@@ -1,0 +1,80 @@
+.progression {
+  padding: 2rem;
+  border-radius: 0.5rem;
+  background: linear-gradient(to right, #f0f9ff, #e6fffa);
+}
+
+.seasonIndicator {
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: #065f46;
+}
+
+.flowContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+}
+
+.flowContainer::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(to right,
+    hsl(120, var(--nav-flow), 50%),
+    hsl(180, var(--nav-harmony), 50%)
+  );
+  z-index: 0;
+}
+
+.flowNode {
+  --nav-resonance: 0;
+  --nav-harmony: 0;
+  --nav-consciousness: 0;
+  --nav-flow: 0;
+  
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 1;
+  
+  background: linear-gradient(
+    135deg,
+    hsl(120, calc(var(--nav-resonance) * 100%), 50%),
+    hsl(180, calc(var(--nav-harmony) * 100%), 50%)
+  );
+  opacity: calc(0.5 + (var(--nav-flow) * 0.5));
+  transform: scale(calc(0.95 + (var(--nav-consciousness) * 0.1)));
+}
+
+.flowNode.active {
+  opacity: 1;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.season {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.8);
+}

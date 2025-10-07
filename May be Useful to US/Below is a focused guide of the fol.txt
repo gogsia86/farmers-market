@@ -1,0 +1,188 @@
+Below is a focused guide of the folders you should create to make your repo Copilot-/agent-friendly, what to put in each folder, and a few ready-to-drop example files (so the agent and humans have a single source of truth). I’ve included short explanations, keys the agent relies on (tests, reproducible env, API contracts), and sample files you can paste into your repository.
+
+Core folders to create (what they are for and what to include)
+- .github/
+  - Purpose: workflows, issue/PR templates, and agent guidance.
+  - Include: workflows/ci.yml, ISSUE_TEMPLATE/, COPILOT_GUIDE.md (agent instructions), CODEOWNERS.
+- docs/
+  - Purpose: architecture, ADRs, runbooks, diagrams (drawio/mermaid).
+  - Include: ARCHITECTURE.md, diagrams/, ADRs/ (decisions the agent must respect).
+- apps/ or services/
+  - Purpose: application code split by app/service (frontend, backend, workers).
+  - Include per-service: src/, tests/, Dockerfile, k8s/ or helm/, README.md.
+- packages/ (monorepo) or libs/
+  - Purpose: shared code (ui-kit, utils, api-client, types).
+  - Include package manifests, build/test scripts, and CHANGELOG.md.
+- infra/
+  - Purpose: IaC (terraform/pulumi), cluster config, secrets wiring examples.
+  - Include: terraform/ modules/, k8s/ manifests, env example files (.tfvars.example).
+- tests/
+  - Purpose: top-level E2E and integration tests (Cypress/Playwright), test infra.
+  - Include: cypress/, playwright/, test-helpers/, test-data/fixtures.
+- monitoring/ & observability/
+  - Purpose: prometheus rules, grafana dashboards, otel configs used by agents.
+- scripts/
+  - Purpose: dev helpers: start-local, migrate, lint-fix, seed-data, run-ci-locally.
+  - Include: makefile or scripts/*.sh and simple usage docs.
+- .devcontainer/ or devcontainer.json
+  - Purpose: reproducible dev environment so the agent’s commands match CI.
+- .vscode/
+  - Purpose: workspace settings and recommended extensions so Copilot & devs share the same editor rules.
+- security/ or policy/
+  - Purpose: OPA/Gatekeeper policy examples, secret rotation docs, Snyk/Trivy baseline configs.
+- docs/api/ or openapi/
+  - Purpose: machine-readable API contracts (OpenAPI/GraphQL/schema.proto) so agent can generate clients or tests.
+
+Why these folders matter for Copilot / coding agents
+- Reproducible environment (devcontainer.json + Dockerfile) => agent can produce commands that run locally/CI.
+- Tests and fixtures => agent can add tests and verify behavior (TDD style).
+- API contracts and schemas => generate SDKs, mock servers, and tests reliably.
+- ISSUE_TEMPLATE + COPILOT_GUIDE.md => gives the agent the exact prompting pattern you want used.
+- CI workflows => reveal the exact commands the agent must run so PR passes CI.
+- ADRs & docs => instruct agent about architectural constraints and forbidden refactors.
+- CODEOWNERS & CONTRIBUTING.md => define reviewers and process the agent should follow when opening PRs.
+
+Files to include so Copilot behaves predictably (examples below)
+- .github/COPILOT_GUIDE.md — How to instruct the agent, prompt templates, branch rules, required test coverage, and CI commands.
+- .github/ISSUE_TEMPLATE/feature_request.md — Standard input the agent will follow when implementing features.
+- .vscode/settings.json — Editor rules so generated code matches formatting and linting settings.
+- devcontainer.json — Repro dev environment so the agent’s commands are valid locally and match CI.
+
+Now I’ve created small, paste-ready example files you can add to your repo. Drop them directly into the paths shown.
+
+````markdown name=.github/COPILOT_GUIDE.md
+```markdown
+# Copilot / Coding Agent Guide
+
+Purpose
+This document explains how to instruct Copilot (or a coding agent) to implement work in this repository so output is predictable, tested, and CI-ready.
+
+Principles
+- One small change per branch/PR.
+- Tests required for any behavior change (unit + a small integration test where applicable).
+- Keep changes within the target folder indicated in the issue.
+- Preserve public API contracts unless an ADR explicitly allows breaking changes.
+
+How to open work for the agent
+1. Create an issue using .github/ISSUE_TEMPLATE/feature_request.md or bug_report.md.
+2. Include: Acceptance Criteria, Example Request/Response, Target folder(s), and any ADRs to respect.
+3. Use the sample prompt below when talking to the agent.
+
+Sample prompt (copy & adapt)
+"You're my coding assistant. Work on issue: <ISSUE_URL>. Create branch feat/<short-desc>. Implement changes under <path>. Requirements: <bullet-list acceptance criteria>. Add unit tests and any integration test needed. Run lint and tests using the project CI commands and include the test output in the PR body. Keep changes minimal, explain design choices in 3 bullets, and include a short migration/rollback note if applicable."
+
+Branch naming
+- feat/<short-description>
+- fix/<short-description>
+- chore/<what-changed>
+
+Files to edit
+- Limit changes to the files and folders listed in the issue unless the agent explains why more files are necessary.
+
+Testing & CI
+- Run the same commands used in CI:
+  - npm ci && npm run lint && npm test
+  - Or: make lint && make test
+- Add tests in the same testing framework already used (see package.json, pyproject.toml, or go.mod).
+- Tests must run headless (CI friendly).
+
+Code style
+- Respect .vscode/settings.json, .editorconfig, .prettierrc, and ESLint/TSLint configs.
+
+APIs & Contracts
+- Prefer updating OpenAPI/GraphQL/proto files first if a public contract changes.
+- Generate clients or update docs accordingly.
+
+PR body checklist (agent should include)
+- Summary of change
+- Link to issue
+- Commands to run locally to verify
+- Tests added (paths)
+- CI output (failing -> passing) where available
+- Files changed with short justification
+
+If blocked
+- Create a draft PR and add a clear description of the blockers and what info is needed.
+
+Example quick tasks
+- "Add POST /api/auth/2fa under services/auth-service with unit tests and a migration script. Branch: feat/auth-2fa."
+- "Fix failing test in services/user-service. Add a regression test demonstrating the original failure."
+
+End of guide.
+```
+````
+
+````markdown name=.github/ISSUE_TEMPLATE/feature_request.md
+```markdown
+---
+name: Feature request
+about: Propose a new feature for the project
+---
+
+## Summary
+(One-sentence summary)
+
+## Motivation and context
+Why is this feature needed?
+
+## Acceptance criteria
+- [ ] Specific, testable outcome 1
+- [ ] Specific, testable outcome 2
+- [ ] CI passes with new tests
+
+## Target folder(s)
+- e.g., services/auth-service/, apps/frontend/
+
+## Expected API / Example
+- Request: POST /api/...
+- Response: 200 { "success": true }
+
+## Notes for implementer/agent
+- Language/stack: (TypeScript/Node/Python/Go)
+- Tests required: unit + small integration (describe)
+- Files to avoid touching: (if any)
+```
+````
+
+```json name=.vscode/settings.json
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "files.exclude": {
+    "node_modules": true,
+    "dist": true
+  },
+  "eslint.validate": ["javascript", "typescript"],
+  "typescript.tsdk": "node_modules/typescript/lib"
+}
+```
+
+```json name=devcontainer.json
+{
+  "name": "Platform Devcontainer",
+  "image": "mcr.microsoft.com/vscode/devcontainers/javascript-node:18",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vsliveshare.vsliveshare",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "github.copilot"
+      ]
+    }
+  },
+  "postCreateCommand": "npm ci"
+}
+```
+
+What I provided and what to do next
+- I described the exact folders you should add and why they make Copilot more effective.
+- I added four ready-to-drop example files (.github/COPILOT_GUIDE.md, issue template, .vscode/settings.json, devcontainer.json) that codify how an agent should behave.
+- Next: add these files into your repository and create one small issue using the feature_request template. After that, use the sample prompt in COPILOT_GUIDE.md to instruct Copilot/your coding agent to create a branch, implement the change, add tests, and open a PR.
+
+If you want, I can now:
+- generate a CI workflow snippet tuned to your stack (Node/TS, Python, Go),
+- or scaffold one example service folder (services/example-service/) including a sample test and Dockerfile — tell me which stack you prefer.

@@ -1,0 +1,210 @@
+.cycleVisualizer {
+  padding: 2rem;
+  background: var(--quantum-background, rgba(0, 0, 0, 0.05));
+  border-radius: 8px;
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+/* Current State Styles */
+.currentState {
+  background: var(--quantum-surface);
+  padding: 1.5rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.moonPhase {
+  margin-bottom: 1.5rem;
+}
+
+.moonIndicator {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(
+    90deg,
+    var(--quantum-accent) calc(var(--moon-phase) * 100%),
+    transparent calc(var(--moon-phase) * 100%)
+  );
+  margin: 1rem 0;
+}
+
+.zodiac {
+  margin-bottom: 1.5rem;
+}
+
+.elementalInfluences {
+  margin-bottom: 1.5rem;
+}
+
+.elements {
+  display: grid;
+  gap: 1rem;
+}
+
+.element {
+  display: grid;
+  grid-template-columns: 80px 1fr 50px;
+  align-items: center;
+  gap: 1rem;
+}
+
+.elementBar {
+  height: 8px;
+  background: rgba(var(--quantum-primary-rgb), 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.elementFill {
+  height: 100%;
+  background: var(--quantum-primary);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* Current Phase Styles */
+.currentPhase {
+  background: var(--quantum-surface);
+  padding: 1.5rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.phaseInfo {
+  display: grid;
+  gap: 1rem;
+}
+
+.phaseType {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.strengthBar {
+  height: 8px;
+  background: rgba(var(--quantum-primary-rgb), 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.strengthFill {
+  height: 100%;
+  background: var(--quantum-success);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* Natural Cycles Styles */
+.naturalCycles {
+  background: var(--quantum-surface);
+  padding: 1.5rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cyclesGrid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.cycle {
+  border: 1px solid rgba(var(--quantum-border-rgb), 0.1);
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.cyclePhase {
+  height: 8px;
+  background: rgba(var(--quantum-primary-rgb), 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 0.5rem 0;
+}
+
+.phaseFill {
+  height: 100%;
+  background: var(--quantum-primary);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.cycleInfo {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: var(--quantum-text-secondary);
+}
+
+/* Activity Recommendations Styles */
+.activityRecommendations {
+  background: var(--quantum-surface);
+  padding: 1.5rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.activities {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.activity {
+  border: 1px solid rgba(var(--quantum-border-rgb), 0.1);
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.favorable {
+  color: var(--quantum-success);
+  font-weight: 500;
+}
+
+.unfavorable {
+  color: var(--quantum-warning);
+  font-weight: 500;
+}
+
+.optimalTimes {
+  margin-top: 1rem;
+}
+
+.optimalTimes h5 {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  color: var(--quantum-text-secondary);
+}
+
+.optimalTimes ul {
+  margin: 0;
+  padding: 0 0 0 1.2rem;
+  font-size: 0.9rem;
+  color: var(--quantum-text-secondary);
+}
+
+.optimalTimes li {
+  margin-bottom: 0.3rem;
+}
+
+/* Common Styles */
+h3 {
+  margin: 0 0 1.5rem;
+  color: var(--quantum-text-primary);
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+h4 {
+  margin: 0 0 0.5rem;
+  color: var(--quantum-text-primary);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.phaseLabel {
+  color: var(--quantum-text-secondary);
+  font-size: 0.9rem;
+}

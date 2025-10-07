@@ -1,0 +1,183 @@
+.alignmentVisualizer {
+  padding: 2rem;
+  background: var(--quantum-background, rgba(0, 0, 0, 0.05));
+  border-radius: 8px;
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+/* Overall Influence Section */
+.overallInfluence {
+  background: var(--quantum-surface);
+  padding: 1.5rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.influenceMetrics {
+  display: grid;
+  gap: 1rem;
+}
+
+.metric {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  align-items: center;
+  gap: 1rem;
+}
+
+.progressBar {
+  height: 8px;
+  background: rgba(var(--quantum-primary-rgb), 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--quantum-primary);
+  border-radius: 4px;
+  width: calc(var(--value) * 100%);
+  transition: width 0.3s ease;
+}
+
+/* Celestial Bodies Section */
+.celestialBodies {
+  background: var(--quantum-surface);
+  padding: 1.5rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.bodiesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.celestialBody {
+  padding: 1rem;
+  background: rgba(var(--quantum-primary-rgb), 0.05);
+  border-radius: 4px;
+}
+
+.bodyPosition {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
+}
+
+.bodyInfluence {
+  margin-top: 0.5rem;
+}
+
+.influenceBar {
+  height: 4px;
+  background: rgba(var(--quantum-primary-rgb), 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.influenceFill {
+  height: 100%;
+  background: var(--quantum-accent);
+  border-radius: 2px;
+  width: calc(var(--value) * 100%);
+  transition: width 0.3s ease;
+}
+
+/* Events Sections */
+.activeEvents,
+.upcomingEvents {
+  background: var(--quantum-surface);
+  padding: 1.5rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.eventsList,
+.timelineEvents {
+  display: grid;
+  gap: 1rem;
+}
+
+.event,
+.timelineEvent {
+  padding: 1rem;
+  background: rgba(var(--quantum-primary-rgb), 0.05);
+  border-radius: 4px;
+}
+
+.eventType {
+  color: var(--quantum-accent);
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.eventBodies {
+  color: var(--quantum-text-secondary);
+  font-size: 0.9rem;
+  margin: 0.3rem 0;
+}
+
+.eventSignificance {
+  font-size: 0.9rem;
+  color: var(--quantum-text-primary);
+  font-weight: 500;
+}
+
+.eventTime {
+  font-size: 0.9rem;
+  color: var(--quantum-text-secondary);
+}
+
+/* Activity Recommendations */
+.activityRecommendations {
+  background: var(--quantum-surface);
+  padding: 1.5rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.activities {
+  display: grid;
+  gap: 1rem;
+}
+
+.activity {
+  padding: 1rem;
+  background: rgba(var(--quantum-primary-rgb), 0.05);
+  border-radius: 4px;
+}
+
+.activityStatus {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.optimal {
+  color: var(--quantum-success);
+  font-weight: 500;
+}
+
+.suboptimal {
+  color: var(--quantum-warning);
+}
+
+/* Common Styles */
+h3 {
+  margin: 0 0 1.5rem;
+  color: var(--quantum-text-primary);
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+h4 {
+  margin: 0;
+  color: var(--quantum-text-primary);
+  font-size: 1rem;
+  font-weight: 500;
+}

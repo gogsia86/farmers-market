@@ -1,0 +1,8 @@
+Implementation Flow:
+
+Start with DEVELOPMENT_GUIDE.md
+Follow setup instructions in setup.md
+Review architecture in README.md
+Follow best practices in best-practices.md
+Implement APIs using README.md
+Track progress using DIVINE_TASK_MANIFEST.md

@@ -1,0 +1,76 @@
+Naravno! Planiranje platforme pod nazivom **Farmers Market** može biti uzbudljiv i koristan projekt, pogotovo ako želiš povezati lokalne proizvođače s kupcima. Evo detaljnog plana koji možeš koristiti kao temelj:
+
+---
+
+## 🧠 Vizija i Ciljevi
+
+**Farmers Market** bi trebala biti digitalna platforma koja:
+- Povezuje lokalne poljoprivrednike, OPG-ove i proizvođače s kupcima
+- Omogućuje online naručivanje svježih proizvoda
+- Promovira održivu i lokalnu proizvodnju hrane
+
+---
+
+## 🧩 Ključne Funkcionalnosti Platforme
+
+### 👥 Za korisnike (kupce)
+- Pretraživanje proizvoda po kategorijama (voće, povrće, mliječni proizvodi, meso, itd.)
+- Filtriranje po lokaciji, dostupnosti, ekološkoj certifikaciji
+- Online naručivanje i plaćanje
+- Ocjenjivanje i recenzije proizvođača
+- Praćenje narudžbi i dostave
+
+### 🚜 Za proizvođače
+- Kreiranje profila i dodavanje proizvoda
+- Upravljanje zalihama i cijenama
+- Primanje narudžbi i komunikacija s kupcima
+- Statistika prodaje i analitika
+
+### 🛠️ Administracija
+- Verifikacija proizvođača
+- Upravljanje kategorijama i promocijama
+- Praćenje transakcija i korisničke podrške
+
+---
+
+## 🖥️ Tehnička Struktura
+
+| Sloj | Tehnologije |
+|------|-------------|
+| Frontend | React, Vue.js ili Next.js |
+| Backend | Node.js, Django ili Laravel |
+| Baza podataka | PostgreSQL, MongoDB |
+| Hosting | AWS, Azure, Vercel |
+| Plaćanja | Stripe, PayPal, lokalne banke |
+| Dostava | Integracija s lokalnim kurirskim službama |
+
+---
+
+## 📣 Marketing i Promocija
+
+- Partnerstva s lokalnim OPG-ovima i sajmovima
+- Kampanje na društvenim mrežama (Instagram, Facebook, TikTok)
+- SEO optimizacija za lokalne pretrage
+- Blog s receptima i pričama proizvođača
+
+---
+
+## 💰 Monetizacija
+
+- Provizija po prodaji
+- Premium profili za proizvođače
+- Oglasi za lokalne proizvode
+- Pretplate za dostavu
+
+---
+
+## 🗺️ Lokalni Fokus
+
+S obzirom na tvoju lokaciju (Zagreb), možeš početi s:
+- Mapiranjem OPG-ova u Zagrebačkoj županiji
+- Uključivanjem tržnica poput Dolca, Jaruna, Trešnjevke
+- Suradnjom s udrugama za ekološku proizvodnju
+
+---
+
+Želiš li da ti pomognem s izradom prototipa, dizajnom korisničkog sučelja ili poslovnim planom? Možemo i osmisliti ime, logo ili slogan ako želiš da platforma bude još upečatljivija.

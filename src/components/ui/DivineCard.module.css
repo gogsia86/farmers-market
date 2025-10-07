@@ -1,0 +1,54 @@
+.divineCard {
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Consciousness Level Classes */
+.divineCard[class*="consciousness-"] {
+  transform: scale(1);
+  transition: transform 0.3s ease-out;
+}
+
+.divineCard.consciousness-1 { transform: scale(0.98); }
+.divineCard.consciousness-2 { transform: scale(0.99); }
+.divineCard.consciousness-3 { transform: scale(1.00); }
+.divineCard.consciousness-4 { transform: scale(1.01); }
+.divineCard.consciousness-5 { transform: scale(1.02); }
+.divineCard.consciousness-6 { transform: scale(1.03); }
+.divineCard.consciousness-7 { transform: scale(1.04); }
+.divineCard.consciousness-8 { transform: scale(1.05); }
+.divineCard.consciousness-9 { transform: scale(1.06); }
+.divineCard.consciousness-10 { transform: scale(1.07); }
+
+/* Evolution Stage Classes */
+.divineCard[class*="evolution-"] {
+  position: relative;
+}
+
+.divineCard.evolution-1::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, transparent 95%, var(--divine-color) 100%);
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.divineCard.evolution-2::after {
+  background: radial-gradient(circle at center, transparent 90%, var(--divine-color) 100%);
+  opacity: 0.15;
+}
+
+.divineCard.evolution-3::after {
+  background: radial-gradient(circle at center, transparent 85%, var(--divine-color) 100%);
+  opacity: 0.2;
+}
+
+/* Hover Effects */
+.divineCard:hover {
+  transform: translateY(-2px);
+}

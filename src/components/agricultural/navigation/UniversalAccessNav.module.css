@@ -1,0 +1,42 @@
+.universalNav {
+  --consciousness-level: 1;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background: linear-gradient(
+    135deg,
+    hsl(120, calc(var(--consciousness-level) * 20%), 95%),
+    hsl(180, calc(var(--consciousness-level) * 20%), 95%)
+  );
+}
+
+.consciousnessIndicator {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #374151;
+  margin-bottom: 1rem;
+  opacity: 0.8;
+}
+
+.content {
+  position: relative;
+}
+
+.content [data-nav-node] {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  transform: scale(calc(0.95 + (var(--consciousness-level) * 0.05)));
+}
+
+.content [data-nav-node]:focus {
+  outline: 2px solid hsl(120, calc(var(--consciousness-level) * 30%), 50%);
+  outline-offset: 2px;
+}
+
+.content [data-nav-node]:focus:not(:focus-visible) {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .content [data-nav-node] {
+    transition: none;
+  }
+}

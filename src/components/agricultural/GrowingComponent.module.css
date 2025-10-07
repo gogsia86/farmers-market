@@ -1,0 +1,109 @@
+.growing-component {
+  position: relative;
+  transition: all 0.6s ease-in-out;
+}
+
+/* Growth Stages */
+.growing-component.seed {
+  opacity: 0.5;
+  transform: scale(0.8);
+}
+
+.growing-component.sprout {
+  opacity: 0.7;
+  transform: scale(0.9);
+}
+
+.growing-component.growth {
+  opacity: 0.8;
+  transform: scale(1);
+}
+
+.growing-component.bloom {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.growing-component.fruit {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+.growing-component.harvest {
+  opacity: 0.9;
+  transform: scale(1);
+}
+
+/* Seasonal Phases */
+.growing-component[data-season="spring"] {
+  --seasonal-hue: 120;
+  filter: hue-rotate(var(--seasonal-hue));
+}
+
+.growing-component[data-season="summer"] {
+  --seasonal-hue: 60;
+  filter: hue-rotate(var(--seasonal-hue));
+}
+
+.growing-component[data-season="autumn"] {
+  --seasonal-hue: 30;
+  filter: hue-rotate(var(--seasonal-hue));
+}
+
+.growing-component[data-season="winter"] {
+  --seasonal-hue: 240;
+  filter: hue-rotate(var(--seasonal-hue));
+}
+
+/* Lunar Phases */
+.growing-component[data-lunar="new"] {
+  --lunar-brightness: 0.8;
+  filter: brightness(var(--lunar-brightness));
+}
+
+.growing-component[data-lunar="waxing"] {
+  --lunar-brightness: 0.9;
+  filter: brightness(var(--lunar-brightness));
+}
+
+.growing-component[data-lunar="full"] {
+  --lunar-brightness: 1;
+  filter: brightness(var(--lunar-brightness));
+}
+
+.growing-component[data-lunar="waning"] {
+  --lunar-brightness: 0.85;
+  filter: brightness(var(--lunar-brightness));
+}
+
+/* Elemental Aspects */
+.growing-component[data-element="earth"] {
+  --elemental-blur: 0px;
+  filter: blur(var(--elemental-blur));
+}
+
+.growing-component[data-element="water"] {
+  --elemental-blur: 1px;
+  filter: blur(var(--elemental-blur));
+}
+
+.growing-component[data-element="air"] {
+  --elemental-blur: 0.5px;
+  filter: blur(var(--elemental-blur));
+}
+
+.growing-component[data-element="fire"] {
+  --elemental-saturation: 1.2;
+  filter: saturate(var(--elemental-saturation));
+}
+
+.growing-component[data-element="aether"] {
+  --elemental-contrast: 1.1;
+  filter: contrast(var(--elemental-contrast));
+}
+
+/* Consciousness Effects */
+.growing-component {
+  --consciousness-glow: calc(var(--consciousness) * 10px);
+  box-shadow: 0 0 var(--consciousness-glow) rgba(255, 255, 255, 0.5);
+}

@@ -1,0 +1,15 @@
+{
+    "git.ignoreLimitWarning": true,
+    "todo-tree.tree.scanMode": "workspace only",
+    "chat.agent.maxRequests": 100,
+    "cSpell.words": [
+        "AGRI",
+        "biodynamic",
+        "Biodynamic",
+        "chartjs",
+        "cicd",
+        "Omnibenevolence",
+        "OMNICORTEX",
+        "pathfinding"
+    ]
+}

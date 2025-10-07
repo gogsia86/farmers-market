@@ -1,0 +1,88 @@
+.probability-visualizer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
+  background: var(--quantum-background, rgba(0, 0, 0, 0.05));
+  border-radius: 8px;
+}
+
+.quantum-metrics,
+.environmental-factors,
+.quantum-state {
+  background: var(--quantum-surface, rgba(255, 255, 255, 0.9));
+  padding: 1.5rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.quantum-metrics h3,
+.environmental-factors h3,
+.quantum-state h3 {
+  margin: 0 0 1.5rem;
+  color: var(--quantum-text-primary);
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.metric,
+.factor,
+.state-metric {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--quantum-border, rgba(0, 0, 0, 0.1));
+}
+
+.metric label,
+.factor label,
+.state-metric label {
+  color: var(--quantum-text-secondary);
+  font-weight: 500;
+}
+
+.metric span,
+.factor span,
+.state-metric span {
+  color: var(--quantum-text-primary);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Quantum animation effects */
+.quantum-metrics,
+.environmental-factors,
+.quantum-state {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.quantum-metrics:hover,
+.environmental-factors:hover,
+.quantum-state:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Dynamic color indicators */
+.metric span,
+.factor span,
+.state-metric span {
+  position: relative;
+}
+
+.metric span::before,
+.factor span::before,
+.state-metric span::before {
+  content: '';
+  position: absolute;
+  left: -1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--indicator-color, #4CAF50);
+  opacity: 0.8;
+}

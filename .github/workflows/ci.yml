@@ -1,0 +1,93 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      working-directory: ./farmers-market
+      run: npm ci
+
+    - name: Run linting
+      working-directory: ./farmers-market
+      run: npm run lint
+
+    - name: Run tests
+      working-directory: ./farmers-market
+      run: npm run test
+
+    - name: Build project
+      working-directory: ./farmers-market
+      run: npm run build
+
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        working-directory: ./farmers-market
+        run: npm ci
+
+      - name: Build for production
+        working-directory: ./farmers-market
+        env:
+          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
+          NEXTAUTH_URL: ${{ secrets.PROD_NEXTAUTH_URL }}
+          NEXTAUTH_SECRET: ${{ secrets.PROD_NEXTAUTH_SECRET }}
+          REDIS_URL: ${{ secrets.PROD_REDIS_URL }}
+          WEATHER_API_KEY: ${{ secrets.PROD_WEATHER_API_KEY }}
+          ML_SERVICE_API_KEY: ${{ secrets.PROD_ML_SERVICE_API_KEY }}
+          SENTRY_DSN: ${{ secrets.PROD_SENTRY_DSN }}
+        run: npm run build
+
+      - name: Configure SSL certificate
+        env:
+          SSL_PRIVATE_KEY: ${{ secrets.PROD_SSL_PRIVATE_KEY }}
+          SSL_CERTIFICATE: ${{ secrets.PROD_SSL_CERTIFICATE }}
+          SSL_CA: ${{ secrets.PROD_SSL_CA }}
+        run: |
+          mkdir -p ./ssl
+          echo "$SSL_PRIVATE_KEY" > ./ssl/private.key
+          echo "$SSL_CERTIFICATE" > ./ssl/certificate.crt
+          echo "$SSL_CA" > ./ssl/ca.crt
+
+      - name: Deploy to Production
+        working-directory: ./farmers-market
+        env:
+          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
+          NEXTAUTH_URL: ${{ secrets.PROD_NEXTAUTH_URL }}
+          NEXTAUTH_SECRET: ${{ secrets.PROD_NEXTAUTH_SECRET }}
+          REDIS_URL: ${{ secrets.PROD_REDIS_URL }}
+          WEATHER_API_KEY: ${{ secrets.PROD_WEATHER_API_KEY }}
+          ML_SERVICE_API_KEY: ${{ secrets.PROD_ML_SERVICE_API_KEY }}
+          SENTRY_DSN: ${{ secrets.PROD_SENTRY_DSN }}
+          SSL_PRIVATE_KEY_PATH: ./ssl/private.key
+          SSL_CERTIFICATE_PATH: ./ssl/certificate.crt
+          SSL_CA_PATH: ./ssl/ca.crt
+        run: npm run start
