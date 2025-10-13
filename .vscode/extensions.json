@@ -1,5 +1,13 @@
 {
     "recommendations": [
-        "github.copilot"
+        "github.copilot",
+        "dbaeumer.vscode-eslint",
+        "ms-azuretools.vscode-docker",
+        "ms-vscode-remote.remote-containers"
+    ],
+    "unwantedRecommendations": [
+        "hookyqr.beautify",
+        "dbaeumer.jshint",
+        "ms-vscode.vscode-typescript-tslint-plugin"
     ]
 }

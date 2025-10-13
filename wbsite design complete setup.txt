@@ -1,0 +1,1094 @@
+wbsite designcomplete setup:
+
+## Project Structure
+```
+farmers-market/
+├── public/
+│   ├── index.html
+│   ├── css/
+│   │   ├── style.css
+│   │   └── responsive.css
+│   ├── js/
+│   │   ├── main.js
+│   │   ├── cart.js
+│   │   └── vendors.js
+│   ├── images/
+│   └── icons/
+├── src/
+│   ├── components/
+│   │   ├── Header.js
+│   │   ├── Footer.js
+│   │   ├── ProductCard.js
+│   │   └── VendorCard.js
+│   ├── pages/
+│   │   ├── Home.js
+│   │   ├── Products.js
+│   │   ├── Vendors.js
+│   │   └── About.js
+│   ├── data/
+│   │   ├── products.js
+│   │   └── vendors.js
+│   └── utils/
+│       └── helpers.js
+├── package.json
+├── README.md
+└── server.js
+```
+
+## 1. package.json
+```json
+{
+  "name": "farmers-market",
+  "version": "1.0.0",
+  "description": "Modern Farmers Market E-commerce Website",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "build": "npm run build:css && npm run build:js",
+    "build:css": "postcss public/css/style.css -o public/css/style.min.css",
+    "build:js": "webpack"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.0.0",
+    "compression": "^1.7.4",
+    "mongoose": "^7.5.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "webpack": "^5.88.2",
+    "postcss": "^8.4.28",
+    "autoprefixer": "^10.4.14"
+  },
+  "keywords": ["farmers", "market", "ecommerce", "local", "organic"],
+  "author": "Your Name",
+  "license": "MIT"
+}
+```
+
+## 2. public/index.html
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Fresh local produce from your community farmers market">
+    <title>FreshFarmers Market | Local Organic Produce</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="/icons/favicon.ico">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="/">🌱 FreshFarmers</a>
+            </div>
+            <div class="nav-menu">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/products" class="nav-link">Products</a>
+                <a href="/vendors" class="nav-link">Vendors</a>
+                <a href="/about" class="nav-link">About</a>
+                <a href="/cart" class="nav-link cart-icon">
+                    🛒 <span class="cart-count">0</span>
+                </a>
+            </div>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Content loaded dynamically -->
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>🌱 FreshFarmers</h3>
+                <p>Bringing fresh, local produce to your community since 2024.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <a href="/products">Products</a>
+                <a href="/vendors">Vendors</a>
+                <a href="/about">About Us</a>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>📍 123 Market Street</p>
+                <p>📞 (555) 123-4567</p>
+                <p>✉️ hello@freshfarmers.com</p>
+            </div>
+            <div class="footer-section">
+                <h4>Hours</h4>
+                <p>Mon-Fri: 8AM-6PM</p>
+                <p>Sat-Sun: 7AM-5PM</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 FreshFarmers Market. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/vendors.js"></script>
+</body>
+</html>
+```
+
+## 3. public/css/style.css
+```css
+/* CSS Variables */
+:root {
+    --primary-green: #2d5016;
+    --secondary-green: #4a7c59;
+    --accent-orange: #e67e22;
+    --light-beige: #fef7e8;
+    --white: #ffffff;
+    --text-dark: #2c3e50;
+    --text-light: #7f8c8d;
+    --border-radius: 12px;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    color: var(--text-dark);
+    background-color: var(--light-beige);
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+}
+
+h1 {
+    font-size: 3rem;
+    color: var(--primary-green);
+}
+
+h2 {
+    font-size: 2.5rem;
+    color: var(--secondary-green);
+}
+
+/* Navigation */
+.navbar {
+    background: var(--white);
+    box-shadow: var(--shadow);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+}
+
+.nav-logo a {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary-green);
+    text-decoration: none;
+    font-family: 'Playfair Display', serif;
+}
+
+.nav-menu {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: var(--text-dark);
+    font-weight: 500;
+    transition: var(--transition);
+    position: relative;
+}
+
+.nav-link:hover {
+    color: var(--primary-green);
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--primary-green);
+    transition: var(--transition);
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+.cart-icon {
+    position: relative;
+    font-size: 1.2rem;
+}
+
+.cart-count {
+    background: var(--accent-orange);
+    color: var(--white);
+    border-radius: 50%;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.8rem;
+    position: absolute;
+    top: -8px;
+    right: -8px;
+}
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.hamburger span {
+    width: 25px;
+    height: 3px;
+    background: var(--text-dark);
+    margin: 3px 0;
+    transition: var(--transition);
+}
+
+/* Main Content */
+main {
+    margin-top: 70px;
+    min-height: calc(100vh - 140px);
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+    color: var(--white);
+    padding: 6rem 2rem;
+    text-align: center;
+}
+
+.hero h1 {
+    color: var(--white);
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+.cta-button {
+    display: inline-block;
+    background: var(--accent-orange);
+    color: var(--white);
+    padding: 1rem 2rem;
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+.cta-button:hover {
+    background: #d35400;
+    transform: translateY(-2px);
+}
+
+/* Products Grid */
+.products-grid {
+    max-width: 1200px;
+    margin: 4rem auto;
+    padding: 0 2rem;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+/* Product Card */
+.product-card {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.product-image {
+    width: 100%;
+    height: 200px;
+    background: var(--secondary-green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 3rem;
+}
+
+.product-info {
+    padding: 1.5rem;
+}
+
+.product-title {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-dark);
+}
+
+.product-vendor {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.product-price {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--primary-green);
+    margin-bottom: 1rem;
+}
+
+.add-to-cart {
+    width: 100%;
+    background: var(--primary-green);
+    color: var(--white);
+    border: none;
+    padding: 0.8rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 600;
+}
+
+.add-to-cart:hover {
+    background: var(--secondary-green);
+}
+
+/* Footer */
+.footer {
+    background: var(--text-dark);
+    color: var(--white);
+    padding: 3rem 0 1rem;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.footer-section h3,
+.footer-section h4 {
+    color: var(--white);
+    margin-bottom: 1rem;
+}
+
+.footer-section a {
+    color: var(--text-light);
+    text-decoration: none;
+    display: block;
+    margin-bottom: 0.5rem;
+    transition: var(--transition);
+}
+
+.footer-section a:hover {
+    color: var(--white);
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #34495e;
+    color: var(--text-light);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hamburger {
+        display: flex;
+    }
+
+    .nav-menu {
+        position: fixed;
+        top: 70px;
+        left: -100%;
+        background: var(--white);
+        width: 100%;
+        flex-direction: column;
+        gap: 0;
+        transition: var(--transition);
+        box-shadow: var(--shadow);
+    }
+
+    .nav-menu.active {
+        left: 0;
+    }
+
+    .nav-link {
+        padding: 1rem 2rem;
+        width: 100%;
+        border-bottom: 1px solid #eee;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    h2 {
+        font-size: 2rem;
+    }
+
+    .hero {
+        padding: 4rem 1rem;
+    }
+
+    .hero h1 {
+        font-size: 2.8rem;
+    }
+}
+
+/* Loading Spinner */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid var(--primary-green);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Alert Messages */
+.alert {
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    margin: 1rem 0;
+    text-align: center;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+```
+
+## 4. public/css/responsive.css
+```css
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+    .nav-container {
+        padding: 0 1rem;
+    }
+    
+    .hero h1 {
+        font-size: 2.2rem;
+    }
+    
+    .hero p {
+        font-size: 1rem;
+    }
+    
+    .products-grid,
+    .footer-content {
+        padding: 0 1rem;
+    }
+    
+    .grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+    .grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Print styles */
+@media print {
+    .navbar,
+    .footer,
+    .cta-button,
+    .add-to-cart {
+        display: none;
+    }
+    
+    body {
+        background: white;
+        color: black;
+    }
+    
+    .product-card {
+        break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+}
+```
+
+## 5. public/js/main.js
+```javascript
+// Main application JavaScript
+class FarmersMarketApp {
+    constructor() {
+        this.currentPage = 'home';
+        this.cart = JSON.parse(localStorage.getItem('cart')) || [];
+        this.init();
+    }
+
+    init() {
+        this.setupEventListeners();
+        this.loadPage(window.location.pathname);
+        this.updateCartCount();
+    }
+
+    setupEventListeners() {
+        // Navigation
+        document.addEventListener('click', (e) => {
+            if (e.target.matches('.nav-link') || e.target.closest('.nav-link')) {
+                e.preventDefault();
+                const link = e.target.closest('.nav-link');
+                const href = link.getAttribute('href');
+                this.loadPage(href);
+            }
+
+            if (e.target.matches('.hamburger') || e.target.closest('.hamburger')) {
+                this.toggleMobileMenu();
+            }
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.nav-container') && document.querySelector('.nav-menu').classList.contains('active')) {
+                this.toggleMobileMenu();
+            }
+        });
+
+        // Handle browser back/forward
+        window.addEventListener('popstate', (e) => {
+            this.loadPage(window.location.pathname, false);
+        });
+    }
+
+    async loadPage(path, pushState = true) {
+        try {
+            // Update active nav link
+            this.updateActiveNavLink(path);
+
+            // Show loading state
+            document.getElementById('main-content').innerHTML = '<div class="loading" style="text-align: center; padding: 2rem;"></div>';
+
+            let content = '';
+            
+            switch (path) {
+                case '/':
+                case '/home':
+                    content = await this.loadHomePage();
+                    this.currentPage = 'home';
+                    break;
+                case '/products':
+                    content = await this.loadProductsPage();
+                    this.currentPage = 'products';
+                    break;
+                case '/vendors':
+                    content = await this.loadVendorsPage();
+                    this.currentPage = 'vendors';
+                    break;
+                case '/about':
+                    content = await this.loadAboutPage();
+                    this.currentPage = 'about';
+                    break;
+                case '/cart':
+                    content = await this.loadCartPage();
+                    this.currentPage = 'cart';
+                    break;
+                default:
+                    content = await this.loadHomePage();
+            }
+
+            document.getElementById('main-content').innerHTML = content;
+            
+            if (pushState) {
+                window.history.pushState({}, '', path);
+            }
+
+            // Update cart count
+            this.updateCartCount();
+
+            // Re-initialize page-specific event listeners
+            this.initializePageEvents();
+
+        } catch (error) {
+            console.error('Error loading page:', error);
+            document.getElementById('main-content').innerHTML = this.getErrorPage();
+        }
+    }
+
+    updateActiveNavLink(path) {
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === path) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+    async loadHomePage() {
+        const products = await this.fetchProducts();
+        const featuredProducts = products.slice(0, 6);
+
+        return `
+            <section class="hero">
+                <div class="hero-content">
+                    <h1>Fresh From Farm to Table</h1>
+                    <p>Discover the finest local produce, handpicked by our community farmers</p>
+                    <a href="/products" class="cta-button">Shop Fresh Produce</a>
+                </div>
+            </section>
+
+            <section class="products-grid">
+                <h2 class="section-title">Featured Products</h2>
+                <div class="grid">
+                    ${featuredProducts.map(product => this.renderProductCard(product)).join('')}
+                </div>
+            </section>
+
+            <section class="features" style="background: white; padding: 4rem 2rem; text-align: center;">
+                <div style="max-width: 1200px; margin: 0 auto;">
+                    <h2>Why Choose FreshFarmers?</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 3rem;">
+                        <div class="feature">
+                            <h3>🌱 100% Organic</h3>
+                            <p>All our products are certified organic and pesticide-free</p>
+                        </div>
+                        <div class="feature">
+                            <h3>🚚 Local Delivery</h3>
+                            <p>Fresh delivery from farm to your doorstep</p>
+                        </div>
+                        <div class="feature">
+                            <h3>💰 Fair Prices</h3>
+                            <p>Support local farmers with fair pricing</p>
+                        </div>
+                        <div class="feature">
+                            <h3>⭐ Quality Guarantee</h3>
+                            <p>100% satisfaction guarantee on all products</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        `;
+    }
+
+    async loadProductsPage() {
+        const products = await this.fetchProducts();
+        
+        return `
+            <section class="products-grid">
+                <div style="text-align: center; margin-bottom: 3rem;">
+                    <h1>Our Fresh Products</h1>
+                    <p>Browse our selection of fresh, locally sourced produce</p>
+                </div>
+                
+                <div class="filters" style="margin-bottom: 2rem; text-align: center;">
+                    <select id="categoryFilter" style="padding: 0.5rem; border-radius: var(--border-radius); border: 1px solid #ddd;">
+                        <option value="">All Categories</option>
+                        <option value="vegetables">Vegetables</option>
+                        <option value="fruits">Fruits</option>
+                        <option value="dairy">Dairy</option>
+                        <option value="meat">Meat</option>
+                    </select>
+                </div>
+                
+                <div class="grid">
+                    ${products.map(product => this.renderProductCard(product)).join('')}
+                </div>
+            </section>
+        `;
+    }
+
+    async loadVendorsPage() {
+        const vendors = await this.fetchVendors();
+        
+        return `
+            <section class="vendors" style="max-width: 1200px; margin: 4rem auto; padding: 0 2rem;">
+                <h1 class="section-title">Our Local Farmers</h1>
+                <div class="grid">
+                    ${vendors.map(vendor => this.renderVendorCard(vendor)).join('')}
+                </div>
+            </section>
+        `;
+    }
+
+    loadAboutPage() {
+        return `
+            <section class="about" style="max-width: 800px; margin: 4rem auto; padding: 0 2rem;">
+                <h1>About FreshFarmers Market</h1>
+                <p style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem;">
+                    Welcome to FreshFarmers Market, your trusted source for fresh, locally grown produce 
+                    since 2024. We believe in connecting our community with the hardworking farmers 
+                    who grow our food with care and dedication.
+                </p>
+                
+                <div style="background: var(--white); padding: 2rem; border-radius: var(--border-radius); margin: 2rem 0;">
+                    <h2>Our Mission</h2>
+                    <p>To support local agriculture, promote sustainable farming practices, and provide our community with access to the freshest, healthiest food possible.</p>
+                </div>
+                
+                <div style="background: var(--white); padding: 2rem; border-radius: var(--border-radius);">
+                    <h2>Visit Us</h2>
+                    <p><strong>Address:</strong> 123 Market Street, Your City</p>
+                    <p><strong>Hours:</strong> Monday-Friday 8AM-6PM, Saturday-Sunday 7AM-5PM</p>
+                    <p><strong>Phone:</strong> (555) 123-4567</p>
+                    <p><strong>Email:</strong> hello@freshfarmers.com</p>
+                </div>
+            </section>
+        `;
+    }
+
+    renderProductCard(product) {
+        return `
+            <div class="product-card" data-product-id="${product.id}">
+                <div class="product-image">
+                    ${product.emoji || '🌱'}
+                </div>
+                <div class="product-info">
+                    <h3 class="product-title">${product.name}</h3>
+                    <p class="product-vendor">By ${product.vendor}</p>
+                    <p class="product-price">$${product.price}</p>
+                    <button class="add-to-cart" onclick="app.addToCart(${product.id})">
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    renderVendorCard(vendor) {
+        return `
+            <div class="product-card">
+                <div class="product-image" style="background: #3498db;">
+                    👨‍🌾
+                </div>
+                <div class="product-info">
+                    <h3 class="product-title">${vendor.name}</h3>
+                    <p class="product-vendor">${vendor.specialty}</p>
+                    <p style="color: var(--text-light); font-size: 0.9rem;">${vendor.description}</p>
+                    <p style="margin-top: 1rem; color: var(--primary-green); font-weight: 600;">
+                        ${vendor.products} Products
+                    </p>
+                </div>
+            </div>
+        `;
+    }
+
+    initializePageEvents() {
+        // Filter functionality for products page
+        const categoryFilter = document.getElementById('categoryFilter');
+        if (categoryFilter) {
+            categoryFilter.addEventListener('change', (e) => {
+                this.filterProducts(e.target.value);
+            });
+        }
+
+        // Add to cart buttons
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const productId = e.target.closest('.product-card').dataset.productId;
+                this.addToCart(parseInt(productId));
+            });
+        });
+    }
+
+    toggleMobileMenu() {
+        const navMenu = document.querySelector('.nav-menu');
+        const hamburger = document.querySelector('.hamburger');
+        
+        navMenu.classList.toggle('active');
+        hamburger.classList.toggle('active');
+    }
+
+    updateCartCount() {
+        const cartCount = document.querySelector('.cart-count');
+        const totalItems = this.cart.reduce((sum, item) => sum + item.quantity, 0);
+        cartCount.textContent = totalItems;
+    }
+
+    getErrorPage() {
+        return `
+            <section style="text-align: center; padding: 4rem 2rem;">
+                <h1>Page Not Found</h1>
+                <p>Sorry, the page you're looking for doesn't exist.</p>
+                <a href="/" class="cta-button" style="margin-top: 2rem;">Go Home</a>
+            </section>
+        `;
+    }
+
+    // Data fetching methods
+    async fetchProducts() {
+        // In a real app, this would be an API call
+        return [
+            { id: 1, name: 'Organic Tomatoes', vendor: 'Green Valley Farms', price: 4.99, category: 'vegetables', emoji: '🍅' },
+            { id: 2, name: 'Fresh Apples', vendor: 'Applewood Orchards', price: 3.99, category: 'fruits', emoji: '🍎' },
+            { id: 3, name: 'Farm Eggs', vendor: 'Happy Hens Farm', price: 6.99, category: 'dairy', emoji: '🥚' },
+            { id: 4, name: 'Organic Carrots', vendor: 'Green Valley Farms', price: 2.99, category: 'vegetables', emoji: '🥕' },
+            { id: 5, name: 'Artisan Bread', vendor: 'Village Bakery', price: 5.99, category: 'bakery', emoji: '🍞' },
+            { id: 6, name: 'Local Honey', vendor: 'Sunny Bee Farm', price: 8.99, category: 'pantry', emoji: '🍯' }
+        ];
+    }
+
+    async fetchVendors() {
+        return [
+            { id: 1, name: 'Green Valley Farms', specialty: 'Organic Vegetables', description: 'Family-owned farm since 1985', products: 12 },
+            { id: 2, name: 'Applewood Orchards', specialty: 'Fresh Fruits', description: 'Specializing in heirloom varieties', products: 8 },
+            { id: 3, name: 'Happy Hens Farm', specialty: 'Free-range Eggs & Poultry', description: 'Ethical farming practices', products: 6 },
+            { id: 4, name: 'Village Bakery', specialty: 'Artisan Breads', description: 'Traditional baking methods', products: 10 }
+        ];
+    }
+}
+
+// Cart functionality
+FarmersMarketApp.prototype.addToCart = function(productId) {
+    // Implementation in cart.js
+    console.log('Add to cart:', productId);
+};
+
+// Initialize app
+const app = new FarmersMarketApp();
+window.app = app;
+```
+
+## 6. public/js/cart.js
+```javascript
+// Cart functionality
+FarmersMarketApp.prototype.addToCart = function(productId) {
+    this.fetchProducts().then(products => {
+        const product = products.find(p => p.id === productId);
+        if (!product) return;
+
+        const existingItem = this.cart.find(item => item.id === productId);
+        
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            this.cart.push({
+                ...product,
+                quantity: 1
+            });
+        }
+
+        this.saveCart();
+        this.updateCartCount();
+        this.showAlert(`${product.name} added to cart!`, 'success');
+    });
+};
+
+FarmersMarketApp.prototype.removeFromCart = function(productId) {
+    this.cart = this.cart.filter(item => item.id !== productId);
+    this.saveCart();
+    this.updateCartCount();
+    
+    if (this.currentPage === 'cart') {
+        this.loadCartPage().then(content => {
+            document.getElementById('main-content').innerHTML = content;
+        });
+    }
+};
+
+FarmersMarketApp.prototype.updateQuantity = function(productId, newQuantity) {
+    if (newQuantity < 1) {
+        this.removeFromCart(productId);
+        return;
+    }
+
+    const item = this.cart.find(item => item.id === productId);
+    if (item) {
+        item.quantity = newQuantity;
+        this.saveCart();
+        this.updateCartCount();
+        
+        if (this.currentPage === 'cart') {
+            this.loadCartPage().then(content => {
+                document.getElementById('main-content').innerHTML = content;
+            });
+        }
+    }
+};
+
+FarmersMarketApp.prototype.saveCart = function() {
+    localStorage.setItem('cart', JSON.stringify(this.cart));
+};
+
+FarmersMarketApp.prototype.loadCartPage = async function() {
+    const total = this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    
+    return `
+        <section class="cart" style="max-width: 1200px; margin: 4rem auto; padding: 0 2rem;">
+            <h1>Shopping Cart</h1>
+            
+            ${this.cart.length === 0 ? `
+                <div style="text-align: center; padding: 4rem;">
+                    <h2>Your cart is empty</h2>
+                    <p>Add some fresh products to get started!</p>
+                    <a href="/products" class="cta-button" style="margin-top: 2rem;">Browse Products</a>
+                </div>
+            ` : `
+                <div class="cart-items" style="margin-bottom: 2rem;">
+                    ${this.cart.map(item => `
+                        <div class="cart-item" style="display: flex; align-items: center; padding: 1rem; background: white; border-radius: var(--border-radius); margin-bottom: 1rem; box-shadow: var(--shadow);">
+                            <div style="font-size: 2rem; margin-right: 1rem;">${item.emoji || '🌱'}</div>
+                            <div style="flex: 1;">
+                                <h3 style="margin: 0 0 0.5rem 0;">${item.name}</h3>
+                                <p style="margin: 0; color: var(--text-light);">${item.vendor}</p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div class="quantity-controls" style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <button onclick="app.updateQuantity(${item.id}, ${item.quantity - 1})" style="padding: 0.5rem; border: 1px solid #ddd; background: white; border-radius: var(--border-radius); cursor: pointer;">-</button>
+                                    <span style="padding: 0 1rem;">${item.quantity}</span>
+                                    <button onclick="app.updateQuantity(${item.id}, ${item.quantity + 1})" style="padding: 0.5rem; border: 1px solid #ddd; background: white; border-radius: var(--border-radius); cursor: pointer;">+</button>
+                                </div>
+                                <div style="font-weight: 600; color: var(--primary-green);">
+                                    $${(item.price * item.quantity).toFixed(2)}
+                                </div>
+                                <button onclick="app.removeFromCart(${item.id})" style="background: none; border: none; color: var(--text-light); cursor: pointer; padding: 0.5rem;">🗑️</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="cart-summary" style="background: white; padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--shadow);">
+                    <div style="display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem;">
+                        <span>Total:</span>
+                        <span>$${total.toFixed(2)}</span>
+                    </div>
+                    <button class="cta-button" style="width: 100%;" onclick="app.checkout()">
+                        Proceed to Checkout
+                    </button>
+                </div>
+            `}
+        </section>
+    `;
+};
+
+FarmersMarketApp.prototype.checkout = function() {
+    if (this.cart.length === 0) {
+        this.showAlert('Your cart is empty!', 'error');
+        return;
+    }
+
+    // In a real app, this would integrate with a payment processor
+    this.showAlert('Checkout functionality would be implemented here!', 'success');
+    
+    // Clear cart after checkout
+    this.cart = [];
+    this.saveCart();
+    this.updateCartCount();
+    
+    // Redirect to home page
+    setTimeout(() => {
+        this.loadPage('/');
+    }, 2000);
+};
+
+FarmersMarketApp.prototype.showAlert = function(message, type = 'success') {
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type}`;
+    alert.textContent = message;
+    alert.style.position = 'fixed';
+    alert.style.top = '100px';
+    alert.style.right = '20px';
+    alert.style.zIndex = '1000';
+    alert.style.minWidth = '300px';
+
+    document.body.appendChild(alert);
+
+    setTimeout(() => {
+        alert.remove();
+    }, 3000);
+};
+```
+
+##

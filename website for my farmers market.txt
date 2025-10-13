@@ -1,0 +1,108 @@
+"I need to create a fully functional website for my farmers market platform in the same repository. The website should include all subpages and functions from the platform. Please generate:"
+
+## Detailed Requirements:
+
+### 1. **Repository Structure**
+```
+"Set up a monorepo structure with:
+- /backend (existing platform)
+- /frontend (new website)
+- Shared components and utilities
+- Package.json with workspaces"
+```
+
+### 2. **Core Pages & Features**
+```
+"Essential pages needed:
+- Home/Landing page with market overview
+- Vendor directory and profiles
+- Product listings and search
+- Shopping cart and checkout
+- User authentication (login/register)
+- Vendor dashboard
+- Admin panel
+- About/Contact pages
+- Event calendar for markets"
+```
+
+### 3. **Technical Stack Request**
+```
+"Build using:
+- Frontend: React/Next.js or Vue/Nuxt.js
+- Styling: Tailwind CSS + component library
+- State management (Redux/Vuex)
+- API integration with existing backend
+- Responsive design for all devices
+- SEO optimization"
+```
+
+### 4. **Integration Requirements**
+```
+"Must integrate with existing platform:
+- Reuse existing API endpoints
+- Share authentication system
+- Sync data models (products, vendors, users)
+- Maintain consistent business logic
+- Use existing database schema"
+```
+
+### 5. **Specific Functionality**
+```
+"Key functions to implement:
+- User registration/login system
+- Product browsing and filtering
+- Shopping cart with real-time updates
+- Vendor management interface
+- Order processing system
+- Payment integration (Stripe/PayPal)
+- Review and rating system
+- Inventory management"
+```
+
+## Complete Question Template:
+
+**"Based on my existing farmers market platform in this repository, create a comprehensive website with all necessary subpages and functionality. The website should be built as a frontend application that integrates seamlessly with the current backend API.**
+
+**Repository Structure:**
+- Maintain existing backend in /backend
+- Create new frontend in /frontend
+- Shared utilities and types
+- Monorepo configuration
+
+**Required Pages:**
+1. Homepage - market overview, featured vendors
+2. Vendor Directory - searchable vendor list
+3. Product Catalog - filterable product listings  
+4. User Authentication - login/register pages
+5. Shopping Cart & Checkout
+6. Vendor Dashboard - manage products/orders
+7. User Profile & Order History
+8. Admin Panel - platform management
+9. About & Contact pages
+
+**Technical Requirements:**
+- Use React/Next.js for SSR and SEO
+- Tailwind CSS for styling
+- Redux for state management
+- Responsive mobile-first design
+- Secure authentication flow
+- Real-time inventory updates
+- Payment processing integration
+
+**Integration Points:**
+- Connect to existing REST/GraphQL API
+- Reuse authentication middleware
+- Sync with current database models
+- Maintain existing business rules
+- Implement same user roles/permissions
+
+Please generate the complete frontend application with all components, pages, routing, and state management needed for a production-ready farmers market website."**
+
+## Additional Tips:
+
+1. **Reference your existing code**: "The API endpoints are already defined in /api folder..."
+2. **Specify data models**: "Use the existing Product, Vendor, User models from..."
+3. **Mention specific features**: "Include the real-time inventory tracking from the platform..."
+4. **Define deployment**: "Set up for deployment on Vercel/Netlify with the backend on..."
+
+This structured approach gives Copilot clear context about your existing platform while specifying exactly what you need for the website implementation.

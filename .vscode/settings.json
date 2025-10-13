@@ -1,4 +1,5 @@
 {
+    // Preserve existing settings
     "git.ignoreLimitWarning": true,
     "todo-tree.tree.scanMode": "workspace only",
     "chat.agent.maxRequests": 100,
@@ -11,5 +12,76 @@
         "Omnibenevolence",
         "OMNICORTEX",
         "pathfinding"
-    ]
+    ],
+    "markdown.validate.enabled": true,
+
+    // Performance Optimizations
+    "editor.formatOnSave": false,
+    "editor.formatOnType": false,
+    "editor.suggest.snippetsPreventQuickSuggestions": true,
+    "editor.suggest.showWords": false,
+    "editor.hover.delay": 1000,
+
+    // GitHub Copilot Optimizations
+    "github.copilot.enable": {
+        "*": true,
+        "plaintext": true,
+        "markdown": true,
+        "scminput": false,
+        "github.copilot.panel.enable": true
+    },
+    "github.copilot.inlineSuggest.enable": false,
+
+    // ESLint Optimizations
+    "eslint.run": "onSave",
+    "eslint.probe": [
+        "javascript",
+        "typescript",
+        "javascriptreact",
+        "typescriptreact"
+    ],
+    "eslint.workingDirectories": [
+        "./farmers-market"
+    ],
+
+    // Language-specific settings
+    "typescript.disableAutomaticTypeAcquisition": true,
+    "typescript.tsserver.maxTsServerMemory": 2048,
+    "javascript.suggest.enabled": false,
+    "typescript.suggest.enabled": false,
+    
+    // Docker optimization
+    "docker.enabled": true,
+    "docker.attachShellCommand.linuxContainer": "/bin/sh",
+    "docker.truncateMaxLength": 50,
+    "docker.images.label": "Tag",
+
+    // Workspace performance
+    "files.watcherExclude": {
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "**/node_modules/**": true,
+        "**/dist/**": true,
+        "**/coverage/**": true
+    },
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/dist": true,
+        "**/coverage": true
+    },
+
+    // Extension-specific optimizations
+    "extensions.autoUpdate": false,
+    "extensions.ignoreRecommendations": true,
+    
+    // Editor performance
+    "workbench.enableExperiments": false,
+    "workbench.settings.enableNaturalLanguageSearch": false,
+    "workbench.statusBar.visible": true,
+    "workbench.tips.enabled": false,
+    
+    // Terminal optimization
+    "terminal.integrated.gpuAcceleration": "off",
+    "terminal.integrated.enablePersistentSessions": false
 }
