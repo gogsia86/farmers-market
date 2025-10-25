@@ -3,15 +3,15 @@
  * Divine agricultural product reviews display
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { StarRatingDisplay } from './StarRating';
-import { QuantumButton } from '@/components/ui/QuantumButton';
-import { ThumbsUp, MessageSquare } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
-import { toast } from 'sonner';
-import type { Review } from '@/types/review.types';
+import { QuantumButton } from "@/components/ui/QuantumButton";
+import type { Review } from "@/types/review.types";
+import { formatDistanceToNow } from "date-fns";
+import { MessageSquare, ThumbsUp } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { StarRatingDisplay } from "./StarRating";
 
 interface ReviewListProps {
   productId: string;
@@ -61,7 +61,7 @@ interface ReviewItemProps {
 function ReviewItem({ review, canRespond, onUpdate }: ReviewItemProps) {
   const [isMarkingHelpful, setIsMarkingHelpful] = useState(false);
   const [showResponse, setShowResponse] = useState(false);
-  const [response, setResponse] = useState('');
+  const [response, setResponse] = useState("");
   const [isSubmittingResponse, setIsSubmittingResponse] = useState(false);
 
   const handleMarkHelpful = async () => {
@@ -69,19 +69,21 @@ function ReviewItem({ review, canRespond, onUpdate }: ReviewItemProps) {
 
     try {
       const res = await fetch(`/api/reviews/${review.id}/helpful`, {
-        method: 'PATCH',
+        method: "PATCH",
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || 'Failed to mark as helpful');
+        throw new Error(data.error || "Failed to mark as helpful");
       }
 
-      toast.success('Marked as helpful!');
+      toast.success("Marked as helpful!");
       onUpdate?.();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to mark helpful');
+      toast.error(
+        error instanceof Error ? error.message : "Failed to mark helpful"
+      );
     } finally {
       setIsMarkingHelpful(false);
     }
@@ -89,7 +91,7 @@ function ReviewItem({ review, canRespond, onUpdate }: ReviewItemProps) {
 
   const handleSubmitResponse = async () => {
     if (!response.trim()) {
-      toast.error('Please write a response');
+      toast.error("Please write a response");
       return;
     }
 
@@ -97,23 +99,25 @@ function ReviewItem({ review, canRespond, onUpdate }: ReviewItemProps) {
 
     try {
       const res = await fetch(`/api/reviews/${review.id}/response`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ response: response.trim() }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || 'Failed to submit response');
+        throw new Error(data.error || "Failed to submit response");
       }
 
-      toast.success('Response submitted!');
+      toast.success("Response submitted!");
       setShowResponse(false);
-      setResponse('');
+      setResponse("");
       onUpdate?.();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to submit response');
+      toast.error(
+        error instanceof Error ? error.message : "Failed to submit response"
+      );
     } finally {
       setIsSubmittingResponse(false);
     }
@@ -127,15 +131,17 @@ function ReviewItem({ review, canRespond, onUpdate }: ReviewItemProps) {
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 rounded-full bg-agricultural-100 flex items-center justify-center">
               <span className="text-agricultural-600 font-semibold">
-                {review.user?.name?.charAt(0) || 'U'}
+                {review.user?.name?.charAt(0) || "U"}
               </span>
             </div>
             <div>
               <p className="font-medium text-gray-900">
-                {review.user?.name || 'Anonymous'}
+                {review.user?.name || "Anonymous"}
               </p>
               <p className="text-sm text-gray-500">
-                {formatDistanceToNow(new Date(review.createdAt), { addSuffix: true })}
+                {formatDistanceToNow(new Date(review.createdAt), {
+                  addSuffix: true,
+                })}
               </p>
             </div>
           </div>
@@ -195,7 +201,7 @@ function ReviewItem({ review, canRespond, onUpdate }: ReviewItemProps) {
               size="sm"
               onClick={() => {
                 setShowResponse(false);
-                setResponse('');
+                setResponse("");
               }}
             >
               Cancel

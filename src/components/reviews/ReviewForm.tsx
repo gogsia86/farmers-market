@@ -3,13 +3,13 @@
  * Divine agricultural product review submission
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { StarRating } from './StarRating';
-import { QuantumButton } from '@/components/ui/QuantumButton';
-import { Textarea } from '@/components/ui/textarea';
-import { toast } from 'sonner';
+import { QuantumButton } from "@/components/ui/QuantumButton";
+import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
+import { toast } from "sonner";
+import { StarRating } from "./StarRating";
 
 interface ReviewFormProps {
   productId: string;
@@ -25,28 +25,28 @@ export function ReviewForm({
   onCancel,
 }: ReviewFormProps) {
   const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (rating === 0) {
-      toast.error('Please select a rating');
+      toast.error("Please select a rating");
       return;
     }
 
     if (!comment.trim()) {
-      toast.error('Please write a review');
+      toast.error("Please write a review");
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('/api/reviews', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           productId,
           rating,
@@ -57,15 +57,17 @@ export function ReviewForm({
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to submit review');
+        throw new Error(data.error || "Failed to submit review");
       }
 
-      toast.success('Review submitted successfully!');
+      toast.success("Review submitted successfully!");
       setRating(0);
-      setComment('');
+      setComment("");
       onSuccess?.();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to submit review');
+      toast.error(
+        error instanceof Error ? error.message : "Failed to submit review"
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -99,7 +101,10 @@ export function ReviewForm({
 
       {/* Comment */}
       <div>
-        <label htmlFor="comment" className="block text-sm font-medium text-gray-700 mb-2">
+        <label
+          htmlFor="comment"
+          className="block text-sm font-medium text-gray-700 mb-2"
+        >
           Your Review *
         </label>
         <Textarea
