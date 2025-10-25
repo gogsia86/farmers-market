@@ -149,7 +149,7 @@ const results = await runner.runTests();
 const comparison = runner.compareWithBaseline(results);
 
 if (comparison.regressions.length > 0) {
-  console.warn('Performance regressions detected:', comparison.regressions);
+  console.warn("Performance regressions detected:", comparison.regressions);
 }
 ```
 
@@ -209,17 +209,17 @@ const MetricView: React.FC<MetricViewProps> = ({ metric, timeRange }) => {
 // Example: Configuring alert thresholds
 const alertConfig = {
   responseTime: {
-    warning: 500,  // ms
-    critical: 1000 // ms
+    warning: 500, // ms
+    critical: 1000, // ms
   },
   cacheHitRate: {
-    warning: 0.8,  // 80%
-    critical: 0.7  // 70%
+    warning: 0.8, // 80%
+    critical: 0.7, // 70%
   },
   errorRate: {
     warning: 0.01, // 1%
-    critical: 0.05 // 5%
-  }
+    critical: 0.05, // 5%
+  },
 };
 ```
 
@@ -290,4 +290,4 @@ const alertConfig = {
 
 ---
 
-*This documentation is maintained by the performance engineering team.
+\*This documentation is maintained by the performance engineering team.

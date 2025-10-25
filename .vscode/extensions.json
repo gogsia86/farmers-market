@@ -1,13 +1,80 @@
 {
-    "recommendations": [
-        "github.copilot",
-        "dbaeumer.vscode-eslint",
-        "ms-azuretools.vscode-docker",
-        "ms-vscode-remote.remote-containers"
-    ],
-    "unwantedRecommendations": [
-        "hookyqr.beautify",
-        "dbaeumer.jshint",
-        "ms-vscode.vscode-typescript-tslint-plugin"
-    ]
+  // ========================================
+  // 🎯 RECOMMENDED EXTENSIONS FOR QUANTUM AGRICULTURAL PLATFORM
+  // ========================================
+  "recommendations": [
+    // === ESSENTIAL CORE ===
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "ms-vscode.vscode-typescript-next",
+
+    // === AI & PRODUCTIVITY ===
+    "github.copilot",
+    "github.copilot-chat",
+    "visualstudioexptteam.vscodeintellicode",
+
+    // === NEXT.JS & REACT ===
+    "dsznajder.es7-react-js-snippets",
+    "infeng.vscode-react-typescript",
+
+    // === TAILWIND CSS ===
+    "bradlc.vscode-tailwindcss",
+    "bourhaouta.tailwindshades",
+
+    // === DATABASE & PRISMA ===
+    "prisma.prisma",
+    "ckolkman.vscode-postgres",
+    "mongodb.mongodb-vscode",
+
+    // === TESTING ===
+    "orta.vscode-jest",
+    "firsttris.vscode-jest-runner",
+
+    // === GIT & VERSION CONTROL ===
+    "eamodio.gitlens",
+    "mhutchie.git-graph",
+    "github.vscode-pull-request-github",
+
+    // === CODE QUALITY ===
+    "streetsidesoftware.code-spell-checker",
+    "usernamehw.errorlens",
+    "aaron-bond.better-comments",
+
+    // === MARKDOWN ===
+    "yzhang.markdown-all-in-one",
+    "davidanson.vscode-markdownlint",
+    "bierner.markdown-preview-github-styles",
+
+    // === UTILITIES ===
+    "christian-kohler.path-intellisense",
+    "christian-kohler.npm-intellisense",
+    "formulahendry.auto-rename-tag",
+    "formulahendry.auto-close-tag",
+    "ms-vscode.hexeditor",
+
+    // === THEME & ICONS ===
+    "pkief.material-icon-theme",
+
+    // === PERFORMANCE & PROFILING ===
+    "ms-vscode.cmake-tools",
+    "nvidia.nsight-vscode-edition",
+
+    // === API DEVELOPMENT ===
+    "humao.rest-client",
+    "42crunch.vscode-openapi",
+
+    // === DOCKER & DEPLOYMENT ===
+    "ms-azuretools.vscode-docker",
+    "ms-vscode-remote.remote-containers"
+  ],
+
+  // ========================================
+  // ⚠️  UNWANTED EXTENSIONS (Performance Impact)
+  // ========================================
+  "unwantedRecommendations": [
+    "hookyqr.beautify",
+    "ms-vscode.vscode-typescript-tslint-plugin",
+    "eg2.tslint",
+    "ms-python.python"
+  ]
 }

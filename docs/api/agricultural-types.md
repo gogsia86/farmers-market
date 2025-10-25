@@ -8,7 +8,7 @@
 
 The foundational crop representation in the quantum agricultural system.
 
-```typescript
+````typescript
 interface CropEntity {
   id: string;
   name: string;
@@ -38,7 +38,7 @@ interface CropEntity {
   energyField: EnergySignature;
   dimensionalLocation: Vector4D;
 }
-```
+````
 
 #### `CropData`
 
@@ -90,13 +90,13 @@ interface CropFormData {
 Represents the biodynamic growth phases of crops.
 
 ```typescript
-type BiodynamicPhase = 
-  | 'seedTime'
-  | 'growth'
-  | 'flowering'
-  | 'fruiting'
-  | 'harvest'
-  | 'rest';
+type BiodynamicPhase =
+  | "seedTime"
+  | "growth"
+  | "flowering"
+  | "fruiting"
+  | "harvest"
+  | "rest";
 ```
 
 #### `GrowthPhase`
@@ -104,13 +104,13 @@ type BiodynamicPhase =
 Detailed growth stages including transcendent state.
 
 ```typescript
-type GrowthPhase = 
-  | 'dormant'
-  | 'germination'
-  | 'vegetative'
-  | 'reproductive'
-  | 'maturation'
-  | 'transcendent';
+type GrowthPhase =
+  | "dormant"
+  | "germination"
+  | "vegetative"
+  | "reproductive"
+  | "maturation"
+  | "transcendent";
 ```
 
 ### Monitoring Types
@@ -120,7 +120,7 @@ type GrowthPhase =
 Indicates the current health state of a crop.
 
 ```typescript
-type CropHealthStatus = 'healthy' | 'warning' | 'critical';
+type CropHealthStatus = "healthy" | "warning" | "critical";
 ```
 
 #### `CropMetrics`

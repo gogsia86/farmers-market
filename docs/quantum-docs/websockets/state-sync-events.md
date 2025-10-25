@@ -218,19 +218,19 @@ interface OmnipresentStateChange {
 
 ### Common Error Scenarios
 
-| Error Code | Description | Recovery Strategy |
-|------------|-------------|-------------------|
-| `COHERENCE_LOSS` | Quantum coherence below threshold | Initiate quantum realignment |
-| `TEMPORAL_DRIFT` | Time synchronization error | Temporal rewind and replay |
-| `DIMENSION_CONFLICT` | Conflicting dimensional states | Force quantum collapse |
-| `SYNC_TIMEOUT` | Synchronization timeout | Retry with exponential backoff |
+| Error Code           | Description                       | Recovery Strategy              |
+| -------------------- | --------------------------------- | ------------------------------ |
+| `COHERENCE_LOSS`     | Quantum coherence below threshold | Initiate quantum realignment   |
+| `TEMPORAL_DRIFT`     | Time synchronization error        | Temporal rewind and replay     |
+| `DIMENSION_CONFLICT` | Conflicting dimensional states    | Force quantum collapse         |
+| `SYNC_TIMEOUT`       | Synchronization timeout           | Retry with exponential backoff |
 
 ### Error Recovery Flow
 
 ```typescript
 interface ErrorRecovery {
   errorCode: string;
-  recoveryPhase: 'DETECT' | 'ISOLATE' | 'RECOVER';
+  recoveryPhase: "DETECT" | "ISOLATE" | "RECOVER";
   coherenceLevel: number;
   timestamp: number;
 }
@@ -242,27 +242,27 @@ interface ErrorRecovery {
 
 ```typescript
 const quantumSocket = io(process.env.NEXT_PUBLIC_WS_URL, {
-  transports: ['websocket'],
+  transports: ["websocket"],
   query: {
-    quantumMode: 'enabled',
-    temporalSensitivity: 'high'
-  }
+    quantumMode: "enabled",
+    temporalSensitivity: "high",
+  },
 });
 
 // Subscribe to state transitions
-quantumSocket.on('state-transition', (payload: StateTransitionPayload) => {
+quantumSocket.on("state-transition", (payload: StateTransitionPayload) => {
   // Handle state transition
   processStateTransition(payload);
 });
 
 // Subscribe to quantum sync
-quantumSocket.on('quantum-state-sync', (message: QuantumMessage) => {
+quantumSocket.on("quantum-state-sync", (message: QuantumMessage) => {
   // Handle quantum state sync
   processQuantumSync(message);
 });
 
 // Subscribe to omnipresent sync
-quantumSocket.on('omnipresent-sync', (payload: OmnipresentSyncPayload) => {
+quantumSocket.on("omnipresent-sync", (payload: OmnipresentSyncPayload) => {
   // Handle omnipresent sync
   processOmnipresentSync(payload);
 });

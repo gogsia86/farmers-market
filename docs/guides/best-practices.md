@@ -3,6 +3,7 @@
 ## 📝 Code Style & Standards
 
 ### TypeScript Best Practices
+
 ```typescript
 // Use explicit types
 interface FarmProduct {
@@ -15,16 +16,17 @@ interface FarmProduct {
 // Use type guards
 function isFarmProduct(obj: any): obj is FarmProduct {
   return (
-    typeof obj === 'object' &&
-    'id' in obj &&
-    'name' in obj &&
-    'price' in obj &&
-    'quantity' in obj
+    typeof obj === "object" &&
+    "id" in obj &&
+    "name" in obj &&
+    "price" in obj &&
+    "quantity" in obj
   );
 }
 ```
 
 ### Component Structure
+
 ```typescript
 // Use functional components with TypeScript
 interface ProductCardProps {
@@ -34,13 +36,14 @@ interface ProductCardProps {
 
 export const ProductCard: React.FC<ProductCardProps> = ({
   product,
-  onSelect
+  onSelect,
 }) => {
   // Implementation
 };
 ```
 
 ### File Naming Conventions
+
 ```
 components/
 ├── ui/
@@ -57,6 +60,7 @@ components/
 ## 🏗️ Architecture Patterns
 
 ### Component Architecture
+
 ```typescript
 // Use component composition
 const FarmDashboard: React.FC = () => {
@@ -71,11 +75,12 @@ const FarmDashboard: React.FC = () => {
 ```
 
 ### State Management
+
 ```typescript
 // Use React Query for server state
 const { data: products } = useQuery({
-  queryKey: ['products'],
-  queryFn: fetchProducts
+  queryKey: ["products"],
+  queryFn: fetchProducts,
 });
 
 // Use Context for shared state
@@ -83,15 +88,16 @@ const AgriculturalContext = createContext<AgriculturalState>(null);
 ```
 
 ### API Patterns
+
 ```typescript
 // Use API route handlers
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const season = searchParams.get('season');
-  
+  const season = searchParams.get("season");
+
   // Implement agricultural logic
   const products = await getSeasonalProducts(season);
-  
+
   return Response.json({ products });
 }
 ```
@@ -99,6 +105,7 @@ export async function GET(request: Request) {
 ## 🧪 Testing Standards
 
 ### Component Testing
+
 ```typescript
 describe('ProductCard', () => {
   it('should display product information', () => {
@@ -110,10 +117,11 @@ describe('ProductCard', () => {
 ```
 
 ### API Testing
+
 ```typescript
-describe('Products API', () => {
-  it('should filter by season', async () => {
-    const response = await fetch('/api/products?season=summer');
+describe("Products API", () => {
+  it("should filter by season", async () => {
+    const response = await fetch("/api/products?season=summer");
     const data = await response.json();
     expect(data.products).toHaveLength(5);
   });
@@ -123,6 +131,7 @@ describe('Products API', () => {
 ## 🚀 Performance Guidelines
 
 ### Image Optimization
+
 ```typescript
 // Use Next.js Image component
 import Image from 'next/image';
@@ -141,24 +150,22 @@ export const ProductImage: React.FC<{ src: string }> = ({ src }) => {
 ```
 
 ### Data Fetching
+
 ```typescript
 // Use SWR for client-side data fetching
-const { data, error } = useSWR<Product[]>(
-  '/api/products',
-  fetcher,
-  {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false
-  }
-);
+const { data, error } = useSWR<Product[]>("/api/products", fetcher, {
+  revalidateOnFocus: false,
+  revalidateOnReconnect: false,
+});
 ```
 
 ## 🔐 Security Practices
 
 ### Authentication
+
 ```typescript
 // Protected API routes
-import { withAuth } from '@/lib/auth';
+import { withAuth } from "@/lib/auth";
 
 export const GET = withAuth(async (req) => {
   // Implementation
@@ -166,18 +173,20 @@ export const GET = withAuth(async (req) => {
 ```
 
 ### Data Validation
+
 ```typescript
 // Use Zod for validation
 const ProductSchema = z.object({
   name: z.string().min(2),
   price: z.number().positive(),
-  quantity: z.number().int().positive()
+  quantity: z.number().int().positive(),
 });
 ```
 
 ## 📚 Documentation Standards
 
 ### Component Documentation
+
 ```typescript
 /**
  * Displays a product card with agricultural context
@@ -188,6 +197,7 @@ const ProductSchema = z.object({
 ```
 
 ### API Documentation
+
 ```typescript
 /**
  * @api {get} /api/products Get Products
@@ -201,6 +211,7 @@ const ProductSchema = z.object({
 ## 🔄 Git Workflow
 
 ### Commit Messages
+
 ```bash
 # Format: <type>(<scope>): <description>
 feat(products): add seasonal filtering
@@ -209,6 +220,7 @@ docs(api): update endpoint documentation
 ```
 
 ### Branch Naming
+
 ```bash
 # Format: <type>/<description>
 feature/seasonal-products
@@ -219,6 +231,7 @@ enhancement/performance
 ## 📈 Monitoring & Analytics
 
 ### Error Tracking
+
 ```typescript
 // Use error boundaries
 class ProductErrorBoundary extends React.Component {
@@ -229,6 +242,7 @@ class ProductErrorBoundary extends React.Component {
 ```
 
 ### Performance Monitoring
+
 ```typescript
 // Use web vitals
 export function reportWebVitals(metric: NextWebVitalsMetric) {
@@ -238,4 +252,4 @@ export function reportWebVitals(metric: NextWebVitalsMetric) {
 
 ---
 
-*These best practices are continuously updated based on project evolution and team feedback.*
+_These best practices are continuously updated based on project evolution and team feedback._

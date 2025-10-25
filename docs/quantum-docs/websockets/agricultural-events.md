@@ -46,19 +46,15 @@ This document details the WebSocket events used for real-time agricultural monit
 #### Crop Status Updates
 
 Event for receiving real-time updates about crop status and metrics.
-
-**Event Properties:**
-
+### Event Properties
 - Type: `CROP_UPDATE`
 - Temporal Order: `SEQUENTIAL`
 - Quantum Awareness: `Yes`
 - State Impact: `Immediate`
-
-**Message Structure:**
-
+### Message Structure
 ```typescript
 interface CropMonitorState {
-  status: 'healthy' | 'warning' | 'critical';
+  status: "healthy" | "warning" | "critical";
   lastUpdate: Date;
   metrics: {
     moisture: number;
@@ -68,14 +64,12 @@ interface CropMonitorState {
 }
 
 interface WebSocketMessage<T> {
-  type: 'CROP_UPDATE';
+  type: "CROP_UPDATE";
   payload: T;
   timestamp?: string;
 }
 ```
-
-**Sample Message:**
-
+### Sample Message
 ```json
 {
   "type": "CROP_UPDATE",
@@ -96,25 +90,19 @@ interface WebSocketMessage<T> {
 #### Crop Subscriptions
 
 Event for subscribing to updates for multiple crops.
-
-**Event Properties:**
-
+### Event Properties
 - Type: `SUBSCRIBE_CROPS`
 - Temporal Order: `FLEXIBLE`
 - Quantum Awareness: `No`
 - State Impact: `Configuration`
-
-**Message Structure:**
-
+### Message Structure
 ```typescript
 interface WebSocketMessage<string[]> {
   type: 'SUBSCRIBE_CROPS';
   payload: string[]; // Array of crop IDs
 }
 ```
-
-**Sample Message:**
-
+### Sample Message
 ```json
 {
   "type": "SUBSCRIBE_CROPS",
@@ -127,16 +115,12 @@ interface WebSocketMessage<string[]> {
 #### Farm Analytics
 
 Event for receiving farm-wide statistical updates.
-
-**Event Properties:**
-
+### Event Properties
 - Type: `STATISTICS_UPDATE`
 - Temporal Order: `SEQUENTIAL`
 - Quantum Awareness: `Yes`
 - State Impact: `Aggregate`
-
-**Message Structure:**
-
+### Message Structure
 ```typescript
 interface FarmStatistics {
   farmId: string;
@@ -183,16 +167,12 @@ interface FarmStatistics {
 #### State Synchronization
 
 Event for synchronizing quantum states across the agricultural system.
-
-**Event Properties:**
-
+### Event Properties
 - Type: `QUANTUM_SYNC`
 - Temporal Order: `QUANTUM`
 - Quantum Awareness: `Yes`
 - State Impact: `Temporal`
-
-**Message Structure:**
-
+### Message Structure
 ```typescript
 interface QuantumSyncPayload {
   predictionState?: {
@@ -217,9 +197,7 @@ interface QuantumSyncPayload {
   };
 }
 ```
-
-**Sample Message:**
-
+### Sample Message
 ```json
 {
   "type": "QUANTUM_SYNC",
@@ -253,19 +231,15 @@ interface QuantumSyncPayload {
 #### Error Events
 
 Event for receiving error notifications.
-
-**Event Properties:**
-
+### Event Properties
 - Type: `ERROR`
 - Temporal Order: `IMMEDIATE`
 - Quantum Awareness: `No`
 - State Impact: `None`
-
-**Message Structure:**
-
+### Message Structure
 ```typescript
 interface WebSocketError {
-  type: 'ERROR';
+  type: "ERROR";
   payload: string;
   error: {
     code: string;
@@ -274,9 +248,7 @@ interface WebSocketError {
   };
 }
 ```
-
-**Sample Message:**
-
+### Sample Message
 ```json
 {
   "type": "ERROR",
@@ -297,49 +269,51 @@ interface WebSocketError {
 ### Single Crop Monitor
 
 ```typescript
-import { WebSocket } from 'ws';
-import { CropMonitorState, WebSocketMessage } from '../types/agriculture';
+import { WebSocket } from "ws";
+import { CropMonitorState, WebSocketMessage } from "../types/agriculture";
 
 class CropMonitor {
   private ws: WebSocket;
-  
+
   constructor(cropId: string) {
-    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3000';
+    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:3000";
     this.ws = new WebSocket(`${wsUrl}/api/agricultural/monitor/${cropId}`);
     this.setupEventHandlers();
   }
 
   private setupEventHandlers() {
     this.ws.onmessage = (event) => {
-      const message = JSON.parse(event.data) as WebSocketMessage<CropMonitorState>;
-      
+      const message = JSON.parse(
+        event.data,
+      ) as WebSocketMessage<CropMonitorState>;
+
       switch (message.type) {
-        case 'CROP_UPDATE':
+        case "CROP_UPDATE":
           this.handleCropUpdate(message.payload);
           break;
-        case 'ERROR':
+        case "ERROR":
           this.handleError(message);
           break;
       }
     };
 
     this.ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
+      console.error("WebSocket error:", error);
     };
 
     this.ws.onclose = () => {
-      console.log('WebSocket connection closed');
+      console.log("WebSocket connection closed");
       // Implement reconnection logic here
     };
   }
 
   private handleCropUpdate(state: CropMonitorState) {
-    console.log('Crop state updated:', state);
+    console.log("Crop state updated:", state);
     // Handle crop update logic
   }
 
   private handleError(error: WebSocketMessage<string>) {
-    console.error('Received error:', error);
+    console.error("Received error:", error);
     // Handle error logic
   }
 
@@ -352,16 +326,16 @@ class CropMonitor {
 ### Multi-Crop Monitor
 
 ```typescript
-import { WebSocket } from 'ws';
-import { CropMonitorState, WebSocketMessage } from '../types/agriculture';
+import { WebSocket } from "ws";
+import { CropMonitorState, WebSocketMessage } from "../types/agriculture";
 
 class MultipleCropMonitor {
   private ws: WebSocket;
   private cropIds: string[];
-  
+
   constructor(cropIds: string[]) {
     this.cropIds = cropIds;
-    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3000';
+    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:3000";
     this.ws = new WebSocket(`${wsUrl}/api/agricultural/monitor-multiple`);
     this.setupEventHandlers();
   }
@@ -372,16 +346,18 @@ class MultipleCropMonitor {
     };
 
     this.ws.onmessage = (event) => {
-      const message = JSON.parse(event.data) as WebSocketMessage<CropMonitorState>;
-      
+      const message = JSON.parse(
+        event.data,
+      ) as WebSocketMessage<CropMonitorState>;
+
       switch (message.type) {
-        case 'CROP_UPDATE':
+        case "CROP_UPDATE":
           this.handleCropUpdate(message.payload);
           break;
-        case 'QUANTUM_SYNC':
+        case "QUANTUM_SYNC":
           this.handleQuantumSync(message.payload);
           break;
-        case 'ERROR':
+        case "ERROR":
           this.handleError(message);
           break;
       }
@@ -390,24 +366,24 @@ class MultipleCropMonitor {
 
   private subscribeToCrops() {
     const subscriptionMessage: WebSocketMessage<string[]> = {
-      type: 'SUBSCRIBE_CROPS',
-      payload: this.cropIds
+      type: "SUBSCRIBE_CROPS",
+      payload: this.cropIds,
     };
     this.ws.send(JSON.stringify(subscriptionMessage));
   }
 
   private handleCropUpdate(state: CropMonitorState) {
-    console.log('Multiple crops state updated:', state);
+    console.log("Multiple crops state updated:", state);
     // Handle multiple crop updates
   }
 
   private handleQuantumSync(state: any) {
-    console.log('Quantum sync received:', state);
+    console.log("Quantum sync received:", state);
     // Handle quantum synchronization
   }
 
   private handleError(error: WebSocketMessage<string>) {
-    console.error('Received error:', error);
+    console.error("Received error:", error);
     // Handle error logic
   }
 
@@ -420,8 +396,8 @@ class MultipleCropMonitor {
 ### React Integration
 
 ```tsx
-import { useEffect, useRef } from 'react';
-import { CropMonitor } from '../lib/CropMonitor';
+import { useEffect, useRef } from "react";
+import { CropMonitor } from "../lib/CropMonitor";
 
 interface CropMonitoringProps {
   cropId: string;
@@ -429,12 +405,16 @@ interface CropMonitoringProps {
   onError: (error: any) => void;
 }
 
-export function CropMonitoring({ cropId, onUpdate, onError }: CropMonitoringProps) {
+export function CropMonitoring({
+  cropId,
+  onUpdate,
+  onError,
+}: CropMonitoringProps) {
   const monitorRef = useRef<CropMonitor>();
 
   useEffect(() => {
     const monitor = new CropMonitor(cropId);
-    
+
     monitor.onUpdate = (state) => {
       onUpdate(state);
     };

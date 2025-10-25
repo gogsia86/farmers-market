@@ -1,0 +1,179 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    // ========================================
+    // 🚀 NEXT.JS DEBUGGING
+    // ========================================
+    {
+      "name": "🌟 Next.js: Debug Server",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "serverReadyAction": {
+        "pattern": "started server on .+, url: (https?://.+)",
+        "uriFormat": "%s",
+        "action": "debugWithChrome"
+      },
+      "skipFiles": ["<node_internals>/**"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    {
+      "name": "🔥 Next.js: Debug Full Stack",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "skipFiles": ["<node_internals>/**", "node_modules/**"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "NODE_ENV": "development",
+        "DEBUG": "*"
+      }
+    },
+    {
+      "name": "🌐 Next.js: Debug Client",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}",
+      "sourceMapPathOverrides": {
+        "webpack://_N_E/./*": "${webRoot}/*"
+      }
+    },
+
+    // ========================================
+    // 🧪 TESTING & JEST
+    // ========================================
+    {
+      "name": "🧪 Jest: Debug Current Test",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": [
+        "${fileBasenameNoExtension}",
+        "--runInBand",
+        "--no-cache",
+        "--watchAll=false"
+      ],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "🎯 Jest: Debug All Tests",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": ["--runInBand", "--no-cache", "--watchAll=false"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": ["<node_internals>/**"]
+    },
+
+    // ========================================
+    // 🔥 NVIDIA PROFILING LAUNCH CONFIGS
+    // ========================================
+    {
+      "name": "🔥 NVIDIA: Profile with Debugging",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "nsys",
+      "runtimeArgs": [
+        "profile",
+        "--trace=cuda,nvtx,osrt",
+        "--output=${workspaceFolder}/profiling_output/debug_session_%p",
+        "--force-overwrite=true",
+        "--stats=true",
+        "node"
+      ],
+      "program": "${workspaceFolder}/server.js",
+      "skipFiles": ["<node_internals>/**"],
+      "console": "integratedTerminal",
+      "env": {
+        "NODE_ENV": "development",
+        "NSYS_PROFILING": "1"
+      }
+    },
+    {
+      "name": "🧪 NVIDIA: Profile Jest Tests",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "nsys",
+      "runtimeArgs": [
+        "profile",
+        "--trace=osrt,cuda",
+        "--sample=cpu",
+        "--output=${workspaceFolder}/profiling_output/jest_debug_%p",
+        "--force-overwrite=true",
+        "node"
+      ],
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": ["--runInBand", "--no-cache"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
+
+    // ========================================
+    // 🗄️  API & DATABASE DEBUGGING
+    // ========================================
+    {
+      "name": "🗄️  API: Debug Route Handler",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "skipFiles": ["<node_internals>/**", "node_modules/**"],
+      "console": "integratedTerminal",
+      "env": {
+        "NODE_ENV": "development",
+        "DEBUG": "prisma:*"
+      }
+    },
+
+    // ========================================
+    // 🎨 STORYBOOK DEBUGGING
+    // ========================================
+    {
+      "name": "🎨 Storybook: Debug",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:6006",
+      "webRoot": "${workspaceFolder}",
+      "sourceMapPathOverrides": {
+        "webpack://*": "${webRoot}/*"
+      }
+    },
+
+    // ========================================
+    // 🔧 TYPESCRIPT DEBUGGING
+    // ========================================
+    {
+      "name": "⚡ TypeScript: Current File",
+      "type": "node",
+      "request": "launch",
+      "runtimeArgs": ["-r", "ts-node/register"],
+      "args": ["${file}"],
+      "cwd": "${workspaceFolder}",
+      "skipFiles": ["<node_internals>/**"],
+      "console": "integratedTerminal"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "🌟 Full Stack: Server + Client",
+      "configurations": [
+        "🌟 Next.js: Debug Server",
+        "🌐 Next.js: Debug Client"
+      ],
+      "stopAll": true
+    }
+  ]
+}

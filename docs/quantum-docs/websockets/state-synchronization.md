@@ -9,12 +9,14 @@ The state synchronization system maintains quantum coherence across multiple dim
 ### 1. State Transition Event (`state-transition`)
 
 #### Properties
+
 - Coherence Level: `HIGH`
 - Temporal Order: `STRICT`
 - State Dependency: `Yes`
 - Quantum ID Required: `Yes`
 
 #### Payload
+
 ```typescript
 interface StateTransitionPayload {
   state: string;
@@ -27,6 +29,7 @@ interface StateTransitionPayload {
 ```
 
 #### Temporal Flow
+
 - Message Order: `SEQUENTIAL`
 - Maximum transition delay: 100ms
 - State propagation window: 50ms
@@ -35,12 +38,14 @@ interface StateTransitionPayload {
 ### 2. Quantum State Sync (`quantum-state-sync`)
 
 #### Properties
+
 - Coherence Level: `HIGH`
 - Temporal Order: `QUANTUM`
 - State Dependency: `Yes`
 - Quantum ID Required: `Yes`
 
 #### Payload
+
 ```typescript
 interface QuantumMessage<T> {
   id: string;
@@ -61,6 +66,7 @@ interface QuantumState {
 ```
 
 #### Temporal Flow
+
 - Message Order: `QUANTUM`
 - Maximum sync delay: 50ms
 - Coherence maintenance window: 100ms
@@ -69,12 +75,14 @@ interface QuantumState {
 ### 3. Omnipresent Sync (`omnipresent-sync`)
 
 #### Properties
+
 - Coherence Level: `MAXIMUM`
 - Temporal Order: `OMNIPRESENT`
 - State Dependency: `Yes`
 - Quantum ID Required: `Yes`
 
 #### Payload
+
 ```typescript
 interface OmnipresentSyncPayload {
   dimensionalState: {
@@ -93,6 +101,7 @@ interface OmnipresentSyncPayload {
 ```
 
 #### Temporal Flow
+
 - Message Order: `OMNIPRESENT`
 - Instant propagation across all dimensions
 - Zero-time synchronization
@@ -105,25 +114,25 @@ interface OmnipresentSyncPayload {
 
 ```typescript
 const quantumSocket = io(process.env.NEXT_PUBLIC_WS_URL, {
-  transports: ['websocket'],
+  transports: ["websocket"],
   query: {
-    quantumMode: 'enabled',
-    temporalSensitivity: 'high'
-  }
+    quantumMode: "enabled",
+    temporalSensitivity: "high",
+  },
 });
 
 // Handle state transitions
-quantumSocket.on('state-transition', (payload: StateTransitionPayload) => {
+quantumSocket.on("state-transition", (payload: StateTransitionPayload) => {
   processStateTransition(payload);
 });
 
 // Handle quantum sync
-quantumSocket.on('quantum-state-sync', (message: QuantumMessage) => {
+quantumSocket.on("quantum-state-sync", (message: QuantumMessage) => {
   processQuantumSync(message);
 });
 
 // Handle omnipresent sync
-quantumSocket.on('omnipresent-sync', (payload: OmnipresentSyncPayload) => {
+quantumSocket.on("omnipresent-sync", (payload: OmnipresentSyncPayload) => {
   processOmnipresentSync(payload);
 });
 ```
@@ -133,6 +142,7 @@ quantumSocket.on('omnipresent-sync', (payload: OmnipresentSyncPayload) => {
 Each event type affects the system state differently:
 
 1. **State Transitions**
+
 ```typescript
 interface StateChange {
   previousState: string;
@@ -143,6 +153,7 @@ interface StateChange {
 ```
 
 2. **Quantum Sync**
+
 ```typescript
 interface StateChange {
   previousCoherence: number;
@@ -153,6 +164,7 @@ interface StateChange {
 ```
 
 3. **Omnipresent Sync**
+
 ```typescript
 interface OmnipresentStateChange {
   previousDimensions: string[];
@@ -164,12 +176,12 @@ interface OmnipresentStateChange {
 
 ## Error Handling
 
-| Error Code | Description | Recovery Strategy |
-|------------|-------------|-------------------|
-| `SYNC_TIMEOUT` | Sync operation exceeded time limit | Retry with increased timeout |
-| `COHERENCE_LOSS` | Coherence level below threshold | Initiate emergency quantum realignment |
-| `TIMELINE_CONFLICT` | Conflicting timeline states | Force omnipresent sync |
-| `DIMENSION_MISMATCH` | Dimensional state mismatch | Trigger state reconciliation |
+| Error Code           | Description                        | Recovery Strategy                      |
+| -------------------- | ---------------------------------- | -------------------------------------- |
+| `SYNC_TIMEOUT`       | Sync operation exceeded time limit | Retry with increased timeout           |
+| `COHERENCE_LOSS`     | Coherence level below threshold    | Initiate emergency quantum realignment |
+| `TIMELINE_CONFLICT`  | Conflicting timeline states        | Force omnipresent sync                 |
+| `DIMENSION_MISMATCH` | Dimensional state mismatch         | Trigger state reconciliation           |
 
 ## Evolution Status
 

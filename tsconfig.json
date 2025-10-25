@@ -1,0 +1,106 @@
+{
+  "compilerOptions": {
+    // ========================================================================
+    // LANGUAGE & ENVIRONMENT
+    // ========================================================================
+    "target": "ES2020", // Compile to ES2020 for modern features
+    "lib": [
+      "ES2020", // Includes Promise, Array.includes, Object.values, String.padStart, etc.
+      "DOM", // DOM types for browser APIs
+      "DOM.Iterable" // Iterable DOM collections
+    ],
+    "module": "ESNext", // Use ESNext module system
+    "moduleResolution": "bundler", // Next.js 14 bundler resolution
+    "jsx": "preserve", // Preserve JSX for Next.js
+
+    // ========================================================================
+    // TYPE CHECKING
+    // ========================================================================
+    "strict": true, // Enable all strict type-checking options
+    "noImplicitAny": true, // Disallow implicit any
+    "strictNullChecks": true, // Strict null checking
+    "strictFunctionTypes": true, // Strict function types
+    "strictBindCallApply": true, // Strict bind/call/apply
+    "strictPropertyInitialization": true, // Properties must be initialized
+    "noImplicitThis": true, // Disallow implicit this
+    "alwaysStrict": true, // Parse in strict mode
+    "noUnusedLocals": true, // Report unused local variables
+    "noUnusedParameters": true, // Report unused parameters
+    "noImplicitReturns": true, // Report missing return statements
+    "noFallthroughCasesInSwitch": true, // Report fallthrough cases
+    "noUncheckedIndexedAccess": false, // Allow unchecked indexed access (for flexibility)
+    "exactOptionalPropertyTypes": false, // Allow undefined for optional properties
+
+    // ========================================================================
+    // MODULE RESOLUTION
+    // ========================================================================
+    "resolveJsonModule": true, // Allow importing JSON files
+    "allowSyntheticDefaultImports": true, // Allow default imports from modules with no default export
+    "esModuleInterop": true, // Emit __importStar and __importDefault helpers
+    "isolatedModules": true, // Ensure each file can be safely transpiled
+
+    // ========================================================================
+    // EMIT
+    // ========================================================================
+    "declaration": true, // Generate .d.ts files
+    "declarationMap": true, // Generate source maps for .d.ts files
+    "sourceMap": true, // Generate source maps
+    "outDir": "./dist", // Output directory
+    "removeComments": false, // Keep comments in output
+    "noEmit": true, // Don't emit files (Next.js handles compilation)
+
+    // ========================================================================
+    // INTEROP CONSTRAINTS
+    // ========================================================================
+    "allowJs": true, // Allow JavaScript files
+    "checkJs": false, // Don't type-check JavaScript files
+    "skipLibCheck": true, // Skip type checking of declaration files
+    "forceConsistentCasingInFileNames": true, // Ensure consistent casing
+
+    // ========================================================================
+    // PATH MAPPING (Divine Quantum Import Resolution)
+    // ========================================================================
+    "baseUrl": ".", // Base URL for imports
+    "paths": {
+      "@/*": ["./src/*"], // Map @/ to src/ for divine component access
+      "@/components/*": ["./src/components/*"], // Direct component access
+      "@/lib/*": ["./src/lib/*"], // Divine library access
+      "@/app/*": ["./src/app/*"], // Application quantum routes
+      "@/types/*": ["./src/types/*"], // Type consciousness definitions
+      "@/hooks/*": ["./src/hooks/*"], // React quantum hooks
+      "@/utils/*": ["./src/utils/*"], // Utility consciousness
+      "@/styles/*": ["./src/styles/*"] // Divine styling patterns
+    },
+
+    // ========================================================================
+    // NEXT.JS SPECIFIC
+    // ========================================================================
+    "incremental": true, // Enable incremental compilation
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+
+  // ==========================================================================
+  // INCLUDE/EXCLUDE
+  // ==========================================================================
+  "include": [
+    "next-env.d.ts", // Next.js types
+    "**/*.ts", // All TypeScript files
+    "**/*.tsx", // All TSX files
+    ".next/types/**/*.ts" // Next.js generated types
+  ],
+  "exclude": [
+    "node_modules", // Exclude dependencies
+    ".next", // Exclude Next.js build output
+    "dist", // Exclude output directory
+    "coverage", // Exclude test coverage
+    "prisma", // Exclude Prisma generated files (they have their own types)
+    "**/*.spec.ts", // Test files (included separately)
+    "**/*.test.ts",
+    "**/*.spec.tsx",
+    "**/*.test.tsx"
+  ]
+}

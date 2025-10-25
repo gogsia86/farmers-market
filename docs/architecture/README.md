@@ -102,4 +102,4 @@ graph LR
 
 ---
 
-*This architecture document serves as the divine blueprint for our implementation.*
+_This architecture document serves as the divine blueprint for our implementation._

@@ -1,0 +1,188 @@
+{
+  "_schema": "Agricultural Domain Intelligence & Biodynamic Patterns",
+  "_description": "Farming-specific development patterns and consciousness",
+  "_purpose": "Integrate agricultural wisdom into development workflows",
+  "_updated": "October 22, 2025",
+  "_status": "100/100 GOD-TIER ACTIVE",
+
+  "agricultural.fileAssociations": {
+    "*.farm": "json",
+    "*.harvest": "yaml",
+    "*.soil": "prisma",
+    "*.season": "typescript",
+    "*.crop": "javascript",
+    "*.field": "markdown",
+    "*.yield": "json",
+    "*.cultivation": "yaml"
+  },
+
+  "agricultural.seasons.current": "fall",
+  "agricultural.seasons.awareness": true,
+  "agricultural.seasons.workflowAdaptation": true,
+  "agricultural.seasons.patterns": {
+    "spring": {
+      "focus": "planting",
+      "activities": ["preparation", "seeding", "planning"],
+      "codePatterns": ["initialization", "setup", "foundation"]
+    },
+    "summer": {
+      "focus": "growth",
+      "activities": ["tending", "watering", "monitoring"],
+      "codePatterns": ["development", "iteration", "optimization"]
+    },
+    "fall": {
+      "focus": "harvest",
+      "activities": ["collecting", "processing", "storing"],
+      "codePatterns": ["deployment", "production", "delivery"]
+    },
+    "winter": {
+      "focus": "planning",
+      "activities": ["reflection", "preparation", "learning"],
+      "codePatterns": ["refactoring", "documentation", "architecture"]
+    }
+  },
+
+  "agricultural.lunarCycle.integration": false,
+  "agricultural.lunarCycle.phases": {
+    "newMoon": "new features",
+    "waxingCrescent": "initial development",
+    "firstQuarter": "core implementation",
+    "waxingGibbous": "feature completion",
+    "fullMoon": "release deployment",
+    "waningGibbous": "bug fixes",
+    "lastQuarter": "optimization",
+    "waningCrescent": "maintenance"
+  },
+
+  "agricultural.cropRotation.enabled": true,
+  "agricultural.cropRotation.patterns": {
+    "legumes": {
+      "description": "Foundation features that improve system health",
+      "examples": ["authentication", "database setup", "core utilities"],
+      "benefit": "nitrogen fixation - improves code foundation"
+    },
+    "heavyFeeders": {
+      "description": "Major features that consume significant resources",
+      "examples": ["complex UI components", "data processing", "integrations"],
+      "benefit": "high yield - major business value"
+    },
+    "lightFeeders": {
+      "description": "Simple features and maintenance tasks",
+      "examples": ["bug fixes", "small UI updates", "documentation"],
+      "benefit": "soil preservation - maintains system health"
+    },
+    "coverCrops": {
+      "description": "Technical debt paydown and refactoring",
+      "examples": ["code cleanup", "performance optimization", "testing"],
+      "benefit": "soil building - improves long-term health"
+    }
+  },
+
+  "agricultural.soilHealth.monitoring": true,
+  "agricultural.soilHealth.metrics": {
+    "codeQuality": {
+      "coverage": "test coverage percentage",
+      "complexity": "cyclomatic complexity",
+      "duplication": "code duplication percentage",
+      "maintainability": "maintainability index"
+    },
+    "systemHealth": {
+      "performance": "response time metrics",
+      "errors": "error rate percentage",
+      "uptime": "system availability",
+      "scalability": "concurrent user capacity"
+    },
+    "teamHealth": {
+      "velocity": "story points per sprint",
+      "satisfaction": "team happiness metrics",
+      "learning": "skill development tracking",
+      "collaboration": "pair programming frequency"
+    }
+  },
+
+  "agricultural.companion.planting": {
+    "enabled": true,
+    "patterns": {
+      "react-typescript": "natural companions",
+      "next-tailwind": "mutually beneficial",
+      "prisma-postgresql": "symbiotic relationship",
+      "jest-testingLibrary": "pest control partnership",
+      "eslint-prettier": "growth optimization team"
+    }
+  },
+
+  "agricultural.pest.management": {
+    "enabled": true,
+    "commonPests": {
+      "bugs": {
+        "prevention": ["comprehensive testing", "code review", "linting"],
+        "treatment": ["debugging", "logging", "monitoring"]
+      },
+      "technicalDebt": {
+        "prevention": [
+          "regular refactoring",
+          "code standards",
+          "documentation"
+        ],
+        "treatment": [
+          "dedicated sprints",
+          "boy scout rule",
+          "architecture review"
+        ]
+      },
+      "performance": {
+        "prevention": ["optimization patterns", "profiling", "caching"],
+        "treatment": ["performance audits", "bottleneck analysis", "scaling"]
+      }
+    }
+  },
+
+  "agricultural.harvest.optimization": {
+    "enabled": true,
+    "strategies": {
+      "timeToMarket": "optimal harvest timing",
+      "qualityControl": "only ship ripe features",
+      "batchProcessing": "harvest related features together",
+      "preservation": "maintain quality during storage/deployment"
+    }
+  },
+
+  "agricultural.weather.awareness": {
+    "enabled": true,
+    "conditions": {
+      "sunny": "ideal for development",
+      "cloudy": "good for planning and documentation",
+      "rainy": "perfect for indoor refactoring",
+      "stormy": "emergency fixes and critical issues",
+      "drought": "resource constraints - focus on essentials",
+      "flood": "overwhelming workload - prioritize and delegate"
+    }
+  },
+
+  "agricultural.tools.preferred": {
+    "cultivation": ["VSCode", "GitHub", "Vercel"],
+    "irrigation": ["Docker", "Kubernetes", "CI/CD"],
+    "harvesting": ["Jest", "Playwright", "Lighthouse"],
+    "storage": ["PostgreSQL", "Redis", "S3"],
+    "distribution": ["CDN", "Load Balancers", "API Gateway"]
+  },
+
+  "agricultural.terminology.mapping": {
+    "seed": "initial commit",
+    "sprout": "first working version",
+    "growth": "feature development",
+    "bloom": "feature complete",
+    "fruit": "production ready",
+    "harvest": "deployment",
+    "compost": "deprecated features",
+    "fallow": "maintenance period"
+  },
+
+  "agricultural.productivity.patterns": {
+    "polyculture": "multiple features developed simultaneously",
+    "monoculture": "focus on single feature completion",
+    "permaculture": "sustainable development practices",
+    "regenerative": "improving system health over time",
+    "organic": "chemical-free development (no quick hacks)"
+  }
+}

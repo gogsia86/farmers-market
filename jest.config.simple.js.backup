@@ -1,0 +1,36 @@
+/** @type {import('jest').Config} */
+module.exports = {
+  testEnvironment: "jsdom",
+  testEnvironmentOptions: {
+    url: "http://localhost:3000",
+    html: '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body></body></html>',
+  },
+  rootDir: "./Farmers-Market",
+  roots: ["<rootDir>/src", "<rootDir>/tests"],
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.basic.ts"],
+  moduleDirectories: ["node_modules", "<rootDir>"],
+  moduleNameMapper: {
+    "^@/(.*)$": "<rootDir>/src/$1",
+    "\\.(css|less|scss|sass)$": "identity-obj-proxy",
+    "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
+      "jest-transform-stub",
+  },
+  transform: {
+    "^.+\\.(js|jsx|ts|tsx)$": ["babel-jest", { presets: ["next/babel"] }],
+  },
+  transformIgnorePatterns: [
+    "node_modules/(?!(next-auth|@auth|@next/.*|next/.*|jose|uuid|nanoid|@panva/hkdf)/)",
+  ],
+  testMatch: [
+    "<rootDir>/src/**/__tests__/**/*.(ts|tsx|js|jsx)",
+    "<rootDir>/src/**/*.(test|spec).(ts|tsx|js|jsx)",
+    "<rootDir>/src/tests/**/*.(test|spec).(ts|tsx|js|jsx)",
+  ],
+  collectCoverage: true,
+  coverageDirectory: "coverage",
+  collectCoverageFrom: [
+    "src/**/*.{ts,tsx,js,jsx}",
+    "!src/**/*.d.ts",
+    "!src/types/**",
+  ],
+};

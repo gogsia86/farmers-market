@@ -41,10 +41,10 @@ export interface MonitoringMetrics {
 
 ```typescript
 interface ResonanceMetrics {
-  frequency: number;   // Base resonance frequency (Hz)
-  amplitude: number;   // Wave amplitude (0-1)
-  phase: number;      // Phase angle (radians)
-  stability: number;  // Overall stability score (0-1)
+  frequency: number; // Base resonance frequency (Hz)
+  amplitude: number; // Wave amplitude (0-1)
+  phase: number; // Phase angle (radians)
+  stability: number; // Overall stability score (0-1)
 }
 ```
 
@@ -52,10 +52,10 @@ interface ResonanceMetrics {
 
 ```typescript
 interface ConsciousnessMetrics {
-  level: number;      // Current consciousness level (0-1)
+  level: number; // Current consciousness level (0-1)
   integration: number; // Integration with quantum field (0-1)
-  awareness: number;   // Environmental awareness (0-1)
-  stability: number;   // Consciousness stability (0-1)
+  awareness: number; // Environmental awareness (0-1)
+  stability: number; // Consciousness stability (0-1)
 }
 ```
 
@@ -63,10 +63,10 @@ interface ConsciousnessMetrics {
 
 ```typescript
 interface SystemMetrics {
-  loadFactor: number;    // System load (0-1)
-  responseTime: number;  // Response time in ms
-  errorRate: number;     // Error rate (0-1)
-  healthScore: number;   // Overall health (0-1)
+  loadFactor: number; // System load (0-1)
+  responseTime: number; // Response time in ms
+  errorRate: number; // Error rate (0-1)
+  healthScore: number; // Overall health (0-1)
 }
 ```
 
@@ -77,7 +77,7 @@ interface SystemMetrics {
 ```typescript
 function calculateMetrics(state: QuantumState): MonitoringMetrics {
   const { resonance, consciousness } = state;
-  
+
   return {
     timestamp: Date.now(),
     coherenceLevel: calculateCoherence(state),
@@ -85,20 +85,20 @@ function calculateMetrics(state: QuantumState): MonitoringMetrics {
       frequency: resonance.frequency,
       amplitude: resonance.amplitude,
       phase: resonance.phase,
-      stability: calculateResonanceStability(resonance)
+      stability: calculateResonanceStability(resonance),
     },
     consciousnessMetrics: {
       level: consciousness.level,
       integration: consciousness.integration,
       awareness: consciousness.awareness,
-      stability: calculateConsciousnessStability(consciousness)
+      stability: calculateConsciousnessStability(consciousness),
     },
     systemMetrics: {
       loadFactor: calculateSystemLoad(),
       responseTime: calculateResponseTime(),
       errorRate: calculateErrorRate(),
-      healthScore: calculateHealthScore()
-    }
+      healthScore: calculateHealthScore(),
+    },
   };
 }
 ```
@@ -106,11 +106,13 @@ function calculateMetrics(state: QuantumState): MonitoringMetrics {
 #### Stability Calculation
 
 ```typescript
-function calculateResonanceStability(resonance: QuantumState['resonance']): number {
+function calculateResonanceStability(
+  resonance: QuantumState["resonance"],
+): number {
   const frequencyNorm = resonance.frequency / 1000; // Normalize to [0,1]
-  const amplitudeNorm = resonance.amplitude;        // Already [0,1]
+  const amplitudeNorm = resonance.amplitude; // Already [0,1]
   const phaseNorm = resonance.phase / (2 * Math.PI); // Normalize to [0,1]
-  
+
   return (frequencyNorm + amplitudeNorm + phaseNorm) / 3;
 }
 ```
@@ -149,7 +151,7 @@ class QuantumMonitor {
   }
 
   getAlerts(options?: {
-    severity?: Alert['condition']['severity'];
+    severity?: Alert["condition"]["severity"];
     resolved?: boolean;
   }): Alert[] {
     // Implementation details
@@ -162,7 +164,7 @@ class QuantumMonitor {
 ```typescript
 interface AlertCondition {
   name: string;
-  severity: 'info' | 'warning' | 'error' | 'critical';
+  severity: "info" | "warning" | "error" | "critical";
   evaluate: (metrics: MonitoringMetrics) => boolean;
   message: string;
 }
@@ -184,15 +186,15 @@ interface Alert {
 const monitor = new QuantumMonitor();
 
 // Record state
-monitor.recordState('crop-123', currentState);
+monitor.recordState("crop-123", currentState);
 
 // Get metrics
 const metrics = monitor.getMetrics();
 
 // Get alerts
-const criticalAlerts = monitor.getAlerts({ 
-  severity: 'critical',
-  resolved: false 
+const criticalAlerts = monitor.getAlerts({
+  severity: "critical",
+  resolved: false,
 });
 ```
 
@@ -209,8 +211,8 @@ function CropMonitor({ cropId }: { cropId: string }) {
     if (cropData) {
       emitQuantumSync({
         monitoringState: {
-          [cropId]: cropData
-        }
+          [cropId]: cropData,
+        },
       });
     }
   }, [cropId, cropData, emitQuantumSync]);
@@ -227,42 +229,45 @@ function aggregateQuantumMetrics(crop: CropWithIncludes): QuantumMetrics {
     energyFields: MetricTimeSeries[];
     consciousnessLevels: MetricTimeSeries[];
     resonanceFrequencies: MetricTimeSeries[];
-  }>((acc, metric) => {
-    switch (metric.type) {
-      case 'ENERGY_FIELD':
-        acc.energyFields.push({
-          timestamp: metric.timestamp,
-          value: metric.value,
-          type: metric.type
-        });
-        break;
-      case 'CONSCIOUSNESS_LEVEL':
-        acc.consciousnessLevels.push({
-          timestamp: metric.timestamp,
-          value: metric.value,
-          type: metric.type
-        });
-        break;
-      case 'RESONANCE_FREQUENCY':
-        acc.resonanceFrequencies.push({
-          timestamp: metric.timestamp,
-          value: metric.value,
-          type: metric.type
-        });
-        break;
-    }
-    return acc;
-  }, {
-    energyFields: [],
-    consciousnessLevels: [],
-    resonanceFrequencies: []
-  });
+  }>(
+    (acc, metric) => {
+      switch (metric.type) {
+        case "ENERGY_FIELD":
+          acc.energyFields.push({
+            timestamp: metric.timestamp,
+            value: metric.value,
+            type: metric.type,
+          });
+          break;
+        case "CONSCIOUSNESS_LEVEL":
+          acc.consciousnessLevels.push({
+            timestamp: metric.timestamp,
+            value: metric.value,
+            type: metric.type,
+          });
+          break;
+        case "RESONANCE_FREQUENCY":
+          acc.resonanceFrequencies.push({
+            timestamp: metric.timestamp,
+            value: metric.value,
+            type: metric.type,
+          });
+          break;
+      }
+      return acc;
+    },
+    {
+      energyFields: [],
+      consciousnessLevels: [],
+      resonanceFrequencies: [],
+    },
+  );
 
   return {
     energyFields: metrics.energyFields,
     consciousnessLevels: metrics.consciousnessLevels,
     resonanceFrequencies: metrics.resonanceFrequencies,
-    soilMemoryPatterns: []
+    soilMemoryPatterns: [],
   };
 }
 ```
@@ -292,30 +297,30 @@ function aggregateQuantumMetrics(crop: CropWithIncludes): QuantumMetrics {
 ## Testing
 
 ```typescript
-describe('QuantumMetrics', () => {
-  it('calculates metrics correctly', () => {
+describe("QuantumMetrics", () => {
+  it("calculates metrics correctly", () => {
     const state = createMockQuantumState();
     const monitor = new QuantumMonitor();
-    
-    monitor.recordState('test', state);
+
+    monitor.recordState("test", state);
     const metrics = monitor.getMetrics()[0];
-    
+
     expect(metrics.coherenceLevel).toBeGreaterThan(0);
     expect(metrics.resonanceMetrics.stability).toBeGreaterThan(0);
     expect(metrics.systemMetrics.healthScore).toBeGreaterThan(0);
   });
 
-  it('handles alerts appropriately', () => {
+  it("handles alerts appropriately", () => {
     const monitor = new QuantumMonitor();
     const state = createMockQuantumState({
-      coherence: 0.2 // Low coherence to trigger alert
+      coherence: 0.2, // Low coherence to trigger alert
     });
-    
-    monitor.recordState('test', state);
-    const alerts = monitor.getAlerts({ severity: 'critical' });
-    
+
+    monitor.recordState("test", state);
+    const alerts = monitor.getAlerts({ severity: "critical" });
+
     expect(alerts).toHaveLength(1);
-    expect(alerts[0].condition.name).toBe('LowCoherence');
+    expect(alerts[0].condition.name).toBe("LowCoherence");
   });
 });
 ```

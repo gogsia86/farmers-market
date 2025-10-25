@@ -25,16 +25,16 @@ interface Request {
 
 ##### Headers
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `Authorization` | `string` | Yes | Bearer token |
-| `Quantum-Alignment` | `string` | No | Quantum state identifier |
+| Name                | Type     | Required | Description              |
+| ------------------- | -------- | -------- | ------------------------ |
+| `Authorization`     | `string` | Yes      | Bearer token             |
+| `Quantum-Alignment` | `string` | No       | Quantum state identifier |
 
 ##### Query Parameters
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `param` | `type` | Yes/No | Description |
+| Name    | Type   | Required | Description |
+| ------- | ------ | -------- | ----------- |
+| `param` | `type` | Yes/No   | Description |
 
 ##### Body
 
@@ -64,19 +64,19 @@ interface Response {
 
 ##### Error Responses
 
-| Status | Description |
-|--------|-------------|
-| `400` | Bad Request |
-| `401` | Unauthorized |
-| `403` | Forbidden |
-| `404` | Not Found |
-| `500` | Internal Server Error |
+| Status | Description           |
+| ------ | --------------------- |
+| `400`  | Bad Request           |
+| `401`  | Unauthorized          |
+| `403`  | Forbidden             |
+| `404`  | Not Found             |
+| `500`  | Internal Server Error |
 
 #### Example
 
 ```typescript
 // Example usage with quantum-aware client
-const response = await quantumClient.post('/api/endpoint', {
+const response = await quantumClient.post("/api/endpoint", {
   // request body
 });
 ```
@@ -99,6 +99,6 @@ const response = await quantumClient.post('/api/endpoint', {
 
 ## 🔄 Template Evolution
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0 | 2024-01-22 | Initial template creation |
+| Version | Date       | Changes                   |
+| ------- | ---------- | ------------------------- |
+| 1.0     | 2024-01-22 | Initial template creation |

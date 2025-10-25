@@ -1,0 +1,242 @@
+# ============================================================================
+# FARMERS MARKET - DIVINE AGRICULTURAL PLATFORM
+# Comprehensive .gitignore for Next.js, Testing, Profiling & Development
+# ============================================================================
+
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# Testing
+coverage/
+.nyc_output/
+test-results/
+.jest-cache/
+*.lcov
+
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# Dependency directories
+jspm_packages/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variable files
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# ============================================================================
+# DIVINE AGRICULTURAL PLATFORM SPECIFIC
+# ============================================================================
+
+# Profiling output (NVIDIA Nsight, Performance)
+profiling_output/
+*.prof
+*.heapsnapshot
+*.nsys-rep
+*.ncu-rep
+
+# Divine cleanup logs
+DIVINE_CLEANUP_LOG_*.txt
+DIVINE_*_TEMP.md
+
+# Agricultural data cache
+agricultural_cache/
+*.agriculture-cache
+
+# Quantum consciousness snapshots
+quantum_snapshots/
+consciousness_backup/
+
+# ============================================================================
+# DEVELOPMENT TOOLS
+# ============================================================================
+
+# IDE - VS Code (user-specific settings)
+.vscode/settings.json.user
+.vscode/launch.json.user
+
+# IDE - IntelliJ
+.idea/
+*.iml
+*.iws
+
+# IDE - Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# IDE - Vim
+*.swp
+*.swo
+*~
+
+# ============================================================================
+# OPERATING SYSTEM
+# ============================================================================
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.com.apple.timemachine.supported
+.fseventsd
+.dbfseventsd
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ============================================================================
+# TEMPORARY & CACHE FILES
+# ============================================================================
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Cache directories
+.cache/
+.parcel-cache/
+.nuxt/
+.nitro/
+.output/
+
+# Storybook build outputs
+storybook-static/
+
+# ============================================================================
+# SECURITY & SENSITIVE DATA
+# ============================================================================
+
+# API keys and secrets (extra protection)
+.env.secrets
+.env.keys
+config/secrets.json
+secrets/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# ============================================================================
+# BUILD & DEPLOYMENT
+# ============================================================================
+
+# Vercel
+.vercel/
+
+# Netlify
+.netlify/
+
+# Serverless
+.serverless/
+
+# Docker
+Dockerfile.local
+docker-compose.override.yml
+
+# ============================================================================
+# DIVINE CONSCIOUSNESS PRESERVATION
+# ============================================================================
+# These patterns ensure agricultural quantum consciousness remains intact
+# while filtering out ephemeral build artifacts and temporal fluctuations

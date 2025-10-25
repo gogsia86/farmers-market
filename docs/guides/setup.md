@@ -3,8 +3,9 @@
 ## 🔧 Prerequisites
 
 1. Node.js Installation
+
    ```bash
-   # Download from: https://nodejs.org/ (LTS version)
+   # Download from: <https://nodejs.org/> (LTS version)
    node --version
    npm --version
    ```
@@ -19,6 +20,7 @@
    - GitHub Copilot
 
 3. Environment Variables
+
    ```env
    # .env.local
    DATABASE_URL="..."
@@ -57,11 +59,13 @@ touch src/lib/{auth,db,utils}.ts
 ## 🗄️ Database Setup
 
 1. Initialize Prisma
+
    ```bash
    npx prisma init
    ```
 
 2. Create schema
+
    ```prisma
    // prisma/schema.prisma
    model User {
@@ -74,6 +78,7 @@ touch src/lib/{auth,db,utils}.ts
    ```
 
 3. Run migrations
+
    ```bash
    npx prisma generate
    npx prisma db push
@@ -82,9 +87,10 @@ touch src/lib/{auth,db,utils}.ts
 ## 🔐 Authentication Setup
 
 1. Configure NextAuth
+
    ```typescript
    // src/lib/auth.ts
-   import NextAuth from 'next-auth';
+   import NextAuth from "next-auth";
 
    export const authConfig = {
      // Configuration
@@ -92,10 +98,11 @@ touch src/lib/{auth,db,utils}.ts
    ```
 
 2. Setup API route
+
    ```typescript
    // src/app/api/auth/[...nextauth]/route.ts
-   import NextAuth from 'next-auth';
-   import { authConfig } from '@/lib/auth';
+   import NextAuth from "next-auth";
+   import { authConfig } from "@/lib/auth";
 
    const handler = NextAuth(authConfig);
    export { handler as GET, handler as POST };
@@ -104,14 +111,13 @@ touch src/lib/{auth,db,utils}.ts
 ## 🎨 UI Setup
 
 1. Configure Tailwind
+
    ```typescript
    // tailwind.config.ts
-   import type { Config } from 'tailwindcss';
+   import type { Config } from "tailwindcss";
 
    const config: Config = {
-     content: [
-       './src/**/*.{js,ts,jsx,tsx,mdx}',
-     ],
+     content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
      theme: {
        extend: {
          // Custom theme
@@ -124,6 +130,7 @@ touch src/lib/{auth,db,utils}.ts
    ```
 
 2. Setup global styles
+
    ```css
    /* src/app/globals.css */
    @tailwind base;
@@ -134,22 +141,24 @@ touch src/lib/{auth,db,utils}.ts
 ## 🧪 Testing Setup
 
 1. Install testing dependencies
+
    ```bash
    npm install -D jest @testing-library/react @testing-library/jest-dom
    ```
 
 2. Configure Jest
+
    ```typescript
    // jest.config.js
-   const nextJest = require('next/jest');
+   const nextJest = require("next/jest");
 
    const createJestConfig = nextJest({
-     dir: './',
+     dir: "./",
    });
 
    const customJestConfig = {
-     setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-     testEnvironment: 'jest-environment-jsdom',
+     setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
+     testEnvironment: "jest-environment-jsdom",
    };
 
    module.exports = createJestConfig(customJestConfig);
@@ -158,11 +167,13 @@ touch src/lib/{auth,db,utils}.ts
 ## 📝 ESLint & Prettier Setup
 
 1. Install dependencies
+
    ```bash
    npm install -D eslint-config-prettier prettier
    ```
 
 2. Configure ESLint
+
    ```javascript
    // .eslintrc.json
    {
@@ -174,6 +185,7 @@ touch src/lib/{auth,db,utils}.ts
    ```
 
 3. Configure Prettier
+
    ```json
    // .prettierrc
    {
@@ -187,11 +199,13 @@ touch src/lib/{auth,db,utils}.ts
 ## 🚀 Development Server
 
 1. Start the development server
+
    ```bash
    npm run dev
    ```
 
 2. Open browser
+
    ```
    http://localhost:3000
    ```
@@ -199,6 +213,7 @@ touch src/lib/{auth,db,utils}.ts
 ## 📚 Additional Configuration
 
 ### Git Setup
+
 ```bash
 # Initialize git
 git init
@@ -217,6 +232,7 @@ git commit -m "Initial commit: Project setup"
 ```
 
 ### VS Code Settings
+
 ```json
 // .vscode/settings.json
 {
@@ -229,6 +245,7 @@ git commit -m "Initial commit: Project setup"
 ```
 
 ### Component Creation
+
 ```typescript
 // src/components/ui/Button.tsx
 interface ButtonProps {
@@ -246,8 +263,8 @@ export const Button: React.FC<ButtonProps> = ({
     <button
       onClick={onClick}
       className={`px-4 py-2 rounded ${
-        variant === 'primary' 
-          ? 'bg-blue-500 text-white' 
+        variant === 'primary'
+          ? 'bg-blue-500 text-white'
           : 'bg-gray-200 text-gray-800'
       }`}
     >
@@ -260,21 +277,25 @@ export const Button: React.FC<ButtonProps> = ({
 ## 🔍 Verification Steps
 
 1. Check Next.js setup
+
    ```bash
    npm run build
    ```
 
 2. Verify database connection
+
    ```bash
    npx prisma studio
    ```
 
 3. Run tests
+
    ```bash
    npm test
    ```
 
 4. Check linting
+
    ```bash
    npm run lint
    ```
@@ -288,4 +309,4 @@ export const Button: React.FC<ButtonProps> = ({
 
 ---
 
-*This setup guide ensures a consistent development environment across the team.*
+_This setup guide ensures a consistent development environment across the team._

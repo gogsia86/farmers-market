@@ -1,21 +1,25 @@
 # Performance Optimizations
 
 ## Overview
+
 This document outlines the performance optimizations implemented in the Farmers Market platform, including benchmarks, strategies used, and configuration guidelines.
 
 ## 🚀 Optimization Strategies
 
 ### 1. Redis Caching Layer
+
 - **Implementation**: Global caching middleware for frequently accessed data
 - **Configuration**:
+
   ```typescript
   // Default cache configuration
   const CACHE_CONFIG = {
     defaultTTL: 3600, // 1 hour
     maxItems: 10000,
-    compressionThreshold: 1024 // bytes
+    compressionThreshold: 1024, // bytes
   };
   ```
+
 - **Use Cases**:
   - Product catalog caching
   - User preferences
@@ -23,6 +27,7 @@ This document outlines the performance optimizations implemented in the Farmers 
   - Weather data
 
 ### 2. Database Query Optimization
+
 - **Implemented Optimizations**:
   - Added compound indexes for frequent queries
   - Implemented query batching for related data
@@ -35,6 +40,7 @@ This document outlines the performance optimizations implemented in the Farmers 
   - Optimized memory usage with field selection
 
 ### 3. API Response Optimization
+
 - **Features**:
   - Response compression
   - Partial response support
@@ -42,17 +48,19 @@ This document outlines the performance optimizations implemented in the Farmers 
   - Response streaming for large datasets
 
 - **Configuration**:
+
   ```typescript
   // Response optimization settings
   const RESPONSE_CONFIG = {
     compression: true,
     minCompressionSize: 1024, // bytes
-    defaultCacheControl: 'public, max-age=3600',
-    streamingThreshold: 1048576 // 1MB
+    defaultCacheControl: "public, max-age=3600",
+    streamingThreshold: 1048576, // 1MB
   };
   ```
 
 ### 4. Performance Monitoring
+
 - **Metrics Tracked**:
   - Response times
   - Cache hit rates
@@ -61,29 +69,33 @@ This document outlines the performance optimizations implemented in the Farmers 
   - Error rates
 
 - **Alert Thresholds**:
+
   ```typescript
   const ALERT_THRESHOLDS = {
     maxResponseTime: 1000, // ms
     maxQueryCount: 10,
-    minCacheHitRate: 0.7 // 70%
+    minCacheHitRate: 0.7, // 70%
   };
   ```
 
 ## 📊 Performance Benchmarks
 
 ### API Response Times
-| Endpoint | Before | After | Improvement |
-|----------|---------|--------|-------------|
-| /api/products | 250ms | 50ms | 80% |
-| /api/markets | 300ms | 75ms | 75% |
-| /api/statistics | 500ms | 100ms | 80% |
+
+| Endpoint        | Before | After | Improvement |
+| --------------- | ------ | ----- | ----------- |
+| /api/products   | 250ms  | 50ms  | 80%         |
+| /api/markets    | 300ms  | 75ms  | 75%         |
+| /api/statistics | 500ms  | 100ms | 80%         |
 
 ### Cache Performance
+
 - Hit Rate: ~85%
 - Average Cache Response: <5ms
 - Memory Usage: ~500MB
 
 ### Database Performance
+
 - Average Query Time: Reduced by 70%
 - Connection Pool Usage: Optimized by 40%
 - Index Hit Rate: 95%
@@ -91,39 +103,42 @@ This document outlines the performance optimizations implemented in the Farmers 
 ## 🔧 Configuration Guide
 
 ### Redis Configuration
+
 ```typescript
 // config/redis.ts
 export const redisConfig = {
   url: process.env.REDIS_URL,
   maxRetries: 3,
   retryDelay: 1000,
-  connectTimeout: 10000
+  connectTimeout: 10000,
 };
 ```
 
 ### Query Optimization
+
 ```typescript
 // lib/db/queryConfig.ts
 export const queryConfig = {
   poolSize: 20,
   statementTimeout: 5000,
-  idleTimeout: 10000
+  idleTimeout: 10000,
 };
 ```
 
 ### Monitoring Setup
+
 ```typescript
 // lib/monitoring/config.ts
 export const monitoringConfig = {
   metrics: {
     enabled: true,
     samplingRate: 1.0,
-    retentionDays: 30
+    retentionDays: 30,
   },
   alerts: {
     enabled: true,
-    channels: ['slack', 'email']
-  }
+    channels: ["slack", "email"],
+  },
 };
 ```
 
@@ -189,12 +204,13 @@ export const monitoringConfig = {
 ### Performance Incidents
 
 1. **High Response Times**
+
    ```typescript
    // Temporary relief measures
    const emergencyConfig = {
      maxConnections: 100,
      cacheTimeout: 7200,
-     queryTimeout: 10000
+     queryTimeout: 10000,
    };
    ```
 
@@ -205,4 +221,4 @@ export const monitoringConfig = {
 
 ---
 
-*This documentation is automatically updated based on performance metrics and system changes.*
+_This documentation is automatically updated based on performance metrics and system changes._

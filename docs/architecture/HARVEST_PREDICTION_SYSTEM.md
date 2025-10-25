@@ -36,16 +36,15 @@ graph TD
 ## Core Components
 
 ### 1. Data Collection Layer
+
 - **Quantum Metrics Collector**
   - Resonance measurements
   - Biodynamic energy readings
   - Soil consciousness levels
-  
 - **Historical Data Aggregator**
   - Past harvest records
   - Yield statistics
   - Growth patterns
-  
 - **Environmental Data Service**
   - Weather patterns
   - Soil conditions
@@ -54,6 +53,7 @@ graph TD
 ### 2. Processing Pipeline
 
 - **Feature Engineering**
+
   ```typescript
   interface FeatureSet {
     quantum: QuantumFeatures;
@@ -70,6 +70,7 @@ graph TD
   ```
 
 - **Model Architecture**
+
   ```typescript
   interface PredictionModel {
     quantumLayer: QuantumEnhancedLayer;
@@ -89,6 +90,7 @@ graph TD
 ### 3. Prediction Engine
 
 - **Harvest Time Predictor**
+
   ```typescript
   interface HarvestPrediction {
     optimalDate: Date;
@@ -102,6 +104,7 @@ graph TD
   ```
 
 - **Yield Estimation**
+
   ```typescript
   interface YieldEstimate {
     expectedAmount: number;
@@ -117,9 +120,10 @@ graph TD
 ### 4. Real-time Integration
 
 - **WebSocket Events**
+
   ```typescript
   interface PredictionUpdate {
-    type: 'harvest' | 'yield' | 'quality';
+    type: "harvest" | "yield" | "quality";
     timestamp: Date;
     data: PredictionData;
     confidence: ConfidenceMetrics;
@@ -127,6 +131,7 @@ graph TD
   ```
 
 - **UI Components**
+
   ```typescript
   interface PredictionDisplayProps {
     prediction: HarvestPrediction;
@@ -147,7 +152,7 @@ graph TD
    - Feature extraction and normalization
    - Quantum pattern recognition
    - Model retraining triggers
-   
+
 3. **Prediction Phase**
    - Initial prediction generation
    - Confidence calculation

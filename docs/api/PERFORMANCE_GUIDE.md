@@ -7,13 +7,15 @@
 All API endpoints support caching through multiple mechanisms:
 
 #### Redis Caching
+
 ```typescript
 // Example response with Redis cache hit
-const response = await fetch('/api/products');
-console.log(response.headers.get('X-Cache')); // "HIT" or "MISS"
+const response = await fetch("/api/products");
+console.log(response.headers.get("X-Cache")); // "HIT" or "MISS"
 ```
 
 #### HTTP Caching
+
 ```typescript
 // Example response with cache headers
 Cache-Control: public, max-age=3600
@@ -66,13 +68,13 @@ Large datasets are automatically streamed:
 
 ```typescript
 // Example: Fetching large dataset
-const response = await fetch('/api/products/export');
+const response = await fetch("/api/products/export");
 const reader = response.body.getReader();
 
 while (true) {
-  const {done, value} = await reader.read();
+  const { done, value } = await reader.read();
   if (done) break;
-  console.log('Received chunk:', value);
+  console.log("Received chunk:", value);
 }
 ```
 
@@ -114,9 +116,9 @@ PATCH /api/products/2
 Use WebSocket connections for real-time data:
 
 ```typescript
-const ws = new WebSocket('/ws/market-updates');
+const ws = new WebSocket("/ws/market-updates");
 ws.onmessage = (event) => {
-  console.log('Real-time update:', event.data);
+  console.log("Real-time update:", event.data);
 };
 ```
 
@@ -192,4 +194,4 @@ GET /api/_metrics
 
 ---
 
-*This documentation is automatically updated based on API changes and performance metrics.*
+_This documentation is automatically updated based on API changes and performance metrics._

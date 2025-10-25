@@ -6,7 +6,7 @@ To complete the payment integration, you need to add your Stripe API keys to the
 
 ### **1. Get Your Stripe Keys**
 
-1. **Sign up/Login to Stripe**: Visit [https://stripe.com](https://stripe.com)
+1. **Sign up/Login to Stripe**: Visit [<https://stripe.com](https://stripe.co>m)
 2. **Navigate to Developers → API Keys**
 3. **Copy your keys**:
    - **Publishable Key** (starts with `pk_test_` for test mode)

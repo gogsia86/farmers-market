@@ -1,0 +1,273 @@
+================================================================================
+  SYSTEM SPECIFICATIONS - HP OMEN Development Workstation
+================================================================================
+Last Updated: October 21, 2025
+Project: Farmers Market Platform
+Status: Production-Ready Development Environment
+
+================================================================================
+  HARDWARE SPECIFICATIONS
+================================================================================
+
+System Information
+------------------
+Manufacturer:        HP
+Model:               OMEN by HP Laptop 15-dh0xxx
+SKU:                 7RY32EA#BED
+System Type:         x64-based PC
+Platform Role:       Mobile Workstation
+System Name:         MEDMEN
+Username:            MEDMEN\MedMen
+
+Processor
+---------
+Model:               Intel(R) Core(TM) i7-9750H
+Base Clock:          2.60GHz (2592 MHz)
+Architecture:        Coffee Lake Refresh (9th Gen)
+Cores:               6 Physical Cores
+Logical Processors:  12 (Hyper-Threading Enabled)
+TDP:                 45W
+Performance:         ⭐ Excellent for development, compilation, and Docker
+
+Graphics
+--------
+Dedicated GPU:       NVIDIA GeForce RTX 2070 Max-Q (8GB GDDR6)
+                     - CUDA Cores: 2304
+                     - Ray Tracing Capable
+                     - Ideal for ML/AI workloads
+                     - GPU acceleration for Next.js builds
+
+Memory (RAM)
+------------
+Installed:           64.0 GB DDR4
+Total Available:     63.9 GB
+Currently Free:      39.7 GB
+Type:                High-Performance DDR4
+Performance:         ⭐⭐⭐ Exceptional - Perfect for:
+                     - Large Node.js applications
+                     - In-memory databases (Redis)
+                     - Multiple Docker containers
+                     - Chrome DevTools with heavy debugging
+                     - Running full development stack
+
+Virtual Memory
+--------------
+Total:               67.9 GB
+Available:           38.3 GB
+Page File:           4.00 GB (C:\pagefile.sys)
+
+Storage
+-------
+Boot Device:         \Device\HarddiskVolume1
+Project Location:    V:\Projects\Farmers-Market
+Recommended:         Use SSD for best Next.js build performance
+
+================================================================================
+  OPERATING SYSTEM
+================================================================================
+
+OS Name:             Microsoft Windows 11 Pro
+Version:             10.0.26200 Build 26200 (Latest Insider Build)
+Build Type:          Professional (Full features enabled)
+OS Manufacturer:     Microsoft Corporation
+Locale:              United Kingdom
+Time Zone:           Central European Summer Time (CEST)
+HAL Version:         10.0.26100.1
+
+System Directories
+------------------
+Windows:             C:\WINDOWS
+System:              C:\WINDOWS\system32
+
+================================================================================
+  BIOS / FIRMWARE
+================================================================================
+
+BIOS Version:        AMI F.22
+BIOS Date:           9.12.2019
+BIOS Mode:           UEFI (Modern boot mode)
+SMBIOS Version:      3.2
+Embedded Controller: 44.41
+BaseBoard:           HP 8600 (Version 44.41)
+Secure Boot:         Off (Required for WSL2 and dual-boot)
+
+================================================================================
+  VIRTUALIZATION & SECURITY
+================================================================================
+
+Virtualization Support
+----------------------
+Hyper-V:             ✅ DETECTED & RUNNING
+WSL2 Ready:          ✅ YES (Hyper-V enables WSL2)
+Docker Support:      ✅ YES (Native Docker Desktop support)
+VT-x/VT-d:           ✅ Enabled (Intel Virtualization Technology)
+
+Virtualization-based Security (VBS)
+------------------------------------
+Status:              Running
+Services:
+  - Hypervisor Enforced Code Integrity:     ✅ Configured & Running
+
+Available Features:
+  - Base Virtualization Support:            ✅
+  - DMA Protection:                         ✅
+  - UEFI Code Readonly:                     ✅
+  - SMM Security Mitigations 1.0:           ✅
+  - Mode Based Execution Control:           ✅
+
+Security Features
+-----------------
+Kernel DMA Protection:                      Off
+App Control for Business:                   Enforced
+User Mode Policy:                           Audit
+Automatic Device Encryption:                Supported (requires elevation)
+Secure Boot:                                Off (by choice)
+
+================================================================================
+  DEVELOPMENT ENVIRONMENT CAPABILITIES
+================================================================================
+
+✅ Optimal for Farmers Market Platform Development
+
+Node.js & Next.js
+-----------------
+✅ 64GB RAM - Perfect for Next.js dev server
+✅ 6-core CPU - Fast builds and hot-reload
+✅ SSD recommended - Sub-second file changes detection
+
+Docker & Containers
+-------------------
+✅ Hyper-V enabled - Native Docker Desktop support
+✅ 64GB RAM - Run multiple containers simultaneously
+✅ WSL2 ready - Best Linux development experience
+
+Database Development
+--------------------
+✅ 64GB RAM - Run PostgreSQL, Redis in-memory
+✅ High-performance CPU - Complex queries execute fast
+✅ Sufficient memory for Prisma Studio + dev server
+
+GPU Acceleration
+----------------
+✅ RTX 2070 Max-Q - Potential for:
+   - TensorFlow.js acceleration
+   - Image processing (Sharp.js with CUDA)
+   - Video encoding for product media
+   - Machine learning model training
+
+================================================================================
+  RECOMMENDED SETUP FOR THIS SYSTEM
+================================================================================
+
+Development Environment Priority
+---------------------------------
+1. ⭐ WSL2 (Ubuntu) - HIGHLY RECOMMENDED
+   - Leverage Hyper-V that's already running
+   - Native Linux environment (no Windows compatibility issues)
+   - Full 64GB RAM access
+   - Better Node.js performance
+   - Production-like environment
+
+2. 🔄 Docker Desktop
+   - Use with WSL2 backend
+   - All 64GB RAM available to containers
+   - Run PostgreSQL, Redis, monitoring stack
+
+3. 🌐 Vercel Deployment
+   - Deploy directly to production
+   - Bypass local environment issues
+   - Free tier sufficient for MVP
+
+Performance Optimizations
+--------------------------
+✅ Enable all 12 logical processors for compilation
+✅ Use WSL2 filesystem for 2-3x faster npm install
+✅ Allocate 8GB+ to Docker (plenty of RAM available)
+✅ Run Redis in-memory for session storage
+✅ Consider GPU acceleration for image optimization
+
+================================================================================
+  SYSTEM LIMITATIONS & NOTES
+================================================================================
+
+Known Issues
+------------
+❌ Windows + Next.js Watchpack incompatibility
+   Solution: Use WSL2 (already Hyper-V ready!)
+
+❌ Windows path handling issues in production builds
+   Solution: Build in WSL2 or deploy to Vercel directly
+
+✅ All issues resolved by using WSL2 (15-minute setup)
+
+Hardware Strengths
+------------------
+✅ 64GB RAM - Top 1% of development machines
+✅ 6-core/12-thread CPU - Excellent parallel processing
+✅ RTX 2070 - GPU acceleration potential
+✅ Hyper-V ready - Professional virtualization
+
+Perfect For
+-----------
+✅ Full-stack web development
+✅ Microservices architecture
+✅ Container orchestration
+✅ Machine learning experiments
+✅ Large-scale Next.js applications
+✅ Multiple development environments simultaneously
+
+================================================================================
+  QUICK REFERENCE
+================================================================================
+
+Installed Software (Recommended)
+---------------------------------
+[ ] Node.js 20 LTS (via NVM in WSL2)
+[ ] Docker Desktop with WSL2 backend
+[ ] Visual Studio Code with Remote-WSL extension
+[ ] Git for Windows
+[ ] Windows Terminal
+[✅] PostgreSQL (running)
+[ ] Redis (optional, for caching)
+
+Useful Commands
+---------------
+# Check if WSL2 is installed
+wsl --list --verbose
+
+# Install WSL2 Ubuntu
+wsl --install Ubuntu
+
+# Check Hyper-V status
+Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All
+
+# View system resources
+Get-ComputerInfo
+
+# Check CPU threads
+Get-WmiObject Win32_Processor | Select-Object NumberOfCores,NumberOfLogicalProcessors
+
+================================================================================
+  CONCLUSION
+================================================================================
+
+This HP OMEN workstation is EXCEPTIONAL for web development:
+
+⭐ 64GB RAM puts you in top tier of development machines
+⭐ 12 logical processors handle parallel tasks excellently
+⭐ Hyper-V already running - WSL2 ready to go
+⭐ RTX 2070 enables advanced features (GPU acceleration, ML)
+⭐ Windows 11 Pro - Full professional feature set
+
+RECOMMENDED NEXT STEP:
+→ Install WSL2 Ubuntu (15 minutes)
+→ Follow: V:\Projects\Farmers-Market\WSL2_SETUP_GUIDE.md
+
+You have a PROFESSIONAL development workstation that can handle
+anything you throw at it. Use WSL2 to unlock its full potential!
+
+================================================================================
+Generated: October 21, 2025
+For: Farmers Market Platform Development
+Project: https://github.com/Gogzia/farmers-market
+================================================================================

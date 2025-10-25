@@ -19,7 +19,7 @@ Core event for quantum metric updates in the agricultural system. Provides real-
 
 ```typescript
 interface QuantumMetricUpdate {
-  type: 'METRIC_UPDATE' | 'ALIGNMENT_UPDATE' | 'TEMPORAL_SHIFT';
+  type: "METRIC_UPDATE" | "ALIGNMENT_UPDATE" | "TEMPORAL_SHIFT";
   timestamp: number;
   metrics: {
     quantumAlignmentScore?: number;
@@ -80,7 +80,7 @@ interface StateChange {
     confidenceDelta: number;
     temporalShift: number;
   };
-  impactLevel: 'HIGH' | 'MEDIUM' | 'LOW';
+  impactLevel: "HIGH" | "MEDIUM" | "LOW";
 }
 ```
 
@@ -95,36 +95,36 @@ interface StateChange {
 
 #### Metric Error Handling
 
-| Error Code | Description | Recovery Strategy |
-|------------|-------------|-------------------|
+| Error Code       | Description                   | Recovery Strategy                          |
+| ---------------- | ----------------------------- | ------------------------------------------ |
 | `TEMPORAL_DRIFT` | Metrics out of temporal order | Buffer and reorder within coherence window |
-| `COHERENCE_LOSS` | Quantum state decoherence | Initiate quantum resync protocol |
-| `BATCH_OVERFLOW` | Too many updates in batch | Drop oldest updates, adjust batch size |
+| `COHERENCE_LOSS` | Quantum state decoherence     | Initiate quantum resync protocol           |
+| `BATCH_OVERFLOW` | Too many updates in batch     | Drop oldest updates, adjust batch size     |
 
 #### Metric Update Implementation
 
 ```typescript
 // Client-side subscription
-socket.on('quantum-metric-update', (update: QuantumMetricUpdate) => {
+socket.on("quantum-metric-update", (update: QuantumMetricUpdate) => {
   // Process the update
   processQuantumMetricUpdate(update);
-  
+
   // Update local state
   updateQuantumState(update);
-  
+
   // Trigger UI updates
   refreshQuantumDisplay();
 });
 
 // Server-side emission
-socket.emit('quantum-metric-update', {
-  type: 'METRIC_UPDATE',
+socket.emit("quantum-metric-update", {
+  type: "METRIC_UPDATE",
   timestamp: Date.now(),
   metrics: {
     quantumAlignmentScore: calculateAlignment(),
     confidence: calculateConfidence(),
     // ... other metrics
-  }
+  },
 });
 ```
 
@@ -188,7 +188,7 @@ interface HeartbeatStateChange {
   previousLatency: number;
   newLatency: number;
   coherenceDelta: number;
-  connectionHealth: 'OPTIMAL' | 'DEGRADED' | 'CRITICAL';
+  connectionHealth: "OPTIMAL" | "DEGRADED" | "CRITICAL";
 }
 ```
 
@@ -202,26 +202,26 @@ interface HeartbeatStateChange {
 
 #### Heartbeat Error Handling
 
-| Error Code | Description | Recovery Strategy |
-|------------|-------------|-------------------|
-| `HEARTBEAT_TIMEOUT` | No heartbeat received | Attempt reconnection |
-| `HIGH_LATENCY` | Latency above threshold | Adjust batch parameters |
+| Error Code          | Description             | Recovery Strategy       |
+| ------------------- | ----------------------- | ----------------------- |
+| `HEARTBEAT_TIMEOUT` | No heartbeat received   | Attempt reconnection    |
+| `HIGH_LATENCY`      | Latency above threshold | Adjust batch parameters |
 
 #### Heartbeat Implementation
 
 ```typescript
 // Client-side handling
-socket.on('heartbeat', (payload: HeartbeatPayload) => {
+socket.on("heartbeat", (payload: HeartbeatPayload) => {
   updateConnectionHealth(payload);
   adjustQuantumCoherence(payload.quantumState);
 });
 
 // Server-side emission
 setInterval(() => {
-  socket.emit('heartbeat', {
+  socket.emit("heartbeat", {
     timestamp: Date.now(),
     latency: calculateLatency(),
-    quantumState: getCurrentQuantumState()
+    quantumState: getCurrentQuantumState(),
   });
 }, 30000);
 ```

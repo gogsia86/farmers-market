@@ -3,6 +3,7 @@
 ## Vegetable Crops
 
 ### 1. Tomato Management System
+
 ```typescript
 // components/agricultural/CropSpecific/TomatoManagement.tsx
 
@@ -17,7 +18,7 @@ interface TomatoMetrics {
 
 export function TomatoManagement({ cropId }: { cropId: string }) {
   const { metrics, updateMetrics } = useTomatoMetrics(cropId)
-  
+
   const handlePruningUpdate = async (status: PruningStatus) => {
     await updateMetrics({
       ...metrics,
@@ -28,7 +29,7 @@ export function TomatoManagement({ cropId }: { cropId: string }) {
 
   return (
     <div className="space-y-6">
-      <TrellisMonitor 
+      <TrellisMonitor
         system={metrics.trellisSystem}
         growthStage={metrics.growthStage}
       />
@@ -44,6 +45,7 @@ export function TomatoManagement({ cropId }: { cropId: string }) {
 ```
 
 ### 2. Leafy Greens System
+
 ```typescript
 // components/agricultural/CropSpecific/LeafyGreensBed.tsx
 
@@ -83,6 +85,7 @@ export function LeafyGreensBed({ bedId }: { bedId: string }) {
 ## Farming Methods
 
 ### 1. Hydroponic Systems
+
 ```typescript
 // components/agricultural/Methods/HydroponicSystem.tsx
 
@@ -97,7 +100,7 @@ interface HydroponicMetrics {
 
 export function HydroponicSystem() {
   const { metrics, adjustSystem } = useHydroponicControls()
-  
+
   const handleAdjustment = async (adjustment: SystemAdjustment) => {
     await adjustSystem(adjustment)
     await logAdjustment(adjustment)
@@ -128,6 +131,7 @@ export function HydroponicSystem() {
 ```
 
 ### 2. Greenhouse Management
+
 ```typescript
 // components/agricultural/Methods/GreenhouseControl.tsx
 
@@ -142,7 +146,7 @@ interface GreenhouseMetrics {
 
 export function GreenhouseControl() {
   const { metrics, controls } = useGreenhouseSystem()
-  
+
   const optimizeEnvironment = useCallback(async () => {
     const optimalSettings = await calculateOptimalEnvironment({
       currentConditions: metrics,
@@ -175,61 +179,64 @@ export function GreenhouseControl() {
 ## Integration Testing Examples
 
 ### 1. Hydroponic System Tests
-```typescript
-describe('Hydroponic System Integration', () => {
-  it('should maintain optimal nutrient levels', async () => {
-    const system = new HydroponicSystem()
-    
-    // Simulate nutrient depletion
-    await system.simulateGrowthCycle({ duration: '24h' })
-    
-    const adjustments = await system.getRequiredAdjustments()
-    expect(adjustments).toContain({
-      type: 'nutrient-dose',
-      amount: expect.any(Number),
-      solution: expect.any(String)
-    })
-  })
 
-  it('should handle pH fluctuations', async () => {
-    const system = new HydroponicSystem()
-    await system.simulatePHShift({ target: 6.8, current: 5.5 })
-    
-    const corrections = await system.getCorrectiveActions()
-    expect(corrections[0].type).toBe('ph-up')
-    expect(corrections[0].amount).toBeGreaterThan(0)
-  })
-})
+```typescript
+describe("Hydroponic System Integration", () => {
+  it("should maintain optimal nutrient levels", async () => {
+    const system = new HydroponicSystem();
+
+    // Simulate nutrient depletion
+    await system.simulateGrowthCycle({ duration: "24h" });
+
+    const adjustments = await system.getRequiredAdjustments();
+    expect(adjustments).toContain({
+      type: "nutrient-dose",
+      amount: expect.any(Number),
+      solution: expect.any(String),
+    });
+  });
+
+  it("should handle pH fluctuations", async () => {
+    const system = new HydroponicSystem();
+    await system.simulatePHShift({ target: 6.8, current: 5.5 });
+
+    const corrections = await system.getCorrectiveActions();
+    expect(corrections[0].type).toBe("ph-up");
+    expect(corrections[0].amount).toBeGreaterThan(0);
+  });
+});
 ```
 
 ### 2. Greenhouse Environment Tests
+
 ```typescript
-describe('Greenhouse Climate Control', () => {
-  it('should maintain optimal growing conditions', async () => {
-    const greenhouse = new GreenhouseSystem()
-    
+describe("Greenhouse Climate Control", () => {
+  it("should maintain optimal growing conditions", async () => {
+    const greenhouse = new GreenhouseSystem();
+
     // Simulate temperature spike
     await greenhouse.simulateExternalConditions({
       temperature: 35,
       humidity: 80,
-      light: 'full-sun'
-    })
-    
-    const actions = await greenhouse.getClimateActions()
+      light: "full-sun",
+    });
+
+    const actions = await greenhouse.getClimateActions();
     expect(actions).toContain({
-      type: 'ventilation-increase',
-      fans: expect.arrayContaining(['roof', 'side'])
-    })
-    
+      type: "ventilation-increase",
+      fans: expect.arrayContaining(["roof", "side"]),
+    });
+
     expect(actions).toContain({
-      type: 'shade-deployment',
-      coverage: expect.any(Number)
-    })
-  })
-})
+      type: "shade-deployment",
+      coverage: expect.any(Number),
+    });
+  });
+});
 ```
 
 Would you like me to:
+
 1. Add more specific examples for other crop types?
 2. Create examples for different growing techniques?
 3. Add more detailed testing scenarios?

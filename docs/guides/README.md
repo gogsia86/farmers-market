@@ -33,10 +33,10 @@ This directory contains detailed implementation guides for the Farmers Market Pl
 
 ## 📚 Additional Resources
 
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Prisma Documentation](https://www.prisma.io/docs)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [Next.js Documentation](<https://nextjs.org/doc>s)
+- [Prisma Documentation](<https://www.prisma.io/doc>s)
+- [Tailwind CSS Documentation](<https://tailwindcss.com/doc>s)
 
 ---
 
-*This guide index is updated as new implementation guides are added.*
+_This guide index is updated as new implementation guides are added._

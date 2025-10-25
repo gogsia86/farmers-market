@@ -3,9 +3,9 @@
 ## 🌌 Event Documentation Template
 
 ### Event: `[EVENT_NAME| Version | Date | Changes |
+
 |---------|------|----------|
 | 1.0 | 2024-01-22 | Initial template creation |
-
 
 #### Overview
 
@@ -57,20 +57,20 @@ interface StateChange {
 
 #### Error Scenarios
 
-| Error Code | Description | Recovery Strategy |
-|------------|-------------|-------------------|
-| `ERROR_CODE` | Description | How to handle |
+| Error Code   | Description | Recovery Strategy |
+| ------------ | ----------- | ----------------- |
+| `ERROR_CODE` | Description | How to handle     |
 
 #### Example Usage
 
 ```typescript
 // Client-side subscription
-quantumSocket.on('EVENT_NAME', (payload) => {
+quantumSocket.on("EVENT_NAME", (payload) => {
   // Handle event
 });
 
 // Server-side emission
-quantumSocket.emit('EVENT_NAME', {
+quantumSocket.emit("EVENT_NAME", {
   // Event payload
 });
 ```
@@ -97,6 +97,6 @@ Link to related type definitions in the quantum type system.
 
 ## 🔄 Template Evolution
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0 | 2024-01-22 | Initial template creation |
+| Version | Date       | Changes                   |
+| ------- | ---------- | ------------------------- |
+| 1.0     | 2024-01-22 | Initial template creation |

@@ -1,0 +1,41 @@
+[
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/products?farmId=abc123&category=vegetables&inStock=true&limit=10&offset=0"
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "products": [
+          {
+            "id": "prod_001",
+            "name": "Organic Tomatoes",
+            "description": "Fresh organic tomatoes harvested today.",
+            "price": 5.99,
+            "unit": "lb",
+            "inStock": true,
+            "quantity": 120,
+            "category": "vegetables",
+            "images": ["https://cdn.farmers-market.com/images/tomatoes.jpg"],
+            "organic": true,
+            "seasonal": true,
+            "farm": {
+              "id": "abc123",
+              "name": "Sun Valley Farm",
+              "location": "123 Farm Lane, Valley City"
+            },
+            "createdAt": "2025-10-21T08:00:00Z",
+            "updatedAt": "2025-10-21T08:00:00Z"
+          }
+        ],
+        "pagination": {
+          "total": 1,
+          "limit": 10,
+          "offset": 0,
+          "hasMore": false
+        }
+      }
+    }
+  }
+]

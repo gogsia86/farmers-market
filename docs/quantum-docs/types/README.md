@@ -10,7 +10,7 @@ The quantum type system enables state-aware, temporally-conscious type definitio
 
 ```typescript
 interface QuantumMetricUpdate {
-  type: 'METRIC_UPDATE' | 'ALIGNMENT_UPDATE' | 'TEMPORAL_SHIFT';
+  type: "METRIC_UPDATE" | "ALIGNMENT_UPDATE" | "TEMPORAL_SHIFT";
   timestamp: number;
   metrics: {
     quantumAlignmentScore?: number;
@@ -52,7 +52,7 @@ interface QuantumState {
 ```typescript
 interface WebSocketMetrics {
   timestamp: Date;
-  metricsType: 'QUANTUM' | 'BIODYNAMIC' | 'ENVIRONMENTAL';
+  metricsType: "QUANTUM" | "BIODYNAMIC" | "ENVIRONMENTAL";
   value: number;
   isConnected: boolean;
   lastHeartbeat: number;
@@ -88,13 +88,17 @@ interface LivingDocument {
 ### DocumentState
 
 ```typescript
-type DocumentState = 'SEEDING' | 'GROWING' | 'FLOWERING' | 'FRUITING';
+type DocumentState = "SEEDING" | "GROWING" | "FLOWERING" | "FRUITING";
 ```
 
 ### DocumentEvolution
 
 ```typescript
-type DocumentEvolution = 'STABLE' | 'EVOLVING' | 'TRANSFORMING' | 'TRANSCENDING';
+type DocumentEvolution =
+  | "STABLE"
+  | "EVOLVING"
+  | "TRANSFORMING"
+  | "TRANSCENDING";
 ```
 
 ## 🌊 Quantum Flow Types
@@ -115,8 +119,8 @@ interface QuantumMessage<T = any> {
 
 ```typescript
 interface QuantumSocketConfig {
-  quantumMode: 'enabled' | 'disabled';
-  temporalSensitivity: 'high' | 'medium' | 'low';
+  quantumMode: "enabled" | "disabled";
+  temporalSensitivity: "high" | "medium" | "low";
 }
 ```
 

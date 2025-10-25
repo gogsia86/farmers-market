@@ -3,6 +3,7 @@
 ## Real-World Scenarios
 
 ### 1. Weather-Based Crop Management
+
 ```typescript
 // components/agricultural/CropTracking/WeatherBasedScheduling.tsx
 
@@ -38,12 +39,12 @@ export function WeatherBasedScheduling({
     <div className="p-4 border rounded-lg bg-white shadow-sm">
       <h3 className="text-lg font-semibold">Weather-Optimized Schedule</h3>
       <WeatherSummary forecast={weatherForecast} />
-      <IrrigationControls 
+      <IrrigationControls
         system={irrigationSystem}
         onOptimize={optimizeSchedule}
       />
-      <RainPredictionAlert 
-        probability={weatherForecast.precipitationProbability} 
+      <RainPredictionAlert
+        probability={weatherForecast.precipitationProbability}
       />
     </div>
   )
@@ -51,37 +52,42 @@ export function WeatherBasedScheduling({
 ```
 
 ### 2. Seasonal Product Pricing Engine
+
 ```typescript
 // lib/pricing/seasonalPricing.ts
 
 interface PricingFactors {
-  basePrice: number
-  season: Season
-  supply: number
-  demand: number
-  weatherImpact: number
-  marketTrends: MarketTrend[]
+  basePrice: number;
+  season: Season;
+  supply: number;
+  demand: number;
+  weatherImpact: number;
+  marketTrends: MarketTrend[];
 }
 
 export class SeasonalPricingEngine {
   calculatePrice(factors: PricingFactors): PriceResult {
-    const seasonalMultiplier = this.getSeasonalMultiplier(factors.season)
+    const seasonalMultiplier = this.getSeasonalMultiplier(factors.season);
     const supplyDemandFactor = this.calculateSupplyDemand(
       factors.supply,
-      factors.demand
-    )
-    const weatherAdjustment = this.assessWeatherImpact(factors.weatherImpact)
-    const trendImpact = this.analyzeTrends(factors.marketTrends)
+      factors.demand,
+    );
+    const weatherAdjustment = this.assessWeatherImpact(factors.weatherImpact);
+    const trendImpact = this.analyzeTrends(factors.marketTrends);
 
     return {
-      finalPrice: factors.basePrice * seasonalMultiplier * supplyDemandFactor * weatherAdjustment,
+      finalPrice:
+        factors.basePrice *
+        seasonalMultiplier *
+        supplyDemandFactor *
+        weatherAdjustment,
       adjustments: {
         seasonal: seasonalMultiplier,
         supplyDemand: supplyDemandFactor,
         weather: weatherAdjustment,
-        trends: trendImpact
-      }
-    }
+        trends: trendImpact,
+      },
+    };
   }
 
   private getSeasonalMultiplier(season: Season): number {
@@ -95,6 +101,7 @@ export class SeasonalPricingEngine {
 ```
 
 ### 3. Farm Resource Optimization
+
 ```typescript
 // components/agricultural/ResourceManagement/WaterUsageOptimizer.tsx
 
@@ -118,7 +125,7 @@ export function WaterUsageOptimizer() {
 
   return (
     <div className="space-y-4">
-      <StrategySelector 
+      <StrategySelector
         current={optimizationStrategy}
         onChange={setStrategy}
       />
@@ -132,45 +139,49 @@ export function WaterUsageOptimizer() {
 ## Integration Examples
 
 ### 1. Multi-Farm Data Aggregation
+
 ```typescript
 // lib/data/farmAggregation.ts
 
 export async function aggregateRegionalData(
   region: string,
-  dateRange: DateRange
+  dateRange: DateRange,
 ): Promise<RegionalInsights> {
-  const farms = await getFarmsInRegion(region)
-  
-  const aggregatedData = await Promise.all(farms.map(async farm => {
-    const crops = await farm.getCrops(dateRange)
-    const yield = await farm.getYield(dateRange)
-    const resources = await farm.getResourceUsage(dateRange)
-    
-    return {
-      farmId: farm.id,
-      crops,
-      yield,
-      resources,
-      efficiency: calculateFarmEfficiency(yield, resources)
-    }
-  }))
+  const farms = await getFarmsInRegion(region);
+
+  const aggregatedData = await Promise.all(
+    farms.map(async (farm) => {
+      const crops = await farm.getCrops(dateRange);
+      const yield = await farm.getYield(dateRange);
+      const resources = await farm.getResourceUsage(dateRange);
+
+      return {
+        farmId: farm.id,
+        crops,
+        yield,
+        resources,
+        efficiency: calculateFarmEfficiency(yield, resources),
+      };
+    }),
+  );
 
   return {
     totalYield: sumYields(aggregatedData),
     averageEfficiency: calculateAverageEfficiency(aggregatedData),
     topPerformers: identifyTopFarms(aggregatedData),
-    regionalTrends: analyzeRegionalTrends(aggregatedData)
-  }
+    regionalTrends: analyzeRegionalTrends(aggregatedData),
+  };
 }
 ```
 
 ### 2. Smart Harvest Planning
+
 ```typescript
 // components/agricultural/Planning/HarvestPlanner.tsx
 
 export function HarvestPlanner() {
   const [harvestPlan, setHarvestPlan] = useState<HarvestPlan>()
-  
+
   const generatePlan = useCallback(async () => {
     const weather = await getExtendedForecast()
     const laborAvailability = await getWorkerSchedules()
@@ -200,25 +211,26 @@ export function HarvestPlanner() {
 ```
 
 ### 3. Automated Quality Control
+
 ```typescript
 // lib/quality/produceQuality.ts
 
 export class ProduceQualityAnalyzer {
   async analyzeBatch(
     batchId: string,
-    sensorData: SensorReadings[]
+    sensorData: SensorReadings[],
   ): Promise<QualityReport> {
-    const visualInspection = await this.processImages(sensorData.images)
-    const sizeAnalysis = this.analyzeSizeDistribution(sensorData.dimensions)
-    const ripeness = this.assessRipeness(sensorData.spectral)
-    const defects = this.identifyDefects(visualInspection)
+    const visualInspection = await this.processImages(sensorData.images);
+    const sizeAnalysis = this.analyzeSizeDistribution(sensorData.dimensions);
+    const ripeness = this.assessRipeness(sensorData.spectral);
+    const defects = this.identifyDefects(visualInspection);
 
     const overallQuality = this.calculateOverallQuality({
       visual: visualInspection,
       size: sizeAnalysis,
       ripeness,
-      defects
-    })
+      defects,
+    });
 
     return {
       batchId,
@@ -226,14 +238,14 @@ export class ProduceQualityAnalyzer {
       recommendations: this.generateRecommendations({
         defects,
         ripeness,
-        market: await getMarketPreferences()
+        market: await getMarketPreferences(),
       }),
       marketability: this.assessMarketability({
         quality: overallQuality,
         demand: await getMarketDemand(),
-        competition: await getCompetitorData()
-      })
-    }
+        competition: await getCompetitorData(),
+      }),
+    };
   }
 }
 ```
@@ -241,65 +253,68 @@ export class ProduceQualityAnalyzer {
 ## Advanced Testing Scenarios
 
 ### 1. Weather Impact Testing
+
 ```typescript
-describe('Weather Impact Analysis', () => {
-  it('should adjust crop recommendations based on extreme weather', async () => {
+describe("Weather Impact Analysis", () => {
+  it("should adjust crop recommendations based on extreme weather", async () => {
     const extremeWeather: WeatherCondition = {
       temperature: 40, // Heat wave
       humidity: 85,
-      windSpeed: 30
-    }
+      windSpeed: 30,
+    };
 
-    const crops = await getCropsInRegion('pacific-northwest')
-    const recommendations = analyzeCropImpact(crops, extremeWeather)
-
-    expect(recommendations).toContain({
-      type: 'urgent',
-      action: 'increase_irrigation'
-    })
+    const crops = await getCropsInRegion("pacific-northwest");
+    const recommendations = analyzeCropImpact(crops, extremeWeather);
 
     expect(recommendations).toContain({
-      type: 'protective',
-      action: 'deploy_shade_covers'
-    })
-  })
-})
+      type: "urgent",
+      action: "increase_irrigation",
+    });
+
+    expect(recommendations).toContain({
+      type: "protective",
+      action: "deploy_shade_covers",
+    });
+  });
+});
 ```
 
 ### 2. Market Integration Testing
+
 ```typescript
-describe('Market Price Integration', () => {
-  it('should update prices based on real-time market data', async () => {
+describe("Market Price Integration", () => {
+  it("should update prices based on real-time market data", async () => {
     // Mock market data stream
     const marketStream = new MockMarketStream([
-      { product: 'tomatoes', change: 0.5 }, // 50% increase
-      { product: 'lettuce', change: -0.2 }  // 20% decrease
-    ])
+      { product: "tomatoes", change: 0.5 }, // 50% increase
+      { product: "lettuce", change: -0.2 }, // 20% decrease
+    ]);
 
-    const priceManager = new PriceManager(marketStream)
-    await priceManager.synchronize()
+    const priceManager = new PriceManager(marketStream);
+    await priceManager.synchronize();
 
-    const updatedPrices = await priceManager.getCurrentPrices()
-    expect(updatedPrices['tomatoes']).toBeCloseTo(basePrice * 1.5)
-    expect(updatedPrices['lettuce']).toBeCloseTo(basePrice * 0.8)
-  })
-})
+    const updatedPrices = await priceManager.getCurrentPrices();
+    expect(updatedPrices["tomatoes"]).toBeCloseTo(basePrice * 1.5);
+    expect(updatedPrices["lettuce"]).toBeCloseTo(basePrice * 0.8);
+  });
+});
 ```
 
 ## Documentation Examples
 
 ### 1. API Documentation
+
 ```typescript
 /**
  * Calculates optimal harvest timing based on multiple factors
- * 
+ *
  * @param crop - Crop details including variety and planting date
  * @param weather - 10-day weather forecast
  * @param market - Market demand projections
  * @param resources - Available labor and equipment
- * 
+ *
  * @returns HarvestSchedule with recommended dates and resource allocation
- * 
+ *
  * @example
  * const schedule = await calculateHarvestTiming({
  *   crop: { id: 'tomato-123', plantingDate: '2025-05-15' },
@@ -308,5 +323,7 @@ describe('Market Price Integration', () => {
  *   resources: await getResourceAvailability()
  * })
  */
-export async function calculateHarvestTiming(params: HarvestParams): Promise<HarvestSchedule>
+export async function calculateHarvestTiming(
+  params: HarvestParams,
+): Promise<HarvestSchedule>;
 ```

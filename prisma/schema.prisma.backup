@@ -1,0 +1,966 @@
+// ============================================================================
+// FARMERS MARKET - DIVINE DATABASE SCHEMA
+// ============================================================================
+// Generated from: 23 FRD Feature Specifications (FR-001 through FR-023)
+// Database: PostgreSQL 15+
+// ORM: Prisma 5.x
+// Multi-Tenant: Farms as tenants (farm_id foreign key on all data)
+// Performance: Optimized indexes, efficient relations
+// Security: Row-level security ready, encrypted sensitive fields
+// ============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// ENUMS - Type-Safe Status Values
+// ============================================================================
+
+enum UserRole {
+  CONSUMER
+  FARMER
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+
+enum FarmStatus {
+  PENDING      // Stripe not connected yet
+  ACTIVE       // Fully operational
+  SUSPENDED    // Admin suspended
+  INACTIVE     // Farmer deactivated
+}
+
+enum TeamMemberRole {
+  OWNER
+  MANAGER
+  STAFF
+}
+
+enum TeamMemberStatus {
+  INVITED
+  ACTIVE
+  REMOVED
+}
+
+enum CertificationType {
+  ORGANIC
+  REGENERATIVE
+  ANIMAL_WELFARE
+  KOSHER
+  HALAL
+  FAIR_TRADE
+  BIODYNAMIC
+  OTHER
+}
+
+enum CertificationStatus {
+  PENDING
+  VERIFIED
+  EXPIRED
+  REJECTED
+}
+
+enum ProductCategory {
+  VEGETABLES
+  FRUITS
+  DAIRY
+  EGGS
+  MEAT
+  POULTRY
+  SEAFOOD
+  PANTRY
+  BEVERAGES
+  BAKED_GOODS
+  PREPARED_FOODS
+  FLOWERS
+  OTHER
+}
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  OUT_OF_STOCK
+  ARCHIVED
+}
+
+enum OrderStatus {
+  PENDING      // Waiting for farmer acceptance
+  CONFIRMED    // Farmer accepted
+  PREPARING    // Being prepared
+  READY        // Ready for fulfillment
+  FULFILLED    // Delivered/picked up
+  COMPLETED    // Customer confirmed receipt
+  CANCELLED    // Cancelled by farmer or customer
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  PAID
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum FulfillmentMethod {
+  DELIVERY      // Farmer delivers to customer address
+  FARM_PICKUP   // Customer picks up at farm
+  MARKET_PICKUP // Customer picks up at farmers market booth
+}
+
+enum FulfillmentStatus {
+  PENDING
+  SCHEDULED
+  IN_TRANSIT
+  READY_FOR_PICKUP
+  DELIVERED
+  FAILED
+}
+
+enum AddressType {
+  HOME
+  WORK
+  OTHER
+}
+
+enum QualityIssueType {
+  SPOILED
+  MISSING_ITEMS
+  WRONG_ITEMS
+  POOR_QUALITY
+  QUANTITY_MISMATCH
+  DAMAGED
+  OTHER
+}
+
+enum QualityIssueStatus {
+  OPEN
+  IN_REVIEW
+  RESOLVED
+  DISPUTED
+}
+
+enum ResolutionType {
+  FULL_REFUND
+  PARTIAL_REFUND
+  REPLACEMENT
+  CREDIT
+  NO_ACTION
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  FLAGGED
+  REMOVED
+}
+
+enum NotificationType {
+  ORDER_PLACED
+  ORDER_CONFIRMED
+  ORDER_READY
+  ORDER_FULFILLED
+  ORDER_CANCELLED
+  PAYMENT_RECEIVED
+  PAYOUT_PROCESSED
+  NEW_MESSAGE
+  REVIEW_RECEIVED
+  QUALITY_ISSUE
+  LOW_STOCK
+  SYSTEM_ANNOUNCEMENT
+}
+
+enum NotificationChannel {
+  EMAIL
+  SMS
+  PUSH
+  IN_APP
+}
+
+// ============================================================================
+// USER MANAGEMENT (FR-001, FR-010)
+// ============================================================================
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique @db.VarChar(255)
+  password  String?    @db.VarChar(255) // Nullable for social login
+  firstName String?    @db.VarChar(100)
+  lastName  String?    @db.VarChar(100)
+  phone     String?    @db.VarChar(20)
+  avatar    String?    @db.VarChar(500)
+  role      UserRole   @default(CONSUMER)
+  status    UserStatus @default(ACTIVE)
+
+  // Email/Phone Verification
+  emailVerified      Boolean   @default(false)
+  emailVerifiedAt    DateTime?
+  phoneVerified      Boolean   @default(false)
+  phoneVerifiedAt    DateTime?
+  verificationToken  String?   @unique @db.VarChar(255)
+  verificationExpiry DateTime?
+
+  // Password Reset
+  resetToken       String?   @unique @db.VarChar(255)
+  resetTokenExpiry DateTime?
+
+  // Preferences (JSONB for flexibility)
+  dietaryPreferences      Json? // ["vegetarian", "gluten-free"]
+  notificationPreferences Json? // {email: true, sms: false, push: true}
+  privacySettings         Json? // {showProfile: false, dataSharing: "minimal"}
+
+  // Metadata
+  lastLoginAt DateTime?
+  lastLoginIP String?   @db.VarChar(45) // IPv6 max length
+  loginCount  Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  addresses       UserAddress[]
+  farms           Farm[] // If user is a farmer
+  teamMemberships FarmTeamMember[]
+  orders          Order[]
+  cartItems       CartItem[]
+  reviews         Review[]
+  qualityIssues   QualityIssue[]
+  messages        Message[]        @relation("MessageSender")
+  notifications   Notification[]
+  sessions        Session[]
+  accounts        Account[] // OAuth accounts
+
+  @@index([email])
+  @@index([role, status])
+  @@index([createdAt])
+  @@map("users")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  sessionToken String   @unique @db.VarChar(255)
+  accessToken  String?  @db.Text
+  refreshToken String?  @db.Text
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([sessionToken])
+  @@map("sessions")
+}
+
+model Account {
+  id                String   @id @default(cuid())
+  userId            String
+  provider          String   @db.VarChar(50) // google, facebook, apple
+  providerAccountId String   @db.VarChar(255)
+  refreshToken      String?  @db.Text
+  accessToken       String?  @db.Text
+  expiresAt         DateTime?
+  tokenType         String?  @db.VarChar(50)
+  scope             String?  @db.VarChar(255)
+  idToken           String?  @db.Text
+  sessionState      String?  @db.VarChar(255)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+model UserAddress {
+  id        String      @id @default(cuid())
+  userId    String
+  type      AddressType @default(HOME)
+  label     String?     @db.VarChar(100) // "Home", "Mom's House", etc.
+  street    String      @db.VarChar(255)
+  street2   String?     @db.VarChar(255)
+  city      String      @db.VarChar(100)
+  state     String      @db.VarChar(50)
+  zipCode   String      @db.VarChar(20)
+  country   String      @default("US") @db.VarChar(2)
+  latitude  Decimal?    @db.Decimal(10, 8)
+  longitude Decimal?    @db.Decimal(11, 8)
+  isDefault Boolean     @default(false)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders Order[] @relation("DeliveryAddress")
+
+  @@index([userId])
+  @@index([zipCode])
+  @@map("user_addresses")
+}
+
+// ============================================================================
+// FARM MANAGEMENT (FR-001, FR-002)
+// ============================================================================
+
+model Farm {
+  id          String     @id @default(cuid())
+  name        String     @db.VarChar(255)
+  slug        String     @unique @db.VarChar(255)
+  description String?    @db.Text
+  story       String?    @db.Text // Long-form farm story
+  status      FarmStatus @default(PENDING)
+
+  // Owner
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id])
+
+  // Contact
+  email   String  @db.VarChar(255)
+  phone   String  @db.VarChar(20)
+  website String? @db.VarChar(500)
+
+  // Location
+  address   String  @db.VarChar(255)
+  city      String  @db.VarChar(100)
+  state     String  @db.VarChar(50)
+  zipCode   String  @db.VarChar(20)
+  country   String  @default("US") @db.VarChar(2)
+  latitude  Decimal @db.Decimal(10, 8)
+  longitude Decimal @db.Decimal(11, 8)
+
+  // Business Details
+  businessName   String? @db.VarChar(255)
+  taxId          String? @db.VarChar(50) // Encrypted
+  businessType   String? @db.VarChar(50) // LLC, Sole Proprietor, etc.
+  yearEstablished Int?
+  farmSize       Decimal? @db.Decimal(10, 2) // Acres
+
+  // Stripe Connect
+  stripeAccountId     String?  @unique @db.VarChar(255)
+  stripeOnboarded     Boolean  @default(false)
+  stripeOnboardedAt   DateTime?
+  payoutsEnabled      Boolean  @default(false)
+  stripeDetailsSubmitted Boolean @default(false)
+
+  // Product Categories (JSONB array)
+  productCategories Json? // ["VEGETABLES", "FRUITS", "DAIRY"]
+
+  // Practices & Tags
+  farmingPractices Json? // ["organic", "regenerative", "no-till"]
+  deliveryRadius   Int?   @default(25) // Miles
+
+  // Analytics
+  profileViewsCount Int @default(0)
+  totalOrdersCount  Int @default(0)
+  totalRevenueUSD   Decimal @default(0) @db.Decimal(12, 2)
+  averageRating     Decimal? @db.Decimal(3, 2)
+  reviewCount       Int @default(0)
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  teamMembers     FarmTeamMember[]
+  photos          FarmPhoto[]
+  certifications  FarmCertification[]
+  products        Product[]
+  orders          Order[]
+  reviews         Review[]
+  qualityIssues   QualityIssue[]
+  messages        Message[]
+  notifications   Notification[]
+  payouts         Payout[]
+  marketLocations MarketLocation[]
+
+  @@index([ownerId])
+  @@index([slug])
+  @@index([status])
+  @@index([latitude, longitude]) // Geospatial queries
+  @@index([createdAt])
+  @@map("farms")
+}
+
+model FarmTeamMember {
+  id       String           @id @default(cuid())
+  farmId   String
+  email    String           @db.VarChar(255)
+  userId   String?          // Null until they accept invitation
+  role     TeamMemberRole   @default(STAFF)
+  status   TeamMemberStatus @default(INVITED)
+  invitedAt DateTime        @default(now())
+  invitedBy String          // User ID who invited
+  joinedAt  DateTime?
+  removedAt DateTime?
+  removedBy String?         // User ID who removed
+
+  farm Farm  @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@unique([farmId, email])
+  @@index([farmId])
+  @@index([userId])
+  @@map("farm_team_members")
+}
+
+model FarmPhoto {
+  id          String   @id @default(cuid())
+  farmId      String
+  photoUrl    String   @db.VarChar(500)
+  thumbnailUrl String  @db.VarChar(500)
+  caption     String?  @db.VarChar(255)
+  altText     String?  @db.VarChar(255)
+  sortOrder   Int      @default(0)
+  isPrimary   Boolean  @default(false)
+  width       Int?
+  height      Int?
+  fileSize    Int?     // Bytes
+  createdAt   DateTime @default(now())
+
+  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  @@index([farmId])
+  @@index([isPrimary])
+  @@map("farm_photos")
+}
+
+model FarmCertification {
+  id             String              @id @default(cuid())
+  farmId         String
+  type           CertificationType
+  certifierName  String              @db.VarChar(255)
+  certificationNumber String?        @db.VarChar(100)
+  documentUrl    String?             @db.VarChar(500)
+  issueDate      DateTime
+  expirationDate DateTime?
+  status         CertificationStatus @default(PENDING)
+  notes          String?             @db.Text
+
+  // Verification
+  verifiedBy String?   // User ID of admin who verified
+  verifiedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  @@index([farmId])
+  @@index([type])
+  @@index([status])
+  @@index([expirationDate])
+  @@map("farm_certifications")
+}
+
+model MarketLocation {
+  id           String  @id @default(cuid())
+  farmId       String
+  marketName   String  @db.VarChar(255)
+  boothNumber  String? @db.VarChar(50)
+  address      String  @db.VarChar(255)
+  city         String  @db.VarChar(100)
+  state        String  @db.VarChar(50)
+  zipCode      String  @db.VarChar(20)
+  latitude     Decimal @db.Decimal(10, 8)
+  longitude    Decimal @db.Decimal(11, 8)
+
+  // Schedule (JSONB)
+  schedule     Json    // {day: "SATURDAY", startTime: "08:00", endTime: "13:00"}
+
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  @@index([farmId])
+  @@map("market_locations")
+}
+
+// ============================================================================
+// PRODUCT CATALOG (FR-003, FR-004)
+// ============================================================================
+
+model Product {
+  id          String          @id @default(cuid())
+  farmId      String
+  name        String          @db.VarChar(255)
+  slug        String          @db.VarChar(255)
+  description String?         @db.VarChar(500)
+  category    ProductCategory
+  status      ProductStatus   @default(DRAFT)
+
+  // Pricing
+  price          Decimal  @db.Decimal(10, 2)
+  compareAtPrice Decimal? @db.Decimal(10, 2) // Original price if on sale
+  unit           String   @db.VarChar(50) // lb, bunch, dozen, each, pint, etc.
+
+  // Inventory
+  trackInventory   Boolean  @default(true)
+  quantityAvailable Decimal? @db.Decimal(10, 2)
+  lowStockThreshold Decimal? @db.Decimal(10, 2)
+  allowBackorder   Boolean  @default(false)
+
+  // Product Details
+  organic         Boolean   @default(false)
+  seasonal        Boolean   @default(false)
+  seasonalStart   DateTime? // Start of season
+  seasonalEnd     DateTime? // End of season
+  harvestDate     DateTime? // When harvested
+  storageInstructions String? @db.Text
+
+  // Images
+  primaryPhotoUrl String? @db.VarChar(500)
+  photoUrls       Json?   // Array of photo URLs
+
+  // Variants (JSONB)
+  hasVariants Boolean @default(false)
+  variants    Json?   // [{size: "Large", price: 8.99}, {size: "Small", price: 4.99}]
+
+  // Tags (JSONB array)
+  tags Json? // ["heirloom", "non-gmo", "locally-grown"]
+
+  // Publishing
+  scheduledPublishAt   DateTime?
+  scheduledUnpublishAt DateTime?
+  publishedAt          DateTime?
+
+  // Analytics
+  viewsCount     Int @default(0)
+  cartAddsCount  Int @default(0)
+  purchaseCount  Int @default(0)
+  wishlistCount  Int @default(0)
+  averageRating  Decimal? @db.Decimal(3, 2)
+  reviewCount    Int @default(0)
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  farm          Farm           @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  cartItems     CartItem[]
+  orderItems    OrderItem[]
+  reviews       Review[]
+  inventoryLogs InventoryLog[]
+
+  @@unique([farmId, slug])
+  @@index([farmId])
+  @@index([category])
+  @@index([status])
+  @@index([organic])
+  @@index([createdAt])
+  @@map("products")
+}
+
+model ProductTemplate {
+  id           String   @id @default(cuid())
+  farmId       String?  // Null = global template
+  name         String   @db.VarChar(255)
+  category     ProductCategory
+  templateData Json     // Pre-filled default values
+  useCount     Int      @default(0)
+  isPublic     Boolean  @default(false) // Available to all farmers?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([farmId])
+  @@index([category])
+  @@map("product_templates")
+}
+
+model InventoryLog {
+  id               String   @id @default(cuid())
+  productId        String
+  previousQuantity Decimal  @db.Decimal(10, 2)
+  newQuantity      Decimal  @db.Decimal(10, 2)
+  changeAmount     Decimal  @db.Decimal(10, 2)
+  changeReason     String   @db.VarChar(100) // "MANUAL_UPDATE", "ORDER_PLACED", "HARVEST", "SPOILAGE"
+  notes            String?  @db.Text
+  changedBy        String   // User ID
+  createdAt        DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([createdAt])
+  @@map("inventory_logs")
+}
+
+// ============================================================================
+// SHOPPING CART (FR-013)
+// ============================================================================
+
+model CartItem {
+  id               String            @id @default(cuid())
+  userId           String
+  productId        String
+  farmId           String            // Denormalized for grouping
+  quantity         Decimal           @db.Decimal(10, 2)
+  unit             String            @db.VarChar(50)
+  priceAtAdd       Decimal           @db.Decimal(10, 2) // Price when added
+  fulfillmentMethod FulfillmentMethod @default(DELIVERY)
+
+  // Reservation (hold stock for 30 min)
+  reservedUntil    DateTime?
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([productId])
+  @@index([farmId])
+  @@index([reservedUntil])
+  @@map("cart_items")
+}
+
+// ============================================================================
+// ORDERS & PAYMENTS (FR-005, FR-014, FR-016)
+// ============================================================================
+
+model Order {
+  id          String        @id @default(cuid())
+  orderNumber String        @unique @db.VarChar(50) // FM-001234
+  customerId  String
+  farmId      String
+  status      OrderStatus   @default(PENDING)
+  paymentStatus PaymentStatus @default(PENDING)
+
+  // Pricing
+  subtotal      Decimal @db.Decimal(10, 2)
+  deliveryFee   Decimal @default(0) @db.Decimal(10, 2)
+  platformFee   Decimal @db.Decimal(10, 2) // 15% commission
+  tax           Decimal @default(0) @db.Decimal(10, 2)
+  discount      Decimal @default(0) @db.Decimal(10, 2)
+  total         Decimal @db.Decimal(10, 2)
+
+  // Farmer receives (85% of subtotal + deliveryFee - tax)
+  farmerAmount  Decimal @db.Decimal(10, 2)
+
+  // Fulfillment
+  fulfillmentMethod FulfillmentMethod
+  deliveryAddressId String?
+  scheduledDate     DateTime?
+  scheduledTimeSlot String?           @db.VarChar(50) // "2:00 PM - 4:00 PM"
+  fulfillmentNotes  String?           @db.Text
+
+  // Stripe Payment
+  stripePaymentIntentId String? @unique @db.VarChar(255)
+  stripeChargeId        String? @db.VarChar(255)
+  stripeTransferId      String? @db.VarChar(255) // Transfer to farmer
+
+  // Customer Notes
+  specialInstructions String? @db.Text
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  confirmedAt DateTime?
+  fulfilledAt DateTime?
+  completedAt DateTime?
+  cancelledAt DateTime?
+  cancelledBy String?   // User ID
+  cancelReason String?  @db.Text
+
+  // Relations
+  customer        User          @relation(fields: [customerId], references: [id])
+  farm            Farm          @relation(fields: [farmId], references: [id])
+  deliveryAddress UserAddress?  @relation("DeliveryAddress", fields: [deliveryAddressId], references: [id])
+  items           OrderItem[]
+  fulfillment     Fulfillment?
+  refunds         Refund[]
+  qualityIssues   QualityIssue[]
+  reviews         Review[]
+  messages        Message[]
+
+  @@index([customerId])
+  @@index([farmId])
+  @@index([status])
+  @@index([paymentStatus])
+  @@index([createdAt])
+  @@index([orderNumber])
+  @@map("orders")
+}
+
+model OrderItem {
+  id          String  @id @default(cuid())
+  orderId     String
+  productId   String
+  productName String  @db.VarChar(255) // Snapshot at purchase time
+  quantity    Decimal @db.Decimal(10, 2)
+  unit        String  @db.VarChar(50)
+  unitPrice   Decimal @db.Decimal(10, 2) // Price at purchase time
+  subtotal    Decimal @db.Decimal(10, 2)
+
+  // Product snapshot (JSONB)
+  productSnapshot Json? // Full product data at time of purchase
+
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+  @@map("order_items")
+}
+
+model Fulfillment {
+  id      String            @id @default(cuid())
+  orderId String            @unique
+  status  FulfillmentStatus @default(PENDING)
+
+  // Tracking
+  trackingNumber String?   @db.VarChar(100)
+  carrierName    String?   @db.VarChar(100)
+  estimatedDate  DateTime?
+  actualDate     DateTime?
+
+  // Proof of Delivery
+  proofPhotoUrl     String? @db.VarChar(500)
+  signature         String? @db.Text // Base64 encoded signature
+  recipientName     String? @db.VarChar(255)
+  deliveryNotes     String? @db.Text
+  gpsLatitude       Decimal? @db.Decimal(10, 8)
+  gpsLongitude      Decimal? @db.Decimal(11, 8)
+  deliveryTimestamp DateTime?
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([status])
+  @@map("fulfillments")
+}
+
+model Payout {
+  id              String   @id @default(cuid())
+  farmId          String
+  amount          Decimal  @db.Decimal(10, 2)
+  currency        String   @default("USD") @db.VarChar(3)
+  status          String   @db.VarChar(50) // pending, paid, failed
+  stripePayoutId  String?  @unique @db.VarChar(255)
+  periodStart     DateTime
+  periodEnd       DateTime
+  orderCount      Int
+  scheduledDate   DateTime // Weekly Monday
+  paidDate        DateTime?
+  failureReason   String?  @db.Text
+  createdAt       DateTime @default(now())
+
+  farm Farm @relation(fields: [farmId], references: [id])
+
+  @@index([farmId])
+  @@index([status])
+  @@index([scheduledDate])
+  @@map("payouts")
+}
+
+model Refund {
+  id             String   @id @default(cuid())
+  orderId        String
+  amount         Decimal  @db.Decimal(10, 2)
+  reason         String   @db.VarChar(255)
+  notes          String?  @db.Text
+  stripeRefundId String?  @unique @db.VarChar(255)
+  status         String   @db.VarChar(50) // pending, succeeded, failed
+  processedAt    DateTime?
+  createdAt      DateTime @default(now())
+
+  order Order @relation(fields: [orderId], references: [id])
+
+  @@index([orderId])
+  @@map("refunds")
+}
+
+// ============================================================================
+// QUALITY GUARANTEE (FR-018)
+// ============================================================================
+
+model QualityIssue {
+  id          String             @id @default(cuid())
+  orderId     String
+  customerId  String
+  farmId      String
+  type        QualityIssueType
+  description String             @db.VarChar(500)
+  photoUrl    String?            @db.VarChar(500)
+  status      QualityIssueStatus @default(OPEN)
+
+  // Resolution
+  resolutionPreference ResolutionType
+  resolution           ResolutionType?
+  resolutionNotes      String?         @db.Text
+  refundAmount         Decimal?        @db.Decimal(10, 2)
+
+  // Timeline
+  createdAt  DateTime  @default(now())
+  resolvedAt DateTime?
+  resolvedBy String?   // User ID of admin/farmer who resolved
+
+  order    Order @relation(fields: [orderId], references: [id])
+  customer User  @relation(fields: [customerId], references: [id])
+  farm     Farm  @relation(fields: [farmId], references: [id])
+
+  @@index([orderId])
+  @@index([customerId])
+  @@index([farmId])
+  @@index([status])
+  @@map("quality_issues")
+}
+
+// ============================================================================
+// REVIEWS & RATINGS (FR-017)
+// ============================================================================
+
+model Review {
+  id         String       @id @default(cuid())
+  farmId     String
+  productId  String?      // Null = farm review
+  customerId String
+  orderId    String?      // Null if not order-related
+  rating     Int          // 1-5 stars
+  reviewText String?      @db.VarChar(500)
+  photoUrl   String?      @db.VarChar(500)
+  isVerifiedPurchase Boolean @default(false)
+  status     ReviewStatus @default(PENDING)
+
+  // Helpfulness
+  helpfulCount   Int @default(0)
+  unhelpfulCount Int @default(0)
+
+  // Farmer Response
+  farmerResponse   String?   @db.VarChar(500)
+  farmerRespondedAt DateTime?
+
+  // Moderation
+  flaggedReason String? @db.VarChar(255)
+  flaggedAt     DateTime?
+  moderatedBy   String? // User ID
+  moderatedAt   DateTime?
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  farm     Farm     @relation(fields: [farmId], references: [id])
+  product  Product? @relation(fields: [productId], references: [id])
+  customer User     @relation(fields: [customerId], references: [id])
+  order    Order?   @relation(fields: [orderId], references: [id])
+
+  @@index([farmId])
+  @@index([productId])
+  @@index([customerId])
+  @@index([orderId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("reviews")
+}
+
+// ============================================================================
+// MESSAGING (FR-009)
+// ============================================================================
+
+model Message {
+  id         String   @id @default(cuid())
+  senderId   String
+  recipientId String? // Null if sent to farm (any team member can see)
+  farmId     String?  // If message is farm-related
+  orderId    String?  // If message is order-related
+  subject    String?  @db.VarChar(255)
+  body       String   @db.Text
+  isRead     Boolean  @default(false)
+  readAt     DateTime?
+  createdAt  DateTime @default(now())
+
+  sender User   @relation("MessageSender", fields: [senderId], references: [id])
+  farm   Farm?  @relation(fields: [farmId], references: [id])
+  order  Order? @relation(fields: [orderId], references: [id])
+
+  @@index([senderId])
+  @@index([recipientId])
+  @@index([farmId])
+  @@index([orderId])
+  @@index([isRead])
+  @@map("messages")
+}
+
+// ============================================================================
+// NOTIFICATIONS (FR-009, FR-023)
+// ============================================================================
+
+model Notification {
+  id        String             @id @default(cuid())
+  userId    String?            // Null = farm notification
+  farmId    String?            // Farm-specific notification
+  type      NotificationType
+  channel   NotificationChannel
+  title     String             @db.VarChar(255)
+  body      String             @db.Text
+  data      Json?              // Additional data (orderId, etc.)
+  isRead    Boolean            @default(false)
+  readAt    DateTime?
+  sentAt    DateTime?
+  createdAt DateTime           @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+  farm Farm? @relation(fields: [farmId], references: [id])
+
+  @@index([userId])
+  @@index([farmId])
+  @@index([type])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+// ============================================================================
+// ANALYTICS & METRICS (FR-008, FR-023)
+// ============================================================================
+
+model AnalyticsEvent {
+  id         String   @id @default(cuid())
+  eventType  String   @db.VarChar(100)
+  userId     String?
+  farmId     String?
+  productId  String?
+  orderId    String?
+  sessionId  String?  @db.VarChar(255)
+  properties Json?    // Flexible event data
+  userAgent  String?  @db.Text
+  ipAddress  String?  @db.VarChar(45)
+  referrer   String?  @db.VarChar(500)
+  createdAt  DateTime @default(now())
+
+  @@index([eventType])
+  @@index([userId])
+  @@index([farmId])
+  @@index([productId])
+  @@index([createdAt])
+  @@map("analytics_events")
+}
+
+// ============================================================================
+// MIGRATIONS & VERSION TRACKING
+// ============================================================================
+
+// This table is managed by Prisma Migrate automatically
+// model _prisma_migrations { }

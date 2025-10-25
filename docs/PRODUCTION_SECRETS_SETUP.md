@@ -51,8 +51,8 @@ Add the following secrets to your GitHub repository:
 21. Implement logging and monitoring for deployments to track any anomalies or issues
 22. Ensure that the production environment is compliant with any relevant regulations or standards
 23. Conduct regular security training for the team to keep them informed about best practices and potential threats
-24. Collaborate with the security team to conduct periodic security assessments of the production environment  
-25. Establish a clear incident response plan in case of a security breach or other emergencies  
+24. Collaborate with the security team to conduct periodic security assessments of the production environment
+25. Establish a clear incident response plan in case of a security breach or other emergencies
 26. Maintain a change log for all modifications made to the secrets and environment settings for accountability and traceability
 27. Use GitHub's audit log to monitor access and changes to the repository and its settings
 28. Ensure that all dependencies and third-party libraries used in the production environment are regularly updated to mitigate security vulnerabilities

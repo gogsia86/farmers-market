@@ -1,0 +1,246 @@
+{
+  // ========================================
+  // 🎯 CODE SNIPPETS FOR QUANTUM AGRICULTURAL PLATFORM
+  // ========================================
+
+  // === NEXT.JS PAGE COMPONENTS ===
+  "Next.js Page Component": {
+    "prefix": ["nextpage", "np"],
+    "body": [
+      "import { Metadata } from 'next';",
+      "",
+      "export const metadata: Metadata = {",
+      "  title: '${1:Page Title}',",
+      "  description: '${2:Page description}',",
+      "};",
+      "",
+      "export default function ${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/}() {",
+      "  return (",
+      "    <div className=\"container mx-auto px-4 py-8\">",
+      "      <h1 className=\"text-4xl font-bold mb-6\">${1:Page Title}</h1>",
+      "      $0",
+      "    </div>",
+      "  );",
+      "}",
+    ],
+    "description": "Create a Next.js page component with metadata",
+  },
+
+  // === API ROUTE HANDLERS ===
+  "Next.js API Route": {
+    "prefix": ["nextapi", "napi"],
+    "body": [
+      "import { NextRequest, NextResponse } from 'next/server';",
+      "",
+      "export async function GET(request: NextRequest) {",
+      "  try {",
+      "    $0",
+      "    return NextResponse.json({ success: true, data: null });",
+      "  } catch (error) {",
+      "    console.error('API Error:', error);",
+      "    return NextResponse.json(",
+      "      { success: false, error: 'Internal server error' },",
+      "      { status: 500 }",
+      "    );",
+      "  }",
+      "}",
+      "",
+      "export async function POST(request: NextRequest) {",
+      "  try {",
+      "    const body = await request.json();",
+      "    ",
+      "    return NextResponse.json({ success: true, data: null });",
+      "  } catch (error) {",
+      "    console.error('API Error:', error);",
+      "    return NextResponse.json(",
+      "      { success: false, error: 'Internal server error' },",
+      "      { status: 500 }",
+      "    );",
+      "  }",
+      "}",
+    ],
+    "description": "Create Next.js API route handlers",
+  },
+
+  // === REACT HOOKS ===
+  "React useState": {
+    "prefix": ["us", "useState"],
+    "body": [
+      "const [${1:state}, set${1/(.*)/${1:/capitalize}/}] = useState$2($3);$0",
+    ],
+    "description": "React useState hook",
+  },
+
+  "React useEffect": {
+    "prefix": ["ue", "useEffect"],
+    "body": ["useEffect(() => {", "  $0", "}, [${1}]);"],
+    "description": "React useEffect hook",
+  },
+
+  "React Custom Hook": {
+    "prefix": ["hook", "customhook"],
+    "body": [
+      "import { useState, useEffect } from 'react';",
+      "",
+      "export function use${1:CustomHook}() {",
+      "  const [${2:state}, set${2/(.*)/${1:/capitalize}/}] = useState$3($4);",
+      "",
+      "  useEffect(() => {",
+      "    $0",
+      "  }, []);",
+      "",
+      "  return { ${2:state}, set${2/(.*)/${1:/capitalize}/} };",
+      "}",
+    ],
+    "description": "Create a custom React hook",
+  },
+
+  // === PRISMA QUERIES ===
+  "Prisma Create": {
+    "prefix": ["pcreate", "prisma-create"],
+    "body": [
+      "const ${1:result} = await prisma.${2:model}.create({",
+      "  data: {",
+      "    $0",
+      "  },",
+      "});",
+    ],
+    "description": "Prisma create query",
+  },
+
+  "Prisma Find Many": {
+    "prefix": ["pfind", "prisma-find"],
+    "body": [
+      "const ${1:results} = await prisma.${2:model}.findMany({",
+      "  where: {",
+      "    $0",
+      "  },",
+      "});",
+    ],
+    "description": "Prisma findMany query",
+  },
+
+  // === JEST TESTS ===
+  "Jest Test Suite": {
+    "prefix": ["describe", "test-suite"],
+    "body": [
+      "describe('${1:Component/Feature}', () => {",
+      "  beforeEach(() => {",
+      "    $0",
+      "  });",
+      "",
+      "  it('should ${2:test description}', () => {",
+      "    ",
+      "  });",
+      "});",
+    ],
+    "description": "Create Jest test suite",
+  },
+
+  "React Testing Library Test": {
+    "prefix": ["rtl", "react-test"],
+    "body": [
+      "import { render, screen } from '@testing-library/react';",
+      "import { ${1:Component} } from './${1:Component}';",
+      "",
+      "describe('${1:Component}', () => {",
+      "  it('should render successfully', () => {",
+      "    render(<${1:Component} />);",
+      "    $0",
+      "  });",
+      "});",
+    ],
+    "description": "Create React Testing Library test",
+  },
+
+  // === QUANTUM AGRICULTURAL PATTERNS ===
+  "Quantum Consciousness Component": {
+    "prefix": ["qcc", "quantum-component"],
+    "body": [
+      "import { useQuantumConsciousness } from '@/hooks/useQuantumConsciousness';",
+      "",
+      "interface ${1:Component}Props {",
+      "  $2",
+      "}",
+      "",
+      "export function ${1:Component}({ $3 }: ${1:Component}Props) {",
+      "  const { awareness, harmonicFrequency } = useQuantumConsciousness();",
+      "",
+      "  return (",
+      "    <div className=\"quantum-consciousness-container\">",
+      "      $0",
+      "    </div>",
+      "  );",
+      "}",
+    ],
+    "description": "Create Quantum Consciousness component",
+  },
+
+  "Agricultural Monitoring Hook": {
+    "prefix": ["agri-hook", "farm-hook"],
+    "body": [
+      "import { useState, useEffect } from 'react';",
+      "import { useRealTimeMetrics } from '@/hooks/useRealTimeMetrics';",
+      "",
+      "export function use${1:Agricultural}Monitoring() {",
+      "  const { metrics, isConnected } = useRealTimeMetrics();",
+      "  const [${2:data}, set${2/(.*)/${1:/capitalize}/}] = useState(null);",
+      "",
+      "  useEffect(() => {",
+      "    if (!isConnected) return;",
+      "    $0",
+      "  }, [isConnected, metrics]);",
+      "",
+      "  return { ${2:data}, isConnected };",
+      "}",
+    ],
+    "description": "Create agricultural monitoring hook",
+  },
+
+  // === ERROR HANDLING ===
+  "Try Catch Block": {
+    "prefix": ["try", "trycatch"],
+    "body": [
+      "try {",
+      "  $0",
+      "} catch (error) {",
+      "  console.error('${1:Error description}:', error);",
+      "  throw error;",
+      "}",
+    ],
+    "description": "Try-catch error handling",
+  },
+
+  "Async Try Catch": {
+    "prefix": ["atry", "async-try"],
+    "body": [
+      "try {",
+      "  const ${1:result} = await ${2:asyncFunction}();",
+      "  $0",
+      "} catch (error) {",
+      "  console.error('${3:Error description}:', error);",
+      "  throw error;",
+      "}",
+    ],
+    "description": "Async try-catch error handling",
+  },
+
+  // === CONSOLE LOGS (DIVINE STYLE) ===
+  "Console Log (Divine)": {
+    "prefix": ["cld", "divine-log"],
+    "body": ["console.log('🌟 ${1:Label}:', $2);$0"],
+    "description": "Divine-style console log",
+  },
+
+  "Console Error (Divine)": {
+    "prefix": ["ced", "divine-error"],
+    "body": ["console.error('❌ ${1:Error}:', $2);$0"],
+    "description": "Divine-style console error",
+  },
+
+  "Console Warn (Divine)": {
+    "prefix": ["cwd", "divine-warn"],
+    "body": ["console.warn('⚠️  ${1:Warning}:', $2);$0"],
+    "description": "Divine-style console warning",
+  },
+}

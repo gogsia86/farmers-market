@@ -75,11 +75,11 @@ npx prisma migrate deploy
 
 #### Version Compatibility
 
-| Version | Status | Migration Path |
-|---------|--------|---------------|
-| v1.x    | Legacy | v1 → v2 → v3  |
-| v2.x    | Stable | v2 → v3       |
-| v3.x    | Current| Direct        |
+| Version | Status  | Migration Path |
+| ------- | ------- | -------------- |
+| v1.x    | Legacy  | v1 → v2 → v3   |
+| v2.x    | Stable  | v2 → v3        |
+| v3.x    | Current | Direct         |
 
 ### 4. WebSocket Migration
 
@@ -95,16 +95,16 @@ npx prisma migrate deploy
 ```typescript
 // Update quantum socket configuration
 const quantumSocket = io(process.env.NEXT_PUBLIC_WS_URL, {
-  transports: ['websocket'],
+  transports: ["websocket"],
   query: {
-    quantumMode: 'enabled',
-    temporalSensitivity: 'high',
-    migrationPhase: 'active'
-  }
+    quantumMode: "enabled",
+    temporalSensitivity: "high",
+    migrationPhase: "active",
+  },
 });
 
 // Implement migration handlers
-quantumSocket.on('state-transition', async (payload) => {
+quantumSocket.on("state-transition", async (payload) => {
   await handleStateMigration(payload);
 });
 ```
@@ -118,7 +118,7 @@ interface MigrationState {
   previousState: QuantumState;
   targetState: QuantumState;
   coherenceLevel: number;
-  migrationPhase: 'preparing' | 'migrating' | 'verifying';
+  migrationPhase: "preparing" | "migrating" | "verifying";
 }
 ```
 
@@ -272,7 +272,6 @@ interface StateUpdate {
 ### Problem: Consciousness Drop
 
 **Solution**: Boost energy fields and restore harmonic resonance
-
 
 ## Support Resources
 

@@ -1,0 +1,398 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    // ========================================
+    // 🌟 WORKSPACE INITIALIZATION
+    // ========================================
+    {
+      "label": "🌟 Initialize Divine Workspace",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/.vscode/workspace-init.ps1"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": false
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    },
+    // ========================================
+    // 🚀 DEVELOPMENT TASKS
+    // ========================================
+    {
+      "label": "🌟 Dev: Start Development Server",
+      "type": "npm",
+      "script": "dev",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": true
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    },
+    {
+      "label": "⚡ Dev: TURBO Mode (HP OMEN 16GB)",
+      "type": "npm",
+      "script": "dev:turbo",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": true
+      },
+      "group": "build",
+      "options": {
+        "env": {
+          "NODE_OPTIONS": "--max-old-space-size=16384",
+          "UV_THREADPOOL_SIZE": "12",
+          "PARALLEL_BUILDS": "12"
+        }
+      }
+    },
+    {
+      "label": "🏗️  Build: Production Build",
+      "type": "npm",
+      "script": "build",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "group": "build"
+    },
+    {
+      "label": "🔥 Build: OPTIMIZED (HP OMEN 32GB)",
+      "type": "npm",
+      "script": "build:optimized",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "group": "build",
+      "options": {
+        "env": {
+          "NODE_OPTIONS": "--max-old-space-size=32768 --max-semi-space-size=128",
+          "UV_THREADPOOL_SIZE": "12",
+          "PARALLEL_BUILDS": "12",
+          "TERSER_WORKERS": "12"
+        }
+      }
+    },
+    {
+      "label": "🧪 Test: Run All Tests",
+      "type": "npm",
+      "script": "test",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "🎯 Test: Run Tests in Watch Mode",
+      "type": "shell",
+      "command": "npm",
+      "args": ["test", "--", "--watch"],
+      "problemMatcher": [],
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "group": "test"
+    },
+    {
+      "label": "🔍 Lint: Check All Files",
+      "type": "npm",
+      "script": "lint",
+      "problemMatcher": ["$eslint-stylish"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "🛠️  Format: Run Prettier",
+      "type": "shell",
+      "command": "npx",
+      "args": ["prettier", "--write", "."],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent"
+      }
+    },
+    {
+      "label": "🗄️  Database: Prisma Studio",
+      "type": "shell",
+      "command": "npx",
+      "args": ["prisma", "studio"],
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "🔄 Database: Run Migrations",
+      "type": "shell",
+      "command": "npx",
+      "args": ["prisma", "migrate", "dev"],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "📦 Install: Clean Install Dependencies",
+      "type": "shell",
+      "command": "npm",
+      "args": ["ci"],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "🧹 Clean: Remove Build Artifacts",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-Command",
+        "Remove-Item -Path .next,node_modules/.cache,dist,out,.turbo -Recurse -Force -ErrorAction SilentlyContinue; Write-Host 'Clean complete!' -ForegroundColor Green"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "⚡ TypeScript: Check Types",
+      "type": "shell",
+      "command": "npx",
+      "args": ["tsc", "--noEmit"],
+      "problemMatcher": ["$tsc"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+
+    // ========================================
+    // 🔥 NVIDIA PROFILING TASKS (WINDOWS POWERSHELL)
+    // ========================================
+    {
+      "label": "🚀 Profile: Basic (NVIDIA Nsight)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/profiling_scripts/profile_basic.ps1"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true,
+        "showReuseMessage": false,
+        "focus": true
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      }
+    },
+    {
+      "label": "🔥 Profile: Advanced (NVIDIA Nsight)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/profiling_scripts/profile_advanced.ps1",
+        "-Duration",
+        "60",
+        "-Interval",
+        "5"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true,
+        "focus": true
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      }
+    },
+    {
+      "label": "🧪 Profile: Test Suite (NVIDIA Nsight)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/profiling_scripts/profile_test_suite.ps1"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      }
+    },
+    {
+      "label": "🏗️  Profile: Next.js Build (NVIDIA Nsight)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/profiling_scripts/profile_next_build.ps1"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "📊 Open Profile in Nsight Viewer",
+      "type": "shell",
+      "command": "nsys-ui",
+      "args": ["${input:profileFilePath}"],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "never"
+      }
+    },
+    {
+      "label": "📈 Generate Profile Statistics",
+      "type": "shell",
+      "command": "nsys",
+      "args": [
+        "stats",
+        "--report",
+        "cuda_gpu_trace,cuda_api_sum,osrt_sum,nvtx_sum",
+        "--format",
+        "column",
+        "${input:profileFilePath}"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "🔍 Export Profile to CSV",
+      "type": "shell",
+      "command": "nsys",
+      "args": [
+        "export",
+        "--type",
+        "csv",
+        "--output",
+        "${workspaceFolder}/profiling_output/timeline.csv",
+        "${input:profileFilePath}"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    // ========================================
+    // 🔮 PERPLEXITY AI INTEGRATION
+    // ========================================
+    {
+      "label": "🔍 Ask Perplexity - Test Suite",
+      "type": "shell",
+      "command": "npx",
+      "args": ["tsx", "scripts/test-perplexity.ts"],
+      "problemMatcher": [],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": true
+      }
+    },
+    {
+      "label": "🌾 Perplexity - Agricultural Research",
+      "type": "shell",
+      "command": "npx",
+      "args": [
+        "tsx",
+        "-e",
+        "import { researchAgriculturalTopic } from './src/lib/ai/perplexity'; researchAgriculturalTopic('${input:agriculturalTopic}').then(r => console.log(r.answer));"
+      ],
+      "problemMatcher": [],
+      "group": "test"
+    },
+    {
+      "label": "💻 Perplexity - Generate Code",
+      "type": "shell",
+      "command": "npx",
+      "args": [
+        "tsx",
+        "-e",
+        "import { generateCode } from './src/lib/ai/perplexity'; generateCode('${input:codeDescription}').then(r => console.log(r.answer));"
+      ],
+      "problemMatcher": [],
+      "group": "test"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "profileFilePath",
+      "type": "promptString",
+      "description": "Enter path to .nsys-rep file (or use file picker)",
+      "default": "${workspaceFolder}/profiling_output/farmers_market_advanced_*.nsys-rep"
+    },
+    {
+      "id": "agriculturalTopic",
+      "type": "promptString",
+      "description": "Enter agricultural topic to research",
+      "default": "organic pest control methods"
+    },
+    {
+      "id": "codeDescription",
+      "type": "promptString",
+      "description": "Describe the code you want to generate",
+      "default": "a TypeScript function to calculate crop yield"
+    }
+  ]
+}

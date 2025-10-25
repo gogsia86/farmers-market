@@ -1,8 +1,33 @@
-# API Documentation
+# 📝 Farmers Market API Documentation
+
+This folder contains the OpenAPI/Swagger specifications and usage notes for all Farmers Market API endpoints.
+
+## Structure
+
+- `openapi.yaml`: Main OpenAPI 3.0 spec for the public API
+- Example requests/responses for each endpoint
+- Usage notes and authentication details
+
+## Quick Start
+
+- View the OpenAPI spec in [Swagger Editor](https://editor.swagger.io/) or compatible tools
+- Use `/products` endpoint for product listing, filtering, and pagination
+- All endpoints documented with request/response schemas
+
+## Contribution
+
+- Add new endpoints to `openapi.yaml`
+- Include example requests and responses for clarity
+- Document authentication and error handling for each endpoint
+
+---
+
+For questions, contact the Farmers Market API team at [support@farmers-market.com](mailto:support@farmers-market.com)# API Documentation
 
 ## 🔌 API Endpoints
 
 ### Authentication
+
 ```typescript
 // POST /api/auth/login
 interface LoginRequest {
@@ -14,7 +39,7 @@ interface LoginRequest {
 interface RegisterRequest {
   email: string;
   password: string;
-  role: 'farmer' | 'customer' | 'admin';
+  role: "farmer" | "customer" | "admin";
   farmDetails?: FarmRegistration;
 }
 ```
@@ -22,10 +47,11 @@ interface RegisterRequest {
 ### Agricultural APIs
 
 #### Crop Management
+
 ```typescript
 // GET /api/crops
 interface CropQuery {
-  season?: 'spring' | 'summer' | 'fall' | 'winter';
+  season?: "spring" | "summer" | "fall" | "winter";
   organic?: boolean;
   region?: string;
 }
@@ -41,6 +67,7 @@ interface CropCreation {
 ```
 
 #### Market Features
+
 ```typescript
 // GET /api/market/inventory
 interface InventoryQuery {
@@ -62,6 +89,7 @@ interface OrderCreation {
 ## 🔐 Authentication & Authorization
 
 ### JWT Format
+
 ```typescript
 interface JWTPayload {
   userId: string;
@@ -73,11 +101,12 @@ interface JWTPayload {
 ```
 
 ### Role-Based Access
+
 ```typescript
 enum UserRole {
-  FARMER = 'farmer',
-  CUSTOMER = 'customer',
-  ADMIN = 'admin'
+  FARMER = "farmer",
+  CUSTOMER = "customer",
+  ADMIN = "admin",
 }
 
 interface RolePermissions {
@@ -90,11 +119,12 @@ interface RolePermissions {
 ## 📡 Real-time Features
 
 ### WebSocket Events
+
 ```typescript
 interface WebSocketEvents {
-  'inventory-update': InventoryUpdate;
-  'order-status': OrderStatusUpdate;
-  'price-change': PriceUpdate;
+  "inventory-update": InventoryUpdate;
+  "order-status": OrderStatusUpdate;
+  "price-change": PriceUpdate;
 }
 ```
 
@@ -106,7 +136,7 @@ sequenceDiagram
     API->>+Auth Service: Validate Credentials
     Auth Service->>-API: JWT Token
     API->>-Client: Auth Response
-    
+
     Client->>+API: Agricultural Request
     API->>+Auth Service: Validate Token
     Auth Service->>-API: Token Valid
@@ -124,26 +154,28 @@ sequenceDiagram
 ## 🧪 Testing
 
 ### Authentication Tests
+
 ```typescript
-describe('Authentication API', () => {
-  it('should authenticate valid credentials', async () => {
+describe("Authentication API", () => {
+  it("should authenticate valid credentials", async () => {
     // Test implementation
   });
-  
-  it('should validate JWT tokens', async () => {
+
+  it("should validate JWT tokens", async () => {
     // Test implementation
   });
 });
 ```
 
 ### Agricultural Tests
+
 ```typescript
-describe('Crop Management API', () => {
-  it('should handle seasonal queries', async () => {
+describe("Crop Management API", () => {
+  it("should handle seasonal queries", async () => {
     // Test implementation
   });
-  
-  it('should validate harvest dates', async () => {
+
+  it("should validate harvest dates", async () => {
     // Test implementation
   });
 });
@@ -159,16 +191,17 @@ interface APIError {
 }
 
 enum ErrorCodes {
-  AUTH_FAILED = 'AUTH_001',
-  INVALID_INPUT = 'VAL_001',
-  NOT_FOUND = 'NF_001',
-  SERVER_ERROR = 'SRV_001'
+  AUTH_FAILED = "AUTH_001",
+  INVALID_INPUT = "VAL_001",
+  NOT_FOUND = "NF_001",
+  SERVER_ERROR = "SRV_001",
 }
 ```
 
 ## 📈 Monitoring
 
 ### Metrics
+
 ```typescript
 interface APIMetrics {
   endpoint: string;
@@ -180,10 +213,11 @@ interface APIMetrics {
 ```
 
 ### Health Checks
+
 ```typescript
 interface HealthCheck {
   service: string;
-  status: 'healthy' | 'degraded' | 'down';
+  status: "healthy" | "degraded" | "down";
   lastChecked: Date;
   metrics: Record<string, number>;
 }
@@ -191,4 +225,4 @@ interface HealthCheck {
 
 ---
 
-*This API documentation is automatically updated based on implementation changes.*
+_This API documentation is automatically updated based on implementation changes._
