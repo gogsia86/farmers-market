@@ -3,35 +3,47 @@
  * Divine email campaign creation interface
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Calendar, Mail, Users, Send } from 'lucide-react';
-import type { CampaignSegment, CreateCampaignInput } from '@/types/marketing.types';
+import type {
+  CampaignSegment,
+  CreateCampaignInput,
+} from "@/types/marketing.types";
+import { Calendar, Mail, Send, Users } from "lucide-react";
+import { useState } from "react";
 
 const EMAIL_TEMPLATES = [
-  { id: 'welcome', name: 'Welcome Email', thumbnail: '👋', type: 'WELCOME' },
-  { id: 'promo', name: 'Promotional', thumbnail: '🎉', type: 'PROMOTIONAL' },
-  { id: 'newsletter', name: 'Newsletter', thumbnail: '📰', type: 'NEWSLETTER' },
-  { id: 'cart', name: 'Abandoned Cart', thumbnail: '🛒', type: 'ABANDONED_CART' },
+  { id: "welcome", name: "Welcome Email", thumbnail: "👋", type: "WELCOME" },
+  { id: "promo", name: "Promotional", thumbnail: "🎉", type: "PROMOTIONAL" },
+  { id: "newsletter", name: "Newsletter", thumbnail: "📰", type: "NEWSLETTER" },
+  {
+    id: "cart",
+    name: "Abandoned Cart",
+    thumbnail: "🛒",
+    type: "ABANDONED_CART",
+  },
 ];
 
-const AUDIENCE_SEGMENTS: Array<{ value: CampaignSegment; label: string; icon: string }> = [
-  { value: 'ALL_USERS', label: 'All Users', icon: '👥' },
-  { value: 'FARMERS_ONLY', label: 'Farmers Only', icon: '🚜' },
-  { value: 'CONSUMERS_ONLY', label: 'Consumers Only', icon: '🛍️' },
-  { value: 'NEW_USERS', label: 'New Users', icon: '🆕' },
-  { value: 'INACTIVE_USERS', label: 'Inactive Users', icon: '😴' },
-  { value: 'VIP_CUSTOMERS', label: 'VIP Customers', icon: '⭐' },
+const AUDIENCE_SEGMENTS: Array<{
+  value: CampaignSegment;
+  label: string;
+  icon: string;
+}> = [
+  { value: "ALL_USERS", label: "All Users", icon: "👥" },
+  { value: "FARMERS_ONLY", label: "Farmers Only", icon: "🚜" },
+  { value: "CONSUMERS_ONLY", label: "Consumers Only", icon: "🛍️" },
+  { value: "NEW_USERS", label: "New Users", icon: "🆕" },
+  { value: "INACTIVE_USERS", label: "Inactive Users", icon: "😴" },
+  { value: "VIP_CUSTOMERS", label: "VIP Customers", icon: "⭐" },
 ];
 
 export function CampaignBuilder() {
   const [formData, setFormData] = useState<Partial<CreateCampaignInput>>({
-    name: '',
-    subject: '',
-    preheader: '',
-    templateId: '',
-    segment: 'ALL_USERS',
+    name: "",
+    subject: "",
+    preheader: "",
+    templateId: "",
+    segment: "ALL_USERS",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -43,31 +55,33 @@ export function CampaignBuilder() {
     setError(null);
 
     try {
-      const response = await fetch('/api/marketing/campaigns', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/marketing/campaigns", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
       const data = await response.json();
 
       if (!data.success) {
-        throw new Error(data.error || 'Failed to create campaign');
+        throw new Error(data.error || "Failed to create campaign");
       }
 
       setSuccess(true);
       // Reset form
       setFormData({
-        name: '',
-        subject: '',
-        preheader: '',
-        templateId: '',
-        segment: 'ALL_USERS',
+        name: "",
+        subject: "",
+        preheader: "",
+        templateId: "",
+        segment: "ALL_USERS",
       });
 
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create campaign');
+      setError(
+        err instanceof Error ? err.message : "Failed to create campaign"
+      );
     } finally {
       setLoading(false);
     }
@@ -78,7 +92,9 @@ export function CampaignBuilder() {
       <div className="bg-white rounded-lg shadow-lg p-8">
         <div className="flex items-center gap-3 mb-6">
           <Mail className="h-8 w-8 text-agricultural-600" />
-          <h2 className="text-3xl font-bold text-gray-900">Create Email Campaign</h2>
+          <h2 className="text-3xl font-bold text-gray-900">
+            Create Email Campaign
+          </h2>
         </div>
 
         {success && (
@@ -104,7 +120,9 @@ export function CampaignBuilder() {
             <input
               type="text"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               placeholder="e.g., Summer Harvest Promotion"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-agricultural-500"
               required
@@ -119,7 +137,9 @@ export function CampaignBuilder() {
             <input
               type="text"
               value={formData.subject}
-              onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, subject: e.target.value })
+              }
               placeholder="e.g., 🌾 Fresh Summer Produce - 20% OFF This Week!"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-agricultural-500"
               required
@@ -134,7 +154,9 @@ export function CampaignBuilder() {
             <input
               type="text"
               value={formData.preheader}
-              onChange={(e) => setFormData({ ...formData, preheader: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, preheader: e.target.value })
+              }
               placeholder="Short preview text that appears after the subject"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-agricultural-500"
               maxLength={150}
@@ -154,15 +176,19 @@ export function CampaignBuilder() {
                 <button
                   key={template.id}
                   type="button"
-                  onClick={() => setFormData({ ...formData, templateId: template.id })}
+                  onClick={() =>
+                    setFormData({ ...formData, templateId: template.id })
+                  }
                   className={`p-4 border-2 rounded-lg transition-all ${
                     formData.templateId === template.id
-                      ? 'border-agricultural-600 bg-agricultural-50'
-                      : 'border-gray-200 hover:border-agricultural-300'
+                      ? "border-agricultural-600 bg-agricultural-50"
+                      : "border-gray-200 hover:border-agricultural-300"
                   }`}
                 >
                   <div className="text-4xl mb-2">{template.thumbnail}</div>
-                  <p className="text-sm font-medium text-gray-900">{template.name}</p>
+                  <p className="text-sm font-medium text-gray-900">
+                    {template.name}
+                  </p>
                 </button>
               ))}
             </div>
@@ -179,11 +205,13 @@ export function CampaignBuilder() {
                 <button
                   key={segment.value}
                   type="button"
-                  onClick={() => setFormData({ ...formData, segment: segment.value })}
+                  onClick={() =>
+                    setFormData({ ...formData, segment: segment.value })
+                  }
                   className={`p-3 border-2 rounded-lg transition-all ${
                     formData.segment === segment.value
-                      ? 'border-agricultural-600 bg-agricultural-50'
-                      : 'border-gray-200 hover:border-agricultural-300'
+                      ? "border-agricultural-600 bg-agricultural-50"
+                      : "border-gray-200 hover:border-agricultural-300"
                   }`}
                 >
                   <span className="text-2xl mr-2">{segment.icon}</span>
@@ -201,8 +229,10 @@ export function CampaignBuilder() {
             </label>
             <input
               type="datetime-local"
-              value={formData.scheduledFor || ''}
-              onChange={(e) => setFormData({ ...formData, scheduledFor: e.target.value })}
+              value={formData.scheduledFor || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, scheduledFor: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-agricultural-500"
             />
           </div>
@@ -214,7 +244,7 @@ export function CampaignBuilder() {
               disabled={loading || !formData.templateId}
               className="flex-1 px-6 py-3 bg-agricultural-600 text-white rounded-lg hover:bg-agricultural-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
             >
-              {loading ? 'Creating...' : 'Create Campaign'}
+              {loading ? "Creating..." : "Create Campaign"}
             </button>
 
             <button

@@ -5,30 +5,30 @@
 
 // Campaign Status
 export type CampaignStatus =
-  | 'DRAFT'
-  | 'SCHEDULED'
-  | 'SENDING'
-  | 'SENT'
-  | 'PAUSED'
-  | 'CANCELLED';
+  | "DRAFT"
+  | "SCHEDULED"
+  | "SENDING"
+  | "SENT"
+  | "PAUSED"
+  | "CANCELLED";
 
 // Campaign Segment (Audience)
 export type CampaignSegment =
-  | 'ALL_USERS'
-  | 'FARMERS_ONLY'
-  | 'CONSUMERS_ONLY'
-  | 'NEW_USERS'
-  | 'INACTIVE_USERS'
-  | 'VIP_CUSTOMERS'
-  | 'LOCATION_BASED'
-  | 'CUSTOM';
+  | "ALL_USERS"
+  | "FARMERS_ONLY"
+  | "CONSUMERS_ONLY"
+  | "NEW_USERS"
+  | "INACTIVE_USERS"
+  | "VIP_CUSTOMERS"
+  | "LOCATION_BASED"
+  | "CUSTOM";
 
 // Discount Types
 export type DiscountType =
-  | 'PERCENTAGE'
-  | 'FIXED_AMOUNT'
-  | 'FREE_SHIPPING'
-  | 'BUY_ONE_GET_ONE';
+  | "PERCENTAGE"
+  | "FIXED_AMOUNT"
+  | "FREE_SHIPPING"
+  | "BUY_ONE_GET_ONE";
 
 // Email Campaign
 export interface EmailCampaign {
@@ -63,16 +63,16 @@ export interface EmailTemplate {
 }
 
 export type EmailTemplateType =
-  | 'WELCOME'
-  | 'PROMOTIONAL'
-  | 'NEWSLETTER'
-  | 'ABANDONED_CART'
-  | 'ORDER_CONFIRMATION'
-  | 'CUSTOM';
+  | "WELCOME"
+  | "PROMOTIONAL"
+  | "NEWSLETTER"
+  | "ABANDONED_CART"
+  | "ORDER_CONFIRMATION"
+  | "CUSTOM";
 
 // Segment Filters
 export interface SegmentFilters {
-  userType?: 'FARMER' | 'CONSUMER';
+  userType?: "FARMER" | "CONSUMER";
   location?: {
     state?: string;
     city?: string;
@@ -155,7 +155,7 @@ export interface DiscountCode {
   };
   eligibleUsers?: {
     userIds?: string[];
-    userType?: 'NEW' | 'EXISTING' | 'ALL';
+    userType?: "NEW" | "EXISTING" | "ALL";
   };
 
   createdAt: Date;
@@ -174,13 +174,13 @@ export interface EmailEvent {
 }
 
 export type EmailEventType =
-  | 'SENT'
-  | 'DELIVERED'
-  | 'OPENED'
-  | 'CLICKED'
-  | 'BOUNCED'
-  | 'UNSUBSCRIBED'
-  | 'COMPLAINED';
+  | "SENT"
+  | "DELIVERED"
+  | "OPENED"
+  | "CLICKED"
+  | "BOUNCED"
+  | "UNSUBSCRIBED"
+  | "COMPLAINED";
 
 // Referral
 export interface Referral {
@@ -197,7 +197,7 @@ export interface Referral {
   completedAt?: Date;
 }
 
-export type ReferralStatus = 'PENDING' | 'COMPLETED' | 'EXPIRED' | 'CANCELLED';
+export type ReferralStatus = "PENDING" | "COMPLETED" | "EXPIRED" | "CANCELLED";
 
 // API Response Types
 export interface CampaignListResponse {
