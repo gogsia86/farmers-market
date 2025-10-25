@@ -3,18 +3,17 @@
  * User notification settings management
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { QuantumButton } from '@/components/ui/QuantumButton';
-import { Switch } from '@/components/ui/switch';
-import { toast } from 'sonner';
-import type { NotificationPreferences } from '@/types/notification.types';
+import { QuantumButton } from "@/components/ui/QuantumButton";
+import { Switch } from "@/components/ui/switch";
+import type { NotificationPreferences } from "@/types/notification.types";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export function NotificationPreferences() {
-  const [preferences, setPreferences] = useState<NotificationPreferences | null>(
-    null
-  );
+  const [preferences, setPreferences] =
+    useState<NotificationPreferences | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -24,14 +23,14 @@ export function NotificationPreferences() {
 
   const fetchPreferences = async () => {
     try {
-      const response = await fetch('/api/notifications/preferences');
+      const response = await fetch("/api/notifications/preferences");
       const data = await response.json();
 
       if (response.ok) {
         setPreferences(data);
       }
     } catch (error) {
-      toast.error('Failed to load preferences');
+      toast.error("Failed to load preferences");
     } finally {
       setIsLoading(false);
     }
@@ -42,26 +41,29 @@ export function NotificationPreferences() {
 
     setIsSaving(true);
     try {
-      const response = await fetch('/api/notifications/preferences', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/notifications/preferences", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(preferences),
       });
 
       if (response.ok) {
-        toast.success('Preferences saved successfully');
+        toast.success("Preferences saved successfully");
       } else {
-        throw new Error('Failed to save preferences');
+        throw new Error("Failed to save preferences");
       }
     } catch (error) {
-      toast.error('Failed to save preferences');
+      toast.error("Failed to save preferences");
     } finally {
       setIsSaving(false);
     }
   };
 
   const updatePreference = (
-    category: keyof Omit<NotificationPreferences, 'id' | 'userId' | 'pauseAll' | 'pauseUntil' | 'createdAt' | 'updatedAt'>,
+    category: keyof Omit<
+      NotificationPreferences,
+      "id" | "userId" | "pauseAll" | "pauseUntil" | "createdAt" | "updatedAt"
+    >,
     channel: string,
     value: boolean
   ) => {
@@ -78,7 +80,9 @@ export function NotificationPreferences() {
 
   if (isLoading) {
     return (
-      <div className="p-8 text-center text-gray-500">Loading preferences...</div>
+      <div className="p-8 text-center text-gray-500">
+        Loading preferences...
+      </div>
     );
   }
 
@@ -92,46 +96,46 @@ export function NotificationPreferences() {
 
   const notificationTypes = [
     {
-      key: 'reviewReceived' as const,
-      label: 'New Reviews',
-      description: 'When someone reviews your product',
-      channels: ['email', 'inApp', 'push'],
+      key: "reviewReceived" as const,
+      label: "New Reviews",
+      description: "When someone reviews your product",
+      channels: ["email", "inApp", "push"],
     },
     {
-      key: 'reviewResponse' as const,
-      label: 'Review Responses',
-      description: 'When a farmer responds to your review',
-      channels: ['email', 'inApp', 'push'],
+      key: "reviewResponse" as const,
+      label: "Review Responses",
+      description: "When a farmer responds to your review",
+      channels: ["email", "inApp", "push"],
     },
     {
-      key: 'orderStatus' as const,
-      label: 'Order Updates',
-      description: 'Order status changes and delivery notifications',
-      channels: ['email', 'inApp', 'push', 'sms'],
+      key: "orderStatus" as const,
+      label: "Order Updates",
+      description: "Order status changes and delivery notifications",
+      channels: ["email", "inApp", "push", "sms"],
     },
     {
-      key: 'productAvailable' as const,
-      label: 'Product Availability',
-      description: 'When out-of-stock products become available',
-      channels: ['email', 'inApp', 'push'],
+      key: "productAvailable" as const,
+      label: "Product Availability",
+      description: "When out-of-stock products become available",
+      channels: ["email", "inApp", "push"],
     },
     {
-      key: 'lowInventory' as const,
-      label: 'Low Inventory Alerts',
-      description: 'When your product stock is running low',
-      channels: ['email', 'inApp'],
+      key: "lowInventory" as const,
+      label: "Low Inventory Alerts",
+      description: "When your product stock is running low",
+      channels: ["email", "inApp"],
     },
     {
-      key: 'newMessage' as const,
-      label: 'New Messages',
-      description: 'Direct messages from customers or farmers',
-      channels: ['email', 'inApp', 'push'],
+      key: "newMessage" as const,
+      label: "New Messages",
+      description: "Direct messages from customers or farmers",
+      channels: ["email", "inApp", "push"],
     },
     {
-      key: 'systemAlert' as const,
-      label: 'System Alerts',
-      description: 'Important system announcements',
-      channels: ['email', 'inApp'],
+      key: "systemAlert" as const,
+      label: "System Alerts",
+      description: "Important system announcements",
+      channels: ["email", "inApp"],
     },
   ];
 
@@ -151,7 +155,9 @@ export function NotificationPreferences() {
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-medium text-gray-900">Pause All Notifications</h3>
+            <h3 className="font-medium text-gray-900">
+              Pause All Notifications
+            </h3>
             <p className="text-sm text-gray-600">
               Temporarily stop all notifications
             </p>
@@ -183,7 +189,7 @@ export function NotificationPreferences() {
                   <Switch
                     checked={
                       preferences[type.key]?.[
-                        channel as keyof typeof preferences[typeof type.key]
+                        channel as keyof (typeof preferences)[typeof type.key]
                       ] ?? false
                     }
                     onCheckedChange={(checked) =>
@@ -192,7 +198,7 @@ export function NotificationPreferences() {
                     disabled={preferences.pauseAll}
                   />
                   <label className="text-sm text-gray-700 capitalize">
-                    {channel === 'inApp' ? 'In-App' : channel}
+                    {channel === "inApp" ? "In-App" : channel}
                   </label>
                 </div>
               ))}
