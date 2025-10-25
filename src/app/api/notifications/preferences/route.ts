@@ -3,9 +3,9 @@
  * User notification settings management
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
-import { database } from '@/lib/database';
+import { auth } from "@/lib/auth";
+import { database } from "@/lib/database";
+import { NextRequest, NextResponse } from "next/server";
 
 /**
  * GET user preferences
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get or create preferences
@@ -41,9 +41,9 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(preferences);
   } catch (error) {
-    console.error('Get preferences error:', error);
+    console.error("Get preferences error:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch preferences' },
+      { error: "Failed to fetch preferences" },
       { status: 500 }
     );
   }
@@ -56,7 +56,7 @@ export async function PUT(request: NextRequest) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
@@ -105,9 +105,9 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json(preferences);
   } catch (error) {
-    console.error('Update preferences error:', error);
+    console.error("Update preferences error:", error);
     return NextResponse.json(
-      { error: 'Failed to update preferences' },
+      { error: "Failed to update preferences" },
       { status: 500 }
     );
   }

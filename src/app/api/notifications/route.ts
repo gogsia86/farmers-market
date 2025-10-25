@@ -3,23 +3,23 @@
  * Divine Agricultural Notification Consciousness
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
-import { database } from '@/lib/database';
-import type { NotificationListResponse } from '@/types/notification.types';
+import { auth } from "@/lib/auth";
+import { database } from "@/lib/database";
+import type { NotificationListResponse } from "@/types/notification.types";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
-    const unreadOnly = searchParams.get('unreadOnly') === 'true';
-    const type = searchParams.get('type');
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "20");
+    const unreadOnly = searchParams.get("unreadOnly") === "true";
+    const type = searchParams.get("type");
 
     const skip = (page - 1) * limit;
 
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
     const [notifications, total] = await Promise.all([
       database.notification.findMany({
         where,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         take: limit,
         skip,
       }),
@@ -56,14 +56,20 @@ export async function GET(request: NextRequest) {
     const stats = {
       total: allNotifications.length,
       unread: allNotifications.filter((n) => !n.read).length,
-      byType: allNotifications.reduce((acc, n) => {
-        acc[n.type] = (acc[n.type] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>),
-      byPriority: allNotifications.reduce((acc, n) => {
-        acc[n.priority] = (acc[n.priority] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>),
+      byType: allNotifications.reduce(
+        (acc, n) => {
+          acc[n.type] = (acc[n.type] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>
+      ),
+      byPriority: allNotifications.reduce(
+        (acc, n) => {
+          acc[n.priority] = (acc[n.priority] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>
+      ),
     };
 
     const response: NotificationListResponse = {
@@ -79,9 +85,9 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error('Notification fetch error:', error);
+    console.error("Notification fetch error:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch notifications' },
+      { error: "Failed to fetch notifications" },
       { status: 500 }
     );
   }
@@ -94,12 +100,12 @@ export async function POST(request: NextRequest) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Only admins or system can create notifications
-    if (session.user.role !== 'ADMIN' && session.user.role !== 'SYSTEM') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    if (session.user.role !== "ADMIN" && session.user.role !== "SYSTEM") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const body = await request.json();
@@ -107,7 +113,7 @@ export async function POST(request: NextRequest) {
     // Validate required fields
     if (!body.userId || !body.type || !body.title || !body.message) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: "Missing required fields" },
         { status: 400 }
       );
     }
@@ -117,12 +123,12 @@ export async function POST(request: NextRequest) {
       data: {
         userId: body.userId,
         type: body.type,
-        priority: body.priority || 'MEDIUM',
+        priority: body.priority || "MEDIUM",
         title: body.title,
         message: body.message,
         data: body.data || {},
         link: body.link,
-        channels: body.channels || ['IN_APP'],
+        channels: body.channels || ["IN_APP"],
         read: false,
       },
     });
@@ -132,9 +138,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(notification, { status: 201 });
   } catch (error) {
-    console.error('Notification creation error:', error);
+    console.error("Notification creation error:", error);
     return NextResponse.json(
-      { error: 'Failed to create notification' },
+      { error: "Failed to create notification" },
       { status: 500 }
     );
   }

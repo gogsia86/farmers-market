@@ -3,9 +3,9 @@
  * Divine notification consciousness tracking
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
-import { database } from '@/lib/database';
+import { auth } from "@/lib/auth";
+import { database } from "@/lib/database";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function PATCH(
   request: NextRequest,
@@ -14,7 +14,7 @@ export async function PATCH(
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Verify notification belongs to user
@@ -24,13 +24,13 @@ export async function PATCH(
 
     if (!notification) {
       return NextResponse.json(
-        { error: 'Notification not found' },
+        { error: "Notification not found" },
         { status: 404 }
       );
     }
 
     if (notification.userId !== session.user.id) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Mark as read
@@ -44,9 +44,9 @@ export async function PATCH(
 
     return NextResponse.json(updated);
   } catch (error) {
-    console.error('Mark read error:', error);
+    console.error("Mark read error:", error);
     return NextResponse.json(
-      { error: 'Failed to mark notification as read' },
+      { error: "Failed to mark notification as read" },
       { status: 500 }
     );
   }
@@ -62,7 +62,7 @@ export async function DELETE(
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Verify notification belongs to user
@@ -72,13 +72,13 @@ export async function DELETE(
 
     if (!notification) {
       return NextResponse.json(
-        { error: 'Notification not found' },
+        { error: "Notification not found" },
         { status: 404 }
       );
     }
 
     if (notification.userId !== session.user.id) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Delete notification
@@ -88,9 +88,9 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Delete notification error:', error);
+    console.error("Delete notification error:", error);
     return NextResponse.json(
-      { error: 'Failed to delete notification' },
+      { error: "Failed to delete notification" },
       { status: 500 }
     );
   }
