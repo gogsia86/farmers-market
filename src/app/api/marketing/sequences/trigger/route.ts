@@ -1,27 +1,27 @@
 /**
  * TRIGGER EMAIL SEQUENCE API
  * POST /api/marketing/sequences/trigger
- * 
+ *
  * Enrolls users in automated sequences based on trigger events
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 import type {
   AutomationTrigger,
   SequenceEnrollment,
-} from '@/types/automation.types';
+} from "@/types/automation.types";
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
 const TriggerSchema = z.object({
   trigger: z.enum([
-    'USER_SIGNUP',
-    'FIRST_ORDER',
-    'CART_ABANDONED',
-    'ORDER_DELIVERED',
-    'USER_INACTIVE_30_DAYS',
-    'USER_INACTIVE_60_DAYS',
-    'FARMER_SIGNUP',
-    'PRODUCT_LISTED',
+    "USER_SIGNUP",
+    "FIRST_ORDER",
+    "CART_ABANDONED",
+    "ORDER_DELIVERED",
+    "USER_INACTIVE_30_DAYS",
+    "USER_INACTIVE_60_DAYS",
+    "FARMER_SIGNUP",
+    "PRODUCT_LISTED",
   ]),
   userId: z.string(),
   metadata: z.record(z.any()).optional(),
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     if (activeSequences.length === 0) {
       return NextResponse.json({
         success: true,
-        message: 'No active sequences found for this trigger',
+        message: "No active sequences found for this trigger",
         enrolled: 0,
       });
     }
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
         (e) =>
           e.sequenceId === sequence.id &&
           e.userId === validated.userId &&
-          e.status === 'ACTIVE'
+          e.status === "ACTIVE"
       );
 
       if (existingEnrollment) {
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
         id: `enroll_${Date.now()}_${Math.random()}`,
         sequenceId: sequence.id,
         userId: validated.userId,
-        status: 'ACTIVE',
+        status: "ACTIVE",
         currentEmailIndex: 0,
         triggeredAt: new Date(),
         emailsDelivered: 0,
@@ -94,18 +94,24 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({
-        success: false,
-        error: 'Validation failed',
-        details: error.errors,
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Validation failed",
+          details: error.errors,
+        },
+        { status: 400 }
+      );
     }
 
-    console.error('Sequence trigger error:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to trigger sequence',
-    }, { status: 500 });
+    console.error("Sequence trigger error:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Failed to trigger sequence",
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -116,35 +122,42 @@ async function findActiveSequences(trigger: AutomationTrigger) {
   // Mock sequences (in production, query from database)
   const mockSequences = [
     {
-      id: 'seq_welcome',
-      trigger: 'USER_SIGNUP',
-      status: 'ACTIVE',
+      id: "seq_welcome",
+      trigger: "USER_SIGNUP",
+      status: "ACTIVE",
       emails: [
-        { id: 'e1', order: 1, delayHours: 0, subject: 'Welcome!' },
-        { id: 'e2', order: 2, delayHours: 72, subject: 'Getting Started' },
+        { id: "e1", order: 1, delayHours: 0, subject: "Welcome!" },
+        { id: "e2", order: 2, delayHours: 72, subject: "Getting Started" },
       ],
     },
     {
-      id: 'seq_abandoned_cart',
-      trigger: 'CART_ABANDONED',
-      status: 'ACTIVE',
+      id: "seq_abandoned_cart",
+      trigger: "CART_ABANDONED",
+      status: "ACTIVE",
       emails: [
-        { id: 'e1', order: 1, delayHours: 1, subject: 'Cart Reminder' },
-        { id: 'e2', order: 2, delayHours: 24, subject: 'Discount Offer' },
+        { id: "e1", order: 1, delayHours: 1, subject: "Cart Reminder" },
+        { id: "e2", order: 2, delayHours: 24, subject: "Discount Offer" },
       ],
     },
     {
-      id: 'seq_farmer_onboarding',
-      trigger: 'FARMER_SIGNUP',
-      status: 'ACTIVE',
+      id: "seq_farmer_onboarding",
+      trigger: "FARMER_SIGNUP",
+      status: "ACTIVE",
       emails: [
-        { id: 'e1', order: 1, delayHours: 0, subject: 'Welcome Farmer!' },
-        { id: 'e2', order: 2, delayHours: 48, subject: 'Product Listing Guide' },
+        { id: "e1", order: 1, delayHours: 0, subject: "Welcome Farmer!" },
+        {
+          id: "e2",
+          order: 2,
+          delayHours: 48,
+          subject: "Product Listing Guide",
+        },
       ],
     },
   ];
 
-  return mockSequences.filter((s) => s.trigger === trigger && s.status === 'ACTIVE');
+  return mockSequences.filter(
+    (s) => s.trigger === trigger && s.status === "ACTIVE"
+  );
 }
 
 /**
@@ -153,7 +166,9 @@ async function findActiveSequences(trigger: AutomationTrigger) {
 async function scheduleEmail(enrollment: SequenceEnrollment, email: any) {
   // In production, use a queue system (Bull, BullMQ, etc.)
   // For now, just log
-  console.log(`Scheduled email "${email.subject}" for user ${enrollment.userId} in ${email.delayHours} hours`);
+  console.log(
+    `Scheduled email "${email.subject}" for user ${enrollment.userId} in ${email.delayHours} hours`
+  );
 
   // If delay is 0, send immediately
   if (email.delayHours === 0) {
@@ -171,7 +186,7 @@ async function scheduleEmail(enrollment: SequenceEnrollment, email: any) {
 async function sendEmailNow(userId: string, email: any) {
   // Integration with SendGrid would go here
   console.log(`Sending email to user ${userId}: "${email.subject}"`);
-  
+
   // Mock success
   return {
     success: true,
@@ -184,13 +199,16 @@ async function sendEmailNow(userId: string, email: any) {
  */
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
-  const userId = searchParams.get('userId');
+  const userId = searchParams.get("userId");
 
   if (!userId) {
-    return NextResponse.json({
-      success: false,
-      error: 'userId parameter required',
-    }, { status: 400 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: "userId parameter required",
+      },
+      { status: 400 }
+    );
   }
 
   const userEnrollments = enrollments.filter((e) => e.userId === userId);

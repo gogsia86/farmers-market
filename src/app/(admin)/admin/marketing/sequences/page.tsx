@@ -3,8 +3,8 @@
  * Manage automated email sequences
  */
 
-import { Suspense } from 'react';
-import { AutomatedSequencesDashboard } from '@/components/marketing/AutomatedSequencesDashboard';
+import { AutomatedSequencesDashboard } from "@/components/marketing/AutomatedSequencesDashboard";
+import { Suspense } from "react";
 
 export default function AutomatedSequencesPage() {
   return (
@@ -30,6 +30,6 @@ function LoadingSkeleton() {
 }
 
 export const metadata = {
-  title: 'Automated Email Sequences | Marketing',
-  description: 'Manage automated email sequences and workflows',
+  title: "Automated Email Sequences | Marketing",
+  description: "Manage automated email sequences and workflows",
 };
