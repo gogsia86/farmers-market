@@ -3,11 +3,20 @@
  * Divine viral growth referral interface
  */
 
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { Gift, Users, DollarSign, Share2, Copy, Check, Trophy, TrendingUp } from 'lucide-react';
-import type { Referral } from '@/types/marketing.types';
+import type { Referral } from "@/types/marketing.types";
+import {
+  Check,
+  Copy,
+  DollarSign,
+  Gift,
+  Share2,
+  TrendingUp,
+  Trophy,
+  Users,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface ReferralStats {
   totalReferrals: number;
@@ -20,8 +29,8 @@ interface ReferralStats {
 
 export function ReferralDashboard({ userId }: { userId: string }) {
   const [stats, setStats] = useState<ReferralStats | null>(null);
-  const [referralLink, setReferralLink] = useState('');
-  const [referralCode, setReferralCode] = useState('');
+  const [referralLink, setReferralLink] = useState("");
+  const [referralCode, setReferralCode] = useState("");
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,7 +45,7 @@ export function ReferralDashboard({ userId }: { userId: string }) {
     try {
       const response = await fetch(`/api/marketing/referrals?userId=${userId}`);
       const data = await response.json();
-      
+
       if (data.success) {
         setStats(data.stats);
         setReferralLink(data.referralLink);
@@ -44,7 +53,7 @@ export function ReferralDashboard({ userId }: { userId: string }) {
         setReferrals(data.referrals);
       }
     } catch (error) {
-      console.error('Failed to fetch referral data:', error);
+      console.error("Failed to fetch referral data:", error);
     } finally {
       setLoading(false);
     }
@@ -52,14 +61,16 @@ export function ReferralDashboard({ userId }: { userId: string }) {
 
   const fetchLeaderboard = async () => {
     try {
-      const response = await fetch('/api/marketing/referrals/leaderboard?limit=10');
+      const response = await fetch(
+        "/api/marketing/referrals/leaderboard?limit=10"
+      );
       const data = await response.json();
-      
+
       if (data.success) {
         setLeaderboard(data.leaderboard);
       }
     } catch (error) {
-      console.error('Failed to fetch leaderboard:', error);
+      console.error("Failed to fetch leaderboard:", error);
     }
   };
 
@@ -69,7 +80,7 @@ export function ReferralDashboard({ userId }: { userId: string }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('Failed to copy:', err);
+      console.error("Failed to copy:", err);
     }
   };
 
@@ -87,7 +98,8 @@ export function ReferralDashboard({ userId }: { userId: string }) {
       <div className="bg-gradient-to-r from-agricultural-600 to-agricultural-700 rounded-lg p-8 text-white">
         <h2 className="text-3xl font-bold mb-2">Earn Money by Sharing!</h2>
         <p className="text-agricultural-100 text-lg">
-          Invite friends and earn ${stats.totalEarned > 0 ? '10' : '10'} for each successful referral
+          Invite friends and earn ${stats.totalEarned > 0 ? "10" : "10"} for
+          each successful referral
         </p>
       </div>
 
@@ -128,7 +140,9 @@ export function ReferralDashboard({ userId }: { userId: string }) {
 
         <div className="bg-gray-50 rounded-lg p-4 mb-4">
           <div className="flex items-center gap-3">
-            <code className="flex-1 text-gray-900 font-mono">{referralLink}</code>
+            <code className="flex-1 text-gray-900 font-mono">
+              {referralLink}
+            </code>
             <button
               onClick={copyReferralLink}
               className="px-4 py-2 bg-agricultural-600 text-white rounded-lg hover:bg-agricultural-700 transition-colors flex items-center gap-2"
@@ -256,7 +270,7 @@ function StatCard({ icon, label, value, subtext }: any) {
 function ShareButton({ platform, icon, label, url }: any) {
   return (
     <button
-      onClick={() => window.open(url, '_blank', 'width=600,height=400')}
+      onClick={() => window.open(url, "_blank", "width=600,height=400")}
       className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-gray-200 rounded-lg hover:border-agricultural-600 hover:bg-agricultural-50 transition-all"
     >
       <span className="text-2xl">{icon}</span>
@@ -273,20 +287,33 @@ function Step({ number, title, description, icon }: any) {
           <span className="text-3xl">{icon}</span>
         </div>
       </div>
-      <div className="text-sm text-agricultural-600 font-semibold mb-2">STEP {number}</div>
+      <div className="text-sm text-agricultural-600 font-semibold mb-2">
+        STEP {number}
+      </div>
       <h4 className="font-bold text-lg mb-2">{title}</h4>
       <p className="text-gray-600 text-sm">{description}</p>
     </div>
   );
 }
 
-function LeaderboardEntry({ rank, name, referrals, earned, isCurrentUser }: any) {
-  const medalEmoji = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : null;
+function LeaderboardEntry({
+  rank,
+  name,
+  referrals,
+  earned,
+  isCurrentUser,
+}: any) {
+  const medalEmoji =
+    rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : null;
 
   return (
-    <div className={`flex items-center justify-between p-4 rounded-lg ${
-      isCurrentUser ? 'bg-agricultural-50 border-2 border-agricultural-600' : 'bg-gray-50'
-    }`}>
+    <div
+      className={`flex items-center justify-between p-4 rounded-lg ${
+        isCurrentUser
+          ? "bg-agricultural-50 border-2 border-agricultural-600"
+          : "bg-gray-50"
+      }`}
+    >
       <div className="flex items-center gap-4">
         <div className="w-10 h-10 flex items-center justify-center font-bold text-gray-700">
           {medalEmoji || `#${rank}`}
@@ -294,7 +321,9 @@ function LeaderboardEntry({ rank, name, referrals, earned, isCurrentUser }: any)
         <div>
           <p className="font-semibold text-gray-900">
             {name}
-            {isCurrentUser && <span className="ml-2 text-sm text-agricultural-600">(You!)</span>}
+            {isCurrentUser && (
+              <span className="ml-2 text-sm text-agricultural-600">(You!)</span>
+            )}
           </p>
           <p className="text-sm text-gray-600">{referrals} referrals</p>
         </div>
@@ -312,7 +341,7 @@ function ReferralItem({ referral }: { referral: Referral }) {
     <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
       <div>
         <p className="font-medium text-gray-900">
-          {referral.status === 'COMPLETED' ? '✅ Completed' : '⏳ Pending'}
+          {referral.status === "COMPLETED" ? "✅ Completed" : "⏳ Pending"}
         </p>
         <p className="text-sm text-gray-600">
           {new Date(referral.createdAt).toLocaleDateString()}

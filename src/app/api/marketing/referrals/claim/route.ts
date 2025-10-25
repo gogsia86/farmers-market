@@ -1,12 +1,12 @@
 /**
  * CLAIM REFERRAL REWARD API
  * POST /api/marketing/referrals/claim
- * 
+ *
  * Claims reward when referred user completes first order
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
 const ClaimSchema = z.object({
   referralCode: z.string(),
@@ -26,24 +26,30 @@ export async function POST(request: NextRequest) {
     const referral = await findReferralByCode(validated.referralCode);
 
     if (!referral) {
-      return NextResponse.json({
-        success: false,
-        error: 'Invalid referral code',
-      }, { status: 404 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Invalid referral code",
+        },
+        { status: 404 }
+      );
     }
 
-    if (referral.status === 'COMPLETED') {
-      return NextResponse.json({
-        success: false,
-        error: 'Referral reward already claimed',
-      }, { status: 400 });
+    if (referral.status === "COMPLETED") {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Referral reward already claimed",
+        },
+        { status: 400 }
+      );
     }
 
     // Complete the referral
     const updatedReferral = {
       ...referral,
       refereeId: validated.refereeId,
-      status: 'COMPLETED' as const,
+      status: "COMPLETED" as const,
       completedAt: new Date(),
     };
 
@@ -71,22 +77,28 @@ export async function POST(request: NextRequest) {
           amount: referral.refereeReward,
         },
       },
-      message: 'Referral rewards claimed successfully!',
+      message: "Referral rewards claimed successfully!",
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({
-        success: false,
-        error: 'Validation failed',
-        details: error.errors,
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Validation failed",
+          details: error.errors,
+        },
+        { status: 400 }
+      );
     }
 
-    console.error('Claim reward error:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to claim referral reward',
-    }, { status: 500 });
+    console.error("Claim reward error:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Failed to claim referral reward",
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -97,10 +109,10 @@ async function findReferralByCode(code: string) {
   // Mock lookup (in production, query database)
   const mockReferrals = [
     {
-      id: 'ref_pending',
-      referrerId: 'user_123',
+      id: "ref_pending",
+      referrerId: "user_123",
       code: code.toUpperCase(),
-      status: 'PENDING',
+      status: "PENDING",
       referrerReward: 10,
       refereeReward: 5,
       rewardPaid: false,
