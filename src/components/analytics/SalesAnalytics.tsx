@@ -3,12 +3,12 @@
  * Detailed sales metrics and trends visualization
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { QuantumButton } from '@/components/ui/QuantumButton';
-import { Calendar, TrendingUp, DollarSign, Users } from 'lucide-react';
-import { toast } from 'sonner';
+import { QuantumButton } from "@/components/ui/QuantumButton";
+import { Calendar, DollarSign, TrendingUp, Users } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 interface SalesData {
   period: {
@@ -35,12 +35,12 @@ interface SalesData {
   };
 }
 
-type DateRange = '7d' | '30d' | '90d' | 'custom';
+type DateRange = "7d" | "30d" | "90d" | "custom";
 
 export function SalesAnalytics({ farmId }: { farmId?: string }) {
   const [data, setData] = useState<SalesData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [dateRange, setDateRange] = useState<DateRange>('30d');
+  const [dateRange, setDateRange] = useState<DateRange>("30d");
 
   useEffect(() => {
     fetchSalesData();
@@ -56,7 +56,7 @@ export function SalesAnalytics({ farmId }: { farmId?: string }) {
       });
 
       if (farmId) {
-        params.append('farmId', farmId);
+        params.append("farmId", farmId);
       }
 
       const response = await fetch(`/api/analytics/sales?${params}`);
@@ -68,24 +68,26 @@ export function SalesAnalytics({ farmId }: { farmId?: string }) {
         throw new Error(result.error);
       }
     } catch (error) {
-      toast.error('Failed to load sales data');
+      toast.error("Failed to load sales data");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const getDateRange = (range: DateRange): { startDate: Date; endDate: Date } => {
+  const getDateRange = (
+    range: DateRange
+  ): { startDate: Date; endDate: Date } => {
     const endDate = new Date();
     const startDate = new Date();
 
     switch (range) {
-      case '7d':
+      case "7d":
         startDate.setDate(endDate.getDate() - 7);
         break;
-      case '30d':
+      case "30d":
         startDate.setDate(endDate.getDate() - 30);
         break;
-      case '90d':
+      case "90d":
         startDate.setDate(endDate.getDate() - 90);
         break;
     }
@@ -94,11 +96,17 @@ export function SalesAnalytics({ farmId }: { farmId?: string }) {
   };
 
   if (isLoading) {
-    return <div className="p-8 text-center text-gray-500">Loading sales data...</div>;
+    return (
+      <div className="p-8 text-center text-gray-500">Loading sales data...</div>
+    );
   }
 
   if (!data) {
-    return <div className="p-8 text-center text-gray-500">Failed to load sales data</div>;
+    return (
+      <div className="p-8 text-center text-gray-500">
+        Failed to load sales data
+      </div>
+    );
   }
 
   return (
@@ -108,30 +116,30 @@ export function SalesAnalytics({ farmId }: { farmId?: string }) {
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Sales Analytics</h2>
           <p className="text-gray-600 mt-1">
-            {new Date(data.period.startDate).toLocaleDateString()} -{' '}
+            {new Date(data.period.startDate).toLocaleDateString()} -{" "}
             {new Date(data.period.endDate).toLocaleDateString()}
           </p>
         </div>
 
         <div className="flex gap-2">
           <QuantumButton
-            variant={dateRange === '7d' ? 'agricultural' : 'secondary'}
+            variant={dateRange === "7d" ? "agricultural" : "secondary"}
             size="sm"
-            onClick={() => setDateRange('7d')}
+            onClick={() => setDateRange("7d")}
           >
             7 Days
           </QuantumButton>
           <QuantumButton
-            variant={dateRange === '30d' ? 'agricultural' : 'secondary'}
+            variant={dateRange === "30d" ? "agricultural" : "secondary"}
             size="sm"
-            onClick={() => setDateRange('30d')}
+            onClick={() => setDateRange("30d")}
           >
             30 Days
           </QuantumButton>
           <QuantumButton
-            variant={dateRange === '90d' ? 'agricultural' : 'secondary'}
+            variant={dateRange === "90d" ? "agricultural" : "secondary"}
             size="sm"
-            onClick={() => setDateRange('90d')}
+            onClick={() => setDateRange("90d")}
           >
             90 Days
           </QuantumButton>
@@ -173,7 +181,9 @@ export function SalesAnalytics({ farmId }: { farmId?: string }) {
 
       {/* Order Breakdown */}
       <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Breakdown</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Order Breakdown
+        </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <p className="text-sm text-gray-600">Completed Orders</p>
@@ -181,7 +191,8 @@ export function SalesAnalytics({ farmId }: { farmId?: string }) {
               {data.orders.completed}
             </p>
             <p className="text-sm text-gray-500 mt-1">
-              {((data.orders.completed / data.orders.total) * 100).toFixed(1)}% completion rate
+              {((data.orders.completed / data.orders.total) * 100).toFixed(1)}%
+              completion rate
             </p>
           </div>
 
@@ -191,7 +202,8 @@ export function SalesAnalytics({ farmId }: { farmId?: string }) {
               {data.orders.cancelled}
             </p>
             <p className="text-sm text-gray-500 mt-1">
-              {((data.orders.cancelled / data.orders.total) * 100).toFixed(1)}% cancellation rate
+              {((data.orders.cancelled / data.orders.total) * 100).toFixed(1)}%
+              cancellation rate
             </p>
           </div>
 
@@ -219,10 +231,10 @@ export function SalesAnalytics({ farmId }: { farmId?: string }) {
                 <span className="text-gray-700">Revenue Growth</span>
                 <span
                   className={`font-semibold ${
-                    data.revenue.growth > 0 ? 'text-green-600' : 'text-red-600'
+                    data.revenue.growth > 0 ? "text-green-600" : "text-red-600"
                   }`}
                 >
-                  {data.revenue.growth > 0 ? '+' : ''}
+                  {data.revenue.growth > 0 ? "+" : ""}
                   {data.revenue.growth.toFixed(1)}%
                 </span>
               </div>
@@ -232,10 +244,10 @@ export function SalesAnalytics({ farmId }: { farmId?: string }) {
                 <span className="text-gray-700">Order Growth</span>
                 <span
                   className={`font-semibold ${
-                    data.orders.growth > 0 ? 'text-green-600' : 'text-red-600'
+                    data.orders.growth > 0 ? "text-green-600" : "text-red-600"
                   }`}
                 >
-                  {data.orders.growth > 0 ? '+' : ''}
+                  {data.orders.growth > 0 ? "+" : ""}
                   {data.orders.growth.toFixed(1)}%
                 </span>
               </div>
@@ -252,7 +264,7 @@ interface SalesMetricCardProps {
   value: string;
   icon: React.ReactNode;
   growth?: number;
-  color: 'green' | 'blue' | 'purple' | 'agricultural';
+  color: "green" | "blue" | "purple" | "agricultural";
 }
 
 function SalesMetricCard({
@@ -263,10 +275,10 @@ function SalesMetricCard({
   color,
 }: SalesMetricCardProps) {
   const colorClasses = {
-    green: 'from-green-50 to-green-100',
-    blue: 'from-blue-50 to-blue-100',
-    purple: 'from-purple-50 to-purple-100',
-    agricultural: 'from-agricultural-50 to-agricultural-100',
+    green: "from-green-50 to-green-100",
+    blue: "from-blue-50 to-blue-100",
+    purple: "from-purple-50 to-purple-100",
+    agricultural: "from-agricultural-50 to-agricultural-100",
   };
 
   return (
@@ -283,10 +295,10 @@ function SalesMetricCard({
       {growth !== undefined && growth !== 0 && (
         <p
           className={`text-sm font-medium ${
-            growth > 0 ? 'text-green-600' : 'text-red-600'
+            growth > 0 ? "text-green-600" : "text-red-600"
           }`}
         >
-          {growth > 0 ? '+' : ''}
+          {growth > 0 ? "+" : ""}
           {growth.toFixed(1)}% vs previous period
         </p>
       )}
