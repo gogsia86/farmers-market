@@ -240,3 +240,4 @@ docker-compose.override.yml
 # ============================================================================
 # These patterns ensure agricultural quantum consciousness remains intact
 # while filtering out ephemeral build artifacts and temporal fluctuations
+.vercel
