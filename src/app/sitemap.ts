@@ -3,41 +3,41 @@
  * Divine SEO sitemap for search engines
  */
 
-import { MetadataRoute } from 'next';
+import { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://farmersmarket.app';
+  const baseUrl = "https://farmersmarket.app";
 
   // Static pages
   const staticPages = [
     {
       url: baseUrl,
       lastModified: new Date(),
-      changeFrequency: 'daily' as const,
+      changeFrequency: "daily" as const,
       priority: 1.0,
     },
     {
       url: `${baseUrl}/farms`,
       lastModified: new Date(),
-      changeFrequency: 'daily' as const,
+      changeFrequency: "daily" as const,
       priority: 0.9,
     },
     {
       url: `${baseUrl}/products`,
       lastModified: new Date(),
-      changeFrequency: 'hourly' as const,
+      changeFrequency: "hourly" as const,
       priority: 0.9,
     },
     {
       url: `${baseUrl}/about`,
       lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
+      changeFrequency: "monthly" as const,
       priority: 0.5,
     },
     {
       url: `${baseUrl}/contact`,
       lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
+      changeFrequency: "monthly" as const,
       priority: 0.5,
     },
   ];
@@ -47,7 +47,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const farmPages = farms.map((farm) => ({
     url: `${baseUrl}/farms/${farm.slug}`,
     lastModified: farm.updatedAt,
-    changeFrequency: 'weekly' as const,
+    changeFrequency: "weekly" as const,
     priority: 0.8,
   }));
 
@@ -56,7 +56,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const productPages = products.map((product) => ({
     url: `${baseUrl}/products/${product.slug}`,
     lastModified: product.updatedAt,
-    changeFrequency: 'daily' as const,
+    changeFrequency: "daily" as const,
     priority: 0.7,
   }));
 
@@ -70,16 +70,16 @@ async function getFarms() {
   // Mock data (in production, query database)
   return [
     {
-      slug: 'sunshine-valley-farm',
-      updatedAt: new Date('2025-10-20'),
+      slug: "sunshine-valley-farm",
+      updatedAt: new Date("2025-10-20"),
     },
     {
-      slug: 'green-acres-organic',
-      updatedAt: new Date('2025-10-18'),
+      slug: "green-acres-organic",
+      updatedAt: new Date("2025-10-18"),
     },
     {
-      slug: 'heritage-homestead',
-      updatedAt: new Date('2025-10-15'),
+      slug: "heritage-homestead",
+      updatedAt: new Date("2025-10-15"),
     },
   ];
 }
@@ -91,16 +91,16 @@ async function getProducts() {
   // Mock data (in production, query database)
   return [
     {
-      slug: 'organic-tomatoes',
-      updatedAt: new Date('2025-10-24'),
+      slug: "organic-tomatoes",
+      updatedAt: new Date("2025-10-24"),
     },
     {
-      slug: 'fresh-strawberries',
-      updatedAt: new Date('2025-10-23'),
+      slug: "fresh-strawberries",
+      updatedAt: new Date("2025-10-23"),
     },
     {
-      slug: 'raw-honey',
-      updatedAt: new Date('2025-10-22'),
+      slug: "raw-honey",
+      updatedAt: new Date("2025-10-22"),
     },
   ];
 }

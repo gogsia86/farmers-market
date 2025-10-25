@@ -3,19 +3,19 @@
  * Divine marketing performance intelligence
  */
 
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
 import {
-  TrendingUp,
-  Mail,
-  DollarSign,
-  Users,
-  Target,
-  BarChart3,
-  PieChart,
   Activity,
-} from 'lucide-react';
+  BarChart3,
+  DollarSign,
+  Mail,
+  PieChart,
+  Target,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface AnalyticsData {
   campaigns: any;
@@ -28,7 +28,7 @@ interface AnalyticsData {
 export function MarketingAnalyticsDashboard() {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [timeframe, setTimeframe] = useState('30days');
+  const [timeframe, setTimeframe] = useState("30days");
 
   useEffect(() => {
     fetchAnalytics();
@@ -36,14 +36,16 @@ export function MarketingAnalyticsDashboard() {
 
   const fetchAnalytics = async () => {
     try {
-      const response = await fetch(`/api/marketing/analytics?timeframe=${timeframe}`);
+      const response = await fetch(
+        `/api/marketing/analytics?timeframe=${timeframe}`
+      );
       const data = await response.json();
-      
+
       if (data.success) {
         setAnalytics(data.metrics);
       }
     } catch (error) {
-      console.error('Failed to fetch analytics:', error);
+      console.error("Failed to fetch analytics:", error);
     } finally {
       setLoading(false);
     }
@@ -57,23 +59,25 @@ export function MarketingAnalyticsDashboard() {
     return <div>Error loading analytics</div>;
   }
 
-  const totalRevenue = 
-    (analytics.discounts.revenue || 0) + 
-    (analytics.roi.totalRevenue || 0);
+  const totalRevenue =
+    (analytics.discounts.revenue || 0) + (analytics.roi.totalRevenue || 0);
 
-  const totalConversions = 
-    (analytics.campaigns.converted || 0) + 
-    (analytics.referrals.completed || 0);
+  const totalConversions =
+    (analytics.campaigns.converted || 0) + (analytics.referrals.completed || 0);
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900">Marketing Analytics</h2>
-          <p className="text-gray-600 mt-1">Track your marketing performance in real-time</p>
+          <h2 className="text-3xl font-bold text-gray-900">
+            Marketing Analytics
+          </h2>
+          <p className="text-gray-600 mt-1">
+            Track your marketing performance in real-time
+          </p>
         </div>
-        
+
         <select
           value={timeframe}
           onChange={(e) => setTimeframe(e.target.value)}
@@ -164,10 +168,22 @@ export function MarketingAnalyticsDashboard() {
           title="Email Campaigns"
           icon={<Mail className="h-6 w-6 text-blue-600" />}
           stats={[
-            { label: 'Total Sent', value: analytics.campaigns.sent.toLocaleString() },
-            { label: 'Open Rate', value: `${((analytics.campaigns.opened / analytics.campaigns.sent) * 100).toFixed(1)}%` },
-            { label: 'Click Rate', value: `${((analytics.campaigns.clicked / analytics.campaigns.sent) * 100).toFixed(1)}%` },
-            { label: 'Conversions', value: analytics.campaigns.converted.toLocaleString() },
+            {
+              label: "Total Sent",
+              value: analytics.campaigns.sent.toLocaleString(),
+            },
+            {
+              label: "Open Rate",
+              value: `${((analytics.campaigns.opened / analytics.campaigns.sent) * 100).toFixed(1)}%`,
+            },
+            {
+              label: "Click Rate",
+              value: `${((analytics.campaigns.clicked / analytics.campaigns.sent) * 100).toFixed(1)}%`,
+            },
+            {
+              label: "Conversions",
+              value: analytics.campaigns.converted.toLocaleString(),
+            },
           ]}
         />
 
@@ -176,10 +192,19 @@ export function MarketingAnalyticsDashboard() {
           title="Automated Sequences"
           icon={<Activity className="h-6 w-6 text-purple-600" />}
           stats={[
-            { label: 'Active Sequences', value: analytics.sequences.active },
-            { label: 'Triggered', value: analytics.sequences.triggered.toLocaleString() },
-            { label: 'Emails Sent', value: analytics.sequences.emailsSent.toLocaleString() },
-            { label: 'Conversion Rate', value: `${analytics.sequences.conversionRate}%` },
+            { label: "Active Sequences", value: analytics.sequences.active },
+            {
+              label: "Triggered",
+              value: analytics.sequences.triggered.toLocaleString(),
+            },
+            {
+              label: "Emails Sent",
+              value: analytics.sequences.emailsSent.toLocaleString(),
+            },
+            {
+              label: "Conversion Rate",
+              value: `${analytics.sequences.conversionRate}%`,
+            },
           ]}
         />
 
@@ -188,10 +213,19 @@ export function MarketingAnalyticsDashboard() {
           title="Discount Codes"
           icon={<PieChart className="h-6 w-6 text-green-600" />}
           stats={[
-            { label: 'Active Codes', value: analytics.discounts.active },
-            { label: 'Total Uses', value: analytics.discounts.totalUses.toLocaleString() },
-            { label: 'Revenue', value: `$${analytics.discounts.revenue.toLocaleString()}` },
-            { label: 'Avg. Order', value: `$${(analytics.discounts.revenue / analytics.discounts.totalUses).toFixed(2)}` },
+            { label: "Active Codes", value: analytics.discounts.active },
+            {
+              label: "Total Uses",
+              value: analytics.discounts.totalUses.toLocaleString(),
+            },
+            {
+              label: "Revenue",
+              value: `$${analytics.discounts.revenue.toLocaleString()}`,
+            },
+            {
+              label: "Avg. Order",
+              value: `$${(analytics.discounts.revenue / analytics.discounts.totalUses).toFixed(2)}`,
+            },
           ]}
         />
       </div>
@@ -211,7 +245,9 @@ export function MarketingAnalyticsDashboard() {
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-600 mb-1">Total Revenue Generated</p>
+            <p className="text-sm text-gray-600 mb-1">
+              Total Revenue Generated
+            </p>
             <p className="text-3xl font-bold text-green-600">
               ${analytics.roi.totalRevenue.toLocaleString()}
             </p>
@@ -222,7 +258,11 @@ export function MarketingAnalyticsDashboard() {
               {analytics.roi.roi}%
             </p>
             <p className="text-sm text-gray-600 mt-1">
-              ${(analytics.roi.totalRevenue / analytics.roi.totalSpent).toFixed(2)} returned per $1 spent
+              $
+              {(analytics.roi.totalRevenue / analytics.roi.totalSpent).toFixed(
+                2
+              )}{" "}
+              returned per $1 spent
             </p>
           </div>
         </div>
@@ -231,19 +271,35 @@ export function MarketingAnalyticsDashboard() {
       {/* Referral Impact */}
       <div className="bg-white rounded-lg shadow-lg p-6">
         <h3 className="text-xl font-bold mb-4">Referral Program Impact</h3>
-        
+
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <ReferralMetric label="Total Referrals" value={analytics.referrals.total} />
-          <ReferralMetric label="Completed" value={analytics.referrals.completed} />
-          <ReferralMetric label="Rewards Paid" value={`$${analytics.referrals.rewardsPaid}`} />
-          <ReferralMetric label="New Users" value={analytics.referrals.newUsers} />
+          <ReferralMetric
+            label="Total Referrals"
+            value={analytics.referrals.total}
+          />
+          <ReferralMetric
+            label="Completed"
+            value={analytics.referrals.completed}
+          />
+          <ReferralMetric
+            label="Rewards Paid"
+            value={`$${analytics.referrals.rewardsPaid}`}
+          />
+          <ReferralMetric
+            label="New Users"
+            value={analytics.referrals.newUsers}
+          />
         </div>
 
         <div className="mt-4 pt-4 border-t border-gray-200">
           <p className="text-sm text-gray-600">
             <span className="font-semibold text-green-600">
-              {((analytics.referrals.completed / analytics.referrals.total) * 100).toFixed(1)}%
-            </span>{' '}
+              {(
+                (analytics.referrals.completed / analytics.referrals.total) *
+                100
+              ).toFixed(1)}
+              %
+            </span>{" "}
             conversion rate from referral to completed purchase
           </p>
         </div>
@@ -257,9 +313,11 @@ function MetricCard({ icon, label, value, change, trend }: any) {
     <div className="bg-white rounded-lg shadow-lg p-6">
       <div className="flex items-center justify-between mb-4">
         <div className="p-3 bg-gray-50 rounded-lg">{icon}</div>
-        <span className={`text-sm font-medium ${
-          trend === 'up' ? 'text-green-600' : 'text-red-600'
-        }`}>
+        <span
+          className={`text-sm font-medium ${
+            trend === "up" ? "text-green-600" : "text-red-600"
+          }`}
+        >
           {change}
         </span>
       </div>
@@ -277,9 +335,11 @@ function ChannelBar({ channel, sent, opened, converted, revenue }: any) {
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <span className="font-medium text-gray-900">{channel}</span>
-        <span className="text-sm text-gray-600">Revenue: ${revenue.toLocaleString()}</span>
+        <span className="text-sm text-gray-600">
+          Revenue: ${revenue.toLocaleString()}
+        </span>
       </div>
-      
+
       <div className="flex items-center gap-4">
         <div className="flex-1 bg-gray-200 rounded-full h-6 overflow-hidden">
           <div
@@ -306,7 +366,7 @@ function StatsCard({ title, icon, stats }: any) {
         {icon}
         <h4 className="font-bold text-gray-900">{title}</h4>
       </div>
-      
+
       <div className="space-y-3">
         {stats.map((stat: any, index: number) => (
           <div key={index} className="flex items-center justify-between">
@@ -319,7 +379,13 @@ function StatsCard({ title, icon, stats }: any) {
   );
 }
 
-function ReferralMetric({ label, value }: { label: string; value: string | number }) {
+function ReferralMetric({
+  label,
+  value,
+}: {
+  label: string;
+  value: string | number;
+}) {
   return (
     <div className="text-center">
       <p className="text-2xl font-bold text-agricultural-600">{value}</p>

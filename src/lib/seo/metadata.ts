@@ -3,7 +3,7 @@
  * Divine search engine optimization utilities
  */
 
-import type { Metadata } from 'next';
+import type { Metadata } from "next";
 
 interface SEOConfig {
   title: string;
@@ -11,7 +11,7 @@ interface SEOConfig {
   keywords?: string[];
   image?: string;
   url?: string;
-  type?: 'website' | 'article' | 'product' | 'profile';
+  type?: "website" | "article" | "product" | "profile";
 }
 
 /**
@@ -22,9 +22,9 @@ export function generateSEO(config: SEOConfig): Metadata {
     title,
     description,
     keywords = [],
-    image = '/images/og-default.jpg',
-    url = 'https://farmersmarket.app',
-    type = 'website',
+    image = "/images/og-default.jpg",
+    url = "https://farmersmarket.app",
+    type = "website",
   } = config;
 
   const fullTitle = `${title} | Farmers Market`;
@@ -32,8 +32,8 @@ export function generateSEO(config: SEOConfig): Metadata {
   return {
     title: fullTitle,
     description,
-    keywords: keywords.join(', '),
-    
+    keywords: keywords.join(", "),
+
     // Open Graph (Facebook, LinkedIn)
     openGraph: {
       title: fullTitle,
@@ -48,18 +48,18 @@ export function generateSEO(config: SEOConfig): Metadata {
           alt: title,
         },
       ],
-      siteName: 'Farmers Market',
-      locale: 'en_US',
+      siteName: "Farmers Market",
+      locale: "en_US",
     },
 
     // Twitter Card
     twitter: {
-      card: 'summary_large_image',
+      card: "summary_large_image",
       title: fullTitle,
       description,
       images: [image],
-      creator: '@farmersmarket',
-      site: '@farmersmarket',
+      creator: "@farmersmarket",
+      site: "@farmersmarket",
     },
 
     // Additional meta tags
@@ -69,16 +69,16 @@ export function generateSEO(config: SEOConfig): Metadata {
       googleBot: {
         index: true,
         follow: true,
-        'max-video-preview': -1,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
       },
     },
 
     // Verification
     verification: {
-      google: 'your-google-verification-code',
-      yandex: 'your-yandex-verification-code',
+      google: "your-google-verification-code",
+      yandex: "your-yandex-verification-code",
     },
   };
 }
@@ -100,14 +100,14 @@ export function generateProductSEO(product: {
     keywords: [
       product.name,
       product.category,
-      'local farm',
-      'organic',
-      'fresh produce',
+      "local farm",
+      "organic",
+      "fresh produce",
       product.farmName,
-      'farmers market',
+      "farmers market",
     ],
     image: product.image,
-    type: 'product',
+    type: "product",
   });
 }
 
@@ -126,14 +126,14 @@ export function generateFarmSEO(farm: {
     description: `${farm.description} | Located in ${farm.location}. Shop fresh local produce from ${farm.name}.`,
     keywords: [
       farm.name,
-      'local farm',
+      "local farm",
       farm.location,
-      'organic farm',
-      'farmers market',
+      "organic farm",
+      "farmers market",
       ...farm.products,
     ],
     image: farm.image,
-    type: 'profile',
+    type: "profile",
   });
 }
 
@@ -151,9 +151,9 @@ export function generateArticleSEO(article: {
   return generateSEO({
     title: article.title,
     description: article.description,
-    keywords: [...article.tags, 'farming', 'agriculture', 'local food'],
+    keywords: [...article.tags, "farming", "agriculture", "local food"],
     image: article.image,
-    type: 'article',
+    type: "article",
   });
 }
 
@@ -170,28 +170,28 @@ export function generateProductSchema(product: {
   reviewCount?: number;
 }) {
   return {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
+    "@context": "https://schema.org",
+    "@type": "Product",
     name: product.name,
     description: product.description,
     image: product.image,
     brand: {
-      '@type': 'Brand',
+      "@type": "Brand",
       name: product.farmName,
     },
     offers: {
-      '@type': 'Offer',
+      "@type": "Offer",
       price: product.price,
-      priceCurrency: 'USD',
-      availability: 'https://schema.org/InStock',
+      priceCurrency: "USD",
+      availability: "https://schema.org/InStock",
       seller: {
-        '@type': 'Organization',
+        "@type": "Organization",
         name: product.farmName,
       },
     },
     ...(product.rating && {
       aggregateRating: {
-        '@type': 'AggregateRating',
+        "@type": "AggregateRating",
         ratingValue: product.rating,
         reviewCount: product.reviewCount || 0,
       },
@@ -213,14 +213,14 @@ export function generateFarmSchema(farm: {
   rating?: number;
 }) {
   return {
-    '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
-    '@id': `https://farmersmarket.app/farms/${farm.name.toLowerCase().replace(/\s+/g, '-')}`,
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": `https://farmersmarket.app/farms/${farm.name.toLowerCase().replace(/\s+/g, "-")}`,
     name: farm.name,
     description: farm.description,
     image: farm.image,
     address: {
-      '@type': 'PostalAddress',
+      "@type": "PostalAddress",
       streetAddress: farm.address,
     },
     ...(farm.phone && { telephone: farm.phone }),
@@ -228,7 +228,7 @@ export function generateFarmSchema(farm: {
     ...(farm.website && { url: farm.website }),
     ...(farm.rating && {
       aggregateRating: {
-        '@type': 'AggregateRating',
+        "@type": "AggregateRating",
         ratingValue: farm.rating,
       },
     }),
@@ -238,11 +238,22 @@ export function generateFarmSchema(farm: {
 /**
  * Generate sitemap entries
  */
-export function generateSitemapEntry(url: string, priority: number = 0.5, changeFreq: string = 'weekly') {
+export function generateSitemapEntry(
+  url: string,
+  priority: number = 0.5,
+  changeFreq: string = "weekly"
+) {
   return {
     url: `https://farmersmarket.app${url}`,
     lastModified: new Date(),
-    changeFrequency: changeFreq as 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never',
+    changeFrequency: changeFreq as
+      | "always"
+      | "hourly"
+      | "daily"
+      | "weekly"
+      | "monthly"
+      | "yearly"
+      | "never",
     priority,
   };
 }
@@ -251,20 +262,30 @@ export function generateSitemapEntry(url: string, priority: number = 0.5, change
  * Agricultural SEO keywords by category
  */
 export const AGRICULTURAL_KEYWORDS = {
-  vegetables: ['fresh vegetables', 'organic vegetables', 'local vegetables', 'seasonal vegetables'],
-  fruits: ['fresh fruits', 'organic fruits', 'local fruits', 'seasonal fruits'],
-  dairy: ['farm fresh dairy', 'organic dairy', 'local dairy', 'raw milk'],
-  meat: ['farm fresh meat', 'grass fed', 'pasture raised', 'organic meat'],
-  eggs: ['farm fresh eggs', 'free range eggs', 'organic eggs', 'pasture raised eggs'],
-  honey: ['local honey', 'raw honey', 'organic honey', 'farm honey'],
+  vegetables: [
+    "fresh vegetables",
+    "organic vegetables",
+    "local vegetables",
+    "seasonal vegetables",
+  ],
+  fruits: ["fresh fruits", "organic fruits", "local fruits", "seasonal fruits"],
+  dairy: ["farm fresh dairy", "organic dairy", "local dairy", "raw milk"],
+  meat: ["farm fresh meat", "grass fed", "pasture raised", "organic meat"],
+  eggs: [
+    "farm fresh eggs",
+    "free range eggs",
+    "organic eggs",
+    "pasture raised eggs",
+  ],
+  honey: ["local honey", "raw honey", "organic honey", "farm honey"],
   general: [
-    'farmers market',
-    'local farm',
-    'organic farm',
-    'farm to table',
-    'support local farmers',
-    'buy local',
-    'fresh produce',
-    'sustainable farming',
+    "farmers market",
+    "local farm",
+    "organic farm",
+    "farm to table",
+    "support local farmers",
+    "buy local",
+    "fresh produce",
+    "sustainable farming",
   ],
 };
