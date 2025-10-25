@@ -3,35 +3,35 @@
  * Divine agricultural report creation interface
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { QuantumButton } from '@/components/ui/QuantumButton';
-import { FileText, Download, Calendar } from 'lucide-react';
-import { toast } from 'sonner';
+import { QuantumButton } from "@/components/ui/QuantumButton";
+import { Calendar, Download, FileText } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
-type ReportType = 'SALES' | 'INVENTORY' | 'PRODUCTS' | 'CUSTOMERS';
-type ReportFormat = 'JSON' | 'CSV';
+type ReportType = "SALES" | "INVENTORY" | "PRODUCTS" | "CUSTOMERS";
+type ReportFormat = "JSON" | "CSV";
 
 export function ReportGenerator({ farmId }: { farmId?: string }) {
-  const [reportType, setReportType] = useState<ReportType>('SALES');
-  const [format, setFormat] = useState<ReportFormat>('JSON');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [reportType, setReportType] = useState<ReportType>("SALES");
+  const [format, setFormat] = useState<ReportFormat>("JSON");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
 
   const handleGenerate = async () => {
     if (!startDate || !endDate) {
-      toast.error('Please select date range');
+      toast.error("Please select date range");
       return;
     }
 
     setIsGenerating(true);
 
     try {
-      const response = await fetch('/api/reports/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/reports/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           reportType,
           startDate,
@@ -46,27 +46,29 @@ export function ReportGenerator({ farmId }: { farmId?: string }) {
         throw new Error(data.error);
       }
 
-      if (format === 'CSV') {
+      if (format === "CSV") {
         // Download CSV
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
         a.download = `${reportType}_${Date.now()}.csv`;
         document.body.appendChild(a);
         a.click();
         a.remove();
         window.URL.revokeObjectURL(url);
-        toast.success('Report downloaded!');
+        toast.success("Report downloaded!");
       } else {
         // Show JSON
         const data = await response.json();
-        console.log('Report data:', data);
-        toast.success('Report generated!');
+        console.log("Report data:", data);
+        toast.success("Report generated!");
         // You could open a modal or new page to display the data
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to generate report');
+      toast.error(
+        error instanceof Error ? error.message : "Failed to generate report"
+      );
     } finally {
       setIsGenerating(false);
     }
@@ -74,24 +76,24 @@ export function ReportGenerator({ farmId }: { farmId?: string }) {
 
   const reportTypes = [
     {
-      value: 'SALES' as const,
-      label: 'Sales Report',
-      description: 'Orders, revenue, and customer details',
+      value: "SALES" as const,
+      label: "Sales Report",
+      description: "Orders, revenue, and customer details",
     },
     {
-      value: 'INVENTORY' as const,
-      label: 'Inventory Report',
-      description: 'Stock levels and product status',
+      value: "INVENTORY" as const,
+      label: "Inventory Report",
+      description: "Stock levels and product status",
     },
     {
-      value: 'PRODUCTS' as const,
-      label: 'Product Report',
-      description: 'Performance, ratings, and sales',
+      value: "PRODUCTS" as const,
+      label: "Product Report",
+      description: "Performance, ratings, and sales",
     },
     {
-      value: 'CUSTOMERS' as const,
-      label: 'Customer Report',
-      description: 'Purchase history and analytics',
+      value: "CUSTOMERS" as const,
+      label: "Customer Report",
+      description: "Purchase history and analytics",
     },
   ];
 
@@ -117,16 +119,16 @@ export function ReportGenerator({ farmId }: { farmId?: string }) {
               onClick={() => setReportType(type.value)}
               className={`p-4 rounded-lg border-2 transition-all text-left ${
                 reportType === type.value
-                  ? 'border-agricultural-500 bg-agricultural-50'
-                  : 'border-gray-200 hover:border-agricultural-300'
+                  ? "border-agricultural-500 bg-agricultural-50"
+                  : "border-gray-200 hover:border-agricultural-300"
               }`}
             >
               <div className="flex items-start gap-3">
                 <FileText
                   className={`w-5 h-5 mt-0.5 ${
                     reportType === type.value
-                      ? 'text-agricultural-600'
-                      : 'text-gray-400'
+                      ? "text-agricultural-600"
+                      : "text-gray-400"
                   }`}
                 />
                 <div>
@@ -182,21 +184,21 @@ export function ReportGenerator({ farmId }: { farmId?: string }) {
         </label>
         <div className="flex gap-4">
           <button
-            onClick={() => setFormat('JSON')}
+            onClick={() => setFormat("JSON")}
             className={`px-6 py-3 rounded-lg border-2 font-medium transition-all ${
-              format === 'JSON'
-                ? 'border-agricultural-500 bg-agricultural-50 text-agricultural-700'
-                : 'border-gray-200 text-gray-700 hover:border-agricultural-300'
+              format === "JSON"
+                ? "border-agricultural-500 bg-agricultural-50 text-agricultural-700"
+                : "border-gray-200 text-gray-700 hover:border-agricultural-300"
             }`}
           >
             JSON
           </button>
           <button
-            onClick={() => setFormat('CSV')}
+            onClick={() => setFormat("CSV")}
             className={`px-6 py-3 rounded-lg border-2 font-medium transition-all ${
-              format === 'CSV'
-                ? 'border-agricultural-500 bg-agricultural-50 text-agricultural-700'
-                : 'border-gray-200 text-gray-700 hover:border-agricultural-300'
+              format === "CSV"
+                ? "border-agricultural-500 bg-agricultural-50 text-agricultural-700"
+                : "border-gray-200 text-gray-700 hover:border-agricultural-300"
             }`}
           >
             CSV (Spreadsheet)
@@ -225,8 +227,13 @@ export function ReportGenerator({ farmId }: { farmId?: string }) {
             Report Preview
           </h4>
           <ul className="text-sm text-agricultural-700 space-y-1">
-            <li>• Type: {reportTypes.find(t => t.value === reportType)?.label}</li>
-            <li>• Period: {new Date(startDate).toLocaleDateString()} - {new Date(endDate).toLocaleDateString()}</li>
+            <li>
+              • Type: {reportTypes.find((t) => t.value === reportType)?.label}
+            </li>
+            <li>
+              • Period: {new Date(startDate).toLocaleDateString()} -{" "}
+              {new Date(endDate).toLocaleDateString()}
+            </li>
             <li>• Format: {format}</li>
             {farmId && <li>• Farm: Specific Farm</li>}
           </ul>

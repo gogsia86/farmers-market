@@ -3,12 +3,12 @@
  * Manage automated report schedules
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { QuantumButton } from '@/components/ui/QuantumButton';
-import { Clock, Calendar, Trash2, Plus } from 'lucide-react';
-import { toast } from 'sonner';
+import { QuantumButton } from "@/components/ui/QuantumButton";
+import { Calendar, Clock, Plus, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 interface ScheduledReport {
   id: string;
@@ -33,35 +33,35 @@ export function ScheduledReports({ farmId }: { farmId?: string }) {
 
   const fetchScheduledReports = async () => {
     try {
-      const response = await fetch('/api/reports/scheduled');
+      const response = await fetch("/api/reports/scheduled");
       const data = await response.json();
 
       if (response.ok) {
         setReports(data.reports);
       }
     } catch (error) {
-      toast.error('Failed to load scheduled reports');
+      toast.error("Failed to load scheduled reports");
     } finally {
       setIsLoading(false);
     }
   };
 
   const deleteReport = async (id: string) => {
-    if (!confirm('Delete this scheduled report?')) return;
+    if (!confirm("Delete this scheduled report?")) return;
 
     try {
       const response = await fetch(`/api/reports/scheduled/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (response.ok) {
-        setReports(prev => prev.filter(r => r.id !== id));
-        toast.success('Scheduled report deleted');
+        setReports((prev) => prev.filter((r) => r.id !== id));
+        toast.success("Scheduled report deleted");
       } else {
-        throw new Error('Failed to delete');
+        throw new Error("Failed to delete");
       }
     } catch (error) {
-      toast.error('Failed to delete scheduled report');
+      toast.error("Failed to delete scheduled report");
     }
   };
 
@@ -74,7 +74,9 @@ export function ScheduledReports({ farmId }: { farmId?: string }) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Scheduled Reports</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Scheduled Reports
+          </h2>
           <p className="text-gray-600 mt-1">
             Automated report delivery to your inbox
           </p>
@@ -99,7 +101,7 @@ export function ScheduledReports({ farmId }: { farmId?: string }) {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {reports.map(report => (
+          {reports.map((report) => (
             <div
               key={report.id}
               className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
@@ -127,11 +129,11 @@ export function ScheduledReports({ farmId }: { farmId?: string }) {
                 <span
                   className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
                     report.active
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-gray-100 text-gray-700'
+                      ? "bg-green-100 text-green-700"
+                      : "bg-gray-100 text-gray-700"
                   }`}
                 >
-                  {report.active ? 'Active' : 'Paused'}
+                  {report.active ? "Active" : "Paused"}
                 </span>
               </div>
 
@@ -179,9 +181,7 @@ export function ScheduledReports({ farmId }: { farmId?: string }) {
             <h3 className="text-xl font-bold text-gray-900 mb-4">
               Create Scheduled Report
             </h3>
-            <p className="text-gray-600 mb-4">
-              Form would go here...
-            </p>
+            <p className="text-gray-600 mb-4">Form would go here...</p>
             <div className="flex justify-end gap-3">
               <QuantumButton
                 variant="secondary"
