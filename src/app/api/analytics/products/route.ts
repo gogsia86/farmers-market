@@ -3,34 +3,37 @@
  * Individual product insights and metrics
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
-import { database } from '@/lib/database';
+import { auth } from "@/lib/auth";
+import { database } from "@/lib/database";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const farmId = searchParams.get('farmId');
-    const limit = Number.parseInt(searchParams.get('limit') || '10');
+    const farmId = searchParams.get("farmId");
+    const limit = Number.parseInt(searchParams.get("limit") || "10");
 
     // Get user's farms
     const userFarms = await database.farm.findMany({
-      where: session.user.role === 'ADMIN' ? {} : { ownerId: session.user.id },
+      where: session.user.role === "ADMIN" ? {} : { ownerId: session.user.id },
       select: { id: true },
     });
 
     if (userFarms.length === 0) {
-      return NextResponse.json({
-        error: 'No farms found',
-      }, { status: 403 });
+      return NextResponse.json(
+        {
+          error: "No farms found",
+        },
+        { status: 403 }
+      );
     }
 
-    const farmIds = farmId ? [farmId] : userFarms.map(f => f.id);
+    const farmIds = farmId ? [farmId] : userFarms.map((f) => f.id);
 
     // Get products with sales data
     const products = await database.product.findMany({
@@ -51,9 +54,9 @@ export async function GET(request: NextRequest) {
     });
 
     // Calculate performance metrics for each product
-    const performance = products.map(product => {
+    const performance = products.map((product) => {
       const completedSales = product.orderItems.filter(
-        item => item.order.status === 'DELIVERED'
+        (item) => item.order.status === "DELIVERED"
       );
 
       const totalSold = completedSales.reduce(
@@ -62,7 +65,8 @@ export async function GET(request: NextRequest) {
       );
 
       const revenue = completedSales.reduce(
-        (sum, item) => sum + Number.parseFloat(item.price.toString()) * item.quantity,
+        (sum, item) =>
+          sum + Number.parseFloat(item.price.toString()) * item.quantity,
         0
       );
 
@@ -75,19 +79,27 @@ export async function GET(request: NextRequest) {
       // Calculate trend (last 7 days vs previous 7 days)
       const now = new Date();
       const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-      const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+      const fourteenDaysAgo = new Date(
+        now.getTime() - 14 * 24 * 60 * 60 * 1000
+      );
 
       const recentSales = completedSales.filter(
-        item => item.order.createdAt >= sevenDaysAgo
+        (item) => item.order.createdAt >= sevenDaysAgo
       );
       const previousSales = completedSales.filter(
-        item =>
+        (item) =>
           item.order.createdAt >= fourteenDaysAgo &&
           item.order.createdAt < sevenDaysAgo
       );
 
-      const recentTotal = recentSales.reduce((sum, item) => sum + item.quantity, 0);
-      const previousTotal = previousSales.reduce((sum, item) => sum + item.quantity, 0);
+      const recentTotal = recentSales.reduce(
+        (sum, item) => sum + item.quantity,
+        0
+      );
+      const previousTotal = previousSales.reduce(
+        (sum, item) => sum + item.quantity,
+        0
+      );
 
       const trendPercentage =
         previousTotal > 0
@@ -95,7 +107,7 @@ export async function GET(request: NextRequest) {
           : 0;
 
       const salesTrend =
-        trendPercentage > 10 ? 'up' : trendPercentage < -10 ? 'down' : 'stable';
+        trendPercentage > 10 ? "up" : trendPercentage < -10 ? "down" : "stable";
 
       return {
         productId: product.id,
@@ -104,15 +116,17 @@ export async function GET(request: NextRequest) {
         totalSold,
         revenue,
         averagePrice:
-          totalSold > 0 ? revenue / totalSold : Number.parseFloat(product.price.toString()),
+          totalSold > 0
+            ? revenue / totalSold
+            : Number.parseFloat(product.price.toString()),
         averageRating,
         totalReviews: product.reviews.length,
         currentStock: product.quantity || 0,
         stockStatus: !product.inStock
-          ? 'OUT_OF_STOCK'
+          ? "OUT_OF_STOCK"
           : (product.quantity || 0) < 10
-          ? 'LOW_STOCK'
-          : 'IN_STOCK',
+            ? "LOW_STOCK"
+            : "IN_STOCK",
         salesTrend,
         trendPercentage,
       };
@@ -137,23 +151,21 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Product performance error:', error);
+    console.error("Product performance error:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch product performance' },
+      { error: "Failed to fetch product performance" },
       { status: 500 }
     );
   }
 }
 
-function getMostCommonCategory(
-  products: Array<{ category: string }>
-): string {
+function getMostCommonCategory(products: Array<{ category: string }>): string {
   const counts = new Map<string, number>();
   for (const product of products) {
     counts.set(product.category, (counts.get(product.category) || 0) + 1);
   }
 
-  let maxCategory = '';
+  let maxCategory = "";
   let maxCount = 0;
   for (const [category, count] of counts.entries()) {
     if (count > maxCount) {

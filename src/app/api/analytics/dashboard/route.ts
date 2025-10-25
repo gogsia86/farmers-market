@@ -3,33 +3,36 @@
  * Comprehensive dashboard metrics
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
-import { database } from '@/lib/database';
+import { auth } from "@/lib/auth";
+import { database } from "@/lib/database";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const farmId = searchParams.get('farmId');
+    const farmId = searchParams.get("farmId");
 
     // Get user's farms
     const userFarms = await database.farm.findMany({
-      where: session.user.role === 'ADMIN' ? {} : { ownerId: session.user.id },
+      where: session.user.role === "ADMIN" ? {} : { ownerId: session.user.id },
       select: { id: true },
     });
 
     if (userFarms.length === 0) {
-      return NextResponse.json({
-        error: 'No farms found',
-      }, { status: 403 });
+      return NextResponse.json(
+        {
+          error: "No farms found",
+        },
+        { status: 403 }
+      );
     }
 
-    const farmIds = farmId ? [farmId] : userFarms.map(f => f.id);
+    const farmIds = farmId ? [farmId] : userFarms.map((f) => f.id);
 
     // Get last 30 days
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
@@ -43,7 +46,7 @@ export async function GET(request: NextRequest) {
           createdAt: { gte: thirtyDaysAgo },
         },
         include: { items: true },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         take: 10,
       }),
 
@@ -79,12 +82,13 @@ export async function GET(request: NextRequest) {
       (sum, order) => sum + Number.parseFloat(order.total.toString()),
       0
     );
-    const averageOrderValue = orders.length > 0 ? totalRevenue / orders.length : 0;
+    const averageOrderValue =
+      orders.length > 0 ? totalRevenue / orders.length : 0;
 
     // Top products by sales
     const productSales = new Map<string, number>();
-    orders.forEach(order => {
-      order.items.forEach(item => {
+    orders.forEach((order) => {
+      order.items.forEach((item) => {
         const current = productSales.get(item.productId) || 0;
         productSales.set(item.productId, current + item.quantity);
       });
@@ -94,18 +98,21 @@ export async function GET(request: NextRequest) {
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
       .map(([productId, quantity]) => {
-        const product = products.find(p => p.id === productId);
+        const product = products.find((p) => p.id === productId);
         return {
           productId,
-          name: product?.name || 'Unknown',
+          name: product?.name || "Unknown",
           quantity,
-          revenue:
-            orders
-              .flatMap(o => o.items)
-              .filter(i => i.productId === productId)
-              .reduce((sum, item) => sum + Number.parseFloat(item.price.toString()) * item.quantity, 0),
+          revenue: orders
+            .flatMap((o) => o.items)
+            .filter((i) => i.productId === productId)
+            .reduce(
+              (sum, item) =>
+                sum + Number.parseFloat(item.price.toString()) * item.quantity,
+              0
+            ),
           rating:
-            product?.reviews.length ?? 0 > 0
+            (product?.reviews.length ?? 0 > 0)
               ? (product?.reviews.reduce((sum, r) => sum + r.rating, 0) ?? 0) /
                 (product?.reviews.length ?? 1)
               : 0,
@@ -114,7 +121,7 @@ export async function GET(request: NextRequest) {
 
     // Farm performance
     const totalProducts = products.length;
-    const activeProducts = products.filter(p => p.inStock).length;
+    const activeProducts = products.filter((p) => p.inStock).length;
     const averageRating =
       reviews.length > 0
         ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
@@ -130,31 +137,31 @@ export async function GET(request: NextRequest) {
         averageRating,
       },
       topProducts,
-      recentOrders: orders.map(order => ({
+      recentOrders: orders.map((order) => ({
         id: order.id,
         total: order.total,
         status: order.status,
         itemCount: order.items.length,
         createdAt: order.createdAt,
       })),
-      lowInventory: lowInventory.map(product => ({
+      lowInventory: lowInventory.map((product) => ({
         id: product.id,
         name: product.name,
         quantity: product.quantity,
-        status: product.quantity === 0 ? 'OUT_OF_STOCK' : 'LOW_STOCK',
+        status: product.quantity === 0 ? "OUT_OF_STOCK" : "LOW_STOCK",
       })),
       alerts: {
         lowInventoryCount: lowInventory.length,
-        pendingOrders: orders.filter(o => o.status === 'PENDING').length,
-        needsReview: reviews.filter(r => !r.response).length,
+        pendingOrders: orders.filter((o) => o.status === "PENDING").length,
+        needsReview: reviews.filter((r) => !r.response).length,
       },
     };
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error('Dashboard analytics error:', error);
+    console.error("Dashboard analytics error:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch dashboard analytics' },
+      { error: "Failed to fetch dashboard analytics" },
       { status: 500 }
     );
   }
