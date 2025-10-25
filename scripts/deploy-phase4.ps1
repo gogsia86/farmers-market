@@ -10,8 +10,8 @@ Write-Host ""
 $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
 if (-not $isAdmin) {
-    Write-Host "⚠️  Warning: Not running as administrator. Some operations may fail." -ForegroundColor Yellow
-    Write-Host ""
+  Write-Host "⚠️  Warning: Not running as administrator. Some operations may fail." -ForegroundColor Yellow
+  Write-Host ""
 }
 
 # Configuration
@@ -35,10 +35,11 @@ Write-Host "   ✅ npm version: $npmVersion" -ForegroundColor White
 # Check if .env files exist
 Write-Host "   Checking environment files..." -ForegroundColor Yellow
 if (Test-Path ".env.production") {
-    Write-Host "   ✅ .env.production found" -ForegroundColor White
-} else {
-    Write-Host "   ⚠️  .env.production not found" -ForegroundColor Yellow
-    Write-Host "      Create .env.production with required variables" -ForegroundColor Gray
+  Write-Host "   ✅ .env.production found" -ForegroundColor White
+}
+else {
+  Write-Host "   ⚠️  .env.production not found" -ForegroundColor Yellow
+  Write-Host "      Create .env.production with required variables" -ForegroundColor Gray
 }
 
 Write-Host ""
@@ -65,9 +66,9 @@ Write-Host ""
 
 $envCheck = Read-Host "   Have you configured all environment variables? (y/n)"
 if ($envCheck -ne "y") {
-    Write-Host "   ⚠️  Please configure environment variables before proceeding" -ForegroundColor Yellow
-    Write-Host "      See PHASE_4_DEPLOYMENT_GUIDE.md for details" -ForegroundColor Gray
-    exit 1
+  Write-Host "   ⚠️  Please configure environment variables before proceeding" -ForegroundColor Yellow
+  Write-Host "      See PHASE_4_DEPLOYMENT_GUIDE.md for details" -ForegroundColor Gray
+  exit 1
 }
 
 Write-Host "   ✅ Environment configured" -ForegroundColor White
@@ -79,19 +80,21 @@ Write-Host "===============================" -ForegroundColor Green
 
 $runMigrations = Read-Host "   Run database migrations? (y/n)"
 if ($runMigrations -eq "y") {
-    Write-Host "   Running Prisma migrations..." -ForegroundColor Yellow
-    
-    try {
-        npx prisma generate
-        npx prisma migrate deploy
-        Write-Host "   ✅ Database migrations complete" -ForegroundColor White
-    } catch {
-        Write-Host "   ❌ Migration failed: $_" -ForegroundColor Red
-        Write-Host "      Check DATABASE_URL and database connectivity" -ForegroundColor Gray
-        exit 1
-    }
-} else {
-    Write-Host "   ⏭️  Skipping migrations" -ForegroundColor Yellow
+  Write-Host "   Running Prisma migrations..." -ForegroundColor Yellow
+
+  try {
+    npx prisma generate
+    npx prisma migrate deploy
+    Write-Host "   ✅ Database migrations complete" -ForegroundColor White
+  }
+  catch {
+    Write-Host "   ❌ Migration failed: $_" -ForegroundColor Red
+    Write-Host "      Check DATABASE_URL and database connectivity" -ForegroundColor Gray
+    exit 1
+  }
+}
+else {
+  Write-Host "   ⏭️  Skipping migrations" -ForegroundColor Yellow
 }
 
 Write-Host ""
@@ -102,11 +105,12 @@ Write-Host "=============================" -ForegroundColor Green
 
 Write-Host "   Building Next.js application..." -ForegroundColor Yellow
 try {
-    npm run build
-    Write-Host "   ✅ Build successful" -ForegroundColor White
-} catch {
-    Write-Host "   ❌ Build failed: $_" -ForegroundColor Red
-    exit 1
+  npm run build
+  Write-Host "   ✅ Build successful" -ForegroundColor White
+}
+catch {
+  Write-Host "   ❌ Build failed: $_" -ForegroundColor Red
+  exit 1
 }
 
 Write-Host ""
@@ -117,21 +121,23 @@ Write-Host "====================" -ForegroundColor Green
 
 $runTests = Read-Host "   Run test suite? (y/n)"
 if ($runTests -eq "y") {
-    Write-Host "   Running tests..." -ForegroundColor Yellow
-    
-    try {
-        npm test
-        Write-Host "   ✅ Tests passed" -ForegroundColor White
-    } catch {
-        Write-Host "   ⚠️  Some tests failed" -ForegroundColor Yellow
-        $continueAnyway = Read-Host "   Continue with deployment? (y/n)"
-        if ($continueAnyway -ne "y") {
-            Write-Host "   ⏸️  Deployment cancelled" -ForegroundColor Yellow
-            exit 1
-        }
+  Write-Host "   Running tests..." -ForegroundColor Yellow
+
+  try {
+    npm test
+    Write-Host "   ✅ Tests passed" -ForegroundColor White
+  }
+  catch {
+    Write-Host "   ⚠️  Some tests failed" -ForegroundColor Yellow
+    $continueAnyway = Read-Host "   Continue with deployment? (y/n)"
+    if ($continueAnyway -ne "y") {
+      Write-Host "   ⏸️  Deployment cancelled" -ForegroundColor Yellow
+      exit 1
     }
-} else {
-    Write-Host "   ⏭️  Skipping tests" -ForegroundColor Yellow
+  }
+}
+else {
+  Write-Host "   ⏭️  Skipping tests" -ForegroundColor Yellow
 }
 
 Write-Host ""
@@ -148,8 +154,8 @@ Write-Host ""
 
 $emailVerified = Read-Host "   Email service configured and tested? (y/n)"
 if ($emailVerified -ne "y") {
-    Write-Host "   ⚠️  Warning: Email service not verified" -ForegroundColor Yellow
-    Write-Host "      Marketing features will not work without email service" -ForegroundColor Gray
+  Write-Host "   ⚠️  Warning: Email service not verified" -ForegroundColor Yellow
+  Write-Host "      Marketing features will not work without email service" -ForegroundColor Gray
 }
 
 Write-Host ""
@@ -170,51 +176,54 @@ Write-Host ""
 $platform = Read-Host "   Enter choice (1-6)"
 
 switch ($platform) {
-    "1" {
-        Write-Host "   Deploying to Vercel..." -ForegroundColor Yellow
-        try {
-            vercel --prod
-            Write-Host "   ✅ Deployed to Vercel" -ForegroundColor White
-        } catch {
-            Write-Host "   ❌ Vercel deployment failed" -ForegroundColor Red
-            Write-Host "      Install Vercel CLI: npm i -g vercel" -ForegroundColor Gray
-        }
+  "1" {
+    Write-Host "   Deploying to Vercel..." -ForegroundColor Yellow
+    try {
+      vercel --prod
+      Write-Host "   ✅ Deployed to Vercel" -ForegroundColor White
     }
-    "2" {
-        Write-Host "   Deploying to Netlify..." -ForegroundColor Yellow
-        try {
-            netlify deploy --prod
-            Write-Host "   ✅ Deployed to Netlify" -ForegroundColor White
-        } catch {
-            Write-Host "   ❌ Netlify deployment failed" -ForegroundColor Red
-            Write-Host "      Install Netlify CLI: npm i -g netlify-cli" -ForegroundColor Gray
-        }
+    catch {
+      Write-Host "   ❌ Vercel deployment failed" -ForegroundColor Red
+      Write-Host "      Install Vercel CLI: npm i -g vercel" -ForegroundColor Gray
     }
-    "3" {
-        Write-Host "   Deploying to AWS Amplify..." -ForegroundColor Yellow
-        Write-Host "      Use AWS Console to complete deployment" -ForegroundColor Gray
+  }
+  "2" {
+    Write-Host "   Deploying to Netlify..." -ForegroundColor Yellow
+    try {
+      netlify deploy --prod
+      Write-Host "   ✅ Deployed to Netlify" -ForegroundColor White
     }
-    "4" {
-        Write-Host "   Deploying to Railway..." -ForegroundColor Yellow
-        try {
-            railway up
-            Write-Host "   ✅ Deployed to Railway" -ForegroundColor White
-        } catch {
-            Write-Host "   ❌ Railway deployment failed" -ForegroundColor Red
-            Write-Host "      Install Railway CLI: npm i -g @railway/cli" -ForegroundColor Gray
-        }
+    catch {
+      Write-Host "   ❌ Netlify deployment failed" -ForegroundColor Red
+      Write-Host "      Install Netlify CLI: npm i -g netlify-cli" -ForegroundColor Gray
     }
-    "5" {
-        Write-Host "   Building Docker image..." -ForegroundColor Yellow
-        Write-Host "      docker build -t farmersmarket:latest ." -ForegroundColor Gray
-        Write-Host "      docker-compose up -d" -ForegroundColor Gray
+  }
+  "3" {
+    Write-Host "   Deploying to AWS Amplify..." -ForegroundColor Yellow
+    Write-Host "      Use AWS Console to complete deployment" -ForegroundColor Gray
+  }
+  "4" {
+    Write-Host "   Deploying to Railway..." -ForegroundColor Yellow
+    try {
+      railway up
+      Write-Host "   ✅ Deployed to Railway" -ForegroundColor White
     }
-    "6" {
-        Write-Host "   ⏭️  Skipping automated deployment" -ForegroundColor Yellow
+    catch {
+      Write-Host "   ❌ Railway deployment failed" -ForegroundColor Red
+      Write-Host "      Install Railway CLI: npm i -g @railway/cli" -ForegroundColor Gray
     }
-    default {
-        Write-Host "   ⚠️  Invalid choice" -ForegroundColor Yellow
-    }
+  }
+  "5" {
+    Write-Host "   Building Docker image..." -ForegroundColor Yellow
+    Write-Host "      docker build -t farmersmarket:latest ." -ForegroundColor Gray
+    Write-Host "      docker-compose up -d" -ForegroundColor Gray
+  }
+  "6" {
+    Write-Host "   ⏭️  Skipping automated deployment" -ForegroundColor Yellow
+  }
+  default {
+    Write-Host "   ⚠️  Invalid choice" -ForegroundColor Yellow
+  }
 }
 
 Write-Host ""
@@ -261,7 +270,7 @@ Write-Host ""
 # Open deployment guide
 $openGuide = Read-Host "Open deployment guide in browser? (y/n)"
 if ($openGuide -eq "y") {
-    Start-Process "PHASE_4_DEPLOYMENT_GUIDE.md"
+  Start-Process "PHASE_4_DEPLOYMENT_GUIDE.md"
 }
 
 Write-Host "✨ Deployment script complete!" -ForegroundColor Cyan
