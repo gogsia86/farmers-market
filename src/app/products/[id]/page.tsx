@@ -196,6 +196,19 @@ export default async function ProductDetailPage({
       {/* Product Detail */}
       <ProductDetailView product={product} />
 
+      {/* Reviews Section */}
+      <div className="container mx-auto px-4 py-12">
+        <div className="bg-white rounded-lg shadow-lg p-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            Customer Reviews
+          </h2>
+
+          <Suspense fallback={<ReviewsSkeleton />}>
+            <ReviewsSection productId={product.identity.id} />
+          </Suspense>
+        </div>
+      </div>
+
       {/* Related Products */}
       {relatedProducts.length > 0 && (
         <div className="container mx-auto px-4 py-12">
@@ -205,6 +218,33 @@ export default async function ProductDetailPage({
           />
         </div>
       )}
+    </div>
+  );
+}
+
+async function ReviewsSection({ productId }: { productId: string }) {
+  // Fetch reviews from API
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/reviews?productId=${productId}`,
+    { cache: "no-store" }
+  );
+
+  const data = await response.json();
+  const reviews = data.reviews || [];
+
+  return (
+    <div className="space-y-8">
+      <ReviewList productId={productId} reviews={reviews} canRespond={false} />
+    </div>
+  );
+}
+
+function ReviewsSkeleton() {
+  return (
+    <div className="space-y-4">
+      {[1, 2, 3].map((i) => (
+        <div key={i} className="h-32 bg-gray-200 rounded animate-pulse" />
+      ))}
     </div>
   );
 }

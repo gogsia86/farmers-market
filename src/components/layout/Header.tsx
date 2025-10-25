@@ -64,6 +64,9 @@ export default function Header() {
 
             {/* Right side - Cart & User */}
             <div className="flex items-center gap-4">
+              {/* Notifications */}
+              <NotificationCenter />
+
               {/* Cart Badge */}
               <button
                 onClick={() => setIsCartOpen(true)}
