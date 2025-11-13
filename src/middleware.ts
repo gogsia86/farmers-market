@@ -167,6 +167,6 @@ async function handleAdminRoutes(req: NextRequest) {
 export const config = {
   matcher: [
     // Match all pathnames except API routes, Next static/image, manifest and common static assets
-    "/((?!api|_next/static|_next/image|manifest|.*\\.png|.*\\.jpg|.*\\.jpeg|.*\\.gif|.*\\.svg|.*\\.ico|.*\\.webp).*)",
+    String.raw`/((?!api|_next/static|_next/image|manifest|.*\.png|.*\.jpg|.*\.jpeg|.*\.gif|.*\.svg|.*\.ico|.*\.webp).*)`,
   ],
 };
