@@ -15,7 +15,7 @@ if (!process.env.PAYPAL_CLIENT_ID || !process.env.PAYPAL_CLIENT_SECRET) {
  */
 async function getPayPalAccessToken(): Promise<string> {
   const auth = Buffer.from(
-    `${process.env.PAYPAL_CLIENT_ID}:${process.env.PAYPAL_CLIENT_SECRET}`
+    `${process.env.PAYPAL_CLIENT_ID}:${process.env.PAYPAL_CLIENT_SECRET}`,
   ).toString("base64");
 
   const response = await fetch(`${PAYPAL_API_BASE}/v1/oauth2/token`, {
@@ -39,7 +39,7 @@ async function getPayPalAccessToken(): Promise<string> {
  * Create PayPal order
  */
 export async function createPayPalOrder(
-  orderData: PayPalOrderData
+  orderData: PayPalOrderData,
 ): Promise<{ id: string; approvalUrl: string }> {
   try {
     const accessToken = await getPayPalAccessToken();
@@ -78,7 +78,7 @@ export async function createPayPalOrder(
 
     const order = await response.json();
     const approvalUrl = order.links.find(
-      (link: any) => link.rel === "approve"
+      (link: any) => link.rel === "approve",
     )?.href;
 
     return {
@@ -88,7 +88,7 @@ export async function createPayPalOrder(
   } catch (error) {
     console.error("PayPal order creation failed:", error);
     throw new Error(
-      `Failed to create PayPal order: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to create PayPal order: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 }
@@ -114,7 +114,7 @@ export async function capturePayPalOrder(paypalOrderId: string): Promise<{
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (!response.ok) {
@@ -135,7 +135,7 @@ export async function capturePayPalOrder(paypalOrderId: string): Promise<{
   } catch (error) {
     console.error("PayPal capture failed:", error);
     throw new Error(
-      `Failed to capture PayPal payment: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to capture PayPal payment: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 }
@@ -160,7 +160,7 @@ export async function getPayPalOrderDetails(paypalOrderId: string): Promise<{
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (!response.ok) {
@@ -179,7 +179,7 @@ export async function getPayPalOrderDetails(paypalOrderId: string): Promise<{
   } catch (error) {
     console.error("Failed to get PayPal order:", error);
     throw new Error(
-      `Failed to retrieve PayPal order: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to retrieve PayPal order: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 }
@@ -190,7 +190,7 @@ export async function getPayPalOrderDetails(paypalOrderId: string): Promise<{
 export async function refundPayPalCapture(
   captureId: string,
   amount?: number,
-  currency?: string
+  currency?: string,
 ): Promise<{
   id: string;
   status: string;
@@ -216,7 +216,7 @@ export async function refundPayPalCapture(
           "Content-Type": "application/json",
         },
         body: JSON.stringify(body),
-      }
+      },
     );
 
     if (!response.ok) {
@@ -234,7 +234,7 @@ export async function refundPayPalCapture(
   } catch (error) {
     console.error("PayPal refund failed:", error);
     throw new Error(
-      `Failed to refund PayPal payment: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to refund PayPal payment: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 }

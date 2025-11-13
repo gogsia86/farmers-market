@@ -72,20 +72,26 @@ model Order { id, user, items, total, status }
 ### Phase 3: Enhanced Shop Interface (Ready to Begin)
 
 #### 1. Product Catalog Enhancement
+
 ### Files to Create/Modify
+
 - `src/app/(shop)/products/page.tsx` - Advanced product listing
 - `src/components/shop/ProductFilter.tsx` - Filtering system
 - `src/components/shop/ProductCard.tsx` - Enhanced product display
 - `src/hooks/useProductFilter.tsx` - Filter state management
 
 #### 2. Vendor Profile Pages
+
 ### Files to Create
+
 - `src/app/(shop)/vendors/[farmId]/page.tsx` - Individual vendor page
 - `src/components/shop/VendorProfile.tsx` - Vendor information display
 - `src/components/shop/VendorProducts.tsx` - Vendor's product grid
 
 #### 3. Enhanced Shopping Cart
+
 ### Files to Modify
+
 - `src/hooks/useCart.tsx` - Add multi-vendor support
 - `src/components/cart/CartSidebar.tsx` - Vendor organization
 - `src/app/(shop)/checkout/page.tsx` - Improved checkout flow

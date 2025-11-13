@@ -1,0 +1,262 @@
+{
+  "common": {
+    "nav": {
+      "home": "होम",
+      "products": "उत्पाद",
+      "farms": "फार्म",
+      "about": "हमारे बारे में",
+      "contact": "संपर्क",
+      "login": "लॉग इन",
+      "signup": "साइन अप",
+      "dashboard": "डैशबोर्ड",
+      "cart": "कार्ट",
+      "orders": "ऑर्डर"
+    },
+    "actions": {
+      "search": "खोजें",
+      "filter": "फ़िल्टर",
+      "sort": "क्रमबद्ध करें",
+      "submit": "सबमिट करें",
+      "cancel": "रद्द करें",
+      "save": "सहेजें",
+      "delete": "हटाएं",
+      "edit": "संपादित करें",
+      "view": "देखें",
+      "addToCart": "कार्ट में जोड़ें",
+      "checkout": "चेकआउट",
+      "buy": "अभी खरीदें",
+      "learn": "और जानें"
+    },
+    "status": {
+      "loading": "लोड हो रहा है...",
+      "error": "त्रुटि",
+      "success": "सफलता",
+      "pending": "लंबित",
+      "processing": "प्रक्रिया में",
+      "completed": "पूर्ण",
+      "cancelled": "रद्द"
+    }
+  },
+  "home": {
+    "hero": {
+      "title": "फार्म से टेबल तक ताजा",
+      "subtitle": "स्थानीय किसानों से जुड़ें और अपने दरवाजे पर सबसे ताजा जैविक उत्पाद प्राप्त करें",
+      "cta": "खरीदारी शुरू करें"
+    },
+    "features": {
+      "title": "हमें क्यों चुनें",
+      "organic": {
+        "title": "100% जैविक",
+        "description": "विश्वसनीय स्थानीय फार्मों से प्रमाणित जैविक उत्पाद"
+      },
+      "fresh": {
+        "title": "हमेशा ताजा",
+        "description": "डिलीवरी से 24 घंटे पहले काटा गया"
+      },
+      "local": {
+        "title": "स्थानीय का समर्थन करें",
+        "description": "अपने समुदाय में किसानों के साथ सीधा संबंध"
+      },
+      "sustainable": {
+        "title": "टिकाऊ",
+        "description": "पर्यावरण के प्रति जागरूक खेती के तरीके"
+      }
+    },
+    "howItWorks": {
+      "title": "यह कैसे काम करता है",
+      "step1": {
+        "title": "उत्पाद ब्राउज़ करें",
+        "description": "स्थानीय फार्मों से ताजा उत्पाद देखें"
+      },
+      "step2": {
+        "title": "कार्ट में जोड़ें",
+        "description": "अपनी पसंदीदा जैविक वस्तुएं चुनें"
+      },
+      "step3": {
+        "title": "चेकआउट",
+        "description": "डिलीवरी या पिकअप विकल्प चुनें"
+      },
+      "step4": {
+        "title": "ताजा भोजन का आनंद लें",
+        "description": "अपने फार्म-ताजा उत्पाद प्राप्त करें"
+      }
+    }
+  },
+  "products": {
+    "title": "हमारे उत्पाद",
+    "categories": {
+      "all": "सभी उत्पाद",
+      "vegetables": "सब्जियां",
+      "fruits": "फल",
+      "dairy": "डेयरी उत्पाद",
+      "meat": "मांस और पोल्ट्री",
+      "eggs": "अंडे",
+      "honey": "शहद और संरक्षित",
+      "bakery": "बेकरी",
+      "herbs": "जड़ी-बूटियां और मसाले"
+    },
+    "filters": {
+      "category": "श्रेणी",
+      "price": "मूल्य सीमा",
+      "organic": "केवल जैविक",
+      "inStock": "स्टॉक में",
+      "farm": "फार्म"
+    },
+    "sorting": {
+      "featured": "विशेष रुप से प्रदर्शित",
+      "newest": "नवीनतम",
+      "priceLowToHigh": "मूल्य: कम से अधिक",
+      "priceHighToLow": "मूल्य: अधिक से कम",
+      "nameAZ": "नाम: A-Z"
+    },
+    "details": {
+      "description": "विवरण",
+      "ingredients": "सामग्री",
+      "nutrition": "पोषण तथ्य",
+      "certifications": "प्रमाणपत्र",
+      "farm": "फार्म",
+      "availability": "उपलब्धता",
+      "quantity": "मात्रा",
+      "unit": "इकाई"
+    }
+  },
+  "farms": {
+    "title": "हमारे फार्म",
+    "subtitle": "उन किसानों से मिलें जो आपका भोजन उगाते हैं",
+    "viewProducts": "उत्पाद देखें",
+    "location": "स्थान",
+    "certifications": "प्रमाणपत्र",
+    "practices": "खेती के तरीके",
+    "story": "हमारी कहानी",
+    "contact": "फार्म से संपर्क करें"
+  },
+  "cart": {
+    "title": "शॉपिंग कार्ट",
+    "empty": "आपकी कार्ट खाली है",
+    "item": "वस्तु",
+    "price": "मूल्य",
+    "quantity": "मात्रा",
+    "total": "कुल",
+    "subtotal": "उप-योग",
+    "tax": "कर",
+    "shipping": "शिपिंग",
+    "grandTotal": "महायोग",
+    "continueShopping": "खरीदारी जारी रखें",
+    "proceedToCheckout": "चेकआउट के लिए आगे बढ़ें",
+    "removeItem": "वस्तु हटाएं",
+    "updateCart": "कार्ट अपडेट करें"
+  },
+  "checkout": {
+    "title": "चेकआउट",
+    "shippingInfo": "शिपिंग जानकारी",
+    "billingInfo": "बिलिंग जानकारी",
+    "paymentMethod": "भुगतान विधि",
+    "orderSummary": "ऑर्डर सारांश",
+    "placeOrder": "ऑर्डर करें",
+    "firstName": "पहला नाम",
+    "lastName": "अंतिम नाम",
+    "email": "ईमेल",
+    "phone": "फोन",
+    "address": "पता",
+    "city": "शहर",
+    "state": "राज्य",
+    "zipCode": "पिन कोड",
+    "country": "देश",
+    "deliveryMethod": {
+      "title": "डिलीवरी विधि",
+      "delivery": "घर पर डिलीवरी",
+      "pickup": "फार्म पिकअप"
+    }
+  },
+  "orders": {
+    "title": "मेरे ऑर्डर",
+    "orderNumber": "ऑर्डर नं.",
+    "date": "तारीख",
+    "status": "स्थिति",
+    "items": "वस्तुएं",
+    "total": "कुल",
+    "viewDetails": "विवरण देखें",
+    "trackOrder": "ऑर्डर ट्रैक करें",
+    "reorder": "फिर से ऑर्डर करें",
+    "noOrders": "अभी तक कोई ऑर्डर नहीं"
+  },
+  "auth": {
+    "login": {
+      "title": "लॉग इन",
+      "email": "ईमेल",
+      "password": "पासवर्ड",
+      "remember": "मुझे याद रखें",
+      "forgot": "पासवर्ड भूल गए?",
+      "submit": "साइन इन",
+      "noAccount": "खाता नहीं है?",
+      "createAccount": "एक बनाएं"
+    },
+    "signup": {
+      "title": "साइन अप",
+      "firstName": "पहला नाम",
+      "lastName": "अंतिम नाम",
+      "email": "ईमेल",
+      "password": "पासवर्ड",
+      "confirmPassword": "पासवर्ड की पुष्टि करें",
+      "submit": "खाता बनाएं",
+      "hasAccount": "पहले से एक खाता है?",
+      "signIn": "साइन इन करें"
+    }
+  },
+  "footer": {
+    "company": {
+      "title": "कंपनी",
+      "about": "हमारे बारे में",
+      "careers": "करियर",
+      "press": "प्रेस",
+      "blog": "ब्लॉग"
+    },
+    "support": {
+      "title": "सहायता",
+      "help": "सहायता केंद्र",
+      "contact": "हमसे संपर्क करें",
+      "faq": "FAQ",
+      "shipping": "शिपिंग जानकारी"
+    },
+    "legal": {
+      "title": "कानूनी",
+      "privacy": "गोपनीयता नीति",
+      "terms": "सेवा की शर्तें",
+      "cookies": "कुकी नीति"
+    },
+    "social": {
+      "title": "हमें फॉलो करें"
+    },
+    "copyright": "© 2024 Farmers Market. सर्वाधिकार सुरक्षित।"
+  },
+  "notifications": {
+    "addedToCart": "सफलतापूर्वक कार्ट में जोड़ा गया",
+    "removedFromCart": "कार्ट से हटा दिया गया",
+    "orderPlaced": "ऑर्डर सफलतापूर्वक दिया गया",
+    "profileUpdated": "प्रोफ़ाइल अपडेट की गई",
+    "error": "कुछ गलत हो गया",
+    "sessionExpired": "आपका सत्र समाप्त हो गया है"
+  },
+  "agricultural": {
+    "consciousness": {
+      "level": "कृषि चेतना",
+      "organic": "जैविक",
+      "biodynamic": "जैव गतिशील",
+      "regenerative": "पुनर्योजी",
+      "permaculture": "स्थायी कृषि"
+    },
+    "seasons": {
+      "spring": "वसंत",
+      "summer": "ग्रीष्म",
+      "fall": "शरद",
+      "winter": "शीत"
+    },
+    "practices": {
+      "noTill": "बिना जुताई खेती",
+      "cropRotation": "फसल चक्र",
+      "composting": "खाद बनाना",
+      "coverCrops": "आवरण फसलें",
+      "integratedPest": "एकीकृत कीट प्रबंधन"
+    }
+  }
+}

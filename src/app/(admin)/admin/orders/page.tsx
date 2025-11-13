@@ -365,7 +365,7 @@ export default async function AdminOrdersPage() {
                           {order.scheduledDate && (
                             <div className="text-xs">
                               {new Date(
-                                order.scheduledDate
+                                order.scheduledDate,
                               ).toLocaleDateString()}
                             </div>
                           )}

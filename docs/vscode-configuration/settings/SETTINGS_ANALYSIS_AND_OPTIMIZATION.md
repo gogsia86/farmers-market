@@ -105,7 +105,6 @@ Search Index: Optimized with smart exclusions
 **Issues Identified**:
 
 1. **Deprecated Settings** (Non-breaking):
-
    - `jest.autoRun` → Use `jest.runMode` instead
    - `jest.showCoverageOnLoad` → No longer needed
 
@@ -466,9 +465,9 @@ Shows errors and warnings inline in the editor (visual enhancement).
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
   },
-  "exclude": ["node_modules", ".next", "dist", "out", ".turbo"]
+  "exclude": ["node_modules", ".next", "dist", "out", ".turbo"],
 }
 ```
 

@@ -111,7 +111,6 @@ import {
 ### **IMMEDIATE** (5-10 minutes)
 
 1. **Fix Enum Types in Seed File**:
-
    - Update imports to include all enum types
    - Replace all string literals with enum values
    - Test with `npx prisma db seed`

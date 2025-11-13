@@ -1,5 +1,6 @@
+"use client";
+
 import { ArrowLeft, Home, Search, Sprout } from "lucide-react";
-import { Metadata } from "next";
 import Link from "next/link";
 
 /**
@@ -18,12 +19,6 @@ import Link from "next/link";
  * - Temporal optimization for path discovery
  * - Reality bending for navigation harmony
  */
-
-export const metadata: Metadata = {
-  title: "🌾 Lost in the Fields - Farmers Market",
-  description:
-    "This agricultural path has not been cultivated yet. Let us guide you back to fertile ground.",
-};
 
 // 🌿 Get seasonal navigation suggestions
 function getSeasonalSuggestions(): string[] {

@@ -3,16 +3,15 @@
     // ========================================================================
     // LANGUAGE & ENVIRONMENT
     // ========================================================================
-    "target": "ES2020", // Compile to ES2020 for modern features
+    "target": "ES2022", // Updated to ES2022 for Next.js 15 compatibility
     "lib": [
-      "ES2020", // Includes Promise, Array.includes, Object.values, String.padStart, etc.
+      "ES2022", // Modern JavaScript features
       "DOM", // DOM types for browser APIs
       "DOM.Iterable" // Iterable DOM collections
     ],
     "module": "ESNext", // Use ESNext module system
-    "moduleResolution": "bundler", // Next.js 14 bundler resolution
-    "jsx": "preserve", // Preserve JSX for Next.js
-
+    "moduleResolution": "bundler", // Next.js 15 bundler resolution (correct for App Router)
+    "jsx": "preserve", // Preserve JSX for Next.js transformation
     // ========================================================================
     // TYPE CHECKING
     // ========================================================================
@@ -28,9 +27,8 @@
     "noUnusedParameters": true, // Report unused parameters
     "noImplicitReturns": true, // Report missing return statements
     "noFallthroughCasesInSwitch": true, // Report fallthrough cases
-    "noUncheckedIndexedAccess": false, // Allow unchecked indexed access (for flexibility)
+    "noUncheckedIndexedAccess": true, // Enable for safer array/object access (stricter)
     "exactOptionalPropertyTypes": false, // Allow undefined for optional properties
-
     // ========================================================================
     // MODULE RESOLUTION
     // ========================================================================
@@ -38,7 +36,7 @@
     "allowSyntheticDefaultImports": true, // Allow default imports from modules with no default export
     "esModuleInterop": true, // Emit __importStar and __importDefault helpers
     "isolatedModules": true, // Ensure each file can be safely transpiled
-
+    "moduleDetection": "force", // Force module detection for all files
     // ========================================================================
     // EMIT
     // ========================================================================
@@ -48,7 +46,6 @@
     "outDir": "./dist", // Output directory
     "removeComments": false, // Keep comments in output
     "noEmit": true, // Don't emit files (Next.js handles compilation)
-
     // ========================================================================
     // INTEROP CONSTRAINTS
     // ========================================================================
@@ -56,22 +53,47 @@
     "checkJs": false, // Don't type-check JavaScript files
     "skipLibCheck": true, // Skip type checking of declaration files
     "forceConsistentCasingInFileNames": true, // Ensure consistent casing
-
     // ========================================================================
     // PATH MAPPING (Divine Quantum Import Resolution)
     // ========================================================================
-    "baseUrl": ".", // Base URL for imports
     "paths": {
-      "@/*": ["./src/*"], // Map @/ to src/ for divine component access
-      "@/components/*": ["./src/components/*"], // Direct component access
-      "@/lib/*": ["./src/lib/*"], // Divine library access
-      "@/app/*": ["./src/app/*"], // Application quantum routes
-      "@/types/*": ["./src/types/*"], // Type consciousness definitions
-      "@/hooks/*": ["./src/hooks/*"], // React quantum hooks
-      "@/utils/*": ["./src/utils/*"], // Utility consciousness
-      "@/styles/*": ["./src/styles/*"] // Divine styling patterns
+      "@/*": [
+        "./src/*"
+      ], // Explicit path from project root
+      "@/components/*": [
+        "./src/components/*"
+      ],
+      "@/lib/*": [
+        "./src/lib/*"
+      ],
+      "@/app/*": [
+        "./src/app/*"
+      ],
+      "@/types/*": [
+        "./src/types/*"
+      ],
+      "@/hooks/*": [
+        "./src/hooks/*"
+      ],
+      "@/utils/*": [
+        "./src/utils/*"
+      ],
+      "@/styles/*": [
+        "./src/styles/*"
+      ],
+      "@/config/*": [
+        "./src/config/*"
+      ],
+      "@/services/*": [
+        "./src/services/*"
+      ],
+      "@/repositories/*": [
+        "./src/repositories/*"
+      ],
+      "@/controllers/*": [
+        "./src/controllers/*"
+      ]
     },
-
     // ========================================================================
     // NEXT.JS SPECIFIC
     // ========================================================================
@@ -82,7 +104,6 @@
       }
     ]
   },
-
   // ==========================================================================
   // INCLUDE/EXCLUDE
   // ==========================================================================
@@ -90,17 +111,25 @@
     "next-env.d.ts", // Next.js types
     "**/*.ts", // All TypeScript files
     "**/*.tsx", // All TSX files
-    ".next/types/**/*.ts" // Next.js generated types
+    ".next/types/**/*.ts", // Next.js generated types
+    "**/*.mts", // Modern TypeScript module files
+    "**/*.cts" // CommonJS TypeScript files
+    ,
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules", // Exclude dependencies
     ".next", // Exclude Next.js build output
     "dist", // Exclude output directory
     "coverage", // Exclude test coverage
-    "prisma", // Exclude Prisma generated files (they have their own types)
-    "**/*.spec.ts", // Test files (included separately)
+    "build", // Exclude build artifacts
+    "**/*.spec.ts", // Test files (handled by separate config)
     "**/*.test.ts",
     "**/*.spec.tsx",
-    "**/*.test.tsx"
+    "**/*.test.tsx",
+    "**/__tests__/**", // Test directories
+    "**/__mocks__/**", // Mock directories
+    "scripts/profiling_output/**", // Profiling output
+    "performance_reports/**" // Performance reports
   ]
 }

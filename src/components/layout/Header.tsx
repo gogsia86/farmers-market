@@ -1,96 +1,153 @@
 /**
- * SITE HEADER - MAIN NAVIGATION WITH CART
- *
- * Divine header component with:
- * - Logo and branding
- * - Navigation links
- * - Cart badge with drawer
- * - User menu (future)
+ * 🧠 DIVINE PATTERN: Main Navigation Header Component
+ * 📚 Reference: 04_NEXTJS_DIVINE_IMPLEMENTATION.instructions.md
+ * 🌾 Domain: Platform Navigation
+ * ⚡ Performance: Client-side interactivity for mobile menu
  */
 
 "use client";
 
-import UserMenu from "@/components/auth/UserMenu";
-import CartDrawer from "@/components/cart/CartDrawer";
-import { useCart } from "@/components/cart/CartProvider";
-import SearchBar from "@/components/search/SearchBar";
-import { ShoppingCart } from "lucide-react";
+import { SimpleLanguageButton } from "@/components/i18n";
+import { Menu, Search, ShoppingCart, User, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-export default function Header() {
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const { cart } = useCart();
+export function Header() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const handleSearchClick = () => {
+    // TODO: Implement search functionality
+    console.log("Search clicked");
+  };
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
 
   return (
-    <>
-      <header className="bg-white shadow-sm sticky top-0 z-40">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between gap-4 h-16">
-            {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-              <span className="text-2xl">🌾</span>
-              <span className="text-xl font-bold text-agricultural-600">
-                Farmers Market
+    <header className="bg-white shadow-sm sticky top-0 z-50">
+      <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-label="Top">
+        <div className="flex w-full items-center justify-between border-b border-agricultural-200 py-4 lg:border-none">
+          {/* Logo */}
+          <div className="flex items-center">
+            <Link href="/" className="flex items-center">
+              <span className="text-2xl font-bold text-agricultural-700">
+                🌾 Farmers Market
+              </span>
+            </Link>
+          </div>
+
+          {/* Desktop Navigation */}
+          <div className="ml-10 hidden space-x-8 lg:flex">
+            <Link
+              href="/"
+              className="text-base font-medium text-gray-700 hover:text-agricultural-700 transition-colors"
+            >
+              Home
+            </Link>
+            <Link
+              href="/farms"
+              data-testid="browse-farms-link"
+              className="text-base font-medium text-gray-700 hover:text-agricultural-700 transition-colors"
+            >
+              Farms
+            </Link>
+            <Link
+              href="/products"
+              className="text-base font-medium text-gray-700 hover:text-agricultural-700 transition-colors"
+            >
+              Products
+            </Link>
+            <Link
+              href="/about"
+              className="text-base font-medium text-gray-700 hover:text-agricultural-700 transition-colors"
+            >
+              About
+            </Link>
+          </div>
+
+          {/* Right side icons */}
+          <div className="ml-10 flex items-center space-x-4">
+            <button
+              onClick={handleSearchClick}
+              className="p-2 text-gray-700 hover:text-agricultural-700 transition-colors"
+              aria-label="Search"
+            >
+              <Search className="h-5 w-5" />
+            </button>
+
+            {/* Language Selector - Always visible */}
+            <SimpleLanguageButton />
+
+            <Link
+              href="/cart"
+              data-testid="cart-button"
+              className="p-2 text-gray-700 hover:text-agricultural-700 transition-colors relative"
+              aria-label="Shopping cart"
+            >
+              <ShoppingCart className="h-5 w-5" />
+              <span
+                data-testid="cart-count"
+                className="absolute -top-1 -right-1 bg-agricultural-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+              >
+                0
               </span>
             </Link>
 
-            {/* Search Bar - Desktop */}
-            <div className="hidden lg:block flex-1 max-w-2xl">
-              <SearchBar />
-            </div>
+            <Link
+              href="/login"
+              className="p-2 text-gray-700 hover:text-agricultural-700 transition-colors"
+              aria-label="User account"
+            >
+              <User className="h-5 w-5" />
+            </Link>
 
-            {/* Navigation */}
-            <nav className="hidden md:flex items-center gap-6 flex-shrink-0">
-              <Link
-                href="/products"
-                className="text-gray-700 hover:text-agricultural-600 transition-colors"
-              >
-                Products
-              </Link>
-              <Link
-                href="/farms"
-                className="text-gray-700 hover:text-agricultural-600 transition-colors"
-              >
-                Farms
-              </Link>
-              <Link
-                href="/about"
-                className="text-gray-700 hover:text-agricultural-600 transition-colors"
-              >
-                About
-              </Link>
-            </nav>
-
-            {/* Right side - Cart & User */}
-            <div className="flex items-center gap-4">
-              {/* Notifications */}
-              <NotificationCenter />
-
-              {/* Cart Badge */}
-              <button
-                onClick={() => setIsCartOpen(true)}
-                className="relative p-2 text-gray-700 hover:text-agricultural-600 transition-colors"
-                aria-label={`Shopping cart with ${cart.itemCount} items`}
-              >
-                <ShoppingCart className="h-6 w-6" />
-
-                {cart.itemCount > 0 && (
-                  <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-agricultural-600 text-xs font-bold text-white">
-                    {cart.itemCount > 99 ? "99+" : cart.itemCount}
-                  </span>
-                )}
-              </button>
-
-              {/* User Menu */}
-              <UserMenu />
-            </div>
+            {/* Mobile menu button */}
+            <button
+              onClick={toggleMobileMenu}
+              data-testid="mobile-menu-button"
+              className="lg:hidden p-2 text-gray-700 hover:text-agricultural-700"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </button>
           </div>
         </div>
-      </header>
 
-      {/* Cart Drawer */}
-      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
-    </>
+        {/* Mobile menu */}
+        {mobileMenuOpen && (
+          <div data-testid="mobile-menu" className="lg:hidden py-4 space-y-2">
+            <Link
+              href="/"
+              className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-agricultural-700 hover:bg-agricultural-50 rounded-md transition-colors"
+            >
+              Home
+            </Link>
+            <Link
+              href="/farms"
+              className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-agricultural-700 hover:bg-agricultural-50 rounded-md transition-colors"
+            >
+              Farms
+            </Link>
+            <Link
+              href="/products"
+              className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-agricultural-700 hover:bg-agricultural-50 rounded-md transition-colors"
+            >
+              Products
+            </Link>
+            <Link
+              href="/about"
+              className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-agricultural-700 hover:bg-agricultural-50 rounded-md transition-colors"
+            >
+              About
+            </Link>
+          </div>
+        )}
+      </nav>
+    </header>
   );
 }

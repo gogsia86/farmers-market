@@ -268,7 +268,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to fetch products" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -290,7 +290,7 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Validation failed", issues: error.issues },
-        { status: 400 }
+        { status: 400 },
       );
     }
     throw error;
@@ -341,7 +341,7 @@ export async function generateMetadata({
 class ValidationError extends Error {
   constructor(
     message: string,
-    public readonly issues: z.ZodIssue[]
+    public readonly issues: z.ZodIssue[],
   ) {
     super(message);
     this.name = "ValidationError";
@@ -573,7 +573,7 @@ type ResponseData<T extends boolean> = T extends true
   : { success: false; error: string };
 
 async function fetchProducts<T extends boolean>(
-  shouldSucceed: T
+  shouldSucceed: T,
 ): Promise<ResponseData<T>> {
   if (shouldSucceed) {
     return { success: true, data: [] } as ResponseData<T>;

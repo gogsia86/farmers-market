@@ -107,7 +107,7 @@
   - [ ] GPU-accelerated machine learning for yield prediction
   - [ ] Quantum parallelization of agricultural calculations
   - **Estimated Time**: 12-15 hours
-  - **Hardware**: RTX 2070 Max-Q (2304 CUDA cores) + 64GB RAM
+  - **Hardware**: RTX 2070 Max-Q (8GB GDDR6, 2304 CUDA cores) + 64GB RAM
   - **Status**: Hardware ready, needs CUDA development integration
   - **Reference**: [03_PERFORMANCE_REALITY_BENDING.instructions.md](../.github/instructions/03_PERFORMANCE_REALITY_BENDING.instructions.md)
 

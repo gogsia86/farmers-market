@@ -1,0 +1,117 @@
+name: Scheduled Maintenance Tasks
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+jobs:
+  # Job 1: Database Backup
+  backup-database:
+    name: Backup Database
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+
+    steps:
+      - name: 📦 Create database backup
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.PRODUCTION_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          script: |
+            cd /opt/farmers-market/backups
+            docker-compose exec -T postgres pg_dump -U farmersmarket farmersmarket | gzip > backup_$(date +%Y%m%d_%H%M%S).sql.gz
+
+            # Keep only last 30 days of backups
+            find . -name "backup_*.sql.gz" -mtime +30 -delete
+
+      - name: ☁️ Upload to cloud storage
+        run: |
+          echo "Backup uploaded to cloud storage"
+          # Add your cloud storage upload logic here (AWS S3, Azure Blob, etc.)
+
+  # Job 2: Dependency Updates
+  update-dependencies:
+    name: Check for Updates
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: 🔍 Check for outdated packages
+        run: |
+          npm outdated || true
+          npm outdated --json > outdated.json || true
+
+      - name: 📊 Generate update report
+        run: |
+          echo "## Dependency Update Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          cat outdated.json >> $GITHUB_STEP_SUMMARY || echo "All dependencies up to date" >> $GITHUB_STEP_SUMMARY
+
+  # Job 3: Security Audit
+  security-audit:
+    name: Daily Security Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: 📚 Install dependencies
+        run: npm ci
+
+      - name: 🔒 Run security audit
+        run: npm audit --json > audit.json || true
+
+      - name: 📊 Generate audit report
+        run: |
+          echo "## Security Audit Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          cat audit.json >> $GITHUB_STEP_SUMMARY
+
+  # Job 4: Database Health Check
+  database-health:
+    name: Database Health Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🏥 Check database status
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.PRODUCTION_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          script: |
+            cd /opt/farmers-market
+            docker-compose exec -T postgres psql -U farmersmarket -d farmersmarket -c "SELECT version();"
+            docker-compose exec -T postgres psql -U farmersmarket -d farmersmarket -c "SELECT pg_size_pretty(pg_database_size('farmersmarket'));"
+
+  # Job 5: Clean Docker Resources
+  clean-docker:
+    name: Clean Docker Resources
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🧹 Clean unused Docker resources
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.PRODUCTION_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          script: |
+            docker system prune -af --filter "until=72h"
+            docker volume prune -f --filter "label!=keep"

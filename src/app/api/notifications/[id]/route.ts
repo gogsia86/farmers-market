@@ -8,7 +8,7 @@ import { database } from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PATCH(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
@@ -37,7 +37,7 @@ export async function PATCH(
     const updated = await database.notification.update({
       where: { id: params.id },
       data: {
-        read: true,
+        isRead: true,
         readAt: new Date(),
       },
     });
@@ -55,8 +55,11 @@ export async function PATCH(
 /**
  * DELETE notification
  */
-export async function DELETE(
-  request: NextRequest,
+/**
+ * GET single notification
+ */
+export async function GET(
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {

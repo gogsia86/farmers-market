@@ -449,7 +449,7 @@ export async function GET(request: NextRequest) {
   if (!queryValidation.success) {
     return NextResponse.json(
       { error: "Invalid query parameters" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -495,7 +495,7 @@ export async function GET(request: NextRequest) {
     console.error("Product fetch error:", error);
     return NextResponse.json(
       { error: "Failed to fetch products" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -506,7 +506,7 @@ export async function POST(request: NextRequest) {
   if (!session?.user) {
     return NextResponse.json(
       { error: "Authentication required" },
-      { status: 401 }
+      { status: 401 },
     );
   }
 
@@ -535,14 +535,14 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Validation failed", details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.error("Product creation error:", error);
     return NextResponse.json(
       { error: "Failed to create product" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -607,7 +607,7 @@ type Farm = ReadonlyFields<
 // Generic data fetcher with type inference
 async function fetchData<T>(
   endpoint: ApiEndpoint,
-  options?: RequestInit
+  options?: RequestInit,
 ): Promise<ApiResponse<T>> {
   try {
     const response = await fetch(endpoint, options);
@@ -787,7 +787,7 @@ export class FarmQueries {
       status?: FarmStatus;
       hasProducts?: boolean;
       organic?: boolean;
-    }
+    },
   ) {
     return await database.farm.findMany({
       where: {

@@ -813,7 +813,7 @@ test("farmer completes registration in under 5 minutes", async ({ page }) => {
   // Step 3: Story
   await page.fill(
     '[name="description"]',
-    "Family farm growing organic veggies since 1997"
+    "Family farm growing organic veggies since 1997",
   );
   await page.setInputFiles('[name="farmPhoto"]', "test-photo.jpg");
   await page.click('button:has-text("Complete Registration")');

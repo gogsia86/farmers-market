@@ -42,7 +42,7 @@ const signupSchema = z
       .min(8, "Password must be at least 8 characters")
       .regex(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-        "Password must contain uppercase, lowercase, and number"
+        "Password must contain uppercase, lowercase, and number",
       ),
     confirmPassword: z.string().min(1, "Please confirm your password"),
     userType: z.enum(["CONSUMER", "FARMER"], {

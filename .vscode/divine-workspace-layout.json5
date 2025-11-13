@@ -1,0 +1,51 @@
+{
+  // Divine Workspace Layout Configuration
+  "workbench.panel.defaultLocation": "bottom",
+  "workbench.panel.opensMaximized": "preserve",
+  "workbench.sideBar.location": "left",
+  "workbench.activityBar.visible": true,
+  "workbench.statusBar.visible": true,
+
+  // Layout preferences
+  "workbench.editor.splitInGroupLayout": "vertical",
+  "workbench.editor.openPositioning": "right",
+  "workbench.editor.revealIfOpen": true,
+
+  // Explorer configuration
+  "explorer.compactFolders": false,
+  "explorer.openEditors.visible": 10,
+  "explorer.autoReveal": "focusNoScroll",
+
+  // Panel layout (Chat + Terminal below)
+  "workbench.panel.defaultLocation": "bottom",
+  "terminal.integrated.defaultLocation": "panel",
+
+  // Multi-pane setup
+  "workbench.editor.limit.enabled": true,
+  "workbench.editor.limit.value": 8,
+  "workbench.editor.limit.perEditorGroup": true,
+
+  // Context files auto-management
+  "github.copilot.chat.welcomeMessage": "never",
+  "github.copilot.editor.enableAutoCompletions": true,
+
+  // Divine workspace features
+  "workbench.startupEditor": "welcomePageInEmptyWorkbench",
+  "workbench.editor.pinnedTabSizing": "compact",
+
+  // File associations for context
+  "files.associations": {
+    "*.context.md": "markdown",
+    "*.divine.ts": "typescript",
+    "*.quantum.tsx": "typescriptreact",
+  },
+
+  // Recommended extensions for this layout
+  "extensions.recommendations": [
+    "ms-vscode.vscode-typescript-next",
+    "bradlc.vscode-tailwindcss",
+    "prisma.prisma",
+    "github.copilot",
+    "github.copilot-chat",
+  ],
+}

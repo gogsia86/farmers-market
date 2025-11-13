@@ -28,7 +28,10 @@ function generateSlug(text: string): string {
     .trim();
 }
 
-function randomDate(start: Date, end: Date): Date {
+// Utility function for generating random dates (currently unused but kept for future use)
+// @ts-ignore - Utility function reserved for future use
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function _randomDate(start: Date, end: Date): Date {
   return new Date(
     start.getTime() + Math.random() * (end.getTime() - start.getTime())
   );
@@ -209,7 +212,7 @@ async function main() {
   await prisma.userAddress.createMany({
     data: [
       {
-        userId: consumers[0].id,
+        userId: consumers[0]!!.id,
         type: "HOME",
         label: "Home",
         street: "123 Oak Street",
@@ -221,7 +224,7 @@ async function main() {
         isDefault: true,
       },
       {
-        userId: consumers[1].id,
+        userId: consumers[1]!!.id,
         type: "HOME",
         street: "456 Maple Avenue",
         city: "Eugene",
@@ -232,7 +235,7 @@ async function main() {
         isDefault: true,
       },
       {
-        userId: consumers[2].id,
+        userId: consumers[2]!!.id,
         type: "HOME",
         street: "789 Pine Road",
         city: "Salem",
@@ -254,7 +257,7 @@ async function main() {
 
   const farmDataList = [
     {
-      ownerId: farmers[0].id,
+      ownerId: farmers[0]!.id,
       name: "Sunny Valley Organic Farm",
       slug: "sunny-valley-organic",
       description:
@@ -280,7 +283,7 @@ async function main() {
       deliveryRadius: 30,
     },
     {
-      ownerId: farmers[1].id,
+      ownerId: farmers[1]!.id,
       name: "Greenfield Acres",
       slug: "greenfield-acres",
       description:
@@ -305,7 +308,7 @@ async function main() {
       deliveryRadius: 25,
     },
     {
-      ownerId: farmers[2].id,
+      ownerId: farmers[2]!.id,
       name: "Harvest Moon Ranch",
       slug: "harvest-moon-ranch",
       description:
@@ -330,7 +333,7 @@ async function main() {
       deliveryRadius: 20,
     },
     {
-      ownerId: farmers[3].id,
+      ownerId: farmers[3]!.id,
       name: "Flores Family Farm",
       slug: "flores-family-farm",
       description:
@@ -355,7 +358,7 @@ async function main() {
       deliveryRadius: 15,
     },
     {
-      ownerId: farmers[4].id,
+      ownerId: farmers[4]!.id,
       name: "Pure Earth Organic",
       slug: "pure-earth-organic",
       description:
@@ -382,7 +385,7 @@ async function main() {
   ];
 
   const farmsCreated = await Promise.all(
-    farmDataList.map((data) => prisma.farm.create({ data }))
+    farmDataList.map((data) => prisma.farm.create({ data: data as any }))
   );
 
   console.log(`  ✅ Created ${farmsCreated.length} farms\n`);
@@ -392,7 +395,7 @@ async function main() {
   // ========================================================================
   console.log("📸 Adding farm photos...");
 
-  const farmPhotos = farmsCreated.flatMap((farm, farmIndex) => [
+  const farmPhotos = farmsCreated.flatMap((farm) => [
     {
       farmId: farm.id,
       photoUrl: `https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=1200`,
@@ -428,7 +431,7 @@ async function main() {
   await prisma.farmCertification.createMany({
     data: [
       {
-        farmId: farmsCreated[0].id,
+        farmId: farmsCreated[0]!.id,
         type: "ORGANIC",
         certifierName: "Oregon Tilth",
         certificationNumber: "OT-2024-1234",
@@ -439,7 +442,7 @@ async function main() {
         verifiedAt: new Date("2024-01-15"),
       },
       {
-        farmId: farmsCreated[1].id,
+        farmId: farmsCreated[1]!.id,
         type: "BIODYNAMIC",
         certifierName: "Demeter USA",
         certificationNumber: "DM-2024-5678",
@@ -450,7 +453,7 @@ async function main() {
         verifiedAt: new Date("2024-02-10"),
       },
       {
-        farmId: farmsCreated[2].id,
+        farmId: farmsCreated[2]!.id,
         type: "ANIMAL_WELFARE",
         certifierName: "Certified Humane",
         certificationNumber: "CH-2024-9012",
@@ -461,7 +464,7 @@ async function main() {
         verifiedAt: new Date("2024-03-05"),
       },
       {
-        farmId: farmsCreated[4].id,
+        farmId: farmsCreated[4]!.id,
         type: "ORGANIC",
         certifierName: "USDA Organic",
         certificationNumber: "USDA-OR-2024-3456",
@@ -486,7 +489,7 @@ async function main() {
   // Sunny Valley Organic (Vegetables & Fruits)
   products.push(
     {
-      farmId: farmsCreated[0].id,
+      farmId: farmsCreated[0]!.id,
       name: "Heirloom Tomatoes",
       slug: generateSlug("Heirloom Tomatoes"),
       description:
@@ -508,7 +511,7 @@ async function main() {
       publishedAt: new Date(),
     },
     {
-      farmId: farmsCreated[0].id,
+      farmId: farmsCreated[0]!.id,
       name: "Rainbow Chard",
       slug: generateSlug("Rainbow Chard"),
       description: "Colorful Swiss chard, perfect for sautéing or salads",
@@ -525,7 +528,7 @@ async function main() {
       publishedAt: new Date(),
     },
     {
-      farmId: farmsCreated[0].id,
+      farmId: farmsCreated[0]!.id,
       name: "Organic Strawberries",
       slug: generateSlug("Organic Strawberries"),
       description: "Sweet, juicy strawberries picked at peak ripeness",
@@ -549,7 +552,7 @@ async function main() {
   // Greenfield Acres (Vegetables & Flowers)
   products.push(
     {
-      farmId: farmsCreated[1].id,
+      farmId: farmsCreated[1]!.id,
       name: "Mixed Salad Greens",
       slug: generateSlug("Mixed Salad Greens"),
       description: "Organic mixed lettuce, arugula, and specialty greens",
@@ -566,7 +569,7 @@ async function main() {
       publishedAt: new Date(),
     },
     {
-      farmId: farmsCreated[1].id,
+      farmId: farmsCreated[1]!.id,
       name: "Organic Basil",
       slug: generateSlug("Organic Basil"),
       description: "Fresh basil, perfect for pesto and Italian dishes",
@@ -583,7 +586,7 @@ async function main() {
       publishedAt: new Date(),
     },
     {
-      farmId: farmsCreated[1].id,
+      farmId: farmsCreated[1]!.id,
       name: "Sunflower Bouquet",
       slug: generateSlug("Sunflower Bouquet"),
       description: "Bright sunflowers, grown biodynamically",
@@ -606,7 +609,7 @@ async function main() {
   // Harvest Moon Ranch (Eggs & Poultry)
   products.push(
     {
-      farmId: farmsCreated[2].id,
+      farmId: farmsCreated[2]!.id,
       name: "Pasture-Raised Eggs",
       slug: generateSlug("Pasture-Raised Eggs"),
       description: "Fresh eggs from happy hens on pasture, collected daily",
@@ -623,7 +626,7 @@ async function main() {
       publishedAt: new Date(),
     },
     {
-      farmId: farmsCreated[2].id,
+      farmId: farmsCreated[2]!.id,
       name: "Whole Chicken (Pasture-Raised)",
       slug: generateSlug("Whole Chicken Pasture-Raised"),
       description: "Whole chicken, pasture-raised, 4-5 lbs",
@@ -643,7 +646,7 @@ async function main() {
   // Flores Family Farm (Specialty Latin American Vegetables)
   products.push(
     {
-      farmId: farmsCreated[3].id,
+      farmId: farmsCreated[3]!.id,
       name: "Nopales (Cactus Paddles)",
       slug: generateSlug("Nopales Cactus Paddles"),
       description: "Fresh cactus paddles, traditional Mexican ingredient",
@@ -659,7 +662,7 @@ async function main() {
       publishedAt: new Date(),
     },
     {
-      farmId: farmsCreated[3].id,
+      farmId: farmsCreated[3]!.id,
       name: "Tomatillos",
       slug: generateSlug("Tomatillos"),
       description: "Fresh tomatillos for salsa verde",
@@ -679,7 +682,7 @@ async function main() {
   // Pure Earth Organic (Specialty Greens & Microgreens)
   products.push(
     {
-      farmId: farmsCreated[4].id,
+      farmId: farmsCreated[4]!.id,
       name: "Microgreens Mix",
       slug: generateSlug("Microgreens Mix"),
       description:
@@ -697,7 +700,7 @@ async function main() {
       publishedAt: new Date(),
     },
     {
-      farmId: farmsCreated[4].id,
+      farmId: farmsCreated[4]!.id,
       name: "Kale (Lacinato)",
       slug: generateSlug("Kale Lacinato"),
       description:
@@ -719,6 +722,18 @@ async function main() {
   await prisma.product.createMany({ data: products });
   console.log(`  ✅ Created ${products.length} products\n`);
 
+  // Fetch created products to get their IDs
+  const createdProducts = await prisma.product.findMany({
+    where: {
+      farmId: {
+        in: [farmsCreated[0]!.id, farmsCreated[1]!.id],
+      },
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+
   // ========================================================================
   // STEP 8: CREATE SAMPLE ORDERS
   // ========================================================================
@@ -727,8 +742,8 @@ async function main() {
   const order1 = await prisma.order.create({
     data: {
       orderNumber: "FM-000001",
-      customerId: consumers[0].id,
-      farmId: farmsCreated[0].id,
+      customerId: consumers[0]!.id,
+      farmId: farmsCreated[0]!.id,
       status: "COMPLETED",
       paymentStatus: "PAID",
       subtotal: new Prisma.Decimal("25.48"),
@@ -748,7 +763,7 @@ async function main() {
         createMany: {
           data: [
             {
-              productId: products[0].farmId, // This will be fixed with actual product ID
+              productId: createdProducts[0]!.id, // Heirloom Tomatoes
               productName: "Heirloom Tomatoes",
               quantity: new Prisma.Decimal("2"),
               unit: "lb",
@@ -756,7 +771,7 @@ async function main() {
               subtotal: new Prisma.Decimal("13.98"),
             },
             {
-              productId: products[1].farmId,
+              productId: createdProducts[1]!.id, // Rainbow Chard
               productName: "Rainbow Chard",
               quantity: new Prisma.Decimal("2"),
               unit: "bunch",
@@ -779,8 +794,8 @@ async function main() {
   await prisma.review.createMany({
     data: [
       {
-        farmId: farmsCreated[0].id,
-        customerId: consumers[0].id,
+        farmId: farmsCreated[0]!.id,
+        customerId: consumers[0]!.id,
         orderId: order1.id,
         rating: 5,
         reviewText:

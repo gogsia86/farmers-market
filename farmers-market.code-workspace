@@ -1,0 +1,248 @@
+{
+  "folders": [
+    {
+      "name": "🌾 Farmers Market - Root",
+      "path": ".",
+    },
+    {
+      "name": "📋 Planning & Docs",
+      "path": "./docs",
+    },
+    {
+      "name": "🧬 Source Code",
+      "path": "./Farmers-Market",
+    },
+    {
+      "name": "🧪 Tests",
+      "path": "./tests",
+    },
+    {
+      "name": "⚙️ Configuration",
+      "path": "./.vscode",
+    },
+    {
+      "name": "📝 Instructions",
+      "path": "./.github/instructions",
+    },
+  ],
+  "settings": {
+    "workbench.colorTheme": "Default Dark Modern",
+    "workbench.iconTheme": "rose-pine-icons",
+    "workbench.panel.defaultLocation": "bottom",
+    "workbench.editor.enablePreview": false,
+    "workbench.startupEditor": "none",
+    "workbench.panel.opens": "below",
+    "workbench.sideBar.location": "right",
+    "explorer.openEditors.visible": 10,
+    "explorer.autoReveal": true,
+    "explorer.confirmDragAndDrop": false,
+    "explorer.compactFolders": false,
+    "workbench.statusBar.visible": true,
+    "workbench.editor.tabActionLocation": "right",
+    "github.copilot.enable": {
+      "*": true,
+      "yaml": true,
+      "plaintext": true,
+      "markdown": true,
+      "scminput": true,
+    },
+    "github.copilot.advanced": {
+      "debug.overrideCapiUrl": "",
+      "debug.testOverrideProxyUrl": "",
+      "debug.overrideProxyUrl": "",
+    },
+    "github.copilot.chat.codeGeneration.instructions": [
+      {
+        "text": "Follow the DIVINE CORE PRINCIPLES from .github/instructions/01_DIVINE_CORE_PRINCIPLES.instructions.md",
+      },
+      {
+        "text": "Apply agricultural quantum patterns for farming domain features from .github/instructions/02_AGRICULTURAL_QUANTUM_MASTERY.instructions.md",
+      },
+      {
+        "text": "Use performance reality bending from .github/instructions/03_PERFORMANCE_REALITY_BENDING.instructions.md",
+      },
+      {
+        "text": "Implement Next.js divine patterns from .github/instructions/04_NEXTJS_DIVINE_IMPLEMENTATION.instructions.md",
+      },
+      {
+        "text": "Apply kilo-scale architecture patterns from .github/instructions/11_KILO_SCALE_ARCHITECTURE.instructions.md",
+      },
+      {
+        "text": "Optimize for HP OMEN hardware (RTX 2070 Max-Q, 32GB RAM, 12 threads)",
+      },
+    ],
+    "files.associations": {
+      "*.instructions.md": "markdown",
+      "*.chatmode.md": "markdown",
+      "*.divine.ts": "typescript",
+      "*.quantum.ts": "typescript",
+      "*.agricultural.ts": "typescript",
+    },
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit",
+      "source.organizeImports": "explicit",
+    },
+    "typescript.preferences.importModuleSpecifier": "relative",
+    "typescript.suggest.autoImports": true,
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "terminal.integrated.profiles.windows": {
+      "PowerShell": {
+        "source": "PowerShell",
+        "icon": "terminal-powershell",
+      },
+      "Command Prompt": {
+        "path": [
+          "${env:windir}\\Sysnative\\cmd.exe",
+          "${env:windir}\\System32\\cmd.exe",
+        ],
+        "args": [],
+        "icon": "terminal-cmd",
+      },
+    },
+    "jest.runMode": {
+      "type": "watch",
+      "coverage": false,
+      "deferred": false,
+    },
+    "jest.enableCodeLens": true,
+    "jest.enableSnapshotUpdateMessages": true,
+    "jest.disabledWorkspaceFolders": [
+      "📋 Planning & Docs",
+      "🧬 Source Code",
+      "🧪 Tests",
+      "⚙️ Configuration",
+      "📝 Instructions",
+    ],
+    "jest.jestCommandLine": "npm test --",
+    "jest.outputConfig": {
+      "revealOn": "run",
+      "revealWithFocus": "test-results",
+      "clearOnRun": "none",
+    },
+    "chat.checkpoints.showFileChanges": true,
+    "editor.defaultFormatter": "GitHub.copilot",
+    "markdown.validate.enabled": true,
+    "chat.agent.maxRequests": 50,
+    "chat.agentSessionsViewLocation": "view",
+    "chat.edits2.enabled": true,
+    "chat.mcp.gallery.enabled": true,
+    "chat.renderRelatedFiles": true,
+    "chat.showAgentSessionsViewDescription": true,
+    "chat.tools.edits.autoApprove": {
+      "**/.vscode/*.json": true,
+      "**/.git/**": true,
+      "**/{package.json,package-lock.json,server.xml,build.rs,web.config,.gitattributes,.env}": true,
+      "**/*.{csproj,fsproj,vbproj}": true,
+    },
+    "chat.tools.terminal.autoReplyToPrompts": true,
+    "chat.useCloudButtonV2": true,
+    "chat.useNestedAgentsMdFiles": true,
+    "inlineChat.enableV2": true,
+    "inlineChat.notebookAgent": true,
+    "[jsonc]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+    },
+    "githubIssues.createIssueTriggers": [
+      "TODO",
+      "BUG",
+      "FIXME",
+      "ISSUE",
+      "HACK",
+    ],
+    "powershell.cwd": "🌾 Farmers Market - Root",
+    "[typescript]": {
+      "editor.defaultFormatter": "vscode.typescript-language-features",
+    },
+    "[typescriptreact]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+    },
+    "cSpell.words": ["Biodynamic", "Nsight", "NSIGHT"],
+    "[markdown]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+    },
+    "window.zoomPerWindow": false,
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "🚀 Next.js Development",
+        "type": "node",
+        "request": "launch",
+        "program": "${workspaceFolder}/node_modules/next/dist/bin/next",
+        "args": ["dev"],
+        "cwd": "${workspaceFolder}",
+        "console": "integratedTerminal",
+        "skipFiles": ["<node_internals>/**"],
+        "env": {
+          "NODE_OPTIONS": "--max-old-space-size=16384",
+        },
+      },
+      {
+        "name": "🧪 Jest Tests",
+        "type": "node",
+        "request": "launch",
+        "program": "${workspaceFolder}/node_modules/.bin/jest",
+        "args": ["--runInBand"],
+        "cwd": "${workspaceFolder}",
+        "console": "integratedTerminal",
+        "skipFiles": ["<node_internals>/**"],
+        "env": {
+          "NODE_OPTIONS": "--max-old-space-size=16384",
+        },
+      },
+    ],
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "🔄 Refresh Context",
+        "type": "shell",
+        "command": "pwsh",
+        "args": [
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "${workspaceFolder}/.vscode/scripts/context-manager.ps1",
+          "-Action",
+          "refresh",
+        ],
+        "group": "build",
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "shared",
+        },
+      },
+      {
+        "label": "🧹 Clear Context",
+        "type": "shell",
+        "command": "pwsh",
+        "args": [
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "${workspaceFolder}/.vscode/scripts/context-manager.ps1",
+          "-Action",
+          "clear",
+        ],
+        "group": "build",
+      },
+    ],
+  },
+  "extensions": {
+    "recommendations": [
+      "GitHub.copilot",
+      "GitHub.copilot-chat",
+      "ms-vscode.vscode-typescript-next",
+      "bradlc.vscode-tailwindcss",
+      "Prisma.prisma",
+      "ms-vscode.powershell",
+      "esbenp.prettier-vscode",
+      "dbaeumer.vscode-eslint",
+    ],
+  },
+}

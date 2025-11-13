@@ -1,0 +1,262 @@
+{
+  "common": {
+    "nav": {
+      "home": "Inicio",
+      "products": "Productos",
+      "farms": "Granjas",
+      "about": "Acerca de",
+      "contact": "Contacto",
+      "login": "Iniciar Sesión",
+      "signup": "Registrarse",
+      "dashboard": "Panel",
+      "cart": "Carrito",
+      "orders": "Pedidos"
+    },
+    "actions": {
+      "search": "Buscar",
+      "filter": "Filtrar",
+      "sort": "Ordenar",
+      "submit": "Enviar",
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "delete": "Eliminar",
+      "edit": "Editar",
+      "view": "Ver",
+      "addToCart": "Añadir al Carrito",
+      "checkout": "Finalizar Compra",
+      "buy": "Comprar Ahora",
+      "learn": "Saber Más"
+    },
+    "status": {
+      "loading": "Cargando...",
+      "error": "Error",
+      "success": "Éxito",
+      "pending": "Pendiente",
+      "processing": "Procesando",
+      "completed": "Completado",
+      "cancelled": "Cancelado"
+    }
+  },
+  "home": {
+    "hero": {
+      "title": "Fresco de la Granja a tu Mesa",
+      "subtitle": "Conecta con agricultores locales y recibe los productos orgánicos más frescos en tu puerta",
+      "cta": "Comenzar a Comprar"
+    },
+    "features": {
+      "title": "Por Qué Elegirnos",
+      "organic": {
+        "title": "100% Orgánico",
+        "description": "Productos orgánicos certificados de granjas locales de confianza"
+      },
+      "fresh": {
+        "title": "Siempre Fresco",
+        "description": "Cosechado dentro de las 24 horas de entrega"
+      },
+      "local": {
+        "title": "Apoya lo Local",
+        "description": "Conexión directa con agricultores en tu comunidad"
+      },
+      "sustainable": {
+        "title": "Sostenible",
+        "description": "Prácticas agrícolas conscientes del medio ambiente"
+      }
+    },
+    "howItWorks": {
+      "title": "Cómo Funciona",
+      "step1": {
+        "title": "Explora Productos",
+        "description": "Descubre productos frescos de granjas locales"
+      },
+      "step2": {
+        "title": "Añade al Carrito",
+        "description": "Selecciona tus productos orgánicos favoritos"
+      },
+      "step3": {
+        "title": "Finaliza la Compra",
+        "description": "Elige opciones de entrega o recogida"
+      },
+      "step4": {
+        "title": "Disfruta Comida Fresca",
+        "description": "Recibe tus productos frescos de granja"
+      }
+    }
+  },
+  "products": {
+    "title": "Nuestros Productos",
+    "categories": {
+      "all": "Todos los Productos",
+      "vegetables": "Verduras",
+      "fruits": "Frutas",
+      "dairy": "Lácteos",
+      "meat": "Carne y Aves",
+      "eggs": "Huevos",
+      "honey": "Miel y Conservas",
+      "bakery": "Panadería",
+      "herbs": "Hierbas y Especias"
+    },
+    "filters": {
+      "category": "Categoría",
+      "price": "Rango de Precio",
+      "organic": "Solo Orgánico",
+      "inStock": "En Stock",
+      "farm": "Granja"
+    },
+    "sorting": {
+      "featured": "Destacados",
+      "newest": "Más Recientes",
+      "priceLowToHigh": "Precio: Menor a Mayor",
+      "priceHighToLow": "Precio: Mayor a Menor",
+      "nameAZ": "Nombre: A-Z"
+    },
+    "details": {
+      "description": "Descripción",
+      "ingredients": "Ingredientes",
+      "nutrition": "Información Nutricional",
+      "certifications": "Certificaciones",
+      "farm": "Granja",
+      "availability": "Disponibilidad",
+      "quantity": "Cantidad",
+      "unit": "Unidad"
+    }
+  },
+  "farms": {
+    "title": "Nuestras Granjas",
+    "subtitle": "Conoce a los agricultores que cultivan tu comida",
+    "viewProducts": "Ver Productos",
+    "location": "Ubicación",
+    "certifications": "Certificaciones",
+    "practices": "Prácticas Agrícolas",
+    "story": "Nuestra Historia",
+    "contact": "Contactar Granja"
+  },
+  "cart": {
+    "title": "Carrito de Compras",
+    "empty": "Tu carrito está vacío",
+    "item": "Artículo",
+    "price": "Precio",
+    "quantity": "Cantidad",
+    "total": "Total",
+    "subtotal": "Subtotal",
+    "tax": "Impuesto",
+    "shipping": "Envío",
+    "grandTotal": "Total General",
+    "continueShopping": "Continuar Comprando",
+    "proceedToCheckout": "Proceder al Pago",
+    "removeItem": "Eliminar Artículo",
+    "updateCart": "Actualizar Carrito"
+  },
+  "checkout": {
+    "title": "Finalizar Compra",
+    "shippingInfo": "Información de Envío",
+    "billingInfo": "Información de Facturación",
+    "paymentMethod": "Método de Pago",
+    "orderSummary": "Resumen del Pedido",
+    "placeOrder": "Realizar Pedido",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "email": "Correo Electrónico",
+    "phone": "Teléfono",
+    "address": "Dirección",
+    "city": "Ciudad",
+    "state": "Estado",
+    "zipCode": "Código Postal",
+    "country": "País",
+    "deliveryMethod": {
+      "title": "Método de Entrega",
+      "delivery": "Entrega a Domicilio",
+      "pickup": "Recogida en Granja"
+    }
+  },
+  "orders": {
+    "title": "Mis Pedidos",
+    "orderNumber": "Pedido #",
+    "date": "Fecha",
+    "status": "Estado",
+    "items": "Artículos",
+    "total": "Total",
+    "viewDetails": "Ver Detalles",
+    "trackOrder": "Rastrear Pedido",
+    "reorder": "Volver a Pedir",
+    "noOrders": "Aún no hay pedidos"
+  },
+  "auth": {
+    "login": {
+      "title": "Iniciar Sesión",
+      "email": "Correo Electrónico",
+      "password": "Contraseña",
+      "remember": "Recordarme",
+      "forgot": "¿Olvidaste tu contraseña?",
+      "submit": "Iniciar Sesión",
+      "noAccount": "¿No tienes una cuenta?",
+      "createAccount": "Crear una"
+    },
+    "signup": {
+      "title": "Registrarse",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "email": "Correo Electrónico",
+      "password": "Contraseña",
+      "confirmPassword": "Confirmar Contraseña",
+      "submit": "Crear Cuenta",
+      "hasAccount": "¿Ya tienes una cuenta?",
+      "signIn": "Iniciar sesión"
+    }
+  },
+  "footer": {
+    "company": {
+      "title": "Empresa",
+      "about": "Acerca de Nosotros",
+      "careers": "Carreras",
+      "press": "Prensa",
+      "blog": "Blog"
+    },
+    "support": {
+      "title": "Soporte",
+      "help": "Centro de Ayuda",
+      "contact": "Contáctanos",
+      "faq": "Preguntas Frecuentes",
+      "shipping": "Información de Envío"
+    },
+    "legal": {
+      "title": "Legal",
+      "privacy": "Política de Privacidad",
+      "terms": "Términos de Servicio",
+      "cookies": "Política de Cookies"
+    },
+    "social": {
+      "title": "Síguenos"
+    },
+    "copyright": "© 2024 Farmers Market. Todos los derechos reservados."
+  },
+  "notifications": {
+    "addedToCart": "Añadido al carrito exitosamente",
+    "removedFromCart": "Eliminado del carrito",
+    "orderPlaced": "Pedido realizado exitosamente",
+    "profileUpdated": "Perfil actualizado",
+    "error": "Algo salió mal",
+    "sessionExpired": "Tu sesión ha expirado"
+  },
+  "agricultural": {
+    "consciousness": {
+      "level": "Consciencia Agrícola",
+      "organic": "Orgánico",
+      "biodynamic": "Biodinámico",
+      "regenerative": "Regenerativo",
+      "permaculture": "Permacultura"
+    },
+    "seasons": {
+      "spring": "Primavera",
+      "summer": "Verano",
+      "fall": "Otoño",
+      "winter": "Invierno"
+    },
+    "practices": {
+      "noTill": "Agricultura Sin Labranza",
+      "cropRotation": "Rotación de Cultivos",
+      "composting": "Compostaje",
+      "coverCrops": "Cultivos de Cobertura",
+      "integratedPest": "Manejo Integrado de Plagas"
+    }
+  }
+}

@@ -342,7 +342,7 @@ test.describe("Farm Marketplace - Complete User Journey", () => {
 
     // 3. Verify search results
     await expect(page.locator('[data-testid="farm-card"]')).toHaveCount(
-      expect.any(Number)
+      expect.any(Number),
     );
 
     // 4. Click first farm
@@ -398,7 +398,7 @@ test.describe("Farm Marketplace - Complete User Journey", () => {
 
     // 6. Verify product listed
     await expect(
-      page.locator("text=Product listed successfully")
+      page.locator("text=Product listed successfully"),
     ).toBeVisible();
     await expect(page.locator("text=Organic Tomatoes")).toBeVisible();
   });
@@ -488,7 +488,7 @@ describe("Authentication Security Divine Protocols", () => {
     it("rejects expired tokens", async () => {
       const token = generateToken(
         { userId: "user-123" },
-        { expiresIn: "1ms" } // Expire immediately
+        { expiresIn: "1ms" }, // Expire immediately
       );
 
       // Wait for expiration
@@ -560,7 +560,7 @@ describe("Input Validation Security Divine Shields", () => {
     };
 
     expect(() => validateFileUpload(maliciousFile)).toThrow(
-      /invalid filename/i
+      /invalid filename/i,
     );
   });
 });
@@ -617,7 +617,7 @@ describe("Git Pre-Commit Validation", () => {
   it("ensures test coverage for new components", async () => {
     const newComponents = await getNewComponents();
     const missingTests = newComponents.filter(
-      (component) => !hasCorrespondingTest(component)
+      (component) => !hasCorrespondingTest(component),
     );
 
     if (missingTests.length > 0) {
@@ -684,14 +684,14 @@ describe("Agricultural Testing Consciousness", () => {
     const invalidSeason = "WINTER";
 
     await expect(farm.plantCrop("TOMATOES", invalidSeason)).rejects.toThrow(
-      SeasonalViolationError
+      SeasonalViolationError,
     );
   });
 
   it("ensures biodynamic patterns in git workflow", async () => {
     const gitHistory = await getGitHistory();
     const agriculturalCommits = gitHistory.filter((commit) =>
-      /farm|crop|harvest|soil|season/i.test(commit.message)
+      /farm|crop|harvest|soil|season/i.test(commit.message),
     );
 
     // Agricultural consciousness should be present in farm features
@@ -709,7 +709,7 @@ describe("Agricultural Testing Consciousness", () => {
     // Divine patterns should be preserved
     expect(afterRefactor.divinePatterns).toEqual(beforeRefactor.divinePatterns);
     expect(afterRefactor.agriculturalConsciousness).toBeGreaterThanOrEqual(
-      beforeRefactor.agriculturalConsciousness
+      beforeRefactor.agriculturalConsciousness,
     );
   });
 });
@@ -730,7 +730,7 @@ export class PerformanceMonitor {
 
   static async measure<T>(
     operationName: string,
-    operation: () => Promise<T>
+    operation: () => Promise<T>,
   ): Promise<T> {
     const start = performance.now();
 

@@ -105,7 +105,7 @@ function getUser(id: string): User;
 // ✅ DIVINE PATTERN
 function materializeUserConsciousness(
   identityResonance: QuantumIdentifier,
-  temporalContext: RealityFrame = CURRENT_REALITY
+  temporalContext: RealityFrame = CURRENT_REALITY,
 ): Promise<ManifestedUserEntity>;
 ```
 
@@ -152,7 +152,7 @@ interface ManifestedUserEntity {
 // === CONSCIOUSNESS OPERATIONS ===
 export async function materializeUserConsciousness(
   identityResonance: QuantumIdentifier,
-  temporalContext: RealityFrame = CURRENT_REALITY
+  temporalContext: RealityFrame = CURRENT_REALITY,
 ): Promise<ManifestedUserEntity> {
   // Divine implementation
 }
@@ -181,7 +181,7 @@ Code should flow like **mindful breath - natural and essential**:
 ```typescript
 async function harmonizeUserWithReality(
   user: UserConsciousness,
-  reality: TargetReality
+  reality: TargetReality,
 ): Promise<HarmonizedState> {
   // 1. Validate current state (breathing in)
   const currentState = await perceiveCurrentState(user);
@@ -208,7 +208,7 @@ class QuantumCoherenceError extends Error {
     message: string,
     public readonly currentState: QuantumState,
     public readonly expectedState: QuantumState,
-    public readonly resolutionPath: string[]
+    public readonly resolutionPath: string[],
   ) {
     super(`
 ╔════════════════════════════════════════════════════════════╗

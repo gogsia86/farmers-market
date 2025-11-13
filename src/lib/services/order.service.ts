@@ -1,357 +1,183 @@
-// src/lib/services/order.service.ts
+/**
+ * 📦 ORDER SERVICE
+ * Handles order creation, management, and tracking
+ */
+
 import { database } from "@/lib/database";
-import type {
-  CreateOrderInput,
-  OrderTotals,
-  OrderWithRelations,
-  UpdateOrderStatusInput,
-} from "@/types/order.types";
-import { OrderStatus, PaymentStatus } from "@prisma/client";
-import { OrderValidator } from "../validation/order.validation";
+import type { Order, OrderItem } from "@prisma/client";
+
+export interface CreateOrderInput {
+  userId: string;
+  farmId: string;
+  items: Array<{
+    productId: string;
+    productName: string;
+    quantity: number;
+    price: number;
+    unit: string;
+  }>;
+  shippingAddress: {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country?: string;
+  };
+  fulfillmentMethod: "DELIVERY" | "FARM_PICKUP" | "MARKET_PICKUP";
+  notes?: string;
+}
+
+export interface OrderWithDetails extends Order {
+  items: OrderItem[];
+  farm: {
+    id: string;
+    name: string;
+  };
+}
 
 export class OrderService {
   /**
-   * Generate unique order number (FM-YYYYMMDD-XXXX)
-   */
-  static async generateOrderNumber(): Promise<string> {
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const prefix = `FM-${year}${month}${day}`;
-
-    // Get count of orders today
-    const startOfDay = new Date(date.setHours(0, 0, 0, 0));
-    const count = await database.order.count({
-      where: {
-        createdAt: { gte: startOfDay },
-      },
-    });
-
-    const sequence = String(count + 1).padStart(4, "0");
-    return `${prefix}-${sequence}`;
-  }
-
-  /**
-   * Calculate order totals
-   */
-  static async calculateTotals(
-    items: Array<{ productId: string; quantity: number }>,
-    farmId: string,
-    fulfillmentMethod: string
-  ): Promise<OrderTotals> {
-    // Fetch product prices
-    const products = await database.product.findMany({
-      where: {
-        id: { in: items.map((i) => i.productId) },
-      },
-      select: { id: true, price: true },
-    });
-
-    // Calculate subtotal
-    const subtotal = items.reduce((sum, item) => {
-      const product = products.find((p) => p.id === item.productId);
-      return sum + (product ? Number(product.price) * item.quantity : 0);
-    }, 0);
-
-    // Calculate fees
-    const deliveryFee = fulfillmentMethod === "DELIVERY" ? 5.0 : 0;
-    const platformFee = subtotal * 0.15; // 15% commission
-    const tax = (subtotal + deliveryFee) * 0.08; // 8% tax (adjust per region)
-    const discount = 0; // TODO: Apply coupons
-    const total = subtotal + deliveryFee + tax - discount;
-    const farmerAmount = subtotal + deliveryFee - platformFee - tax;
-
-    return {
-      subtotal,
-      deliveryFee,
-      platformFee,
-      tax,
-      discount,
-      total,
-      farmerAmount,
-    };
-  }
-
-  /**
    * Create new order
    */
-  static async createOrder(
-    input: CreateOrderInput
-  ): Promise<OrderWithRelations> {
-    // Validate order creation
-    const validation = await OrderValidator.validateOrderCreation(
-      input.customerId,
-      input.farmId,
-      input.items,
-      input.fulfillmentMethod,
-      input.deliveryAddressId,
-      input.scheduledDate
-    );
-
-    if (!validation.valid) {
-      throw new Error(
-        `Order validation failed: ${validation.errors.join(", ")}`
-      );
-    }
-
-    // Fetch product prices for order items
-    const products = await database.product.findMany({
-      where: {
-        id: { in: input.items.map((i) => i.productId) },
-      },
-      select: { id: true, price: true },
-    });
-
-    // Generate order number
-    const orderNumber = await this.generateOrderNumber();
+  static async createOrder(input: CreateOrderInput): Promise<OrderWithDetails> {
+    const { userId, farmId, items, shippingAddress, fulfillmentMethod, notes } =
+      input;
 
     // Calculate totals
-    const totals = await this.calculateTotals(
-      input.items,
-      input.farmId,
-      input.fulfillmentMethod
+    const subtotal = items.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
     );
+    const tax = subtotal * 0.08; // 8% tax
+    const platformFee = subtotal * 0.15; // 15% platform commission
+    const farmerAmount = subtotal - platformFee;
+    const total = subtotal + tax;
+
+    // Generate order number
+    const orderNumber = `FM-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
 
     // Create order with items
     const order = await database.order.create({
       data: {
         orderNumber,
-        customerId: input.customerId,
-        farmId: input.farmId,
-        status: OrderStatus.PENDING,
-        paymentStatus: PaymentStatus.PENDING,
-        ...totals,
-        fulfillmentMethod: input.fulfillmentMethod,
-        deliveryAddressId: input.deliveryAddressId,
-        scheduledDate: input.scheduledDate,
-        scheduledTimeSlot: input.scheduledTimeSlot,
-        specialInstructions: input.specialInstructions,
+        customerId: userId,
+        farmId,
+        status: "PENDING",
+        paymentStatus: "PENDING",
+        subtotal,
+        tax,
+        platformFee,
+        farmerAmount,
+        total,
+        deliveryFee: 0,
+        discount: 0,
+        fulfillmentMethod,
+        shippingAddress: JSON.stringify(shippingAddress),
+        specialInstructions: notes,
         items: {
-          create: input.items.map((item) => {
-            const product = products.find((p) => p.id === item.productId);
-            const pricePerUnit = product ? Number(product.price) : 0;
-            const total = pricePerUnit * item.quantity;
-
-            return {
-              productId: item.productId,
-              quantity: item.quantity,
-              pricePerUnit,
-              total,
-            };
-          }),
+          create: items.map((item) => ({
+            productId: item.productId,
+            productName: item.productName,
+            quantity: item.quantity,
+            unit: item.unit,
+            unitPrice: item.price,
+            subtotal: item.price * item.quantity,
+          })),
         },
       },
       include: {
-        customer: {
-          select: { id: true, name: true, email: true },
-        },
+        items: true,
         farm: {
-          select: { id: true, name: true },
-        },
-        items: {
-          include: {
-            product: {
-              select: {
-                id: true,
-                name: true,
-                price: true,
-                unit: true,
-                images: true,
-              },
-            },
+          select: {
+            id: true,
+            name: true,
           },
         },
-        deliveryAddress: true,
       },
     });
 
-    return order as OrderWithRelations;
+    return order as OrderWithDetails;
   }
 
   /**
    * Get order by ID
    */
-  static async getOrderById(
-    orderId: string
-  ): Promise<OrderWithRelations | null> {
-    return (await database.order.findUnique({
+  static async getOrderById(orderId: string): Promise<OrderWithDetails | null> {
+    const order = await database.order.findUnique({
       where: { id: orderId },
       include: {
-        customer: {
-          select: { id: true, name: true, email: true },
-        },
+        items: true,
         farm: {
-          select: { id: true, name: true },
-        },
-        items: {
-          include: {
-            product: {
-              select: {
-                id: true,
-                name: true,
-                price: true,
-                unit: true,
-                images: true,
-              },
-            },
+          select: {
+            id: true,
+            name: true,
           },
         },
-        deliveryAddress: true,
       },
-    })) as OrderWithRelations | null;
-  }
+    });
 
-  /**
-   * Get customer's orders
-   */
-  static async getCustomerOrders(
-    customerId: string
-  ): Promise<OrderWithRelations[]> {
-    return (await database.order.findMany({
-      where: { customerId },
-      include: {
-        customer: {
-          select: { id: true, name: true, email: true },
-        },
-        farm: {
-          select: { id: true, name: true },
-        },
-        items: {
-          include: {
-            product: {
-              select: {
-                id: true,
-                name: true,
-                price: true,
-                unit: true,
-                images: true,
-              },
-            },
-          },
-        },
-        deliveryAddress: true,
-      },
-      orderBy: { createdAt: "desc" },
-    })) as OrderWithRelations[];
-  }
-
-  /**
-   * Get farm's orders
-   */
-  static async getFarmOrders(farmId: string): Promise<OrderWithRelations[]> {
-    return (await database.order.findMany({
-      where: { farmId },
-      include: {
-        customer: {
-          select: { id: true, name: true, email: true },
-        },
-        farm: {
-          select: { id: true, name: true },
-        },
-        items: {
-          include: {
-            product: {
-              select: {
-                id: true,
-                name: true,
-                price: true,
-                unit: true,
-                images: true,
-              },
-            },
-          },
-        },
-        deliveryAddress: true,
-      },
-      orderBy: { createdAt: "desc" },
-    })) as OrderWithRelations[];
+    return order as OrderWithDetails | null;
   }
 
   /**
    * Update order status
    */
   static async updateOrderStatus(
-    input: UpdateOrderStatusInput
-  ): Promise<OrderWithRelations> {
-    // Get current order
-    const currentOrder = await database.order.findUnique({
-      where: { id: input.orderId },
+    orderId: string,
+    status:
+      | "PENDING"
+      | "CONFIRMED"
+      | "PREPARING"
+      | "READY"
+      | "FULFILLED"
+      | "COMPLETED"
+      | "CANCELLED"
+  ): Promise<Order> {
+    return database.order.update({
+      where: { id: orderId },
+      data: { status },
     });
-
-    if (!currentOrder) {
-      throw new Error("Order not found");
-    }
-
-    // Validate status transition
-    const validation = OrderValidator.validateStatusTransition(
-      currentOrder.status,
-      input.status
-    );
-
-    if (!validation.valid) {
-      throw new Error(`Status update failed: ${validation.errors.join(", ")}`);
-    }
-
-    const order = await database.order.update({
-      where: { id: input.orderId },
-      data: {
-        status: input.status,
-        ...(input.status === OrderStatus.CONFIRMED && {
-          confirmedAt: new Date(),
-        }),
-        ...(input.status === OrderStatus.FULFILLED && {
-          fulfilledAt: new Date(),
-        }),
-        ...(input.status === OrderStatus.COMPLETED && {
-          completedAt: new Date(),
-        }),
-        ...(input.status === OrderStatus.CANCELLED && {
-          cancelledAt: new Date(),
-          cancelledBy: input.updatedBy,
-          cancelReason: input.notes,
-        }),
-      },
-      include: {
-        customer: {
-          select: { id: true, name: true, email: true },
-        },
-        farm: {
-          select: { id: true, name: true },
-        },
-        items: {
-          include: {
-            product: {
-              select: {
-                id: true,
-                name: true,
-                price: true,
-                unit: true,
-                images: true,
-              },
-            },
-          },
-        },
-        deliveryAddress: true,
-      },
-    });
-
-    return order as OrderWithRelations;
   }
 
   /**
-   * Cancel order
+   * Get orders for user
    */
-  static async cancelOrder(
-    orderId: string,
-    cancelledBy: string,
-    reason: string
-  ): Promise<OrderWithRelations> {
-    return await this.updateOrderStatus({
-      orderId,
-      status: OrderStatus.CANCELLED,
-      updatedBy: cancelledBy,
-      notes: reason,
+  static async getUserOrders(userId: string): Promise<OrderWithDetails[]> {
+    const orders = await database.order.findMany({
+      where: { customerId: userId },
+      include: {
+        items: true,
+        farm: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
     });
+
+    return orders as OrderWithDetails[];
+  }
+
+  /**
+   * Get orders for farm
+   */
+  static async getFarmOrders(farmId: string): Promise<OrderWithDetails[]> {
+    const orders = await database.order.findMany({
+      where: { farmId },
+      include: {
+        items: true,
+        farm: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return orders as OrderWithDetails[];
   }
 }

@@ -1,0 +1,262 @@
+{
+  "common": {
+    "nav": {
+      "home": "Início",
+      "products": "Produtos",
+      "farms": "Fazendas",
+      "about": "Sobre",
+      "contact": "Contato",
+      "login": "Entrar",
+      "signup": "Cadastrar",
+      "dashboard": "Painel",
+      "cart": "Carrinho",
+      "orders": "Pedidos"
+    },
+    "actions": {
+      "search": "Pesquisar",
+      "filter": "Filtrar",
+      "sort": "Ordenar",
+      "submit": "Enviar",
+      "cancel": "Cancelar",
+      "save": "Salvar",
+      "delete": "Excluir",
+      "edit": "Editar",
+      "view": "Ver",
+      "addToCart": "Adicionar ao carrinho",
+      "checkout": "Finalizar compra",
+      "buy": "Comprar agora",
+      "learn": "Saiba mais"
+    },
+    "status": {
+      "loading": "Carregando...",
+      "error": "Erro",
+      "success": "Sucesso",
+      "pending": "Pendente",
+      "processing": "Processando",
+      "completed": "Concluído",
+      "cancelled": "Cancelado"
+    }
+  },
+  "home": {
+    "hero": {
+      "title": "Fresco da Fazenda para a Mesa",
+      "subtitle": "Conecte-se com agricultores locais e receba os produtos orgânicos mais frescos entregues na sua porta",
+      "cta": "Começar a comprar"
+    },
+    "features": {
+      "title": "Por que nos escolher",
+      "organic": {
+        "title": "100% Orgânico",
+        "description": "Produtos orgânicos certificados de fazendas locais confiáveis"
+      },
+      "fresh": {
+        "title": "Sempre fresco",
+        "description": "Colhido dentro de 24 horas antes da entrega"
+      },
+      "local": {
+        "title": "Apoie o local",
+        "description": "Conexão direta com agricultores da sua comunidade"
+      },
+      "sustainable": {
+        "title": "Sustentável",
+        "description": "Práticas agrícolas ambientalmente conscientes"
+      }
+    },
+    "howItWorks": {
+      "title": "Como funciona",
+      "step1": {
+        "title": "Navegar produtos",
+        "description": "Explore produtos frescos de fazendas locais"
+      },
+      "step2": {
+        "title": "Adicionar ao carrinho",
+        "description": "Selecione seus itens orgânicos favoritos"
+      },
+      "step3": {
+        "title": "Finalizar compra",
+        "description": "Escolha opções de entrega ou retirada"
+      },
+      "step4": {
+        "title": "Aproveite alimentos frescos",
+        "description": "Receba seus produtos frescos da fazenda"
+      }
+    }
+  },
+  "products": {
+    "title": "Nossos produtos",
+    "categories": {
+      "all": "Todos os produtos",
+      "vegetables": "Vegetais",
+      "fruits": "Frutas",
+      "dairy": "Laticínios",
+      "meat": "Carne e aves",
+      "eggs": "Ovos",
+      "honey": "Mel e conservas",
+      "bakery": "Padaria",
+      "herbs": "Ervas e especiarias"
+    },
+    "filters": {
+      "category": "Categoria",
+      "price": "Faixa de preço",
+      "organic": "Apenas orgânico",
+      "inStock": "Em estoque",
+      "farm": "Fazenda"
+    },
+    "sorting": {
+      "featured": "Destaque",
+      "newest": "Mais recente",
+      "priceLowToHigh": "Preço: Menor para maior",
+      "priceHighToLow": "Preço: Maior para menor",
+      "nameAZ": "Nome: A-Z"
+    },
+    "details": {
+      "description": "Descrição",
+      "ingredients": "Ingredientes",
+      "nutrition": "Informações nutricionais",
+      "certifications": "Certificações",
+      "farm": "Fazenda",
+      "availability": "Disponibilidade",
+      "quantity": "Quantidade",
+      "unit": "Unidade"
+    }
+  },
+  "farms": {
+    "title": "Nossas fazendas",
+    "subtitle": "Conheça os agricultores que cultivam sua comida",
+    "viewProducts": "Ver produtos",
+    "location": "Localização",
+    "certifications": "Certificações",
+    "practices": "Práticas agrícolas",
+    "story": "Nossa história",
+    "contact": "Contatar fazenda"
+  },
+  "cart": {
+    "title": "Carrinho de compras",
+    "empty": "Seu carrinho está vazio",
+    "item": "Item",
+    "price": "Preço",
+    "quantity": "Quantidade",
+    "total": "Total",
+    "subtotal": "Subtotal",
+    "tax": "Imposto",
+    "shipping": "Envio",
+    "grandTotal": "Total geral",
+    "continueShopping": "Continuar comprando",
+    "proceedToCheckout": "Ir para o checkout",
+    "removeItem": "Remover item",
+    "updateCart": "Atualizar carrinho"
+  },
+  "checkout": {
+    "title": "Finalizar compra",
+    "shippingInfo": "Informações de envio",
+    "billingInfo": "Informações de cobrança",
+    "paymentMethod": "Método de pagamento",
+    "orderSummary": "Resumo do pedido",
+    "placeOrder": "Fazer pedido",
+    "firstName": "Primeiro nome",
+    "lastName": "Sobrenome",
+    "email": "E-mail",
+    "phone": "Telefone",
+    "address": "Endereço",
+    "city": "Cidade",
+    "state": "Estado",
+    "zipCode": "CEP",
+    "country": "País",
+    "deliveryMethod": {
+      "title": "Método de entrega",
+      "delivery": "Entrega em casa",
+      "pickup": "Retirada na fazenda"
+    }
+  },
+  "orders": {
+    "title": "Meus pedidos",
+    "orderNumber": "Pedido nº",
+    "date": "Data",
+    "status": "Status",
+    "items": "Itens",
+    "total": "Total",
+    "viewDetails": "Ver detalhes",
+    "trackOrder": "Rastrear pedido",
+    "reorder": "Pedir novamente",
+    "noOrders": "Ainda não há pedidos"
+  },
+  "auth": {
+    "login": {
+      "title": "Entrar",
+      "email": "E-mail",
+      "password": "Senha",
+      "remember": "Lembrar de mim",
+      "forgot": "Esqueceu a senha?",
+      "submit": "Entrar",
+      "noAccount": "Não tem uma conta?",
+      "createAccount": "Criar uma"
+    },
+    "signup": {
+      "title": "Cadastrar",
+      "firstName": "Primeiro nome",
+      "lastName": "Sobrenome",
+      "email": "E-mail",
+      "password": "Senha",
+      "confirmPassword": "Confirmar senha",
+      "submit": "Criar conta",
+      "hasAccount": "Já tem uma conta?",
+      "signIn": "Entrar"
+    }
+  },
+  "footer": {
+    "company": {
+      "title": "Empresa",
+      "about": "Sobre nós",
+      "careers": "Carreiras",
+      "press": "Imprensa",
+      "blog": "Blog"
+    },
+    "support": {
+      "title": "Suporte",
+      "help": "Central de ajuda",
+      "contact": "Entre em contato",
+      "faq": "FAQ",
+      "shipping": "Informações de envio"
+    },
+    "legal": {
+      "title": "Legal",
+      "privacy": "Política de privacidade",
+      "terms": "Termos de serviço",
+      "cookies": "Política de cookies"
+    },
+    "social": {
+      "title": "Siga-nos"
+    },
+    "copyright": "© 2024 Farmers Market. Todos os direitos reservados."
+  },
+  "notifications": {
+    "addedToCart": "Adicionado ao carrinho com sucesso",
+    "removedFromCart": "Removido do carrinho",
+    "orderPlaced": "Pedido feito com sucesso",
+    "profileUpdated": "Perfil atualizado",
+    "error": "Algo deu errado",
+    "sessionExpired": "Sua sessão expirou"
+  },
+  "agricultural": {
+    "consciousness": {
+      "level": "Consciência agrícola",
+      "organic": "Orgânico",
+      "biodynamic": "Biodinâmico",
+      "regenerative": "Regenerativo",
+      "permaculture": "Permacultura"
+    },
+    "seasons": {
+      "spring": "Primavera",
+      "summer": "Verão",
+      "fall": "Outono",
+      "winter": "Inverno"
+    },
+    "practices": {
+      "noTill": "Plantio direto",
+      "cropRotation": "Rotação de culturas",
+      "composting": "Compostagem",
+      "coverCrops": "Culturas de cobertura",
+      "integratedPest": "Manejo integrado de pragas"
+    }
+  }
+}

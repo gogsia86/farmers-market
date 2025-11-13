@@ -1,0 +1,262 @@
+{
+  "common": {
+    "nav": {
+      "home": "Početna",
+      "products": "Proizvodi",
+      "farms": "Farme",
+      "about": "O Nama",
+      "contact": "Kontakt",
+      "login": "Prijava",
+      "signup": "Registracija",
+      "dashboard": "Kontrolna Tabla",
+      "cart": "Korpa",
+      "orders": "Porudžbine"
+    },
+    "actions": {
+      "search": "Pretraži",
+      "filter": "Filtriraj",
+      "sort": "Sortiraj",
+      "submit": "Pošalji",
+      "cancel": "Otkaži",
+      "save": "Sačuvaj",
+      "delete": "Obriši",
+      "edit": "Izmeni",
+      "view": "Pogledaj",
+      "addToCart": "Dodaj u Korpu",
+      "checkout": "Završi Kupovinu",
+      "buy": "Kupi Odmah",
+      "learn": "Saznaj Više"
+    },
+    "status": {
+      "loading": "Učitavanje...",
+      "error": "Greška",
+      "success": "Uspeh",
+      "pending": "Na Čekanju",
+      "processing": "Obrada",
+      "completed": "Završeno",
+      "cancelled": "Otkazano"
+    }
+  },
+  "home": {
+    "hero": {
+      "title": "Sveže sa Farme na Sto",
+      "subtitle": "Povežite se sa lokalnim poljoprivrednicima i dobijte najsvežije organske proizvode dostavljene na vašu adresu",
+      "cta": "Počni da Kupuješ"
+    },
+    "features": {
+      "title": "Zašto Odabrati Nas",
+      "organic": {
+        "title": "100% Organsko",
+        "description": "Sertifikovani organski proizvodi sa proverenih lokalnih farmi"
+      },
+      "fresh": {
+        "title": "Uvek Sveže",
+        "description": "Ubrano u roku od 24 sata od dostave"
+      },
+      "local": {
+        "title": "Podrži Lokalno",
+        "description": "Direktna veza sa poljoprivrednicima u vašoj zajednici"
+      },
+      "sustainable": {
+        "title": "Održivo",
+        "description": "Ekološki svesne poljoprivredne prakse"
+      }
+    },
+    "howItWorks": {
+      "title": "Kako Funkcioniše",
+      "step1": {
+        "title": "Pregledaj Proizvode",
+        "description": "Istražite sveže proizvode sa lokalnih farmi"
+      },
+      "step2": {
+        "title": "Dodaj u Korpu",
+        "description": "Odaberite svoje omiljene organske proizvode"
+      },
+      "step3": {
+        "title": "Završi Kupovinu",
+        "description": "Odaberite opcije dostave ili preuzimanja"
+      },
+      "step4": {
+        "title": "Uživaj u Svežoj Hrani",
+        "description": "Primite svoje sveže proizvode sa farme"
+      }
+    }
+  },
+  "products": {
+    "title": "Naši Proizvodi",
+    "categories": {
+      "all": "Svi Proizvodi",
+      "vegetables": "Povrće",
+      "fruits": "Voće",
+      "dairy": "Mlečni Proizvodi",
+      "meat": "Meso i Živina",
+      "eggs": "Jaja",
+      "honey": "Med i Konzerve",
+      "bakery": "Pekara",
+      "herbs": "Začini i Bilje"
+    },
+    "filters": {
+      "category": "Kategorija",
+      "price": "Raspon Cena",
+      "organic": "Samo Organsko",
+      "inStock": "Na Lageru",
+      "farm": "Farma"
+    },
+    "sorting": {
+      "featured": "Istaknuto",
+      "newest": "Najnovije",
+      "priceLowToHigh": "Cena: Od Niže ka Višoj",
+      "priceHighToLow": "Cena: Od Više ka Nižoj",
+      "nameAZ": "Naziv: A-Ž"
+    },
+    "details": {
+      "description": "Opis",
+      "ingredients": "Sastojci",
+      "nutrition": "Nutritivne Informacije",
+      "certifications": "Sertifikati",
+      "farm": "Farma",
+      "availability": "Dostupnost",
+      "quantity": "Količina",
+      "unit": "Jedinica"
+    }
+  },
+  "farms": {
+    "title": "Naše Farme",
+    "subtitle": "Upoznajte poljoprivrednike koji gaje vašu hranu",
+    "viewProducts": "Pogledaj Proizvode",
+    "location": "Lokacija",
+    "certifications": "Sertifikati",
+    "practices": "Poljoprivredne Prakse",
+    "story": "Naša Priča",
+    "contact": "Kontaktirajte Farmu"
+  },
+  "cart": {
+    "title": "Korpa za Kupovinu",
+    "empty": "Vaša korpa je prazna",
+    "item": "Artikal",
+    "price": "Cena",
+    "quantity": "Količina",
+    "total": "Ukupno",
+    "subtotal": "Međuzbir",
+    "tax": "Porez",
+    "shipping": "Dostava",
+    "grandTotal": "Konačan Iznos",
+    "continueShopping": "Nastavi da Kupuješ",
+    "proceedToCheckout": "Nastavi ka Blagajni",
+    "removeItem": "Ukloni Artikal",
+    "updateCart": "Ažuriraj Korpu"
+  },
+  "checkout": {
+    "title": "Blagajna",
+    "shippingInfo": "Informacije o Dostavi",
+    "billingInfo": "Informacije o Plaćanju",
+    "paymentMethod": "Način Plaćanja",
+    "orderSummary": "Rezime Porudžbine",
+    "placeOrder": "Poruči",
+    "firstName": "Ime",
+    "lastName": "Prezime",
+    "email": "Email",
+    "phone": "Telefon",
+    "address": "Adresa",
+    "city": "Grad",
+    "state": "Okrug",
+    "zipCode": "Poštanski Broj",
+    "country": "Država",
+    "deliveryMethod": {
+      "title": "Način Dostave",
+      "delivery": "Kućna Dostava",
+      "pickup": "Preuzimanje na Farmi"
+    }
+  },
+  "orders": {
+    "title": "Moje Porudžbine",
+    "orderNumber": "Porudžbina #",
+    "date": "Datum",
+    "status": "Status",
+    "items": "Artikli",
+    "total": "Ukupno",
+    "viewDetails": "Pogledaj Detalje",
+    "trackOrder": "Prati Porudžbinu",
+    "reorder": "Poruči Ponovo",
+    "noOrders": "Još nema porudžbina"
+  },
+  "auth": {
+    "login": {
+      "title": "Prijava",
+      "email": "Email",
+      "password": "Lozinka",
+      "remember": "Zapamti me",
+      "forgot": "Zaboravili ste lozinku?",
+      "submit": "Prijavi se",
+      "noAccount": "Nemate nalog?",
+      "createAccount": "Napravite ga"
+    },
+    "signup": {
+      "title": "Registracija",
+      "firstName": "Ime",
+      "lastName": "Prezime",
+      "email": "Email",
+      "password": "Lozinka",
+      "confirmPassword": "Potvrdi Lozinku",
+      "submit": "Napravi Nalog",
+      "hasAccount": "Već imate nalog?",
+      "signIn": "Prijavite se"
+    }
+  },
+  "footer": {
+    "company": {
+      "title": "Kompanija",
+      "about": "O Nama",
+      "careers": "Karijere",
+      "press": "Mediji",
+      "blog": "Blog"
+    },
+    "support": {
+      "title": "Podrška",
+      "help": "Centar za Pomoć",
+      "contact": "Kontaktirajte Nas",
+      "faq": "Često Postavljana Pitanja",
+      "shipping": "Informacije o Dostavi"
+    },
+    "legal": {
+      "title": "Pravno",
+      "privacy": "Politika Privatnosti",
+      "terms": "Uslovi Korišćenja",
+      "cookies": "Politika Kolačića"
+    },
+    "social": {
+      "title": "Pratite Nas"
+    },
+    "copyright": "© 2024 Farmers Market. Sva prava zadržana."
+  },
+  "notifications": {
+    "addedToCart": "Uspešno dodato u korpu",
+    "removedFromCart": "Uklonjeno iz korpe",
+    "orderPlaced": "Porudžbina uspešno primljena",
+    "profileUpdated": "Profil ažuriran",
+    "error": "Nešto nije u redu",
+    "sessionExpired": "Vaša sesija je istekla"
+  },
+  "agricultural": {
+    "consciousness": {
+      "level": "Poljoprivredna Svest",
+      "organic": "Organsko",
+      "biodynamic": "Biodinamičko",
+      "regenerative": "Regenerativno",
+      "permaculture": "Permakultura"
+    },
+    "seasons": {
+      "spring": "Proleće",
+      "summer": "Leto",
+      "fall": "Jesen",
+      "winter": "Zima"
+    },
+    "practices": {
+      "noTill": "Poljoprivreda Bez Oranja",
+      "cropRotation": "Rotacija Useva",
+      "composting": "Kompostiranje",
+      "coverCrops": "Pokrovni Usevi",
+      "integratedPest": "Integrisano Upravljanje Štetočinama"
+    }
+  }
+}

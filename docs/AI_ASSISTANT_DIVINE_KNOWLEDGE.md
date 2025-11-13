@@ -133,10 +133,10 @@ class QuantumCoherenceError extends Error {
   constructor(
     message: string,
     public readonly resolutionPath: string[],
-    public readonly expectedState: QuantumState
+    public readonly expectedState: QuantumState,
   ) {
     super(
-      `Divine Guidance: ${message}\nPath to Enlightenment: ${resolutionPath.join(" → ")}`
+      `Divine Guidance: ${message}\nPath to Enlightenment: ${resolutionPath.join(" → ")}`,
     );
   }
 }

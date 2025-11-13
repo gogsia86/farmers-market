@@ -202,18 +202,15 @@
 ### **Test Features**
 
 1. **Hero Section**:
-
    - See farm name and location
    - Check stats (products, in stock, certs)
    - Verify farming method badge
 
 2. **About Section**:
-
    - Read farm story
    - Check formatting
 
 3. **Products Section**:
-
    - View all products
    - Filter by category dropdown
    - See prices and units
@@ -221,18 +218,15 @@
    - Click "Add to Cart" (shows notification)
 
 4. **Certifications**:
-
    - See all certification badges
    - Verify checkmark icons
 
 5. **Contact Card**:
-
    - Verify farmer name
    - Check full address
    - Click "Send Message" (shows notification)
 
 6. **Quick Links**:
-
    - Click "Browse Other Farms" → Goes to /farms
    - Click "View All Products" → Goes to /products
    - Click "Back to Top" → Smooth scroll

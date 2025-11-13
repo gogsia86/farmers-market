@@ -122,6 +122,14 @@ enum PaymentStatus {
   PARTIALLY_REFUNDED
 }
 
+enum PaymentMethod {
+  STRIPE
+  CARD
+  PAYPAL
+  CASH
+  BANK_TRANSFER
+}
+
 enum FulfillmentMethod {
   DELIVERY // Farmer delivers to customer address
   FARM_PICKUP // Customer picks up at farm
@@ -275,6 +283,8 @@ model User {
   sessions        Session[]
   accounts        Account[] // OAuth accounts
   adminActions    AdminAction[]    @relation("AdminActions") // Actions performed by this admin
+  Address         Address[]
+  supportTickets  SupportTicket[] // Support tickets created by this user
 
   @@index([email])
   @@index([role, status])
@@ -467,6 +477,9 @@ model Farm {
   marketLocations MarketLocation[]
   Inventory       Inventory[]
   FarmRating      FarmRating?
+  DeliveryZone    DeliveryZone[]
+  DeliverySlot    DeliverySlot[]
+  PickupLocation  PickupLocation[]
 
   @@index([ownerId])
   @@index([slug])
@@ -619,6 +632,11 @@ model Product {
   // Tags (JSONB array)
   tags Json? // ["heirloom", "non-gmo", "locally-grown"]
 
+  // Additional Product Data (for service layer compatibility)
+  pricing    Json? // Extended pricing structure: {basePrice, discounts, bulkPricing, etc}
+  inventory  Json? // Extended inventory data: {currentStock, reserved, incoming, locations}
+  attributes Json? // Product-specific attributes: {size, color, weight, freshness, etc}
+
   // Publishing
   scheduledPublishAt   DateTime?
   scheduledUnpublishAt DateTime?
@@ -755,6 +773,16 @@ model Order {
   stripeChargeId        String? @db.VarChar(255)
   stripeTransferId      String? @db.VarChar(255) // Transfer to farmer
 
+  // Generic Payment Intent (for service layer - supports multiple providers)
+  paymentIntentId String? @db.VarChar(255) // Stripe/PayPal payment intent ID
+
+  // Payment & Shipping Tracking (for service layer compatibility)
+  paidAt          DateTime? // When payment was completed
+  trackingNumber  String?   @db.VarChar(255) // Shipping tracking number
+  shippingService String?   @db.VarChar(100) // STANDARD, EXPRESS, OVERNIGHT
+  shippingAddress Json? // Full shipping address details
+  deliverySlotId  String? // Reference to DeliverySlot if applicable
+
   // Customer Notes
   specialInstructions String? @db.Text
 
@@ -778,6 +806,7 @@ model Order {
   qualityIssues   QualityIssue[]
   reviews         Review[]
   messages        Message[]
+  Payment         Payment?
 
   @@index([customerId])
   @@index([farmId])
@@ -838,6 +867,40 @@ model Fulfillment {
   @@index([orderId])
   @@index([status])
   @@map("fulfillments")
+}
+
+// ============================================================================
+// PAYMENT PROCESSING (FR-013)
+// ============================================================================
+
+model Payment {
+  id            String        @id @default(cuid())
+  orderId       String        @unique
+  amount        Decimal       @db.Decimal(10, 2)
+  currency      String        @default("usd") @db.VarChar(3)
+  status        PaymentStatus @default(PENDING)
+  paymentMethod String        @db.VarChar(50) // STRIPE, CARD, PAYPAL
+
+  // Payment Provider IDs
+  stripePaymentIntentId String? @unique @db.VarChar(255)
+  paypalOrderId         String? @unique @db.VarChar(255)
+
+  // Payment Details
+  paidAt        DateTime?
+  failureReason String?   @db.Text
+  receiptUrl    String?   @db.VarChar(500)
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([status])
+  @@index([stripePaymentIntentId])
+  @@index([paypalOrderId])
+  @@map("payments")
 }
 
 model Payout {
@@ -1098,6 +1161,139 @@ enum GrowthPhase {
   RESTING // Post-harvest rest
 }
 
+// ============================================================================
+// SHIPPING & DELIVERY (FR-014)
+// ============================================================================
+
+model DeliveryZone {
+  id          String  @id @default(cuid())
+  farmId      String
+  name        String  @db.VarChar(255)
+  description String? @db.Text
+
+  // Geographic coverage (simplified - could use PostGIS for production)
+  zipCodes String[] // Array of ZIP codes
+  cities   String[] // Array of city names
+
+  // Pricing
+  baseFee         Decimal @db.Decimal(10, 2)
+  perMileFee      Decimal @default(0) @db.Decimal(10, 2)
+  minimumOrder    Decimal @default(0) @db.Decimal(10, 2)
+  freeDeliveryMin Decimal @default(0) @db.Decimal(10, 2)
+
+  // Schedule
+  availableDays String[] // ["MONDAY", "WEDNESDAY", "FRIDAY"]
+  cutoffHours   Int      @default(24) // Hours before delivery
+
+  // Status
+  isActive Boolean @default(true)
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  @@index([farmId])
+  @@index([isActive])
+  @@map("delivery_zones")
+}
+
+model DeliverySlot {
+  id        String   @id @default(cuid())
+  farmId    String
+  date      DateTime @db.Date
+  startTime String   @db.VarChar(10) // "09:00"
+  endTime   String   @db.VarChar(10) // "12:00"
+
+  // Capacity
+  maxOrders     Int @default(10)
+  currentOrders Int @default(0)
+
+  // Status
+  isActive Boolean @default(true)
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  @@index([farmId])
+  @@index([date])
+  @@index([isActive])
+  @@map("delivery_slots")
+}
+
+model PickupLocation {
+  id      String @id @default(cuid())
+  farmId  String
+  name    String @db.VarChar(255)
+  address String @db.VarChar(500)
+  city    String @db.VarChar(100)
+  state   String @db.VarChar(50)
+  zipCode String @db.VarChar(20)
+
+  // Location details
+  instructions String? @db.Text
+
+  // GPS coordinates
+  latitude  Decimal? @db.Decimal(10, 8)
+  longitude Decimal? @db.Decimal(11, 8)
+
+  // Schedule
+  availableDays  String[] // ["MONDAY", "WEDNESDAY", "FRIDAY"]
+  availableHours String?  @db.VarChar(255) // "9:00 AM - 5:00 PM"
+
+  // Status
+  isActive Boolean @default(true)
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  @@index([farmId])
+  @@index([isActive])
+  @@map("pickup_locations")
+}
+
+model Address {
+  id     String  @id @default(cuid())
+  userId String?
+
+  // Address details
+  fullName String @db.VarChar(255)
+  street   String @db.VarChar(500)
+  city     String @db.VarChar(100)
+  state    String @db.VarChar(50)
+  zipCode  String @db.VarChar(20)
+  country  String @default("USA") @db.VarChar(50)
+
+  // Contact
+  phone String? @db.VarChar(20)
+
+  // GPS coordinates
+  latitude  Decimal? @db.Decimal(10, 8)
+  longitude Decimal? @db.Decimal(11, 8)
+
+  // Type
+  type AddressType @default(HOME)
+
+  // Status
+  isDefault Boolean @default(false)
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("addresses")
+}
+
 model SeasonalCycle {
   id        String      @id @default(cuid())
   productId String
@@ -1157,6 +1353,34 @@ enum AlertSeverity {
   INFO
   WARNING
   CRITICAL
+}
+
+enum SupportTicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING_FOR_RESPONSE
+  RESOLVED
+  CLOSED
+}
+
+enum SupportTicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum SupportTicketCategory {
+  ACCOUNT
+  ORDERS
+  PAYMENTS
+  PRODUCTS
+  TECHNICAL
+  FARM_MANAGEMENT
+  GENERAL
+  BUG_REPORT
+  FEATURE_REQUEST
+  OTHER
 }
 
 model Inventory {
@@ -1293,6 +1517,104 @@ model InventoryAlert {
   @@index([severity])
   @@index([isResolved])
   @@map("inventory_alerts")
+}
+
+// ============================================================================
+// SUPPORT TICKETS - Customer Support System
+// ============================================================================
+
+model SupportTicket {
+  id     String @id @default(cuid())
+  userId String
+
+  // Ticket details
+  subject     String                @db.VarChar(255)
+  description String                @db.Text
+  category    SupportTicketCategory @default(GENERAL)
+  priority    SupportTicketPriority @default(MEDIUM)
+  status      SupportTicketStatus   @default(OPEN)
+
+  // Assignment
+  assignedTo String? // Admin/Support user ID
+  assignedAt DateTime?
+
+  // Metadata
+  tags           String[] @default([])
+  relatedOrderId String? // Optional link to order
+  relatedFarmId  String? // Optional link to farm
+
+  // Resolution
+  resolvedAt     DateTime?
+  resolvedBy     String? // Admin user ID
+  resolutionNote String?   @db.Text
+
+  // Relations
+  user     User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages SupportTicketMessage[]
+  files    SupportTicketFile[]
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([priority])
+  @@index([category])
+  @@index([assignedTo])
+  @@index([createdAt])
+  @@map("support_tickets")
+}
+
+model SupportTicketMessage {
+  id       String @id @default(cuid())
+  ticketId String
+
+  // Message details
+  content  String  @db.Text
+  isStaff  Boolean @default(false) // True if from support staff
+  authorId String // User or admin ID
+
+  // Status
+  isInternal Boolean @default(false) // Internal notes not visible to user
+  isRead     Boolean @default(false)
+
+  // Relations
+  ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([ticketId])
+  @@index([authorId])
+  @@index([createdAt])
+  @@map("support_ticket_messages")
+}
+
+model SupportTicketFile {
+  id       String @id @default(cuid())
+  ticketId String
+
+  // File details
+  filename    String  @db.VarChar(255)
+  url         String  @db.VarChar(500)
+  mimeType    String  @db.VarChar(100)
+  size        Int // File size in bytes
+  description String? @db.Text
+
+  // Uploader
+  uploadedBy String // User or admin ID
+
+  // Relations
+  ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+
+  @@index([ticketId])
+  @@index([uploadedBy])
+  @@map("support_ticket_files")
 }
 
 // ============================================================================

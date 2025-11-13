@@ -7,7 +7,7 @@
  * @reference .github/instructions/02_AGRICULTURAL_QUANTUM_MASTERY.instructions.md
  */
 
-import { Season } from "./farm.types";
+import { Season } from "@prisma/client"; // Use Prisma-generated Season enum
 
 // ============================================
 // BRANDED TYPES
@@ -610,7 +610,7 @@ export function getQuarterFromDate(date: Date): number {
 export function getSeasonFromMonth(month: number): Season {
   if (month >= 3 && month <= 5) return "SPRING";
   if (month >= 6 && month <= 8) return "SUMMER";
-  if (month >= 9 && month <= 11) return "AUTUMN";
+  if (month >= 9 && month <= 11) return "FALL"; // FALL, not AUTUMN
   return "WINTER";
 }
 

@@ -106,16 +106,16 @@ interface SeasonalContext<S extends Season> {
   appropriateActions: S extends "SPRING"
     ? ["PLANT", "PREPARE_SOIL", "START_SEEDS"]
     : S extends "SUMMER"
-    ? ["WATER", "WEED", "MONITOR_GROWTH"]
-    : S extends "FALL"
-    ? ["HARVEST", "PRESERVE", "PREPARE_WINTER"]
-    : ["REST", "PLAN", "REPAIR_EQUIPMENT"];
+      ? ["WATER", "WEED", "MONITOR_GROWTH"]
+      : S extends "FALL"
+        ? ["HARVEST", "PRESERVE", "PREPARE_WINTER"]
+        : ["REST", "PLAN", "REPAIR_EQUIPMENT"];
 }
 
 // Type-safe seasonal operations
 function performSeasonalWork<S extends Season>(
   context: SeasonalContext<S>,
-  farm: QuantumFarm
+  farm: QuantumFarm,
 ): Promise<SeasonalOutcome<S>> {
   // Compiler ensures only season-appropriate actions
   return farm.consciousness.execute(context.appropriateActions[0]);
@@ -136,18 +136,18 @@ function performSeasonalWork<S extends Season>(
 async function manifestSeasonalHarvest(
   farmConsciousness: FarmConsciousness,
   seasonalContext: BiodynamicTimeframe,
-  quantumSoil: SoilQuantumState
+  quantumSoil: SoilQuantumState,
 ): Promise<HarvestedReality> {
   // 1. Validate seasonal alignment
   const seasonalCoherence = await validateSeasonalAlignment(
     seasonalContext,
-    farmConsciousness.currentSeason
+    farmConsciousness.currentSeason,
   );
 
   if (!seasonalCoherence.aligned) {
     throw new SeasonalIncoherenceError(
       "Harvest attempted outside optimal window",
-      seasonalCoherence.suggestedTimeframe
+      seasonalCoherence.suggestedTimeframe,
     );
   }
 
@@ -155,13 +155,13 @@ async function manifestSeasonalHarvest(
   const yieldPotential = await calculateQuantumYield(
     quantumSoil,
     farmConsciousness.cropHealth,
-    seasonalContext.weatherPatterns
+    seasonalContext.weatherPatterns,
   );
 
   // 3. Collapse quantum states to actual harvest
   const harvestedProducts = await collapseHarvestReality(
     yieldPotential,
-    farmConsciousness.harvestIntent
+    farmConsciousness.harvestIntent,
   );
 
   // 4. Update soil quantum memory
@@ -195,7 +195,7 @@ class SeasonalQuantumTransformer {
   async transformGrowthReality(
     currentState: GrowthState,
     targetState: HarvestState,
-    environmentalContext: ClimateQuantumField
+    environmentalContext: ClimateQuantumField,
   ): Promise<Array<HarvestedProduct>> {
     // Validate natural progression
     this.validateNaturalTransition(currentState, targetState);
@@ -203,13 +203,13 @@ class SeasonalQuantumTransformer {
     // Calculate quantum yield across parallel realities
     const harvestPotential = await this.calculateQuantumYield(
       currentState,
-      environmentalContext
+      environmentalContext,
     );
 
     // Select optimal reality for harvest
     const optimalReality = await this.findOptimalHarvestReality(
       harvestPotential,
-      this.lunarCalendar.currentPhase
+      this.lunarCalendar.currentPhase,
     );
 
     // Manifest harvest in physical reality
@@ -226,7 +226,7 @@ class SeasonalQuantumTransformer {
         {
           suggestedHarvestDate: addDays(from.plantingDate, requiredDays),
           currentMaturity: (actualDays / requiredDays) * 100,
-        }
+        },
       );
     }
   }
@@ -250,25 +250,25 @@ class QuantumCropCycleOptimizer {
 
   async optimizeCropCycle(
     cropType: CropConsciousness,
-    constraints: FarmingConstraints
+    constraints: FarmingConstraints,
   ): Promise<OptimizedCycle> {
     // Calculate optimal planting windows across parallel timelines
     const plantingWindows = await this.findOptimalPlantingRealities(
       cropType,
-      this.weatherPredictor.forecastNextSeasons(3)
+      this.weatherPredictor.forecastNextSeasons(3),
     );
 
     // Compress timeline using quantum acceleration (while respecting nature)
     const acceleratedGrowth = await this.calculateNaturalAcceleration(
       cropType.minimumGrowthDays,
-      constraints.timeframe
+      constraints.timeframe,
     );
 
     // Generate optimal care schedule
     const careSchedule = await this.generateQuantumCareSchedule(
       cropType,
       acceleratedGrowth,
-      plantingWindows[0]
+      plantingWindows[0],
     );
 
     return {
@@ -308,7 +308,7 @@ class BiodynamicCache {
   async set(
     key: BiodynamicKey,
     state: QuantumAgriculturalState,
-    ttl: SeasonalDuration = "UNTIL_NEXT_SEASON"
+    ttl: SeasonalDuration = "UNTIL_NEXT_SEASON",
   ): Promise<void> {
     this.cache.set(key.toString(), state);
 
@@ -323,13 +323,13 @@ class BiodynamicCache {
   }
 
   private async queryMultiverseCache(
-    key: BiodynamicKey
+    key: BiodynamicKey,
   ): Promise<QuantumAgriculturalState | null> {
     // Query parallel realities for similar agricultural states
     const parallelStates = await Promise.all(
       this.getParallelRealities().map((reality) =>
-        reality.queryAgriculturalState(key)
-      )
+        reality.queryAgriculturalState(key),
+      ),
     );
 
     // Collapse to most probable beneficial state
@@ -394,7 +394,7 @@ describe("Quantum Agricultural Operations", () => {
       const harvestedProducts = await transformer.transformGrowthReality(
         currentState,
         { targetYield: 100, quality: "ORGANIC" },
-        { temperature: 75, rainfall: "OPTIMAL", sunlight: 8 }
+        { temperature: 75, rainfall: "OPTIMAL", sunlight: 8 },
       );
 
       expect(harvestedProducts).toHaveLength(greaterThan(80));
@@ -421,7 +421,7 @@ interface CropRotationStrategy {
 
   planNextCrop(
     currentCrop: CropType,
-    soilHealth: SoilQuantumState
+    soilHealth: SoilQuantumState,
   ): Promise<NextCropRecommendation>;
 }
 
@@ -437,7 +437,7 @@ class BiodynamicRotationPlanner implements CropRotationStrategy {
 
   async planNextCrop(
     currentCrop: CropType,
-    soilHealth: SoilQuantumState
+    soilHealth: SoilQuantumState,
   ): Promise<NextCropRecommendation> {
     const currentIndex = this.rotationCycle.indexOf(currentCrop.family);
     const nextIndex = (currentIndex + 1) % this.rotationCycle.length;
@@ -451,7 +451,7 @@ class BiodynamicRotationPlanner implements CropRotationStrategy {
       recommendedFamily: nextFamily,
       specificCrops: await this.selectOptimalCrops(
         nextFamily,
-        nutrientAnalysis
+        nutrientAnalysis,
       ),
       soilAmendments: await this.recommendAmendments(nutrientAnalysis),
       expectedBenefits: this.predictRotationBenefits(nextFamily, soilHealth),
@@ -476,11 +476,11 @@ class LunarCycleOptimizer {
 
   async findOptimalActionDate(
     action: FarmingAction,
-    constraints: TimeConstraints
+    constraints: TimeConstraints,
   ): Promise<OptimalDate> {
     const moonPhases = this.lunarCalendar.getPhasesInRange(
       constraints.startDate,
-      constraints.endDate
+      constraints.endDate,
     );
 
     const optimalPhase = this.getOptimalPhaseForAction(action);
@@ -521,13 +521,13 @@ async function plantCrop(crop: CropType) {
 async function plantCropWithSeasonalAwareness(
   crop: CropType,
   season: Season,
-  soilState: SoilQuantumState
+  soilState: SoilQuantumState,
 ) {
   // Validate planting window
   if (!crop.plantingSeasons.includes(season)) {
     throw new SeasonalViolationError(
       `${crop.name} cannot be planted in ${season}`,
-      crop.plantingSeasons
+      crop.plantingSeasons,
     );
   }
 
@@ -557,7 +557,7 @@ class SeasonalTransitionManager {
   async handleSeasonChange(
     fromSeason: Season,
     toSeason: Season,
-    farm: QuantumFarm
+    farm: QuantumFarm,
   ): Promise<TransitionResult> {
     // 1. Complete all pending seasonal operations
     await this.completePendingOperations(farm, fromSeason);
@@ -586,19 +586,19 @@ class SeasonalTransitionManager {
 // Agricultural wisdom as compile-time enforcement
 type PlantingCompatibility<
   C1 extends CropType,
-  C2 extends CropType
+  C2 extends CropType,
 > = C1 extends "TOMATOES"
   ? C2 extends "BASIL" | "CARROTS"
     ? "COMPANION"
     : C2 extends "POTATOES" | "FENNEL"
-    ? "ANTAGONISTIC"
-    : "NEUTRAL"
+      ? "ANTAGONISTIC"
+      : "NEUTRAL"
   : "NEUTRAL";
 
 function planGardenBed<C1 extends CropType, C2 extends CropType>(
   crop1: C1,
   crop2: C2,
-  compatibility: PlantingCompatibility<C1, C2>
+  compatibility: PlantingCompatibility<C1, C2>,
 ): GardenPlan {
   if (compatibility === "ANTAGONISTIC") {
     throw new Error(`${crop1} and ${crop2} should not be planted together`);

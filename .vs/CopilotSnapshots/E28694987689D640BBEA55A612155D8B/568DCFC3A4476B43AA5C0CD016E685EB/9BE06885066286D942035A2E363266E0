@@ -1,0 +1,10 @@
+﻿{
+  "profiles": {
+    "Farmers Market Platform web and app": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}

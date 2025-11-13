@@ -1,0 +1,55 @@
+{
+  "folders": [
+    {
+      "path": "..",
+    },
+  ],
+  "settings": {
+    // Custom layout configuration
+    "workbench.editor.splitInGroupLayout": "vertical",
+    "workbench.panel.defaultLocation": "right",
+
+    // Terminal configuration
+    "terminal.integrated.defaultLocation": "editor",
+
+    // Explorer configuration
+    "explorer.openEditors.visible": 0,
+
+    // Panel configuration
+    "workbench.panel.opensMaximized": "never",
+
+    // Chat configuration
+    "github.copilot.chat.welcomeMessage": "always",
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [],
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [],
+  },
+  // Custom layout: Editor on top, Explorer left, Terminal right, Two chat boxes in middle-bottom
+  "layout": {
+    "editors": {
+      "groups": [
+        {
+          "groups": [{}],
+          "size": 0.7,
+        },
+      ],
+    },
+    "panel": {
+      "position": "right",
+      "size": 0.3,
+    },
+    "sidebar": {
+      "position": "left",
+      "size": 0.2,
+    },
+    "auxiliaryBar": {
+      "position": "bottom",
+      "size": 0.3,
+    },
+  },
+}

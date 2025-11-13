@@ -487,7 +487,7 @@ export interface StockMovementSummary {
 
 export function calculateAvailableQuantity(
   quantity: number,
-  reservedQuantity: number
+  reservedQuantity: number,
 ): number {
   return Math.max(0, quantity - reservedQuantity);
 }
@@ -495,7 +495,7 @@ export function calculateAvailableQuantity(
 export function determineInventoryStatus(
   quantity: number,
   minimumStock: number,
-  reorderPoint: number
+  reorderPoint: number,
 ): InventoryStatus {
   if (quantity <= 0) return InventoryStatus.OUT_OF_STOCK;
   if (quantity <= reorderPoint) return InventoryStatus.LOW_STOCK;
@@ -504,7 +504,7 @@ export function determineInventoryStatus(
 }
 
 export function calculateDaysUntilExpiry(
-  expiryDate: Date | null
+  expiryDate: Date | null,
 ): number | null {
   if (!expiryDate) return null;
   const now = new Date();
@@ -513,7 +513,7 @@ export function calculateDaysUntilExpiry(
 }
 
 export function determineExpiryRisk(
-  daysUntilExpiry: number | null
+  daysUntilExpiry: number | null,
 ): "LOW" | "MEDIUM" | "HIGH" {
   if (daysUntilExpiry === null) return "LOW";
   if (daysUntilExpiry <= 3) return "HIGH";
@@ -523,7 +523,7 @@ export function determineExpiryRisk(
 
 export function calculateDaysOfSupply(
   currentQuantity: number,
-  averageDailySales: number
+  averageDailySales: number,
 ): number {
   if (averageDailySales <= 0) return Infinity;
   return Math.floor(currentQuantity / averageDailySales);
@@ -532,7 +532,7 @@ export function calculateDaysOfSupply(
 export function determineInventoryConsciousness(
   status: InventoryStatus,
   turnoverRate: number,
-  expiryRisk: "LOW" | "MEDIUM" | "HIGH"
+  expiryRisk: "LOW" | "MEDIUM" | "HIGH",
 ): InventoryConsciousness {
   if (status === InventoryStatus.OUT_OF_STOCK || expiryRisk === "HIGH") {
     return "CRITICAL";
@@ -555,7 +555,7 @@ export function determineInventoryConsciousness(
 export function calculateTurnoverRate(
   soldQuantity: number,
   averageInventory: number,
-  periodDays: number
+  periodDays: number,
 ): number {
   if (averageInventory <= 0) return 0;
   const monthlyFactor = 30 / periodDays;
@@ -573,7 +573,7 @@ export function validateQuantity(quantity: number): boolean {
 export function validateStockAdjustment(
   currentQuantity: number,
   adjustment: number,
-  allowNegative: boolean = false
+  allowNegative: boolean = false,
 ): { valid: boolean; error?: string } {
   if (!validateQuantity(Math.abs(adjustment))) {
     return { valid: false, error: "Invalid adjustment quantity" };
@@ -592,7 +592,7 @@ export function validateStockAdjustment(
 
 export function validateReservation(
   availableQuantity: number,
-  requestedQuantity: number
+  requestedQuantity: number,
 ): { valid: boolean; error?: string } {
   if (!validateQuantity(requestedQuantity)) {
     return { valid: false, error: "Invalid reservation quantity" };
@@ -616,11 +616,11 @@ export class InsufficientStockError extends Error {
   constructor(
     public readonly requested: number,
     public readonly available: number,
-    public readonly inventoryId: InventoryId
+    public readonly inventoryId: InventoryId,
   ) {
     super(
       `Insufficient stock for inventory ${inventoryId}. ` +
-        `Requested: ${requested}, Available: ${available}`
+        `Requested: ${requested}, Available: ${available}`,
     );
     this.name = "InsufficientStockError";
   }
@@ -629,7 +629,7 @@ export class InsufficientStockError extends Error {
 export class InvalidQuantityError extends Error {
   constructor(public readonly quantity: number) {
     super(
-      `Invalid quantity: ${quantity}. Must be a non-negative finite number.`
+      `Invalid quantity: ${quantity}. Must be a non-negative finite number.`,
     );
     this.name = "InvalidQuantityError";
   }
@@ -638,10 +638,10 @@ export class InvalidQuantityError extends Error {
 export class ExpiredInventoryError extends Error {
   constructor(
     public readonly inventoryId: InventoryId,
-    public readonly expiryDate: Date
+    public readonly expiryDate: Date,
   ) {
     super(
-      `Inventory ${inventoryId} has expired on ${expiryDate.toISOString()}`
+      `Inventory ${inventoryId} has expired on ${expiryDate.toISOString()}`,
     );
     this.name = "ExpiredInventoryError";
   }
@@ -652,11 +652,11 @@ export class LocationCapacityError extends Error {
     public readonly locationId: LocationId,
     public readonly capacity: number,
     public readonly currentOccupancy: number,
-    public readonly requestedSpace: number
+    public readonly requestedSpace: number,
   ) {
     super(
       `Location ${locationId} capacity exceeded. ` +
-        `Capacity: ${capacity}, Current: ${currentOccupancy}, Requested: ${requestedSpace}`
+        `Capacity: ${capacity}, Current: ${currentOccupancy}, Requested: ${requestedSpace}`,
     );
     this.name = "LocationCapacityError";
   }

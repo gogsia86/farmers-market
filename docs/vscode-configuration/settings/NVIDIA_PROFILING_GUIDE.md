@@ -657,7 +657,9 @@ for (int stream_id = 0; stream_id < N_STREAMS; stream_id++) {
 ## ❗ DIVINE TROUBLESHOOTING GUIDE
 
 ### Issue 1: "nsys: command not found"
+
 ### Solution
+
 ```bash
 # Add to ~/.bashrc or ~/.zshrc:
 export PATH="/opt/nvidia/nsight-systems/bin:$PATH"
@@ -668,7 +670,9 @@ sudo dpkg -i nsight-systems-*.deb
 ```
 
 ### Issue 2: "Permission denied" or "Failed to create profile"
+
 ### Solution
+
 ```bash
 # Fix permissions
 chmod +x profiling_scripts/*.sh
@@ -681,7 +685,9 @@ sudo setcap cap_sys_admin+ep `which nsys`
 ```
 
 ### Issue 3: "No CUDA-capable device detected"
+
 ### Solution
+
 ```bash
 # Check GPU visibility
 nvidia-smi
@@ -698,7 +704,9 @@ sudo apt-get install nvidia-driver-535  # or latest
 ```
 
 ### Issue 4: "Missing debug symbols" or "???" in backtrace
+
 ### Solution
+
 ```bash
 # Compile with debug info
 export CFLAGS="-g -lineinfo"
@@ -710,7 +718,9 @@ export NODE_OPTIONS="--inspect-brk"
 ```
 
 ### Issue 5: "GPU metrics collection failed"
+
 ### Solution
+
 ```bash
 # Enable metrics for non-root users
 sudo nvidia-smi -pm 1
@@ -724,7 +734,9 @@ nsys profile --sample=none --gpu-metrics-device=0 true
 ```
 
 ### Issue 6: "Output file already exists"
+
 ### Solution
+
 ```bash
 # Add force-overwrite flag (already in scripts)
 --force-overwrite=true
@@ -734,7 +746,9 @@ rm -rf profiling_output/*.nsys-rep
 ```
 
 ### Issue 7: "Profiling overhead too high"
+
 ### Solution
+
 ```bash
 # Reduce sampling frequency
 --sampling-period=10000  # Sample every 10ms instead of 1ms
@@ -747,7 +761,9 @@ rm -rf profiling_output/*.nsys-rep
 ```
 
 ### Issue 8: ".nsys-rep file too large"
+
 ### Solution
+
 ```bash
 # Limit trace size
 --trace-fork-before-exec=false

@@ -108,7 +108,7 @@ VSCode uses **JSONC** format:
 // JSONC - comments ARE allowed
 {
   // This is perfectly valid in VSCode settings
-  "setting": "value"
+  "setting": "value",
 }
 ```
 
@@ -187,10 +187,10 @@ Add to `.vscode/settings.json`:
       "fileMatch": ["settings*.json"],
       "schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
-        "allowComments": true
-      }
-    }
-  ]
+        "allowComments": true,
+      },
+    },
+  ],
 }
 ```
 
@@ -218,13 +218,11 @@ Rename-Item settings.optimized.json settings.optimized.jsonc
    ```
 
 2. **VSCode Loads It**
-
    - VSCode opens without errors
    - All settings applied
    - No warnings in console
 
 3. **Settings Active**
-
    - GPU acceleration working
    - TypeScript server using 65GB
    - All 478 settings active

@@ -109,7 +109,7 @@ export function hasPermission(role: UserRole, permission: Permission): boolean {
  */
 export function hasAnyPermission(
   role: UserRole,
-  permissions: Permission[]
+  permissions: Permission[],
 ): boolean {
   return permissions.some((permission) => hasPermission(role, permission));
 }
@@ -119,7 +119,7 @@ export function hasAnyPermission(
  */
 export function hasAllPermissions(
   role: UserRole,
-  permissions: Permission[]
+  permissions: Permission[],
 ): boolean {
   return permissions.every((permission) => hasPermission(role, permission));
 }
@@ -209,7 +209,7 @@ export function logPermissionCheck(
   role: UserRole,
   permission: Permission,
   granted: boolean,
-  context?: string
+  context?: string,
 ) {
   console.log("🌾 Divine Permission Check:", {
     userId,

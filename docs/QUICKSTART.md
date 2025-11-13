@@ -39,7 +39,9 @@ cp .env.local.example .env.local
 # - NEXTAUTH_SECRET (generate with: openssl rand -base64 32)
 # - NEXTAUTH_URL (http://localhost:3000 for local dev)
 ```
+
 ### Minimum Required Variables
+
 ```env
 DATABASE_URL="postgresql://user:password@localhost:5432/farmers_market"
 NEXTAUTH_URL="http://localhost:3000"
@@ -189,6 +191,7 @@ npm run db:generate
 - [Troubleshooting Guide](./guides/TROUBLESHOOTING.md) - Common issues
 
 ## 🎉 You're Ready
+
 Congratulations! You now have a fully functional local development environment.
 
 **Next**: Start exploring the codebase and making your first contribution! 🚀

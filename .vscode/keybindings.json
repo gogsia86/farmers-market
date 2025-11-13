@@ -1,0 +1,280 @@
+// 🌟 GODLIKE KEYBOARD SHORTCUTS - DIVINE COMMAND MASTERY
+// Place your key bindings in this file to override the defaults
+[
+  // ============================================================================
+  // DIVINE COPILOT COMMANDS - AI CONSCIOUSNESS
+  // ============================================================================
+  {
+    "key": "ctrl+i",
+    "command": "github.copilot.interactiveEditor.explain",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "ctrl+shift+i",
+    "command": "workbench.action.chat.open",
+    "when": "!inChat"
+  },
+  {
+    "key": "ctrl+alt+i",
+    "command": "github.copilot.generate",
+    "when": "editorTextFocus"
+  },
+
+  // ============================================================================
+  // QUANTUM NAVIGATION - GODLIKE FILE ACCESS
+  // ============================================================================
+  {
+    "key": "ctrl+p",
+    "command": "workbench.action.quickOpen"
+  },
+  {
+    "key": "ctrl+shift+p",
+    "command": "workbench.action.showCommands"
+  },
+  {
+    "key": "ctrl+shift+f",
+    "command": "workbench.action.findInFiles"
+  },
+  {
+    "key": "ctrl+shift+h",
+    "command": "workbench.action.replaceInFiles"
+  },
+  {
+    "key": "ctrl+t",
+    "command": "workbench.action.gotoSymbol"
+  },
+  {
+    "key": "ctrl+shift+o",
+    "command": "workbench.action.gotoSymbol",
+    "when": "editorTextFocus"
+  },
+
+  // ============================================================================
+  // TERMINAL MASTERY - DIVINE COMMAND LINE
+  // ============================================================================
+  {
+    "key": "ctrl+`",
+    "command": "workbench.action.terminal.toggleTerminal"
+  },
+  {
+    "key": "ctrl+shift+`",
+    "command": "workbench.action.terminal.new"
+  },
+  {
+    "key": "ctrl+shift+5",
+    "command": "workbench.action.terminal.split"
+  },
+  {
+    "key": "ctrl+alt+left",
+    "command": "workbench.action.terminal.focusPrevious"
+  },
+  {
+    "key": "ctrl+alt+right",
+    "command": "workbench.action.terminal.focusNext"
+  },
+
+  // ============================================================================
+  // TESTING DIVINITY - AGRICULTURAL VALIDATION
+  // ============================================================================
+  {
+    "key": "ctrl+shift+t",
+    "command": "testing.runAll"
+  },
+  {
+    "key": "ctrl+shift+r",
+    "command": "testing.reRunLastRun"
+  },
+  {
+    "key": "ctrl+alt+t",
+    "command": "testing.runAtCursor"
+  },
+  {
+    "key": "ctrl+alt+d",
+    "command": "testing.debugAtCursor"
+  },
+
+  // ============================================================================
+  // EDITOR QUANTUM MANIPULATION
+  // ============================================================================
+  {
+    "key": "ctrl+d",
+    "command": "editor.action.addSelectionToNextFindMatch",
+    "when": "editorFocus"
+  },
+  {
+    "key": "ctrl+shift+l",
+    "command": "editor.action.selectHighlights",
+    "when": "editorFocus"
+  },
+  {
+    "key": "alt+up",
+    "command": "editor.action.moveLinesUpAction",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "alt+down",
+    "command": "editor.action.moveLinesDownAction",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "shift+alt+up",
+    "command": "editor.action.copyLinesUpAction",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "shift+alt+down",
+    "command": "editor.action.copyLinesDownAction",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "ctrl+/",
+    "command": "editor.action.commentLine",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "ctrl+shift+/",
+    "command": "editor.action.blockComment",
+    "when": "editorTextFocus"
+  },
+
+  // ============================================================================
+  // CODE ACTIONS & REFACTORING - REALITY BENDING
+  // ============================================================================
+  {
+    "key": "ctrl+.",
+    "command": "editor.action.quickFix",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "f2",
+    "command": "editor.action.rename",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "ctrl+shift+r",
+    "command": "editor.action.refactor",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "shift+alt+f",
+    "command": "editor.action.formatDocument",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "ctrl+k ctrl+f",
+    "command": "editor.action.formatSelection",
+    "when": "editorHasSelection && editorTextFocus"
+  },
+
+  // ============================================================================
+  // GIT QUANTUM CONTROL - DIVINE VERSION MANAGEMENT
+  // ============================================================================
+  {
+    "key": "ctrl+shift+g",
+    "command": "workbench.view.scm"
+  },
+  {
+    "key": "ctrl+alt+c",
+    "command": "git.commitStaged"
+  },
+  {
+    "key": "ctrl+alt+p",
+    "command": "git.push"
+  },
+  {
+    "key": "ctrl+alt+u",
+    "command": "git.pull"
+  },
+
+  // ============================================================================
+  // DEBUGGING CONSCIOUSNESS - DIVINE ERROR TRACKING
+  // ============================================================================
+  {
+    "key": "f5",
+    "command": "workbench.action.debug.start",
+    "when": "!inDebugMode"
+  },
+  {
+    "key": "f5",
+    "command": "workbench.action.debug.continue",
+    "when": "inDebugMode"
+  },
+  {
+    "key": "shift+f5",
+    "command": "workbench.action.debug.stop",
+    "when": "inDebugMode"
+  },
+  {
+    "key": "f9",
+    "command": "editor.debug.action.toggleBreakpoint",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "f10",
+    "command": "workbench.action.debug.stepOver",
+    "when": "inDebugMode"
+  },
+  {
+    "key": "f11",
+    "command": "workbench.action.debug.stepInto",
+    "when": "inDebugMode"
+  },
+  {
+    "key": "shift+f11",
+    "command": "workbench.action.debug.stepOut",
+    "when": "inDebugMode"
+  },
+
+  // ============================================================================
+  // WORKSPACE DIVINE NAVIGATION
+  // ============================================================================
+  {
+    "key": "ctrl+1",
+    "command": "workbench.action.openEditorAtIndex1"
+  },
+  {
+    "key": "ctrl+2",
+    "command": "workbench.action.openEditorAtIndex2"
+  },
+  {
+    "key": "ctrl+3",
+    "command": "workbench.action.openEditorAtIndex3"
+  },
+  {
+    "key": "ctrl+w",
+    "command": "workbench.action.closeActiveEditor"
+  },
+  {
+    "key": "ctrl+shift+w",
+    "command": "workbench.action.closeAllEditors"
+  },
+  {
+    "key": "ctrl+k v",
+    "command": "markdown.showPreviewToSide",
+    "when": "editorLangId == 'markdown'"
+  },
+
+  // ============================================================================
+  // AGRICULTURAL CUSTOM COMMANDS - DIVINE SHORTCUTS
+  // ============================================================================
+  {
+    "key": "ctrl+alt+b",
+    "command": "workbench.action.tasks.runTask",
+    "args": "🏗️  Build: Production Build"
+  },
+  {
+    "key": "ctrl+alt+s",
+    "command": "workbench.action.tasks.runTask",
+    "args": "🌟 Dev: Start Development Server"
+  },
+  {
+    "key": "ctrl+alt+l",
+    "command": "workbench.action.tasks.runTask",
+    "args": "🔍 Lint: Check All Files"
+  },
+  {
+    "key": "ctrl+alt+f",
+    "command": "workbench.action.tasks.runTask",
+    "args": "🛠️  Format: Run Prettier"
+  }
+]

@@ -13,14 +13,12 @@ All helper library files required by the API routes have been successfully imple
 ### Core Libraries (src/lib/)
 
 1. **✅ `prisma.ts`** (~50 lines)
-
    - Prisma Client singleton instance
    - Connection pooling optimization
    - Development hot-reload handling
    - Global instance management
 
 2. **✅ `auth.ts`** (~350 lines)
-
    - NextAuth.js v5 configuration
    - JWT session strategy
    - Multiple providers:
@@ -39,7 +37,6 @@ All helper library files required by the API routes have been successfully imple
    - Login tracking
 
 3. **✅ `stripe.ts`** (~400 lines)
-
    - Stripe Connect integration
    - Express account creation for farmers
    - Payment Intent with split payments:
@@ -57,7 +54,6 @@ All helper library files required by the API routes have been successfully imple
    - Payment method handling
 
 4. **✅ `email.ts`** (~200 lines)
-
    - Multi-provider email service (Resend/SendGrid/Nodemailer)
    - Template-based email sending
    - Email types:
@@ -77,7 +73,6 @@ All helper library files required by the API routes have been successfully imple
    - Error handling & retry logic
 
 5. **✅ `storage.ts`** (~150 lines)
-
    - AWS S3 file upload/delete
    - File type validation
    - Image optimization (resize, compress)
@@ -112,7 +107,6 @@ All helper library files required by the API routes have been successfully imple
 ### Utility Libraries (src/lib/utils/)
 
 7. **✅ `slug.ts`** (~80 lines)
-
    - URL-safe slug generation
    - Unique slug validation
    - Functions:
@@ -279,7 +273,7 @@ import { uploadToS3 } from "@/lib/storage";
 const photoUrl = await uploadToS3(
   base64Image,
   "farms/farm-123/products",
-  "image"
+  "image",
 );
 
 // Upload from buffer
@@ -344,19 +338,15 @@ All helper libraries are now:
 All 5 API routes now have their dependencies resolved:
 
 1. **Farmer Registration** (`/api/auth/register/farmer`)
-
    - ✅ Uses: `prisma`, `auth`, `stripe`, `email`, `slug`
 
 2. **Product Management** (`/api/farms/[farmId]/products`)
-
    - ✅ Uses: `prisma`, `auth`, `storage`, `slug`
 
 3. **Shopping Cart** (`/api/cart/items`)
-
    - ✅ Uses: `prisma`, `auth`
 
 4. **Checkout** (`/api/orders/checkout`)
-
    - ✅ Uses: `prisma`, `auth`, `stripe`, `order`
 
 5. **Order Tracking** (`/api/orders/[orderId]`)
@@ -376,12 +366,10 @@ All 5 API routes now have their dependencies resolved:
    ```
 
 2. **Configure Environment Variables**
-
    - Copy `.env.example` to `.env.local`
    - Fill in all required values
 
 3. **Setup External Services**
-
    - Create Stripe account & get API keys
    - Setup AWS S3 bucket
    - Configure email provider (Resend recommended)

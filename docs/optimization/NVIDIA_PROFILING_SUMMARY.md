@@ -19,7 +19,7 @@
 ### 🖥️ Hardware Utilization
 
 - **CPU:** Intel i7-9750H (6C/12T @ 2.6GHz)
-- **GPU:** RTX 2070 Max-Q (4GB, 2304 CUDA cores)
+- **GPU:** RTX 2070 Max-Q (8GB GDDR6, 2304 CUDA cores)
 - **RAM:** 64GB DDR4 (45GB available)
 - **Storage:** High-speed NVMe SSD
 

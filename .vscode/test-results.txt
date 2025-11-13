@@ -1,0 +1,362 @@
+
+> farmers-market@1.0.0 test
+> vitest --run --reporter=verbose
+
+
+[1m[46m RUN [49m[22m [36mv4.0.7 [39m[90mM:/Repo/Farmers Market Platform web and app[39m
+
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mBasic Initialization[2m > [22mshould initialize with component name[32m 49[2mms[22m[39m
+ [31m├ù[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mBasic Initialization[2m > [22mshould return consistent consciousness object[32m 34[2mms[22m[39m
+[31m   ΓåÆ expected { startMeasurement: [Function], ΓÇª(2) } to be { startMeasurement: [Function], ΓÇª(2) } // Object.is equality
+
+If it should pass with deep equality, replace "toBe" with "toStrictEqual"
+
+Expected: { startMeasurement: [Function], ΓÇª(2) }
+Received: serializes to the same string
+[39m
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mRendering - Basic Display[2m > [22mrenders farm name correctly[32m 90[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading 'description')[39m
+[90mstdout[2m | src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22m[2museComponentConsciousness Hook[2m > [22m[2mPerformance Measurement[2m > [22m[2mshould start and complete measurement successfully
+[22m[39mΓ£¿ Divine Performance Tracking initialized
+
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mBasic Initialization[2m > [22mshould accept optional context[32m 18[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mMetrics Tracking[2m > [22mshould initialize metrics with zero values[32m 5[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mMetrics Tracking[2m > [22mshould track render count[32m 27[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mMetrics Tracking[2m > [22mshould record render times[32m 57[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22mcreateFarmService[2m > [22mshould create a farm successfully[32m 6[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22mcreateFarmService[2m > [22mshould throw error if user not found[32m 4[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22mcreateFarmService[2m > [22mshould generate unique slug from farm name[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22mgetFarmById[2m > [22mshould return farm from cache if available[32m 6[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22mgetFarmById[2m > [22mshould fetch from database if not in cache[32m 6[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22mgetFarmById[2m > [22mshould return null for non-existent farm[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22mgetFarmBySlug[2m > [22mshould return farm by slug from cache[32m 3[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22mgetFarmBySlug[2m > [22mshould fetch from database by slug if not cached[32m 2[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22mupdateFarmService[2m > [22mshould update farm with valid ownership[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22mupdateFarmService[2m > [22mshould throw error if farm not found[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22mupdateFarmService[2m > [22mshould throw error if user is not owner[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22mupdateFarmService[2m > [22mshould handle partial updates[32m 0[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22mupdateFarmService[2m > [22mshould invalidate cache after update[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22mdeleteFarmService[2m > [22mshould soft delete farm (set status to INACTIVE)[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22mdeleteFarmService[2m > [22mshould throw error if farm not found[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22mdeleteFarmService[2m > [22mshould throw error if user is not owner[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22mdeleteFarmService[2m > [22mshould invalidate cache after deletion[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22mlistFarmsService[2m > [22mshould return paginated farms with default options[32m 2[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22mlistFarmsService[2m > [22mshould filter by status[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22mlistFarmsService[2m > [22mshould filter by state[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22mlistFarmsService[2m > [22mshould handle pagination correctly[32m 2[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22mlistFarmsService[2m > [22mshould filter by farming practices[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22msearchFarmsService[2m > [22mshould search farms by text query[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22msearchFarmsService[2m > [22mshould search with case-insensitive matching[32m 0[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22msearchFarmsService[2m > [22mshould search across multiple fields[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22msearchFarmsService[2m > [22mshould limit results to 10 by default[32m 0[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22msearchFarmsService[2m > [22mshould return empty array for no matches[32m 0[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22mEdge Cases and Error Handling[2m > [22mshould handle database errors gracefully in getFarmById[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22mEdge Cases and Error Handling[2m > [22mshould handle empty search query[32m 0[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22mEdge Cases and Error Handling[2m > [22mshould handle very large pagination requests[32m 0[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/__tests__/farm.service.test.ts[2m > [22mFarm Service - CRUD Operations[2m > [22mEdge Cases and Error Handling[2m > [22mshould handle updates with no changes[32m 0[2mms[22m[39m
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mRendering - Basic Display[2m > [22mrenders farm location correctly[32m 16[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading 'description')[39m
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mRendering - Basic Display[2m > [22mrenders farm description correctly[32m 10[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading 'description')[39m
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mRendering - Basic Display[2m > [22mrenders product categories as tags[32m 8[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading 'description')[39m
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mRendering - Basic Display[2m > [22mrenders farming practices as badges[32m 9[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading 'description')[39m
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mVariants - Visual Styles[2m > [22mrenders "default" variant with correct classes[32m 5[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading 'description')[39m
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mVariants - Visual Styles[2m > [22mrenders "featured" variant with highlighted styling[32m 7[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading 'description')[39m
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mVariants - Visual Styles[2m > [22mrenders "compact" variant with minimal layout[32m 16[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading 'description')[39m
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mInteractivity - Click Behavior[2m > [22mrenders as article (non-interactive) when interactive=false[32m 8[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading 'description')[39m
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mInteractivity - Click Behavior[2m > [22mrenders as button when interactive=true[32m 7[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading 'description')[39m
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mInteractivity - Click Behavior[2m > [22mcalls onClick handler when clicked (interactive)[32m 5[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading 'description')[39m
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mInteractivity - Click Behavior[2m > [22mhandles keyboard navigation (Enter key)[32m 5[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading 'description')[39m
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mInteractivity - Click Behavior[2m > [22mhandles keyboard navigation (Space key)[32m 5[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading 'description')[39m
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mInteractivity - Click Behavior[2m > [22mdoes not call onClick when non-interactive[32m 5[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading 'description')[39m
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mLoading State - Skeleton[2m > [22mrenders skeleton when variant="skeleton"[32m 2[2mms[22m[39m
+[31m   ΓåÆ Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.[39m
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mLoading State - Skeleton[2m > [22mrenders skeleton with all placeholder elements[32m 2[2mms[22m[39m
+[31m   ΓåÆ Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.[39m
+ [32mΓ£ô[39m src/lib/__tests__/cache.memory.test.ts[2m > [22mcache (memory fallback)[2m > [22mgetOrSet caches computed value[33m 311[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/__tests__/cache.memory.test.ts[2m > [22mcache (memory fallback)[2m > [22minvalidatePattern removes matching keys[32m 11[2mms[22m[39m
+[90mstdout[2m | src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22m[2museComponentConsciousness Hook[2m > [22m[2mPerformance Measurement[2m > [22m[2mshould handle measurement failure with Error object
+[22m[39mΓ£¿ Divine Performance Tracking initialized
+
+stderr | src/hooks/__tests__/useComponentConsciousness.test.ts > useComponentConsciousness Hook > Performance Measurement > should handle measurement failure with Error object
+Γ¥î TestComponent.failing_operation failed: Error: Test error message
+    at M:/Repo/Farmers Market Platform web and app/src/hooks/__tests__/useComponentConsciousness.test.ts:153:25
+    at file:///M:/Repo/Farmers%20Market%20Platform%20web%20and%20app/node_modules/@vitest/runner/dist/index.js:157:11
+    at file:///M:/Repo/Farmers%20Market%20Platform%20web%20and%20app/node_modules/@vitest/runner/dist/index.js:753:26
+    at file:///M:/Repo/Farmers%20Market%20Platform%20web%20and%20app/node_modules/@vitest/runner/dist/index.js:1636:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///M:/Repo/Farmers%20Market%20Platform%20web%20and%20app/node_modules/@vitest/runner/dist/index.js:1602:10)
+    at runTest (file:///M:/Repo/Farmers%20Market%20Platform%20web%20and%20app/node_modules/@vitest/runner/dist/index.js:1309:12)
+    at runSuite (file:///M:/Repo/Farmers%20Market%20Platform%20web%20and%20app/node_modules/@vitest/runner/dist/index.js:1468:8)
+    at runSuite (file:///M:/Repo/Farmers%20Market%20Platform%20web%20and%20app/node_modules/@vitest/runner/dist/index.js:1468:8)
+    at runSuite (file:///M:/Repo/Farmers%20Market%20Platform%20web%20and%20app/node_modules/@vitest/runner/dist/index.js:1468:8) after 0.11ms
+
+[90mstdout[2m | src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22m[2museComponentConsciousness Hook[2m > [22m[2mPerformance Measurement[2m > [22m[2mshould handle measurement failure with string error
+[22m[39mΓ£¿ Divine Performance Tracking initialized
+
+stderr | src/hooks/__tests__/useComponentConsciousness.test.ts > useComponentConsciousness Hook > Performance Measurement > should handle measurement failure with string error
+Γ¥î TestComponent.string_error_op failed: String error message after 0.01ms
+
+[90mstdout[2m | src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22m[2museComponentConsciousness Hook[2m > [22m[2mPerformance Measurement[2m > [22m[2mshould handle measurement failure with unknown error type
+[22m[39mΓ£¿ Divine Performance Tracking initialized
+
+stderr | src/hooks/__tests__/useComponentConsciousness.test.ts > useComponentConsciousness Hook > Performance Measurement > should handle measurement failure with unknown error type
+Γ¥î TestComponent.unknown_error_op failed: { custom: 'error object' } after 0.02ms
+
+stderr | src/hooks/__tests__/useComponentConsciousness.test.ts > useComponentConsciousness Hook > Performance Measurement > should increment error count on failure
+Γ¥î TestComponent.error_op failed: Error: test
+    at M:/Repo/Farmers Market Platform web and app/src/hooks/__tests__/useComponentConsciousness.test.ts:221:29
+    at M:\Repo\Farmers Market Platform web and app\node_modules\@testing-library\react\dist\act-compat.js:48:24
+    at process.env.NODE_ENV.exports.act (M:\Repo\Farmers Market Platform web and app\node_modules\react\cjs\react.development.js:814:22)
+    at M:\Repo\Farmers Market Platform web and app\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at M:/Repo/Farmers Market Platform web and app/src/hooks/__tests__/useComponentConsciousness.test.ts:219:13
+    at file:///M:/Repo/Farmers%20Market%20Platform%20web%20and%20app/node_modules/@vitest/runner/dist/index.js:157:11
+    at file:///M:/Repo/Farmers%20Market%20Platform%20web%20and%20app/node_modules/@vitest/runner/dist/index.js:753:26
+    at file:///M:/Repo/Farmers%20Market%20Platform%20web%20and%20app/node_modules/@vitest/runner/dist/index.js:1636:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///M:/Repo/Farmers%20Market%20Platform%20web%20and%20app/node_modules/@vitest/runner/dist/index.js:1602:10) after 0.04ms
+
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mImage Handling - Quantum Reality[2m > [22mrenders farm logo when available[32m 6[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading 'description')[39m
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mImage Handling - Quantum Reality[2m > [22mrenders default image when logo is missing[32m 6[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading 'description')[39m
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mImage Handling - Quantum Reality[2m > [22mhandles image load error by showing fallback[32m 6[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading 'description')[39m
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mAccessibility - A11y Divine Standards[2m > [22muses semantic HTML article when non-interactive[32m 5[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading 'description')[39m
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mAccessibility - A11y Divine Standards[2m > [22muses semantic HTML button when interactive[32m 5[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading 'description')[39m
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mAccessibility - A11y Divine Standards[2m > [22mhas proper ARIA labels[32m 5[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading 'description')[39m
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mAccessibility - A11y Divine Standards[2m > [22mskeleton has proper loading indicator[32m 2[2mms[22m[39m
+[31m   ΓåÆ Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.[39m
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mEdge Cases - Quantum Resilience[2m > [22mhandles missing description gracefully[32m 6[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading 'description')[39m
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mEdge Cases - Quantum Resilience[2m > [22mhandles empty product categories[32m 6[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading 'description')[39m
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mEdge Cases - Quantum Resilience[2m > [22mhandles empty farming practices[32m 5[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading 'description')[39m
+ [31m├ù[39m src/components/farm/FarmProfileCard.test.tsx[2m > [22mFarmProfileCard - Divine Component[2m > [22mEdge Cases - Quantum Resilience[2m > [22mhandles very long farm name gracefully[32m 7[2mms[22m[39m
+[31m   ΓåÆ Cannot read properties of undefined (reading 'description')[39m
+[90mstdout[2m | src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22m[2museComponentConsciousness Hook[2m > [22m[2mGlobal Performance Tracking Initialization[2m > [22m[2mshould initialize global trackers
+[22m[39mΓ£¿ Divine Performance Tracking initialized
+
+[90mstdout[2m | src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22m[2museComponentConsciousness Hook[2m > [22m[2mGlobal Performance Tracking Initialization[2m > [22m[2mshould record metrics globally
+[22m[39mΓ£¿ Divine Performance Tracking initialized
+
+[90mstdout[2m | src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22m[2museComponentConsciousness Hook[2m > [22m[2mGlobal Performance Tracking Initialization[2m > [22m[2mshould get component-specific metrics
+[22m[39mΓ£¿ Divine Performance Tracking initialized
+
+[90mstdout[2m | src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22m[2museComponentConsciousness Hook[2m > [22m[2mGlobal Performance Tracking Initialization[2m > [22m[2mshould clear metrics
+[22m[39mΓ£¿ Divine Performance Tracking initialized
+
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mPerformance Measurement[2m > [22mshould start and complete measurement successfully[32m 76[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mPerformance Measurement[2m > [22mshould handle measurement failure with Error object[32m 5[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mPerformance Measurement[2m > [22mshould handle measurement failure with string error[32m 5[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mPerformance Measurement[2m > [22mshould handle measurement failure with unknown error type[32m 4[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mPerformance Measurement[2m > [22mshould increment error count on failure[32m 4[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mPerformance Measurement[2m > [22mshould work without global tracker initialized[32m 2[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mEvent Tracking[2m > [22mshould track events without metadata[32m 2[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mEvent Tracking[2m > [22mshould track events with metadata[32m 2[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mEvent Tracking[2m > [22mshould track multiple events[32m 2[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mEvent Tracking[2m > [22mshould send events to analytics tracker if available[32m 5[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mEvent Tracking[2m > [22mshould work without analytics tracker[32m 3[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mGlobal Performance Tracking Initialization[2m > [22mshould initialize global trackers[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mGlobal Performance Tracking Initialization[2m > [22mshould record metrics globally[32m 2[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mGlobal Performance Tracking Initialization[2m > [22mshould get component-specific metrics[32m 2[2mms[22m[39m
+[90mstdout[2m | src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22m[2museComponentConsciousness Hook[2m > [22m[2mGlobal Performance Tracking Initialization[2m > [22m[2mshould limit metrics to 1000 entries
+[22m[39mΓ£¿ Divine Performance Tracking initialized
+
+[90mstdout[2m | src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22m[2museComponentConsciousness Hook[2m > [22m[2mEdge Cases[2m > [22m[2mshould handle measurements with zero duration
+[22m[39mΓ£¿ Divine Performance Tracking initialized
+
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mGlobal Performance Tracking Initialization[2m > [22mshould clear metrics[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mGlobal Performance Tracking Initialization[2m > [22mshould limit metrics to 1000 entries[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mIntegration with React Lifecycle[2m > [22mshould track component unmount[32m 2[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mIntegration with React Lifecycle[2m > [22mshould handle multiple component instances[32m 4[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mTypeScript Type Safety[2m > [22mshould have properly typed return object[32m 2[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mTypeScript Type Safety[2m > [22mshould have properly typed metrics[32m 3[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mEdge Cases[2m > [22mshould handle empty component name[32m 2[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mEdge Cases[2m > [22mshould handle very long component names[32m 2[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mEdge Cases[2m > [22mshould handle special characters in component name[32m 3[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mEdge Cases[2m > [22mshould handle rapid-fire events[32m 3[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/__tests__/useComponentConsciousness.test.ts[2m > [22museComponentConsciousness Hook[2m > [22mEdge Cases[2m > [22mshould handle measurements with zero duration[32m 5[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/farm.service.test.ts[2m > [22mFarm Service - Divine Operations[2m > [22mcreateFarmService[2m > [22mmanifests new farm with unique slug successfully[32m 4[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/farm.service.test.ts[2m > [22mFarm Service - Divine Operations[2m > [22mcreateFarmService[2m > [22mhandles slug collision by appending counter[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/farm.service.test.ts[2m > [22mFarm Service - Divine Operations[2m > [22mcreateFarmService[2m > [22mthrows error after max slug collision attempts[32m 2[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/farm.service.test.ts[2m > [22mFarm Service - Divine Operations[2m > [22mcreateFarmService[2m > [22mcreates farm with PENDING status by default[32m 4[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/farm.service.test.ts[2m > [22mFarm Service - Divine Operations[2m > [22mcreateFarmService[2m > [22mmanifests quantum farm with agricultural consciousness[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/farm.service.test.ts[2m > [22mFarm Service - Divine Operations[2m > [22mcheckExistingFarm[2m > [22mreturns exists=false when user has no farm[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/farm.service.test.ts[2m > [22mFarm Service - Divine Operations[2m > [22mcheckExistingFarm[2m > [22mreturns exists=true with farm details when user has farm[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/farm.service.test.ts[2m > [22mFarm Service - Divine Operations[2m > [22mcheckExistingFarm[2m > [22mqueries database with correct user ID[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/farm.service.test.ts[2m > [22mFarm Service - Divine Operations[2m > [22mgetFarmById[2m > [22mmanifests quantum farm when farm exists[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/farm.service.test.ts[2m > [22mFarm Service - Divine Operations[2m > [22mgetFarmById[2m > [22mreturns null when farm does not exist[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/farm.service.test.ts[2m > [22mFarm Service - Divine Operations[2m > [22mgetFarmById[2m > [22mincludes owner information in query[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/farm.service.test.ts[2m > [22mFarm Service - Divine Operations[2m > [22mgetFarmBySlug[2m > [22mmanifests quantum farm when slug exists[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/services/farm.service.test.ts[2m > [22mFarm Service - Divine Operations[2m > [22mgetFarmBySlug[2m > [22mreturns null when slug does not exist[32m 0[2mms[22m[39m
+ [2m[90mΓåô[39m[22m src/__tests__/services/shipping.service.test.ts[2m > [22mShippingService - Divine Shipping Orchestration[2m > [22mcalculateRates - Manifest Shipping Reality[2m > [22mcalculates distance-based rates with quantum precision
+ [2m[90mΓåô[39m[22m src/__tests__/services/shipping.service.test.ts[2m > [22mShippingService - Divine Shipping Orchestration[2m > [22mcalculateRates - Manifest Shipping Reality[2m > [22mapplies free shipping threshold with agricultural consciousness
+ [2m[90mΓåô[39m[22m src/__tests__/services/shipping.service.test.ts[2m > [22mShippingService - Divine Shipping Orchestration[2m > [22mcalculateRates - Manifest Shipping Reality[2m > [22mvalidates delivery address is in service area
+ [2m[90mΓåô[39m[22m src/__tests__/services/shipping.service.test.ts[2m > [22mShippingService - Divine Shipping Orchestration[2m > [22mgetTracking - Retrieve Tracking Consciousness[2m > [22mretrieves USPS tracking with quantum awareness
+ [2m[90mΓåô[39m[22m src/__tests__/services/shipping.service.test.ts[2m > [22mShippingService - Divine Shipping Orchestration[2m > [22mgetTracking - Retrieve Tracking Consciousness[2m > [22mparses tracking number format with divine wisdom
+ [2m[90mΓåô[39m[22m src/__tests__/services/shipping.service.test.ts[2m > [22mShippingService - Divine Shipping Orchestration[2m > [22mgetTracking - Retrieve Tracking Consciousness[2m > [22mhandles invalid tracking numbers with enlightening errors
+ [2m[90mΓåô[39m[22m src/__tests__/services/shipping.service.test.ts[2m > [22mShippingService - Divine Shipping Orchestration[2m > [22mcreateLabel - Generate Shipping Label[2m > [22mcreates shipping label with agricultural precision
+ [2m[90mΓåô[39m[22m src/__tests__/services/shipping.service.test.ts[2m > [22mShippingService - Divine Shipping Orchestration[2m > [22mcreateLabel - Generate Shipping Label[2m > [22mcalculates total weight with biodynamic mathematics
+ [2m[90mΓåô[39m[22m src/__tests__/services/shipping.service.test.ts[2m > [22mShippingService - Divine Shipping Orchestration[2m > [22mgetDeliverySlots - Agricultural Slot Management[2m > [22mretrieves available delivery slots with temporal awareness
+ [2m[90mΓåô[39m[22m src/__tests__/services/shipping.service.test.ts[2m > [22mShippingService - Divine Shipping Orchestration[2m > [22mreserveDeliverySlot - Quantum Slot Reservation[2m > [22mreserves slot and updates order with consciousness preservation
+ [2m[90mΓåô[39m[22m src/__tests__/services/shipping.service.test.ts[2m > [22mShippingService - Divine Shipping Orchestration[2m > [22mreserveDeliverySlot - Quantum Slot Reservation[2m > [22mprevents over-booking with divine protection
+ [2m[90mΓåô[39m[22m src/__tests__/services/shipping.service.test.ts[2m > [22mShippingService - Divine Shipping Orchestration[2m > [22mgetPickupLocations - Farm Pickup Consciousness[2m > [22mretrieves active pickup locations with agricultural awareness
+ [2m[90mΓåô[39m[22m src/__tests__/services/shipping.service.test.ts[2m > [22mShippingService - Divine Shipping Orchestration[2m > [22mgetPickupLocations - Farm Pickup Consciousness[2m > [22mfilters inactive locations with quantum consciousness
+ [2m[90mΓåô[39m[22m src/__tests__/services/shipping.service.test.ts[2m > [22mShippingService - Divine Shipping Orchestration[2m > [22mEdge Cases - Reality Boundary Testing[2m > [22mhandles missing order with enlightening error
+ [2m[90mΓåô[39m[22m src/__tests__/services/shipping.service.test.ts[2m > [22mShippingService - Divine Shipping Orchestration[2m > [22mEdge Cases - Reality Boundary Testing[2m > [22mhandles missing shipping address gracefully
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Suites 7 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  src/tests/auth/middleware.test.ts [ src/tests/auth/middleware.test.ts ]
+ FAIL  src/tests/rbac/permissions.test.ts [ src/tests/rbac/permissions.test.ts ]
+ FAIL  src/__tests__/services/order.service.test.ts [ src/__tests__/services/order.service.test.ts ]
+ FAIL  src/lib/services/security/__tests__/security.service.test.ts [ src/lib/services/security/__tests__/security.service.test.ts ]
+Error: Do not import `@jest/globals` outside of the Jest test environment
+ Γ¥» node_modules/@jest/globals/build/index.js:23:7
+ Γ¥» Object.<anonymous> node_modules/@jest/globals/build/index.js:25:12
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/35]ΓÄ»
+
+ FAIL  src/tests/security/input-validation.test.ts [ src/tests/security/input-validation.test.ts ]
+Error: No test suite found in file M:/Repo/Farmers Market Platform web and app/src/tests/security/input-validation.test.ts
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[2/35]ΓÄ»
+
+ FAIL  src/__tests__/e2e/checkout-flow.test.ts [ src/__tests__/e2e/checkout-flow.test.ts ]
+Error: Playwright Test did not expect test() to be called here.
+Most common reasons include:
+- You are calling test() in a configuration file.
+- You are calling test() in a file that is imported by the configuration file.
+- You have two different versions of @playwright/test. This usually happens
+  when one of the dependencies in your package.json depends on @playwright/test.
+ Γ¥» TestTypeImpl._currentSuite node_modules/playwright/lib/common/testType.js:74:13
+ Γ¥» TestTypeImpl._createTest node_modules/playwright/lib/common/testType.js:87:24
+ Γ¥» node_modules/playwright/lib/transform/transform.js:275:12
+ Γ¥» src/__tests__/e2e/checkout-flow.test.ts:49:5
+     47| 
+     48|   describe("Complete Purchase Flow - Agricultural Product", () => {
+     49|     playwrightTest(
+       |     ^
+     50|       "user completes full checkout from cart to confirmation",
+     51|       async ({ page }) => {
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[3/35]ΓÄ»
+
+ FAIL  src/__tests__/services/payment.service.test.ts [ src/__tests__/services/payment.service.test.ts ]
+Error: PayPal credentials are required
+ Γ¥» src/lib/payment/paypal.ts:10:9
+      8| 
+      9| if (!process.env.PAYPAL_CLIENT_ID || !process.env.PAYPAL_CLIENT_SECRETΓÇª
+     10|   throw new Error("PayPal credentials are required");
+       |         ^
+     11| }
+     12| 
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[4/35]ΓÄ»
+
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 28 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Rendering - Basic Display > renders farm name correctly
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Rendering - Basic Display > renders farm location correctly
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Rendering - Basic Display > renders farm description correctly
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Rendering - Basic Display > renders product categories as tags
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Rendering - Basic Display > renders farming practices as badges
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Variants - Visual Styles > renders "default" variant with correct classes
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Variants - Visual Styles > renders "featured" variant with highlighted styling
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Variants - Visual Styles > renders "compact" variant with minimal layout
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Interactivity - Click Behavior > renders as article (non-interactive) when interactive=false
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Interactivity - Click Behavior > renders as button when interactive=true
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Interactivity - Click Behavior > calls onClick handler when clicked (interactive)
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Interactivity - Click Behavior > handles keyboard navigation (Enter key)
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Interactivity - Click Behavior > handles keyboard navigation (Space key)
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Interactivity - Click Behavior > does not call onClick when non-interactive
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Image Handling - Quantum Reality > renders farm logo when available
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Image Handling - Quantum Reality > renders default image when logo is missing
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Image Handling - Quantum Reality > handles image load error by showing fallback
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Accessibility - A11y Divine Standards > uses semantic HTML article when non-interactive
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Accessibility - A11y Divine Standards > uses semantic HTML button when interactive
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Accessibility - A11y Divine Standards > has proper ARIA labels
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Edge Cases - Quantum Resilience > handles missing description gracefully
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Edge Cases - Quantum Resilience > handles empty product categories
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Edge Cases - Quantum Resilience > handles empty farming practices
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Edge Cases - Quantum Resilience > handles very long farm name gracefully
+TypeError: Cannot read properties of undefined (reading 'description')
+ Γ¥» FarmProfileCard src/components/farm/FarmProfileCard.tsx:224:26
+    222| 
+    223|           {/* Farm Description */}
+    224|           {farm.business.description && variant !== "compact" && (
+       |                          ^
+    225|             <p
+    226|               className={cn("text-gray-700 line-clamp-2", {
+ Γ¥» Object.react_stack_bottom_frame node_modules/react-dom/cjs/react-dom-client.development.js:25904:20
+ Γ¥» renderWithHooks node_modules/react-dom/cjs/react-dom-client.development.js:7662:22
+ Γ¥» updateForwardRef node_modules/react-dom/cjs/react-dom-client.development.js:9724:19
+ Γ¥» beginWork node_modules/react-dom/cjs/react-dom-client.development.js:12117:18
+ Γ¥» runWithFiberInDEV node_modules/react-dom/cjs/react-dom-client.development.js:874:13
+ Γ¥» performUnitOfWork node_modules/react-dom/cjs/react-dom-client.development.js:17641:22
+ Γ¥» workLoopSync node_modules/react-dom/cjs/react-dom-client.development.js:17469:41
+ Γ¥» renderRootSync node_modules/react-dom/cjs/react-dom-client.development.js:17450:11
+ Γ¥» performWorkOnRoot node_modules/react-dom/cjs/react-dom-client.development.js:16583:35
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[5/35]ΓÄ»
+
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Loading State - Skeleton > renders skeleton when variant="skeleton"
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Loading State - Skeleton > renders skeleton with all placeholder elements
+ FAIL  src/components/farm/FarmProfileCard.test.tsx > FarmProfileCard - Divine Component > Accessibility - A11y Divine Standards > skeleton has proper loading indicator
+Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+ Γ¥» createFiberFromTypeAndProps node_modules/react-dom/cjs/react-dom-client.development.js:5021:28
+ Γ¥» createFiberFromElement node_modules/react-dom/cjs/react-dom-client.development.js:5035:14
+ Γ¥» reconcileChildFibersImpl node_modules/react-dom/cjs/react-dom-client.development.js:6920:31
+ Γ¥» node_modules/react-dom/cjs/react-dom-client.development.js:7098:33
+ Γ¥» reconcileChildren node_modules/react-dom/cjs/react-dom-client.development.js:9702:13
+ Γ¥» beginWork node_modules/react-dom/cjs/react-dom-client.development.js:11899:15
+ Γ¥» runWithFiberInDEV node_modules/react-dom/cjs/react-dom-client.development.js:874:13
+ Γ¥» performUnitOfWork node_modules/react-dom/cjs/react-dom-client.development.js:17641:22
+ Γ¥» workLoopSync node_modules/react-dom/cjs/react-dom-client.development.js:17469:41
+ Γ¥» renderRootSync node_modules/react-dom/cjs/react-dom-client.development.js:17450:11
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[6/35]ΓÄ»
+
+ FAIL  src/hooks/__tests__/useComponentConsciousness.test.ts > useComponentConsciousness Hook > Basic Initialization > should return consistent consciousness object
+AssertionError: expected { startMeasurement: [Function], ΓÇª(2) } to be { startMeasurement: [Function], ΓÇª(2) } // Object.is equality
+
+If it should pass with deep equality, replace "toBe" with "toStrictEqual"
+
+Expected: { startMeasurement: [Function], ΓÇª(2) }
+Received: serializes to the same string
+
+
+Compared values have no visual difference.
+
+ Γ¥» src/hooks/__tests__/useComponentConsciousness.test.ts:55:30
+     53| 
+     54|       // Should be same reference (memoized)
+     55|       expect(result.current).toBe(firstRef);
+       |                              ^
+     56|     });
+     57|     it("should accept optional context", () => {
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[7/35]ΓÄ»
+
+
+[2m Test Files [22m [1m[31m9 failed[39m[22m[2m | [22m[1m[32m3 passed[39m[22m[2m | [22m[33m1 skipped[39m[90m (13)[39m
+[2m      Tests [22m [1m[31m28 failed[39m[22m[2m | [22m[1m[32m76 passed[39m[22m[2m | [22m[33m15 skipped[39m[90m (119)[39m
+[2m   Start at [22m 04:54:14
+[2m   Duration [22m 6.02s[2m (transform 4.22s, setup 10.96s, collect 2.12s, tests 1.00s, environment 19.90s, prepare 777ms)[22m
+

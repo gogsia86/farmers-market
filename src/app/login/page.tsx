@@ -132,6 +132,7 @@ export default function LoginPage() {
                 {...register("email")}
                 type="email"
                 id="email"
+                data-testid="email-input"
                 autoComplete="email"
                 className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-agricultural-500 focus:border-agricultural-500 outline-none transition-colors ${
                   errors.email ? "border-red-500" : "border-gray-300"
@@ -157,6 +158,7 @@ export default function LoginPage() {
                 {...register("password")}
                 type="password"
                 id="password"
+                data-testid="password-input"
                 autoComplete="current-password"
                 className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-agricultural-500 focus:border-agricultural-500 outline-none transition-colors ${
                   errors.password ? "border-red-500" : "border-gray-300"
@@ -192,6 +194,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
+              data-testid="login-button"
               className="w-full bg-agricultural-600 hover:bg-agricultural-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isLoading ? (

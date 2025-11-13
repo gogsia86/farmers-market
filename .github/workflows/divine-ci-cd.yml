@@ -38,22 +38,17 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "npm"
-          cache-dependency-path: farmers-market/package-lock.json
 
       - name: 📦 Install Dependencies
-        working-directory: farmers-market
         run: npm ci --legacy-peer-deps
 
       - name: 🎨 Run ESLint
-        working-directory: farmers-market
         run: npm run lint
 
       - name: ⚡ TypeScript Type Check
-        working-directory: farmers-market
         run: npx tsc --noEmit
 
       - name: 🛠️  Check Prettier Formatting
-        working-directory: farmers-market
         run: npm run format:check
 
       - name: 🔍 Validate Divine Pattern Compliance
@@ -76,15 +71,15 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "npm"
-          cache-dependency-path: farmers-market/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: 📦 Install Dependencies
-        working-directory: farmers-market
+
         run: npm ci --legacy-peer-deps
 
       - name: 🧪 Run Test Suite
         if: ${{ !inputs.skip_tests }}
-        working-directory: farmers-market
+
         run: npm run test -- --coverage
 
       - name: 📊 Upload Coverage to Codecov
@@ -111,14 +106,14 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "npm"
-          cache-dependency-path: farmers-market/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: 📦 Install Dependencies
-        working-directory: farmers-market
+
         run: npm ci --legacy-peer-deps
 
       - name: 🏗️  Build Next.js Application
-        working-directory: farmers-market
+
         env:
           NEXT_TELEMETRY_DISABLED: 1
           SKIP_ENV_VALIDATION: true
@@ -150,14 +145,14 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "npm"
-          cache-dependency-path: farmers-market/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: 📦 Install Dependencies
-        working-directory: farmers-market
+
         run: npm ci --legacy-peer-deps
 
       - name: 🎨 Run Chromatic
-        working-directory: farmers-market
+
         env:
           CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
         run: |
@@ -248,7 +243,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: 🔒 npm Audit
-        working-directory: farmers-market
+
         run: npm audit --audit-level=moderate
         continue-on-error: true
 
@@ -276,10 +271,10 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "npm"
-          cache-dependency-path: farmers-market/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: 📦 Install Dependencies
-        working-directory: farmers-market
+
         run: npm ci --legacy-peer-deps
 
       - name: 📥 Download Build Artifacts
@@ -300,7 +295,7 @@ jobs:
           echo "$SSL_CA" > ./ssl/ca.crt
 
       - name: 🚀 Deploy to Production
-        working-directory: farmers-market
+
         env:
           DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
           NEXTAUTH_URL: ${{ secrets.PROD_NEXTAUTH_URL }}

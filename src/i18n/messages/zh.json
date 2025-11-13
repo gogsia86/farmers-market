@@ -1,0 +1,262 @@
+{
+  "common": {
+    "nav": {
+      "home": "首页",
+      "products": "产品",
+      "farms": "农场",
+      "about": "关于",
+      "contact": "联系",
+      "login": "登录",
+      "signup": "注册",
+      "dashboard": "控制台",
+      "cart": "购物车",
+      "orders": "订单"
+    },
+    "actions": {
+      "search": "搜索",
+      "filter": "筛选",
+      "sort": "排序",
+      "submit": "提交",
+      "cancel": "取消",
+      "save": "保存",
+      "delete": "删除",
+      "edit": "编辑",
+      "view": "查看",
+      "addToCart": "加入购物车",
+      "checkout": "结账",
+      "buy": "立即购买",
+      "learn": "了解更多"
+    },
+    "status": {
+      "loading": "加载中...",
+      "error": "错误",
+      "success": "成功",
+      "pending": "待处理",
+      "processing": "处理中",
+      "completed": "已完成",
+      "cancelled": "已取消"
+    }
+  },
+  "home": {
+    "hero": {
+      "title": "从农场到餐桌的新鲜食品",
+      "subtitle": "与当地农民联系,获取最新鲜的有机农产品送货上门",
+      "cta": "开始购物"
+    },
+    "features": {
+      "title": "为什么选择我们",
+      "organic": {
+        "title": "100%有机",
+        "description": "来自可信当地农场的认证有机产品"
+      },
+      "fresh": {
+        "title": "始终新鲜",
+        "description": "送货前24小时内采摘"
+      },
+      "local": {
+        "title": "支持本地",
+        "description": "直接与社区农民联系"
+      },
+      "sustainable": {
+        "title": "可持续",
+        "description": "环保的农业实践"
+      }
+    },
+    "howItWorks": {
+      "title": "如何运作",
+      "step1": {
+        "title": "浏览产品",
+        "description": "探索当地农场的新鲜产品"
+      },
+      "step2": {
+        "title": "加入购物车",
+        "description": "选择您喜欢的有机产品"
+      },
+      "step3": {
+        "title": "结账",
+        "description": "选择配送或自提选项"
+      },
+      "step4": {
+        "title": "享受新鲜食品",
+        "description": "收到您的农场新鲜产品"
+      }
+    }
+  },
+  "products": {
+    "title": "我们的产品",
+    "categories": {
+      "all": "所有产品",
+      "vegetables": "蔬菜",
+      "fruits": "水果",
+      "dairy": "乳制品",
+      "meat": "肉类和家禽",
+      "eggs": "鸡蛋",
+      "honey": "蜂蜜和保鲜食品",
+      "bakery": "烘焙食品",
+      "herbs": "草药和香料"
+    },
+    "filters": {
+      "category": "类别",
+      "price": "价格范围",
+      "organic": "仅有机",
+      "inStock": "有货",
+      "farm": "农场"
+    },
+    "sorting": {
+      "featured": "精选",
+      "newest": "最新",
+      "priceLowToHigh": "价格:从低到高",
+      "priceHighToLow": "价格:从高到低",
+      "nameAZ": "名称:A-Z"
+    },
+    "details": {
+      "description": "描述",
+      "ingredients": "成分",
+      "nutrition": "营养成分",
+      "certifications": "认证",
+      "farm": "农场",
+      "availability": "可用性",
+      "quantity": "数量",
+      "unit": "单位"
+    }
+  },
+  "farms": {
+    "title": "我们的农场",
+    "subtitle": "认识种植您食物的农民",
+    "viewProducts": "查看产品",
+    "location": "位置",
+    "certifications": "认证",
+    "practices": "农业实践",
+    "story": "我们的故事",
+    "contact": "联系农场"
+  },
+  "cart": {
+    "title": "购物车",
+    "empty": "您的购物车是空的",
+    "item": "商品",
+    "price": "价格",
+    "quantity": "数量",
+    "total": "总计",
+    "subtotal": "小计",
+    "tax": "税",
+    "shipping": "运费",
+    "grandTotal": "总计",
+    "continueShopping": "继续购物",
+    "proceedToCheckout": "去结账",
+    "removeItem": "移除商品",
+    "updateCart": "更新购物车"
+  },
+  "checkout": {
+    "title": "结账",
+    "shippingInfo": "配送信息",
+    "billingInfo": "账单信息",
+    "paymentMethod": "支付方式",
+    "orderSummary": "订单摘要",
+    "placeOrder": "下订单",
+    "firstName": "名",
+    "lastName": "姓",
+    "email": "电子邮件",
+    "phone": "电话",
+    "address": "地址",
+    "city": "城市",
+    "state": "州/省",
+    "zipCode": "邮政编码",
+    "country": "国家",
+    "deliveryMethod": {
+      "title": "配送方式",
+      "delivery": "送货上门",
+      "pickup": "农场自提"
+    }
+  },
+  "orders": {
+    "title": "我的订单",
+    "orderNumber": "订单号",
+    "date": "日期",
+    "status": "状态",
+    "items": "商品",
+    "total": "总计",
+    "viewDetails": "查看详情",
+    "trackOrder": "追踪订单",
+    "reorder": "重新订购",
+    "noOrders": "还没有订单"
+  },
+  "auth": {
+    "login": {
+      "title": "登录",
+      "email": "电子邮件",
+      "password": "密码",
+      "remember": "记住我",
+      "forgot": "忘记密码?",
+      "submit": "登录",
+      "noAccount": "没有账户?",
+      "createAccount": "创建一个"
+    },
+    "signup": {
+      "title": "注册",
+      "firstName": "名",
+      "lastName": "姓",
+      "email": "电子邮件",
+      "password": "密码",
+      "confirmPassword": "确认密码",
+      "submit": "创建账户",
+      "hasAccount": "已有账户?",
+      "signIn": "登录"
+    }
+  },
+  "footer": {
+    "company": {
+      "title": "公司",
+      "about": "关于我们",
+      "careers": "职业",
+      "press": "新闻",
+      "blog": "博客"
+    },
+    "support": {
+      "title": "支持",
+      "help": "帮助中心",
+      "contact": "联系我们",
+      "faq": "常见问题",
+      "shipping": "配送信息"
+    },
+    "legal": {
+      "title": "法律",
+      "privacy": "隐私政策",
+      "terms": "服务条款",
+      "cookies": "Cookie政策"
+    },
+    "social": {
+      "title": "关注我们"
+    },
+    "copyright": "© 2024 Farmers Market. 保留所有权利。"
+  },
+  "notifications": {
+    "addedToCart": "成功加入购物车",
+    "removedFromCart": "已从购物车中移除",
+    "orderPlaced": "订单已成功下单",
+    "profileUpdated": "个人资料已更新",
+    "error": "出了点问题",
+    "sessionExpired": "您的会话已过期"
+  },
+  "agricultural": {
+    "consciousness": {
+      "level": "农业意识",
+      "organic": "有机",
+      "biodynamic": "生物动力",
+      "regenerative": "再生",
+      "permaculture": "永续农业"
+    },
+    "seasons": {
+      "spring": "春季",
+      "summer": "夏季",
+      "fall": "秋季",
+      "winter": "冬季"
+    },
+    "practices": {
+      "noTill": "免耕",
+      "cropRotation": "轮作",
+      "composting": "堆肥",
+      "coverCrops": "覆盖作物",
+      "integratedPest": "综合病虫害管理"
+    }
+  }
+}

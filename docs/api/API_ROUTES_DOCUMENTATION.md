@@ -41,7 +41,7 @@ const session = await getServerSession();
 if (!session?.user) {
   return NextResponse.json(
     { error: "Authentication required" },
-    { status: 401 }
+    { status: 401 },
   );
 }
 ```
@@ -657,14 +657,14 @@ if (error instanceof z.ZodError) {
         message: err.message,
       })),
     },
-    { status: 400 }
+    { status: 400 },
   );
 }
 
 // Generic errors
 return NextResponse.json(
   { error: "Operation failed. Please try again." },
-  { status: 500 }
+  { status: 500 },
 );
 ```
 
@@ -727,31 +727,25 @@ const [items, totalCount] = await Promise.all([
 ### Missing API Routes (To Be Created)
 
 1. **Farm Discovery** (FR-011):
-
    - `GET /api/farms` - Search farms by location/filters
    - `GET /api/farms/:slug` - Get farm profile
 
 2. **Inventory Updates** (FR-004):
-
    - `PATCH /api/products/:id/inventory` - Real-time inventory update
 
 3. **Consumer Registration** (FR-010):
-
    - `POST /api/auth/register/consumer` - Consumer signup
 
 4. **Reviews** (FR-017):
-
    - `POST /api/orders/:orderId/reviews` - Submit review
    - `GET /api/farms/:farmId/reviews` - Get farm reviews
    - `GET /api/products/:productId/reviews` - Get product reviews
 
 5. **Quality Issues** (FR-018):
-
    - `POST /api/orders/:orderId/quality-issues` - Report issue
    - `PATCH /api/quality-issues/:id` - Resolve issue
 
 6. **Notifications** (FR-009):
-
    - `GET /api/notifications` - Get user notifications
    - `PATCH /api/notifications/:id/read` - Mark as read
 

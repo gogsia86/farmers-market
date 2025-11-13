@@ -31,7 +31,7 @@
 
 **Before**:
 
-```javascript
+````javascript
 experimental: {
   optimizeCss: true,
   // Basic optimizations
@@ -486,3 +486,4 @@ Get-Process -Name node | Select-Object CPU,WS
 **Ready for**: Production development, large-scale builds, intensive workloads
 
 **Your machine is a BEAST - use it like one!** 💪
+````

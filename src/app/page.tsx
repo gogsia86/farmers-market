@@ -12,19 +12,19 @@
  * - CTA sections
  */
 
-import Header from "@/components/layout/Header";
-import Link from "next/link";
+import { Header } from "@/components/layout/Header";
 import {
-  Search,
-  ShoppingBag,
-  MapPin,
-  Star,
-  Leaf,
-  Clock,
-  Shield,
-  Award,
   ArrowRight,
+  Award,
+  Clock,
+  Leaf,
+  MapPin,
+  Search,
+  Shield,
+  ShoppingBag,
+  Star,
 } from "lucide-react";
+import Link from "next/link";
 
 export default function HomePage() {
   return (

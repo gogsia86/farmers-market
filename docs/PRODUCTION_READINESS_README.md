@@ -110,7 +110,9 @@ cp .env.production.template .env.production
 # - Security secrets (JWT, NextAuth)
 # - Monitoring configuration (Sentry, Grafana)
 ```
+
 ### Required Environment Variables
+
 - `DATABASE_URL` - PostgreSQL connection string
 - `REDIS_URL` - Redis cache connection
 - `NEXTAUTH_SECRET` - Authentication secret key
@@ -145,7 +147,9 @@ certbot certonly --nginx -d your-domain.com
 # Verify secrets were created
 kubectl get secrets -n farmers-market
 ```
+
 ### Created Secrets
+
 - `agricultural-secrets` - Application configuration
 - `agricultural-tls` - SSL/TLS certificates
 - `monitoring-secrets` - Grafana/Prometheus configuration
@@ -162,7 +166,9 @@ kubectl get pods -n farmers-market -w
 # Check service endpoints
 kubectl get services -n farmers-market
 ```
+
 ### Deployed Components
+
 - **Agricultural Platform** - Main Next.js application
 - **PostgreSQL** - Primary database
 - **Redis** - Caching layer
@@ -178,7 +184,9 @@ kubectl get services -n farmers-market
 # Run complete production verification
 ./scripts/verify-production.sh
 ```
+
 ### Verification Includes
+
 - ✅ Kubernetes cluster connectivity
 - ✅ Pod health and readiness
 - ✅ Service endpoints and ingress
@@ -207,8 +215,8 @@ kubectl top pods -n farmers-market
 
 ### **Access Your Monitoring Stack**
 
-| Service                | URL                               | Purpose                            | Default Credentials |
-| ---------------------- | --------------------------------- | ---------------------------------- | ------------------- |
+| Service                | URL                                 | Purpose                            | Default Credentials |
+| ---------------------- | ----------------------------------- | ---------------------------------- | ------------------- |
 | **Main Application**   | `<https://your-domain`>             | Agricultural Intelligence Platform | User registration   |
 | **Grafana Dashboards** | `<https://your-domain:3001`>        | Performance monitoring             | `admin` / `admin`   |
 | **Prometheus Metrics** | `<https://your-domain:9090`>        | Raw metrics collection             | Basic auth          |
@@ -270,7 +278,9 @@ The Grafana installation includes pre-configured dashboards:
 #### **🚨 Pod Startup Failures**
 
 **Symptoms:** Pods stuck in `Pending` or `CrashLoopBackOff` state
+
 ### Diagnosis
+
 ```bash
 # Check pod status and events
 kubectl describe pod <pod-name> -n farmers-market
@@ -281,7 +291,9 @@ kubectl logs <pod-name> -n farmers-market -c <container-name>
 # Check resource constraints
 kubectl top pods -n farmers-market
 ```
+
 ### Solutions
+
 - **Resource Limits**: Increase memory/CPU limits in deployment YAML
 - **Image Pull Issues**: Verify Docker registry access and credentials
 - **Configuration Errors**: Check environment variables and secrets
@@ -289,7 +301,9 @@ kubectl top pods -n farmers-market
 #### **🚨 Database Connection Issues**
 
 **Symptoms:** Application health checks failing, database connection errors
+
 ### Diagnosis
+
 ```bash
 # Test database connectivity from pod
 kubectl exec -it <app-pod> -n farmers-market -- psql $DATABASE_URL -c "SELECT 1;"
@@ -300,7 +314,9 @@ kubectl get pods -n farmers-market -l app=postgresql
 # Verify database secrets
 kubectl get secret agricultural-secrets -n farmers-market -o yaml
 ```
+
 ### Solutions
+
 - **Connection String**: Verify `DATABASE_URL` format and credentials
 - **Network Policy**: Ensure pods can communicate with database
 - **Database Startup**: Check PostgreSQL pod logs for startup issues
@@ -308,7 +324,9 @@ kubectl get secret agricultural-secrets -n farmers-market -o yaml
 #### **🚨 SSL/TLS Certificate Problems**
 
 **Symptoms:** HTTPS not working, certificate warnings, ingress issues
+
 ### Diagnosis
+
 ```bash
 # Check TLS secret
 kubectl get secret agricultural-tls -n farmers-market
@@ -319,7 +337,9 @@ openssl x509 -in ssl/certificate.crt -text -noout
 # Test SSL grade
 curl -I <https://your-domain>
 ```
+
 ### Solutions
+
 - **Certificate Regeneration**: Create new certificates with correct domain
 - **Secret Update**: Re-create TLS secret with new certificates
 - **Ingress Configuration**: Verify ingress TLS configuration
@@ -327,7 +347,9 @@ curl -I <https://your-domain>
 #### **🚨 Performance Issues**
 
 **Symptoms:** Slow response times, high resource usage, cache misses
+
 ### Diagnosis
+
 ```bash
 # Check application performance
 ./scripts/verify-production.sh
@@ -338,7 +360,9 @@ kubectl top pods -n farmers-market
 # Analyze cache performance
 curl <https://your-domain/api/metrics> | grep cache
 ```
+
 ### Solutions
+
 - **Cache Configuration**: Adjust Redis settings and cache strategies
 - **Database Optimization**: Review slow queries and indexing
 - **Resource Scaling**: Increase pod replicas or resource limits

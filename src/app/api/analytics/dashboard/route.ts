@@ -67,11 +67,11 @@ export async function GET(request: NextRequest) {
         },
       }),
 
-      // Low inventory products
+      // Low inventory products (check quantityAvailable instead)
       database.product.findMany({
         where: {
           farmId: { in: farmIds },
-          quantity: { lte: 10 },
+          quantityAvailable: { lte: 10 },
         },
         take: 5,
       }),
@@ -90,7 +90,7 @@ export async function GET(request: NextRequest) {
     orders.forEach((order) => {
       order.items.forEach((item) => {
         const current = productSales.get(item.productId) || 0;
-        productSales.set(item.productId, current + item.quantity);
+        productSales.set(item.productId, current + Number(item.quantity));
       });
     });
 
@@ -108,7 +108,7 @@ export async function GET(request: NextRequest) {
             .filter((i) => i.productId === productId)
             .reduce(
               (sum, item) =>
-                sum + Number.parseFloat(item.price.toString()) * item.quantity,
+                sum + Number(item.unitPrice) * Number(item.quantity),
               0
             ),
           rating:
@@ -147,13 +147,14 @@ export async function GET(request: NextRequest) {
       lowInventory: lowInventory.map((product) => ({
         id: product.id,
         name: product.name,
-        quantity: product.quantity,
-        status: product.quantity === 0 ? "OUT_OF_STOCK" : "LOW_STOCK",
+        quantity: product.quantityAvailable || 0,
+        status:
+          (product.quantityAvailable || 0) === 0 ? "OUT_OF_STOCK" : "LOW_STOCK",
       })),
       alerts: {
         lowInventoryCount: lowInventory.length,
         pendingOrders: orders.filter((o) => o.status === "PENDING").length,
-        needsReview: reviews.filter((r) => !r.response).length,
+        needsReview: reviews.filter((r) => !r.farmerResponse).length,
       },
     };
 

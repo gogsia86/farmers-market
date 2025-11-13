@@ -121,7 +121,7 @@ export class AgriculturalConsciousness {
    */
   generateHarvestPrediction(
     cropType: CropType,
-    plantingDate: Date
+    plantingDate: Date,
   ): HarvestPrediction {
     // Simplified prediction logic
     const growthDays = 90; // Default growth period

@@ -1,396 +1,161 @@
 {
   // ============================================================================
-  // HP OMEN DEVELOPMENT WORKSTATION - OPTIMIZED SETTINGS
+  // HP OMEN DEVELOPMENT WORKSTATION - FINAL OPTIMIZED SETTINGS
   // ============================================================================
   // Hardware: i7-9750H (6 cores, 12 threads @ 2.60GHz)
-  //           64GB DDR4 RAM
-  //           NVIDIA GeForce RTX 2070 Max-Q (8GB GDDR6, 2304 CUDA cores)
+  //           64GB DDR4 RAM + NVIDIA GeForce RTX 2070 Max-Q (8GB GDDR6, 2304 CUDA cores)
   // OS:       Windows 11 Pro Build 26200
-  // Updated:  October 21, 2025
-  // Purpose:  Maximum performance for Farmers Market Platform development
-  //
-  // Related Files:
-  // - .vscode/tasks.json (16 build/test/profiling tasks)
-  // - .vscode/launch.json (10 debug configurations)
-  // - .vscode/extensions.json (43 recommended extensions)
-  // - .vscode/typescript.code-snippets (20 custom snippets)
-  // - .vscode/SETTINGS_REFERENCE.md (Comprehensive documentation)
-  // - .github/instructions/ (AI coding patterns for Copilot)
-  // - farmers-market/next.config.js (Next.js optimization)
-  // - farmers-market/package.json (Performance scripts)
+  // Updated:  November 12, 2025
+  // Purpose:  Maximum performance for development workflows + GPU acceleration
   // ============================================================================
 
   // ============================================================================
-  // SECTION 1: DIVINE CONFIGURATION INTEGRATION (NEW GOD-TIER)
-  // ============================================================================
-  // Integration with divine configuration files for 100/100 perfection
-  // Each configuration file handles a specific domain of divine development
+  // SECTION 1: HARDWARE ACCELERATION & PERFORMANCE
   // ============================================================================
 
-  // Divine Configuration Files Integration
-  "_divineConfigurations": {
-    "gpu-settings": ".vscode/gpu-settings.json",
-    "ai-workflows": ".vscode/ai-workflows.json",
-    "agricultural-patterns": ".vscode/agricultural-patterns.json",
-    "quantum-performance": ".vscode/quantum-performance.json",
-    "divine-monitoring": ".vscode/divine-monitoring.json"
-  },
-
-  // Enhanced Copilot Integration with Divine Instructions
-  "github.copilot.chat.codeGeneration.instructions": [
-    { "text": "Follow the DIVINE CORE PRINCIPLES from .github/instructions/" },
-    {
-      "text": "Apply agricultural quantum patterns for farming domain features"
-    },
-    {
-      "text": "Optimize for HP OMEN hardware (RTX 2070, 64GB RAM, 12 threads)"
-    },
-    { "text": "Use holographic component patterns with quantum consciousness" },
-    {
-      "text": "Implement temporal optimization and reality bending techniques"
-    },
-    { "text": "Generate enlightening error messages with resolution paths" },
-    { "text": "Apply cosmic naming conventions and semantic precision" },
-    { "text": "Include comprehensive test coverage (100% meaningful tests)" }
-  ],
-
-  // ============================================================================
-  // MCP (MODEL CONTEXT PROTOCOL) INTEGRATION - MICROSOFT DOCS
-  // ============================================================================
-  // Enable real-time access to Microsoft official documentation
-  // Transform Copilot into omniscient development partner
-  // Updated: October 25, 2025
-  // ============================================================================
-  "github.copilot.chat.mcp.enabled": true,
-  "github.copilot.chat.mcp.settingsFile": "${workspaceFolder}/.vscode/mcp-settings.json",
-  "github.copilot.chat.mcp.autoStart": true,
-  "github.copilot.chat.mcp.logLevel": "info",
-
-  // Agricultural Domain Intelligence (Enhanced)
-  "files.associations": {
-    "*.css": "tailwindcss",
-    "*.prisma": "prisma",
-    "*.env*": "dotenv",
-    "*.mjs": "javascript",
-    "*.cjs": "javascript",
-    "*.mdx": "markdown",
-    "tsconfig*.json": "jsonc",
-    "*.farm": "json",
-    "*.harvest": "yaml",
-    "*.soil": "prisma",
-    "*.season": "typescript",
-    "*.crop": "javascript",
-    "*.field": "markdown",
-    "*.yield": "json",
-    "*.cultivation": "yaml"
-  },
-
-  // ============================================================================
-  // SECTION 2: HARDWARE ACCELERATION (GPU + CPU) - ENHANCED
-  // ============================================================================
-
-  // GPU-Accelerated Terminal (2304 CUDA cores)
+  // GPU Acceleration (RTX 2070 Max-Q 8GB Optimization)
+  "editor.gpuAcceleration": "on",
   "terminal.integrated.gpuAcceleration": "on",
-  "terminal.integrated.smoothScrolling": true,
-  "terminal.integrated.enablePersistentSessions": true,
-  "terminal.integrated.persistentSessionReviveProcess": "onExit",
-  "terminal.integrated.defaultProfile.windows": "PowerShell",
-  "terminal.integrated.fontSize": 13,
-  "terminal.integrated.fontFamily": "'Cascadia Code', 'Fira Code', monospace",
-  "terminal.integrated.cursorBlinking": true,
-  "terminal.integrated.cursorStyle": "line",
-  "terminal.integrated.rightClickBehavior": "default",
-  "terminal.integrated.copyOnSelection": true,
-  "terminal.integrated.shellIntegration.enabled": true,
-  "terminal.integrated.shellIntegration.decorationsEnabled": "both",
-  "terminal.integrated.tabs.enabled": true,
-  "terminal.integrated.tabs.location": "right",
-  "terminal.integrated.environmentChangesIndicator": "on",
-  "terminal.integrated.persistentSessionScrollback": 1000,
-  "terminal.integrated.cwd": "${workspaceFolder}/farmers-market",
-  "terminal.integrated.defaultLocation": "view",
-
-  // GPU-Accelerated Editor Rendering
   "editor.smoothScrolling": true,
   "editor.cursorSmoothCaretAnimation": "on",
   "editor.cursorBlinking": "smooth",
-  "editor.experimentalWhitespaceRendering": "off",
   "workbench.list.smoothScrolling": true,
-  "workbench.tree.indent": 20,
-  "workbench.tree.renderIndentGuides": "always",
+  "editor.semanticHighlighting.enabled": true,
 
-  // GPU-Accelerated Window Features
-  "window.experimental.windowControlsOverlay.enabled": true,
-  "window.experimental.useTitleBarInactiveForegroundInSearchResults": true,
+  // Window & UI Performance
   "window.titleBarStyle": "custom",
   "window.menuBarVisibility": "compact",
   "window.commandCenter": true,
-  "window.density.editorTabHeight": "default",
-  "window.autoDetectColorScheme": false,
-  "window.autoDetectHighContrast": true,
-  "window.closeWhenEmpty": false,
-  "window.confirmBeforeClose": "keyboardOnly",
-  "window.customTitleBarVisibility": "auto",
-  "window.dialogStyle": "custom",
-  "window.doubleClickIconToClose": false,
-  "window.enableMenuBarMnemonics": true,
-  "window.newWindowDimensions": "default",
-  "window.openFilesInNewWindow": "off",
-  "window.openFoldersInNewWindow": "default",
-  "window.restoreFullscreen": false,
-  "window.restoreWindows": "all",
-  "window.title": "${dirty}${activeEditorShort}${separator}${rootName}${separator}${profileName}",
-  "window.titleSeparator": " - ",
   "window.zoomLevel": 0,
 
   // ============================================================================
   // SECTION 2: MEMORY OPTIMIZATION (64GB RAM)
   // ============================================================================
-  // Optimized for 64GB RAM system - aggressive memory allocation
-  // TypeScript Server: 65GB max (can use full RAM if needed)
-  // File Operations: 32GB for large file handling
-  // Search: 100K results (2x default)
-  // ============================================================================
 
-  // File System Memory (32GB allocation)
-  "files.maxMemoryForLargeFilesMB": 32768,
-  "search.maxFileSize": 209715200,
-  "files.autoSaveDelay": 1000,
-  "files.hotExit": "onExitAndWindowClose",
-  "files.defaultLanguage": "typescript",
-  "files.refactoring.autoSave": true,
-  "files.trimTrailingWhitespace": true,
-  "files.insertFinalNewline": true,
-  "files.autoSave": "off",
-  "files.eol": "\n",
-
-  // File Watcher Exclusions (Performance optimization)
-  "files.watcherExclude": {
-    "**/.git/objects/**": true,
-    "**/.git/subtree-cache/**": true,
-    "**/node_modules/**": true,
-    "**/.next/**": true,
-    "**/dist/**": true,
-    "**/out/**": true,
-    "**/.turbo/**": true,
-    "**/coverage/**": true,
-    "**/.cache/**": true,
-    "**/.vercel/**": true,
-    "**/.husky/**": true,
-    "**/build/**": true
-  },
-
-  // Search Performance (100K results, 200MB max file size)
-  "search.followSymlinks": false,
-  "search.smartCase": true,
-  "search.maxResults": 100000,
-  "search.quickOpen.includeSymbols": true,
-  "search.quickOpen.includeHistory": true,
-  "search.collapseResults": "alwaysCollapse",
-  "search.searchEditor.defaultNumberOfContextLines": 1,
-  "search.seedWithNearestWord": true,
-  "search.useGlobalIgnoreFiles": true,
-  "search.useParentIgnoreFiles": true,
-  "search.exclude": {
-    "**/node_modules": true,
-    "**/dist": true,
-    "**/.next": true,
-    "**/out": true,
-    "**/.turbo": true,
-    "**/coverage": true,
-    "**/package-lock.json": true,
-    "**/yarn.lock": true,
-    "**/pnpm-lock.yaml": true
-  },
-
-  // TypeScript Server (65GB max memory - can use full RAM)
-  "typescript.tsserver.maxTsServerMemory": 65536,
-  "typescript.tsserver.experimental.enableProjectDiagnostics": true,
+  // TypeScript Server (56GB allocation - divine performance)
+  "typescript.tsserver.maxTsServerMemory": 57344,
   "typescript.tsserver.watchOptions": {
     "watchFile": "useFsEvents",
     "watchDirectory": "useFsEvents",
     "fallbackPolling": "dynamicPriorityPolling",
-    "synchronousWatchDirectory": true,
     "excludeDirectories": ["**/node_modules", "**/.next", "**/.turbo"]
   },
-  "typescript.disableAutomaticTypeAcquisition": false,
   "typescript.suggest.completeFunctionCalls": true,
-  "typescript.suggest.includeCompletionsForImportStatements": true,
-  "typescript.suggest.includeAutomaticOptionalChainCompletions": true,
   "typescript.updateImportsOnFileMove.enabled": "always",
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
   "typescript.preferences.includePackageJsonAutoImports": "auto",
-  "typescript.preferences.jsxAttributeCompletionStyle": "auto",
-  "typescript.preferences.importModuleSpecifier": "relative",
 
-  // TypeScript Inlay Hints (Maximum type information)
-  "typescript.inlayHints.enumMemberValues.enabled": true,
-  "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
-  "typescript.inlayHints.parameterNames.enabled": "all",
-  "typescript.inlayHints.parameterTypes.enabled": true,
-  "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
-  "typescript.inlayHints.variableTypes.enabled": true,
+  // File System Memory (20GB allocation - divine scale)
+  "files.maxMemoryForLargeFilesMB": 20480,
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000,
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "files.eol": "\n",
 
-  // JavaScript Performance
-  "javascript.updateImportsOnFileMove.enabled": "always",
-  "javascript.suggest.autoImports": true,
-  "javascript.format.semicolons": "insert",
-  "javascript.inlayHints.enumMemberValues.enabled": true,
-  "javascript.inlayHints.functionLikeReturnTypes.enabled": true,
-  "javascript.inlayHints.parameterNames.enabled": "all",
-  "javascript.inlayHints.parameterTypes.enabled": true,
-  "javascript.inlayHints.propertyDeclarationTypes.enabled": true,
-  "javascript.inlayHints.variableTypes.enabled": true,
+  // File Watcher Exclusions
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/node_modules/**": true,
+    "**/.next/**": true,
+    "**/dist/**": true,
+    "**/.turbo/**": true,
+    "**/coverage/**": true
+  },
+
+  // Search Performance
+  "search.maxResults": 50000,
+  "search.followSymlinks": false,
+  "search.smartCase": true,
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.next": true,
+    "**/.turbo": true,
+    "**/coverage": true
+  },
 
   // ============================================================================
-  // SECTION 3: EDITOR PERFORMANCE & FEATURES
-  // ============================================================================
-  // Optimized for development speed and code quality
-  // Semantic highlighting, bracket colorization, inlay hints all enabled
+  // SECTION 3: EDITOR & CODE EXPERIENCE
   // ============================================================================
 
-  // Editor Visual Performance
-  "editor.semanticHighlighting.enabled": true,
-  "editor.semanticTokenColorCustomizations": {},
-  "editor.maxTokenizationLineLength": 50000,
+  // Editor Visual Features
+  "editor.fontFamily": "'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace",
+  "editor.fontLigatures": true,
+  "editor.fontSize": 14,
+  "editor.lineHeight": 1.5,
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+
+  // Bracket Pair & Guide Features (GPU accelerated)
   "editor.bracketPairColorization.enabled": true,
-  "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
   "editor.guides.bracketPairs": "active",
   "editor.guides.bracketPairsHorizontal": "active",
-  "editor.guides.highlightActiveBracketPair": true,
   "editor.guides.indentation": true,
+  "editor.guides.highlightActiveIndentation": true,
 
-  // Editor Suggestions & IntelliSense
-  "editor.inlayHints.enabled": "onUnlessPressed",
-  "editor.inlayHints.fontSize": 12,
-  "editor.inlayHints.padding": true,
-  "editor.suggest.preview": true,
-  "editor.suggest.shareSuggestSelections": true,
-  "editor.suggest.showIcons": true,
-  "editor.suggest.showStatusBar": true,
-  "editor.suggest.localityBonus": true,
-  "editor.suggest.insertMode": "replace",
-  "editor.suggest.snippetsPreventQuickSuggestions": false,
+  // Minimap & Overview (8GB VRAM enables character rendering)
+  "editor.minimap.enabled": true,
+  "editor.minimap.maxColumn": 200,
+  "editor.minimap.renderCharacters": true,
+  "editor.minimap.showSlider": "always",
+
+  // Suggestions & IntelliSense
   "editor.suggestSelection": "first",
   "editor.quickSuggestions": {
-    "other": "on",
-    "comments": "off",
-    "strings": "on"
+    "other": true,
+    "comments": false,
+    "strings": true
   },
   "editor.quickSuggestionsDelay": 10,
-  "editor.acceptSuggestionOnCommitCharacter": true,
-  "editor.snippetSuggestions": "top",
-  "editor.tabCompletion": "on",
-  "editor.wordBasedSuggestions": "matchingDocuments",
-  "editor.wordBasedSuggestionsMode": "matchingDocuments",
+  "editor.suggest.showStatusBar": true,
+  "editor.inlineSuggest.enabled": true,
 
-  // Editor Navigation & Parameters
-  "editor.parameterHints.enabled": true,
+  // Inlay Hints
+  "editor.inlayHints.enabled": "onUnlessPressed",
+  "typescript.inlayHints.parameterNames.enabled": "all",
+  "typescript.inlayHints.variableTypes.enabled": true,
+  "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
+
+  // Navigation & Hover
+  "editor.stickyScroll.enabled": true,
+  "editor.stickyScroll.maxLineCount": 5,
   "editor.hover.enabled": true,
   "editor.hover.sticky": true,
   "editor.hover.delay": 300,
-  "editor.gotoLocation.multipleDefinitions": "goto",
-  "editor.gotoLocation.multipleTypeDefinitions": "goto",
-  "editor.gotoLocation.multipleDeclarations": "goto",
-  "editor.gotoLocation.multipleImplementations": "goto",
-  "editor.gotoLocation.multipleReferences": "goto",
 
-  // Editor Visual Aids
-  "editor.renderWhitespace": "selection",
-  "editor.renderControlCharacters": false,
-  "editor.renderLineHighlight": "all",
-  "editor.renderLineHighlightOnlyWhenFocus": false,
-  "editor.minimap.enabled": true,
-  "editor.minimap.renderCharacters": false,
-  "editor.minimap.maxColumn": 120,
-  "editor.minimap.showSlider": "always",
-  "editor.minimap.side": "right",
-  "editor.stickyScroll.enabled": true,
-  "editor.stickyScroll.maxLineCount": 5,
-  "editor.unicodeHighlight.ambiguousCharacters": true,
-  "editor.unicodeHighlight.invisibleCharacters": true,
-
-  // Editor Code Actions & Refactoring
-  "editor.lightbulb.enabled": "on",
-  "editor.codeActionWidget.includeNearbyQuickFixes": true,
-  "editor.codeActionWidget.showHeaders": true,
-  "editor.rename.enablePreview": true,
-
-  // Editor Productivity Features
-  "editor.accessibilitySupport": "off",
-  "editor.find.addExtraSpaceOnTop": true,
-  "editor.find.autoFindInSelection": "multiline",
-  "editor.find.seedSearchStringFromSelection": "selection",
-  "editor.linkedEditing": true,
-  "editor.matchBrackets": "always",
-  "editor.occurrencesHighlight": "multiFile",
-  "editor.selectionHighlight": true,
-  "editor.wordWrap": "on",
-  "editor.wrappingIndent": "indent",
-
-  // Advanced Editor Features
-  "editor.codeLens": true,
-  "editor.colorDecorators": true,
-  "editor.colorDecoratorsActivatedOn": "clickAndHover",
-  "editor.colorDecoratorsLimit": 500,
-  "editor.copyWithSyntaxHighlighting": true,
-  "editor.definitionLinkOpensInPeek": false,
-  "editor.dragAndDrop": true,
-  "editor.emptySelectionClipboard": true,
-  "editor.foldingHighlight": true,
-  "editor.foldingStrategy": "auto",
-  "editor.folding": true,
-  "editor.foldingImportsByDefault": false,
-  "editor.foldingMaximumRegions": 5000,
-  "editor.formatOnSaveMode": "file",
-  "editor.glyphMargin": true,
-  "editor.hideCursorInOverviewRuler": false,
-  "editor.hover.above": true,
-  "editor.links": true,
-  "editor.mouseWheelScrollSensitivity": 1,
-  "editor.multiCursorModifier": "alt",
-  "editor.multiCursorPaste": "spread",
-  "editor.padding.bottom": 0,
-  "editor.padding.top": 0,
-  "editor.peekWidgetDefaultFocus": "editor",
+  // Rulers & Visual Aids
   "editor.rulers": [80, 120],
-  "editor.scrollBeyondLastColumn": 5,
-  "editor.scrollBeyondLastLine": true,
-  "editor.showDeprecated": true,
-  "editor.showFoldingControls": "always",
-  "editor.showUnused": true,
-  "editor.snippets.codeActions.enabled": true,
-  "editor.unfoldOnClickAfterEndOfLine": false,
-  "editor.unusualLineTerminators": "prompt",
-  "editor.useTabStops": true,
+  "editor.renderWhitespace": "selection",
+  "editor.renderLineHighlight": "all",
+  "editor.matchBrackets": "always",
 
   // ============================================================================
-  // SECTION 4: CODE FORMATTING & QUALITY
-  // ============================================================================
-  // Prettier for formatting, ESLint for linting
-  // Format on save, fix on save enabled for maximum code quality
+  // SECTION 4: TERMINAL CONFIGURATION
   // ============================================================================
 
-  // Editor Font & Layout
-  "editor.fontFamily": "'Fira Code', 'Cascadia Code', 'JetBrains Mono', 'Courier New', monospace",
-  "editor.fontLigatures": true,
-  "editor.fontSize": 14,
-  "editor.lineHeight": 22,
-  "editor.tabSize": 2,
-  "editor.insertSpaces": true,
-  "editor.detectIndentation": true,
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.fontSize": 13,
+  "terminal.integrated.fontFamily": "'Cascadia Code', 'JetBrains Mono', monospace",
+  "terminal.integrated.cursorBlinking": true,
+  "terminal.integrated.cursorStyle": "line",
+  "terminal.integrated.shellIntegration.enabled": true,
+  "terminal.integrated.tabs.enabled": true,
+  "terminal.integrated.tabs.location": "right",
+  "terminal.integrated.scrollback": 10000,
 
-  // Formatting Configuration
+  // ============================================================================
+  // SECTION 5: FORMATTING & LINTING
+  // ============================================================================
+
+  // Format on Save
   "editor.formatOnSave": true,
-  "editor.formatOnPaste": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",
     "source.organizeImports": "explicit"
   },
 
-  // ESLint Configuration
+  // ESLint Configuration (Enhanced)
   "eslint.enable": true,
   "eslint.validate": [
     "javascript",
@@ -398,110 +163,19 @@
     "typescript",
     "typescriptreact"
   ],
-  "eslint.format.enable": true,
-  "eslint.lintTask.enable": true,
   "eslint.run": "onType",
-  "eslint.codeAction.disableRuleComment": {
-    "enable": true,
-    "location": "separateLine",
-    "commentStyle": "line"
-  },
   "eslint.codeAction.showDocumentation": {
     "enable": true
   },
-  "eslint.codeActionsOnSave.mode": "all",
-  "eslint.codeActionsOnSave.rules": null,
-  "eslint.probe": [
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "typescriptreact",
-    "html",
-    "vue",
-    "markdown"
-  ],
-  "eslint.workingDirectories": [
-    {
-      "mode": "auto"
-    }
-  ],
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+  "eslint.lintTask.enable": true,
 
   // Prettier Configuration
   "prettier.enable": true,
   "prettier.requireConfig": false,
-  "prettier.resolveGlobalModules": true,
-  "prettier.withNodeModules": false,
-  "prettier.documentSelectors": [],
-
-  // ============================================================================
-  // SECTION 5: AI-POWERED DEVELOPMENT (GitHub Copilot)
-  // ============================================================================
-  // Full Copilot integration with all features enabled
-  // CUDA acceleration for AI suggestions
-  // ============================================================================
-
-  // Copilot Core Settings
-  "github.copilot.enable": {
-    "*": true,
-    "plaintext": true,
-    "markdown": true,
-    "scminput": false,
-    "github.copilot.panel.enable": true,
-    "yaml": true,
-    "powershell": true
-  },
-  "github.copilot.editor.enableAutoCompletions": true,
-  "github.copilot.editor.enableCodeActions": true,
-  "github.copilot.renameSuggestions.triggerAutomatically": true,
-
-  // Copilot Chat Configuration
-  "github.copilot.chat.localeOverride": "en",
-  "github.copilot.chat.terminalChatLocation": "quickChat",
-  "github.copilot.chat.scopeSelection": true,
-  "github.copilot.chat.useProjectTemplates": true,
-  "github.copilot.chat.followUps": "on",
-  "github.copilot.chat.search.semanticTextResults": true,
-  "github.copilot.chat.search.codeSearchResults": true,
-  "github.copilot.chat.experimental.generateDocs.enabled": true,
-  "github.copilot.chat.editor.temporalContext.enabled": true,
-
-  // Inline Suggestions
-  "editor.inlineSuggest.enabled": true,
-  "editor.inlineSuggest.showToolbar": "always",
-  "editor.inlineSuggest.suppressSuggestions": false,
-  "editor.aiStats.enabled": true,
-
-  // Advanced Copilot Features
-  "github.copilot.advanced": {},
-  // Note: Custom instructions moved to .github/instructions/*.instructions.md files
-  // Copilot automatically reads instruction files from .github/instructions/
-  "github.copilot.chat.codeGeneration.useInstructionFiles": true,
-
-  // ============================================================================
-  // SECTION 6: FRAMEWORK-SPECIFIC CONFIGURATION
-  // ============================================================================
-  // Next.js, React, Tailwind CSS, Prisma optimizations
-  // ============================================================================
-
-  // File Associations removed - using the primary definition in Agricultural Domain Intelligence section
-
-  // Files to Exclude from Explorer
-  "files.exclude": {
-    "**/.git": true,
-    "**/.DS_Store": true,
-    "**/node_modules": true,
-    "**/dist": true,
-    "**/.next": true,
-    "**/out": true,
-    "**/.turbo": true,
-    "**/coverage": true
-  },
 
   // Language-Specific Formatters
   "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[javascriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[typescript]": {
@@ -513,681 +187,240 @@
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
   "[markdown]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.wordWrap": "on",
-    "editor.quickSuggestions": {
-      "comments": "on",
-      "strings": "on",
-      "other": "on"
-    }
-  },
-  "[prisma]": {
-    "editor.defaultFormatter": "Prisma.prisma"
-  },
-  "[chatmode]": {
-    "editor.defaultFormatter": "vscode.json-language-features"
-  },
-
-  // Tailwind CSS Configuration
-  "tailwindCSS.experimental.classRegex": [
-    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
-    ["cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
-  ],
-  "tailwindCSS.includeLanguages": {
-    "typescript": "javascript",
-    "typescriptreact": "javascript"
-  },
-  "tailwindCSS.emmetCompletions": true,
-  "tailwindCSS.hovers": true,
-  "tailwindCSS.suggestions": true,
-  "tailwindCSS.validate": true,
-  "tailwindCSS.colorDecorators": true,
-  "tailwindCSS.lint.cssConflict": "warning",
-  "tailwindCSS.lint.invalidApply": "error",
-  "tailwindCSS.lint.invalidScreen": "error",
-  "tailwindCSS.lint.invalidVariant": "error",
-  "tailwindCSS.lint.invalidConfigPath": "error",
-  "tailwindCSS.lint.invalidTailwindDirective": "error",
-  "tailwindCSS.lint.recommendedVariantOrder": "warning",
-
-  // CSS/SCSS Linting
-  "css.lint.unknownAtRules": "ignore",
-  "scss.lint.unknownAtRules": "ignore",
-
-  // HTML Configuration
-  "html.autoClosingTags": true,
-  "html.autoCreateQuotes": true,
-  "html.completion.attributeDefaultValue": "doublequotes",
-  "html.format.contentUnformatted": "pre,code,textarea",
-  "html.format.enable": true,
-  "html.format.extraLiners": "head, body, /html",
-  "html.format.indentHandlebars": false,
-  "html.format.indentInnerHtml": false,
-  "html.format.maxPreserveNewLines": 2,
-  "html.format.preserveNewLines": true,
-  "html.format.templating": false,
-  "html.format.unformatted": "wbr",
-  "html.format.wrapAttributes": "auto",
-  "html.format.wrapLineLength": 120,
-  "html.suggest.html5": true,
-
-  // JSON Configuration
-  "json.maxItemsComputed": 10000,
-  "json.schemas": [],
-  "json.format.enable": true,
-  "json.format.keepLines": false,
-  "json.validate.enable": true,
-
-  // Prisma Configuration
-  "prisma.showPrismaDataPlatformNotification": false,
-
-  // Emmet Configuration
-  "emmet.includeLanguages": {
-    "javascript": "javascriptreact",
-    "typescript": "typescriptreact"
-  },
-  "emmet.triggerExpansionOnTab": true,
-
-  // ============================================================================
-  // SECTION 7: TESTING & DEBUGGING - DIVINE QUALITY ASSURANCE
-  // ============================================================================
-  // Jest, Testing Library, debugging, and performance profiling
-  // Integrated with NVIDIA Nsight Systems for CUDA profiling
-  // ============================================================================
-
-  // Jest Configuration
-  "jest.runMode": "on-demand",
-  "jest.coverageFormatter": "DefaultFormatter",
-  "jest.outputConfig": {
-    "revealOutput": "on-exec",
-    "revealWithFocus": "terminal",
-    "clearOnRun": "terminal"
-  },
-
-  // Testing Configuration
-  "testing.automaticallyOpenPeekView": "failureInVisibleDocument",
-  "testing.openTesting": "neverOpen",
-  "testing.automaticallyOpenTestResults": "neverOpen",
-  "testing.saveBeforeTest": true,
-  "testing.followRunningTest": true,
-  "testing.defaultGutterClickAction": "run",
-  "testing.gutterEnabled": true,
-
-  // Debug Configuration
-  "debug.internalConsoleOptions": "neverOpen",
-  "debug.openDebug": "neverOpen",
-  "debug.showBreakpointsInOverviewRuler": true,
-  "debug.console.fontSize": 14,
-  "debug.console.lineHeight": 22,
-  "debug.console.fontFamily": "'Cascadia Code', 'Fira Code', monospace",
-  "debug.allowBreakpointsEverywhere": true,
-  "debug.confirmOnExit": "never",
-  "debug.focusEditorOnBreak": true,
-  "debug.focusWindowOnBreak": true,
-  "debug.inlineValues": "on",
-  "debug.saveBeforeStart": "allEditorsInActiveGroup",
-  "debug.showInlineBreakpointCandidates": true,
-  "debug.showSubSessionsInToolBar": true,
-  "debug.toolBarLocation": "floating",
-
-  // Launch Configuration Defaults
-  "launch": {
-    "configurations": [],
-    "compounds": []
+    "editor.wordWrap": "on"
   },
 
   // ============================================================================
-  // SECTION 8: GIT INTEGRATION - DIVINE QUANTUM SOURCE CONTROL
-  // ============================================================================
-  // Full Git visualization, timeline, graph, and intelligent operations
-  // Optimized for agricultural codebase evolution tracking
+  // SECTION 6: GIT INTEGRATION
   // ============================================================================
 
-  // Core Git Operations
+  "git.enableSmartCommit": true,
+  "git.confirmSync": false,
   "git.autofetch": true,
   "git.autofetchPeriod": 180,
-  "git.confirmSync": false,
-  "git.enableSmartCommit": true,
-  "git.ignoreLimitWarning": true,
-  "git.fetchOnPull": true,
-  "git.pruneOnFetch": true,
-  "git.pullBeforeCheckout": true,
-  "git.rebaseWhenSync": false,
-
-  // Git Visualization & Timeline
-  "git.timeline.showAuthor": true,
-  "git.timeline.showUncommitted": true,
-  "git.timeline.date": "committed",
   "git.openRepositoryInParentFolders": "always",
-  "git.repositoryScanMaxDepth": 3,
-
-  // Git Graph & History
-  "git.decorations.enabled": true,
-  "git.showActionButton": {
-    "commit": true,
-    "publish": true,
-    "sync": true
-  },
-  "git.showCommitInput": true,
-  "git.showPushSuccessNotification": true,
-  "git.showInlineOpenFileAction": true,
-
-  // Git Diff & Merge
-  "git.allowForcePush": false,
-  "git.alwaysShowStagedChangesResourceGroup": true,
-  "git.branchProtection": [],
-  "git.branchRandomName.enable": false,
-  "git.defaultCloneDirectory": "v:\\Projects",
-
-  // Git Performance
-  "git.detectSubmodules": true,
-  "git.detectSubmodulesLimit": 10,
-  "git.ignoredRepositories": [],
-  "git.inputValidationLength": 72,
-  "git.inputValidationSubjectLength": 50,
-
-  // Merge Editor Configuration
-  "mergeEditor.showDeletionMarkers": true,
-  "mergeEditor.diffAlgorithm": "advanced",
-
-  // Diff Editor Enhancements
-  "diffEditor.codeLens": true,
-  "diffEditor.diffAlgorithm": "advanced",
-  "diffEditor.experimental.showMoves": true,
-  "diffEditor.ignoreTrimWhitespace": false,
-  "diffEditor.maxComputationTime": 10000,
-  "diffEditor.renderIndicators": true,
-  "diffEditor.renderMarginRevertIcon": true,
-  "diffEditor.renderSideBySide": true,
-  "diffEditor.wordWrap": "on",
 
   // ============================================================================
-  // SECTION 9: UI & VISUAL CUSTOMIZATION
-  // ============================================================================
-  // Theme, layout, and visual preferences
+  // SECTION 7: WORKBENCH & UI
   // ============================================================================
 
-  // Workbench Theme & Icons
+  // Theme & Appearance
   "workbench.colorTheme": "Default Dark Modern",
   "workbench.iconTheme": "vs-seti",
-  "workbench.productIconTheme": "Default",
-  "workbench.preferredDarkColorTheme": "Default Dark Modern",
-  "workbench.preferredLightColorTheme": "Default Light Modern",
-  "workbench.preferredHighContrastColorTheme": "Default High Contrast",
-  "workbench.preferredHighContrastLightColorTheme": "Default High Contrast Light",
-
-  // Workbench Layout
   "workbench.startupEditor": "none",
-  "workbench.editor.enablePreview": false,
+  "workbench.editor.enablePreview": true,
   "workbench.editor.highlightModifiedTabs": true,
-  "workbench.editor.limit.enabled": true,
-  "workbench.editor.limit.value": 15,
-  "workbench.editor.tabCloseButton": "right",
   "workbench.editor.tabSizing": "fit",
-  "workbench.editor.tabActionLocation": "right",
-  "workbench.editor.enablePreviewFromQuickOpen": false,
+
+  // Activity Bar & Layout
   "workbench.activityBar.location": "top",
-  "workbench.statusBar.visible": true,
-  "workbench.layoutControl.enabled": true,
-  "workbench.quickOpen.preserveInput": false,
-
-  // Advanced Workbench Features
-  "workbench.editor.closeOnFileDelete": true,
-  "workbench.editor.decorations.badges": true,
-  "workbench.editor.decorations.colors": true,
-  "workbench.editor.doubleClickTabToToggleEditorGroupSizes": "maximize",
-  "workbench.editor.empty.hint": "text",
-  "workbench.editor.focusRecentEditorAfterClose": true,
-  "workbench.editor.languageDetection": true,
-  "workbench.editor.openPositioning": "last",
-  "workbench.editor.pinnedTabSizing": "compact",
-  "workbench.editor.pinnedTabsOnSeparateRow": false,
-  "workbench.editor.restoreViewState": true,
-  "workbench.editor.revealIfOpen": false,
-  "workbench.editor.scrollToSwitchTabs": false,
-  "workbench.editor.sharedViewState": false,
-  "workbench.editor.showTabs": "multiple",
-  "workbench.editor.splitInGroupLayout": "vertical",
-  "workbench.editor.splitSizing": "distribute",
-  "workbench.editor.tabSizingFixedMaxWidth": 160,
-  "workbench.editor.tabSizingFixedMinWidth": 50,
-  "workbench.editor.titleScrollbarSizing": "default",
-  "workbench.editor.untitled.hint": "text",
-  "workbench.editor.wrapTabs": false,
-
-  // Panel & Sidebar Configuration
-  "workbench.panel.defaultLocation": "bottom",
-  "workbench.panel.opensMaximized": "preserve",
   "workbench.sideBar.location": "left",
-  "workbench.tips.enabled": true,
+  "workbench.panel.defaultLocation": "bottom",
 
-  // Hover & Notifications
-  "workbench.hover.delay": 300,
-  "workbench.reduceMotion": "off",
-  "workbench.settings.editor": "ui",
-  "workbench.settings.enableNaturalLanguageSearch": true,
-  "workbench.settings.openDefaultSettings": false,
-  "workbench.settings.useSplitJSON": false,
+  // Breadcrumbs
+  "breadcrumbs.enabled": true,
+  "breadcrumbs.filePath": "on",
+  "breadcrumbs.symbolPath": "on",
 
-  // Bracket Pair Color Customization
-  "workbench.colorCustomizations": {
-    "editorBracketHighlight.foreground1": "#FFD700",
-    "editorBracketHighlight.foreground2": "#DA70D6",
-    "editorBracketHighlight.foreground3": "#87CEFA",
-    "editorBracketHighlight.foreground4": "#FA8072",
-    "editorBracketHighlight.foreground5": "#7CFC00",
-    "editorBracketHighlight.foreground6": "#FF69B4",
-    "editorBracketHighlight.unexpectedBracket.foreground": "#FF0000"
+  // ============================================================================
+  // SECTION 8: VITEST TESTING FRAMEWORK CONFIGURATION
+  // ============================================================================
+
+  // Vitest Extension Configuration (vitest.explorer - Modern API)
+  // Note: The modern extension auto-detects vitest.config.ts
+  // and doesn't require explicit enable/commandLine settings
+
+  // Disable deprecated Jest extension
+  "jest.enable": false,
+  "jest.disabledWorkspaceFolders": ["🌾 Farmers Market - Root"],
+
+  // ============================================================================
+  // SECTION 9: FILE EXPLORER & NAVIGATION
+  // ============================================================================
+
+  "explorer.confirmDelete": false,
+  "explorer.autoReveal": true,
+  "explorer.compactFolders": true,
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "*.ts": "${capture}.js, ${capture}.d.ts, ${capture}.test.ts, ${capture}.spec.ts",
+    "*.tsx": "${capture}.css, ${capture}.module.css, ${capture}.test.tsx, ${capture}.spec.tsx, ${capture}.stories.tsx",
+    "package.json": "package-lock.json, pnpm-lock.yaml, yarn.lock, .npmrc, .nvmrc",
+    ".env": ".env.*, .env.example, .env.local, .env.development, .env.production",
+    "tsconfig.json": "tsconfig.*.json, tsconfig.tsbuildinfo",
+    "next.config.js": "next.config.mjs, next-env.d.ts",
+    "tailwind.config.js": "tailwind.config.ts, postcss.config.js",
+    "prisma/schema.prisma": "prisma/migrations/*, prisma/seed.ts"
+  },
+
+  // ============================================================================
+  // SECTION 9: AI & COPILOT INTEGRATION
+  // ============================================================================
+
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": true,
+    "markdown": true,
+    "yaml": true
+  },
+  "github.copilot.editor.enableAutoCompletions": true,
+  "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+  "github.copilot.chat.codeGeneration.instructions": [
+    {
+      "text": "Follow DIVINE CORE PRINCIPLES from .github/instructions/01_DIVINE_CORE_PRINCIPLES.instructions.md"
+    },
+    {
+      "text": "Apply agricultural quantum patterns from .github/instructions/02_AGRICULTURAL_QUANTUM_MASTERY.instructions.md"
+    },
+    {
+      "text": "Optimize for HP OMEN hardware (RTX 2070 Max-Q 8GB, 64GB RAM, 12 threads)"
+    },
+    {
+      "text": "Use kilo-scale patterns from .github/instructions/11_KILO_SCALE_ARCHITECTURE.instructions.md"
+    }
+  ],
+  "github.copilot.advanced": {
+    "debug.overrideEngine": "gpt-4",
+    "debug.useNodeFetch": true,
+    "length": 1000
   },
 
   // ============================================================================
   // SECTION 10: EXTENSIONS & UPDATES
   // ============================================================================
-  // Extension management and update preferences
-  // ============================================================================
 
-  "extensions.ignoreRecommendations": false,
   "extensions.autoUpdate": true,
-  "extensions.autoCheckUpdates": true,
-  "update.mode": "start",
-  "update.showReleaseNotes": true,
-  "telemetry.telemetryLevel": "off",
-  "workbench.enableExperiments": true,
+  "extensions.ignoreRecommendations": false,
 
   // ============================================================================
-  // SECTION 11: PATH INTELLISENSE & IMPORTS
-  // ============================================================================
-  // Auto-completion for file paths and imports
+  // SECTION 11: DEBUGGING & TESTING
   // ============================================================================
 
-  "path-intellisense.autoSlashAfterDirectory": true,
-  "path-intellisense.extensionOnImport": true,
-  "path-intellisense.showHiddenFiles": true,
+  "debug.internalConsoleOptions": "neverOpen",
+  "debug.openDebug": "neverOpen",
+  "debug.showBreakpointsInOverviewRuler": true,
+  "debug.allowBreakpointsEverywhere": true,
 
   // ============================================================================
-  // SECTION 12: SECURITY & WORKSPACE TRUST - DIVINE PROTECTION
-  // ============================================================================
-  // Security scanning, workspace trust, and vulnerability detection
+  // SECTION 12: SECURITY & WORKSPACE
   // ============================================================================
 
-  // Workspace Trust
   "security.workspace.trust.enabled": true,
-  "security.workspace.trust.startupPrompt": "always",
-  "security.workspace.trust.banner": "always",
   "security.workspace.trust.untrustedFiles": "prompt",
-  "security.workspace.trust.emptyWindow": true,
-
-  // Security Scanning
-  "security.promptForLocalFileProtocolHandling": true,
-  "security.promptForRemoteFileProtocolHandling": true,
-  "security.allowedUNCHosts": [],
-  "security.restrictUNCAccess": true,
 
   // ============================================================================
-  // SECTION 13: CODE NAVIGATION & BREADCRUMBS - QUANTUM PATHFINDING
-  // ============================================================================
-  // Enhanced navigation, breadcrumbs, and symbol search
+  // SECTION 13: ADVANCED PERFORMANCE SETTINGS
   // ============================================================================
 
-  // Breadcrumbs Configuration
-  "breadcrumbs.enabled": true,
-  "breadcrumbs.filePath": "on",
-  "breadcrumbs.symbolPath": "on",
-  "breadcrumbs.symbolSortOrder": "position",
-  "breadcrumbs.showFiles": true,
-  "breadcrumbs.showClasses": true,
-  "breadcrumbs.showFunctions": true,
-  "breadcrumbs.showMethods": true,
-  "breadcrumbs.showVariables": true,
-  "breadcrumbs.showArrays": true,
-  "breadcrumbs.showBooleans": true,
-  "breadcrumbs.showConstants": true,
-  "breadcrumbs.showEnums": true,
-  "breadcrumbs.showEvents": true,
-  "breadcrumbs.showFields": true,
-  "breadcrumbs.showKeys": true,
-  "breadcrumbs.showModules": true,
-  "breadcrumbs.showNamespaces": true,
-  "breadcrumbs.showNumbers": true,
-  "breadcrumbs.showObjects": true,
-  "breadcrumbs.showOperators": true,
-  "breadcrumbs.showPackages": true,
-  "breadcrumbs.showProperties": true,
-  "breadcrumbs.showStrings": true,
-  "breadcrumbs.showStructs": true,
-  "breadcrumbs.showTypeParameters": true,
+  // Enhanced Performance Features
+  "editor.largeFileOptimizations": true,
+  "editor.maxTokenizationLineLength": 20000,
+  "files.useExperimentalFileWatcher": true,
+  "gitlens.advanced.caching.enabled": true,
 
-  // Outline & Symbol Navigation
-  "outline.collapseItems": "alwaysCollapse",
-  "outline.icons": true,
-  "outline.problems.enabled": true,
-  "outline.problems.badges": true,
-  "outline.problems.colors": true,
+  // CPU Optimization for 6-core processor
+  "typescript.tsserver.useSyntaxServer": "auto",
+  "javascript.suggest.maxSuggestions": 50,
 
-  // ============================================================================
-  // SECTION 14: FILE NESTING & EXPLORER - CONSCIOUS ORGANIZATION
-  // ============================================================================
-  // Intelligent file grouping and explorer enhancements
-  // ============================================================================
-
-  // File Nesting Patterns
-  "explorer.fileNesting.enabled": true,
-  "explorer.fileNesting.expand": false,
-  "explorer.fileNesting.patterns": {
-    "*.ts": "${capture}.js, ${capture}.d.ts, ${capture}.test.ts, ${capture}.spec.ts",
-    "*.tsx": "${capture}.css, ${capture}.module.css, ${capture}.test.tsx, ${capture}.spec.tsx, ${capture}.stories.tsx",
-    "*.js": "${capture}.js.map, ${capture}.min.js, ${capture}.test.js, ${capture}.spec.js",
-    "*.jsx": "${capture}.css, ${capture}.module.css, ${capture}.test.jsx, ${capture}.spec.jsx",
-    "package.json": "package-lock.json, pnpm-lock.yaml, yarn.lock, .npmrc, .yarnrc",
-    "tsconfig.json": "tsconfig.*.json",
-    ".env": ".env.*, .envrc",
-    "docker-compose.yml": "docker-compose.*.yml, Dockerfile*",
-    "next.config.js": "next.config.*.js, next-env.d.ts",
-    "tailwind.config.js": "tailwind.config.*.js, postcss.config.js",
-    "README.md": "CONTRIBUTING.md, CHANGELOG.md, LICENSE*"
-  },
-
-  // Explorer Settings
-  "explorer.confirmDelete": true,
-  "explorer.confirmDragAndDrop": true,
-  "explorer.sortOrder": "type",
-  "explorer.sortOrderLexicographicOptions": "default",
-  "explorer.autoReveal": true,
-  "explorer.autoRevealExclude": {
-    "**/node_modules": true,
-    "**/.next": true
-  },
-  "explorer.compactFolders": true,
-  "explorer.copyRelativePathSeparator": "/",
-  "explorer.decorations.badges": true,
-  "explorer.decorations.colors": true,
-  "explorer.incrementalNaming": "smart",
-  "explorer.openEditors.visible": 9,
-  "explorer.openEditors.sortOrder": "editorOrder",
-
-  // ============================================================================
-  // SECTION 15: PROBLEMS & DIAGNOSTICS - ERROR ENLIGHTENMENT
-  // ============================================================================
-  // Enhanced problem detection, filtering, and resolution
-  // ============================================================================
-
-  "problems.autoReveal": true,
-  "problems.decorations.enabled": true,
-  "problems.defaultViewMode": "tree",
-  "problems.showCurrentInStatus": true,
-  "problems.sortOrder": "severity",
-
-  // ============================================================================
-  // SECTION 16: C/C++ DEVELOPMENT - NATIVE CODE QUANTUM
-  // ============================================================================
-  // C/C++ IntelliSense optimization for RTX 2070 + 64GB RAM system
-  // Cache on R: drive for maximum performance
-  // ============================================================================
-
-  // C/C++ IntelliSense Performance (64GB RAM optimized)
-  "C_Cpp.intelliSenseCachePath": "R:/vscode-cpp-cache",
-  "C_Cpp.intelliSenseCacheSize": 2048,
-  "C_Cpp.default.browseMemoryLimit": 2048,
-  "C_Cpp.default.intelliSenseMemoryLimit": 2048,
-  "C_Cpp.maxConcurrentThreads": 8,
-
-  // ============================================================================
-  // SECTION 17: NOTEBOOK CONFIGURATION - JUPYTER QUANTUM
-  // ============================================================================
-  // Jupyter notebooks and interactive computing optimization
-  // ============================================================================
-
-  "notebook.cellToolbarLocation": {
-    "default": "right",
-    "jupyter-notebook": "left"
-  },
-  "notebook.consolidatedOutputButton": true,
-  "notebook.diff.enablePreview": true,
-  "notebook.displayOrder": [],
-  "notebook.dragAndDropEnabled": true,
-  "notebook.formatOnCellExecution": false,
-  "notebook.formatOnSave.enabled": true,
-  "notebook.insertToolbarLocation": "betweenCells",
-  "notebook.lineNumbers": "on",
-  "notebook.markup.fontSize": 14,
-  "notebook.output.scrolling": true,
-  "notebook.output.textLineLimit": 30,
-  "notebook.showCellStatusBar": "visible",
-  "notebook.showFoldingControls": "always",
-
-  // ============================================================================
-  // SECTION 18: REMOTE DEVELOPMENT - MULTIVERSE CONNECTIVITY
-  // ============================================================================
-  // WSL, SSH, containers, and remote workspace optimization
-  // ============================================================================
-
-  "remote.autoForwardPorts": true,
-  "remote.autoForwardPortsSource": "hybrid",
-  "remote.downloadExtensionsLocally": true,
-  "remote.extensionKind": {
-    "ms-vscode.js-debug": ["workspace"]
-  },
-  "remote.portsAttributes": {},
-  "remote.restoreForwardedPorts": true,
-
-  // ============================================================================
-  // SECTION 19: ZEN MODE & FOCUS - DEEP WORK CONSCIOUSNESS
-  // ============================================================================
-  // Distraction-free coding environment for flow state
-  // ============================================================================
-
-  "zenMode.centerLayout": true,
-  "zenMode.fullScreen": false,
-  "zenMode.hideActivityBar": true,
-  "zenMode.hideLineNumbers": false,
-  "zenMode.hideStatusBar": true,
-  "zenMode.restore": true,
-  "zenMode.silentNotifications": true,
-  "zenMode.showTabs": "single",
-
-  // ============================================================================
-  // SECTION 20: TASK AUTOMATION - DIVINE WORKFLOW ORCHESTRATION
-  // ============================================================================
-  // Task detection, execution, and problem matching
-  // ============================================================================
-
-  "task.autoDetect": "on",
-  "task.problemMatchers.neverPrompt": false,
-  "task.quickOpen.detail": true,
-  "task.quickOpen.history": 30,
-  "task.quickOpen.skip": false,
-  "task.reconnection": true,
-  "task.saveBeforeRun": "always",
-  "task.showDecorations": true,
-  "task.slowProviderWarning": true,
-
-  // ============================================================================
-  // SECTION 21: ACCESSIBILITY - INCLUSIVE DIVINE INTERFACE
-  // ============================================================================
-  // Screen reader optimization and accessibility features
-  // ============================================================================
-
-  "accessibility.signals.lineHasBreakpoint": {
-    "sound": "on",
-    "announcement": "auto"
-  },
-  "accessibility.signals.lineHasError": {
-    "sound": "on",
-    "announcement": "auto"
-  },
-  "accessibility.signals.lineHasWarning": {
-    "sound": "off",
-    "announcement": "auto"
-  },
-  "accessibility.signals.terminalQuickFix": {
-    "sound": "on",
-    "announcement": "off"
-  },
-  "accessibility.signals.onDebugBreak": {
-    "sound": "on",
-    "announcement": "auto"
-  },
-  "accessibility.signals.notebookCellCompleted": {
-    "sound": "on",
-    "announcement": "off"
-  },
-  "accessibility.signals.notebookCellFailed": {
-    "sound": "on",
-    "announcement": "off"
-  },
-  "accessibility.signals.taskCompleted": {
-    "sound": "on",
-    "announcement": "off"
-  },
-  "accessibility.signals.taskFailed": {
-    "sound": "on",
-    "announcement": "off"
-  },
-  "accessibility.signals.terminalCommandFailed": {
-    "sound": "on",
-    "announcement": "off"
-  },
-  "accessibility.signals.terminalBell": {
-    "sound": "on",
-    "announcement": "off"
-  },
-
-  // ============================================================================
-  // SECTION 22: PERFORMANCE MONITORING - REALITY METRICS
-  // ============================================================================
-  // Extension host monitoring and performance tracking
-  // ============================================================================
-
+  // Extension Performance
   "extensions.experimental.affinity": {
     "ms-vscode.js-debug": 1,
-    "esbenp.prettier-vscode": 1
+    "esbenp.prettier-vscode": 1,
+    "bradlc.vscode-tailwindcss": 1
   },
-  "application.experimental.rendererProfiling": true,
-  "workbench.editor.historyBasedLanguageDetection": true,
 
   // ============================================================================
-  // SECTION 23: SPELL CHECKING - LINGUISTIC QUANTUM CORRECTNESS
+  // SECTION 14: FRAMEWORK-SPECIFIC OPTIMIZATIONS
   // ============================================================================
-  // Custom dictionary for project-specific terms
+
+  // Tailwind CSS
+  "tailwindCSS.includeLanguages": {
+    "typescript": "javascript",
+    "typescriptreact": "javascript"
+  },
+  "tailwindCSS.emmetCompletions": true,
+
+  // File Associations
+  "files.associations": {
+    "*.css": "tailwindcss",
+    "*.prisma": "prisma",
+    "*.env*": "dotenv",
+    "*.mdx": "markdown"
+  },
+
   // ============================================================================
+  // SECTION 15: ACCESSIBILITY & USABILITY
+  // ============================================================================
+
+  "editor.accessibilitySupport": "off",
+  "workbench.reduceMotion": "off",
+
+  // Spell Checking
   "cSpell.words": [
     "biodynamic",
     "chakra",
-    "Cascadia",
-    "CICD",
     "clsx",
     "Contentful",
     "Copilot",
-    "csrf",
-    "cuda",
-    "cuid",
     "cva",
     "datagrid",
-    "datetime",
-    "dotenv",
-    "Fargate",
     "Farmers",
     "frontmatter",
-    "fulltext",
     "Geospatial",
-    "hotspots",
-    "hsla",
     "Lucide",
-    "middlewares",
-    "monorepo",
     "nextjs",
-    "Nsight",
-    "nsys",
-    "nvtx",
     "OMEN",
-    "opengl",
-    "osrt",
-    "Parsec",
     "Postgres",
     "Prisma",
     "pnpm",
     "radix",
-    "rgba",
-    "Sentry",
     "shadcn",
     "Supabase",
     "tailwindcss",
-    "testname",
     "trpc",
-    "TURBO",
     "typecheck",
-    "UUIDs",
-    "VERCEL",
-    "WCAG",
-    "wddm",
-    "wireframes",
-    "xstate",
     "zustand"
   ],
-  "cSpell.enabledFileTypes": {
-    "mdx": true,
-    "prisma": true,
-    "dotenv": true
+
+  // ============================================================================
+  // FINAL PERFORMANCE VALIDATION SETTINGS
+  // ============================================================================
+
+  // Monitor these for performance tuning
+  "editor.cursorBlinkingCaretAnimation": "blink",
+  "editor.find.cursorMoveOnType": true,
+  "editor.links": true,
+  "editor.occurrencesHighlight": "singleFile",
+  "editor.selectionHighlight": true,
+  "editor.wordWrap": "off",
+
+  // Final memory safety checks
+  "editor.inlayHints.fontSize": 11,
+  "editor.inlayHints.padding": true,
+
+  // ============================================================================
+  // SECTION 16: TASK PERFORMANCE OPTIMIZATION (HP OMEN)
+  // ============================================================================
+
+  "task.autoDetect": "on",
+  "task.quickOpen.history": 10,
+  "task.quickOpen.detail": true,
+  "task.quickOpen.skip": false,
+  "task.saveBeforeRun": "always",
+  "task.reconnection": true,
+
+  // Terminal Performance for Tasks
+  "terminal.integrated.persistentSessionReviveProcess": "onExitAndWindowClose",
+  "terminal.integrated.enablePersistentSessions": true,
+  "[dockerfile]": {
+    "editor.defaultFormatter": "ms-azuretools.vscode-containers"
   },
-  "cSpell.diagnosticLevel": "Information",
-  "cSpell.showAutocompleteSuggestions": true,
-  "cSpell.showSuggestionsLinkInEditorContextMenu": true,
   "[powershell]": {
     "editor.defaultFormatter": "ms-vscode.powershell"
   },
-
-  // ============================================================================
-  // MARKDOWNLINT CONFIGURATION - LOCAL SCHEMA
-  // ============================================================================
-  "markdownlint.config": {
-    "MD013": {
-      "line_length": 120,
-      "code_blocks": false,
-      "tables": false
-    },
-    "MD033": false,
-    "MD041": false
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
   }
 }
-
-// ============================================================================
-// END OF OPTIMIZED SETTINGS - 100/100 DIVINE GOD-TIER ACHIEVED ✨
-// ============================================================================
-//
-// DIVINE ENHANCEMENT COMPLETE:
-// + 5 Divine Configuration Files Created (.vscode/*)
-// + Agricultural Domain Intelligence Integrated
-// + GPU Quantum Computing Optimization Added
-// + AI Workflow Automation Consciousness Enabled
-// + Quantum Performance Reality Bending Active
-// + Divine Monitoring & Reality Metrics Online
-//
-// QUICK REFERENCE:
-// - Documentation: .vscode/SETTINGS_REFERENCE.md (comprehensive guide)
-// - Quick Start: Press Ctrl+Shift+P → "Preferences: Open Settings (UI)"
-// - Performance: npm run dev:turbo (3-5s startup on HP OMEN)
-// - AI Copilot: Uses .github/instructions/ for divine patterns
-// - Debugging: Press F5 (10 debug configs available)
-// - Tasks: Press Ctrl+Shift+B (16 tasks available)
-//
-// DIVINE CONFIGURATION FILES:
-// - gpu-settings.json: RTX 2070 Max-Q optimization & CUDA integration
-// - ai-workflows.json: Advanced Copilot consciousness & automation
-// - agricultural-patterns.json: Farming domain intelligence & seasonal awareness
-// - quantum-performance.json: Reality bending & temporal optimization
-// - divine-monitoring.json: Comprehensive metrics & consciousness tracking
-//
-// MAINTENANCE:
-// - Review quarterly (next: January 2026)
-// - Update divine configuration files when adding new patterns
-// - Keep main settings.json focused on core configuration
-// - Document new divine features in individual config files
-//
-// STATUS: ✅ All 24 sections optimized + 5 divine config files
-// SCORE: 100/100 (ULTIMATE GOD-TIER ACHIEVED October 22, 2025)
-// HARDWARE: RTX 2070 Max-Q + 64GB RAM + 12 Threads = MAXIMUM DIVINE POWER
-// ============================================================================

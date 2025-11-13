@@ -180,7 +180,7 @@ farmers-market/
      } catch (error) {
        return NextResponse.json(
          { error: "Failed to fetch farms" },
-         { status: 500 }
+         { status: 500 },
        );
      }
    }
@@ -252,10 +252,10 @@ farmers-market/
 
 ### Production Services
 
-| Service           | Purpose              | Dashboard                                            |
-| ----------------- | -------------------- | ---------------------------------------------------- |
+| Service           | Purpose              | Dashboard                                              |
+| ----------------- | -------------------- | ------------------------------------------------------ |
 | **Vercel**        | Hosting & deployment | [vercel.com/dashboard](<https://vercel.com/dashboar>d) |
-| **Neon/Supabase** | PostgreSQL database  | Service-specific                                     |
+| **Neon/Supabase** | PostgreSQL database  | Service-specific                                       |
 | **Stripe**        | Payment processing   | [dashboard.stripe.com](<https://dashboard.stripe.co>m) |
 | **Resend**        | Email service        | [resend.com/dashboard](<https://resend.com/dashboar>d) |
 
@@ -297,7 +297,6 @@ RESEND_API_KEY="re_..."
    ```
 
 2. **Set up Database**
-
    - Create PostgreSQL database on Neon or Supabase
    - Copy connection string to `DATABASE_URL`
 

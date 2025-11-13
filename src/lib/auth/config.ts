@@ -2,64 +2,40 @@ import { database } from "@/lib/database/index";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { UserRole } from "@prisma/client";
 import { compare } from "bcryptjs";
-import { NextAuthConfig } from "next-auth";
+import type { NextAuthOptions, Session, User } from "next-auth";
+import type { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-export const authConfig: NextAuthConfig = {
+export const authConfig: NextAuthOptions = {
   pages: {
     signIn: "/admin-login",
     error: "/admin-login",
   },
   callbacks: {
-    async session({ session, token }) {
-      if (token) {
+    async session({ session, token }: { session: Session; token: JWT }) {
+      if (token && session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as UserRole;
-        session.user.name = token.name;
-        session.user.email = token.email;
+        session.user.name = (token.name as string) || "";
+        session.user.email = (token.email as string) || "";
       }
       return session;
     },
-    async jwt({ token, user }) {
+    async jwt({
+      token,
+      user,
+    }: {
+      token: JWT;
+      user?: User & { role?: UserRole };
+    }) {
       if (user) {
         token.id = user.id;
         token.role = user.role;
       }
       return token;
     },
-    async authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user;
-      const isAdminRoute = nextUrl.pathname.startsWith("/admin");
-      const isAdminLoginPage = nextUrl.pathname === "/admin-login";
-
-      // Allow access to login page
-      if (isAdminLoginPage) {
-        if (isLoggedIn) {
-          return Response.redirect(new URL("/admin", nextUrl));
-        }
-        return true;
-      }
-
-      // Protect admin routes
-      if (isAdminRoute) {
-        if (!isLoggedIn) {
-          return false;
-        }
-        const isAdmin = ["ADMIN", "SUPER_ADMIN", "MODERATOR"].includes(
-          auth.user.role as string
-        );
-        if (!isAdmin) {
-          return Response.redirect(
-            new URL("/?error=admin_access_required", nextUrl)
-          );
-        }
-        return true;
-      }
-
-      return true;
-    },
   },
-  adapter: PrismaAdapter(database),
+  adapter: PrismaAdapter(database) as any,
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -116,3 +92,7 @@ export const authConfig: NextAuthConfig = {
   ],
   session: { strategy: "jwt" },
 };
+
+// Export a helper to get auth from next-auth
+import NextAuth from "next-auth";
+export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);

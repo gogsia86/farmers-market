@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "Perplexity Pro Configuration",
+  "description": "Divine configuration for Perplexity Pro API integration with Agricultural Consciousness",
+  "type": "object",
+  "apiKey": "YOUR_PERPLEXITY_PRO_API_KEY_HERE",
+  "defaultModel": "llama-3.1-sonar-large-128k-online",
+  "searchDomainFilter": [],
+  "returnImages": true,
+  "returnRelatedQuestions": true,
+  "searchRecencyFilter": "month",
+  "topP": 0.9,
+  "topK": 0,
+  "temperature": 0.2,
+  "presencePenalty": 0,
+  "frequencyPenalty": 1,
+  "agriculturalModeSettings": {
+    "enabled": true,
+    "searchDomainFilter": [
+      "perplexity.ai",
+      "usda.gov",
+      "agriculture.com",
+      "extension.org",
+      "farmers.gov",
+      "nal.usda.gov"
+    ],
+    "customSystemPrompt": "You are an expert agricultural consultant with deep knowledge of farming practices, sustainable agriculture, biodynamic farming, organic certification, crop rotation, soil health, pest management, and local food systems. Provide accurate, practical advice grounded in scientific research and real-world farming experience."
+  },
+  "profiles": {
+    "agricultural-research": {
+      "model": "llama-3.1-sonar-large-128k-online",
+      "temperature": 0.2,
+      "searchDomainFilter": [
+        "usda.gov",
+        "agriculture.com",
+        "extension.org",
+        "farmers.gov"
+      ],
+      "description": "Deep agricultural research with verified sources"
+    },
+    "code-generation": {
+      "model": "llama-3.1-sonar-large-128k-online",
+      "temperature": 0.7,
+      "searchDomainFilter": [
+        "github.com",
+        "stackoverflow.com",
+        "nextjs.org",
+        "react.dev",
+        "prisma.io"
+      ],
+      "description": "Code generation with latest best practices"
+    },
+    "quick-answer": {
+      "model": "llama-3.1-sonar-small-128k-online",
+      "temperature": 0.5,
+      "description": "Fast responses for quick questions"
+    },
+    "divine-reasoning": {
+      "model": "llama-3.1-sonar-huge-128k-online",
+      "temperature": 0.3,
+      "topP": 0.95,
+      "description": "Complex reasoning with maximum context"
+    }
+  }
+}

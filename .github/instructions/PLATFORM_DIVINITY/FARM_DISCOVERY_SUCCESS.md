@@ -200,13 +200,11 @@ Go to: `http://localhost:3001/farms`
 ### **Test Filters**
 
 1. **Farming Method**:
-
    - Select "Organic" → Only organic farms
    - Select "Conventional" → Only conventional
    - Select "All Methods" → Shows all
 
 2. **Location**:
-
    - Select a state → Only farms in that state
    - Select "All Locations" → Shows all
 

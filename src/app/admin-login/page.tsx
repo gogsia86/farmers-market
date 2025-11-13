@@ -81,6 +81,8 @@ export default function AdminLoginPage() {
                 name="email"
                 type="email"
                 required
+                data-testid="admin-email-input"
+                aria-label="Email address"
                 className="mt-1 block w-full px-3 py-2 bg-white/5 border border-purple-300/20 rounded-md text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 placeholder="admin@farmersmarket.app"
               />
@@ -98,6 +100,8 @@ export default function AdminLoginPage() {
                 name="password"
                 type="password"
                 required
+                data-testid="admin-password-input"
+                aria-label="Password"
                 className="mt-1 block w-full px-3 py-2 bg-white/5 border border-purple-300/20 rounded-md text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 placeholder="••••••••"
               />
@@ -112,6 +116,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={loading}
+              data-testid="admin-login-button"
               className="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-md hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-purple-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {loading

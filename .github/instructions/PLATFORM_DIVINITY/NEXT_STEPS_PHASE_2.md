@@ -107,23 +107,19 @@ GET    /api/farms/:id/products // Get farm's products
 ### **Step-by-Step (Best for Learning)**
 
 1. **Start Here**: Authentication API (30 min)
-
    - Sets up NextAuth.js
    - Enables protected routes
    - Tests with existing users
 
 2. **Then**: Farm Management API (45 min)
-
    - Public farm browsing
    - Farmer portal CRUD
 
 3. **Next**: Product Catalog API (1 hour)
-
    - Product search
    - Inventory management
 
 4. **After**: Shopping Cart API (45 min)
-
    - Multi-farm cart
    - Session-based storage
 

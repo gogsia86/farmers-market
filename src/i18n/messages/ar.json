@@ -1,0 +1,262 @@
+{
+  "common": {
+    "nav": {
+      "home": "الصفحة الرئيسية",
+      "products": "المنتجات",
+      "farms": "المزارع",
+      "about": "من نحن",
+      "contact": "اتصل بنا",
+      "login": "تسجيل الدخول",
+      "signup": "التسجيل",
+      "dashboard": "لوحة التحكم",
+      "cart": "السلة",
+      "orders": "الطلبات"
+    },
+    "actions": {
+      "search": "بحث",
+      "filter": "تصفية",
+      "sort": "ترتيب",
+      "submit": "إرسال",
+      "cancel": "إلغاء",
+      "save": "حفظ",
+      "delete": "حذف",
+      "edit": "تعديل",
+      "view": "عرض",
+      "addToCart": "أضف إلى السلة",
+      "checkout": "الدفع",
+      "buy": "اشتر الآن",
+      "learn": "اعرف المزيد"
+    },
+    "status": {
+      "loading": "جاري التحميل...",
+      "error": "خطأ",
+      "success": "نجاح",
+      "pending": "قيد الانتظار",
+      "processing": "قيد المعالجة",
+      "completed": "مكتمل",
+      "cancelled": "ملغى"
+    }
+  },
+  "home": {
+    "hero": {
+      "title": "طازج من المزرعة إلى المائدة",
+      "subtitle": "تواصل مع المزارعين المحليين واحصل على أطازج المنتجات العضوية المسلمة إلى باب منزلك",
+      "cta": "ابدأ التسوق"
+    },
+    "features": {
+      "title": "لماذا تختارنا",
+      "organic": {
+        "title": "100% عضوي",
+        "description": "منتجات عضوية معتمدة من مزارع محلية موثوقة"
+      },
+      "fresh": {
+        "title": "دائمًا طازج",
+        "description": "يتم حصاده خلال 24 ساعة من التسليم"
+      },
+      "local": {
+        "title": "دعم المحلي",
+        "description": "اتصال مباشر مع المزارعين في مجتمعك"
+      },
+      "sustainable": {
+        "title": "مستدام",
+        "description": "ممارسات زراعية واعية بيئيًا"
+      }
+    },
+    "howItWorks": {
+      "title": "كيف يعمل",
+      "step1": {
+        "title": "تصفح المنتجات",
+        "description": "استكشف المنتجات الطازجة من المزارع المحلية"
+      },
+      "step2": {
+        "title": "أضف إلى السلة",
+        "description": "اختر العناصر العضوية المفضلة لديك"
+      },
+      "step3": {
+        "title": "الدفع",
+        "description": "اختر خيارات التوصيل أو الاستلام"
+      },
+      "step4": {
+        "title": "استمتع بالطعام الطازج",
+        "description": "استلم منتجاتك الطازجة من المزرعة"
+      }
+    }
+  },
+  "products": {
+    "title": "منتجاتنا",
+    "categories": {
+      "all": "جميع المنتجات",
+      "vegetables": "خضروات",
+      "fruits": "فواكه",
+      "dairy": "منتجات الألبان",
+      "meat": "اللحوم والدواجن",
+      "eggs": "بيض",
+      "honey": "عسل ومربى",
+      "bakery": "مخبوزات",
+      "herbs": "أعشاب وتوابل"
+    },
+    "filters": {
+      "category": "الفئة",
+      "price": "نطاق السعر",
+      "organic": "عضوي فقط",
+      "inStock": "متوفر",
+      "farm": "المزرعة"
+    },
+    "sorting": {
+      "featured": "مميز",
+      "newest": "الأحدث",
+      "priceLowToHigh": "السعر: من الأقل إلى الأعلى",
+      "priceHighToLow": "السعر: من الأعلى إلى الأقل",
+      "nameAZ": "الاسم: أ-ي"
+    },
+    "details": {
+      "description": "الوصف",
+      "ingredients": "المكونات",
+      "nutrition": "الحقائق الغذائية",
+      "certifications": "الشهادات",
+      "farm": "المزرعة",
+      "availability": "التوفر",
+      "quantity": "الكمية",
+      "unit": "الوحدة"
+    }
+  },
+  "farms": {
+    "title": "مزارعنا",
+    "subtitle": "تعرف على المزارعين الذين يزرعون طعامك",
+    "viewProducts": "عرض المنتجات",
+    "location": "الموقع",
+    "certifications": "الشهادات",
+    "practices": "ممارسات الزراعة",
+    "story": "قصتنا",
+    "contact": "اتصل بالمزرعة"
+  },
+  "cart": {
+    "title": "سلة التسوق",
+    "empty": "سلتك فارغة",
+    "item": "عنصر",
+    "price": "السعر",
+    "quantity": "الكمية",
+    "total": "المجموع",
+    "subtotal": "المجموع الفرعي",
+    "tax": "الضريبة",
+    "shipping": "الشحن",
+    "grandTotal": "المجموع الإجمالي",
+    "continueShopping": "متابعة التسوق",
+    "proceedToCheckout": "المتابعة إلى الدفع",
+    "removeItem": "إزالة العنصر",
+    "updateCart": "تحديث السلة"
+  },
+  "checkout": {
+    "title": "الدفع",
+    "shippingInfo": "معلومات الشحن",
+    "billingInfo": "معلومات الفواتير",
+    "paymentMethod": "طريقة الدفع",
+    "orderSummary": "ملخص الطلب",
+    "placeOrder": "تقديم الطلب",
+    "firstName": "الاسم الأول",
+    "lastName": "اسم العائلة",
+    "email": "البريد الإلكتروني",
+    "phone": "الهاتف",
+    "address": "العنوان",
+    "city": "المدينة",
+    "state": "الولاية",
+    "zipCode": "الرمز البريدي",
+    "country": "البلد",
+    "deliveryMethod": {
+      "title": "طريقة التوصيل",
+      "delivery": "التوصيل للمنزل",
+      "pickup": "الاستلام من المزرعة"
+    }
+  },
+  "orders": {
+    "title": "طلباتي",
+    "orderNumber": "رقم الطلب",
+    "date": "التاريخ",
+    "status": "الحالة",
+    "items": "العناصر",
+    "total": "المجموع",
+    "viewDetails": "عرض التفاصيل",
+    "trackOrder": "تتبع الطلب",
+    "reorder": "إعادة الطلب",
+    "noOrders": "لا توجد طلبات بعد"
+  },
+  "auth": {
+    "login": {
+      "title": "تسجيل الدخول",
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "remember": "تذكرني",
+      "forgot": "نسيت كلمة المرور؟",
+      "submit": "تسجيل الدخول",
+      "noAccount": "ليس لديك حساب؟",
+      "createAccount": "إنشاء واحد"
+    },
+    "signup": {
+      "title": "التسجيل",
+      "firstName": "الاسم الأول",
+      "lastName": "اسم العائلة",
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "submit": "إنشاء حساب",
+      "hasAccount": "هل لديك حساب بالفعل؟",
+      "signIn": "تسجيل الدخول"
+    }
+  },
+  "footer": {
+    "company": {
+      "title": "الشركة",
+      "about": "من نحن",
+      "careers": "الوظائف",
+      "press": "الصحافة",
+      "blog": "المدونة"
+    },
+    "support": {
+      "title": "الدعم",
+      "help": "مركز المساعدة",
+      "contact": "اتصل بنا",
+      "faq": "الأسئلة الشائعة",
+      "shipping": "معلومات الشحن"
+    },
+    "legal": {
+      "title": "قانوني",
+      "privacy": "سياسة الخصوصية",
+      "terms": "شروط الخدمة",
+      "cookies": "سياسة ملفات تعريف الارتباط"
+    },
+    "social": {
+      "title": "تابعنا"
+    },
+    "copyright": "© 2024 Farmers Market. جميع الحقوق محفوظة."
+  },
+  "notifications": {
+    "addedToCart": "تمت الإضافة إلى السلة بنجاح",
+    "removedFromCart": "تمت الإزالة من السلة",
+    "orderPlaced": "تم تقديم الطلب بنجاح",
+    "profileUpdated": "تم تحديث الملف الشخصي",
+    "error": "حدث خطأ ما",
+    "sessionExpired": "انتهت جلستك"
+  },
+  "agricultural": {
+    "consciousness": {
+      "level": "الوعي الزراعي",
+      "organic": "عضوي",
+      "biodynamic": "حيوي ديناميكي",
+      "regenerative": "تجديدي",
+      "permaculture": "الزراعة الدائمة"
+    },
+    "seasons": {
+      "spring": "الربيع",
+      "summer": "الصيف",
+      "fall": "الخريف",
+      "winter": "الشتاء"
+    },
+    "practices": {
+      "noTill": "الزراعة بدون حرث",
+      "cropRotation": "تدوير المحاصيل",
+      "composting": "التسميد",
+      "coverCrops": "محاصيل التغطية",
+      "integratedPest": "الإدارة المتكاملة للآفات"
+    }
+  }
+}

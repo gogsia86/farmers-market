@@ -23,7 +23,7 @@ interface WithAuthOptions {
 
 export function withAuth<P extends object>(
   Component: ComponentType<P>,
-  options: WithAuthOptions = {}
+  options: WithAuthOptions = {},
 ) {
   return function ProtectedRoute(props: P) {
     const { data: session, status } = useSession();

@@ -1,0 +1,47 @@
+{
+  "workbench.panel.defaultLocation": "bottom",
+  "workbench.panel.opensMaximized": false,
+  "workbench.sideBar.location": "left",
+  "workbench.auxiliaryBar.location": "right",
+  "workbench.activityBar.visible": true,
+  "workbench.editor.showTabs": true,
+  "workbench.editor.tabSizing": "shrink",
+  "workbench.editor.wrapTabs": true,
+  "workbench.editor.splitInGroupLayout": "horizontal",
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "*.ts": "${capture}.js, ${capture}.d.ts, ${capture}.test.ts, ${capture}.spec.ts",
+    "*.tsx": "${capture}.test.tsx, ${capture}.spec.tsx, ${capture}.stories.tsx",
+    "*.component.tsx": "${capture}.module.css, ${capture}.styles.ts",
+    "package.json": "package-lock.json, npm-shrinkwrap.json, yarn.lock, pnpm-lock.yaml",
+    "README.md": "CHANGELOG.md, LICENSE, .gitignore, .gitattributes",
+    "next.config.*": "next-env.d.ts, .next/**",
+    "prisma/schema.prisma": "prisma/migrations/**, prisma/seed.ts"
+  },
+  "workbench.view.alwaysShowHeaderActions": true,
+  "terminal.integrated.defaultLocation": "panel",
+  "chat.defaultLocation": "panel",
+  "github.copilot.editor.enableAutoCompletions": true,
+  "github.copilot.enable": {
+    "*": true,
+    "yaml": true,
+    "plaintext": true,
+    "markdown": true
+  },
+  "agricultural.contextManagement": {
+    "autoRefreshOnTask": true,
+    "maxContextFiles": 8,
+    "relevancyThreshold": 0.75,
+    "removeStaleFiles": true,
+    "addRelatedFiles": true
+  },
+  "workbench.panel.size": 300,
+  "workbench.sideBar.size": 280,
+  "workbench.auxiliaryBar.size": 320,
+  "workbench.startupEditor": "readme",
+  "workbench.tips.enabled": false,
+  "keyboard.dispatch": "keyCode",
+  "workbench.statusBar.visible": true,
+  "workbench.activityBar.iconClickBehavior": "toggle"
+}

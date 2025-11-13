@@ -13,6 +13,7 @@
  * Functional Requirements: FR-011 (Farm Profile Creation)
  */
 
+import { AgriculturalCache } from "@/lib/cache/agricultural-cache";
 import { database } from "@/lib/database";
 import {
   generateFarmSlug,
@@ -80,8 +81,8 @@ export async function createFarmService(
       longitude: farmData.longitude,
 
       // Contact
-      email: farmData.email,
-      phone: farmData.phone,
+      email: farmData.email || "",
+      phone: farmData.phone || "",
       website: farmData.website || null,
 
       // Practices
@@ -177,7 +178,10 @@ const MAX_SLUG_ATTEMPTS = 10;
  * @returns Unique slug
  * @throws Error if max attempts exceeded
  */
-async function generateUniqueSlug(name: string, city: string): Promise<string> {
+async function generateUniqueSlug(
+  name: string,
+  city: string
+): Promise<FarmSlug> {
   let slug = generateFarmSlug(name, city);
   let attempt = 0;
 
@@ -193,7 +197,7 @@ async function generateUniqueSlug(name: string, city: string): Promise<string> {
 
     // Collision detected - try with counter
     attempt++;
-    slug = `${generateFarmSlug(name, city)}-${attempt}`;
+    slug = `${generateFarmSlug(name, city)}-${attempt}` as FarmSlug;
   }
 
   throw new Error(
@@ -207,8 +211,16 @@ async function generateUniqueSlug(name: string, city: string): Promise<string> {
 
 /**
  * Get farm by ID with quantum manifestation
+ * Uses agricultural cache for performance
  */
 export async function getFarmById(farmId: string): Promise<QuantumFarm | null> {
+  // Try cache first
+  const cached = await AgriculturalCache.getFarm(farmId);
+  if (cached) {
+    return cached;
+  }
+
+  // Fetch from database
   const farm = await database.farm.findUnique({
     where: { id: farmId },
     include: {
@@ -227,13 +239,27 @@ export async function getFarmById(farmId: string): Promise<QuantumFarm | null> {
     return null;
   }
 
-  return manifestQuantumFarm(farm);
+  const quantumFarm = manifestQuantumFarm(farm);
+
+  // Cache the result
+  await AgriculturalCache.cacheFarm(farmId, quantumFarm);
+
+  return quantumFarm;
 }
 
 /**
  * Get farm by slug with quantum manifestation
+ * Uses agricultural cache for performance
  */
 export async function getFarmBySlug(slug: string): Promise<QuantumFarm | null> {
+  // Try cache first (using slug as key)
+  const cacheKey = `farm:slug:${slug}`;
+  const cached = await AgriculturalCache.getFarm(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
+  // Fetch from database
   const farm = await database.farm.findUnique({
     where: { slug },
     include: {
@@ -252,5 +278,299 @@ export async function getFarmBySlug(slug: string): Promise<QuantumFarm | null> {
     return null;
   }
 
-  return manifestQuantumFarm(farm);
+  const quantumFarm = manifestQuantumFarm(farm);
+
+  // Cache by both ID and slug
+  await Promise.all([
+    AgriculturalCache.cacheFarm(farm.id, quantumFarm),
+    AgriculturalCache.cacheFarm(cacheKey, quantumFarm),
+  ]);
+
+  return quantumFarm;
+}
+
+// ============================================================================
+// FARM UPDATE SERVICE
+// ============================================================================
+
+export interface UpdateFarmServiceOptions {
+  farmId: string;
+  userId: UserId;
+  updateData: Partial<CreateFarmRequest>;
+}
+
+/**
+ * Update farm with ownership validation
+ *
+ * @param options - Farm ID, User ID, and update data
+ * @returns Updated quantum farm entity
+ * @throws Error if user doesn't own the farm
+ */
+export async function updateFarmService(
+  options: UpdateFarmServiceOptions
+): Promise<QuantumFarm> {
+  const { farmId, userId, updateData } = options;
+
+  // Verify ownership
+  const existingFarm = await database.farm.findUnique({
+    where: { id: farmId },
+    select: { ownerId: true },
+  });
+
+  if (!existingFarm) {
+    throw new Error("Farm not found");
+  }
+
+  if (existingFarm.ownerId !== userId) {
+    throw new Error("Unauthorized: You don't own this farm");
+  }
+
+  // Update farm
+  const updatedFarm = await database.farm.update({
+    where: { id: farmId },
+    data: {
+      // Only update provided fields
+      ...(updateData.name && { name: updateData.name }),
+      ...(updateData.description && { description: updateData.description }),
+      ...(updateData.story && { story: updateData.story }),
+      ...(updateData.businessName && { businessName: updateData.businessName }),
+      ...(updateData.yearEstablished && {
+        yearEstablished: updateData.yearEstablished,
+      }),
+      ...(updateData.farmSize && { farmSize: updateData.farmSize }),
+      ...(updateData.address && { address: updateData.address }),
+      ...(updateData.city && { city: updateData.city }),
+      ...(updateData.state && { state: updateData.state }),
+      ...(updateData.zipCode && { zipCode: updateData.zipCode }),
+      ...(updateData.latitude !== undefined && {
+        latitude: updateData.latitude,
+      }),
+      ...(updateData.longitude !== undefined && {
+        longitude: updateData.longitude,
+      }),
+      ...(updateData.email && { email: updateData.email }),
+      ...(updateData.phone && { phone: updateData.phone }),
+      ...(updateData.website !== undefined && { website: updateData.website }),
+      ...(updateData.farmingPractices && {
+        farmingPractices: updateData.farmingPractices,
+      }),
+      ...(updateData.productCategories && {
+        productCategories: updateData.productCategories,
+      }),
+      ...(updateData.deliveryRadius !== undefined && {
+        deliveryRadius: updateData.deliveryRadius,
+      }),
+    },
+    include: {
+      owner: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+        },
+      },
+    },
+  });
+
+  const quantumFarm = manifestQuantumFarm(updatedFarm);
+
+  // Invalidate cache
+  await AgriculturalCache.invalidateFarm(farmId);
+
+  return quantumFarm;
+}
+
+// ============================================================================
+// FARM DELETION SERVICE
+// ============================================================================
+
+export interface DeleteFarmServiceOptions {
+  farmId: string;
+  userId: UserId;
+}
+
+/**
+ * Delete farm with ownership validation
+ *
+ * Soft delete by setting status to INACTIVE
+ *
+ * @param options - Farm ID and User ID
+ * @throws Error if user doesn't own the farm
+ */
+export async function deleteFarmService(
+  options: DeleteFarmServiceOptions
+): Promise<void> {
+  const { farmId, userId } = options;
+
+  // Verify ownership
+  const existingFarm = await database.farm.findUnique({
+    where: { id: farmId },
+    select: { ownerId: true },
+  });
+
+  if (!existingFarm) {
+    throw new Error("Farm not found");
+  }
+
+  if (existingFarm.ownerId !== userId) {
+    throw new Error("Unauthorized: You don't own this farm");
+  }
+
+  // Soft delete (set status to INACTIVE)
+  await database.farm.update({
+    where: { id: farmId },
+    data: {
+      status: "INACTIVE",
+    },
+  });
+
+  // Invalidate cache
+  await AgriculturalCache.invalidateFarm(farmId);
+}
+
+// ============================================================================
+// FARM LISTING SERVICE
+// ============================================================================
+
+export interface ListFarmsOptions {
+  page?: number;
+  limit?: number;
+  status?: string;
+  city?: string;
+  state?: string;
+  farmingPractices?: string[];
+  sortBy?: "name" | "createdAt" | "rating";
+  sortOrder?: "asc" | "desc";
+}
+
+export interface ListFarmsResult {
+  farms: QuantumFarm[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+/**
+ * List farms with pagination and filtering
+ *
+ * @param options - Pagination and filter options
+ * @returns Paginated list of quantum farms
+ */
+export async function listFarmsService(
+  options: ListFarmsOptions = {}
+): Promise<ListFarmsResult> {
+  const {
+    page = 1,
+    limit = 20,
+    status,
+    city,
+    state,
+    farmingPractices,
+    sortBy = "createdAt",
+    sortOrder = "desc",
+  } = options;
+
+  const skip = (page - 1) * limit;
+
+  // Note: List queries are not cached due to complexity of filters and pagination
+  // Individual farms are cached when retrieved
+
+  // Build where clause
+  const where: any = {
+    status: { not: "INACTIVE" }, // Only active farms
+  };
+
+  if (status) {
+    where.status = status; // Override with specific status if provided
+  }
+
+  if (city) {
+    where.city = { contains: city, mode: "insensitive" };
+  }
+
+  if (state) {
+    where.state = state;
+  }
+
+  if (farmingPractices && farmingPractices.length > 0) {
+    where.farmingPractices = {
+      hasSome: farmingPractices,
+    };
+  }
+
+  // Get total count
+  const total = await database.farm.count({ where });
+
+  // Get paginated farms
+  const farms = await database.farm.findMany({
+    where,
+    include: {
+      owner: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+        },
+      },
+    },
+    orderBy: { [sortBy]: sortOrder },
+    skip,
+    take: limit,
+  });
+
+  return {
+    farms: farms.map(manifestQuantumFarm),
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+  };
+}
+
+// ============================================================================
+// FARM SEARCH SERVICE
+// ============================================================================
+
+export interface SearchFarmsOptions {
+  query: string;
+  limit?: number;
+}
+
+/**
+ * Search farms by name, description, or location
+ *
+ * @param options - Search query and limit
+ * @returns Matching quantum farms
+ */
+export async function searchFarmsService(
+  options: SearchFarmsOptions
+): Promise<QuantumFarm[]> {
+  const { query, limit = 10 } = options;
+
+  const farms = await database.farm.findMany({
+    where: {
+      status: "ACTIVE",
+      OR: [
+        { name: { contains: query, mode: "insensitive" } },
+        { description: { contains: query, mode: "insensitive" } },
+        { city: { contains: query, mode: "insensitive" } },
+        { state: { contains: query, mode: "insensitive" } },
+      ],
+    },
+    include: {
+      owner: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+        },
+      },
+    },
+    take: limit,
+    orderBy: { name: "asc" },
+  });
+
+  return farms.map(manifestQuantumFarm);
 }

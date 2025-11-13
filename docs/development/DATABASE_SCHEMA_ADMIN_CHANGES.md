@@ -172,19 +172,16 @@ model AdminAction {
 ## 🎯 Business Capabilities Enabled
 
 1. **Granular Admin Permissions**
-
    - Super admins can perform all actions
    - Moderators can review/approve but not delete
    - Clear role hierarchy
 
 2. **User Management**
-
    - Admins can approve new users
    - Admins can suspend problematic users
    - Full audit trail of who did what
 
 3. **Farm Verification**
-
    - Farms start as PENDING
    - Admins verify or reject with reasons
    - Track verification history
@@ -231,12 +228,10 @@ model AdminAction {
    ```
 
 2. **Seed Admin User**
-
    - Update `prisma/seed.ts` to create test admin user
    - Run `npx prisma db seed`
 
 3. **Implement Admin Authentication**
-
    - Update NextAuth configuration
    - Create admin login page
    - Add middleware protection

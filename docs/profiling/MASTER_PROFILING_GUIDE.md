@@ -553,7 +553,6 @@ nsys stats --report cuda_api_sum --format column profile.nsys-rep
    ```
 
 3. **Identify Slow Tests**:
-
    - Find longest-running test files in timeline
    - Check for repeated database queries (N+1 problem)
    - Look for synchronous operations blocking parallel execution
@@ -580,13 +579,11 @@ nsys stats --report cuda_api_sum --format column profile.nsys-rep
    Or VS Code task: "🏗️ Profile: Next.js Build"
 
 2. **Analyze Build Timeline**:
-
    - Identify longest compilation phases
    - Check TypeScript compilation time
    - Look for slow webpack plugins
 
 3. **Apply Optimizations**:
-
    - Enable SWC compiler (Next.js 12+)
    - Configure Turbopack (Next.js 13+)
    - Optimize imports (tree shaking)
@@ -627,14 +624,12 @@ nsys stats --report cuda_api_sum --format column profile.nsys-rep
    ```
 
 3. **Analyze GPU Timeline**:
-
    - Check GPU utilization (should be >80%)
    - Identify memory transfer bottlenecks
    - Look for kernel launch overhead
    - Verify async operations overlap
 
 4. **Optimize**:
-
    - Use CUDA streams for concurrency
    - Batch small kernels together
    - Optimize memory transfers (pinned memory, async)
@@ -1019,27 +1014,22 @@ bash profiling_scripts/profile_next_build.sh
 **Available Tasks** (Ctrl+Shift+P → "Run Task"):
 
 1. **🚀 Profile: Basic (NVIDIA Nsight)**
-
    - Runs basic CPU profiling
    - Opens in dedicated panel
 
 2. **🔥 Profile: Advanced (NVIDIA Nsight)**
-
    - Runs advanced profiling (60s, 5s delay)
    - Complete GPU metrics
 
 3. **🧪 Profile: Test Suite (NVIDIA Nsight)**
-
    - Profiles Jest test execution
    - Identifies slow tests
 
 4. **🏗️ Profile: Next.js Build (NVIDIA Nsight)**
-
    - Profiles production build
    - Optimize compilation
 
 5. **📊 Open Profile in Nsight Viewer**
-
    - Opens nsys-ui with file picker
    - Interactive timeline analysis
 
@@ -1153,7 +1143,6 @@ nvidia-smi -pl 60  # Limit to 60W
    ```
 
 2. **Check GPU Usage in VS Code**:
-
    - Help → Toggle Developer Tools
    - Console tab
    - Type: `chrome://gpu`

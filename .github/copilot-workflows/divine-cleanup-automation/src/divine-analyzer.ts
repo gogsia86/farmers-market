@@ -139,7 +139,7 @@ export class QuantumFileAnalyzer {
     console.log("🌟 Initiating Quantum File Analysis...");
     console.log(`⚡ Parallelization: ${this.parallelization} threads`);
     console.log(
-      `🚀 GPU Acceleration: ${this.gpuAcceleration ? "ENABLED" : "DISABLED"}`
+      `🚀 GPU Acceleration: ${this.gpuAcceleration ? "ENABLED" : "DISABLED"}`,
     );
 
     // Phase 1: Quantum file discovery
@@ -177,7 +177,7 @@ export class QuantumFileAnalyzer {
       dependencyGraph,
       agriculturalFiles,
       divinePatternFiles,
-      Date.now() - startTime
+      Date.now() - startTime,
     );
 
     console.log(`✨ Analysis complete in ${metrics.analyzedIn}ms`);
@@ -214,13 +214,13 @@ export class QuantumFileAnalyzer {
    * Quantum parallelization across 12 dimensions
    */
   private async analyzeFilesInParallel(
-    files: string[]
+    files: string[],
   ): Promise<QuantumFileNode[]> {
     const chunkSize = Math.ceil(files.length / this.parallelization);
     const chunks = this.chunkArray(files, chunkSize);
 
     const promises = chunks.map((chunk, index) =>
-      this.analyzeFileChunk(chunk, index)
+      this.analyzeFileChunk(chunk, index),
     );
 
     const results = await Promise.all(promises);
@@ -232,7 +232,7 @@ export class QuantumFileAnalyzer {
    */
   private async analyzeFileChunk(
     files: string[],
-    chunkIndex: number
+    chunkIndex: number,
   ): Promise<QuantumFileNode[]> {
     const analyzed: QuantumFileNode[] = [];
 
@@ -258,7 +258,7 @@ export class QuantumFileAnalyzer {
     // Detect agricultural consciousness
     const consciousness = this.analyzeAgriculturalConsciousness(
       content,
-      relativePath
+      relativePath,
     );
 
     // Detect divine patterns
@@ -268,14 +268,14 @@ export class QuantumFileAnalyzer {
     const quantumConfidence = this.calculateQuantumConfidence(
       consciousness,
       divinePatterns,
-      dependencies
+      dependencies,
     );
 
     // Categorize file
     const category = this.categorizeFile(
       relativePath,
       consciousness,
-      divinePatterns
+      divinePatterns,
     );
 
     return {
@@ -326,7 +326,7 @@ export class QuantumFileAnalyzer {
    */
   private analyzeAgriculturalConsciousness(
     content: string,
-    filePath: string
+    filePath: string,
   ): AgriculturalConsciousness {
     const patterns: string[] = [];
     let totalMatches = 0;
@@ -341,7 +341,7 @@ export class QuantumFileAnalyzer {
 
     // Check file path for agricultural indicators
     const pathIndicators = /farm|crop|harvest|agricultural|soil/i.test(
-      filePath
+      filePath,
     );
     if (pathIndicators) totalMatches += 5;
 
@@ -401,7 +401,7 @@ export class QuantumFileAnalyzer {
   private calculateQuantumConfidence(
     consciousness: AgriculturalConsciousness,
     divinePatterns: DivinePattern[],
-    dependencies: string[]
+    dependencies: string[],
   ): number {
     let confidence = 50; // Base confidence
 
@@ -426,7 +426,7 @@ export class QuantumFileAnalyzer {
   private categorizeFile(
     filePath: string,
     consciousness: AgriculturalConsciousness,
-    divinePatterns: DivinePattern[]
+    divinePatterns: DivinePattern[],
   ): FileCategory {
     if (consciousness.preservationRequired) return "agricultural";
     if (divinePatterns.length > 0) return "divine-pattern";
@@ -441,7 +441,7 @@ export class QuantumFileAnalyzer {
    * Build quantum dependency graph
    */
   private async buildDependencyGraph(
-    files: QuantumFileNode[]
+    files: QuantumFileNode[],
   ): Promise<DependencyEdge[]> {
     const edges: DependencyEdge[] = [];
     const fileMap = new Map(files.map((f) => [f.path, f]));
@@ -475,7 +475,7 @@ export class QuantumFileAnalyzer {
   private resolveDependency(
     dep: string,
     fromFile: string,
-    fileMap: Map<string, QuantumFileNode>
+    fileMap: Map<string, QuantumFileNode>,
   ): string | null {
     // Skip node_modules
     if (!dep.startsWith(".") && !dep.startsWith("/")) {
@@ -513,7 +513,7 @@ export class QuantumFileAnalyzer {
    * Detect agricultural consciousness in analyzed files
    */
   private detectAgriculturalConsciousness(
-    files: QuantumFileNode[]
+    files: QuantumFileNode[],
   ): QuantumFileNode[] {
     return files.filter((f) => f.consciousness.isFarmingRelated);
   }
@@ -537,7 +537,7 @@ export class QuantumFileAnalyzer {
    */
   private findUnusedFiles(
     files: QuantumFileNode[],
-    dependencyGraph: DependencyEdge[]
+    dependencyGraph: DependencyEdge[],
   ): QuantumFileNode[] {
     const entryPoints = new Set([
       "src/app/layout.tsx",
@@ -569,14 +569,14 @@ export class QuantumFileAnalyzer {
     dependencies: DependencyEdge[],
     agriculturalFiles: QuantumFileNode[],
     divineFiles: QuantumFileNode[],
-    duration: number
+    duration: number,
   ): AnalysisMetrics {
     const totalSize = files.reduce((sum, f) => sum + f.size, 0);
     const orphanedFiles = files.filter(
       (f) =>
         f.dependencies.length === 0 &&
         f.dependents.length === 0 &&
-        f.category !== "config"
+        f.category !== "config",
     ).length;
 
     const agriculturalConsciousness =

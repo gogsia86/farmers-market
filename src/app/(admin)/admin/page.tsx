@@ -127,7 +127,7 @@ export default async function AdminDashboardPage() {
           <div className="md:flex md:items-center md:justify-between">
             <div className="min-w-0 flex-1">
               <h1 className="text-3xl font-bold tracking-tight text-agricultural-900">
-                Divine Agricultural Control Center
+                Admin Dashboard
               </h1>
               <p className="mt-1 text-sm text-agricultural-600">
                 Welcome back, {session.user.name} • Quantum consciousness active

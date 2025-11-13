@@ -154,7 +154,7 @@ export class QuantumDatabaseConsciousness {
   async searchAgriculturalReality(
     query: string,
     season: Season,
-    consciousness?: FarmConsciousness[]
+    consciousness?: FarmConsciousness[],
   ): Promise<QuantumSearchResults> {
     const seasonalFilter = this.buildSeasonalFilter(season);
     const consciousnessFilter = consciousness
@@ -195,7 +195,7 @@ export class QuantumDatabaseConsciousness {
    * Maintains biodynamic integrity across operations
    */
   async executeQuantumTransaction<T>(
-    operations: (prisma: PrismaClient) => Promise<T>
+    operations: (prisma: PrismaClient) => Promise<T>,
   ): Promise<T> {
     return await this.prisma.$transaction(async (tx) => {
       // Begin quantum transaction with consciousness tracking
@@ -226,7 +226,7 @@ export class QuantumDatabaseConsciousness {
 
         throw new QuantumTransactionError(
           "Quantum transaction failed - biodynamic integrity compromised",
-          error
+          error,
         );
       }
     });
@@ -283,7 +283,7 @@ const soilMemorySchema = z.object({
         season: z.enum(["SPRING", "SUMMER", "FALL", "WINTER"]),
         success: z.number().min(0).max(1), // 0-1 success ratio
         lessons: z.array(z.string()), // What the soil learned
-      })
+      }),
     ),
     currentState: z.object({
       fertility: z.number().min(0).max(100),
@@ -304,7 +304,7 @@ const soilMemorySchema = z.object({
 class SeasonalDataTransition {
   async transitionToSeason(
     newSeason: Season,
-    farms: Farm[]
+    farms: Farm[],
   ): Promise<TransitionResult> {
     return await this.prisma.$transaction(async (tx) => {
       // Archive current season's consciousness
@@ -315,7 +315,7 @@ class SeasonalDataTransition {
         farms.map(async (farm) => {
           const newConsciousness = this.calculateSeasonalConsciousness(
             farm.currentConsciousness,
-            newSeason
+            newSeason,
           );
 
           return tx.farm.update({
@@ -326,7 +326,7 @@ class SeasonalDataTransition {
               updatedAt: new Date(),
             },
           });
-        })
+        }),
       );
 
       // Initialize new seasonal quantum fields
@@ -367,7 +367,7 @@ class BiodynamicCache {
   async set<T>(
     key: string,
     data: T,
-    options: CacheOptions = {}
+    options: CacheOptions = {},
   ): Promise<void> {
     const ttl = options.respectSeason
       ? this.calculateSeasonalTTL(options.farmId)
@@ -404,7 +404,7 @@ class BiodynamicCache {
 class QuantumQueryOptimizer {
   async optimizeAgriculturalQuery(
     baseQuery: QueryBuilder,
-    optimizations: QueryOptimization[]
+    optimizations: QueryOptimization[],
   ): Promise<OptimizedQuery> {
     // Analyze query patterns across quantum realities
     const parallelQueries = await Promise.all([
@@ -483,7 +483,7 @@ if ($schemaChanged) {
 class SchemaConsciousnessValidator {
   async validateSchemaChanges(
     schemaDiff: SchemaDiff,
-    agriculturalContext: AgriculturalContext
+    agriculturalContext: AgriculturalContext,
   ): Promise<ValidationResult> {
     const validations = await Promise.all([
       this.validateAgriculturalModels(schemaDiff),
@@ -496,7 +496,7 @@ class SchemaConsciousnessValidator {
   }
 
   private async validateAgriculturalModels(
-    diff: SchemaDiff
+    diff: SchemaDiff,
   ): Promise<ModelValidation> {
     const requiredModels = [
       "Farm",
@@ -510,7 +510,7 @@ class SchemaConsciousnessValidator {
     ];
 
     const missingModels = requiredModels.filter(
-      (model) => !diff.models.includes(model)
+      (model) => !diff.models.includes(model),
     );
 
     if (missingModels.length > 0) {
@@ -530,7 +530,7 @@ class SchemaConsciousnessValidator {
   async generateMigrationStrategy(
     currentSchema: PrismaSchema,
     targetSchema: PrismaSchema,
-    season: Season
+    season: Season,
   ): Promise<AgriculturalMigrationPlan> {
     // Align migration with agricultural seasons
     const migrationTiming = this.calculateOptimalMigrationTiming(season);
@@ -539,20 +539,20 @@ class SchemaConsciousnessValidator {
       migrationName: this.generateAgriculturalMigrationName(
         currentSchema,
         targetSchema,
-        season
+        season,
       ),
       executionWindow: migrationTiming.optimalWindow,
       preValidation: await this.generatePreMigrationChecks(currentSchema),
       migrationSteps: await this.generateSeasonalMigrationSteps(
         currentSchema,
-        targetSchema
+        targetSchema,
       ),
       postValidation:
         await this.generatePostMigrationVerification(targetSchema),
       rollbackStrategy: await this.generateRollbackPlan(currentSchema),
       agriculturalImpact: await this.assessAgriculturalImpact(
         currentSchema,
-        targetSchema
+        targetSchema,
       ),
     };
   }
@@ -674,15 +674,15 @@ describe("Database Schema Agricultural Consciousness", () => {
     it("creates properly formatted agricultural migration commits", async () => {
       const migrationCommit = await createAgriculturalMigration(
         "add_soil_sensor_data",
-        { season: "SUMMER" }
+        { season: "SUMMER" },
       );
 
       expect(migrationCommit.message).toMatch(
-        /feat\(db\): add .* for .* season/
+        /feat\(db\): add .* for .* season/,
       );
       expect(migrationCommit.files).toInclude("prisma/migrations/");
       expect(migrationCommit.description).toInclude(
-        "agricultural consciousness"
+        "agricultural consciousness",
       );
     });
   });
@@ -704,7 +704,7 @@ class QuantumAccessControl {
   async enforceAgriculturalBoundaries(
     userId: string,
     operation: DatabaseOperation,
-    resourceId: string
+    resourceId: string,
   ): Promise<AccessDecision> {
     // Verify user's quantum signature
     const userConsciousness = await this.getUserConsciousness(userId);
@@ -713,12 +713,12 @@ class QuantumAccessControl {
     const resourceOwnership = await this.verifyResourceOwnership(
       userId,
       operation.resourceType,
-      resourceId
+      resourceId,
     );
 
     if (!resourceOwnership.isOwner) {
       throw new QuantumAccessViolation(
-        `User ${userId} attempted to access ${operation.resourceType} ${resourceId} outside their agricultural reality`
+        `User ${userId} attempted to access ${operation.resourceType} ${resourceId} outside their agricultural reality`,
       );
     }
 

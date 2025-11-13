@@ -13,7 +13,7 @@
 
 "use client";
 
-import Header from "@/components/layout/Header";
+import { Header } from "@/components/layout/Header";
 import { Heart, MapPin, Package, ShoppingBag, TrendingUp } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";

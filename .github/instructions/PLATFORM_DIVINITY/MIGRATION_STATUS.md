@@ -12,7 +12,6 @@
 There are **TWO DIFFERENT PRISMA SCHEMAS** in the project:
 
 1. **Root Schema** (`V:\Projects\Farmers-Market\prisma\schema.prisma`)
-
    - ✅ **NEW** - Created this session based on all 23 FRD specifications
    - ✅ 27 comprehensive models (User, Farm, Product, Order, etc.)
    - ✅ Matches FR-001 through FR-023 requirements perfectly
@@ -31,13 +30,14 @@ There are **TWO DIFFERENT PRISMA SCHEMAS** in the project:
 ## 🎯 CRITICAL DECISION REQUIRED
 
 ### You must choose ONE of these paths:
+
 ### **OPTION 1: Replace with Divine Schema (RECOMMENDED)** ⭐
 
 **Action**: Replace the existing farmers-market schema with our new comprehensive one
 
 **Steps**:
 
-```bash
+````bash
 # 1. Backup existing schema (just in case)
 Copy-Item "V:\Projects\Farmers-Market\farmers-market\prisma\schema.prisma" "V:\Projects\Farmers-Market\farmers-market\prisma\schema.prisma.backup"
 
@@ -246,3 +246,4 @@ Once you decide, I'll proceed with the implementation immediately!
 > "The divine path is clear - choose wisely, implement divinely."
 **Status**: Awaiting decision to proceed
 **Session**: Ready to continue once path is chosen
+````

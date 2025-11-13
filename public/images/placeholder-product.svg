@@ -1,0 +1,42 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="600" fill="#fef3c7"/>
+
+  <!-- Product illustration -->
+  <g transform="translate(400, 280)">
+    <!-- Basket -->
+    <ellipse cx="0" cy="50" rx="140" ry="20" fill="#92400e"/>
+    <path d="M -140,50 Q -140,0 -100,-40 L 100,-40 Q 140,0 140,50 Z" fill="#b45309" stroke="#92400e" stroke-width="3"/>
+
+    <!-- Handle -->
+    <path d="M -120,50 Q -120,-60 0,-80 Q 120,-60 120,50" fill="none" stroke="#92400e" stroke-width="8" stroke-linecap="round"/>
+
+    <!-- Vegetables/Fruits -->
+    <!-- Tomato -->
+    <circle cx="-60" cy="0" r="35" fill="#dc2626"/>
+    <ellipse cx="-60" cy="-20" rx="8" ry="6" fill="#22c55e"/>
+
+    <!-- Apple -->
+    <circle cx="60" cy="0" r="35" fill="#ef4444"/>
+    <ellipse cx="60" cy="-20" rx="6" ry="4" fill="#22c55e"/>
+
+    <!-- Carrot -->
+    <g transform="translate(-10, 20)">
+      <polygon points="0,-10 -8,20 8,20" fill="#f97316"/>
+      <line x1="0" y1="-10" x2="-5" y2="-20" stroke="#22c55e" stroke-width="2"/>
+      <line x1="0" y1="-10" x2="5" y2="-20" stroke="#22c55e" stroke-width="2"/>
+    </g>
+
+    <!-- Corn -->
+    <g transform="translate(20, -10)">
+      <ellipse cx="0" cy="0" rx="12" ry="35" fill="#fbbf24"/>
+      <line x1="-15" y1="-20" x2="-25" y2="-30" stroke="#22c55e" stroke-width="2"/>
+      <line x1="15" y1="-20" x2="25" y2="-30" stroke="#22c55e" stroke-width="2"/>
+    </g>
+  </g>
+
+  <!-- Text -->
+  <text x="400" y="520" font-family="Arial, sans-serif" font-size="32" fill="#78350f" text-anchor="middle" font-weight="600">
+    🥕 Product Image Coming Soon
+  </text>
+</svg>

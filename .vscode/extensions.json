@@ -26,9 +26,9 @@
     "ckolkman.vscode-postgres",
     "mongodb.mongodb-vscode",
 
-    // === TESTING ===
-    "orta.vscode-jest",
-    "firsttris.vscode-jest-runner",
+    // === TESTING (MODERN VITEST ECOSYSTEM) ===
+    "vitest.explorer", // Official Vitest extension - Test UI in sidebar
+    "ms-playwright.playwright", // E2E testing with Playwright
 
     // === GIT & VERSION CONTROL ===
     "eamodio.gitlens",
@@ -75,6 +75,10 @@
     "hookyqr.beautify",
     "ms-vscode.vscode-typescript-tslint-plugin",
     "eg2.tslint",
-    "ms-python.python"
+    "ms-python.python",
+    "orta.vscode-jest", // Deprecated Jest extension
+    "firsttris.vscode-jest-runner", // Deprecated Jest runner
+    "kavod-io.vscode-jest-test-adapter", // Old Jest adapter
+    "jest.jest-runner" // Obsolete Jest runner
   ]
 }

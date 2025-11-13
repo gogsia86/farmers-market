@@ -1,0 +1,262 @@
+{
+  "common": {
+    "nav": {
+      "home": "Home",
+      "products": "Products",
+      "farms": "Farms",
+      "about": "About",
+      "contact": "Contact",
+      "login": "Login",
+      "signup": "Sign Up",
+      "dashboard": "Dashboard",
+      "cart": "Cart",
+      "orders": "Orders"
+    },
+    "actions": {
+      "search": "Search",
+      "filter": "Filter",
+      "sort": "Sort",
+      "submit": "Submit",
+      "cancel": "Cancel",
+      "save": "Save",
+      "delete": "Delete",
+      "edit": "Edit",
+      "view": "View",
+      "addToCart": "Add to Cart",
+      "checkout": "Checkout",
+      "buy": "Buy Now",
+      "learn": "Learn More"
+    },
+    "status": {
+      "loading": "Loading...",
+      "error": "Error",
+      "success": "Success",
+      "pending": "Pending",
+      "processing": "Processing",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    }
+  },
+  "home": {
+    "hero": {
+      "title": "Fresh From Farm to Table",
+      "subtitle": "Connect with local farmers and get the freshest organic produce delivered to your door",
+      "cta": "Start Shopping"
+    },
+    "features": {
+      "title": "Why Choose Us",
+      "organic": {
+        "title": "100% Organic",
+        "description": "Certified organic products from trusted local farms"
+      },
+      "fresh": {
+        "title": "Always Fresh",
+        "description": "Harvested within 24 hours of delivery"
+      },
+      "local": {
+        "title": "Support Local",
+        "description": "Direct connection with farmers in your community"
+      },
+      "sustainable": {
+        "title": "Sustainable",
+        "description": "Environmentally conscious farming practices"
+      }
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "step1": {
+        "title": "Browse Products",
+        "description": "Explore fresh produce from local farms"
+      },
+      "step2": {
+        "title": "Add to Cart",
+        "description": "Select your favorite organic items"
+      },
+      "step3": {
+        "title": "Checkout",
+        "description": "Choose delivery or pickup options"
+      },
+      "step4": {
+        "title": "Enjoy Fresh Food",
+        "description": "Receive your farm-fresh products"
+      }
+    }
+  },
+  "products": {
+    "title": "Our Products",
+    "categories": {
+      "all": "All Products",
+      "vegetables": "Vegetables",
+      "fruits": "Fruits",
+      "dairy": "Dairy",
+      "meat": "Meat & Poultry",
+      "eggs": "Eggs",
+      "honey": "Honey & Preserves",
+      "bakery": "Bakery",
+      "herbs": "Herbs & Spices"
+    },
+    "filters": {
+      "category": "Category",
+      "price": "Price Range",
+      "organic": "Organic Only",
+      "inStock": "In Stock",
+      "farm": "Farm"
+    },
+    "sorting": {
+      "featured": "Featured",
+      "newest": "Newest",
+      "priceLowToHigh": "Price: Low to High",
+      "priceHighToLow": "Price: High to Low",
+      "nameAZ": "Name: A-Z"
+    },
+    "details": {
+      "description": "Description",
+      "ingredients": "Ingredients",
+      "nutrition": "Nutrition Facts",
+      "certifications": "Certifications",
+      "farm": "Farm",
+      "availability": "Availability",
+      "quantity": "Quantity",
+      "unit": "Unit"
+    }
+  },
+  "farms": {
+    "title": "Our Farms",
+    "subtitle": "Meet the farmers who grow your food",
+    "viewProducts": "View Products",
+    "location": "Location",
+    "certifications": "Certifications",
+    "practices": "Farming Practices",
+    "story": "Our Story",
+    "contact": "Contact Farm"
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "empty": "Your cart is empty",
+    "item": "Item",
+    "price": "Price",
+    "quantity": "Quantity",
+    "total": "Total",
+    "subtotal": "Subtotal",
+    "tax": "Tax",
+    "shipping": "Shipping",
+    "grandTotal": "Grand Total",
+    "continueShopping": "Continue Shopping",
+    "proceedToCheckout": "Proceed to Checkout",
+    "removeItem": "Remove Item",
+    "updateCart": "Update Cart"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "shippingInfo": "Shipping Information",
+    "billingInfo": "Billing Information",
+    "paymentMethod": "Payment Method",
+    "orderSummary": "Order Summary",
+    "placeOrder": "Place Order",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "city": "City",
+    "state": "State",
+    "zipCode": "Zip Code",
+    "country": "Country",
+    "deliveryMethod": {
+      "title": "Delivery Method",
+      "delivery": "Home Delivery",
+      "pickup": "Farm Pickup"
+    }
+  },
+  "orders": {
+    "title": "My Orders",
+    "orderNumber": "Order #",
+    "date": "Date",
+    "status": "Status",
+    "items": "Items",
+    "total": "Total",
+    "viewDetails": "View Details",
+    "trackOrder": "Track Order",
+    "reorder": "Reorder",
+    "noOrders": "No orders yet"
+  },
+  "auth": {
+    "login": {
+      "title": "Login",
+      "email": "Email",
+      "password": "Password",
+      "remember": "Remember me",
+      "forgot": "Forgot password?",
+      "submit": "Sign In",
+      "noAccount": "Don't have an account?",
+      "createAccount": "Create one"
+    },
+    "signup": {
+      "title": "Sign Up",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "submit": "Create Account",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in"
+    }
+  },
+  "footer": {
+    "company": {
+      "title": "Company",
+      "about": "About Us",
+      "careers": "Careers",
+      "press": "Press",
+      "blog": "Blog"
+    },
+    "support": {
+      "title": "Support",
+      "help": "Help Center",
+      "contact": "Contact Us",
+      "faq": "FAQ",
+      "shipping": "Shipping Info"
+    },
+    "legal": {
+      "title": "Legal",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "cookies": "Cookie Policy"
+    },
+    "social": {
+      "title": "Follow Us"
+    },
+    "copyright": "© 2024 Farmers Market. All rights reserved."
+  },
+  "notifications": {
+    "addedToCart": "Added to cart successfully",
+    "removedFromCart": "Removed from cart",
+    "orderPlaced": "Order placed successfully",
+    "profileUpdated": "Profile updated",
+    "error": "Something went wrong",
+    "sessionExpired": "Your session has expired"
+  },
+  "agricultural": {
+    "consciousness": {
+      "level": "Agricultural Consciousness",
+      "organic": "Organic",
+      "biodynamic": "Biodynamic",
+      "regenerative": "Regenerative",
+      "permaculture": "Permaculture"
+    },
+    "seasons": {
+      "spring": "Spring",
+      "summer": "Summer",
+      "fall": "Fall",
+      "winter": "Winter"
+    },
+    "practices": {
+      "noTill": "No-Till Farming",
+      "cropRotation": "Crop Rotation",
+      "composting": "Composting",
+      "coverCrops": "Cover Crops",
+      "integratedPest": "Integrated Pest Management"
+    }
+  }
+}

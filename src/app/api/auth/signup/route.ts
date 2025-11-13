@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     if (!validation.success) {
       return NextResponse.json(
         { error: "Invalid input data", details: validation.error.issues },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     if (existingUser) {
       return NextResponse.json(
         { error: "An account with this email already exists" },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -83,13 +83,13 @@ export async function POST(request: NextRequest) {
         message: "Account created successfully",
         user,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error("Signup error:", error);
     return NextResponse.json(
       { error: "Failed to create account. Please try again." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

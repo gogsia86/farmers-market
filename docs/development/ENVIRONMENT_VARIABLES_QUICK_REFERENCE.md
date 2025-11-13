@@ -143,7 +143,9 @@ postgresql://postgres.xxxxx:[YOUR-PASSWORD]@aws-0-us-east-1.pooler.supabase.com:
 8. Set verified email → `CONTACT_EMAIL`
 
 ### **5. Add to Vercel**
+
 ### Via Dashboard
+
 1. Go to: <<https://vercel.com/dashboar>d>
 2. Select project → Settings → Environment Variables
 3. For each variable:
@@ -152,7 +154,9 @@ postgresql://postgres.xxxxx:[YOUR-PASSWORD]@aws-0-us-east-1.pooler.supabase.com:
    - Value: `postgresql://...`
    - Environment: Select "Production" (and "Preview" if needed)
    - Click "Save"
+
 ### Via CLI
+
 ```powershell
 # Install Vercel CLI
 npm install -g vercel
@@ -220,7 +224,7 @@ git log -S "postgres://" --all  # Search for database URLs
 | Variable          | Development (`.env.local`)   | Production (Vercel)             |
 | ----------------- | ---------------------------- | ------------------------------- |
 | `DATABASE_URL`    | `file:./dev.db` (SQLite)     | `postgresql://...` (PostgreSQL) |
-| `NEXTAUTH_URL`    | `http://localhost:3001`      | `<https://yourdomain.com`>        |
+| `NEXTAUTH_URL`    | `http://localhost:3001`      | `<https://yourdomain.com`>      |
 | `NEXTAUTH_SECRET` | `development-secret`         | Generated secure secret         |
 | `STRIPE_*`        | `pk_test_...`, `sk_test_...` | `pk_live_...`, `sk_live_...`    |
 
@@ -312,8 +316,8 @@ Expected response:
 
 Quick links to manage your services:
 
-| Service       | Dashboard URL                    | Purpose                            |
-| ------------- | -------------------------------- | ---------------------------------- |
+| Service       | Dashboard URL                      | Purpose                            |
+| ------------- | ---------------------------------- | ---------------------------------- |
 | **Vercel**    | <<https://vercel.com/dashboar>d>   | Deployment & environment variables |
 | **Supabase**  | <<https://supabase.com/dashboar>d> | Database management                |
 | **Stripe**    | <<https://dashboard.stripe.co>m>   | Payment processing                 |

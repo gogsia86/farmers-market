@@ -143,58 +143,48 @@
 **By Category**:
 
 1. **Essential Core** (3)
-
    - ESLint
    - Prettier
    - TypeScript Next
 
 2. **AI & Productivity** (3)
-
    - GitHub Copilot
    - Copilot Chat
    - IntelliCode
 
 3. **Next.js & React** (2) ← **OPTIMIZED**
-
    - ES7 React Snippets (dsznajder)
    - React TypeScript
 
 4. **Tailwind CSS** (2)
-
    - Tailwind IntelliSense
    - Tailwind Shades
 
 5. **Database & Prisma** (3)
-
    - Prisma
    - PostgreSQL
    - MongoDB
 
 6. **Testing** (2)
-
    - Jest
    - Jest Runner
 
 7. **Git & Version Control** (3)
-
    - GitLens
    - Git Graph
    - GitHub PRs
 
 8. **Code Quality** (3)
-
    - Code Spell Checker
    - Error Lens
    - Better Comments
 
 9. **Markdown** (3)
-
    - Markdown All-in-One
    - Markdownlint
    - GitHub Styles
 
 10. **Utilities** (5)
-
     - Path IntelliSense
     - NPM IntelliSense
     - Auto Rename Tag
@@ -202,16 +192,13 @@
     - Hex Editor
 
 11. **Theme & Icons** (1) ← **OPTIMIZED**
-
     - Material Icon Theme
 
 12. **Performance & Profiling** (2)
-
     - CMake Tools
     - NVIDIA Nsight
 
 13. **API Development** (2)
-
     - REST Client
     - OpenAPI
 

@@ -1,235 +1,256 @@
 #!/usr/bin/env pwsh
-# ============================================================================
-# TEST SUITE PROFILING SCRIPT - HP OMEN RTX 2070 DIVINE TESTING PROFILER
-# ============================================================================
-# Purpose: Profile test suite execution for performance optimization
-# Hardware: RTX 2070 Max-Q + 64GB RAM + 12 threads
-# Updated: October 22, 2025
-# ============================================================================
+# ============================================
+# 🧪 TEST SUITE PROFILING WITH NVIDIA NSIGHT
+# ============================================
+# 🧠 DIVINE PATTERN: Performance Reality Bending - Test Performance Analysis
+# 📚 Reference: 03_PERFORMANCE_REALITY_BENDING.instructions.md
+# 🌾 Domain: Test Suite Performance Optimization
+# ⚡ Performance: Quantum Hardware Optimization (RTX 2070 Max-Q, 32GB RAM)
 
 param(
-  [string]$TestType = "all",
-  [string]$OutputDir = "profiling_output"
+    [string]$OutputDir = "profiling_output",
+    [string]$TestPattern = "",  # Optional: specific test pattern
+    [switch]$Coverage = $false
 )
 
-Write-Host "🧪 Starting Test Suite Divine Profiling..." -ForegroundColor Blue
-Write-Host "Test Type: $TestType" -ForegroundColor Cyan
-Write-Host "Output Directory: $OutputDir" -ForegroundColor Cyan
+$ErrorActionPreference = "Stop"
 
-# Create output directory
-if (!(Test-Path $OutputDir)) {
-  New-Item -ItemType Directory -Path $OutputDir -Force | Out-Null
-  Write-Host "📁 Created output directory: $OutputDir" -ForegroundColor Yellow
-}
+Write-Host "🧪 Divine Test Suite Profiling Starting..." -ForegroundColor Cyan
+Write-Host "=" * 60 -ForegroundColor Gray
 
+# ============================================
+# CONFIGURATION
+# ============================================
 $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+$profileName = "test_suite_$timestamp"
+$profilePath = "$OutputDir/$profileName.nsys-rep"
 
-# Ensure we're in the correct directory
-if (!(Test-Path "package.json")) {
-  Write-Warning "⚠️  Not in project root. Changing to Farmers-Market directory..."
-  Set-Location "Farmers-Market" -ErrorAction SilentlyContinue
-  if (!(Test-Path "package.json")) {
-    Write-Error "❌ Cannot find package.json. Please run from project root."
-    exit 1
-  }
+# Ensure output directory exists
+if (-not (Test-Path $OutputDir)) {
+    New-Item -ItemType Directory -Path $OutputDir -Force | Out-Null
+    Write-Host "✅ Created profiling output directory: $OutputDir" -ForegroundColor Green
 }
 
-# Test suite profiling function
-function Profile-TestSuite {
-  param(
-    [string]$TestCommand,
-    [string]$TestName,
-    [string]$OutputFile
-  )
+# ============================================
+# FIND NVIDIA NSIGHT SYSTEMS
+# ============================================
+$nsysPath = $null
+$possiblePaths = @(
+    "N:\installed apps\Nsight Systems 2025.5.1\target-windows-x64\nsys.exe",
+    "C:\Program Files\NVIDIA Corporation\Nsight Systems 2025.5.1\target-windows-x64\nsys.exe",
+    "C:\Program Files\NVIDIA Corporation\Nsight Systems 2025.3.2\target-windows-x64\nsys.exe",
+    "C:\Program Files\NVIDIA Corporation\Nsight Systems 2024.5.1\target-windows-x64\nsys.exe",
+    "C:\Program Files\NVIDIA Corporation\Nsight Systems 2024.4.1\target-windows-x64\nsys.exe",
+    "C:\Program Files\NVIDIA Corporation\Nsight Systems\target-windows-x64\nsys.exe"
+)
 
-  Write-Host "🎯 Profiling: $TestName..." -ForegroundColor Green
+foreach ($path in $possiblePaths) {
+    if (Test-Path $path) {
+        $nsysPath = $path
+        break
+    }
+}
 
-  $startTime = Get-Date
+if (-not $nsysPath) {
+    Write-Host "⚠️ NVIDIA Nsight Systems not found" -ForegroundColor Yellow
+    Write-Host "   Falling back to basic test profiling..." -ForegroundColor Gray
 
-  try {
-    # Profile the test execution
-    $measureResult = Measure-Command {
-      & npm run $TestCommand 2>&1 | Tee-Object -FilePath "$OutputFile.log"
+    # Run tests without profiling
+    Write-Host "`n🧪 Starting test suite..." -ForegroundColor Cyan
+    $testStart = Get-Date
+
+    try {
+        if ($Coverage) {
+            npm test -- --coverage
+        } elseif ($TestPattern) {
+            npm test -- --testNamePattern="$TestPattern"
+        } else {
+            npm test
+        }
+
+        $testEnd = Get-Date
+        $duration = ($testEnd - $testStart).TotalSeconds
+
+        Write-Host "`n✅ Tests completed in $([math]::Round($duration, 2)) seconds" -ForegroundColor Green
+    }
+    catch {
+        Write-Host "`n❌ Tests failed: $_" -ForegroundColor Red
+        exit 1
     }
 
-    $endTime = Get-Date
-
-    # Collect performance metrics
-    $metrics = @{
-      TestName    = $TestName
-      Command     = $TestCommand
-      StartTime   = $startTime
-      EndTime     = $endTime
-      Duration    = $measureResult.TotalSeconds
-      ExitCode    = $LASTEXITCODE
-      MemoryUsage = (Get-Process -Name "node" -ErrorAction SilentlyContinue | Measure-Object WorkingSet -Sum).Sum
-    }
-
-    # Save metrics to JSON
-    $metrics | ConvertTo-Json | Out-File -FilePath "$OutputFile.json" -Encoding UTF8
-
-    Write-Host "✅ $TestName completed in $([math]::Round($measureResult.TotalSeconds, 2)) seconds" -ForegroundColor Green
-
-    return $metrics
-  }
-  catch {
-    Write-Warning "⚠️  $TestName failed: $_"
-    return $null
-  }
+    exit 0
 }
 
-# Profile different test types
-$allMetrics = @()
+Write-Host "✅ Found NVIDIA Nsight Systems: $nsysPath" -ForegroundColor Green
 
-switch ($TestType.ToLower()) {
-  "unit" {
-    Write-Host "🔬 Profiling Unit Tests..." -ForegroundColor Blue
-    $metrics = Profile-TestSuite -TestCommand "test:unit" -TestName "Unit Tests" -OutputFile "$OutputDir\unit_tests_$timestamp"
-    if ($metrics) { $allMetrics += $metrics }
-  }
-  "integration" {
-    Write-Host "🔗 Profiling Integration Tests..." -ForegroundColor Blue
-    $metrics = Profile-TestSuite -TestCommand "test:integration" -TestName "Integration Tests" -OutputFile "$OutputDir\integration_tests_$timestamp"
-    if ($metrics) { $allMetrics += $metrics }
-  }
-  "e2e" {
-    Write-Host "🎭 Profiling E2E Tests..." -ForegroundColor Blue
-    $metrics = Profile-TestSuite -TestCommand "test:e2e" -TestName "E2E Tests" -OutputFile "$OutputDir\e2e_tests_$timestamp"
-    if ($metrics) { $allMetrics += $metrics }
-  }
-  "all" {
-    Write-Host "🎯 Profiling All Test Suites..." -ForegroundColor Blue
+# ============================================
+# CONFIGURE TEST COMMAND
+# ============================================
+Write-Host "`n🔧 Configuring test execution..." -ForegroundColor Cyan
 
-    # Unit Tests
-    $unitMetrics = Profile-TestSuite -TestCommand "test:unit" -TestName "Unit Tests" -OutputFile "$OutputDir\unit_tests_$timestamp"
-    if ($unitMetrics) { $allMetrics += $unitMetrics }
+$testArgs = @()
 
-    # Integration Tests
-    $integrationMetrics = Profile-TestSuite -TestCommand "test:integration" -TestName "Integration Tests" -OutputFile "$OutputDir\integration_tests_$timestamp"
-    if ($integrationMetrics) { $allMetrics += $integrationMetrics }
-
-    # E2E Tests
-    $e2eMetrics = Profile-TestSuite -TestCommand "test:e2e" -TestName "E2E Tests" -OutputFile "$OutputDir\e2e_tests_$timestamp"
-    if ($e2eMetrics) { $allMetrics += $e2eMetrics }
-
-    # Coverage Tests
-    $coverageMetrics = Profile-TestSuite -TestCommand "test:coverage" -TestName "Coverage Tests" -OutputFile "$OutputDir\coverage_tests_$timestamp"
-    if ($coverageMetrics) { $allMetrics += $coverageMetrics }
-  }
-  "coverage" {
-    Write-Host "📊 Profiling Coverage Tests..." -ForegroundColor Blue
-    $metrics = Profile-TestSuite -TestCommand "test:coverage" -TestName "Coverage Tests" -OutputFile "$OutputDir\coverage_tests_$timestamp"
-    if ($metrics) { $allMetrics += $metrics }
-  }
-  default {
-    Write-Error "❌ Unknown test type: $TestType. Use: unit, integration, e2e, coverage, or all"
-    exit 1
-  }
+if ($Coverage) {
+    Write-Host "   Coverage collection: ENABLED" -ForegroundColor Green
+    $testArgs += "--coverage"
 }
 
-# Generate comprehensive test performance report
-$reportFile = "$OutputDir\test_performance_report_$timestamp.md"
+if ($TestPattern) {
+    Write-Host "   Test pattern: $TestPattern" -ForegroundColor Green
+    $testArgs += "--testNamePattern=$TestPattern"
+}
+
+# ============================================
+# START PROFILING
+# ============================================
+Write-Host "`n🔍 Starting NVIDIA Nsight profiling of test suite..." -ForegroundColor Cyan
+Write-Host "   Profile will be saved to: $profilePath" -ForegroundColor Gray
+
+# Configure nsys arguments
+$nsysArgs = @(
+    "profile",
+    "--output=$profilePath",
+    "--force-overwrite=true",
+    "--trace=cuda,nvtx,osrt,cublas,cudnn",
+    "--sample=cpu",
+    "--cpuctxsw=process-tree",
+    "--duration=60",
+    "npm",
+    "test"
+)
+
+if ($testArgs.Count -gt 0) {
+    $nsysArgs += "--"
+    $nsysArgs += $testArgs
+}
+
+Write-Host "`n🚀 Executing profiled test suite..." -ForegroundColor Magenta
+Write-Host "   Command: nsys $($nsysArgs -join ' ')" -ForegroundColor Gray
+
+$testStartTime = Get-Date
 
 try {
-  $totalDuration = ($allMetrics | Measure-Object Duration -Sum).Sum
-  $averageDuration = if ($allMetrics.Count -gt 0) { $totalDuration / $allMetrics.Count } else { 0 }
-  $totalMemory = ($allMetrics | Measure-Object MemoryUsage -Sum).Sum / 1MB
+    $process = Start-Process -FilePath $nsysPath `
+        -ArgumentList $nsysArgs `
+        -NoNewWindow `
+        -Wait `
+        -PassThru
 
-  @"
-# 🧪 Test Suite Performance Report
-**Generated:** $(Get-Date)
-**Hardware:** HP OMEN i7-9750H + RTX 2070 Max-Q + 64GB RAM
-**Project:** Farmers Market Platform
-**Test Type:** $TestType
+    $testEndTime = Get-Date
+    $testDuration = ($testEndTime - $testStartTime).TotalSeconds
 
-## 📊 Performance Summary
+    if ($process.ExitCode -eq 0) {
+        Write-Host "`n✅ Test suite profiling completed successfully!" -ForegroundColor Green
+        Write-Host "   Duration: $([math]::Round($testDuration, 2)) seconds" -ForegroundColor White
 
-- **Total Test Duration:** $([math]::Round($totalDuration, 2)) seconds
-- **Average Test Duration:** $([math]::Round($averageDuration, 2)) seconds
-- **Total Memory Usage:** $([math]::Round($totalMemory, 2)) MB
-- **Tests Executed:** $($allMetrics.Count)
+        # ============================================
+        # GENERATE STATISTICS
+        # ============================================
+        Write-Host "`n📊 Generating profiling statistics..." -ForegroundColor Cyan
 
-## 📋 Individual Test Results
+        $statsOutput = "$OutputDir/${profileName}_stats.txt"
+        $statsArgs = @(
+            "stats",
+            "--report=cuda_gpu_trace,cuda_api_sum,osrt_sum,nvtx_sum",
+            "--format=column",
+            $profilePath
+        )
 
-$(foreach ($metric in $allMetrics) {
-    @"
-### $($metric.TestName)
-- **Command:** ``npm run $($metric.Command)``
-- **Duration:** $([math]::Round($metric.Duration, 2)) seconds
-- **Memory Usage:** $([math]::Round($metric.MemoryUsage / 1MB, 2)) MB
-- **Exit Code:** $($metric.ExitCode)
-- **Status:** $(if ($metric.ExitCode -eq 0) { "✅ PASSED" } else { "❌ FAILED" })
+        $stats = & $nsysPath @statsArgs 2>&1
+        $stats | Out-File -FilePath $statsOutput -Encoding UTF8
 
-"@
-})
+        if (Test-Path $statsOutput) {
+            Write-Host "✅ Statistics saved to: $statsOutput" -ForegroundColor Green
+        }
 
-## 🎯 Performance Insights
+        # ============================================
+        # EXPORT TO CSV
+        # ============================================
+        Write-Host "`n📊 Exporting timeline data..." -ForegroundColor Cyan
 
-$(if ($totalDuration -lt 30) {
-    "✅ **Excellent:** Test suite execution is very fast (< 30 seconds)"
-} elseif ($totalDuration -lt 60) {
-    "🟡 **Good:** Test suite execution is acceptable (30-60 seconds)"
-} else {
-    "🔴 **Slow:** Test suite execution is slow (> 60 seconds) - consider optimization"
-})
+        $csvOutput = "$OutputDir/${profileName}_timeline.csv"
+        & $nsysPath export --type=csv --output=$csvOutput $profilePath 2>&1 | Out-Null
 
-$(if ($totalMemory -lt 500) {
-    "✅ **Excellent:** Memory usage is efficient (< 500 MB)"
-} elseif ($totalMemory -lt 1000) {
-    "🟡 **Good:** Memory usage is acceptable (500-1000 MB)"
-} else {
-    "🔴 **High:** Memory usage is high (> 1000 MB) - check for memory leaks"
-})
+        if (Test-Path $csvOutput) {
+            Write-Host "✅ Timeline exported to: $csvOutput" -ForegroundColor Green
+        }
 
-## 🔧 Optimization Recommendations
+        # ============================================
+        # ANALYZE TEST RESULTS
+        # ============================================
+        Write-Host "`n🌟 Divine Test Performance Analysis:" -ForegroundColor Magenta
+        Write-Host "=" * 60 -ForegroundColor Gray
 
-### Performance Optimizations
-1. **Parallel Test Execution:** Use Jest's ``--maxWorkers`` option
-2. **Test Isolation:** Ensure tests don't interfere with each other
-3. **Mock Heavy Operations:** Mock database and external API calls
-4. **Cache Dependencies:** Use test result caching when possible
+        $profileSize = (Get-Item $profilePath).Length / 1MB
+        Write-Host "📦 Profile Information:" -ForegroundColor Cyan
+        Write-Host "   Profile Size: $([math]::Round($profileSize, 2)) MB" -ForegroundColor White
+        Write-Host "   Total Duration: $([math]::Round($testDuration, 2)) seconds" -ForegroundColor White
+        Write-Host "   Test Pattern: $(if ($TestPattern) { $TestPattern } else { 'All tests' })" -ForegroundColor White
+        Write-Host "   Coverage: $(if ($Coverage) { 'Enabled' } else { 'Disabled' })" -ForegroundColor White
 
-### Memory Optimizations
-1. **Clean Up Resources:** Ensure proper cleanup in test teardown
-2. **Limit Concurrent Tests:** Reduce memory pressure by limiting parallelism
-3. **Mock Large Objects:** Use lightweight mocks instead of real objects
-4. **Monitor Memory Leaks:** Check for growing memory usage over time
+        # Check for coverage report
+        if ($Coverage -and (Test-Path "coverage")) {
+            Write-Host "`n📊 Coverage Report:" -ForegroundColor Cyan
 
-### Hardware Utilization
-- **CPU:** Utilize all 12 logical processors with ``--maxWorkers=12``
-- **Memory:** Leverage 64GB RAM for extensive test caching
-- **GPU:** Consider GPU-accelerated testing for computational tests
+            $coverageSummary = Get-Content "coverage/coverage-summary.json" -ErrorAction SilentlyContinue
+            if ($coverageSummary) {
+                $coverage = $coverageSummary | ConvertFrom-Json
+                $totalCoverage = $coverage.total
 
-## 📈 Monitoring Commands
+                if ($totalCoverage) {
+                    Write-Host "   Lines: $($totalCoverage.lines.pct)%" -ForegroundColor White
+                    Write-Host "   Statements: $($totalCoverage.statements.pct)%" -ForegroundColor White
+                    Write-Host "   Functions: $($totalCoverage.functions.pct)%" -ForegroundColor White
+                    Write-Host "   Branches: $($totalCoverage.branches.pct)%" -ForegroundColor White
+                }
+            }
+        }
 
-```powershell
-# Run tests with profiling
-npm run test:coverage -- --detectOpenHandles --forceExit
+        # ============================================
+        # PERFORMANCE INSIGHTS
+        # ============================================
+        Write-Host "`n🎯 Performance Insights:" -ForegroundColor Cyan
+        Write-Host "=" * 60 -ForegroundColor Gray
 
-# Monitor memory during tests
-Get-Process node | Select-Object Name, WorkingSet, CPU
+        Write-Host "   Focus on optimizing:" -ForegroundColor Yellow
+        Write-Host "   • Slow test cases (>1s)" -ForegroundColor Gray
+        Write-Host "   • Setup/teardown overhead" -ForegroundColor Gray
+        Write-Host "   • Database mock performance" -ForegroundColor Gray
+        Write-Host "   • Module import times" -ForegroundColor Gray
+        Write-Host "   • Async operation handling" -ForegroundColor Gray
 
-# Profile specific test files
-npm test -- --testNamePattern="YourTestName" --verbose
-```
+        Write-Host "`n🔍 Next Steps:" -ForegroundColor Cyan
+        Write-Host "   1. Open profile: nsys-ui $profilePath" -ForegroundColor Gray
+        Write-Host "   2. Analyze statistics: Get-Content $statsOutput" -ForegroundColor Gray
+        Write-Host "   3. Identify slow tests in timeline view" -ForegroundColor Gray
+        Write-Host "   4. Optimize test setup/teardown" -ForegroundColor Gray
+        Write-Host "   5. Profile specific slow tests: -TestPattern 'YourTest'" -ForegroundColor Gray
 
-**Report generated by Divine Test Profiling System v1.0**
-"@ | Out-File -FilePath $reportFile -Encoding UTF8
+        # Generate recommendations
+        Write-Host "`n💡 Optimization Recommendations:" -ForegroundColor Magenta
 
-  Write-Host "✅ Test performance report generated!" -ForegroundColor Green
-  Write-Host "📊 Report: $reportFile" -ForegroundColor Cyan
+        if ($testDuration -gt 60) {
+            Write-Host "   ⚠️ Long test duration detected (>60s)" -ForegroundColor Yellow
+            Write-Host "      Consider: Test parallelization, selective mocking" -ForegroundColor Gray
+        }
+
+        if ($testDuration -lt 5) {
+            Write-Host "   ✅ Fast test suite! Consider:" -ForegroundColor Green
+            Write-Host "      - Adding more edge case tests" -ForegroundColor Gray
+            Write-Host "      - Increasing test coverage" -ForegroundColor Gray
+        }
+
+    } else {
+        Write-Host "`n❌ Test suite profiling failed with exit code: $($process.ExitCode)" -ForegroundColor Red
+        Write-Host "   Check test output above for errors" -ForegroundColor Yellow
+        exit 1
+    }
 }
 catch {
-  Write-Warning "⚠️  Report generation failed: $_"
+    Write-Host "`n❌ Profiling error: $_" -ForegroundColor Red
+    Write-Host $_.ScriptStackTrace -ForegroundColor Gray
+    exit 1
 }
 
-Write-Host ""
-Write-Host "🌟 TEST SUITE PROFILING COMPLETE! 🌟" -ForegroundColor Blue
-Write-Host "📁 All files saved to: $OutputDir" -ForegroundColor Green
-Write-Host ""
-Write-Host "📋 Summary:" -ForegroundColor Yellow
-foreach ($metric in $allMetrics) {
-  $status = if ($metric.ExitCode -eq 0) { "✅" } else { "❌" }
-  Write-Host "  $status $($metric.TestName): $([math]::Round($metric.Duration, 2))s" -ForegroundColor White
-}
-Write-Host ""
+Write-Host "`n🎉 Divine test profiling complete!" -ForegroundColor Green
+Write-Host "=" * 60 -ForegroundColor Gray

@@ -12,10 +12,10 @@ import { hasPermission, Permission } from "./index";
  */
 export function withPermission<T extends object>(
   Component: React.ComponentType<T>,
-  requiredPermission: Permission
+  requiredPermission: Permission,
 ) {
   return function PermissionGuardedComponent(
-    props: T & { userRole: UserRole }
+    props: T & { userRole: UserRole },
   ) {
     const { userRole, ...restProps } = props;
 
@@ -174,7 +174,7 @@ export function PermissionList({
   className = "",
 }: PermissionListProps) {
   const userPermissions = permissions.filter((permission) =>
-    hasPermission(role, permission)
+    hasPermission(role, permission),
   );
 
   if (userPermissions.length === 0) {

@@ -1,0 +1,33 @@
+# Farmers Market Platform - Development Dockerfile
+# Optimized for hot reload and fast development
+
+ARG NODE_VERSION=20
+FROM node:${NODE_VERSION}-alpine
+
+WORKDIR /app
+
+# Install dependencies for Prisma
+RUN apk add --no-cache libc6-compat openssl
+
+# Copy package files AND Prisma schema
+COPY package*.json ./
+COPY prisma ./prisma/
+
+# Install dependencies without running postinstall scripts
+RUN npm install --ignore-scripts
+
+# Copy rest of application code
+COPY . .
+
+# Now generate Prisma Client after all files are in place
+RUN npx prisma generate
+
+# Expose port
+EXPOSE 3000
+
+ENV PORT=3000
+ENV WATCHPACK_POLLING=true
+ENV CHOKIDAR_USEPOLLING=true
+
+# Start development server with hot reload
+CMD ["npm", "run", "dev"]

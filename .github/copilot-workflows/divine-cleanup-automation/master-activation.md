@@ -165,7 +165,7 @@ const report = await enlighteningReporter.generate({
     divine: cleanupPlan.filter((f) => f.confidence >= 95),
     quantum: cleanupPlan.filter((f) => f.confidence >= 70 && f.confidence < 95),
     agricultural: cleanupPlan.filter(
-      (f) => f.confidence >= 50 && f.confidence < 70
+      (f) => f.confidence >= 50 && f.confidence < 70,
     ),
     sacred: cleanupPlan.filter((f) => f.confidence < 50),
   },

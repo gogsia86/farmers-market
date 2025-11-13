@@ -13,6 +13,9 @@ import {
 import Link from "next/link";
 import { Suspense } from "react";
 
+// Force dynamic rendering for all admin pages
+export const dynamic = "force-dynamic";
+
 /**
  * Modern Horizontal Admin Layout
  * Clean, compact top navigation design

@@ -49,7 +49,7 @@ export const PERMISSIONS = {
   MANAGE_SECURITY: "manage_security",
 } as const;
 
-export type Permission = typeof PERMISSIONS[keyof typeof PERMISSIONS];
+export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
 
 // Role permission matrix - Divine agricultural consciousness
 export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
@@ -109,15 +109,21 @@ export function hasPermission(role: UserRole, permission: Permission): boolean {
 /**
  * Check if a user role has any of the specified permissions
  */
-export function hasAnyPermission(role: UserRole, permissions: Permission[]): boolean {
-  return permissions.some(permission => hasPermission(role, permission));
+export function hasAnyPermission(
+  role: UserRole,
+  permissions: Permission[],
+): boolean {
+  return permissions.some((permission) => hasPermission(role, permission));
 }
 
 /**
  * Check if a user role has all of the specified permissions
  */
-export function hasAllPermissions(role: UserRole, permissions: Permission[]): boolean {
-  return permissions.every(permission => hasPermission(role, permission));
+export function hasAllPermissions(
+  role: UserRole,
+  permissions: Permission[],
+): boolean {
+  return permissions.every((permission) => hasPermission(role, permission));
 }
 
 /**
@@ -202,9 +208,11 @@ export function usePermissions(role: UserRole) {
  */
 export function withPermission<T extends object>(
   Component: React.ComponentType<T>,
-  requiredPermission: Permission
+  requiredPermission: Permission,
 ) {
-  return function PermissionGuardedComponent(props: T & { userRole: UserRole }) {
+  return function PermissionGuardedComponent(
+    props: T & { userRole: UserRole },
+  ) {
     const { userRole, ...restProps } = props;
 
     if (!hasPermission(userRole, requiredPermission)) {
@@ -219,8 +227,8 @@ export function withPermission<T extends object>(
                 Insufficient Permissions
               </h3>
               <div className="mt-2 text-sm text-amber-700">
-                Your role ({userRole}) does not have permission to access this feature.
-                Required permission: {requiredPermission}
+                Your role ({userRole}) does not have permission to access this
+                feature. Required permission: {requiredPermission}
               </div>
             </div>
           </div>
@@ -246,7 +254,7 @@ export function PermissionGate({
   role,
   permission,
   children,
-  fallback = null
+  fallback = null,
 }: PermissionGateProps) {
   if (!hasPermission(role, permission)) {
     return <>{fallback}</>;
@@ -263,7 +271,7 @@ export function logPermissionCheck(
   role: UserRole,
   permission: Permission,
   granted: boolean,
-  context?: string
+  context?: string,
 ) {
   console.log("🌾 Divine Permission Check:", {
     userId,

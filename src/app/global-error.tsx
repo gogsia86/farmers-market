@@ -71,12 +71,12 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
           gtag?: (
             action: string,
             target: string,
-            params: Record<string, unknown>
+            params: Record<string, unknown>,
           ) => void;
           Sentry?: {
             captureException?: (
               error: Error,
-              params: Record<string, unknown>
+              params: Record<string, unknown>,
             ) => void;
           };
         };

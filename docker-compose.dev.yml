@@ -1,0 +1,95 @@
+# Farmers Market Platform - Development Docker Compose
+# Optimized for local development with hot reload
+
+version: "3.8"
+
+services:
+  # PostgreSQL Database with PostGIS
+  postgres:
+    image: postgis/postgis:15-3.3-alpine
+    container_name: farmers-market-db-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: farmers_market
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    networks:
+      - farmers-market-dev
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d farmers_market"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: farmers-market-redis-dev
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - farmers-market-dev
+
+  # Next.js Development Server (Hot Reload)
+  app-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      args:
+        NODE_VERSION: 20
+    container_name: farmers-market-app-dev
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/farmers_market?schema=public
+      SHADOW_DATABASE_URL: postgresql://postgres:postgres@postgres:5432/farmers_market_shadow?schema=public
+      REDIS_URL: redis://redis:6379
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: dev-secret-key-not-for-production
+      NODE_ENV: development
+      PORT: 3000
+      WATCHPACK_POLLING: "true"
+      CHOKIDAR_USEPOLLING: "true"
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount source code for hot reload
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    command: npm run dev
+    networks:
+      - farmers-market-dev
+
+  # pgAdmin for database management
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: farmers-market-pgadmin-dev
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: dev@farmersmarket.local
+      PGADMIN_DEFAULT_PASSWORD: dev123
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    volumes:
+      - pgadmin_dev_data:/var/lib/pgadmin
+    networks:
+      - farmers-market-dev
+
+volumes:
+  postgres_dev_data:
+  pgadmin_dev_data:
+
+networks:
+  farmers-market-dev:
+    driver: bridge

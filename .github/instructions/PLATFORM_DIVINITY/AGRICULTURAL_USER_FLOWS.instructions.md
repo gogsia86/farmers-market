@@ -14,6 +14,7 @@ related_docs:
 # 🌊 AGRICULTURAL USER FLOWS
 
 ### Comprehensive Journey Mapping for Farmers Market Platform
+
 ---
 
 ## 📋 TABLE OF CONTENTS
@@ -49,7 +50,7 @@ This document maps **all critical user journeys** through the Farmers Market pla
 
 ### Flow Notation
 
-```mermaid
+````mermaid
 graph LR
     Start([Start]) --> Action[Action/Screen]
     Action --> Decision{Decision Point?}
@@ -1143,3 +1144,4 @@ graph TD
 ---
 
 > "Every flow is a journey. Every journey is an opportunity to delight."
+````

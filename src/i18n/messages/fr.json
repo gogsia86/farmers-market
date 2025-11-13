@@ -1,0 +1,262 @@
+{
+  "common": {
+    "nav": {
+      "home": "Accueil",
+      "products": "Produits",
+      "farms": "Fermes",
+      "about": "À propos",
+      "contact": "Contact",
+      "login": "Connexion",
+      "signup": "S'inscrire",
+      "dashboard": "Tableau de bord",
+      "cart": "Panier",
+      "orders": "Commandes"
+    },
+    "actions": {
+      "search": "Rechercher",
+      "filter": "Filtrer",
+      "sort": "Trier",
+      "submit": "Soumettre",
+      "cancel": "Annuler",
+      "save": "Enregistrer",
+      "delete": "Supprimer",
+      "edit": "Modifier",
+      "view": "Voir",
+      "addToCart": "Ajouter au panier",
+      "checkout": "Commander",
+      "buy": "Acheter maintenant",
+      "learn": "En savoir plus"
+    },
+    "status": {
+      "loading": "Chargement...",
+      "error": "Erreur",
+      "success": "Succès",
+      "pending": "En attente",
+      "processing": "En cours",
+      "completed": "Terminé",
+      "cancelled": "Annulé"
+    }
+  },
+  "home": {
+    "hero": {
+      "title": "Frais de la Ferme à la Table",
+      "subtitle": "Connectez-vous avec des agriculteurs locaux et recevez les produits bio les plus frais livrés chez vous",
+      "cta": "Commencer les achats"
+    },
+    "features": {
+      "title": "Pourquoi nous choisir",
+      "organic": {
+        "title": "100% Bio",
+        "description": "Produits biologiques certifiés de fermes locales de confiance"
+      },
+      "fresh": {
+        "title": "Toujours frais",
+        "description": "Récolté dans les 24 heures avant la livraison"
+      },
+      "local": {
+        "title": "Soutenir le local",
+        "description": "Connexion directe avec les agriculteurs de votre communauté"
+      },
+      "sustainable": {
+        "title": "Durable",
+        "description": "Pratiques agricoles respectueuses de l'environnement"
+      }
+    },
+    "howItWorks": {
+      "title": "Comment ça marche",
+      "step1": {
+        "title": "Parcourir les produits",
+        "description": "Explorez les produits frais des fermes locales"
+      },
+      "step2": {
+        "title": "Ajouter au panier",
+        "description": "Sélectionnez vos articles bio préférés"
+      },
+      "step3": {
+        "title": "Commander",
+        "description": "Choisissez les options de livraison ou de retrait"
+      },
+      "step4": {
+        "title": "Profitez d'aliments frais",
+        "description": "Recevez vos produits frais de la ferme"
+      }
+    }
+  },
+  "products": {
+    "title": "Nos produits",
+    "categories": {
+      "all": "Tous les produits",
+      "vegetables": "Légumes",
+      "fruits": "Fruits",
+      "dairy": "Produits laitiers",
+      "meat": "Viande et volaille",
+      "eggs": "Œufs",
+      "honey": "Miel et conserves",
+      "bakery": "Boulangerie",
+      "herbs": "Herbes et épices"
+    },
+    "filters": {
+      "category": "Catégorie",
+      "price": "Gamme de prix",
+      "organic": "Bio uniquement",
+      "inStock": "En stock",
+      "farm": "Ferme"
+    },
+    "sorting": {
+      "featured": "En vedette",
+      "newest": "Plus récent",
+      "priceLowToHigh": "Prix: croissant",
+      "priceHighToLow": "Prix: décroissant",
+      "nameAZ": "Nom: A-Z"
+    },
+    "details": {
+      "description": "Description",
+      "ingredients": "Ingrédients",
+      "nutrition": "Valeurs nutritionnelles",
+      "certifications": "Certifications",
+      "farm": "Ferme",
+      "availability": "Disponibilité",
+      "quantity": "Quantité",
+      "unit": "Unité"
+    }
+  },
+  "farms": {
+    "title": "Nos fermes",
+    "subtitle": "Rencontrez les agriculteurs qui cultivent vos aliments",
+    "viewProducts": "Voir les produits",
+    "location": "Emplacement",
+    "certifications": "Certifications",
+    "practices": "Pratiques agricoles",
+    "story": "Notre histoire",
+    "contact": "Contacter la ferme"
+  },
+  "cart": {
+    "title": "Panier",
+    "empty": "Votre panier est vide",
+    "item": "Article",
+    "price": "Prix",
+    "quantity": "Quantité",
+    "total": "Total",
+    "subtotal": "Sous-total",
+    "tax": "Taxe",
+    "shipping": "Livraison",
+    "grandTotal": "Total général",
+    "continueShopping": "Continuer les achats",
+    "proceedToCheckout": "Passer à la caisse",
+    "removeItem": "Retirer l'article",
+    "updateCart": "Mettre à jour le panier"
+  },
+  "checkout": {
+    "title": "Caisse",
+    "shippingInfo": "Informations de livraison",
+    "billingInfo": "Informations de facturation",
+    "paymentMethod": "Mode de paiement",
+    "orderSummary": "Résumé de la commande",
+    "placeOrder": "Passer la commande",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "email": "E-mail",
+    "phone": "Téléphone",
+    "address": "Adresse",
+    "city": "Ville",
+    "state": "État",
+    "zipCode": "Code postal",
+    "country": "Pays",
+    "deliveryMethod": {
+      "title": "Mode de livraison",
+      "delivery": "Livraison à domicile",
+      "pickup": "Retrait à la ferme"
+    }
+  },
+  "orders": {
+    "title": "Mes commandes",
+    "orderNumber": "Commande n°",
+    "date": "Date",
+    "status": "Statut",
+    "items": "Articles",
+    "total": "Total",
+    "viewDetails": "Voir les détails",
+    "trackOrder": "Suivre la commande",
+    "reorder": "Recommander",
+    "noOrders": "Aucune commande pour le moment"
+  },
+  "auth": {
+    "login": {
+      "title": "Connexion",
+      "email": "E-mail",
+      "password": "Mot de passe",
+      "remember": "Se souvenir de moi",
+      "forgot": "Mot de passe oublié?",
+      "submit": "Se connecter",
+      "noAccount": "Pas de compte?",
+      "createAccount": "En créer un"
+    },
+    "signup": {
+      "title": "S'inscrire",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "E-mail",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "submit": "Créer un compte",
+      "hasAccount": "Vous avez déjà un compte?",
+      "signIn": "Se connecter"
+    }
+  },
+  "footer": {
+    "company": {
+      "title": "Entreprise",
+      "about": "À propos",
+      "careers": "Carrières",
+      "press": "Presse",
+      "blog": "Blog"
+    },
+    "support": {
+      "title": "Support",
+      "help": "Centre d'aide",
+      "contact": "Nous contacter",
+      "faq": "FAQ",
+      "shipping": "Infos livraison"
+    },
+    "legal": {
+      "title": "Légal",
+      "privacy": "Politique de confidentialité",
+      "terms": "Conditions d'utilisation",
+      "cookies": "Politique des cookies"
+    },
+    "social": {
+      "title": "Suivez-nous"
+    },
+    "copyright": "© 2024 Farmers Market. Tous droits réservés."
+  },
+  "notifications": {
+    "addedToCart": "Ajouté au panier avec succès",
+    "removedFromCart": "Retiré du panier",
+    "orderPlaced": "Commande passée avec succès",
+    "profileUpdated": "Profil mis à jour",
+    "error": "Quelque chose s'est mal passé",
+    "sessionExpired": "Votre session a expiré"
+  },
+  "agricultural": {
+    "consciousness": {
+      "level": "Conscience agricole",
+      "organic": "Biologique",
+      "biodynamic": "Biodynamique",
+      "regenerative": "Régénératif",
+      "permaculture": "Permaculture"
+    },
+    "seasons": {
+      "spring": "Printemps",
+      "summer": "Été",
+      "fall": "Automne",
+      "winter": "Hiver"
+    },
+    "practices": {
+      "noTill": "Sans labour",
+      "cropRotation": "Rotation des cultures",
+      "composting": "Compostage",
+      "coverCrops": "Cultures de couverture",
+      "integratedPest": "Gestion intégrée des ravageurs"
+    }
+  }
+}

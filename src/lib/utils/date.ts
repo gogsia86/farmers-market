@@ -5,7 +5,7 @@
  */
 export function formatDate(
   date: Date | string,
-  options?: Intl.DateTimeFormatOptions
+  options?: Intl.DateTimeFormatOptions,
 ): string {
   const dateObj = typeof date === "string" ? new Date(date) : date;
 

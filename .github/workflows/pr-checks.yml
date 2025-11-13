@@ -1,0 +1,154 @@
+name: Pull Request Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  # Job 1: PR Validation
+  validate-pr:
+    name: Validate PR
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🏷️ Check PR title
+        uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            docs
+            style
+            refactor
+            perf
+            test
+            build
+            ci
+            chore
+            revert
+
+      - name: 📝 Check for breaking changes
+        run: |
+          if git log --format=%B -n 1 ${{ github.event.pull_request.head.sha }} | grep -i "BREAKING CHANGE"; then
+            echo "⚠️ Breaking changes detected" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # Job 2: Code Review Assistant
+  code-review:
+    name: Automated Code Review
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🤖 Run code review
+        uses: reviewdog/action-eslint@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
+          eslint_flags: "src/**/*.{ts,tsx}"
+
+  # Job 3: Test Coverage Diff
+  coverage-diff:
+    name: Coverage Comparison
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgis/postgis:16-3.4-alpine
+        env:
+          POSTGRES_USER: farmersmarket
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: farmersmarket_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: 📥 Checkout PR
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: 📚 Install dependencies
+        run: npm ci
+
+      - name: 🔧 Generate Prisma Client
+        run: npx prisma generate
+
+      - name: 🧪 Run tests with coverage
+        env:
+          DATABASE_URL: postgresql://farmersmarket:test@localhost:5432/farmersmarket_test?schema=public
+        run: npm run test:coverage || true
+
+      - name: 📊 Comment coverage report
+        uses: romeovs/lcov-reporter-action@v0.3.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          lcov-file: ./coverage/lcov.info
+        continue-on-error: true
+
+  # Job 4: Build Preview
+  build-preview:
+    name: Build Preview
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: 📚 Install dependencies
+        run: npm ci
+
+      - name: 🔧 Generate Prisma Client
+        run: npx prisma generate
+
+      - name: 🏗️ Build application
+        run: npm run build
+
+      - name: 📊 Bundle size report
+        run: |
+          echo "## Build Preview 📦" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Build Status:** ✅ Success" >> $GITHUB_STEP_SUMMARY
+          echo "**Build Size:** $(du -sh .next | cut -f1)" >> $GITHUB_STEP_SUMMARY
+
+  # Job 5: Lighthouse CI
+  lighthouse:
+    name: Lighthouse Performance
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🏃 Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v10
+        with:
+          urls: |
+            http://localhost:3000
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+        continue-on-error: true

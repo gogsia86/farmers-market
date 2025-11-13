@@ -65,7 +65,7 @@ export default function SearchBar() {
       setIsLoading(true);
       try {
         const response = await fetch(
-          `/api/search?q=${encodeURIComponent(query)}&limit=5`
+          `/api/search?q=${encodeURIComponent(query)}&limit=5`,
         );
         const data = await response.json();
 

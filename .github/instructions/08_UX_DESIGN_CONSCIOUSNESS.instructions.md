@@ -226,7 +226,7 @@ export function AgriculturalCard({
             elevation === "floating",
         },
 
-        className
+        className,
       )}
       {...props}
     >
@@ -279,7 +279,7 @@ export function AgriculturalCardFooter({
     <div
       className={cn(
         "px-6 py-4 border-t border-agricultural-light/20 bg-agricultural-light/5",
-        className
+        className,
       )}
       {...props}
     >
@@ -320,7 +320,7 @@ export function SeasonalNavigation({
 
   // Filter items based on current season
   const seasonalItems = items.filter(
-    (item) => !item.season || item.season.includes(currentSeason)
+    (item) => !item.season || item.season.includes(currentSeason),
   );
 
   return (
@@ -328,7 +328,7 @@ export function SeasonalNavigation({
       className={cn(
         "flex space-x-2 p-4 rounded-lg transition-all duration-500",
         "bg-gradient-seasonal backdrop-blur-md",
-        { "animate-pulse": isTransitioning }
+        { "animate-pulse": isTransitioning },
       )}
     >
       {seasonalItems.map((item) => {
@@ -350,7 +350,7 @@ export function SeasonalNavigation({
                 "bg-agricultural-dormant/20": item.consciousness === "dormant",
                 "bg-white/10 backdrop-blur-sm": isActive,
                 "hover:bg-white/5": !isActive,
-              }
+              },
             )}
           >
             {/* Quantum consciousness indicator */}
@@ -659,7 +659,7 @@ export function AgriculturalError({
       className={cn(
         "p-6 rounded-lg border-2 text-center",
         "bg-white/90 backdrop-blur-sm",
-        `border-${context.color}/30`
+        `border-${context.color}/30`,
       )}
     >
       <div className="text-4xl mb-3">{context.icon}</div>
@@ -676,7 +676,7 @@ export function AgriculturalError({
           className={cn(
             "px-4 py-2 rounded-md transition-all duration-200",
             `bg-${context.color} text-white`,
-            "hover:shadow-md hover:scale-105"
+            "hover:shadow-md hover:scale-105",
           )}
         >
           {recovery.action}

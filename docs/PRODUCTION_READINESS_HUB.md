@@ -112,8 +112,8 @@ kubectl logs -n farmers-market -l app=agricultural-platform
 
 ### **DASHBOARDS & ENDPOINTS**
 
-| Service             | URL                                 | Purpose                    | Credentials          |
-| ------------------- | ----------------------------------- | -------------------------- | -------------------- |
+| Service             | URL                                   | Purpose                    | Credentials          |
+| ------------------- | ------------------------------------- | -------------------------- | -------------------- |
 | **Application**     | `<https://your-domain`>               | Main agricultural platform | User accounts        |
 | **Grafana**         | `<https://your-domain:3001`>          | Performance dashboards     | `admin` / configured |
 | **Prometheus**      | `<https://your-domain:9090`>          | Metrics collection         | Basic auth           |

@@ -7,7 +7,7 @@ import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
@@ -18,10 +18,10 @@ export async function POST(request: NextRequest) {
     const result = await database.notification.updateMany({
       where: {
         userId: session.user.id,
-        read: false,
+        isRead: false,
       },
       data: {
-        read: true,
+        isRead: true,
         readAt: new Date(),
       },
     });

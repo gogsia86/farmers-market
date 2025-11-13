@@ -1,0 +1,42 @@
+{
+  "layouts": [
+    {
+      "name": "Divine Development Layout",
+      "description": "Optimal layout for agricultural consciousness development",
+      "groups": [
+        {
+          "name": "Explorer",
+          "size": 20,
+          "views": ["workbench.view.explorer", "outline", "timeline"],
+          "position": "left"
+        },
+        {
+          "name": "Main Editor",
+          "size": 45,
+          "views": ["workbench.editors"],
+          "position": "center"
+        },
+        {
+          "name": "Context Manager",
+          "size": 20,
+          "views": [
+            "workbench.view.scm",
+            "workbench.view.search",
+            "references-view.tree"
+          ],
+          "position": "right"
+        },
+        {
+          "name": "AI Assistant",
+          "size": 35,
+          "views": [
+            "workbench.panel.chat",
+            "workbench.panel.output",
+            "workbench.panel.terminal"
+          ],
+          "position": "bottom"
+        }
+      ]
+    }
+  ]
+}

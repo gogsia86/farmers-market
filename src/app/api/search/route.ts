@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     if (!query || query.length < 2) {
       return NextResponse.json(
         { error: "Search query must be at least 2 characters" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
     console.error("Search API error:", error);
     return NextResponse.json(
       { error: "Failed to search products" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

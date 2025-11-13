@@ -69,11 +69,15 @@ git diff
 ```
 
 ### **Troubleshooting**
+
 ### If build fails
+
 - Check for TypeScript errors
 - Review build output for specific issues
 - Ensure all dependencies installed
+
 ### If tests fail
+
 - Review test output
 - Check for environment-specific issues
 - Verify mock data is correct
@@ -87,7 +91,9 @@ git diff
 ### **2.1 Hosting Platform Setup**
 
 **Platform Choice**: [ ] Vercel | [ ] AWS | [ ] Railway | [ ] Other
+
 ### Action Items
+
 - [ ] Create hosting account
 - [ ] Install CLI tools
 - [ ] Connect GitHub repository
@@ -109,7 +115,9 @@ vercel
 ### **2.2 Database Provider Setup**
 
 **Provider Choice**: [ ] Neon | [ ] Supabase | [ ] PlanetScale
+
 ### Action Items
+
 - [ ] Create database account
 - [ ] Create production database
 - [ ] Get connection string
@@ -122,18 +130,24 @@ vercel
 3. Create project: "farmers-market-prod"
 4. Region: Choose closest to users
 5. Copy connection string
+
 ### Connection String Format
+
 ```
 postgresql://[user]:[password]@[host]/[database]?sslmode=require
 ```
 
 ### **2.3 Stripe Production Setup**
+
 ### Action Items
+
 - [ ] Log into Stripe Dashboard
 - [ ] Switch to Live mode
 - [ ] Copy production API keys
 - [ ] Save credentials securely
+
 ### Keys Needed
+
 - Publishable key: `pk_live_...`
 - Secret key: `sk_live_...`
 - Webhook secret: `whsec_...` (after domain setup)
@@ -177,7 +191,9 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 ```
 
 ### **Add to Hosting Platform**
+
 ### Vercel
+
 1. Go to Project Settings → Environment Variables
 2. Add each variable
 3. Select "Production" environment
@@ -258,12 +274,16 @@ vercel logs --production
 ### **6.1 Custom Domain Configuration**
 
 **Your Domain**: **\*\***\*\***\*\***\_\_\_**\*\***\*\***\*\***
+
 ### Action Items
+
 - [ ] Add domain in hosting dashboard
 - [ ] Configure DNS records
 - [ ] Verify domain ownership
 - [ ] Wait for SSL provisioning (auto)
+
 ### Vercel Domain Setup
+
 1. Project Settings → Domains
 2. Add domain
 3. Choose DNS configuration:
@@ -275,7 +295,9 @@ vercel logs --production
 - [ ] SSL automatically provisioned
 - [ ] HTTPS redirect enabled
 - [ ] Certificate auto-renewal configured
+
 ### Verification
+
 ```powershell
 # Check domain resolution
 nslookup yourdomain.com
@@ -331,10 +353,14 @@ curl -I <https://yourdomain.com>
 - [ ] PWA score 100
 
 ### **Test Payment Card**
+
 ### For Stripe Production
+
 - Use real card (small amount: $0.50)
 - Or use test card in test mode first
+
 ### Test Mode Card
+
 - Card: 4242 4242 4242 4242
 - Expiry: Any future date
 - CVC: Any 3 digits
@@ -346,7 +372,9 @@ curl -I <https://yourdomain.com>
 **Status**: ⏸️ PENDING
 
 ### **8.1 Error Monitoring**
+
 ### Sentry Setup
+
 ```powershell
 npm install @sentry/nextjs
 npx @sentry/wizard@latest -i nextjs
@@ -358,7 +386,9 @@ npx @sentry/wizard@latest -i nextjs
 - [ ] Error alerts configured
 
 ### **8.2 Analytics**
+
 ### Vercel Analytics
+
 ```powershell
 npm install @vercel/analytics
 ```
@@ -369,7 +399,9 @@ npm install @vercel/analytics
 - [ ] Events tracking
 
 ### **8.3 Performance Monitoring**
+
 ### Vercel Speed Insights
+
 ```powershell
 npm install @vercel/speed-insights
 ```

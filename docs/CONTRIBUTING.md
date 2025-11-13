@@ -40,7 +40,9 @@ git checkout -b feature/your-feature-name
 # or
 git checkout -b fix/bug-description
 ```
+
 ### Branch Naming Convention
+
 - `feature/description` - New features
 - `fix/description` - Bug fixes
 - `docs/description` - Documentation updates
@@ -123,7 +125,9 @@ Then create a Pull Request on GitHub.
 - Use `const` for immutable values, `let` for mutable
 - Avoid `any` - use `unknown` if type is truly unknown
 - Use optional chaining (`?.`) and nullish coalescing (`??`)
+
 ### Good
+
 ```typescript
 interface User {
   id: string;
@@ -138,7 +142,9 @@ const user: User = {
 
 const email = user.email ?? "no-email@example.com";
 ```
+
 ### Avoid
+
 ```typescript
 const user: any = {
   /* ... */
@@ -153,7 +159,9 @@ let name: string = "John"; // Use 'const' if not reassigned
 - Keep components small and focused
 - Use descriptive prop names
 - Document props with JSDoc comments
+
 ### Good
+
 ```typescript
 interface ProductCardProps {
   /** Unique product identifier */
@@ -439,7 +447,9 @@ What you expected to happen.
 
 **Screenshots**
 If applicable, add screenshots.
+
 ### Environment
+
 - OS: [e.g. Windows 11]
 - Browser: [e.g. Chrome 120]
 - Node version: [e.g. 20.10.0]
@@ -466,6 +476,7 @@ We welcome feature requests! Please:
 - [Testing Library](<https://testing-library.com/docs>/)
 
 ## ❓ Questions
+
 - Check the [Development Guide](./guides/DEVELOPMENT.md)
 - Search [GitHub Discussions](<https://github.com/your-org/farmers-market/discussion>s)
 - Ask in team chat

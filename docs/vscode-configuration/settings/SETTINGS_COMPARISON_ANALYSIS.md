@@ -36,57 +36,48 @@
 All core settings are present in both:
 
 1. **GPU Acceleration** ✅
-
    - Terminal GPU acceleration
    - Editor smooth scrolling
    - Window experimental features
 
 2. **Memory Optimization (64GB RAM)** ✅
-
    - TypeScript server: 65GB max
    - File memory: 32GB
    - Search: 100K results
 
 3. **Editor Features** ✅
-
    - Semantic highlighting
    - Bracket colorization
    - Inlay hints
    - All suggestions & IntelliSense
 
 4. **Formatting** ✅
-
    - Prettier as default formatter
    - ESLint fix on save
    - Organize imports
 
 5. **AI/Copilot** ✅
-
    - Full Copilot integration
    - Chat features
    - All AI settings
 
 6. **Framework Support** ✅
-
    - Next.js optimization
    - React/TypeScript
    - Tailwind CSS
    - Prisma
 
 7. **Testing & Debugging** ✅
-
    - Jest configuration
    - Debug settings
    - Testing automation
 
 8. **Git Integration** ✅
-
    - Auto-fetch
    - Smart commit
    - All git features
 
 9. **UI/Visual** ✅
-
    - Dark theme
    - Bracket colors
    - Activity bar top

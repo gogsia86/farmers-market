@@ -89,7 +89,7 @@
 
 ## 📁 File Organization
 
-```text
+````text
 V:\Projects\Farmers-Market\
 │
 ├── 📘 QUICK START
@@ -352,3 +352,4 @@ code V:\Projects\Farmers-Market\PROJECT_STATUS.md
 _Last updated: October 21, 2025_
 _All guides tested and ready for use_
 _Good luck with your launch! 🚀_
+````

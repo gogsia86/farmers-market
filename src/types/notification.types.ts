@@ -93,8 +93,7 @@ export interface NotificationPreferences {
 export interface NotificationStats {
   total: number;
   unread: number;
-  byType: Record<NotificationType, number>;
-  byPriority: Record<NotificationPriority, number>;
+  byType: Record<string, number>;
 }
 
 // API Request/Response Types

@@ -78,3 +78,7 @@ global.console = {
 process.env.NODE_ENV = "test";
 process.env.NEXTAUTH_SECRET = "test-secret";
 process.env.NEXTAUTH_URL = "http://localhost:3000";
+process.env.PAYPAL_CLIENT_ID = "test-paypal-client-id";
+process.env.PAYPAL_CLIENT_SECRET = "test-paypal-client-secret";
+process.env.STRIPE_SECRET_KEY = "test-stripe-secret-key";
+process.env.STRIPE_PUBLISHABLE_KEY = "test-stripe-publishable-key";

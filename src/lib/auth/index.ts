@@ -1,12 +1,11 @@
-import NextAuth from "next-auth";
+import { getServerSession } from "next-auth/next";
 import { authConfig } from "./config";
 
-export const {
-  handlers: { GET, POST },
-  auth,
-  signIn,
-  signOut,
-} = NextAuth(authConfig);
+// NextAuth v4 uses getServerSession
+export const auth = () => getServerSession(authConfig);
+
+// Export config
+export const authOptions = authConfig;
 
 // Helper to require authentication
 export async function requireAuth() {

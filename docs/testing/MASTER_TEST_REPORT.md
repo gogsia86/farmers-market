@@ -446,7 +446,7 @@ test.describe("Marketplace User Journey", () => {
 
     // 3. Verify results
     await expect(page.locator('[data-testid="farm-card"]')).toHaveCount(
-      expect.any(Number)
+      expect.any(Number),
     );
 
     // 4. Click first farm
@@ -823,7 +823,7 @@ await waitFor(
   () => {
     expect(screen.getByText("Loaded")).toBeInTheDocument();
   },
-  { timeout: 5000 }
+  { timeout: 5000 },
 );
 
 // Ensure async operations complete
@@ -1142,28 +1142,24 @@ test("complete farm purchase flow", async ({ page }) => {
 **Pipeline Stages**:
 
 1. **divine-validation** (~10 min)
-
    - Lint: ESLint + Prettier
    - Type Check: TypeScript
    - Unit Tests: Jest with coverage
    - Upload coverage to Codecov
 
 2. **integration-ascension** (~15 min)
-
    - Set up PostgreSQL + Redis
    - Run database migrations
    - Integration tests
    - API contract validation
 
 3. **e2e-transcendence** (~20 min)
-
    - Build production
    - Install Playwright browsers
    - Run E2E tests (Chromium)
    - Upload screenshots/videos on failure
 
 4. **build-manifestation** (~10 min)
-
    - Build Next.js app
    - Upload build artifacts
    - Retention: 7 days

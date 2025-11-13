@@ -1,9 +1,6 @@
 {
   "version": "0.2.0",
   "configurations": [
-    // ========================================
-    // 🚀 NEXT.JS DEBUGGING
-    // ========================================
     {
       "name": "🌟 Next.js: Debug Server",
       "type": "node",
@@ -40,26 +37,44 @@
       "name": "🌐 Next.js: Debug Client",
       "type": "chrome",
       "request": "launch",
-      "url": "http://localhost:3000",
+      "url": "http://localhost:3001",
       "webRoot": "${workspaceFolder}",
       "sourceMapPathOverrides": {
-        "webpack://_N_E/./*": "${webRoot}/*"
+        "webpack://_N_E/./*": "${webRoot}/*",
+        "webpack://app/./*": "${webRoot}/*"
       }
     },
-
-    // ========================================
-    // 🧪 TESTING & JEST
-    // ========================================
     {
-      "name": "🧪 Jest: Debug Current Test",
+      "name": "🧪 Vitest: Debug Current Test",
       "type": "node",
       "request": "launch",
-      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/jest",
-      "args": [
-        "${fileBasenameNoExtension}",
-        "--runInBand",
-        "--no-cache",
-        "--watchAll=false"
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["test", "--", "--run", "${file}"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "🎯 Vitest: Debug All Tests",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["test", "--", "--run"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "🔍 Vitest: Debug with Chrome DevTools",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "--inspect-brk",
+        "${workspaceFolder}/node_modules/.bin/vitest",
+        "--run"
       ],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
@@ -67,28 +82,13 @@
       "skipFiles": ["<node_internals>/**"]
     },
     {
-      "name": "🎯 Jest: Debug All Tests",
-      "type": "node",
-      "request": "launch",
-      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/jest",
-      "args": ["--runInBand", "--no-cache", "--watchAll=false"],
-      "cwd": "${workspaceFolder}",
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen",
-      "skipFiles": ["<node_internals>/**"]
-    },
-
-    // ========================================
-    // 🔥 NVIDIA PROFILING LAUNCH CONFIGS
-    // ========================================
-    {
       "name": "🔥 NVIDIA: Profile with Debugging",
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "nsys",
       "runtimeArgs": [
         "profile",
-        "--trace=cuda,nvtx,osrt",
+        "--config=${workspaceFolder}/nsight-systems-config.json",
         "--output=${workspaceFolder}/profiling_output/debug_session_%p",
         "--force-overwrite=true",
         "--stats=true",
@@ -103,27 +103,19 @@
       }
     },
     {
-      "name": "🧪 NVIDIA: Profile Jest Tests",
+      "name": "📊 Node.js: Profile Tests (CPU)",
       "type": "node",
       "request": "launch",
-      "runtimeExecutable": "nsys",
+      "runtimeExecutable": "node",
       "runtimeArgs": [
-        "profile",
-        "--trace=osrt,cuda",
-        "--sample=cpu",
-        "--output=${workspaceFolder}/profiling_output/jest_debug_%p",
-        "--force-overwrite=true",
-        "node"
+        "--prof",
+        "${workspaceFolder}/node_modules/.bin/vitest",
+        "--run"
       ],
-      "program": "${workspaceFolder}/node_modules/.bin/jest",
-      "args": ["--runInBand", "--no-cache"],
       "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen"
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": ["<node_internals>/**"]
     },
-
-    // ========================================
-    // 🗄️  API & DATABASE DEBUGGING
-    // ========================================
     {
       "name": "🗄️  API: Debug Route Handler",
       "type": "node",
@@ -137,10 +129,6 @@
         "DEBUG": "prisma:*"
       }
     },
-
-    // ========================================
-    // 🎨 STORYBOOK DEBUGGING
-    // ========================================
     {
       "name": "🎨 Storybook: Debug",
       "type": "chrome",
@@ -151,19 +139,44 @@
         "webpack://*": "${webRoot}/*"
       }
     },
-
-    // ========================================
-    // 🔧 TYPESCRIPT DEBUGGING
-    // ========================================
     {
       "name": "⚡ TypeScript: Current File",
       "type": "node",
       "request": "launch",
-      "runtimeArgs": ["-r", "ts-node/register"],
+      "runtimeArgs": [
+        "-r",
+        "ts-node/register",
+        "--project",
+        "tsconfig.prod.json"
+      ],
       "args": ["${file}"],
       "cwd": "${workspaceFolder}",
-      "skipFiles": ["<node_internals>/**"],
-      "console": "integratedTerminal"
+      "skipFiles": ["<node_internals>/**", "node_modules/**"],
+      "console": "integratedTerminal",
+      "env": {
+        "TS_NODE_PROJECT": "tsconfig.prod.json"
+      }
+    },
+    {
+      "type": "node",
+      "name": "vscode-jest-tests.v2",
+      "request": "launch",
+      "args": [
+        "test",
+        "--",
+        "--runInBand",
+        "--watchAll=false",
+        "--testNamePattern",
+        "${jest.testNamePattern}",
+        "--runTestsByPath",
+        "${jest.testFile}",
+        "--config",
+        "jest.config.clean.js"
+      ],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "runtimeExecutable": "npm"
     }
   ],
   "compounds": [

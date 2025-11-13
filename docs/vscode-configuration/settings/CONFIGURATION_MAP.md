@@ -157,13 +157,11 @@ PARALLEL_BUILDS=12
 **Categories**:
 
 1. **Essential** (Required for development)
-
    - ESLint, Prettier, TypeScript
    - Tailwind CSS IntelliSense
    - Prisma extension
 
 2. **Productivity** (Highly recommended)
-
    - GitHub Copilot
    - Path Intellisense
    - GitLens
@@ -231,13 +229,11 @@ webpack: (config) => {
 **Provides**:
 
 - **Development Scripts**:
-
   - `npm run dev` - Standard (4GB)
   - `npm run dev:stable` - Stable (8GB)
   - `npm run dev:turbo` - ⚡ TURBO (16GB, 12 threads)
 
 - **Build Scripts**:
-
   - `npm run build` - Standard
   - `npm run build:production` - Production (16GB, 12 threads)
   - `npm run build:optimized` - ⚡ MAXIMUM (32GB, 12 threads)

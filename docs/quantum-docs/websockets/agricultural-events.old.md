@@ -46,12 +46,16 @@ This document details the WebSocket events used for real-time agricultural monit
 #### CROP_UPDATE
 
 Event for receiving real-time updates about crop status and metrics.
+
 ### Event Properties
+
 - Type: `CROP_UPDATE`
 - Temporal Order: `SEQUENTIAL`
 - Quantum Awareness: `Yes`
 - State Impact: `Immediate`
+
 ### Message Structure
+
 ```typescript
 interface CropMonitorState {
   status: "healthy" | "warning" | "critical";
@@ -69,7 +73,9 @@ interface WebSocketMessage<T> {
   timestamp?: string;
 }
 ```
+
 ### Sample Message
+
 ```json
 {
   "type": "CROP_UPDATE",
@@ -90,19 +96,25 @@ interface WebSocketMessage<T> {
 #### SUBSCRIBE_CROPS
 
 Event for subscribing to updates for multiple crops.
+
 ### Event Properties
+
 - Type: `SUBSCRIBE_CROPS`
 - Temporal Order: `FLEXIBLE`
 - Quantum Awareness: `No`
 - State Impact: `Configuration`
+
 ### Message Structure
+
 ```typescript
 interface WebSocketMessage<string[]> {
   type: 'SUBSCRIBE_CROPS';
   payload: string[]; // Array of crop IDs
 }
 ```
+
 ### Sample Message
+
 ```json
 {
   "type": "SUBSCRIBE_CROPS",
@@ -115,12 +127,16 @@ interface WebSocketMessage<string[]> {
 #### STATISTICS_UPDATE
 
 Event for receiving farm-wide statistical updates.
+
 ### Event Properties
+
 - Type: `STATISTICS_UPDATE`
 - Temporal Order: `SEQUENTIAL`
 - Quantum Awareness: `Yes`
 - State Impact: `Aggregate`
+
 ### Message Structure
+
 ```typescript
 interface FarmStatistics {
   farmId: string;
@@ -167,12 +183,16 @@ interface FarmStatistics {
 #### QUANTUM_SYNC
 
 Event for synchronizing quantum states across the agricultural system.
+
 ### Event Properties
+
 - Type: `QUANTUM_SYNC`
 - Temporal Order: `QUANTUM`
 - Quantum Awareness: `Yes`
 - State Impact: `Temporal`
+
 ### Message Structure
+
 ```typescript
 interface QuantumSyncPayload {
   predictionState?: {
@@ -197,7 +217,9 @@ interface QuantumSyncPayload {
   };
 }
 ```
+
 ### Sample Message
+
 ```json
 {
   "type": "QUANTUM_SYNC",
@@ -231,12 +253,16 @@ interface QuantumSyncPayload {
 #### ERROR
 
 Event for receiving error notifications.
+
 ### Event Properties
+
 - Type: `ERROR`
 - Temporal Order: `IMMEDIATE`
 - Quantum Awareness: `No`
 - State Impact: `None`
+
 ### Message Structure
+
 ```typescript
 interface WebSocketError {
   type: "ERROR";
@@ -248,7 +274,9 @@ interface WebSocketError {
   };
 }
 ```
+
 ### Sample Message
+
 ```json
 {
   "type": "ERROR",

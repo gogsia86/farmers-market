@@ -1,0 +1,180 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - banner [ref=e2]:
+    - navigation "Top" [ref=e3]:
+      - generic [ref=e4]:
+        - link "🌾 Farmers Market" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e7]: 🌾 Farmers Market
+        - generic [ref=e8]:
+          - link "Home" [ref=e9] [cursor=pointer]:
+            - /url: /
+          - link "Farms" [ref=e10] [cursor=pointer]:
+            - /url: /farms
+          - link "Products" [ref=e11] [cursor=pointer]:
+            - /url: /products
+          - link "About" [ref=e12] [cursor=pointer]:
+            - /url: /about
+        - generic [ref=e13]:
+          - button "Search" [ref=e14] [cursor=pointer]:
+            - img [ref=e15]
+          - button "Select language" [ref=e19] [cursor=pointer]:
+            - generic [ref=e20]: 🇺🇸
+            - generic [ref=e21]: English
+            - img [ref=e22]
+          - link "Shopping cart" [ref=e24] [cursor=pointer]:
+            - /url: /cart
+            - img [ref=e25]
+            - generic [ref=e29]: "0"
+          - link "User account" [ref=e30] [cursor=pointer]:
+            - /url: /login
+            - img [ref=e31]
+  - main [ref=e34]:
+    - generic [ref=e40]:
+      - generic [ref=e41]:
+        - img [ref=e42]
+        - text: Fresh, Local, Seasonal Products
+      - heading "Shop Fresh Fall Harvest" [level=1] [ref=e45]
+      - paragraph [ref=e46]: Discover seasonal produce, artisan goods, and farm-fresh products from local farmers.
+      - generic [ref=e47]:
+        - generic [ref=e48]:
+          - generic [ref=e49]: 🍎
+          - generic [ref=e50]: 500+
+          - generic [ref=e51]: Products
+        - generic [ref=e52]:
+          - generic [ref=e53]: 🌾
+          - generic [ref=e54]: 50+
+          - generic [ref=e55]: Local Farms
+        - generic [ref=e56]:
+          - generic [ref=e57]: ✨
+          - generic [ref=e58]: 100%
+          - generic [ref=e59]: Daily Fresh
+    - generic [ref=e62]:
+      - generic [ref=e63]:
+        - img [ref=e64]
+        - textbox "Search products, farms, or categories..." [active] [ref=e67]: tomato
+      - generic [ref=e68]:
+        - generic [ref=e69]:
+          - img [ref=e70]
+          - text: Categories
+        - generic [ref=e72]:
+          - button "All" [ref=e73] [cursor=pointer]
+          - button "Fruits" [ref=e74] [cursor=pointer]
+          - button "Vegetables" [ref=e75] [cursor=pointer]
+          - button "Dairy" [ref=e76] [cursor=pointer]
+          - button "Grains" [ref=e77] [cursor=pointer]
+          - button "Greens" [ref=e78] [cursor=pointer]
+          - button "Eggs" [ref=e79] [cursor=pointer]
+      - generic [ref=e80]:
+        - generic [ref=e81]:
+          - img [ref=e82]
+          - text: Season
+        - generic [ref=e84]:
+          - button "All" [ref=e85] [cursor=pointer]
+          - button "Fall" [ref=e86] [cursor=pointer]
+          - button "Summer" [ref=e87] [cursor=pointer]
+          - button "Spring" [ref=e88] [cursor=pointer]
+          - button "Winter" [ref=e89] [cursor=pointer]
+          - button "Year-Round" [ref=e90] [cursor=pointer]
+      - generic [ref=e91]:
+        - generic [ref=e92]:
+          - generic [ref=e93] [cursor=pointer]:
+            - checkbox "Organic Only" [ref=e94]
+            - generic [ref=e95]: Organic Only
+          - generic [ref=e96] [cursor=pointer]:
+            - checkbox "In Stock Only" [checked] [ref=e97]
+            - generic [ref=e98]: In Stock Only
+        - generic [ref=e99]:
+          - generic [ref=e100]: 0 products
+          - combobox "Sort products by" [ref=e101]:
+            - option "Featured" [selected]
+            - 'option "Price: Low to High"'
+            - 'option "Price: High to Low"'
+            - option "Highest Rated"
+            - 'option "Name: A to Z"'
+    - generic [ref=e105]:
+      - generic [ref=e106]: 🍎
+      - heading "No Products Found" [level=3] [ref=e107]
+      - paragraph [ref=e108]: Try adjusting your filters or search terms
+      - button "Clear All Filters" [ref=e109] [cursor=pointer]
+    - generic [ref=e112]:
+      - heading "Want to Sell Your Products?" [level=2] [ref=e113]
+      - paragraph [ref=e114]: Join our marketplace and reach thousands of customers looking for fresh, local products.
+      - link "Start Selling Today" [ref=e115] [cursor=pointer]:
+        - /url: /register-farm
+        - img [ref=e116]
+        - text: Start Selling Today
+  - contentinfo [ref=e119]:
+    - generic [ref=e121]:
+      - generic [ref=e122]:
+        - heading "🌾 Farmers Market" [level=3] [ref=e123]
+        - paragraph [ref=e124]: Connecting local farmers with conscious consumers through divine agricultural consciousness.
+        - generic [ref=e125]:
+          - link "Facebook" [ref=e126] [cursor=pointer]:
+            - /url: https://facebook.com/farmersmarket
+            - img [ref=e127]
+          - link "Twitter" [ref=e129] [cursor=pointer]:
+            - /url: https://twitter.com/farmersmarket
+            - img [ref=e130]
+          - link "Instagram" [ref=e132] [cursor=pointer]:
+            - /url: https://instagram.com/farmersmarket
+            - img [ref=e133]
+      - generic [ref=e136]:
+        - heading "Quick Links" [level=3] [ref=e137]
+        - list [ref=e138]:
+          - listitem [ref=e139]:
+            - link "Browse Farms" [ref=e140] [cursor=pointer]:
+              - /url: /farms
+          - listitem [ref=e141]:
+            - link "Fresh Products" [ref=e142] [cursor=pointer]:
+              - /url: /products
+          - listitem [ref=e143]:
+            - link "About Us" [ref=e144] [cursor=pointer]:
+              - /url: /about
+          - listitem [ref=e145]:
+            - link "How It Works" [ref=e146] [cursor=pointer]:
+              - /url: /how-it-works
+      - generic [ref=e147]:
+        - heading "For Farmers" [level=3] [ref=e148]
+        - list [ref=e149]:
+          - listitem [ref=e150]:
+            - link "Register Your Farm" [ref=e151] [cursor=pointer]:
+              - /url: /register-farm
+          - listitem [ref=e152]:
+            - link "Farmer Dashboard" [ref=e153] [cursor=pointer]:
+              - /url: /farmer-dashboard
+          - listitem [ref=e154]:
+            - link "Resources" [ref=e155] [cursor=pointer]:
+              - /url: /resources
+          - listitem [ref=e156]:
+            - link "Support" [ref=e157] [cursor=pointer]:
+              - /url: /support
+      - generic [ref=e158]:
+        - heading "Contact" [level=3] [ref=e159]
+        - list [ref=e160]:
+          - listitem [ref=e161]:
+            - img [ref=e162]
+            - link "info@farmersmarket.com" [ref=e165] [cursor=pointer]:
+              - /url: mailto:info@farmersmarket.com
+          - listitem [ref=e166]:
+            - img [ref=e167]
+            - link "(123) 456-7890" [ref=e169] [cursor=pointer]:
+              - /url: tel:+1234567890
+          - listitem [ref=e170]:
+            - img [ref=e171]
+            - generic [ref=e174]: 123 Farm Road, Agricultural District
+    - generic [ref=e177]:
+      - paragraph [ref=e178]: © 2025 Farmers Market. All rights reserved.
+      - generic [ref=e179]:
+        - link "Privacy Policy" [ref=e180] [cursor=pointer]:
+          - /url: /privacy
+        - link "Terms of Service" [ref=e181] [cursor=pointer]:
+          - /url: /terms
+        - link "Cookie Policy" [ref=e182] [cursor=pointer]:
+          - /url: /cookies
+  - button "Open Next.js Dev Tools" [ref=e188] [cursor=pointer]:
+    - img [ref=e189]
+  - alert [ref=e192]
+```

@@ -1,0 +1,230 @@
+{
+  "version": "1.0.0",
+  "workflow_type": "sequential_with_intelligent_handoff",
+  "communication_protocol": "git_based_with_markdown_artifacts",
+  "context_sharing_strategy": "comprehensive_documentation",
+
+  "routing_rules": {
+    "complexity_threshold": {
+      "cyclomatic_complexity": 10,
+      "function_length_lines": 50,
+      "nesting_depth": 4,
+      "dependency_count": 8
+    },
+
+    "automatic_gpt_assignments": [
+      "documentation_update",
+      "test_scaffold_generation",
+      "boilerplate_code_creation",
+      "readme_generation",
+      "changelog_update",
+      "mock_data_creation",
+      "simple_crud_operations",
+      "ui_component_scaffolding",
+      "configuration_file_creation",
+      "migration_script_drafts"
+    ],
+
+    "automatic_claude_assignments": [
+      "authentication_system",
+      "payment_processing",
+      "security_implementation",
+      "performance_optimization",
+      "database_schema_design",
+      "api_architecture",
+      "state_management_design",
+      "complex_algorithms",
+      "production_deployment",
+      "critical_bug_fixes",
+      "architectural_decisions",
+      "scalability_solutions"
+    ],
+
+    "collaborative_assignments": [
+      "feature_implementation",
+      "integration_testing",
+      "end_to_end_testing",
+      "component_refactoring",
+      "api_endpoint_creation",
+      "form_implementation"
+    ]
+  },
+
+  "handoff_protocol": {
+    "gpt_to_claude_handoff": {
+      "trigger_conditions": [
+        "complexity_exceeds_threshold",
+        "security_implications_detected",
+        "performance_optimization_needed",
+        "architectural_decision_required",
+        "production_deployment_code",
+        "payment_or_auth_logic",
+        "gpt_uncertainty_high"
+      ],
+      "handoff_format": {
+        "location": ".agents/handoffs/",
+        "file_naming": "handoff_{timestamp}_{task_id}.md",
+        "required_sections": [
+          "context",
+          "problem_statement",
+          "attempted_solution",
+          "blocking_issues",
+          "acceptance_criteria",
+          "test_cases",
+          "references"
+        ]
+      },
+      "context_artifacts": [
+        "current_code_state",
+        "test_results",
+        "error_logs",
+        "performance_metrics",
+        "related_files_list"
+      ]
+    },
+
+    "claude_to_gpt_return": {
+      "trigger_conditions": [
+        "complex_work_completed",
+        "documentation_needed",
+        "test_expansion_needed",
+        "routine_cleanup_required"
+      ],
+      "return_format": {
+        "location": ".agents/handoffs/",
+        "file_naming": "return_{timestamp}_{task_id}.md",
+        "required_sections": [
+          "implementation_summary",
+          "architectural_decisions",
+          "testing_recommendations",
+          "documentation_tasks",
+          "follow_up_items"
+        ]
+      }
+    }
+  },
+
+  "context_synchronization": {
+    "shared_context_directory": ".agents/context/",
+    "context_files": [
+      "current_sprint_context.md",
+      "architectural_decisions.md",
+      "known_issues.md",
+      "performance_metrics.md",
+      "test_coverage_report.md",
+      "deployment_status.md"
+    ],
+    "update_frequency": "after_each_major_task",
+    "version_control": true
+  },
+
+  "quality_gates": {
+    "gpt_completion_criteria": [
+      "code_compiles",
+      "tests_pass",
+      "eslint_clean",
+      "typescript_valid",
+      "basic_functionality_works",
+      "documentation_drafted"
+    ],
+
+    "claude_review_criteria": [
+      "divine_patterns_applied",
+      "security_hardened",
+      "performance_optimized",
+      "edge_cases_handled",
+      "comprehensive_testing",
+      "production_ready",
+      "architectural_alignment",
+      "kilo_scale_patterns_applied"
+    ],
+
+    "final_merge_criteria": [
+      "all_tests_passing",
+      "code_reviewed",
+      "documentation_complete",
+      "performance_validated",
+      "security_scanned",
+      "accessibility_checked",
+      "cross_browser_tested",
+      "mobile_responsive"
+    ]
+  },
+
+  "decision_tree": {
+    "task_analysis_flow": [
+      "1. Parse task description and classify type",
+      "2. Analyze complexity metrics",
+      "3. Identify security implications",
+      "4. Assess performance requirements",
+      "5. Check architectural impact",
+      "6. Route to appropriate agent",
+      "7. Monitor progress and quality",
+      "8. Trigger handoffs as needed"
+    ],
+
+    "escalation_path": [
+      "GPT attempts task",
+      "GPT hits complexity threshold",
+      "GPT creates handoff document",
+      "Claude reviews and enhances",
+      "Claude returns with guidance",
+      "GPT completes documentation",
+      "Final review and merge"
+    ]
+  },
+
+  "divine_instruction_integration": {
+    "pattern_validation": {
+      "enabled": true,
+      "check_on_commit": true,
+      "report_violations": true,
+      "auto_suggest_fixes": true
+    },
+
+    "agricultural_consciousness": {
+      "enforce_domain_patterns": true,
+      "seasonal_validation": true,
+      "biodynamic_compliance": true,
+      "farm_entity_awareness": true
+    },
+
+    "performance_monitoring": {
+      "track_metrics": true,
+      "compare_against_baselines": true,
+      "alert_on_regressions": true,
+      "suggest_optimizations": true
+    }
+  },
+
+  "communication_channels": {
+    "primary": "git_commits_and_prs",
+    "handoff_documents": ".agents/handoffs/",
+    "shared_context": ".agents/context/",
+    "decision_records": ".agents/decisions/",
+    "progress_tracking": ".agents/progress/",
+    "metrics_dashboard": ".agents/metrics/"
+  },
+
+  "success_metrics": {
+    "efficiency": {
+      "gpt_task_completion_rate": "target_90_percent",
+      "claude_intervention_rate": "target_10_percent",
+      "handoff_overhead_time": "target_under_5_minutes",
+      "total_development_velocity": "target_5x_improvement"
+    },
+
+    "quality": {
+      "code_review_pass_rate": "target_95_percent",
+      "bug_reduction": "target_80_percent",
+      "test_coverage": "target_90_percent_plus",
+      "divine_pattern_adherence": "target_100_percent"
+    },
+
+    "cost_optimization": {
+      "gpt_free_token_utilization": "maximize",
+      "claude_paid_token_efficiency": "critical_tasks_only",
+      "cost_per_feature": "minimize_while_maintaining_quality"
+    }
+  }
+}

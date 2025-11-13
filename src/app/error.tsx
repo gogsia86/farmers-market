@@ -54,7 +54,7 @@ export default function ErrorPage({ error, reset }: ErrorProps) {
         gtag?: (
           action: string,
           target: string,
-          params: Record<string, unknown>
+          params: Record<string, unknown>,
         ) => void;
       };
       windowWithGtag.gtag?.("event", "exception", {

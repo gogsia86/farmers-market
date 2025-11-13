@@ -339,6 +339,7 @@ Third-Party Integrations
 ---
 
 ## 🔥 What Makes This Backend DIVINE
+
 ### **1. Production-Ready Quality** ✨
 
 - ✅ Type-safe end-to-end (TypeScript + Prisma + Zod)
@@ -441,6 +442,7 @@ Third-Party Integrations
 ---
 
 ## 💬 What Would You Like to Do Next
+
 Type the number to continue:
 
 **1** - Build React Components (Frontend UI)

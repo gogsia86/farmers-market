@@ -11,16 +11,13 @@
 ### Find Your 4 Disabled Extensions
 
 1. **Open Extensions View**
-
    - Press `Ctrl+Shift+X`
 
 2. **Filter for Disabled**
-
    - Click the **filter icon** (funnel) at top-right
    - Select **"Disabled"**
 
 3. **Check Against Recommended List**
-
    - Look for these 40 extensions in your disabled list
    - The 4 you find are the missing ones!
 

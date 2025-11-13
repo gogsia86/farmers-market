@@ -462,12 +462,12 @@ Configure in: **GitHub Repository Settings → Secrets and variables → Actions
 | Secret Name               | Purpose                | Example                               |
 | ------------------------- | ---------------------- | ------------------------------------- |
 | `PROD_DATABASE_URL`       | PostgreSQL connection  | `postgresql://user:pass@host:5432/db` |
-| `PROD_NEXTAUTH_URL`       | Auth callback URL      | `<https://farmers-market.com`>          |
+| `PROD_NEXTAUTH_URL`       | Auth callback URL      | `<https://farmers-market.com`>        |
 | `PROD_NEXTAUTH_SECRET`    | Session encryption key | `generated-random-string-32-chars`    |
 | `PROD_REDIS_URL`          | Cache connection       | `redis://host:6379`                   |
 | `PROD_WEATHER_API_KEY`    | Weather service        | `api-key-from-provider`               |
 | `PROD_ML_SERVICE_API_KEY` | ML predictions         | `api-key-from-provider`               |
-| `PROD_SENTRY_DSN`         | Error tracking         | `<https://key@sentry.io/project`>       |
+| `PROD_SENTRY_DSN`         | Error tracking         | `<https://key@sentry.io/project`>     |
 | `PROD_SSL_PRIVATE_KEY`    | SSL private key        | `-----BEGIN PRIVATE KEY-----...`      |
 | `PROD_SSL_CERTIFICATE`    | SSL certificate        | `-----BEGIN CERTIFICATE-----...`      |
 | `PROD_SSL_CA`             | Certificate authority  | `-----BEGIN CERTIFICATE-----...`      |

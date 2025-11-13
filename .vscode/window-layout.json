@@ -1,0 +1,34 @@
+{
+  "workbench.panel.defaultLocation": "right",
+  "workbench.panel.opensMaximized": "never",
+  "workbench.editor.splitInGroupLayout": "vertical",
+  "workbench.sideBar.location": "left",
+  "workbench.activityBar.location": "default",
+
+  "explorer.sortOrder": "type",
+  "explorer.decorations.colors": true,
+  "explorer.decorations.badges": true,
+  "explorer.fileNesting.enabled": true,
+
+  "workbench.colorTheme": "GitHub Dark Default",
+  "workbench.iconTheme": "vs-code-icons",
+
+  "window.zoomLevel": 0,
+  "editor.minimap.enabled": true,
+  "editor.minimap.side": "right",
+
+  "workbench.editor.limit.enabled": true,
+  "workbench.editor.limit.value": 8,
+  "workbench.editor.limit.perEditorGroup": true,
+
+  "chat.editor.wordWrap": "on",
+  "github.copilot.chat.welcomeMessage": "never",
+
+  "workbench.startupEditor": "none",
+  "workbench.editor.enablePreview": false,
+  "workbench.editor.revealIfOpen": true,
+
+  "files.hotExit": "onExitAndWindowClose",
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000
+}

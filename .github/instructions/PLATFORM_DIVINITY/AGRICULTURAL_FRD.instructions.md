@@ -6,6 +6,7 @@ description: "Agricultural marketplace functional requirements - Comprehensive f
 # AGRICULTURAL FUNCTIONAL REQUIREMENTS DOCUMENT (FRD)
 
 ### Comprehensive Feature Specifications for Farmers Market Platform
+
 ---
 
 ## 🔗 DIVINE INTEGRATION
@@ -24,7 +25,7 @@ This FRD integrates with:
 
 ### 🌾 Agricultural Requirements Hierarchy
 
-```text
+````text
 LEVEL 1 - STRATEGIC (WHY)
 ├── AGRICULTURAL_BRD.instructions.md (Business requirements, anti-goals)
 ├── AGRICULTURAL_PERSONAS.instructions.md (User needs, pain points)
@@ -821,3 +822,4 @@ Business Value:  100/100 (HIGHEST - enables marketplace transactions)
 Dependencies:    FR-001 (Farmer Registration)
 User Story:      FARM-001 from AGRICULTURAL_PERSONAS (3-minute listing)
 ```text
+````
