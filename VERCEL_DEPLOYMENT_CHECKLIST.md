@@ -3,15 +3,18 @@
 ## ✅ Pre-Deployment Fixes Applied
 
 ### 1. **Fixed `.npmrc` Configuration**
+
 - ❌ **Before**: `script-shell=powershell` (Windows-only)
 - ✅ **After**: Removed PowerShell-specific config for cross-platform compatibility
 - **Why**: Vercel runs on Linux servers without PowerShell
 
 ### 2. **Fixed TypeScript/ESLint Issues**
+
 - ✅ Fixed `middleware.ts` regex escape warning using `String.raw`
 - **Why**: Strict type checking in Vercel builds
 
 ### 3. **Optimized Build Configuration**
+
 - ✅ Added Vercel region configuration
 - ✅ `vercel-build` script properly generates Prisma client
 - ✅ `.vercelignore` excludes local development files
@@ -67,6 +70,7 @@ PERPLEXITY_API_KEY="pplx-..."
 ## 🗄️ Database Setup
 
 ### Option 1: Vercel Postgres (Recommended)
+
 ```bash
 # In Vercel Dashboard
 1. Go to Storage → Add Database → Postgres
@@ -75,6 +79,7 @@ PERPLEXITY_API_KEY="pplx-..."
 ```
 
 ### Option 2: External PostgreSQL (Neon, Supabase, etc.)
+
 ```bash
 # Get your DATABASE_URL from your provider
 # Format: postgresql://username:password@host:5432/database
@@ -82,6 +87,7 @@ PERPLEXITY_API_KEY="pplx-..."
 ```
 
 ### Run Migrations
+
 ```bash
 # After first deployment, run from local:
 npx prisma migrate deploy --preview-feature
@@ -95,6 +101,7 @@ npx prisma migrate deploy --preview-feature
 ## 🚀 Deployment Steps
 
 ### 1. **Push to GitHub**
+
 ```bash
 git add .
 git commit -m "fix: Vercel deployment configuration"
@@ -102,6 +109,7 @@ git push origin master
 ```
 
 ### 2. **Import Project in Vercel**
+
 1. Go to [vercel.com/new](https://vercel.com/new)
 2. Import your GitHub repository
 3. Framework Preset: **Next.js** (auto-detected)
@@ -110,11 +118,13 @@ git push origin master
 6. Output Directory: `.next` (from vercel.json)
 
 ### 3. **Configure Environment Variables**
+
 1. Settings → Environment Variables
 2. Add ALL variables from section above
 3. Apply to: **Production, Preview, Development**
 
 ### 4. **Deploy**
+
 - Click **Deploy**
 - Wait 2-5 minutes for build
 - Check build logs for errors
@@ -124,28 +134,37 @@ git push origin master
 ## 🔍 Troubleshooting Common Issues
 
 ### ❌ **Error: `spawn powershell ENOENT`**
+
 **Solution**: ✅ Fixed in `.npmrc` - removed PowerShell config
 
 ### ❌ **Error: Prisma Client not generated**
+
 **Solution**: ✅ Fixed in `vercel.json` - runs `npx prisma generate` in installCommand
 
 ### ❌ **Error: Environment variable missing**
+
 **Solution**: Add missing variables in Vercel Dashboard → Settings → Environment Variables
 
 ### ❌ **Error: Database connection failed**
-**Solution**: 
+
+**Solution**:
+
 1. Verify `DATABASE_URL` is correct
 2. Ensure database accepts connections from Vercel IPs
 3. Check if database requires SSL: Add `?sslmode=require` to connection string
 
 ### ❌ **Error: Build timeout**
+
 **Solution**:
+
 1. Vercel has 15-minute build limit
 2. Optimize build by removing large dependencies
 3. Consider using Vercel Pro for longer build times
 
 ### ❌ **Error: Module not found after deployment**
+
 **Solution**:
+
 1. Clear Vercel cache: Settings → Delete Cache
 2. Redeploy
 3. Check `package.json` dependencies are correct
@@ -155,11 +174,13 @@ git push origin master
 ## 📊 Post-Deployment Verification
 
 ### 1. **Check Build Logs**
+
 ```
 Vercel Dashboard → Deployments → Latest → View Function Logs
 ```
 
 ### 2. **Test Critical Endpoints**
+
 ```bash
 # Homepage
 curl https://your-domain.vercel.app
@@ -172,11 +193,13 @@ curl https://your-domain.vercel.app/api/farms
 ```
 
 ### 3. **Monitor Performance**
+
 - Vercel Dashboard → Analytics
 - Check response times
 - Monitor error rates
 
 ### 4. **Test Database Connection**
+
 ```bash
 # From Vercel Dashboard → Deployments → Latest → Functions
 # Check if Prisma is connecting successfully
@@ -187,19 +210,22 @@ curl https://your-domain.vercel.app/api/farms
 ## ⚡ Performance Optimization
 
 ### Enable Edge Functions (Optional)
+
 ```typescript
 // In specific API routes
-export const runtime = 'edge';
-export const preferredRegion = 'iad1'; // US East
+export const runtime = "edge";
+export const preferredRegion = "iad1"; // US East
 ```
 
 ### Configure Caching
+
 ```typescript
 // In page components
 export const revalidate = 3600; // Revalidate every hour
 ```
 
 ### Image Optimization
+
 ```typescript
 // Already configured in next.config.mjs
 // Vercel automatically optimizes images
@@ -221,11 +247,13 @@ export const revalidate = 3600; // Revalidate every hour
 ## 📱 Custom Domain Setup
 
 ### 1. **Add Domain in Vercel**
+
 ```
 Settings → Domains → Add Domain
 ```
 
 ### 2. **Update DNS Records**
+
 ```
 Type: CNAME
 Name: www (or @)
@@ -233,12 +261,14 @@ Value: cname.vercel-dns.com
 ```
 
 ### 3. **Update Environment Variables**
+
 ```env
 NEXTAUTH_URL="https://yourdomain.com"
 NEXT_PUBLIC_APP_URL="https://yourdomain.com"
 ```
 
 ### 4. **Redeploy**
+
 ```bash
 git push origin master
 # Or trigger redeploy in Vercel Dashboard
@@ -249,11 +279,13 @@ git push origin master
 ## 🔄 Continuous Deployment
 
 ### Auto-Deploy on Git Push
+
 - ✅ **Production**: Deploys on push to `master` branch
 - ✅ **Preview**: Deploys on pull requests
 - ⚙️ **Configure**: Settings → Git → Production Branch
 
 ### Manual Deploy
+
 ```bash
 # Install Vercel CLI
 npm i -g vercel
