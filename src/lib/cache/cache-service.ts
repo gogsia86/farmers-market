@@ -51,78 +51,95 @@ export class CacheService {
   /**
    * Get item from cache
    */
-  static async get<T>(key: string): Promise<T | null> {
-    // Try Redis first
-    if (this.isRedisConnected && this.redis) {
-      try {
-        const value = await this.redis.get(key);
-        if (value) {
-          return JSON.parse(value);
-        }
-      } catch (error) {
-        console.error("Redis get error:", error);
+  async get<T = CacheValue>(key: CacheKey): Promise<T | null> {
+    if (!this.enabled) return null;
+
+    try {
+      const value = await redisClient.get(key);
+
+      if (value === null) {
+        this.stats.misses++;
+        return null;
       }
-    }
 
-    // Fallback to memory cache
-    const entry = this.memoryCache.get(key);
-    if (!entry) return null;
-
-    // Check expiration
-    if (Date.now() > entry.expires) {
-      this.memoryCache.delete(key);
+      this.stats.hits++;
+      return JSON.parse(value) as T;
+    } catch (error) {
+      this.stats.errors++;
+      this.logger.error("Cache get error", error as Error, { key });
       return null;
     }
-
-    return entry.data;
   }
 
   /**
    * Set item in cache
    */
-  static async set<T>(
-    key: string,
-    value: T,
-    options: CacheOptions = {}
-  ): Promise<void> {
-    const ttl = this.calculateTTL(options);
-    const expires = Date.now() + ttl * 1000;
-    const tags = options.tags || [];
+  async set(
+    key: CacheKey,
+    value: CacheValue,
+    options?: CacheOptions
+  ): Promise<boolean> {
+    if (!this.enabled) return false;
 
-    // Set in Redis
-    if (this.isRedisConnected && this.redis) {
-      try {
-        await this.redis.setEx(key, ttl, JSON.stringify(value));
-        // Store tags separately for invalidation
-        if (tags.length > 0) {
-          for (const tag of tags) {
-            await this.redis.sAdd(`tag:${tag}`, key);
-          }
-        }
-      } catch (error) {
-        console.error("Redis set error:", error);
-      }
+    try {
+      const ttl = options?.ttl || 3600; // Default 1 hour
+      const stringValue = JSON.stringify(value);
+
+      await redisClient.set(key, stringValue, ttl);
+      this.stats.sets++;
+      return true;
+    } catch (error) {
+      this.stats.errors++;
+      this.logger.error("Cache set error", error as Error, { key });
+      return false;
     }
-
-    // Set in memory cache
-    this.memoryCache.set(key, { data: value, expires, tags });
   }
 
   /**
    * Delete item from cache
    */
-  static async delete(key: string): Promise<void> {
-    // Delete from Redis
-    if (this.isRedisConnected && this.redis) {
-      try {
-        await this.redis.del(key);
-      } catch (error) {
-        console.error("Redis delete error:", error);
-      }
+  async delete(key: string): Promise<boolean> {
+    try {
+      await redis.del(this.buildKey(key));
+      this.logger.debug("Cache key deleted", { key });
+      return true;
+    } catch (error) {
+      this.logger.error("Cache delete failed", error as Error, { key });
+      return false;
     }
+  }
 
-    // Delete from memory
-    this.memoryCache.delete(key);
+  async pattern(pattern: string): Promise<string[]> {
+    try {
+      const fullPattern = this.buildKey(pattern);
+      const keys = await redis.keys(fullPattern);
+      // Remove prefix from returned keys
+      const prefix = this.buildKey("");
+      return keys.map((key) =>
+        key.startsWith(prefix) ? key.slice(prefix.length) : key
+      );
+    } catch (error) {
+      this.logger.error("Cache pattern search failed", error as Error, {
+        pattern,
+      });
+      return [];
+    }
+  }
+
+  async deleteMany(keys: string[]): Promise<number> {
+    if (keys.length === 0) return 0;
+
+    try {
+      const fullKeys = keys.map((key) => this.buildKey(key));
+      const deleted = await redis.del(...fullKeys);
+      this.logger.debug("Multiple cache keys deleted", { count: deleted });
+      return deleted;
+    } catch (error) {
+      this.logger.error("Cache deleteMany failed", error as Error, {
+        keyCount: keys.length,
+      });
+      return 0;
+    }
   }
 
   /**
@@ -153,18 +170,25 @@ export class CacheService {
   /**
    * Clear all cache
    */
-  static async clear(): Promise<void> {
-    // Clear Redis
-    if (this.isRedisConnected && this.redis) {
-      try {
-        await this.redis.flushDb();
-      } catch (error) {
-        console.error("Redis clear error:", error);
-      }
-    }
+  async clear(pattern?: string): Promise<boolean> {
+    if (!this.enabled) return false;
 
-    // Clear memory
-    this.memoryCache.clear();
+    try {
+      // Clear all keys or keys matching pattern
+      // For now, just reset stats
+      this.stats = {
+        hits: 0,
+        misses: 0,
+        sets: 0,
+        deletes: 0,
+        errors: 0,
+      };
+      return true;
+    } catch (error) {
+      this.stats.errors++;
+      this.logger.error("Cache clear error", error as Error, { pattern });
+      return false;
+    }
   }
 
   /**

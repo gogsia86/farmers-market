@@ -1,14 +1,17 @@
 import { requireAdmin } from "@/lib/auth";
 import {
-  BellIcon,
-  BuildingStorefrontIcon,
-  CogIcon,
-  DocumentTextIcon,
-  GlobeAltIcon,
-  KeyIcon,
-  ShieldCheckIcon,
-  UserGroupIcon,
+    BellIcon,
+    BuildingStorefrontIcon,
+    CogIcon,
+    DocumentTextIcon,
+    GlobeAltIcon,
+    KeyIcon,
+    ShieldCheckIcon,
+    UserGroupIcon,
 } from "@heroicons/react/24/outline";
+
+// Force dynamic rendering - no static generation
+export const dynamic = "force-dynamic";
 
 /**
  * Divine System Configuration - Platform Consciousness Control Portal
@@ -61,6 +64,7 @@ export default async function AdminSettingsPage() {
                   <input
                     type="text"
                     defaultValue="Farmers Market"
+                    aria-label="Platform Name"
                     className="block w-full px-3 py-2 border border-agricultural-300 rounded-md shadow-sm focus:ring-agricultural-500 focus:border-agricultural-500"
                   />
                 </div>
@@ -75,6 +79,7 @@ export default async function AdminSettingsPage() {
                     min="0"
                     max="100"
                     step="0.1"
+                    aria-label="Platform Commission Percentage"
                     className="block w-full px-3 py-2 border border-agricultural-300 rounded-md shadow-sm focus:ring-agricultural-500 focus:border-agricultural-500"
                   />
                   <p className="mt-1 text-sm text-agricultural-500">
@@ -91,6 +96,7 @@ export default async function AdminSettingsPage() {
                     defaultValue="50"
                     min="1"
                     max="200"
+                    aria-label="Maximum Delivery Radius in Miles"
                     className="block w-full px-3 py-2 border border-agricultural-300 rounded-md shadow-sm focus:ring-agricultural-500 focus:border-agricultural-500"
                   />
                 </div>
@@ -147,6 +153,7 @@ export default async function AdminSettingsPage() {
                 <div className="flex items-center">
                   <input
                     type="checkbox"
+                    aria-label="Require admin approval for farmer accounts"
                     className="h-4 w-4 text-agricultural-600 focus:ring-agricultural-500 border-agricultural-300 rounded"
                   />
                   <label className="ml-2 block text-sm text-agricultural-700">
@@ -163,6 +170,7 @@ export default async function AdminSettingsPage() {
                       <input
                         type="checkbox"
                         defaultChecked
+                        aria-label="Minimum 8 characters password requirement"
                         className="h-4 w-4 text-agricultural-600 focus:ring-agricultural-500 border-agricultural-300 rounded"
                       />
                       <label className="ml-2 block text-sm text-agricultural-700">
@@ -173,6 +181,7 @@ export default async function AdminSettingsPage() {
                       <input
                         type="checkbox"
                         defaultChecked
+                        aria-label="Require special characters in password"
                         className="h-4 w-4 text-agricultural-600 focus:ring-agricultural-500 border-agricultural-300 rounded"
                       />
                       <label className="ml-2 block text-sm text-agricultural-700">
@@ -182,6 +191,7 @@ export default async function AdminSettingsPage() {
                     <div className="flex items-center">
                       <input
                         type="checkbox"
+                        aria-label="Two-factor authentication required"
                         className="h-4 w-4 text-agricultural-600 focus:ring-agricultural-500 border-agricultural-300 rounded"
                       />
                       <label className="ml-2 block text-sm text-agricultural-700">
@@ -200,6 +210,7 @@ export default async function AdminSettingsPage() {
                     defaultValue="60"
                     min="5"
                     max="1440"
+                    aria-label="Session Timeout in Minutes"
                     className="block w-full px-3 py-2 border border-agricultural-300 rounded-md shadow-sm focus:ring-agricultural-500 focus:border-agricultural-500"
                   />
                 </div>
@@ -248,6 +259,7 @@ export default async function AdminSettingsPage() {
                     <div className="flex items-center">
                       <input
                         type="checkbox"
+                        aria-label="Enable marketing emails"
                         className="h-4 w-4 text-agricultural-600 focus:ring-agricultural-500 border-agricultural-300 rounded"
                       />
                       <label className="ml-2 block text-sm text-agricultural-700">
@@ -275,16 +287,19 @@ export default async function AdminSettingsPage() {
                     <input
                       type="text"
                       placeholder="SMTP Host"
+                      aria-label="SMTP Host"
                       className="block w-full px-3 py-2 border border-agricultural-300 rounded-md shadow-sm focus:ring-agricultural-500 focus:border-agricultural-500"
                     />
                     <input
                       type="number"
                       placeholder="Port (587)"
+                      aria-label="SMTP Port"
                       className="block w-full px-3 py-2 border border-agricultural-300 rounded-md shadow-sm focus:ring-agricultural-500 focus:border-agricultural-500"
                     />
                     <input
                       type="email"
                       placeholder="From Email"
+                      aria-label="From Email Address"
                       className="block w-full px-3 py-2 border border-agricultural-300 rounded-md shadow-sm focus:ring-agricultural-500 focus:border-agricultural-500"
                     />
                   </div>
@@ -314,16 +329,19 @@ export default async function AdminSettingsPage() {
                     <input
                       type="password"
                       placeholder="Stripe Publishable Key"
+                      aria-label="Stripe Publishable Key"
                       className="block w-full px-3 py-2 border border-agricultural-300 rounded-md shadow-sm focus:ring-agricultural-500 focus:border-agricultural-500"
                     />
                     <input
                       type="password"
                       placeholder="Stripe Secret Key"
+                      aria-label="Stripe Secret Key"
                       className="block w-full px-3 py-2 border border-agricultural-300 rounded-md shadow-sm focus:ring-agricultural-500 focus:border-agricultural-500"
                     />
                     <input
                       type="text"
                       placeholder="Webhook Endpoint Secret"
+                      aria-label="Stripe Webhook Endpoint Secret"
                       className="block w-full px-3 py-2 border border-agricultural-300 rounded-md shadow-sm focus:ring-agricultural-500 focus:border-agricultural-500"
                     />
                   </div>
@@ -341,6 +359,7 @@ export default async function AdminSettingsPage() {
                       <input
                         type="number"
                         defaultValue="100"
+                        aria-label="API Requests per minute"
                         className="block w-full px-3 py-2 border border-agricultural-300 rounded-md shadow-sm focus:ring-agricultural-500 focus:border-agricultural-500"
                       />
                     </div>
@@ -351,6 +370,7 @@ export default async function AdminSettingsPage() {
                       <input
                         type="number"
                         defaultValue="5"
+                        aria-label="Login attempts per hour"
                         className="block w-full px-3 py-2 border border-agricultural-300 rounded-md shadow-sm focus:ring-agricultural-500 focus:border-agricultural-500"
                       />
                     </div>
@@ -398,6 +418,7 @@ export default async function AdminSettingsPage() {
                 <div className="flex items-center">
                   <input
                     type="checkbox"
+                    aria-label="Enable maintenance mode"
                     className="h-4 w-4 text-agricultural-600 focus:ring-agricultural-500 border-agricultural-300 rounded"
                   />
                   <label className="ml-2 block text-sm text-agricultural-700">
@@ -412,6 +433,7 @@ export default async function AdminSettingsPage() {
                   <textarea
                     rows={3}
                     defaultValue="The platform is currently undergoing maintenance. Please check back soon."
+                    aria-label="Maintenance Message"
                     className="block w-full px-3 py-2 border border-agricultural-300 rounded-md shadow-sm focus:ring-agricultural-500 focus:border-agricultural-500"
                   />
                 </div>
@@ -530,6 +552,7 @@ export default async function AdminSettingsPage() {
                   <div className="flex items-center">
                     <input
                       type="checkbox"
+                      aria-label="Enable Farmers Market Integration"
                       className="h-4 w-4 text-agricultural-600 focus:ring-agricultural-500 border-agricultural-300 rounded"
                     />
                   </div>

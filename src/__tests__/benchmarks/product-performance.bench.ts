@@ -11,10 +11,7 @@
 
 import { database } from "@/lib/database";
 import { ProductService } from "@/lib/services/product.service";
-import { bench, describe } from "vitest";
-
-// Mock the database for benchmarks
-import { beforeAll, vi } from "vitest";
+import { beforeAll, bench, describe, vi } from "vitest";
 
 vi.mock("@/lib/database", () => ({
   database: {

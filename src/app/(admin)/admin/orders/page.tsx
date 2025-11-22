@@ -1,13 +1,17 @@
 import { requireAdmin } from "@/lib/auth";
 import { database } from "@/lib/database";
 import {
-  CheckCircleIcon,
-  ClockIcon,
-  CurrencyDollarIcon,
-  ExclamationCircleIcon,
-  MagnifyingGlassIcon,
-  TruckIcon,
+    CheckCircleIcon,
+    ClockIcon,
+    CurrencyDollarIcon,
+    ExclamationCircleIcon,
+    MagnifyingGlassIcon,
+    TruckIcon,
 } from "@heroicons/react/24/outline";
+
+// Force dynamic rendering - no static generation
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 /**
  * Divine Order Management - Transaction Flow Harmonization Portal
@@ -122,53 +126,53 @@ export default async function AdminOrdersPage() {
             <div className="bg-white rounded-lg shadow border border-agricultural-200 p-6">
               <div className="flex items-center">
                 <CurrencyDollarIcon className="h-8 w-8 text-green-600 mr-3" />
-                <div>
+                <dl>
                   <dt className="text-sm font-medium text-agricultural-500">
                     Total Revenue
                   </dt>
                   <dd className="text-2xl font-semibold text-green-600">
                     ${orderStats.totalRevenue.toFixed(2)}
                   </dd>
-                </div>
+                </dl>
               </div>
             </div>
             <div className="bg-white rounded-lg shadow border border-agricultural-200 p-6">
               <div className="flex items-center">
                 <TruckIcon className="h-8 w-8 text-agricultural-600 mr-3" />
-                <div>
+                <dl>
                   <dt className="text-sm font-medium text-agricultural-500">
                     Total Orders
                   </dt>
                   <dd className="text-2xl font-semibold text-agricultural-600">
                     {orderStats.total}
                   </dd>
-                </div>
+                </dl>
               </div>
             </div>
             <div className="bg-white rounded-lg shadow border border-agricultural-200 p-6">
               <div className="flex items-center">
                 <ClockIcon className="h-8 w-8 text-amber-600 mr-3" />
-                <div>
+                <dl>
                   <dt className="text-sm font-medium text-agricultural-500">
                     Pending
                   </dt>
                   <dd className="text-2xl font-semibold text-amber-600">
                     {orderStats.pending}
                   </dd>
-                </div>
+                </dl>
               </div>
             </div>
             <div className="bg-white rounded-lg shadow border border-agricultural-200 p-6">
               <div className="flex items-center">
                 <CheckCircleIcon className="h-8 w-8 text-green-600 mr-3" />
-                <div>
+                <dl>
                   <dt className="text-sm font-medium text-agricultural-500">
                     Completed
                   </dt>
                   <dd className="text-2xl font-semibold text-green-600">
                     {orderStats.completed}
                   </dd>
-                </div>
+                </dl>
               </div>
             </div>
           </div>
@@ -242,7 +246,10 @@ export default async function AdminOrdersPage() {
 
                 {/* Status Filter */}
                 <div className="flex gap-3">
-                  <select className="block pl-3 pr-10 py-2 text-base border-agricultural-300 focus:outline-none focus:ring-agricultural-500 focus:border-agricultural-500 rounded-md">
+                  <select
+                    className="block pl-3 pr-10 py-2 text-base border-agricultural-300 focus:outline-none focus:ring-agricultural-500 focus:border-agricultural-500 rounded-md"
+                    aria-label="Filter by order status"
+                  >
                     <option value="">All Status</option>
                     <option value="PENDING">Pending</option>
                     <option value="CONFIRMED">Confirmed</option>
@@ -253,7 +260,10 @@ export default async function AdminOrdersPage() {
                     <option value="CANCELLED">Cancelled</option>
                   </select>
 
-                  <select className="block pl-3 pr-10 py-2 text-base border-agricultural-300 focus:outline-none focus:ring-agricultural-500 focus:border-agricultural-500 rounded-md">
+                  <select
+                    className="block pl-3 pr-10 py-2 text-base border-agricultural-300 focus:outline-none focus:ring-agricultural-500 focus:border-agricultural-500 rounded-md"
+                    aria-label="Filter by fulfillment method"
+                  >
                     <option value="">All Fulfillment</option>
                     <option value="DELIVERY">Delivery</option>
                     <option value="FARM_PICKUP">Farm Pickup</option>

@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from '@jest/globals';
 
 // Input validation tests
 describe("Input Validation", () => {
@@ -60,3 +60,5 @@ describe("Input Validation", () => {
     });
   });
 });
+
+

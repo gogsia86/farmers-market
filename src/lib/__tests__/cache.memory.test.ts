@@ -1,10 +1,10 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 
 describe("cache (memory fallback)", () => {
   beforeEach(async () => {
     // Force memory cache by clearing Redis env and reloading module
     delete (process.env as any).REDIS_HOST;
-    vi.resetModules();
+    jest.resetModules();
   });
 
   it("getOrSet caches computed value", async () => {
@@ -43,3 +43,5 @@ describe("cache (memory fallback)", () => {
     expect(await (cache as any).has(k2)).toBe(false);
   });
 });
+
+

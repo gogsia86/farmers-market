@@ -1,0 +1,258 @@
+name: 🌾 Divine Quality Checks
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+# Cancel in-progress runs for the same workflow
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ============================================
+  # QUALITY CHECK: TYPE CHECKING
+  # ============================================
+  type-check:
+    name: 🔍 Type Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.0'
+          cache: 'npm'
+
+      - name: 📚 Install dependencies
+        run: npm ci
+
+      - name: 🔧 Generate Prisma Client
+        run: npx prisma generate
+
+      - name: 🔍 Run TypeScript type check
+        run: npm run type-check
+
+  # ============================================
+  # QUALITY CHECK: LINTING
+  # ============================================
+  lint:
+    name: 🧹 Lint Code
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.0'
+          cache: 'npm'
+
+      - name: 📚 Install dependencies
+        run: npm ci
+
+      - name: 🔧 Generate Prisma Client
+        run: npx prisma generate
+
+      - name: 🧹 Run ESLint
+        run: npm run lint
+
+  # ============================================
+  # QUALITY CHECK: FORMATTING
+  # ============================================
+  format-check:
+    name: 💅 Format Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.0'
+          cache: 'npm'
+
+      - name: 📚 Install dependencies
+        run: npm ci
+
+      - name: 💅 Check code formatting
+        run: npm run format:check
+
+  # ============================================
+  # QUALITY CHECK: UNIT TESTS
+  # ============================================
+  unit-tests:
+    name: 🧪 Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.0'
+          cache: 'npm'
+
+      - name: 📚 Install dependencies
+        run: npm ci
+
+      - name: 🔧 Generate Prisma Client
+        run: npx prisma generate
+
+      - name: 🧪 Run unit tests with coverage
+        run: npm run test:coverage
+
+      - name: 📊 Upload coverage reports
+        uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+
+  # ============================================
+  # QUALITY CHECK: BUILD VERIFICATION
+  # ============================================
+  build-check:
+    name: 🏗️ Build Verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [type-check, lint, format-check]
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.0'
+          cache: 'npm'
+
+      - name: 📚 Install dependencies
+        run: npm ci
+
+      - name: 🔧 Generate Prisma Client
+        run: npx prisma generate
+
+      - name: 🏗️ Build application
+        run: npm run build
+        env:
+          SKIP_ENV_VALIDATION: true
+
+      - name: 📦 Check build output
+        run: |
+          if [ ! -d ".next" ]; then
+            echo "❌ Build failed - .next directory not found"
+            exit 1
+          fi
+          echo "✅ Build successful"
+
+  # ============================================
+  # QUALITY CHECK: E2E TESTS (Optional)
+  # ============================================
+  e2e-tests:
+    name: 🎭 E2E Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: [build-check]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.0'
+          cache: 'npm'
+
+      - name: 📚 Install dependencies
+        run: npm ci
+
+      - name: 🔧 Generate Prisma Client
+        run: npx prisma generate
+
+      - name: 🎭 Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: 🏗️ Build application
+        run: npm run build
+        env:
+          SKIP_ENV_VALIDATION: true
+
+      - name: 🎭 Run E2E tests
+        run: npm run test:e2e
+        env:
+          CI: true
+
+      - name: 📸 Upload test artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+  # ============================================
+  # SUMMARY: ALL CHECKS PASSED
+  # ============================================
+  quality-gate:
+    name: ✅ Quality Gate
+    runs-on: ubuntu-latest
+    needs: [type-check, lint, format-check, unit-tests, build-check]
+    if: always()
+
+    steps:
+      - name: 🎯 Check all jobs status
+        run: |
+          echo "Type Check: ${{ needs.type-check.result }}"
+          echo "Lint: ${{ needs.lint.result }}"
+          echo "Format Check: ${{ needs.format-check.result }}"
+          echo "Unit Tests: ${{ needs.unit-tests.result }}"
+          echo "Build Check: ${{ needs.build-check.result }}"
+
+          if [ "${{ needs.type-check.result }}" != "success" ] || \
+             [ "${{ needs.lint.result }}" != "success" ] || \
+             [ "${{ needs.format-check.result }}" != "success" ] || \
+             [ "${{ needs.unit-tests.result }}" != "success" ] || \
+             [ "${{ needs.build-check.result }}" != "success" ]; then
+            echo "❌ Quality gate failed - one or more checks failed"
+            exit 1
+          fi
+
+          echo "✅ All quality checks passed! 🌾⚡"
+
+      - name: 🌾 Agricultural consciousness achieved
+        if: success()
+        run: |
+          echo "╔════════════════════════════════════════════════════════════╗"
+          echo "║ ⚡ DIVINE QUALITY GATE PASSED                              ║"
+          echo "╠════════════════════════════════════════════════════════════╣"
+          echo "║ 🔍 Type Safety: ACHIEVED                                   ║"
+          echo "║ 🧹 Code Quality: DIVINE                                    ║"
+          echo "║ 💅 Code Style: PERFECT                                     ║"
+          echo "║ 🧪 Test Coverage: COMPREHENSIVE                            ║"
+          echo "║ 🏗️  Build Status: SUCCESSFUL                               ║"
+          echo "║                                                            ║"
+          echo "║ 🌾 Agricultural Consciousness: ACTIVATED                   ║"
+          echo "║ ⚡ Quantum Coherence: MAINTAINED                           ║"
+          echo "╚════════════════════════════════════════════════════════════╝"

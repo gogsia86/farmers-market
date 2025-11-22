@@ -11,7 +11,7 @@
     ],
     "module": "ESNext", // Use ESNext module system
     "moduleResolution": "bundler", // Next.js 15 bundler resolution (correct for App Router)
-    "jsx": "preserve", // Preserve JSX for Next.js transformation
+    "jsx": "react-jsx", // Preserve JSX for Next.js transformation
     // ========================================================================
     // TYPE CHECKING
     // ========================================================================
@@ -113,9 +113,14 @@
     "**/*.tsx", // All TSX files
     ".next/types/**/*.ts", // Next.js generated types
     "**/*.mts", // Modern TypeScript module files
-    "**/*.cts" // CommonJS TypeScript files
-    ,
-    ".next/dev/types/**/*.ts"
+    "**/*.cts", // CommonJS TypeScript files
+    ".next/dev/types/**/*.ts",
+    "**/*.d.ts", // Include all declaration files
+    "jest.setup.js" // Include Jest setup for global types
+  ],
+  "types": [
+    "jest",
+    "@testing-library/jest-dom"
   ],
   "exclude": [
     "node_modules", // Exclude dependencies

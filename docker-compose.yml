@@ -1,126 +1,209 @@
-# Farmers Market Platform - Production Docker Compose
-# Optimized for Next.js 15 with Prisma and PostgreSQL with PostGIS
+# ============================================================================
+# FARMERS MARKET - PRODUCTION DOCKER COMPOSE
+# Divine Agricultural Platform with Quantum Consciousness
+# Docker Compose v2+ (version attribute removed as obsolete)
+# ============================================================================
 
 services:
-  # PostgreSQL with PostGIS Extension
-  postgres:
-    image: postgis/postgis:16-3.4-alpine
-    container_name: farmers-market-db
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-farmersmarket}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-farmersmarket_secure}
-      POSTGRES_DB: ${POSTGRES_DB:-farmersmarket}
-    ports:
-      - "${POSTGRES_PORT:-5432}:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - farmers-market-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U farmersmarket"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # Redis Cache
-  redis:
-    image: redis:7-alpine
-    container_name: farmers-market-redis
-    restart: unless-stopped
-    command: redis-server --appendonly yes
-    ports:
-      - "${REDIS_PORT:-6379}:6379"
-    volumes:
-      - redis_data:/data
-    networks:
-      - farmers-market-network
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # Next.js Application
+  # ============================================================================
+  # NEXT.JS DIVINE APPLICATION
+  # ============================================================================
   app:
     build:
       context: .
       dockerfile: Dockerfile
+      target: runner
+      args:
+        - NODE_ENV=production
     container_name: farmers-market-app
     restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      # Application
+      - NODE_ENV=production
+      - DOCKER_BUILD=true
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:3000/api}
+
+      # Database
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/farmers_market
+      - DIRECT_URL=postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/farmers_market
+
+      # Redis Cache
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-quantum_cache_password}@redis:6379
+
+      # Authentication
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-change-this-to-a-random-secret-in-production}
+
+      # Stripe Payment
+      - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+
+      # AI Services (optional - features disabled if not set)
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - PERPLEXITY_API_KEY=${PERPLEXITY_API_KEY:-}
+      - PERPLEXITY_DEFAULT_MODEL=${PERPLEXITY_DEFAULT_MODEL:-SONAR_PRO}
+
+      # Email (optional - uses console logging if not configured)
+      - SMTP_HOST=${SMTP_HOST:-smtp.gmail.com}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_SECURE=${SMTP_SECURE:-false}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASSWORD=${SMTP_PASSWORD:-}
+      - SMTP_FROM=${SMTP_FROM:-noreply@farmersmarket.app}
+
+      # Monitoring
+      - SENTRY_DSN=${SENTRY_DSN}
+      - ENABLE_TRACING=${ENABLE_TRACING:-false}
+
     depends_on:
-      postgres:
+      db:
         condition: service_healthy
       redis:
         condition: service_healthy
-    environment:
-      # Database
-      DATABASE_URL: postgresql://${POSTGRES_USER:-farmersmarket}:${POSTGRES_PASSWORD:-farmersmarket_secure}@postgres:5432/${POSTGRES_DB:-farmersmarket}?schema=public
-
-      # Redis
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      REDIS_URL: redis://redis:6379
-
-      # Next.js
-      NODE_ENV: production
-      PORT: 3000
-      HOSTNAME: "0.0.0.0"
-
-      # NextAuth
-      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
-      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
-
-      # Optional: Email, Stripe, etc
-      SMTP_HOST: ${SMTP_HOST:-}
-      SMTP_PORT: ${SMTP_PORT:-}
-      SMTP_USER: ${SMTP_USER:-}
-      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
-      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
-      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY:-}
-    ports:
-      - "${APP_PORT:-3000}:3000"
     networks:
-      - farmers-market-network
+      - divine-network
     volumes:
-      - app_uploads:/app/public/uploads
+      # Persistent uploads
+      - uploads-data:/app/uploads
+      # Logs
+      - logs-data:/app/logs
     healthcheck:
       test:
         [
           "CMD",
-          "node",
-          "-e",
-          "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:3000/api/health",
         ]
       interval: 30s
       timeout: 10s
-      start_period: 60s
       retries: 3
+      start_period: 60s
+    labels:
+      - "com.farmersmarket.service=app"
+      - "com.farmersmarket.environment=production"
 
-  # Adminer - Database Management Tool
-  adminer:
-    image: adminer:latest
-    container_name: farmers-market-adminer
-    restart: unless-stopped
-    depends_on:
-      - postgres
-    ports:
-      - "${ADMINER_PORT:-8080}:8080"
+  # ============================================================================
+  # POSTGRESQL DIVINE DATABASE
+  # ============================================================================
+  db:
+    image: postgis/postgis:16-3.4-alpine
+    container_name: farmers-market-db
     environment:
-      ADMINER_DEFAULT_SERVER: postgres
-      ADMINER_DESIGN: dracula
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=farmersmarket
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
     networks:
-      - farmers-market-network
+      - divine-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
+  # ============================================================================
+  # REDIS DIVINE CACHE
+  # ============================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: farmers-market-cache
+    restart: unless-stopped
+    command: >
+      redis-server
+      --appendonly yes
+      --requirepass ${REDIS_PASSWORD:-quantum_cache_password}
+      --maxmemory 2gb
+      --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - divine-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "quantum_cache_password", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    labels:
+      - "com.farmersmarket.service=cache"
+      - "com.farmersmarket.environment=production"
+
+  # ============================================================================
+  # NGINX DIVINE REVERSE PROXY (Optional - for production deployment)
+  # ============================================================================
+  nginx:
+    image: nginx:alpine
+    container_name: farmers-market-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - ./public:/usr/share/nginx/html/public:ro
+    depends_on:
+      - app
+    networks:
+      - divine-network
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost/health",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "com.farmersmarket.service=proxy"
+      - "com.farmersmarket.environment=production"
+
+# ============================================================================
+# VOLUMES - PERSISTENT DATA STORAGE
+# ============================================================================
 volumes:
-  postgres_data:
-    name: farmers-market-postgres-data
-  redis_data:
-    name: farmers-market-redis-data
-  app_uploads:
-    name: farmers-market-uploads
+  postgres-data:
+    driver: local
+    labels:
+      - "com.farmersmarket.volume=database"
+  redis-data:
+    driver: local
+    labels:
+      - "com.farmersmarket.volume=cache"
+  uploads-data:
+    driver: local
+    labels:
+      - "com.farmersmarket.volume=uploads"
+  logs-data:
+    driver: local
+    labels:
+      - "com.farmersmarket.volume=logs"
 
+# ============================================================================
+# NETWORKS - SERVICE COMMUNICATION
+# ============================================================================
 networks:
-  farmers-market-network:
-    name: farmers-market-network
+  divine-network:
     driver: bridge
+    labels:
+      - "com.farmersmarket.network=main"

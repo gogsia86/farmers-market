@@ -4,35 +4,35 @@
  * Target: 100% coverage of cache/index.ts
  */
 
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "@jest/globals";
 import { cache, CacheKeys, warmCache } from "../index";
 
 // Mock logger
-vi.mock("@/lib/monitoring/logger", () => ({
+jest.mock("@/lib/monitoring/logger", () => ({
   logger: {
-    info: vi.fn(),
-    debug: vi.fn(),
-    error: vi.fn(),
-    warn: vi.fn(),
+    info: jest.fn(),
+    debug: jest.fn(),
+    error: jest.fn(),
+    warn: jest.fn(),
   },
 }));
 
 // Mock ioredis
-vi.mock("ioredis", () => ({
-  Redis: vi.fn().mockImplementation(() => ({
-    on: vi.fn(),
-    get: vi.fn(),
-    setex: vi.fn(),
-    del: vi.fn(),
-    keys: vi.fn(),
-    flushdb: vi.fn(),
-    quit: vi.fn(),
+jest.mock("ioredis", () => ({
+  Redis: jest.fn().mockImplementation(() => ({
+    on: jest.fn(),
+    get: jest.fn(),
+    setex: jest.fn(),
+    del: jest.fn(),
+    keys: jest.fn(),
+    flushdb: jest.fn(),
+    quit: jest.fn(),
   })),
 }));
 
 describe("🗄️ Cache Index - Multi-Layer Caching", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
     // Set Redis disabled for most tests
     process.env.REDIS_ENABLED = "false";
   });
@@ -236,7 +236,7 @@ describe("🗄️ Cache Index - Multi-Layer Caching", () => {
       const cachedData = { id: 1, cached: true };
       await cache.set("wrap-key", cachedData);
 
-      const factory = vi.fn().mockResolvedValue({ id: 1, fresh: true });
+      const factory = jest.fn().mockResolvedValue({ id: 1, fresh: true });
       const result = await cache.wrap("wrap-key", factory);
 
       expect(result).toEqual(cachedData);
@@ -245,7 +245,7 @@ describe("🗄️ Cache Index - Multi-Layer Caching", () => {
 
     it("should compute and cache if not exists", async () => {
       const freshData = { id: 1, fresh: true };
-      const factory = vi.fn().mockResolvedValue(freshData);
+      const factory = jest.fn().mockResolvedValue(freshData);
 
       const result = await cache.wrap("missing-key", factory);
 
@@ -258,7 +258,7 @@ describe("🗄️ Cache Index - Multi-Layer Caching", () => {
     });
 
     it("should use custom TTL in wrap", async () => {
-      const factory = vi.fn().mockResolvedValue({ data: "test" });
+      const factory = jest.fn().mockResolvedValue({ data: "test" });
 
       await cache.wrap("wrap-ttl", factory, 1800);
 
@@ -268,7 +268,7 @@ describe("🗄️ Cache Index - Multi-Layer Caching", () => {
     });
 
     it("should handle factory errors", async () => {
-      const factory = vi.fn().mockRejectedValue(new Error("Factory error"));
+      const factory = jest.fn().mockRejectedValue(new Error("Factory error"));
 
       await expect(cache.wrap("error-key", factory)).rejects.toThrow(
         "Factory error"
@@ -276,7 +276,7 @@ describe("🗄️ Cache Index - Multi-Layer Caching", () => {
     });
 
     it("should cache factory result on success", async () => {
-      const factory = vi.fn().mockResolvedValue("computed value");
+      const factory = jest.fn().mockResolvedValue("computed value");
 
       const result1 = await cache.wrap("compute", factory);
       const result2 = await cache.wrap("compute", factory);
@@ -298,47 +298,47 @@ describe("🗄️ Cache Index - Multi-Layer Caching", () => {
 
     it("should handle SPRING season (Mar-May)", async () => {
       // Mock date to April (SPRING)
-      vi.useFakeTimers();
-      vi.setSystemTime(new Date("2025-04-15"));
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date("2025-04-15"));
 
       await cache.set("spring-data", { season: "spring" });
       const result = await cache.get("spring-data");
 
       expect(result).toEqual({ season: "spring" });
-      vi.useRealTimers();
+      jest.useRealTimers();
     });
 
     it("should handle SUMMER season (Jun-Aug)", async () => {
-      vi.useFakeTimers();
-      vi.setSystemTime(new Date("2025-07-15"));
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date("2025-07-15"));
 
       await cache.set("summer-data", { season: "summer" });
       const result = await cache.get("summer-data");
 
       expect(result).toEqual({ season: "summer" });
-      vi.useRealTimers();
+      jest.useRealTimers();
     });
 
     it("should handle FALL season (Sep-Nov)", async () => {
-      vi.useFakeTimers();
-      vi.setSystemTime(new Date("2025-10-15"));
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date("2025-10-15"));
 
       await cache.set("fall-data", { season: "fall" });
       const result = await cache.get("fall-data");
 
       expect(result).toEqual({ season: "fall" });
-      vi.useRealTimers();
+      jest.useRealTimers();
     });
 
     it("should handle WINTER season (Dec-Feb)", async () => {
-      vi.useFakeTimers();
-      vi.setSystemTime(new Date("2025-01-15"));
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date("2025-01-15"));
 
       await cache.set("winter-data", { season: "winter" });
       const result = await cache.get("winter-data");
 
       expect(result).toEqual({ season: "winter" });
-      vi.useRealTimers();
+      jest.useRealTimers();
     });
   });
 
@@ -511,3 +511,4 @@ describe("🗄️ Cache Index - Multi-Layer Caching", () => {
     });
   });
 });
+

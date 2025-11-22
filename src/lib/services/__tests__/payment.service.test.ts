@@ -6,23 +6,23 @@
  */
 
 import { database } from "@/lib/database";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "@jest/globals";
 import { PaymentService } from "../payment.service";
 
 // Mock the database
-vi.mock("@/lib/database", () => ({
+jest.mock("@/lib/database", () => ({
   database: {
     order: {
-      findUnique: vi.fn(),
-      update: vi.fn(),
-      updateMany: vi.fn(),
+      findUnique: jest.fn(),
+      update: jest.fn(),
+      updateMany: jest.fn(),
     },
   },
 }));
 
 describe("💳 Payment Service - Divine Payment Operations", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
   });
 
   describe("🎯 createPaymentIntent", () => {
@@ -32,7 +32,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
       const currency = "USD";
 
       // Mock database update
-      vi.mocked(database.order.update).mockResolvedValue({
+      jest.mocked(database.order.update).mockResolvedValue({
         id: orderId,
         paymentIntentId: expect.any(String),
       } as any);
@@ -63,7 +63,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
       const orderId = "order-456";
       const amount = 5000;
 
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       const result = await PaymentService.createPaymentIntent(orderId, amount);
 
@@ -71,7 +71,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
     });
 
     it("should generate unique payment intent IDs", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       const result1 = await PaymentService.createPaymentIntent("order-1", 1000);
 
@@ -86,7 +86,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
     });
 
     it("should handle different currencies (EUR)", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       const result = await PaymentService.createPaymentIntent(
         "order-789",
@@ -98,7 +98,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
     });
 
     it("should handle different currencies (GBP)", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       const result = await PaymentService.createPaymentIntent(
         "order-999",
@@ -110,7 +110,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
     });
 
     it("should create payment intent with zero amount (free order)", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       const result = await PaymentService.createPaymentIntent("order-free", 0);
 
@@ -119,7 +119,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
     });
 
     it("should handle large payment amounts", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       const largeAmount = 999999999; // $9,999,999.99
       const result = await PaymentService.createPaymentIntent(
@@ -131,7 +131,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
     });
 
     it("should handle small payment amounts (1 cent)", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       const result = await PaymentService.createPaymentIntent("order-small", 1);
 
@@ -139,7 +139,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
     });
 
     it("should set initial status as pending", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       const result = await PaymentService.createPaymentIntent(
         "order-status",
@@ -150,7 +150,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
     });
 
     it("should propagate database errors", async () => {
-      vi.mocked(database.order.update).mockRejectedValue(
+      jest.mocked(database.order.update).mockRejectedValue(
         new Error("Database connection failed")
       );
 
@@ -164,7 +164,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
     it("should confirm payment with valid payment intent ID", async () => {
       const paymentIntentId = "pi_123456789";
 
-      vi.mocked(database.order.updateMany).mockResolvedValue({
+      jest.mocked(database.order.updateMany).mockResolvedValue({
         count: 1,
       } as any);
 
@@ -241,13 +241,13 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
     it("should refund payment for valid order", async () => {
       const orderId = "order-refund-123";
 
-      vi.mocked(database.order.findUnique).mockResolvedValue({
+      jest.mocked(database.order.findUnique).mockResolvedValue({
         id: orderId,
         totalAmount: 10000,
         paymentStatus: "COMPLETED",
       } as any);
 
-      vi.mocked(database.order.update).mockResolvedValue({
+      jest.mocked(database.order.update).mockResolvedValue({
         id: orderId,
         paymentStatus: "REFUNDED",
         status: "CANCELLED",
@@ -262,7 +262,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
     });
 
     it("should throw error if order not found", async () => {
-      vi.mocked(database.order.findUnique).mockResolvedValue(null);
+      jest.mocked(database.order.findUnique).mockResolvedValue(null);
 
       await expect(
         PaymentService.refundPayment("nonexistent-order")
@@ -272,12 +272,12 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
     it("should update payment status to REFUNDED", async () => {
       const orderId = "order-refund-status";
 
-      vi.mocked(database.order.findUnique).mockResolvedValue({
+      jest.mocked(database.order.findUnique).mockResolvedValue({
         id: orderId,
         totalAmount: 5000,
       } as any);
 
-      vi.mocked(database.order.update).mockResolvedValue({
+      jest.mocked(database.order.update).mockResolvedValue({
         paymentStatus: "REFUNDED",
       } as any);
 
@@ -295,17 +295,17 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
     it("should update order status to CANCELLED", async () => {
       const orderId = "order-cancel";
 
-      vi.mocked(database.order.findUnique).mockResolvedValue({
+      jest.mocked(database.order.findUnique).mockResolvedValue({
         id: orderId,
       } as any);
 
-      vi.mocked(database.order.update).mockResolvedValue({
+      jest.mocked(database.order.update).mockResolvedValue({
         status: "CANCELLED",
       } as any);
 
       await PaymentService.refundPayment(orderId);
 
-      const updateCall = vi.mocked(database.order.update).mock.calls[0][0];
+      const updateCall = jest.mocked(database.order.update).mock.calls[0][0];
       expect(updateCall.data).toMatchObject({
         status: "CANCELLED",
       });
@@ -315,12 +315,12 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
       const orderId = "order-partial";
       const refundAmount = 2500; // Partial refund
 
-      vi.mocked(database.order.findUnique).mockResolvedValue({
+      jest.mocked(database.order.findUnique).mockResolvedValue({
         id: orderId,
         totalAmount: 10000,
       } as any);
 
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       const result = await PaymentService.refundPayment(orderId, refundAmount);
 
@@ -332,12 +332,12 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
     it("should handle full refund when amount not specified", async () => {
       const orderId = "order-full-refund";
 
-      vi.mocked(database.order.findUnique).mockResolvedValue({
+      jest.mocked(database.order.findUnique).mockResolvedValue({
         id: orderId,
         totalAmount: 15000,
       } as any);
 
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       const result = await PaymentService.refundPayment(orderId);
 
@@ -347,13 +347,13 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
     it("should refund already refunded orders (idempotent)", async () => {
       const orderId = "order-already-refunded";
 
-      vi.mocked(database.order.findUnique).mockResolvedValue({
+      jest.mocked(database.order.findUnique).mockResolvedValue({
         id: orderId,
         paymentStatus: "REFUNDED",
         status: "CANCELLED",
       } as any);
 
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       const result = await PaymentService.refundPayment(orderId);
 
@@ -363,12 +363,12 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
     it("should handle refund for order with zero amount", async () => {
       const orderId = "order-zero";
 
-      vi.mocked(database.order.findUnique).mockResolvedValue({
+      jest.mocked(database.order.findUnique).mockResolvedValue({
         id: orderId,
         totalAmount: 0,
       } as any);
 
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       const result = await PaymentService.refundPayment(orderId);
 
@@ -376,11 +376,11 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
     });
 
     it("should propagate database errors on refund", async () => {
-      vi.mocked(database.order.findUnique).mockResolvedValue({
+      jest.mocked(database.order.findUnique).mockResolvedValue({
         id: "order-error",
       } as any);
 
-      vi.mocked(database.order.update).mockRejectedValue(
+      jest.mocked(database.order.update).mockRejectedValue(
         new Error("Network error")
       );
 
@@ -392,10 +392,10 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
     it("should handle refund with various order statuses", async () => {
       const statuses = ["PENDING", "CONFIRMED", "PROCESSING", "COMPLETED"];
 
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       for (const status of statuses) {
-        vi.mocked(database.order.findUnique).mockResolvedValue({
+        jest.mocked(database.order.findUnique).mockResolvedValue({
           id: `order-${status}`,
           status,
         } as any);
@@ -412,7 +412,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
       const amount = 7500;
 
       // Step 1: Create payment intent
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       const intent = await PaymentService.createPaymentIntent(orderId, amount);
 
@@ -436,20 +436,20 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
       const amount = 12000;
 
       // Step 1: Create payment intent
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
       const intent = await PaymentService.createPaymentIntent(orderId, amount);
 
       // Step 2: Confirm payment (stub just returns true)
       await PaymentService.confirmPayment(intent.id);
 
       // Step 3: Refund
-      vi.mocked(database.order.findUnique).mockResolvedValue({
+      jest.mocked(database.order.findUnique).mockResolvedValue({
         id: orderId,
         totalAmount: amount,
         paymentStatus: "COMPLETED",
       } as any);
 
-      vi.mocked(database.order.update).mockResolvedValue({
+      jest.mocked(database.order.update).mockResolvedValue({
         paymentStatus: "REFUNDED",
       } as any);
 
@@ -461,7 +461,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
 
   describe("⚡ Edge Cases & Error Handling", () => {
     it("should handle concurrent payment intent creation", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       // Create intents with small delays to ensure unique timestamps
       const results = [];
@@ -497,7 +497,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
         "ORDER-UPPERCASE",
       ];
 
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       for (const orderId of specialOrderIds) {
         const result = await PaymentService.createPaymentIntent(orderId, 1000);
@@ -511,7 +511,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
     });
 
     it("should handle empty string payment intent ID gracefully", async () => {
-      vi.mocked(database.order.updateMany).mockResolvedValue({
+      jest.mocked(database.order.updateMany).mockResolvedValue({
         count: 0,
       } as any);
 
@@ -522,7 +522,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
     });
 
     it("should handle database timeout during payment creation", async () => {
-      vi.mocked(database.order.update).mockImplementation(
+      jest.mocked(database.order.update).mockImplementation(
         () =>
           new Promise((_, reject) =>
             setTimeout(() => reject(new Error("Request timeout")), 100)
@@ -535,7 +535,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
     });
 
     it("should validate payment intent structure", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       const result = await PaymentService.createPaymentIntent(
         "order-validate",
@@ -558,7 +558,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
 
   describe("🎨 Payment Intent ID Format", () => {
     it("should generate payment intent IDs with pi_ prefix", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       const result = await PaymentService.createPaymentIntent(
         "order-prefix",
@@ -569,7 +569,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
     });
 
     it("should use timestamp in payment intent ID for uniqueness", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       const before = Date.now();
       const result = await PaymentService.createPaymentIntent(
@@ -586,3 +586,4 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
     });
   });
 });
+

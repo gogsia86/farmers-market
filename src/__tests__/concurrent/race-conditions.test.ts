@@ -11,22 +11,22 @@
 
 import { database } from "@/lib/database";
 import { ProductService } from "@/lib/services/product.service";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, jest } from '@jest/globals';
 
-vi.mock("@/lib/database", () => ({
+jest.mock("@/lib/database", () => ({
   database: {
     product: {
-      findUnique: vi.fn(),
-      update: vi.fn(),
-      findMany: vi.fn(),
+      findUnique: jest.fn(),
+      update: jest.fn(),
+      findMany: jest.fn(),
     },
     farm: {
-      findUnique: vi.fn(),
+      findUnique: jest.fn(),
     },
     order: {
-      findUnique: vi.fn(),
-      update: vi.fn(),
-      updateMany: vi.fn(),
+      findUnique: jest.fn(),
+      update: jest.fn(),
+      updateMany: jest.fn(),
     },
   },
 }));
@@ -41,7 +41,7 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
       let availableQuantity = 50;
       let reservedQuantity = 0;
 
-      vi.mocked(database.product.findUnique).mockImplementation(async () => ({
+      jest.mocked(database.product.findUnique).mockImplementation(async () => ({
         id: productId,
         name: "Limited Product",
         inventory: {
@@ -54,7 +54,7 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
         farm: { ownerId: "farmer-123" },
       })) as any;
 
-      vi
+      jest
         .mocked(database.product.update)
         .mockImplementation(async ({ data }: any) => {
           // Simulate atomic update with check
@@ -96,7 +96,7 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
       const productId = "product-race-456";
       let currentQuantity = 10;
 
-      vi.mocked(database.product.findUnique).mockImplementation(async () => ({
+      jest.mocked(database.product.findUnique).mockImplementation(async () => ({
         id: productId,
         inventory: {
           quantity: currentQuantity,
@@ -106,7 +106,7 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
         farm: { ownerId: "farmer-123" },
       })) as any;
 
-      vi
+      jest
         .mocked(database.product.update)
         .mockImplementation(async ({ data }: any) => {
           const newQuantity = data.inventory?.quantity;
@@ -136,13 +136,13 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
     it("should handle multiple order status updates correctly", async () => {
       const orderId = "order-concurrent-789";
 
-      vi.mocked(database.order.findUnique).mockResolvedValue({
+      jest.mocked(database.order.findUnique).mockResolvedValue({
         id: orderId,
         status: "PENDING",
         paymentStatus: "PENDING",
       } as any);
 
-      vi.mocked(database.order.update).mockResolvedValue({
+      jest.mocked(database.order.update).mockResolvedValue({
         id: orderId,
         status: "CONFIRMED",
         paymentStatus: "COMPLETED",
@@ -178,7 +178,7 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
     it("should handle duplicate payment confirmations idempotently", async () => {
       const paymentIntentId = "pi_concurrent_123";
 
-      vi.mocked(database.order.updateMany).mockResolvedValue({
+      jest.mocked(database.order.updateMany).mockResolvedValue({
         count: 1,
       } as any);
 
@@ -205,13 +205,13 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
       const orderId = "order-payment-456";
       let paymentProcessed = false;
 
-      vi.mocked(database.order.findUnique).mockImplementation(async () => ({
+      jest.mocked(database.order.findUnique).mockImplementation(async () => ({
         id: orderId,
         paymentStatus: paymentProcessed ? "COMPLETED" : "PENDING",
         total: 10000,
       })) as any;
 
-      vi.mocked(database.order.update).mockImplementation(async () => {
+      jest.mocked(database.order.update).mockImplementation(async () => {
         if (paymentProcessed) {
           throw new Error("Payment already processed");
         }
@@ -247,7 +247,7 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
 
   describe("⚡ High Concurrency: Bulk Operations", () => {
     it("should handle 100 concurrent product fetches efficiently", async () => {
-      vi.mocked(database.product.findUnique).mockResolvedValue({
+      jest.mocked(database.product.findUnique).mockResolvedValue({
         id: "product-123",
         name: "Test Product",
         status: "AVAILABLE",
@@ -270,12 +270,12 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
     });
 
     it("should handle 50 concurrent batch updates", async () => {
-      vi.mocked(database.product.findUnique).mockResolvedValue({
+      jest.mocked(database.product.findUnique).mockResolvedValue({
         id: "product-123",
         farm: { ownerId: "user-123" },
       } as any);
 
-      vi.mocked(database.product.update).mockResolvedValue({
+      jest.mocked(database.product.update).mockResolvedValue({
         id: "product-123",
         isActive: true,
       } as any);
@@ -309,12 +309,12 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
       // In a real scenario, proper transaction ordering prevents this
       // For now, we test that operations can complete concurrently
 
-      vi.mocked(database.product.findUnique).mockResolvedValue({
+      jest.mocked(database.product.findUnique).mockResolvedValue({
         id: "product-deadlock-test",
         farm: { ownerId: "user-123" },
       } as any);
 
-      vi.mocked(database.product.update).mockImplementation(
+      jest.mocked(database.product.update).mockImplementation(
         async () =>
           new Promise((resolve) =>
             setTimeout(
@@ -368,3 +368,5 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
  * - Idempotency keys
  * - Event sourcing
  */
+
+

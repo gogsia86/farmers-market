@@ -3,7 +3,7 @@
  * Comprehensive test suite for rate limiting functionality
  */
 
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "@jest/globals";
 import {
   API_RATE_LIMIT,
   checkRateLimit,
@@ -269,13 +269,12 @@ describe("🛡️ Rate Limiting", () => {
     });
 
     it("should prioritize x-forwarded-for over other headers", () => {
-      const request = new Request("https://example.com", {
-        headers: {
-          "x-forwarded-for": "192.168.1.1",
-          "x-real-ip": "192.168.1.2",
-          "cf-connecting-ip": "192.168.1.3",
-        },
-      });
+      const headers = new Headers();
+      headers.set("x-forwarded-for", "192.168.1.1");
+      headers.set("x-real-ip", "192.168.1.2");
+      headers.set("cf-connecting-ip", "192.168.1.3");
+
+      const request = new Request("https://example.com", { headers });
 
       const ip = getClientIp(request);
       expect(ip).toBe("192.168.1.1");

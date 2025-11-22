@@ -1,101 +1,233 @@
 # Copilot working guide for this repo
 
-Purpose: give AI coding agents the minimum, specific context to be productive here. Keep changes aligned with these patterns and file locations.
+Purpose: Give AI coding agents the minimum, specific context to be productive in this agricultural e-commerce platform. Keep changes aligned with these patterns and file locations.
 
 ## Architecture at a glance
 
-- Framework: Next.js (App Router) + TypeScript (strict) + Prisma (PostgreSQL).
-- App routes: `src/app/` with route groups `(admin)`, `(customer)`, `(farmer)`, API handlers in `src/app/api/**`.
-- Service layer (business logic): `src/lib/services/**` (e.g., `product.service.ts`, `order.service.ts`). Prefer calling services from API routes and server components, not Prisma directly.
-- Data layer: Prisma Client singleton via `src/lib/database/index.ts` (alias `database`). Avoid creating new `PrismaClient` instances; do NOT import from `@prisma/client` in feature code.
-- Auth/RBAC: NextAuth v5 configured in `src/lib/auth/config.ts` with JWT sessions; admin-only via `src/middleware.ts` and route group `(admin)`. Admin login at `/admin-login`.
-- Domain: multi-tenant (farms as tenants), rich enums and relations in `prisma/schema.prisma` (PostgreSQL 15+).
-- Integrations: payments (`src/lib/payment/stripe.ts`, `paypal.ts`), caching/logging/monitoring under `src/lib/**`, AI utilities at `src/lib/ai/perplexity.ts`.
+**Framework**: Next.js 15 (App Router) + TypeScript (strict) + Prisma + PostgreSQL 15+
 
-## Conventions and imports
+**Key architectural decisions**:
 
-- **Path aliases** (tsconfig, next.config): use `@/…`
-  - Examples: `@/lib/services/product.service`, `@/lib/database`, `@/components/ui/Button`.
-- **Database access**: ALWAYS use `import { database } from "@/lib/database";` (canonical location: `src/lib/database/index.ts`)
-  - ✅ Correct: `import { database } from "@/lib/database";`
-  - ❌ Wrong: `new PrismaClient()` or importing from `@/lib/prisma`
-  - ℹ️ Note: Importing **types** from `@prisma/client` is OK (e.g., `import type { User, Farm } from "@prisma/client";`)
-- **Services** return typed data from `src/types/**` and encapsulate validation/slugging (see `ProductService.createProduct()` uses `generateSlug`, validation, and `database`).
-- **Testing** relies on Jest mocks in `jest.setup.js` (Next.js APIs and Prisma are mocked). Import `database` to benefit from mocks in tests.
-- **Keep Prisma usage server-only**. From UI/components, call API routes or server actions that delegate to services.
+- **Service layer first**: All business logic lives in `src/lib/services/**`. API routes and server components call services, NOT Prisma directly.
+- **Database singleton**: ONE canonical import location `src/lib/database` prevents connection pool issues.
+- **Multi-tenant**: Farms are tenants. Most data has `farmId` foreign key (see `prisma/schema.prisma`).
+- **Route-based RBAC**: NextAuth v5 + middleware auto-protects `/admin/*` routes (see `src/middleware.ts`).
+- **Agricultural domain**: This isn't generic e-commerce. Expect seasonal logic, biodynamic patterns, farm-specific validation.
 
-## Critical workflows
+**Route structure**:
 
-- Dev server (port 3001): `npm run dev` (or `npm run dev:turbo`).
-- Build: `npm run build` (Next.js 15; output: standalone). Analyze: `npm run build:analyze`.
-- Tests: `npm test` (Jest; config `jest.config.clean.js`). Watch: `npm run test:watch`. Coverage: `npm run test:coverage`.
-- Types/Lint/Format: `npm run type-check`, `npm run lint`, `npm run lint:fix`, `npm run format`.
-- Database (Prisma): `npm run db:migrate`, `npm run db:seed`, `npm run db:studio`. Postinstall runs `prisma generate`.
-- VS Code tasks exist for one-click runs (see workspace tasks for dev, tests, migrations, Prisma Studio).
+```
+src/app/
+├── (admin)/         # Admin-only (RBAC enforced in middleware)
+├── (customer)/      # Public shopping routes
+├── (farmer)/        # Farmer dashboard
+└── api/             # API routes (should delegate to services)
+```
 
-## Files to study before changes
+**Data flow**: Request → Middleware (auth/RBAC) → Route/API → Service (validation/business logic) → Database → Cache
 
-- Schema & roles: `prisma/schema.prisma` (UserRole, Farm*, Product*, Order*, Payment* enums and relations).
-- Auth & access control: `src/lib/auth/config.ts`, `src/middleware.ts` (ADMIN, SUPER_ADMIN, MODERATOR handling, `/admin` protection).
-- Example service patterns: `src/lib/services/product.service.ts` (validation → slugging → derived fields → `database.*`).
-- Testing setup: `jest.setup.js` (what’s mocked), `jest.config.clean.js` (roots, moduleNameMapper).
-- Next config and aliases: `next.config.mjs`, `tsconfig.json`.
+## Critical conventions (non-negotiable)
 
-## When adding features
+### Database access
 
-- Place domain logic in a service under `src/lib/services`. Expose small methods (validate → compute → `database` ops). Re-use types in `src/types/**` and helpers in `src/lib/utils/**`.
-- Access DB via `import { database } from "@/lib/database";` only. Do not instantiate `new PrismaClient()`.
-- For admin-only features, locate pages in `src/app/(admin)/…` and rely on existing middleware checks.
-- Add tests under `src/**/__tests__/**` or co-locate `*.test.ts(x)`; use RTL for React, mock external services; avoid real Prisma by importing `database`.
-
-## Environment & integrations
-
-- Required env (local): `DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, Stripe keys if payments, `PERPLEXITY_API_KEY` for `src/lib/ai/perplexity.ts` (optional).
-- Images/domains and headers configured in `next.config.mjs`. Port is 3001 by default.
-
-## Examples
-
-**Service layer:**
+**ALWAYS** use the canonical singleton:
 
 ```typescript
-// ✅ Correct pattern
-import { ProductService } from "@/lib/services/product.service";
+// ✅ CORRECT - only import location
 import { database } from "@/lib/database";
 
-export class ProductService {
-  static async createProduct(input: CreateProductInput) {
-    // Validation → Business logic → Database
-    const farm = await database.farm.findUnique({
-      where: { id: input.farmId },
-    });
-    // ...
-  }
+// ✅ Also OK - importing types
+import type { User, Farm } from "@prisma/client";
+
+// ❌ NEVER DO THIS - creates connection pool leaks
+import { PrismaClient } from "@prisma/client";
+const db = new PrismaClient();
+```
+
+**Why**: Prevents connection pool exhaustion. Tests mock the singleton (see `jest.setup.js`).
+
+### Service layer pattern
+
+See `src/lib/services/product.service.ts` for the canonical example:
+
+1. **Validate input** (ownership, permissions, data integrity)
+2. **Compute derived values** (slugs, timestamps, calculations)
+3. **Database operations** (using `database` singleton)
+4. **Return typed data** (from `src/types/**`)
+
+```typescript
+// Example from ProductService.createProduct()
+static async createProduct(productData: CreateProductInput, userId: string) {
+  // 1. Validate farm ownership
+  const farm = await database.farm.findUnique({
+    where: { id: productData.farmId },
+    select: { ownerId: true, status: true }
+  });
+
+  if (farm.ownerId !== userId) throw new Error("Unauthorized");
+
+  // 2. Generate unique slug (business logic)
+  const slug = await this.generateUniqueSlug(
+    generateSlug(productData.name),
+    productData.farmId
+  );
+
+  // 3. Database operation
+  return await database.product.create({ data: { ...productData, slug } });
 }
 ```
 
-**Database imports:**
+### Path aliases (from tsconfig.json)
+
+All code uses `@/` prefix:
 
 ```typescript
-// ✅ Correct - use canonical location
 import { database } from "@/lib/database";
-
-// ✅ Also correct - importing types
-import type { User, Farm, Product } from "@prisma/client";
-
-// ❌ Wrong - don't create new instances
-import { PrismaClient } from "@prisma/client";
-const db = new PrismaClient(); // DON'T DO THIS
+import { ProductService } from "@/lib/services/product.service";
+import { Button } from "@/components/ui/Button";
+import type { Farm } from "@/types";
 ```
 
-**Admin routes:**
+### Multi-language support
 
-- Place pages in `src/app/(admin)/…` - middleware automatically enforces RBAC
-- Example: `src/app/(admin)/farms/page.tsx` requires ADMIN/SUPER_ADMIN/MODERATOR role
+Middleware uses `next-intl` for Croatian/English. Non-admin routes get locale handling automatically.
 
-## References for deeper context
+## Critical workflows
 
-- High-level project README: `README.md` (quick start, structure).
-- Divine instruction set and patterns: `.github/instructions/README.md`.
-- Copilot daily context and shortcuts: `.copilot/README.md`.
+**Development**:
 
-> Keep changes small and typed, favor service-layer additions over ad-hoc DB calls, and align with RBAC + multi-tenant constraints in the Prisma schema.
+- `npm run dev` - Dev server on port 3000
+- `npm run dev:turbo` - Turbo mode (optimized for HP OMEN: 12 threads, 64GB RAM)
+- `npm run db:studio` - Prisma Studio GUI
+
+**Quality checks** (run before commits):
+
+- `npm run type-check` - TypeScript strict mode (must pass)
+- `npm test` - Jest (config: `jest.config.clean.js`, setup: `jest.setup.js`)
+- `npm run lint` - ESLint with Next.js config
+
+**Database** (uses Prisma):
+
+- `npm run db:migrate` - Apply schema changes
+- `npm run db:seed` - Seed with test data
+- `postinstall` - Auto-runs `prisma generate` after npm install
+
+**VS Code tasks**: 20+ tasks available (F1 → "Tasks: Run Task") for dev server, tests, profiling, database.
+
+## Files to read before making changes
+
+**Schema & domain logic**:
+
+- `prisma/schema.prisma` - 1,626 lines, defines ALL enums, relations, multi-tenant structure
+  - Key enums: `UserRole`, `FarmStatus`, `ProductStatus`, `OrderStatus`, `PaymentStatus`
+  - Multi-tenant pattern: most tables have `farmId` relation
+
+**Auth & permissions**:
+
+- `src/middleware.ts` - Auto-protects `/admin/*`, handles i18n, checks JWT tokens
+- Role hierarchy: SUPER_ADMIN > ADMIN > MODERATOR (see lines 90-114 for permission matrix)
+- Admin login: `/admin-login` (not `/admin/login` - middleware redirects)
+
+**Service examples**:
+
+- `src/lib/services/product.service.ts` - Full CRUD with validation/slugging (774 lines)
+- `src/lib/services/farm.service.ts` - Shows caching integration, "quantum farm" patterns
+- Pattern: validate → compute → database → cache
+
+**Test configuration**:
+
+- `jest.config.clean.js` - Module resolution, SWC transforms, path mapping
+- `jest.setup.js` - Mocks Next.js APIs (`next/navigation`, `next/headers`), mocks `database`
+- Test location: `src/**/__tests__/**/*.test.ts` or co-located `*.test.ts`
+
+**Environment**:
+
+- `.env.example` - Complete list of required/optional env vars
+- Required: `DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`
+- Optional: Stripe keys, `PERPLEXITY_API_KEY`, Redis, OpenTelemetry tracing
+
+## When adding features
+
+**Standard flow**:
+
+1. Update Prisma schema if needed (`prisma/schema.prisma`) → run `npm run db:migrate`
+2. Create/update service in `src/lib/services/` (validation → business logic → database)
+3. Create API route in `src/app/api/` that calls the service
+4. Create UI in appropriate route group (`(admin)`, `(customer)`, `(farmer)`)
+5. Add tests in `src/**/__tests__/`
+
+**Admin features**:
+
+- Pages: `src/app/(admin)/your-feature/page.tsx`
+- Middleware auto-enforces RBAC (ADMIN, SUPER_ADMIN, MODERATOR only)
+- Check role in code: `session.user.role` (from `await auth()`)
+
+**Service tests**:
+
+```typescript
+// Import mocked database singleton
+import { database } from "@/lib/database";
+
+// Jest mocks are auto-loaded from jest.setup.js
+describe("FarmService", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should create farm with unique slug", async () => {
+    (database.farm.create as jest.Mock).mockResolvedValue({
+      id: "farm-1",
+      slug: "my-farm",
+    });
+
+    const result = await FarmService.createFarm({ name: "My Farm" });
+    expect(result.slug).toBe("my-farm");
+  });
+});
+```
+
+## Domain-specific patterns (agricultural consciousness)
+
+This platform has unique agricultural patterns (see `.cursorrules` and `.github/instructions/02_AGRICULTURAL_QUANTUM_MASTERY.instructions.md`):
+
+**"Quantum" terminology**: Components/services use terms like `manifestQuantumFarm`, `QuantumFarm`, `Agricultural consciousness` - these are domain-specific abstractions for farm entities with rich metadata.
+
+**Seasonal awareness**: Some features check/enforce seasons (Spring/Summer/Fall/Winter) - see `useSeasonalConsciousness` hook.
+
+**Biodynamic validation**: Farm operations validate against agricultural best practices (crop rotation, soil health).
+
+**Component naming**: Components prefixed with `Quantum` or `Divine` follow specific patterns (e.g., `QuantumButton` includes performance tracking via `useComponentConsciousness` hook).
+
+When in doubt, follow existing patterns in `src/lib/services/farm.service.ts` or `src/components/`.
+
+## Performance optimizations (HP OMEN hardware)
+
+This codebase is optimized for:
+
+- RTX 2070 Max-Q GPU (8GB VRAM)
+- 64GB RAM
+- 12-thread CPU (Intel i7)
+
+**Relevant configs**:
+
+- `next.config.mjs`: Sets `cpus: 12`, `workerThreads: true`, parallel webpack builds
+- `package.json`: Turbo scripts use `NODE_OPTIONS=--max-old-space-size=32768`
+- Jest: `maxWorkers: "50%"` for parallel test execution
+
+**Profiling scripts**: `profiling_scripts/*.ps1` (NVIDIA Nsight GPU profiling) - use VS Code tasks "Profile: \*"
+
+## Common pitfalls
+
+1. **Don't create new PrismaClient** - always use `import { database } from "@/lib/database";`
+2. **Don't bypass services** - API routes should call services, not Prisma directly
+3. **Don't forget RBAC** - admin features must be in `(admin)` route group or check `session.user.role`
+4. **Don't ignore tests** - all services should have test coverage (use mocked `database`)
+5. **Don't hardcode ports** - dev server runs on 3001 (not 3000) per `package.json`
+
+## References for deep dives
+
+- **Divine instructions**: `.github/instructions/README.md` (16 comprehensive guides on architecture, patterns, testing)
+- **Project status**: `README.md` (current completion: 100/100, 250+ passing tests)
+- **Cursorrules**: `.cursorrules` (detailed coding standards, 3,500+ lines)
+
+> Keep changes aligned with service-layer pattern, multi-tenant constraints, and agricultural domain logic. When unsure, study existing services and tests.

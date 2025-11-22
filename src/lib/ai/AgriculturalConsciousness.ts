@@ -3,6 +3,7 @@
  * Divine consciousness for agricultural decision making
  */
 
+import { addAgriculturalEvent } from "@/lib/tracing/agricultural-tracer";
 import type {
   BiodynamicState,
   CropCycle,
@@ -49,10 +50,23 @@ export class AgriculturalConsciousness {
    */
   getCurrentSeason(): Season {
     const month = new Date().getMonth();
-    if (month >= 2 && month <= 4) return "SPRING";
-    if (month >= 5 && month <= 7) return "SUMMER";
-    if (month >= 8 && month <= 10) return "FALL";
-    return "WINTER";
+    const season =
+      month >= 2 && month <= 4
+        ? "SPRING"
+        : month >= 5 && month <= 7
+          ? "SUMMER"
+          : month >= 8 && month <= 10
+            ? "FALL"
+            : "WINTER";
+
+    // Trace seasonal calculation
+    addAgriculturalEvent("season.calculated", {
+      "season.current": season,
+      "season.month": month,
+      "season.year": new Date().getFullYear(),
+    });
+
+    return season;
   }
 
   /**
@@ -69,14 +83,31 @@ export class AgriculturalConsciousness {
     const e = 2 * (year % 19) + c + 11 * Math.floor((year % 19) / 4);
     const phase = ((e + month + day) % 30) / 30;
 
-    if (phase < 0.125) return "NEW";
-    if (phase < 0.25) return "WAXING_CRESCENT";
-    if (phase < 0.375) return "FIRST_QUARTER";
-    if (phase < 0.5) return "WAXING_GIBBOUS";
-    if (phase < 0.625) return "FULL";
-    if (phase < 0.75) return "WANING_GIBBOUS";
-    if (phase < 0.875) return "LAST_QUARTER";
-    return "WANING_CRESCENT";
+    const lunarPhase =
+      phase < 0.125
+        ? "NEW"
+        : phase < 0.25
+          ? "WAXING_CRESCENT"
+          : phase < 0.375
+            ? "FIRST_QUARTER"
+            : phase < 0.5
+              ? "WAXING_GIBBOUS"
+              : phase < 0.625
+                ? "FULL"
+                : phase < 0.75
+                  ? "WANING_GIBBOUS"
+                  : phase < 0.875
+                    ? "LAST_QUARTER"
+                    : "WANING_CRESCENT";
+
+    // Trace lunar calculation
+    addAgriculturalEvent("lunar.phase.calculated", {
+      "lunar.phase": lunarPhase,
+      "lunar.phase_value": phase,
+      "lunar.date": date.toISOString(),
+    });
+
+    return lunarPhase;
   }
 
   /**
@@ -121,7 +152,7 @@ export class AgriculturalConsciousness {
    */
   generateHarvestPrediction(
     cropType: CropType,
-    plantingDate: Date,
+    plantingDate: Date
   ): HarvestPrediction {
     // Simplified prediction logic
     const growthDays = 90; // Default growth period

@@ -1,0 +1,26 @@
+f8f202d36305f2a00c7eecedf2486881
+"use strict";
+/**
+ * NextAuth Mock
+ * Provides mock implementations for NextAuth functions
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.mockAuth = exports.mockSession = void 0;
+// Mock next-auth module
+jest.mock('next-auth', () => ({
+    default: jest.fn(),
+}));
+jest.mock('next-auth/next', () => ({
+    getServerSession: exports.mockAuth,
+}));
+exports.mockSession = {
+    user: {
+        id: 'test-user-id',
+        name: 'Test User',
+        email: 'test@example.com',
+        role: 'FARMER',
+    },
+    expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+};
+exports.mockAuth = jest.fn().mockResolvedValue(exports.mockSession);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiTTpcXFJlcG9cXEZhcm1lcnMgTWFya2V0IFBsYXRmb3JtIHdlYiBhbmQgYXBwXFx0ZXN0c1xcbW9ja3NcXG5leHQtYXV0aC5tb2NrLnRzIiwibWFwcGluZ3MiOiI7QUFBQTs7O0dBR0c7OztBQWNILHdCQUF3QjtBQUN4QixJQUFJLENBQUMsSUFBSSxDQUFDLFdBQVcsRUFBRSxHQUFHLEVBQUUsQ0FBQyxDQUFDO0lBQzFCLE9BQU8sRUFBRSxJQUFJLENBQUMsRUFBRSxFQUFFO0NBQ3JCLENBQUMsQ0FBQyxDQUFDO0FBRUosSUFBSSxDQUFDLElBQUksQ0FBQyxnQkFBZ0IsRUFBRSxHQUFHLEVBQUUsQ0FBQyxDQUFDO0lBQy9CLGdCQUFnQixFQUFFLGdCQUFRO0NBQzdCLENBQUMsQ0FBQyxDQUFDO0FBbkJTLFFBQUEsV0FBVyxHQUFHO0lBQ3ZCLElBQUksRUFBRTtRQUNGLEVBQUUsRUFBRSxjQUFjO1FBQ2xCLElBQUksRUFBRSxXQUFXO1FBQ2pCLEtBQUssRUFBRSxrQkFBa0I7UUFDekIsSUFBSSxFQUFFLFFBQWlCO0tBQzFCO0lBQ0QsT0FBTyxFQUFFLElBQUksSUFBSSxDQUFDLElBQUksQ0FBQyxHQUFHLEVBQUUsR0FBRyxFQUFFLEdBQUcsRUFBRSxHQUFHLEVBQUUsR0FBRyxJQUFJLENBQUMsQ0FBQyxXQUFXLEVBQUU7Q0FDcEUsQ0FBQztBQUVXLFFBQUEsUUFBUSxHQUFHLElBQUksQ0FBQyxFQUFFLEVBQUUsQ0FBQyxpQkFBaUIsQ0FBQyxtQkFBVyxDQUFDLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiTTpcXFJlcG9cXEZhcm1lcnMgTWFya2V0IFBsYXRmb3JtIHdlYiBhbmQgYXBwXFx0ZXN0c1xcbW9ja3NcXG5leHQtYXV0aC5tb2NrLnRzIl0sInNvdXJjZXNDb250ZW50IjpbIi8qKlxyXG4gKiBOZXh0QXV0aCBNb2NrXHJcbiAqIFByb3ZpZGVzIG1vY2sgaW1wbGVtZW50YXRpb25zIGZvciBOZXh0QXV0aCBmdW5jdGlvbnNcclxuICovXHJcblxyXG5leHBvcnQgY29uc3QgbW9ja1Nlc3Npb24gPSB7XHJcbiAgICB1c2VyOiB7XHJcbiAgICAgICAgaWQ6ICd0ZXN0LXVzZXItaWQnLFxyXG4gICAgICAgIG5hbWU6ICdUZXN0IFVzZXInLFxyXG4gICAgICAgIGVtYWlsOiAndGVzdEBleGFtcGxlLmNvbScsXHJcbiAgICAgICAgcm9sZTogJ0ZBUk1FUicgYXMgY29uc3QsXHJcbiAgICB9LFxyXG4gICAgZXhwaXJlczogbmV3IERhdGUoRGF0ZS5ub3coKSArIDI0ICogNjAgKiA2MCAqIDEwMDApLnRvSVNPU3RyaW5nKCksXHJcbn07XHJcblxyXG5leHBvcnQgY29uc3QgbW9ja0F1dGggPSBqZXN0LmZuKCkubW9ja1Jlc29sdmVkVmFsdWUobW9ja1Nlc3Npb24pO1xyXG5cclxuLy8gTW9jayBuZXh0LWF1dGggbW9kdWxlXHJcbmplc3QubW9jaygnbmV4dC1hdXRoJywgKCkgPT4gKHtcclxuICAgIGRlZmF1bHQ6IGplc3QuZm4oKSxcclxufSkpO1xyXG5cclxuamVzdC5tb2NrKCduZXh0LWF1dGgvbmV4dCcsICgpID0+ICh7XHJcbiAgICBnZXRTZXJ2ZXJTZXNzaW9uOiBtb2NrQXV0aCxcclxufSkpO1xyXG4iXSwidmVyc2lvbiI6M30=

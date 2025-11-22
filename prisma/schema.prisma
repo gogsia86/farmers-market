@@ -14,8 +14,10 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider     = "postgresql"
+  // Note: In Prisma 7, the DATABASE_URL is now configured in prisma.config.ts
+  // or passed directly to PrismaClient constructor
+  relationMode = "foreignKeys"
   // extensions = [postgis(schema: "public"), pgcrypto]
 }
 
@@ -279,12 +281,15 @@ model User {
   reviews         Review[]
   qualityIssues   QualityIssue[]
   messages        Message[]        @relation("MessageSender")
-  notifications   Notification[]
-  sessions        Session[]
-  accounts        Account[] // OAuth accounts
-  adminActions    AdminAction[]    @relation("AdminActions") // Actions performed by this admin
-  Address         Address[]
-  supportTickets  SupportTicket[] // Support tickets created by this user
+  notifications            Notification[]
+  sessions                 Session[]
+  accounts                 Account[] // OAuth accounts
+  adminActions             AdminAction[]           @relation("AdminActions") // Actions performed by this admin
+  Address                  Address[]
+  supportTickets           SupportTicket[] // Support tickets created by this user
+  notificationSettings     NotificationPreferences?
+  downloadLogs             DownloadLog[]
+  auditLogs                AuditLog[]
 
   @@index([email])
   @@index([role, status])
@@ -464,22 +469,27 @@ model Farm {
   updatedAt DateTime @updatedAt
 
   // Relations
-  teamMembers     FarmTeamMember[]
-  photos          FarmPhoto[]
-  certifications  FarmCertification[]
-  products        Product[]
-  orders          Order[]
-  reviews         Review[]
-  qualityIssues   QualityIssue[]
-  messages        Message[]
-  notifications   Notification[]
-  payouts         Payout[]
-  marketLocations MarketLocation[]
-  Inventory       Inventory[]
-  FarmRating      FarmRating?
-  DeliveryZone    DeliveryZone[]
-  DeliverySlot    DeliverySlot[]
-  PickupLocation  PickupLocation[]
+  teamMembers        FarmTeamMember[]
+  photos             FarmPhoto[]
+  certifications     FarmCertification[]
+  products           Product[]
+  orders             Order[]
+  reviews            Review[]
+  qualityIssues      QualityIssue[]
+  messages           Message[]
+  notifications      Notification[]
+  payouts            Payout[]
+  marketLocations    MarketLocation[]
+  Inventory          Inventory[]
+  FarmRating         FarmRating?
+  DeliveryZone       DeliveryZone[]
+  DeliverySlot       DeliverySlot[]
+  PickupLocation     PickupLocation[]
+  biodynamicCalendar BiodynamicCalendar[]
+  soilAnalyses       SoilAnalysis[]
+  weatherData        WeatherData[]
+  cropRotations      CropRotation[]
+  harvestSchedules   HarvestSchedule[]
 
   @@index([ownerId])
   @@index([slug])
@@ -587,6 +597,262 @@ model MarketLocation {
 }
 
 // ============================================================================
+// AGRICULTURAL CONSCIOUSNESS MODELS (Divine Quantum Patterns)
+// ============================================================================
+
+model BiodynamicCalendar {
+  id     String @id @default(cuid())
+  farmId String
+
+  // Lunar Consciousness
+  lunarPhase   LunarPhase
+  lunarDay     Int // 1-29 (lunar month)
+  moonRiseTime DateTime?
+  moonSetTime  DateTime?
+
+  // Seasonal Alignment
+  season           Season
+  astronomicalDate DateTime
+
+  // Biodynamic Recommendations
+  plantingFavorability Int @default(0) // 0-100 score
+  harvestFavorability  Int @default(0) // 0-100 score
+  soilWorkFavorability Int @default(0) // 0-100 score
+
+  // Planetary Influences
+  planetaryAlignment Json? // {mercury: "trine", venus: "conjunction", mars: "opposition"}
+
+  // Agricultural Activities
+  recommendedActivities String[] // ["PLANT_ROOT_CROPS", "HARVEST_LEAFY_GREENS"]
+  avoidActivities       String[] // ["TRANSPLANTING", "HEAVY_PRUNING"]
+
+  // Consciousness Level
+  agriculturalConsciousness Decimal @default(0.0) @db.Decimal(3, 2) // 0.00-1.00
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  @@unique([farmId, astronomicalDate])
+  @@index([farmId])
+  @@index([season])
+  @@index([lunarPhase])
+  @@map("biodynamic_calendar")
+}
+
+model SoilAnalysis {
+  id        String @id @default(cuid())
+  farmId    String
+  fieldName String @db.VarChar(255)
+
+  // Location
+  latitude  Decimal @db.Decimal(10, 8)
+  longitude Decimal @db.Decimal(11, 8)
+
+  // Soil Composition (pH and nutrients)
+  pH            Decimal @db.Decimal(4, 2) // 0.00-14.00
+  nitrogen      Decimal @db.Decimal(5, 2) // ppm or %
+  phosphorus    Decimal @db.Decimal(5, 2)
+  potassium     Decimal @db.Decimal(5, 2)
+  organicMatter Decimal @db.Decimal(5, 2) // %
+
+  // Soil Health Metrics
+  soilType   SoilType
+  drainage   DrainageLevel
+  compaction CompactionLevel
+
+  // Microbiome Consciousness
+  microbialActivity Decimal  @default(0.0) @db.Decimal(3, 2) // 0.00-1.00
+  earthwormCount    Int?
+  fungalPresence    Decimal? @db.Decimal(3, 2)
+
+  // Quantum Soil Memory
+  previousCrops Json? // [{crop: "TOMATOES", year: 2024, yield: "HIGH"}]
+  soilHistory   Json? // Historical data points
+
+  // Recommendations
+  amendments       String[] // ["COMPOST", "LIME", "SULFUR"]
+  recommendedCrops String[] // Crops suitable for this soil
+
+  // Analysis Metadata
+  analyzedBy       String?   @db.VarChar(255) // Lab or person
+  analysisDate     DateTime  @default(now())
+  nextAnalysisDate DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  @@index([farmId])
+  @@index([fieldName])
+  @@index([analysisDate])
+  @@map("soil_analyses")
+}
+
+model WeatherData {
+  id     String @id @default(cuid())
+  farmId String
+
+  // Temporal Context
+  recordedAt DateTime @default(now())
+
+  // Location
+  latitude  Decimal @db.Decimal(10, 8)
+  longitude Decimal @db.Decimal(11, 8)
+
+  // Temperature (Celsius)
+  temperature Decimal  @db.Decimal(5, 2)
+  feelsLike   Decimal? @db.Decimal(5, 2)
+  tempMin     Decimal? @db.Decimal(5, 2)
+  tempMax     Decimal? @db.Decimal(5, 2)
+
+  // Precipitation
+  humidity          Int // 0-100 %
+  precipitation     Decimal? @db.Decimal(6, 2) // mm
+  precipitationProb Int? // 0-100 %
+
+  // Wind
+  windSpeed     Decimal? @db.Decimal(5, 2) // km/h
+  windDirection Int? // 0-360 degrees
+
+  // Conditions
+  condition  WeatherCondition
+  cloudCover Int? // 0-100 %
+  uvIndex    Int? // 0-11+
+  visibility Decimal?         @db.Decimal(5, 2) // km
+
+  // Agricultural Impact
+  growingDegreeDay   Decimal? @db.Decimal(5, 2)
+  evapotranspiration Decimal? @db.Decimal(5, 2)
+  soilMoisture       Decimal? @db.Decimal(3, 2) // 0.00-1.00
+
+  // Frost & Extremes
+  frostRisk      Boolean @default(false)
+  heatStressRisk Boolean @default(false)
+
+  // Data Source
+  source String @default("API") @db.VarChar(50) // "API", "MANUAL", "SENSOR"
+
+  createdAt DateTime @default(now())
+
+  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  @@index([farmId])
+  @@index([recordedAt])
+  @@map("weather_data")
+}
+
+model CropRotation {
+  id        String @id @default(cuid())
+  farmId    String
+  fieldName String @db.VarChar(255)
+
+  // Rotation Plan
+  rotationCycle Int // Years in full cycle
+  currentYear   Int // Position in cycle (1-based)
+
+  // Current Crop
+  currentCrop       String     @db.VarChar(100)
+  currentCropFamily CropFamily
+  plantedAt         DateTime
+  expectedHarvest   DateTime?
+
+  // Rotation History
+  cropHistory Json // [{year: 2023, crop: "CORN", family: "GRASSES", yield: "HIGH"}]
+
+  // Planned Future Rotations
+  plannedRotations Json // [{year: 2025, crop: "BEANS", family: "LEGUMES", purpose: "NITROGEN_FIXING"}]
+
+  // Soil Regeneration
+  coverCropPlanned Boolean @default(false)
+  coverCropType    String? @db.VarChar(100)
+  restPeriod       Boolean @default(false)
+
+  // Biodynamic Compliance
+  followsBiodynamic Boolean @default(false)
+  biodynamicScore   Decimal @default(0.0) @db.Decimal(3, 2)
+
+  // Recommendations
+  nextRecommendedCrop String?  @db.VarChar(100)
+  soilBenefits        String[] // ["NITROGEN_FIXING", "PEST_BREAK", "STRUCTURE_IMPROVEMENT"]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  @@unique([farmId, fieldName])
+  @@index([farmId])
+  @@index([currentCropFamily])
+  @@map("crop_rotations")
+}
+
+model HarvestSchedule {
+  id        String  @id @default(cuid())
+  farmId    String
+  productId String?
+
+  // Crop Information
+  cropName    String  @db.VarChar(255)
+  cropVariety String? @db.VarChar(255)
+  fieldName   String  @db.VarChar(255)
+
+  // Planting Details
+  plantedAt       DateTime
+  plantedQuantity Decimal? @db.Decimal(10, 2)
+  plantedUnit     String?  @db.VarChar(50)
+
+  // Harvest Timing
+  expectedHarvestStart DateTime
+  expectedHarvestEnd   DateTime?
+  actualHarvestStart   DateTime?
+  actualHarvestEnd     DateTime?
+
+  // Harvest Quantum Predictions
+  harvestConfidence  Decimal  @default(0.5) @db.Decimal(3, 2) // 0.00-1.00
+  predictedYield     Decimal? @db.Decimal(10, 2)
+  predictedYieldUnit String?  @db.VarChar(50)
+
+  // Actual Results
+  actualYield     Decimal?        @db.Decimal(10, 2)
+  actualYieldUnit String?         @db.VarChar(50)
+  harvestQuality  HarvestQuality?
+
+  // Lunar & Seasonal Alignment
+  optimalLunarPhase LunarPhase?
+  seasonalAlignment Season
+  biodynamicTiming  Boolean     @default(false)
+
+  // Labor Planning
+  estimatedLaborHours Decimal? @db.Decimal(6, 2)
+  actualLaborHours    Decimal? @db.Decimal(6, 2)
+  laborersNeeded      Int?
+
+  // Status
+  status HarvestStatus @default(PLANNED)
+
+  // Notes & Observations
+  notes      String?  @db.Text
+  challenges String[] // ["PEST_PRESSURE", "DROUGHT", "EARLY_FROST"]
+  successes  String[] // ["GREAT_YIELD", "EXCELLENT_QUALITY"]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  farm    Farm     @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([farmId])
+  @@index([productId])
+  @@index([status])
+  @@index([expectedHarvestStart])
+  @@index([seasonalAlignment])
+  @@map("harvest_schedules")
+}
+
+// ============================================================================
 // PRODUCT CATALOG (FR-003, FR-004)
 // ============================================================================
 
@@ -655,13 +921,14 @@ model Product {
   updatedAt DateTime @updatedAt
 
   // Relations
-  farm          Farm            @relation(fields: [farmId], references: [id], onDelete: Cascade)
-  cartItems     CartItem[]
-  orderItems    OrderItem[]
-  reviews       Review[]
-  inventoryLogs InventoryLog[]
-  SeasonalCycle SeasonalCycle[]
-  Inventory     Inventory[]
+  farm             Farm              @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  cartItems        CartItem[]
+  orderItems       OrderItem[]
+  reviews          Review[]
+  inventoryLogs    InventoryLog[]
+  SeasonalCycle    SeasonalCycle[]
+  Inventory        Inventory[]
+  harvestSchedules HarvestSchedule[]
 
   @@unique([farmId, slug])
   @@index([farmId])
@@ -1162,6 +1429,91 @@ enum GrowthPhase {
 }
 
 // ============================================================================
+// AGRICULTURAL CONSCIOUSNESS ENUMS
+// ============================================================================
+
+enum LunarPhase {
+  NEW_MOON
+  WAXING_CRESCENT
+  FIRST_QUARTER
+  WAXING_GIBBOUS
+  FULL_MOON
+  WANING_GIBBOUS
+  LAST_QUARTER
+  WANING_CRESCENT
+}
+
+enum SoilType {
+  CLAY
+  SANDY
+  LOAM
+  SILT
+  PEATY
+  CHALKY
+  MIXED
+}
+
+enum DrainageLevel {
+  EXCELLENT
+  GOOD
+  MODERATE
+  POOR
+  VERY_POOR
+}
+
+enum CompactionLevel {
+  NONE
+  LOW
+  MODERATE
+  HIGH
+  SEVERE
+}
+
+enum WeatherCondition {
+  CLEAR
+  PARTLY_CLOUDY
+  CLOUDY
+  OVERCAST
+  LIGHT_RAIN
+  RAIN
+  HEAVY_RAIN
+  THUNDERSTORM
+  SNOW
+  SLEET
+  FOG
+  WINDY
+}
+
+enum CropFamily {
+  BRASSICAS // Cabbage, broccoli, cauliflower
+  LEGUMES // Beans, peas, lentils
+  NIGHTSHADES // Tomatoes, peppers, potatoes
+  CUCURBITS // Cucumbers, squash, melons
+  ALLIUMS // Onions, garlic, leeks
+  GRASSES // Corn, wheat, rice
+  UMBELLIFERS // Carrots, parsley, celery
+  LEAFY_GREENS // Lettuce, spinach, kale
+  ROOT_VEGETABLES // Beets, turnips, radishes
+  OTHER
+}
+
+enum HarvestQuality {
+  EXCELLENT
+  GOOD
+  FAIR
+  POOR
+  FAILED
+}
+
+enum HarvestStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  DELAYED
+  CANCELLED
+}
+
+// ============================================================================
 // SHIPPING & DELIVERY (FR-014)
 // ============================================================================
 
@@ -1615,6 +1967,95 @@ model SupportTicketFile {
   @@index([ticketId])
   @@index([uploadedBy])
   @@map("support_ticket_files")
+}
+
+// ============================================================================
+// NOTIFICATION PREFERENCES
+// ============================================================================
+
+model NotificationPreferences {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Email notifications
+  emailOrders     Boolean @default(true)
+  emailReviews    Boolean @default(true)
+  emailPromotions Boolean @default(false)
+  emailNewsletter Boolean @default(false)
+
+  // In-app notifications
+  inAppOrders   Boolean @default(true)
+  inAppReviews  Boolean @default(true)
+  inAppMessages Boolean @default(true)
+
+  // Push notifications
+  pushOrders     Boolean @default(true)
+  pushReviews    Boolean @default(true)
+  pushPromotions Boolean @default(false)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("notification_preferences")
+}
+
+// ============================================================================
+// DOWNLOAD TRACKING
+// ============================================================================
+
+model DownloadLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  resourceId String   @db.VarChar(255)
+  ipAddress  String?  @db.VarChar(45)
+  userAgent  String?  @db.Text
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([resourceId])
+  @@index([createdAt])
+  @@map("download_logs")
+}
+
+// ============================================================================
+// AUDIT TRAIL
+// ============================================================================
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  LOGIN
+  LOGOUT
+  PERMISSION_CHANGE
+  STATUS_CHANGE
+  APPROVE
+  REJECT
+  SUSPEND
+  RESTORE
+}
+
+model AuditLog {
+  id         String      @id @default(cuid())
+  userId     String?
+  user       User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action     AuditAction
+  entityType String      @db.VarChar(100)
+  entityId   String      @db.VarChar(255)
+  changes    Json? // Store before/after state as JSON
+  ipAddress  String?     @db.VarChar(45)
+  userAgent  String?     @db.Text
+  createdAt  DateTime    @default(now())
+
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
 }
 
 // ============================================================================

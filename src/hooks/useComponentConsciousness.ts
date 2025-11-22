@@ -167,8 +167,11 @@ export function useComponentConsciousness(
   /**
    * Start performance measurement for an operation
    */
+  const measurements = useRef(new Map<string, PerformanceMeasurement>());
+  const errors = useRef<Error[]>([]);
+
   const startMeasurement = useCallback(
-    (operationName: string): PerformanceMeasurement => {
+    (operationName: string) => {
       const startTime = performance.now();
 
       return {
@@ -177,14 +180,15 @@ export function useComponentConsciousness(
         success: () => {
           const duration = performance.now() - startTime;
 
-          if (process.env.NODE_ENV === "development") {
-            console.debug(
-              `✅ ${componentName}.${operationName}:`,
-              `${duration.toFixed(2)}ms`
-            );
-          }
+          // Store internally
+          measurements.current.set(operationName, {
+            name: operationName,
+            duration,
+            success: true,
+            timestamp: new Date(),
+          });
 
-          // Track in performance monitoring (if available)
+          // Record in global tracker if available
           if (globalThis.__DIVINE_PERFORMANCE__) {
             globalThis.__DIVINE_PERFORMANCE__.recordMetric({
               component: componentName,
@@ -197,24 +201,24 @@ export function useComponentConsciousness(
         },
         failure: (error: unknown) => {
           const duration = performance.now() - startTime;
+          const err = error instanceof Error ? error : new Error(String(error));
+          errors.current.push(err);
+
+          // Increment error count
           metricsRef.current.errorCount += 1;
 
-          let errorMessage: string;
-          if (error instanceof Error) {
-            errorMessage = error.message;
-          } else if (typeof error === "string") {
-            errorMessage = error;
-          } else {
-            errorMessage = String(error);
-          }
+          const errorMessage = err.message;
 
-          console.error(
-            `❌ ${componentName}.${operationName} failed:`,
-            error,
-            `after ${duration.toFixed(2)}ms`
-          );
+          // Store internally
+          measurements.current.set(operationName, {
+            name: operationName,
+            duration,
+            success: false,
+            timestamp: new Date(),
+            error: err,
+          });
 
-          // Track error in monitoring (if available)
+          // Record in global tracker if available
           if (globalThis.__DIVINE_PERFORMANCE__) {
             globalThis.__DIVINE_PERFORMANCE__.recordMetric({
               component: componentName,
@@ -229,9 +233,7 @@ export function useComponentConsciousness(
       };
     },
     [componentName]
-  );
-
-  /**
+  ); /**
    * Track custom events (clicks, interactions, etc.)
    */
   const trackEvent = useCallback(

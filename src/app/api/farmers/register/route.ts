@@ -1,4 +1,5 @@
 import { database } from "@/lib/database";
+import { GeocodingService } from "@/lib/services/geocoding.service";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -70,7 +71,7 @@ export async function POST(request: NextRequest) {
     if (existingFarmer) {
       return NextResponse.json(
         { error: "Email already registered" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -90,6 +91,14 @@ export async function POST(request: NextRequest) {
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
 
+    // Geocode address to get coordinates
+    const geocodeResult = await GeocodingService.geocodeAddress(
+      validatedData.address,
+      validatedData.city,
+      validatedData.state,
+      validatedData.zipCode,
+    );
+
     const farm = await database.farm.create({
       data: {
         name: validatedData.farmName,
@@ -101,8 +110,8 @@ export async function POST(request: NextRequest) {
         city: validatedData.city,
         state: validatedData.state,
         zipCode: validatedData.zipCode,
-        latitude: 0, // TODO: Geocode address to get coordinates
-        longitude: 0, // TODO: Geocode address to get coordinates
+        latitude: geocodeResult.latitude,
+        longitude: geocodeResult.longitude,
         website: validatedData.website || null,
         taxId: validatedData.taxId,
         status: "PENDING",
@@ -124,7 +133,7 @@ export async function POST(request: NextRequest) {
           status: farm.status,
         },
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -133,14 +142,14 @@ export async function POST(request: NextRequest) {
           error: "Validation failed",
           details: error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.error("Farmer registration error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -153,7 +162,7 @@ export async function GET(request: NextRequest) {
     if (!email) {
       return NextResponse.json(
         { error: "Email parameter required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -190,7 +199,7 @@ export async function GET(request: NextRequest) {
     console.error("Get farmer error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -3,17 +3,17 @@
  * Comprehensive tests for agricultural-aware caching
  */
 
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "@jest/globals";
 import { AgriculturalCache } from "../agricultural-cache";
 import * as cacheModule from "../index";
 
 // Mock the cache module
-vi.mock("../index", () => ({
+jest.mock("../index", () => ({
   cache: {
-    set: vi.fn(),
-    get: vi.fn(),
-    del: vi.fn(),
-    delPattern: vi.fn(),
+    set: jest.fn(),
+    get: jest.fn(),
+    del: jest.fn(),
+    delPattern: jest.fn(),
   },
   CacheKeys: {
     farm: (id: string) => `farm:${id}`,
@@ -24,7 +24,7 @@ vi.mock("../index", () => ({
 
 describe("🌾 Agricultural Cache - Seasonal Awareness", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
   });
 
   describe("🏡 Farm Caching", () => {
@@ -41,7 +41,7 @@ describe("🌾 Agricultural Cache - Seasonal Awareness", () => {
 
     it("should get cached farm data", async () => {
       const farmData = { id: "farm-1", name: "Green Valley Farm" };
-      vi.mocked(cacheModule.cache.get).mockResolvedValue(farmData);
+      jest.mocked(cacheModule.cache.get).mockResolvedValue(farmData);
 
       const result = await AgriculturalCache.getFarm("farm-1");
 
@@ -50,7 +50,7 @@ describe("🌾 Agricultural Cache - Seasonal Awareness", () => {
     });
 
     it("should return null for cache miss", async () => {
-      vi.mocked(cacheModule.cache.get).mockResolvedValue(null);
+      jest.mocked(cacheModule.cache.get).mockResolvedValue(null);
 
       const result = await AgriculturalCache.getFarm("nonexistent");
 
@@ -93,7 +93,7 @@ describe("🌾 Agricultural Cache - Seasonal Awareness", () => {
 
     it("should get cached product data", async () => {
       const productData = { id: "prod-1", name: "Organic Tomatoes" };
-      vi.mocked(cacheModule.cache.get).mockResolvedValue(productData);
+      jest.mocked(cacheModule.cache.get).mockResolvedValue(productData);
 
       const result = await AgriculturalCache.getProduct("prod-1");
 
@@ -102,7 +102,7 @@ describe("🌾 Agricultural Cache - Seasonal Awareness", () => {
     });
 
     it("should return null for product cache miss", async () => {
-      vi.mocked(cacheModule.cache.get).mockResolvedValue(null);
+      jest.mocked(cacheModule.cache.get).mockResolvedValue(null);
 
       const result = await AgriculturalCache.getProduct("nonexistent");
 
@@ -185,7 +185,7 @@ describe("🌾 Agricultural Cache - Seasonal Awareness", () => {
 
     it("should get cached seasonal data", async () => {
       const seasonalData = { season: "SPRING", data: "test" };
-      vi.mocked(cacheModule.cache.get).mockResolvedValue(seasonalData);
+      jest.mocked(cacheModule.cache.get).mockResolvedValue(seasonalData);
 
       const result = await AgriculturalCache.getSeasonalData("SPRING");
 
@@ -194,7 +194,7 @@ describe("🌾 Agricultural Cache - Seasonal Awareness", () => {
     });
 
     it("should return null for seasonal cache miss", async () => {
-      vi.mocked(cacheModule.cache.get).mockResolvedValue(null);
+      jest.mocked(cacheModule.cache.get).mockResolvedValue(null);
 
       const result = await AgriculturalCache.getSeasonalData("SUMMER");
 
@@ -226,7 +226,7 @@ describe("🌾 Agricultural Cache - Seasonal Awareness", () => {
       expect(cacheModule.cache.set).toHaveBeenCalled();
 
       // Get
-      vi.mocked(cacheModule.cache.get).mockResolvedValue(farmData);
+      jest.mocked(cacheModule.cache.get).mockResolvedValue(farmData);
       const result = await AgriculturalCache.getFarm("farm-1");
       expect(result).toEqual(farmData);
 
@@ -247,7 +247,7 @@ describe("🌾 Agricultural Cache - Seasonal Awareness", () => {
       expect(cacheModule.cache.set).toHaveBeenCalled();
 
       // Get
-      vi.mocked(cacheModule.cache.get).mockResolvedValue(productData);
+      jest.mocked(cacheModule.cache.get).mockResolvedValue(productData);
       const result = await AgriculturalCache.getProduct("prod-1");
       expect(result).toEqual(productData);
 
@@ -301,7 +301,7 @@ describe("🌾 Agricultural Cache - Seasonal Awareness", () => {
     });
 
     it("should handle null returns gracefully", async () => {
-      vi.mocked(cacheModule.cache.get).mockResolvedValue(null);
+      jest.mocked(cacheModule.cache.get).mockResolvedValue(null);
 
       const farmResult = await AgriculturalCache.getFarm("missing");
       const productResult = await AgriculturalCache.getProduct("missing");
@@ -340,3 +340,4 @@ describe("🌾 Agricultural Cache - Seasonal Awareness", () => {
     });
   });
 });
+

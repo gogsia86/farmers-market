@@ -1,0 +1,2373 @@
+npm info using npm@10.9.4
+npm info using node@v22.21.0
+
+> farmers-market@1.0.0 test
+> cross-env NODE_OPTIONS='--no-warnings' jest
+
+PASS src/lib/services/__tests__/product.service.test.ts
+  ≡ƒ¢Æ Product Service - Divine Product Operations
+    ≡ƒÄ» createProduct
+      ΓêÜ should create product with valid data (12 ms)
+      ΓêÜ should throw error if farm not found (37 ms)
+      ΓêÜ should throw error for unauthorized user (2 ms)
+      ΓêÜ should throw error for inactive farm (2 ms)
+      ΓêÜ should validate product name length (too short) (2 ms)
+      ΓêÜ should validate product name length (too long) (1 ms)
+      ΓêÜ should validate price is positive (2 ms)
+      ΓêÜ should validate inventory quantity is non-negative (1 ms)
+      ΓêÜ should validate reserved quantity does not exceed total (4 ms)
+      ΓêÜ should generate unique slug when duplicate exists (1 ms)
+      ΓêÜ should calculate available quantity correctly (1 ms)
+      ΓêÜ should set isLowStock correctly
+      ΓêÜ should extract primary photo URL
+    ≡ƒôû getProductById
+      ΓêÜ should get product by ID with farm (1 ms)
+      ΓêÜ should get product by ID without farm (1 ms)
+      ΓêÜ should return null if product not found (1 ms)
+    ≡ƒöù getProductBySlug
+      ΓêÜ should get product by farm and product slug (2 ms)
+      ΓêÜ should return null if product not found by slug (1 ms)
+    ≡ƒôï listProducts
+      ΓêÜ should list products with default pagination (2 ms)
+      ΓêÜ should filter products by farm ID (1 ms)
+      ΓêÜ should filter products by category (1 ms)
+      ΓêÜ should filter products by status (1 ms)
+      ΓêÜ should filter products in stock (1 ms)
+      ΓêÜ should filter featured products
+      ΓêÜ should search products by name
+      ΓêÜ should handle pagination correctly (1 ms)
+    Γ£Å∩╕Å updateProduct
+      ΓêÜ should update product successfully (1 ms)
+      ΓêÜ should throw error if product not found (1 ms)
+      ΓêÜ should throw error for unauthorized user
+      ΓêÜ should regenerate slug if name changes (1 ms)
+      ΓêÜ should recalculate inventory when updated (2 ms)
+      ΓêÜ should update primary photo URL if images change (1 ms)
+    ≡ƒùæ∩╕Å deleteProduct
+      ΓêÜ should soft delete product successfully (1 ms)
+      ΓêÜ should throw error if product not found (1 ms)
+      ΓêÜ should throw error for unauthorized user (1 ms)
+    ≡ƒôª updateInventory
+      ΓêÜ should update inventory successfully (1 ms)
+      ΓêÜ should calculate available quantity
+      ΓêÜ should set status to OUT_OF_STOCK when quantity is zero (1 ms)
+      ΓêÜ should set status to AVAILABLE when quantity is positive (1 ms)
+      ΓêÜ should update lastRestocked timestamp (1 ms)
+    ≡ƒöì searchProducts
+      ΓêÜ should search products by name (1 ms)
+      ΓêÜ should limit search results
+      ΓêÜ should only return available products (1 ms)
+    ≡ƒöä batchUpdateProducts
+      ΓêÜ should update multiple products successfully
+      ΓêÜ should handle partial failures (1 ms)
+      ΓêÜ should return total count
+    ≡ƒôè getProductStats
+      ΓêÜ should return product statistics
+
+FAIL src/components/__tests__/SeasonalProductCatalog.test.tsx
+  SeasonalProductCatalog
+    Product Manifestation Reality
+      ├ù manifests seasonal products with agricultural consciousness (6 ms)
+      ├ù respects seasonal boundaries and filters appropriately (1 ms)
+      ├ù handles empty product catalog with divine grace (1 ms)
+    Product Interaction Quantum Mechanics
+      ├ù allows users to view product details (4 ms)
+      ├ù supports adding products to cart with agricultural intent (1 ms)
+    Agricultural Consciousness Preservation
+      ├ù maintains biodynamic awareness during rendering
+      ├ù displays seasonal consciousness indicators
+    Performance Quantum Optimization
+      ├ù efficiently renders large product catalogs (1 ms)
+      ├ù implements virtualization for optimal performance (2 ms)
+
+  ΓùÅ SeasonalProductCatalog ΓÇ║ Product Manifestation Reality ΓÇ║ manifests seasonal products with agricultural consciousness
+
+    ReferenceError: React is not defined
+
+      47 |       // Act
+      48 |       render(
+    > 49 |         <SeasonalProductCatalog products={mockProducts} season="SPRING" />
+         |         ^
+      50 |       );
+      51 |
+      52 |       // Assert - Spring products should be visible
+
+      at Object.<anonymous> (src/components/__tests__/SeasonalProductCatalog.test.tsx:49:9)
+
+  ΓùÅ SeasonalProductCatalog ΓÇ║ Product Manifestation Reality ΓÇ║ respects seasonal boundaries and filters appropriately
+
+    ReferenceError: React is not defined
+
+      81 |       // Act
+      82 |       render(
+    > 83 |         <SeasonalProductCatalog products={mockProducts} season="SPRING" />
+         |         ^
+      84 |       );
+      85 |
+      86 |       // Assert - Only spring products should be visible
+
+      at Object.<anonymous> (src/components/__tests__/SeasonalProductCatalog.test.tsx:83:9)
+
+  ΓùÅ SeasonalProductCatalog ΓÇ║ Product Manifestation Reality ΓÇ║ handles empty product catalog with divine grace
+
+    ReferenceError: React is not defined
+
+      91 |     it("handles empty product catalog with divine grace", async () => {
+      92 |       // Arrange - Empty product array
+    > 93 |       render(<SeasonalProductCatalog products={[]} season="SPRING" />);
+         |              ^
+      94 |
+      95 |       // Assert - Should show empty state message
+      96 |       await waitFor(() => {
+
+      at Object.<anonymous> (src/components/__tests__/SeasonalProductCatalog.test.tsx:93:14)
+
+  ΓùÅ SeasonalProductCatalog ΓÇ║ Product Interaction Quantum Mechanics ΓÇ║ allows users to view product details
+
+    ReferenceError: React is not defined
+
+      121 |       // Act
+      122 |       render(
+    > 123 |         <SeasonalProductCatalog
+          |         ^
+      124 |           products={mockProducts}
+      125 |           season="SPRING"
+      126 |           onProductClick={mockOnProductClick}
+
+      at Object.<anonymous> (src/components/__tests__/SeasonalProductCatalog.test.tsx:123:9)
+
+  ΓùÅ SeasonalProductCatalog ΓÇ║ Product Interaction Quantum Mechanics ΓÇ║ supports adding products to cart with agricultural intent
+
+    ReferenceError: React is not defined
+
+      153 |       // Act
+      154 |       render(
+    > 155 |         <SeasonalProductCatalog
+          |         ^
+      156 |           products={mockProducts}
+      157 |           season="SUMMER"
+      158 |           onAddToCart={mockOnAddToCart}
+
+      at Object.<anonymous> (src/components/__tests__/SeasonalProductCatalog.test.tsx:155:9)
+
+  ΓùÅ SeasonalProductCatalog ΓÇ║ Agricultural Consciousness Preservation ΓÇ║ maintains biodynamic awareness during rendering
+
+    ReferenceError: React is not defined
+
+      186 |       // Act
+      187 |       render(
+    > 188 |         <SeasonalProductCatalog products={mockProducts} season="SPRING" />
+          |         ^
+      189 |       );
+      190 |
+      191 |       // Assert - Biodynamic badge should be visible
+
+      at Object.<anonymous> (src/components/__tests__/SeasonalProductCatalog.test.tsx:188:9)
+
+  ΓùÅ SeasonalProductCatalog ΓÇ║ Agricultural Consciousness Preservation ΓÇ║ displays seasonal consciousness indicators
+
+    ReferenceError: React is not defined
+
+      213 |       // Act
+      214 |       render(
+    > 215 |         <SeasonalProductCatalog products={mockProducts} season="SPRING" />
+          |         ^
+      216 |       );
+      217 |
+      218 |       // Assert - Harvest date should be displayed
+
+      at Object.<anonymous> (src/components/__tests__/SeasonalProductCatalog.test.tsx:215:9)
+
+  ΓùÅ SeasonalProductCatalog ΓÇ║ Performance Quantum Optimization ΓÇ║ efficiently renders large product catalogs
+
+    ReferenceError: React is not defined
+
+      239 |       // Act
+      240 |       render(
+    > 241 |         <SeasonalProductCatalog products={largeProductList} season="SPRING" />
+          |         ^
+      242 |       );
+      243 |
+      244 |       const renderTime = performance.now() - startTime;
+
+      at Object.<anonymous> (src/components/__tests__/SeasonalProductCatalog.test.tsx:241:9)
+
+  ΓùÅ SeasonalProductCatalog ΓÇ║ Performance Quantum Optimization ΓÇ║ implements virtualization for optimal performance
+
+    ReferenceError: React is not defined
+
+      261 |       // Act
+      262 |       const { container } = render(
+    > 263 |         <SeasonalProductCatalog
+          |         ^
+      264 |           products={manyProducts}
+      265 |           season="SPRING"
+      266 |           virtualized
+
+      at Object.<anonymous> (src/components/__tests__/SeasonalProductCatalog.test.tsx:263:9)
+
+  console.log
+    Γ£¿ Divine Performance Tracking initialized
+
+      at initializeDivinePerformanceTracking (src/hooks/useComponentConsciousness.ts:353:11)
+
+  console.log
+    Γ£¿ Divine Performance Tracking initialized
+
+      at initializeDivinePerformanceTracking (src/hooks/useComponentConsciousness.ts:353:11)
+
+  console.log
+    Γ£¿ Divine Performance Tracking initialized
+
+      at initializeDivinePerformanceTracking (src/hooks/useComponentConsciousness.ts:353:11)
+
+  console.log
+    Payment confirmed for intent: pi_123456789
+
+      at Function.confirmPayment (src/lib/services/payment.service.ts:49:13)
+
+  console.log
+    Γ£¿ Divine Performance Tracking initialized
+
+      at initializeDivinePerformanceTracking (src/hooks/useComponentConsciousness.ts:353:11)
+
+  console.log
+    Payment confirmed for intent: pi_test_completed
+
+      at Function.confirmPayment (src/lib/services/payment.service.ts:49:13)
+
+  console.log
+    Payment confirmed for intent: pi_test_confirmed
+
+      at Function.confirmPayment (src/lib/services/payment.service.ts:49:13)
+
+  console.log
+    Payment confirmed for intent: pi_multi_order
+
+      at Function.confirmPayment (src/lib/services/payment.service.ts:49:13)
+
+  console.log
+    Payment confirmed for intent: pi_nonexistent
+
+      at Function.confirmPayment (src/lib/services/payment.service.ts:49:13)
+
+  console.log
+    Payment confirmed for intent: pi_123
+
+      at Function.confirmPayment (src/lib/services/payment.service.ts:49:13)
+
+  console.log
+    Payment confirmed for intent: pi_abc123def
+
+      at Function.confirmPayment (src/lib/services/payment.service.ts:49:13)
+
+  console.log
+    Payment confirmed for intent: payment_intent_xyz
+
+      at Function.confirmPayment (src/lib/services/payment.service.ts:49:13)
+
+  console.log
+    Payment confirmed for intent: custom-id-format-999
+
+      at Function.confirmPayment (src/lib/services/payment.service.ts:49:13)
+
+  console.log
+    Payment confirmed for intent: pi_error
+
+      at Function.confirmPayment (src/lib/services/payment.service.ts:49:13)
+
+  console.log
+    Payment confirmed for intent: pi_1763629586542
+
+      at Function.confirmPayment (src/lib/services/payment.service.ts:49:13)
+
+  console.log
+    Γ£¿ Divine Performance Tracking initialized
+
+      at initializeDivinePerformanceTracking (src/hooks/useComponentConsciousness.ts:353:11)
+
+  console.log
+    Payment confirmed for intent: pi_1763629586543
+
+      at Function.confirmPayment (src/lib/services/payment.service.ts:49:13)
+
+  console.log
+    Γ£¿ Divine Performance Tracking initialized
+
+      at initializeDivinePerformanceTracking (src/hooks/useComponentConsciousness.ts:353:11)
+
+  console.log
+    Γ£¿ Divine Performance Tracking initialized
+
+      at initializeDivinePerformanceTracking (src/hooks/useComponentConsciousness.ts:353:11)
+
+  console.log
+    Γ£¿ Divine Performance Tracking initialized
+
+      at initializeDivinePerformanceTracking (src/hooks/useComponentConsciousness.ts:353:11)
+
+  console.log
+    Γ£¿ Divine Performance Tracking initialized
+
+      at initializeDivinePerformanceTracking (src/hooks/useComponentConsciousness.ts:353:11)
+
+  console.log
+    Γ£¿ Divine Performance Tracking initialized
+
+      at initializeDivinePerformanceTracking (src/hooks/useComponentConsciousness.ts:353:11)
+
+PASS src/hooks/__tests__/useComponentConsciousness.test.ts
+  useComponentConsciousness Hook
+    Basic Initialization
+      ΓêÜ should initialize with component name (38 ms)
+      ΓêÜ should return consistent consciousness object (13 ms)
+      ΓêÜ should accept optional context (3 ms)
+    Metrics Tracking
+      ΓêÜ should initialize metrics with zero values (5 ms)
+      ΓêÜ should track render count (17 ms)
+      ΓêÜ should record render times (31 ms)
+    Performance Measurement
+      ΓêÜ should start and complete measurement successfully (132 ms)
+      ΓêÜ should handle measurement failure with Error object (6 ms)
+      ΓêÜ should handle measurement failure with string error (5 ms)
+      ΓêÜ should handle measurement failure with unknown error type (5 ms)
+      ΓêÜ should increment error count on failure (3 ms)
+    Event Tracking
+      ΓêÜ should track custom events (2 ms)
+      ΓêÜ should provide component metrics (3 ms)
+      ΓêÜ should work without global tracker initialized (6 ms)
+      ΓêÜ should track events without metadata (3 ms)
+      ΓêÜ should track events with metadata (2 ms)
+      ΓêÜ should track multiple events (2 ms)
+      ΓêÜ should send events to analytics tracker if available (3 ms)
+      ΓêÜ should work without analytics tracker (1 ms)
+    Global Performance Tracking Initialization
+      ΓêÜ should initialize global trackers (2 ms)
+      ΓêÜ should record metrics globally (3 ms)
+      ΓêÜ should get component-specific metrics (3 ms)
+      ΓêÜ should clear metrics (3 ms)
+      ΓêÜ should limit metrics to 1000 entries (3 ms)
+    Integration with React Lifecycle
+      ΓêÜ should track component unmount (1 ms)
+      ΓêÜ should handle multiple component instances (4 ms)
+    TypeScript Type Safety
+      ΓêÜ should have properly typed return object (1 ms)
+      ΓêÜ should have properly typed metrics (3 ms)
+    Edge Cases
+      ΓêÜ should handle empty component name (1 ms)
+      ΓêÜ should handle very long component names (1 ms)
+      ΓêÜ should handle special characters in component name (1 ms)
+      ΓêÜ should handle rapid-fire events (1 ms)
+      ΓêÜ should handle measurements with zero duration (4 ms)
+
+FAIL src/components/__tests__/ErrorBoundary.test.tsx
+  ErrorBoundary Divine Consciousness
+    Basic Error Catching
+      ├ù renders children when no error occurs (6 ms)
+      ├ù catches and displays errors (1 ms)
+      ├ù allows custom fallback UI (1 ms)
+    Error Categorization System
+      ├ù categorizes errors correctly (1 ms)
+      ├ù categorizes authentication errors correctly
+      ├ù categorizes authorization errors correctly (1 ms)
+      ├ù categorizes validation errors correctly (1 ms)
+      ├ù categorizes server errors correctly (1 ms)
+      ├ù categorizes not found errors correctly (1 ms)
+      ├ù categorizes unknown errors with generic message (1 ms)
+    Structured Logging
+      ├ù logs errors with structured format (1 ms)
+      ├ù includes categorization metadata in logs (1 ms)
+    Retry Mechanism
+      ├ù automatically retries recoverable errors (3 ms)
+      ├ù uses exponential backoff for retries (1 ms)
+      ├ù respects maxRetries limit (1 ms)
+      ├ù does not retry non-recoverable errors (1 ms)
+    Reset Functionality
+      ├ù resets error state when reset button clicked (3 ms)
+      ├ù logs reset action (1 ms)
+    Development Mode Features
+      ├ù shows error details in development mode (1 ms)
+      ├ù hides error details in production mode (1 ms)
+    UI Rendering
+      ├ù displays appropriate button for recoverable errors (1 ms)
+      ├ù displays homepage button for non-recoverable errors
+      ├ù shows retry count when retries have occurred (1 ms)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Basic Error Catching ΓÇ║ renders children when no error occurs
+
+    ReferenceError: React is not defined
+
+      54 |     it("renders children when no error occurs", () => {
+      55 |       render(
+    > 56 |         <ErrorBoundary>
+         |         ^
+      57 |           <div>Normal content</div>
+      58 |         </ErrorBoundary>
+      59 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:56:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Basic Error Catching ΓÇ║ catches and displays errors
+
+    ReferenceError: React is not defined
+
+      72 |
+      73 |       render(
+    > 74 |         <ErrorBoundary>
+         |         ^
+      75 |           <ThrowError />
+      76 |         </ErrorBoundary>
+      77 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:74:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Basic Error Catching ΓÇ║ allows custom fallback UI
+
+    ReferenceError: React is not defined
+
+      92 |
+      93 |       render(
+    > 94 |         <ErrorBoundary
+         |         ^
+      95 |           maxRetries={3}
+      96 |           retryDelay={1000}
+      97 |           fallback={CustomFallback}
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:94:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Error Categorization System ΓÇ║ categorizes errors correctly
+
+    ReferenceError: React is not defined
+
+      112 |
+      113 |       render(
+    > 114 |         <ErrorBoundary>
+          |         ^
+      115 |           <ThrowError errorToThrow={networkError} />
+      116 |         </ErrorBoundary>
+      117 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:114:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Error Categorization System ΓÇ║ categorizes authentication errors correctly
+
+    ReferenceError: React is not defined
+
+      130 |
+      131 |       render(
+    > 132 |         <ErrorBoundary>
+          |         ^
+      133 |           <ThrowError errorToThrow={authError} />
+      134 |         </ErrorBoundary>
+      135 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:132:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Error Categorization System ΓÇ║ categorizes authorization errors correctly
+
+    ReferenceError: React is not defined
+
+      145 |
+      146 |       render(
+    > 147 |         <ErrorBoundary>
+          |         ^
+      148 |           <ThrowError errorToThrow={authzError} />
+      149 |         </ErrorBoundary>
+      150 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:147:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Error Categorization System ΓÇ║ categorizes validation errors correctly
+
+    ReferenceError: React is not defined
+
+      160 |
+      161 |       render(
+    > 162 |         <ErrorBoundary>
+          |         ^
+      163 |           <ThrowError errorToThrow={validationError} />
+      164 |         </ErrorBoundary>
+      165 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:162:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Error Categorization System ΓÇ║ categorizes server errors correctly
+
+    ReferenceError: React is not defined
+
+      172 |
+      173 |       render(
+    > 174 |         <ErrorBoundary>
+          |         ^
+      175 |           <ThrowError errorToThrow={serverError} />
+      176 |         </ErrorBoundary>
+      177 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:174:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Error Categorization System ΓÇ║ categorizes not found errors correctly
+
+    ReferenceError: React is not defined
+
+      184 |
+      185 |       render(
+    > 186 |         <ErrorBoundary>
+          |         ^
+      187 |           <ThrowError errorToThrow={notFoundError} />
+      188 |         </ErrorBoundary>
+      189 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:186:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Error Categorization System ΓÇ║ categorizes unknown errors with generic message
+
+    ReferenceError: React is not defined
+
+      196 |
+      197 |       render(
+    > 198 |         <ErrorBoundary>
+          |         ^
+      199 |           <ThrowError errorToThrow={unknownError} />
+      200 |         </ErrorBoundary>
+      201 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:198:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Structured Logging ΓÇ║ logs errors with structured format
+
+    ReferenceError: React is not defined
+
+      212 |
+      213 |       render(
+    > 214 |         <ErrorBoundary>
+          |         ^
+      215 |           <ThrowError errorToThrow={testError} />
+      216 |         </ErrorBoundary>
+      217 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:214:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Structured Logging ΓÇ║ includes categorization metadata in logs
+
+    ReferenceError: React is not defined
+
+      242 |
+      243 |       render(
+    > 244 |         <ErrorBoundary>
+          |         ^
+      245 |           <ThrowError errorToThrow={networkError} />
+      246 |         </ErrorBoundary>
+      247 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:244:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Retry Mechanism ΓÇ║ automatically retries recoverable errors
+
+    ReferenceError: React is not defined
+
+      274 |
+      275 |       render(
+    > 276 |         <ErrorBoundary maxRetries={3} retryDelay={1000}>
+          |         ^
+      277 |           <ThrowError errorToThrow={networkError} />
+      278 |         </ErrorBoundary>
+      279 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:276:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Retry Mechanism ΓÇ║ uses exponential backoff for retries
+
+    ReferenceError: React is not defined
+
+      293 |
+      294 |       const { rerender } = render(
+    > 295 |         <ErrorBoundary maxRetries={3} retryDelay={1000}>
+          |         ^
+      296 |           <ThrowError errorToThrow={networkError} />
+      297 |         </ErrorBoundary>
+      298 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:295:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Retry Mechanism ΓÇ║ respects maxRetries limit
+
+    ReferenceError: React is not defined
+
+      321 |
+      322 |       render(
+    > 323 |         <ErrorBoundary maxRetries={2} retryDelay={100}>
+          |         ^
+      324 |           <ThrowError errorToThrow={networkError} />
+      325 |         </ErrorBoundary>
+      326 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:323:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Retry Mechanism ΓÇ║ does not retry non-recoverable errors
+
+    ReferenceError: React is not defined
+
+      341 |
+      342 |       render(
+    > 343 |         <ErrorBoundary maxRetries={3} retryDelay={1000}>
+          |         ^
+      344 |           <ThrowError errorToThrow={authError} />
+      345 |         </ErrorBoundary>
+      346 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:343:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Reset Functionality ΓÇ║ resets error state when reset button clicked
+
+    ReferenceError: React is not defined
+
+      371 |
+      372 |       render(
+    > 373 |         <ErrorBoundary>
+          |         ^
+      374 |           <ConditionalError />
+      375 |         </ErrorBoundary>
+      376 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:373:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Reset Functionality ΓÇ║ logs reset action
+
+    ReferenceError: React is not defined
+
+      395 |
+      396 |       render(
+    > 397 |         <ErrorBoundary>
+          |         ^
+      398 |           <ThrowError error={recoverableError} />
+      399 |         </ErrorBoundary>
+      400 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:397:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Development Mode Features ΓÇ║ shows error details in development mode
+
+    ReferenceError: React is not defined
+
+      424 |
+      425 |       render(
+    > 426 |         <ErrorBoundary>
+          |         ^
+      427 |           <ThrowError error={testError} />
+      428 |         </ErrorBoundary>
+      429 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:426:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Development Mode Features ΓÇ║ hides error details in production mode
+
+    ReferenceError: React is not defined
+
+      441 |
+      442 |       render(
+    > 443 |         <ErrorBoundary>
+          |         ^
+      444 |           <ThrowError error={testError} />
+      445 |         </ErrorBoundary>
+      446 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:443:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ UI Rendering ΓÇ║ displays appropriate button for recoverable errors
+
+    ReferenceError: React is not defined
+
+      455 |
+      456 |       render(
+    > 457 |         <ErrorBoundary>
+          |         ^
+      458 |           <ThrowError error={recoverableError} />
+      459 |         </ErrorBoundary>
+      460 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:457:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ UI Rendering ΓÇ║ displays homepage button for non-recoverable errors
+
+    ReferenceError: React is not defined
+
+      469 |
+      470 |       render(
+    > 471 |         <ErrorBoundary>
+          |         ^
+      472 |           <ThrowError error={nonRecoverableError} />
+      473 |         </ErrorBoundary>
+      474 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:471:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ UI Rendering ΓÇ║ shows retry count when retries have occurred
+
+    ReferenceError: React is not defined
+
+      484 |
+      485 |       render(
+    > 486 |         <ErrorBoundary maxRetries={3} retryDelay={1000}>
+          |         ^
+      487 |           <ThrowError errorToThrow={authError} />
+      488 |         </ErrorBoundary>
+      489 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:486:9)
+
+  console.log
+    Payment confirmed for intent:
+
+      at Function.confirmPayment (src/lib/services/payment.service.ts:49:13)
+
+PASS src/__tests__/concurrent/race-conditions.test.ts
+  ≡ƒöä Concurrent Operations: Inventory Management
+    ΓÜí Race Condition: Multiple Purchases of Same Product
+      ΓêÜ should handle concurrent product purchases correctly (3 ms)
+      ΓêÜ should prevent negative inventory through concurrent updates (1 ms)
+    ΓÜí Race Condition: Concurrent Order Updates
+      ΓêÜ should handle multiple order status updates correctly (1 ms)
+    ΓÜí Race Condition: Payment Confirmation
+      ΓêÜ should handle duplicate payment confirmations idempotently
+      ΓêÜ should prevent double charging through concurrent payments
+    ΓÜí High Concurrency: Bulk Operations
+      ΓêÜ should handle 100 concurrent product fetches efficiently (2 ms)
+      ΓêÜ should handle 50 concurrent batch updates (12 ms)
+    ΓÜí Deadlock Prevention
+      ΓêÜ should avoid deadlocks in cross-service operations (109 ms)
+
+PASS src/lib/services/__tests__/payment.service.test.ts
+  ≡ƒÆ│ Payment Service - Divine Payment Operations
+    ≡ƒÄ» createPaymentIntent
+      ΓêÜ should create payment intent with valid order ID and amount (1 ms)
+      ΓêÜ should use USD as default currency when not specified (1 ms)
+      ΓêÜ should generate unique payment intent IDs (19 ms)
+      ΓêÜ should handle different currencies (EUR) (1 ms)
+      ΓêÜ should handle different currencies (GBP)
+      ΓêÜ should create payment intent with zero amount (free order) (1 ms)
+      ΓêÜ should handle large payment amounts (1 ms)
+      ΓêÜ should handle small payment amounts (1 cent) (1 ms)
+      ΓêÜ should set initial status as pending (1 ms)
+      ΓêÜ should propagate database errors (16 ms)
+    Γ£à confirmPayment
+      ΓêÜ should confirm payment with valid payment intent ID (59 ms)
+      ΓêÜ should update payment status to COMPLETED (7 ms)
+      ΓêÜ should update order status to CONFIRMED (3 ms)
+      ΓêÜ should handle confirmation of multiple orders with same payment intent (2 ms)
+      ΓêÜ should return true even if no orders found (idempotent) (3 ms)
+      ΓêÜ should handle different payment intent ID formats (7 ms)
+      ΓêÜ should not throw errors on confirmation (3 ms)
+    ≡ƒÆ░ refundPayment
+      ΓêÜ should refund payment for valid order (1 ms)
+      ΓêÜ should throw error if order not found (2 ms)
+      ΓêÜ should update payment status to REFUNDED (1 ms)
+      ΓêÜ should update order status to CANCELLED
+      ΓêÜ should handle partial refund with specified amount (1 ms)
+      ΓêÜ should handle full refund when amount not specified
+      ΓêÜ should refund already refunded orders (idempotent) (1 ms)
+      ΓêÜ should handle refund for order with zero amount
+      ΓêÜ should propagate database errors on refund (1 ms)
+      ΓêÜ should handle refund with various order statuses
+    ≡ƒöä Payment Workflow Integration
+      ΓêÜ should handle complete payment flow: create -> confirm (2 ms)
+      ΓêÜ should handle complete refund flow: create -> confirm -> refund (1 ms)
+    ΓÜí Edge Cases & Error Handling
+      ΓêÜ should handle concurrent payment intent creation (84 ms)
+      ΓêÜ should handle payment intent creation with special characters in order ID (1 ms)
+      ΓêÜ should handle empty string payment intent ID gracefully (2 ms)
+      ΓêÜ should handle database timeout during payment creation (105 ms)
+      ΓêÜ should validate payment intent structure (2 ms)
+    ≡ƒÄ¿ Payment Intent ID Format
+      ΓêÜ should generate payment intent IDs with pi_ prefix (1 ms)
+      ΓêÜ should use timestamp in payment intent ID for uniqueness
+
+  console.log
+    Cache miss { key: 'farm:farm-123' }
+
+      at Object.debug (src/lib/monitoring/logger.ts:6:38)
+
+PASS src/lib/__tests__/rate-limit.test.ts
+  ≡ƒ¢í∩╕Å Rate Limiting
+    Basic Rate Limiting
+      ΓêÜ should allow requests within limit (10 ms)
+      ΓêÜ should block requests exceeding limit (1 ms)
+      ΓêÜ should reset after time window expires (155 ms)
+      ΓêÜ should handle different identifiers separately (2 ms)
+      ΓêÜ should return correct remaining count (2 ms)
+    Pre-configured Rate Limits
+      ΓêÜ LOGIN_RATE_LIMIT should have correct configuration (1 ms)
+      ΓêÜ API_RATE_LIMIT should have correct configuration (1 ms)
+      ΓêÜ SENSITIVE_RATE_LIMIT should have correct configuration (1 ms)
+      ΓêÜ should enforce LOGIN_RATE_LIMIT correctly (2 ms)
+    Rate Limit Status
+      ΓêÜ should return null for non-existent identifier (2 ms)
+      ΓêÜ should return current status without incrementing (1 ms)
+    Rate Limit Reset
+      ΓêÜ should reset rate limit for specific identifier (1 ms)
+      ΓêÜ should clear all rate limits (1 ms)
+    Reset Time Calculation
+      ΓêÜ should calculate reset time correctly (1 ms)
+      ΓêÜ should decrease reset time with subsequent calls (510 ms)
+    Client IP Extraction
+      ΓêÜ should extract IP from x-forwarded-for header (2 ms)
+      ΓêÜ should extract IP from x-real-ip header (1 ms)
+      ΓêÜ should extract IP from cf-connecting-ip header (Cloudflare) (1 ms)
+      ΓêÜ should return 'unknown' if no IP headers present
+      ΓêÜ should prioritize x-forwarded-for over other headers (1 ms)
+    Edge Cases
+      ΓêÜ should handle concurrent requests correctly (2 ms)
+      ΓêÜ should handle zero max requests (1 ms)
+      ΓêÜ should handle very large window (1 ms)
+      ΓêÜ should handle rapid successive requests (15 ms)
+    Rate Limit Response Headers
+      ΓêÜ should include correct limit information (1 ms)
+      ΓêÜ should provide retry-after information when blocked (1 ms)
+
+  console.log
+    Cache set { key: 'farm:farm-123', ttl: 1800 }
+
+      at Object.debug (src/lib/monitoring/logger.ts:6:38)
+
+  console.log
+    Cache miss { key: 'farm:nonexistent-farm' }
+
+      at Object.debug (src/lib/monitoring/logger.ts:6:38)
+
+PASS src/lib/__tests__/cache.memory.test.ts
+  cache (memory fallback)
+    ΓêÜ getOrSet caches computed value (98 ms)
+    ΓêÜ invalidatePattern removes matching keys (48 ms)
+
+  console.log
+    Cache hit (memory) { key: 'farm:farm-123' }
+
+      at Object.debug (src/lib/monitoring/logger.ts:6:38)
+
+  console.log
+    Cache miss { key: 'farm:farm:slug:quantum-valley-farm-reality' }
+
+      at Object.debug (src/lib/monitoring/logger.ts:6:38)
+
+  console.log
+    Cache set { key: 'farm:farm-123', ttl: 1800 }
+
+      at Object.debug (src/lib/monitoring/logger.ts:6:38)
+          at async Promise.all (index 0)
+
+  console.log
+    Cache set { key: 'farm:farm:slug:quantum-valley-farm-reality', ttl: 1800 }
+
+      at Object.debug (src/lib/monitoring/logger.ts:6:38)
+          at async Promise.all (index 1)
+
+  console.log
+    Cache miss { key: 'farm:farm:slug:nonexistent-slug' }
+
+      at Object.debug (src/lib/monitoring/logger.ts:6:38)
+
+PASS src/lib/services/farm.service.test.ts
+  Farm Service - Divine Operations
+    createFarmService
+      ΓêÜ manifests new farm with unique slug successfully (3 ms)
+      ΓêÜ handles slug collision by appending counter (1 ms)
+      ΓêÜ throws error after max slug collision attempts (26 ms)
+      ΓêÜ creates farm with PENDING status by default (1 ms)
+      ΓêÜ manifests quantum farm with agricultural consciousness (2 ms)
+    checkExistingFarm
+      ΓêÜ returns exists=false when user has no farm (2 ms)
+      ΓêÜ returns exists=true with farm details when user has farm (1 ms)
+      ΓêÜ queries database with correct user ID (1 ms)
+    getFarmById
+      ΓêÜ manifests quantum farm when farm exists (13 ms)
+      ΓêÜ returns null when farm does not exist (1 ms)
+      ΓêÜ includes owner information in query (1 ms)
+    getFarmBySlug
+      ΓêÜ manifests quantum farm when slug exists (4 ms)
+      ΓêÜ returns null when slug does not exist (2 ms)
+
+  console.error
+    Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+        at module.exports (M:\Repo\Farmers Market Platform web and app\node_modules\jest-environment-jsdom\node_modules\jsdom\lib\jsdom\browser\not-implemented.js:9:17)
+        at HTMLCanvasElementImpl.getContext (M:\Repo\Farmers Market Platform web and app\node_modules\jest-environment-jsdom\node_modules\jsdom\lib\jsdom\living\nodes\HTMLCanvasElement-impl.js:42:5)
+        at HTMLCanvasElement.getContext (M:\Repo\Farmers Market Platform web and app\node_modules\jest-environment-jsdom\node_modules\jsdom\lib\jsdom\living\generated\HTMLCanvasElement.js:131:58)
+        at getWebGLRenderingContext (M:\Repo\Farmers Market Platform web and app\tfjs-backend-webgl\src\canvas_util.ts:111:17)
+        at getWebGLContext (M:\Repo\Farmers Market Platform web and app\tfjs-backend-webgl\src\canvas_util.ts:45:20)
+        at isWebGLVersionEnabled (M:\Repo\Farmers Market Platform web and app\tfjs-backend-webgl\src\webgl_util.ts:565:16)
+        at Object.evaluationFn (M:\Repo\Farmers Market Platform web and app\tfjs-backend-webgl\src\flags_webgl.ts:35:7)
+        at Environment.evaluateFlag (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\environment.ts:148:40)
+        at Environment.get (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\environment.ts:101:28)
+        at Environment.getNumber (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\environment.ts:113:17)
+        at Object.evaluationFn (M:\Repo\Farmers Market Platform web and app\tfjs-backend-webgl\src\flags_webgl.ts:31:41)
+        at Environment.evaluateFlag (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\environment.ts:148:40)
+        at Environment.get (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\environment.ts:101:28)
+        at Environment.getBool (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\environment.ts:117:17)
+        at new MathBackendWebGL (M:\Repo\Farmers Market Platform web and app\tfjs-backend-webgl\src\backend_webgl.ts:146:16)
+        at Object.factory (M:\Repo\Farmers Market Platform web and app\tfjs-backend-webgl\src\base.ts:25:34)
+        at Engine.initializeBackend (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\engine.ts:328:44)
+        at Engine.initializeBackendsAndReturnBest (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\engine.ts:414:41)
+        at Engine.get (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\engine.ts:219:38)
+        at Engine.memory (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\engine.ts:960:23)
+        at Object.memory (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\globals.ts:111:17)
+        at Object.<anonymous> (M:\Repo\Farmers Market Platform web and app\src\lib\performance\__tests__\gpu-processor.test.ts:278:31)
+        at Promise.finally.completed (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:1557:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:1497:10)
+        at _callCircusTest (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:1007:40)
+        at processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at _runTest (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:947:3)
+        at M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:849:7
+        at _runTestsForDescribeBlock (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:862:11)
+        at _runTestsForDescribeBlock (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at _runTestsForDescribeBlock (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at run (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:761:3)
+        at runAndTransformResultsToJestFormat (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:1918:21)
+        at jestAdapter (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\runner.js:101:19)
+        at runTestInternal (M:\Repo\Farmers Market Platform web and app\node_modules\jest-runner\build\testWorker.js:275:16)
+        at runTest (M:\Repo\Farmers Market Platform web and app\node_modules\jest-runner\build\testWorker.js:343:7)
+        at Object.worker (M:\Repo\Farmers Market Platform web and app\node_modules\jest-runner\build\testWorker.js:497:12) {
+      type: 'not implemented'
+    }
+
+      at VirtualConsole.<anonymous> (node_modules/@jest/environment-jsdom-abstract/build/index.js:87:23)
+      at getWebGLRenderingContext (tfjs-backend-webgl/src/canvas_util.ts:111:17)
+      at getWebGLContext (tfjs-backend-webgl/src/canvas_util.ts:45:20)
+      at isWebGLVersionEnabled (tfjs-backend-webgl/src/webgl_util.ts:565:16)
+      at Object.evaluationFn (tfjs-backend-webgl/src/flags_webgl.ts:35:7)
+      at Environment.evaluateFlag (tfjs-core/src/environment.ts:148:40)
+      at Environment.get (tfjs-core/src/environment.ts:101:28)
+      at Environment.getNumber (tfjs-core/src/environment.ts:113:17)
+      at Object.evaluationFn (tfjs-backend-webgl/src/flags_webgl.ts:31:41)
+      at Environment.evaluateFlag (tfjs-core/src/environment.ts:148:40)
+      at Environment.get (tfjs-core/src/environment.ts:101:28)
+      at Environment.getBool (tfjs-core/src/environment.ts:117:17)
+      at new MathBackendWebGL (tfjs-backend-webgl/src/backend_webgl.ts:146:16)
+      at Object.factory (tfjs-backend-webgl/src/base.ts:25:34)
+      at Engine.initializeBackend (tfjs-core/src/engine.ts:328:44)
+      at Engine.initializeBackendsAndReturnBest (tfjs-core/src/engine.ts:414:41)
+      at Engine.get (tfjs-core/src/engine.ts:219:38)
+      at Engine.memory (tfjs-core/src/engine.ts:960:23)
+      at Object.memory (tfjs-core/src/globals.ts:111:17)
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:278:31)
+
+  console.log
+    Could not get context for WebGL version 2
+
+      at getWebGLContext (tfjs-backend-webgl/src/canvas_util.ts:49:15)
+
+  console.error
+    Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+        at module.exports (M:\Repo\Farmers Market Platform web and app\node_modules\jest-environment-jsdom\node_modules\jsdom\lib\jsdom\browser\not-implemented.js:9:17)
+        at HTMLCanvasElementImpl.getContext (M:\Repo\Farmers Market Platform web and app\node_modules\jest-environment-jsdom\node_modules\jsdom\lib\jsdom\living\nodes\HTMLCanvasElement-impl.js:42:5)
+        at HTMLCanvasElement.getContext (M:\Repo\Farmers Market Platform web and app\node_modules\jest-environment-jsdom\node_modules\jsdom\lib\jsdom\living\generated\HTMLCanvasElement.js:131:58)
+        at getWebGLRenderingContext (M:\Repo\Farmers Market Platform web and app\tfjs-backend-webgl\src\canvas_util.ts:106:16)
+        at getWebGLContext (M:\Repo\Farmers Market Platform web and app\tfjs-backend-webgl\src\canvas_util.ts:45:20)
+        at isWebGLVersionEnabled (M:\Repo\Farmers Market Platform web and app\tfjs-backend-webgl\src\webgl_util.ts:565:16)
+        at Object.evaluationFn (M:\Repo\Farmers Market Platform web and app\tfjs-backend-webgl\src\flags_webgl.ts:37:14)
+        at Environment.evaluateFlag (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\environment.ts:148:40)
+        at Environment.get (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\environment.ts:101:28)
+        at Environment.getNumber (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\environment.ts:113:17)
+        at Object.evaluationFn (M:\Repo\Farmers Market Platform web and app\tfjs-backend-webgl\src\flags_webgl.ts:31:41)
+        at Environment.evaluateFlag (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\environment.ts:148:40)
+        at Environment.get (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\environment.ts:101:28)
+        at Environment.getBool (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\environment.ts:117:17)
+        at new MathBackendWebGL (M:\Repo\Farmers Market Platform web and app\tfjs-backend-webgl\src\backend_webgl.ts:146:16)
+        at Object.factory (M:\Repo\Farmers Market Platform web and app\tfjs-backend-webgl\src\base.ts:25:34)
+        at Engine.initializeBackend (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\engine.ts:328:44)
+        at Engine.initializeBackendsAndReturnBest (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\engine.ts:414:41)
+        at Engine.get (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\engine.ts:219:38)
+        at Engine.memory (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\engine.ts:960:23)
+        at Object.memory (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\globals.ts:111:17)
+        at Object.<anonymous> (M:\Repo\Farmers Market Platform web and app\src\lib\performance\__tests__\gpu-processor.test.ts:278:31)
+        at Promise.finally.completed (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:1557:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:1497:10)
+        at _callCircusTest (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:1007:40)
+        at processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at _runTest (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:947:3)
+        at M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:849:7
+        at _runTestsForDescribeBlock (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:862:11)
+        at _runTestsForDescribeBlock (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at _runTestsForDescribeBlock (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at run (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:761:3)
+        at runAndTransformResultsToJestFormat (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:1918:21)
+        at jestAdapter (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\runner.js:101:19)
+        at runTestInternal (M:\Repo\Farmers Market Platform web and app\node_modules\jest-runner\build\testWorker.js:275:16)
+        at runTest (M:\Repo\Farmers Market Platform web and app\node_modules\jest-runner\build\testWorker.js:343:7)
+        at Object.worker (M:\Repo\Farmers Market Platform web and app\node_modules\jest-runner\build\testWorker.js:497:12) {
+      type: 'not implemented'
+    }
+
+      at VirtualConsole.<anonymous> (node_modules/@jest/environment-jsdom-abstract/build/index.js:87:23)
+      at getWebGLRenderingContext (tfjs-backend-webgl/src/canvas_util.ts:106:16)
+      at getWebGLContext (tfjs-backend-webgl/src/canvas_util.ts:45:20)
+      at isWebGLVersionEnabled (tfjs-backend-webgl/src/webgl_util.ts:565:16)
+      at Object.evaluationFn (tfjs-backend-webgl/src/flags_webgl.ts:37:14)
+      at Environment.evaluateFlag (tfjs-core/src/environment.ts:148:40)
+      at Environment.get (tfjs-core/src/environment.ts:101:28)
+      at Environment.getNumber (tfjs-core/src/environment.ts:113:17)
+      at Object.evaluationFn (tfjs-backend-webgl/src/flags_webgl.ts:31:41)
+      at Environment.evaluateFlag (tfjs-core/src/environment.ts:148:40)
+      at Environment.get (tfjs-core/src/environment.ts:101:28)
+      at Environment.getBool (tfjs-core/src/environment.ts:117:17)
+      at new MathBackendWebGL (tfjs-backend-webgl/src/backend_webgl.ts:146:16)
+      at Object.factory (tfjs-backend-webgl/src/base.ts:25:34)
+      at Engine.initializeBackend (tfjs-core/src/engine.ts:328:44)
+      at Engine.initializeBackendsAndReturnBest (tfjs-core/src/engine.ts:414:41)
+      at Engine.get (tfjs-core/src/engine.ts:219:38)
+      at Engine.memory (tfjs-core/src/engine.ts:960:23)
+      at Object.memory (tfjs-core/src/globals.ts:111:17)
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:278:31)
+
+  console.error
+    Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+        at module.exports (M:\Repo\Farmers Market Platform web and app\node_modules\jest-environment-jsdom\node_modules\jsdom\lib\jsdom\browser\not-implemented.js:9:17)
+        at HTMLCanvasElementImpl.getContext (M:\Repo\Farmers Market Platform web and app\node_modules\jest-environment-jsdom\node_modules\jsdom\lib\jsdom\living\nodes\HTMLCanvasElement-impl.js:42:5)
+        at HTMLCanvasElement.getContext (M:\Repo\Farmers Market Platform web and app\node_modules\jest-environment-jsdom\node_modules\jsdom\lib\jsdom\living\generated\HTMLCanvasElement.js:131:58)
+        at getWebGLRenderingContext (M:\Repo\Farmers Market Platform web and app\tfjs-backend-webgl\src\canvas_util.ts:108:14)
+        at getWebGLContext (M:\Repo\Farmers Market Platform web and app\tfjs-backend-webgl\src\canvas_util.ts:45:20)
+        at isWebGLVersionEnabled (M:\Repo\Farmers Market Platform web and app\tfjs-backend-webgl\src\webgl_util.ts:565:16)
+        at Object.evaluationFn (M:\Repo\Farmers Market Platform web and app\tfjs-backend-webgl\src\flags_webgl.ts:37:14)
+        at Environment.evaluateFlag (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\environment.ts:148:40)
+        at Environment.get (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\environment.ts:101:28)
+        at Environment.getNumber (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\environment.ts:113:17)
+        at Object.evaluationFn (M:\Repo\Farmers Market Platform web and app\tfjs-backend-webgl\src\flags_webgl.ts:31:41)
+        at Environment.evaluateFlag (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\environment.ts:148:40)
+        at Environment.get (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\environment.ts:101:28)
+        at Environment.getBool (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\environment.ts:117:17)
+        at new MathBackendWebGL (M:\Repo\Farmers Market Platform web and app\tfjs-backend-webgl\src\backend_webgl.ts:146:16)
+        at Object.factory (M:\Repo\Farmers Market Platform web and app\tfjs-backend-webgl\src\base.ts:25:34)
+        at Engine.initializeBackend (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\engine.ts:328:44)
+        at Engine.initializeBackendsAndReturnBest (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\engine.ts:414:41)
+        at Engine.get (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\engine.ts:219:38)
+        at Engine.memory (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\engine.ts:960:23)
+        at Object.memory (M:\Repo\Farmers Market Platform web and app\tfjs-core\src\globals.ts:111:17)
+        at Object.<anonymous> (M:\Repo\Farmers Market Platform web and app\src\lib\performance\__tests__\gpu-processor.test.ts:278:31)
+        at Promise.finally.completed (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:1557:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:1497:10)
+        at _callCircusTest (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:1007:40)
+        at processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at _runTest (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:947:3)
+        at M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:849:7
+        at _runTestsForDescribeBlock (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:862:11)
+        at _runTestsForDescribeBlock (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at _runTestsForDescribeBlock (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at run (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:761:3)
+        at runAndTransformResultsToJestFormat (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\jestAdapterInit.js:1918:21)
+        at jestAdapter (M:\Repo\Farmers Market Platform web and app\node_modules\jest-circus\build\runner.js:101:19)
+        at runTestInternal (M:\Repo\Farmers Market Platform web and app\node_modules\jest-runner\build\testWorker.js:275:16)
+        at runTest (M:\Repo\Farmers Market Platform web and app\node_modules\jest-runner\build\testWorker.js:343:7)
+        at Object.worker (M:\Repo\Farmers Market Platform web and app\node_modules\jest-runner\build\testWorker.js:497:12) {
+      type: 'not implemented'
+    }
+
+      at VirtualConsole.<anonymous> (node_modules/@jest/environment-jsdom-abstract/build/index.js:87:23)
+      at getWebGLRenderingContext (tfjs-backend-webgl/src/canvas_util.ts:108:14)
+      at getWebGLContext (tfjs-backend-webgl/src/canvas_util.ts:45:20)
+      at isWebGLVersionEnabled (tfjs-backend-webgl/src/webgl_util.ts:565:16)
+      at Object.evaluationFn (tfjs-backend-webgl/src/flags_webgl.ts:37:14)
+      at Environment.evaluateFlag (tfjs-core/src/environment.ts:148:40)
+      at Environment.get (tfjs-core/src/environment.ts:101:28)
+      at Environment.getNumber (tfjs-core/src/environment.ts:113:17)
+      at Object.evaluationFn (tfjs-backend-webgl/src/flags_webgl.ts:31:41)
+      at Environment.evaluateFlag (tfjs-core/src/environment.ts:148:40)
+      at Environment.get (tfjs-core/src/environment.ts:101:28)
+      at Environment.getBool (tfjs-core/src/environment.ts:117:17)
+      at new MathBackendWebGL (tfjs-backend-webgl/src/backend_webgl.ts:146:16)
+      at Object.factory (tfjs-backend-webgl/src/base.ts:25:34)
+      at Engine.initializeBackend (tfjs-core/src/engine.ts:328:44)
+      at Engine.initializeBackendsAndReturnBest (tfjs-core/src/engine.ts:414:41)
+      at Engine.get (tfjs-core/src/engine.ts:219:38)
+      at Engine.memory (tfjs-core/src/engine.ts:960:23)
+      at Object.memory (tfjs-core/src/globals.ts:111:17)
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:278:31)
+
+  console.log
+    Could not get context for WebGL version 1
+
+      at getWebGLContext (tfjs-backend-webgl/src/canvas_util.ts:49:15)
+
+PASS src/lib/services/__tests__/shipping.service.test.ts
+  ≡ƒÜÜ Shipping Service - Divine Shipping Operations
+    ≡ƒôª calculateShippingRates
+      ΓêÜ should return shipping rates for valid destination (3 ms)
+      ΓêÜ should return STANDARD shipping option (2 ms)
+      ΓêÜ should return EXPRESS shipping option (1 ms)
+      ΓêÜ should return OVERNIGHT shipping option (1 ms)
+      ΓêÜ should handle different cities (2 ms)
+      ΓêÜ should handle different states (1 ms)
+      ΓêÜ should handle different zip codes (2 ms)
+      ΓêÜ should return rates in order of cost (cheapest first)
+      ΓêÜ should return rates in reverse order of speed (1 ms)
+      ΓêÜ should have consistent rate structure (4 ms)
+      ΓêÜ should return positive costs
+      ΓêÜ should return positive estimated days (1 ms)
+    ≡ƒÅ╖∩╕Å createShippingLabel
+      ΓêÜ should create shipping label successfully (1 ms)
+      ΓêÜ should update order status to PREPARING with tracking (2 ms)
+      ΓêÜ should update order with shipping service (3 ms)
+      ΓêÜ should generate unique tracking numbers (4 ms)
+      ΓêÜ should generate unique label IDs (18 ms)
+      ΓêÜ should handle STANDARD service (2 ms)
+      ΓêÜ should handle EXPRESS service (3 ms)
+      ΓêÜ should handle OVERNIGHT service (3 ms)
+      ΓêÜ should propagate database errors (26 ms)
+    ≡ƒôì getTrackingInfo
+      ΓêÜ should return tracking info for valid tracking number (1 ms)
+      ΓêÜ should return empty array for invalid tracking number (1 ms)
+      ΓêÜ should include timestamp in tracking info (1 ms)
+      ΓêÜ should query database with tracking number (4 ms)
+      ΓêÜ should handle different order statuses (2 ms)
+      ΓêÜ should handle database errors (3 ms)
+      ΓêÜ should return tracking info with correct structure (2 ms)
+    ≡ƒöä updateShippingStatus
+      ΓêÜ should update shipping status successfully (3 ms)
+      ΓêÜ should handle PENDING status (1 ms)
+      ΓêÜ should handle invalid status by defaulting to PREPARING (1 ms)
+      ΓêÜ should handle SHIPPED status (1 ms)
+      ΓêÜ should handle DELIVERED status (3 ms)
+      ΓêÜ should handle CANCELLED status
+      ΓêÜ should propagate database errors (1 ms)
+      ΓêÜ should update status for different order IDs (1 ms)
+    ≡ƒöä Integration Scenarios
+      ΓêÜ should handle complete shipping workflow (1 ms)
+      ΓêÜ should handle rate calculation for multiple orders (1 ms)
+
+PASS src/lib/services/__tests__/farm.service.test.ts
+  Farm Service - CRUD Operations
+    createFarmService
+      ΓêÜ should create a farm successfully (5 ms)
+      ΓêÜ should throw error if user not found (31 ms)
+      ΓêÜ should generate unique slug from farm name (2 ms)
+    getFarmById
+      ΓêÜ should return farm from cache if available (2 ms)
+      ΓêÜ should fetch from database if not in cache (1 ms)
+      ΓêÜ should return null for non-existent farm (1 ms)
+    getFarmBySlug
+      ΓêÜ should return farm by slug from cache (2 ms)
+      ΓêÜ should fetch from database by slug if not cached (1 ms)
+    updateFarmService
+      ΓêÜ should update farm with valid ownership (8 ms)
+      ΓêÜ should throw error if farm not found (6 ms)
+      ΓêÜ should throw error if user is not owner (1 ms)
+      ΓêÜ should handle partial updates (1 ms)
+      ΓêÜ should invalidate cache after update (1 ms)
+    deleteFarmService
+      ΓêÜ should soft delete farm (set status to INACTIVE) (1 ms)
+      ΓêÜ should throw error if farm not found (4 ms)
+      ΓêÜ should throw error if user is not owner (3 ms)
+      ΓêÜ should invalidate cache after deletion (1 ms)
+    listFarmsService
+      ΓêÜ should return paginated farms with default options (1 ms)
+      ΓêÜ should filter by status (1 ms)
+      ΓêÜ should filter by state (1 ms)
+      ΓêÜ should handle pagination correctly (1 ms)
+      ΓêÜ should filter by farming practices (1 ms)
+    searchFarmsService
+      ΓêÜ should search farms by text query (2 ms)
+      ΓêÜ should search with case-insensitive matching
+      ΓêÜ should search across multiple fields (1 ms)
+      ΓêÜ should limit results to 10 by default (1 ms)
+      ΓêÜ should return empty array for no matches
+    Edge Cases and Error Handling
+      ΓêÜ should handle database errors gracefully in getFarmById (1 ms)
+      ΓêÜ should handle empty search query
+      ΓêÜ should handle very large pagination requests (1 ms)
+      ΓêÜ should handle updates with no changes
+
+PASS src/lib/cache/__tests__/agricultural-cache.test.ts
+  ≡ƒî╛ Agricultural Cache - Seasonal Awareness
+    ≡ƒÅí Farm Caching
+      ΓêÜ should cache farm data (2 ms)
+      ΓêÜ should get cached farm data (1 ms)
+      ΓêÜ should return null for cache miss
+      ΓêÜ should invalidate farm cache (1 ms)
+      ΓêÜ should cache multiple farms (1 ms)
+    ≡ƒ¢Æ Product Caching
+      ΓêÜ should cache product data
+      ΓêÜ should get cached product data (1 ms)
+      ΓêÜ should return null for product cache miss (1 ms)
+      ΓêÜ should invalidate product cache and related lists (1 ms)
+      ΓêÜ should cache multiple products (2 ms)
+    ≡ƒî╕ Seasonal Caching
+      ΓêÜ should cache SPRING data with correct TTL (1 ms)
+      ΓêÜ should cache SUMMER data with correct TTL
+      ΓêÜ should cache FALL data with correct TTL (5 ms)
+      ΓêÜ should cache WINTER data with correct TTL (1 ms)
+      ΓêÜ should get cached seasonal data (1 ms)
+      ΓêÜ should return null for seasonal cache miss (1 ms)
+      ΓêÜ should cache all seasons (1 ms)
+    ≡ƒöä Integration Scenarios
+      ΓêÜ should handle complete farm workflow (1 ms)
+      ΓêÜ should handle complete product workflow (4 ms)
+      ΓêÜ should cache farm with products
+      ΓêÜ should cache seasonal data for all seasons (1 ms)
+    ≡ƒÄ» Edge Cases
+      ΓêÜ should handle empty farm data (2 ms)
+      ΓêÜ should handle empty product data
+      ΓêÜ should handle null returns gracefully (1 ms)
+      ΓêÜ should handle complex nested data (1 ms)
+      ΓêÜ should handle arrays
+
+PASS src/hooks/__tests__/useSeasonalConsciousness.test.ts
+  useSeasonalConsciousness
+    Hook Initialization
+      ΓêÜ should initialize with default seasonal awareness (24 ms)
+      ΓêÜ should detect current season (4 ms)
+      ΓêÜ should detect lunar phase (6 ms)
+    Seasonal Patterns
+      ΓêÜ should provide optimal activities (5 ms)
+      ΓêÜ should calculate planting windows (7 ms)
+      ΓêÜ should calculate harvest windows (3 ms)
+    Agricultural Consciousness
+      ΓêÜ should provide consistent seasonal data (3 ms)
+      ΓêÜ should return valid season for current date (3 ms)
+
+PASS src/__tests__/services/order.service.test.ts
+  OrderService - Divine Order Management
+    createOrder
+      ΓêÜ creates order with items (2 ms)
+    getOrderById
+      ΓêÜ retrieves order by ID (4 ms)
+      ΓêÜ returns null for non-existent order (1 ms)
+    updateOrderStatus
+      ΓêÜ updates order status
+    getUserOrders
+      ΓêÜ retrieves all orders for user
+    getFarmOrders
+      ΓêÜ retrieves all orders for farm
+
+PASS src/lib/services/security/__tests__/security.service.test.ts
+  SecurityService
+    sanitizeInput
+      ΓêÜ should sanitize HTML tags (1 ms)
+      ΓêÜ should sanitize quotes
+    isValidEmail
+      ΓêÜ should validate correct email (1 ms)
+      ΓêÜ should reject invalid email
+    isValidPhone
+      ΓêÜ should validate correct phone numbers (2 ms)
+      ΓêÜ should reject invalid phone numbers
+    isStrongPassword
+      ΓêÜ should validate strong password (1 ms)
+      ΓêÜ should reject weak passwords
+      ΓêÜ should require minimum length
+    validateFileUpload
+      ΓêÜ should validate correct file
+      ΓêÜ should reject file that is too large (1 ms)
+      ΓêÜ should reject invalid file type
+
+PASS src/lib/cache/__tests__/index.test.ts
+  ≡ƒùä∩╕Å Cache Index - Multi-Layer Caching
+    ≡ƒôï Cache Keys
+      ΓêÜ should generate farm cache key (2 ms)
+      ΓêÜ should generate farm list cache key
+      ΓêÜ should generate product cache key
+      ΓêÜ should generate product list cache key (1 ms)
+      ΓêÜ should generate user profile cache key (1 ms)
+      ΓêÜ should generate seasonal data cache key for SPRING (1 ms)
+      ΓêÜ should generate seasonal data cache key for SUMMER
+      ΓêÜ should generate seasonal data cache key for FALL (1 ms)
+      ΓêÜ should generate seasonal data cache key for WINTER
+    ≡ƒÆ╛ Memory Cache Operations
+      ΓêÜ should set and get value from memory cache (2 ms)
+      ΓêÜ should return null for non-existent key (1 ms)
+      ΓêÜ should delete key from cache (1 ms)
+      ΓêÜ should handle custom TTL (1 ms)
+      ΓêÜ should cache complex objects (1 ms)
+      ΓêÜ should cache arrays (1 ms)
+      ΓêÜ should cache strings (1 ms)
+      ΓêÜ should cache numbers
+      ΓêÜ should cache booleans (1 ms)
+      ΓêÜ should cache null values (2 ms)
+    ≡ƒöä Pattern Deletion
+      ΓêÜ should delete keys matching pattern (2 ms)
+      ΓêÜ should handle pattern with no matches (1 ms)
+      ΓêÜ should delete multiple patterns (2 ms)
+    ≡ƒº╣ Clear Operations
+      ΓêÜ should clear all cache (2 ms)
+      ΓêÜ should handle clearing empty cache
+    ≡ƒÄü Cache Wrap Pattern
+      ΓêÜ should return cached value if exists (1 ms)
+      ΓêÜ should compute and cache if not exists (1 ms)
+      ΓêÜ should use custom TTL in wrap (2 ms)
+      ΓêÜ should handle factory errors (26 ms)
+      ΓêÜ should cache factory result on success (1 ms)
+    ≡ƒî╕ Seasonal TTL
+      ΓêÜ should use seasonal TTL when not specified (2 ms)
+      ΓêÜ should handle SPRING season (Mar-May) (4 ms)
+      ΓêÜ should handle SUMMER season (Jun-Aug) (2 ms)
+      ΓêÜ should handle FALL season (Sep-Nov) (3 ms)
+      ΓêÜ should handle WINTER season (Dec-Feb) (1 ms)
+    ≡ƒöÑ Cache Warming
+      ΓêÜ should warm cache successfully (1 ms)
+      ΓêÜ should handle cache warming errors gracefully (4 ms)
+    ΓÜí Performance & Edge Cases
+      ΓêÜ should handle rapid successive sets (2 ms)
+      ΓêÜ should handle rapid successive gets (15 ms)
+      ΓêÜ should handle very large objects
+      ΓêÜ should handle empty objects (1 ms)
+      ΓêÜ should handle empty arrays (1 ms)
+      ΓêÜ should handle keys with special characters (1 ms)
+      ΓêÜ should handle concurrent operations
+    ≡ƒöä Integration Scenarios
+      ΓêÜ should handle complete cache lifecycle (1 ms)
+      ΓêÜ should handle multiple related keys
+      ΓêÜ should invalidate related caches (1 ms)
+    ≡ƒÄ» Type Safety
+      ΓêÜ should maintain type safety with generics (1 ms)
+      ΓêÜ should handle union types
+
+PASS src/__tests__/setup-verification.test.ts
+  Testing Infrastructure Verification
+    ΓêÜ should have Jest configured correctly (2 ms)
+    ΓêÜ should support TypeScript
+    ΓêÜ should have proper module resolution (1 ms)
+    ΓêÜ should support async/await
+    ΓêÜ should support ES6 features (1 ms)
+
+PASS src/tests/security/input-validation.test.ts
+  Input Validation
+    String Validation
+      ΓêÜ should validate non-empty strings (1 ms)
+      ΓêÜ should reject empty strings (1 ms)
+      ΓêÜ should validate string length (1 ms)
+    Number Validation
+      ΓêÜ should validate positive numbers (1 ms)
+      ΓêÜ should validate integer numbers
+      ΓêÜ should validate number ranges (1 ms)
+    XSS Prevention
+      ΓêÜ should detect potential XSS in input (1 ms)
+      ΓêÜ should allow safe HTML entities
+
+PASS src/__tests__/setup.test.ts
+  Test Environment Setup
+    ΓêÜ should have Jest configured (1 ms)
+    ΓêÜ should have global test utilities available (1 ms)
+    ΓêÜ should support async/await in tests
+    ΓêÜ should have beforeEach and afterEach available (3 ms)
+    ΓêÜ should have mocking capabilities
+
+FAIL src/lib/performance/__tests__/gpu-processor.test.ts
+  GPUProcessor Divine Tests
+    GPU Initialization
+      ΓêÜ initializes GPU successfully (6 ms)
+      ΓêÜ reports GPU backend availability (1 ms)
+      ΓêÜ initializes metrics correctly (1 ms)
+    Image Processing Pipeline
+      ├ù processes single image with GPU acceleration (1 ms)
+      ├ù processes batch of images in parallel
+      ├ù applies image enhancement correctly
+      ├ù resizes images correctly (1 ms)
+    Basic GPU Operations
+      ΓêÜ reports GPU status correctly (2 ms)
+      ΓêÜ tracks metrics correctly (1 ms)
+      ├ù handles image processing
+    Performance Metrics
+      ├ù tracks kernel execution count (1 ms)
+      ├ù calculates average kernel time correctly (1 ms)
+      ΓêÜ reports VRAM usage (4 ms)
+      ├ù estimates GPU utilization (4 ms)
+    Error Handling
+      ├ù handles invalid image data gracefully (3 ms)
+      ├ù handles matrix dimension mismatch (1 ms)
+    Resource Management
+      ├ù cleans up TensorFlow memory (1136 ms)
+      ΓêÜ provides disposal method
+      ├ù reports accurate status after operations (1 ms)
+    Agricultural Use Cases
+      ├ù processes farm product images efficiently
+      ├ù handles high-resolution farm photos
+    Performance Benchmarks
+      ├ù benchmarks image processing throughput
+      ├ù benchmarks matrix multiplication performance (1 ms)
+  GPU Singleton Pattern
+    ├ù returns same instance on multiple calls (3 ms)
+    ├ù maintains state across calls (1 ms)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Image Processing Pipeline ΓÇ║ processes single image with GPU acceleration
+
+    ReferenceError: OffscreenCanvas is not defined
+
+      84 |       const width = 800;
+      85 |       const height = 600;
+    > 86 |       const canvas = new OffscreenCanvas(width, height);
+         |                      ^
+      87 |       const ctx = canvas.getContext("2d")!;
+      88 |       const imageData = ctx.createImageData(width, height);
+      89 |
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:86:22)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Image Processing Pipeline ΓÇ║ processes batch of images in parallel
+
+    ReferenceError: OffscreenCanvas is not defined
+
+      113 |       // Create batch of test images
+      114 |       for (let i = 0; i < batchSize; i++) {
+    > 115 |         const canvas = new OffscreenCanvas(400, 300);
+          |                        ^
+      116 |         const ctx = canvas.getContext("2d")!;
+      117 |         const imageData = ctx.createImageData(400, 300);
+      118 |
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:115:24)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Image Processing Pipeline ΓÇ║ applies image enhancement correctly
+
+    ReferenceError: OffscreenCanvas is not defined
+
+      144 |
+      145 |     it("applies image enhancement correctly", async () => {
+    > 146 |       const canvas = new OffscreenCanvas(100, 100);
+          |                      ^
+      147 |       const ctx = canvas.getContext("2d")!;
+      148 |       const imageData = ctx.createImageData(100, 100);
+      149 |
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:146:22)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Image Processing Pipeline ΓÇ║ resizes images correctly
+
+    ReferenceError: OffscreenCanvas is not defined
+
+      166 |
+      167 |     it("resizes images correctly", async () => {
+    > 168 |       const canvas = new OffscreenCanvas(800, 600);
+          |                      ^
+      169 |       const ctx = canvas.getContext("2d")!;
+      170 |       const imageData = ctx.createImageData(800, 600);
+      171 |
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:168:22)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Basic GPU Operations ΓÇ║ handles image processing
+
+    ReferenceError: OffscreenCanvas is not defined
+
+      197 |
+      198 |     it("handles image processing", async () => {
+    > 199 |       const canvas = new OffscreenCanvas(100, 100);
+          |                      ^
+      200 |       const ctx = canvas.getContext("2d")!;
+      201 |       const imageData = ctx.createImageData(100, 100);
+      202 |
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:199:22)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Performance Metrics ΓÇ║ tracks kernel execution count
+
+    TypeError: processor.matrixMultiply is not a function
+
+      215 |
+      216 |       // Execute multiple operations
+    > 217 |       await processor.matrixMultiply([[1]], [[2]]);
+          |                       ^
+      218 |       await processor.matrixMultiply([[3]], [[4]]);
+      219 |
+      220 |       const metricsAfter = processor.getMetrics();
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:217:23)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Performance Metrics ΓÇ║ calculates average kernel time correctly
+
+    TypeError: processor.matrixMultiply is not a function
+
+      228 |       // Execute some operations
+      229 |       for (let i = 0; i < 5; i++) {
+    > 230 |         await processor.matrixMultiply([[i]], [[i]]);
+          |                         ^
+      231 |       }
+      232 |
+      233 |       const metrics = processor.getMetrics();
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:230:25)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Performance Metrics ΓÇ║ estimates GPU utilization
+
+    TypeError: processor.matrixMultiply is not a function
+
+      247 |       // Run some operations to increase utilization
+      248 |       for (let i = 0; i < 10; i++) {
+    > 249 |         await processor.matrixMultiply([[i]], [[i]]);
+          |                         ^
+      250 |       }
+      251 |
+      252 |       const metrics = processor.getMetrics();
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:249:25)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Error Handling ΓÇ║ handles invalid image data gracefully
+
+    expect(received).rejects.toThrow()
+
+    Received promise resolved instead of rejected
+    Resolved to value: [{}]
+
+      261 |       const invalidImage = {} as ImageData;
+      262 |
+    > 263 |       await expect(processor.processImages([invalidImage])).rejects.toThrow();
+          |                   ^
+      264 |     });
+      265 |
+      266 |     it("handles matrix dimension mismatch", async () => {
+
+      at expect (node_modules/expect/build/index.js:2116:15)
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:263:19)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Error Handling ΓÇ║ handles matrix dimension mismatch
+
+    TypeError: processor.matrixMultiply is not a function
+
+      269 |
+      270 |       // Should still return a result (GPU.js creates output)
+    > 271 |       const result = await processor.matrixMultiply(matrixA, matrixB);
+          |                                      ^
+      272 |       expect(result).toBeDefined();
+      273 |     });
+      274 |   });
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:271:38)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Resource Management ΓÇ║ cleans up TensorFlow memory
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: undefined
+
+      282 |       const disposed = tensor.dispose();
+      283 |
+    > 284 |       expect(disposed).toBe(true);
+          |                        ^
+      285 |
+      286 |       const memoryAfter = tf.memory();
+      287 |       expect(memoryAfter.numTensors).toBeLessThanOrEqual(
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:284:24)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Resource Management ΓÇ║ reports accurate status after operations
+
+    TypeError: processor.matrixMultiply is not a function
+
+      297 |
+      298 |     it("reports accurate status after operations", async () => {
+    > 299 |       await processor.matrixMultiply([[1, 2]], [[3], [4]]);
+          |                       ^
+      300 |
+      301 |       const status = processor.getStatus();
+      302 |
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:299:23)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Agricultural Use Cases ΓÇ║ processes farm product images efficiently
+
+    ReferenceError: OffscreenCanvas is not defined
+
+      314 |
+      315 |       for (let i = 0; i < 10; i++) {
+    > 316 |         const canvas = new OffscreenCanvas(1200, 900);
+          |                        ^
+      317 |         const ctx = canvas.getContext("2d")!;
+      318 |         productImages.push(ctx.createImageData(1200, 900));
+      319 |       }
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:316:24)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Agricultural Use Cases ΓÇ║ handles high-resolution farm photos
+
+    ReferenceError: OffscreenCanvas is not defined
+
+      335 |
+      336 |     it("handles high-resolution farm photos", async () => {
+    > 337 |       const canvas = new OffscreenCanvas(4000, 3000); // High res
+          |                      ^
+      338 |       const ctx = canvas.getContext("2d")!;
+      339 |       const imageData = ctx.createImageData(4000, 3000);
+      340 |
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:337:22)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Performance Benchmarks ΓÇ║ benchmarks image processing throughput
+
+    ReferenceError: OffscreenCanvas is not defined
+
+      369 |
+      370 |         for (let i = 0; i < batchSize; i++) {
+    > 371 |           const canvas = new OffscreenCanvas(800, 600);
+          |                          ^
+      372 |           const ctx = canvas.getContext("2d")!;
+      373 |           images.push(ctx.createImageData(800, 600));
+      374 |         }
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:371:26)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Performance Benchmarks ΓÇ║ benchmarks matrix multiplication performance
+
+    TypeError: processor.matrixMultiply is not a function
+
+      410 |
+      411 |         const startTime = performance.now();
+    > 412 |         await processor.matrixMultiply(matrixA, matrixB);
+          |                         ^
+      413 |         const duration = performance.now() - startTime;
+      414 |
+      415 |         const operations = size * size * size; // Approximate FLOPs
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:412:25)
+
+  ΓùÅ GPU Singleton Pattern ΓÇ║ returns same instance on multiple calls
+
+    expect(received).toBe(expected) // Object.is equality
+
+    If it should pass with deep equality, replace "toBe" with "toStrictEqual"
+
+    Expected: {}
+    Received: serializes to the same string
+
+      437 |     const instance2 = getGPUProcessor();
+      438 |
+    > 439 |     expect(instance1).toBe(instance2);
+          |                       ^
+      440 |   });
+      441 |
+      442 |   it("maintains state across calls", async () => {
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:439:23)
+
+  ΓùÅ GPU Singleton Pattern ΓÇ║ maintains state across calls
+
+    TypeError: instance1.matrixMultiply is not a function
+
+      442 |   it("maintains state across calls", async () => {
+      443 |     const instance1 = getGPUProcessor();
+    > 444 |     await instance1.matrixMultiply([[1]], [[2]]);
+          |                     ^
+      445 |
+      446 |     const metrics1 = instance1.getMetrics();
+      447 |
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:444:21)
+
+Summary of all failing tests
+FAIL src/components/__tests__/SeasonalProductCatalog.test.tsx
+  ΓùÅ SeasonalProductCatalog ΓÇ║ Product Manifestation Reality ΓÇ║ manifests seasonal products with agricultural consciousness
+
+    ReferenceError: React is not defined
+
+      47 |       // Act
+      48 |       render(
+    > 49 |         <SeasonalProductCatalog products={mockProducts} season="SPRING" />
+         |         ^
+      50 |       );
+      51 |
+      52 |       // Assert - Spring products should be visible
+
+      at Object.<anonymous> (src/components/__tests__/SeasonalProductCatalog.test.tsx:49:9)
+
+  ΓùÅ SeasonalProductCatalog ΓÇ║ Product Manifestation Reality ΓÇ║ respects seasonal boundaries and filters appropriately
+
+    ReferenceError: React is not defined
+
+      81 |       // Act
+      82 |       render(
+    > 83 |         <SeasonalProductCatalog products={mockProducts} season="SPRING" />
+         |         ^
+      84 |       );
+      85 |
+      86 |       // Assert - Only spring products should be visible
+
+      at Object.<anonymous> (src/components/__tests__/SeasonalProductCatalog.test.tsx:83:9)
+
+  ΓùÅ SeasonalProductCatalog ΓÇ║ Product Manifestation Reality ΓÇ║ handles empty product catalog with divine grace
+
+    ReferenceError: React is not defined
+
+      91 |     it("handles empty product catalog with divine grace", async () => {
+      92 |       // Arrange - Empty product array
+    > 93 |       render(<SeasonalProductCatalog products={[]} season="SPRING" />);
+         |              ^
+      94 |
+      95 |       // Assert - Should show empty state message
+      96 |       await waitFor(() => {
+
+      at Object.<anonymous> (src/components/__tests__/SeasonalProductCatalog.test.tsx:93:14)
+
+  ΓùÅ SeasonalProductCatalog ΓÇ║ Product Interaction Quantum Mechanics ΓÇ║ allows users to view product details
+
+    ReferenceError: React is not defined
+
+      121 |       // Act
+      122 |       render(
+    > 123 |         <SeasonalProductCatalog
+          |         ^
+      124 |           products={mockProducts}
+      125 |           season="SPRING"
+      126 |           onProductClick={mockOnProductClick}
+
+      at Object.<anonymous> (src/components/__tests__/SeasonalProductCatalog.test.tsx:123:9)
+
+  ΓùÅ SeasonalProductCatalog ΓÇ║ Product Interaction Quantum Mechanics ΓÇ║ supports adding products to cart with agricultural intent
+
+    ReferenceError: React is not defined
+
+      153 |       // Act
+      154 |       render(
+    > 155 |         <SeasonalProductCatalog
+          |         ^
+      156 |           products={mockProducts}
+      157 |           season="SUMMER"
+      158 |           onAddToCart={mockOnAddToCart}
+
+      at Object.<anonymous> (src/components/__tests__/SeasonalProductCatalog.test.tsx:155:9)
+
+  ΓùÅ SeasonalProductCatalog ΓÇ║ Agricultural Consciousness Preservation ΓÇ║ maintains biodynamic awareness during rendering
+
+    ReferenceError: React is not defined
+
+      186 |       // Act
+      187 |       render(
+    > 188 |         <SeasonalProductCatalog products={mockProducts} season="SPRING" />
+          |         ^
+      189 |       );
+      190 |
+      191 |       // Assert - Biodynamic badge should be visible
+
+      at Object.<anonymous> (src/components/__tests__/SeasonalProductCatalog.test.tsx:188:9)
+
+  ΓùÅ SeasonalProductCatalog ΓÇ║ Agricultural Consciousness Preservation ΓÇ║ displays seasonal consciousness indicators
+
+    ReferenceError: React is not defined
+
+      213 |       // Act
+      214 |       render(
+    > 215 |         <SeasonalProductCatalog products={mockProducts} season="SPRING" />
+          |         ^
+      216 |       );
+      217 |
+      218 |       // Assert - Harvest date should be displayed
+
+      at Object.<anonymous> (src/components/__tests__/SeasonalProductCatalog.test.tsx:215:9)
+
+  ΓùÅ SeasonalProductCatalog ΓÇ║ Performance Quantum Optimization ΓÇ║ efficiently renders large product catalogs
+
+    ReferenceError: React is not defined
+
+      239 |       // Act
+      240 |       render(
+    > 241 |         <SeasonalProductCatalog products={largeProductList} season="SPRING" />
+          |         ^
+      242 |       );
+      243 |
+      244 |       const renderTime = performance.now() - startTime;
+
+      at Object.<anonymous> (src/components/__tests__/SeasonalProductCatalog.test.tsx:241:9)
+
+  ΓùÅ SeasonalProductCatalog ΓÇ║ Performance Quantum Optimization ΓÇ║ implements virtualization for optimal performance
+
+    ReferenceError: React is not defined
+
+      261 |       // Act
+      262 |       const { container } = render(
+    > 263 |         <SeasonalProductCatalog
+          |         ^
+      264 |           products={manyProducts}
+      265 |           season="SPRING"
+      266 |           virtualized
+
+      at Object.<anonymous> (src/components/__tests__/SeasonalProductCatalog.test.tsx:263:9)
+
+FAIL src/components/__tests__/ErrorBoundary.test.tsx
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Basic Error Catching ΓÇ║ renders children when no error occurs
+
+    ReferenceError: React is not defined
+
+      54 |     it("renders children when no error occurs", () => {
+      55 |       render(
+    > 56 |         <ErrorBoundary>
+         |         ^
+      57 |           <div>Normal content</div>
+      58 |         </ErrorBoundary>
+      59 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:56:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Basic Error Catching ΓÇ║ catches and displays errors
+
+    ReferenceError: React is not defined
+
+      72 |
+      73 |       render(
+    > 74 |         <ErrorBoundary>
+         |         ^
+      75 |           <ThrowError />
+      76 |         </ErrorBoundary>
+      77 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:74:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Basic Error Catching ΓÇ║ allows custom fallback UI
+
+    ReferenceError: React is not defined
+
+      92 |
+      93 |       render(
+    > 94 |         <ErrorBoundary
+         |         ^
+      95 |           maxRetries={3}
+      96 |           retryDelay={1000}
+      97 |           fallback={CustomFallback}
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:94:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Error Categorization System ΓÇ║ categorizes errors correctly
+
+    ReferenceError: React is not defined
+
+      112 |
+      113 |       render(
+    > 114 |         <ErrorBoundary>
+          |         ^
+      115 |           <ThrowError errorToThrow={networkError} />
+      116 |         </ErrorBoundary>
+      117 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:114:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Error Categorization System ΓÇ║ categorizes authentication errors correctly
+
+    ReferenceError: React is not defined
+
+      130 |
+      131 |       render(
+    > 132 |         <ErrorBoundary>
+          |         ^
+      133 |           <ThrowError errorToThrow={authError} />
+      134 |         </ErrorBoundary>
+      135 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:132:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Error Categorization System ΓÇ║ categorizes authorization errors correctly
+
+    ReferenceError: React is not defined
+
+      145 |
+      146 |       render(
+    > 147 |         <ErrorBoundary>
+          |         ^
+      148 |           <ThrowError errorToThrow={authzError} />
+      149 |         </ErrorBoundary>
+      150 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:147:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Error Categorization System ΓÇ║ categorizes validation errors correctly
+
+    ReferenceError: React is not defined
+
+      160 |
+      161 |       render(
+    > 162 |         <ErrorBoundary>
+          |         ^
+      163 |           <ThrowError errorToThrow={validationError} />
+      164 |         </ErrorBoundary>
+      165 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:162:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Error Categorization System ΓÇ║ categorizes server errors correctly
+
+    ReferenceError: React is not defined
+
+      172 |
+      173 |       render(
+    > 174 |         <ErrorBoundary>
+          |         ^
+      175 |           <ThrowError errorToThrow={serverError} />
+      176 |         </ErrorBoundary>
+      177 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:174:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Error Categorization System ΓÇ║ categorizes not found errors correctly
+
+    ReferenceError: React is not defined
+
+      184 |
+      185 |       render(
+    > 186 |         <ErrorBoundary>
+          |         ^
+      187 |           <ThrowError errorToThrow={notFoundError} />
+      188 |         </ErrorBoundary>
+      189 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:186:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Error Categorization System ΓÇ║ categorizes unknown errors with generic message
+
+    ReferenceError: React is not defined
+
+      196 |
+      197 |       render(
+    > 198 |         <ErrorBoundary>
+          |         ^
+      199 |           <ThrowError errorToThrow={unknownError} />
+      200 |         </ErrorBoundary>
+      201 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:198:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Structured Logging ΓÇ║ logs errors with structured format
+
+    ReferenceError: React is not defined
+
+      212 |
+      213 |       render(
+    > 214 |         <ErrorBoundary>
+          |         ^
+      215 |           <ThrowError errorToThrow={testError} />
+      216 |         </ErrorBoundary>
+      217 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:214:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Structured Logging ΓÇ║ includes categorization metadata in logs
+
+    ReferenceError: React is not defined
+
+      242 |
+      243 |       render(
+    > 244 |         <ErrorBoundary>
+          |         ^
+      245 |           <ThrowError errorToThrow={networkError} />
+      246 |         </ErrorBoundary>
+      247 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:244:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Retry Mechanism ΓÇ║ automatically retries recoverable errors
+
+    ReferenceError: React is not defined
+
+      274 |
+      275 |       render(
+    > 276 |         <ErrorBoundary maxRetries={3} retryDelay={1000}>
+          |         ^
+      277 |           <ThrowError errorToThrow={networkError} />
+      278 |         </ErrorBoundary>
+      279 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:276:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Retry Mechanism ΓÇ║ uses exponential backoff for retries
+
+    ReferenceError: React is not defined
+
+      293 |
+      294 |       const { rerender } = render(
+    > 295 |         <ErrorBoundary maxRetries={3} retryDelay={1000}>
+          |         ^
+      296 |           <ThrowError errorToThrow={networkError} />
+      297 |         </ErrorBoundary>
+      298 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:295:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Retry Mechanism ΓÇ║ respects maxRetries limit
+
+    ReferenceError: React is not defined
+
+      321 |
+      322 |       render(
+    > 323 |         <ErrorBoundary maxRetries={2} retryDelay={100}>
+          |         ^
+      324 |           <ThrowError errorToThrow={networkError} />
+      325 |         </ErrorBoundary>
+      326 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:323:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Retry Mechanism ΓÇ║ does not retry non-recoverable errors
+
+    ReferenceError: React is not defined
+
+      341 |
+      342 |       render(
+    > 343 |         <ErrorBoundary maxRetries={3} retryDelay={1000}>
+          |         ^
+      344 |           <ThrowError errorToThrow={authError} />
+      345 |         </ErrorBoundary>
+      346 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:343:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Reset Functionality ΓÇ║ resets error state when reset button clicked
+
+    ReferenceError: React is not defined
+
+      371 |
+      372 |       render(
+    > 373 |         <ErrorBoundary>
+          |         ^
+      374 |           <ConditionalError />
+      375 |         </ErrorBoundary>
+      376 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:373:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Reset Functionality ΓÇ║ logs reset action
+
+    ReferenceError: React is not defined
+
+      395 |
+      396 |       render(
+    > 397 |         <ErrorBoundary>
+          |         ^
+      398 |           <ThrowError error={recoverableError} />
+      399 |         </ErrorBoundary>
+      400 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:397:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Development Mode Features ΓÇ║ shows error details in development mode
+
+    ReferenceError: React is not defined
+
+      424 |
+      425 |       render(
+    > 426 |         <ErrorBoundary>
+          |         ^
+      427 |           <ThrowError error={testError} />
+      428 |         </ErrorBoundary>
+      429 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:426:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ Development Mode Features ΓÇ║ hides error details in production mode
+
+    ReferenceError: React is not defined
+
+      441 |
+      442 |       render(
+    > 443 |         <ErrorBoundary>
+          |         ^
+      444 |           <ThrowError error={testError} />
+      445 |         </ErrorBoundary>
+      446 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:443:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ UI Rendering ΓÇ║ displays appropriate button for recoverable errors
+
+    ReferenceError: React is not defined
+
+      455 |
+      456 |       render(
+    > 457 |         <ErrorBoundary>
+          |         ^
+      458 |           <ThrowError error={recoverableError} />
+      459 |         </ErrorBoundary>
+      460 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:457:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ UI Rendering ΓÇ║ displays homepage button for non-recoverable errors
+
+    ReferenceError: React is not defined
+
+      469 |
+      470 |       render(
+    > 471 |         <ErrorBoundary>
+          |         ^
+      472 |           <ThrowError error={nonRecoverableError} />
+      473 |         </ErrorBoundary>
+      474 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:471:9)
+
+  ΓùÅ ErrorBoundary Divine Consciousness ΓÇ║ UI Rendering ΓÇ║ shows retry count when retries have occurred
+
+    ReferenceError: React is not defined
+
+      484 |
+      485 |       render(
+    > 486 |         <ErrorBoundary maxRetries={3} retryDelay={1000}>
+          |         ^
+      487 |           <ThrowError errorToThrow={authError} />
+      488 |         </ErrorBoundary>
+      489 |       );
+
+      at Object.<anonymous> (src/components/__tests__/ErrorBoundary.test.tsx:486:9)
+
+FAIL src/lib/performance/__tests__/gpu-processor.test.ts
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Image Processing Pipeline ΓÇ║ processes single image with GPU acceleration
+
+    ReferenceError: OffscreenCanvas is not defined
+
+      84 |       const width = 800;
+      85 |       const height = 600;
+    > 86 |       const canvas = new OffscreenCanvas(width, height);
+         |                      ^
+      87 |       const ctx = canvas.getContext("2d")!;
+      88 |       const imageData = ctx.createImageData(width, height);
+      89 |
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:86:22)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Image Processing Pipeline ΓÇ║ processes batch of images in parallel
+
+    ReferenceError: OffscreenCanvas is not defined
+
+      113 |       // Create batch of test images
+      114 |       for (let i = 0; i < batchSize; i++) {
+    > 115 |         const canvas = new OffscreenCanvas(400, 300);
+          |                        ^
+      116 |         const ctx = canvas.getContext("2d")!;
+      117 |         const imageData = ctx.createImageData(400, 300);
+      118 |
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:115:24)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Image Processing Pipeline ΓÇ║ applies image enhancement correctly
+
+    ReferenceError: OffscreenCanvas is not defined
+
+      144 |
+      145 |     it("applies image enhancement correctly", async () => {
+    > 146 |       const canvas = new OffscreenCanvas(100, 100);
+          |                      ^
+      147 |       const ctx = canvas.getContext("2d")!;
+      148 |       const imageData = ctx.createImageData(100, 100);
+      149 |
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:146:22)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Image Processing Pipeline ΓÇ║ resizes images correctly
+
+    ReferenceError: OffscreenCanvas is not defined
+
+      166 |
+      167 |     it("resizes images correctly", async () => {
+    > 168 |       const canvas = new OffscreenCanvas(800, 600);
+          |                      ^
+      169 |       const ctx = canvas.getContext("2d")!;
+      170 |       const imageData = ctx.createImageData(800, 600);
+      171 |
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:168:22)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Basic GPU Operations ΓÇ║ handles image processing
+
+    ReferenceError: OffscreenCanvas is not defined
+
+      197 |
+      198 |     it("handles image processing", async () => {
+    > 199 |       const canvas = new OffscreenCanvas(100, 100);
+          |                      ^
+      200 |       const ctx = canvas.getContext("2d")!;
+      201 |       const imageData = ctx.createImageData(100, 100);
+      202 |
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:199:22)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Performance Metrics ΓÇ║ tracks kernel execution count
+
+    TypeError: processor.matrixMultiply is not a function
+
+      215 |
+      216 |       // Execute multiple operations
+    > 217 |       await processor.matrixMultiply([[1]], [[2]]);
+          |                       ^
+      218 |       await processor.matrixMultiply([[3]], [[4]]);
+      219 |
+      220 |       const metricsAfter = processor.getMetrics();
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:217:23)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Performance Metrics ΓÇ║ calculates average kernel time correctly
+
+    TypeError: processor.matrixMultiply is not a function
+
+      228 |       // Execute some operations
+      229 |       for (let i = 0; i < 5; i++) {
+    > 230 |         await processor.matrixMultiply([[i]], [[i]]);
+          |                         ^
+      231 |       }
+      232 |
+      233 |       const metrics = processor.getMetrics();
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:230:25)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Performance Metrics ΓÇ║ estimates GPU utilization
+
+    TypeError: processor.matrixMultiply is not a function
+
+      247 |       // Run some operations to increase utilization
+      248 |       for (let i = 0; i < 10; i++) {
+    > 249 |         await processor.matrixMultiply([[i]], [[i]]);
+          |                         ^
+      250 |       }
+      251 |
+      252 |       const metrics = processor.getMetrics();
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:249:25)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Error Handling ΓÇ║ handles invalid image data gracefully
+
+    expect(received).rejects.toThrow()
+
+    Received promise resolved instead of rejected
+    Resolved to value: [{}]
+
+      261 |       const invalidImage = {} as ImageData;
+      262 |
+    > 263 |       await expect(processor.processImages([invalidImage])).rejects.toThrow();
+          |                   ^
+      264 |     });
+      265 |
+      266 |     it("handles matrix dimension mismatch", async () => {
+
+      at expect (node_modules/expect/build/index.js:2116:15)
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:263:19)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Error Handling ΓÇ║ handles matrix dimension mismatch
+
+    TypeError: processor.matrixMultiply is not a function
+
+      269 |
+      270 |       // Should still return a result (GPU.js creates output)
+    > 271 |       const result = await processor.matrixMultiply(matrixA, matrixB);
+          |                                      ^
+      272 |       expect(result).toBeDefined();
+      273 |     });
+      274 |   });
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:271:38)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Resource Management ΓÇ║ cleans up TensorFlow memory
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: undefined
+
+      282 |       const disposed = tensor.dispose();
+      283 |
+    > 284 |       expect(disposed).toBe(true);
+          |                        ^
+      285 |
+      286 |       const memoryAfter = tf.memory();
+      287 |       expect(memoryAfter.numTensors).toBeLessThanOrEqual(
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:284:24)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Resource Management ΓÇ║ reports accurate status after operations
+
+    TypeError: processor.matrixMultiply is not a function
+
+      297 |
+      298 |     it("reports accurate status after operations", async () => {
+    > 299 |       await processor.matrixMultiply([[1, 2]], [[3], [4]]);
+          |                       ^
+      300 |
+      301 |       const status = processor.getStatus();
+      302 |
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:299:23)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Agricultural Use Cases ΓÇ║ processes farm product images efficiently
+
+    ReferenceError: OffscreenCanvas is not defined
+
+      314 |
+      315 |       for (let i = 0; i < 10; i++) {
+    > 316 |         const canvas = new OffscreenCanvas(1200, 900);
+          |                        ^
+      317 |         const ctx = canvas.getContext("2d")!;
+      318 |         productImages.push(ctx.createImageData(1200, 900));
+      319 |       }
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:316:24)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Agricultural Use Cases ΓÇ║ handles high-resolution farm photos
+
+    ReferenceError: OffscreenCanvas is not defined
+
+      335 |
+      336 |     it("handles high-resolution farm photos", async () => {
+    > 337 |       const canvas = new OffscreenCanvas(4000, 3000); // High res
+          |                      ^
+      338 |       const ctx = canvas.getContext("2d")!;
+      339 |       const imageData = ctx.createImageData(4000, 3000);
+      340 |
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:337:22)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Performance Benchmarks ΓÇ║ benchmarks image processing throughput
+
+    ReferenceError: OffscreenCanvas is not defined
+
+      369 |
+      370 |         for (let i = 0; i < batchSize; i++) {
+    > 371 |           const canvas = new OffscreenCanvas(800, 600);
+          |                          ^
+      372 |           const ctx = canvas.getContext("2d")!;
+      373 |           images.push(ctx.createImageData(800, 600));
+      374 |         }
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:371:26)
+
+  ΓùÅ GPUProcessor Divine Tests ΓÇ║ Performance Benchmarks ΓÇ║ benchmarks matrix multiplication performance
+
+    TypeError: processor.matrixMultiply is not a function
+
+      410 |
+      411 |         const startTime = performance.now();
+    > 412 |         await processor.matrixMultiply(matrixA, matrixB);
+          |                         ^
+      413 |         const duration = performance.now() - startTime;
+      414 |
+      415 |         const operations = size * size * size; // Approximate FLOPs
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:412:25)
+
+  ΓùÅ GPU Singleton Pattern ΓÇ║ returns same instance on multiple calls
+
+    expect(received).toBe(expected) // Object.is equality
+
+    If it should pass with deep equality, replace "toBe" with "toStrictEqual"
+
+    Expected: {}
+    Received: serializes to the same string
+
+      437 |     const instance2 = getGPUProcessor();
+      438 |
+    > 439 |     expect(instance1).toBe(instance2);
+          |                       ^
+      440 |   });
+      441 |
+      442 |   it("maintains state across calls", async () => {
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:439:23)
+
+  ΓùÅ GPU Singleton Pattern ΓÇ║ maintains state across calls
+
+    TypeError: instance1.matrixMultiply is not a function
+
+      442 |   it("maintains state across calls", async () => {
+      443 |     const instance1 = getGPUProcessor();
+    > 444 |     await instance1.matrixMultiply([[1]], [[2]]);
+          |                     ^
+      445 |
+      446 |     const metrics1 = instance1.getMetrics();
+      447 |
+
+      at Object.<anonymous> (src/lib/performance/__tests__/gpu-processor.test.ts:444:21)
+
+
+Test Suites: 3 failed, 2 skipped, 17 passed, 20 of 22 total
+Tests:       50 failed, 14 skipped, 359 passed, 423 total
+Snapshots:   0 total
+Time:        4.96 s
+Ran all test suites.

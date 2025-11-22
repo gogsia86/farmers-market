@@ -1,8 +1,17 @@
-// Prisma Configuration File
-// Ready for Prisma 7 migration
-// NOTE: Prisma 6.x still requires package.json#prisma config
-// This file will be automatically used when upgrading to Prisma 7
+/**
+ * PRISMA 7 CONFIGURATION
+ * Database connection and migration settings
+ * @see https://pris.ly/d/prisma7-client-config
+ */
 
-export default {
-  seed: "tsx prisma/seed.ts",
-};
+import { defineConfig } from '@prisma/client/config'
+
+export default defineConfig({
+  datasources: {
+    db: {
+      url: process.env.DATABASE_URL || 'postgresql://user:password@localhost:5432/farmers_market',
+    },
+  },
+  // Seed configuration (replaces package.json prisma.seed)
+  seed: 'tsx prisma/seed.ts',
+})

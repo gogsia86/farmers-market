@@ -6,15 +6,15 @@
  */
 
 import { database } from "@/lib/database";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "@jest/globals";
 import { ShippingService } from "../shipping.service";
 
 // Mock the database
-vi.mock("@/lib/database", () => ({
+jest.mock("@/lib/database", () => ({
   database: {
     order: {
-      update: vi.fn(),
-      findFirst: vi.fn(),
+      update: jest.fn(),
+      findFirst: jest.fn(),
     },
   },
 }));
@@ -28,7 +28,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
   };
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
   });
 
   describe("📦 calculateShippingRates", () => {
@@ -199,7 +199,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
 
   describe("🏷️ createShippingLabel", () => {
     it("should create shipping label successfully", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       const result = await ShippingService.createShippingLabel(
         mockOrderId,
@@ -213,7 +213,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     });
 
     it("should update order status to PREPARING with tracking", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       await ShippingService.createShippingLabel(mockOrderId, "EXPRESS");
 
@@ -228,16 +228,16 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     });
 
     it("should update order with shipping service", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       await ShippingService.createShippingLabel(mockOrderId, "OVERNIGHT");
 
-      const updateCall = vi.mocked(database.order.update).mock.calls[0][0];
+      const updateCall = jest.mocked(database.order.update).mock.calls[0][0];
       expect(updateCall.data).toMatchObject({ status: "PREPARING" });
     });
 
     it("should generate unique tracking numbers", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       const result1 = await ShippingService.createShippingLabel(
         "order-1",
@@ -256,7 +256,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     });
 
     it("should generate unique label IDs", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       const result1 = await ShippingService.createShippingLabel(
         "order-1",
@@ -275,7 +275,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     });
 
     it("should handle STANDARD service", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       const result = await ShippingService.createShippingLabel(
         mockOrderId,
@@ -287,7 +287,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     });
 
     it("should handle EXPRESS service", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       const result = await ShippingService.createShippingLabel(
         mockOrderId,
@@ -299,7 +299,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     });
 
     it("should handle OVERNIGHT service", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       const result = await ShippingService.createShippingLabel(
         mockOrderId,
@@ -311,7 +311,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     });
 
     it("should propagate database errors", async () => {
-      vi.mocked(database.order.update).mockRejectedValue(
+      jest.mocked(database.order.update).mockRejectedValue(
         new Error("Database error")
       );
 
@@ -330,7 +330,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     };
 
     it("should return tracking info for valid tracking number", async () => {
-      vi.mocked(database.order.findFirst).mockResolvedValue(mockOrder as any);
+      jest.mocked(database.order.findFirst).mockResolvedValue(mockOrder as any);
 
       const info = await ShippingService.getTrackingInfo(mockTrackingNumber);
 
@@ -343,7 +343,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     });
 
     it("should return empty array for invalid tracking number", async () => {
-      vi.mocked(database.order.findFirst).mockResolvedValue(null);
+      jest.mocked(database.order.findFirst).mockResolvedValue(null);
 
       const info = await ShippingService.getTrackingInfo("INVALID123");
 
@@ -351,7 +351,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     });
 
     it("should include timestamp in tracking info", async () => {
-      vi.mocked(database.order.findFirst).mockResolvedValue(mockOrder as any);
+      jest.mocked(database.order.findFirst).mockResolvedValue(mockOrder as any);
 
       const info = await ShippingService.getTrackingInfo(mockTrackingNumber);
 
@@ -359,7 +359,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     });
 
     it("should query database with tracking number", async () => {
-      vi.mocked(database.order.findFirst).mockResolvedValue(mockOrder as any);
+      jest.mocked(database.order.findFirst).mockResolvedValue(mockOrder as any);
 
       await ShippingService.getTrackingInfo(mockTrackingNumber);
 
@@ -372,7 +372,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
       const statuses = ["PENDING", "PROCESSING", "SHIPPED", "DELIVERED"];
 
       for (const status of statuses) {
-        vi.mocked(database.order.findFirst).mockResolvedValue({
+        jest.mocked(database.order.findFirst).mockResolvedValue({
           ...mockOrder,
           status,
         } as any);
@@ -383,7 +383,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     });
 
     it("should handle database errors", async () => {
-      vi.mocked(database.order.findFirst).mockRejectedValue(
+      jest.mocked(database.order.findFirst).mockRejectedValue(
         new Error("Database error")
       );
 
@@ -393,7 +393,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     });
 
     it("should return tracking info with correct structure", async () => {
-      vi.mocked(database.order.findFirst).mockResolvedValue(mockOrder as any);
+      jest.mocked(database.order.findFirst).mockResolvedValue(mockOrder as any);
 
       const info = await ShippingService.getTrackingInfo(mockTrackingNumber);
 
@@ -406,7 +406,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
 
   describe("🔄 updateShippingStatus", () => {
     it("should update shipping status successfully", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       await ShippingService.updateShippingStatus(mockOrderId, "SHIPPED");
 
@@ -417,53 +417,53 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     });
 
     it("should handle PENDING status", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       await ShippingService.updateShippingStatus(mockOrderId, "PENDING");
 
-      const updateCall = vi.mocked(database.order.update).mock.calls[0][0];
+      const updateCall = jest.mocked(database.order.update).mock.calls[0][0];
       expect(updateCall.data).toMatchObject({ status: "PENDING" });
     });
 
     it("should handle invalid status by defaulting to PREPARING", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       // "PROCESSING" is not in valid statuses, so it defaults to "PREPARING"
       await ShippingService.updateShippingStatus(mockOrderId, "PROCESSING");
 
-      const updateCall = vi.mocked(database.order.update).mock.calls[0][0];
+      const updateCall = jest.mocked(database.order.update).mock.calls[0][0];
       expect(updateCall.data).toMatchObject({ status: "PREPARING" });
     });
 
     it("should handle SHIPPED status", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       await ShippingService.updateShippingStatus(mockOrderId, "SHIPPED");
 
-      const updateCall = vi.mocked(database.order.update).mock.calls[0][0];
+      const updateCall = jest.mocked(database.order.update).mock.calls[0][0];
       expect(updateCall.data).toMatchObject({ status: "SHIPPED" });
     });
 
     it("should handle DELIVERED status", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       await ShippingService.updateShippingStatus(mockOrderId, "DELIVERED");
 
-      const updateCall = vi.mocked(database.order.update).mock.calls[0][0];
+      const updateCall = jest.mocked(database.order.update).mock.calls[0][0];
       expect(updateCall.data).toMatchObject({ status: "DELIVERED" });
     });
 
     it("should handle CANCELLED status", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       await ShippingService.updateShippingStatus(mockOrderId, "CANCELLED");
 
-      const updateCall = vi.mocked(database.order.update).mock.calls[0][0];
+      const updateCall = jest.mocked(database.order.update).mock.calls[0][0];
       expect(updateCall.data).toMatchObject({ status: "CANCELLED" });
     });
 
     it("should propagate database errors", async () => {
-      vi.mocked(database.order.update).mockRejectedValue(
+      jest.mocked(database.order.update).mockRejectedValue(
         new Error("Update failed")
       );
 
@@ -473,7 +473,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     });
 
     it("should update status for different order IDs", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
 
       const orderIds = ["order-1", "order-2", "order-3"];
 
@@ -489,8 +489,8 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
 
   describe("🔄 Integration Scenarios", () => {
     it("should handle complete shipping workflow", async () => {
-      vi.mocked(database.order.update).mockResolvedValue({} as any);
-      vi.mocked(database.order.findFirst).mockResolvedValue({
+      jest.mocked(database.order.update).mockResolvedValue({} as any);
+      jest.mocked(database.order.findFirst).mockResolvedValue({
         id: mockOrderId,
         status: "SHIPPED",
         trackingNumber: "TRK123",
@@ -533,3 +533,4 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     });
   });
 });
+

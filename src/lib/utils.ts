@@ -32,17 +32,13 @@ export function formatNumber(num: number, locale = "en-US"): string {
 }
 
 /**
- * Format currency with localization
+ * Format price with currency symbol
  */
-export function formatCurrency(
-  amount: number,
-  currency = "USD",
-  locale = "en-US",
-): string {
-  return new Intl.NumberFormat(locale, {
+export function formatPrice(price: number): string {
+  return new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency,
-  }).format(amount);
+    currency: "USD",
+  }).format(price) as string;
 }
 
 /**
@@ -65,7 +61,7 @@ export function sleep(ms: number): Promise<void> {
  */
 export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
-  wait: number,
+  wait: number
 ): (...args: Parameters<T>) => void {
   let timeout: NodeJS.Timeout | null = null;
 

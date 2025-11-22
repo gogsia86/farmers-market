@@ -29,12 +29,25 @@ export class ProductService {
    * Validates farm ownership and generates unique slug
    */
   static async createProduct(
-    input: CreateProductInput,
+    productData: CreateProductInput,
     userId: string
-  ): Promise<Product> {
+  ): Promise<Product & { id: string }> {
+    // Input validation
+    if (!userId || typeof userId !== "string") {
+      throw new Error("Valid user ID is required");
+    }
+
+    if (!productData?.name || productData.name.trim().length < 3) {
+      throw new Error("Product name must be at least 3 characters");
+    }
+
+    if (!productData?.farmId) {
+      throw new Error("Farm ID is required");
+    }
+
     // 1. Verify farm ownership
     const farm = await database.farm.findUnique({
-      where: { id: input.farmId },
+      where: { id: productData.farmId },
       select: { id: true, ownerId: true, status: true },
     });
 
@@ -51,7 +64,7 @@ export class ProductService {
     }
 
     // 2. Validate product data
-    const validation = await this.validateProduct(input);
+    const validation = await ProductService.validateProduct(productData);
     if (!validation.isValid) {
       throw new Error(
         `Validation failed: ${validation.errors.map((e) => e.message).join(", ")}`
@@ -59,22 +72,28 @@ export class ProductService {
     }
 
     // 3. Generate unique slug
-    const baseSlug = generateSlug(input.name);
-    const slug = await this.generateUniqueSlug(baseSlug, input.farmId);
+    const baseSlug = generateSlug(productData.name);
+    const slug = await ProductService.generateUniqueSlug(
+      baseSlug,
+      productData.farmId
+    );
 
     // 4. Calculate derived values
     const availableQuantity =
-      input.inventory.quantity - input.inventory.reservedQuantity;
-    const isLowStock = availableQuantity <= input.inventory.lowStockThreshold;
-    const primaryPhotoUrl = input.images.find((img) => img.isPrimary)?.url;
+      productData.inventory.quantity - productData.inventory.reservedQuantity;
+    const isLowStock =
+      availableQuantity <= productData.inventory.lowStockThreshold;
+    const primaryPhotoUrl = productData.images.find(
+      (img) => img.isPrimary
+    )?.url;
 
     // 5. Create product
     const product = await database.product.create({
       data: {
-        ...(input as any),
+        ...(productData as any),
         slug,
         inventory: {
-          ...input.inventory,
+          ...productData.inventory,
           availableQuantity,
           isLowStock,
         },
@@ -331,7 +350,7 @@ export class ProductService {
     let slug = existing.slug;
     if (updates.name && updates.name !== existing.name) {
       const baseSlug = generateSlug(updates.name);
-      slug = await this.generateUniqueSlug(baseSlug, existing.farmId);
+      slug = await ProductService.generateUniqueSlug(baseSlug, existing.farmId);
     }
 
     // 3. Calculate derived inventory values if inventory updated
@@ -712,14 +731,18 @@ export class ProductService {
     const errors: { field: string; message: string }[] = [];
 
     // Name validation
-    if ("name" in input && input.name) {
-      if (input.name.length < 3) {
+    if ("name" in input) {
+      if (!input.name || input.name.trim() === "") {
+        errors.push({
+          field: "name",
+          message: "Product name is required",
+        });
+      } else if (input.name.length < 3) {
         errors.push({
           field: "name",
           message: "Product name must be at least 3 characters",
         });
-      }
-      if (input.name.length > 100) {
+      } else if (input.name.length > 100) {
         errors.push({
           field: "name",
           message: "Product name must not exceed 100 characters",

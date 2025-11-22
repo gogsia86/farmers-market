@@ -1,0 +1,473 @@
+9fa5d1bacd78802b999d8a59c5fa6815
+/**
+ * ⚡ DIVINE JEST SETUP - TEST ENVIRONMENT CONFIGURATION
+ * Enterprise-grade test setup with agricultural consciousness
+ * HP OMEN Optimized: 64GB RAM, 12 threads
+ */
+
+// ============================================
+// TESTING LIBRARY SETUP
+// ============================================
+require("@testing-library/jest-dom");
+
+// ============================================
+// GLOBAL TEST CONFIGURATION
+// ============================================
+jest.setTimeout(10000);
+
+// Global agricultural consciousness
+global.agriculturalConsciousness = {
+  testSeason: "FALL",
+  biodynamicMode: true,
+  quantumCoherence: 0.95,
+};
+
+// ============================================
+// ENVIRONMENT VARIABLES - TEST REALITY
+// ============================================
+process.env.NODE_ENV = "test";
+process.env.DATABASE_URL = "postgresql://test:test@localhost:5432/test";
+process.env.NEXTAUTH_SECRET = "divine-test-secret-for-quantum-authentication";
+process.env.NEXTAUTH_URL = "http://localhost:3000";
+process.env.PAYPAL_CLIENT_ID = "test-paypal-client-id";
+process.env.PAYPAL_CLIENT_SECRET = "test-paypal-client-secret";
+process.env.STRIPE_SECRET_KEY = "test-stripe-secret-key";
+process.env.STRIPE_PUBLISHABLE_KEY = "test-stripe-publishable-key";
+
+// ============================================
+// WEB API POLYFILLS - NEXT.JS COMPATIBILITY
+// ============================================
+
+global.Request = class Request {
+  constructor(input, init = {}) {
+    this.url = typeof input === "string" ? input : input.url;
+    this.method = init.method || "GET";
+    this.headers = new Headers(init.headers || {});
+    this.body = init.body;
+  }
+
+  async json() {
+    return JSON.parse(this.body);
+  }
+
+  async text() {
+    return String(this.body);
+  }
+};
+
+global.Response = class Response {
+  constructor(body, init = {}) {
+    this.body = body;
+    this.status = init.status || 200;
+    this.statusText = init.statusText || "OK";
+    this.headers = new Headers(init.headers || {});
+    this.ok = this.status >= 200 && this.status < 300;
+  }
+
+  async json() {
+    return JSON.parse(this.body);
+  }
+
+  async text() {
+    return String(this.body);
+  }
+};
+
+global.Headers = class Headers {
+  constructor(init = {}) {
+    this.map = new Map();
+    if (init instanceof Headers) {
+      init.forEach((value, key) => this.map.set(key.toLowerCase(), value));
+    } else if (Array.isArray(init)) {
+      init.forEach(([key, value]) => this.map.set(key.toLowerCase(), value));
+    } else if (init && typeof init === "object") {
+      Object.entries(init).forEach(([key, value]) => {
+        this.map.set(key.toLowerCase(), value);
+      });
+    }
+  }
+
+  get(name) {
+    return this.map.get(name.toLowerCase()) || null;
+  }
+
+  set(name, value) {
+    this.map.set(name.toLowerCase(), value);
+  }
+
+  has(name) {
+    return this.map.has(name.toLowerCase());
+  }
+
+  delete(name) {
+    this.map.delete(name.toLowerCase());
+  }
+
+  forEach(callback) {
+    this.map.forEach((value, key) => callback(value, key, this));
+  }
+
+  entries() {
+    return this.map.entries();
+  }
+
+  keys() {
+    return this.map.keys();
+  }
+
+  values() {
+    return this.map.values();
+  }
+};
+
+global.TransformStream = class TransformStream {
+  constructor() {
+    this.readable = {};
+    this.writable = {};
+  }
+};
+
+global.ReadableStream = class ReadableStream {
+  constructor() {}
+};
+
+global.WritableStream = class WritableStream {
+  constructor() {}
+};
+
+// ============================================
+// PRISMA DATABASE QUANTUM MOCKS
+// ============================================
+
+const mockDatabase = {
+  user: {
+    findUnique: jest.fn(),
+    findFirst: jest.fn(),
+    findMany: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+    count: jest.fn(),
+    upsert: jest.fn(),
+  },
+  farm: {
+    findUnique: jest.fn(),
+    findFirst: jest.fn(),
+    findMany: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+    count: jest.fn(),
+    upsert: jest.fn(),
+  },
+  product: {
+    findUnique: jest.fn(),
+    findFirst: jest.fn(),
+    findMany: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+    count: jest.fn(),
+    upsert: jest.fn(),
+  },
+  order: {
+    findUnique: jest.fn(),
+    findFirst: jest.fn(),
+    findMany: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+    count: jest.fn(),
+  },
+  orderItem: {
+    findUnique: jest.fn(),
+    findFirst: jest.fn(),
+    findMany: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+    createMany: jest.fn(),
+    count: jest.fn(),
+  },
+  payment: {
+    findUnique: jest.fn(),
+    findFirst: jest.fn(),
+    findMany: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+    count: jest.fn(),
+  },
+  $connect: jest.fn().mockResolvedValue(undefined),
+  $disconnect: jest.fn().mockResolvedValue(undefined),
+  $transaction: jest.fn((callback) => callback(mockDatabase)),
+  $queryRaw: jest.fn(),
+  $executeRaw: jest.fn(),
+};
+
+jest.mock("@prisma/client", () => ({
+  PrismaClient: jest.fn(() => mockDatabase),
+}));
+
+jest.mock(
+  "./src/lib/database",
+  () => ({
+    database: mockDatabase,
+    prisma: mockDatabase,
+    default: mockDatabase,
+    isDatabaseConnected: jest.fn(() => true),
+  }),
+  { virtual: true },
+);
+
+// Global helper for test database queries
+global.mockQueryFirst = (model, result) => {
+  if (mockDatabase[model]) {
+    mockDatabase[model].findFirst.mockResolvedValueOnce(result);
+  }
+};
+
+// ============================================
+// NEXT.JS QUANTUM MOCKS - NAVIGATION & ROUTING
+// ============================================
+
+jest.mock("next/navigation", () => ({
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    prefetch: jest.fn(),
+    back: jest.fn(),
+    forward: jest.fn(),
+    refresh: jest.fn(),
+    pathname: "/",
+    query: {},
+  })),
+  usePathname: jest.fn(() => "/"),
+  useSearchParams: jest.fn(() => ({
+    get: jest.fn(),
+    getAll: jest.fn(),
+    has: jest.fn(),
+    toString: jest.fn(() => ""),
+  })),
+  redirect: jest.fn(),
+  notFound: jest.fn(),
+}));
+
+jest.mock("next/link", () => {
+  return ({ children, href }) => {
+    const React = require("react");
+    return React.createElement("a", { href }, children);
+  };
+});
+
+jest.mock("next/headers", () => ({
+  cookies: jest.fn(() => ({
+    get: jest.fn(),
+    set: jest.fn(),
+    delete: jest.fn(),
+  })),
+  headers: jest.fn(() => new Map()),
+}));
+
+// ============================================
+// NEXT-AUTH MOCKS
+// ============================================
+
+jest.mock("next-auth", () => ({
+  default: jest.fn(),
+}));
+
+jest.mock("next-auth/react", () => ({
+  useSession: () => ({
+    data: null,
+    status: "unauthenticated",
+  }),
+  signIn: jest.fn(),
+  signOut: jest.fn(),
+  SessionProvider: ({ children }) => children,
+}));
+
+// ============================================
+// NATIVE MODULE MOCKS - C++ DEPENDENCIES
+// ============================================
+
+jest.mock(
+  "bcrypt",
+  () => ({
+    hash: jest.fn().mockResolvedValue("$2b$12$hashedpassword"),
+    compare: jest.fn().mockResolvedValue(true),
+    genSalt: jest.fn().mockResolvedValue("$2b$12$"),
+    hashSync: jest.fn().mockReturnValue("$2b$12$hashedpassword"),
+    compareSync: jest.fn().mockReturnValue(true),
+    genSaltSync: jest.fn().mockReturnValue("$2b$12$"),
+    getRounds: jest.fn().mockReturnValue(12),
+  }),
+  { virtual: true },
+);
+
+jest.mock(
+  "sharp",
+  () => {
+    const mockSharp = jest.fn(() => ({
+      resize: jest.fn().mockReturnThis(),
+      toFormat: jest.fn().mockReturnThis(),
+      toBuffer: jest.fn().mockResolvedValue(Buffer.from("mock-image")),
+      toFile: jest.fn().mockResolvedValue({ size: 1024 }),
+      metadata: jest
+        .fn()
+        .mockResolvedValue({ width: 800, height: 600, format: "jpeg" }),
+      jpeg: jest.fn().mockReturnThis(),
+      png: jest.fn().mockReturnThis(),
+      webp: jest.fn().mockReturnThis(),
+    }));
+    return mockSharp;
+  },
+  { virtual: true },
+);
+
+jest.mock(
+  "canvas",
+  () => ({
+    createCanvas: jest.fn(() => ({
+      getContext: jest.fn(() => ({
+        fillRect: jest.fn(),
+        clearRect: jest.fn(),
+        fillText: jest.fn(),
+        measureText: jest.fn(() => ({ width: 100 })),
+        drawImage: jest.fn(),
+      })),
+      toBuffer: jest.fn(() => Buffer.from("mock-canvas")),
+    })),
+    loadImage: jest.fn().mockResolvedValue({}),
+    registerFont: jest.fn(),
+  }),
+  { virtual: true },
+);
+
+// ============================================
+// THIRD-PARTY LIBRARY MOCKS
+// ============================================
+
+jest.mock(
+  "react-hot-toast",
+  () => ({
+    toast: {
+      success: jest.fn(),
+      error: jest.fn(),
+      loading: jest.fn(),
+      custom: jest.fn(),
+    },
+    Toaster: () => null,
+  }),
+  { virtual: true },
+);
+
+jest.mock(
+  "axios",
+  () => ({
+    default: {
+      get: jest.fn(),
+      post: jest.fn(),
+      put: jest.fn(),
+      delete: jest.fn(),
+      create: jest.fn(() => ({
+        get: jest.fn(),
+        post: jest.fn(),
+        put: jest.fn(),
+        delete: jest.fn(),
+      })),
+    },
+  }),
+  { virtual: true },
+);
+
+jest.mock("@/lib/utils", () => ({
+  cn: jest.fn((...args) => args.filter(Boolean).join(" ")),
+}));
+
+// ============================================
+// CONSOLE SUPPRESSION - CLEANER TEST OUTPUT
+// ============================================
+
+const originalConsole = { ...console };
+
+global.console = {
+  ...console,
+  error: jest.fn((...args) => {
+    // Only log actual errors, suppress expected warnings
+    if (
+      !args[0]?.includes?.("Warning:") &&
+      !args[0]?.includes?.("Not implemented:")
+    ) {
+      originalConsole.error(...args);
+    }
+  }),
+  warn: jest.fn((...args) => {
+    // Suppress certain warnings in tests
+    if (!args[0]?.includes?.("componentWillReceiveProps")) {
+      originalConsole.warn(...args);
+    }
+  }),
+};
+
+// ============================================
+// TEST LIFECYCLE HOOKS
+// ============================================
+
+// Clear all mocks before each test
+beforeEach(() => {
+  jest.clearAllMocks();
+});
+
+// Clean up after each test
+afterEach(() => {
+  jest.restoreAllMocks();
+});
+
+// ============================================
+// DIVINE TESTING UTILITIES
+// ============================================
+
+// Helper to create test data
+global.createTestUser = (overrides = {}) => ({
+  id: "test-user-id",
+  email: "test@example.com",
+  name: "Test User",
+  role: "CUSTOMER",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  ...overrides,
+});
+
+global.createTestFarm = (overrides = {}) => ({
+  id: "test-farm-id",
+  name: "Divine Test Farm",
+  description: "A test farm with agricultural consciousness",
+  location: "Test Location",
+  ownerId: "test-user-id",
+  status: "ACTIVE",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  ...overrides,
+});
+
+global.createTestProduct = (overrides = {}) => ({
+  id: "test-product-id",
+  name: "Test Product",
+  description: "A divine test product",
+  price: 9.99,
+  farmId: "test-farm-id",
+  category: "VEGETABLES",
+  season: "FALL",
+  stock: 100,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  ...overrides,
+});
+
+// ============================================
+// AGRICULTURAL CONSCIOUSNESS
+// ============================================
+console.log("🌾 Divine Test Environment Initialized");
+console.log("⚡ Agricultural Consciousness: ACTIVE");
+console.log("🎯 HP OMEN Optimization: ENABLED");

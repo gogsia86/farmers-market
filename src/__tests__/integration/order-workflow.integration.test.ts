@@ -10,7 +10,7 @@ import { OrderService } from "@/lib/services/order.service";
 import { PaymentService } from "@/lib/services/payment.service";
 import { ProductService } from "@/lib/services/product.service";
 import { ShippingService } from "@/lib/services/shipping.service";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
 
 // Test data
 let testFarmId: string;
@@ -424,3 +424,5 @@ describe.skip("🔗 Integration: Complete Order Workflow", () => {
     });
   });
 });
+
+

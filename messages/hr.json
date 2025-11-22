@@ -1,0 +1,42 @@
+{
+  "common": {
+    "appName": "Tržnica Farmera",
+    "welcome": "Dobrodošli",
+    "home": "Početna",
+    "about": "O nama",
+    "contact": "Kontakt",
+    "login": "Prijava",
+    "logout": "Odjava",
+    "signup": "Registracija"
+  },
+  "nav": {
+    "farms": "Farme",
+    "products": "Proizvodi",
+    "marketplace": "Tržnica",
+    "dashboard": "Nadzorna ploča",
+    "admin": "Administracija"
+  },
+  "farm": {
+    "title": "Farme",
+    "browse": "Pretraži farme",
+    "create": "Stvori farmu",
+    "manage": "Upravljaj farmama",
+    "details": "Detalji farme"
+  },
+  "product": {
+    "title": "Proizvodi",
+    "browse": "Pretraži proizvode",
+    "add": "Dodaj proizvod",
+    "details": "Detalji proizvoda",
+    "inStock": "Na zalihi",
+    "outOfStock": "Nije na zalihi"
+  },
+  "auth": {
+    "email": "E-pošta",
+    "password": "Lozinka",
+    "confirmPassword": "Potvrdi lozinku",
+    "forgotPassword": "Zaboravljena lozinka?",
+    "noAccount": "Nemate račun?",
+    "hasAccount": "Već imate račun?"
+  }
+}

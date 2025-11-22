@@ -3,9 +3,9 @@
  * Comprehensive end-to-end testing for Farmers Market Platform
  */
 
-import { expect, test } from "@playwright/test";
+import { expect, test } from '@playwright/test';
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
 
 test.describe("🔐 Authentication Flows", () => {
     test("Admin can login successfully", async ({ page }) => {

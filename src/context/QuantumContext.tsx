@@ -4,7 +4,7 @@
  */
 "use client";
 
-import { createContext, ReactNode, useContext } from "react";
+import { createContext, ReactNode, useContext, useState, useCallback } from "react";
 
 interface QuantumState {
   season: "SPRING" | "SUMMER" | "FALL" | "WINTER";
@@ -24,16 +24,29 @@ const QuantumContext = createContext<QuantumContextValue | undefined>(
 );
 
 export function QuantumProvider({ children }: { children: ReactNode }) {
-  // TODO: Implement with useState/useReducer
+  const [state, setState] = useState<QuantumState>({
+    season: "SUMMER",
+    consciousness: "GROWING",
+    agriculturalMode: true,
+  });
+
+  const updateSeason = useCallback((season: QuantumState["season"]) => {
+    setState(prev => ({ ...prev, season }));
+  }, []);
+
+  const updateConsciousness = useCallback((consciousness: QuantumState["consciousness"]) => {
+    setState(prev => ({ ...prev, consciousness }));
+  }, []);
+
+  const toggleAgriculturalMode = useCallback(() => {
+    setState(prev => ({ ...prev, agriculturalMode: !prev.agriculturalMode }));
+  }, []);
+
   const value: QuantumContextValue = {
-    state: {
-      season: "SUMMER",
-      consciousness: "GROWING",
-      agriculturalMode: true,
-    },
-    updateSeason: () => {},
-    updateConsciousness: () => {},
-    toggleAgriculturalMode: () => {},
+    state,
+    updateSeason,
+    updateConsciousness,
+    toggleAgriculturalMode,
   };
 
   return (

@@ -1,13 +1,17 @@
 import { requireAdmin } from "@/lib/auth";
 import { database } from "@/lib/database";
 import {
-  BuildingStorefrontIcon,
-  CurrencyDollarIcon,
-  ExclamationTriangleIcon,
-  ShoppingBagIcon,
-  TruckIcon,
-  UserGroupIcon,
+    BuildingStorefrontIcon,
+    CurrencyDollarIcon,
+    ExclamationTriangleIcon,
+    ShoppingBagIcon,
+    TruckIcon,
+    UserGroupIcon,
 } from "@heroicons/react/24/outline";
+
+// Force dynamic rendering - no static generation
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 /**
  * Divine Admin Dashboard - Quantum Agricultural Management Center
@@ -58,45 +62,54 @@ export default async function AdminDashboardPage() {
   // Calculate total revenue (would need actual order data)
   const totalRevenue = totalOrders * 45.5; // Placeholder calculation
 
+  // Icon mapping for serialization safety
+  const iconMap = {
+    UserGroupIcon,
+    BuildingStorefrontIcon,
+    ShoppingBagIcon,
+    CurrencyDollarIcon,
+    TruckIcon,
+  };
+
   const metrics = [
     {
       name: "Total Users",
       value: totalUsers.toLocaleString(),
-      icon: UserGroupIcon,
+      iconName: "UserGroupIcon" as const,
       change: "+12.5%",
-      changeType: "positive",
+      changeType: "positive" as const,
       consciousness: "User entities in quantum state",
     },
     {
       name: "Active Farms",
       value: totalFarms.toLocaleString(),
-      icon: BuildingStorefrontIcon,
+      iconName: "BuildingStorefrontIcon" as const,
       change: "+8.3%",
-      changeType: "positive",
+      changeType: "positive" as const,
       consciousness: "Agricultural consciousness nodes",
     },
     {
       name: "Product Catalog",
       value: totalProducts.toLocaleString(),
-      icon: ShoppingBagIcon,
+      iconName: "ShoppingBagIcon" as const,
       change: "+23.1%",
-      changeType: "positive",
+      changeType: "positive" as const,
       consciousness: "Product reality manifestations",
     },
     {
       name: "Total Revenue",
       value: `$${totalRevenue.toLocaleString()}`,
-      icon: CurrencyDollarIcon,
+      iconName: "CurrencyDollarIcon" as const,
       change: "+15.7%",
-      changeType: "positive",
+      changeType: "positive" as const,
       consciousness: "Economic quantum field energy",
     },
     {
       name: "Orders Processed",
       value: totalOrders.toLocaleString(),
-      icon: TruckIcon,
+      iconName: "TruckIcon" as const,
       change: "+9.2%",
-      changeType: "positive",
+      changeType: "positive" as const,
       consciousness: "Transaction flow harmonization",
     },
   ];
@@ -202,7 +215,7 @@ export default async function AdminDashboardPage() {
           {/* Quantum Metrics Grid */}
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5 mb-8">
             {metrics.map((metric) => {
-              const Icon = metric.icon;
+              const Icon = iconMap[metric.iconName];
               return (
                 <div
                   key={metric.name}

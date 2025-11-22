@@ -2,12 +2,12 @@ import { requireAdmin } from "@/lib/auth";
 import { database } from "@/lib/database";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import type { Farm, User } from "@prisma/client";
-import { Suspense } from "react";
 import { FarmFilters } from "./FarmFilters";
 import { FarmsTable } from "./FarmsTable";
 
-// Force dynamic rendering to avoid prerendering issues with client components
+// Force dynamic rendering for database access
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 /**
  * DIVINE FARM STATISTICS TYPES
@@ -51,14 +51,14 @@ function StatCard({ label, value, color, icon }: StatCardProps) {
         <span className="text-2xl mr-3" role="img" aria-label={label}>
           {icon}
         </span>
-        <div>
+        <dl>
           <dt className="text-sm font-medium text-agricultural-500 truncate">
             {label}
           </dt>
           <dd className={`text-2xl font-semibold text-${color}-600`}>
             {value}
           </dd>
-        </div>
+        </dl>
       </div>
     </div>
   );
@@ -226,9 +226,7 @@ export default async function AdminFarmsPage({
             </div>
 
             {/* Quantum Filters & Search */}
-            <Suspense fallback={<div>Loading filters...</div>}>
-              <FarmFilters />
-            </Suspense>
+            <FarmFilters />
 
             {/* Divine Farm List */}
             <div className="bg-white shadow rounded-lg border border-agricultural-200">
@@ -242,9 +240,7 @@ export default async function AdminFarmsPage({
                 </p>
               </div>
 
-              <Suspense fallback={<div className="p-6">Loading farms...</div>}>
-                <FarmsTable initialFarms={JSON.parse(JSON.stringify(farms))} />
-              </Suspense>
+              <FarmsTable initialFarms={JSON.parse(JSON.stringify(farms))} />
 
               {/* Divine Pagination */}
               <div className="bg-agricultural-50 px-6 py-3 border-t border-agricultural-200">
@@ -255,32 +251,34 @@ export default async function AdminFarmsPage({
                   </div>
                   <div className="flex gap-2">
                     <a
-                      href={`?page=${page - 1}&limit=${limit}${
+                      href={hasPrevPage ? `?page=${page - 1}&limit=${limit}${
                         statusFilter.status
                           ? `&status=${statusFilter.status}`
                           : ""
-                      }`}
+                      }` : undefined}
                       className={`px-3 py-1 text-sm border border-agricultural-300 rounded-md ${
                         hasPrevPage
                           ? "text-agricultural-700 bg-white hover:bg-agricultural-50"
-                          : "text-agricultural-400 bg-agricultural-100 cursor-not-allowed"
+                          : "text-agricultural-400 bg-agricultural-100 cursor-not-allowed pointer-events-none"
                       }`}
-                      aria-disabled={!hasPrevPage}
+                      aria-disabled={hasPrevPage ? "false" : "true"}
+                      onClick={(e) => !hasPrevPage && e.preventDefault()}
                     >
                       Previous
                     </a>
                     <a
-                      href={`?page=${page + 1}&limit=${limit}${
+                      href={hasNextPage ? `?page=${page + 1}&limit=${limit}${
                         statusFilter.status
                           ? `&status=${statusFilter.status}`
                           : ""
-                      }`}
+                      }` : undefined}
                       className={`px-3 py-1 text-sm border border-agricultural-300 rounded-md ${
                         hasNextPage
                           ? "text-agricultural-700 bg-white hover:bg-agricultural-50"
-                          : "text-agricultural-400 bg-agricultural-100 cursor-not-allowed"
+                          : "text-agricultural-400 bg-agricultural-100 cursor-not-allowed pointer-events-none"
                       }`}
-                      aria-disabled={!hasNextPage}
+                      aria-disabled={hasNextPage ? "false" : "true"}
+                      onClick={(e) => !hasNextPage && e.preventDefault()}
                     >
                       Next
                     </a>

@@ -1,0 +1,42 @@
+{
+  "common": {
+    "appName": "Farmers Market",
+    "welcome": "Welcome",
+    "home": "Home",
+    "about": "About",
+    "contact": "Contact",
+    "login": "Login",
+    "logout": "Logout",
+    "signup": "Sign Up"
+  },
+  "nav": {
+    "farms": "Farms",
+    "products": "Products",
+    "marketplace": "Marketplace",
+    "dashboard": "Dashboard",
+    "admin": "Admin"
+  },
+  "farm": {
+    "title": "Farms",
+    "browse": "Browse Farms",
+    "create": "Create Farm",
+    "manage": "Manage Farms",
+    "details": "Farm Details"
+  },
+  "product": {
+    "title": "Products",
+    "browse": "Browse Products",
+    "add": "Add Product",
+    "details": "Product Details",
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot Password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?"
+  }
+}

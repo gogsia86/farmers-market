@@ -6,8 +6,16 @@
  * Tests for type-safe performance monitoring and analytics tracking
  */
 
+import React from 'react';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from "@jest/globals";
 import { act, renderHook } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   initializeDivinePerformanceTracking,
   useComponentConsciousness,
@@ -22,11 +30,11 @@ describe("useComponentConsciousness Hook", () => {
     delete (globalThis as any).__DIVINE_PERFORMANCE__;
     delete (globalThis as any).__DIVINE_ANALYTICS__;
 
-    vi.clearAllMocks();
+    jest.clearAllMocks();
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    jest.restoreAllMocks();
   });
 
   describe("Basic Initialization", () => {
@@ -54,6 +62,7 @@ describe("useComponentConsciousness Hook", () => {
       // Should have same structure (memoized)
       expect(result.current).toStrictEqual(firstRef);
     });
+
     it("should accept optional context", () => {
       const context = { variant: "agricultural", size: "large" };
 
@@ -224,6 +233,36 @@ describe("useComponentConsciousness Hook", () => {
       const finalErrorCount = result.current.getMetrics().errorCount;
       expect(finalErrorCount).toBe(initialErrorCount + 1);
     });
+  });
+
+  describe("Event Tracking", () => {
+    it("should track custom events", async () => {
+      const { result } = renderHook(() =>
+        useComponentConsciousness("TestComponent")
+      );
+
+      const initialEventCount = result.current.getMetrics().eventCount;
+
+      await act(async () => {
+        result.current.trackEvent("user_interaction", { action: "click" });
+      });
+
+      const finalEventCount = result.current.getMetrics().eventCount;
+      expect(finalEventCount).toBe(initialEventCount + 1);
+    });
+
+    it("should provide component metrics", () => {
+      const { result } = renderHook(() =>
+        useComponentConsciousness("TestComponent", { variant: "test" })
+      );
+
+      const metrics = result.current.getMetrics();
+
+      expect(metrics.componentName).toBe("TestComponent");
+      expect(metrics).toHaveProperty("renderCount");
+      expect(metrics).toHaveProperty("errorCount");
+      expect(metrics).toHaveProperty("eventCount");
+    });
 
     it("should work without global tracker initialized", async () => {
       const { result } = renderHook(() =>
@@ -238,9 +277,7 @@ describe("useComponentConsciousness Hook", () => {
       // Should not throw, just not record globally
       expect(result.current.getMetrics()).toBeDefined();
     });
-  });
 
-  describe("Event Tracking", () => {
     it("should track events without metadata", () => {
       const { result } = renderHook(() =>
         useComponentConsciousness("ButtonComponent")
@@ -260,14 +297,21 @@ describe("useComponentConsciousness Hook", () => {
       );
 
       act(() => {
+        result.current.trackEvent("submit", { formId: "contact-form" });
+      });
+
+      const metrics1 = result.current.getMetrics();
+      expect(metrics1.eventCount).toBe(1);
+
+      act(() => {
         result.current.trackEvent("submit", {
           formId: "contact-form",
           fieldCount: 5,
         });
       });
 
-      const metrics = result.current.getMetrics();
-      expect(metrics.eventCount).toBe(1);
+      const metrics2 = result.current.getMetrics();
+      expect(metrics2.eventCount).toBe(2);
     });
 
     it("should track multiple events", () => {
@@ -286,7 +330,7 @@ describe("useComponentConsciousness Hook", () => {
     });
 
     it("should send events to analytics tracker if available", () => {
-      const mockAnalyticsTrack = vi.fn();
+      const mockAnalyticsTrack = jest.fn();
 
       (globalThis as any).__DIVINE_ANALYTICS__ = {
         track: mockAnalyticsTrack,

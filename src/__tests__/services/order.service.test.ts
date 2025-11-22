@@ -1,29 +1,29 @@
 // src/__tests__/services/order.service.test.ts
 
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { OrderService } from "@/lib/services/order.service";
-import type { CreateOrderInput } from "@/lib/services/order.service";
 import { database } from "@/lib/database";
+import type { CreateOrderInput } from "@/lib/services/order.service";
+import { OrderService } from "@/lib/services/order.service";
+import { afterEach, beforeEach, describe, expect, it } from "@jest/globals";
 
 // Mock database
-vi.mock("@/lib/database", () => ({
+jest.mock("@/lib/database", () => ({
   database: {
     order: {
-      create: vi.fn(),
-      findUnique: vi.fn(),
-      findMany: vi.fn(),
-      update: vi.fn(),
+      create: jest.fn(),
+      findUnique: jest.fn(),
+      findMany: jest.fn(),
+      update: jest.fn(),
     },
   },
 }));
 
 describe("OrderService - Divine Order Management", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
   });
 
   afterEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
   });
 
   describe("createOrder", () => {
@@ -92,7 +92,10 @@ describe("OrderService - Divine Order Management", () => {
 
       (database.order.update as any).mockResolvedValue(mockOrder);
 
-      const result = await OrderService.updateOrderStatus("order-1", "CONFIRMED");
+      const result = await OrderService.updateOrderStatus(
+        "order-1",
+        "CONFIRMED"
+      );
 
       expect(result.status).toBe("CONFIRMED");
     });
@@ -101,8 +104,18 @@ describe("OrderService - Divine Order Management", () => {
   describe("getUserOrders", () => {
     it("retrieves all orders for user", async () => {
       const mockOrders = [
-        { id: "order-1", items: [], farm: {id: "f1", name: "F1"}, user: {id: "u1", name: "U1", email: "u1@test.com"} },
-        { id: "order-2", items: [], farm: {id: "f2", name: "F2"}, user: {id: "u1", name: "U1", email: "u1@test.com"} },
+        {
+          id: "order-1",
+          items: [],
+          farm: { id: "f1", name: "F1" },
+          user: { id: "u1", name: "U1", email: "u1@test.com" },
+        },
+        {
+          id: "order-2",
+          items: [],
+          farm: { id: "f2", name: "F2" },
+          user: { id: "u1", name: "U1", email: "u1@test.com" },
+        },
       ];
 
       (database.order.findMany as any).mockResolvedValue(mockOrders);
@@ -116,7 +129,12 @@ describe("OrderService - Divine Order Management", () => {
   describe("getFarmOrders", () => {
     it("retrieves all orders for farm", async () => {
       const mockOrders = [
-        { id: "order-1", items: [], farm: {id: "f1", name: "F1"}, user: {id: "u1", name: "U1", email: "u1@test.com"} },
+        {
+          id: "order-1",
+          items: [],
+          farm: { id: "f1", name: "F1" },
+          user: { id: "u1", name: "U1", email: "u1@test.com" },
+        },
       ];
 
       (database.order.findMany as any).mockResolvedValue(mockOrders);
@@ -127,3 +145,4 @@ describe("OrderService - Divine Order Management", () => {
     });
   });
 });
+

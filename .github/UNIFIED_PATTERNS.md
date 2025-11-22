@@ -39,11 +39,11 @@ const db = new PrismaClient(); // DON'T DO THIS!
 ### **DON'T: Import from legacy locations**
 
 ```typescript
-// ⚠️ DEPRECATED - These still work but are deprecated
-import { prisma } from "@/lib/prisma";
-import { database } from "@/lib/database.ts";
+// ⚠️ DEPRECATED - Don't use these patterns
+import { database } from "@/lib/database.ts"; // ❌ Wrong - .ts extension
 
-// Use @/lib/database instead (points to database/index.ts)
+// ✅ CORRECT - Use this pattern
+import { database } from "@/lib/database"; // Points to database/index.ts
 ```
 
 ---
@@ -56,6 +56,7 @@ import { database } from "@/lib/database.ts";
 // ✅ CORRECT - Service layer pattern
 // src/lib/services/product.service.ts
 import { database } from "@/lib/database";
+import type { Product, Farm } from "@prisma/client";
 
 export class ProductService {
   static async createProduct(input: CreateProductInput, userId: string) {

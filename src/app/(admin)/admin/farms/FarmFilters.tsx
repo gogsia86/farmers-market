@@ -61,6 +61,7 @@ export function FarmFilters() {
               value={selectedStatus}
               onChange={(e) => handleStatusFilter(e.target.value)}
               disabled={isPending}
+              aria-label="Filter farms by status"
               className="block pl-3 pr-10 py-2 text-base border-agricultural-300 focus:outline-none focus:ring-agricultural-500 focus:border-agricultural-500 rounded-md disabled:opacity-50"
             >
               <option value="ALL">All Status</option>

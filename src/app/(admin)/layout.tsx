@@ -1,17 +1,16 @@
 import { requireAdmin } from "@/lib/auth";
 import {
-  ArrowRightStartOnRectangleIcon,
-  BanknotesIcon,
-  Bars3Icon,
-  BellIcon,
-  BuildingStorefrontIcon,
-  ChartBarIcon,
-  CogIcon,
-  ShoppingBagIcon,
-  UserGroupIcon,
+    ArrowRightStartOnRectangleIcon,
+    BanknotesIcon,
+    Bars3Icon,
+    BellIcon,
+    BuildingStorefrontIcon,
+    ChartBarIcon,
+    CogIcon,
+    ShoppingBagIcon,
+    UserGroupIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { Suspense } from "react";
 
 // Force dynamic rendering for all admin pages
 export const dynamic = "force-dynamic";
@@ -27,14 +26,24 @@ export default async function AdminLayout({
 }>) {
   const session = await requireAdmin();
 
+  // Icon mapping for serialization safety
+  const iconMap = {
+    ChartBarIcon,
+    UserGroupIcon,
+    BuildingStorefrontIcon,
+    ShoppingBagIcon,
+    BanknotesIcon,
+    CogIcon,
+  };
+
   const navigation = [
-    { name: "Dashboard", href: "/admin", icon: ChartBarIcon },
-    { name: "Users", href: "/admin/users", icon: UserGroupIcon },
-    { name: "Farms", href: "/admin/farms", icon: BuildingStorefrontIcon },
-    { name: "Products", href: "/admin/products", icon: ShoppingBagIcon },
-    { name: "Orders", href: "/admin/orders", icon: ShoppingBagIcon },
-    { name: "Financial", href: "/admin/financial", icon: BanknotesIcon },
-    { name: "Settings", href: "/admin/settings", icon: CogIcon },
+    { name: "Dashboard", href: "/admin", iconName: "ChartBarIcon" as const },
+    { name: "Users", href: "/admin/users", iconName: "UserGroupIcon" as const },
+    { name: "Farms", href: "/admin/farms", iconName: "BuildingStorefrontIcon" as const },
+    { name: "Products", href: "/admin/products", iconName: "ShoppingBagIcon" as const },
+    { name: "Orders", href: "/admin/orders", iconName: "ShoppingBagIcon" as const },
+    { name: "Financial", href: "/admin/financial", iconName: "BanknotesIcon" as const },
+    { name: "Settings", href: "/admin/settings", iconName: "CogIcon" as const },
   ];
 
   return (
@@ -58,16 +67,19 @@ export default async function AdminLayout({
 
               {/* Horizontal Menu */}
               <div className="hidden lg:flex items-center space-x-1">
-                {navigation.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
-                  >
-                    <item.icon className="h-4 w-4 mr-1.5" />
-                    {item.name}
-                  </Link>
-                ))}
+                {navigation.map((item) => {
+                  const Icon = iconMap[item.iconName];
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+                    >
+                      <Icon className="h-4 w-4 mr-1.5" />
+                      {item.name}
+                    </Link>
+                  );
+                })}
               </div>
             </div>
 
@@ -82,7 +94,11 @@ export default async function AdminLayout({
               </div>
 
               {/* Notifications */}
-              <button className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md">
+              <button
+                className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md"
+                title="Notifications"
+                aria-label="View notifications"
+              >
                 <BellIcon className="h-5 w-5" />
                 <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full" />
               </button>
@@ -112,7 +128,11 @@ export default async function AdminLayout({
               </div>
 
               {/* Mobile Menu Button */}
-              <button className="lg:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md">
+              <button
+                className="lg:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md"
+                title="Open menu"
+                aria-label="Open navigation menu"
+              >
                 <Bars3Icon className="h-5 w-5" />
               </button>
             </div>
@@ -123,15 +143,7 @@ export default async function AdminLayout({
       {/* Main Content */}
       <main className="pt-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-          <Suspense
-            fallback={
-              <div className="flex items-center justify-center min-h-[400px]">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600" />
-              </div>
-            }
-          >
-            {children}
-          </Suspense>
+          {children}
         </div>
       </main>
     </div>

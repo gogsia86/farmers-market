@@ -7,7 +7,7 @@ module.exports = {
     html: '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body></body></html>',
   },
 
-  // ⚡ Project Structure
+  // ⚡ Project Structure - Only test files in src/
   rootDir: ".",
   roots: ["<rootDir>/src"],
 
@@ -17,8 +17,9 @@ module.exports = {
   // 🎯 Test Setup
   setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
 
-  // Module name mapping for path aliases
+  // Module resolution
   moduleNameMapper: {
+    "^bcrypt$": "<rootDir>/__mocks__/bcrypt.js",
     "^@/(.*)$": "<rootDir>/src/$1",
     "^@/components/(.*)$": "<rootDir>/src/components/$1",
     "^@/lib/(.*)$": "<rootDir>/src/lib/$1",
@@ -58,27 +59,38 @@ module.exports = {
     ],
   },
 
-  // 🔮 Transform Ignore Patterns - Handle ESM modules
-  transformIgnorePatterns: [
-    "node_modules/(?!(next-auth|@auth|jose|uuid|nanoid|@panva/hkdf)/)",
+  // 📂 Test Patterns - Run ALL tests to find real issues
+  testMatch: [
+    "<rootDir>/src/**/__tests__/**/*.test.{ts,tsx}",
+    "<rootDir>/src/**/*.test.{ts,tsx}",
+    // Exclude only non-Jest test files (Playwright E2E)
+    "!<rootDir>/src/**/*.spec.{ts,tsx}",
+    "!<rootDir>/src/**/*.bench.{ts,tsx}", // Keep benchmark exclusion
   ],
 
-  // Test file patterns
-  testMatch: [
-    "<rootDir>/src/**/__tests__/**/*.(test|spec).(ts|tsx|js|jsx)",
-    "<rootDir>/src/**/*.(test|spec).(ts|tsx|js|jsx)",
+  // Minimal exclusions - only non-Jest test types
+  testPathIgnorePatterns: [
+    "/node_modules/",
+    "/.next/",
+    "/dist/",
+    "/coverage/",
+    "\\.e2e\\.", // E2E tests run separately with Playwright
+    "\\.spec\\.", // Playwright spec files
+    "\\.bench\\.", // Benchmark files
   ],
 
   // 📊 Coverage Configuration
   collectCoverageFrom: [
-    "src/**/*.{ts,tsx,js,jsx}",
+    "src/**/*.{ts,tsx}",
     "!src/**/*.d.ts",
-    "!src/**/*.stories.{ts,tsx,js,jsx}",
+    "!src/**/*.stories.tsx",
     "!src/**/__tests__/**",
-    "!src/**/*.test.{ts,tsx,js,jsx}",
-    "!src/**/*.spec.{ts,tsx,js,jsx}",
     "!src/types/**",
-    "!src/**/index.{ts,tsx,js,jsx}",
+  ],
+
+  // 🔮 Transform Ignore Patterns - Handle ESM modules and native modules
+  transformIgnorePatterns: [
+    "node_modules/(?!(next-auth|@auth|jose|uuid|nanoid|@panva/hkdf|bcrypt|sharp)/)",
   ],
 
   coverageDirectory: "coverage",
@@ -98,20 +110,12 @@ module.exports = {
   // 📝 Output Configuration
   verbose: true,
 
+  // Silence deprecation warnings
+  silent: false,
+
   // 🌍 Global Configuration
   globals: {
-    "ts-jest": {
-      tsconfig: {
-        jsx: "react-jsx",
-      },
-    },
+    // Prevent native module loading
+    __NATIVE_MODULES_MOCKED__: true,
   },
-
-  // Ignore patterns
-  testPathIgnorePatterns: [
-    "<rootDir>/.next/",
-    "<rootDir>/node_modules/",
-    "<rootDir>/dist/",
-    "<rootDir>/build/",
-  ],
 };

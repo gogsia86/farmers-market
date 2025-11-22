@@ -1,9 +1,9 @@
 // ============================================================================
-// FARMERS MARKET - DIVINE DATABASE SEED SCRIPT
+// FARMERS MARKET - COMPREHENSIVE DIVINE DATABASE SEED SCRIPT
 // ============================================================================
-// Purpose: Populate development database with realistic agricultural data
+// Purpose: Populate development database with extensive realistic agricultural data
+// Coverage: 15+ farmers, 30+ farms, 300+ products, orders, reviews, notifications
 // Personas: Ana Romana (farmer), Divna Kapica (consumer), Mile Mochwara (admin)
-// Data: 10 farmers, 20 farms, 100+ products, sample orders
 // ============================================================================
 
 import { Prisma, PrismaClient } from "@prisma/client";
@@ -26,6 +26,25 @@ function generateSlug(text: string): string {
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-")
     .trim();
+}
+
+function randomDate(start: Date, end: Date): Date {
+  return new Date(
+    start.getTime() + Math.random() * (end.getTime() - start.getTime())
+  );
+}
+
+function randomInt(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function randomElement<T>(array: T[]): T {
+  return array[Math.floor(Math.random() * array.length)]!;
+}
+
+function randomElements<T>(array: T[], count: number): T[] {
+  const shuffled = [...array].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, Math.min(count, array.length));
 }
 
 // Utility function for generating random dates (currently unused but kept for future use)

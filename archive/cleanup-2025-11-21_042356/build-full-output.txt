@@ -1,0 +1,66 @@
+npm info using npm@10.9.4
+npm info using node@v22.21.0
+
+> farmers-market@1.0.0 build
+> prisma generate && next build
+
+warn The configuration property `package.json#prisma` is deprecated and will be removed in Prisma 7. Please migrate to a Prisma config file (e.g., `prisma.config.ts`).
+For more information, see: https://pris.ly/prisma-config
+
+Environment variables loaded from .env
+Prisma schema loaded from prisma\schema.prisma
+
+Γ£ö Generated Prisma Client (v6.19.0) to .\node_modules\@prisma\client in 443ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Interested in query caching in just a few lines of code? Try Accelerate today! https://pris.ly/tip-3-accelerate
+
+   Γû▓ Next.js 15.5.6
+   - Environments: .env.local, .env.production, .env
+   - Experiments (use with caution):
+     ┬╖ cpus: 12
+     Γ£ô workerThreads
+     Γ£ô scrollRestoration
+     Γ£ô memoryBasedWorkersCount
+
+   Creating an optimized production build ...
+   Using tsconfig file: ./tsconfig.json
+   Using tsconfig file: ./tsconfig.json
+   Using tsconfig file: ./tsconfig.json
+ Γ£ô Compiled successfully in 8.1s
+   Skipping validation of types
+   Skipping linting
+   Collecting page data ...
+   Generating static pages (0/21) ...
+
+> Build error occurred
+Error [DataCloneError]: ()=>null could not be cloned.
+    at new Promise (<anonymous>) {
+  code: 25,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}

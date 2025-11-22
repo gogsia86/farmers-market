@@ -284,6 +284,53 @@
       }
     },
     {
+      "label": "🌐 Profile: Dev Server (NVIDIA Nsight)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/profiling_scripts/profile_dev_server.ps1",
+        "-Duration",
+        "60",
+        "-Interactive"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": true
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      }
+    },
+    {
+      "label": "🌐 Profile: Dev Server (Manual - No Auto-Load)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/profiling_scripts/profile_dev_server.ps1",
+        "-Duration",
+        "60"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": true
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      }
+    },
+    {
       "label": "📊 Open Profile in Nsight Viewer",
       "type": "shell",
       "command": "nsys-ui",

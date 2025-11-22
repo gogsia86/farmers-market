@@ -296,11 +296,11 @@ export function LoginForm() {
 
 ```tsx
 // app/farms/page.tsx
-import { prisma } from "@/lib/prisma";
+import { database } from "@/lib/database";
 
 export default async function FarmsPage() {
   // Direct database access - runs on server
-  const farms = await prisma.farm.findMany();
+  const farms = await database.farm.findMany();
 
   return (
     <div>

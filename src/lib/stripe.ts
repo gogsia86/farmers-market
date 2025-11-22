@@ -13,7 +13,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
  * Enterprise payment processing with agricultural consciousness
  */
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-10-29.clover", // Updated to match Stripe's current API version
+  apiVersion: "2025-11-17.clover", // Latest Stripe API version for 100% compatibility
   typescript: true,
   appInfo: {
     name: "Farmers Market Platform",

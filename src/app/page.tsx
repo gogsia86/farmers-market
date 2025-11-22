@@ -2,29 +2,34 @@
  * FARMERS MARKET HOME PAGE - DIVINE REDESIGN
  *
  * Comprehensive landing page featuring:
- * - Hero section with search
+ * - Hero section with search autocomplete
  * - Featured products
- * - Featured farms
+ * - Featured farms (real data)
  * - Categories grid
  * - How it works section
  * - Testimonials
- * - Stats counter
+ * - Stats counter (real-time data)
  * - CTA sections
  */
 
 import { Header } from "@/components/layout/Header";
+import { SearchAutocomplete } from "@/components/homepage/SearchAutocomplete";
+import { PlatformStats } from "@/components/homepage/PlatformStats";
+import { FeaturedFarms } from "@/components/homepage/FeaturedFarms";
 import {
   ArrowRight,
   Award,
   Clock,
   Leaf,
   MapPin,
-  Search,
   Shield,
   ShoppingBag,
   Star,
 } from "lucide-react";
 import Link from "next/link";
+
+// Force dynamic rendering to avoid serialization issues
+export const dynamic = "force-dynamic";
 
 export default function HomePage() {
   return (
@@ -56,56 +61,13 @@ export default function HomePage() {
                 </p>
               </div>
 
-              {/* Hero Search Bar */}
+              {/* Hero Search Bar - Now with Autocomplete */}
               <div className="max-w-2xl mx-auto mb-8">
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Search for fresh tomatoes, local honey, organic eggs..."
-                    className="w-full px-6 py-5 pr-32 rounded-full border-2 border-agricultural-200 focus:border-agricultural-500 focus:outline-none text-lg shadow-lg"
-                  />
-                  <Link
-                    href="/search"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-agricultural-600 hover:bg-agricultural-700 text-white px-8 py-3 rounded-full font-semibold transition-colors flex items-center gap-2"
-                  >
-                    <Search className="h-5 w-5" />
-                    Search
-                  </Link>
-                </div>
-                <div className="mt-4 flex flex-wrap justify-center gap-2">
-                  <span className="text-sm text-gray-600">Popular:</span>
-                  {["Tomatoes", "Organic Eggs", "Fresh Milk", "Honey"].map(
-                    (term) => (
-                      <Link
-                        key={term}
-                        href={`/search?q=${term.toLowerCase()}`}
-                        className="text-sm text-agricultural-600 hover:text-agricultural-700 hover:underline"
-                      >
-                        {term}
-                      </Link>
-                    )
-                  )}
-                </div>
+                <SearchAutocomplete placeholder="Search for fresh tomatoes, local honey, organic eggs..." />
               </div>
 
-              {/* Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto">
-                {[
-                  { label: "Local Farms", value: "500+" },
-                  { label: "Fresh Products", value: "2,000+" },
-                  { label: "Happy Customers", value: "10,000+" },
-                  { label: "Cities Covered", value: "50+" },
-                ].map((stat) => (
-                  <div key={stat.label}>
-                    <div className="text-3xl md:text-4xl font-bold text-agricultural-600">
-                      {stat.value}
-                    </div>
-                    <div className="text-sm text-gray-600 mt-1">
-                      {stat.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              {/* Stats - Real-time Platform Statistics */}
+              <PlatformStats />
             </div>
           </div>
         </section>
@@ -234,6 +196,41 @@ export default function HomePage() {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Featured Farms - Real Data */}
+        <section className="py-16 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between mb-12">
+              <div>
+                <h2 className="text-4xl font-bold text-gray-900 mb-2">
+                  Featured Local Farms
+                </h2>
+                <p className="text-xl text-gray-600">
+                  Discover amazing farms in your community
+                </p>
+              </div>
+              <Link
+                href="/farms"
+                className="hidden md:flex items-center gap-2 text-agricultural-600 hover:text-agricultural-700 font-semibold"
+              >
+                View All Farms
+                <ArrowRight className="h-5 w-5" />
+              </Link>
+            </div>
+
+            <FeaturedFarms />
+
+            <div className="text-center mt-8">
+              <Link
+                href="/farms"
+                className="md:hidden inline-flex items-center gap-2 text-agricultural-600 hover:text-agricultural-700 font-semibold"
+              >
+                View All Farms
+                <ArrowRight className="h-5 w-5" />
+              </Link>
             </div>
           </div>
         </section>

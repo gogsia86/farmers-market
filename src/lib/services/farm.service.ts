@@ -46,12 +46,39 @@ export interface CreateFarmServiceResult {
  *
  * @param options - User ID and farm data
  * @returns Created quantum farm entity
- * @throws Error if slug generation fails
+ * @throws Error if slug generation fails or validation fails
  */
 export async function createFarmService(
   options: CreateFarmServiceOptions
 ): Promise<CreateFarmServiceResult> {
   const { userId, farmData } = options;
+
+  // Input validation
+  if (!userId || typeof userId !== "string") {
+    throw new Error("Valid user ID is required");
+  }
+
+  if (!farmData.name || farmData.name.trim().length < 3) {
+    throw new Error("Farm name must be at least 3 characters");
+  }
+
+  if (!farmData.city || !farmData.state) {
+    throw new Error("City and state are required");
+  }
+
+  if (farmData.email && !validateEmail(farmData.email)) {
+    throw new Error("Invalid email format");
+  }
+
+// Email validation helper
+function validateEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+  if (farmData.deliveryRadius && farmData.deliveryRadius < 0) {
+    throw new Error("Delivery radius must be positive");
+  }
 
   // Generate unique slug with collision detection
   const slug = await generateUniqueSlug(farmData.name, farmData.city);

@@ -42,6 +42,10 @@ interface PageProps {
   }>;
 }
 
+// Force dynamic rendering - don't try to pre-generate all possible slugs
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
+
 // This would normally fetch from API
 async function getFarmBySlug(slug: string) {
   // TODO: Replace with actual API call

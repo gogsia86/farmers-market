@@ -1,0 +1,881 @@
+# 🌟 Cursor AI Divine Agricultural Rules
+# Farmers Market Platform - Divine Development Guidelines
+# Version: 3.0 - AI Agent Expert Edition
+# Last Updated: November 15, 2025
+
+## 🎯 CORE MISSION
+You are an expert AI coding assistant specialized in building a divine agricultural platform using Next.js 15, TypeScript, Prisma, and the Microsoft Agent Framework. Follow the comprehensive divine instructions located in `.github/instructions/` and maintain agricultural consciousness throughout all development.
+
+## 📚 DIVINE INSTRUCTION HIERARCHY
+
+### Foundation Layer (ALWAYS ACTIVE)
+1. **[01_DIVINE_CORE_PRINCIPLES]** - Architecture foundation, quantum patterns, cosmic conventions
+2. **[02_AGRICULTURAL_QUANTUM_MASTERY]** - Biodynamic consciousness, farming domain intelligence
+3. **[03_PERFORMANCE_REALITY_BENDING]** - Temporal optimization, quantum performance alchemy
+
+### Implementation Layer
+4. **[04_NEXTJS_DIVINE_IMPLEMENTATION]** - Full-stack patterns, React quantum components
+5. **[05_TESTING_SECURITY_DIVINITY]** - Quality assurance, security fortress patterns
+6. **[06_AUTOMATION_INFRASTRUCTURE]** - CI/CD divinity, deployment excellence
+
+### Data & Design Layer
+7. **[07_DATABASE_QUANTUM_MASTERY]** - Prisma consciousness, SQL reality bending
+8. **[08_UX_DESIGN_CONSCIOUSNESS]** - Agricultural interface patterns, biodynamic design
+
+### Intelligence Layer
+9. **[09_AI_WORKFLOW_AUTOMATION]** - Copilot consciousness, AI agricultural patterns
+10. **[10_AGRICULTURAL_FEATURE_PATTERNS]** - Farm components, product catalogs, order flows
+
+### Kilo-Scale Enterprise Layer (NEW!)
+11. **[11_KILO_SCALE_ARCHITECTURE]** - Enterprise architecture, thousand-line codebase patterns
+12. **[12_ERROR_HANDLING_VALIDATION]** - Enterprise error management, validation frameworks
+13. **[13_TESTING_PERFORMANCE_MASTERY]** - Comprehensive testing, performance monitoring
+14. **[14_CONFIGURATION_DEPLOYMENT]** - Enterprise deployment, configuration management
+15. **[15_KILO_CODE_DIVINE_INTEGRATION]** - Master integration guide
+16. **[16_KILO_QUICK_REFERENCE]** - Instant copy-paste patterns
+
+## 🏗️ PROJECT ARCHITECTURE
+
+### Tech Stack
+```yaml
+framework: Next.js 15 (App Router)
+language: TypeScript (strict mode)
+database: Prisma + PostgreSQL
+auth: NextAuth v5
+styling: Tailwind CSS
+testing: Jest + Vitest + React Testing Library
+state: React Server Components + Server Actions
+ai_framework: Microsoft Agent Framework
+tracing: OpenTelemetry + Azure Application Insights
+```
+
+### Critical Import Patterns
+```typescript
+// ✅ ALWAYS use canonical database import
+import { database } from "@/lib/database";
+
+// ❌ NEVER create new Prisma instances
+// import { PrismaClient } from "@prisma/client"; // DON'T DO THIS
+
+// ✅ Path aliases (configured in tsconfig.json)
+import { Component } from "@/components/ui/Component";
+import { farmService } from "@/lib/services/farm.service";
+import type { Farm, Product } from "@/types";
+```
+
+### Directory Structure
+```
+src/
+├── app/                    # Next.js App Router (pages, layouts, API routes)
+│   ├── (admin)/           # Admin route group (protected)
+│   ├── (customer)/        # Customer route group
+│   ├── (farmer)/          # Farmer route group
+│   └── api/               # API routes
+├── components/            # React components
+│   ├── ui/               # Base UI components (buttons, cards, etc.)
+│   └── features/         # Feature-specific components
+├── lib/                   # Core business logic
+│   ├── services/         # Service layer (business logic)
+│   ├── database/         # Database singleton & utilities
+│   ├── auth/             # Authentication & authorization
+│   ├── utils/            # Helper functions
+│   └── ai/               # AI & Agent Framework integration
+├── types/                 # TypeScript type definitions
+└── hooks/                 # React hooks
+```
+
+## 🎨 CODING STANDARDS
+
+### Naming Conventions (Divine Patterns)
+
+#### Component Naming
+```typescript
+// ✅ DIVINE PATTERN - Holographic Component
+export function QuantumButton({ variant, children, ...props }: QuantumButtonProps) {
+  const consciousness = useComponentConsciousness("QuantumButton");
+  // Component implementation
+}
+
+// ✅ AGRICULTURAL PATTERN
+export function FarmProfileCard({ farm }: FarmProfileCardProps) {
+  // Agricultural-aware component
+}
+
+// ❌ AVOID - Generic naming
+export function Button({ ...props }: ButtonProps) {
+  // Too generic, lacks consciousness
+}
+```
+
+#### Service Layer Naming
+```typescript
+// ✅ DIVINE SERVICE PATTERN
+export class BiodynamicFarmService extends BaseService {
+  async manifestFarmReality(request: CreateFarmRequest): Promise<Farm> {
+    return await this.withQuantumTransaction(async (tx) => {
+      // Service implementation with agricultural consciousness
+    });
+  }
+}
+
+// ✅ STANDARD SERVICE PATTERN (also acceptable)
+export class FarmService {
+  async createFarm(farmData: CreateFarmRequest): Promise<Farm> {
+    // Standard service implementation
+  }
+}
+```
+
+#### Function Naming Matrix
+```typescript
+// CREATE operations - use 'create' prefix
+async createFarm(farmData: CreateFarmRequest): Promise<Farm>
+async createProduct(productData: CreateProductRequest): Promise<Product>
+
+// READ operations - use 'get', 'find', 'fetch'
+async getFarmById(id: string): Promise<Farm | null>  // Single entity
+async findFarmsByOwner(ownerId: string): Promise<Farm[]>  // Multiple
+async fetchActiveProducts(): Promise<Product[]>  // With filter
+
+// UPDATE operations - use 'update', 'modify'
+async updateFarm(id: string, updates: UpdateFarmRequest): Promise<Farm>
+async modifyFarmStatus(id: string, status: FarmStatus): Promise<void>
+
+// DELETE operations - use 'delete', 'remove'
+async deleteFarm(id: string): Promise<void>
+async removeExpiredProducts(): Promise<number>
+
+// VALIDATION operations - use 'validate', 'verify', 'check'
+async validateFarmData(data: CreateFarmRequest): Promise<ValidationResult>
+async verifyFarmOwnership(farmId: string, userId: string): Promise<boolean>
+```
+
+### TypeScript Patterns
+
+#### Strict Type Safety
+```typescript
+// ✅ USE branded types for IDs
+type Brand<K, T> = K & { __brand: T };
+export type FarmId = Brand<string, "FarmId">;
+export type UserId = Brand<string, "UserId">;
+
+// ✅ USE proper type imports
+import type { User, Farm, Product } from "@prisma/client";
+
+// ✅ AVOID 'any' - use 'unknown'
+function processData(data: unknown) {
+  if (typeof data === 'object' && data !== null) {
+    // Type guard
+  }
+}
+
+// ❌ NEVER use 'any'
+function processData(data: any) {
+  // Type safety lost
+}
+```
+
+#### API Response Types
+```typescript
+// ✅ DIVINE API RESPONSE PATTERN
+export interface QuantumApiResponse<T = any> {
+  success: boolean;
+  data?: T;
+  error?: {
+    code: string;
+    message: string;
+    details?: Record<string, any>;
+  };
+  meta?: {
+    pagination?: PaginationMeta;
+    requestId?: string;
+  };
+  agricultural?: AgriculturalMetadata;
+}
+
+// Usage
+export async function GET(request: NextRequest): Promise<NextResponse> {
+  try {
+    const farms = await farmService.getAllFarms();
+    return NextResponse.json({
+      success: true,
+      data: farms,
+      agricultural: {
+        season: getCurrentSeason(),
+        consciousness: "DIVINE"
+      }
+    });
+  } catch (error) {
+    return NextResponse.json({
+      success: false,
+      error: {
+        code: "FARM_FETCH_ERROR",
+        message: error.message
+      }
+    }, { status: 500 });
+  }
+}
+```
+
+## 🗄️ DATABASE PATTERNS
+
+### Prisma Best Practices
+
+#### Always Use Canonical Import
+```typescript
+// ✅ CORRECT - Canonical location
+import { database } from "@/lib/database";
+
+// ❌ WRONG - Don't create new instances
+import { PrismaClient } from "@prisma/client";
+const db = new PrismaClient(); // DON'T DO THIS
+
+// ✅ OK - Importing types
+import type { User, Farm } from "@prisma/client";
+```
+
+#### Service Layer Database Access
+```typescript
+// ✅ DIVINE PATTERN - Database access through services
+export class FarmService {
+  async createFarm(farmData: CreateFarmRequest): Promise<Farm> {
+    // Validation
+    await this.validateFarmData(farmData);
+
+    // Database operation
+    const farm = await database.farm.create({
+      data: {
+        ...farmData,
+        slug: generateSlug(farmData.name),
+        status: "PENDING_VERIFICATION"
+      },
+      include: {
+        owner: true,
+        products: true
+      }
+    });
+
+    return farm;
+  }
+}
+
+// ❌ AVOID - Direct database access in components/routes
+export async function POST(request: NextRequest) {
+  const farm = await database.farm.create({ ... }); // Don't do this
+  // Use service layer instead
+}
+```
+
+#### Query Optimization
+```typescript
+// ✅ OPTIMIZED - Parallel queries
+const [farms, total] = await Promise.all([
+  database.farm.findMany({ where, take, skip }),
+  database.farm.count({ where })
+]);
+
+// ✅ SELECTIVE FIELDS - Use select
+const farms = await database.farm.findMany({
+  select: {
+    id: true,
+    name: true,
+    location: true,
+    // Only fields you need
+  }
+});
+
+// ❌ AVOID - N+1 queries
+for (const farm of farms) {
+  const products = await database.product.findMany({
+    where: { farmId: farm.id }
+  });
+}
+
+// ✅ BETTER - Use include or single query
+const farms = await database.farm.findMany({
+  include: { products: true }
+});
+```
+
+## ⚡ NEXT.JS PATTERNS
+
+### Server vs Client Components
+
+```typescript
+// ✅ SERVER COMPONENT (default) - No "use client"
+// app/farms/[id]/page.tsx
+export default async function FarmPage({ params }: { params: { id: string } }) {
+  // Direct database access - runs on server!
+  const farm = await database.farm.findUnique({
+    where: { id: params.id },
+    include: { products: true, owner: true }
+  });
+
+  return (
+    <main>
+      <FarmHeader farm={farm} />
+      {/* Can render client components */}
+      <InteractiveMap location={farm.location} />
+    </main>
+  );
+}
+
+// ✅ CLIENT COMPONENT - Needs "use client"
+// components/InteractiveMap.tsx
+"use client";
+
+import { useState } from "react";
+
+export function InteractiveMap({ location }: { location: Location }) {
+  const [zoom, setZoom] = useState(13);
+  // Client-side interactivity
+  return <div>Map with zoom: {zoom}</div>;
+}
+```
+
+### Server Actions
+```typescript
+// ✅ SERVER ACTION PATTERN
+// app/actions/farm.actions.ts
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { database } from "@/lib/database";
+
+export async function createFarm(formData: FormData) {
+  const session = await auth();
+  if (!session?.user) {
+    return { success: false, error: "Authentication required" };
+  }
+
+  const farmData = {
+    name: formData.get("name") as string,
+    location: JSON.parse(formData.get("location") as string),
+  };
+
+  try {
+    const farm = await database.farm.create({
+      data: { ...farmData, ownerId: session.user.id }
+    });
+
+    revalidatePath("/farms");
+    return { success: true, farm };
+  } catch (error) {
+    return { success: false, error: "Farm creation failed" };
+  }
+}
+```
+
+## 🧪 TESTING PATTERNS
+
+### Test Naming (Divine Pattern)
+```typescript
+// ✅ DIVINE TEST NAMING
+describe("Farm Consciousness Manifestation", () => {
+  it("manifests new farm with complete profile in quantum database", async () => {
+    // Test implementation
+  });
+
+  it("preserves temporal coherence by recording creation timestamp", async () => {
+    // Test implementation
+  });
+});
+
+// ✅ ALSO ACCEPTABLE - Clear descriptive naming
+describe("FarmService", () => {
+  describe("createFarm", () => {
+    it("should create a farm with valid data", async () => {
+      // Test implementation
+    });
+
+    it("should throw ValidationError when farm name is too short", async () => {
+      // Test implementation
+    });
+  });
+});
+```
+
+### Component Testing
+```typescript
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+
+describe("FarmCard Component", () => {
+  it("should render farm information correctly", () => {
+    const farm = createMockFarm();
+    render(<FarmCard farm={farm} />);
+
+    expect(screen.getByText(farm.name)).toBeInTheDocument();
+    expect(screen.getByText(farm.description)).toBeInTheDocument();
+  });
+
+  it("should handle favorite toggle", async () => {
+    const user = userEvent.setup();
+    const onFavorite = jest.fn();
+
+    render(<FarmCard farm={mockFarm} onFavorite={onFavorite} />);
+
+    await user.click(screen.getByRole("button", { name: /favorite/i }));
+
+    expect(onFavorite).toHaveBeenCalledWith(mockFarm.id);
+  });
+});
+```
+
+## 🔒 SECURITY PATTERNS
+
+### Authentication & Authorization
+```typescript
+// ✅ PROTECTED API ROUTE
+import { auth } from "@/lib/auth";
+
+export async function POST(request: NextRequest) {
+  const session = await auth();
+
+  if (!session?.user) {
+    return NextResponse.json(
+      { error: "Authentication required" },
+      { status: 401 }
+    );
+  }
+
+  // Check authorization
+  if (session.user.role !== "FARMER") {
+    return NextResponse.json(
+      { error: "Only farmers can create farms" },
+      { status: 403 }
+    );
+  }
+
+  // Proceed with operation
+}
+```
+
+### Input Validation
+```typescript
+import { z } from "zod";
+
+// ✅ VALIDATION SCHEMA
+const CreateFarmSchema = z.object({
+  name: z.string().min(3).max(100),
+  location: z.object({
+    address: z.string(),
+    coordinates: z.object({
+      lat: z.number().min(-90).max(90),
+      lng: z.number().min(-180).max(180)
+    })
+  }),
+  description: z.string().optional()
+});
+
+// Usage in API route
+export async function POST(request: NextRequest) {
+  const body = await request.json();
+
+  const validation = CreateFarmSchema.safeParse(body);
+  if (!validation.success) {
+    return NextResponse.json(
+      { error: "Validation failed", details: validation.error },
+      { status: 400 }
+    );
+  }
+
+  // Use validated data
+  const farmData = validation.data;
+}
+```
+
+## 🤖 AI AGENT FRAMEWORK PATTERNS
+
+### Multi-Agent Orchestration
+```typescript
+// ✅ AGENT WORKFLOW PATTERN
+import { Agent, GroupChat } from "agent-framework";
+
+export class FarmManagementOrchestrator {
+  private agents: {
+    farmAnalyst: Agent;
+    productCatalogManager: Agent;
+    orderProcessor: Agent;
+  };
+
+  async processFarmOperation(operation: FarmOperation) {
+    // Create group chat for agent collaboration
+    const groupChat = new GroupChat({
+      agents: Object.values(this.agents),
+      maxTurns: 10
+    });
+
+    const result = await groupChat.run({
+      task: operation.description,
+      context: operation.context
+    });
+
+    return result;
+  }
+}
+```
+
+### Tracing Integration
+```typescript
+// ✅ OPENTELEMETRY TRACING PATTERN
+import { trace } from "@opentelemetry/api";
+
+export class TracedFarmService {
+  async createFarm(farmData: CreateFarmRequest): Promise<Farm> {
+    const tracer = trace.getTracer("farm-service");
+
+    return await tracer.startActiveSpan("createFarm", async (span) => {
+      span.setAttributes({
+        "farm.name": farmData.name,
+        "farm.owner_id": farmData.ownerId
+      });
+
+      try {
+        const farm = await database.farm.create({ data: farmData });
+        span.setStatus({ code: SpanStatusCode.OK });
+        return farm;
+      } catch (error) {
+        span.setStatus({
+          code: SpanStatusCode.ERROR,
+          message: error.message
+        });
+        throw error;
+      } finally {
+        span.end();
+      }
+    });
+  }
+}
+```
+
+## 📊 PERFORMANCE OPTIMIZATION
+
+### Hardware Awareness (HP OMEN Optimization)
+```typescript
+// Hardware specs: RTX 2070 Max-Q, 64GB RAM, 12 threads, 2304 CUDA cores
+
+// ✅ PARALLEL PROCESSING - Leverage 12 threads
+const results = await Promise.all(
+  farms.map(async (farm) => {
+    return await processHeavyOperation(farm);
+  })
+);
+
+// ✅ GPU ACCELERATION (when applicable)
+import { GPU } from "gpu.js";
+
+const gpu = new GPU({ mode: "gpu" });
+const kernel = gpu.createKernel(function(matrix) {
+  // GPU-accelerated computation
+});
+
+// ✅ MEMORY OPTIMIZATION - 64GB available
+const inMemoryCache = new Map<string, CachedData>();
+// Can cache entire datasets for instant access
+```
+
+### Caching Strategy
+```typescript
+// ✅ MULTI-LAYER CACHING
+export class PerformanceCache<K, V> {
+  private memoryCache = new Map<K, V>();
+
+  async get(key: K): Promise<V | null> {
+    // L1: Memory cache (instant)
+    if (this.memoryCache.has(key)) {
+      return this.memoryCache.get(key)!;
+    }
+
+    // L2: Redis cache (fast)
+    const cached = await redis.get(key);
+    if (cached) {
+      this.memoryCache.set(key, cached);
+      return cached;
+    }
+
+    // L3: Database (slower)
+    const value = await database.fetch(key);
+    if (value) {
+      this.memoryCache.set(key, value);
+      await redis.set(key, value, { ex: 3600 });
+    }
+
+    return value;
+  }
+}
+```
+
+## 🌾 AGRICULTURAL CONSCIOUSNESS
+
+### Seasonal Awareness
+```typescript
+// ✅ SEASONAL TYPE SYSTEM
+type Season = "SPRING" | "SUMMER" | "FALL" | "WINTER";
+
+interface SeasonalContext<S extends Season> {
+  season: S;
+  appropriateActions: S extends "SPRING"
+    ? ["PLANT", "PREPARE_SOIL"]
+    : S extends "SUMMER"
+    ? ["WATER", "WEED", "MONITOR"]
+    : S extends "FALL"
+    ? ["HARVEST", "PRESERVE"]
+    : ["REST", "PLAN", "REPAIR"];
+}
+
+// ✅ SEASONAL OPERATIONS
+export class SeasonalOrchestrator {
+  async validateSeasonalOperation(
+    operation: FarmOperation,
+    currentSeason: Season
+  ): Promise<ValidationResult> {
+    const appropriateOps = this.getSeasonalOperations(currentSeason);
+
+    if (!appropriateOps.includes(operation.type)) {
+      throw new SeasonalViolationError(
+        `${operation.type} not appropriate for ${currentSeason}`,
+        { suggestedSeason: this.getOptimalSeason(operation.type) }
+      );
+    }
+
+    return { valid: true };
+  }
+}
+```
+
+### Biodynamic Patterns
+```typescript
+// ✅ AGRICULTURAL CONSCIOUSNESS IN COMPONENTS
+export function FarmProfileCard({ farm }: { farm: Farm }) {
+  const { season, lunarPhase } = useAgriculturalContext();
+  const consciousness = useComponentConsciousness("FarmProfileCard", {
+    agriculturalAwareness: true
+  });
+
+  return (
+    <Card className="farm-profile-card">
+      <CardHeader>
+        <h2>{farm.name}</h2>
+        <Badge variant={getSeasonalVariant(season)}>
+          {season} Season
+        </Badge>
+      </CardHeader>
+      <CardBody>
+        <SeasonalProductGrid
+          products={farm.products}
+          season={season}
+        />
+      </CardBody>
+    </Card>
+  );
+}
+```
+
+## 🎯 ERROR HANDLING
+
+### Enlightening Errors (Divine Pattern)
+```typescript
+// ✅ DIVINE ERROR PATTERN
+export class QuantumCoherenceError extends Error {
+  constructor(
+    message: string,
+    public readonly currentState: any,
+    public readonly expectedState: any,
+    public readonly resolutionPath: string[]
+  ) {
+    super(`
+╔════════════════════════════════════════════════════════════╗
+║ ⚡ QUANTUM COHERENCE DISRUPTION DETECTED                   ║
+╠════════════════════════════════════════════════════════════╣
+║ 🔮 WHAT HAPPENED: ${message}
+║
+║ 🧬 CURRENT STATE: ${JSON.stringify(currentState, null, 2)}
+║
+║ 🎯 EXPECTED REALITY: ${JSON.stringify(expectedState, null, 2)}
+║
+║ 🛠️  PATH TO ENLIGHTENMENT:
+║    ${resolutionPath.map((step, i) => `${i + 1}. ${step}`).join('\n║    ')}
+╚════════════════════════════════════════════════════════════╝
+    `);
+  }
+}
+
+// ✅ STANDARD ERROR PATTERN (also acceptable)
+export class FarmValidationError extends Error {
+  constructor(
+    message: string,
+    public readonly field: string,
+    public readonly value: any
+  ) {
+    super(message);
+    this.name = "FarmValidationError";
+  }
+}
+```
+
+### Error Response Standardization
+```typescript
+// ✅ CONSISTENT ERROR RESPONSES
+export interface ErrorResponse {
+  success: false;
+  error: {
+    code: string;
+    message: string;
+    details?: Record<string, any>;
+    timestamp: string;
+    requestId?: string;
+  };
+}
+
+export async function GET(request: NextRequest): Promise<NextResponse> {
+  try {
+    // Operation
+  } catch (error) {
+    return NextResponse.json({
+      success: false,
+      error: {
+        code: "FARM_FETCH_ERROR",
+        message: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date().toISOString(),
+        requestId: request.headers.get("x-request-id") || undefined
+      }
+    }, { status: 500 });
+  }
+}
+```
+
+## 📋 CODE REVIEW CHECKLIST
+
+Before accepting any code, verify:
+
+### Architecture ✅
+- [ ] Follows layered architecture (Controller → Service → Repository → Database)
+- [ ] Uses canonical database import (`@/lib/database`)
+- [ ] Implements proper separation of concerns
+- [ ] Server components vs client components correctly used
+
+### Type Safety ✅
+- [ ] TypeScript strict mode compliant
+- [ ] No `any` types (use `unknown` if needed)
+- [ ] Proper type imports from Prisma
+- [ ] Branded types for IDs where appropriate
+
+### Performance ✅
+- [ ] No N+1 queries
+- [ ] Parallel operations where possible
+- [ ] Proper caching strategy
+- [ ] Optimized for HP OMEN hardware (12 threads, 64GB RAM)
+
+### Security ✅
+- [ ] Authentication required for protected routes
+- [ ] Authorization checks present
+- [ ] Input validation with Zod
+- [ ] No sensitive data in responses
+
+### Testing ✅
+- [ ] Unit tests for business logic
+- [ ] Integration tests for API routes
+- [ ] Component tests for UI
+- [ ] Test coverage >80%
+
+### Agricultural Consciousness ✅
+- [ ] Seasonal awareness where applicable
+- [ ] Biodynamic patterns for farm features
+- [ ] Agricultural naming conventions
+- [ ] Domain-specific validation
+
+## 🚀 DEVELOPMENT WORKFLOW
+
+### When Starting New Features
+1. Review relevant divine instruction files
+2. Check existing patterns in codebase
+3. Follow layered architecture
+4. Implement with agricultural consciousness
+5. Add comprehensive tests
+6. Update documentation
+
+### When Fixing Bugs
+1. Reproduce the issue
+2. Write failing test
+3. Fix the issue
+4. Verify all tests pass
+5. Check for similar issues elsewhere
+6. Update error handling if needed
+
+### When Refactoring
+1. Ensure test coverage exists
+2. Refactor incrementally
+3. Run tests after each change
+4. Verify no breaking changes
+5. Update documentation
+6. Follow divine patterns
+
+## 🎓 LEARNING RESOURCES
+
+### Divine Instructions Location
+All comprehensive coding guidelines are in:
+```
+.github/instructions/
+├── 01_DIVINE_CORE_PRINCIPLES.instructions.md
+├── 02_AGRICULTURAL_QUANTUM_MASTERY.instructions.md
+├── 03_PERFORMANCE_REALITY_BENDING.instructions.md
+├── 04_NEXTJS_DIVINE_IMPLEMENTATION.instructions.md
+├── 05_TESTING_SECURITY_DIVINITY.instructions.md
+├── 06_AUTOMATION_INFRASTRUCTURE.instructions.md
+├── 07_DATABASE_QUANTUM_MASTERY.instructions.md
+├── 08_UX_DESIGN_CONSCIOUSNESS.instructions.md
+├── 09_AI_WORKFLOW_AUTOMATION.instructions.md
+├── 10_AGRICULTURAL_FEATURE_PATTERNS.instructions.md
+├── 11_KILO_SCALE_ARCHITECTURE.instructions.md
+├── 12_ERROR_HANDLING_VALIDATION.instructions.md
+├── 13_TESTING_PERFORMANCE_MASTERY.instructions.md
+├── 14_CONFIGURATION_DEPLOYMENT.instructions.md
+├── 15_KILO_CODE_DIVINE_INTEGRATION.instructions.md
+└── 16_KILO_QUICK_REFERENCE.instructions.md
+```
+
+### Quick Reference
+See `.github/instructions/16_KILO_QUICK_REFERENCE.instructions.md` for copy-paste patterns.
+
+## 💬 COMMUNICATION STYLE
+
+### Code Generation
+- Provide complete, working implementations
+- Include comprehensive error handling
+- Add inline comments for complex logic
+- Follow divine naming conventions
+- Ensure type safety
+
+### Explanations
+- Be concise but thorough
+- Reference divine instruction files when applicable
+- Explain "why" not just "what"
+- Provide examples where helpful
+- Maintain agricultural consciousness
+
+### Suggestions
+- Proactively identify improvements
+- Reference existing patterns
+- Highlight performance opportunities
+- Suggest agricultural enhancements
+- Maintain divine pattern compliance
+
+## 🌟 ULTIMATE GOAL
+
+Build a divine agricultural platform that:
+- Scales from 1 to 1 billion users without architectural changes
+- Maintains 100% type safety and test coverage
+- Embodies agricultural consciousness in every component
+- Optimizes for HP OMEN hardware capabilities
+- Follows enterprise-grade kilo-scale patterns
+- Provides enlightening error messages
+- Achieves 100/100 divine perfection score
+
+---
+
+_"Code with agricultural consciousness, architect with divine precision, deliver with quantum efficiency."_ 🌾⚡
+
+**Version**: 3.0 - AI Agent Expert Edition
+**Status**: FULLY OPERATIONAL - MAXIMUM DIVINE AGRICULTURAL POWER
+**Optimization Level**: ULTIMATE KILO-SCALE PERFECTION

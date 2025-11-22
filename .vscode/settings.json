@@ -152,7 +152,13 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",
-    "source.organizeImports": "explicit"
+    "source.organizeImports": "explicit",
+    "source.removeUnusedImports": "explicit"
+  },
+  "editor.suggest.showStatusBar": true,
+  "editor.suggest.preview": true,
+  "editor.quickSuggestions": {
+    "strings": true
   },
 
   // ESLint Configuration (Enhanced)
@@ -256,15 +262,20 @@
   },
 
   // ============================================================================
-  // SECTION 9: AI & COPILOT INTEGRATION
+  // SECTION 9: AI & COPILOT INTEGRATION (OPTIMIZED FOR DIVINE DEVELOPMENT)
   // ============================================================================
 
   "github.copilot.enable": {
     "*": true,
     "plaintext": true,
     "markdown": true,
-    "yaml": true
+    "yaml": true,
+    "jsonc": true,
+    "typescript": true,
+    "typescriptreact": true
   },
+  
+  // Enhanced Copilot Settings for Divine Development
   "github.copilot.editor.enableAutoCompletions": true,
   "github.copilot.chat.codeGeneration.useInstructionFiles": true,
   "github.copilot.chat.codeGeneration.instructions": [
@@ -275,17 +286,52 @@
       "text": "Apply agricultural quantum patterns from .github/instructions/02_AGRICULTURAL_QUANTUM_MASTERY.instructions.md"
     },
     {
-      "text": "Optimize for HP OMEN hardware (RTX 2070 Max-Q 8GB, 64GB RAM, 12 threads)"
+      "text": "Use performance reality bending from .github/instructions/03_PERFORMANCE_REALITY_BENDING.instructions.md"
     },
     {
-      "text": "Use kilo-scale patterns from .github/instructions/11_KILO_SCALE_ARCHITECTURE.instructions.md"
+      "text": "Implement Next.js divine patterns from .github/instructions/04_NEXTJS_DIVINE_IMPLEMENTATION.instructions.md"
+    },
+    {
+      "text": "Apply kilo-scale architecture patterns from .github/instructions/11_KILO_SCALE_ARCHITECTURE.instructions.md"
+    },
+    {
+      "text": "Use error handling patterns from .github/instructions/12_ERROR_HANDLING_VALIDATION.instructions.md"
+    },
+    {
+      "text": "Optimize for HP OMEN hardware (RTX 2070 Max-Q 8GB VRAM, 64GB RAM, 12 threads, 2304 CUDA cores)"
+    },
+    {
+      "text": "Use TypeScript strict mode, Zod validation, and Prisma for database operations"
+    },
+    {
+      "text": "Follow service layer patterns: Controllers -> Services -> Repositories -> Database"
+    },
+    {
+      "text": "Include comprehensive error handling with enlightening error messages"
     }
   ],
+  
+  // Advanced Copilot Configuration
   "github.copilot.advanced": {
-    "debug.overrideEngine": "gpt-4",
-    "debug.useNodeFetch": true,
-    "length": 1000
+    // Removed debug.overrideEngine to use default paid tier model
+    "debug.useNodeFetcher": true,
+    "debug.testOverrideProxyUrl": "",
+    "debug.overrideProxyUrl": "",
+    "authProvider": "github",
+    "debug.filterLogCategories": [],
+    "inlineSuggestCount": 3,
+    "listCount": 10,
+    "length": 500
   },
+  
+  // Enhanced Copilot Suggestions
+  "github.copilot.editor.iterativeFixing": true,
+  
+  // Copilot Chat Settings
+  "github.copilot.chat.localeOverride": "en",
+  "github.copilot.chat.welcomeMessage": "never",
+  "github.copilot.chat.scopeSelection": true,
+  "github.copilot.chat.terminalChatLocation": "quickChat",
 
   // ============================================================================
   // SECTION 10: EXTENSIONS & UPDATES
@@ -320,9 +366,12 @@
   "files.useExperimentalFileWatcher": true,
   "gitlens.advanced.caching.enabled": true,
 
-  // CPU Optimization for 6-core processor
+  // CPU Optimization for 12-thread processor (HP OMEN)
   "typescript.tsserver.useSyntaxServer": "auto",
-  "javascript.suggest.maxSuggestions": 50,
+  "typescript.tsserver.maxTsServerMemory": 8192,
+  "javascript.suggest.maxSuggestions": 100,
+  "search.maintainFileSearchCache": true,
+  "search.maxResults": 20000,
 
   // Extension Performance
   "extensions.experimental.affinity": {
@@ -343,6 +392,7 @@
   "tailwindCSS.emmetCompletions": true,
 
   // File Associations
+  // === FILE ASSOCIATIONS ===
   "files.associations": {
     "*.css": "tailwindcss",
     "*.prisma": "prisma",
@@ -350,12 +400,202 @@
     "*.mdx": "markdown"
   },
 
+  // === ADVANCED COPILOT OPTIMIZATIONS ===
+  // Moved to SECTION 9 above
+  
+  // Copilot Inline Suggest Settings
+  "github.copilot.inlineSuggest.enable": true,
+  
+  // Copilot Interaction Settings
+  "github.copilot.renameSuggestions.triggerAutomatically": true,
+
+  // === ENHANCED TYPESCRIPT & JAVASCRIPT ===
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.preferences.useAliasesForRenames": true,
+  "typescript.suggest.autoImports": true,
+  "typescript.suggest.completeFunctionCalls": true,
+  "typescript.suggest.includeCompletionsForImportStatements": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "typescript.suggest.includeAutomaticOptionalChainCompletions": true,
+  "typescript.preferences.jsxAttributeCompletionStyle": "auto",
+  "typescript.inlayHints.parameterNames.enabled": "all",
+  "typescript.inlayHints.parameterTypes.enabled": true,
+  "typescript.inlayHints.variableTypes.enabled": true,
+  "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
+  "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
+  "typescript.inlayHints.enumMemberValues.enabled": true,
+  
+  // JavaScript IntelliSense
+  "javascript.suggest.autoImports": true,
+  "javascript.suggest.completeFunctionCalls": true,
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "javascript.inlayHints.parameterNames.enabled": "all",
+  "javascript.inlayHints.parameterTypes.enabled": true,
+  "javascript.inlayHints.variableTypes.enabled": true,
+  "typescript.preferences.quoteStyle": "double",
+  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": true,
+  
+  "javascript.preferences.importModuleSpecifier": "non-relative",
+  "javascript.suggest.autoImports": true,
+  "javascript.suggest.completeFunctionCalls": true,
+  "javascript.updateImportsOnFileMove.enabled": "always",
+
+  // === ENHANCED EDITOR FEATURES ===
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": "active",
+  "editor.stickyScroll.enabled": true,
+  "editor.unicodeHighlight.ambiguousCharacters": true,
+  "editor.unicodeHighlight.invisibleCharacters": true,
+  "editor.inlayHints.enabled": "on",
+  "editor.linkedEditing": true,
+
+  // === PATH INTELLISENSE ===
+  "path-intellisense.mappings": {
+    "@": "${workspaceFolder}/src",
+    "@/components": "${workspaceFolder}/src/components",
+    "@/lib": "${workspaceFolder}/src/lib",
+    "@/types": "${workspaceFolder}/src/types",
+    "@/styles": "${workspaceFolder}/src/styles",
+    "@/hooks": "${workspaceFolder}/src/hooks",
+    "@/utils": "${workspaceFolder}/src/utils"
+  },
+
+  // === TAILWIND CSS INTELLISENSE ===
+  "tailwindCSS.experimental.classRegex": [
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+    ["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
+    ["tw`([^`]*)", "([^`]*)"]
+  ],
+  "tailwindCSS.includeLanguages": {
+    "typescript": "javascript",
+    "typescriptreact": "javascript"
+  },
+
+  // === GIT ENHANCED SETTINGS ===
+  "git.enableSmartCommit": true,
+  "git.confirmSync": false,
+  "git.autofetch": true,
+  "git.fetchOnPull": true,
+  "git.pruneOnFetch": true,
+  "git.postCommitCommand": "sync",
+  "git.branchProtection": ["main", "master", "production"],
+  "git.branchPrefix": "feature/",
+  "git.showActionButton": {
+    "commit": true,
+    "publish": true,
+    "sync": true
+  },
+
+  // === ENHANCED FILE EXPLORER ===
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "*.ts": "${capture}.test.ts, ${capture}.spec.ts",
+    "*.tsx": "${capture}.test.tsx, ${capture}.spec.tsx, ${capture}.module.css, ${capture}.styles.ts",
+    "*.js": "${capture}.test.js, ${capture}.spec.js",
+    "*.jsx": "${capture}.test.jsx, ${capture}.spec.jsx",
+    "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, .npmrc, .yarnrc",
+    "tsconfig.json": "tsconfig.*.json",
+    ".env": ".env.*, .envrc",
+    "docker-compose.yml": "docker-compose.*.yml, Dockerfile*",
+    "README.md": "CHANGELOG.md, CONTRIBUTING.md, LICENSE*"
+  },
+
+  // === SEARCH ENHANCEMENTS ===
+  "search.quickOpen.includeSymbols": true,
+  "search.smartCase": true,
+  "search.seedWithNearestWord": true,
+  "search.seedOnFocus": true,
+
+  // === PERFORMANCE OPTIMIZATIONS ===
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/*/**": true,
+    "**/.next/**": true,
+    "**/dist/**": true,
+    "**/out/**": true,
+    "**/.turbo/**": true,
+    "**/coverage/**": true,
+    "**/profiling_output/**": true
+  },
+
+  // === EXTENSION SPECIFIC SETTINGS ===
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "eslint.format.enable": true,
+  "eslint.codeActionsOnSave.mode": "all",
+
+  // Prettier
+  "prettier.requireConfig": true,
+  "prettier.useEditorConfig": true,
+
+  // Error Lens
+  "errorLens.enabledDiagnosticLevels": ["error", "warning"],
+  "errorLens.fontSize": "0.9em",
+  "errorLens.messageBackgroundMode": "message",
+  "errorLens.gutterIconsEnabled": true,
+
+  // === WORKSPACE TRUST ===
+  "security.workspace.trust.untrustedFiles": "open",
+  "security.workspace.trust.enabled": true,
+
+  // === TERMINAL ENHANCEMENTS ===
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.profiles.windows": {
+    "PowerShell": {
+      "source": "PowerShell",
+      "icon": "terminal-powershell",
+      "args": ["-NoLogo", "-ExecutionPolicy", "Bypass"]
+    },
+    "Command Prompt": {
+      "path": ["${env:windir}\\System32\\cmd.exe"],
+      "icon": "terminal-cmd"
+    },
+    "Git Bash": {
+      "source": "Git Bash",
+      "icon": "terminal-bash"
+    }
+  },
+  "terminal.integrated.enableMultiLinePasteWarning": false,
+  "terminal.integrated.copyOnSelection": true,
+  "terminal.integrated.rightClickBehavior": "copyPaste",
+
+  // === NOTEBOOK SETTINGS ===
+  "notebook.cellToolbarLocation": {
+    "default": "right",
+    "jupyter-notebook": "left"
+  },
+  "notebook.lineNumbers": "on",
+  "notebook.outline.showCodeCells": true,
+
   // ============================================================================
   // SECTION 15: ACCESSIBILITY & USABILITY
   // ============================================================================
 
   "editor.accessibilitySupport": "off",
   "workbench.reduceMotion": "off",
+  
+  // === ENHANCED CODE ACTIONS ===
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "never",
+    "source.addMissingImports": "explicit"
+  },
+  "editor.quickSuggestions": {
+    "other": "on",
+    "comments": "on",
+    "strings": "on"
+  },
+  "editor.suggest.snippetsPreventQuickSuggestions": false,
+  "editor.suggest.showWords": true,
+  "editor.suggest.preview": true,
+  "editor.wordBasedSuggestions": "matchingDocuments",
+  "editor.wordBasedSuggestionsMode": "matchingDocuments",
 
   // Spell Checking
   "cSpell.words": [
@@ -381,8 +621,69 @@
     "tailwindcss",
     "trpc",
     "typecheck",
-    "zustand"
+    "zustand",
+    "Nsight",
+    "CUDA",
+    "RTX",
+    "divine",
+    "quantum",
+    "manifestation",
+    "agricultural",
+    "consciousness",
+    "transcendence",
+    "omniscient",
+    "kilo",
+    "holographic",
+    "biodynamic"
   ],
+  
+  // === ENHANCED FIND AND SEARCH ===
+  "search.smartCase": true,
+  "search.seedWithNearestWord": true,
+  "search.seedOnFocus": true,
+  "search.quickAccess.preserveInput": true,
+  
+  // === ENHANCED DIFF EDITOR ===
+  "diffEditor.ignoreTrimWhitespace": true,
+  "diffEditor.renderSideBySide": true,
+  "diffEditor.wordWrap": "on",
+  
+  // === ENHANCED DEBUGGING ===
+  "debug.console.fontSize": 14,
+  "debug.console.wordWrap": true,
+  "debug.internalConsoleOptions": "openOnSessionStart",
+  "debug.showInlineBreakpointCandidates": true,
+  "debug.showBreakpointsInOverviewRuler": true,
+  
+  // === ENHANCED PROBLEMS PANEL ===
+  "problems.decorations.enabled": true,
+  "problems.showCurrentInStatus": true,
+  
+  // === ENHANCED BREADCRUMBS ===
+  "breadcrumbs.enabled": true,
+  "breadcrumbs.filePath": "on",
+  "breadcrumbs.symbolPath": "on",
+  "breadcrumbs.symbolSortOrder": "position",
+  
+  // === ENHANCED OUTLINE ===
+  "outline.icons": true,
+  "outline.problems.enabled": true,
+  "outline.problems.badges": true,
+  "outline.problems.colors": true,
+  
+  // === ENHANCED FILE NESTING ===
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "*.ts": "${capture}.test.ts, ${capture}.spec.ts, ${capture}.d.ts",
+    "*.tsx": "${capture}.test.tsx, ${capture}.spec.tsx, ${capture}.module.css, ${capture}.styles.ts",
+    "*.js": "${capture}.test.js, ${capture}.spec.js, ${capture}.min.js, ${capture}.map",
+    "*.jsx": "${capture}.test.jsx, ${capture}.spec.jsx, ${capture}.module.css",
+    "package.json": "package-lock.json, pnpm-lock.yaml, yarn.lock, .npmrc, .yarnrc",
+    "tsconfig.json": "tsconfig.*.json",
+    ".env": ".env.*",
+    "README.md": "LICENSE, CHANGELOG.md, CONTRIBUTING.md"
+  }
 
   // ============================================================================
   // FINAL PERFORMANCE VALIDATION SETTINGS
@@ -421,6 +722,8 @@
     "editor.defaultFormatter": "ms-vscode.powershell"
   },
   "[prisma]": {
-    "editor.defaultFormatter": "Prisma.prisma"
-  }
+    "editor.defaultFormatter": "Prisma.prisma",
+    "editor.formatOnSave": true
+  },
+  "prisma.showPrismaDataPlatformNotification": false
 }

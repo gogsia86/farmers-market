@@ -21,30 +21,30 @@ import {
   getFarmBySlug,
 } from "@/lib/services/farm.service";
 import type { CreateFarmRequest, UserId } from "@/types/farm.types";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 
 // ============================================================================
 // MOCKS - DIVINE TEST DOUBLES
 // ============================================================================
 
-vi.mock("@/lib/database", () => ({
+jest.mock("@/lib/database", () => ({
   database: {
     farm: {
-      create: vi.fn(),
-      findFirst: vi.fn(),
-      findUnique: vi.fn(),
+      create: jest.fn(),
+      findFirst: jest.fn(),
+      findUnique: jest.fn(),
     },
   },
 }));
 
-vi.mock("@/lib/cache", () => ({
+jest.mock("@/lib/cache", () => ({
   AgriculturalCache: {
-    getFarm: vi.fn(),
-    cacheFarm: vi.fn(),
-    invalidateFarm: vi.fn(),
-    getProduct: vi.fn(),
-    cacheProduct: vi.fn(),
-    invalidateProduct: vi.fn(),
+    getFarm: jest.fn(),
+    cacheFarm: jest.fn(),
+    invalidateFarm: jest.fn(),
+    getProduct: jest.fn(),
+    cacheProduct: jest.fn(),
+    invalidateProduct: jest.fn(),
   },
 }));
 
@@ -117,11 +117,11 @@ const mockCreatedFarm = {
 // ============================================================================
 
 beforeEach(() => {
-  vi.clearAllMocks();
+  jest.clearAllMocks();
 });
 
 afterEach(() => {
-  vi.restoreAllMocks();
+  jest.restoreAllMocks();
 });
 
 // ============================================================================
@@ -132,8 +132,8 @@ describe("Farm Service - Divine Operations", () => {
   describe("createFarmService", () => {
     it("manifests new farm with unique slug successfully", async () => {
       // Arrange
-      vi.mocked(database.farm.findUnique).mockResolvedValue(null); // No slug collision
-      vi.mocked(database.farm.create).mockResolvedValue(mockCreatedFarm as any);
+      jest.mocked(database.farm.findUnique).mockResolvedValue(null); // No slug collision
+      jest.mocked(database.farm.create).mockResolvedValue(mockCreatedFarm as any);
 
       // Act
       const result = await createFarmService({
@@ -150,11 +150,11 @@ describe("Farm Service - Divine Operations", () => {
 
     it("handles slug collision by appending counter", async () => {
       // Arrange - First slug exists, second doesn't
-      vi.mocked(database.farm.findUnique)
+      jest.mocked(database.farm.findUnique)
         .mockResolvedValueOnce({ id: "existing-farm" } as any) // Collision
         .mockResolvedValueOnce(null); // Success
 
-      vi.mocked(database.farm.create).mockResolvedValue(mockCreatedFarm as any);
+      jest.mocked(database.farm.create).mockResolvedValue(mockCreatedFarm as any);
 
       // Act
       const result = await createFarmService({
@@ -169,7 +169,7 @@ describe("Farm Service - Divine Operations", () => {
 
     it("throws error after max slug collision attempts", async () => {
       // Arrange - All attempts collide
-      vi.mocked(database.farm.findUnique).mockResolvedValue({
+      jest.mocked(database.farm.findUnique).mockResolvedValue({
         id: "existing-farm",
       } as any);
 
@@ -184,8 +184,8 @@ describe("Farm Service - Divine Operations", () => {
 
     it("creates farm with PENDING status by default", async () => {
       // Arrange
-      vi.mocked(database.farm.findUnique).mockResolvedValue(null);
-      vi.mocked(database.farm.create).mockResolvedValue(mockCreatedFarm as any);
+      jest.mocked(database.farm.findUnique).mockResolvedValue(null);
+      jest.mocked(database.farm.create).mockResolvedValue(mockCreatedFarm as any);
 
       // Act
       await createFarmService({
@@ -208,8 +208,8 @@ describe("Farm Service - Divine Operations", () => {
 
     it("manifests quantum farm with agricultural consciousness", async () => {
       // Arrange
-      vi.mocked(database.farm.findUnique).mockResolvedValue(null);
-      vi.mocked(database.farm.create).mockResolvedValue(mockCreatedFarm as any);
+      jest.mocked(database.farm.findUnique).mockResolvedValue(null);
+      jest.mocked(database.farm.create).mockResolvedValue(mockCreatedFarm as any);
 
       // Act
       const result = await createFarmService({
@@ -237,7 +237,7 @@ describe("Farm Service - Divine Operations", () => {
   describe("checkExistingFarm", () => {
     it("returns exists=false when user has no farm", async () => {
       // Arrange
-      vi.mocked(database.farm.findFirst).mockResolvedValue(null);
+      jest.mocked(database.farm.findFirst).mockResolvedValue(null);
 
       // Act
       const result = await checkExistingFarm(mockUserId);
@@ -249,7 +249,7 @@ describe("Farm Service - Divine Operations", () => {
 
     it("returns exists=true with farm details when user has farm", async () => {
       // Arrange
-      vi.mocked(database.farm.findFirst).mockResolvedValue({
+      jest.mocked(database.farm.findFirst).mockResolvedValue({
         id: "farm-123",
         slug: "quantum-valley-farm",
         name: "Quantum Valley Farm",
@@ -269,7 +269,7 @@ describe("Farm Service - Divine Operations", () => {
 
     it("queries database with correct user ID", async () => {
       // Arrange
-      vi.mocked(database.farm.findFirst).mockResolvedValue(null);
+      jest.mocked(database.farm.findFirst).mockResolvedValue(null);
 
       // Act
       await checkExistingFarm(mockUserId);
@@ -289,7 +289,7 @@ describe("Farm Service - Divine Operations", () => {
   describe("getFarmById", () => {
     it("manifests quantum farm when farm exists", async () => {
       // Arrange
-      vi.mocked(database.farm.findUnique).mockResolvedValue(
+      jest.mocked(database.farm.findUnique).mockResolvedValue(
         mockCreatedFarm as any
       );
 
@@ -305,7 +305,7 @@ describe("Farm Service - Divine Operations", () => {
 
     it("returns null when farm does not exist", async () => {
       // Arrange
-      vi.mocked(database.farm.findUnique).mockResolvedValue(null);
+      jest.mocked(database.farm.findUnique).mockResolvedValue(null);
 
       // Act
       const result = await getFarmById("nonexistent-farm");
@@ -316,7 +316,7 @@ describe("Farm Service - Divine Operations", () => {
 
     it("includes owner information in query", async () => {
       // Arrange
-      vi.mocked(database.farm.findUnique).mockResolvedValue(
+      jest.mocked(database.farm.findUnique).mockResolvedValue(
         mockCreatedFarm as any
       );
 
@@ -336,7 +336,7 @@ describe("Farm Service - Divine Operations", () => {
   describe("getFarmBySlug", () => {
     it("manifests quantum farm when slug exists", async () => {
       // Arrange
-      vi.mocked(database.farm.findUnique).mockResolvedValue(
+      jest.mocked(database.farm.findUnique).mockResolvedValue(
         mockCreatedFarm as any
       );
 
@@ -350,7 +350,7 @@ describe("Farm Service - Divine Operations", () => {
 
     it("returns null when slug does not exist", async () => {
       // Arrange
-      vi.mocked(database.farm.findUnique).mockResolvedValue(null);
+      jest.mocked(database.farm.findUnique).mockResolvedValue(null);
 
       // Act
       const result = await getFarmBySlug("nonexistent-slug");
@@ -360,3 +360,5 @@ describe("Farm Service - Divine Operations", () => {
     });
   });
 });
+
+

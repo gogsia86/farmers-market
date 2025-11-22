@@ -1,391 +1,307 @@
 #!/usr/bin/env pwsh
-# scripts/docker-setup.ps1
-# Divine Docker Setup and Management Script
-# Ensures PostgreSQL container is running for development
+# ============================================================================
+# DOCKER SETUP SCRIPT
+# Divine Docker Environment Setup and Validation
+# ============================================================================
 
 param(
-  [ValidateSet('up', 'down', 'restart', 'status', 'logs', 'clean')]
-  [string]$Action = 'up',
-
-  [switch]$Build,
-  [switch]$Recreate,
-  [switch]$Verbose
+    [switch]$Build,
+    [switch]$Start,
+    [switch]$Stop,
+    [switch]$Clean,
+    [switch]$Logs,
+    [switch]$Validate,
+    [switch]$Help
 )
 
-$ErrorActionPreference = 'Stop'
+$ErrorActionPreference = "Stop"
 
-# ============================================
-# DIVINE DOCKER CONFIGURATION
-# ============================================
+# ============================================================================
+# FUNCTIONS
+# ============================================================================
 
-$DOCKER_COMPOSE_FILE = Join-Path $PSScriptRoot "..\docker-compose.yml"
-$ENV_FILE = Join-Path $PSScriptRoot "..\.env"
+function Show-Help {
+    Write-Host @"
+🐳 DOCKER SETUP SCRIPT - Divine Agricultural Platform
+============================================================================
 
-Write-Host "🐳 Divine Docker Management System" -ForegroundColor Cyan
-Write-Host "   Action: $Action" -ForegroundColor Gray
-Write-Host ""
+USAGE:
+  .\scripts\docker-setup.ps1 [OPTIONS]
 
-# ============================================
-# HELPER FUNCTIONS
-# ============================================
+OPTIONS:
+  -Build      Build Docker images
+  -Start      Start Docker containers
+  -Stop       Stop Docker containers
+  -Clean      Clean Docker images and containers
+  -Logs       Show Docker logs
+  -Validate   Validate Docker setup
+  -Help       Show this help message
+
+EXAMPLES:
+  # Build and start:
+  .\scripts\docker-setup.ps1 -Build -Start
+
+  # Stop all containers:
+  .\scripts\docker-setup.ps1 -Stop
+
+  # Clean everything:
+  .\scripts\docker-setup.ps1 -Clean
+
+  # Validate setup:
+  .\scripts\docker-setup.ps1 -Validate
+
+"@ -ForegroundColor Cyan
+}
 
 function Test-DockerInstalled {
-  try {
-    $dockerVersion = docker --version
-    Write-Host "   ✅ Docker installed: $dockerVersion" -ForegroundColor Green
-    return $true
-  }
-  catch {
-    Write-Host "   ❌ Docker is not installed or not in PATH" -ForegroundColor Red
-    Write-Host "      Install Docker Desktop from: https://www.docker.com/products/docker-desktop" -ForegroundColor Yellow
-    return $false
-  }
-}
+    Write-Host "🔍 Checking Docker installation..." -ForegroundColor Yellow
 
-function Test-DockerRunning {
-  try {
-    docker info | Out-Null
-    Write-Host "   ✅ Docker daemon is running" -ForegroundColor Green
-    return $true
-  }
-  catch {
-    Write-Host "   ❌ Docker daemon is not running" -ForegroundColor Red
-    Write-Host "      Start Docker Desktop and try again" -ForegroundColor Yellow
-    return $false
-  }
-}
+    try {
+        $dockerVersion = docker --version
+        Write-Host "✅ Docker installed: $dockerVersion" -ForegroundColor Green
 
-function Test-DockerComposeFile {
-  if (Test-Path $DOCKER_COMPOSE_FILE) {
-    Write-Host "   ✅ docker-compose.yml found" -ForegroundColor Green
-    return $true
-  }
-  else {
-    Write-Host "   ❌ docker-compose.yml not found" -ForegroundColor Red
-    Write-Host "      Creating docker-compose.yml..." -ForegroundColor Yellow
-    New-DockerComposeFile
-    return (Test-Path $DOCKER_COMPOSE_FILE)
-  }
-}
+        $composeVersion = docker compose version
+        Write-Host "✅ Docker Compose installed: $composeVersion" -ForegroundColor Green
 
-function New-DockerComposeFile {
-  $composeContent = @'
-version: '3.9'
-
-services:
-  # PostgreSQL Divine Database
-  postgres:
-    image: postgres:16-alpine
-    container_name: farmers-market-db
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: divine_user
-      POSTGRES_PASSWORD: quantum_password
-      POSTGRES_DB: farmers_market
-      PGDATA: /var/lib/postgresql/data/pgdata
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    networks:
-      - divine-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U divine_user -d farmers_market"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # Redis Divine Cache (Optional)
-  redis:
-    image: redis:7-alpine
-    container_name: farmers-market-cache
-    restart: unless-stopped
-    command: redis-server --appendonly yes
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis-data:/data
-    networks:
-      - divine-network
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-volumes:
-  postgres-data:
-    driver: local
-  redis-data:
-    driver: local
-
-networks:
-  divine-network:
-    driver: bridge
-'@
-
-  $composeContent | Out-File -FilePath $DOCKER_COMPOSE_FILE -Encoding UTF8
-  Write-Host "   ✅ docker-compose.yml created" -ForegroundColor Green
-}
-
-function Get-ContainerStatus {
-  param([string]$ContainerName)
-
-  try {
-    $status = docker inspect --format='{{.State.Status}}' $ContainerName 2>$null
-    return $status
-  }
-  catch {
-    return "not-found"
-  }
-}
-
-function Show-ContainerStatus {
-  Write-Host ""
-  Write-Host "📊 Container Status:" -ForegroundColor Cyan
-
-  $postgresStatus = Get-ContainerStatus "farmers-market-db"
-  $redisStatus = Get-ContainerStatus "farmers-market-cache"
-
-  if ($postgresStatus -eq "running") {
-    Write-Host "   ✅ PostgreSQL: Running" -ForegroundColor Green
-
-    # Show connection info
-    Write-Host ""
-    Write-Host "   📋 Connection Info:" -ForegroundColor Yellow
-    Write-Host "      Host: localhost" -ForegroundColor Gray
-    Write-Host "      Port: 5432" -ForegroundColor Gray
-    Write-Host "      Database: farmers_market" -ForegroundColor Gray
-    Write-Host "      User: divine_user" -ForegroundColor Gray
-    Write-Host "      Password: quantum_password" -ForegroundColor Gray
-    Write-Host ""
-    Write-Host "   📝 DATABASE_URL:" -ForegroundColor Yellow
-    Write-Host "      postgresql://divine_user:quantum_password@localhost:5432/farmers_market" -ForegroundColor Cyan
-  }
-  elseif ($postgresStatus -eq "not-found") {
-    Write-Host "   ⚠️  PostgreSQL: Container not created" -ForegroundColor Yellow
-  }
-  else {
-    Write-Host "   ❌ PostgreSQL: $postgresStatus" -ForegroundColor Red
-  }
-
-  if ($redisStatus -eq "running") {
-    Write-Host "   ✅ Redis: Running" -ForegroundColor Green
-  }
-  elseif ($redisStatus -eq "not-found") {
-    Write-Host "   ⚠️  Redis: Container not created" -ForegroundColor Yellow
-  }
-  else {
-    Write-Host "   ⚠️  Redis: $redisStatus" -ForegroundColor Yellow
-  }
-
-  Write-Host ""
-}
-
-function Start-Containers {
-  Write-Host "🚀 Starting containers..." -ForegroundColor Yellow
-  Write-Host ""
-
-  $args = @('up', '-d')
-
-  if ($Build) {
-    $args += '--build'
-    Write-Host "   🏗️  Building images..." -ForegroundColor Yellow
-  }
-
-  if ($Recreate) {
-    $args += '--force-recreate'
-    Write-Host "   🔄 Forcing recreation..." -ForegroundColor Yellow
-  }
-
-  try {
-    & docker-compose -f $DOCKER_COMPOSE_FILE $args
-
-    if ($LASTEXITCODE -eq 0) {
-      Write-Host ""
-      Write-Host "   ✅ Containers started successfully!" -ForegroundColor Green
-
-      # Wait for health checks
-      Write-Host ""
-      Write-Host "   ⏳ Waiting for health checks..." -ForegroundColor Yellow
-      Start-Sleep -Seconds 5
-
-      Show-ContainerStatus
-
-      # Update .env file
-      Update-EnvFile
-
-      return $true
+        return $true
+    } catch {
+        Write-Host "❌ Docker is not installed or not running!" -ForegroundColor Red
+        Write-Host "   Please install Docker Desktop from https://www.docker.com/products/docker-desktop" -ForegroundColor Yellow
+        return $false
     }
-    else {
-      Write-Host ""
-      Write-Host "   ❌ Failed to start containers" -ForegroundColor Red
-      return $false
-    }
-  }
-  catch {
-    Write-Host ""
-    Write-Host "   ❌ Error starting containers: $_" -ForegroundColor Red
-    return $false
-  }
 }
 
-function Stop-Containers {
-  Write-Host "🛑 Stopping containers..." -ForegroundColor Yellow
-  Write-Host ""
+function Test-EnvFile {
+    Write-Host "🔍 Checking .env file..." -ForegroundColor Yellow
 
-  try {
-    docker-compose -f $DOCKER_COMPOSE_FILE down
+    if (Test-Path ".env") {
+        Write-Host "✅ .env file exists" -ForegroundColor Green
+        return $true
+    } else {
+        Write-Host "⚠️  .env file not found!" -ForegroundColor Yellow
+        Write-Host "   Creating from .env.example..." -ForegroundColor Yellow
 
-    if ($LASTEXITCODE -eq 0) {
-      Write-Host ""
-      Write-Host "   ✅ Containers stopped successfully!" -ForegroundColor Green
-      return $true
+        if (Test-Path ".env.example") {
+            Copy-Item ".env.example" ".env"
+            Write-Host "✅ .env file created from .env.example" -ForegroundColor Green
+            Write-Host "   Please update .env with your configuration!" -ForegroundColor Yellow
+            return $true
+        } else {
+            Write-Host "❌ .env.example not found!" -ForegroundColor Red
+            return $false
+        }
     }
-    else {
-      Write-Host ""
-      Write-Host "   ❌ Failed to stop containers" -ForegroundColor Red
-      return $false
-    }
-  }
-  catch {
-    Write-Host ""
-    Write-Host "   ❌ Error stopping containers: $_" -ForegroundColor Red
-    return $false
-  }
 }
 
-function Restart-Containers {
-  Write-Host "🔄 Restarting containers..." -ForegroundColor Yellow
-  Write-Host ""
+function Build-DockerImages {
+    Write-Host "`n🏗️  Building Docker images..." -ForegroundColor Cyan
 
-  Stop-Containers
-  Start-Sleep -Seconds 2
-  Start-Containers
+    try {
+        docker compose build --no-cache
+        Write-Host "✅ Docker images built successfully!" -ForegroundColor Green
+    } catch {
+        Write-Host "❌ Failed to build Docker images!" -ForegroundColor Red
+        Write-Host $_.Exception.Message -ForegroundColor Red
+        exit 1
+    }
 }
 
-function Show-Logs {
-  Write-Host "📋 Container Logs:" -ForegroundColor Cyan
-  Write-Host ""
+function Start-DockerContainers {
+    Write-Host "`n🚀 Starting Docker containers..." -ForegroundColor Cyan
 
-  try {
-    docker-compose -f $DOCKER_COMPOSE_FILE logs --tail=50 --follow
-  }
-  catch {
-    Write-Host "   ❌ Error showing logs: $_" -ForegroundColor Red
-  }
+    try {
+        docker compose up -d
+        Write-Host "✅ Docker containers started successfully!" -ForegroundColor Green
+
+        Write-Host "`n📊 Container Status:" -ForegroundColor Yellow
+        docker compose ps
+
+        Write-Host "`n🌐 Application URLs:" -ForegroundColor Cyan
+        Write-Host "   Application: http://localhost:3000" -ForegroundColor Green
+        Write-Host "   Database:    postgresql://localhost:5432/farmersmarket" -ForegroundColor Green
+        Write-Host "   Redis:       redis://localhost:6379" -ForegroundColor Green
+
+    } catch {
+        Write-Host "❌ Failed to start Docker containers!" -ForegroundColor Red
+        Write-Host $_.Exception.Message -ForegroundColor Red
+        exit 1
+    }
 }
 
-function Clear-Containers {
-  Write-Host "🧹 Cleaning containers and volumes..." -ForegroundColor Yellow
-  Write-Host ""
+function Stop-DockerContainers {
+    Write-Host "`n🛑 Stopping Docker containers..." -ForegroundColor Yellow
 
-  Write-Host "   ⚠️  This will DELETE all data in the containers!" -ForegroundColor Red
-  $confirm = Read-Host "   Type 'yes' to confirm"
-
-  if ($confirm -ne 'yes') {
-    Write-Host "   ❌ Cancelled" -ForegroundColor Yellow
-    return
-  }
-
-  try {
-    docker-compose -f $DOCKER_COMPOSE_FILE down -v
-
-    if ($LASTEXITCODE -eq 0) {
-      Write-Host ""
-      Write-Host "   ✅ Containers and volumes cleaned!" -ForegroundColor Green
-      return $true
+    try {
+        docker compose down
+        Write-Host "✅ Docker containers stopped successfully!" -ForegroundColor Green
+    } catch {
+        Write-Host "❌ Failed to stop Docker containers!" -ForegroundColor Red
+        Write-Host $_.Exception.Message -ForegroundColor Red
+        exit 1
     }
-    else {
-      Write-Host ""
-      Write-Host "   ❌ Failed to clean containers" -ForegroundColor Red
-      return $false
-    }
-  }
-  catch {
-    Write-Host ""
-    Write-Host "   ❌ Error cleaning containers: $_" -ForegroundColor Red
-    return $false
-  }
 }
 
-function Update-EnvFile {
-  $databaseUrl = "postgresql://divine_user:quantum_password@localhost:5432/farmers_market"
+function Remove-DockerResources {
+    Write-Host "`n🧹 Cleaning Docker resources..." -ForegroundColor Yellow
 
-  if (Test-Path $ENV_FILE) {
-    $content = Get-Content $ENV_FILE -Raw
-
-    if ($content -match 'DATABASE_URL=') {
-      # Update existing
-      $content = $content -replace 'DATABASE_URL=.*', "DATABASE_URL=$databaseUrl"
-    }
-    else {
-      # Add new
-      $content += "`nDATABASE_URL=$databaseUrl`n"
+    $confirm = Read-Host "This will remove all containers, images, and volumes. Continue? (y/N)"
+    if ($confirm -ne 'y') {
+        Write-Host "Cleanup cancelled." -ForegroundColor Yellow
+        return
     }
 
-    $content | Out-File -FilePath $ENV_FILE -Encoding UTF8 -NoNewline
-    Write-Host "   ✅ .env file updated with DATABASE_URL" -ForegroundColor Green
-  }
-  else {
-    # Create new .env file
-    @"
-# Divine Database Configuration
-DATABASE_URL=$databaseUrl
+    try {
+        # Stop containers
+        docker compose down
 
-# Redis Configuration (Optional)
-REDIS_URL=redis://localhost:6379
+        # Remove volumes
+        docker compose down -v
 
-# Development Settings
-NODE_ENV=development
-"@ | Out-File -FilePath $ENV_FILE -Encoding UTF8
-    Write-Host "   ✅ .env file created" -ForegroundColor Green
-  }
+        # Remove images
+        docker rmi $(docker images -q farmers-market* 2>$null) 2>$null
+
+        # Prune system
+        docker system prune -f
+
+        Write-Host "✅ Docker resources cleaned successfully!" -ForegroundColor Green
+    } catch {
+        Write-Host "⚠️  Cleanup completed with warnings" -ForegroundColor Yellow
+    }
 }
 
-# ============================================
+function Show-DockerLogs {
+    Write-Host "`n📋 Docker Logs:" -ForegroundColor Cyan
+
+    try {
+        docker compose logs -f --tail=100
+    } catch {
+        Write-Host "❌ Failed to show logs!" -ForegroundColor Red
+        Write-Host $_.Exception.Message -ForegroundColor Red
+    }
+}
+
+function Test-DockerSetup {
+    Write-Host "`n🔍 Validating Docker Setup..." -ForegroundColor Cyan
+
+    $allGood = $true
+
+    # Check Docker
+    if (-not (Test-DockerInstalled)) {
+        $allGood = $false
+    }
+
+    # Check .env
+    if (-not (Test-EnvFile)) {
+        $allGood = $false
+    }
+
+    # Check Dockerfile
+    if (Test-Path "Dockerfile") {
+        Write-Host "✅ Dockerfile exists" -ForegroundColor Green
+    } else {
+        Write-Host "❌ Dockerfile not found!" -ForegroundColor Red
+        $allGood = $false
+    }
+
+    # Check docker-compose.yml
+    if (Test-Path "docker-compose.yml") {
+        Write-Host "✅ docker-compose.yml exists" -ForegroundColor Green
+    } else {
+        Write-Host "❌ docker-compose.yml not found!" -ForegroundColor Red
+        $allGood = $false
+    }
+
+    # Check .dockerignore
+    if (Test-Path ".dockerignore") {
+        Write-Host "✅ .dockerignore exists" -ForegroundColor Green
+    } else {
+        Write-Host "⚠️  .dockerignore not found (optional)" -ForegroundColor Yellow
+    }
+
+    # Check next.config.mjs
+    if (Test-Path "next.config.mjs") {
+        Write-Host "✅ next.config.mjs exists" -ForegroundColor Green
+
+        $configContent = Get-Content "next.config.mjs" -Raw
+        if ($configContent -match 'output.*standalone') {
+            Write-Host "✅ Standalone output configured" -ForegroundColor Green
+        } else {
+            Write-Host "⚠️  Standalone output not configured in next.config.mjs" -ForegroundColor Yellow
+            Write-Host "   Add: output: process.env.DOCKER_BUILD === 'true' ? 'standalone' : undefined" -ForegroundColor Gray
+        }
+    }
+
+    if ($allGood) {
+        Write-Host "`n✅ Docker setup validation passed!" -ForegroundColor Green
+    } else {
+        Write-Host "`n❌ Docker setup validation failed!" -ForegroundColor Red
+        Write-Host "   Please fix the issues above before proceeding." -ForegroundColor Yellow
+    }
+
+    return $allGood
+}
+
+# ============================================================================
 # MAIN EXECUTION
-# ============================================
+# ============================================================================
 
-# Validate Docker installation
-if (-not (Test-DockerInstalled)) {
-  exit 1
+Write-Host @"
+╔════════════════════════════════════════════════════════════════════════╗
+║                    🐳 DOCKER SETUP SCRIPT                             ║
+║              Divine Agricultural Platform - Docker Manager            ║
+╚════════════════════════════════════════════════════════════════════════╝
+"@ -ForegroundColor Cyan
+
+if ($Help) {
+    Show-Help
+    exit 0
 }
 
-if (-not (Test-DockerRunning)) {
-  exit 1
+# Change to repository root
+$scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
+$repoRoot = Split-Path -Parent $scriptPath
+Set-Location $repoRoot
+
+if ($Validate) {
+    Test-DockerSetup
+    exit 0
 }
 
-if (-not (Test-DockerComposeFile)) {
-  exit 1
+if ($Clean) {
+    Remove-DockerResources
+    exit 0
 }
 
-Write-Host ""
-
-# Execute action
-switch ($Action) {
-  'up' {
-    Start-Containers
-  }
-  'down' {
-    Stop-Containers
-  }
-  'restart' {
-    Restart-Containers
-  }
-  'status' {
-    Show-ContainerStatus
-  }
-  'logs' {
-    Show-Logs
-  }
-  'clean' {
-    Clear-Containers
-  }
+if ($Stop) {
+    Stop-DockerContainers
+    exit 0
 }
 
-Write-Host ""
-Write-Host "🎉 Divine Docker Management Complete!" -ForegroundColor Cyan
-Write-Host ""
+if ($Logs) {
+    Show-DockerLogs
+    exit 0
+}
 
-exit 0
+# Default workflow: Validate -> Build -> Start
+if ($Build -or $Start -or (-not $Build -and -not $Start)) {
+    # Validate first
+    if (-not (Test-DockerSetup)) {
+        Write-Host "`n❌ Validation failed! Please fix issues before proceeding." -ForegroundColor Red
+        exit 1
+    }
+
+    # Build if requested
+    if ($Build -or (-not $Start)) {
+        Build-DockerImages
+    }
+
+    # Start if requested
+    if ($Start -or (-not $Build)) {
+        Start-DockerContainers
+
+        Write-Host "`n✨ To view logs, run:" -ForegroundColor Cyan
+        Write-Host "   .\scripts\docker-setup.ps1 -Logs" -ForegroundColor White
+    }
+}
+
+Write-Host "`n✅ Script completed successfully!" -ForegroundColor Green

@@ -2,11 +2,18 @@
 
 ## Simple, Clean Deployment to Vercel
 
-### Prerequisites
-- Node.js 20+ installed
-- npm or pnpm installed
-- GitHub account
-- Vercel account (free tier works)
+## 🚀 Deployment Guide
+
+This guide covers deployment to production environments with proper security,
+monitoring, and CI/CD automation.
+
+## Prerequisites
+
+- Node.js 20+
+- PostgreSQL 15+
+- Redis 7+ (for caching)
+- Domain with SSL certificate
+- Production server (VPS, cloud instance, or container platform)
 
 ---
 
@@ -65,11 +72,13 @@ NEXTAUTH_URL=https://your-project.vercel.app
 ```
 
 #### Generate NEXTAUTH_SECRET:
+
 ```powershell
 openssl rand -base64 32
 ```
 
 #### Database Options:
+
 - **Easy**: Vercel Postgres (Dashboard → Storage → Create Database)
 - **Free**: Neon.tech or Supabase
 
@@ -100,6 +109,7 @@ npx prisma migrate deploy
 ## ✅ Verification
 
 Visit your deployment URL and verify:
+
 - Homepage loads
 - API routes work: `/api/health`
 - Database connection successful
@@ -109,11 +119,13 @@ Visit your deployment URL and verify:
 ## 🆘 Troubleshooting
 
 **Build fails?**
+
 - Check environment variables are set
 - Verify DATABASE_URL format
 - Clear cache and redeploy
 
 **Database issues?**
+
 - Add `?sslmode=require` to DATABASE_URL
 - Verify migrations ran successfully
 - Check database firewall settings

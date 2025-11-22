@@ -1,9 +1,11 @@
 /**
  * 🌾 BIODYNAMIC CACHE SYSTEM
  * Agricultural-aware caching with seasonal patterns and quantum performance
+ * Multi-layer: L1 (Memory) + L2 (Redis)
  */
 
 import { MemoryCache } from "./memory";
+import { redisClient } from "./redis-client";
 
 export interface CacheOptions {
   ttl?: number; // Time to live in seconds
@@ -26,39 +28,62 @@ export interface CachedData<T> {
 export class BiodynamicCacheManager {
   private readonly memoryCache: MemoryCache;
   private readonly defaultTTL = 300; // 5 minutes
+  private readonly tagPrefix = "tag:";
 
   constructor() {
     this.memoryCache = new MemoryCache();
   }
 
   /**
-   * Get value from cache (Memory only for now)
+   * Get value from cache (L1: Memory, L2: Redis)
    */
   async get<T>(key: string): Promise<T | null> {
-    // L1: Check memory cache
+    // L1: Check memory cache (fastest)
     const memoryValue = this.memoryCache.get<T>(key);
     if (memoryValue !== null) {
+      console.log(`✅ L1 Cache HIT: ${key}`);
       return memoryValue;
     }
 
-    // TODO: L2: Redis cache when configured
+    // L2: Check Redis cache
+    const redisValue = await redisClient.get<T>(key);
+    if (redisValue !== null) {
+      console.log(`✅ L2 Cache HIT (Redis): ${key}`);
+      // Populate L1 cache
+      this.memoryCache.set(key, redisValue, 300); // Max 5 min in memory
+      return redisValue;
+    }
+
+    console.log(`❌ Cache MISS: ${key}`);
     return null;
   }
 
   /**
-   * Set value in cache (Memory only for now)
+   * Set value in cache (L1: Memory, L2: Redis)
    */
   async set<T>(
     key: string,
     value: T,
-    options: CacheOptions = {}
+    options: CacheOptions = {},
   ): Promise<void> {
     const ttl = this.calculateTTL(options);
 
-    // Store in memory cache
-    this.memoryCache.set(key, value, Math.min(ttl, 300)); // Max 5 min in memory
+    // Store in L1 (memory) cache - max 5 min to prevent memory bloat
+    this.memoryCache.set(key, value, Math.min(ttl, 300));
 
-    // TODO: Store tags for invalidation when Redis is configured
+    // Store in L2 (Redis) cache
+    const redisSuccess = await redisClient.set(key, value, ttl);
+
+    if (redisSuccess) {
+      console.log(`✅ Cached in L1+L2: ${key} (TTL: ${ttl}s)`);
+
+      // Store tag associations in Redis
+      if (options.tags && options.tags.length > 0) {
+        await this.associateTags(key, options.tags, ttl);
+      }
+    } else {
+      console.log(`⚠️ Cached in L1 only: ${key} (Redis unavailable)`);
+    }
   }
 
   /**
@@ -67,7 +92,7 @@ export class BiodynamicCacheManager {
   async getOrSet<T>(
     key: string,
     compute: () => Promise<T>,
-    options: CacheOptions = {}
+    options: CacheOptions = {},
   ): Promise<T> {
     // Try to get from cache
     const cached = await this.get<T>(key);
@@ -76,6 +101,7 @@ export class BiodynamicCacheManager {
     }
 
     // Compute value
+    console.log(`🔄 Computing: ${key}`);
     const value = await compute();
 
     // Store in cache
@@ -89,6 +115,8 @@ export class BiodynamicCacheManager {
    */
   async invalidate(key: string): Promise<void> {
     this.memoryCache.invalidate(key);
+    await redisClient.delete(key);
+    console.log(`🗑️ Invalidated: ${key}`);
   }
 
   /**
@@ -96,13 +124,32 @@ export class BiodynamicCacheManager {
    */
   async invalidatePattern(pattern: string): Promise<void> {
     this.memoryCache.invalidatePattern(pattern);
+    const deletedCount = await redisClient.deletePattern(pattern);
+    console.log(`🗑️ Invalidated pattern: ${pattern} (${deletedCount} keys)`);
   }
 
   /**
    * Invalidate cache by tag
    */
-  async invalidateByTag(_tag: string): Promise<void> {
-    // TODO: Implement when Redis is configured
+  async invalidateByTag(tag: string): Promise<void> {
+    const tagKey = this.getTagKey(tag);
+
+    // Get all keys associated with this tag from Redis
+    const keysJson = await redisClient.get<string[]>(tagKey);
+
+    if (keysJson && Array.isArray(keysJson)) {
+      console.log(`🗑️ Invalidating tag: ${tag} (${keysJson.length} keys)`);
+
+      // Delete all associated keys
+      for (const key of keysJson) {
+        await this.invalidate(key);
+      }
+
+      // Delete the tag key itself
+      await redisClient.delete(tagKey);
+    } else {
+      console.log(`⚠️ Tag not found: ${tag}`);
+    }
   }
 
   /**
@@ -110,6 +157,38 @@ export class BiodynamicCacheManager {
    */
   async clear(): Promise<void> {
     this.memoryCache.clear();
+    // Note: We don't clear ALL of Redis, just invalidate patterns
+    await this.invalidatePattern("biodynamic:*");
+    console.log(`🗑️ Cache cleared`);
+  }
+
+  /**
+   * Associate cache key with tags
+   */
+  private async associateTags(
+    key: string,
+    tags: string[],
+    ttl: number,
+  ): Promise<void> {
+    for (const tag of tags) {
+      const tagKey = this.getTagKey(tag);
+
+      // Get existing keys for this tag
+      const existingKeys = (await redisClient.get<string[]>(tagKey)) || [];
+
+      // Add current key if not already present
+      if (!existingKeys.includes(key)) {
+        existingKeys.push(key);
+        await redisClient.set(tagKey, existingKeys, ttl);
+      }
+    }
+  }
+
+  /**
+   * Get tag key for Redis
+   */
+  private getTagKey(tag: string): string {
+    return `${this.tagPrefix}${tag}`;
   }
 
   /**
@@ -164,7 +243,7 @@ export class BiodynamicCacheManager {
   static generateKey(
     resource: string,
     id?: string,
-    params?: Record<string, any>
+    params?: Record<string, any>,
   ): string {
     const parts = ["biodynamic", resource];
 
@@ -181,6 +260,19 @@ export class BiodynamicCacheManager {
     }
 
     return parts.join(":");
+  }
+
+  /**
+   * Get cache statistics
+   */
+  getStats(): {
+    redisConnected: boolean;
+    memorySize: number;
+  } {
+    return {
+      redisConnected: redisClient.getConnectionStatus(),
+      memorySize: this.memoryCache.size(),
+    };
   }
 }
 

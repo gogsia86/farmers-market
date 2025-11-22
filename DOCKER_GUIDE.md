@@ -1,11 +1,14 @@
-# 🐳 Docker Quick Start Guide for Farmers Market Platform
+# Docker Development Guide
+
+## Getting Started
 
 ## Prerequisites
 
-- Docker Desktop installed and running
-- Git repository cloned
+- Docker Desktop installed
+- Docker Compose installed
+- Git installed
 
-## 🚀 Quick Start (Development Mode)
+## Quick Start
 
 ### Start the Application
 

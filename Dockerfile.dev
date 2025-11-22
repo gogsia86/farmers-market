@@ -1,33 +1,39 @@
-# Farmers Market Platform - Development Dockerfile
-# Optimized for hot reload and fast development
+# ============================================
+# Divine Development Docker Image
+# Optimized for HP OMEN Development Experience
+# ============================================
+FROM node:20-alpine
 
-ARG NODE_VERSION=20
-FROM node:${NODE_VERSION}-alpine
+# Install development dependencies
+RUN apk add --no-cache \
+  libc6-compat \
+  python3 \
+  make \
+  g++ \
+  git \
+  curl
 
 WORKDIR /app
 
-# Install dependencies for Prisma
-RUN apk add --no-cache libc6-compat openssl
+# Copy package files
+COPY package.json package-lock.json* ./
 
-# Copy package files AND Prisma schema
-COPY package*.json ./
-COPY prisma ./prisma/
+# Install all dependencies (including dev)
+RUN npm install
 
-# Install dependencies without running postinstall scripts
-RUN npm install --ignore-scripts
-
-# Copy rest of application code
+# Copy source code
 COPY . .
 
-# Now generate Prisma Client after all files are in place
+# Generate Prisma Client
 RUN npx prisma generate
 
-# Expose port
-EXPOSE 3000
+# Expose development ports
+EXPOSE 3001 5555
 
-ENV PORT=3000
-ENV WATCHPACK_POLLING=true
-ENV CHOKIDAR_USEPOLLING=true
+# Development environment variables
+ENV NODE_ENV=development
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3001
 
-# Start development server with hot reload
+# Start development server
 CMD ["npm", "run", "dev"]

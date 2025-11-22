@@ -1,0 +1,12 @@
+[10:15:06] [INFO] Cache directory found: .next (will be regenerated)
+[10:15:06] [INFO] Cache directory found: .jest-cache (will be regenerated)
+[10:15:06] [INFO] Cache directory found: coverage (will be regenerated)
+[10:15:06] [INFO] Cache directory found: playwright-report (will be regenerated)
+[10:15:06] [INFO] Cache directory found: test-results (will be regenerated)
+[10:15:06] [INFO] Removing: CLEANUP_REPORT_2025-11-21_042356.md - Old report/analysis file
+[10:15:06] [INFO] Removing: CLEANUP_REPORT_2025-11-22_101358.md - Old report/analysis file
+[10:15:06] [INFO] Removing: analysis-duplicates.txt - Old report/analysis file
+[10:15:06] [INFO] Removing: analysis-file-types.txt - Old report/analysis file
+[10:15:06] [INFO] Removing: duplicate-analysis.json - Old report/analysis file
+[10:15:06] [INFO] Removing: cleanup-backup-list-20251121_044307.txt - Old backup file
+[10:15:06] [INFO] Removing: cleanup-log-20251121_044217.txt - Old backup file
