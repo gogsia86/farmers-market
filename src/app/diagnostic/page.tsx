@@ -1,40 +1,44 @@
-import { locales } from "@/i18n/config";
+/**
+ * DIAGNOSTIC TEST PAGE
+ * Simple page to verify server is working
+ */
 
-export default function DiagnosticPage() {
+export const dynamic = "force-dynamic";
+
+export default function TestPage() {
+  const timestamp = new Date().toISOString();
+
   return (
-    <div className="container mx-auto px-4 py-16 bg-white min-h-screen">
-      <h1 className="text-4xl font-bold mb-8 text-black">
-        🔍 Language Routing Diagnostic
-      </h1>
+    <main className="min-h-screen bg-gray-50 p-8">
+      <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8">
+        <h1 className="text-3xl font-bold text-green-600 mb-4">
+          ✅ Server is Working!
+        </h1>
 
-      <div className="bg-gray-100 rounded-lg shadow-lg border-2 border-gray-300 p-6 mb-8">
-        <h2 className="text-2xl font-bold mb-4 text-black">
-          Configured Locales:
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          {locales.map((locale) => (
-            <a
-              key={locale}
-              href={`/${locale}`}
-              className="block p-4 bg-green-600 hover:bg-green-700 rounded text-center font-bold text-white text-lg"
-            >
-              {locale.toUpperCase()}
-            </a>
-          ))}
+        <div className="space-y-4">
+          <div className="border-l-4 border-green-500 pl-4">
+            <p className="font-semibold">Status:</p>
+            <p className="text-gray-700">Server rendering successfully</p>
+          </div>
+
+          <div className="border-l-4 border-blue-500 pl-4">
+            <p className="font-semibold">Timestamp:</p>
+            <p className="text-gray-700">{timestamp}</p>
+          </div>
+
+          <div className="border-l-4 border-purple-500 pl-4">
+            <p className="font-semibold">Environment:</p>
+            <p className="text-gray-700">{process.env.NODE_ENV || 'development'}</p>
+          </div>
+
+          <div className="mt-8 p-4 bg-green-50 rounded">
+            <p className="text-sm text-gray-600">
+              If you can see this page, the Next.js server is working correctly.
+              The homepage 500 error is likely related to a specific component or import.
+            </p>
+          </div>
         </div>
       </div>
-
-      <div className="bg-orange-200 rounded-lg border-4 border-orange-600 p-8">
-        <h2 className="text-3xl font-black mb-6 text-gray-900">
-          📋 Test Instructions:
-        </h2>
-        <ol className="list-decimal list-inside space-y-4 text-2xl font-black text-gray-900">
-          <li>Click on any language code above</li>
-          <li>You should see the homepage in that language</li>
-          <li>If you see a 404, open DevTools (F12) → Network tab</li>
-          <li>Check the response status code</li>
-        </ol>
-      </div>
-    </div>
+    </main>
   );
 }
