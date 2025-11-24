@@ -1,6 +1,3 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 # 🌾 FARMERS MARKET DIVINE COMMIT MESSAGE HOOK
 # Validates commit message format
 
