@@ -372,4 +372,78 @@ export class GeocodingService {
   private static toRadians(degrees: number): number {
     return degrees * (Math.PI / 180);
   }
+
+  /**
+   * Find nearby farms within a specified radius
+   * Calculates distances and filters/sorts farms by proximity
+   *
+   * @param userLat - User's latitude
+   * @param userLng - User's longitude
+   * @param farms - Array of farms with id, name, lat, lng, and distance fields
+   * @param radiusMiles - Search radius in miles
+   * @returns Array of farms within radius, sorted by distance (closest first)
+   *
+   * @example
+   * const nearbyFarms = await GeocodingService.findNearbyFarms(
+   *   38.5816,
+   *   -121.4944,
+   *   farmsList,
+   *   50
+   * );
+   */
+  static async findNearbyFarms<
+    T extends {
+      id: string;
+      name: string;
+      lat: number;
+      lng: number;
+      distance: number;
+    },
+  >(
+    userLat: number,
+    userLng: number,
+    farms: T[],
+    radiusMiles: number,
+  ): Promise<T[]> {
+    // Handle empty array
+    if (farms.length === 0) {
+      return [];
+    }
+
+    // Validate user coordinates
+    if (!this.validateCoordinates(userLat, userLng)) {
+      throw new Error(
+        `Invalid user coordinates: lat=${userLat}, lng=${userLng}`,
+      );
+    }
+
+    // Calculate distances for all farms
+    const farmsWithDistances = farms.map((farm) => {
+      const distance = this.calculateDistance(
+        userLat,
+        userLng,
+        farm.lat,
+        farm.lng,
+      );
+
+      return {
+        ...farm,
+        distance,
+      };
+    });
+
+    // Filter farms within radius
+    const nearbyFarms = farmsWithDistances.filter(
+      (farm) => farm.distance <= radiusMiles,
+    );
+
+    // Sort by distance (closest first)
+    nearbyFarms.sort((a, b) => a.distance - b.distance);
+
+    console.log(
+      `🔍 Found ${nearbyFarms.length} farms within ${radiusMiles} miles of (${userLat}, ${userLng})`,
+    );
+
+    return nearbyFarms;
+  }
 }

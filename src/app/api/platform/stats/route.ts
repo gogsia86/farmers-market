@@ -64,11 +64,11 @@ export async function GET(_request: NextRequest) {
       database.order.aggregate({
         where: {
           status: {
-            in: ["DELIVERED", "COMPLETED"],
+            in: ["FULFILLED", "COMPLETED"],
           },
         },
         _sum: {
-          totalAmount: true,
+          total: true,
         },
       }),
 
@@ -77,9 +77,6 @@ export async function GET(_request: NextRequest) {
         where: {
           status: "ACTIVE",
           verificationStatus: "VERIFIED",
-          city: {
-            not: null,
-          },
         },
         select: {
           city: true,
@@ -90,9 +87,13 @@ export async function GET(_request: NextRequest) {
     ]);
 
     // Calculate derived stats
-    const totalRevenueAmount = totalRevenue._sum.totalAmount || 0;
-    const averageOrderValue = totalOrders > 0 ? totalRevenueAmount / totalOrders : 0;
-    const productPerFarm = activeFarms > 0 ? Math.round(activeProducts / activeFarms) : 0;
+    const totalRevenueAmount = totalRevenue._sum?.total
+      ? Number(totalRevenue._sum.total)
+      : 0;
+    const averageOrderValue =
+      totalOrders > 0 ? totalRevenueAmount / totalOrders : 0;
+    const productPerFarm =
+      activeFarms > 0 ? Math.round(activeProducts / activeFarms) : 0;
 
     // Format numbers for display
     const stats = {
@@ -167,7 +168,7 @@ export async function GET(_request: NextRequest) {
         headers: {
           "Cache-Control": "public, s-maxage=600, stale-while-revalidate=1200",
         },
-      }
+      },
     );
   } catch (error) {
     console.error("[PLATFORM_STATS_API_ERROR]", error);
@@ -177,7 +178,7 @@ export async function GET(_request: NextRequest) {
         error: "Failed to fetch platform statistics",
         message: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -261,19 +262,22 @@ async function getRevenueThisMonth(): Promise<number> {
   startOfMonth.setDate(1);
   startOfMonth.setHours(0, 0, 0, 0);
 
+  const startDate = new Date();
+  startDate.setMonth(startDate.getMonth() - 1);
+  startDate.setDate(1);
+  startDate.setHours(0, 0, 0, 0);
+
   const result = await database.order.aggregate({
     where: {
-      createdAt: {
-        gte: startOfMonth,
-      },
+      createdAt: { gte: startDate },
       status: {
-        in: ["DELIVERED", "COMPLETED"],
+        in: ["FULFILLED", "COMPLETED"],
       },
     },
     _sum: {
-      totalAmount: true,
+      total: true,
     },
   });
 
-  return result._sum.totalAmount || 0;
+  return result._sum?.total ? Number(result._sum.total) : 0;
 }

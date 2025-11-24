@@ -50,12 +50,12 @@ export async function GET(request: NextRequest) {
 
     // Parse and validate query parameters
     const queryValidation = ProductQuerySchema.safeParse({
-      farmId: searchParams.get("farmId"),
-      category: searchParams.get("category"),
-      inStock: searchParams.get("inStock") === "true",
-      organic: searchParams.get("organic") === "true",
-      seasonal: searchParams.get("seasonal") === "true",
-      searchTerm: searchParams.get("searchTerm"),
+      farmId: searchParams.get("farmId") || undefined,
+      category: searchParams.get("category") || undefined,
+      inStock: searchParams.get("inStock") === "true" || undefined,
+      organic: searchParams.get("organic") === "true" || undefined,
+      seasonal: searchParams.get("seasonal") === "true" || undefined,
+      searchTerm: searchParams.get("searchTerm") || undefined,
       minPrice: searchParams.get("minPrice")
         ? Number(searchParams.get("minPrice"))
         : undefined,

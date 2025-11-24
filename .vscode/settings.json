@@ -381,6 +381,26 @@
   },
 
   // ============================================================================
+  // SECTION 14: CONSOLE NINJA PRO CONFIGURATION
+  // ============================================================================
+
+  // Console Ninja PRO Settings
+  "console-ninja.featureSet": "Pro",
+  "console-ninja.captureFunctions": true,
+  "console-ninja.captureObjects": true,
+  "console-ninja.showInlineValues": true,
+  "console-ninja.toolsToEnableDuringDebugging": [
+    "Performance"
+  ],
+  "console-ninja.fontSize": 13,
+  "console-ninja.outputMode": "In-Place",
+  "console-ninja.showTimes": true,
+  
+  // Note: To activate PRO, visit: https://console-ninja.com
+  // Then add your license key below:
+  // "console-ninja.licenseKey": "YOUR-LICENSE-KEY-HERE",
+
+  // ============================================================================
   // SECTION 14: FRAMEWORK-SPECIFIC OPTIMIZATIONS
   // ============================================================================
 

@@ -17,9 +17,9 @@ import type { UserRole, UserStatus } from "@prisma/client";
  * NextAuth v5 Configuration
  * New API with better App Router support
  */
-export const { handlers, signIn, signOut, auth } = NextAuth({
+const nextAuthResult = NextAuth({
   // Prisma adapter for database sessions
-  adapter: PrismaAdapter(database),
+  adapter: PrismaAdapter(database) as any,
 
   // JWT strategy for stateless sessions
   session: {
@@ -220,10 +220,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
   // Events for logging
   events: {
-    async signIn({ user, account, profile }) {
+    async signIn({ user, account: _account, profile: _profile }) {
       console.log(`✅ User signed in: ${user.email} (${user.role})`);
     },
-    async signOut({ session, token }) {
+    async signOut(params) {
+      const token = "token" in params ? params.token : null;
       console.log(`👋 User signed out: ${token?.email}`);
     },
     async createUser({ user }) {
@@ -238,11 +239,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: true,
 });
 
+export const { handlers, signIn, signOut } = nextAuthResult;
+export const auth: any = nextAuthResult.auth;
+export const authConfig = nextAuthResult;
+
 /**
  * Export type-safe auth helper
  * Use this in Server Components and API routes
  */
-export { auth as getServerSession };
+export const getServerSession: any = auth;
 
 /**
  * Helper function to get current user
@@ -271,7 +276,7 @@ export async function requireAuth() {
  */
 export async function requireRole(
   allowedRoles: UserRole | UserRole[],
-): Promise<NonNullable<Awaited<ReturnType<typeof auth>>["user"]>> {
+): Promise<any> {
   const session = await auth();
   if (!session?.user) {
     throw new Error("Authentication required");

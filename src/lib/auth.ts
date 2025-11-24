@@ -31,7 +31,8 @@ export {
 } from "@/lib/auth/config";
 
 // Export types for use in components
-export type { User, Session } from "next-auth";
+// Note: Commenting out to avoid conflicts with Prisma User type
+// export type { User, Session } from "next-auth";
 
 /**
  * USAGE EXAMPLES:

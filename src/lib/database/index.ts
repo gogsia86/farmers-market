@@ -3,6 +3,7 @@
  * Divine database connection with quantum consciousness
  * @reference .github/instructions/07_DATABASE_QUANTUM_MASTERY.instructions.md
  */
+
 import { PrismaClient } from "@prisma/client";
 
 declare global {
@@ -17,24 +18,23 @@ const MAX_RETRIES = 3;
 const RETRY_DELAY = 2000; // 2 seconds
 
 // Prisma v7 configuration with adapter support
-const createPrismaClient = () => {
+const createPrismaClient = (): PrismaClient => {
   const client = new PrismaClient({
     log:
       process.env.NODE_ENV === "development"
         ? ["query", "error", "warn"]
         : ["error"],
-    // Prisma v7: Pass datasourceUrl via client config
-    datasourceUrl: process.env.DATABASE_URL,
   });
 
   return client;
 };
 
 // Sleep utility for retries
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = (ms: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, ms));
 
 // Enhanced connection handling with retries
-const connectWithRetry = async (client: PrismaClient) => {
+const connectWithRetry = async (client: PrismaClient): Promise<void> => {
   while (connectionAttempts < MAX_RETRIES) {
     try {
       await client.$connect();
@@ -45,7 +45,7 @@ const connectWithRetry = async (client: PrismaClient) => {
       connectionAttempts++;
       console.warn(
         `⚠️  Database connection attempt ${connectionAttempts}/${MAX_RETRIES} failed:`,
-        error instanceof Error ? error.message : error
+        error instanceof Error ? error.message : error,
       );
 
       if (connectionAttempts < MAX_RETRIES) {
@@ -55,11 +55,13 @@ const connectWithRetry = async (client: PrismaClient) => {
         console.error(
           "❌ Database connection failed after",
           MAX_RETRIES,
-          "attempts"
+          "attempts",
         );
-        console.error("⚠️  Server will start but database operations will fail");
         console.error(
-          "💡 Tip: Make sure PostgreSQL is running and DATABASE_URL is correct"
+          "⚠️  Server will start but database operations will fail",
+        );
+        console.error(
+          "💡 Tip: Make sure PostgreSQL is running and DATABASE_URL is correct",
         );
         globalThis.databaseConnected = false;
         // Don't exit - allow server to start for development
@@ -72,7 +74,7 @@ const connectWithRetry = async (client: PrismaClient) => {
 };
 
 // Initialize with logging configuration based on environment
-const initializeDatabase = () => {
+const initializeDatabase = (): PrismaClient => {
   const client = createPrismaClient();
 
   // Attempt connection asynchronously (non-blocking)
@@ -91,7 +93,8 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 // Helper to check database connection status
-export const isDatabaseConnected = () => globalThis.databaseConnected ?? false;
+export const isDatabaseConnected = (): boolean =>
+  globalThis.databaseConnected ?? false;
 
 // Re-export as both database and prisma for compatibility
 export const prisma = database;

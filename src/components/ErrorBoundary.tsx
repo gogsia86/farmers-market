@@ -26,13 +26,7 @@ import React, { Component } from "react";
 
 // 🌿 Agricultural season context for divine error consciousness
 // Reserved for future biodynamic error recovery features
-function _getCurrentSeason(): string {
-  const month = new Date().getMonth() + 1;
-  if (month >= 3 && month <= 5) return "spring";
-  if (month >= 6 && month <= 8) return "summer";
-  if (month >= 9 && month <= 11) return "autumn";
-  return "winter";
-}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 /**
  * DIVINE ERROR CATEGORIZATION

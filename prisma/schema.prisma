@@ -1,36 +1,1247 @@
-// ============================================================================
-// FARMERS MARKET - DIVINE DATABASE SCHEMA
-// ============================================================================
-// Generated from: 23 FRD Feature Specifications (FR-001 through FR-023)
-// Database: PostgreSQL 15+
-// ORM: Prisma 5.x
-// Multi-Tenant: Farms as tenants (farm_id foreign key on all data)
-// Performance: Optimized indexes, efficient relations
-// Security: Row-level security ready, encrypted sensitive fields
-// ============================================================================
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider     = "postgresql"
-  // Note: In Prisma 7, the DATABASE_URL is now configured in prisma.config.ts
-  // or passed directly to PrismaClient constructor
+  url          = env("DATABASE_URL")
   relationMode = "foreignKeys"
-  // extensions = [postgis(schema: "public"), pgcrypto]
 }
 
-// ============================================================================
-// ENUMS - Type-Safe Status Values
-// ============================================================================
+model User {
+  id                      String                   @id @default(cuid())
+  email                   String                   @unique @db.VarChar(255)
+  password                String?                  @db.VarChar(255)
+  firstName               String?                  @db.VarChar(100)
+  lastName                String?                  @db.VarChar(100)
+  name                    String?                  @db.VarChar(255)
+  phone                   String?                  @db.VarChar(20)
+  avatar                  String?                  @db.VarChar(500)
+  role                    UserRole                 @default(CONSUMER)
+  status                  UserStatus               @default(ACTIVE)
+  approvedBy              String?
+  approvedAt              DateTime?
+  suspendedBy             String?
+  suspendedAt             DateTime?
+  suspensionReason        String?
+  emailVerified           Boolean                  @default(false)
+  emailVerifiedAt         DateTime?
+  phoneVerified           Boolean                  @default(false)
+  phoneVerifiedAt         DateTime?
+  verificationToken       String?                  @unique @db.VarChar(255)
+  verificationExpiry      DateTime?
+  resetToken              String?                  @unique @db.VarChar(255)
+  resetTokenExpiry        DateTime?
+  dietaryPreferences      Json?
+  notificationPreferences Json?
+  privacySettings         Json?
+  lastLoginAt             DateTime?
+  lastLoginIP             String?                  @db.VarChar(45)
+  loginCount              Int                      @default(0)
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+  accounts                Account[]
+  Address                 Address[]
+  adminActions            AdminAction[]            @relation("AdminActions")
+  auditLogs               AuditLog[]
+  cartItems               CartItem[]
+  downloadLogs            DownloadLog[]
+  teamMemberships         FarmTeamMember[]
+  farms                   Farm[]
+  messages                Message[]                @relation("MessageSender")
+  notificationSettings    NotificationPreferences?
+  notifications           Notification[]
+  orders                  Order[]
+  qualityIssues           QualityIssue[]
+  reviews                 Review[]
+  sessions                Session[]
+  supportTickets          SupportTicket[]
+  addresses               UserAddress[]
+
+  @@index([email])
+  @@index([role, status])
+  @@index([createdAt])
+  @@map("users")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  sessionToken String   @unique @db.VarChar(255)
+  accessToken  String?
+  refreshToken String?
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([sessionToken])
+  @@map("sessions")
+}
+
+model Account {
+  id                String    @id @default(cuid())
+  userId            String
+  provider          String    @db.VarChar(50)
+  providerAccountId String    @db.VarChar(255)
+  refreshToken      String?
+  accessToken       String?
+  expiresAt         DateTime?
+  tokenType         String?   @db.VarChar(50)
+  scope             String?   @db.VarChar(255)
+  idToken           String?
+  sessionState      String?   @db.VarChar(255)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+model UserAddress {
+  id        String      @id @default(cuid())
+  userId    String
+  type      AddressType @default(HOME)
+  label     String?     @db.VarChar(100)
+  street    String      @db.VarChar(255)
+  street2   String?     @db.VarChar(255)
+  city      String      @db.VarChar(100)
+  state     String      @db.VarChar(50)
+  zipCode   String      @db.VarChar(20)
+  country   String      @default("US") @db.VarChar(2)
+  latitude  Decimal?    @db.Decimal(10, 8)
+  longitude Decimal?    @db.Decimal(11, 8)
+  isDefault Boolean     @default(false)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  orders    Order[]     @relation("DeliveryAddress")
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([zipCode])
+  @@map("user_addresses")
+}
+
+model AdminAction {
+  id          String          @id @default(cuid())
+  type        AdminActionType
+  adminId     String
+  targetId    String?
+  targetType  String?         @db.VarChar(50)
+  description String
+  metadata    Json?
+  ipAddress   String?         @db.VarChar(45)
+  userAgent   String?         @db.VarChar(500)
+  createdAt   DateTime        @default(now())
+  admin       User            @relation("AdminActions", fields: [adminId], references: [id])
+
+  @@index([adminId])
+  @@index([type])
+  @@index([createdAt])
+  @@index([targetId, targetType])
+  @@map("admin_actions")
+}
+
+model Farm {
+  id                     String                 @id @default(cuid())
+  name                   String                 @db.VarChar(255)
+  slug                   String                 @unique @db.VarChar(255)
+  description            String?
+  story                  String?
+  status                 FarmStatus             @default(PENDING)
+  verificationStatus     FarmVerificationStatus @default(PENDING)
+  verifiedBy             String?
+  verifiedAt             DateTime?
+  rejectionReason        String?
+  ownerId                String
+  email                  String                 @db.VarChar(255)
+  phone                  String                 @db.VarChar(20)
+  website                String?                @db.VarChar(500)
+  address                String                 @db.VarChar(255)
+  city                   String                 @db.VarChar(100)
+  state                  String                 @db.VarChar(50)
+  zipCode                String                 @db.VarChar(20)
+  country                String                 @default("US") @db.VarChar(2)
+  latitude               Decimal                @db.Decimal(10, 8)
+  longitude              Decimal                @db.Decimal(11, 8)
+  location               Json?
+  images                 String[]
+  logoUrl                String?                @db.VarChar(500)
+  bannerUrl              String?                @db.VarChar(500)
+  businessName           String?                @db.VarChar(255)
+  taxId                  String?                @db.VarChar(50)
+  businessType           String?                @db.VarChar(50)
+  yearEstablished        Int?
+  farmSize               Decimal?               @db.Decimal(10, 2)
+  certificationsArray    String[]
+  stripeAccountId        String?                @unique @db.VarChar(255)
+  stripeOnboarded        Boolean                @default(false)
+  stripeOnboardedAt      DateTime?
+  payoutsEnabled         Boolean                @default(false)
+  stripeDetailsSubmitted Boolean                @default(false)
+  productCategories      Json?
+  farmingPractices       Json?
+  deliveryRadius         Int?                   @default(25)
+  profileViewsCount      Int                    @default(0)
+  totalOrdersCount       Int                    @default(0)
+  totalRevenueUSD        Decimal                @default(0) @db.Decimal(12, 2)
+  averageRating          Decimal?               @db.Decimal(3, 2)
+  reviewCount            Int                    @default(0)
+  createdAt              DateTime               @default(now())
+  updatedAt              DateTime               @updatedAt
+  biodynamicCalendar     BiodynamicCalendar[]
+  cropRotations          CropRotation[]
+  DeliverySlot           DeliverySlot[]
+  DeliveryZone           DeliveryZone[]
+  certifications         FarmCertification[]
+  photos                 FarmPhoto[]
+  FarmRating             FarmRating?
+  teamMembers            FarmTeamMember[]
+  owner                  User                   @relation(fields: [ownerId], references: [id])
+  harvestSchedules       HarvestSchedule[]
+  Inventory              Inventory[]
+  marketLocations        MarketLocation[]
+  messages               Message[]
+  notifications          Notification[]
+  orders                 Order[]
+  payouts                Payout[]
+  PickupLocation         PickupLocation[]
+  products               Product[]
+  qualityIssues          QualityIssue[]
+  reviews                Review[]
+  soilAnalyses           SoilAnalysis[]
+  weatherData            WeatherData[]
+
+  @@index([ownerId])
+  @@index([slug])
+  @@index([status])
+  @@index([latitude, longitude])
+  @@index([createdAt])
+  @@map("farms")
+}
+
+model FarmTeamMember {
+  id        String           @id @default(cuid())
+  farmId    String
+  email     String           @db.VarChar(255)
+  userId    String?
+  role      TeamMemberRole   @default(STAFF)
+  status    TeamMemberStatus @default(INVITED)
+  invitedAt DateTime         @default(now())
+  invitedBy String
+  joinedAt  DateTime?
+  removedAt DateTime?
+  removedBy String?
+  farm      Farm             @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  user      User?            @relation(fields: [userId], references: [id])
+
+  @@unique([farmId, email])
+  @@index([farmId])
+  @@index([userId])
+  @@map("farm_team_members")
+}
+
+model FarmPhoto {
+  id           String   @id @default(cuid())
+  farmId       String
+  photoUrl     String   @db.VarChar(500)
+  thumbnailUrl String   @db.VarChar(500)
+  caption      String?  @db.VarChar(255)
+  altText      String?  @db.VarChar(255)
+  sortOrder    Int      @default(0)
+  isPrimary    Boolean  @default(false)
+  width        Int?
+  height       Int?
+  fileSize     Int?
+  createdAt    DateTime @default(now())
+  farm         Farm     @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  @@index([farmId])
+  @@index([isPrimary])
+  @@map("farm_photos")
+}
+
+model FarmCertification {
+  id                  String              @id @default(cuid())
+  farmId              String
+  type                CertificationType
+  certifierName       String              @db.VarChar(255)
+  certificationNumber String?             @db.VarChar(100)
+  documentUrl         String?             @db.VarChar(500)
+  issueDate           DateTime
+  expirationDate      DateTime?
+  status              CertificationStatus @default(PENDING)
+  notes               String?
+  verifiedBy          String?
+  verifiedAt          DateTime?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  farm                Farm                @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  @@index([farmId])
+  @@index([type])
+  @@index([status])
+  @@index([expirationDate])
+  @@map("farm_certifications")
+}
+
+model MarketLocation {
+  id          String   @id @default(cuid())
+  farmId      String
+  marketName  String   @db.VarChar(255)
+  boothNumber String?  @db.VarChar(50)
+  address     String   @db.VarChar(255)
+  city        String   @db.VarChar(100)
+  state       String   @db.VarChar(50)
+  zipCode     String   @db.VarChar(20)
+  latitude    Decimal  @db.Decimal(10, 8)
+  longitude   Decimal  @db.Decimal(11, 8)
+  schedule    Json
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  farm        Farm     @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  @@index([farmId])
+  @@map("market_locations")
+}
+
+model BiodynamicCalendar {
+  id                        String     @id @default(cuid())
+  farmId                    String
+  lunarPhase                LunarPhase
+  lunarDay                  Int
+  moonRiseTime              DateTime?
+  moonSetTime               DateTime?
+  season                    Season
+  astronomicalDate          DateTime
+  plantingFavorability      Int        @default(0)
+  harvestFavorability       Int        @default(0)
+  soilWorkFavorability      Int        @default(0)
+  planetaryAlignment        Json?
+  recommendedActivities     String[]
+  avoidActivities           String[]
+  agriculturalConsciousness Decimal    @default(0.0) @db.Decimal(3, 2)
+  createdAt                 DateTime   @default(now())
+  updatedAt                 DateTime   @updatedAt
+  farm                      Farm       @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  @@unique([farmId, astronomicalDate])
+  @@index([farmId])
+  @@index([season])
+  @@index([lunarPhase])
+  @@map("biodynamic_calendar")
+}
+
+model SoilAnalysis {
+  id                String          @id @default(cuid())
+  farmId            String
+  fieldName         String          @db.VarChar(255)
+  latitude          Decimal         @db.Decimal(10, 8)
+  longitude         Decimal         @db.Decimal(11, 8)
+  pH                Decimal         @db.Decimal(4, 2)
+  nitrogen          Decimal         @db.Decimal(5, 2)
+  phosphorus        Decimal         @db.Decimal(5, 2)
+  potassium         Decimal         @db.Decimal(5, 2)
+  organicMatter     Decimal         @db.Decimal(5, 2)
+  soilType          SoilType
+  drainage          DrainageLevel
+  compaction        CompactionLevel
+  microbialActivity Decimal         @default(0.0) @db.Decimal(3, 2)
+  earthwormCount    Int?
+  fungalPresence    Decimal?        @db.Decimal(3, 2)
+  previousCrops     Json?
+  soilHistory       Json?
+  amendments        String[]
+  recommendedCrops  String[]
+  analyzedBy        String?         @db.VarChar(255)
+  analysisDate      DateTime        @default(now())
+  nextAnalysisDate  DateTime?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  farm              Farm            @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  @@index([farmId])
+  @@index([fieldName])
+  @@index([analysisDate])
+  @@map("soil_analyses")
+}
+
+model WeatherData {
+  id                 String           @id @default(cuid())
+  farmId             String
+  recordedAt         DateTime         @default(now())
+  latitude           Decimal          @db.Decimal(10, 8)
+  longitude          Decimal          @db.Decimal(11, 8)
+  temperature        Decimal          @db.Decimal(5, 2)
+  feelsLike          Decimal?         @db.Decimal(5, 2)
+  tempMin            Decimal?         @db.Decimal(5, 2)
+  tempMax            Decimal?         @db.Decimal(5, 2)
+  humidity           Int
+  precipitation      Decimal?         @db.Decimal(6, 2)
+  precipitationProb  Int?
+  windSpeed          Decimal?         @db.Decimal(5, 2)
+  windDirection      Int?
+  condition          WeatherCondition
+  cloudCover         Int?
+  uvIndex            Int?
+  visibility         Decimal?         @db.Decimal(5, 2)
+  growingDegreeDay   Decimal?         @db.Decimal(5, 2)
+  evapotranspiration Decimal?         @db.Decimal(5, 2)
+  soilMoisture       Decimal?         @db.Decimal(3, 2)
+  frostRisk          Boolean          @default(false)
+  heatStressRisk     Boolean          @default(false)
+  source             String           @default("API") @db.VarChar(50)
+  createdAt          DateTime         @default(now())
+  farm               Farm             @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  @@index([farmId])
+  @@index([recordedAt])
+  @@map("weather_data")
+}
+
+model CropRotation {
+  id                  String     @id @default(cuid())
+  farmId              String
+  fieldName           String     @db.VarChar(255)
+  rotationCycle       Int
+  currentYear         Int
+  currentCrop         String     @db.VarChar(100)
+  currentCropFamily   CropFamily
+  plantedAt           DateTime
+  expectedHarvest     DateTime?
+  cropHistory         Json
+  plannedRotations    Json
+  coverCropPlanned    Boolean    @default(false)
+  coverCropType       String?    @db.VarChar(100)
+  restPeriod          Boolean    @default(false)
+  followsBiodynamic   Boolean    @default(false)
+  biodynamicScore     Decimal    @default(0.0) @db.Decimal(3, 2)
+  nextRecommendedCrop String?    @db.VarChar(100)
+  soilBenefits        String[]
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+  farm                Farm       @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  @@unique([farmId, fieldName])
+  @@index([farmId])
+  @@index([currentCropFamily])
+  @@map("crop_rotations")
+}
+
+model HarvestSchedule {
+  id                   String          @id @default(cuid())
+  farmId               String
+  productId            String?
+  cropName             String          @db.VarChar(255)
+  cropVariety          String?         @db.VarChar(255)
+  fieldName            String          @db.VarChar(255)
+  plantedAt            DateTime
+  plantedQuantity      Decimal?        @db.Decimal(10, 2)
+  plantedUnit          String?         @db.VarChar(50)
+  expectedHarvestStart DateTime
+  expectedHarvestEnd   DateTime?
+  actualHarvestStart   DateTime?
+  actualHarvestEnd     DateTime?
+  harvestConfidence    Decimal         @default(0.5) @db.Decimal(3, 2)
+  predictedYield       Decimal?        @db.Decimal(10, 2)
+  predictedYieldUnit   String?         @db.VarChar(50)
+  actualYield          Decimal?        @db.Decimal(10, 2)
+  actualYieldUnit      String?         @db.VarChar(50)
+  harvestQuality       HarvestQuality?
+  optimalLunarPhase    LunarPhase?
+  seasonalAlignment    Season
+  biodynamicTiming     Boolean         @default(false)
+  estimatedLaborHours  Decimal?        @db.Decimal(6, 2)
+  actualLaborHours     Decimal?        @db.Decimal(6, 2)
+  laborersNeeded       Int?
+  status               HarvestStatus   @default(PLANNED)
+  notes                String?
+  challenges           String[]
+  successes            String[]
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+  farm                 Farm            @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  product              Product?        @relation(fields: [productId], references: [id])
+
+  @@index([farmId])
+  @@index([productId])
+  @@index([status])
+  @@index([expectedHarvestStart])
+  @@index([seasonalAlignment])
+  @@map("harvest_schedules")
+}
+
+model Product {
+  id                   String            @id @default(cuid())
+  farmId               String
+  name                 String            @db.VarChar(255)
+  slug                 String            @db.VarChar(255)
+  description          String?           @db.VarChar(500)
+  category             ProductCategory
+  status               ProductStatus     @default(DRAFT)
+  price                Decimal           @db.Decimal(10, 2)
+  compareAtPrice       Decimal?          @db.Decimal(10, 2)
+  unit                 String            @db.VarChar(50)
+  trackInventory       Boolean           @default(true)
+  quantityAvailable    Decimal?          @db.Decimal(10, 2)
+  lowStockThreshold    Decimal?          @db.Decimal(10, 2)
+  allowBackorder       Boolean           @default(false)
+  inStock              Boolean           @default(true)
+  organic              Boolean           @default(false)
+  seasonal             Boolean           @default(false)
+  featured             Boolean           @default(false)
+  seasonalStart        DateTime?
+  seasonalEnd          DateTime?
+  harvestDate          DateTime?
+  storageInstructions  String?
+  primaryPhotoUrl      String?           @db.VarChar(500)
+  photoUrls            Json?
+  images               String[]
+  hasVariants          Boolean           @default(false)
+  variants             Json?
+  tags                 Json?
+  pricing              Json?
+  inventory            Json?
+  attributes           Json?
+  scheduledPublishAt   DateTime?
+  scheduledUnpublishAt DateTime?
+  publishedAt          DateTime?
+  viewsCount           Int               @default(0)
+  cartAddsCount        Int               @default(0)
+  purchaseCount        Int               @default(0)
+  wishlistCount        Int               @default(0)
+  averageRating        Decimal?          @db.Decimal(3, 2)
+  reviewCount          Int               @default(0)
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  cartItems            CartItem[]
+  harvestSchedules     HarvestSchedule[]
+  Inventory            Inventory[]
+  inventoryLogs        InventoryLog[]
+  orderItems           OrderItem[]
+  farm                 Farm              @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  reviews              Review[]
+  SeasonalCycle        SeasonalCycle[]
+
+  @@unique([farmId, slug])
+  @@index([farmId])
+  @@index([category])
+  @@index([status])
+  @@index([organic])
+  @@index([createdAt])
+  @@index([farmId, inStock])
+  @@index([farmId, category, inStock])
+  @@index([quantityAvailable])
+  @@map("products")
+}
+
+model ProductTemplate {
+  id           String          @id @default(cuid())
+  farmId       String?
+  name         String          @db.VarChar(255)
+  category     ProductCategory
+  templateData Json
+  useCount     Int             @default(0)
+  isPublic     Boolean         @default(false)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@index([farmId])
+  @@index([category])
+  @@map("product_templates")
+}
+
+model InventoryLog {
+  id               String   @id @default(cuid())
+  productId        String
+  previousQuantity Decimal  @db.Decimal(10, 2)
+  newQuantity      Decimal  @db.Decimal(10, 2)
+  changeAmount     Decimal  @db.Decimal(10, 2)
+  changeReason     String   @db.VarChar(100)
+  notes            String?
+  changedBy        String
+  createdAt        DateTime @default(now())
+  product          Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([createdAt])
+  @@map("inventory_logs")
+}
+
+model CartItem {
+  id                String            @id @default(cuid())
+  userId            String
+  productId         String
+  farmId            String
+  quantity          Decimal           @db.Decimal(10, 2)
+  unit              String            @db.VarChar(50)
+  priceAtAdd        Decimal           @db.Decimal(10, 2)
+  fulfillmentMethod FulfillmentMethod @default(DELIVERY)
+  reservedUntil     DateTime?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  product           Product           @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([productId])
+  @@index([farmId])
+  @@index([reservedUntil])
+  @@map("cart_items")
+}
+
+model Order {
+  id                    String            @id @default(cuid())
+  orderNumber           String            @unique @db.VarChar(50)
+  customerId            String
+  farmId                String
+  status                OrderStatus       @default(PENDING)
+  paymentStatus         PaymentStatus     @default(PENDING)
+  subtotal              Decimal           @db.Decimal(10, 2)
+  deliveryFee           Decimal           @default(0) @db.Decimal(10, 2)
+  platformFee           Decimal           @db.Decimal(10, 2)
+  tax                   Decimal           @default(0) @db.Decimal(10, 2)
+  discount              Decimal           @default(0) @db.Decimal(10, 2)
+  total                 Decimal           @db.Decimal(10, 2)
+  farmerAmount          Decimal           @db.Decimal(10, 2)
+  fulfillmentMethod     FulfillmentMethod
+  deliveryAddressId     String?
+  scheduledDate         DateTime?
+  scheduledTimeSlot     String?           @db.VarChar(50)
+  fulfillmentNotes      String?
+  stripePaymentIntentId String?           @unique @db.VarChar(255)
+  stripeChargeId        String?           @db.VarChar(255)
+  stripeTransferId      String?           @db.VarChar(255)
+  paymentIntentId       String?           @db.VarChar(255)
+  paidAt                DateTime?
+  trackingNumber        String?           @db.VarChar(255)
+  shippingService       String?           @db.VarChar(100)
+  shippingAddress       Json?
+  deliverySlotId        String?
+  specialInstructions   String?
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+  confirmedAt           DateTime?
+  fulfilledAt           DateTime?
+  completedAt           DateTime?
+  cancelledAt           DateTime?
+  cancelledBy           String?
+  cancelReason          String?
+  fulfillment           Fulfillment?
+  messages              Message[]
+  items                 OrderItem[]
+  customer              User              @relation(fields: [customerId], references: [id])
+  deliveryAddress       UserAddress?      @relation("DeliveryAddress", fields: [deliveryAddressId], references: [id])
+  farm                  Farm              @relation(fields: [farmId], references: [id])
+  Payment               Payment?
+  qualityIssues         QualityIssue[]
+  refunds               Refund[]
+  reviews               Review[]
+
+  @@index([customerId])
+  @@index([farmId])
+  @@index([status])
+  @@index([paymentStatus])
+  @@index([createdAt])
+  @@index([orderNumber])
+  @@index([farmId, createdAt])
+  @@index([customerId, createdAt])
+  @@index([status, createdAt])
+  @@map("orders")
+}
+
+model OrderItem {
+  id              String  @id @default(cuid())
+  orderId         String
+  productId       String
+  productName     String  @db.VarChar(255)
+  quantity        Decimal @db.Decimal(10, 2)
+  unit            String  @db.VarChar(50)
+  unitPrice       Decimal @db.Decimal(10, 2)
+  subtotal        Decimal @db.Decimal(10, 2)
+  productSnapshot Json?
+  order           Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product         Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+  @@map("order_items")
+}
+
+model Fulfillment {
+  id                String            @id @default(cuid())
+  orderId           String            @unique
+  status            FulfillmentStatus @default(PENDING)
+  trackingNumber    String?           @db.VarChar(100)
+  carrierName       String?           @db.VarChar(100)
+  estimatedDate     DateTime?
+  actualDate        DateTime?
+  proofPhotoUrl     String?           @db.VarChar(500)
+  signature         String?
+  recipientName     String?           @db.VarChar(255)
+  deliveryNotes     String?
+  gpsLatitude       Decimal?          @db.Decimal(10, 8)
+  gpsLongitude      Decimal?          @db.Decimal(11, 8)
+  deliveryTimestamp DateTime?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  order             Order             @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([status])
+  @@map("fulfillments")
+}
+
+model Payment {
+  id                    String        @id @default(cuid())
+  orderId               String        @unique
+  amount                Decimal       @db.Decimal(10, 2)
+  currency              String        @default("usd") @db.VarChar(3)
+  status                PaymentStatus @default(PENDING)
+  paymentMethod         String        @db.VarChar(50)
+  stripePaymentIntentId String?       @unique @db.VarChar(255)
+  paypalOrderId         String?       @unique @db.VarChar(255)
+  paidAt                DateTime?
+  failureReason         String?
+  receiptUrl            String?       @db.VarChar(500)
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  order                 Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([status])
+  @@index([stripePaymentIntentId])
+  @@index([paypalOrderId])
+  @@map("payments")
+}
+
+model Payout {
+  id             String    @id @default(cuid())
+  farmId         String
+  amount         Decimal   @db.Decimal(10, 2)
+  currency       String    @default("USD") @db.VarChar(3)
+  status         String    @db.VarChar(50)
+  stripePayoutId String?   @unique @db.VarChar(255)
+  periodStart    DateTime
+  periodEnd      DateTime
+  orderCount     Int
+  scheduledDate  DateTime
+  paidDate       DateTime?
+  failureReason  String?
+  createdAt      DateTime  @default(now())
+  farm           Farm      @relation(fields: [farmId], references: [id])
+
+  @@index([farmId])
+  @@index([status])
+  @@index([scheduledDate])
+  @@map("payouts")
+}
+
+model Refund {
+  id             String    @id @default(cuid())
+  orderId        String
+  amount         Decimal   @db.Decimal(10, 2)
+  reason         String    @db.VarChar(255)
+  notes          String?
+  stripeRefundId String?   @unique @db.VarChar(255)
+  status         String    @db.VarChar(50)
+  processedAt    DateTime?
+  createdAt      DateTime  @default(now())
+  order          Order     @relation(fields: [orderId], references: [id])
+
+  @@index([orderId])
+  @@map("refunds")
+}
+
+model QualityIssue {
+  id                   String             @id @default(cuid())
+  orderId              String
+  customerId           String
+  farmId               String
+  type                 QualityIssueType
+  description          String             @db.VarChar(500)
+  photoUrl             String?            @db.VarChar(500)
+  status               QualityIssueStatus @default(OPEN)
+  resolutionPreference ResolutionType
+  resolution           ResolutionType?
+  resolutionNotes      String?
+  refundAmount         Decimal?           @db.Decimal(10, 2)
+  createdAt            DateTime           @default(now())
+  resolvedAt           DateTime?
+  resolvedBy           String?
+  customer             User               @relation(fields: [customerId], references: [id])
+  farm                 Farm               @relation(fields: [farmId], references: [id])
+  order                Order              @relation(fields: [orderId], references: [id])
+
+  @@index([orderId])
+  @@index([customerId])
+  @@index([farmId])
+  @@index([status])
+  @@map("quality_issues")
+}
+
+model Review {
+  id                 String       @id @default(cuid())
+  farmId             String
+  productId          String?
+  customerId         String
+  orderId            String?
+  rating             Int
+  reviewText         String?      @db.VarChar(500)
+  photoUrl           String?      @db.VarChar(500)
+  isVerifiedPurchase Boolean      @default(false)
+  status             ReviewStatus @default(PENDING)
+  helpfulCount       Int          @default(0)
+  unhelpfulCount     Int          @default(0)
+  farmerResponse     String?      @db.VarChar(500)
+  farmerRespondedAt  DateTime?
+  flaggedReason      String?      @db.VarChar(255)
+  flaggedAt          DateTime?
+  moderatedBy        String?
+  moderatedAt        DateTime?
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  customer           User         @relation(fields: [customerId], references: [id])
+  farm               Farm         @relation(fields: [farmId], references: [id])
+  order              Order?       @relation(fields: [orderId], references: [id])
+  product            Product?     @relation(fields: [productId], references: [id])
+
+  @@index([farmId])
+  @@index([productId])
+  @@index([customerId])
+  @@index([orderId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([productId, createdAt])
+  @@index([rating])
+  @@index([farmId, rating])
+  @@map("reviews")
+}
+
+model FarmRating {
+  id             String   @id @default(cuid())
+  farmId         String   @unique
+  averageRating  Float    @default(0)
+  totalReviews   Int      @default(0)
+  productQuality Float    @default(0)
+  communication  Float    @default(0)
+  delivery       Float    @default(0)
+  packaging      Float    @default(0)
+  fiveStarCount  Int      @default(0)
+  fourStarCount  Int      @default(0)
+  threeStarCount Int      @default(0)
+  twoStarCount   Int      @default(0)
+  oneStarCount   Int      @default(0)
+  updatedAt      DateTime @updatedAt
+  farm           Farm     @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  @@index([averageRating])
+  @@map("farm_ratings")
+}
+
+model Message {
+  id          String    @id @default(cuid())
+  senderId    String
+  recipientId String?
+  farmId      String?
+  orderId     String?
+  subject     String?   @db.VarChar(255)
+  body        String
+  isRead      Boolean   @default(false)
+  readAt      DateTime?
+  createdAt   DateTime  @default(now())
+  farm        Farm?     @relation(fields: [farmId], references: [id])
+  order       Order?    @relation(fields: [orderId], references: [id])
+  sender      User      @relation("MessageSender", fields: [senderId], references: [id])
+
+  @@index([senderId])
+  @@index([recipientId])
+  @@index([farmId])
+  @@index([orderId])
+  @@index([isRead])
+  @@map("messages")
+}
+
+model Notification {
+  id        String              @id @default(cuid())
+  userId    String?
+  farmId    String?
+  type      NotificationType
+  channel   NotificationChannel
+  title     String              @db.VarChar(255)
+  body      String
+  data      Json?
+  isRead    Boolean             @default(false)
+  readAt    DateTime?
+  sentAt    DateTime?
+  createdAt DateTime            @default(now())
+  farm      Farm?               @relation(fields: [farmId], references: [id])
+  user      User?               @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([farmId])
+  @@index([type])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+model AnalyticsEvent {
+  id         String   @id @default(cuid())
+  eventType  String   @db.VarChar(100)
+  userId     String?
+  farmId     String?
+  productId  String?
+  orderId    String?
+  sessionId  String?  @db.VarChar(255)
+  properties Json?
+  userAgent  String?
+  ipAddress  String?  @db.VarChar(45)
+  referrer   String?  @db.VarChar(500)
+  createdAt  DateTime @default(now())
+
+  @@index([eventType])
+  @@index([userId])
+  @@index([farmId])
+  @@index([productId])
+  @@index([createdAt])
+  @@map("analytics_events")
+}
+
+model DeliveryZone {
+  id              String   @id @default(cuid())
+  farmId          String
+  name            String   @db.VarChar(255)
+  description     String?
+  zipCodes        String[]
+  cities          String[]
+  baseFee         Decimal  @db.Decimal(10, 2)
+  perMileFee      Decimal  @default(0) @db.Decimal(10, 2)
+  minimumOrder    Decimal  @default(0) @db.Decimal(10, 2)
+  freeDeliveryMin Decimal  @default(0) @db.Decimal(10, 2)
+  availableDays   String[]
+  cutoffHours     Int      @default(24)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  farm            Farm     @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  @@index([farmId])
+  @@index([isActive])
+  @@map("delivery_zones")
+}
+
+model DeliverySlot {
+  id            String   @id @default(cuid())
+  farmId        String
+  date          DateTime @db.Date
+  startTime     String   @db.VarChar(10)
+  endTime       String   @db.VarChar(10)
+  maxOrders     Int      @default(10)
+  currentOrders Int      @default(0)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  farm          Farm     @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  @@index([farmId])
+  @@index([date])
+  @@index([isActive])
+  @@map("delivery_slots")
+}
+
+model PickupLocation {
+  id             String   @id @default(cuid())
+  farmId         String
+  name           String   @db.VarChar(255)
+  address        String   @db.VarChar(500)
+  city           String   @db.VarChar(100)
+  state          String   @db.VarChar(50)
+  zipCode        String   @db.VarChar(20)
+  instructions   String?
+  latitude       Decimal? @db.Decimal(10, 8)
+  longitude      Decimal? @db.Decimal(11, 8)
+  availableDays  String[]
+  availableHours String?  @db.VarChar(255)
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  farm           Farm     @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  @@index([farmId])
+  @@index([isActive])
+  @@map("pickup_locations")
+}
+
+model Address {
+  id        String      @id @default(cuid())
+  userId    String?
+  fullName  String      @db.VarChar(255)
+  street    String      @db.VarChar(500)
+  city      String      @db.VarChar(100)
+  state     String      @db.VarChar(50)
+  zipCode   String      @db.VarChar(20)
+  country   String      @default("USA") @db.VarChar(50)
+  phone     String?     @db.VarChar(20)
+  latitude  Decimal?    @db.Decimal(10, 8)
+  longitude Decimal?    @db.Decimal(11, 8)
+  type      AddressType @default(HOME)
+  isDefault Boolean     @default(false)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  user      User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("addresses")
+}
+
+model SeasonalCycle {
+  id             String      @id @default(cuid())
+  productId      String
+  season         Season
+  phase          GrowthPhase
+  startDate      DateTime
+  endDate        DateTime?
+  lunarPhase     String?     @db.VarChar(50)
+  soilConditions Json?
+  energyLevel    Int?
+  notes          String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  product        Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([season])
+  @@index([phase])
+  @@index([startDate, endDate])
+  @@map("seasonal_cycles")
+}
+
+model Inventory {
+  id           String           @id @default(cuid())
+  farmId       String
+  productId    String
+  sku          String           @unique @db.VarChar(100)
+  quantity     Int              @default(0)
+  reservedQty  Int              @default(0)
+  availableQty Int              @default(0)
+  reorderPoint Int              @default(10)
+  reorderQty   Int              @default(50)
+  costPrice    Decimal          @db.Decimal(10, 2)
+  sellingPrice Decimal          @db.Decimal(10, 2)
+  pricePerUnit Decimal          @db.Decimal(10, 2)
+  location     String?          @db.VarChar(100)
+  zone         String?          @db.VarChar(50)
+  status       InventoryStatus  @default(IN_STOCK)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  farm         Farm             @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  product      Product          @relation(fields: [productId], references: [id], onDelete: Cascade)
+  alerts       InventoryAlert[]
+  batches      ProductBatch[]
+  movements    StockMovement[]
+
+  @@index([farmId])
+  @@index([productId])
+  @@index([status])
+  @@index([quantity])
+  @@map("inventory")
+}
+
+model ProductBatch {
+  id              String    @id @default(cuid())
+  inventoryId     String
+  batchNumber     String    @unique @db.VarChar(100)
+  quantity        Int
+  receivedQty     Int
+  damagedQty      Int       @default(0)
+  receivedDate    DateTime  @default(now())
+  expiryDate      DateTime?
+  manufactureDate DateTime?
+  supplier        String?   @db.VarChar(255)
+  cost            Decimal?  @db.Decimal(10, 2)
+  qualityGrade    String?   @db.VarChar(20)
+  notes           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  inventory       Inventory @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
+
+  @@index([inventoryId])
+  @@index([expiryDate])
+  @@map("product_batches")
+}
+
+model StockMovement {
+  id          String            @id @default(cuid())
+  inventoryId String
+  type        StockMovementType
+  quantity    Int
+  reference   String?           @db.VarChar(255)
+  previousQty Int
+  newQty      Int
+  reason      String?
+  performedBy String            @db.VarChar(255)
+  createdAt   DateTime          @default(now())
+  inventory   Inventory         @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
+
+  @@index([inventoryId])
+  @@index([type])
+  @@index([createdAt])
+  @@map("stock_movements")
+}
+
+model InventoryAlert {
+  id          String        @id @default(cuid())
+  inventoryId String
+  type        AlertType
+  severity    AlertSeverity
+  message     String
+  isRead      Boolean       @default(false)
+  isResolved  Boolean       @default(false)
+  resolvedAt  DateTime?
+  resolvedBy  String?       @db.VarChar(255)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  inventory   Inventory     @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
+
+  @@index([inventoryId])
+  @@index([type])
+  @@index([severity])
+  @@index([isResolved])
+  @@map("inventory_alerts")
+}
+
+model SupportTicket {
+  id             String                 @id @default(cuid())
+  userId         String
+  subject        String                 @db.VarChar(255)
+  description    String
+  category       SupportTicketCategory  @default(GENERAL)
+  priority       SupportTicketPriority  @default(MEDIUM)
+  status         SupportTicketStatus    @default(OPEN)
+  assignedTo     String?
+  assignedAt     DateTime?
+  tags           String[]               @default([])
+  relatedOrderId String?
+  relatedFarmId  String?
+  resolvedAt     DateTime?
+  resolvedBy     String?
+  resolutionNote String?
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+  files          SupportTicketFile[]
+  messages       SupportTicketMessage[]
+  user           User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([priority])
+  @@index([category])
+  @@index([assignedTo])
+  @@index([createdAt])
+  @@map("support_tickets")
+}
+
+model SupportTicketMessage {
+  id         String        @id @default(cuid())
+  ticketId   String
+  content    String
+  isStaff    Boolean       @default(false)
+  authorId   String
+  isInternal Boolean       @default(false)
+  isRead     Boolean       @default(false)
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  ticket     SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId])
+  @@index([authorId])
+  @@index([createdAt])
+  @@map("support_ticket_messages")
+}
+
+model SupportTicketFile {
+  id          String        @id @default(cuid())
+  ticketId    String
+  filename    String        @db.VarChar(255)
+  url         String        @db.VarChar(500)
+  mimeType    String        @db.VarChar(100)
+  size        Int
+  description String?
+  uploadedBy  String
+  createdAt   DateTime      @default(now())
+  ticket      SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId])
+  @@index([uploadedBy])
+  @@map("support_ticket_files")
+}
+
+model NotificationPreferences {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  emailOrders     Boolean  @default(true)
+  emailReviews    Boolean  @default(true)
+  emailPromotions Boolean  @default(false)
+  emailNewsletter Boolean  @default(false)
+  inAppOrders     Boolean  @default(true)
+  inAppReviews    Boolean  @default(true)
+  inAppMessages   Boolean  @default(true)
+  pushOrders      Boolean  @default(true)
+  pushReviews     Boolean  @default(true)
+  pushPromotions  Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("notification_preferences")
+}
+
+model DownloadLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  resourceId String   @db.VarChar(255)
+  ipAddress  String?  @db.VarChar(45)
+  userAgent  String?
+  createdAt  DateTime @default(now())
+  user       User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([resourceId])
+  @@index([createdAt])
+  @@map("download_logs")
+}
+
+model AuditLog {
+  id         String      @id @default(cuid())
+  userId     String?
+  action     AuditAction
+  entityType String      @db.VarChar(100)
+  entityId   String      @db.VarChar(255)
+  changes    Json?
+  ipAddress  String?     @db.VarChar(45)
+  userAgent  String?
+  createdAt  DateTime    @default(now())
+  user       User?       @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
 
 enum UserRole {
   CONSUMER
   FARMER
   ADMIN
-  SUPER_ADMIN // Full system access, can delete users and change settings
-  MODERATOR // Limited admin access, can view and approve but not delete
+  SUPER_ADMIN
+  MODERATOR
 }
 
 enum UserStatus {
@@ -40,16 +1251,16 @@ enum UserStatus {
 }
 
 enum FarmStatus {
-  PENDING // Stripe not connected yet
-  ACTIVE // Fully operational
-  SUSPENDED // Admin suspended
-  INACTIVE // Farmer deactivated
+  PENDING
+  ACTIVE
+  SUSPENDED
+  INACTIVE
 }
 
 enum FarmVerificationStatus {
-  PENDING // Awaiting admin review
-  VERIFIED // Admin approved
-  REJECTED // Admin rejected
+  PENDING
+  VERIFIED
+  REJECTED
 }
 
 enum TeamMemberRole {
@@ -106,13 +1317,13 @@ enum ProductStatus {
 }
 
 enum OrderStatus {
-  PENDING // Waiting for farmer acceptance
-  CONFIRMED // Farmer accepted
-  PREPARING // Being prepared
-  READY // Ready for fulfillment
-  FULFILLED // Delivered/picked up
-  COMPLETED // Customer confirmed receipt
-  CANCELLED // Cancelled by farmer or customer
+  PENDING
+  CONFIRMED
+  PREPARING
+  READY
+  FULFILLED
+  COMPLETED
+  CANCELLED
 }
 
 enum PaymentStatus {
@@ -133,9 +1344,9 @@ enum PaymentMethod {
 }
 
 enum FulfillmentMethod {
-  DELIVERY // Farmer delivers to customer address
-  FARM_PICKUP // Customer picks up at farm
-  MARKET_PICKUP // Customer picks up at farmers market booth
+  DELIVERY
+  FARM_PICKUP
+  MARKET_PICKUP
 }
 
 enum FulfillmentStatus {
@@ -225,1191 +1436,6 @@ enum AdminActionType {
   ANNOUNCEMENT_CREATED
 }
 
-// ============================================================================
-// USER MANAGEMENT (FR-001, FR-010)
-// ============================================================================
-
-model User {
-  id        String     @id @default(cuid())
-  email     String     @unique @db.VarChar(255)
-  password  String?    @db.VarChar(255) // Nullable for social login
-  firstName String?    @db.VarChar(100)
-  lastName  String?    @db.VarChar(100)
-  name      String?    @db.VarChar(255) // Computed field: firstName + lastName (for compatibility)
-  phone     String?    @db.VarChar(20)
-  avatar    String?    @db.VarChar(500)
-  role      UserRole   @default(CONSUMER)
-  status    UserStatus @default(ACTIVE)
-
-  // Admin Approval & Suspension Fields
-  approvedBy       String? // Admin user ID who approved this user
-  approvedAt       DateTime? // When user was approved
-  suspendedBy      String? // Admin user ID who suspended this user
-  suspendedAt      DateTime? // When user was suspended
-  suspensionReason String?   @db.Text // Reason for suspension
-
-  // Email/Phone Verification
-  emailVerified      Boolean   @default(false)
-  emailVerifiedAt    DateTime?
-  phoneVerified      Boolean   @default(false)
-  phoneVerifiedAt    DateTime?
-  verificationToken  String?   @unique @db.VarChar(255)
-  verificationExpiry DateTime?
-
-  // Password Reset
-  resetToken       String?   @unique @db.VarChar(255)
-  resetTokenExpiry DateTime?
-
-  // Preferences (JSONB for flexibility)
-  dietaryPreferences      Json? // ["vegetarian", "gluten-free"]
-  notificationPreferences Json? // {email: true, sms: false, push: true}
-  privacySettings         Json? // {showProfile: false, dataSharing: "minimal"}
-
-  // Metadata
-  lastLoginAt DateTime?
-  lastLoginIP String?   @db.VarChar(45) // IPv6 max length
-  loginCount  Int       @default(0)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  // Relations
-  addresses       UserAddress[]
-  farms           Farm[] // If user is a farmer
-  teamMemberships FarmTeamMember[]
-  orders          Order[]
-  cartItems       CartItem[]
-  reviews         Review[]
-  qualityIssues   QualityIssue[]
-  messages        Message[]        @relation("MessageSender")
-  notifications            Notification[]
-  sessions                 Session[]
-  accounts                 Account[] // OAuth accounts
-  adminActions             AdminAction[]           @relation("AdminActions") // Actions performed by this admin
-  Address                  Address[]
-  supportTickets           SupportTicket[] // Support tickets created by this user
-  notificationSettings     NotificationPreferences?
-  downloadLogs             DownloadLog[]
-  auditLogs                AuditLog[]
-
-  @@index([email])
-  @@index([role, status])
-  @@index([createdAt])
-  @@map("users")
-}
-
-model Session {
-  id           String   @id @default(cuid())
-  userId       String
-  sessionToken String   @unique @db.VarChar(255)
-  accessToken  String?  @db.Text
-  refreshToken String?  @db.Text
-  expiresAt    DateTime
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([sessionToken])
-  @@map("sessions")
-}
-
-model Account {
-  id                String    @id @default(cuid())
-  userId            String
-  provider          String    @db.VarChar(50) // google, facebook, apple
-  providerAccountId String    @db.VarChar(255)
-  refreshToken      String?   @db.Text
-  accessToken       String?   @db.Text
-  expiresAt         DateTime?
-  tokenType         String?   @db.VarChar(50)
-  scope             String?   @db.VarChar(255)
-  idToken           String?   @db.Text
-  sessionState      String?   @db.VarChar(255)
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-  @@index([userId])
-  @@map("accounts")
-}
-
-model UserAddress {
-  id        String      @id @default(cuid())
-  userId    String
-  type      AddressType @default(HOME)
-  label     String?     @db.VarChar(100) // "Home", "Mom's House", etc.
-  street    String      @db.VarChar(255)
-  street2   String?     @db.VarChar(255)
-  city      String      @db.VarChar(100)
-  state     String      @db.VarChar(50)
-  zipCode   String      @db.VarChar(20)
-  country   String      @default("US") @db.VarChar(2)
-  latitude  Decimal?    @db.Decimal(10, 8)
-  longitude Decimal?    @db.Decimal(11, 8)
-  isDefault Boolean     @default(false)
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-
-  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  orders Order[] @relation("DeliveryAddress")
-
-  @@index([userId])
-  @@index([zipCode])
-  @@map("user_addresses")
-}
-
-// ============================================================================
-// ADMIN ACTION LOG (FR-009 - Admin Dashboard)
-// ============================================================================
-
-model AdminAction {
-  id      String          @id @default(cuid())
-  type    AdminActionType // Type of admin action performed
-  adminId String // Admin who performed the action
-  admin   User            @relation("AdminActions", fields: [adminId], references: [id])
-
-  // Target Information
-  targetId   String? // ID of affected entity (user, farm, order, etc.)
-  targetType String? @db.VarChar(50) // "User", "Farm", "Order", "Product"
-
-  // Action Details
-  description String @db.Text // Human-readable description
-  metadata    Json? // Additional structured data (old values, new values, etc.)
-
-  // Audit Trail
-  ipAddress String?  @db.VarChar(45) // IPv6 max length
-  userAgent String?  @db.VarChar(500)
-  createdAt DateTime @default(now())
-
-  @@index([adminId])
-  @@index([type])
-  @@index([createdAt])
-  @@index([targetId, targetType])
-  @@map("admin_actions")
-}
-
-// ============================================================================
-// FARM MANAGEMENT (FR-001, FR-002)
-// ============================================================================
-
-model Farm {
-  id          String     @id @default(cuid())
-  name        String     @db.VarChar(255)
-  slug        String     @unique @db.VarChar(255)
-  description String?    @db.Text
-  story       String?    @db.Text // Long-form farm story
-  status      FarmStatus @default(PENDING)
-
-  // Admin Verification Fields
-  verificationStatus FarmVerificationStatus @default(PENDING)
-  verifiedBy         String? // Admin user ID who verified this farm
-  verifiedAt         DateTime? // When farm was verified
-  rejectionReason    String?                @db.Text // Reason for rejection if REJECTED
-
-  // Owner
-  ownerId String
-  owner   User   @relation(fields: [ownerId], references: [id])
-
-  // Contact
-  email   String  @db.VarChar(255)
-  phone   String  @db.VarChar(20)
-  website String? @db.VarChar(500)
-
-  // Location
-  address   String  @db.VarChar(255)
-  city      String  @db.VarChar(100)
-  state     String  @db.VarChar(50)
-  zipCode   String  @db.VarChar(20)
-  country   String  @default("US") @db.VarChar(2)
-  latitude  Decimal @db.Decimal(10, 8)
-  longitude Decimal @db.Decimal(11, 8)
-  location  Json? // Comprehensive location data: {address, city, state, zip, coordinates, formatted}
-
-  // Images & Media
-  images    String[] // Array of image URLs
-  logoUrl   String?  @db.VarChar(500) // Farm logo
-  bannerUrl String?  @db.VarChar(500) // Profile banner
-
-  // Business Details
-  businessName    String?  @db.VarChar(255)
-  taxId           String?  @db.VarChar(50) // Encrypted
-  businessType    String?  @db.VarChar(50) // LLC, Sole Proprietor, etc.
-  yearEstablished Int?
-  farmSize        Decimal? @db.Decimal(10, 2) // Acres
-
-  // Certifications (for quick access)
-  certificationsArray String[] // Array of certification types: ["ORGANIC", "BIODYNAMIC"]
-
-  // Stripe Connect
-  stripeAccountId        String?   @unique @db.VarChar(255)
-  stripeOnboarded        Boolean   @default(false)
-  stripeOnboardedAt      DateTime?
-  payoutsEnabled         Boolean   @default(false)
-  stripeDetailsSubmitted Boolean   @default(false)
-
-  // Product Categories (JSONB array)
-  productCategories Json? // ["VEGETABLES", "FRUITS", "DAIRY"]
-
-  // Practices & Tags
-  farmingPractices Json? // ["organic", "regenerative", "no-till"]
-  deliveryRadius   Int?  @default(25) // Miles
-
-  // Analytics
-  profileViewsCount Int      @default(0)
-  totalOrdersCount  Int      @default(0)
-  totalRevenueUSD   Decimal  @default(0) @db.Decimal(12, 2)
-  averageRating     Decimal? @db.Decimal(3, 2)
-  reviewCount       Int      @default(0)
-
-  // Metadata
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
-  teamMembers        FarmTeamMember[]
-  photos             FarmPhoto[]
-  certifications     FarmCertification[]
-  products           Product[]
-  orders             Order[]
-  reviews            Review[]
-  qualityIssues      QualityIssue[]
-  messages           Message[]
-  notifications      Notification[]
-  payouts            Payout[]
-  marketLocations    MarketLocation[]
-  Inventory          Inventory[]
-  FarmRating         FarmRating?
-  DeliveryZone       DeliveryZone[]
-  DeliverySlot       DeliverySlot[]
-  PickupLocation     PickupLocation[]
-  biodynamicCalendar BiodynamicCalendar[]
-  soilAnalyses       SoilAnalysis[]
-  weatherData        WeatherData[]
-  cropRotations      CropRotation[]
-  harvestSchedules   HarvestSchedule[]
-
-  @@index([ownerId])
-  @@index([slug])
-  @@index([status])
-  @@index([latitude, longitude]) // Geospatial queries
-  @@index([createdAt])
-  // @@fulltext([name, description, story])
-  @@map("farms")
-}
-
-model FarmTeamMember {
-  id        String           @id @default(cuid())
-  farmId    String
-  email     String           @db.VarChar(255)
-  userId    String? // Null until they accept invitation
-  role      TeamMemberRole   @default(STAFF)
-  status    TeamMemberStatus @default(INVITED)
-  invitedAt DateTime         @default(now())
-  invitedBy String // User ID who invited
-  joinedAt  DateTime?
-  removedAt DateTime?
-  removedBy String? // User ID who removed
-
-  farm Farm  @relation(fields: [farmId], references: [id], onDelete: Cascade)
-  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
-
-  @@unique([farmId, email])
-  @@index([farmId])
-  @@index([userId])
-  @@map("farm_team_members")
-}
-
-model FarmPhoto {
-  id           String   @id @default(cuid())
-  farmId       String
-  photoUrl     String   @db.VarChar(500)
-  thumbnailUrl String   @db.VarChar(500)
-  caption      String?  @db.VarChar(255)
-  altText      String?  @db.VarChar(255)
-  sortOrder    Int      @default(0)
-  isPrimary    Boolean  @default(false)
-  width        Int?
-  height       Int?
-  fileSize     Int? // Bytes
-  createdAt    DateTime @default(now())
-
-  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
-
-  @@index([farmId])
-  @@index([isPrimary])
-  @@map("farm_photos")
-}
-
-model FarmCertification {
-  id                  String              @id @default(cuid())
-  farmId              String
-  type                CertificationType
-  certifierName       String              @db.VarChar(255)
-  certificationNumber String?             @db.VarChar(100)
-  documentUrl         String?             @db.VarChar(500)
-  issueDate           DateTime
-  expirationDate      DateTime?
-  status              CertificationStatus @default(PENDING)
-  notes               String?             @db.Text
-
-  // Verification
-  verifiedBy String? // User ID of admin who verified
-  verifiedAt DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
-
-  @@index([farmId])
-  @@index([type])
-  @@index([status])
-  @@index([expirationDate])
-  @@map("farm_certifications")
-}
-
-model MarketLocation {
-  id          String  @id @default(cuid())
-  farmId      String
-  marketName  String  @db.VarChar(255)
-  boothNumber String? @db.VarChar(50)
-  address     String  @db.VarChar(255)
-  city        String  @db.VarChar(100)
-  state       String  @db.VarChar(50)
-  zipCode     String  @db.VarChar(20)
-  latitude    Decimal @db.Decimal(10, 8)
-  longitude   Decimal @db.Decimal(11, 8)
-
-  // Schedule (JSONB)
-  schedule Json // {day: "SATURDAY", startTime: "08:00", endTime: "13:00"}
-
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
-
-  @@index([farmId])
-  @@map("market_locations")
-}
-
-// ============================================================================
-// AGRICULTURAL CONSCIOUSNESS MODELS (Divine Quantum Patterns)
-// ============================================================================
-
-model BiodynamicCalendar {
-  id     String @id @default(cuid())
-  farmId String
-
-  // Lunar Consciousness
-  lunarPhase   LunarPhase
-  lunarDay     Int // 1-29 (lunar month)
-  moonRiseTime DateTime?
-  moonSetTime  DateTime?
-
-  // Seasonal Alignment
-  season           Season
-  astronomicalDate DateTime
-
-  // Biodynamic Recommendations
-  plantingFavorability Int @default(0) // 0-100 score
-  harvestFavorability  Int @default(0) // 0-100 score
-  soilWorkFavorability Int @default(0) // 0-100 score
-
-  // Planetary Influences
-  planetaryAlignment Json? // {mercury: "trine", venus: "conjunction", mars: "opposition"}
-
-  // Agricultural Activities
-  recommendedActivities String[] // ["PLANT_ROOT_CROPS", "HARVEST_LEAFY_GREENS"]
-  avoidActivities       String[] // ["TRANSPLANTING", "HEAVY_PRUNING"]
-
-  // Consciousness Level
-  agriculturalConsciousness Decimal @default(0.0) @db.Decimal(3, 2) // 0.00-1.00
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
-
-  @@unique([farmId, astronomicalDate])
-  @@index([farmId])
-  @@index([season])
-  @@index([lunarPhase])
-  @@map("biodynamic_calendar")
-}
-
-model SoilAnalysis {
-  id        String @id @default(cuid())
-  farmId    String
-  fieldName String @db.VarChar(255)
-
-  // Location
-  latitude  Decimal @db.Decimal(10, 8)
-  longitude Decimal @db.Decimal(11, 8)
-
-  // Soil Composition (pH and nutrients)
-  pH            Decimal @db.Decimal(4, 2) // 0.00-14.00
-  nitrogen      Decimal @db.Decimal(5, 2) // ppm or %
-  phosphorus    Decimal @db.Decimal(5, 2)
-  potassium     Decimal @db.Decimal(5, 2)
-  organicMatter Decimal @db.Decimal(5, 2) // %
-
-  // Soil Health Metrics
-  soilType   SoilType
-  drainage   DrainageLevel
-  compaction CompactionLevel
-
-  // Microbiome Consciousness
-  microbialActivity Decimal  @default(0.0) @db.Decimal(3, 2) // 0.00-1.00
-  earthwormCount    Int?
-  fungalPresence    Decimal? @db.Decimal(3, 2)
-
-  // Quantum Soil Memory
-  previousCrops Json? // [{crop: "TOMATOES", year: 2024, yield: "HIGH"}]
-  soilHistory   Json? // Historical data points
-
-  // Recommendations
-  amendments       String[] // ["COMPOST", "LIME", "SULFUR"]
-  recommendedCrops String[] // Crops suitable for this soil
-
-  // Analysis Metadata
-  analyzedBy       String?   @db.VarChar(255) // Lab or person
-  analysisDate     DateTime  @default(now())
-  nextAnalysisDate DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
-
-  @@index([farmId])
-  @@index([fieldName])
-  @@index([analysisDate])
-  @@map("soil_analyses")
-}
-
-model WeatherData {
-  id     String @id @default(cuid())
-  farmId String
-
-  // Temporal Context
-  recordedAt DateTime @default(now())
-
-  // Location
-  latitude  Decimal @db.Decimal(10, 8)
-  longitude Decimal @db.Decimal(11, 8)
-
-  // Temperature (Celsius)
-  temperature Decimal  @db.Decimal(5, 2)
-  feelsLike   Decimal? @db.Decimal(5, 2)
-  tempMin     Decimal? @db.Decimal(5, 2)
-  tempMax     Decimal? @db.Decimal(5, 2)
-
-  // Precipitation
-  humidity          Int // 0-100 %
-  precipitation     Decimal? @db.Decimal(6, 2) // mm
-  precipitationProb Int? // 0-100 %
-
-  // Wind
-  windSpeed     Decimal? @db.Decimal(5, 2) // km/h
-  windDirection Int? // 0-360 degrees
-
-  // Conditions
-  condition  WeatherCondition
-  cloudCover Int? // 0-100 %
-  uvIndex    Int? // 0-11+
-  visibility Decimal?         @db.Decimal(5, 2) // km
-
-  // Agricultural Impact
-  growingDegreeDay   Decimal? @db.Decimal(5, 2)
-  evapotranspiration Decimal? @db.Decimal(5, 2)
-  soilMoisture       Decimal? @db.Decimal(3, 2) // 0.00-1.00
-
-  // Frost & Extremes
-  frostRisk      Boolean @default(false)
-  heatStressRisk Boolean @default(false)
-
-  // Data Source
-  source String @default("API") @db.VarChar(50) // "API", "MANUAL", "SENSOR"
-
-  createdAt DateTime @default(now())
-
-  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
-
-  @@index([farmId])
-  @@index([recordedAt])
-  @@map("weather_data")
-}
-
-model CropRotation {
-  id        String @id @default(cuid())
-  farmId    String
-  fieldName String @db.VarChar(255)
-
-  // Rotation Plan
-  rotationCycle Int // Years in full cycle
-  currentYear   Int // Position in cycle (1-based)
-
-  // Current Crop
-  currentCrop       String     @db.VarChar(100)
-  currentCropFamily CropFamily
-  plantedAt         DateTime
-  expectedHarvest   DateTime?
-
-  // Rotation History
-  cropHistory Json // [{year: 2023, crop: "CORN", family: "GRASSES", yield: "HIGH"}]
-
-  // Planned Future Rotations
-  plannedRotations Json // [{year: 2025, crop: "BEANS", family: "LEGUMES", purpose: "NITROGEN_FIXING"}]
-
-  // Soil Regeneration
-  coverCropPlanned Boolean @default(false)
-  coverCropType    String? @db.VarChar(100)
-  restPeriod       Boolean @default(false)
-
-  // Biodynamic Compliance
-  followsBiodynamic Boolean @default(false)
-  biodynamicScore   Decimal @default(0.0) @db.Decimal(3, 2)
-
-  // Recommendations
-  nextRecommendedCrop String?  @db.VarChar(100)
-  soilBenefits        String[] // ["NITROGEN_FIXING", "PEST_BREAK", "STRUCTURE_IMPROVEMENT"]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
-
-  @@unique([farmId, fieldName])
-  @@index([farmId])
-  @@index([currentCropFamily])
-  @@map("crop_rotations")
-}
-
-model HarvestSchedule {
-  id        String  @id @default(cuid())
-  farmId    String
-  productId String?
-
-  // Crop Information
-  cropName    String  @db.VarChar(255)
-  cropVariety String? @db.VarChar(255)
-  fieldName   String  @db.VarChar(255)
-
-  // Planting Details
-  plantedAt       DateTime
-  plantedQuantity Decimal? @db.Decimal(10, 2)
-  plantedUnit     String?  @db.VarChar(50)
-
-  // Harvest Timing
-  expectedHarvestStart DateTime
-  expectedHarvestEnd   DateTime?
-  actualHarvestStart   DateTime?
-  actualHarvestEnd     DateTime?
-
-  // Harvest Quantum Predictions
-  harvestConfidence  Decimal  @default(0.5) @db.Decimal(3, 2) // 0.00-1.00
-  predictedYield     Decimal? @db.Decimal(10, 2)
-  predictedYieldUnit String?  @db.VarChar(50)
-
-  // Actual Results
-  actualYield     Decimal?        @db.Decimal(10, 2)
-  actualYieldUnit String?         @db.VarChar(50)
-  harvestQuality  HarvestQuality?
-
-  // Lunar & Seasonal Alignment
-  optimalLunarPhase LunarPhase?
-  seasonalAlignment Season
-  biodynamicTiming  Boolean     @default(false)
-
-  // Labor Planning
-  estimatedLaborHours Decimal? @db.Decimal(6, 2)
-  actualLaborHours    Decimal? @db.Decimal(6, 2)
-  laborersNeeded      Int?
-
-  // Status
-  status HarvestStatus @default(PLANNED)
-
-  // Notes & Observations
-  notes      String?  @db.Text
-  challenges String[] // ["PEST_PRESSURE", "DROUGHT", "EARLY_FROST"]
-  successes  String[] // ["GREAT_YIELD", "EXCELLENT_QUALITY"]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  farm    Farm     @relation(fields: [farmId], references: [id], onDelete: Cascade)
-  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
-
-  @@index([farmId])
-  @@index([productId])
-  @@index([status])
-  @@index([expectedHarvestStart])
-  @@index([seasonalAlignment])
-  @@map("harvest_schedules")
-}
-
-// ============================================================================
-// PRODUCT CATALOG (FR-003, FR-004)
-// ============================================================================
-
-model Product {
-  id          String          @id @default(cuid())
-  farmId      String
-  name        String          @db.VarChar(255)
-  slug        String          @db.VarChar(255)
-  description String?         @db.VarChar(500)
-  category    ProductCategory
-  status      ProductStatus   @default(DRAFT)
-
-  // Pricing
-  price          Decimal  @db.Decimal(10, 2)
-  compareAtPrice Decimal? @db.Decimal(10, 2) // Original price if on sale
-  unit           String   @db.VarChar(50) // lb, bunch, dozen, each, pint, etc.
-
-  // Inventory
-  trackInventory    Boolean  @default(true)
-  quantityAvailable Decimal? @db.Decimal(10, 2)
-  lowStockThreshold Decimal? @db.Decimal(10, 2)
-  allowBackorder    Boolean  @default(false)
-  inStock           Boolean  @default(true) // Quick availability check
-
-  // Product Details
-  organic             Boolean   @default(false)
-  seasonal            Boolean   @default(false)
-  featured            Boolean   @default(false) // Featured product flag
-  seasonalStart       DateTime? // Start of season
-  seasonalEnd         DateTime? // End of season
-  harvestDate         DateTime? // When harvested
-  storageInstructions String?   @db.Text
-
-  // Images
-  primaryPhotoUrl String?  @db.VarChar(500)
-  photoUrls       Json? // Array of photo URLs
-  images          String[] // Alternative images array for compatibility
-
-  // Variants (JSONB)
-  hasVariants Boolean @default(false)
-  variants    Json? // [{size: "Large", price: 8.99}, {size: "Small", price: 4.99}]
-
-  // Tags (JSONB array)
-  tags Json? // ["heirloom", "non-gmo", "locally-grown"]
-
-  // Additional Product Data (for service layer compatibility)
-  pricing    Json? // Extended pricing structure: {basePrice, discounts, bulkPricing, etc}
-  inventory  Json? // Extended inventory data: {currentStock, reserved, incoming, locations}
-  attributes Json? // Product-specific attributes: {size, color, weight, freshness, etc}
-
-  // Publishing
-  scheduledPublishAt   DateTime?
-  scheduledUnpublishAt DateTime?
-  publishedAt          DateTime?
-
-  // Analytics
-  viewsCount    Int      @default(0)
-  cartAddsCount Int      @default(0)
-  purchaseCount Int      @default(0)
-  wishlistCount Int      @default(0)
-  averageRating Decimal? @db.Decimal(3, 2)
-  reviewCount   Int      @default(0)
-
-  // Metadata
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
-  farm             Farm              @relation(fields: [farmId], references: [id], onDelete: Cascade)
-  cartItems        CartItem[]
-  orderItems       OrderItem[]
-  reviews          Review[]
-  inventoryLogs    InventoryLog[]
-  SeasonalCycle    SeasonalCycle[]
-  Inventory        Inventory[]
-  harvestSchedules HarvestSchedule[]
-
-  @@unique([farmId, slug])
-  @@index([farmId])
-  @@index([category])
-  @@index([status])
-  @@index([organic])
-  @@index([createdAt])
-  // @@fulltext([name, description])
-  @@map("products")
-}
-
-model ProductTemplate {
-  id           String          @id @default(cuid())
-  farmId       String? // Null = global template
-  name         String          @db.VarChar(255)
-  category     ProductCategory
-  templateData Json // Pre-filled default values
-  useCount     Int             @default(0)
-  isPublic     Boolean         @default(false) // Available to all farmers?
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
-
-  @@index([farmId])
-  @@index([category])
-  @@map("product_templates")
-}
-
-model InventoryLog {
-  id               String   @id @default(cuid())
-  productId        String
-  previousQuantity Decimal  @db.Decimal(10, 2)
-  newQuantity      Decimal  @db.Decimal(10, 2)
-  changeAmount     Decimal  @db.Decimal(10, 2)
-  changeReason     String   @db.VarChar(100) // "MANUAL_UPDATE", "ORDER_PLACED", "HARVEST", "SPOILAGE"
-  notes            String?  @db.Text
-  changedBy        String // User ID
-  createdAt        DateTime @default(now())
-
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  @@index([productId])
-  @@index([createdAt])
-  @@map("inventory_logs")
-}
-
-// ============================================================================
-// SHOPPING CART (FR-013)
-// ============================================================================
-
-model CartItem {
-  id                String            @id @default(cuid())
-  userId            String
-  productId         String
-  farmId            String // Denormalized for grouping
-  quantity          Decimal           @db.Decimal(10, 2)
-  unit              String            @db.VarChar(50)
-  priceAtAdd        Decimal           @db.Decimal(10, 2) // Price when added
-  fulfillmentMethod FulfillmentMethod @default(DELIVERY)
-
-  // Reservation (hold stock for 30 min)
-  reservedUntil DateTime?
-
-  // Metadata
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([productId])
-  @@index([farmId])
-  @@index([reservedUntil])
-  @@map("cart_items")
-}
-
-// ============================================================================
-// ORDERS & PAYMENTS (FR-005, FR-014, FR-016)
-// ============================================================================
-
-model Order {
-  id            String        @id @default(cuid())
-  orderNumber   String        @unique @db.VarChar(50) // FM-001234
-  customerId    String
-  farmId        String
-  status        OrderStatus   @default(PENDING)
-  paymentStatus PaymentStatus @default(PENDING)
-
-  // Pricing
-  subtotal    Decimal @db.Decimal(10, 2)
-  deliveryFee Decimal @default(0) @db.Decimal(10, 2)
-  platformFee Decimal @db.Decimal(10, 2) // 15% commission
-  tax         Decimal @default(0) @db.Decimal(10, 2)
-  discount    Decimal @default(0) @db.Decimal(10, 2)
-  total       Decimal @db.Decimal(10, 2)
-
-  // Farmer receives (85% of subtotal + deliveryFee - tax)
-  farmerAmount Decimal @db.Decimal(10, 2)
-
-  // Fulfillment
-  fulfillmentMethod FulfillmentMethod
-  deliveryAddressId String?
-  scheduledDate     DateTime?
-  scheduledTimeSlot String?           @db.VarChar(50) // "2:00 PM - 4:00 PM"
-  fulfillmentNotes  String?           @db.Text
-
-  // Stripe Payment
-  stripePaymentIntentId String? @unique @db.VarChar(255)
-  stripeChargeId        String? @db.VarChar(255)
-  stripeTransferId      String? @db.VarChar(255) // Transfer to farmer
-
-  // Generic Payment Intent (for service layer - supports multiple providers)
-  paymentIntentId String? @db.VarChar(255) // Stripe/PayPal payment intent ID
-
-  // Payment & Shipping Tracking (for service layer compatibility)
-  paidAt          DateTime? // When payment was completed
-  trackingNumber  String?   @db.VarChar(255) // Shipping tracking number
-  shippingService String?   @db.VarChar(100) // STANDARD, EXPRESS, OVERNIGHT
-  shippingAddress Json? // Full shipping address details
-  deliverySlotId  String? // Reference to DeliverySlot if applicable
-
-  // Customer Notes
-  specialInstructions String? @db.Text
-
-  // Timestamps
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  confirmedAt  DateTime?
-  fulfilledAt  DateTime?
-  completedAt  DateTime?
-  cancelledAt  DateTime?
-  cancelledBy  String? // User ID
-  cancelReason String?   @db.Text
-
-  // Relations
-  customer        User           @relation(fields: [customerId], references: [id])
-  farm            Farm           @relation(fields: [farmId], references: [id])
-  deliveryAddress UserAddress?   @relation("DeliveryAddress", fields: [deliveryAddressId], references: [id])
-  items           OrderItem[]
-  fulfillment     Fulfillment?
-  refunds         Refund[]
-  qualityIssues   QualityIssue[]
-  reviews         Review[]
-  messages        Message[]
-  Payment         Payment?
-
-  @@index([customerId])
-  @@index([farmId])
-  @@index([status])
-  @@index([paymentStatus])
-  @@index([createdAt])
-  @@index([orderNumber])
-  @@map("orders")
-}
-
-model OrderItem {
-  id          String  @id @default(cuid())
-  orderId     String
-  productId   String
-  productName String  @db.VarChar(255) // Snapshot at purchase time
-  quantity    Decimal @db.Decimal(10, 2)
-  unit        String  @db.VarChar(50)
-  unitPrice   Decimal @db.Decimal(10, 2) // Price at purchase time
-  subtotal    Decimal @db.Decimal(10, 2)
-
-  // Product snapshot (JSONB)
-  productSnapshot Json? // Full product data at time of purchase
-
-  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product Product @relation(fields: [productId], references: [id])
-
-  @@index([orderId])
-  @@index([productId])
-  @@map("order_items")
-}
-
-model Fulfillment {
-  id      String            @id @default(cuid())
-  orderId String            @unique
-  status  FulfillmentStatus @default(PENDING)
-
-  // Tracking
-  trackingNumber String?   @db.VarChar(100)
-  carrierName    String?   @db.VarChar(100)
-  estimatedDate  DateTime?
-  actualDate     DateTime?
-
-  // Proof of Delivery
-  proofPhotoUrl     String?   @db.VarChar(500)
-  signature         String?   @db.Text // Base64 encoded signature
-  recipientName     String?   @db.VarChar(255)
-  deliveryNotes     String?   @db.Text
-  gpsLatitude       Decimal?  @db.Decimal(10, 8)
-  gpsLongitude      Decimal?  @db.Decimal(11, 8)
-  deliveryTimestamp DateTime?
-
-  // Metadata
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
-
-  @@index([orderId])
-  @@index([status])
-  @@map("fulfillments")
-}
-
-// ============================================================================
-// PAYMENT PROCESSING (FR-013)
-// ============================================================================
-
-model Payment {
-  id            String        @id @default(cuid())
-  orderId       String        @unique
-  amount        Decimal       @db.Decimal(10, 2)
-  currency      String        @default("usd") @db.VarChar(3)
-  status        PaymentStatus @default(PENDING)
-  paymentMethod String        @db.VarChar(50) // STRIPE, CARD, PAYPAL
-
-  // Payment Provider IDs
-  stripePaymentIntentId String? @unique @db.VarChar(255)
-  paypalOrderId         String? @unique @db.VarChar(255)
-
-  // Payment Details
-  paidAt        DateTime?
-  failureReason String?   @db.Text
-  receiptUrl    String?   @db.VarChar(500)
-
-  // Metadata
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
-
-  @@index([orderId])
-  @@index([status])
-  @@index([stripePaymentIntentId])
-  @@index([paypalOrderId])
-  @@map("payments")
-}
-
-model Payout {
-  id             String    @id @default(cuid())
-  farmId         String
-  amount         Decimal   @db.Decimal(10, 2)
-  currency       String    @default("USD") @db.VarChar(3)
-  status         String    @db.VarChar(50) // pending, paid, failed
-  stripePayoutId String?   @unique @db.VarChar(255)
-  periodStart    DateTime
-  periodEnd      DateTime
-  orderCount     Int
-  scheduledDate  DateTime // Weekly Monday
-  paidDate       DateTime?
-  failureReason  String?   @db.Text
-  createdAt      DateTime  @default(now())
-
-  farm Farm @relation(fields: [farmId], references: [id])
-
-  @@index([farmId])
-  @@index([status])
-  @@index([scheduledDate])
-  @@map("payouts")
-}
-
-model Refund {
-  id             String    @id @default(cuid())
-  orderId        String
-  amount         Decimal   @db.Decimal(10, 2)
-  reason         String    @db.VarChar(255)
-  notes          String?   @db.Text
-  stripeRefundId String?   @unique @db.VarChar(255)
-  status         String    @db.VarChar(50) // pending, succeeded, failed
-  processedAt    DateTime?
-  createdAt      DateTime  @default(now())
-
-  order Order @relation(fields: [orderId], references: [id])
-
-  @@index([orderId])
-  @@map("refunds")
-}
-
-// ============================================================================
-// QUALITY GUARANTEE (FR-018)
-// ============================================================================
-
-model QualityIssue {
-  id          String             @id @default(cuid())
-  orderId     String
-  customerId  String
-  farmId      String
-  type        QualityIssueType
-  description String             @db.VarChar(500)
-  photoUrl    String?            @db.VarChar(500)
-  status      QualityIssueStatus @default(OPEN)
-
-  // Resolution
-  resolutionPreference ResolutionType
-  resolution           ResolutionType?
-  resolutionNotes      String?         @db.Text
-  refundAmount         Decimal?        @db.Decimal(10, 2)
-
-  // Timeline
-  createdAt  DateTime  @default(now())
-  resolvedAt DateTime?
-  resolvedBy String? // User ID of admin/farmer who resolved
-
-  order    Order @relation(fields: [orderId], references: [id])
-  customer User  @relation(fields: [customerId], references: [id])
-  farm     Farm  @relation(fields: [farmId], references: [id])
-
-  @@index([orderId])
-  @@index([customerId])
-  @@index([farmId])
-  @@index([status])
-  @@map("quality_issues")
-}
-
-// ============================================================================
-// REVIEWS & RATINGS (FR-017)
-// ============================================================================
-
-model Review {
-  id                 String       @id @default(cuid())
-  farmId             String
-  productId          String? // Null = farm review
-  customerId         String
-  orderId            String? // Null if not order-related
-  rating             Int // 1-5 stars
-  reviewText         String?      @db.VarChar(500)
-  photoUrl           String?      @db.VarChar(500)
-  isVerifiedPurchase Boolean      @default(false)
-  status             ReviewStatus @default(PENDING)
-
-  // Helpfulness
-  helpfulCount   Int @default(0)
-  unhelpfulCount Int @default(0)
-
-  // Farmer Response
-  farmerResponse    String?   @db.VarChar(500)
-  farmerRespondedAt DateTime?
-
-  // Moderation
-  flaggedReason String?   @db.VarChar(255)
-  flaggedAt     DateTime?
-  moderatedBy   String? // User ID
-  moderatedAt   DateTime?
-
-  // Metadata
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  farm     Farm     @relation(fields: [farmId], references: [id])
-  product  Product? @relation(fields: [productId], references: [id])
-  customer User     @relation(fields: [customerId], references: [id])
-  order    Order?   @relation(fields: [orderId], references: [id])
-
-  @@index([farmId])
-  @@index([productId])
-  @@index([customerId])
-  @@index([orderId])
-  @@index([status])
-  @@index([createdAt])
-  @@map("reviews")
-}
-
-model FarmRating {
-  id String @id @default(cuid())
-
-  farmId String @unique
-  farm   Farm   @relation(fields: [farmId], references: [id], onDelete: Cascade)
-
-  // Aggregate Ratings
-  averageRating Float @default(0)
-  totalReviews  Int   @default(0)
-
-  // Category Ratings
-  productQuality Float @default(0)
-  communication  Float @default(0)
-  delivery       Float @default(0)
-  packaging      Float @default(0)
-
-  // Rating Distribution
-  fiveStarCount  Int @default(0)
-  fourStarCount  Int @default(0)
-  threeStarCount Int @default(0)
-  twoStarCount   Int @default(0)
-  oneStarCount   Int @default(0)
-
-  updatedAt DateTime @updatedAt
-
-  @@index([averageRating])
-  @@map("farm_ratings")
-}
-
-// ============================================================================
-// MESSAGING (FR-009)
-// ============================================================================
-
-model Message {
-  id          String    @id @default(cuid())
-  senderId    String
-  recipientId String? // Null if sent to farm (any team member can see)
-  farmId      String? // If message is farm-related
-  orderId     String? // If message is order-related
-  subject     String?   @db.VarChar(255)
-  body        String    @db.Text
-  isRead      Boolean   @default(false)
-  readAt      DateTime?
-  createdAt   DateTime  @default(now())
-
-  sender User   @relation("MessageSender", fields: [senderId], references: [id])
-  farm   Farm?  @relation(fields: [farmId], references: [id])
-  order  Order? @relation(fields: [orderId], references: [id])
-
-  @@index([senderId])
-  @@index([recipientId])
-  @@index([farmId])
-  @@index([orderId])
-  @@index([isRead])
-  @@map("messages")
-}
-
-// ============================================================================
-// NOTIFICATIONS (FR-009, FR-023)
-// ============================================================================
-
-model Notification {
-  id        String              @id @default(cuid())
-  userId    String? // Null = farm notification
-  farmId    String? // Farm-specific notification
-  type      NotificationType
-  channel   NotificationChannel
-  title     String              @db.VarChar(255)
-  body      String              @db.Text
-  data      Json? // Additional data (orderId, etc.)
-  isRead    Boolean             @default(false)
-  readAt    DateTime?
-  sentAt    DateTime?
-  createdAt DateTime            @default(now())
-
-  user User? @relation(fields: [userId], references: [id])
-  farm Farm? @relation(fields: [farmId], references: [id])
-
-  @@index([userId])
-  @@index([farmId])
-  @@index([type])
-  @@index([isRead])
-  @@index([createdAt])
-  @@map("notifications")
-}
-
-// ============================================================================
-// ANALYTICS & METRICS (FR-008, FR-023)
-// ============================================================================
-
-model AnalyticsEvent {
-  id         String   @id @default(cuid())
-  eventType  String   @db.VarChar(100)
-  userId     String?
-  farmId     String?
-  productId  String?
-  orderId    String?
-  sessionId  String?  @db.VarChar(255)
-  properties Json? // Flexible event data
-  userAgent  String?  @db.Text
-  ipAddress  String?  @db.VarChar(45)
-  referrer   String?  @db.VarChar(500)
-  createdAt  DateTime @default(now())
-
-  @@index([eventType])
-  @@index([userId])
-  @@index([farmId])
-  @@index([productId])
-  @@index([createdAt])
-  @@map("analytics_events")
-}
-
-// ============================================================================
-// SEASONAL CYCLES & BIODYNAMIC TRACKING
-// ============================================================================
-
 enum Season {
   SPRING
   SUMMER
@@ -1418,19 +1444,15 @@ enum Season {
 }
 
 enum GrowthPhase {
-  PREPARING // Soil preparation, planning
-  SEEDING // Seeds planted
-  SPROUTING // First sprouts visible
-  GROWING // Active growth phase
-  FLOWERING // Flowering/fruiting
-  RIPENING // Produce ripening
-  HARVESTING // Ready for harvest
-  RESTING // Post-harvest rest
+  PREPARING
+  SEEDING
+  SPROUTING
+  GROWING
+  FLOWERING
+  RIPENING
+  HARVESTING
+  RESTING
 }
-
-// ============================================================================
-// AGRICULTURAL CONSCIOUSNESS ENUMS
-// ============================================================================
 
 enum LunarPhase {
   NEW_MOON
@@ -1485,15 +1507,15 @@ enum WeatherCondition {
 }
 
 enum CropFamily {
-  BRASSICAS // Cabbage, broccoli, cauliflower
-  LEGUMES // Beans, peas, lentils
-  NIGHTSHADES // Tomatoes, peppers, potatoes
-  CUCURBITS // Cucumbers, squash, melons
-  ALLIUMS // Onions, garlic, leeks
-  GRASSES // Corn, wheat, rice
-  UMBELLIFERS // Carrots, parsley, celery
-  LEAFY_GREENS // Lettuce, spinach, kale
-  ROOT_VEGETABLES // Beets, turnips, radishes
+  BRASSICAS
+  LEGUMES
+  NIGHTSHADES
+  CUCURBITS
+  ALLIUMS
+  GRASSES
+  UMBELLIFERS
+  LEAFY_GREENS
+  ROOT_VEGETABLES
   OTHER
 }
 
@@ -1512,171 +1534,6 @@ enum HarvestStatus {
   DELAYED
   CANCELLED
 }
-
-// ============================================================================
-// SHIPPING & DELIVERY (FR-014)
-// ============================================================================
-
-model DeliveryZone {
-  id          String  @id @default(cuid())
-  farmId      String
-  name        String  @db.VarChar(255)
-  description String? @db.Text
-
-  // Geographic coverage (simplified - could use PostGIS for production)
-  zipCodes String[] // Array of ZIP codes
-  cities   String[] // Array of city names
-
-  // Pricing
-  baseFee         Decimal @db.Decimal(10, 2)
-  perMileFee      Decimal @default(0) @db.Decimal(10, 2)
-  minimumOrder    Decimal @default(0) @db.Decimal(10, 2)
-  freeDeliveryMin Decimal @default(0) @db.Decimal(10, 2)
-
-  // Schedule
-  availableDays String[] // ["MONDAY", "WEDNESDAY", "FRIDAY"]
-  cutoffHours   Int      @default(24) // Hours before delivery
-
-  // Status
-  isActive Boolean @default(true)
-
-  // Metadata
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
-
-  @@index([farmId])
-  @@index([isActive])
-  @@map("delivery_zones")
-}
-
-model DeliverySlot {
-  id        String   @id @default(cuid())
-  farmId    String
-  date      DateTime @db.Date
-  startTime String   @db.VarChar(10) // "09:00"
-  endTime   String   @db.VarChar(10) // "12:00"
-
-  // Capacity
-  maxOrders     Int @default(10)
-  currentOrders Int @default(0)
-
-  // Status
-  isActive Boolean @default(true)
-
-  // Metadata
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
-
-  @@index([farmId])
-  @@index([date])
-  @@index([isActive])
-  @@map("delivery_slots")
-}
-
-model PickupLocation {
-  id      String @id @default(cuid())
-  farmId  String
-  name    String @db.VarChar(255)
-  address String @db.VarChar(500)
-  city    String @db.VarChar(100)
-  state   String @db.VarChar(50)
-  zipCode String @db.VarChar(20)
-
-  // Location details
-  instructions String? @db.Text
-
-  // GPS coordinates
-  latitude  Decimal? @db.Decimal(10, 8)
-  longitude Decimal? @db.Decimal(11, 8)
-
-  // Schedule
-  availableDays  String[] // ["MONDAY", "WEDNESDAY", "FRIDAY"]
-  availableHours String?  @db.VarChar(255) // "9:00 AM - 5:00 PM"
-
-  // Status
-  isActive Boolean @default(true)
-
-  // Metadata
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
-
-  @@index([farmId])
-  @@index([isActive])
-  @@map("pickup_locations")
-}
-
-model Address {
-  id     String  @id @default(cuid())
-  userId String?
-
-  // Address details
-  fullName String @db.VarChar(255)
-  street   String @db.VarChar(500)
-  city     String @db.VarChar(100)
-  state    String @db.VarChar(50)
-  zipCode  String @db.VarChar(20)
-  country  String @default("USA") @db.VarChar(50)
-
-  // Contact
-  phone String? @db.VarChar(20)
-
-  // GPS coordinates
-  latitude  Decimal? @db.Decimal(10, 8)
-  longitude Decimal? @db.Decimal(11, 8)
-
-  // Type
-  type AddressType @default(HOME)
-
-  // Status
-  isDefault Boolean @default(false)
-
-  // Metadata
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@map("addresses")
-}
-
-model SeasonalCycle {
-  id        String      @id @default(cuid())
-  productId String
-  season    Season
-  phase     GrowthPhase
-  startDate DateTime
-  endDate   DateTime?
-
-  // Biodynamic metrics
-  lunarPhase     String? @db.VarChar(50)
-  soilConditions Json? // {moisture: 85, pH: 6.5, nutrients: {...}}
-  energyLevel    Int? // 1-100 vitality measurement
-  notes          String? @db.Text
-
-  // Relations
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  // Metadata
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([productId])
-  @@index([season])
-  @@index([phase])
-  @@index([startDate, endDate])
-  @@map("seasonal_cycles")
-}
-
-// ============================================================================
-// INVENTORY MANAGEMENT SYSTEM (Week 7)
-// ============================================================================
 
 enum InventoryStatus {
   IN_STOCK
@@ -1735,296 +1592,6 @@ enum SupportTicketCategory {
   OTHER
 }
 
-model Inventory {
-  id        String @id @default(cuid())
-  farmId    String
-  productId String
-  sku       String @unique @db.VarChar(100)
-
-  // Stock levels
-  quantity     Int @default(0)
-  reservedQty  Int @default(0)
-  availableQty Int @default(0)
-  reorderPoint Int @default(10)
-  reorderQty   Int @default(50)
-
-  // Pricing
-  costPrice    Decimal @db.Decimal(10, 2)
-  sellingPrice Decimal @db.Decimal(10, 2)
-  pricePerUnit Decimal @db.Decimal(10, 2)
-
-  // Storage
-  location String? @db.VarChar(100)
-  zone     String? @db.VarChar(50)
-
-  // Status
-  status InventoryStatus @default(IN_STOCK)
-
-  // Relations
-  farm      Farm             @relation(fields: [farmId], references: [id], onDelete: Cascade)
-  product   Product          @relation(fields: [productId], references: [id], onDelete: Cascade)
-  batches   ProductBatch[]
-  movements StockMovement[]
-  alerts    InventoryAlert[]
-
-  // Metadata
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([farmId])
-  @@index([productId])
-  @@index([status])
-  @@index([quantity])
-  @@map("inventory")
-}
-
-model ProductBatch {
-  id          String @id @default(cuid())
-  inventoryId String
-  batchNumber String @unique @db.VarChar(100)
-
-  // Quantities
-  quantity    Int
-  receivedQty Int
-  damagedQty  Int @default(0)
-
-  // Dates
-  receivedDate    DateTime  @default(now())
-  expiryDate      DateTime?
-  manufactureDate DateTime?
-
-  // Supplier info
-  supplier String?  @db.VarChar(255)
-  cost     Decimal? @db.Decimal(10, 2)
-
-  // Quality
-  qualityGrade String? @db.VarChar(20)
-  notes        String? @db.Text
-
-  // Relations
-  inventory Inventory @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
-
-  // Metadata
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([inventoryId])
-  @@index([expiryDate])
-  @@map("product_batches")
-}
-
-model StockMovement {
-  id          String @id @default(cuid())
-  inventoryId String
-
-  // Movement details
-  type      StockMovementType
-  quantity  Int
-  reference String?           @db.VarChar(255)
-
-  // Before/After state
-  previousQty Int
-  newQty      Int
-
-  // Metadata
-  reason      String? @db.Text
-  performedBy String  @db.VarChar(255)
-
-  // Relations
-  inventory Inventory @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
-
-  // Timestamps
-  createdAt DateTime @default(now())
-
-  @@index([inventoryId])
-  @@index([type])
-  @@index([createdAt])
-  @@map("stock_movements")
-}
-
-model InventoryAlert {
-  id          String @id @default(cuid())
-  inventoryId String
-
-  // Alert details
-  type     AlertType
-  severity AlertSeverity
-  message  String        @db.Text
-
-  // Status
-  isRead     Boolean   @default(false)
-  isResolved Boolean   @default(false)
-  resolvedAt DateTime?
-  resolvedBy String?   @db.VarChar(255)
-
-  // Relations
-  inventory Inventory @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
-
-  // Timestamps
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([inventoryId])
-  @@index([type])
-  @@index([severity])
-  @@index([isResolved])
-  @@map("inventory_alerts")
-}
-
-// ============================================================================
-// SUPPORT TICKETS - Customer Support System
-// ============================================================================
-
-model SupportTicket {
-  id     String @id @default(cuid())
-  userId String
-
-  // Ticket details
-  subject     String                @db.VarChar(255)
-  description String                @db.Text
-  category    SupportTicketCategory @default(GENERAL)
-  priority    SupportTicketPriority @default(MEDIUM)
-  status      SupportTicketStatus   @default(OPEN)
-
-  // Assignment
-  assignedTo String? // Admin/Support user ID
-  assignedAt DateTime?
-
-  // Metadata
-  tags           String[] @default([])
-  relatedOrderId String? // Optional link to order
-  relatedFarmId  String? // Optional link to farm
-
-  // Resolution
-  resolvedAt     DateTime?
-  resolvedBy     String? // Admin user ID
-  resolutionNote String?   @db.Text
-
-  // Relations
-  user     User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  messages SupportTicketMessage[]
-  files    SupportTicketFile[]
-
-  // Timestamps
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([userId])
-  @@index([status])
-  @@index([priority])
-  @@index([category])
-  @@index([assignedTo])
-  @@index([createdAt])
-  @@map("support_tickets")
-}
-
-model SupportTicketMessage {
-  id       String @id @default(cuid())
-  ticketId String
-
-  // Message details
-  content  String  @db.Text
-  isStaff  Boolean @default(false) // True if from support staff
-  authorId String // User or admin ID
-
-  // Status
-  isInternal Boolean @default(false) // Internal notes not visible to user
-  isRead     Boolean @default(false)
-
-  // Relations
-  ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
-
-  // Timestamps
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([ticketId])
-  @@index([authorId])
-  @@index([createdAt])
-  @@map("support_ticket_messages")
-}
-
-model SupportTicketFile {
-  id       String @id @default(cuid())
-  ticketId String
-
-  // File details
-  filename    String  @db.VarChar(255)
-  url         String  @db.VarChar(500)
-  mimeType    String  @db.VarChar(100)
-  size        Int // File size in bytes
-  description String? @db.Text
-
-  // Uploader
-  uploadedBy String // User or admin ID
-
-  // Relations
-  ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
-
-  // Timestamps
-  createdAt DateTime @default(now())
-
-  @@index([ticketId])
-  @@index([uploadedBy])
-  @@map("support_ticket_files")
-}
-
-// ============================================================================
-// NOTIFICATION PREFERENCES
-// ============================================================================
-
-model NotificationPreferences {
-  id     String @id @default(cuid())
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // Email notifications
-  emailOrders     Boolean @default(true)
-  emailReviews    Boolean @default(true)
-  emailPromotions Boolean @default(false)
-  emailNewsletter Boolean @default(false)
-
-  // In-app notifications
-  inAppOrders   Boolean @default(true)
-  inAppReviews  Boolean @default(true)
-  inAppMessages Boolean @default(true)
-
-  // Push notifications
-  pushOrders     Boolean @default(true)
-  pushReviews    Boolean @default(true)
-  pushPromotions Boolean @default(false)
-
-  // Timestamps
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([userId])
-  @@map("notification_preferences")
-}
-
-// ============================================================================
-// DOWNLOAD TRACKING
-// ============================================================================
-
-model DownloadLog {
-  id         String   @id @default(cuid())
-  userId     String?
-  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  resourceId String   @db.VarChar(255)
-  ipAddress  String?  @db.VarChar(45)
-  userAgent  String?  @db.Text
-  createdAt  DateTime @default(now())
-
-  @@index([userId])
-  @@index([resourceId])
-  @@index([createdAt])
-  @@map("download_logs")
-}
-
-// ============================================================================
-// AUDIT TRAIL
-// ============================================================================
-
 enum AuditAction {
   CREATE
   UPDATE
@@ -2038,29 +1605,3 @@ enum AuditAction {
   SUSPEND
   RESTORE
 }
-
-model AuditLog {
-  id         String      @id @default(cuid())
-  userId     String?
-  user       User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
-  action     AuditAction
-  entityType String      @db.VarChar(100)
-  entityId   String      @db.VarChar(255)
-  changes    Json? // Store before/after state as JSON
-  ipAddress  String?     @db.VarChar(45)
-  userAgent  String?     @db.Text
-  createdAt  DateTime    @default(now())
-
-  @@index([userId])
-  @@index([entityType, entityId])
-  @@index([action])
-  @@index([createdAt])
-  @@map("audit_logs")
-}
-
-// ============================================================================
-// MIGRATIONS & VERSION TRACKING
-// ============================================================================
-
-// This table is managed by Prisma Migrate automatically
-// model _prisma_migrations { }

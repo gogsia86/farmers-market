@@ -18,15 +18,7 @@ import type { LunarPhase, Season } from "@prisma/client";
 // TYPES & INTERFACES
 // ============================================================================
 
-interface _BiodynamicCalendarInput {
-  farmId: string;
-  astronomicalDate: Date;
-  season: Season;
-  lunarPhase: LunarPhase;
-  lunarDay: number;
-  moonRiseTime?: Date;
-  moonSetTime?: Date;
-}
+// Removed unused _BiodynamicCalendarInput interface
 
 interface BiodynamicRecommendations {
   plantingFavorability: number; // 0-100

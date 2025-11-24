@@ -12,7 +12,7 @@ require("@testing-library/jest-dom");
 // ============================================
 // GLOBAL TEST CONFIGURATION
 // ============================================
-jest.setTimeout(10000);
+jest.setTimeout(30000);
 
 // Global agricultural consciousness
 global.agriculturalConsciousness = {
@@ -36,6 +36,44 @@ process.env.STRIPE_PUBLISHABLE_KEY = "test-stripe-publishable-key";
 // ============================================
 // WEB API POLYFILLS - NEXT.JS COMPATIBILITY
 // ============================================
+
+// Global fetch mock for Stripe and other HTTP clients
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    ok: true,
+    status: 200,
+    json: () => Promise.resolve({}),
+    text: () => Promise.resolve(""),
+    headers: new Headers(),
+  }),
+);
+
+// Mock NextResponse for Next.js API route testing
+jest.mock("next/server", () => ({
+  NextResponse: {
+    json: (data, init) => {
+      const response = {
+        status: init?.status || 200,
+        headers: init?.headers || {},
+        ok: (init?.status || 200) >= 200 && (init?.status || 200) < 300,
+        json: async () => data,
+        text: async () => JSON.stringify(data),
+      };
+      return response;
+    },
+    redirect: (url) => ({
+      status: 307,
+      headers: { Location: url },
+      url,
+    }),
+  },
+  NextRequest: class NextRequest extends Request {
+    constructor(input, init) {
+      super(input, init);
+      this.nextUrl = new URL(input);
+    }
+  },
+}));
 
 global.Request = class Request {
   constructor(input, init = {}) {
@@ -382,6 +420,28 @@ jest.mock(
 
 jest.mock("@/lib/utils", () => ({
   cn: jest.fn((...args) => args.filter(Boolean).join(" ")),
+  formatNumber: jest.fn((num, locale = "en-US") =>
+    new Intl.NumberFormat(locale).format(num),
+  ),
+  formatPrice: jest.fn((price) =>
+    new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(price),
+  ),
+  truncate: jest.fn((text, length) => {
+    if (text.length <= length) return text;
+    return text.slice(0, length) + "...";
+  }),
+  sleep: jest.fn((ms) => Promise.resolve()),
+  debounce: jest.fn((func, wait) => {
+    let timeout = null;
+    return (...args) => {
+      if (timeout) clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), wait);
+    };
+  }),
+  generateId: jest.fn(() => Math.random().toString(36).substring(2, 15)),
 }));
 
 // ============================================

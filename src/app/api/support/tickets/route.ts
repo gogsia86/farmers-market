@@ -1,4 +1,5 @@
 import { database } from "@/lib/database";
+import { sendSupportTicketConfirmationLazy } from "@/lib/email/email-service-lazy";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -64,8 +65,18 @@ export async function POST(request: NextRequest) {
     //   },
     // });
 
-    // Send notification email (TODO: implement email service)
-    // await sendSupportTicketEmail(user.email, ticketId);
+    // Send confirmation email (lazy-loaded to reduce bundle size)
+    try {
+      await sendSupportTicketConfirmationLazy({
+        ticketId,
+        subject: validatedData.subject,
+        name: validatedData.name,
+        email: user.email,
+      });
+    } catch (emailError) {
+      // Log email error but don't fail ticket creation
+      console.error("Failed to send support ticket confirmation:", emailError);
+    }
 
     return NextResponse.json(
       {
@@ -79,7 +90,7 @@ export async function POST(request: NextRequest) {
           estimatedResponse: "24 hours",
         },
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -88,14 +99,14 @@ export async function POST(request: NextRequest) {
           error: "Validation failed",
           details: error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.error("Support ticket error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -108,7 +119,7 @@ export async function GET(request: NextRequest) {
     if (!email) {
       return NextResponse.json(
         { error: "Email parameter required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -145,7 +156,7 @@ export async function GET(request: NextRequest) {
     console.error("Get tickets error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

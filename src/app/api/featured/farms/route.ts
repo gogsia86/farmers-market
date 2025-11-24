@@ -38,7 +38,8 @@ export async function GET(request: NextRequest) {
             description: true,
             city: true,
             state: true,
-            coverImage: true,
+            bannerUrl: true,
+            logoUrl: true,
             latitude: true,
             longitude: true,
             _count: {
@@ -60,8 +61,8 @@ export async function GET(request: NextRequest) {
         const farmsWithRatings = farms
           .map((farm) => {
             const totalRating = farm.reviews.reduce(
-              (sum, review) => sum + review.rating,
-              0
+              (sum: number, review: { rating: number }) => sum + review.rating,
+              0,
             );
             const averageRating =
               farm.reviews.length > 0 ? totalRating / farm.reviews.length : 0;
@@ -106,7 +107,8 @@ export async function GET(request: NextRequest) {
             description: true,
             city: true,
             state: true,
-            coverImage: true,
+            bannerUrl: true,
+            logoUrl: true,
             latitude: true,
             longitude: true,
             createdAt: true,
@@ -133,7 +135,10 @@ export async function GET(request: NextRequest) {
           },
         });
 
-        const skip = Math.max(0, Math.floor(Math.random() * (totalFarms - limit)));
+        const skip = Math.max(
+          0,
+          Math.floor(Math.random() * (totalFarms - limit)),
+        );
 
         farms = await database.farm.findMany({
           where: {
@@ -147,7 +152,8 @@ export async function GET(request: NextRequest) {
             description: true,
             city: true,
             state: true,
-            coverImage: true,
+            bannerUrl: true,
+            logoUrl: true,
             latitude: true,
             longitude: true,
             _count: {
@@ -176,7 +182,8 @@ export async function GET(request: NextRequest) {
             description: true,
             city: true,
             state: true,
-            coverImage: true,
+            bannerUrl: true,
+            logoUrl: true,
             latitude: true,
             longitude: true,
             _count: {
@@ -208,7 +215,7 @@ export async function GET(request: NextRequest) {
         headers: {
           "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
         },
-      }
+      },
     );
   } catch (error) {
     console.error("[FEATURED_FARMS_API_ERROR]", error);
@@ -218,7 +225,7 @@ export async function GET(request: NextRequest) {
         error: "Failed to fetch featured farms",
         message: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

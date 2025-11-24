@@ -25,7 +25,12 @@ export interface CreateFarmRequest {
   name: string;
   description?: string;
   address: string;
+  city: string;
+  state: string;
+  zipCode: string;
   ownerId: string;
+  email: string;
+  phone: string;
   coordinates?: {
     lat: number;
     lng: number;

@@ -1,0 +1,267 @@
+name: Bundle Size Check
+
+on:
+  pull_request:
+    branches: [main, master, develop]
+  push:
+    branches: [main, master, develop]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: "20"
+
+jobs:
+  bundle-size-check:
+    name: 📦 Bundle Size Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for comparison
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: 📚 Install dependencies
+        run: npm ci
+
+      - name: 🔧 Generate Prisma Client
+        run: npx prisma generate
+
+      - name: 🏗️ Build application (webpack for deterministic analysis)
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+          NODE_ENV: production
+          # Optimize for production build
+          ANALYZE: true
+        run: |
+          echo "Building with webpack for bundle analysis..."
+          npx next build --webpack
+        continue-on-error: false
+
+      - name: 📊 Measure bundle performance
+        id: measure
+        run: |
+          echo "Running bundle measurement script..."
+          node scripts/measure-bundle-performance.mjs > bundle-report.txt 2>&1 || echo "exitcode=$?" >> $GITHUB_OUTPUT
+          cat bundle-report.txt
+        continue-on-error: true
+
+      - name: 📄 Check bundle size thresholds
+        id: check-thresholds
+        run: |
+          echo "Checking Phase 5 optimization thresholds..."
+
+          # Define thresholds based on Phase 5 achievements
+          API_ROUTE_THRESHOLD_KB=50
+          API_ROUTE_OPTIMIZED_KB=25
+          MIDDLEWARE_THRESHOLD_KB=300
+          SHARED_CHUNK_THRESHOLD_KB=400
+
+          # Parse bundle sizes from .next/server directory
+          if [ ! -d ".next/server" ]; then
+            echo "❌ .next/server directory not found"
+            exit 1
+          fi
+
+          # Check API routes
+          echo "🔍 Checking API route bundles..."
+          OVERSIZED_ROUTES=0
+
+          for route in .next/server/app/api/**/*.js; do
+            if [ -f "$route" ]; then
+              SIZE_KB=$(du -k "$route" | cut -f1)
+              ROUTE_NAME=$(basename "$route")
+
+              if [ "$SIZE_KB" -gt "$API_ROUTE_THRESHOLD_KB" ]; then
+                echo "⚠️  $ROUTE_NAME: ${SIZE_KB}KB (threshold: ${API_ROUTE_THRESHOLD_KB}KB)"
+                OVERSIZED_ROUTES=$((OVERSIZED_ROUTES + 1))
+              elif [ "$SIZE_KB" -lt "$API_ROUTE_OPTIMIZED_KB" ]; then
+                echo "✅ $ROUTE_NAME: ${SIZE_KB}KB (optimized!)"
+              else
+                echo "✓  $ROUTE_NAME: ${SIZE_KB}KB"
+              fi
+            fi
+          done
+
+          echo "oversized_routes=$OVERSIZED_ROUTES" >> $GITHUB_OUTPUT
+
+          if [ "$OVERSIZED_ROUTES" -gt 0 ]; then
+            echo "threshold_status=warning" >> $GITHUB_OUTPUT
+          else
+            echo "threshold_status=success" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 📈 Generate bundle comparison
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "Comparing bundle sizes with base branch..."
+
+          # Checkout base branch
+          git fetch origin ${{ github.base_ref }}
+          git checkout origin/${{ github.base_ref }}
+
+          # Build base
+          npm ci
+          npx prisma generate
+          npx next build --webpack 2>/dev/null || true
+
+          # Save base sizes
+          if [ -d ".next/server" ]; then
+            find .next/server -name "*.js" -exec du -b {} + > /tmp/base-sizes.txt
+          fi
+
+          # Checkout PR branch
+          git checkout ${{ github.sha }}
+          npm ci
+          npx prisma generate
+          npx next build --webpack
+
+          # Compare sizes
+          if [ -f "/tmp/base-sizes.txt" ]; then
+            echo "📊 Bundle size changes:"
+            find .next/server -name "*.js" -exec du -b {} + > /tmp/pr-sizes.txt
+
+            # Generate comparison report
+            echo "Base vs PR comparison available"
+          fi
+        continue-on-error: true
+
+      - name: 💾 Upload bundle analysis artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-analysis-${{ github.sha }}
+          path: |
+            .next/analyze/
+            bundle-performance-report.json
+            bundle-report.txt
+          retention-days: 30
+        continue-on-error: true
+
+      - name: 📝 Comment PR with bundle size report
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            let reportContent = '## 📦 Bundle Size Report\n\n';
+
+            try {
+              // Read the bundle report
+              if (fs.existsSync('bundle-report.txt')) {
+                const report = fs.readFileSync('bundle-report.txt', 'utf8');
+
+                // Extract key metrics
+                const summaryMatch = report.match(/SUMMARY[\s\S]*?(?=\n\n|\n📁)/);
+                const largestMatch = report.match(/TOP \d+ LARGEST FILES[\s\S]*?(?=\n\n|\n❌|\n✅|$)/);
+                const failuresMatch = report.match(/THRESHOLD FAILURES[\s\S]*?(?=\n\n|$)/);
+                const optimizedMatch = report.match(/HIGHLY OPTIMIZED ROUTES[\s\S]*?(?=\n\n|$)/);
+
+                if (summaryMatch) {
+                  reportContent += '### Summary\n```\n' + summaryMatch[0] + '\n```\n\n';
+                }
+
+                if (optimizedMatch) {
+                  reportContent += '### ✅ Highly Optimized Routes\n```\n' + optimizedMatch[0] + '\n```\n\n';
+                }
+
+                if (largestMatch) {
+                  reportContent += '### 🔝 Largest Files\n```\n' + largestMatch[0] + '\n```\n\n';
+                }
+
+                if (failuresMatch) {
+                  reportContent += '### ❌ Threshold Failures\n```\n' + failuresMatch[0] + '\n```\n\n';
+                }
+
+                reportContent += '\n---\n';
+                reportContent += '*Phase 5 Optimization Thresholds:*\n';
+                reportContent += '- API Routes (Critical): < 20 KB\n';
+                reportContent += '- API Routes (Standard): < 50 KB\n';
+                reportContent += '- API Routes (Heavy): < 200 KB\n';
+                reportContent += '- Shared Chunks: < 400 KB\n';
+                reportContent += '- Middleware: < 300 KB\n';
+              } else {
+                reportContent += '⚠️ Bundle report not available\n';
+              }
+            } catch (error) {
+              reportContent += `⚠️ Error reading bundle report: ${error.message}\n`;
+            }
+
+            // Post comment
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: reportContent
+            });
+        continue-on-error: true
+
+      - name: 🎯 Validate Phase 5 optimization targets
+        run: |
+          echo "Validating Phase 5 lazy-loading optimization results..."
+
+          # Check that optimized routes are truly optimized
+          ADMIN_APPROVALS=$(find .next/server/app/api/admin/approvals -name "*.js" -exec du -k {} + 2>/dev/null | awk '{sum+=$1} END {print sum}')
+          FARMS_ROUTE=$(find .next/server/app/api/farms -name "route.js" -exec du -k {} + 2>/dev/null | awk '{print $1}')
+
+          echo "📊 Phase 5 Optimization Validation:"
+          echo "  Admin Approvals Route: ${ADMIN_APPROVALS:-N/A} KB (target: < 25 KB)"
+          echo "  Farms Route: ${FARMS_ROUTE:-N/A} KB (target: < 25 KB)"
+
+          # Success criteria: Both should be under 25 KB (Phase 5 achievement)
+          VALIDATION_PASSED=true
+
+          if [ ! -z "$ADMIN_APPROVALS" ] && [ "$ADMIN_APPROVALS" -gt 25 ]; then
+            echo "⚠️ Admin approvals route exceeds optimized threshold"
+            VALIDATION_PASSED=false
+          fi
+
+          if [ ! -z "$FARMS_ROUTE" ] && [ "$FARMS_ROUTE" -gt 25 ]; then
+            echo "⚠️ Farms route exceeds optimized threshold"
+            VALIDATION_PASSED=false
+          fi
+
+          if [ "$VALIDATION_PASSED" = true ]; then
+            echo "✅ Phase 5 optimizations maintained!"
+          else
+            echo "⚠️ Some routes have regressed from Phase 5 optimizations"
+            echo "Please review lazy-loading patterns for email, tracing, and Redis"
+          fi
+        continue-on-error: true
+
+      - name: 🚨 Fail if critical thresholds exceeded
+        if: steps.check-thresholds.outputs.threshold_status == 'warning'
+        run: |
+          echo "❌ Bundle size check failed: ${{ steps.check-thresholds.outputs.oversized_routes }} route(s) exceed thresholds"
+          echo ""
+          echo "Action required:"
+          echo "1. Review the bundle analysis artifacts"
+          echo "2. Apply lazy-loading patterns (see docs/LAZY_LOADING_QUICK_REFERENCE.md)"
+          echo "3. Use email-service-lazy.ts, lazy-tracer.ts, redis-client-lazy.ts"
+          echo "4. Ensure type-only imports: import type { ... } from '@prisma/client'"
+          echo ""
+          exit 1
+
+  bundle-size-success:
+    name: ✅ Bundle Size Check Complete
+    runs-on: ubuntu-latest
+    needs: bundle-size-check
+    if: always()
+
+    steps:
+      - name: Check bundle size results
+        run: |
+          if [ "${{ needs.bundle-size-check.result }}" = "success" ]; then
+            echo "✅ All bundle size checks passed!"
+            echo "Phase 5 optimizations are maintained 🎉"
+          else
+            echo "⚠️ Bundle size checks did not pass"
+            echo "Review the bundle analysis report for details"
+          fi

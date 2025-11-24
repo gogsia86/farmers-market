@@ -21,6 +21,8 @@ coverage/
 .nyc_output/
 test-results/
 playwright-report/
+.jest-cache/
+cleanup-logs/
 *.log
 
 # ═══════════════════════════════════════════════════════════
@@ -209,5 +211,3 @@ docs/build/
 # 🌟 Custom Project-Specific Ignores
 # ═══════════════════════════════════════════════════════════
 # Add your custom ignore patterns below:
-
-

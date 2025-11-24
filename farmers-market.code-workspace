@@ -185,6 +185,7 @@
     "workbench.preferredHighContrastColorTheme": "Default Dark Modern",
     "kilo-code.newTaskRequireTodos": true,
     "kilo-code.preventCompletionWithOpenTodos": true,
+    "console-ninja.installBinToPath": true,
   },
   "launch": {
     "version": "0.2.0",

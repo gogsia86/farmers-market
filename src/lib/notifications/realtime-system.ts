@@ -6,6 +6,7 @@
 import { StructuredLogger } from "@/lib/monitoring/logger";
 import { WebSocket, WebSocketServer } from "ws";
 import type { IncomingMessage } from "http";
+import type { RawData } from "ws";
 
 export interface NotificationPayload {
   id: string;
@@ -20,7 +21,7 @@ export interface NotificationPayload {
   userId: string;
   title: string;
   message: string;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   priority: "LOW" | "MEDIUM" | "HIGH" | "URGENT";
   timestamp: Date;
   agriculturalContext?: {
@@ -70,11 +71,14 @@ export class RealtimeNotificationSystem {
     try {
       this.wss = new WebSocketServer({ port });
 
-      this.wss.on("connection", (ws: WebSocket, request: IncomingMessage) => {
-        this.handleConnection(ws, request);
-      });
+      this.wss.on(
+        "connection",
+        (ws: WebSocket, request: IncomingMessage): void => {
+          this.handleConnection(ws, request);
+        },
+      );
 
-      this.wss.on("error", (error: Error) => {
+      this.wss.on("error", (error: Error): void => {
         this.logger.error("WebSocket server error", error);
       });
 
@@ -129,9 +133,15 @@ export class RealtimeNotificationSystem {
     });
 
     // Set up message handlers
-    ws.on("message", (data: Buffer) => this.handleMessage(connectionId, data));
-    ws.on("close", () => this.handleDisconnection(connectionId));
-    ws.on("error", (error: Error) => this.handleError(connectionId, error));
+    ws.on("message", (data: RawData): void => {
+      this.handleMessage(connectionId, data);
+    });
+    ws.on("close", (): void => {
+      this.handleDisconnection(connectionId);
+    });
+    ws.on("error", (error: Error): void => {
+      this.handleError(connectionId, error);
+    });
 
     // Send pending notifications
     await this.sendPendingNotifications(connectionId);
@@ -148,9 +158,10 @@ export class RealtimeNotificationSystem {
   /**
    * HANDLE INCOMING MESSAGE
    */
-  private handleMessage(connectionId: string, data: any): void {
+  private handleMessage(connectionId: string, data: RawData): void {
     try {
-      const message = JSON.parse(data.toString());
+      const rawData = data.toString();
+      const message = JSON.parse(rawData);
       const connection = this.connections.get(connectionId);
 
       if (!connection) return;
@@ -178,9 +189,10 @@ export class RealtimeNotificationSystem {
           this.logger.warn("Unknown message type", { type: message.type });
       }
     } catch (error) {
-      this.logger.error("Error handling message", error as Error, {
-        connectionId,
-      });
+      this.logger.error(
+        `Error handling message for ${connectionId}`,
+        error as Error,
+      );
     }
   }
 
@@ -405,9 +417,10 @@ export class RealtimeNotificationSystem {
     try {
       connection.ws.send(JSON.stringify(data));
     } catch (error) {
-      this.logger.error("Error sending to connection", error as Error, {
-        connectionId,
-      });
+      this.logger.error(
+        `Error sending to connection ${connectionId}`,
+        error as Error,
+      );
     }
   }
 
@@ -432,7 +445,7 @@ export class RealtimeNotificationSystem {
    * HANDLE ERROR
    */
   private handleError(connectionId: string, error: Error): void {
-    this.logger.error("WebSocket connection error", error, { connectionId });
+    this.logger.error(`WebSocket connection error for ${connectionId}`, error);
   }
 
   /**

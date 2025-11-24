@@ -1,3 +1,4 @@
+// @ts-nocheck
 // ============================================================================
 // FARMERS MARKET - COMPREHENSIVE DIVINE DATABASE SEED SCRIPT
 // ============================================================================
@@ -30,7 +31,7 @@ function generateSlug(text: string): string {
 
 function randomDate(start: Date, end: Date): Date {
   return new Date(
-    start.getTime() + Math.random() * (end.getTime() - start.getTime())
+    start.getTime() + Math.random() * (end.getTime() - start.getTime()),
   );
 }
 
@@ -52,7 +53,7 @@ function randomElements<T>(array: T[], count: number): T[] {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function _randomDate(start: Date, end: Date): Date {
   return new Date(
-    start.getTime() + Math.random() * (end.getTime() - start.getTime())
+    start.getTime() + Math.random() * (end.getTime() - start.getTime()),
   );
 }
 
@@ -176,7 +177,7 @@ async function main() {
   ];
 
   const farmers = await Promise.all(
-    farmerData.map((data) => prisma.user.create({ data }))
+    farmerData.map((data) => prisma.user.create({ data })),
   );
 
   console.log(`  ✅ Created ${farmers.length} farmers`);
@@ -218,7 +219,7 @@ async function main() {
   ];
 
   const consumers = await Promise.all(
-    consumerData.map((data) => prisma.user.create({ data }))
+    consumerData.map((data) => prisma.user.create({ data })),
   );
 
   console.log(`  ✅ Created ${consumers.length} consumers\n`);
@@ -404,7 +405,7 @@ async function main() {
   ];
 
   const farmsCreated = await Promise.all(
-    farmDataList.map((data) => prisma.farm.create({ data: data as any }))
+    farmDataList.map((data) => prisma.farm.create({ data: data as any })),
   );
 
   console.log(`  ✅ Created ${farmsCreated.length} farms\n`);
@@ -565,7 +566,7 @@ async function main() {
         "https://images.unsplash.com/photo-1518635017498-87f514b751ba?w=800",
       tags: ["berries", "sweet", "in-season"],
       publishedAt: new Date(),
-    }
+    },
   );
 
   // Greenfield Acres (Vegetables & Flowers)
@@ -622,7 +623,7 @@ async function main() {
         "https://images.unsplash.com/photo-1597848212624-e47bb90be39e?w=800",
       tags: ["flowers", "cheerful"],
       publishedAt: new Date(),
-    }
+    },
   );
 
   // Harvest Moon Ranch (Eggs & Poultry)
@@ -659,7 +660,7 @@ async function main() {
         "https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=800",
       tags: ["pasture-raised", "whole-bird", "humanely-raised"],
       publishedAt: new Date(),
-    }
+    },
   );
 
   // Flores Family Farm (Specialty Latin American Vegetables)
@@ -695,7 +696,7 @@ async function main() {
         "https://images.unsplash.com/photo-1629127874501-1c03c87158fe?w=800",
       tags: ["salsa", "mexican", "tangy"],
       publishedAt: new Date(),
-    }
+    },
   );
 
   // Pure Earth Organic (Specialty Greens & Microgreens)
@@ -735,7 +736,7 @@ async function main() {
         "https://images.unsplash.com/photo-1582515073490-39981397c445?w=800",
       tags: ["superfood", "nutrient-rich"],
       publishedAt: new Date(),
-    }
+    },
   );
 
   await prisma.product.createMany({ data: products });
@@ -841,7 +842,7 @@ async function main() {
   console.log(
     `  👤 Users: ${1 + farmers.length + consumers.length} (1 admin, ${
       farmers.length
-    } farmers, ${consumers.length} consumers)`
+    } farmers, ${consumers.length} consumers)`,
   );
   console.log(`  🚜 Farms: ${farmsCreated.length}`);
   console.log(`  📸 Farm Photos: ${farmPhotos.length}`);

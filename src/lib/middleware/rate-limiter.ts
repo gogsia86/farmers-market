@@ -8,10 +8,15 @@
  * - Configurable time windows and limits
  * - IP-based and user-based tracking
  * - Rate limit headers (X-RateLimit-*)
+ *
+ * OPTIMIZATION:
+ * - Uses lazy-loaded Redis client to reduce server bundle size
+ * - Redis only loaded when actually needed (saves ~100KB per route)
+ * - Seamless fallback to in-memory storage
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { redisClient } from "@/lib/cache/redis-client";
+import { redisClientLazy } from "@/lib/cache/redis-client-lazy";
 
 /**
  * Rate limit configuration
@@ -60,7 +65,7 @@ export class RateLimiter {
     const windowStart = now - this.config.windowMs;
 
     // Try Redis first (distributed rate limiting)
-    if (redisClient.getConnectionStatus()) {
+    if (redisClientLazy.getConnectionStatus()) {
       return await this.checkWithRedis(key, now, windowStart);
     }
 
@@ -86,18 +91,28 @@ export class RateLimiter {
       const resetKey = `${redisKey}:reset`;
 
       // Get current count
-      const currentCountStr = await redisClient.get<string>(countKey);
+      const currentCountStr = await redisClientLazy.get<string>(countKey);
       const currentCount = currentCountStr ? parseInt(currentCountStr, 10) : 0;
 
       // Get reset time
-      const resetTimeStr = await redisClient.get<string>(resetKey);
-      const resetTime = resetTimeStr ? parseInt(resetTimeStr, 10) : now + this.config.windowMs;
+      const resetTimeStr = await redisClientLazy.get<string>(resetKey);
+      const resetTime = resetTimeStr
+        ? parseInt(resetTimeStr, 10)
+        : now + this.config.windowMs;
 
       // If reset time has passed, reset the counter
       if (now >= resetTime) {
-        await redisClient.set(countKey, "1", Math.ceil(this.config.windowMs / 1000));
+        await redisClientLazy.set(
+          countKey,
+          "1",
+          Math.ceil(this.config.windowMs / 1000),
+        );
         const newResetTime = now + this.config.windowMs;
-        await redisClient.set(resetKey, newResetTime.toString(), Math.ceil(this.config.windowMs / 1000));
+        await redisClientLazy.set(
+          resetKey,
+          newResetTime.toString(),
+          Math.ceil(this.config.windowMs / 1000),
+        );
 
         return {
           success: true,
@@ -122,7 +137,11 @@ export class RateLimiter {
 
       // Increment counter
       const newCount = currentCount + 1;
-      await redisClient.set(countKey, newCount.toString(), Math.ceil(this.config.windowMs / 1000));
+      await redisClientLazy.set(
+        countKey,
+        newCount.toString(),
+        Math.ceil(this.config.windowMs / 1000),
+      );
 
       return {
         success: true,
@@ -154,6 +173,10 @@ export class RateLimiter {
     // Check if limit exceeded
     if (validTimestamps.length >= this.config.maxRequests) {
       const oldestTimestamp = validTimestamps[0];
+      if (!oldestTimestamp) {
+        // This should never happen, but TypeScript requires the check
+        throw new Error("Unexpected: validTimestamps array is empty");
+      }
       const resetTime = oldestTimestamp + this.config.windowMs;
       const retryAfter = Math.ceil((resetTime - now) / 1000);
 
@@ -194,11 +217,11 @@ export class RateLimiter {
     }
 
     // Fall back to IP address
+    // NextRequest doesn't have .ip property, use headers instead
     const forwarded = request.headers.get("x-forwarded-for");
-    const ip = forwarded?.split(",")[0]?.trim() ||
-               request.headers.get("x-real-ip") ||
-               request.ip ||
-               "unknown";
+    const realIp = request.headers.get("x-real-ip");
+
+    const ip = forwarded?.split(",")[0]?.trim() || realIp || "unknown";
 
     return `ip:${ip}`;
   }
@@ -207,7 +230,8 @@ export class RateLimiter {
    * Clean up old entries from memory store
    */
   private cleanupMemoryStore(windowStart: number): void {
-    for (const [key, timestamps] of this.memoryStore.entries()) {
+    const entries = Array.from(this.memoryStore.entries());
+    for (const [key, timestamps] of entries) {
       const validTimestamps = timestamps.filter((ts) => ts > windowStart);
       if (validTimestamps.length === 0) {
         this.memoryStore.delete(key);

@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
     if (!session?.user) {
       return NextResponse.json(
         { success: false, error: "Authentication required" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -93,11 +93,18 @@ export async function POST(request: NextRequest) {
           success: false,
           error: "Only active farmers can bulk upload products",
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
-    const farmId = user.farms[0].id;
+    const farmId = user.farms?.[0]?.id;
+
+    if (!farmId) {
+      return NextResponse.json(
+        { success: false, error: "No farm found for user" },
+        { status: 404 },
+      );
+    }
 
     // Parse form data
     const formData = await request.formData();
@@ -106,7 +113,7 @@ export async function POST(request: NextRequest) {
     if (!file) {
       return NextResponse.json(
         { success: false, error: "CSV file is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -114,7 +121,7 @@ export async function POST(request: NextRequest) {
     if (!file.name.endsWith(".csv")) {
       return NextResponse.json(
         { success: false, error: "Only CSV files are supported" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -125,7 +132,7 @@ export async function POST(request: NextRequest) {
     if (rows.length === 0) {
       return NextResponse.json(
         { success: false, error: "CSV file is empty" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -133,9 +140,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: "Maximum 500 products per upload. Please split into smaller batches.",
+          error:
+            "Maximum 500 products per upload. Please split into smaller batches.",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -162,27 +170,28 @@ export async function POST(request: NextRequest) {
           // Create product
           const product = await tx.product.create({
             data: {
-              farmId,
+              farmId: farmId || "",
               name: validatedData.name,
+              slug: validatedData.name
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, "-"),
               description: validatedData.description || "",
               category: validatedData.category,
-              pricePerUnit: validatedData.pricePerUnit,
+              price: validatedData.pricePerUnit,
               unit: validatedData.unit,
-              stockQuantity: validatedData.stockQuantity,
-              minimumOrder: validatedData.minimumOrder,
-              maximumOrder: validatedData.maximumOrder,
+              quantityAvailable: validatedData.stockQuantity,
               organic: validatedData.organic,
               seasonal: validatedData.seasonal,
-              availableFrom: validatedData.availableFrom
+              seasonalStart: validatedData.availableFrom
                 ? new Date(validatedData.availableFrom)
                 : null,
-              availableTo: validatedData.availableTo
+              seasonalEnd: validatedData.availableTo
                 ? new Date(validatedData.availableTo)
                 : null,
               status: "ACTIVE",
               inStock: validatedData.stockQuantity > 0,
               featured: false,
-              published: true,
+              publishedAt: new Date(),
             },
           });
 
@@ -199,7 +208,7 @@ export async function POST(request: NextRequest) {
           // If more than 50% errors, abort transaction
           if (result.errorCount > rows.length * 0.5) {
             throw new Error(
-              "Too many errors (>50%). Upload aborted. Please fix CSV and try again."
+              "Too many errors (>50%). Upload aborted. Please fix CSV and try again.",
             );
           }
         }
@@ -217,7 +226,7 @@ export async function POST(request: NextRequest) {
           ? `Successfully uploaded ${result.successCount} products`
           : `Uploaded ${result.successCount} products with ${result.errorCount} errors`,
       },
-      { status: result.success ? 201 : 207 } // 207 = Multi-Status
+      { status: result.success ? 201 : 207 }, // 207 = Multi-Status
     );
   } catch (error) {
     console.error("[BULK_UPLOAD_API_ERROR]", error);
@@ -227,7 +236,7 @@ export async function POST(request: NextRequest) {
         error: "Bulk upload failed",
         message: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -243,12 +252,14 @@ function parseCSV(content: string): any[] {
   }
 
   // Parse header
-  const headers = lines[0].split(",").map((h) => h.trim());
+  const headers = lines[0]?.split(",").map((h) => h.trim()) || [];
 
   // Parse rows
   const rows = [];
   for (let i = 1; i < lines.length; i++) {
-    const values = parseCSVLine(lines[i]);
+    const line = lines[i];
+    if (!line) continue;
+    const values = parseCSVLine(line);
 
     if (values.length !== headers.length) {
       continue; // Skip malformed rows
@@ -256,10 +267,15 @@ function parseCSV(content: string): any[] {
 
     const row: any = {};
     headers.forEach((header, index) => {
-      const value = values[index].trim();
+      const value = values[index]?.trim() || "";
 
       // Type conversion
-      if (header === "pricePerUnit" || header === "stockQuantity" || header === "minimumOrder" || header === "maximumOrder") {
+      if (
+        header === "pricePerUnit" ||
+        header === "stockQuantity" ||
+        header === "minimumOrder" ||
+        header === "maximumOrder"
+      ) {
         row[header] = value ? parseFloat(value) : undefined;
       } else if (header === "organic" || header === "seasonal") {
         row[header] = value.toLowerCase() === "true" || value === "1";
@@ -313,7 +329,8 @@ export async function GET(_request: NextRequest) {
     status: 200,
     headers: {
       "Content-Type": "text/csv",
-      "Content-Disposition": 'attachment; filename="product-upload-template.csv"',
+      "Content-Disposition":
+        'attachment; filename="product-upload-template.csv"',
     },
   });
 }

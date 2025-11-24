@@ -1,6 +1,6 @@
 import { requireFarmerAuth } from "@/lib/auth/farmer-auth";
 import { database } from "@/lib/database";
-import { emailService } from "@/lib/email/email-service";
+import { sendEmailLazy } from "@/lib/email/email-service-lazy";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     ) {
       return NextResponse.json(
         { error: "Admin access required" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
     console.error("Get approvals error:", error);
     return NextResponse.json(
       { error: "Failed to fetch approvals" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
     ) {
       return NextResponse.json(
         { error: "Admin access required" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -101,14 +101,14 @@ export async function POST(request: NextRequest) {
     if (!farmId || !action) {
       return NextResponse.json(
         { error: "Farm ID and action required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!["approve", "reject"].includes(action)) {
       return NextResponse.json(
         { error: "Action must be 'approve' or 'reject'" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
     if (farm.status !== "PENDING") {
       return NextResponse.json(
         { error: "Farm is not pending approval" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -154,8 +154,8 @@ export async function POST(request: NextRequest) {
       farm.owner.email;
 
     if (action === "approve") {
-      // Send approval email
-      await emailService.sendEmail({
+      // Send approval email (lazy-loaded to reduce bundle size)
+      await sendEmailLazy({
         to: farm.owner.email,
         subject: `🎉 Your Farm Application Has Been Approved!`,
         html: `
@@ -194,8 +194,8 @@ export async function POST(request: NextRequest) {
         text: `Congratulations! Your farm "${farm.name}" has been approved. Visit ${process.env.NEXTAUTH_URL}/farmer-dashboard to get started.`,
       });
     } else {
-      // Send rejection email
-      await emailService.sendEmail({
+      // Send rejection email (lazy-loaded to reduce bundle size)
+      await sendEmailLazy({
         to: farm.owner.email,
         subject: `Application Update for ${farm.name}`,
         html: `
@@ -244,7 +244,7 @@ export async function POST(request: NextRequest) {
     console.error("Approval action error:", error);
     return NextResponse.json(
       { error: "Failed to process approval" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -4,27 +4,12 @@
  */
 
 import { logger } from "../monitoring/logger";
+import { redisClient } from "./redis-client";
+import type { CacheOptions, CacheEntry, IMultiLayerCache } from "./types";
 
-interface CacheOptions {
-  ttl?: number; // Time to live in seconds
-  layer?: "memory" | "redis" | "all";
-  seasonalAware?: boolean;
-  agriculturalContext?: string;
-}
-
-interface CacheEntry<T> {
-  value: T;
-  timestamp: number;
-  ttl: number;
-  metadata?: {
-    season?: string;
-    agriculturalContext?: string;
-  };
-}
-
-class MultiLayerCache {
+class MultiLayerCache implements IMultiLayerCache {
   // L1: In-Memory Cache (Map-based)
-  private memoryCache = new Map<string, CacheEntry<any>>();
+  private memoryCache = new Map<string, CacheEntry<unknown>>();
   private readonly maxMemorySize = 1000; // Max entries in memory
 
   // Default TTLs by layer
@@ -74,13 +59,13 @@ class MultiLayerCache {
         key,
         value,
         Math.min(ttl, this.defaultTTL.memory),
-        options
+        options,
       );
     }
 
     // L2: Redis
     if (layer === "all" || layer === "redis") {
-      await this.redisClient.set(key, value, ttl);
+      await redisClient.set(key, JSON.stringify(value), ttl);
     }
 
     logger.debug("Cache set", { key, layer, ttl });
@@ -91,7 +76,7 @@ class MultiLayerCache {
    */
   async delete(key: string): Promise<void> {
     this.memoryCache.delete(key);
-    await redisClient.del(key);
+    await redisClient.delete(key);
     logger.debug("Cache deleted", { key });
   }
 
@@ -121,7 +106,7 @@ class MultiLayerCache {
   async getOrSet<T>(
     key: string,
     factory: () => Promise<T>,
-    options?: CacheOptions
+    options?: CacheOptions,
   ): Promise<T> {
     // Try to get from cache
     const cached = await this.get<T>(key, options);
@@ -174,7 +159,7 @@ class MultiLayerCache {
   /**
    * GET CACHE STATISTICS
    */
-  getStats() {
+  getStats(): Record<string, unknown> {
     return {
       memorySize: this.memoryCache.size,
       memoryMax: this.maxMemorySize,
@@ -208,12 +193,14 @@ class MultiLayerCache {
     key: string,
     value: T,
     ttl: number,
-    options?: CacheOptions
+    options?: CacheOptions,
   ): void {
     // Evict oldest entry if cache is full
     if (this.memoryCache.size >= this.maxMemorySize) {
       const firstKey = this.memoryCache.keys().next().value;
-      this.memoryCache.delete(firstKey);
+      if (firstKey !== undefined) {
+        this.memoryCache.delete(firstKey);
+      }
     }
 
     const entry: CacheEntry<T> = {
@@ -236,15 +223,6 @@ class MultiLayerCache {
 
   private async getFromRedis<T>(key: string): Promise<T | null> {
     return await redisClient.get<T>(key);
-  }
-
-  private async setInRedis<T>(
-    key: string,
-    value: T,
-    ttl: number,
-    options?: CacheOptions
-  ): Promise<void> {
-    await redisClient.set(key, value, ttl);
   }
 }
 

@@ -13,7 +13,6 @@
  */
 
 import { Search, TrendingUp, MapPin, Tag, X } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useCallback } from "react";
 
@@ -51,48 +50,53 @@ export function SearchAutocomplete({
 
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const debounceTimerRef = useRef<NodeJS.Timeout>();
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Popular search terms (shown when input is empty)
   const popularTerms = ["Tomatoes", "Organic Eggs", "Fresh Milk", "Honey"];
 
   // Fetch suggestions with debounce
-  const fetchSuggestions = useCallback(async (searchQuery: string) => {
-    if (searchQuery.length < 2) {
-      setSuggestions([]);
-      setShowDropdown(false);
-      return;
-    }
-
-    try {
-      setLoading(true);
-      setError(null);
-
-      const response = await fetch(
-        `/api/search/suggest?q=${encodeURIComponent(searchQuery)}&limit=10`
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch suggestions");
+  const fetchSuggestions = useCallback(
+    async (searchQuery: string): Promise<void> => {
+      if (searchQuery.length < 2) {
+        setSuggestions([]);
+        setShowDropdown(false);
+        return;
       }
 
-      const data = await response.json();
+      try {
+        setLoading(true);
+        setError(null);
 
-      if (data.success) {
-        setSuggestions(data.data);
-        setShowDropdown(true);
-        setSelectedIndex(-1);
-      } else {
-        throw new Error(data.error || "Failed to load suggestions");
+        const response = await fetch(
+          `/api/search/suggest?q=${encodeURIComponent(searchQuery)}&limit=10`,
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch suggestions");
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+          setSuggestions(data.data);
+          setShowDropdown(true);
+          setSelectedIndex(-1);
+        } else {
+          throw new Error(data.error || "Failed to load suggestions");
+        }
+      } catch (err) {
+        console.error("Error fetching suggestions:", err);
+        setError(
+          err instanceof Error ? err.message : "Failed to load suggestions",
+        );
+        setSuggestions([]);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error("Error fetching suggestions:", err);
-      setError(err instanceof Error ? err.message : "Failed to load suggestions");
-      setSuggestions([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    [],
+  );
 
   // Handle input change with debounce
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -158,7 +162,7 @@ export function SearchAutocomplete({
       case "ArrowDown":
         e.preventDefault();
         setSelectedIndex((prev) =>
-          prev < suggestions.length - 1 ? prev + 1 : prev
+          prev < suggestions.length - 1 ? prev + 1 : prev,
         );
         break;
 
@@ -170,7 +174,10 @@ export function SearchAutocomplete({
       case "Enter":
         e.preventDefault();
         if (selectedIndex >= 0 && selectedIndex < suggestions.length) {
-          handleSuggestionClick(suggestions[selectedIndex]);
+          const selectedSuggestion = suggestions[selectedIndex];
+          if (selectedSuggestion) {
+            handleSuggestionClick(selectedSuggestion);
+          }
         } else {
           handleSearch();
         }
@@ -310,15 +317,18 @@ export function SearchAutocomplete({
           )}
 
           {/* No Results */}
-          {!loading && !error && suggestions.length === 0 && query.length >= 2 && (
-            <div className="p-6 text-center">
-              <Search className="h-12 w-12 text-gray-300 mx-auto mb-2" />
-              <p className="text-gray-600">No results found for "{query}"</p>
-              <p className="text-sm text-gray-500 mt-1">
-                Try different keywords or browse our categories
-              </p>
-            </div>
-          )}
+          {!loading &&
+            !error &&
+            suggestions.length === 0 &&
+            query.length >= 2 && (
+              <div className="p-6 text-center">
+                <Search className="h-12 w-12 text-gray-300 mx-auto mb-2" />
+                <p className="text-gray-600">No results found for "{query}"</p>
+                <p className="text-sm text-gray-500 mt-1">
+                  Try different keywords or browse our categories
+                </p>
+              </div>
+            )}
 
           {/* Suggestions List */}
           {!loading && suggestions.length > 0 && (
@@ -354,9 +364,12 @@ export function SearchAutocomplete({
 
                       {/* Metadata */}
                       <div className="text-sm text-gray-600 flex items-center gap-2 mt-0.5">
-                        {suggestion.type === "product" && suggestion.farmName && (
-                          <span className="truncate">{suggestion.farmName}</span>
-                        )}
+                        {suggestion.type === "product" &&
+                          suggestion.farmName && (
+                            <span className="truncate">
+                              {suggestion.farmName}
+                            </span>
+                          )}
                         {suggestion.type === "farm" &&
                           (suggestion.city || suggestion.state) && (
                             <span className="truncate">
@@ -365,9 +378,12 @@ export function SearchAutocomplete({
                               {suggestion.state}
                             </span>
                           )}
-                        {suggestion.type === "category" && suggestion.description && (
-                          <span className="truncate">{suggestion.description}</span>
-                        )}
+                        {suggestion.type === "category" &&
+                          suggestion.description && (
+                            <span className="truncate">
+                              {suggestion.description}
+                            </span>
+                          )}
                       </div>
                     </div>
 

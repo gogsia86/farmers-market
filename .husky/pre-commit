@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# 🌾 FARMERS MARKET DIVINE PRE-COMMIT HOOK
+# Ensures code quality before commits
+
+echo "🔍 Running pre-commit checks..."
+echo ""
+
+# Run lint-staged (type check, lint, format)
+npx lint-staged
+
+# Check exit code
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "❌ Pre-commit checks failed!"
+  echo "💡 Fix the errors above and try again."
+  echo ""
+  exit 1
+fi
+
+echo ""
+echo "✅ Pre-commit checks passed!"
+echo "🚀 Proceeding with commit..."
+echo ""

@@ -3,23 +3,16 @@
  * Multi-layer caching with agricultural consciousness
  */
 
+import type { Redis as RedisType } from "ioredis";
 import Redis from "ioredis";
-import { LoggerFactory } from "../monitoring/logger";
-
-interface RedisConfig {
-  host: string;
-  port: number;
-  password?: string;
-  keyPrefix: string;
-  maxRetries: number;
-  retryDelay: number;
-}
+import { logger } from "../monitoring/logger";
+import type { RedisConfig } from "./types";
 
 class RedisClient {
-  private client: Redis | null = null;
+  private client: RedisType | null = null;
   private isConnected: boolean = false;
   private readonly config: RedisConfig;
-  private readonly logger = LoggerFactory.getLogger("RedisClient");
+  private logger = logger;
 
   constructor() {
     this.config = {
@@ -49,7 +42,7 @@ class RedisClient {
         retryStrategy: (times: number) => {
           if (times > this.config.maxRetries) {
             this.logger.error(
-              "Redis max retries exceeded - falling back to memory cache"
+              "Redis max retries exceeded - falling back to memory cache",
             );
             return null;
           }
@@ -101,7 +94,7 @@ class RedisClient {
     }
   }
 
-  async set(key: string, value: any, ttl?: number): Promise<boolean> {
+  async set(key: string, value: unknown, ttl?: number): Promise<boolean> {
     if (!this.isConnected || !this.client) {
       return false;
     }
@@ -123,6 +116,10 @@ class RedisClient {
   }
 
   async delete(key: string): Promise<void> {
+    if (!this.isConnected || !this.client) {
+      return;
+    }
+
     try {
       await this.client.del(key);
       this.logger.debug("Deleted key from Redis", { key });

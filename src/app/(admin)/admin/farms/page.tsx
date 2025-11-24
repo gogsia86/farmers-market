@@ -3,7 +3,7 @@ import { database } from "@/lib/database";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import type { Farm, User } from "@prisma/client";
 import { FarmFilters } from "./FarmFilters";
-import { FarmsTable } from "./FarmsTable";
+import { FarmsTableDynamic } from "@/components/admin/FarmsTableDynamic";
 
 // Force dynamic rendering for database access
 export const dynamic = "force-dynamic";
@@ -120,7 +120,7 @@ export default async function AdminFarmsPage({
   const page = Math.max(1, parseInt(searchParams.page || "1", 10));
   const limit = Math.min(
     100,
-    Math.max(10, parseInt(searchParams.limit || "50", 10))
+    Math.max(10, parseInt(searchParams.limit || "50", 10)),
   );
   const skip = (page - 1) * limit;
 
@@ -240,7 +240,9 @@ export default async function AdminFarmsPage({
                 </p>
               </div>
 
-              <FarmsTable initialFarms={JSON.parse(JSON.stringify(farms))} />
+              <FarmsTableDynamic
+                initialFarms={JSON.parse(JSON.stringify(farms))}
+              />
 
               {/* Divine Pagination */}
               <div className="bg-agricultural-50 px-6 py-3 border-t border-agricultural-200">
@@ -251,11 +253,15 @@ export default async function AdminFarmsPage({
                   </div>
                   <div className="flex gap-2">
                     <a
-                      href={hasPrevPage ? `?page=${page - 1}&limit=${limit}${
-                        statusFilter.status
-                          ? `&status=${statusFilter.status}`
-                          : ""
-                      }` : undefined}
+                      href={
+                        hasPrevPage
+                          ? `?page=${page - 1}&limit=${limit}${
+                              statusFilter.status
+                                ? `&status=${statusFilter.status}`
+                                : ""
+                            }`
+                          : undefined
+                      }
                       className={`px-3 py-1 text-sm border border-agricultural-300 rounded-md ${
                         hasPrevPage
                           ? "text-agricultural-700 bg-white hover:bg-agricultural-50"
@@ -267,11 +273,15 @@ export default async function AdminFarmsPage({
                       Previous
                     </a>
                     <a
-                      href={hasNextPage ? `?page=${page + 1}&limit=${limit}${
-                        statusFilter.status
-                          ? `&status=${statusFilter.status}`
-                          : ""
-                      }` : undefined}
+                      href={
+                        hasNextPage
+                          ? `?page=${page + 1}&limit=${limit}${
+                              statusFilter.status
+                                ? `&status=${statusFilter.status}`
+                                : ""
+                            }`
+                          : undefined
+                      }
                       className={`px-3 py-1 text-sm border border-agricultural-300 rounded-md ${
                         hasNextPage
                           ? "text-agricultural-700 bg-white hover:bg-agricultural-50"

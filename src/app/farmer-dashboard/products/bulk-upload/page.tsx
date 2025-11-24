@@ -11,17 +11,17 @@
  * - Navigation back to dashboard
  */
 
-import { BulkProductUpload } from "@/components/farmer/BulkProductUpload";
+import { BulkProductUploadDynamic } from "@/components/farmer/BulkProductUploadDynamic";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ArrowLeft, Package } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+
 import { useState } from "react";
 
 export default function BulkUploadPage() {
-  const router = useRouter();
-  const [uploadComplete, setUploadComplete] = useState(false);
+  // const router = useRouter(); // Reserved for future redirect functionality
+  const [_uploadComplete, setUploadComplete] = useState(false);
 
   const handleUploadSuccess = (result: any) => {
     setUploadComplete(true);
@@ -70,39 +70,45 @@ export default function BulkUploadPage() {
             </div>
           </div>
 
-          {/* Upload Component */}
-          <BulkProductUpload
-            onSuccess={handleUploadSuccess}
-          />
+          {/* Upload Component - Dynamically Loaded */}
+          <BulkProductUploadDynamic onSuccess={handleUploadSuccess} />
 
           {/* Help Section */}
           <div className="mt-8 bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
-              Need Help?
-            </h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Need Help?</h2>
             <div className="space-y-3 text-gray-700">
               <div>
-                <h3 className="font-semibold mb-1">What file format should I use?</h3>
+                <h3 className="font-semibold mb-1">
+                  What file format should I use?
+                </h3>
                 <p className="text-sm text-gray-600">
-                  Use CSV (Comma-Separated Values) format. Download our template to get started with the correct format.
+                  Use CSV (Comma-Separated Values) format. Download our template
+                  to get started with the correct format.
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold mb-1">How many products can I upload at once?</h3>
+                <h3 className="font-semibold mb-1">
+                  How many products can I upload at once?
+                </h3>
                 <p className="text-sm text-gray-600">
-                  You can upload up to 500 products in a single CSV file. For larger catalogs, split into multiple uploads.
+                  You can upload up to 500 products in a single CSV file. For
+                  larger catalogs, split into multiple uploads.
                 </p>
               </div>
               <div>
                 <h3 className="font-semibold mb-1">What if I have errors?</h3>
                 <p className="text-sm text-gray-600">
-                  The system will validate each row and show you exactly which rows have errors. You can fix the CSV and re-upload.
+                  The system will validate each row and show you exactly which
+                  rows have errors. You can fix the CSV and re-upload.
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold mb-1">Can I update existing products?</h3>
+                <h3 className="font-semibold mb-1">
+                  Can I update existing products?
+                </h3>
                 <p className="text-sm text-gray-600">
-                  Currently, bulk upload only creates new products. To update existing products, please use the individual product editor.
+                  Currently, bulk upload only creates new products. To update
+                  existing products, please use the individual product editor.
                 </p>
               </div>
             </div>
@@ -123,7 +129,9 @@ export default function BulkUploadPage() {
               href="/farmer-dashboard/products"
               className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
             >
-              <h3 className="font-semibold text-gray-900 mb-2">Manage Products</h3>
+              <h3 className="font-semibold text-gray-900 mb-2">
+                Manage Products
+              </h3>
               <p className="text-sm text-gray-600">
                 Edit, delete, or view individual products
               </p>

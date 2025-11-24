@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
           success: false,
           error: "Query must be at least 2 characters",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -68,20 +68,14 @@ export async function GET(request: NextRequest) {
                 mode: "insensitive",
               },
             },
-            {
-              category: {
-                contains: query,
-                mode: "insensitive",
-              },
-            },
           ],
         },
         select: {
           id: true,
           name: true,
           description: true,
-          primaryImage: true,
-          pricePerUnit: true,
+          images: true,
+          price: true,
           category: true,
           farm: {
             select: {
@@ -132,14 +126,10 @@ export async function GET(request: NextRequest) {
           id: true,
           name: true,
           description: true,
-          coverImage: true,
+          bannerUrl: true,
+          logoUrl: true,
           city: true,
           state: true,
-          _count: {
-            select: {
-              products: true,
-            },
-          },
         },
         take: Math.floor(maxLimit * 0.3), // 30% farms
         orderBy: {
@@ -156,12 +146,12 @@ export async function GET(request: NextRequest) {
         id: product.id,
         name: product.name,
         description: product.description || undefined,
-        image: product.primaryImage,
-        farmName: product.farm.name,
-        city: product.farm.city || undefined,
-        state: product.farm.state || undefined,
+        image: product.images?.[0],
+        farmName: product.farm?.name,
+        city: product.farm?.city || undefined,
+        state: product.farm?.state || undefined,
         category: product.category,
-        price: product.pricePerUnit,
+        price: Number(product.price),
       })),
 
       // Farm suggestions
@@ -170,10 +160,10 @@ export async function GET(request: NextRequest) {
         id: farm.id,
         name: farm.name,
         description: farm.description || undefined,
-        image: farm.coverImage,
+        image: farm.bannerUrl || farm.logoUrl,
         city: farm.city || undefined,
         state: farm.state || undefined,
-        productCount: farm._count.products,
+        productCount: undefined,
       })),
     ];
 
@@ -188,9 +178,15 @@ export async function GET(request: NextRequest) {
       if (bNameLower === queryLower) return 1;
 
       // Starts with query
-      if (aNameLower.startsWith(queryLower) && !bNameLower.startsWith(queryLower))
+      if (
+        aNameLower.startsWith(queryLower) &&
+        !bNameLower.startsWith(queryLower)
+      )
         return -1;
-      if (bNameLower.startsWith(queryLower) && !aNameLower.startsWith(queryLower))
+      if (
+        bNameLower.startsWith(queryLower) &&
+        !aNameLower.startsWith(queryLower)
+      )
         return 1;
 
       // Alphabetical
@@ -201,7 +197,7 @@ export async function GET(request: NextRequest) {
     const categoryMatches = getCategorySuggestions(query);
     const allSuggestions = [...categoryMatches, ...sortedSuggestions].slice(
       0,
-      maxLimit
+      maxLimit,
     );
 
     return NextResponse.json(
@@ -221,7 +217,7 @@ export async function GET(request: NextRequest) {
         headers: {
           "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
         },
-      }
+      },
     );
   } catch (error) {
     console.error("[SEARCH_SUGGEST_API_ERROR]", error);
@@ -231,7 +227,7 @@ export async function GET(request: NextRequest) {
         error: "Failed to fetch search suggestions",
         message: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

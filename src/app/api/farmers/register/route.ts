@@ -1,4 +1,5 @@
 import { database } from "@/lib/database";
+import { sendFarmerWelcomeLazy } from "@/lib/email/email-service-lazy";
 import { GeocodingService } from "@/lib/services/geocoding.service";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -119,8 +120,17 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Send confirmation email (TODO: implement email service)
-    // await sendFarmerWelcomeEmail(user.email, farm.name);
+    // Send confirmation email (lazy-loaded to reduce bundle size)
+    try {
+      await sendFarmerWelcomeLazy(user.email, {
+        farmerName: validatedData.ownerName,
+        farmName: farm.name,
+        farmId: farm.id,
+      });
+    } catch (emailError) {
+      // Log email error but don't fail registration
+      console.error("Failed to send welcome email:", emailError);
+    }
 
     return NextResponse.json(
       {

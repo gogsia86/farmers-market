@@ -1,4 +1,10 @@
 import { fileURLToPath } from "url";
+import bundleAnalyzer from "@next/bundle-analyzer";
+
+// Bundle analyzer for performance optimization
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+});
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -25,7 +31,7 @@ const nextConfig = {
   // EXPERIMENTAL FEATURES (PERFORMANCE)
   // ============================================
   experimental: {
-    // Optimize package imports
+    // Optimize package imports - Phase 5 Enhanced
     optimizePackageImports: [
       "@headlessui/react",
       "@heroicons/react",
@@ -35,6 +41,8 @@ const nextConfig = {
       "@radix-ui/react-toast",
       "lucide-react",
       "framer-motion",
+      "date-fns",
+      "@tanstack/react-query",
     ],
     // Enable scroll restoration
     scrollRestoration: true,
@@ -71,17 +79,68 @@ const nextConfig = {
         runtimeChunk: "single",
         splitChunks: {
           chunks: "all",
+          maxInitialRequests: 25,
+          minSize: 20000,
           cacheGroups: {
             default: false,
             vendors: false,
-            // Vendor chunk
+            // Framework chunk (React, Next.js core)
+            framework: {
+              name: "framework",
+              chunks: "all",
+              test: /[\\/]node_modules[\\/](react|react-dom|next|scheduler)[\\/]/,
+              priority: 40,
+              enforce: true,
+            },
+            // Heavy AI/ML libraries - Phase 5 Dynamic Import Target
+            ai: {
+              name: "ai-ml",
+              test: /[\\/]node_modules[\\/](@tensorflow|ollama)[\\/]/,
+              chunks: "async",
+              priority: 35,
+              reuseExistingChunk: true,
+            },
+            // Chart libraries - Phase 5 Dynamic Import Target
+            charts: {
+              name: "charts",
+              test: /[\\/]node_modules[\\/](recharts|chart\.js|d3|victory)[\\/]/,
+              chunks: "async",
+              priority: 35,
+              reuseExistingChunk: true,
+            },
+            // Animation libraries
+            animations: {
+              name: "animations",
+              test: /[\\/]node_modules[\\/](framer-motion)[\\/]/,
+              chunks: "async",
+              priority: 30,
+              reuseExistingChunk: true,
+            },
+            // Stripe and payment processing
+            payments: {
+              name: "payments",
+              test: /[\\/]node_modules[\\/](@stripe)[\\/]/,
+              chunks: "async",
+              priority: 30,
+              reuseExistingChunk: true,
+            },
+            // OpenTelemetry and monitoring
+            telemetry: {
+              name: "telemetry",
+              test: /[\\/]node_modules[\\/](@opentelemetry|@sentry)[\\/]/,
+              chunks: "all",
+              priority: 25,
+              reuseExistingChunk: true,
+            },
+            // Large vendor libraries
             vendor: {
               name: "vendor",
               chunks: "all",
-              test: /node_modules/,
+              test: /[\\/]node_modules[\\/]/,
               priority: 20,
+              reuseExistingChunk: true,
             },
-            // Common chunk
+            // Common chunks across pages
             common: {
               name: "common",
               minChunks: 2,
@@ -283,6 +342,12 @@ const nextConfig = {
       transform: "lucide-react/dist/esm/icons/{{kebabCase member}}",
     },
   },
+
+  // ============================================
+  // TURBOPACK CONFIGURATION (Next.js 16+)
+  // ============================================
+  // Empty config to silence webpack compatibility warning
+  turbopack: {},
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);

@@ -29,7 +29,7 @@ export const QuantumFarmCard = forwardRef<HTMLDivElement, QuantumFarmCardProps>(
       showBiodynamicScore = true,
       onFarmClick,
     },
-    ref
+    ref,
   ) => {
     // Component consciousness tracking
     const consciousness = useComponentConsciousness("QuantumFarmCard", {
@@ -38,8 +38,7 @@ export const QuantumFarmCard = forwardRef<HTMLDivElement, QuantumFarmCardProps>(
     });
 
     // Seasonal consciousness
-    const { currentSeason, lunarPhase, getSeasonalAdvice } =
-      useSeasonalConsciousness();
+    const { season: currentSeason, lunarPhase } = useSeasonalConsciousness();
 
     const [imageError, setImageError] = useState(false);
 
@@ -72,7 +71,7 @@ export const QuantumFarmCard = forwardRef<HTMLDivElement, QuantumFarmCardProps>(
               variant === "agricultural",
             "bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200":
               variant === "divine",
-          }
+          },
         )}
         onClick={handleClick}
         data-testid="farm-card"
@@ -229,7 +228,7 @@ export const QuantumFarmCard = forwardRef<HTMLDivElement, QuantumFarmCardProps>(
                     variant === "divine",
                   "bg-blue-600 hover:bg-blue-700 text-white":
                     variant === "default",
-                }
+                },
               )}
             >
               View Farm
@@ -238,7 +237,7 @@ export const QuantumFarmCard = forwardRef<HTMLDivElement, QuantumFarmCardProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
 QuantumFarmCard.displayName = "QuantumFarmCard";

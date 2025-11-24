@@ -16,7 +16,7 @@ import {
 } from "@/types/inventory.types";
 import { useEffect, useState } from "react";
 
-interface InventoryDashboardProps {
+export interface InventoryDashboardProps {
   farmId: string;
 }
 

@@ -21,12 +21,20 @@ export interface PerformanceMeasurement {
   failure: (error: Error | unknown) => void;
 }
 
+export interface MeasurementRecord {
+  name: string;
+  duration: number;
+  success: boolean;
+  timestamp: Date;
+  error?: Error;
+}
+
 export interface ComponentConsciousness {
   startMeasurement: (operationName: string) => PerformanceMeasurement;
   trackEvent: (eventName: string, metadata?: Record<string, unknown>) => void;
   trackInteraction: (
     eventName: string,
-    metadata?: Record<string, unknown>
+    metadata?: Record<string, unknown>,
   ) => void;
   captureError: (errorName: string, error: unknown) => void;
   getMetrics: () => ComponentMetrics;
@@ -115,7 +123,7 @@ declare global {
  */
 export function useComponentConsciousness(
   componentName: string,
-  context?: Record<string, unknown>
+  context?: Record<string, unknown>,
 ): ComponentConsciousness {
   // Metrics storage
   const metricsRef = useRef<ComponentMetrics>({
@@ -159,7 +167,7 @@ export function useComponentConsciousness(
       console.warn(
         `🐌 Slow render detected in ${componentName}:`,
         `${renderTime.toFixed(2)}ms`,
-        context
+        context,
       );
     }
   });
@@ -167,7 +175,7 @@ export function useComponentConsciousness(
   /**
    * Start performance measurement for an operation
    */
-  const measurements = useRef(new Map<string, PerformanceMeasurement>());
+  const measurements = useRef(new Map<string, MeasurementRecord>());
   const errors = useRef<Error[]>([]);
 
   const startMeasurement = useCallback(
@@ -232,7 +240,7 @@ export function useComponentConsciousness(
         },
       };
     },
-    [componentName]
+    [componentName],
   ); /**
    * Track custom events (clicks, interactions, etc.)
    */
@@ -255,7 +263,7 @@ export function useComponentConsciousness(
         });
       }
     },
-    [componentName, context]
+    [componentName, context],
   );
 
   /**
@@ -265,7 +273,7 @@ export function useComponentConsciousness(
     (eventName: string, metadata?: Record<string, unknown>) => {
       trackEvent(eventName, metadata);
     },
-    [trackEvent]
+    [trackEvent],
   );
 
   /**
@@ -298,7 +306,7 @@ export function useComponentConsciousness(
         });
       }
     },
-    [componentName]
+    [componentName],
   );
 
   /**

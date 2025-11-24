@@ -1,0 +1,137 @@
+npm info using npm@10.9.4
+npm info using node@v22.21.0
+npm http fetch POST 200 https://registry.npmjs.org/-/npm/v1/security/advisories/bulk 510ms
+npm http cache https://registry.npmjs.org/hono 16ms (cache hit)
+npm http cache https://registry.npmjs.org/@hono%2fnode-server 12ms (cache hit)
+npm http cache https://registry.npmjs.org/@prisma%2fdev 15ms (cache hit)
+npm http cache https://registry.npmjs.org/prisma 47ms (cache hit)
+npm http cache https://registry.npmjs.org/@prisma%2fclient 68ms (cache hit)
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "@prisma/dev": {
+      "name": "@prisma/dev",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "hono"
+      ],
+      "effects": [
+        "prisma"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/@prisma/dev"
+      ],
+      "fixAvailable": {
+        "name": "prisma",
+        "version": "6.19.0",
+        "isSemVerMajor": true
+      }
+    },
+    "hono": {
+      "name": "hono",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1107532,
+          "name": "hono",
+          "dependency": "hono",
+          "title": "Hono has Body Limit Middleware Bypass",
+          "url": "https://github.com/advisories/GHSA-92vj-g62v-jqhh",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-400",
+            "CWE-770"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": "<4.9.7"
+        },
+        {
+          "source": 1109151,
+          "name": "hono",
+          "dependency": "hono",
+          "title": "Hono Improper Authorization vulnerability",
+          "url": "https://github.com/advisories/GHSA-m732-5p4w-x69g",
+          "severity": "high",
+          "cwe": [
+            "CWE-285"
+          ],
+          "cvss": {
+            "score": 8.1,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N"
+          },
+          "range": ">=1.1.0 <4.10.2"
+        },
+        {
+          "source": 1109205,
+          "name": "hono",
+          "dependency": "hono",
+          "title": "Hono vulnerable to Vary Header Injection leading to potential CORS Bypass",
+          "url": "https://github.com/advisories/GHSA-q7jf-gf43-6x6p",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-444"
+          ],
+          "cvss": {
+            "score": 6.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N"
+          },
+          "range": "<4.10.3"
+        }
+      ],
+      "effects": [
+        "@prisma/dev"
+      ],
+      "range": "<=4.10.2",
+      "nodes": [
+        "node_modules/hono"
+      ],
+      "fixAvailable": {
+        "name": "prisma",
+        "version": "6.19.0",
+        "isSemVerMajor": true
+      }
+    },
+    "prisma": {
+      "name": "prisma",
+      "severity": "moderate",
+      "isDirect": true,
+      "via": [
+        "@prisma/dev"
+      ],
+      "effects": [],
+      "range": ">=6.20.0-dev.1",
+      "nodes": [
+        "node_modules/prisma"
+      ],
+      "fixAvailable": {
+        "name": "prisma",
+        "version": "6.19.0",
+        "isSemVerMajor": true
+      }
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 2,
+      "high": 1,
+      "critical": 0,
+      "total": 3
+    },
+    "dependencies": {
+      "prod": 717,
+      "dev": 754,
+      "optional": 138,
+      "peer": 61,
+      "peerOptional": 0,
+      "total": 1593
+    }
+  }
+}

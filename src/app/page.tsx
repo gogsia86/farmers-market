@@ -22,6 +22,7 @@ import {
   Clock,
   Leaf,
   MapPin,
+  Search,
   Shield,
   ShoppingBag,
   Star,

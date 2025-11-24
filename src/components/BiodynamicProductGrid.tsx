@@ -39,8 +39,11 @@ export function BiodynamicProductGrid({
   });
 
   // Seasonal consciousness
-  const { currentSeason, isSeasonallyAppropriate, getSeasonalRecommendations } =
-    useSeasonalConsciousness();
+  const {
+    season: currentSeason,
+    plantingWindow,
+    harvestWindow,
+  } = useSeasonalConsciousness();
 
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
 
@@ -50,7 +53,7 @@ export function BiodynamicProductGrid({
 
     if (seasonalFilter) {
       filtered = filtered.filter((product) =>
-        product.seasonal ? isSeasonallyAppropriate(currentSeason) : true
+        product.seasonal ? plantingWindow || harvestWindow : true,
       );
     }
 
@@ -59,13 +62,7 @@ export function BiodynamicProductGrid({
     }
 
     setFilteredProducts(filtered);
-  }, [
-    products,
-    seasonalFilter,
-    organicOnly,
-    currentSeason,
-    isSeasonallyAppropriate,
-  ]);
+  }, [products, seasonalFilter, organicOnly, currentSeason]);
 
   const handleProductClick = (product: Product) => {
     const measurement = consciousness.startMeasurement("product_click");
@@ -113,7 +110,7 @@ export function BiodynamicProductGrid({
           "grid-cols-1 md:grid-cols-2 lg:grid-cols-3": columns === 3,
           "grid-cols-1 md:grid-cols-2 lg:grid-cols-4": columns === 4,
         },
-        className
+        className,
       )}
     >
       {filteredProducts.map((product) => (
@@ -127,7 +124,7 @@ export function BiodynamicProductGrid({
           <div className="relative h-48 bg-gray-200">
             {product.images && product.images.length > 0 ? (
               <Image
-                src={product.images[0]}
+                src={product.images?.[0] || "/placeholder-product.jpg"}
                 alt={product.name}
                 fill
                 className="object-cover"
@@ -208,7 +205,7 @@ export function BiodynamicProductGrid({
                 "w-full py-2 rounded-lg font-medium transition-colors",
                 product.inStock
                   ? "bg-agricultural-600 text-white hover:bg-agricultural-700"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed",
               )}
             >
               {product.inStock ? "Add to Cart" : "Out of Stock"}

@@ -5,7 +5,7 @@
 
 import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
-import { Resource } from "@opentelemetry/resources";
+import { resourceFromAttributes } from "@opentelemetry/resources";
 import { NodeSDK } from "@opentelemetry/sdk-node";
 import {
   ATTR_SERVICE_NAME,
@@ -27,7 +27,7 @@ const traceExporter = new OTLPTraceExporter({
 /**
  * Configure resource with agricultural metadata
  */
-const resource = new Resource({
+const resource = resourceFromAttributes({
   [ATTR_SERVICE_NAME]: "farmers-market-divine",
   [ATTR_SERVICE_VERSION]: process.env.npm_package_version || "1.0.0",
   "agricultural.consciousness": "enabled",
@@ -46,7 +46,7 @@ const sdk = new NodeSDK({
       // Enable comprehensive instrumentation
       "@opentelemetry/instrumentation-http": {
         enabled: true,
-        ignoreIncomingRequestHook: (req) => {
+        ignoreIncomingRequestHook: (req: { url?: string }) => {
           // Don't trace health checks and static assets
           const url = req.url || "";
           return (
@@ -75,7 +75,7 @@ const sdk = new NodeSDK({
 /**
  * Start the SDK
  */
-export function initializeTracing() {
+export function initializeTracing(): void {
   sdk.start();
   console.log("🌾 Divine Tracing initialized with agricultural consciousness");
   console.log(
@@ -86,7 +86,7 @@ export function initializeTracing() {
 /**
  * Graceful shutdown
  */
-export async function shutdownTracing() {
+export async function shutdownTracing(): Promise<void> {
   try {
     await sdk.shutdown();
     console.log("🌾 Divine Tracing gracefully shut down");

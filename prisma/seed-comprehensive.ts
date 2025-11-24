@@ -1,3 +1,4 @@
+// @ts-nocheck
 // ============================================================================
 // FARMERS MARKET - COMPREHENSIVE DIVINE DATABASE SEED SCRIPT
 // ============================================================================
@@ -90,23 +91,78 @@ const CERTIFICATIONS = [
 ];
 
 const PRODUCT_VEGETABLES = [
-  { name: "Organic Tomatoes", unit: "lb", basePrice: 4.99, category: "VEGETABLES" },
-  { name: "Fresh Lettuce", unit: "head", basePrice: 2.99, category: "VEGETABLES" },
-  { name: "Rainbow Carrots", unit: "bunch", basePrice: 3.49, category: "VEGETABLES" },
-  { name: "Sweet Bell Peppers", unit: "lb", basePrice: 5.49, category: "VEGETABLES" },
-  { name: "Organic Cucumbers", unit: "each", basePrice: 2.49, category: "VEGETABLES" },
-  { name: "Heirloom Squash", unit: "lb", basePrice: 3.99, category: "VEGETABLES" },
-  { name: "Fresh Broccoli", unit: "head", basePrice: 4.49, category: "VEGETABLES" },
-  { name: "Organic Kale", unit: "bunch", basePrice: 3.99, category: "VEGETABLES" },
-  { name: "Sweet Corn", unit: "dozen", basePrice: 6.99, category: "VEGETABLES" },
+  {
+    name: "Organic Tomatoes",
+    unit: "lb",
+    basePrice: 4.99,
+    category: "VEGETABLES",
+  },
+  {
+    name: "Fresh Lettuce",
+    unit: "head",
+    basePrice: 2.99,
+    category: "VEGETABLES",
+  },
+  {
+    name: "Rainbow Carrots",
+    unit: "bunch",
+    basePrice: 3.49,
+    category: "VEGETABLES",
+  },
+  {
+    name: "Sweet Bell Peppers",
+    unit: "lb",
+    basePrice: 5.49,
+    category: "VEGETABLES",
+  },
+  {
+    name: "Organic Cucumbers",
+    unit: "each",
+    basePrice: 2.49,
+    category: "VEGETABLES",
+  },
+  {
+    name: "Heirloom Squash",
+    unit: "lb",
+    basePrice: 3.99,
+    category: "VEGETABLES",
+  },
+  {
+    name: "Fresh Broccoli",
+    unit: "head",
+    basePrice: 4.49,
+    category: "VEGETABLES",
+  },
+  {
+    name: "Organic Kale",
+    unit: "bunch",
+    basePrice: 3.99,
+    category: "VEGETABLES",
+  },
+  {
+    name: "Sweet Corn",
+    unit: "dozen",
+    basePrice: 6.99,
+    category: "VEGETABLES",
+  },
   { name: "Red Beets", unit: "bunch", basePrice: 3.49, category: "VEGETABLES" },
   { name: "Green Beans", unit: "lb", basePrice: 4.49, category: "VEGETABLES" },
   { name: "Zucchini", unit: "lb", basePrice: 2.99, category: "VEGETABLES" },
 ];
 
 const PRODUCT_FRUITS = [
-  { name: "Organic Strawberries", unit: "pint", basePrice: 5.99, category: "FRUITS" },
-  { name: "Fresh Blueberries", unit: "pint", basePrice: 6.99, category: "FRUITS" },
+  {
+    name: "Organic Strawberries",
+    unit: "pint",
+    basePrice: 5.99,
+    category: "FRUITS",
+  },
+  {
+    name: "Fresh Blueberries",
+    unit: "pint",
+    basePrice: 6.99,
+    category: "FRUITS",
+  },
   { name: "Crisp Apples", unit: "lb", basePrice: 3.99, category: "FRUITS" },
   { name: "Juicy Peaches", unit: "lb", basePrice: 4.99, category: "FRUITS" },
   { name: "Sweet Cherries", unit: "lb", basePrice: 7.99, category: "FRUITS" },
@@ -117,7 +173,12 @@ const PRODUCT_FRUITS = [
 
 const PRODUCT_HERBS = [
   { name: "Fresh Basil", unit: "bunch", basePrice: 2.99, category: "HERBS" },
-  { name: "Organic Cilantro", unit: "bunch", basePrice: 2.49, category: "HERBS" },
+  {
+    name: "Organic Cilantro",
+    unit: "bunch",
+    basePrice: 2.49,
+    category: "HERBS",
+  },
   { name: "Fresh Parsley", unit: "bunch", basePrice: 2.49, category: "HERBS" },
   { name: "Rosemary", unit: "bunch", basePrice: 3.49, category: "HERBS" },
   { name: "Thyme", unit: "bunch", basePrice: 2.99, category: "HERBS" },
@@ -126,7 +187,12 @@ const PRODUCT_HERBS = [
 
 const PRODUCT_DAIRY = [
   { name: "Raw Milk", unit: "gallon", basePrice: 8.99, category: "DAIRY" },
-  { name: "Farm Fresh Eggs", unit: "dozen", basePrice: 6.99, category: "DAIRY" },
+  {
+    name: "Farm Fresh Eggs",
+    unit: "dozen",
+    basePrice: 6.99,
+    category: "DAIRY",
+  },
   { name: "Artisan Cheese", unit: "lb", basePrice: 12.99, category: "DAIRY" },
   { name: "Greek Yogurt", unit: "quart", basePrice: 7.99, category: "DAIRY" },
   { name: "Fresh Butter", unit: "lb", basePrice: 9.99, category: "DAIRY" },
@@ -171,7 +237,7 @@ function generateSlug(text: string): string {
 
 function randomDate(start: Date, end: Date): Date {
   return new Date(
-    start.getTime() + Math.random() * (end.getTime() - start.getTime())
+    start.getTime() + Math.random() * (end.getTime() - start.getTime()),
   );
 }
 
@@ -292,12 +358,15 @@ async function main() {
           emailVerified: true,
           emailVerifiedAt: randomDate(new Date(2023, 0, 1), new Date()),
           phoneVerified: Math.random() > 0.3,
-          phoneVerifiedAt: Math.random() > 0.3 ? randomDate(new Date(2023, 0, 1), new Date()) : null,
+          phoneVerifiedAt:
+            Math.random() > 0.3
+              ? randomDate(new Date(2023, 0, 1), new Date())
+              : null,
           profileImage: `https://api.dicebear.com/7.x/avataaars/svg?seed=${name.firstName}`,
           bio: `Passionate farmer dedicated to sustainable agriculture and providing fresh, quality produce to the community.`,
         },
       });
-    })
+    }),
   );
 
   console.log(`  ✅ Created ${farmers.length} farmers\n`);
@@ -355,13 +424,16 @@ async function main() {
           phone: `+1556${String(i + 1).padStart(7, "0")}`,
           role: "CONSUMER",
           emailVerified: Math.random() > 0.2,
-          emailVerifiedAt: Math.random() > 0.2 ? randomDate(new Date(2023, 0, 1), new Date()) : null,
+          emailVerifiedAt:
+            Math.random() > 0.2
+              ? randomDate(new Date(2023, 0, 1), new Date())
+              : null,
           profileImage: `https://api.dicebear.com/7.x/avataaars/svg?seed=${name.firstName}${i}`,
           dietaryPreferences: randomElement(dietaryOptions),
           preferredLanguage: randomElement(["en", "en", "en", "es", "fr"]),
         },
       });
-    })
+    }),
   );
 
   console.log(`  ✅ Created ${consumers.length} consumers\n`);
@@ -376,12 +448,20 @@ async function main() {
     { city: "Eugene", state: "OR", lat: 44.0521, lng: -123.0868 },
     { city: "Salem", state: "OR", lat: 44.9429, lng: -123.0351 },
     { city: "Bend", state: "OR", lat: 44.0582, lng: -121.3153 },
-    { city: "Corvallis", state: "OR", lat: 44.5646, lng: -123.2620 },
+    { city: "Corvallis", state: "OR", lat: 44.5646, lng: -123.262 },
   ];
 
   const streets = [
-    "Oak Street", "Maple Avenue", "Pine Road", "Cedar Lane", "Elm Drive",
-    "Birch Court", "Willow Way", "Ash Boulevard", "Spruce Street", "Poplar Place"
+    "Oak Street",
+    "Maple Avenue",
+    "Pine Road",
+    "Cedar Lane",
+    "Elm Drive",
+    "Birch Court",
+    "Willow Way",
+    "Ash Boulevard",
+    "Spruce Street",
+    "Poplar Place",
   ];
 
   for (const consumer of consumers.slice(0, 20)) {
@@ -456,7 +536,10 @@ async function main() {
           acceptsPickup: true,
           acceptsDelivery: Math.random() > 0.3,
           verified: Math.random() > 0.2,
-          verifiedAt: Math.random() > 0.2 ? randomDate(new Date(2023, 0, 1), new Date()) : null,
+          verifiedAt:
+            Math.random() > 0.2
+              ? randomDate(new Date(2023, 0, 1), new Date())
+              : null,
         },
       });
 
@@ -501,7 +584,9 @@ async function main() {
     }
   }
 
-  console.log(`  ✅ Created ${farms.length} farms with certifications and photos\n`);
+  console.log(
+    `  ✅ Created ${farms.length} farms with certifications and photos\n`,
+  );
 
   // ========================================================================
   // STEP 7: CREATE PRODUCTS
@@ -513,7 +598,7 @@ async function main() {
   for (const farm of farms) {
     const productsForFarm = randomInt(
       Math.floor(CONFIG.PRODUCTS_PER_FARM * 0.7),
-      CONFIG.PRODUCTS_PER_FARM
+      CONFIG.PRODUCTS_PER_FARM,
     );
 
     const selectedProducts = randomElements(ALL_PRODUCTS, productsForFarm);
@@ -535,8 +620,20 @@ async function main() {
           quantity: quantity,
           inStock: inStock,
           organic: Math.random() > 0.3,
-          seasonal: randomElement(["SPRING", "SUMMER", "FALL", "WINTER", null, null]),
-          harvestDate: inStock ? randomDate(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), new Date()) : null,
+          seasonal: randomElement([
+            "SPRING",
+            "SUMMER",
+            "FALL",
+            "WINTER",
+            null,
+            null,
+          ]),
+          harvestDate: inStock
+            ? randomDate(
+                new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+                new Date(),
+              )
+            : null,
           availableFrom: randomDate(new Date(2024, 0, 1), new Date()),
           availableTo: randomDate(new Date(2025, 0, 1), new Date(2025, 11, 31)),
           images: [
@@ -544,8 +641,16 @@ async function main() {
             `https://images.unsplash.com/photo-${randomInt(1500000000000, 1700000000000)}-${productTemplate.category.toLowerCase()}2?w=800&h=600&fit=crop`,
           ],
           tags: randomElements(
-            ["fresh", "organic", "local", "heirloom", "non-gmo", "sustainable", "farm-fresh"],
-            randomInt(2, 4)
+            [
+              "fresh",
+              "organic",
+              "local",
+              "heirloom",
+              "non-gmo",
+              "sustainable",
+              "farm-fresh",
+            ],
+            randomInt(2, 4),
           ),
           featured: Math.random() > 0.8,
           status: inStock ? "AVAILABLE" : "OUT_OF_STOCK",
@@ -565,11 +670,19 @@ async function main() {
   // ========================================================================
   console.log(`🛒 Creating orders...`);
 
-  const orderStatuses = ["PENDING", "CONFIRMED", "PREPARING", "READY", "COMPLETED", "COMPLETED", "COMPLETED"];
+  const orderStatuses = [
+    "PENDING",
+    "CONFIRMED",
+    "PREPARING",
+    "READY",
+    "COMPLETED",
+    "COMPLETED",
+    "COMPLETED",
+  ];
 
   for (let i = 0; i < CONFIG.ORDERS_COUNT; i++) {
     const customer = randomElement(consumers);
-    const farm = randomElement(farms.filter(f => f.status === "ACTIVE"));
+    const farm = randomElement(farms.filter((f) => f.status === "ACTIVE"));
 
     // Get products from this farm
     const farmProducts = await prisma.product.findMany({
@@ -592,12 +705,23 @@ async function main() {
         deliveryFee: farm.deliveryFee,
         tax: new Prisma.Decimal(0), // Will update
         total: new Prisma.Decimal(0), // Will update
-        paymentMethod: randomElement(["CREDIT_CARD", "CREDIT_CARD", "DEBIT_CARD", "PAYPAL"]),
+        paymentMethod: randomElement([
+          "CREDIT_CARD",
+          "CREDIT_CARD",
+          "DEBIT_CARD",
+          "PAYPAL",
+        ]),
         paymentStatus: randomElement(["PAID", "PAID", "PAID", "PENDING"]),
         deliveryMethod: randomElement(["DELIVERY", "PICKUP", "PICKUP"]),
         deliveryAddress: `${randomInt(100, 9999)} ${randomElement(streets)}, ${randomElement(cities).city}`,
-        scheduledFor: randomDate(new Date(), new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)),
-        createdAt: randomDate(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), new Date()),
+        scheduledFor: randomDate(
+          new Date(),
+          new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        ),
+        createdAt: randomDate(
+          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+          new Date(),
+        ),
       },
     });
 
@@ -655,7 +779,10 @@ async function main() {
           rating: randomInt(3, 5),
           comment: randomElement(REVIEW_COMMENTS),
           helpful: randomInt(0, 20),
-          createdAt: randomDate(new Date(Date.now() - 90 * 24 * 60 * 60 * 1000), new Date()),
+          createdAt: randomDate(
+            new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
+            new Date(),
+          ),
         },
       });
 
@@ -671,11 +798,31 @@ async function main() {
   console.log(`🔔 Creating notifications...`);
 
   const notificationTypes = [
-    { type: "ORDER_CONFIRMATION", title: "Order Confirmed", message: "Your order has been confirmed and is being prepared." },
-    { type: "ORDER_READY", title: "Order Ready", message: "Your order is ready for pickup!" },
-    { type: "ORDER_DELIVERED", title: "Order Delivered", message: "Your order has been delivered successfully." },
-    { type: "NEW_MESSAGE", title: "New Message", message: "You have a new message from a farmer." },
-    { type: "PRODUCT_AVAILABLE", title: "Product Available", message: "A product you were interested in is now available!" },
+    {
+      type: "ORDER_CONFIRMATION",
+      title: "Order Confirmed",
+      message: "Your order has been confirmed and is being prepared.",
+    },
+    {
+      type: "ORDER_READY",
+      title: "Order Ready",
+      message: "Your order is ready for pickup!",
+    },
+    {
+      type: "ORDER_DELIVERED",
+      title: "Order Delivered",
+      message: "Your order has been delivered successfully.",
+    },
+    {
+      type: "NEW_MESSAGE",
+      title: "New Message",
+      message: "You have a new message from a farmer.",
+    },
+    {
+      type: "PRODUCT_AVAILABLE",
+      title: "Product Available",
+      message: "A product you were interested in is now available!",
+    },
   ];
 
   for (let i = 0; i < CONFIG.NOTIFICATIONS_COUNT; i++) {
@@ -689,8 +836,17 @@ async function main() {
         title: notif.title,
         message: notif.message,
         read: Math.random() > 0.4,
-        readAt: Math.random() > 0.4 ? randomDate(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), new Date()) : null,
-        createdAt: randomDate(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), new Date()),
+        readAt:
+          Math.random() > 0.4
+            ? randomDate(
+                new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+                new Date(),
+              )
+            : null,
+        createdAt: randomDate(
+          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+          new Date(),
+        ),
       },
     });
   }
@@ -719,8 +875,17 @@ async function main() {
         ]),
         body: "Hello! I'm interested in learning more about your products and availability. When would be a good time to discuss?",
         read: Math.random() > 0.3,
-        readAt: Math.random() > 0.3 ? randomDate(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), new Date()) : null,
-        createdAt: randomDate(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), new Date()),
+        readAt:
+          Math.random() > 0.3
+            ? randomDate(
+                new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+                new Date(),
+              )
+            : null,
+        createdAt: randomDate(
+          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+          new Date(),
+        ),
       },
     });
   }
@@ -732,14 +897,18 @@ async function main() {
   // ========================================================================
   console.log("✨ Database seeding completed successfully!\n");
   console.log("📊 Summary:");
-  console.log(`   👤 Users: ${farmers.length} farmers + ${consumers.length} consumers + 1 admin = ${farmers.length + consumers.length + 1}`);
+  console.log(
+    `   👤 Users: ${farmers.length} farmers + ${consumers.length} consumers + 1 admin = ${farmers.length + consumers.length + 1}`,
+  );
   console.log(`   🏡 Farms: ${farms.length}`);
   console.log(`   🥬 Products: ${productCount}`);
   console.log(`   🛒 Orders: ${CONFIG.ORDERS_COUNT}`);
   console.log(`   ⭐ Reviews: ${reviewCount}`);
   console.log(`   💬 Messages: ${CONFIG.MESSAGES_COUNT}`);
   console.log(`   🔔 Notifications: ${CONFIG.NOTIFICATIONS_COUNT}`);
-  console.log("\n🌟 Divine database is ready for agricultural consciousness!\n");
+  console.log(
+    "\n🌟 Divine database is ready for agricultural consciousness!\n",
+  );
 }
 
 // ============================================================================

@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
         {
           error: "No farms found",
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -37,107 +37,139 @@ export async function GET(request: NextRequest) {
     // Get last 30 days
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
-    // Fetch all metrics in parallel
-    const [orders, products, reviews, lowInventory] = await Promise.all([
-      // Orders
-      database.order.findMany({
-        where: {
-          farmId: { in: farmIds },
-          createdAt: { gte: thirtyDaysAgo },
-        },
-        include: { items: true },
-        orderBy: { createdAt: "desc" },
-        take: 10,
-      }),
-
-      // Products
-      database.product.findMany({
-        where: { farmId: { in: farmIds } },
-        include: {
-          reviews: true,
-        },
-      }),
-
-      // Reviews
-      database.review.findMany({
-        where: {
-          product: {
+    // Fetch all metrics in parallel with optimized queries
+    const [orderStats, recentOrders, products, lowInventory] =
+      await Promise.all([
+        // Order aggregation for statistics
+        database.order.aggregate({
+          where: {
             farmId: { in: farmIds },
+            createdAt: { gte: thirtyDaysAgo },
           },
-        },
-      }),
+          _sum: { total: true },
+          _count: true,
+          _avg: { total: true },
+        }),
 
-      // Low inventory products (check quantityAvailable instead)
-      database.product.findMany({
-        where: {
-          farmId: { in: farmIds },
-          quantityAvailable: { lte: 10 },
-        },
-        take: 5,
-      }),
-    ]);
+        // Recent orders with minimal data
+        database.order.findMany({
+          where: {
+            farmId: { in: farmIds },
+            createdAt: { gte: thirtyDaysAgo },
+          },
+          select: {
+            id: true,
+            total: true,
+            status: true,
+            createdAt: true,
+            items: {
+              select: {
+                id: true,
+                productId: true,
+                quantity: true,
+                unitPrice: true,
+              },
+            },
+          },
+          orderBy: { createdAt: "desc" },
+          take: 10,
+        }),
 
-    // Calculate metrics
-    const totalRevenue = orders.reduce(
-      (sum, order) => sum + Number.parseFloat(order.total.toString()),
-      0
-    );
-    const averageOrderValue =
-      orders.length > 0 ? totalRevenue / orders.length : 0;
+        // Products with selective fields and limited reviews
+        database.product.findMany({
+          where: { farmId: { in: farmIds } },
+          select: {
+            id: true,
+            name: true,
+            inStock: true,
+            quantityAvailable: true,
+            reviews: {
+              select: { rating: true },
+              take: 100, // Limit reviews per product
+            },
+          },
+        }),
 
-    // Top products by sales
-    const productSales = new Map<string, number>();
-    orders.forEach((order) => {
+        // Low inventory with minimal fields
+        database.product.findMany({
+          where: {
+            farmId: { in: farmIds },
+            quantityAvailable: { lte: 10 },
+          },
+          select: {
+            id: true,
+            name: true,
+            quantityAvailable: true,
+          },
+          take: 5,
+        }),
+      ]);
+
+    // Calculate metrics from aggregation
+    const totalRevenue = Number(orderStats._sum.total || 0);
+    const totalOrders = orderStats._count;
+    const averageOrderValue = Number(orderStats._avg.total || 0);
+
+    // Top products by sales (optimized)
+    const productSales = new Map<
+      string,
+      { quantity: number; revenue: number }
+    >();
+    recentOrders.forEach((order) => {
       order.items.forEach((item) => {
-        const current = productSales.get(item.productId) || 0;
-        productSales.set(item.productId, current + Number(item.quantity));
+        const current = productSales.get(item.productId) || {
+          quantity: 0,
+          revenue: 0,
+        };
+        productSales.set(item.productId, {
+          quantity: current.quantity + Number(item.quantity),
+          revenue:
+            current.revenue + Number(item.unitPrice) * Number(item.quantity),
+        });
       });
     });
 
     const topProducts = Array.from(productSales.entries())
-      .sort((a, b) => b[1] - a[1])
+      .sort((a, b) => b[1].quantity - a[1].quantity)
       .slice(0, 5)
-      .map(([productId, quantity]) => {
+      .map(([productId, stats]) => {
         const product = products.find((p) => p.id === productId);
+        const avgRating = product?.reviews.length
+          ? product.reviews.reduce((sum, r) => sum + r.rating, 0) /
+            product.reviews.length
+          : 0;
+
         return {
           productId,
           name: product?.name || "Unknown",
-          quantity,
-          revenue: orders
-            .flatMap((o) => o.items)
-            .filter((i) => i.productId === productId)
-            .reduce(
-              (sum, item) =>
-                sum + Number(item.unitPrice) * Number(item.quantity),
-              0
-            ),
-          rating:
-            (product?.reviews.length ?? 0 > 0)
-              ? (product?.reviews.reduce((sum, r) => sum + r.rating, 0) ?? 0) /
-                (product?.reviews.length ?? 1)
-              : 0,
+          quantity: stats.quantity,
+          revenue: stats.revenue,
+          rating: avgRating,
         };
       });
 
-    // Farm performance
+    // Farm performance (optimized)
     const totalProducts = products.length;
     const activeProducts = products.filter((p) => p.inStock).length;
+
+    // Calculate average rating from all product reviews
+    const allReviews = products.flatMap((p) => p.reviews);
     const averageRating =
-      reviews.length > 0
-        ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+      allReviews.length > 0
+        ? allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length
         : 0;
 
     const response = {
       summary: {
         totalRevenue,
-        totalOrders: orders.length,
+        totalOrders,
         averageOrderValue,
         totalProducts,
         activeProducts,
         averageRating,
       },
       topProducts,
-      recentOrders: orders.map((order) => ({
+      recentOrders: recentOrders.map((order) => ({
         id: order.id,
         total: order.total,
         status: order.status,
@@ -153,8 +185,9 @@ export async function GET(request: NextRequest) {
       })),
       alerts: {
         lowInventoryCount: lowInventory.length,
-        pendingOrders: orders.filter((o) => o.status === "PENDING").length,
-        needsReview: reviews.filter((r) => !r.farmerResponse).length,
+        pendingOrders: recentOrders.filter((o) => o.status === "PENDING")
+          .length,
+        needsReview: 0, // Reviews not fetched separately anymore - can be calculated if needed
       },
     };
 
@@ -163,7 +196,7 @@ export async function GET(request: NextRequest) {
     console.error("Dashboard analytics error:", error);
     return NextResponse.json(
       { error: "Failed to fetch dashboard analytics" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

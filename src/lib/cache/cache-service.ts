@@ -4,47 +4,51 @@
  * Agricultural-aware TTLs and seasonal invalidation
  */
 
-interface CacheOptions {
-  ttl?: number; // Time to live in seconds
-  tags?: string[]; // Cache tags for invalidation
-  seasonal?: boolean; // Use seasonal TTL
-}
+import { redisClient } from "./redis-client";
+import { logger } from "../monitoring/logger";
+import type {
+  CacheKey,
+  CacheValue,
+  CacheOptions,
+  CacheStats,
+  ICacheService,
+} from "./types";
 
-interface CacheEntry<T> {
-  data: T;
-  expires: number;
-  tags: string[];
-}
+export class CacheService implements ICacheService {
+  private enabled: boolean = true;
+  private stats: CacheStats = {
+    hits: 0,
+    misses: 0,
+    sets: 0,
+    deletes: 0,
+    errors: 0,
+  };
+  private logger = logger;
+  private keyPrefix: string = "fm:";
 
-export class CacheService {
-  private static memoryCache: Map<string, CacheEntry<any>> = new Map();
-  private static redis: any = null;
-  private static isRedisConnected = false;
+  constructor() {
+    this.initialize();
+  }
 
   /**
    * Initialize cache service
    */
-  static async initialize() {
+  private async initialize(): Promise<void> {
     try {
-      // Try to connect to Redis if available
-      if (process.env.REDIS_URL) {
-        // In production, use actual Redis client
-        // const { createClient } = await import('redis');
-        // this.redis = createClient({ url: process.env.REDIS_URL });
-        // await this.redis.connect();
-        // this.isRedisConnected = true;
-        console.log(
-          "✅ Cache: Redis would be initialized here (add redis package)"
-        );
+      const isConnected = redisClient.getConnectionStatus();
+      if (isConnected) {
+        this.logger.info("✅ Cache: Redis connected successfully");
       } else {
-        console.log("ℹ️ Cache: Using in-memory cache (Redis not configured)");
+        this.logger.warn(
+          "⚠️ Cache: Redis not connected, cache operations may be limited",
+        );
       }
     } catch (error) {
-      console.error(
-        "⚠️ Cache: Redis connection failed, using memory cache",
-        error
+      this.logger.error(
+        "⚠️ Cache: Initialization failed, cache disabled",
+        error as Error,
       );
-      this.isRedisConnected = false;
+      this.enabled = false;
     }
   }
 
@@ -55,7 +59,8 @@ export class CacheService {
     if (!this.enabled) return null;
 
     try {
-      const value = await redisClient.get(key);
+      const fullKey = this.buildKey(key);
+      const value = await redisClient.get<T>(fullKey);
 
       if (value === null) {
         this.stats.misses++;
@@ -63,7 +68,7 @@ export class CacheService {
       }
 
       this.stats.hits++;
-      return JSON.parse(value) as T;
+      return value;
     } catch (error) {
       this.stats.errors++;
       this.logger.error("Cache get error", error as Error, { key });
@@ -77,17 +82,21 @@ export class CacheService {
   async set(
     key: CacheKey,
     value: CacheValue,
-    options?: CacheOptions
+    options?: CacheOptions,
   ): Promise<boolean> {
     if (!this.enabled) return false;
 
     try {
-      const ttl = options?.ttl || 3600; // Default 1 hour
-      const stringValue = JSON.stringify(value);
+      const fullKey = this.buildKey(key);
+      const ttl = this.calculateTTL(options);
 
-      await redisClient.set(key, stringValue, ttl);
-      this.stats.sets++;
-      return true;
+      const success = await redisClient.set(fullKey, value, ttl);
+
+      if (success) {
+        this.stats.sets++;
+      }
+
+      return success;
     } catch (error) {
       this.stats.errors++;
       this.logger.error("Cache set error", error as Error, { key });
@@ -99,90 +108,72 @@ export class CacheService {
    * Delete item from cache
    */
   async delete(key: string): Promise<boolean> {
+    if (!this.enabled) return false;
+
     try {
-      await redis.del(this.buildKey(key));
+      const fullKey = this.buildKey(key);
+      await redisClient.delete(fullKey);
+      this.stats.deletes++;
       this.logger.debug("Cache key deleted", { key });
       return true;
     } catch (error) {
+      this.stats.errors++;
       this.logger.error("Cache delete failed", error as Error, { key });
       return false;
     }
   }
 
-  async pattern(pattern: string): Promise<string[]> {
+  /**
+   * Delete pattern from cache
+   */
+  async deletePattern(pattern: string): Promise<number> {
+    if (!this.enabled) return 0;
+
     try {
       const fullPattern = this.buildKey(pattern);
-      const keys = await redis.keys(fullPattern);
-      // Remove prefix from returned keys
-      const prefix = this.buildKey("");
-      return keys.map((key) =>
-        key.startsWith(prefix) ? key.slice(prefix.length) : key
-      );
-    } catch (error) {
-      this.logger.error("Cache pattern search failed", error as Error, {
-        pattern,
-      });
-      return [];
-    }
-  }
-
-  async deleteMany(keys: string[]): Promise<number> {
-    if (keys.length === 0) return 0;
-
-    try {
-      const fullKeys = keys.map((key) => this.buildKey(key));
-      const deleted = await redis.del(...fullKeys);
-      this.logger.debug("Multiple cache keys deleted", { count: deleted });
+      const deleted = await redisClient.deletePattern(fullPattern);
+      this.stats.deletes += deleted;
+      this.logger.debug("Cache pattern deleted", { pattern, count: deleted });
       return deleted;
     } catch (error) {
-      this.logger.error("Cache deleteMany failed", error as Error, {
-        keyCount: keys.length,
+      this.stats.errors++;
+      this.logger.error("Cache deletePattern failed", error as Error, {
+        pattern,
       });
       return 0;
     }
   }
 
   /**
-   * Invalidate cache by tags
+   * Check if key exists
    */
-  static async invalidateByTag(tag: string): Promise<void> {
-    // Invalidate in Redis
-    if (this.isRedisConnected && this.redis) {
-      try {
-        const keys = await this.redis.sMembers(`tag:${tag}`);
-        if (keys.length > 0) {
-          await this.redis.del(...keys);
-          await this.redis.del(`tag:${tag}`);
-        }
-      } catch (error) {
-        console.error("Redis invalidate error:", error);
-      }
-    }
+  async exists(key: CacheKey): Promise<boolean> {
+    if (!this.enabled) return false;
 
-    // Invalidate in memory
-    for (const [key, entry] of this.memoryCache.entries()) {
-      if (entry.tags.includes(tag)) {
-        this.memoryCache.delete(key);
-      }
+    try {
+      const fullKey = this.buildKey(key);
+      return await redisClient.exists(fullKey);
+    } catch (error) {
+      this.stats.errors++;
+      this.logger.error("Cache exists check failed", error as Error, { key });
+      return false;
     }
   }
 
   /**
-   * Clear all cache
+   * Clear all cache or pattern
    */
   async clear(pattern?: string): Promise<boolean> {
     if (!this.enabled) return false;
 
     try {
-      // Clear all keys or keys matching pattern
-      // For now, just reset stats
-      this.stats = {
-        hits: 0,
-        misses: 0,
-        sets: 0,
-        deletes: 0,
-        errors: 0,
-      };
+      if (pattern) {
+        await this.deletePattern(pattern);
+      } else {
+        await this.deletePattern("*");
+      }
+
+      this.logger.info("Cache cleared", { pattern: pattern || "all" });
       return true;
     } catch (error) {
       this.stats.errors++;
@@ -192,12 +183,59 @@ export class CacheService {
   }
 
   /**
+   * Invalidate cache by tags
+   */
+  async invalidateByTag(tag: string): Promise<void> {
+    try {
+      const pattern = `*:tag:${tag}:*`;
+      await this.deletePattern(pattern);
+      this.logger.info("Cache invalidated by tag", { tag });
+    } catch (error) {
+      this.logger.error("Tag invalidation failed", error as Error, { tag });
+    }
+  }
+
+  /**
+   * Get cache statistics
+   */
+  getStats(): CacheStats {
+    return {
+      ...this.stats,
+      redisConnected: redisClient.getConnectionStatus(),
+    };
+  }
+
+  /**
+   * Reset cache statistics
+   */
+  resetStats(): void {
+    this.stats = {
+      hits: 0,
+      misses: 0,
+      sets: 0,
+      deletes: 0,
+      errors: 0,
+    };
+  }
+
+  // ============================================
+  // PRIVATE HELPER METHODS
+  // ============================================
+
+  /**
+   * Build full cache key with prefix
+   */
+  private buildKey(key: string): string {
+    return `${this.keyPrefix}${key}`;
+  }
+
+  /**
    * Calculate TTL based on options and season
    */
-  private static calculateTTL(options: CacheOptions): number {
-    if (options.ttl) return options.ttl;
+  private calculateTTL(options?: CacheOptions): number {
+    if (options?.ttl) return options.ttl;
 
-    if (options.seasonal) {
+    if (options?.seasonal) {
       return this.getSeasonalTTL();
     }
 
@@ -208,7 +246,7 @@ export class CacheService {
   /**
    * Get seasonal TTL (shorter during harvest season)
    */
-  private static getSeasonalTTL(): number {
+  private getSeasonalTTL(): number {
     const month = new Date().getMonth();
 
     // Harvest months (June-October): Shorter TTL for freshness
@@ -219,49 +257,40 @@ export class CacheService {
     // Off-season: Longer TTL
     return 600; // 10 minutes
   }
-
-  /**
-   * Generate cache key
-   */
-  static key(...parts: (string | number)[]): string {
-    return parts.join(":");
-  }
-
-  /**
-   * Get cache statistics
-   */
-  static getStats() {
-    return {
-      memorySize: this.memoryCache.size,
-      isRedisConnected: this.isRedisConnected,
-      entries: Array.from(this.memoryCache.keys()),
-    };
-  }
 }
 
-// Cache key builders
+// ============================================
+// SINGLETON INSTANCE
+// ============================================
+
+export const cacheService = new CacheService();
+
+// ============================================
+// CACHE KEY BUILDERS
+// ============================================
+
 export const CacheKeys = {
-  product: (id: string) => CacheService.key("product", id),
-  products: (filters?: any) =>
-    CacheService.key("products", JSON.stringify(filters || {})),
-  farm: (id: string) => CacheService.key("farm", id),
-  farms: (filters?: any) =>
-    CacheService.key("farms", JSON.stringify(filters || {})),
-  user: (id: string) => CacheService.key("user", id),
-  orders: (userId: string) => CacheService.key("orders", userId),
-  search: (query: string, type?: string) =>
-    CacheService.key("search", query, type || "all"),
-  dashboard: (userId: string) => CacheService.key("dashboard", userId),
+  product: (id: string): string => `product:${id}`,
+  products: (filters?: Record<string, unknown>): string =>
+    `products:${JSON.stringify(filters || {})}`,
+  farm: (id: string): string => `farm:${id}`,
+  farms: (filters?: Record<string, unknown>): string =>
+    `farms:${JSON.stringify(filters || {})}`,
+  user: (id: string): string => `user:${id}`,
+  orders: (userId: string): string => `orders:${userId}`,
+  search: (query: string, type?: string): string =>
+    `search:${query}:${type || "all"}`,
+  dashboard: (userId: string): string => `dashboard:${userId}`,
 };
 
-// Cache tags for invalidation
+// ============================================
+// CACHE TAGS FOR INVALIDATION
+// ============================================
+
 export const CacheTags = {
   PRODUCTS: "products",
   FARMS: "farms",
   USERS: "users",
   ORDERS: "orders",
   SEARCH: "search",
-};
-
-// Initialize cache on import
-CacheService.initialize();
+} as const;
