@@ -82,7 +82,7 @@ export interface RateLimitResult {
  */
 export function checkRateLimit(
   identifier: string,
-  config: RateLimitConfig
+  config: RateLimitConfig,
 ): RateLimitResult {
   const now = Date.now();
   const key = `${identifier}:${config.windowMs}`;
@@ -178,7 +178,7 @@ export function resetRateLimit(identifier: string, windowMs: number): void {
  */
 export function getRateLimitStatus(
   identifier: string,
-  config: RateLimitConfig
+  config: RateLimitConfig,
 ): RateLimitResult | null {
   const now = Date.now();
   const key = `${identifier}:${config.windowMs}`;

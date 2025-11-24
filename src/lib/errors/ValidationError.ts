@@ -13,13 +13,13 @@ export class ValidationError extends ApplicationError {
     field: string,
     message: string,
     value?: any,
-    details: Record<string, any> = {}
+    details: Record<string, any> = {},
   ) {
     super(
       `Validation failed for ${field}: ${message}`,
       "VALIDATION_ERROR",
       "VALIDATION",
-      { field, value, ...details }
+      { field, value, ...details },
     );
     this.field = field;
     this.value = value;

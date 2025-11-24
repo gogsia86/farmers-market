@@ -53,14 +53,16 @@ jest.mock("@opentelemetry/api", () => ({
 // ✅ CORRECT - Use plain functions
 jest.mock("@opentelemetry/api", () => {
   const mockSpan = {
-    setStatus: function() {},
-    setAttributes: function() {},
-    setAttribute: function() {},
-    addEvent: function() {},
-    recordException: function() {},
-    end: function() {},
-    isRecording: function() { return true; },
-    spanContext: function() {
+    setStatus: function () {},
+    setAttributes: function () {},
+    setAttribute: function () {},
+    addEvent: function () {},
+    recordException: function () {},
+    end: function () {},
+    isRecording: function () {
+      return true;
+    },
+    spanContext: function () {
       return {
         traceId: "mock-trace-id",
         spanId: "mock-span-id",
@@ -71,13 +73,14 @@ jest.mock("@opentelemetry/api", () => {
 
   return {
     trace: {
-      getTracer: function() {
+      getTracer: function () {
         return {
-          startSpan: function() {
+          startSpan: function () {
             return mockSpan;
           },
-          startActiveSpan: async function(name, fnOrOptions, maybeFn) {
-            const fn = typeof fnOrOptions === "function" ? fnOrOptions : maybeFn;
+          startActiveSpan: async function (name, fnOrOptions, maybeFn) {
+            const fn =
+              typeof fnOrOptions === "function" ? fnOrOptions : maybeFn;
             if (typeof fn === "function") {
               try {
                 const result = await fn(mockSpan);
@@ -92,9 +95,13 @@ jest.mock("@opentelemetry/api", () => {
           },
         };
       },
-      getActiveSpan: function() { return mockSpan; },
-      setSpan: function() {},
-      getSpan: function() { return mockSpan; },
+      getActiveSpan: function () {
+        return mockSpan;
+      },
+      setSpan: function () {},
+      getSpan: function () {
+        return mockSpan;
+      },
     },
     SpanStatusCode: { UNSET: 0, OK: 1, ERROR: 2 },
   };
@@ -107,9 +114,9 @@ jest.mock("@/lib/tracing/agricultural-tracer", () => ({
     PLANTING: "crop.planting",
     HARVESTING: "crop.harvesting",
   },
-  setAgriculturalAttributes: function() {},
-  addAgriculturalEvent: function() {},
-  traceAgriculturalOperation: async function(operation, attributes, fn) {
+  setAgriculturalAttributes: function () {},
+  addAgriculturalEvent: function () {},
+  traceAgriculturalOperation: async function (operation, attributes, fn) {
     if (typeof fn === "function") {
       return await fn(); // ✅ Call WITHOUT span parameter
     }
@@ -143,6 +150,7 @@ jest.mock("@/lib/middleware/rate-limiter", () => ({
 ## 📋 When to Use Each Approach
 
 ### Use Plain Functions When:
+
 - ✅ Function is called at **module-load time** (top-level `const`)
 - ✅ Mock needs to return complex objects (tracers, loggers, utilities)
 - ✅ Return value structure is always the same
@@ -151,6 +159,7 @@ jest.mock("@/lib/middleware/rate-limiter", () => ({
 **Examples**: `trace.getTracer()`, `traceAgriculturalOperation()`, `setAgriculturalAttributes()`
 
 ### Use jest.fn() When:
+
 - ✅ Mock return value changes **per test**
 - ✅ Need to call `.mockResolvedValue()`, `.mockRejectedValue()`, `.mockImplementation()`
 - ✅ Need to assert on calls with `expect(mock).toHaveBeenCalled()`
@@ -188,6 +197,7 @@ tracer.startActiveSpan("operation", { kind: SpanKind.SERVER }, async (span) => {
 ```
 
 **Implementation**:
+
 ```typescript
 const fn = typeof fnOrOptions === "function" ? fnOrOptions : maybeFn;
 ```
@@ -210,16 +220,19 @@ traceAgriculturalOperation: async function(operation, attributes, fn) {
 ## 📁 Files Updated
 
 ### Core Mock Module
+
 - `src/app/api/__tests__/tracing-mocks.ts`
   - Updated `mockOpenTelemetryApi` to use plain functions
   - Updated `mockAgriculturalTracer` to use plain functions
   - Exports can now be used with `require()` in `jest.mock()` calls
 
 ### Test Files
+
 - `src/app/api/farms/__tests__/route.test.ts` ✅ 29/29 tests passing
 - `src/app/api/farms/__tests__/route-minimal-debug.test.ts` ✅ Debug test passing
 
 ### Documentation
+
 - `TRACING_MOCK_SOLUTION.md` - Original problem analysis
 - `QUICKSTART_API_TESTING.md` - Quick reference guide
 - `.github/instructions/17_API_TESTING_TRACING_MOCKS.instructions.md` - Detailed patterns
@@ -230,6 +243,7 @@ traceAgriculturalOperation: async function(operation, attributes, fn) {
 ## 🚀 Test Results
 
 ### Before Fix
+
 ```
 Test Suites: 1 failed, 1 total
 Tests:       13 failed, 16 skipped, 29 total
@@ -237,6 +251,7 @@ Error: GET returned undefined
 ```
 
 ### After Fix
+
 ```
 Test Suites: 1 passed, 1 total
 Tests:       29 passed, 29 total
@@ -246,6 +261,7 @@ Time:        1.889 s
 ```
 
 ### Test Coverage
+
 - ✅ GET /api/farms - All retrieval scenarios
 - ✅ POST /api/farms - All creation scenarios
 - ✅ Error handling - Database errors, unknown errors
@@ -259,12 +275,15 @@ Time:        1.889 s
 ## 🎓 Key Learnings
 
 ### 1. Jest Hoisting Behavior
+
 Jest hoists `jest.mock()` calls to the **top of the file** before any other code runs. This means:
+
 - Module imports happen **after** mocks are defined
 - Any code in `jest.mock()` factory runs **during hoisting**
 - `jest.fn()` is available but its **configured behavior is not**
 
 ### 2. Module Load Order
+
 ```
 1. Jest hoists all jest.mock() calls
 2. Mock factories execute (create mock objects)
@@ -276,6 +295,7 @@ Jest hoists `jest.mock()` calls to the **top of the file** before any other code
 ```
 
 ### 3. Why Arrow Functions Didn't Work
+
 ```typescript
 getTracer: () => ({ ... }) // ❌ Still evaluates at wrong time
 getTracer: function() { return { ... }; } // ✅ Plain function works
@@ -295,25 +315,30 @@ Both are available during hoisting, but **plain function syntax is more explicit
 // 1. MOCKS FIRST - Before any imports
 jest.mock("@opentelemetry/api", () => {
   const mockSpan = {
-    setStatus: function() {},
-    setAttributes: function() {},
-    setAttribute: function() {},
-    addEvent: function() {},
-    recordException: function() {},
-    end: function() {},
-    isRecording: function() { return true; },
-    spanContext: function() {
+    setStatus: function () {},
+    setAttributes: function () {},
+    setAttribute: function () {},
+    addEvent: function () {},
+    recordException: function () {},
+    end: function () {},
+    isRecording: function () {
+      return true;
+    },
+    spanContext: function () {
       return { traceId: "mock-trace", spanId: "mock-span", traceFlags: 1 };
     },
   };
 
   return {
     trace: {
-      getTracer: function() {
+      getTracer: function () {
         return {
-          startSpan: function() { return mockSpan; },
-          startActiveSpan: async function(name, fnOrOptions, maybeFn) {
-            const fn = typeof fnOrOptions === "function" ? fnOrOptions : maybeFn;
+          startSpan: function () {
+            return mockSpan;
+          },
+          startActiveSpan: async function (name, fnOrOptions, maybeFn) {
+            const fn =
+              typeof fnOrOptions === "function" ? fnOrOptions : maybeFn;
             if (typeof fn === "function") {
               const result = await fn(mockSpan);
               return result;
@@ -322,7 +347,9 @@ jest.mock("@opentelemetry/api", () => {
           },
         };
       },
-      getActiveSpan: function() { return mockSpan; },
+      getActiveSpan: function () {
+        return mockSpan;
+      },
     },
     SpanStatusCode: { UNSET: 0, OK: 1, ERROR: 2 },
   };
@@ -333,8 +360,8 @@ jest.mock("@/lib/tracing/agricultural-tracer", () => ({
     CROP_PLANNING: "crop.planning",
     PLANTING: "crop.planting",
   },
-  setAgriculturalAttributes: function() {},
-  traceAgriculturalOperation: async function(op, attrs, fn) {
+  setAgriculturalAttributes: function () {},
+  traceAgriculturalOperation: async function (op, attrs, fn) {
     if (typeof fn === "function") return await fn();
     return undefined;
   },
@@ -359,7 +386,10 @@ jest.mock("@/lib/middleware/rate-limiter", () => ({
 // 2. NOW IMPORT - After mocks are set up
 import { GET, POST } from "../route";
 import { database } from "@/lib/database";
-import { createMockNextRequest, createMockFarm } from "../../__tests__/api-test-utils";
+import {
+  createMockNextRequest,
+  createMockFarm,
+} from "../../__tests__/api-test-utils";
 
 describe("Farms API Tests", () => {
   beforeEach(() => {
@@ -401,17 +431,20 @@ describe("Farms API Tests", () => {
 ## 🔄 Next Steps
 
 ### Immediate (✅ DONE)
+
 1. ✅ Fixed farms API route tests (29/29 passing)
 2. ✅ Updated tracing-mocks module with plain functions
 3. ✅ Created comprehensive documentation
 
 ### Short-term (To Do Next)
+
 1. Apply this pattern to products API tests
 2. Apply this pattern to health API tests
 3. Apply this pattern to auth/admin API tests
 4. Update all API route tests project-wide
 
 ### Medium-term
+
 1. Create shared test utilities for common mock patterns
 2. Add test templates to project scaffolding
 3. Update testing guidelines in .cursorrules
@@ -432,7 +465,7 @@ describe("Farms API Tests", () => {
 **Solution Quality**: 100/100 ⚡  
 **Test Coverage**: 100% (29/29 tests passing)  
 **Documentation**: Complete and comprehensive  
-**Reusability**: Pattern ready for project-wide application  
+**Reusability**: Pattern ready for project-wide application
 
 _"Code with agricultural consciousness, mock with module-level precision, test with divine confidence."_ 🌾✨
 

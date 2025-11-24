@@ -42,17 +42,20 @@ npm run kill-server -- --all
 ### Method 1: Safe Start (Recommended) ⭐
 
 **What it does:**
+
 - ✅ Automatically checks if ports are available
 - ✅ Kills conflicting processes if needed
 - ✅ Falls back to alternative ports if necessary
 - ✅ Provides clear status messages
 
 **Usage:**
+
 ```bash
 npm run dev:safe
 ```
 
 **Output:**
+
 ```
 ╔════════════════════════════════════════════════════════════╗
 ║  🚀 Safe Dev Server Starter                                ║
@@ -78,16 +81,19 @@ npm run dev:safe
 ### Method 2: Standard Start
 
 **What it does:**
+
 - Uses Next.js standard startup
 - Requires port 3001 to be available
 - Fails if port is in use
 
 **Usage:**
+
 ```bash
 npm run dev
 ```
 
 **Port Configuration:**
+
 - Default: `3001` (configured in package.json)
 - Change via: `PORT=3002 npm run dev`
 
@@ -96,16 +102,19 @@ npm run dev
 ### Method 3: Turbo Mode
 
 **What it does:**
+
 - Uses Next.js Turbopack for faster compilation
 - Better for large codebases
 - Optimized for development speed
 
 **Usage:**
+
 ```bash
 npm run dev:turbo
 ```
 
 **Benefits:**
+
 - ⚡ Faster initial compilation
 - ⚡ Faster hot module replacement (HMR)
 - ⚡ Better memory usage
@@ -115,21 +124,25 @@ npm run dev:turbo
 ### Method 4: HP OMEN Optimized
 
 **What it does:**
+
 - Maximum memory allocation (32GB)
 - Optimized for HP OMEN hardware
 - Best performance for large projects
 
 **Usage:**
+
 ```bash
 npm run dev:omen
 ```
 
 **Hardware Requirements:**
+
 - RAM: 64GB recommended
 - CPU: 12+ threads
 - GPU: RTX 2070 Max-Q or better
 
 **Memory Settings:**
+
 - `--max-old-space-size=32768` (32GB)
 - `--max-semi-space-size=512` (512MB)
 
@@ -140,16 +153,19 @@ npm run dev:omen
 ### Method 1: Kill Dev Server (Targeted)
 
 **What it does:**
+
 - Scans common development ports (3000-3003, 5000, 8000, 8080)
 - Finds and terminates processes
 - Safe and selective
 
 **Usage:**
+
 ```bash
 npm run kill-server
 ```
 
 **Output:**
+
 ```
 ╔════════════════════════════════════════════════════════════╗
 ║  🔪 Kill Dev Server - Farmers Market Platform             ║
@@ -179,16 +195,19 @@ npm run kill-server
 ### Method 2: Kill All Node Processes (Nuclear)
 
 **What it does:**
+
 - ⚠️ Kills ALL Node.js processes on your system
 - Use with caution
 - Useful when targeted kill doesn't work
 
 **Usage:**
+
 ```bash
 npm run kill-server -- --all
 ```
 
 **Warning:**
+
 - This will terminate ALL Node.js processes
 - Any running Node apps will be killed
 - IDE extensions using Node may need restart
@@ -200,6 +219,7 @@ npm run kill-server -- --all
 ### Issue 1: Port Already in Use
 
 **Error:**
+
 ```
 Error: listen EADDRINUSE: address already in use :::3001
 ```
@@ -207,18 +227,21 @@ Error: listen EADDRINUSE: address already in use :::3001
 **Solutions:**
 
 #### Solution A: Use Safe Start (Recommended)
+
 ```bash
 npm run dev:safe
 # Automatically handles port conflicts
 ```
 
 #### Solution B: Kill Existing Process
+
 ```bash
 npm run kill-server
 npm run dev
 ```
 
 #### Solution C: Manual Kill (Windows)
+
 ```bash
 # Find process
 netstat -ano | findstr :3001
@@ -228,6 +251,7 @@ taskkill /F /PID <PID>
 ```
 
 #### Solution D: Manual Kill (Linux/Mac)
+
 ```bash
 # Find process
 lsof -i :3001
@@ -237,6 +261,7 @@ kill -9 <PID>
 ```
 
 #### Solution E: Use Different Port
+
 ```bash
 PORT=3002 npm run dev
 ```
@@ -246,11 +271,13 @@ PORT=3002 npm run dev
 ### Issue 2: Multiple Instances Running
 
 **Symptoms:**
+
 - Multiple terminal windows with dev servers
 - Confused about which server is active
 - Unexpected behavior
 
 **Solution:**
+
 ```bash
 # Kill all dev servers
 npm run kill-server
@@ -267,6 +294,7 @@ npm run dev:safe
 ### Issue 3: Server Won't Start
 
 **Error:**
+
 ```
 ⨯ Failed to start server
 ```
@@ -274,6 +302,7 @@ npm run dev:safe
 **Checklist:**
 
 1. **Check Database Connection**
+
 ```bash
 # Verify DATABASE_URL is set
 echo $DATABASE_URL  # Linux/Mac
@@ -284,24 +313,28 @@ npm run db:studio
 ```
 
 2. **Clear Next.js Cache**
+
 ```bash
 rm -rf .next
 npm run dev
 ```
 
 3. **Check Node Version**
+
 ```bash
 node --version
 # Should be >= 20.19.0
 ```
 
 4. **Check Dependencies**
+
 ```bash
 rm -rf node_modules package-lock.json
 npm install
 ```
 
 5. **Check TypeScript Errors**
+
 ```bash
 npm run type-check
 ```
@@ -311,6 +344,7 @@ npm run type-check
 ### Issue 4: Server Crashes Randomly
 
 **Symptoms:**
+
 - Server exits unexpectedly
 - "Out of memory" errors
 - Slow performance
@@ -318,12 +352,14 @@ npm run type-check
 **Solutions:**
 
 1. **Increase Memory Allocation**
+
 ```bash
 # Use HP OMEN optimized mode
 npm run dev:omen
 ```
 
 2. **Check Available Memory**
+
 ```bash
 # Windows
 systeminfo | findstr Memory
@@ -333,6 +369,7 @@ free -h
 ```
 
 3. **Check for Memory Leaks**
+
 ```bash
 # Monitor Node process
 # Windows: Task Manager
@@ -344,6 +381,7 @@ free -h
 ### Issue 5: Hot Reload Not Working
 
 **Symptoms:**
+
 - Changes not reflecting
 - Need to manually refresh
 - HMR not triggering
@@ -351,11 +389,13 @@ free -h
 **Solutions:**
 
 1. **Use Turbo Mode**
+
 ```bash
 npm run dev:turbo
 ```
 
 2. **Check File Watchers**
+
 ```bash
 # Increase file watcher limit (Linux)
 echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf
@@ -363,6 +403,7 @@ sudo sysctl -p
 ```
 
 3. **Restart Dev Server**
+
 ```bash
 # Ctrl+C to stop
 npm run dev
@@ -374,21 +415,23 @@ npm run dev
 
 ### Default Ports
 
-| Service | Port | Configured In |
-|---------|------|---------------|
-| **Next.js Dev** | 3001 | package.json |
-| **Next.js Prod** | 3001 | package.json |
-| **Database Studio** | 5555 | Prisma default |
-| **Playwright** | 3001 | playwright.config.ts |
+| Service             | Port | Configured In        |
+| ------------------- | ---- | -------------------- |
+| **Next.js Dev**     | 3001 | package.json         |
+| **Next.js Prod**    | 3001 | package.json         |
+| **Database Studio** | 5555 | Prisma default       |
+| **Playwright**      | 3001 | playwright.config.ts |
 
 ### Changing Ports
 
 #### Temporary (One-time)
+
 ```bash
 PORT=3002 npm run dev
 ```
 
 #### Permanent (Update package.json)
+
 ```json
 {
   "scripts": {
@@ -398,6 +441,7 @@ PORT=3002 npm run dev
 ```
 
 #### Environment Variable (.env.local)
+
 ```bash
 PORT=3002
 ```
@@ -425,17 +469,20 @@ NODE_OPTIONS='--max-old-space-size=32768' npm run dev
 ### Performance Tuning
 
 #### Enable Turbopack
+
 ```bash
 npm run dev:turbo
 ```
 
 #### Disable Source Maps (Faster builds)
+
 ```javascript
 // next.config.mjs
 productionBrowserSourceMaps: false,
 ```
 
 #### Enable SWC Minification (Already enabled)
+
 ```javascript
 // Automatically enabled in Next.js 15+
 ```
@@ -463,12 +510,14 @@ npm run dev -- --hostname 0.0.0.0
 ### Firewall Configuration
 
 **Windows:**
+
 ```powershell
 # Allow Node through firewall
 netsh advfirewall firewall add rule name="Node.js" dir=in action=allow program="C:\Program Files\nodejs\node.exe" enable=yes
 ```
 
 **Linux:**
+
 ```bash
 # Allow port 3001
 sudo ufw allow 3001
@@ -480,15 +529,15 @@ sudo ufw allow 3001
 
 ### Available Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Standard dev server (port 3001) |
-| `npm run dev:safe` | Safe start with auto port handling |
-| `npm run dev:turbo` | Turbo mode (faster) |
-| `npm run dev:omen` | HP OMEN optimized |
-| `npm run kill-server` | Kill dev server processes |
-| `npm run kill-server -- --all` | Kill ALL Node.js processes |
-| `npm start` | Production server |
+| Command                        | Description                        |
+| ------------------------------ | ---------------------------------- |
+| `npm run dev`                  | Standard dev server (port 3001)    |
+| `npm run dev:safe`             | Safe start with auto port handling |
+| `npm run dev:turbo`            | Turbo mode (faster)                |
+| `npm run dev:omen`             | HP OMEN optimized                  |
+| `npm run kill-server`          | Kill dev server processes          |
+| `npm run kill-server -- --all` | Kill ALL Node.js processes         |
+| `npm start`                    | Production server                  |
 
 ### Script Locations
 
@@ -506,6 +555,7 @@ sudo ufw allow 3001
 ### Development Workflow
 
 1. **Start of Day**
+
 ```bash
 # Kill any leftover processes
 npm run kill-server
@@ -515,6 +565,7 @@ npm run dev:safe
 ```
 
 2. **During Development**
+
 ```bash
 # Use watch mode for tests
 npm run test:watch
@@ -524,6 +575,7 @@ npm run test:watch
 ```
 
 3. **End of Day**
+
 ```bash
 # Stop server gracefully (Ctrl+C)
 # Or ensure all processes are stopped

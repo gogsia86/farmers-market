@@ -18,11 +18,11 @@ npm run bundle:check
 
 After Phase 5 optimizations, we achieved **90-94% bundle size reductions**:
 
-| Route | Before | After | Savings |
-|-------|--------|-------|---------|
-| Admin Approvals | 228 KB | 13 KB | 94% ⬇️ |
-| Farms API | 150 KB | 15 KB | 90% ⬇️ |
-| Agricultural | 60 KB | 9 KB | 86% ⬇️ |
+| Route           | Before | After | Savings |
+| --------------- | ------ | ----- | ------- |
+| Admin Approvals | 228 KB | 13 KB | 94% ⬇️  |
+| Farms API       | 150 KB | 15 KB | 90% ⬇️  |
+| Agricultural    | 60 KB  | 9 KB  | 86% ⬇️  |
 
 **Your job**: Keep it that way! 🎉
 
@@ -47,6 +47,7 @@ npm run bundle:measure
 ### CI Will Check Automatically
 
 Every PR gets a bundle size report comment. Look for:
+
 - ✅ **Highly Optimized Routes** (< 20 KB)
 - ⚠️ **Near Threshold** (need optimization)
 - ❌ **Threshold Failures** (must fix)
@@ -59,41 +60,41 @@ Every PR gets a bundle size report comment. Look for:
 
 ```typescript
 // ✅ Email (was 228 KB → now 13 KB)
-import { sendEmail } from '@/lib/email/email-service-lazy';
+import { sendEmail } from "@/lib/email/email-service-lazy";
 
 await sendEmail({
-  to: 'user@example.com',
-  subject: 'Welcome',
-  html: '<p>Hello!</p>'
+  to: "user@example.com",
+  subject: "Welcome",
+  html: "<p>Hello!</p>",
 });
 ```
 
 ```typescript
 // ✅ Tracing (was 60 KB → now 9 KB)
-import { startSpan } from '@/lib/tracing/lazy-tracer';
+import { startSpan } from "@/lib/tracing/lazy-tracer";
 
-await startSpan('operation-name', async (span) => {
+await startSpan("operation-name", async (span) => {
   // Your code here
-  span.setAttributes({ key: 'value' });
+  span.setAttributes({ key: "value" });
 });
 ```
 
 ```typescript
 // ✅ Redis (was 150 KB → now 15 KB)
-import { redisClient } from '@/lib/cache/redis-client-lazy';
+import { redisClient } from "@/lib/cache/redis-client-lazy";
 
 const client = await redisClient.getClient();
-await client.set('key', 'value');
+await client.set("key", "value");
 ```
 
 ### ✅ DO: Type-Only Imports
 
 ```typescript
 // ✅ Prisma types (0 KB!)
-import type { User, Farm, Product } from '@prisma/client';
+import type { User, Farm, Product } from "@prisma/client";
 
 // ✅ Zod types
-import type { z } from 'zod';
+import type { z } from "zod";
 
 function processUser(user: User) {
   // Uses type only, no bundle impact
@@ -104,13 +105,13 @@ function processUser(user: User) {
 
 ```typescript
 // ❌ Adds 1.5 MB to bundle
-import nodemailer from 'nodemailer';
+import nodemailer from "nodemailer";
 
 // ❌ Adds 800 KB to bundle
-import Redis from 'ioredis';
+import Redis from "ioredis";
 
 // ❌ Adds 500+ KB to bundle
-import { trace } from '@opentelemetry/api';
+import { trace } from "@opentelemetry/api";
 ```
 
 ---
@@ -184,13 +185,13 @@ Look for large modules in your route chunk.
 
 Common culprits and fixes:
 
-| Import | Size | Fix |
-|--------|------|-----|
-| `nodemailer` | 1.5 MB | Use `email-service-lazy` |
-| `ioredis` | 800 KB | Use `redis-client-lazy` |
-| `@opentelemetry` | 500 KB | Use `lazy-tracer` |
-| `stripe` | 300 KB | Dynamic import |
-| `@prisma/client` | Varies | `import type` only |
+| Import           | Size   | Fix                      |
+| ---------------- | ------ | ------------------------ |
+| `nodemailer`     | 1.5 MB | Use `email-service-lazy` |
+| `ioredis`        | 800 KB | Use `redis-client-lazy`  |
+| `@opentelemetry` | 500 KB | Use `lazy-tracer`        |
+| `stripe`         | 300 KB | Dynamic import           |
+| `@prisma/client` | Varies | `import type` only       |
 
 ### Step 4: Verify Fix
 
@@ -219,12 +220,12 @@ When creating a new API route:
 
 ## 🎯 Thresholds Reference
 
-| Route Type | Target | Threshold | Status |
-|------------|--------|-----------|--------|
-| Health/Ready | < 10 KB | < 20 KB | Critical |
-| Standard API | < 25 KB | < 50 KB | Standard |
-| Admin API | < 50 KB | < 200 KB | Heavy |
-| Pages | < 100 KB | < 300 KB | Standard |
+| Route Type   | Target   | Threshold | Status   |
+| ------------ | -------- | --------- | -------- |
+| Health/Ready | < 10 KB  | < 20 KB   | Critical |
+| Standard API | < 25 KB  | < 50 KB   | Standard |
+| Admin API    | < 50 KB  | < 200 KB  | Heavy    |
+| Pages        | < 100 KB | < 300 KB  | Standard |
 
 ---
 
@@ -249,6 +250,7 @@ npm run bundle:check
 ### Scenario 2: "Flaky test failed"
 
 If you see `password.test.ts` timeout:
+
 - This is known and fixed in latest
 - Just re-run the CI (it's environment-dependent)
 
@@ -268,6 +270,7 @@ npm run bundle:measure
 ### 1. Check Before Committing
 
 Add to your workflow:
+
 ```bash
 git add .
 npm run bundle:check  # ← Add this
@@ -300,6 +303,7 @@ npm run build:analyze
 ## 📚 Learn More
 
 Detailed docs:
+
 - [PHASE_5_CI_BUNDLE_PROTECTION.md](./PHASE_5_CI_BUNDLE_PROTECTION.md) - Full CI system
 - [LAZY_LOADING_QUICK_REFERENCE.md](./LAZY_LOADING_QUICK_REFERENCE.md) - All patterns
 - [PHASE_5_CONTINUATION_RESULTS.md](../PHASE_5_CONTINUATION_RESULTS.md) - Achievement details
@@ -322,6 +326,7 @@ Before merging your PR:
 ## 🎉 You're Ready!
 
 Remember:
+
 - **Always check bundles before PR**
 - **Use lazy wrappers for heavy deps**
 - **Type-only imports save MBs**
@@ -329,4 +334,4 @@ Remember:
 
 Questions? Check the full docs or ask in `#platform-performance`.
 
-🌾 *Building a divine agricultural platform with quantum efficiency* ⚡
+🌾 _Building a divine agricultural platform with quantum efficiency_ ⚡

@@ -1,4 +1,5 @@
 # 🌟 Ollama DeepSeek-R1:7b Setup Guide
+
 ## HP OMEN Laptop Integration - Divine Agricultural AI
 
 ---
@@ -29,6 +30,7 @@ This guide will help you set up Ollama with DeepSeek-R1:7b on your HP OMEN lapto
 - ✅ **7B Parameters** - Perfect balance of quality and speed
 
 ### HP OMEN Specs
+
 - **GPU**: NVIDIA RTX 2070 Max-Q (2304 CUDA cores, 8GB VRAM)
 - **RAM**: 64GB (excellent for model caching)
 - **CPU**: 12 threads (parallel processing)
@@ -38,12 +40,14 @@ This guide will help you set up Ollama with DeepSeek-R1:7b on your HP OMEN lapto
 ## 🖥️ System Requirements
 
 ### Minimum Requirements
+
 - Windows 10/11
 - 8GB RAM (you have 64GB ✅)
 - GPU with 4GB VRAM (you have 8GB ✅)
 - 10GB free disk space
 
 ### Your HP OMEN (Actual)
+
 - ✅ 64GB RAM - Can handle multiple models simultaneously
 - ✅ RTX 2070 Max-Q - GPU acceleration enabled
 - ✅ 12 threads - Excellent parallel processing
@@ -57,6 +61,7 @@ This guide will help you set up Ollama with DeepSeek-R1:7b on your HP OMEN lapto
 #### Option A: Windows Installer (Recommended)
 
 1. **Download Ollama**
+
    ```powershell
    # Visit the official website
    Start-Process "https://ollama.com/download/windows"
@@ -95,6 +100,7 @@ ollama pull deepseek-r1:7b
 ```
 
 **Download Info:**
+
 - Model size: ~4.7GB
 - Download time: 5-15 minutes (depending on internet speed)
 - Disk space required: ~5GB
@@ -125,6 +131,7 @@ ollama serve
 ```
 
 **Default Configuration:**
+
 - Server URL: `http://localhost:11434`
 - API endpoint: `http://localhost:11434/api`
 - Web UI: Not included (use API or CLI)
@@ -155,6 +162,7 @@ ollama serve
 ```
 
 **Pro Tip**: Set Ollama to start automatically with Windows:
+
 1. Press `Win + R`
 2. Type `shell:startup`
 3. Create a shortcut to `C:\Users\<YourUsername>\AppData\Local\Programs\Ollama\ollama.exe serve`
@@ -287,11 +295,11 @@ try {
         -ContentType "application/json" `
         -ErrorAction Stop
     $duration = (Get-Date) - $startTime
-    
+
     Write-Host "✅ Inference successful!" -ForegroundColor Green
     Write-Host "   Response: $($response.response.Substring(0, [Math]::Min(100, $response.response.Length)))..." -ForegroundColor Gray
     Write-Host "   Duration: $($duration.TotalSeconds) seconds" -ForegroundColor Gray
-    
+
     if ($response.eval_count -and $response.eval_duration) {
         $tokensPerSec = [Math]::Round($response.eval_count / ($response.eval_duration / 1000000000), 2)
         Write-Host "   Speed: $tokensPerSec tokens/second" -ForegroundColor Gray
@@ -336,17 +344,17 @@ Run the test:
 ```typescript
 // Frontend component
 async function askAgriculturalQuestion(question: string) {
-  const response = await fetch('/api/ai/ollama', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+  const response = await fetch("/api/ai/ollama", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       message: question,
-      model: 'deepseek-r1:7b',
+      model: "deepseek-r1:7b",
       options: {
         temperature: 0.7,
-        num_predict: 1024
-      }
-    })
+        num_predict: 1024,
+      },
+    }),
   });
 
   const data = await response.json();
@@ -355,7 +363,7 @@ async function askAgriculturalQuestion(question: string) {
 
 // Usage
 const answer = await askAgriculturalQuestion(
-  "What's the best time to plant tomatoes in a temperate climate?"
+  "What's the best time to plant tomatoes in a temperate climate?",
 );
 ```
 
@@ -363,14 +371,14 @@ const answer = await askAgriculturalQuestion(
 
 ```typescript
 async function analyzeCropIssue(issue: string, farmContext: any) {
-  const response = await fetch('/api/ai/ollama/analyze', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+  const response = await fetch("/api/ai/ollama/analyze", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       query: issue,
       context: farmContext,
-      analysisType: 'advisory'
-    })
+      analysisType: "advisory",
+    }),
   });
 
   const data = await response.json();
@@ -384,8 +392,8 @@ const analysis = await analyzeCropIssue(
     season: "summer",
     soilType: "clay",
     lastFertilized: "2 weeks ago",
-    irrigationFrequency: "daily"
-  }
+    irrigationFrequency: "daily",
+  },
 );
 
 console.log(analysis.advice);
@@ -400,13 +408,13 @@ console.log(analysis.actionItems);
 const threadId = crypto.randomUUID();
 
 async function continueConversation(message: string) {
-  const response = await fetch('/api/ai/ollama', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+  const response = await fetch("/api/ai/ollama", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       message,
       threadId, // Maintain conversation history
-    })
+    }),
   });
 
   return await response.json();
@@ -442,7 +450,7 @@ export function AgriculturalChatBot() {
       });
 
       const data = await res.json();
-      
+
       if (data.success) {
         setResponse(data.data.message);
       } else {
@@ -468,7 +476,7 @@ export function AgriculturalChatBot() {
           {loading ? 'Thinking...' : 'Ask AI'}
         </button>
       </form>
-      
+
       {response && (
         <div className="response">
           <h3>🌾 Agricultural AI Response:</h3>
@@ -524,8 +532,8 @@ const options = {
   temperature: 0.7,
   top_p: 0.9,
   top_k: 40,
-  num_predict: 2048,  // Max tokens to generate
-  num_ctx: 4096,      // Context window (with 64GB RAM)
+  num_predict: 2048, // Max tokens to generate
+  num_ctx: 4096, // Context window (with 64GB RAM)
 };
 ```
 
@@ -533,14 +541,14 @@ const options = {
 
 With your HP OMEN specs:
 
-| Metric | Expected Value |
-|--------|---------------|
-| **Tokens/Second** | 15-25 tokens/sec |
-| **First Token Latency** | 200-500ms |
-| **Response Time (100 tokens)** | 4-7 seconds |
-| **GPU Utilization** | 60-90% |
-| **VRAM Usage** | 4-6GB |
-| **RAM Usage** | 8-12GB |
+| Metric                         | Expected Value   |
+| ------------------------------ | ---------------- |
+| **Tokens/Second**              | 15-25 tokens/sec |
+| **First Token Latency**        | 200-500ms        |
+| **Response Time (100 tokens)** | 4-7 seconds      |
+| **GPU Utilization**            | 60-90%           |
+| **VRAM Usage**                 | 4-6GB            |
+| **RAM Usage**                  | 8-12GB           |
 
 ---
 
@@ -549,11 +557,13 @@ With your HP OMEN specs:
 ### Issue 1: Ollama Not Running
 
 **Symptoms:**
+
 ```
 Error: connect ECONNREFUSED 127.0.0.1:11434
 ```
 
 **Solution:**
+
 ```powershell
 # Start Ollama
 ollama serve
@@ -569,11 +579,13 @@ ollama serve
 ### Issue 2: Model Not Found
 
 **Symptoms:**
+
 ```
 Error: model 'deepseek-r1:7b' not found
 ```
 
 **Solution:**
+
 ```powershell
 # Pull the model
 ollama pull deepseek-r1:7b
@@ -588,10 +600,12 @@ ollama show deepseek-r1:7b
 ### Issue 3: GPU Not Detected
 
 **Symptoms:**
+
 - Slow inference (CPU-only)
 - Low GPU utilization
 
 **Solution:**
+
 ```powershell
 # 1. Update NVIDIA drivers
 # Visit: https://www.nvidia.com/Download/index.aspx
@@ -609,11 +623,13 @@ $env:OLLAMA_GPU = "1"
 ### Issue 4: Out of Memory
 
 **Symptoms:**
+
 ```
 Error: CUDA out of memory
 ```
 
 **Solution:**
+
 ```powershell
 # Use smaller quantization
 ollama pull deepseek-r1:7b-q4  # 4-bit quantization
@@ -631,10 +647,12 @@ $body = @{
 ### Issue 5: Slow Response Times
 
 **Symptoms:**
+
 - Taking >30 seconds per response
 - Low tokens/second
 
 **Solution:**
+
 ```powershell
 # 1. Ensure GPU is being used
 nvidia-smi  # Check GPU utilization while generating
@@ -654,6 +672,7 @@ ollama pull deepseek-r1:1.5b  # Faster but less capable
 ### Issue 6: Authentication Errors in Platform
 
 **Symptoms:**
+
 ```json
 {
   "success": false,
@@ -664,6 +683,7 @@ ollama pull deepseek-r1:1.5b  # Faster but less capable
 ```
 
 **Solution:**
+
 1. Ensure you're logged into the platform
 2. Check your session cookie is valid
 3. Use the platform's frontend instead of direct API calls
@@ -695,12 +715,14 @@ ollama serve
 ### Platform Integration Metrics
 
 The platform automatically tracks:
+
 - Total duration
 - Load duration
 - Eval count
 - Tokens per second
 
 Check these in the API response:
+
 ```json
 {
   "metadata": {
@@ -757,31 +779,31 @@ const context = {
 ```typescript
 async function safeOllamaCall(message: string) {
   try {
-    const response = await fetch('/api/ai/ollama', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const response = await fetch("/api/ai/ollama", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message }),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      
+
       // Handle specific errors
-      if (error.error.code === 'OLLAMA_UNAVAILABLE') {
+      if (error.error.code === "OLLAMA_UNAVAILABLE") {
         return {
           success: false,
-          message: 'AI service is currently offline. Please try again later.',
-          fallback: 'Check our FAQ for common farming questions.'
+          message: "AI service is currently offline. Please try again later.",
+          fallback: "Check our FAQ for common farming questions.",
         };
       }
     }
 
     return await response.json();
   } catch (error) {
-    console.error('Ollama call failed:', error);
+    console.error("Ollama call failed:", error);
     return {
       success: false,
-      message: 'Failed to connect to AI service.'
+      message: "Failed to connect to AI service.",
     };
   }
 }
@@ -809,18 +831,18 @@ $body = @{
 
 ```typescript
 // Fine-tune generation parameters
-const response = await fetch('/api/ai/ollama', {
-  method: 'POST',
+const response = await fetch("/api/ai/ollama", {
+  method: "POST",
   body: JSON.stringify({
     message: query,
     options: {
-      temperature: 0.3,     // Lower = more focused
-      top_p: 0.95,          // Nucleus sampling
-      top_k: 50,            // Top-k sampling
-      num_predict: 512,     // Shorter responses
-      stop: ["\n\n", "###"] // Stop sequences
-    }
-  })
+      temperature: 0.3, // Lower = more focused
+      top_p: 0.95, // Nucleus sampling
+      top_k: 50, // Top-k sampling
+      num_predict: 512, // Shorter responses
+      stop: ["\n\n", "###"], // Stop sequences
+    },
+  }),
 });
 ```
 
@@ -828,12 +850,12 @@ const response = await fetch('/api/ai/ollama', {
 
 ```typescript
 // Enable streaming for real-time responses
-const response = await fetch('/api/ai/ollama', {
-  method: 'POST',
+const response = await fetch("/api/ai/ollama", {
+  method: "POST",
   body: JSON.stringify({
     message: query,
-    stream: true  // Enable streaming
-  })
+    stream: true, // Enable streaming
+  }),
 });
 
 const reader = response.body?.getReader();
@@ -842,7 +864,7 @@ const decoder = new TextDecoder();
 while (true) {
   const { done, value } = await reader!.read();
   if (done) break;
-  
+
   const chunk = decoder.decode(value);
   console.log(chunk); // Display token by token
 }
@@ -853,15 +875,18 @@ while (true) {
 ## 📚 Additional Resources
 
 ### Official Documentation
+
 - Ollama Docs: https://github.com/ollama/ollama
 - DeepSeek-R1: https://huggingface.co/deepseek-ai
 - API Reference: https://github.com/ollama/ollama/blob/main/docs/api.md
 
 ### Community
+
 - Ollama Discord: https://discord.gg/ollama
 - GitHub Issues: https://github.com/ollama/ollama/issues
 
 ### Related Files in This Project
+
 - `/src/lib/ai/ollama.ts` - Ollama client implementation
 - `/src/app/api/ai/ollama/route.ts` - Chat API endpoint
 - `/src/app/api/ai/ollama/analyze/route.ts` - Analysis endpoint
@@ -883,15 +908,17 @@ while (true) {
 
 ## 🎉 You're Ready!
 
-Your HP OMEN laptop is now a powerful agricultural AI assistant! 
+Your HP OMEN laptop is now a powerful agricultural AI assistant!
 
 **Next Steps:**
+
 1. Integrate the chat UI into your platform
 2. Add agricultural analysis to farm dashboards
 3. Create automated crop health monitoring
 4. Build a farming advisory system
 
 **Need Help?**
+
 - Check the troubleshooting section
 - Review API examples
 - Consult divine instruction files in `.github/instructions/`

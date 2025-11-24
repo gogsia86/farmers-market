@@ -6,12 +6,17 @@
  * Provides clear instructions and error handling
  */
 
-const http = require('http');
-const { spawn } = require('child_process');
-const chalk = require('chalk') || { green: (s) => s, red: (s) => s, yellow: (s) => s, blue: (s) => s };
+const http = require("http");
+const { spawn } = require("child_process");
+const chalk = require("chalk") || {
+  green: (s) => s,
+  red: (s) => s,
+  yellow: (s) => s,
+  blue: (s) => s,
+};
 
 const PORT = process.env.TEST_PORT || process.env.PORT || 3001;
-const HOST = 'localhost';
+const HOST = "localhost";
 const BASE_URL = `http://${HOST}:${PORT}`;
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 2000;
@@ -37,12 +42,16 @@ function checkServerRunning(retries = 0) {
       }
     });
 
-    req.on('error', (err) => {
-      if (err.code === 'ECONNREFUSED') {
+    req.on("error", (err) => {
+      if (err.code === "ECONNREFUSED") {
         if (retries < MAX_RETRIES) {
-          console.log(`⏳ Waiting for server to start... (attempt ${retries + 1}/${MAX_RETRIES})`);
+          console.log(
+            `⏳ Waiting for server to start... (attempt ${retries + 1}/${MAX_RETRIES})`,
+          );
           setTimeout(() => {
-            checkServerRunning(retries + 1).then(resolve).catch(reject);
+            checkServerRunning(retries + 1)
+              .then(resolve)
+              .catch(reject);
           }, RETRY_DELAY);
         } else {
           resolve(false);
@@ -109,19 +118,23 @@ function runPlaywrightTests() {
   console.log(`🧪 Starting Playwright E2E tests...\n`);
 
   const playwrightArgs = process.argv.slice(2);
-  const playwrightCmd = process.platform === 'win32' ? 'npx.cmd' : 'npx';
+  const playwrightCmd = process.platform === "win32" ? "npx.cmd" : "npx";
 
-  const playwright = spawn(playwrightCmd, ['playwright', 'test', ...playwrightArgs], {
-    stdio: 'inherit',
-    shell: true,
-    env: {
-      ...process.env,
-      BASE_URL: BASE_URL,
-      TEST_PORT: PORT,
+  const playwright = spawn(
+    playwrightCmd,
+    ["playwright", "test", ...playwrightArgs],
+    {
+      stdio: "inherit",
+      shell: true,
+      env: {
+        ...process.env,
+        BASE_URL: BASE_URL,
+        TEST_PORT: PORT,
+      },
     },
-  });
+  );
 
-  playwright.on('close', (code) => {
+  playwright.on("close", (code) => {
     if (code === 0) {
       console.log(`\n✅ E2E tests completed successfully!`);
     } else {
@@ -130,7 +143,7 @@ function runPlaywrightTests() {
     process.exit(code);
   });
 
-  playwright.on('error', (err) => {
+  playwright.on("error", (err) => {
     console.error(`\n❌ Failed to start Playwright:`, err);
     process.exit(1);
   });
@@ -153,18 +166,18 @@ async function main() {
 }
 
 // Handle termination signals
-process.on('SIGINT', () => {
-  console.log('\n\n🛑 E2E tests interrupted by user');
+process.on("SIGINT", () => {
+  console.log("\n\n🛑 E2E tests interrupted by user");
   process.exit(130);
 });
 
-process.on('SIGTERM', () => {
-  console.log('\n\n🛑 E2E tests terminated');
+process.on("SIGTERM", () => {
+  console.log("\n\n🛑 E2E tests terminated");
   process.exit(143);
 });
 
 // Run main function
 main().catch((err) => {
-  console.error('❌ Unexpected error:', err);
+  console.error("❌ Unexpected error:", err);
   process.exit(1);
 });

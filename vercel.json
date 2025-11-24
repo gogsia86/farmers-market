@@ -5,7 +5,7 @@
   "installCommand": "npm ci --ignore-scripts && npx prisma generate",
   "framework": "nextjs",
   "regions": ["iad1"],
-    "env": {
+  "env": {
     "NODE_ENV": "production",
     "NEXT_TELEMETRY_DISABLED": "1",
     "SKIP_ENV_VALIDATION": "1"

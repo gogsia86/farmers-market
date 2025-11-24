@@ -94,7 +94,7 @@ describe("OrderService - Divine Order Management", () => {
 
       const result = await OrderService.updateOrderStatus(
         "order-1",
-        "CONFIRMED"
+        "CONFIRMED",
       );
 
       expect(result.status).toBe("CONFIRMED");
@@ -145,4 +145,3 @@ describe("OrderService - Divine Order Management", () => {
     });
   });
 });
-

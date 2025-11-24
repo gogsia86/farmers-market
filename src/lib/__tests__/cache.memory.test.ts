@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 
 describe("cache (memory fallback)", () => {
   beforeEach(async () => {
@@ -43,5 +43,3 @@ describe("cache (memory fallback)", () => {
     expect(await (cache as any).has(k2)).toBe(false);
   });
 });
-
-

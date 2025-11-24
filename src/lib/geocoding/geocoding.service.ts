@@ -57,7 +57,7 @@ export class GeocodingService {
    */
   async geocodeAddress(
     address: string,
-    options: GeocodeOptions = {}
+    options: GeocodeOptions = {},
   ): Promise<GeocodeResult | null> {
     try {
       // Check cache first
@@ -106,7 +106,7 @@ export class GeocodingService {
   async reverseGeocode(
     latitude: number,
     longitude: number,
-    options: GeocodeOptions = {}
+    options: GeocodeOptions = {},
   ): Promise<GeocodeResult | null> {
     try {
       await this.enforceRateLimit();
@@ -118,25 +118,25 @@ export class GeocodingService {
           return await this.reverseGeocodeWithNominatim(
             latitude,
             longitude,
-            options
+            options,
           );
         case "google":
           return await this.reverseGeocodeWithGoogle(
             latitude,
             longitude,
-            options
+            options,
           );
         case "mapbox":
           return await this.reverseGeocodeWithMapbox(
             latitude,
             longitude,
-            options
+            options,
           );
         default:
           return await this.reverseGeocodeWithNominatim(
             latitude,
             longitude,
-            options
+            options,
           );
       }
     } catch (error) {
@@ -183,7 +183,7 @@ export class GeocodingService {
    */
   private async geocodeWithNominatim(
     address: string,
-    options: GeocodeOptions
+    options: GeocodeOptions,
   ): Promise<GeocodeResult | null> {
     const params = new URLSearchParams({
       q: address,
@@ -202,7 +202,7 @@ export class GeocodingService {
         headers: {
           "User-Agent": "FarmersMarketPlatform/1.0", // Required by Nominatim
         },
-      }
+      },
     );
 
     if (!response.ok) {
@@ -236,7 +236,7 @@ export class GeocodingService {
   private async reverseGeocodeWithNominatim(
     latitude: number,
     longitude: number,
-    _options: GeocodeOptions
+    _options: GeocodeOptions,
   ): Promise<GeocodeResult | null> {
     const params = new URLSearchParams({
       lat: latitude.toString(),
@@ -251,7 +251,7 @@ export class GeocodingService {
         headers: {
           "User-Agent": "FarmersMarketPlatform/1.0",
         },
-      }
+      },
     );
 
     if (!response.ok) {
@@ -282,13 +282,13 @@ export class GeocodingService {
    */
   private async geocodeWithGoogle(
     address: string,
-    options: GeocodeOptions
+    options: GeocodeOptions,
   ): Promise<GeocodeResult | null> {
     const apiKey = process.env.GOOGLE_MAPS_API_KEY;
 
     if (!apiKey) {
       console.warn(
-        "⚠️  Google Maps API key not configured, falling back to Nominatim"
+        "⚠️  Google Maps API key not configured, falling back to Nominatim",
       );
       return this.geocodeWithNominatim(address, options);
     }
@@ -303,7 +303,7 @@ export class GeocodingService {
     }
 
     const response = await fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?${params.toString()}`
+      `https://maps.googleapis.com/maps/api/geocode/json?${params.toString()}`,
     );
 
     if (!response.ok) {
@@ -322,7 +322,7 @@ export class GeocodingService {
     // Extract address components
     const getComponent = (type: string) =>
       result.address_components.find((c: { types: string[] }) =>
-        c.types.includes(type)
+        c.types.includes(type),
       )?.long_name;
 
     return {
@@ -345,13 +345,13 @@ export class GeocodingService {
   private async reverseGeocodeWithGoogle(
     latitude: number,
     longitude: number,
-    options: GeocodeOptions
+    options: GeocodeOptions,
   ): Promise<GeocodeResult | null> {
     const apiKey = process.env.GOOGLE_MAPS_API_KEY;
 
     if (!apiKey) {
       console.warn(
-        "⚠️  Google Maps API key not configured, falling back to Nominatim"
+        "⚠️  Google Maps API key not configured, falling back to Nominatim",
       );
       return this.reverseGeocodeWithNominatim(latitude, longitude, options);
     }
@@ -366,7 +366,7 @@ export class GeocodingService {
     }
 
     const response = await fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?${params.toString()}`
+      `https://maps.googleapis.com/maps/api/geocode/json?${params.toString()}`,
     );
 
     if (!response.ok) {
@@ -383,7 +383,7 @@ export class GeocodingService {
 
     const getComponent = (type: string) =>
       result.address_components.find((c: { types: string[] }) =>
-        c.types.includes(type)
+        c.types.includes(type),
       )?.long_name;
 
     return {
@@ -405,20 +405,20 @@ export class GeocodingService {
    */
   private async geocodeWithMapbox(
     address: string,
-    _options: GeocodeOptions
+    _options: GeocodeOptions,
   ): Promise<GeocodeResult | null> {
     const apiKey = process.env.MAPBOX_API_KEY;
 
     if (!apiKey) {
       console.warn(
-        "⚠️  Mapbox API key not configured, falling back to Nominatim"
+        "⚠️  Mapbox API key not configured, falling back to Nominatim",
       );
       return this.geocodeWithNominatim(address, _options);
     }
 
     const encodedAddress = encodeURIComponent(address);
     const response = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodedAddress}.json?access_token=${apiKey}`
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodedAddress}.json?access_token=${apiKey}`,
     );
 
     if (!response.ok) {
@@ -457,19 +457,19 @@ export class GeocodingService {
   private async reverseGeocodeWithMapbox(
     latitude: number,
     longitude: number,
-    _options: GeocodeOptions
+    _options: GeocodeOptions,
   ): Promise<GeocodeResult | null> {
     const apiKey = process.env.MAPBOX_API_KEY;
 
     if (!apiKey) {
       console.warn(
-        "⚠️  Mapbox API key not configured, falling back to Nominatim"
+        "⚠️  Mapbox API key not configured, falling back to Nominatim",
       );
       return this.reverseGeocodeWithNominatim(latitude, longitude, _options);
     }
 
     const response = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${apiKey}`
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${apiKey}`,
     );
 
     if (!response.ok) {

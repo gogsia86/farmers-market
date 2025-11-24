@@ -11,7 +11,7 @@
 
 import { database } from "@/lib/database";
 import { ProductService } from "@/lib/services/product.service";
-import { describe, expect, it, jest } from '@jest/globals';
+import { describe, expect, it, jest } from "@jest/globals";
 
 jest.mock("@/lib/database", () => ({
   database: {
@@ -76,7 +76,11 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
 
       // Simulate 10 concurrent purchase attempts, each trying to buy 10 units
       const purchases = Array.from({ length: 10 }, (_, i) =>
-        ProductService.updateInventory(productId, 50 - (i + 1) * 10, "user-123")
+        ProductService.updateInventory(
+          productId,
+          50 - (i + 1) * 10,
+          "user-123",
+        ),
       );
 
       // Wait for all attempts
@@ -190,7 +194,7 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
             paymentStatus: "COMPLETED",
             status: "CONFIRMED",
           },
-        })
+        }),
       );
 
       const results = await Promise.all(confirmations);
@@ -257,7 +261,7 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
 
       // Simulate 100 concurrent requests
       const requests = Array.from({ length: 100 }, (_, i) =>
-        ProductService.getProductById(`product-${i}`)
+        ProductService.getProductById(`product-${i}`),
       );
 
       await Promise.all(requests);
@@ -284,8 +288,8 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
         ProductService.batchUpdateProducts(
           [`product-${i}`],
           { isActive: true } as any,
-          "user-123"
-        )
+          "user-123",
+        ),
       );
 
       const results = await Promise.all(updates);
@@ -314,32 +318,37 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
         farm: { ownerId: "user-123" },
       } as any);
 
-      jest.mocked(database.product.update).mockImplementation(
-        async () =>
-          new Promise((resolve) =>
-            setTimeout(
-              () =>
-                resolve({ id: "product-deadlock-test", isActive: true } as any),
-              100
-            )
-          )
-      );
+      jest
+        .mocked(database.product.update)
+        .mockImplementation(
+          async () =>
+            new Promise((resolve) =>
+              setTimeout(
+                () =>
+                  resolve({
+                    id: "product-deadlock-test",
+                    isActive: true,
+                  } as any),
+                100,
+              ),
+            ),
+        );
 
       const operations = [
         ProductService.updateProduct(
           "product-1",
           { isActive: true } as any,
-          "user-123"
+          "user-123",
         ),
         ProductService.updateProduct(
           "product-2",
           { isActive: false } as any,
-          "user-123"
+          "user-123",
         ),
         ProductService.updateProduct(
           "product-3",
           { isFeatured: true } as any,
-          "user-123"
+          "user-123",
         ),
       ];
 
@@ -368,5 +377,3 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
  * - Idempotency keys
  * - Event sourcing
  */
-
-

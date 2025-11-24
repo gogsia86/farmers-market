@@ -82,7 +82,7 @@ class EmailService {
       // Development mode - log emails to console
       if (process.env.NODE_ENV === "development") {
         console.log(
-          "⚠️ Email service: Development mode - emails will be logged"
+          "⚠️ Email service: Development mode - emails will be logged",
         );
         this.isConfigured = true;
         return;
@@ -142,7 +142,7 @@ class EmailService {
    */
   async sendFarmerWelcome(
     email: string,
-    data: FarmerWelcomeData
+    data: FarmerWelcomeData,
   ): Promise<boolean> {
     const html = `
       <!DOCTYPE html>
@@ -200,7 +200,7 @@ class EmailService {
    * Send support ticket confirmation
    */
   async sendSupportTicketConfirmation(
-    data: SupportTicketData
+    data: SupportTicketData,
   ): Promise<boolean> {
     const html = `
       <!DOCTYPE html>
@@ -237,12 +237,12 @@ class EmailService {
    */
   async sendOrderNotification(
     farmerEmail: string,
-    data: OrderNotificationData
+    data: OrderNotificationData,
   ): Promise<boolean> {
     const itemsList = data.items
       .map(
         (item) =>
-          `<li>${item.name} - Qty: ${item.quantity} - $${item.price.toFixed(2)}</li>`
+          `<li>${item.name} - Qty: ${item.quantity} - $${item.price.toFixed(2)}</li>`,
       )
       .join("");
 
@@ -288,12 +288,12 @@ class EmailService {
    */
   async sendOrderConfirmation(
     customerEmail: string,
-    data: OrderNotificationData
+    data: OrderNotificationData,
   ): Promise<boolean> {
     const itemsList = data.items
       .map(
         (item) =>
-          `<li>${item.name} - Qty: ${item.quantity} - $${item.price.toFixed(2)}</li>`
+          `<li>${item.name} - Qty: ${item.quantity} - $${item.price.toFixed(2)}</li>`,
       )
       .join("");
 

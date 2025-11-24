@@ -391,7 +391,7 @@ export function apiError(message: string, status = 500) {
       error: { message },
       timestamp: new Date().toISOString(),
     },
-    { status }
+    { status },
   );
 }
 

@@ -20,7 +20,7 @@ async function testPerplexityAPI() {
   }
 
   console.log(
-    `✅ API Key found: ${apiKey.substring(0, 10)}...${apiKey.slice(-4)}`
+    `✅ API Key found: ${apiKey.substring(0, 10)}...${apiKey.slice(-4)}`,
   );
 
   try {
@@ -67,7 +67,7 @@ async function testPerplexityAPI() {
     console.log(`   Tokens Used: ${data.usage?.total_tokens || "N/A"}`);
     console.log(`   Citations: ${data.citations?.length || 0}`);
     console.log(
-      `   Related Questions: ${data.related_questions?.length || 0}\n`
+      `   Related Questions: ${data.related_questions?.length || 0}\n`,
     );
 
     console.log("💬 Answer:");

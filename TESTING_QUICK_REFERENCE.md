@@ -86,33 +86,33 @@ npm run test:coverage
 
 ```typescript
 // Component test
-src/components/__tests__/MyComponent.test.tsx
+src / components / __tests__ / MyComponent.test.tsx;
 
 // Service test
-src/lib/services/__tests__/my.service.test.ts
+src / lib / services / __tests__ / my.service.test.ts;
 
 // Hook test
-src/hooks/__tests__/useMyHook.test.ts
+src / hooks / __tests__ / useMyHook.test.ts;
 
 // Utility test
-src/lib/utils/__tests__/myUtil.test.ts
+src / lib / utils / __tests__ / myUtil.test.ts;
 ```
 
 ### Integration Tests
 
 ```typescript
 // API route test
-src/app/api/__tests__/my-route.test.ts
+src / app / api / __tests__ / my - route.test.ts;
 
 // Workflow test
-src/__tests__/integration/my-workflow.integration.test.ts
+src / __tests__ / integration / my - workflow.integration.test.ts;
 ```
 
 ### E2E Tests
 
 ```typescript
 // Playwright E2E test
-tests/e2e/my-feature.spec.ts
+tests / e2e / my - feature.spec.ts;
 ```
 
 ---
@@ -400,12 +400,14 @@ global.agriculturalConsciousness = {
 ## 📚 Additional Resources
 
 ### Documentation
+
 - [Jest Documentation](https://jestjs.io/)
 - [Testing Library](https://testing-library.com/)
 - [Playwright Docs](https://playwright.dev/)
 - [Divine Instructions](.github/instructions/05_TESTING_SECURITY_DIVINITY.instructions.md)
 
 ### Configuration Files
+
 - `jest.config.js` - Jest configuration
 - `jest.setup.js` - Test environment setup
 - `playwright.config.ts` - E2E configuration

@@ -12,7 +12,14 @@
  * - Template download
  */
 
-import { Upload, Download, AlertCircle, CheckCircle2, X, FileText } from "lucide-react";
+import {
+  Upload,
+  Download,
+  AlertCircle,
+  CheckCircle2,
+  X,
+  FileText,
+} from "lucide-react";
 import { useCallback, useState, useRef } from "react";
 
 interface UploadResult {
@@ -33,7 +40,10 @@ interface BulkProductUploadProps {
   onClose?: () => void;
 }
 
-export function BulkProductUpload({ onSuccess, onClose }: BulkProductUploadProps) {
+export function BulkProductUpload({
+  onSuccess,
+  onClose,
+}: BulkProductUploadProps) {
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -81,7 +91,7 @@ export function BulkProductUpload({ onSuccess, onClose }: BulkProductUploadProps
         handleFileSelect(droppedFile);
       }
     },
-    [handleFileSelect]
+    [handleFileSelect],
   );
 
   // Handle file input change
@@ -92,7 +102,7 @@ export function BulkProductUpload({ onSuccess, onClose }: BulkProductUploadProps
         handleFileSelect(selectedFile);
       }
     },
-    [handleFileSelect]
+    [handleFileSelect],
   );
 
   // Download CSV template
@@ -161,8 +171,12 @@ export function BulkProductUpload({ onSuccess, onClose }: BulkProductUploadProps
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Bulk Product Upload</h2>
-          <p className="text-gray-600 mt-1">Upload multiple products at once using CSV</p>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Bulk Product Upload
+          </h2>
+          <p className="text-gray-600 mt-1">
+            Upload multiple products at once using CSV
+          </p>
         </div>
         {onClose && (
           <button
@@ -184,7 +198,9 @@ export function BulkProductUpload({ onSuccess, onClose }: BulkProductUploadProps
             <ol className="list-decimal list-inside space-y-1">
               <li>Download the CSV template below</li>
               <li>Fill in your product information</li>
-              <li>Upload the completed CSV file (max 500 products per upload)</li>
+              <li>
+                Upload the completed CSV file (max 500 products per upload)
+              </li>
               <li>Review any errors and re-upload if needed</li>
             </ol>
           </div>
@@ -320,7 +336,9 @@ export function BulkProductUpload({ onSuccess, onClose }: BulkProductUploadProps
                 <div className="grid grid-cols-3 gap-4 text-sm">
                   <div>
                     <span className="text-gray-600">Total Rows:</span>
-                    <span className="ml-2 font-semibold">{result.totalRows}</span>
+                    <span className="ml-2 font-semibold">
+                      {result.totalRows}
+                    </span>
                   </div>
                   <div>
                     <span className="text-gray-600">Successful:</span>
@@ -368,7 +386,9 @@ export function BulkProductUpload({ onSuccess, onClose }: BulkProductUploadProps
                         <td className="px-4 py-2 text-gray-900 font-medium">
                           {error.row}
                         </td>
-                        <td className="px-4 py-2 text-red-700">{error.error}</td>
+                        <td className="px-4 py-2 text-red-700">
+                          {error.error}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -399,7 +419,9 @@ export function BulkProductUpload({ onSuccess, onClose }: BulkProductUploadProps
 
       {/* CSV Format Reference */}
       <div className="mt-8 border-t pt-6">
-        <h3 className="font-semibold text-gray-900 mb-3">CSV Format Reference</h3>
+        <h3 className="font-semibold text-gray-900 mb-3">
+          CSV Format Reference
+        </h3>
         <div className="bg-gray-50 rounded-lg p-4 overflow-x-auto">
           <table className="text-sm min-w-full">
             <thead>
@@ -419,7 +441,9 @@ export function BulkProductUpload({ onSuccess, onClose }: BulkProductUploadProps
               <tr>
                 <td className="py-2 pr-4 font-mono text-xs">name</td>
                 <td className="py-2 pr-4 text-gray-600">Required</td>
-                <td className="py-2 text-gray-600">Product name (3-200 characters)</td>
+                <td className="py-2 text-gray-600">
+                  Product name (3-200 characters)
+                </td>
               </tr>
               <tr>
                 <td className="py-2 pr-4 font-mono text-xs">description</td>
@@ -441,7 +465,9 @@ export function BulkProductUpload({ onSuccess, onClose }: BulkProductUploadProps
               <tr>
                 <td className="py-2 pr-4 font-mono text-xs">unit</td>
                 <td className="py-2 pr-4 text-gray-600">Required</td>
-                <td className="py-2 text-gray-600">Unit (lb, kg, dozen, etc.)</td>
+                <td className="py-2 text-gray-600">
+                  Unit (lb, kg, dozen, etc.)
+                </td>
               </tr>
               <tr>
                 <td className="py-2 pr-4 font-mono text-xs">stockQuantity</td>

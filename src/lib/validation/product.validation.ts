@@ -52,7 +52,7 @@ export const PricingSchema = z.object({
       z.object({
         minQuantity: z.number().int().positive(),
         pricePerUnit: z.number().positive(),
-      })
+      }),
     )
     .optional(),
   unit: z.string().min(1, "Unit is required"),
@@ -209,7 +209,7 @@ export function validateOrderQuantity(
       reservedQuantity: number;
       allowBackorder: boolean;
     };
-  }
+  },
 ): { valid: boolean; reason?: string } {
   if (requestedQty <= 0) {
     return { valid: false, reason: "Quantity must be positive" };

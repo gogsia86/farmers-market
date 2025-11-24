@@ -22,26 +22,31 @@ Your Farmers Market Platform now has full local AI integration with DeepSeek-R1:
 ## 🚀 Quick Start (5 Minutes)
 
 ### 1. Install Ollama
+
 ```powershell
 winget install Ollama.Ollama
 ```
 
 ### 2. Download Model
+
 ```powershell
 ollama pull deepseek-r1:7b
 ```
 
 ### 3. Start Ollama
+
 ```powershell
 ollama serve
 ```
 
 ### 4. Test Integration
+
 ```powershell
 .\test-ollama.ps1
 ```
 
 ### 5. Start Platform
+
 ```powershell
 npm run dev:omen
 ```
@@ -56,15 +61,17 @@ npm run dev:omen
 ## 🌐 API Endpoints
 
 ### Chat
+
 ```
 POST /api/ai/ollama
 Body: { "message": "Your question here" }
 ```
 
 ### Agricultural Analysis
+
 ```
 POST /api/ai/ollama/analyze
-Body: { 
+Body: {
   "query": "Crop issue description",
   "analysisType": "advisory",
   "context": { ... }
@@ -72,6 +79,7 @@ Body: {
 ```
 
 ### Status Check
+
 ```
 GET /api/ai/ollama
 ```
@@ -96,13 +104,13 @@ import { OllamaChatBot } from '@/components/features/ai/OllamaChatBot';
 
 ## 📊 Performance Metrics
 
-| Metric | Your HP OMEN |
-|--------|--------------|
-| Tokens/Second | 15-25 |
-| First Token | 200-500ms |
-| GPU Usage | 60-90% |
-| VRAM | 4-6GB |
-| Cost | $0 |
+| Metric        | Your HP OMEN |
+| ------------- | ------------ |
+| Tokens/Second | 15-25        |
+| First Token   | 200-500ms    |
+| GPU Usage     | 60-90%       |
+| VRAM          | 4-6GB        |
+| Cost          | $0           |
 
 ## 🎯 What You Can Build
 
@@ -130,6 +138,7 @@ Run the comprehensive test suite:
 ```
 
 This verifies:
+
 - Ollama installation
 - DeepSeek-R1:7b availability
 - GPU acceleration
@@ -141,40 +150,43 @@ This verifies:
 
 ```typescript
 // Simple chat
-const response = await fetch('/api/ai/ollama', {
-  method: 'POST',
+const response = await fetch("/api/ai/ollama", {
+  method: "POST",
   body: JSON.stringify({
-    message: "How do I improve soil health?"
-  })
+    message: "How do I improve soil health?",
+  }),
 });
 
 // Agricultural analysis
-const analysis = await fetch('/api/ai/ollama/analyze', {
-  method: 'POST',
+const analysis = await fetch("/api/ai/ollama/analyze", {
+  method: "POST",
   body: JSON.stringify({
     query: "Yellow tomato leaves",
     analysisType: "advisory",
     context: {
       season: "summer",
-      soilType: "clay"
-    }
-  })
+      soilType: "clay",
+    },
+  }),
 });
 ```
 
 ## 🔧 Troubleshooting
 
 ### Ollama not running?
+
 ```powershell
 ollama serve
 ```
 
 ### Model not found?
+
 ```powershell
 ollama pull deepseek-r1:7b
 ```
 
 ### Slow performance?
+
 ```powershell
 # Check GPU
 nvidia-smi
@@ -186,6 +198,7 @@ nvidia-smi
 ## ✨ Divine Integration
 
 This integration follows all divine architectural principles:
+
 - ✅ Agricultural consciousness in prompts
 - ✅ Biodynamic scoring system
 - ✅ Quantum coherence analysis
@@ -198,6 +211,7 @@ This integration follows all divine architectural principles:
 ## 🎉 You're Ready!
 
 Your platform now has:
+
 - ✅ Local AI running on your laptop
 - ✅ Agricultural domain expertise
 - ✅ GPU-accelerated performance

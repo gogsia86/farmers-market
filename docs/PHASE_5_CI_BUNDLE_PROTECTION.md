@@ -18,6 +18,7 @@ After achieving **90-94% bundle size reductions** through Phase 5 optimizations,
 ## 🏆 Phase 5 Achievement Baselines
 
 ### Before Optimization
+
 ```
 Admin Approvals Route:  228.0 KB  (contained nodemailer)
 Farms Route:           150.0 KB  (contained ioredis)
@@ -25,6 +26,7 @@ Agricultural Route:     60.0 KB  (contained OpenTelemetry)
 ```
 
 ### After Phase 5 Optimization ✨
+
 ```
 Admin Approvals Route:   13.1 KB  (94% reduction) ✅
 Farms Route:             14.8 KB  (90% reduction) ✅
@@ -42,6 +44,7 @@ Agricultural Route:       8.6 KB  (86% reduction) ✅
 **File**: `.github/workflows/bundle-size-check.yml`
 
 **Triggers**:
+
 - Pull requests to `main`, `master`, `develop`
 - Push to main branches
 - Manual workflow dispatch
@@ -49,23 +52,28 @@ Agricultural Route:       8.6 KB  (86% reduction) ✅
 **Key Steps**:
 
 #### Step 1: Build with webpack
+
 ```yaml
 - name: Build application (webpack)
   run: npx next build --webpack
 ```
+
 - Uses **webpack** (not Turbopack) for deterministic analysis
 - Enables `ANALYZE=true` for bundle analyzer reports
 
 #### Step 2: Measure bundle performance
+
 ```yaml
 - name: Measure bundle performance
   run: node scripts/measure-bundle-performance.mjs
 ```
+
 - Runs custom measurement script
 - Outputs detailed console report
 - Generates `bundle-performance-report.json`
 
 #### Step 3: Check thresholds
+
 ```yaml
 - name: Check bundle size thresholds
   run: |
@@ -75,11 +83,13 @@ Agricultural Route:       8.6 KB  (86% reduction) ✅
 ```
 
 #### Step 4: PR comment
+
 - Posts detailed bundle report to PR
 - Shows before/after comparison
 - Highlights regressions
 
 #### Step 5: Validate Phase 5 targets
+
 ```bash
 Admin Approvals: < 25 KB ✅
 Farms Route:     < 25 KB ✅
@@ -90,6 +100,7 @@ Farms Route:     < 25 KB ✅
 **File**: `.github/workflows/ci.yml`
 
 Integrated into the `performance` job:
+
 - Measures bundles during every CI run
 - Validates optimization targets
 - Uploads bundle analysis artifacts
@@ -100,26 +111,26 @@ Integrated into the `performance` job:
 
 ### API Routes
 
-| Category | Threshold | Description | Example Routes |
-|----------|-----------|-------------|----------------|
-| **Critical** | < 20 KB | Health checks, simple endpoints | `/api/health`, `/api/ready` |
-| **Standard** | < 50 KB | Most API routes | `/api/products`, `/api/orders` |
-| **Heavy** | < 200 KB | Complex admin routes | `/api/admin/analytics` |
+| Category     | Threshold | Description                     | Example Routes                 |
+| ------------ | --------- | ------------------------------- | ------------------------------ |
+| **Critical** | < 20 KB   | Health checks, simple endpoints | `/api/health`, `/api/ready`    |
+| **Standard** | < 50 KB   | Most API routes                 | `/api/products`, `/api/orders` |
+| **Heavy**    | < 200 KB  | Complex admin routes            | `/api/admin/analytics`         |
 
 ### Pages
 
-| Category | Threshold | Description |
-|----------|-----------|-------------|
-| **Standard** | < 100 KB | Most pages |
-| **Heavy** | < 300 KB | Admin dashboards |
+| Category     | Threshold | Description      |
+| ------------ | --------- | ---------------- |
+| **Standard** | < 100 KB  | Most pages       |
+| **Heavy**    | < 300 KB  | Admin dashboards |
 
 ### Infrastructure
 
-| Component | Threshold | Description |
-|-----------|-----------|-------------|
-| **Shared Chunks** | < 400 KB | Common dependencies |
-| **Middleware** | < 300 KB | Edge middleware |
-| **Lazy Chunks** | < 300 KB | Dynamic imports |
+| Component         | Threshold | Description         |
+| ----------------- | --------- | ------------------- |
+| **Shared Chunks** | < 400 KB  | Common dependencies |
+| **Middleware**    | < 300 KB  | Edge middleware     |
+| **Lazy Chunks**   | < 300 KB  | Dynamic imports     |
 
 ---
 
@@ -130,6 +141,7 @@ Integrated into the `performance` job:
 **Location**: `scripts/measure-bundle-performance.mjs`
 
 **Features**:
+
 - Recursively scans `.next/server/` directory
 - Categorizes files by route type
 - Applies category-specific thresholds
@@ -137,6 +149,7 @@ Integrated into the `performance` job:
 - Exits with failure if thresholds exceeded
 
 **Output**:
+
 ```
 ═══════════════════════════════════════════════════════════════
   📊 BUNDLE PERFORMANCE REPORT
@@ -167,20 +180,22 @@ Integrated into the `performance` job:
 ### 2. Threshold Enforcement
 
 **Algorithm**:
+
 ```typescript
 function checkThreshold(file: File): ThresholdCheck {
   const category = categorizeRoute(file.path);
   const threshold = getThreshold(category);
-  
+
   return {
     passes: file.sizeKB <= threshold,
     percent: (file.sizeKB / threshold) * 100,
-    overage: Math.max(0, file.sizeKB - threshold)
+    overage: Math.max(0, file.sizeKB - threshold),
   };
 }
 ```
 
 **Categories**:
+
 - `api-critical`: Health checks → 20 KB
 - `api-standard`: Normal routes → 50 KB
 - `api-admin`: Admin routes → 200 KB
@@ -196,17 +211,21 @@ Automatically posted to every pull request:
 
 ### Summary
 ```
-Total Files:       245
-Total Size:        15.7 MB (15.70 MB)
-Passing:           242 ✅
-Warnings:          3 ⚠️
-Failing:           0 ❌
+
+Total Files: 245
+Total Size: 15.7 MB (15.70 MB)
+Passing: 242 ✅
+Warnings: 3 ⚠️
+Failing: 0 ❌
+
 ```
 
 ### ✅ Highly Optimized Routes
 ```
-✨   8.6 KB  app/api/agricultural/consciousness/route.js
-✨  13.1 KB  app/api/admin/approvals/route.js
+
+✨ 8.6 KB app/api/agricultural/consciousness/route.js
+✨ 13.1 KB app/api/admin/approvals/route.js
+
 ```
 
 ---
@@ -255,19 +274,21 @@ du -h .next/server/app/api/admin/approvals/route.js
 ### What Contributes to Bundle Size?
 
 1. **Direct imports** (added immediately to bundle):
+
    ```typescript
-   import nodemailer from 'nodemailer';  // ❌ +1.5 MB
-   import Redis from 'ioredis';          // ❌ +800 KB
+   import nodemailer from "nodemailer"; // ❌ +1.5 MB
+   import Redis from "ioredis"; // ❌ +800 KB
    ```
 
 2. **Transitive dependencies** (imported by imports):
+
    ```typescript
-   import { trace } from '@opentelemetry/api';  // Brings entire SDK
+   import { trace } from "@opentelemetry/api"; // Brings entire SDK
    ```
 
 3. **Type-only imports** (NOT in bundle):
    ```typescript
-   import type { User } from '@prisma/client';  // ✅ 0 KB
+   import type { User } from "@prisma/client"; // ✅ 0 KB
    ```
 
 ### Phase 5 Optimization Patterns
@@ -275,13 +296,15 @@ du -h .next/server/app/api/admin/approvals/route.js
 #### 1. Lazy Email Loading
 
 **Before**:
+
 ```typescript
-import nodemailer from 'nodemailer';  // 228 KB route
+import nodemailer from "nodemailer"; // 228 KB route
 ```
 
 **After**:
+
 ```typescript
-import { sendEmail } from '@/lib/email/email-service-lazy';  // 13 KB route
+import { sendEmail } from "@/lib/email/email-service-lazy"; // 13 KB route
 ```
 
 **Savings**: 215 KB (94% reduction)
@@ -289,13 +312,15 @@ import { sendEmail } from '@/lib/email/email-service-lazy';  // 13 KB route
 #### 2. Lazy Tracing
 
 **Before**:
+
 ```typescript
-import { trace } from '@opentelemetry/api';  // 60 KB route
+import { trace } from "@opentelemetry/api"; // 60 KB route
 ```
 
 **After**:
+
 ```typescript
-import { startSpan } from '@/lib/tracing/lazy-tracer';  // 8.6 KB route
+import { startSpan } from "@/lib/tracing/lazy-tracer"; // 8.6 KB route
 ```
 
 **Savings**: 51.4 KB (86% reduction)
@@ -303,13 +328,15 @@ import { startSpan } from '@/lib/tracing/lazy-tracer';  // 8.6 KB route
 #### 3. Lazy Redis Client
 
 **Before**:
+
 ```typescript
-import Redis from 'ioredis';  // 150 KB route
+import Redis from "ioredis"; // 150 KB route
 ```
 
 **After**:
+
 ```typescript
-import { redisClient } from '@/lib/cache/redis-client-lazy';  // 14.8 KB route
+import { redisClient } from "@/lib/cache/redis-client-lazy"; // 14.8 KB route
 ```
 
 **Savings**: 135.2 KB (90% reduction)
@@ -323,16 +350,18 @@ import { redisClient } from '@/lib/cache/redis-client-lazy';  // 14.8 KB route
 **Symptom**: CI fails with "Bundle size check failed: X route(s) exceed thresholds"
 
 **Solution**:
+
 1. Download bundle analysis artifacts from CI
 2. Review `bundle-performance-report.json`
 3. Identify which routes regressed
 4. Apply lazy-loading pattern:
+
    ```typescript
    // Before
-   import heavyDependency from 'heavy-package';
-   
+   import heavyDependency from "heavy-package";
+
    // After
-   const heavyDependency = await import('heavy-package');
+   const heavyDependency = await import("heavy-package");
    ```
 
 ### Route Shows as Large Despite Lazy Loading
@@ -340,35 +369,38 @@ import { redisClient } from '@/lib/cache/redis-client-lazy';  // 14.8 KB route
 **Possible Causes**:
 
 1. **Import instead of dynamic import**:
+
    ```typescript
    // ❌ Still bundles at build time
-   import { sendEmail } from '@/lib/email/email-service-lazy';
+   import { sendEmail } from "@/lib/email/email-service-lazy";
    await sendEmail();
-   
+
    // ✅ Truly lazy
-   const { sendEmail } = await import('@/lib/email/email-service-lazy');
+   const { sendEmail } = await import("@/lib/email/email-service-lazy");
    await sendEmail();
    ```
 
 2. **Type import not marked**:
+
    ```typescript
    // ❌ Includes in bundle
-   import { PrismaClient } from '@prisma/client';
-   
+   import { PrismaClient } from "@prisma/client";
+
    // ✅ Type-only
-   import type { PrismaClient } from '@prisma/client';
+   import type { PrismaClient } from "@prisma/client";
    ```
 
 3. **Heavy dependency in shared scope**:
+
    ```typescript
    // ❌ Available to all routes
    const redis = new Redis();
-   
+
    // ✅ Lazy instantiation
    let redis: Redis | null = null;
    const getRedis = async () => {
      if (!redis) {
-       const { default: Redis } = await import('ioredis');
+       const { default: Redis } = await import("ioredis");
        redis = new Redis();
      }
      return redis;
@@ -380,10 +412,12 @@ import { redisClient } from '@/lib/cache/redis-client-lazy';  // 14.8 KB route
 **Issue**: Bundle sizes differ between dev and production
 
 **Explanation**:
+
 - **Dev (Turbopack)**: Fast, but different bundling strategy
 - **Production (webpack)**: Optimized, deterministic
 
 **Best Practice**:
+
 - Always use `npx next build --webpack` for analysis
 - CI uses webpack for consistency
 - Turbopack for dev speed only
@@ -395,6 +429,7 @@ import { redisClient } from '@/lib/cache/redis-client-lazy';  // 14.8 KB route
 ### CI Status Checks
 
 All PRs require passing:
+
 - ✅ Bundle Size Check
 - ✅ Phase 5 Optimization Validation
 - ✅ Threshold Compliance
@@ -402,6 +437,7 @@ All PRs require passing:
 ### Artifact Retention
 
 Bundle analysis artifacts kept for **30 days**:
+
 - `bundle-analysis-{sha}/`
 - `bundle-performance-report.json`
 - `bundle-report.txt`
@@ -409,6 +445,7 @@ Bundle analysis artifacts kept for **30 days**:
 ### PR Review Guidelines
 
 Reviewers should check:
+
 1. Bundle size report comment
 2. No routes > 50 KB (unless justified)
 3. Lazy-loading patterns used
@@ -422,26 +459,26 @@ Reviewers should check:
 
 ```typescript
 // ✅ Email
-import { sendEmail } from '@/lib/email/email-service-lazy';
+import { sendEmail } from "@/lib/email/email-service-lazy";
 
 // ✅ Tracing
-import { startSpan } from '@/lib/tracing/lazy-tracer';
+import { startSpan } from "@/lib/tracing/lazy-tracer";
 
 // ✅ Redis
-import { redisClient } from '@/lib/cache/redis-client-lazy';
+import { redisClient } from "@/lib/cache/redis-client-lazy";
 ```
 
 ### 2. Type-Only Imports
 
 ```typescript
 // ✅ Prisma types
-import type { User, Farm, Product } from '@prisma/client';
+import type { User, Farm, Product } from "@prisma/client";
 
 // ✅ Zod types
-import type { z } from 'zod';
+import type { z } from "zod";
 
 // ❌ Avoid
-import { User } from '@prisma/client';  // Bundles Prisma client!
+import { User } from "@prisma/client"; // Bundles Prisma client!
 ```
 
 ### 3. Dynamic Imports for Large Libraries
@@ -449,7 +486,7 @@ import { User } from '@prisma/client';  // Bundles Prisma client!
 ```typescript
 // ✅ Lazy Stripe
 export async function createPaymentIntent(amount: number) {
-  const { default: Stripe } = await import('stripe');
+  const { default: Stripe } = await import("stripe");
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
   // ...
 }
@@ -496,12 +533,12 @@ node scripts/measure-bundle-performance.mjs
 
 ### Phase 5 Achievements (Maintained by CI)
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| **Admin Approvals** | 228 KB | 13.1 KB | 94% ⬇️ |
-| **Farms Route** | 150 KB | 14.8 KB | 90% ⬇️ |
-| **Agricultural** | 60 KB | 8.6 KB | 86% ⬇️ |
-| **Average API Route** | 146 KB | 12.2 KB | 92% ⬇️ |
+| Metric                | Before | After   | Improvement |
+| --------------------- | ------ | ------- | ----------- |
+| **Admin Approvals**   | 228 KB | 13.1 KB | 94% ⬇️      |
+| **Farms Route**       | 150 KB | 14.8 KB | 90% ⬇️      |
+| **Agricultural**      | 60 KB  | 8.6 KB  | 86% ⬇️      |
+| **Average API Route** | 146 KB | 12.2 KB | 92% ⬇️      |
 
 ### CI Protection Stats
 
@@ -555,6 +592,7 @@ node scripts/measure-bundle-performance.mjs
 ### Issues
 
 If bundle checks fail unexpectedly:
+
 1. Check CI logs for details
 2. Download bundle analysis artifacts
 3. Review [Troubleshooting](#-troubleshooting)
@@ -569,8 +607,9 @@ If bundle checks fail unexpectedly:
 ---
 
 **Version History**:
+
 - **1.0** (Jan 2025): Initial release with Phase 5 protection
 - Maintained by: Platform Engineering Team
 - Last validated: Post-Phase 5 optimization completion
 
-🌾 *Building a divine agricultural platform with quantum efficiency* ⚡
+🌾 _Building a divine agricultural platform with quantum efficiency_ ⚡

@@ -41,7 +41,7 @@ export function SimpleLanguageButton() {
     if (pathname.startsWith(`/${detectedLocale}`)) {
       const newPathname = pathname.replace(
         `/${detectedLocale}`,
-        `/${newLocale}`
+        `/${newLocale}`,
       );
       router.push(newPathname);
     } else {

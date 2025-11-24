@@ -7,6 +7,7 @@
 ## 📦 Essential Commands
 
 ### Quality Checks
+
 ```bash
 npm run quality              # ✅ Run ALL checks (type + lint + format)
 npm run quality:fix          # 🔧 Run all + auto-fix issues
@@ -14,6 +15,7 @@ npm run quality:omen         # ⚡ HP OMEN optimized (12 threads)
 ```
 
 ### Individual Checks
+
 ```bash
 npm run type-check           # 🔍 TypeScript type checking
 npm run lint                 # 🧹 ESLint (check only)
@@ -23,6 +25,7 @@ npm run format               # 💅 Prettier format all files
 ```
 
 ### Testing
+
 ```bash
 npm run test                 # 🧪 Unit tests
 npm run test:watch           # 👀 Tests in watch mode
@@ -33,6 +36,7 @@ npm run test:all             # 🔄 All tests (unit + e2e)
 ```
 
 ### Building
+
 ```bash
 npm run build                # 🏗️ Production build (lint skipped)
 npm run build:optimized      # 🚀 Optimized build
@@ -45,6 +49,7 @@ npm run build:analyze        # 📊 Build with bundle analyzer
 ## 🔄 Workflow Patterns
 
 ### Before Starting Work
+
 ```bash
 git pull origin main
 npm ci
@@ -53,6 +58,7 @@ npm run quality
 ```
 
 ### During Development
+
 ```bash
 # Terminal 1: Dev server
 npm run dev
@@ -62,6 +68,7 @@ npm run test:watch
 ```
 
 ### Before Committing
+
 ```bash
 npm run quality:fix          # Auto-fix issues
 npm run test                 # Run tests
@@ -70,6 +77,7 @@ git commit -m "feat: description"
 ```
 
 ### Before Pushing
+
 ```bash
 npm run quality              # Final quality check
 npm run test:all             # All tests
@@ -96,23 +104,27 @@ npm run type-check:omen      # Type check (12 threads)
 ## 🐛 Quick Fixes
 
 ### Fix All Auto-Fixable Issues
+
 ```bash
 npm run quality:fix
 ```
 
 ### Fix Specific Issues
+
 ```bash
 npm run lint:fix             # Fix ESLint issues
 npm run format               # Fix formatting
 ```
 
 ### Type Errors (Manual Fix Required)
+
 ```bash
 npm run type-check
 # Read errors and fix in code
 ```
 
 ### Test Failures
+
 ```bash
 npm run test:watch           # Debug in watch mode
 npm run test -- --verbose    # More details
@@ -123,11 +135,13 @@ npm run test -- --verbose    # More details
 ## 🚨 Common Issues
 
 ### "Pre-build hook slows development"
+
 ```bash
 npm run build --ignore-scripts
 ```
 
 ### "Type check fails in CI but not locally"
+
 ```bash
 rm -rf node_modules .next
 npm ci
@@ -136,6 +150,7 @@ npm run type-check
 ```
 
 ### "Too many lint errors"
+
 ```bash
 npm run lint:quiet           # See errors only
 npm run lint:fix             # Auto-fix first
@@ -146,18 +161,21 @@ npm run lint:fix             # Auto-fix first
 ## 📊 Check Status
 
 ### Coverage Report
+
 ```bash
 npm run test:coverage
 open coverage/lcov-report/index.html
 ```
 
 ### Bundle Size
+
 ```bash
 npm run build:analyze
 # Opens in browser
 ```
 
 ### Type Coverage
+
 ```bash
 npm run type-check
 ```
@@ -167,6 +185,7 @@ npm run type-check
 ## 🎯 CI/CD Pipeline
 
 ### GitHub Actions Jobs (Parallel)
+
 1. ✅ **type-check** - TypeScript validation
 2. ✅ **lint** - ESLint code quality
 3. ✅ **format-check** - Prettier formatting
@@ -192,20 +211,21 @@ npm run type-check
 
 ## 📚 Configuration Files
 
-| File | Purpose |
-|------|---------|
-| `next.config.mjs` | ESLint: `ignoreDuringBuilds: true` |
-| `.eslintrc.json` | ESLint rules |
-| `.prettierrc` | Prettier config |
-| `tsconfig.json` | TypeScript config |
-| `jest.config.js` | Jest test config |
-| `playwright.config.ts` | E2E test config |
+| File                   | Purpose                            |
+| ---------------------- | ---------------------------------- |
+| `next.config.mjs`      | ESLint: `ignoreDuringBuilds: true` |
+| `.eslintrc.json`       | ESLint rules                       |
+| `.prettierrc`          | Prettier config                    |
+| `tsconfig.json`        | TypeScript config                  |
+| `jest.config.js`       | Jest test config                   |
+| `playwright.config.ts` | E2E test config                    |
 
 ---
 
 ## 🎓 Best Practices
 
 ### ✅ DO
+
 - Run `npm run quality` before every commit
 - Fix issues incrementally
 - Use HP OMEN commands for speed
@@ -213,6 +233,7 @@ npm run type-check
 - Write meaningful commit messages
 
 ### ❌ DON'T
+
 - Skip quality checks
 - Use `@ts-ignore` or `eslint-disable` unnecessarily
 - Commit failing tests

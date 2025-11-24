@@ -13,7 +13,7 @@ import React from "react";
  */
 export function render(
   ui: React.ReactElement,
-  options?: Omit<RenderOptions, "wrapper">
+  options?: Omit<RenderOptions, "wrapper">,
 ) {
   const Wrapper = ({ children }: { children: React.ReactNode }) => {
     return <SessionProvider session={null}>{children}</SessionProvider>;

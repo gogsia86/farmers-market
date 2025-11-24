@@ -13,7 +13,7 @@ export abstract class ApplicationError extends Error {
     message: string,
     code: string,
     context: string = "UNKNOWN",
-    details: Record<string, any> = {}
+    details: Record<string, any> = {},
   ) {
     super(message);
     this.name = this.constructor.name;

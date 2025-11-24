@@ -82,7 +82,7 @@ const CATEGORIES = [
 export default function CategoriesPage() {
   const totalProducts = CATEGORIES.reduce(
     (sum, cat) => sum + cat.productCount,
-    0
+    0,
   );
 
   return (

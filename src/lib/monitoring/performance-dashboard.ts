@@ -104,7 +104,7 @@ class PerformanceDashboard {
 
     if (this.agriculturalMetrics.length > this.maxMetrics) {
       this.agriculturalMetrics = this.agriculturalMetrics.slice(
-        -this.maxMetrics
+        -this.maxMetrics,
       );
     }
 
@@ -198,7 +198,7 @@ class PerformanceDashboard {
 
   getComponentsWithErrors(): ComponentMetrics[] {
     return Array.from(this.componentMetrics.values()).filter(
-      (m) => m.errorCount > 0
+      (m) => m.errorCount > 0,
     );
   }
 

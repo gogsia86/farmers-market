@@ -97,7 +97,7 @@ try {
 
   const categories = {
     unit: testFiles.filter(
-      (f) => f.includes("__tests__") && !f.includes("integration")
+      (f) => f.includes("__tests__") && !f.includes("integration"),
     ),
     integration: testFiles.filter((f) => f.includes("integration")),
     component: testFiles.filter((f) => f.includes("components")),
@@ -172,7 +172,7 @@ if (!existsSync(join(__dirname, "vitest.setup.ts"))) {
 
 if (!process.env.DATABASE_URL) {
   recommendations.push(
-    "Set DATABASE_URL environment variable for database tests"
+    "Set DATABASE_URL environment variable for database tests",
   );
 }
 

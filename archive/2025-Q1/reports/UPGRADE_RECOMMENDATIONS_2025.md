@@ -15,6 +15,7 @@ The Farmers Market Platform is a **well-architected, production-ready** agricult
 ### Overall Health: **A- (Excellent)**
 
 **Current Strengths:**
+
 - ✅ Modern tech stack (Next.js 16, TypeScript 5.9, Prisma 7)
 - ✅ Clean architecture with proper separation of concerns
 - ✅ Comprehensive divine instruction system
@@ -23,6 +24,7 @@ The Farmers Market Platform is a **well-architected, production-ready** agricult
 - ✅ Docker & Kubernetes ready
 
 **Priority Upgrade Areas:**
+
 - 🔴 **Critical**: Security patches and NextAuth v5 migration
 - 🟡 **High**: React 19 upgrade and i18n completion
 - 🟢 **Medium**: Redis caching and performance optimizations
@@ -39,6 +41,7 @@ The Farmers Market Platform is a **well-architected, production-ready** agricult
 **Issue**: NextAuth v4 is outdated; React 18 has known vulnerabilities in older versions
 
 **Action Items:**
+
 ```bash
 # 1. Update to NextAuth v5 (Auth.js)
 npm install next-auth@beta @auth/prisma-adapter@latest
@@ -73,6 +76,7 @@ const session = await auth();
    - Verify Server Actions compatibility
 
 **Files to Update:**
+
 - `src/lib/auth/config.ts`
 - `src/middleware.ts`
 - All API routes using `getServerSession`
@@ -86,6 +90,7 @@ const session = await auth();
 #### 2. Dependency Security Patches
 
 **Current Outdated Packages:**
+
 ```json
 {
   "@swc/core": "1.15.2 → 1.15.3",
@@ -97,6 +102,7 @@ const session = await auth();
 ```
 
 **Action:**
+
 ```bash
 npm update @swc/core @next/bundle-analyzer @playwright/test eslint-config-next tailwindcss
 npm audit fix
@@ -115,6 +121,7 @@ npm audit fix --force  # Review changes carefully
 **Issue**: i18n currently disabled, `[locale]` routes removed but `next-intl` still installed
 
 **Current State:**
+
 ```typescript
 // src/i18n.ts exists but disabled
 // Locale routing removed from app structure
@@ -128,12 +135,14 @@ npm install next-intl@latest
 ```
 
 **Steps:**
+
 1. Re-enable locale routing
 2. Create translation files
 3. Update middleware for locale detection
 4. Add language switcher component
 
 **File Structure:**
+
 ```
 src/
 ├── i18n/
@@ -154,17 +163,17 @@ src/
 
 ```typescript
 // src/i18n/config.ts
-export const locales = ['en', 'es', 'fr'] as const;
-export const defaultLocale = 'en' as const;
+export const locales = ["en", "es", "fr"] as const;
+export const defaultLocale = "en" as const;
 export type Locale = (typeof locales)[number];
 
 // src/middleware.ts
-import createMiddleware from 'next-intl/middleware';
+import createMiddleware from "next-intl/middleware";
 
 export default createMiddleware({
-  locales: ['en', 'es', 'fr'],
-  defaultLocale: 'en',
-  localePrefix: 'as-needed'
+  locales: ["en", "es", "fr"],
+  defaultLocale: "en",
+  localePrefix: "as-needed",
 });
 ```
 
@@ -189,6 +198,7 @@ npm uninstall next-intl
 **Missing Models:**
 
 1. **NotificationPreferences**
+
 ```prisma
 // prisma/schema.prisma
 
@@ -196,31 +206,32 @@ model NotificationPreferences {
   id        String   @id @default(cuid())
   userId    String   @unique
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   // Email notifications
   emailOrders        Boolean @default(true)
   emailReviews       Boolean @default(true)
   emailPromotions    Boolean @default(false)
   emailNewsletter    Boolean @default(false)
-  
+
   // In-app notifications
   inAppOrders        Boolean @default(true)
   inAppReviews       Boolean @default(true)
   inAppMessages      Boolean @default(true)
-  
+
   // Push notifications
   pushOrders         Boolean @default(true)
   pushReviews        Boolean @default(true)
   pushPromotions     Boolean @default(false)
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   @@index([userId])
 }
 ```
 
 2. **SupportTicket**
+
 ```prisma
 enum TicketStatus {
   OPEN
@@ -241,24 +252,24 @@ model SupportTicket {
   ticketId    String         @unique // TICKET-timestamp format
   userId      String
   user        User           @relation(fields: [userId], references: [id])
-  
+
   subject     String
   description String         @db.Text
   category    String
   priority    TicketPriority @default(MEDIUM)
   status      TicketStatus   @default(OPEN)
-  
+
   // Agent assignment
   assignedToId String?
   assignedTo   User?         @relation("AssignedTickets", fields: [assignedToId], references: [id])
-  
+
   // Resolution
   resolution  String?        @db.Text
   resolvedAt  DateTime?
-  
+
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
-  
+
   @@index([userId])
   @@index([status])
   @@index([assignedToId])
@@ -266,6 +277,7 @@ model SupportTicket {
 ```
 
 3. **DownloadLog** (for tracking resource downloads)
+
 ```prisma
 model DownloadLog {
   id         String   @id @default(cuid())
@@ -275,7 +287,7 @@ model DownloadLog {
   ipAddress  String?
   userAgent  String?
   createdAt  DateTime @default(now())
-  
+
   @@index([userId])
   @@index([resourceId])
   @@index([createdAt])
@@ -283,6 +295,7 @@ model DownloadLog {
 ```
 
 4. **AuditLog** (for tracking sensitive operations)
+
 ```prisma
 enum AuditAction {
   CREATE
@@ -298,17 +311,17 @@ model AuditLog {
   id          String      @id @default(cuid())
   userId      String?
   user        User?       @relation(fields: [userId], references: [id])
-  
+
   action      AuditAction
   entityType  String      // 'Farm', 'Product', 'Order', etc.
   entityId    String
-  
+
   changes     Json?       // Store before/after state
   ipAddress   String?
   userAgent   String?
-  
+
   createdAt   DateTime    @default(now())
-  
+
   @@index([userId])
   @@index([entityType, entityId])
   @@index([createdAt])
@@ -316,6 +329,7 @@ model AuditLog {
 ```
 
 **Migration:**
+
 ```bash
 npx prisma migrate dev --name add_missing_models
 npx prisma generate
@@ -331,6 +345,7 @@ npx prisma generate
 **Issue**: Latitude/longitude set to 0 with TODO comments
 
 **Current Code:**
+
 ```typescript
 // src/app/api/farmers/register/route.ts
 latitude: 0, // TODO: Geocode address to get coordinates
@@ -341,8 +356,8 @@ longitude: 0, // TODO: Geocode address to get coordinates
 
 ```typescript
 // src/lib/services/geocoding.service.ts
-import { createHash } from 'crypto';
-import { database } from '@/lib/database';
+import { createHash } from "crypto";
+import { database } from "@/lib/database";
 
 interface GeocodeResult {
   latitude: number;
@@ -361,7 +376,7 @@ export class GeocodingService {
     address: string,
     city: string,
     state: string,
-    zipCode: string
+    zipCode: string,
   ): Promise<GeocodeResult> {
     const fullAddress = `${address}, ${city}, ${state} ${zipCode}`;
     const cacheKey = this.generateCacheKey(fullAddress);
@@ -383,23 +398,23 @@ export class GeocodingService {
       await this.saveToCache(cacheKey, result);
       return result;
     } catch (error) {
-      console.error('Geocoding failed:', error);
+      console.error("Geocoding failed:", error);
       // Return approximate coordinates for state center
       return this.getStateCenterCoordinates(state);
     }
   }
 
   private static async geocodeWithGoogle(
-    address: string
+    address: string,
   ): Promise<GeocodeResult> {
-    const url = new URL('https://maps.googleapis.com/maps/api/geocode/json');
-    url.searchParams.set('address', address);
-    url.searchParams.set('key', process.env.GOOGLE_MAPS_API_KEY!);
+    const url = new URL("https://maps.googleapis.com/maps/api/geocode/json");
+    url.searchParams.set("address", address);
+    url.searchParams.set("key", process.env.GOOGLE_MAPS_API_KEY!);
 
     const response = await fetch(url.toString());
     const data = await response.json();
 
-    if (data.status !== 'OK' || !data.results[0]) {
+    if (data.status !== "OK" || !data.results[0]) {
       throw new Error(`Google Geocoding failed: ${data.status}`);
     }
 
@@ -412,22 +427,22 @@ export class GeocodingService {
   }
 
   private static async geocodeWithNominatim(
-    address: string
+    address: string,
   ): Promise<GeocodeResult> {
-    const url = new URL('https://nominatim.openstreetmap.org/search');
-    url.searchParams.set('q', address);
-    url.searchParams.set('format', 'json');
-    url.searchParams.set('limit', '1');
+    const url = new URL("https://nominatim.openstreetmap.org/search");
+    url.searchParams.set("q", address);
+    url.searchParams.set("format", "json");
+    url.searchParams.set("limit", "1");
 
     const response = await fetch(url.toString(), {
       headers: {
-        'User-Agent': 'FarmersMarketPlatform/1.0',
+        "User-Agent": "FarmersMarketPlatform/1.0",
       },
     });
 
     const data = await response.json();
     if (!data[0]) {
-      throw new Error('Nominatim geocoding failed: No results');
+      throw new Error("Nominatim geocoding failed: No results");
     }
 
     return {
@@ -438,11 +453,11 @@ export class GeocodingService {
   }
 
   private static generateCacheKey(address: string): string {
-    return createHash('sha256').update(address).digest('hex');
+    return createHash("sha256").update(address).digest("hex");
   }
 
   private static async getFromCache(
-    key: string
+    key: string,
   ): Promise<GeocodeResult | null> {
     // Implement with Redis when available
     // For now, return null
@@ -451,7 +466,7 @@ export class GeocodingService {
 
   private static async saveToCache(
     key: string,
-    result: GeocodeResult
+    result: GeocodeResult,
   ): Promise<void> {
     // Implement with Redis when available
   }
@@ -475,20 +490,22 @@ export class GeocodingService {
 ```
 
 **Usage:**
+
 ```typescript
 // src/app/api/farmers/register/route.ts
-import { GeocodingService } from '@/lib/services/geocoding.service';
+import { GeocodingService } from "@/lib/services/geocoding.service";
 
-const { latitude, longitude, formattedAddress } = 
+const { latitude, longitude, formattedAddress } =
   await GeocodingService.geocodeAddress(
     validatedData.address,
     validatedData.city,
     validatedData.state,
-    validatedData.zipCode
+    validatedData.zipCode,
   );
 ```
 
 **Environment Variables:**
+
 ```bash
 # Optional - for better accuracy
 GOOGLE_MAPS_API_KEY=your_api_key_here
@@ -506,6 +523,7 @@ GOOGLE_MAPS_API_KEY=your_api_key_here
 **Issue**: Multiple TODO comments for Redis caching
 
 **Current Code:**
+
 ```typescript
 // src/lib/cache/biodynamic-cache.ts
 // TODO: L2: Redis cache when configured
@@ -516,7 +534,7 @@ return null;
 
 ```typescript
 // src/lib/cache/redis-client.ts
-import { Redis } from 'ioredis';
+import { Redis } from "ioredis";
 
 let redisClient: Redis | null = null;
 
@@ -530,8 +548,8 @@ export function getRedisClient(): Redis | null {
       },
     });
 
-    redisClient.on('error', (err) => {
-      console.error('Redis error:', err);
+    redisClient.on("error", (err) => {
+      console.error("Redis error:", err);
     });
   }
 
@@ -547,9 +565,10 @@ export async function closeRedis(): Promise<void> {
 ```
 
 **Update Biodynamic Cache:**
+
 ```typescript
 // src/lib/cache/biodynamic-cache.ts
-import { getRedisClient } from './redis-client';
+import { getRedisClient } from "./redis-client";
 
 export class BiodynamicCacheManager {
   async get<T>(key: string): Promise<T | null> {
@@ -571,7 +590,7 @@ export class BiodynamicCacheManager {
           return value;
         }
       } catch (error) {
-        console.error('Redis get error:', error);
+        console.error("Redis get error:", error);
       }
     }
 
@@ -581,7 +600,7 @@ export class BiodynamicCacheManager {
   async set<T>(
     key: string,
     value: T,
-    options: CacheOptions = {}
+    options: CacheOptions = {},
   ): Promise<void> {
     const ttl = this.calculateTTL(options);
 
@@ -593,7 +612,7 @@ export class BiodynamicCacheManager {
     if (redis) {
       try {
         await redis.setex(key, ttl, JSON.stringify(value));
-        
+
         // Store tags for invalidation
         if (options.tags) {
           for (const tag of options.tags) {
@@ -602,7 +621,7 @@ export class BiodynamicCacheManager {
           }
         }
       } catch (error) {
-        console.error('Redis set error:', error);
+        console.error("Redis set error:", error);
       }
     }
   }
@@ -617,7 +636,7 @@ export class BiodynamicCacheManager {
           await redis.del(`tag:${tag}`);
         }
       } catch (error) {
-        console.error('Redis invalidation error:', error);
+        console.error("Redis invalidation error:", error);
       }
     }
 
@@ -628,6 +647,7 @@ export class BiodynamicCacheManager {
 ```
 
 **Docker Compose Update:**
+
 ```yaml
 # docker-compose.yml
 services:
@@ -649,6 +669,7 @@ volumes:
 ```
 
 **Environment Variables:**
+
 ```bash
 REDIS_URL=redis://localhost:6379
 ```
@@ -666,13 +687,13 @@ REDIS_URL=redis://localhost:6379
 
 ```typescript
 // src/lib/middleware/rate-limit.ts
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { getRedisClient } from '@/lib/cache/redis-client';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { getRedisClient } from "@/lib/cache/redis-client";
 
 interface RateLimitConfig {
-  windowMs: number;  // Time window in milliseconds
-  maxRequests: number;  // Max requests per window
+  windowMs: number; // Time window in milliseconds
+  maxRequests: number; // Max requests per window
   keyPrefix?: string;
 }
 
@@ -691,7 +712,7 @@ export class RateLimiter {
   }> {
     const redis = getRedisClient();
     const identifier = this.getIdentifier(request);
-    const key = `${this.config.keyPrefix || 'rl'}:${identifier}`;
+    const key = `${this.config.keyPrefix || "rl"}:${identifier}`;
     const now = Date.now();
     const windowStart = now - this.config.windowMs;
 
@@ -700,14 +721,14 @@ export class RateLimiter {
       try {
         // Remove old entries
         await redis.zremrangebyscore(key, 0, windowStart);
-        
+
         // Count requests in current window
         const count = await redis.zcard(key);
-        
+
         if (count >= this.config.maxRequests) {
-          const oldest = await redis.zrange(key, 0, 0, 'WITHSCORES');
+          const oldest = await redis.zrange(key, 0, 0, "WITHSCORES");
           const resetTime = parseInt(oldest[1]) + this.config.windowMs;
-          
+
           return {
             success: false,
             limit: this.config.maxRequests,
@@ -715,11 +736,11 @@ export class RateLimiter {
             reset: resetTime,
           };
         }
-        
+
         // Add current request
         await redis.zadd(key, now, `${now}-${Math.random()}`);
         await redis.expire(key, Math.ceil(this.config.windowMs / 1000));
-        
+
         return {
           success: true,
           limit: this.config.maxRequests,
@@ -727,7 +748,7 @@ export class RateLimiter {
           reset: now + this.config.windowMs,
         };
       } catch (error) {
-        console.error('Redis rate limit error:', error);
+        console.error("Redis rate limit error:", error);
         // Fall through to memory-based rate limiting
       }
     }
@@ -738,22 +759,18 @@ export class RateLimiter {
 
   private getIdentifier(request: NextRequest): string {
     // Try to get user ID from session
-    const userId = request.headers.get('x-user-id');
+    const userId = request.headers.get("x-user-id");
     if (userId) return `user:${userId}`;
 
     // Fall back to IP address
-    const forwarded = request.headers.get('x-forwarded-for');
-    const ip = forwarded?.split(',')[0] || request.ip || 'unknown';
+    const forwarded = request.headers.get("x-forwarded-for");
+    const ip = forwarded?.split(",")[0] || request.ip || "unknown";
     return `ip:${ip}`;
   }
 
   private memoryStore = new Map<string, number[]>();
 
-  private checkInMemory(
-    identifier: string,
-    now: number,
-    windowStart: number
-  ) {
+  private checkInMemory(identifier: string, now: number, windowStart: number) {
     const timestamps = this.memoryStore.get(identifier) || [];
     const validTimestamps = timestamps.filter((ts) => ts > windowStart);
 
@@ -783,46 +800,49 @@ export const rateLimiters = {
   api: new RateLimiter({
     windowMs: 15 * 60 * 1000, // 15 minutes
     maxRequests: 100,
-    keyPrefix: 'api',
+    keyPrefix: "api",
   }),
   auth: new RateLimiter({
     windowMs: 15 * 60 * 1000, // 15 minutes
     maxRequests: 5,
-    keyPrefix: 'auth',
+    keyPrefix: "auth",
   }),
   strict: new RateLimiter({
     windowMs: 60 * 1000, // 1 minute
     maxRequests: 10,
-    keyPrefix: 'strict',
+    keyPrefix: "strict",
   }),
 };
 ```
 
 **Usage in API Routes:**
+
 ```typescript
 // src/app/api/example/route.ts
-import { rateLimiters } from '@/lib/middleware/rate-limit';
-import { NextRequest, NextResponse } from 'next/server';
+import { rateLimiters } from "@/lib/middleware/rate-limit";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   // Apply rate limiting
   const rateLimit = await rateLimiters.api.check(request);
-  
+
   if (!rateLimit.success) {
     return NextResponse.json(
       {
-        error: 'Too many requests',
+        error: "Too many requests",
         retryAfter: Math.ceil((rateLimit.reset - Date.now()) / 1000),
       },
       {
         status: 429,
         headers: {
-          'X-RateLimit-Limit': rateLimit.limit.toString(),
-          'X-RateLimit-Remaining': rateLimit.remaining.toString(),
-          'X-RateLimit-Reset': rateLimit.reset.toString(),
-          'Retry-After': Math.ceil((rateLimit.reset - Date.now()) / 1000).toString(),
+          "X-RateLimit-Limit": rateLimit.limit.toString(),
+          "X-RateLimit-Remaining": rateLimit.remaining.toString(),
+          "X-RateLimit-Reset": rateLimit.reset.toString(),
+          "Retry-After": Math.ceil(
+            (rateLimit.reset - Date.now()) / 1000,
+          ).toString(),
         },
-      }
+      },
     );
   }
 
@@ -848,32 +868,33 @@ export async function POST(request: NextRequest) {
 model Farm {
   id                 String    @id @default(cuid())
   // ... existing fields
-  
+
   // Soft delete
   deletedAt          DateTime?
   deletedBy          String?
   deletedByUser      User?     @relation("DeletedFarms", fields: [deletedBy], references: [id])
-  
+
   @@index([deletedAt])
 }
 
 model Product {
   id                 String    @id @default(cuid())
   // ... existing fields
-  
+
   // Soft delete
   deletedAt          DateTime?
   deletedBy          String?
   deletedByUser      User?     @relation("DeletedProducts", fields: [deletedBy], references: [id])
-  
+
   @@index([deletedAt])
 }
 ```
 
 **Base Service with Soft Delete:**
+
 ```typescript
 // src/lib/services/base.service.ts
-import { database } from '@/lib/database';
+import { database } from "@/lib/database";
 
 export abstract class BaseService {
   /**
@@ -882,7 +903,7 @@ export abstract class BaseService {
   protected async softDelete<T extends { deletedAt?: Date | null }>(
     model: any,
     id: string,
-    userId: string
+    userId: string,
   ): Promise<T> {
     return await model.update({
       where: { id },
@@ -896,10 +917,7 @@ export abstract class BaseService {
   /**
    * Find many excluding soft-deleted records
    */
-  protected async findManyActive<T>(
-    model: any,
-    params: any
-  ): Promise<T[]> {
+  protected async findManyActive<T>(model: any, params: any): Promise<T[]> {
     return await model.findMany({
       ...params,
       where: {
@@ -912,10 +930,7 @@ export abstract class BaseService {
   /**
    * Find one excluding soft-deleted records
    */
-  protected async findOneActive<T>(
-    model: any,
-    params: any
-  ): Promise<T | null> {
+  protected async findOneActive<T>(model: any, params: any): Promise<T | null> {
     return await model.findFirst({
       ...params,
       where: {
@@ -954,25 +969,26 @@ export abstract class BaseService {
 **Actions:**
 
 1. **Complete Service Worker**
+
 ```javascript
 // public/sw.js - Complete IndexedDB implementation
 
 // IndexedDB setup
-const DB_NAME = 'farmers-market-db';
+const DB_NAME = "farmers-market-db";
 const DB_VERSION = 1;
-const ORDERS_STORE = 'pending-orders';
+const ORDERS_STORE = "pending-orders";
 
 function openDatabase() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
-    
+
     request.onerror = () => reject(request.error);
     request.onsuccess = () => resolve(request.result);
-    
+
     request.onupgradeneeded = (event) => {
       const db = event.target.result;
       if (!db.objectStoreNames.contains(ORDERS_STORE)) {
-        db.createObjectStore(ORDERS_STORE, { keyPath: 'id' });
+        db.createObjectStore(ORDERS_STORE, { keyPath: "id" });
       }
     };
   });
@@ -981,10 +997,10 @@ function openDatabase() {
 async function getPendingOrders() {
   const db = await openDatabase();
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction([ORDERS_STORE], 'readonly');
+    const transaction = db.transaction([ORDERS_STORE], "readonly");
     const store = transaction.objectStore(ORDERS_STORE);
     const request = store.getAll();
-    
+
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
   });
@@ -993,10 +1009,10 @@ async function getPendingOrders() {
 async function addPendingOrder(order) {
   const db = await openDatabase();
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction([ORDERS_STORE], 'readwrite');
+    const transaction = db.transaction([ORDERS_STORE], "readwrite");
     const store = transaction.objectStore(ORDERS_STORE);
     const request = store.add(order);
-    
+
     request.onsuccess = () => resolve();
     request.onerror = () => reject(request.error);
   });
@@ -1005,10 +1021,10 @@ async function addPendingOrder(order) {
 async function removePendingOrder(orderId) {
   const db = await openDatabase();
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction([ORDERS_STORE], 'readwrite');
+    const transaction = db.transaction([ORDERS_STORE], "readwrite");
     const store = transaction.objectStore(ORDERS_STORE);
     const request = store.delete(orderId);
-    
+
     request.onsuccess = () => resolve();
     request.onerror = () => reject(request.error);
   });
@@ -1016,6 +1032,7 @@ async function removePendingOrder(orderId) {
 ```
 
 2. **Add PWA Manifest**
+
 ```json
 // public/manifest.json
 {
@@ -1094,6 +1111,7 @@ async function removePendingOrder(orderId) {
 ```
 
 3. **Generate PWA Icons**
+
 ```bash
 # Use a tool like pwa-asset-generator
 npx pwa-asset-generator public/logo.png public/icons --favicon --type png
@@ -1111,41 +1129,42 @@ npx pwa-asset-generator public/logo.png public/icons --favicon --type png
 **Enhancements:**
 
 1. **Add Performance Monitoring**
+
 ```typescript
 // src/lib/monitoring/performance.ts
-import { trace, context } from '@opentelemetry/api';
+import { trace, context } from "@opentelemetry/api";
 
 export class PerformanceMonitor {
   static async measureAsync<T>(
     name: string,
     fn: () => Promise<T>,
-    attributes?: Record<string, any>
+    attributes?: Record<string, any>,
   ): Promise<T> {
-    const tracer = trace.getTracer('performance-monitor');
+    const tracer = trace.getTracer("performance-monitor");
     return await tracer.startActiveSpan(name, async (span) => {
       const startTime = Date.now();
-      
+
       try {
         span.setAttributes({
-          'performance.operation': name,
+          "performance.operation": name,
           ...attributes,
         });
-        
+
         const result = await fn();
-        
+
         const duration = Date.now() - startTime;
         span.setAttributes({
-          'performance.duration_ms': duration,
-          'performance.status': 'success',
+          "performance.duration_ms": duration,
+          "performance.status": "success",
         });
-        
+
         return result;
       } catch (error) {
         const duration = Date.now() - startTime;
         span.setAttributes({
-          'performance.duration_ms': duration,
-          'performance.status': 'error',
-          'performance.error': error.message,
+          "performance.duration_ms": duration,
+          "performance.status": "error",
+          "performance.error": error.message,
         });
         throw error;
       } finally {
@@ -1154,7 +1173,7 @@ export class PerformanceMonitor {
     });
   }
 
-  static recordMetric(name: string, value: number, unit: string = 'ms') {
+  static recordMetric(name: string, value: number, unit: string = "ms") {
     // Send to Application Insights or your monitoring service
     console.log(`[METRIC] ${name}: ${value}${unit}`);
   }
@@ -1162,9 +1181,10 @@ export class PerformanceMonitor {
 ```
 
 2. **Add Custom Error Tracking**
+
 ```typescript
 // src/lib/monitoring/error-tracker.ts
-import * as Sentry from '@sentry/nextjs';
+import * as Sentry from "@sentry/nextjs";
 
 export interface ErrorContext {
   userId?: string;
@@ -1178,7 +1198,7 @@ export class ErrorTracker {
     Sentry.captureException(error, {
       contexts: {
         operation: {
-          name: context?.operation || 'unknown',
+          name: context?.operation || "unknown",
           metadata: context?.metadata || {},
         },
       },
@@ -1189,7 +1209,7 @@ export class ErrorTracker {
     });
   }
 
-  static captureMessage(message: string, level: 'info' | 'warning' | 'error') {
+  static captureMessage(message: string, level: "info" | "warning" | "error") {
     Sentry.captureMessage(message, level);
   }
 
@@ -1286,6 +1306,7 @@ npm run test:e2e
 ### 3. Browser Compatibility Testing
 
 Test on:
+
 - Chrome (latest)
 - Firefox (latest)
 - Safari (latest)
@@ -1300,28 +1321,33 @@ Test on:
 ### Rolling Upgrade Approach
 
 1. **Create Feature Branch**
+
 ```bash
 git checkout -b upgrade/2025-comprehensive
 ```
 
 2. **Upgrade in Stages**
+
 - Stage 1: Critical security updates
 - Stage 2: Database migrations
 - Stage 3: API enhancements
 - Stage 4: UI improvements
 
 3. **Test Each Stage**
+
 ```bash
 npm run test:all
 npm run build
 ```
 
 4. **Deploy to Staging**
+
 ```bash
 vercel --prod=false
 ```
 
 5. **Production Deployment**
+
 ```bash
 vercel --prod
 ```
@@ -1343,14 +1369,14 @@ git push origin main
 
 ### Before Upgrades (Baseline)
 
-| Metric | Current | Target |
-|--------|---------|--------|
-| Time to First Byte (TTFB) | ~200ms | <150ms |
-| Largest Contentful Paint (LCP) | ~1.2s | <1.0s |
-| First Input Delay (FID) | ~50ms | <100ms |
-| Cumulative Layout Shift (CLS) | ~0.05 | <0.1 |
-| Build Time | ~180s | <150s |
-| Test Suite Runtime | ~45s | <40s |
+| Metric                         | Current | Target |
+| ------------------------------ | ------- | ------ |
+| Time to First Byte (TTFB)      | ~200ms  | <150ms |
+| Largest Contentful Paint (LCP) | ~1.2s   | <1.0s  |
+| First Input Delay (FID)        | ~50ms   | <100ms |
+| Cumulative Layout Shift (CLS)  | ~0.05   | <0.1   |
+| Build Time                     | ~180s   | <150s  |
+| Test Suite Runtime             | ~45s    | <40s   |
 
 ### Expected Improvements
 
@@ -1366,12 +1392,12 @@ git push origin main
 
 ### New Infrastructure Costs
 
-| Service | Monthly Cost | Notes |
-|---------|-------------|-------|
-| Redis (Upstash) | $10-20 | 10k requests/day free tier available |
-| Google Maps API | $0-200 | $200/month free credit, $5/1000 requests after |
-| Sentry (Enhanced) | $0-26 | 5k events/month free |
-| **Total Estimated** | **$10-246** | Can start with free tiers |
+| Service             | Monthly Cost | Notes                                          |
+| ------------------- | ------------ | ---------------------------------------------- |
+| Redis (Upstash)     | $10-20       | 10k requests/day free tier available           |
+| Google Maps API     | $0-200       | $200/month free credit, $5/1000 requests after |
+| Sentry (Enhanced)   | $0-26        | 5k events/month free                           |
+| **Total Estimated** | **$10-246**  | Can start with free tiers                      |
 
 ### Free Tier Options
 
@@ -1431,12 +1457,14 @@ git push origin main
 ### Required Updates
 
 1. **Node.js Version**
+
 ```bash
 # Ensure Node.js >= 20.19.0
 node --version  # Should be v20.19.0 or higher
 ```
 
 2. **Environment Variables**
+
 ```bash
 # Add to .env.local
 REDIS_URL=redis://localhost:6379
@@ -1446,6 +1474,7 @@ ENABLE_SOFT_DELETE=true
 ```
 
 3. **Docker Compose Update**
+
 ```bash
 # Start services with Redis
 docker-compose up -d
@@ -1557,19 +1586,22 @@ docker-compose up -d
 This comprehensive upgrade plan will bring the Farmers Market Platform to production-ready excellence with enhanced security, performance, and scalability. The phased approach ensures minimal disruption while maximizing benefits.
 
 **Recommended Timeline:**
+
 - **Week 1-2**: Critical security updates (NextAuth v5, React 19)
 - **Week 3-4**: Feature completion (i18n, geocoding, database models)
 - **Week 5-6**: Performance enhancements (Redis, rate limiting, soft deletes)
 - **Week 7-8**: Polish & documentation (PWA, monitoring)
 
 **Total Estimated Effort**: 80-120 hours
-**Expected ROI**: 
+**Expected ROI**:
+
 - 30% performance improvement
 - 50% reduction in security vulnerabilities
 - 40% better developer experience
 - Ready for 10x traffic scale
 
 **Next Steps:**
+
 1. Review and prioritize recommendations
 2. Create detailed implementation tickets
 3. Begin with critical security updates

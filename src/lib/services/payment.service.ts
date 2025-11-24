@@ -19,7 +19,7 @@ export class PaymentService {
   static async createPaymentIntent(
     orderId: string,
     amount: number,
-    currency = "USD"
+    currency = "USD",
   ): Promise<PaymentIntent> {
     // In production, integrate with Stripe/PayPal
     const paymentIntent = {
@@ -66,7 +66,7 @@ export class PaymentService {
    */
   static async refundPayment(
     orderId: string,
-    _amount?: number
+    _amount?: number,
   ): Promise<boolean> {
     const order = await database.order.findUnique({
       where: { id: orderId },

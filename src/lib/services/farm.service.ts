@@ -49,7 +49,7 @@ export interface CreateFarmServiceResult {
  * @throws Error if slug generation fails or validation fails
  */
 export async function createFarmService(
-  options: CreateFarmServiceOptions
+  options: CreateFarmServiceOptions,
 ): Promise<CreateFarmServiceResult> {
   const { userId, farmData } = options;
 
@@ -70,11 +70,11 @@ export async function createFarmService(
     throw new Error("Invalid email format");
   }
 
-// Email validation helper
-function validateEmail(email: string): boolean {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-}
+  // Email validation helper
+  function validateEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
 
   if (farmData.deliveryRadius && farmData.deliveryRadius < 0) {
     throw new Error("Delivery radius must be positive");
@@ -166,7 +166,7 @@ export interface ExistingFarmCheck {
  * @returns Existing farm info if found
  */
 export async function checkExistingFarm(
-  userId: UserId
+  userId: UserId,
 ): Promise<ExistingFarmCheck> {
   const farm = await database.farm.findFirst({
     where: {
@@ -207,7 +207,7 @@ const MAX_SLUG_ATTEMPTS = 10;
  */
 async function generateUniqueSlug(
   name: string,
-  city: string
+  city: string,
 ): Promise<FarmSlug> {
   let slug = generateFarmSlug(name, city);
   let attempt = 0;
@@ -228,7 +228,7 @@ async function generateUniqueSlug(
   }
 
   throw new Error(
-    `Failed to generate unique slug after ${MAX_SLUG_ATTEMPTS} attempts`
+    `Failed to generate unique slug after ${MAX_SLUG_ATTEMPTS} attempts`,
   );
 }
 
@@ -334,7 +334,7 @@ export interface UpdateFarmServiceOptions {
  * @throws Error if user doesn't own the farm
  */
 export async function updateFarmService(
-  options: UpdateFarmServiceOptions
+  options: UpdateFarmServiceOptions,
 ): Promise<QuantumFarm> {
   const { farmId, userId, updateData } = options;
 
@@ -426,7 +426,7 @@ export interface DeleteFarmServiceOptions {
  * @throws Error if user doesn't own the farm
  */
 export async function deleteFarmService(
-  options: DeleteFarmServiceOptions
+  options: DeleteFarmServiceOptions,
 ): Promise<void> {
   const { farmId, userId } = options;
 
@@ -485,7 +485,7 @@ export interface ListFarmsResult {
  * @returns Paginated list of quantum farms
  */
 export async function listFarmsService(
-  options: ListFarmsOptions = {}
+  options: ListFarmsOptions = {},
 ): Promise<ListFarmsResult> {
   const {
     page = 1,
@@ -571,7 +571,7 @@ export interface SearchFarmsOptions {
  * @returns Matching quantum farms
  */
 export async function searchFarmsService(
-  options: SearchFarmsOptions
+  options: SearchFarmsOptions,
 ): Promise<QuantumFarm[]> {
   const { query, limit = 10 } = options;
 

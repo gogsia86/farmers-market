@@ -292,11 +292,11 @@ export async function middleware(req: NextRequest) {
 
     // ✅ Good: Role checking
     const isAdminRole = ["ADMIN", "SUPER_ADMIN", "MODERATOR"].includes(
-      token.role
+      token.role,
     );
     if (!isAdminRole) {
       return NextResponse.redirect(
-        new URL("/?error=insufficient_permissions", req.url)
+        new URL("/?error=insufficient_permissions", req.url),
       );
     }
   }

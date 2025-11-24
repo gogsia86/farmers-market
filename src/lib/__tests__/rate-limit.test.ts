@@ -287,7 +287,7 @@ describe("🛡️ Rate Limiting", () => {
       const identifier = "concurrent-test";
 
       const requests = Array.from({ length: 15 }, () =>
-        checkRateLimit(identifier, config)
+        checkRateLimit(identifier, config),
       );
 
       const results = await Promise.all(requests);

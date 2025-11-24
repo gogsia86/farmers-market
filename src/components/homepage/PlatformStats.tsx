@@ -64,7 +64,11 @@ export function PlatformStats() {
         setStats({
           farms: { total: 500, display: "500+", label: "Local Farms" },
           products: { total: 2000, display: "2,000+", label: "Fresh Products" },
-          customers: { total: 10000, display: "10,000+", label: "Happy Customers" },
+          customers: {
+            total: 10000,
+            display: "10,000+",
+            label: "Happy Customers",
+          },
           cities: { total: 50, display: "50+", label: "Cities Covered" },
         });
       } finally {

@@ -25,12 +25,12 @@
 
 Phase 5 CI Bundle Protection system that **automatically prevents bundle size regressions** and protects the massive optimization gains achieved:
 
-| Route Type | Before Phase 5 | After Phase 5 | Protection |
-|------------|-----------------|---------------|------------|
-| Admin Approvals | 228 KB | 13.1 KB | ✅ CI enforced |
-| Farms API | 150 KB | 14.8 KB | ✅ CI enforced |
-| Agricultural/Tracing | 60 KB | 8.6 KB | ✅ CI enforced |
-| **Average Reduction** | - | **90-94%** | **Automated** |
+| Route Type            | Before Phase 5 | After Phase 5 | Protection     |
+| --------------------- | -------------- | ------------- | -------------- |
+| Admin Approvals       | 228 KB         | 13.1 KB       | ✅ CI enforced |
+| Farms API             | 150 KB         | 14.8 KB       | ✅ CI enforced |
+| Agricultural/Tracing  | 60 KB          | 8.6 KB        | ✅ CI enforced |
+| **Average Reduction** | -              | **90-94%**    | **Automated**  |
 
 ### Why This Matters
 
@@ -62,6 +62,7 @@ npm test
 ```
 
 **Expected Output**:
+
 - ✅ Build completes successfully
 - ✅ Bundle measurement shows all routes within thresholds
 - ✅ All tests pass (including fixed bcrypt test)
@@ -116,6 +117,7 @@ npm run bundle:measure
 ```
 
 **Expected Results**:
+
 - Admin approvals route: ≈ 13 KB ✅
 - Farms route: ≈ 15 KB ✅
 - Agricultural routes: ≈ 9 KB ✅
@@ -139,7 +141,7 @@ done
 
 ### Email/Slack Template
 
-```
+````
 🚀 **NEW: Phase 5 CI Bundle Protection Now Active**
 
 Team,
@@ -159,7 +161,8 @@ We've deployed Phase 5 CI Bundle Protection to maintain our 90%+ bundle size opt
 2. Add to your workflow:
    ```bash
    npm run bundle:check  # Run before every commit
-   ```
+````
+
 3. Use lazy wrappers for heavy dependencies:
    - Email: `import { sendEmail } from '@/lib/email/email-service-lazy'`
    - Tracing: `import { startSpan } from '@/lib/tracing/lazy-tracer'`
@@ -168,7 +171,7 @@ We've deployed Phase 5 CI Bundle Protection to maintain our 90%+ bundle size opt
 **Bundle Size Thresholds:**
 
 - API Routes (Critical): < 20 KB
-- API Routes (Standard): < 50 KB  
+- API Routes (Standard): < 50 KB
 - API Routes (Heavy): < 200 KB
 - Most routes should be < 25 KB (Phase 5 target)
 
@@ -188,7 +191,8 @@ We've deployed Phase 5 CI Bundle Protection to maintain our 90%+ bundle size opt
 Let's keep our platform lightning-fast! ⚡
 
 🌾 Platform Team
-```
+
+````
 
 ---
 
@@ -211,7 +215,7 @@ git push origin phase-5-ci-bundle-protection
 # Open PR on GitHub
 # Title: "Phase 5: CI Bundle Protection System"
 # Description: See template below
-```
+````
 
 **PR Description Template**:
 
@@ -219,9 +223,11 @@ git push origin phase-5-ci-bundle-protection
 ## Phase 5: CI Bundle Protection System
 
 ### Summary
+
 Implements automated CI bundle size monitoring to protect Phase 5's 90%+ optimization gains.
 
 ### Changes
+
 - ✅ New workflow: `.github/workflows/bundle-size-check.yml`
 - ✅ Enhanced workflow: `.github/workflows/ci.yml`
 - ✅ npm scripts: `bundle:measure`, `bundle:check`, `bundle:validate`
@@ -230,6 +236,7 @@ Implements automated CI bundle size monitoring to protect Phase 5's 90%+ optimiz
 - ✅ Fixed flaky test: `password.test.ts` (bcrypt timing)
 
 ### Testing
+
 - [x] Local bundle check passes
 - [x] All tests pass (including fixed flaky test)
 - [x] CI workflow validated
@@ -237,25 +244,30 @@ Implements automated CI bundle size monitoring to protect Phase 5's 90%+ optimiz
 - [x] Artifacts uploaded correctly
 
 ### Bundle Size Results
+
 - Admin approvals: 228 KB → 13.1 KB (94% reduction) ✅
 - Farms API: 150 KB → 14.8 KB (90% reduction) ✅
 - Agricultural: 60 KB → 8.6 KB (86% reduction) ✅
 
 ### Breaking Changes
+
 None - additive only
 
 ### Deployment Notes
+
 - No environment variables required
 - No database migrations
 - CI workflows activate immediately on merge
 - Developers should run `npm run bundle:check` before committing
 
 ### Documentation
+
 - Quick Start: `docs/BUNDLE_SIZE_QUICK_START.md`
 - Full Guide: `docs/PHASE_5_CI_BUNDLE_PROTECTION.md`
 - Completion Summary: `docs/PHASE_5_CI_COMPLETION_SUMMARY.md`
 
 ### Rollback Plan
+
 Simple revert if needed - no database/infra dependencies
 ```
 
@@ -350,6 +362,7 @@ Threshold Failures: 0
 ```
 
 **Action Items**:
+
 - ✅ Verify comment appears
 - ✅ Check for threshold failures
 - ✅ Review any warnings
@@ -372,11 +385,13 @@ grep "app/api/new-route" bundle-performance-report.json
 ```
 
 **Red Flags**:
+
 - ❌ New route > 50 KB (standard threshold)
 - ❌ Modified route increased > 20%
 - ❌ Direct imports of heavy dependencies
 
 **Green Flags**:
+
 - ✅ Route < 25 KB (Phase 5 target)
 - ✅ Uses lazy wrappers (`*-lazy.ts`)
 - ✅ Type-only Prisma imports
@@ -385,17 +400,17 @@ grep "app/api/new-route" bundle-performance-report.json
 
 ```typescript
 // ❌ BAD - Direct heavy imports
-import nodemailer from 'nodemailer';
-import Redis from 'ioredis';
-import { trace } from '@opentelemetry/api';
+import nodemailer from "nodemailer";
+import Redis from "ioredis";
+import { trace } from "@opentelemetry/api";
 
 // ✅ GOOD - Lazy wrappers
-import { sendEmail } from '@/lib/email/email-service-lazy';
-import { redisClient } from '@/lib/cache/redis-client-lazy';
-import { startSpan } from '@/lib/tracing/lazy-tracer';
+import { sendEmail } from "@/lib/email/email-service-lazy";
+import { redisClient } from "@/lib/cache/redis-client-lazy";
+import { startSpan } from "@/lib/tracing/lazy-tracer";
 
 // ✅ GOOD - Type-only imports
-import type { User, Farm } from '@prisma/client';
+import type { User, Farm } from "@prisma/client";
 ```
 
 #### 4. Review Test Changes
@@ -450,12 +465,15 @@ npm test
 ### Bundle Size Impact
 
 **Modified Routes:**
+
 - `app/api/some-route/route.ts`: 15.2 KB → 14.8 KB ✅ (-400 bytes)
 
 **New Routes:**
+
 - `app/api/new-feature/route.ts`: 12.3 KB ✅ (within threshold)
 
 **Optimization Techniques Used:**
+
 - [x] Lazy email service
 - [x] Type-only Prisma imports
 - [x] Dynamic import for Stripe
@@ -472,6 +490,7 @@ npm test
 #### Scenario 1: False Positives (CI failing incorrectly)
 
 **Symptoms**:
+
 - CI fails but bundles are actually fine
 - Thresholds too aggressive
 
@@ -495,6 +514,7 @@ npm test
 ```
 
 **Commit & Push**:
+
 ```bash
 git add .github/workflows/bundle-size-check.yml
 git commit -m "chore: temporarily make bundle check non-blocking"
@@ -504,6 +524,7 @@ git push origin main
 #### Scenario 2: Performance Issues (CI too slow)
 
 **Symptoms**:
+
 - CI taking > 30 minutes
 - Bundle analysis timing out
 
@@ -523,10 +544,11 @@ if (FAST_MODE) {
 ```
 
 **Update workflow**:
+
 ```yaml
 - name: 📊 Measure bundle performance
   env:
-    FAST_BUNDLE_CHECK: "true"  # Add this
+    FAST_BUNDLE_CHECK: "true" # Add this
   run: node scripts/measure-bundle-performance.mjs
 ```
 
@@ -557,6 +579,7 @@ git push origin revert-phase-5-ci
 ```
 
 **Then**:
+
 1. Open PR to main
 2. Get emergency approval
 3. Merge immediately
@@ -602,12 +625,14 @@ npm run bundle:measure | grep "THRESHOLD FAILURES"
 ```
 
 **Red Flags**:
+
 - ❌ Failure rate > 20%
 - ❌ Multiple false positives reported
 - ❌ CI timing out frequently
 - ❌ Developers bypassing checks
 
 **Green Flags**:
+
 - ✅ Failure rate < 10%
 - ✅ Developers using `bundle:check` locally
 - ✅ Bundle sizes stable or decreasing
@@ -621,6 +646,7 @@ npm run bundle:measure | grep "THRESHOLD FAILURES"
 # Phase 5 CI Bundle Protection - Week [X] Report
 
 ## Metrics
+
 - **CI Runs**: [number] total
 - **Failure Rate**: [percentage]%
 - **False Positives**: [number]
@@ -628,15 +654,18 @@ npm run bundle:measure | grep "THRESHOLD FAILURES"
 - **Average Bundle Size**: [size] KB
 
 ## Feedback
+
 - Developer feedback: [summary]
 - Issues reported: [count]
 - Feature requests: [count]
 
 ## Action Items
+
 - [ ] [Action 1]
 - [ ] [Action 2]
 
 ## Status
+
 🟢 GREEN / 🟡 YELLOW / 🔴 RED
 ```
 
@@ -661,12 +690,12 @@ npm run bundle:measure | grep "THRESHOLD FAILURES"
 
 **Decision Matrix**:
 
-| Score | Action |
-|-------|--------|
+| Score   | Action                                   |
+| ------- | ---------------------------------------- |
 | 90-100% | 🟢 Continue as-is, consider enhancements |
-| 70-89% | 🟡 Minor adjustments needed |
-| 50-69% | 🟠 Significant improvements required |
-| < 50% | 🔴 Consider rollback or major redesign |
+| 70-89%  | 🟡 Minor adjustments needed              |
+| 50-69%  | 🟠 Significant improvements required     |
+| < 50%   | 🔴 Consider rollback or major redesign   |
 
 ---
 
@@ -736,11 +765,11 @@ rm -rf src/app/api/test-route
 
 ### Quick Help
 
-| Issue | Solution |
-|-------|----------|
-| CI failed | Check PR comment for details |
-| Bundle too large | See `docs/BUNDLE_SIZE_QUICK_START.md` |
-| Flaky test | Re-run (bcrypt test fixed) |
+| Issue              | Solution                                               |
+| ------------------ | ------------------------------------------------------ |
+| CI failed          | Check PR comment for details                           |
+| Bundle too large   | See `docs/BUNDLE_SIZE_QUICK_START.md`                  |
+| Flaky test         | Re-run (bcrypt test fixed)                             |
 | Local check failed | Clear `.next`: `rm -rf .next && npm run build:analyze` |
 
 ### Escalation Path
@@ -795,6 +824,7 @@ rm -rf src/app/api/test-route
 🏆 **Phase 5 Achievement Unlocked**: 90%+ Bundle Size Reduction
 
 **Top Contributors**:
+
 - Engineering team for implementing optimizations
 - DevOps team for CI integration
 - QA team for testing validation

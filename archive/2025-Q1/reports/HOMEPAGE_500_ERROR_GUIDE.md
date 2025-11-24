@@ -9,12 +9,14 @@
 ## 🎯 Quick Diagnosis
 
 ### Symptoms
+
 - ✅ Server starts successfully on port 3001
 - ✅ Next.js compiles without errors
 - ❌ Homepage returns 500 error
 - ⚠️ Error occurs during render phase (268ms)
 
 ### Likely Causes
+
 1. **Server-side data fetching error** (database, API)
 2. **Component rendering error** (Header, i18n)
 3. **Missing environment variables**
@@ -35,6 +37,7 @@ curl http://localhost:3001/api/health
 ```
 
 **Expected Output:**
+
 ```json
 {
   "status": "healthy",
@@ -54,6 +57,7 @@ curl http://localhost:3001/api/health
 ```
 
 **If database is down:**
+
 - Check `DATABASE_URL` in `.env.local`
 - Verify PostgreSQL is running
 - Run `npm run db:studio` to test connection
@@ -73,10 +77,12 @@ http://localhost:3001/page-debug
 ```
 
 **If debug page works:**
+
 - Issue is in original homepage components
 - Proceed to Step 3
 
 **If debug page also fails:**
+
 - Issue is more fundamental
 - Check environment variables
 - Check Next.js configuration
@@ -178,6 +184,7 @@ curl -v http://localhost:3001/
 ```
 
 **Look for:**
+
 - Stack traces
 - Database connection errors
 - Module resolution errors
@@ -190,6 +197,7 @@ curl -v http://localhost:3001/
 ### Solution 1: Database Connection Issue
 
 **Error Indicators:**
+
 - "PrismaClient" error in logs
 - "ECONNREFUSED" database errors
 - Database status "down" in health check
@@ -219,6 +227,7 @@ npm run db:studio
 ### Solution 2: i18n Configuration Issue
 
 **Error Indicators:**
+
 - Error mentions "locale" or "i18n"
 - Header component fails to render
 - SimpleLanguageButton causing issues
@@ -233,7 +242,6 @@ Edit `src/components/layout/Header.tsx`:
 
 export function Header() {
   // ... rest of component
-  
   // Comment out SimpleLanguageButton in render:
   // {/* <SimpleLanguageButton /> */}
 }
@@ -259,6 +267,7 @@ export { SimpleLanguageButton } from "./SimpleLanguageButton";
 ### Solution 3: Server Components Issue
 
 **Error Indicators:**
+
 - "You're importing a component that needs..." error
 - "useState/useEffect can only be used in Client Components"
 
@@ -279,6 +288,7 @@ import { useState } from "react";
 ### Solution 4: Missing Dependencies
 
 **Error Indicators:**
+
 - "Cannot find module" errors
 - Import resolution errors
 
@@ -304,6 +314,7 @@ npm run dev
 ### Solution 5: TypeScript Compilation Errors
 
 **Error Indicators:**
+
 - Red squiggly lines in VSCode
 - Type errors in terminal
 
@@ -368,7 +379,7 @@ Add extensive logging to identify the issue:
 // src/app/page.tsx
 export default function HomePage() {
   console.log("🔍 HomePage rendering started");
-  
+
   try {
     console.log("✅ Component tree rendering");
     return (
@@ -391,6 +402,7 @@ export default function HomePage() {
 Use this checklist to systematically debug:
 
 ### Environment
+
 - [ ] `.env.local` file exists
 - [ ] `DATABASE_URL` is set correctly
 - [ ] `NEXTAUTH_SECRET` is set
@@ -398,24 +410,28 @@ Use this checklist to systematically debug:
 - [ ] PostgreSQL is running (if using database)
 
 ### Dependencies
+
 - [ ] `node_modules` installed (`npm install`)
 - [ ] Prisma client generated (`npx prisma generate`)
 - [ ] No dependency conflicts
 - [ ] Node version >= 20.19.0
 
 ### Code
+
 - [ ] No TypeScript errors (`npm run type-check`)
 - [ ] No linting errors (`npm run lint`)
 - [ ] Client components have `"use client"`
 - [ ] Server components don't use hooks
 
 ### Server
+
 - [ ] Port 3001 is available
 - [ ] Server starts without errors
 - [ ] Health endpoint works (`/api/health`)
 - [ ] Debug page works (`/page-debug`)
 
 ### Browser
+
 - [ ] Clear browser cache (Ctrl+Shift+R)
 - [ ] Check browser console for errors (F12)
 - [ ] Check Network tab for failed requests
@@ -438,8 +454,8 @@ export default function HomePage() {
         <p className="text-xl text-gray-600 mb-8">
           Platform under maintenance
         </p>
-        <a 
-          href="/api/health" 
+        <a
+          href="/api/health"
           className="bg-green-600 text-white px-6 py-3 rounded-lg"
         >
           Check System Health
@@ -484,7 +500,7 @@ npm run dev
 
 ```
 1. Server starts       [0ms]     ✅ Success
-2. Request received    [0ms]     ✅ Success  
+2. Request received    [0ms]     ✅ Success
 3. Compilation         [3400ms]  ✅ Success
 4. Proxy handling      [202ms]   ✅ Success
 5. Render phase        [268ms]   ❌ FAILS HERE
@@ -590,6 +606,7 @@ npm run type-check > type-errors.txt 2>&1
 ## 500 Error on Homepage
 
 **Environment:**
+
 - Node: v20.x.x
 - Next.js: 16.0.3
 - OS: Windows/Mac/Linux
@@ -598,18 +615,22 @@ npm run type-check > type-errors.txt 2>&1
 GET / returns 500 after 3.8s
 
 **What Works:**
+
 - [ ] Server starts
 - [ ] Health endpoint (/api/health)
 - [ ] Debug page (/page-debug)
 - [ ] Other routes
 
 **What Fails:**
+
 - [x] Homepage (/)
 - [ ] Other specific routes
 
 **Error Logs:**
 ```
+
 [Paste error logs here]
+
 ```
 
 **Steps Already Tried:**

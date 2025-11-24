@@ -188,7 +188,7 @@ export class SearchService {
    */
   private static searchResources(
     query: string,
-    category?: string
+    category?: string,
   ): Array<{
     id: string;
     title: string;
@@ -292,7 +292,7 @@ export class SearchService {
       filtered = filtered.filter(
         (r) =>
           r.title.toLowerCase().includes(lowerQuery) ||
-          r.description.toLowerCase().includes(lowerQuery)
+          r.description.toLowerCase().includes(lowerQuery),
       );
     }
 

@@ -140,7 +140,10 @@ jest.mock("@/lib/middleware/rate-limiter", () => ({
 
 import { GET, POST } from "../route";
 import { database } from "@/lib/database";
-import { createMockNextRequest, createMockFarm } from "../../__tests__/api-test-utils";
+import {
+  createMockNextRequest,
+  createMockFarm,
+} from "../../__tests__/api-test-utils";
 
 // ========================================
 // STEP 3: TESTS
@@ -174,21 +177,25 @@ describe("API Tests", () => {
 ## ⚡ 3-MINUTE IMPLEMENTATION
 
 ### 1. Create Test File (30 seconds)
+
 ```bash
 cd src/app/api/[your-route]/__tests__
 touch route.test.ts
 ```
 
 ### 2. Copy Template (30 seconds)
+
 - Copy the entire pattern above
 - Paste into `route.test.ts`
 
 ### 3. Customize (2 minutes)
+
 - Change `farm` to your resource name
 - Update imports for your route
 - Add your test cases
 
 ### 4. Run Tests (30 seconds)
+
 ```bash
 npm test -- route.test.ts --no-coverage
 ```
@@ -198,30 +205,33 @@ npm test -- route.test.ts --no-coverage
 ## 🔥 CRITICAL REMINDERS
 
 ### ✅ DO THIS
+
 ```typescript
 // In jest.mock() factory:
 traceAgriculturalOperation: async (op, attrs, fn) => {
   if (typeof fn === "function") {
-    return await fn();  // ✅ Plain async function
+    return await fn(); // ✅ Plain async function
   }
   return undefined;
-}
+};
 ```
 
 ### ❌ DON'T DO THIS
+
 ```typescript
 // DON'T use jest.fn() in factory:
 traceAgriculturalOperation: jest.fn(async (op, attrs, fn) => {
-  return await fn();  // ❌ Implementation never executes!
-})
+  return await fn(); // ❌ Implementation never executes!
+});
 ```
 
 ### 🎯 ALWAYS REMEMBER
+
 ```typescript
 it("test", async () => {
   // ✅ MUST configure mock BEFORE calling route
   (database.farm.findMany as jest.Mock).mockResolvedValue([mockData]);
-  
+
   const response = await GET(request);
   // ...
 });
@@ -232,15 +242,19 @@ it("test", async () => {
 ## 🆘 TROUBLESHOOTING
 
 ### Problem: "GET returned undefined"
+
 **Fix**: Make sure `startActiveSpan` has `return await fn(mockSpan)`
 
 ### Problem: "Cannot read properties of undefined"
+
 **Fix**: Use plain functions `() => {}` not `jest.fn(() => {})`
 
 ### Problem: "Database mock not called"
+
 **Fix**: Set `.mockResolvedValue()` before calling route
 
 ### Problem: "Rate limit error"
+
 **Fix**: Check rate limiter returns `{ success: true, ... }`
 
 ---

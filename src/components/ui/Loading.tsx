@@ -19,13 +19,13 @@ export function Loading({ size = "md", className, text }: LoadingProps) {
     <div
       className={cn(
         "flex flex-col items-center justify-center gap-2",
-        className
+        className,
       )}
     >
       <div
         className={cn(
           "animate-spin rounded-full border-gray-300 border-t-blue-600",
-          sizeClasses[size]
+          sizeClasses[size],
         )}
       />
       {text && <p className="text-sm text-gray-600">{text}</p>}

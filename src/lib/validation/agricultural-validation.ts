@@ -73,7 +73,7 @@ export const FarmValidationSchema = z.object({
         "BIODYNAMIC_PREPARATIONS",
         "COMPANION_PLANTING",
         "NATURAL_PEST_CONTROL",
-      ])
+      ]),
     )
     .default([]),
 
@@ -160,7 +160,7 @@ export const FarmSearchSchema = z.object({
 
 export function validateSeasonalAlignment(
   season: z.infer<typeof SeasonSchema>,
-  cropType: string
+  cropType: string,
 ): boolean {
   const seasonalCrops: Record<string, z.infer<typeof SeasonSchema>[]> = {
     TOMATOES: ["SPRING", "SUMMER"],

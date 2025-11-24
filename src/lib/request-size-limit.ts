@@ -36,7 +36,7 @@ export const DEFAULT_SIZE_LIMITS = {
  */
 export async function validateRequestSize(
   request: Request,
-  maxSize: number = DEFAULT_SIZE_LIMITS.DEFAULT
+  maxSize: number = DEFAULT_SIZE_LIMITS.DEFAULT,
 ): Promise<NextResponse | null> {
   const contentLength = request.headers.get("content-length");
 
@@ -54,7 +54,7 @@ export async function validateRequestSize(
         error: "Invalid Content-Length header",
         code: "INVALID_CONTENT_LENGTH",
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -78,7 +78,7 @@ export async function validateRequestSize(
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
   }
 
@@ -114,7 +114,7 @@ export function getSizeLimitForContentType(contentType: string | null): number {
  * Middleware helper to validate request size based on content type
  */
 export async function validateRequestSizeByContentType(
-  request: Request
+  request: Request,
 ): Promise<NextResponse | null> {
   const contentType = request.headers.get("content-type");
   const maxSize = getSizeLimitForContentType(contentType);

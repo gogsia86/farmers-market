@@ -417,8 +417,8 @@ async function processImages(images) {
   // Sharp automatically uses GPU when available
   return Promise.all(
     images.map((img) =>
-      sharp(img).resize(800, 600).webp({ quality: 80 }).toBuffer()
-    )
+      sharp(img).resize(800, 600).webp({ quality: 80 }).toBuffer(),
+    ),
   );
 }
 ```

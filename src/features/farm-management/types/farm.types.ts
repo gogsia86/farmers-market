@@ -233,7 +233,7 @@ export interface IFarmService {
   deleteFarm(id: string): Promise<void>;
   searchFarms(
     filters: FarmFilters,
-    pagination: PaginationOptions
+    pagination: PaginationOptions,
   ): Promise<PaginatedResult<Farm>>;
 }
 
@@ -244,6 +244,6 @@ export interface IFarmRepository {
   delete(id: string): Promise<void>;
   findMany(
     filters: FarmFilters,
-    pagination: PaginationOptions
+    pagination: PaginationOptions,
   ): Promise<PaginatedResult<Farm>>;
 }

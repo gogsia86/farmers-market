@@ -1,14 +1,17 @@
 # Database Setup Guide - Farmers Market Platform 🗄️
+
 **Quick Start: Get Your Database Running in 15 Minutes**
 
 ---
 
 ## 🎯 Goal
+
 Set up a PostgreSQL database for the Farmers Market Platform to unlock Phase 4B performance optimizations.
 
 ---
 
 ## 📋 What You Need
+
 - PostgreSQL 15+ (we'll help you install it)
 - 5-15 minutes of time
 - Administrator access on your machine
@@ -20,18 +23,20 @@ Set up a PostgreSQL database for the Farmers Market Platform to unlock Phase 4B 
 ### For Windows (HP OMEN)
 
 #### Step 1: Download PostgreSQL
+
 1. Visit: https://www.postgresql.org/download/windows/
 2. Click "Download the installer"
 3. Choose: **PostgreSQL 16.x for Windows x86-64**
 4. Download the installer (approximately 350 MB)
 
 #### Step 2: Install PostgreSQL
+
 ```cmd
 # Run the downloaded installer
 # Follow these settings:
 
 Installation Directory: C:\Program Files\PostgreSQL\16
-Components: 
+Components:
   ✅ PostgreSQL Server
   ✅ pgAdmin 4
   ✅ Command Line Tools
@@ -47,6 +52,7 @@ Superuser Password: [CREATE A STRONG PASSWORD]
 ```
 
 #### Step 3: Add PostgreSQL to PATH
+
 ```cmd
 # Open PowerShell as Administrator
 setx PATH "%PATH%;C:\Program Files\PostgreSQL\16\bin" /M
@@ -55,6 +61,7 @@ setx PATH "%PATH%;C:\Program Files\PostgreSQL\16\bin" /M
 ```
 
 #### Step 4: Verify Installation
+
 ```bash
 # Open new terminal
 psql --version
@@ -62,6 +69,7 @@ psql --version
 ```
 
 #### Step 5: Create Database
+
 ```bash
 # Connect to PostgreSQL (use password you set)
 psql -U postgres
@@ -83,6 +91,7 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 ```
 
 #### Step 6: Configure Environment
+
 ```bash
 # Navigate to project
 cd "M:\Repo\Farmers Market Platform web and app"
@@ -104,6 +113,7 @@ cat .env
 Perfect if you already have Docker Desktop installed.
 
 ### Step 1: Create Docker Compose File
+
 ```bash
 cd "M:\Repo\Farmers Market Platform web and app"
 
@@ -152,6 +162,7 @@ EOF
 ```
 
 ### Step 2: Create Initialization Script
+
 ```bash
 # Create init script for extensions
 cat > prisma/init.sql << 'EOF'
@@ -165,6 +176,7 @@ EOF
 ```
 
 ### Step 3: Start Docker Container
+
 ```bash
 # Start PostgreSQL container
 docker-compose up -d postgres
@@ -179,6 +191,7 @@ docker-compose logs postgres
 ```
 
 ### Step 4: Configure Environment
+
 ```bash
 # Create .env file
 echo DATABASE_URL="postgresql://farmers_admin:FarmersMarket2025!@localhost:5432/farmers_market" > .env
@@ -188,6 +201,7 @@ docker exec -it farmers_market_db psql -U farmers_admin -d farmers_market -c "SE
 ```
 
 ### Step 5: Optional - Access pgAdmin
+
 ```
 Open browser: http://localhost:5050
 Email: admin@farmersmarket.local
@@ -284,16 +298,16 @@ npx prisma migrate dev --name add_performance_indexes
 
 # 2. Verify tables were created
 npx prisma db execute --stdin <<EOF
-SELECT table_name 
-FROM information_schema.tables 
+SELECT table_name
+FROM information_schema.tables
 WHERE table_schema = 'public'
 ORDER BY table_name;
 EOF
 
 # 3. Verify performance indexes
 npx prisma db execute --stdin <<EOF
-SELECT schemaname, tablename, indexname 
-FROM pg_indexes 
+SELECT schemaname, tablename, indexname
+FROM pg_indexes
 WHERE tablename IN ('products','orders','reviews')
 ORDER BY tablename, indexname;
 EOF
@@ -326,19 +340,25 @@ curl http://localhost:3001/api/analytics/dashboard
 ## 🛠️ Troubleshooting
 
 ### Issue: "Connection refused"
-**Solution**: 
+
+**Solution**:
+
 - Check PostgreSQL is running: `pg_isready` (local) or `docker-compose ps` (docker)
 - Verify port 5432 is not blocked by firewall
 - Check DATABASE_URL has correct host/port
 
 ### Issue: "Authentication failed"
+
 **Solution**:
+
 - Verify username/password in DATABASE_URL
 - For local: use password set during installation
 - For Docker: use `farmers_admin` / `FarmersMarket2025!`
 
 ### Issue: "Database does not exist"
+
 **Solution**:
+
 ```bash
 # Create database manually
 psql -U postgres -c "CREATE DATABASE farmers_market;"
@@ -348,7 +368,9 @@ docker exec -it farmers_market_db psql -U farmers_admin -c "CREATE DATABASE farm
 ```
 
 ### Issue: "Permission denied"
+
 **Solution**:
+
 ```sql
 -- Grant all privileges
 GRANT ALL PRIVILEGES ON DATABASE farmers_market TO your_user;
@@ -356,7 +378,9 @@ GRANT ALL ON SCHEMA public TO your_user;
 ```
 
 ### Issue: Migration fails with "relation already exists"
+
 **Solution**:
+
 ```bash
 # Reset database (WARNING: deletes all data)
 npx prisma migrate reset
@@ -369,19 +393,20 @@ npx prisma db push --accept-data-loss
 
 ## 📊 Database Configuration Comparison
 
-| Option | Setup Time | Cost | Best For |
-|--------|------------|------|----------|
-| **Local PostgreSQL** | 10-15 min | Free | Full control, offline work |
-| **Docker** | 5 min | Free | Easy setup, isolated environment |
-| **Supabase** | 2 min | Free tier | Quick start, built-in features |
-| **Neon** | 2 min | Free tier | Serverless, auto-scaling |
-| **Railway** | 2 min | Free tier | Simple deployment |
+| Option               | Setup Time | Cost      | Best For                         |
+| -------------------- | ---------- | --------- | -------------------------------- |
+| **Local PostgreSQL** | 10-15 min  | Free      | Full control, offline work       |
+| **Docker**           | 5 min      | Free      | Easy setup, isolated environment |
+| **Supabase**         | 2 min      | Free tier | Quick start, built-in features   |
+| **Neon**             | 2 min      | Free tier | Serverless, auto-scaling         |
+| **Railway**          | 2 min      | Free tier | Simple deployment                |
 
 ---
 
 ## 🔒 Security Best Practices
 
 ### For Local Development
+
 ```bash
 # Strong password requirements:
 - Minimum 16 characters
@@ -395,6 +420,7 @@ npx prisma db push --accept-data-loss
 ```
 
 ### For Production
+
 ```bash
 # Use environment variables (not .env file)
 # Configure in hosting platform (Vercel, Railway, etc.)
@@ -456,6 +482,7 @@ docker-compose restart postgres     # Restart database
 Given your powerful hardware, I recommend **Option 2: Docker PostgreSQL**:
 
 **Why?**
+
 - ✅ Fast setup (5 minutes)
 - ✅ Isolated environment
 - ✅ Easy to reset/recreate

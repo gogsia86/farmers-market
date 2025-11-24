@@ -28,13 +28,16 @@ export default function TestPage() {
 
           <div className="border-l-4 border-purple-500 pl-4">
             <p className="font-semibold">Environment:</p>
-            <p className="text-gray-700">{process.env.NODE_ENV || 'development'}</p>
+            <p className="text-gray-700">
+              {process.env.NODE_ENV || "development"}
+            </p>
           </div>
 
           <div className="mt-8 p-4 bg-green-50 rounded">
             <p className="text-sm text-gray-600">
               If you can see this page, the Next.js server is working correctly.
-              The homepage 500 error is likely related to a specific component or import.
+              The homepage 500 error is likely related to a specific component
+              or import.
             </p>
           </div>
         </div>

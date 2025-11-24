@@ -7,7 +7,7 @@ describe("SecurityService", () => {
       const input = "<script>alert('xss')</script>";
       const result = SecurityService.sanitizeInput(input);
       expect(result).toBe(
-        "&lt;script&gt;alert(&#x27;xss&#x27;)&lt;&#x2F;script&gt;"
+        "&lt;script&gt;alert(&#x27;xss&#x27;)&lt;&#x2F;script&gt;",
       );
     });
 
@@ -109,4 +109,3 @@ describe("SecurityService", () => {
     });
   });
 });
-

@@ -168,7 +168,7 @@ export class RedisCacheService {
   async set<T>(
     key: string,
     value: T,
-    options: CacheOptions = {}
+    options: CacheOptions = {},
   ): Promise<boolean> {
     try {
       const client = await this.redisClient.getClient();
@@ -235,7 +235,7 @@ export class RedisCacheService {
   async getOrSet<T>(
     key: string,
     factory: () => Promise<T>,
-    options: CacheOptions = {}
+    options: CacheOptions = {},
   ): Promise<T> {
     // Try to get from cache first
     const cached = await this.get<T>(key);

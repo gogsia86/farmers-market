@@ -142,7 +142,7 @@ export default function FarmsPage() {
     setSelectedFilters((prev) =>
       prev.includes(filter)
         ? prev.filter((f) => f !== filter)
-        : [...prev, filter]
+        : [...prev, filter],
     );
   };
 
@@ -151,7 +151,7 @@ export default function FarmsPage() {
       farm.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       farm.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
       farm.products.some((p) =>
-        p.toLowerCase().includes(searchTerm.toLowerCase())
+        p.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     return matchesSearch;
   });

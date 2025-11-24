@@ -203,7 +203,7 @@ export interface SeasonalOrchestrator {
   getCurrentLunarPhase(): Promise<LunarPhase>;
   validateSeasonalAlignment(
     operation: string,
-    season: Season
+    season: Season,
   ): Promise<boolean>;
   getOptimalPlantingWindows(crop: CropType): Promise<PlantingWindow[]>;
 }

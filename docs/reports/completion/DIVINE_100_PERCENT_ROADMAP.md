@@ -188,13 +188,13 @@ export class BiodynamicFarmService extends BaseService {
     private readonly seasonalOrchestrator: SeasonalOrchestrator,
     private readonly lunarCycleService: LunarCycleService,
     private readonly agriculturalCache: BiodynamicCacheService,
-    private readonly cosmicNotificationService: CosmicNotificationService
+    private readonly cosmicNotificationService: CosmicNotificationService,
   ) {
     super("BiodynamicFarmService");
   }
 
   async manifestFarmReality(
-    request: ManifestFarmRequest
+    request: ManifestFarmRequest,
   ): Promise<QuantumFarm> {
     // Divine service implementation
     return await this.withQuantumTransaction(async (tx) => {

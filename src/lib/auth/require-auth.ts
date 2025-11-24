@@ -28,7 +28,7 @@ export async function requireAuth() {
 export async function requireAdmin() {
   const session = await requireAuth();
   const isAdmin = ["ADMIN", "SUPER_ADMIN", "MODERATOR"].includes(
-    session.user.role
+    session.user.role,
   );
   if (!isAdmin) {
     throw new Error("Admin access required");

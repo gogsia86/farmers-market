@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     if (!type) {
       return NextResponse.json(
         { error: "Upload type required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
         if (!farmId) {
           return NextResponse.json(
             { error: "Farm ID required for license upload" },
-            { status: 400 }
+            { status: 400 },
           );
         }
         result = await fileUploadService.uploadBusinessLicense(file, farmId);
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
         if (!farmId) {
           return NextResponse.json(
             { error: "Farm ID required for certification upload" },
-            { status: 400 }
+            { status: 400 },
           );
         }
         const certType =
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
         result = await fileUploadService.uploadCertification(
           file,
           farmId,
-          certType
+          certType,
         );
         break;
 
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
         if (!productId) {
           return NextResponse.json(
             { error: "Product ID required for product image upload" },
-            { status: 400 }
+            { status: 400 },
           );
         }
         result = await fileUploadService.uploadProductImage(file, productId);
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
         if (!farmId) {
           return NextResponse.json(
             { error: "Farm ID required for logo upload" },
-            { status: 400 }
+            { status: 400 },
           );
         }
         result = await fileUploadService.uploadFarmLogo(file, farmId);
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
     if (!result.success) {
       return NextResponse.json(
         { error: result.error || "Upload failed" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
     console.error("Upload API error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

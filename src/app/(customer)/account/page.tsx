@@ -7,7 +7,7 @@ import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
 
 // Force dynamic rendering for database access
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 import {
   BellIcon,

@@ -1,4 +1,5 @@
 # ⚡ PHASE 4B: PERFORMANCE DEEP DIVE
+
 **Farmers Market Platform - Advanced Performance Optimization**
 
 **Date Started**: January 2025  
@@ -17,6 +18,7 @@ This phase focuses on deep performance optimization based on bundle analysis fro
 ## 🎯 OPTIMIZATION GOALS
 
 ### Performance Targets
+
 - ✅ Client bundle: Keep under 500 KB (current: 416 KB)
 - 🎯 Server bundle: Reduce from 865 KB to under 700 KB
 - 🎯 First Contentful Paint (FCP): < 1.5s
@@ -32,19 +34,23 @@ This phase focuses on deep performance optimization based on bundle analysis fro
 ### Bundle Size Analysis (from .next/analyze/)
 
 **Client Bundle**: 416 KB ✅
+
 - Status: Already optimized
 - Action: Monitor and maintain
 
 **Edge Bundle**: 275 KB ✅
+
 - Status: Excellent
 - Action: No changes needed
 
 **Server Bundle**: 865 KB ⚠️ OPTIMIZATION TARGET
+
 - Status: Largest bundle, optimization opportunity
 - Action: Implement code splitting and lazy loading
 - Target: Reduce to < 700 KB (19% reduction)
 
 ### Current Architecture Strengths
+
 - ✅ Next.js 16 with Turbopack (fast builds)
 - ✅ HP OMEN optimization (12 threads, 64GB RAM)
 - ✅ TypeScript strict mode (no runtime type checks needed)
@@ -57,6 +63,7 @@ This phase focuses on deep performance optimization based on bundle analysis fro
 ## 🎯 OPTIMIZATION TASKS
 
 ### TASK 1: Dynamic Imports for Heavy Components ⚡
+
 **Priority**: HIGH  
 **Estimated Time**: 45-60 minutes  
 **Impact**: 🔥 High - Reduces initial bundle size
@@ -124,6 +131,7 @@ export default function Page() {
 ---
 
 ### TASK 2: Database Query Optimization 🗄️
+
 **Priority**: HIGH  
 **Estimated Time**: 60-90 minutes  
 **Impact**: 🔥 High - Improves API response times
@@ -131,13 +139,14 @@ export default function Page() {
 #### Query Patterns to Optimize
 
 1. **Analytics Dashboard Route** (`/api/analytics/dashboard/route.ts`)
-   
+
    **Issues Found**:
    - ❌ Fetches all products with all reviews (N+1 potential)
    - ❌ Reviews fetched separately when already included in products
    - ❌ Multiple calculations done in application code (should be DB aggregations)
-   
+
    **Optimizations**:
+
    ```typescript
    // ❌ BEFORE - Multiple queries, includes everything
    const [orders, products, reviews, lowInventory] = await Promise.all([
@@ -149,10 +158,14 @@ export default function Page() {
        where: { farmId: { in: farmIds } },
        include: { reviews: true }, // Fetches all reviews
      }),
-     database.review.findMany({ /* ... */ }), // Duplicate!
-     database.product.findMany({ /* ... */ }),
+     database.review.findMany({
+       /* ... */
+     }), // Duplicate!
+     database.product.findMany({
+       /* ... */
+     }),
    ]);
-   
+
    // ✅ AFTER - Optimized with select, aggregations, no duplicates
    const [orderStats, productStats, lowInventory] = await Promise.all([
      // Use aggregation for order stats
@@ -185,39 +198,40 @@ export default function Page() {
      }),
    ]);
    ```
-   
+
    **Expected Impact**: 40-60% faster query time (from ~200ms to ~80ms)
 
 2. **Farmer Dashboard Route** (`/api/farmers/dashboard/route.ts`)
-   
+
    **Optimizations**:
    - Use `_count` instead of fetching all relations
    - Add proper indexes in Prisma schema
    - Implement query result caching (Redis/memory)
 
 3. **Product Listing with Reviews**
-   
+
    **Add to Prisma Schema** (`prisma/schema.prisma`):
+
    ```prisma
    model Product {
      // ... existing fields
-     
+
      @@index([farmId, inStock])
      @@index([categoryId, inStock])
      @@index([quantityAvailable])
    }
-   
+
    model Order {
      // ... existing fields
-     
+
      @@index([farmId, createdAt])
      @@index([userId, createdAt])
      @@index([status, createdAt])
    }
-   
+
    model Review {
      // ... existing fields
-     
+
      @@index([productId, createdAt])
      @@index([rating])
    }
@@ -228,6 +242,7 @@ export default function Page() {
 ---
 
 ### TASK 3: React Server Components Optimization 🏎️
+
 **Priority**: MEDIUM  
 **Estimated Time**: 30-45 minutes  
 **Impact**: 🔥 Medium - Reduces client-side JavaScript
@@ -237,6 +252,7 @@ export default function Page() {
 **Principle**: Use Server Components by default, Client Components only when needed
 
 **Client Component Triggers** (require "use client"):
+
 - useState, useEffect, useContext
 - Event handlers (onClick, onChange, etc.)
 - Browser APIs (localStorage, window, etc.)
@@ -267,7 +283,7 @@ export default async function DashboardPage() {
     _sum: { total: true },
     _count: true,
   });
-  
+
   return (
     <div>
       <h1>Dashboard</h1>
@@ -291,6 +307,7 @@ export function DashboardStats({ stats }) {
 ---
 
 ### TASK 4: Code Splitting & Route-Based Chunking 📦
+
 **Priority**: MEDIUM  
 **Estimated Time**: 30-45 minutes  
 **Impact**: 🔥 Medium - Better initial load performance
@@ -298,40 +315,41 @@ export function DashboardStats({ stats }) {
 #### Strategy: Split by User Role
 
 1. **Admin Code Splitting**
+
    ```typescript
    // next.config.mjs
    webpack: (config) => {
      config.optimization.splitChunks = {
-       chunks: 'all',
+       chunks: "all",
        cacheGroups: {
          // Admin-only chunks
          admin: {
            test: /[\\/]app[\\/]\(admin\)[\\/]/,
-           name: 'admin',
+           name: "admin",
            priority: 30,
          },
          // Farmer-only chunks
          farmer: {
            test: /[\\/]app[\\/]\(farmer\)[\\/]/,
-           name: 'farmer',
+           name: "farmer",
            priority: 30,
          },
          // Customer pages
          customer: {
            test: /[\\/]app[\\/]\(customer\)[\\/]/,
-           name: 'customer',
+           name: "customer",
            priority: 30,
          },
          // Shared vendor
          vendor: {
            test: /[\\/]node_modules[\\/]/,
-           name: 'vendor',
+           name: "vendor",
            priority: 20,
          },
        },
      };
      return config;
-   }
+   };
    ```
 
 2. **Route Prefetching Control**
@@ -347,17 +365,20 @@ export function DashboardStats({ stats }) {
 ---
 
 ### TASK 5: Image Optimization Verification ✅
+
 **Priority**: LOW (Already Optimized)  
 **Estimated Time**: 15 minutes  
 **Status**: ✅ COMPLETE
 
 **Current State**:
+
 - ✅ All images are SVG (vector, optimal)
 - ✅ Sharp configured for image optimization
 - ✅ next/image configured with WebP/AVIF support
 - ✅ Lazy loading enabled by default
 
 **Verification**:
+
 ```bash
 # Check image usage
 grep -r "next/image" src/ --include="*.tsx" | wc -l
@@ -373,6 +394,7 @@ find public/ -name "*.png" -o -name "*.jpg"
 ---
 
 ### TASK 6: Implement Performance Monitoring 📊
+
 **Priority**: MEDIUM  
 **Estimated Time**: 45-60 minutes  
 **Impact**: 🔥 High - Enables continuous performance tracking
@@ -380,10 +402,11 @@ find public/ -name "*.png" -o -name "*.jpg"
 #### Add Performance Instrumentation
 
 1. **Web Vitals Tracking** (Already have @vercel/speed-insights)
+
    ```typescript
    // app/layout.tsx
    import { SpeedInsights } from '@vercel/speed-insights/next';
-   
+
    export default function RootLayout({ children }) {
      return (
        <html>
@@ -397,48 +420,51 @@ find public/ -name "*.png" -o -name "*.jpg"
    ```
 
 2. **Custom Performance Metrics**
+
    ```typescript
    // lib/monitoring/performance.ts
    export function measureQueryPerformance<T>(
      name: string,
-     fn: () => Promise<T>
+     fn: () => Promise<T>,
    ): Promise<T> {
      const start = performance.now();
-     return fn().then(result => {
+     return fn().then((result) => {
        const duration = performance.now() - start;
        console.log(`[PERF] ${name}: ${duration.toFixed(2)}ms`);
-       
+
        // Send to monitoring (Sentry, OpenTelemetry)
        if (duration > 100) {
          console.warn(`[SLOW QUERY] ${name} took ${duration}ms`);
        }
-       
+
        return result;
      });
    }
-   
+
    // Usage in API routes
-   const orders = await measureQueryPerformance(
-     'analytics-orders',
-     () => database.order.findMany({ /* ... */ })
+   const orders = await measureQueryPerformance("analytics-orders", () =>
+     database.order.findMany({
+       /* ... */
+     }),
    );
    ```
 
 3. **Database Query Logging**
+
    ```typescript
    // lib/database/index.ts
-   import { PrismaClient } from '@prisma/client';
-   
+   import { PrismaClient } from "@prisma/client";
+
    const prisma = new PrismaClient({
      log: [
-       { level: 'query', emit: 'event' },
-       { level: 'error', emit: 'stdout' },
+       { level: "query", emit: "event" },
+       { level: "error", emit: "stdout" },
      ],
    });
-   
+
    // Log slow queries in development
-   if (process.env.NODE_ENV === 'development') {
-     prisma.$on('query', (e) => {
+   if (process.env.NODE_ENV === "development") {
+     prisma.$on("query", (e) => {
        if (e.duration > 100) {
          console.warn(`[SLOW QUERY] ${e.duration}ms: ${e.query}`);
        }
@@ -452,31 +478,34 @@ find public/ -name "*.png" -o -name "*.jpg"
 
 ## 📈 OPTIMIZATION PRIORITY MATRIX
 
-| Task | Priority | Impact | Effort | ROI | Order |
-|------|----------|--------|--------|-----|-------|
-| Dynamic Imports | HIGH | 🔥🔥🔥 | Medium | ⭐⭐⭐ | 1 |
-| Database Query Optimization | HIGH | 🔥🔥🔥 | Medium | ⭐⭐⭐ | 2 |
-| Server Components Audit | MEDIUM | 🔥🔥 | Low | ⭐⭐⭐ | 3 |
-| Code Splitting | MEDIUM | 🔥🔥 | Medium | ⭐⭐ | 4 |
-| Performance Monitoring | MEDIUM | 🔥🔥🔥 | Medium | ⭐⭐⭐ | 5 |
-| Image Optimization | LOW | ✅ | None | N/A | - |
+| Task                        | Priority | Impact | Effort | ROI    | Order |
+| --------------------------- | -------- | ------ | ------ | ------ | ----- |
+| Dynamic Imports             | HIGH     | 🔥🔥🔥 | Medium | ⭐⭐⭐ | 1     |
+| Database Query Optimization | HIGH     | 🔥🔥🔥 | Medium | ⭐⭐⭐ | 2     |
+| Server Components Audit     | MEDIUM   | 🔥🔥   | Low    | ⭐⭐⭐ | 3     |
+| Code Splitting              | MEDIUM   | 🔥🔥   | Medium | ⭐⭐   | 4     |
+| Performance Monitoring      | MEDIUM   | 🔥🔥🔥 | Medium | ⭐⭐⭐ | 5     |
+| Image Optimization          | LOW      | ✅     | None   | N/A    | -     |
 
 ---
 
 ## 🎯 IMPLEMENTATION PLAN
 
 ### Phase 1: Quick Wins (60-90 minutes)
+
 1. ✅ Create optimization plan (this document)
 2. 🔄 Implement dynamic imports for heavy components
 3. 🔄 Add database query optimizations to analytics route
 4. 🔄 Verify and optimize Server/Client component split
 
 ### Phase 2: Advanced Optimizations (45-60 minutes)
+
 5. 🔄 Implement code splitting by user role
 6. 🔄 Add performance monitoring and logging
 7. 🔄 Add database indexes for common queries
 
 ### Phase 3: Validation & Documentation (30-45 minutes)
+
 8. 🔄 Run bundle analysis and compare before/after
 9. 🔄 Test performance improvements (Lighthouse)
 10. 🔄 Document results and create completion report
@@ -538,6 +567,7 @@ API Response Times (Target):
 ## 📁 FILES TO MODIFY
 
 ### High Priority
+
 1. `src/components/features/ai/OllamaChatBot.tsx` - Dynamic import wrapper
 2. `src/components/AdvancedAnalyticsDashboard.tsx` - Dynamic import wrapper
 3. `src/components/inventory/InventoryDashboard.tsx` - Dynamic import wrapper
@@ -547,11 +577,13 @@ API Response Times (Target):
 7. `prisma/schema.prisma` - Add database indexes
 
 ### Medium Priority
+
 8. `next.config.mjs` - Code splitting configuration
 9. `src/lib/monitoring/performance.ts` - Performance utilities (NEW)
 10. `src/lib/database/index.ts` - Query logging
 
 ### Documentation
+
 11. `PHASE_4B_COMPLETION_SUMMARY.md` - Results report (NEW)
 12. `PERFORMANCE_BENCHMARKS.md` - Before/after metrics (NEW)
 
@@ -608,6 +640,7 @@ API Response Times (Target):
 ## 📊 SUCCESS CRITERIA
 
 ### Must Have ✅
+
 - [x] All heavy components use dynamic imports
 - [x] Analytics route queries optimized (<100ms)
 - [x] Server bundle reduced to <700 KB
@@ -616,6 +649,7 @@ API Response Times (Target):
 - [x] Build time maintained (<25s)
 
 ### Should Have 🎯
+
 - [ ] Performance monitoring instrumented
 - [ ] Database indexes added
 - [ ] Code splitting by role implemented
@@ -623,6 +657,7 @@ API Response Times (Target):
 - [ ] API response times <100ms average
 
 ### Nice to Have 💡
+
 - [ ] Redis caching layer
 - [ ] ISR for product pages
 - [ ] Virtual scrolling for lists
@@ -632,6 +667,7 @@ API Response Times (Target):
 ## 🚀 GETTING STARTED
 
 ### Step 1: Baseline Measurement
+
 ```bash
 # Build and analyze current state
 npm run build:analyze
@@ -644,9 +680,11 @@ npx lighthouse http://localhost:3001 --output=json --output-path=./baseline-ligh
 ```
 
 ### Step 2: Implement Optimizations
+
 Follow implementation plan Phase 1 → Phase 2 → Phase 3
 
 ### Step 3: Measure Impact
+
 ```bash
 # Build and analyze optimized state
 npm run build:analyze
@@ -663,11 +701,13 @@ npx lighthouse http://localhost:3001 --output=json --output-path=./optimized-lig
 ## 📞 SUPPORT & RESOURCES
 
 ### Documentation
+
 - Next.js Performance: https://nextjs.org/docs/app/building-your-application/optimizing
 - Prisma Performance: https://www.prisma.io/docs/guides/performance-and-optimization
 - Web Vitals: https://web.dev/vitals/
 
 ### Tools
+
 - @next/bundle-analyzer - Bundle analysis
 - Lighthouse - Performance auditing
 - React DevTools Profiler - Component performance

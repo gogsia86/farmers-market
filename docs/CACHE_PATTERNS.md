@@ -129,34 +129,34 @@ console.log(`
 
 ```typescript
 // User caches
-"user:123"                          // User profile
-"user:123:farms"                    // User's farms list
-"user:123:orders"                   // User's orders list
-"user:123:favorites"                // User's favorite farms
+"user:123"; // User profile
+"user:123:farms"; // User's farms list
+"user:123:orders"; // User's orders list
+"user:123:favorites"; // User's favorite farms
 
 // Farm caches
-"farm:456"                          // Farm profile
-"farm:456:products"                 // Farm's products
-"farm:456:products:active"          // Farm's active products only
-"farm:456:orders:pending"           // Farm's pending orders
-"farm:456:stats"                    // Farm statistics
+"farm:456"; // Farm profile
+"farm:456:products"; // Farm's products
+"farm:456:products:active"; // Farm's active products only
+"farm:456:orders:pending"; // Farm's pending orders
+"farm:456:stats"; // Farm statistics
 
 // Product caches
-"product:789"                       // Single product
-"products:featured"                 // Featured products list
-"products:category:vegetables"      // Products by category
-"products:search:tomato"            // Search results
+"product:789"; // Single product
+"products:featured"; // Featured products list
+"products:category:vegetables"; // Products by category
+"products:search:tomato"; // Search results
 
 // Order caches
-"order:101"                         // Single order
-"orders:user:123:recent"            // User's recent orders
-"orders:farm:456:pending"           // Farm's pending orders
+"order:101"; // Single order
+"orders:user:123:recent"; // User's recent orders
+"orders:farm:456:pending"; // Farm's pending orders
 
 // Global/aggregate caches
-"farms:all"                         // All farms list
-"farms:verified"                    // Verified farms only
-"categories:all"                    // All categories
-"stats:daily:2024-01-15"            // Daily statistics
+"farms:all"; // All farms list
+"farms:verified"; // Verified farms only
+"categories:all"; // All categories
+"stats:daily:2024-01-15"; // Daily statistics
 ```
 
 ## Cache TTL Strategy
@@ -166,39 +166,39 @@ console.log(`
 ```typescript
 export const CACHE_TTL = {
   // User data - moderate changes
-  USER_PROFILE: 300,              // 5 minutes
-  USER_PREFERENCES: 600,          // 10 minutes
-  USER_FAVORITES: 180,            // 3 minutes
+  USER_PROFILE: 300, // 5 minutes
+  USER_PREFERENCES: 600, // 10 minutes
+  USER_FAVORITES: 180, // 3 minutes
 
   // Farm data - infrequent changes
-  FARM_PROFILE: 600,              // 10 minutes
-  FARM_VERIFICATION: 3600,        // 1 hour
-  FARM_STATS: 300,                // 5 minutes
+  FARM_PROFILE: 600, // 10 minutes
+  FARM_VERIFICATION: 3600, // 1 hour
+  FARM_STATS: 300, // 5 minutes
 
   // Product data - frequent updates
-  PRODUCT: 180,                   // 3 minutes
-  PRODUCT_LIST: 120,              // 2 minutes
-  PRODUCT_SEARCH: 60,             // 1 minute
-  PRODUCT_AVAILABILITY: 30,       // 30 seconds
+  PRODUCT: 180, // 3 minutes
+  PRODUCT_LIST: 120, // 2 minutes
+  PRODUCT_SEARCH: 60, // 1 minute
+  PRODUCT_AVAILABILITY: 30, // 30 seconds
 
   // Order data - real-time
-  ORDER_DETAILS: 60,              // 1 minute
-  ORDER_STATUS: 30,               // 30 seconds
-  PENDING_ORDERS: 30,             // 30 seconds
+  ORDER_DETAILS: 60, // 1 minute
+  ORDER_STATUS: 30, // 30 seconds
+  PENDING_ORDERS: 30, // 30 seconds
 
   // Static/reference data - rare changes
-  CATEGORIES: 3600,               // 1 hour
-  CERTIFICATIONS: 7200,           // 2 hours
-  SYSTEM_CONFIG: 1800,            // 30 minutes
+  CATEGORIES: 3600, // 1 hour
+  CERTIFICATIONS: 7200, // 2 hours
+  SYSTEM_CONFIG: 1800, // 30 minutes
 
   // Computed/aggregate data
-  STATISTICS: 300,                // 5 minutes
-  REPORTS: 600,                   // 10 minutes
-  SEARCH_RESULTS: 60,             // 1 minute
+  STATISTICS: 300, // 5 minutes
+  REPORTS: 600, // 10 minutes
+  SEARCH_RESULTS: 60, // 1 minute
 
   // Session data
-  SESSION: 900,                   // 15 minutes
-  AUTH_TOKEN: 3600,               // 1 hour
+  SESSION: 900, // 15 minutes
+  AUTH_TOKEN: 3600, // 1 hour
 } as const;
 ```
 
@@ -214,7 +214,10 @@ export const CACHE_TTL = {
 
 ```typescript
 // When creating a product
-async function createProduct(farmId: string, productData: CreateProductRequest) {
+async function createProduct(
+  farmId: string,
+  productData: CreateProductRequest,
+) {
   const product = await database.product.create({
     data: {
       ...productData,
@@ -226,15 +229,15 @@ async function createProduct(farmId: string, productData: CreateProductRequest) 
   await cacheService.set(`product:${product.id}`, product, {
     ttl: CACHE_TTL.PRODUCT,
     tags: [
-      `farm:${farmId}`,                     // Farm relationship
-      `category:${product.category}`,       // Category relationship
-      `products`,                           // Global products tag
+      `farm:${farmId}`, // Farm relationship
+      `category:${product.category}`, // Category relationship
+      `products`, // Global products tag
     ],
   });
 
   // Invalidate related caches
   await cacheService.invalidateByTags([
-    `farm:${farmId}`,                       // Invalidate all farm-related caches
+    `farm:${farmId}`, // Invalidate all farm-related caches
   ]);
 
   return product;
@@ -334,11 +337,7 @@ async function createOrder(orderData: CreateOrderRequest): Promise<Order> {
   // 2. Immediately cache (write-through)
   await cacheService.set(`order:${order.id}`, order, {
     ttl: CACHE_TTL.ORDER_DETAILS,
-    tags: [
-      `user:${order.customerId}`,
-      `farm:${order.farmId}`,
-      `orders`,
-    ],
+    tags: [`user:${order.customerId}`, `farm:${order.farmId}`, `orders`],
   });
 
   // 3. Invalidate related list caches
@@ -375,8 +374,8 @@ async function warmFeaturedProductsCache() {
       cacheService.set(`product:${product.id}`, product, {
         ttl: CACHE_TTL.PRODUCT,
         tags: [`farm:${product.farmId}`, `category:${product.category}`],
-      })
-    )
+      }),
+    ),
   );
 
   // Cache the featured list
@@ -411,7 +410,7 @@ async function getFarmWithRefresh(farmId: string): Promise<Farm | null> {
     if (remainingTTL < configuredTTL * 0.1) {
       // Refresh cache in background (don't await)
       refreshFarmCache(farmId).catch((err) =>
-        console.error("Cache refresh failed:", err)
+        console.error("Cache refresh failed:", err),
       );
     }
 
@@ -447,7 +446,7 @@ async function refreshFarmCache(farmId: string): Promise<Farm | null> {
 const pendingFetches = new Map<string, Promise<any>>();
 
 async function getFarmWithStampedeProtection(
-  farmId: string
+  farmId: string,
 ): Promise<Farm | null> {
   const cacheKey = `farm:${farmId}`;
 
@@ -495,7 +494,9 @@ import { MultiLayerCache } from "@/lib/cache/multi-layer-cache";
 const multiCache = new MultiLayerCache();
 
 // L1 (memory) → L2 (Redis) → Database
-async function getProductWithMultiLayer(productId: string): Promise<Product | null> {
+async function getProductWithMultiLayer(
+  productId: string,
+): Promise<Product | null> {
   const cacheKey = `product:${productId}`;
 
   // Check L1 (memory) → L2 (Redis)
@@ -532,7 +533,7 @@ async function getProductWithMultiLayer(productId: string): Promise<Product | nu
 ```typescript
 // Middleware to track cache performance
 export async function cacheMetricsMiddleware(
-  request: NextRequest
+  request: NextRequest,
 ): Promise<Response> {
   const startStats = cacheService.getStats();
 
@@ -572,9 +573,12 @@ if (process.env.NODE_ENV === "development") {
   cacheService.set = async function <T>(
     key: string,
     value: T,
-    options?: any
+    options?: any,
   ): Promise<void> {
-    console.log(`[CACHE SET] ${key}`, { ttl: options?.ttl, tags: options?.tags });
+    console.log(`[CACHE SET] ${key}`, {
+      ttl: options?.ttl,
+      tags: options?.tags,
+    });
     await originalSet(key, value, options);
   };
 }
@@ -585,6 +589,7 @@ if (process.env.NODE_ENV === "development") {
 ### ✅ DO
 
 1. **Use consistent key naming conventions**
+
    ```typescript
    ✅ "user:123"
    ✅ "farm:456:products"
@@ -593,18 +598,21 @@ if (process.env.NODE_ENV === "development") {
    ```
 
 2. **Always specify TTL based on data volatility**
+
    ```typescript
    ✅ await cacheService.set(key, data, { ttl: CACHE_TTL.FARM_PROFILE });
    ❌ await cacheService.set(key, data); // Uses default, may not be appropriate
    ```
 
 3. **Tag caches for easy invalidation**
+
    ```typescript
    ✅ tags: [`farm:${farmId}`, `category:${category}`]
    ❌ No tags (hard to invalidate related data)
    ```
 
 4. **Invalidate related caches on updates**
+
    ```typescript
    ✅ await cacheService.invalidateByTags([`farm:${farmId}`]);
    ❌ Forgot to invalidate (stale data)
@@ -619,24 +627,28 @@ if (process.env.NODE_ENV === "development") {
 ### ❌ DON'T
 
 1. **Don't cache sensitive data without encryption**
+
    ```typescript
    ❌ await cacheService.set("user:123:password", hashedPassword);
    ✅ Don't cache passwords at all
    ```
 
 2. **Don't cache data that changes frequently**
+
    ```typescript
    ❌ await cacheService.set("order:123:status", status, { ttl: 3600 });
    ✅ Use short TTL or don't cache real-time data
    ```
 
 3. **Don't set TTL too long for dynamic data**
+
    ```typescript
    ❌ await cacheService.set("products:search:tomato", results, { ttl: 86400 });
    ✅ await cacheService.set("products:search:tomato", results, { ttl: 60 });
    ```
 
 4. **Don't cache errors or null values**
+
    ```typescript
    ❌ await cacheService.set(key, null);
    ✅ if (data) await cacheService.set(key, data);
@@ -660,7 +672,7 @@ for (const farm of farms) {
 
 // ✅ Fast - parallel operations
 await Promise.all(
-  farms.map((farm) => cacheService.set(`farm:${farm.id}`, farm))
+  farms.map((farm) => cacheService.set(`farm:${farm.id}`, farm)),
 );
 ```
 
@@ -682,9 +694,7 @@ await cacheService.set("farm:123:products", allProducts);
 
 // ✅ Cache individual products + list of IDs
 await cacheService.set("farm:123:product-ids", productIds);
-await Promise.all(
-  products.map((p) => cacheService.set(`product:${p.id}`, p))
-);
+await Promise.all(products.map((p) => cacheService.set(`product:${p.id}`, p)));
 ```
 
 ## Troubleshooting
@@ -694,6 +704,7 @@ await Promise.all(
 **Symptoms**: Cache stats show < 50% hit rate
 
 **Causes & Solutions**:
+
 1. TTL too short → Increase TTL for stable data
 2. Keys not consistent → Review key naming convention
 3. Cache invalidation too aggressive → Use tag-based invalidation more selectively
@@ -704,6 +715,7 @@ await Promise.all(
 **Symptoms**: Users seeing outdated information
 
 **Causes & Solutions**:
+
 1. Missing invalidation → Add invalidation on updates/deletes
 2. TTL too long → Reduce TTL for dynamic data
 3. Tags not comprehensive → Review and add missing tags
@@ -713,6 +725,7 @@ await Promise.all(
 **Symptoms**: Redis memory usage high, evictions occurring
 
 **Causes & Solutions**:
+
 1. No TTL set → Always specify appropriate TTL
 2. Large objects cached → Cache only necessary fields
 3. Too many keys → Review and consolidate cache keys
@@ -743,6 +756,6 @@ Remember: Cache is like fertile soil - it stores nutrients (data) for quick acce
 
 **Version**: 1.0  
 **Last Updated**: 2024-01-15  
-**Status**: ✅ PRODUCTION READY  
+**Status**: ✅ PRODUCTION READY
 
 _"Cache with consciousness, invalidate with precision, scale with agricultural wisdom."_ 🌾⚡

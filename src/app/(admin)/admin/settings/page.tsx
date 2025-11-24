@@ -1,13 +1,13 @@
 import { requireAdmin } from "@/lib/auth";
 import {
-    BellIcon,
-    BuildingStorefrontIcon,
-    CogIcon,
-    DocumentTextIcon,
-    GlobeAltIcon,
-    KeyIcon,
-    ShieldCheckIcon,
-    UserGroupIcon,
+  BellIcon,
+  BuildingStorefrontIcon,
+  CogIcon,
+  DocumentTextIcon,
+  GlobeAltIcon,
+  KeyIcon,
+  ShieldCheckIcon,
+  UserGroupIcon,
 } from "@heroicons/react/24/outline";
 
 // Force dynamic rendering - no static generation

@@ -1,4 +1,5 @@
 # 🚀 DEPLOYMENT GUIDE - NEW FEATURES
+
 ## Farmers Market Platform - December 2024
 
 **Version:** 1.0.0  
@@ -39,18 +40,21 @@ This deployment includes **5 major enhancements** that bring the platform from 9
 ### Files Added
 
 **API Routes (4 files):**
+
 - `src/app/api/featured/farms/route.ts`
 - `src/app/api/platform/stats/route.ts`
 - `src/app/api/search/suggest/route.ts`
 - `src/app/api/products/bulk/route.ts`
 
 **Components (4 files):**
+
 - `src/components/homepage/FeaturedFarms.tsx`
 - `src/components/homepage/PlatformStats.tsx`
 - `src/components/homepage/SearchAutocomplete.tsx`
 - `src/components/farmer/BulkProductUpload.tsx`
 
 **Pages (1 file):**
+
 - `src/app/farmer-dashboard/products/bulk-upload/page.tsx`
 
 ### Files Modified
@@ -188,10 +192,12 @@ npm run db:seed
 **Endpoint:** `GET /api/featured/farms`
 
 **Query Parameters:**
+
 - `limit` (optional): Number of farms to return (default: 6)
 - `strategy` (optional): `top-rated`, `recent`, `random` (default: `top-rated`)
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -228,6 +234,7 @@ npm run db:seed
 **Endpoint:** `GET /api/platform/stats`
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -270,10 +277,12 @@ npm run db:seed
 **Endpoint:** `GET /api/search/suggest`
 
 **Query Parameters:**
+
 - `q` (required): Search query (min 2 characters)
 - `limit` (optional): Max suggestions (default: 10, max: 20)
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -324,9 +333,11 @@ npm run db:seed
 **Content-Type:** `multipart/form-data`
 
 **Body:**
+
 - `file`: CSV file (max 5MB, max 500 products)
 
 **Response (Success):**
+
 ```json
 {
   "success": true,
@@ -361,18 +372,21 @@ npm run db:seed
 **File:** `src/app/page.tsx`
 
 **Changes Made:**
+
 1. Imported new components
 2. Replaced old search input with `<SearchAutocomplete />`
 3. Replaced static stats with `<PlatformStats />`
 4. Added `<FeaturedFarms />` section
 
 **Before:**
+
 ```tsx
 <input type="text" placeholder="Search..." />
 <div>{/* Static stats */}</div>
 ```
 
 **After:**
+
 ```tsx
 <SearchAutocomplete placeholder="Search..." />
 <PlatformStats />
@@ -384,10 +398,9 @@ npm run db:seed
 **New Page:** `/farmer-dashboard/products/bulk-upload`
 
 **Add Link to Dashboard:**
+
 ```tsx
-<Link href="/farmer-dashboard/products/bulk-upload">
-  Bulk Upload Products
-</Link>
+<Link href="/farmer-dashboard/products/bulk-upload">Bulk Upload Products</Link>
 ```
 
 ---
@@ -536,12 +549,14 @@ docker-compose up -d
 ### Immediate Checks (Within 5 minutes)
 
 1. **Homepage Loads:**
+
    ```bash
    curl https://your-domain.com
    # Should return 200 OK
    ```
 
 2. **API Endpoints Respond:**
+
    ```bash
    curl https://your-domain.com/api/health
    curl https://your-domain.com/api/featured/farms
@@ -549,6 +564,7 @@ docker-compose up -d
    ```
 
 3. **Database Connection:**
+
    ```bash
    curl https://your-domain.com/api/health/ready
    # Should return { "status": "ready" }
@@ -617,12 +633,14 @@ Cache:
 ### Alert Configuration
 
 **Critical Alerts (Immediate Response):**
+
 - Error rate > 5%
 - API response time > 1s (p95)
 - Database connection failures
 - Bulk upload endpoint down
 
 **Warning Alerts (Monitor):**
+
 - Error rate > 1%
 - API response time > 500ms (p95)
 - Cache hit rate < 70%
@@ -687,11 +705,13 @@ curl http://localhost:3000/api/health
 **Symptoms:** Homepage shows loading forever or error message
 
 **Possible Causes:**
+
 1. Database connection issue
 2. No farms in database
 3. API endpoint not deployed
 
 **Solutions:**
+
 ```bash
 # Check database connection
 curl https://your-domain.com/api/health/ready
@@ -713,11 +733,13 @@ vercel logs
 **Symptoms:** No suggestions appear when typing
 
 **Possible Causes:**
+
 1. API endpoint not responding
 2. Client-side JavaScript error
 3. CORS issue
 
 **Solutions:**
+
 ```bash
 # Check API endpoint
 curl "https://your-domain.com/api/search/suggest?q=tomato"
@@ -737,11 +759,13 @@ curl -H "Origin: https://your-domain.com" \
 **Symptoms:** Upload returns error or hangs
 
 **Possible Causes:**
+
 1. File size too large (> 5MB)
 2. Authentication issue
 3. Database transaction timeout
 
 **Solutions:**
+
 ```bash
 # Check authentication
 # Ensure user has FARMER role
@@ -763,10 +787,12 @@ vercel logs --follow
 **Symptoms:** Build fails with TS errors
 
 **Possible Causes:**
+
 1. Missing dependencies
 2. Type definition issues
 
 **Solutions:**
+
 ```bash
 # Clear cache and reinstall
 rm -rf node_modules .next

@@ -31,7 +31,7 @@ export function SeasonalProductCatalog({
   virtualized = false,
 }: SeasonalProductCatalogProps) {
   const filteredProducts = products.filter(
-    (product) => product.season === season && product.inStock
+    (product) => product.season === season && product.inStock,
   );
 
   // For virtualized rendering, only show first 20 items
@@ -43,7 +43,9 @@ export function SeasonalProductCatalog({
     <div className="seasonal-product-catalog" data-testid="seasonal-catalog">
       <h2 className="text-2xl font-bold mb-4">{season} Products</h2>
       {displayProducts.length === 0 ? (
-        <p className="text-gray-500">No seasonal products available for this season</p>
+        <p className="text-gray-500">
+          No seasonal products available for this season
+        </p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {displayProducts.map((product) => (
@@ -55,7 +57,9 @@ export function SeasonalProductCatalog({
             >
               <h3 className="text-lg font-semibold">{product.name}</h3>
               {product.description && (
-                <p className="text-sm text-gray-500 mt-1">{product.description}</p>
+                <p className="text-sm text-gray-500 mt-1">
+                  {product.description}
+                </p>
               )}
               <p className="text-gray-600 mt-2">${product.price.toFixed(2)}</p>
               <div className="flex flex-wrap gap-2 mt-2">
@@ -75,7 +79,8 @@ export function SeasonalProductCatalog({
               </div>
               {product.harvestDate && (
                 <p className="text-xs text-gray-500 mt-2">
-                  Harvested: {new Date(product.harvestDate).toLocaleDateString()}
+                  Harvested:{" "}
+                  {new Date(product.harvestDate).toLocaleDateString()}
                 </p>
               )}
               {onAddToCart && (

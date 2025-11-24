@@ -92,7 +92,7 @@ export class AITracer {
     traceId: string,
     spanName: string,
     attributes: Record<string, any> = {},
-    parentSpanId?: string
+    parentSpanId?: string,
   ): string {
     const trace = this.traces.get(traceId);
     if (!trace) {
@@ -134,7 +134,7 @@ export class AITracer {
   addEvent(
     spanId: string,
     eventName: string,
-    attributes: Record<string, any> = {}
+    attributes: Record<string, any> = {},
   ): void {
     const span = this.activeSpans.get(spanId);
     if (!span) {
@@ -167,7 +167,7 @@ export class AITracer {
   endSpan(
     spanId: string,
     status: "success" | "error" = "success",
-    error?: Error
+    error?: Error,
   ): void {
     const span = this.activeSpans.get(spanId);
     if (!span) return;
@@ -186,7 +186,7 @@ export class AITracer {
     this.activeSpans.delete(spanId);
 
     console.log(
-      `  ✅ [Span] Completed: ${span.name} (${span.duration}ms) - ${status}`
+      `  ✅ [Span] Completed: ${span.name} (${span.duration}ms) - ${status}`,
     );
   }
 
@@ -195,7 +195,7 @@ export class AITracer {
    */
   endTrace(
     traceId: string,
-    metadata: Partial<AgentTrace["metadata"]> = {}
+    metadata: Partial<AgentTrace["metadata"]> = {},
   ): void {
     const trace = this.traces.get(traceId);
     if (!trace) return;
@@ -246,7 +246,7 @@ export class AITracer {
   calculateMetrics(agentName?: string): PerformanceMetrics {
     const traces = agentName
       ? Array.from(this.traces.values()).filter(
-          (t) => t.agentName === agentName
+          (t) => t.agentName === agentName,
         )
       : Array.from(this.traces.values());
 
@@ -311,7 +311,7 @@ export class AITracer {
 export function withTracing<T extends (...args: any[]) => Promise<any>>(
   agentName: string,
   operation: T,
-  tracer: AITracer = new AITracer()
+  tracer: AITracer = new AITracer(),
 ): T {
   return (async (...args: Parameters<T>): Promise<ReturnType<T>> => {
     const traceId = tracer.startTrace(agentName);
@@ -340,7 +340,7 @@ export function withTracing<T extends (...args: any[]) => Promise<any>>(
       tracer.endSpan(
         spanId,
         "error",
-        error instanceof Error ? error : new Error(String(error))
+        error instanceof Error ? error : new Error(String(error)),
       );
       tracer.endTrace(traceId);
 
@@ -362,7 +362,7 @@ export async function traceAIOperation<T>(
   agentName: string,
   operationName: string,
   operation: () => Promise<T>,
-  attributes: Record<string, any> = {}
+  attributes: Record<string, any> = {},
 ): Promise<T> {
   const traceId = globalTracer.startTrace(agentName);
   const spanId = globalTracer.startSpan(traceId, operationName, attributes);
@@ -376,7 +376,7 @@ export async function traceAIOperation<T>(
     globalTracer.endSpan(
       spanId,
       "error",
-      error instanceof Error ? error : new Error(String(error))
+      error instanceof Error ? error : new Error(String(error)),
     );
     globalTracer.endTrace(traceId);
     throw error;

@@ -145,6 +145,7 @@ Result:           Tests finish before profiling starts
    - Query performance
 
 4. **CPU-Heavy Scripts** ⭐
+
    ```bash
    nsys profile --output=script node heavy-computation.js
    ```

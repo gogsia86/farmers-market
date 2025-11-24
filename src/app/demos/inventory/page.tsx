@@ -114,11 +114,13 @@ export default function InventoryDemoPage() {
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold mb-1">Agricultural Consciousness</h3>
+                <h3 className="font-semibold mb-1">
+                  Agricultural Consciousness
+                </h3>
                 <p className="text-sm text-gray-600">
                   Inventory management with biodynamic awareness - track stock
-                  levels, expiration dates, and seasonal availability with divine
-                  precision.
+                  levels, expiration dates, and seasonal availability with
+                  divine precision.
                 </p>
               </div>
             </div>

@@ -98,7 +98,7 @@ export default function CheckoutPage() {
   const cartItems = MOCK_CART;
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
-    0
+    0,
   );
   const tax = subtotal * 0.08;
   const total = subtotal + tax;
@@ -110,7 +110,7 @@ export default function CheckoutPage() {
       acc[item.farm]!.push(item);
       return acc;
     },
-    {}
+    {},
   );
   const farms = Object.keys(itemsByFarm);
 
@@ -155,7 +155,7 @@ export default function CheckoutPage() {
     }
     if (currentStep === 2) {
       return farms.every(
-        (farm) => formData.pickupDates[farm] && formData.pickupTimes[farm]
+        (farm) => formData.pickupDates[farm] && formData.pickupTimes[farm],
       );
     }
     if (currentStep === 3) {
@@ -360,7 +360,7 @@ export default function CheckoutPage() {
                         const farmItems = itemsByFarm[farm] || [];
                         const farmTotal = farmItems.reduce(
                           (sum, item) => sum + item.price * item.quantity,
-                          0
+                          0,
                         );
 
                         return (
@@ -468,7 +468,7 @@ export default function CheckoutPage() {
                           onChange={(e) =>
                             handleInputChange(
                               "specialInstructions",
-                              e.target.value
+                              e.target.value,
                             )
                           }
                           rows={3}

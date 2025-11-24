@@ -1,12 +1,12 @@
 import { requireAdmin } from "@/lib/auth";
 import { database } from "@/lib/database";
 import {
-    BuildingStorefrontIcon,
-    CurrencyDollarIcon,
-    ExclamationTriangleIcon,
-    ShoppingBagIcon,
-    TruckIcon,
-    UserGroupIcon,
+  BuildingStorefrontIcon,
+  CurrencyDollarIcon,
+  ExclamationTriangleIcon,
+  ShoppingBagIcon,
+  TruckIcon,
+  UserGroupIcon,
 } from "@heroicons/react/24/outline";
 
 // Force dynamic rendering - no static generation

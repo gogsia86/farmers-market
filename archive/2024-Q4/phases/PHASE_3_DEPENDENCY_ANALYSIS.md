@@ -12,6 +12,7 @@
 Analyzed all project dependencies using `depcheck` to identify unused packages, missing dependencies, and optimization opportunities.
 
 ### Key Findings
+
 - ✅ **Project is healthy** - Most "unused" deps are actually used
 - ⚠️ **12 packages flagged as unused** (but most are false positives)
 - ⚠️ **6 missing dependencies** for specialty features
@@ -27,23 +28,28 @@ Analyzed all project dependencies using `depcheck` to identify unused packages, 
 #### ⚠️ FALSE POSITIVES (Keep - Used in App)
 
 **UI Component Libraries:**
+
 - ❌ `@radix-ui/react-dialog` - **KEEP** (Used in modal components)
 - ❌ `@radix-ui/react-dropdown-menu` - **KEEP** (Used in navigation)
 - ❌ `@radix-ui/react-select` - **KEEP** (Used in forms)
 - ❌ `@radix-ui/react-toast` - **KEEP** (Used in notifications)
 
 **Payment Integration:**
+
 - ❌ `@stripe/react-stripe-js` - **KEEP** (Payment forms)
 - ❌ `@stripe/stripe-js` - **KEEP** (Stripe integration)
 
 **Data Fetching:**
+
 - ❌ `@tanstack/react-query` - **KEEP** (API state management)
 
 **Analytics:**
+
 - ❌ `@vercel/analytics` - **KEEP** (Production analytics)
 - ❌ `@vercel/speed-insights` - **KEEP** (Performance monitoring)
 
 **Utilities:**
+
 - ❌ `date-fns` - **KEEP** (Date formatting throughout app)
 - ❌ `framer-motion` - **KEEP** (Animations)
 - ❌ `jose` - **KEEP** (JWT handling in NextAuth)
@@ -107,7 +113,7 @@ Analyzed all project dependencies using `depcheck` to identify unused packages, 
 
 10. **`ts-node`**
     - **Why flagged:** Not in scripts
-    - **Verdict:** 🟡 **MAYBE REMOVE** - Check if scripts/*.ts need it
+    - **Verdict:** 🟡 **MAYBE REMOVE** - Check if scripts/\*.ts need it
     - **Action:** If using `tsx` instead, can remove
 
 ---
@@ -162,11 +168,13 @@ Analyzed all project dependencies using `depcheck` to identify unused packages, 
 ### Immediate Actions (High Priority)
 
 #### 1. ✅ Remove Confirmed Unused Dependencies
+
 ```bash
 npm uninstall @swc/core critters
 ```
 
 **Impact:**
+
 - Saves ~37MB in `node_modules`
 - Faster `npm install`
 - Reduced security surface
@@ -174,6 +182,7 @@ npm uninstall @swc/core critters
 **Risk:** Low - Next.js 16 has built-in compilation
 
 #### 2. ✅ Add Missing Critical Dependencies (If Features Used)
+
 ```bash
 # If real-time notifications are active:
 npm install ws
@@ -193,12 +202,14 @@ npm install -D @jest/globals
 ### Verification Actions (Medium Priority)
 
 #### 3. 🔍 Verify `@next/bundle-analyzer` Script
+
 ```bash
 # Check if build:analyze exists
 grep "build:analyze" package.json
 ```
 
 **If missing, add to `package.json`:**
+
 ```json
 {
   "scripts": {
@@ -208,12 +219,14 @@ grep "build:analyze" package.json
 ```
 
 #### 4. 🔍 Check `cross-env` Usage
+
 ```bash
 # Search for cross-env in package.json
 grep "cross-env" package.json
 ```
 
 **If not found:**
+
 ```bash
 npm uninstall cross-env
 ```
@@ -221,12 +234,14 @@ npm uninstall cross-env
 **Savings:** ~1MB
 
 #### 5. 🔍 Verify `ts-node` vs `tsx` Usage
+
 ```bash
 # Check which is used in scripts
 grep -r "ts-node\|tsx" package.json scripts/
 ```
 
 **If only `tsx` is used:**
+
 ```bash
 npm uninstall ts-node
 ```
@@ -240,10 +255,12 @@ npm uninstall ts-node
 #### 6. 🧹 Remove Unused Imports
 
 **Files to review:**
+
 - Any files with unused TypeScript imports
 - Check for unused utility functions
 
 **Command to find unused exports:**
+
 ```bash
 npx ts-prune | grep -v "used in module"
 ```
@@ -251,6 +268,7 @@ npx ts-prune | grep -v "used in module"
 #### 7. 🧹 Clean Up Dead Code
 
 **Check for:**
+
 - Commented-out code blocks
 - Unused component files
 - Old migration scripts
@@ -260,6 +278,7 @@ npx ts-prune | grep -v "used in module"
 ## 📦 Package.json Optimization
 
 ### Current State
+
 ```json
 {
   "dependencies": 61,
@@ -269,6 +288,7 @@ npx ts-prune | grep -v "used in module"
 ```
 
 ### After Optimization
+
 ```json
 {
   "dependencies": 61,          // No change (all used)
@@ -298,15 +318,17 @@ Before removing ANY dependency:
 ## 📊 Impact Analysis
 
 ### Storage Savings
-| Action | Savings | Risk |
-|--------|---------|------|
-| Remove `@swc/core` | ~35MB | Low |
-| Remove `critters` | ~2MB | Low |
-| Remove `cross-env` (if unused) | ~1MB | Low |
-| Remove `ts-node` (if unused) | ~5MB | Low |
-| **Total Potential** | **~43MB** | **Low** |
+
+| Action                         | Savings   | Risk    |
+| ------------------------------ | --------- | ------- |
+| Remove `@swc/core`             | ~35MB     | Low     |
+| Remove `critters`              | ~2MB      | Low     |
+| Remove `cross-env` (if unused) | ~1MB      | Low     |
+| Remove `ts-node` (if unused)   | ~5MB      | Low     |
+| **Total Potential**            | **~43MB** | **Low** |
 
 ### Performance Impact
+
 - ✅ **Faster `npm install`** (~5-10 seconds faster)
 - ✅ **Smaller Docker images** (~40MB smaller)
 - ✅ **Faster CI/CD** (less dependencies to install)
@@ -332,6 +354,7 @@ Before removing ANY dependency:
 ## 📝 Phase 3 Execution Plan
 
 ### Step 1: Safe Removals (10 minutes)
+
 ```bash
 # Confirmed safe to remove
 npm uninstall @swc/core critters
@@ -344,6 +367,7 @@ npm test
 ```
 
 ### Step 2: Add Missing (If Features Used) (15 minutes)
+
 ```bash
 # Check if real-time system is used
 grep -r "realtime-system" src/
@@ -359,6 +383,7 @@ npm install -D vitest @jest/globals
 ```
 
 ### Step 3: Verification (20 minutes)
+
 ```bash
 # Check all scripts work
 npm run lint
@@ -372,7 +397,9 @@ npm run dev
 ```
 
 ### Step 4: Document Changes (10 minutes)
+
 Update `PHASE_3_COMPLETION_SUMMARY.md` with:
+
 - Packages removed
 - Packages added
 - Savings achieved
@@ -393,6 +420,7 @@ Update `PHASE_3_COMPLETION_SUMMARY.md` with:
 5. **Use `--save-exact`** for critical dependencies
 
 ### Update package.json Script
+
 ```json
 {
   "scripts": {
@@ -409,8 +437,9 @@ Update `PHASE_3_COMPLETION_SUMMARY.md` with:
 After Phase 3 completion:
 
 ### Phase 4: Performance Optimization
+
 - Bundle analysis
-- Image optimization  
+- Image optimization
 - Database query optimization
 - Test suite optimization
 
@@ -421,18 +450,21 @@ After Phase 3 completion:
 ## 📋 Phase 3 Checklist
 
 ### Safe Removals
+
 - [ ] Remove `@swc/core`
 - [ ] Remove `critters`
 - [ ] Verify `cross-env` usage, remove if unused
 - [ ] Verify `ts-node` usage, remove if unused
 
 ### Add Missing Dependencies
+
 - [ ] Check real-time system usage → Add `ws` if needed
 - [ ] Check benchmarks → Add `vitest` if needed
 - [ ] Check example tests → Add `@jest/globals` if needed
 - [ ] Check GPU features → Add `gpu.js` if needed
 
 ### Verification
+
 - [ ] `npm run build` succeeds
 - [ ] `npm test` all pass
 - [ ] `npm run lint` clean
@@ -440,6 +472,7 @@ After Phase 3 completion:
 - [ ] Dev server runs: `npm run dev`
 
 ### Documentation
+
 - [ ] Update `PHASE_3_COMPLETION_SUMMARY.md`
 - [ ] Update `PROJECT_STATUS_2025.md`
 - [ ] Mark Phase 3 complete in `CLEANUP_AND_IMPROVEMENTS_PLAN.md`

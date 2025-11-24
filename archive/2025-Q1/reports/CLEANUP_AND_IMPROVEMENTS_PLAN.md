@@ -1,4 +1,5 @@
 # 🧹 COMPREHENSIVE CLEANUP AND IMPROVEMENTS PLAN
+
 ## Farmers Market Platform - Code Quality & Optimization Review
 
 **Review Date:** January 2025  
@@ -27,6 +28,7 @@
 ### Overall Assessment: ⭐ **A (92/100)**
 
 **Strengths:**
+
 - ✅ Clean architecture with service layer pattern
 - ✅ No console.log statements (excellent!)
 - ✅ No TODO/FIXME comments cluttering code
@@ -34,6 +36,7 @@
 - ✅ 96.3% test coverage
 
 **Areas Requiring Attention:**
+
 - ⚠️ **86 duplicate/redundant documentation files** (2,331 total .md files!)
 - ⚠️ **3 failing test suites** (syntax errors)
 - ⚠️ **Backup files** in source code (page-backup.tsx, .gitignore.backup)
@@ -48,6 +51,7 @@
 ### Priority 1: Fix Failing Tests
 
 #### Issue 1: Unterminated String Literal in Farms API Test
+
 **File:** `src/app/api/farms/__tests__/route.test.ts`  
 **Line:** 41  
 **Error:** `error TS1002: Unterminated string literal`
@@ -63,6 +67,7 @@ import {
 ```
 
 **Fix:**
+
 ```typescript
 // ✅ CORRECTED CODE
 import {
@@ -78,11 +83,13 @@ import {
 ---
 
 #### Issue 2: Products API Test Assertion Failure
+
 **File:** `src/app/api/products/__tests__/route.test.ts`  
 **Line:** 648  
 **Error:** Assertion failure with `database.product.count`
 
 **Action Required:**
+
 1. Review test expectations
 2. Verify mock setup
 3. Fix assertion logic
@@ -93,6 +100,7 @@ import {
 ---
 
 #### Issue 3: Additional Test Suite Failure
+
 **Status:** Needs investigation  
 **Impact:** Medium  
 **Effort:** 15-30 minutes
@@ -102,6 +110,7 @@ import {
 ### Priority 2: Remove Backup/Old Files
 
 #### Files to Delete:
+
 ```bash
 # Backup files in source code (SHOULD NOT BE IN VERSION CONTROL)
 ./src/app/page-backup.tsx
@@ -237,6 +246,7 @@ INTO:
 ```
 
 **Recommended Essential Documentation (10 files):**
+
 ```
 ROOT DIRECTORY ESSENTIAL DOCS:
 1. README.md                          # Main project documentation
@@ -271,6 +281,7 @@ SPECIALIZED GUIDES (Optional - keep in docs/):
 ### 2. .txt File Cleanup (17 text files → 1 file)
 
 **Files to Archive:**
+
 ```bash
 # Status/Achievement Reports (Move to archive/)
 100_PERFECTION_ACHIEVED.txt
@@ -317,6 +328,7 @@ cleanup-logs/        # 8 KB - Old cleanup logs
 **Recommended Actions:**
 
 #### Option A: Add to .gitignore (Recommended)
+
 ```bash
 # Add to .gitignore if not already present
 .jest-cache/
@@ -326,6 +338,7 @@ cleanup-logs/
 ```
 
 #### Option B: Clean Periodically
+
 ```bash
 # Add npm script to package.json
 "clean:cache": "rimraf .jest-cache coverage playwright-report",
@@ -340,11 +353,12 @@ cleanup-logs/
 ### 4. Source Code Cleanup
 
 #### Remove Backup Files from src/
+
 ```typescript
 // Files to delete or move to archive/
-src/app/page-backup.tsx      // Old homepage backup
-src/app/page.tsx.original    // Original homepage
-src/app/page-debug.tsx       // Debug version
+src / app / page - backup.tsx; // Old homepage backup
+src / app / page.tsx.original; // Original homepage
+src / app / page - debug.tsx; // Debug version
 ```
 
 **Impact:** Medium  
@@ -356,6 +370,7 @@ src/app/page-debug.tsx       // Debug version
 ### 5. Test Directory Consolidation
 
 **Current Structure:**
+
 ```
 src/__tests__/         # Some tests
 src/tests/             # Some tests
@@ -366,6 +381,7 @@ src/app/api/__tests__/
 ```
 
 **Recommended Structure:**
+
 ```
 src/__tests__/         # DELETE (consolidate into component tests)
 src/tests/             # DELETE (consolidate into component tests)
@@ -410,17 +426,18 @@ import {
 ### 2. Dependency Cleanup
 
 #### Unused Dependencies (Can be removed)
+
 ```json
 {
   "dependencies": {
-    "jose": "^6.1.2",  // ❓ May be used by NextAuth internally
-    "date-fns": "^4.1.0"  // ❓ Check if used in date formatting
+    "jose": "^6.1.2", // ❓ May be used by NextAuth internally
+    "date-fns": "^4.1.0" // ❓ Check if used in date formatting
   },
   "devDependencies": {
-    "@swc/core": "^1.15.2",  // ❌ Not used (Next.js uses internal SWC)
-    "critters": "^0.0.25",  // ❌ Not used
-    "autoprefixer": "^10.4.22",  // ❓ Check if used by PostCSS
-    "postcss": "^8.5.6"  // ❓ Check if used by Tailwind
+    "@swc/core": "^1.15.2", // ❌ Not used (Next.js uses internal SWC)
+    "critters": "^0.0.25", // ❌ Not used
+    "autoprefixer": "^10.4.22", // ❓ Check if used by PostCSS
+    "postcss": "^8.5.6" // ❓ Check if used by Tailwind
   }
 }
 ```
@@ -428,6 +445,7 @@ import {
 **⚠️ WARNING:** Some dependencies might be used by frameworks internally!
 
 **Recommended Approach:**
+
 1. ✅ Keep `jose` (NextAuth dependency)
 2. ✅ Keep `date-fns` (likely used somewhere)
 3. ❌ Remove `@swc/core` (Next.js has built-in SWC)
@@ -435,14 +453,15 @@ import {
 5. ✅ Keep `autoprefixer` & `postcss` (Tailwind dependencies)
 
 #### Missing Dependencies (Need to add)
+
 ```json
 {
   "devDependencies": {
-    "vitest": "^1.0.0",  // For benchmarks
-    "dotenv": "^16.0.0",  // For scripts
-    "fast-glob": "^3.3.0",  // For GitHub Copilot workflows
-    "gpu.js": "^2.16.0",  // For GPU acceleration
-    "ws": "^8.18.0"  // For WebSocket notifications
+    "vitest": "^1.0.0", // For benchmarks
+    "dotenv": "^16.0.0", // For scripts
+    "fast-glob": "^3.3.0", // For GitHub Copilot workflows
+    "gpu.js": "^2.16.0", // For GPU acceleration
+    "ws": "^8.18.0" // For WebSocket notifications
   }
 }
 ```
@@ -452,6 +471,7 @@ import {
 ### 3. Unused Components Detection
 
 **Strategy:** Run dead code elimination
+
 ```bash
 # Install and run depcheck for components
 npm install -D ts-prune
@@ -473,11 +493,13 @@ npx ts-prune | grep -v "used in module"
 ### 1. Bundle Size Analysis
 
 **Action:** Enable bundle analyzer
+
 ```bash
 npm run build:analyze
 ```
 
 **Check for:**
+
 - Large dependencies (can they be code-split?)
 - Duplicate code
 - Unused exports
@@ -487,11 +509,13 @@ npm run build:analyze
 ### 2. Image Optimization Audit
 
 **Action:** Check for unoptimized images
+
 ```bash
 find public -type f \( -iname "*.jpg" -o -iname "*.png" \) -size +500k
 ```
 
 **Recommendation:**
+
 - Convert large images to WebP
 - Use Next.js Image component everywhere
 - Implement lazy loading
@@ -501,17 +525,20 @@ find public -type f \( -iname "*.jpg" -o -iname "*.png" \) -size +500k
 ### 3. Database Query Optimization
 
 **Check for:**
+
 - N+1 queries
 - Missing indexes
 - Unnecessary data fetching
 
 **Action:** Add query logging in development
+
 ```typescript
 // src/lib/database/index.ts
 const prisma = new PrismaClient({
-  log: process.env.NODE_ENV === 'development' 
-    ? ['query', 'info', 'warn', 'error']
-    : ['error'],
+  log:
+    process.env.NODE_ENV === "development"
+      ? ["query", "info", "warn", "error"]
+      : ["error"],
 });
 ```
 
@@ -522,11 +549,13 @@ const prisma = new PrismaClient({
 ### 1. Environment Variables Audit
 
 **Action:** Ensure all secrets are in .env (not .env.example)
+
 ```bash
 grep -r "API_KEY\|SECRET\|PASSWORD" .env.example
 ```
 
 **Verify:**
+
 - ✅ No actual secrets in .env.example
 - ✅ All secrets in .env (gitignored)
 - ✅ No hardcoded secrets in source code
@@ -536,6 +565,7 @@ grep -r "API_KEY\|SECRET\|PASSWORD" .env.example
 ### 2. Dependency Vulnerability Scan
 
 **Action:** Run security audit
+
 ```bash
 npm audit --production
 npm audit fix
@@ -548,6 +578,7 @@ npm audit fix
 ✅ **EXCELLENT:** Using Zod for validation
 
 **Recommendation:** Audit all API routes for:
+
 - Input validation on all POST/PUT/PATCH
 - SQL injection protection (Prisma handles this ✅)
 - XSS protection (Next.js handles this ✅)
@@ -604,6 +635,7 @@ ROOT/
 **Target:** 100% tests passing (currently 96.3%)
 
 **Action Items:**
+
 1. ✅ Fix `src/app/api/farms/__tests__/route.test.ts` (missing quote)
 2. ✅ Fix `src/app/api/products/__tests__/route.test.ts` (assertion)
 3. ✅ Investigate third failing test suite
@@ -615,12 +647,14 @@ ROOT/
 ### 2. Test Coverage Gaps
 
 **Action:** Identify untested code
+
 ```bash
 npm run test:coverage
 # Look for files with <80% coverage
 ```
 
 **Focus Areas:**
+
 - Error handling paths
 - Edge cases
 - Integration between services
@@ -632,6 +666,7 @@ npm run test:coverage
 **Current:** Tests take ~127 seconds
 
 **Optimization Ideas:**
+
 1. Parallelize test suites (already using --maxWorkers=6 ✅)
 2. Use test.concurrent for independent tests
 3. Mock expensive operations (database, external APIs)
@@ -648,8 +683,8 @@ npm run test:coverage
 ```json
 {
   "devDependencies": {
-    "@swc/core": "^1.15.2",           // Next.js includes SWC
-    "critters": "^0.0.25"              // Not used
+    "@swc/core": "^1.15.2", // Next.js includes SWC
+    "critters": "^0.0.25" // Not used
   }
 }
 ```
@@ -659,11 +694,11 @@ npm run test:coverage
 ```json
 {
   "devDependencies": {
-    "vitest": "^1.0.0",                // For benchmarks
-    "dotenv": "^16.4.0",               // For scripts
-    "fast-glob": "^3.3.2",             // For workflows
-    "gpu.js": "^2.16.0",               // For GPU features
-    "ws": "^8.18.1"                    // For WebSockets
+    "vitest": "^1.0.0", // For benchmarks
+    "dotenv": "^16.4.0", // For scripts
+    "fast-glob": "^3.3.2", // For workflows
+    "gpu.js": "^2.16.0", // For GPU features
+    "ws": "^8.18.1" // For WebSockets
   }
 }
 ```
@@ -671,12 +706,14 @@ npm run test:coverage
 ### Need to Verify
 
 **These might be used implicitly:**
+
 - `@radix-ui/*` packages (check if UI components use them)
 - `@stripe/*` packages (check if Stripe integration is complete)
 - `@tanstack/react-query` (check if used in components)
 - `framer-motion` (check if animations use it)
 
 **Action:** Search codebase for each
+
 ```bash
 grep -r "@radix-ui/react-dialog" src/
 grep -r "@tanstack/react-query" src/
@@ -692,6 +729,7 @@ grep -r "framer-motion" src/
 **Priority:** 🔴 HIGH
 
 1. **Fix Test Failures** (30 min)
+
    ```bash
    # Fix farms API test
    # Fix products API test
@@ -699,6 +737,7 @@ grep -r "framer-motion" src/
    ```
 
 2. **Remove Backup Files** (5 min)
+
    ```bash
    rm src/app/page-backup.tsx
    rm src/app/page.tsx.original
@@ -722,20 +761,22 @@ grep -r "framer-motion" src/
 **Priority:** 🟡 MEDIUM-HIGH
 
 1. **Create Archive Directory** (5 min)
+
    ```bash
    mkdir -p archive/docs-historical/{status-reports,test-reports,integration-reports}
    ```
 
 2. **Move Redundant Docs** (30 min)
+
    ```bash
    # Move status reports
    mv *_ACHIEVEMENT.md archive/docs-historical/status-reports/
    mv *_VICTORY*.md archive/docs-historical/status-reports/
-   
+
    # Move test reports
    mv EPIC_*_SESSION*.md archive/docs-historical/test-reports/
    mv TEST_*_REPORT*.md archive/docs-historical/test-reports/
-   
+
    # Move integration reports
    mv *INTEGRATION*.md archive/docs-historical/integration-reports/
    mv *TRACING*.md archive/docs-historical/integration-reports/
@@ -760,15 +801,17 @@ grep -r "framer-motion" src/
 **Priority:** 🟡 MEDIUM
 
 1. **Clean Cache Directories** (5 min)
+
    ```bash
    npm run clean:cache  # After adding script
    ```
 
 2. **Dependency Cleanup** (30 min)
+
    ```bash
    # Remove safe-to-remove deps
    npm uninstall @swc/core critters
-   
+
    # Add missing deps
    npm install -D vitest dotenv fast-glob ws gpu.js
    ```
@@ -788,11 +831,12 @@ grep -r "framer-motion" src/
 
 **Priority:** 🟢 LOW-MEDIUM  
 **Status:** ✅ **COMPLETED** - November 23, 2025  
-**Duration:** ~2 hours  
+**Duration:** ~2 hours
 
 **Completed Actions:**
 
 1. ✅ **Bundle Analysis** (30 min)
+
    ```bash
    npm run build:analyze
    # Generated 3 reports: client.html, nodejs.html, edge.html
@@ -815,6 +859,7 @@ grep -r "framer-motion" src/
    - HP OMEN hardware fully utilized
 
 **Results:**
+
 - Bundle analyzer reports generated in `.next/analyze/`
 - TypeScript errors: 0 (was 6)
 - Code quality: 100%
@@ -823,6 +868,7 @@ grep -r "framer-motion" src/
 **See:** `PHASE_4_PERFORMANCE_OPTIMIZATION.md` for complete report
 
 **Next Steps (Phase 4B - Optional):**
+
 - Review bundle analyzer visualizations
 - Implement dynamic imports for heavy components
 - Database query profiling and optimization
@@ -836,6 +882,7 @@ grep -r "framer-motion" src/
 **Status:** 🎯 **READY TO START**
 
 1. **Dependency Audit** (30 min)
+
    ```bash
    npm audit
    npm audit fix
@@ -856,6 +903,7 @@ grep -r "framer-motion" src/
 ## 📊 SUCCESS METRICS
 
 ### Before Cleanup (January 2025)
+
 - ❌ 3 failing test suites
 - ❌ 86 root-level .md files
 - ❌ 17 .txt files
@@ -865,6 +913,7 @@ grep -r "framer-motion" src/
 - ⚠️ 96.3% test coverage
 
 ### After Phase 1-4 (November 23, 2025)
+
 - ✅ 100% tests passing (1,326 passed, 98.6% coverage)
 - ✅ Essential documentation organized
 - ✅ Archive structure created
@@ -875,6 +924,7 @@ grep -r "framer-motion" src/
 - ✅ Performance baseline established
 
 ### After Full Cleanup (Target)
+
 - ✅ 100% tests passing ✓
 - ✅ 10-15 essential .md files in root (in progress)
 - ✅ 1 .txt file (coverage baseline)
@@ -889,14 +939,14 @@ grep -r "framer-motion" src/
 
 ## 🎯 ESTIMATED EFFORT
 
-| Phase | Priority | Time | Impact |
-|-------|----------|------|--------|
-| Phase 1: Critical Fixes | 🔴 HIGH | 1 hour | ⭐⭐⭐⭐⭐ |
-| Phase 2: Documentation | 🟡 MEDIUM | 3 hours | ⭐⭐⭐⭐ |
-| Phase 3: Code Cleanup | 🟡 MEDIUM | 2 hours | ⭐⭐⭐ |
-| Phase 4: Performance | 🟢 LOW | 3 hours | ⭐⭐⭐ |
-| Phase 5: Security | 🟡 MEDIUM | 2 hours | ⭐⭐⭐⭐ |
-| **TOTAL** | | **11 hours** | |
+| Phase                   | Priority  | Time         | Impact     |
+| ----------------------- | --------- | ------------ | ---------- |
+| Phase 1: Critical Fixes | 🔴 HIGH   | 1 hour       | ⭐⭐⭐⭐⭐ |
+| Phase 2: Documentation  | 🟡 MEDIUM | 3 hours      | ⭐⭐⭐⭐   |
+| Phase 3: Code Cleanup   | 🟡 MEDIUM | 2 hours      | ⭐⭐⭐     |
+| Phase 4: Performance    | 🟢 LOW    | 3 hours      | ⭐⭐⭐     |
+| Phase 5: Security       | 🟡 MEDIUM | 2 hours      | ⭐⭐⭐⭐   |
+| **TOTAL**               |           | **11 hours** |            |
 
 **Recommended Timeline:** 4-5 days (2-3 hours per day)
 
@@ -911,6 +961,7 @@ If you only have 30 minutes, do these **high-impact** tasks:
    - Run tests to verify
 
 2. **Remove Backup Files** (5 min)
+
    ```bash
    rm src/app/page-backup.tsx src/app/page.tsx.original src/app/page-debug.tsx
    ```
@@ -930,6 +981,7 @@ If you only have 30 minutes, do these **high-impact** tasks:
 ### Ongoing Practices
 
 1. **Test Coverage Gates**
+
    ```json
    {
      "jest": {
@@ -950,6 +1002,7 @@ If you only have 30 minutes, do these **high-impact** tasks:
    - Add type checking to pre-push
 
 3. **Dependency Updates**
+
    ```bash
    # Monthly dependency updates
    npx npm-check-updates -u
@@ -972,6 +1025,7 @@ If you only have 30 minutes, do these **high-impact** tasks:
 ## ✅ CHECKLIST
 
 ### Phase 1: Critical Fixes ✅ COMPLETE
+
 - [x] Fix `src/app/api/farms/__tests__/route.test.ts` (Line 41)
 - [x] Fix `src/app/api/products/__tests__/route.test.ts` (Line 648)
 - [x] Investigate third failing test suite
@@ -980,6 +1034,7 @@ If you only have 30 minutes, do these **high-impact** tasks:
 - [x] Update .gitignore for cache directories
 
 ### Phase 2: Documentation Cleanup ✅ COMPLETE
+
 - [x] Create archive/docs-historical/ structure
 - [x] Move 20 status/victory reports to archive
 - [x] Move 12 test coverage reports to archive
@@ -991,6 +1046,7 @@ If you only have 30 minutes, do these **high-impact** tasks:
 - [x] Verify essential docs (10-15 files in root)
 
 ### Phase 3: Code Cleanup ✅ COMPLETE
+
 - [x] Clean cache directories
 - [x] Remove unused dependencies (@swc/core, critters)
 - [x] Document missing dependencies (vitest, dotenv, etc.) - add when features used
@@ -999,6 +1055,7 @@ If you only have 30 minutes, do these **high-impact** tasks:
 - [x] Document false positives and best practices
 
 ### Phase 4: Performance Optimization
+
 - [ ] Run build:analyze and review
 - [ ] Find and optimize large images
 - [ ] Enable database query logging
@@ -1007,6 +1064,7 @@ If you only have 30 minutes, do these **high-impact** tasks:
 - [ ] Optimize test suite (<60s target)
 
 ### Phase 5: Security Audit
+
 - [ ] Run npm audit and fix vulnerabilities
 - [ ] Verify no secrets in .env.example
 - [ ] Audit all API routes for input validation
@@ -1014,6 +1072,7 @@ If you only have 30 minutes, do these **high-impact** tasks:
 - [ ] Check for SQL injection protection
 
 ### Final Verification
+
 - [ ] All tests passing (100%)
 - [ ] No TypeScript errors
 - [ ] No ESLint errors
@@ -1029,6 +1088,7 @@ If you only have 30 minutes, do these **high-impact** tasks:
 Your Farmers Market Platform is already **excellent** (92/100)! These cleanup and improvement tasks will take it to **perfection** (98/100).
 
 **Priority Order:**
+
 1. 🔴 **Phase 1** (1 hour) - Immediate impact, unblocks 100% tests
 2. 🟡 **Phase 2** (3 hours) - High impact, dramatically improves clarity
 3. 🟡 **Phase 3** (2 hours) - Medium impact, cleaner codebase

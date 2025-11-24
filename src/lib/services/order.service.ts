@@ -46,7 +46,7 @@ export class OrderService {
     // Calculate totals
     const subtotal = items.reduce(
       (sum, item) => sum + item.price * item.quantity,
-      0
+      0,
     );
     const tax = subtotal * 0.08; // 8% tax
     const platformFee = subtotal * 0.15; // 15% platform commission
@@ -131,7 +131,7 @@ export class OrderService {
       | "READY"
       | "FULFILLED"
       | "COMPLETED"
-      | "CANCELLED"
+      | "CANCELLED",
   ): Promise<Order> {
     return database.order.update({
       where: { id: orderId },

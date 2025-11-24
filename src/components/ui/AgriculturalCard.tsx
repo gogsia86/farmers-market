@@ -30,7 +30,7 @@ export function AgriculturalCard({
             variant === "agricultural",
           "bg-gradient-to-br from-purple-50 to-pink-50": variant === "divine",
         },
-        className
+        className,
       )}
     >
       {children}

@@ -9,12 +9,14 @@
 ## 📊 Current Test Status
 
 ### Overall Results
+
 ```
 Test Suites: 1 failed, 4 passed, 5 total
 Tests:       24 failed, 92 passed, 116 total
 ```
 
 ### Passing Test Suites ✅
+
 1. **Farms API** (`src/app/api/farms/__tests__/route.test.ts`)
    - 29/29 tests passing (100%)
    - GET /api/farms - All scenarios
@@ -34,6 +36,7 @@ Tests:       24 failed, 92 passed, 116 total
    - Isolated verification of mock behavior
 
 ### Failing Test Suite ❌
+
 1. **Products API** (`src/app/api/products/__tests__/route.test.ts`)
    - 24 tests failing
    - **Reason**: Still using old jest.fn() pattern in mocks
@@ -44,6 +47,7 @@ Tests:       24 failed, 92 passed, 116 total
 ## 🔧 Root Cause & Solution
 
 ### The Problem
+
 API route tests were failing with `undefined` responses because:
 
 1. **Module-level initialization**: Routes call `trace.getTracer()` at the top level when modules load
@@ -51,32 +55,38 @@ API route tests were failing with `undefined` responses because:
 3. **Execution timing**: Mocks must work before `beforeEach()` runs
 
 ### The Solution ✅
+
 **Use plain `function` declarations in `jest.mock()` factories for module-level code**
 
 #### ❌ Wrong Pattern (Returns undefined)
+
 ```typescript
 jest.mock("@opentelemetry/api", () => ({
   trace: {
-    getTracer: jest.fn(() => ({ /* tracer */ })) // Returns undefined!
-  }
+    getTracer: jest.fn(() => ({
+      /* tracer */
+    })), // Returns undefined!
+  },
 }));
 ```
 
 #### ✅ Correct Pattern (Works)
+
 ```typescript
 jest.mock("@opentelemetry/api", () => {
   const mockSpan = {
-    setStatus: function() {},
-    setAttributes: function() {},
+    setStatus: function () {},
+    setAttributes: function () {},
     // ... more methods
   };
 
   return {
     trace: {
-      getTracer: function() {
+      getTracer: function () {
         return {
-          startActiveSpan: async function(name, fnOrOptions, maybeFn) {
-            const fn = typeof fnOrOptions === "function" ? fnOrOptions : maybeFn;
+          startActiveSpan: async function (name, fnOrOptions, maybeFn) {
+            const fn =
+              typeof fnOrOptions === "function" ? fnOrOptions : maybeFn;
             if (typeof fn === "function") {
               const result = await fn(mockSpan);
               return result; // ✅ CRITICAL: Return callback result!
@@ -96,18 +106,22 @@ jest.mock("@opentelemetry/api", () => {
 ## 📁 Files Updated
 
 ### Core Mock Module
+
 - ✅ `src/app/api/__mocks__/tracing-mocks.ts` - Centralized mock exports using plain functions
-- ✅ `src/app/api/__mocks__/api-test-utils.ts` - Test utilities (moved from __tests__)
+- ✅ `src/app/api/__mocks__/api-test-utils.ts` - Test utilities (moved from **tests**)
 
 ### Test Files Updated
+
 - ✅ `src/app/api/farms/__tests__/route.test.ts` - 29/29 passing
 - ✅ `src/app/api/farms/__tests__/route-debug.test.ts` - All passing
 - ✅ `src/app/api/farms/__tests__/route-minimal-debug.test.ts` - All passing
 
 ### Test Files Pending Update
+
 - ❌ `src/app/api/products/__tests__/route.test.ts` - Needs pattern applied
 
 ### Documentation Created
+
 - ✅ `TRACING_MOCK_FIX_COMPLETE.md` - Complete solution documentation
 - ✅ `TRACING_MOCK_SOLUTION.md` - Original problem analysis (already existed)
 - ✅ `QUICKSTART_API_TESTING.md` - Quick reference guide (already existed)
@@ -121,22 +135,26 @@ jest.mock("@opentelemetry/api", () => {
 ### 1. When to Use Plain Functions vs jest.fn()
 
 #### Use Plain Functions When:
+
 - ✅ Called at **module-load time** (top-level `const`)
 - ✅ Returns complex objects (tracers, loggers)
 - ✅ No per-test configuration needed
 
 **Examples:**
+
 - `trace.getTracer()`
 - `tracer.startActiveSpan()`
 - `traceAgriculturalOperation()`
 - `setAgriculturalAttributes()`
 
 #### Use jest.fn() When:
+
 - ✅ Mock return value changes **per test**
 - ✅ Need `.mockResolvedValue()`, `.mockRejectedValue()`
 - ✅ Need to assert with `expect(mock).toHaveBeenCalled()`
 
 **Examples:**
+
 - `database.farm.findMany()`
 - `database.farm.create()`
 - `rateLimiters.public.check()`
@@ -144,6 +162,7 @@ jest.mock("@opentelemetry/api", () => {
 ### 2. Critical Implementation Details
 
 #### startActiveSpan Must Return Callback Result
+
 ```typescript
 startActiveSpan: async function(name, fnOrOptions, maybeFn) {
   const fn = typeof fnOrOptions === "function" ? fnOrOptions : maybeFn;
@@ -156,6 +175,7 @@ startActiveSpan: async function(name, fnOrOptions, maybeFn) {
 ```
 
 #### Agricultural Tracer Calls fn() WITHOUT Span
+
 ```typescript
 traceAgriculturalOperation: async function(operation, attributes, fn) {
   if (typeof fn === "function") {
@@ -170,6 +190,7 @@ traceAgriculturalOperation: async function(operation, attributes, fn) {
 ## 📈 Test Coverage Breakdown
 
 ### Farms API (100% - 29/29) ✅
+
 - **GET /api/farms**
   - ✅ Fetch all farms successfully
   - ✅ Include meta information
@@ -203,9 +224,11 @@ traceAgriculturalOperation: async function(operation, attributes, fn) {
   - ✅ Preserve all input data
 
 ### Health API ✅
+
 - ✅ All health check tests passing
 
 ### Products API (0% - 24 failing) ❌
+
 - ❌ Needs same pattern applied
 - **Estimated fix time**: 15-30 minutes
 
@@ -214,12 +237,14 @@ traceAgriculturalOperation: async function(operation, attributes, fn) {
 ## 🚀 Next Steps (Prioritized)
 
 ### Immediate Priority (Next 30 minutes)
-1. **Fix Products API Tests** 
+
+1. **Fix Products API Tests**
    - Apply the same plain function pattern to products route tests
    - Update mock setup in `src/app/api/products/__tests__/route.test.ts`
    - Expected result: 24 more tests passing
 
 ### Short-term (Next 1-2 hours)
+
 2. **Apply Pattern to Remaining API Tests**
    - Auth API tests
    - Admin API tests
@@ -232,6 +257,7 @@ traceAgriculturalOperation: async function(operation, attributes, fn) {
    - Consider setupFilesAfterEnv for common mock setup
 
 ### Medium-term (Next session)
+
 4. **Service Layer Tests**
    - Apply patterns to `src/lib/services/*` tests
    - Test business logic in isolation
@@ -245,6 +271,7 @@ traceAgriculturalOperation: async function(operation, attributes, fn) {
    - Focus on interactive components first
 
 ### Long-term
+
 7. **E2E Tests**
    - Playwright test suite
    - Critical user flows
@@ -255,6 +282,7 @@ traceAgriculturalOperation: async function(operation, attributes, fn) {
 ## 🎓 Key Learnings
 
 ### Jest Hoisting Behavior
+
 1. `jest.mock()` calls are hoisted to top of file
 2. Mock factories execute during hoisting phase
 3. `jest.fn()` is available but its **configured behavior is not**
@@ -262,6 +290,7 @@ traceAgriculturalOperation: async function(operation, attributes, fn) {
 5. Module-level code runs **before** `beforeEach()`
 
 ### Module Load Order
+
 ```
 1. Jest hoists all jest.mock() calls
 2. Mock factories execute (create mock objects)
@@ -273,11 +302,12 @@ traceAgriculturalOperation: async function(operation, attributes, fn) {
 ```
 
 ### Best Practices Discovered
+
 - ✅ Use plain functions for module-level mocks
 - ✅ Use jest.fn() for per-test configuration
 - ✅ Always return callback results from startActiveSpan
 - ✅ Agricultural tracers don't pass span to callbacks
-- ✅ Move utility files to __mocks__ directory (not __tests__)
+- ✅ Move utility files to **mocks** directory (not **tests**)
 - ✅ Configure database mocks in beforeEach or individual tests
 
 ---
@@ -285,15 +315,19 @@ traceAgriculturalOperation: async function(operation, attributes, fn) {
 ## 📚 Documentation References
 
 ### Complete Solution
+
 - `TRACING_MOCK_FIX_COMPLETE.md` - Comprehensive solution document
 
 ### Quick Start
+
 - `QUICKSTART_API_TESTING.md` - Copy-paste patterns
 
 ### Detailed Guidance
+
 - `.github/instructions/17_API_TESTING_TRACING_MOCKS.instructions.md`
 
 ### Working Examples
+
 - `src/app/api/farms/__tests__/route.test.ts` - Full test suite (29 tests)
 - `src/app/api/farms/__tests__/route-minimal-debug.test.ts` - Minimal example
 
@@ -302,6 +336,7 @@ traceAgriculturalOperation: async function(operation, attributes, fn) {
 ## 🎯 Success Metrics
 
 ### Before Fix
+
 ```
 Test Suites: Multiple failed
 Tests:       Many failures with "undefined" responses
@@ -310,6 +345,7 @@ Pattern:     All API route tests failing
 ```
 
 ### After Fix
+
 ```
 Test Suites: 4/5 passing (80%)
 Tests:       92/116 passing (79%)
@@ -319,6 +355,7 @@ Remaining:   Products API needs pattern applied
 ```
 
 ### Target State (Achievable Today)
+
 ```
 Test Suites: 5/5 passing (100%)
 Tests:       116/116 passing (100%)
@@ -344,7 +381,7 @@ All APIs:    Full coverage with tracing verified
 3. ✅ **Fixed farms API** - 29/29 tests passing (was 0/29)
 4. ✅ **Created comprehensive documentation** - 4 detailed documents
 5. ✅ **Updated shared mocks** - tracing-mocks.ts with correct patterns
-6. ✅ **Organized test utilities** - Moved to __mocks__ directory
+6. ✅ **Organized test utilities** - Moved to **mocks** directory
 7. ✅ **Verified solution** - Multiple test suites passing
 
 ---

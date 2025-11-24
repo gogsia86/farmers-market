@@ -21,7 +21,7 @@ interface Measurement {
 
 export function useQuantumConsciousness(
   componentName: string,
-  options: ConsciousnessOptions = {}
+  options: ConsciousnessOptions = {},
 ) {
   const metrics = useRef({
     renders: 0,
@@ -61,7 +61,7 @@ export function useQuantumConsciousness(
 
         if (options.trackPerformance && duration > 100) {
           console.warn(
-            `⚠️ Slow operation in ${componentName}: ${operation} took ${duration.toFixed(2)}ms`
+            `⚠️ Slow operation in ${componentName}: ${operation} took ${duration.toFixed(2)}ms`,
           );
         }
       },
@@ -77,7 +77,7 @@ export function useQuantumConsciousness(
         if (options.trackErrors) {
           console.error(
             `❌ Operation failed in ${componentName}: ${operation}`,
-            error
+            error,
           );
         }
       },

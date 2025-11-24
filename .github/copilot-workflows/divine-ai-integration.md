@@ -148,7 +148,7 @@ import type { Farm, CreateFarmRequest, UpdateFarmRequest } from "@/types";
 export class FarmService extends BaseService {
   constructor(
     private readonly logger: Logger,
-    private readonly cache: BiodynamicCacheService
+    private readonly cache: BiodynamicCacheService,
   ) {
     super("FarmService");
   }
@@ -280,7 +280,7 @@ describe("FarmService - Agricultural Consciousness", () => {
 
       // Act & Assert - Expect enlightening failure
       await expect(
-        farmService.createFarm({ name: "Existing Farm", ownerId: "user-1" })
+        farmService.createFarm({ name: "Existing Farm", ownerId: "user-1" }),
       ).rejects.toThrow(ValidationError);
     });
   });

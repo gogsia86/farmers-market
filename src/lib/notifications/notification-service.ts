@@ -23,7 +23,7 @@ export class NotificationService {
    */
   static subscribe(
     userId: string,
-    callback: (notification: Notification) => void
+    callback: (notification: Notification) => void,
   ) {
     if (!this.connections.has(userId)) {
       this.connections.set(userId, new Set());
@@ -47,7 +47,7 @@ export class NotificationService {
    */
   static async notify(
     userId: string,
-    notification: Omit<Notification, "id" | "userId" | "createdAt">
+    notification: Omit<Notification, "id" | "userId" | "createdAt">,
   ) {
     const fullNotification: Notification = {
       id: `notif_${Date.now()}_${Math.random().toString(36).substring(7)}`,
@@ -79,10 +79,10 @@ export class NotificationService {
    */
   static async notifyMany(
     userIds: string[],
-    notification: Omit<Notification, "id" | "userId" | "createdAt">
+    notification: Omit<Notification, "id" | "userId" | "createdAt">,
   ) {
     return Promise.all(
-      userIds.map((userId) => this.notify(userId, notification))
+      userIds.map((userId) => this.notify(userId, notification)),
     );
   }
 
@@ -95,7 +95,7 @@ export class NotificationService {
       orderNumber: string;
       customerName: string;
       total: number;
-    }
+    },
   ) {
     return this.notify(farmerId, {
       type: "ORDER",
@@ -115,7 +115,7 @@ export class NotificationService {
       farmName: string;
       approved: boolean;
       reason?: string;
-    }
+    },
   ) {
     return this.notify(farmerId, {
       type: "APPROVAL",
@@ -137,7 +137,7 @@ export class NotificationService {
       orderNumber: string;
       status: string;
       farmName: string;
-    }
+    },
   ) {
     return this.notify(customerId, {
       type: "ORDER",
@@ -157,7 +157,7 @@ export class NotificationService {
       title: string;
       message: string;
       severity: "info" | "warning" | "error";
-    }
+    },
   ) {
     return this.notify(userId, {
       type: "ALERT",

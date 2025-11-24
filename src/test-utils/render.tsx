@@ -18,7 +18,7 @@ interface CustomRenderOptions extends Omit<RenderOptions, "wrapper"> {
  */
 export function render(
   ui: React.ReactElement,
-  { session = null, ...options }: CustomRenderOptions = {}
+  { session = null, ...options }: CustomRenderOptions = {},
 ) {
   function Wrapper({ children }: { children: React.ReactNode }) {
     return (

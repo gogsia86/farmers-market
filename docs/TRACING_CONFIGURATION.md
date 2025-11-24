@@ -11,6 +11,7 @@
 The Farmers Market Platform uses OpenTelemetry for distributed tracing and agricultural operation monitoring. While powerful in development and staging, tracing adds significant bundle size overhead in production.
 
 **Bundle Impact**:
+
 - OpenTelemetry SDK: ~50 KB
 - Agricultural tracer: ~10 KB
 - Trace exporters: ~20 KB
@@ -23,6 +24,7 @@ With lazy loading (already implemented), the overhead is reduced but only when t
 ## 🎯 Recommended Configuration
 
 ### Development Environment
+
 ```env
 # .env.local or .env.development
 ENABLE_TRACING=true
@@ -34,6 +36,7 @@ NODE_ENV=development
 ```
 
 ### Staging Environment
+
 ```env
 # .env.staging
 ENABLE_TRACING=true
@@ -46,6 +49,7 @@ NODE_ENV=production
 ```
 
 ### Production Environment
+
 ```env
 # .env.production
 ENABLE_TRACING=false
@@ -78,6 +82,7 @@ function isTracingEnabled(): boolean {
 ```
 
 **When Tracing is Disabled**:
+
 - `traceIfEnabled()` executes function directly (zero overhead)
 - OpenTelemetry SDK is NOT loaded
 - No spans created
@@ -85,6 +90,7 @@ function isTracingEnabled(): boolean {
 - Bundle size reduced
 
 **When Tracing is Enabled**:
+
 - `traceIfEnabled()` dynamically imports OpenTelemetry
 - Full tracing with spans, attributes, events
 - Traces exported to configured backend
@@ -97,20 +103,23 @@ function isTracingEnabled(): boolean {
 ### Pattern 1: Standard Tracing (Recommended)
 
 ```typescript
-import { traceIfEnabled, AgriculturalOperation } from '@/lib/tracing/lazy-tracer';
+import {
+  traceIfEnabled,
+  AgriculturalOperation,
+} from "@/lib/tracing/lazy-tracer";
 
 export async function GET(request: NextRequest) {
   const result = await traceIfEnabled(
     AgriculturalOperation.HARVEST,
     {
-      'http.method': 'GET',
-      'http.route': '/api/products',
-      'agricultural.season': 'SUMMER',
+      "http.method": "GET",
+      "http.route": "/api/products",
+      "agricultural.season": "SUMMER",
     },
     async () => {
       // Your business logic here
       return await database.product.findMany();
-    }
+    },
   );
 
   return NextResponse.json(result);
@@ -118,6 +127,7 @@ export async function GET(request: NextRequest) {
 ```
 
 **Benefits**:
+
 - Zero overhead when tracing disabled
 - Full tracing when enabled
 - Clean, simple code
@@ -129,15 +139,18 @@ export async function GET(request: NextRequest) {
 Use this when you want timing information even when full tracing is disabled:
 
 ```typescript
-import { traceWithTiming, AgriculturalOperation } from '@/lib/tracing/lazy-tracer';
+import {
+  traceWithTiming,
+  AgriculturalOperation,
+} from "@/lib/tracing/lazy-tracer";
 
 export async function GET(request: NextRequest) {
   const { result, durationMs, timestamp } = await traceWithTiming(
     AgriculturalOperation.HARVEST,
-    { 'http.route': '/api/products' },
+    { "http.route": "/api/products" },
     async () => {
       return await database.product.findMany();
-    }
+    },
   );
 
   return NextResponse.json({
@@ -151,6 +164,7 @@ export async function GET(request: NextRequest) {
 ```
 
 **Benefits**:
+
 - Lightweight timing (~1ms overhead)
 - Still skips full OpenTelemetry
 - Useful for performance monitoring
@@ -162,16 +176,16 @@ export async function GET(request: NextRequest) {
 For fine-grained control over spans:
 
 ```typescript
-import { conditionalSpan } from '@/lib/tracing/lazy-tracer';
+import { conditionalSpan } from "@/lib/tracing/lazy-tracer";
 
 export async function POST(request: NextRequest) {
-  const span = await conditionalSpan('POST /api/farms', {
-    'http.method': 'POST',
+  const span = await conditionalSpan("POST /api/farms", {
+    "http.method": "POST",
   });
 
   try {
     const farm = await database.farm.create({ data });
-    span.addEvent('Farm created', { 'farm.id': farm.id });
+    span.addEvent("Farm created", { "farm.id": farm.id });
     span.setStatus({ code: 1 }); // OK
     return NextResponse.json(farm);
   } catch (error) {
@@ -185,6 +199,7 @@ export async function POST(request: NextRequest) {
 ```
 
 **Benefits**:
+
 - More control over span lifecycle
 - Can add events and attributes incrementally
 - No-op span when tracing disabled
@@ -207,19 +222,19 @@ ENABLE_PRODUCTION_TRACING=true
 Add feature flag support in your route:
 
 ```typescript
-import { traceIfEnabled } from '@/lib/tracing/lazy-tracer';
+import { traceIfEnabled } from "@/lib/tracing/lazy-tracer";
 
 export async function GET(request: NextRequest) {
   // Check feature flag from database or config service
-  const tracingEnabled = await getFeatureFlag('tracing-enabled');
+  const tracingEnabled = await getFeatureFlag("tracing-enabled");
 
   const result = await traceIfEnabled(
     AgriculturalOperation.HARVEST,
-    { 'http.route': '/api/products' },
+    { "http.route": "/api/products" },
     async () => {
       return await database.product.findMany();
     },
-    { enabled: tracingEnabled } // Override env var
+    { enabled: tracingEnabled }, // Override env var
   );
 
   return NextResponse.json(result);
@@ -231,17 +246,17 @@ export async function GET(request: NextRequest) {
 ```typescript
 export async function GET(request: NextRequest) {
   // Enable tracing for requests with special header
-  const debugHeader = request.headers.get('x-enable-tracing');
-  const tracingEnabled = debugHeader === 'true';
+  const debugHeader = request.headers.get("x-enable-tracing");
+  const tracingEnabled = debugHeader === "true";
 
   // Use tracing override
   const result = await traceIfEnabled(
     AgriculturalOperation.HARVEST,
-    { 'http.route': '/api/products' },
+    { "http.route": "/api/products" },
     async () => {
       return await database.product.findMany();
     },
-    { enabled: tracingEnabled }
+    { enabled: tracingEnabled },
   );
 
   return NextResponse.json(result);
@@ -253,6 +268,7 @@ export async function GET(request: NextRequest) {
 ## 📊 Bundle Size Impact
 
 ### Before Optimization (Eager Loading)
+
 ```
 ✗ Admin approvals route: 228 KB
 ✗ Farms API route: 151 KB
@@ -261,6 +277,7 @@ export async function GET(request: NextRequest) {
 ```
 
 ### After Optimization (Lazy Loading + Disabled)
+
 ```
 ✓ Admin approvals route: 13 KB (-215 KB, 94%)
 ✓ Farms API route: 90 KB (-61 KB, 40%)
@@ -273,6 +290,7 @@ export async function GET(request: NextRequest) {
 ## 🧪 Testing
 
 ### Verify Tracing is Disabled
+
 ```bash
 # In production build
 NODE_ENV=production ENABLE_PRODUCTION_TRACING=false npm run build
@@ -284,6 +302,7 @@ find .next/server -name "*.js" -type f -exec ls -lh {} \; | sort -h | tail -10
 ```
 
 ### Verify Tracing Works When Enabled
+
 ```bash
 # Start dev server with tracing
 ENABLE_TRACING=true npm run dev
@@ -296,6 +315,7 @@ curl http://localhost:3000/api/farms
 ```
 
 ### Verify Production Tracing (When Needed)
+
 ```bash
 # Build with tracing enabled
 NODE_ENV=production ENABLE_PRODUCTION_TRACING=true npm run build
@@ -315,24 +335,30 @@ curl http://localhost:3000/api/farms
 ## 🚨 Troubleshooting
 
 ### Issue: Tracing not working in development
+
 **Solution**: Check `ENABLE_TRACING` is not set to `"false"` (string)
+
 ```bash
 # .env.local
 ENABLE_TRACING=true  # or omit entirely (defaults to true in dev)
 ```
 
 ### Issue: Bundle still large after disabling tracing
+
 **Solution**: Ensure you're using lazy imports, not direct imports
+
 ```typescript
 // ✗ WRONG - Eagerly imports OpenTelemetry
-import { trace } from '@opentelemetry/api';
+import { trace } from "@opentelemetry/api";
 
 // ✓ CORRECT - Lazy imports only when needed
-import { traceIfEnabled } from '@/lib/tracing/lazy-tracer';
+import { traceIfEnabled } from "@/lib/tracing/lazy-tracer";
 ```
 
 ### Issue: No traces in Application Insights
+
 **Solution**: Check telemetry exporter configuration
+
 ```typescript
 // Verify in src/lib/tracing/setup.ts
 export function setupTelemetry() {
@@ -343,13 +369,17 @@ export function setupTelemetry() {
 ```
 
 ### Issue: Timing information needed but tracing disabled
+
 **Solution**: Use `traceWithTiming()` instead of `traceIfEnabled()`
+
 ```typescript
 // Always get timing, skip full tracing when disabled
 const { result, durationMs } = await traceWithTiming(
   AgriculturalOperation.HARVEST,
   {},
-  async () => { /* ... */ }
+  async () => {
+    /* ... */
+  },
 );
 ```
 
@@ -367,6 +397,7 @@ const { result, durationMs } = await traceWithTiming(
 ## 🎯 Best Practices
 
 ### DO ✅
+
 - Use `traceIfEnabled()` for all new API routes
 - Disable production tracing by default
 - Enable tracing in staging for testing
@@ -374,6 +405,7 @@ const { result, durationMs } = await traceWithTiming(
 - Add meaningful span attributes
 
 ### DON'T ❌
+
 - Import `@opentelemetry/api` directly in routes
 - Enable production tracing unless debugging
 - Create spans without error handling

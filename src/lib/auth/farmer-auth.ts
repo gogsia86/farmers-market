@@ -64,7 +64,7 @@ export async function checkFarmerAuth(): Promise<FarmerAuthResult> {
  * Middleware wrapper for API routes - returns error response if unauthorized
  */
 export async function requireFarmerAuth(
-  _request: NextRequest
+  _request: NextRequest,
 ): Promise<FarmerAuthResult> {
   try {
     const session = await auth();
@@ -131,7 +131,7 @@ export async function getUserFarmId(userId: string): Promise<string | null> {
  */
 export async function checkFarmOwnership(
   userId: string,
-  farmId: string
+  farmId: string,
 ): Promise<boolean> {
   try {
     const { database } = await import("@/lib/database");
@@ -154,14 +154,14 @@ export async function checkFarmOwnership(
  * Require farm ownership for API routes
  */
 export async function requireFarmOwnership(
-  farmId: string
+  farmId: string,
 ): Promise<NextResponse | true> {
   const authResult = await checkFarmerAuth();
 
   if (!authResult.authenticated || !authResult.authorized) {
     return NextResponse.json(
       { error: "Authentication required" },
-      { status: 401 }
+      { status: 401 },
     );
   }
 
@@ -170,7 +170,7 @@ export async function requireFarmOwnership(
   if (!ownsF) {
     return NextResponse.json(
       { error: "You do not own this farm" },
-      { status: 403 }
+      { status: 403 },
     );
   }
 

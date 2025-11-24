@@ -14,7 +14,7 @@ export class NotFoundError extends ApplicationError {
       `${resourceType} with id ${resourceId} not found`,
       "NOT_FOUND_ERROR",
       "RESOURCE_ACCESS",
-      { resourceType, resourceId }
+      { resourceType, resourceId },
     );
     this.resourceType = resourceType;
     this.resourceId = resourceId;

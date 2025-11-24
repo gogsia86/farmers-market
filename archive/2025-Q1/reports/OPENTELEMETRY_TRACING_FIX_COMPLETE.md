@@ -20,6 +20,7 @@ tracer.startActiveSpan("operation", async (span) => {
 ```
 
 The mock wasn't properly:
+
 1. Handling the async callback function
 2. Awaiting the result
 3. Returning the callback's return value
@@ -118,13 +119,15 @@ jest.mock("@/lib/tracing/agricultural-tracer", () => {
         return undefined;
       },
     ),
-    traceSeasonalOperation: jest.fn(async (season: string, operation: string, fn: any) => {
-      if (typeof fn === "function") {
-        const result = await fn();
-        return result;
-      }
-      return undefined;
-    }),
+    traceSeasonalOperation: jest.fn(
+      async (season: string, operation: string, fn: any) => {
+        if (typeof fn === "function") {
+          const result = await fn();
+          return result;
+        }
+        return undefined;
+      },
+    ),
     traceLunarOperation: jest.fn(async (phase: string, fn: any) => {
       if (typeof fn === "function") {
         const result = await fn();
@@ -162,7 +165,8 @@ export function setupOpenTelemetryMocks() {
         startSpan: jest.fn().mockReturnValue(mockSpan),
         startActiveSpan: jest.fn(
           async (name: string, fnOrOptions: any, maybeFn?: any) => {
-            const fn = typeof fnOrOptions === "function" ? fnOrOptions : maybeFn;
+            const fn =
+              typeof fnOrOptions === "function" ? fnOrOptions : maybeFn;
             if (typeof fn === "function") {
               const result = await fn(mockSpan);
               return result;
@@ -198,7 +202,6 @@ export function setupAgriculturalTracerMocks() {
 1. ✅ **GET /api/farms**
    - Should fetch all farms successfully
    - Should include meta information in response
-   
 2. ✅ **Rate Limiting**
    - Should apply rate limiting to GET requests
    - Should return 429 when rate limit exceeded
@@ -217,6 +220,7 @@ export function setupAgriculturalTracerMocks() {
 **Common Issue**: Database mock not being called
 
 Most failing tests have this pattern:
+
 ```
 expect(jest.fn()).toHaveBeenCalledWith(...expected)
 Expected: ObjectContaining {...}
@@ -226,6 +230,7 @@ Number of calls: 0
 **Root Cause**: Tests don't set up `mockResolvedValue` before calling the API, so database returns `undefined`.
 
 **Examples**:
+
 - Should filter farms by status ❌
 - Should filter farms by season ❌
 - Should include owner information ❌
@@ -293,13 +298,13 @@ jest.mock("@/lib/tracing/agricultural-tracer", () => ({
 ```typescript
 it("should fetch data successfully", async () => {
   const mockData = [{ id: "1", name: "Test" }];
-  
+
   // ✅ ALWAYS set up mock response BEFORE calling API
   (database.entity.findMany as jest.Mock).mockResolvedValue(mockData);
-  
+
   const response = await GET(request);
   const data = await response.json();
-  
+
   expect(data.success).toBe(true);
   expect(data.data).toEqual(mockData);
 });
@@ -376,6 +381,7 @@ it("should fetch data successfully", async () => {
 ### 1. Mock Return Values Matter
 
 When mocking async functions that wrap callbacks:
+
 - ✅ `return await fn(mockSpan)`
 - ❌ `fn(mockSpan)` (returns Promise, not awaited result)
 - ❌ `return fn(mockSpan)` (returns Promise, not resolved value)
@@ -383,6 +389,7 @@ When mocking async functions that wrap callbacks:
 ### 2. Callback Signatures Matter
 
 Agricultural tracer wraps operations:
+
 ```typescript
 // In actual code:
 traceAgriculturalOperation(operation, attrs, async () => {
@@ -398,19 +405,23 @@ traceAgriculturalOperation: jest.fn(async (op, attrs, fn) => {
 ### 3. Jest Mock Hoisting
 
 Can't call functions in `jest.mock()`:
+
 ```typescript
 // ❌ FAILS - ReferenceError
 jest.mock("@opentelemetry/api", () => setupOpenTelemetryMocks());
 
 // ✅ WORKS - Inline object
 jest.mock("@opentelemetry/api", () => ({
-  trace: { /* ... */ }
+  trace: {
+    /* ... */
+  },
 }));
 ```
 
 ### 4. Database Mock Setup Pattern
 
 Always set up mocks in this order:
+
 ```typescript
 beforeEach(() => {
   jest.clearAllMocks(); // Clear previous test state
@@ -419,10 +430,10 @@ beforeEach(() => {
 it("should work", async () => {
   // 1. Set up mock response FIRST
   (database.entity.method as jest.Mock).mockResolvedValue(mockData);
-  
+
   // 2. Call API
   const response = await GET(request);
-  
+
   // 3. Assert
   expect(response).toBeDefined();
 });
@@ -517,19 +528,19 @@ describe("API Tests", () => {
 
 ## 📈 Progress Summary
 
-| Metric | Before | After | Change |
-|--------|--------|-------|--------|
-| **Farms API Tests Passing** | 3/28 | 9/29 | +6 tests ✅ |
-| **Core Issue** | Tracer returns undefined | Fixed | ✅ RESOLVED |
-| **Test Infrastructure** | Incomplete mocks | Robust pattern | ✅ IMPROVED |
-| **Documentation** | Scattered | Centralized | ✅ COMPLETE |
+| Metric                      | Before                   | After          | Change      |
+| --------------------------- | ------------------------ | -------------- | ----------- |
+| **Farms API Tests Passing** | 3/28                     | 9/29           | +6 tests ✅ |
+| **Core Issue**              | Tracer returns undefined | Fixed          | ✅ RESOLVED |
+| **Test Infrastructure**     | Incomplete mocks         | Robust pattern | ✅ IMPROVED |
+| **Documentation**           | Scattered                | Centralized    | ✅ COMPLETE |
 
 ---
 
 ## 🎯 Immediate Action Items
 
 1. ✅ **DONE**: Fix OpenTelemetry tracer mock
-2. ✅ **DONE**: Fix agricultural tracer mock  
+2. ✅ **DONE**: Fix agricultural tracer mock
 3. ✅ **DONE**: Document the solution
 4. ⏳ **TODO**: Fix remaining 20 farms API tests (add mockResolvedValue calls)
 5. ⏳ **TODO**: Apply pattern to products API tests
@@ -541,6 +552,7 @@ describe("API Tests", () => {
 ## 💡 Recommendations
 
 ### For Immediate Testing
+
 ```bash
 # Run farms API tests
 npm test -- "src/app/api/farms/__tests__/route.test.ts" --no-coverage
@@ -550,11 +562,13 @@ npm test -- "src/app/api/farms/__tests__/route.test.ts" -t "should fetch all far
 ```
 
 ### For Code Quality
+
 1. Extract common mock patterns into `src/app/api/__tests__/tracing-mocks.ts`
 2. Add JSDoc comments explaining the async/await requirement
 3. Create a testing guide document with examples
 
 ### For Performance
+
 1. Use `--maxWorkers=6` to leverage HP OMEN's 12 threads
 2. Use `--onlyChanged` for faster feedback during development
 3. Consider test sharding for CI/CD

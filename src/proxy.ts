@@ -110,7 +110,7 @@ async function handleAdminRoutes(req: NextRequest) {
     // Verify admin role
     const userRole = token.role as string;
     const isAdminRole = ["ADMIN", "SUPER_ADMIN", "MODERATOR"].includes(
-      userRole
+      userRole,
     );
 
     if (!isAdminRole) {

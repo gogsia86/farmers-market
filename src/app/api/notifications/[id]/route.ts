@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function PATCH(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const session = await auth();
@@ -25,7 +25,7 @@ export async function PATCH(
     if (!notification) {
       return NextResponse.json(
         { error: "Notification not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -47,7 +47,7 @@ export async function PATCH(
     console.error("Mark read error:", error);
     return NextResponse.json(
       { error: "Failed to mark notification as read" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -60,7 +60,7 @@ export async function PATCH(
  */
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const session = await auth();
@@ -76,7 +76,7 @@ export async function GET(
     if (!notification) {
       return NextResponse.json(
         { error: "Notification not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -94,7 +94,7 @@ export async function GET(
     console.error("Delete notification error:", error);
     return NextResponse.json(
       { error: "Failed to delete notification" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

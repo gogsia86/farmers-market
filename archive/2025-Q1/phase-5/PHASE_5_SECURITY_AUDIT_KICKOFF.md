@@ -26,30 +26,35 @@ Phase 5 focuses on comprehensive security audit of the Farmers Market Platform. 
 ## 🎯 Security Audit Objectives
 
 ### 1. Dependency Security
+
 - Scan for known vulnerabilities
 - Review dependency versions
 - Check for outdated packages with security issues
 - Verify supply chain integrity
 
 ### 2. Secret Management
+
 - Audit environment variables
 - Verify no secrets in repository
 - Check `.env.example` for sensitive data
 - Review API key handling
 
 ### 3. Input Validation
+
 - Verify all API routes have validation
 - Check Zod schema coverage
 - Review file upload validation
 - Test SQL injection prevention
 
 ### 4. Authentication & Authorization
+
 - Verify NextAuth configuration
 - Check session security
 - Review RBAC implementation
 - Test unauthorized access prevention
 
 ### 5. Security Headers & CSP
+
 - Verify security headers in place
 - Check Content Security Policy
 - Review CORS configuration
@@ -83,10 +88,12 @@ npm audit --production
 ```
 
 #### Known Issues (from previous analysis):
+
 - 3 vulnerabilities reported (2 moderate, 1 high)
 - Need to investigate and remediate
 
 #### Expected Actions:
+
 - [ ] Review each vulnerability
 - [ ] Apply `npm audit fix` where safe
 - [ ] Manually update packages if needed
@@ -94,6 +101,7 @@ npm audit --production
 - [ ] Verify no breaking changes after updates
 
 #### Success Criteria:
+
 - ✅ 0 high/critical vulnerabilities
 - ✅ All moderate vulnerabilities reviewed
 - ✅ Documentation of any accepted risks
@@ -124,6 +132,7 @@ grep -r "process.env" src/ --include="*.ts" --include="*.tsx"
 ```
 
 #### Verification Checklist:
+
 - [ ] `.env.example` contains no real secrets
 - [ ] `.env.local`, `.env.production` are gitignored
 - [ ] No hardcoded API keys in source code
@@ -133,6 +142,7 @@ grep -r "process.env" src/ --include="*.ts" --include="*.tsx"
 - [ ] Database URL not exposed in client code
 
 #### Files to Review:
+
 - `.env.example`
 - `.gitignore`
 - `src/lib/stripe.ts`
@@ -140,6 +150,7 @@ grep -r "process.env" src/ --include="*.ts" --include="*.tsx"
 - `next.config.mjs`
 
 #### Success Criteria:
+
 - ✅ No secrets committed to repository
 - ✅ All environment variables documented
 - ✅ Proper secret rotation process documented
@@ -231,21 +242,21 @@ routes=$(find src/app/api -name "route.ts" -o -name "route.tsx")
 for route in $routes; do
   echo ""
   echo "📁 $route"
-  
+
   # Check for Zod import
   if grep -q "import.*zod" "$route"; then
     echo "  ✅ Zod imported"
   else
     echo "  ⚠️  No Zod import found"
   fi
-  
+
   # Check for auth
   if grep -q "await auth()" "$route"; then
     echo "  ✅ Authentication check"
   else
     echo "  ⚠️  No authentication check"
   fi
-  
+
   # Check for validation
   if grep -q "safeParse\|parse" "$route"; then
     echo "  ✅ Input validation"
@@ -260,6 +271,7 @@ chmod +x validation-audit.sh
 ```
 
 #### Success Criteria:
+
 - ✅ All API routes have input validation
 - ✅ All protected routes check authentication
 - ✅ All role-specific routes check authorization
@@ -273,26 +285,27 @@ chmod +x validation-audit.sh
 **Priority:** 🟡 MEDIUM
 
 #### User Roles in Platform:
+
 1. **CUSTOMER** - Browse, order products
 2. **FARMER** - Manage farm, products
 3. **ADMIN** - Platform administration
 
 #### RBAC Audit Matrix:
 
-| Route | Customer | Farmer | Admin | Status |
-|-------|----------|--------|-------|--------|
-| GET /api/farms | ✅ | ✅ | ✅ | To verify |
-| POST /api/farms | ❌ | ✅ | ✅ | To verify |
-| PUT /api/farms/[id] | ❌ | ✅* | ✅ | To verify |
-| DELETE /api/farms/[id] | ❌ | ✅* | ✅ | To verify |
-| GET /api/products | ✅ | ✅ | ✅ | To verify |
-| POST /api/products | ❌ | ✅ | ✅ | To verify |
-| GET /api/orders | ✅* | ✅* | ✅ | To verify |
-| POST /api/orders | ✅ | ❌ | ✅ | To verify |
-| PUT /api/orders/[id] | ❌ | ✅* | ✅ | To verify |
-| GET /api/admin/* | ❌ | ❌ | ✅ | To verify |
+| Route                  | Customer | Farmer | Admin | Status    |
+| ---------------------- | -------- | ------ | ----- | --------- |
+| GET /api/farms         | ✅       | ✅     | ✅    | To verify |
+| POST /api/farms        | ❌       | ✅     | ✅    | To verify |
+| PUT /api/farms/[id]    | ❌       | ✅\*   | ✅    | To verify |
+| DELETE /api/farms/[id] | ❌       | ✅\*   | ✅    | To verify |
+| GET /api/products      | ✅       | ✅     | ✅    | To verify |
+| POST /api/products     | ❌       | ✅     | ✅    | To verify |
+| GET /api/orders        | ✅\*     | ✅\*   | ✅    | To verify |
+| POST /api/orders       | ✅       | ❌     | ✅    | To verify |
+| PUT /api/orders/[id]   | ❌       | ✅\*   | ✅    | To verify |
+| GET /api/admin/\*      | ❌       | ❌     | ✅    | To verify |
 
-_* = Only own resources_
+_\* = Only own resources_
 
 #### RBAC Helper Functions to Verify:
 
@@ -313,7 +326,7 @@ export function isAdmin(session: Session): boolean {
 export async function canAccessResource(
   session: Session,
   resourceId: string,
-  resourceType: string
+  resourceType: string,
 ): Promise<boolean> {
   // Check if user owns the resource or is admin
 }
@@ -321,7 +334,7 @@ export async function canAccessResource(
 // 4. Farmer resource checker
 export async function canManageFarm(
   session: Session,
-  farmId: string
+  farmId: string,
 ): Promise<boolean> {
   // Check if user is farmer who owns the farm or admin
 }
@@ -338,6 +351,7 @@ npm test -- --testNamePattern="unauthorized|forbidden"
 ```
 
 #### Success Criteria:
+
 - ✅ All routes have appropriate role checks
 - ✅ Users can only access their own resources
 - ✅ Admin has full access
@@ -374,6 +388,7 @@ async headers() {
 ```
 
 #### CSP Verification Checklist:
+
 - [ ] `default-src 'self'` - Only load resources from same origin
 - [ ] `script-src` - Allow only necessary script sources
 - [ ] `style-src` - Allow only necessary style sources
@@ -399,6 +414,7 @@ curl -I http://localhost:3001 | grep -E "X-|Content-Security"
 ```
 
 #### Success Criteria:
+
 - ✅ All security headers present
 - ✅ CSP configured appropriately
 - ✅ No unsafe-inline/unsafe-eval unless necessary
@@ -423,7 +439,7 @@ Create `SECURITY_AUDIT_RESULTS.md` with findings:
 Overall Security Score: [X/100]
 
 - **Critical Issues:** 0
-- **High Issues:** 0  
+- **High Issues:** 0
 - **Medium Issues:** X
 - **Low Issues:** X
 - **Informational:** X
@@ -432,9 +448,9 @@ Overall Security Score: [X/100]
 
 ### 1. Dependency Vulnerabilities
 
-| Package | Severity | CVE | Status | Fix |
-|---------|----------|-----|--------|-----|
-| [name] | [level] | [CVE-#] | [Fixed/Accepted] | [Action] |
+| Package | Severity | CVE     | Status           | Fix      |
+| ------- | -------- | ------- | ---------------- | -------- |
+| [name]  | [level]  | [CVE-#] | [Fixed/Accepted] | [Action] |
 
 ### 2. Secret Management
 
@@ -465,14 +481,17 @@ Routes with validation: [X/X]
 ## Recommendations
 
 ### High Priority
+
 1. [Recommendation]
 2. [Recommendation]
 
 ### Medium Priority
+
 1. [Recommendation]
 2. [Recommendation]
 
 ### Low Priority
+
 1. [Recommendation]
 2. [Recommendation]
 
@@ -488,42 +507,49 @@ Routes with validation: [X/X]
 ## 🛡️ Security Best Practices Checklist
 
 ### General Security
+
 - [ ] No secrets in source code
 - [ ] Environment variables used for all secrets
 - [ ] `.gitignore` includes all secret files
 - [ ] Regular dependency updates scheduled
 
 ### Authentication
+
 - [ ] NextAuth configured with secure settings
 - [ ] Session tokens are httpOnly
 - [ ] CSRF protection enabled
 - [ ] Password hashing with bcrypt (12+ rounds)
 
 ### Authorization
+
 - [ ] All protected routes check authentication
 - [ ] Role-based access control implemented
 - [ ] Resource ownership verified
 - [ ] Admin routes properly protected
 
 ### Input Validation
+
 - [ ] All API inputs validated with Zod
 - [ ] File uploads validated (type, size)
 - [ ] SQL injection prevented (Prisma ORM)
 - [ ] XSS prevention (React escapes by default)
 
 ### API Security
+
 - [ ] Rate limiting implemented (if needed)
 - [ ] CORS configured appropriately
 - [ ] Error messages don't leak info
 - [ ] Request size limits enforced
 
 ### Data Security
+
 - [ ] Database credentials secured
 - [ ] Database connections use SSL (production)
 - [ ] Sensitive data encrypted at rest
 - [ ] Backup strategy documented
 
 ### Infrastructure
+
 - [ ] Security headers configured
 - [ ] CSP policy enforced
 - [ ] HTTPS enforced in production
@@ -534,18 +560,21 @@ Routes with validation: [X/X]
 ## 📝 Post-Audit Actions
 
 ### Immediate (After Phase 5)
+
 1. Fix any critical vulnerabilities found
 2. Document security findings
 3. Update security documentation
 4. Create security incident response plan
 
 ### Short-Term (Next Sprint)
+
 1. Implement any missing validations
 2. Add rate limiting if needed
 3. Set up security monitoring
 4. Schedule regular dependency updates
 
 ### Long-Term (Next Quarter)
+
 1. Penetration testing (if budget allows)
 2. Security training for team
 3. Implement automated security scanning in CI/CD
@@ -556,24 +585,28 @@ Routes with validation: [X/X]
 ## 🔗 Resources & Tools
 
 ### Scanning Tools
+
 - **npm audit** - Built-in vulnerability scanner
 - **Snyk** - Advanced vulnerability scanning
 - **OWASP ZAP** - Web application security scanner
 - **SonarQube** - Code security analysis
 
 ### Testing Tools
+
 - **Postman** - API security testing
 - **Burp Suite** - Web security testing
 - **SQLMap** - SQL injection testing
 - **XSS Hunter** - XSS vulnerability detection
 
 ### Documentation
+
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
 - [Next.js Security Best Practices](https://nextjs.org/docs/app/building-your-application/configuring/security-headers)
 - [Node.js Security Best Practices](https://nodejs.org/en/docs/guides/security/)
 - [Prisma Security](https://www.prisma.io/docs/guides/security)
 
 ### Compliance
+
 - **GDPR** - Data protection (EU)
 - **CCPA** - Consumer privacy (California)
 - **PCI DSS** - Payment card data (if applicable)
@@ -583,6 +616,7 @@ Routes with validation: [X/X]
 ## 🎯 Success Criteria for Phase 5
 
 ### Must Have ✅
+
 - [ ] 0 critical/high vulnerabilities in dependencies
 - [ ] All API routes have input validation
 - [ ] Authentication checks on all protected routes
@@ -592,12 +626,14 @@ Routes with validation: [X/X]
 - [ ] Security audit report completed
 
 ### Should Have 🎯
+
 - [ ] RBAC tested for all user roles
 - [ ] Rate limiting implemented
 - [ ] Security documentation updated
 - [ ] Incident response plan created
 
 ### Nice to Have 🌟
+
 - [ ] Automated security scanning in CI/CD
 - [ ] Penetration testing completed
 - [ ] Security training materials created
@@ -607,14 +643,14 @@ Routes with validation: [X/X]
 
 ## 📈 Timeline
 
-| Task | Duration | Priority | Dependencies |
-|------|----------|----------|--------------|
-| Dependency scan | 30 min | HIGH | None |
-| Secret audit | 30 min | HIGH | None |
-| Input validation | 45 min | MEDIUM | None |
-| RBAC verification | 30 min | MEDIUM | None |
-| Security headers | 15 min | LOW | None |
-| **Total** | **~2.5 hours** | | |
+| Task              | Duration       | Priority | Dependencies |
+| ----------------- | -------------- | -------- | ------------ |
+| Dependency scan   | 30 min         | HIGH     | None         |
+| Secret audit      | 30 min         | HIGH     | None         |
+| Input validation  | 45 min         | MEDIUM   | None         |
+| RBAC verification | 30 min         | MEDIUM   | None         |
+| Security headers  | 15 min         | LOW      | None         |
+| **Total**         | **~2.5 hours** |          |              |
 
 ---
 
@@ -623,6 +659,7 @@ Routes with validation: [X/X]
 > "Just as a farmer protects their crops from pests and weather, we protect our platform from vulnerabilities and threats. Security is cultivated, not installed." 🌾🔒
 
 **Security as Agriculture:**
+
 - **Prevention** - Build secure from the start (like healthy soil)
 - **Detection** - Monitor for threats (like watching for pests)
 - **Response** - Act quickly on issues (like treating diseased plants)
@@ -633,6 +670,7 @@ Routes with validation: [X/X]
 ## 🚀 Ready to Begin?
 
 ### Pre-Audit Checklist
+
 - [x] Phase 1-4 complete
 - [x] All tests passing
 - [x] Clean build
@@ -665,6 +703,6 @@ npm audit --json > security-audit-report.json
 
 ---
 
-*Generated with Agricultural Security Consciousness*  
-*Powered by Divine Development Principles*  
-*Security Level: MAXIMUM* 🔒🌾
+_Generated with Agricultural Security Consciousness_  
+_Powered by Divine Development Principles_  
+_Security Level: MAXIMUM_ 🔒🌾

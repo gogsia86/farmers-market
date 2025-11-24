@@ -1,4 +1,5 @@
 # 🧪 API TESTING WITH TRACING MOCKS - DIVINE INSTRUCTION GUIDE
+
 **File**: `17_API_TESTING_TRACING_MOCKS.instructions.md`
 **Purpose**: Comprehensive guide for testing Next.js API routes with OpenTelemetry and Agricultural Tracer mocks
 **Version**: 1.0
@@ -14,8 +15,10 @@
 // THIS DOESN'T WORK - Jest doesn't execute the implementation!
 jest.mock("@opentelemetry/api", () => ({
   trace: {
-    getTracer: jest.fn(() => ({  // ❌ Implementation NEVER executes
-      startActiveSpan: jest.fn(async (name, fn) => {  // ❌ NEVER called
+    getTracer: jest.fn(() => ({
+      // ❌ Implementation NEVER executes
+      startActiveSpan: jest.fn(async (name, fn) => {
+        // ❌ NEVER called
         return await fn(mockSpan);
       }),
     })),
@@ -38,12 +41,14 @@ jest.mock("@opentelemetry/api", () => {
 
   return {
     trace: {
-      getTracer: () => ({  // ✅ Plain arrow function works!
-        startActiveSpan: async (name, fnOrOptions, maybeFn) => {  // ✅ Executes correctly
+      getTracer: () => ({
+        // ✅ Plain arrow function works!
+        startActiveSpan: async (name, fnOrOptions, maybeFn) => {
+          // ✅ Executes correctly
           const fn = typeof fnOrOptions === "function" ? fnOrOptions : maybeFn;
           if (typeof fn === "function") {
             const result = await fn(mockSpan);
-            return result;  // ✅ Returns callback result
+            return result; // ✅ Returns callback result
           }
           return mockSpan;
         },
@@ -58,42 +63,47 @@ jest.mock("@opentelemetry/api", () => {
 ## 🔑 GOLDEN RULES FOR API ROUTE TESTING
 
 ### Rule 1: Use Plain Functions in Mock Factories
+
 ✅ **DO**: `() => value` or `async () => value`
 ❌ **DON'T**: `jest.fn(() => value)` inside `jest.mock()`
 
 ### Rule 2: Always Return Callback Results
+
 ```typescript
 // ✅ CORRECT
 startActiveSpan: async (name, fn) => {
   const result = await fn(mockSpan);
-  return result;  // CRITICAL!
-}
+  return result; // CRITICAL!
+};
 
 // ❌ WRONG - route will return undefined
 startActiveSpan: async (name, fn) => {
   await fn(mockSpan);
   // Missing return!
-}
+};
 ```
 
 ### Rule 3: Match Real Implementation Signatures
+
 Agricultural tracer calls `fn()` **WITHOUT** passing span:
+
 ```typescript
 // ✅ CORRECT - no span parameter
 traceAgriculturalOperation: async (operation, attributes, fn) => {
   if (typeof fn === "function") {
-    return await fn();  // Call fn() with NO arguments
+    return await fn(); // Call fn() with NO arguments
   }
   return undefined;
-}
+};
 
 // ❌ WRONG - real implementation doesn't pass span
 traceAgriculturalOperation: async (operation, attributes, fn) => {
-  return await fn(mockSpan);  // This breaks real code
-}
+  return await fn(mockSpan); // This breaks real code
+};
 ```
 
 ### Rule 4: Mock ALL Dependencies Before Imports
+
 ```typescript
 // ✅ CORRECT ORDER
 jest.mock("@opentelemetry/api", () => ({ ... }));
@@ -106,11 +116,12 @@ import { GET, POST } from "../route";
 ```
 
 ### Rule 5: Configure Database Mocks Before Each Test
+
 ```typescript
 it("should work", async () => {
   // ✅ CRITICAL: Set mock return value BEFORE calling route
   (database.farm.findMany as jest.Mock).mockResolvedValue(mockFarms);
-  
+
   const response = await GET(request);
   // ...
 });
@@ -311,7 +322,7 @@ describe("🧪 [Route Name] API Tests", () => {
   describe("✅ Successful Operations", () => {
     it("should fetch resources successfully", async () => {
       const mockData = [createMockFarm()];
-      
+
       // CRITICAL: Set mock return value BEFORE calling route
       (database.farm.findMany as jest.Mock).mockResolvedValue(mockData);
 
@@ -330,7 +341,7 @@ describe("🧪 [Route Name] API Tests", () => {
 
     it("should create resource successfully", async () => {
       const newResource = createMockFarm({ name: "New Farm" });
-      
+
       (database.farm.create as jest.Mock).mockResolvedValue(newResource);
 
       const request = createMockNextRequest({
@@ -377,22 +388,27 @@ describe("🧪 [Route Name] API Tests", () => {
 ## 🚨 COMMON ERRORS AND FIXES
 
 ### Error 1: "GET returned undefined"
+
 **Cause**: Mock tracer's `startActiveSpan` doesn't return callback result
 **Fix**: Add `return result;` after calling callback
 
 ### Error 2: "Cannot read properties of undefined"
+
 **Cause**: Using `jest.fn(() => impl)` in mock factory
 **Fix**: Use plain arrow functions `() => impl`
 
 ### Error 3: "Agricultural operation returns undefined"
+
 **Cause**: Calling `fn(span)` instead of `fn()`
 **Fix**: Remove span parameter from agricultural tracer calls
 
 ### Error 4: "Database mock returns undefined"
+
 **Cause**: Forgot to call `.mockResolvedValue()` before test
 **Fix**: Set mock return value in each test
 
 ### Error 5: "Rate limit error"
+
 **Cause**: Rate limiter mock returns undefined
 **Fix**: Use plain async function that returns success object
 
@@ -401,6 +417,7 @@ describe("🧪 [Route Name] API Tests", () => {
 ## 🎨 TESTING PATTERNS
 
 ### Pattern 1: Query Parameters
+
 ```typescript
 it("should filter by query params", async () => {
   (database.farm.findMany as jest.Mock).mockResolvedValue([]);
@@ -418,12 +435,13 @@ it("should filter by query params", async () => {
       where: expect.objectContaining({
         status: "ACTIVE",
       }),
-    })
+    }),
   );
 });
 ```
 
 ### Pattern 2: Request Body Validation
+
 ```typescript
 it("should validate request body", async () => {
   const request = createMockNextRequest({
@@ -441,6 +459,7 @@ it("should validate request body", async () => {
 ```
 
 ### Pattern 3: Database Transactions
+
 ```typescript
 it("should handle transaction rollback", async () => {
   const error = new Error("Transaction failed");
@@ -458,6 +477,7 @@ it("should handle transaction rollback", async () => {
 ```
 
 ### Pattern 4: Agricultural Consciousness
+
 ```typescript
 it("should include agricultural metadata", async () => {
   const mockFarms = [createMockFarm()];
@@ -499,12 +519,14 @@ Before committing API route tests, verify:
 ## 🎯 TESTING GOALS
 
 ### Coverage Targets
+
 - **API Routes**: 100% line coverage
 - **Error Handling**: All error paths tested
 - **Edge Cases**: Boundary conditions tested
 - **Integration**: Database, auth, rate limiting
 
 ### Test Categories
+
 1. **Successful Operations** (200, 201 responses)
 2. **Error Handling** (400, 500 responses)
 3. **Rate Limiting** (429 responses)

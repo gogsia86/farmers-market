@@ -225,7 +225,7 @@ export async function GET(_request: NextRequest) {
 
     // Low stock alerts
     const lowStockProducts = farm.products.filter(
-      (p) => p.quantityAvailable !== null && Number(p.quantityAvailable) < 5
+      (p) => p.quantityAvailable !== null && Number(p.quantityAvailable) < 5,
     );
 
     // Format response
@@ -261,7 +261,7 @@ export async function GET(_request: NextRequest) {
           total: order.items.reduce(
             (sum, item) =>
               sum + Number(item.product.price) * Number(item.quantity),
-            0
+            0,
           ),
           status: order.status,
           scheduledDate: order.scheduledDate,
@@ -296,7 +296,7 @@ export async function GET(_request: NextRequest) {
     console.error("Dashboard API error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

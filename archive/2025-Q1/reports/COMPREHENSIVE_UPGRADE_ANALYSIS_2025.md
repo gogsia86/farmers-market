@@ -3,13 +3,14 @@
 **Generated:** January 2025  
 **Platform:** Farmers Market Divine Agricultural E-Commerce Platform  
 **Status:** Production-Ready with Optimization Opportunities  
-**Analysis Scope:** Complete codebase, dependencies, architecture, security, performance  
+**Analysis Scope:** Complete codebase, dependencies, architecture, security, performance
 
 ---
 
 ## 📊 Executive Summary
 
 ### Current State: ✅ EXCELLENT
+
 - **Test Coverage:** 100% passing (414/414 unit tests)
 - **Build Status:** ✅ Stable
 - **Architecture:** Modern, scalable, well-structured
@@ -18,9 +19,10 @@
 - **Documentation:** 2,229 markdown files (excessive - needs cleanup)
 
 ### Priority Matrix
+
 ```
 HIGH PRIORITY   ⚡ 12 items - Security, Performance, Dependencies
-MEDIUM PRIORITY 🔶 15 items - Code Quality, Features, Documentation  
+MEDIUM PRIORITY 🔶 15 items - Code Quality, Features, Documentation
 LOW PRIORITY    🟢 8 items  - Nice-to-haves, Future enhancements
 ```
 
@@ -29,12 +31,14 @@ LOW PRIORITY    🟢 8 items  - Nice-to-haves, Future enhancements
 ## 🎯 CRITICAL PRIORITIES (Address Immediately)
 
 ### 1. ⚠️ TypeScript Errors - HIGH PRIORITY
+
 **Current Issues:** 37 TypeScript errors across 6 files
 
 **Affected Files:**
+
 ```
 ❌ src/app/api/platform/stats/route.ts         - 9 errors
-❌ src/app/api/featured/farms/route.ts         - 10 errors  
+❌ src/app/api/featured/farms/route.ts         - 10 errors
 ❌ src/app/api/search/suggest/route.ts         - 10 errors
 ❌ src/app/api/products/bulk/route.ts          - 5 errors
 ❌ src/components/homepage/SearchAutocomplete.tsx - 2 errors, 1 warning
@@ -43,6 +47,7 @@ LOW PRIORITY    🟢 8 items  - Nice-to-haves, Future enhancements
 ```
 
 **Action Plan:**
+
 ```bash
 # Run diagnostics on each file
 npm run type-check
@@ -63,14 +68,14 @@ npm run type-check
 
 #### Critical Updates Available
 
-| Package | Current | Latest | Priority | Breaking Changes |
-|---------|---------|--------|----------|------------------|
-| **React** | 19.0.0 | 19.2.0 | HIGH | No |
-| **React DOM** | 19.0.0 | 19.2.0 | HIGH | No |
-| **@types/react** | 19.0.0 | 19.2.6 | HIGH | No |
-| **@types/react-dom** | 19.0.0 | 19.2.3 | HIGH | No |
-| **Tailwind CSS** | 3.4.18 | 4.1.17 | MEDIUM | **YES** ⚠️ |
-| **Next Auth** | 5.0.0-beta.30 | 4.24.13 (stable) | MEDIUM | Evaluate |
+| Package              | Current       | Latest           | Priority | Breaking Changes |
+| -------------------- | ------------- | ---------------- | -------- | ---------------- |
+| **React**            | 19.0.0        | 19.2.0           | HIGH     | No               |
+| **React DOM**        | 19.0.0        | 19.2.0           | HIGH     | No               |
+| **@types/react**     | 19.0.0        | 19.2.6           | HIGH     | No               |
+| **@types/react-dom** | 19.0.0        | 19.2.3           | HIGH     | No               |
+| **Tailwind CSS**     | 3.4.18        | 4.1.17           | MEDIUM   | **YES** ⚠️       |
+| **Next Auth**        | 5.0.0-beta.30 | 4.24.13 (stable) | MEDIUM   | Evaluate         |
 
 #### Upgrade Strategy
 
@@ -93,6 +98,7 @@ npm run build
 ```
 
 **Notes:**
+
 - ⚠️ `critters@0.0.25` shows as "Current: 0.0.25, Latest: 0.0.23" - this is correct (you have newer)
 - Next Auth v5 beta is the right choice for Next.js 15
 
@@ -103,10 +109,12 @@ npm run build
 #### A. Environment Variable Security
 
 **Current Issues:**
+
 - Multiple `.env` files in repository (8 files detected)
 - Potential exposure of sensitive data
 
 **Recommendations:**
+
 ```bash
 # 1. Audit .gitignore
 echo "Verify these are ignored:"
@@ -125,16 +133,17 @@ npm install --save-dev @vercel/git-hooks
 ```
 
 **Secret Management Upgrade:**
+
 ```typescript
 // lib/config/secrets.ts
-import { getSecret } from '@vercel/secrets';
+import { getSecret } from "@vercel/secrets";
 
 export async function getSecureConfig() {
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === "production") {
     // Use Vercel Secrets in production
     return {
-      databaseUrl: await getSecret('DATABASE_URL'),
-      stripeKey: await getSecret('STRIPE_SECRET_KEY'),
+      databaseUrl: await getSecret("DATABASE_URL"),
+      stripeKey: await getSecret("STRIPE_SECRET_KEY"),
     };
   }
   return {
@@ -202,35 +211,36 @@ async headers() {
 
 ```typescript
 // middleware.ts - Add edge rate limiting
-import { Ratelimit } from '@upstash/ratelimit';
-import { Redis } from '@upstash/redis';
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(10, '10 s'),
+  limiter: Ratelimit.slidingWindow(10, "10 s"),
   analytics: true,
 });
 
 export async function middleware(request: NextRequest) {
-  const ip = request.ip ?? '127.0.0.1';
+  const ip = request.ip ?? "127.0.0.1";
   const { success, limit, reset, remaining } = await ratelimit.limit(ip);
-  
+
   if (!success) {
-    return new Response('Too Many Requests', {
+    return new Response("Too Many Requests", {
       status: 429,
       headers: {
-        'X-RateLimit-Limit': limit.toString(),
-        'X-RateLimit-Remaining': remaining.toString(),
-        'X-RateLimit-Reset': reset.toString()
-      }
+        "X-RateLimit-Limit": limit.toString(),
+        "X-RateLimit-Remaining": remaining.toString(),
+        "X-RateLimit-Reset": reset.toString(),
+      },
     });
   }
-  
+
   return NextResponse.next();
 }
 ```
 
 **Required Package:**
+
 ```bash
 npm install @upstash/ratelimit @upstash/redis
 ```
@@ -242,6 +252,7 @@ npm install @upstash/ratelimit @upstash/redis
 **Issue:** 2,229 markdown files causing repository bloat
 
 **Identified Redundant Documentation:**
+
 ```
 ✅ Keep (Essential):
 - README.md
@@ -253,7 +264,7 @@ npm install @upstash/ratelimit @upstash/redis
 
 ❌ Archive or Delete (Redundant):
 - Multiple "FINAL" reports (10+ files)
-- Multiple "ACHIEVEMENT" files (8+ files)  
+- Multiple "ACHIEVEMENT" files (8+ files)
 - Multiple "STATUS" reports (12+ files)
 - Duplicate deployment guides (3+ versions)
 - Historical "UPGRADE" reports (outdated)
@@ -261,6 +272,7 @@ npm install @upstash/ratelimit @upstash/redis
 ```
 
 **Cleanup Script:**
+
 ```bash
 # Create archive directory
 mkdir -p archive/historical-reports
@@ -275,7 +287,7 @@ mv *SUCCESS*.md archive/historical-reports/
 
 # Keep only latest of each type
 git rm OPERATION_100_*.md
-git rm PLATFORM_100_*.md  
+git rm PLATFORM_100_*.md
 git rm MISSION_*.md
 
 # Consolidate guides
@@ -306,7 +318,7 @@ model Product {
   category    ProductCategory
   status      ProductStatus
   createdAt   DateTime @default(now())
-  
+
   // Add composite indexes for common queries
   @@index([farmId, status]) // Farm's active products
   @@index([category, status]) // Category browsing
@@ -321,7 +333,7 @@ model Order {
   farmId      String
   status      OrderStatus
   createdAt   DateTime    @default(now())
-  
+
   // Optimize order queries
   @@index([userId, createdAt(sort: Desc)]) // User's orders
   @@index([farmId, status]) // Farm's pending orders
@@ -333,7 +345,7 @@ model Farm {
   slug            String     @unique
   status          FarmStatus
   verificationStatus FarmVerificationStatus
-  
+
   // Optimize farm discovery
   @@index([status, verificationStatus]) // Active verified farms
   @@index([createdAt(sort: Desc)]) // Recent farms
@@ -342,6 +354,7 @@ model Farm {
 ```
 
 **Migration:**
+
 ```bash
 npx prisma migrate dev --name add_performance_indexes
 npx prisma migrate deploy # Production
@@ -353,44 +366,44 @@ npx prisma migrate deploy # Production
 
 ```typescript
 // lib/cache/query-cache.ts
-import { Redis } from 'ioredis';
+import { Redis } from "ioredis";
 
 const redis = new Redis(process.env.REDIS_URL);
 
 export async function getCachedQuery<T>(
   key: string,
   queryFn: () => Promise<T>,
-  ttl: number = 300 // 5 minutes default
+  ttl: number = 300, // 5 minutes default
 ): Promise<T> {
   // Try cache first
   const cached = await redis.get(key);
   if (cached) {
     return JSON.parse(cached) as T;
   }
-  
+
   // Execute query
   const result = await queryFn();
-  
+
   // Cache result
   await redis.setex(key, ttl, JSON.stringify(result));
-  
+
   return result;
 }
 
 // Usage in API routes
 export async function GET(request: NextRequest) {
   const farms = await getCachedQuery(
-    'featured-farms',
+    "featured-farms",
     async () => {
       return await database.farm.findMany({
-        where: { status: 'ACTIVE', verificationStatus: 'VERIFIED' },
+        where: { status: "ACTIVE", verificationStatus: "VERIFIED" },
         take: 10,
-        include: { products: { take: 5 } }
+        include: { products: { take: 5 } },
       });
     },
-    600 // Cache for 10 minutes
+    600, // Cache for 10 minutes
   );
-  
+
   return NextResponse.json(farms);
 }
 ```
@@ -448,31 +461,29 @@ export function OptimizedImage({ src, alt, priority = false }: Props) {
 
 ```javascript
 // next.config.mjs - Add bundle analysis
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true",
 });
 
 module.exports = withBundleAnalyzer({
   // ... existing config
-  
+
   // Add package-specific optimizations
-  transpilePackages: [
-    '@tensorflow/tfjs',
-    '@tensorflow/tfjs-node-gpu'
-  ],
-  
+  transpilePackages: ["@tensorflow/tfjs", "@tensorflow/tfjs-node-gpu"],
+
   // Optimize font loading
   optimizeFonts: true,
-  
+
   // Compress images more aggressively
   images: {
     minimumCacheTTL: 86400, // 24 hours
-    formats: ['image/avif', 'image/webp'],
-  }
+    formats: ["image/avif", "image/webp"],
+  },
 });
 ```
 
 **Run Analysis:**
+
 ```bash
 ANALYZE=true npm run build
 # Review bundle-analyzer output at localhost:8888
@@ -500,12 +511,12 @@ export async function GET(request: NextRequest) {
 
 // middleware.ts - API version routing
 export function middleware(request: NextRequest) {
-  const apiVersion = request.headers.get('X-API-Version') || 'v1';
-  
-  if (request.nextUrl.pathname.startsWith('/api/')) {
+  const apiVersion = request.headers.get("X-API-Version") || "v1";
+
+  if (request.nextUrl.pathname.startsWith("/api/")) {
     // Rewrite to versioned endpoint
     const url = request.nextUrl.clone();
-    url.pathname = `/api/${apiVersion}${url.pathname.replace('/api', '')}`;
+    url.pathname = `/api/${apiVersion}${url.pathname.replace("/api", "")}`;
     return NextResponse.rewrite(url);
   }
 }
@@ -525,40 +536,41 @@ npm install bullmq ioredis
 
 ```typescript
 // lib/queues/email-queue.ts
-import { Queue, Worker } from 'bullmq';
-import { Redis } from 'ioredis';
+import { Queue, Worker } from "bullmq";
+import { Redis } from "ioredis";
 
 const connection = new Redis(process.env.REDIS_URL);
 
 // Define queue
-export const emailQueue = new Queue('emails', { connection });
+export const emailQueue = new Queue("emails", { connection });
 
 // Define worker
 export const emailWorker = new Worker(
-  'emails',
+  "emails",
   async (job) => {
     const { to, subject, body } = job.data;
     await sendEmail(to, subject, body);
   },
-  { connection }
+  { connection },
 );
 
 // Usage in API route
-import { emailQueue } from '@/lib/queues/email-queue';
+import { emailQueue } from "@/lib/queues/email-queue";
 
 export async function POST(request: NextRequest) {
   // Add job to queue instead of blocking
-  await emailQueue.add('welcome-email', {
+  await emailQueue.add("welcome-email", {
     to: user.email,
-    subject: 'Welcome to Farmers Market',
-    body: renderWelcomeEmail(user)
+    subject: "Welcome to Farmers Market",
+    body: renderWelcomeEmail(user),
   });
-  
-  return NextResponse.json({ message: 'Email queued' });
+
+  return NextResponse.json({ message: "Email queued" });
 }
 ```
 
 **Use Cases:**
+
 - Email notifications
 - Image processing (thumbnails, optimization)
 - Report generation
@@ -571,39 +583,39 @@ export async function POST(request: NextRequest) {
 
 ```typescript
 // lib/middleware/api-logger.ts
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export async function apiLogger(request: NextRequest, handler: Function) {
   const startTime = Date.now();
   const requestId = crypto.randomUUID();
-  
+
   // Log request
   console.log({
-    type: 'API_REQUEST',
+    type: "API_REQUEST",
     requestId,
     method: request.method,
     url: request.url,
     headers: Object.fromEntries(request.headers),
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
-  
+
   // Execute handler
   const response = await handler(request);
-  
+
   // Log response
   const duration = Date.now() - startTime;
   console.log({
-    type: 'API_RESPONSE',
+    type: "API_RESPONSE",
     requestId,
     status: response.status,
     duration,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
-  
+
   // Add request ID to response headers
-  response.headers.set('X-Request-ID', requestId);
-  
+  response.headers.set("X-Request-ID", requestId);
+
   return response;
 }
 ```
@@ -622,34 +634,36 @@ export async function apiLogger(request: NextRequest, handler: Function) {
 ```typescript
 // playwright.config.ts - Enhanced configuration
 export default defineConfig({
-  testDir: './tests/e2e',
+  testDir: "./tests/e2e",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 4 : 12, // HP OMEN optimization
-  
+
   // Automatic server management
   webServer: {
-    command: 'npm run build && npm start',
-    url: 'http://localhost:3001',
+    command: "npm run build && npm start",
+    url: "http://localhost:3001",
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
-    stdout: 'pipe',
-    stderr: 'pipe'
+    stdout: "pipe",
+    stderr: "pipe",
   },
-  
+
   // Add visual regression testing
   use: {
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
-    trace: 'retain-on-failure'
+    screenshot: "only-on-failure",
+    video: "retain-on-failure",
+    trace: "retain-on-failure",
   },
-  
+
   // Test sharding for CI
-  shard: process.env.CI ? { 
-    current: parseInt(process.env.SHARD_INDEX || '1'),
-    total: parseInt(process.env.SHARD_TOTAL || '4')
-  } : undefined
+  shard: process.env.CI
+    ? {
+        current: parseInt(process.env.SHARD_INDEX || "1"),
+        total: parseInt(process.env.SHARD_TOTAL || "4"),
+      }
+    : undefined,
 });
 ```
 
@@ -657,49 +671,49 @@ export default defineConfig({
 
 ```typescript
 // tests/e2e/critical-flows.spec.ts
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test.describe('Critical User Journeys', () => {
-  test('Complete purchase flow', async ({ page }) => {
+test.describe("Critical User Journeys", () => {
+  test("Complete purchase flow", async ({ page }) => {
     // 1. Browse products
-    await page.goto('/');
-    await page.click('text=View Products');
-    
+    await page.goto("/");
+    await page.click("text=View Products");
+
     // 2. Add to cart
     await page.click('button:has-text("Add to Cart")').first();
-    await expect(page.locator('[data-testid="cart-count"]')).toHaveText('1');
-    
+    await expect(page.locator('[data-testid="cart-count"]')).toHaveText("1");
+
     // 3. Checkout
     await page.click('[data-testid="cart-icon"]');
-    await page.click('text=Checkout');
-    
+    await page.click("text=Checkout");
+
     // 4. Fill shipping info
-    await page.fill('[name="address"]', '123 Farm Road');
-    await page.fill('[name="city"]', 'Farmville');
-    
+    await page.fill('[name="address"]', "123 Farm Road");
+    await page.fill('[name="city"]', "Farmville");
+
     // 5. Payment (test mode)
-    await page.click('text=Complete Order');
-    
+    await page.click("text=Complete Order");
+
     // 6. Verify success
-    await expect(page.locator('h1')).toContainText('Order Confirmed');
+    await expect(page.locator("h1")).toContainText("Order Confirmed");
   });
-  
-  test('Farmer dashboard workflow', async ({ page }) => {
+
+  test("Farmer dashboard workflow", async ({ page }) => {
     // Login as farmer
-    await page.goto('/login');
-    await page.fill('[name="email"]', 'farmer@test.com');
-    await page.fill('[name="password"]', 'password123');
+    await page.goto("/login");
+    await page.fill('[name="email"]', "farmer@test.com");
+    await page.fill('[name="password"]', "password123");
     await page.click('button[type="submit"]');
-    
+
     // Add product
-    await page.goto('/farmer-dashboard/products');
-    await page.click('text=Add Product');
-    await page.fill('[name="name"]', 'Fresh Tomatoes');
-    await page.fill('[name="price"]', '4.99');
+    await page.goto("/farmer-dashboard/products");
+    await page.click("text=Add Product");
+    await page.fill('[name="name"]', "Fresh Tomatoes");
+    await page.fill('[name="price"]', "4.99");
     await page.click('button:has-text("Save")');
-    
+
     // Verify product appears
-    await expect(page.locator('text=Fresh Tomatoes')).toBeVisible();
+    await expect(page.locator("text=Fresh Tomatoes")).toBeVisible();
   });
 });
 ```
@@ -712,21 +726,21 @@ npm install -D @playwright/test pixelmatch
 
 ```typescript
 // tests/e2e/visual-regression.spec.ts
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test.describe('Visual Regression', () => {
-  test('Homepage renders correctly', async ({ page }) => {
-    await page.goto('/');
-    await expect(page).toHaveScreenshot('homepage.png', {
+test.describe("Visual Regression", () => {
+  test("Homepage renders correctly", async ({ page }) => {
+    await page.goto("/");
+    await expect(page).toHaveScreenshot("homepage.png", {
       fullPage: true,
-      threshold: 0.2 // 20% tolerance
+      threshold: 0.2, // 20% tolerance
     });
   });
-  
-  test('Product card matches design', async ({ page }) => {
-    await page.goto('/products');
+
+  test("Product card matches design", async ({ page }) => {
+    await page.goto("/products");
     const productCard = page.locator('[data-testid="product-card"]').first();
-    await expect(productCard).toHaveScreenshot('product-card.png');
+    await expect(productCard).toHaveScreenshot("product-card.png");
   });
 });
 ```
@@ -753,7 +767,7 @@ config:
     - duration: 60
       arrivalRate: 100
       name: "Peak load"
-  
+
 scenarios:
   - name: "Browse and purchase"
     flow:
@@ -771,6 +785,7 @@ scenarios:
 ```
 
 **Run Load Tests:**
+
 ```bash
 npx artillery run artillery/load-test.yml --output report.json
 npx artillery report report.json
@@ -796,23 +811,39 @@ npx artillery report report.json
   },
   "rules": {
     "@typescript-eslint/no-explicit-any": "error",
-    "@typescript-eslint/no-unused-vars": ["error", {
-      "argsIgnorePattern": "^_",
-      "varsIgnorePattern": "^_"
-    }],
-    "@typescript-eslint/explicit-function-return-type": ["warn", {
-      "allowExpressions": true
-    }],
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ],
+    "@typescript-eslint/explicit-function-return-type": [
+      "warn",
+      {
+        "allowExpressions": true
+      }
+    ],
     "@typescript-eslint/no-floating-promises": "error",
     "@typescript-eslint/await-thenable": "error",
     "no-console": ["warn", { "allow": ["warn", "error"] }],
     "react/no-unescaped-entities": "off",
     "react-hooks/exhaustive-deps": "error",
-    "import/order": ["error", {
-      "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
-      "newlines-between": "always",
-      "alphabetize": { "order": "asc" }
-    }]
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index"
+        ],
+        "newlines-between": "always",
+        "alphabetize": { "order": "asc" }
+      }
+    ]
   }
 }
 ```
@@ -837,21 +868,21 @@ npx husky add .husky/commit-msg 'npx --no -- commitlint --edit "$1"'
 ```javascript
 // commitlint.config.js
 module.exports = {
-  extends: ['@commitlint/config-conventional'],
+  extends: ["@commitlint/config-conventional"],
   rules: {
-    'type-enum': [
+    "type-enum": [
       2,
-      'always',
+      "always",
       [
-        'feat',     // New feature
-        'fix',      // Bug fix
-        'docs',     // Documentation
-        'style',    // Formatting
-        'refactor', // Code refactoring
-        'perf',     // Performance
-        'test',     // Tests
-        'chore',    // Maintenance
-        'security', // Security fixes
+        "feat", // New feature
+        "fix", // Bug fix
+        "docs", // Documentation
+        "style", // Formatting
+        "refactor", // Code refactoring
+        "perf", // Performance
+        "test", // Tests
+        "chore", // Maintenance
+        "security", // Security fixes
       ],
     ],
   },
@@ -865,6 +896,7 @@ module.exports = {
 **Found:** 15+ TODO/FIXME comments in codebase
 
 **Action Items:**
+
 ```bash
 # Generate TODO report
 grep -r "TODO\|FIXME\|HACK\|XXX\|BUG" src/ --exclude-dir=node_modules > TODO_REPORT.txt
@@ -875,6 +907,7 @@ node scripts/create-issues-from-todos.js
 ```
 
 **High-Priority TODOs to Address:**
+
 ```typescript
 // src/app/api/farmers/dashboard/route.ts
 // TODO: Calculate actual revenue change (currently mocked)
@@ -897,30 +930,32 @@ node scripts/create-issues-from-todos.js
 
 ```typescript
 // lib/websocket/notifications.ts
-import { Server as SocketServer } from 'socket.io';
-import { createServer } from 'http';
+import { Server as SocketServer } from "socket.io";
+import { createServer } from "http";
 
-export function initializeWebSocket(httpServer: ReturnType<typeof createServer>) {
+export function initializeWebSocket(
+  httpServer: ReturnType<typeof createServer>,
+) {
   const io = new SocketServer(httpServer, {
-    cors: { origin: process.env.NEXT_PUBLIC_APP_URL }
+    cors: { origin: process.env.NEXT_PUBLIC_APP_URL },
   });
-  
-  io.on('connection', (socket) => {
-    socket.on('subscribe:orders', (farmId) => {
+
+  io.on("connection", (socket) => {
+    socket.on("subscribe:orders", (farmId) => {
       socket.join(`farm:${farmId}:orders`);
     });
-    
-    socket.on('subscribe:notifications', (userId) => {
+
+    socket.on("subscribe:notifications", (userId) => {
       socket.join(`user:${userId}:notifications`);
     });
   });
-  
+
   return io;
 }
 
 // Emit notifications
 export function notifyNewOrder(farmId: string, order: Order) {
-  io.to(`farm:${farmId}:orders`).emit('new-order', order);
+  io.to(`farm:${farmId}:orders`).emit("new-order", order);
 }
 ```
 
@@ -934,11 +969,11 @@ npm install next-pwa
 
 ```javascript
 // next.config.mjs
-const withPWA = require('next-pwa')({
-  dest: 'public',
+const withPWA = require("next-pwa")({
+  dest: "public",
   register: true,
   skipWaiting: true,
-  disable: process.env.NODE_ENV === 'development'
+  disable: process.env.NODE_ENV === "development",
 });
 
 module.exports = withPWA({
@@ -983,15 +1018,15 @@ export const trackEvent = {
   productView: (productId: string) => {
     analytics.track('Product Viewed', { productId });
   },
-  
+
   addToCart: (productId: string, quantity: number) => {
     analytics.track('Added to Cart', { productId, quantity });
   },
-  
+
   checkout: (orderValue: number, items: number) => {
     analytics.track('Checkout Started', { orderValue, items });
   },
-  
+
   purchase: (orderId: string, value: number) => {
     analytics.track('Purchase Completed', { orderId, value });
   }
@@ -1004,7 +1039,7 @@ function ProductCard({ product }) {
   const handleView = () => {
     trackEvent.productView(product.id);
   };
-  
+
   return (
     <Link href={`/products/${product.id}`} onClick={handleView}>
       {/* ... */}
@@ -1015,4 +1050,4 @@ function ProductCard({ product }) {
 
 ---
 
-## 🚢 
+## 🚢

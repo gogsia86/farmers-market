@@ -8,18 +8,18 @@ This directory contains Architecture Decision Records (ADRs) for the Farmers Mar
 
 ## 📋 ADR INDEX
 
-| ADR | Title | Status | Date |
-|-----|-------|--------|------|
-| [001](001-nextjs-app-router.md) | Adopt Next.js 15 App Router | ✅ Accepted | 2024-01 |
-| [002](002-prisma-orm.md) | Use Prisma as ORM | ✅ Accepted | 2024-01 |
-| [003](003-typescript-strict-mode.md) | TypeScript Strict Mode | ✅ Accepted | 2024-01 |
-| [004](004-divine-coding-patterns.md) | Divine Agricultural Patterns | ✅ Accepted | 2024-02 |
-| [005](005-multi-layer-caching.md) | Multi-Layer Caching Strategy | ✅ Accepted | 2024-03 |
-| [006](006-gpu-acceleration.md) | GPU Acceleration for Images | ✅ Accepted | 2024-04 |
-| [007](007-service-layer-architecture.md) | Service Layer Architecture | ✅ Accepted | 2024-05 |
-| [008](008-nextauth-v5.md) | NextAuth v5 for Authentication | ✅ Accepted | 2024-06 |
+| ADR                                      | Title                             | Status      | Date    |
+| ---------------------------------------- | --------------------------------- | ----------- | ------- |
+| [001](001-nextjs-app-router.md)          | Adopt Next.js 15 App Router       | ✅ Accepted | 2024-01 |
+| [002](002-prisma-orm.md)                 | Use Prisma as ORM                 | ✅ Accepted | 2024-01 |
+| [003](003-typescript-strict-mode.md)     | TypeScript Strict Mode            | ✅ Accepted | 2024-01 |
+| [004](004-divine-coding-patterns.md)     | Divine Agricultural Patterns      | ✅ Accepted | 2024-02 |
+| [005](005-multi-layer-caching.md)        | Multi-Layer Caching Strategy      | ✅ Accepted | 2024-03 |
+| [006](006-gpu-acceleration.md)           | GPU Acceleration for Images       | ✅ Accepted | 2024-04 |
+| [007](007-service-layer-architecture.md) | Service Layer Architecture        | ✅ Accepted | 2024-05 |
+| [008](008-nextauth-v5.md)                | NextAuth v5 for Authentication    | ✅ Accepted | 2024-06 |
 | [009](009-agricultural-consciousness.md) | Agricultural Consciousness System | ✅ Accepted | 2024-07 |
-| [010](010-monorepo-structure.md) | Single Repository Structure | ✅ Accepted | 2024-08 |
+| [010](010-monorepo-structure.md)         | Single Repository Structure       | ✅ Accepted | 2024-08 |
 
 ---
 
@@ -86,10 +86,12 @@ What is the change we're proposing/have made?
 **Description:** Brief description
 
 **Pros:**
+
 - Pro 1
 - Pro 2
 
 **Cons:**
+
 - Con 1
 - Con 2
 
@@ -100,9 +102,11 @@ What is the change we're proposing/have made?
 **Description:** Brief description
 
 **Pros:**
+
 - Pro 1
 
 **Cons:**
+
 - Con 1
 
 **Rejected because:** Reason
@@ -126,6 +130,7 @@ What is the change we're proposing/have made?
 ---
 
 **Status History:**
+
 - YYYY-MM-DD: Proposed by [Name]
 - YYYY-MM-DD: Accepted by [Team]
 ```
@@ -184,29 +189,34 @@ Proposed → Discussion → Accepted/Rejected
 ### Key Architectural Decisions
 
 **Frontend:**
+
 - Next.js 15 App Router (ADR-001)
 - React 19 with TypeScript (ADR-003)
 - Tailwind CSS for styling
 - Server Components by default
 
 **Backend:**
+
 - Next.js API Routes (ADR-001)
 - Prisma ORM (ADR-002)
 - PostgreSQL database
 - Service layer architecture (ADR-007)
 
 **Authentication:**
+
 - NextAuth v5 (ADR-008)
 - JWT tokens
 - Role-based access control
 
 **Performance:**
+
 - Multi-layer caching (ADR-005)
 - GPU acceleration (ADR-006)
 - CDN delivery
 - Image optimization
 
 **Development:**
+
 - TypeScript strict mode (ADR-003)
 - Divine coding patterns (ADR-004)
 - Agricultural consciousness (ADR-009)
@@ -219,20 +229,24 @@ Proposed → Discussion → Accepted/Rejected
 ### By Topic
 
 **Frontend Decisions:**
+
 - ADR-001: Next.js App Router
 - ADR-003: TypeScript Strict Mode
 - ADR-004: Divine Patterns
 
 **Backend Decisions:**
+
 - ADR-002: Prisma ORM
 - ADR-007: Service Layer
 - ADR-008: NextAuth v5
 
 **Performance Decisions:**
+
 - ADR-005: Multi-Layer Caching
 - ADR-006: GPU Acceleration
 
 **Philosophy Decisions:**
+
 - ADR-004: Divine Patterns
 - ADR-009: Agricultural Consciousness
 
@@ -246,8 +260,8 @@ Start with these ADRs to understand key decisions:
 
 1. **ADR-001:** Why Next.js App Router
 2. **ADR-003:** Why TypeScript Strict Mode
-4. **ADR-004:** Divine Coding Patterns (Important!)
-5. **ADR-007:** Service Layer Architecture
+3. **ADR-004:** Divine Coding Patterns (Important!)
+4. **ADR-007:** Service Layer Architecture
 
 ### For Specific Topics
 
@@ -303,6 +317,7 @@ Good ADRs should:
 **Superseded:** 0
 
 **Coverage:**
+
 - Architecture: 40%
 - Technology: 30%
 - Process: 20%

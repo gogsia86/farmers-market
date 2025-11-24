@@ -108,7 +108,7 @@ export default function SearchPage() {
       const filtered = MOCK_RESULTS.filter(
         (result) =>
           result.name.toLowerCase().includes(query.toLowerCase()) ||
-          result.description.toLowerCase().includes(query.toLowerCase())
+          result.description.toLowerCase().includes(query.toLowerCase()),
       );
       setResults(filtered);
     }
@@ -258,7 +258,7 @@ export default function SearchPage() {
                               <div className="flex items-center gap-2 mb-1">
                                 <span
                                   className={`px-2 py-0.5 rounded text-xs font-semibold ${getTypeBadgeColor(
-                                    result.type
+                                    result.type,
                                   )}`}
                                 >
                                   {result.type.charAt(0).toUpperCase() +

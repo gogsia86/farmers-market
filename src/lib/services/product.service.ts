@@ -30,7 +30,7 @@ export class ProductService {
    */
   static async createProduct(
     productData: CreateProductInput,
-    userId: string
+    userId: string,
   ): Promise<Product & { id: string }> {
     // Input validation
     if (!userId || typeof userId !== "string") {
@@ -67,7 +67,7 @@ export class ProductService {
     const validation = await ProductService.validateProduct(productData);
     if (!validation.isValid) {
       throw new Error(
-        `Validation failed: ${validation.errors.map((e) => e.message).join(", ")}`
+        `Validation failed: ${validation.errors.map((e) => e.message).join(", ")}`,
       );
     }
 
@@ -75,7 +75,7 @@ export class ProductService {
     const baseSlug = generateSlug(productData.name);
     const slug = await ProductService.generateUniqueSlug(
       baseSlug,
-      productData.farmId
+      productData.farmId,
     );
 
     // 4. Calculate derived values
@@ -84,7 +84,7 @@ export class ProductService {
     const isLowStock =
       availableQuantity <= productData.inventory.lowStockThreshold;
     const primaryPhotoUrl = productData.images.find(
-      (img) => img.isPrimary
+      (img) => img.isPrimary,
     )?.url;
 
     // 5. Create product
@@ -120,7 +120,7 @@ export class ProductService {
    */
   static async getProductById(
     productId: string,
-    includeFarm: boolean = true
+    includeFarm: boolean = true,
   ): Promise<Product | null> {
     const product = await database.product.findUnique({
       where: { id: productId },
@@ -147,7 +147,7 @@ export class ProductService {
    */
   static async getProductBySlug(
     farmSlug: string,
-    productSlug: string
+    productSlug: string,
   ): Promise<Product | null> {
     const product = await database.product.findFirst({
       where: {
@@ -177,7 +177,7 @@ export class ProductService {
    */
   static async listProducts(
     filters: ProductFilters = {},
-    options?: PaginationOptions
+    options?: PaginationOptions,
   ): Promise<PaginatedProducts> {
     const { page = 1, limit = 20 } = options || {};
     const skip = (page - 1) * limit;
@@ -326,7 +326,7 @@ export class ProductService {
   static async updateProduct(
     productId: string,
     updates: UpdateProductInput,
-    userId: string
+    userId: string,
   ): Promise<Product> {
     // 1. Get existing product with farm
     const existing = await database.product.findUnique({
@@ -447,7 +447,7 @@ export class ProductService {
   static async updateInventory(
     productId: string,
     quantity: number,
-    userId: string
+    userId: string,
   ): Promise<Product> {
     const product = await database.product.findUnique({
       where: { id: productId },
@@ -522,7 +522,7 @@ export class ProductService {
    */
   static async searchProducts(
     query: string,
-    limit: number = 20
+    limit: number = 20,
   ): Promise<Product[]> {
     const products = await database.product.findMany({
       where: {
@@ -556,7 +556,7 @@ export class ProductService {
   static async batchUpdateProducts(
     productIds: string[],
     updates: Partial<UpdateProductInput>,
-    userId: string
+    userId: string,
   ): Promise<BatchProductResult> {
     const result: BatchProductResult = {
       successful: [],
@@ -591,7 +591,7 @@ export class ProductService {
    * Build where clause for filtering products
    */
   private static buildWhereClause(
-    filters: ProductFilters
+    filters: ProductFilters,
   ): Record<string, unknown> {
     const where: Record<string, unknown> = {};
 
@@ -667,7 +667,7 @@ export class ProductService {
    */
   // @ts-ignore - Reserved for future use
   private static buildOrderByClause(
-    filters: ProductFilters
+    filters: ProductFilters,
   ): Record<string, unknown> {
     const orderBy: Record<string, unknown> = {};
 
@@ -703,7 +703,7 @@ export class ProductService {
    */
   private static async generateUniqueSlug(
     baseSlug: string,
-    farmId: string
+    farmId: string,
   ): Promise<string> {
     let slug = baseSlug;
     let counter = 1;
@@ -726,7 +726,7 @@ export class ProductService {
    * Validate product data
    */
   private static async validateProduct(
-    input: CreateProductInput | UpdateProductInput
+    input: CreateProductInput | UpdateProductInput,
   ): Promise<ProductValidation> {
     const errors: { field: string; message: string }[] = [];
 

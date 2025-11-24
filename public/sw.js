@@ -29,7 +29,7 @@ self.addEventListener("install", (event) => {
         console.log("[Service Worker] Precaching critical assets");
         return cache.addAll(PRECACHE_URLS);
       })
-      .then(() => self.skipWaiting())
+      .then(() => self.skipWaiting()),
   );
 });
 
@@ -53,10 +53,10 @@ self.addEventListener("activate", (event) => {
             .map((cacheName) => {
               console.log("[Service Worker] Deleting old cache:", cacheName);
               return caches.delete(cacheName);
-            })
+            }),
         );
       })
-      .then(() => self.clients.claim())
+      .then(() => self.clients.claim()),
   );
 });
 
@@ -96,10 +96,10 @@ self.addEventListener("fetch", (event) => {
               {
                 headers: { "Content-Type": "application/json" },
                 status: 503,
-              }
+              },
             );
           });
-        })
+        }),
     );
     return;
   }
@@ -123,7 +123,7 @@ self.addEventListener("fetch", (event) => {
             return response;
           });
         });
-      })
+      }),
     );
     return;
   }
@@ -150,7 +150,7 @@ self.addEventListener("fetch", (event) => {
             }
             return caches.match("/offline");
           });
-        })
+        }),
     );
     return;
   }
@@ -172,7 +172,7 @@ self.addEventListener("fetch", (event) => {
         }
         return response;
       });
-    })
+    }),
   );
 });
 
@@ -227,7 +227,7 @@ self.addEventListener("notificationclick", (event) => {
         if (clients.openWindow) {
           return clients.openWindow(urlToOpen);
         }
-      })
+      }),
   );
 });
 

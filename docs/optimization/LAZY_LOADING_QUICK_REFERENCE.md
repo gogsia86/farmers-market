@@ -86,9 +86,9 @@ try {
 ### Order Notifications
 
 ```typescript
-import { 
+import {
   sendOrderNotificationLazy,
-  sendOrderConfirmationLazy 
+  sendOrderConfirmationLazy
 } from "@/lib/email/email-service-lazy";
 
 // To farmer
@@ -120,7 +120,7 @@ await sendOrderConfirmationLazy(customerEmail, {
 ```typescript
 import { sendBatchEmailsLazy } from "@/lib/email/email-service-lazy";
 
-const emails = users.map(user => ({
+const emails = users.map((user) => ({
   to: user.email,
   subject: "Newsletter",
   html: generateNewsletterHTML(user),
@@ -128,7 +128,7 @@ const emails = users.map(user => ({
 }));
 
 const results = await sendBatchEmailsLazy(emails);
-console.log(`Sent ${results.filter(r => r).length} emails`);
+console.log(`Sent ${results.filter((r) => r).length} emails`);
 ```
 
 **Bundle Savings**: ~80 KB per route
@@ -172,7 +172,7 @@ const { result, durationMs, timestamp } = await traceWithTiming(
   { "farm.id": farmId },
   async () => {
     return await processHarvest(farmId);
-  }
+  },
 );
 
 console.log(`Operation completed in ${durationMs}ms`);
@@ -211,7 +211,7 @@ const result = await traceSeasonalOperation(
   "SPRING",
   async () => {
     return await plantCrops(farmId);
-  }
+  },
 );
 ```
 
@@ -327,10 +327,10 @@ import { processHeavyOperationLazy } from "@/lib/services/heavy-service-lazy";
 
 export async function POST(request: NextRequest) {
   const data = await request.json();
-  
+
   // Heavy service only loaded when needed
   const result = await processHeavyOperationLazy(data);
-  
+
   return NextResponse.json({ result });
 }
 ```
@@ -343,11 +343,11 @@ export async function POST(request: NextRequest) {
 export async function generatePDFLazy(data: any) {
   // jsPDF is ~200 KB - only load when generating PDF
   const { jsPDF } = await import("jspdf");
-  
+
   const doc = new jsPDF();
   doc.text("Hello world!", 10, 10);
   // ... PDF generation logic
-  
+
   return doc.output("blob");
 }
 ```
@@ -383,12 +383,14 @@ export async function middleware(request: NextRequest) {
 
   // API routes: load rate limiter
   if (pathname.startsWith("/api")) {
-    const { checkRateLimit } = await import("@/lib/middleware/rate-limiter-lazy");
+    const { checkRateLimit } = await import(
+      "@/lib/middleware/rate-limiter-lazy"
+    );
     const rateLimit = await checkRateLimit(request);
     if (!rateLimit.success) {
       return NextResponse.json(
         { error: "Rate limit exceeded" },
-        { status: 429 }
+        { status: 429 },
       );
     }
   }
@@ -411,7 +413,7 @@ export async function GET(request: NextRequest) {
   // Load admin auth only for this route
   const { requireAdminAuth } = await import("@/lib/auth/admin-auth-lazy");
   const auth = await requireAdminAuth(request);
-  
+
   if (!auth.success) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -519,6 +521,7 @@ await service.doSomething();
 ## ⚠️ When NOT to Use Lazy Loading
 
 ### Don't Lazy Load:
+
 1. **Critical path dependencies** - Needed on every request
 2. **Tiny modules** - <5 KB (overhead not worth it)
 3. **Database client** - Should be singleton
@@ -551,7 +554,7 @@ describe("Lazy Service", () => {
     const { processHeavyOperationLazy } = await import(
       "@/lib/services/heavy-service-lazy"
     );
-    
+
     const result = await processHeavyOperationLazy({ test: "data" });
     expect(result).toBeDefined();
   });
@@ -601,6 +604,7 @@ export async function GET(request: NextRequest) {
 ## 🎓 Best Practices Summary
 
 ### ✅ DO:
+
 - Use lazy loading for infrequently-used code (email, PDF, analytics)
 - Implement non-blocking error handling
 - Cache loaded modules when possible
@@ -608,6 +612,7 @@ export async function GET(request: NextRequest) {
 - Test lazy-loaded code thoroughly
 
 ### ❌ DON'T:
+
 - Lazy load critical path dependencies
 - Lazy load tiny modules (<5 KB)
 - Ignore first-call latency

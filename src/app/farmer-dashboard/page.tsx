@@ -220,7 +220,7 @@ export default function FarmerDashboardPage() {
                           </div>
                           <span
                             className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
-                              order.status
+                              order.status,
                             )}`}
                           >
                             {order.status.charAt(0).toUpperCase() +

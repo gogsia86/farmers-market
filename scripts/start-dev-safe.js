@@ -190,11 +190,14 @@ async function findAvailablePort() {
  */
 function startDevServer(port) {
   console.log(`╔════════════════════════════════════════════════════════════╗`);
-  console.log(`║  🚀 Starting Next.js Dev Server on port ${port}              ║`);
-  console.log(`╚════════════════════════════════════════════════════════════╝\n`);
+  console.log(
+    `║  🚀 Starting Next.js Dev Server on port ${port}              ║`,
+  );
+  console.log(
+    `╚════════════════════════════════════════════════════════════╝\n`,
+  );
 
-  const nodeOptions =
-    process.env.NODE_OPTIONS || "--max-old-space-size=16384";
+  const nodeOptions = process.env.NODE_OPTIONS || "--max-old-space-size=16384";
   const cmd = isWindows ? "npx.cmd" : "npx";
 
   const devServer = spawn(cmd, ["next", "dev", "-p", port.toString()], {

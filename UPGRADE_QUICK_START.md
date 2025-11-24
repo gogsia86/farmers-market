@@ -63,7 +63,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const isValid = await bcrypt.compare(
           credentials.password as string,
-          user.password
+          user.password,
         );
 
         if (!isValid) {
@@ -118,6 +118,7 @@ const session = await auth();
 ```
 
 **Files to Update** (Search & Replace):
+
 ```bash
 # Find all files using old pattern
 grep -r "getServerSession" src/
@@ -153,6 +154,7 @@ npm run build
 **Common Issues & Fixes:**
 
 1. **TypeScript Errors in Components**
+
 ```typescript
 // If you see FC errors, update to:
 import { ReactNode } from 'react';
@@ -167,6 +169,7 @@ export function Component({ children }: Props) {
 ```
 
 2. **Form Actions**
+
 ```typescript
 // React 19 has better form action support
 "use client";
@@ -175,7 +178,7 @@ import { useFormStatus } from "react-dom";
 
 export function SubmitButton() {
   const { pending } = useFormStatus();
-  
+
   return (
     <button type="submit" disabled={pending}>
       {pending ? "Submitting..." : "Submit"}
@@ -225,23 +228,23 @@ model NotificationPreferences {
   id                 String   @id @default(cuid())
   userId             String   @unique
   user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   emailOrders        Boolean  @default(true)
   emailReviews       Boolean  @default(true)
   emailPromotions    Boolean  @default(false)
   emailNewsletter    Boolean  @default(false)
-  
+
   inAppOrders        Boolean  @default(true)
   inAppReviews       Boolean  @default(true)
   inAppMessages      Boolean  @default(true)
-  
+
   pushOrders         Boolean  @default(true)
   pushReviews        Boolean  @default(true)
   pushPromotions     Boolean  @default(false)
-  
+
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
-  
+
   @@index([userId])
 }
 
@@ -265,22 +268,22 @@ model SupportTicket {
   ticketId       String         @unique
   userId         String
   user           User           @relation(fields: [userId], references: [id])
-  
+
   subject        String
   description    String         @db.Text
   category       String
   priority       TicketPriority @default(MEDIUM)
   status         TicketStatus   @default(OPEN)
-  
+
   assignedToId   String?
   assignedTo     User?          @relation("AssignedTickets", fields: [assignedToId], references: [id])
-  
+
   resolution     String?        @db.Text
   resolvedAt     DateTime?
-  
+
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
-  
+
   @@index([userId])
   @@index([status])
   @@index([assignedToId])
@@ -295,7 +298,7 @@ model DownloadLog {
   ipAddress  String?
   userAgent  String?
   createdAt  DateTime @default(now())
-  
+
   @@index([userId])
   @@index([resourceId])
   @@index([createdAt])
@@ -316,17 +319,17 @@ model AuditLog {
   id         String      @id @default(cuid())
   userId     String?
   user       User?       @relation(fields: [userId], references: [id])
-  
+
   action     AuditAction
   entityType String
   entityId   String
-  
+
   changes    Json?
   ipAddress  String?
   userAgent  String?
-  
+
   createdAt  DateTime    @default(now())
-  
+
   @@index([userId])
   @@index([entityType, entityId])
   @@index([createdAt])
@@ -362,7 +365,7 @@ export class GeocodingService {
     address: string,
     city: string,
     state: string,
-    zipCode: string
+    zipCode: string,
   ): Promise<GeocodeResult> {
     const fullAddress = `${address}, ${city}, ${state} ${zipCode}`;
 
@@ -472,7 +475,7 @@ const { latitude, longitude } = await GeocodingService.geocodeAddress(
   validatedData.address,
   validatedData.city,
   validatedData.state,
-  validatedData.zipCode
+  validatedData.zipCode,
 );
 
 // Use in farm creation:
@@ -495,7 +498,7 @@ const farm = await database.farm.create({
 
 ```yaml
 # docker-compose.yml
-version: '3.8'
+version: "3.8"
 
 services:
   postgres:
@@ -652,18 +655,20 @@ import { rateLimiters } from "@/lib/middleware/rate-limit";
 
 export async function POST(request: NextRequest) {
   const rateLimit = await rateLimiters.auth.check(request);
-  
+
   if (!rateLimit.success) {
     return NextResponse.json(
       { error: "Too many requests" },
-      { 
+      {
         status: 429,
         headers: {
-          'X-RateLimit-Limit': rateLimit.limit.toString(),
-          'X-RateLimit-Remaining': '0',
-          'Retry-After': Math.ceil((rateLimit.reset - Date.now()) / 1000).toString(),
-        }
-      }
+          "X-RateLimit-Limit": rateLimit.limit.toString(),
+          "X-RateLimit-Remaining": "0",
+          "Retry-After": Math.ceil(
+            (rateLimit.reset - Date.now()) / 1000,
+          ).toString(),
+        },
+      },
     );
   }
 

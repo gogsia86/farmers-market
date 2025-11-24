@@ -35,7 +35,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     it("should return shipping rates for valid destination", async () => {
       const rates = await ShippingService.calculateShippingRates(
         mockOrderId,
-        mockDestination
+        mockDestination,
       );
 
       expect(rates).toHaveLength(3);
@@ -44,14 +44,14 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
           expect.objectContaining({ service: "STANDARD" }),
           expect.objectContaining({ service: "EXPRESS" }),
           expect.objectContaining({ service: "OVERNIGHT" }),
-        ])
+        ]),
       );
     });
 
     it("should return STANDARD shipping option", async () => {
       const rates = await ShippingService.calculateShippingRates(
         mockOrderId,
-        mockDestination
+        mockDestination,
       );
 
       const standard = rates.find((r) => r.service === "STANDARD");
@@ -65,7 +65,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     it("should return EXPRESS shipping option", async () => {
       const rates = await ShippingService.calculateShippingRates(
         mockOrderId,
-        mockDestination
+        mockDestination,
       );
 
       const express = rates.find((r) => r.service === "EXPRESS");
@@ -79,7 +79,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     it("should return OVERNIGHT shipping option", async () => {
       const rates = await ShippingService.calculateShippingRates(
         mockOrderId,
-        mockDestination
+        mockDestination,
       );
 
       const overnight = rates.find((r) => r.service === "OVERNIGHT");
@@ -100,7 +100,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
       for (const dest of destinations) {
         const rates = await ShippingService.calculateShippingRates(
           mockOrderId,
-          dest
+          dest,
         );
         expect(rates).toHaveLength(3);
       }
@@ -116,7 +116,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
             city: "Test City",
             state,
             zipCode: "12345",
-          }
+          },
         );
         expect(rates).toHaveLength(3);
       }
@@ -132,7 +132,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
             city: "Test City",
             state: "CA",
             zipCode,
-          }
+          },
         );
         expect(rates).toHaveLength(3);
       }
@@ -141,7 +141,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     it("should return rates in order of cost (cheapest first)", async () => {
       const rates = await ShippingService.calculateShippingRates(
         mockOrderId,
-        mockDestination
+        mockDestination,
       );
 
       expect(rates[0].cost).toBeLessThan(rates[1].cost);
@@ -151,7 +151,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     it("should return rates in reverse order of speed", async () => {
       const rates = await ShippingService.calculateShippingRates(
         mockOrderId,
-        mockDestination
+        mockDestination,
       );
 
       expect(rates[0].estimatedDays).toBeGreaterThan(rates[1].estimatedDays);
@@ -161,7 +161,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     it("should have consistent rate structure", async () => {
       const rates = await ShippingService.calculateShippingRates(
         mockOrderId,
-        mockDestination
+        mockDestination,
       );
 
       rates.forEach((rate) => {
@@ -177,7 +177,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     it("should return positive costs", async () => {
       const rates = await ShippingService.calculateShippingRates(
         mockOrderId,
-        mockDestination
+        mockDestination,
       );
 
       rates.forEach((rate) => {
@@ -188,7 +188,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     it("should return positive estimated days", async () => {
       const rates = await ShippingService.calculateShippingRates(
         mockOrderId,
-        mockDestination
+        mockDestination,
       );
 
       rates.forEach((rate) => {
@@ -203,7 +203,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
 
       const result = await ShippingService.createShippingLabel(
         mockOrderId,
-        "STANDARD"
+        "STANDARD",
       );
 
       expect(result).toHaveProperty("labelId");
@@ -241,7 +241,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
 
       const result1 = await ShippingService.createShippingLabel(
         "order-1",
-        "STANDARD"
+        "STANDARD",
       );
 
       // Small delay to ensure different timestamp
@@ -249,7 +249,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
 
       const result2 = await ShippingService.createShippingLabel(
         "order-2",
-        "STANDARD"
+        "STANDARD",
       );
 
       expect(result1.trackingNumber).not.toBe(result2.trackingNumber);
@@ -260,7 +260,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
 
       const result1 = await ShippingService.createShippingLabel(
         "order-1",
-        "STANDARD"
+        "STANDARD",
       );
 
       // Small delay to ensure different timestamp
@@ -268,7 +268,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
 
       const result2 = await ShippingService.createShippingLabel(
         "order-2",
-        "STANDARD"
+        "STANDARD",
       );
 
       expect(result1.labelId).not.toBe(result2.labelId);
@@ -279,7 +279,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
 
       const result = await ShippingService.createShippingLabel(
         mockOrderId,
-        "STANDARD"
+        "STANDARD",
       );
 
       expect(result).toBeDefined();
@@ -291,7 +291,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
 
       const result = await ShippingService.createShippingLabel(
         mockOrderId,
-        "EXPRESS"
+        "EXPRESS",
       );
 
       expect(result).toBeDefined();
@@ -303,7 +303,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
 
       const result = await ShippingService.createShippingLabel(
         mockOrderId,
-        "OVERNIGHT"
+        "OVERNIGHT",
       );
 
       expect(result).toBeDefined();
@@ -311,12 +311,12 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     });
 
     it("should propagate database errors", async () => {
-      jest.mocked(database.order.update).mockRejectedValue(
-        new Error("Database error")
-      );
+      jest
+        .mocked(database.order.update)
+        .mockRejectedValue(new Error("Database error"));
 
       await expect(
-        ShippingService.createShippingLabel(mockOrderId, "STANDARD")
+        ShippingService.createShippingLabel(mockOrderId, "STANDARD"),
       ).rejects.toThrow("Database error");
     });
   });
@@ -383,12 +383,12 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     });
 
     it("should handle database errors", async () => {
-      jest.mocked(database.order.findFirst).mockRejectedValue(
-        new Error("Database error")
-      );
+      jest
+        .mocked(database.order.findFirst)
+        .mockRejectedValue(new Error("Database error"));
 
       await expect(
-        ShippingService.getTrackingInfo(mockTrackingNumber)
+        ShippingService.getTrackingInfo(mockTrackingNumber),
       ).rejects.toThrow("Database error");
     });
 
@@ -463,12 +463,12 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
     });
 
     it("should propagate database errors", async () => {
-      jest.mocked(database.order.update).mockRejectedValue(
-        new Error("Update failed")
-      );
+      jest
+        .mocked(database.order.update)
+        .mockRejectedValue(new Error("Update failed"));
 
       await expect(
-        ShippingService.updateShippingStatus(mockOrderId, "SHIPPED")
+        ShippingService.updateShippingStatus(mockOrderId, "SHIPPED"),
       ).rejects.toThrow("Update failed");
     });
 
@@ -499,14 +499,14 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
       // Step 1: Calculate rates
       const rates = await ShippingService.calculateShippingRates(
         mockOrderId,
-        mockDestination
+        mockDestination,
       );
       expect(rates).toHaveLength(3);
 
       // Step 2: Create label
       const label = await ShippingService.createShippingLabel(
         mockOrderId,
-        "EXPRESS"
+        "EXPRESS",
       );
       expect(label.trackingNumber).toBeDefined();
 
@@ -515,7 +515,7 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
 
       // Step 4: Get tracking
       const tracking = await ShippingService.getTrackingInfo(
-        label.trackingNumber
+        label.trackingNumber,
       );
       expect(tracking).toBeDefined();
     });
@@ -526,11 +526,10 @@ describe("🚚 Shipping Service - Divine Shipping Operations", () => {
       for (const orderId of orderIds) {
         const rates = await ShippingService.calculateShippingRates(
           orderId,
-          mockDestination
+          mockDestination,
         );
         expect(rates).toHaveLength(3);
       }
     });
   });
 });
-

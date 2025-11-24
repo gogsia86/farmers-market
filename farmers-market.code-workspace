@@ -162,7 +162,7 @@
       "farmersmarket",
       "NEXTAUTH",
       "Nsight",
-      "NSIGHT"
+      "NSIGHT",
     ],
     "[markdown]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode",

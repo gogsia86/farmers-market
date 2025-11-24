@@ -1,14 +1,14 @@
 import { requireAdmin } from "@/lib/auth";
 import {
-    ArrowRightStartOnRectangleIcon,
-    BanknotesIcon,
-    Bars3Icon,
-    BellIcon,
-    BuildingStorefrontIcon,
-    ChartBarIcon,
-    CogIcon,
-    ShoppingBagIcon,
-    UserGroupIcon,
+  ArrowRightStartOnRectangleIcon,
+  BanknotesIcon,
+  Bars3Icon,
+  BellIcon,
+  BuildingStorefrontIcon,
+  ChartBarIcon,
+  CogIcon,
+  ShoppingBagIcon,
+  UserGroupIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
@@ -39,10 +39,26 @@ export default async function AdminLayout({
   const navigation = [
     { name: "Dashboard", href: "/admin", iconName: "ChartBarIcon" as const },
     { name: "Users", href: "/admin/users", iconName: "UserGroupIcon" as const },
-    { name: "Farms", href: "/admin/farms", iconName: "BuildingStorefrontIcon" as const },
-    { name: "Products", href: "/admin/products", iconName: "ShoppingBagIcon" as const },
-    { name: "Orders", href: "/admin/orders", iconName: "ShoppingBagIcon" as const },
-    { name: "Financial", href: "/admin/financial", iconName: "BanknotesIcon" as const },
+    {
+      name: "Farms",
+      href: "/admin/farms",
+      iconName: "BuildingStorefrontIcon" as const,
+    },
+    {
+      name: "Products",
+      href: "/admin/products",
+      iconName: "ShoppingBagIcon" as const,
+    },
+    {
+      name: "Orders",
+      href: "/admin/orders",
+      iconName: "ShoppingBagIcon" as const,
+    },
+    {
+      name: "Financial",
+      href: "/admin/financial",
+      iconName: "BanknotesIcon" as const,
+    },
     { name: "Settings", href: "/admin/settings", iconName: "CogIcon" as const },
   ];
 

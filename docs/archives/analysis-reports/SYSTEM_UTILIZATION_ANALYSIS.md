@@ -116,11 +116,11 @@ export class GPUImageProcessor {
 
   async optimizeProductImages(
     productId: string,
-    images: string[]
+    images: string[],
   ): Promise<void> {
     // Parallel processing on GPU
     const buffers = await Promise.all(
-      images.map((url) => this.downloadImage(url))
+      images.map((url) => this.downloadImage(url)),
     );
 
     const processed = await this.processBatchImages(buffers);
@@ -132,8 +132,8 @@ export class GPUImageProcessor {
           sharp(buffer).resize(400, 400).webp().toFile(`thumb-${i}.webp`),
           sharp(buffer).resize(800, 800).webp().toFile(`medium-${i}.webp`),
           sharp(buffer).resize(1600, 1600).webp().toFile(`large-${i}.webp`),
-        ])
-      )
+        ]),
+      ),
     );
   }
 }
@@ -158,7 +158,7 @@ export class GPURecommendationEngine {
 
   async generateRecommendations(
     userId: string,
-    farmId: string
+    farmId: string,
   ): Promise<string[]> {
     if (!this.model) await this.initialize();
 
@@ -185,7 +185,7 @@ export class GPUSearchIndexer {
   async indexProducts(products: Product[]): Promise<void> {
     // Use GPU for parallel text vectorization
     const vectors = await this.vectorizeTexts(
-      products.map((p) => `${p.name} ${p.description}`)
+      products.map((p) => `${p.name} ${p.description}`),
     );
 
     // Store in optimized search index

@@ -122,10 +122,10 @@ export function getPerformanceStats(windowMs: number = 60000) {
 
   // Filter metrics within window
   const recentRequests = metrics.requests.filter(
-    (m) => m.timestamp > windowStart
+    (m) => m.timestamp > windowStart,
   );
   const recentDbQueries = metrics.database.filter(
-    (m) => m.timestamp > windowStart
+    (m) => m.timestamp > windowStart,
   );
   const recentMemory = metrics.memory.filter((m) => m.timestamp > windowStart);
 
@@ -135,15 +135,15 @@ export function getPerformanceStats(windowMs: number = 60000) {
     avgDuration: average(recentRequests.map((r) => r.duration)),
     p50Duration: percentile(
       recentRequests.map((r) => r.duration),
-      50
+      50,
     ),
     p95Duration: percentile(
       recentRequests.map((r) => r.duration),
-      95
+      95,
     ),
     p99Duration: percentile(
       recentRequests.map((r) => r.duration),
-      99
+      99,
     ),
     successRate:
       (recentRequests.filter((r) => r.statusCode < 400).length /
@@ -161,7 +161,7 @@ export function getPerformanceStats(windowMs: number = 60000) {
     avgDuration: average(recentDbQueries.map((q) => q.duration)),
     p95Duration: percentile(
       recentDbQueries.map((q) => q.duration),
-      95
+      95,
     ),
     successRate:
       (recentDbQueries.filter((q) => q.success).length /
@@ -210,7 +210,7 @@ export function getSlowestEndpoints(limit: number = 10) {
       avgDuration: average(durations),
       p95Duration: percentile(durations, 95),
       count: durations.length,
-    })
+    }),
   );
 
   return endpointStats

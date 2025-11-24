@@ -73,14 +73,14 @@ npx lint-staged
 **Priority 1 (Production-Critical)**:
 ✅ Fixed 3 files in ~1.5 hours  
 ✅ Added 5 missing required fields to `CreateFarmRequest`  
-✅ Fixed OpenTelemetry Resource API (v2.x)  
+✅ Fixed OpenTelemetry Resource API (v2.x)
 
 **Priority 2 (Infrastructure)**:
 ✅ Fixed 5 files in ~4 hours  
 ✅ Installed @types/ioredis for Redis types  
 ✅ Complete cache service rewrite with singleton pattern  
 ✅ Fixed NextRequest IP extraction (no .ip property)  
-✅ Fixed WebSocket types (ws v8 with RawData)  
+✅ Fixed WebSocket types (ws v8 with RawData)
 
 **Combined**: 8 files, ~5.5 hours, 0 breaking changes!
 
@@ -111,11 +111,13 @@ Overall:    ████████████████████ 100%* (
 ## 💡 Quick Tips
 
 **Before Committing:**
+
 1. Run `npx tsc --noEmit` ← Catches errors
 2. Run `npm test` ← Ensures no regressions
 3. Pre-commit hooks will auto-run ← Trust them!
 
 **Remaining `@ts-nocheck` Files (8 total - All Dev-Only)**:
+
 - ✅ `prisma/seed*.ts` (4 files) - Dev-only scripts
 - ✅ `src/lib/gpu/*.ts` (3 files) - Optional GPU features
 - ✅ `src/lib/ml/*.ts` (1 file) - Optional ML features

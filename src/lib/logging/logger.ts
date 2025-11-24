@@ -25,13 +25,13 @@ export interface LogEntry {
 export class StructuredLogger {
   constructor(
     private service: string,
-    private environment: string = process.env.NODE_ENV || "development"
+    private environment: string = process.env.NODE_ENV || "development",
   ) {}
 
   debug(
     message: string,
     context: LogContext = {},
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): void {
     this.log("DEBUG", message, context, metadata);
   }
@@ -39,7 +39,7 @@ export class StructuredLogger {
   info(
     message: string,
     context: LogContext = {},
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): void {
     this.log("INFO", message, context, metadata);
   }
@@ -47,7 +47,7 @@ export class StructuredLogger {
   warn(
     message: string,
     context: LogContext = {},
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): void {
     this.log("WARN", message, context, metadata);
   }
@@ -56,7 +56,7 @@ export class StructuredLogger {
     message: string,
     error?: Error,
     context: LogContext = {},
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): void {
     this.log(
       "ERROR",
@@ -72,7 +72,7 @@ export class StructuredLogger {
             }
           : undefined,
       },
-      error?.stack
+      error?.stack,
     );
   }
 
@@ -80,7 +80,7 @@ export class StructuredLogger {
     message: string,
     error?: Error,
     context: LogContext = {},
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): void {
     this.log(
       "FATAL",
@@ -96,7 +96,7 @@ export class StructuredLogger {
             }
           : undefined,
       },
-      error?.stack
+      error?.stack,
     );
   }
 
@@ -107,7 +107,7 @@ export class StructuredLogger {
   async measurePerformance<T>(
     operation: string,
     fn: () => Promise<T>,
-    context: LogContext = {}
+    context: LogContext = {},
   ): Promise<T> {
     const startTime = Date.now();
     const operationContext = { ...context, operation };
@@ -145,7 +145,7 @@ export class StructuredLogger {
     entity: string,
     entityId: string,
     context: LogContext = {},
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): void {
     this.info(
       `Business Event: ${event}`,
@@ -155,7 +155,7 @@ export class StructuredLogger {
         entity,
         entityId,
       },
-      metadata
+      metadata,
     );
   }
 
@@ -167,7 +167,7 @@ export class StructuredLogger {
     event: string,
     severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL",
     context: LogContext = {},
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): void {
     this.warn(
       `Security Event: ${event}`,
@@ -176,7 +176,7 @@ export class StructuredLogger {
         eventType: "SECURITY",
         severity,
       },
-      metadata
+      metadata,
     );
   }
 
@@ -185,7 +185,7 @@ export class StructuredLogger {
     message: string,
     context: LogContext,
     metadata?: Record<string, any>,
-    stack?: string
+    stack?: string,
   ): void {
     const entry: LogEntry = {
       level,
@@ -205,8 +205,8 @@ export class StructuredLogger {
       JSON.stringify(
         entry,
         null,
-        this.environment === "development" ? 2 : undefined
-      )
+        this.environment === "development" ? 2 : undefined,
+      ),
     );
   }
 
@@ -225,7 +225,7 @@ export class StructuredLogger {
         message,
         { ...additionalContext, ...context },
         metadata,
-        stack
+        stack,
       );
     };
 
@@ -249,7 +249,7 @@ export class LoggerFactory {
 
   static createRequestLogger(
     requestId: string,
-    userId?: string
+    userId?: string,
   ): StructuredLogger {
     const baseLogger = this.getLogger("REQUEST");
     return baseLogger.child({ requestId, userId });

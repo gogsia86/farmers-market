@@ -1,4 +1,5 @@
 # 🚀 QUICK REFERENCE CARD
+
 **Farmers Market Platform - Immediate Commands & Status**
 
 ---
@@ -18,6 +19,7 @@
 ## ⚡ INSTANT COMMANDS
 
 ### Run Tests
+
 ```bash
 # Unit & Integration (414 tests)
 npm test
@@ -30,6 +32,7 @@ node scripts/verify-env.js
 ```
 
 ### Development
+
 ```bash
 # Start dev server
 npm run dev
@@ -45,6 +48,7 @@ npm run lint
 ```
 
 ### Database
+
 ```bash
 # Generate Prisma Client
 npx prisma generate
@@ -61,6 +65,7 @@ npx prisma studio
 ## 🚨 CRITICAL BLOCKER
 
 **Homepage 500 Error**
+
 - **File:** `src/app/page.tsx`
 - **Impact:** E2E tests blocked
 - **Fix Time:** 2-4 hours
@@ -70,13 +75,13 @@ npx prisma studio
 
 ## 📋 KEY FILES
 
-| File | Purpose | Lines |
-|------|---------|-------|
-| `.github/workflows/ci-cd-pipeline.yml` | CI/CD automation | 438 |
-| `DEPLOYMENT_CHECKLIST.md` | Deploy guide | 611 |
-| `E2E_AND_CICD_STATUS_REPORT.md` | Full status | 687 |
-| `scripts/verify-env.js` | Env checker | 293 |
-| `MISSION_COMPLETE_REPORT.md` | Summary | 828 |
+| File                                   | Purpose          | Lines |
+| -------------------------------------- | ---------------- | ----- |
+| `.github/workflows/ci-cd-pipeline.yml` | CI/CD automation | 438   |
+| `DEPLOYMENT_CHECKLIST.md`              | Deploy guide     | 611   |
+| `E2E_AND_CICD_STATUS_REPORT.md`        | Full status      | 687   |
+| `scripts/verify-env.js`                | Env checker      | 293   |
+| `MISSION_COMPLETE_REPORT.md`           | Summary          | 828   |
 
 ---
 
@@ -140,16 +145,19 @@ SENTRY_DSN, SENTRY_AUTH_TOKEN, SLACK_WEBHOOK
 ## 🆘 TROUBLESHOOTING
 
 **Tests failing?**
+
 ```bash
 npm test -- --verbose
 ```
 
 **Build errors?**
+
 ```bash
 npm run build 2>&1 | grep "error TS"
 ```
 
 **E2E blocked?**
+
 ```bash
 # Check homepage
 curl http://localhost:3001
@@ -158,6 +166,7 @@ npm run dev 2>&1 | grep "Error"
 ```
 
 **Env issues?**
+
 ```bash
 node scripts/verify-env.js
 ```

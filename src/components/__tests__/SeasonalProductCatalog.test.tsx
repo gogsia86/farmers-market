@@ -3,11 +3,11 @@
  * Tests the manifestation and consciousness of seasonal agricultural products
  */
 
-import React from 'react';
+import React from "react";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { SeasonalProductCatalog } from '../SeasonalProductCatalog';
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { SeasonalProductCatalog } from "../SeasonalProductCatalog";
 
 // Mock the database module
 jest.mock("@/lib/database", () => ({
@@ -47,13 +47,13 @@ describe("SeasonalProductCatalog", () => {
 
       // Act
       render(
-        <SeasonalProductCatalog products={mockProducts} season="SPRING" />
+        <SeasonalProductCatalog products={mockProducts} season="SPRING" />,
       );
 
       // Assert - Spring products should be visible
       await waitFor(() => {
         expect(
-          screen.getByText(/organic spring tomatoes/i)
+          screen.getByText(/organic spring tomatoes/i),
         ).toBeInTheDocument();
       });
     });
@@ -81,7 +81,7 @@ describe("SeasonalProductCatalog", () => {
 
       // Act
       render(
-        <SeasonalProductCatalog products={mockProducts} season="SPRING" />
+        <SeasonalProductCatalog products={mockProducts} season="SPRING" />,
       );
 
       // Assert - Only spring products should be visible
@@ -125,7 +125,7 @@ describe("SeasonalProductCatalog", () => {
           products={mockProducts}
           season="SPRING"
           onProductClick={mockOnProductClick}
-        />
+        />,
       );
 
       const productCard = screen.getByText(/quantum carrots/i);
@@ -157,7 +157,7 @@ describe("SeasonalProductCatalog", () => {
           products={mockProducts}
           season="SUMMER"
           onAddToCart={mockOnAddToCart}
-        />
+        />,
       );
 
       const addButton = screen.getByRole("button", { name: /add to cart/i });
@@ -186,7 +186,7 @@ describe("SeasonalProductCatalog", () => {
 
       // Act
       render(
-        <SeasonalProductCatalog products={mockProducts} season="SPRING" />
+        <SeasonalProductCatalog products={mockProducts} season="SPRING" />,
       );
 
       // Assert - Biodynamic badge should be visible
@@ -213,7 +213,7 @@ describe("SeasonalProductCatalog", () => {
 
       // Act
       render(
-        <SeasonalProductCatalog products={mockProducts} season="SPRING" />
+        <SeasonalProductCatalog products={mockProducts} season="SPRING" />,
       );
 
       // Assert - Harvest date should be displayed
@@ -239,7 +239,7 @@ describe("SeasonalProductCatalog", () => {
 
       // Act
       render(
-        <SeasonalProductCatalog products={largeProductList} season="SPRING" />
+        <SeasonalProductCatalog products={largeProductList} season="SPRING" />,
       );
 
       const renderTime = performance.now() - startTime;
@@ -265,12 +265,12 @@ describe("SeasonalProductCatalog", () => {
           products={manyProducts}
           season="SPRING"
           virtualized
-        />
+        />,
       );
 
       // Assert - Should only render visible items initially
       const renderedItems = container.querySelectorAll(
-        '[data-testid^="product-"]'
+        '[data-testid^="product-"]',
       );
       expect(renderedItems.length).toBeLessThan(50); // Should virtualize
     });

@@ -43,7 +43,7 @@ interface PageProps {
 }
 
 // Force dynamic rendering - don't try to pre-generate all possible slugs
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 export const dynamicParams = true;
 
 // This would normally fetch from API
@@ -645,7 +645,7 @@ export default async function FarmDetailPage({ params }: PageProps) {
   }
 
   const categories = Array.from(
-    new Set(farm.products.map((p: any) => p.category))
+    new Set(farm.products.map((p: any) => p.category)),
   );
 
   return (

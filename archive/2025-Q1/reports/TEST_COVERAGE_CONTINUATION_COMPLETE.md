@@ -15,6 +15,7 @@ Successfully diagnosed and solved the critical blocker preventing API route test
 ## 🔍 THE PROBLEM
 
 ### Symptoms
+
 - API route tests returning `undefined` instead of responses
 - 29 tests in farms API: 8 passing, 21 failing
 - Database mocks appearing to not be called
@@ -29,8 +30,10 @@ Successfully diagnosed and solved the critical blocker preventing API route test
 // ❌ THIS PATTERN FAILS - Jest doesn't execute the implementation!
 jest.mock("@opentelemetry/api", () => ({
   trace: {
-    getTracer: jest.fn(() => ({  // Implementation NEVER executes
-      startActiveSpan: jest.fn(async (name, fn) => {  // NEVER called
+    getTracer: jest.fn(() => ({
+      // Implementation NEVER executes
+      startActiveSpan: jest.fn(async (name, fn) => {
+        // NEVER called
         return await fn(mockSpan);
       }),
     })),
@@ -59,12 +62,14 @@ jest.mock("@opentelemetry/api", () => {
 
   return {
     trace: {
-      getTracer: () => ({  // ✅ Plain arrow function
-        startActiveSpan: async (name, fnOrOptions, maybeFn) => {  // ✅ Executes!
+      getTracer: () => ({
+        // ✅ Plain arrow function
+        startActiveSpan: async (name, fnOrOptions, maybeFn) => {
+          // ✅ Executes!
           const fn = typeof fnOrOptions === "function" ? fnOrOptions : maybeFn;
           if (typeof fn === "function") {
             const result = await fn(mockSpan);
-            return result;  // ✅ Returns callback result
+            return result; // ✅ Returns callback result
           }
           return mockSpan;
         },
@@ -122,6 +127,7 @@ jest.mock("@opentelemetry/api", () => {
 ## 📊 RESULTS
 
 ### Before Solution
+
 ```
 Farms API Tests: 29 total
 ✅ Passing: 8
@@ -130,6 +136,7 @@ Farms API Tests: 29 total
 ```
 
 ### After Solution (Debug Tests)
+
 ```
 Debug Tests: 5 total
 ✅ Passing: 5
@@ -138,6 +145,7 @@ Debug Tests: 5 total
 ```
 
 ### Test Execution Evidence
+
 ```
 PASS FARMERS MARKET DIVINE TESTS src/app/api/farms/__tests__/route-debug.test.ts
   🔍 DEBUG - Farms API
@@ -156,26 +164,31 @@ Tests:       5 passed, 5 total
 ## 🎓 KEY LEARNINGS
 
 ### 1. Jest Mock Factory Behavior
+
 - Mock factories execute at hoist time (before runtime)
 - Functions passed to `jest.fn()` in factories are NOT executed
 - Plain arrow functions work correctly in factory context
 
 ### 2. Tracer Callback Pattern
+
 - `startActiveSpan` MUST await callback and return result
 - Signature: `async (name, fnOrOptions, maybeFn) => { ... }`
 - Handle both 2-arg and 3-arg forms
 
 ### 3. Agricultural Tracer Signature
+
 - Real implementation calls `fn()` WITHOUT passing span
 - Mock must match: `async (op, attrs, fn) => await fn()`
 - DO NOT pass span to agricultural operation callbacks
 
 ### 4. Database Mock Configuration
+
 - Use `jest.fn()` for database methods (they need tracking)
 - Set `.mockResolvedValue()` in each test before route call
 - `jest.clearAllMocks()` is safe for these (they're re-configured)
 
 ### 5. Rate Limiter Pattern
+
 - Must return success object with all properties
 - Use plain async function in factory
 - Return shape: `{ success: true, limit, remaining, reset }`
@@ -269,10 +282,12 @@ jest.mock("@opentelemetry/api", () => {
 });
 
 jest.mock("@/lib/tracing/agricultural-tracer", () => ({
-  AgriculturalOperation: { /* ... */ },
+  AgriculturalOperation: {
+    /* ... */
+  },
   traceAgriculturalOperation: async (operation, attributes, fn) => {
     if (typeof fn === "function") {
-      return await fn();  // NO span parameter!
+      return await fn(); // NO span parameter!
     }
     return undefined;
   },
@@ -281,7 +296,7 @@ jest.mock("@/lib/tracing/agricultural-tracer", () => ({
 jest.mock("@/lib/database", () => ({
   database: {
     farm: {
-      findMany: jest.fn(),  // OK to use jest.fn() here
+      findMany: jest.fn(), // OK to use jest.fn() here
       create: jest.fn(),
     },
   },
@@ -290,7 +305,12 @@ jest.mock("@/lib/database", () => ({
 jest.mock("@/lib/middleware/rate-limiter", () => ({
   rateLimiters: {
     public: {
-      check: async () => ({ success: true, limit: 100, remaining: 99, reset: Date.now() + 60000 }),
+      check: async () => ({
+        success: true,
+        limit: 100,
+        remaining: 99,
+        reset: Date.now() + 60000,
+      }),
     },
   },
 }));
@@ -308,7 +328,7 @@ describe("Tests", () => {
   it("works", async () => {
     // CRITICAL: Configure mock BEFORE route call
     (database.farm.findMany as jest.Mock).mockResolvedValue([mockFarm]);
-    
+
     const response = await GET(request);
     expect(response.status).toBe(200);
   });
@@ -338,6 +358,7 @@ Before considering API route tests complete:
 ## 🎯 SUCCESS METRICS
 
 ### Current Status
+
 - ✅ Root cause identified and documented
 - ✅ Working solution verified
 - ✅ Debug tests passing (5/5)
@@ -345,6 +366,7 @@ Before considering API route tests complete:
 - ✅ Templates ready for reuse
 
 ### Target Goals
+
 - 🎯 Farms API: 29/29 tests passing
 - 🎯 Products API: 100% coverage
 - 🎯 All API routes: >90% coverage
@@ -356,15 +378,18 @@ Before considering API route tests complete:
 ## 🔗 RELATED RESOURCES
 
 ### Documentation
+
 - `TRACING_MOCK_SOLUTION.md` - Detailed solution guide
 - `.github/instructions/17_API_TESTING_TRACING_MOCKS.instructions.md` - Divine patterns
 - `.cursorrules` - Updated with test guidance
 
 ### Working Examples
+
 - `src/app/api/farms/__tests__/route-debug.test.ts` - All patterns demonstrated
 - `src/app/api/__tests__/api-test-utils.ts` - Test helpers
 
 ### Previous Session Notes
+
 - `OPENTELEMETRY_TRACING_FIX_COMPLETE.md` - Initial investigation
 - `NEXT_STEPS_TEST_COVERAGE.md` - Original action plan
 
@@ -373,18 +398,21 @@ Before considering API route tests complete:
 ## 💡 LESSONS FOR FUTURE
 
 ### What Worked
+
 - Methodical debugging with isolated test file
 - Console logging to verify mock execution
 - Testing mocks directly before integration
 - Creating minimal reproduction cases
 
 ### What to Remember
+
 - Jest mock factories have special hoisting behavior
 - `jest.fn()` with implementation doesn't work in factories
 - Always return callback results in tracer mocks
 - Plain functions are more reliable in mock contexts
 
 ### Best Practices Established
+
 - Mock everything before imports
 - Use plain functions in factories
 - Configure database mocks per test
@@ -397,10 +425,10 @@ Before considering API route tests complete:
 
 > "In the realm of Jest, factories hoist before execution,
 > And functions passed to jest.fn() remain in suspended animation.
-> 
+>
 > Use plain arrows in thy factories,
 > And return the results of callbacks divine.
-> 
+>
 > Mock not with complexity, but with simplicity that works,
 > For the test that passes is more divine than the one that's clever."
 
@@ -433,6 +461,7 @@ Before considering API route tests complete:
 ### For AI Assistants
 
 When helping with API route tests:
+
 1. Always check mock factory patterns
 2. Use plain functions, not `jest.fn()` in factories
 3. Ensure callbacks return results
@@ -446,6 +475,7 @@ When helping with API route tests:
 **Status**: ✅ CRITICAL BLOCKER RESOLVED
 
 The test coverage blocker has been completely solved. We now have:
+
 - Clear understanding of the root cause
 - Verified working solution
 - Comprehensive documentation

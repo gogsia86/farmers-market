@@ -17,7 +17,7 @@ interface CustomRenderOptions extends Omit<RenderOptions, "wrapper"> {
 
 export function render(
   ui: React.ReactElement,
-  { theme = "light", ...options }: CustomRenderOptions = {}
+  { theme = "light", ...options }: CustomRenderOptions = {},
 ) {
   function Wrapper({ children }: { children: React.ReactNode }) {
     return (

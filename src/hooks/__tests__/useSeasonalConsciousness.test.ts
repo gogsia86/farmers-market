@@ -3,7 +3,7 @@
  * Validates seasonal awareness and biodynamic patterns
  */
 
-import React from 'react';
+import React from "react";
 import { renderHook } from "@testing-library/react";
 import {
   useSeasonalConsciousness,

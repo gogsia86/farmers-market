@@ -155,7 +155,7 @@ describe("Farm Service - CRUD Operations", () => {
         createFarmService({
           userId: "invalid-user",
           farmData: createInput as any,
-        })
+        }),
       ).rejects.toThrow();
     });
 
@@ -183,7 +183,7 @@ describe("Farm Service - CRUD Operations", () => {
       expect(result).toBeDefined();
       expect(result?.id).toBe(mockFarmId);
       expect(jest.mocked(AgriculturalCache.getFarm)).toHaveBeenCalledWith(
-        mockFarmId
+        mockFarmId,
       );
       expect(database.farm.findUnique).not.toHaveBeenCalled();
     });
@@ -271,7 +271,7 @@ describe("Farm Service - CRUD Operations", () => {
           farmId: "non-existent",
           userId: mockUserId,
           updateData,
-        })
+        }),
       ).rejects.toThrow("Farm not found");
     });
 
@@ -283,7 +283,7 @@ describe("Farm Service - CRUD Operations", () => {
           farmId: mockFarmId,
           userId: "different-user-id",
           updateData,
-        })
+        }),
       ).rejects.toThrow("Unauthorized: You don't own this farm");
     });
 
@@ -318,7 +318,7 @@ describe("Farm Service - CRUD Operations", () => {
       });
 
       expect(
-        jest.mocked(AgriculturalCache.invalidateFarm)
+        jest.mocked(AgriculturalCache.invalidateFarm),
       ).toHaveBeenCalledWith(mockFarmId);
     });
   });
@@ -345,7 +345,7 @@ describe("Farm Service - CRUD Operations", () => {
       jest.mocked(database.farm.findUnique).mockResolvedValue(null);
 
       await expect(
-        deleteFarmService({ farmId: "non-existent", userId: mockUserId })
+        deleteFarmService({ farmId: "non-existent", userId: mockUserId }),
       ).rejects.toThrow("Farm not found");
     });
 
@@ -353,7 +353,7 @@ describe("Farm Service - CRUD Operations", () => {
       jest.mocked(database.farm.findUnique).mockResolvedValue(mockFarm as any);
 
       await expect(
-        deleteFarmService({ farmId: mockFarmId, userId: "different-user-id" })
+        deleteFarmService({ farmId: mockFarmId, userId: "different-user-id" }),
       ).rejects.toThrow("Unauthorized: You don't own this farm");
     });
 
@@ -367,7 +367,7 @@ describe("Farm Service - CRUD Operations", () => {
       await deleteFarmService({ farmId: mockFarmId, userId: mockUserId });
 
       expect(
-        jest.mocked(AgriculturalCache.invalidateFarm)
+        jest.mocked(AgriculturalCache.invalidateFarm),
       ).toHaveBeenCalledWith(mockFarmId);
     });
   });
@@ -425,7 +425,7 @@ describe("Farm Service - CRUD Operations", () => {
         expect.objectContaining({
           take: 10,
           skip: 10, // page 2, skip first 10
-        })
+        }),
       );
     });
 
@@ -505,7 +505,7 @@ describe("Farm Service - CRUD Operations", () => {
         .mockRejectedValue(new Error("Database connection error"));
 
       await expect(getFarmById(mockFarmId)).rejects.toThrow(
-        "Database connection error"
+        "Database connection error",
       );
     });
 

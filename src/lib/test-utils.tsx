@@ -33,7 +33,7 @@ interface CustomRenderOptions extends Omit<RenderOptions, "wrapper"> {
 
 export function render(
   ui: React.ReactElement,
-  { session, ...renderOptions }: CustomRenderOptions = {}
+  { session, ...renderOptions }: CustomRenderOptions = {},
 ) {
   const Wrapper = ({ children }: { children: React.ReactNode }) => (
     <TestWrapper session={session}>{children}</TestWrapper>

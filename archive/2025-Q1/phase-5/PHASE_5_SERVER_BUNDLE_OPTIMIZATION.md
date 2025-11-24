@@ -9,21 +9,22 @@
 ## 📊 Bundle Analysis Results
 
 ### Current Bundle Sizes
+
 - **Client Bundle**: 419 KB ✅ (within target)
 - **Server Bundle**: 871 KB ❌ (exceeds 700 KB target by 171 KB)
 - **Edge Bundle**: 269 KB ✅ (within target)
 
 ### Largest Server Files Identified
 
-| File | Size | Issue | Priority |
-|------|------|-------|----------|
-| `chunks/1295.js` | 357 KB | Shared dependencies bundle | 🔴 Critical |
-| `middleware.js` | 258 KB | Next.js generated middleware | 🔴 Critical |
-| `admin/farms/page.js` | 250 KB | Heavy admin page with all deps | 🔴 Critical |
-| `api/admin/approvals/route.js` | 228 KB | Email service (nodemailer) bundled | 🟡 High |
-| `chunks/6745.js` | 169 KB | Unknown shared chunk | 🟡 High |
-| `api/farms/route.js` | 151 KB | OpenTelemetry tracing overhead | 🟡 High |
-| `chunks/134.js` | 149 KB | Unknown shared chunk | 🟢 Medium |
+| File                           | Size   | Issue                              | Priority    |
+| ------------------------------ | ------ | ---------------------------------- | ----------- |
+| `chunks/1295.js`               | 357 KB | Shared dependencies bundle         | 🔴 Critical |
+| `middleware.js`                | 258 KB | Next.js generated middleware       | 🔴 Critical |
+| `admin/farms/page.js`          | 250 KB | Heavy admin page with all deps     | 🔴 Critical |
+| `api/admin/approvals/route.js` | 228 KB | Email service (nodemailer) bundled | 🟡 High     |
+| `chunks/6745.js`               | 169 KB | Unknown shared chunk               | 🟡 High     |
+| `api/farms/route.js`           | 151 KB | OpenTelemetry tracing overhead     | 🟡 High     |
+| `chunks/134.js`                | 149 KB | Unknown shared chunk               | 🟢 Medium   |
 
 ---
 
@@ -36,17 +37,19 @@
 **Problem**: Email service (`nodemailer`) is being bundled in every API route that imports it.
 
 **Files to Fix**:
+
 - `src/lib/email/email-service.ts` - Refactor to use dynamic imports
 - `src/app/api/admin/approvals/route.ts` - Lazy load email service
 
 **Pattern**:
+
 ```typescript
 // ❌ BEFORE - Bundled at build time
-import { emailService } from '@/lib/email/email-service';
+import { emailService } from "@/lib/email/email-service";
 
 // ✅ AFTER - Loaded on demand
 const sendEmail = async (options) => {
-  const { emailService } = await import('@/lib/email/email-service');
+  const { emailService } = await import("@/lib/email/email-service");
   return emailService.sendEmail(options);
 };
 ```
@@ -60,26 +63,30 @@ const sendEmail = async (options) => {
 **Problem**: Every traced API route bundles full OpenTelemetry SDK.
 
 **Files to Fix**:
+
 - `src/lib/tracing/agricultural-tracer.ts` - Add lazy loading wrapper
 - `src/app/api/farms/route.ts` - Use conditional tracing
 - `src/app/api/products/route.ts` - Use conditional tracing
 
 **Pattern**:
+
 ```typescript
 // ❌ BEFORE - Always bundled
-import { trace } from '@opentelemetry/api';
-import { traceAgriculturalOperation } from '@/lib/tracing/agricultural-tracer';
+import { trace } from "@opentelemetry/api";
+import { traceAgriculturalOperation } from "@/lib/tracing/agricultural-tracer";
 
 // ✅ AFTER - Lazy loaded for traced operations
 async function withOptionalTracing<T>(
   operation: string,
-  fn: () => Promise<T>
+  fn: () => Promise<T>,
 ): Promise<T> {
-  if (process.env.ENABLE_TRACING !== 'true') {
+  if (process.env.ENABLE_TRACING !== "true") {
     return fn(); // Skip tracing overhead
   }
-  
-  const { traceAgriculturalOperation } = await import('@/lib/tracing/agricultural-tracer');
+
+  const { traceAgriculturalOperation } = await import(
+    "@/lib/tracing/agricultural-tracer"
+  );
   return traceAgriculturalOperation(operation, {}, fn);
 }
 ```
@@ -93,10 +100,12 @@ async function withOptionalTracing<T>(
 **Problem**: Admin pages bundle all UI components even if user never visits.
 
 **Files to Fix**:
+
 - `src/app/(admin)/admin/farms/page.tsx` - Extract heavy tables to dynamic components
 - `src/app/(admin)/admin/settings/page.tsx` - Lazy load settings forms
 
 **Pattern**:
+
 ```typescript
 // ✅ Create dynamic wrapper
 // src/components/admin/FarmsTableDynamic.tsx
@@ -132,11 +141,12 @@ export default async function AdminFarmsPage() {
 **Solution**: Create lazy validation wrapper
 
 **Pattern**:
+
 ```typescript
 // src/lib/validation/lazy-validator.ts
 export async function validateWithSchema<T>(
   schemaName: string,
-  data: unknown
+  data: unknown,
 ): Promise<T> {
   const schemas = await import(`./schemas/${schemaName}`);
   return schemas.default.parse(data);
@@ -154,15 +164,17 @@ export async function validateWithSchema<T>(
 **Solution**: Extract rate limiting and auth to edge functions
 
 **Files to Create**:
+
 - `src/middleware-edge.ts` - Minimal edge middleware
 - `src/lib/middleware/lazy-rate-limiter.ts` - Dynamic rate limiter
 
 **Pattern**:
+
 ```typescript
 // middleware-edge.ts - Minimal routing only
 export function middleware(request: NextRequest) {
   // Only critical path checks here
-  if (request.nextUrl.pathname.startsWith('/api/')) {
+  if (request.nextUrl.pathname.startsWith("/api/")) {
     // Defer rate limiting to API route level
     return NextResponse.next();
   }
@@ -170,7 +182,7 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next|static|favicon.ico).*)'],
+  matcher: ["/((?!_next|static|favicon.ico).*)"],
 };
 ```
 
@@ -181,11 +193,13 @@ export const config = {
 #### 6. Remove Unused Dependencies from Server Chunks
 
 **Action Items**:
+
 - [ ] Analyze `chunks/1295.js` to identify unused exports
 - [ ] Use `next-unused` to find dead code
 - [ ] Tree-shake unused Prisma client methods
 
 **Commands**:
+
 ```bash
 # Find unused exports
 npx next-unused
@@ -201,6 +215,7 @@ npx webpack-bundle-analyzer .next/server/chunks-analysis.json
 ## 📋 Implementation Checklist
 
 ### Priority 1: Critical (Do First)
+
 - [ ] **Task 1.1**: Refactor email service to use dynamic imports
   - File: `src/lib/email/email-service-lazy.ts`
   - Update: `src/app/api/admin/approvals/route.ts`
@@ -222,6 +237,7 @@ npx webpack-bundle-analyzer .next/server/chunks-analysis.json
 **Subtotal Phase 1**: -165 KB (Target achieved! ✅)
 
 ### Priority 2: Polish (Nice to Have)
+
 - [ ] **Task 2.1**: Lazy validation schemas
   - Expected: -25 KB
 
@@ -242,12 +258,12 @@ npx webpack-bundle-analyzer .next/server/chunks-analysis.json
 ```typescript
 // src/lib/email/email-service-lazy.ts
 export async function sendEmailLazy(options: EmailOptions) {
-  const { emailService } = await import('./email-service');
+  const { emailService } = await import("./email-service");
   return emailService.sendEmail(options);
 }
 
 export async function sendFarmerWelcomeEmailLazy(data: FarmerWelcomeData) {
-  const { emailService } = await import('./email-service');
+  const { emailService } = await import("./email-service");
   return emailService.sendFarmerWelcomeEmail(data);
 }
 ```
@@ -259,15 +275,18 @@ export async function sendFarmerWelcomeEmailLazy(data: FarmerWelcomeData) {
 export async function traceIfEnabled<T>(
   operation: string,
   attributes: Record<string, any>,
-  fn: () => Promise<T>
+  fn: () => Promise<T>,
 ): Promise<T> {
   // Skip tracing in production to reduce bundle
-  if (process.env.NODE_ENV === 'production' && !process.env.ENABLE_PRODUCTION_TRACING) {
+  if (
+    process.env.NODE_ENV === "production" &&
+    !process.env.ENABLE_PRODUCTION_TRACING
+  ) {
     return fn();
   }
 
   // Lazy load tracing only when needed
-  const { traceAgriculturalOperation } = await import('./agricultural-tracer');
+  const { traceAgriculturalOperation } = await import("./agricultural-tracer");
   return traceAgriculturalOperation(operation, attributes, fn);
 }
 ```
@@ -287,17 +306,20 @@ echo "Target: <700 KB"
 ## 📈 Success Metrics
 
 ### Bundle Size Targets
+
 - [x] Client: <500 KB (Current: 419 KB ✅)
 - [ ] Server: <700 KB (Current: 871 KB ❌ → Target: 600-650 KB ✅)
 - [x] Edge: <300 KB (Current: 269 KB ✅)
 
 ### Performance Targets
+
 - API route cold start: <200ms
 - Admin page load: <1s
 - Email sending: <500ms
 - Database queries: <100ms
 
 ### Code Quality
+
 - TypeScript: 0 errors ✅
 - Test coverage: >98% ✅
 - Build time: <30s ✅

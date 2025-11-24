@@ -244,7 +244,7 @@ describe("📧 Email Service - Divine Communication System", () => {
 
       const total = items.reduce(
         (sum, item) => sum + item.quantity * item.price,
-        0
+        0,
       );
       expect(total).toBe(25.0);
     });
@@ -369,7 +369,7 @@ describe("📧 Email Service - Divine Communication System", () => {
       mockSendMail.mockResolvedValue({ messageId: "concurrent-test" });
 
       await Promise.all(
-        emails.map(() => mockSendMail({ to: "test", subject: "test" }))
+        emails.map(() => mockSendMail({ to: "test", subject: "test" })),
       );
 
       expect(mockSendMail).toHaveBeenCalledTimes(10);
@@ -496,7 +496,7 @@ describe("📧 Email Service - Divine Communication System", () => {
       };
 
       expect(deliveryStatus.delivered).toBeGreaterThan(
-        deliveryStatus.bounced + deliveryStatus.failed
+        deliveryStatus.bounced + deliveryStatus.failed,
       );
     });
 

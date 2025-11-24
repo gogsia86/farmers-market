@@ -80,7 +80,7 @@ export default function RegisterFarmPage() {
 
   const handleInputChange = (
     field: keyof FarmRegistrationData,
-    value: string | boolean
+    value: string | boolean,
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -89,7 +89,7 @@ export default function RegisterFarmPage() {
     e.preventDefault();
     // Note: API integration in progress - using mock submission for now
     alert(
-      "Farm registration submitted! We'll review and contact you within 2-3 business days."
+      "Farm registration submitted! We'll review and contact you within 2-3 business days.",
     );
     // Redirect to confirmation page
   };
@@ -431,7 +431,7 @@ export default function RegisterFarmPage() {
                           onChange={(e) =>
                             handleInputChange(
                               "pickupAvailable",
-                              e.target.checked
+                              e.target.checked,
                             )
                           }
                           className="w-5 h-5 rounded border-border text-primary-600 focus:ring-primary-500"
@@ -447,7 +447,7 @@ export default function RegisterFarmPage() {
                           onChange={(e) =>
                             handleInputChange(
                               "deliveryAvailable",
-                              e.target.checked
+                              e.target.checked,
                             )
                           }
                           className="w-5 h-5 rounded border-border text-primary-600 focus:ring-primary-500"

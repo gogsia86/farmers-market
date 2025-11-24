@@ -56,7 +56,7 @@ describe("🗄️ Cache Index - Multi-Layer Caching", () => {
 
     it("should generate product list cache key", () => {
       expect(CacheKeys.productList("farm-123", "category=vegetables")).toBe(
-        "products:farm-123:category=vegetables"
+        "products:farm-123:category=vegetables",
       );
     });
 
@@ -271,7 +271,7 @@ describe("🗄️ Cache Index - Multi-Layer Caching", () => {
       const factory = jest.fn().mockRejectedValue(new Error("Factory error"));
 
       await expect(cache.wrap("error-key", factory)).rejects.toThrow(
-        "Factory error"
+        "Factory error",
       );
     });
 
@@ -511,4 +511,3 @@ describe("🗄️ Cache Index - Multi-Layer Caching", () => {
     });
   });
 });
-

@@ -149,7 +149,7 @@ PERPLEXITY_API_KEY=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
 import { researchAgriculturalTopic } from "@/lib/ai/perplexity";
 
 const result = await researchAgriculturalTopic(
-  "How to improve soil quality for organic farming"
+  "How to improve soil quality for organic farming",
 );
 
 console.log(result.answer);
@@ -164,7 +164,7 @@ console.log(`Citations: ${result.citations.length}`);
 import { generateCode } from "@/lib/ai/perplexity";
 
 const code = await generateCode(
-  "Create a React component for displaying farm products with filtering"
+  "Create a React component for displaying farm products with filtering",
 );
 
 console.log(code.code);
@@ -181,13 +181,13 @@ const agent = new AgriculturalResearchAgent();
 
 // Start session
 const threadId = await agent.startResearchSession(
-  "Sustainable irrigation methods"
+  "Sustainable irrigation methods",
 );
 
 // Ask follow-up
 const answer = await agent.continueResearch(
   threadId,
-  "What about drip irrigation costs?"
+  "What about drip irrigation costs?",
 );
 ```
 
@@ -205,7 +205,7 @@ const result = await agent.generateCode(
     framework: "Next.js",
     includeTests: true,
     divinePatterns: true,
-  }
+  },
 );
 
 // result.code - The generated code

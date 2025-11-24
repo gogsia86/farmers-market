@@ -31,4 +31,3 @@ describe("Testing Infrastructure Verification", () => {
     expect(doubled).toEqual([2, 4, 6]);
   });
 });
-

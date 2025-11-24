@@ -36,7 +36,7 @@ export function Skeleton({
           "animate-pulse": animation === "pulse",
           "animate-shimmer": animation === "wave",
         },
-        className
+        className,
       )}
       style={style}
     />

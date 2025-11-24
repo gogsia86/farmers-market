@@ -286,11 +286,11 @@ beforeEach(() => {
 
 ```typescript
 vi.mocked(database.order.update).mockRejectedValue(
-  new Error("Database connection failed")
+  new Error("Database connection failed"),
 );
 
 await expect(
-  PaymentService.createPaymentIntent("order-error", 1000)
+  PaymentService.createPaymentIntent("order-error", 1000),
 ).rejects.toThrow("Database connection failed");
 ```
 

@@ -7,7 +7,7 @@ console.log("✅ Test 1: Node.js Environment");
 console.log(`   Node version: ${process.version}`);
 console.log(`   Platform: ${process.platform}`);
 console.log(
-  `   Memory: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)} MB\n`
+  `   Memory: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)} MB\n`,
 );
 
 // Test 2: Check environment variables
@@ -16,7 +16,7 @@ const requiredVars = ["DATABASE_URL", "NEXTAUTH_SECRET", "NEXTAUTH_URL"];
 requiredVars.forEach((varName) => {
   const exists = !!process.env[varName];
   console.log(
-    `   ${exists ? "✅" : "❌"} ${varName}: ${exists ? "SET" : "MISSING"}`
+    `   ${exists ? "✅" : "❌"} ${varName}: ${exists ? "SET" : "MISSING"}`,
   );
 });
 console.log("");
@@ -34,7 +34,7 @@ try {
   Promise.race([
     prisma.$connect(),
     new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Timeout")), 5000)
+      setTimeout(() => reject(new Error("Timeout")), 5000),
     ),
   ])
     .then(() => {

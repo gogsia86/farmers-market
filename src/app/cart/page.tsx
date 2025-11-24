@@ -74,8 +74,8 @@ export default function CartPage() {
     if (newQuantity < 1) return;
     setCartItems((items) =>
       items.map((item) =>
-        item.id === id ? { ...item, quantity: newQuantity } : item
-      )
+        item.id === id ? { ...item, quantity: newQuantity } : item,
+      ),
     );
   };
 
@@ -85,7 +85,7 @@ export default function CartPage() {
 
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
-    0
+    0,
   );
   const tax = subtotal * 0.08; // 8% tax
   const total = subtotal + tax;
@@ -99,7 +99,7 @@ export default function CartPage() {
       acc[item.farm]!.push(item);
       return acc;
     },
-    {} as Record<string, CartItem[]>
+    {} as Record<string, CartItem[]>,
   );
 
   return (

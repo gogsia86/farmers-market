@@ -128,11 +128,11 @@ async function seedTestData() {
     const totalConsciousness =
       testCrops.reduce(
         (sum: number, crop: any) => sum + (crop.consciousness?.level || 0),
-        0
+        0,
       ) / testCrops.length;
 
     console.log(
-      `🌟 Average agricultural consciousness: ${totalConsciousness.toFixed(2)}`
+      `🌟 Average agricultural consciousness: ${totalConsciousness.toFixed(2)}`,
     );
 
     if (totalConsciousness >= 0.95) {

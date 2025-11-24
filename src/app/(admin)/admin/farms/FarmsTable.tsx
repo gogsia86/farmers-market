@@ -35,13 +35,13 @@ export function FarmsTable({ initialFarms }: FarmsTableProps) {
 
   const handleStatusChange = async (
     farmId: string,
-    newStatus: Farm["status"]
+    newStatus: Farm["status"],
   ) => {
     setActioningFarmId(farmId);
 
     // Optimistic update
     setFarms((prevFarms) =>
-      prevFarms.map((f) => (f.id === farmId ? { ...f, status: newStatus } : f))
+      prevFarms.map((f) => (f.id === farmId ? { ...f, status: newStatus } : f)),
     );
 
     startTransition(async () => {

@@ -23,7 +23,7 @@ export function formatNumber(value: number, locale: Locale): string {
 export function formatCurrency(
   amount: number,
   locale: Locale,
-  options?: Intl.NumberFormatOptions
+  options?: Intl.NumberFormatOptions,
 ): string {
   const currency = currencyByLocale[locale];
 
@@ -40,7 +40,7 @@ export function formatCurrency(
 export function formatDate(
   date: Date | string,
   locale: Locale,
-  options?: Intl.DateTimeFormatOptions
+  options?: Intl.DateTimeFormatOptions,
 ): string {
   const dateObj = typeof date === "string" ? new Date(date) : date;
 
@@ -58,7 +58,7 @@ export function formatDate(
 export function formatDateTime(
   date: Date | string,
   locale: Locale,
-  options?: Intl.DateTimeFormatOptions
+  options?: Intl.DateTimeFormatOptions,
 ): string {
   const dateObj = typeof date === "string" ? new Date(date) : date;
 
@@ -77,7 +77,7 @@ export function formatDateTime(
  */
 export function formatRelativeTime(
   date: Date | string,
-  locale: Locale
+  locale: Locale,
 ): string {
   const dateObj = typeof date === "string" ? new Date(date) : date;
   const now = new Date();
@@ -106,7 +106,7 @@ export function formatRelativeTime(
 export function formatPercentage(
   value: number,
   locale: Locale,
-  decimals: number = 0
+  decimals: number = 0,
 ): string {
   return new Intl.NumberFormat(locale, {
     style: "percent",
@@ -179,7 +179,7 @@ export function getDateFormat(locale: Locale): string {
  */
 export function parseLocalizedDate(
   dateString: string,
-  locale: Locale
+  locale: Locale,
 ): Date | null {
   try {
     const format = dateFormatByLocale[locale];
@@ -195,21 +195,21 @@ export function parseLocalizedDate(
       return new Date(
         parseInt(parts[2]!, 10),
         parseInt(parts[0]!, 10) - 1,
-        parseInt(parts[1]!, 10)
+        parseInt(parts[1]!, 10),
       );
     } else if (format.startsWith("DD")) {
       // DD/MM/YYYY or DD.MM.YYYY
       return new Date(
         parseInt(parts[2]!, 10),
         parseInt(parts[1]!, 10) - 1,
-        parseInt(parts[0]!, 10)
+        parseInt(parts[0]!, 10),
       );
     } else {
       // YYYY-MM-DD or similar
       return new Date(
         parseInt(parts[0]!, 10),
         parseInt(parts[1]!, 10) - 1,
-        parseInt(parts[2]!, 10)
+        parseInt(parts[2]!, 10),
       );
     }
   } catch {
@@ -223,7 +223,7 @@ export function parseLocalizedDate(
 export function formatList(
   items: string[],
   locale: Locale,
-  type: "conjunction" | "disjunction" = "conjunction"
+  type: "conjunction" | "disjunction" = "conjunction",
 ): string {
   return new Intl.ListFormat(locale, { type }).format(items);
 }
@@ -240,7 +240,7 @@ export function sortByLocale(strings: string[], locale: Locale): string[] {
  */
 export function getPluralRule(
   count: number,
-  locale: Locale
+  locale: Locale,
 ): Intl.LDMLPluralRule {
   const pr = new Intl.PluralRules(locale);
   return pr.select(count);
@@ -320,7 +320,7 @@ export const agriculturalConsciousnessLevels = {
  */
 export function getAgriculturalConsciousnessLabel(
   level: keyof (typeof agriculturalConsciousnessLevels)["en"],
-  locale: Locale
+  locale: Locale,
 ): string {
   const labels =
     agriculturalConsciousnessLevels[

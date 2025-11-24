@@ -13,8 +13,10 @@ API route tests were failing because OpenTelemetry and Agricultural tracer mocks
 ```typescript
 jest.mock("@opentelemetry/api", () => ({
   trace: {
-    getTracer: jest.fn(() => ({  // ❌ Implementation never executes
-      startActiveSpan: jest.fn(async (name, fn) => {  // ❌ Never called
+    getTracer: jest.fn(() => ({
+      // ❌ Implementation never executes
+      startActiveSpan: jest.fn(async (name, fn) => {
+        // ❌ Never called
         return await fn(mockSpan);
       }),
     })),
@@ -34,13 +36,15 @@ jest.mock("@opentelemetry/api", () => {
 
   return {
     trace: {
-      getTracer: () => ({  // ✅ Plain arrow function
+      getTracer: () => ({
+        // ✅ Plain arrow function
         startSpan: () => mockSpan,
-        startActiveSpan: async (name, fnOrOptions, maybeFn) => {  // ✅ Plain async function
+        startActiveSpan: async (name, fnOrOptions, maybeFn) => {
+          // ✅ Plain async function
           const fn = typeof fnOrOptions === "function" ? fnOrOptions : maybeFn;
           if (typeof fn === "function") {
             const result = await fn(mockSpan);
-            return result;  // ✅ Returns the callback result
+            return result; // ✅ Returns the callback result
           }
           return mockSpan;
         },
@@ -57,6 +61,7 @@ jest.mock("@opentelemetry/api", () => {
 ### 1. Use Plain Functions in Mock Factories
 
 Inside `jest.mock()` factory:
+
 - ✅ Use plain arrow functions: `() => value`
 - ✅ Use plain async functions: `async () => value`
 - ❌ NEVER use `jest.fn(() => impl)` - the implementation won't run
@@ -64,6 +69,7 @@ Inside `jest.mock()` factory:
 ### 2. Critical for Callbacks
 
 Tracer methods that accept callbacks **MUST**:
+
 1. Call the callback function
 2. Await the result (if async)
 3. **Return the callback result**
@@ -229,7 +235,10 @@ jest.mock("@/lib/middleware/rate-limiter", () => ({
 // 2. NOW IMPORT AFTER MOCKS ARE SET UP
 import { GET, POST } from "../route";
 import { database } from "@/lib/database";
-import { createMockNextRequest, createMockFarm } from "../../__tests__/api-test-utils";
+import {
+  createMockNextRequest,
+  createMockFarm,
+} from "../../__tests__/api-test-utils";
 
 describe("API Route Tests", () => {
   beforeEach(() => {
@@ -239,7 +248,7 @@ describe("API Route Tests", () => {
 
   it("should return farms successfully", async () => {
     const mockFarms = [createMockFarm()];
-    
+
     // CRITICAL: Set mock return value BEFORE calling route
     (database.farm.findMany as jest.Mock).mockResolvedValue(mockFarms);
 
@@ -260,22 +269,27 @@ describe("API Route Tests", () => {
 ## 🚨 Common Pitfalls
 
 ### 1. Using jest.fn() in Mock Factory
+
 **Problem**: `jest.fn(() => impl)` doesn't execute the implementation
 **Solution**: Use plain arrow functions `() => impl`
 
 ### 2. Forgetting to Return Callback Result
+
 **Problem**: Route returns `undefined` because mock doesn't return callback result
 **Solution**: Always `return await fn(mockSpan)` or `return await fn()`
 
 ### 3. Wrong Agricultural Tracer Signature
+
 **Problem**: Calling `fn(mockSpan)` when it should be `fn()`
 **Solution**: Agricultural operations call `fn()` with NO arguments
 
 ### 4. Using jest.clearAllMocks() with jest.fn()
+
 **Problem**: Even if `jest.fn(impl)` worked, `clearAllMocks()` removes implementations
 **Solution**: Use plain functions or don't use `clearAllMocks()`
 
 ### 5. Not Setting Database Mock Values
+
 **Problem**: Database methods return `undefined` because mock not configured
 **Solution**: Always call `.mockResolvedValue()` before route invocation
 

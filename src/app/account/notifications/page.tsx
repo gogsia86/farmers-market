@@ -154,7 +154,7 @@ export default function EmailNotificationsPage() {
 
   const toggleSetting = (id: string) => {
     setSettings(
-      settings.map((s) => (s.id === id ? { ...s, enabled: !s.enabled } : s))
+      settings.map((s) => (s.id === id ? { ...s, enabled: !s.enabled } : s)),
     );
   };
 
@@ -235,7 +235,7 @@ export default function EmailNotificationsPage() {
             <div className="space-y-6">
               {Object.entries(categoryGroups).map(([category, info]) => {
                 const categorySettings = settings.filter(
-                  (s) => s.category === category
+                  (s) => s.category === category,
                 );
 
                 return (

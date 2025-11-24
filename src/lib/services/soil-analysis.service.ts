@@ -104,7 +104,7 @@ export class SoilAnalysisService {
     };
     scores.structure = Math.max(
       0,
-      drainageScore[analysis.drainage] - compactionPenalty[analysis.compaction]
+      drainageScore[analysis.drainage] - compactionPenalty[analysis.compaction],
     );
 
     // Biology score (microbial activity + earthworms)
@@ -158,7 +158,7 @@ export class SoilAnalysisService {
   static getRecommendedCrops(
     soilType: SoilType,
     pH: number,
-    drainage: DrainageLevel
+    drainage: DrainageLevel,
   ): string[] {
     const cropsByType: Record<SoilType, string[]> = {
       CLAY: ["WHEAT", "CABBAGE", "BROCCOLI", "CHARD"],
@@ -175,11 +175,11 @@ export class SoilAnalysisService {
     // Filter by pH preferences
     if (pH < 6.0) {
       crops = crops.filter((crop) =>
-        ["POTATOES", "BLUEBERRIES", "RADISHES"].includes(crop)
+        ["POTATOES", "BLUEBERRIES", "RADISHES"].includes(crop),
       );
     } else if (pH > 7.5) {
       crops = crops.filter((crop) =>
-        ["BEETS", "CABBAGE", "SPINACH"].includes(crop)
+        ["BEETS", "CABBAGE", "SPINACH"].includes(crop),
       );
     }
 
@@ -195,7 +195,7 @@ export class SoilAnalysisService {
    * Create a new soil analysis
    */
   static async createAnalysis(
-    data: CreateSoilAnalysisInput
+    data: CreateSoilAnalysisInput,
   ): Promise<SoilAnalysis> {
     // Validate farm exists
     const farm = await database.farm.findUnique({
@@ -212,14 +212,14 @@ export class SoilAnalysisService {
       1.0,
       (data.organicMatter / 10) * 0.5 +
         ((data.earthwormCount || 0) / 100) * 0.3 +
-        (data.fungalPresence || 0) * 0.2
+        (data.fungalPresence || 0) * 0.2,
     );
 
     // Get recommended crops
     const recommendedCrops = this.getRecommendedCrops(
       data.soilType,
       data.pH,
-      data.drainage
+      data.drainage,
     );
 
     // Calculate soil health and get amendments
@@ -279,7 +279,7 @@ export class SoilAnalysisService {
    */
   static async getAnalysisByField(
     farmId: string,
-    fieldName: string
+    fieldName: string,
   ): Promise<SoilAnalysis | null> {
     return await database.soilAnalysis.findFirst({
       where: { farmId, fieldName },
@@ -292,7 +292,7 @@ export class SoilAnalysisService {
    */
   static async getSoilHealthTrends(
     farmId: string,
-    fieldName: string
+    fieldName: string,
   ): Promise<
     Array<{
       date: Date;
@@ -329,7 +329,7 @@ export class SoilAnalysisService {
    */
   static async updateSoilHistory(
     analysisId: string,
-    cropData: { crop: string; year: number; yield: string }
+    cropData: { crop: string; year: number; yield: string },
   ): Promise<SoilAnalysis> {
     const analysis = await database.soilAnalysis.findUnique({
       where: { id: analysisId },

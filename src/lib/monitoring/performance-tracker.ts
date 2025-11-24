@@ -31,7 +31,7 @@ export class PerformanceTracker {
   static track(
     name: string,
     value: number,
-    tags?: Record<string, string>
+    tags?: Record<string, string>,
   ): void {
     const metric: PerformanceMetric = {
       name,
@@ -59,7 +59,7 @@ export class PerformanceTracker {
   static async trackOperation<T>(
     name: string,
     operation: () => Promise<T>,
-    tags?: Record<string, string>
+    tags?: Record<string, string>,
   ): Promise<T> {
     const start = performance.now();
 
@@ -96,7 +96,7 @@ export class PerformanceTracker {
     method: string,
     path: string,
     duration: number,
-    statusCode: number
+    statusCode: number,
   ): void {
     this.track("api.request", duration, {
       method,
@@ -111,7 +111,7 @@ export class PerformanceTracker {
   static trackAgriculturalOperation(
     operation: string,
     farmId: string,
-    duration: number
+    duration: number,
   ): void {
     this.track("agricultural.operation", duration, {
       operation,

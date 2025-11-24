@@ -11,7 +11,7 @@ import { database } from "@/lib/database";
 // Example: Fetch farm by ID
 const farm = await database.farm.findUnique({
   where: { id: farmId },
-  include: { owner: true, products: true }
+  include: { owner: true, products: true },
 });
 
 // Example: Create with transaction
@@ -30,13 +30,14 @@ const result = await database.$transaction(async (tx) => {
 import { cacheService } from "@/lib/cache/cache-service";
 
 // Get from cache (with fallback to database)
-const farm = await cacheService.get<Farm>(`farm:${id}`) ?? 
-  await database.farm.findUnique({ where: { id } });
+const farm =
+  (await cacheService.get<Farm>(`farm:${id}`)) ??
+  (await database.farm.findUnique({ where: { id } }));
 
 // Set cache with TTL
 await cacheService.set(`farm:${id}`, farm, {
   ttl: 600, // 10 minutes
-  tags: [`farm:${id}`, `user:${ownerId}`]
+  tags: [`farm:${id}`, `user:${ownerId}`],
 });
 
 // Invalidate by tags
@@ -48,6 +49,7 @@ console.log(`Hit rate: ${stats.hits / (stats.hits + stats.misses)}`);
 ```
 
 **Common TTLs**:
+
 - User profile: 300s (5 min)
 - Farm profile: 600s (10 min)
 - Product: 180s (3 min)
@@ -59,12 +61,12 @@ console.log(`Hit rate: ${stats.hits / (stats.hits + stats.misses)}`);
 ### Rate Limiting
 
 ```typescript
-import { 
-  checkRateLimit, 
+import {
+  checkRateLimit,
   LOGIN_RATE_LIMIT,
   API_RATE_LIMIT,
   SENSITIVE_RATE_LIMIT,
-  getClientIp 
+  getClientIp,
 } from "@/lib/middleware/rate-limiter";
 
 // IP-based rate limiting (public endpoints)
@@ -78,20 +80,21 @@ const rateLimit = await checkRateLimit(API_RATE_LIMIT(userId));
 if (!rateLimit.success) {
   return NextResponse.json(
     { error: "Rate limit exceeded", resetInSeconds: rateLimit.resetInSeconds },
-    { 
+    {
       status: 429,
       headers: {
         "X-RateLimit-Limit": rateLimit.limit.toString(),
         "X-RateLimit-Remaining": "0",
         "X-RateLimit-Reset": rateLimit.reset.toString(),
-        "Retry-After": rateLimit.resetInSeconds.toString()
-      }
-    }
+        "Retry-After": rateLimit.resetInSeconds.toString(),
+      },
+    },
   );
 }
 ```
 
 **Pre-configured Limits**:
+
 - `LOGIN_RATE_LIMIT`: 5 per 15 min (IP-based)
 - `API_RATE_LIMIT`: 100 per 1 min (user-based)
 - `SENSITIVE_RATE_LIMIT`: 10 per 1 hour (user-based)
@@ -110,7 +113,7 @@ import { checkRateLimit, API_RATE_LIMIT } from "@/lib/middleware/rate-limiter";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   // 1. Authentication
   const session = await auth();
@@ -121,10 +124,7 @@ export async function GET(
   // 2. Rate limiting
   const rateLimit = await checkRateLimit(API_RATE_LIMIT(session.user.id));
   if (!rateLimit.success) {
-    return NextResponse.json(
-      { error: "Rate limit exceeded" },
-      { status: 429 }
-    );
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
 
   // 3. Cache check
@@ -135,7 +135,7 @@ export async function GET(
     // 4. Database fetch
     farm = await database.farm.findUnique({
       where: { id: params.id },
-      include: { owner: true, products: true }
+      include: { owner: true, products: true },
     });
 
     if (!farm) {
@@ -145,7 +145,7 @@ export async function GET(
     // 5. Cache the result
     await cacheService.set(cacheKey, farm, {
       ttl: 600,
-      tags: [`farm:${params.id}`, `user:${farm.ownerId}`]
+      tags: [`farm:${params.id}`, `user:${farm.ownerId}`],
     });
   }
 
@@ -193,7 +193,7 @@ export async function createFarm(formData: FormData) {
     // 4. Cache the new farm
     await cacheService.set(`farm:${farm.id}`, farm, {
       ttl: 600,
-      tags: [`farm:${farm.id}`, `user:${session.user.id}`]
+      tags: [`farm:${farm.id}`, `user:${session.user.id}`],
     });
 
     // 5. Invalidate related caches
@@ -204,9 +204,9 @@ export async function createFarm(formData: FormData) {
 
     return { success: true, farm };
   } catch (error) {
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : "Failed to create farm" 
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to create farm",
     };
   }
 }
@@ -226,15 +226,15 @@ import { ProductGrid } from "@/components/features/ProductGrid";
 export default async function FarmPage({ params }: { params: { id: string } }) {
   // Server component - can access database directly
   const cacheKey = `farm:${params.id}`;
-  
+
   let farm = await cacheService.get<Farm>(cacheKey);
-  
+
   if (!farm) {
     farm = await database.farm.findUnique({
       where: { id: params.id },
       include: { owner: true, products: true }
     });
-    
+
     if (farm) {
       await cacheService.set(cacheKey, farm, { ttl: 600 });
     }
@@ -300,17 +300,17 @@ try {
   return NextResponse.json({ success: true, data: result });
 } catch (error) {
   console.error("Operation failed:", error);
-  
+
   return NextResponse.json(
     {
       success: false,
       error: {
         code: "OPERATION_FAILED",
         message: error instanceof Error ? error.message : "Unknown error",
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     },
-    { status: 500 }
+    { status: 500 },
   );
 }
 
@@ -325,15 +325,15 @@ const schema = z.object({
 const validation = schema.safeParse(data);
 if (!validation.success) {
   return NextResponse.json(
-    { 
+    {
       success: false,
       error: {
         code: "VALIDATION_ERROR",
         message: "Invalid input",
-        details: validation.error.errors
-      }
+        details: validation.error.errors,
+      },
     },
-    { status: 400 }
+    { status: 400 },
   );
 }
 ```
@@ -350,20 +350,20 @@ const tracer = trace.getTracer("farm-service");
 await tracer.startActiveSpan("createFarm", async (span) => {
   span.setAttributes({
     "farm.name": farmData.name,
-    "farm.owner_id": farmData.ownerId
+    "farm.owner_id": farmData.ownerId,
   });
 
   try {
     const farm = await database.farm.create({ data: farmData });
-    
+
     span.setStatus({ code: SpanStatusCode.OK });
     span.setAttribute("farm.id", farm.id);
-    
+
     return farm;
   } catch (error) {
     span.setStatus({
       code: SpanStatusCode.ERROR,
-      message: error instanceof Error ? error.message : "Unknown error"
+      message: error instanceof Error ? error.message : "Unknown error",
     });
     throw error;
   } finally {
@@ -377,6 +377,7 @@ await tracer.startActiveSpan("createFarm", async (span) => {
 ## 🔧 Common Commands
 
 ### Development
+
 ```bash
 # Install dependencies
 npm ci
@@ -404,6 +405,7 @@ npm run format
 ```
 
 ### Database
+
 ```bash
 # Create migration
 npx prisma migrate dev --name description
@@ -422,6 +424,7 @@ npm run seed
 ```
 
 ### Build & Deploy
+
 ```bash
 # Build for production
 npm run build
@@ -438,6 +441,7 @@ docker-compose up -d
 ## 🚨 Common Gotchas
 
 ### ❌ DON'T
+
 ```typescript
 // ❌ Don't create new Prisma instances
 import { PrismaClient } from "@prisma/client";
@@ -460,6 +464,7 @@ const API_KEY = "sk_live_abc123"; // Never do this!
 ```
 
 ### ✅ DO
+
 ```typescript
 // ✅ Use canonical database import
 import { database } from "@/lib/database";
@@ -493,6 +498,7 @@ const apiKey = process.env.API_KEY;
 ## 🆘 Troubleshooting
 
 ### TypeScript Errors
+
 ```bash
 # Check errors
 npx tsc --noEmit
@@ -504,6 +510,7 @@ npx prisma generate
 ```
 
 ### Cache Issues
+
 ```bash
 # Check Redis connection
 redis-cli ping
@@ -517,6 +524,7 @@ console.log(stats);
 ```
 
 ### Rate Limit Issues
+
 ```bash
 # Reset specific rate limit
 await resetRateLimit("user:123");
@@ -529,6 +537,7 @@ const status = await getRateLimitStatus("user:123");
 ```
 
 ### Test Failures
+
 ```bash
 # Run single test file
 npm test -- path/to/test.ts
@@ -548,6 +557,7 @@ npx jest --clearCache
 ## 🌾 Agricultural Consciousness
 
 Remember the core principles:
+
 - **🌱 Growth**: Write code that scales
 - **💧 Irrigation**: Cache flows to speed
 - **🛡️ Protection**: Rate limits guard the gates

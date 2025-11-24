@@ -57,42 +57,18 @@
     // PATH MAPPING (Divine Quantum Import Resolution)
     // ========================================================================
     "paths": {
-      "@/*": [
-        "./src/*"
-      ], // Explicit path from project root
-      "@/components/*": [
-        "./src/components/*"
-      ],
-      "@/lib/*": [
-        "./src/lib/*"
-      ],
-      "@/app/*": [
-        "./src/app/*"
-      ],
-      "@/types/*": [
-        "./src/types/*"
-      ],
-      "@/hooks/*": [
-        "./src/hooks/*"
-      ],
-      "@/utils/*": [
-        "./src/utils/*"
-      ],
-      "@/styles/*": [
-        "./src/styles/*"
-      ],
-      "@/config/*": [
-        "./src/config/*"
-      ],
-      "@/services/*": [
-        "./src/services/*"
-      ],
-      "@/repositories/*": [
-        "./src/repositories/*"
-      ],
-      "@/controllers/*": [
-        "./src/controllers/*"
-      ]
+      "@/*": ["./src/*"], // Explicit path from project root
+      "@/components/*": ["./src/components/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/app/*": ["./src/app/*"],
+      "@/types/*": ["./src/types/*"],
+      "@/hooks/*": ["./src/hooks/*"],
+      "@/utils/*": ["./src/utils/*"],
+      "@/styles/*": ["./src/styles/*"],
+      "@/config/*": ["./src/config/*"],
+      "@/services/*": ["./src/services/*"],
+      "@/repositories/*": ["./src/repositories/*"],
+      "@/controllers/*": ["./src/controllers/*"]
     },
     // ========================================================================
     // NEXT.JS SPECIFIC
@@ -118,10 +94,7 @@
     "**/*.d.ts", // Include all declaration files
     "jest.setup.js" // Include Jest setup for global types
   ],
-  "types": [
-    "jest",
-    "@testing-library/jest-dom"
-  ],
+  "types": ["jest", "@testing-library/jest-dom"],
   "exclude": [
     "node_modules", // Exclude dependencies
     ".next", // Exclude Next.js build output

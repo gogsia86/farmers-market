@@ -1,4 +1,5 @@
 # 🌾 FARMERS MARKET PLATFORM - API DOCUMENTATION
+
 ## Complete REST API Reference - v1.0.0
 
 **Base URL:** `https://api.farmersmarket.com` (Production)  
@@ -43,6 +44,7 @@ Authorization: Bearer <your_jwt_token>
 User login endpoint.
 
 **Request:**
+
 ```json
 {
   "email": "user@example.com",
@@ -51,6 +53,7 @@ User login endpoint.
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -68,6 +71,7 @@ User login endpoint.
 ```
 
 **Response (401 Unauthorized):**
+
 ```json
 {
   "success": false,
@@ -83,6 +87,7 @@ User login endpoint.
 User registration endpoint.
 
 **Request:**
+
 ```json
 {
   "email": "newuser@example.com",
@@ -93,6 +98,7 @@ User registration endpoint.
 ```
 
 **Response (201 Created):**
+
 ```json
 {
   "success": true,
@@ -114,11 +120,13 @@ User registration endpoint.
 Logout current user.
 
 **Headers:**
+
 ```http
 Authorization: Bearer <token>
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -135,6 +143,7 @@ Authorization: Bearer <token>
 Get all farms with pagination and filtering.
 
 **Query Parameters:**
+
 - `page` (number, default: 1) - Page number
 - `limit` (number, default: 20) - Items per page
 - `status` (string) - Filter by status: ACTIVE, PENDING, SUSPENDED
@@ -142,11 +151,13 @@ Get all farms with pagination and filtering.
 - `search` (string) - Search by name or location
 
 **Request:**
+
 ```http
 GET /api/farms?page=1&limit=20&status=ACTIVE&verified=true
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -197,11 +208,13 @@ GET /api/farms?page=1&limit=20&status=ACTIVE&verified=true
 Get farm details by slug.
 
 **Request:**
+
 ```http
 GET /api/farms/green-valley-farm
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -241,9 +254,7 @@ GET /api/farms/green-valley-farm
     },
     "logoUrl": "https://cdn.example.com/farms/farm_001.jpg",
     "bannerUrl": "https://cdn.example.com/farms/farm_001_banner.jpg",
-    "photos": [
-      "https://cdn.example.com/farms/farm_001_photo1.jpg"
-    ],
+    "photos": ["https://cdn.example.com/farms/farm_001_photo1.jpg"],
     "rating": 4.8,
     "reviewCount": 156,
     "productCount": 42,
@@ -267,12 +278,14 @@ GET /api/farms/green-valley-farm
 Create a new farm (FARMER role required).
 
 **Headers:**
+
 ```http
 Authorization: Bearer <token>
 Content-Type: application/json
 ```
 
 **Request:**
+
 ```json
 {
   "name": "Sunny Acres Farm",
@@ -295,6 +308,7 @@ Content-Type: application/json
 ```
 
 **Response (201 Created):**
+
 ```json
 {
   "success": true,
@@ -314,12 +328,14 @@ Content-Type: application/json
 Update farm details (Owner or Admin only).
 
 **Headers:**
+
 ```http
 Authorization: Bearer <token>
 Content-Type: application/json
 ```
 
 **Request:**
+
 ```json
 {
   "description": "Updated description",
@@ -330,6 +346,7 @@ Content-Type: application/json
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -347,11 +364,13 @@ Content-Type: application/json
 Delete farm (Owner or Admin only).
 
 **Headers:**
+
 ```http
 Authorization: Bearer <token>
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -368,6 +387,7 @@ Authorization: Bearer <token>
 Get all products with filtering.
 
 **Query Parameters:**
+
 - `page` (number) - Page number
 - `limit` (number) - Items per page
 - `farmId` (string) - Filter by farm
@@ -378,11 +398,13 @@ Get all products with filtering.
 - `search` (string) - Search query
 
 **Request:**
+
 ```http
 GET /api/products?category=VEGETABLES&inStock=true&page=1&limit=20
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -431,11 +453,13 @@ GET /api/products?category=VEGETABLES&inStock=true&page=1&limit=20
 Get product details.
 
 **Request:**
+
 ```http
 GET /api/products/organic-tomatoes-green-valley
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -497,12 +521,14 @@ GET /api/products/organic-tomatoes-green-valley
 Create new product (Farm owner only).
 
 **Headers:**
+
 ```http
 Authorization: Bearer <token>
 Content-Type: application/json
 ```
 
 **Request:**
+
 ```json
 {
   "farmId": "farm_001",
@@ -525,6 +551,7 @@ Content-Type: application/json
 ```
 
 **Response (201 Created):**
+
 ```json
 {
   "success": true,
@@ -547,16 +574,19 @@ Content-Type: application/json
 Get user's orders.
 
 **Headers:**
+
 ```http
 Authorization: Bearer <token>
 ```
 
 **Query Parameters:**
+
 - `status` (string) - Filter by status
 - `page` (number) - Page number
 - `limit` (number) - Items per page
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -584,7 +614,7 @@ Authorization: Bearer <token>
           }
         ],
         "subtotal": 14.97,
-        "tax": 1.20,
+        "tax": 1.2,
         "shippingCost": 5.99,
         "total": 22.16,
         "shippingAddress": {
@@ -615,12 +645,14 @@ Authorization: Bearer <token>
 Create new order.
 
 **Headers:**
+
 ```http
 Authorization: Bearer <token>
 Content-Type: application/json
 ```
 
 **Request:**
+
 ```json
 {
   "farmId": "farm_001",
@@ -649,6 +681,7 @@ Content-Type: application/json
 ```
 
 **Response (201 Created):**
+
 ```json
 {
   "success": true,
@@ -673,11 +706,13 @@ Content-Type: application/json
 Get order details.
 
 **Headers:**
+
 ```http
 Authorization: Bearer <token>
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -701,7 +736,7 @@ Authorization: Bearer <token>
     ],
     "items": [],
     "subtotal": 14.97,
-    "tax": 1.20,
+    "tax": 1.2,
     "shippingCost": 5.99,
     "total": 22.16,
     "payment": {
@@ -722,11 +757,13 @@ Authorization: Bearer <token>
 Get current user profile.
 
 **Headers:**
+
 ```http
 Authorization: Bearer <token>
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -751,12 +788,14 @@ Authorization: Bearer <token>
 Update user profile.
 
 **Headers:**
+
 ```http
 Authorization: Bearer <token>
 Content-Type: application/json
 ```
 
 **Request:**
+
 ```json
 {
   "name": "John Updated",
@@ -768,6 +807,7 @@ Content-Type: application/json
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -789,15 +829,18 @@ Content-Type: application/json
 Get all farms for admin review (ADMIN role required).
 
 **Headers:**
+
 ```http
 Authorization: Bearer <admin_token>
 ```
 
 **Query Parameters:**
+
 - `status` (string) - Filter by status
 - `verificationStatus` (string) - Filter by verification
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -818,12 +861,14 @@ Authorization: Bearer <admin_token>
 Verify a farm (ADMIN role required).
 
 **Headers:**
+
 ```http
 Authorization: Bearer <admin_token>
 Content-Type: application/json
 ```
 
 **Request:**
+
 ```json
 {
   "status": "VERIFIED",
@@ -832,6 +877,7 @@ Content-Type: application/json
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -848,16 +894,19 @@ Content-Type: application/json
 Universal search across platform.
 
 **Query Parameters:**
+
 - `q` (string, required) - Search query
 - `type` (string) - Type: farms, products, all
 - `limit` (number) - Results limit
 
 **Request:**
+
 ```http
 GET /api/search?q=organic%20tomatoes&type=products&limit=10
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -890,21 +939,24 @@ GET /api/search?q=organic%20tomatoes&type=products&limit=10
 Get analytics dashboard data.
 
 **Headers:**
+
 ```http
 Authorization: Bearer <token>
 ```
 
 **Query Parameters:**
+
 - `startDate` (string) - ISO date
 - `endDate` (string) - ISO date
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
   "data": {
     "overview": {
-      "totalSales": 15420.50,
+      "totalSales": 15420.5,
       "totalOrders": 342,
       "averageOrderValue": 45.09,
       "newCustomers": 67
@@ -925,11 +977,13 @@ Authorization: Bearer <token>
 Get user notifications.
 
 **Headers:**
+
 ```http
 Authorization: Bearer <token>
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -953,18 +1007,19 @@ Authorization: Bearer <token>
 
 ## ⚠️ ERROR CODES
 
-| Code | HTTP Status | Description |
-|------|-------------|-------------|
-| `INVALID_CREDENTIALS` | 401 | Invalid email or password |
-| `UNAUTHORIZED` | 401 | Authentication required |
-| `FORBIDDEN` | 403 | Insufficient permissions |
-| `NOT_FOUND` | 404 | Resource not found |
-| `VALIDATION_ERROR` | 400 | Invalid request data |
-| `RATE_LIMIT_EXCEEDED` | 429 | Too many requests |
-| `SERVER_ERROR` | 500 | Internal server error |
-| `SERVICE_UNAVAILABLE` | 503 | Service temporarily unavailable |
+| Code                  | HTTP Status | Description                     |
+| --------------------- | ----------- | ------------------------------- |
+| `INVALID_CREDENTIALS` | 401         | Invalid email or password       |
+| `UNAUTHORIZED`        | 401         | Authentication required         |
+| `FORBIDDEN`           | 403         | Insufficient permissions        |
+| `NOT_FOUND`           | 404         | Resource not found              |
+| `VALIDATION_ERROR`    | 400         | Invalid request data            |
+| `RATE_LIMIT_EXCEEDED` | 429         | Too many requests               |
+| `SERVER_ERROR`        | 500         | Internal server error           |
+| `SERVICE_UNAVAILABLE` | 503         | Service temporarily unavailable |
 
 **Error Response Format:**
+
 ```json
 {
   "success": false,
@@ -985,11 +1040,13 @@ Authorization: Bearer <token>
 ## 🚦 RATE LIMITING
 
 **Rate Limits:**
+
 - **Authentication:** 5 requests per 15 minutes per IP
 - **General API:** 100 requests per minute per user
 - **Sensitive Operations:** 10 requests per minute per user
 
 **Rate Limit Headers:**
+
 ```http
 X-RateLimit-Limit: 100
 X-RateLimit-Remaining: 95
@@ -997,6 +1054,7 @@ X-RateLimit-Reset: 1702650000
 ```
 
 **Rate Limit Exceeded Response (429):**
+
 ```json
 {
   "success": false,
@@ -1015,6 +1073,7 @@ X-RateLimit-Reset: 1702650000
 Configure webhooks to receive real-time updates.
 
 **Webhook Events:**
+
 - `order.created`
 - `order.confirmed`
 - `order.delivered`
@@ -1024,6 +1083,7 @@ Configure webhooks to receive real-time updates.
 - `product.low_stock`
 
 **Webhook Payload Example:**
+
 ```json
 {
   "event": "order.confirmed",
@@ -1037,6 +1097,7 @@ Configure webhooks to receive real-time updates.
 ```
 
 **Webhook Headers:**
+
 ```http
 X-Webhook-Signature: sha256=abc123...
 X-Webhook-Event: order.confirmed
@@ -1048,21 +1109,27 @@ X-Webhook-Timestamp: 1702650000
 ## 📝 NOTES
 
 ### Pagination
+
 All list endpoints support pagination with `page` and `limit` parameters.
 
 ### Filtering
+
 Most endpoints support filtering via query parameters.
 
 ### Sorting
+
 Use `sortBy` and `sortOrder` (asc/desc) parameters.
 
 ### Versioning
+
 API version is specified in the URL path: `/api/v1/...`
 
 ### CORS
+
 CORS is enabled for configured domains.
 
 ### Caching
+
 Responses include cache headers for optimization.
 
 ---

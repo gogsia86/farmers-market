@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
     if (!farmId) {
       return NextResponse.json(
         { error: "farmId is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
         if (!startDateParam || !endDateParam) {
           return NextResponse.json(
             { error: "startDate and endDate are required for range queries" },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
         const calendars = await BiodynamicCalendarService.getCalendarRange(
           farmId,
           startDate,
-          endDate
+          endDate,
         );
 
         return NextResponse.json({ data: calendars });
@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
       default:
         return NextResponse.json(
           { error: "Invalid type parameter" },
-          { status: 400 }
+          { status: 400 },
         );
     }
   } catch (error) {
@@ -92,7 +92,7 @@ export async function GET(request: NextRequest) {
       {
         error: error instanceof Error ? error.message : "Internal server error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -115,19 +115,19 @@ export async function POST(request: NextRequest) {
     if (!farmId || !date || !userId) {
       return NextResponse.json(
         { error: "farmId, date, and userId are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const calendar = await BiodynamicCalendarService.createOrUpdateCalendar(
       farmId,
       new Date(date),
-      userId
+      userId,
     );
 
     return NextResponse.json(
       { data: calendar, message: "Biodynamic calendar updated successfully" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Biodynamic calendar POST error:", error);
@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
       {
         error: error instanceof Error ? error.message : "Internal server error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

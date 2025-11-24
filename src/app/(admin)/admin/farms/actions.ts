@@ -10,7 +10,7 @@ import { revalidatePath } from "next/cache";
  */
 export async function updateFarmStatus(
   farmId: string,
-  status: FarmStatus
+  status: FarmStatus,
 ): Promise<{ success: boolean; error?: string }> {
   try {
     // Validate farm exists

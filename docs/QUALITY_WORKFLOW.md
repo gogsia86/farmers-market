@@ -58,6 +58,7 @@ npm run build:docker
 ### Configuration Changes
 
 #### 1. **Next.js Config** (`next.config.mjs`)
+
 ```javascript
 eslint: {
   // Skip linting during builds - run separately with npm run quality
@@ -68,6 +69,7 @@ eslint: {
 #### 2. **Package.json Scripts**
 
 **Quality Check Scripts:**
+
 ```json
 {
   "lint": "next lint",
@@ -82,6 +84,7 @@ eslint: {
 ```
 
 **Pre-build Hooks:**
+
 ```json
 {
   "prebuild": "npm run quality",
@@ -165,22 +168,21 @@ git push origin feature/your-branch
 Our `.github/workflows/quality-checks.yml` runs these jobs in parallel:
 
 ```yaml
-Jobs:
-  ┌─────────────────────────────────────────┐
+Jobs: ┌─────────────────────────────────────────┐
   │  1. type-check   (TypeScript)           │
   │  2. lint         (ESLint)               │
   │  3. format-check (Prettier)             │
   │  4. unit-tests   (Jest + Coverage)      │
   └─────────────────────────────────────────┘
-              ↓ (all must pass)
+  ↓ (all must pass)
   ┌─────────────────────────────────────────┐
   │  5. build-check  (Next.js Build)        │
   └─────────────────────────────────────────┘
-              ↓ (on main branch only)
+  ↓ (on main branch only)
   ┌─────────────────────────────────────────┐
   │  6. e2e-tests    (Playwright)           │
   └─────────────────────────────────────────┘
-              ↓ (all checks passed)
+  ↓ (all checks passed)
   ┌─────────────────────────────────────────┐
   │  ✅ Quality Gate PASSED                 │
   └─────────────────────────────────────────┘
@@ -199,24 +201,28 @@ Jobs:
 ### 1. Type Checking
 
 **What it checks:**
+
 - TypeScript type safety
 - Interface/type consistency
 - Strict null checks
 - Import/export correctness
 
 **Commands:**
+
 ```bash
 npm run type-check          # Standard
 npm run type-check:omen     # HP OMEN optimized (12 threads)
 ```
 
 **Fix issues:**
+
 ```bash
 # TypeScript errors must be fixed manually
 # Check the error output and fix type issues in your code
 ```
 
 **Common issues:**
+
 ```typescript
 // ❌ BAD - Type 'any'
 const data: any = fetchData();
@@ -225,11 +231,11 @@ const data: any = fetchData();
 const data: Farm[] = await fetchData();
 
 // ❌ BAD - Missing null check
-const farm = farms.find(f => f.id === id);
+const farm = farms.find((f) => f.id === id);
 console.log(farm.name); // Possible undefined
 
 // ✅ GOOD - Null safe
-const farm = farms.find(f => f.id === id);
+const farm = farms.find((f) => f.id === id);
 if (farm) {
   console.log(farm.name);
 }
@@ -240,6 +246,7 @@ if (farm) {
 ### 2. Linting (ESLint)
 
 **What it checks:**
+
 - Code quality issues
 - React hooks rules
 - Import organization
@@ -247,6 +254,7 @@ if (farm) {
 - Best practices
 
 **Commands:**
+
 ```bash
 npm run lint              # Check only
 npm run lint:fix          # Auto-fix issues
@@ -254,17 +262,20 @@ npm run lint:quiet        # Minimal output
 ```
 
 **Common auto-fixable issues:**
+
 - Missing semicolons
 - Incorrect spacing
 - Import order
 - Unused imports
 
 **Manual fixes required:**
+
 - React hooks dependencies
 - Accessibility violations
 - Complex logic issues
 
 **Example:**
+
 ```javascript
 // ❌ BAD - Missing dependency
 useEffect(() => {
@@ -282,6 +293,7 @@ useEffect(() => {
 ### 3. Code Formatting (Prettier)
 
 **What it checks:**
+
 - Code style consistency
 - Indentation
 - Line length
@@ -289,6 +301,7 @@ useEffect(() => {
 - Trailing commas
 
 **Commands:**
+
 ```bash
 npm run format:check      # Check only
 npm run format            # Auto-format
@@ -298,6 +311,7 @@ npm run format            # Auto-format
 See `.prettierrc` and `prettier.config.js`
 
 **Auto-fixes everything!**
+
 ```bash
 npm run format
 ```
@@ -307,12 +321,14 @@ npm run format
 ### 4. Unit Tests
 
 **What it checks:**
+
 - Business logic correctness
 - Component rendering
 - API endpoint behavior
 - Service layer functionality
 
 **Commands:**
+
 ```bash
 npm run test                # Run all tests
 npm run test:watch          # Watch mode
@@ -321,6 +337,7 @@ npm run test:omen           # HP OMEN optimized (10 workers)
 ```
 
 **Coverage thresholds:**
+
 ```json
 {
   "branches": 80,
@@ -335,12 +352,14 @@ npm run test:omen           # HP OMEN optimized (10 workers)
 ### 5. Build Verification
 
 **What it checks:**
+
 - Next.js compilation success
 - TypeScript compilation (again, as final check)
 - Bundle size optimization
 - Static page generation
 
 **Commands:**
+
 ```bash
 npm run build               # Standard build
 npm run build:optimized     # Optimized build
@@ -349,6 +368,7 @@ npm run build:analyze       # With bundle analyzer
 ```
 
 **Build output:**
+
 ```
 ✓ Type checking completed
 ✓ Prisma client generated
@@ -386,6 +406,7 @@ Or temporarily comment out prebuild hooks in `package.json`
 **Cause:** Different Node/TypeScript versions or missing generated files
 
 **Solution:**
+
 ```bash
 # Use exact Node version
 nvm use 20.19.0
@@ -417,6 +438,7 @@ npm run lint:quiet
 ## ⚡ HP OMEN Optimization
 
 ### Hardware Specs
+
 - **RAM:** 64GB DDR4
 - **CPU:** Intel i7 (12 threads)
 - **GPU:** RTX 2070 Max-Q (2304 CUDA cores, 8GB VRAM)
@@ -442,13 +464,13 @@ npm run quality:omen && npm run test:omen && npm run build:omen
 
 ### Performance Comparison
 
-| Command | Standard | HP OMEN | Speedup |
-|---------|----------|---------|---------|
-| Type Check | ~45s | ~15s | **3x faster** |
-| Lint | ~30s | ~20s | **1.5x faster** |
-| Unit Tests | ~2m | ~45s | **2.6x faster** |
-| Build | ~3m | ~1m 30s | **2x faster** |
-| **Total** | **~6m** | **~2m 30s** | **2.4x faster** |
+| Command    | Standard | HP OMEN     | Speedup         |
+| ---------- | -------- | ----------- | --------------- |
+| Type Check | ~45s     | ~15s        | **3x faster**   |
+| Lint       | ~30s     | ~20s        | **1.5x faster** |
+| Unit Tests | ~2m      | ~45s        | **2.6x faster** |
+| Build      | ~3m      | ~1m 30s     | **2x faster**   |
+| **Total**  | **~6m**  | **~2m 30s** | **2.4x faster** |
 
 ---
 
@@ -456,14 +478,14 @@ npm run quality:omen && npm run test:omen && npm run build:omen
 
 ### Target Metrics
 
-| Metric | Target | Current | Status |
-|--------|--------|---------|--------|
-| Type Coverage | 100% | 99.8% | 🟢 Excellent |
-| Test Coverage | 80%+ | 85.3% | 🟢 Excellent |
-| Lint Errors | 0 | 0 | 🟢 Perfect |
-| Format Issues | 0 | 0 | 🟢 Perfect |
-| Build Time | <3m | 1m 30s | 🟢 Excellent |
-| Bundle Size | <500KB | 387KB | 🟢 Excellent |
+| Metric        | Target | Current | Status       |
+| ------------- | ------ | ------- | ------------ |
+| Type Coverage | 100%   | 99.8%   | 🟢 Excellent |
+| Test Coverage | 80%+   | 85.3%   | 🟢 Excellent |
+| Lint Errors   | 0      | 0       | 🟢 Perfect   |
+| Format Issues | 0      | 0       | 🟢 Perfect   |
+| Build Time    | <3m    | 1m 30s  | 🟢 Excellent |
+| Bundle Size   | <500KB | 387KB   | 🟢 Excellent |
 
 ### Monitoring
 
@@ -484,12 +506,14 @@ npm run build:analyze
 ### Using Husky + lint-staged
 
 **Install:**
+
 ```bash
 npm install --save-dev husky lint-staged
 npx husky install
 ```
 
 **Configure `.husky/pre-commit`:**
+
 ```bash
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
@@ -499,16 +523,12 @@ npm run test --passWithNoTests
 ```
 
 **Configure `lint-staged` in `package.json`:**
+
 ```json
 {
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,md,yml,yaml}": [
-      "prettier --write"
-    ]
+    "*.{js,jsx,ts,tsx}": ["eslint --fix", "prettier --write"],
+    "*.{json,md,yml,yaml}": ["prettier --write"]
   }
 }
 ```
@@ -520,6 +540,7 @@ npm run test --passWithNoTests
 ### ✅ DO
 
 1. **Run quality checks before committing**
+
    ```bash
    npm run quality:fix
    ```
@@ -544,6 +565,7 @@ npm run test --passWithNoTests
    - They exist for a reason
 
 2. **Don't disable ESLint rules without team approval**
+
    ```javascript
    // ❌ BAD
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -567,11 +589,13 @@ npm run test --passWithNoTests
 ## 🎓 Learning Resources
 
 ### Internal Documentation
+
 - [Divine Core Principles](.github/instructions/01_DIVINE_CORE_PRINCIPLES.instructions.md)
 - [Testing & Security](.github/instructions/05_TESTING_SECURITY_DIVINITY.instructions.md)
 - [Error Handling](.github/instructions/12_ERROR_HANDLING_VALIDATION.instructions.md)
 
 ### External Resources
+
 - [Next.js ESLint](https://nextjs.org/docs/app/building-your-application/configuring/eslint)
 - [TypeScript Strict Mode](https://www.typescriptlang.org/tsconfig#strict)
 - [Prettier Configuration](https://prettier.io/docs/en/configuration.html)
@@ -599,6 +623,7 @@ npm run test --passWithNoTests
 ## 📝 Changelog
 
 ### v3.0.0 - 2024-11-15
+
 - ✨ Separated linting from build process
 - ✨ Added comprehensive quality check scripts
 - ✨ Implemented GitHub Actions workflow
@@ -607,6 +632,7 @@ npm run test --passWithNoTests
 - 📚 Added comprehensive documentation
 
 ### v2.0.0 - Previous
+
 - Quality checks integrated in build
 - Basic linting and testing
 
@@ -623,6 +649,7 @@ Our **separate quality workflow** ensures:
 5. **Better DX** - Optimized for HP OMEN hardware
 
 ### Quick Start
+
 ```bash
 # Development
 npm run dev

@@ -23,19 +23,19 @@ npm run build:analyze
 
 ```typescript
 // ✅ Email (saves 1.5 MB)
-import { sendEmail } from '@/lib/email/email-service-lazy';
+import { sendEmail } from "@/lib/email/email-service-lazy";
 
 // ✅ Tracing (saves 500 KB)
-import { startSpan } from '@/lib/tracing/lazy-tracer';
+import { startSpan } from "@/lib/tracing/lazy-tracer";
 
 // ✅ Redis (saves 800 KB)
-import { redisClient } from '@/lib/cache/redis-client-lazy';
+import { redisClient } from "@/lib/cache/redis-client-lazy";
 
 // ✅ Type-only imports (saves EVERYTHING)
-import type { User, Farm } from '@prisma/client';
+import type { User, Farm } from "@prisma/client";
 
 // ✅ Dynamic import for heavy libs
-const stripe = await import('stripe');
+const stripe = await import("stripe");
 ```
 
 ---
@@ -44,23 +44,23 @@ const stripe = await import('stripe');
 
 ```typescript
 // ❌ These KILL bundle size
-import nodemailer from 'nodemailer';        // +1.5 MB
-import Redis from 'ioredis';                // +800 KB
-import { trace } from '@opentelemetry/api'; // +500 KB
-import Stripe from 'stripe';                // +300 KB
-import { PrismaClient } from '@prisma/client'; // Variable
+import nodemailer from "nodemailer"; // +1.5 MB
+import Redis from "ioredis"; // +800 KB
+import { trace } from "@opentelemetry/api"; // +500 KB
+import Stripe from "stripe"; // +300 KB
+import { PrismaClient } from "@prisma/client"; // Variable
 ```
 
 ---
 
 ## 📊 Bundle Size Thresholds
 
-| Route Type          | Target   | Max      | Status |
-|---------------------|----------|----------|--------|
-| Health/Ready        | < 10 KB  | < 20 KB  | 🔴 Critical |
-| Standard API        | < 25 KB  | < 50 KB  | 🟡 Standard |
-| Admin API           | < 50 KB  | < 200 KB | 🟠 Heavy |
-| Pages               | < 100 KB | < 300 KB | 🔵 Standard |
+| Route Type   | Target   | Max      | Status      |
+| ------------ | -------- | -------- | ----------- |
+| Health/Ready | < 10 KB  | < 20 KB  | 🔴 Critical |
+| Standard API | < 25 KB  | < 50 KB  | 🟡 Standard |
+| Admin API    | < 50 KB  | < 200 KB | 🟠 Heavy    |
+| Pages        | < 100 KB | < 300 KB | 🔵 Standard |
 
 **Golden Rule**: If it's > 50 KB, it NEEDS optimization!
 
@@ -101,19 +101,19 @@ npm run bundle:check
 ```typescript
 // Q: Is it a heavy dependency (> 100 KB)?
 // A: Use lazy wrapper or dynamic import
-const service = await import('./heavy-service');
+const service = await import("./heavy-service");
 
 // Q: Is it a Prisma type?
 // A: Type-only import
-import type { User } from '@prisma/client';
+import type { User } from "@prisma/client";
 
 // Q: Is it email/tracing/Redis?
 // A: Use existing lazy wrappers
-import { sendEmail } from '@/lib/email/email-service-lazy';
+import { sendEmail } from "@/lib/email/email-service-lazy";
 
 // Q: Is it a utility function?
 // A: Import specific function only
-import pick from 'lodash/pick'; // Not entire lodash!
+import pick from "lodash/pick"; // Not entire lodash!
 ```
 
 ---
@@ -121,18 +121,21 @@ import pick from 'lodash/pick'; // Not entire lodash!
 ## 🚨 Common Mistakes
 
 ### 1. Importing Entire Library
+
 ```typescript
 ❌ import _ from 'lodash';
 ✅ import pick from 'lodash/pick';
 ```
 
 ### 2. Forgetting Type-Only
+
 ```typescript
 ❌ import { User } from '@prisma/client';
 ✅ import type { User } from '@prisma/client';
 ```
 
 ### 3. Skipping Bundle Check
+
 ```typescript
 ❌ git add . && git commit && git push
 ✅ npm run bundle:check && git add . && git commit && git push
@@ -143,6 +146,7 @@ import pick from 'lodash/pick'; // Not entire lodash!
 ## 📖 Reading Bundle Reports
 
 ### ✅ Good Output
+
 ```
 ✅ 13.1 KB  app/api/admin/approvals/route.js
 ✅ 14.8 KB  app/api/farms/route.js
@@ -152,6 +156,7 @@ Total: 3 files analyzed, 0 failures
 ```
 
 ### ❌ Needs Fixing
+
 ```
 ❌ 235.5 KB  app/api/problem-route/route.js
    Exceeds threshold by 185.5 KB (372%)
@@ -164,13 +169,13 @@ Action: Check for direct imports of nodemailer, Redis, etc.
 
 ## 💡 Quick Fixes by Size
 
-| Bundle Size | Likely Cause | Quick Fix |
-|-------------|--------------|-----------|
-| 50-100 KB | Lodash/utility | Import specific functions |
-| 100-300 KB | Stripe/AWS SDK | Dynamic import |
-| 300-800 KB | Redis/Cache | Use `redis-client-lazy` |
-| 800-1500 KB | Email lib | Use `email-service-lazy` |
-| > 1500 KB | Nodemailer | Use `email-service-lazy` |
+| Bundle Size | Likely Cause   | Quick Fix                 |
+| ----------- | -------------- | ------------------------- |
+| 50-100 KB   | Lodash/utility | Import specific functions |
+| 100-300 KB  | Stripe/AWS SDK | Dynamic import            |
+| 300-800 KB  | Redis/Cache    | Use `redis-client-lazy`   |
+| 800-1500 KB | Email lib      | Use `email-service-lazy`  |
+| > 1500 KB   | Nodemailer     | Use `email-service-lazy`  |
 
 ---
 
@@ -185,12 +190,12 @@ Action: Check for direct imports of nodemailer, Redis, etc.
 
 ## 📞 Getting Help
 
-| Time | Channel |
-|------|---------|
-| 2 min | Check `BUNDLE_SIZE_QUICK_START.md` |
-| 15 min | Ask in `#platform-performance` |
-| 1 hour | GitHub issue: `ci/bundle-protection` |
-| Emergency | Contact Platform Team Lead |
+| Time      | Channel                              |
+| --------- | ------------------------------------ |
+| 2 min     | Check `BUNDLE_SIZE_QUICK_START.md`   |
+| 15 min    | Ask in `#platform-performance`       |
+| 1 hour    | GitHub issue: `ci/bundle-protection` |
+| Emergency | Contact Platform Team Lead           |
 
 ---
 
@@ -236,12 +241,14 @@ Track your progress:
 ## 📊 CI Integration
 
 ### Every PR Gets:
+
 1. Automatic bundle size analysis
 2. PR comment with detailed report
 3. Pass/fail based on thresholds
 4. Artifacts uploaded for review
 
 ### If CI Fails:
+
 1. Read PR comment for specific routes
 2. Run `npm run bundle:check` locally
 3. Apply lazy patterns
@@ -288,7 +295,7 @@ If ❌ → fix → npm run bundle:check → git push
 
 **Version**: 1.0.0  
 **Updated**: January 2025  
-**Print Date**: __________
+**Print Date**: ****\_\_****
 
 ---
 

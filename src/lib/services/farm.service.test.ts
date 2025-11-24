@@ -21,7 +21,14 @@ import {
   getFarmBySlug,
 } from "@/lib/services/farm.service";
 import type { CreateFarmRequest, UserId } from "@/types/farm.types";
-import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from "@jest/globals";
 
 // ============================================================================
 // MOCKS - DIVINE TEST DOUBLES
@@ -133,7 +140,9 @@ describe("Farm Service - Divine Operations", () => {
     it("manifests new farm with unique slug successfully", async () => {
       // Arrange
       jest.mocked(database.farm.findUnique).mockResolvedValue(null); // No slug collision
-      jest.mocked(database.farm.create).mockResolvedValue(mockCreatedFarm as any);
+      jest
+        .mocked(database.farm.create)
+        .mockResolvedValue(mockCreatedFarm as any);
 
       // Act
       const result = await createFarmService({
@@ -150,11 +159,14 @@ describe("Farm Service - Divine Operations", () => {
 
     it("handles slug collision by appending counter", async () => {
       // Arrange - First slug exists, second doesn't
-      jest.mocked(database.farm.findUnique)
+      jest
+        .mocked(database.farm.findUnique)
         .mockResolvedValueOnce({ id: "existing-farm" } as any) // Collision
         .mockResolvedValueOnce(null); // Success
 
-      jest.mocked(database.farm.create).mockResolvedValue(mockCreatedFarm as any);
+      jest
+        .mocked(database.farm.create)
+        .mockResolvedValue(mockCreatedFarm as any);
 
       // Act
       const result = await createFarmService({
@@ -178,14 +190,16 @@ describe("Farm Service - Divine Operations", () => {
         createFarmService({
           userId: mockUserId,
           farmData: mockFarmData,
-        })
+        }),
       ).rejects.toThrow("Failed to generate unique slug");
     });
 
     it("creates farm with PENDING status by default", async () => {
       // Arrange
       jest.mocked(database.farm.findUnique).mockResolvedValue(null);
-      jest.mocked(database.farm.create).mockResolvedValue(mockCreatedFarm as any);
+      jest
+        .mocked(database.farm.create)
+        .mockResolvedValue(mockCreatedFarm as any);
 
       // Act
       await createFarmService({
@@ -202,14 +216,16 @@ describe("Farm Service - Divine Operations", () => {
             stripeOnboarded: false,
             payoutsEnabled: false,
           }),
-        })
+        }),
       );
     });
 
     it("manifests quantum farm with agricultural consciousness", async () => {
       // Arrange
       jest.mocked(database.farm.findUnique).mockResolvedValue(null);
-      jest.mocked(database.farm.create).mockResolvedValue(mockCreatedFarm as any);
+      jest
+        .mocked(database.farm.create)
+        .mockResolvedValue(mockCreatedFarm as any);
 
       // Act
       const result = await createFarmService({
@@ -220,10 +236,10 @@ describe("Farm Service - Divine Operations", () => {
       // Assert - Check quantum properties
       expect(result.farm.consciousness).toBeDefined();
       expect(result.farm.consciousness.currentSeason).toMatch(
-        /SPRING|SUMMER|FALL|WINTER/
+        /SPRING|SUMMER|FALL|WINTER/,
       );
       expect(result.farm.consciousness.state).toMatch(
-        /DORMANT|AWAKENING|GROWING|HARVESTING|REGENERATING/
+        /DORMANT|AWAKENING|GROWING|HARVESTING|REGENERATING/,
       );
       expect(result.farm.location.latitude).toBe(37.7749);
       expect(result.farm.location.longitude).toBe(-122.4194);
@@ -289,9 +305,9 @@ describe("Farm Service - Divine Operations", () => {
   describe("getFarmById", () => {
     it("manifests quantum farm when farm exists", async () => {
       // Arrange
-      jest.mocked(database.farm.findUnique).mockResolvedValue(
-        mockCreatedFarm as any
-      );
+      jest
+        .mocked(database.farm.findUnique)
+        .mockResolvedValue(mockCreatedFarm as any);
 
       // Act
       const result = await getFarmById("farm-123");
@@ -316,9 +332,9 @@ describe("Farm Service - Divine Operations", () => {
 
     it("includes owner information in query", async () => {
       // Arrange
-      jest.mocked(database.farm.findUnique).mockResolvedValue(
-        mockCreatedFarm as any
-      );
+      jest
+        .mocked(database.farm.findUnique)
+        .mockResolvedValue(mockCreatedFarm as any);
 
       // Act
       const result = await getFarmById("farm-123");
@@ -336,9 +352,9 @@ describe("Farm Service - Divine Operations", () => {
   describe("getFarmBySlug", () => {
     it("manifests quantum farm when slug exists", async () => {
       // Arrange
-      jest.mocked(database.farm.findUnique).mockResolvedValue(
-        mockCreatedFarm as any
-      );
+      jest
+        .mocked(database.farm.findUnique)
+        .mockResolvedValue(mockCreatedFarm as any);
 
       // Act
       const result = await getFarmBySlug("quantum-valley-farm-reality");
@@ -360,5 +376,3 @@ describe("Farm Service - Divine Operations", () => {
     });
   });
 });
-
-

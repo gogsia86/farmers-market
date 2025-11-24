@@ -24,7 +24,7 @@ export class ShippingService {
    */
   static async calculateShippingRates(
     _orderId: string,
-    _destination: { city: string; state: string; zipCode: string }
+    _destination: { city: string; state: string; zipCode: string },
   ): Promise<ShippingRate[]> {
     // In production, integrate with shipping providers (FedEx, UPS, USPS)
     const rates: ShippingRate[] = [
@@ -41,7 +41,7 @@ export class ShippingService {
    */
   static async createShippingLabel(
     orderId: string,
-    service: string
+    service: string,
   ): Promise<{ labelId: string; trackingNumber: string }> {
     // In production, create label with shipping provider
     const trackingNumber = `TRK${Date.now()}`;
@@ -64,7 +64,7 @@ export class ShippingService {
    * Get tracking information
    */
   static async getTrackingInfo(
-    trackingNumber: string
+    trackingNumber: string,
   ): Promise<TrackingInfo[]> {
     // In production, fetch from shipping provider API
     const order = await database.order.findFirst({
@@ -90,7 +90,7 @@ export class ShippingService {
    */
   static async updateShippingStatus(
     orderId: string,
-    status: string
+    status: string,
   ): Promise<void> {
     // Cast to OrderStatus enum type
     const validStatuses = [

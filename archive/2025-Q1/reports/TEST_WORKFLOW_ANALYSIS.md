@@ -79,7 +79,7 @@ it("should throw error for unauthorized user", async () => {
   });
 
   await expect(
-    ProductService.createProduct(validInput, mockUserId)
+    ProductService.createProduct(validInput, mockUserId),
   ).rejects.toThrow("Unauthorized: You don't own this farm");
 });
 
@@ -91,7 +91,7 @@ it("should validate price is positive", async () => {
   };
 
   await expect(
-    ProductService.createProduct(invalidPriceInput, mockUserId)
+    ProductService.createProduct(invalidPriceInput, mockUserId),
   ).rejects.toThrow("Price must be greater than 0");
 });
 
@@ -375,7 +375,7 @@ it("should sanitize XSS attempts in product names", async () => {
 describe("useComponentConsciousness Hook", () => {
   it("should track performance measurement", () => {
     const { result } = renderHook(() =>
-      useComponentConsciousness("TestComponent")
+      useComponentConsciousness("TestComponent"),
     );
 
     act(() => {

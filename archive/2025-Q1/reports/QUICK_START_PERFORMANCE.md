@@ -1,7 +1,9 @@
 # 🚀 Quick Start: Performance Optimization Guide
+
 **Farmers Market Platform - Developer Quick Reference**
 
 ## 📋 Table of Contents
+
 - [Current Status](#current-status)
 - [Quick Commands](#quick-commands)
 - [Demo Pages](#demo-pages)
@@ -14,6 +16,7 @@
 ## 🎯 Current Status
 
 ### Bundle Sizes (Latest Build)
+
 ```
 Client:  419 KB  ⚠️  Target: < 450 KB (Close to target)
 Server:  871 KB  ⚠️  Target: < 700 KB (171 KB over)
@@ -21,6 +24,7 @@ Edge:    269 KB  ✅  Target: < 300 KB (Excellent)
 ```
 
 ### What's Complete
+
 - ✅ Dynamic component wrappers (4 components)
 - ✅ Demo pages showcasing optimization (4 pages)
 - ✅ Webpack code splitting configured
@@ -29,6 +33,7 @@ Edge:    269 KB  ✅  Target: < 300 KB (Excellent)
 - ✅ Database schema with performance indexes
 
 ### What's Pending
+
 - ⏳ Heavy component implementations (charts, AI, data processing)
 - ⏳ Server bundle optimization (need -171 KB)
 - ⏳ Database performance testing
@@ -39,6 +44,7 @@ Edge:    269 KB  ✅  Target: < 300 KB (Excellent)
 ## ⚡ Quick Commands
 
 ### Development
+
 ```bash
 # Start dev server
 npm run dev
@@ -51,6 +57,7 @@ npm run dev:omen
 ```
 
 ### Building & Analysis
+
 ```bash
 # Standard build
 npm run build
@@ -63,6 +70,7 @@ npm run build:omen
 ```
 
 ### Testing
+
 ```bash
 # Run all tests
 npm test
@@ -75,6 +83,7 @@ npm run test:omen
 ```
 
 ### Quality Checks
+
 ```bash
 # Type checking
 npm run type-check
@@ -90,6 +99,7 @@ npm run quality
 ```
 
 ### Database
+
 ```bash
 # Generate Prisma client
 npx prisma generate
@@ -105,6 +115,7 @@ npx prisma studio
 ```
 
 ### Performance Validation
+
 ```bash
 # Validate analytics endpoint performance
 # (requires dev server running)
@@ -116,30 +127,35 @@ node scripts/validate-analytics-performance.mjs
 ## 🎨 Demo Pages
 
 ### Access the Demos
+
 1. Start dev server: `npm run dev`
 2. Navigate to: `http://localhost:3001/demos`
 
 ### Available Demos
 
 #### 1. Analytics Dashboard (`/demos/analytics`)
+
 - **Component**: `AdvancedAnalyticsDashboardDynamic`
 - **Bundle Savings**: ~50-70 KB (projected)
 - **Features**: Charts, revenue analytics, customer insights
 - **Heavy Libraries**: recharts, chart.js, d3 (not yet implemented)
 
 #### 2. Inventory Management (`/demos/inventory`)
+
 - **Component**: `InventoryDashboardDynamic`
 - **Bundle Savings**: ~40-60 KB (projected)
 - **Features**: Stock monitoring, alerts, CSV export
 - **Heavy Libraries**: papaparse, data tables (not yet implemented)
 
 #### 3. AI Chat Assistant (`/demos/chat`)
+
 - **Component**: `OllamaChatBotDynamic`
 - **Bundle Savings**: ~60-80 KB (projected)
 - **Features**: Crop recommendations, pest management, planning
 - **Heavy Libraries**: Ollama client, WebSocket (not yet implemented)
 
 #### 4. Bulk Product Upload (`/farmer-dashboard/products/bulk-upload`)
+
 - **Component**: `BulkProductUploadDynamic`
 - **Bundle Savings**: ~40-50 KB (projected)
 - **Features**: CSV processing, validation, batch operations
@@ -150,6 +166,7 @@ node scripts/validate-analytics-performance.mjs
 ## 📊 Bundle Analysis
 
 ### Run Analysis
+
 ```bash
 # Build with analyzer enabled
 ANALYZE=true npm run build:analyze
@@ -159,7 +176,9 @@ npm run build:analyze
 ```
 
 ### View Results
+
 After build completes, open the HTML reports:
+
 ```
 .next/analyze/client.html    - Client bundle breakdown
 .next/analyze/nodejs.html    - Server bundle breakdown
@@ -169,18 +188,21 @@ After build completes, open the HTML reports:
 ### What to Look For
 
 #### Client Bundle
+
 - Framework chunks (React, Next.js)
 - Vendor libraries (UI components)
 - Page-specific chunks
 - Shared common chunks
 
 #### Server Bundle
+
 - Prisma client (~300-400 KB typical)
 - API route handlers
 - Database service layers
 - Authentication logic
 
 #### Optimization Opportunities
+
 - ❌ Large individual modules (>100 KB)
 - ❌ Duplicate code in multiple chunks
 - ❌ Unused dependencies
@@ -191,15 +213,17 @@ After build completes, open the HTML reports:
 ## 🎯 Next Actions
 
 ### Priority 1: Optimize Server Bundle (High Impact)
+
 **Goal**: Reduce server bundle from 871 KB to <700 KB
 
 **Strategies**:
+
 ```typescript
 // A. Dynamic imports in API routes
 export async function POST(req: NextRequest) {
   // Before: import at top
   // import { heavyValidator } from '@/lib/validation/heavy';
-  
+
   // After: dynamic import
   const { heavyValidator } = await import('@/lib/validation/heavy');
   const validated = heavyValidator.parse(data);
@@ -220,9 +244,11 @@ const product = await database.product.findUnique({
 ```
 
 ### Priority 2: Implement Heavy Components (Realize Savings)
+
 **Goal**: Add real implementations to see bundle savings
 
 **Tasks**:
+
 1. Add chart library to AdvancedAnalyticsDashboard
 2. Add CSV processing to InventoryDashboard
 3. Integrate Ollama client to OllamaChatBot
@@ -231,9 +257,11 @@ const product = await database.product.findUnique({
 **Expected Result**: 400-600 KB total savings
 
 ### Priority 3: Add Bundle Size Monitoring
+
 **Goal**: Prevent regressions
 
 **Implementation**:
+
 ```json
 // package.json
 "bundlesize": [
@@ -249,6 +277,7 @@ const product = await database.product.findUnique({
 ```
 
 Add to CI:
+
 ```yaml
 # .github/workflows/bundle-size.yml
 - name: Check bundle size
@@ -262,6 +291,7 @@ Add to CI:
 ### Creating a New Dynamic Component
 
 **1. Create the component**
+
 ```typescript
 // src/components/MyHeavyComponent.tsx
 export function MyHeavyComponent({ data }: Props) {
@@ -271,6 +301,7 @@ export function MyHeavyComponent({ data }: Props) {
 ```
 
 **2. Create dynamic wrapper**
+
 ```typescript
 // src/components/MyHeavyComponentDynamic.tsx
 "use client";
@@ -305,6 +336,7 @@ export const MyHeavyComponentDynamic = dynamic<
 ```
 
 **3. Use in page**
+
 ```typescript
 // src/app/my-page/page.tsx
 "use client";
@@ -324,11 +356,12 @@ export default function MyPage() {
 ### Optimizing an API Route
 
 **Before (Heavy imports loaded immediately)**
+
 ```typescript
 // app/api/my-route/route.ts
-import { heavyProcessor } from '@/lib/heavy-processor';
-import { complexValidator } from '@/lib/validators/complex';
-import { bigUtility } from '@/lib/big-utility';
+import { heavyProcessor } from "@/lib/heavy-processor";
+import { complexValidator } from "@/lib/validators/complex";
+import { bigUtility } from "@/lib/big-utility";
 
 export async function POST(req: NextRequest) {
   const validated = complexValidator.parse(data);
@@ -339,20 +372,18 @@ export async function POST(req: NextRequest) {
 ```
 
 **After (Dynamic imports)**
+
 ```typescript
 // app/api/my-route/route.ts
 export async function POST(req: NextRequest) {
   // Load only when needed
-  const [
-    { heavyProcessor },
-    { complexValidator },
-    { bigUtility }
-  ] = await Promise.all([
-    import('@/lib/heavy-processor'),
-    import('@/lib/validators/complex'),
-    import('@/lib/big-utility')
-  ]);
-  
+  const [{ heavyProcessor }, { complexValidator }, { bigUtility }] =
+    await Promise.all([
+      import("@/lib/heavy-processor"),
+      import("@/lib/validators/complex"),
+      import("@/lib/big-utility"),
+    ]);
+
   const validated = complexValidator.parse(data);
   const processed = heavyProcessor.process(validated);
   const result = bigUtility.transform(processed);
@@ -363,6 +394,7 @@ export async function POST(req: NextRequest) {
 ### Adding Performance Indexes
 
 **1. Update Prisma schema**
+
 ```prisma
 // prisma/schema.prisma
 model Product {
@@ -372,9 +404,9 @@ model Product {
   category  String
   status    String
   createdAt DateTime @default(now())
-  
+
   farm Farm @relation(fields: [farmId], references: [id])
-  
+
   // Add indexes for common queries
   @@index([farmId, status]) // For filtering by farm and status
   @@index([category, status]) // For category pages
@@ -383,6 +415,7 @@ model Product {
 ```
 
 **2. Apply to database**
+
 ```bash
 # Development (quick)
 npx prisma db push
@@ -392,13 +425,14 @@ npx prisma migrate dev --name add_product_indexes
 ```
 
 **3. Verify indexes**
+
 ```sql
 -- Connect to database
 psql -h localhost -U postgres -d farmersmarket
 
 -- Check indexes
-SELECT schemaname, tablename, indexname 
-FROM pg_indexes 
+SELECT schemaname, tablename, indexname
+FROM pg_indexes
 WHERE tablename = 'Product';
 ```
 
@@ -407,12 +441,14 @@ WHERE tablename = 'Product';
 ## 📚 Documentation
 
 ### Key Files
+
 - `PHASE_5_CONTINUATION_STATUS.md` - Comprehensive status report
 - `PHASE_5_INTEGRATION_COMPLETE.md` - Integration results
 - `QUICK_START_PERFORMANCE.md` - This file
 - `.github/instructions/` - Divine instruction files (1-16)
 
 ### Divine Instructions Reference
+
 ```
 01 - Core architecture principles
 02 - Agricultural patterns
@@ -427,6 +463,7 @@ WHERE tablename = 'Product';
 ## 🔍 Troubleshooting
 
 ### Build Fails with TypeScript Errors
+
 ```bash
 # Check for type errors
 npm run type-check
@@ -444,6 +481,7 @@ npm install
 ```
 
 ### Bundle Analyzer Not Working
+
 ```bash
 # Ensure ANALYZE env var is set
 ANALYZE=true npm run build:analyze
@@ -456,6 +494,7 @@ npm run build:analyze
 ```
 
 ### Performance Validation Script Fails
+
 ```bash
 # Ensure dev server is running
 npm run dev
@@ -471,6 +510,7 @@ curl http://localhost:3001/api/health
 ```
 
 ### Prisma Schema Push Fails
+
 ```bash
 # Check database is running
 docker ps
@@ -490,11 +530,13 @@ npx prisma db push --force-reset
 ## 🎓 Learning Resources
 
 ### Internal Documentation
+
 - Divine Instructions: `.github/instructions/`
 - Status Reports: `PHASE_*_*.md` files
 - Component Examples: `src/app/demos/`
 
 ### External Resources
+
 - [Next.js Dynamic Imports](https://nextjs.org/docs/app/building-your-application/optimizing/lazy-loading)
 - [Webpack Bundle Analyzer](https://github.com/webpack-contrib/webpack-bundle-analyzer)
 - [Web Vitals Guide](https://web.dev/vitals/)
@@ -505,47 +547,55 @@ npx prisma db push --force-reset
 ## 🌟 Performance Targets
 
 ### Bundle Sizes
+
 | Bundle | Current | Target | Stretch |
-|--------|---------|--------|---------|
+| ------ | ------- | ------ | ------- |
 | Client | 419 KB  | 450 KB | 350 KB  |
 | Server | 871 KB  | 700 KB | 600 KB  |
 | Edge   | 269 KB  | 300 KB | 250 KB  |
 
 ### Core Web Vitals
-| Metric | Target | Stretch |
-|--------|--------|---------|
-| LCP    | < 2.5s | < 1.8s  |
-| FID    | < 100ms| < 50ms  |
-| CLS    | < 0.1  | < 0.05  |
-| TTI    | < 2s   | < 1.5s  |
+
+| Metric | Target  | Stretch |
+| ------ | ------- | ------- |
+| LCP    | < 2.5s  | < 1.8s  |
+| FID    | < 100ms | < 50ms  |
+| CLS    | < 0.1   | < 0.05  |
+| TTI    | < 2s    | < 1.5s  |
 
 ### API Performance
-| Endpoint | Target | Stretch |
-|----------|--------|---------|
-| Analytics| < 100ms| < 80ms  |
-| Products | < 50ms | < 30ms  |
-| Farms    | < 80ms | < 50ms  |
+
+| Endpoint  | Target  | Stretch |
+| --------- | ------- | ------- |
+| Analytics | < 100ms | < 80ms  |
+| Products  | < 50ms  | < 30ms  |
+| Farms     | < 80ms  | < 50ms  |
 
 ---
 
 ## 💬 Quick Questions?
 
 ### "How do I check bundle sizes?"
+
 ```bash
 npm run build:analyze
 # Open .next/analyze/*.html files
 ```
 
 ### "How do I make a component dynamic?"
+
 See [Creating a New Dynamic Component](#creating-a-new-dynamic-component) above.
 
 ### "How do I optimize the server bundle?"
+
 See [Priority 1: Optimize Server Bundle](#priority-1-optimize-server-bundle-high-impact) above.
 
 ### "Where are the demo pages?"
+
 Navigate to: `http://localhost:3001/demos` (dev server must be running)
 
 ### "How do I test performance?"
+
 ```bash
 # 1. Start dev server
 npm run dev
@@ -562,13 +612,15 @@ node scripts/validate-analytics-performance.mjs
 ## 🚀 Ready to Optimize?
 
 **Start with the easiest wins:**
+
 1. ✅ Run bundle analysis: `npm run build:analyze`
 2. ✅ View demo pages: `http://localhost:3001/demos`
 3. ✅ Identify optimization targets in analyzer
 4. ✅ Apply dynamic imports where beneficial
 5. ✅ Measure improvements and iterate
 
-**Remember**: 
+**Remember**:
+
 - Infrastructure has a cost (wrappers, configs)
 - Savings come from deferring heavy libraries
 - Measure after each change

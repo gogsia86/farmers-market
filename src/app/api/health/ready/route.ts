@@ -26,7 +26,7 @@ export async function GET() {
           ready: false,
           reason: `Missing environment variables: ${missing.join(", ")}`,
         },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -40,7 +40,7 @@ export async function GET() {
         ready: false,
         reason: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 503 }
+      { status: 503 },
     );
   }
 }

@@ -1,4 +1,5 @@
 # 🎣 Pre-Commit Hooks Guide
+
 ## Automated Code Quality Enforcement
 
 **Status**: ✅ Active  
@@ -49,37 +50,45 @@ Pre-commit hooks are automated checks that run before each commit to ensure code
 When you run `git commit`, the following checks run automatically:
 
 #### 1. TypeScript Type Checking ⚡
+
 ```bash
 npx tsc --noEmit
 ```
+
 - ✅ Ensures no TypeScript errors
 - ✅ Validates all type annotations
 - ✅ Catches type mismatches
 - ❌ Blocks commit if errors found
 
 #### 2. ESLint (Code Linting) 🔍
+
 ```bash
 npx eslint <files> --fix --max-warnings=0
 ```
+
 - ✅ Checks code style and best practices
 - ✅ Auto-fixes issues when possible
 - ✅ Enforces coding standards
 - ❌ Blocks commit if unfixable errors
 
 #### 3. Prettier (Code Formatting) 💅
+
 ```bash
 npx prettier --write <files>
 ```
+
 - ✅ Formats code consistently
 - ✅ Auto-fixes formatting
 - ✅ Maintains code style
 - ✅ Always succeeds (auto-fixes)
 
 #### 4. Prisma Schema Validation (if schema changed) 🗄️
+
 ```bash
 npx prisma format
 npx prisma validate
 ```
+
 - ✅ Validates Prisma schema syntax
 - ✅ Formats schema file
 - ✅ Checks for schema errors
@@ -89,6 +98,7 @@ npx prisma validate
 After you write your commit message, it's validated against conventional commits format:
 
 **Required Format**:
+
 ```
 <type>(<scope>): <subject>
 
@@ -100,6 +110,7 @@ Examples:
 ```
 
 **Valid Types**:
+
 - `feat` - New feature
 - `fix` - Bug fix
 - `docs` - Documentation changes
@@ -125,6 +136,7 @@ npm install
 ```
 
 This triggers the `prepare` script in `package.json` which runs:
+
 ```bash
 npm run prepare  # Runs: husky
 ```
@@ -138,6 +150,7 @@ ls -la .husky/
 ```
 
 You should see:
+
 - `.husky/pre-commit` - Runs before commit
 - `.husky/commit-msg` - Validates commit message
 - `.husky/_/` - Husky internal files
@@ -253,6 +266,7 @@ git checkout .husky/commit-msg
 **Symptoms**: Changes commit without any checks
 
 **Solution**:
+
 ```bash
 # Check if hooks are installed
 ls -la .husky/
@@ -271,13 +285,15 @@ git config core.hooksPath
 
 ### Issue: TypeScript errors on commit
 
-**Symptoms**: 
+**Symptoms**:
+
 ```
 ❌ Pre-commit checks failed!
 src/lib/auth/config.ts:42:5 - error TS2322: Type 'string' is not assignable to type 'never'
 ```
 
 **Solution**:
+
 ```bash
 # Fix the TypeScript errors first
 npx tsc --noEmit
@@ -291,12 +307,14 @@ git commit -m "fix: resolve type errors"
 ### Issue: ESLint errors blocking commit
 
 **Symptoms**:
+
 ```
 ❌ 3 linting errors found
   src/components/FarmCard.tsx:15:7 - 'farm' is never used
 ```
 
 **Solution**:
+
 ```bash
 # Try auto-fix first
 npx eslint src/components/FarmCard.tsx --fix
@@ -311,6 +329,7 @@ git commit -m "fix(components): remove unused variable"
 ### Issue: Commit message rejected
 
 **Symptoms**:
+
 ```
 ❌ Invalid commit message format!
 
@@ -319,6 +338,7 @@ Your commit message:
 ```
 
 **Solution**:
+
 ```bash
 # Use conventional commit format
 git commit -m "fix(auth): resolve authentication bug"
@@ -334,16 +354,18 @@ git commit -m "feat(farms): add farm search functionality"
 **Causes & Solutions**:
 
 1. **Too many files staged**:
+
    ```bash
    # Commit in smaller batches
    git add src/lib/auth/
    git commit -m "fix(auth): update auth config"
-   
+
    git add src/components/
    git commit -m "feat(ui): add new components"
    ```
 
 2. **TypeScript check is slow**:
+
    ```bash
    # Ensure tsconfig.json excludes unnecessary files
    # Check: "exclude": ["node_modules", "dist", ".next"]
@@ -360,6 +382,7 @@ git commit -m "feat(farms): add farm search functionality"
 **Symptoms**: TypeScript errors that don't make sense
 
 **Solution**:
+
 ```bash
 # Clear TypeScript cache
 rm -rf .next/
@@ -377,6 +400,7 @@ git commit -m "fix: your fix"
 **Symptoms**: `/bin/sh: not found` or similar errors
 
 **Solution**:
+
 ```bash
 # Install Git Bash (comes with Git for Windows)
 # Or use WSL (Windows Subsystem for Linux)
@@ -396,12 +420,14 @@ npm run prepare
 ### When to Bypass
 
 ⚠️ **ONLY in emergencies**:
+
 - Critical hotfix needed immediately
 - CI/CD is down and needs urgent fix
 - Working on experimental branch (not main)
 - Infrastructure changes that break type checking temporarily
 
 ❌ **NEVER bypass**:
+
 - "I'll fix it later" - You won't, and it will break CI
 - "It's just a small change" - Small changes can have big impacts
 - "The errors don't matter" - They always matter
@@ -410,6 +436,7 @@ npm run prepare
 ### How to Bypass (Use Responsibly)
 
 #### Skip Pre-Commit Checks
+
 ```bash
 git commit --no-verify -m "fix: emergency hotfix"
 # or
@@ -417,6 +444,7 @@ git commit -n -m "fix: emergency hotfix"
 ```
 
 #### Skip Commit Message Validation
+
 ```bash
 # Same as above - --no-verify skips all hooks
 git commit --no-verify -m "quick fix"
@@ -439,41 +467,37 @@ git commit --no-verify -m "quick fix"
 ```javascript
 module.exports = {
   // TypeScript files
-  '**/*.{ts,tsx}': (filenames) => [
-    'npx tsc --noEmit',                    // Type check
-    `npx eslint ${filenames} --fix`,       // Lint & auto-fix
-    `npx prettier --write ${filenames}`,   // Format
+  "**/*.{ts,tsx}": (filenames) => [
+    "npx tsc --noEmit", // Type check
+    `npx eslint ${filenames} --fix`, // Lint & auto-fix
+    `npx prettier --write ${filenames}`, // Format
   ],
 
   // JavaScript files
-  '**/*.{js,jsx}': (filenames) => [
+  "**/*.{js,jsx}": (filenames) => [
     `npx eslint ${filenames} --fix`,
     `npx prettier --write ${filenames}`,
   ],
 
   // JSON files
-  '**/*.json': (filenames) => [
-    `npx prettier --write ${filenames}`,
-  ],
+  "**/*.json": (filenames) => [`npx prettier --write ${filenames}`],
 
   // Prisma schema
-  'prisma/schema.prisma': () => [
-    'npx prisma format',
-    'npx prisma validate',
-  ],
+  "prisma/schema.prisma": () => ["npx prisma format", "npx prisma validate"],
 };
 ```
 
 ### Customizing Checks
 
 #### Add New File Type
+
 ```javascript
 // In .lintstagedrc.js
 module.exports = {
   // ... existing rules ...
-  
+
   // Add CSS linting
-  '**/*.css': (filenames) => [
+  "**/*.css": (filenames) => [
     `npx stylelint ${filenames} --fix`,
     `npx prettier --write ${filenames}`,
   ],
@@ -481,6 +505,7 @@ module.exports = {
 ```
 
 #### Disable Specific Check
+
 ```javascript
 // Remove type checking (not recommended!)
 '**/*.{ts,tsx}': (filenames) => [
@@ -491,6 +516,7 @@ module.exports = {
 ```
 
 #### Add Test Running
+
 ```javascript
 // Run tests for changed files
 '**/*.test.{ts,tsx}': (filenames) => [
@@ -678,6 +704,7 @@ $ git commit -m "feat(ui): add farm card component"
 ## 🎓 Best Practices
 
 ### 1. Commit Often, Commit Small
+
 ```bash
 # ✅ Good - Small, focused commits
 git commit -m "feat(auth): add login form validation"
@@ -689,6 +716,7 @@ git commit -m "feat(auth): complete auth system"
 ```
 
 ### 2. Stage Related Files Only
+
 ```bash
 # ✅ Good - Related changes together
 git add src/lib/auth/config.ts src/lib/auth/types.ts
@@ -700,6 +728,7 @@ git commit -m "fix: various fixes"
 ```
 
 ### 3. Fix Issues Before Committing
+
 ```bash
 # ✅ Good workflow
 npx tsc --noEmit  # Check for errors
@@ -713,6 +742,7 @@ git commit -m "feat: add new feature" # Hope it works!
 ```
 
 ### 4. Use Descriptive Commit Messages
+
 ```bash
 # ✅ Good - Clear and descriptive
 git commit -m "fix(database): resolve connection timeout in production"
@@ -726,6 +756,7 @@ git commit -m "changes"
 ```
 
 ### 5. Review Changes Before Committing
+
 ```bash
 # Check what you're about to commit
 git diff --staged

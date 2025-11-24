@@ -40,7 +40,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
       const result = await PaymentService.createPaymentIntent(
         orderId,
         amount,
-        currency
+        currency,
       );
 
       expect(result).toMatchObject({
@@ -91,7 +91,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
       const result = await PaymentService.createPaymentIntent(
         "order-789",
         15000,
-        "EUR"
+        "EUR",
       );
 
       expect(result.currency).toBe("EUR");
@@ -103,7 +103,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
       const result = await PaymentService.createPaymentIntent(
         "order-999",
         8500,
-        "GBP"
+        "GBP",
       );
 
       expect(result.currency).toBe("GBP");
@@ -124,7 +124,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
       const largeAmount = 999999999; // $9,999,999.99
       const result = await PaymentService.createPaymentIntent(
         "order-large",
-        largeAmount
+        largeAmount,
       );
 
       expect(result.amount).toBe(largeAmount);
@@ -143,19 +143,19 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
 
       const result = await PaymentService.createPaymentIntent(
         "order-status",
-        5000
+        5000,
       );
 
       expect(result.status).toBe("pending");
     });
 
     it("should propagate database errors", async () => {
-      jest.mocked(database.order.update).mockRejectedValue(
-        new Error("Database connection failed")
-      );
+      jest
+        .mocked(database.order.update)
+        .mockRejectedValue(new Error("Database connection failed"));
 
       await expect(
-        PaymentService.createPaymentIntent("order-error", 1000)
+        PaymentService.createPaymentIntent("order-error", 1000),
       ).rejects.toThrow("Database connection failed");
     });
   });
@@ -265,7 +265,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
       jest.mocked(database.order.findUnique).mockResolvedValue(null);
 
       await expect(
-        PaymentService.refundPayment("nonexistent-order")
+        PaymentService.refundPayment("nonexistent-order"),
       ).rejects.toThrow("Order not found");
     });
 
@@ -380,12 +380,12 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
         id: "order-error",
       } as any);
 
-      jest.mocked(database.order.update).mockRejectedValue(
-        new Error("Network error")
-      );
+      jest
+        .mocked(database.order.update)
+        .mockRejectedValue(new Error("Network error"));
 
       await expect(PaymentService.refundPayment("order-error")).rejects.toThrow(
-        "Network error"
+        "Network error",
       );
     });
 
@@ -468,7 +468,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
       for (let i = 0; i < 10; i++) {
         const result = await PaymentService.createPaymentIntent(
           `order-concurrent-${i}`,
-          1000
+          1000,
         );
         results.push(result);
         if (i < 9) {
@@ -505,7 +505,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
         expect(database.order.update).toHaveBeenCalledWith(
           expect.objectContaining({
             where: { id: orderId },
-          })
+          }),
         );
       }
     });
@@ -522,15 +522,17 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
     });
 
     it("should handle database timeout during payment creation", async () => {
-      jest.mocked(database.order.update).mockImplementation(
-        () =>
-          new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("Request timeout")), 100)
-          )
-      );
+      jest
+        .mocked(database.order.update)
+        .mockImplementation(
+          () =>
+            new Promise((_, reject) =>
+              setTimeout(() => reject(new Error("Request timeout")), 100),
+            ),
+        );
 
       await expect(
-        PaymentService.createPaymentIntent("order-timeout", 5000)
+        PaymentService.createPaymentIntent("order-timeout", 5000),
       ).rejects.toThrow("Request timeout");
     });
 
@@ -539,7 +541,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
 
       const result = await PaymentService.createPaymentIntent(
         "order-validate",
-        2500
+        2500,
       );
 
       // Validate structure
@@ -562,7 +564,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
 
       const result = await PaymentService.createPaymentIntent(
         "order-prefix",
-        1000
+        1000,
       );
 
       expect(result.id).toMatch(/^pi_/);
@@ -574,7 +576,7 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
       const before = Date.now();
       const result = await PaymentService.createPaymentIntent(
         "order-timestamp",
-        1000
+        1000,
       );
       const after = Date.now();
 
@@ -586,4 +588,3 @@ describe("💳 Payment Service - Divine Payment Operations", () => {
     });
   });
 });
-

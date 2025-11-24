@@ -1,4 +1,5 @@
 # 🚀 DEPLOYMENT CHECKLIST - FARMERS MARKET PLATFORM
+
 **Divine Agricultural Platform - Production Deployment Guide**
 
 > **Version:** 3.0  
@@ -25,6 +26,7 @@
 ## ✅ PRE-DEPLOYMENT VERIFICATION
 
 ### Code Quality Gates
+
 - [ ] **All Tests Passing**: 414/414 unit tests ✅
 - [ ] **E2E Tests**: Playwright tests executed successfully
 - [ ] **TypeScript**: Zero compilation errors
@@ -33,6 +35,7 @@
 - [ ] **Build Success**: Production build completes without errors
 
 ### Documentation
+
 - [ ] **API Documentation**: Up to date
 - [ ] **README**: Reflects current state
 - [ ] **Environment Variables**: Documented in `.env.example`
@@ -40,6 +43,7 @@
 - [ ] **Rollback Plan**: Documented and accessible
 
 ### Team Approval
+
 - [ ] **Code Review**: All PRs approved by 2+ reviewers
 - [ ] **QA Sign-off**: Manual testing completed
 - [ ] **Product Owner**: Feature set approved
@@ -53,6 +57,7 @@
 ### Required Environment Variables
 
 #### **Core Application**
+
 ```bash
 # Application
 NODE_ENV=production
@@ -71,6 +76,7 @@ API_RATE_LIMIT_WINDOW=900000
 ```
 
 #### **Database**
+
 ```bash
 # PostgreSQL Primary
 DATABASE_URL=postgresql://user:password@host:5432/farmers_market_prod?schema=public&connection_limit=20&pool_timeout=20
@@ -84,6 +90,7 @@ PRISMA_POOL_TIMEOUT=20000
 ```
 
 #### **Authentication Providers**
+
 ```bash
 # Google OAuth
 GOOGLE_CLIENT_ID=<YOUR_GOOGLE_CLIENT_ID>
@@ -95,6 +102,7 @@ GITHUB_SECRET=<YOUR_GITHUB_SECRET>
 ```
 
 #### **Payment Processing**
+
 ```bash
 # Stripe
 STRIPE_SECRET_KEY=sk_live_...
@@ -104,6 +112,7 @@ STRIPE_API_VERSION=2025-11-17.clover
 ```
 
 #### **Email Service**
+
 ```bash
 # Nodemailer / SendGrid / AWS SES
 EMAIL_FROM=noreply@farmersmarket.app
@@ -115,6 +124,7 @@ EMAIL_SECURE=true
 ```
 
 #### **Storage & CDN**
+
 ```bash
 # AWS S3 / Cloudinary
 STORAGE_PROVIDER=s3
@@ -128,6 +138,7 @@ NEXT_PUBLIC_CDN_URL=https://cdn.farmersmarket.app
 ```
 
 #### **Monitoring & Observability**
+
 ```bash
 # OpenTelemetry
 OTEL_EXPORTER_OTLP_ENDPOINT=https://otel-collector.farmersmarket.app:4318
@@ -144,6 +155,7 @@ SENTRY_PROJECT=web-app
 ```
 
 #### **Redis Cache**
+
 ```bash
 REDIS_URL=redis://default:password@redis-host:6379
 REDIS_TLS_ENABLED=true
@@ -151,6 +163,7 @@ REDIS_MAX_RETRIES=3
 ```
 
 ### Verification Checklist
+
 - [ ] All environment variables documented
 - [ ] Secrets stored in secure vault (e.g., AWS Secrets Manager, Azure Key Vault)
 - [ ] No hardcoded credentials in codebase
@@ -162,6 +175,7 @@ REDIS_MAX_RETRIES=3
 ## 🗄️ DATABASE PREPARATION
 
 ### Pre-Migration Checklist
+
 - [ ] **Backup Created**: Full database backup completed
 - [ ] **Backup Verified**: Backup restoration tested
 - [ ] **Migration Scripts**: Reviewed for correctness
@@ -171,6 +185,7 @@ REDIS_MAX_RETRIES=3
 ### Migration Steps
 
 #### 1. Create Full Backup
+
 ```bash
 # PostgreSQL Backup
 pg_dump -h <host> -U <user> -d farmers_market_prod -F c -b -v -f backup_$(date +%Y%m%d_%H%M%S).dump
@@ -180,6 +195,7 @@ pg_restore --list backup_$(date +%Y%m%d_%H%M%S).dump
 ```
 
 #### 2. Run Prisma Migrations
+
 ```bash
 # Generate Prisma Client
 npx prisma generate
@@ -192,6 +208,7 @@ npx prisma migrate status
 ```
 
 #### 3. Seed Production Data (if needed)
+
 ```bash
 # Run seed script
 npm run seed:production
@@ -201,6 +218,7 @@ npm run verify:data
 ```
 
 ### Database Health Checks
+
 - [ ] **Connection Pool**: Configured (20 connections)
 - [ ] **Query Performance**: Slow queries optimized
 - [ ] **Indexes**: All critical indexes created
@@ -208,6 +226,7 @@ npm run verify:data
 - [ ] **Data Integrity**: No orphaned records
 
 ### Performance Optimization
+
 ```sql
 -- Create indexes for frequently queried columns
 CREATE INDEX CONCURRENTLY idx_farms_status ON "Farm"(status);
@@ -227,47 +246,51 @@ ANALYZE "User";
 ## 🔒 SECURITY HARDENING
 
 ### SSL/TLS Configuration
+
 - [ ] **SSL Certificate**: Valid and not expiring soon
 - [ ] **HTTPS Only**: HTTP redirects to HTTPS
 - [ ] **HSTS Enabled**: Strict-Transport-Security header set
 - [ ] **Certificate Pinning**: Implemented for mobile apps
 
 ### Security Headers
+
 ```typescript
 // next.config.js - Security Headers
 const securityHeaders = [
   {
-    key: 'X-DNS-Prefetch-Control',
-    value: 'on'
+    key: "X-DNS-Prefetch-Control",
+    value: "on",
   },
   {
-    key: 'Strict-Transport-Security',
-    value: 'max-age=63072000; includeSubDomains; preload'
+    key: "Strict-Transport-Security",
+    value: "max-age=63072000; includeSubDomains; preload",
   },
   {
-    key: 'X-Frame-Options',
-    value: 'SAMEORIGIN'
+    key: "X-Frame-Options",
+    value: "SAMEORIGIN",
   },
   {
-    key: 'X-Content-Type-Options',
-    value: 'nosniff'
+    key: "X-Content-Type-Options",
+    value: "nosniff",
   },
   {
-    key: 'X-XSS-Protection',
-    value: '1; mode=block'
+    key: "X-XSS-Protection",
+    value: "1; mode=block",
   },
   {
-    key: 'Referrer-Policy',
-    value: 'origin-when-cross-origin'
+    key: "Referrer-Policy",
+    value: "origin-when-cross-origin",
   },
   {
-    key: 'Content-Security-Policy',
-    value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline';"
-  }
+    key: "Content-Security-Policy",
+    value:
+      "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline';",
+  },
 ];
 ```
 
 ### Authentication & Authorization
+
 - [ ] **Session Security**: HttpOnly, Secure, SameSite cookies
 - [ ] **JWT Tokens**: Properly signed and validated
 - [ ] **Rate Limiting**: Enabled on all API routes
@@ -275,12 +298,14 @@ const securityHeaders = [
 - [ ] **API Keys**: Rotated and secured
 
 ### Input Validation
+
 - [ ] **Zod Schemas**: All inputs validated
 - [ ] **SQL Injection**: Protected via Prisma ORM
 - [ ] **XSS Protection**: Inputs sanitized
 - [ ] **CSRF Protection**: Tokens implemented
 
 ### Secrets Management
+
 - [ ] **No Secrets in Code**: All secrets in environment variables
 - [ ] **Secret Rotation**: Process documented
 - [ ] **Access Control**: Secrets accessible only to authorized services
@@ -290,6 +315,7 @@ const securityHeaders = [
 ## ⚡ PERFORMANCE OPTIMIZATION
 
 ### Build Optimization
+
 - [ ] **Production Build**: `npm run build` completed
 - [ ] **Bundle Analysis**: Large bundles optimized
 - [ ] **Code Splitting**: Implemented for large pages
@@ -297,6 +323,7 @@ const securityHeaders = [
 - [ ] **Image Optimization**: Next.js Image component used
 
 ### Caching Strategy
+
 ```typescript
 // Cache Configuration
 - Browser Cache: Static assets (1 year)
@@ -306,6 +333,7 @@ const securityHeaders = [
 ```
 
 ### Performance Targets
+
 - [ ] **First Contentful Paint (FCP)**: < 1.5s
 - [ ] **Largest Contentful Paint (LCP)**: < 2.5s
 - [ ] **Time to Interactive (TTI)**: < 3.5s
@@ -313,6 +341,7 @@ const securityHeaders = [
 - [ ] **API Response Time**: < 200ms (p95)
 
 ### CDN Configuration
+
 - [ ] **CloudFront / Cloudflare**: Configured
 - [ ] **Edge Caching**: Enabled for static assets
 - [ ] **Geo-Routing**: Nearest edge server
@@ -323,21 +352,24 @@ const securityHeaders = [
 ## 📊 MONITORING & OBSERVABILITY
 
 ### Application Monitoring
+
 - [ ] **APM Tool**: Azure Application Insights configured
 - [ ] **Error Tracking**: Sentry integrated
 - [ ] **Uptime Monitoring**: StatusPage or Pingdom
 - [ ] **Real User Monitoring (RUM)**: Enabled
 
 ### Health Endpoints
+
 ```typescript
 // Health Check Endpoints
-GET /api/health              // Basic health check
-GET /api/health/database     // Database connectivity
-GET /api/health/redis        // Redis connectivity
-GET /api/health/detailed     // Full system health
+GET / api / health; // Basic health check
+GET / api / health / database; // Database connectivity
+GET / api / health / redis; // Redis connectivity
+GET / api / health / detailed; // Full system health
 ```
 
 ### Metrics to Monitor
+
 - [ ] **Request Rate**: Requests per second
 - [ ] **Error Rate**: 5xx errors < 0.1%
 - [ ] **Response Time**: p50, p95, p99 latencies
@@ -346,6 +378,7 @@ GET /api/health/detailed     // Full system health
 - [ ] **CPU**: Utilization percentage
 
 ### Alerting
+
 - [ ] **Critical Alerts**: Error rate > 1%
 - [ ] **Warning Alerts**: Response time > 1s
 - [ ] **Infrastructure**: CPU > 80%, Memory > 85%
@@ -353,6 +386,7 @@ GET /api/health/detailed     // Full system health
 - [ ] **On-Call Rotation**: PagerDuty or OpsGenie configured
 
 ### Logging
+
 ```typescript
 // Structured Logging
 - Level: info, warn, error
@@ -366,12 +400,14 @@ GET /api/health/detailed     // Full system health
 ## 🚀 DEPLOYMENT STEPS
 
 ### Step 1: Pre-Deployment Communication
+
 - [ ] **Stakeholders Notified**: 24 hours in advance
 - [ ] **Maintenance Window**: Scheduled and communicated
 - [ ] **Status Page**: Updated with maintenance notice
 - [ ] **Team Ready**: On-call team alerted
 
 ### Step 2: Final Verification
+
 ```bash
 # Run all checks locally
 npm run lint
@@ -384,6 +420,7 @@ node scripts/verify-env.js
 ```
 
 ### Step 3: Database Migration
+
 ```bash
 # Create backup
 ./scripts/backup-database.sh production
@@ -396,6 +433,7 @@ npx prisma migrate status
 ```
 
 ### Step 4: Deploy Application
+
 ```bash
 # Option A: Vercel Deployment
 vercel --prod
@@ -412,6 +450,7 @@ git push origin v1.0.0
 ```
 
 ### Step 5: Smoke Tests
+
 ```bash
 # Run post-deployment smoke tests
 npm run test:smoke:production
@@ -422,6 +461,7 @@ curl https://farmersmarket.app/api/health/database
 ```
 
 ### Step 6: Traffic Gradual Rollout
+
 - [ ] **Blue-Green Deployment**: New version running in parallel
 - [ ] **Canary Release**: 10% → 50% → 100% traffic
 - [ ] **Monitor Metrics**: Watch for errors and latency spikes
@@ -432,6 +472,7 @@ curl https://farmersmarket.app/api/health/database
 ## ✅ POST-DEPLOYMENT VALIDATION
 
 ### Functional Verification
+
 - [ ] **Homepage**: Loads correctly
 - [ ] **Authentication**: Login/logout works
 - [ ] **Farm Listings**: Displays properly
@@ -441,6 +482,7 @@ curl https://farmersmarket.app/api/health/database
 - [ ] **Admin Dashboard**: Accessible and functional
 
 ### API Endpoint Testing
+
 ```bash
 # Test critical endpoints
 curl -X GET https://farmersmarket.app/api/farms
@@ -450,18 +492,21 @@ curl -X POST https://farmersmarket.app/api/auth/signin
 ```
 
 ### Performance Validation
+
 - [ ] **Lighthouse Score**: > 90 on all metrics
 - [ ] **WebPageTest**: Load time < 3s
 - [ ] **API Latency**: p95 < 200ms
 - [ ] **Database Queries**: No N+1 queries
 
 ### Monitoring Dashboard
+
 - [ ] **Error Rate**: < 0.1%
 - [ ] **Request Rate**: Expected baseline
 - [ ] **Response Time**: Within SLA
 - [ ] **Resource Utilization**: CPU < 60%, Memory < 70%
 
 ### User Acceptance Testing
+
 - [ ] **Customer Flow**: Place test order
 - [ ] **Farmer Flow**: Add test product
 - [ ] **Admin Flow**: Verify farm approval
@@ -472,6 +517,7 @@ curl -X POST https://farmersmarket.app/api/auth/signin
 ## 🔄 ROLLBACK PROCEDURES
 
 ### When to Rollback
+
 - Critical bugs affecting core functionality
 - Security vulnerabilities discovered
 - Performance degradation > 50%
@@ -481,6 +527,7 @@ curl -X POST https://farmersmarket.app/api/auth/signin
 ### Rollback Steps
 
 #### Option 1: Revert Deployment
+
 ```bash
 # Vercel
 vercel rollback
@@ -494,6 +541,7 @@ docker push registry.farmersmarket.app/farmers-market:latest
 ```
 
 #### Option 2: Database Rollback
+
 ```bash
 # Restore from backup
 pg_restore -h <host> -U <user> -d farmers_market_prod backup_20250115_120000.dump
@@ -503,6 +551,7 @@ npx prisma migrate resolve --rolled-back <migration-name>
 ```
 
 #### Option 3: DNS Failover
+
 ```bash
 # Switch DNS to previous version
 # Update DNS records to point to old deployment
@@ -510,6 +559,7 @@ npx prisma migrate resolve --rolled-back <migration-name>
 ```
 
 ### Post-Rollback Actions
+
 - [ ] **Incident Report**: Document what went wrong
 - [ ] **Root Cause Analysis**: Identify the issue
 - [ ] **Prevention Plan**: How to avoid in future
@@ -520,32 +570,36 @@ npx prisma migrate resolve --rolled-back <migration-name>
 ## 📞 EMERGENCY CONTACTS
 
 ### On-Call Team
-| Role | Name | Phone | Email | Slack |
-|------|------|-------|-------|-------|
-| Lead Engineer | [Name] | [Phone] | [Email] | @username |
-| DevOps Lead | [Name] | [Phone] | [Email] | @username |
+
+| Role           | Name   | Phone   | Email   | Slack     |
+| -------------- | ------ | ------- | ------- | --------- |
+| Lead Engineer  | [Name] | [Phone] | [Email] | @username |
+| DevOps Lead    | [Name] | [Phone] | [Email] | @username |
 | Database Admin | [Name] | [Phone] | [Email] | @username |
-| Security Lead | [Name] | [Phone] | [Email] | @username |
-| Product Owner | [Name] | [Phone] | [Email] | @username |
+| Security Lead  | [Name] | [Phone] | [Email] | @username |
+| Product Owner  | [Name] | [Phone] | [Email] | @username |
 
 ### Escalation Path
+
 1. **Level 1**: On-call engineer (responds within 15 minutes)
 2. **Level 2**: Team lead (responds within 30 minutes)
 3. **Level 3**: CTO/VP Engineering (responds within 1 hour)
 
 ### External Vendors
-| Service | Contact | Support URL | SLA |
-|---------|---------|-------------|-----|
-| Vercel | support@vercel.com | https://vercel.com/support | 24/7 |
-| AWS | aws-support | https://console.aws.amazon.com/support | 24/7 |
-| Stripe | support@stripe.com | https://support.stripe.com | 24/7 |
-| Database Provider | [Contact] | [URL] | [SLA] |
+
+| Service           | Contact            | Support URL                            | SLA   |
+| ----------------- | ------------------ | -------------------------------------- | ----- |
+| Vercel            | support@vercel.com | https://vercel.com/support             | 24/7  |
+| AWS               | aws-support        | https://console.aws.amazon.com/support | 24/7  |
+| Stripe            | support@stripe.com | https://support.stripe.com             | 24/7  |
+| Database Provider | [Contact]          | [URL]                                  | [SLA] |
 
 ---
 
 ## 📊 SUCCESS CRITERIA
 
 ### Deployment Considered Successful When:
+
 - ✅ All tests passing (414/414 unit tests)
 - ✅ Zero critical errors in first 24 hours
 - ✅ Error rate < 0.1%
@@ -559,6 +613,7 @@ npx prisma migrate resolve --rolled-back <migration-name>
 ## 🌟 DIVINE CONSCIOUSNESS VERIFICATION
 
 ### Agricultural Consciousness Checklist
+
 - [ ] **Seasonal Awareness**: Functioning correctly
 - [ ] **Biodynamic Patterns**: Integrated throughout
 - [ ] **Farm Management**: Full CRUD operations
@@ -567,6 +622,7 @@ npx prisma migrate resolve --rolled-back <migration-name>
 - [ ] **Divine Performance**: HP OMEN optimizations active
 
 ### Final Blessing
+
 ```
 ╔════════════════════════════════════════════════════════════════╗
 ║  🌾 DIVINE AGRICULTURAL CONSCIOUSNESS DEPLOYMENT COMPLETE     ║
@@ -584,18 +640,23 @@ npx prisma migrate resolve --rolled-back <migration-name>
 ## 📚 APPENDICES
 
 ### Appendix A: Environment Variable Reference
+
 See complete list in `.env.example`
 
 ### Appendix B: Database Schema
+
 See `prisma/schema.prisma`
 
 ### Appendix C: API Documentation
+
 See `/docs/api/README.md`
 
 ### Appendix D: Architecture Diagrams
+
 See `/docs/architecture/`
 
 ### Appendix E: Runbooks
+
 See `/docs/runbooks/`
 
 ---

@@ -1,4 +1,5 @@
 # ⚡ Lazy-Loading Quick Reference
+
 ## Copy-Paste Patterns for Bundle Optimization
 
 **Purpose**: Reduce server bundle sizes by deferring heavy dependency loading  
@@ -48,12 +49,12 @@ interface IHeavyService {
 // Optional: Fallback implementation
 class FallbackService implements IHeavyService {
   async doSomething(data: string): Promise<boolean> {
-    console.log('Fallback: doSomething called with', data);
+    console.log("Fallback: doSomething called with", data);
     return true;
   }
-  
+
   async doSomethingElse(): Promise<void> {
-    console.log('Fallback: doSomethingElse called');
+    console.log("Fallback: doSomethingElse called");
   }
 }
 
@@ -62,7 +63,7 @@ let cachedService: IHeavyService | null = null;
 
 // Check if service should be loaded
 function shouldLoadService(): boolean {
-  return process.env.ENABLE_SERVICE === 'true';
+  return process.env.ENABLE_SERVICE === "true";
 }
 
 // Get service (lazy-loaded)
@@ -77,7 +78,7 @@ async function getService(): Promise<IHeavyService> {
 
   // Lazy load actual service
   if (!cachedService) {
-    const { heavyService } = await import('./heavy-service');
+    const { heavyService } = await import("./heavy-service");
     cachedService = heavyService;
   }
 
@@ -104,14 +105,15 @@ export async function doSomethingLazy(data: string): Promise<boolean> {
 ```
 
 **Usage**:
+
 ```typescript
 // ❌ BEFORE (eager import)
-import { heavyService } from '@/lib/services/heavy-service';
-await heavyService.doSomething('data');
+import { heavyService } from "@/lib/services/heavy-service";
+await heavyService.doSomething("data");
 
 // ✅ AFTER (lazy import)
-import { heavyServiceLazy } from '@/lib/services/heavy-service-lazy';
-await heavyServiceLazy.doSomething('data');
+import { heavyServiceLazy } from "@/lib/services/heavy-service-lazy";
+await heavyServiceLazy.doSomething("data");
 ```
 
 ---
@@ -130,7 +132,7 @@ await heavyServiceLazy.doSomething('data');
  */
 
 function isFeatureEnabled(): boolean {
-  return process.env.ENABLE_FEATURE === 'true';
+  return process.env.ENABLE_FEATURE === "true";
 }
 
 export async function executeWithFeature<T>(
@@ -145,10 +147,10 @@ export async function executeWithFeature<T>(
 
   // Lazy load feature infrastructure
   try {
-    const { featureExecutor } = await import('./feature-executor');
+    const { featureExecutor } = await import("./feature-executor");
     return await featureExecutor.execute(operationType, metadata, fn);
   } catch (error) {
-    console.warn('Feature loading failed, executing without feature:', error);
+    console.warn("Feature loading failed, executing without feature:", error);
     return fn();
   }
 }
@@ -168,17 +170,18 @@ export async function executeWithTiming<T>(
 ```
 
 **Usage**:
+
 ```typescript
 // ✅ WITH FEATURE
-import { executeWithFeature } from '@/lib/features/conditional-feature-lazy';
+import { executeWithFeature } from "@/lib/features/conditional-feature-lazy";
 
 const result = await executeWithFeature(
-  'OPERATION_TYPE',
-  { key: 'value' },
+  "OPERATION_TYPE",
+  { key: "value" },
   async () => {
     // Your operation here
     return await someOperation();
-  }
+  },
 );
 ```
 
@@ -192,17 +195,17 @@ const result = await executeWithFeature(
 
 ```typescript
 // ❌ BAD - Bundles entire module
-import { HeavyType, someFunction } from './heavy-module';
+import { HeavyType, someFunction } from "./heavy-module";
 
 // ✅ GOOD - Type only, no runtime bundle
-import type { HeavyType } from './heavy-module';
+import type { HeavyType } from "./heavy-module";
 
 // ✅ GOOD - Mixed imports (type separate)
-import { someFunction } from './heavy-module';
-import type { HeavyType, AnotherType } from './heavy-module';
+import { someFunction } from "./heavy-module";
+import type { HeavyType, AnotherType } from "./heavy-module";
 
 // ✅ GOOD - Import type keyword
-import { type HeavyType, someFunction } from './heavy-module';
+import { type HeavyType, someFunction } from "./heavy-module";
 ```
 
 ---
@@ -239,6 +242,7 @@ export default function HeavyComponentDynamic(
 ```
 
 **Usage in page**:
+
 ```typescript
 // ❌ BAD - Eager import
 import { HeavyComponent } from '@/components/heavy/HeavyComponent';
@@ -256,51 +260,50 @@ export default function Page() {
 ## 📦 Real-World Examples from Codebase
 
 ### Example 1: Email Service (94% reduction)
+
 ```typescript
 // src/lib/email/email-service-lazy.ts
 // Before: 228 KB route
 // After:  13 KB route
 // Savings: 215 KB (94%)
 
-import { sendEmailLazy } from '@/lib/email/email-service-lazy';
+import { sendEmailLazy } from "@/lib/email/email-service-lazy";
 
 await sendEmailLazy({
-  to: 'user@example.com',
-  subject: 'Welcome',
-  html: '<h1>Welcome!</h1>',
+  to: "user@example.com",
+  subject: "Welcome",
+  html: "<h1>Welcome!</h1>",
 });
 ```
 
 ### Example 2: Tracing (86% reduction)
+
 ```typescript
 // src/lib/tracing/lazy-tracer.ts
 // Before: ~60 KB route
 // After:  8.6 KB route
 // Savings: ~51 KB (86%)
 
-import { traceIfEnabled } from '@/lib/tracing/lazy-tracer';
+import { traceIfEnabled } from "@/lib/tracing/lazy-tracer";
 
-await traceIfEnabled(
-  'OPERATION_NAME',
-  { key: 'value' },
-  async () => {
-    // Your operation
-    return result;
-  }
-);
+await traceIfEnabled("OPERATION_NAME", { key: "value" }, async () => {
+  // Your operation
+  return result;
+});
 ```
 
 ### Example 3: Redis Client (90% reduction)
+
 ```typescript
 // src/lib/cache/redis-client-lazy.ts
 // Before: 150 KB route
 // After:  14.8 KB route
 // Savings: 135 KB (90%)
 
-import { redisClientLazy } from '@/lib/cache/redis-client-lazy';
+import { redisClientLazy } from "@/lib/cache/redis-client-lazy";
 
-await redisClientLazy.set('key', 'value', 3600);
-const value = await redisClientLazy.get('key');
+await redisClientLazy.set("key", "value", 3600);
+const value = await redisClientLazy.get("key");
 ```
 
 ---
@@ -308,12 +311,14 @@ const value = await redisClientLazy.get('key');
 ## 🔍 How to Identify Optimization Candidates
 
 ### Step 1: Build with Analyzer
+
 ```bash
 npm run build:analyze
 # Opens .next/analyze/nodejs.html in browser
 ```
 
 ### Step 2: Look for Large Routes
+
 ```bash
 # Find routes larger than 50 KB
 find .next/server/app/api -name "route.js" -type f | \
@@ -323,6 +328,7 @@ find .next/server/app/api -name "route.js" -type f | \
 ```
 
 ### Step 3: Check Dependencies
+
 ```bash
 # List dependency sizes
 npm ls --depth=0
@@ -331,7 +337,9 @@ npm info <package-name> dist.unpackedSize
 ```
 
 ### Step 4: Identify Heavy Imports
+
 Look in the large route file for imports from:
+
 - `nodemailer` (~80 KB)
 - `ioredis` (~100 KB)
 - `@opentelemetry/*` (~50 KB)
@@ -360,10 +368,11 @@ Look in the large route file for imports from:
 ## 🚫 Common Mistakes to Avoid
 
 ### Mistake 1: Not providing fallback
+
 ```typescript
 // ❌ BAD - No fallback, breaks when disabled
 async function getService() {
-  const { service } = await import('./service');
+  const { service } = await import("./service");
   return service;
 }
 
@@ -372,19 +381,20 @@ async function getService() {
   if (!isEnabled()) {
     return mockService;
   }
-  const { service } = await import('./service');
+  const { service } = await import("./service");
   return service;
 }
 ```
 
 ### Mistake 2: Not caching loaded module
+
 ```typescript
 // ❌ BAD - Re-imports every time (slow)
 export const serviceLazy = {
   async doSomething() {
-    const { service } = await import('./service');
+    const { service } = await import("./service");
     return service.doSomething();
-  }
+  },
 };
 
 // ✅ GOOD - Caches after first load
@@ -392,25 +402,26 @@ let cached = null;
 export const serviceLazy = {
   async doSomething() {
     if (!cached) {
-      const { service } = await import('./service');
+      const { service } = await import("./service");
       cached = service;
     }
     return cached.doSomething();
-  }
+  },
 };
 ```
 
 ### Mistake 3: Not handling errors
+
 ```typescript
 // ❌ BAD - No error handling
-const { service } = await import('./service');
+const { service } = await import("./service");
 
 // ✅ GOOD - Graceful error handling
 try {
-  const { service } = await import('./service');
+  const { service } = await import("./service");
   return service;
 } catch (error) {
-  console.warn('Failed to load service:', error);
+  console.warn("Failed to load service:", error);
   return fallbackService;
 }
 ```
@@ -419,14 +430,14 @@ try {
 
 ## 📊 Expected Results
 
-| Dependency Type | Bundle Size | Expected Savings |
-|-----------------|-------------|------------------|
-| Email (nodemailer) | ~80 KB | 85-95% |
-| Redis (ioredis) | ~100 KB | 90-95% |
-| Tracing (OpenTelemetry) | ~50 KB | 80-90% |
-| Payment (Stripe) | ~200 KB | 90-95% |
-| AWS SDK | ~100+ KB | 90-95% |
-| Image processing | ~50-200 KB | 85-95% |
+| Dependency Type         | Bundle Size | Expected Savings |
+| ----------------------- | ----------- | ---------------- |
+| Email (nodemailer)      | ~80 KB      | 85-95%           |
+| Redis (ioredis)         | ~100 KB     | 90-95%           |
+| Tracing (OpenTelemetry) | ~50 KB      | 80-90%           |
+| Payment (Stripe)        | ~200 KB     | 90-95%           |
+| AWS SDK                 | ~100+ KB    | 90-95%           |
+| Image processing        | ~50-200 KB  | 85-95%           |
 
 **Average reduction**: 85-95% on routes using lazy-loaded dependencies
 
@@ -458,6 +469,7 @@ A lazy-loading implementation is successful when:
 ## 💬 Need Help?
 
 ### Questions to Ask
+
 1. Is this dependency >50 KB?
 2. Is this dependency optional or feature-flagged?
 3. Does this dependency have a lightweight fallback?
@@ -465,12 +477,15 @@ A lazy-loading implementation is successful when:
 5. What's the expected bundle savings?
 
 ### Reference Implementations
+
 Look at these files for examples:
+
 - `src/lib/email/email-service-lazy.ts` - Email pattern
 - `src/lib/tracing/lazy-tracer.ts` - Tracing pattern
 - `src/lib/cache/redis-client-lazy.ts` - Redis pattern
 
 ### Copy-Paste Starting Point
+
 Use any of the lazy wrapper files as a template and adapt.
 
 ---

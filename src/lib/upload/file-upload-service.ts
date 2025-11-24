@@ -63,7 +63,7 @@ class FileUploadService {
    */
   private validateFile(
     file: File,
-    options: UploadOptions = {}
+    options: UploadOptions = {},
   ): { valid: boolean; error?: string } {
     const maxSize = options.maxSize || this.maxFileSize;
     const allowedTypes = options.allowedTypes || [
@@ -113,7 +113,7 @@ class FileUploadService {
    */
   async uploadFile(
     file: File,
-    options: UploadOptions = {}
+    options: UploadOptions = {},
   ): Promise<UploadResult> {
     try {
       // Validate file
@@ -161,7 +161,7 @@ class FileUploadService {
    */
   async uploadBusinessLicense(
     file: File,
-    _farmId: string
+    _farmId: string,
   ): Promise<UploadResult> {
     return this.uploadFile(file, {
       folder: "licenses",
@@ -176,7 +176,7 @@ class FileUploadService {
   async uploadCertification(
     file: File,
     _farmId: string,
-    _certificationType: string
+    _certificationType: string,
   ): Promise<UploadResult> {
     return this.uploadFile(file, {
       folder: "certifications",
@@ -190,7 +190,7 @@ class FileUploadService {
    */
   async uploadProductImage(
     file: File,
-    _productId: string
+    _productId: string,
   ): Promise<UploadResult> {
     return this.uploadFile(file, {
       folder: "products",
@@ -215,7 +215,7 @@ class FileUploadService {
    */
   async uploadMultiple(
     files: File[],
-    options: UploadOptions = {}
+    options: UploadOptions = {},
   ): Promise<UploadResult[]> {
     const results: UploadResult[] = [];
 

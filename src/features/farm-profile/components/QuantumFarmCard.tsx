@@ -96,7 +96,7 @@ export const QuantumFarmCard = forwardRef<HTMLDivElement, QuantumFarmCardProps>(
       isFavorite = false,
       className,
     },
-    ref
+    ref,
   ) => {
     const router = useRouter();
     const [imageLoaded, setImageLoaded] = useState(false);
@@ -118,7 +118,7 @@ export const QuantumFarmCard = forwardRef<HTMLDivElement, QuantumFarmCardProps>(
         e.stopPropagation();
         onFavoriteToggle?.(farm.id);
       },
-      [onFavoriteToggle, farm.id]
+      [onFavoriteToggle, farm.id],
     );
 
     // 🌾 AGRICULTURAL CONSCIOUSNESS CALCULATION
@@ -176,7 +176,7 @@ export const QuantumFarmCard = forwardRef<HTMLDivElement, QuantumFarmCardProps>(
           farm.consciousness.biodynamicScore < 90,
       },
 
-      className
+      className,
     );
 
     const primaryImage = farm.images[0] || "/images/placeholder-farm.svg";
@@ -213,7 +213,7 @@ export const QuantumFarmCard = forwardRef<HTMLDivElement, QuantumFarmCardProps>(
               {
                 "text-red-500": isFavorite,
                 "text-gray-400 hover:text-red-500": !isFavorite,
-              }
+              },
             )}
             aria-label={
               isFavorite ? "Remove from favorites" : "Add to favorites"
@@ -235,7 +235,7 @@ export const QuantumFarmCard = forwardRef<HTMLDivElement, QuantumFarmCardProps>(
               fill
               className={cn(
                 "object-cover transition-opacity duration-300",
-                imageLoaded ? "opacity-100" : "opacity-0"
+                imageLoaded ? "opacity-100" : "opacity-0",
               )}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               onLoad={() => setImageLoaded(true)}
@@ -254,7 +254,7 @@ export const QuantumFarmCard = forwardRef<HTMLDivElement, QuantumFarmCardProps>(
             <div className="flex items-center gap-2 text-white text-sm">
               <span
                 className={getConsciousnessColor(
-                  farm.consciousness.agriculturalAwareness
+                  farm.consciousness.agriculturalAwareness,
                 )}
               >
                 {getSeasonalEmoji(farm.consciousness.seasonalAlignment)}
@@ -339,8 +339,8 @@ export const QuantumFarmCard = forwardRef<HTMLDivElement, QuantumFarmCardProps>(
                 className={cn(
                   "font-semibold",
                   getConsciousnessColor(
-                    farm.consciousness.agriculturalAwareness
-                  )
+                    farm.consciousness.agriculturalAwareness,
+                  ),
                 )}
               >
                 {Math.round(farm.consciousness.agriculturalAwareness * 100)}%
@@ -351,7 +351,7 @@ export const QuantumFarmCard = forwardRef<HTMLDivElement, QuantumFarmCardProps>(
         </div>
       </div>
     );
-  }
+  },
 );
 
 QuantumFarmCard.displayName = "QuantumFarmCard";

@@ -37,7 +37,7 @@ export async function initializeGPU(): Promise<boolean> {
  */
 export function gpuMatrixMultiply(
   matrixA: number[][],
-  matrixB: number[][]
+  matrixB: number[][],
 ): number[][] {
   return tf.tidy(() => {
     const tensorA = tf.tensor2d(matrixA);
@@ -52,7 +52,7 @@ export function gpuMatrixMultiply(
  */
 export function gpuArrayProcess<T extends number>(
   data: T[],
-  _operation: (value: number) => number
+  _operation: (value: number) => number,
 ): T[] {
   return tf.tidy(() => {
     const tensor = tf.tensor1d(data);
@@ -68,7 +68,7 @@ export function gpuArrayProcess<T extends number>(
  */
 export function gpuAgriculturalTransform(
   cropYields: number[],
-  weatherFactors: number[]
+  weatherFactors: number[],
 ): number[] {
   return tf.tidy(() => {
     const yields = tf.tensor1d(cropYields);

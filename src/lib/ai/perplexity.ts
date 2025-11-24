@@ -179,7 +179,7 @@ export class PerplexityAI {
    */
   async chat(
     messages: PerplexityMessage[],
-    options: PerplexityRequestOptions = {}
+    options: PerplexityRequestOptions = {},
   ): Promise<PerplexityResponse> {
     return await tracer.startActiveSpan("perplexity.chat", async (span) => {
       const startTime = Date.now();
@@ -344,7 +344,7 @@ export class AgriculturalResearchAgent {
     options: {
       depth?: "quick" | "comprehensive" | "expert";
       recencyFilter?: "day" | "week" | "month" | "year";
-    } = {}
+    } = {},
   ): Promise<AgriculturalResearchResult> {
     return await tracer.startActiveSpan(
       "agricultural.research",
@@ -386,7 +386,7 @@ export class AgriculturalResearchAgent {
           const relatedQuestions = response.relatedQuestions || [];
           const confidence = this.assessConfidence(
             citations.length,
-            answer.length
+            answer.length,
           );
           const agriculturalRelevance =
             this.calculateAgriculturalRelevance(answer);
@@ -420,7 +420,7 @@ export class AgriculturalResearchAgent {
         } finally {
           span.end();
         }
-      }
+      },
     );
   }
 
@@ -450,7 +450,7 @@ export class AgriculturalResearchAgent {
           ...PERPLEXITY_PRO_CONFIG.agricultural.searchDomains,
         ],
         returnRelatedQuestions: true,
-      }
+      },
     );
 
     // Add response to thread
@@ -467,7 +467,7 @@ export class AgriculturalResearchAgent {
    */
   async continueResearch(
     threadId: string,
-    followUpQuestion: string
+    followUpQuestion: string,
   ): Promise<string> {
     this.client.addToThread(threadId, {
       role: "user",
@@ -480,7 +480,7 @@ export class AgriculturalResearchAgent {
         searchDomainFilter: [
           ...PERPLEXITY_PRO_CONFIG.agricultural.searchDomains,
         ],
-      }
+      },
     );
 
     const answer = response.choices[0]?.message?.content || "";
@@ -494,7 +494,7 @@ export class AgriculturalResearchAgent {
   }
 
   private selectModelForDepth(
-    depth: "quick" | "comprehensive" | "expert"
+    depth: "quick" | "comprehensive" | "expert",
   ): PerplexityProModel {
     const modelMap: Record<typeof depth, PerplexityProModel> = {
       quick: "llama-3.1-sonar-small-128k-online",
@@ -506,7 +506,7 @@ export class AgriculturalResearchAgent {
 
   private assessConfidence(
     citationCount: number,
-    answerLength: number
+    answerLength: number,
   ): "high" | "medium" | "low" {
     if (citationCount >= 3 && answerLength > 500) return "high";
     if (citationCount >= 1 && answerLength > 200) return "medium";
@@ -533,7 +533,7 @@ export class AgriculturalResearchAgent {
 
     const lowerAnswer = answer.toLowerCase();
     const matchCount = agriculturalKeywords.filter((keyword) =>
-      lowerAnswer.includes(keyword)
+      lowerAnswer.includes(keyword),
     ).length;
 
     return Math.min((matchCount / agriculturalKeywords.length) * 100, 100);
@@ -563,7 +563,7 @@ export class CodeGenerationAgent {
       framework?: string;
       includeTests?: boolean;
       divinePatterns?: boolean;
-    } = {}
+    } = {},
   ): Promise<CodeGenerationResult> {
     const {
       language = "TypeScript",
@@ -577,7 +577,7 @@ export class CodeGenerationAgent {
       language,
       framework,
       includeTests,
-      divinePatterns
+      divinePatterns,
     );
 
     const messages: PerplexityMessage[] = [
@@ -601,7 +601,7 @@ export class CodeGenerationAgent {
     language: string,
     framework: string,
     includeTests: boolean,
-    divinePatterns: boolean
+    divinePatterns: boolean,
   ): string {
     let prompt = `Generate ${language} code for the following requirement:\n\n${description}\n\n`;
 
@@ -633,7 +633,7 @@ export class CodeGenerationAgent {
 
   private parseCodeResponse(
     response: string,
-    language: string
+    language: string,
   ): CodeGenerationResult {
     // Extract code blocks
     const codeBlockRegex = /```(?:\w+)?\n([\s\S]*?)```/g;
@@ -676,7 +676,7 @@ export class CodeGenerationAgent {
     ];
 
     return patterns.filter((pattern) =>
-      response.toLowerCase().includes(pattern)
+      response.toLowerCase().includes(pattern),
     );
   }
 }
@@ -689,7 +689,7 @@ export class CodeGenerationAgent {
  * Quick agricultural research
  */
 export async function researchAgriculturalTopic(
-  topic: string
+  topic: string,
 ): Promise<AgriculturalResearchResult> {
   const agent = new AgriculturalResearchAgent();
   return await agent.researchTopic(topic);
@@ -699,7 +699,7 @@ export async function researchAgriculturalTopic(
  * Quick code generation
  */
 export async function generateCode(
-  description: string
+  description: string,
 ): Promise<CodeGenerationResult> {
   const agent = new CodeGenerationAgent();
   return await agent.generateCode(description);

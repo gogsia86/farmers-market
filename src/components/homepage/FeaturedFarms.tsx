@@ -49,7 +49,9 @@ export function FeaturedFarms() {
     async function fetchFeaturedFarms() {
       try {
         setLoading(true);
-        const response = await fetch("/api/featured/farms?limit=6&strategy=top-rated");
+        const response = await fetch(
+          "/api/featured/farms?limit=6&strategy=top-rated",
+        );
 
         if (!response.ok) {
           throw new Error("Failed to fetch featured farms");
@@ -202,9 +204,7 @@ export function FeaturedFarms() {
               {/* Footer */}
               <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                 <div className="flex items-center gap-4 text-sm text-gray-500">
-                  {reviewCount > 0 && (
-                    <span>{reviewCount} reviews</span>
-                  )}
+                  {reviewCount > 0 && <span>{reviewCount} reviews</span>}
                 </div>
                 <span className="text-agricultural-600 font-medium text-sm group-hover:gap-2 flex items-center gap-1 transition-all">
                   Visit Farm

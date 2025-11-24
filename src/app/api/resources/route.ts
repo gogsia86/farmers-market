@@ -147,7 +147,7 @@ export async function GET(request: NextRequest) {
     // Filter by category if provided
     if (category) {
       resources = resources.filter(
-        (r) => r.category === category.toUpperCase()
+        (r) => r.category === category.toUpperCase(),
       );
     }
 
@@ -160,7 +160,7 @@ export async function GET(request: NextRequest) {
         acc[resource.category]!.push(resource);
         return acc;
       },
-      {} as Record<string, Resource[]>
+      {} as Record<string, Resource[]>,
     );
 
     return NextResponse.json({
@@ -180,7 +180,7 @@ export async function GET(request: NextRequest) {
     console.error("Resources API error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -195,14 +195,14 @@ export async function POST(request: NextRequest) {
     if (!resource) {
       return NextResponse.json(
         { error: "Resource not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     if (!resource.downloadable) {
       return NextResponse.json(
         { error: "Resource is not downloadable" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -220,7 +220,7 @@ export async function POST(request: NextRequest) {
     console.error("Resource download error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -17,7 +17,7 @@ export async function GET(_request: NextRequest) {
           authenticated: false,
           error: "Not authenticated",
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -34,7 +34,7 @@ export async function GET(_request: NextRequest) {
           authorized: false,
           error: "Not authorized - Farmer role required",
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -52,7 +52,7 @@ export async function GET(_request: NextRequest) {
     console.error("Auth check error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

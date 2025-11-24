@@ -74,26 +74,26 @@ npm run build:analyze
 
 ```typescript
 // Email (saves 1.5 MB)
-import { sendEmail } from '@/lib/email/email-service-lazy';
+import { sendEmail } from "@/lib/email/email-service-lazy";
 
 // Tracing (saves 500 KB)
-import { startSpan } from '@/lib/tracing/lazy-tracer';
+import { startSpan } from "@/lib/tracing/lazy-tracer";
 
 // Redis (saves 800 KB)
-import { redisClient } from '@/lib/cache/redis-client-lazy';
+import { redisClient } from "@/lib/cache/redis-client-lazy";
 
 // Type-only imports (saves everything!)
-import type { User, Farm } from '@prisma/client';
+import type { User, Farm } from "@prisma/client";
 ```
 
 ### ❌ DON'T: Direct Heavy Imports
 
 ```typescript
 // ❌ These add massive bundles
-import nodemailer from 'nodemailer';          // +1.5 MB
-import Redis from 'ioredis';                  // +800 KB
-import { trace } from '@opentelemetry/api';   // +500 KB
-import Stripe from 'stripe';                  // +300 KB
+import nodemailer from "nodemailer"; // +1.5 MB
+import Redis from "ioredis"; // +800 KB
+import { trace } from "@opentelemetry/api"; // +500 KB
+import Stripe from "stripe"; // +300 KB
 ```
 
 ---
@@ -120,25 +120,25 @@ npm run bundle:check
 
 ```typescript
 // Heavy dependency? → Use lazy wrapper
-import { sendEmail } from '@/lib/email/email-service-lazy';
+import { sendEmail } from "@/lib/email/email-service-lazy";
 
 // Prisma type? → Type-only import
-import type { User } from '@prisma/client';
+import type { User } from "@prisma/client";
 
 // Large utility? → Dynamic import
-const { heavyUtil } = await import('@/lib/heavy-util');
+const { heavyUtil } = await import("@/lib/heavy-util");
 ```
 
 ---
 
 ## 📊 Thresholds Quick Reference
 
-| Route Type | Target | Threshold | Example |
-|------------|--------|-----------|---------|
-| Health/Ready | < 10 KB | 20 KB | `/api/health` |
-| Standard API | < 25 KB | 50 KB | `/api/farms` |
-| Admin API | < 50 KB | 200 KB | `/api/admin/approvals` |
-| Pages | < 100 KB | 300 KB | `/farms/[id]` |
+| Route Type   | Target   | Threshold | Example                |
+| ------------ | -------- | --------- | ---------------------- |
+| Health/Ready | < 10 KB  | 20 KB     | `/api/health`          |
+| Standard API | < 25 KB  | 50 KB     | `/api/farms`           |
+| Admin API    | < 50 KB  | 200 KB    | `/api/admin/approvals` |
+| Pages        | < 100 KB | 300 KB    | `/farms/[id]`          |
 
 **Rule of Thumb**: If it's over 50 KB, it needs optimization.
 
@@ -147,17 +147,20 @@ const { heavyUtil } = await import('@/lib/heavy-util');
 ## 🎓 Learning Path
 
 ### Day 1: Basics (15 min)
+
 1. Read `BUNDLE_SIZE_QUICK_START.md`
 2. Run `npm run bundle:check` once
 3. Review your existing PRs' bundle comments
 
 ### Day 2: Practice (30 min)
+
 1. Create a test route with bad patterns
 2. Run bundle check and see it fail
 3. Fix using lazy wrappers
 4. See it pass
 
 ### Day 3: Apply (ongoing)
+
 1. Add `bundle:check` to your workflow
 2. Review PR bundle comments
 3. Apply patterns to new code
@@ -170,20 +173,20 @@ const { heavyUtil } = await import('@/lib/heavy-util');
 
 ```typescript
 // ❌ BAD - Imports everything
-import _ from 'lodash';
+import _ from "lodash";
 
 // ✅ GOOD - Import specific function
-import pick from 'lodash/pick';
+import pick from "lodash/pick";
 ```
 
 ### Mistake #2: Forgetting Type-Only Imports
 
 ```typescript
 // ❌ BAD - Imports Prisma client
-import { User } from '@prisma/client';
+import { User } from "@prisma/client";
 
 // ✅ GOOD - Type-only
-import type { User } from '@prisma/client';
+import type { User } from "@prisma/client";
 ```
 
 ### Mistake #3: Not Checking Before Committing
@@ -209,6 +212,7 @@ git push
 ### Tip #1: Make It Automatic
 
 Add to `.git/hooks/pre-commit`:
+
 ```bash
 #!/bin/sh
 npm run bundle:check || exit 1
@@ -252,15 +256,19 @@ Track your own progress:
 ## 📞 Getting Help
 
 ### Level 1: Self-Service (2 min)
+
 Check `docs/BUNDLE_SIZE_QUICK_START.md`
 
 ### Level 2: Team Slack (15 min)
+
 Ask in `#platform-performance`
 
 ### Level 3: GitHub Issue (1 hour)
+
 Create issue with label `ci/bundle-protection`
 
 ### Emergency
+
 Production blocker? Contact Platform Team Lead
 
 ---
@@ -269,11 +277,11 @@ Production blocker? Contact Platform Team Lead
 
 Understanding what we protected:
 
-| Route | Before | After | Savings |
-|-------|--------|-------|---------|
-| Admin Approvals | 228 KB | 13 KB | 94% ⬇️ |
-| Farms API | 150 KB | 15 KB | 90% ⬇️ |
-| Agricultural | 60 KB | 9 KB | 86% ⬇️ |
+| Route           | Before | After | Savings |
+| --------------- | ------ | ----- | ------- |
+| Admin Approvals | 228 KB | 13 KB | 94% ⬇️  |
+| Farms API       | 150 KB | 15 KB | 90% ⬇️  |
+| Agricultural    | 60 KB  | 9 KB  | 86% ⬇️  |
 
 **Your job**: Keep these gains! 🛡️
 
@@ -303,6 +311,7 @@ You're ready when you can:
 ## 🌟 Welcome to Phase 5!
 
 Remember:
+
 - **Check bundles before committing**
 - **Use lazy wrappers for heavy imports**
 - **Type-only imports save megabytes**

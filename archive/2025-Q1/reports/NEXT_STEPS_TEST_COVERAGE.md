@@ -22,7 +22,7 @@ startActiveSpan: async (name, fnOrOptions, maybeFn) => {
     return await fn(mockSpan); // KEY: await and return!
   }
   return mockSpan;
-}
+};
 ```
 
 ### ✅ Files Modified
@@ -53,28 +53,30 @@ startActiveSpan: async (name, fnOrOptions, maybeFn) => {
 **Solution**: Add `mockResolvedValue()` before each test.
 
 **Example**:
+
 ```typescript
 it("should filter farms by status", async () => {
   const mockFarms = [createMockFarm({ status: "ACTIVE" })];
-  
+
   // ✅ ADD THIS LINE to each failing test
   (database.farm.findMany as jest.Mock).mockResolvedValue(mockFarms);
-  
+
   const request = createMockNextRequest({
     url: "/api/farms",
     method: "GET",
-    searchParams: { status: "ACTIVE" }
+    searchParams: { status: "ACTIVE" },
   });
-  
+
   const response = await GET(request);
   const data = await response.json();
-  
+
   expect(data.success).toBe(true);
   expect(data.data).toEqual(mockFarms);
 });
 ```
 
 **Tests to Fix** (in `src/app/api/farms/__tests__/route.test.ts`):
+
 - ❌ should filter farms by status
 - ❌ should filter farms by season
 - ❌ should include owner information
@@ -96,6 +98,7 @@ it("should filter farms by status", async () => {
 - ❌ should include all required farm fields
 
 **Command to test**:
+
 ```bash
 npm test -- "src/app/api/farms/__tests__/route.test.ts" --no-coverage
 ```
@@ -109,6 +112,7 @@ npm test -- "src/app/api/farms/__tests__/route.test.ts" --no-coverage
 **File**: `src/app/api/products/__tests__/route.test.ts`
 
 **Actions**:
+
 1. Copy the OpenTelemetry mock setup from farms test
 2. Copy the agricultural tracer mock setup
 3. Ensure all tests have `mockResolvedValue()` calls
@@ -123,6 +127,7 @@ npm test -- "src/app/api/farms/__tests__/route.test.ts" --no-coverage
 **File**: `src/app/api/health/__tests__/route.test.ts`
 
 **Actions**:
+
 1. Apply the same tracer mock pattern
 2. Run tests: `npm test -- "src/app/api/health/__tests__/route.test.ts"`
 
@@ -135,6 +140,7 @@ npm test -- "src/app/api/farms/__tests__/route.test.ts" --no-coverage
 **File**: `src/app/api/__tests__/tracing-mocks.ts` (new file)
 
 **Content**:
+
 ```typescript
 /**
  * 🧪 REUSABLE TRACING MOCKS
@@ -157,7 +163,8 @@ export function createTracerMock() {
       trace: {
         getTracer: jest.fn(() => ({
           startActiveSpan: async (name, fnOrOptions, maybeFn) => {
-            const fn = typeof fnOrOptions === "function" ? fnOrOptions : maybeFn;
+            const fn =
+              typeof fnOrOptions === "function" ? fnOrOptions : maybeFn;
             if (typeof fn === "function") {
               return await fn(mockSpan);
             }
@@ -185,6 +192,7 @@ export function createTracerMock() {
 ```
 
 **Usage**:
+
 ```typescript
 import { createTracerMock } from "../../__tests__/tracing-mocks";
 
@@ -201,6 +209,7 @@ jest.mock("@/lib/tracing/agricultural-tracer", () => agriculturalTracerMock);
 ### Other API Routes (4-6 hours)
 
 Apply the same pattern to:
+
 - ✅ `/api/auth/*` - Authentication endpoints
 - ✅ `/api/search/*` - Search endpoints
 - ✅ `/api/admin/*` - Admin endpoints
@@ -210,6 +219,7 @@ Apply the same pattern to:
 - ✅ `/api/ai/*` - AI endpoints
 
 **Template** (copy this for each route):
+
 ```typescript
 import { createTracerMock } from "../../__tests__/tracing-mocks";
 
@@ -232,7 +242,7 @@ describe("API Route Tests", () => {
   it("should work", async () => {
     const mockData = [{ id: "1" }];
     (database.entity.findMany as jest.Mock).mockResolvedValue(mockData);
-    
+
     const response = await GET(request);
     expect(response).toBeDefined();
   });
@@ -246,6 +256,7 @@ describe("API Route Tests", () => {
 ### Service Layer Tests (8-12 hours)
 
 Files to test:
+
 - `src/lib/services/farm.service.ts`
 - `src/lib/services/product.service.ts`
 - `src/lib/services/order.service.ts`
@@ -253,6 +264,7 @@ Files to test:
 - `src/lib/services/shipping.service.ts`
 
 **Mock Pattern**:
+
 ```typescript
 jest.mock("@/lib/database", () => ({
   database: {
@@ -289,16 +301,18 @@ describe("FarmService", () => {
 ### AI Module Tests (6-8 hours)
 
 Files to test:
+
 - `src/lib/ai/ollama.ts`
 - `src/lib/ai/perplexity.ts`
 - `src/lib/ai/AgriculturalConsciousness.ts`
 
 **Mock Pattern**:
+
 ```typescript
 jest.mock("ollama", () => ({
   Ollama: jest.fn().mockImplementation(() => ({
     chat: jest.fn().mockResolvedValue({
-      message: { content: "Test response" }
+      message: { content: "Test response" },
     }),
   })),
 }));
@@ -316,10 +330,12 @@ describe("Ollama Integration", () => {
 ### UI Component Tests (20-40 hours)
 
 Files to test:
+
 - All components in `src/components/*`
 - All feature components in `src/features/*`
 
 **Pattern**:
+
 ```typescript
 import { render, screen } from "@testing-library/react";
 import { FarmCard } from "./FarmCard";
@@ -328,7 +344,7 @@ describe("FarmCard", () => {
   it("should render farm information", () => {
     const farm = { id: "1", name: "Test Farm" };
     render(<FarmCard farm={farm} />);
-    
+
     expect(screen.getByText("Test Farm")).toBeInTheDocument();
   });
 });
@@ -338,13 +354,13 @@ describe("FarmCard", () => {
 
 ## 📊 Coverage Goals
 
-| Area | Current | Goal | Priority |
-|------|---------|------|----------|
-| API Routes | ~10% | 80% | 🔥 HIGH |
-| Services | ~5% | 70% | 🔥 HIGH |
-| Utilities | ~60% | 90% | ⚡ MEDIUM |
-| Components | ~0% | 60% | 🔷 LOW |
-| E2E | 0% | 20% | 🔷 LOW |
+| Area       | Current | Goal | Priority  |
+| ---------- | ------- | ---- | --------- |
+| API Routes | ~10%    | 80%  | 🔥 HIGH   |
+| Services   | ~5%     | 70%  | 🔥 HIGH   |
+| Utilities  | ~60%    | 90%  | ⚡ MEDIUM |
+| Components | ~0%     | 60%  | 🔷 LOW    |
+| E2E        | 0%      | 20%  | 🔷 LOW    |
 
 ---
 
@@ -381,6 +397,7 @@ npm test -- --no-coverage
 ## ✅ Definition of Done
 
 For each API route test file:
+
 - [ ] OpenTelemetry mock properly set up
 - [ ] Agricultural tracer mock properly set up
 - [ ] All database operations mocked
@@ -394,6 +411,7 @@ For each API route test file:
 ## 🎓 Key Patterns to Remember
 
 ### 1. Always Await in Tracer Mock
+
 ```typescript
 // ✅ CORRECT
 return await fn(mockSpan);
@@ -403,6 +421,7 @@ return fn(mockSpan);
 ```
 
 ### 2. Don't Pass Span to Agricultural Tracer Callback
+
 ```typescript
 // ✅ CORRECT
 traceAgriculturalOperation: jest.fn(async (op, attrs, fn) => {
@@ -416,6 +435,7 @@ traceAgriculturalOperation: jest.fn(async (op, attrs, fn) => {
 ```
 
 ### 3. Always Mock Database Before Test
+
 ```typescript
 // ✅ CORRECT
 it("should work", async () => {
@@ -445,16 +465,19 @@ it("should work", async () => {
 ## 🎉 Success Criteria
 
 **Short Term** (This Week):
+
 - ✅ Farms API: 29/29 tests passing
 - ✅ Products API: All tests passing
 - ✅ Health API: 31/31 tests passing
 
 **Medium Term** (This Month):
+
 - ✅ All API routes: 80% coverage
 - ✅ Service layer: 70% coverage
 - ✅ Utilities: 90% coverage
 
 **Long Term** (Next Quarter):
+
 - ✅ Overall project: 80% coverage
 - ✅ Components: 60% coverage
 - ✅ E2E tests: 20 critical flows

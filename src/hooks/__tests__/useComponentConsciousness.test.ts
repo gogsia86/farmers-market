@@ -6,7 +6,7 @@
  * Tests for type-safe performance monitoring and analytics tracking
  */
 
-import React from 'react';
+import React from "react";
 import {
   afterEach,
   beforeEach,
@@ -40,7 +40,7 @@ describe("useComponentConsciousness Hook", () => {
   describe("Basic Initialization", () => {
     it("should initialize with component name", () => {
       const { result } = renderHook(() =>
-        useComponentConsciousness("TestComponent")
+        useComponentConsciousness("TestComponent"),
       );
 
       expect(result.current).toBeDefined();
@@ -51,7 +51,7 @@ describe("useComponentConsciousness Hook", () => {
 
     it("should return consistent consciousness object", () => {
       const { result, rerender } = renderHook(() =>
-        useComponentConsciousness("TestComponent")
+        useComponentConsciousness("TestComponent"),
       );
 
       const firstRef = result.current;
@@ -67,7 +67,7 @@ describe("useComponentConsciousness Hook", () => {
       const context = { variant: "agricultural", size: "large" };
 
       const { result } = renderHook(() =>
-        useComponentConsciousness("FarmCard", context)
+        useComponentConsciousness("FarmCard", context),
       );
 
       expect(result.current).toBeDefined();
@@ -77,7 +77,7 @@ describe("useComponentConsciousness Hook", () => {
   describe("Metrics Tracking", () => {
     it("should initialize metrics with zero values", () => {
       const { result } = renderHook(() =>
-        useComponentConsciousness("TestComponent")
+        useComponentConsciousness("TestComponent"),
       );
 
       const metrics = result.current.getMetrics();
@@ -90,7 +90,7 @@ describe("useComponentConsciousness Hook", () => {
 
     it("should track render count", async () => {
       const { result, rerender } = renderHook(() =>
-        useComponentConsciousness("TestComponent")
+        useComponentConsciousness("TestComponent"),
       );
 
       const initialRenderCount = result.current.getMetrics().renderCount;
@@ -109,7 +109,7 @@ describe("useComponentConsciousness Hook", () => {
 
     it("should record render times", async () => {
       const { result } = renderHook(() =>
-        useComponentConsciousness("TestComponent")
+        useComponentConsciousness("TestComponent"),
       );
 
       await act(async () => {
@@ -127,7 +127,7 @@ describe("useComponentConsciousness Hook", () => {
       initializeDivinePerformanceTracking();
 
       const { result } = renderHook(() =>
-        useComponentConsciousness("TestComponent")
+        useComponentConsciousness("TestComponent"),
       );
 
       await act(async () => {
@@ -144,7 +144,7 @@ describe("useComponentConsciousness Hook", () => {
 
       const testMetric = metrics.find(
         (m: DivinePerformanceMetric) =>
-          m.component === "TestComponent" && m.operation === "test_operation"
+          m.component === "TestComponent" && m.operation === "test_operation",
       );
 
       expect(testMetric).toBeDefined();
@@ -156,7 +156,7 @@ describe("useComponentConsciousness Hook", () => {
       initializeDivinePerformanceTracking();
 
       const { result } = renderHook(() =>
-        useComponentConsciousness("TestComponent")
+        useComponentConsciousness("TestComponent"),
       );
 
       const testError = new Error("Test error message");
@@ -170,7 +170,8 @@ describe("useComponentConsciousness Hook", () => {
       const metrics = (globalThis as any).__DIVINE_PERFORMANCE__.getMetrics();
       const failureMetric = metrics.find(
         (m: DivinePerformanceMetric) =>
-          m.component === "TestComponent" && m.operation === "failing_operation"
+          m.component === "TestComponent" &&
+          m.operation === "failing_operation",
       );
 
       expect(failureMetric).toBeDefined();
@@ -182,7 +183,7 @@ describe("useComponentConsciousness Hook", () => {
       initializeDivinePerformanceTracking();
 
       const { result } = renderHook(() =>
-        useComponentConsciousness("TestComponent")
+        useComponentConsciousness("TestComponent"),
       );
 
       await act(async () => {
@@ -192,7 +193,7 @@ describe("useComponentConsciousness Hook", () => {
 
       const metrics = (globalThis as any).__DIVINE_PERFORMANCE__.getMetrics();
       const failureMetric = metrics.find(
-        (m: DivinePerformanceMetric) => m.operation === "string_error_op"
+        (m: DivinePerformanceMetric) => m.operation === "string_error_op",
       );
 
       expect(failureMetric?.error).toBe("String error message");
@@ -202,7 +203,7 @@ describe("useComponentConsciousness Hook", () => {
       initializeDivinePerformanceTracking();
 
       const { result } = renderHook(() =>
-        useComponentConsciousness("TestComponent")
+        useComponentConsciousness("TestComponent"),
       );
 
       await act(async () => {
@@ -212,7 +213,7 @@ describe("useComponentConsciousness Hook", () => {
 
       const metrics = (globalThis as any).__DIVINE_PERFORMANCE__.getMetrics();
       const failureMetric = metrics.find(
-        (m: DivinePerformanceMetric) => m.operation === "unknown_error_op"
+        (m: DivinePerformanceMetric) => m.operation === "unknown_error_op",
       );
 
       expect(failureMetric?.error).toBeDefined();
@@ -220,7 +221,7 @@ describe("useComponentConsciousness Hook", () => {
 
     it("should increment error count on failure", async () => {
       const { result } = renderHook(() =>
-        useComponentConsciousness("TestComponent")
+        useComponentConsciousness("TestComponent"),
       );
 
       const initialErrorCount = result.current.getMetrics().errorCount;
@@ -238,7 +239,7 @@ describe("useComponentConsciousness Hook", () => {
   describe("Event Tracking", () => {
     it("should track custom events", async () => {
       const { result } = renderHook(() =>
-        useComponentConsciousness("TestComponent")
+        useComponentConsciousness("TestComponent"),
       );
 
       const initialEventCount = result.current.getMetrics().eventCount;
@@ -253,7 +254,7 @@ describe("useComponentConsciousness Hook", () => {
 
     it("should provide component metrics", () => {
       const { result } = renderHook(() =>
-        useComponentConsciousness("TestComponent", { variant: "test" })
+        useComponentConsciousness("TestComponent", { variant: "test" }),
       );
 
       const metrics = result.current.getMetrics();
@@ -266,7 +267,7 @@ describe("useComponentConsciousness Hook", () => {
 
     it("should work without global tracker initialized", async () => {
       const { result } = renderHook(() =>
-        useComponentConsciousness("TestComponent")
+        useComponentConsciousness("TestComponent"),
       );
 
       await act(async () => {
@@ -280,7 +281,7 @@ describe("useComponentConsciousness Hook", () => {
 
     it("should track events without metadata", () => {
       const { result } = renderHook(() =>
-        useComponentConsciousness("ButtonComponent")
+        useComponentConsciousness("ButtonComponent"),
       );
 
       act(() => {
@@ -293,7 +294,7 @@ describe("useComponentConsciousness Hook", () => {
 
     it("should track events with metadata", () => {
       const { result } = renderHook(() =>
-        useComponentConsciousness("FormComponent")
+        useComponentConsciousness("FormComponent"),
       );
 
       act(() => {
@@ -316,7 +317,7 @@ describe("useComponentConsciousness Hook", () => {
 
     it("should track multiple events", () => {
       const { result } = renderHook(() =>
-        useComponentConsciousness("TestComponent")
+        useComponentConsciousness("TestComponent"),
       );
 
       act(() => {
@@ -338,7 +339,7 @@ describe("useComponentConsciousness Hook", () => {
 
       const context = { variant: "primary" };
       const { result } = renderHook(() =>
-        useComponentConsciousness("TestComponent", context)
+        useComponentConsciousness("TestComponent", context),
       );
 
       const metadata = { buttonId: "submit" };
@@ -358,7 +359,7 @@ describe("useComponentConsciousness Hook", () => {
 
     it("should work without analytics tracker", () => {
       const { result } = renderHook(() =>
-        useComponentConsciousness("TestComponent")
+        useComponentConsciousness("TestComponent"),
       );
 
       expect(() => {
@@ -375,16 +376,16 @@ describe("useComponentConsciousness Hook", () => {
 
       expect((globalThis as any).__DIVINE_PERFORMANCE__).toBeDefined();
       expect(
-        (globalThis as any).__DIVINE_PERFORMANCE__.recordMetric
+        (globalThis as any).__DIVINE_PERFORMANCE__.recordMetric,
       ).toBeDefined();
       expect(
-        (globalThis as any).__DIVINE_PERFORMANCE__.getMetrics
+        (globalThis as any).__DIVINE_PERFORMANCE__.getMetrics,
       ).toBeDefined();
       expect(
-        (globalThis as any).__DIVINE_PERFORMANCE__.getComponentMetrics
+        (globalThis as any).__DIVINE_PERFORMANCE__.getComponentMetrics,
       ).toBeDefined();
       expect(
-        (globalThis as any).__DIVINE_PERFORMANCE__.clearMetrics
+        (globalThis as any).__DIVINE_PERFORMANCE__.clearMetrics,
       ).toBeDefined();
 
       expect((globalThis as any).__DIVINE_ANALYTICS__).toBeDefined();
@@ -451,12 +452,12 @@ describe("useComponentConsciousness Hook", () => {
 
       (globalThis as any).__DIVINE_PERFORMANCE__.recordMetric(metric);
       expect(
-        (globalThis as any).__DIVINE_PERFORMANCE__.getMetrics().length
+        (globalThis as any).__DIVINE_PERFORMANCE__.getMetrics().length,
       ).toBeGreaterThan(0);
 
       (globalThis as any).__DIVINE_PERFORMANCE__.clearMetrics();
       expect(
-        (globalThis as any).__DIVINE_PERFORMANCE__.getMetrics().length
+        (globalThis as any).__DIVINE_PERFORMANCE__.getMetrics().length,
       ).toBe(0);
     });
 
@@ -482,7 +483,7 @@ describe("useComponentConsciousness Hook", () => {
   describe("Integration with React Lifecycle", () => {
     it("should track component unmount", () => {
       const { result, unmount } = renderHook(() =>
-        useComponentConsciousness("TestComponent")
+        useComponentConsciousness("TestComponent"),
       );
 
       const metricsBeforeUnmount = result.current.getMetrics();
@@ -502,10 +503,10 @@ describe("useComponentConsciousness Hook", () => {
       });
 
       expect(hook1.result.current.getMetrics().componentName).toBe(
-        "Component1"
+        "Component1",
       );
       expect(hook2.result.current.getMetrics().componentName).toBe(
-        "Component2"
+        "Component2",
       );
 
       expect(hook1.result.current.getMetrics().eventCount).toBe(1);
@@ -519,7 +520,7 @@ describe("useComponentConsciousness Hook", () => {
   describe("TypeScript Type Safety", () => {
     it("should have properly typed return object", () => {
       const { result } = renderHook(() =>
-        useComponentConsciousness("TestComponent")
+        useComponentConsciousness("TestComponent"),
       );
 
       const consciousness: ComponentConsciousness = result.current;
@@ -531,7 +532,7 @@ describe("useComponentConsciousness Hook", () => {
 
     it("should have properly typed metrics", () => {
       const { result } = renderHook(() =>
-        useComponentConsciousness("TestComponent")
+        useComponentConsciousness("TestComponent"),
       );
 
       const metrics: ComponentMetrics = result.current.getMetrics();
@@ -564,7 +565,7 @@ describe("useComponentConsciousness Hook", () => {
       const specialName = "Test-Component_123@#$";
 
       const { result } = renderHook(() =>
-        useComponentConsciousness(specialName)
+        useComponentConsciousness(specialName),
       );
 
       expect(result.current.getMetrics().componentName).toBe(specialName);
@@ -572,7 +573,7 @@ describe("useComponentConsciousness Hook", () => {
 
     it("should handle rapid-fire events", () => {
       const { result } = renderHook(() =>
-        useComponentConsciousness("TestComponent")
+        useComponentConsciousness("TestComponent"),
       );
 
       act(() => {
@@ -589,7 +590,7 @@ describe("useComponentConsciousness Hook", () => {
       initializeDivinePerformanceTracking();
 
       const { result } = renderHook(() =>
-        useComponentConsciousness("TestComponent")
+        useComponentConsciousness("TestComponent"),
       );
 
       await act(async () => {
@@ -599,7 +600,7 @@ describe("useComponentConsciousness Hook", () => {
 
       const metrics = (globalThis as any).__DIVINE_PERFORMANCE__.getMetrics();
       const instantMetric = metrics.find(
-        (m: DivinePerformanceMetric) => m.operation === "instant_op"
+        (m: DivinePerformanceMetric) => m.operation === "instant_op",
       );
 
       expect(instantMetric).toBeDefined();

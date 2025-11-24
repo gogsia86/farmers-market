@@ -10,7 +10,7 @@ import { OrderService } from "@/lib/services/order.service";
 import { PaymentService } from "@/lib/services/payment.service";
 import { ProductService } from "@/lib/services/product.service";
 import { ShippingService } from "@/lib/services/shipping.service";
-import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
+import { afterAll, beforeAll, describe, expect, it } from "@jest/globals";
 
 // Test data
 let testFarmId: string;
@@ -77,7 +77,7 @@ describe.skip("🔗 Integration: Complete Order Workflow", () => {
           },
         ],
       } as any,
-      testUserId
+      testUserId,
     );
     testProductId = testProduct.id;
   });
@@ -150,7 +150,7 @@ describe.skip("🔗 Integration: Complete Order Workflow", () => {
           city: "Los Angeles",
           state: "CA",
           zipCode: "90001",
-        }
+        },
       );
 
       expect(shippingRates).toHaveLength(3);
@@ -161,7 +161,7 @@ describe.skip("🔗 Integration: Complete Order Workflow", () => {
       const paymentIntent = await PaymentService.createPaymentIntent(
         order.id,
         totalAmount,
-        "USD"
+        "USD",
       );
 
       expect(paymentIntent).toMatchObject({
@@ -173,7 +173,7 @@ describe.skip("🔗 Integration: Complete Order Workflow", () => {
 
       // Step 4: Confirm payment
       const paymentConfirmed = await PaymentService.confirmPayment(
-        paymentIntent.id
+        paymentIntent.id,
       );
 
       expect(paymentConfirmed).toBe(true);
@@ -189,7 +189,7 @@ describe.skip("🔗 Integration: Complete Order Workflow", () => {
       // Step 5: Create shipment
       const shipment = await ShippingService.createShipment(
         order.id,
-        selectedRate.service
+        selectedRate.service,
       );
 
       expect(shipment).toMatchObject({
@@ -255,11 +255,11 @@ describe.skip("🔗 Integration: Complete Order Workflow", () => {
       });
 
       expect(productAfter?.inventory.reservedQuantity).toBe(
-        (productBefore?.inventory.reservedQuantity || 0) + 5
+        (productBefore?.inventory.reservedQuantity || 0) + 5,
       );
 
       expect(productAfter?.inventory.availableQuantity).toBe(
-        (initialAvailable || 0) - 5
+        (initialAvailable || 0) - 5,
       );
 
       // Cleanup
@@ -336,7 +336,7 @@ describe.skip("🔗 Integration: Complete Order Workflow", () => {
           },
           images: [],
         } as any,
-        testUserId
+        testUserId,
       );
 
       // Create order with product
@@ -363,7 +363,7 @@ describe.skip("🔗 Integration: Complete Order Workflow", () => {
       const paymentIntent = await PaymentService.createPaymentIntent(
         order.id,
         order.total,
-        "USD"
+        "USD",
       );
 
       await PaymentService.confirmPayment(paymentIntent.id);
@@ -424,5 +424,3 @@ describe.skip("🔗 Integration: Complete Order Workflow", () => {
     });
   });
 });
-
-

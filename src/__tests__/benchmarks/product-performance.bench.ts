@@ -50,7 +50,7 @@ describe("⚡ Performance: Product Listing", () => {
     async () => {
       await ProductService.listProducts({}, { page: 1, limit: 20 });
     },
-    { iterations: 1000 }
+    { iterations: 1000 },
   );
 
   bench(
@@ -58,7 +58,7 @@ describe("⚡ Performance: Product Listing", () => {
     async () => {
       await ProductService.listProducts({}, { page: 1, limit: 50 });
     },
-    { iterations: 500 }
+    { iterations: 500 },
   );
 
   bench(
@@ -70,7 +70,7 @@ describe("⚡ Performance: Product Listing", () => {
         status: "AVAILABLE",
       });
     },
-    { iterations: 1000 }
+    { iterations: 1000 },
   );
 
   bench(
@@ -80,7 +80,7 @@ describe("⚡ Performance: Product Listing", () => {
         search: "tomato",
       });
     },
-    { iterations: 1000 }
+    { iterations: 1000 },
   );
 });
 
@@ -102,7 +102,7 @@ describe("⚡ Performance: Product Retrieval", () => {
     async () => {
       await ProductService.getProductById("product-123");
     },
-    { iterations: 5000 }
+    { iterations: 5000 },
   );
 
   bench(
@@ -110,7 +110,7 @@ describe("⚡ Performance: Product Retrieval", () => {
     async () => {
       await ProductService.getProductById("product-123", true);
     },
-    { iterations: 5000 }
+    { iterations: 5000 },
   );
 });
 
@@ -156,7 +156,7 @@ describe("⚡ Performance: Product Creation", () => {
     async () => {
       await ProductService.createProduct(validInput as any, "user-123");
     },
-    { iterations: 1000 }
+    { iterations: 1000 },
   );
 });
 
@@ -181,10 +181,10 @@ describe("⚡ Performance: Batch Operations", () => {
       await ProductService.batchUpdateProducts(
         productIds,
         { isActive: true } as any,
-        "user-123"
+        "user-123",
       );
     },
-    { iterations: 100 }
+    { iterations: 100 },
   );
 
   bench(
@@ -194,10 +194,10 @@ describe("⚡ Performance: Batch Operations", () => {
       await ProductService.batchUpdateProducts(
         productIds,
         { isActive: true } as any,
-        "user-123"
+        "user-123",
       );
     },
-    { iterations: 50 }
+    { iterations: 50 },
   );
 });
 

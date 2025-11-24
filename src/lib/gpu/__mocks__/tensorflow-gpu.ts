@@ -18,7 +18,7 @@ export const gpuMatrixMultiply = jest.fn(
       }
     }
     return result;
-  }
+  },
 );
 
 export const gpuArrayProcess = jest.fn(<T extends number>(data: T[]): T[] => {
@@ -28,9 +28,9 @@ export const gpuArrayProcess = jest.fn(<T extends number>(data: T[]): T[] => {
 export const gpuAgriculturalTransform = jest.fn(
   (cropYields: number[], weatherFactors: number[]): number[] => {
     return cropYields.map(
-      (yield_val, i) => yield_val * weatherFactors[i] + yield_val * 0.1
+      (yield_val, i) => yield_val * weatherFactors[i] + yield_val * 0.1,
     );
-  }
+  },
 );
 
 export const getGPUMemoryInfo = jest.fn(() => ({

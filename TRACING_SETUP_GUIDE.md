@@ -106,7 +106,7 @@ const result = await traceAgriculturalOperation(
   async () => {
     // Your business logic here
     return await plantCrops(farmId, cropType);
-  }
+  },
 );
 ```
 
@@ -118,7 +118,7 @@ import { traceSeasonalOperation } from "@/lib/tracing/agricultural-tracer";
 const season = await traceSeasonalOperation(
   "current",
   "detectSeason",
-  async () => consciousness.getCurrentSeason()
+  async () => consciousness.getCurrentSeason(),
 );
 ```
 
@@ -128,7 +128,7 @@ const season = await traceSeasonalOperation(
 import { traceLunarOperation } from "@/lib/tracing/agricultural-tracer";
 
 const lunarPhase = await traceLunarOperation("current", async () =>
-  consciousness.getCurrentLunarPhase()
+  consciousness.getCurrentLunarPhase(),
 );
 ```
 

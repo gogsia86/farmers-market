@@ -1,4 +1,5 @@
 # 🚀 Ollama Quick Start Guide
+
 ## Get DeepSeek-R1:7b Running in 5 Minutes on Your HP OMEN
 
 ---
@@ -8,17 +9,20 @@
 ### Step 1: Install Ollama (2 minutes)
 
 **Windows (Recommended):**
+
 ```powershell
 # Download and run the installer
 Start-Process "https://ollama.com/download/windows"
 ```
 
 Or use winget:
+
 ```powershell
 winget install Ollama.Ollama
 ```
 
 **Verify installation:**
+
 ```powershell
 ollama --version
 ```
@@ -81,6 +85,7 @@ Run the automated test script:
 ```
 
 This will verify:
+
 - ✅ Ollama is installed
 - ✅ DeepSeek-R1:7b is available
 - ✅ GPU acceleration is working
@@ -92,11 +97,13 @@ This will verify:
 ## 🌐 API Endpoints
 
 ### 1. Chat Endpoint
+
 ```
 POST http://localhost:3001/api/ai/ollama
 ```
 
 **Example Request:**
+
 ```json
 {
   "message": "How do I improve soil health naturally?",
@@ -109,6 +116,7 @@ POST http://localhost:3001/api/ai/ollama
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -126,11 +134,13 @@ POST http://localhost:3001/api/ai/ollama
 ---
 
 ### 2. Agricultural Analysis Endpoint
+
 ```
 POST http://localhost:3001/api/ai/ollama/analyze
 ```
 
 **Example Request:**
+
 ```json
 {
   "query": "My tomato leaves are turning yellow. What's wrong?",
@@ -144,6 +154,7 @@ POST http://localhost:3001/api/ai/ollama/analyze
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -165,11 +176,13 @@ POST http://localhost:3001/api/ai/ollama/analyze
 ---
 
 ### 3. Status Check Endpoint
+
 ```
 GET http://localhost:3001/api/ai/ollama
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -203,9 +216,9 @@ export default function FarmDashboard() {
   return (
     <div className="container mx-auto p-4">
       <h1>Farm Dashboard</h1>
-      
+
       {/* AI Chat Assistant */}
-      <OllamaChatBot 
+      <OllamaChatBot
         className="h-[600px]"
         placeholder="Ask about your crops, soil, or farming practices..."
       />
@@ -220,14 +233,14 @@ export default function FarmDashboard() {
 
 ```typescript
 async function askAgriculturalQuestion(question: string) {
-  const response = await fetch('/api/ai/ollama', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message: question })
+  const response = await fetch("/api/ai/ollama", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: question }),
   });
 
   const data = await response.json();
-  
+
   if (data.success) {
     return data.data.message;
   } else {
@@ -237,7 +250,7 @@ async function askAgriculturalQuestion(question: string) {
 
 // Usage
 const answer = await askAgriculturalQuestion(
-  "What's the best time to plant tomatoes?"
+  "What's the best time to plant tomatoes?",
 );
 console.log(answer);
 ```
@@ -248,14 +261,14 @@ console.log(answer);
 
 ```typescript
 async function analyzeCropIssue(issue: string, farmContext: any) {
-  const response = await fetch('/api/ai/ollama/analyze', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+  const response = await fetch("/api/ai/ollama/analyze", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       query: issue,
       context: farmContext,
-      analysisType: 'advisory'
-    })
+      analysisType: "advisory",
+    }),
   });
 
   const data = await response.json();
@@ -268,12 +281,12 @@ const analysis = await analyzeCropIssue(
   {
     season: "summer",
     temperature: "85°F",
-    soilType: "sandy loam"
-  }
+    soilType: "sandy loam",
+  },
 );
 
-console.log(analysis.riskLevel);      // "HIGH", "MEDIUM", or "LOW"
-console.log(analysis.actionItems);    // Array of specific actions
+console.log(analysis.riskLevel); // "HIGH", "MEDIUM", or "LOW"
+console.log(analysis.actionItems); // Array of specific actions
 console.log(analysis.biodynamicScore); // 0-100 score
 ```
 
@@ -282,6 +295,7 @@ console.log(analysis.biodynamicScore); // 0-100 score
 ## 🎮 GPU Optimization for HP OMEN
 
 Your HP OMEN specs are perfect for local AI:
+
 - **RTX 2070 Max-Q**: 8GB VRAM, 2304 CUDA cores
 - **64GB RAM**: Excellent for model caching
 - **12 CPU Threads**: Parallel processing power
@@ -304,19 +318,20 @@ $env:OLLAMA_NUM_PARALLEL = "4"
 
 ### Expected Performance
 
-| Metric | Your HP OMEN |
-|--------|--------------|
-| **Tokens/Second** | 15-25 tok/s |
-| **First Response** | 200-500ms |
-| **GPU Utilization** | 60-90% |
-| **VRAM Usage** | 4-6GB |
-| **Quality** | Excellent ⭐⭐⭐⭐⭐ |
+| Metric              | Your HP OMEN         |
+| ------------------- | -------------------- |
+| **Tokens/Second**   | 15-25 tok/s          |
+| **First Response**  | 200-500ms            |
+| **GPU Utilization** | 60-90%               |
+| **VRAM Usage**      | 4-6GB                |
+| **Quality**         | Excellent ⭐⭐⭐⭐⭐ |
 
 ---
 
 ## 🔧 Common Issues & Fixes
 
 ### Issue: "Ollama not found"
+
 ```powershell
 # Install Ollama
 winget install Ollama.Ollama
@@ -327,6 +342,7 @@ winget install Ollama.Ollama
 ---
 
 ### Issue: "Model not found"
+
 ```powershell
 # Pull the model
 ollama pull deepseek-r1:7b
@@ -338,6 +354,7 @@ ollama list
 ---
 
 ### Issue: "Connection refused"
+
 ```powershell
 # Start Ollama service
 ollama serve
@@ -349,6 +366,7 @@ Get-Process ollama
 ---
 
 ### Issue: "Slow performance"
+
 ```powershell
 # Check GPU is being used
 nvidia-smi
@@ -363,6 +381,7 @@ $env:OLLAMA_GPU = "1"
 ---
 
 ### Issue: "Out of memory"
+
 ```powershell
 # Use smaller quantization
 ollama pull deepseek-r1:7b-q4
@@ -405,12 +424,14 @@ ollama serve
 ## 🎯 Pro Tips
 
 ### 1. Keep Model in Memory
+
 ```powershell
 # With 64GB RAM, keep model loaded all day
 $env:OLLAMA_KEEP_ALIVE = "24h"
 ```
 
 ### 2. Faster Responses
+
 ```typescript
 // Use shorter context for quick answers
 options: {
@@ -420,6 +441,7 @@ options: {
 ```
 
 ### 3. Better Agricultural Advice
+
 ```typescript
 // Provide more context
 const context = {
@@ -427,11 +449,12 @@ const context = {
   climate: "temperate",
   farmingMethod: "organic",
   season: "spring",
-  currentCrops: ["tomatoes", "lettuce"]
+  currentCrops: ["tomatoes", "lettuce"],
 };
 ```
 
 ### 4. Try Different Models
+
 ```powershell
 # Pull additional models
 ollama pull llama3.1:8b     # General purpose
@@ -487,18 +510,21 @@ With Ollama integrated, you can now:
 Your HP OMEN laptop is now running a powerful local AI assistant for agriculture!
 
 **Next Steps:**
+
 1. ✅ Ollama installed and running
 2. ✅ DeepSeek-R1:7b model downloaded
 3. ✅ Platform integration tested
 4. 🚀 Start building AI features!
 
 **Resources:**
+
 - Full Setup Guide: `OLLAMA_SETUP_GUIDE.md`
 - API Documentation: `/src/lib/ai/ollama.ts`
 - Component Example: `/src/components/features/ai/OllamaChatBot.tsx`
 - Test Script: `test-ollama.ps1`
 
 **Need Help?**
+
 - Run: `.\test-ollama.ps1 -Verbose`
 - Check: `OLLAMA_SETUP_GUIDE.md` troubleshooting section
 - Visit: https://github.com/ollama/ollama

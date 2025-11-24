@@ -14,6 +14,7 @@
 ### Overall Health Score: 6.5/10
 
 **Strengths** ✅:
+
 - Zero TypeScript errors/warnings
 - Well-structured source code (`src/` directory)
 - Excellent divine instruction documentation
@@ -21,6 +22,7 @@
 - Modern tech stack (Next.js 15, React 19, TypeScript 5.9)
 
 **Critical Issues** 🚨:
+
 - **2,337 Markdown files** (excessive documentation clutter)
 - **141 MD files in root directory alone**
 - **137 TXT files** scattered throughout
@@ -39,6 +41,7 @@
 #### Breakdown by Category:
 
 **PHASE Documentation** (35 files):
+
 ```
 PHASE_2_CLEANUP_SUMMARY.md
 PHASE_3_COMPLETION_SUMMARY.md
@@ -71,6 +74,7 @@ PHASE_5_VALIDATION_REPORT.md
 ```
 
 **SESSION Summaries** (15+ files):
+
 ```
 SESSION_COMPLETION_SUMMARY.txt
 SESSION_FINAL_SUMMARY.md
@@ -86,6 +90,7 @@ CONTINUATION_WORK_COMPLETE.md
 ```
 
 **STATUS Files** (12+ files):
+
 ```
 CURRENT_STATUS.txt
 PROJECT_STATUS.txt
@@ -101,6 +106,7 @@ QUICK_STATUS.md
 ```
 
 **"COMPLETE" Variations** (20+ files):
+
 ```
 CLEANUP_COMPLETED_SUMMARY.md
 CLEANUP_SUCCESS_SUMMARY.txt
@@ -129,6 +135,7 @@ WORK_COMPLETE_NOV_23.md
 #### IMMEDIATE ACTIONS (Priority 1):
 
 1. **Create Historical Archive Structure**:
+
 ```
 archive/
 ├── 2024-Q4/
@@ -142,6 +149,7 @@ archive/
 ```
 
 2. **Consolidate Active Documentation**:
+
 ```
 ROOT/
 ├── README.md (ONLY primary readme)
@@ -162,19 +170,19 @@ docs/
 ```
 
 3. **Archive Candidates** (move to `archive/2024-Q4/` or `archive/2025-Q1/`):
-   - All PHASE_* files except PHASE_5_README.md (consolidate into CHANGELOG.md)
-   - All SESSION_SUMMARY_* files
-   - All *_COMPLETE.md files older than 30 days
-   - All EPIC_* files
-   - All VICTORY_*, MISSION_*, HALL_OF_FAME documents
+   - All PHASE\_\* files except PHASE_5_README.md (consolidate into CHANGELOG.md)
+   - All SESSION*SUMMARY*\* files
+   - All \*\_COMPLETE.md files older than 30 days
+   - All EPIC\_\* files
+   - All VICTORY*\*, MISSION*\*, HALL_OF_FAME documents
 
 4. **Delete Candidates** (redundant/obsolete):
    - Duplicate status files (keep only CURRENT_STATUS.md)
    - build-output.log, build-output.txt
-   - All cleanup-log-*.txt files
+   - All cleanup-log-\*.txt files
    - phase4-bundle-analysis.log
    - test-results-final.txt, coverage-baseline.txt
-   - All *.bak, *.old, *.backup files (if any)
+   - All _.bak, _.old, \*.backup files (if any)
 
 ---
 
@@ -183,6 +191,7 @@ docs/
 ### 2.1 Inconsistent Test Directory Structure
 
 **Current Structure** (PROBLEMATIC):
+
 ```
 src/
 ├── __tests__/           ⚠️ Root level tests
@@ -208,6 +217,7 @@ src/
 ### 2.2 Test Configuration Duplication
 
 **ISSUE**: Multiple Jest configs
+
 ```
 jest.config.js          ← Primary config
 jest.config.clean.js    ← What's the difference? Redundant?
@@ -217,6 +227,7 @@ jest.setup.js           ← Setup file (needed)
 ### 2.3 Recommendations - Testing
 
 1. **Standardize Test Location Strategy**:
+
 ```
 RECOMMENDED APPROACH: Co-located __tests__ directories
 
@@ -255,6 +266,7 @@ src/
 ### 3.1 Docker Files Analysis
 
 **Current State** (18 files!):
+
 ```
 ROOT:
 ├── Dockerfile              ← Production
@@ -284,6 +296,7 @@ archive/:
 ### 3.2 Recommendations - Docker
 
 1. **Consolidate Docker Scripts**:
+
 ```
 KEEP:
 - Dockerfile (production)
@@ -318,6 +331,7 @@ DELETE:
 ### 4.1 Config Files Review
 
 **Current Configs**:
+
 ```
 ✅ GOOD:
 - next.config.mjs
@@ -343,6 +357,7 @@ DELETE:
 ### 4.2 Unusual Files in Root
 
 **Investigate/Clean**:
+
 ```
 ❓ WEIRD FILES:
 - "h text eol=lf" (orphaned Git attribute?)
@@ -365,6 +380,7 @@ DELETE:
 ### 4.3 Recommendations - Config
 
 1. **Clean Git Artifacts**:
+
 ```bash
 # These files should NOT exist - delete them:
 rm "h text eol=lf"
@@ -379,6 +395,7 @@ rm "t 📝 Step 3 Creating .gitattributes file..." # etc.
 ```
 
 2. **Verify .gitattributes**:
+
 ```
 # Check if .gitattributes is corrupted
 cat .gitattributes
@@ -396,6 +413,7 @@ cat .gitattributes
 ### 5.1 Problematic Directories
 
 **1. "Farmers-Market" Directory** ⚠️:
+
 ```
 Farmers-Market/
 └── src/
@@ -408,12 +426,14 @@ Farmers-Market/
 
 **Analysis**: Only 3 files, appears to be old/experimental code or duplicate.
 
-**Recommendation**: 
+**Recommendation**:
+
 - Check if these files are duplicates of `src/components/` and `src/hooks/`
 - If duplicates: DELETE entire `Farmers-Market/` directory
 - If unique and needed: MOVE to proper locations in `src/`
 
 **2. Multiple .vscode Directories** 🤔:
+
 ```
 ./.vscode/                          ← Root (keep)
 ./.vscode/.vscode/                  ← NESTED?! Delete this!
@@ -424,6 +444,7 @@ Farmers-Market/
 ```
 
 **Recommendation**:
+
 ```bash
 # Keep only root .vscode
 # Delete nested and scattered ones
@@ -434,10 +455,11 @@ rm -rf .github/instructions/.vscode/
 ```
 
 **3. Empty/Unnecessary Directories**:
+
 ```
 cleanup-logs/     ← Empty, delete it
 .jest-cache/      ← Should be in .gitignore and cleaned
-coverage/         ← Should be in .gitignore and cleaned  
+coverage/         ← Should be in .gitignore and cleaned
 playwright-report/← Should be in .gitignore and cleaned
 .vs/              ← Visual Studio artifacts (Windows), should be gitignored
 ```
@@ -445,12 +467,14 @@ playwright-report/← Should be in .gitignore and cleaned
 ### 5.2 Build Artifacts
 
 **Current Size**:
+
 ```
 .next/     169MB  ← Normal, but should be cleaned regularly
 dist/      ???    ← If exists, should be cleaned
 ```
 
 **Recommendations**:
+
 1. Add npm script: `"clean:build": "rimraf .next dist .turbo"`
 2. Run before major commits
 3. Ensure .gitignore covers all build outputs
@@ -462,6 +486,7 @@ dist/      ???    ← If exists, should be cleaned
 ### 6.1 Outdated Packages
 
 **Current vs Latest**:
+
 ```
 Package              Current        Latest     Risk Level
 ─────────────────────────────────────────────────────────
@@ -478,12 +503,14 @@ next-auth            5.0.0-beta.30  4.24.13    ⚠️ BETA (unstable)
 ### 6.2 Upgrade Strategy
 
 **Phase 1 - Safe Updates** (Do First):
+
 ```bash
 # Minor/patch updates - LOW RISK
 npm update react react-dom @types/react @types/react-dom
 ```
 
 **Phase 2 - Breaking Changes** (Test Thoroughly):
+
 ```bash
 # Prisma 6 → 7 Migration
 # Read migration guide first!
@@ -498,6 +525,7 @@ npx prisma migrate dev
 ```
 
 **Phase 3 - Beta Considerations**:
+
 ```
 next-auth v5 (currently beta.30):
 - Monitor for stable release
@@ -509,6 +537,7 @@ next-auth v5 (currently beta.30):
 ### 6.3 Dependencies to Consider Adding
 
 **Recommended Additions**:
+
 ```json
 {
   "devDependencies": {
@@ -527,6 +556,7 @@ next-auth v5 (currently beta.30):
 ### 7.1 Security Audit Findings
 
 **✅ GOOD**:
+
 - Comprehensive .gitignore covering secrets
 - Using environment variables
 - NextAuth for authentication
@@ -534,6 +564,7 @@ next-auth v5 (currently beta.30):
 - HTTPS enforced
 
 **⚠️ ATTENTION NEEDED**:
+
 1. **Environment Files**:
    - Ensure `.env.local`, `.env.production` are NEVER committed
    - Create `.env.example` with dummy values
@@ -551,20 +582,24 @@ next-auth v5 (currently beta.30):
 ### 7.2 Best Practices Audit
 
 **Code Organization**: ✅ EXCELLENT
+
 - Layered architecture (Controller → Service → Repository)
 - Canonical database import pattern
 - Type-safe with strict TypeScript
 
 **Performance**: ✅ GOOD
+
 - Optimized for HP OMEN hardware
 - Multi-layer caching
 - Bundle optimization
 
 **Testing**: ✅ GOOD (needs standardization)
+
 - Test coverage infrastructure exists
 - Need to standardize directory structure
 
 **Documentation**: ⚠️ EXCESSIVE
+
 - Over-documented with historical artifacts
 - Need aggressive cleanup
 
@@ -575,6 +610,7 @@ next-auth v5 (currently beta.30):
 ### Priority 1: CRITICAL (Do This Week)
 
 #### 1.1 Delete Corrupted Files (5 minutes)
+
 ```bash
 cd "Farmers Market Platform web and app"
 
@@ -597,6 +633,7 @@ rm "Market Platform web and app" 2>/dev/null
 ```
 
 #### 1.2 Archive Historical Documentation (30 minutes)
+
 ```bash
 # Create archive structure
 mkdir -p archive/2024-Q4/{phases,sessions,reports}
@@ -628,6 +665,7 @@ mv CLEANUP_*.md archive/2025-Q1/reports/
 ```
 
 #### 1.3 Clean Build Artifacts (2 minutes)
+
 ```bash
 # Add to package.json:
 npm run clean:all
@@ -647,6 +685,7 @@ rm phase4-bundle-analysis.log
 ```
 
 #### 1.4 Consolidate Test Directories (15 minutes)
+
 ```bash
 # Create standardized test utilities
 mkdir -p src/test-utils
@@ -671,6 +710,7 @@ mv src/app/test src/app/__tests__ 2>/dev/null
 ### Priority 2: HIGH (Do This Month)
 
 #### 2.1 Evaluate Farmers-Market Directory (10 minutes)
+
 ```bash
 # Check for duplicates
 diff -r Farmers-Market/src/components/ src/components/
@@ -686,6 +726,7 @@ rm -rf Farmers-Market/
 ```
 
 #### 2.2 Clean .vscode Directories (2 minutes)
+
 ```bash
 # Remove nested and scattered .vscode
 rm -rf .vscode/.vscode/
@@ -697,6 +738,7 @@ rm -rf .github/instructions/.vscode/
 ```
 
 #### 2.3 Consolidate Docker Scripts (20 minutes)
+
 ```bash
 # Create organized Docker scripts directory
 mkdir -p scripts/docker
@@ -715,6 +757,7 @@ mv docker-deploy-simple.ps1 archive/docker/
 ```
 
 #### 2.4 Update Dependencies - Safe Updates (10 minutes)
+
 ```bash
 # Update React to latest 19.x
 npm update react react-dom @types/react @types/react-dom
@@ -731,6 +774,7 @@ git commit -m "chore: update React to 19.2.x"
 ### Priority 3: MEDIUM (Do Next Month)
 
 #### 3.1 Documentation Restructure (2 hours)
+
 1. Create `DOCUMENTATION_GUIDE.md` explaining doc structure
 2. Update README.md to be concise entry point
 3. Consolidate all PHASE docs into CHANGELOG.md
@@ -738,6 +782,7 @@ git commit -m "chore: update React to 19.2.x"
 5. Archive everything older than 90 days
 
 #### 3.2 Jest Configuration Review (30 minutes)
+
 ```bash
 # Compare jest configs
 diff jest.config.js jest.config.clean.js
@@ -749,13 +794,16 @@ rm jest.config.clean.js
 ```
 
 #### 3.3 PowerShell to Cross-Platform (4 hours)
+
 Convert 131 .ps1 scripts to:
+
 - Node.js scripts (preferred for consistency)
 - Shell scripts with .sh extension
 - Use `cross-env` patterns
 - Organize in `scripts/` subdirectories
 
 #### 3.4 Create Maintenance Scripts (1 hour)
+
 ```json
 // Add to package.json
 {
@@ -776,6 +824,7 @@ Convert 131 .ps1 scripts to:
 ### Priority 4: LOW (Future Improvements)
 
 #### 4.1 Prisma 7 Migration (4 hours + testing)
+
 - Read Prisma 7 migration guide
 - Test in development environment
 - Run all tests
@@ -783,6 +832,7 @@ Convert 131 .ps1 scripts to:
 - Deploy to staging first
 
 #### 4.2 Tailwind 4 Migration (8 hours + testing)
+
 - **MAJOR BREAKING CHANGES**
 - Read full upgrade guide
 - Rewrite config file
@@ -791,6 +841,7 @@ Convert 131 .ps1 scripts to:
 - Consider staying on Tailwind 3 for now
 
 #### 4.3 Bundle Analysis & Optimization (2 hours)
+
 ```bash
 npm run build:analyze
 npm run bundle:measure
@@ -801,6 +852,7 @@ npm run bundle:measure
 ```
 
 #### 4.4 Dependency Visualization (1 hour)
+
 ```bash
 npm install -D dependency-cruiser
 
@@ -816,6 +868,7 @@ npx depcruise --validate src
 ## 📊 SECTION 9: METRICS & TARGETS
 
 ### Current State
+
 ```
 Total Files:              ~50,000 (with node_modules)
 Source Files:             ~2,000
@@ -831,6 +884,7 @@ Type Safety:              10/10 ✅
 ```
 
 ### Target State
+
 ```
 Total Files:              ~48,000
 Source Files:             ~2,000
@@ -846,6 +900,7 @@ Type Safety:              10/10 ✅
 ```
 
 ### Success Metrics
+
 - ✅ Root directory has <10 files
 - ✅ All historical docs archived
 - ✅ Build runs <2 minutes on HP OMEN
@@ -860,6 +915,7 @@ Type Safety:              10/10 ✅
 ## 🎯 SECTION 10: NEXT STEPS CHECKLIST
 
 ### This Week
+
 - [ ] Delete corrupted Git attribute files
 - [ ] Archive PHASE documentation (1-5)
 - [ ] Archive SESSION_SUMMARY files
@@ -870,6 +926,7 @@ Type Safety:              10/10 ✅
 - [ ] Update React to 19.2.x (safe minor update)
 
 ### This Month
+
 - [ ] Consolidate Docker scripts
 - [ ] Review and remove duplicate Jest configs
 - [ ] Create comprehensive CHANGELOG.md
@@ -879,6 +936,7 @@ Type Safety:              10/10 ✅
 - [ ] Document all environment variables in .env.example
 
 ### Next Month
+
 - [ ] Convert PowerShell scripts to Node.js/shell
 - [ ] Restructure documentation (move to docs/)
 - [ ] Create developer onboarding guide
@@ -887,6 +945,7 @@ Type Safety:              10/10 ✅
 - [ ] Create dependency update schedule
 
 ### Future (Q1 2025)
+
 - [ ] Plan Prisma 7 migration
 - [ ] Evaluate Tailwind 4 migration (breaking changes)
 - [ ] Implement automated dependency updates (Dependabot configured?)
@@ -957,12 +1016,14 @@ echo "🌟 Next: Run 'npm test' and 'npm run build' to verify everything works!"
 ## 📝 FINAL RECOMMENDATIONS
 
 ### Immediate Priorities
+
 1. **Clean corrupted files** (5 min) - CRITICAL
 2. **Archive historical docs** (30 min) - HIGH
 3. **Standardize test structure** (15 min) - HIGH
 4. **Clean build artifacts** (2 min) - MEDIUM
 
 ### Long-term Strategy
+
 1. **Establish documentation lifecycle policy**
    - Archive docs older than 90 days
    - Keep only active/relevant docs in root
@@ -984,7 +1045,9 @@ echo "🌟 Next: Run 'npm test' and 'npm run build' to verify everything works!"
    - Security audits weekly
 
 ### Success Criteria
+
 ✅ **You'll know cleanup is successful when:**
+
 - Root directory has <10 files
 - All tests pass
 - Build time <2 minutes
@@ -998,6 +1061,7 @@ echo "🌟 Next: Run 'npm test' and 'npm run build' to verify everything works!"
 ## 🎓 LESSONS LEARNED
 
 **What Went Well**:
+
 - Excellent code organization (src/ structure)
 - Strong type safety (zero TS errors!)
 - Comprehensive divine instruction system
@@ -1005,6 +1069,7 @@ echo "🌟 Next: Run 'npm test' and 'npm run build' to verify everything works!"
 - Modern tech stack
 
 **What Needs Improvement**:
+
 - Documentation lifecycle management
 - File naming consistency
 - Build artifact cleanup discipline
@@ -1012,6 +1077,7 @@ echo "🌟 Next: Run 'npm test' and 'npm run build' to verify everything works!"
 - Script organization and cross-platform support
 
 **Recommendations for Future**:
+
 1. Implement "docs rotation policy" - archive monthly
 2. Use automated tools to detect clutter
 3. Add pre-commit checks for common issues
@@ -1023,14 +1089,17 @@ echo "🌟 Next: Run 'npm test' and 'npm run build' to verify everything works!"
 ## 📞 SUPPORT & RESOURCES
 
 **Divine Instructions** (Excellent resource!):
+
 - `.github/instructions/` - Comprehensive development guides
 - Follow these patterns for all new code
 
 **Documentation**:
+
 - `docs/` - Well-organized technical documentation
 - Keep using this structure going forward
 
 **Tools to Install**:
+
 ```bash
 npm install -g npm-check-updates  # For dependency updates
 npm install -g dependency-cruiser # For dependency visualization
@@ -1048,8 +1117,9 @@ The Farmers Market Platform has **excellent code quality** and **solid architect
 With the cleanup plan outlined above, this project can reach **divine perfection** in repository organization while maintaining its excellent code quality.
 
 **Estimated Cleanup Time**:
+
 - Priority 1 (Critical): 1-2 hours
-- Priority 2 (High): 2-3 hours  
+- Priority 2 (High): 2-3 hours
 - Priority 3 (Medium): 8-10 hours
 - Priority 4 (Low): 15-20 hours
 

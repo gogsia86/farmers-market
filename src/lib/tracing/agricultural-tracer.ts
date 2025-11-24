@@ -27,7 +27,7 @@ export enum AgriculturalOperation {
 export async function traceAgriculturalOperation<T>(
   operation: AgriculturalOperation,
   attributes: Record<string, string | number | boolean>,
-  fn: (span: any) => Promise<T>
+  fn: (span: any) => Promise<T>,
 ): Promise<T> {
   return tracer.startActiveSpan(operation, async (span) => {
     try {
@@ -57,7 +57,7 @@ export async function traceAgriculturalOperation<T>(
 export async function traceSeasonalOperation<T>(
   season: string,
   operation: string,
-  fn: () => Promise<T>
+  fn: () => Promise<T>,
 ): Promise<T> {
   return traceAgriculturalOperation(
     AgriculturalOperation.CROP_PLANNING,
@@ -70,7 +70,7 @@ export async function traceSeasonalOperation<T>(
       const result = await fn();
       span.addEvent(`Completed ${operation} for ${season} season`);
       return result;
-    }
+    },
   );
 }
 
@@ -79,7 +79,7 @@ export async function traceSeasonalOperation<T>(
  */
 export async function traceLunarOperation<T>(
   phase: string,
-  fn: () => Promise<T>
+  fn: () => Promise<T>,
 ): Promise<T> {
   return traceAgriculturalOperation(
     AgriculturalOperation.LUNAR_CALCULATION,
@@ -92,7 +92,7 @@ export async function traceLunarOperation<T>(
       const result = await fn();
       span.addEvent(`Lunar calculation complete`);
       return result;
-    }
+    },
   );
 }
 
@@ -101,7 +101,7 @@ export async function traceLunarOperation<T>(
  */
 export async function traceConsciousnessMeasurement<T>(
   consciousnessLevel: number,
-  fn: () => Promise<T>
+  fn: () => Promise<T>,
 ): Promise<T> {
   return traceAgriculturalOperation(
     AgriculturalOperation.CONSCIOUSNESS_MEASUREMENT,
@@ -109,7 +109,7 @@ export async function traceConsciousnessMeasurement<T>(
       "agricultural.consciousness_level": consciousnessLevel,
       "divine.energy": consciousnessLevel > 0.7 ? "high" : "moderate",
     },
-    async () => await fn()
+    async () => await fn(),
   );
 }
 
@@ -118,7 +118,7 @@ export async function traceConsciousnessMeasurement<T>(
  */
 export function addAgriculturalEvent(
   eventName: string,
-  attributes?: Record<string, string | number | boolean>
+  attributes?: Record<string, string | number | boolean>,
 ): void {
   const span = trace.getActiveSpan();
   if (span) {
@@ -133,7 +133,7 @@ export function addAgriculturalEvent(
  * Set agricultural attributes on current span
  */
 export function setAgriculturalAttributes(
-  attributes: Record<string, string | number | boolean>
+  attributes: Record<string, string | number | boolean>,
 ) {
   const span = trace.getActiveSpan();
   if (span) {

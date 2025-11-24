@@ -11,11 +11,11 @@
 
 module.exports = {
   // TypeScript files - run type check and lint
-  '**/*.{ts,tsx}': (filenames) => {
-    const fileList = filenames.join(' ');
+  "**/*.{ts,tsx}": (filenames) => {
+    const fileList = filenames.join(" ");
     return [
       // Type check all TypeScript files
-      'npx tsc --noEmit',
+      "npx tsc --noEmit",
       // Lint and auto-fix
       `npx eslint ${fileList} --fix --max-warnings=0`,
       // Format with Prettier
@@ -24,8 +24,8 @@ module.exports = {
   },
 
   // JavaScript files - lint and format
-  '**/*.{js,jsx}': (filenames) => {
-    const fileList = filenames.join(' ');
+  "**/*.{js,jsx}": (filenames) => {
+    const fileList = filenames.join(" ");
     return [
       `npx eslint ${fileList} --fix --max-warnings=0`,
       `npx prettier --write ${fileList}`,
@@ -33,25 +33,22 @@ module.exports = {
   },
 
   // JSON files - format only
-  '**/*.json': (filenames) => {
-    return `npx prettier --write ${filenames.join(' ')}`;
+  "**/*.json": (filenames) => {
+    return `npx prettier --write ${filenames.join(" ")}`;
   },
 
   // Markdown files - format only
-  '**/*.md': (filenames) => {
-    return `npx prettier --write ${filenames.join(' ')}`;
+  "**/*.md": (filenames) => {
+    return `npx prettier --write ${filenames.join(" ")}`;
   },
 
   // Prisma schema - format and validate
-  'prisma/schema.prisma': () => {
-    return [
-      'npx prisma format',
-      'npx prisma validate',
-    ];
+  "prisma/schema.prisma": () => {
+    return ["npx prisma format", "npx prisma validate"];
   },
 
   // Environment example file - validate structure
-  '.env.example': () => {
+  ".env.example": () => {
     return 'echo "✅ .env.example validated"';
   },
 

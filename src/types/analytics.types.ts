@@ -575,7 +575,7 @@ export function calculatePercentage(part: number, total: number): number {
 
 export function formatCurrency(
   amount: number,
-  currency: string = "USD"
+  currency: string = "USD",
 ): string {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -616,7 +616,7 @@ export function getSeasonFromMonth(month: number): Season {
 
 export function getTimeRangeForPeriod(
   period: TimePeriod,
-  date: Date = new Date()
+  date: Date = new Date(),
 ): TimeRange {
   const start = new Date(date);
   const end = new Date(date);

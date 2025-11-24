@@ -233,7 +233,7 @@ export class EmailService {
    * Send order confirmation email
    */
   async sendOrderConfirmationEmail(
-    data: OrderConfirmationEmailData
+    data: OrderConfirmationEmailData,
   ): Promise<boolean> {
     const html = this.generateOrderConfirmationTemplate(data);
     const text = `Order Confirmation #${data.orderNumber}\n\nThank you for your order, ${data.customerName}!\n\nTotal: $${data.total.toFixed(2)}\nDelivery Date: ${data.deliveryDate}\n\nTrack your order: ${data.trackingUrl}`;
@@ -450,7 +450,7 @@ export class EmailService {
   }
 
   private generateOrderConfirmationTemplate(
-    data: OrderConfirmationEmailData
+    data: OrderConfirmationEmailData,
   ): string {
     const itemsHtml = data.items
       .map(
@@ -460,7 +460,7 @@ export class EmailService {
         <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; text-align: center;">${item.quantity}</td>
         <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; text-align: right;">$${item.price.toFixed(2)}</td>
       </tr>
-    `
+    `,
       )
       .join("");
 

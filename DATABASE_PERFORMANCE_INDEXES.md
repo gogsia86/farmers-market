@@ -1,9 +1,10 @@
 # 🗄️ DATABASE PERFORMANCE INDEXES
+
 **Farmers Market Platform - Database Optimization Guide**
 
 **Date**: January 2025  
 **Phase**: 4B - Performance Deep Dive  
-**Status**: Ready for Migration  
+**Status**: Ready for Migration
 
 ---
 
@@ -22,23 +23,26 @@ This document describes the new performance indexes added to the Prisma schema t
 ### Product Model (3 indexes)
 
 #### 1. Farm + Stock Status Index
+
 ```prisma
 @@index([farmId, inStock])
 ```
 
 **Purpose**: Optimize queries filtering products by farm and availability  
 **Use Cases**:
+
 - Fetching active products for a specific farm
 - Product catalog filtering by farm and stock status
 - Analytics queries for available inventory
 
 **Query Example**:
+
 ```typescript
 const products = await database.product.findMany({
   where: {
     farmId: farmId,
     inStock: true,
-  }
+  },
 });
 // Before: Full table scan or single-column index
 // After: Composite index scan (40-60% faster)
@@ -47,24 +51,27 @@ const products = await database.product.findMany({
 ---
 
 #### 2. Farm + Category + Stock Status Index
+
 ```prisma
 @@index([farmId, category, inStock])
 ```
 
 **Purpose**: Optimize queries filtering by farm, category, and availability  
 **Use Cases**:
+
 - Category-based product listings per farm
 - "Shop by category" on farm pages
 - Analytics by product category
 
 **Query Example**:
+
 ```typescript
 const vegetables = await database.product.findMany({
   where: {
     farmId: farmId,
-    category: 'VEGETABLES',
+    category: "VEGETABLES",
     inStock: true,
-  }
+  },
 });
 // Before: Multiple index scans
 // After: Single composite index scan (50-70% faster)
@@ -73,22 +80,25 @@ const vegetables = await database.product.findMany({
 ---
 
 #### 3. Quantity Available Index
+
 ```prisma
 @@index([quantityAvailable])
 ```
 
 **Purpose**: Optimize low inventory queries  
 **Use Cases**:
+
 - Finding products with low stock (≤10 units)
 - Inventory alerts and notifications
 - Dashboard "low inventory" widget
 
 **Query Example**:
+
 ```typescript
 const lowStock = await database.product.findMany({
   where: {
-    quantityAvailable: { lte: 10 }
-  }
+    quantityAvailable: { lte: 10 },
+  },
 });
 // Before: Full table scan
 // After: Index range scan (80-90% faster)
@@ -99,24 +109,27 @@ const lowStock = await database.product.findMany({
 ### Order Model (3 indexes)
 
 #### 4. Farm + Created Date Index
+
 ```prisma
 @@index([farmId, createdAt])
 ```
 
 **Purpose**: Critical for analytics queries - orders by farm over time  
 **Use Cases**:
+
 - Analytics dashboard (last 30 days orders)
 - Revenue calculations per farm
 - Order history for farm owners
 - Time-based reporting
 
 **Query Example**:
+
 ```typescript
 const recentOrders = await database.order.findMany({
   where: {
     farmId: { in: farmIds },
-    createdAt: { gte: thirtyDaysAgo }
-  }
+    createdAt: { gte: thirtyDaysAgo },
+  },
 });
 // Before: Slow full table scan (200-300ms)
 // After: Fast index scan (50-80ms) - 60-70% improvement ✅
@@ -127,23 +140,26 @@ const recentOrders = await database.order.findMany({
 ---
 
 #### 5. Customer + Created Date Index
+
 ```prisma
 @@index([customerId, createdAt])
 ```
 
 **Purpose**: Optimize customer order history queries  
 **Use Cases**:
+
 - Customer order history page
 - "Recent orders" widget on customer dashboard
 - Order tracking by customer
 
 **Query Example**:
+
 ```typescript
 const customerOrders = await database.order.findMany({
   where: {
     customerId: userId,
   },
-  orderBy: { createdAt: 'desc' }
+  orderBy: { createdAt: "desc" },
 });
 // Before: Single column index + sort
 // After: Composite index with pre-sorted data (40-50% faster)
@@ -152,24 +168,27 @@ const customerOrders = await database.order.findMany({
 ---
 
 #### 6. Status + Created Date Index
+
 ```prisma
 @@index([status, createdAt])
 ```
 
 **Purpose**: Optimize order status filtering with time range  
 **Use Cases**:
+
 - Finding pending orders
 - Order fulfillment queue
 - Admin order management filtered by status
 - Status-based analytics
 
 **Query Example**:
+
 ```typescript
 const pendingOrders = await database.order.findMany({
   where: {
-    status: 'PENDING',
-    createdAt: { gte: yesterday }
-  }
+    status: "PENDING",
+    createdAt: { gte: yesterday },
+  },
 });
 // Before: Status index + filter
 // After: Composite index scan (50-60% faster)
@@ -180,21 +199,24 @@ const pendingOrders = await database.order.findMany({
 ### Review Model (3 indexes)
 
 #### 7. Product + Created Date Index
+
 ```prisma
 @@index([productId, createdAt])
 ```
 
 **Purpose**: Optimize product review queries sorted by date  
 **Use Cases**:
+
 - Product detail page reviews (sorted by most recent)
 - Review moderation queue
 - Product rating aggregations
 
 **Query Example**:
+
 ```typescript
 const reviews = await database.review.findMany({
   where: { productId: productId },
-  orderBy: { createdAt: 'desc' }
+  orderBy: { createdAt: "desc" },
 });
 // Before: Product index + sort in memory
 // After: Composite index with pre-sorted data (40-50% faster)
@@ -203,20 +225,23 @@ const reviews = await database.review.findMany({
 ---
 
 #### 8. Rating Index
+
 ```prisma
 @@index([rating])
 ```
 
 **Purpose**: Optimize rating-based filtering and sorting  
 **Use Cases**:
+
 - Finding top-rated products
 - Low-rating alerts
 - Rating distribution analytics
 
 **Query Example**:
+
 ```typescript
 const topReviews = await database.review.findMany({
-  where: { rating: { gte: 4 } }
+  where: { rating: { gte: 4 } },
 });
 // Before: Full table scan
 // After: Index range scan (70-80% faster)
@@ -225,21 +250,24 @@ const topReviews = await database.review.findMany({
 ---
 
 #### 9. Farm + Rating Index
+
 ```prisma
 @@index([farmId, rating])
 ```
 
 **Purpose**: Optimize farm rating aggregations and filtering  
 **Use Cases**:
+
 - Farm average rating calculations
 - Farm reputation scoring
 - Finding farms with high ratings
 
 **Query Example**:
+
 ```typescript
 const farmRatings = await database.review.aggregate({
   where: { farmId: farmId },
-  _avg: { rating: true }
+  _avg: { rating: true },
 });
 // Before: Full scan of farm's reviews
 // After: Index scan (50-60% faster)
@@ -296,8 +324,8 @@ npx prisma migrate deploy
 
 ```sql
 -- PostgreSQL: List indexes for a table
-SELECT indexname, indexdef 
-FROM pg_indexes 
+SELECT indexname, indexdef
+FROM pg_indexes
 WHERE tablename = 'products' OR tablename = 'orders' OR tablename = 'reviews'
 ORDER BY tablename, indexname;
 ```
@@ -308,13 +336,13 @@ ORDER BY tablename, indexname;
 
 ### Query Performance Improvements
 
-| Query Type | Before | After | Improvement |
-|------------|--------|-------|-------------|
-| Analytics Dashboard | 200ms | 60-80ms | 60-70% faster ✅ |
-| Product Listing (filtered) | 100ms | 40-50ms | 50-60% faster |
-| Order History | 80ms | 40-50ms | 40-50% faster |
-| Low Inventory Check | 150ms | 20-30ms | 80-87% faster |
-| Review Aggregation | 120ms | 50-60ms | 50-58% faster |
+| Query Type                 | Before | After   | Improvement      |
+| -------------------------- | ------ | ------- | ---------------- |
+| Analytics Dashboard        | 200ms  | 60-80ms | 60-70% faster ✅ |
+| Product Listing (filtered) | 100ms  | 40-50ms | 50-60% faster    |
+| Order History              | 80ms   | 40-50ms | 40-50% faster    |
+| Low Inventory Check        | 150ms  | 20-30ms | 80-87% faster    |
+| Review Aggregation         | 120ms  | 50-60ms | 50-58% faster    |
 
 ### Database Load Reduction
 
@@ -330,6 +358,7 @@ ORDER BY tablename, indexname;
 ### 1. Index Strategy
 
 ✅ **DO**: Create composite indexes for common filter combinations
+
 ```prisma
 @@index([farmId, createdAt])  // Common pattern: farm + time range
 ```
@@ -341,11 +370,13 @@ ORDER BY tablename, indexname;
 ### 2. Index Order Matters
 
 ✅ **DO**: Put most selective column first if not using range queries
+
 ```prisma
 @@index([farmId, inStock])  // farmId is highly selective
 ```
 
 ❌ **DON'T**: Put low-cardinality columns first
+
 ```prisma
 @@index([inStock, farmId])  // inStock is boolean (low cardinality)
 ```
@@ -356,7 +387,7 @@ ORDER BY tablename, indexname;
 
 ```sql
 -- PostgreSQL: Check index usage statistics
-SELECT 
+SELECT
   schemaname,
   tablename,
   indexname,
@@ -375,11 +406,13 @@ ORDER BY idx_scan DESC;
 ### Issue: Migration Fails
 
 **Possible Causes**:
+
 1. Database connection not available
 2. Schema drift (manual changes to database)
 3. Existing index with same name
 
 **Solution**:
+
 ```bash
 # Reset database (DEV ONLY!)
 npx prisma migrate reset
@@ -393,18 +426,21 @@ DROP INDEX IF EXISTS "products_farmId_inStock_idx";
 ### Issue: Indexes Not Being Used
 
 **Check Query Plan**:
+
 ```sql
 EXPLAIN ANALYZE
-SELECT * FROM products 
+SELECT * FROM products
 WHERE "farmId" = 'xyz' AND "inStock" = true;
 ```
 
 **Common Causes**:
+
 - Query not using indexed columns
 - Database statistics outdated
 - Index selectivity too low
 
 **Solution**:
+
 ```sql
 -- Update database statistics
 ANALYZE products;
@@ -420,13 +456,12 @@ ANALYZE reviews;
 
 ```typescript
 // Add to API routes for comparison
-import { measureQueryPerformance } from '@/lib/monitoring/query';
+import { measureQueryPerformance } from "@/lib/monitoring/query";
 
-const orders = await measureQueryPerformance(
-  'analytics-orders',
-  () => database.order.findMany({
-    where: { farmId: { in: farmIds }, createdAt: { gte: thirtyDaysAgo } }
-  })
+const orders = await measureQueryPerformance("analytics-orders", () =>
+  database.order.findMany({
+    where: { farmId: { in: farmIds }, createdAt: { gte: thirtyDaysAgo } },
+  }),
 );
 // Logs: ✅ [QUERY] analytics-orders: 65.32ms
 ```
@@ -437,12 +472,12 @@ const orders = await measureQueryPerformance(
 // lib/database/index.ts
 const prisma = new PrismaClient({
   log: [
-    { level: 'query', emit: 'event' },
-    { level: 'error', emit: 'stdout' },
+    { level: "query", emit: "event" },
+    { level: "error", emit: "stdout" },
   ],
 });
 
-prisma.$on('query', (e) => {
+prisma.$on("query", (e) => {
   console.log(`[DB] ${e.duration}ms: ${e.query}`);
 });
 ```
@@ -452,12 +487,14 @@ prisma.$on('query', (e) => {
 ## ✅ VERIFICATION CHECKLIST
 
 ### Pre-Migration
+
 - [x] Indexes added to `prisma/schema.prisma`
 - [x] TypeScript compilation successful
 - [ ] Development database backup created
 - [ ] Migration plan reviewed
 
 ### Post-Migration
+
 - [ ] Migration applied successfully
 - [ ] All 9 indexes created in database
 - [ ] Query performance tested and improved
@@ -469,16 +506,19 @@ prisma.$on('query', (e) => {
 ## 📚 ADDITIONAL RESOURCES
 
 ### Prisma Documentation
+
 - [Indexes](https://www.prisma.io/docs/concepts/components/prisma-schema/indexes)
 - [Performance Best Practices](https://www.prisma.io/docs/guides/performance-and-optimization)
 - [Migrations](https://www.prisma.io/docs/concepts/components/prisma-migrate)
 
 ### PostgreSQL Documentation
+
 - [Index Types](https://www.postgresql.org/docs/current/indexes-types.html)
 - [Index Usage](https://www.postgresql.org/docs/current/indexes-examine.html)
 - [Query Performance](https://www.postgresql.org/docs/current/using-explain.html)
 
 ### Performance Optimization
+
 - [Database Indexing Strategies](https://use-the-index-luke.com/)
 - [PostgreSQL Performance Tuning](https://wiki.postgresql.org/wiki/Performance_Optimization)
 
@@ -495,6 +535,7 @@ prisma.$on('query', (e) => {
 ### Next Steps
 
 After applying these indexes:
+
 1. Monitor query performance for 24-48 hours
 2. Identify any remaining slow queries
 3. Consider additional indexes if needed
@@ -505,7 +546,7 @@ After applying these indexes:
 **Document Version**: 1.0  
 **Last Updated**: January 2025  
 **Status**: Ready for Migration  
-**Expected Impact**: 40-70% query performance improvement  
+**Expected Impact**: 40-70% query performance improvement
 
 ---
 

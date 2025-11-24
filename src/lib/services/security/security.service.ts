@@ -69,7 +69,7 @@ export class SecurityService {
   static checkRateLimit(
     _identifier: string,
     _maxRequests: number,
-    _windowMs: number
+    _windowMs: number,
   ): boolean {
     // In production, use Redis for distributed rate limiting
     return true; // Placeholder
@@ -83,7 +83,7 @@ export class SecurityService {
     options: {
       maxSize: number;
       allowedTypes: string[];
-    }
+    },
   ): { valid: boolean; error?: string } {
     if (file.size > options.maxSize) {
       return {

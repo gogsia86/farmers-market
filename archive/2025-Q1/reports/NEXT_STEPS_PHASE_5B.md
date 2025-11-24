@@ -10,6 +10,7 @@
 ## 🎯 Quick Win Summary
 
 We've proven the optimization strategy works:
+
 - ✅ **Admin Approvals Route**: 228 KB → 13 KB (-215 KB, 94% reduction)
 - 🛠️ **Infrastructure Ready**: Lazy wrappers created and tested
 - 📚 **Patterns Documented**: Easy to replicate across codebase
@@ -25,24 +26,27 @@ We've proven the optimization strategy works:
 Find all routes that import `emailService` and switch to lazy version.
 
 **Search Command**:
+
 ```bash
 grep -r "from '@/lib/email/email-service'" src/app/api --include="*.ts"
 ```
 
 **Routes to Update**:
+
 - [ ] `src/app/api/farmers/register/route.ts` - Welcome emails
 - [ ] `src/app/api/support/tickets/route.ts` - Ticket confirmations
 - [ ] `src/app/api/auth/signup/route.ts` - Verification emails
 - [ ] Any other routes discovered by grep
 
 **Pattern** (copy-paste this):
+
 ```typescript
 // BEFORE:
-import { emailService } from '@/lib/email/email-service';
+import { emailService } from "@/lib/email/email-service";
 await emailService.sendEmail(options);
 
 // AFTER:
-import { sendEmailLazy } from '@/lib/email/email-service-lazy';
+import { sendEmailLazy } from "@/lib/email/email-service-lazy";
 await sendEmailLazy(options);
 ```
 
@@ -56,33 +60,39 @@ await sendEmailLazy(options);
 Find all routes that import tracing and switch to lazy version.
 
 **Search Command**:
+
 ```bash
 grep -r "from '@/lib/tracing/agricultural-tracer'" src/app/api --include="*.ts"
 ```
 
 **Routes to Update**:
+
 - [ ] `src/app/api/products/route.ts`
 - [ ] `src/app/api/agricultural-consciousness/route.ts`
 - [ ] `src/app/api/analytics/dashboard/route.ts`
 - [ ] Any other traced routes discovered
 
 **Pattern** (copy-paste this):
+
 ```typescript
 // BEFORE:
-import { trace } from '@opentelemetry/api';
-import { traceAgriculturalOperation, AgriculturalOperation } from '@/lib/tracing/agricultural-tracer';
+import { trace } from "@opentelemetry/api";
+import {
+  traceAgriculturalOperation,
+  AgriculturalOperation,
+} from "@/lib/tracing/agricultural-tracer";
 
-const tracer = trace.getTracer('my-service', '1.0.0');
+const tracer = trace.getTracer("my-service", "1.0.0");
 
 export async function GET(request: NextRequest) {
-  return tracer.startActiveSpan('GET /api/endpoint', async (span) => {
+  return tracer.startActiveSpan("GET /api/endpoint", async (span) => {
     try {
       const result = await traceAgriculturalOperation(
         AgriculturalOperation.SOME_OP,
-        { 'attr': 'value' },
+        { attr: "value" },
         async () => {
           // Your code here
-        }
+        },
       );
       span.end();
       return NextResponse.json(result);
@@ -95,28 +105,28 @@ export async function GET(request: NextRequest) {
 }
 
 // AFTER:
-import { traceIfEnabled, AgriculturalOperation } from '@/lib/tracing/lazy-tracer';
+import {
+  traceIfEnabled,
+  AgriculturalOperation,
+} from "@/lib/tracing/lazy-tracer";
 
 export async function GET(request: NextRequest) {
   try {
     const result = await traceIfEnabled(
       AgriculturalOperation.SOME_OP,
       {
-        'http.method': 'GET',
-        'http.route': '/api/endpoint',
-        'attr': 'value',
+        "http.method": "GET",
+        "http.route": "/api/endpoint",
+        attr: "value",
       },
       async () => {
         // Your code here
-      }
+      },
     );
-    
+
     return NextResponse.json(result);
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Operation failed' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Operation failed" }, { status: 500 });
   }
 }
 ```
@@ -135,6 +145,7 @@ Update admin pages to use dynamic components.
 **File**: `src/app/(admin)/admin/farms/page.tsx`
 
 **Changes**:
+
 ```typescript
 // BEFORE (line ~6):
 import { FarmsTable } from "./FarmsTable";
@@ -180,6 +191,7 @@ ENABLE_PRODUCTION_TRACING=false
 ```
 
 **Rationale**:
+
 - Tracing primarily for dev/staging
 - Saves 40-60 KB per traced route
 - Can enable when needed via env var
@@ -194,6 +206,7 @@ ENABLE_PRODUCTION_TRACING=false
 Analyze what's in the large shared chunks.
 
 **Commands**:
+
 ```bash
 # Generate full analyzer report
 npm run build:analyze
@@ -205,11 +218,13 @@ xdg-open .next/analyze/nodejs.html  # Linux
 ```
 
 **Files to Investigate**:
+
 - `chunks/1295.js` (357 KB) - What's causing this?
 - `chunks/6745.js` (169 KB)
 - `chunks/134.js` (149 KB)
 
 **Actions Based on Findings**:
+
 - If Prisma is duplicated → Consolidate database imports
 - If React is duplicated → Check webpack config
 - If large libraries → Consider dynamic imports
@@ -221,13 +236,13 @@ xdg-open .next/analyze/nodejs.html  # Linux
 
 ## 📊 Expected Total Savings
 
-| Optimization | Files | Savings per File | Total Savings |
-|--------------|-------|------------------|---------------|
-| Email lazy loading (Priority 1) | 3 routes | 80-100 KB | 240-300 KB |
-| Tracing lazy loading (Priority 2) | 5+ routes | 40-60 KB | 200-300 KB |
-| Dynamic admin components (Priority 3) | 2 pages | 30 KB | 60 KB |
-| Disable production tracing (Priority 4) | All traced | Shared | 100-150 KB |
-| **TOTAL PROJECTED** | | | **600-810 KB** |
+| Optimization                            | Files      | Savings per File | Total Savings  |
+| --------------------------------------- | ---------- | ---------------- | -------------- |
+| Email lazy loading (Priority 1)         | 3 routes   | 80-100 KB        | 240-300 KB     |
+| Tracing lazy loading (Priority 2)       | 5+ routes  | 40-60 KB         | 200-300 KB     |
+| Dynamic admin components (Priority 3)   | 2 pages    | 30 KB            | 60 KB          |
+| Disable production tracing (Priority 4) | All traced | Shared           | 100-150 KB     |
+| **TOTAL PROJECTED**                     |            |                  | **600-810 KB** |
 
 **Starting Point**: 4.47 MB compiled JS  
 **After Priority 1-4**: ~3.66-3.87 MB  
@@ -240,11 +255,13 @@ xdg-open .next/analyze/nodejs.html  # Linux
 ### After Each Priority
 
 1. **Type Check**:
+
    ```bash
    npm run type-check
    ```
 
 2. **Build**:
+
    ```bash
    npx next build --webpack
    ```
@@ -297,6 +314,7 @@ git reset --hard HEAD
 ## 📈 Success Metrics
 
 ### Bundle Size Targets
+
 - [ ] Admin approvals route: <20 KB (Already ✅ 13 KB)
 - [ ] Farms API route: <100 KB (Currently 151 KB)
 - [ ] Products API route: <80 KB
@@ -304,12 +322,14 @@ git reset --hard HEAD
 - [ ] Admin pages: <50 KB each
 
 ### Performance Targets
+
 - [ ] API cold start: <200ms (currently ~150ms)
 - [ ] Email sending: <500ms
 - [ ] Admin page load: <1s
 - [ ] Zero runtime errors
 
 ### Quality Targets
+
 - [ ] TypeScript: 0 errors
 - [ ] Tests: 1,326 passing
 - [ ] Coverage: >98%
@@ -356,32 +376,37 @@ find src/app -name "*.tsx" -o -name "*.ts" | xargs wc -l | sort -n | tail -20
 ### Copy-Paste Templates
 
 **Email Route Update**:
+
 ```typescript
-import { sendEmailLazy } from '@/lib/email/email-service-lazy';
+import { sendEmailLazy } from "@/lib/email/email-service-lazy";
 
 await sendEmailLazy({
   to: email,
-  subject: 'Subject',
-  html: '<p>Content</p>',
-  text: 'Content',
+  subject: "Subject",
+  html: "<p>Content</p>",
+  text: "Content",
 });
 ```
 
 **Tracing Route Update**:
+
 ```typescript
-import { traceIfEnabled, AgriculturalOperation } from '@/lib/tracing/lazy-tracer';
+import {
+  traceIfEnabled,
+  AgriculturalOperation,
+} from "@/lib/tracing/lazy-tracer";
 
 const result = await traceIfEnabled(
   AgriculturalOperation.YOUR_OPERATION,
   {
-    'http.method': 'GET',
-    'http.route': '/api/your-route',
+    "http.method": "GET",
+    "http.route": "/api/your-route",
     // Add your attributes
   },
   async () => {
     // Your code here
     return data;
-  }
+  },
 );
 ```
 

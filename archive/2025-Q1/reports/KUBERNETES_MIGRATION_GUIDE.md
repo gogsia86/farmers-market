@@ -1,11 +1,15 @@
 # ============================================================================
+
 # KUBERNETES ARCHITECTURE GUIDE - Farmers Market Platform
+
 # Migration path from Docker Compose to Kubernetes
+
 # ============================================================================
 
 ## 📊 When to Migrate to Kubernetes
 
 ### Current Docker Compose Advantages:
+
 - ✅ Simple local development
 - ✅ Easy to understand
 - ✅ Fast iteration cycles
@@ -13,6 +17,7 @@
 - ✅ Works on single server
 
 ### Kubernetes Migration Triggers:
+
 - 🚀 Need for **auto-scaling** (100+ concurrent users)
 - 🌍 **Multi-region** deployment required
 - 💪 **High availability** (99.9%+ uptime needed)
@@ -32,7 +37,7 @@ metadata:
   name: farmers-market-app
   namespace: agricultural-platform
 spec:
-  replicas: 3  # Auto-scaling 3-20 pods
+  replicas: 3 # Auto-scaling 3-20 pods
   selector:
     matchLabels:
       app: farmers-market
@@ -43,29 +48,29 @@ spec:
         tier: application
     spec:
       containers:
-      - name: nextjs-app
-        image: farmersmarket/app:latest
-        ports:
-        - containerPort: 3000
-        env:
-        - name: DATABASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: db-secret
-              key: url
-        resources:
-          requests:
-            memory: "512Mi"
-            cpu: "500m"
-          limits:
-            memory: "1Gi"
-            cpu: "1000m"
-        livenessProbe:
-          httpGet:
-            path: /api/health
-            port: 3000
-          initialDelaySeconds: 30
-          periodSeconds: 10
+        - name: nextjs-app
+          image: farmersmarket/app:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: url
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
 ```
 
 ---
@@ -75,6 +80,7 @@ spec:
 Our Docker Compose is **already structured** for easy K8s migration:
 
 ### 1. **Health Checks** ✅
+
 ```yaml
 # Docker Compose (Current)
 healthcheck:
@@ -88,6 +94,7 @@ livenessProbe:
 ```
 
 ### 2. **Environment Variables** ✅
+
 ```yaml
 # Docker Compose (Current)
 environment:
@@ -95,13 +102,14 @@ environment:
 
 # Kubernetes (Future)
 env:
-- name: DATABASE_URL
-  valueFrom:
-    secretKeyRef:
-      name: db-credentials
+  - name: DATABASE_URL
+    valueFrom:
+      secretKeyRef:
+        name: db-credentials
 ```
 
 ### 3. **Resource Management** ✅
+
 ```yaml
 # Kubernetes (Future)
 resources:
@@ -118,24 +126,28 @@ resources:
 ## 📋 Migration Checklist (When Ready)
 
 ### Phase 1: Preparation
+
 - [ ] Create `/k8s` directory structure
 - [ ] Convert Docker Compose to K8s manifests
 - [ ] Setup Kubernetes cluster (Minikube local, or cloud)
 - [ ] Configure kubectl and context
 
 ### Phase 2: Core Services
+
 - [ ] Deploy PostgreSQL StatefulSet
 - [ ] Deploy Redis Deployment
 - [ ] Create ConfigMaps for configuration
 - [ ] Create Secrets for sensitive data
 
 ### Phase 3: Application
+
 - [ ] Deploy Next.js application Deployment
 - [ ] Configure Service (ClusterIP)
 - [ ] Setup Ingress for external access
 - [ ] Configure HorizontalPodAutoscaler
 
 ### Phase 4: Production
+
 - [ ] Setup monitoring (Prometheus + Grafana)
 - [ ] Configure logging (ELK/Loki stack)
 - [ ] Implement CI/CD pipeline
@@ -146,6 +158,7 @@ resources:
 ## 🎯 Recommended Path
 
 ### **TODAY**: Docker Compose Development
+
 ```bash
 # Start development environment
 docker-compose -f docker-compose.dev.yml up -d
@@ -158,6 +171,7 @@ docker-compose up --build
 ```
 
 ### **WHEN SCALING** (50+ users): Kubernetes
+
 ```bash
 # Local K8s testing
 minikube start
@@ -181,6 +195,7 @@ kubectl get pods -n agricultural-platform
 5. **Sufficient Scale**: Handles 100+ concurrent users easily
 
 **Migrate to Kubernetes when:**
+
 - You have 500+ daily active users
 - You need multi-region deployment
 - You require 99.9%+ uptime guarantees

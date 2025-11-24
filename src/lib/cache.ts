@@ -25,7 +25,7 @@ class BiodynamicCache {
   async set(
     key: string,
     value: unknown,
-    ttlSeconds: number = 3600
+    ttlSeconds: number = 3600,
   ): Promise<void> {
     const expiresAt = Date.now() + ttlSeconds * 1000;
     this.cache.set(key, { value, expiresAt });
@@ -85,7 +85,7 @@ class BiodynamicCache {
   async getOrSet<T>(
     key: string,
     fetcher: () => Promise<T>,
-    ttlSeconds: number = 3600
+    ttlSeconds: number = 3600,
   ): Promise<T> {
     const cached = await this.get<T>(key);
 
@@ -105,7 +105,7 @@ class BiodynamicCache {
   async setSeasonalData(
     key: string,
     value: unknown,
-    season: Season
+    season: Season,
   ): Promise<void> {
     const seasonalTTL = {
       SPRING: 7 * 24 * 3600, // 1 week
@@ -169,7 +169,7 @@ interface CacheAdapter {
   set(
     key: string,
     value: unknown,
-    ttlSeconds?: number
+    ttlSeconds?: number,
   ): Promise<void | boolean>;
   get<T = unknown>(key: string): Promise<T | null>;
   delete(key: string): Promise<void | boolean>;
@@ -178,12 +178,12 @@ interface CacheAdapter {
   getOrSet<T>(
     key: string,
     fetcher: () => Promise<T>,
-    ttlSeconds?: number
+    ttlSeconds?: number,
   ): Promise<T>;
   setSeasonalData(
     key: string,
     value: unknown,
-    season: "SPRING" | "SUMMER" | "FALL" | "WINTER"
+    season: "SPRING" | "SUMMER" | "FALL" | "WINTER",
   ): Promise<void | boolean>;
   invalidatePattern(pattern: string): Promise<void | number>;
   getStats(): unknown;
@@ -215,7 +215,7 @@ class RedisCacheAdapter implements CacheAdapter {
   async getOrSet<T>(
     key: string,
     fetcher: () => Promise<T>,
-    ttlSeconds: number = 3600
+    ttlSeconds: number = 3600,
   ): Promise<T> {
     return this.svc.getOrSet<T>(key, fetcher, { ttl: ttlSeconds });
   }

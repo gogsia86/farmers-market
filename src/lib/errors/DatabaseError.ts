@@ -12,13 +12,13 @@ export class DatabaseError extends ApplicationError {
   constructor(
     operation: string,
     originalError: Error,
-    details: Record<string, any> = {}
+    details: Record<string, any> = {},
   ) {
     super(
       `Database operation failed: ${operation}`,
       "DATABASE_ERROR",
       "DATABASE",
-      { operation, originalMessage: originalError.message, ...details }
+      { operation, originalMessage: originalError.message, ...details },
     );
     this.operation = operation;
     this.originalError = originalError;

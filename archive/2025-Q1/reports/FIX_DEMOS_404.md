@@ -1,14 +1,17 @@
 # 🔧 Fix Guide: Demos 404 Issue
 
 ## Problem Summary
+
 The `/demos` routes return 404 errors despite files existing in `src/app/demos/`.
 
 ## Root Causes Identified
 
 ### 1. **Turbopack Route Detection Issue**
+
 Next.js 16 Turbopack doesn't always detect new route folders added while the dev server is running.
 
 ### 2. **Prisma Engine Missing**
+
 The `libquery_engine-windows.dll.node` file is being looked for but doesn't exist. The actual file is `query_engine-windows.dll.node` (different naming convention).
 
 ---
@@ -72,11 +75,13 @@ This uses stable webpack instead of experimental Turbopack.
 If server is already running and you don't want to restart:
 
 1. Create a temporary file in `src/app/demos/`:
+
    ```powershell
    New-Item -Path "src/app/demos/temp.txt" -ItemType File
    ```
 
 2. Delete it:
+
    ```powershell
    Remove-Item "src/app/demos/temp.txt"
    ```
@@ -90,21 +95,27 @@ If server is already running and you don't want to restart:
 After applying the fix:
 
 ### 1. Check Server Output
+
 You should see successful compilation, not 404s:
+
 ```
 ✓ Compiled /demos in 1.2s
 GET /demos 200 in 1234ms
 ```
 
 ### 2. Test All Routes
+
 Visit these URLs and verify they load:
+
 - `http://localhost:3001/demos` - Main hub
 - `http://localhost:3001/demos/analytics` - Analytics demo
 - `http://localhost:3001/demos/inventory` - Inventory demo
 - `http://localhost:3001/demos/chat` - Chat demo
 
 ### 3. Check for Errors
+
 Look for:
+
 - ✅ No 404 errors in terminal
 - ✅ No Prisma engine errors
 - ✅ Pages render correctly in browser
@@ -115,12 +126,14 @@ Look for:
 ## 🐛 If Still Not Working
 
 ### Check File Structure
+
 ```powershell
 # Verify all files exist
 Get-ChildItem -Path "src/app/demos" -Recurse -Filter "*.tsx"
 ```
 
 Should show:
+
 ```
 src/app/demos/page.tsx
 src/app/demos/analytics/page.tsx
@@ -129,6 +142,7 @@ src/app/demos/chat/page.tsx
 ```
 
 ### Check for TypeScript Errors
+
 ```powershell
 npm run type-check
 ```
@@ -136,6 +150,7 @@ npm run type-check
 Should output: `npm info ok` with no errors.
 
 ### Check Prisma Client
+
 ```powershell
 # Verify Prisma client is generated
 Test-Path "node_modules/@prisma/client"
@@ -144,6 +159,7 @@ Test-Path "node_modules/@prisma/client"
 Should return: `True`
 
 ### Rebuild from Scratch
+
 ```powershell
 # Nuclear option - full clean rebuild
 Remove-Item -Recurse -Force .next, node_modules
@@ -157,14 +173,17 @@ npm run dev:webpack
 ## 📋 Known Issues
 
 ### Issue: "Unable to require libquery_engine-windows.dll.node"
+
 **Cause**: Prisma binary naming mismatch  
 **Fix**: Run `npx prisma generate` and ensure `query_engine-windows.dll.node` exists in `node_modules/@prisma/engines/`
 
 ### Issue: Routes return 404 even after restart
+
 **Cause**: Turbopack cache corruption  
 **Fix**: Delete `.next` folder and restart with webpack mode (`npm run dev:webpack`)
 
-### Issue: "/_not-found/page" compiling
+### Issue: "/\_not-found/page" compiling
+
 **Cause**: Next.js can't find the route, falling back to 404 page  
 **Fix**: Ensure `page.tsx` exists in each route folder, restart dev server
 
@@ -188,6 +207,7 @@ You'll know it's working when:
 **Use Webpack for Development** (at least until Turbopack is stable):
 
 Update your workflow:
+
 ```powershell
 # Instead of:
 npm run dev
@@ -203,16 +223,19 @@ This avoids Turbopack's experimental issues while maintaining all other optimiza
 ## 📞 If All Else Fails
 
 1. Check that Node.js version is correct:
+
    ```powershell
    node --version  # Should be v22.21.0 or similar
    ```
 
 2. Check Next.js version:
+
    ```powershell
    npm list next  # Should be 16.0.3
    ```
 
 3. Try production build to rule out dev-only issues:
+
    ```powershell
    npm run build
    npm run start
@@ -231,6 +254,7 @@ This avoids Turbopack's experimental issues while maintaining all other optimiza
 ### Why Turbopack Has Problems
 
 Turbopack in Next.js 16 is still experimental. Known issues:
+
 - File watcher doesn't always detect new route folders
 - Cache invalidation can be inconsistent
 - Windows file path handling has edge cases
@@ -238,6 +262,7 @@ Turbopack in Next.js 16 is still experimental. Known issues:
 ### Why Webpack Works Better
 
 Webpack has been stable for years and handles:
+
 - Route discovery reliably
 - Proper cache invalidation
 - Windows paths correctly

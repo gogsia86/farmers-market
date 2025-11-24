@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
             console.error("SSE send error:", error);
             unsubscribe();
           }
-        }
+        },
       );
 
       // Keep-alive ping every 30 seconds

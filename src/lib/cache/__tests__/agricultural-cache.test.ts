@@ -35,7 +35,7 @@ describe("🌾 Agricultural Cache - Seasonal Awareness", () => {
 
       expect(cacheModule.cache.set).toHaveBeenCalledWith(
         "farm:farm-1",
-        farmData
+        farmData,
       );
     });
 
@@ -87,7 +87,7 @@ describe("🌾 Agricultural Cache - Seasonal Awareness", () => {
 
       expect(cacheModule.cache.set).toHaveBeenCalledWith(
         "product:prod-1",
-        productData
+        productData,
       );
     });
 
@@ -114,7 +114,7 @@ describe("🌾 Agricultural Cache - Seasonal Awareness", () => {
 
       expect(cacheModule.cache.del).toHaveBeenCalledWith("product:prod-1");
       expect(cacheModule.cache.delPattern).toHaveBeenCalledWith(
-        "products:farm-1:*"
+        "products:farm-1:*",
       );
       expect(cacheModule.cache.delPattern).toHaveBeenCalledWith("farms:list:*");
     });
@@ -143,7 +143,7 @@ describe("🌾 Agricultural Cache - Seasonal Awareness", () => {
       expect(cacheModule.cache.set).toHaveBeenCalledWith(
         "seasonal:SPRING",
         springData,
-        3600
+        3600,
       );
     });
 
@@ -155,7 +155,7 @@ describe("🌾 Agricultural Cache - Seasonal Awareness", () => {
       expect(cacheModule.cache.set).toHaveBeenCalledWith(
         "seasonal:SUMMER",
         summerData,
-        7200
+        7200,
       );
     });
 
@@ -167,7 +167,7 @@ describe("🌾 Agricultural Cache - Seasonal Awareness", () => {
       expect(cacheModule.cache.set).toHaveBeenCalledWith(
         "seasonal:FALL",
         fallData,
-        1800
+        1800,
       );
     });
 
@@ -179,7 +179,7 @@ describe("🌾 Agricultural Cache - Seasonal Awareness", () => {
       expect(cacheModule.cache.set).toHaveBeenCalledWith(
         "seasonal:WINTER",
         winterData,
-        14400
+        14400,
       );
     });
 
@@ -326,7 +326,7 @@ describe("🌾 Agricultural Cache - Seasonal Awareness", () => {
       await AgriculturalCache.cacheFarm("farm-1", complexData);
       expect(cacheModule.cache.set).toHaveBeenCalledWith(
         "farm:farm-1",
-        complexData
+        complexData,
       );
     });
 
@@ -335,9 +335,8 @@ describe("🌾 Agricultural Cache - Seasonal Awareness", () => {
       await AgriculturalCache.cacheFarm("farm-1", arrayData);
       expect(cacheModule.cache.set).toHaveBeenCalledWith(
         "farm:farm-1",
-        arrayData
+        arrayData,
       );
     });
   });
 });
-
