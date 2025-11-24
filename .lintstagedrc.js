@@ -12,7 +12,8 @@
 module.exports = {
   // TypeScript files - run type check and lint
   "**/*.{ts,tsx}": (filenames) => {
-    const fileList = filenames.join(" ");
+    // Properly escape filenames with spaces for shell commands
+    const fileList = filenames.map((f) => `"${f}"`).join(" ");
     return [
       // Type check all TypeScript files
       "npx tsc --noEmit",
@@ -23,23 +24,23 @@ module.exports = {
     ];
   },
 
-  // JavaScript files - lint and format
+  // JavaScript files - format only (ESLint 9 flat config doesn't support .js in root)
   "**/*.{js,jsx}": (filenames) => {
-    const fileList = filenames.join(" ");
-    return [
-      `npx eslint ${fileList} --fix --max-warnings=0`,
-      `npx prettier --write ${fileList}`,
-    ];
+    // Properly escape filenames with spaces for shell commands
+    const fileList = filenames.map((f) => `"${f}"`).join(" ");
+    return [`npx prettier --write ${fileList}`];
   },
 
   // JSON files - format only
   "**/*.json": (filenames) => {
-    return `npx prettier --write ${filenames.join(" ")}`;
+    const fileList = filenames.map((f) => `"${f}"`).join(" ");
+    return `npx prettier --write ${fileList}`;
   },
 
   // Markdown files - format only
   "**/*.md": (filenames) => {
-    return `npx prettier --write ${filenames.join(" ")}`;
+    const fileList = filenames.map((f) => `"${f}"`).join(" ");
+    return `npx prettier --write ${fileList}`;
   },
 
   // Prisma schema - format and validate

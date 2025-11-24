@@ -9,7 +9,7 @@ updates:
       interval: "weekly"
       day: "monday"
       time: "09:00"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 5
     reviewers:
       - "medici-g2"
     assignees:
@@ -21,13 +21,31 @@ updates:
       prefix: "chore(deps)"
       include: "scope"
     versioning-strategy: increase
+    # Group minor and patch updates together
+    groups:
+      production-dependencies:
+        dependency-type: "production"
+        update-types:
+          - "minor"
+          - "patch"
+      development-dependencies:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
     ignore:
-      # Ignore major version updates for critical packages
+      # Defer major version updates for critical packages (handle manually)
       - dependency-name: "next"
         update-types: ["version-update:semver-major"]
       - dependency-name: "react"
         update-types: ["version-update:semver-major"]
       - dependency-name: "react-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "prisma"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@prisma/client"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "tailwindcss"
         update-types: ["version-update:semver-major"]
 
   # Update GitHub Actions
