@@ -44,7 +44,10 @@ export default async function FarmerDashboardPage() {
     where: { ownerId: session.id },
     include: {
       products: {
-        where: { available: true },
+        where: {
+          status: "ACTIVE",
+          inStock: true,
+        },
         take: 5,
         orderBy: { createdAt: "desc" },
       },
@@ -107,14 +110,18 @@ export default async function FarmerDashboardPage() {
     database.order.aggregate({
       where: {
         farmId: farm.id,
-        status: { in: ["CONFIRMED", "READY_FOR_PICKUP", "COMPLETED"] },
+        status: { in: ["CONFIRMED", "READY", "COMPLETED"] },
       },
       _sum: { total: true },
     }),
   ]);
 
   const activeProducts = await database.product.count({
-    where: { farmId: farm.id, available: true },
+    where: {
+      farmId: farm.id,
+      status: "ACTIVE",
+      inStock: true,
+    },
   });
 
   const pendingOrders = orders.filter(
@@ -125,16 +132,18 @@ export default async function FarmerDashboardPage() {
     (order) => order.status === "COMPLETED",
   ).length;
 
+  const totalRevenueAmount = revenue._sum?.total
+    ? Number(revenue._sum.total)
+    : 0;
+
   const metrics: DashboardMetrics = {
     totalProducts: products,
     activeProducts,
     pendingOrders,
     completedOrders,
-    totalRevenue: revenue._sum.total?.toNumber() || 0,
+    totalRevenue: totalRevenueAmount,
     averageOrderValue:
-      completedOrders > 0
-        ? (revenue._sum.total?.toNumber() || 0) / completedOrders
-        : 0,
+      completedOrders > 0 ? totalRevenueAmount / completedOrders : 0,
   };
 
   return (
@@ -259,9 +268,9 @@ export default async function FarmerDashboardPage() {
               </div>
             </div>
             <div className="p-6">
-              {farm.products.length > 0 ? (
+              {farm.products && farm.products.length > 0 ? (
                 <div className="space-y-4">
-                  {farm.products.map((product) => (
+                  {farm.products.map((product: any) => (
                     <div
                       key={product.id}
                       className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
