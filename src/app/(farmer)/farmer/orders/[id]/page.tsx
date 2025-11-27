@@ -72,7 +72,7 @@ export default async function FarmerOrderDetailsPage({ params }: PageProps) {
           name: true,
           email: true,
           phone: true,
-          image: true,
+          avatar: true,
         },
       },
       items: {
@@ -92,7 +92,7 @@ export default async function FarmerOrderDetailsPage({ params }: PageProps) {
         select: {
           id: true,
           rating: true,
-          comment: true,
+          reviewText: true,
           createdAt: true,
         },
       },
@@ -104,22 +104,20 @@ export default async function FarmerOrderDetailsPage({ params }: PageProps) {
   }
 
   // Verify this order contains items from this farmer's farm
-  const hasFarmItems = order.items.some(
-    (item) => item.product.farmId === farm.id,
-  );
+  const hasFarmItems =
+    order.items?.some((item: any) => item.product.farmId === farm.id) ?? false;
 
   if (!hasFarmItems) {
     notFound();
   }
 
   // Filter items to only show this farm's products
-  const farmItems = order.items.filter(
-    (item) => item.product.farmId === farm.id,
-  );
+  const farmItems =
+    order.items?.filter((item: any) => item.product.farmId === farm.id) ?? [];
 
   // Calculate farm-specific totals
   const farmSubtotal = farmItems.reduce(
-    (sum, item) => sum + Number(item.subtotal),
+    (sum: number, item: any) => sum + Number(item.subtotal),
     0,
   );
 
@@ -290,44 +288,47 @@ export default async function FarmerOrderDetailsPage({ params }: PageProps) {
                 Order Status
               </h2>
               <div className="space-y-4">
-                {activeTimeline.map((step, index) => (
-                  <div key={step.status} className="flex items-start">
-                    <div className="flex-shrink-0">
-                      <div
-                        className={`flex h-10 w-10 items-center justify-center rounded-full ${
-                          step.completed
-                            ? "bg-green-600 text-white"
-                            : "bg-gray-200 text-gray-400"
-                        }`}
-                      >
-                        <step.icon className="h-5 w-5" />
+                {activeTimeline.map((step, index) => {
+                  if (!step) return null;
+                  return (
+                    <div key={step.status} className="flex items-start">
+                      <div className="flex-shrink-0">
+                        <div
+                          className={`flex h-10 w-10 items-center justify-center rounded-full ${
+                            step.completed
+                              ? "bg-green-600 text-white"
+                              : "bg-gray-200 text-gray-400"
+                          }`}
+                        >
+                          <step.icon className="h-5 w-5" />
+                        </div>
                       </div>
-                    </div>
-                    <div className="ml-4 flex-1">
-                      <p
-                        className={`text-sm font-medium ${
-                          step.completed ? "text-gray-900" : "text-gray-500"
-                        }`}
-                      >
-                        {step.label}
-                      </p>
-                      {step.date && (
-                        <p className="mt-0.5 text-xs text-gray-500">
-                          {new Date(step.date).toLocaleDateString("en-US", {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
+                      <div className="ml-4 flex-1">
+                        <p
+                          className={`text-sm font-medium ${
+                            step.completed ? "text-gray-900" : "text-gray-500"
+                          }`}
+                        >
+                          {step.label}
                         </p>
+                        {step.date && (
+                          <p className="mt-0.5 text-xs text-gray-500">
+                            {new Date(step.date).toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </p>
+                        )}
+                      </div>
+                      {index < activeTimeline.length - 1 && (
+                        <div className="absolute left-5 top-10 -ml-px mt-0.5 h-full w-0.5 bg-gray-300" />
                       )}
                     </div>
-                    {index < activeTimeline.length - 1 && (
-                      <div className="absolute left-5 ml-px mt-10 h-full w-0.5 bg-gray-200" />
-                    )}
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
@@ -340,7 +341,7 @@ export default async function FarmerOrderDetailsPage({ params }: PageProps) {
                 Order Items ({farmItems.length})
               </h2>
               <div className="divide-y divide-gray-200">
-                {farmItems.map((item) => (
+                {farmItems.map((item: any) => (
                   <div
                     key={item.id}
                     className="flex items-center py-4 first:pt-0 last:pb-0"
@@ -456,12 +457,12 @@ export default async function FarmerOrderDetailsPage({ params }: PageProps) {
                   <UserIcon className="h-5 w-5 text-gray-400 mt-0.5" />
                   <div className="ml-3">
                     <p className="text-sm font-medium text-gray-900">
-                      {order.customer.name || "Guest Customer"}
+                      {order.customer?.name || "Guest Customer"}
                     </p>
                     <p className="text-sm text-gray-500">
-                      {order.customer.email}
+                      {order.customer?.email}
                     </p>
-                    {order.customer.phone && (
+                    {order.customer?.phone && (
                       <p className="text-sm text-gray-500">
                         {order.customer.phone}
                       </p>
