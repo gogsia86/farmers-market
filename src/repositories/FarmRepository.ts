@@ -20,8 +20,8 @@ import { DatabaseError } from "@/lib/errors/DatabaseError";
 export class FarmRepository {
   private readonly logger: StructuredLogger;
 
-  constructor() {
-    this.logger = LoggerFactory.getLogger("FarmRepository");
+  constructor(logger?: StructuredLogger) {
+    this.logger = logger || LoggerFactory.getLogger("FarmRepository");
   }
 
   /**

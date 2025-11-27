@@ -118,7 +118,7 @@ describe("FarmRepository", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    repository = new FarmRepository();
+    repository = new FarmRepository(mockLoggerInstance);
   });
 
   afterEach(() => {
