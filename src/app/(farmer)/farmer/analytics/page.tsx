@@ -69,7 +69,7 @@ export default async function FarmerAnalyticsPage() {
   const now = new Date();
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
   const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
-  const startOfYear = new Date(now.getFullYear(), 0, 1);
+  // const startOfYear = new Date(now.getFullYear(), 0, 1); // Unused for now
 
   // Fetch all orders for the farm
   const allOrders = await database.order.findMany({
@@ -108,23 +108,24 @@ export default async function FarmerAnalyticsPage() {
 
   // Current period orders (last 30 days)
   const currentPeriodOrders = allOrders.filter(
-    (order) => order.createdAt >= thirtyDaysAgo
+    (order) => order.createdAt >= thirtyDaysAgo,
   );
 
   // Previous period orders (30-60 days ago)
   const previousPeriodOrders = allOrders.filter(
-    (order) => order.createdAt >= sixtyDaysAgo && order.createdAt < thirtyDaysAgo
+    (order) =>
+      order.createdAt >= sixtyDaysAgo && order.createdAt < thirtyDaysAgo,
   );
 
   // Calculate metrics
   const totalRevenue = currentPeriodOrders.reduce(
     (sum, order) => sum + Number(order.farmerAmount),
-    0
+    0,
   );
 
   const previousRevenue = previousPeriodOrders.reduce(
     (sum, order) => sum + Number(order.farmerAmount),
-    0
+    0,
   );
 
   const revenueGrowth =
@@ -141,7 +142,7 @@ export default async function FarmerAnalyticsPage() {
 
   // Unique customers
   const uniqueCustomers = new Set(
-    currentPeriodOrders.map((order) => order.customerId)
+    currentPeriodOrders.map((order) => order.customerId),
   ).size;
 
   const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
@@ -197,16 +198,19 @@ export default async function FarmerAnalyticsPage() {
     const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
     const monthOrders = allOrders.filter(
-      (order) => order.createdAt >= monthStart && order.createdAt <= monthEnd
+      (order) => order.createdAt >= monthStart && order.createdAt <= monthEnd,
     );
 
     const revenue = monthOrders.reduce(
       (sum, order) => sum + Number(order.farmerAmount),
-      0
+      0,
     );
 
     monthlyRevenue.push({
-      month: date.toLocaleDateString("en-US", { month: "short", year: "numeric" }),
+      month: date.toLocaleDateString("en-US", {
+        month: "short",
+        year: "numeric",
+      }),
       revenue,
       orders: monthOrders.length,
     });
@@ -220,7 +224,9 @@ export default async function FarmerAnalyticsPage() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Analytics Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Analytics Dashboard
+          </h1>
           <p className="mt-2 text-sm text-gray-600">
             Performance insights for {farm.name}
           </p>
@@ -229,10 +235,15 @@ export default async function FarmerAnalyticsPage() {
         {/* Metrics Cards */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
           {/* Total Revenue */}
-          <div className="bg-white rounded-lg shadow-sm p-6" data-testid="revenue-card">
+          <div
+            className="bg-white rounded-lg shadow-sm p-6"
+            data-testid="revenue-card"
+          >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Revenue</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Revenue
+                </p>
                 <p className="mt-2 text-3xl font-bold text-gray-900">
                   ${metrics.totalRevenue.toFixed(2)}
                 </p>
@@ -262,10 +273,15 @@ export default async function FarmerAnalyticsPage() {
           </div>
 
           {/* Total Orders */}
-          <div className="bg-white rounded-lg shadow-sm p-6" data-testid="orders-card">
+          <div
+            className="bg-white rounded-lg shadow-sm p-6"
+            data-testid="orders-card"
+          >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Orders</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Orders
+                </p>
                 <p className="mt-2 text-3xl font-bold text-gray-900">
                   {metrics.totalOrders}
                 </p>
@@ -295,7 +311,10 @@ export default async function FarmerAnalyticsPage() {
           </div>
 
           {/* Total Customers */}
-          <div className="bg-white rounded-lg shadow-sm p-6" data-testid="customers-card">
+          <div
+            className="bg-white rounded-lg shadow-sm p-6"
+            data-testid="customers-card"
+          >
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">
@@ -315,10 +334,15 @@ export default async function FarmerAnalyticsPage() {
           </div>
 
           {/* Average Order Value */}
-          <div className="bg-white rounded-lg shadow-sm p-6" data-testid="aov-card">
+          <div
+            className="bg-white rounded-lg shadow-sm p-6"
+            data-testid="aov-card"
+          >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Avg Order Value</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Avg Order Value
+                </p>
                 <p className="mt-2 text-3xl font-bold text-gray-900">
                   ${metrics.averageOrderValue.toFixed(2)}
                 </p>
@@ -335,7 +359,10 @@ export default async function FarmerAnalyticsPage() {
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Revenue Chart */}
-          <div className="lg:col-span-2 bg-white rounded-lg shadow-sm p-6" data-testid="revenue-chart">
+          <div
+            className="lg:col-span-2 bg-white rounded-lg shadow-sm p-6"
+            data-testid="revenue-chart"
+          >
             <h2 className="text-lg font-semibold text-gray-900 mb-6">
               Revenue Trend (Last 12 Months)
             </h2>
@@ -367,13 +394,16 @@ export default async function FarmerAnalyticsPage() {
           </div>
 
           {/* Top Products */}
-          <div className="bg-white rounded-lg shadow-sm p-6" data-testid="top-products">
+          <div
+            className="bg-white rounded-lg shadow-sm p-6"
+            data-testid="top-products"
+          >
             <h2 className="text-lg font-semibold text-gray-900 mb-6">
               Top Products (Last 30 Days)
             </h2>
             {topProducts.length > 0 ? (
               <div className="space-y-4">
-                {topProducts.map((product, index) => (
+                {topProducts.map((product: TopProduct, index: number) => (
                   <div
                     key={product.id}
                     className="flex items-start space-x-3"
@@ -411,7 +441,10 @@ export default async function FarmerAnalyticsPage() {
         {/* Additional Insights */}
         <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
           {/* Performance Summary */}
-          <div className="bg-white rounded-lg shadow-sm p-6" data-testid="performance-summary">
+          <div
+            className="bg-white rounded-lg shadow-sm p-6"
+            data-testid="performance-summary"
+          >
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Performance Summary
             </h2>
@@ -449,7 +482,10 @@ export default async function FarmerAnalyticsPage() {
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-white rounded-lg shadow-sm p-6" data-testid="quick-actions">
+          <div
+            className="bg-white rounded-lg shadow-sm p-6"
+            data-testid="quick-actions"
+          >
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Quick Actions
             </h2>

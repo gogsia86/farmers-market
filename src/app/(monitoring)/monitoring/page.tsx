@@ -58,7 +58,7 @@ async function getDashboardData() {
         },
         select: {
           id: true,
-          workflowId: true,
+          workflowName: true,
           status: true,
           startedAt: true,
           completedAt: true,
@@ -88,10 +88,13 @@ async function getDashboardData() {
         },
         select: {
           id: true,
-          healthy: true,
+          status: true,
           checkedAt: true,
-          responseTime: true,
+          responseTimeMs: true,
           details: true,
+          errorMessage: true,
+          checkId: true,
+          checkName: true,
         },
       }),
 
@@ -108,11 +111,12 @@ async function getDashboardData() {
         },
         select: {
           id: true,
-          type: true,
-          priority: true,
+          notificationType: true,
+          channel: true,
+          status: true,
           message: true,
           sentAt: true,
-          successful: true,
+          subject: true,
         },
       }),
 
@@ -123,10 +127,10 @@ async function getDashboardData() {
         },
         select: {
           id: true,
-          workflowId: true,
-          schedule: true,
-          lastRun: true,
-          nextRun: true,
+          workflowName: true,
+          cronExpression: true,
+          lastRunAt: true,
+          nextRunAt: true,
           enabled: true,
         },
       }),
@@ -156,11 +160,13 @@ async function getDashboardData() {
 
     // System health status
     const latestHealthCheck = recentHealthChecks[0];
-    const systemHealthy = latestHealthCheck?.healthy ?? false;
+    const systemHealthy =
+      latestHealthCheck?.status === "HEALTHY" ||
+      latestHealthCheck?.status === "SUCCESS";
 
-    // Alert count (high priority notifications)
+    // Alert count (high priority notifications in last hour)
     const alertCount = recentNotifications.filter(
-      (n) => n.priority === "CRITICAL" || n.priority === "HIGH",
+      (n) => n.status === "FAILED" || n.status === "ERROR",
     ).length;
 
     return {
