@@ -97,7 +97,7 @@ docker-compose up --build
    ```
 
 3. **Access the application**:
-   - Application: http://localhost:3001
+   - Application: http://localhost:3000
    - Database: localhost:5432
    - Redis: localhost:6379
 

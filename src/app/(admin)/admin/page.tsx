@@ -143,7 +143,9 @@ export default async function AdminDashboardPage() {
                 Admin Dashboard
               </h1>
               <p className="mt-1 text-sm text-agricultural-600">
-                Welcome back, {session.user.name} • Quantum consciousness active
+                Welcome back,{" "}
+                {session.user?.name || session.user?.email || "Admin"} • Quantum
+                consciousness active
               </p>
             </div>
             <div className="mt-4 flex md:ml-4 md:mt-0">

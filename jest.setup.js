@@ -5,6 +5,13 @@
  */
 
 // ============================================
+// TEXT ENCODER/DECODER POLYFILL - FIX FOR PRISMA/PG
+// ============================================
+const { TextEncoder, TextDecoder } = require("util");
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
+
+// ============================================
 // TESTING LIBRARY SETUP
 // ============================================
 require("@testing-library/jest-dom");
@@ -265,7 +272,48 @@ global.mockQueryFirst = (model, result) => {
 };
 
 // ============================================
-// NEXT.JS QUANTUM MOCKS - NAVIGATION & ROUTING
+// STRUCTURED LOGGER MOCK - MUST BE BEFORE DATABASE
+// ============================================
+
+// Create a factory that always returns a working logger
+const createMockLogger = () => {
+  const logger = {
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    fatal: jest.fn(),
+    businessEvent: jest.fn(),
+    child: jest.fn(),
+  };
+  // Make child return a new logger instance
+  logger.child.mockImplementation(() => createMockLogger());
+  return logger;
+};
+
+// Create global instance
+const mockLoggerInstance = createMockLogger();
+
+// Mock the module BEFORE any other mocks
+jest.mock(
+  "@/lib/monitoring/StructuredLogger",
+  () => ({
+    StructuredLogger: jest.fn().mockImplementation(() => createMockLogger()),
+    LoggerFactory: {
+      getLogger: jest.fn().mockImplementation(() => createMockLogger()),
+      createRequestLogger: jest
+        .fn()
+        .mockImplementation(() => createMockLogger()),
+    },
+  }),
+  { virtual: true },
+);
+
+global.mockLogger = mockLoggerInstance;
+global.createMockLogger = createMockLogger;
+
+// ============================================
+// PRISMA DATABASE QUANTUM MOCKS
 // ============================================
 
 jest.mock("next/navigation", () => ({

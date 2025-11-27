@@ -15,11 +15,11 @@
 ### 1. ✅ Admin Dashboard Test
 
 **Status**: Ready to test
-**URL**: `http://localhost:3001/admin`
+**URL**: `http://localhost:3000/admin`
 
 **Steps**:
 
-1. Navigate to `http://localhost:3001/admin/login`
+1. Navigate to `http://localhost:3000/admin/login`
 2. Login with credentials:
    - Email: `admin@farmersmarket.app`
    - Password: `DivineAdmin123!`
@@ -45,7 +45,7 @@
 ### 2. ⏳ Vendors Page Test
 
 **Status**: Pending test
-**URL**: `http://localhost:3001/vendors`
+**URL**: `http://localhost:3000/vendors`
 
 **Steps**:
 
@@ -77,7 +77,7 @@
 ### 3. ⏳ Vendor Detail Page Test
 
 **Status**: Pending test
-**URL**: `http://localhost:3001/vendors/[id]`
+**URL**: `http://localhost:3000/vendors/[id]`
 
 **Steps**:
 
@@ -112,8 +112,8 @@
 **Status**: Pending test
 **URLs**:
 
-- `http://localhost:3001/about`
-- `http://localhost:3001/contact`
+- `http://localhost:3000/about`
+- `http://localhost:3000/contact`
 
 **Steps**:
 

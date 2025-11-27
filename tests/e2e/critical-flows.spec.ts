@@ -5,11 +5,11 @@
 
 import { expect, test } from "@playwright/test";
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 test.describe("🔐 Authentication Flows", () => {
   test("Admin can login successfully", async ({ page }) => {
-    await page.goto(`${BASE_URL}/admin-login`);
+    await page.goto(`${BASE_URL}/login`);
 
     await page.fill('input[name="email"]', "admin@farmersmarket.app");
     await page.fill('input[name="password"]', "DivineAdmin123!");
@@ -21,7 +21,7 @@ test.describe("🔐 Authentication Flows", () => {
   });
 
   test("Failed login shows error message", async ({ page }) => {
-    await page.goto(`${BASE_URL}/admin-login`);
+    await page.goto(`${BASE_URL}/login`);
 
     await page.fill('input[name="email"]', "wrong@email.com");
     await page.fill('input[name="password"]', "wrongpassword");
@@ -105,8 +105,8 @@ test.describe("🚜 Farmer Management Flow", () => {
   test("Farmer can view their dashboard", async ({ page }) => {
     // Login as farmer
     await page.goto(`${BASE_URL}/login`);
-    await page.fill('input[name="email"]', "ana.romana@email.com");
-    await page.fill('input[name="password"]', "FarmLife2024!");
+    await page.fill('input[name="email"]', "farmer@farmersmarket.app");
+    await page.fill('input[name="password"]', "DivineFarmer123!");
     await page.click('button[type="submit"]');
 
     // Should redirect to farmer dashboard
@@ -117,8 +117,8 @@ test.describe("🚜 Farmer Management Flow", () => {
   test("Farmer can add new product", async ({ page }) => {
     // Login as farmer first
     await page.goto(`${BASE_URL}/login`);
-    await page.fill('input[name="email"]', "ana.romana@email.com");
-    await page.fill('input[name="password"]', "FarmLife2024!");
+    await page.fill('input[name="email"]', "farmer@farmersmarket.app");
+    await page.fill('input[name="password"]', "DivineFarmer123!");
     await page.click('button[type="submit"]');
 
     // Navigate to products
@@ -143,8 +143,8 @@ test.describe("🚜 Farmer Management Flow", () => {
   test("Farmer can view orders", async ({ page }) => {
     // Login as farmer
     await page.goto(`${BASE_URL}/login`);
-    await page.fill('input[name="email"]', "ana.romana@email.com");
-    await page.fill('input[name="password"]', "FarmLife2024!");
+    await page.fill('input[name="email"]', "farmer@farmersmarket.app");
+    await page.fill('input[name="password"]', "DivineFarmer123!");
     await page.click('button[type="submit"]');
 
     // Navigate to orders
@@ -158,7 +158,7 @@ test.describe("🚜 Farmer Management Flow", () => {
 test.describe("👨‍💼 Admin Management Flow", () => {
   test.beforeEach(async ({ page }) => {
     // Login as admin
-    await page.goto(`${BASE_URL}/admin-login`);
+    await page.goto(`${BASE_URL}/login`);
     await page.fill('input[name="email"]', "admin@farmersmarket.app");
     await page.fill('input[name="password"]', "DivineAdmin123!");
     await page.click('button[type="submit"]');

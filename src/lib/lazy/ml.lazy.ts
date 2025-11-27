@@ -124,7 +124,8 @@ export async function loadTensorFlowGPU(): Promise<typeof tf> {
 export async function predictCropYield(
   input: YieldPredictionInput,
 ): Promise<YieldPredictionResult> {
-  const tf = await loadTensorFlowGPU();
+  const _tf = await loadTensorFlowGPU();
+  void _tf; // Suppress unused warning - will be used when model is implemented
 
   // This is a simplified example - in production, you'd load a trained model
   // For now, we'll use a basic calculation
@@ -157,9 +158,10 @@ export async function predictCropYield(
  * ```
  */
 export async function classifyCropDisease(
-  imageData: Buffer | ImageData,
+  _imageData: Buffer | ImageData,
 ): Promise<ImageClassificationResult> {
-  const tf = await loadTensorFlowGPU();
+  const _tf = await loadTensorFlowGPU();
+  void _tf; // Suppress unused warning - will be used when model is implemented
 
   // In production, load a pre-trained disease classification model
   // For now, return a mock result
@@ -181,14 +183,15 @@ export async function classifyCropDisease(
  * const pests = await detectPests(imageBuffer);
  * ```
  */
-export async function detectPests(imageData: Buffer | ImageData): Promise<
+export async function detectPests(_imageData: Buffer | ImageData): Promise<
   Array<{
     pest: string;
     confidence: number;
     location?: { x: number; y: number; width: number; height: number };
   }>
 > {
-  const tf = await loadTensorFlowGPU();
+  const _tf = await loadTensorFlowGPU();
+  void _tf; // Suppress unused warning - will be used when model is implemented
 
   // In production, use object detection model
   return [];
@@ -206,10 +209,12 @@ export async function predictOptimalPlantingDate(input: {
   confidence: number;
   weatherFactors: any;
 }> {
-  const tf = await loadTensorFlowGPU();
+  const _tf = await loadTensorFlowGPU();
+  void _tf; // Suppress unused warning - will be used when model is implemented
 
   // Calculate based on crop growth cycle and weather patterns
-  const growthDays = getCropGrowthDays(input.cropType);
+  const _growthDays = getCropGrowthDays(input.cropType);
+  void _growthDays; // Suppress unused warning - will be used in production
   const suggestedDate = new Date();
   suggestedDate.setDate(suggestedDate.getDate() + 30); // Simplified
 
@@ -224,7 +229,7 @@ export async function predictOptimalPlantingDate(input: {
  * Analyze soil composition from image
  */
 export async function analyzeSoilFromImage(
-  imageData: Buffer | ImageData,
+  _imageData: Buffer | ImageData,
 ): Promise<{
   soilType: string;
   pH: number;
@@ -235,7 +240,8 @@ export async function analyzeSoilFromImage(
   };
   confidence: number;
 }> {
-  const tf = await loadTensorFlowGPU();
+  const _tf = await loadTensorFlowGPU();
+  void _tf; // Suppress unused warning - will be used when model is implemented
 
   // In production, use trained soil analysis model
   return {
@@ -268,7 +274,8 @@ export async function predictMarketPrice(input: {
   confidence: number;
   marketFactors: any;
 }> {
-  const tf = await loadTensorFlowGPU();
+  const _tf = await loadTensorFlowGPU();
+  void _tf; // Suppress unused warning - will be used when model is implemented
 
   // In production, use time series forecasting model
   const basePrice = getCropBasePrice(input.cropType);
@@ -287,7 +294,7 @@ export async function predictMarketPrice(input: {
 /**
  * Predict demand for products
  */
-export async function predictDemand(input: {
+export async function predictDemand(_input: {
   productId: string;
   location: string;
   timeframe: "week" | "month" | "season";
@@ -296,7 +303,8 @@ export async function predictDemand(input: {
   trend: "increasing" | "stable" | "decreasing";
   confidence: number;
 }> {
-  const tf = await loadTensorFlowGPU();
+  const _tf = await loadTensorFlowGPU();
+  void _tf; // Suppress unused warning - will be used when model is implemented
 
   return {
     predictedDemand: 100,
@@ -309,7 +317,7 @@ export async function predictDemand(input: {
 // HELPER FUNCTIONS (Would be more sophisticated in production)
 // ============================================================================
 
-function getCropBaseYield(cropType: string): number {
+function getCropBaseYield(_cropType: string): number {
   const yields: Record<string, number> = {
     tomatoes: 50,
     lettuce: 30,
@@ -317,10 +325,10 @@ function getCropBaseYield(cropType: string): number {
     corn: 150,
     wheat: 100,
   };
-  return yields[cropType.toLowerCase()] || 50;
+  return yields[_cropType.toLowerCase()] || 50;
 }
 
-function getCropBasePrice(cropType: string): number {
+function getCropBasePrice(_cropType: string): number {
   const prices: Record<string, number> = {
     tomatoes: 3.5,
     lettuce: 2.0,
@@ -328,10 +336,10 @@ function getCropBasePrice(cropType: string): number {
     corn: 0.5,
     wheat: 0.3,
   };
-  return prices[cropType.toLowerCase()] || 2.0;
+  return prices[_cropType.toLowerCase()] || 2.0;
 }
 
-function getCropGrowthDays(cropType: string): number {
+function getCropGrowthDays(_cropType: string): number {
   const days: Record<string, number> = {
     tomatoes: 75,
     lettuce: 45,
@@ -339,11 +347,11 @@ function getCropGrowthDays(cropType: string): number {
     corn: 90,
     wheat: 120,
   };
-  return days[cropType.toLowerCase()] || 60;
+  return days[_cropType.toLowerCase()] || 60;
 }
 
-function getSeasonalFactor(plantingDate: Date): number {
-  const month = plantingDate.getMonth();
+function getSeasonalFactor(_plantingDate: Date): number {
+  const month = _plantingDate.getMonth();
   // Spring/Summer: better yields
   if (month >= 3 && month <= 8) return 1.2;
   // Fall: moderate
@@ -352,34 +360,37 @@ function getSeasonalFactor(plantingDate: Date): number {
   return 0.7;
 }
 
-function getLocationFactor(location: {
+function getLocationFactor(_location: {
   latitude: number;
   longitude: number;
 }): number {
   // Simplified: better yields near equator
-  const absLat = Math.abs(location.latitude);
+  const absLat = Math.abs(_location.latitude);
   if (absLat < 30) return 1.1;
   if (absLat < 45) return 1.0;
   return 0.9;
 }
 
-function getTimingFactor(plantingDate: Date): number {
+function getTimingFactor(_plantingDate: Date): number {
   // Simplified timing calculation
   return 1.0;
 }
 
 function generateRecommendations(
-  input: YieldPredictionInput,
-  expectedYield: number,
+  _input: YieldPredictionInput,
+  _expectedYield: number,
 ): string[] {
   const recommendations: string[] = [];
 
-  if (expectedYield < 30) {
+  if (_expectedYield < 30) {
     recommendations.push("Consider adding compost to improve soil fertility");
     recommendations.push("Ensure adequate irrigation during growing season");
   }
 
-  if (input.plantingDate.getMonth() < 3 || input.plantingDate.getMonth() > 9) {
+  if (
+    _input.plantingDate.getMonth() < 3 ||
+    _input.plantingDate.getMonth() > 9
+  ) {
     recommendations.push("Consider using season extension techniques");
   }
 

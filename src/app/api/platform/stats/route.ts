@@ -64,7 +64,7 @@ export async function GET(_request: NextRequest) {
       database.order.aggregate({
         where: {
           status: {
-            in: ["FULFILLED", "COMPLETED"],
+            in: ["COMPLETED", "FULFILLED"],
           },
         },
         _sum: {
@@ -271,7 +271,7 @@ async function getRevenueThisMonth(): Promise<number> {
     where: {
       createdAt: { gte: startDate },
       status: {
-        in: ["FULFILLED", "COMPLETED"],
+        in: ["COMPLETED", "FULFILLED"],
       },
     },
     _sum: {

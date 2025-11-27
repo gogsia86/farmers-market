@@ -69,7 +69,7 @@
 
    // Option B: Update Playwright config to port 3001
    webServer: {
-     url: 'http://localhost:3001'
+     url: 'http://localhost:3000'
    }
    ```
 
@@ -78,7 +78,7 @@
    ```bash
    # Create .env.test
    DATABASE_URL="postgresql://user:pass@localhost:5432/farmers_market_test"
-   NEXTAUTH_URL="http://localhost:3001"
+   NEXTAUTH_URL="http://localhost:3000"
    NODE_ENV="test"
    ```
 
@@ -112,7 +112,7 @@
    ```typescript
    webServer: {
      command: 'npm run dev',
-     url: 'http://localhost:3001',
+     url: 'http://localhost:3000',
      reuseExistingServer: !process.env.CI,
      timeout: 120 * 1000,
      env: {
@@ -196,14 +196,14 @@ npm run test:e2e
 1. Update `playwright.config.ts` line 45:
 
    ```typescript
-   url: 'http://localhost:3001', // Changed from 3000 to 3001
+   url: 'http://localhost:3000', // Docker runs on 3000, dev scripts use 3001
    ```
 
 2. Create basic `.env.test`:
 
    ```env
    DATABASE_URL="postgresql://divine_user:quantum_password@localhost:5432/farmers_market"
-   NEXTAUTH_URL="http://localhost:3001"
+   NEXTAUTH_URL="http://localhost:3000"
    ```
 
 3. Run tests:

@@ -84,6 +84,62 @@ const disease = await classifyCropDisease(imageBuffer);
 
 ---
 
+### 4. Email Lazy Loading (`email.lazy.ts`)
+
+**Savings**: 50-80 KB  
+**Module**: `nodemailer`
+
+**What It Does**:
+- Loads Nodemailer only when sending emails
+- Transporter creation on demand
+- Fire-and-forget email queuing
+- Email configuration verification
+
+**Usage**:
+```typescript
+import { sendEmail, queueEmail } from '@/lib/lazy/email.lazy';
+
+// Nodemailer loaded on first call
+await sendEmail(
+  { host: process.env.SMTP_HOST, auth: { user: '...', pass: '...' } },
+  { to: 'user@example.com', subject: 'Hello', html: '<p>World</p>' }
+);
+
+// Fire-and-forget for non-critical emails
+queueEmail(emailConfig, mailOptions);
+```
+
+---
+
+### 5. Cloudinary Lazy Loading (`cloudinary.lazy.ts`)
+
+**Savings**: 60-100 KB  
+**Module**: `cloudinary`
+
+**What It Does**:
+- Loads Cloudinary only when handling image uploads
+- Upload, delete, and resource management
+- URL generation with transformations
+- Buffer/stream upload support
+
+**Usage**:
+```typescript
+import { uploadToCloudinary, generateCloudinaryUrl } from '@/lib/lazy/cloudinary.lazy';
+
+// Cloudinary loaded on first call
+const result = await uploadToCloudinary(filePath, {
+  folder: 'products',
+  transformation: [{ width: 800, crop: 'fill' }]
+});
+
+const url = await generateCloudinaryUrl('products/product-123', {
+  width: 400,
+  quality: 'auto'
+});
+```
+
+---
+
 ## 📈 Total Expected Savings
 
 | Optimization | Module | Expected Savings |
@@ -91,7 +147,9 @@ const disease = await classifyCropDisease(imageBuffer);
 | Analytics | @vercel/analytics | 25-30 KB |
 | Image Processing | sharp | 40-50 KB |
 | TensorFlow ML | @tensorflow/tfjs | 80-120 KB |
-| **TOTAL** | | **145-200 KB** |
+| Email | nodemailer | 50-80 KB |
+| Cloudinary | cloudinary | 60-100 KB |
+| **TOTAL** | | **255-380 KB** |
 
 ---
 
@@ -265,13 +323,13 @@ function handleClick() {
 
 Potential candidates for lazy loading:
 
-- [ ] **Nodemailer** - Email sending (30-40 KB)
+- [x] **Nodemailer** - Email sending ✅ IMPLEMENTED
+- [x] **Cloudinary** - Image uploads ✅ IMPLEMENTED
 - [ ] **Stripe** - Payment processing (when used)
 - [ ] **date-fns** - Date utilities (conditional imports)
 - [ ] **PDF generation** - PDF export features
 - [ ] **CSV export** - Data export utilities
 - [ ] **Chart libraries** - Data visualization
-- [ ] **Cloudinary** - Image uploads (API only)
 
 ---
 
@@ -306,9 +364,9 @@ When creating a new lazy loading wrapper:
 
 ---
 
-**Version**: 1.0  
+**Version**: 1.1  
 **Created**: Phase 6 - Day 2  
-**Last Updated**: January 2025  
+**Last Updated**: January 2025 (Day 3 - Added Email & Cloudinary)  
 **Status**: ✅ Active and Saving Bundle Size!
 
 🌾 **Building divine agricultural excellence through performance!** 🚀

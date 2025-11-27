@@ -74,8 +74,25 @@ export default function LoginPage() {
       }
 
       if (result?.ok) {
-        // Redirect to dashboard or home
-        router.push("/dashboard");
+        // Fetch session to get user role
+        const response = await fetch("/api/auth/session");
+        const session = await response.json();
+
+        // Role-based redirect
+        if (
+          session?.user?.role === "ADMIN" ||
+          session?.user?.role === "SUPER_ADMIN" ||
+          session?.user?.role === "MODERATOR"
+        ) {
+          router.push("/admin/dashboard");
+        } else if (session?.user?.role === "FARMER") {
+          router.push("/farmer/dashboard");
+        } else if (session?.user?.role === "CONSUMER") {
+          router.push("/");
+        } else {
+          // Fallback to home
+          router.push("/");
+        }
         router.refresh();
       }
     } catch (err) {

@@ -44,7 +44,7 @@ export async function GET(_request: NextRequest) {
       user: {
         id: session.user.id,
         email: session.user.email,
-        name: session.user.name,
+        name: session.user.name || session.user.email || "User",
         role: session.user.role,
       },
     });

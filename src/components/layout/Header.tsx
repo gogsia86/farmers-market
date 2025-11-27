@@ -11,9 +11,11 @@ import { SimpleLanguageButton } from "@/components/i18n";
 import { Menu, Search, ShoppingCart, User, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { useCartStore } from "@/stores/cartStore";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const cartItemCount = useCartStore((state) => state.getTotalItems());
 
   const handleSearchClick = () => {
     // TODO: Implement search functionality
@@ -86,12 +88,14 @@ export function Header() {
               aria-label="Shopping cart"
             >
               <ShoppingCart className="h-5 w-5" />
-              <span
-                data-testid="cart-count"
-                className="absolute -top-1 -right-1 bg-agricultural-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
-              >
-                0
-              </span>
+              {cartItemCount > 0 && (
+                <span
+                  data-testid="cart-count"
+                  className="absolute -top-1 -right-1 bg-agricultural-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+                >
+                  {cartItemCount}
+                </span>
+              )}
             </Link>
 
             <Link

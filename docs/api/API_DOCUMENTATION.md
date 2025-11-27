@@ -3,7 +3,7 @@
 ## Complete REST API Reference - v1.0.0
 
 **Base URL:** `https://api.farmersmarket.com` (Production)  
-**Base URL:** `http://localhost:3001` (Development)  
+**Base URL:** `http://localhost:3000` (Development)  
 **API Version:** 1.0.0  
 **Last Updated:** December 2024  
 **Authentication:** Bearer Token (JWT)

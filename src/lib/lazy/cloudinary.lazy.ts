@@ -19,7 +19,12 @@ import type {
 // TYPES
 // ============================================================================
 
-export type { UploadApiOptions, UploadApiResponse, ConfigOptions, ResourceApiResponse };
+export type {
+  UploadApiOptions,
+  UploadApiResponse,
+  ConfigOptions,
+  ResourceApiResponse,
+};
 
 export interface CloudinaryConfig {
   cloud_name: string;
@@ -40,7 +45,6 @@ export interface CloudinaryUploadOptions extends UploadApiOptions {
 // ============================================================================
 
 let cloudinaryPromise: Promise<typeof cloudinaryV2> | null = null;
-let cloudinaryInstance: typeof cloudinaryV2 | null = null;
 let isConfigured = false;
 
 /**
@@ -49,10 +53,7 @@ let isConfigured = false;
  */
 async function loadCloudinary(): Promise<typeof cloudinaryV2> {
   if (!cloudinaryPromise) {
-    cloudinaryPromise = import("cloudinary").then((module) => {
-      cloudinaryInstance = module.v2;
-      return module.v2;
-    });
+    cloudinaryPromise = import("cloudinary").then((module) => module.v2);
   }
   return cloudinaryPromise;
 }
@@ -71,7 +72,7 @@ async function loadCloudinary(): Promise<typeof cloudinaryV2> {
  * ```
  */
 export async function configureCloudinary(
-  config: CloudinaryConfig
+  config: CloudinaryConfig,
 ): Promise<void> {
   const cloudinary = await loadCloudinary();
   cloudinary.config(config);
@@ -99,7 +100,7 @@ async function getCloudinary(): Promise<typeof cloudinaryV2> {
       isConfigured = true;
     } else {
       throw new Error(
-        "Cloudinary not configured. Call configureCloudinary() or set environment variables."
+        "Cloudinary not configured. Call configureCloudinary() or set environment variables.",
       );
     }
   }
@@ -130,7 +131,7 @@ async function getCloudinary(): Promise<typeof cloudinaryV2> {
  */
 export async function uploadToCloudinary(
   file: string | Buffer,
-  options?: CloudinaryUploadOptions
+  options?: CloudinaryUploadOptions,
 ): Promise<UploadApiResponse> {
   const cloudinary = await getCloudinary();
   return cloudinary.uploader.upload(file as string, options);
@@ -154,7 +155,7 @@ export async function uploadToCloudinary(
  */
 export async function uploadBufferToCloudinary(
   buffer: Buffer,
-  options?: CloudinaryUploadOptions
+  options?: CloudinaryUploadOptions,
 ): Promise<UploadApiResponse> {
   const cloudinary = await getCloudinary();
 
@@ -167,7 +168,7 @@ export async function uploadBufferToCloudinary(
         } else {
           resolve(result as UploadApiResponse);
         }
-      }
+      },
     );
 
     uploadStream.end(buffer);
@@ -184,7 +185,7 @@ export async function uploadBufferToCloudinary(
  */
 export async function deleteFromCloudinary(
   publicId: string,
-  options?: { resource_type?: "image" | "video" | "raw" }
+  options?: { resource_type?: "image" | "video" | "raw" },
 ): Promise<any> {
   const cloudinary = await getCloudinary();
   return cloudinary.uploader.destroy(publicId, options);
@@ -201,7 +202,7 @@ export async function deleteFromCloudinary(
  */
 export async function getCloudinaryResource(
   publicId: string,
-  options?: { resource_type?: "image" | "video" | "raw" }
+  options?: { resource_type?: "image" | "video" | "raw" },
 ): Promise<ResourceApiResponse> {
   const cloudinary = await getCloudinary();
   return cloudinary.api.resource(publicId, options);
@@ -223,7 +224,7 @@ export async function getCloudinaryResource(
  */
 export async function generateCloudinaryUrl(
   publicId: string,
-  transformations?: Record<string, any>
+  transformations?: Record<string, any>,
 ): Promise<string> {
   const cloudinary = await getCloudinary();
   return cloudinary.url(publicId, transformations);
@@ -246,7 +247,7 @@ export async function listCloudinaryResources(
     max_results?: number;
     next_cursor?: string;
     resource_type?: "image" | "video" | "raw";
-  }
+  },
 ): Promise<any> {
   const cloudinary = await getCloudinary();
   return cloudinary.api.resources({
@@ -273,7 +274,7 @@ export async function listCloudinaryResources(
  */
 export function queueCloudinaryUpload(
   file: string | Buffer,
-  options?: CloudinaryUploadOptions
+  options?: CloudinaryUploadOptions,
 ): void {
   // Fire and forget - don't await
   const uploadPromise =

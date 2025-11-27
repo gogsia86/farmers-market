@@ -14,7 +14,7 @@ The E2E tests are failing due to multiple configuration and infrastructure issue
 ### 2. ✅ FIXED: Port Mismatch
 
 **Issue**: Dev server runs on port 3001, but Playwright expects port 3000
-**Fix**: Updated `playwright.config.ts` webServer URL to `http://localhost:3001`
+**Fix**: Updated `playwright.config.ts` webServer URL to `http://localhost:3000`
 
 ### 3. ✅ FIXED: Missing Test Environment File
 

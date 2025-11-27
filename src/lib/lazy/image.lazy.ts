@@ -11,7 +11,7 @@
  * @module lib/lazy/image.lazy
  */
 
-import type { Sharp, SharpOptions } from "sharp";
+import type Sharp from "sharp";
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -49,9 +49,9 @@ let sharpPromise: Promise<typeof import("sharp")> | null = null;
  * Lazy load the Sharp module
  * Only imports the module on first use
  */
-export async function loadSharp() {
+export async function loadSharp(): Promise<typeof Sharp> {
   if (!sharpPromise) {
-    sharpPromise = import("sharp");
+    sharpPromise = import("sharp").then((module) => module.default);
   }
   return sharpPromise;
 }
@@ -88,30 +88,30 @@ export async function processImage(
     fit = "cover",
   } = options;
 
-  let pipeline = sharp.default(input);
+  let processor = sharp(input);
 
   // Resize if dimensions provided
   if (width || height) {
-    pipeline = pipeline.resize(width, height, { fit });
+    processor = processor.resize(width, height, { fit });
   }
 
   // Convert format and optimize
   switch (format) {
     case "jpeg":
-      pipeline = pipeline.jpeg({ quality, progressive: true });
+      processor = processor.jpeg({ quality, progressive: true });
       break;
     case "png":
-      pipeline = pipeline.png({ quality, compressionLevel: 9 });
+      processor = processor.png({ quality, compressionLevel: 9 });
       break;
     case "webp":
-      pipeline = pipeline.webp({ quality });
+      processor = processor.webp({ quality });
       break;
     case "avif":
-      pipeline = pipeline.avif({ quality });
+      processor = processor.avif({ quality });
       break;
   }
 
-  const buffer = await pipeline.toBuffer({ resolveWithObject: true });
+  const buffer = await processor.toBuffer({ resolveWithObject: true });
 
   return {
     buffer: buffer.data,
@@ -177,8 +177,7 @@ export async function createThumbnail(
 
   const { width, height, quality = 70 } = options;
 
-  return await sharp
-    .default(input)
+  return await sharp(input)
     .resize(width, height, {
       fit: "cover",
       position: "center",
@@ -208,7 +207,7 @@ export async function getImageMetadata(input: Buffer | string): Promise<{
   hasAlpha?: boolean;
 }> {
   const sharp = await loadSharp();
-  return await sharp.default(input).metadata();
+  return await sharp(input).metadata();
 }
 
 /**

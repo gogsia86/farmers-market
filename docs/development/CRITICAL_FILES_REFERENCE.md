@@ -131,7 +131,7 @@ docker-compose -f docker-compose.prod.yml up --scale app=3
 
 - **Application Health**: `/api/health/detailed`
 - **Prometheus Metrics**: `http://localhost:9090`
-- **Grafana Dashboard**: `http://localhost:3001`
+- **Grafana Dashboard**: `http://localhost:3000`
 
 ### Performance Tracking
 

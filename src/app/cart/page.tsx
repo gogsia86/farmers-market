@@ -11,7 +11,7 @@ import {
   Trash2,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useCartStore } from "@/stores/cartStore";
 
 /**
  * 🛒 SHOPPING CART PAGE - Fall Harvest Theme
@@ -23,80 +23,33 @@ interface CartItem {
   productId: string;
   name: string;
   price: number;
-  unit: string;
+  unit?: string;
   quantity: number;
-  farm: string;
-  organic: boolean;
-  image: string;
+  farm?: string;
+  organic?: boolean;
+  image?: string;
 }
 
-// Mock cart data - Replace with actual cart context
-const INITIAL_CART: CartItem[] = [
-  {
-    id: "cart-1",
-    productId: "1",
-    name: "Organic Pumpkins",
-    price: 8.99,
-    unit: "each",
-    quantity: 2,
-    farm: "Harvest Moon Farm",
-    organic: true,
-    image: "/images/products/pumpkin.jpg",
-  },
-  {
-    id: "cart-2",
-    productId: "2",
-    name: "Honeycrisp Apples",
-    price: 4.99,
-    unit: "lb",
-    quantity: 3,
-    farm: "Autumn Ridge Orchard",
-    organic: true,
-    image: "/images/products/apples.jpg",
-  },
-  {
-    id: "cart-3",
-    productId: "4",
-    name: "Artisan Cheddar Cheese",
-    price: 12.99,
-    unit: "8oz",
-    quantity: 1,
-    farm: "Maple Leaf Dairy",
-    organic: false,
-    image: "/images/products/cheese.jpg",
-  },
-];
-
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState<CartItem[]>(INITIAL_CART);
+  const {
+    items: cartItems,
+    updateQuantity,
+    removeItem,
+    getTotalPrice,
+  } = useCartStore();
 
-  const updateQuantity = (id: string, newQuantity: number) => {
-    if (newQuantity < 1) return;
-    setCartItems((items) =>
-      items.map((item) =>
-        item.id === id ? { ...item, quantity: newQuantity } : item,
-      ),
-    );
-  };
-
-  const removeItem = (id: string) => {
-    setCartItems((items) => items.filter((item) => item.id !== id));
-  };
-
-  const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0,
-  );
+  const subtotal = getTotalPrice();
   const tax = subtotal * 0.08; // 8% tax
   const total = subtotal + tax;
 
-  // Group items by farm
+  // Group items by farm (with fallback for items without farm info)
   const itemsByFarm = cartItems.reduce(
     (acc: Record<string, CartItem[]>, item: CartItem) => {
-      if (!acc[item.farm]) {
-        acc[item.farm] = [];
+      const farmName = item.farm || "Unknown Farm";
+      if (!acc[farmName]) {
+        acc[farmName] = [];
       }
-      acc[item.farm]!.push(item);
+      acc[farmName]!.push(item);
       return acc;
     },
     {} as Record<string, CartItem[]>,

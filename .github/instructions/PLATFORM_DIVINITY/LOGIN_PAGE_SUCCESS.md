@@ -28,7 +28,7 @@
 
 **Development Server**: ✅ **RUNNING**
 
-- **URL**: <http://localhost:3001>
+- **URL**: <http://localhost:3000>
 - **Status**: Ready in 1327ms
 - **Note**: Regex warnings about Windows paths (harmless, can ignore)
 
@@ -38,7 +38,7 @@
 
 ### **1. Open Browser**
 
-Navigate to: **http://localhost:3001/auth/login**
+Navigate to: **http://localhost:3000/auth/login**
 
 ### **2. Test Credentials**
 
@@ -146,7 +146,7 @@ Invalid regular expression: /^C:\Users\([^/]*)\Application Data\([^/]*)$/
 
 ### **Immediate Next Action**: Test the Login Page
 
-1. Open browser to http://localhost:3001/auth/login
+1. Open browser to http://localhost:3000/auth/login
 2. Try logging in with test credentials
 3. Verify beep plays on success
 4. Check redirect to dashboard/home
@@ -189,6 +189,6 @@ Invalid regular expression: /^C:\Users\([^/]*)\Application Data\([^/]*)$/
 _"From nothing to working login in one session - that's divine development!"_ 🌾✨
 
 **Status**: ✅ **STEP 1.1 COMPLETE**
-**Server**: ✅ **RUNNING** at http://localhost:3001
+**Server**: ✅ **RUNNING** at http://localhost:3000
 **Next**: Test login, then build registration pages
 **Progress**: Authentication 25% → 100% coming soon!

@@ -1,111 +1,88 @@
-import { requireFarmerAuth } from "@/lib/auth/farmer-auth";
-import { fileUploadService } from "@/lib/upload/file-upload-service";
+import { auth } from "@/lib/auth";
+import { uploadImage, validateImageFile } from "@/lib/cloudinary";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
- * 📎 FILE UPLOAD API
- * POST /api/upload - Handle file uploads
+ * 📎 IMAGE UPLOAD API - CLOUDINARY
+ * POST /api/upload - Handle image uploads with Cloudinary
+ *
+ * Supports:
+ * - Product images
+ * - Farm logos
+ * - Certification documents
+ * - License uploads
  */
 
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication
-    const authResult = await requireFarmerAuth(request);
-    if (authResult instanceof NextResponse) {
-      return authResult; // Return error response
+    // 1. Check authentication
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json(
+        { success: false, error: "Authentication required" },
+        { status: 401 },
+      );
     }
 
-    // Get form data
+    // 2. Parse form data
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
-    const type = formData.get("type") as string | null;
-    const farmId = formData.get("farmId") as string | null;
-    const productId = formData.get("productId") as string | null;
+    const type = (formData.get("type") as string) || "product";
 
     if (!file) {
-      return NextResponse.json({ error: "No file provided" }, { status: 400 });
-    }
-
-    if (!type) {
       return NextResponse.json(
-        { error: "Upload type required" },
+        { success: false, error: "No file provided" },
         { status: 400 },
       );
     }
 
-    let result;
+    // 3. Validate file
+    const validation = validateImageFile(file, 5); // 5MB max
+    if (!validation.valid) {
+      return NextResponse.json(
+        { success: false, error: validation.error },
+        { status: 400 },
+      );
+    }
 
-    // Handle different upload types
+    // 4. Determine upload folder based on type
+    let folder = "farmers-market/products";
     switch (type) {
-      case "license":
-        if (!farmId) {
-          return NextResponse.json(
-            { error: "Farm ID required for license upload" },
-            { status: 400 },
-          );
-        }
-        result = await fileUploadService.uploadBusinessLicense(file, farmId);
-        break;
-
-      case "certification":
-        if (!farmId) {
-          return NextResponse.json(
-            { error: "Farm ID required for certification upload" },
-            { status: 400 },
-          );
-        }
-        const certType =
-          (formData.get("certificationType") as string) || "general";
-        result = await fileUploadService.uploadCertification(
-          file,
-          farmId,
-          certType,
-        );
-        break;
-
-      case "product":
-        if (!productId) {
-          return NextResponse.json(
-            { error: "Product ID required for product image upload" },
-            { status: 400 },
-          );
-        }
-        result = await fileUploadService.uploadProductImage(file, productId);
-        break;
-
       case "logo":
-        if (!farmId) {
-          return NextResponse.json(
-            { error: "Farm ID required for logo upload" },
-            { status: 400 },
-          );
-        }
-        result = await fileUploadService.uploadFarmLogo(file, farmId);
+        folder = "farmers-market/farms/logos";
         break;
-
+      case "certification":
+        folder = "farmers-market/farms/certifications";
+        break;
+      case "license":
+        folder = "farmers-market/farms/licenses";
+        break;
+      case "product":
       default:
-        result = await fileUploadService.uploadFile(file);
+        folder = "farmers-market/products";
+        break;
     }
 
-    if (!result.success) {
-      return NextResponse.json(
-        { error: result.error || "Upload failed" },
-        { status: 400 },
-      );
-    }
+    // 5. Upload to Cloudinary
+    const imageUrl = await uploadImage(file, folder, {
+      quality: "auto:good",
+      format: "auto",
+      tags: [type, "farmers-market"],
+    });
 
+    // 6. Return success with URL
     return NextResponse.json({
       success: true,
-      data: {
-        url: result.url,
-        path: result.path,
-        type,
-      },
+      url: imageUrl,
+      type,
     });
   } catch (error) {
     console.error("Upload API error:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      {
+        success: false,
+        error: error instanceof Error ? error.message : "Upload failed",
+      },
       { status: 500 },
     );
   }
@@ -118,18 +95,17 @@ export async function GET() {
   return NextResponse.json({
     success: true,
     config: {
-      maxFileSize: 10 * 1024 * 1024, // 10MB
-      allowedTypes: {
-        license: ["application/pdf", "image/jpeg", "image/png"],
-        certification: ["application/pdf", "image/jpeg", "image/png"],
-        product: ["image/jpeg", "image/png", "image/webp"],
-        logo: ["image/jpeg", "image/png", "image/webp"],
+      maxFileSize: 5 * 1024 * 1024, // 5MB
+      allowedTypes: ["image/jpeg", "image/jpg", "image/png", "image/webp"],
+      supportedFormats: ["JPEG", "JPG", "PNG", "WEBP"],
+      maxDimensions: {
+        width: 1200,
+        height: 1200,
       },
-      maxSizes: {
-        license: 5 * 1024 * 1024, // 5MB
-        certification: 5 * 1024 * 1024, // 5MB
-        product: 2 * 1024 * 1024, // 2MB
-        logo: 1 * 1024 * 1024, // 1MB
+      optimizations: {
+        quality: "auto:good",
+        format: "auto",
+        autoWebP: true,
       },
     },
   });

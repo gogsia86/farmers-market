@@ -15,7 +15,7 @@ Test-Path ".\node_modules"  # ✅ Should return True
 npm run dev
 
 # 3. Open in browser
-# Navigate to: http://localhost:3001
+# Navigate to: http://localhost:3000
 
 # 4. (Optional) Start in TURBO mode for HP OMEN
 npm run dev:turbo

@@ -8,7 +8,9 @@ const config = {
   // Datasource configuration for Prisma Migrate
   datasource: {
     db: {
-      url: process.env.DATABASE_URL,
+      url:
+        process.env.DATABASE_URL ||
+        "postgresql://postgres:postgres@localhost:5432/farmersmarket",
     },
   },
 

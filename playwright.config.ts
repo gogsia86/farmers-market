@@ -3,9 +3,11 @@
  * Updated to handle port conflicts and provide better error messages
  */
 import { defineConfig, devices } from "@playwright/test";
+import path from "path";
 
 // Determine the port to use (allow override via env)
-const PORT = process.env.TEST_PORT || process.env.PORT || "3001";
+// Default to 3000 (Docker) - use TEST_PORT=3001 for dev script
+const PORT = process.env.TEST_PORT || process.env.PORT || "3000";
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || `http://localhost:${PORT}`;
 
 export default defineConfig({
@@ -16,6 +18,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : 6, // Use 6 workers on local (HP OMEN optimization)
   reporter: "html",
   timeout: 30000, // 30 second timeout per test
+  globalSetup: path.join(__dirname, "tests", "global-setup.ts"),
   use: {
     baseURL: BASE_URL,
     trace: "on-first-retry",

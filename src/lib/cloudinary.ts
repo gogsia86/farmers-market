@@ -12,31 +12,13 @@
  */
 
 import {
-  configureCloudinary as lazyConfigureCloudinary,
-  uploadToCloudinary,
   uploadBufferToCloudinary,
   deleteFromCloudinary,
-  generateCloudinaryUrl,
 } from "@/lib/lazy/cloudinary.lazy";
-import type { UploadApiResponse } from "cloudinary";
 
 // ============================================================================
 // CLOUDINARY CONFIGURATION
 // ============================================================================
-
-/**
- * Configure Cloudinary with environment variables
- * Must be called before any upload operations
- * ⚡ PERFORMANCE: Uses lazy loading (~60-100 KB savings)
- */
-async function configureCloudinary(): Promise<void> {
-  await lazyConfigureCloudinary({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME || "",
-    api_key: process.env.CLOUDINARY_API_KEY || "",
-    api_secret: process.env.CLOUDINARY_API_SECRET || "",
-    secure: true,
-  });
-}
 
 // ============================================================================
 // TYPE DEFINITIONS

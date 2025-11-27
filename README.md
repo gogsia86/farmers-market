@@ -99,10 +99,12 @@ Farmers Market is a **divine agricultural e-commerce platform** that connects lo
 3. **Set up environment variables**
 
    ```bash
-   cp .env.example .env
+   cp .env.example .env.local
    ```
 
-   Edit `.env` with your configuration:
+   For quick start, the defaults work out of the box! For full configuration, see `docs/deployment/ENV-SETUP-GUIDE.md`.
+
+   Basic configuration:
 
    ```env
    # Database
@@ -375,10 +377,12 @@ Run the entire platform in Docker containers:
 # Quick start with Docker
 .\docker-start.ps1
 
-# Or manually
+# Or manually (from docker/compose directory)
+cd docker/compose
 docker-compose -f docker-compose.dev.yml up --build
 
 # Clean rebuild (when language packs or dependencies are stuck)
+cd docker/compose
 docker-compose -f docker-compose.dev.yml down -v
 docker builder prune -af
 docker-compose -f docker-compose.dev.yml build --no-cache
@@ -387,9 +391,12 @@ docker-compose -f docker-compose.dev.yml up -d
 
 **Docker Resources:**
 
-- 📖 [Docker Guide](DOCKER_GUIDE.md) - Complete setup and usage
-- 🔄 [Docker Clean Rebuild](DOCKER_CLEAN_REBUILD.md) - Fix stuck builds
-- 🚀 [docker-start.ps1](docker-start.ps1) - One-click startup script
+- 📖 [Docker README](docker/README.md) - Master Docker documentation
+- 📋 [Docker Setup Guide](docker/docs/SETUP-GUIDE.md) - Complete setup instructions
+- 🚀 [Docker Deployment Guide](docker/docs/DEPLOYMENT-GUIDE.md) - Production deployment
+- 🔧 [Docker Troubleshooting](docker/docs/TROUBLESHOOTING.md) - Common issues
+- 📦 [Dockerfiles](docker/dockerfiles/) - Container definitions
+- 🐙 [Docker Compose](docker/compose/) - Orchestration configs
 
 ### **HP OMEN Optimization**
 
@@ -450,7 +457,8 @@ Key models:
 
 - **[Quick Start Guide](./docs/guides/QUICK_START_100.md)** - Get running in 5 minutes
 - **[Development Guide](./docs/DEVELOPMENT_GUIDE.md)** - Comprehensive development documentation
-- **[Divine Dev Setup](docs/guides/DIVINE_DEV_SETUP.md)** - Complete environment setup
+- **[Environment Setup Guide](docs/deployment/ENV-SETUP-GUIDE.md)** - Complete environment configuration
+- **[Divine Dev Setup](docs/guides/DIVINE_DEV_SETUP.md)** - Complete development setup
 - **[API Documentation](docs/API_DOCUMENTATION.md)** - Full API reference
 
 #### 🏗️ For DevOps

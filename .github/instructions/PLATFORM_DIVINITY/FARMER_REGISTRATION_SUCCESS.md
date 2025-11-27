@@ -92,7 +92,7 @@
 
 ### **Open in Browser**
 
-Navigate to: `http://localhost:3001/auth/register/farmer`
+Navigate to: `http://localhost:3000/auth/register/farmer`
 
 ### **Test Flow**
 
@@ -254,12 +254,12 @@ Navigate to: `http://localhost:3001/auth/register/farmer`
 
 ## 🚀 **READY TO TEST**
 
-**Server**: Running at http://localhost:3001
+**Server**: Running at http://localhost:3000
 
 **URLs to Test**:
 
-1. Login: http://localhost:3001/auth/login
-2. **Farmer Registration**: <http://localhost:3001/auth/register/farmer>
+1. Login: http://localhost:3000/auth/login
+2. **Farmer Registration**: <http://localhost:3000/auth/register/farmer>
 
 **Try**:
 

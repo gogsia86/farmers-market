@@ -6,7 +6,7 @@ import "./globals.css";
 export const dynamic = "force-dynamic";
 
 // Divine Site Configuration
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 const siteConfig = {
   name: "Farmers Market - Divine Agricultural Platform",
   description:

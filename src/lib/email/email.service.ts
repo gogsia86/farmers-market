@@ -16,10 +16,7 @@
  * @module EmailService
  */
 
-import {
-  createTransporter,
-  sendEmail as lazySendEmail,
-} from "@/lib/lazy/email.lazy";
+import { createTransporter } from "@/lib/lazy/email.lazy";
 import type { Transporter } from "nodemailer";
 
 // ============================================================================

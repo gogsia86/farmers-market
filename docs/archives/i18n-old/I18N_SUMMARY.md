@@ -101,9 +101,9 @@ function MyComponent() {
 
 Visit:
 
-- `http://localhost:3001/en/` - English
-- `http://localhost:3001/es/` - Spanish
-- `http://localhost:3001/fr/` - French
+- `http://localhost:3000/en/` - English
+- `http://localhost:3000/es/` - Spanish
+- `http://localhost:3000/fr/` - French
 
 ---
 

@@ -156,7 +156,8 @@ const nextAuthResult = NextAuth({
         session.user.id = token.id as string;
         session.user.role = token.role as UserRole;
         session.user.status = token.status as UserStatus;
-        session.user.name = token.name as string;
+        session.user.name =
+          (token.name as string) || (token.email as string) || "User";
         session.user.email = token.email as string;
       }
 

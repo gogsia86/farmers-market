@@ -5,6 +5,8 @@
  */
 
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 
 declare global {
   // eslint-disable-next-line no-var
@@ -19,7 +21,24 @@ const RETRY_DELAY = 2000; // 2 seconds
 
 // Prisma v7 configuration with adapter support
 const createPrismaClient = (): PrismaClient => {
+  // Create PostgreSQL connection pool
+  const connectionString = process.env.DATABASE_URL;
+
+  if (!connectionString) {
+    console.warn("⚠️  DATABASE_URL not set, using fallback configuration");
+  }
+
+  const pool = new Pool({
+    connectionString:
+      connectionString || "postgresql://localhost:5432/farmersmarket",
+  });
+
+  // Create Prisma adapter for PostgreSQL
+  const adapter = new PrismaPg(pool);
+
+  // Initialize Prisma Client with adapter
   const client = new PrismaClient({
+    adapter,
     log:
       process.env.NODE_ENV === "development"
         ? ["query", "error", "warn"]

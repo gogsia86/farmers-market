@@ -188,7 +188,7 @@
 
 ### **Navigate to Page**
 
-Go to: `http://localhost:3001/farms`
+Go to: `http://localhost:3000/farms`
 
 ### **Test Search**
 
@@ -400,12 +400,12 @@ Go to: `http://localhost:3001/farms`
 
 ## 🚀 **READY TO TEST**
 
-**Server**: <http://localhost:3001>
+**Server**: <http://localhost:3000>
 
 **Test URLs**:
 
-1. **Homepage**: <http://localhost:3001/>
-2. **Farm Discovery**: <http://localhost:3001/farms> 🎉 (NEW!)
+1. **Homepage**: <http://localhost:3000/>
+2. **Farm Discovery**: <http://localhost:3000/farms> 🎉 (NEW!)
 
 **Full User Flow**:
 
