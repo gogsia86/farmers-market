@@ -54,7 +54,7 @@ export default async function FarmerSettingsPage() {
       name: true,
       email: true,
       phone: true,
-      image: true,
+      avatar: true,
       role: true,
       emailVerified: true,
     },
@@ -206,7 +206,7 @@ export default async function FarmerSettingsPage() {
                       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
                         farm.status === "ACTIVE"
                           ? "bg-green-100 text-green-800"
-                          : farm.status === "PENDING_VERIFICATION"
+                          : farm.status === "PENDING"
                             ? "bg-yellow-100 text-yellow-800"
                             : "bg-gray-100 text-gray-800"
                       }`}
@@ -224,7 +224,7 @@ export default async function FarmerSettingsPage() {
                       Contact Email
                     </label>
                     <p className="text-sm text-gray-900">
-                      {farm.contactEmail || user?.email || "Not provided"}
+                      {farm.email || user?.email || "Not provided"}
                     </p>
                   </div>
                   <div>
@@ -232,7 +232,7 @@ export default async function FarmerSettingsPage() {
                       Contact Phone
                     </label>
                     <p className="text-sm text-gray-900">
-                      {farm.contactPhone || user?.phone || "Not provided"}
+                      {farm.phone || user?.phone || "Not provided"}
                     </p>
                   </div>
                 </div>
@@ -300,10 +300,10 @@ export default async function FarmerSettingsPage() {
 
               <div className="space-y-6">
                 <div className="flex items-center space-x-4">
-                  {user?.image ? (
+                  {user?.avatar ? (
                     <img
-                      src={user.image}
-                      alt={user.name || "User"}
+                      src={user.avatar}
+                      alt={user?.name || "User"}
                       className="h-16 w-16 rounded-full"
                     />
                   ) : (
@@ -312,10 +312,10 @@ export default async function FarmerSettingsPage() {
                     </div>
                   )}
                   <div>
-                    <p className="text-sm font-medium text-gray-900">
+                    <h3 className="text-sm font-medium text-gray-900">
                       {user?.name || "Not set"}
-                    </p>
-                    <p className="text-sm text-gray-500">{user?.role}</p>
+                    </h3>
+                    <p className="text-sm text-gray-500">{user?.email}</p>
                   </div>
                 </div>
 
