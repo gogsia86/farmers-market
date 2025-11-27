@@ -9,7 +9,6 @@
 
 import type {
   MonitoringReport,
-  Notification,
   NotificationConfig,
   WorkflowResult,
   WorkflowPriority,
@@ -286,7 +285,7 @@ export class DiscordNotifier {
   private buildWorkflowSuccessMessage(
     workflow: WorkflowResult,
   ): DiscordMessage {
-    const emoji = this.getPriorityEmoji(workflow.priority);
+    // const emoji = this.getPriorityEmoji(workflow.priority);
     const color = this.getStatusColor("PASSED");
     const duration = (workflow.duration / 1000).toFixed(2);
 

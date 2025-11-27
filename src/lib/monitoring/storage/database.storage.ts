@@ -114,8 +114,8 @@ class DatabaseStorageService {
           startedAt: result.startTime,
           completedAt: result.endTime,
           durationMs: result.duration,
-          testsPassed: result.steps.filter((s) => s.status === "PASSED").length,
-          testsFailed: result.steps.filter((s) => s.status === "FAILED").length,
+          testsPassed: result.steps.filter((s) => s.success).length,
+          testsFailed: result.steps.filter((s) => !s.success).length,
           testsTotal: result.steps.length,
           errorMessage: result.error ? String(result.error) : null,
           errorStack:
@@ -126,16 +126,18 @@ class DatabaseStorageService {
               : null,
           triggeredBy: "SCHEDULED",
           environment: process.env.NODE_ENV || "production",
-          metadata: {
-            name: result.name,
-            type: result.type,
-            priority: result.priority,
-            metrics: result.metrics,
-            screenshots: result.screenshots,
-            traces: result.traces,
-            tags: result.tags,
-            agricultureConsciousness: result.agricultureConsciousness,
-          },
+          metadata: JSON.parse(
+            JSON.stringify({
+              name: result.name,
+              type: result.type,
+              priority: result.priority,
+              metrics: result.metrics,
+              screenshots: result.screenshots,
+              traces: result.traces,
+              tags: result.tags,
+              agricultureConsciousness: result.agricultureConsciousness,
+            }),
+          ),
           reportId: reportId || null,
         },
       });
@@ -252,7 +254,7 @@ class DatabaseStorageService {
   /**
    * Log a notification
    */
-  async logNotification(notification: NotificationData): Promise<void> {
+  async saveNotification(notification: Notification): Promise<void> {
     try {
       await database.notificationLog.create({
         data: {

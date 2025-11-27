@@ -33,10 +33,11 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
   private browser: Browser | null = null;
   private context: BrowserContext | null = null;
   private workflows = new Map<string, WorkflowConfig>();
-  private _baseUrl: string;
+  // Base URL stored for future extension (e.g., health checks, API calls)
+  private baseUrl: string;
 
   constructor(baseUrl: string) {
-    this._baseUrl = baseUrl;
+    this.baseUrl = baseUrl;
   }
 
   /**

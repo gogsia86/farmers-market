@@ -9,7 +9,6 @@
 
 import type {
   MonitoringReport,
-  Notification,
   NotificationConfig,
   WorkflowResult,
   WorkflowPriority,
@@ -619,15 +618,15 @@ export class SlackNotifier {
     return emojiMap[priority] || "ℹ️";
   }
 
-  private getStatusColor(status: string): string {
-    const colorMap: Record<string, string> = {
-      PASSED: "#36a64f",
-      FAILED: "#d9534f",
-      WARNING: "#f0ad4e",
-      SKIPPED: "#5bc0de",
-    };
-    return colorMap[status] || "#808080";
-  }
+  // private getStatusColor(status: string): string {
+  //   const colorMap: Record<string, string> = {
+  //     PASSED: "#36a64f",
+  //     FAILED: "#d9534f",
+  //     WARNING: "#f0ad4e",
+  //     SKIPPED: "#5bc0de",
+  //   };
+  //   return colorMap[status] || "#808080";
+  // }
 
   private formatTrends(trends: MonitoringReport["trends"]): string {
     const { successRateTrend, performanceTrend, errorRateTrend } = trends;

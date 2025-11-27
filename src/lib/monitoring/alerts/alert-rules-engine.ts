@@ -687,7 +687,7 @@ export class AlertRulesEngine {
   private sanitizeContext(context: EvaluationContext): Record<string, any> {
     return {
       timestamp: context.timestamp,
-      workflowName: context.workflowResult?.workflow?.name,
+      workflowName: context.workflowResult?.name,
       workflowStatus: context.workflowResult?.status,
       reportSummary: context.report
         ? {
