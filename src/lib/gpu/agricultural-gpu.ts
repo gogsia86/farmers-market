@@ -1,12 +1,12 @@
-// @ts-nocheck
 /**
  * Agricultural GPU Acceleration using TensorFlow.js
  * Divine patterns for RTX 2070 Max-Q optimization
  *
- * NOTE: TypeScript checks disabled - TensorFlow types not available in this environment
+ * ⚡ PERFORMANCE: Uses lazy loading for TensorFlow (~80-120 KB savings)
  */
 
-import * as tf from "@tensorflow/tfjs";
+import { loadTensorFlow } from "@/lib/lazy/ml.lazy";
+import type * as tf from "@tensorflow/tfjs";
 
 export interface AgriculturalGPUConfig {
   preferredBackend?: "webgl" | "cpu" | "wasm";
@@ -15,31 +15,37 @@ export interface AgriculturalGPUConfig {
 export class AgriculturalGPUAccelerator {
   private initialized = false;
   private backend: "webgl" | "cpu" | "wasm" = "webgl";
+  private tf: typeof tf | null = null;
 
   async initialize(config?: AgriculturalGPUConfig): Promise<void> {
     try {
+      // Lazy load TensorFlow
+      this.tf = await loadTensorFlow();
+
       // Set preferred backend
       if (config?.preferredBackend) {
         this.backend = config.preferredBackend;
       }
 
       // Initialize TensorFlow.js with WebGL backend for GPU acceleration
-      await tf.setBackend(this.backend);
-      await tf.ready();
+      await this.tf.setBackend(this.backend);
+      await this.tf.ready();
 
       this.initialized = true;
 
       console.log("🚀 Agricultural GPU Accelerator initialized", {
-        backend: tf.getBackend(),
-        numTensors: tf.memory().numTensors,
-        numDataBuffers: tf.memory().numDataBuffers,
+        backend: this.tf.getBackend(),
+        numTensors: this.tf.memory().numTensors,
+        numDataBuffers: this.tf.memory().numDataBuffers,
       });
     } catch (error) {
       console.warn(
         "⚠️ GPU acceleration unavailable, falling back to CPU",
         error,
       );
-      await tf.setBackend("cpu");
+      if (this.tf) {
+        await this.tf.setBackend("cpu");
+      }
       this.backend = "cpu";
       this.initialized = true;
     }
@@ -53,14 +59,20 @@ export class AgriculturalGPUAccelerator {
       await this.initialize();
     }
 
-    return tf.tidy(() => {
+    if (!this.tf) {
+      throw new Error("TensorFlow not initialized");
+    }
+
+    return this.tf.tidy(() => {
       // Convert to tensor
-      const inputTensor = tf.tensor2d(data);
+      const inputTensor = this.tf!.tensor2d(data);
 
       // GPU-accelerated operations
-      const normalized = inputTensor.div(tf.scalar(255));
-      const enhanced = normalized.mul(tf.scalar(1.2)).sub(tf.scalar(0.1));
-      const clipped = enhanced.clipByValue(0, 1).mul(tf.scalar(255));
+      const normalized = inputTensor.div(this.tf!.scalar(255));
+      const enhanced = normalized
+        .mul(this.tf!.scalar(1.2))
+        .sub(this.tf!.scalar(0.1));
+      const clipped = enhanced.clipByValue(0, 1).mul(this.tf!.scalar(255));
 
       // Convert back to array
       return clipped.arraySync() as number[][];
@@ -78,11 +90,15 @@ export class AgriculturalGPUAccelerator {
       await this.initialize();
     }
 
+    if (!this.tf) {
+      throw new Error("TensorFlow not initialized");
+    }
+
     const results: number[][][][] = [];
 
     for (const batch of batches) {
-      const result = tf.tidy(() => {
-        const tensor = tf.tensor3d(batch);
+      const result = this.tf.tidy(() => {
+        const tensor = this.tf!.tensor3d(batch);
         const processed = operation(tensor);
         return processed.arraySync() as number[][][];
       });
@@ -96,7 +112,10 @@ export class AgriculturalGPUAccelerator {
    * Get GPU memory usage statistics
    */
   getMemoryStats() {
-    const memory = tf.memory();
+    if (!this.tf) {
+      throw new Error("TensorFlow not initialized");
+    }
+    const memory = this.tf.memory();
     return {
       numTensors: memory.numTensors,
       numDataBuffers: memory.numDataBuffers,
@@ -109,8 +128,11 @@ export class AgriculturalGPUAccelerator {
    * Clean up GPU resources
    */
   async dispose(): Promise<void> {
-    tf.disposeVariables();
+    if (this.tf) {
+      this.tf.disposeVariables();
+    }
     this.initialized = false;
+    this.tf = null;
   }
 
   /**
@@ -124,7 +146,10 @@ export class AgriculturalGPUAccelerator {
    * Get current backend
    */
   getBackend(): string {
-    return tf.getBackend();
+    if (!this.tf) {
+      throw new Error("TensorFlow not initialized");
+    }
+    return this.tf.getBackend();
   }
 }
 

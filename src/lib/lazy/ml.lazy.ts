@@ -63,7 +63,7 @@ let tfInitialized = false;
  * Lazy load the TensorFlow module
  * Only imports the module on first use
  */
-async function loadTensorFlow(): Promise<typeof tf> {
+export async function loadTensorFlow(): Promise<typeof tf> {
   if (!tfPromise) {
     tfPromise = import("@tensorflow/tfjs").then(async (module) => {
       // Initialize TensorFlow backend
@@ -80,7 +80,7 @@ async function loadTensorFlow(): Promise<typeof tf> {
 /**
  * Load TensorFlow with GPU support (server-side only)
  */
-async function loadTensorFlowGPU(): Promise<typeof tf> {
+export async function loadTensorFlowGPU(): Promise<typeof tf> {
   if (typeof window !== "undefined") {
     // Use WebGL backend in browser
     return loadTensorFlow();
@@ -122,7 +122,7 @@ async function loadTensorFlowGPU(): Promise<typeof tf> {
  * ```
  */
 export async function predictCropYield(
-  input: YieldPredictionInput
+  input: YieldPredictionInput,
 ): Promise<YieldPredictionResult> {
   const tf = await loadTensorFlowGPU();
 
@@ -157,7 +157,7 @@ export async function predictCropYield(
  * ```
  */
 export async function classifyCropDisease(
-  imageData: Buffer | ImageData
+  imageData: Buffer | ImageData,
 ): Promise<ImageClassificationResult> {
   const tf = await loadTensorFlowGPU();
 
@@ -181,9 +181,7 @@ export async function classifyCropDisease(
  * const pests = await detectPests(imageBuffer);
  * ```
  */
-export async function detectPests(
-  imageData: Buffer | ImageData
-): Promise<
+export async function detectPests(imageData: Buffer | ImageData): Promise<
   Array<{
     pest: string;
     confidence: number;
@@ -226,7 +224,7 @@ export async function predictOptimalPlantingDate(input: {
  * Analyze soil composition from image
  */
 export async function analyzeSoilFromImage(
-  imageData: Buffer | ImageData
+  imageData: Buffer | ImageData,
 ): Promise<{
   soilType: string;
   pH: number;
@@ -372,7 +370,7 @@ function getTimingFactor(plantingDate: Date): number {
 
 function generateRecommendations(
   input: YieldPredictionInput,
-  expectedYield: number
+  expectedYield: number,
 ): string[] {
   const recommendations: string[] = [];
 

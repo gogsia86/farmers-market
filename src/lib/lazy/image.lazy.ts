@@ -49,7 +49,7 @@ let sharpPromise: Promise<typeof import("sharp")> | null = null;
  * Lazy load the Sharp module
  * Only imports the module on first use
  */
-async function loadSharp() {
+export async function loadSharp() {
   if (!sharpPromise) {
     sharpPromise = import("sharp");
   }
@@ -76,7 +76,7 @@ async function loadSharp() {
  */
 export async function processImage(
   input: Buffer | string,
-  options: ImageProcessingOptions = {}
+  options: ImageProcessingOptions = {},
 ): Promise<ImageOptimizationResult> {
   const sharp = await loadSharp();
 
@@ -139,7 +139,7 @@ export async function generateResponsiveImages(
     sizes: number[];
     format?: "jpeg" | "png" | "webp" | "avif";
     quality?: number;
-  }
+  },
 ): Promise<ImageOptimizationResult[]> {
   const { sizes, format = "webp", quality = 80 } = options;
 
@@ -150,8 +150,8 @@ export async function generateResponsiveImages(
         format,
         quality,
         fit: "inside",
-      })
-    )
+      }),
+    ),
   );
 
   return results;
@@ -171,7 +171,7 @@ export async function generateResponsiveImages(
  */
 export async function createThumbnail(
   input: Buffer | string,
-  options: ThumbnailOptions
+  options: ThumbnailOptions,
 ): Promise<Buffer> {
   const sharp = await loadSharp();
 
@@ -196,9 +196,7 @@ export async function createThumbnail(
  * console.log(metadata.width, metadata.height, metadata.format);
  * ```
  */
-export async function getImageMetadata(
-  input: Buffer | string
-): Promise<{
+export async function getImageMetadata(input: Buffer | string): Promise<{
   width: number;
   height: number;
   format: string;
@@ -229,7 +227,7 @@ export async function compressImage(
   options: {
     format?: "jpeg" | "png" | "webp" | "avif";
     quality?: number;
-  } = {}
+  } = {},
 ): Promise<Buffer> {
   const { format = "webp", quality = 75 } = options;
 
@@ -328,7 +326,7 @@ export async function processFarmImage(input: Buffer | string): Promise<{
  */
 export async function batchProcessImages(
   images: (Buffer | string)[],
-  options: ImageProcessingOptions = {}
+  options: ImageProcessingOptions = {},
 ): Promise<ImageOptimizationResult[]> {
   return await Promise.all(images.map((img) => processImage(img, options)));
 }
@@ -341,7 +339,7 @@ export async function batchProcessImages(
  * Validate image file before processing
  */
 export async function validateImage(
-  input: Buffer | string
+  input: Buffer | string,
 ): Promise<{ valid: boolean; error?: string; metadata?: any }> {
   try {
     const metadata = await getImageMetadata(input);
@@ -377,7 +375,7 @@ export async function validateImage(
  */
 export async function imageToBase64(
   input: Buffer | string,
-  options: ImageProcessingOptions = {}
+  options: ImageProcessingOptions = {},
 ): Promise<string> {
   const result = await processImage(input, options);
   const base64 = result.buffer.toString("base64");
