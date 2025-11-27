@@ -85,7 +85,7 @@ export class DivineMonitoringBot {
     };
 
     // Initialize components
-    this.executor = createWorkflowExecutor(this.config.baseUrl);
+    this.executor = createWorkflowExecutor();
     this.reporter = createReporter(
       this.config.storage.location,
       this.config.notifications,
@@ -271,7 +271,7 @@ export class DivineMonitoringBot {
 
     // Reinitialize components if needed
     if (updates.baseUrl) {
-      this.executor = createWorkflowExecutor(this.config.baseUrl);
+      this.executor = createWorkflowExecutor();
     }
 
     if (updates.storage || updates.notifications) {

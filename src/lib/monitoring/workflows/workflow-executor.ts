@@ -33,11 +33,9 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
   private browser: Browser | null = null;
   private context: BrowserContext | null = null;
   private workflows = new Map<string, WorkflowConfig>();
-  // Base URL stored for future extension (e.g., health checks, API calls)
-  private _baseUrl: string;
 
-  constructor(baseUrl: string) {
-    this._baseUrl = baseUrl;
+  constructor() {
+    // Initialization logic can be added here if needed
   }
 
   /**
@@ -644,8 +642,6 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
 // EXPORT DEFAULT INSTANCE
 // ============================================================================
 
-export function createWorkflowExecutor(
-  baseUrl: string,
-): DivinedWorkflowExecutor {
-  return new DivinedWorkflowExecutor(baseUrl);
+export function createWorkflowExecutor(): DivinedWorkflowExecutor {
+  return new DivinedWorkflowExecutor();
 }
