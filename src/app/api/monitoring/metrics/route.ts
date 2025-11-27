@@ -241,35 +241,41 @@ export async function GET(
             existing.executionCount;
           existing.minDuration = Math.min(existing.minDuration, duration);
           existing.maxDuration = Math.max(existing.maxDuration, duration);
-          existing.lastExecution = execution.startedAt;
-          existing.lastStatus = execution.status;
 
           workflowMap.set(name, existing);
         });
 
         // Calculate success rates for each workflow
-        const workflows = Array.from(workflowMap.values()).map((w) => ({
-          ...w,
+        const workflows: WorkflowMetrics[] = Array.from(
+          workflowMap.values(),
+        ).map((w) => ({
+          workflowName: w.workflowName,
+          executionCount: w.executionCount,
+          successCount: w.successCount,
+          failureCount: w.failureCount,
           successRate:
             w.executionCount > 0
               ? (w.successCount / w.executionCount) * 100
               : 0,
+          averageDuration: w.averageDuration,
           minDuration: w.minDuration === Infinity ? 0 : w.minDuration,
+          maxDuration: w.maxDuration,
         }));
 
         // Fetch system health
-        const healthChecks = await database.systemHealthCheck.findMany({
-          {
-            orderBy: {
-              checkedAt: "desc",
-            },
+        const latestHealthCheck = await database.systemHealthCheck.findFirst({
+          orderBy: {
+            checkedAt: "desc",
           },
-        );
+        });
 
         const systemMetrics: SystemMetrics = {
-          healthStatus: latestHealthCheck?.status || "unknown",
-          lastHealthCheck: latestHealthCheck?.checked_at,
-          uptime: latestHealthCheck?.uptime_seconds || 0,
+          healthStatus: (latestHealthCheck?.status || "unknown") as
+            | "healthy"
+            | "degraded"
+            | "unhealthy",
+          lastHealthCheck: latestHealthCheck?.checkedAt,
+          uptime: 0, // uptime not in schema
           activeAlerts: 0, // Will be populated from alerts engine
           criticalAlerts: 0,
         };
@@ -280,8 +286,8 @@ export async function GET(
           { count: number; successes: number }
         >();
 
-        executions.forEach((execution) => {
-          const hour = new Date(execution.started_at).getHours();
+        executions.forEach((execution: any) => {
+          const hour = new Date(execution.startedAt).getHours();
           const existing = hourlyMap.get(hour) || { count: 0, successes: 0 };
           existing.count++;
           if (execution.status === "success") {
@@ -307,9 +313,9 @@ export async function GET(
             (endDate.getTime() - startDate.getTime()),
         );
 
-        const previousExecutions = await database.workflow_executions.findMany({
+        const previousExecutions = await database.workflowExecution.findMany({
           where: {
-            started_at: {
+            startedAt: {
               gte: previousPeriodStart,
               lt: startDate,
             },
@@ -318,7 +324,8 @@ export async function GET(
 
         const previousSuccessRate =
           previousExecutions.length > 0
-            ? (previousExecutions.filter((e) => e.status === "success").length /
+            ? (previousExecutions.filter((e: any) => e.status === "success")
+                .length /
                 previousExecutions.length) *
               100
             : 0;
@@ -326,7 +333,7 @@ export async function GET(
         const previousAvgDuration =
           previousExecutions.length > 0
             ? previousExecutions.reduce(
-                (sum, e) => sum + (e.duration_ms || 0),
+                (sum: any, e: any) => sum + (e.durationMs || 0),
                 0,
               ) / previousExecutions.length
             : 0;
@@ -352,15 +359,15 @@ export async function GET(
         };
 
         // Fetch alert metrics (from notification logs)
-        const recentAlerts = await database.notification_logs.findMany({
+        const recentAlerts = await database.notificationLog.findMany({
           where: {
-            sent_at: {
+            sentAt: {
               gte: startDate,
               lte: endDate,
             },
           },
           orderBy: {
-            sent_at: "desc",
+            sentAt: "desc",
           },
           take: 10,
         });
@@ -368,22 +375,24 @@ export async function GET(
         const alertMetrics: AlertMetrics = {
           total: recentAlerts.length,
           bySeverity: {
-            info: recentAlerts.filter((a) => a.notification_type === "info")
+            info: recentAlerts.filter((a: any) => a.notificationType === "info")
               .length,
             warning: recentAlerts.filter(
-              (a) => a.notification_type === "warning",
+              (a: any) => a.notificationType === "warning",
             ).length,
-            error: recentAlerts.filter((a) => a.notification_type === "error")
-              .length,
+            error: recentAlerts.filter(
+              (a: any) => a.notificationType === "error",
+            ).length,
             critical: recentAlerts.filter(
-              (a) => a.notification_type === "critical",
+              (a: any) => a.notificationType === "critical",
             ).length,
           },
-          activeCount: recentAlerts.filter((a) => !a.acknowledged_at).length,
-          recentAlerts: recentAlerts.slice(0, 5).map((a) => ({
-            severity: a.notification_type || "info",
+          activeCount: recentAlerts.filter((a: any) => a.status === "PENDING")
+            .length,
+          recentAlerts: recentAlerts.slice(0, 5).map((a: any) => ({
+            severity: a.notificationType || "info",
             message: a.message || "",
-            timestamp: a.sent_at,
+            timestamp: a.sentAt,
           })),
         };
 

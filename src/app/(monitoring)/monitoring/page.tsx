@@ -336,7 +336,13 @@ export default async function MonitoringDashboardPage() {
         {/* System Health Widget */}
         <Suspense fallback={<DashboardSkeleton />}>
           <SystemHealthWidget
-            healthChecks={data.recentHealthChecks}
+            healthChecks={data.recentHealthChecks.map((hc) => ({
+              id: hc.id,
+              healthy: hc.status === "HEALTHY" || hc.status === "SUCCESS",
+              checkedAt: hc.checkedAt,
+              responseTime: hc.responseTimeMs,
+              details: hc.details,
+            }))}
             systemHealthy={data.overview.systemHealthy}
           />
         </Suspense>
@@ -344,7 +350,15 @@ export default async function MonitoringDashboardPage() {
         {/* Workflow Execution Widget */}
         <Suspense fallback={<DashboardSkeleton />}>
           <WorkflowExecutionWidget
-            executions={data.recentExecutions}
+            executions={data.recentExecutions.map((exec) => ({
+              id: exec.id,
+              workflowId: exec.workflowName,
+              status: exec.status,
+              startedAt: exec.startedAt,
+              completedAt: exec.completedAt,
+              durationMs: exec.durationMs,
+              errorMessage: exec.errorMessage,
+            }))}
             stats={{
               total: data.overview.totalExecutions,
               successful: data.overview.successfulExecutions,
@@ -357,7 +371,17 @@ export default async function MonitoringDashboardPage() {
         {/* Alerts Widget */}
         <Suspense fallback={<DashboardSkeleton />}>
           <AlertsWidget
-            notifications={data.recentNotifications}
+            notifications={data.recentNotifications.map((notif) => ({
+              id: notif.id,
+              type: notif.notificationType,
+              priority:
+                notif.status === "FAILED" || notif.status === "ERROR"
+                  ? "HIGH"
+                  : "MEDIUM",
+              message: notif.message,
+              sentAt: notif.sentAt,
+              successful: notif.status === "SUCCESS",
+            }))}
             alertCount={data.overview.alertCount}
           />
         </Suspense>
@@ -366,7 +390,13 @@ export default async function MonitoringDashboardPage() {
         <Suspense fallback={<DashboardSkeleton />}>
           <PerformanceMetricsWidget
             avgResponseTime={data.overview.avgResponseTime}
-            executions={data.recentExecutions}
+            executions={data.recentExecutions.map((exec) => ({
+              id: exec.id,
+              startedAt: exec.startedAt,
+              completedAt: exec.completedAt,
+              durationMs: exec.durationMs,
+              status: exec.status,
+            }))}
           />
         </Suspense>
       </div>

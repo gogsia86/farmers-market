@@ -458,7 +458,9 @@ export default async function FarmerAnalyticsPage() {
               <div className="flex justify-between">
                 <dt className="text-sm text-gray-600">Most Popular Product</dt>
                 <dd className="text-sm font-medium text-gray-900">
-                  {topProducts.length > 0 ? topProducts[0].name : "N/A"}
+                  {topProducts.length > 0
+                    ? (topProducts[0]?.name ?? "N/A")
+                    : "N/A"}
                 </dd>
               </div>
               <div className="flex justify-between">

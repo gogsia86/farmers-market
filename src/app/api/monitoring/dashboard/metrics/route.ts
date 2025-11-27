@@ -231,11 +231,7 @@ export async function GET(
 ): Promise<NextResponse<MetricsResponse>> {
   try {
     // Parse query parameters
-    const {
-      period,
-      interval: requestedInterval,
-      metric,
-    } = parseQueryParams(request);
+    const { period, interval: requestedInterval } = parseQueryParams(request);
 
     // Calculate time range
     const { start, end } = getTimeRange(period);
