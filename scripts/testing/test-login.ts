@@ -1,0 +1,324 @@
+#!/usr/bin/env tsx
+/**
+ * 🧪 Login Workflow Test Script
+ * Tests the user login workflow in isolation
+ */
+
+import { chromium, type Browser, type Page } from "playwright";
+import chalk from "chalk";
+
+const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
+
+interface TestResult {
+  success: boolean;
+  duration: number;
+  logs: string[];
+  error?: string;
+  screenshot?: string;
+}
+
+async function testLogin(): Promise<TestResult> {
+  const startTime = Date.now();
+  const logs: string[] = [];
+  let browser: Browser | null = null;
+  let page: Page | null = null;
+
+  try {
+    // Launch browser
+    logs.push("Launching browser...");
+    browser = await chromium.launch({
+      headless: false, // Set to true for CI
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
+
+    const context = await browser.newContext({
+      viewport: { width: 1920, height: 1080 },
+    });
+
+    page = await context.newPage();
+
+    // Capture console messages
+    const consoleMessages: string[] = [];
+    page.on("console", (msg) => {
+      consoleMessages.push(`[${msg.type()}] ${msg.text()}`);
+    });
+
+    // Step 1: First, create a test user via registration
+    logs.push("Step 1: Creating test user via registration...");
+    await page.goto(`${BASE_URL}/signup`);
+    await page.waitForLoadState("networkidle");
+
+    const timestamp = Date.now();
+    const email = `test-login-${timestamp}@farmersmarket.test`;
+    const password = "TestPassword123!";
+    const name = `Login Test User ${timestamp}`;
+
+    // Fill registration form
+    await page.fill('input[name="name"]', name);
+    await page.fill('input[name="email"]', email);
+    await page.fill('input[name="password"]', password);
+    await page.fill('input[name="confirmPassword"]', password);
+
+    // Select user type
+    const userTypeLabel = page
+      .locator('label:has(input[value="CONSUMER"])')
+      .first();
+    await userTypeLabel.click();
+
+    // Submit registration
+    await page.locator('button[type="submit"]').first().click();
+    logs.push(`✓ Created test user: ${email}`);
+
+    // Wait a moment for registration to process
+    await page.waitForTimeout(2000);
+
+    // Step 2: Navigate to login page
+    logs.push("Step 2: Navigating to /login...");
+    await page.goto(`${BASE_URL}/login`);
+    await page.waitForLoadState("networkidle");
+    logs.push(`✓ Loaded: ${page.url()}`);
+
+    // Step 3: Fill login form
+    logs.push("Step 3: Filling login form...");
+
+    // Check if form fields exist
+    const emailField = page.locator('input[name="email"]').first();
+    const passwordField = page.locator('input[name="password"]').first();
+
+    const emailVisible = await emailField.isVisible({ timeout: 5000 });
+    if (!emailVisible) {
+      throw new Error("Email field not found on login page");
+    }
+
+    await emailField.fill(email);
+    logs.push(`✓ Filled email: ${email}`);
+
+    await passwordField.fill(password);
+    logs.push(`✓ Filled password: ${"*".repeat(password.length)}`);
+
+    // Wait a moment for form validation
+    await page.waitForTimeout(500);
+
+    // Step 4: Submit login form
+    logs.push("Step 4: Submitting login form...");
+
+    // Check if submit button is enabled
+    const submitButton = page.locator('button[type="submit"]').first();
+    const isDisabled = await submitButton.isDisabled();
+    if (isDisabled) {
+      logs.push(
+        "⚠ Submit button is disabled - checking for validation errors"
+      );
+
+      // Check for any validation errors
+      const errorMessages = await page
+        .locator('[class*="text-red"]')
+        .allTextContents();
+      if (errorMessages.length > 0) {
+        logs.push(`Validation errors found: ${errorMessages.join(", ")}`);
+      }
+    }
+
+    await submitButton.click();
+    logs.push("✓ Clicked submit button");
+
+    // Wait for network to settle
+    await page.waitForLoadState("networkidle", { timeout: 5000 }).catch(() => {
+      logs.push("⚠ Network did not become idle (may be normal)");
+    });
+
+    // Step 5: Check for success indicators
+    logs.push("Step 5: Checking for success indicators...");
+
+    let successFound = false;
+    let successMessage = "";
+
+    // Try to find success message
+    const successSelectors = [
+      '[data-testid="login-success"]',
+      '[role="alert"]:has-text("success")',
+      "text=/login.*success/i",
+      "text=/welcome back/i",
+      "text=/welcome/i",
+    ];
+
+    for (const selector of successSelectors) {
+      try {
+        const element = page.locator(selector).first();
+        await element.waitFor({ state: "visible", timeout: 2000 });
+        successMessage = (await element.textContent()) || selector;
+        successFound = true;
+        logs.push(`✓ Success indicator found: ${successMessage}`);
+        break;
+      } catch (e) {
+        // Continue checking
+      }
+    }
+
+    // Check for redirect to authenticated page
+    if (!successFound) {
+      logs.push(
+        "No success message found, checking for redirect to authenticated page..."
+      );
+      try {
+        await page.waitForURL(/\/(dashboard|farms|profile|home)/, {
+          timeout: 30000,
+        });
+        successFound = true;
+        logs.push(`✓ Redirected to authenticated page: ${page.url()}`);
+      } catch (e) {
+        logs.push("⚠ No redirect to authenticated page detected within 30s");
+      }
+    }
+
+    // Check for user-specific elements (indicates logged in)
+    if (!successFound) {
+      logs.push("Checking for user-specific elements...");
+      const userIndicators = [
+        page.locator('[data-testid="user-menu"]').first(),
+        page.locator("text=/logout|sign out/i").first(),
+        page.locator('[data-testid="user-profile"]').first(),
+        page.locator("text=/my account|account/i").first(),
+      ];
+
+      for (const indicator of userIndicators) {
+        try {
+          await indicator.waitFor({ state: "visible", timeout: 2000 });
+          successFound = true;
+          const text = await indicator.textContent();
+          logs.push(`✓ User element found: ${text}`);
+          break;
+        } catch (e) {
+          // Continue checking
+        }
+      }
+    }
+
+    // Check for errors
+    const errorSelectors = [
+      '[role="alert"]:has-text("error")',
+      '[data-testid="error-message"]',
+      "text=/error|failed|invalid|incorrect/i",
+      "text=/credentials/i",
+    ];
+
+    let errorFound = false;
+    let errorMessage = "";
+
+    for (const selector of errorSelectors) {
+      try {
+        const element = page.locator(selector).first();
+        await element.waitFor({ state: "visible", timeout: 1000 });
+        errorMessage = (await element.textContent()) || selector;
+        errorFound = true;
+        logs.push(`✗ Error found: ${errorMessage}`);
+        break;
+      } catch (e) {
+        // No error
+      }
+    }
+
+    // Final status
+    const currentUrl = page.url();
+    logs.push(`Final URL: ${currentUrl}`);
+    logs.push(
+      `Console messages (${consoleMessages.length} total): ${consoleMessages.slice(-3).join("; ")}`
+    );
+
+    if (errorFound) {
+      throw new Error(`Login failed with error: ${errorMessage}`);
+    }
+
+    if (!successFound) {
+      // Take screenshot
+      await page.screenshot({
+        path: `./test-results/login-failed-${timestamp}.png`,
+        fullPage: true,
+      });
+      logs.push("Screenshot saved to test-results/");
+
+      throw new Error(
+        `No clear success indicator found. URL: ${currentUrl}. Check screenshot.`
+      );
+    }
+
+    const duration = Date.now() - startTime;
+    logs.push(`✓ Login test completed in ${duration}ms`);
+
+    return {
+      success: true,
+      duration,
+      logs,
+    };
+  } catch (error) {
+    const duration = Date.now() - startTime;
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logs.push(`✗ Test failed: ${errorMessage}`);
+
+    // Try to take screenshot
+    if (page) {
+      try {
+        await page.screenshot({
+          path: `./test-results/login-error-${Date.now()}.png`,
+          fullPage: true,
+        });
+        logs.push("Error screenshot saved to test-results/");
+      } catch (e) {
+        logs.push("Could not save error screenshot");
+      }
+    }
+
+    return {
+      success: false,
+      duration,
+      logs,
+      error: errorMessage,
+    };
+  } finally {
+    // Cleanup
+    if (browser) {
+      await browser.close();
+      logs.push("Browser closed");
+    }
+  }
+}
+
+// Main execution
+async function main() {
+  console.log(chalk.cyan.bold("\n🧪 Login Workflow Test\n"));
+  console.log(chalk.gray(`Base URL: ${BASE_URL}\n`));
+
+  const result = await testLogin();
+
+  console.log(chalk.bold("\n📋 Test Logs:\n"));
+  result.logs.forEach((log) => {
+    if (log.startsWith("✓")) {
+      console.log(chalk.green(log));
+    } else if (log.startsWith("✗")) {
+      console.log(chalk.red(log));
+    } else if (log.startsWith("⚠")) {
+      console.log(chalk.yellow(log));
+    } else {
+      console.log(chalk.gray(log));
+    }
+  });
+
+  console.log(chalk.bold("\n📊 Test Results:\n"));
+  console.log(chalk.gray(`Duration: ${result.duration}ms`));
+  console.log(
+    result.success
+      ? chalk.green.bold("✅ TEST PASSED")
+      : chalk.red.bold("❌ TEST FAILED")
+  );
+
+  if (result.error) {
+    console.log(chalk.red(`\nError: ${result.error}`));
+  }
+
+  process.exit(result.success ? 0 : 1);
+}
+
+main().catch((error) => {
+  console.error(chalk.red.bold("\n💥 Unhandled error:\n"), error);
+  process.exit(1);
+});

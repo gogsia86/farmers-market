@@ -112,7 +112,7 @@ function parsePeriod(period: string): { startDate: Date; endDate: Date } {
   }
 
   const [, amount, unit] = match;
-  const value = parseInt(amount, 10);
+  const value = parseInt(amount!, 10);
 
   switch (unit) {
     case "h": // hours

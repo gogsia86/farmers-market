@@ -98,7 +98,7 @@ export class AgriculturalGPUAccelerator {
 
     for (const batch of batches) {
       const result = this.tf.tidy(() => {
-        const tensor = this.tf!.tensor3d(batch as number[][][]);
+        const tensor = this.tf!.tensor3d(batch as unknown as number[][][]);
         const processed = operation(tensor);
         return processed.arraySync() as number[][][];
       });
