@@ -84,6 +84,37 @@ const nextConfig = {
           cacheGroups: {
             default: false,
             vendors: false,
+            // ============================================
+            // PHASE 6 DAY 4: ROUTE-BASED CODE SPLITTING
+            // ============================================
+            // Admin routes bundle (80-100 KB)
+            admin: {
+              name: "admin",
+              test: /[\\/]app[\\/]\(admin\)/,
+              chunks: "all",
+              priority: 35,
+              reuseExistingChunk: true,
+              enforce: true,
+            },
+            // Farmer dashboard bundle (70-90 KB)
+            farmer: {
+              name: "farmer",
+              test: /[\\/]app[\\/]\(farmer\)/,
+              chunks: "all",
+              priority: 35,
+              reuseExistingChunk: true,
+              enforce: true,
+            },
+            // Monitoring dashboard bundle (40-60 KB)
+            monitoring: {
+              name: "monitoring",
+              test: /[\\/]app[\\/]\(monitoring\)|[\\/]lib[\\/]monitoring/,
+              chunks: "all",
+              priority: 36,
+              reuseExistingChunk: true,
+              enforce: true,
+            },
+            // ============================================
             // Framework chunk (React, Next.js core)
             framework: {
               name: "framework",
