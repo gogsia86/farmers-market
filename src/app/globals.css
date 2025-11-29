@@ -23,6 +23,47 @@
     --input: 25 18% 18%;
     --ring: 0 54% 47%;
     --radius: 0.75rem;
+
+    /* 🎨 Wireframe Design System Colors */
+    /* Primary Agricultural Colors */
+    --farm-green: 145 55% 25%;
+    --farm-green-rgb: 29 90 39;
+    --harvest-orange: 27 81% 52%;
+    --harvest-orange-rgb: 230 126 34;
+    --earth-brown: 16 25% 38%;
+    --earth-brown-rgb: 121 85 72;
+
+    /* Functional Colors */
+    --success: 142 71% 45%;
+    --success-rgb: 56 161 105;
+    --warning: 36 77% 49%;
+    --warning-rgb: 214 158 46;
+    --error: 4 90% 58%;
+    --error-rgb: 229 62 62;
+    --info: 199 89% 48%;
+    --info-rgb: 49 130 206;
+
+    /* Neutral Palette */
+    --gray-50: 210 20% 98%;
+    --gray-100: 220 14% 96%;
+    --gray-200: 214 32% 91%;
+    --gray-300: 213 27% 84%;
+    --gray-600: 215 16% 47%;
+    --gray-900: 222 47% 11%;
+
+    /* Status Colors - Order States */
+    --status-pending: 48 96% 89%;
+    --status-pending-text: 45 86% 45%;
+    --status-confirmed: 214 95% 93%;
+    --status-confirmed-text: 217 91% 60%;
+    --status-preparing: 276 73% 91%;
+    --status-preparing-text: 271 91% 65%;
+    --status-ready: 142 76% 91%;
+    --status-ready-text: 142 71% 45%;
+    --status-completed: 220 13% 95%;
+    --status-completed-text: 215 16% 47%;
+    --status-cancelled: 0 93% 94%;
+    --status-cancelled-text: 0 84% 60%;
   }
 
   .light {
@@ -42,6 +83,11 @@
     --border: 32 20% 85%;
     --input: 32 20% 90%;
     --ring: 0 54% 47%;
+
+    /* Light mode overrides for wireframe colors */
+    --farm-green: 145 55% 25%;
+    --harvest-orange: 27 81% 52%;
+    --earth-brown: 16 25% 38%;
   }
 
   * {
@@ -89,6 +135,91 @@
 }
 
 @layer components {
+  /* 🎨 Wireframe Component System */
+
+  /* Farm & Product Cards */
+  .farm-card {
+    @apply bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 p-4 border border-gray-200;
+  }
+
+  .product-card {
+    @apply bg-white border-2 border-gray-200 rounded-lg overflow-hidden hover:border-green-600 transition-colors duration-300;
+  }
+
+  /* Status Badges */
+  .badge {
+    @apply px-3 py-1 rounded-full text-sm font-medium inline-flex items-center;
+  }
+
+  .badge-pending {
+    @apply badge bg-yellow-100 text-yellow-800;
+  }
+
+  .badge-confirmed {
+    @apply badge bg-blue-100 text-blue-800;
+  }
+
+  .badge-preparing {
+    @apply badge bg-purple-100 text-purple-800;
+  }
+
+  .badge-ready {
+    @apply badge bg-green-100 text-green-800;
+  }
+
+  .badge-completed {
+    @apply badge bg-gray-100 text-gray-800;
+  }
+
+  .badge-cancelled {
+    @apply badge bg-red-100 text-red-800;
+  }
+
+  /* Input Fields */
+  .input-field {
+    @apply w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200;
+  }
+
+  .input-field:focus {
+    @apply outline-none;
+  }
+
+  /* Stat Cards */
+  .stat-card {
+    @apply border-2 rounded-lg p-6 hover:shadow-lg transition-shadow duration-300 cursor-pointer;
+  }
+
+  .stat-card-blue {
+    @apply stat-card bg-blue-50 border-blue-200 text-blue-700;
+  }
+
+  .stat-card-green {
+    @apply stat-card bg-green-50 border-green-200 text-green-700;
+  }
+
+  .stat-card-red {
+    @apply stat-card bg-red-50 border-red-200 text-red-700;
+  }
+
+  .stat-card-yellow {
+    @apply stat-card bg-yellow-50 border-yellow-200 text-yellow-700;
+  }
+
+  /* Order Cards */
+  .order-card {
+    @apply border-2 border-gray-200 rounded-lg p-6 hover:border-green-500 transition-colors duration-300;
+  }
+
+  /* Quick Action Cards */
+  .action-card {
+    @apply bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-green-500 hover:shadow-lg transition-all duration-300 cursor-pointer;
+  }
+
+  /* Empty States */
+  .empty-state {
+    @apply text-center py-12 px-6;
+  }
+
   /* Fall Divine Button Styles */
   .btn {
     @apply inline-flex items-center justify-center rounded-xl px-5 py-2.5 text-sm font-semibold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed;
@@ -100,6 +231,19 @@
 
   .btn-secondary {
     @apply btn bg-gradient-to-br from-secondary-500 to-secondary-600 text-white hover:from-secondary-400 hover:to-secondary-500 focus:ring-secondary-500 shadow-glow-warm;
+  }
+
+  /* Wireframe Button Variants */
+  .btn-green {
+    @apply px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium;
+  }
+
+  .btn-outline {
+    @apply px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200 font-medium;
+  }
+
+  .btn-outline-green {
+    @apply px-6 py-3 border-2 border-green-600 text-green-600 rounded-lg hover:bg-green-50 transition-colors duration-200 font-medium;
   }
 
   .btn-agricultural {

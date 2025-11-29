@@ -381,6 +381,332 @@ export interface QuantumWorkflowOrchestrator {
 // EXPORT DEFAULT CONFIG
 // ============================================================================
 
+// ============================================================================
+// AI ANALYSIS TYPES
+// ============================================================================
+
+export interface AIAnalysisResult {
+  rootCause: string;
+  remediationSteps: string[];
+  preventionStrategy: string;
+  relatedIssues: string[];
+  confidence: number; // 0-100
+  aiModel: string;
+  timestamp: Date;
+  estimatedFixTime?: string;
+  severity?: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+}
+
+export interface FailureAnalysis extends AIAnalysisResult {
+  immediateFix: string[];
+  longTermSolutions: string[];
+  similarIncidents?: string[];
+  documentationLinks?: string[];
+}
+
+export interface FailureRiskPrediction {
+  workflowId: string;
+  riskScore: number; // 0-100
+  confidence: number; // 0-100
+  predictedTimeToFailure?: string;
+  contributingFactors: string[];
+  recommendations: string[];
+  mitigationSteps: string[];
+  timestamp: Date;
+}
+
+export interface FailurePrediction {
+  failureProbability: number;
+  confidence: number;
+  predictedTimeToFailure?: string;
+  contributingFactors: string[];
+  recommendation: string;
+  preventiveActions?: string[];
+}
+
+// ============================================================================
+// AGENT FRAMEWORK TYPES
+// ============================================================================
+
+export interface AgentConfig {
+  name: string;
+  role: "ANALYST" | "OPTIMIZER" | "AUDITOR" | "ADVISOR" | "HEALER";
+  systemMessage: string;
+  llmConfig: {
+    model: string;
+    provider: "openai" | "anthropic" | "azure";
+    temperature: number;
+    maxTokens?: number;
+  };
+  capabilities: string[];
+  agriculturalAwareness?: boolean;
+}
+
+export interface AgentMessage {
+  role: "system" | "user" | "assistant";
+  content: string;
+  timestamp?: Date;
+  metadata?: Record<string, any>;
+}
+
+export interface AgentResponse {
+  content: string;
+  confidence: number;
+  reasoning?: string;
+  suggestions?: string[];
+  metadata?: Record<string, any>;
+}
+
+export interface MultiAgentAnalysis {
+  consensus: string;
+  individualAnalyses: Array<{
+    agent: string;
+    analysis: string;
+    confidence: number;
+  }>;
+  conflictingOpinions?: string[];
+  finalRecommendation: string;
+  votingResults?: Record<string, number>;
+}
+
+// ============================================================================
+// TRACING TYPES
+// ============================================================================
+
+export interface TracingConfig {
+  enabled: boolean;
+  serviceName: string;
+  serviceVersion: string;
+  exporter: "console" | "otlp-http" | "otlp-grpc" | "azure-monitor";
+  endpoint?: string;
+  connectionString?: string;
+  samplingRate?: number;
+  attributes?: Record<string, string | number | boolean>;
+}
+
+export interface TraceContext {
+  traceId: string;
+  spanId: string;
+  parentSpanId?: string;
+  attributes: Record<string, any>;
+  events: TraceEvent[];
+  status: "OK" | "ERROR" | "UNSET";
+}
+
+export interface TraceEvent {
+  name: string;
+  timestamp: Date;
+  attributes?: Record<string, any>;
+}
+
+export interface SpanMetrics {
+  duration: number;
+  childSpans: number;
+  errors: number;
+  attributes: Record<string, any>;
+}
+
+// ============================================================================
+// SELF-HEALING TYPES
+// ============================================================================
+
+export interface RemediationStrategy {
+  id: string;
+  name: string;
+  description: string;
+  applicableTo: string[]; // error codes/types
+  execute: (context: HealingContext) => Promise<HealingResult>;
+  safetyCheck: (context: HealingContext) => boolean;
+  successRate: number;
+  estimatedDuration?: number;
+  requiresApproval?: boolean;
+}
+
+export interface HealingContext {
+  workflowResult: WorkflowResult;
+  aiAnalysis?: AIAnalysisResult;
+  historicalData?: WorkflowResult[];
+  systemState?: Record<string, any>;
+}
+
+export interface HealingResult {
+  healed: boolean;
+  strategyUsed?: string;
+  actions: string[];
+  duration: number;
+  reason?: string;
+  requiresManualIntervention: boolean;
+  followUpRecommendations?: string[];
+  verificationPassed?: boolean;
+}
+
+export interface HealingAttempt {
+  id: string;
+  timestamp: Date;
+  workflowId: string;
+  strategy: string;
+  result: HealingResult;
+  aiConfidence?: number;
+}
+
+// ============================================================================
+// ML PREDICTION TYPES
+// ============================================================================
+
+export interface PredictionModel {
+  id: string;
+  name: string;
+  version: string;
+  type: "LSTM" | "RANDOM_FOREST" | "XG_BOOST" | "NEURAL_NETWORK";
+  trainingDate: Date;
+  accuracy: number;
+  features: string[];
+  targetVariable: string;
+}
+
+export interface ModelTrainingData {
+  features: number[][];
+  labels: number[];
+  timestamps: Date[];
+  metadata?: Record<string, any>;
+}
+
+export interface PredictionResult {
+  prediction: number;
+  confidence: number;
+  timestamp: Date;
+  model: string;
+  features: Record<string, number>;
+  explanation?: string;
+}
+
+export interface AnomalyDetection {
+  isAnomaly: boolean;
+  anomalyScore: number;
+  expectedValue: number;
+  actualValue: number;
+  deviation: number;
+  context: string;
+  recommendations: string[];
+}
+
+// ============================================================================
+// PERFORMANCE OPTIMIZATION TYPES
+// ============================================================================
+
+export interface PerformanceOptimization {
+  id: string;
+  type: "TIMEOUT" | "CONCURRENCY" | "CACHING" | "QUERY" | "NETWORK";
+  description: string;
+  currentValue: any;
+  suggestedValue: any;
+  expectedImprovement: string;
+  confidence: number;
+  implementationDifficulty: "LOW" | "MEDIUM" | "HIGH";
+  priority: WorkflowPriority;
+}
+
+export interface PerformanceAnalysis {
+  workflowId: string;
+  averageDuration: number;
+  p50: number;
+  p95: number;
+  p99: number;
+  bottlenecks: string[];
+  optimizations: PerformanceOptimization[];
+  trend: "IMPROVING" | "STABLE" | "DEGRADING";
+  comparisonToPrevious: number; // percentage change
+}
+
+// ============================================================================
+// ENHANCED MONITORING REPORT
+// ============================================================================
+
+export interface EnhancedMonitoringReport extends MonitoringReport {
+  aiInsights?: {
+    executiveSummary: string;
+    keyFindings: string[];
+    criticalActions: string[];
+    predictedIssues: FailureRiskPrediction[];
+    performanceOptimizations: PerformanceOptimization[];
+  };
+  healing?: {
+    totalAttempts: number;
+    successfulHeals: number;
+    failedHeals: number;
+    averageHealTime: number;
+    savedDowntime: number;
+  };
+  mlPredictions?: {
+    nextHourRisk: number;
+    next6HourRisk: number;
+    next24HourRisk: number;
+    anomaliesDetected: AnomalyDetection[];
+  };
+  agentCollaboration?: {
+    totalAgentInteractions: number;
+    consensusRate: number;
+    topRecommendations: string[];
+  };
+}
+
+// ============================================================================
+// CONFIGURATION EXTENSIONS
+// ============================================================================
+
+export interface AIConfig {
+  enabled: boolean;
+  providers: {
+    openai?: {
+      apiKey: string;
+      model: string;
+      temperature?: number;
+    };
+    anthropic?: {
+      apiKey: string;
+      model: string;
+    };
+    azure?: {
+      apiKey: string;
+      endpoint: string;
+      deployment: string;
+    };
+  };
+  features: {
+    failureAnalysis: boolean;
+    predictiveMonitoring: boolean;
+    selfHealing: boolean;
+    agentOrchestration: boolean;
+    performanceOptimization: boolean;
+  };
+  agentFramework?: {
+    maxAgents: number;
+    collaborationMode: "SEQUENTIAL" | "PARALLEL" | "VOTING";
+    consensusThreshold?: number;
+  };
+}
+
+export interface EnhancedDivineBotConfig extends DivineBotConfig {
+  ai?: AIConfig;
+  tracing?: TracingConfig;
+  selfHealing?: {
+    enabled: boolean;
+    autoApprove: boolean;
+    maxAttemptsPerWorkflow: number;
+    strategies: RemediationStrategy[];
+  };
+  ml?: {
+    enabled: boolean;
+    modelPath: string;
+    trainingSchedule?: string;
+    features: string[];
+  };
+}
+
+// ============================================================================
+// EXPORT DEFAULT CONFIG
+// ============================================================================
+
 export const DEFAULT_WORKFLOW_TIMEOUT = 5 * 60 * 1000; // 5 minutes
 export const DEFAULT_STEP_TIMEOUT = 30 * 1000; // 30 seconds
 export const DEFAULT_MAX_RETRIES = 3;
@@ -388,3 +714,9 @@ export const DEFAULT_RETRY_DELAY = 5000; // 5 seconds
 export const DEFAULT_CONCURRENCY = 5;
 export const DEFAULT_RETENTION_DAYS = 30;
 export const DEFAULT_MAX_REPORTS = 1000;
+
+// AI/ML Defaults
+export const DEFAULT_AI_CONFIDENCE_THRESHOLD = 0.7;
+export const DEFAULT_PREDICTION_WINDOW = 6 * 60 * 60 * 1000; // 6 hours
+export const DEFAULT_ANOMALY_THRESHOLD = 2.5; // standard deviations
+export const DEFAULT_HEALING_TIMEOUT = 5 * 60 * 1000; // 5 minutes

@@ -10,9 +10,34 @@ import { database } from "@/lib/database";
 import type {
   CreateOrderRequest,
   UpdateOrderRequest,
-  CancelOrderRequest
+  CancelOrderRequest,
 } from "@/types";
-import { OrderStatus, PaymentStatus, FulfillmentMethod } from "@prisma/client";
+
+// Define Prisma enums locally to avoid import issues in tests
+enum OrderStatus {
+  PENDING = "PENDING",
+  CONFIRMED = "CONFIRMED",
+  PREPARING = "PREPARING",
+  READY = "READY",
+  FULFILLED = "FULFILLED",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED",
+}
+
+enum PaymentStatus {
+  PENDING = "PENDING",
+  PROCESSING = "PROCESSING",
+  PAID = "PAID",
+  FAILED = "FAILED",
+  REFUNDED = "REFUNDED",
+  PARTIALLY_REFUNDED = "PARTIALLY_REFUNDED",
+}
+
+enum FulfillmentMethod {
+  DELIVERY = "DELIVERY",
+  FARM_PICKUP = "FARM_PICKUP",
+  MARKET_PICKUP = "MARKET_PICKUP",
+}
 
 // Mock database
 jest.mock("@/lib/database", () => ({
@@ -36,6 +61,7 @@ jest.mock("@/lib/database", () => ({
       findUnique: jest.fn(),
     },
     orderItem: {
+      create: jest.fn(),
       createMany: jest.fn(),
     },
     fulfillment: {
@@ -101,7 +127,7 @@ describe("OrderService", () => {
     deliveryFee: 0,
     platformFee: 2.995,
     tax: 2.396,
-    totalAmount: 35.341,
+    total: 35.341,
     farmerAmount: 26.955,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -150,9 +176,11 @@ describe("OrderService", () => {
       (database.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
       (database.farm.findUnique as jest.Mock).mockResolvedValue(mockFarm);
       (database.product.findMany as jest.Mock).mockResolvedValue([mockProduct]);
-      (database.$transaction as jest.Mock).mockImplementation(async (callback) => {
-        return await callback(database);
-      });
+      (database.$transaction as jest.Mock).mockImplementation(
+        async (callback) => {
+          return await callback(database);
+        },
+      );
       (database.order.create as jest.Mock).mockResolvedValue(mockOrder);
 
       const result = await orderService.createOrder(validCreateRequest);
@@ -172,18 +200,18 @@ describe("OrderService", () => {
     it("should throw error when customer not found", async () => {
       (database.user.findUnique as jest.Mock).mockResolvedValue(null);
 
-      await expect(orderService.createOrder(validCreateRequest)).rejects.toThrow(
-        "Customer not found"
-      );
+      await expect(
+        orderService.createOrder(validCreateRequest),
+      ).rejects.toThrow("Customer not found");
     });
 
     it("should throw error when farm not found", async () => {
       (database.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
       (database.farm.findUnique as jest.Mock).mockResolvedValue(null);
 
-      await expect(orderService.createOrder(validCreateRequest)).rejects.toThrow(
-        "Farm not found"
-      );
+      await expect(
+        orderService.createOrder(validCreateRequest),
+      ).rejects.toThrow("Farm not found");
     });
 
     it("should throw error when product not found", async () => {
@@ -191,9 +219,9 @@ describe("OrderService", () => {
       (database.farm.findUnique as jest.Mock).mockResolvedValue(mockFarm);
       (database.product.findMany as jest.Mock).mockResolvedValue([]);
 
-      await expect(orderService.createOrder(validCreateRequest)).rejects.toThrow(
-        "Product not found"
-      );
+      await expect(
+        orderService.createOrder(validCreateRequest),
+      ).rejects.toThrow("Product not found");
     });
 
     it("should throw error when product is inactive", async () => {
@@ -203,9 +231,9 @@ describe("OrderService", () => {
         { ...mockProduct, status: "INACTIVE" },
       ]);
 
-      await expect(orderService.createOrder(validCreateRequest)).rejects.toThrow(
-        "Product is not available"
-      );
+      await expect(
+        orderService.createOrder(validCreateRequest),
+      ).rejects.toThrow("Product is not available");
     });
 
     it("should throw error when insufficient inventory", async () => {
@@ -215,9 +243,9 @@ describe("OrderService", () => {
         { ...mockProduct, quantityAvailable: 2 },
       ]);
 
-      await expect(orderService.createOrder(validCreateRequest)).rejects.toThrow(
-        "Insufficient inventory"
-      );
+      await expect(
+        orderService.createOrder(validCreateRequest),
+      ).rejects.toThrow("Insufficient inventory");
     });
 
     it("should require delivery address when method is DELIVERY", async () => {
@@ -231,7 +259,7 @@ describe("OrderService", () => {
       (database.farm.findUnique as jest.Mock).mockResolvedValue(mockFarm);
 
       await expect(orderService.createOrder(deliveryRequest)).rejects.toThrow(
-        "Delivery address required"
+        "Delivery address required",
       );
     });
 
@@ -239,9 +267,11 @@ describe("OrderService", () => {
       (database.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
       (database.farm.findUnique as jest.Mock).mockResolvedValue(mockFarm);
       (database.product.findMany as jest.Mock).mockResolvedValue([mockProduct]);
-      (database.$transaction as jest.Mock).mockImplementation(async (callback) => {
-        return await callback(database);
-      });
+      (database.$transaction as jest.Mock).mockImplementation(
+        async (callback) => {
+          return await callback(database);
+        },
+      );
       (database.order.create as jest.Mock).mockResolvedValue(mockOrder);
 
       await orderService.createOrder(validCreateRequest);
@@ -263,7 +293,7 @@ describe("OrderService", () => {
       };
 
       await expect(orderService.createOrder(invalidRequest)).rejects.toThrow(
-        "Order must contain at least one item"
+        "Order must contain at least one item",
       );
     });
 
@@ -274,7 +304,7 @@ describe("OrderService", () => {
       };
 
       await expect(orderService.createOrder(invalidRequest)).rejects.toThrow(
-        "Quantity must be positive"
+        "Quantity must be positive",
       );
     });
   });
@@ -294,7 +324,7 @@ describe("OrderService", () => {
 
       const result = await orderService.updateOrder(
         mockOrderId,
-        validUpdateRequest
+        validUpdateRequest,
       );
 
       expect(result.status).toBe(OrderStatus.CONFIRMED);
@@ -311,7 +341,7 @@ describe("OrderService", () => {
       (database.order.findUnique as jest.Mock).mockResolvedValue(null);
 
       await expect(
-        orderService.updateOrder(mockOrderId, validUpdateRequest)
+        orderService.updateOrder(mockOrderId, validUpdateRequest),
       ).rejects.toThrow("Order not found");
     });
 
@@ -335,7 +365,7 @@ describe("OrderService", () => {
         });
 
         await expect(
-          orderService.updateOrder(mockOrderId, { status: transition.to })
+          orderService.updateOrder(mockOrderId, { status: transition.to }),
         ).resolves.not.toThrow();
       }
     });
@@ -347,7 +377,7 @@ describe("OrderService", () => {
       });
 
       await expect(
-        orderService.updateOrder(mockOrderId, { status: OrderStatus.PENDING })
+        orderService.updateOrder(mockOrderId, { status: OrderStatus.PENDING }),
       ).rejects.toThrow("Invalid status transition");
     });
 
@@ -371,7 +401,9 @@ describe("OrderService", () => {
         });
 
         await expect(
-          orderService.updateOrder(mockOrderId, { status: OrderStatus.CANCELLED })
+          orderService.updateOrder(mockOrderId, {
+            status: OrderStatus.CANCELLED,
+          }),
         ).resolves.not.toThrow();
       }
     });
@@ -386,9 +418,11 @@ describe("OrderService", () => {
 
     it("should cancel order and restore inventory", async () => {
       (database.order.findUnique as jest.Mock).mockResolvedValue(mockOrder);
-      (database.$transaction as jest.Mock).mockImplementation(async (callback) => {
-        return await callback(database);
-      });
+      (database.$transaction as jest.Mock).mockImplementation(
+        async (callback) => {
+          return await callback(database);
+        },
+      );
       (database.order.update as jest.Mock).mockResolvedValue({
         ...mockOrder,
         status: OrderStatus.CANCELLED,
@@ -411,7 +445,7 @@ describe("OrderService", () => {
       (database.order.findUnique as jest.Mock).mockResolvedValue(null);
 
       await expect(
-        orderService.cancelOrder(mockOrderId, cancelRequest)
+        orderService.cancelOrder(mockOrderId, cancelRequest),
       ).rejects.toThrow("Order not found");
     });
 
@@ -422,7 +456,7 @@ describe("OrderService", () => {
       });
 
       await expect(
-        orderService.cancelOrder(mockOrderId, cancelRequest)
+        orderService.cancelOrder(mockOrderId, cancelRequest),
       ).rejects.toThrow("Order is already cancelled");
     });
 
@@ -433,7 +467,7 @@ describe("OrderService", () => {
       });
 
       await expect(
-        orderService.cancelOrder(mockOrderId, cancelRequest)
+        orderService.cancelOrder(mockOrderId, cancelRequest),
       ).rejects.toThrow("Cannot cancel completed order");
     });
 
@@ -442,9 +476,11 @@ describe("OrderService", () => {
         ...mockOrder,
         paymentStatus: PaymentStatus.PAID,
       });
-      (database.$transaction as jest.Mock).mockImplementation(async (callback) => {
-        return await callback(database);
-      });
+      (database.$transaction as jest.Mock).mockImplementation(
+        async (callback) => {
+          return await callback(database);
+        },
+      );
       (database.order.update as jest.Mock).mockResolvedValue({
         ...mockOrder,
         status: OrderStatus.CANCELLED,
@@ -469,9 +505,9 @@ describe("OrderService", () => {
       });
 
       expect(result.orders).toHaveLength(1);
-      expect(result.total).toBe(1);
-      expect(result.page).toBe(1);
-      expect(result.totalPages).toBe(1);
+      expect(result.pagination.total).toBe(1);
+      expect(result.pagination.page).toBe(1);
+      expect(result.pagination.totalPages).toBe(1);
     });
 
     it("should filter orders by status", async () => {
@@ -489,7 +525,7 @@ describe("OrderService", () => {
           where: expect.objectContaining({
             status: OrderStatus.PENDING,
           }),
-        })
+        }),
       );
     });
 
@@ -508,7 +544,7 @@ describe("OrderService", () => {
           where: expect.objectContaining({
             customerId: mockUserId,
           }),
-        })
+        }),
       );
     });
 
@@ -527,7 +563,7 @@ describe("OrderService", () => {
           where: expect.objectContaining({
             farmId: mockFarmId,
           }),
-        })
+        }),
       );
     });
 
@@ -553,7 +589,7 @@ describe("OrderService", () => {
               lte: endDate,
             },
           }),
-        })
+        }),
       );
     });
 
@@ -574,7 +610,7 @@ describe("OrderService", () => {
               contains: "ORD-20241127",
             }),
           }),
-        })
+        }),
       );
     });
 
@@ -587,10 +623,10 @@ describe("OrderService", () => {
         limit: 10,
       });
 
-      expect(result.page).toBe(2);
-      expect(result.limit).toBe(10);
-      expect(result.total).toBe(25);
-      expect(result.totalPages).toBe(3);
+      expect(result.pagination.page).toBe(2);
+      expect(result.pagination.limit).toBe(10);
+      expect(result.pagination.total).toBe(25);
+      expect(result.pagination.totalPages).toBe(3);
     });
   });
 
@@ -604,7 +640,7 @@ describe("OrderService", () => {
 
       const totals = orderService.calculateOrderTotals(
         items,
-        FulfillmentMethod.PICKUP
+        FulfillmentMethod.PICKUP,
       );
 
       expect(totals.subtotal).toBe(35.0);
@@ -620,7 +656,7 @@ describe("OrderService", () => {
 
       const totals = orderService.calculateOrderTotals(
         items,
-        FulfillmentMethod.DELIVERY
+        FulfillmentMethod.DELIVERY,
       );
 
       expect(totals.subtotal).toBe(20.0);
@@ -636,7 +672,7 @@ describe("OrderService", () => {
 
       const totals = orderService.calculateOrderTotals(
         items,
-        FulfillmentMethod.PICKUP
+        FulfillmentMethod.PICKUP,
       );
 
       expect(totals.subtotal).toBe(5.99);
@@ -649,7 +685,7 @@ describe("OrderService", () => {
 
       const totals = orderService.calculateOrderTotals(
         items,
-        FulfillmentMethod.PICKUP
+        FulfillmentMethod.PICKUP,
       );
 
       expect(totals.subtotal).toBe(299.0);
@@ -680,7 +716,7 @@ describe("OrderService", () => {
       };
 
       expect(() => orderService.validateOrderData(invalidData)).toThrow(
-        "Order must contain at least one item"
+        "Order must contain at least one item",
       );
     });
 
@@ -693,7 +729,7 @@ describe("OrderService", () => {
       };
 
       expect(() => orderService.validateOrderData(invalidData)).toThrow(
-        "Quantity must be positive"
+        "Quantity must be positive",
       );
     });
 
@@ -706,7 +742,7 @@ describe("OrderService", () => {
       };
 
       expect(() => orderService.validateOrderData(invalidData)).toThrow(
-        "Quantity must be positive"
+        "Quantity must be positive",
       );
     });
 
@@ -720,7 +756,7 @@ describe("OrderService", () => {
       };
 
       expect(() => orderService.validateOrderData(invalidData)).toThrow(
-        "Delivery address required"
+        "Delivery address required",
       );
     });
 
@@ -776,12 +812,12 @@ describe("OrderService", () => {
       expect(result).toEqual(mockOrder);
       expect(database.order.findUnique).toHaveBeenCalledWith({
         where: { id: mockOrderId },
-        include: expect.objectContaining({
+        include: {
           customer: true,
           farm: true,
-          items: expect.any(Object),
+          items: true,
           fulfillment: true,
-        }),
+        },
       });
     });
 
@@ -798,9 +834,9 @@ describe("OrderService", () => {
   describe("getOrderStatistics", () => {
     it("should calculate order statistics for farm", async () => {
       const mockOrders = [
-        { ...mockOrder, totalAmount: 100, status: OrderStatus.COMPLETED },
-        { ...mockOrder, totalAmount: 200, status: OrderStatus.COMPLETED },
-        { ...mockOrder, totalAmount: 150, status: OrderStatus.PENDING },
+        { ...mockOrder, total: 100, status: OrderStatus.COMPLETED },
+        { ...mockOrder, total: 200, status: OrderStatus.COMPLETED },
+        { ...mockOrder, total: 150, status: OrderStatus.PENDING },
       ];
 
       (database.order.findMany as jest.Mock).mockResolvedValue(mockOrders);

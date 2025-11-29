@@ -1,0 +1,4 @@
+#!/bin/bash
+# Stripe CLI wrapper script
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+exec "$DIR/stripe.exe" "$@"

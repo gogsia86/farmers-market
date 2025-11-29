@@ -5,6 +5,10 @@
  * These tests require a running database and test actual service interactions
  */
 
+// Unmock the database for integration tests - we need real connections
+jest.unmock("@/lib/database");
+jest.unmock("@prisma/client");
+
 import { database } from "@/lib/database";
 import { OrderService } from "@/lib/services/order.service";
 import { PaymentService } from "@/lib/services/payment.service";
@@ -18,8 +22,35 @@ let testUserId: string;
 let testProductId: string;
 let testOrderId: string;
 
-describe.skip("🔗 Integration: Complete Order Workflow", () => {
+// Check if we should skip integration tests (no real database available)
+const shouldSkipIntegrationTests =
+  process.env.SKIP_INTEGRATION_TESTS === "true" ||
+  process.env.DATABASE_URL?.includes("localhost:5432/test");
+
+const describeIntegration = shouldSkipIntegrationTests
+  ? describe.skip
+  : describe;
+
+describeIntegration("🔗 Integration: Complete Order Workflow", () => {
   beforeAll(async () => {
+    // These tests require a real database connection
+    // Set DATABASE_URL to a real test database (not the mocked localhost:5432/test)
+    // Or set SKIP_INTEGRATION_TESTS=true to skip
+
+    // Ensure database is connected
+    try {
+      await database.$connect();
+    } catch (error) {
+      console.warn(
+        "⚠️ Database connection failed. Integration tests will fail.",
+      );
+      console.warn("To run integration tests:");
+      console.warn("  1. Set up a test database");
+      console.warn("  2. Set DATABASE_URL to the test database");
+      console.warn("  3. Run: npm run db:push");
+      throw error;
+    }
+
     // Create test user
     const testUser = await database.user.create({
       data: {
@@ -103,12 +134,20 @@ describe.skip("🔗 Integration: Complete Order Workflow", () => {
     }
 
     if (testUserId) {
-      await database.user.delete({
-        where: { id: testUserId },
-      });
+      try {
+        await database.user.delete({
+          where: { id: testUserId },
+        });
+      } catch (error) {
+        console.warn("Cleanup warning:", error.message);
+      }
     }
 
-    await database.$disconnect();
+    try {
+      await database.$disconnect();
+    } catch (error) {
+      // Ignore disconnect errors
+    }
   });
 
   describe("📦 End-to-End Order Processing", () => {
