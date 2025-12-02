@@ -60,26 +60,31 @@ export {
 } from "./product.repository";
 
 // ============================================================================
-// ORDER REPOSITORY (Coming Soon)
+// ORDER REPOSITORY
 // ============================================================================
 
-// TODO: Implement OrderRepository
-// export {
-//   QuantumOrderRepository,
-//   orderRepository,
-//   type QuantumOrder
-// } from "./order.repository";
+export {
+  QuantumOrderRepository,
+  orderRepository,
+  type QuantumOrder,
+  type OrderSearchFilters,
+  type OrderStatistics,
+  type OrderStatusTransition,
+} from "./order.repository";
 
 // ============================================================================
-// USER REPOSITORY (Coming Soon)
+// USER REPOSITORY
 // ============================================================================
 
-// TODO: Implement UserRepository
-// export {
-//   QuantumUserRepository,
-//   userRepository,
-//   type QuantumUser
-// } from "./user.repository";
+export {
+  QuantumUserRepository,
+  userRepository,
+  type QuantumUser,
+  type UserWithAuth,
+  type UserSearchFilters,
+  type UserStatistics,
+  type UserProfileUpdate,
+} from "./user.repository";
 
 /**
  * Repository layer divine perfection achieved ✨
