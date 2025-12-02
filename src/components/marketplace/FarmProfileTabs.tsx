@@ -10,7 +10,6 @@ import {
   Mail,
   Globe,
   Award,
-  Calendar,
   Package,
   MessageSquare,
   Navigation,
@@ -18,7 +17,6 @@ import {
   Share2,
 } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 
 /**
@@ -339,9 +337,7 @@ export function FarmProfileTabs({
                     </dd>
                   </div>
                   <div className="flex justify-between">
-                    <dt className="text-sm text-muted-foreground">
-                      Farm Size
-                    </dt>
+                    <dt className="text-sm text-muted-foreground">Farm Size</dt>
                     <dd className="text-sm font-medium text-foreground">
                       {farm.farmSize}
                     </dd>
@@ -397,7 +393,11 @@ export function FarmProfileTabs({
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     {farm.certifications.map((cert, index) => (
-                      <Badge key={index} variant="outline" className="px-3 py-1">
+                      <Badge
+                        key={index}
+                        variant="outline"
+                        className="px-3 py-1"
+                      >
                         {cert}
                       </Badge>
                     ))}

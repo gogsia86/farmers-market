@@ -212,3 +212,10 @@ docs/build/
 # ═══════════════════════════════════════════════════════════
 # Add your custom ignore patterns below:
 nul
+
+# Monitoring Reports (runtime generated)
+monitoring-reports/
+
+# Visual Studio
+.vs/
+*.slnx

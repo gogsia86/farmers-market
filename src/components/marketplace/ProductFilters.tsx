@@ -61,7 +61,12 @@ const CATEGORIES = [
     color: "text-green-600",
   },
   { id: "dairy", name: "Dairy", icon: Milk, color: "text-blue-600" },
-  { id: "grains", name: "Grains & Flour", icon: Wheat, color: "text-amber-600" },
+  {
+    id: "grains",
+    name: "Grains & Flour",
+    icon: Wheat,
+    color: "text-amber-600",
+  },
   { id: "eggs", name: "Eggs & Poultry", icon: Egg, color: "text-orange-600" },
   { id: "greens", name: "Greens & Herbs", icon: Leaf, color: "text-lime-600" },
 ];
@@ -189,7 +194,9 @@ export function ProductFilters({
               type="text"
               placeholder="Search by name..."
               value={filters.searchQuery}
-              onChange={(e) => updateFilter("searchQuery", e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                updateFilter("searchQuery", e.target.value)
+              }
               className="pl-9"
             />
           </div>
@@ -200,7 +207,7 @@ export function ProductFilters({
           <Label className="text-sm font-semibold mb-3 block">Sort By</Label>
           <Select
             value={filters.sortBy}
-            onValueChange={(value) => updateFilter("sortBy", value)}
+            onValueChange={(value: string) => updateFilter("sortBy", value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select sort order" />
@@ -275,7 +282,7 @@ export function ProductFilters({
           <div className="space-y-4">
             <Slider
               value={filters.priceRange}
-              onValueChange={(value) =>
+              onValueChange={(value: number[]) =>
                 updateFilter("priceRange", value as [number, number])
               }
               min={0}
@@ -304,7 +311,9 @@ export function ProductFilters({
           <div className="space-y-4">
             <Slider
               value={[filters.maxDistance]}
-              onValueChange={(value) => updateFilter("maxDistance", value[0])}
+              onValueChange={(value: number[]) =>
+                updateFilter("maxDistance", value[0])
+              }
               min={5}
               max={100}
               step={5}
@@ -312,7 +321,9 @@ export function ProductFilters({
             />
             <div className="text-sm text-center">
               <span className="font-semibold text-foreground">
-                {filters.maxDistance >= 100 ? "Any distance" : `${filters.maxDistance} miles`}
+                {filters.maxDistance >= 100
+                  ? "Any distance"
+                  : `${filters.maxDistance} miles`}
               </span>
             </div>
           </div>
@@ -375,7 +386,7 @@ export function ProductFilters({
             <Checkbox
               id="in-stock"
               checked={filters.inStockOnly}
-              onCheckedChange={(checked) =>
+              onCheckedChange={(checked: boolean) =>
                 updateFilter("inStockOnly", checked)
               }
             />

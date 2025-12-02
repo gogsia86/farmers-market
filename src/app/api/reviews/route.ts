@@ -20,7 +20,7 @@ export async function GET() {
 
     // Fetch submitted reviews
     const reviews = await database.review.findMany({
-      where: { userId: session.user.id },
+      where: { customerId: session.user.id },
       include: {
         farm: {
           select: {
@@ -50,7 +50,7 @@ export async function GET() {
     const completedOrders = await database.order.findMany({
       where: {
         customerId: session.user.id,
-        status: "DELIVERED",
+        status: "COMPLETED",
       },
       include: {
         farm: {
@@ -97,7 +97,7 @@ export async function GET() {
     const formattedReviews = reviews.map((review) => ({
       id: review.id,
       rating: review.rating,
-      comment: review.comment,
+      comment: review.reviewText,
       farmId: review.farmId || undefined,
       farmName: review.farm?.name || undefined,
       farmSlug: review.farm?.slug || undefined,
@@ -109,7 +109,7 @@ export async function GET() {
       createdAt: review.createdAt.toISOString(),
       updatedAt: review.updatedAt.toISOString(),
       helpful: review.helpfulCount || 0,
-      notHelpful: review.notHelpfulCount || 0,
+      notHelpful: review.unhelpfulCount || 0,
     }));
 
     return NextResponse.json({
@@ -198,7 +198,7 @@ export async function POST(request: NextRequest) {
       // Check if review already exists for this order
       const existingReview = await database.review.findFirst({
         where: {
-          userId: session.user.id,
+          customerId: session.user.id,
           orderId,
         },
       });
@@ -214,12 +214,12 @@ export async function POST(request: NextRequest) {
     // Create review
     const review = await database.review.create({
       data: {
-        userId: session.user.id,
+        customerId: session.user.id,
         rating,
-        comment: comment.trim(),
-        farmId: farmId || null,
-        productId: productId || null,
-        orderId: orderId || null,
+        reviewText: comment.trim(),
+        farmId,
+        productId: productId || undefined,
+        orderId: orderId || undefined,
         status: "APPROVED", // Auto-approve for now
       },
       include: {
@@ -246,7 +246,7 @@ export async function POST(request: NextRequest) {
       review: {
         id: review.id,
         rating: review.rating,
-        comment: review.comment,
+        comment: review.reviewText,
         farmName: review.farm?.name || undefined,
         productName: review.product?.name || undefined,
         createdAt: review.createdAt.toISOString(),

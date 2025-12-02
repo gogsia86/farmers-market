@@ -28,8 +28,9 @@ export async function GET() {
             name: true,
             slug: true,
             description: true,
-            bannerImage: true,
-            location: true,
+            bannerUrl: true,
+            city: true,
+            state: true,
             _count: {
               select: { products: true },
             },
@@ -42,7 +43,7 @@ export async function GET() {
             slug: true,
             price: true,
             unit: true,
-            primaryImage: true,
+            primaryPhotoUrl: true,
             inStock: true,
             farm: {
               select: {
@@ -64,13 +65,11 @@ export async function GET() {
         name: f.farm!.name,
         slug: f.farm!.slug,
         description: f.farm!.description || "",
-        imageUrl: f.farm!.bannerImage || null,
-        location: f.farm!.location
-          ? {
-              city: (f.farm!.location as any).city || "",
-              state: (f.farm!.location as any).state || "",
-            }
-          : undefined,
+        imageUrl: f.farm!.bannerUrl || null,
+        location: {
+          city: f.farm!.city || "",
+          state: f.farm!.state || "",
+        },
         productsCount: f.farm!._count.products,
       }));
 
@@ -82,7 +81,7 @@ export async function GET() {
         slug: f.product!.slug,
         price: Number(f.product!.price),
         unit: f.product!.unit,
-        imageUrl: f.product!.primaryImage || null,
+        imageUrl: f.product!.primaryPhotoUrl || null,
         farmName: f.product!.farm.name,
         farmSlug: f.product!.farm.slug,
         inStock: f.product!.inStock,

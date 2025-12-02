@@ -10,7 +10,7 @@ import { database } from "@/lib/database";
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const session = await auth();
@@ -18,7 +18,7 @@ export async function PUT(
     if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: "Authentication required" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -44,7 +44,7 @@ export async function PUT(
     if (!existingAddress) {
       return NextResponse.json(
         { success: false, error: "Address not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -52,7 +52,7 @@ export async function PUT(
     if (existingAddress.userId !== session.user.id) {
       return NextResponse.json(
         { success: false, error: "You can only update your own addresses" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -61,8 +61,11 @@ export async function PUT(
     if (type !== undefined) {
       if (!["HOME", "WORK", "OTHER"].includes(type)) {
         return NextResponse.json(
-          { success: false, error: "Invalid type. Must be HOME, WORK, or OTHER" },
-          { status: 400 }
+          {
+            success: false,
+            error: "Invalid type. Must be HOME, WORK, or OTHER",
+          },
+          { status: 400 },
         );
       }
       updateData.type = type;
@@ -72,7 +75,7 @@ export async function PUT(
       if (street.trim().length === 0) {
         return NextResponse.json(
           { success: false, error: "Street address cannot be empty" },
-          { status: 400 }
+          { status: 400 },
         );
       }
       updateData.street = street.trim();
@@ -82,7 +85,7 @@ export async function PUT(
       if (city.trim().length === 0) {
         return NextResponse.json(
           { success: false, error: "City cannot be empty" },
-          { status: 400 }
+          { status: 400 },
         );
       }
       updateData.city = city.trim();
@@ -91,7 +94,7 @@ export async function PUT(
       if (state.trim().length === 0) {
         return NextResponse.json(
           { success: false, error: "State cannot be empty" },
-          { status: 400 }
+          { status: 400 },
         );
       }
       updateData.state = state.trim();
@@ -100,7 +103,7 @@ export async function PUT(
       if (zipCode.trim().length === 0) {
         return NextResponse.json(
           { success: false, error: "ZIP code cannot be empty" },
-          { status: 400 }
+          { status: 400 },
         );
       }
       updateData.zipCode = zipCode.trim();
@@ -153,7 +156,7 @@ export async function PUT(
         error: "Failed to update address",
         details: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -166,8 +169,8 @@ export async function PUT(
  * Cannot delete the default address if it's the only one
  */
 export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  _request: NextRequest,
+  { params }: { params: { id: string } },
 ) {
   try {
     const session = await auth();
@@ -175,7 +178,7 @@ export async function DELETE(
     if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: "Authentication required" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -189,7 +192,7 @@ export async function DELETE(
     if (!existingAddress) {
       return NextResponse.json(
         { success: false, error: "Address not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -197,7 +200,7 @@ export async function DELETE(
     if (existingAddress.userId !== session.user.id) {
       return NextResponse.json(
         { success: false, error: "You can only delete your own addresses" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -212,7 +215,7 @@ export async function DELETE(
           success: false,
           error: "Cannot delete your only address. Add a new address first.",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -251,7 +254,7 @@ export async function DELETE(
         error: "Failed to delete address",
         details: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -15,7 +15,7 @@ export async function GET() {
     if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: "Authentication required" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -29,11 +29,11 @@ export async function GET() {
         },
       }),
 
-      // Completed orders (DELIVERED)
+      // Completed orders (FULFILLED and COMPLETED)
       database.order.count({
         where: {
           customerId: session.user.id,
-          status: "DELIVERED",
+          status: { in: ["FULFILLED", "COMPLETED"] },
         },
       }),
 
@@ -61,7 +61,7 @@ export async function GET() {
         success: false,
         error: "Failed to fetch order counts",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

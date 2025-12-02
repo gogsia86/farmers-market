@@ -9,8 +9,8 @@ import { database } from "@/lib/database";
  * Only the address owner can set their address as default
  */
 export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  _request: NextRequest,
+  { params }: { params: { id: string } },
 ) {
   try {
     const session = await auth();
@@ -18,7 +18,7 @@ export async function PUT(
     if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: "Authentication required" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -32,7 +32,7 @@ export async function PUT(
     if (!existingAddress) {
       return NextResponse.json(
         { success: false, error: "Address not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -40,7 +40,7 @@ export async function PUT(
     if (existingAddress.userId !== session.user.id) {
       return NextResponse.json(
         { success: false, error: "You can only modify your own addresses" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -106,7 +106,7 @@ export async function PUT(
         error: "Failed to set default address",
         details: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

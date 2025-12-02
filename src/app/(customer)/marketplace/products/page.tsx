@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import {
@@ -59,7 +59,8 @@ const MOCK_PRODUCTS: Product[] = [
   {
     id: "1",
     name: "Organic Heirloom Tomatoes",
-    description: "Vine-ripened, bursting with flavor. Perfect for salads and sauces.",
+    description:
+      "Vine-ripened, bursting with flavor. Perfect for salads and sauces.",
     price: 5.99,
     unit: "lb",
     category: "vegetables",
@@ -139,7 +140,8 @@ const MOCK_PRODUCTS: Product[] = [
   {
     id: "5",
     name: "Raw Honey",
-    description: "Pure, unfiltered wildflower honey. Never heated or processed.",
+    description:
+      "Pure, unfiltered wildflower honey. Never heated or processed.",
     price: 12.99,
     unit: "16oz jar",
     category: "honey",
@@ -221,7 +223,30 @@ const MOCK_PRODUCTS: Product[] = [
 export default function ProductsMarketplacePage() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
-  const [cart, setCart] = useState<Set<string>>(new Set());
+
+  // Load initial favorites on mount
+  useEffect(() => {
+    const loadFavorites = async () => {
+      try {
+        const response = await fetch("/api/users/favorites");
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.data) {
+            const favoriteIds = new Set<string>(
+              data.data
+                .filter((fav: any) => fav.productId)
+                .map((fav: any) => fav.productId as string),
+            );
+            setFavorites(favoriteIds);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to load favorites:", error);
+      }
+    };
+
+    loadFavorites();
+  }, []);
 
   // Default filter state
   const [filters, setFilters] = useState<ProductFilterState>({
@@ -246,7 +271,7 @@ export default function ProductsMarketplacePage() {
         (p) =>
           p.name.toLowerCase().includes(query) ||
           p.description.toLowerCase().includes(query) ||
-          p.farmName.toLowerCase().includes(query)
+          p.farmName.toLowerCase().includes(query),
       );
     }
 
@@ -257,7 +282,8 @@ export default function ProductsMarketplacePage() {
 
     // Price range filter
     results = results.filter(
-      (p) => p.price >= filters.priceRange[0] && p.price <= filters.priceRange[1]
+      (p) =>
+        p.price >= filters.priceRange[0] && p.price <= filters.priceRange[1],
     );
 
     // Distance filter
@@ -268,14 +294,14 @@ export default function ProductsMarketplacePage() {
     // Dietary filters
     if (filters.dietary.length > 0) {
       results = results.filter((p) =>
-        filters.dietary.every((d) => p.dietary.includes(d))
+        filters.dietary.every((d) => p.dietary.includes(d)),
       );
     }
 
     // Certification filters
     if (filters.certifications.length > 0) {
       results = results.filter((p) =>
-        filters.certifications.some((c) => p.certifications.includes(c))
+        filters.certifications.some((c) => p.certifications.includes(c)),
       );
     }
 
@@ -309,20 +335,67 @@ export default function ProductsMarketplacePage() {
     return results;
   }, [filters]);
 
-  const toggleFavorite = (productId: string) => {
+  const toggleFavorite = async (productId: string) => {
+    const isFavorited = favorites.has(productId);
+
+    // Optimistic update
     setFavorites((prev) => {
       const newFavorites = new Set(prev);
-      if (newFavorites.has(productId)) {
+      if (isFavorited) {
         newFavorites.delete(productId);
       } else {
         newFavorites.add(productId);
       }
       return newFavorites;
     });
+
+    try {
+      if (isFavorited) {
+        // Unfavorite - DELETE request
+        const response = await fetch(
+          `/api/users/favorites?productId=${productId}`,
+          {
+            method: "DELETE",
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to unfavorite");
+        }
+      } else {
+        // Favorite - POST request
+        const response = await fetch("/api/users/favorites", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ productId }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to favorite");
+        }
+      }
+    } catch (error) {
+      console.error("Failed to toggle favorite:", error);
+
+      // Rollback on error
+      setFavorites((prev) => {
+        const newFavorites = new Set(prev);
+        if (isFavorited) {
+          newFavorites.add(productId);
+        } else {
+          newFavorites.delete(productId);
+        }
+        return newFavorites;
+      });
+
+      // TODO: Show error toast/notification
+      alert("Failed to update favorite. Please try again.");
+    }
   };
 
   const addToCart = (productId: string) => {
-    setCart((prev) => new Set(prev).add(productId));
     // In real app, would call API to add to cart
     console.log("Added to cart:", productId);
   };
@@ -364,7 +437,8 @@ export default function ProductsMarketplacePage() {
               </h1>
 
               <p className="text-lg text-muted-foreground">
-                Browse {MOCK_PRODUCTS.length}+ products from local farms in your area
+                Browse {MOCK_PRODUCTS.length}+ products from local farms in your
+                area
               </p>
             </div>
           </div>
@@ -395,8 +469,8 @@ export default function ProductsMarketplacePage() {
                       Products
                     </h2>
                     <p className="text-sm text-muted-foreground">
-                      Showing {filteredProducts.length} of {MOCK_PRODUCTS.length}{" "}
-                      products
+                      Showing {filteredProducts.length} of{" "}
+                      {MOCK_PRODUCTS.length} products
                     </p>
                   </div>
 

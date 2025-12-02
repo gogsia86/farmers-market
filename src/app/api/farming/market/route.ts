@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
             message: "You must be logged in to access market intelligence",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
             details: validation.error.flatten(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -73,7 +73,8 @@ export async function POST(request: NextRequest) {
       region: validatedData.region,
       topics: validatedData.topics,
       timeframe: validatedData.timeframe || "month",
-      includeCompetitiveAnalysis: validatedData.includeCompetitiveAnalysis ?? true,
+      includeCompetitiveAnalysis:
+        validatedData.includeCompetitiveAnalysis ?? true,
       includePriceTrends: validatedData.includePriceTrends ?? true,
     };
 
@@ -100,7 +101,7 @@ export async function POST(request: NextRequest) {
               : "Failed to get market intelligence",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -109,7 +110,7 @@ export async function POST(request: NextRequest) {
 // GET HANDLER (Optional - for testing)
 // ============================================================================
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   const session = await auth();
 
   if (!session?.user) {
@@ -121,7 +122,7 @@ export async function GET(request: NextRequest) {
           message: "Authentication required",
         },
       },
-      { status: 401 }
+      { status: 401 },
     );
   }
 

@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
             message: "You must be logged in to get product recommendations",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
             details: validation.error.flatten(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
               : "Failed to get product recommendations",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
 // GET HANDLER
 // ============================================================================
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const session = await auth();
 
@@ -130,7 +130,7 @@ export async function GET(request: NextRequest) {
             message: "Authentication required",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -154,7 +154,7 @@ export async function GET(request: NextRequest) {
           message: "Failed to get recommendations",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

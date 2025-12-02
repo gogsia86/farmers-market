@@ -109,7 +109,7 @@ export async function GET(request: NextRequest) {
           lte: now,
         },
         status: {
-          notIn: ["CANCELLED", "REFUNDED"],
+          notIn: ["CANCELLED"],
         },
       },
       include: {
@@ -120,7 +120,8 @@ export async function GET(request: NextRequest) {
             },
           },
         },
-        payment: true,
+        Payment: true,
+        customer: true,
       },
     });
 
@@ -133,7 +134,7 @@ export async function GET(request: NextRequest) {
           lt: periodStart,
         },
         status: {
-          notIn: ["CANCELLED", "REFUNDED"],
+          notIn: ["CANCELLED"],
         },
       },
       include: {
@@ -144,6 +145,8 @@ export async function GET(request: NextRequest) {
             },
           },
         },
+        Payment: true,
+        customer: true,
       },
     });
 
@@ -151,7 +154,7 @@ export async function GET(request: NextRequest) {
     const calculateFarmRevenue = (orders: typeof currentOrders) => {
       return orders.reduce((total, order) => {
         const farmItemsTotal = order.items.reduce(
-          (sum, item) => sum + Number(item.subtotal),
+          (sum: number, item: any) => sum + Number(item.subtotal),
           0,
         );
         return total + farmItemsTotal;
@@ -184,12 +187,12 @@ export async function GET(request: NextRequest) {
       0,
     );
 
-    // Calculate pending balance (orders in PENDING/CONFIRMED/PROCESSING status)
+    // Calculate pending balance (orders in PENDING/CONFIRMED/PREPARING status)
     const pendingOrders = await database.order.findMany({
       where: {
         farmId: farmId,
         status: {
-          in: ["PENDING", "CONFIRMED", "PROCESSING"],
+          in: ["PENDING", "CONFIRMED", "PREPARING"],
         },
       },
       include: {
@@ -200,6 +203,8 @@ export async function GET(request: NextRequest) {
             },
           },
         },
+        customer: true,
+        Payment: true,
       },
     });
 
@@ -210,7 +215,7 @@ export async function GET(request: NextRequest) {
       where: {
         farmId: farmId,
         status: {
-          in: ["DELIVERED", "COMPLETED"],
+          in: ["FULFILLED", "COMPLETED"],
         },
         paymentStatus: "PAID",
       },
@@ -222,6 +227,8 @@ export async function GET(request: NextRequest) {
             },
           },
         },
+        customer: true,
+        Payment: true,
       },
     });
 
@@ -229,9 +236,7 @@ export async function GET(request: NextRequest) {
     const allPayouts = await database.payout.findMany({
       where: {
         farmId: farmId,
-        status: {
-          in: ["COMPLETED", "PENDING", "PROCESSING"],
-        },
+        status: "COMPLETED",
       },
     });
 
@@ -259,15 +264,15 @@ export async function GET(request: NextRequest) {
 
     // Add sales transactions
     currentOrders.forEach((order) => {
-      const farmTotal = order.items.reduce(
-        (sum, item) => sum + Number(item.subtotal),
+      const farmItemsTotal = order.items.reduce(
+        (sum: number, item: any) => sum + Number(item.subtotal),
         0,
       );
 
       transactions.push({
         id: order.id,
         type: "SALE",
-        amount: farmTotal,
+        amount: farmItemsTotal,
         status: order.paymentStatus === "PAID" ? "COMPLETED" : "PENDING",
         description: `Order from ${order.customer?.name || "Customer"}`,
         orderNumber: order.orderNumber,
@@ -341,7 +346,7 @@ export async function GET(request: NextRequest) {
         return (
           sum +
           order.items.reduce(
-            (itemSum, item) => itemSum + Number(item.subtotal),
+            (itemSum: number, item: any) => itemSum + Number(item.subtotal),
             0,
           )
         );

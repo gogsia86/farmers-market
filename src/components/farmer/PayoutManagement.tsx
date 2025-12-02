@@ -71,14 +71,20 @@ interface PayoutManagementProps {
   className?: string;
 }
 
-export function PayoutManagement({ farmId, className = "" }: PayoutManagementProps) {
+export function PayoutManagement({
+  farmId,
+  className = "",
+}: PayoutManagementProps) {
   const [payouts, setPayouts] = useState<Payout[]>([]);
   const [accounts, setAccounts] = useState<PayoutAccount[]>([]);
   const [schedule, setSchedule] = useState<PayoutSchedule | null>(null);
   const [loading, setLoading] = useState(true);
   const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false);
-  const [isAccountDialogOpen, setIsAccountDialogOpen] = useState(false);
   const [availableBalance, setAvailableBalance] = useState(0);
+  const [scheduleFrequency, setScheduleFrequency] = useState<
+    "DAILY" | "WEEKLY" | "MONTHLY"
+  >("WEEKLY");
+  const [minimumAmount, setMinimumAmount] = useState<number>(10);
 
   useEffect(() => {
     fetchPayoutData();
@@ -87,12 +93,13 @@ export function PayoutManagement({ farmId, className = "" }: PayoutManagementPro
   const fetchPayoutData = async () => {
     try {
       setLoading(true);
-      const [payoutsRes, accountsRes, scheduleRes, balanceRes] = await Promise.all([
-        fetch(`/api/farmer/payouts?farmId=${farmId}`),
-        fetch(`/api/farmer/payout-accounts?farmId=${farmId}`),
-        fetch(`/api/farmer/payout-schedule?farmId=${farmId}`),
-        fetch(`/api/farmer/finances?farmId=${farmId}`),
-      ]);
+      const [payoutsRes, accountsRes, scheduleRes, balanceRes] =
+        await Promise.all([
+          fetch(`/api/farmer/payouts?farmId=${farmId}`),
+          fetch(`/api/farmer/payout-accounts?farmId=${farmId}`),
+          fetch(`/api/farmer/payout-schedule?farmId=${farmId}`),
+          fetch(`/api/farmer/finances?farmId=${farmId}`),
+        ]);
 
       const payoutsData = await payoutsRes.json();
       const accountsData = await accountsRes.json();
@@ -168,7 +175,7 @@ export function PayoutManagement({ farmId, className = "" }: PayoutManagementPro
 
       if (!response.ok) throw new Error("Failed to request payout");
 
-      const data = await response.json();
+      await response.json();
       alert("Payout requested successfully!");
       fetchPayoutData();
     } catch (error) {
@@ -177,6 +184,7 @@ export function PayoutManagement({ farmId, className = "" }: PayoutManagementPro
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const updatePayoutSchedule = async (newSchedule: PayoutSchedule) => {
     try {
       const response = await fetch(`/api/farmer/payout-schedule`, {
@@ -216,11 +224,14 @@ export function PayoutManagement({ farmId, className = "" }: PayoutManagementPro
 
   const setDefaultAccount = async (accountId: string) => {
     try {
-      const response = await fetch(`/api/farmer/payout-accounts/${accountId}/default`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ farmId }),
-      });
+      const response = await fetch(
+        `/api/farmer/payout-accounts/${accountId}/default`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ farmId }),
+        },
+      );
 
       if (!response.ok) throw new Error("Failed to set default account");
 
@@ -274,7 +285,9 @@ export function PayoutManagement({ farmId, className = "" }: PayoutManagementPro
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Payout Management</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Payout Management
+          </h2>
           <p className="text-sm text-gray-500 mt-1">
             Manage your payout accounts and schedule
           </p>
@@ -286,7 +299,9 @@ export function PayoutManagement({ farmId, className = "" }: PayoutManagementPro
         <CardContent className="pt-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Available for Payout</p>
+              <p className="text-sm font-medium text-gray-600">
+                Available for Payout
+              </p>
               <p className="text-3xl font-bold text-gray-900 mt-2">
                 {formatCurrency(availableBalance)}
               </p>
@@ -310,7 +325,8 @@ export function PayoutManagement({ farmId, className = "" }: PayoutManagementPro
             <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md flex items-start gap-2">
               <AlertCircle className="h-4 w-4 text-yellow-600 mt-0.5" />
               <p className="text-sm text-yellow-800">
-                Minimum payout amount is $10.00. Continue selling to reach the minimum.
+                Minimum payout amount is $10.00. Continue selling to reach the
+                minimum.
               </p>
             </div>
           )}
@@ -323,7 +339,10 @@ export function PayoutManagement({ farmId, className = "" }: PayoutManagementPro
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Payout Schedule</CardTitle>
-            <Dialog open={isScheduleDialogOpen} onOpenChange={setIsScheduleDialogOpen}>
+            <Dialog
+              open={isScheduleDialogOpen}
+              onOpenChange={setIsScheduleDialogOpen}
+            >
               <DialogTrigger asChild>
                 <Button variant="outline" size="sm">
                   Edit
@@ -339,7 +358,14 @@ export function PayoutManagement({ farmId, className = "" }: PayoutManagementPro
                 <div className="space-y-4 py-4">
                   <div>
                     <Label>Frequency</Label>
-                    <Select defaultValue={schedule?.frequency || "WEEKLY"}>
+                    <Select
+                      value={scheduleFrequency}
+                      onValueChange={(value) =>
+                        setScheduleFrequency(
+                          value as "DAILY" | "WEEKLY" | "MONTHLY",
+                        )
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -354,12 +380,23 @@ export function PayoutManagement({ farmId, className = "" }: PayoutManagementPro
                     <Label>Minimum Amount</Label>
                     <Input
                       type="number"
-                      defaultValue={schedule?.minimumAmount || 10}
+                      value={minimumAmount}
+                      onChange={(e) => setMinimumAmount(Number(e.target.value))}
                       min={10}
                       step={5}
                     />
                   </div>
-                  <Button className="w-full">Save Schedule</Button>
+                  <Button
+                    className="w-full"
+                    onClick={() =>
+                      updatePayoutSchedule({
+                        frequency: scheduleFrequency,
+                        minimumAmount,
+                      })
+                    }
+                  >
+                    Save Schedule
+                  </Button>
                 </div>
               </DialogContent>
             </Dialog>
@@ -369,17 +406,31 @@ export function PayoutManagement({ farmId, className = "" }: PayoutManagementPro
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600">Frequency</span>
-                  <span className="font-medium">{schedule.frequency.toLowerCase()}</span>
+                  <span className="font-medium">
+                    {schedule.frequency.toLowerCase()}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600">Minimum Amount</span>
-                  <span className="font-medium">{formatCurrency(schedule.minimumAmount)}</span>
+                  <span className="font-medium">
+                    {formatCurrency(schedule.minimumAmount)}
+                  </span>
                 </div>
                 {schedule.frequency === "WEEKLY" && schedule.dayOfWeek && (
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-600">Payout Day</span>
                     <span className="font-medium">
-                      {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][schedule.dayOfWeek]}
+                      {
+                        [
+                          "Sunday",
+                          "Monday",
+                          "Tuesday",
+                          "Wednesday",
+                          "Thursday",
+                          "Friday",
+                          "Saturday",
+                        ][schedule.dayOfWeek]
+                      }
                     </span>
                   </div>
                 )}
@@ -394,11 +445,7 @@ export function PayoutManagement({ farmId, className = "" }: PayoutManagementPro
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Payout Accounts</CardTitle>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={connectStripeAccount}
-            >
+            <Button variant="outline" size="sm" onClick={connectStripeAccount}>
               <Plus className="h-4 w-4 mr-2" />
               Add Account
             </Button>
@@ -432,12 +479,17 @@ export function PayoutManagement({ farmId, className = "" }: PayoutManagementPro
                           <p className="font-medium text-gray-900">
                             {account.bankName || "Bank Account"}
                           </p>
-                          <p className="text-sm text-gray-500">••••{account.last4}</p>
+                          <p className="text-sm text-gray-500">
+                            ••••{account.last4}
+                          </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
                         {account.isDefault && (
-                          <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">
+                          <Badge
+                            variant="outline"
+                            className="bg-green-100 text-green-800 border-green-200"
+                          >
                             Default
                           </Badge>
                         )}
@@ -500,7 +552,8 @@ export function PayoutManagement({ farmId, className = "" }: PayoutManagementPro
                         {getPayoutStatusBadge(payout.status)}
                       </div>
                       <p className="text-sm text-gray-500 mt-1">
-                        {formatDate(payout.periodStart)} - {formatDate(payout.periodEnd)}
+                        {formatDate(payout.periodStart)} -{" "}
+                        {formatDate(payout.periodEnd)}
                       </p>
                       <p className="text-xs text-gray-400 mt-1">
                         {payout.orderCount} orders • ••••{payout.accountLast4}

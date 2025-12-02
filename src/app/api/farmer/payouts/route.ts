@@ -93,7 +93,7 @@ export async function GET(request: NextRequest) {
       periodEnd: payout.periodEnd.toISOString(),
       orderCount: payout.orderCount,
       scheduledDate: payout.scheduledDate.toISOString(),
-      completedDate: payout.completedAt?.toISOString(),
+      completedDate: payout.paidDate?.toISOString(),
       failureReason: payout.failureReason || undefined,
       accountLast4: "1234", // TODO: Get from Stripe Connect account
     }));
@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if Stripe Connect is set up
-    if (!farm.stripeConnectAccountId) {
+    if (!farm.stripeAccountId) {
       return NextResponse.json(
         {
           success: false,
@@ -177,7 +177,7 @@ export async function POST(request: NextRequest) {
       where: {
         farmId: farmId,
         status: {
-          in: ["DELIVERED", "COMPLETED"],
+          in: ["FULFILLED", "COMPLETED"],
         },
         paymentStatus: "PAID",
       },
@@ -194,7 +194,7 @@ export async function POST(request: NextRequest) {
 
     const totalRevenue = completedOrders.reduce((sum, order) => {
       const farmItemsTotal = order.items.reduce(
-        (itemSum, item) => itemSum + Number(item.subtotal),
+        (itemSum: number, item: any) => itemSum + Number(item.subtotal),
         0,
       );
       return sum + farmItemsTotal;

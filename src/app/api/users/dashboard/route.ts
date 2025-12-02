@@ -15,7 +15,7 @@ export async function GET() {
     if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: "Authentication required" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -41,11 +41,10 @@ export async function GET() {
         where: { customerId: session.user.id },
       }),
 
-      // Count favorites (if you have a Favorite model)
-      // Otherwise return 0
-      database.favorite?.count({
+      // Count favorites
+      database.favorite.count({
         where: { userId: session.user.id },
-      }).catch(() => 0) || Promise.resolve(0),
+      }),
 
       // Fetch recent orders
       database.order.findMany({
@@ -63,7 +62,7 @@ export async function GET() {
       database.order.findMany({
         where: {
           customerId: session.user.id,
-          status: "DELIVERED",
+          status: "COMPLETED",
         },
         include: {
           reviews: true,
@@ -71,7 +70,7 @@ export async function GET() {
       }),
 
       // Fetch favorite farms
-      database.favorite?.findMany({
+      database.favorite.findMany({
         where: { userId: session.user.id },
         include: {
           farm: {
@@ -79,17 +78,17 @@ export async function GET() {
               id: true,
               name: true,
               slug: true,
-              bannerImage: true,
+              bannerUrl: true,
             },
           },
         },
         take: 10,
-      }).catch(() => []) || Promise.resolve([]),
+      }),
     ]);
 
     // Calculate pending reviews (orders without reviews)
     const pendingReviews = completedOrders.filter(
-      (order) => !order.reviews || order.reviews.length === 0
+      (order: any) => !order.reviews || order.reviews.length === 0,
     ).length;
 
     // Format response data
@@ -100,12 +99,12 @@ export async function GET() {
       pendingReviews,
     };
 
-    const formattedOrders = recentOrders.map((order) => ({
+    const formattedOrders = recentOrders.map((order: any) => ({
       id: order.id,
       orderNumber: order.orderNumber,
       farmName: order.farm.name,
       status: order.status.toLowerCase(),
-      totalAmount: Number(order.totalAmount),
+      totalAmount: Number(order.total),
       createdAt: order.createdAt.toISOString(),
     }));
 
@@ -114,7 +113,7 @@ export async function GET() {
           id: fav.farm.id,
           name: fav.farm.name,
           slug: fav.farm.slug,
-          imageUrl: fav.farm.bannerImage || null,
+          imageUrl: fav.farm.bannerUrl || null,
         }))
       : [];
 
@@ -130,9 +129,9 @@ export async function GET() {
       {
         success: false,
         error: "Failed to fetch dashboard data",
-        details: error instanceof Error ? error.message : "Unknown error"
+        details: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

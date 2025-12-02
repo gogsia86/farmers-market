@@ -48,6 +48,7 @@ model User {
   downloadLogs            DownloadLog[]
   teamMemberships         FarmTeamMember[]
   farms                   Farm[]
+  favorites               Favorite[]
   messages                Message[]                @relation("MessageSender")
   notificationSettings    NotificationPreferences?
   notifications           Notification[]
@@ -182,6 +183,7 @@ model Farm {
   stripeOnboardedAt      DateTime?
   payoutsEnabled         Boolean                @default(false)
   stripeDetailsSubmitted Boolean                @default(false)
+  payoutSchedule         Json?
   productCategories      Json?
   farmingPractices       Json?
   deliveryRadius         Int?                   @default(25)
@@ -211,7 +213,8 @@ model Farm {
   PickupLocation         PickupLocation[]
   products               Product[]
   qualityIssues          QualityIssue[]
-  reviews                Review[]
+  reviews                  Review[]
+  favorites                Favorite[]
   soilAnalyses           SoilAnalysis[]
   weatherData            WeatherData[]
 
@@ -525,6 +528,7 @@ model Product {
   orderItems           OrderItem[]
   farm                 Farm              @relation(fields: [farmId], references: [id], onDelete: Cascade)
   reviews              Review[]
+  favorites            Favorite[]
   SeasonalCycle        SeasonalCycle[]
 
   @@unique([farmId, slug])
@@ -820,6 +824,24 @@ model Review {
   @@index([rating])
   @@index([farmId, rating])
   @@map("reviews")
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  farmId    String?
+  productId String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  farm      Farm?    @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, farmId])
+  @@unique([userId, productId])
+  @@index([userId])
+  @@index([farmId])
+  @@index([productId])
+  @@map("favorites")
 }
 
 model FarmRating {

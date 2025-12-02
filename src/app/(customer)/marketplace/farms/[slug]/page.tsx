@@ -2,18 +2,10 @@ import { notFound } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { FarmProfileTabs } from "@/components/marketplace/FarmProfileTabs";
+import { FarmProfileActions } from "@/components/marketplace/FarmProfileActions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Award,
-  MapPin,
-  Star,
-  Truck,
-  Calendar,
-  Heart,
-  Share2,
-} from "lucide-react";
-import Image from "next/image";
+import { Award, MapPin, Star, Truck, Calendar } from "lucide-react";
 
 /**
  * 🌾 ENHANCED FARM PROFILE PAGE - Phase 3
@@ -371,14 +363,7 @@ export default async function FarmProfilePage({ params }: PageProps) {
                 <Button size="lg" className="gap-2">
                   Browse Products
                 </Button>
-                <Button size="lg" variant="outline" className="gap-2">
-                  <Heart className="h-5 w-5" />
-                  Save Farm
-                </Button>
-                <Button size="lg" variant="outline" className="gap-2">
-                  <Share2 className="h-5 w-5" />
-                  Share
-                </Button>
+                <FarmProfileActions farmId={farm.id} farmName={farm.name} />
               </div>
             </div>
           </div>

@@ -5,7 +5,13 @@ import { ReactNode } from "react";
 
 export interface BadgeProps {
   children: ReactNode;
-  variant?: "default" | "secondary" | "success" | "warning" | "error";
+  variant?:
+    | "default"
+    | "secondary"
+    | "outline"
+    | "success"
+    | "warning"
+    | "error";
   className?: string;
 }
 
@@ -21,6 +27,8 @@ export function Badge({
         {
           "bg-gray-100 text-gray-800": variant === "default",
           "bg-blue-100 text-blue-800": variant === "secondary",
+          "border border-gray-300 text-gray-700 bg-transparent":
+            variant === "outline",
           "bg-green-100 text-green-800": variant === "success",
           "bg-yellow-100 text-yellow-800": variant === "warning",
           "bg-red-100 text-red-800": variant === "error",

@@ -10,7 +10,7 @@ import { database } from "@/lib/database";
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const session = await auth();
@@ -18,7 +18,7 @@ export async function PUT(
     if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: "Authentication required" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -30,14 +30,14 @@ export async function PUT(
     if (rating !== undefined && (rating < 1 || rating > 5)) {
       return NextResponse.json(
         { success: false, error: "Rating must be between 1 and 5" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (comment !== undefined && comment.trim().length === 0) {
       return NextResponse.json(
         { success: false, error: "Comment cannot be empty" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -49,22 +49,22 @@ export async function PUT(
     if (!existingReview) {
       return NextResponse.json(
         { success: false, error: "Review not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     // Authorization check - only review author can update
-    if (existingReview.userId !== session.user.id) {
+    if (existingReview.customerId !== session.user.id) {
       return NextResponse.json(
         { success: false, error: "You can only update your own reviews" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     // Update review
     const updateData: any = {};
     if (rating !== undefined) updateData.rating = rating;
-    if (comment !== undefined) updateData.comment = comment.trim();
+    if (comment !== undefined) updateData.reviewText = comment.trim();
     updateData.updatedAt = new Date();
 
     const updatedReview = await database.review.update({
@@ -94,7 +94,7 @@ export async function PUT(
       review: {
         id: updatedReview.id,
         rating: updatedReview.rating,
-        comment: updatedReview.comment,
+        comment: updatedReview.reviewText,
         farmName: updatedReview.farm?.name || undefined,
         productName: updatedReview.product?.name || undefined,
         updatedAt: updatedReview.updatedAt.toISOString(),
@@ -108,7 +108,7 @@ export async function PUT(
         error: "Failed to update review",
         details: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -120,8 +120,8 @@ export async function PUT(
  * Only the review author can delete their review
  */
 export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  _request: NextRequest,
+  { params }: { params: { id: string } },
 ) {
   try {
     const session = await auth();
@@ -129,7 +129,7 @@ export async function DELETE(
     if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: "Authentication required" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -143,15 +143,15 @@ export async function DELETE(
     if (!existingReview) {
       return NextResponse.json(
         { success: false, error: "Review not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     // Authorization check - only review author can delete
-    if (existingReview.userId !== session.user.id) {
+    if (existingReview.customerId !== session.user.id) {
       return NextResponse.json(
         { success: false, error: "You can only delete your own reviews" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -172,7 +172,7 @@ export async function DELETE(
         error: "Failed to delete review",
         details: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

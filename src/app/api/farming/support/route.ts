@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
             message: "You must be logged in to get support",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
             details: validation.error.flatten(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -82,7 +82,8 @@ export async function POST(request: NextRequest) {
       message: validatedData.message,
       context: {
         ...validatedData.context,
-        currentSeason: validatedData.context?.currentSeason || getCurrentSeason(),
+        currentSeason:
+          validatedData.context?.currentSeason || getCurrentSeason(),
       },
       includeHistory: validatedData.includeHistory ?? true,
     };
@@ -110,7 +111,7 @@ export async function POST(request: NextRequest) {
               : "Failed to process support request",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -119,7 +120,7 @@ export async function POST(request: NextRequest) {
 // GET HANDLER (API Info)
 // ============================================================================
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   const session = await auth();
 
   if (!session?.user) {
@@ -131,7 +132,7 @@ export async function GET(request: NextRequest) {
           message: "Authentication required",
         },
       },
-      { status: 401 }
+      { status: 401 },
     );
   }
 

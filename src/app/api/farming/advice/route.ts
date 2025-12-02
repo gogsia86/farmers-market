@@ -20,19 +20,24 @@ import { getCurrentSeason } from "@/types/farming-advice.types";
 // ============================================================================
 
 const FarmingAdviceSchema = z.object({
-  question: z.string().min(10, "Question must be at least 10 characters").max(500),
-  category: z.enum([
-    "CROP_MANAGEMENT",
-    "PEST_CONTROL",
-    "SOIL_HEALTH",
-    "IRRIGATION",
-    "HARVESTING",
-    "ORGANIC_PRACTICES",
-    "MARKET_TRENDS",
-    "SEASONAL_PLANNING",
-    "EQUIPMENT",
-    "SUSTAINABILITY",
-  ]).optional(),
+  question: z
+    .string()
+    .min(10, "Question must be at least 10 characters")
+    .max(500),
+  category: z
+    .enum([
+      "CROP_MANAGEMENT",
+      "PEST_CONTROL",
+      "SOIL_HEALTH",
+      "IRRIGATION",
+      "HARVESTING",
+      "ORGANIC_PRACTICES",
+      "MARKET_TRENDS",
+      "SEASONAL_PLANNING",
+      "EQUIPMENT",
+      "SUSTAINABILITY",
+    ])
+    .optional(),
   farmLocation: z.string().optional(),
   currentSeason: z.enum(["SPRING", "SUMMER", "FALL", "WINTER"]).optional(),
   depth: z.enum(["quick", "comprehensive", "expert"]).optional(),
@@ -58,7 +63,7 @@ export async function POST(request: NextRequest) {
             message: "You must be logged in to get farming advice",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -76,7 +81,7 @@ export async function POST(request: NextRequest) {
             details: validation.error.flatten(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -111,10 +116,13 @@ export async function POST(request: NextRequest) {
         success: false,
         error: {
           code: "INTERNAL_SERVER_ERROR",
-          message: error instanceof Error ? error.message : "Failed to get farming advice",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Failed to get farming advice",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -123,7 +131,7 @@ export async function POST(request: NextRequest) {
 // GET HANDLER (Optional - for testing)
 // ============================================================================
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   const session = await auth();
 
   if (!session?.user) {
@@ -135,7 +143,7 @@ export async function GET(request: NextRequest) {
           message: "Authentication required",
         },
       },
-      { status: 401 }
+      { status: 401 },
     );
   }
 

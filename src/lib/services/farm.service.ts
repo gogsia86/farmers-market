@@ -13,6 +13,7 @@
  * Functional Requirements: FR-011 (Farm Profile Creation)
  */
 
+import { Prisma } from "@prisma/client";
 import { AgriculturalCache } from "@/lib/cache/agricultural-cache";
 import { database } from "@/lib/database";
 import {
@@ -504,7 +505,7 @@ export async function listFarmsService(
   // Individual farms are cached when retrieved
 
   // Build where clause
-  const where: any = {
+  const where: Prisma.FarmWhereInput = {
     status: { not: "INACTIVE" }, // Only active farms
   };
 

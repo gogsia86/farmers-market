@@ -11,9 +11,7 @@ import {
   Mail,
   ChevronDown,
   AlertCircle,
-  Filter,
   Search,
-  Calendar,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,7 +30,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 
 interface OrderItem {
@@ -53,10 +50,11 @@ interface Order {
   status:
     | "PENDING"
     | "CONFIRMED"
-    | "PROCESSING"
+    | "PREPARING"
     | "READY"
-    | "SHIPPED"
-    | "DELIVERED";
+    | "FULFILLED"
+    | "COMPLETED"
+    | "CANCELLED";
   items: OrderItem[];
   total: number;
   pickupDate?: string;
@@ -296,25 +294,28 @@ export function OrderFulfillmentTools({
         return <Clock className="h-4 w-4 text-yellow-600" />;
       case "CONFIRMED":
         return <CheckCircle className="h-4 w-4 text-blue-600" />;
-      case "PROCESSING":
+      case "PREPARING":
         return <Package className="h-4 w-4 text-purple-600" />;
       case "READY":
         return <CheckCircle className="h-4 w-4 text-green-600" />;
-      case "SHIPPED":
+      case "FULFILLED":
         return <Truck className="h-4 w-4 text-indigo-600" />;
-      case "DELIVERED":
+      case "COMPLETED":
         return <CheckCircle className="h-4 w-4 text-green-700" />;
+      case "CANCELLED":
+        return <AlertCircle className="h-4 w-4 text-red-600" />;
     }
   };
 
   const getStatusBadge = (status: Order["status"]) => {
-    const styles = {
+    const styles: Record<Order["status"], string> = {
       PENDING: "bg-yellow-100 text-yellow-800 border-yellow-200",
       CONFIRMED: "bg-blue-100 text-blue-800 border-blue-200",
-      PROCESSING: "bg-purple-100 text-purple-800 border-purple-200",
+      PREPARING: "bg-purple-100 text-purple-800 border-purple-200",
       READY: "bg-green-100 text-green-800 border-green-200",
-      SHIPPED: "bg-indigo-100 text-indigo-800 border-indigo-200",
-      DELIVERED: "bg-green-100 text-green-900 border-green-300",
+      FULFILLED: "bg-indigo-100 text-indigo-800 border-indigo-200",
+      COMPLETED: "bg-green-100 text-green-900 border-green-300",
+      CANCELLED: "bg-red-100 text-red-800 border-red-200",
     };
 
     return (
@@ -335,19 +336,23 @@ export function OrderFulfillmentTools({
         { label: "Cancel Order", nextStatus: "CANCELLED" as const },
       ],
       CONFIRMED: [
-        { label: "Start Processing", nextStatus: "PROCESSING" as const },
+        { label: "Start Preparing", nextStatus: "PREPARING" as const },
         { label: "Mark Ready", nextStatus: "READY" as const },
       ],
-      PROCESSING: [{ label: "Mark Ready", nextStatus: "READY" as const }],
+      PREPARING: [{ label: "Mark Ready", nextStatus: "READY" as const }],
       READY: [
-        { label: "Mark Shipped", nextStatus: "SHIPPED" as const },
-        { label: "Mark Delivered", nextStatus: "DELIVERED" as const },
+        { label: "Mark Fulfilled", nextStatus: "FULFILLED" as const },
+        { label: "Mark Completed", nextStatus: "COMPLETED" as const },
       ],
-      SHIPPED: [{ label: "Mark Delivered", nextStatus: "DELIVERED" as const }],
-      DELIVERED: [],
+      FULFILLED: [
+        { label: "Mark Completed", nextStatus: "COMPLETED" as const },
+      ],
+      COMPLETED: [],
+      CANCELLED: [],
     };
 
-    return workflows[status] || [];
+    type WorkflowAction = { label: string; nextStatus: Order["status"] };
+    return (workflows[status] as WorkflowAction[] | undefined) || [];
   };
 
   return (
@@ -379,7 +384,9 @@ export function OrderFulfillmentTools({
                   <Input
                     placeholder="Search orders..."
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setSearchQuery(e.target.value)
+                    }
                     className="pl-10"
                   />
                 </div>
@@ -444,27 +451,27 @@ export function OrderFulfillmentTools({
                       <DropdownMenuItem
                         onClick={() => batchUpdateStatus("CONFIRMED")}
                       >
-                        Mark as Confirmed
+                        Confirm
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        onClick={() => batchUpdateStatus("PROCESSING")}
+                        onClick={() => batchUpdateStatus("PREPARING")}
                       >
-                        Mark as Processing
+                        Preparing
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => batchUpdateStatus("READY")}
                       >
-                        Mark as Ready
+                        Ready
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        onClick={() => batchUpdateStatus("SHIPPED")}
+                        onClick={() => batchUpdateStatus("FULFILLED")}
                       >
-                        Mark as Shipped
+                        Fulfilled
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        onClick={() => batchUpdateStatus("DELIVERED")}
+                        onClick={() => batchUpdateStatus("COMPLETED")}
                       >
-                        Mark as Delivered
+                        Completed
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -618,19 +625,24 @@ export function OrderFulfillmentTools({
                       {/* Workflow Actions */}
                       {getWorkflowActions(order.status).length > 0 && (
                         <div className="flex items-center gap-2 pt-2">
-                          {getWorkflowActions(order.status).map((action) => (
-                            <Button
-                              key={action.label}
-                              size="sm"
-                              variant="outline"
-                              onClick={() => {
-                                setSelectedOrders(new Set([order.id]));
-                                batchUpdateStatus(action.nextStatus);
-                              }}
-                            >
-                              {action.label}
-                            </Button>
-                          ))}
+                          {getWorkflowActions(order.status).map(
+                            (action: {
+                              label: string;
+                              nextStatus: Order["status"];
+                            }) => (
+                              <Button
+                                key={action.label}
+                                size="sm"
+                                variant="outline"
+                                onClick={() => {
+                                  setSelectedOrders(new Set([order.id]));
+                                  batchUpdateStatus(action.nextStatus);
+                                }}
+                              >
+                                {action.label}
+                              </Button>
+                            ),
+                          )}
                         </div>
                       )}
                     </div>
