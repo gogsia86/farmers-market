@@ -48,6 +48,12 @@ export function Header() {
               Home
             </Link>
             <Link
+              href="/markets"
+              className="text-base font-medium text-gray-700 hover:text-agricultural-700 transition-colors"
+            >
+              Marketplace
+            </Link>
+            <Link
               href="/farms"
               data-testid="browse-farms-link"
               className="text-base font-medium text-gray-700 hover:text-agricultural-700 transition-colors"

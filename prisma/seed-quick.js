@@ -12,7 +12,7 @@ const connectionString =
   "postgresql://postgres:postgres@localhost:5432/farmersmarket";
 
 const pool = new Pool({
-  connectionString: connectionString,
+  connectionString,
 });
 
 // Create Prisma adapter

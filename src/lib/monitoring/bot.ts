@@ -39,9 +39,9 @@ export class DivineMonitoringBot {
       enabled: true,
       name: "Divine Workflow Monitor Bot",
       version: "1.0.0",
-      baseUrl: config.baseUrl || "http://localhost:3000",
+      baseUrl: config.baseUrl || "http://localhost:3001",
       environments: {
-        dev: "http://localhost:3000",
+        dev: "http://localhost:3001",
         ...config.environments,
       },
       workflows: config.workflows || PREDEFINED_WORKFLOWS,
@@ -446,12 +446,14 @@ export class DivineMonitoringBot {
         testData.password = "TestPassword123!";
         break;
 
-      case "FARM_CREATION":
+      case "FARM_CREATION": {
         const season = this.getCurrentSeason();
         testData.farmName = `Divine ${season} Farm ${timestamp}`;
-        testData.description = `A biodynamic farm practicing sustainable agriculture.`;
+        testData.description =
+          "A biodynamic farm practicing sustainable agriculture.";
         testData.address = "123 Farm Road, Agricultural Valley, CA 95000";
         break;
+      }
 
       case "PRODUCT_LISTING":
         testData.productName = "Fresh Organic Produce";
@@ -511,7 +513,7 @@ export async function quickHealthCheck(
   baseUrl?: string,
 ): Promise<WorkflowResult> {
   const bot = createMonitoringBot({
-    baseUrl: baseUrl || "http://localhost:3000",
+    baseUrl: baseUrl || "http://localhost:3001",
   });
 
   return await bot.runWorkflow("health-check");
@@ -524,7 +526,7 @@ export async function runCriticalChecks(
   baseUrl?: string,
 ): Promise<MonitoringReport> {
   const bot = createMonitoringBot({
-    baseUrl: baseUrl || "http://localhost:3000",
+    baseUrl: baseUrl || "http://localhost:3001",
     performance: {
       parallel: false, // Sequential execution to avoid browser crashes
       maxConcurrency: 1,
@@ -544,7 +546,7 @@ export async function runComprehensiveMonitoring(
   baseUrl?: string,
 ): Promise<MonitoringReport> {
   const bot = createMonitoringBot({
-    baseUrl: baseUrl || "http://localhost:3000",
+    baseUrl: baseUrl || "http://localhost:3001",
   });
 
   return await bot.runAllWorkflows();

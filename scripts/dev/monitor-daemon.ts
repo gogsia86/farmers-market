@@ -113,7 +113,7 @@ class MonitoringDaemon {
 
   constructor() {
     this.bot = new DivineMonitoringBot({
-      baseUrl: process.env.BASE_URL || "http://localhost:3000",
+      baseUrl: process.env.BASE_URL || "http://localhost:3001",
     });
     this.notificationManager = createNotificationManager();
     this.storage = getDatabaseStorage();
@@ -165,7 +165,7 @@ class MonitoringDaemon {
         "Monitoring Daemon Started",
         `The Divine Workflow Monitor daemon is now running and will monitor ${this.scheduledWorkflows.size} workflows.`,
         {
-          baseUrl: process.env.BASE_URL || "http://localhost:3000",
+          baseUrl: process.env.BASE_URL || "http://localhost:3001",
           workflows: Array.from(this.scheduledWorkflows.keys()),
           startTime: this.stats.startTime.toISOString(),
         },
@@ -449,7 +449,7 @@ class MonitoringDaemon {
 
       // Check API
       try {
-        const baseUrl = process.env.BASE_URL || "http://localhost:3000";
+        const baseUrl = process.env.BASE_URL || "http://localhost:3001";
         const response = await fetch(`${baseUrl}/api/health`, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -481,7 +481,7 @@ class MonitoringDaemon {
       if (healthCheck.healthy) {
         console.log(`✅ Health check passed (${healthCheck.responseTime}ms)`);
       } else {
-        console.log(`❌ Health check failed:`);
+        console.log("❌ Health check failed:");
         healthCheck.errors.forEach((err) => console.log(`   - ${err}`));
 
         await this.notificationManager.sendCriticalAlert(

@@ -7,7 +7,7 @@
 import { chromium, type Browser, type Page } from "playwright";
 import chalk from "chalk";
 
-const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
+const BASE_URL = process.env.BASE_URL || "http://localhost:3001";
 
 interface TestResult {
   success: boolean;
@@ -79,14 +79,14 @@ async function testRegistration(): Promise<TestResult> {
     logs.push(`✓ Filled password: ${"*".repeat(password.length)}`);
 
     await confirmPasswordField.fill(password);
-    logs.push(`✓ Filled confirm password`);
+    logs.push("✓ Filled confirm password");
 
     // Select user type (CONSUMER) - click the label since radio is hidden
     const userTypeLabel = page
       .locator('label:has(input[value="CONSUMER"])')
       .first();
     await userTypeLabel.click();
-    logs.push(`✓ Selected user type: CONSUMER`);
+    logs.push("✓ Selected user type: CONSUMER");
 
     // Wait a moment for form validation
     await page.waitForTimeout(500);

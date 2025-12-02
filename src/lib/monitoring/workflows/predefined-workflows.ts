@@ -193,7 +193,7 @@ const userRegistrationSteps: WorkflowStep[] = [
         }
 
         throw new Error(
-          `Registration submission did not show clear success. ` +
+          "Registration submission did not show clear success. " +
             `Check screenshot and logs. URL: ${currentUrl}`,
         );
       }
@@ -430,7 +430,7 @@ const userLoginSteps: WorkflowStep[] = [
         }
 
         throw new Error(
-          `Login submission did not show clear success. ` +
+          "Login submission did not show clear success. " +
             `Check screenshot and logs. URL: ${currentUrl}`,
         );
       }
@@ -565,7 +565,7 @@ const productListingSteps: WorkflowStep[] = [
       const { page, baseUrl } = context;
       if (!page) throw new Error("Page not initialized");
 
-      await page.goto(`${baseUrl}/farmer-dashboard/products/bulk-upload`);
+      await page.goto(`${baseUrl}/farmer/dashboard/products/bulk-upload`);
       await page.waitForLoadState("networkidle");
 
       return {

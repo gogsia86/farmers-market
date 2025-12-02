@@ -7,7 +7,7 @@
 import { chromium, type Browser, type Page } from "playwright";
 import chalk from "chalk";
 
-const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
+const BASE_URL = process.env.BASE_URL || "http://localhost:3001";
 
 interface TestResult {
   success: boolean;
@@ -107,7 +107,7 @@ async function testLogin(): Promise<TestResult> {
     const isDisabled = await submitButton.isDisabled();
     if (isDisabled) {
       logs.push(
-        "⚠ Submit button is disabled - checking for validation errors"
+        "⚠ Submit button is disabled - checking for validation errors",
       );
 
       // Check for any validation errors
@@ -158,7 +158,7 @@ async function testLogin(): Promise<TestResult> {
     // Check for redirect to authenticated page
     if (!successFound) {
       logs.push(
-        "No success message found, checking for redirect to authenticated page..."
+        "No success message found, checking for redirect to authenticated page...",
       );
       try {
         await page.waitForURL(/\/(dashboard|farms|profile|home)/, {
@@ -222,7 +222,7 @@ async function testLogin(): Promise<TestResult> {
     const currentUrl = page.url();
     logs.push(`Final URL: ${currentUrl}`);
     logs.push(
-      `Console messages (${consoleMessages.length} total): ${consoleMessages.slice(-3).join("; ")}`
+      `Console messages (${consoleMessages.length} total): ${consoleMessages.slice(-3).join("; ")}`,
     );
 
     if (errorFound) {
@@ -238,7 +238,7 @@ async function testLogin(): Promise<TestResult> {
       logs.push("Screenshot saved to test-results/");
 
       throw new Error(
-        `No clear success indicator found. URL: ${currentUrl}. Check screenshot.`
+        `No clear success indicator found. URL: ${currentUrl}. Check screenshot.`,
       );
     }
 
@@ -308,7 +308,7 @@ async function main() {
   console.log(
     result.success
       ? chalk.green.bold("✅ TEST PASSED")
-      : chalk.red.bold("❌ TEST FAILED")
+      : chalk.red.bold("❌ TEST FAILED"),
   );
 
   if (result.error) {

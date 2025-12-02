@@ -23,7 +23,7 @@ console.log(`
  * Find process using a specific port
  */
 function findProcessOnPort(port) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, _reject) => {
     let command;
 
     if (isWindows) {
@@ -32,7 +32,7 @@ function findProcessOnPort(port) {
       command = `lsof -ti :${port}`;
     }
 
-    exec(command, (error, stdout, stderr) => {
+    exec(command, (error, stdout, _stderr) => {
       if (error) {
         // No process found on this port
         resolve(null);
@@ -74,7 +74,7 @@ function killProcess(pid) {
       command = `kill -9 ${pid}`;
     }
 
-    exec(command, (error, stdout, stderr) => {
+    exec(command, (error, _stdout, _stderr) => {
       if (error) {
         reject(new Error(`Failed to kill process ${pid}: ${error.message}`));
         return;
@@ -91,7 +91,7 @@ function killProcess(pid) {
  * Kill all Node.js processes (nuclear option)
  */
 function killAllNodeProcesses() {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, _reject) => {
     let command;
 
     if (isWindows) {
@@ -100,7 +100,7 @@ function killAllNodeProcesses() {
       command = "killall -9 node";
     }
 
-    exec(command, (error, stdout, stderr) => {
+    exec(command, (error, stdout, _stderr) => {
       if (error) {
         // No node processes found is not an error
         resolve(0);
@@ -120,15 +120,15 @@ async function main() {
   const killAll = args.includes("--all") || args.includes("-a");
 
   if (killAll) {
-    console.log(`⚠️  NUCLEAR OPTION: Killing ALL Node.js processes\n`);
+    console.log("⚠️  NUCLEAR OPTION: Killing ALL Node.js processes\n");
     try {
-      const killed = await killAllNodeProcesses();
-      console.log(`✅ Killed all Node.js processes\n`);
-      console.log(`💡 You can now start the dev server:`);
-      console.log(`   npm run dev\n`);
+      const _killed = await killAllNodeProcesses();
+      console.log("✅ Killed all Node.js processes\n");
+      console.log("💡 You can now start the dev server:");
+      console.log("   npm run dev\n");
       return;
-    } catch (err) {
-      console.log(`❌ Error killing Node processes: ${err.message}\n`);
+    } catch (_err) {
+      console.log(`❌ Error killing Node processes: ${_err.message}\n`);
       process.exit(1);
     }
   }
@@ -136,7 +136,7 @@ async function main() {
   console.log(`🔍 Scanning common development ports: ${PORTS.join(", ")}\n`);
 
   let totalKilled = 0;
-  let portsWithProcesses = [];
+  const portsWithProcesses = [];
 
   for (const port of PORTS) {
     console.log(`📍 Checking port ${port}...`);
@@ -169,7 +169,7 @@ async function main() {
   }
 
   console.log(
-    `\n╔════════════════════════════════════════════════════════════╗`,
+    "\n╔════════════════════════════════════════════════════════════╗",
   );
   if (totalKilled > 0) {
     const padding = " ".repeat(Math.max(0, 36 - totalKilled.toString().length));
@@ -179,21 +179,21 @@ async function main() {
     );
   } else {
     console.log(
-      `║  ✅ All ports are clear - no processes to kill            ║`,
+      "║  ✅ All ports are clear - no processes to kill            ║",
     );
   }
   console.log(
-    `╚════════════════════════════════════════════════════════════╝\n`,
+    "╚════════════════════════════════════════════════════════════╝\n",
   );
 
   if (totalKilled > 0) {
-    console.log(`💡 You can now start the dev server:`);
-    console.log(`   npm run dev\n`);
+    console.log("💡 You can now start the dev server:");
+    console.log("   npm run dev\n");
   } else {
-    console.log(`💡 All clear! Start the dev server with:`);
-    console.log(`   npm run dev\n`);
-    console.log(`⚠️  If you still have issues, try the nuclear option:`);
-    console.log(`   npm run kill-server -- --all\n`);
+    console.log("💡 All clear! Start the dev server with:");
+    console.log("   npm run dev\n");
+    console.log("⚠️  If you still have issues, try the nuclear option:");
+    console.log("   npm run kill-server -- --all\n");
   }
 }
 

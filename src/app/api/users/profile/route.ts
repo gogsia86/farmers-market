@@ -102,7 +102,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const contentType = request.headers.get("content-type") || "";
-    let updateData: any = {};
+    const updateData: any = {};
     let avatarUrl: string | null = null;
 
     // Handle FormData (with file upload)

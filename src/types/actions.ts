@@ -30,7 +30,7 @@ export class ActionError extends Error {
     public code: string,
     message: string,
     public field?: string,
-    public details?: Record<string, any>
+    public details?: Record<string, any>,
   ) {
     super(message);
     this.name = "ActionError";
@@ -90,7 +90,7 @@ export function createErrorResult(
   code: string,
   message: string,
   field?: string,
-  details?: Record<string, any>
+  details?: Record<string, any>,
 ): ActionResult<never> {
   return {
     success: false,

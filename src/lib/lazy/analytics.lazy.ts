@@ -58,7 +58,7 @@ async function loadAnalytics() {
  */
 export async function trackEvent(
   name: string,
-  properties?: Record<string, any>
+  properties?: Record<string, any>,
 ): Promise<void> {
   if (typeof window === "undefined") {
     // Skip on server-side
@@ -107,7 +107,7 @@ export async function trackPageView(path?: string): Promise<void> {
  */
 export async function trackInteraction(
   action: string,
-  data?: Record<string, any>
+  data?: Record<string, any>,
 ): Promise<void> {
   return trackEvent(`interaction:${action}`, data);
 }
@@ -122,7 +122,7 @@ export async function trackInteraction(
  */
 export async function trackConversion(
   type: string,
-  data?: Record<string, any>
+  data?: Record<string, any>,
 ): Promise<void> {
   return trackEvent(`conversion:${type}`, data);
 }
@@ -137,7 +137,7 @@ export async function trackConversion(
  */
 export async function trackError(
   error: string,
-  context?: Record<string, any>
+  context?: Record<string, any>,
 ): Promise<void> {
   return trackEvent(`error:${error}`, context);
 }
@@ -151,7 +151,7 @@ export async function trackError(
  */
 export async function trackFarmEvent(
   action: string,
-  farmData?: Record<string, any>
+  farmData?: Record<string, any>,
 ): Promise<void> {
   return trackEvent(`farm:${action}`, farmData);
 }
@@ -161,7 +161,7 @@ export async function trackFarmEvent(
  */
 export async function trackProductEvent(
   action: string,
-  productData?: Record<string, any>
+  productData?: Record<string, any>,
 ): Promise<void> {
   return trackEvent(`product:${action}`, productData);
 }
@@ -171,7 +171,7 @@ export async function trackProductEvent(
  */
 export async function trackOrderEvent(
   action: string,
-  orderData?: Record<string, any>
+  orderData?: Record<string, any>,
 ): Promise<void> {
   return trackEvent(`order:${action}`, orderData);
 }
@@ -220,7 +220,7 @@ export async function flushEvents(): Promise<void> {
 
   // Send all events
   await Promise.all(
-    events.map((event) => trackEvent(event.name, event.properties))
+    events.map((event) => trackEvent(event.name, event.properties)),
   );
 }
 

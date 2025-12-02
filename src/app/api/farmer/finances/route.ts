@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
     // Fetch orders for current period
     const currentOrders = await database.order.findMany({
       where: {
-        farmId: farmId,
+        farmId,
         createdAt: {
           gte: periodStart,
           lte: now,
@@ -116,7 +116,7 @@ export async function GET(request: NextRequest) {
         items: {
           where: {
             product: {
-              farmId: farmId,
+              farmId,
             },
           },
         },
@@ -128,7 +128,7 @@ export async function GET(request: NextRequest) {
     // Fetch orders for previous period (for comparison)
     const previousOrders = await database.order.findMany({
       where: {
-        farmId: farmId,
+        farmId,
         createdAt: {
           gte: previousPeriodStart,
           lt: periodStart,
@@ -141,7 +141,7 @@ export async function GET(request: NextRequest) {
         items: {
           where: {
             product: {
-              farmId: farmId,
+              farmId,
             },
           },
         },
@@ -175,7 +175,7 @@ export async function GET(request: NextRequest) {
     // Fetch payouts
     const payouts = await database.payout.findMany({
       where: {
-        farmId: farmId,
+        farmId,
         createdAt: {
           gte: periodStart,
         },
@@ -190,7 +190,7 @@ export async function GET(request: NextRequest) {
     // Calculate pending balance (orders in PENDING/CONFIRMED/PREPARING status)
     const pendingOrders = await database.order.findMany({
       where: {
-        farmId: farmId,
+        farmId,
         status: {
           in: ["PENDING", "CONFIRMED", "PREPARING"],
         },
@@ -199,7 +199,7 @@ export async function GET(request: NextRequest) {
         items: {
           where: {
             product: {
-              farmId: farmId,
+              farmId,
             },
           },
         },
@@ -213,7 +213,7 @@ export async function GET(request: NextRequest) {
     // Calculate available balance (completed orders minus payouts)
     const completedOrders = await database.order.findMany({
       where: {
-        farmId: farmId,
+        farmId,
         status: {
           in: ["FULFILLED", "COMPLETED"],
         },
@@ -223,7 +223,7 @@ export async function GET(request: NextRequest) {
         items: {
           where: {
             product: {
-              farmId: farmId,
+              farmId,
             },
           },
         },
@@ -235,7 +235,7 @@ export async function GET(request: NextRequest) {
     const completedRevenue = calculateFarmRevenue(completedOrders);
     const allPayouts = await database.payout.findMany({
       where: {
-        farmId: farmId,
+        farmId,
         status: "COMPLETED",
       },
     });
@@ -292,7 +292,7 @@ export async function GET(request: NextRequest) {
             : payout.status === "FAILED"
               ? "FAILED"
               : "PENDING",
-        description: `Payout to bank account`,
+        description: "Payout to bank account",
         createdAt: payout.createdAt.toISOString(),
       });
     });

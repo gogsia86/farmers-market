@@ -367,7 +367,7 @@ export class SecurityAuditSystem {
     score: number;
   }> {
     const issues: string[] = [];
-    let score = 100;
+    const score = 100;
 
     // Check GDPR requirements
     // - Right to be forgotten
@@ -387,7 +387,7 @@ export class SecurityAuditSystem {
     score: number;
   }> {
     const issues: string[] = [];
-    let score = 100;
+    const score = 100;
 
     // Check PCI requirements if handling payments
     // - Never store CVV
@@ -408,7 +408,7 @@ export class SecurityAuditSystem {
     score: number;
   }> {
     const issues: string[] = [];
-    let score = 100;
+    const score = 100;
 
     // Agricultural-specific security requirements
     // - Farm data privacy

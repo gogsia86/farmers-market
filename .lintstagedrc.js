@@ -16,7 +16,6 @@ module.exports = {
     const fileList = filenames.map((f) => `"${f}"`).join(" ");
 
     // Separate prisma config files from other TS files
-    const prismaFiles = filenames.filter((f) => f.includes("prisma/"));
     const otherFiles = filenames.filter((f) => !f.includes("prisma/"));
 
     const commands = [

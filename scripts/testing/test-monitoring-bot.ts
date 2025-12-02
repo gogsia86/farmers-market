@@ -18,7 +18,7 @@ import type { WorkflowResult } from "../src/lib/monitoring/types";
 const TEST_CONFIG = {
   testMode: true,
   mockServer: true,
-  baseUrl: "http://localhost:3000",
+  baseUrl: "http://localhost:3001",
   timeout: 10000,
 };
 
@@ -27,9 +27,13 @@ const TEST_CONFIG = {
 // ============================================================================
 
 async function testHealthCheckWorkflow(): Promise<void> {
-  console.log("\n╔════════════════════════════════════════════════════════════╗");
+  console.log(
+    "\n╔════════════════════════════════════════════════════════════╗",
+  );
   console.log("║ 🧪 TESTING MONITORING BOT - HEALTH CHECK                  ║");
-  console.log("╚════════════════════════════════════════════════════════════╝\n");
+  console.log(
+    "╚════════════════════════════════════════════════════════════╝\n",
+  );
 
   let browser;
   try {
@@ -55,7 +59,9 @@ async function testHealthCheckWorkflow(): Promise<void> {
       console.log(
         "ℹ️  Test 2: Cannot connect to server (expected if server not running)",
       );
-      console.log("   This is normal - the bot correctly handles offline scenarios");
+      console.log(
+        "   This is normal - the bot correctly handles offline scenarios",
+      );
     }
 
     // Test 3: Workflow executor can handle failures gracefully
@@ -64,9 +70,15 @@ async function testHealthCheckWorkflow(): Promise<void> {
     // Test 4: Verify report generation
     console.log("✅ Test 4: Report generation system operational");
 
-    console.log("\n╔════════════════════════════════════════════════════════════╗");
-    console.log("║ ✅ ALL TESTS PASSED                                        ║");
-    console.log("╚════════════════════════════════════════════════════════════╝\n");
+    console.log(
+      "\n╔════════════════════════════════════════════════════════════╗",
+    );
+    console.log(
+      "║ ✅ ALL TESTS PASSED                                        ║",
+    );
+    console.log(
+      "╚════════════════════════════════════════════════════════════╝\n",
+    );
 
     await browser.close();
   } catch (error) {
@@ -83,15 +95,21 @@ async function testHealthCheckWorkflow(): Promise<void> {
 // ============================================================================
 
 async function testWorkflowSystem(): Promise<void> {
-  console.log("\n╔════════════════════════════════════════════════════════════╗");
+  console.log(
+    "\n╔════════════════════════════════════════════════════════════╗",
+  );
   console.log("║ 🧪 TESTING WORKFLOW SYSTEM                                 ║");
-  console.log("╚════════════════════════════════════════════════════════════╝\n");
+  console.log(
+    "╚════════════════════════════════════════════════════════════╝\n",
+  );
 
   const tests = [
     {
       name: "Import monitoring modules",
       test: async () => {
-        const { createMonitoringBot } = await import("../src/lib/monitoring/bot");
+        const { createMonitoringBot } = await import(
+          "../src/lib/monitoring/bot"
+        );
         return !!createMonitoringBot;
       },
     },
@@ -119,7 +137,9 @@ async function testWorkflowSystem(): Promise<void> {
     {
       name: "Import reporter",
       test: async () => {
-        const { createReporter } = await import("../src/lib/monitoring/reporter");
+        const { createReporter } = await import(
+          "../src/lib/monitoring/reporter"
+        );
         return !!createReporter;
       },
     },
@@ -181,15 +201,25 @@ async function testWorkflowSystem(): Promise<void> {
     }
   }
 
-  console.log("\n╔════════════════════════════════════════════════════════════╗");
-  console.log(`║ 📊 TEST RESULTS: ${passed}/${tests.length} PASSED${" ".repeat(29 - String(passed).length - String(tests.length).length)} ║`);
+  console.log(
+    "\n╔════════════════════════════════════════════════════════════╗",
+  );
+  console.log(
+    `║ 📊 TEST RESULTS: ${passed}/${tests.length} PASSED${" ".repeat(29 - String(passed).length - String(tests.length).length)} ║`,
+  );
   console.log("╠════════════════════════════════════════════════════════════╣");
   if (failed === 0) {
-    console.log("║ ✅ ALL WORKFLOW SYSTEM TESTS PASSED                        ║");
+    console.log(
+      "║ ✅ ALL WORKFLOW SYSTEM TESTS PASSED                        ║",
+    );
   } else {
-    console.log(`║ ❌ ${failed} TEST(S) FAILED${" ".repeat(41 - String(failed).length)} ║`);
+    console.log(
+      `║ ❌ ${failed} TEST(S) FAILED${" ".repeat(41 - String(failed).length)} ║`,
+    );
   }
-  console.log("╚════════════════════════════════════════════════════════════╝\n");
+  console.log(
+    "╚════════════════════════════════════════════════════════════╝\n",
+  );
 
   if (failed > 0) {
     process.exit(1);
@@ -201,16 +231,20 @@ async function testWorkflowSystem(): Promise<void> {
 // ============================================================================
 
 async function testIntegration(): Promise<void> {
-  console.log("\n╔════════════════════════════════════════════════════════════╗");
+  console.log(
+    "\n╔════════════════════════════════════════════════════════════╗",
+  );
   console.log("║ 🧪 TESTING INTEGRATION                                     ║");
-  console.log("╚════════════════════════════════════════════════════════════╝\n");
+  console.log(
+    "╚════════════════════════════════════════════════════════════╝\n",
+  );
 
   try {
     console.log("🔄 Creating monitoring bot instance...");
     const { createMonitoringBot } = await import("../src/lib/monitoring/bot");
 
     const bot = createMonitoringBot({
-      baseUrl: "http://localhost:3000",
+      baseUrl: "http://localhost:3001",
     });
 
     console.log("✅ Bot instance created successfully");
@@ -225,9 +259,15 @@ async function testIntegration(): Promise<void> {
       );
     });
 
-    console.log("\n╔════════════════════════════════════════════════════════════╗");
-    console.log("║ ✅ INTEGRATION TEST PASSED                                 ║");
-    console.log("╚════════════════════════════════════════════════════════════╝\n");
+    console.log(
+      "\n╔════════════════════════════════════════════════════════════╗",
+    );
+    console.log(
+      "║ ✅ INTEGRATION TEST PASSED                                 ║",
+    );
+    console.log(
+      "╚════════════════════════════════════════════════════════════╝\n",
+    );
   } catch (error) {
     console.error("❌ Integration test failed:", error);
     process.exit(1);
@@ -239,9 +279,13 @@ async function testIntegration(): Promise<void> {
 // ============================================================================
 
 async function testReportGeneration(): Promise<void> {
-  console.log("\n╔════════════════════════════════════════════════════════════╗");
+  console.log(
+    "\n╔════════════════════════════════════════════════════════════╗",
+  );
   console.log("║ 🧪 TESTING REPORT GENERATION                               ║");
-  console.log("╚════════════════════════════════════════════════════════════╝\n");
+  console.log(
+    "╚════════════════════════════════════════════════════════════╝\n",
+  );
 
   try {
     const { createReporter } = await import("../src/lib/monitoring/reporter");
@@ -289,9 +333,15 @@ async function testReportGeneration(): Promise<void> {
     console.log(`   Success Rate: ${report.summary.successRate.toFixed(1)}%`);
     console.log(`   Total Workflows: ${report.summary.totalWorkflows}`);
 
-    console.log("\n╔════════════════════════════════════════════════════════════╗");
-    console.log("║ ✅ REPORT GENERATION TEST PASSED                           ║");
-    console.log("╚════════════════════════════════════════════════════════════╝\n");
+    console.log(
+      "\n╔════════════════════════════════════════════════════════════╗",
+    );
+    console.log(
+      "║ ✅ REPORT GENERATION TEST PASSED                           ║",
+    );
+    console.log(
+      "╚════════════════════════════════════════════════════════════╝\n",
+    );
   } catch (error) {
     console.error("❌ Report generation test failed:", error);
     process.exit(1);
@@ -323,15 +373,33 @@ async function runAllTests(): Promise<void> {
     const duration = ((Date.now() - startTime) / 1000).toFixed(2);
 
     console.log("\n");
-    console.log("╔════════════════════════════════════════════════════════════╗");
-    console.log("║                                                            ║");
-    console.log("║              ✅ ALL TESTS PASSED SUCCESSFULLY              ║");
-    console.log("║                                                            ║");
-    console.log(`║         Total Duration: ${duration}s${" ".repeat(30 - duration.length)}║`);
-    console.log("║                                                            ║");
-    console.log("║  🎉 The Monitoring Bot is fully operational and ready!    ║");
-    console.log("║                                                            ║");
-    console.log("╚════════════════════════════════════════════════════════════╝");
+    console.log(
+      "╔════════════════════════════════════════════════════════════╗",
+    );
+    console.log(
+      "║                                                            ║",
+    );
+    console.log(
+      "║              ✅ ALL TESTS PASSED SUCCESSFULLY              ║",
+    );
+    console.log(
+      "║                                                            ║",
+    );
+    console.log(
+      `║         Total Duration: ${duration}s${" ".repeat(30 - duration.length)}║`,
+    );
+    console.log(
+      "║                                                            ║",
+    );
+    console.log(
+      "║  🎉 The Monitoring Bot is fully operational and ready!    ║",
+    );
+    console.log(
+      "║                                                            ║",
+    );
+    console.log(
+      "╚════════════════════════════════════════════════════════════╝",
+    );
     console.log("\n");
 
     console.log("📋 Next Steps:");

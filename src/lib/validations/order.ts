@@ -35,7 +35,7 @@ export const shippingAddressSchema = z.object({
   country: z.string().length(2).default("US"),
   phone: z
     .string()
-    .regex(/^\+?[\d\s\-\(\)]+$/)
+    .regex(/^\+?[\d\s\-()]+$/)
     .optional(),
 });
 

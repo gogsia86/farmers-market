@@ -262,7 +262,7 @@ export class SlackNotifier {
           fields: [
             {
               type: "mrkdwn",
-              text: `*Status:*\n❌ FAILED`,
+              text: "*Status:*\n❌ FAILED",
             },
             {
               type: "mrkdwn",

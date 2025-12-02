@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
+import { Metadata } from "next";
 import { FarmProfileTabs } from "@/components/marketplace/FarmProfileTabs";
 import { FarmProfileActions } from "@/components/marketplace/FarmProfileActions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Award, MapPin, Star, Truck, Calendar } from "lucide-react";
+import { generateFarmMetadata, generateFarmJsonLd } from "@/lib/utils/metadata";
 
 /**
  * 🌾 ENHANCED FARM PROFILE PAGE - Phase 3
@@ -15,6 +15,10 @@ import { Award, MapPin, Star, Truck, Calendar } from "lucide-react";
  * - Tabbed content (Products, About, Reviews, Location)
  * - Favorite/Save farm functionality
  * - Social sharing
+ * - Comprehensive SEO metadata
+ * - JSON-LD structured data
+ *
+ * ✅ WIRED TO API - Uses /api/farms/[slug]
  */
 
 interface PageProps {
@@ -23,242 +27,80 @@ interface PageProps {
   };
 }
 
-// Mock data - will be replaced with API/database calls
-async function getFarmBySlug(slug: string) {
-  // Mock farms data
-  const farms = {
-    "green-valley-farm": {
-      id: "1",
-      name: "Green Valley Farm",
-      slug: "green-valley-farm",
-      tagline: "Organic vegetables and heritage produce since 1987",
-      description:
-        "Family-owned organic farm specializing in heirloom vegetables and sustainable farming practices.",
-      story: `Green Valley Farm has been a cornerstone of our local food community for over 35 years.
-
-Founded by the Martinez family in 1987, our farm sits on 50 beautiful acres in the heart of Oregon's agricultural heartland. We're committed to growing the highest quality organic vegetables using regenerative farming practices that heal the land and nourish our community.
-
-Our journey began when Maria and Carlos Martinez purchased this land with a dream of creating a sustainable farm that would serve future generations. Today, their grandchildren help tend the fields, continuing a legacy of stewardship and care for the earth.
-
-We grow over 40 varieties of heirloom vegetables, from rainbow carrots to purple cauliflower, preserving biodiversity and bringing unique flavors to your table. Every seed we plant is chosen with intention, every harvest is handled with care, and every relationship with our customers is built on trust and transparency.`,
-      farmType: "Organic Vegetable Farm",
-      address: "1234 Farm Road",
-      city: "Portland",
-      state: "OR",
-      zipCode: "97201",
-      deliveryRadius: 30,
-      farmSize: "50 acres",
-      establishedYear: 1987,
-      rating: 4.8,
-      reviewCount: 124,
-      certifications: ["USDA Organic", "Certified Biodynamic", "Non-GMO"],
-      farmingPractices: [
-        "Certified organic since 1990",
-        "No synthetic pesticides or fertilizers",
-        "Crop rotation and cover cropping",
-        "Integrated pest management",
-        "Water conservation practices",
-        "Composting and soil building",
-      ],
-      specialties: [
-        "Heirloom Tomatoes",
-        "Rainbow Carrots",
-        "Heritage Potatoes",
-        "Seasonal Greens",
-      ],
-      email: "info@greenvalleyfarm.com",
-      phone: "(503) 555-0123",
-      website: "https://greenvalleyfarm.com",
-      socialMedia: {
-        facebook: "greenvalleyfarm",
-        instagram: "@greenvalleyfarm",
-      },
-      operatingHours: {
-        Monday: "8:00 AM - 6:00 PM",
-        Tuesday: "8:00 AM - 6:00 PM",
-        Wednesday: "8:00 AM - 6:00 PM",
-        Thursday: "8:00 AM - 6:00 PM",
-        Friday: "8:00 AM - 6:00 PM",
-        Saturday: "9:00 AM - 5:00 PM",
-        Sunday: "Closed",
-      },
-      products: [
-        {
-          id: "1",
-          name: "Organic Heirloom Tomatoes",
-          description: "Vine-ripened, bursting with flavor",
-          price: 5.99,
-          unit: "lb",
-          category: "vegetables",
-          inStock: true,
-          image: "/images/products/tomatoes.jpg",
-          organic: true,
-          rating: 4.8,
-        },
-        {
-          id: "2",
-          name: "Rainbow Carrots",
-          description: "Colorful heritage varieties",
-          price: 3.99,
-          unit: "lb",
-          category: "vegetables",
-          inStock: true,
-          image: "/images/products/carrots.jpg",
-          organic: true,
-          rating: 4.9,
-        },
-        {
-          id: "3",
-          name: "Mixed Salad Greens",
-          description: "Fresh-cut seasonal blend",
-          price: 4.49,
-          unit: "5oz bag",
-          category: "greens",
-          inStock: true,
-          image: "/images/products/greens.jpg",
-          organic: true,
-          rating: 4.7,
-        },
-        {
-          id: "4",
-          name: "Purple Cauliflower",
-          description: "Stunning and nutritious",
-          price: 4.99,
-          unit: "head",
-          category: "vegetables",
-          inStock: true,
-          image: "/images/products/cauliflower.jpg",
-          organic: true,
-          rating: 4.6,
-        },
-      ],
-      reviews: [
-        {
-          id: "1",
-          customerName: "Sarah Johnson",
-          rating: 5,
-          reviewText:
-            "Absolutely love this farm! The quality of their produce is outstanding, and you can really taste the difference. The heirloom tomatoes are the best I've ever had.",
-          createdAt: "2024-01-15T10:00:00Z",
-          isVerifiedPurchase: true,
-          productName: "Organic Heirloom Tomatoes",
-        },
-        {
-          id: "2",
-          customerName: "Michael Chen",
-          rating: 5,
-          reviewText:
-            "Green Valley Farm is our go-to for fresh, organic vegetables. The rainbow carrots are a huge hit with my kids, and I appreciate their commitment to sustainable farming.",
-          createdAt: "2024-01-10T14:30:00Z",
-          isVerifiedPurchase: true,
-          productName: "Rainbow Carrots",
-        },
-        {
-          id: "3",
-          customerName: "Emily Rodriguez",
-          rating: 4,
-          reviewText:
-            "Great selection of unique vegetables. Their salad greens stay fresh for days. Would love to see more variety in the winter months.",
-          createdAt: "2024-01-05T09:15:00Z",
-          isVerifiedPurchase: true,
-          productName: "Mixed Salad Greens",
-        },
-      ],
-      owner: {
-        name: "Maria Martinez",
-        bio: "Third-generation farmer passionate about organic agriculture and community food systems. Maria has been farming since childhood and holds a degree in Sustainable Agriculture.",
-        joinedYear: 1987,
-      },
-      heroImage: "/images/farms/green-valley-hero.jpg",
-    },
-    "sunny-acres-orchard": {
-      id: "2",
-      name: "Sunny Acres Orchard",
-      slug: "sunny-acres-orchard",
-      tagline: "Premium organic fruit from the heart of Hood River",
-      description:
-        "Family orchard specializing in heritage apple varieties and stone fruits.",
-      story: `Sunny Acres Orchard has been growing premium fruit in Hood River Valley since 1952. Our orchard spans 75 acres of prime fruit-growing land, with stunning views of Mount Hood.
-
-We specialize in heritage apple varieties that are becoming rare in commercial agriculture. Our collection includes over 30 unique apple varieties, each chosen for exceptional flavor and historical significance.
-
-Sustainable orchard management is at the heart of everything we do. We use integrated pest management, maintain healthy soil through composting, and protect beneficial insects through habitat preservation.`,
-      farmType: "Fruit Orchard",
-      address: "5678 Orchard Lane",
-      city: "Hood River",
-      state: "OR",
-      zipCode: "97031",
-      deliveryRadius: 50,
-      farmSize: "75 acres",
-      establishedYear: 1952,
-      rating: 4.9,
-      reviewCount: 89,
-      certifications: ["USDA Organic", "Salmon-Safe"],
-      farmingPractices: [
-        "Organic orchard management",
-        "No synthetic pesticides",
-        "Beneficial insect habitat",
-        "Minimal tillage",
-        "Integrated pest management",
-      ],
-      specialties: [
-        "Honeycrisp Apples",
-        "Heritage Apple Varieties",
-        "Stone Fruits",
-        "Pears",
-      ],
-      email: "info@sunnyacres.com",
-      phone: "(541) 555-0456",
-      website: "https://sunnyacresorchard.com",
-      products: [
-        {
-          id: "5",
-          name: "Honeycrisp Apples",
-          description: "Crisp, sweet, and juicy",
-          price: 4.99,
-          unit: "lb",
-          category: "fruits",
-          inStock: true,
-          image: "/images/products/apples.jpg",
-          organic: true,
-          rating: 4.9,
-        },
-        {
-          id: "6",
-          name: "Organic Pears",
-          description: "Sweet and buttery",
-          price: 3.99,
-          unit: "lb",
-          category: "fruits",
-          inStock: true,
-          image: "/images/products/pears.jpg",
-          organic: true,
-          rating: 4.8,
-        },
-      ],
-      reviews: [
-        {
-          id: "4",
-          customerName: "David Wilson",
-          rating: 5,
-          reviewText:
-            "Best apples I've ever tasted! The Honeycrisp variety is absolutely perfect - crisp, sweet, and so fresh.",
-          createdAt: "2024-01-20T11:00:00Z",
-          isVerifiedPurchase: true,
-          productName: "Honeycrisp Apples",
-        },
-      ],
-      owner: {
-        name: "Robert Thompson",
-        bio: "Fourth-generation orchardist dedicated to preserving heritage fruit varieties and sustainable farming practices.",
-        joinedYear: 1952,
-      },
-      heroImage: "/images/farms/sunny-acres-hero.jpg",
-    },
+interface ApiResponse {
+  success: boolean;
+  data?: any;
+  error?: {
+    code: string;
+    message: string;
   };
+}
 
-  const farm = farms[slug as keyof typeof farms];
-  return farm || null;
+// Fetch farm data from API
+async function getFarmBySlug(slug: string) {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
+    const response = await fetch(`${baseUrl}/api/farms/${slug}`, {
+      cache: "no-store", // Always fetch fresh data for customer views
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null;
+      }
+      throw new Error(`Failed to fetch farm: ${response.statusText}`);
+    }
+
+    const result: ApiResponse = await response.json();
+
+    if (!result.success || !result.data) {
+      return null;
+    }
+
+    return result.data;
+  } catch (error) {
+    console.error("[FARM_FETCH_ERROR]", error);
+    return null;
+  }
+}
+
+// Generate metadata for SEO
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { slug } = params;
+  const farm = await getFarmBySlug(slug);
+
+  if (!farm) {
+    return {
+      title: "Farm Not Found",
+      description: "The farm you're looking for could not be found.",
+    };
+  }
+
+  return generateFarmMetadata({
+    title: farm.name,
+    farmName: farm.name,
+    description:
+      farm.description ||
+      `Visit ${farm.name} - Fresh, local produce from sustainable farming`,
+    location: `${farm.city}, ${farm.state}`,
+    path: `/marketplace/farms/${slug}`,
+    image:
+      farm.bannerUrl || farm.images?.[0] || "/images/farms/placeholder.jpg",
+    rating: farm.averageRating || 0,
+    reviewCount: farm.reviewCount || 0,
+    products: farm.products?.length || 0,
+    keywords: [
+      farm.name.toLowerCase(),
+      `${farm.city} farm`,
+      `${farm.state} farm`,
+      ...(farm.productCategories || []).map((cat: string) => cat.toLowerCase()),
+      ...(farm.farmingPractices || []).map((practice: string) =>
+        practice.toLowerCase(),
+      ),
+    ],
+  });
 }
 
 export default async function FarmProfilePage({ params }: PageProps) {
@@ -269,18 +111,113 @@ export default async function FarmProfilePage({ params }: PageProps) {
     notFound();
   }
 
+  // Transform API data to match component expectations
+  const transformedFarm = {
+    id: farm.id,
+    name: farm.name,
+    slug: farm.slug,
+    tagline: farm.description || "",
+    description: farm.description || "",
+    story: farm.story || "",
+    farmType: farm.businessName || "Farm",
+    address: farm.address || "",
+    city: farm.city || "",
+    state: farm.state || "",
+    zipCode: farm.zipCode || "",
+    deliveryRadius: farm.deliveryRadius || 0,
+    farmSize: farm.farmSize ? `${farm.farmSize} acres` : "N/A",
+    establishedYear: farm.yearEstablished || new Date().getFullYear(),
+    rating: farm.averageRating || 0,
+    reviewCount: farm.reviewCount || 0,
+    certifications: farm.certifications || [],
+    farmingPractices: farm.farmingPractices || [],
+    specialties: farm.productCategories || [],
+    email: farm.email || "",
+    phone: farm.phone || "",
+    website: farm.website || "",
+    socialMedia: {
+      facebook: "",
+      instagram: "",
+    },
+    operatingHours: {
+      Monday: "Contact for hours",
+      Tuesday: "Contact for hours",
+      Wednesday: "Contact for hours",
+      Thursday: "Contact for hours",
+      Friday: "Contact for hours",
+      Saturday: "Contact for hours",
+      Sunday: "Contact for hours",
+    },
+    products: farm.products.map((product: any) => ({
+      id: product.id,
+      name: product.name,
+      description: product.description || "",
+      price: product.price,
+      unit: product.unit || "each",
+      category: product.category || "general",
+      inStock: product.inStock,
+      image: product.images?.[0] || "/images/products/placeholder.jpg",
+      organic: product.organic || false,
+      rating: product.averageRating || 0,
+    })),
+    reviews: farm.reviews.map((review: any) => ({
+      id: review.id,
+      customerName: review.customer?.name || "Anonymous",
+      rating: review.rating,
+      reviewText: review.comment || "",
+      createdAt: review.createdAt,
+      isVerifiedPurchase: true,
+    })),
+    owner: {
+      name: farm.owner?.name || "Farm Owner",
+      bio: "",
+      joinedYear: farm.owner?.joinedYear || farm.establishedYear,
+    },
+    heroImage:
+      farm.bannerUrl || farm.images?.[0] || "/images/farms/placeholder.jpg",
+  };
+
+  // Generate JSON-LD structured data
+  const farmJsonLd = generateFarmJsonLd({
+    name: transformedFarm.name,
+    description: transformedFarm.description,
+    address: transformedFarm.address,
+    city: transformedFarm.city,
+    state: transformedFarm.state,
+    zipCode: transformedFarm.zipCode,
+    phone: transformedFarm.phone,
+    email: transformedFarm.email,
+    website: transformedFarm.website,
+    logoUrl: transformedFarm.heroImage,
+    rating: transformedFarm.rating,
+    reviewCount: transformedFarm.reviewCount,
+  });
+
   return (
     <>
-      <Header />
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(farmJsonLd) }}
+      />
+
       <main className="min-h-screen bg-background">
         {/* Farm Hero Section */}
         <section className="relative h-[400px] lg:h-[500px]">
           {/* Hero Image */}
           <div className="absolute inset-0 bg-gradient-to-br from-green-600 to-green-800">
-            {/* Placeholder for hero image */}
-            <div className="absolute inset-0 opacity-30">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.3)_0%,transparent_50%)]"></div>
-            </div>
+            {transformedFarm.heroImage &&
+            transformedFarm.heroImage !== "/images/farms/placeholder.jpg" ? (
+              <img
+                src={transformedFarm.heroImage}
+                alt={transformedFarm.name}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="absolute inset-0 opacity-30">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.3)_0%,transparent_50%)]"></div>
+              </div>
+            )}
           </div>
 
           {/* Overlay Gradient */}
@@ -291,49 +228,65 @@ export default async function FarmProfilePage({ params }: PageProps) {
             <div className="container mx-auto px-4 pb-8">
               <div className="max-w-4xl">
                 {/* Certifications */}
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {farm.certifications.map((cert, index) => (
-                    <Badge
-                      key={index}
-                      className="bg-white/20 backdrop-blur-md text-white border-white/30"
-                    >
-                      <Award className="h-3 w-3 mr-1" />
-                      {cert}
-                    </Badge>
-                  ))}
-                </div>
+                {transformedFarm.certifications.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {transformedFarm.certifications.map(
+                      (cert: string, index: number) => (
+                        <Badge
+                          key={index}
+                          className="bg-white/20 backdrop-blur-md text-white border-white/30"
+                        >
+                          <Award className="h-3 w-3 mr-1" />
+                          {cert}
+                        </Badge>
+                      ),
+                    )}
+                  </div>
+                )}
 
                 {/* Farm Name & Info */}
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-3">
-                  {farm.name}
+                  {transformedFarm.name}
                 </h1>
                 <p className="text-xl md:text-2xl text-white/90 mb-4">
-                  {farm.tagline}
+                  {transformedFarm.tagline}
                 </p>
 
                 {/* Quick Stats */}
                 <div className="flex flex-wrap items-center gap-6 text-white/90">
-                  <div className="flex items-center gap-2">
-                    <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
-                    <span className="font-semibold">{farm.rating}</span>
-                    <span className="text-white/70">
-                      ({farm.reviewCount} reviews)
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="h-5 w-5" />
-                    <span>
-                      {farm.city}, {farm.state}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Truck className="h-5 w-5" />
-                    <span>Delivers within {farm.deliveryRadius} miles</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-5 w-5" />
-                    <span>Est. {farm.establishedYear}</span>
-                  </div>
+                  {transformedFarm.rating > 0 && (
+                    <div className="flex items-center gap-2">
+                      <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
+                      <span className="font-semibold">
+                        {transformedFarm.rating.toFixed(1)}
+                      </span>
+                      <span className="text-white/70">
+                        ({transformedFarm.reviewCount} reviews)
+                      </span>
+                    </div>
+                  )}
+                  {transformedFarm.city && transformedFarm.state && (
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-5 w-5" />
+                      <span>
+                        {transformedFarm.city}, {transformedFarm.state}
+                      </span>
+                    </div>
+                  )}
+                  {transformedFarm.deliveryRadius > 0 && (
+                    <div className="flex items-center gap-2">
+                      <Truck className="h-5 w-5" />
+                      <span>
+                        Delivers within {transformedFarm.deliveryRadius} miles
+                      </span>
+                    </div>
+                  )}
+                  {transformedFarm.establishedYear && (
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-5 w-5" />
+                      <span>Est. {transformedFarm.establishedYear}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -344,7 +297,7 @@ export default async function FarmProfilePage({ params }: PageProps) {
         <section className="py-8">
           <div className="container mx-auto px-4">
             <div className="max-w-7xl mx-auto">
-              <FarmProfileTabs farm={farm} />
+              <FarmProfileTabs farm={transformedFarm} />
             </div>
           </div>
         </section>
@@ -354,7 +307,7 @@ export default async function FarmProfilePage({ params }: PageProps) {
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center">
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                Ready to order from {farm.name}?
+                Ready to order from {transformedFarm.name}?
               </h2>
               <p className="text-lg text-muted-foreground mb-8">
                 Fresh, local products delivered to your door
@@ -363,23 +316,21 @@ export default async function FarmProfilePage({ params }: PageProps) {
                 <Button size="lg" className="gap-2">
                   Browse Products
                 </Button>
-                <FarmProfileActions farmId={farm.id} farmName={farm.name} />
+                <FarmProfileActions
+                  farmId={transformedFarm.id}
+                  farmName={transformedFarm.name}
+                />
               </div>
             </div>
           </div>
         </section>
       </main>
-      <Footer />
     </>
   );
 }
 
-// Generate static params for known farms
+// Generate static params for known farms (optional - can be removed for fully dynamic)
 export async function generateStaticParams() {
-  return [
-    { slug: "green-valley-farm" },
-    { slug: "sunny-acres-orchard" },
-    { slug: "happy-hen-farm" },
-    { slug: "heritage-bakery" },
-  ];
+  // Return empty array to allow all dynamic slugs
+  return [];
 }

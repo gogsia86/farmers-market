@@ -78,7 +78,7 @@ export class AIFailureAnalyzer {
         max_tokens: 2000,
       });
 
-      const content = completion.choices[0].message.content;
+      const content = completion.choices[0]?.message.content;
       if (!content) {
         throw new Error("Empty response from AI");
       }
@@ -136,7 +136,7 @@ export class AIFailureAnalyzer {
         max_tokens: 1500,
       });
 
-      const content = completion.choices[0].message.content;
+      const content = completion.choices[0]?.message.content;
       if (!content) {
         throw new Error("Empty response from AI");
       }
@@ -204,7 +204,7 @@ export class AIFailureAnalyzer {
         max_tokens: 1000,
       });
 
-      const content = completion.choices[0].message.content;
+      const content = completion.choices[0]?.message.content;
       if (!content) {
         throw new Error("Empty response from AI");
       }
@@ -282,7 +282,7 @@ Keep it concise and actionable for executives.`;
       });
 
       return (
-        completion.choices[0].message.content ||
+        completion.choices[0]?.message.content ||
         this.generateBasicSummary(report)
       );
     } catch (error) {
@@ -325,7 +325,7 @@ Format as JSON array of strings.`;
         max_tokens: 500,
       });
 
-      const content = completion.choices[0].message.content;
+      const content = completion.choices[0]?.message.content;
       if (!content) {
         throw new Error("Empty response from AI");
       }
@@ -451,25 +451,25 @@ Provide practical, actionable insights with agricultural consciousness.`;
     switch (type) {
       case "failure-analysis":
         return (
-          basePrompt +
-          "\n\nFocus on identifying root causes and providing step-by-step remediation."
+          `${basePrompt
+          }\n\nFocus on identifying root causes and providing step-by-step remediation.`
         );
 
       case "risk-prediction":
         return (
-          basePrompt +
-          "\n\nFocus on predictive analysis and proactive issue prevention."
+          `${basePrompt
+          }\n\nFocus on predictive analysis and proactive issue prevention.`
         );
 
       case "performance-analysis":
         return (
-          basePrompt +
-          "\n\nFocus on performance bottlenecks and optimization opportunities."
+          `${basePrompt
+          }\n\nFocus on performance bottlenecks and optimization opportunities.`
         );
 
       case "remediation":
         return (
-          basePrompt + "\n\nFocus on specific, implementable remediation steps."
+          `${basePrompt  }\n\nFocus on specific, implementable remediation steps.`
         );
 
       default:

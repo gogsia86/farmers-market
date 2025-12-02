@@ -49,20 +49,20 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
     const startTime = new Date();
 
     console.log(
-      `\n╔════════════════════════════════════════════════════════════╗`,
+      "\n╔════════════════════════════════════════════════════════════╗",
     );
     console.log(
-      `║ ⚡ DIVINE WORKFLOW EXECUTION INITIATED                     ║`,
+      "║ ⚡ DIVINE WORKFLOW EXECUTION INITIATED                     ║",
     );
     console.log(
-      `╠════════════════════════════════════════════════════════════╣`,
+      "╠════════════════════════════════════════════════════════════╣",
     );
     console.log(`║ 🔮 WORKFLOW: ${workflow.name.padEnd(44)} ║`);
     console.log(`║ 🆔 RUN ID: ${runId.padEnd(46)} ║`);
     console.log(`║ 🌾 TYPE: ${workflow.type.padEnd(48)} ║`);
     console.log(`║ ⚠️  PRIORITY: ${workflow.priority.padEnd(45)} ║`);
     console.log(
-      `╚════════════════════════════════════════════════════════════╝\n`,
+      "╚════════════════════════════════════════════════════════════╝\n",
     );
 
     try {
@@ -140,7 +140,7 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
 
       return result;
     } catch (error) {
-      console.error(`❌ Workflow execution failed:`, error);
+      console.error("❌ Workflow execution failed:", error);
 
       const endTime = new Date();
       const duration = endTime.getTime() - startTime.getTime();
@@ -226,7 +226,7 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
       return false;
     }
 
-    console.log(`   ✅ Workflow validation passed`);
+    console.log("   ✅ Workflow validation passed");
     return true;
   }
 
@@ -558,13 +558,13 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
             : "⏭️";
 
     console.log(
-      `\n╔════════════════════════════════════════════════════════════╗`,
+      "\n╔════════════════════════════════════════════════════════════╗",
     );
     console.log(
       `║ ${statusEmoji} WORKFLOW EXECUTION COMPLETE                           ║`,
     );
     console.log(
-      `╠════════════════════════════════════════════════════════════╣`,
+      "╠════════════════════════════════════════════════════════════╣",
     );
     console.log(`║ 📊 STATUS: ${result.status.padEnd(46)} ║`);
     console.log(
@@ -593,7 +593,7 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
     }
 
     console.log(
-      `╚════════════════════════════════════════════════════════════╝\n`,
+      "╚════════════════════════════════════════════════════════════╝\n",
     );
   }
 

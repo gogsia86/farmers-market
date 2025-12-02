@@ -1,9 +1,14 @@
+import { auth } from "@/lib/auth";
+import { database } from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
  * 📚 RESOURCES API
- * GET /api/resources
- * Returns educational resources for farmers
+ * Divine agricultural resource management with quantum consciousness
+ *
+ * @module api/resources
+ * @implements {GET} Fetch educational resources
+ * @implements {POST} Track resource downloads
  */
 
 interface Resource {
@@ -185,7 +190,10 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// Download resource
+/**
+ * POST - Track resource downloads with divine precision
+ * Logs downloads to database for analytics and user tracking
+ */
 export async function POST(request: NextRequest) {
   try {
     const { resourceId } = await request.json();
@@ -194,19 +202,43 @@ export async function POST(request: NextRequest) {
 
     if (!resource) {
       return NextResponse.json(
-        { error: "Resource not found" },
+        {
+          success: false,
+          error: "Resource not found",
+        },
         { status: 404 },
       );
     }
 
     if (!resource.downloadable) {
       return NextResponse.json(
-        { error: "Resource is not downloadable" },
+        {
+          success: false,
+          error: "Resource is not downloadable",
+        },
         { status: 400 },
       );
     }
 
-    // Log download (TODO: track in database)
+    // Get user session (optional for downloads)
+    const session = await auth();
+
+    // Extract request metadata for tracking
+    const ipAddress =
+      request.headers.get("x-forwarded-for")?.split(",")[0] ||
+      request.headers.get("x-real-ip") ||
+      "unknown";
+    const userAgent = request.headers.get("user-agent") || undefined;
+
+    // Track download in database with agricultural consciousness
+    await database.downloadLog.create({
+      data: {
+        userId: session?.user?.id,
+        resourceId: resource.id,
+        ipAddress: ipAddress.slice(0, 45), // Ensure it fits in VarChar(45)
+        userAgent,
+      },
+    });
 
     return NextResponse.json({
       success: true,
@@ -214,12 +246,17 @@ export async function POST(request: NextRequest) {
         resourceId: resource.id,
         title: resource.title,
         fileUrl: resource.fileUrl,
+        downloadTracked: true,
       },
+      message: "Resource download tracked successfully",
     });
   } catch (error) {
     console.error("Resource download error:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      {
+        success: false,
+        error: "Failed to track resource download",
+      },
       { status: 500 },
     );
   }

@@ -25,6 +25,8 @@ const eslintConfig = [
       "**/*.config.js",
       "**/*.config.mjs",
       "**/.husky/**",
+      "**/cleanup-backup-*/**",
+      "**/docs/archive/**",
     ],
   },
 
@@ -110,6 +112,42 @@ const eslintConfig = [
     rules: {
       "prefer-const": "warn",
       "no-console": "off",
+      "no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
+    },
+  },
+
+  // Jest test files configuration
+  {
+    files: [
+      "**/*.test.{js,jsx,ts,tsx}",
+      "**/*.spec.{js,jsx,ts,tsx}",
+      "**/jest.setup.js",
+      "**/__tests__/**/*.{js,jsx,ts,tsx}",
+    ],
+    languageOptions: {
+      globals: {
+        jest: "readonly",
+        expect: "readonly",
+        test: "readonly",
+        it: "readonly",
+        describe: "readonly",
+        beforeEach: "readonly",
+        afterEach: "readonly",
+        beforeAll: "readonly",
+        afterAll: "readonly",
+        global: "readonly",
+      },
+    },
+    rules: {
+      "no-undef": "off",
+      "@typescript-eslint/no-explicit-any": "off",
     },
   },
 

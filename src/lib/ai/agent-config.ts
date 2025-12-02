@@ -8,8 +8,8 @@
  * @module ai/agent-config
  */
 
-import { OpenAI } from 'openai';
-import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
+import { OpenAI } from "openai";
+import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 
 // ============================================================================
 // Types & Interfaces
@@ -26,7 +26,7 @@ export interface AgentConfig {
 }
 
 export interface AgentMessage {
-  role: 'system' | 'user' | 'assistant' | 'function';
+  role: "system" | "user" | "assistant" | "function";
   content: string;
   name?: string;
   function_call?: any;
@@ -71,8 +71,8 @@ export function getOpenAIClient(): OpenAI {
 
     if (!apiKey) {
       throw new Error(
-        'OPENAI_API_KEY environment variable is not set. ' +
-        'Please add it to your .env.local file.'
+        "OPENAI_API_KEY environment variable is not set. " +
+        "Please add it to your .env.local file.",
       );
     }
 
@@ -95,8 +95,8 @@ export function getOpenAIClient(): OpenAI {
  * Analyzes farm data, provides insights, and recommends optimizations
  */
 export const FARM_ANALYST_AGENT: AgentConfig = {
-  name: 'FarmAnalyst',
-  role: 'Farm Operations & Analytics Expert',
+  name: "FarmAnalyst",
+  role: "Farm Operations & Analytics Expert",
   systemPrompt: `You are a Farm Analyst AI specializing in agricultural operations and data analysis.
 
 Your responsibilities:
@@ -120,17 +120,17 @@ Output Format:
 - Data-backed insights with confidence scores
 - Actionable next steps for farmers
 - Risk assessments when applicable`,
-  model: 'gpt-4o',
+  model: "gpt-4o",
   temperature: 0.3, // Lower temperature for analytical tasks
   maxTokens: 2000,
   capabilities: [
-    'farm_performance_analysis',
-    'yield_prediction',
-    'seasonal_planning',
-    'crop_rotation_optimization',
-    'sustainability_assessment',
-    'data_visualization_insights'
-  ]
+    "farm_performance_analysis",
+    "yield_prediction",
+    "seasonal_planning",
+    "crop_rotation_optimization",
+    "sustainability_assessment",
+    "data_visualization_insights",
+  ],
 };
 
 /**
@@ -138,8 +138,8 @@ Output Format:
  * Manages product listings, descriptions, pricing, and inventory
  */
 export const PRODUCT_CATALOG_AGENT: AgentConfig = {
-  name: 'ProductCatalogManager',
-  role: 'Product & Inventory Management Expert',
+  name: "ProductCatalogManager",
+  role: "Product & Inventory Management Expert",
   systemPrompt: `You are a Product Catalog Manager AI specializing in agricultural products and inventory management.
 
 Your responsibilities:
@@ -163,17 +163,17 @@ Output Format:
 - Clear pricing and availability details
 - Relevant tags and categories
 - Inventory recommendations with reasoning`,
-  model: 'gpt-4o',
+  model: "gpt-4o",
   temperature: 0.7, // Higher temperature for creative descriptions
   maxTokens: 1500,
   capabilities: [
-    'product_description_generation',
-    'category_optimization',
-    'pricing_analysis',
-    'inventory_management',
-    'seasonal_recommendations',
-    'seo_optimization'
-  ]
+    "product_description_generation",
+    "category_optimization",
+    "pricing_analysis",
+    "inventory_management",
+    "seasonal_recommendations",
+    "seo_optimization",
+  ],
 };
 
 /**
@@ -181,8 +181,8 @@ Output Format:
  * Handles order management, logistics, and customer communication
  */
 export const ORDER_PROCESSING_AGENT: AgentConfig = {
-  name: 'OrderProcessor',
-  role: 'Order Management & Logistics Expert',
+  name: "OrderProcessor",
+  role: "Order Management & Logistics Expert",
   systemPrompt: `You are an Order Processing AI specializing in agricultural product fulfillment and customer service.
 
 Your responsibilities:
@@ -207,17 +207,17 @@ Output Format:
 - Inventory allocation decisions
 - Customer communication templates
 - Issue resolution strategies`,
-  model: 'gpt-4o',
+  model: "gpt-4o",
   temperature: 0.4, // Balanced temperature for logical + communicative tasks
   maxTokens: 1800,
   capabilities: [
-    'order_validation',
-    'inventory_allocation',
-    'delivery_optimization',
-    'customer_communication',
-    'issue_resolution',
-    'logistics_planning'
-  ]
+    "order_validation",
+    "inventory_allocation",
+    "delivery_optimization",
+    "customer_communication",
+    "issue_resolution",
+    "logistics_planning",
+  ],
 };
 
 /**
@@ -225,8 +225,8 @@ Output Format:
  * Provides customer assistance, answers questions, and resolves issues
  */
 export const CUSTOMER_SUPPORT_AGENT: AgentConfig = {
-  name: 'CustomerSupport',
-  role: 'Customer Service & Support Expert',
+  name: "CustomerSupport",
+  role: "Customer Service & Support Expert",
   systemPrompt: `You are a Customer Support AI specializing in farmers market and agricultural product assistance.
 
 Your responsibilities:
@@ -250,17 +250,17 @@ Output Format:
 - Step-by-step guidance when needed
 - Relevant product or farm recommendations
 - Issue resolution steps with timelines`,
-  model: 'gpt-4o',
+  model: "gpt-4o",
   temperature: 0.6, // Moderate temperature for empathetic communication
   maxTokens: 1200,
   capabilities: [
-    'customer_inquiry_response',
-    'product_recommendations',
-    'issue_resolution',
-    'agricultural_education',
-    'order_assistance',
-    'complaint_handling'
-  ]
+    "customer_inquiry_response",
+    "product_recommendations",
+    "issue_resolution",
+    "agricultural_education",
+    "order_assistance",
+    "complaint_handling",
+  ],
 };
 
 // ============================================================================
@@ -286,7 +286,7 @@ export function getAgentConfig(agentName: string): AgentConfig {
   if (!config) {
     throw new Error(
       `Agent "${agentName}" not found in registry. ` +
-      `Available agents: ${Object.keys(AGENT_REGISTRY).join(', ')}`
+      `Available agents: ${Object.keys(AGENT_REGISTRY).join(", ")}`,
     );
   }
 
@@ -305,7 +305,7 @@ export function listAvailableAgents(): string[] {
  */
 export function agentHasCapability(
   agentName: string,
-  capability: string
+  capability: string,
 ): boolean {
   const config = getAgentConfig(agentName);
   return config.capabilities.includes(capability);
@@ -321,7 +321,7 @@ export function agentHasCapability(
 export async function invokeAgent(
   agentName: string,
   userMessage: string,
-  context?: AgentContext
+  context?: AgentContext,
 ): Promise<AgentResponse> {
   const config = getAgentConfig(agentName);
   const client = getOpenAIClient();
@@ -329,7 +329,7 @@ export async function invokeAgent(
   // Build messages array
   const messages: ChatCompletionMessageParam[] = [
     {
-      role: 'system',
+      role: "system",
       content: config.systemPrompt,
     },
   ];
@@ -337,14 +337,14 @@ export async function invokeAgent(
   // Add context if provided
   if (context) {
     messages.push({
-      role: 'system',
+      role: "system",
       content: `Context: ${JSON.stringify(context, null, 2)}`,
     });
   }
 
   // Add user message
   messages.push({
-    role: 'user',
+    role: "user",
     content: userMessage,
   });
 
@@ -359,7 +359,7 @@ export async function invokeAgent(
       presence_penalty: 0.3,
     });
 
-    const responseContent = completion.choices[0]?.message?.content || '';
+    const responseContent = completion.choices[0]?.message?.content || "";
 
     return {
       agent: config.name,
@@ -375,8 +375,8 @@ export async function invokeAgent(
     console.error(`[Agent ${config.name}] Invocation error:`, error);
     throw new Error(
       `Agent ${config.name} failed to process request: ${
-        error instanceof Error ? error.message : 'Unknown error'
-      }`
+        error instanceof Error ? error.message : "Unknown error"
+      }`,
     );
   }
 }
@@ -392,9 +392,9 @@ function calculateConfidence(completion: any): number {
   let confidence = 0.5; // Base confidence
 
   // Adjust based on finish reason
-  if (finishReason === 'stop') {
+  if (finishReason === "stop") {
     confidence += 0.3; // Completed naturally
-  } else if (finishReason === 'length') {
+  } else if (finishReason === "length") {
     confidence += 0.1; // Hit token limit
   }
 
@@ -413,7 +413,7 @@ function calculateConfidence(completion: any): number {
  * Orchestrate multiple agents for complex tasks
  */
 export async function orchestrateAgents(
-  task: MultiAgentTask
+  task: MultiAgentTask,
 ): Promise<AgentResponse[]> {
   const responses: AgentResponse[] = [];
   const maxTurns = task.maxTurns || 3;
@@ -424,7 +424,7 @@ export async function orchestrateAgents(
         const response = await invokeAgent(
           agentName,
           task.task,
-          task.context
+          task.context,
         );
 
         responses.push(response);
@@ -432,7 +432,7 @@ export async function orchestrateAgents(
         // If confidence is high enough, we can stop early
         if (response.confidence >= 0.8) {
           console.log(
-            `[Orchestrator] High confidence response from ${agentName}, completing task.`
+            `[Orchestrator] High confidence response from ${agentName}, completing task.`,
           );
           return responses;
         }
@@ -457,11 +457,11 @@ export function formatAgentResponse(response: AgentResponse): string {
   return `
 ╔═══════════════════════════════════════════════════════════╗
 ║ 🤖 Agent: ${response.agent.padEnd(48)} ║
-║ 💯 Confidence: ${(response.confidence * 100).toFixed(1)}%${' '.repeat(42)} ║
+║ 💯 Confidence: ${(response.confidence * 100).toFixed(1)}%${" ".repeat(42)} ║
 ╠═══════════════════════════════════════════════════════════╣
 ║ Response:                                                 ║
 ║ ${response.content.substring(0, 55).padEnd(55)} ║
-${response.content.length > 55 ? `║ ${response.content.substring(55, 110).padEnd(55)} ║` : ''}
+${response.content.length > 55 ? `║ ${response.content.substring(55, 110).padEnd(55)} ║` : ""}
 ╚═══════════════════════════════════════════════════════════╝
   `.trim();
 }
@@ -471,12 +471,12 @@ ${response.content.length > 55 ? `║ ${response.content.substring(55, 110).padE
  */
 export function validateAgentResponse(
   response: AgentResponse,
-  minConfidence: number = 0.6
+  minConfidence: number = 0.6,
 ): boolean {
   return (
     response.content.length > 50 && // Has meaningful content
     response.confidence >= minConfidence && // Meets confidence threshold
-    !response.content.toLowerCase().includes('error') // No error messages
+    !response.content.toLowerCase().includes("error") // No error messages
   );
 }
 

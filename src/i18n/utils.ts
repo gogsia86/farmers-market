@@ -184,7 +184,7 @@ export function parseLocalizedDate(
   try {
     const format = dateFormatByLocale[locale];
     // Simple parsing - in production, use date-fns or similar
-    const parts = dateString.split(/[\/\-\.]/);
+    const parts = dateString.split(/[/\-.]/);
 
     if (parts.length !== 3 || parts.some((p) => !p)) {
       return null;

@@ -25,7 +25,7 @@ export function FarmProfileActions({
           const data = await response.json();
           if (data.success && data.data) {
             const isFarmFavorited = data.data.some(
-              (fav: any) => fav.farmId === farmId
+              (fav: any) => fav.farmId === farmId,
             );
             setIsFavorited(isFarmFavorited);
           }

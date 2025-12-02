@@ -47,7 +47,7 @@ async function createAdminUser() {
       console.log("🔑 Password:", adminPassword);
       console.log("👤 Role:", updatedUser.role);
       console.log("📊 Status:", updatedUser.status);
-      console.log("\n🌐 You can now login at: http://localhost:3000/login\n");
+      console.log("\n🌐 You can now login at: http://localhost:3001/login\n");
     } else {
       console.log("📝 Creating new admin user...\n");
 
@@ -74,7 +74,7 @@ async function createAdminUser() {
       console.log("🔑 Password:", adminPassword);
       console.log("👤 Role:", newUser.role);
       console.log("📊 Status:", newUser.status);
-      console.log("\n🌐 You can now login at: http://localhost:3000/login\n");
+      console.log("\n🌐 You can now login at: http://localhost:3001/login\n");
     }
 
     console.log("═══════════════════════════════════════════════════════");

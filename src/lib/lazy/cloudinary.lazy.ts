@@ -252,7 +252,7 @@ export async function listCloudinaryResources(
   const cloudinary = await getCloudinary();
   return cloudinary.api.resources({
     type: "upload",
-    prefix: prefix,
+    prefix,
     ...options,
   });
 }

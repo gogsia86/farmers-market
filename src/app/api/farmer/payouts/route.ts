@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
     const [payouts, total] = await Promise.all([
       database.payout.findMany({
         where: {
-          farmId: farmId,
+          farmId,
         },
         orderBy: {
           createdAt: "desc",
@@ -78,7 +78,7 @@ export async function GET(request: NextRequest) {
       }),
       database.payout.count({
         where: {
-          farmId: farmId,
+          farmId,
         },
       }),
     ]);
@@ -175,7 +175,7 @@ export async function POST(request: NextRequest) {
     // Calculate available balance
     const completedOrders = await database.order.findMany({
       where: {
-        farmId: farmId,
+        farmId,
         status: {
           in: ["FULFILLED", "COMPLETED"],
         },
@@ -185,7 +185,7 @@ export async function POST(request: NextRequest) {
         items: {
           where: {
             product: {
-              farmId: farmId,
+              farmId,
             },
           },
         },
@@ -203,7 +203,7 @@ export async function POST(request: NextRequest) {
     // Get total payouts
     const allPayouts = await database.payout.findMany({
       where: {
-        farmId: farmId,
+        farmId,
         status: {
           in: ["COMPLETED", "PENDING", "PROCESSING"],
         },
@@ -232,7 +232,7 @@ export async function POST(request: NextRequest) {
     // Check for pending payouts
     const pendingPayout = await database.payout.findFirst({
       where: {
-        farmId: farmId,
+        farmId,
         status: {
           in: ["PENDING", "PROCESSING"],
         },
@@ -262,11 +262,11 @@ export async function POST(request: NextRequest) {
     // Create payout record
     const payout = await database.payout.create({
       data: {
-        farmId: farmId,
+        farmId,
         amount: availableBalance,
         currency: "USD",
         status: "PENDING",
-        periodStart: periodStart,
+        periodStart,
         periodEnd: now,
         orderCount: completedOrders.length,
         scheduledDate: now,

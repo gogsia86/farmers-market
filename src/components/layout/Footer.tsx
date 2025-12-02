@@ -122,7 +122,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/farmer-dashboard"
+                  href="/farmer/dashboard"
                   className="hover:text-white transition-colors"
                 >
                   Farmer Dashboard

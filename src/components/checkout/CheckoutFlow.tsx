@@ -57,7 +57,6 @@ export function CheckoutFlow() {
   const currentStep = useCheckoutStore((state) => state.currentStep);
   const isProcessing = useCheckoutStore((state) => state.isProcessing);
   const errors = useCheckoutStore((state) => state.errors);
-  const _goToStep = useCheckoutStore((state) => state.goToStep);
   const previousStep = useCheckoutStore((state) => state.previousStep);
   const nextStep = useCheckoutStore((state) => state.nextStep);
 

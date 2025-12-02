@@ -417,7 +417,7 @@ export class DiscordNotifier {
     return {
       username: this.username,
       avatar_url: this.avatarUrl,
-      content: `🚨 **CRITICAL ALERT**`,
+      content: "🚨 **CRITICAL ALERT**",
       embeds: [
         {
           title: `🚨 ${title}`,

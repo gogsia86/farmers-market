@@ -8,12 +8,6 @@
 
 const http = require("http");
 const { spawn } = require("child_process");
-const chalk = require("chalk") || {
-  green: (s) => s,
-  red: (s) => s,
-  yellow: (s) => s,
-  blue: (s) => s,
-};
 
 const PORT = process.env.TEST_PORT || process.env.PORT || 3000;
 const HOST = "localhost";
@@ -115,7 +109,7 @@ To kill process on port ${PORT}:
  */
 function runPlaywrightTests() {
   console.log(`✅ Server is running on ${BASE_URL}`);
-  console.log(`🧪 Starting Playwright E2E tests...\n`);
+  console.log("🧪 Starting Playwright E2E tests...\n");
 
   const playwrightArgs = process.argv.slice(2);
   const playwrightCmd = process.platform === "win32" ? "npx.cmd" : "npx";
@@ -128,7 +122,7 @@ function runPlaywrightTests() {
       shell: true,
       env: {
         ...process.env,
-        BASE_URL: BASE_URL,
+        BASE_URL,
         TEST_PORT: PORT,
       },
     },
@@ -136,7 +130,7 @@ function runPlaywrightTests() {
 
   playwright.on("close", (code) => {
     if (code === 0) {
-      console.log(`\n✅ E2E tests completed successfully!`);
+      console.log("\n✅ E2E tests completed successfully!");
     } else {
       console.log(`\n❌ E2E tests failed with exit code ${code}`);
     }
@@ -144,7 +138,7 @@ function runPlaywrightTests() {
   });
 
   playwright.on("error", (err) => {
-    console.error(`\n❌ Failed to start Playwright:`, err);
+    console.error("\n❌ Failed to start Playwright:", err);
     process.exit(1);
   });
 }

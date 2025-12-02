@@ -49,7 +49,7 @@ function isPortInUse(port) {
  * Find process using a specific port
  */
 function findProcessOnPort(port) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, _reject) => {
     let command;
 
     if (isWindows) {
@@ -58,7 +58,7 @@ function findProcessOnPort(port) {
       command = `lsof -ti :${port}`;
     }
 
-    exec(command, (error, stdout, stderr) => {
+    exec(command, (error, stdout, _stderr) => {
       if (error) {
         resolve(null);
         return;
@@ -97,7 +97,7 @@ function killProcess(pid) {
       command = `kill -9 ${pid}`;
     }
 
-    exec(command, (error, stdout, stderr) => {
+    exec(command, (error, _stdout, _stderr) => {
       if (error) {
         reject(new Error(`Failed to kill process ${pid}`));
         return;
@@ -121,7 +121,7 @@ async function clearPort(port) {
   }
 
   console.log(`   ⚠️  Found ${pids.length} process(es) using port ${port}`);
-  console.log(`   🔪 Attempting to kill processes...`);
+  console.log("   🔪 Attempting to kill processes...");
 
   let killed = 0;
   for (const pid of pids) {
@@ -129,7 +129,7 @@ async function clearPort(port) {
       await killProcess(pid);
       console.log(`      ✅ Killed PID: ${pid}`);
       killed++;
-    } catch (err) {
+    } catch (_err) {
       console.log(`      ❌ Failed to kill PID: ${pid}`);
     }
   }
@@ -171,7 +171,7 @@ async function findAvailablePort() {
   }
 
   // Try fallback ports
-  console.log(`🔍 Searching for alternative port...\n`);
+  console.log("🔍 Searching for alternative port...\n");
 
   for (const port of FALLBACK_PORTS) {
     const inUse = await isPortInUse(port);
@@ -189,12 +189,12 @@ async function findAvailablePort() {
  * Start Next.js dev server
  */
 function startDevServer(port) {
-  console.log(`╔════════════════════════════════════════════════════════════╗`);
+  console.log("╔════════════════════════════════════════════════════════════╗");
   console.log(
     `║  🚀 Starting Next.js Dev Server on port ${port}              ║`,
   );
   console.log(
-    `╚════════════════════════════════════════════════════════════╝\n`,
+    "╚════════════════════════════════════════════════════════════╝\n",
   );
 
   const nodeOptions = process.env.NODE_OPTIONS || "--max-old-space-size=16384";
@@ -211,7 +211,7 @@ function startDevServer(port) {
   });
 
   devServer.on("error", (err) => {
-    console.error(`\n❌ Failed to start dev server:`, err);
+    console.error("\n❌ Failed to start dev server:", err);
     process.exit(1);
   });
 

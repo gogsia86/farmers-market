@@ -50,7 +50,7 @@ function randomElements<T>(array: T[], count: number): T[] {
 
 // Utility function for generating random dates (currently unused but kept for future use)
 // @ts-ignore - Utility function reserved for future use
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 function _randomDate(start: Date, end: Date): Date {
   return new Date(
     start.getTime() + Math.random() * (end.getTime() - start.getTime()),
@@ -268,7 +268,7 @@ async function main() {
     ],
   });
 
-  console.log(`  ✅ Created user addresses\n`);
+  console.log("  ✅ Created user addresses\n");
 
   // ========================================================================
   // STEP 4: CREATE FARMS
@@ -418,8 +418,8 @@ async function main() {
   const farmPhotos = farmsCreated.flatMap((farm) => [
     {
       farmId: farm.id,
-      photoUrl: `https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=1200`,
-      thumbnailUrl: `https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=400`,
+      photoUrl: "https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=1200",
+      thumbnailUrl: "https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=400",
       caption: "Main farm view",
       altText: `${farm.name} main view`,
       sortOrder: 0,
@@ -429,8 +429,8 @@ async function main() {
     },
     {
       farmId: farm.id,
-      photoUrl: `https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1200`,
-      thumbnailUrl: `https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=400`,
+      photoUrl: "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1200",
+      thumbnailUrl: "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=400",
       caption: "Our fields",
       altText: `${farm.name} fields`,
       sortOrder: 1,
@@ -497,7 +497,7 @@ async function main() {
     ],
   });
 
-  console.log(`  ✅ Added farm certifications\n`);
+  console.log("  ✅ Added farm certifications\n");
 
   // ========================================================================
   // STEP 7: CREATE PRODUCTS
@@ -830,7 +830,7 @@ async function main() {
     ],
   });
 
-  console.log(`  ✅ Created reviews\n`);
+  console.log("  ✅ Created reviews\n");
 
   // ========================================================================
   // FINAL SUMMARY
@@ -847,8 +847,8 @@ async function main() {
   console.log(`  🚜 Farms: ${farmsCreated.length}`);
   console.log(`  📸 Farm Photos: ${farmPhotos.length}`);
   console.log(`  🥬 Products: ${products.length}`);
-  console.log(`  📦 Orders: 1`);
-  console.log(`  ⭐ Reviews: 1`);
+  console.log("  📦 Orders: 1");
+  console.log("  ⭐ Reviews: 1");
   console.log("\n🔑 Login Credentials:");
   console.log("  Admin:    admin@farmersmarket.app / DivineAdmin123!");
   console.log("  Farmer:   ana.romana@email.com / FarmLife2024!");

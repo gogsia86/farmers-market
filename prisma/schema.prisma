@@ -213,8 +213,8 @@ model Farm {
   PickupLocation         PickupLocation[]
   products               Product[]
   qualityIssues          QualityIssue[]
-  reviews                  Review[]
-  favorites                Favorite[]
+  reviews                Review[]
+  favorites              Favorite[]
   soilAnalyses           SoilAnalysis[]
   weatherData            WeatherData[]
 

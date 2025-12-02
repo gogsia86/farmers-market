@@ -237,7 +237,7 @@ async function testMonitoringBot(): Promise<void> {
   log.section("Testing Monitoring Bot Integration");
 
   const bot = new DivineMonitoringBot({
-    baseUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+    baseUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001",
     enableNotifications: false, // Don't spam Slack during tests
     slackWebhookUrl: process.env.SLACK_WEBHOOK_URL,
     workflows: [
@@ -409,7 +409,7 @@ async function testAnalytics(): Promise<void> {
       _count: true,
     });
 
-    log.info(`  Status distribution:`);
+    log.info("  Status distribution:");
     statusCounts.forEach((stat) => {
       log.info(`    ${stat.status}: ${stat._count}`);
     });

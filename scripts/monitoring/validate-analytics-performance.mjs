@@ -263,7 +263,7 @@ async function main() {
   try {
     const validation = await validateAnalyticsEndpoint();
 
-    log("\n" + "═".repeat(60), colors.cyan);
+    log(`\n${"═".repeat(60)}`, colors.cyan);
 
     if (validation.optimal) {
       log(
@@ -295,7 +295,7 @@ async function checkServer() {
   try {
     const response = await fetch(`${API_BASE_URL}/api/health`);
     return response.ok;
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 }
@@ -321,7 +321,7 @@ checkServer()
     log("\n🚀 Starting performance validation...\n", colors.cyan);
     main();
   })
-  .catch((error) => {
+  .catch((_error) => {
     log("\n⚠️  Could not check server status", colors.yellow);
     log("Proceeding with validation...\n", colors.yellow);
     main();

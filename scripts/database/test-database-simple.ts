@@ -10,9 +10,9 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient({
   datasources: {
     db: {
-      url: process.env.DATABASE_URL || "postgresql://postgres:postgres@127.0.0.1:5432/farmersmarket"
-    }
-  }
+      url: process.env.DATABASE_URL || "postgresql://postgres:postgres@127.0.0.1:5432/farmersmarket",
+    },
+  },
 });
 
 async function testDatabase() {
@@ -62,9 +62,9 @@ async function testDatabase() {
         agricultureInsights: {
           season: "SPRING",
           consciousness: "DIVINE",
-          biodynamic: true
-        }
-      }
+          biodynamic: true,
+        },
+      },
     });
     console.log("   ✅ Report created successfully!");
     console.log(`   📝 Report ID: ${testReport.reportId}`);
@@ -91,17 +91,17 @@ async function testDatabase() {
         metrics: {
           responseTime: 125,
           memoryUsage: 45.2,
-          cpuUsage: 12.5
+          cpuUsage: 12.5,
         },
         screenshots: [],
         traces: [],
         tags: ["health", "critical"],
         agricultureData: {
           season: "SPRING",
-          soilHealth: "excellent"
+          soilHealth: "excellent",
         },
-        reportId: testReport.reportId
-      }
+        reportId: testReport.reportId,
+      },
     });
     console.log("   ✅ Workflow execution created!");
     console.log(`   🔄 Run ID: ${testExecution.runId}`);
@@ -111,12 +111,12 @@ async function testDatabase() {
     console.log("5️⃣  Querying recent reports...");
     const recentReports = await prisma.monitoringReport.findMany({
       take: 5,
-      orderBy: { timestamp: 'desc' },
+      orderBy: { timestamp: "desc" },
       include: {
         workflowExecutions: {
-          take: 3
-        }
-      }
+          take: 3,
+        },
+      },
     });
     console.log(`   ✅ Found ${recentReports.length} recent reports`);
     if (recentReports.length > 0) {
@@ -128,7 +128,7 @@ async function testDatabase() {
     console.log("6️⃣  Checking workflow schedules...");
     const schedules = await prisma.workflowSchedule.findMany({
       where: { enabled: true },
-      orderBy: { workflowName: 'asc' }
+      orderBy: { workflowName: "asc" },
     });
     console.log(`   ✅ Found ${schedules.length} active schedules:`);
     schedules.forEach(s => {
@@ -141,7 +141,7 @@ async function testDatabase() {
     const [reportCount, executionCount, metricCount] = await Promise.all([
       prisma.monitoringReport.count(),
       prisma.workflowExecution.count(),
-      prisma.workflowMetric.count()
+      prisma.workflowMetric.count(),
     ]);
     console.log(`   📊 Total Reports: ${reportCount}`);
     console.log(`   🔄 Total Executions: ${executionCount}`);
@@ -150,10 +150,10 @@ async function testDatabase() {
     // Test 8: Cleanup test data
     console.log("8️⃣  Cleaning up test data...");
     await prisma.workflowExecution.delete({
-      where: { runId: testExecution.runId }
+      where: { runId: testExecution.runId },
     });
     await prisma.monitoringReport.delete({
-      where: { reportId: testReport.reportId }
+      where: { reportId: testReport.reportId },
     });
     console.log("   ✅ Test data cleaned up\n");
 
@@ -178,7 +178,7 @@ async function testDatabase() {
     if (error instanceof Error) {
       console.error(`   Message: ${error.message}`);
       if (error.stack) {
-        console.error(`   Stack: ${error.stack.split('\n').slice(0, 5).join('\n')}\n`);
+        console.error(`   Stack: ${error.stack.split("\n").slice(0, 5).join("\n")}\n`);
       }
     } else {
       console.error(`   ${String(error)}\n`);

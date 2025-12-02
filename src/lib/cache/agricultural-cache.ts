@@ -26,7 +26,7 @@ export const AgriculturalCache = {
    */
   async invalidateFarm(farmId: string): Promise<void> {
     await cache.del(CacheKeys.farm(farmId));
-    await cache.delPattern(`farms:list:*`);
+    await cache.delPattern("farms:list:*");
   },
 
   /**
@@ -49,7 +49,7 @@ export const AgriculturalCache = {
   async invalidateProduct(productId: string, farmId: string): Promise<void> {
     await cache.del(CacheKeys.product(productId));
     await cache.delPattern(`products:${farmId}:*`);
-    await cache.delPattern(`farms:list:*`);
+    await cache.delPattern("farms:list:*");
   },
 
   /**

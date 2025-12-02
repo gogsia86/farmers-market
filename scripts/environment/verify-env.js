@@ -80,9 +80,9 @@ const productionOnlyVariables = [
 ];
 
 // Validation results
-let missingRequired = [];
-let missingOptional = [];
-let warnings = [];
+const missingRequired = [];
+const missingOptional = [];
+const warnings = [];
 let validCount = 0;
 
 // Check if .env file exists
@@ -123,7 +123,7 @@ Object.entries(requiredVariables).forEach(([category, variables]) => {
         varName.includes("PASSWORD") ||
         varName.includes("KEY");
       const displayValue = isSensitive
-        ? "***" + value.slice(-4)
+        ? `***${  value.slice(-4)}`
         : value.slice(0, 50);
 
       console.log(
@@ -133,16 +133,16 @@ Object.entries(requiredVariables).forEach(([category, variables]) => {
 
       // Validate format
       if (varName === "DATABASE_URL" && !value.startsWith("postgresql://")) {
-        warnings.push(`DATABASE_URL should start with postgresql://`);
+        warnings.push("DATABASE_URL should start with postgresql://");
       }
 
       if (varName === "NEXTAUTH_SECRET" && value.length < 32) {
-        warnings.push(`NEXTAUTH_SECRET should be at least 32 characters`);
+        warnings.push("NEXTAUTH_SECRET should be at least 32 characters");
       }
 
       if (varName === "NEXT_PUBLIC_APP_URL" && !value.startsWith("http")) {
         warnings.push(
-          `NEXT_PUBLIC_APP_URL should start with http:// or https://`,
+          "NEXT_PUBLIC_APP_URL should start with http:// or https://",
         );
       }
     }
@@ -171,7 +171,7 @@ Object.entries(optionalVariables).forEach(([category, variables]) => {
         varName.includes("PASSWORD") ||
         varName.includes("KEY");
       const displayValue = isSensitive
-        ? "***" + value.slice(-4)
+        ? `***${  value.slice(-4)}`
         : value.slice(0, 50);
 
       console.log(

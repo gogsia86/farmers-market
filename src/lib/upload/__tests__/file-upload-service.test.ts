@@ -621,7 +621,7 @@ describe("📎 File Upload Service - Divine Upload Operations", () => {
     });
 
     it("should handle very long filenames", async () => {
-      const longName = "a".repeat(300) + ".jpg";
+      const longName = `${"a".repeat(300)  }.jpg`;
       const file = createMockFile(longName, 1024 * 1024, "image/jpeg");
 
       const result = await fileUploadService.uploadFile(file);

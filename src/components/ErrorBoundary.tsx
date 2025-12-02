@@ -26,7 +26,6 @@ import React, { Component } from "react";
 
 // 🌿 Agricultural season context for divine error consciousness
 // Reserved for future biodynamic error recovery features
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 /**
  * DIVINE ERROR CATEGORIZATION
@@ -123,14 +122,6 @@ interface ErrorBoundaryProps {
   showDetails?: boolean;
   maxRetries?: number;
   retryDelay?: number;
-}
-
-interface ErrorBoundaryState {
-  hasError: boolean;
-  error: Error | null;
-  errorInfo: ErrorInfo | null;
-  retryCount: number;
-  categorizedError: CategorizedError | null;
 }
 
 class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {

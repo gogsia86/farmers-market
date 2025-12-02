@@ -331,7 +331,7 @@ export class GPUProcessor {
   ): Promise<number[]> {
     const startTime = performance.now();
 
-    console.log(`🤖 Generating product recommendations on GPU`);
+    console.log("🤖 Generating product recommendations on GPU");
     console.log(`   User history: ${userHistory.length} items`);
     console.log(`   Product pool: ${products.length} products`);
     console.log(`   GPU Backend: ${this.tfBackend}`);
@@ -352,7 +352,7 @@ export class GPUProcessor {
           .squeeze();
 
         // Apply seasonal weights if provided
-        let finalScores = scores;
+        const finalScores = scores;
 
         // Get top recommendations
         const { values, indices } = tfInstance!.topk(
@@ -399,7 +399,7 @@ export class GPUProcessor {
   ): Promise<AgriculturalAnalytics> {
     const startTime = performance.now();
 
-    console.log(`🌾 Analyzing agricultural data on GPU`);
+    console.log("🌾 Analyzing agricultural data on GPU");
     console.log(`📊 Soil health samples: ${dataset.soilHealth.length}`);
     console.log(`🌱 Yield records: ${dataset.yields.length}`);
     console.log(`🌤️  Weather data points: ${dataset.weather.length}`);

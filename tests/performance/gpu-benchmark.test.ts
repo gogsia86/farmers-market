@@ -180,7 +180,7 @@ describe.skip("GPU Performance Benchmarking", () => {
       expect(backend).toBe("webgl");
 
       console.log(`✅ TensorFlow.js Backend: ${backend}`);
-      console.log(`🎮 GPU: RTX 2070 Max-Q (2304 CUDA cores)`);
+      console.log("🎮 GPU: RTX 2070 Max-Q (2304 CUDA cores)");
     });
 
     it("validates CUDA core utilization potential", () => {

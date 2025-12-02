@@ -116,7 +116,7 @@ class ValidationTracker {
           await this.complete();
         }
       },
-      VALIDATION_CONFIG.checkpointIntervalMinutes * 60 * 1000
+      VALIDATION_CONFIG.checkpointIntervalMinutes * 60 * 1000,
     );
 
     // Setup graceful shutdown
@@ -208,7 +208,7 @@ class ValidationTracker {
 
       // Count critical notifications as alerts
       const alertsTriggered = notifications.filter(
-        (n) => n.priority === "CRITICAL" || n.priority === "HIGH"
+        (n) => n.priority === "CRITICAL" || n.priority === "HIGH",
       ).length;
 
       return {
@@ -250,28 +250,28 @@ class ValidationTracker {
 
     if (successRate < VALIDATION_CONFIG.healthCheckThreshold) {
       issues.push(
-        `⚠️  Low success rate: ${successRate.toFixed(2)}% (threshold: ${VALIDATION_CONFIG.healthCheckThreshold}%)`
+        `⚠️  Low success rate: ${successRate.toFixed(2)}% (threshold: ${VALIDATION_CONFIG.healthCheckThreshold}%)`,
       );
     }
 
     // Check response time
     if (stats.avgResponseTime > 5000) {
       issues.push(
-        `⚠️  High average response time: ${stats.avgResponseTime}ms`
+        `⚠️  High average response time: ${stats.avgResponseTime}ms`,
       );
     }
 
     // Check health checks
     if (stats.healthChecksFailed > 0) {
       issues.push(
-        `⚠️  Health checks failed: ${stats.healthChecksFailed}`
+        `⚠️  Health checks failed: ${stats.healthChecksFailed}`,
       );
     }
 
     // Check for excessive alerts
     if (stats.alertsTriggered > 10) {
       issues.push(
-        `⚠️  High number of alerts: ${stats.alertsTriggered}`
+        `⚠️  High number of alerts: ${stats.alertsTriggered}`,
       );
     }
 
@@ -288,7 +288,7 @@ class ValidationTracker {
    */
   private generateRecommendations(
     stats: ValidationCheckpoint["stats"],
-    issues: string[]
+    issues: string[],
   ): string[] {
     const recommendations: string[] = [];
 
@@ -365,7 +365,7 @@ class ValidationTracker {
     await fs.writeFile(
       filepath,
       JSON.stringify(checkpoint, null, 2),
-      "utf-8"
+      "utf-8",
     );
   }
 
@@ -435,7 +435,7 @@ class ValidationTracker {
 
     // Calculate stability score (0-100)
     const stabilityScore = Math.round(
-      (overallSuccessRate * 0.4 + uptimePercentage * 0.3 + (100 - Math.min(totalIssues * 5, 100)) * 0.3)
+      (overallSuccessRate * 0.4 + uptimePercentage * 0.3 + (100 - Math.min(totalIssues * 5, 100)) * 0.3),
     );
 
     // Generate recommendations
@@ -550,7 +550,7 @@ class ValidationTracker {
    */
   private getEndTime(): Date {
     return new Date(
-      this.startTime.getTime() + VALIDATION_CONFIG.durationHours * 60 * 60 * 1000
+      this.startTime.getTime() + VALIDATION_CONFIG.durationHours * 60 * 60 * 1000,
     );
   }
 

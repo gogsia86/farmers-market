@@ -77,7 +77,7 @@ export async function login(
   page: Page,
   email: string,
   password: string,
-  expectedRedirect?: string | RegExp
+  expectedRedirect?: string | RegExp,
 ) {
   await page.goto(`${BASE_URL}/login`);
   await page.fill('input[name="email"]', email);
@@ -124,7 +124,7 @@ export async function isAuthenticated(page: Page): Promise<boolean> {
     const authIndicators = [
       page.locator('[data-testid="user-menu"]'),
       page.locator('[data-testid="profile-button"]'),
-      page.locator('text=/logout/i'),
+      page.locator("text=/logout/i"),
     ];
 
     for (const indicator of authIndicators) {
@@ -144,7 +144,7 @@ export async function isAuthenticated(page: Page): Promise<boolean> {
  */
 export async function ensureAuthenticated(
   page: Page,
-  userType: keyof typeof TEST_USERS = "customer"
+  userType: keyof typeof TEST_USERS = "customer",
 ) {
   const authenticated = await isAuthenticated(page);
 
@@ -176,7 +176,7 @@ export async function waitForSession(page: Page) {
         cookies.includes("__Secure-next-auth.session-token")
       );
     },
-    { timeout: 10000 }
+    { timeout: 10000 },
   );
   console.log("✅ Session established");
 }
@@ -198,7 +198,7 @@ export async function clearSession(page: Page) {
  */
 export async function verifyUserRole(
   page: Page,
-  expectedRole: "ADMIN" | "FARMER" | "CONSUMER"
+  expectedRole: "ADMIN" | "FARMER" | "CONSUMER",
 ) {
   // Check URL for role-specific dashboard
   const url = page.url();

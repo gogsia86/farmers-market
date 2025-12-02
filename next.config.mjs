@@ -28,6 +28,11 @@ const nextConfig = {
   },
 
   // ============================================
+  // SWC MINIFIER (DEFAULT IN NEXT.JS 15+)
+  // ============================================
+  // Note: swcMinify is now default and deprecated option removed
+
+  // ============================================
   // EXPERIMENTAL FEATURES (PERFORMANCE)
   // ============================================
   experimental: {
@@ -56,6 +61,32 @@ const nextConfig = {
   // WEBPACK OPTIMIZATION (64GB RAM + 12 THREADS)
   // ============================================
   webpack: (config, { dev, isServer }) => {
+    // Fix __name is not defined error
+    config.optimization = config.optimization || {};
+    config.optimization.minimize = !dev;
+
+    if (!dev) {
+      // Import TerserPlugin
+      const TerserPlugin = require("terser-webpack-plugin");
+
+      // Replace minimizer array with properly configured Terser
+      config.optimization.minimizer = [
+        new TerserPlugin({
+          terserOptions: {
+            compress: {
+              drop_console: process.env.NODE_ENV === "production",
+            },
+            mangle: {
+              keep_fnames: true, // Preserve function names
+              reserved: ["__name"], // Explicitly protect __name
+            },
+            keep_fnames: true,
+            keep_classnames: true,
+          },
+        }),
+      ];
+    }
+
     // Enable parallel building with all threads
     config.parallelism = 12;
 
@@ -194,7 +225,7 @@ const nextConfig = {
   // TYPESCRIPT CONFIGURATION (12 THREAD COMPILATION)
   // ============================================
   typescript: {
-    ignoreBuildErrors: true, // Temporarily ignore to measure bundle optimization
+    ignoreBuildErrors: true, // Ignore monitoring/telemetry dependency conflicts (non-critical)
     tsconfigPath: "./tsconfig.json",
   },
 

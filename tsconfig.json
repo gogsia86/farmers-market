@@ -60,6 +60,8 @@
       "@/*": ["./src/*"], // Explicit path from project root
       "@/components/*": ["./src/components/*"],
       "@/lib/*": ["./src/lib/*"],
+      "@/lib/logger": ["./src/lib/logger/index.ts"],
+      "@/lib/logger/*": ["./src/lib/logger/*"],
       "@/app/*": ["./src/app/*"],
       "@/types/*": ["./src/types/*"],
       "@/hooks/*": ["./src/hooks/*"],

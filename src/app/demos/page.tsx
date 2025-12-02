@@ -87,7 +87,7 @@ export default function DemosPage() {
       </div>
 
       <div style={{ marginTop: "2rem" }}>
-        <a href="/farmer-dashboard" style={{ color: "#4a9d4a" }}>
+        <a href="/farmer/dashboard" style={{ color: "#4a9d4a" }}>
           ← Back to Farmer Dashboard
         </a>
       </div>

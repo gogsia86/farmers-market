@@ -500,11 +500,11 @@ Provide:
       const trimmed = line.trim();
       // Match numbered lists, bullet points, or "Recommendation:" lines
       if (
-        /^\d+[\.)]\s/.test(trimmed) ||
+        /^\d+[.)]\s/.test(trimmed) ||
         /^[-*•]\s/.test(trimmed) ||
         /recommend/i.test(trimmed)
       ) {
-        const cleaned = trimmed.replace(/^\d+[\.)]\s|^[-*•]\s/g, "").trim();
+        const cleaned = trimmed.replace(/^\d+[.)]\s|^[-*•]\s/g, "").trim();
         if (cleaned.length > 10) {
           recommendations.push(cleaned);
         }
@@ -522,11 +522,11 @@ Provide:
       const trimmed = line.trim();
       // Match action-oriented phrases
       if (
-        /^\d+[\.)]\s/.test(trimmed) ||
+        /^\d+[.)]\s/.test(trimmed) ||
         /^[-*•]\s/.test(trimmed) ||
         /action|implement|apply|monitor|check|ensure/i.test(trimmed)
       ) {
-        const cleaned = trimmed.replace(/^\d+[\.)]\s|^[-*•]\s/g, "").trim();
+        const cleaned = trimmed.replace(/^\d+[.)]\s|^[-*•]\s/g, "").trim();
         if (cleaned.length > 10) {
           actionItems.push(cleaned);
         }

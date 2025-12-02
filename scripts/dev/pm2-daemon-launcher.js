@@ -29,7 +29,7 @@ console.log("╚═════════════════════�
 
 console.log(`📂 Script: ${SCRIPT_PATH}`);
 console.log(`🌍 Environment: ${process.env.NODE_ENV || "development"}`);
-console.log(`📦 Using tsx/register for TypeScript execution\n`);
+console.log("📦 Using tsx/register for TypeScript execution\n");
 
 console.log("✅ Loading TypeScript runtime...");
 
@@ -39,7 +39,7 @@ try {
 
   console.log("✅ TypeScript runtime loaded");
   console.log("🚀 Starting daemon...\n");
-  console.log("─".repeat(60) + "\n");
+  console.log(`${"─".repeat(60)  }\n`);
 
   // Load and execute the daemon script
   require(SCRIPT_PATH);

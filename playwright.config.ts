@@ -61,7 +61,7 @@ export default defineConfig({
       DATABASE_URL:
         process.env.DATABASE_URL || process.env.TEST_DATABASE_URL || "",
       NODE_ENV: process.env.CI ? "test" : "development",
-      PORT: PORT,
+      PORT,
     },
     // Ignore HTTP errors on server startup (e.g., port already in use)
     ignoreHTTPSErrors: true,

@@ -244,9 +244,9 @@ class DatabaseStorageService {
         },
       });
 
-      console.log(`✅ Health check saved to database`);
+      console.log("✅ Health check saved to database");
     } catch (error) {
-      console.error(`❌ Failed to save health check:`, error);
+      console.error("❌ Failed to save health check:", error);
       throw error;
     }
   }
@@ -276,9 +276,9 @@ class DatabaseStorageService {
         },
       });
 
-      console.log(`✅ Notification logged to database`);
+      console.log("✅ Notification logged to database");
     } catch (error) {
-      console.error(`❌ Failed to log notification:`, error);
+      console.error("❌ Failed to log notification:", error);
       // Don't throw - notifications are not critical
     }
   }
@@ -631,10 +631,10 @@ class DatabaseStorageService {
         deletedNotifications: deletedNotifications.count,
       };
 
-      console.log(`✅ Cleanup complete:`, result);
+      console.log("✅ Cleanup complete:", result);
       return result;
     } catch (error) {
-      console.error(`❌ Cleanup failed:`, error);
+      console.error("❌ Cleanup failed:", error);
       throw error;
     }
   }

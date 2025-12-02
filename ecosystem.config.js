@@ -31,7 +31,7 @@ module.exports = {
       // Environment variables
       env: {
         NODE_ENV: "development",
-        BASE_URL: "http://localhost:3000",
+        BASE_URL: "http://localhost:3001",
         LOG_LEVEL: "info",
       },
 
@@ -80,12 +80,12 @@ module.exports = {
 
       env: {
         NODE_ENV: "development",
-        PORT: 3000,
+        PORT: 3001,
       },
 
       env_production: {
         NODE_ENV: "production",
-        PORT: 3000,
+        PORT: 3001,
       },
 
       error_file: "./logs/pm2/app-error.log",

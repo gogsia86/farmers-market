@@ -43,6 +43,11 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     return NextResponse.next();
   }
 
+  // Redirect /register to /signup (removed duplicate route)
+  if (pathname === "/register") {
+    return NextResponse.redirect(new URL("/signup", request.url));
+  }
+
   // Handle admin routes with authentication
   if (pathname.startsWith("/admin")) {
     return handleAdminRoutes(request);
@@ -62,18 +67,9 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 async function handleAdminRoutes(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Redirect /admin/login to /admin-login to avoid conflicts
-  if (pathname === "/admin/login") {
-    const loginUrl = new URL("/admin-login", req.url);
-    const callbackUrl = req.nextUrl.searchParams.get("callbackUrl");
-    if (callbackUrl) {
-      loginUrl.searchParams.set("callbackUrl", callbackUrl);
-    }
-    return NextResponse.redirect(loginUrl);
-  }
-
   // Admin route protection (exclude login page to prevent redirect loops)
-  if (!pathname.startsWith("/admin-login")) {
+  // Login is now at /(auth)/admin-login
+  if (!pathname.includes("admin-login")) {
     // Check for valid authentication token
     const token = await getToken({
       req,
@@ -89,7 +85,7 @@ async function handleAdminRoutes(req: NextRequest) {
 
     // Redirect to login if not authenticated
     if (!token) {
-      const loginUrl = new URL("/admin-login", req.url);
+      const loginUrl = new URL("/(auth)/admin-login", req.url);
       loginUrl.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(loginUrl);
     }

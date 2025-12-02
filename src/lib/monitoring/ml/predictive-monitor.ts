@@ -110,7 +110,7 @@ export class PredictiveMonitor {
 
       // Predict
       const prediction = this.model.predict(tensor) as tf.Tensor;
-      const failureProba = (await prediction.data())[0];
+      const failureProba = (await prediction.data())[0] ?? 0;
 
       // Cleanup tensors
       tensor.dispose();

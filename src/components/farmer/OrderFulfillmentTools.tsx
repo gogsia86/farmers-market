@@ -147,7 +147,7 @@ export function OrderFulfillmentTools({
 
     setIsProcessing(true);
     try {
-      const response = await fetch(`/api/farmer/orders/batch-update`, {
+      const response = await fetch("/api/farmer/orders/batch-update", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -178,7 +178,7 @@ export function OrderFulfillmentTools({
 
     setIsProcessing(true);
     try {
-      const response = await fetch(`/api/farmer/orders/packing-slips`, {
+      const response = await fetch("/api/farmer/orders/packing-slips", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -217,7 +217,7 @@ export function OrderFulfillmentTools({
 
     setIsProcessing(true);
     try {
-      const response = await fetch(`/api/farmer/orders/notify`, {
+      const response = await fetch("/api/farmer/orders/notify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -245,7 +245,7 @@ export function OrderFulfillmentTools({
 
     setIsProcessing(true);
     try {
-      const response = await fetch(`/api/farmer/orders/export`, {
+      const response = await fetch("/api/farmer/orders/export", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -175,7 +175,7 @@ class EmailService {
 
             <p>Your Farm ID: <code>${data.farmId}</code></p>
 
-            <a href="${process.env.NEXTAUTH_URL}/farmer-dashboard" class="button">Go to Dashboard</a>
+            <a href="${process.env.NEXTAUTH_URL}/farmer/dashboard" class="button">Go to Dashboard</a>
 
             <h3>Need Help?</h3>
             <p>Visit our <a href="${process.env.NEXTAUTH_URL}/resources">Resource Center</a> or contact support at <a href="mailto:support@farmersmarket.com">support@farmersmarket.com</a></p>
@@ -264,7 +264,7 @@ class EmailService {
           <h3>Items Ordered:</h3>
           <ul>${itemsList}</ul>
 
-          <a href="${process.env.NEXTAUTH_URL}/farmer-dashboard"
+          <a href="${process.env.NEXTAUTH_URL}/farmer/dashboard"
              style="display: inline-block; background: #d97706; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0;">
             View Order Details
           </a>

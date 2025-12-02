@@ -137,7 +137,7 @@ export class SelfHealingOrchestrator {
 
     // Execute healing strategy
     try {
-      console.log(`   ⚡ Executing healing strategy...`);
+      console.log("   ⚡ Executing healing strategy...");
       const result = await strategy.execute(context);
 
       // Record attempt
@@ -152,11 +152,11 @@ export class SelfHealingOrchestrator {
 
       // Verify healing was successful
       if (result.healed) {
-        console.log(`   ✅ Self-healing successful!`);
+        console.log("   ✅ Self-healing successful!");
         result.verificationPassed = await this.verifyHealing(context);
 
         if (!result.verificationPassed) {
-          console.log(`   ⚠️  Healing verification failed - rolling back`);
+          console.log("   ⚠️  Healing verification failed - rolling back");
           await this.rollback(strategy, context);
           result.healed = false;
           result.reason = "Healing verification failed, rolled back changes";
@@ -166,7 +166,7 @@ export class SelfHealingOrchestrator {
       result.duration = Date.now() - startTime;
       return result;
     } catch (error) {
-      console.error(`   ❌ Healing strategy failed:`, error);
+      console.error("   ❌ Healing strategy failed:", error);
 
       const result: HealingResult = {
         healed: false,

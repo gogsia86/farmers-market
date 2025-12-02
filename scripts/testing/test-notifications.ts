@@ -174,7 +174,7 @@ async function testSlack(manager: ReturnType<typeof createNotificationManager>) 
         testType: "critical-alert",
         timestamp: new Date().toISOString(),
         environment: process.env.NODE_ENV || "development",
-      }
+      },
     );
     const slackAlert = alertResults.find((r) => r.channel === "slack");
     if (slackAlert?.success) {
@@ -258,7 +258,7 @@ async function testDiscord(manager: ReturnType<typeof createNotificationManager>
         testType: "critical-alert",
         timestamp: new Date().toISOString(),
         environment: process.env.NODE_ENV || "development",
-      }
+      },
     );
     const discordAlert = alertResults.find((r) => r.channel === "discord");
     if (discordAlert?.success) {

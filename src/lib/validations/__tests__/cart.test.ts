@@ -71,7 +71,7 @@ describe("Cart Validation Schemas", () => {
 
       expect(() => addToCartSchema.parse(validData)).not.toThrow();
       expect(() =>
-        addToCartSchema.parse({ ...validData, quantity: 100 })
+        addToCartSchema.parse({ ...validData, quantity: 100 }),
       ).not.toThrow();
     });
 
@@ -115,7 +115,7 @@ describe("Cart Validation Schemas", () => {
 
       [1, 2, 5, 10, 50, 100, 1000].forEach((quantity) => {
         expect(() =>
-          addToCartSchema.parse({ productId, quantity })
+          addToCartSchema.parse({ productId, quantity }),
         ).not.toThrow();
       });
     });
@@ -158,7 +158,7 @@ describe("Cart Validation Schemas", () => {
       expect(() => updateCartItemSchema.parse({ quantity: 0 })).not.toThrow();
       expect(() => updateCartItemSchema.parse({ quantity: 1 })).not.toThrow();
       expect(() =>
-        updateCartItemSchema.parse({ quantity: 9999 })
+        updateCartItemSchema.parse({ quantity: 9999 }),
       ).not.toThrow();
     });
 

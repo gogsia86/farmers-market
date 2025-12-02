@@ -87,8 +87,9 @@ export class WorkflowTracer {
     const exporter = this.createExporter();
 
     if (exporter) {
-      // @ts-ignore - addSpanProcessor exists at runtime
+      // @ts-ignore - addSpanProcessor exists at runtime, type conflicts with @sentry/nextjs
       this.provider.addSpanProcessor(
+        // @ts-ignore - Type conflicts between @opentelemetry versions (via @sentry/nextjs)
         new BatchSpanProcessor(exporter, {
           maxQueueSize: 2048,
           maxExportBatchSize: 512,
@@ -226,7 +227,7 @@ export class WorkflowTracer {
 
           span.addEvent("workflow.completed", {
             timestamp: result.endTime.getTime(),
-            duration: duration,
+            duration,
           });
 
           // Set span status based on result
@@ -275,7 +276,7 @@ export class WorkflowTracer {
             error_type: error instanceof Error ? error.name : "UnknownError",
             error_message:
               error instanceof Error ? error.message : String(error),
-            duration: duration,
+            duration,
           });
 
           throw error;

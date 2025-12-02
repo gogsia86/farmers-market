@@ -554,7 +554,7 @@ Provide validation in JSON:
         max_tokens: agent.config.llmConfig.maxTokens,
       });
 
-      const content = completion.choices[0].message.content || "";
+      const content = completion.choices[0]?.message.content || "";
 
       // Store in conversation history
       agent.conversationHistory.push(
@@ -620,7 +620,7 @@ Format as concise, actionable recommendation.`;
 
       return {
         finalRecommendation:
-          completion.choices[0].message.content ||
+          completion.choices[0]?.message.content ||
           "Unable to generate consensus",
         votes: this.calculateVotes(analyses),
       };

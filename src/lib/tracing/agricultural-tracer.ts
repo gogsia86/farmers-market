@@ -90,7 +90,7 @@ export async function traceLunarOperation<T>(
     async (span) => {
       span.addEvent(`Calculating lunar influence for ${phase} phase`);
       const result = await fn();
-      span.addEvent(`Lunar calculation complete`);
+      span.addEvent("Lunar calculation complete");
       return result;
     },
   );

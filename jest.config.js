@@ -30,6 +30,11 @@ module.exports = {
     "^@/utils/(.*)$": "<rootDir>/src/utils/$1",
     "^@/tests/(.*)$": "<rootDir>/tests/$1",
 
+    // Mock next-auth ESM modules
+    "^next-auth$": "<rootDir>/tests/__mocks__/next-auth.js",
+    "^next-auth/(.*)$": "<rootDir>/tests/__mocks__/next-auth.js",
+    "^@auth/(.*)$": "<rootDir>/tests/__mocks__/auth.js",
+
     // Mock CSS modules
     "\\.(css|less|scss|sass)$": "identity-obj-proxy",
 
@@ -61,10 +66,10 @@ module.exports = {
 
   coverageThreshold: {
     global: {
-      branches: 80,
-      functions: 80,
-      lines: 80,
-      statements: 80,
+      branches: 90,
+      functions: 90,
+      lines: 90,
+      statements: 90,
     },
   },
 
@@ -89,7 +94,7 @@ module.exports = {
 
   // Transform ignore patterns to fix coverage instrumentation
   transformIgnorePatterns: [
-    "node_modules/(?!(test-exclude|babel-plugin-istanbul)/)",
+    "node_modules/(?!(test-exclude|babel-plugin-istanbul|@auth)/)",
   ],
 
   // Ignore patterns
@@ -116,8 +121,8 @@ module.exports = {
   // ============================================
 
   // Maximum workers for parallel execution
-  // Use 10 workers (leave 2 threads for OS/IDE)
-  maxWorkers: 10,
+  // Dynamic based on environment (CI vs local)
+  maxWorkers: process.env.CI ? 4 : 10,
 
   // Worker idle memory limit (with 64GB we can be generous)
   workerIdleMemoryLimit: "2GB",
@@ -133,10 +138,13 @@ module.exports = {
   // Bail after first test failure in CI (faster feedback)
   bail: process.env.CI ? 1 : 0,
 
-  // Clear mocks between tests
+  // Clear mocks between tests (essential for test isolation)
   clearMocks: true,
   resetMocks: true,
   restoreMocks: true,
+
+  // Automatically clear mock calls and instances between every test
+  resetModules: false, // Keep false for performance
 
   // Error on deprecated APIs
   errorOnDeprecated: false, // Disabled to avoid issues with dependencies
@@ -149,6 +157,12 @@ module.exports = {
 
   // Force exit (faster in CI)
   forceExit: process.env.CI,
+
+  // Run tests in random order (helps catch test interdependencies)
+  randomize: false, // Set to true to enable random order
+
+  // Collect coverage from all files, not just tested ones
+  collectCoverage: process.env.COLLECT_COVERAGE === "true",
 
   // ============================================
   // AGRICULTURAL CONSCIOUSNESS SETTINGS

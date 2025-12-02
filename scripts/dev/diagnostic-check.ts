@@ -16,7 +16,7 @@ import chalk from "chalk";
 // ============================================================================
 
 const DIAGNOSTIC_CONFIG = {
-  baseUrl: process.env.BASE_URL || "http://localhost:3000",
+  baseUrl: process.env.BASE_URL || "http://localhost:3001",
   timeout: 10000,
   checkServer: true,
   checkBrowser: true,
@@ -39,9 +39,13 @@ const results: DiagnosticResult[] = [];
 // ============================================================================
 
 function logHeader(title: string) {
-  console.log("\n╔════════════════════════════════════════════════════════════╗");
+  console.log(
+    "\n╔════════════════════════════════════════════════════════════╗",
+  );
   console.log(`║ ${title.padEnd(58)} ║`);
-  console.log("╚════════════════════════════════════════════════════════════╝\n");
+  console.log(
+    "╚════════════════════════════════════════════════════════════╝\n",
+  );
 }
 
 function logResult(result: DiagnosticResult) {
@@ -120,8 +124,7 @@ async function checkServerAvailability(): Promise<void> {
     }
   } catch (error) {
     const duration = Date.now() - startTime;
-    const errorMessage =
-      error instanceof Error ? error.message : String(error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
 
     addResult(
       "Server Reachability",
@@ -225,11 +228,7 @@ async function checkBrowserAutomation(): Promise<void> {
         timeout: 5000,
       });
 
-      addResult(
-        "Page Navigation",
-        "PASS",
-        "Page navigation working correctly",
-      );
+      addResult("Page Navigation", "PASS", "Page navigation working correctly");
     } catch (error) {
       addResult(
         "Page Navigation",
@@ -241,19 +240,13 @@ async function checkBrowserAutomation(): Promise<void> {
 
     await browser.close();
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : String(error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
 
     if (errorMessage.includes("Executable doesn't exist")) {
-      addResult(
-        "Browser Launch",
-        "FAIL",
-        "Chromium browser not installed",
-        {
-          error: errorMessage,
-          solution: "Run: npx playwright install chromium",
-        },
-      );
+      addResult("Browser Launch", "FAIL", "Chromium browser not installed", {
+        error: errorMessage,
+        solution: "Run: npx playwright install chromium",
+      });
     } else {
       addResult("Browser Launch", "FAIL", "Browser launch failed", {
         error: errorMessage,
@@ -301,11 +294,7 @@ async function checkMonitoringComponents(): Promise<void> {
 
     // Check reporter module
     const { createReporter } = await import("../src/lib/monitoring/reporter");
-    addResult(
-      "Reporter Module",
-      "PASS",
-      "Reporter module loaded successfully",
-    );
+    addResult("Reporter Module", "PASS", "Reporter module loaded successfully");
 
     // Test bot instantiation
     const bot = createMonitoringBot({
@@ -316,11 +305,16 @@ async function checkMonitoringComponents(): Promise<void> {
 
     // Test workflow listing
     const workflowList = bot.listWorkflows();
-    addResult("Workflow Registration", "PASS", "Workflows registered correctly", {
-      totalWorkflows: workflowList.length,
-      critical: workflowList.filter((w) => w.priority === "CRITICAL").length,
-      high: workflowList.filter((w) => w.priority === "HIGH").length,
-    });
+    addResult(
+      "Workflow Registration",
+      "PASS",
+      "Workflows registered correctly",
+      {
+        totalWorkflows: workflowList.length,
+        critical: workflowList.filter((w) => w.priority === "CRITICAL").length,
+        high: workflowList.filter((w) => w.priority === "HIGH").length,
+      },
+    );
 
     // Test workflow retrieval
     const healthCheckWorkflow = bot.getWorkflow("health-check");
@@ -345,8 +339,7 @@ async function checkMonitoringComponents(): Promise<void> {
       performanceEnabled: config.performance?.parallel,
     });
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : String(error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
     addResult("Monitoring Components", "FAIL", "Component check failed", {
       error: errorMessage,
     });
@@ -401,19 +394,13 @@ async function checkReportGeneration(): Promise<void> {
       end: new Date(),
     });
 
-    addResult(
-      "Report Generation",
-      "PASS",
-      "Report generated successfully",
-      {
-        reportId: report.reportId,
-        successRate: report.summary.successRate,
-        totalWorkflows: report.summary.totalWorkflows,
-      },
-    );
+    addResult("Report Generation", "PASS", "Report generated successfully", {
+      reportId: report.reportId,
+      successRate: report.summary.successRate,
+      totalWorkflows: report.summary.totalWorkflows,
+    });
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : String(error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
     addResult("Report Generation", "FAIL", "Report generation failed", {
       error: errorMessage,
     });
@@ -432,12 +419,9 @@ async function checkFileSystem(): Promise<void> {
 
     try {
       await fs.access(reportsDir);
-      addResult(
-        "Reports Directory",
-        "PASS",
-        "Reports directory exists",
-        { path: reportsDir },
-      );
+      addResult("Reports Directory", "PASS", "Reports directory exists", {
+        path: reportsDir,
+      });
     } catch {
       try {
         await fs.mkdir(reportsDir, { recursive: true });
@@ -513,13 +497,19 @@ function generateSummary() {
   console.log("╠════════════════════════════════════════════════════════════╣");
 
   const successRate = ((passed / total) * 100).toFixed(1);
-  console.log(`║ 📈 SUCCESS RATE: ${successRate}%${" ".repeat(40 - successRate.length)} ║`);
+  console.log(
+    `║ 📈 SUCCESS RATE: ${successRate}%${" ".repeat(40 - successRate.length)} ║`,
+  );
 
-  console.log("╚════════════════════════════════════════════════════════════╝\n");
+  console.log(
+    "╚════════════════════════════════════════════════════════════╝\n",
+  );
 
   // Overall status
   if (failed === 0 && warnings === 0) {
-    console.log(chalk.green.bold("🎉 ALL DIAGNOSTICS PASSED - SYSTEM HEALTHY\n"));
+    console.log(
+      chalk.green.bold("🎉 ALL DIAGNOSTICS PASSED - SYSTEM HEALTHY\n"),
+    );
   } else if (failed === 0) {
     console.log(
       chalk.yellow.bold(
@@ -605,7 +595,9 @@ async function runDiagnostics() {
   console.log("║                                                            ║");
   console.log("╚════════════════════════════════════════════════════════════╝");
 
-  console.log(chalk.gray(`\n🔍 Running diagnostics for: ${DIAGNOSTIC_CONFIG.baseUrl}\n`));
+  console.log(
+    chalk.gray(`\n🔍 Running diagnostics for: ${DIAGNOSTIC_CONFIG.baseUrl}\n`),
+  );
 
   const startTime = Date.now();
 

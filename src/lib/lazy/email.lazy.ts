@@ -65,7 +65,7 @@ async function loadNodemailer(): Promise<typeof nodemailer> {
  * ```
  */
 export async function createTransporter(
-  config: EmailConfig
+  config: EmailConfig,
 ): Promise<Transporter> {
   const nm = await loadNodemailer();
   return nm.createTransport(config);
@@ -94,7 +94,7 @@ export async function createTransporter(
  */
 export async function sendEmail(
   config: EmailConfig,
-  mailOptions: SendMailOptions
+  mailOptions: SendMailOptions,
 ): Promise<SentMessageInfo> {
   const transporter = await createTransporter(config);
   return transporter.sendMail(mailOptions);
@@ -118,7 +118,7 @@ export async function sendEmail(
  */
 export function queueEmail(
   config: EmailConfig,
-  mailOptions: SendMailOptions
+  mailOptions: SendMailOptions,
 ): void {
   // Fire and forget - don't await
   sendEmail(config, mailOptions).catch((error) => {
@@ -141,7 +141,7 @@ export function queueEmail(
  * ```
  */
 export async function verifyEmailConfig(
-  config: EmailConfig
+  config: EmailConfig,
 ): Promise<boolean> {
   try {
     const transporter = await createTransporter(config);

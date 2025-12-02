@@ -191,7 +191,7 @@ class CircuitBreaker {
 
   constructor(
     private threshold: number,
-    private resetTimeMs: number
+    private resetTimeMs: number,
   ) {}
 
   recordSuccess(): void {
@@ -253,7 +253,7 @@ export class EnhancedRetrySystem {
   async executeWithRetry<T>(
     operation: () => Promise<T>,
     operationName: string,
-    customConfig?: Partial<RetryConfig>
+    customConfig?: Partial<RetryConfig>,
   ): Promise<RetryResult<T>> {
     const config = { ...this.config, ...customConfig };
     const startTime = Date.now();
@@ -274,7 +274,7 @@ export class EnhancedRetrySystem {
             const circuitBreaker = this.getCircuitBreaker(operationName, config);
             if (!circuitBreaker.canAttempt()) {
               throw new Error(
-                `Circuit breaker is OPEN for ${operationName}. Too many recent failures.`
+                `Circuit breaker is OPEN for ${operationName}. Too many recent failures.`,
               );
             }
           }
@@ -361,7 +361,7 @@ export class EnhancedRetrySystem {
               const delay = this.calculateDelay(
                 attempt,
                 config,
-                classification.suggestedDelay
+                classification.suggestedDelay,
               );
 
               span.addEvent("retry_waiting", {
@@ -392,7 +392,7 @@ export class EnhancedRetrySystem {
         } finally {
           span.end();
         }
-      }
+      },
     );
   }
 
@@ -402,7 +402,7 @@ export class EnhancedRetrySystem {
   private calculateDelay(
     attempt: number,
     config: RetryConfig,
-    suggestedDelay?: number
+    suggestedDelay?: number,
   ): number {
     // Use suggested delay if provided, otherwise exponential backoff
     const baseDelay = suggestedDelay ||
@@ -426,8 +426,8 @@ export class EnhancedRetrySystem {
         operationName,
         new CircuitBreaker(
           config.circuitBreakerThreshold,
-          config.circuitBreakerResetTimeMs
-        )
+          config.circuitBreakerResetTimeMs,
+        ),
       );
     }
     return this.circuitBreakers.get(operationName)!;
@@ -465,7 +465,7 @@ export class EnhancedRetrySystem {
         ([operation, breaker]) => ({
           operation,
           state: breaker.getState(),
-        })
+        }),
       ),
     };
   }
@@ -487,7 +487,7 @@ export const globalRetrySystem = new EnhancedRetrySystem();
 export async function withRetry<T>(
   operation: () => Promise<T>,
   operationName: string,
-  config?: Partial<RetryConfig>
+  config?: Partial<RetryConfig>,
 ): Promise<RetryResult<T>> {
   return globalRetrySystem.executeWithRetry(operation, operationName, config);
 }
@@ -497,7 +497,7 @@ export async function withRetry<T>(
  */
 export async function withAggressiveRetry<T>(
   operation: () => Promise<T>,
-  operationName: string
+  operationName: string,
 ): Promise<RetryResult<T>> {
   return globalRetrySystem.executeWithRetry(operation, operationName, {
     maxAttempts: 5,
@@ -512,7 +512,7 @@ export async function withAggressiveRetry<T>(
  */
 export async function withFastRetry<T>(
   operation: () => Promise<T>,
-  operationName: string
+  operationName: string,
 ): Promise<RetryResult<T>> {
   return globalRetrySystem.executeWithRetry(operation, operationName, {
     maxAttempts: 2,

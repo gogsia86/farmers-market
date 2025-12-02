@@ -286,7 +286,7 @@ export async function updateOrderStatusAction(
         data: {
           orderId,
           senderId: user.id,
-          subject: `Order Status Update`,
+          subject: "Order Status Update",
           body: `Status changed to ${newStatus}: ${notes}`,
           createdAt: new Date(),
         },

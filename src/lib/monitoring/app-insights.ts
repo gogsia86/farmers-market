@@ -8,8 +8,13 @@
  * @module monitoring/app-insights
  */
 
-import { TelemetryClient, Contracts } from 'applicationinsights';
-import type { TelemetryItem } from 'applicationinsights/out/Declarations/Contracts';
+// NOTE: Application Insights package is not installed.
+// To use this module, install: npm install applicationinsights
+// import { TelemetryClient, Contracts } from 'applicationinsights';
+// import type { TelemetryItem } from 'applicationinsights/out/Declarations/Contracts';
+
+// Placeholder types for when package is not installed
+type TelemetryClient = any;
 
 // ============================================================================
 // Types & Interfaces
@@ -49,7 +54,7 @@ export interface AgriculturalMetrics {
 // Configuration
 // ============================================================================
 
-let appInsightsClient: TelemetryClient | null = null;
+const appInsightsClient: TelemetryClient | null = null;
 let isInitialized = false;
 
 /**
@@ -59,11 +64,11 @@ export function getAppInsightsConfig(): AppInsightsConfig {
   return {
     connectionString: process.env.APPLICATIONINSIGHTS_CONNECTION_STRING,
     instrumentationKey: process.env.APPINSIGHTS_INSTRUMENTATION_KEY,
-    enabled: process.env.APPINSIGHTS_ENABLED !== 'false',
+    enabled: process.env.APPINSIGHTS_ENABLED !== "false",
     samplingPercentage: parseFloat(
-      process.env.APPINSIGHTS_SAMPLING_PERCENTAGE || '100'
+      process.env.APPINSIGHTS_SAMPLING_PERCENTAGE || "100",
     ),
-    enableAutoCollect: process.env.APPINSIGHTS_AUTO_COLLECT !== 'false',
+    enableAutoCollect: process.env.APPINSIGHTS_AUTO_COLLECT !== "false",
   };
 }
 
@@ -76,21 +81,21 @@ export function getAppInsightsConfig(): AppInsightsConfig {
  */
 export function initializeAppInsights(): TelemetryClient | null {
   if (appInsightsClient) {
-    console.log('[AppInsights] Already initialized');
+    console.log("[AppInsights] Already initialized");
     return appInsightsClient;
   }
 
   const config = getAppInsightsConfig();
 
   if (!config.enabled) {
-    console.log('[AppInsights] Disabled via configuration');
+    console.log("[AppInsights] Disabled via configuration");
     return null;
   }
 
   if (!config.connectionString && !config.instrumentationKey) {
     console.warn(
-      '[AppInsights] No connection string or instrumentation key provided. ' +
-      'Set APPLICATIONINSIGHTS_CONNECTION_STRING or APPINSIGHTS_INSTRUMENTATION_KEY.'
+      "[AppInsights] No connection string or instrumentation key provided. " +
+        "Set APPLICATIONINSIGHTS_CONNECTION_STRING or APPINSIGHTS_INSTRUMENTATION_KEY.",
     );
     return null;
   }
@@ -111,8 +116,8 @@ export function initializeAppInsights(): TelemetryClient | null {
     //
     // appInsightsClient = appInsights.defaultClient;
 
-    console.log('[AppInsights] Initialized successfully');
-    console.log('[AppInsights] Configuration:', {
+    console.log("[AppInsights] Initialized successfully");
+    console.log("[AppInsights] Configuration:", {
       hasConnectionString: !!config.connectionString,
       hasInstrumentationKey: !!config.instrumentationKey,
       samplingPercentage: config.samplingPercentage,
@@ -124,15 +129,14 @@ export function initializeAppInsights(): TelemetryClient | null {
     // Setup common properties
     if (appInsightsClient) {
       appInsightsClient.commonProperties = {
-        application: 'farmers-market-platform',
-        environment: process.env.NODE_ENV || 'development',
-        version: process.env.APP_VERSION || '1.0.0',
-        'agricultural.consciousness': 'divine',
+        application: "farmers-market-platform",
+        environment: process.env.NODE_ENV || "development",
+        version: process.env.APP_VERSION || "1.0.0",
+        "agricultural.consciousness": "divine",
       };
     }
-
   } catch (error) {
-    console.error('[AppInsights] Initialization failed:', error);
+    console.error("[AppInsights] Initialization failed:", error);
     return null;
   }
 
@@ -160,7 +164,10 @@ export function trackMetric(metric: CustomMetric): void {
   const client = getAppInsightsClient();
 
   if (!client) {
-    console.debug('[AppInsights] Client not available, skipping metric:', metric.name);
+    console.debug(
+      "[AppInsights] Client not available, skipping metric:",
+      metric.name,
+    );
     return;
   }
 
@@ -174,7 +181,7 @@ export function trackMetric(metric: CustomMetric): void {
       },
     });
   } catch (error) {
-    console.error('[AppInsights] Failed to track metric:', error);
+    console.error("[AppInsights] Failed to track metric:", error);
   }
 }
 
@@ -196,7 +203,10 @@ export function trackEvent(event: CustomEvent): void {
   const client = getAppInsightsClient();
 
   if (!client) {
-    console.debug('[AppInsights] Client not available, skipping event:', event.name);
+    console.debug(
+      "[AppInsights] Client not available, skipping event:",
+      event.name,
+    );
     return;
   }
 
@@ -207,7 +217,7 @@ export function trackEvent(event: CustomEvent): void {
       measurements: event.measurements,
     });
   } catch (error) {
-    console.error('[AppInsights] Failed to track event:', error);
+    console.error("[AppInsights] Failed to track event:", error);
   }
 }
 
@@ -222,21 +232,21 @@ export function trackFarmOperation(
   operation: string,
   farmId: string,
   durationMs: number,
-  success: boolean
+  success: boolean,
 ): void {
   trackMetric({
-    name: 'farm.operation.duration',
+    name: "farm.operation.duration",
     value: durationMs,
     properties: {
       operation,
       farmId,
       success: success.toString(),
-      domain: 'agricultural',
+      domain: "agricultural",
     },
   });
 
   trackEvent({
-    name: 'FarmOperationCompleted',
+    name: "FarmOperationCompleted",
     properties: {
       operation,
       farmId,
@@ -254,10 +264,10 @@ export function trackFarmOperation(
 export function trackProductCatalogOperation(
   operation: string,
   productId: string,
-  metadata?: Record<string, string>
+  metadata?: Record<string, string>,
 ): void {
   trackEvent({
-    name: 'ProductCatalogOperation',
+    name: "ProductCatalogOperation",
     properties: {
       operation,
       productId,
@@ -273,19 +283,19 @@ export function trackOrderProcessing(
   orderId: string,
   processingTimeMs: number,
   orderValue: number,
-  itemCount: number
+  itemCount: number,
 ): void {
   trackMetric({
-    name: 'order.processing.time',
+    name: "order.processing.time",
     value: processingTimeMs,
     properties: {
       orderId,
-      domain: 'order_management',
+      domain: "order_management",
     },
   });
 
   trackMetric({
-    name: 'order.value',
+    name: "order.value",
     value: orderValue,
     properties: {
       orderId,
@@ -294,7 +304,7 @@ export function trackOrderProcessing(
   });
 
   trackEvent({
-    name: 'OrderProcessed',
+    name: "OrderProcessed",
     properties: {
       orderId,
       itemCount: itemCount.toString(),
@@ -315,22 +325,22 @@ export function trackAgentInvocation(
   task: string,
   durationMs: number,
   success: boolean,
-  confidence?: number
+  confidence?: number,
 ): void {
   trackMetric({
-    name: 'ai.agent.invocation.duration',
+    name: "ai.agent.invocation.duration",
     value: durationMs,
     properties: {
       agentName,
       task,
       success: success.toString(),
-      framework: 'openai',
+      framework: "openai",
     },
   });
 
   if (confidence !== undefined) {
     trackMetric({
-      name: 'ai.agent.confidence',
+      name: "ai.agent.confidence",
       value: confidence,
       properties: {
         agentName,
@@ -340,7 +350,7 @@ export function trackAgentInvocation(
   }
 
   trackEvent({
-    name: 'AgentInvocationCompleted',
+    name: "AgentInvocationCompleted",
     properties: {
       agentName,
       task,
@@ -359,15 +369,15 @@ export function trackAgentInvocation(
 export function trackBundleSize(
   bundleName: string,
   sizeKB: number,
-  route?: string
+  route?: string,
 ): void {
   trackMetric({
-    name: 'bundle.size.kb',
+    name: "bundle.size.kb",
     value: sizeKB,
     properties: {
       bundleName,
-      route: route || 'global',
-      optimization: 'phase-6',
+      route: route || "global",
+      optimization: "phase-6",
     },
   });
 }
@@ -384,10 +394,10 @@ export function trackPagePerformance(
     lcp?: number;
     cls?: number;
     fid?: number;
-  }
+  },
 ): void {
   trackMetric({
-    name: 'page.load.time',
+    name: "page.load.time",
     value: loadTimeMs,
     properties: {
       route,
@@ -397,7 +407,7 @@ export function trackPagePerformance(
   // Track Web Vitals
   if (metrics.ttfb) {
     trackMetric({
-      name: 'page.ttfb',
+      name: "page.ttfb",
       value: metrics.ttfb,
       properties: { route },
     });
@@ -405,7 +415,7 @@ export function trackPagePerformance(
 
   if (metrics.fcp) {
     trackMetric({
-      name: 'page.fcp',
+      name: "page.fcp",
       value: metrics.fcp,
       properties: { route },
     });
@@ -413,7 +423,7 @@ export function trackPagePerformance(
 
   if (metrics.lcp) {
     trackMetric({
-      name: 'page.lcp',
+      name: "page.lcp",
       value: metrics.lcp,
       properties: { route },
     });
@@ -421,7 +431,7 @@ export function trackPagePerformance(
 
   if (metrics.cls) {
     trackMetric({
-      name: 'page.cls',
+      name: "page.cls",
       value: metrics.cls,
       properties: { route },
     });
@@ -429,7 +439,7 @@ export function trackPagePerformance(
 
   if (metrics.fid) {
     trackMetric({
-      name: 'page.fid',
+      name: "page.fid",
       value: metrics.fid,
       properties: { route },
     });
@@ -440,16 +450,16 @@ export function trackPagePerformance(
  * Track seasonal agricultural activity
  */
 export function trackSeasonalActivity(
-  season: 'spring' | 'summer' | 'fall' | 'winter',
+  season: "spring" | "summer" | "fall" | "winter",
   activityType: string,
-  metadata?: Record<string, string>
+  metadata?: Record<string, string>,
 ): void {
   trackEvent({
-    name: 'SeasonalActivity',
+    name: "SeasonalActivity",
     properties: {
       season,
       activityType,
-      agricultural_context: 'biodynamic',
+      agricultural_context: "biodynamic",
       ...metadata,
     },
   });
@@ -464,12 +474,15 @@ export function trackSeasonalActivity(
  */
 export function trackException(
   error: Error,
-  context?: Record<string, string>
+  context?: Record<string, string>,
 ): void {
   const client = getAppInsightsClient();
 
   if (!client) {
-    console.error('[AppInsights] Client not available, logging exception:', error);
+    console.error(
+      "[AppInsights] Client not available, logging exception:",
+      error,
+    );
     return;
   }
 
@@ -479,7 +492,7 @@ export function trackException(
       properties: context,
     });
   } catch (trackError) {
-    console.error('[AppInsights] Failed to track exception:', trackError);
+    console.error("[AppInsights] Failed to track exception:", trackError);
   }
 }
 
@@ -495,12 +508,15 @@ export function trackDependency(
   data: string,
   duration: number,
   success: boolean,
-  dependencyType?: string
+  dependencyType?: string,
 ): void {
   const client = getAppInsightsClient();
 
   if (!client) {
-    console.debug('[AppInsights] Client not available, skipping dependency:', name);
+    console.debug(
+      "[AppInsights] Client not available, skipping dependency:",
+      name,
+    );
     return;
   }
 
@@ -510,10 +526,10 @@ export function trackDependency(
       data,
       duration,
       success,
-      dependencyTypeName: dependencyType || 'HTTP',
+      dependencyTypeName: dependencyType || "HTTP",
     });
   } catch (error) {
-    console.error('[AppInsights] Failed to track dependency:', error);
+    console.error("[AppInsights] Failed to track dependency:", error);
   }
 }
 
@@ -529,12 +545,15 @@ export function trackRequest(
   url: string,
   duration: number,
   responseCode: number,
-  success: boolean
+  success: boolean,
 ): void {
   const client = getAppInsightsClient();
 
   if (!client) {
-    console.debug('[AppInsights] Client not available, skipping request:', name);
+    console.debug(
+      "[AppInsights] Client not available, skipping request:",
+      name,
+    );
     return;
   }
 
@@ -547,7 +566,7 @@ export function trackRequest(
       success,
     });
   } catch (error) {
-    console.error('[AppInsights] Failed to track request:', error);
+    console.error("[AppInsights] Failed to track request:", error);
   }
 }
 
@@ -569,12 +588,12 @@ export async function flushTelemetry(): Promise<void> {
     try {
       client.flush({
         callback: () => {
-          console.log('[AppInsights] Telemetry flushed');
+          console.log("[AppInsights] Telemetry flushed");
           resolve();
         },
       });
     } catch (error) {
-      console.error('[AppInsights] Failed to flush telemetry:', error);
+      console.error("[AppInsights] Failed to flush telemetry:", error);
       resolve();
     }
   });
@@ -602,9 +621,9 @@ export function getTelemetryContext(): Record<string, string> {
   }
 
   return {
-    operationId: client.context.keys.operationId || '',
-    sessionId: client.context.keys.sessionId || '',
-    userId: client.context.keys.userId || '',
+    operationId: client.context.keys.operationId || "",
+    sessionId: client.context.keys.sessionId || "",
+    userId: client.context.keys.userId || "",
   };
 }
 

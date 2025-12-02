@@ -41,20 +41,20 @@ export class DivineMonitoringReporter implements IReporter {
     period: { start: Date; end: Date },
   ): Promise<MonitoringReport> {
     console.log(
-      `\n╔════════════════════════════════════════════════════════════╗`,
+      "\n╔════════════════════════════════════════════════════════════╗",
     );
     console.log(
-      `║ 📊 GENERATING DIVINE MONITORING REPORT                     ║`,
+      "║ 📊 GENERATING DIVINE MONITORING REPORT                     ║",
     );
     console.log(
-      `╠════════════════════════════════════════════════════════════╣`,
+      "╠════════════════════════════════════════════════════════════╣",
     );
     console.log(
       `║ 📅 PERIOD: ${this.formatDate(period.start)} - ${this.formatDate(period.end)}    ║`,
     );
     console.log(`║ 🔢 WORKFLOWS: ${String(results.length).padEnd(43)} ║`);
     console.log(
-      `╚════════════════════════════════════════════════════════════╝\n`,
+      "╚════════════════════════════════════════════════════════════╝\n",
     );
 
     // Calculate summary statistics
@@ -410,7 +410,7 @@ export class DivineMonitoringReporter implements IReporter {
   ): Promise<void> {
     // Email implementation would go here
     // For now, just log
-    console.log(`   📧 Would send email notification:`, {
+    console.log("   📧 Would send email notification:", {
       to: this.notificationConfig?.email?.to,
       subject: notification.title,
     });
@@ -453,7 +453,7 @@ export class DivineMonitoringReporter implements IReporter {
     };
 
     // In production, would use fetch to send to Slack
-    console.log(`   💬 Would send Slack message:`, slackMessage);
+    console.log("   💬 Would send Slack message:", slackMessage);
   }
 
   private async sendDiscordNotification(
@@ -481,7 +481,7 @@ export class DivineMonitoringReporter implements IReporter {
     };
 
     // In production, would use fetch to send to Discord
-    console.log(`   🎮 Would send Discord message:`, discordMessage);
+    console.log("   🎮 Would send Discord message:", discordMessage);
   }
 
   private async sendWebhookNotification(
@@ -493,7 +493,7 @@ export class DivineMonitoringReporter implements IReporter {
 
     // In production, would use fetch to send webhook
     console.log(
-      `   🔗 Would send webhook to:`,
+      "   🔗 Would send webhook to:",
       this.notificationConfig.webhook.url,
     );
   }
@@ -524,7 +524,7 @@ export class DivineMonitoringReporter implements IReporter {
   private generateNotificationMessage(report: MonitoringReport): string {
     const lines: string[] = [];
 
-    lines.push(`**Summary:**`);
+    lines.push("**Summary:**");
     lines.push(`• Total Workflows: ${report.summary.totalWorkflows}`);
     lines.push(`• Passed: ${report.summary.passedWorkflows} ✅`);
     lines.push(`• Failed: ${report.summary.failedWorkflows} ❌`);
@@ -541,7 +541,7 @@ export class DivineMonitoringReporter implements IReporter {
     }
 
     if (report.recommendations.length > 0) {
-      lines.push(`\n**Recommendations:**`);
+      lines.push("\n**Recommendations:**");
       report.recommendations
         .slice(0, 3)
         .forEach((rec) => lines.push(`• ${rec}`));

@@ -24,7 +24,7 @@ import type { WorkflowResult, WorkflowMetrics } from "@/lib/monitoring/types";
 
 const mockFailedWorkflow: WorkflowResult = {
   workflowId: "test-workflow-001",
-  runId: "run-" + Date.now(),
+  runId: `run-${  Date.now()}`,
   name: "User Login Test",
   type: "USER_LOGIN",
   priority: "HIGH",
@@ -163,7 +163,7 @@ async function testAIFailureAnalyzer() {
 
     console.log("✅ AI Analysis Complete!\n");
     console.log("📊 Results:");
-    console.log("   Confidence:", analysis.confidence + "%");
+    console.log("   Confidence:", `${analysis.confidence  }%`);
     console.log("   Root Cause:", analysis.rootCause);
     console.log("   Severity:", analysis.severity);
     console.log("\n🔧 Immediate Fix:");
@@ -171,7 +171,7 @@ async function testAIFailureAnalyzer() {
       console.log(`   ${i + 1}. ${step}`);
     });
     console.log("\n🛡️  Prevention Strategy:");
-    console.log("   " + analysis.preventionStrategy);
+    console.log(`   ${  analysis.preventionStrategy}`);
 
     return true;
   } catch (error) {
@@ -202,19 +202,19 @@ async function testMultiAgentOrchestrator() {
     console.log("   Collaboration Mode: VOTING\n");
 
     const analysis = await orchestrator.analyzeWorkflowFailure(
-      mockFailedWorkflow
+      mockFailedWorkflow,
     );
 
     console.log("✅ Multi-Agent Analysis Complete!\n");
     console.log("🤖 Agent Consensus:");
-    console.log("   " + analysis.consensus);
+    console.log(`   ${  analysis.consensus}`);
     console.log("\n📋 Individual Analyses:");
     analysis.individualAnalyses.forEach((agent) => {
       console.log(`\n   ${agent.agent} (${agent.confidence}% confidence):`);
-      console.log("   " + agent.analysis.substring(0, 100) + "...");
+      console.log(`   ${  agent.analysis.substring(0, 100)  }...`);
     });
     console.log("\n✅ Final Recommendation:");
-    console.log("   " + analysis.finalRecommendation.substring(0, 150) + "...");
+    console.log(`   ${  analysis.finalRecommendation.substring(0, 150)  }...`);
 
     return true;
   } catch (error) {
@@ -267,13 +267,13 @@ async function testOpenTelemetryTracing() {
         // Simulate work
         await new Promise((resolve) => setTimeout(resolve, 100));
         return mockFailedWorkflow;
-      }
+      },
     );
 
     console.log("✅ Trace created successfully");
     console.log("   Workflow:", result.name);
     console.log("   Status:", result.status);
-    console.log("   Duration:", result.duration + "ms");
+    console.log("   Duration:", `${result.duration  }ms`);
 
     // Cleanup
     await tracer.shutdown();
@@ -322,15 +322,15 @@ async function testPredictiveMonitoring() {
     console.log("✅ Prediction Complete!");
     console.log(
       "   Failure Probability:",
-      (prediction.failureProbability * 100).toFixed(1) + "%"
+      `${(prediction.failureProbability * 100).toFixed(1)  }%`,
     );
-    console.log("   Confidence:", prediction.confidence.toFixed(1) + "%");
+    console.log("   Confidence:", `${prediction.confidence.toFixed(1)  }%`);
     console.log("   Recommendation:", prediction.recommendation);
 
     if (prediction.contributingFactors.length > 0) {
       console.log("\n📉 Contributing Factors:");
       prediction.contributingFactors.forEach((factor) => {
-        console.log("   • " + factor);
+        console.log(`   • ${  factor}`);
       });
     }
 
@@ -345,10 +345,10 @@ async function testPredictiveMonitoring() {
       anomalies.forEach((anomaly) => {
         console.log(`   • ${anomaly.context}`);
         console.log(
-          `     Expected: ${anomaly.expectedValue.toFixed(0)}, Actual: ${anomaly.actualValue.toFixed(0)}`
+          `     Expected: ${anomaly.expectedValue.toFixed(0)}, Actual: ${anomaly.actualValue.toFixed(0)}`,
         );
         console.log(
-          `     Deviation: ${anomaly.deviation.toFixed(2)}σ (${(anomaly.anomalyScore * 100).toFixed(0)}% severity)`
+          `     Deviation: ${anomaly.deviation.toFixed(2)}σ (${(anomaly.anomalyScore * 100).toFixed(0)}% severity)`,
         );
       });
     }
@@ -389,10 +389,10 @@ async function testSelfHealing() {
       console.log(`   • ${strategy.name}`);
       console.log(`     Success Rate: ${(strategy.successRate * 100).toFixed(0)}%`);
       console.log(
-        `     Estimated Duration: ${strategy.estimatedDuration}ms`
+        `     Estimated Duration: ${strategy.estimatedDuration}ms`,
       );
       console.log(
-        `     Auto-approve: ${strategy.requiresApproval ? "❌ No" : "✅ Yes"}`
+        `     Auto-approve: ${strategy.requiresApproval ? "❌ No" : "✅ Yes"}`,
       );
     });
 
@@ -403,10 +403,10 @@ async function testSelfHealing() {
     if (healingResult.healed) {
       console.log("✅ Self-Healing Successful!");
       console.log("   Strategy:", healingResult.strategyUsed);
-      console.log("   Duration:", healingResult.duration + "ms");
+      console.log("   Duration:", `${healingResult.duration  }ms`);
       console.log("\n🔧 Actions Taken:");
       healingResult.actions.forEach((action) => {
-        console.log("   • " + action);
+        console.log(`   • ${  action}`);
       });
     } else {
       console.log("⚠️  Self-Healing Not Applied");
@@ -416,7 +416,7 @@ async function testSelfHealing() {
         if (healingResult.followUpRecommendations) {
           console.log("\n📋 Follow-up Recommendations:");
           healingResult.followUpRecommendations.forEach((rec) => {
-            console.log("   • " + rec);
+            console.log(`   • ${  rec}`);
           });
         }
       }
@@ -429,11 +429,11 @@ async function testSelfHealing() {
     console.log("   Failed:", stats.failed);
     console.log(
       "   Success Rate:",
-      (stats.successRate * 100).toFixed(1) + "%"
+      `${(stats.successRate * 100).toFixed(1)  }%`,
     );
     console.log(
       "   Average Heal Time:",
-      stats.averageHealTime.toFixed(0) + "ms"
+      `${stats.averageHealTime.toFixed(0)  }ms`,
     );
 
     return true;
@@ -490,11 +490,11 @@ async function runAllTests() {
     console.log(`   ${status} - ${name}`);
   });
 
-  console.log("\n" + "═".repeat(60));
+  console.log(`\n${  "═".repeat(60)}`);
   console.log(
-    `   Total: ${passed}/${total} tests passed (${((passed / total) * 100).toFixed(0)}%)`
+    `   Total: ${passed}/${total} tests passed (${((passed / total) * 100).toFixed(0)}%)`,
   );
-  console.log("═".repeat(60) + "\n");
+  console.log(`${"═".repeat(60)  }\n`);
 
   if (passed === total) {
     console.log("🎉 ALL TESTS PASSED! Tier 1 features are operational.\n");

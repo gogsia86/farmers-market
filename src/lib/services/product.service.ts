@@ -787,4 +787,136 @@ export class ProductService {
       errors,
     };
   }
+
+  /**
+   * Increment view count for a product
+   * Tracks product page views for analytics
+   */
+  static async incrementViewCount(productId: string): Promise<void> {
+    await database.product.update({
+      where: { id: productId },
+      data: {
+        viewsCount: {
+          increment: 1,
+        },
+      },
+    });
+  }
+
+  /**
+   * Get related products based on category and farm
+   * Returns products from same category or same farm
+   */
+  static async getRelatedProducts(
+    productId: string,
+    limit: number = 8,
+  ): Promise<Product[]> {
+    // Get the source product to find related items
+    const product = await database.product.findUnique({
+      where: { id: productId },
+      select: {
+        id: true,
+        farmId: true,
+        category: true,
+      },
+    });
+
+    if (!product) {
+      return [];
+    }
+
+    // Find related products: same category or same farm, excluding current product
+    const relatedProducts = await database.product.findMany({
+      where: {
+        id: { not: productId },
+        status: "PUBLISHED" as any,
+        inStock: true,
+        OR: [{ category: product.category }, { farmId: product.farmId }],
+      },
+      take: limit,
+      orderBy: [
+        { featured: "desc" },
+        { averageRating: "desc" },
+        { viewsCount: "desc" },
+      ],
+      include: {
+        farm: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            logoUrl: true,
+            verificationStatus: true,
+          },
+        },
+      },
+    });
+
+    return relatedProducts as any;
+  }
+
+  /**
+   * Get product by slug with all relations for detail page
+   * Includes farm, reviews, and other necessary data
+   */
+  static async getProductDetailBySlug(
+    farmSlug: string,
+    productSlug: string,
+  ): Promise<Product | null> {
+    const product = await database.product.findFirst({
+      where: {
+        slug: productSlug,
+        farm: {
+          slug: farmSlug,
+        },
+        status: "PUBLISHED" as any,
+      },
+      include: {
+        farm: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            logoUrl: true,
+            verificationStatus: true,
+            location: true,
+            description: true,
+          },
+        },
+        reviews: {
+          take: 5,
+          orderBy: {
+            createdAt: "desc",
+          },
+          include: {
+            customer: {
+              select: {
+                id: true,
+                name: true,
+                avatar: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return product as Product | null;
+  }
+
+  /**
+   * Calculate available quantity considering reserved items
+   * Useful for stock validation on product detail page
+   */
+  static calculateAvailableQuantity(product: any): number {
+    if (!product.trackInventory) {
+      return 999; // Arbitrary large number for untracked inventory
+    }
+
+    const inventory = product.inventory as any;
+    const totalQuantity = inventory?.quantity || product.quantityAvailable || 0;
+    const reservedQuantity = inventory?.reservedQuantity || 0;
+
+    return Math.max(0, totalQuantity - reservedQuantity);
+  }
 }

@@ -240,7 +240,7 @@ export async function GET(_request: NextRequest) {
         stats: {
           totalRevenue: monthRevenue,
           revenueChange: 12.5, // TODO: Calculate actual change
-          pendingOrders: pendingOrders,
+          pendingOrders,
           ordersChange: 8.3, // TODO: Calculate actual change
           activeProducts: farm.products.length,
           totalCustomers: uniqueCustomers.length,

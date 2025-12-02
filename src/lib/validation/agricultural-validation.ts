@@ -47,7 +47,7 @@ export const FarmValidationSchema = z.object({
     .string()
     .min(3, "Farm name must be at least 3 characters")
     .max(100, "Farm name must not exceed 100 characters")
-    .regex(/^[a-zA-Z0-9\s\-'\.]+$/, "Farm name contains invalid characters"),
+    .regex(/^[a-zA-Z0-9\s\-'.]+$/, "Farm name contains invalid characters"),
 
   description: z
     .string()
@@ -191,7 +191,7 @@ export function validateBiodynamicCompliance(practices: string[]): {
 export function sanitizeSearchQuery(query: string): string {
   // Remove SQL injection attempts
   return query
-    .replace(/[';\"\\]/g, "")
+    .replace(/[;'"\\]/g, "")
     .replace(/DROP|DELETE|INSERT|UPDATE|CREATE/gi, "")
     .trim()
     .slice(0, 100);

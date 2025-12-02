@@ -12,7 +12,7 @@ const connectionString =
   "postgresql://postgres:postgres@localhost:5432/farmersmarket";
 
 const pool = new Pool({
-  connectionString: connectionString,
+  connectionString,
 });
 
 // Create Prisma adapter
@@ -383,7 +383,7 @@ async function main() {
               name: productTemplate.name,
               slug: productSlug,
               description: productTemplate.description,
-              category: category,
+              category,
               price: productTemplate.price,
               unit: productTemplate.unit,
               farmId: farm.id,
@@ -436,8 +436,8 @@ async function main() {
           const price = parseFloat(product.price);
           orderProducts.push({
             productId: product.id,
-            quantity: quantity,
-            price: price,
+            quantity,
+            price,
           });
           subtotal += price * quantity;
         }
@@ -455,7 +455,7 @@ async function main() {
         );
 
         try {
-          const order = await prisma.order.create({
+          const _order = await prisma.order.create({
             data: {
               orderNumber: `FM-${Date.now()}-${randomInt(1000, 9999)}`,
               customerId: consumer.id,
@@ -466,26 +466,26 @@ async function main() {
                   ? "PAID"
                   : "PENDING",
               paymentMethod: randomElement(paymentMethods),
-              subtotal: subtotal,
-              tax: tax,
-              deliveryFee: deliveryFee,
-              platformFee: platformFee,
-              farmerAmount: farmerAmount,
-              total: total,
+              subtotal,
+              tax,
+              deliveryFee,
+              platformFee,
+              farmerAmount,
+              total,
               deliveryMethod: randomElement(["DELIVERY", "PICKUP"]),
               deliveryAddress: `${randomInt(100, 9999)} Main St`,
-              deliveryCity: consumer.firstName + " City",
+              deliveryCity: `${consumer.firstName} City`,
               deliveryState: "CA",
               deliveryZipCode: "90001",
-              createdAt: createdAt,
+              createdAt,
               items: {
                 create: orderProducts,
               },
             },
           });
           orderCount++;
-        } catch (error) {
-          console.log(`    ⚠️  Skipping duplicate order`);
+        } catch (_error) {
+          console.log("    ⚠️  Skipping duplicate order");
         }
       }
     }
@@ -517,7 +517,7 @@ async function main() {
             data: {
               farmId: farm.id,
               customerId: consumer.id,
-              rating: rating,
+              rating,
               comment: randomElement(reviewTexts),
               createdAt: randomDate(
                 new Date(2024, 0, 1),
@@ -526,8 +526,8 @@ async function main() {
             },
           });
           reviewCount++;
-        } catch (error) {
-          console.log(`    ⚠️  Skipping duplicate review`);
+        } catch (_error) {
+          console.log("    ⚠️  Skipping duplicate review");
         }
       }
     }
@@ -564,7 +564,7 @@ async function main() {
         },
       });
     }
-    console.log(`  ✅ Updated statistics for all farms\n`);
+    console.log("  ✅ Updated statistics for all farms\n");
 
     // ========================================
     // SUMMARY
@@ -574,7 +574,7 @@ async function main() {
     console.log("📊 DATA SUMMARY:");
     console.log("═══════════════════════════════════════════════════");
     console.log(`  👥 Users:     ${1 + farmers.length + consumers.length}`);
-    console.log(`     - Admins:   1`);
+    console.log("     - Admins:   1");
     console.log(`     - Farmers:  ${farmers.length}`);
     console.log(`     - Consumers: ${consumers.length}`);
     console.log(`  🌾 Farms:     ${farms.length}`);

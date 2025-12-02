@@ -157,7 +157,7 @@ export async function POST(request: NextRequest) {
       // Send approval email (lazy-loaded to reduce bundle size)
       await sendEmailLazy({
         to: farm.owner.email,
-        subject: `🎉 Your Farm Application Has Been Approved!`,
+        subject: "🎉 Your Farm Application Has Been Approved!",
         html: `
           <!DOCTYPE html>
           <html>
@@ -178,7 +178,7 @@ export async function POST(request: NextRequest) {
                   <li><strong>Customize Profile</strong> - Add photos and details</li>
                 </ol>
 
-                <a href="${process.env.NEXTAUTH_URL}/farmer-dashboard"
+                <a href="${process.env.NEXTAUTH_URL}/farmer/dashboard"
                    style="display: inline-block; background: #10b981; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0;">
                   Go to Dashboard
                 </a>
@@ -191,7 +191,7 @@ export async function POST(request: NextRequest) {
           </body>
           </html>
         `,
-        text: `Congratulations! Your farm "${farm.name}" has been approved. Visit ${process.env.NEXTAUTH_URL}/farmer-dashboard to get started.`,
+        text: `Congratulations! Your farm "${farm.name}" has been approved. Visit ${process.env.NEXTAUTH_URL}/farmer/dashboard to get started.`,
       });
     } else {
       // Send rejection email (lazy-loaded to reduce bundle size)

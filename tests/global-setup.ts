@@ -3,34 +3,34 @@
  * Seeds database with test users and data before E2E tests run
  */
 
-import { PrismaClient } from "@prisma/client";
+import { database } from "@/lib/database";
 import * as bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
-
 async function globalSetup() {
-  console.log("\n╔════════════════════════════════════════════════════════════╗");
+  console.log(
+    "\n╔════════════════════════════════════════════════════════════╗",
+  );
   console.log("║  🌾 E2E Test Environment Setup - Divine Preparation       ║");
-  console.log("╚════════════════════════════════════════════════════════════╝\n");
+  console.log(
+    "╚════════════════════════════════════════════════════════════╝\n",
+  );
 
   try {
-    // Connect to database
-    await prisma.$connect();
-    console.log("✅ Database connected");
+    console.log("✅ Using canonical database connection");
 
     // Clean up existing test data
     console.log("\n🧹 Cleaning up existing test data...");
-    await prisma.order.deleteMany({
+    await database.order.deleteMany({
       where: {
         OR: [
-          { user: { email: { contains: "@test.farmersmarket.app" } } },
-          { user: { email: "admin@farmersmarket.app" } },
-          { user: { email: "farmer@farmersmarket.app" } },
-          { user: { email: "customer@farmersmarket.app" } },
+          { customer: { email: { contains: "@test.farmersmarket.app" } } },
+          { customer: { email: "admin@farmersmarket.app" } },
+          { customer: { email: "farmer@farmersmarket.app" } },
+          { customer: { email: "customer@farmersmarket.app" } },
         ],
       },
     });
-    await prisma.product.deleteMany({
+    await database.product.deleteMany({
       where: {
         farm: {
           owner: {
@@ -45,7 +45,7 @@ async function globalSetup() {
         },
       },
     });
-    await prisma.farm.deleteMany({
+    await database.farm.deleteMany({
       where: {
         owner: {
           email: {
@@ -58,7 +58,7 @@ async function globalSetup() {
         },
       },
     });
-    await prisma.user.deleteMany({
+    await database.user.deleteMany({
       where: {
         email: {
           in: [
@@ -76,7 +76,7 @@ async function globalSetup() {
     // 1. Create Admin Test User
     console.log("\n👨‍💼 Creating admin test user...");
     const adminPassword = await bcrypt.hash("DivineAdmin123!", 12);
-    const admin = await prisma.user.create({
+    const admin = await database.user.create({
       data: {
         email: "admin@farmersmarket.app",
         password: adminPassword,
@@ -93,7 +93,7 @@ async function globalSetup() {
     // 2. Create Farmer Test User
     console.log("\n🚜 Creating farmer test user...");
     const farmerPassword = await bcrypt.hash("DivineFarmer123!", 12);
-    const farmer = await prisma.user.create({
+    const farmer = await database.user.create({
       data: {
         email: "farmer@farmersmarket.app",
         password: farmerPassword,
@@ -110,7 +110,7 @@ async function globalSetup() {
     // 3. Create Customer Test User
     console.log("\n🛒 Creating customer test user...");
     const customerPassword = await bcrypt.hash("DivineCustomer123!", 12);
-    const customer = await prisma.user.create({
+    const customer = await database.user.create({
       data: {
         email: "customer@farmersmarket.app",
         password: customerPassword,
@@ -126,7 +126,7 @@ async function globalSetup() {
 
     // 4. Create Test Farm for Farmer
     console.log("\n🌾 Creating test farm...");
-    const farm = await prisma.farm.create({
+    const farm = await database.farm.create({
       data: {
         name: "Divine Test Farm",
         slug: "divine-test-farm",
@@ -156,7 +156,7 @@ async function globalSetup() {
     // 5. Create Test Products
     console.log("\n🥕 Creating test products...");
     const products = await Promise.all([
-      prisma.product.create({
+      database.product.create({
         data: {
           name: "Organic Tomatoes",
           slug: "organic-tomatoes",
@@ -169,12 +169,10 @@ async function globalSetup() {
           available: true,
           seasonal: true,
           harvestDate: new Date(),
-          images: [
-            "https://images.unsplash.com/photo-1546470427-e26264be0b3d",
-          ],
+          images: ["https://images.unsplash.com/photo-1546470427-e26264be0b3d"],
         },
       }),
-      prisma.product.create({
+      database.product.create({
         data: {
           name: "Fresh Lettuce",
           slug: "fresh-lettuce",
@@ -190,7 +188,7 @@ async function globalSetup() {
           images: ["https://images.unsplash.com/photo-1556801712-76c8eb07bbc9"],
         },
       }),
-      prisma.product.create({
+      database.product.create({
         data: {
           name: "Organic Carrots",
           slug: "organic-carrots",
@@ -203,7 +201,9 @@ async function globalSetup() {
           available: true,
           seasonal: true,
           harvestDate: new Date(),
-          images: ["https://images.unsplash.com/photo-1598170845058-32b9d6a5da37"],
+          images: [
+            "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37",
+          ],
         },
       }),
     ]);
@@ -212,7 +212,7 @@ async function globalSetup() {
     // 6. Create Additional Test Farms
     console.log("\n🌾 Creating additional test farms...");
     const farmer2Password = await bcrypt.hash("TestFarmer123!", 12);
-    const farmer2 = await prisma.user.create({
+    const farmer2 = await database.user.create({
       data: {
         email: "farmer1@test.farmersmarket.app",
         password: farmer2Password,
@@ -225,7 +225,7 @@ async function globalSetup() {
       },
     });
 
-    const farm2 = await prisma.farm.create({
+    const farm2 = await database.farm.create({
       data: {
         name: "Green Valley Organics",
         slug: "green-valley-organics",
@@ -252,19 +252,35 @@ async function globalSetup() {
     });
     console.log(`✅ Farm: ${farm2.name}`);
 
-    console.log("\n╔════════════════════════════════════════════════════════════╗");
-    console.log("║  ✅ E2E Test Environment Ready                             ║");
-    console.log("╠════════════════════════════════════════════════════════════╣");
-    console.log("║  Test Credentials:                                         ║");
-    console.log("║  • Admin:    admin@farmersmarket.app / DivineAdmin123!     ║");
-    console.log("║  • Farmer:   farmer@farmersmarket.app / DivineFarmer123!   ║");
-    console.log("║  • Customer: customer@farmersmarket.app / DivineCustomer123! ║");
-    console.log("╚════════════════════════════════════════════════════════════╝\n");
+    console.log(
+      "\n╔════════════════════════════════════════════════════════════╗",
+    );
+    console.log(
+      "║  ✅ E2E Test Environment Ready                             ║",
+    );
+    console.log(
+      "╠════════════════════════════════════════════════════════════╣",
+    );
+    console.log(
+      "║  Test Credentials:                                         ║",
+    );
+    console.log(
+      "║  • Admin:    admin@farmersmarket.app / DivineAdmin123!     ║",
+    );
+    console.log(
+      "║  • Farmer:   farmer@farmersmarket.app / DivineFarmer123!   ║",
+    );
+    console.log(
+      "║  • Customer: customer@farmersmarket.app / DivineCustomer123! ║",
+    );
+    console.log(
+      "╚════════════════════════════════════════════════════════════╝\n",
+    );
   } catch (error) {
     console.error("❌ E2E setup failed:", error);
     throw error;
   } finally {
-    await prisma.$disconnect();
+    // Database connection managed by singleton, no need to disconnect
   }
 }
 

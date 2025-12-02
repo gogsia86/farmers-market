@@ -123,7 +123,7 @@ export const CreateFarmSchema = z.object({
   email: z.string().email().optional(),
   phone: z
     .string()
-    .regex(/^[\d\s\-\(\)]+$/, "Invalid phone format")
+    .regex(/^[\d\s\-()]+$/, "Invalid phone format")
     .optional(),
   website: z.string().url().optional(),
   socialMedia: z

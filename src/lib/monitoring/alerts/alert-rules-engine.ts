@@ -572,7 +572,7 @@ export class AlertRulesEngine {
     }
 
     if (context.report) {
-      message += `\n**Report Summary:**\n`;
+      message += "\n**Report Summary:**\n";
       message += `- Total Runs: ${context.report.summary.totalWorkflows}\n`;
       message += `- Success Rate: ${((context.report.summary.passedWorkflows / context.report.summary.totalWorkflows) * 100).toFixed(1)}%\n`;
     }

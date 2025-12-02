@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
             message: "Authentication required",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
             details: validation.error.flatten(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -87,7 +87,7 @@ export async function GET(request: NextRequest) {
             message: "Farm not found",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
             message: "You do not have permission to access this farm",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -119,7 +119,7 @@ export async function GET(request: NextRequest) {
           message: "Failed to fetch payout schedule",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -141,7 +141,7 @@ export async function PUT(request: NextRequest) {
             message: "Authentication required",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -159,7 +159,7 @@ export async function PUT(request: NextRequest) {
             details: validation.error.flatten(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -183,7 +183,7 @@ export async function PUT(request: NextRequest) {
             message: "Farm not found",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -196,7 +196,7 @@ export async function PUT(request: NextRequest) {
             message: "You do not have permission to modify this farm",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -210,7 +210,7 @@ export async function PUT(request: NextRequest) {
             message: "dayOfWeek is required for WEEKLY frequency",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -223,7 +223,7 @@ export async function PUT(request: NextRequest) {
             message: "dayOfMonth is required for MONTHLY frequency",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -258,7 +258,7 @@ export async function PUT(request: NextRequest) {
           message: "Failed to update payout schedule",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

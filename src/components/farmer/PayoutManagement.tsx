@@ -167,7 +167,7 @@ export function PayoutManagement({
     }
 
     try {
-      const response = await fetch(`/api/farmer/payouts/instant`, {
+      const response = await fetch("/api/farmer/payouts/instant", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ farmId }),
@@ -184,10 +184,10 @@ export function PayoutManagement({
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   const updatePayoutSchedule = async (newSchedule: PayoutSchedule) => {
     try {
-      const response = await fetch(`/api/farmer/payout-schedule`, {
+      const response = await fetch("/api/farmer/payout-schedule", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ farmId, schedule: newSchedule }),
@@ -206,7 +206,7 @@ export function PayoutManagement({
 
   const connectStripeAccount = async () => {
     try {
-      const response = await fetch(`/api/farmer/stripe/connect`, {
+      const response = await fetch("/api/farmer/stripe/connect", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ farmId }),

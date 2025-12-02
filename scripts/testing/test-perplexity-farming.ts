@@ -33,13 +33,11 @@ const colors = {
 
 function header(text: string) {
   console.log(
-    `\n${colors.bright}${colors.cyan}${"═".repeat(70)}${colors.reset}`
+    `\n${colors.bright}${colors.cyan}${"═".repeat(70)}${colors.reset}`,
   );
+  console.log(`${colors.bright}${colors.cyan}  ${text}${colors.reset}`);
   console.log(
-    `${colors.bright}${colors.cyan}  ${text}${colors.reset}`
-  );
-  console.log(
-    `${colors.bright}${colors.cyan}${"═".repeat(70)}${colors.reset}\n`
+    `${colors.bright}${colors.cyan}${"═".repeat(70)}${colors.reset}\n`,
   );
 }
 
@@ -68,7 +66,7 @@ function warning(text: string) {
 // TEST CONFIGURATION
 // ============================================================================
 
-const API_BASE = "http://localhost:3000/api/farming";
+const API_BASE = "http://localhost:3001/api/farming";
 const TEST_CONFIG = {
   runAll: true,
   testFarmingAdvice: true,
@@ -141,14 +139,17 @@ async function testFarmingAdvice() {
         console.log(`\n${colors.bright}Answer:${colors.reset}`);
         console.log(
           result.data.answer.substring(0, 300) +
-            (result.data.answer.length > 300 ? "..." : "")
+            (result.data.answer.length > 300 ? "..." : ""),
         );
         info(`Confidence: ${(result.data.confidence * 100).toFixed(1)}%`);
         info(
-          `Agricultural Relevance: ${(result.data.agriculturalRelevance * 100).toFixed(1)}%`
+          `Agricultural Relevance: ${(result.data.agriculturalRelevance * 100).toFixed(1)}%`,
         );
         info(`Citations: ${result.data.citations.length}`);
-        if (result.data.relatedQuestions && result.data.relatedQuestions.length > 0) {
+        if (
+          result.data.relatedQuestions &&
+          result.data.relatedQuestions.length > 0
+        ) {
           info(`Related Questions: ${result.data.relatedQuestions.length}`);
         }
         success(`✓ Test passed for: ${testCase.category}`);
@@ -200,29 +201,27 @@ async function testProductRecommendations() {
 
       if (result.success && result.data) {
         success(`Received recommendations in ${duration}ms`);
-        info(
-          `Recommendations: ${result.data.recommendations.length} products`
-        );
+        info(`Recommendations: ${result.data.recommendations.length} products`);
         info(`Citations: ${result.data.citations.length}`);
         info(
-          `Confidence: ${(result.data.metadata.confidenceScore * 100).toFixed(1)}%`
+          `Confidence: ${(result.data.metadata.confidenceScore * 100).toFixed(1)}%`,
         );
 
         if (result.data.recommendations.length > 0) {
-          console.log(`\n${colors.bright}Top 3 Recommendations:${colors.reset}`);
+          console.log(
+            `\n${colors.bright}Top 3 Recommendations:${colors.reset}`,
+          );
           result.data.recommendations.slice(0, 3).forEach((rec, i) => {
             console.log(
-              `  ${i + 1}. ${rec.productName} (${rec.priority} priority)`
+              `  ${i + 1}. ${rec.productName} (${rec.priority} priority)`,
             );
             console.log(`     ${rec.reasoning}`);
           });
         }
 
+        console.log(`\n${colors.bright}Seasonal Insights:${colors.reset}`);
         console.log(
-          `\n${colors.bright}Seasonal Insights:${colors.reset}`
-        );
-        console.log(
-          `  Key Activities: ${result.data.seasonalInsights.keyActivities.join(", ")}`
+          `  Key Activities: ${result.data.seasonalInsights.keyActivities.join(", ")}`,
         );
 
         success(`✓ Test passed for: ${season}`);
@@ -296,7 +295,7 @@ async function testMarketIntelligence() {
           console.log(`\n${colors.bright}Key Trends:${colors.reset}`);
           result.data.trends.slice(0, 2).forEach((trend, i) => {
             console.log(
-              `  ${i + 1}. ${trend.title} (${trend.direction}, ${trend.impact} impact)`
+              `  ${i + 1}. ${trend.title} (${trend.direction}, ${trend.impact} impact)`,
             );
           });
         }
@@ -367,12 +366,12 @@ async function testEducationalContent() {
 
       if (result.success && result.data) {
         success(`Generated content in ${duration}ms`);
-        console.log(`\n${colors.bright}Title:${colors.reset} ${result.data.title}`);
-        info(
-          `Read time: ${result.data.metadata.estimatedReadTime} minutes`
+        console.log(
+          `\n${colors.bright}Title:${colors.reset} ${result.data.title}`,
         );
+        info(`Read time: ${result.data.metadata.estimatedReadTime} minutes`);
         info(
-          `Credibility: ${(result.data.metadata.credibilityScore * 100).toFixed(1)}%`
+          `Credibility: ${(result.data.metadata.credibilityScore * 100).toFixed(1)}%`,
         );
         info(`Sources: ${result.data.metadata.sourcesCount}`);
         info(`Key points: ${result.data.content.keyPoints.length}`);
@@ -413,7 +412,8 @@ async function testSupport() {
 
     const testConversations = [
       {
-        message: "My cucumber plants are wilting despite regular watering. What could be wrong?",
+        message:
+          "My cucumber plants are wilting despite regular watering. What could be wrong?",
         context: {
           currentSeason: "SUMMER",
           location: "Arizona",
@@ -440,7 +440,9 @@ async function testSupport() {
 
     for (const conversation of testConversations) {
       info(`\nFarmer Question: "${conversation.message}"`);
-      info(`Context: ${conversation.context.location}, ${conversation.context.currentSeason}`);
+      info(
+        `Context: ${conversation.context.location}, ${conversation.context.currentSeason}`,
+      );
 
       const startTime = Date.now();
 
@@ -462,31 +464,28 @@ async function testSupport() {
         console.log(`\n${colors.bright}AI Response:${colors.reset}`);
         console.log(
           result.data.message.content.substring(0, 300) +
-            (result.data.message.content.length > 300 ? "..." : "")
+            (result.data.message.content.length > 300 ? "..." : ""),
         );
         info(
-          `Confidence: ${((result.data.message.confidence || 0) * 100).toFixed(1)}%`
+          `Confidence: ${((result.data.message.confidence || 0) * 100).toFixed(1)}%`,
         );
-        info(
-          `Citations: ${result.data.message.citations?.length || 0}`
-        );
-        info(
-          `Suggested Actions: ${result.data.suggestedActions?.length || 0}`
-        );
-        info(
-          `Needs Escalation: ${result.data.needsEscalation ? "Yes" : "No"}`
-        );
+        info(`Citations: ${result.data.message.citations?.length || 0}`);
+        info(`Suggested Actions: ${result.data.suggestedActions?.length || 0}`);
+        info(`Needs Escalation: ${result.data.needsEscalation ? "Yes" : "No"}`);
 
-        if (result.data.suggestedActions && result.data.suggestedActions.length > 0) {
+        if (
+          result.data.suggestedActions &&
+          result.data.suggestedActions.length > 0
+        ) {
           console.log(`\n${colors.bright}Suggested Actions:${colors.reset}`);
           result.data.suggestedActions.forEach((action, i) => {
             console.log(
-              `  ${i + 1}. ${action.title} (${action.priority} priority)`
+              `  ${i + 1}. ${action.title} (${action.priority} priority)`,
             );
           });
         }
 
-        success(`✓ Test passed`);
+        success("✓ Test passed");
       } else {
         error(`Failed to get support response: ${result.error?.message}`);
       }
@@ -517,13 +516,13 @@ function delay(ms: number): Promise<void> {
 async function runAllTests() {
   console.log("\n");
   console.log(
-    `${colors.bright}${colors.magenta}╔════════════════════════════════════════════════════════════════════╗${colors.reset}`
+    `${colors.bright}${colors.magenta}╔════════════════════════════════════════════════════════════════════╗${colors.reset}`,
   );
   console.log(
-    `${colors.bright}${colors.magenta}║  🌾 PERPLEXITY FARMING FEATURES - COMPREHENSIVE TEST SUITE  🌾   ║${colors.reset}`
+    `${colors.bright}${colors.magenta}║  🌾 PERPLEXITY FARMING FEATURES - COMPREHENSIVE TEST SUITE  🌾   ║${colors.reset}`,
   );
   console.log(
-    `${colors.bright}${colors.magenta}╚════════════════════════════════════════════════════════════════════╝${colors.reset}`
+    `${colors.bright}${colors.magenta}╚════════════════════════════════════════════════════════════════════╝${colors.reset}`,
   );
 
   // Check API Key
@@ -534,8 +533,10 @@ async function runAllTests() {
     process.exit(1);
   }
 
-  success(`\n✅ API Key found: ${apiKey.substring(0, 10)}...${apiKey.slice(-4)}`);
-  info(`Testing all 5 Perplexity farming features\n`);
+  success(
+    `\n✅ API Key found: ${apiKey.substring(0, 10)}...${apiKey.slice(-4)}`,
+  );
+  info("Testing all 5 Perplexity farming features\n");
 
   const results = {
     farmingAdvice: false,
@@ -579,19 +580,19 @@ async function runAllTests() {
 
   console.log(`${colors.bright}Results:${colors.reset}`);
   console.log(
-    `  1. Smart Farming Advice:       ${results.farmingAdvice ? colors.green + "✅ PASSED" : colors.red + "❌ FAILED"}${colors.reset}`
+    `  1. Smart Farming Advice:       ${results.farmingAdvice ? `${colors.green  }✅ PASSED` : `${colors.red  }❌ FAILED`}${colors.reset}`,
   );
   console.log(
-    `  2. Product Recommendations:    ${results.productRecommendations ? colors.green + "✅ PASSED" : colors.red + "❌ FAILED"}${colors.reset}`
+    `  2. Product Recommendations:    ${results.productRecommendations ? `${colors.green  }✅ PASSED` : `${colors.red  }❌ FAILED`}${colors.reset}`,
   );
   console.log(
-    `  3. Market Intelligence:        ${results.marketIntelligence ? colors.green + "✅ PASSED" : colors.red + "❌ FAILED"}${colors.reset}`
+    `  3. Market Intelligence:        ${results.marketIntelligence ? `${colors.green  }✅ PASSED` : `${colors.red  }❌ FAILED`}${colors.reset}`,
   );
   console.log(
-    `  4. Educational Content:        ${results.educationalContent ? colors.green + "✅ PASSED" : colors.red + "❌ FAILED"}${colors.reset}`
+    `  4. Educational Content:        ${results.educationalContent ? `${colors.green  }✅ PASSED` : `${colors.red  }❌ FAILED`}${colors.reset}`,
   );
   console.log(
-    `  5. AI-Powered Support:         ${results.support ? colors.green + "✅ PASSED" : colors.red + "❌ FAILED"}${colors.reset}`
+    `  5. AI-Powered Support:         ${results.support ? `${colors.green  }✅ PASSED` : `${colors.red  }❌ FAILED`}${colors.reset}`,
   );
 
   const passedTests = Object.values(results).filter(Boolean).length;
