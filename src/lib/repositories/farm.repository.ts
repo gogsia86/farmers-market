@@ -102,11 +102,11 @@ export class QuantumFarmRepository extends BaseRepository<
    */
   async manifestFarm(
     data: Prisma.FarmCreateInput,
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<QuantumFarm> {
     this.logOperation("manifestFarm:start", {
       farmName: (data as any).name,
-      agriculturalConsciousness: "DIVINE"
+      agriculturalConsciousness: "DIVINE",
     });
 
     const farm = await this.create(data, options);
@@ -114,7 +114,7 @@ export class QuantumFarmRepository extends BaseRepository<
     this.logOperation("manifestFarm:complete", {
       farmId: farm.id,
       slug: farm.slug,
-      biodynamicEnergy: "PURE"
+      biodynamicEnergy: "PURE",
     });
 
     return farm;
@@ -134,13 +134,13 @@ export class QuantumFarmRepository extends BaseRepository<
    */
   async findBySlug(
     slug: string,
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<QuantumFarm | null> {
     try {
       const db = options.tx || this.db;
       const farm = await db.farm.findUnique({
         where: { slug },
-        ...this.getDefaultInclude()
+        ...this.getDefaultInclude(),
       });
 
       if (farm) {
@@ -167,13 +167,13 @@ export class QuantumFarmRepository extends BaseRepository<
    */
   async findByOwnerId(
     ownerId: string,
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<QuantumFarm[]> {
     const farms = await this.findMany({ ownerId }, options);
 
     this.logOperation("findByOwnerId", {
       ownerId,
-      count: farms.length
+      count: farms.length,
     });
 
     return farms;
@@ -191,19 +191,19 @@ export class QuantumFarmRepository extends BaseRepository<
    * ```
    */
   async findActiveWithProducts(
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<QuantumFarm[]> {
     return await this.findMany(
       {
         isActive: true,
         products: {
-          some: { isActive: true }
-        }
+          some: { isActive: true },
+        },
       },
       {
         ...options,
-        orderBy: { createdAt: "desc" }
-      }
+        orderBy: { createdAt: "desc" },
+      },
     );
   }
 
@@ -227,50 +227,63 @@ export class QuantumFarmRepository extends BaseRepository<
     latitude: number,
     longitude: number,
     radiusKm: number = 50,
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<FarmSearchResult[]> {
     try {
       const db = options.tx || this.db;
 
       // Get all active farms with coordinates
-      const farms = await db.farm.findMany({
+      const farms = (await db.farm.findMany({
         where: {
           isActive: true,
           latitude: { not: null },
-          longitude: { not: null }
+          longitude: { not: null },
         },
-        ...this.getDefaultInclude()
-      }) as QuantumFarm[];
+        ...this.getDefaultInclude(),
+      })) as QuantumFarm[];
 
       // Calculate distances and filter by radius
       const farmsWithDistance: FarmSearchResult[] = farms
-        .map(farm => {
+        .map((farm) => {
           if (!farm.latitude || !farm.longitude) {
             return null;
           }
 
+          // Convert Decimal to number for calculations
+          const farmLat =
+            typeof farm.latitude === "number"
+              ? farm.latitude
+              : Number(farm.latitude);
+          const farmLng =
+            typeof farm.longitude === "number"
+              ? farm.longitude
+              : Number(farm.longitude);
+
           const distance = this.calculateDistance(
             latitude,
             longitude,
-            farm.latitude,
-            farm.longitude
+            farmLat,
+            farmLng,
           );
 
           return {
             ...farm,
-            distance
+            distance,
           };
         })
-        .filter((farm): farm is FarmSearchResult =>
-          farm !== null && farm.distance !== undefined && farm.distance <= radiusKm
+        .filter(
+          (farm): farm is NonNullable<typeof farm> & { distance: number } =>
+            farm !== null &&
+            farm.distance !== undefined &&
+            farm.distance <= radiusKm,
         )
-        .sort((a, b) => (a.distance || 0) - (b.distance || 0));
+        .sort((a, b) => a.distance - b.distance);
 
       this.logOperation("findNearLocation", {
         searchLat: latitude,
         searchLng: longitude,
         radiusKm,
-        farmsFound: farmsWithDistance.length
+        farmsFound: farmsWithDistance.length,
       });
 
       return farmsWithDistance;
@@ -306,17 +319,17 @@ export class QuantumFarmRepository extends BaseRepository<
    */
   async findByCity(
     city: string,
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<QuantumFarm[]> {
     return await this.findMany(
       {
         city: {
           equals: city,
-          mode: "insensitive"
+          mode: "insensitive",
         },
-        isActive: true
+        isActive: true,
       },
-      options
+      options,
     );
   }
 
@@ -329,17 +342,17 @@ export class QuantumFarmRepository extends BaseRepository<
    */
   async findByState(
     state: string,
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<QuantumFarm[]> {
     return await this.findMany(
       {
         state,
-        isActive: true
+        isActive: true,
       },
       {
         ...options,
-        orderBy: { city: "asc" }
-      }
+        orderBy: { city: "asc" },
+      },
     );
   }
 
@@ -352,16 +365,16 @@ export class QuantumFarmRepository extends BaseRepository<
    */
   async findByFarmingPractices(
     practices: string[],
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<QuantumFarm[]> {
     return await this.findMany(
       {
         farmingPractices: {
-          hasSome: practices
+          hasSome: practices,
         },
-        isActive: true
+        isActive: true,
       },
-      options
+      options,
     );
   }
 
@@ -374,31 +387,32 @@ export class QuantumFarmRepository extends BaseRepository<
    */
   async searchFarms(
     searchTerm: string,
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<QuantumFarm[]> {
     try {
       const db = options.tx || this.db;
 
-      const farms = await db.farm.findMany({
+      const farms = (await db.farm.findMany({
         where: {
           AND: [
-            { isActive: true },
+            { status: "ACTIVE" },
             {
               OR: [
                 { name: { contains: searchTerm, mode: "insensitive" } },
                 { description: { contains: searchTerm, mode: "insensitive" } },
-                { city: { contains: searchTerm, mode: "insensitive" } }
-              ]
-            }
-          ]
+                { city: { contains: searchTerm, mode: "insensitive" } },
+                { state: { contains: searchTerm, mode: "insensitive" } },
+              ],
+            },
+          ],
         },
         ...this.getDefaultInclude(),
-        ...this.filterOptions(options)
-      }) as QuantumFarm[];
+        ...this.filterOptions(options),
+      })) as QuantumFarm[];
 
       this.logOperation("searchFarms", {
         searchTerm,
-        resultsCount: farms.length
+        resultsCount: farms.length,
       });
 
       return farms;
@@ -417,14 +431,10 @@ export class QuantumFarmRepository extends BaseRepository<
    */
   async updateStatus(
     id: string,
-    isActive: boolean,
-    options: RepositoryOptions = {}
+    status: string,
+    options: RepositoryOptions = {},
   ): Promise<QuantumFarm> {
-    return await this.update(
-      id,
-      { isActive } as Prisma.FarmUpdateInput,
-      options
-    );
+    return await this.update(id, { status } as Prisma.FarmUpdateInput, options);
   }
 
   /**
@@ -440,29 +450,29 @@ export class QuantumFarmRepository extends BaseRepository<
           id: true,
           name: true,
           email: true,
-          image: true
-        }
+          avatar: true,
+        },
       },
       products: {
-        where: { isActive: true },
-        take: 10,
+        where: { inStock: true },
         select: {
           id: true,
           name: true,
+          slug: true,
           price: true,
           unit: true,
           images: true,
-          isActive: true,
-          category: true
+          inStock: true,
+          category: true,
         },
-        orderBy: { createdAt: "desc" }
+        orderBy: { createdAt: "desc" },
       },
       _count: {
         select: {
           products: true,
-          orders: true
-        }
-      }
+          orders: true,
+        },
+      },
     };
   }
 
@@ -482,7 +492,7 @@ export class QuantumFarmRepository extends BaseRepository<
     lat1: number,
     lon1: number,
     lat2: number,
-    lon2: number
+    lon2: number,
   ): number {
     const R = 6371; // Earth's radius in kilometers
     const dLat = this.toRadians(lat2 - lat1);
@@ -519,11 +529,6 @@ export class QuantumFarmRepository extends BaseRepository<
  * Following divine pattern of single point of database access
  */
 export const farmRepository = new QuantumFarmRepository();
-
-/**
- * Export type aliases for convenience
- */
-export type { QuantumFarm, FarmSearchResult };
 
 /**
  * Divine farm repository consciousness achieved ✨🚜

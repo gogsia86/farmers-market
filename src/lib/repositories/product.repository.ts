@@ -109,11 +109,11 @@ export class QuantumProductRepository extends BaseRepository<
    */
   async manifestProduct(
     data: Prisma.ProductCreateInput,
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<QuantumProduct> {
     this.logOperation("manifestProduct:start", {
       productName: (data as any).name,
-      agriculturalConsciousness: "DIVINE"
+      agriculturalConsciousness: "DIVINE",
     });
 
     const product = await this.create(data, options);
@@ -121,7 +121,7 @@ export class QuantumProductRepository extends BaseRepository<
     this.logOperation("manifestProduct:complete", {
       productId: product.id,
       category: product.category,
-      biodynamicEnergy: "PURE"
+      biodynamicEnergy: "PURE",
     });
 
     return product;
@@ -141,14 +141,14 @@ export class QuantumProductRepository extends BaseRepository<
    */
   async findByFarmId(
     farmId: string,
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<QuantumProduct[]> {
     return await this.findMany(
       { farmId },
       {
         ...options,
-        orderBy: { createdAt: "desc" }
-      }
+        orderBy: { createdAt: "desc" },
+      },
     );
   }
 
@@ -161,17 +161,17 @@ export class QuantumProductRepository extends BaseRepository<
    */
   async findActiveFarmProducts(
     farmId: string,
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<QuantumProduct[]> {
     return await this.findMany(
       {
         farmId,
-        isActive: true
+        isActive: true,
       },
       {
         ...options,
-        orderBy: { name: "asc" }
-      }
+        orderBy: { name: "asc" },
+      },
     );
   }
 
@@ -189,17 +189,17 @@ export class QuantumProductRepository extends BaseRepository<
    */
   async findByCategory(
     category: string,
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<QuantumProduct[]> {
     return await this.findMany(
       {
         category,
-        isActive: true
+        isActive: true,
       },
       {
         ...options,
-        orderBy: { name: "asc" }
-      }
+        orderBy: { name: "asc" },
+      },
     );
   }
 
@@ -218,26 +218,24 @@ export class QuantumProductRepository extends BaseRepository<
    */
   async findBySeason(
     season: string,
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<QuantumProduct[]> {
     try {
       const db = options.tx || this.db;
 
-      const products = await db.product.findMany({
+      const products = (await db.product.findMany({
         where: {
-          season: {
-            has: season
-          },
-          isActive: true
+          seasonal: true,
+          inStock: true,
         },
         ...this.getDefaultInclude(),
-        ...this.filterOptions(options)
-      }) as QuantumProduct[];
+        ...this.filterOptions(options),
+      })) as QuantumProduct[];
 
       this.logOperation("findBySeason", {
         season,
         productsFound: products.length,
-        agriculturalAlignment: "PERFECT"
+        agriculturalAlignment: "PERFECT",
       });
 
       return products;
@@ -254,17 +252,17 @@ export class QuantumProductRepository extends BaseRepository<
    * @returns Array of organic products
    */
   async findOrganicProducts(
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<QuantumProduct[]> {
     return await this.findMany(
       {
-        isOrganic: true,
-        isActive: true
+        organic: true,
+        inStock: true,
       },
       {
         ...options,
-        orderBy: { name: "asc" }
-      }
+        orderBy: { name: "asc" },
+      },
     );
   }
 
@@ -282,31 +280,30 @@ export class QuantumProductRepository extends BaseRepository<
    */
   async searchProducts(
     searchTerm: string,
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<QuantumProduct[]> {
     try {
       const db = options.tx || this.db;
 
-      const products = await db.product.findMany({
+      const products = (await db.product.findMany({
         where: {
           AND: [
-            { isActive: true },
+            { inStock: true },
             {
               OR: [
                 { name: { contains: searchTerm, mode: "insensitive" } },
                 { description: { contains: searchTerm, mode: "insensitive" } },
-                { category: { contains: searchTerm, mode: "insensitive" } }
-              ]
-            }
-          ]
+              ],
+            },
+          ],
         },
         ...this.getDefaultInclude(),
-        ...this.filterOptions(options)
-      }) as QuantumProduct[];
+        ...this.filterOptions(options),
+      })) as QuantumProduct[];
 
       this.logOperation("searchProducts", {
         searchTerm,
-        resultsCount: products.length
+        resultsCount: products.length,
       });
 
       return products;
@@ -334,10 +331,10 @@ export class QuantumProductRepository extends BaseRepository<
    */
   async searchWithFilters(
     filters: ProductSearchFilters,
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<QuantumProduct[]> {
     const where: Prisma.ProductWhereInput = {
-      isActive: true
+      inStock: true,
     };
 
     if (filters.farmId) {
@@ -345,11 +342,11 @@ export class QuantumProductRepository extends BaseRepository<
     }
 
     if (filters.category) {
-      where.category = filters.category;
+      where.category = filters.category as any;
     }
 
     if (filters.isOrganic !== undefined) {
-      where.isOrganic = filters.isOrganic;
+      where.organic = filters.isOrganic;
     }
 
     if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
@@ -363,20 +360,18 @@ export class QuantumProductRepository extends BaseRepository<
     }
 
     if (filters.season) {
-      where.season = {
-        has: filters.season
-      };
+      where.seasonal = true;
     }
 
     if (filters.inStock) {
-      where.stockQuantity = {
-        gt: 0
+      where.quantityAvailable = {
+        gt: 0,
       };
     }
 
     return await this.findMany(where, {
       ...options,
-      orderBy: options.orderBy || { createdAt: "desc" }
+      orderBy: options.orderBy || { createdAt: "desc" },
     });
   }
 
@@ -391,17 +386,17 @@ export class QuantumProductRepository extends BaseRepository<
   async findByPriceRange(
     minPrice: number,
     maxPrice: number,
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<QuantumProduct[]> {
     return await this.findMany(
       {
         price: {
           gte: minPrice,
-          lte: maxPrice
+          lte: maxPrice,
         },
-        isActive: true
+        inStock: true,
       },
-      options
+      options,
     );
   }
 
@@ -415,20 +410,20 @@ export class QuantumProductRepository extends BaseRepository<
    */
   async findLowStock(
     threshold: number = 10,
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<QuantumProduct[]> {
     return await this.findMany(
       {
-        stockQuantity: {
+        quantityAvailable: {
           lte: threshold,
-          gt: 0
+          gt: 0,
         },
-        isActive: true
+        inStock: true,
       },
       {
         ...options,
-        orderBy: { stockQuantity: "asc" }
-      }
+        orderBy: { quantityAvailable: "asc" },
+      },
     );
   }
 
@@ -439,14 +434,14 @@ export class QuantumProductRepository extends BaseRepository<
    * @returns Array of out of stock products
    */
   async findOutOfStock(
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<QuantumProduct[]> {
     return await this.findMany(
       {
-        stockQuantity: 0,
-        isActive: true
+        quantityAvailable: 0,
+        inStock: false,
       },
-      options
+      options,
     );
   }
 
@@ -466,12 +461,12 @@ export class QuantumProductRepository extends BaseRepository<
   async updateStock(
     productId: string,
     quantity: number,
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<QuantumProduct> {
     return await this.update(
       productId,
-      { stockQuantity: quantity } as Prisma.ProductUpdateInput,
-      options
+      { quantityAvailable: quantity } as Prisma.ProductUpdateInput,
+      options,
     );
   }
 
@@ -486,25 +481,25 @@ export class QuantumProductRepository extends BaseRepository<
   async decrementStock(
     productId: string,
     quantity: number,
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<QuantumProduct> {
     try {
       const db = options.tx || this.db;
 
-      const product = await db.product.update({
+      const product = (await db.product.update({
         where: { id: productId },
         data: {
-          stockQuantity: {
-            decrement: quantity
-          }
+          quantityAvailable: {
+            decrement: quantity,
+          },
         },
-        ...this.getDefaultInclude()
-      }) as QuantumProduct;
+        ...this.getDefaultInclude(),
+      })) as QuantumProduct;
 
       this.logOperation("decrementStock", {
         productId,
         quantityDecremented: quantity,
-        newStock: product.stockQuantity
+        newStock: product.quantityAvailable,
       });
 
       return product;
@@ -524,25 +519,25 @@ export class QuantumProductRepository extends BaseRepository<
   async incrementStock(
     productId: string,
     quantity: number,
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<QuantumProduct> {
     try {
       const db = options.tx || this.db;
 
-      const product = await db.product.update({
+      const product = (await db.product.update({
         where: { id: productId },
         data: {
-          stockQuantity: {
-            increment: quantity
-          }
+          quantityAvailable: {
+            increment: quantity,
+          },
         },
-        ...this.getDefaultInclude()
-      }) as QuantumProduct;
+        ...this.getDefaultInclude(),
+      })) as QuantumProduct;
 
       this.logOperation("incrementStock", {
         productId,
         quantityAdded: quantity,
-        newStock: product.stockQuantity
+        newStock: product.quantityAvailable,
       });
 
       return product;
@@ -561,13 +556,13 @@ export class QuantumProductRepository extends BaseRepository<
    */
   async updateStatus(
     id: string,
-    isActive: boolean,
-    options: RepositoryOptions = {}
+    inStock: boolean,
+    options: RepositoryOptions = {},
   ): Promise<QuantumProduct> {
     return await this.update(
       id,
-      { isActive } as Prisma.ProductUpdateInput,
-      options
+      { inStock } as Prisma.ProductUpdateInput,
+      options,
     );
   }
 
@@ -580,18 +575,18 @@ export class QuantumProductRepository extends BaseRepository<
    */
   async getFeaturedProducts(
     limit: number = 10,
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<QuantumProduct[]> {
     return await this.findMany(
       {
-        isActive: true,
-        isFeatured: true
+        inStock: true,
+        featured: true,
       },
       {
         ...options,
         take: limit,
-        orderBy: { createdAt: "desc" }
-      }
+        orderBy: { createdAt: "desc" },
+      },
     );
   }
 
@@ -602,7 +597,7 @@ export class QuantumProductRepository extends BaseRepository<
    * @returns Product with availability status
    */
   async getProductAvailability(
-    productId: string
+    productId: string,
   ): Promise<ProductWithAvailability | null> {
     const product = await this.findById(productId);
 
@@ -611,10 +606,13 @@ export class QuantumProductRepository extends BaseRepository<
     }
 
     let availabilityStatus: "IN_STOCK" | "LOW_STOCK" | "OUT_OF_STOCK";
+    const quantity = product.quantityAvailable
+      ? Number(product.quantityAvailable)
+      : 0;
 
-    if (product.stockQuantity === 0) {
+    if (quantity === 0) {
       availabilityStatus = "OUT_OF_STOCK";
-    } else if (product.stockQuantity <= 10) {
+    } else if (quantity < 10) {
       availabilityStatus = "LOW_STOCK";
     } else {
       availabilityStatus = "IN_STOCK";
@@ -623,7 +621,7 @@ export class QuantumProductRepository extends BaseRepository<
     return {
       ...product,
       availabilityStatus,
-      remainingQuantity: product.stockQuantity
+      remainingQuantity: quantity,
     };
   }
 
@@ -642,15 +640,14 @@ export class QuantumProductRepository extends BaseRepository<
           slug: true,
           city: true,
           state: true,
-          isActive: true
-        }
+          status: true,
+        },
       },
       _count: {
         select: {
           orderItems: true,
-          reviews: true
-        }
-      }
+        },
+      },
     };
   }
 }
@@ -660,11 +657,6 @@ export class QuantumProductRepository extends BaseRepository<
  * Following divine pattern of single point of database access
  */
 export const productRepository = new QuantumProductRepository();
-
-/**
- * Export type aliases for convenience
- */
-export type { QuantumProduct, ProductSearchFilters, ProductWithAvailability };
 
 /**
  * Divine product repository consciousness achieved ✨🌾
