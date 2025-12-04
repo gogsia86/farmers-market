@@ -2,7 +2,7 @@
 
 **Issue:** "No Featured Farms Yet" message appearing on homepage  
 **Cause:** Farms in database are not ACTIVE and/or VERIFIED  
-**Solution:** Activate and verify farms in database  
+**Solution:** Activate and verify farms in database
 
 ---
 
@@ -32,12 +32,12 @@ npm run db:studio
 -- Run this SQL in your PostgreSQL client or Prisma Studio SQL tab
 
 -- 1. Check current status
-SELECT name, status, "verificationStatus", city, state 
+SELECT name, status, "verificationStatus", city, state
 FROM "Farm";
 
 -- 2. Activate all farms
 UPDATE "Farm"
-SET 
+SET
     status = 'ACTIVE',
     "verificationStatus" = 'VERIFIED',
     "verifiedAt" = NOW(),
@@ -45,7 +45,7 @@ SET
     "updatedAt" = NOW();
 
 -- 3. Verify the update
-SELECT name, status, "verificationStatus", city, state 
+SELECT name, status, "verificationStatus", city, state
 FROM "Farm"
 WHERE status = 'ACTIVE' AND "verificationStatus" = 'VERIFIED';
 ```
@@ -62,7 +62,7 @@ const prisma = new PrismaClient();
 
 (async () => {
   console.log('🌟 Activating farms...');
-  
+
   const result = await prisma.farm.updateMany({
     data: {
       status: 'ACTIVE',
@@ -71,17 +71,17 @@ const prisma = new PrismaClient();
       verifiedBy: 'system-admin'
     }
   });
-  
+
   console.log('✅ Activated', result.count, 'farms');
-  
+
   const farms = await prisma.farm.findMany({
     where: { status: 'ACTIVE', verificationStatus: 'VERIFIED' },
     select: { name: true, city: true, state: true }
   });
-  
+
   console.log('\\n📋 Featured Farms:');
   farms.forEach((f, i) => console.log(i + 1 + '.', f.name, '-', f.city + ',', f.state));
-  
+
   await prisma.\$disconnect();
 })();
 "
@@ -103,6 +103,7 @@ psql -U your_username -d your_database -c "SELECT COUNT(*) FROM \"Farm\";"
 ```
 
 **If no farms exist:**
+
 ```bash
 # Seed the database
 npm run prisma:seed
@@ -115,10 +116,12 @@ npx tsx prisma/seed-comprehensive.js
 ### Step 2: Understand the Problem
 
 The Featured Farms API (`/api/featured/farms/route.ts`) requires farms to have:
+
 - ✅ `status: "ACTIVE"`
 - ✅ `verificationStatus: "VERIFIED"`
 
 Current farm status might be:
+
 - ❌ `status: "PENDING"`
 - ❌ `verificationStatus: "PENDING"`
 
@@ -129,6 +132,7 @@ Current farm status might be:
 #### Option A: Prisma Studio (Visual Interface)
 
 1. **Open Prisma Studio:**
+
    ```bash
    npm run db:studio
    ```
@@ -156,25 +160,27 @@ Current farm status might be:
 #### Option B: SQL Script
 
 1. **Connect to your database:**
+
    ```bash
    psql postgresql://username:password@localhost:5432/database_name
    ```
 
 2. **Run activation script:**
+
    ```sql
    -- See current status
    SELECT id, name, status, "verificationStatus" FROM "Farm";
-   
+
    -- Activate all farms
    UPDATE "Farm"
-   SET 
+   SET
        status = 'ACTIVE',
        "verificationStatus" = 'VERIFIED',
        "verifiedAt" = NOW(),
        "verifiedBy" = 'system-admin',
        "updatedAt" = NOW()
    WHERE status != 'ACTIVE' OR "verificationStatus" != 'VERIFIED';
-   
+
    -- Confirm changes
    SELECT id, name, status, "verificationStatus", "verifiedAt" FROM "Farm";
    ```
@@ -184,59 +190,61 @@ Current farm status might be:
 #### Option C: Create a Quick Node Script
 
 1. **Create file: `fix-farms.js`**
+
    ```javascript
-   const { PrismaClient } = require('@prisma/client');
+   const { PrismaClient } = require("@prisma/client");
    const prisma = new PrismaClient();
 
    async function fixFarms() {
      try {
-       console.log('🔧 Checking farms...\n');
-       
+       console.log("🔧 Checking farms...\n");
+
        const total = await prisma.farm.count();
        console.log(`Found ${total} farms\n`);
-       
+
        if (total === 0) {
-         console.log('❌ No farms in database. Run: npm run prisma:seed');
+         console.log("❌ No farms in database. Run: npm run prisma:seed");
          return;
        }
-       
-       console.log('✅ Activating farms...\n');
-       
+
+       console.log("✅ Activating farms...\n");
+
        const result = await prisma.farm.updateMany({
          data: {
-           status: 'ACTIVE',
-           verificationStatus: 'VERIFIED',
+           status: "ACTIVE",
+           verificationStatus: "VERIFIED",
            verifiedAt: new Date(),
-           verifiedBy: 'system-admin'
-         }
+           verifiedBy: "system-admin",
+         },
        });
-       
+
        console.log(`✅ Successfully activated ${result.count} farms!\n`);
-       
+
        const activeFarms = await prisma.farm.findMany({
          where: {
-           status: 'ACTIVE',
-           verificationStatus: 'VERIFIED'
+           status: "ACTIVE",
+           verificationStatus: "VERIFIED",
          },
          select: {
            name: true,
            city: true,
            state: true,
-           slug: true
-         }
+           slug: true,
+         },
        });
-       
-       console.log('🌟 Active Featured Farms:\n');
+
+       console.log("🌟 Active Featured Farms:\n");
        activeFarms.forEach((farm, i) => {
          console.log(`${i + 1}. ${farm.name}`);
          console.log(`   Location: ${farm.city}, ${farm.state}`);
          console.log(`   URL: http://localhost:3001/farms/${farm.slug}\n`);
        });
-       
-       console.log('✅ DONE! Visit http://localhost:3001 to see featured farms\n');
-       
+
+       console.log(
+         "✅ DONE! Visit http://localhost:3001 to see featured farms\n",
+       );
      } catch (error) {
-       console.error('❌ Error:', error);
+       console.error("❌ Error:", error);
      } finally {
        await prisma.$disconnect();
      }
@@ -264,6 +272,7 @@ curl http://localhost:3001/api/featured/farms?limit=6&strategy=top-rated
 ```
 
 **Expected Response:**
+
 ```json
 {
   "success": true,
@@ -298,23 +307,27 @@ curl http://localhost:3001/api/featured/farms?limit=6&strategy=top-rated
 ### Issue: "No Featured Farms Yet" still appears
 
 **Cause 1: No farms in database**
+
 ```bash
 # Solution: Seed the database
 npm run prisma:seed
 ```
 
 **Cause 2: Farms not activated**
+
 ```bash
 # Solution: Run one of the activation methods above
 ```
 
 **Cause 3: Cache issue**
+
 ```bash
 # Solution: Clear browser cache and refresh
 # Or hard refresh: Ctrl+Shift+R (Windows) / Cmd+Shift+R (Mac)
 ```
 
 **Cause 4: API error**
+
 ```bash
 # Check console logs in browser (F12)
 # Check server logs in terminal
@@ -328,6 +341,7 @@ npm run prisma:seed
 Even if farms are activated, they might look empty without products.
 
 **Solution: Add products to farms**
+
 ```bash
 # The comprehensive seed includes products
 npx tsx prisma/seed-comprehensive.js
@@ -352,6 +366,7 @@ npm run db:studio
 ## 📊 UNDERSTANDING THE FEATURED FARMS LOGIC
 
 ### API Endpoint
+
 - **File:** `src/app/api/featured/farms/route.ts`
 - **URL:** `/api/featured/farms`
 
@@ -397,6 +412,7 @@ enum FarmVerificationStatus {
 To make farms appear higher in featured section, add reviews:
 
 ### Using Prisma Studio:
+
 1. Open Prisma Studio: `npm run db:studio`
 2. Navigate to "Review" model
 3. Click "Add Record"
@@ -410,6 +426,7 @@ To make farms appear higher in featured section, add reviews:
 5. Save
 
 ### Using SQL:
+
 ```sql
 -- First, get a customer user ID
 SELECT id, email FROM "User" WHERE role = 'CUSTOMER' LIMIT 1;
@@ -452,7 +469,7 @@ Save this as `activate-all-farms.sql` and run in your database:
 -- ============================================================================
 
 -- Step 1: Check current state
-SELECT 
+SELECT
     '📊 BEFORE' as status,
     COUNT(*) as total,
     COUNT(CASE WHEN status = 'ACTIVE' THEN 1 END) as active,
@@ -461,7 +478,7 @@ FROM "Farm";
 
 -- Step 2: Activate ALL farms
 UPDATE "Farm"
-SET 
+SET
     status = 'ACTIVE',
     "verificationStatus" = 'VERIFIED',
     "verifiedAt" = NOW(),
@@ -469,7 +486,7 @@ SET
     "updatedAt" = NOW();
 
 -- Step 3: Verify changes
-SELECT 
+SELECT
     '✅ AFTER' as status,
     COUNT(*) as total,
     COUNT(CASE WHEN status = 'ACTIVE' THEN 1 END) as active,
@@ -477,7 +494,7 @@ SELECT
 FROM "Farm";
 
 -- Step 4: Show all active farms
-SELECT 
+SELECT
     name,
     slug,
     city,
@@ -507,12 +524,14 @@ If you continue to have issues:
    - Network tab for API calls
 
 2. **Verify database:**
+
    ```bash
    npm run db:studio
    # Check Farm table manually
    ```
 
 3. **Re-seed database:**
+
    ```bash
    npx prisma db push --force-reset
    npm run prisma:seed

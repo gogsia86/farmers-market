@@ -7,12 +7,14 @@
 ## 🎯 IMMEDIATE ACTION
 
 ### Windows PowerShell:
+
 ```powershell
 cd "M:\Repo\Farmers Market Platform web and app"
 .\scripts\Complete-StripeTesting.ps1
 ```
 
 ### Mac/Linux/Git Bash:
+
 ```bash
 cd "M:/Repo/Farmers Market Platform web and app"
 bash scripts/complete-stripe-testing.sh
@@ -64,7 +66,7 @@ bash scripts/complete-stripe-testing.sh
 
 1. ✅ Health Check - Endpoint reachable
 2. ✅ Payment Success - Order → PAID
-3. ✅ Payment Failed - Order → FAILED  
+3. ✅ Payment Failed - Order → FAILED
 4. ✅ Refund - Order → REFUNDED
 
 All return `[200]` = SUCCESS! 🎉

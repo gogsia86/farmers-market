@@ -36,6 +36,7 @@ cd "M:/Repo/Farmers Market Platform web and app"
 **IMPORTANT**: Switch to **TEST MODE** (toggle at top)
 
 **Copy these keys**:
+
 - Publishable key: `pk_test_...`
 - Secret key: `sk_test_...`
 
@@ -46,6 +47,7 @@ cd "M:/Repo/Farmers Market Platform web and app"
 **Edit**: `.env.local` in project root
 
 **Add/Update**:
+
 ```env
 STRIPE_SECRET_KEY=sk_test_YOUR_SECRET_KEY_HERE
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_YOUR_PUBLISHABLE_KEY_HERE
@@ -63,13 +65,15 @@ cd "M:/Repo/Farmers Market Platform web and app"
 npm run dev:omen
 ```
 
-**Expected**: 
+**Expected**:
+
 ```
 ✓ Ready in 3.5s
 ○ Local:   http://localhost:3001
 ```
 
 **Verify**:
+
 ```bash
 curl http://localhost:3001/api/webhooks/stripe
 ```
@@ -86,11 +90,13 @@ cd "M:/Repo/Farmers Market Platform web and app"
 ```
 
 **Expected Output**:
+
 ```
 > Ready! Your webhook signing secret is whsec_xxxxxxxxxxxxx
 ```
 
-**⚠️ IMPORTANT**: 
+**⚠️ IMPORTANT**:
+
 1. Copy the `whsec_...` secret
 2. Update `.env.local`: `STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx`
 3. Restart dev server (Terminal 1: Ctrl+C → npm run dev:omen)
@@ -112,6 +118,7 @@ curl http://localhost:3001/api/webhooks/stripe
 ```
 
 **Expected Response**:
+
 ```json
 {
   "status": "ok",
@@ -129,6 +136,7 @@ cd "M:/Repo/Farmers Market Platform web and app"
 ```
 
 **Watch For**:
+
 - **Terminal 2**: `[200] POST http://localhost:3001/api/webhooks/stripe`
 - **Terminal 1**: `Payment successful for order xxx { paymentIntentId: 'pi_xxx', amount: 50.00 }`
 
@@ -141,6 +149,7 @@ cd "M:/Repo/Farmers Market Platform web and app"
 ```
 
 **Watch For**:
+
 - **Terminal 2**: `[200] POST ...`
 - **Terminal 1**: `Payment failed for order xxx { paymentIntentId: 'pi_xxx', lastPaymentError: '...' }`
 
@@ -153,6 +162,7 @@ cd "M:/Repo/Farmers Market Platform web and app"
 ```
 
 **Watch For**:
+
 - **Terminal 2**: `[200] POST ...`
 - **Terminal 1**: `Refund processed for order xxx { paymentIntentId: 'pi_xxx', amount: 50.00 }`
 
@@ -171,6 +181,7 @@ curl -X POST http://localhost:3001/api/payments/intent \
 ```
 
 **Expected Response**:
+
 ```json
 {
   "success": true,
@@ -191,6 +202,7 @@ cd "M:/Repo/Farmers Market Platform web and app"
 ```
 
 **Features**:
+
 - Interactive menu
 - Run individual tests or all tests
 - Color-coded output
@@ -204,11 +216,13 @@ cd "M:/Repo/Farmers Market Platform web and app"
 ### Issue: `stripe: command not found`
 
 **Solution**: Use full path:
+
 ```bash
 ./.stripe-cli/stripe --version
 ```
 
 Or create alias:
+
 ```bash
 alias stripe="$(pwd)/.stripe-cli/stripe.exe"
 ```
@@ -217,17 +231,20 @@ alias stripe="$(pwd)/.stripe-cli/stripe.exe"
 
 ### Issue: Webhook signature verification fails
 
-**Symptoms**: 
+**Symptoms**:
+
 - Terminal 1 shows: "Invalid webhook signature"
 - Terminal 2 shows: `[400]` or `[401]` responses
 
 **Solution**:
+
 1. Check webhook secret is correct in `.env.local`
 2. Ensure no extra spaces or quotes around the secret
 3. Restart dev server after updating `.env.local`
 4. Verify Terminal 2 is running and shows "Ready!"
 
 **Verify**:
+
 ```bash
 # In Terminal 2, you should see:
 > Ready! Your webhook signing secret is whsec_xxxxxxxxxxxxx
@@ -242,6 +259,7 @@ STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx
 ### Issue: Dev server shows no logs
 
 **Solution**:
+
 1. Check Terminal 2 shows `[200]` responses (not 400/500)
 2. Verify webhook endpoint is reachable:
    ```bash
@@ -255,6 +273,7 @@ STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx
 ### Issue: "Cannot connect to localhost:3001"
 
 **Solution**:
+
 1. Check dev server is running (Terminal 1)
 2. Verify port 3001 is not in use:
    ```bash
@@ -267,6 +286,7 @@ STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx
 ### Issue: Browser doesn't open during login
 
 **Solution**:
+
 ```bash
 # Copy the URL from terminal
 # Paste in browser manually
@@ -296,6 +316,7 @@ STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx
 ## 🎓 WHAT EACH TEST VALIDATES
 
 ### Payment Success (`payment_intent.succeeded`)
+
 - ✅ Webhook signature verification works
 - ✅ Event payload parsing is correct
 - ✅ Order status updates to "PAID"
@@ -303,6 +324,7 @@ STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx
 - ✅ Success notifications triggered
 
 ### Payment Failed (`payment_intent.payment_failed`)
+
 - ✅ Failure handling works
 - ✅ Order status updates to "FAILED"
 - ✅ Error details captured
@@ -310,6 +332,7 @@ STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx
 - ✅ Customer notified of failure
 
 ### Refund (`charge.refunded`)
+
 - ✅ Refund processing works
 - ✅ Order status updates to "REFUNDED"
 - ✅ Refund amount tracked
@@ -317,6 +340,7 @@ STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx
 - ✅ Refund notifications sent
 
 ### Payment Intent API
+
 - ✅ Authentication works
 - ✅ Amount validation correct
 - ✅ Stripe integration functional
@@ -328,19 +352,23 @@ STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx
 ## 📁 KEY FILES
 
 **Payment Service**:
+
 - `src/lib/services/payment.service.ts` - Core payment logic
 - `src/lib/services/__tests__/payment.service.test.ts` - Unit tests (29/29 passing)
 
 **API Routes**:
+
 - `src/app/api/webhooks/stripe/route.ts` - Webhook handler
 - `src/app/api/payments/intent/route.ts` - Payment intent creation
 - `src/app/api/payments/confirm/route.ts` - Payment confirmation
 
 **Configuration**:
+
 - `.env.local` - Environment variables (API keys, webhook secret)
 - `src/lib/stripe.ts` - Stripe client initialization
 
 **Tests & Scripts**:
+
 - `__mocks__/stripe.ts` - Jest mock for unit tests
 - `scripts/test-stripe-webhooks.sh` - Automated testing script
 
@@ -349,17 +377,20 @@ STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx
 ## 🔗 USEFUL LINKS
 
 **Stripe Dashboard**:
+
 - Test API Keys: https://dashboard.stripe.com/test/apikeys
 - Webhooks: https://dashboard.stripe.com/test/webhooks
 - Events & Logs: https://dashboard.stripe.com/test/events
 - Test Cards: https://stripe.com/docs/testing#cards
 
 **Stripe CLI**:
+
 - Documentation: https://stripe.com/docs/stripe-cli
 - GitHub: https://github.com/stripe/stripe-cli
 - Release Notes: https://github.com/stripe/stripe-cli/releases
 
 **Project Documentation**:
+
 - `START_PRIORITY_2_NOW.md` - Quick start guide
 - `PAYMENT_MANUAL_TESTING_GUIDE.md` - Detailed testing guide
 - `PRIORITY_2_PROGRESS.md` - Progress tracker

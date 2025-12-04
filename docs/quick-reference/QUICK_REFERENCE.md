@@ -20,6 +20,7 @@ This guide provides quick copy-paste examples for the three newly implemented fe
 ### API Endpoints
 
 #### Get User Favorites
+
 ```http
 GET /api/users/favorites
 Authorization: Required (session-based)
@@ -40,6 +41,7 @@ Response:
 ```
 
 #### Add Product to Favorites
+
 ```http
 POST /api/users/favorites
 Authorization: Required (session-based)
@@ -63,6 +65,7 @@ Response:
 ```
 
 #### Remove Product from Favorites
+
 ```http
 DELETE /api/users/favorites?productId=prod_456
 Authorization: Required (session-based)
@@ -77,6 +80,7 @@ Response:
 ### Frontend Implementation
 
 #### Load Favorites on Mount
+
 ```typescript
 import { useState, useEffect } from "react";
 
@@ -93,7 +97,7 @@ export function ProductsPage() {
             const favoriteIds = new Set<string>(
               data.data
                 .filter((fav: any) => fav.productId)
-                .map((fav: any) => fav.productId as string)
+                .map((fav: any) => fav.productId as string),
             );
             setFavorites(favoriteIds);
           }
@@ -111,6 +115,7 @@ export function ProductsPage() {
 ```
 
 #### Toggle Favorite with Optimistic Update
+
 ```typescript
 const toggleFavorite = async (productId: string) => {
   const isFavorited = favorites.has(productId);
@@ -131,7 +136,7 @@ const toggleFavorite = async (productId: string) => {
       // Unfavorite
       const response = await fetch(
         `/api/users/favorites?productId=${productId}`,
-        { method: "DELETE" }
+        { method: "DELETE" },
       );
       if (!response.ok) throw new Error("Failed to unfavorite");
     } else {
@@ -169,6 +174,7 @@ const toggleFavorite = async (productId: string) => {
 ### API Endpoints
 
 #### Add Farm to Favorites
+
 ```http
 POST /api/users/favorites
 Authorization: Required (session-based)
@@ -192,6 +198,7 @@ Response:
 ```
 
 #### Remove Farm from Favorites
+
 ```http
 DELETE /api/users/favorites?farmId=farm_789
 Authorization: Required (session-based)
@@ -206,6 +213,7 @@ Response:
 ### Frontend Implementation
 
 #### FarmProfileActions Component (Complete)
+
 ```typescript
 "use client";
 
@@ -317,6 +325,7 @@ export function FarmProfileActions({
 ```
 
 #### Usage in Farm Profile Page
+
 ```typescript
 import { FarmProfileActions } from "@/components/marketplace/FarmProfileActions";
 
@@ -327,7 +336,7 @@ export default async function FarmProfilePage({ params }: PageProps) {
     <main>
       <h1>{farm.name}</h1>
       {/* ... other farm details ... */}
-      
+
       <FarmProfileActions farmId={farm.id} farmName={farm.name} />
     </main>
   );
@@ -353,6 +362,7 @@ model Farm {
 ### API Endpoints
 
 #### Get Payout Schedule
+
 ```http
 GET /api/farmer/payout-schedule?farmId=farm_123
 Authorization: Required (farmer must own the farm)
@@ -369,6 +379,7 @@ Response:
 ```
 
 #### Update Payout Schedule
+
 ```http
 PUT /api/farmer/payout-schedule
 Authorization: Required (farmer must own the farm)
@@ -402,6 +413,7 @@ Response:
 ### Schedule Configuration
 
 #### Daily Payout
+
 ```json
 {
   "frequency": "DAILY",
@@ -410,6 +422,7 @@ Response:
 ```
 
 #### Weekly Payout
+
 ```json
 {
   "frequency": "WEEKLY",
@@ -417,9 +430,11 @@ Response:
   "minimumAmount": 100
 }
 ```
+
 - `dayOfWeek`: 0 (Sunday) through 6 (Saturday)
 
 #### Monthly Payout
+
 ```json
 {
   "frequency": "MONTHLY",
@@ -427,6 +442,7 @@ Response:
   "minimumAmount": 500
 }
 ```
+
 - `dayOfMonth`: 1 through 31
 
 ### Validation Rules
@@ -439,12 +455,15 @@ Response:
 ### Frontend Implementation
 
 #### Fetch Payout Schedule
+
 ```typescript
 const fetchPayoutSchedule = async (farmId: string) => {
   try {
-    const response = await fetch(`/api/farmer/payout-schedule?farmId=${farmId}`);
+    const response = await fetch(
+      `/api/farmer/payout-schedule?farmId=${farmId}`,
+    );
     const data = await response.json();
-    
+
     if (data.success && data.schedule) {
       setSchedule(data.schedule);
     }
@@ -455,8 +474,12 @@ const fetchPayoutSchedule = async (farmId: string) => {
 ```
 
 #### Update Payout Schedule
+
 ```typescript
-const updatePayoutSchedule = async (farmId: string, newSchedule: PayoutSchedule) => {
+const updatePayoutSchedule = async (
+  farmId: string,
+  newSchedule: PayoutSchedule,
+) => {
   try {
     const response = await fetch(`/api/farmer/payout-schedule`, {
       method: "PUT",
@@ -477,8 +500,11 @@ const updatePayoutSchedule = async (farmId: string, newSchedule: PayoutSchedule)
 ```
 
 #### Complete Form Example
+
 ```typescript
-const [scheduleFrequency, setScheduleFrequency] = useState<"DAILY" | "WEEKLY" | "MONTHLY">("WEEKLY");
+const [scheduleFrequency, setScheduleFrequency] = useState<
+  "DAILY" | "WEEKLY" | "MONTHLY"
+>("WEEKLY");
 const [minimumAmount, setMinimumAmount] = useState<number>(100);
 const [dayOfWeek, setDayOfWeek] = useState<number>(1);
 const [dayOfMonth, setDayOfMonth] = useState<number>(15);
@@ -510,8 +536,14 @@ All three features require authentication:
 const session = await auth();
 if (!session?.user?.id) {
   return NextResponse.json(
-    { success: false, error: { code: "AUTHENTICATION_REQUIRED", message: "Authentication required" } },
-    { status: 401 }
+    {
+      success: false,
+      error: {
+        code: "AUTHENTICATION_REQUIRED",
+        message: "Authentication required",
+      },
+    },
+    { status: 401 },
   );
 }
 
@@ -519,8 +551,11 @@ if (!session?.user?.id) {
 const farm = await database.farm.findUnique({ where: { id: farmId } });
 if (farm.ownerId !== session.user.id) {
   return NextResponse.json(
-    { success: false, error: { code: "AUTHORIZATION_ERROR", message: "Unauthorized" } },
-    { status: 403 }
+    {
+      success: false,
+      error: { code: "AUTHORIZATION_ERROR", message: "Unauthorized" },
+    },
+    { status: 403 },
   );
 }
 ```
@@ -530,6 +565,7 @@ if (farm.ownerId !== session.user.id) {
 ## 🧪 Testing Examples
 
 ### Test Product Favorites
+
 ```typescript
 // Test: Add product to favorites
 const response = await fetch("/api/users/favorites", {
@@ -545,6 +581,7 @@ expect(data.data.productId).toBe("test_prod_123");
 ```
 
 ### Test Farm Favorites
+
 ```typescript
 // Test: Toggle farm favorite
 const response = await fetch("/api/users/favorites", {
@@ -557,6 +594,7 @@ expect(response.ok).toBe(true);
 ```
 
 ### Test Payout Schedule
+
 ```typescript
 // Test: Update payout schedule
 const schedule = {
@@ -581,7 +619,9 @@ expect(data.data.schedule.frequency).toBe("WEEKLY");
 ## 🐛 Common Issues & Solutions
 
 ### Issue: Favorites not persisting
+
 **Solution**: Verify user is authenticated and API endpoint is accessible.
+
 ```typescript
 // Add logging
 console.log("Session:", await auth());
@@ -589,14 +629,18 @@ console.log("API response:", await response.json());
 ```
 
 ### Issue: TypeScript errors after schema changes
+
 **Solution**: Regenerate Prisma client and restart TypeScript server.
+
 ```bash
 npx prisma generate
 # Restart TypeScript server in your editor
 ```
 
 ### Issue: Payout schedule validation failing
+
 **Solution**: Ensure required fields are present based on frequency.
+
 ```typescript
 // For WEEKLY, dayOfWeek is required
 if (frequency === "WEEKLY" && !dayOfWeek) {
@@ -609,6 +653,7 @@ if (frequency === "WEEKLY" && !dayOfWeek) {
 ## 📊 Database Queries
 
 ### Get all user favorites
+
 ```typescript
 const favorites = await database.favorite.findMany({
   where: { userId: session.user.id },
@@ -620,6 +665,7 @@ const favorites = await database.favorite.findMany({
 ```
 
 ### Get farm payout schedule
+
 ```typescript
 const farm = await database.farm.findUnique({
   where: { id: farmId },

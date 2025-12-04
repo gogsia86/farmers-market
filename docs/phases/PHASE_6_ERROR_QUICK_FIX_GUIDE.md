@@ -1,4 +1,5 @@
 # 🚀 Phase 6 - Quick Fix Guide
+
 ## Fast Reference for Common TypeScript Errors
 
 **Version**: 1.0  
@@ -34,20 +35,20 @@ const order = await database.order.findUnique({
   where: { id },
   include: {
     items: true,
-  }
+  },
 });
 
 const totalAmount = order.items.reduce(
-  (sum, item) => sum + (item.price * item.quantity), 
-  0
+  (sum, item) => sum + item.price * item.quantity,
+  0,
 );
 
 // Method 2: Use _sum aggregation
 const result = await database.orderItem.aggregate({
   where: { orderId: order.id },
   _sum: {
-    total: true  // Assuming there's a 'total' field
-  }
+    total: true, // Assuming there's a 'total' field
+  },
 });
 const totalAmount = result._sum.total ?? 0;
 ```
@@ -66,10 +67,10 @@ const order = await database.order.findUnique({
   include: {
     items: {
       include: {
-        product: true,  // Include product details if needed
-      }
-    }
-  }
+        product: true, // Include product details if needed
+      },
+    },
+  },
 });
 
 // Now you can access:
@@ -95,9 +96,9 @@ const order = await database.order.findUnique({
         email: true,
         phone: true,
         avatar: true,
-      }
-    }
-  }
+      },
+    },
+  },
 });
 
 // Now you can access:
@@ -121,7 +122,7 @@ const order = await database.order.findUnique({
   where: { id },
   include: {
     // Check schema for actual fulfillment relation name
-  }
+  },
 });
 ```
 
@@ -137,13 +138,13 @@ const payments = order.payments;
 const order = await database.order.findUnique({
   where: { id },
   include: {
-    payments: true,  // Add to include
-  }
+    payments: true, // Add to include
+  },
 });
 
 // Or query separately:
 const payments = await database.payment.findMany({
-  where: { orderId: order.id }
+  where: { orderId: order.id },
 });
 ```
 
@@ -163,7 +164,7 @@ const product = await database.product.findUnique({
   where: { id },
   include: {
     inventory: true,
-  }
+  },
 });
 const stock = product.inventory?.quantity ?? 0;
 
@@ -190,9 +191,9 @@ const product = await database.product.findUnique({
         name: true,
         slug: true,
         status: true,
-      }
-    }
-  }
+      },
+    },
+  },
 });
 
 const farmName = product.farm.name;
@@ -208,7 +209,7 @@ const categoryName = product.category.name;
 
 // AFTER (CORRECT)
 // category IS the enum value itself
-const categoryName = product.category;  // "VEGETABLES", "FRUITS", etc.
+const categoryName = product.category; // "VEGETABLES", "FRUITS", etc.
 
 // If you want display name:
 const categoryDisplayName = {
@@ -219,7 +220,7 @@ const categoryDisplayName = {
   EGGS: "Eggs",
   HONEY: "Honey & Preserves",
   BAKED_GOODS: "Baked Goods",
-  OTHER: "Other"
+  OTHER: "Other",
 }[product.category];
 ```
 
@@ -231,17 +232,17 @@ const categoryDisplayName = {
 // BEFORE (WRONG)
 const products = await database.product.findMany({
   include: {
-    category: true,  // category is NOT a relation!
-  }
+    category: true, // category is NOT a relation!
+  },
 });
 
 // AFTER (CORRECT)
 const products = await database.product.findMany({
   // No need to include category - it's already on the model
   include: {
-    farm: true,      // Include relations only
+    farm: true, // Include relations only
     inventory: true,
-  }
+  },
 });
 
 // Access category directly:
@@ -263,14 +264,14 @@ const farm = await database.farm.findUnique({
   where: { id },
   include: {
     products: {
-      where: { status: 'AVAILABLE' },  // Optional filter
+      where: { status: "AVAILABLE" }, // Optional filter
       select: {
         id: true,
         name: true,
         status: true,
-      }
-    }
-  }
+      },
+    },
+  },
 });
 
 const productCount = farm.products?.length ?? 0;
@@ -285,7 +286,7 @@ const productCount = farm.products?.length ?? 0;
 const contact = farm.contactEmail;
 
 // AFTER (CORRECT)
-const contact = farm.email;  // Use 'email' field from schema
+const contact = farm.email; // Use 'email' field from schema
 ```
 
 ---
@@ -297,7 +298,7 @@ const contact = farm.email;  // Use 'email' field from schema
 const phone = farm.contactPhone;
 
 // AFTER (CORRECT)
-const phone = farm.phone;  // Use 'phone' field from schema
+const phone = farm.phone; // Use 'phone' field from schema
 ```
 
 ---
@@ -311,7 +312,7 @@ const phone = farm.phone;  // Use 'phone' field from schema
 const avatar = user.image;
 
 // AFTER (CORRECT)
-const avatar = user.avatar;  // Use 'avatar' field from schema
+const avatar = user.avatar; // Use 'avatar' field from schema
 
 // In queries:
 const user = await database.user.findUnique({
@@ -320,8 +321,8 @@ const user = await database.user.findUnique({
     id: true,
     name: true,
     email: true,
-    avatar: true,  // NOT 'image'
-  }
+    avatar: true, // NOT 'image'
+  },
 });
 ```
 
@@ -337,7 +338,7 @@ const method = payment.method;
 
 // AFTER (CORRECT)
 // Check schema for actual field name - might be 'paymentMethod' or similar
-const method = payment.paymentMethod;  // Or whatever field exists
+const method = payment.paymentMethod; // Or whatever field exists
 
 // If it doesn't exist, you might need to check Stripe metadata
 const method = payment.stripePaymentMethod;
@@ -358,10 +359,10 @@ const payout = await database.payout.findUnique({
   include: {
     farm: {
       include: {
-        owner: true,  // Get farmer through farm
-      }
-    }
-  }
+        owner: true, // Get farmer through farm
+      },
+    },
+  },
 });
 
 const farmerName = payout.farm.owner.name;
@@ -376,7 +377,7 @@ const farmerName = payout.farm.owner.name;
 const date = payout.paidAt;
 
 // AFTER (CORRECT)
-const date = payout.paidDate;  // Use 'paidDate' field from schema
+const date = payout.paidDate; // Use 'paidDate' field from schema
 ```
 
 ---
@@ -392,9 +393,9 @@ const failed = result.steps.failedSteps;
 const total = result.steps.totalSteps;
 
 // AFTER (CORRECT)
-const steps = result.steps;  // This is an array
-const passedSteps = steps.filter(s => s.status === 'passed').length;
-const failedSteps = steps.filter(s => s.status === 'failed').length;
+const steps = result.steps; // This is an array
+const passedSteps = steps.filter((s) => s.status === "passed").length;
+const failedSteps = steps.filter((s) => s.status === "failed").length;
 const totalSteps = steps.length;
 ```
 
@@ -413,8 +414,8 @@ const workflowId = result.workflowId;
 const result = await database.workflowExecution.findUnique({
   where: { id },
   include: {
-    workflow: true,  // If there's a workflow relation
-  }
+    workflow: true, // If there's a workflow relation
+  },
 });
 ```
 
@@ -430,10 +431,10 @@ const failed = report.failedWorkflows;
 
 // AFTER (CORRECT)
 // Calculate from results array
-const results = report.results;  // Assuming report has results
+const results = report.results; // Assuming report has results
 const totalWorkflows = results.length;
-const passedWorkflows = results.filter(r => r.status === 'passed').length;
-const failedWorkflows = results.filter(r => r.status === 'failed').length;
+const passedWorkflows = results.filter((r) => r.status === "passed").length;
+const failedWorkflows = results.filter((r) => r.status === "failed").length;
 ```
 
 ---
@@ -464,15 +465,15 @@ const apiHealth = metadata.api?.healthy ?? false;
 
 ```typescript
 // BEFORE (WRONG)
-const severity: AlertSeverity = getSeverity();  // might return undefined
+const severity: AlertSeverity = getSeverity(); // might return undefined
 
 // AFTER (CORRECT)
-const severity: AlertSeverity = getSeverity() ?? 'INFO';
+const severity: AlertSeverity = getSeverity() ?? "INFO";
 
 // Or use proper type guard:
 const severity = getSeverity();
 if (!severity) {
-  throw new Error('Severity is required');
+  throw new Error("Severity is required");
 }
 // Now severity is AlertSeverity, not undefined
 ```
@@ -511,13 +512,13 @@ const status: OrderStatus = "DELIVERED";
 // AFTER (CORRECT)
 // Check schema for valid OrderStatus values
 // Common values: PENDING, CONFIRMED, PROCESSING, READY, COMPLETED, CANCELLED
-const status: OrderStatus = "COMPLETED";  // Use valid enum value
+const status: OrderStatus = "COMPLETED"; // Use valid enum value
 
 // Create mapping if needed:
 const legacyToNew: Record<string, OrderStatus> = {
-  "DELIVERED": "COMPLETED",
-  "READY_FOR_PICKUP": "READY",
-  "IN_PROGRESS": "PROCESSING",
+  DELIVERED: "COMPLETED",
+  READY_FOR_PICKUP: "READY",
+  IN_PROGRESS: "PROCESSING",
 };
 ```
 
@@ -555,17 +556,17 @@ if (farm.status === "PENDING") { ... }
 
 ```typescript
 // BEFORE (WRONG)
-channel: "ALL"
+channel: "ALL";
 
 // AFTER (CORRECT)
 // Option 1: Add to enum (in types file)
 type NotificationChannel = "EMAIL" | "SLACK" | "DISCORD" | "SMS" | "ALL";
 
 // Option 2: Use array instead
-channels: ["EMAIL", "SLACK", "DISCORD", "SMS"]
+channels: ["EMAIL", "SLACK", "DISCORD", "SMS"];
 
 // Option 3: Use union type
-channel: "EMAIL" as NotificationChannel | "ALL"
+channel: "EMAIL" as NotificationChannel | "ALL";
 ```
 
 ---
@@ -582,7 +583,7 @@ const result = await database.order.aggregate({
   _count: true,
 });
 
-const totalRevenue = result._sum?.total ?? 0;  // Safe with ??
+const totalRevenue = result._sum?.total ?? 0; // Safe with ??
 const orderCount = result._count ?? 0;
 ```
 
@@ -592,7 +593,7 @@ const orderCount = result._count ?? 0;
 
 ```typescript
 // CORRECT
-const firstImage = product.images?.[0] ?? '/placeholder.jpg';
+const firstImage = product.images?.[0] ?? "/placeholder.jpg";
 const productCount = farm.products?.length ?? 0;
 const firstItem = order.items?.[0];
 ```
@@ -603,15 +604,15 @@ const firstItem = order.items?.[0];
 
 ```typescript
 // CORRECT
-type StatusBadgeVariant = 'success' | 'warning' | 'error' | 'info';
+type StatusBadgeVariant = "success" | "warning" | "error" | "info";
 
 const statusVariants: Record<OrderStatus, StatusBadgeVariant> = {
-  PENDING: 'info',
-  CONFIRMED: 'info',
-  PROCESSING: 'warning',
-  READY: 'warning',
-  COMPLETED: 'success',
-  CANCELLED: 'error',
+  PENDING: "info",
+  CONFIRMED: "info",
+  PROCESSING: "warning",
+  READY: "warning",
+  COMPLETED: "success",
+  CANCELLED: "error",
 };
 
 const variant = statusVariants[order.status];
@@ -623,19 +624,19 @@ const variant = statusVariants[order.status];
 
 ```typescript
 // CORRECT
-const includeProducts = searchParams.get('withProducts') === 'true';
+const includeProducts = searchParams.get("withProducts") === "true";
 
 const farm = await database.farm.findUnique({
   where: { id },
   include: {
-    owner: true,  // Always include
+    owner: true, // Always include
     ...(includeProducts && {
       products: {
-        where: { status: 'AVAILABLE' },
+        where: { status: "AVAILABLE" },
         take: 10,
-      }
+      },
     }),
-  }
+  },
 });
 ```
 
@@ -651,14 +652,14 @@ const result = await database.$transaction(async (tx) => {
     include: {
       items: true,
       customer: true,
-    }
+    },
   });
 
   const payment = await tx.payment.create({
     data: {
       orderId: order.id,
       amount: calculateTotal(order.items),
-    }
+    },
   });
 
   return { order, payment };
@@ -683,7 +684,7 @@ const metadata = farm.metadata as FarmMetadata | null;
 const certifications = metadata?.certifications ?? [];
 
 // Or with Zod validation
-import { z } from 'zod';
+import { z } from "zod";
 
 const FarmMetadataSchema = z.object({
   certifications: z.array(z.string()).optional(),
@@ -713,7 +714,7 @@ const { products, ...farmWithoutProducts } = farm;
 
 ```typescript
 // BEFORE (ERROR)
-const value = step.value;  // Object is possibly 'undefined'
+const value = step.value; // Object is possibly 'undefined'
 
 // AFTER (CORRECT)
 if (!step) continue;
@@ -753,26 +754,26 @@ cat prisma/schema.prisma | grep "enum "
 
 ### Common Field Name Mappings
 
-| ❌ Wrong Field | ✅ Correct Field | Model |
-|---------------|------------------|-------|
-| `totalAmount` | Calculate from `items` | Order |
-| `image` | `avatar` | User |
-| `contactEmail` | `email` | Farm |
-| `contactPhone` | `phone` | Farm |
-| `fulfillment` | `fulfilledAt` | Order |
-| `paidAt` | `paidDate` | Payout |
-| `farmer` | `farm.owner` | Payout |
-| `stockQuantity` | `inventory.quantity` | Product |
+| ❌ Wrong Field  | ✅ Correct Field       | Model   |
+| --------------- | ---------------------- | ------- |
+| `totalAmount`   | Calculate from `items` | Order   |
+| `image`         | `avatar`               | User    |
+| `contactEmail`  | `email`                | Farm    |
+| `contactPhone`  | `phone`                | Farm    |
+| `fulfillment`   | `fulfilledAt`          | Order   |
+| `paidAt`        | `paidDate`             | Payout  |
+| `farmer`        | `farm.owner`           | Payout  |
+| `stockQuantity` | `inventory.quantity`   | Product |
 
 ### Common Enum Values
 
-| Enum | Valid Values |
-|------|--------------|
-| OrderStatus | PENDING, CONFIRMED, PROCESSING, READY, COMPLETED, CANCELLED |
-| PaymentStatus | PENDING, PROCESSING, SUCCEEDED, FAILED, REFUNDED |
-| FarmStatus | DRAFT, PENDING, ACTIVE, SUSPENDED, INACTIVE |
-| ProductStatus | DRAFT, AVAILABLE, OUT_OF_STOCK, DISCONTINUED |
-| UserRole | CONSUMER, FARMER, ADMIN |
+| Enum          | Valid Values                                                |
+| ------------- | ----------------------------------------------------------- |
+| OrderStatus   | PENDING, CONFIRMED, PROCESSING, READY, COMPLETED, CANCELLED |
+| PaymentStatus | PENDING, PROCESSING, SUCCEEDED, FAILED, REFUNDED            |
+| FarmStatus    | DRAFT, PENDING, ACTIVE, SUSPENDED, INACTIVE                 |
+| ProductStatus | DRAFT, AVAILABLE, OUT_OF_STOCK, DISCONTINUED                |
+| UserRole      | CONSUMER, FARMER, ADMIN                                     |
 
 ---
 

@@ -1,4 +1,5 @@
 # 🐳 Docker Configuration
+
 # Farmers Market Platform - Containerized Deployment
 
 **Version**: 3.0  
@@ -41,12 +42,14 @@ docker/
 ### Development Environment
 
 **Prerequisites:**
+
 - Docker Desktop 24.0+ installed
 - Docker Compose v2.20+
 - 8GB+ RAM available
 - 20GB+ disk space
 
 **Start Development Stack:**
+
 ```bash
 # Navigate to compose directory
 cd docker/compose
@@ -65,6 +68,7 @@ docker-compose -f docker-compose.dev.yml logs -f app
 ```
 
 **Stop Development Stack:**
+
 ```bash
 cd docker/compose
 docker-compose -f docker-compose.dev.yml down
@@ -73,6 +77,7 @@ docker-compose -f docker-compose.dev.yml down
 ### Production Environment
 
 **Start Production Stack:**
+
 ```bash
 # Navigate to compose directory
 cd docker/compose
@@ -90,6 +95,7 @@ docker-compose logs -f app
 ```
 
 **Production without management tools:**
+
 ```bash
 cd docker/compose
 docker-compose up -d
@@ -100,9 +106,11 @@ docker-compose up -d
 ## 📦 Dockerfiles
 
 ### Production Dockerfile (`dockerfiles/Dockerfile`)
+
 **Purpose**: Optimized multi-stage build for production deployment
 
 **Features**:
+
 - ✅ Multi-stage build (minimal final image)
 - ✅ Next.js standalone output mode
 - ✅ Node.js 20 Alpine (small footprint)
@@ -112,6 +120,7 @@ docker-compose up -d
 - ✅ Health checks included
 
 **Build Locally**:
+
 ```bash
 cd docker/dockerfiles
 docker build -f Dockerfile -t farmers-market:latest ../..
@@ -120,9 +129,11 @@ docker build -f Dockerfile -t farmers-market:latest ../..
 **Image Size**: ~350MB (optimized)
 
 ### Development Dockerfile (`dockerfiles/Dockerfile.dev`)
+
 **Purpose**: Fast iteration with hot-reloading and debugging tools
 
 **Features**:
+
 - ✅ Hot module replacement (HMR)
 - ✅ Turbopack for faster builds
 - ✅ Node.js debugger on port 9229
@@ -132,6 +143,7 @@ docker build -f Dockerfile -t farmers-market:latest ../..
 - ✅ Optimized for HP OMEN specs (12 threads, 64GB RAM)
 
 **Build Locally**:
+
 ```bash
 cd docker/dockerfiles
 docker build -f Dockerfile.dev -t farmers-market:dev ../..
@@ -140,15 +152,18 @@ docker build -f Dockerfile.dev -t farmers-market:dev ../..
 **Image Size**: ~800MB (includes dev tools)
 
 ### Simple Dockerfile (`dockerfiles/Dockerfile.simple`)
+
 **Purpose**: Simplified build for testing and legacy compatibility
 
 **Features**:
+
 - ✅ Single-stage build
 - ✅ Minimal configuration
 - ✅ Quick to build
 - ✅ Good for debugging build issues
 
 **Build Locally**:
+
 ```bash
 cd docker/dockerfiles
 docker build -f Dockerfile.simple -t farmers-market:simple ../..
@@ -161,6 +176,7 @@ docker build -f Dockerfile.simple -t farmers-market:simple ../..
 ### Production Stack (`compose/docker-compose.yml`)
 
 **Services Included**:
+
 1. **app** - Next.js application (production mode)
 2. **db** - PostgreSQL 16 with PostGIS
 3. **redis** - Redis 7 cache
@@ -170,6 +186,7 @@ docker build -f Dockerfile.simple -t farmers-market:simple ../..
 7. **adminer** - Database management UI (optional, `--profile management`)
 
 **Persistent Volumes**:
+
 - `postgres-data` - Database storage
 - `postgres-backups` - Automated backups
 - `redis-data` - Cache persistence
@@ -179,23 +196,27 @@ docker build -f Dockerfile.simple -t farmers-market:simple ../..
 - `nginx-logs` - Nginx logs
 
 **Resource Limits**:
+
 - App: 768MB memory, 2 CPUs (max), 384MB (min)
 - Optimized for production workloads
 
 ### Development Stack (`compose/docker-compose.dev.yml`)
 
 **Services Included**:
+
 1. **app** - Next.js dev server with hot-reload
 2. **db** - PostgreSQL with PostGIS
 3. **redis** - Redis cache
 4. **prisma-studio** - Database GUI (via app service)
 
 **Volume Mounts** (for hot-reload):
+
 - Source code mounted at `/app`
 - Node modules in named volume (performance)
 - Uploads and logs persisted
 
 **Developer Ports**:
+
 - 3001 - Next.js dev server
 - 5555 - Prisma Studio
 - 9229 - Node.js debugger
@@ -203,6 +224,7 @@ docker build -f Dockerfile.simple -t farmers-market:simple ../..
 - 8081 - Redis Commander
 
 **HP OMEN Optimizations**:
+
 - 12-thread parallelization enabled
 - 16GB Node.js heap allocation
 - Turbopack for faster builds
@@ -324,18 +346,21 @@ docker-compose up -d --scale app=3
 ### Environment Variables
 
 **Required for Production**:
+
 - `DATABASE_URL` - PostgreSQL connection
 - `NEXTAUTH_SECRET` - Auth secret (min 32 chars)
 - `NEXTAUTH_URL` - Public app URL
 - `REDIS_PASSWORD` - Redis password
 
 **Optional but Recommended**:
+
 - `STRIPE_SECRET_KEY` - Payment processing
 - `OPENAI_API_KEY` - AI features
 - `SMTP_*` - Email configuration
 - `SENTRY_DSN` - Error monitoring
 
 **Configuration Files**:
+
 - Production: Create `.env` in project root
 - Development: Use `.env.local` or `.env.development`
 - Reference: See `.env.example` in project root
@@ -351,7 +376,7 @@ Create `docker-compose.override.yml` for local customizations:
 services:
   app:
     ports:
-      - "3002:3000"  # Custom port
+      - "3002:3000" # Custom port
     environment:
       - CUSTOM_VAR=value
 ```
@@ -395,16 +420,19 @@ docker build --platform linux/amd64 -f Dockerfile -t farmers-market:amd64 ../..
 ### Health Check Endpoints
 
 **Application Health**:
+
 ```bash
 curl http://localhost:3000/api/health
 ```
 
 **Docker Health Status**:
+
 ```bash
 docker-compose ps
 ```
 
 **Service-Specific Health**:
+
 ```bash
 # Check database
 docker-compose exec db pg_isready -U postgres
@@ -419,11 +447,13 @@ curl http://localhost:3000/api/health
 ### Logs & Debugging
 
 **Log Locations** (inside containers):
+
 - App logs: `/app/logs/`
 - Nginx logs: `/var/log/nginx/`
 - PostgreSQL logs: `/var/lib/postgresql/data/log/`
 
 **Access logs from host**:
+
 ```bash
 # Application logs
 docker-compose exec app cat logs/app.log
@@ -455,10 +485,12 @@ docker-compose logs db
 ### Network Security
 
 **Exposed Ports (Production)**:
+
 - 80 (HTTP) - Nginx
 - 443 (HTTPS) - Nginx
 
 **Internal Ports** (not exposed to host):
+
 - 3000 - Next.js app
 - 5432 - PostgreSQL
 - 6379 - Redis
@@ -484,11 +516,13 @@ docker-compose -f docker-compose.yml up -d --build
 ### Production Deployment
 
 See detailed deployment guides:
+
 - **Complete Guide**: `docs/deployment/DOCKER-COMPLETE-GUIDE.md`
 - **Docker-Specific**: `docker/docs/DEPLOYMENT-GUIDE.md`
 - **Setup Instructions**: `docker/docs/SETUP-GUIDE.md`
 
 **Quick Production Deploy**:
+
 ```bash
 # 1. Configure environment
 cp .env.example .env
@@ -514,6 +548,7 @@ curl http://localhost:3000/api/health
 ### Common Issues
 
 **Issue**: Container won't start
+
 ```bash
 # Check logs
 docker-compose logs app
@@ -527,6 +562,7 @@ docker-compose up -d app
 ```
 
 **Issue**: Database connection failed
+
 ```bash
 # Verify database is healthy
 docker-compose exec db pg_isready -U postgres
@@ -539,6 +575,7 @@ docker-compose restart db
 ```
 
 **Issue**: Hot reload not working (development)
+
 ```bash
 # Ensure polling is enabled in docker-compose.dev.yml:
 WATCHPACK_POLLING=true
@@ -549,6 +586,7 @@ docker-compose -f docker-compose.dev.yml restart app
 ```
 
 **Issue**: Out of disk space
+
 ```bash
 # Remove unused containers
 docker container prune
@@ -564,6 +602,7 @@ docker system prune -a --volumes
 ```
 
 **Issue**: Port already in use
+
 ```bash
 # Find process using port
 lsof -i :3000  # macOS/Linux
@@ -580,18 +619,21 @@ For more troubleshooting, see `docker/docs/TROUBLESHOOTING.md`.
 ## 📚 Additional Documentation
 
 ### Detailed Guides
+
 - **Complete Setup**: `docker/docs/SETUP-GUIDE.md`
 - **Deployment Guide**: `docker/docs/DEPLOYMENT-GUIDE.md`
 - **Troubleshooting**: `docker/docs/TROUBLESHOOTING.md`
 - **Technical Reference**: `docker/docs/REFERENCE.md`
 
 ### Project Documentation
+
 - **Main README**: `../../README.md`
 - **Quick Start**: `../../docs/QUICK-START.md`
 - **Deployment Complete**: `../../docs/deployment/DOCKER-COMPLETE-GUIDE.md`
 - **Environment Setup**: `../../docs/deployment/ENV-SETUP-GUIDE.md`
 
 ### Docker Scripts
+
 - **Docker Utilities**: `../../scripts/docker/`
 - **Deployment Scripts**: `../../scripts/deployment/`
 
@@ -621,6 +663,7 @@ For more troubleshooting, see `docker/docs/TROUBLESHOOTING.md`.
 ### Reporting Issues
 
 When reporting Docker-related issues, include:
+
 - Docker version: `docker --version`
 - Docker Compose version: `docker-compose --version`
 - Container logs: `docker-compose logs [service]`
@@ -677,4 +720,4 @@ docker-compose down -v                            # Remove everything (⚠️ DA
 **Last Updated**: November 27, 2024  
 **Status**: ✅ Production Ready
 
-*For the most up-to-date information, always refer to the latest documentation.*
+_For the most up-to-date information, always refer to the latest documentation._

@@ -60,8 +60,10 @@ async function addProductToCart(page: Page, productId = "product_1") {
   await page.waitForLoadState("networkidle");
 
   // Find and click on a product
-  const productCard = page.locator(`[data-testid="product-card-${productId}"]`).first();
-  if (await productCard.count() === 0) {
+  const productCard = page
+    .locator(`[data-testid="product-card-${productId}"]`)
+    .first();
+  if ((await productCard.count()) === 0) {
     // Fallback: click first available product
     await page.locator('[data-testid^="product-card-"]').first().click();
   } else {
@@ -102,7 +104,9 @@ async function fillShippingAddress(page: Page, address = TEST_ADDRESS) {
 
   // Continue to payment step
   await page.click('button:has-text("Continue to Payment")');
-  await page.waitForSelector('[data-testid="payment-step"]', { timeout: 10000 });
+  await page.waitForSelector('[data-testid="payment-step"]', {
+    timeout: 10000,
+  });
 }
 
 async function fillStripePaymentDetails(
@@ -110,7 +114,9 @@ async function fillStripePaymentDetails(
   cardNumber = STRIPE_TEST_CARDS.SUCCESS,
 ) {
   // Wait for Stripe Elements to load
-  const stripeFrame = page.frameLocator('iframe[name^="__privateStripeFrame"]').first();
+  const stripeFrame = page
+    .frameLocator('iframe[name^="__privateStripeFrame"]')
+    .first();
   await expect(stripeFrame.locator('[name="number"]')).toBeVisible({
     timeout: 10000,
   });
@@ -287,7 +293,9 @@ test.describe("Checkout Flow with Stripe Payment", () => {
     await page.click('button:has-text("Place Order")');
 
     // Verify loading state
-    await expect(page.locator('[data-testid="payment-processing"]')).toBeVisible({
+    await expect(
+      page.locator('[data-testid="payment-processing"]'),
+    ).toBeVisible({
       timeout: 2000,
     });
   });
@@ -302,7 +310,9 @@ test.describe("Checkout Flow with Stripe Payment", () => {
     await navigateToCheckout(page);
 
     // Try to continue without filling address
-    const continueButton = page.locator('button:has-text("Continue to Payment")');
+    const continueButton = page.locator(
+      'button:has-text("Continue to Payment")',
+    );
     await continueButton.click();
 
     // Should show validation errors
@@ -326,9 +336,9 @@ test.describe("Checkout Flow with Stripe Payment", () => {
     await page.click('button:has-text("Continue to Payment")');
 
     // Should show zip code error
-    await expect(
-      page.locator('text="Invalid zip code format"'),
-    ).toBeVisible({ timeout: 2000 });
+    await expect(page.locator('text="Invalid zip code format"')).toBeVisible({
+      timeout: 2000,
+    });
   });
 
   test("should normalize address fields", async ({ page }) => {
@@ -361,9 +371,9 @@ test.describe("Checkout Flow with Stripe Payment", () => {
     await page.goto("/checkout");
 
     // Should redirect to cart or show error
-    await expect(
-      page.locator('text="Your cart is empty"'),
-    ).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('text="Your cart is empty"')).toBeVisible({
+      timeout: 5000,
+    });
   });
 
   test("should update order total when cart changes", async ({ page }) => {
@@ -423,7 +433,9 @@ test.describe("Checkout Flow with Stripe Payment", () => {
     expect(deliveryFeeText).toContain("$0.00");
   });
 
-  test("should show free delivery for orders over threshold", async ({ page }) => {
+  test("should show free delivery for orders over threshold", async ({
+    page,
+  }) => {
     // This requires adding enough products to reach free delivery threshold
     test.skip(true, "Requires cart total calculation");
 
@@ -525,12 +537,14 @@ test.describe("Checkout Flow with Stripe Payment", () => {
 
     // Check for seasonal badges or indicators
     const seasonalBadge = page.locator('[data-testid="seasonal-badge"]');
-    if (await seasonalBadge.count() > 0) {
+    if ((await seasonalBadge.count()) > 0) {
       await expect(seasonalBadge.first()).toBeVisible();
     }
   });
 
-  test("should display biodynamic consciousness indicators", async ({ page }) => {
+  test("should display biodynamic consciousness indicators", async ({
+    page,
+  }) => {
     await loginAsCustomer(page);
     await page.goto("/checkout");
 
@@ -560,7 +574,7 @@ test.describe("Checkout Flow with Stripe Payment", () => {
 
     // Should show network error
     await expect(
-      page.locator('text=/network error|connection failed/i'),
+      page.locator("text=/network error|connection failed/i"),
     ).toBeVisible({ timeout: 5000 });
 
     // Restore connection

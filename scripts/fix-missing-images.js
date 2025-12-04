@@ -66,17 +66,19 @@ async function fixMissingImages() {
       take: 10,
     });
 
-    console.log(
-      `  ✅ Found ${featuredFarms.length} active & verified farms\n`,
-    );
+    console.log(`  ✅ Found ${featuredFarms.length} active & verified farms\n`);
 
     if (featuredFarms.length > 0) {
       console.log("📋 Featured Farms:");
       featuredFarms.forEach((farm) => {
         console.log(`  • ${farm.name} (${farm.slug})`);
-        console.log(`    Status: ${farm.status} | Verified: ${farm.verificationStatus}`);
+        console.log(
+          `    Status: ${farm.status} | Verified: ${farm.verificationStatus}`,
+        );
         console.log(`    Logo: ${farm.logoUrl}`);
-        console.log(`    Products: ${farm._count.products} | Reviews: ${farm._count.reviews}`);
+        console.log(
+          `    Products: ${farm._count.products} | Reviews: ${farm._count.reviews}`,
+        );
         console.log("");
       });
     }
@@ -84,7 +86,9 @@ async function fixMissingImages() {
     console.log("✅ Image fix complete!\n");
     console.log("🎯 Next steps:");
     console.log("  1. Refresh your browser: http://localhost:3001");
-    console.log("  2. Featured farms should now display with placeholder images");
+    console.log(
+      "  2. Featured farms should now display with placeholder images",
+    );
     console.log(
       "  3. Later, you can replace placeholders with real farm/product photos\n",
     );

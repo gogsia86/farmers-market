@@ -103,6 +103,7 @@
     "dist", // Exclude output directory
     "coverage", // Exclude test coverage
     "build", // Exclude build artifacts
+    "mobile-app/**", // Exclude React Native mobile app (separate project)
     "scripts/**", // Exclude all script files (have separate TS errors)
     "tests/**", // Exclude test files
     "**/*.spec.ts", // Test files (handled by separate config)

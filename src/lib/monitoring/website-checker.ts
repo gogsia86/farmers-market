@@ -775,7 +775,7 @@ export class DivineWebsiteChecker {
             violations.push({
               id: "image-alt",
               impact: "critical",
-              description: `Image missing alt text`,
+              description: "Image missing alt text",
               element: `img[${index}]`,
             });
           }

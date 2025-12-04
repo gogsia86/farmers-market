@@ -1,4 +1,5 @@
 # 🎯 REPOSITORY ISSUES - EXECUTIVE SUMMARY
+
 **Farmers Market Platform - Quick Reference Guide**
 
 **Date:** January 2025  
@@ -20,6 +21,7 @@
 ## 🚨 CRITICAL ISSUES (Must Fix Before Deploy)
 
 ### 1. TypeScript Errors: 72 ❌
+
 **Impact:** BLOCKING DEPLOYMENT  
 **Time to Fix:** 4-6 hours  
 **Location:** `WEEK_1_TYPESCRIPT_FIXES.md`
@@ -33,6 +35,7 @@ Categories:
 ```
 
 **Top Offenders:**
+
 - `stripeConnectAccountId` → `stripeAccountId` (property renamed)
 - `include: { items: true }` → `include: { OrderItem: true }`
 - `include: { payment: true }` → `include: { Payment: true }`
@@ -43,6 +46,7 @@ Categories:
 ## ⚠️ DUPLICATE STRUCTURES (Confusion & Maintenance Risk)
 
 ### 2. Duplicate Validation Folders ⚠️
+
 **Impact:** Developer confusion, potential logic conflicts  
 **Time to Fix:** 2-3 hours
 
@@ -72,6 +76,7 @@ src/lib/validations/         # Single location
 ---
 
 ### 3. Duplicate Error Handling ⚠️
+
 **Impact:** Inconsistent error handling across codebase  
 **Time to Fix:** 2-3 hours
 
@@ -96,6 +101,7 @@ src/lib/errors.ts            # Single file
 ---
 
 ### 4. Confusing API Route Structure ⚠️
+
 **Impact:** Frontend confusion, unclear API boundaries  
 **Time to Fix:** 4-6 hours
 
@@ -133,6 +139,7 @@ src/app/api/
 ---
 
 ### 5. Duplicate Dashboard Routes ⚠️
+
 **Impact:** Navigation confusion, maintenance overhead  
 **Time to Fix:** 3-4 hours
 
@@ -167,6 +174,7 @@ API Routes (consolidated):
 ## 📁 ORGANIZATIONAL ISSUES
 
 ### 6. Root Directory Clutter 📚
+
 **Impact:** Hard to find documentation, overwhelming for new devs  
 **Time to Fix:** 2-3 hours
 
@@ -218,6 +226,7 @@ TOTAL    |                          | 23-33h  | 3-5 days
 ## ✅ WHAT'S WORKING WELL
 
 ### Database Architecture ✅
+
 ```typescript
 ✅ Proper singleton pattern
 ✅ No duplicate PrismaClient instances in src/
@@ -227,6 +236,7 @@ TOTAL    |                          | 23-33h  | 3-5 days
 ```
 
 ### Testing Coverage ✅
+
 ```
 ✅ 1,890+ tests passing
 ✅ Comprehensive test suite
@@ -235,6 +245,7 @@ TOTAL    |                          | 23-33h  | 3-5 days
 ```
 
 ### Project Structure ✅
+
 ```
 ✅ Clean separation of concerns
 ✅ Service layer properly implemented
@@ -250,6 +261,7 @@ TOTAL    |                          | 23-33h  | 3-5 days
 ### Week 1 - Before Deployment (CRITICAL)
 
 **Day 1-2: Critical Fixes (P0 + P1)**
+
 ```bash
 1. Fix 72 TypeScript errors            [4-6 hours]  🔴
 2. Consolidate validation folders      [2-3 hours]  🟡
@@ -260,6 +272,7 @@ TOTAL    |                          | 23-33h  | 3-5 days
 ```
 
 **Day 3-4: Medium Priority (P2)**
+
 ```bash
 5. Restructure API routes              [4-6 hours]  🟢
 6. Consolidate dashboards              [3-4 hours]  🟢
@@ -268,6 +281,7 @@ TOTAL    |                          | 23-33h  | 3-5 days
 ```
 
 **Day 5: Low Priority (P3)**
+
 ```bash
 7. Organize documentation              [2-3 hours]  🔵
 8. Final verification & testing        [2-3 hours]  ✅
@@ -280,6 +294,7 @@ TOTAL    |                          | 23-33h  | 3-5 days
 ## 📋 DETAILED ACTION DOCUMENTS
 
 **For step-by-step fixes, see:**
+
 - `REPOSITORY_DEEP_ANALYSIS.md` - Full analysis with examples
 - `CLEANUP_ACTION_PLAN.md` - Phase-by-phase execution guide
 - `WEEK_1_TYPESCRIPT_FIXES.md` - Complete TypeScript fix list
@@ -345,6 +360,7 @@ MITIGATION:
 ## 🎯 NEXT STEP
 
 **START HERE:**
+
 ```bash
 # Step 1: Fix TypeScript errors
 npm run type-check 2>&1 | tee typescript-errors.log

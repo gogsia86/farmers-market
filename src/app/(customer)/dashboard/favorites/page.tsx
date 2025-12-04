@@ -50,7 +50,9 @@ export default function FavoritesPage() {
   const [activeTab, setActiveTab] = useState<"farms" | "products">("farms");
   const [loading, setLoading] = useState(true);
   const [favoriteFarms, setFavoriteFarms] = useState<FavoriteFarm[]>([]);
-  const [favoriteProducts, setFavoriteProducts] = useState<FavoriteProduct[]>([]);
+  const [favoriteProducts, setFavoriteProducts] = useState<FavoriteProduct[]>(
+    [],
+  );
   const [removingId, setRemovingId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -269,7 +271,9 @@ export default function FavoritesPage() {
                             disabled={removingId === farm.id}
                             className="text-red-600 hover:text-red-700 font-medium text-sm transition-colors disabled:opacity-50"
                           >
-                            {removingId === farm.id ? "Removing..." : "❤️ Remove"}
+                            {removingId === farm.id
+                              ? "Removing..."
+                              : "❤️ Remove"}
                           </button>
                         </div>
                       </div>
@@ -396,8 +400,8 @@ export default function FavoritesPage() {
                 Pro Tip: Build Your Weekly Order
               </h3>
               <p className="text-gray-600 mb-4">
-                Save your favorite products to quickly build recurring orders from
-                your trusted farms
+                Save your favorite products to quickly build recurring orders
+                from your trusted farms
               </p>
               <Link href="/farms" className="btn-green inline-block">
                 Discover More Farms

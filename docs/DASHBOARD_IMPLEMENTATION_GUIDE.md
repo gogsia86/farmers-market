@@ -1,4 +1,5 @@
 # 🎨 Dashboard Implementation Guide
+
 ## Phase 3 Week 1 - Real-Time Monitoring Dashboard
 
 **Version**: 1.0.0  
@@ -25,7 +26,9 @@
 ## 🎯 Overview
 
 ### Goal
+
 Build a real-time monitoring dashboard that displays:
+
 - System health status
 - Workflow execution history
 - Active alerts and notifications
@@ -33,6 +36,7 @@ Build a real-time monitoring dashboard that displays:
 - Live updates via WebSocket
 
 ### Success Criteria
+
 - ✅ Dashboard loads in <2 seconds
 - ✅ Real-time updates within 500ms
 - ✅ Handles 100+ concurrent users
@@ -100,15 +104,15 @@ Build a real-time monitoring dashboard that displays:
 
 ### Tech Stack
 
-| Layer | Technology | Purpose |
-|-------|-----------|---------|
-| Frontend | React 18 + Next.js 15 | UI Framework |
-| Styling | Tailwind CSS | Styling |
-| Charts | Recharts / Chart.js | Data visualization |
-| Real-time | WebSocket / SSE | Live updates |
-| API | Next.js API Routes | Backend endpoints |
-| Database | Prisma + PostgreSQL | Data persistence |
-| State | React Server Components | Server-side state |
+| Layer     | Technology              | Purpose            |
+| --------- | ----------------------- | ------------------ |
+| Frontend  | React 18 + Next.js 15   | UI Framework       |
+| Styling   | Tailwind CSS            | Styling            |
+| Charts    | Recharts / Chart.js     | Data visualization |
+| Real-time | WebSocket / SSE         | Live updates       |
+| API       | Next.js API Routes      | Backend endpoints  |
+| Database  | Prisma + PostgreSQL     | Data persistence   |
+| State     | React Server Components | Server-side state  |
 
 ---
 
@@ -120,6 +124,7 @@ Build a real-time monitoring dashboard that displays:
 **Complexity**: MEDIUM
 
 **Tasks**:
+
 1. Create monitoring API directory structure
 2. Implement overview endpoint
 3. Implement executions endpoint
@@ -129,6 +134,7 @@ Build a real-time monitoring dashboard that displays:
 7. Write API tests
 
 **Files to Create**:
+
 - `src/app/api/monitoring/dashboard/overview/route.ts`
 - `src/app/api/monitoring/dashboard/executions/route.ts`
 - `src/app/api/monitoring/dashboard/alerts/route.ts`
@@ -140,6 +146,7 @@ Build a real-time monitoring dashboard that displays:
 **Complexity**: MEDIUM
 
 **Tasks**:
+
 1. Create DashboardLayout component
 2. Implement SystemHealthWidget
 3. Implement WorkflowExecutionWidget
@@ -148,6 +155,7 @@ Build a real-time monitoring dashboard that displays:
 6. Write component tests
 
 **Files to Create**:
+
 - `src/components/monitoring/dashboard/DashboardLayout.tsx`
 - `src/components/monitoring/dashboard/SystemHealthWidget.tsx`
 - `src/components/monitoring/dashboard/WorkflowExecutionWidget.tsx`
@@ -159,6 +167,7 @@ Build a real-time monitoring dashboard that displays:
 **Complexity**: MEDIUM-HIGH
 
 **Tasks**:
+
 1. Implement AlertsWidget
 2. Implement PerformanceMetricsWidget
 3. Add charts and visualizations
@@ -167,6 +176,7 @@ Build a real-time monitoring dashboard that displays:
 6. Write integration tests
 
 **Files to Create**:
+
 - `src/components/monitoring/dashboard/AlertsWidget.tsx`
 - `src/components/monitoring/dashboard/PerformanceMetricsWidget.tsx`
 - `src/components/monitoring/dashboard/MetricsChart.tsx`
@@ -177,6 +187,7 @@ Build a real-time monitoring dashboard that displays:
 **Complexity**: HIGH
 
 **Tasks**:
+
 1. Set up WebSocket server
 2. Implement broadcast mechanism
 3. Create WebSocket client hook
@@ -186,6 +197,7 @@ Build a real-time monitoring dashboard that displays:
 7. Write WebSocket tests
 
 **Files to Create**:
+
 - `src/lib/websocket/server.ts`
 - `src/lib/websocket/client.ts`
 - `src/hooks/useWebSocket.ts`
@@ -197,6 +209,7 @@ Build a real-time monitoring dashboard that displays:
 **Complexity**: LOW-MEDIUM
 
 **Tasks**:
+
 1. Responsive design refinement
 2. Dark mode support
 3. Accessibility improvements
@@ -215,6 +228,7 @@ Build a real-time monitoring dashboard that displays:
 **Purpose**: Provides high-level dashboard statistics
 
 **Response**:
+
 ```typescript
 {
   success: true,
@@ -250,6 +264,7 @@ Build a real-time monitoring dashboard that displays:
 ```
 
 **Implementation**:
+
 ```typescript
 // src/app/api/monitoring/dashboard/overview/route.ts
 import { NextRequest, NextResponse } from "next/server";
@@ -258,30 +273,26 @@ import { database } from "@/lib/database";
 export async function GET(request: NextRequest) {
   try {
     // Fetch overview data
-    const [
-      totalExecutions,
-      todayExecutions,
-      lastHealthCheck,
-      activeAlerts
-    ] = await Promise.all([
-      database.workflowExecution.count(),
-      database.workflowExecution.count({
-        where: {
-          startedAt: {
-            gte: new Date(new Date().setHours(0, 0, 0, 0))
-          }
-        }
-      }),
-      database.systemHealthCheck.findFirst({
-        orderBy: { createdAt: "desc" }
-      }),
-      database.notificationLog.count({
-        where: {
-          priority: { in: ["CRITICAL", "HIGH"] },
-          status: "SENT"
-        }
-      })
-    ]);
+    const [totalExecutions, todayExecutions, lastHealthCheck, activeAlerts] =
+      await Promise.all([
+        database.workflowExecution.count(),
+        database.workflowExecution.count({
+          where: {
+            startedAt: {
+              gte: new Date(new Date().setHours(0, 0, 0, 0)),
+            },
+          },
+        }),
+        database.systemHealthCheck.findFirst({
+          orderBy: { createdAt: "desc" },
+        }),
+        database.notificationLog.count({
+          where: {
+            priority: { in: ["CRITICAL", "HIGH"] },
+            status: "SENT",
+          },
+        }),
+      ]);
 
     return NextResponse.json({
       success: true,
@@ -289,25 +300,25 @@ export async function GET(request: NextRequest) {
         systemHealth: {
           status: lastHealthCheck?.status || "UNKNOWN",
           lastCheck: lastHealthCheck?.createdAt,
-          checks: lastHealthCheck?.details || {}
+          checks: lastHealthCheck?.details || {},
         },
         workflows: {
           total: totalExecutions,
           today: todayExecutions,
           active: 0, // TODO: Track active executions
-          success_rate: 98.5 // TODO: Calculate from data
+          success_rate: 98.5, // TODO: Calculate from data
         },
         alerts: {
           critical: activeAlerts,
           warning: 0,
-          info: 0
+          info: 0,
         },
         performance: {
           avgResponseTime: 234,
           avgDuration: 1543,
-          successRate: 98.5
-        }
-      }
+          successRate: 98.5,
+        },
+      },
     });
   } catch (error) {
     console.error("Dashboard overview error:", error);
@@ -316,10 +327,10 @@ export async function GET(request: NextRequest) {
         success: false,
         error: {
           code: "DASHBOARD_OVERVIEW_ERROR",
-          message: error instanceof Error ? error.message : "Unknown error"
-        }
+          message: error instanceof Error ? error.message : "Unknown error",
+        },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -330,6 +341,7 @@ export async function GET(request: NextRequest) {
 **Endpoint**: `GET /api/monitoring/dashboard/executions`
 
 **Query Parameters**:
+
 - `limit` (default: 50, max: 100)
 - `offset` (default: 0)
 - `status` (PASSED, FAILED, RUNNING, PENDING)
@@ -337,6 +349,7 @@ export async function GET(request: NextRequest) {
 - `endDate` (ISO 8601)
 
 **Response**:
+
 ```typescript
 {
   success: true,
@@ -369,10 +382,12 @@ export async function GET(request: NextRequest) {
 **Endpoint**: `GET /api/monitoring/dashboard/alerts`
 
 **Query Parameters**:
+
 - `priority` (CRITICAL, HIGH, MEDIUM, LOW)
 - `status` (ACTIVE, ACKNOWLEDGED, RESOLVED)
 
 **Response**:
+
 ```typescript
 {
   success: true,
@@ -400,10 +415,12 @@ export async function GET(request: NextRequest) {
 **Endpoint**: `GET /api/monitoring/dashboard/metrics`
 
 **Query Parameters**:
+
 - `period` (1h, 6h, 24h, 7d, 30d)
 - `metric` (response_time, duration, success_rate, throughput)
 
 **Response**:
+
 ```typescript
 {
   success: true,
@@ -430,12 +447,14 @@ export async function GET(request: NextRequest) {
 **Purpose**: Main layout wrapper with navigation and grid system
 
 **Features**:
+
 - Responsive grid layout
 - Navigation sidebar
 - Header with refresh button
 - Loading states
 
 **Props**:
+
 ```typescript
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -450,12 +469,14 @@ interface DashboardLayoutProps {
 **Purpose**: Display real-time system health status
 
 **Features**:
+
 - Health status indicator (green/yellow/red)
 - Individual check status (DB, API, Cache, External)
 - Last check timestamp
 - Auto-refresh every 30 seconds
 
 **Props**:
+
 ```typescript
 interface SystemHealthWidgetProps {
   initialData?: SystemHealthData;
@@ -469,6 +490,7 @@ interface SystemHealthWidgetProps {
 **Purpose**: Display recent workflow executions in a table
 
 **Features**:
+
 - Sortable columns
 - Status filtering
 - Pagination
@@ -476,6 +498,7 @@ interface SystemHealthWidgetProps {
 - Real-time updates
 
 **Props**:
+
 ```typescript
 interface WorkflowExecutionWidgetProps {
   initialExecutions?: WorkflowExecution[];
@@ -489,12 +512,14 @@ interface WorkflowExecutionWidgetProps {
 **Purpose**: Display active alerts and notifications
 
 **Features**:
+
 - Priority-based color coding
 - Alert filtering
 - Acknowledge/dismiss actions
 - Alert details modal
 
 **Props**:
+
 ```typescript
 interface AlertsWidgetProps {
   initialAlerts?: Alert[];
@@ -508,12 +533,14 @@ interface AlertsWidgetProps {
 **Purpose**: Visualize performance metrics with charts
 
 **Features**:
+
 - Line charts for time-series data
 - Selectable time period (1h, 6h, 24h, 7d, 30d)
 - Multiple metrics (response time, duration, success rate)
 - Export to CSV
 
 **Props**:
+
 ```typescript
 interface PerformanceMetricsWidgetProps {
   initialMetrics?: MetricDataPoint[];
@@ -529,6 +556,7 @@ interface PerformanceMetricsWidgetProps {
 ### WebSocket Implementation
 
 **Server Setup** (`src/lib/websocket/server.ts`):
+
 ```typescript
 import { WebSocketServer } from "ws";
 import { database } from "@/lib/database";
@@ -582,6 +610,7 @@ export const wsServer = new DashboardWebSocketServer();
 ```
 
 **Client Hook** (`src/hooks/useWebSocket.ts`):
+
 ```typescript
 "use client";
 
@@ -652,6 +681,7 @@ export function useWebSocket(options: WebSocketHookOptions) {
 ```
 
 **Dashboard Updates Hook** (`src/hooks/useDashboardUpdates.ts`):
+
 ```typescript
 "use client";
 
@@ -680,14 +710,14 @@ export function useDashboardUpdates() {
   const { isConnected } = useWebSocket({
     url: "ws://localhost:3002",
     autoReconnect: true,
-    onMessage: handleMessage
+    onMessage: handleMessage,
   });
 
   return {
     isConnected,
     healthCheck,
     latestExecution,
-    latestAlert
+    latestAlert,
   };
 }
 ```
@@ -699,6 +729,7 @@ export function useDashboardUpdates() {
 ### Complete Widget Example
 
 **SystemHealthWidget.tsx**:
+
 ```typescript
 "use client";
 
@@ -777,7 +808,7 @@ export function SystemHealthWidget({
           {healthData?.status || "UNKNOWN"}
         </div>
         <div className="text-sm">
-          Last check: {healthData?.lastCheck 
+          Last check: {healthData?.lastCheck
             ? new Date(healthData.lastCheck).toLocaleString()
             : "Never"}
         </div>
@@ -811,6 +842,7 @@ export function SystemHealthWidget({
 ### Unit Tests
 
 **Component Test Example**:
+
 ```typescript
 import { render, screen, waitFor } from "@testing-library/react";
 import { SystemHealthWidget } from "./SystemHealthWidget";
@@ -841,12 +873,15 @@ describe("SystemHealthWidget", () => {
 ### Integration Tests
 
 **API Test Example**:
+
 ```typescript
 import { GET } from "@/app/api/monitoring/dashboard/overview/route";
 
 describe("/api/monitoring/dashboard/overview", () => {
   it("returns dashboard overview data", async () => {
-    const request = new Request("http://localhost:3000/api/monitoring/dashboard/overview");
+    const request = new Request(
+      "http://localhost:3000/api/monitoring/dashboard/overview",
+    );
     const response = await GET(request);
     const data = await response.json();
 

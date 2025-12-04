@@ -242,7 +242,8 @@ function EmptyOrderState({ tab }: { tab: OrderStatus }) {
     active: {
       icon: "📦",
       title: "No active orders",
-      description: "Orders you place will appear here. Start shopping from local farms!",
+      description:
+        "Orders you place will appear here. Start shopping from local farms!",
       action: (
         <Link href="/farms" className="inline-block btn-green">
           Browse Farms
@@ -252,7 +253,8 @@ function EmptyOrderState({ tab }: { tab: OrderStatus }) {
     completed: {
       icon: "✅",
       title: "No completed orders yet",
-      description: "Your order history will appear here once orders are delivered.",
+      description:
+        "Your order history will appear here once orders are delivered.",
       action: (
         <Link href="/farms" className="inline-block btn-green">
           Start Shopping
@@ -262,7 +264,8 @@ function EmptyOrderState({ tab }: { tab: OrderStatus }) {
     cancelled: {
       icon: "❌",
       title: "No cancelled orders",
-      description: "Cancelled orders will appear here if you need to cancel an order.",
+      description:
+        "Cancelled orders will appear here if you need to cancel an order.",
       action: null,
     },
   };

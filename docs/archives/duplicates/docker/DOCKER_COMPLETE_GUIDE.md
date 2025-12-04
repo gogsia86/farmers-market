@@ -1,7 +1,11 @@
 # ============================================================================
+
 # FARMERS MARKET PLATFORM - COMPLETE DOCKER GUIDE
+
 # Divine Agricultural E-Commerce Platform
+
 # Comprehensive Docker Deployment and Management Documentation
+
 # ============================================================================
 
 ## 📋 Table of Contents
@@ -56,11 +60,13 @@ The Farmers Market Platform uses Docker and Docker Compose to provide consistent
 ### System Requirements
 
 #### Development
+
 - **RAM**: 8GB minimum, 16GB recommended
 - **Disk Space**: 20GB free space
 - **CPU**: 4 cores minimum
 
 #### Production
+
 - **RAM**: 4GB minimum, 8GB+ recommended
 - **Disk Space**: 50GB+ for data and backups
 - **CPU**: 2 cores minimum, 4+ recommended
@@ -159,16 +165,16 @@ docker-compose -f docker-compose.dev.yml up
 
 ### Development Services
 
-| Service | Port | Description | URL |
-|---------|------|-------------|-----|
-| **app** | 3001 | Next.js application with hot-reload | http://localhost:3000 |
-| **db** | 5432 | PostgreSQL 16 with PostGIS | localhost:5432 |
-| **redis** | 6379 | Redis cache | localhost:6379 |
-| **mailhog** | 8025 | Email testing UI | http://localhost:8025 |
-| **adminer** | 8080 | Database management | http://localhost:8080 |
-| **redis-commander** | 8081 | Redis management | http://localhost:8081 |
-| **pgadmin** | 8082 | Advanced DB management | http://localhost:8082 |
-| **debugger** | 9229 | Node.js debugger | chrome://inspect |
+| Service             | Port | Description                         | URL                   |
+| ------------------- | ---- | ----------------------------------- | --------------------- |
+| **app**             | 3001 | Next.js application with hot-reload | http://localhost:3000 |
+| **db**              | 5432 | PostgreSQL 16 with PostGIS          | localhost:5432        |
+| **redis**           | 6379 | Redis cache                         | localhost:6379        |
+| **mailhog**         | 8025 | Email testing UI                    | http://localhost:8025 |
+| **adminer**         | 8080 | Database management                 | http://localhost:8080 |
+| **redis-commander** | 8081 | Redis management                    | http://localhost:8081 |
+| **pgadmin**         | 8082 | Advanced DB management              | http://localhost:8082 |
+| **debugger**        | 9229 | Node.js debugger                    | chrome://inspect      |
 
 ### Database Connection (Development)
 
@@ -272,6 +278,7 @@ docker-compose -f docker-compose.dev.yml down -v --rmi all
 ### Hot Reload Configuration
 
 The development environment supports hot-reload for:
+
 - ✅ React components (`.tsx`, `.jsx`)
 - ✅ TypeScript files (`.ts`)
 - ✅ CSS/Tailwind styles
@@ -304,6 +311,7 @@ Create `.vscode/launch.json`:
 ```
 
 Then:
+
 1. Start development environment: `./docker-start-dev.sh`
 2. In VSCode, press F5 or go to Run → Start Debugging
 3. Set breakpoints in your code
@@ -437,13 +445,13 @@ docker-compose exec app npx prisma db execute --stdin < /dev/null
 
 ### Production Services
 
-| Service | Port | Description | Access |
-|---------|------|-------------|--------|
-| **app** | 3000 | Next.js application | Internal only |
-| **nginx** | 80, 443 | Reverse proxy | Public |
-| **db** | 5432 | PostgreSQL database | Internal only |
-| **redis** | 6379 | Redis cache | Internal only |
-| **db-backup** | - | Automated backups | Background |
+| Service       | Port    | Description         | Access        |
+| ------------- | ------- | ------------------- | ------------- |
+| **app**       | 3000    | Next.js application | Internal only |
+| **nginx**     | 80, 443 | Reverse proxy       | Public        |
+| **db**        | 5432    | PostgreSQL database | Internal only |
+| **redis**     | 6379    | Redis cache         | Internal only |
+| **db-backup** | -       | Automated backups   | Background    |
 
 ### Scaling Production
 
@@ -456,7 +464,7 @@ services:
   app:
     # ... existing config
     deploy:
-      replicas: 3  # Run 3 instances
+      replicas: 3 # Run 3 instances
 ```
 
 Or scale dynamically:
@@ -478,10 +486,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '2'
+          cpus: "2"
           memory: 4G
         reservations:
-          cpus: '1'
+          cpus: "1"
           memory: 2G
 ```
 
@@ -587,6 +595,7 @@ docker-compose exec db psql -U postgres -d farmersmarket < /backups/latest.sql
 ### Volume Mounts
 
 #### Development
+
 ```
 ./src          → /app/src          (source code)
 ./public       → /app/public       (static assets)
@@ -597,6 +606,7 @@ redis-data     → /data
 ```
 
 #### Production
+
 ```
 postgres-data    → /var/lib/postgresql/data
 postgres-backups → /backups
@@ -682,7 +692,7 @@ services:
     environment:
       - CUSTOM_ENV_VAR=value
     ports:
-      - "4000:3001"  # Use different port
+      - "4000:3001" # Use different port
 ```
 
 #### Environment-Specific Configs
@@ -877,11 +887,12 @@ docker network inspect farmers-network
 The production setup includes automated PostgreSQL backups via `prodrigestivill/postgres-backup-local`.
 
 **Configuration** (in docker-compose.yml):
+
 ```yaml
-BACKUP_SCHEDULE: "@daily"       # Daily backups
-BACKUP_KEEP_DAYS: 7            # Keep daily for 7 days
-BACKUP_KEEP_WEEKS: 4           # Keep weekly for 4 weeks
-BACKUP_KEEP_MONTHS: 6          # Keep monthly for 6 months
+BACKUP_SCHEDULE: "@daily" # Daily backups
+BACKUP_KEEP_DAYS: 7 # Keep daily for 7 days
+BACKUP_KEEP_WEEKS: 4 # Keep weekly for 4 weeks
+BACKUP_KEEP_MONTHS: 6 # Keep monthly for 6 months
 ```
 
 ### Manual Backup
@@ -1028,9 +1039,9 @@ Update `docker-compose.yml` PostgreSQL command section:
 command:
   - "postgres"
   - "-c"
-  - "shared_buffers=256MB"      # 25% of RAM
+  - "shared_buffers=256MB" # 25% of RAM
   - "-c"
-  - "effective_cache_size=1GB"  # 50-75% of RAM
+  - "effective_cache_size=1GB" # 50-75% of RAM
   - "-c"
   - "maintenance_work_mem=64MB"
   - "-c"
@@ -1108,9 +1119,9 @@ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
 ```yaml
 networks:
   farmers-network:
-    internal: true  # No external access
+    internal: true # No external access
   public:
-    internal: false  # Only nginx on public network
+    internal: false # Only nginx on public network
 ```
 
 #### 2. Firewall Rules
@@ -1224,12 +1235,14 @@ docker inspect farmers-market-app
 ```
 
 **Common Causes:**
+
 - Port already in use
 - Missing environment variables
 - Database not ready
 - Volume permission issues
 
 **Solutions:**
+
 ```bash
 # Check port usage
 netstat -tlnp | grep 3000
@@ -1256,6 +1269,7 @@ docker-compose logs db
 ```
 
 **Solutions:**
+
 ```bash
 # Restart database
 docker-compose restart db
@@ -1270,11 +1284,13 @@ sleep 10 && docker-compose restart app
 #### Issue: Hot Reload Not Working (Development)
 
 **Causes:**
+
 - Volume mount issues
 - File watching disabled
 - Docker Desktop resource limits
 
 **Solutions:**
+
 ```bash
 # Enable polling in .env.local
 WATCHPACK_POLLING=true
@@ -1330,6 +1346,7 @@ docker-compose exec -u root app chown -R nextjs:nodejs /app
 #### Issue: Slow Performance
 
 **Diagnosis:**
+
 ```bash
 # Check resource usage
 docker stats
@@ -1339,6 +1356,7 @@ docker-compose logs --tail=100
 ```
 
 **Solutions:**
+
 ```bash
 # Increase resources in docker-compose.yml
 deploy:
@@ -1411,6 +1429,7 @@ FROM node:20-alpine AS runner      # Final lightweight image
 ```
 
 **Benefits:**
+
 - Smaller final image (only runtime dependencies)
 - Faster builds (better caching)
 - More secure (no build tools in production)
@@ -1450,7 +1469,7 @@ networks:
     driver: bridge
   backend:
     driver: bridge
-    internal: true  # No external access
+    internal: true # No external access
 ```
 
 ### Volume Drivers
@@ -1591,6 +1610,7 @@ services:
 ### Professional Support
 
 For production deployments and enterprise support, consider:
+
 - Docker Enterprise Support
 - Managed hosting providers (AWS ECS, Azure Container Instances, Google Cloud Run)
 - Professional DevOps consulting
@@ -1600,6 +1620,7 @@ For production deployments and enterprise support, consider:
 ## 📝 Changelog
 
 ### Version 1.0.0 (2025-01-15)
+
 - Initial comprehensive Docker setup
 - Development and production configurations
 - Complete documentation

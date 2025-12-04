@@ -19,16 +19,19 @@ The Farmers Market Platform has been **completely updated to Docker** with a com
 ### 🏗️ Core Infrastructure Files
 
 #### 1. **Production Configuration**
+
 - `Dockerfile` - Multi-stage production build (Alpine Linux, ~200MB)
 - `docker-compose.yml` - Complete production stack
 - `.dockerignore` - Optimized build exclusions
 
 #### 2. **Development Configuration**
+
 - `Dockerfile.dev` - Development build with hot-reload
 - `docker-compose.dev.yml` - Full development stack with tools
 - Development profiles for advanced features
 
 #### 3. **Nginx Reverse Proxy**
+
 - `nginx/nginx.conf` - Production-grade configuration
 - SSL/TLS support
 - Rate limiting and security headers
@@ -36,11 +39,13 @@ The Farmers Market Platform has been **completely updated to Docker** with a com
 - Load balancing ready
 
 #### 4. **Helper Scripts**
+
 - `docker-scripts/docker-deploy.sh` - Production deployment automation
 - `docker-scripts/docker-dev.sh` - Development environment manager
 - `docker-scripts/README.md` - Scripts documentation
 
 #### 5. **Documentation**
+
 - `DOCKER_DEPLOYMENT_GUIDE.md` - Complete 1000+ line deployment guide
 - Environment variables reference
 - Troubleshooting guides
@@ -84,11 +89,13 @@ services:
 The Docker setup is optimized for HP OMEN hardware:
 
 **Hardware Specs:**
+
 - CPU: 12 threads
 - RAM: 64GB
 - GPU: RTX 2070 Max-Q (2304 CUDA cores)
 
 **Optimizations Applied:**
+
 ```yaml
 # Development
 NODE_OPTIONS: --max-old-space-size=16384 --max-semi-space-size=512
@@ -96,10 +103,10 @@ NODE_OPTIONS: --max-old-space-size=16384 --max-semi-space-size=512
 # Production
 resources:
   limits:
-    cpus: '8'
+    cpus: "8"
     memory: 16G
   reservations:
-    cpus: '4'
+    cpus: "4"
     memory: 8G
 ```
 
@@ -238,28 +245,36 @@ docker compose down
 Over **50+ environment variables** documented including:
 
 **Core:**
+
 - `NODE_ENV`, `NEXT_PUBLIC_APP_URL`, `PORT`
 
 **Database:**
+
 - `DATABASE_URL`, `POSTGRES_USER`, `POSTGRES_PASSWORD`
 
 **Redis:**
+
 - `REDIS_URL`, `REDIS_PASSWORD`
 
 **Authentication:**
+
 - `NEXTAUTH_URL`, `NEXTAUTH_SECRET`
 - OAuth providers (Google, GitHub)
 
 **Payments:**
+
 - `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`
 
 **AI Services:**
+
 - `OPENAI_API_KEY`, `PERPLEXITY_API_KEY`
 
 **Email:**
+
 - `SMTP_HOST`, `SMTP_USER`, `SMTP_PASSWORD`
 
 **Monitoring:**
+
 - `SENTRY_DSN`, `APPLICATIONINSIGHTS_CONNECTION_STRING`
 
 See `DOCKER_DEPLOYMENT_GUIDE.md` for complete reference.
@@ -282,11 +297,11 @@ docker compose up -d --scale app=3
 ```yaml
 # docker-compose.yml
 upstream farmers_market_app {
-    least_conn;
-    server app1:3000 max_fails=3 fail_timeout=30s;
-    server app2:3000 max_fails=3 fail_timeout=30s;
-    server app3:3000 max_fails=3 fail_timeout=30s;
-    keepalive 32;
+least_conn;
+server app1:3000 max_fails=3 fail_timeout=30s;
+server app2:3000 max_fails=3 fail_timeout=30s;
+server app3:3000 max_fails=3 fail_timeout=30s;
+keepalive 32;
 }
 ```
 
@@ -299,10 +314,10 @@ upstream farmers_market_app {
 ```yaml
 db-backup:
   environment:
-    SCHEDULE: "@daily"              # Daily backups
-    BACKUP_KEEP_DAYS: 7            # 7 daily backups
-    BACKUP_KEEP_WEEKS: 4           # 4 weekly backups
-    BACKUP_KEEP_MONTHS: 6          # 6 monthly backups
+    SCHEDULE: "@daily" # Daily backups
+    BACKUP_KEEP_DAYS: 7 # 7 daily backups
+    BACKUP_KEEP_WEEKS: 4 # 4 weekly backups
+    BACKUP_KEEP_MONTHS: 6 # 6 monthly backups
 ```
 
 ### Manual Backup
@@ -348,6 +363,7 @@ docker compose -f docker-compose.dev.yml exec app npm run type-check
 ### Test Results Integration
 
 All 1,326 tests pass successfully in Docker environment:
+
 - ✅ Unit tests
 - ✅ Integration tests
 - ✅ Component tests
@@ -361,6 +377,7 @@ All 1,326 tests pass successfully in Docker environment:
 ### Common Issues Covered
 
 The deployment guide includes solutions for:
+
 - Container won't start
 - Database connection failed
 - Port already in use
@@ -396,6 +413,7 @@ curl http://localhost:3000/api/health
 ### DOCKER_DEPLOYMENT_GUIDE.md (1000+ lines)
 
 Complete sections on:
+
 1. Overview & Architecture
 2. Prerequisites
 3. Quick Start
@@ -412,6 +430,7 @@ Complete sections on:
 ### docker-scripts/README.md
 
 Helper scripts documentation:
+
 - Script usage examples
 - Command reference
 - Troubleshooting
@@ -449,18 +468,21 @@ Helper scripts documentation:
 The Docker implementation follows divine agricultural consciousness:
 
 ### Biodynamic Architecture
+
 - Holistic system design
 - Layered service communication
 - Natural data flows
 - Seasonal awareness in logging
 
 ### Quantum Performance
+
 - HP OMEN optimizations
 - 12-thread parallel processing
 - 64GB RAM utilization
 - GPU acceleration ready
 
 ### Agricultural Consciousness
+
 - Context-aware logging
 - Divine error messages
 - Seasonal operations support
@@ -473,14 +495,17 @@ The Docker implementation follows divine agricultural consciousness:
 ### Build Optimization
 
 **Image Sizes:**
+
 - Production: ~200MB (Alpine-based)
 - Development: ~800MB (with dev tools)
 
 **Build Time:**
+
 - Clean build: ~5-8 minutes
 - Cached build: ~30-60 seconds
 
 **Startup Time:**
+
 - Development: ~30-45 seconds
 - Production: ~15-30 seconds
 
@@ -625,6 +650,7 @@ The Farmers Market Platform is now **100% Dockerized** with:
 ## 📖 VERSION HISTORY
 
 ### v3.0 - Complete Docker Ecosystem (Current)
+
 - Complete production stack
 - Full development environment
 - Comprehensive documentation
@@ -634,11 +660,13 @@ The Farmers Market Platform is now **100% Dockerized** with:
 - HP OMEN optimization
 
 ### v2.0 - Basic Docker Support
+
 - Simple Dockerfile
 - Basic docker-compose.yml
 - Limited documentation
 
 ### v1.0 - No Docker Support
+
 - Local development only
 
 ---

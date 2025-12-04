@@ -10,17 +10,20 @@
 ## 📋 QUICK VERIFICATION
 
 ### 1. Start Development Server
+
 ```bash
 npm run dev
 ```
 
 **Expected Output:**
+
 ```
 ✓ Ready on http://localhost:3001
 ✓ Compiled in XXXms
 ```
 
 ### 2. Verify Endpoints
+
 Open these URLs in your browser:
 
 - **Homepage:** http://localhost:3001
@@ -33,6 +36,7 @@ Open these URLs in your browser:
 ## ✅ CONFIGURATION CHECKLIST
 
 ### Environment Variables (.env.local)
+
 ```bash
 # Auth Configuration
 NEXTAUTH_URL="http://localhost:3001"
@@ -48,6 +52,7 @@ NEXTAUTH_SECRET="your-secret-key-minimum-32-characters"
 ```
 
 ### Package.json Scripts (Already Configured)
+
 ```json
 {
   "scripts": {
@@ -64,16 +69,19 @@ NEXTAUTH_SECRET="your-secret-key-minimum-32-characters"
 All these files now use port **3001**:
 
 ### Core Configuration
+
 - ✅ `ecosystem.config.js` - PM2 configuration
 - ✅ `create-admin.ts` - Admin user creation
 - ✅ `jest.setup.js` - Test environment
 
 ### Development Scripts
+
 - ✅ `scripts/dev/diagnostic-check.ts`
 - ✅ `scripts/dev/monitor-daemon.ts`
 - ✅ `scripts/monitoring/workflow-monitor.ts`
 
 ### Testing Scripts
+
 - ✅ `scripts/setup-test-db.ts`
 - ✅ `scripts/testing/test-dashboard-apis.ts`
 - ✅ `scripts/testing/test-login.ts`
@@ -82,6 +90,7 @@ All these files now use port **3001**:
 - ✅ `scripts/testing/test-perplexity-farming.ts`
 
 ### Database Seeds
+
 - ✅ `prisma/seed-comprehensive.js`
 - ✅ `prisma/seed-quick.js`
 
@@ -90,16 +99,19 @@ All these files now use port **3001**:
 ## 🎯 COMMON TASKS
 
 ### Create Admin User
+
 ```bash
 npx tsx create-admin.ts
 ```
 
 **Output will show:**
+
 ```
 🌐 You can now login at: http://localhost:3001/login
 ```
 
 ### Run Health Check
+
 ```bash
 npx tsx scripts/monitoring/workflow-monitor.ts health
 ```
@@ -107,6 +119,7 @@ npx tsx scripts/monitoring/workflow-monitor.ts health
 **Connects to:** http://localhost:3001/api/health
 
 ### Run Tests
+
 ```bash
 # All tests automatically use port 3001
 npm test
@@ -114,6 +127,7 @@ npm run test:e2e
 ```
 
 ### Seed Database
+
 ```bash
 # Quick seed
 npm run prisma:seed
@@ -123,6 +137,7 @@ npx tsx prisma/seed-comprehensive.js
 ```
 
 **Output includes:**
+
 - Admin Panel: http://localhost:3001/admin
 - Browse Farms: http://localhost:3001/farms
 - Browse Products: http://localhost:3001/products
@@ -132,6 +147,7 @@ npx tsx prisma/seed-comprehensive.js
 ## 🐛 TROUBLESHOOTING
 
 ### Port Already in Use
+
 ```bash
 # Check what's using port 3001
 lsof -ti:3001  # Mac/Linux
@@ -143,17 +159,20 @@ taskkill /PID <PID> /F  # Windows
 ```
 
 ### Server Not Starting
+
 1. **Check .env.local exists** and has correct URLs
 2. **Clear cache:** `npm run clean:all`
 3. **Reinstall:** `rm -rf node_modules && npm install`
 4. **Generate Prisma:** `npm run prisma:generate`
 
 ### Tests Failing
+
 1. **Start dev server first:** `npm run dev`
 2. **Verify server responds:** curl http://localhost:3001/api/health
 3. **Check DATABASE_URL** in .env.local
 
 ### Authentication Issues
+
 1. **Verify NEXTAUTH_URL:** Should be `http://localhost:3001`
 2. **Check NEXTAUTH_SECRET:** At least 32 characters
 3. **Clear cookies** in browser
@@ -164,6 +183,7 @@ taskkill /PID <PID> /F  # Windows
 ## 🎓 WORKFLOWS
 
 ### First Time Setup
+
 ```bash
 # 1. Install dependencies
 npm install
@@ -190,6 +210,7 @@ open http://localhost:3001
 ```
 
 ### Daily Development
+
 ```bash
 # Start server
 npm run dev
@@ -200,6 +221,7 @@ npm run dev
 ```
 
 ### Running Monitoring
+
 ```bash
 # Start monitoring daemon
 npm run workflow:monitor
@@ -214,6 +236,7 @@ npx tsx scripts/monitoring/workflow-monitor.ts critical
 ## 📊 VERIFICATION COMMANDS
 
 ### Test All Endpoints
+
 ```bash
 # Health check
 curl http://localhost:3001/api/health
@@ -226,6 +249,7 @@ curl http://localhost:3001/api/monitoring/dashboard/overview
 ```
 
 ### Run Diagnostic Check
+
 ```bash
 npx tsx scripts/dev/diagnostic-check.ts
 ```
@@ -233,6 +257,7 @@ npx tsx scripts/dev/diagnostic-check.ts
 **Expected:** All checks pass with port 3001
 
 ### Test Login Workflow
+
 ```bash
 npx tsx scripts/testing/test-login.ts
 ```
@@ -266,6 +291,7 @@ Your setup is correct when:
 ## 🔑 KEY URLS
 
 ### Development Server
+
 - **Homepage:** http://localhost:3001
 - **Login:** http://localhost:3001/login
 - **Register:** http://localhost:3001/register
@@ -273,6 +299,7 @@ Your setup is correct when:
 - **Admin Panel:** http://localhost:3001/admin
 
 ### API Endpoints
+
 - **Health:** http://localhost:3001/api/health
 - **Auth Session:** http://localhost:3001/api/auth/session
 - **Cart:** http://localhost:3001/api/cart
@@ -280,6 +307,7 @@ Your setup is correct when:
 - **Products:** http://localhost:3001/api/products
 
 ### Utilities
+
 - **Prisma Studio:** `npm run prisma:studio` (separate port)
 
 ---
@@ -287,16 +315,19 @@ Your setup is correct when:
 ## 💡 TIPS
 
 ### Performance
+
 - Use `npm run dev:omen` for HP OMEN systems (32GB memory)
 - Enable debug logging: `npm run dev:logger`
 - Use safe mode if needed: `npm run dev:safe`
 
 ### Development
+
 - All URLs in console output use port 3001
 - Copy-paste URLs work without modification
 - No need to manually change ports
 
 ### Testing
+
 - Tests automatically connect to port 3001
 - No environment variable override needed
 - Monitoring scripts use correct port by default
@@ -306,16 +337,19 @@ Your setup is correct when:
 ## ⚠️ IMPORTANT NOTES
 
 ### Port Configuration
+
 - **DO NOT** change port in package.json without updating all related files
 - **DO NOT** use port 3000 - it's not the configured port
 - **DO** use http://localhost:3001 for all development work
 
 ### Environment Variables
+
 - **ALWAYS** set `NEXTAUTH_URL=http://localhost:3001` in .env.local
 - **NEVER** use localhost:3000 in environment files
 - **CHECK** BASE_URL matches NEXTAUTH_URL
 
 ### Production Deployment
+
 - Production uses standard ports (80/443)
 - Staging may use different ports
 - Only development uses port 3001

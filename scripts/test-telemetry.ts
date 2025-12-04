@@ -28,9 +28,9 @@ import {
 // ============================================================================
 
 function logSection(title: string): void {
-  console.log(`\n${  "=".repeat(80)}`);
+  console.log(`\n${"=".repeat(80)}`);
   console.log(`  ${title}`);
-  console.log(`${"=".repeat(80)  }\n`);
+  console.log(`${"=".repeat(80)}\n`);
 }
 
 function logSuccess(message: string): void {
@@ -194,22 +194,19 @@ async function testSyncTracing(): Promise<boolean> {
   try {
     logInfo("Testing synchronous tracing...");
 
-    const result = traceSync(
-      "test.sync.operation",
-      (span) => {
-        span.setAttributes({
-          "sync.test": true,
-        });
+    const result = traceSync("test.sync.operation", (span) => {
+      span.setAttributes({
+        "sync.test": true,
+      });
 
-        // Synchronous operation
-        const sum = Array.from({ length: 1000 }, (_, i) => i).reduce(
-          (a, b) => a + b,
-          0,
-        );
+      // Synchronous operation
+      const sum = Array.from({ length: 1000 }, (_, i) => i).reduce(
+        (a, b) => a + b,
+        0,
+      );
 
-        return sum;
-      },
-    );
+      return sum;
+    });
 
     if (result !== 499500) {
       logError("Sync trace returned unexpected result");
@@ -427,7 +424,10 @@ async function testSpanErrorHandling(): Promise<boolean> {
       logError("Should have thrown an error");
       return false;
     } catch (error) {
-      if (error instanceof Error && error.message === "Intentional test error") {
+      if (
+        error instanceof Error &&
+        error.message === "Intentional test error"
+      ) {
         logSuccess("Error was correctly propagated and recorded");
       } else {
         logError("Unexpected error type");
@@ -531,7 +531,9 @@ async function testContextPropagation(): Promise<boolean> {
 // ============================================================================
 
 async function runAllTests(): Promise<void> {
-  console.log("\n╔════════════════════════════════════════════════════════════╗");
+  console.log(
+    "\n╔════════════════════════════════════════════════════════════╗",
+  );
   console.log("║       OPENTELEMETRY TRACING TEST SUITE                   ║");
   console.log("║       Farmers Market Platform - Phase 6 Day 4            ║");
   console.log("╚════════════════════════════════════════════════════════════╝");
@@ -588,9 +590,13 @@ async function runAllTests(): Promise<void> {
     process.exit(1);
   }
 
-  console.log("\n╔════════════════════════════════════════════════════════════╗");
+  console.log(
+    "\n╔════════════════════════════════════════════════════════════╗",
+  );
   console.log("║       TEST SUITE COMPLETE                                 ║");
-  console.log("╚════════════════════════════════════════════════════════════╝\n");
+  console.log(
+    "╚════════════════════════════════════════════════════════════╝\n",
+  );
 }
 
 // ============================================================================

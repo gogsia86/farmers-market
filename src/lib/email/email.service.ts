@@ -159,7 +159,7 @@ export class EmailService {
         console.log("📧 [EMAIL DEV MODE]", {
           to: options.to,
           subject: options.subject,
-          html: `${options.html?.substring(0, 100)  }...`,
+          html: `${options.html?.substring(0, 100)}...`,
         });
         return true;
       }

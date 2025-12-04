@@ -12,6 +12,7 @@ This directory contains archived documentation from previous development phases.
 ## Current Documentation
 
 For current documentation, refer to the root directory:
+
 - `README.md` - Main project documentation
 - `QUICK_REFERENCE.md` - Command reference
 - `BUILD_SUCCESS.md` - Latest build status

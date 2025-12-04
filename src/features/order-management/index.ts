@@ -43,7 +43,11 @@ export type {
 } from "./types";
 
 // Services
-export { orderService, OrderService, OrderValidationError as OrderValidationServiceError } from "./services/order.service";
+export {
+  orderService,
+  OrderService,
+  OrderValidationError as OrderValidationServiceError,
+} from "./services/order.service";
 
 // Hooks
 export { useOrders, useSingleOrder } from "./hooks/useOrders";

@@ -13,7 +13,8 @@ module.exports = {
   // Test environment
   testEnvironment: "jsdom",
 
-  // Setup files
+  // Setup files - Load environment BEFORE any imports
+  setupFiles: ["<rootDir>/jest.env.js"],
   setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
 
   // TypeScript transformation

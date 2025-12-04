@@ -34,7 +34,10 @@ export function DashboardSkeleton() {
 
         {/* Service Checks */}
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="flex items-center justify-between rounded-lg bg-gray-50 p-3">
+          <div
+            key={i}
+            className="flex items-center justify-between rounded-lg bg-gray-50 p-3"
+          >
             <div className="flex items-center space-x-3">
               <div className="h-8 w-8 bg-gray-200 rounded-full" />
               <div className="space-y-1">

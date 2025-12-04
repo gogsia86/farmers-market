@@ -11,6 +11,7 @@
 ### Redundant/Overlapping Routes
 
 #### Farm-Related Routes (CONSOLIDATE)
+
 ```
 ❌ /api/farmer        - Individual farmer operations
 ❌ /api/farmers       - Multiple farmers
@@ -21,6 +22,7 @@
 **Decision:** Merge all into `/api/farms` with proper sub-routes
 
 #### Agricultural Routes (SIMPLIFY)
+
 ```
 ❌ /api/agricultural              - Generic agricultural data
 ❌ /api/agricultural-consciousness - Divine patterns (internal only)
@@ -170,6 +172,7 @@
 ## 🔄 Migration Strategy
 
 ### Phase 1: Analysis & Documentation (Week 1)
+
 - [x] Audit current API routes
 - [x] Document route usage
 - [x] Identify redundancies
@@ -177,6 +180,7 @@
 - [ ] Review with team
 
 ### Phase 2: Create New Consolidated Routes (Week 2)
+
 - [ ] Create `/api/farms` consolidated endpoint
 - [ ] Add proper sub-routes
 - [ ] Implement request validation
@@ -184,18 +188,21 @@
 - [ ] Write tests for new routes
 
 ### Phase 3: Update Client Code (Week 2-3)
+
 - [ ] Update frontend API calls
 - [ ] Update service layer
 - [ ] Update types/interfaces
 - [ ] Test all user flows
 
 ### Phase 4: Deprecate Old Routes (Week 3)
+
 - [ ] Add deprecation warnings to old routes
 - [ ] Log usage of deprecated routes
 - [ ] Monitor for remaining usage
 - [ ] Update documentation
 
 ### Phase 5: Remove Old Routes (Week 4)
+
 - [ ] Remove deprecated routes
 - [ ] Final testing
 - [ ] Update API documentation
@@ -206,6 +213,7 @@
 ## 📝 Detailed Consolidation: Farms
 
 ### Current Structure
+
 ```
 /api/farmer/              # Individual farmer CRUD
 /api/farmers/             # List/search farmers
@@ -214,18 +222,19 @@
 ```
 
 ### New Consolidated Structure
+
 ```typescript
 // GET /api/farms - List all farms
 interface GetFarmsQuery {
   page?: number;
   limit?: number;
   search?: string;
-  status?: 'PENDING' | 'VERIFIED' | 'SUSPENDED';
+  status?: "PENDING" | "VERIFIED" | "SUSPENDED";
   location?: string;
   radius?: number; // miles
   category?: string;
   organic?: boolean;
-  sort?: 'name' | 'rating' | 'distance' | 'created';
+  sort?: "name" | "rating" | "distance" | "created";
 }
 
 // POST /api/farms - Create new farm
@@ -288,7 +297,7 @@ interface GetFarmOrdersQuery {
 interface GetFarmReviewsQuery {
   page?: number;
   limit?: number;
-  sort?: 'recent' | 'rating';
+  sort?: "recent" | "rating";
 }
 
 // POST /api/farms/[id]/verify - Verify farm (admin only)
@@ -396,10 +405,11 @@ export async function GET(request: NextRequest) {
         success: false,
         error: {
           code: "FARMS_FETCH_ERROR",
-          message: error instanceof Error ? error.message : "Failed to fetch farms",
+          message:
+            error instanceof Error ? error.message : "Failed to fetch farms",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -410,8 +420,11 @@ export async function POST(request: NextRequest) {
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json(
-        { success: false, error: { code: "UNAUTHORIZED", message: "Authentication required" } },
-        { status: 401 }
+        {
+          success: false,
+          error: { code: "UNAUTHORIZED", message: "Authentication required" },
+        },
+        { status: 401 },
       );
     }
 
@@ -437,10 +450,11 @@ export async function POST(request: NextRequest) {
         success: false,
         error: {
           code: "FARM_CREATE_ERROR",
-          message: error instanceof Error ? error.message : "Failed to create farm",
+          message:
+            error instanceof Error ? error.message : "Failed to create farm",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -451,6 +465,7 @@ export async function POST(request: NextRequest) {
 ## 📋 Migration Checklist
 
 ### Farm Routes
+
 - [ ] Create `/api/farms/route.ts` (GET, POST)
 - [ ] Create `/api/farms/my/route.ts`
 - [ ] Create `/api/farms/[id]/route.ts` (GET, PUT, DELETE)
@@ -464,16 +479,19 @@ export async function POST(request: NextRequest) {
 - [ ] Remove old routes: `/api/farmer`, `/api/farmers`, `/api/farming`
 
 ### Product Routes
+
 - [ ] Ensure `/api/products/route.ts` follows pattern
 - [ ] Add missing sub-routes
 - [ ] Standardize response format
 
 ### Order Routes
+
 - [ ] Ensure `/api/orders/route.ts` follows pattern
 - [ ] Add missing sub-routes
 - [ ] Standardize response format
 
 ### User Routes
+
 - [ ] Ensure `/api/users/route.ts` follows pattern
 - [ ] Add `/api/users/me` endpoint
 - [ ] Standardize response format
@@ -498,18 +516,22 @@ export async function POST(request: NextRequest) {
 ## 📊 Expected Benefits
 
 ### Developer Experience
+
 - **Before:** Confusion about which endpoint to use
 - **After:** Clear, predictable route structure
 
 ### API Maintenance
+
 - **Before:** 26 top-level API folders
 - **After:** 15 well-organized resource endpoints
 
 ### Documentation
+
 - **Before:** Scattered, inconsistent
 - **After:** Clear OpenAPI/Swagger docs
 
 ### Performance
+
 - **Before:** Multiple similar queries
 - **After:** Optimized, consolidated queries
 

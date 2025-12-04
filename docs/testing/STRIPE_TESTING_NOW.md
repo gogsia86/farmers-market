@@ -18,12 +18,14 @@ cd "M:/Repo/Farmers Market Platform web and app"
 ```
 
 **What happens:**
+
 1. Browser opens automatically
 2. Click "Allow access" button
 3. Return to terminal
 4. Done!
 
 **Verify it worked:**
+
 ```bash
 ./.stripe-cli/stripe config --list
 ```
@@ -63,6 +65,7 @@ STRIPE_WEBHOOK_SECRET=whsec_TEMPORARY
 You need **2 terminal windows:**
 
 #### **Terminal 1 - Dev Server:**
+
 ```bash
 npm run dev:omen
 ```
@@ -70,6 +73,7 @@ npm run dev:omen
 Wait for: `✓ Ready in X.Xs`
 
 #### **Terminal 2 - Webhook Listener:**
+
 ```bash
 ./.stripe-cli/stripe listen --forward-to localhost:3001/api/webhooks/stripe
 ```
@@ -99,6 +103,7 @@ Wait for: `✓ Ready in X.Xs`
 Open a **3rd terminal** and run these tests:
 
 ### **Test 1: Health Check**
+
 ```bash
 curl http://localhost:3001/api/webhooks/stripe
 ```
@@ -110,6 +115,7 @@ curl http://localhost:3001/api/webhooks/stripe
 ---
 
 ### **Test 2: Payment Success**
+
 ```bash
 ./.stripe-cli/stripe trigger payment_intent.succeeded
 ```
@@ -122,6 +128,7 @@ curl http://localhost:3001/api/webhooks/stripe
 ---
 
 ### **Test 3: Payment Failed**
+
 ```bash
 ./.stripe-cli/stripe trigger payment_intent.payment_failed
 ```
@@ -134,6 +141,7 @@ curl http://localhost:3001/api/webhooks/stripe
 ---
 
 ### **Test 4: Refund**
+
 ```bash
 ./.stripe-cli/stripe trigger charge.refunded
 ```
@@ -166,26 +174,34 @@ Mark off as you complete:
 ## 🚨 TROUBLESHOOTING
 
 ### **Issue: Browser doesn't open for login**
+
 **Fix:** Copy the URL from terminal, paste in browser manually
 
 ### **Issue: Webhook shows [401] or [400]**
-**Fix:** 
+
+**Fix:**
+
 1. Make sure you updated webhook secret in .env.local
 2. Make sure you restarted dev server after updating .env.local
 3. Check for typos in the webhook secret
 
 ### **Issue: Can't find stripe command**
+
 **Fix:** Use full path: `./.stripe-cli/stripe`
 
 ### **Issue: Port 3001 already in use**
-**Fix:** 
+
+**Fix:**
+
 ```bash
 npm run kill-server
 # Then try starting dev server again
 ```
 
 ### **Issue: No logs appear in Terminal 1**
+
 **Fix:**
+
 1. Make sure dev server is running (Terminal 1 shows "Ready")
 2. Make sure webhook listener is running (Terminal 2 shows "Ready!")
 3. Check that .env.local has all 3 Stripe variables set
@@ -195,20 +211,24 @@ npm run kill-server
 ## 📊 WHAT YOU'RE TESTING
 
 ### **Health Check**
+
 - Tests that your webhook endpoint is reachable
 - Verifies server is running correctly
 
 ### **Payment Success**
+
 - Simulates a successful payment from a customer
 - Tests order status update to "PAID"
 - Verifies webhook signature validation
 
 ### **Payment Failed**
+
 - Simulates a declined card or failed payment
 - Tests order status update to "FAILED"
 - Tests error handling
 
 ### **Refund**
+
 - Simulates a refund being issued
 - Tests order status update to "REFUNDED"
 - Verifies refund processing logic
@@ -242,12 +262,14 @@ Edit `PRIORITY_2_PROGRESS.md` and mark as 100% complete.
 ## 📞 NEED HELP?
 
 ### **If tests fail:**
+
 1. Check all 3 terminals are running
 2. Verify webhook secret is correct in .env.local
 3. Confirm dev server restarted after updating .env.local
 4. Look for error messages in Terminal 1
 
 ### **If still stuck:**
+
 1. Check `DO_THIS_NOW.md` for detailed guide
 2. Review `PAYMENT_MANUAL_TESTING_GUIDE.md`
 3. Check error messages carefully - they usually tell you what's wrong
@@ -290,6 +312,7 @@ cd "M:/Repo/Farmers Market Platform web and app"
 ## 🎊 WHEN YOU'RE DONE
 
 You'll have:
+
 - ✅ Verified payment processing works
 - ✅ Tested webhook handling
 - ✅ Confirmed error handling

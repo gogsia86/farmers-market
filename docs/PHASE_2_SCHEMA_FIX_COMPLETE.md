@@ -39,7 +39,7 @@ model MonitoringReport {
   avgDurationMs    Float    @default(0) @map("avg_duration_ms")
   successRate      Float    @default(0) @map("success_rate")
   // ... more fields with @map directives
-  
+
   @@map("monitoring_reports")
 }
 ```
@@ -101,17 +101,17 @@ Success Rate: 100.00%
 
 ### Test Coverage by Category
 
-| Category | Tests | Passed | Status |
-|----------|-------|--------|--------|
-| Database Connection | 1 | 1 | ✅ |
-| MonitoringReport CRUD | 4 | 4 | ✅ |
-| WorkflowExecution CRUD | 5 | 5 | ✅ |
-| WorkflowMetrics CRUD | 5 | 5 | ✅ |
-| SystemHealthCheck CRUD | 4 | 4 | ✅ |
-| NotificationLog CRUD | 4 | 4 | ✅ |
-| WorkflowSchedule CRUD | 5 | 5 | ✅ |
-| Complex Queries | 4 | 4 | ✅ |
-| Transaction Handling | 1 | 1 | ✅ |
+| Category               | Tests | Passed | Status |
+| ---------------------- | ----- | ------ | ------ |
+| Database Connection    | 1     | 1      | ✅     |
+| MonitoringReport CRUD  | 4     | 4      | ✅     |
+| WorkflowExecution CRUD | 5     | 5      | ✅     |
+| WorkflowMetrics CRUD   | 5     | 5      | ✅     |
+| SystemHealthCheck CRUD | 4     | 4      | ✅     |
+| NotificationLog CRUD   | 4     | 4      | ✅     |
+| WorkflowSchedule CRUD  | 5     | 5      | ✅     |
+| Complex Queries        | 4     | 4      | ✅     |
+| Transaction Handling   | 1     | 1      | ✅     |
 
 ---
 
@@ -140,7 +140,7 @@ const execution = await database.workflowExecution.create({
     status: "SUCCESS",
     startedAt: new Date(),
     // ... all fields work correctly
-  }
+  },
 });
 ```
 
@@ -149,26 +149,32 @@ const execution = await database.workflowExecution.create({
 ## 🔄 Migration Steps Performed
 
 ### Step 1: Schema Analysis
+
 - Compared SQL table definitions with Prisma models
 - Identified all column name mismatches
 - Documented required mappings
 
 ### Step 2: Prisma Schema Update
+
 - Added `@map("column_name")` directives to all fields
 - Updated table mappings with `@@map("table_name")`
 - Fixed foreign key relations
 - Removed duplicate/leftover model definitions
 
 ### Step 3: Client Regeneration
+
 ```bash
 npx prisma generate
 ```
+
 ✅ Generated successfully without errors
 
 ### Step 4: Comprehensive Testing
+
 ```bash
 npm run test:db-persistence
 ```
+
 ✅ All 33 tests passed
 
 ---
@@ -176,99 +182,106 @@ npm run test:db-persistence
 ## 🎯 Database Schema Mapping Reference
 
 ### MonitoringReport
-| Prisma Field | Database Column | Type |
-|--------------|-----------------|------|
-| reportId | report_id | TEXT |
-| startTime | start_time | TIMESTAMP(3) |
-| endTime | end_time | TIMESTAMP(3) |
-| totalRuns | total_runs | INTEGER |
-| successfulRuns | successful_runs | INTEGER |
-| failedRuns | failed_runs | INTEGER |
-| totalDurationMs | total_duration_ms | INTEGER |
-| avgDurationMs | avg_duration_ms | DOUBLE PRECISION |
-| successRate | success_rate | DOUBLE PRECISION |
-| reportType | report_type | TEXT |
-| generatedAt | generated_at | TIMESTAMP(3) |
-| notifiedAt | notified_at | TIMESTAMP(3) |
-| createdAt | created_at | TIMESTAMP(3) |
-| updatedAt | updated_at | TIMESTAMP(3) |
+
+| Prisma Field    | Database Column   | Type             |
+| --------------- | ----------------- | ---------------- |
+| reportId        | report_id         | TEXT             |
+| startTime       | start_time        | TIMESTAMP(3)     |
+| endTime         | end_time          | TIMESTAMP(3)     |
+| totalRuns       | total_runs        | INTEGER          |
+| successfulRuns  | successful_runs   | INTEGER          |
+| failedRuns      | failed_runs       | INTEGER          |
+| totalDurationMs | total_duration_ms | INTEGER          |
+| avgDurationMs   | avg_duration_ms   | DOUBLE PRECISION |
+| successRate     | success_rate      | DOUBLE PRECISION |
+| reportType      | report_type       | TEXT             |
+| generatedAt     | generated_at      | TIMESTAMP(3)     |
+| notifiedAt      | notified_at       | TIMESTAMP(3)     |
+| createdAt       | created_at        | TIMESTAMP(3)     |
+| updatedAt       | updated_at        | TIMESTAMP(3)     |
 
 ### WorkflowExecution
-| Prisma Field | Database Column | Type |
-|--------------|-----------------|------|
-| runId | run_id | TEXT |
-| workflowName | workflow_name | TEXT |
-| startedAt | started_at | TIMESTAMP(3) |
-| completedAt | completed_at | TIMESTAMP(3) |
-| durationMs | duration_ms | INTEGER |
-| testsPassed | tests_passed | INTEGER |
-| testsFailed | tests_failed | INTEGER |
-| testsTotal | tests_total | INTEGER |
-| errorMessage | error_message | TEXT |
-| errorStack | error_stack | TEXT |
-| triggeredBy | triggered_by | TEXT |
-| reportId | report_id | TEXT |
-| createdAt | created_at | TIMESTAMP(3) |
-| updatedAt | updated_at | TIMESTAMP(3) |
+
+| Prisma Field | Database Column | Type         |
+| ------------ | --------------- | ------------ |
+| runId        | run_id          | TEXT         |
+| workflowName | workflow_name   | TEXT         |
+| startedAt    | started_at      | TIMESTAMP(3) |
+| completedAt  | completed_at    | TIMESTAMP(3) |
+| durationMs   | duration_ms     | INTEGER      |
+| testsPassed  | tests_passed    | INTEGER      |
+| testsFailed  | tests_failed    | INTEGER      |
+| testsTotal   | tests_total     | INTEGER      |
+| errorMessage | error_message   | TEXT         |
+| errorStack   | error_stack     | TEXT         |
+| triggeredBy  | triggered_by    | TEXT         |
+| reportId     | report_id       | TEXT         |
+| createdAt    | created_at      | TIMESTAMP(3) |
+| updatedAt    | updated_at      | TIMESTAMP(3) |
 
 ### WorkflowMetrics
-| Prisma Field | Database Column | Type |
-|--------------|-----------------|------|
-| workflowId | workflow_id | TEXT |
-| metricName | metric_name | TEXT |
-| metricValue | metric_value | DOUBLE PRECISION |
-| metricUnit | metric_unit | TEXT |
-| thresholdValue | threshold_value | DOUBLE PRECISION |
-| isWithinThreshold | is_within_threshold | BOOLEAN |
-| recordedAt | recorded_at | TIMESTAMP(3) |
-| executionId | execution_id | TEXT |
-| createdAt | created_at | TIMESTAMP(3) |
+
+| Prisma Field      | Database Column     | Type             |
+| ----------------- | ------------------- | ---------------- |
+| workflowId        | workflow_id         | TEXT             |
+| metricName        | metric_name         | TEXT             |
+| metricValue       | metric_value        | DOUBLE PRECISION |
+| metricUnit        | metric_unit         | TEXT             |
+| thresholdValue    | threshold_value     | DOUBLE PRECISION |
+| isWithinThreshold | is_within_threshold | BOOLEAN          |
+| recordedAt        | recorded_at         | TIMESTAMP(3)     |
+| executionId       | execution_id        | TEXT             |
+| createdAt         | created_at          | TIMESTAMP(3)     |
 
 ### SystemHealthCheck
-| Prisma Field | Database Column | Type |
-|--------------|-----------------|------|
-| checkId | check_id | TEXT |
-| checkName | check_name | TEXT |
-| responseTimeMs | response_time_ms | INTEGER |
-| checkedAt | checked_at | TIMESTAMP(3) |
-| expectedStatus | expected_status | INTEGER |
-| actualStatus | actual_status | INTEGER |
-| errorMessage | error_message | TEXT |
-| executionId | execution_id | TEXT |
-| createdAt | created_at | TIMESTAMP(3) |
+
+| Prisma Field   | Database Column  | Type         |
+| -------------- | ---------------- | ------------ |
+| checkId        | check_id         | TEXT         |
+| checkName      | check_name       | TEXT         |
+| responseTimeMs | response_time_ms | INTEGER      |
+| checkedAt      | checked_at       | TIMESTAMP(3) |
+| expectedStatus | expected_status  | INTEGER      |
+| actualStatus   | actual_status    | INTEGER      |
+| errorMessage   | error_message    | TEXT         |
+| executionId    | execution_id     | TEXT         |
+| createdAt      | created_at       | TIMESTAMP(3) |
 
 ### NotificationLog
-| Prisma Field | Database Column | Type |
-|--------------|-----------------|------|
-| logId | log_id | TEXT |
-| notificationType | notification_type | TEXT |
-| sentAt | sent_at | TIMESTAMP(3) |
-| deliveryStatus | delivery_status | TEXT |
-| errorMessage | error_message | TEXT |
-| retryCount | retry_count | INTEGER |
-| executionId | execution_id | TEXT |
-| reportId | report_id | TEXT |
-| createdAt | created_at | TIMESTAMP(3) |
+
+| Prisma Field     | Database Column   | Type         |
+| ---------------- | ----------------- | ------------ |
+| logId            | log_id            | TEXT         |
+| notificationType | notification_type | TEXT         |
+| sentAt           | sent_at           | TIMESTAMP(3) |
+| deliveryStatus   | delivery_status   | TEXT         |
+| errorMessage     | error_message     | TEXT         |
+| retryCount       | retry_count       | INTEGER      |
+| executionId      | execution_id      | TEXT         |
+| reportId         | report_id         | TEXT         |
+| createdAt        | created_at        | TIMESTAMP(3) |
 
 ### WorkflowSchedule
-| Prisma Field | Database Column | Type |
-|--------------|-----------------|------|
-| scheduleId | schedule_id | TEXT |
-| workflowName | workflow_name | TEXT |
-| cronExpression | cron_expression | TEXT |
-| lastRunAt | last_run_at | TIMESTAMP(3) |
-| nextRunAt | next_run_at | TIMESTAMP(3) |
-| runCount | run_count | INTEGER |
-| failureCount | failure_count | INTEGER |
-| successCount | success_count | INTEGER |
-| createdAt | created_at | TIMESTAMP(3) |
-| updatedAt | updated_at | TIMESTAMP(3) |
+
+| Prisma Field   | Database Column | Type         |
+| -------------- | --------------- | ------------ |
+| scheduleId     | schedule_id     | TEXT         |
+| workflowName   | workflow_name   | TEXT         |
+| cronExpression | cron_expression | TEXT         |
+| lastRunAt      | last_run_at     | TIMESTAMP(3) |
+| nextRunAt      | next_run_at     | TIMESTAMP(3) |
+| runCount       | run_count       | INTEGER      |
+| failureCount   | failure_count   | INTEGER      |
+| successCount   | success_count   | INTEGER      |
+| createdAt      | created_at      | TIMESTAMP(3) |
+| updatedAt      | updated_at      | TIMESTAMP(3) |
 
 ---
 
 ## 🚀 What's Now Possible
 
 ### 1. ✅ Full Prisma Type Safety
+
 ```typescript
 // IntelliSense works perfectly
 const execution = await database.workflowExecution.findUnique({
@@ -276,8 +289,8 @@ const execution = await database.workflowExecution.findUnique({
   include: {
     report: true,
     workflowMetrics: true,
-    systemHealthChecks: true
-  }
+    systemHealthChecks: true,
+  },
 });
 
 // TypeScript knows all fields and relations
@@ -285,6 +298,7 @@ console.log(execution.workflowName); // ✅ Type-safe
 ```
 
 ### 2. ✅ No More Raw SQL Workarounds
+
 ```typescript
 // All operations work with Prisma ORM
 await database.monitoringReport.create({ data: {...} }); // ✅
@@ -293,6 +307,7 @@ await database.workflowMetrics.update({ where: {...}, data: {...} }); // ✅
 ```
 
 ### 3. ✅ Relations Work Correctly
+
 ```typescript
 // Can now use includes and selects
 const reports = await database.monitoringReport.findMany({
@@ -300,20 +315,21 @@ const reports = await database.monitoringReport.findMany({
     workflowExecutions: {
       include: {
         workflowMetrics: true,
-        notificationLogs: true
-      }
-    }
-  }
+        notificationLogs: true,
+      },
+    },
+  },
 });
 ```
 
 ### 4. ✅ Complex Queries Supported
+
 ```typescript
 // GroupBy, aggregations, etc.
 const stats = await database.workflowExecution.groupBy({
-  by: ['status', 'workflowName'],
+  by: ["status", "workflowName"],
   _count: true,
-  _avg: { durationMs: true }
+  _avg: { durationMs: true },
 });
 ```
 
@@ -322,14 +338,17 @@ const stats = await database.workflowExecution.groupBy({
 ## 📝 Files Modified
 
 ### Core Files
+
 - ✅ `prisma/schema.prisma` - Added @map directives to all monitoring models
 - ✅ `package.json` - Added `test:db-persistence` script
 
 ### New Files Created
+
 - ✅ `scripts/test-db-persistence.ts` - Comprehensive test suite (728 lines)
 - ✅ `docs/PHASE_2_SCHEMA_FIX_COMPLETE.md` - This documentation
 
 ### Generated Files
+
 - ✅ `node_modules/@prisma/client` - Regenerated with correct mappings
 
 ---
@@ -352,16 +371,19 @@ const stats = await database.workflowExecution.groupBy({
 ## 🎯 Next Steps
 
 ### Immediate (Ready Now)
+
 1. ✅ **Update Monitoring Daemon** - Remove raw SQL workarounds, use clean Prisma operations
 2. ✅ **Run Daemon for 24h** - Validate end-to-end with actual scheduled workflows
 3. ✅ **Verify Slack Notifications** - Ensure alerts come from running daemon
 
 ### Short Term
+
 4. **Persist Alert State to DB** - Move alerts from in-memory to database
 5. **Add Monitoring Dashboard** - Build UI to visualize metrics and alerts
 6. **PM2/Systemd Setup** - Productionize process management
 
 ### Phase 3
+
 7. **Real-time WebSocket Updates** - Live dashboard updates
 8. **ML-based Anomaly Detection** - Intelligent alerting
 9. **Multi-environment Support** - Dev, staging, production monitoring
@@ -371,15 +393,19 @@ const stats = await database.workflowExecution.groupBy({
 ## 🎓 Lessons Learned
 
 ### 1. Always Map Schema Differences
+
 When using Prisma with existing databases, **always use @map directives** if naming conventions differ.
 
 ### 2. Test Early and Comprehensively
+
 The comprehensive test suite caught issues early and provided confidence in the fix.
 
 ### 3. Type Safety is Worth It
+
 The effort to fix Prisma mappings pays off with IntelliSense, type safety, and clean code.
 
 ### 4. Document Everything
+
 Clear documentation makes troubleshooting and onboarding much easier.
 
 ---
@@ -395,13 +421,13 @@ Clear documentation makes troubleshooting and onboarding much easier.
 
 ## 🌟 Success Metrics
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| Prisma Errors | Frequent P2022 | None | ✅ 100% |
-| Test Pass Rate | N/A | 33/33 | ✅ 100% |
-| Type Safety | Partial | Full | ✅ 100% |
-| Code Cleanliness | Raw SQL workarounds | Clean Prisma | ✅ Significant |
-| Developer Experience | Poor | Excellent | ✅ Major |
+| Metric               | Before              | After        | Improvement    |
+| -------------------- | ------------------- | ------------ | -------------- |
+| Prisma Errors        | Frequent P2022      | None         | ✅ 100%        |
+| Test Pass Rate       | N/A                 | 33/33        | ✅ 100%        |
+| Type Safety          | Partial             | Full         | ✅ 100%        |
+| Code Cleanliness     | Raw SQL workarounds | Clean Prisma | ✅ Significant |
+| Developer Experience | Poor                | Excellent    | ✅ Major       |
 
 ---
 

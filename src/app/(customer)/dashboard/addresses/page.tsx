@@ -57,11 +57,56 @@ const emptyForm: AddressFormData = {
 };
 
 const US_STATES = [
-  "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
-  "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
-  "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
-  "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
-  "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY",
+  "AL",
+  "AK",
+  "AZ",
+  "AR",
+  "CA",
+  "CO",
+  "CT",
+  "DE",
+  "FL",
+  "GA",
+  "HI",
+  "ID",
+  "IL",
+  "IN",
+  "IA",
+  "KS",
+  "KY",
+  "LA",
+  "ME",
+  "MD",
+  "MA",
+  "MI",
+  "MN",
+  "MS",
+  "MO",
+  "MT",
+  "NE",
+  "NV",
+  "NH",
+  "NJ",
+  "NM",
+  "NY",
+  "NC",
+  "ND",
+  "OH",
+  "OK",
+  "OR",
+  "PA",
+  "RI",
+  "SC",
+  "SD",
+  "TN",
+  "TX",
+  "UT",
+  "VT",
+  "VA",
+  "WA",
+  "WV",
+  "WI",
+  "WY",
 ];
 
 export default function AddressesPage() {
@@ -74,7 +119,10 @@ export default function AddressesPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<AddressFormData>(emptyForm);
   const [submitting, setSubmitting] = useState(false);
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -155,16 +203,24 @@ export default function AddressesPage() {
       if (data.success) {
         setMessage({
           type: "success",
-          text: editingId ? "Address updated successfully!" : "Address added successfully!",
+          text: editingId
+            ? "Address updated successfully!"
+            : "Address added successfully!",
         });
         await fetchAddresses();
         closeModal();
       } else {
-        setMessage({ type: "error", text: data.error || "Failed to save address" });
+        setMessage({
+          type: "error",
+          text: data.error || "Failed to save address",
+        });
       }
     } catch (error) {
       console.error("Address save error:", error);
-      setMessage({ type: "error", text: "An error occurred. Please try again." });
+      setMessage({
+        type: "error",
+        text: "An error occurred. Please try again.",
+      });
     } finally {
       setSubmitting(false);
     }
@@ -175,9 +231,12 @@ export default function AddressesPage() {
     setMessage(null);
 
     try {
-      const response = await fetch(`/api/users/addresses/${addressId}/default`, {
-        method: "PUT",
-      });
+      const response = await fetch(
+        `/api/users/addresses/${addressId}/default`,
+        {
+          method: "PUT",
+        },
+      );
 
       const data = await response.json();
 
@@ -185,11 +244,17 @@ export default function AddressesPage() {
         setMessage({ type: "success", text: "Default address updated!" });
         await fetchAddresses();
       } else {
-        setMessage({ type: "error", text: data.error || "Failed to set default address" });
+        setMessage({
+          type: "error",
+          text: data.error || "Failed to set default address",
+        });
       }
     } catch (error) {
       console.error("Set default error:", error);
-      setMessage({ type: "error", text: "An error occurred. Please try again." });
+      setMessage({
+        type: "error",
+        text: "An error occurred. Please try again.",
+      });
     } finally {
       setSubmitting(false);
     }
@@ -212,11 +277,17 @@ export default function AddressesPage() {
         setMessage({ type: "success", text: "Address deleted successfully!" });
         await fetchAddresses();
       } else {
-        setMessage({ type: "error", text: data.error || "Failed to delete address" });
+        setMessage({
+          type: "error",
+          text: data.error || "Failed to delete address",
+        });
       }
     } catch (error) {
       console.error("Delete error:", error);
-      setMessage({ type: "error", text: "An error occurred. Please try again." });
+      setMessage({
+        type: "error",
+        text: "An error occurred. Please try again.",
+      });
     } finally {
       setSubmitting(false);
     }
@@ -394,7 +465,9 @@ export default function AddressesPage() {
                 <li>• Set a default address for faster checkout</li>
                 <li>• Add multiple addresses for home, work, or gifts</li>
                 <li>• Use descriptive labels to identify addresses easily</li>
-                <li>• Keep your addresses up-to-date for accurate deliveries</li>
+                <li>
+                  • Keep your addresses up-to-date for accurate deliveries
+                </li>
               </ul>
             </div>
           </div>
@@ -579,7 +652,11 @@ export default function AddressesPage() {
                   disabled={submitting}
                   className="btn-green flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {submitting ? "Saving..." : editingId ? "Update Address" : "Add Address"}
+                  {submitting
+                    ? "Saving..."
+                    : editingId
+                      ? "Update Address"
+                      : "Add Address"}
                 </button>
                 <button
                   type="button"
@@ -654,7 +731,9 @@ function AddressCard({
       </div>
 
       {address.label && (
-        <h3 className="text-lg font-bold text-gray-900 mb-2">{address.label}</h3>
+        <h3 className="text-lg font-bold text-gray-900 mb-2">
+          {address.label}
+        </h3>
       )}
 
       <div className="text-gray-700 space-y-1">

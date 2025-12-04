@@ -13,17 +13,21 @@ Complete Docker-based development and production environment for the Farmers Mar
 ## ⚡ Quick Start (30 Seconds)
 
 ### Step 1: Start Docker Desktop
+
 - Open **Docker Desktop** application
 - Wait for it to fully start (whale icon in system tray)
 
 ### Step 2: Launch Platform
+
 ```bash
 DOCKER-START.bat
 ```
+
 - Select **[1] Development Mode**
 - Wait 60 seconds
 
 ### Step 3: Access Application
+
 ```
 http://localhost:3000
 ```
@@ -37,19 +41,25 @@ http://localhost:3000
 We created **3 super easy scripts** for you:
 
 ### 1️⃣ DOCKER-START.bat
+
 **Main launcher** - Start, stop, reset services
+
 ```bash
 DOCKER-START.bat
 ```
 
 ### 2️⃣ DOCKER-LOGS.bat
+
 **Log viewer** - See what's happening in real-time
+
 ```bash
 DOCKER-LOGS.bat
 ```
 
 ### 3️⃣ DOCKER-SHELL.bat
+
 **Shell access** - Run commands, migrations, open Prisma Studio
+
 ```bash
 DOCKER-SHELL.bat
 ```
@@ -58,13 +68,13 @@ DOCKER-SHELL.bat
 
 ## 🌐 Access Points (After Starting)
 
-| Service | URL | Purpose |
-|---------|-----|---------|
-| **Application** | http://localhost:3000 | Main platform |
-| **Admin Login** | http://localhost:3000/admin-login | Admin panel |
-| **Adminer** | http://localhost:8080 | Database UI |
-| **Redis Commander** | http://localhost:8081 | Cache UI |
-| **MailHog** | http://localhost:8025 | Email testing |
+| Service             | URL                               | Purpose       |
+| ------------------- | --------------------------------- | ------------- |
+| **Application**     | http://localhost:3000             | Main platform |
+| **Admin Login**     | http://localhost:3000/admin-login | Admin panel   |
+| **Adminer**         | http://localhost:8080             | Database UI   |
+| **Redis Commander** | http://localhost:8081             | Cache UI      |
+| **MailHog**         | http://localhost:8025             | Email testing |
 
 ---
 
@@ -81,32 +91,35 @@ Use these at: http://localhost:3000/admin-login
 
 ## 📦 What's Running in Docker?
 
-| Container | Port | Service |
-|-----------|------|---------|
-| `farmers-market-dev` | 3001 | Next.js App (hot-reload) |
-| `farmers-market-db-dev` | 5432 | PostgreSQL + PostGIS |
-| `farmers-market-redis-dev` | 6379 | Redis Cache |
-| `farmers-market-mailhog` | 8025 | Email Testing |
-| `farmers-market-adminer` | 8080 | Database Admin |
-| `farmers-market-redis-commander` | 8081 | Redis Admin |
+| Container                        | Port | Service                  |
+| -------------------------------- | ---- | ------------------------ |
+| `farmers-market-dev`             | 3001 | Next.js App (hot-reload) |
+| `farmers-market-db-dev`          | 5432 | PostgreSQL + PostGIS     |
+| `farmers-market-redis-dev`       | 6379 | Redis Cache              |
+| `farmers-market-mailhog`         | 8025 | Email Testing            |
+| `farmers-market-adminer`         | 8080 | Database Admin           |
+| `farmers-market-redis-commander` | 8081 | Redis Admin              |
 
 ---
 
 ## 🛠️ Common Tasks
 
 ### Start Development
+
 ```bash
 DOCKER-START.bat
 → [1] Development Mode
 ```
 
 ### View Logs
+
 ```bash
 DOCKER-LOGS.bat
 → Select service
 ```
 
 ### Database Operations
+
 ```bash
 DOCKER-SHELL.bat
 → [4] Quick Commands
@@ -114,12 +127,14 @@ DOCKER-SHELL.bat
 ```
 
 ### Stop Services
+
 ```bash
 DOCKER-START.bat
 → [3] Stop All Services
 ```
 
 ### Fresh Start (Delete All Data)
+
 ```bash
 DOCKER-START.bat
 → [4] Full Reset
@@ -154,6 +169,7 @@ docker ps
 ## 💡 Development Workflow
 
 1. **Start Services**
+
    ```bash
    DOCKER-START.bat → [1] Development Mode
    ```
@@ -161,6 +177,7 @@ docker ps
 2. **Wait 60 Seconds** (for all services to start)
 
 3. **Open & Login**
+
    ```
    http://localhost:3000/admin-login
    gogsia@gmail.com / Admin123!
@@ -180,10 +197,13 @@ docker ps
 ## 🐛 Troubleshooting
 
 ### "Docker Desktop is not running"
+
 **Solution:** Open Docker Desktop, wait for startup, try again
 
 ### "Port already in use"
-**Solution:** 
+
+**Solution:**
+
 ```bash
 # Check what's using the port
 netstat -ano | findstr :3000
@@ -191,13 +211,17 @@ netstat -ano | findstr :3000
 ```
 
 ### "Admin routes show 404"
+
 **This is normal!** You need to authenticate first:
+
 1. Go to: http://localhost:3000/admin-login
 2. Sign in: `gogsia@gmail.com` / `Admin123!`
 3. Admin routes now work! ✅
 
 ### "Container keeps restarting"
+
 **Solution:**
+
 ```bash
 # Check logs
 DOCKER-LOGS.bat
@@ -206,7 +230,9 @@ DOCKER-LOGS.bat
 ```
 
 ### "Hot-reload not working"
+
 **Solution:**
+
 ```bash
 docker restart farmers-market-dev
 ```
@@ -215,12 +241,12 @@ docker restart farmers-market-dev
 
 ## 📚 Documentation
 
-| File | Purpose |
-|------|---------|
-| `DOCKER-COMPLETE-SETUP.md` | Complete setup guide |
-| `DOCKER-GUIDE.md` | Comprehensive Docker documentation |
-| `DOCKER-QUICK-REFERENCE.txt` | Command cheat sheet |
-| `AUTHENTICATION-GUIDE.md` | Auth setup & troubleshooting |
+| File                         | Purpose                            |
+| ---------------------------- | ---------------------------------- |
+| `DOCKER-COMPLETE-SETUP.md`   | Complete setup guide               |
+| `DOCKER-GUIDE.md`            | Comprehensive Docker documentation |
+| `DOCKER-QUICK-REFERENCE.txt` | Command cheat sheet                |
+| `AUTHENTICATION-GUIDE.md`    | Auth setup & troubleshooting       |
 
 ---
 
@@ -244,7 +270,7 @@ After running Docker setup:
 ✅ **Complete stack** - DB, cache, email testing, admin UIs  
 ✅ **Easy to reset** - Fresh start anytime  
 ✅ **Production ready** - Same setup works everywhere  
-✅ **Helper scripts** - Interactive menus make it easy  
+✅ **Helper scripts** - Interactive menus make it easy
 
 ---
 

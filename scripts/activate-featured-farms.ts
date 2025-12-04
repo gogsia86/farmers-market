@@ -27,7 +27,7 @@ interface FarmStats {
 
 async function activateFeaturedFarms() {
   console.log(chalk.cyan.bold("\n🌟 FEATURED FARMS ACTIVATION SCRIPT"));
-  console.log(chalk.cyan(`${"═".repeat(60)  }\n`));
+  console.log(chalk.cyan(`${"═".repeat(60)}\n`));
 
   const stats: FarmStats = {
     totalFarms: 0,
@@ -99,7 +99,7 @@ async function activateFeaturedFarms() {
       }
     });
 
-    console.log(chalk.cyan(`\n${  "─".repeat(60)  }\n`));
+    console.log(chalk.cyan(`\n${"─".repeat(60)}\n`));
 
     // Step 2: Find farms that need activation
     const farmsToActivate = allFarms.filter(
@@ -244,9 +244,9 @@ async function activateFeaturedFarms() {
     }
 
     // Step 5: Display summary
-    console.log(chalk.cyan(`\n${  "═".repeat(60)}`));
+    console.log(chalk.cyan(`\n${"═".repeat(60)}`));
     console.log(chalk.cyan.bold("📊 SUMMARY"));
-    console.log(chalk.cyan(`${"═".repeat(60)  }\n`));
+    console.log(chalk.cyan(`${"═".repeat(60)}\n`));
 
     console.log(chalk.white(`Total Farms:           ${stats.totalFarms}`));
     console.log(
@@ -261,7 +261,7 @@ async function activateFeaturedFarms() {
     );
     console.log(chalk.yellow(`Farms Activated:       ${stats.updated}`));
 
-    console.log(chalk.cyan(`\n${  "═".repeat(60)}`));
+    console.log(chalk.cyan(`\n${"═".repeat(60)}`));
     console.log(chalk.green.bold("\n✅ SUCCESS! Featured farms are ready!\n"));
 
     console.log(chalk.yellow("🎯 Next Steps:\n"));

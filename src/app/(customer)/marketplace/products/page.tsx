@@ -8,6 +8,9 @@ import {
   generateMetadata as generateMeta,
   generateOrganizationJsonLd,
 } from "@/lib/utils/metadata";
+import { MarketplaceSearch } from "@/components/marketplace/MarketplaceSearch";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { ShoppingCart as ShoppingCartIcon } from "lucide-react";
 
 /**
  * 🛒 MARKETPLACE PRODUCTS PAGE - Server Component
@@ -110,38 +113,49 @@ export default async function MarketplaceProductsPage() {
           </div>
         </section>
 
+        {/* Search Section */}
+        <section className="py-8 bg-white border-b border-gray-200">
+          <div className="container mx-auto px-4">
+            <div className="max-w-7xl mx-auto">
+              <MarketplaceSearch
+                type="products"
+                showFilters={true}
+                placeholder="Search fresh tomatoes, organic honey, free-range eggs..."
+              />
+            </div>
+          </div>
+        </section>
+
         {/* Products Grid */}
         <section className="py-16">
           <div className="container mx-auto px-4">
             <div className="max-w-7xl mx-auto">
               {products.length === 0 ? (
-                <div className="text-center py-16">
-                  <p className="text-xl text-muted-foreground mb-4">
-                    No products available at the moment
-                  </p>
-                  <p className="text-muted-foreground mb-6">
-                    Check back soon for fresh seasonal products!
-                  </p>
-                  <Button asChild>
-                    <Link href="/marketplace/farms">Browse Farms Instead</Link>
-                  </Button>
-                </div>
+                <EmptyState
+                  icon={ShoppingCartIcon}
+                  title="No Products Available"
+                  description="We couldn't find any products at the moment."
+                  secondaryDescription="Check back soon for fresh seasonal products!"
+                  action={{
+                    label: "Browse Farms",
+                    href: "/marketplace/farms",
+                  }}
+                  secondaryAction={{
+                    label: "Back to Home",
+                    href: "/",
+                    variant: "outline",
+                  }}
+                  size="lg"
+                  showDecoration
+                />
               ) : (
                 <>
-                  <div className="flex items-center justify-between mb-8">
+                  <div className="mb-8">
                     <div>
                       <p className="text-lg text-muted-foreground">
                         Showing {products.length}{" "}
                         {products.length === 1 ? "product" : "products"}
                       </p>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm">
-                        Filters
-                      </Button>
-                      <Button variant="outline" size="sm">
-                        Sort
-                      </Button>
                     </div>
                   </div>
 

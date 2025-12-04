@@ -17,6 +17,7 @@ cd "M:/Repo/Farmers Market Platform web and app"
 ```
 
 **What happens**:
+
 1. Browser opens automatically
 2. Stripe dashboard appears
 3. Click **"Allow access"** button
@@ -24,6 +25,7 @@ cd "M:/Repo/Farmers Market Platform web and app"
 5. See: "Done! The Stripe CLI is configured..."
 
 **Verify it worked**:
+
 ```bash
 ./.stripe-cli/stripe config --list
 ```
@@ -45,7 +47,7 @@ You should see your account email and device name.
    - Copy the entire key
 
 2. **Secret key** (starts with `sk_test_`)
-   - Click "Reveal test key" 
+   - Click "Reveal test key"
    - Copy the entire key
 
 **Keep these keys handy** - you'll paste them in the next step.
@@ -88,6 +90,7 @@ npm run dev:omen
 ```
 
 **Wait for**:
+
 ```
 ✓ Ready in X.Xs
 ○ Local:   http://localhost:3001
@@ -96,13 +99,15 @@ npm run dev:omen
 **Test it's working**:
 
 Open **NEW terminal** and run:
+
 ```bash
 curl http://localhost:3001/api/webhooks/stripe
 ```
 
 **Expected response**:
+
 ```json
-{"status":"ok","message":"Stripe webhook endpoint is active"}
+{ "status": "ok", "message": "Stripe webhook endpoint is active" }
 ```
 
 ✅ If you see this, the server is working!
@@ -121,6 +126,7 @@ cd "M:/Repo/Farmers Market Platform web and app"
 ```
 
 **Expected output**:
+
 ```
 > Ready! Your webhook signing secret is whsec_xxxxxxxxxxxxxxxxxxxxx (this is your webhook signing secret)
 ```
@@ -142,6 +148,7 @@ cd "M:/Repo/Farmers Market Platform web and app"
 5. **Save** the file
 
 **Now restart the dev server**:
+
 - Go to **Terminal 1**
 - Press `Ctrl+C` to stop the server
 - Run `npm run dev:omen` again
@@ -161,12 +168,14 @@ cd "M:/Repo/Farmers Market Platform web and app"
 **Watch what happens**:
 
 **Terminal 2** should show:
+
 ```
 --> payment_intent.succeeded [evt_xxxxx]
 <-- [200] POST http://localhost:3001/api/webhooks/stripe [evt_xxxxx]
 ```
 
 **Terminal 1** should show:
+
 ```
 Payment successful for order xxx { paymentIntentId: 'pi_xxx', amount: 50.00 }
 ```
@@ -186,6 +195,7 @@ Payment successful for order xxx { paymentIntentId: 'pi_xxx', amount: 50.00 }
 **Choose option 5**: "Run All Tests"
 
 This will test:
+
 - ✅ Health check
 - ✅ Payment success
 - ✅ Payment failed
@@ -200,11 +210,11 @@ This will test:
 
 You should have **3 terminals open**:
 
-| Terminal | Running | Purpose |
-|----------|---------|---------|
-| **Terminal 1** | `npm run dev:omen` | Development server |
+| Terminal       | Running                                                         | Purpose            |
+| -------------- | --------------------------------------------------------------- | ------------------ |
+| **Terminal 1** | `npm run dev:omen`                                              | Development server |
 | **Terminal 2** | `stripe listen --forward-to localhost:3001/api/webhooks/stripe` | Webhook forwarding |
-| **Terminal 3** | (Free for commands) | Run test commands |
+| **Terminal 3** | (Free for commands)                                             | Run test commands  |
 
 ---
 
@@ -212,7 +222,8 @@ You should have **3 terminals open**:
 
 ### Problem: Browser doesn't open in Step 1
 
-**Solution**: 
+**Solution**:
+
 - Copy the URL from the terminal
 - Paste it in your browser manually
 - Complete authentication
@@ -221,6 +232,7 @@ You should have **3 terminals open**:
 ### Problem: "stripe: command not found" in Step 1
 
 **Solution**: Use the full path:
+
 ```bash
 ./.stripe-cli/stripe login
 ```
@@ -228,6 +240,7 @@ You should have **3 terminals open**:
 ### Problem: Health check fails in Step 4
 
 **Solution**:
+
 - Check if port 3001 is in use: `netstat -ano | findstr :3001`
 - Make sure dev server shows "✓ Ready"
 - Try restarting the dev server
@@ -235,6 +248,7 @@ You should have **3 terminals open**:
 ### Problem: Webhook shows [401] or [400] in Step 7
 
 **Solution**:
+
 - Verify webhook secret in `.env.local` matches Terminal 2 output
 - Make sure you restarted dev server after updating `.env.local`
 - Check for extra spaces or quotes around the webhook secret
@@ -242,6 +256,7 @@ You should have **3 terminals open**:
 ### Problem: No logs appear in Terminal 1
 
 **Solution**:
+
 1. Check Terminal 2 shows "Ready!" and webhook secret
 2. Verify dev server is running (Terminal 1)
 3. Make sure `.env.local` has all three Stripe variables set
@@ -275,6 +290,7 @@ Mark these off as you complete them:
 ```
 
 **Then you're ready for**:
+
 - Priority 3: Integration Tests
 - Priority 4: E2E Tests with Playwright
 
@@ -283,6 +299,7 @@ Mark these off as you complete them:
 ## 📚 REFERENCE DOCS
 
 Quick access:
+
 - `STRIPE_TESTING_COMMANDS.md` - All test commands
 - `PRIORITY_2_PROGRESS.md` - Detailed progress tracker
 - `PAYMENT_MANUAL_TESTING_GUIDE.md` - Comprehensive guide

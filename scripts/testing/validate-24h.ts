@@ -90,14 +90,24 @@ class ValidationTracker {
     }
 
     this.running = true;
-    console.log("\n╔════════════════════════════════════════════════════════════╗");
-    console.log("║  🌾 24-HOUR VALIDATION RUN STARTED                        ║");
-    console.log("╠════════════════════════════════════════════════════════════╣");
+    console.log(
+      "\n╔════════════════════════════════════════════════════════════╗",
+    );
+    console.log(
+      "║  🌾 24-HOUR VALIDATION RUN STARTED                        ║",
+    );
+    console.log(
+      "╠════════════════════════════════════════════════════════════╣",
+    );
     console.log(`║  Start Time: ${this.startTime.toISOString()}`);
     console.log(`║  End Time:   ${this.getEndTime().toISOString()}`);
     console.log(`║  Duration:   ${VALIDATION_CONFIG.durationHours} hours`);
-    console.log(`║  Checkpoints: Every ${VALIDATION_CONFIG.checkpointIntervalMinutes} minutes`);
-    console.log("╚════════════════════════════════════════════════════════════╝\n");
+    console.log(
+      `║  Checkpoints: Every ${VALIDATION_CONFIG.checkpointIntervalMinutes} minutes`,
+    );
+    console.log(
+      "╚════════════════════════════════════════════════════════════╝\n",
+    );
 
     // Ensure directories exist
     await this.setupDirectories();
@@ -123,7 +133,9 @@ class ValidationTracker {
     this.setupShutdownHandlers();
 
     console.log("✅ Validation tracking started successfully");
-    console.log(`📊 Progress will be logged every ${VALIDATION_CONFIG.checkpointIntervalMinutes} minutes`);
+    console.log(
+      `📊 Progress will be logged every ${VALIDATION_CONFIG.checkpointIntervalMinutes} minutes`,
+    );
     console.log("💡 Press Ctrl+C to stop and generate interim report\n");
   }
 
@@ -131,7 +143,9 @@ class ValidationTracker {
    * Record a validation checkpoint
    */
   private async recordCheckpoint(): Promise<void> {
-    console.log(`\n⏰ Recording checkpoint ${this.currentHour + 1}/${VALIDATION_CONFIG.durationHours}...`);
+    console.log(
+      `\n⏰ Recording checkpoint ${this.currentHour + 1}/${VALIDATION_CONFIG.durationHours}...`,
+    );
 
     try {
       const stats = await this.collectStats();
@@ -195,7 +209,9 @@ class ValidationTracker {
       });
 
       // Calculate metrics
-      const successful = executions.filter((e) => e.status === "SUCCESS").length;
+      const successful = executions.filter(
+        (e) => e.status === "SUCCESS",
+      ).length;
       const failed = executions.filter((e) => e.status === "FAILED").length;
       const avgResponseTime =
         executions.length > 0
@@ -239,7 +255,9 @@ class ValidationTracker {
   /**
    * Detect issues based on statistics
    */
-  private async detectIssues(stats: ValidationCheckpoint["stats"]): Promise<string[]> {
+  private async detectIssues(
+    stats: ValidationCheckpoint["stats"],
+  ): Promise<string[]> {
     const issues: string[] = [];
 
     // Check success rate
@@ -256,23 +274,17 @@ class ValidationTracker {
 
     // Check response time
     if (stats.avgResponseTime > 5000) {
-      issues.push(
-        `⚠️  High average response time: ${stats.avgResponseTime}ms`,
-      );
+      issues.push(`⚠️  High average response time: ${stats.avgResponseTime}ms`);
     }
 
     // Check health checks
     if (stats.healthChecksFailed > 0) {
-      issues.push(
-        `⚠️  Health checks failed: ${stats.healthChecksFailed}`,
-      );
+      issues.push(`⚠️  Health checks failed: ${stats.healthChecksFailed}`);
     }
 
     // Check for excessive alerts
     if (stats.alertsTriggered > 10) {
-      issues.push(
-        `⚠️  High number of alerts: ${stats.alertsTriggered}`,
-      );
+      issues.push(`⚠️  High number of alerts: ${stats.alertsTriggered}`);
     }
 
     // Check for no activity
@@ -299,7 +311,9 @@ class ValidationTracker {
 
     // Recommendations based on issues
     if (stats.failedExecutions > stats.successfulExecutions) {
-      recommendations.push("🔧 Review failed workflow logs and add error handling");
+      recommendations.push(
+        "🔧 Review failed workflow logs and add error handling",
+      );
     }
 
     if (stats.avgResponseTime > 5000) {
@@ -307,7 +321,9 @@ class ValidationTracker {
     }
 
     if (stats.healthChecksFailed > 0) {
-      recommendations.push("🏥 Investigate health check failures and dependencies");
+      recommendations.push(
+        "🏥 Investigate health check failures and dependencies",
+      );
     }
 
     if (stats.alertsTriggered > 10) {
@@ -315,7 +331,9 @@ class ValidationTracker {
     }
 
     if (stats.totalExecutions === 0) {
-      recommendations.push("🚨 Check if daemon is running: npm run monitor:daemon");
+      recommendations.push(
+        "🚨 Check if daemon is running: npm run monitor:daemon",
+      );
     }
 
     return recommendations;
@@ -325,15 +343,31 @@ class ValidationTracker {
    * Display checkpoint summary
    */
   private displayCheckpoint(checkpoint: ValidationCheckpoint): void {
-    console.log("┌────────────────────────────────────────────────────────────┐");
-    console.log(`│  Checkpoint #${checkpoint.hour + 1} - ${checkpoint.timestamp.toLocaleString()}`);
-    console.log("├────────────────────────────────────────────────────────────┤");
-    console.log(`│  Executions:     ${checkpoint.stats.totalExecutions} total (${checkpoint.stats.successfulExecutions} ✓ / ${checkpoint.stats.failedExecutions} ✗)`);
-    console.log(`│  Success Rate:   ${this.calculateSuccessRate(checkpoint.stats).toFixed(2)}%`);
+    console.log(
+      "┌────────────────────────────────────────────────────────────┐",
+    );
+    console.log(
+      `│  Checkpoint #${checkpoint.hour + 1} - ${checkpoint.timestamp.toLocaleString()}`,
+    );
+    console.log(
+      "├────────────────────────────────────────────────────────────┤",
+    );
+    console.log(
+      `│  Executions:     ${checkpoint.stats.totalExecutions} total (${checkpoint.stats.successfulExecutions} ✓ / ${checkpoint.stats.failedExecutions} ✗)`,
+    );
+    console.log(
+      `│  Success Rate:   ${this.calculateSuccessRate(checkpoint.stats).toFixed(2)}%`,
+    );
     console.log(`│  Response Time:  ${checkpoint.stats.avgResponseTime}ms avg`);
-    console.log(`│  Health Checks:  ${checkpoint.stats.healthChecksPassed} passed / ${checkpoint.stats.healthChecksFailed} failed`);
-    console.log(`│  Notifications:  ${checkpoint.stats.notificationsSent} sent (${checkpoint.stats.alertsTriggered} alerts)`);
-    console.log("├────────────────────────────────────────────────────────────┤");
+    console.log(
+      `│  Health Checks:  ${checkpoint.stats.healthChecksPassed} passed / ${checkpoint.stats.healthChecksFailed} failed`,
+    );
+    console.log(
+      `│  Notifications:  ${checkpoint.stats.notificationsSent} sent (${checkpoint.stats.alertsTriggered} alerts)`,
+    );
+    console.log(
+      "├────────────────────────────────────────────────────────────┤",
+    );
 
     if (checkpoint.issues.length > 0) {
       console.log("│  Issues:");
@@ -344,7 +378,9 @@ class ValidationTracker {
       console.log("│  ✅ No issues detected");
     }
 
-    console.log("└────────────────────────────────────────────────────────────┘");
+    console.log(
+      "└────────────────────────────────────────────────────────────┘",
+    );
   }
 
   /**
@@ -358,24 +394,28 @@ class ValidationTracker {
   /**
    * Save checkpoint to file
    */
-  private async saveCheckpoint(checkpoint: ValidationCheckpoint): Promise<void> {
+  private async saveCheckpoint(
+    checkpoint: ValidationCheckpoint,
+  ): Promise<void> {
     const filename = `checkpoint-${checkpoint.hour.toString().padStart(2, "0")}.json`;
     const filepath = path.join(VALIDATION_CONFIG.logsDir, filename);
 
-    await fs.writeFile(
-      filepath,
-      JSON.stringify(checkpoint, null, 2),
-      "utf-8",
-    );
+    await fs.writeFile(filepath, JSON.stringify(checkpoint, null, 2), "utf-8");
   }
 
   /**
    * Complete validation and generate final report
    */
   private async complete(): Promise<void> {
-    console.log("\n╔════════════════════════════════════════════════════════════╗");
-    console.log("║  🎉 24-HOUR VALIDATION RUN COMPLETED                      ║");
-    console.log("╚════════════════════════════════════════════════════════════╝\n");
+    console.log(
+      "\n╔════════════════════════════════════════════════════════════╗",
+    );
+    console.log(
+      "║  🎉 24-HOUR VALIDATION RUN COMPLETED                      ║",
+    );
+    console.log(
+      "╚════════════════════════════════════════════════════════════╝\n",
+    );
 
     if (this.checkpointInterval) {
       clearInterval(this.checkpointInterval);
@@ -393,7 +433,9 @@ class ValidationTracker {
     await this.saveReport(report);
 
     console.log("\n✅ Validation complete! Report saved to:");
-    console.log(`   ${VALIDATION_CONFIG.reportsDir}/validation-report-${this.getTimestamp()}.json`);
+    console.log(
+      `   ${VALIDATION_CONFIG.reportsDir}/validation-report-${this.getTimestamp()}.json`,
+    );
 
     process.exit(0);
   }
@@ -403,7 +445,9 @@ class ValidationTracker {
    */
   private async generateReport(): Promise<ValidationReport> {
     const now = new Date();
-    const duration = this.formatDuration(now.getTime() - this.startTime.getTime());
+    const duration = this.formatDuration(
+      now.getTime() - this.startTime.getTime(),
+    );
 
     // Calculate overall metrics
     let totalExecutions = 0;
@@ -417,11 +461,15 @@ class ValidationTracker {
       successfulExecutions += checkpoint.stats.successfulExecutions;
       totalResponseTime += checkpoint.stats.avgResponseTime;
       totalIssues += checkpoint.issues.length;
-      criticalIssues += checkpoint.issues.filter((i) => i.includes("CRITICAL")).length;
+      criticalIssues += checkpoint.issues.filter((i) =>
+        i.includes("CRITICAL"),
+      ).length;
     });
 
     const overallSuccessRate =
-      totalExecutions > 0 ? (successfulExecutions / totalExecutions) * 100 : 100;
+      totalExecutions > 0
+        ? (successfulExecutions / totalExecutions) * 100
+        : 100;
     const avgResponseTime =
       this.checkpoints.length > 0
         ? totalResponseTime / this.checkpoints.length
@@ -429,27 +477,35 @@ class ValidationTracker {
 
     // Calculate uptime (assume 100% if no critical issues with no executions)
     const uptimePercentage =
-      this.checkpoints.filter((c) => c.stats.totalExecutions > 0).length /
-        this.checkpoints.length *
+      (this.checkpoints.filter((c) => c.stats.totalExecutions > 0).length /
+        this.checkpoints.length) *
       100;
 
     // Calculate stability score (0-100)
     const stabilityScore = Math.round(
-      (overallSuccessRate * 0.4 + uptimePercentage * 0.3 + (100 - Math.min(totalIssues * 5, 100)) * 0.3),
+      overallSuccessRate * 0.4 +
+        uptimePercentage * 0.3 +
+        (100 - Math.min(totalIssues * 5, 100)) * 0.3,
     );
 
     // Generate recommendations
     const recommendations: string[] = [];
     if (overallSuccessRate < VALIDATION_CONFIG.stabilityThreshold) {
-      recommendations.push("⚠️  Success rate below production threshold - review error logs");
+      recommendations.push(
+        "⚠️  Success rate below production threshold - review error logs",
+      );
     }
     if (criticalIssues > 0) {
-      recommendations.push("🚨 Address critical issues before production deployment");
+      recommendations.push(
+        "🚨 Address critical issues before production deployment",
+      );
     }
     if (stabilityScore >= VALIDATION_CONFIG.stabilityThreshold) {
       recommendations.push("✅ System is stable and ready for production");
     } else {
-      recommendations.push("⚠️  Additional testing and fixes recommended before production");
+      recommendations.push(
+        "⚠️  Additional testing and fixes recommended before production",
+      );
     }
 
     const productionReady =
@@ -480,25 +536,43 @@ class ValidationTracker {
    * Display final report
    */
   private displayReport(report: ValidationReport): void {
-    console.log("\n╔════════════════════════════════════════════════════════════╗");
-    console.log("║  📊 VALIDATION REPORT SUMMARY                             ║");
-    console.log("╠════════════════════════════════════════════════════════════╣");
+    console.log(
+      "\n╔════════════════════════════════════════════════════════════╗",
+    );
+    console.log(
+      "║  📊 VALIDATION REPORT SUMMARY                             ║",
+    );
+    console.log(
+      "╠════════════════════════════════════════════════════════════╣",
+    );
     console.log(`║  Duration:        ${report.duration}`);
     console.log(`║  Checkpoints:     ${report.totalCheckpoints}`);
-    console.log("╠════════════════════════════════════════════════════════════╣");
+    console.log(
+      "╠════════════════════════════════════════════════════════════╣",
+    );
     console.log(`║  Success Rate:    ${report.summary.overallSuccessRate}%`);
     console.log(`║  Avg Response:    ${report.summary.avgResponseTime}ms`);
     console.log(`║  Uptime:          ${report.summary.uptimePercentage}%`);
-    console.log(`║  Total Issues:    ${report.summary.totalIssues} (${report.summary.criticalIssues} critical)`);
+    console.log(
+      `║  Total Issues:    ${report.summary.totalIssues} (${report.summary.criticalIssues} critical)`,
+    );
     console.log(`║  Stability Score: ${report.summary.stabilityScore}/100`);
-    console.log("╠════════════════════════════════════════════════════════════╣");
-    console.log(`║  Production Ready: ${report.productionReady ? "✅ YES" : "⚠️  NO"}`);
-    console.log("╠════════════════════════════════════════════════════════════╣");
+    console.log(
+      "╠════════════════════════════════════════════════════════════╣",
+    );
+    console.log(
+      `║  Production Ready: ${report.productionReady ? "✅ YES" : "⚠️  NO"}`,
+    );
+    console.log(
+      "╠════════════════════════════════════════════════════════════╣",
+    );
     console.log("║  Recommendations:");
     report.recommendations.forEach((rec) => {
       console.log(`║    ${rec}`);
     });
-    console.log("╚════════════════════════════════════════════════════════════╝");
+    console.log(
+      "╚════════════════════════════════════════════════════════════╝",
+    );
   }
 
   /**
@@ -511,7 +585,10 @@ class ValidationTracker {
     await fs.writeFile(filepath, JSON.stringify(report, null, 2), "utf-8");
 
     // Also save as latest
-    const latestPath = path.join(VALIDATION_CONFIG.reportsDir, "validation-latest.json");
+    const latestPath = path.join(
+      VALIDATION_CONFIG.reportsDir,
+      "validation-latest.json",
+    );
     await fs.writeFile(latestPath, JSON.stringify(report, null, 2), "utf-8");
   }
 
@@ -550,7 +627,8 @@ class ValidationTracker {
    */
   private getEndTime(): Date {
     return new Date(
-      this.startTime.getTime() + VALIDATION_CONFIG.durationHours * 60 * 60 * 1000,
+      this.startTime.getTime() +
+        VALIDATION_CONFIG.durationHours * 60 * 60 * 1000,
     );
   }
 

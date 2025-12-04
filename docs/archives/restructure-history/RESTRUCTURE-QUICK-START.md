@@ -9,6 +9,7 @@
 ## 📊 WHAT'S THE PROBLEM?
 
 Your repository has grown organically and accumulated:
+
 - 🔴 **20 markdown files in root** (should be 2-3)
 - 🔴 **369 total markdown files** (excessive documentation sprawl)
 - 🟡 **9 duplicate cleanup scripts** (redundancy)
@@ -27,20 +28,23 @@ Your repository has grown organically and accumulated:
 **Reversible:** Yes (git revert)
 
 **Run this command:**
+
 ```powershell
 cd "Farmers Market Platform web and app"
 pwsh scripts/restructure-phase1-archive.ps1
 ```
 
 **What it does:**
+
 - Creates `/docs/09-archives/` structure
 - Moves 100-PERCENT-READY.md, ACTION-NOW.md, etc. → archives
-- Moves CLEANUP_*.md → archives/reports/cleanup/
-- Moves all PHASE_*.md docs → archives/phases/
+- Moves CLEANUP\_\*.md → archives/reports/cleanup/
+- Moves all PHASE\_\*.md docs → archives/phases/
 - Creates README files in archives
 - Commits to git
 
 **Dry run first (to see what would happen):**
+
 ```powershell
 pwsh scripts/restructure-phase1-archive.ps1 -DryRun
 ```
@@ -139,12 +143,14 @@ git commit -m "refactor: consolidate 9 cleanup scripts into 2 master scripts"
 ## 📋 BEFORE YOU START
 
 ### Prerequisites
+
 - [ ] Git installed
 - [ ] PowerShell 5.1+ (Windows) or pwsh (cross-platform)
 - [ ] Uncommitted changes committed or stashed
 - [ ] 2-3 hours of time
 
 ### Safety Checklist
+
 - [ ] Create backup branch: `git checkout -b restructure-backup`
 - [ ] Test build works: `npm run build`
 - [ ] Test tests pass: `npm run test`
@@ -154,29 +160,34 @@ git commit -m "refactor: consolidate 9 cleanup scripts into 2 master scripts"
 ## 🎯 EXECUTION PLAN
 
 ### Step 1: Dry Run (5 min)
+
 ```bash
 # See what Phase 1 would do without making changes
 pwsh scripts/restructure-phase1-archive.ps1 -DryRun
 ```
 
 ### Step 2: Execute Phase 1 (1 hour)
+
 ```bash
 # Archive historical documents
 pwsh scripts/restructure-phase1-archive.ps1
 ```
 
 ### Step 3: Execute Priority 2 (1 hour)
+
 ```bash
 # Follow manual steps above for root cleanup
 # Or wait for automated script (coming soon)
 ```
 
 ### Step 4: Execute Priority 3 (30 min)
+
 ```bash
 # Follow manual steps above for script consolidation
 ```
 
 ### Step 5: Verify (10 min)
+
 ```bash
 # Ensure everything still works
 npm run build
@@ -189,6 +200,7 @@ docker-compose build
 ```
 
 ### Step 6: Commit & Push (5 min)
+
 ```bash
 git push origin main
 # Delete backup branch if everything works
@@ -201,14 +213,15 @@ git branch -D restructure-backup
 
 ### Before vs After
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| Root .md files | 20 | 2-3 | 85% ↓ |
-| Root total files | 76 | ~25 | 67% ↓ |
-| Cleanup scripts | 9 | 2 | 78% ↓ |
-| Doc subdirs | 17 | 9 | 47% ↓ |
+| Metric           | Before | After | Improvement |
+| ---------------- | ------ | ----- | ----------- |
+| Root .md files   | 20     | 2-3   | 85% ↓       |
+| Root total files | 76     | ~25   | 67% ↓       |
+| Cleanup scripts  | 9      | 2     | 78% ↓       |
+| Doc subdirs      | 17     | 9     | 47% ↓       |
 
 ### Benefits
+
 - ✅ Cleaner root directory (easier to navigate)
 - ✅ Less overwhelming for new developers
 - ✅ Better organization
@@ -221,6 +234,7 @@ git branch -D restructure-backup
 ## 🆘 IF SOMETHING GOES WRONG
 
 ### Undo Everything
+
 ```bash
 # Revert all changes
 git reset --hard HEAD
@@ -231,11 +245,13 @@ git checkout restructure-backup
 ```
 
 ### Undo Last Commit
+
 ```bash
 git revert HEAD
 ```
 
 ### Undo Specific File
+
 ```bash
 git checkout HEAD -- path/to/file.md
 ```
@@ -245,9 +261,11 @@ git checkout HEAD -- path/to/file.md
 ## 📚 FULL DOCUMENTATION
 
 For complete details, see:
+
 - **[REPOSITORY-ANALYSIS-RESTRUCTURE.md](./REPOSITORY-ANALYSIS-RESTRUCTURE.md)** - Full 1,376-line analysis
 
 This document covers:
+
 - Detailed analysis of every directory
 - All 6 phases of restructure
 - Benefits and risks
@@ -261,16 +279,19 @@ This document covers:
 After completing the quick wins above, consider:
 
 ### Phase 2: Documentation Restructure (3 hours)
+
 - Reorganize `/docs/` from 17 to 9 subdirectories
 - Create numbered hierarchy (01-getting-started, 02-guides, etc.)
 - Consolidate overlapping documentation
 
 ### Phase 3: Scripts Reorganization (2 hours)
+
 - Organize 49 scripts into subdirectories
 - Group by purpose (dev, build, docker, database, etc.)
 - Create README in each subdirectory
 
 ### Phase 5: .github Cleanup (1 hour)
+
 - Archive excessive markdown files
 - Keep only essential GitHub configs
 
@@ -279,17 +300,19 @@ After completing the quick wins above, consider:
 ## 💡 TIPS
 
 ### Do This:
+
 ✅ Run dry run first (`-DryRun` parameter)  
 ✅ Create backup branch before starting  
 ✅ Commit after each phase  
 ✅ Test that everything works after changes  
-✅ Read the full analysis document  
+✅ Read the full analysis document
 
 ### Don't Do This:
+
 ❌ Delete files without archiving first  
 ❌ Skip the verification step  
 ❌ Make changes without git commit safety net  
-❌ Rush through without understanding impact  
+❌ Rush through without understanding impact
 
 ---
 
@@ -318,18 +341,21 @@ A: Yes! Use `git revert` or restore from backup branch.
 ## ✅ QUICK CHECKLIST
 
 Before starting:
+
 - [ ] Read this guide completely
 - [ ] Review REPOSITORY-ANALYSIS-RESTRUCTURE.md (at least summary)
 - [ ] Create backup branch
 - [ ] Ensure uncommitted changes are committed
 
 Phase 1 (1 hour):
+
 - [ ] Run dry run: `pwsh scripts/restructure-phase1-archive.ps1 -DryRun`
 - [ ] Execute: `pwsh scripts/restructure-phase1-archive.ps1`
 - [ ] Verify: Check `/docs/09-archives/` created
 - [ ] Test: `npm run build && npm run test`
 
 Phase 2 (1 hour):
+
 - [ ] Move Docker docs to `/docs/06-deployment/`
 - [ ] Move quick reference to `/docs/08-reference/`
 - [ ] Move getting started to `/docs/01-getting-started/`
@@ -337,6 +363,7 @@ Phase 2 (1 hour):
 - [ ] Test: `npm run build`
 
 Phase 3 (30 min):
+
 - [ ] Create `/scripts/maintenance/`
 - [ ] Consolidate cleanup scripts
 - [ ] Delete old scripts
@@ -344,6 +371,7 @@ Phase 3 (30 min):
 - [ ] Test scripts work
 
 Verification:
+
 - [ ] `npm run build` succeeds
 - [ ] `npm run test` passes
 - [ ] `npm run lint` passes
@@ -352,6 +380,7 @@ Verification:
 - [ ] No broken links
 
 Completion:
+
 - [ ] Commit all changes
 - [ ] Push to origin
 - [ ] Delete backup branch (if everything works)
@@ -392,6 +421,7 @@ After completing these quick wins:
 ## 🎊 SUCCESS!
 
 After completing these steps, your repository will be:
+
 - ✅ 67% cleaner in root directory
 - ✅ Better organized
 - ✅ Easier to navigate
@@ -410,4 +440,4 @@ After completing these steps, your repository will be:
 
 ---
 
-*Divine Agricultural Platform - Organizing for Excellence* 🌾✨
+_Divine Agricultural Platform - Organizing for Excellence_ 🌾✨

@@ -10,7 +10,7 @@ Your Farmers Market Platform image is now available on Docker Hub and ready to d
 
 - **Docker Hub**: https://hub.docker.com/r/gogsiasdocker/farmers-market-app
 - **Image Name**: `gogsiasdocker/farmers-market-app`
-- **Available Tags**: 
+- **Available Tags**:
   - `latest` - Always points to the latest stable version
   - `v1.0.0` - Specific version tag
 - **Size**: 698MB (160MB compressed)
@@ -47,7 +47,7 @@ docker run -d \
 Create `docker-compose.production.yml`:
 
 ```yaml
-version: '3.8'
+version: "3.8"
 
 services:
   app:
@@ -103,6 +103,7 @@ networks:
 ```
 
 **Deploy**:
+
 ```bash
 # Set environment variables
 export NEXTAUTH_SECRET="your-super-secret-key-here"
@@ -203,6 +204,7 @@ heroku container:release web -a your-app-name
 ## 🔧 Required Environment Variables
 
 **Essential**:
+
 ```bash
 NODE_ENV=production
 DATABASE_URL=postgresql://user:password@host:5432/dbname
@@ -211,6 +213,7 @@ NEXTAUTH_URL=https://yourdomain.com
 ```
 
 **Optional but Recommended**:
+
 ```bash
 # Redis
 REDIS_URL=redis://localhost:6379
@@ -258,6 +261,7 @@ postgresql://[user]:[password]@[host]:[port]/[database]?schema=public
 ```
 
 **Example**:
+
 ```
 postgresql://postgres:mypassword@db.example.com:5432/farmersmarket?schema=public
 ```
@@ -381,6 +385,7 @@ docker container inspect farmers-market-app --format='{{.State.Status}}'
 ### Use Secrets Management
 
 **Docker Secrets**:
+
 ```bash
 # Create secrets
 echo "my-secret-key" | docker secret create nextauth_secret -
@@ -393,6 +398,7 @@ docker service create \
 ```
 
 **Environment Files**:
+
 ```bash
 # Never commit .env files!
 # Use .env.example as template
@@ -408,12 +414,14 @@ docker run -d --env-file .env.production gogsiasdocker/farmers-market-app:latest
 ### SSL/TLS (HTTPS)
 
 **Using Nginx Reverse Proxy**:
+
 ```bash
 # Use included nginx configuration
 docker-compose -f docker-compose.yml up -d
 ```
 
 **Using Caddy (Auto SSL)**:
+
 ```bash
 docker run -d \
   -p 80:80 -p 443:443 \
@@ -479,6 +487,7 @@ docker run -d --memory="2g" --cpus="2" \
 ## 🎯 Production Checklist
 
 ### Before Deploying:
+
 - [ ] Set strong `NEXTAUTH_SECRET` (32+ characters)
 - [ ] Configure production `DATABASE_URL`
 - [ ] Set up SSL/TLS certificates
@@ -489,6 +498,7 @@ docker run -d --memory="2g" --cpus="2" \
 - [ ] Configure backup strategy
 
 ### After Deploying:
+
 - [ ] Run database migrations
 - [ ] Verify health endpoint responds
 - [ ] Test user registration/login
@@ -537,6 +547,7 @@ Your Farmers Market Platform is containerized and ready to deploy to any cloud p
 **Image**: `gogsiasdocker/farmers-market-app:latest`
 
 **Next Steps**:
+
 1. Choose deployment target (AWS, Azure, GCP, DigitalOcean, etc.)
 2. Set up environment variables
 3. Configure database
@@ -545,6 +556,7 @@ Your Farmers Market Platform is containerized and ready to deploy to any cloud p
 6. Test and monitor
 
 **Need Help?**
+
 - Check troubleshooting section
 - Review `DOCKER_DEPLOYMENT_GUIDE.md`
 - Inspect container logs: `docker logs farmers-market-app`

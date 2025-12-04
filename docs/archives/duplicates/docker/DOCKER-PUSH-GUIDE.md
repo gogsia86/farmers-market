@@ -46,6 +46,7 @@ You have **3 simple options** to push your Docker image to Docker Hub:
 ## 💻 **Option 3: Command Line (TRADITIONAL)**
 
 ### Windows PowerShell:
+
 ```powershell
 # Navigate to project
 cd "M:\Repo\Farmers Market Platform web and app"
@@ -55,6 +56,7 @@ cd "M:\Repo\Farmers Market Platform web and app"
 ```
 
 ### Or Manual Commands:
+
 ```bash
 # 1. Login
 docker login
@@ -71,9 +73,11 @@ docker push gogsiasdocker/farmers-market-app:latest
 ## 🔐 Authentication Tips
 
 ### Using Password:
+
 - Just enter your Docker Hub account password
 
 ### Using Access Token (More Secure):
+
 1. Go to: https://hub.docker.com/settings/security
 2. Click **"New Access Token"**
 3. Name it: `Farmers Market Platform`
@@ -85,9 +89,11 @@ docker push gogsiasdocker/farmers-market-app:latest
 ## ✅ Verify Upload Success
 
 ### Check on Docker Hub:
+
 Visit: https://hub.docker.com/r/gogsiasdocker/farmers-market-app
 
 ### Pull and Test:
+
 ```bash
 docker pull gogsiasdocker/farmers-market-app:v1.0.0
 docker run -d -p 3000:3000 --env-file .env.production gogsiasdocker/farmers-market-app:v1.0.0
@@ -98,7 +104,7 @@ docker run -d -p 3000:3000 --env-file .env.production gogsiasdocker/farmers-mark
 ## 📦 What's Been Pushed
 
 - **Image Name**: `gogsiasdocker/farmers-market-app`
-- **Tags**: 
+- **Tags**:
   - `v1.0.0` (version tag)
   - `latest` (latest version)
 - **Size**: 698MB (160MB compressed)
@@ -110,25 +116,33 @@ docker run -d -p 3000:3000 --env-file .env.production gogsiasdocker/farmers-mark
 ## 🛠️ Troubleshooting
 
 ### "Authentication Required"
+
 **Solution**: Run `docker login` first or use Docker Desktop GUI
 
 ### "Repository Does Not Exist"
+
 **Solution**: Repository already created at https://hub.docker.com/r/gogsiasdocker/farmers-market-app
 
 ### "Push Access Denied"
-**Solution**: 
+
+**Solution**:
+
 1. Log out: `docker logout`
 2. Log in again: `docker login`
 3. Retry push
 
 ### "Network Timeout / Broken Pipe"
+
 **Solution**:
+
 - Check internet connection
 - Try again (Docker will resume from last layer)
 - Or use Docker Desktop GUI (more stable for large uploads)
 
 ### "Image Not Found Locally"
+
 **Solution**: Build the image first
+
 ```bash
 docker build -t gogsiasdocker/farmers-market-app:v1.0.0 -f Dockerfile .
 ```
@@ -158,6 +172,7 @@ The upload has **15 layers** and will take **5-15 minutes** depending on your co
 ## 🚀 Deployment Commands
 
 ### Using Docker Compose:
+
 ```bash
 # On your server
 git clone <your-repo>
@@ -167,6 +182,7 @@ docker-compose up -d
 ```
 
 ### Using Docker Run:
+
 ```bash
 docker pull gogsiasdocker/farmers-market-app:v1.0.0
 

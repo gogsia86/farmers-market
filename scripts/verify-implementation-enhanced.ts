@@ -47,11 +47,14 @@ const colors = {
 };
 
 const log = {
-  success: (msg: string) => console.log(`${colors.green}✅ ${msg}${colors.reset}`),
+  success: (msg: string) =>
+    console.log(`${colors.green}✅ ${msg}${colors.reset}`),
   error: (msg: string) => console.log(`${colors.red}❌ ${msg}${colors.reset}`),
-  warning: (msg: string) => console.log(`${colors.yellow}⚠️  ${msg}${colors.reset}`),
+  warning: (msg: string) =>
+    console.log(`${colors.yellow}⚠️  ${msg}${colors.reset}`),
   info: (msg: string) => console.log(`${colors.blue}ℹ️  ${msg}${colors.reset}`),
-  section: (msg: string) => console.log(`\n${colors.cyan}${colors.bright}${msg}${colors.reset}\n`),
+  section: (msg: string) =>
+    console.log(`\n${colors.cyan}${colors.bright}${msg}${colors.reset}\n`),
   debug: (msg: string) => console.log(`${colors.dim}🔧 ${msg}${colors.reset}`),
 };
 
@@ -88,7 +91,7 @@ function addResult(
     estimatedFixTime?: string;
     autoFixAvailable?: boolean;
     autoFix?: () => Promise<void>;
-  }
+  },
 ) {
   const result: EnhancedVerificationResult = {
     test,
@@ -113,7 +116,7 @@ function addResult(
       log.info(`   Fix: ${options.fixSuggestion}`);
     }
     if (options?.autoFixAvailable) {
-      log.info(`   💡 Auto-fix available`);
+      log.info("   💡 Auto-fix available");
     }
   }
 }
@@ -133,7 +136,7 @@ async function fileExists(filePath: string): Promise<boolean> {
 
 async function findFilesRecursive(
   dir: string,
-  extension: string
+  extension: string,
 ): Promise<string[]> {
   const files: string[] = [];
 
@@ -183,14 +186,23 @@ async function verifyFileExistence() {
   const requiredFiles = [
     { path: "src/app/sitemap.ts", description: "Sitemap generator" },
     { path: "src/app/robots.ts", description: "Robots.txt generator" },
-    { path: "src/components/seo/StructuredData.tsx", description: "Structured data components" },
+    {
+      path: "src/components/seo/StructuredData.tsx",
+      description: "Structured data components",
+    },
     { path: "src/app/(public)/layout.tsx", description: "Public layout" },
     { path: "src/app/(auth)/layout.tsx", description: "Auth layout" },
     { path: "src/app/(customer)/layout.tsx", description: "Customer layout" },
     { path: "src/app/(farmer)/layout.tsx", description: "Farmer layout" },
     { path: "src/app/(admin)/layout.tsx", description: "Admin layout" },
-    { path: "src/components/onboarding/OnboardingTour.tsx", description: "Onboarding tour" },
-    { path: "src/hooks/useRealtimeNotifications.ts", description: "Notifications hook" },
+    {
+      path: "src/components/onboarding/OnboardingTour.tsx",
+      description: "Onboarding tour",
+    },
+    {
+      path: "src/hooks/useRealtimeNotifications.ts",
+      description: "Notifications hook",
+    },
     { path: "docs/API_CONSOLIDATION_PLAN.md", description: "API docs" },
   ];
 
@@ -205,7 +217,7 @@ async function verifyFileExistence() {
         severity: exists ? "low" : "critical",
         fixSuggestion: exists ? undefined : `Create ${file.path}`,
         estimatedFixTime: "5-15 minutes",
-      }
+      },
     );
   }
 }
@@ -225,7 +237,10 @@ async function verifyRouteStructure() {
     { path: "src/app/(customer)/cart", description: "Cart page" },
     { path: "src/app/(customer)/checkout", description: "Checkout page" },
     { path: "src/app/(customer)/dashboard", description: "Customer dashboard" },
-    { path: "src/app/(farmer)/farmer/dashboard", description: "Farmer dashboard" },
+    {
+      path: "src/app/(farmer)/farmer/dashboard",
+      description: "Farmer dashboard",
+    },
     { path: "src/app/(admin)/admin", description: "Admin dashboard" },
   ];
 
@@ -238,7 +253,7 @@ async function verifyRouteStructure() {
       exists ? `${route.description} exists` : `Missing ${route.description}`,
       {
         severity: exists ? "low" : "high",
-      }
+      },
     );
   }
 
@@ -248,7 +263,9 @@ async function verifyRouteStructure() {
   addResult(
     "Duplicate route removed",
     removed,
-    removed ? "Duplicate /register route removed" : "Old /register route still exists",
+    removed
+      ? "Duplicate /register route removed"
+      : "Old /register route still exists",
     {
       severity: removed ? "low" : "medium",
       fixSuggestion: "Delete src/app/register directory",
@@ -256,7 +273,7 @@ async function verifyRouteStructure() {
       autoFix: async () => {
         await fs.rm(duplicateRoute, { recursive: true, force: true });
       },
-    }
+    },
   );
 }
 
@@ -269,31 +286,56 @@ async function verifyDatabaseConnectivity() {
 
   try {
     await database.$connect();
-    addResult("Database connection established", true, "Successfully connected to database");
+    addResult(
+      "Database connection established",
+      true,
+      "Successfully connected to database",
+    );
 
     try {
       const farmCount = await database.farm.count();
-      addResult("Database query", true, `Found ${farmCount} farms in database`, {
-        details: { farmCount },
-      });
+      addResult(
+        "Database query",
+        true,
+        `Found ${farmCount} farms in database`,
+        {
+          details: { farmCount },
+        },
+      );
 
       const productCount = await database.product.count();
-      addResult("Database query", true, `Found ${productCount} products in database`, {
-        details: { productCount },
-      });
+      addResult(
+        "Database query",
+        true,
+        `Found ${productCount} products in database`,
+        {
+          details: { productCount },
+        },
+      );
     } catch (error: any) {
-      addResult("Database query", false, `Failed to query database: ${error.message}`, {
-        details: { error: error.message },
-        severity: "medium",
-        fixSuggestion: "Check database permissions and schema",
-      });
+      addResult(
+        "Database query",
+        false,
+        `Failed to query database: ${error.message}`,
+        {
+          details: { error: error.message },
+          severity: "medium",
+          fixSuggestion: "Check database permissions and schema",
+        },
+      );
     }
   } catch (error: any) {
-    addResult("Database connection", false, `Failed to connect: ${error.message}`, {
-      details: { error },
-      severity: "high",
-      fixSuggestion: "Check DATABASE_URL in .env and ensure PostgreSQL is running",
-    });
+    addResult(
+      "Database connection",
+      false,
+      `Failed to connect: ${error.message}`,
+      {
+        details: { error },
+        severity: "high",
+        fixSuggestion:
+          "Check DATABASE_URL in .env and ensure PostgreSQL is running",
+      },
+    );
   }
 }
 
@@ -334,8 +376,12 @@ async function verifyNoManualHeaderImports() {
       const content = await fs.readFile(file, "utf-8");
       const relativePath = path.relative(process.cwd(), file);
 
-      const hasHeaderImport = content.includes('import { Header } from "@/components/layout/Header"');
-      const hasFooterImport = content.includes('import { Footer } from "@/components/layout/Footer"');
+      const hasHeaderImport = content.includes(
+        'import { Header } from "@/components/layout/Header"',
+      );
+      const hasFooterImport = content.includes(
+        'import { Footer } from "@/components/layout/Footer"',
+      );
       const hasHeaderJSX = content.includes("<Header");
       const hasFooterJSX = content.includes("<Footer");
 
@@ -349,7 +395,8 @@ async function verifyNoManualHeaderImports() {
           "Page manually imports/renders Header/Footer - should use layout",
           {
             severity: "high",
-            fixSuggestion: "Remove Header/Footer imports and JSX, rely on route group layout",
+            fixSuggestion:
+              "Remove Header/Footer imports and JSX, rely on route group layout",
             autoFixAvailable: true,
             estimatedFixTime: "2 minutes",
             details: {
@@ -364,11 +411,11 @@ async function verifyNoManualHeaderImports() {
               // Remove imports
               newContent = newContent.replace(
                 /import\s*{\s*Header\s*}\s*from\s*["']@\/components\/layout\/Header["'];?\n?/g,
-                ""
+                "",
               );
               newContent = newContent.replace(
                 /import\s*{\s*Footer\s*}\s*from\s*["']@\/components\/layout\/Footer["'];?\n?/g,
-                ""
+                "",
               );
 
               // Remove JSX (simple cases)
@@ -381,7 +428,7 @@ async function verifyNoManualHeaderImports() {
               await fs.writeFile(file, newContent, "utf-8");
               log.success(`Fixed: ${relativePath}`);
             },
-          }
+          },
         );
       }
     }
@@ -392,7 +439,7 @@ async function verifyNoManualHeaderImports() {
       "Manual Header/Footer imports",
       true,
       "No manual Header/Footer imports found in route groups",
-      { severity: "low" }
+      { severity: "low" },
     );
   } else {
     log.warning(`Found ${totalIssues} files with manual Header/Footer imports`);
@@ -429,29 +476,28 @@ async function verifyNoOrphanedPages() {
     const exists = await fileExists(currentPath);
 
     if (exists) {
-      addResult(
-        `Orphaned: ${orphan.current}`,
-        false,
-        `${orphan.reason}`,
-        {
-          severity: orphan.suggested === "DELETE" ? "high" : "medium",
-          fixSuggestion: orphan.suggested === "DELETE"
+      addResult(`Orphaned: ${orphan.current}`, false, `${orphan.reason}`, {
+        severity: orphan.suggested === "DELETE" ? "high" : "medium",
+        fixSuggestion:
+          orphan.suggested === "DELETE"
             ? `Delete ${orphan.current}`
             : `Move ${orphan.current} to ${orphan.suggested}`,
-          autoFixAvailable: orphan.suggested === "DELETE",
-          estimatedFixTime: "5 minutes",
-          autoFix: orphan.suggested === "DELETE" ? async () => {
-            await fs.rm(currentPath, { recursive: true, force: true });
-            log.success(`Deleted: ${orphan.current}`);
-          } : undefined,
-        }
-      );
+        autoFixAvailable: orphan.suggested === "DELETE",
+        estimatedFixTime: "5 minutes",
+        autoFix:
+          orphan.suggested === "DELETE"
+            ? async () => {
+                await fs.rm(currentPath, { recursive: true, force: true });
+                log.success(`Deleted: ${orphan.current}`);
+              }
+            : undefined,
+      });
     } else {
       addResult(
         `No orphan: ${orphan.current}`,
         true,
         `${orphan.current} already handled`,
-        { severity: "low" }
+        { severity: "low" },
       );
     }
   }
@@ -508,14 +554,14 @@ async function verifyAPIRouteConsistency() {
             redundantRoutes: foundRoutes,
             recommended: group.recommended,
           },
-        }
+        },
       );
     } else if (foundRoutes.length === 1) {
       addResult(
         `API route: ${group.description}`,
         true,
         `Using consolidated route: /api/${foundRoutes[0]}`,
-        { severity: "low" }
+        { severity: "low" },
       );
     }
   }
@@ -537,13 +583,16 @@ async function verifySecurityConfiguration() {
     addResult(
       "Security: Headers",
       hasHeaders,
-      hasHeaders ? "Security headers configured" : "Security headers not configured",
+      hasHeaders
+        ? "Security headers configured"
+        : "Security headers not configured",
       {
         severity: hasHeaders ? "low" : "high",
         fixSuggestion: "Add security headers to next.config.mjs",
-        documentationLink: "https://nextjs.org/docs/app/api-reference/next-config-js/headers",
+        documentationLink:
+          "https://nextjs.org/docs/app/api-reference/next-config-js/headers",
         estimatedFixTime: "15 minutes",
-      }
+      },
     );
   }
 
@@ -551,15 +600,18 @@ async function verifySecurityConfiguration() {
   const middlewarePath = path.join(process.cwd(), "src/middleware.ts");
   if (await fileExists(middlewarePath)) {
     const middleware = await fs.readFile(middlewarePath, "utf-8");
-    const hasAuth = middleware.includes("auth()") || middleware.includes("getToken");
+    const hasAuth =
+      middleware.includes("auth()") || middleware.includes("getToken");
 
     addResult(
       "Security: Middleware Auth",
       hasAuth,
-      hasAuth ? "Authentication middleware configured" : "No authentication in middleware",
+      hasAuth
+        ? "Authentication middleware configured"
+        : "No authentication in middleware",
       {
         severity: hasAuth ? "low" : "critical",
-      }
+      },
     );
   }
 
@@ -574,7 +626,7 @@ async function verifySecurityConfiguration() {
     {
       severity: hasEnvExample ? "low" : "medium",
       fixSuggestion: "Create .env.example with placeholder values",
-    }
+    },
   );
 }
 
@@ -595,7 +647,8 @@ async function verifyPerformanceOptimizations() {
   for (const file of files) {
     const content = await fs.readFile(file, "utf-8");
     imgTagCount += (content.match(/<img\s+/g) || []).length;
-    nextImageCount += (content.match(/from\s+["']next\/image["']/g) || []).length;
+    nextImageCount += (content.match(/from\s+["']next\/image["']/g) || [])
+      .length;
   }
 
   addResult(
@@ -604,8 +657,9 @@ async function verifyPerformanceOptimizations() {
     `Found ${nextImageCount} next/image imports, ${imgTagCount} plain <img> tags`,
     {
       severity: imgTagCount > 10 ? "medium" : "low",
-      fixSuggestion: imgTagCount > 0 ? "Replace <img> tags with next/image" : undefined,
-    }
+      fixSuggestion:
+        imgTagCount > 0 ? "Replace <img> tags with next/image" : undefined,
+    },
   );
 
   // Check for dynamic imports
@@ -625,7 +679,7 @@ async function verifyPerformanceOptimizations() {
     {
       severity: "low",
       details: { dynamicImportCount },
-    }
+    },
   );
 }
 
@@ -677,15 +731,12 @@ async function verifyBackupCleanup() {
         fixSuggestion: "Archive and delete old backup directories",
         details: { backupDirs },
         estimatedFixTime: "5 minutes",
-      }
+      },
     );
   } else {
-    addResult(
-      "Backup directories",
-      true,
-      "No old backup directories found",
-      { severity: "low" }
-    );
+    addResult("Backup directories", true, "No old backup directories found", {
+      severity: "low",
+    });
   }
 }
 
@@ -711,8 +762,10 @@ async function verifySitemapContent() {
       addResult(
         `Sitemap: ${check.name}`,
         found === check.expected,
-        found === check.expected ? `${check.name} implemented` : `${check.name} missing`,
-        { severity: "low" }
+        found === check.expected
+          ? `${check.name} implemented`
+          : `${check.name} missing`,
+        { severity: "low" },
       );
     }
   }
@@ -735,8 +788,10 @@ async function verifyRobotsContent() {
       addResult(
         `Robots: ${check.name}`,
         found === check.expected,
-        found === check.expected ? `${check.name} configured` : `${check.name} missing`,
-        { severity: "low" }
+        found === check.expected
+          ? `${check.name} configured`
+          : `${check.name} missing`,
+        { severity: "low" },
       );
     }
   }
@@ -747,7 +802,9 @@ async function verifyRobotsContent() {
 // ============================================
 
 async function runAutoFixes() {
-  const fixableIssues = results.filter((r) => !r.passed && r.autoFixAvailable && r.autoFix);
+  const fixableIssues = results.filter(
+    (r) => !r.passed && r.autoFixAvailable && r.autoFix,
+  );
 
   if (fixableIssues.length === 0) {
     log.info("No auto-fixable issues found.");
@@ -804,28 +861,42 @@ function generateReport() {
   console.log(`Success Rate: ${successRate}%\n`);
 
   if (failedTests > 0) {
-    console.log(`${colors.red}${colors.bright}❌ FAILED TESTS${colors.reset}\n`);
+    console.log(
+      `${colors.red}${colors.bright}❌ FAILED TESTS${colors.reset}\n`,
+    );
 
     if (bySeverity.critical.length > 0) {
-      console.log(`${colors.red}🔴 CRITICAL (${bySeverity.critical.length}):${colors.reset}`);
+      console.log(
+        `${colors.red}🔴 CRITICAL (${bySeverity.critical.length}):${colors.reset}`,
+      );
       bySeverity.critical.forEach((r) => {
         console.log(`  - ${r.test}: ${r.message}`);
-        if (r.fixSuggestion) console.log(`    ${colors.cyan}Fix: ${r.fixSuggestion}${colors.reset}`);
+        if (r.fixSuggestion)
+          console.log(
+            `    ${colors.cyan}Fix: ${r.fixSuggestion}${colors.reset}`,
+          );
       });
       console.log();
     }
 
     if (bySeverity.high.length > 0) {
-      console.log(`${colors.yellow}🟡 HIGH (${bySeverity.high.length}):${colors.reset}`);
+      console.log(
+        `${colors.yellow}🟡 HIGH (${bySeverity.high.length}):${colors.reset}`,
+      );
       bySeverity.high.forEach((r) => {
         console.log(`  - ${r.test}: ${r.message}`);
-        if (r.fixSuggestion) console.log(`    ${colors.cyan}Fix: ${r.fixSuggestion}${colors.reset}`);
+        if (r.fixSuggestion)
+          console.log(
+            `    ${colors.cyan}Fix: ${r.fixSuggestion}${colors.reset}`,
+          );
       });
       console.log();
     }
 
     if (bySeverity.medium.length > 0) {
-      console.log(`${colors.magenta}🟠 MEDIUM (${bySeverity.medium.length}):${colors.reset}`);
+      console.log(
+        `${colors.magenta}🟠 MEDIUM (${bySeverity.medium.length}):${colors.reset}`,
+      );
       bySeverity.medium.forEach((r) => {
         console.log(`  - ${r.test}: ${r.message}`);
       });
@@ -833,22 +904,34 @@ function generateReport() {
     }
   }
 
-  const autoFixableCount = results.filter((r) => !r.passed && r.autoFixAvailable).length;
+  const autoFixableCount = results.filter(
+    (r) => !r.passed && r.autoFixAvailable,
+  ).length;
   if (autoFixableCount > 0) {
-    log.info(`💡 ${autoFixableCount} issues can be auto-fixed. Run with --fix flag.`);
+    log.info(
+      `💡 ${autoFixableCount} issues can be auto-fixed. Run with --fix flag.`,
+    );
   }
 
   // Deployment status
   log.section("🎯 DEPLOYMENT STATUS");
 
   if (bySeverity.critical.length > 0) {
-    console.log(`${colors.red}❌ NOT READY - Critical issues must be resolved${colors.reset}`);
+    console.log(
+      `${colors.red}❌ NOT READY - Critical issues must be resolved${colors.reset}`,
+    );
   } else if (bySeverity.high.length > 0) {
-    console.log(`${colors.yellow}⚠️  MOSTLY READY - High priority issues should be addressed${colors.reset}`);
+    console.log(
+      `${colors.yellow}⚠️  MOSTLY READY - High priority issues should be addressed${colors.reset}`,
+    );
   } else if (failedTests > 0) {
-    console.log(`${colors.green}✅ READY - Minor issues can be addressed later${colors.reset}`);
+    console.log(
+      `${colors.green}✅ READY - Minor issues can be addressed later${colors.reset}`,
+    );
   } else {
-    console.log(`${colors.green}✅ PERFECT - All checks passed!${colors.reset}`);
+    console.log(
+      `${colors.green}✅ PERFECT - All checks passed!${colors.reset}`,
+    );
   }
 
   return {
@@ -866,7 +949,10 @@ function generateReport() {
 }
 
 async function saveReport() {
-  const reportPath = path.join(process.cwd(), "verification-report-enhanced.json");
+  const reportPath = path.join(
+    process.cwd(),
+    "verification-report-enhanced.json",
+  );
   const report = {
     timestamp: new Date().toISOString(),
     summary: generateReport(),

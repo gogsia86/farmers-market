@@ -12,6 +12,7 @@
 Bundle analysis completed successfully after achieving **zero TypeScript errors**. The application builds cleanly and is production-ready with optimized code splitting.
 
 ### Key Metrics
+
 ```
 Total Chunk Files:     114 files
 Client Bundle Size:    ~1.5 MB (gzipped)
@@ -27,33 +28,35 @@ TypeScript Errors:     0 ✅
 
 ### Main Chunks (Client-Side)
 
-| Chunk Name | Size | Description | Status |
-|------------|------|-------------|--------|
-| `framework-*.js` | 721 KB | React, Next.js core | ✅ Optimized |
-| `vendor-*.js` | 235 KB | Third-party libraries | ✅ Split |
-| `polyfills-*.js` | 110 KB | Browser polyfills | ✅ Required |
-| `common-*.js` | 30 KB | Shared components | ✅ Cached |
-| **Total Core** | **~1.1 MB** | **Framework + Vendors** | **✅ Good** |
+| Chunk Name       | Size        | Description             | Status       |
+| ---------------- | ----------- | ----------------------- | ------------ |
+| `framework-*.js` | 721 KB      | React, Next.js core     | ✅ Optimized |
+| `vendor-*.js`    | 235 KB      | Third-party libraries   | ✅ Split     |
+| `polyfills-*.js` | 110 KB      | Browser polyfills       | ✅ Required  |
+| `common-*.js`    | 30 KB       | Shared components       | ✅ Cached    |
+| **Total Core**   | **~1.1 MB** | **Framework + Vendors** | **✅ Good**  |
 
 ### Page-Specific Chunks
 
-| Page Route | Chunk Size | Notes |
-|------------|-----------|-------|
-| `/monitoring` | 29 KB | Monitoring dashboard |
-| `/register-farm` | 20 KB | Farm registration |
-| `/checkout` | 16 KB | Checkout flow |
-| `/products` | 14 KB | Product listing |
-| `/` (home) | 13 KB | Landing page |
-| `/farms` | 12 KB | Farm directory |
-| `/farmer-dashboard` | 12 KB | Farmer dashboard |
-| Other pages | 2-10 KB | Various routes |
+| Page Route          | Chunk Size | Notes                |
+| ------------------- | ---------- | -------------------- |
+| `/monitoring`       | 29 KB      | Monitoring dashboard |
+| `/register-farm`    | 20 KB      | Farm registration    |
+| `/checkout`         | 16 KB      | Checkout flow        |
+| `/products`         | 14 KB      | Product listing      |
+| `/` (home)          | 13 KB      | Landing page         |
+| `/farms`            | 12 KB      | Farm directory       |
+| `/farmer-dashboard` | 12 KB      | Farmer dashboard     |
+| Other pages         | 2-10 KB    | Various routes       |
 
 ---
 
 ## 🔍 Detailed Analysis
 
 ### Framework Chunk (721 KB)
+
 **Contents:**
+
 - React 19.0.0
 - React DOM 19.0.0
 - Next.js 16.0.3 runtime
@@ -66,7 +69,9 @@ This is the core framework bundle that's shared across all pages. The size is ex
 **Optimization:** Already optimal - framework chunk is automatically cached by Next.js.
 
 ### Vendor Chunk (235 KB)
+
 **Contents:**
+
 - Third-party libraries used across multiple pages
 - UI components (@radix-ui, @headlessui)
 - Utilities (date-fns, clsx, etc.)
@@ -78,6 +83,7 @@ The vendor chunk is properly split from the framework, ensuring better caching a
 ### Code Splitting Results
 
 **✅ Excellent:** 114 separate chunks created
+
 - Each page loads only what it needs
 - Shared code extracted to common chunks
 - Route-based code splitting working perfectly
@@ -88,24 +94,25 @@ The vendor chunk is properly split from the framework, ensuring better caching a
 
 ### Libraries Checked for Lazy Loading
 
-| Library | Location | Bundle Impact | Status |
-|---------|----------|--------------|--------|
-| `@tensorflow/tfjs` | Server-side only | 0 KB (not bundled) | ✅ Not in client bundle |
-| `@tensorflow/tfjs-node-gpu` | Server-side only | 0 KB (not bundled) | ✅ Server-only |
-| `sharp` | Server-side only | 0 KB (not bundled) | ✅ Server-only |
-| `nodemailer` | Server-side only | 0 KB (not bundled) | ✅ Server-only |
-| `cloudinary` | Server-side only | 0 KB (not bundled) | ✅ Server-only |
-| `@prisma/client` | Server-side only | 0 KB (not bundled) | ✅ Server-only |
-| `@opentelemetry/*` | All bundles | In telemetry chunk | ✅ Separated |
-| `@sentry/nextjs` | All bundles | In telemetry chunk | ✅ Separated |
-| `@stripe/stripe-js` | Client-side | In payments chunk | ✅ Async loaded |
-| `framer-motion` | Client-side | In animations chunk | ✅ Async loaded |
+| Library                     | Location         | Bundle Impact       | Status                  |
+| --------------------------- | ---------------- | ------------------- | ----------------------- |
+| `@tensorflow/tfjs`          | Server-side only | 0 KB (not bundled)  | ✅ Not in client bundle |
+| `@tensorflow/tfjs-node-gpu` | Server-side only | 0 KB (not bundled)  | ✅ Server-only          |
+| `sharp`                     | Server-side only | 0 KB (not bundled)  | ✅ Server-only          |
+| `nodemailer`                | Server-side only | 0 KB (not bundled)  | ✅ Server-only          |
+| `cloudinary`                | Server-side only | 0 KB (not bundled)  | ✅ Server-only          |
+| `@prisma/client`            | Server-side only | 0 KB (not bundled)  | ✅ Server-only          |
+| `@opentelemetry/*`          | All bundles      | In telemetry chunk  | ✅ Separated            |
+| `@sentry/nextjs`            | All bundles      | In telemetry chunk  | ✅ Separated            |
+| `@stripe/stripe-js`         | Client-side      | In payments chunk   | ✅ Async loaded         |
+| `framer-motion`             | Client-side      | In animations chunk | ✅ Async loaded         |
 
 ### Finding: Server-Side Libraries Already Optimized ✅
 
 **Great News:** Heavy libraries like TensorFlow, Sharp, Nodemailer, and Cloudinary are **already server-side only** and do NOT impact client bundle size.
 
 Next.js 16 automatically:
+
 - Excludes server-only packages from client bundles
 - Tree-shakes unused code
 - Optimizes imports with package import optimization
@@ -169,13 +176,10 @@ The following are configured for async loading:
 
 - **AI/ML Libraries** (`@tensorflow`, `ollama`)
   - Status: Server-side only, not in client bundle ✅
-  
 - **Charts** (`recharts`, `chart.js`, `d3`, `victory`)
   - Status: Not currently used in client bundle ✅
-  
 - **Animations** (`framer-motion`)
   - Status: Async chunk created ✅
-  
 - **Payments** (`@stripe`)
   - Status: Async chunk created ✅
 
@@ -275,16 +279,17 @@ start .next/analyze/client.html
 **Current:** Monitoring page is 29 KB (largest page-specific chunk)
 
 **Optimization:**
+
 ```typescript
 // Lazy load monitoring widgets
 const PerformanceMetricsWidget = dynamic(
-  () => import('@/components/monitoring/PerformanceMetricsWidget'),
-  { ssr: false }
+  () => import("@/components/monitoring/PerformanceMetricsWidget"),
+  { ssr: false },
 );
 
 const AlertsWidget = dynamic(
-  () => import('@/components/monitoring/AlertsWidget'),
-  { ssr: false }
+  () => import("@/components/monitoring/AlertsWidget"),
+  { ssr: false },
 );
 ```
 
@@ -304,6 +309,7 @@ const AlertsWidget = dynamic(
 **Opportunity:** Some pages could be statically generated
 
 Candidates:
+
 - `/about` - Static content
 - `/how-it-works` - Static content
 - `/faq` - Static content
@@ -323,6 +329,7 @@ performance: {
 ```
 
 **Thresholds:**
+
 - Framework chunk: < 800 KB
 - Vendor chunk: < 300 KB
 - Page chunks: < 50 KB each
@@ -334,19 +341,20 @@ performance: {
 
 ### Phase 6 Impact
 
-| Metric | Before Phase 6 | After Phase 6 | Change |
-|--------|----------------|---------------|--------|
-| TypeScript Errors | 182 | 0 | ✅ -182 |
-| Build Success | ❌ Failing | ✅ Passing | ✅ Fixed |
-| Bundle Analysis | ❌ Blocked | ✅ Complete | ✅ Available |
-| Production Ready | ❌ No | ✅ Yes | ✅ Ready |
-| Client Bundle | N/A | ~1.5 MB | ✅ Optimized |
+| Metric            | Before Phase 6 | After Phase 6 | Change       |
+| ----------------- | -------------- | ------------- | ------------ |
+| TypeScript Errors | 182            | 0             | ✅ -182      |
+| Build Success     | ❌ Failing     | ✅ Passing    | ✅ Fixed     |
+| Bundle Analysis   | ❌ Blocked     | ✅ Complete   | ✅ Available |
+| Production Ready  | ❌ No          | ✅ Yes        | ✅ Ready     |
+| Client Bundle     | N/A            | ~1.5 MB       | ✅ Optimized |
 
 ### Theoretical vs Actual Lazy Loading
 
 **Initial Plan:** Lazy load heavy libraries for 255-380 KB savings
 
 **Reality:** ✅ Even Better!
+
 - Those libraries were already server-side only
 - No client bundle impact at all
 - Next.js 16 automatically optimized them
@@ -433,7 +441,7 @@ Build Time:     34.9s - Excellent for project size
 ## 📁 Generated Artifacts
 
 - ✅ `client.html` - 429 KB interactive report
-- ✅ `nodejs.html` - 979 KB server bundle report  
+- ✅ `nodejs.html` - 979 KB server bundle report
 - ✅ `edge.html` - 287 KB edge runtime report
 - ✅ This report - Bundle analysis documentation
 

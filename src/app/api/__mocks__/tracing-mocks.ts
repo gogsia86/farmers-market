@@ -28,16 +28,16 @@
 
 // Create mock span object
 const mockSpan = {
-  setStatus () {},
-  setAttributes () {},
-  setAttribute () {},
-  addEvent () {},
-  recordException () {},
-  end () {},
-  isRecording () {
+  setStatus() {},
+  setAttributes() {},
+  setAttribute() {},
+  addEvent() {},
+  recordException() {},
+  end() {},
+  isRecording() {
     return true;
   },
-  spanContext () {
+  spanContext() {
     return {
       traceId: "mock-trace-id-12345678",
       spanId: "mock-span-id-87654321",
@@ -52,16 +52,12 @@ const mockSpan = {
  */
 export const mockOpenTelemetryApi = {
   trace: {
-    getTracer () {
+    getTracer() {
       return {
-        startSpan () {
+        startSpan() {
           return mockSpan;
         },
-        async startActiveSpan (
-          name: string,
-          fnOrOptions: any,
-          maybeFn?: any,
-        ) {
+        async startActiveSpan(name: string, fnOrOptions: any, maybeFn?: any) {
           const fn = typeof fnOrOptions === "function" ? fnOrOptions : maybeFn;
           if (typeof fn === "function") {
             try {
@@ -77,19 +73,19 @@ export const mockOpenTelemetryApi = {
         },
       };
     },
-    getActiveSpan () {
+    getActiveSpan() {
       return mockSpan;
     },
-    setSpan () {},
-    getSpan () {
+    setSpan() {},
+    getSpan() {
       return mockSpan;
     },
   },
   context: {
-    active () {
+    active() {
       return {};
     },
-    with (ctx: any, fn: any) {
+    with(ctx: any, fn: any) {
       return fn();
     },
   },
@@ -106,8 +102,8 @@ export const mockOpenTelemetryApi = {
     CONSUMER: 4,
   },
   propagation: {
-    extract () {},
-    inject () {},
+    extract() {},
+    inject() {},
   },
 };
 
@@ -130,9 +126,9 @@ export const mockAgriculturalTracer = {
     PRODUCT_LISTING: "product.listing",
     ORDER_PROCESSING: "order.processing",
   },
-  setAgriculturalAttributes () {},
-  addAgriculturalEvent () {},
-  async traceAgriculturalOperation (
+  setAgriculturalAttributes() {},
+  addAgriculturalEvent() {},
+  async traceAgriculturalOperation(
     operation: string,
     attributes: any,
     fn: any,
@@ -142,29 +138,25 @@ export const mockAgriculturalTracer = {
     }
     return undefined;
   },
-  async traceSeasonalOperation (
-    season: string,
-    operation: string,
-    fn: any,
-  ) {
+  async traceSeasonalOperation(season: string, operation: string, fn: any) {
     if (typeof fn === "function") {
       return await fn();
     }
     return undefined;
   },
-  async traceLunarOperation (phase: string, fn: any) {
+  async traceLunarOperation(phase: string, fn: any) {
     if (typeof fn === "function") {
       return await fn();
     }
     return undefined;
   },
-  async traceConsciousnessMeasurement (level: string, fn: any) {
+  async traceConsciousnessMeasurement(level: string, fn: any) {
     if (typeof fn === "function") {
       return await fn();
     }
     return undefined;
   },
-  async traceBiodynamicOperation (operation: string, fn: any) {
+  async traceBiodynamicOperation(operation: string, fn: any) {
     if (typeof fn === "function") {
       return await fn();
     }

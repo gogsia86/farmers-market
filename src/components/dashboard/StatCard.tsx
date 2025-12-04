@@ -19,10 +19,7 @@ export function StatCard({ title, value, icon, link, color }: StatCardProps) {
   };
 
   return (
-    <Link
-      href={link}
-      className={colorClasses[color]}
-    >
+    <Link href={link} className={colorClasses[color]}>
       <div className="flex items-center justify-between mb-2">
         <span className="text-3xl" role="img" aria-label={title}>
           {icon}

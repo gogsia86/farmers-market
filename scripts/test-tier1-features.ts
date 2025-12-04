@@ -24,7 +24,7 @@ import type { WorkflowResult, WorkflowMetrics } from "@/lib/monitoring/types";
 
 const mockFailedWorkflow: WorkflowResult = {
   workflowId: "test-workflow-001",
-  runId: `run-${  Date.now()}`,
+  runId: `run-${Date.now()}`,
   name: "User Login Test",
   type: "USER_LOGIN",
   priority: "HIGH",
@@ -141,9 +141,13 @@ const mockMetrics: WorkflowMetrics[] = [
 // ============================================================================
 
 async function testAIFailureAnalyzer() {
-  console.log("\n╔════════════════════════════════════════════════════════════╗");
+  console.log(
+    "\n╔════════════════════════════════════════════════════════════╗",
+  );
   console.log("║ TEST 1: AI FAILURE ANALYZER                                ║");
-  console.log("╚════════════════════════════════════════════════════════════╝\n");
+  console.log(
+    "╚════════════════════════════════════════════════════════════╝\n",
+  );
 
   try {
     const analyzer = createFailureAnalyzer({
@@ -163,7 +167,7 @@ async function testAIFailureAnalyzer() {
 
     console.log("✅ AI Analysis Complete!\n");
     console.log("📊 Results:");
-    console.log("   Confidence:", `${analysis.confidence  }%`);
+    console.log("   Confidence:", `${analysis.confidence}%`);
     console.log("   Root Cause:", analysis.rootCause);
     console.log("   Severity:", analysis.severity);
     console.log("\n🔧 Immediate Fix:");
@@ -171,7 +175,7 @@ async function testAIFailureAnalyzer() {
       console.log(`   ${i + 1}. ${step}`);
     });
     console.log("\n🛡️  Prevention Strategy:");
-    console.log(`   ${  analysis.preventionStrategy}`);
+    console.log(`   ${analysis.preventionStrategy}`);
 
     return true;
   } catch (error) {
@@ -181,9 +185,13 @@ async function testAIFailureAnalyzer() {
 }
 
 async function testMultiAgentOrchestrator() {
-  console.log("\n╔════════════════════════════════════════════════════════════╗");
+  console.log(
+    "\n╔════════════════════════════════════════════════════════════╗",
+  );
   console.log("║ TEST 2: MULTI-AGENT ORCHESTRATOR                          ║");
-  console.log("╚════════════════════════════════════════════════════════════╝\n");
+  console.log(
+    "╚════════════════════════════════════════════════════════════╝\n",
+  );
 
   try {
     const orchestrator = createWorkflowAgentOrchestrator({
@@ -201,20 +209,19 @@ async function testMultiAgentOrchestrator() {
     console.log("   Active Agents:", orchestrator.getAgentCount());
     console.log("   Collaboration Mode: VOTING\n");
 
-    const analysis = await orchestrator.analyzeWorkflowFailure(
-      mockFailedWorkflow,
-    );
+    const analysis =
+      await orchestrator.analyzeWorkflowFailure(mockFailedWorkflow);
 
     console.log("✅ Multi-Agent Analysis Complete!\n");
     console.log("🤖 Agent Consensus:");
-    console.log(`   ${  analysis.consensus}`);
+    console.log(`   ${analysis.consensus}`);
     console.log("\n📋 Individual Analyses:");
     analysis.individualAnalyses.forEach((agent) => {
       console.log(`\n   ${agent.agent} (${agent.confidence}% confidence):`);
-      console.log(`   ${  agent.analysis.substring(0, 100)  }...`);
+      console.log(`   ${agent.analysis.substring(0, 100)}...`);
     });
     console.log("\n✅ Final Recommendation:");
-    console.log(`   ${  analysis.finalRecommendation.substring(0, 150)  }...`);
+    console.log(`   ${analysis.finalRecommendation.substring(0, 150)}...`);
 
     return true;
   } catch (error) {
@@ -224,9 +231,13 @@ async function testMultiAgentOrchestrator() {
 }
 
 async function testOpenTelemetryTracing() {
-  console.log("\n╔════════════════════════════════════════════════════════════╗");
+  console.log(
+    "\n╔════════════════════════════════════════════════════════════╗",
+  );
   console.log("║ TEST 3: OPENTELEMETRY TRACING                             ║");
-  console.log("╚════════════════════════════════════════════════════════════╝\n");
+  console.log(
+    "╚════════════════════════════════════════════════════════════╝\n",
+  );
 
   try {
     const tracer = createWorkflowTracer({
@@ -273,7 +284,7 @@ async function testOpenTelemetryTracing() {
     console.log("✅ Trace created successfully");
     console.log("   Workflow:", result.name);
     console.log("   Status:", result.status);
-    console.log("   Duration:", `${result.duration  }ms`);
+    console.log("   Duration:", `${result.duration}ms`);
 
     // Cleanup
     await tracer.shutdown();
@@ -287,9 +298,13 @@ async function testOpenTelemetryTracing() {
 }
 
 async function testPredictiveMonitoring() {
-  console.log("\n╔════════════════════════════════════════════════════════════╗");
+  console.log(
+    "\n╔════════════════════════════════════════════════════════════╗",
+  );
   console.log("║ TEST 4: ML PREDICTIVE MONITORING                          ║");
-  console.log("╚════════════════════════════════════════════════════════════╝\n");
+  console.log(
+    "╚════════════════════════════════════════════════════════════╝\n",
+  );
 
   try {
     const monitor = createPredictiveMonitor({
@@ -322,15 +337,15 @@ async function testPredictiveMonitoring() {
     console.log("✅ Prediction Complete!");
     console.log(
       "   Failure Probability:",
-      `${(prediction.failureProbability * 100).toFixed(1)  }%`,
+      `${(prediction.failureProbability * 100).toFixed(1)}%`,
     );
-    console.log("   Confidence:", `${prediction.confidence.toFixed(1)  }%`);
+    console.log("   Confidence:", `${prediction.confidence.toFixed(1)}%`);
     console.log("   Recommendation:", prediction.recommendation);
 
     if (prediction.contributingFactors.length > 0) {
       console.log("\n📉 Contributing Factors:");
       prediction.contributingFactors.forEach((factor) => {
-        console.log(`   • ${  factor}`);
+        console.log(`   • ${factor}`);
       });
     }
 
@@ -361,9 +376,13 @@ async function testPredictiveMonitoring() {
 }
 
 async function testSelfHealing() {
-  console.log("\n╔════════════════════════════════════════════════════════════╗");
+  console.log(
+    "\n╔════════════════════════════════════════════════════════════╗",
+  );
   console.log("║ TEST 5: SELF-HEALING ORCHESTRATOR                         ║");
-  console.log("╚════════════════════════════════════════════════════════════╝\n");
+  console.log(
+    "╚════════════════════════════════════════════════════════════╝\n",
+  );
 
   try {
     const healer = createSelfHealer({
@@ -387,10 +406,10 @@ async function testSelfHealing() {
     console.log("\n📋 Available Healing Strategies:");
     strategies.forEach((strategy) => {
       console.log(`   • ${strategy.name}`);
-      console.log(`     Success Rate: ${(strategy.successRate * 100).toFixed(0)}%`);
       console.log(
-        `     Estimated Duration: ${strategy.estimatedDuration}ms`,
+        `     Success Rate: ${(strategy.successRate * 100).toFixed(0)}%`,
       );
+      console.log(`     Estimated Duration: ${strategy.estimatedDuration}ms`);
       console.log(
         `     Auto-approve: ${strategy.requiresApproval ? "❌ No" : "✅ Yes"}`,
       );
@@ -403,10 +422,10 @@ async function testSelfHealing() {
     if (healingResult.healed) {
       console.log("✅ Self-Healing Successful!");
       console.log("   Strategy:", healingResult.strategyUsed);
-      console.log("   Duration:", `${healingResult.duration  }ms`);
+      console.log("   Duration:", `${healingResult.duration}ms`);
       console.log("\n🔧 Actions Taken:");
       healingResult.actions.forEach((action) => {
-        console.log(`   • ${  action}`);
+        console.log(`   • ${action}`);
       });
     } else {
       console.log("⚠️  Self-Healing Not Applied");
@@ -416,7 +435,7 @@ async function testSelfHealing() {
         if (healingResult.followUpRecommendations) {
           console.log("\n📋 Follow-up Recommendations:");
           healingResult.followUpRecommendations.forEach((rec) => {
-            console.log(`   • ${  rec}`);
+            console.log(`   • ${rec}`);
           });
         }
       }
@@ -427,13 +446,10 @@ async function testSelfHealing() {
     console.log("   Total Attempts:", stats.totalAttempts);
     console.log("   Successful:", stats.successful);
     console.log("   Failed:", stats.failed);
-    console.log(
-      "   Success Rate:",
-      `${(stats.successRate * 100).toFixed(1)  }%`,
-    );
+    console.log("   Success Rate:", `${(stats.successRate * 100).toFixed(1)}%`);
     console.log(
       "   Average Heal Time:",
-      `${stats.averageHealTime.toFixed(0)  }ms`,
+      `${stats.averageHealTime.toFixed(0)}ms`,
     );
 
     return true;
@@ -458,9 +474,18 @@ async function runAllTests() {
   console.log("╚════════════════════════════════════════════════════════════╝");
 
   console.log("\n📋 Test Configuration:");
-  console.log("   OpenAI API Key:", process.env.OPENAI_API_KEY ? "✅ Set" : "❌ Not set");
-  console.log("   Tracing:", process.env.TRACING_ENABLED !== "false" ? "✅ Enabled" : "❌ Disabled");
-  console.log("   AI Analysis:", process.env.AI_ANALYSIS_ENABLED !== "false" ? "✅ Enabled" : "❌ Disabled");
+  console.log(
+    "   OpenAI API Key:",
+    process.env.OPENAI_API_KEY ? "✅ Set" : "❌ Not set",
+  );
+  console.log(
+    "   Tracing:",
+    process.env.TRACING_ENABLED !== "false" ? "✅ Enabled" : "❌ Disabled",
+  );
+  console.log(
+    "   AI Analysis:",
+    process.env.AI_ANALYSIS_ENABLED !== "false" ? "✅ Enabled" : "❌ Disabled",
+  );
 
   if (!process.env.OPENAI_API_KEY) {
     console.log("\n⚠️  WARNING: OPENAI_API_KEY not set!");
@@ -478,9 +503,13 @@ async function runAllTests() {
   results["Self-Healing Orchestrator"] = await testSelfHealing();
 
   // Summary
-  console.log("\n╔════════════════════════════════════════════════════════════╗");
+  console.log(
+    "\n╔════════════════════════════════════════════════════════════╗",
+  );
   console.log("║ TEST SUMMARY                                               ║");
-  console.log("╚════════════════════════════════════════════════════════════╝\n");
+  console.log(
+    "╚════════════════════════════════════════════════════════════╝\n",
+  );
 
   const passed = Object.values(results).filter((r) => r).length;
   const total = Object.keys(results).length;
@@ -490,11 +519,11 @@ async function runAllTests() {
     console.log(`   ${status} - ${name}`);
   });
 
-  console.log(`\n${  "═".repeat(60)}`);
+  console.log(`\n${"═".repeat(60)}`);
   console.log(
     `   Total: ${passed}/${total} tests passed (${((passed / total) * 100).toFixed(0)}%)`,
   );
-  console.log(`${"═".repeat(60)  }\n`);
+  console.log(`${"═".repeat(60)}\n`);
 
   if (passed === total) {
     console.log("🎉 ALL TESTS PASSED! Tier 1 features are operational.\n");

@@ -53,7 +53,9 @@ export default function ReviewsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  const [activeTab, setActiveTab] = useState<"pending" | "submitted">("pending");
+  const [activeTab, setActiveTab] = useState<"pending" | "submitted">(
+    "pending",
+  );
   const [loading, setLoading] = useState(true);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [pendingReviews, setPendingReviews] = useState<PendingReview[]>([]);
@@ -61,7 +63,10 @@ export default function ReviewsPage() {
   const [editRating, setEditRating] = useState(5);
   const [editComment, setEditComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -124,17 +129,28 @@ export default function ReviewsPage() {
         setReviews((prev) =>
           prev.map((r) =>
             r.id === reviewId
-              ? { ...r, rating: editRating, comment: editComment, updatedAt: new Date().toISOString() }
+              ? {
+                  ...r,
+                  rating: editRating,
+                  comment: editComment,
+                  updatedAt: new Date().toISOString(),
+                }
               : r,
           ),
         );
         cancelEdit();
       } else {
-        setMessage({ type: "error", text: data.error || "Failed to update review" });
+        setMessage({
+          type: "error",
+          text: data.error || "Failed to update review",
+        });
       }
     } catch (error) {
       console.error("Review update error:", error);
-      setMessage({ type: "error", text: "An error occurred. Please try again." });
+      setMessage({
+        type: "error",
+        text: "An error occurred. Please try again.",
+      });
     } finally {
       setSubmitting(false);
     }
@@ -157,11 +173,17 @@ export default function ReviewsPage() {
         setMessage({ type: "success", text: "Review deleted successfully!" });
         setReviews((prev) => prev.filter((r) => r.id !== reviewId));
       } else {
-        setMessage({ type: "error", text: data.error || "Failed to delete review" });
+        setMessage({
+          type: "error",
+          text: data.error || "Failed to delete review",
+        });
       }
     } catch (error) {
       console.error("Review delete error:", error);
-      setMessage({ type: "error", text: "An error occurred. Please try again." });
+      setMessage({
+        type: "error",
+        text: "An error occurred. Please try again.",
+      });
     } finally {
       setSubmitting(false);
     }
@@ -175,7 +197,11 @@ export default function ReviewsPage() {
     return null;
   }
 
-  const renderStars = (rating: number, interactive = false, onSelect?: (rating: number) => void) => {
+  const renderStars = (
+    rating: number,
+    interactive = false,
+    onSelect?: (rating: number) => void,
+  ) => {
     return (
       <div className="flex items-center gap-1">
         {[1, 2, 3, 4, 5].map((star) => (
@@ -249,7 +275,10 @@ export default function ReviewsPage() {
           <div className="bg-white rounded-lg shadow-md p-4 hidden sm:block">
             <div className="text-3xl font-bold text-blue-600">
               {reviews.length > 0
-                ? (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1)
+                ? (
+                    reviews.reduce((acc, r) => acc + r.rating, 0) /
+                    reviews.length
+                  ).toFixed(1)
                 : "0.0"}
             </div>
             <div className="text-sm text-gray-600">Average Rating</div>
@@ -408,7 +437,9 @@ export default function ReviewsPage() {
                               <div className="flex items-center gap-3 mb-2">
                                 {renderStars(review.rating)}
                                 <span className="text-sm text-gray-600">
-                                  {new Date(review.createdAt).toLocaleDateString()}
+                                  {new Date(
+                                    review.createdAt,
+                                  ).toLocaleDateString()}
                                 </span>
                               </div>
 
@@ -457,7 +488,8 @@ export default function ReviewsPage() {
 
                           {review.updatedAt !== review.createdAt && (
                             <p className="text-xs text-gray-500">
-                              Updated {new Date(review.updatedAt).toLocaleDateString()}
+                              Updated{" "}
+                              {new Date(review.updatedAt).toLocaleDateString()}
                             </p>
                           )}
 
@@ -492,7 +524,9 @@ export default function ReviewsPage() {
                 Write Helpful Reviews
               </h3>
               <ul className="text-gray-600 space-y-1 text-sm">
-                <li>• Share specific details about product quality and freshness</li>
+                <li>
+                  • Share specific details about product quality and freshness
+                </li>
                 <li>• Mention the farm's customer service and packaging</li>
                 <li>• Be honest but constructive in your feedback</li>
                 <li>• Help other shoppers make informed decisions</li>

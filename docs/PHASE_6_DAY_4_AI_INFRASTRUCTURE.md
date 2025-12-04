@@ -27,24 +27,28 @@
 ### Goals Achieved
 
 ✅ **AI Agent Framework Setup**
+
 - Multi-agent architecture with OpenAI GPT-4o integration
 - 4 specialized agents: Farm Analyst, Product Catalog, Order Processor, Customer Support
 - Agent orchestration for complex multi-step tasks
 - Comprehensive error handling and validation
 
 ✅ **OpenTelemetry Tracing**
+
 - Full distributed tracing implementation
 - OTLP HTTP exporter configuration
 - Auto-instrumentation for Node.js applications
 - Agricultural-specific tracing utilities
 
 ✅ **Azure Application Insights Integration**
+
 - Custom metrics tracking for agricultural operations
 - Performance monitoring and telemetry
 - Bundle size tracking (Phase 6 optimization metrics)
 - Exception and dependency tracking
 
 ✅ **Test Infrastructure**
+
 - Comprehensive test scripts for AI agents
 - OpenTelemetry tracing validation tests
 - Mock-based testing for development without API keys
@@ -133,16 +137,16 @@ scripts/
 #### Single Agent Invocation
 
 ```typescript
-import { invokeAgent } from '@/lib/ai/agent-config';
+import { invokeAgent } from "@/lib/ai/agent-config";
 
 const response = await invokeAgent(
-  'farmAnalyst',
-  'Analyze farm performance for Sunshine Farm with 50 acres...',
+  "farmAnalyst",
+  "Analyze farm performance for Sunshine Farm with 50 acres...",
   {
-    farmId: 'farm-123',
-    userId: 'user-456',
-    metadata: { season: 'summer' }
-  }
+    farmId: "farm-123",
+    userId: "user-456",
+    metadata: { season: "summer" },
+  },
 );
 
 console.log(response.content);
@@ -152,21 +156,21 @@ console.log(`Confidence: ${response.confidence * 100}%`);
 #### Multi-Agent Orchestration
 
 ```typescript
-import { orchestrateAgents } from '@/lib/ai/agent-config';
+import { orchestrateAgents } from "@/lib/ai/agent-config";
 
 const responses = await orchestrateAgents({
-  task: 'Customer needs seasonal vegetables with delivery recommendations',
+  task: "Customer needs seasonal vegetables with delivery recommendations",
   context: {
-    userId: 'customer-001',
-    sessionId: 'session-123',
-    metadata: { location: 'Seattle, WA', season: 'summer' }
+    userId: "customer-001",
+    sessionId: "session-123",
+    metadata: { location: "Seattle, WA", season: "summer" },
   },
-  requiredAgents: ['farmAnalyst', 'productCatalog', 'customerSupport'],
-  maxTurns: 3
+  requiredAgents: ["farmAnalyst", "productCatalog", "customerSupport"],
+  maxTurns: 3,
 });
 
 // Process multiple agent responses
-responses.forEach(response => {
+responses.forEach((response) => {
   console.log(`${response.agent}: ${response.content}`);
 });
 ```
@@ -174,9 +178,9 @@ responses.forEach(response => {
 #### Agent Capabilities Check
 
 ```typescript
-import { agentHasCapability } from '@/lib/ai/agent-config';
+import { agentHasCapability } from "@/lib/ai/agent-config";
 
-if (agentHasCapability('farmAnalyst', 'yield_prediction')) {
+if (agentHasCapability("farmAnalyst", "yield_prediction")) {
   // Use agent for yield prediction
 }
 ```
@@ -227,7 +231,7 @@ export const AGENT_REGISTRY: Record<string, AgentConfig> = {
 #### Initialization
 
 ```typescript
-import { initializeTelemetry } from '@/lib/monitoring/telemetry';
+import { initializeTelemetry } from "@/lib/monitoring/telemetry";
 
 // Initialize at application startup
 const sdk = initializeTelemetry();
@@ -236,14 +240,14 @@ const sdk = initializeTelemetry();
 #### Basic Tracing
 
 ```typescript
-import { withSpan } from '@/lib/monitoring/telemetry';
+import { withSpan } from "@/lib/monitoring/telemetry";
 
-const result = await withSpan('operation.name', async (span) => {
+const result = await withSpan("operation.name", async (span) => {
   span.setAttributes({
-    'operation.type': 'database',
-    'entity.name': 'farm'
+    "operation.type": "database",
+    "entity.name": "farm",
   });
-  
+
   const data = await performOperation();
   return data;
 });
@@ -256,37 +260,40 @@ import {
   traceFarmOperation,
   traceApiRoute,
   traceAgentInvocation,
-  traceDatabaseOperation
-} from '@/lib/monitoring/telemetry';
+  traceDatabaseOperation,
+} from "@/lib/monitoring/telemetry";
 
 // Trace farm operation
-await traceFarmOperation('createProduct', 'farm-123', async (span) => {
-  span.setAttribute('product.name', 'Organic Tomatoes');
+await traceFarmOperation("createProduct", "farm-123", async (span) => {
+  span.setAttribute("product.name", "Organic Tomatoes");
   return await createProduct();
 });
 
 // Trace API route
-await traceApiRoute('POST', '/api/farms', async (span) => {
+await traceApiRoute("POST", "/api/farms", async (span) => {
   return await handleFarmCreation();
 });
 
 // Trace AI agent
-await traceAgentInvocation('FarmAnalyst', 'analyze', async (span) => {
-  return await invokeAgent('farmAnalyst', 'Analyze farm...');
+await traceAgentInvocation("FarmAnalyst", "analyze", async (span) => {
+  return await invokeAgent("farmAnalyst", "Analyze farm...");
 });
 ```
 
 #### Context Propagation (Distributed Tracing)
 
 ```typescript
-import { injectTraceContext, extractTraceContext } from '@/lib/monitoring/telemetry';
+import {
+  injectTraceContext,
+  extractTraceContext,
+} from "@/lib/monitoring/telemetry";
 
 // Service A: Inject context into outgoing request
 const headers = injectTraceContext({
-  'Content-Type': 'application/json'
+  "Content-Type": "application/json",
 });
 
-await fetch('http://service-b/api', { headers });
+await fetch("http://service-b/api", { headers });
 
 // Service B: Extract context from incoming request
 const context = extractTraceContext(request.headers);
@@ -314,6 +321,7 @@ OTEL_EXPORTER_OTLP_HEADERS={"Authorization":"Bearer token"}
 #### Auto-Instrumentation
 
 Automatically instruments:
+
 - HTTP requests/responses
 - Express.js routes
 - Prisma database queries
@@ -323,6 +331,7 @@ Automatically instruments:
 ### Span Attributes
 
 Standard attributes automatically added:
+
 - `service.name` - Service identifier
 - `service.version` - Application version
 - `deployment.environment` - Environment (dev/staging/prod)
@@ -349,7 +358,7 @@ Standard attributes automatically added:
 #### Initialization
 
 ```typescript
-import { initializeAppInsights } from '@/lib/monitoring/app-insights';
+import { initializeAppInsights } from "@/lib/monitoring/app-insights";
 
 // Initialize at application startup (optional - monitors without crashing if not configured)
 const client = initializeAppInsights();
@@ -358,16 +367,16 @@ const client = initializeAppInsights();
 #### Custom Metrics
 
 ```typescript
-import { trackMetric } from '@/lib/monitoring/app-insights';
+import { trackMetric } from "@/lib/monitoring/app-insights";
 
 trackMetric({
-  name: 'farm.operation.duration',
+  name: "farm.operation.duration",
   value: 150, // milliseconds
   properties: {
-    operation: 'createFarm',
-    farmId: 'farm-123',
-    success: 'true'
-  }
+    operation: "createFarm",
+    farmId: "farm-123",
+    success: "true",
+  },
 });
 ```
 
@@ -381,49 +390,49 @@ import {
   trackAgentInvocation,
   trackBundleSize,
   trackPagePerformance,
-  trackSeasonalActivity
-} from '@/lib/monitoring/app-insights';
+  trackSeasonalActivity,
+} from "@/lib/monitoring/app-insights";
 
 // Track farm operations
-trackFarmOperation('createFarm', 'farm-123', 250, true);
+trackFarmOperation("createFarm", "farm-123", 250, true);
 
 // Track order processing
-trackOrderProcessing('order-456', 1500, 49.99, 3);
+trackOrderProcessing("order-456", 1500, 49.99, 3);
 
 // Track AI agent invocations
-trackAgentInvocation('FarmAnalyst', 'analyze', 2000, true, 0.85);
+trackAgentInvocation("FarmAnalyst", "analyze", 2000, true, 0.85);
 
 // Track bundle sizes (Phase 6 optimization)
-trackBundleSize('admin-bundle', 250, '/admin');
+trackBundleSize("admin-bundle", 250, "/admin");
 
 // Track page performance
-trackPagePerformance('/farms', 1200, {
+trackPagePerformance("/farms", 1200, {
   ttfb: 100,
   fcp: 500,
   lcp: 1000,
   cls: 0.05,
-  fid: 50
+  fid: 50,
 });
 
 // Track seasonal activity
-trackSeasonalActivity('summer', 'harvest', {
-  farmId: 'farm-123',
-  cropType: 'tomatoes'
+trackSeasonalActivity("summer", "harvest", {
+  farmId: "farm-123",
+  cropType: "tomatoes",
 });
 ```
 
 #### Exception Tracking
 
 ```typescript
-import { trackException } from '@/lib/monitoring/app-insights';
+import { trackException } from "@/lib/monitoring/app-insights";
 
 try {
   await riskyOperation();
 } catch (error) {
   trackException(error as Error, {
-    operation: 'createFarm',
-    farmId: 'farm-123',
-    userId: 'user-456'
+    operation: "createFarm",
+    farmId: "farm-123",
+    userId: "user-456",
   });
   throw error;
 }
@@ -450,6 +459,7 @@ APPINSIGHTS_AUTO_COLLECT=true
 #### Common Properties
 
 Automatically added to all telemetry:
+
 - `application: farmers-market-platform`
 - `environment: development|production`
 - `version: 1.0.0`
@@ -471,6 +481,7 @@ tsx scripts/test-agent-framework.ts
 ```
 
 **Test Coverage**:
+
 - ✅ Agent Registry (4 agents)
 - ✅ Agent Capabilities (16 capabilities)
 - ✅ OpenAI Client Initialization
@@ -491,6 +502,7 @@ tsx scripts/test-telemetry.ts
 ```
 
 **Test Coverage**:
+
 - ✅ Configuration Loading
 - ✅ SDK Initialization
 - ✅ Tracer Access
@@ -586,16 +598,19 @@ HOSTNAME=instance-name
 ### Development Setup
 
 1. **Create `.env.local`** (not committed to git):
+
    ```bash
    cp .env.example .env.local
    ```
 
 2. **Add OpenAI API Key** (required for AI features):
+
    ```env
    OPENAI_API_KEY=sk-...
    ```
 
 3. **Optional: Setup OpenTelemetry Collector** (for trace viewing):
+
    ```bash
    # Using Docker
    docker run -p 4318:4318 -p 55679:55679 \
@@ -632,39 +647,39 @@ HOSTNAME=instance-name
 ### Example 1: Farm Analysis Workflow
 
 ```typescript
-import { invokeAgent } from '@/lib/ai/agent-config';
-import { traceFarmOperation } from '@/lib/monitoring/telemetry';
-import { trackFarmOperation } from '@/lib/monitoring/app-insights';
+import { invokeAgent } from "@/lib/ai/agent-config";
+import { traceFarmOperation } from "@/lib/monitoring/telemetry";
+import { trackFarmOperation } from "@/lib/monitoring/app-insights";
 
 export async function analyzeFarm(farmId: string) {
   const startTime = Date.now();
-  
-  return await traceFarmOperation('analyzeFarm', farmId, async (span) => {
+
+  return await traceFarmOperation("analyzeFarm", farmId, async (span) => {
     try {
       // Get farm data
       const farm = await database.farm.findUnique({
         where: { id: farmId },
-        include: { products: true, orders: true }
+        include: { products: true, orders: true },
       });
-      
-      span.setAttribute('farm.name', farm.name);
-      span.setAttribute('farm.productCount', farm.products.length);
-      
+
+      span.setAttribute("farm.name", farm.name);
+      span.setAttribute("farm.productCount", farm.products.length);
+
       // Invoke AI agent
       const analysis = await invokeAgent(
-        'farmAnalyst',
+        "farmAnalyst",
         `Analyze farm performance: ${JSON.stringify(farm)}`,
-        { farmId, metadata: { season: getCurrentSeason() } }
+        { farmId, metadata: { season: getCurrentSeason() } },
       );
-      
+
       // Track metrics
       const duration = Date.now() - startTime;
-      trackFarmOperation('analyzeFarm', farmId, duration, true);
-      
+      trackFarmOperation("analyzeFarm", farmId, duration, true);
+
       return analysis;
     } catch (error) {
       const duration = Date.now() - startTime;
-      trackFarmOperation('analyzeFarm', farmId, duration, false);
+      trackFarmOperation("analyzeFarm", farmId, duration, false);
       throw error;
     }
   });
@@ -674,20 +689,17 @@ export async function analyzeFarm(farmId: string) {
 ### Example 2: Product Description Generation
 
 ```typescript
-import { invokeAgent } from '@/lib/ai/agent-config';
-import { traceAgentInvocation } from '@/lib/monitoring/telemetry';
+import { invokeAgent } from "@/lib/ai/agent-config";
+import { traceAgentInvocation } from "@/lib/monitoring/telemetry";
 
-export async function generateProductDescription(
-  product: Product,
-  farm: Farm
-) {
+export async function generateProductDescription(product: Product, farm: Farm) {
   return await traceAgentInvocation(
-    'ProductCatalogManager',
-    'generate_description',
+    "ProductCatalogManager",
+    "generate_description",
     async (span) => {
-      span.setAttribute('product.id', product.id);
-      span.setAttribute('farm.id', farm.id);
-      
+      span.setAttribute("product.id", product.id);
+      span.setAttribute("farm.id", farm.id);
+
       const prompt = `
         Generate a compelling product description for:
         - Product: ${product.name}
@@ -697,14 +709,14 @@ export async function generateProductDescription(
         - Organic: ${product.organic}
         - Season: ${product.season}
       `;
-      
-      const response = await invokeAgent('productCatalog', prompt, {
+
+      const response = await invokeAgent("productCatalog", prompt, {
         productId: product.id,
         farmId: farm.id,
       });
-      
+
       return response.content;
-    }
+    },
   );
 }
 ```
@@ -712,11 +724,11 @@ export async function generateProductDescription(
 ### Example 3: Multi-Agent Customer Service
 
 ```typescript
-import { orchestrateAgents } from '@/lib/ai/agent-config';
+import { orchestrateAgents } from "@/lib/ai/agent-config";
 
 export async function handleCustomerInquiry(
   inquiry: string,
-  customerId: string
+  customerId: string,
 ) {
   const responses = await orchestrateAgents({
     task: inquiry,
@@ -726,21 +738,17 @@ export async function handleCustomerInquiry(
       metadata: {
         timestamp: new Date().toISOString(),
         location: await getCustomerLocation(customerId),
-      }
+      },
     },
-    requiredAgents: [
-      'customerSupport',
-      'productCatalog',
-      'farmAnalyst'
-    ],
-    maxTurns: 2
+    requiredAgents: ["customerSupport", "productCatalog", "farmAnalyst"],
+    maxTurns: 2,
   });
-  
+
   // Aggregate responses
-  return responses.map(r => ({
+  return responses.map((r) => ({
     agent: r.agent,
     content: r.content,
-    confidence: r.confidence
+    confidence: r.confidence,
   }));
 }
 ```
@@ -748,37 +756,33 @@ export async function handleCustomerInquiry(
 ### Example 4: Order Processing with Tracing
 
 ```typescript
-import { traceApiRoute } from '@/lib/monitoring/telemetry';
-import { trackOrderProcessing } from '@/lib/monitoring/app-insights';
+import { traceApiRoute } from "@/lib/monitoring/telemetry";
+import { trackOrderProcessing } from "@/lib/monitoring/app-insights";
 
 export async function POST(request: NextRequest) {
-  return await traceApiRoute(
-    'POST',
-    '/api/orders',
-    async (span) => {
-      const startTime = Date.now();
-      const orderData = await request.json();
-      
-      span.setAttribute('order.itemCount', orderData.items.length);
-      span.setAttribute('order.totalValue', orderData.total);
-      
-      // Process order
-      const order = await database.order.create({
-        data: orderData
-      });
-      
-      // Track metrics
-      const processingTime = Date.now() - startTime;
-      trackOrderProcessing(
-        order.id,
-        processingTime,
-        order.total,
-        order.items.length
-      );
-      
-      return NextResponse.json({ success: true, order });
-    }
-  );
+  return await traceApiRoute("POST", "/api/orders", async (span) => {
+    const startTime = Date.now();
+    const orderData = await request.json();
+
+    span.setAttribute("order.itemCount", orderData.items.length);
+    span.setAttribute("order.totalValue", orderData.total);
+
+    // Process order
+    const order = await database.order.create({
+      data: orderData,
+    });
+
+    // Track metrics
+    const processingTime = Date.now() - startTime;
+    trackOrderProcessing(
+      order.id,
+      processingTime,
+      order.total,
+      order.items.length,
+    );
+
+    return NextResponse.json({ success: true, order });
+  });
 }
 ```
 
@@ -788,33 +792,33 @@ export async function POST(request: NextRequest) {
 
 ### AI Agent Framework
 
-| Metric | Value | Notes |
-|--------|-------|-------|
-| Agent Count | 4 | Farm, Product, Order, Support |
-| Total Capabilities | 24 | 6 per agent average |
-| Response Time (avg) | 2-5s | Depends on model & complexity |
-| Confidence Threshold | 60% | Minimum for valid responses |
-| Max Tokens | 1200-2000 | Per agent configuration |
+| Metric               | Value     | Notes                         |
+| -------------------- | --------- | ----------------------------- |
+| Agent Count          | 4         | Farm, Product, Order, Support |
+| Total Capabilities   | 24        | 6 per agent average           |
+| Response Time (avg)  | 2-5s      | Depends on model & complexity |
+| Confidence Threshold | 60%       | Minimum for valid responses   |
+| Max Tokens           | 1200-2000 | Per agent configuration       |
 
 ### OpenTelemetry
 
-| Metric | Value | Notes |
-|--------|-------|-------|
-| Span Processing | Batch | 512 spans per batch |
-| Export Interval | 5s | Configurable |
-| Overhead | <5% | Minimal performance impact |
-| Auto-Instrumentation | 6 libraries | HTTP, Express, Prisma, PG, Redis |
-| Context Propagation | W3C Standard | Distributed tracing support |
+| Metric               | Value        | Notes                            |
+| -------------------- | ------------ | -------------------------------- |
+| Span Processing      | Batch        | 512 spans per batch              |
+| Export Interval      | 5s           | Configurable                     |
+| Overhead             | <5%          | Minimal performance impact       |
+| Auto-Instrumentation | 6 libraries  | HTTP, Express, Prisma, PG, Redis |
+| Context Propagation  | W3C Standard | Distributed tracing support      |
 
 ### Application Insights
 
-| Metric | Value | Notes |
-|--------|-------|-------|
-| Sampling Rate | 100% | Adjustable for production |
-| Metric Types | 12+ | Farm, product, order, agent, bundle, etc. |
-| Custom Events | 8+ | Agricultural-specific events |
-| Exception Tracking | Yes | With full context |
-| Telemetry Flush | On-demand | Plus automatic intervals |
+| Metric             | Value     | Notes                                     |
+| ------------------ | --------- | ----------------------------------------- |
+| Sampling Rate      | 100%      | Adjustable for production                 |
+| Metric Types       | 12+       | Farm, product, order, agent, bundle, etc. |
+| Custom Events      | 8+        | Agricultural-specific events              |
+| Exception Tracking | Yes       | With full context                         |
+| Telemetry Flush    | On-demand | Plus automatic intervals                  |
 
 ---
 
@@ -919,6 +923,6 @@ export async function POST(request: NextRequest) {
 
 ---
 
-*Generated: 2024-11-29*  
-*Phase 6 Day 4 - Afternoon Session*  
-*Farmers Market Platform - Divine Agricultural Intelligence* 🌾⚡
+_Generated: 2024-11-29_  
+_Phase 6 Day 4 - Afternoon Session_  
+_Farmers Market Platform - Divine Agricultural Intelligence_ 🌾⚡

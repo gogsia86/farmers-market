@@ -4,36 +4,44 @@
 
 ✅ **OpenAI package installed** (version 4.104.0)  
 ✅ **Setup scripts created**  
-⚠️ **API key needs to be added** to `.env` file  
+⚠️ **API key needs to be added** to `.env` file
 
 ---
 
 ## 🚀 Complete Setup in 3 Commands
 
 ### Step 1: Run Interactive Setup
+
 ```bash
 npx tsx scripts/setup-openai.ts
 ```
+
 This wizard will:
+
 - Guide you through adding your API key
 - Configure AI settings
 - Set up model preferences
 - Create backups automatically
 
 ### Step 2: Verify Everything Works
+
 ```bash
 npx tsx scripts/verify-openai.ts
 ```
+
 This will:
+
 - Test your API key
 - Verify OpenAI connection
 - Show available models
 - Confirm AI features are ready
 
 ### Step 3: Start Development
+
 ```bash
 npm run dev
 ```
+
 Your platform now has full AI capabilities! 🎉
 
 ---
@@ -41,6 +49,7 @@ Your platform now has full AI capabilities! 🎉
 ## 📖 Quick Reference
 
 ### Manual Setup (Alternative)
+
 If you prefer to add the key manually:
 
 1. Open `.env` file in your project root
@@ -52,6 +61,7 @@ If you prefer to add the key manually:
 4. Run verification: `npx tsx scripts/verify-openai.ts`
 
 ### Get Your API Key
+
 1. Visit: https://platform.openai.com/api-keys
 2. Sign in or create account
 3. Click "Create new secret key"
@@ -63,15 +73,18 @@ If you prefer to add the key manually:
 ## 🎁 What's Been Created For You
 
 ### 1. Setup Scripts
+
 - **`scripts/setup-openai.ts`** - Interactive setup wizard
 - **`scripts/verify-openai.ts`** - Connection tester
 
 ### 2. Documentation
+
 - **`OPENAI_QUICKSTART.md`** - 5-minute quick start
 - **`docs/AI_SETUP_GUIDE.md`** - Complete setup guide
 - **`NEXT_STEPS_OPENAI.md`** - This file!
 
 ### 3. AI Features Ready to Use
+
 - `src/lib/monitoring/ai/failure-analyzer.ts` - AI failure analysis
 - `src/lib/monitoring/agents/workflow-agent-orchestrator.ts` - Multi-agent system
 - `src/lib/ai/agent-config.ts` - AI configuration & clients
@@ -81,20 +94,25 @@ If you prefer to add the key manually:
 ## 💡 Pro Tips
 
 ### For Development (Save Money!)
+
 ```bash
 # In .env:
 OPENAI_MODEL=gpt-4o-mini
 ```
+
 **Cost**: ~$0.15 per 1M tokens (20x cheaper!)
 
 ### For Production (Best Quality)
+
 ```bash
 # In .env:
 OPENAI_MODEL=gpt-4o
 ```
+
 **Cost**: ~$5.00 per 1M tokens (best quality)
 
 ### Set Budget Limits
+
 1. Go to: https://platform.openai.com/account/billing/limits
 2. Set monthly limit (e.g., $50)
 3. Enable email notifications
@@ -116,15 +134,19 @@ After running setup, verify:
 ## 🐛 Common Issues & Fixes
 
 ### Issue: "OPENAI_API_KEY not found"
+
 **Fix**: Add key to `.env` file
+
 ```bash
 echo "OPENAI_API_KEY=sk-proj-your-key" >> .env
 ```
 
 ### Issue: "Authentication failed"
+
 **Fix**: Key is invalid - generate new one from OpenAI dashboard
 
 ### Issue: "Rate limit exceeded"
+
 **Fix**: Check billing at https://platform.openai.com/account/billing
 
 ---

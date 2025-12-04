@@ -140,9 +140,7 @@ export function queueEmail(
  * });
  * ```
  */
-export async function verifyEmailConfig(
-  config: EmailConfig,
-): Promise<boolean> {
+export async function verifyEmailConfig(config: EmailConfig): Promise<boolean> {
   try {
     const transporter = await createTransporter(config);
     await transporter.verify();

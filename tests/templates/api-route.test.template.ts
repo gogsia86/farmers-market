@@ -12,7 +12,12 @@
  */
 
 import { NextRequest } from "next/server";
-import { GET, POST, PUT, DELETE } from "@/app/api/REPLACE_WITH_YOUR_ROUTE/route";
+import {
+  GET,
+  POST,
+  PUT,
+  DELETE,
+} from "@/app/api/REPLACE_WITH_YOUR_ROUTE/route";
 
 // Mock dependencies
 jest.mock("@/lib/database", () => ({
@@ -60,7 +65,9 @@ describe("API: /api/YOUR_ENDPOINT", () => {
       ]);
 
       // Create request
-      const request = new NextRequest("http://localhost:3000/api/YOUR_ENDPOINT");
+      const request = new NextRequest(
+        "http://localhost:3000/api/YOUR_ENDPOINT",
+      );
 
       // Execute
       const response = await GET(request);
@@ -77,7 +84,9 @@ describe("API: /api/YOUR_ENDPOINT", () => {
       // Mock no authentication
       (auth as jest.Mock).mockResolvedValue(null);
 
-      const request = new NextRequest("http://localhost:3000/api/YOUR_ENDPOINT");
+      const request = new NextRequest(
+        "http://localhost:3000/api/YOUR_ENDPOINT",
+      );
 
       const response = await GET(request);
       const data = await response.json();
@@ -136,7 +145,9 @@ describe("API: /api/YOUR_ENDPOINT", () => {
         new Error("Database connection failed"),
       );
 
-      const request = new NextRequest("http://localhost:3000/api/YOUR_ENDPOINT");
+      const request = new NextRequest(
+        "http://localhost:3000/api/YOUR_ENDPOINT",
+      );
 
       const response = await GET(request);
       const data = await response.json();
@@ -155,7 +166,9 @@ describe("API: /api/YOUR_ENDPOINT", () => {
         new Error("Insufficient permissions"),
       );
 
-      const request = new NextRequest("http://localhost:3000/api/YOUR_ENDPOINT");
+      const request = new NextRequest(
+        "http://localhost:3000/api/YOUR_ENDPOINT",
+      );
 
       const response = await GET(request);
       const data = await response.json();
@@ -177,13 +190,16 @@ describe("API: /api/YOUR_ENDPOINT", () => {
       const newItem = { id: "new_1", name: "New Item" };
       (prisma.model.create as jest.Mock).mockResolvedValue(newItem);
 
-      const request = new NextRequest("http://localhost:3000/api/YOUR_ENDPOINT", {
-        method: "POST",
-        body: JSON.stringify({ name: "New Item" }),
-        headers: {
-          "Content-Type": "application/json",
+      const request = new NextRequest(
+        "http://localhost:3000/api/YOUR_ENDPOINT",
+        {
+          method: "POST",
+          body: JSON.stringify({ name: "New Item" }),
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -200,13 +216,16 @@ describe("API: /api/YOUR_ENDPOINT", () => {
         user: { id: "user_1", email: "test@example.com", role: "FARMER" },
       });
 
-      const request = new NextRequest("http://localhost:3000/api/YOUR_ENDPOINT", {
-        method: "POST",
-        body: JSON.stringify({}), // Empty body
-        headers: {
-          "Content-Type": "application/json",
+      const request = new NextRequest(
+        "http://localhost:3000/api/YOUR_ENDPOINT",
+        {
+          method: "POST",
+          body: JSON.stringify({}), // Empty body
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -226,13 +245,16 @@ describe("API: /api/YOUR_ENDPOINT", () => {
         meta: { target: ["name"] },
       });
 
-      const request = new NextRequest("http://localhost:3000/api/YOUR_ENDPOINT", {
-        method: "POST",
-        body: JSON.stringify({ name: "Duplicate Item" }),
-        headers: {
-          "Content-Type": "application/json",
+      const request = new NextRequest(
+        "http://localhost:3000/api/YOUR_ENDPOINT",
+        {
+          method: "POST",
+          body: JSON.stringify({ name: "Duplicate Item" }),
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -252,15 +274,18 @@ describe("API: /api/YOUR_ENDPOINT", () => {
         name: "Clean Input",
       });
 
-      const request = new NextRequest("http://localhost:3000/api/YOUR_ENDPOINT", {
-        method: "POST",
-        body: JSON.stringify({
-          name: '<script>alert("xss")</script>Clean Input',
-        }),
-        headers: {
-          "Content-Type": "application/json",
+      const request = new NextRequest(
+        "http://localhost:3000/api/YOUR_ENDPOINT",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            name: '<script>alert("xss")</script>Clean Input',
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
 
       const response = await POST(request);
 
@@ -439,13 +464,16 @@ describe("API: /api/YOUR_ENDPOINT", () => {
         user: { id: "user_1", email: "test@example.com", role: "FARMER" },
       });
 
-      const request = new NextRequest("http://localhost:3000/api/YOUR_ENDPOINT", {
-        method: "POST",
-        body: "invalid json",
-        headers: {
-          "Content-Type": "application/json",
+      const request = new NextRequest(
+        "http://localhost:3000/api/YOUR_ENDPOINT",
+        {
+          method: "POST",
+          body: "invalid json",
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -459,10 +487,13 @@ describe("API: /api/YOUR_ENDPOINT", () => {
         user: { id: "user_1", email: "test@example.com", role: "FARMER" },
       });
 
-      const request = new NextRequest("http://localhost:3000/api/YOUR_ENDPOINT", {
-        method: "POST",
-        body: JSON.stringify({ name: "Test" }),
-      });
+      const request = new NextRequest(
+        "http://localhost:3000/api/YOUR_ENDPOINT",
+        {
+          method: "POST",
+          body: JSON.stringify({ name: "Test" }),
+        },
+      );
 
       const response = await POST(request);
 
@@ -480,13 +511,16 @@ describe("API: /api/YOUR_ENDPOINT", () => {
         description: "B".repeat(50000),
       };
 
-      const request = new NextRequest("http://localhost:3000/api/YOUR_ENDPOINT", {
-        method: "POST",
-        body: JSON.stringify(largePayload),
-        headers: {
-          "Content-Type": "application/json",
+      const request = new NextRequest(
+        "http://localhost:3000/api/YOUR_ENDPOINT",
+        {
+          method: "POST",
+          body: JSON.stringify(largePayload),
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
 
       const response = await POST(request);
 
@@ -527,7 +561,9 @@ describe("API: /api/YOUR_ENDPOINT", () => {
       (prisma.model.findMany as jest.Mock).mockResolvedValue([]);
 
       const start = Date.now();
-      const request = new NextRequest("http://localhost:3000/api/YOUR_ENDPOINT");
+      const request = new NextRequest(
+        "http://localhost:3000/api/YOUR_ENDPOINT",
+      );
       await GET(request);
       const duration = Date.now() - start;
 

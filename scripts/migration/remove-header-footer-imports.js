@@ -13,19 +13,21 @@
  * Usage: node scripts/migration/remove-header-footer-imports.js
  */
 
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+const fs = require("fs");
+const path = require("path");
+const { execSync } = require("child_process");
 
 // Configuration
-const PUBLIC_PAGES_DIR = path.join(__dirname, '../../src/app/(public)');
-const BACKUP_DIR = path.join(__dirname, '../../.migration-backups');
-const DRY_RUN = process.argv.includes('--dry-run');
+const PUBLIC_PAGES_DIR = path.join(__dirname, "../../src/app/(public)");
+const BACKUP_DIR = path.join(__dirname, "../../.migration-backups");
+const DRY_RUN = process.argv.includes("--dry-run");
 
 // Patterns to match and remove
 const PATTERNS = {
-  headerImport: /import\s+{\s*Header\s*}\s+from\s+["']@\/components\/layout\/Header["'];?\s*\n?/g,
-  footerImport: /import\s+{\s*Footer\s*}\s+from\s+["']@\/components\/layout\/Footer["'];?\s*\n?/g,
+  headerImport:
+    /import\s+{\s*Header\s*}\s+from\s+["']@\/components\/layout\/Header["'];?\s*\n?/g,
+  footerImport:
+    /import\s+{\s*Footer\s*}\s+from\s+["']@\/components\/layout\/Footer["'];?\s*\n?/g,
   headerElement: /<Header\s*\/>/g,
   footerElement: /<Footer\s*\/>/g,
   fragmentWrapper: /^\s*<>\s*\n?([\s\S]*?)\n?\s*<\/>\s*$/m,
@@ -40,13 +42,13 @@ const STANDARD_CONTAINER = 'className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"';
 
 // Colors for console output
 const colors = {
-  reset: '\x1b[0m',
-  bright: '\x1b[1m',
-  red: '\x1b[31m',
-  green: '\x1b[32m',
-  yellow: '\x1b[33m',
-  blue: '\x1b[34m',
-  magenta: '\x1b[35m',
+  reset: "\x1b[0m",
+  bright: "\x1b[1m",
+  red: "\x1b[31m",
+  green: "\x1b[32m",
+  yellow: "\x1b[33m",
+  blue: "\x1b[34m",
+  magenta: "\x1b[35m",
 };
 
 // Stats tracking
@@ -68,7 +70,7 @@ const stats = {
 /**
  * Log with color
  */
-function log(message, color = 'reset') {
+function log(message, color = "reset") {
   console.log(colors[color] + message + colors.reset);
 }
 
@@ -78,7 +80,7 @@ function log(message, color = 'reset') {
 function ensureBackupDir() {
   if (!fs.existsSync(BACKUP_DIR)) {
     fs.mkdirSync(BACKUP_DIR, { recursive: true });
-    log(`✅ Created backup directory: ${BACKUP_DIR}`, 'green');
+    log(`✅ Created backup directory: ${BACKUP_DIR}`, "green");
   }
 }
 
@@ -95,7 +97,7 @@ function backupFile(filePath) {
   }
 
   fs.copyFileSync(filePath, backupPath);
-  log(`  📦 Backed up: ${relativePath}`, 'blue');
+  log(`  📦 Backed up: ${relativePath}`, "blue");
 }
 
 /**
@@ -112,7 +114,7 @@ function findPageFiles(dir) {
 
       if (entry.isDirectory()) {
         traverse(fullPath);
-      } else if (entry.name === 'page.tsx') {
+      } else if (entry.name === "page.tsx") {
         files.push(fullPath);
       }
     }
@@ -126,10 +128,12 @@ function findPageFiles(dir) {
  * Check if file has Header or Footer imports
  */
 function hasHeaderFooterImports(content) {
-  return content.includes('from "@/components/layout/Header"') ||
-         content.includes('from "@/components/layout/Footer"') ||
-         content.includes("from '@/components/layout/Header'") ||
-         content.includes("from '@/components/layout/Footer'");
+  return (
+    content.includes('from "@/components/layout/Header"') ||
+    content.includes('from "@/components/layout/Footer"') ||
+    content.includes("from '@/components/layout/Header'") ||
+    content.includes("from '@/components/layout/Footer'")
+  );
 }
 
 /**
@@ -137,7 +141,7 @@ function hasHeaderFooterImports(content) {
  */
 function processFile(filePath) {
   try {
-    const content = fs.readFileSync(filePath, 'utf-8');
+    const content = fs.readFileSync(filePath, "utf-8");
 
     // Check if file needs processing
     if (!hasHeaderFooterImports(content)) {
@@ -146,7 +150,10 @@ function processFile(filePath) {
     }
 
     stats.totalFiles++;
-    log(`\n📄 Processing: ${path.relative(PUBLIC_PAGES_DIR, filePath)}`, 'bright');
+    log(
+      `\n📄 Processing: ${path.relative(PUBLIC_PAGES_DIR, filePath)}`,
+      "bright",
+    );
 
     // Backup original file
     if (!DRY_RUN) {
@@ -154,34 +161,34 @@ function processFile(filePath) {
     }
 
     let modified = content;
-    let changes = [];
+    const changes = [];
 
     // Remove Header import
     if (PATTERNS.headerImport.test(modified)) {
-      modified = modified.replace(PATTERNS.headerImport, '');
+      modified = modified.replace(PATTERNS.headerImport, "");
       stats.changes.headerImports++;
-      changes.push('Removed Header import');
+      changes.push("Removed Header import");
     }
 
     // Remove Footer import
     if (PATTERNS.footerImport.test(modified)) {
-      modified = modified.replace(PATTERNS.footerImport, '');
+      modified = modified.replace(PATTERNS.footerImport, "");
       stats.changes.footerImports++;
-      changes.push('Removed Footer import');
+      changes.push("Removed Footer import");
     }
 
     // Remove Header element
     if (PATTERNS.headerElement.test(modified)) {
-      modified = modified.replace(PATTERNS.headerElement, '');
+      modified = modified.replace(PATTERNS.headerElement, "");
       stats.changes.headerElements++;
-      changes.push('Removed <Header /> element');
+      changes.push("Removed <Header /> element");
     }
 
     // Remove Footer element
     if (PATTERNS.footerElement.test(modified)) {
-      modified = modified.replace(PATTERNS.footerElement, '');
+      modified = modified.replace(PATTERNS.footerElement, "");
       stats.changes.footerElements++;
-      changes.push('Removed <Footer /> element');
+      changes.push("Removed <Footer /> element");
     }
 
     // Remove fragment wrapper <></>
@@ -194,10 +201,10 @@ function processFile(filePath) {
         /return\s*\(\s*<>\s*\n?([\s\S]*?)\n?\s*<\/>\s*\);?/m,
         (match, content) => {
           return `return (\n${content.trim()}\n  );`;
-        }
+        },
       );
       stats.changes.fragmentWrappers++;
-      changes.push('Removed fragment wrapper');
+      changes.push("Removed fragment wrapper");
     }
 
     // Standardize container classes (optional, can be commented out)
@@ -205,25 +212,25 @@ function processFile(filePath) {
       if (pattern.test(modified)) {
         modified = modified.replace(pattern, STANDARD_CONTAINER);
         stats.changes.containerClasses++;
-        changes.push('Standardized container class');
+        changes.push("Standardized container class");
       }
     });
 
     // Write modified content
     if (!DRY_RUN && modified !== content) {
-      fs.writeFileSync(filePath, modified, 'utf-8');
+      fs.writeFileSync(filePath, modified, "utf-8");
       stats.processedFiles++;
-      log(`  ✅ Changes applied:`, 'green');
-      changes.forEach(change => log(`     - ${change}`, 'green'));
+      log("  ✅ Changes applied:", "green");
+      changes.forEach((change) => log(`     - ${change}`, "green"));
     } else if (DRY_RUN) {
-      log(`  🔍 [DRY RUN] Would apply changes:`, 'yellow');
-      changes.forEach(change => log(`     - ${change}`, 'yellow'));
+      log("  🔍 [DRY RUN] Would apply changes:", "yellow");
+      changes.forEach((change) => log(`     - ${change}`, "yellow"));
     }
 
     return true;
   } catch (error) {
     stats.errors++;
-    log(`  ❌ Error processing file: ${error.message}`, 'red');
+    log(`  ❌ Error processing file: ${error.message}`, "red");
     return false;
   }
 }
@@ -232,13 +239,13 @@ function processFile(filePath) {
  * Main execution
  */
 function main() {
-  log('\n🚀 Starting Header/Footer Import Removal Migration', 'bright');
-  log('='.repeat(60), 'blue');
+  log("\n🚀 Starting Header/Footer Import Removal Migration", "bright");
+  log("=".repeat(60), "blue");
 
   if (DRY_RUN) {
-    log('\n⚠️  DRY RUN MODE - No files will be modified', 'yellow');
+    log("\n⚠️  DRY RUN MODE - No files will be modified", "yellow");
   } else {
-    log('\n📝 LIVE MODE - Files will be modified', 'green');
+    log("\n📝 LIVE MODE - Files will be modified", "green");
   }
 
   // Ensure backup directory exists
@@ -247,43 +254,49 @@ function main() {
   }
 
   // Find all page.tsx files
-  log(`\n🔍 Scanning: ${PUBLIC_PAGES_DIR}`, 'blue');
+  log(`\n🔍 Scanning: ${PUBLIC_PAGES_DIR}`, "blue");
   const pageFiles = findPageFiles(PUBLIC_PAGES_DIR);
-  log(`📊 Found ${pageFiles.length} page.tsx files`, 'blue');
+  log(`📊 Found ${pageFiles.length} page.tsx files`, "blue");
 
   // Process each file
   pageFiles.forEach(processFile);
 
   // Print summary
-  log('\n' + '='.repeat(60), 'blue');
-  log('📊 MIGRATION SUMMARY', 'bright');
-  log('='.repeat(60), 'blue');
-  log(`Total files found: ${pageFiles.length}`, 'blue');
-  log(`Files processed: ${stats.processedFiles}`, 'green');
-  log(`Files skipped: ${stats.skippedFiles}`, 'yellow');
-  log(`Errors: ${stats.errors}`, stats.errors > 0 ? 'red' : 'green');
-  log('\nChanges made:', 'bright');
-  log(`  - Header imports removed: ${stats.changes.headerImports}`, 'green');
-  log(`  - Footer imports removed: ${stats.changes.footerImports}`, 'green');
-  log(`  - Header elements removed: ${stats.changes.headerElements}`, 'green');
-  log(`  - Footer elements removed: ${stats.changes.footerElements}`, 'green');
-  log(`  - Fragment wrappers removed: ${stats.changes.fragmentWrappers}`, 'green');
-  log(`  - Container classes standardized: ${stats.changes.containerClasses}`, 'green');
+  log(`\n${"=".repeat(60)}`, "blue");
+  log("📊 MIGRATION SUMMARY", "bright");
+  log("=".repeat(60), "blue");
+  log(`Total files found: ${pageFiles.length}`, "blue");
+  log(`Files processed: ${stats.processedFiles}`, "green");
+  log(`Files skipped: ${stats.skippedFiles}`, "yellow");
+  log(`Errors: ${stats.errors}`, stats.errors > 0 ? "red" : "green");
+  log("\nChanges made:", "bright");
+  log(`  - Header imports removed: ${stats.changes.headerImports}`, "green");
+  log(`  - Footer imports removed: ${stats.changes.footerImports}`, "green");
+  log(`  - Header elements removed: ${stats.changes.headerElements}`, "green");
+  log(`  - Footer elements removed: ${stats.changes.footerElements}`, "green");
+  log(
+    `  - Fragment wrappers removed: ${stats.changes.fragmentWrappers}`,
+    "green",
+  );
+  log(
+    `  - Container classes standardized: ${stats.changes.containerClasses}`,
+    "green",
+  );
 
   if (!DRY_RUN && stats.processedFiles > 0) {
-    log(`\n💾 Backups saved to: ${BACKUP_DIR}`, 'blue');
+    log(`\n💾 Backups saved to: ${BACKUP_DIR}`, "blue");
   }
 
-  log('\n✅ Migration complete!', 'green');
+  log("\n✅ Migration complete!", "green");
 
   if (DRY_RUN) {
-    log('\n💡 Run without --dry-run to apply changes', 'yellow');
+    log("\n💡 Run without --dry-run to apply changes", "yellow");
   } else {
-    log('\n📝 Next steps:', 'bright');
-    log('  1. Run: npm run type-check', 'blue');
-    log('  2. Run: npm run build', 'blue');
-    log('  3. Test the application', 'blue');
-    log('  4. If issues occur, restore from: ' + BACKUP_DIR, 'blue');
+    log("\n📝 Next steps:", "bright");
+    log("  1. Run: npm run type-check", "blue");
+    log("  2. Run: npm run build", "blue");
+    log("  3. Test the application", "blue");
+    log(`  4. If issues occur, restore from: ${BACKUP_DIR}`, "blue");
   }
 }
 

@@ -9,6 +9,7 @@
 ## 🚨 EXECUTIVE SUMMARY
 
 **Major Issues Identified**:
+
 1. **Duplicate Dashboard Routes** - 2 different farmer dashboards exist
 2. **Duplicate Components** - Multiple versions of same components
 3. **Route Conflicts** - Overlapping routes causing confusion
@@ -25,6 +26,7 @@
 **Issue**: TWO different farmer dashboard implementations exist
 
 #### Route A: `/farmer-dashboard` (OUTDATED)
+
 - **File**: `src/app/farmer-dashboard/page.tsx`
 - **Type**: Client-side component with mock data
 - **Features**: Hardcoded stats, fake orders
@@ -34,14 +36,15 @@
 ```typescript
 // This is the OLD version with fake data
 const [stats] = useState<DashboardStats>({
-  totalRevenue: 12450,  // Hardcoded!
-  pendingOrders: 8,     // Fake data!
-  activeProducts: 24,   // Not real!
+  totalRevenue: 12450, // Hardcoded!
+  pendingOrders: 8, // Fake data!
+  activeProducts: 24, // Not real!
   // ...
 });
 ```
 
 #### Route B: `/farmer/dashboard` (CORRECT)
+
 - **File**: `src/app/(farmer)/farmer/dashboard/page.tsx`
 - **Type**: Server-side component with real data
 - **Features**: Database queries, authentication, real metrics
@@ -57,7 +60,8 @@ const farm = await database.farm.findFirst({
 });
 ```
 
-**RECOMMENDATION**: 
+**RECOMMENDATION**:
+
 - ❌ DELETE: `src/app/farmer-dashboard/` entire directory
 - ✅ KEEP: `src/app/(farmer)/farmer/dashboard/`
 - 🔄 UPDATE: All links pointing to `/farmer-dashboard` → `/farmer/dashboard`
@@ -69,6 +73,7 @@ const farm = await database.farm.findFirst({
 **Issue**: Customer dashboard accessible via multiple routes
 
 #### Customer/Consumer Dashboard Routes:
+
 ```
 1. /dashboard              -> src/app/dashboard/page.tsx           ✅ PRIMARY
 2. /dashboard/orders       -> src/app/dashboard/orders/page.tsx    ✅ VALID
@@ -80,6 +85,7 @@ const farm = await database.farm.findFirst({
 **Status**: These are INTENTIONAL but need clear documentation
 
 #### Farmer Dashboard Routes:
+
 ```
 1. /farmer-dashboard       -> src/app/farmer-dashboard/page.tsx    ❌ DELETE
 2. /farmer/dashboard       -> src/app/(farmer)/farmer/dashboard/   ✅ KEEP
@@ -105,11 +111,13 @@ ROUTE                      FILE                                    STATUS
 ```
 
 **ANALYSIS**:
+
 - `/orders` is a smart router (redirects based on user role) ✅
 - `/dashboard/orders` and `/account/orders` both show CONSUMER orders ⚠️
 - `/farmer-dashboard/orders` is DUPLICATE and outdated ❌
 
 **RECOMMENDATION**:
+
 1. ❌ DELETE: `/farmer-dashboard/orders/`
 2. ⚠️ CLARIFY: Are `/dashboard/orders` and `/account/orders` duplicates?
    - If YES: Keep one, redirect the other
@@ -130,6 +138,7 @@ ROUTE                               FILE                                    STAT
 ```
 
 **RECOMMENDATION**:
+
 - ❌ DELETE: `/farmer-dashboard/products/bulk-upload/`
 - ⚠️ CLARIFY: Difference between `/products` and `/marketplace/products`
 - ✅ KEEP: Role-based routes (farmer, admin)
@@ -141,6 +150,7 @@ ROUTE                               FILE                                    STAT
 **Issue**: Multiple versions of same component
 
 #### ErrorBoundary Component - 2 VERSIONS
+
 ```
 1. src/components/ErrorBoundary.tsx              ✅ PRIMARY (full featured)
 2. src/components/layout/ErrorBoundary.tsx       ❌ DELETE (duplicate?)
@@ -149,6 +159,7 @@ ROUTE                               FILE                                    STAT
 **Analysis**: Check if both are used. Keep the more complete one.
 
 #### CodeBlock Component - 2 VERSIONS
+
 ```
 1. src/components/CodeBlock.tsx                  ✅ PRIMARY
 2. src/components/best-practices/CodeBlock.tsx   ⚠️ SPECIALIZED?
@@ -165,14 +176,17 @@ ROUTE                               FILE                                    STAT
 **Problem**: Depending on which route loads, users see different headers
 
 **Routes Using Header**:
+
 - Home page (`/`) ✅
 - Public pages (about, contact, etc.) ✅
 - Farmer dashboard (`/farmer-dashboard/`) ⚠️ WRONG ONE
 
 **Routes NOT Using Header**:
+
 - Authenticated dashboards (should they?) ⚠️
 
 **RECOMMENDATION**:
+
 - Audit all pages to use consistent header/navigation
 - Define clear layout hierarchy:
   - Public Layout → Header + Footer
@@ -205,6 +219,7 @@ ROUTE                               FILE                                    STAT
 ### High Priority Deletions:
 
 1. **Entire farmer-dashboard directory** ❌
+
    ```
    DELETE: src/app/farmer-dashboard/
    ├── page.tsx                    (outdated dashboard)
@@ -236,6 +251,7 @@ ROUTE                               FILE                                    STAT
 ### Update All Links Pointing To Old Farmer Dashboard:
 
 Search and replace in entire codebase:
+
 ```bash
 # Find all references
 grep -r "farmer-dashboard" src/
@@ -245,6 +261,7 @@ grep -r "farmer-dashboard" src/
 ```
 
 **Files likely affected**:
+
 - Navigation components
 - Link components
 - Redirect logic
@@ -298,6 +315,7 @@ src/app/
 ### Phase 1: Immediate Cleanup (HIGH PRIORITY)
 
 **Step 1: Delete Outdated Farmer Dashboard**
+
 ```bash
 # Backup first
 cp -r src/app/farmer-dashboard src/app/farmer-dashboard.backup
@@ -307,6 +325,7 @@ rm -rf src/app/farmer-dashboard
 ```
 
 **Step 2: Update All References**
+
 ```bash
 # Find all references to old dashboard
 grep -rn "farmer-dashboard" src/ --include="*.tsx" --include="*.ts"
@@ -316,6 +335,7 @@ grep -rn "farmer-dashboard" src/ --include="*.tsx" --include="*.ts"
 ```
 
 **Step 3: Verify Navigation**
+
 - Check all navigation components
 - Update farmer login redirects
 - Test authentication flows
@@ -324,12 +344,14 @@ grep -rn "farmer-dashboard" src/ --include="*.tsx" --include="*.ts"
 
 **Step 1: Document Route Purpose**
 Create a file documenting each route's purpose:
+
 - `/dashboard/orders` - Primary consumer orders page
 - `/account/orders` - Alternative consumer orders page (why?)
 - Purpose of each should be clear
 
 **Step 2: Decide on Duplicates**
 For each duplicate pair:
+
 - Keep the one that follows the pattern
 - Redirect or delete the other
 - Update documentation
@@ -337,6 +359,7 @@ For each duplicate pair:
 ### Phase 3: Standardize Layouts (MEDIUM PRIORITY)
 
 **Step 1: Create Layout Hierarchy**
+
 ```
 - Public Layout (Header + Footer)
   ├── Home
@@ -350,6 +373,7 @@ For each duplicate pair:
 ```
 
 **Step 2: Apply Consistently**
+
 - Ensure all pages use correct layout
 - Remove inconsistent header/footer usage
 - Test all routes
@@ -357,11 +381,13 @@ For each duplicate pair:
 ### Phase 4: Component Deduplication (LOW PRIORITY)
 
 **Step 1: Audit Duplicate Components**
+
 - Compare `ErrorBoundary` versions
 - Compare `CodeBlock` versions
 - Keep the most complete one
 
 **Step 2: Update Imports**
+
 - Find all imports of duplicate components
 - Update to use canonical version
 - Delete duplicates
@@ -429,6 +455,7 @@ After cleanup, verify:
 After implementing fixes:
 
 ### 1. Route Testing
+
 ```bash
 # Test all dashboard routes
 curl http://localhost:3001/farmer/dashboard     # Should work
@@ -437,16 +464,19 @@ curl http://localhost:3001/dashboard            # Should work
 ```
 
 ### 2. Authentication Flow Testing
+
 - Test farmer login → redirects to `/farmer/dashboard`
 - Test consumer login → redirects to `/dashboard`
 - Test admin login → redirects to `/admin`
 
 ### 3. Navigation Testing
+
 - Click all nav links from farmer dashboard
 - Click all nav links from consumer dashboard
 - Verify no links point to deleted routes
 
 ### 4. Component Testing
+
 - Verify ErrorBoundary catches errors
 - Verify CodeBlock renders correctly
 - Check all component imports work
@@ -456,18 +486,22 @@ curl http://localhost:3001/dashboard            # Should work
 ## 📊 IMPACT ASSESSMENT
 
 ### User Impact:
+
 - **Current**: Farmers might access wrong dashboard (with fake data)
 - **After Fix**: Clear, consistent experience for all users
 
 ### Developer Impact:
+
 - **Current**: Confusion about which routes to use
 - **After Fix**: Clear route structure, easy to maintain
 
 ### Performance Impact:
+
 - **Before**: Duplicate code increases bundle size
 - **After**: Cleaner codebase, smaller bundle
 
 ### Maintenance Impact:
+
 - **Before**: Have to maintain 2 versions of same features
 - **After**: Single source of truth for each feature
 
@@ -518,12 +552,14 @@ Create these documents after cleanup:
 ## 🚨 CRITICAL WARNINGS
 
 ### DO NOT:
+
 - ❌ Delete routes without checking all references first
 - ❌ Update production without testing locally
 - ❌ Change route groups without understanding impact
 - ❌ Delete components that might be used elsewhere
 
 ### DO:
+
 - ✅ Backup files before deletion
 - ✅ Search entire codebase for references
 - ✅ Test locally after each change
@@ -554,6 +590,7 @@ Create these documents after cleanup:
 ## 📈 ESTIMATED EFFORT
 
 **Time Required**:
+
 - Phase 1 (Critical cleanup): 2-4 hours
 - Phase 2 (Route clarification): 2-3 hours
 - Phase 3 (Layout standardization): 4-6 hours

@@ -18,6 +18,7 @@
 ## 🗑️ Files to DELETE (Safe to Remove)
 
 ### Build Artifacts & Cache (216+ MB)
+
 ```
 ❌ .next/                    # Next.js build output (176 MB)
 ❌ .jest-cache/              # Jest test cache (7.1 MB)
@@ -25,48 +26,59 @@
 ❌ dist/                     # Build distribution (4.8 MB)
 ❌ playwright-report/        # E2E test reports (504 KB)
 ```
+
 **Action:** Can be regenerated with `npm run build` and `npm test`
 
 ### Temporary/Audit Files
+
 ```
 ❌ console_audit.txt                    # Old audit report (55 KB)
 ❌ console_audit_production.txt         # Old audit report (3.1 KB)
 ❌ console_audit_summary.txt            # Old audit report (902 B)
 ```
+
 **Reason:** Outdated audit files from previous cleanup phases
 
 ### Duplicate TODO Files
+
 ```
 ❌ TODO_CATEGORIZED.txt                 # Duplicate (8.1 KB)
 ❌ TODO_HIGH_PRIORITY.txt               # Duplicate (4.1 KB)
 ❌ TODO_INVENTORY.txt                   # Duplicate (4.1 KB)
 ❌ TODO_SUMMARY.txt                     # Duplicate (1.1 KB)
 ```
+
 **Reason:** Information merged into current tracking systems
 
 ### Old Migration/Fix Files
+
 ```
 ❌ FEATURED_FARMS_SOLUTION.txt          # Resolved issue (6.4 KB)
 ❌ PORT_3001_MIGRATION_COMPLETE.txt     # Completed migration (9.3 KB)
 ❌ PASTE_INTO_PRISMA_STUDIO.sql         # One-time use script (2.5 KB)
 ```
+
 **Reason:** Historical fixes that are now complete
 
 ### Root Script Duplicates
+
 ```
 ❌ activate-farms-simple.ts             # Duplicate of scripts/activate-featured-farms.ts
 ❌ fix-featured-farms.js                # Duplicate of scripts/fix-missing-images.js
 ❌ update-farms.js                      # One-time use, now in scripts/database/
 ```
+
 **Reason:** Better organized versions exist in scripts/ directory
 
 ### IDE-Specific Files (If not needed)
+
 ```
 ❌ .vs/                                 # Visual Studio folder
 ❌ Farmers Market Platform web and app.slnx   # VS solution file
 ❌ Market Platform web and app          # Unknown file/folder
 ❌ farmers-market.code-workspace        # VSCode workspace (optional)
 ```
+
 **Reason:** IDE-specific, not needed for development (optional removal)
 
 ---
@@ -76,6 +88,7 @@
 ### REDUNDANT Documentation (Keep Current, Archive Others)
 
 #### Status Reports (Choose Latest)
+
 ```
 ⚠️  COMPLETION_STATUS_95_PERCENT.md         # Outdated status
 ✅  100_PERCENT_PRODUCTION_READY.md         # KEEP - Latest status
@@ -84,6 +97,7 @@
 ```
 
 #### Cleanup Documentation (Consolidate)
+
 ```
 ⚠️  CLEANUP_COMPLETED.md                    # Phase 1 complete
 ⚠️  CLEANUP_EXECUTION_SUMMARY.md            # Phase 1 summary
@@ -92,9 +106,11 @@
 ⚠️  QUICK_CLEANUP_REFERENCE.md              # Redundant quick ref
 ✅  REPOSITORY_ANALYSIS_AND_CLEANUP.md      # KEEP - Comprehensive
 ```
+
 **Action:** Archive old cleanup docs, keep latest comprehensive one
 
 #### Review Documents (Consolidate)
+
 ```
 ⚠️  COMPREHENSIVE_PLATFORM_ANALYSIS.md      # Detailed review
 ⚠️  FINAL_PLATFORM_REVIEW.md                # Another review
@@ -102,9 +118,11 @@
 ⚠️  REVIEW_INDEX.md                         # Review index
 ✅  README.md                                # KEEP - Main docs
 ```
+
 **Action:** Keep README.md and one comprehensive review, archive others
 
 #### Quick Start Guides (Consolidate)
+
 ```
 ⚠️  QUICK_START_100_PERCENT.md              # Quick start v1
 ⚠️  QUICK_START_PORT_3001.md                # Port migration guide
@@ -113,9 +131,11 @@
 ⚠️  QUICK_WINS_SUMMARY.md                   # Old wins summary
 ⚠️  START_HERE_UPGRADE.md                   # Old upgrade guide
 ```
+
 **Action:** Keep QUICK_REFERENCE.md, archive others
 
 #### Feature/Enhancement Docs (Keep Relevant)
+
 ```
 ⚠️  DATABASE_ENHANCEMENTS_COMPLETE.md       # Completed enhancements
 ⚠️  DEV_SERVER_SETUP.md                     # Server setup (merge to README)
@@ -126,6 +146,7 @@
 ```
 
 #### Implementation Docs (Keep Current)
+
 ```
 ✅  IMPLEMENTATION_ROADMAP.md                # KEEP - Current roadmap
 ⚠️  NUCLEAR_MOMENTUM_VICTORY.md             # Motivational (optional)
@@ -136,6 +157,7 @@
 ```
 
 #### Current Status Docs (Keep These)
+
 ```
 ✅  BUILD_SUCCESS.md                         # KEEP - Latest build success
 ✅  CURRENT_STATUS_AND_NEXT_STEPS.md         # KEEP - Current status
@@ -149,15 +171,18 @@
 ### Immediate Actions (Safe)
 
 #### 1. Clean Build Artifacts
+
 ```bash
 npm run clean:all
 # OR manually:
 rm -rf .next .jest-cache coverage dist playwright-report
 ```
+
 **Impact:** None - can be regenerated  
 **Space Saved:** ~216 MB
 
 #### 2. Remove Temporary Files
+
 ```bash
 rm -f console_audit*.txt
 rm -f TODO_*.txt
@@ -165,22 +190,26 @@ rm -f FEATURED_FARMS_SOLUTION.txt
 rm -f PORT_3001_MIGRATION_COMPLETE.txt
 rm -f PASTE_INTO_PRISMA_STUDIO.sql
 ```
+
 **Impact:** None - historical files  
 **Space Saved:** ~30 KB
 
 #### 3. Remove Duplicate Root Scripts
+
 ```bash
 # These have better versions in scripts/ directory
 rm -f activate-farms-simple.ts
 rm -f fix-featured-farms.js
 rm -f update-farms.js
 ```
+
 **Impact:** None - duplicates exist in scripts/  
 **Space Saved:** ~10 KB
 
 ### Documentation Consolidation (Recommended)
 
 #### Create Archive Folder
+
 ```bash
 mkdir -p docs/archive
 mkdir -p docs/archive/status-reports
@@ -189,6 +218,7 @@ mkdir -p docs/archive/reviews
 ```
 
 #### Archive Old Documentation
+
 ```bash
 # Status reports
 mv COMPLETION_STATUS_95_PERCENT.md docs/archive/status-reports/
@@ -222,6 +252,7 @@ mv PLATFORM_UPDATE_RECOMMENDATIONS.md docs/archive/
 ```
 
 #### Keep in Root (Essential Documentation)
+
 ```
 ✅ README.md                          # Main documentation
 ✅ BUILD_SUCCESS.md                   # Latest build status
@@ -238,6 +269,7 @@ mv PLATFORM_UPDATE_RECOMMENDATIONS.md docs/archive/
 ### Optional Cleanup (Low Priority)
 
 #### Remove IDE-Specific Files (If Not Using)
+
 ```bash
 # If not using Visual Studio
 rm -rf .vs/
@@ -248,6 +280,7 @@ rm -f farmers-market.code-workspace
 ```
 
 #### Clean Monitoring Reports (Keep Latest Only)
+
 ```bash
 # Archive old reports, keep recent ones
 cd monitoring-reports
@@ -259,6 +292,7 @@ cd monitoring-reports
 ## 🎯 Cleanup Script
 
 ### Automated Cleanup Script
+
 ```bash
 #!/bin/bash
 # cleanup-project.sh
@@ -342,6 +376,7 @@ echo ""
 ## 📋 Post-Cleanup Checklist
 
 After cleanup, verify:
+
 - [ ] `npm run dev` still works
 - [ ] `npm run build` completes successfully
 - [ ] All essential documentation is accessible
@@ -354,6 +389,7 @@ After cleanup, verify:
 ## 🔒 Files to NEVER Delete
 
 ### Essential Configuration
+
 ```
 ✅ package.json
 ✅ package-lock.json
@@ -366,6 +402,7 @@ After cleanup, verify:
 ```
 
 ### Essential Source Code
+
 ```
 ✅ src/ directory
 ✅ public/ directory
@@ -374,6 +411,7 @@ After cleanup, verify:
 ```
 
 ### Essential Documentation
+
 ```
 ✅ README.md
 ✅ LICENSE
@@ -385,14 +423,14 @@ After cleanup, verify:
 
 ## 💾 Space Recovery Estimate
 
-| Category | Size | Recovery |
-|----------|------|----------|
-| Build artifacts | 216 MB | 100% |
-| Temporary files | 30 KB | 100% |
-| Duplicate scripts | 10 KB | 100% |
-| **Total** | **~216 MB** | **~100%** |
+| Category          | Size        | Recovery  |
+| ----------------- | ----------- | --------- |
+| Build artifacts   | 216 MB      | 100%      |
+| Temporary files   | 30 KB       | 100%      |
+| Duplicate scripts | 10 KB       | 100%      |
+| **Total**         | **~216 MB** | **~100%** |
 
-*Note: Documentation archiving doesn't save space but improves organization*
+_Note: Documentation archiving doesn't save space but improves organization_
 
 ---
 

@@ -55,16 +55,19 @@ Webhooks allow Stripe to notify your application about payment events in real-ti
 #### **Step 1: Install Stripe CLI**
 
 **Windows (PowerShell):**
+
 ```powershell
 scoop install stripe
 ```
 
 **macOS:**
+
 ```bash
 brew install stripe/stripe-cli/stripe
 ```
 
 **Linux:**
+
 ```bash
 # Download from https://github.com/stripe/stripe-cli/releases
 wget https://github.com/stripe/stripe-cli/releases/latest/download/stripe_linux_x86_64.tar.gz
@@ -126,17 +129,18 @@ STRIPE_WEBHOOK_SECRET="whsec_xyz123..."
 
 Use these test card numbers in development:
 
-| Card Number          | Scenario              | Use Case                    |
-|---------------------|----------------------|----------------------------|
-| `4242 4242 4242 4242` | Success              | Standard payment success   |
-| `4000 0025 0000 3155` | 3D Secure Required   | Test 3DS authentication    |
-| `4000 0000 0000 9995` | Declined             | Insufficient funds         |
-| `4000 0000 0000 0002` | Declined             | Card declined              |
-| `4000 0000 0000 9987` | Declined             | Lost card                  |
-| `4000 0000 0000 0069` | Expired              | Expired card               |
-| `4000 0000 0000 0127` | Incorrect CVC        | Wrong security code        |
+| Card Number           | Scenario           | Use Case                 |
+| --------------------- | ------------------ | ------------------------ |
+| `4242 4242 4242 4242` | Success            | Standard payment success |
+| `4000 0025 0000 3155` | 3D Secure Required | Test 3DS authentication  |
+| `4000 0000 0000 9995` | Declined           | Insufficient funds       |
+| `4000 0000 0000 0002` | Declined           | Card declined            |
+| `4000 0000 0000 9987` | Declined           | Lost card                |
+| `4000 0000 0000 0069` | Expired            | Expired card             |
+| `4000 0000 0000 0127` | Incorrect CVC      | Wrong security code      |
 
 **Additional Details for Test Cards:**
+
 - **Expiration**: Any future date (e.g., `12/34`)
 - **CVC**: Any 3 digits (e.g., `123`)
 - **ZIP**: Any 5 digits (e.g., `12345`)
@@ -144,6 +148,7 @@ Use these test card numbers in development:
 ### **Manual Testing Steps**
 
 1. **Start Development Server**
+
    ```bash
    npm run dev:omen
    ```
@@ -154,6 +159,7 @@ Use these test card numbers in development:
    - Proceed to checkout
 
 3. **Test Payment Intent Creation**
+
    ```bash
    # API endpoint test
    curl -X POST http://localhost:3001/api/payments/intent \
@@ -201,12 +207,14 @@ stripe trigger payment_intent.requires_action
 ### **Manual Webhook Testing**
 
 1. **Create Real Payment Intent**
+
    ```bash
    npm run dev:omen
    # Create an order through the UI
    ```
 
 2. **Monitor Webhook Events**
+
    ```bash
    # Terminal 1: Forward webhooks
    stripe listen --forward-to localhost:3001/api/webhooks/stripe
@@ -314,6 +322,7 @@ STRIPE_WEBHOOK_SECRET="whsec_your_production_webhook_secret"
 #### **"STRIPE_SECRET_KEY is not configured"**
 
 **Solution:**
+
 - Verify `.env.local` file exists
 - Check key starts with `sk_test_` or `sk_live_`
 - Restart development server after adding keys
@@ -321,6 +330,7 @@ STRIPE_WEBHOOK_SECRET="whsec_your_production_webhook_secret"
 #### **"Webhook signature verification failed"**
 
 **Solution:**
+
 - Verify `STRIPE_WEBHOOK_SECRET` is correctly set
 - Ensure webhook secret matches the endpoint
 - For local dev, make sure `stripe listen` is running
@@ -329,6 +339,7 @@ STRIPE_WEBHOOK_SECRET="whsec_your_production_webhook_secret"
 #### **"Order not found"**
 
 **Solution:**
+
 - Verify order exists in database
 - Check orderId is valid UUID format
 - Ensure order belongs to authenticated user
@@ -336,6 +347,7 @@ STRIPE_WEBHOOK_SECRET="whsec_your_production_webhook_secret"
 #### **"Payment intent creation failed"**
 
 **Solution:**
+
 - Check Stripe API key is valid
 - Verify internet connection
 - Check Stripe dashboard for API errors
@@ -344,6 +356,7 @@ STRIPE_WEBHOOK_SECRET="whsec_your_production_webhook_secret"
 #### **Webhooks not received locally**
 
 **Solution:**
+
 ```bash
 # 1. Check Stripe CLI is running
 stripe listen --forward-to localhost:3001/api/webhooks/stripe
@@ -358,6 +371,7 @@ curl http://localhost:3001/api/webhooks/stripe
 #### **Payment succeeded but order not updated**
 
 **Solution:**
+
 - Check webhook events are being received (Stripe Dashboard → Developers → Events)
 - Verify webhook handler is processing events correctly
 - Check server logs for errors in `handlePaymentSuccess`
@@ -368,6 +382,7 @@ curl http://localhost:3001/api/webhooks/stripe
 #### **Check Stripe Logs**
 
 View Stripe API logs:
+
 1. Go to [Stripe Dashboard → Developers → Logs](https://dashboard.stripe.com/logs)
 2. Filter by your API key
 3. Look for errors or failed requests
@@ -375,6 +390,7 @@ View Stripe API logs:
 #### **Monitor Webhook Events**
 
 View webhook delivery status:
+
 1. Go to [Stripe Dashboard → Developers → Webhooks](https://dashboard.stripe.com/webhooks)
 2. Click on your endpoint
 3. View recent deliveries and any failures

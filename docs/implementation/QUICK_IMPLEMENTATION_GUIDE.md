@@ -1,4 +1,5 @@
 # 🚀 QUICK IMPLEMENTATION GUIDE
+
 **Priority Fixes for Farmers Market Platform**  
 **Estimated Total Time**: 2-3 hours for all critical fixes  
 **Last Updated**: December 2024
@@ -8,7 +9,7 @@
 ## ✅ COMPLETED FIXES (No Action Needed)
 
 1. ✅ **Homepage Cart Integration** - Working
-2. ✅ **Markets Page API Integration** - Working  
+2. ✅ **Markets Page API Integration** - Working
 3. ✅ **Products Page Cart** - Working
 4. ✅ **Customer Marketplace Products Cart** - Working
 5. ✅ **Checkout Real Cart** - Working
@@ -18,6 +19,7 @@
 ## 🔴 REMAINING CRITICAL FIXES (Priority Order)
 
 ### Fix #1: Public Farms Page - API Integration
+
 **File**: `src/app/(public)/farms/page.tsx`  
 **Time**: 45 minutes  
 **Status**: 🔴 CRITICAL
@@ -45,13 +47,13 @@ export default function FarmsPage() {
       setLoading(true);
       try {
         const response = await fetch("/api/farms?status=ACTIVE&limit=100");
-        
+
         if (!response.ok) {
           throw new Error("Failed to fetch farms");
         }
 
         const data = await response.json();
-        
+
         if (data.success && Array.isArray(data.data)) {
           const transformedFarms = data.data.map((farm: any) => ({
             id: farm.id,
@@ -84,7 +86,7 @@ export default function FarmsPage() {
     const matchesSearch =
       farm.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       farm.description.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesCategory =
       selectedCategory === "All" ||
       farm.products.includes(selectedCategory);
@@ -145,6 +147,7 @@ export default function FarmsPage() {
 ```
 
 **Testing**:
+
 1. Navigate to `/farms`
 2. Verify real farms display
 3. Test search functionality
@@ -153,6 +156,7 @@ export default function FarmsPage() {
 ---
 
 ### Fix #2: Farm Detail API Endpoint
+
 **File**: `src/app/api/farms/[slug]/route.ts` (NEW FILE)  
 **Time**: 30 minutes  
 **Status**: 🔴 CRITICAL - Required for Fix #3 & #4
@@ -167,7 +171,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: { slug: string } },
 ) {
   try {
     const { slug } = params;
@@ -220,14 +224,14 @@ export async function GET(
           success: false,
           error: "Farm not found",
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     // Calculate average rating
     const totalRating = farm.reviews.reduce(
       (sum: number, review: any) => sum + (review.rating || 0),
-      0
+      0,
     );
     const averageRating =
       farm.reviews.length > 0 ? totalRating / farm.reviews.length : 0;
@@ -245,7 +249,7 @@ export async function GET(
         headers: {
           "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
         },
-      }
+      },
     );
   } catch (error) {
     console.error("[FARM_DETAIL_API_ERROR]", error);
@@ -255,13 +259,14 @@ export async function GET(
         error: "Failed to fetch farm details",
         message: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 ```
 
 **Testing**:
+
 1. Test in browser: `http://localhost:3001/api/farms/[existing-slug]`
 2. Verify JSON response with farm data
 3. Test with invalid slug - should return 404
@@ -269,6 +274,7 @@ export async function GET(
 ---
 
 ### Fix #3: Public Farm Detail Page
+
 **File**: `src/app/(public)/farms/[slug]/page.tsx`  
 **Time**: 30 minutes  
 **Status**: 🔴 CRITICAL
@@ -290,7 +296,7 @@ async function getFarmBySlug(slug: string) {
     }
 
     const data = await response.json();
-    
+
     if (!data.success || !data.farm) {
       return null;
     }
@@ -338,6 +344,7 @@ export default async function FarmDetailPage({
 ```
 
 **Testing**:
+
 1. Click on a farm from `/farms` page
 2. Verify farm details load
 3. Test with invalid slug
@@ -347,6 +354,7 @@ export default async function FarmDetailPage({
 ---
 
 ### Fix #4: Customer Marketplace Farm Detail
+
 **File**: `src/app/(customer)/marketplace/farms/[slug]/page.tsx`  
 **Time**: 15 minutes  
 **Status**: 🔴 CRITICAL
@@ -357,10 +365,10 @@ export default async function FarmDetailPage({
 async function getFarmBySlug(slug: string) {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001'}/api/farms/${slug}`,
+      `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001"}/api/farms/${slug}`,
       {
-        cache: 'no-store'
-      }
+        cache: "no-store",
+      },
     );
 
     if (!response.ok) {
@@ -381,6 +389,7 @@ async function getFarmBySlug(slug: string) {
 ---
 
 ### Fix #5: Public Products Page - API Integration
+
 **File**: `src/app/(public)/products/page.tsx`  
 **Time**: 45 minutes  
 **Status**: 🟡 MEDIUM (Cart already works)
@@ -390,11 +399,11 @@ async function getFarmBySlug(slug: string) {
 ```typescript
 export default function ProductsPage() {
   const addItem = useCartStore((state) => state.addItem);
-  
+
   // Add these states
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedSeason, setSelectedSeason] = useState("All");
@@ -411,11 +420,11 @@ export default function ProductsPage() {
           status: "ACTIVE",
           limit: "100",
         });
-        
+
         if (showInStock) {
           params.append("inStock", "true");
         }
-        
+
         if (showOrganic) {
           params.append("organic", "true");
         }
@@ -517,6 +526,7 @@ export default function ProductsPage() {
 ```
 
 **Testing**:
+
 1. Navigate to `/products`
 2. Verify real products display
 3. Test filters and sorting
@@ -525,6 +535,7 @@ export default function ProductsPage() {
 ---
 
 ### Fix #6: Customer Marketplace Products - API Integration
+
 **File**: `src/app/(customer)/marketplace/products/page.tsx`  
 **Time**: 45 minutes  
 **Status**: 🟡 MEDIUM (Cart already works)
@@ -565,6 +576,7 @@ const filteredProducts = useMemo(() => {
 ---
 
 ### Fix #7: Search API Endpoint (OPTIONAL - Can skip for MVP)
+
 **File**: `src/app/api/search/route.ts` (NEW FILE)  
 **Time**: 1 hour  
 **Status**: 🟢 LOW PRIORITY
@@ -612,7 +624,7 @@ export async function GET(request: NextRequest) {
           description: farm.description,
           image: farm.bannerUrl || farm.logoUrl,
           url: `/farms/${farm.slug}`,
-        }))
+        })),
       );
     }
 
@@ -649,7 +661,7 @@ export async function GET(request: NextRequest) {
             farmName: product.farm.name,
             price: product.price,
           },
-        }))
+        })),
       );
     }
 
@@ -666,7 +678,7 @@ export async function GET(request: NextRequest) {
         success: false,
         error: "Search failed",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -677,6 +689,7 @@ export async function GET(request: NextRequest) {
 ## 📋 IMPLEMENTATION CHECKLIST
 
 ### Day 1: Critical Cart & Farms (3-4 hours)
+
 - [x] Customer Marketplace Products Cart ✅
 - [x] Checkout Real Cart ✅
 - [ ] Create Farm Detail API (#2)
@@ -685,10 +698,12 @@ export async function GET(request: NextRequest) {
 - [ ] Customer Farm Detail (#4)
 
 ### Day 2: Products Integration (1.5 hours)
+
 - [ ] Public Products Page API (#5)
 - [ ] Customer Products Page API (#6)
 
 ### Day 3: Optional Search (1 hour)
+
 - [ ] Search API (#7)
 - [ ] Search Page Integration
 
@@ -726,12 +741,15 @@ After all fixes:
 ## ⚠️ IMPORTANT NOTES
 
 ### Environment Variables
+
 Add to `.env.local`:
+
 ```env
 NEXT_PUBLIC_APP_URL=http://localhost:3001
 ```
 
 ### Type Safety
+
 Some transformations use `any` type. Consider creating proper types:
 
 ```typescript
@@ -750,6 +768,7 @@ export interface ApiFarm {
 ```
 
 ### Error Handling Pattern
+
 Consistent error handling:
 
 ```typescript

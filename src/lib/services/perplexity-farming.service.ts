@@ -529,7 +529,8 @@ Focus on organic, sustainable, and locally-appropriate products. Include market 
   private buildMarketIntelligencePrompt(
     request: MarketIntelligenceRequest,
   ): string {
-    let prompt = "As a market intelligence analyst for organic farming and local agriculture, provide comprehensive market analysis:\n\n";
+    let prompt =
+      "As a market intelligence analyst for organic farming and local agriculture, provide comprehensive market analysis:\n\n";
 
     if (request.region) {
       prompt += `Region: ${request.region}\n`;
@@ -584,7 +585,8 @@ Make it practical, actionable, and easy to follow. Include real-world examples a
   }
 
   private buildSupportPrompt(request: SupportRequest): string {
-    let prompt = "You are an AI agricultural support assistant helping farmers with their questions and challenges.\n\n";
+    let prompt =
+      "You are an AI agricultural support assistant helping farmers with their questions and challenges.\n\n";
 
     if (request.context) {
       prompt += "Context:\n";

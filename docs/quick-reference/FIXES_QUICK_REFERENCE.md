@@ -1,4 +1,5 @@
 # ⚡ QUICK REFERENCE - IMMEDIATE FIXES
+
 **Farmers Market Platform - Copy-Paste Commands**
 
 **Status:** Ready to Execute  
@@ -10,6 +11,7 @@
 ## 🔥 IMMEDIATE ACTIONS (DO THIS FIRST)
 
 ### 1. Check Current Status
+
 ```bash
 # See what we're working with
 npm run type-check 2>&1 | tee typescript-errors-full.log
@@ -22,6 +24,7 @@ npm run lint 2>&1 | head -20
 ## 🎯 PHASE 1: FIX TYPESCRIPT ERRORS (P0 - BLOCKING)
 
 ### Quick Wins - Unused Imports
+
 ```bash
 # Auto-fix with ESLint
 npm run lint -- --fix
@@ -31,6 +34,7 @@ npm run type-check | grep "Found.*errors"
 ```
 
 ### Fix Prisma Schema Mismatches
+
 ```bash
 # OPTION 1: Global find-replace (use with caution!)
 find src -type f -name "*.ts" -exec sed -i 's/stripeConnectAccountId/stripeAccountId/g' {} +
@@ -46,6 +50,7 @@ npm run type-check
 ```
 
 ### Fix Unused Request Parameters
+
 ```bash
 # Files to update (prefix request with _)
 # src/app/api/farming/advice/route.ts
@@ -59,6 +64,7 @@ npm run type-check
 ```
 
 ### Fix OrderStatus Enum Issues
+
 ```bash
 # Check valid enum values
 npx prisma studio
@@ -75,6 +81,7 @@ npx prisma studio
 ```
 
 ### Verify Phase 1 Complete
+
 ```bash
 npm run type-check  # Should show 0 errors
 npm run test        # Should pass
@@ -86,6 +93,7 @@ npm run build       # Should succeed
 ## 📦 PHASE 2: CONSOLIDATE VALIDATIONS (P1)
 
 ### Quick Commands
+
 ```bash
 # 1. Move files from validation/ to validations/
 mv src/lib/validation/agricultural-validation.ts src/lib/validations/agricultural.ts
@@ -112,6 +120,7 @@ npm run test
 ## 🚨 PHASE 3: CONSOLIDATE ERRORS (P1)
 
 ### Quick Commands
+
 ```bash
 # 1. Check for unique logic in errors/ folder
 ls -la src/lib/errors/
@@ -141,6 +150,7 @@ npm run test
 ## 🗂️ PHASE 4: RESTRUCTURE API ROUTES (P2)
 
 ### Consolidate Farmer Routes
+
 ```bash
 # Move farmer/* to farmers/*
 mv src/app/api/farmer/finances src/app/api/farmers/
@@ -156,6 +166,7 @@ grep -r "/api/farmer/" src/ --include="*.ts" --include="*.tsx"
 ```
 
 ### Rename Farming to Agricultural
+
 ```bash
 # Rename folder
 mv src/app/api/farming src/app/api/agricultural
@@ -168,6 +179,7 @@ npm run type-check
 ```
 
 ### Move Product Recommendations
+
 ```bash
 # Move recommendations
 mv src/app/api/agricultural/products/recommendations src/app/api/products/
@@ -184,6 +196,7 @@ npm run build
 ## 🏠 PHASE 5: CONSOLIDATE DASHBOARDS (P2)
 
 ### Quick Commands
+
 ```bash
 # Check current structure
 find src/app -type d -name "*dashboard*"
@@ -207,6 +220,7 @@ find src/app/api -type d -empty -delete
 ## 📚 PHASE 6: ORGANIZE DOCUMENTATION (P3)
 
 ### Quick Commands
+
 ```bash
 # Create structure
 mkdir -p docs/{guides/{setup,testing,deployment},phases,architecture,status}
@@ -238,6 +252,7 @@ mv *_CHECKLIST.md docs/guides/deployment/
 ## 🧪 PHASE 7: STANDARDIZE API RESPONSES (P2)
 
 ### Create Response Helpers
+
 ```bash
 # Create file: src/lib/api/response-helpers.ts
 # (See CLEANUP_ACTION_PLAN.md for full code)
@@ -254,6 +269,7 @@ mv *_CHECKLIST.md docs/guides/deployment/
 ## ✅ VERIFICATION CHECKLIST
 
 ### Run After Each Phase
+
 ```bash
 npm run type-check  # 0 errors expected
 npm run lint        # 0 errors expected
@@ -261,6 +277,7 @@ npm run test        # All tests passing
 ```
 
 ### Final Verification
+
 ```bash
 # Complete test suite
 npm run type-check
@@ -287,12 +304,14 @@ ls src/app/api/agricultural # Should exist
 ## 🎯 COMMON ISSUES & FIXES
 
 ### Issue: Git index.lock
+
 ```bash
 rm -f .git/index.lock
 git status
 ```
 
 ### Issue: TypeScript errors after moving files
+
 ```bash
 # Clear cache
 rm -rf .next node_modules/.cache
@@ -302,6 +321,7 @@ npm run type-check
 ```
 
 ### Issue: Tests fail after refactoring
+
 ```bash
 # Check test imports
 npm run test -- --verbose
@@ -309,6 +329,7 @@ npm run test -- --verbose
 ```
 
 ### Issue: Build fails
+
 ```bash
 # Check circular dependencies
 npm run build 2>&1 | grep -i "circular"
@@ -322,6 +343,7 @@ npm run build 2>&1 | grep -i "cannot find"
 ## 🚀 GIT WORKFLOW
 
 ### Commit After Each Phase
+
 ```bash
 # Phase 1
 git add .

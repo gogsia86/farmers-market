@@ -70,12 +70,16 @@ export const ActionErrorCode = {
   UNKNOWN_ERROR: "UNKNOWN_ERROR",
 } as const;
 
-export type ActionErrorCodeType = typeof ActionErrorCode[keyof typeof ActionErrorCode];
+export type ActionErrorCodeType =
+  (typeof ActionErrorCode)[keyof typeof ActionErrorCode];
 
 /**
  * Helper function to create success result
  */
-export function createSuccessResult<T>(data: T, meta?: ActionResult["meta"]): ActionResult<T> {
+export function createSuccessResult<T>(
+  data: T,
+  meta?: ActionResult["meta"],
+): ActionResult<T> {
   return {
     success: true,
     data,
@@ -109,13 +113,20 @@ export function createErrorResult(
 /**
  * Type guard to check if result is success
  */
-export function isSuccessResult<T>(result: ActionResult<T>): result is ActionResult<T> & { success: true; data: T } {
+export function isSuccessResult<T>(
+  result: ActionResult<T>,
+): result is ActionResult<T> & { success: true; data: T } {
   return result.success === true && result.data !== undefined;
 }
 
 /**
  * Type guard to check if result is error
  */
-export function isErrorResult(result: ActionResult): result is ActionResult & { success: false; error: NonNullable<ActionResult["error"]> } {
+export function isErrorResult(
+  result: ActionResult,
+): result is ActionResult & {
+  success: false;
+  error: NonNullable<ActionResult["error"]>;
+} {
   return result.success === false && result.error !== undefined;
 }

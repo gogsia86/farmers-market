@@ -187,7 +187,10 @@ let flushTimeout: NodeJS.Timeout | null = null;
  * Queue an event to be sent in batch
  * Useful for high-frequency events
  */
-export function queueEvent(name: string, properties?: Record<string, any>): void {
+export function queueEvent(
+  name: string,
+  properties?: Record<string, any>,
+): void {
   eventQueue.push({
     name,
     properties,

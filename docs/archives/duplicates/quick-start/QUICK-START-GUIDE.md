@@ -11,6 +11,7 @@ docker ps
 ```
 
 You should see:
+
 - ✅ `farmers-market-db-dev` (PostgreSQL with PostGIS)
 - ✅ `farmers-market-redis-dev` (Redis cache)
 - ✅ `farmers-market-mailhog` (Email testing)
@@ -51,15 +52,18 @@ npm run dev
 Once started, open your browser:
 
 ### Main Application
+
 ```
 http://localhost:3000
 ```
 
 ### Development Tools
+
 - **MailHog UI** (Email testing): `http://localhost:8025`
 - **Prisma Studio** (Database viewer): Run `npx prisma studio`
 
 ### Database Connections
+
 - **PostgreSQL**: `localhost:5432`
 - **Redis**: `localhost:6379`
 
@@ -84,10 +88,12 @@ GET / 200 in [time]ms
 ### Issue Fixed: Middleware Configuration ✅
 
 **Problem:** The app was returning 404 errors because:
+
 - Middleware file was incorrectly named `proxy.ts`
 - Function was named `proxy()` instead of `middleware()`
 
 **Solution Applied:**
+
 - ✅ Renamed `src/proxy.ts` → `src/middleware.ts`
 - ✅ Renamed function `proxy()` → `middleware()`
 
@@ -134,6 +140,7 @@ npx prisma generate
 ### Problem: Database connection errors
 
 Check your `.env.local` file has:
+
 ```
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/farmers_market_dev?schema=public"
 ```
@@ -206,18 +213,23 @@ npx prisma migrate dev   # Run database migrations
 ## 🌟 DIVINE DEVELOPMENT TIPS
 
 ### 1. Hot Reload is Enabled
+
 Changes to files automatically reload - no server restart needed!
 
 ### 2. Turbopack Speed
+
 Using `dev:omen` enables Turbopack for ultra-fast compilation.
 
 ### 3. Database Inspection
+
 Use Prisma Studio (`npx prisma studio`) to view/edit database records visually.
 
 ### 4. Email Testing
+
 All emails sent in dev mode go to MailHog - check `http://localhost:8025`
 
 ### 5. Agricultural Consciousness
+
 The app uses "divine agricultural patterns" - check `.cursorrules` for coding standards.
 
 ---
@@ -225,16 +237,19 @@ The app uses "divine agricultural patterns" - check `.cursorrules` for coding st
 ## 🐛 KNOWN ISSUES & SOLUTIONS
 
 ### Prisma Client Out of Sync
+
 ```bash
 npx prisma generate
 ```
 
 ### TypeScript Errors
+
 ```bash
 npm run type-check
 ```
 
 ### Build Errors
+
 ```bash
 # Clean build cache
 rm -rf .next
@@ -266,12 +281,14 @@ npm run build
 ## 💡 NEED HELP?
 
 ### Check These Resources:
+
 - `START-HERE.md` - Project overview
 - `DEPLOYMENT-QUICK-START.md` - Deployment guide
 - `.github/instructions/` - Comprehensive coding guides
 - Docker services: `docker compose -f docker-compose.dev.yml logs`
 
 ### Common Commands:
+
 ```bash
 # View logs for all services
 docker compose -f docker-compose.dev.yml logs -f

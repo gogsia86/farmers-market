@@ -1,11 +1,33 @@
 /**
- * CONSUMER DASHBOARD - WIREFRAME IMPLEMENTATION
+ * 🏠 CUSTOMER DASHBOARD - Activity Overview & Monitoring Hub
+ *
+ * Purpose: Daily monitoring hub for customer activity (Client Component)
+ * Use Cases:
+ * - Check order status in real-time
+ * - View favorite farms
+ * - Quick actions for shopping
+ * - Monitor account activity
+ * - Real-time updates and interactivity
+ *
+ * Technical Details:
+ * - Client component with useSession() hook
+ * - Client-side API calls for dynamic data
+ * - Interactive widgets and real-time updates
+ * - Stateful components with React hooks
+ *
+ * Related Routes:
+ * - /account - For profile settings and account management
+ * - /orders - For detailed order history
+ * - /marketplace - For browsing products and farms
  *
  * Complete dashboard overview with:
- * - Quick stats grid
- * - Recent orders
- * - Favorite farms
- * - Quick actions
+ * - Quick stats grid (active orders, favorites, pending reviews)
+ * - Recent orders with status
+ * - Favorite farms grid
+ * - Quick action buttons
+ *
+ * @see /account for profile settings and management
+ * @reference DASHBOARD_ACCOUNT_DISTINCTION.md
  */
 
 "use client";
@@ -244,6 +266,13 @@ export default function CustomerDashboard() {
               link="/dashboard/reviews"
               color="yellow"
             />
+            <QuickActionCard
+              title="Account Settings"
+              description="Manage your profile and preferences"
+              icon="⚙️"
+              link="/account"
+              color="blue"
+            />
           </div>
         </div>
 
@@ -265,6 +294,9 @@ export default function CustomerDashboard() {
                 </Link>
                 <Link href="/contact" className="btn-outline">
                   Contact Support
+                </Link>
+                <Link href="/account" className="btn-outline">
+                  Account Settings
                 </Link>
               </div>
             </div>

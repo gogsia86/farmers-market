@@ -31,11 +31,14 @@ const colors = {
 };
 
 const log = {
-  success: (msg: string) => console.log(`${colors.green}✅ ${msg}${colors.reset}`),
+  success: (msg: string) =>
+    console.log(`${colors.green}✅ ${msg}${colors.reset}`),
   error: (msg: string) => console.log(`${colors.red}❌ ${msg}${colors.reset}`),
-  warning: (msg: string) => console.log(`${colors.yellow}⚠️  ${msg}${colors.reset}`),
+  warning: (msg: string) =>
+    console.log(`${colors.yellow}⚠️  ${msg}${colors.reset}`),
   info: (msg: string) => console.log(`${colors.blue}ℹ️  ${msg}${colors.reset}`),
-  section: (msg: string) => console.log(`\n${colors.cyan}${colors.bright}${msg}${colors.reset}\n`),
+  section: (msg: string) =>
+    console.log(`\n${colors.cyan}${colors.bright}${msg}${colors.reset}\n`),
 };
 
 // ============================================
@@ -51,7 +54,12 @@ interface VerificationResult {
 
 const results: VerificationResult[] = [];
 
-function addResult(test: string, passed: boolean, message: string, details?: any) {
+function addResult(
+  test: string,
+  passed: boolean,
+  message: string,
+  details?: any,
+) {
   results.push({ test, passed, message, details });
   if (passed) {
     log.success(`${test}: ${message}`);
@@ -70,11 +78,20 @@ async function verifyFileExistence() {
   const requiredFiles = [
     { path: "src/app/sitemap.ts", description: "Sitemap generator" },
     { path: "src/app/robots.ts", description: "Robots.txt generator" },
-    { path: "src/components/seo/StructuredData.tsx", description: "Structured data components" },
+    {
+      path: "src/components/seo/StructuredData.tsx",
+      description: "Structured data components",
+    },
     { path: "src/app/(public)/layout.tsx", description: "Public layout" },
     { path: "src/app/(auth)/layout.tsx", description: "Auth layout" },
-    { path: "src/components/onboarding/OnboardingTour.tsx", description: "Onboarding tour" },
-    { path: "src/hooks/useRealtimeNotifications.ts", description: "Notifications hook" },
+    {
+      path: "src/components/onboarding/OnboardingTour.tsx",
+      description: "Onboarding tour",
+    },
+    {
+      path: "src/hooks/useRealtimeNotifications.ts",
+      description: "Notifications hook",
+    },
     { path: "docs/API_CONSOLIDATION_PLAN.md", description: "API docs" },
   ];
 
@@ -84,7 +101,7 @@ async function verifyFileExistence() {
     addResult(
       `File: ${file.path}`,
       exists,
-      exists ? `${file.description} exists` : `Missing ${file.description}`
+      exists ? `${file.description} exists` : `Missing ${file.description}`,
     );
   }
 }
@@ -115,7 +132,7 @@ async function verifyRouteStructure() {
     addResult(
       `Route: ${route.path}`,
       exists,
-      exists ? `${route.description} exists` : `Missing ${route.description}`
+      exists ? `${route.description} exists` : `Missing ${route.description}`,
     );
   }
 
@@ -125,7 +142,9 @@ async function verifyRouteStructure() {
   addResult(
     "Duplicate route removed",
     removed,
-    removed ? "Duplicate /register route removed" : "Duplicate /register still exists"
+    removed
+      ? "Duplicate /register route removed"
+      : "Duplicate /register still exists",
   );
 }
 
@@ -138,17 +157,28 @@ async function verifyDatabaseConnectivity() {
 
   try {
     await database.$connect();
-    addResult("Database connection", true, "Successfully connected to database");
+    addResult(
+      "Database connection",
+      true,
+      "Successfully connected to database",
+    );
 
     // Test farm query
     const farmCount = await database.farm.count();
-    addResult("Farm query", true, `Found ${farmCount} farms in database`, { count: farmCount });
+    addResult("Farm query", true, `Found ${farmCount} farms in database`, {
+      count: farmCount,
+    });
 
     // Test product query
     const productCount = await database.product.count();
-    addResult("Product query", true, `Found ${productCount} products in database`, {
-      count: productCount,
-    });
+    addResult(
+      "Product query",
+      true,
+      `Found ${productCount} products in database`,
+      {
+        count: productCount,
+      },
+    );
 
     await database.$disconnect();
   } catch (error) {
@@ -156,7 +186,7 @@ async function verifyDatabaseConnectivity() {
       "Database connection",
       false,
       `Failed to connect: ${error instanceof Error ? error.message : "Unknown error"}`,
-      { error }
+      { error },
     );
   }
 }
@@ -176,7 +206,7 @@ async function verifySitemapContent() {
   addResult(
     "Sitemap: Database import",
     hasDatabaseImport,
-    hasDatabaseImport ? "Uses real database" : "Missing database import"
+    hasDatabaseImport ? "Uses real database" : "Missing database import",
   );
 
   // Check for farm query
@@ -184,7 +214,7 @@ async function verifySitemapContent() {
   addResult(
     "Sitemap: Farm query",
     hasFarmQuery,
-    hasFarmQuery ? "Queries farms from database" : "Missing farm query"
+    hasFarmQuery ? "Queries farms from database" : "Missing farm query",
   );
 
   // Check for product query
@@ -192,7 +222,9 @@ async function verifySitemapContent() {
   addResult(
     "Sitemap: Product query",
     hasProductQuery,
-    hasProductQuery ? "Queries products from database" : "Missing product query"
+    hasProductQuery
+      ? "Queries products from database"
+      : "Missing product query",
   );
 
   // Check for error handling
@@ -200,7 +232,7 @@ async function verifySitemapContent() {
   addResult(
     "Sitemap: Error handling",
     hasErrorHandling,
-    hasErrorHandling ? "Has error handling" : "Missing error handling"
+    hasErrorHandling ? "Has error handling" : "Missing error handling",
   );
 }
 
@@ -219,7 +251,7 @@ async function verifyRobotsContent() {
   addResult(
     "Robots: Sitemap reference",
     hasSitemap,
-    hasSitemap ? "References sitemap" : "Missing sitemap reference"
+    hasSitemap ? "References sitemap" : "Missing sitemap reference",
   );
 
   // Check for AI bot blocking
@@ -228,7 +260,7 @@ async function verifyRobotsContent() {
   addResult(
     "Robots: AI bot blocking",
     hasGPTBot && hasClaude,
-    hasGPTBot && hasClaude ? "Blocks AI crawlers" : "Missing AI bot rules"
+    hasGPTBot && hasClaude ? "Blocks AI crawlers" : "Missing AI bot rules",
   );
 
   // Check for allow rules
@@ -236,7 +268,7 @@ async function verifyRobotsContent() {
   addResult(
     "Robots: Allow rules",
     hasAllowRules,
-    hasAllowRules ? "Has allow rules" : "Missing allow rules"
+    hasAllowRules ? "Has allow rules" : "Missing allow rules",
   );
 
   // Check for disallow rules
@@ -244,7 +276,7 @@ async function verifyRobotsContent() {
   addResult(
     "Robots: Disallow rules",
     hasDisallowRules,
-    hasDisallowRules ? "Has disallow rules" : "Missing disallow rules"
+    hasDisallowRules ? "Has disallow rules" : "Missing disallow rules",
   );
 }
 
@@ -257,7 +289,7 @@ async function verifyStructuredDataComponents() {
 
   const structuredDataPath = path.join(
     process.cwd(),
-    "src/components/seo/StructuredData.tsx"
+    "src/components/seo/StructuredData.tsx",
   );
   const content = fs.readFileSync(structuredDataPath, "utf-8");
 
@@ -277,7 +309,9 @@ async function verifyStructuredDataComponents() {
     addResult(
       `Structured data: ${component.name}`,
       exists,
-      exists ? `${component.description} available` : `Missing ${component.description}`
+      exists
+        ? `${component.description} available`
+        : `Missing ${component.description}`,
     );
   }
 
@@ -286,7 +320,7 @@ async function verifyStructuredDataComponents() {
   addResult(
     "Structured data: Schema.org",
     hasSchemaContext,
-    hasSchemaContext ? "Uses Schema.org context" : "Missing Schema.org context"
+    hasSchemaContext ? "Uses Schema.org context" : "Missing Schema.org context",
   );
 }
 
@@ -305,7 +339,9 @@ async function verifyMiddlewareConfiguration() {
   addResult(
     "Middleware: Register redirect",
     hasRegisterRedirect,
-    hasRegisterRedirect ? "Redirects /register to /signup" : "Missing register redirect"
+    hasRegisterRedirect
+      ? "Redirects /register to /signup"
+      : "Missing register redirect",
   );
 
   // Check for admin route handling
@@ -313,7 +349,7 @@ async function verifyMiddlewareConfiguration() {
   addResult(
     "Middleware: Admin routes",
     hasAdminHandling,
-    hasAdminHandling ? "Handles admin routes" : "Missing admin route handling"
+    hasAdminHandling ? "Handles admin routes" : "Missing admin route handling",
   );
 
   // Check for authentication
@@ -321,7 +357,7 @@ async function verifyMiddlewareConfiguration() {
   addResult(
     "Middleware: Authentication",
     hasAuth,
-    hasAuth ? "Validates authentication" : "Missing authentication check"
+    hasAuth ? "Validates authentication" : "Missing authentication check",
   );
 }
 
@@ -334,7 +370,7 @@ async function verifyOnboardingTour() {
 
   const tourPath = path.join(
     process.cwd(),
-    "src/components/onboarding/OnboardingTour.tsx"
+    "src/components/onboarding/OnboardingTour.tsx",
   );
   const content = fs.readFileSync(tourPath, "utf-8");
 
@@ -343,7 +379,7 @@ async function verifyOnboardingTour() {
   addResult(
     "Onboarding: Tour definitions",
     hasTourDefinitions,
-    hasTourDefinitions ? "Has tour definitions" : "Missing tour definitions"
+    hasTourDefinitions ? "Has tour definitions" : "Missing tour definitions",
   );
 
   // Check for framer-motion
@@ -351,7 +387,7 @@ async function verifyOnboardingTour() {
   addResult(
     "Onboarding: Animations",
     hasFramerMotion,
-    hasFramerMotion ? "Uses Framer Motion" : "Missing animation library"
+    hasFramerMotion ? "Uses Framer Motion" : "Missing animation library",
   );
 
   // Check for localStorage
@@ -359,7 +395,7 @@ async function verifyOnboardingTour() {
   addResult(
     "Onboarding: Persistence",
     hasLocalStorage,
-    hasLocalStorage ? "Persists tour state" : "Missing persistence"
+    hasLocalStorage ? "Persists tour state" : "Missing persistence",
   );
 
   // Check for multiple tours
@@ -367,7 +403,9 @@ async function verifyOnboardingTour() {
   addResult(
     "Onboarding: Tour count",
     tourCount >= 5,
-    tourCount >= 5 ? `Has ${tourCount} tours configured` : `Only ${tourCount} tours found`
+    tourCount >= 5
+      ? `Has ${tourCount} tours configured`
+      : `Only ${tourCount} tours found`,
   );
 }
 
@@ -378,7 +416,10 @@ async function verifyOnboardingTour() {
 async function verifyRealtimeNotifications() {
   log.section("🔔 TEST 9: Verifying Real-time Notifications");
 
-  const hookPath = path.join(process.cwd(), "src/hooks/useRealtimeNotifications.ts");
+  const hookPath = path.join(
+    process.cwd(),
+    "src/hooks/useRealtimeNotifications.ts",
+  );
   const content = fs.readFileSync(hookPath, "utf-8");
 
   // Check for EventSource
@@ -386,7 +427,7 @@ async function verifyRealtimeNotifications() {
   addResult(
     "Notifications: SSE client",
     hasEventSource,
-    hasEventSource ? "Uses Server-Sent Events" : "Missing SSE implementation"
+    hasEventSource ? "Uses Server-Sent Events" : "Missing SSE implementation",
   );
 
   // Check for reconnection logic
@@ -394,7 +435,7 @@ async function verifyRealtimeNotifications() {
   addResult(
     "Notifications: Reconnection",
     hasReconnection,
-    hasReconnection ? "Has reconnection logic" : "Missing reconnection"
+    hasReconnection ? "Has reconnection logic" : "Missing reconnection",
   );
 
   // Check for notification API
@@ -402,19 +443,21 @@ async function verifyRealtimeNotifications() {
   addResult(
     "Notifications: Browser API",
     hasNotificationAPI,
-    hasNotificationAPI ? "Uses browser Notification API" : "Missing browser notifications"
+    hasNotificationAPI
+      ? "Uses browser Notification API"
+      : "Missing browser notifications",
   );
 
   // Check SSE endpoint exists
   const sseEndpointPath = path.join(
     process.cwd(),
-    "src/app/api/notifications/stream/route.ts"
+    "src/app/api/notifications/stream/route.ts",
   );
   const sseExists = fs.existsSync(sseEndpointPath);
   addResult(
     "Notifications: SSE endpoint",
     sseExists,
-    sseExists ? "SSE endpoint exists" : "Missing SSE endpoint"
+    sseExists ? "SSE endpoint exists" : "Missing SSE endpoint",
   );
 }
 
@@ -430,8 +473,14 @@ async function verifyDocumentation() {
       path: "WEBSITE_STRUCTURE_ANALYSIS_AND_RECOMMENDATIONS.md",
       description: "Analysis document",
     },
-    { path: "IMPLEMENTATION_SUMMARY.md", description: "Implementation summary" },
-    { path: "docs/API_CONSOLIDATION_PLAN.md", description: "API consolidation plan" },
+    {
+      path: "IMPLEMENTATION_SUMMARY.md",
+      description: "Implementation summary",
+    },
+    {
+      path: "docs/API_CONSOLIDATION_PLAN.md",
+      description: "API consolidation plan",
+    },
   ];
 
   for (const doc of docs) {
@@ -440,7 +489,7 @@ async function verifyDocumentation() {
     addResult(
       `Documentation: ${doc.description}`,
       exists,
-      exists ? `${doc.description} exists` : `Missing ${doc.description}`
+      exists ? `${doc.description} exists` : `Missing ${doc.description}`,
     );
   }
 }
@@ -470,7 +519,7 @@ function generateReport() {
         console.log(`\n${colors.red}${r.test}${colors.reset}`);
         console.log(`  ${r.message}`);
         if (r.details) {
-          console.log(`  Details:`, r.details);
+          console.log("  Details:", r.details);
         }
       });
   }
@@ -484,7 +533,9 @@ function generateReport() {
     log.warning("MOSTLY READY - Minor issues found. Review failed tests.");
     return 1;
   } else if (parseFloat(successRate) >= 70) {
-    log.warning("NOT READY - Several issues found. Fix failed tests before deploying.");
+    log.warning(
+      "NOT READY - Several issues found. Fix failed tests before deploying.",
+    );
     return 2;
   } else {
     log.error("CRITICAL ISSUES - Many tests failed. Significant work needed.");
@@ -498,10 +549,18 @@ function generateReport() {
 
 async function main() {
   console.log("\n");
-  console.log(`${colors.cyan}${colors.bright}╔═══════════════════════════════════════════════════════╗${colors.reset}`);
-  console.log(`${colors.cyan}${colors.bright}║   🌾 FARMERS MARKET PLATFORM                         ║${colors.reset}`);
-  console.log(`${colors.cyan}${colors.bright}║   IMPLEMENTATION VERIFICATION SCRIPT                  ║${colors.reset}`);
-  console.log(`${colors.cyan}${colors.bright}╚═══════════════════════════════════════════════════════╝${colors.reset}`);
+  console.log(
+    `${colors.cyan}${colors.bright}╔═══════════════════════════════════════════════════════╗${colors.reset}`,
+  );
+  console.log(
+    `${colors.cyan}${colors.bright}║   🌾 FARMERS MARKET PLATFORM                         ║${colors.reset}`,
+  );
+  console.log(
+    `${colors.cyan}${colors.bright}║   IMPLEMENTATION VERIFICATION SCRIPT                  ║${colors.reset}`,
+  );
+  console.log(
+    `${colors.cyan}${colors.bright}╚═══════════════════════════════════════════════════════╝${colors.reset}`,
+  );
   console.log("\n");
 
   log.info("Starting verification tests...\n");
@@ -532,21 +591,24 @@ async function main() {
             total: results.length,
             passed: results.filter((r) => r.passed).length,
             failed: results.filter((r) => !r.passed).length,
-            successRate: ((results.filter((r) => r.passed).length / results.length) * 100).toFixed(
-              1
-            ),
+            successRate: (
+              (results.filter((r) => r.passed).length / results.length) *
+              100
+            ).toFixed(1),
           },
         },
         null,
-        2
-      )
+        2,
+      ),
     );
 
     log.info(`\n📄 Report saved to: ${reportPath}\n`);
 
     process.exit(exitCode);
   } catch (error) {
-    log.error(`\nFATAL ERROR: ${error instanceof Error ? error.message : "Unknown error"}\n`);
+    log.error(
+      `\nFATAL ERROR: ${error instanceof Error ? error.message : "Unknown error"}\n`,
+    );
     console.error(error);
     process.exit(4);
   }

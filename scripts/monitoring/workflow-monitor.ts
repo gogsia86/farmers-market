@@ -319,7 +319,7 @@ program
         console.log(`   Timestamp: ${report.timestamp.toISOString()}`);
         console.log(`   Workflows: ${report.summary.totalWorkflows}`);
         console.log(
-          `   Success Rate: ${successColor(`${report.summary.successRate.toFixed(1)  }%`)}`,
+          `   Success Rate: ${successColor(`${report.summary.successRate.toFixed(1)}%`)}`,
         );
         console.log(
           `   Passed: ${chalk.green(report.summary.passedWorkflows)}`,
@@ -387,7 +387,7 @@ function displayReport(report: any): void {
     `║ ${chalk.yellow("Warnings:")} ${String(report.summary.warningWorkflows).padEnd(48)} ║`,
   );
   console.log(
-    `║ Success Rate: ${successColor(`${report.summary.successRate.toFixed(1)  }%`).padEnd(43)} ║`,
+    `║ Success Rate: ${successColor(`${report.summary.successRate.toFixed(1)}%`).padEnd(43)} ║`,
   );
   console.log(
     `║ Avg Duration: ${(report.summary.averageDuration / 1000).toFixed(2)}s${" ".repeat(43 - (report.summary.averageDuration / 1000).toFixed(2).length)} ║`,

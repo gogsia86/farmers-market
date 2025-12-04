@@ -37,15 +37,15 @@ The Divine Workflow Monitoring System is a comprehensive 24/7 monitoring solutio
 
 ### Key Features
 
-| Feature | Description | Status |
-|---------|-------------|--------|
-| **Continuous Monitoring** | 24/7 workflow execution | ✅ Implemented |
-| **Real-time Alerts** | Slack/Discord notifications | ✅ Implemented |
-| **Database Storage** | PostgreSQL metrics tracking | ✅ Implemented |
-| **Performance Tracking** | Historical trend analysis | ✅ Implemented |
-| **Auto-Recovery** | Self-healing on failures | ✅ Implemented |
-| **Report Generation** | Hourly/Daily summaries | ✅ Implemented |
-| **Process Management** | PM2/Systemd support | ✅ Implemented |
+| Feature                   | Description                 | Status         |
+| ------------------------- | --------------------------- | -------------- |
+| **Continuous Monitoring** | 24/7 workflow execution     | ✅ Implemented |
+| **Real-time Alerts**      | Slack/Discord notifications | ✅ Implemented |
+| **Database Storage**      | PostgreSQL metrics tracking | ✅ Implemented |
+| **Performance Tracking**  | Historical trend analysis   | ✅ Implemented |
+| **Auto-Recovery**         | Self-healing on failures    | ✅ Implemented |
+| **Report Generation**     | Hourly/Daily summaries      | ✅ Implemented |
+| **Process Management**    | PM2/Systemd support         | ✅ Implemented |
 
 ---
 
@@ -232,16 +232,16 @@ pm2 --version
 
 ### Environment Variables
 
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `DATABASE_URL` | ✅ Yes | - | PostgreSQL connection string |
-| `BASE_URL` | ✅ Yes | `http://localhost:3000` | Application base URL |
-| `NODE_ENV` | No | `development` | Environment (dev/staging/prod) |
-| `SLACK_WEBHOOK_URL` | No | - | Slack incoming webhook URL |
-| `SLACK_CHANNEL` | No | - | Slack channel for notifications |
-| `DISCORD_WEBHOOK_URL` | No | - | Discord webhook URL |
-| `MONITORING_ENABLED` | No | `true` | Enable/disable monitoring |
-| `MONITORING_INTERVAL_MINUTES` | No | `15` | Default check interval |
+| Variable                      | Required | Default                 | Description                     |
+| ----------------------------- | -------- | ----------------------- | ------------------------------- |
+| `DATABASE_URL`                | ✅ Yes   | -                       | PostgreSQL connection string    |
+| `BASE_URL`                    | ✅ Yes   | `http://localhost:3000` | Application base URL            |
+| `NODE_ENV`                    | No       | `development`           | Environment (dev/staging/prod)  |
+| `SLACK_WEBHOOK_URL`           | No       | -                       | Slack incoming webhook URL      |
+| `SLACK_CHANNEL`               | No       | -                       | Slack channel for notifications |
+| `DISCORD_WEBHOOK_URL`         | No       | -                       | Discord webhook URL             |
+| `MONITORING_ENABLED`          | No       | `true`                  | Enable/disable monitoring       |
+| `MONITORING_INTERVAL_MINUTES` | No       | `15`                    | Default check interval          |
 
 ### Workflow Schedules
 
@@ -251,17 +251,17 @@ Edit `scripts/monitor-daemon.ts` to customize schedules:
 const DEFAULT_SCHEDULES = [
   {
     workflowId: "health-check",
-    intervalMinutes: 5,      // Every 5 minutes
+    intervalMinutes: 5, // Every 5 minutes
     enabled: true,
   },
   {
     workflowId: "user-login",
-    intervalMinutes: 15,     // Every 15 minutes
+    intervalMinutes: 15, // Every 15 minutes
     enabled: true,
   },
   {
     workflowId: "farm-creation",
-    intervalMinutes: 60,     // Every hour
+    intervalMinutes: 60, // Every hour
     enabled: true,
   },
   // Add more workflows...
@@ -274,8 +274,8 @@ Configure in `src/lib/monitoring/notifiers/index.ts`:
 
 ```typescript
 const throttleConfig = {
-  maxPerHour: 10,   // Max 10 notifications per hour
-  maxPerDay: 100,   // Max 100 notifications per day
+  maxPerHour: 10, // Max 10 notifications per hour
+  maxPerDay: 100, // Max 100 notifications per day
 };
 ```
 
@@ -396,6 +396,7 @@ npm run test:notifications
 #### Expected Slack Messages
 
 **Workflow Failure:**
+
 ```
 🚨 Workflow Failed: User Login
 
@@ -406,13 +407,16 @@ Failed Steps:   2/5
 
 Error:
 ```
+
 Login button not found after 5000ms
+
 ```
 
 Run ID: run_1234567890_abc123 | 🕐 Nov 15, 2025 10:30:45 AM
 ```
 
 **Daily Summary:**
+
 ```
 🌟 Daily Workflow Monitoring Summary
 Period: Nov 14, 2025 - Nov 15, 2025
@@ -457,6 +461,7 @@ npm run test:notifications
 ### Monitoring Tables
 
 #### MonitoringReport
+
 Stores monitoring report summaries.
 
 ```prisma
@@ -466,7 +471,7 @@ model MonitoringReport {
   timestamp         DateTime @default(now())
   periodStart       DateTime
   periodEnd         DateTime
-  
+
   // Summary metrics
   totalWorkflows    Int
   passedWorkflows   Int
@@ -474,18 +479,19 @@ model MonitoringReport {
   successRate       Float
   averageDuration   Float
   criticalIssues    Int
-  
+
   // Trends
   successRateTrend  Float
   performanceTrend  Float
   errorRateTrend    Float
-  
+
   // Relations
   workflowExecutions WorkflowExecution[]
 }
 ```
 
 #### WorkflowExecution
+
 Individual workflow run records.
 
 ```prisma
@@ -497,24 +503,25 @@ model WorkflowExecution {
   type              String
   priority          String
   status            String
-  
+
   startTime         DateTime
   endTime           DateTime
   duration          Int
-  
+
   totalSteps        Int
   passedSteps       Int
   failedSteps       Int
-  
+
   error             String?
   metrics           Json?
-  
+
   reportId          String?
   report            MonitoringReport?
 }
 ```
 
 #### WorkflowMetrics
+
 Performance metrics for each workflow run.
 
 ```prisma
@@ -523,7 +530,7 @@ model WorkflowMetrics {
   workflowId        String
   runId             String
   timestamp         DateTime @default(now())
-  
+
   totalDuration     Int
   apiResponseTime   Int?
   pageLoadTime      Int?
@@ -534,6 +541,7 @@ model WorkflowMetrics {
 ```
 
 #### SystemHealthCheck
+
 System health check results.
 
 ```prisma
@@ -542,7 +550,7 @@ model SystemHealthCheck {
   timestamp         DateTime @default(now())
   healthy           Boolean
   responseTime      Int
-  
+
   databaseHealthy   Boolean
   apiHealthy        Boolean
   cacheHealthy      Boolean
@@ -550,6 +558,7 @@ model SystemHealthCheck {
 ```
 
 #### NotificationLog
+
 Log of all sent notifications.
 
 ```prisma
@@ -572,7 +581,7 @@ model NotificationLog {
 // Get recent reports
 const reports = await database.monitoringReport.findMany({
   take: 10,
-  orderBy: { timestamp: 'desc' },
+  orderBy: { timestamp: "desc" },
   include: { workflowExecutions: true },
 });
 
@@ -580,21 +589,21 @@ const reports = await database.monitoringReport.findMany({
 const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 const failures = await database.workflowExecution.findMany({
   where: {
-    status: 'FAILED',
+    status: "FAILED",
     startTime: { gte: oneDayAgo },
   },
 });
 
 // Get performance metrics for specific workflow
 const metrics = await database.workflowMetrics.findMany({
-  where: { workflowId: 'user-login' },
-  orderBy: { timestamp: 'desc' },
+  where: { workflowId: "user-login" },
+  orderBy: { timestamp: "desc" },
   take: 100,
 });
 
 // Calculate average response time
 const avgMetrics = await database.workflowMetrics.aggregate({
-  where: { workflowId: 'health-check' },
+  where: { workflowId: "health-check" },
   _avg: {
     apiResponseTime: true,
     pageLoadTime: true,
@@ -608,14 +617,14 @@ const avgMetrics = await database.workflowMetrics.aggregate({
 
 ### Available Workflows
 
-| Workflow ID | Name | Priority | Default Interval |
-|-------------|------|----------|------------------|
-| `health-check` | Health Check | CRITICAL | 5 minutes |
-| `user-login` | User Login | CRITICAL | 15 minutes |
-| `user-registration` | User Registration | CRITICAL | 30 minutes |
-| `farm-creation` | Farm Creation | HIGH | 60 minutes |
-| `product-listing` | Product Listing | HIGH | 30 minutes |
-| `order-placement` | Order Placement | CRITICAL | 20 minutes |
+| Workflow ID         | Name              | Priority | Default Interval |
+| ------------------- | ----------------- | -------- | ---------------- |
+| `health-check`      | Health Check      | CRITICAL | 5 minutes        |
+| `user-login`        | User Login        | CRITICAL | 15 minutes       |
+| `user-registration` | User Registration | CRITICAL | 30 minutes       |
+| `farm-creation`     | Farm Creation     | HIGH     | 60 minutes       |
+| `product-listing`   | Product Listing   | HIGH     | 30 minutes       |
+| `order-placement`   | Order Placement   | CRITICAL | 20 minutes       |
 
 ### Running Individual Workflows
 
@@ -639,33 +648,33 @@ Create a new workflow in `src/lib/monitoring/workflows/`:
 
 ```typescript
 // src/lib/monitoring/workflows/password-reset.workflow.ts
-import type { WorkflowConfig, WorkflowStep } from '../types';
+import type { WorkflowConfig, WorkflowStep } from "../types";
 
 export const passwordResetWorkflow: WorkflowConfig = {
-  id: 'password-reset',
-  name: 'Password Reset Flow',
-  type: 'USER_MANAGEMENT',
-  priority: 'HIGH',
+  id: "password-reset",
+  name: "Password Reset Flow",
+  type: "USER_MANAGEMENT",
+  priority: "HIGH",
   enabled: true,
   timeout: 60000,
   retries: 3,
   notifyOnFailure: true,
   notifyOnSuccess: false,
-  tags: ['authentication', 'user'],
+  tags: ["authentication", "user"],
 };
 
 export const passwordResetSteps: WorkflowStep[] = [
   {
-    id: 'navigate-to-forgot-password',
-    name: 'Navigate to Forgot Password',
-    description: 'Navigate to the password reset page',
+    id: "navigate-to-forgot-password",
+    name: "Navigate to Forgot Password",
+    description: "Navigate to the password reset page",
     execute: async (context) => {
       const startTime = Date.now();
       await context.page?.goto(`${context.baseUrl}/forgot-password`);
       return {
         success: true,
         duration: Date.now() - startTime,
-        logs: ['Navigated to forgot password page'],
+        logs: ["Navigated to forgot password page"],
       };
     },
   },
@@ -676,7 +685,10 @@ export const passwordResetSteps: WorkflowStep[] = [
 Register in `src/lib/monitoring/bot.ts`:
 
 ```typescript
-import { passwordResetWorkflow, passwordResetSteps } from './workflows/password-reset.workflow';
+import {
+  passwordResetWorkflow,
+  passwordResetSteps,
+} from "./workflows/password-reset.workflow";
 
 // In constructor or initialization
 this.registerWorkflow(passwordResetWorkflow, passwordResetSteps);
@@ -688,7 +700,7 @@ Add to daemon schedule in `scripts/monitor-daemon.ts`:
 const DEFAULT_SCHEDULES = [
   // ... existing schedules
   {
-    workflowId: 'password-reset',
+    workflowId: "password-reset",
     intervalMinutes: 30,
     enabled: true,
   },
@@ -704,6 +716,7 @@ const DEFAULT_SCHEDULES = [
 #### 1. Daemon Won't Start
 
 **Error: `Cannot find module 'tsx'`**
+
 ```bash
 # Install tsx globally
 npm install -g tsx
@@ -713,6 +726,7 @@ npx tsx scripts/monitor-daemon.ts
 ```
 
 **Error: `Database connection failed`**
+
 ```bash
 # Check DATABASE_URL in .env
 # Verify PostgreSQL is running
@@ -728,6 +742,7 @@ npx prisma migrate deploy
 #### 2. Notifications Not Working
 
 **Slack notifications not arriving:**
+
 ```bash
 # Test webhook URL directly
 curl -X POST -H 'Content-type: application/json' \
@@ -742,6 +757,7 @@ pm2 logs workflow-monitor-daemon --err
 ```
 
 **Discord notifications not arriving:**
+
 ```bash
 # Verify webhook URL format
 # Should be: https://discord.com/api/webhooks/{id}/{token}
@@ -783,7 +799,7 @@ npm run monitor:workflow -- health-check
 
 ```bash
 # Check database size
-SELECT 
+SELECT
   schemaname,
   tablename,
   pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) AS size
@@ -816,12 +832,12 @@ LOG_LEVEL=debug npm run monitor:daemon
 ### NotificationManager
 
 ```typescript
-import { createNotificationManager } from '@/lib/monitoring/notifiers';
+import { createNotificationManager } from "@/lib/monitoring/notifiers";
 
 const manager = createNotificationManager({
   slack: {
     webhookUrl: process.env.SLACK_WEBHOOK_URL,
-    channel: '#monitoring',
+    channel: "#monitoring",
   },
   discord: {
     webhookUrl: process.env.DISCORD_WEBHOOK_URL,
@@ -838,11 +854,10 @@ await manager.notifyWorkflowSuccess(workflowResult);
 await manager.sendReportSummary(report);
 
 // Send critical alert
-await manager.sendCriticalAlert(
-  'System Down',
-  'Database connection lost',
-  { server: 'db-01', timestamp: new Date() }
-);
+await manager.sendCriticalAlert("System Down", "Database connection lost", {
+  server: "db-01",
+  timestamp: new Date(),
+});
 
 // Test all channels
 await manager.testAllChannels();
@@ -856,7 +871,7 @@ console.log(status.discord.enabled);
 ### DatabaseStorage
 
 ```typescript
-import { getDatabaseStorage } from '@/lib/monitoring/storage/database.storage';
+import { getDatabaseStorage } from "@/lib/monitoring/storage/database.storage";
 
 const storage = getDatabaseStorage();
 
@@ -872,19 +887,19 @@ await storage.saveWorkflowMetrics(workflowId, runId, metrics);
 // Query reports
 const reports = await storage.getReports({
   limit: 50,
-  startDate: new Date('2025-11-01'),
-  endDate: new Date('2025-11-15'),
+  startDate: new Date("2025-11-01"),
+  endDate: new Date("2025-11-15"),
 });
 
 // Get workflow executions
 const executions = await storage.getWorkflowExecutions({
-  workflowId: 'user-login',
-  status: 'FAILED',
+  workflowId: "user-login",
+  status: "FAILED",
   limit: 100,
 });
 
 // Get performance stats
-const stats = await storage.getWorkflowPerformanceStats('health-check');
+const stats = await storage.getWorkflowPerformanceStats("health-check");
 
 // Cleanup old records
 await storage.cleanupOldRecords(30); // 30 days retention
@@ -893,10 +908,10 @@ await storage.cleanupOldRecords(30); // 30 days retention
 ### DivineWorkflowBot
 
 ```typescript
-import { DivineWorkflowBot } from '@/lib/monitoring/bot';
+import { DivineWorkflowBot } from "@/lib/monitoring/bot";
 
 const bot = new DivineWorkflowBot({
-  baseUrl: 'http://localhost:3000',
+  baseUrl: "http://localhost:3000",
 });
 
 await bot.initialize();
@@ -905,7 +920,7 @@ await bot.initialize();
 const workflows = bot.listWorkflows();
 
 // Run specific workflow
-const result = await bot.runWorkflow('user-login');
+const result = await bot.runWorkflow("user-login");
 
 // Run all workflows
 const results = await bot.runAllWorkflows();
@@ -949,7 +964,7 @@ Configure different channels for different priorities:
 // Medium → Discord
 // Low → Email digest
 
-if (workflow.priority === 'CRITICAL') {
+if (workflow.priority === "CRITICAL") {
   await manager.sendCriticalAlert(title, message);
 }
 ```
@@ -959,16 +974,16 @@ if (workflow.priority === 'CRITICAL') {
 ```typescript
 // Run workflows in parallel when possible
 const results = await Promise.all([
-  bot.runWorkflow('health-check'),
-  bot.runWorkflow('user-login'),
-  bot.runWorkflow('farm-creation'),
+  bot.runWorkflow("health-check"),
+  bot.runWorkflow("user-login"),
+  bot.runWorkflow("farm-creation"),
 ]);
 
 // Limit concurrent executions
 const concurrency = 3;
 const batches = chunk(workflows, concurrency);
 for (const batch of batches) {
-  await Promise.all(batch.map(w => bot.runWorkflow(w.id)));
+  await Promise.all(batch.map((w) => bot.runWorkflow(w.id)));
 }
 ```
 
@@ -978,11 +993,14 @@ for (const batch of batches) {
 // Schedule cleanup job
 const RETENTION_DAYS = 30;
 
-setInterval(async () => {
-  const storage = getDatabaseStorage();
-  const deleted = await storage.cleanupOldRecords(RETENTION_DAYS);
-  console.log(`Cleaned up ${deleted.deletedReports} old reports`);
-}, 24 * 60 * 60 * 1000); // Daily
+setInterval(
+  async () => {
+    const storage = getDatabaseStorage();
+    const deleted = await storage.cleanupOldRecords(RETENTION_DAYS);
+    console.log(`Cleaned up ${deleted.deletedReports} old reports`);
+  },
+  24 * 60 * 60 * 1000,
+); // Daily
 ```
 
 ### 5. Monitoring the Monitor
@@ -1004,7 +1022,7 @@ Set up meta-monitoring:
 try {
   await manager.notifyWorkflowFailure(result);
 } catch (error) {
-  console.error('Notification failed, but continuing monitoring', error);
+  console.error("Notification failed, but continuing monitoring", error);
 }
 
 // Still save to database if notifications fail
@@ -1026,13 +1044,15 @@ await storage.saveWorkflowExecution(result);
 ### Current Workarounds
 
 **View reports in CLI:**
+
 ```bash
 npm run monitor:reports
 ```
 
 **Query database directly:**
+
 ```sql
-SELECT 
+SELECT
   timestamp,
   success_rate,
   total_workflows,
@@ -1043,6 +1063,7 @@ LIMIT 20;
 ```
 
 **Use PM2 Plus** (paid service):
+
 ```bash
 pm2 plus
 # Provides web dashboard for process monitoring
@@ -1079,11 +1100,13 @@ MIT License - See LICENSE file for details
 ## 🆘 Support
 
 **Issues & Questions:**
+
 - GitHub Issues: [Create Issue]
 - Slack: `#dev-monitoring`
 - Email: dev-team@farmersmarket.com
 
 **Documentation:**
+
 - Main README: `README.md`
 - API Docs: `docs/API.md`
 - Architecture: `docs/ARCHITECTURE.md`

@@ -32,12 +32,14 @@ This guide covers pushing Docker images of the Farmers Market Platform to variou
 ### Available Images
 
 **Production Image:**
+
 - `farmersmarket/farmers-market-app:latest`
 - `farmersmarket/farmers-market-app:v1.0.0`
 - Multi-stage optimized (~200MB)
 - Node.js 20 Alpine base
 
 **Development Image:**
+
 - `farmersmarket/farmers-market-app:dev`
 - `farmersmarket/farmers-market-app:v1.0.0-dev`
 - Includes development tools (~800MB)
@@ -67,10 +69,12 @@ docker buildx version
 ### Docker Desktop
 
 **Windows/Mac:**
+
 - Docker Desktop 4.20+ installed and running
 - Sign in to Docker Desktop (optional but recommended)
 
 **Linux:**
+
 - Docker Engine installed
 - Docker Compose plugin installed
 - User added to docker group: `sudo usermod -aG docker $USER`
@@ -91,6 +95,7 @@ Docker Hub is the default and most popular container registry.
 ### 2. Create Repository
 
 **Option A: Web Interface**
+
 1. Log in to Docker Hub
 2. Click "Repositories"
 3. Click "Create Repository"
@@ -104,6 +109,7 @@ Repository is created automatically on first push (if you have permissions).
 ### 3. Login to Docker Hub
 
 **Command Line:**
+
 ```bash
 # Login with username and password
 docker login
@@ -116,6 +122,7 @@ docker login -u USERNAME --password-stdin <<< "YOUR_ACCESS_TOKEN"
 ```
 
 **PowerShell:**
+
 ```powershell
 # Login
 docker login
@@ -176,6 +183,7 @@ docker info | grep -i username
 ```
 
 **PowerShell:**
+
 ```powershell
 # Login
 $env:CR_PAT | docker login ghcr.io -u YOUR_GITHUB_USERNAME --password-stdin
@@ -270,6 +278,7 @@ docker push farmersmarketacr.azurecr.io/farmers-market/farmers-market-app:latest
 ### Option 1: Using Helper Scripts (Recommended)
 
 **Linux/Mac:**
+
 ```bash
 # Make scripts executable
 chmod +x docker-scripts/*.sh
@@ -291,6 +300,7 @@ chmod +x docker-scripts/*.sh
 ```
 
 **Windows (PowerShell):**
+
 ```powershell
 # Build and push production image
 .\docker-scripts\docker-push.ps1
@@ -574,7 +584,7 @@ name: Docker Build and Push
 on:
   push:
     branches: [main]
-    tags: ['v*']
+    tags: ["v*"]
   pull_request:
     branches: [main]
 
@@ -636,31 +646,31 @@ trigger:
   - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: "ubuntu-latest"
 
 variables:
-  imageRepository: 'farmers-market-app'
-  containerRegistry: 'farmersmarketacr.azurecr.io'
-  dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
-  tag: '$(Build.BuildId)'
+  imageRepository: "farmers-market-app"
+  containerRegistry: "farmersmarketacr.azurecr.io"
+  dockerfilePath: "$(Build.SourcesDirectory)/Dockerfile"
+  tag: "$(Build.BuildId)"
 
 stages:
-- stage: Build
-  displayName: Build and push image
-  jobs:
-  - job: Build
-    displayName: Build
-    steps:
-    - task: Docker@2
-      displayName: Build and push an image
-      inputs:
-        command: buildAndPush
-        repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
-        containerRegistry: $(dockerRegistryServiceConnection)
-        tags: |
-          $(tag)
-          latest
+  - stage: Build
+    displayName: Build and push image
+    jobs:
+      - job: Build
+        displayName: Build
+        steps:
+          - task: Docker@2
+            displayName: Build and push an image
+            inputs:
+              command: buildAndPush
+              repository: $(imageRepository)
+              dockerfile: $(dockerfilePath)
+              containerRegistry: $(dockerRegistryServiceConnection)
+              tags: |
+                $(tag)
+                latest
 ```
 
 ### GitLab CI
@@ -724,15 +734,17 @@ docker tag app:latest USERNAME/farmers-market-app:$(date +%Y%m%d)
    - Use read-only tokens for pulling
 
 2. **Scan Images**
+
    ```bash
    # Docker Scout
    docker scout cves USERNAME/farmers-market-app:latest
-   
+
    # Trivy
    trivy image USERNAME/farmers-market-app:latest
    ```
 
 3. **Sign Images**
+
    ```bash
    # Docker Content Trust
    export DOCKER_CONTENT_TRUST=1
@@ -747,12 +759,13 @@ docker tag app:latest USERNAME/farmers-market-app:$(date +%Y%m%d)
 ### Image Optimization
 
 1. **Minimize Layers**
+
    ```dockerfile
    # Bad: Multiple RUN commands
    RUN apt-get update
    RUN apt-get install -y package1
    RUN apt-get install -y package2
-   
+
    # Good: Single RUN command
    RUN apt-get update && \
        apt-get install -y package1 package2 && \
@@ -760,6 +773,7 @@ docker tag app:latest USERNAME/farmers-market-app:$(date +%Y%m%d)
    ```
 
 2. **Use .dockerignore**
+
    ```
    node_modules
    .git
@@ -794,11 +808,13 @@ docker tag app:latest USERNAME/farmers-market-app:$VERSION
 ### Docker Daemon Not Running
 
 **Error:**
+
 ```
 Cannot connect to the Docker daemon. Is the docker daemon running?
 ```
 
 **Solution:**
+
 ```bash
 # Windows/Mac: Start Docker Desktop
 
@@ -813,11 +829,13 @@ docker info
 ### Authentication Failed
 
 **Error:**
+
 ```
 unauthorized: authentication required
 ```
 
 **Solution:**
+
 ```bash
 # Re-login
 docker logout
@@ -833,11 +851,13 @@ cat ~/.docker/config.json
 ### Image Push Denied
 
 **Error:**
+
 ```
 denied: requested access to the resource is denied
 ```
 
 **Solution:**
+
 1. Verify repository exists
 2. Check username/namespace in image tag
 3. Ensure you have write permissions
@@ -846,11 +866,13 @@ denied: requested access to the resource is denied
 ### Rate Limit Exceeded
 
 **Error:**
+
 ```
 You have reached your pull rate limit
 ```
 
 **Solution:**
+
 1. Login to Docker Hub (authenticated users have higher limits)
 2. Wait for rate limit to reset (usually 6 hours)
 3. Use Docker Hub Pro/Team for unlimited pulls
@@ -859,11 +881,13 @@ You have reached your pull rate limit
 ### Out of Disk Space
 
 **Error:**
+
 ```
 no space left on device
 ```
 
 **Solution:**
+
 ```bash
 # Check disk usage
 docker system df
@@ -881,11 +905,13 @@ docker builder prune -a
 ### Build Failed
 
 **Error:**
+
 ```
 failed to solve: failed to build image
 ```
 
 **Solution:**
+
 ```bash
 # Check Dockerfile syntax
 docker build --no-cache -t test .
@@ -903,11 +929,13 @@ cat .dockerignore
 ### Multi-Platform Build Issues
 
 **Error:**
+
 ```
 multiple platforms feature is currently not supported for docker driver
 ```
 
 **Solution:**
+
 ```bash
 # Create buildx builder
 docker buildx create --name mybuilder --use
@@ -922,11 +950,13 @@ docker buildx build --platform linux/amd64,linux/arm64 -t USERNAME/app:latest --
 ### Push Timeout
 
 **Error:**
+
 ```
 net/http: TLS handshake timeout
 ```
 
 **Solution:**
+
 1. Check internet connection
 2. Try again (may be temporary network issue)
 3. Increase timeout: `export DOCKER_CLIENT_TIMEOUT=300`
@@ -1004,9 +1034,10 @@ You now have everything you need to push Docker images of the Farmers Market Pla
 ✅ **Multi-platform builds** - Support for amd64 and arm64  
 ✅ **CI/CD integration** - GitHub Actions, Azure DevOps, GitLab CI  
 ✅ **Best practices** - Security, optimization, versioning  
-✅ **Comprehensive troubleshooting** - Solutions for common issues  
+✅ **Comprehensive troubleshooting** - Solutions for common issues
 
 **Quick Start:**
+
 ```bash
 # Linux/Mac
 ./docker-scripts/docker-push.sh

@@ -52,19 +52,20 @@ docker-compose -f docker-compose.dev.yml exec app npx prisma db seed
 
 ## 🌐 Access Your Development Tools
 
-| Service | URL | Credentials |
-|---------|-----|-------------|
-| **Main App** | http://localhost:3000 | - |
-| **Prisma Studio** | http://localhost:5555 | - |
-| **MailHog (Email)** | http://localhost:8025 | - |
+| Service                | URL                   | Credentials       |
+| ---------------------- | --------------------- | ----------------- |
+| **Main App**           | http://localhost:3000 | -                 |
+| **Prisma Studio**      | http://localhost:5555 | -                 |
+| **MailHog (Email)**    | http://localhost:8025 | -                 |
 | **Adminer (Database)** | http://localhost:8080 | postgres/postgres |
-| **Redis Commander** | http://localhost:8081 | admin/admin |
+| **Redis Commander**    | http://localhost:8081 | admin/admin       |
 
 ---
 
 ## 🎯 Common Development Commands
 
 ### View Logs
+
 ```bash
 # All services
 docker-compose -f docker-compose.dev.yml logs -f
@@ -74,11 +75,13 @@ docker-compose -f docker-compose.dev.yml logs -f app
 ```
 
 ### Run Database Migrations
+
 ```bash
 docker-compose -f docker-compose.dev.yml exec app npx prisma migrate dev
 ```
 
 ### Install New Package
+
 ```bash
 docker-compose -f docker-compose.dev.yml exec app npm install <package-name>
 
@@ -87,11 +90,13 @@ docker-compose -f docker-compose.dev.yml up -d --build
 ```
 
 ### Run Tests
+
 ```bash
 docker-compose -f docker-compose.dev.yml exec app npm test
 ```
 
 ### Shell Access
+
 ```bash
 # App container
 docker-compose -f docker-compose.dev.yml exec app sh
@@ -101,6 +106,7 @@ docker-compose -f docker-compose.dev.yml exec db psql -U postgres -d farmersmark
 ```
 
 ### Stop Everything
+
 ```bash
 # Stop (keeps data)
 docker-compose -f docker-compose.dev.yml down
@@ -114,6 +120,7 @@ docker-compose -f docker-compose.dev.yml down -v
 ## 🚀 Quick Start - Production
 
 ### Prerequisites Checklist
+
 - [ ] Server with 4GB+ RAM
 - [ ] Domain name configured
 - [ ] SSL certificates ready (or use Let's Encrypt)
@@ -154,12 +161,12 @@ curl https://yourdomain.com/api/health
 
 ### Production Services
 
-| Service | Port | Access |
-|---------|------|--------|
-| **App** | 3000 | Internal only |
-| **Nginx** | 80, 443 | Public |
-| **Database** | 5432 | Internal only |
-| **Redis** | 6379 | Internal only |
+| Service      | Port    | Access        |
+| ------------ | ------- | ------------- |
+| **App**      | 3000    | Internal only |
+| **Nginx**    | 80, 443 | Public        |
+| **Database** | 5432    | Internal only |
+| **Redis**    | 6379    | Internal only |
 
 ---
 
@@ -237,6 +244,7 @@ docker stats
 ## 📊 Monitoring
 
 ### Check Status
+
 ```bash
 # All services
 docker-compose ps
@@ -249,6 +257,7 @@ docker-compose logs --tail=50
 ```
 
 ### Health Checks
+
 ```bash
 # Application
 curl http://localhost:3000/api/health
@@ -298,12 +307,14 @@ docker-compose exec db pg_dump -U postgres farmersmarket > backup_$(date +%Y%m%d
 ## 🎓 Next Steps
 
 ### For Development
+
 1. ✅ Start development environment
 2. ✅ Access app at http://localhost:3000
 3. ✅ Run migrations and seed data
 4. ✅ Start coding! Changes auto-reload
 
 ### For Production
+
 1. ✅ Configure environment variables
 2. ✅ Deploy with production script
 3. ✅ Configure SSL certificates
@@ -332,11 +343,13 @@ docker-compose exec db pg_dump -U postgres farmersmarket > backup_$(date +%Y%m%d
 ## 🆘 Getting Help
 
 ### Check Logs First
+
 ```bash
 docker-compose logs -f
 ```
 
 ### Common Issues
+
 - Port already in use → Kill the process using that port
 - Database connection failed → Restart database service
 - Out of memory → Increase Docker Desktop resources
@@ -389,12 +402,14 @@ docker stats                             # Resource usage
 ## 🌟 Quick Wins
 
 ### Development
+
 - ✨ **Hot Reload**: Edit code, see changes instantly
 - 📧 **MailHog**: All emails caught and viewable at http://localhost:8025
 - 🗄️ **Prisma Studio**: Visual database editor at http://localhost:5555
 - 🐛 **Debugging**: Attach debugger to port 9229
 
 ### Production
+
 - 🚀 **One-Command Deploy**: `./docker-start-prod.sh`
 - 🔒 **Secure by Default**: Non-root user, security headers, rate limiting
 - 📊 **Health Checks**: Built-in monitoring
@@ -406,6 +421,7 @@ docker stats                             # Resource usage
 ## 📝 Environment Variables Quick Reference
 
 ### Development (.env.local)
+
 ```bash
 NODE_ENV=development
 DATABASE_URL=postgresql://postgres:postgres@db:5432/farmersmarket
@@ -415,6 +431,7 @@ NEXTAUTH_SECRET=dev-secret-min-32-chars
 ```
 
 ### Production (.env.production)
+
 ```bash
 NODE_ENV=production
 NEXT_PUBLIC_APP_URL=https://yourdomain.com
@@ -426,6 +443,7 @@ DATABASE_URL=postgresql://postgres:<password>@db:5432/farmersmarket
 ```
 
 **Generate secure secret:**
+
 ```bash
 openssl rand -base64 32
 ```
@@ -435,11 +453,13 @@ openssl rand -base64 32
 ## ✅ Success Indicators
 
 ### Development Ready When You See:
+
 - ✓ `docker-compose ps` shows all services as "healthy"
 - ✓ App accessible at http://localhost:3000
 - ✓ No errors in logs: `docker-compose logs`
 
 ### Production Ready When You See:
+
 - ✓ All services healthy: `docker-compose ps`
 - ✓ Health endpoint returns 200: `curl https://yourdomain.com/api/health`
 - ✓ SSL certificate valid

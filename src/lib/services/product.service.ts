@@ -8,7 +8,6 @@ import { database } from "@/lib/database";
 import { generateSlug } from "@/lib/utils/slug";
 import {
   BatchProductResult,
-  CreateProductInput,
   PaginatedProducts,
   PaginationOptions,
   Product,
@@ -18,6 +17,7 @@ import {
   ProductValidation,
   UpdateProductInput,
 } from "@/types/product";
+import type { CreateProductInput } from "@/lib/validations/product";
 
 // ============================================
 // PRODUCT SERVICE CLASS
@@ -80,24 +80,48 @@ export class ProductService {
 
     // 4. Calculate derived values
     const availableQuantity =
-      productData.inventory.quantity - productData.inventory.reservedQuantity;
+      productData.inventory.quantity - (productData.inventory.reserved || 0);
     const isLowStock =
       availableQuantity <= productData.inventory.lowStockThreshold;
-    const primaryPhotoUrl = productData.images.find(
-      (img) => img.isPrimary,
-    )?.url;
+    const primaryPhotoUrl = Array.isArray(productData.images)
+      ? productData.images[0]
+      : undefined;
+
+    // 5. Transform data to match Prisma schema
+    const price =
+      typeof productData.pricing === "object" &&
+      productData.pricing !== null &&
+      "basePrice" in productData.pricing
+        ? (productData.pricing.basePrice as any)?.amount || 0
+        : 0;
+    const unit = productData.unit || "lb";
+    const images = Array.isArray(productData.images) ? productData.images : [];
+    const quantity = productData.inventory?.quantity || 0;
+    const lowStockThreshold = productData.inventory?.lowStockThreshold || 10;
 
     // 5. Create product
     const product = await database.product.create({
       data: {
-        ...(productData as any),
+        farmId: productData.farmId,
+        name: productData.name,
         slug,
+        description: productData.description,
+        category: productData.category as any,
+        price,
+        unit,
+        images,
+        quantityAvailable: quantity,
+        lowStockThreshold,
+        inStock: quantity > 0,
+        status: "ACTIVE",
+        trackInventory: true,
+        primaryPhotoUrl,
+        pricing: productData.pricing as any,
         inventory: {
           ...productData.inventory,
           availableQuantity,
           isLowStock,
         },
-        primaryPhotoUrl,
       },
       include: {
         farm: {
@@ -752,7 +776,9 @@ export class ProductService {
 
     // Price validation
     if ("pricing" in input && input.pricing) {
-      if (input.pricing.basePrice.amount <= 0) {
+      const pricing = input.pricing as any;
+      const amount = pricing?.basePrice?.amount || pricing?.amount || 0;
+      if (amount <= 0) {
         errors.push({
           field: "pricing.basePrice.amount",
           message: "Price must be greater than 0",
@@ -762,19 +788,24 @@ export class ProductService {
 
     // Inventory validation
     if ("inventory" in input && input.inventory) {
-      if (input.inventory.quantity < 0) {
+      const inventory = input.inventory as any;
+      const quantity = inventory.quantity || 0;
+      const reservedQuantity =
+        inventory.reservedQuantity || inventory.reserved || 0;
+
+      if (quantity < 0) {
         errors.push({
           field: "inventory.quantity",
           message: "Quantity cannot be negative",
         });
       }
-      if (input.inventory.reservedQuantity < 0) {
+      if (reservedQuantity < 0) {
         errors.push({
           field: "inventory.reservedQuantity",
           message: "Reserved quantity cannot be negative",
         });
       }
-      if (input.inventory.reservedQuantity > input.inventory.quantity) {
+      if (reservedQuantity > quantity) {
         errors.push({
           field: "inventory.reservedQuantity",
           message: "Reserved quantity cannot exceed total quantity",

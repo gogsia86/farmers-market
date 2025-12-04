@@ -7,6 +7,7 @@
 ## 🎯 What This Does
 
 This setup allows you to run the **entire Farmers Market Platform** in Docker Desktop:
+
 - ✅ No Node.js installation required
 - ✅ No PostgreSQL installation required
 - ✅ No Redis installation required
@@ -19,18 +20,22 @@ This setup allows you to run the **entire Farmers Market Platform** in Docker De
 ## ⚡ Quick Start (3 Steps)
 
 ### Step 1: Ensure Docker Desktop is Running
+
 - Open **Docker Desktop** application
 - Wait for it to fully start (whale icon in system tray)
 - Verify by running: `docker info`
 
 ### Step 2: Start the Platform
+
 ```bash
 DOCKER-START.bat
 ```
+
 - Select **[1] Development Mode**
 - Wait 60 seconds for all services to start
 
 ### Step 3: Access & Login
+
 ```bash
 # Open application
 http://localhost:3000
@@ -49,14 +54,14 @@ Password: Admin123!
 
 ### Services Running in Docker
 
-| Service | Container Name | Port | Purpose |
-|---------|----------------|------|---------|
-| **Next.js App** | `farmers-market-dev` | 3001 | Main application with hot-reload |
-| **PostgreSQL** | `farmers-market-db-dev` | 5432 | Database with PostGIS |
-| **Redis** | `farmers-market-redis-dev` | 6379 | Cache & sessions |
-| **MailHog** | `farmers-market-mailhog` | 8025 | Email testing (catches all emails) |
-| **Adminer** | `farmers-market-adminer` | 8080 | Database admin UI |
-| **Redis Commander** | `farmers-market-redis-commander` | 8081 | Redis admin UI |
+| Service             | Container Name                   | Port | Purpose                            |
+| ------------------- | -------------------------------- | ---- | ---------------------------------- |
+| **Next.js App**     | `farmers-market-dev`             | 3001 | Main application with hot-reload   |
+| **PostgreSQL**      | `farmers-market-db-dev`          | 5432 | Database with PostGIS              |
+| **Redis**           | `farmers-market-redis-dev`       | 6379 | Cache & sessions                   |
+| **MailHog**         | `farmers-market-mailhog`         | 8025 | Email testing (catches all emails) |
+| **Adminer**         | `farmers-market-adminer`         | 8080 | Database admin UI                  |
+| **Redis Commander** | `farmers-market-redis-commander` | 8081 | Redis admin UI                     |
 
 ### Development Tools
 
@@ -77,7 +82,9 @@ All accessible in your browser:
 We've created **easy-to-use batch files** that handle everything for you:
 
 ### 1. DOCKER-START.bat
+
 **Main launcher** - Interactive menu for:
+
 - Starting development environment
 - Starting production environment
 - Stopping all services
@@ -85,13 +92,17 @@ We've created **easy-to-use batch files** that handle everything for you:
 - Viewing status
 
 **Usage:**
+
 ```bash
 DOCKER-START.bat
 ```
+
 Then follow the menu!
 
 ### 2. DOCKER-LOGS.bat
+
 **Log viewer** - See what's happening in real-time:
+
 - Application logs
 - Database logs
 - Redis logs
@@ -99,12 +110,15 @@ Then follow the menu!
 - All services combined
 
 **Usage:**
+
 ```bash
 DOCKER-LOGS.bat
 ```
 
 ### 3. DOCKER-SHELL.bat
+
 **Shell access & quick commands:**
+
 - Access container shells
 - Run database migrations
 - Open Prisma Studio
@@ -113,6 +127,7 @@ DOCKER-LOGS.bat
 - Run tests
 
 **Usage:**
+
 ```bash
 DOCKER-SHELL.bat
 ```
@@ -187,6 +202,7 @@ docker volume prune -f
 ## 🔐 Default Credentials
 
 ### Admin Panel Login
+
 ```
 URL:      http://localhost:3000/admin-login
 Email:    gogsia@gmail.com
@@ -194,6 +210,7 @@ Password: Admin123!
 ```
 
 ### Adminer (Database UI)
+
 ```
 System:   PostgreSQL
 Server:   db
@@ -203,6 +220,7 @@ Database: farmersmarket
 ```
 
 ### Redis Commander
+
 ```
 Username: admin
 Password: admin
@@ -215,6 +233,7 @@ Password: admin
 ### Typical Development Session
 
 1. **Start Services**
+
    ```bash
    DOCKER-START.bat
    → [1] Development Mode
@@ -224,11 +243,13 @@ Password: admin
    - Check logs: `DOCKER-LOGS.bat` if needed
 
 3. **Open Application**
+
    ```
    http://localhost:3000
    ```
 
 4. **Sign In to Admin**
+
    ```
    http://localhost:3000/admin-login
    gogsia@gmail.com / Admin123!
@@ -240,6 +261,7 @@ Password: admin
    - See changes instantly in browser
 
 6. **View Logs** (if needed)
+
    ```bash
    DOCKER-LOGS.bat
    → [1] Application
@@ -254,6 +276,7 @@ Password: admin
 ### Adding New Features
 
 **Schema Changes:**
+
 ```bash
 # 1. Edit prisma/schema.prisma in your editor
 
@@ -267,6 +290,7 @@ DOCKER-SHELL.bat
 ```
 
 **Adding NPM Packages:**
+
 ```bash
 # Easy way
 DOCKER-SHELL.bat
@@ -284,6 +308,7 @@ docker-compose -f docker-compose.dev.yml exec app npm install <package-name>
 ### Issue: "Docker Desktop is not running"
 
 **Solution:**
+
 1. Open Docker Desktop application
 2. Wait for whale icon in system tray
 3. Run `docker info` to verify
@@ -294,6 +319,7 @@ docker-compose -f docker-compose.dev.yml exec app npm install <package-name>
 **Error:** `Bind for 0.0.0.0:3001 failed`
 
 **Solution:**
+
 ```bash
 # Check what's using the port
 netstat -ano | findstr :3001
@@ -305,6 +331,7 @@ netstat -ano | findstr :3001
 ### Issue: "Container keeps restarting"
 
 **Solution:**
+
 ```bash
 # Check logs
 DOCKER-LOGS.bat
@@ -321,6 +348,7 @@ DOCKER-LOGS.bat
 **This is not broken!** You need to authenticate first.
 
 **Solution:**
+
 1. Go to: http://localhost:3000/admin-login
 2. Sign in: `gogsia@gmail.com` / `Admin123!`
 3. Admin routes now work!
@@ -330,6 +358,7 @@ DOCKER-LOGS.bat
 ### Issue: "Hot-reload not working"
 
 **Solution:**
+
 ```bash
 # Restart container
 docker restart farmers-market-dev
@@ -341,6 +370,7 @@ docker-compose -f docker-compose.dev.yml up -d --build
 ### Issue: "Database connection failed"
 
 **Solution:**
+
 ```bash
 # 1. Check if DB is running
 docker ps --filter "name=farmers-market-db"
@@ -357,6 +387,7 @@ docker restart farmers-market-db-dev
 ### Issue: "Out of disk space"
 
 **Solution:**
+
 ```bash
 # Clean up Docker resources
 docker system prune -a
@@ -373,6 +404,7 @@ docker volume prune
 ## 📊 Monitoring
 
 ### Check Status
+
 ```bash
 # Easy way
 DOCKER-START.bat
@@ -384,6 +416,7 @@ docker-compose -f docker-compose.dev.yml ps
 ```
 
 ### Resource Usage
+
 ```bash
 # Real-time stats
 docker stats
@@ -393,6 +426,7 @@ docker stats farmers-market-dev
 ```
 
 ### Application Health
+
 ```bash
 # Check API health
 curl http://localhost:3000/api/health
@@ -406,12 +440,14 @@ curl http://localhost:3000/api/auth/session
 ## 🧹 Cleanup & Maintenance
 
 ### Stop Services (Keep Data)
+
 ```bash
 DOCKER-START.bat → [3] Stop All Services
 # Data volumes are preserved
 ```
 
 ### Full Reset (Delete All Data)
+
 ```bash
 DOCKER-START.bat → [4] Full Reset → Type 'YES'
 # Removes all containers, volumes, and data
@@ -419,6 +455,7 @@ DOCKER-START.bat → [4] Full Reset → Type 'YES'
 ```
 
 ### Clean Up Docker
+
 ```bash
 # Remove stopped containers
 docker container prune -f
@@ -438,21 +475,25 @@ docker system prune -a --volumes
 ## 🚀 Production Deployment
 
 ### Build Production Image
+
 ```bash
 docker-compose build
 ```
 
 ### Start Production Stack
+
 ```bash
 docker-compose up -d
 ```
 
 ### Run Migrations
+
 ```bash
 docker-compose exec app npx prisma migrate deploy
 ```
 
 ### Access Production App
+
 ```
 http://localhost:3000
 ```
@@ -462,17 +503,20 @@ http://localhost:3000
 ## 📚 Additional Resources
 
 ### Documentation Files
+
 - `DOCKER-GUIDE.md` - Comprehensive Docker documentation
 - `DOCKER-QUICK-REFERENCE.txt` - Command cheat sheet
 - `AUTHENTICATION-GUIDE.md` - Auth setup & troubleshooting
 - `QUICK-START-GUIDE.md` - Project overview
 
 ### Helper Scripts
+
 - `DOCKER-START.bat` - Main launcher
 - `DOCKER-LOGS.bat` - Log viewer
 - `DOCKER-SHELL.bat` - Shell access & commands
 
 ### Docker Configuration Files
+
 - `docker-compose.dev.yml` - Development setup
 - `docker-compose.yml` - Production setup
 - `Dockerfile` - Production image
@@ -515,6 +559,7 @@ After running Docker setup, verify:
 ## 🆘 Need Help?
 
 ### Quick Diagnostics
+
 ```bash
 # 1. Check Docker is running
 docker info
@@ -534,15 +579,15 @@ curl http://localhost:3000/api/auth/session
 
 ### Common Issues Table
 
-| Problem | Quick Fix |
-|---------|-----------|
-| Docker not running | Open Docker Desktop |
-| Port conflict | Change port or stop conflicting service |
-| Container restarting | Check logs, wait for DB to initialize |
-| Admin routes 404 | Sign in first at /admin-login |
-| Hot-reload broken | Restart container or rebuild |
-| Out of memory | Increase Docker memory allocation |
-| Database error | Wait 30s for DB startup |
+| Problem              | Quick Fix                               |
+| -------------------- | --------------------------------------- |
+| Docker not running   | Open Docker Desktop                     |
+| Port conflict        | Change port or stop conflicting service |
+| Container restarting | Check logs, wait for DB to initialize   |
+| Admin routes 404     | Sign in first at /admin-login           |
+| Hot-reload broken    | Restart container or rebuild            |
+| Out of memory        | Increase Docker memory allocation       |
+| Database error       | Wait 30s for DB startup                 |
 
 ---
 
@@ -583,6 +628,7 @@ A: Pull latest code, then: `docker-compose -f docker-compose.dev.yml up -d --bui
 ## 🎯 Key Advantages of Docker Setup
 
 ### For Development
+
 - ✅ No local software installation needed
 - ✅ Consistent environment across machines
 - ✅ Easy onboarding for new developers
@@ -592,12 +638,14 @@ A: Pull latest code, then: `docker-compose -f docker-compose.dev.yml up -d --bui
 - ✅ Debugging tools included
 
 ### For Testing
+
 - ✅ MailHog catches all emails
 - ✅ Isolated database for each developer
 - ✅ Redis cache for realistic performance
 - ✅ All services run together seamlessly
 
 ### For Deployment
+
 - ✅ Production-ready Docker images
 - ✅ Same image runs everywhere
 - ✅ Easy to scale horizontally

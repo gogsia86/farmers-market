@@ -3,11 +3,13 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { MapPin, Star, Award, Truck } from "lucide-react";
+import { MapPin, Star, Award, Truck, Store } from "lucide-react";
 import {
   generateMetadata,
   generateOrganizationJsonLd,
 } from "@/lib/utils/metadata";
+import { MarketplaceSearch } from "@/components/marketplace/MarketplaceSearch";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 /**
  * 🌾 MARKETPLACE FARMS INDEX PAGE
@@ -98,13 +100,23 @@ export default async function MarketplaceFarmsPage() {
                 produce
               </p>
               <div className="flex flex-wrap gap-4 justify-center">
-                <Button size="lg" variant="default">
-                  Search Farms
-                </Button>
-                <Button size="lg" variant="outline">
-                  View Map
+                <Button size="lg" variant="default" asChild>
+                  <Link href="/marketplace/products">Shop Products</Link>
                 </Button>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Search Section */}
+        <section className="py-8 bg-white border-b border-gray-200">
+          <div className="container mx-auto px-4">
+            <div className="max-w-7xl mx-auto">
+              <MarketplaceSearch
+                type="farms"
+                showFilters={true}
+                placeholder="Search farms by name, location, or products..."
+              />
             </div>
           </div>
         </section>
@@ -114,14 +126,23 @@ export default async function MarketplaceFarmsPage() {
           <div className="container mx-auto px-4">
             <div className="max-w-7xl mx-auto">
               {farms.length === 0 ? (
-                <div className="text-center py-16">
-                  <p className="text-xl text-muted-foreground mb-4">
-                    No farms found
-                  </p>
-                  <p className="text-muted-foreground">
-                    Check back soon as more farms join our marketplace!
-                  </p>
-                </div>
+                <EmptyState
+                  icon={Store}
+                  title="No Farms Found"
+                  description="We couldn't find any farms in your area."
+                  secondaryDescription="Check back soon as more farms join our marketplace!"
+                  action={{
+                    label: "Shop Products",
+                    href: "/marketplace/products",
+                  }}
+                  secondaryAction={{
+                    label: "Back to Home",
+                    href: "/",
+                    variant: "outline",
+                  }}
+                  size="lg"
+                  showDecoration
+                />
               ) : (
                 <>
                   <div className="mb-8">

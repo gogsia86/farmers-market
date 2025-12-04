@@ -1,6 +1,9 @@
 # ============================================================================
+
 # FARMERS MARKET PLATFORM - QUICK START GUIDE
+
 # Get Up and Running in 5 Minutes
+
 # ============================================================================
 
 ## 🚀 DEPLOYMENT STATUS: ✅ COMPLETE & RUNNING
@@ -12,17 +15,20 @@ All services are deployed and operational on Docker Desktop!
 ## 📍 ACCESS YOUR APPLICATION
 
 ### Main Application
+
 ```
 http://localhost:3000
 ```
 
 ### Alternative Access (via Nginx)
+
 ```
 http://localhost:80
 https://localhost:443
 ```
 
 ### Health Check API
+
 ```
 http://localhost:3000/api/health
 ```
@@ -31,13 +37,13 @@ http://localhost:3000/api/health
 
 ## 🎯 CURRENT STATUS
 
-| Service | Status | Port | Container Name |
-|---------|--------|------|----------------|
-| **Next.js App** | ✅ Running | 3000 | farmers-market-app |
-| **PostgreSQL** | ✅ Running | 5432 | farmers-market-db |
-| **Redis Cache** | ✅ Running | 6379 | farmers-market-cache |
-| **Nginx Proxy** | ✅ Running | 80, 443 | farmers-market-proxy |
-| **DB Backup** | ✅ Running | - | farmers-market-db-backup |
+| Service         | Status     | Port    | Container Name           |
+| --------------- | ---------- | ------- | ------------------------ |
+| **Next.js App** | ✅ Running | 3000    | farmers-market-app       |
+| **PostgreSQL**  | ✅ Running | 5432    | farmers-market-db        |
+| **Redis Cache** | ✅ Running | 6379    | farmers-market-cache     |
+| **Nginx Proxy** | ✅ Running | 80, 443 | farmers-market-proxy     |
+| **DB Backup**   | ✅ Running | -       | farmers-market-db-backup |
 
 **Application Response Time**: 11-12ms  
 **Database Status**: Connected ✅  
@@ -48,16 +54,19 @@ http://localhost:3000/api/health
 ## 🔑 DEFAULT CREDENTIALS
 
 ### Database
+
 - **Host**: localhost:5432
 - **Database**: farmersmarket
 - **User**: postgres
 - **Password**: postgres
 
 ### Redis
+
 - **Host**: localhost:6379
 - **Password**: quantum_cache_password
 
 ### Admin UI (Optional Services)
+
 - **Adminer**: http://localhost:8082
 - **Redis Commander**: http://localhost:8081
 - **Username**: admin
@@ -68,31 +77,37 @@ http://localhost:3000/api/health
 ## ⚡ ESSENTIAL COMMANDS
 
 ### View Running Services
+
 ```bash
 docker-compose ps
 ```
 
 ### View Application Logs
+
 ```bash
 docker-compose logs -f app
 ```
 
 ### Restart Application
+
 ```bash
 docker-compose restart app
 ```
 
 ### Stop All Services
+
 ```bash
 docker-compose down
 ```
 
 ### Start All Services
+
 ```bash
 docker-compose up -d
 ```
 
 ### View Resource Usage
+
 ```bash
 docker stats
 ```
@@ -117,6 +132,7 @@ npx prisma studio
 ```
 
 **OR** if Prisma is already installed locally:
+
 ```bash
 cd "M:\Repo\Farmers Market Platform web and app"
 npx prisma migrate deploy
@@ -125,6 +141,7 @@ npx prisma migrate deploy
 ### 2. Seed Database (Optional)
 
 Create initial data:
+
 ```bash
 npx prisma db seed
 ```
@@ -132,6 +149,7 @@ npx prisma db seed
 ### 3. Create Your First User
 
 Visit the application and register:
+
 ```
 http://localhost:3000/register
 ```
@@ -172,11 +190,13 @@ Then update `NEXTAUTH_SECRET` in `.env` file.
 ## 🔍 VERIFY DEPLOYMENT
 
 ### Check Health Endpoint
+
 ```bash
 curl http://localhost:3000/api/health
 ```
 
 **Expected Response**:
+
 ```json
 {
   "status": "degraded",
@@ -199,14 +219,17 @@ curl http://localhost:3000/api/health
 ```
 
 ### Check Database Connection
+
 ```bash
 docker-compose exec db psql -U postgres -d farmersmarket -c "SELECT version();"
 ```
 
 ### Check Redis
+
 ```bash
 docker-compose exec redis redis-cli -a quantum_cache_password PING
 ```
+
 Expected: `PONG`
 
 ---
@@ -251,6 +274,7 @@ taskkill /PID <PID> /F
 ### High Memory Usage?
 
 This is normal during initial startup. If persistent:
+
 ```bash
 # Restart application
 docker-compose restart app
@@ -264,6 +288,7 @@ docker stats
 ## 📊 MONITORING
 
 ### Real-Time Logs
+
 ```bash
 # All services
 docker-compose logs -f
@@ -276,6 +301,7 @@ docker-compose logs -f nginx
 ```
 
 ### Container Status
+
 ```bash
 # Quick status
 docker-compose ps
@@ -285,6 +311,7 @@ docker inspect farmers-market-app
 ```
 
 ### Resource Usage
+
 ```bash
 # Live resource monitoring
 docker stats
@@ -352,12 +379,14 @@ docker-compose restart
 ## 📚 ADDITIONAL RESOURCES
 
 ### Documentation
+
 - `DEPLOYMENT_SUCCESS.md` - Complete deployment details
 - `DOCKER_DEPLOYMENT_STATUS.md` - Pre-deployment verification
 - `docker-compose.yml` - Service configuration
 - `Dockerfile` - Build configuration
 
 ### Useful Links
+
 - Next.js Docs: https://nextjs.org/docs
 - Prisma Docs: https://www.prisma.io/docs
 - Docker Compose: https://docs.docker.com/compose
@@ -459,9 +488,10 @@ docker-compose exec app sh
 
 ## 🌾 DIVINE AGRICULTURAL CONSCIOUSNESS
 
-*"From seed to scale, cultivating digital abundance."*
+_"From seed to scale, cultivating digital abundance."_
 
 Your platform is ready to serve the agricultural community with:
+
 - ⚡ Lightning-fast performance (11-12ms response time)
 - 🔒 Secure architecture (non-root containers, network isolation)
 - 💾 Persistent data storage (volumes for all critical data)
@@ -475,6 +505,6 @@ Your platform is ready to serve the agricultural community with:
 **Deployment Date**: November 26, 2024  
 **Status**: ✅ OPERATIONAL  
 **Services**: 5/5 Running  
-**Health**: All Systems Nominal  
+**Health**: All Systems Nominal
 
 🚀 **You're all set!**

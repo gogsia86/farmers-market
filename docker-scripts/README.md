@@ -13,6 +13,7 @@ This directory contains helper scripts for managing the Farmers Market Platform 
 Comprehensive production deployment script with health checks and validation.
 
 **Features:**
+
 - ✅ Prerequisites checking (Docker, Docker Compose)
 - ✅ Environment variable validation
 - ✅ Service health monitoring
@@ -37,6 +38,7 @@ Comprehensive production deployment script with health checks and validation.
 ```
 
 **Requirements:**
+
 - `.env.production` file configured
 - Docker Engine 24.0+
 - Docker Compose V2
@@ -48,6 +50,7 @@ Comprehensive production deployment script with health checks and validation.
 Quick setup for local development with hot-reload and debugging tools.
 
 **Features:**
+
 - ✅ Automatic environment setup
 - ✅ Hot-reload configuration
 - ✅ Database seeding option
@@ -87,6 +90,7 @@ Quick setup for local development with hot-reload and debugging tools.
 ```
 
 **Development URLs:**
+
 - Next.js App: http://localhost:3000
 - Prisma Studio: http://localhost:5555
 - Adminer: http://localhost:8080
@@ -151,6 +155,7 @@ docker compose logs -f app
 ### Script Won't Execute
 
 **Linux/Mac:**
+
 ```bash
 # Make script executable
 chmod +x docker-scripts/*.sh
@@ -160,12 +165,14 @@ chmod +x docker-scripts/*.sh
 ```
 
 **Windows (Git Bash):**
+
 ```bash
 bash docker-scripts/docker-dev.sh
 ```
 
 **Windows (PowerShell):**
 Use Docker Compose commands directly:
+
 ```powershell
 docker compose -f docker-compose.dev.yml up -d
 ```

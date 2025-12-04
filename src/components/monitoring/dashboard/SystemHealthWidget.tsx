@@ -106,9 +106,7 @@ export function SystemHealthWidget({
       {/* Widget Header */}
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <h3 className="text-lg font-semibold text-gray-900">
-            System Health
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-900">System Health</h3>
           <div
             className={`h-2 w-2 rounded-full ${
               systemHealthy ? "bg-green-500" : "bg-red-500"
@@ -196,9 +194,7 @@ export function SystemHealthWidget({
                 healthDetails.api ? "bg-green-100" : "bg-red-100"
               }`}
             >
-              <span className="text-lg">
-                {healthDetails.api ? "✓" : "✗"}
-              </span>
+              <span className="text-lg">{healthDetails.api ? "✓" : "✗"}</span>
             </div>
             <div>
               <p className="text-sm font-medium text-gray-900">API</p>
@@ -224,9 +220,7 @@ export function SystemHealthWidget({
                 healthDetails.cache ? "bg-green-100" : "bg-red-100"
               }`}
             >
-              <span className="text-lg">
-                {healthDetails.cache ? "✓" : "✗"}
-              </span>
+              <span className="text-lg">{healthDetails.cache ? "✓" : "✗"}</span>
             </div>
             <div>
               <p className="text-sm font-medium text-gray-900">Cache</p>
@@ -279,7 +273,9 @@ export function SystemHealthWidget({
       {latestCheck && (
         <div className="mt-4 pt-4 border-t border-gray-200">
           <div className="flex items-center justify-between text-xs text-gray-500">
-            <span>Last checked: {timeAgo(new Date(latestCheck.checkedAt))}</span>
+            <span>
+              Last checked: {timeAgo(new Date(latestCheck.checkedAt))}
+            </span>
             {latestCheck.responseTime && (
               <span>Response: {latestCheck.responseTime}ms</span>
             )}

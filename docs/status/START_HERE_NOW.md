@@ -32,11 +32,13 @@ cd "M:/Repo/Farmers Market Platform web and app"
 ```
 
 **In Browser:**
+
 1. Click "Allow access" button
 2. Return to terminal
 3. See "Done! The Stripe CLI is configured"
 
 **Verify it worked:**
+
 ```bash
 ./.stripe-cli/stripe config --list
 ```
@@ -75,20 +77,23 @@ NEXTAUTH_SECRET=your-secret-here
 **Open 3 terminals:**
 
 **TERMINAL 1 - Dev Server:**
+
 ```bash
 npm run dev:omen
 # Wait for: ✓ Ready in 3.5s
 ```
 
 **TERMINAL 2 - Webhook Forwarding:**
+
 ```bash
 ./.stripe-cli/stripe listen --forward-to localhost:3001/api/webhooks/stripe
 # You'll see: whsec_xxxxx (COPY THIS!)
 ```
 
-**Update .env.local with the whsec_ secret, then restart Terminal 1!**
+**Update .env.local with the whsec\_ secret, then restart Terminal 1!**
 
 **TERMINAL 3 - Run Tests:**
+
 ```bash
 # Health check
 curl http://localhost:3001/api/webhooks/stripe
@@ -125,11 +130,13 @@ curl http://localhost:3001/api/webhooks/stripe
 ## 📚 DETAILED GUIDES
 
 **Need step-by-step help?**
+
 - `DO_THIS_NOW.md` - Complete Stripe setup guide (detailed)
 - `PROJECT_REVIEW_AND_NEXT_STEPS.md` - Full project analysis
 - `PRIORITY_2_PROGRESS.md` - Testing progress tracker
 
 **Having issues?**
+
 - Check troubleshooting section in `DO_THIS_NOW.md`
 - All common problems are documented with solutions
 
@@ -138,6 +145,7 @@ curl http://localhost:3001/api/webhooks/stripe
 ## 🎯 AFTER YOU COMPLETE THIS (1 hour from now)
 
 You'll have:
+
 - ✅ Payment system fully tested
 - ✅ 100% confidence in Stripe integration
 - ✅ Ready for staging deployment
@@ -151,7 +159,7 @@ You'll have:
 → Copy the URL from terminal and paste in browser
 
 **Webhook shows [401] error?**
-→ Make sure you updated .env.local with whsec_ secret AND restarted dev server
+→ Make sure you updated .env.local with whsec\_ secret AND restarted dev server
 
 **Can't find stripe command?**
 → Use full path: `./.stripe-cli/stripe`
@@ -200,6 +208,7 @@ The only thing between you and production is verifying your payment system works
 ## 💪 YOU'VE GOT THIS!
 
 You've built something exceptional:
+
 - Nearly 2,000 tests passing
 - Zero errors in strict TypeScript
 - Professional architecture

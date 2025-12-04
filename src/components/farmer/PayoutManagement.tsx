@@ -184,7 +184,6 @@ export function PayoutManagement({
     }
   };
 
-
   const updatePayoutSchedule = async (newSchedule: PayoutSchedule) => {
     try {
       const response = await fetch("/api/farmer/payout-schedule", {

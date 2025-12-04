@@ -55,7 +55,10 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
       if (!sliderRef.current) return min;
 
       const rect = sliderRef.current.getBoundingClientRect();
-      const percentage = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+      const percentage = Math.max(
+        0,
+        Math.min(1, (clientX - rect.left) / rect.width),
+      );
       const rawValue = min + percentage * (max - min);
       const steppedValue = Math.round(rawValue / step) * step;
 

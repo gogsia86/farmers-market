@@ -450,27 +450,22 @@ Provide practical, actionable insights with agricultural consciousness.`;
 
     switch (type) {
       case "failure-analysis":
-        return (
-          `${basePrompt
-          }\n\nFocus on identifying root causes and providing step-by-step remediation.`
-        );
+        return `${
+          basePrompt
+        }\n\nFocus on identifying root causes and providing step-by-step remediation.`;
 
       case "risk-prediction":
-        return (
-          `${basePrompt
-          }\n\nFocus on predictive analysis and proactive issue prevention.`
-        );
+        return `${
+          basePrompt
+        }\n\nFocus on predictive analysis and proactive issue prevention.`;
 
       case "performance-analysis":
-        return (
-          `${basePrompt
-          }\n\nFocus on performance bottlenecks and optimization opportunities.`
-        );
+        return `${
+          basePrompt
+        }\n\nFocus on performance bottlenecks and optimization opportunities.`;
 
       case "remediation":
-        return (
-          `${basePrompt  }\n\nFocus on specific, implementable remediation steps.`
-        );
+        return `${basePrompt}\n\nFocus on specific, implementable remediation steps.`;
 
       default:
         return basePrompt;

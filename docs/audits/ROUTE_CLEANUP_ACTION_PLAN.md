@@ -1,4 +1,5 @@
 # 🚦 ROUTE CLEANUP ACTION PLAN
+
 ## Farmers Market Platform - Route Duplication Analysis & Resolution
 
 **Generated**: November 2025  
@@ -11,12 +12,14 @@
 ## 📊 EXECUTIVE SUMMARY
 
 ### Issues Identified
+
 - **Route Duplications**: 8 confirmed cases
 - **Ambiguous Routes**: 5 routes need clarification
 - **Demo Routes**: 5 routes requiring production decision
 - **Diagnostic Routes**: 2 routes needing protection
 
 ### Impact
+
 - User confusion and potential routing conflicts
 - SEO issues with duplicate content
 - Maintenance overhead
@@ -46,6 +49,7 @@ DUPLICATE ROUTES:
 **Decision**: ❌ REMOVE `/farmer-dashboard/`
 
 **Action Items**:
+
 ```bash
 # 1. Check for any direct links to /farmer-dashboard
 grep -r "/farmer-dashboard" src/
@@ -97,11 +101,13 @@ ACCOUNT ROUTES:
 ```
 
 **Analysis**:
+
 - `/account/` (route group) - Protected customer routes ✅
 - `/account/` (standalone) - Only has notifications 🤔
 - `/dashboard/` - Full-featured user dashboard 🤔
 
 **Recommended Structure**:
+
 ```
 PROPOSED CONSOLIDATION:
 └─ src/app/(customer)/account/
@@ -117,6 +123,7 @@ PROPOSED CONSOLIDATION:
 **Decision**: 🔄 CONSOLIDATE into `(customer)/account/`
 
 **Action Items**:
+
 ```bash
 # Phase 1: Analysis
 # 1. Compare functionality between /dashboard and /account
@@ -178,6 +185,7 @@ ORDER ROUTES:
 **Analysis Options**:
 
 **Option A: Remove and redirect based on role**
+
 ```typescript
 // src/app/orders/page.tsx
 import { auth } from "@/lib/auth";
@@ -185,11 +193,11 @@ import { redirect } from "next/navigation";
 
 export default async function OrdersPage() {
   const session = await auth();
-  
+
   if (!session?.user) {
     redirect("/login?callbackUrl=/orders");
   }
-  
+
   switch (session.user.role) {
     case "FARMER":
       redirect("/farmer/orders");
@@ -205,6 +213,7 @@ export default async function OrdersPage() {
 ```
 
 **Option B: Create unified order listing with role-based views**
+
 ```typescript
 // Keep /orders as a smart route that shows appropriate view
 // Based on user role
@@ -213,6 +222,7 @@ export default async function OrdersPage() {
 **Decision**: ✅ OPTION A - Role-based redirect (simpler, clearer)
 
 **Action Items**:
+
 ```bash
 # 1. Replace content with redirect logic
 # (see Option A code above)
@@ -251,6 +261,7 @@ PRODUCT ROUTES:
 ```
 
 **Analysis**:
+
 - `/marketplace/products` - Specific marketplace view ✅
 - `/farmer/products` - Management interface ✅
 - `/products` - Could be public catalog OR redirect 🤔
@@ -258,6 +269,7 @@ PRODUCT ROUTES:
 **Recommended Approach**:
 
 **Option A: Keep as public catalog (canonical URL)**
+
 ```typescript
 // src/app/products/page.tsx
 // PUBLIC PRODUCT CATALOG
@@ -267,6 +279,7 @@ PRODUCT ROUTES:
 ```
 
 **Option B: Remove and use /marketplace/products**
+
 ```typescript
 // Remove /products
 // Redirect to /marketplace/products
@@ -276,11 +289,13 @@ PRODUCT ROUTES:
 **Decision**: ✅ OPTION A - Keep as public catalog with canonical URL
 
 **Reasoning**:
+
 - SEO benefit: `/products` is cleaner than `/marketplace/products`
 - Public access makes sense for product browsing
 - Role-specific routes handle authenticated actions
 
 **Action Items**:
+
 ```bash
 # 1. Verify /products is truly public catalog
 cat src/app/products/page.tsx
@@ -316,6 +331,7 @@ ADMIN ROUTES:
 **Analysis**: This is likely **INTENTIONAL** ✅
 
 **Reasoning**:
+
 - `/admin-login` needs to be public for unauthenticated admin access
 - `/admin/*` routes are protected by route group layout
 - Common pattern: public login, protected dashboard
@@ -323,6 +339,7 @@ ADMIN ROUTES:
 **Decision**: ✅ KEEP AS-IS (but verify protection)
 
 **Verification Checklist**:
+
 ```typescript
 // ✅ Check 1: admin-login is public
 // src/app/admin-login/page.tsx should NOT require auth
@@ -338,6 +355,7 @@ ADMIN ROUTES:
 ```
 
 **Action Items**:
+
 ```bash
 # 1. Verify admin role protection
 grep -A 20 "export default" src/app/(admin)/layout.tsx
@@ -369,6 +387,7 @@ DEMO ROUTES:
 ```
 
 **Security Risk**: 🔴 HIGH
+
 - Exposes test functionality
 - Potential data leakage
 - Unprofessional appearance
@@ -379,29 +398,32 @@ DEMO ROUTES:
 **Recommended Approach**:
 
 **Option A: Remove entirely (RECOMMENDED)**
+
 ```bash
 rm -rf src/app/demos/
 ```
 
 **Option B: Feature flag protection**
+
 ```typescript
 // src/app/demos/layout.tsx
 export default function DemosLayout({ children }) {
   if (process.env.NODE_ENV === 'production') {
     notFound();
   }
-  
+
   // Additional admin-only protection
   const session = await auth();
   if (session?.user?.role !== 'ADMIN') {
     redirect('/');
   }
-  
+
   return <>{children}</>;
 }
 ```
 
 **Option C: Move to separate development app**
+
 ```bash
 # Create demos as separate Next.js app
 mkdir demos-app/
@@ -412,6 +434,7 @@ mkdir demos-app/
 **Decision**: ✅ OPTION B (for now), migrate to OPTION A before production
 
 **Action Items**:
+
 ```bash
 # Immediate (OPTION B):
 # 1. Create protective layout
@@ -424,13 +447,13 @@ export default async function DemosLayout({ children }: { children: React.ReactN
   if (process.env.NODE_ENV === 'production' && process.env.ENABLE_DEMOS !== 'true') {
     notFound();
   }
-  
+
   // Admin only
   const session = await auth();
   if (session?.user?.role !== 'ADMIN') {
     redirect('/');
   }
-  
+
   return (
     <div className="demos-container">
       <div className="bg-yellow-100 border-l-4 border-yellow-500 p-4 mb-4">
@@ -469,6 +492,7 @@ DIAGNOSTIC ROUTES:
 ```
 
 **Security Risk**: 🟡 MEDIUM
+
 - May expose system information
 - Could reveal infrastructure details
 - Performance overhead if publicly accessible
@@ -476,6 +500,7 @@ DIAGNOSTIC ROUTES:
 **Decision**: 🔒 ADMIN-ONLY PROTECTION
 
 **Action Items**:
+
 ```typescript
 // src/app/diagnostic/page.tsx
 import { auth } from "@/lib/auth";
@@ -483,12 +508,12 @@ import { redirect } from "next/navigation";
 
 export default async function DiagnosticPage() {
   const session = await auth();
-  
+
   // Admin only
-  if (session?.user?.role !== 'ADMIN') {
-    redirect('/');
+  if (session?.user?.role !== "ADMIN") {
+    redirect("/");
   }
-  
+
   // ... rest of diagnostic page
 }
 
@@ -497,6 +522,7 @@ export default async function DiagnosticPage() {
 ```
 
 **Verification**:
+
 ```bash
 # 1. Check monitoring layout protection
 cat src/app/(monitoring)/layout.tsx
@@ -525,12 +551,13 @@ FARM ROUTES:
    └─ [slug]/page.tsx   → /farms/[slug]
 ```
 
-**Analysis Needed**: 
+**Analysis Needed**:
+
 - Are these duplicates or different views?
 - `/farms` - Public farm directory
 - `/marketplace/farms` - Marketplace context
 
-**Recommended Approach**: 
+**Recommended Approach**:
 Similar to products, `/farms` should be the **canonical public URL**
 
 **Decision**: ✅ KEEP BOTH, ensure proper purpose
@@ -539,6 +566,7 @@ Similar to products, `/farms` should be the **canonical public URL**
 - `/marketplace/farms` - Marketplace-specific view (optional redirect)
 
 **Action Items**:
+
 ```bash
 # 1. Compare implementations
 diff src/app/farms/[slug]/page.tsx src/app/(customer)/marketplace/farms/[slug]/page.tsx
@@ -565,7 +593,6 @@ diff src/app/farms/[slug]/page.tsx src/app/(customer)/marketplace/farms/[slug]/p
   - Add admin-only layout to `/demos`
   - Add production blocking
   - Time: 1 hour
-  
 - [ ] **1.2** Protect diagnostic routes (Issue #7)
   - Verify monitoring protection
   - Add admin check to diagnostic
@@ -580,19 +607,16 @@ diff src/app/farms/[slug]/page.tsx src/app/(customer)/marketplace/farms/[slug]/p
   - Remove `/farmer-dashboard/`
   - Add redirect
   - Time: 30 minutes
-  
 - [ ] **2.2** Consolidate account routes (Issue #2)
   - Merge `/dashboard/` into `/(customer)/account/`
   - Move `/account/notifications/`
   - Add redirects
   - Update links
   - Time: 2 hours
-  
 - [ ] **2.3** Fix orders route ambiguity (Issue #3)
   - Implement role-based redirect
   - Update navigation
   - Time: 1 hour
-  
 - [ ] **2.4** Resolve products route (Issue #4)
   - Keep `/products` as canonical
   - Consolidate with marketplace
@@ -608,7 +632,6 @@ diff src/app/farms/[slug]/page.tsx src/app/(customer)/marketplace/farms/[slug]/p
   - Check protection
   - Document pattern
   - Time: 30 minutes
-  
 - [ ] **3.2** Investigate farms routes (Issue #8)
   - Compare implementations
   - Consolidate or document
@@ -623,12 +646,10 @@ diff src/app/farms/[slug]/page.tsx src/app/(customer)/marketplace/farms/[slug]/p
   - Verify 301 permanent redirects
   - Check with different roles
   - Time: 1 hour
-  
 - [ ] **4.2** Update navigation components
   - Search for old URLs
   - Update all links
   - Time: 1 hour
-  
 - [ ] **4.3** E2E testing
   - Test user flows
   - Verify route protection
@@ -642,33 +663,33 @@ diff src/app/farms/[slug]/page.tsx src/app/(customer)/marketplace/farms/[slug]/p
 
 ```typescript
 // tests/e2e/route-protection.spec.ts
-describe('Route Protection', () => {
-  describe('Demo Routes', () => {
-    it('should block unauthenticated users from /demos', async () => {
+describe("Route Protection", () => {
+  describe("Demo Routes", () => {
+    it("should block unauthenticated users from /demos", async () => {
       // Test implementation
     });
-    
-    it('should block non-admin users from /demos', async () => {
+
+    it("should block non-admin users from /demos", async () => {
       // Test implementation
     });
-    
-    it('should allow admin users in development', async () => {
-      // Test implementation
-    });
-  });
-  
-  describe('Diagnostic Routes', () => {
-    it('should require admin role for /diagnostic', async () => {
+
+    it("should allow admin users in development", async () => {
       // Test implementation
     });
   });
-  
-  describe('Role-based Redirects', () => {
-    it('should redirect farmers to /farmer/orders', async () => {
+
+  describe("Diagnostic Routes", () => {
+    it("should require admin role for /diagnostic", async () => {
       // Test implementation
     });
-    
-    it('should redirect customers to /account/orders', async () => {
+  });
+
+  describe("Role-based Redirects", () => {
+    it("should redirect farmers to /farmer/orders", async () => {
+      // Test implementation
+    });
+
+    it("should redirect customers to /account/orders", async () => {
       // Test implementation
     });
   });
@@ -825,6 +846,7 @@ ENABLE_DIAGNOSTICS=false     # Optionally disable diagnostics
 ## 📈 ESTIMATED IMPACT
 
 ### Before Cleanup
+
 - Total routes: ~65
 - Duplicate routes: ~8
 - Unprotected sensitive routes: ~7
@@ -832,6 +854,7 @@ ENABLE_DIAGNOSTICS=false     # Optionally disable diagnostics
 - Maintenance overhead: HIGH
 
 ### After Cleanup
+
 - Total routes: ~57 (-8)
 - Duplicate routes: 0
 - Unprotected sensitive routes: 0
@@ -839,6 +862,7 @@ ENABLE_DIAGNOSTICS=false     # Optionally disable diagnostics
 - Maintenance overhead: LOW
 
 ### ROI
+
 - **Time saved**: ~2 hours/week in developer confusion
 - **Security improvement**: HIGH (protected sensitive routes)
 - **SEO improvement**: MEDIUM (canonical URLs, proper redirects)
@@ -861,4 +885,4 @@ ENABLE_DIAGNOSTICS=false     # Optionally disable diagnostics
 
 ---
 
-*Generated by Deep Repository Analysis System*
+_Generated by Deep Repository Analysis System_

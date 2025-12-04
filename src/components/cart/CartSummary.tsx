@@ -55,9 +55,7 @@ export function CartSummary({
   return (
     <div className="glass-card rounded-2xl p-6 sticky top-24">
       {/* Header */}
-      <h2 className="text-xl font-bold text-foreground mb-6">
-        Order Summary
-      </h2>
+      <h2 className="text-xl font-bold text-foreground mb-6">Order Summary</h2>
 
       {/* Promo Code (Optional) */}
       {showPromoCode && !isEmpty && (
@@ -67,7 +65,10 @@ export function CartSummary({
           </label>
           <div className="flex gap-2">
             <div className="relative flex-1">
-              <Tag className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
+              <Tag
+                className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
+                aria-hidden="true"
+              />
               <input
                 id="promo-code"
                 type="text"
@@ -89,7 +90,10 @@ export function CartSummary({
             </button>
           </div>
           {promoError && (
-            <p id="promo-error" className="text-sm text-red-600 dark:text-red-400 mt-2">
+            <p
+              id="promo-error"
+              className="text-sm text-red-600 dark:text-red-400 mt-2"
+            >
               {promoError}
             </p>
           )}
@@ -100,7 +104,10 @@ export function CartSummary({
       <div className="space-y-4 mb-6">
         {/* Subtotal */}
         <div className="flex justify-between text-muted-foreground">
-          <span>Subtotal ({summary.itemCount} {summary.itemCount === 1 ? "item" : "items"})</span>
+          <span>
+            Subtotal ({summary.itemCount}{" "}
+            {summary.itemCount === 1 ? "item" : "items"})
+          </span>
           <span className="font-medium">${summary.subtotal.toFixed(2)}</span>
         </div>
 
@@ -117,7 +124,9 @@ export function CartSummary({
             Delivery
           </span>
           {hasDeliveryFee ? (
-            <span className="font-medium">${summary.deliveryFee.toFixed(2)}</span>
+            <span className="font-medium">
+              ${summary.deliveryFee.toFixed(2)}
+            </span>
           ) : (
             <span className="text-green-600 dark:text-green-400 font-medium">
               Free
@@ -128,7 +137,8 @@ export function CartSummary({
         {/* Multi-farm Notice */}
         {summary.farmCount > 1 && (
           <div className="text-xs text-muted-foreground bg-accent/10 p-3 rounded-lg">
-            <span className="font-semibold">{summary.farmCount} farms</span> - Items from multiple farms may have separate delivery times
+            <span className="font-semibold">{summary.farmCount} farms</span> -
+            Items from multiple farms may have separate delivery times
           </div>
         )}
 
@@ -177,7 +187,10 @@ export function CartSummary({
       <div className="mt-6 pt-6 border-t border-border space-y-3">
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
           <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center flex-shrink-0">
-            <Lock className="h-4 w-4 text-green-600 dark:text-green-400" aria-hidden="true" />
+            <Lock
+              className="h-4 w-4 text-green-600 dark:text-green-400"
+              aria-hidden="true"
+            />
           </div>
           <span>Secure checkout with SSL encryption</span>
         </div>
@@ -193,7 +206,10 @@ export function CartSummary({
 
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
           <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center flex-shrink-0">
-            <ShieldCheck className="h-4 w-4 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+            <ShieldCheck
+              className="h-4 w-4 text-blue-600 dark:text-blue-400"
+              aria-hidden="true"
+            />
           </div>
           <span>100% satisfaction guarantee</span>
         </div>
@@ -201,7 +217,10 @@ export function CartSummary({
         {hasDeliveryFee && (
           <div className="flex items-center gap-3 text-sm text-muted-foreground">
             <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center flex-shrink-0">
-              <Truck className="h-4 w-4 text-orange-600 dark:text-orange-400" aria-hidden="true" />
+              <Truck
+                className="h-4 w-4 text-orange-600 dark:text-orange-400"
+                aria-hidden="true"
+              />
             </div>
             <span>Free delivery on orders over $50</span>
           </div>
@@ -211,7 +230,13 @@ export function CartSummary({
       {/* Help Text */}
       {!isEmpty && (
         <div className="mt-4 text-xs text-center text-muted-foreground">
-          Need help? <Link href="/support" className="text-primary-600 hover:text-primary-700 underline">Contact support</Link>
+          Need help?{" "}
+          <Link
+            href="/support"
+            className="text-primary-600 hover:text-primary-700 underline"
+          >
+            Contact support
+          </Link>
         </div>
       )}
     </div>

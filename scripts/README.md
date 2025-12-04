@@ -35,6 +35,7 @@ This directory contains all helper scripts organized by purpose. Each subdirecto
 **Change:** All scripts reorganized from flat structure into logical subdirectories
 
 **Migration Notes:**
+
 - Old location: `scripts/*.{ps1,sh,ts,js}` (flat)
 - New location: `scripts/{category}/*.{ps1,sh,ts,js}` (organized)
 - Old `docker-scripts/` → merged into `scripts/deployment/` and `scripts/docker/`
@@ -118,18 +119,18 @@ scripts/
 
 ### Most Used Scripts
 
-| Task | Script | Category |
-|------|--------|----------|
-| Start dev server | `dev/start-dev-safe.js` | Development |
-| Kill dev server | `dev/kill-dev-server.js` | Development |
-| Setup database | `database/setup-database.ps1` | Database |
-| Verify environment | `environment/verify-env.ps1` | Environment |
-| Run E2E tests | `testing/e2e-test.js` | Testing |
-| Deploy to Docker | `deployment/docker-deploy.sh` | Deployment |
-| Push to Docker Hub | `deployment/docker-push.sh` | Deployment |
-| Clean Docker | `docker/docker-clean-all.ps1` | Docker |
-| Clean repository | `maintenance/cleanup-repository.sh` | Maintenance |
-| Monitor workflows | `monitoring/workflow-monitor.ts` | Monitoring |
+| Task               | Script                              | Category    |
+| ------------------ | ----------------------------------- | ----------- |
+| Start dev server   | `dev/start-dev-safe.js`             | Development |
+| Kill dev server    | `dev/kill-dev-server.js`            | Development |
+| Setup database     | `database/setup-database.ps1`       | Database    |
+| Verify environment | `environment/verify-env.ps1`        | Environment |
+| Run E2E tests      | `testing/e2e-test.js`               | Testing     |
+| Deploy to Docker   | `deployment/docker-deploy.sh`       | Deployment  |
+| Push to Docker Hub | `deployment/docker-push.sh`         | Deployment  |
+| Clean Docker       | `docker/docker-clean-all.ps1`       | Docker      |
+| Clean repository   | `maintenance/cleanup-repository.sh` | Maintenance |
+| Monitor workflows  | `monitoring/workflow-monitor.ts`    | Monitoring  |
 
 ### Quick Commands
 
@@ -173,6 +174,7 @@ npx tsx scripts/monitoring/workflow-monitor.ts
 ### Running Scripts
 
 #### PowerShell Scripts (`.ps1`)
+
 ```powershell
 # Windows
 pwsh scripts/category/script-name.ps1
@@ -182,6 +184,7 @@ pwsh scripts/environment/setup-env.ps1 -Environment "production"
 ```
 
 #### Shell Scripts (`.sh`)
+
 ```bash
 # macOS/Linux
 bash scripts/category/script-name.sh
@@ -192,6 +195,7 @@ chmod +x scripts/category/script-name.sh
 ```
 
 #### TypeScript Scripts (`.ts`)
+
 ```bash
 # Using tsx
 npx tsx scripts/category/script-name.ts
@@ -201,6 +205,7 @@ npx ts-node scripts/category/script-name.ts
 ```
 
 #### JavaScript Scripts (`.js`)
+
 ```bash
 # Using Node.js
 node scripts/category/script-name.js
@@ -227,6 +232,7 @@ node scripts/category/script-name.mjs
 **Purpose:** Local development assistance
 
 **Key Scripts:**
+
 - `start-dev-safe.js` - Safely start dev server (checks ports, kills conflicts)
 - `kill-dev-server.js` - Kill running dev processes
 - `pm2-daemon-launcher.js` - Launch PM2 process manager
@@ -235,6 +241,7 @@ node scripts/category/script-name.mjs
 - `diagnostic-check.ts` - Run system diagnostics
 
 **Common Use Cases:**
+
 - Starting development environment
 - Troubleshooting port conflicts
 - Managing background processes
@@ -248,6 +255,7 @@ node scripts/category/script-name.mjs
 **Purpose:** Database management and testing
 
 **Key Scripts:**
+
 - `setup-database.ps1` - Initialize database schema
 - `update-database-url.sh` - Update connection strings
 - `test-database-simple.ts` - Basic connectivity test
@@ -256,6 +264,7 @@ node scripts/category/script-name.mjs
 - `test-db-persistence.ts` - Data persistence verification
 
 **Common Use Cases:**
+
 - Setting up local database
 - Testing database connectivity
 - Verifying data persistence
@@ -269,6 +278,7 @@ node scripts/category/script-name.mjs
 **Purpose:** Environment variable management
 
 **Key Scripts:**
+
 - `setup-env.ps1` - Interactive environment setup
 - `manage-env.ps1` - Manage environment variables
 - `verify-env.ps1` / `verify-env.js` - Verify configuration
@@ -277,6 +287,7 @@ node scripts/category/script-name.mjs
 - `add-monitoring-env.sh` - Add monitoring variables
 
 **Common Use Cases:**
+
 - Setting up `.env` files
 - Verifying environment configuration
 - Managing different environments (dev/staging/prod)
@@ -292,6 +303,7 @@ node scripts/category/script-name.mjs
 **Purpose:** Automated testing utilities
 
 **Key Scripts:**
+
 - `e2e-test.js` - End-to-end tests
 - `test-login.ts` - Login flow testing
 - `test-registration.ts` - Registration flow testing
@@ -302,6 +314,7 @@ node scripts/category/script-name.mjs
 - `validate-24h.ts` - 24-hour validation test
 
 **Common Use Cases:**
+
 - Running integration tests
 - Testing specific features
 - Validating API endpoints
@@ -316,6 +329,7 @@ node scripts/category/script-name.mjs
 **Purpose:** Production deployment automation
 
 **Key Scripts:**
+
 - `docker-deploy.sh` / `.ps1` - Deploy to Docker
 - `docker-push.sh` / `.ps1` / `.bat` - Push images to Docker Hub
 - `docker-entrypoint.sh` - Container entrypoint script
@@ -323,6 +337,7 @@ node scripts/category/script-name.mjs
 - `validate-phase5-deployment.sh` - Deployment validation
 
 **Common Use Cases:**
+
 - Deploying to production
 - Pushing Docker images
 - Setting up monitoring
@@ -339,6 +354,7 @@ node scripts/category/script-name.mjs
 **Purpose:** Docker container management
 
 **Key Scripts:**
+
 - `docker-dev.sh` - Start development container
 - `docker-setup.ps1` - Setup Docker environment
 - `docker-readiness-check.ps1` - Check Docker readiness
@@ -347,6 +363,7 @@ node scripts/category/script-name.mjs
 - `docker-complete-cleanup.ps1` - Alternative cleanup
 
 **Common Use Cases:**
+
 - Setting up Docker environment
 - Managing containers
 - Cleaning Docker resources
@@ -362,17 +379,20 @@ node scripts/category/script-name.mjs
 **Purpose:** Repository maintenance and cleanup
 
 **Active Scripts:**
+
 - `cleanup-repository.sh` - Comprehensive repo cleanup
 - `clean-repository.ps1` - Repository cleanup (PowerShell)
 - `analyze-duplicates.ps1` - Find duplicate files
 - `restructure-phase1-archive.ps1` - Phase 1 archival
 
 **Archived Scripts** (in `ARCHIVED/`):
+
 - Old cleanup scripts from previous iterations
 - Kept for historical reference
 - Not recommended for use
 
 **Common Use Cases:**
+
 - Cleaning up temporary files
 - Finding duplicate code
 - Repository maintenance
@@ -386,10 +406,12 @@ node scripts/category/script-name.mjs
 **Purpose:** System monitoring and analytics
 
 **Key Scripts:**
+
 - `workflow-monitor.ts` - Monitor CI/CD workflows
 - `validate-analytics-performance.mjs` - Analytics validation
 
 **Common Use Cases:**
+
 - Monitoring GitHub workflows
 - Validating analytics setup
 - Performance tracking
@@ -403,9 +425,11 @@ node scripts/category/script-name.mjs
 **Purpose:** General utility scripts
 
 **Key Scripts:**
+
 - `measure-bundle-performance.mjs` - Analyze bundle size and performance
 
 **Common Use Cases:**
+
 - Bundle size analysis
 - Performance optimization
 - Build metrics
@@ -485,12 +509,14 @@ pwsh scripts/maintenance/analyze-duplicates.ps1
 ### Script Won't Run
 
 **Issue:** Permission denied
+
 ```bash
 # Solution: Make script executable
 chmod +x scripts/category/script-name.sh
 ```
 
 **Issue:** Command not found
+
 ```bash
 # Solution: Use full path or ensure shell is correct
 bash scripts/category/script-name.sh
@@ -501,6 +527,7 @@ pwsh scripts/category/script-name.ps1
 ### TypeScript Scripts Failing
 
 **Issue:** Cannot find module 'tsx'
+
 ```bash
 # Solution: Install tsx globally or use npx
 npm install -g tsx
@@ -511,6 +538,7 @@ npx tsx scripts/category/script-name.ts
 ### PowerShell Execution Policy
 
 **Issue:** Script execution disabled
+
 ```powershell
 # Solution: Set execution policy
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
@@ -519,6 +547,7 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ### Environment Variables Not Loading
 
 **Issue:** Scripts can't find environment variables
+
 ```bash
 # Solution: Ensure .env.local exists
 cp .env.example .env.local
@@ -530,6 +559,7 @@ pwsh scripts/environment/verify-env.ps1
 ### Docker Scripts Failing
 
 **Issue:** Docker daemon not running
+
 ```bash
 # Solution: Start Docker Desktop
 # Then verify with:
@@ -551,6 +581,7 @@ pwsh scripts/docker/docker-readiness-check.ps1
 ### Category READMEs
 
 Each subdirectory contains detailed documentation:
+
 - `dev/README.md` - Development scripts
 - `database/README.md` - Database utilities
 - `environment/README.md` - Environment management
@@ -565,17 +596,18 @@ Each subdirectory contains detailed documentation:
 
 **Old Locations → New Locations:**
 
-| Old Location | New Location |
-|--------------|--------------|
-| `scripts/*.ps1` | `scripts/{category}/*.ps1` |
-| `scripts/*.sh` | `scripts/{category}/*.sh` |
-| `scripts/*.ts` | `scripts/{category}/*.ts` |
-| `scripts/*.js` | `scripts/{category}/*.js` |
-| `docker-scripts/*` | `scripts/deployment/*` or `scripts/docker/*` |
-| `push-to-dockerhub.*` | `scripts/deployment/docker-push.*` |
-| Root cleanup scripts | `scripts/maintenance/cleanup-repository.*` |
+| Old Location          | New Location                                 |
+| --------------------- | -------------------------------------------- |
+| `scripts/*.ps1`       | `scripts/{category}/*.ps1`                   |
+| `scripts/*.sh`        | `scripts/{category}/*.sh`                    |
+| `scripts/*.ts`        | `scripts/{category}/*.ts`                    |
+| `scripts/*.js`        | `scripts/{category}/*.js`                    |
+| `docker-scripts/*`    | `scripts/deployment/*` or `scripts/docker/*` |
+| `push-to-dockerhub.*` | `scripts/deployment/docker-push.*`           |
+| Root cleanup scripts  | `scripts/maintenance/cleanup-repository.*`   |
 
 **Finding Scripts:**
+
 ```bash
 # Search by name
 find scripts/ -name "*test*"
@@ -645,6 +677,7 @@ cat scripts/category/script-name.js
 ### Phase 4 Reorganization (2025-01-XX)
 
 **Changes:**
+
 - Reorganized 50+ scripts into 10 categories
 - Created subdirectory structure
 - Moved all scripts from flat structure
@@ -653,6 +686,7 @@ cat scripts/category/script-name.js
 - Created comprehensive documentation
 
 **Impact:**
+
 - 📁 Better organization (10 categories vs flat)
 - 🔍 Easier script discovery
 - 📖 Comprehensive documentation
@@ -660,6 +694,7 @@ cat scripts/category/script-name.js
 - ✅ Improved maintainability
 
 **Backward Compatibility:**
+
 - All Git history preserved via `git mv`
 - Old scripts archived, not deleted
 - Migration guide provided above

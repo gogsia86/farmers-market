@@ -580,19 +580,19 @@ async function runAllTests() {
 
   console.log(`${colors.bright}Results:${colors.reset}`);
   console.log(
-    `  1. Smart Farming Advice:       ${results.farmingAdvice ? `${colors.green  }✅ PASSED` : `${colors.red  }❌ FAILED`}${colors.reset}`,
+    `  1. Smart Farming Advice:       ${results.farmingAdvice ? `${colors.green}✅ PASSED` : `${colors.red}❌ FAILED`}${colors.reset}`,
   );
   console.log(
-    `  2. Product Recommendations:    ${results.productRecommendations ? `${colors.green  }✅ PASSED` : `${colors.red  }❌ FAILED`}${colors.reset}`,
+    `  2. Product Recommendations:    ${results.productRecommendations ? `${colors.green}✅ PASSED` : `${colors.red}❌ FAILED`}${colors.reset}`,
   );
   console.log(
-    `  3. Market Intelligence:        ${results.marketIntelligence ? `${colors.green  }✅ PASSED` : `${colors.red  }❌ FAILED`}${colors.reset}`,
+    `  3. Market Intelligence:        ${results.marketIntelligence ? `${colors.green}✅ PASSED` : `${colors.red}❌ FAILED`}${colors.reset}`,
   );
   console.log(
-    `  4. Educational Content:        ${results.educationalContent ? `${colors.green  }✅ PASSED` : `${colors.red  }❌ FAILED`}${colors.reset}`,
+    `  4. Educational Content:        ${results.educationalContent ? `${colors.green}✅ PASSED` : `${colors.red}❌ FAILED`}${colors.reset}`,
   );
   console.log(
-    `  5. AI-Powered Support:         ${results.support ? `${colors.green  }✅ PASSED` : `${colors.red  }❌ FAILED`}${colors.reset}`,
+    `  5. AI-Powered Support:         ${results.support ? `${colors.green}✅ PASSED` : `${colors.red}❌ FAILED`}${colors.reset}`,
   );
 
   const passedTests = Object.values(results).filter(Boolean).length;

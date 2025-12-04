@@ -58,7 +58,7 @@ interface UseRealtimeNotificationsReturn {
 // ============================================
 
 export function useRealtimeNotifications(
-  options: UseRealtimeNotificationsOptions = {}
+  options: UseRealtimeNotificationsOptions = {},
 ): UseRealtimeNotificationsReturn {
   const {
     enabled = true,
@@ -167,7 +167,7 @@ export function useRealtimeNotifications(
         if (reconnectAttemptRef.current < maxReconnectAttempts) {
           reconnectAttemptRef.current++;
           console.log(
-            `🔄 Reconnecting... (attempt ${reconnectAttemptRef.current}/${maxReconnectAttempts})`
+            `🔄 Reconnecting... (attempt ${reconnectAttemptRef.current}/${maxReconnectAttempts})`,
           );
 
           reconnectTimeoutRef.current = setTimeout(() => {
@@ -176,7 +176,7 @@ export function useRealtimeNotifications(
         } else {
           console.error("❌ Max reconnection attempts reached");
           const maxError = new Error(
-            "Failed to connect after maximum attempts"
+            "Failed to connect after maximum attempts",
           );
           setError(maxError);
           onError?.(maxError);
@@ -187,8 +187,7 @@ export function useRealtimeNotifications(
     } catch (err) {
       console.error("❌ Failed to create SSE connection:", err);
       setIsConnecting(false);
-      const error =
-        err instanceof Error ? err : new Error("Failed to connect");
+      const error = err instanceof Error ? err : new Error("Failed to connect");
       setError(error);
       onError?.(error);
     }
@@ -235,7 +234,7 @@ export function useRealtimeNotifications(
   // Mark notification as read
   const markAsRead = useCallback(async (notificationId: string) => {
     setNotifications((prev) =>
-      prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n))
+      prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n)),
     );
 
     // Sync with server
@@ -350,7 +349,7 @@ export async function requestNotificationPermission(): Promise<boolean> {
 
 export function showBrowserNotification(
   title: string,
-  options?: NotificationOptions
+  options?: NotificationOptions,
 ): void {
   if (
     typeof window === "undefined" ||

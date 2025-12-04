@@ -1,4 +1,5 @@
 # Quick Reference Guide
+
 ## Farmers Market Platform - Development Commands
 
 **Last Updated:** December 1, 2024  
@@ -10,12 +11,15 @@
 ## 🚀 Getting Started
 
 ### Start Development Server
+
 ```bash
 npm run dev
 ```
+
 **Access:** http://localhost:3001
 
 ### Alternative Dev Modes
+
 ```bash
 npm run dev:safe          # Safe mode with error handling
 npm run dev:webpack       # Use Webpack instead of Turbo
@@ -28,21 +32,25 @@ npm run dev:omen          # High-performance mode (64GB RAM systems)
 ## 🏗️ Building
 
 ### Standard Build
+
 ```bash
 npm run build
 ```
 
 ### Optimized Build
+
 ```bash
 npm run build:optimized
 ```
 
 ### Build for Docker
+
 ```bash
 npm run build:docker
 ```
 
 ### Start Production Server
+
 ```bash
 npm run start             # Port 3001
 ```
@@ -52,12 +60,14 @@ npm run start             # Port 3001
 ## ✅ Quality Checks
 
 ### Type Checking
+
 ```bash
 npm run type-check        # Standard
 npm run type-check:omen   # High-performance systems
 ```
 
 ### Code Linting
+
 ```bash
 npm run lint              # Check for issues
 npm run lint:fix          # Auto-fix issues
@@ -65,12 +75,14 @@ npm run lint:quiet        # Suppress warnings
 ```
 
 ### Code Formatting
+
 ```bash
 npm run format            # Format all files
 npm run format:check      # Check formatting only
 ```
 
 ### Full Quality Check
+
 ```bash
 npm run quality           # type-check + lint + format:check
 npm run quality:fix       # type-check + lint:fix + format
@@ -81,6 +93,7 @@ npm run quality:fix       # type-check + lint:fix + format
 ## 🧪 Testing
 
 ### Unit Tests
+
 ```bash
 npm test                  # Run all tests
 npm run test:watch        # Watch mode
@@ -89,11 +102,13 @@ npm run test:omen         # High-performance mode
 ```
 
 ### Integration Tests
+
 ```bash
 npm run test:integration
 ```
 
 ### E2E Tests
+
 ```bash
 npm run test:e2e          # Standard
 npm run test:e2e:ui       # With UI
@@ -102,6 +117,7 @@ npm run test:e2e:debug    # Debug mode
 ```
 
 ### All Tests
+
 ```bash
 npm run test:all          # Unit + E2E
 npm run test:all:omen     # High-performance mode
@@ -112,24 +128,28 @@ npm run test:all:omen     # High-performance mode
 ## 🗄️ Database
 
 ### Migrations
+
 ```bash
 npm run db:migrate        # Create and apply migration
 npm run db:push           # Push schema changes
 ```
 
 ### Seeding
+
 ```bash
 npm run db:seed           # Full seed
 npm run db:seed:basic     # Basic seed only
 ```
 
 ### Database Setup
+
 ```bash
 npm run db:setup          # Push + seed
 npm run db:reset          # Reset and seed
 ```
 
 ### Prisma Studio
+
 ```bash
 npm run db:studio         # Open GUI on http://localhost:5555
 ```
@@ -139,11 +159,13 @@ npm run db:studio         # Open GUI on http://localhost:5555
 ## 📊 Monitoring
 
 ### Dashboard
+
 ```bash
 npm run monitor:dashboard:test    # Test monitoring APIs
 ```
 
 ### Workflow Monitor
+
 ```bash
 npm run monitor                   # All workflows
 npm run monitor:critical          # Critical only
@@ -152,6 +174,7 @@ npm run monitor:reports           # View reports
 ```
 
 ### Monitoring Daemon
+
 ```bash
 npm run monitor:daemon:pm2        # Start daemon
 npm run monitor:daemon:stop       # Stop daemon
@@ -165,12 +188,14 @@ npm run monitor:daemon:status     # Check status
 ## 🧹 Maintenance
 
 ### Clean Cache
+
 ```bash
 npm run clean:cache       # Clean test cache
 npm run clean:all         # Clean all caches
 ```
 
 ### Kill Dev Server
+
 ```bash
 npm run kill-server       # Force stop dev server
 ```
@@ -180,24 +205,29 @@ npm run kill-server       # Force stop dev server
 ## 🔧 Troubleshooting
 
 ### TypeScript Errors
+
 ✅ **Status:** All fixed (see TYPESCRIPT_FIXES_SUMMARY.md)
 
 ### Build Fails
+
 1. Check TypeScript: `npm run type-check`
 2. Clean cache: `npm run clean:all`
 3. Reinstall: `rm -rf node_modules && npm install`
 
 ### Development Server Won't Start
+
 1. Kill existing server: `npm run kill-server`
 2. Check port 3001 is free
 3. Try safe mode: `npm run dev:safe`
 
 ### Database Issues
+
 1. Reset database: `npm run db:reset`
 2. Check connection string in `.env.local`
 3. Ensure PostgreSQL is running
 
 ### ESLint Issues
+
 **Known Issue:** `next lint` has a directory resolution bug  
 **Workaround:** Use type checking instead: `npm run type-check`
 
@@ -206,6 +236,7 @@ npm run kill-server       # Force stop dev server
 ## 📁 Important Files
 
 ### Configuration
+
 - `next.config.mjs` - Next.js configuration
 - `tsconfig.json` - TypeScript configuration
 - `eslint.config.mjs` - ESLint configuration
@@ -213,11 +244,13 @@ npm run kill-server       # Force stop dev server
 - `prisma/schema.prisma` - Database schema
 
 ### Environment Variables
+
 - `.env.local` - Local development (create from .env.example)
 - `.env.production` - Production settings
 - `.env` - Shared settings
 
 ### Documentation
+
 - `README.md` - Project overview
 - `TYPESCRIPT_FIXES_SUMMARY.md` - Recent error fixes
 - `START_HERE_UPGRADE.md` - Platform upgrade guide
@@ -228,6 +261,7 @@ npm run kill-server       # Force stop dev server
 ## 🎯 Common Workflows
 
 ### Starting Fresh Development Session
+
 ```bash
 git pull
 npm install
@@ -236,6 +270,7 @@ npm run dev
 ```
 
 ### Before Committing
+
 ```bash
 npm run quality:fix
 npm test
@@ -244,6 +279,7 @@ git commit -m "Your message"
 ```
 
 ### Preparing for Production
+
 ```bash
 npm run clean:all
 npm install
@@ -253,6 +289,7 @@ npm run test:all
 ```
 
 ### Creating a Production Build
+
 ```bash
 npm run build:optimized
 npm run start
@@ -263,12 +300,12 @@ npm run start
 
 ## 🌐 URLs
 
-| Service | URL |
-|---------|-----|
-| Development | http://localhost:3001 |
-| Production | http://localhost:3001 |
-| Prisma Studio | http://localhost:5555 |
-| API Health | http://localhost:3001/api/health |
+| Service       | URL                              |
+| ------------- | -------------------------------- |
+| Development   | http://localhost:3001            |
+| Production    | http://localhost:3001            |
+| Prisma Studio | http://localhost:5555            |
+| API Health    | http://localhost:3001/api/health |
 
 ---
 
@@ -286,10 +323,12 @@ npm run start
 ## 🆘 Help & Support
 
 ### Documentation
+
 - Check `/docs` folder for detailed guides
 - Review `.github/instructions` for feature documentation
 
 ### Debug Mode
+
 ```bash
 # Enable detailed logging
 npm run dev:logger
@@ -299,6 +338,7 @@ npm run diagnostic
 ```
 
 ### System Requirements
+
 - Node.js >= 20.19.0
 - npm >= 10.0.0
 - PostgreSQL (latest)

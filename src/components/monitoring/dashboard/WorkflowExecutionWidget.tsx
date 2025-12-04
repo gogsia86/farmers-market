@@ -163,9 +163,7 @@ export function WorkflowExecutionWidget({
       {executions.length === 0 ? (
         <div className="py-8 text-center">
           <div className="text-4xl mb-2">📊</div>
-          <p className="text-sm font-medium text-gray-600">
-            No executions yet
-          </p>
+          <p className="text-sm font-medium text-gray-600">No executions yet</p>
           <p className="text-xs text-gray-500 mt-1">
             Workflow executions will appear here
           </p>
@@ -250,9 +248,7 @@ export function WorkflowExecutionWidget({
             onClick={() => setShowAll(!showAll)}
             className="text-sm font-medium text-green-600 hover:text-green-700 transition-colors"
           >
-            {showAll
-              ? "Show Less ↑"
-              : `Show ${executions.length - 5} More ↓`}
+            {showAll ? "Show Less ↑" : `Show ${executions.length - 5} More ↓`}
           </button>
         </div>
       )}

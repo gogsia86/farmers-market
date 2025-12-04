@@ -1,4 +1,5 @@
 # 📚 Documentation Index
+
 ## Farmers Market Platform Documentation
 
 Last Updated: $(date +%Y-%m-%d)
@@ -26,21 +27,25 @@ Last Updated: $(date +%Y-%m-%d)
 ## Key Documents
 
 ### For Developers
+
 - [Quick Start Guide](./quick-reference/)
 - [Development Workflow](../README.md)
 - [Testing Guide](./testing/)
 
 ### For DevOps
+
 - [Deployment Checklist](./deployment/)
 - [Database Setup](./database/)
 
 ### For Project Managers
+
 - [Project Status](./status/)
 - [Progress Reports](./progress/)
 
 ## Contributing to Documentation
 
 Please place new documentation in the appropriate directory:
+
 - Development phases → `/docs/phases/`
 - Status updates → `/docs/status/`
 - Testing guides → `/docs/testing/`

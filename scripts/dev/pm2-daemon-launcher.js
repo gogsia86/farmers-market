@@ -39,7 +39,7 @@ try {
 
   console.log("✅ TypeScript runtime loaded");
   console.log("🚀 Starting daemon...\n");
-  console.log(`${"─".repeat(60)  }\n`);
+  console.log(`${"─".repeat(60)}\n`);
 
   // Load and execute the daemon script
   require(SCRIPT_PATH);

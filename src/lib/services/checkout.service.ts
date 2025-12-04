@@ -344,7 +344,7 @@ export class CheckoutService {
           consciousness: "BIODYNAMIC",
           ...metadata,
         },
-        description: `Order from Farmers Market Platform`,
+        description: "Order from Farmers Market Platform",
       });
 
       return {

@@ -1,4 +1,5 @@
 # 🚀 DEVELOPMENT SERVER SETUP GUIDE
+
 **Farmers Market Platform - Local Development Environment**  
 **Version:** 2.0  
 **Last Updated:** November 26, 2024  
@@ -9,6 +10,7 @@
 ## 📋 QUICK START
 
 ### Prerequisites Checklist
+
 - [ ] Node.js >= 20.19.0
 - [ ] npm >= 10.0.0
 - [ ] PostgreSQL database running
@@ -16,6 +18,7 @@
 - [ ] 16GB+ RAM recommended (HP OMEN optimized)
 
 ### 5-Minute Setup
+
 ```bash
 # 1. Install dependencies
 npm install
@@ -96,6 +99,7 @@ LOG_LEVEL="debug"
 ```
 
 #### Generate NextAuth Secret
+
 ```bash
 openssl rand -base64 32
 ```
@@ -103,6 +107,7 @@ openssl rand -base64 32
 ### Step 3: Database Setup
 
 #### Option A: Local PostgreSQL
+
 ```bash
 # Install PostgreSQL (if not already installed)
 # Windows: Download from postgresql.org
@@ -120,6 +125,7 @@ npm run prisma:seed
 ```
 
 #### Option B: Docker PostgreSQL
+
 ```bash
 # Start PostgreSQL in Docker
 docker run --name farmers-market-db \
@@ -138,9 +144,11 @@ npm run prisma:push
 ### Step 4: Start Development Server
 
 #### Standard Development Mode
+
 ```bash
 npm run dev
 ```
+
 - Uses Turbopack for fast refresh
 - Runs on port 3001
 - 16GB memory allocation
@@ -168,6 +176,7 @@ npm run dev:logger
 ### Available Scripts
 
 #### Development
+
 ```bash
 npm run dev              # Start dev server (Turbopack)
 npm run dev:omen         # HP OMEN optimized mode
@@ -176,6 +185,7 @@ npm run dev:safe         # Safe mode with error handling
 ```
 
 #### Building
+
 ```bash
 npm run build            # Production build
 npm run build:omen       # HP OMEN optimized build
@@ -184,6 +194,7 @@ npm start                # Start production server
 ```
 
 #### Testing
+
 ```bash
 npm test                 # Run all tests
 npm run test:watch       # Run tests in watch mode
@@ -193,6 +204,7 @@ npm run test:e2e         # Run E2E tests
 ```
 
 #### Code Quality
+
 ```bash
 npm run lint             # Lint code
 npm run lint:fix         # Fix lint errors
@@ -202,6 +214,7 @@ npm run quality          # Run all quality checks
 ```
 
 #### Database
+
 ```bash
 npm run prisma:push      # Push schema to database
 npm run prisma:generate  # Generate Prisma client
@@ -211,6 +224,7 @@ npm run prisma:seed      # Seed database
 ```
 
 #### Cleanup & Maintenance
+
 ```bash
 npm run clean:cache      # Clean Jest cache
 npm run clean:all        # Clean all caches
@@ -230,24 +244,25 @@ The platform now includes a production-grade structured logger:
 
 ```typescript
 // Import logger
-import { createLogger } from '@/lib/logger';
-import type { FarmContext } from '@/lib/logger/types';
+import { createLogger } from "@/lib/logger";
+import type { FarmContext } from "@/lib/logger/types";
 
 // Create service-specific logger
-const logger = createLogger('my-service');
+const logger = createLogger("my-service");
 
 // Use logger
-logger.info('Operation successful', { 
-  userId: 'user-123',
-  orderId: 'order-456' 
+logger.info("Operation successful", {
+  userId: "user-123",
+  orderId: "order-456",
 });
 
-logger.error('Operation failed', error, {
-  context: 'additional-data'
+logger.error("Operation failed", error, {
+  context: "additional-data",
 });
 ```
 
 ### Logger Features
+
 - ✅ OpenTelemetry integration
 - ✅ Structured JSON logs (production)
 - ✅ Human-readable logs (development)
@@ -255,6 +270,7 @@ logger.error('Operation failed', error, {
 - ✅ Domain-specific types
 
 ### Enable Debug Logging
+
 ```bash
 # Set LOG_LEVEL in .env.local
 LOG_LEVEL=debug
@@ -270,6 +286,7 @@ npm run dev:logger
 ### Common Issues
 
 #### 1. Port 3001 Already in Use
+
 ```bash
 # Find process using port
 lsof -ti:3001  # Mac/Linux
@@ -283,6 +300,7 @@ taskkill /PID <PID> /F  # Windows
 ```
 
 #### 2. Database Connection Issues
+
 ```bash
 # Check PostgreSQL is running
 psql -U postgres -c "SELECT version();"
@@ -295,6 +313,7 @@ npm run prisma:reset
 ```
 
 #### 3. Prisma Generation Fails
+
 ```bash
 # Clear Prisma cache
 rm -rf node_modules/.prisma
@@ -307,6 +326,7 @@ npx prisma validate
 ```
 
 #### 4. Memory Issues
+
 ```bash
 # Use HP OMEN mode (more memory)
 npm run dev:omen
@@ -316,6 +336,7 @@ NODE_OPTIONS='--max-old-space-size=32768' npm run dev
 ```
 
 #### 5. TypeScript Errors
+
 ```bash
 # Run type check
 npm run type-check
@@ -329,6 +350,7 @@ npm run dev
 ```
 
 #### 6. Module Not Found Errors
+
 ```bash
 # Clear all caches
 npm run clean:all
@@ -348,6 +370,7 @@ npm run prisma:generate
 ### Daily Development Routine
 
 #### Morning Setup
+
 ```bash
 # Pull latest changes
 git pull origin main
@@ -363,6 +386,7 @@ npm run dev
 ```
 
 #### Before Committing
+
 ```bash
 # Run quality checks
 npm run quality
@@ -378,6 +402,7 @@ npm run audit:todo
 ```
 
 #### Weekly Maintenance
+
 ```bash
 # Clean caches
 npm run clean:all
@@ -395,18 +420,21 @@ npm run test:coverage
 ## 🔐 SECURITY NOTES
 
 ### Environment Variables
+
 - ✅ Never commit `.env` or `.env.local`
 - ✅ Use `.env.example` as template
 - ✅ Keep API keys in environment variables
 - ✅ Use different keys for dev/staging/production
 
 ### Database
+
 - ✅ Use strong passwords
 - ✅ Don't expose database publicly
 - ✅ Backup regularly
 - ✅ Use migrations for schema changes
 
 ### API Keys
+
 - ✅ Use test/development keys for local dev
 - ✅ Rotate keys regularly
 - ✅ Never hardcode keys in source code
@@ -417,18 +445,21 @@ npm run test:coverage
 ## 📱 TESTING DIFFERENT SCENARIOS
 
 ### Test as Customer
+
 1. Register at: http://localhost:3001/register
 2. Browse farms: http://localhost:3001/farms
 3. Add products to cart
 4. Place test order
 
 ### Test as Farmer
+
 1. Register as farmer: http://localhost:3001/register-farm
 2. Create farm profile
 3. Add products
 4. Manage orders
 
 ### Test as Admin
+
 1. Login with admin credentials
 2. Access admin panel: http://localhost:3001/admin
 3. Review approvals
@@ -439,6 +470,7 @@ npm run test:coverage
 ## 🚀 DEPLOYMENT PREPARATION
 
 ### Pre-Deployment Checklist
+
 - [ ] All tests passing: `npm test`
 - [ ] Type check passes: `npm run type-check`
 - [ ] Lint passes: `npm run lint`
@@ -448,6 +480,7 @@ npm run test:coverage
 - [ ] Backup created
 
 ### Build for Production
+
 ```bash
 # Production build
 npm run build
@@ -463,17 +496,20 @@ npm start
 ## 📚 ADDITIONAL RESOURCES
 
 ### Documentation
+
 - [CLEANUP_INDEX.md](./CLEANUP_INDEX.md) - Complete cleanup documentation
 - [PHASE_2_CLEANUP_PLAN.md](./PHASE_2_CLEANUP_PLAN.md) - Logging migration guide
 - [QUICK_CLEANUP_REFERENCE.md](./QUICK_CLEANUP_REFERENCE.md) - Quick commands
 - `.github/instructions/` - Divine coding patterns
 
 ### API Documentation
+
 - Prisma Studio: `npm run prisma:studio`
 - API Routes: http://localhost:3001/api
 - Health Check: http://localhost:3001/api/health
 
 ### Tools
+
 - **Prisma Studio**: Visual database editor
 - **Next.js DevTools**: React debugging
 - **OpenTelemetry**: Distributed tracing
@@ -485,6 +521,7 @@ npm start
 ## 🎓 TIPS & BEST PRACTICES
 
 ### Performance Tips
+
 1. Use HP OMEN mode for better performance
 2. Enable Turbopack for faster builds
 3. Use selective imports to reduce bundle size
@@ -492,6 +529,7 @@ npm start
 5. Implement proper caching strategies
 
 ### Code Quality Tips
+
 1. Follow divine coding patterns in `.cursorrules`
 2. Use the new structured logger
 3. Write tests for new features
@@ -499,6 +537,7 @@ npm start
 5. Run quality checks before commits
 
 ### Development Tips
+
 1. Use TypeScript strict mode
 2. Leverage path aliases (`@/lib/...`)
 3. Use Prisma Studio for database exploration
@@ -510,6 +549,7 @@ npm start
 ## 💡 NEXT STEPS
 
 ### After Initial Setup
+
 1. ✅ Explore the codebase
 2. ✅ Review divine instruction files
 3. ✅ Run the test suite
@@ -517,7 +557,9 @@ npm start
 5. ✅ Read CLEANUP_INDEX.md
 
 ### Ready for Phase 2?
+
 If you want to contribute to the logging migration:
+
 ```bash
 # Review Phase 2 plan
 cat PHASE_2_CLEANUP_PLAN.md
@@ -531,12 +573,14 @@ npm run cleanup:phase2
 ## 📞 SUPPORT
 
 ### Get Help
+
 - Review documentation in `docs/`
 - Check troubleshooting section above
 - Run health checks: http://localhost:3001/api/health
 - Check logs in console
 
 ### Useful Commands
+
 ```bash
 # Check system status
 npm run type-check
@@ -558,6 +602,7 @@ npm run dev
 ## ✅ SUCCESS CRITERIA
 
 Your development environment is ready when:
+
 - ✅ `npm run dev` starts without errors
 - ✅ Can access http://localhost:3001
 - ✅ Database connection successful

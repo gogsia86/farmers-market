@@ -73,6 +73,7 @@
 ## 🎯 Critical Path Analysis
 
 ### Path 1: Get Bundle Analysis ASAP (4 hours)
+
 ```
 Schema Investigation (30m)
     ↓
@@ -88,6 +89,7 @@ Verification (30m)
 ```
 
 ### Path 2: Complete Fix (6-7 hours)
+
 ```
 Schema Investigation (30m)
     ↓
@@ -103,6 +105,7 @@ Verification (30m)
 ```
 
 ### Path 3: Parallel Team Approach (3-4 hours)
+
 ```
 Developer A              Developer B
     ↓                        ↓
@@ -125,6 +128,7 @@ Admin Pages             Farmer Pages
 ## 🔴 Error Hotspots
 
 ### High-Impact Files (Fix First)
+
 ```
 Priority 1 (CRITICAL):
 ├── src/app/(admin)/admin/financial/page.tsx (15 errors)
@@ -180,8 +184,10 @@ Priority 3 (MEDIUM):
 ## ⚡ Quick Win Opportunities
 
 ### 1. Enum Fixes (30 min, 15 errors)
+
 **Why Quick**: Simple find & replace
 **Impact**: Immediate error reduction
+
 ```bash
 # Example
 "DELIVERED" → "COMPLETED"
@@ -189,8 +195,10 @@ Priority 3 (MEDIUM):
 ```
 
 ### 2. Field Name Fixes (15 min, 10 errors)
+
 **Why Quick**: Known mappings
 **Impact**: Type safety restored
+
 ```typescript
 user.image → user.avatar
 farm.contactEmail → farm.email
@@ -198,8 +206,10 @@ order.fulfillment → order.fulfilledAt
 ```
 
 ### 3. Unused Variable Suppressions (10 min, 8 errors)
+
 **Why Quick**: Just add comments
 **Impact**: Cleaner error list
+
 ```typescript
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const session = await auth();
@@ -212,6 +222,7 @@ const session = await auth();
 ## 🚫 Error Anti-Patterns
 
 ### Don't Do This:
+
 ```typescript
 ❌ Suppress errors without fixing
 // @ts-ignore
@@ -228,6 +239,7 @@ const order: any = await database.order.find...
 ```
 
 ### Do This Instead:
+
 ```typescript
 ✅ Fix the root cause
 const order = await database.order.findUnique({
@@ -295,6 +307,7 @@ START: Do you have 6-7 hours available?
 ## 🔄 Feedback Loops
 
 ### After Each Phase:
+
 ```bash
 # Quick verification
 npx tsc --noEmit 2>&1 | grep "error TS" | wc -l
@@ -317,11 +330,12 @@ npx tsc --noEmit 2>&1 | grep "error TS" | wc -l
 ## 🎓 Lessons for Prevention
 
 ### Add to CI/CD:
+
 ```yaml
 # .github/workflows/type-check.yml
 - name: TypeScript Check
   run: npx tsc --noEmit
-  
+
 - name: Fail if errors
   run: |
     ERRORS=$(npx tsc --noEmit 2>&1 | grep "error TS" | wc -l)
@@ -332,6 +346,7 @@ npx tsc --noEmit 2>&1 | grep "error TS" | wc -l
 ```
 
 ### Pre-commit Hook:
+
 ```bash
 # .husky/pre-commit
 npm run type-check || {

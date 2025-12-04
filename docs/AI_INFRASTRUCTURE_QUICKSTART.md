@@ -11,6 +11,7 @@
 ### Step 1: Install Dependencies (Already Done)
 
 The required packages are already installed:
+
 - ✅ `ai@^5.0.0` - Vercel AI SDK
 - ✅ `openai@^4.77.0` - OpenAI client
 - ✅ `@opentelemetry/*` - Tracing packages
@@ -21,11 +22,13 @@ The required packages are already installed:
 1. **Get your API key** from https://platform.openai.com/api-keys
 
 2. **Create `.env.local`** in project root:
+
    ```bash
    cp .env.example .env.local
    ```
 
 3. **Add your key**:
+
    ```env
    # Required for AI features
    OPENAI_API_KEY=sk-...your-key-here...
@@ -47,6 +50,7 @@ npm run test:telemetry
 ```
 
 **Expected Output**:
+
 ```
 ✅ Agent Registry - 4 agents found
 ✅ OpenAI Client - Initialized successfully
@@ -61,31 +65,31 @@ npm run test:telemetry
 ### Example 1: Farm Analysis
 
 ```typescript
-import { invokeAgent } from '@/lib/ai/agent-config';
+import { invokeAgent } from "@/lib/ai/agent-config";
 
 // Analyze a farm's performance
 export async function analyzeFarm(farmId: string) {
   const farm = await database.farm.findUnique({
     where: { id: farmId },
-    include: { products: true, orders: true }
+    include: { products: true, orders: true },
   });
 
   const response = await invokeAgent(
-    'farmAnalyst',
+    "farmAnalyst",
     `Analyze performance for ${farm.name}. 
      Products: ${farm.products.length}
      Orders: ${farm.orders.length}
      Revenue: $${calculateRevenue(farm)}`,
     {
       farmId,
-      metadata: { season: getCurrentSeason() }
-    }
+      metadata: { season: getCurrentSeason() },
+    },
   );
 
   return {
     analysis: response.content,
     confidence: response.confidence,
-    recommendations: extractRecommendations(response.content)
+    recommendations: extractRecommendations(response.content),
   };
 }
 ```
@@ -93,22 +97,22 @@ export async function analyzeFarm(farmId: string) {
 ### Example 2: Product Description Generation
 
 ```typescript
-import { invokeAgent } from '@/lib/ai/agent-config';
+import { invokeAgent } from "@/lib/ai/agent-config";
 
 // Generate product description
 export async function generateProductDesc(product: Product) {
   const response = await invokeAgent(
-    'productCatalog',
+    "productCatalog",
     `Create a compelling description for:
      - Name: ${product.name}
      - Category: ${product.category}
      - Price: $${product.price}
-     - Organic: ${product.organic ? 'Yes' : 'No'}
+     - Organic: ${product.organic ? "Yes" : "No"}
      Include SEO keywords and tags.`,
     {
       productId: product.id,
-      farmId: product.farmId
-    }
+      farmId: product.farmId,
+    },
   );
 
   return response.content;
@@ -118,22 +122,18 @@ export async function generateProductDesc(product: Product) {
 ### Example 3: Customer Support
 
 ```typescript
-import { invokeAgent } from '@/lib/ai/agent-config';
+import { invokeAgent } from "@/lib/ai/agent-config";
 
 // Handle customer inquiry
 export async function handleInquiry(question: string, customerId: string) {
-  const response = await invokeAgent(
-    'customerSupport',
-    question,
-    {
-      userId: customerId,
-      sessionId: generateSessionId()
-    }
-  );
+  const response = await invokeAgent("customerSupport", question, {
+    userId: customerId,
+    sessionId: generateSessionId(),
+  });
 
   return {
     answer: response.content,
-    confidence: response.confidence
+    confidence: response.confidence,
   };
 }
 ```
@@ -141,29 +141,25 @@ export async function handleInquiry(question: string, customerId: string) {
 ### Example 4: Multi-Agent Orchestration
 
 ```typescript
-import { orchestrateAgents } from '@/lib/ai/agent-config';
+import { orchestrateAgents } from "@/lib/ai/agent-config";
 
 // Complex task requiring multiple agents
 export async function processComplexRequest(request: string) {
   const responses = await orchestrateAgents({
     task: request,
     context: {
-      userId: 'user-123',
-      sessionId: 'session-456'
+      userId: "user-123",
+      sessionId: "session-456",
     },
-    requiredAgents: [
-      'farmAnalyst',
-      'productCatalog',
-      'customerSupport'
-    ],
-    maxTurns: 2
+    requiredAgents: ["farmAnalyst", "productCatalog", "customerSupport"],
+    maxTurns: 2,
   });
 
   // Aggregate responses
-  return responses.map(r => ({
+  return responses.map((r) => ({
     agent: r.agent,
     content: r.content,
-    confidence: r.confidence
+    confidence: r.confidence,
   }));
 }
 ```
@@ -175,13 +171,13 @@ export async function processComplexRequest(request: string) {
 ### Trace a Function
 
 ```typescript
-import { withSpan } from '@/lib/monitoring/telemetry';
+import { withSpan } from "@/lib/monitoring/telemetry";
 
 export async function myFunction() {
-  return await withSpan('myFunction', async (span) => {
+  return await withSpan("myFunction", async (span) => {
     // Add attributes
-    span.setAttribute('user.id', 'user-123');
-    span.setAttribute('operation', 'create');
+    span.setAttribute("user.id", "user-123");
+    span.setAttribute("operation", "create");
 
     // Your code here
     const result = await doSomething();
@@ -194,44 +190,36 @@ export async function myFunction() {
 ### Trace Farm Operations
 
 ```typescript
-import { traceFarmOperation } from '@/lib/monitoring/telemetry';
+import { traceFarmOperation } from "@/lib/monitoring/telemetry";
 
 export async function createProduct(farmId: string, data: ProductData) {
-  return await traceFarmOperation(
-    'createProduct',
-    farmId,
-    async (span) => {
-      span.setAttribute('product.name', data.name);
-      
-      const product = await database.product.create({
-        data: { ...data, farmId }
-      });
+  return await traceFarmOperation("createProduct", farmId, async (span) => {
+    span.setAttribute("product.name", data.name);
 
-      return product;
-    }
-  );
+    const product = await database.product.create({
+      data: { ...data, farmId },
+    });
+
+    return product;
+  });
 }
 ```
 
 ### Trace AI Agent Calls
 
 ```typescript
-import { traceAgentInvocation } from '@/lib/monitoring/telemetry';
+import { traceAgentInvocation } from "@/lib/monitoring/telemetry";
 
 export async function callAgent(agentName: string, prompt: string) {
-  return await traceAgentInvocation(
-    agentName,
-    'analyze',
-    async (span) => {
-      span.setAttribute('prompt.length', prompt.length);
-      
-      const response = await invokeAgent(agentName, prompt);
-      
-      span.setAttribute('response.confidence', response.confidence);
-      
-      return response;
-    }
-  );
+  return await traceAgentInvocation(agentName, "analyze", async (span) => {
+    span.setAttribute("prompt.length", prompt.length);
+
+    const response = await invokeAgent(agentName, prompt);
+
+    span.setAttribute("response.confidence", response.confidence);
+
+    return response;
+  });
 }
 ```
 
@@ -242,16 +230,16 @@ export async function callAgent(agentName: string, prompt: string) {
 ### Track Custom Metrics
 
 ```typescript
-import { trackMetric } from '@/lib/monitoring/app-insights';
+import { trackMetric } from "@/lib/monitoring/app-insights";
 
 // Track any metric
 trackMetric({
-  name: 'custom.metric',
+  name: "custom.metric",
   value: 123,
   properties: {
-    category: 'performance',
-    unit: 'milliseconds'
-  }
+    category: "performance",
+    unit: "milliseconds",
+  },
 });
 ```
 
@@ -262,20 +250,20 @@ import {
   trackFarmOperation,
   trackOrderProcessing,
   trackAgentInvocation,
-  trackBundleSize
-} from '@/lib/monitoring/app-insights';
+  trackBundleSize,
+} from "@/lib/monitoring/app-insights";
 
 // Track farm operation
-trackFarmOperation('createFarm', 'farm-123', 250, true);
+trackFarmOperation("createFarm", "farm-123", 250, true);
 
 // Track order processing
-trackOrderProcessing('order-456', 1500, 49.99, 3);
+trackOrderProcessing("order-456", 1500, 49.99, 3);
 
 // Track AI agent usage
-trackAgentInvocation('FarmAnalyst', 'analyze', 2000, true, 0.85);
+trackAgentInvocation("FarmAnalyst", "analyze", 2000, true, 0.85);
 
 // Track bundle size (Phase 6)
-trackBundleSize('admin-bundle', 250, '/admin');
+trackBundleSize("admin-bundle", 250, "/admin");
 ```
 
 ---
@@ -322,6 +310,7 @@ APPINSIGHTS_AUTO_COLLECT=true
 **Best For**: Performance analysis, yield predictions, optimization recommendations
 
 **Capabilities**:
+
 - `farm_performance_analysis`
 - `yield_prediction`
 - `seasonal_planning`
@@ -330,10 +319,11 @@ APPINSIGHTS_AUTO_COLLECT=true
 - `data_visualization_insights`
 
 **Example**:
+
 ```typescript
 const analysis = await invokeAgent(
-  'farmAnalyst',
-  'Analyze Sunshine Farm: 50 acres, tomatoes, yield 5000 lbs/month'
+  "farmAnalyst",
+  "Analyze Sunshine Farm: 50 acres, tomatoes, yield 5000 lbs/month",
 );
 ```
 
@@ -342,6 +332,7 @@ const analysis = await invokeAgent(
 **Best For**: Product descriptions, pricing, SEO, inventory management
 
 **Capabilities**:
+
 - `product_description_generation`
 - `category_optimization`
 - `pricing_analysis`
@@ -350,10 +341,11 @@ const analysis = await invokeAgent(
 - `seo_optimization`
 
 **Example**:
+
 ```typescript
 const description = await invokeAgent(
-  'productCatalog',
-  'Create description for organic heirloom tomatoes, $5.99/lb'
+  "productCatalog",
+  "Create description for organic heirloom tomatoes, $5.99/lb",
 );
 ```
 
@@ -362,6 +354,7 @@ const description = await invokeAgent(
 **Best For**: Order validation, logistics, inventory allocation
 
 **Capabilities**:
+
 - `order_validation`
 - `inventory_allocation`
 - `delivery_optimization`
@@ -370,10 +363,11 @@ const description = await invokeAgent(
 - `logistics_planning`
 
 **Example**:
+
 ```typescript
 const validation = await invokeAgent(
-  'orderProcessor',
-  'Validate order: 10 items, $150 total, deliver to Seattle'
+  "orderProcessor",
+  "Validate order: 10 items, $150 total, deliver to Seattle",
 );
 ```
 
@@ -382,6 +376,7 @@ const validation = await invokeAgent(
 **Best For**: Customer inquiries, recommendations, issue resolution
 
 **Capabilities**:
+
 - `customer_inquiry_response`
 - `product_recommendations`
 - `issue_resolution`
@@ -390,10 +385,11 @@ const validation = await invokeAgent(
 - `complaint_handling`
 
 **Example**:
+
 ```typescript
 const response = await invokeAgent(
-  'customerSupport',
-  'Customer asks: What vegetables are in season right now?'
+  "customerSupport",
+  "Customer asks: What vegetables are in season right now?",
 );
 ```
 
@@ -421,82 +417,78 @@ npm run test:telemetry
 ### Pattern 1: API Route with AI + Tracing
 
 ```typescript
-import { NextRequest, NextResponse } from 'next/server';
-import { invokeAgent } from '@/lib/ai/agent-config';
-import { traceApiRoute } from '@/lib/monitoring/telemetry';
-import { trackAgentInvocation } from '@/lib/monitoring/app-insights';
+import { NextRequest, NextResponse } from "next/server";
+import { invokeAgent } from "@/lib/ai/agent-config";
+import { traceApiRoute } from "@/lib/monitoring/telemetry";
+import { trackAgentInvocation } from "@/lib/monitoring/app-insights";
 
 export async function POST(request: NextRequest) {
-  return await traceApiRoute(
-    'POST',
-    '/api/analyze-farm',
-    async (span) => {
-      const { farmId } = await request.json();
-      
-      span.setAttribute('farm.id', farmId);
-      
-      const startTime = Date.now();
-      const response = await invokeAgent(
-        'farmAnalyst',
-        `Analyze farm ${farmId}`,
-        { farmId }
-      );
-      
-      // Track metrics
-      trackAgentInvocation(
-        'FarmAnalyst',
-        'analyze',
-        Date.now() - startTime,
-        true,
-        response.confidence
-      );
-      
-      return NextResponse.json({
-        success: true,
-        analysis: response.content,
-        confidence: response.confidence
-      });
-    }
-  );
+  return await traceApiRoute("POST", "/api/analyze-farm", async (span) => {
+    const { farmId } = await request.json();
+
+    span.setAttribute("farm.id", farmId);
+
+    const startTime = Date.now();
+    const response = await invokeAgent(
+      "farmAnalyst",
+      `Analyze farm ${farmId}`,
+      { farmId },
+    );
+
+    // Track metrics
+    trackAgentInvocation(
+      "FarmAnalyst",
+      "analyze",
+      Date.now() - startTime,
+      true,
+      response.confidence,
+    );
+
+    return NextResponse.json({
+      success: true,
+      analysis: response.content,
+      confidence: response.confidence,
+    });
+  });
 }
 ```
 
 ### Pattern 2: Background Job with Monitoring
 
 ```typescript
-import { withSpan } from '@/lib/monitoring/telemetry';
-import { trackMetric } from '@/lib/monitoring/app-insights';
+import { withSpan } from "@/lib/monitoring/telemetry";
+import { trackMetric } from "@/lib/monitoring/app-insights";
 
 export async function processNightlyReports() {
-  return await withSpan('nightly.reports', async (span) => {
+  return await withSpan("nightly.reports", async (span) => {
     const startTime = Date.now();
-    
+
     try {
       // Process reports
       const reports = await generateReports();
-      
-      span.setAttribute('reports.count', reports.length);
-      
+
+      span.setAttribute("reports.count", reports.length);
+
       // Track success
       trackMetric({
-        name: 'nightly.reports.duration',
+        name: "nightly.reports.duration",
         value: Date.now() - startTime,
         properties: {
           count: reports.length.toString(),
-          status: 'success'
-        }
+          status: "success",
+        },
       });
-      
+
       return reports;
     } catch (error) {
       // Track failure
       trackMetric({
-        name: 'nightly.reports.duration',
+        name: "nightly.reports.duration",
         value: Date.now() - startTime,
         properties: {
-          status: 'failure',
-          error: error.message
-        }
+          status: "failure",
+          error: error.message,
+        },
       });
       throw error;
     }
@@ -507,41 +499,38 @@ export async function processNightlyReports() {
 ### Pattern 3: Multi-Step Workflow
 
 ```typescript
-import { orchestrateAgents } from '@/lib/ai/agent-config';
-import { withSpan } from '@/lib/monitoring/telemetry';
+import { orchestrateAgents } from "@/lib/ai/agent-config";
+import { withSpan } from "@/lib/monitoring/telemetry";
 
 export async function onboardNewFarm(farmData: CreateFarmData) {
-  return await withSpan('farm.onboarding', async (span) => {
-    span.setAttribute('farm.name', farmData.name);
-    
+  return await withSpan("farm.onboarding", async (span) => {
+    span.setAttribute("farm.name", farmData.name);
+
     // Step 1: Validate farm data
     const validation = await invokeAgent(
-      'farmAnalyst',
-      `Validate farm data: ${JSON.stringify(farmData)}`
+      "farmAnalyst",
+      `Validate farm data: ${JSON.stringify(farmData)}`,
     );
-    
+
     // Step 2: Generate optimized product descriptions
     const products = await Promise.all(
-      farmData.products.map(p =>
-        invokeAgent(
-          'productCatalog',
-          `Create description for ${p.name}`
-        )
-      )
+      farmData.products.map((p) =>
+        invokeAgent("productCatalog", `Create description for ${p.name}`),
+      ),
     );
-    
+
     // Step 3: Create onboarding plan
     const onboarding = await orchestrateAgents({
-      task: 'Create comprehensive onboarding plan',
-      context: { farmId: 'new', metadata: farmData },
-      requiredAgents: ['farmAnalyst', 'productCatalog'],
-      maxTurns: 2
+      task: "Create comprehensive onboarding plan",
+      context: { farmId: "new", metadata: farmData },
+      requiredAgents: ["farmAnalyst", "productCatalog"],
+      maxTurns: 2,
     });
-    
+
     return {
       validation,
       products,
-      onboarding
+      onboarding,
     };
   });
 }
@@ -554,6 +543,7 @@ export async function onboardNewFarm(farmData: CreateFarmData) {
 ### Issue: "OPENAI_API_KEY not set"
 
 **Solution**: Add key to `.env.local`:
+
 ```env
 OPENAI_API_KEY=sk-...
 ```
@@ -561,6 +551,7 @@ OPENAI_API_KEY=sk-...
 ### Issue: Agent responses are slow
 
 **Solution**: Reduce max_tokens or use faster model:
+
 ```env
 OPENAI_MAX_TOKENS=1000
 OPENAI_MODEL=gpt-4o-mini  # Faster, cheaper
@@ -569,12 +560,14 @@ OPENAI_MODEL=gpt-4o-mini  # Faster, cheaper
 ### Issue: Traces not appearing
 
 **Solution**: Check OpenTelemetry endpoint:
+
 ```env
 OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318/v1/traces
 OTEL_ENABLED=true
 ```
 
 Run OpenTelemetry collector:
+
 ```bash
 docker run -p 4318:4318 otel/opentelemetry-collector-contrib:latest
 ```
@@ -582,6 +575,7 @@ docker run -p 4318:4318 otel/opentelemetry-collector-contrib:latest
 ### Issue: Application Insights not receiving data
 
 **Solution**: Verify connection string:
+
 ```env
 APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=...;IngestionEndpoint=...
 APPINSIGHTS_ENABLED=true
@@ -592,16 +586,19 @@ APPINSIGHTS_ENABLED=true
 ## 📚 Additional Resources
 
 ### Documentation
+
 - **Complete Guide**: `docs/PHASE_6_DAY_4_AI_INFRASTRUCTURE.md`
 - **Full Summary**: `docs/PHASE_6_DAY_4_COMPLETE.md`
 - **Test Scripts**: `scripts/test-agent-framework.ts`, `scripts/test-telemetry.ts`
 
 ### Source Code
+
 - **AI Agents**: `src/lib/ai/agent-config.ts`
 - **Telemetry**: `src/lib/monitoring/telemetry.ts`
 - **App Insights**: `src/lib/monitoring/app-insights.ts`
 
 ### External Links
+
 - **OpenAI API**: https://platform.openai.com/docs
 - **OpenTelemetry**: https://opentelemetry.io/docs/
 - **Azure Application Insights**: https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview
@@ -620,4 +617,4 @@ APPINSIGHTS_ENABLED=true
 
 **Happy Coding!** 🌾⚡
 
-*Questions? Check the full documentation or test scripts for detailed examples.*
+_Questions? Check the full documentation or test scripts for detailed examples._

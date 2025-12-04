@@ -31,6 +31,7 @@
 ### 🏆 Platform Capabilities
 
 #### **For Platform Owners (Admin)**
+
 - 📊 Complete platform management dashboard
 - 👥 User management with RBAC (Admin, Farmer, Consumer)
 - 🏪 Farm verification and approval workflow
@@ -42,6 +43,7 @@
 - 📈 Business intelligence and KPIs
 
 #### **For Farmers**
+
 - 🏞️ Farm profile with verification system
 - 📦 Product catalog management (CRUD)
 - 📸 Image gallery (up to 5 images per product)
@@ -55,6 +57,7 @@
 - 🎯 Performance metrics
 
 #### **For Customers**
+
 - 🔍 Advanced product search with filters
 - 🛒 Persistent shopping cart
 - ❤️ Wishlist and favorites
@@ -70,6 +73,7 @@
 ### **Key Features Deep Dive**
 
 #### 🔐 Authentication & Security
+
 - NextAuth.js v5 with JWT tokens
 - Role-based access control (RBAC)
 - Email verification
@@ -80,6 +84,7 @@
 - PCI-compliant payments
 
 #### 💳 Payment Processing
+
 - Stripe integration (Cards, Apple Pay, Google Pay)
 - Automated farmer payouts
 - Platform commission handling
@@ -89,6 +94,7 @@
 - Webhook-based real-time updates
 
 #### 📦 Order Management
+
 - Complete order lifecycle: Pending → Confirmed → Processing → Shipped → Delivered
 - Multiple delivery options (Farm pickup, Home delivery, Market pickup)
 - Real-time order tracking
@@ -97,6 +103,7 @@
 - Order notes and special instructions
 
 #### 🏪 Farm Management
+
 - Farm verification workflow (Pending → Under Review → Approved/Rejected)
 - Location mapping with coordinates
 - Operating hours management
@@ -107,6 +114,7 @@
 - Customer reviews and ratings
 
 #### 📦 Product Management
+
 - Full CRUD operations
 - Image gallery (5 images max)
 - Real-time inventory tracking
@@ -119,6 +127,7 @@
 - Bulk upload support
 
 #### 🔍 Search & Discovery
+
 - Full-text search with autocomplete
 - Category browsing
 - Price range filtering
@@ -129,6 +138,7 @@
 - Advanced filters (organic, local, etc.)
 
 #### 🌍 Multi-Language Support
+
 - English (default)
 - French (Français)
 - Spanish (Español)
@@ -139,6 +149,7 @@
 - Date/time localization
 
 #### 📊 Analytics & Reporting
+
 - Platform-wide metrics
 - Revenue tracking
 - User engagement analytics
@@ -155,6 +166,7 @@
 ### 🛠️ Technology Stack
 
 #### **Frontend Excellence**
+
 - **Framework**: Next.js 16.0.3 (App Router with Server Components)
 - **UI Library**: React 19.0.0
 - **Language**: TypeScript 5.9.3 (Strict mode, 100% typed)
@@ -165,6 +177,7 @@
 - **Forms**: React Hook Form 7.66.1 + Zod 4.1.12 validation
 
 #### **Backend & Database**
+
 - **Runtime**: Node.js 20+
 - **Database**: PostgreSQL 15+ (Production-ready with indexes)
 - **ORM**: Prisma 7.0.1 (Type-safe queries, migrations)
@@ -174,6 +187,7 @@
 - **Caching**: Multi-layer (Memory + Redis optional)
 
 #### **Payment & Commerce**
+
 - **Payment Gateway**: Stripe 20.0.0 (Full integration)
 - **Payment UI**: @stripe/react-stripe-js 5.4.0
 - **Features**: Cards, Apple Pay, Google Pay, Webhooks
@@ -181,6 +195,7 @@
 - **Commission**: Configurable platform fees
 
 #### **Infrastructure & DevOps**
+
 - **Deployment**: Vercel (optimized), Docker (production-ready)
 - **File Storage**: Cloudinary 2.8.0, Vercel Blob
 - **Monitoring**: Sentry 10.26.0 (Error tracking)
@@ -190,6 +205,7 @@
 - **CI/CD**: GitHub Actions, automated testing
 
 #### **Quality & Testing**
+
 - **Unit Tests**: Jest 30.2.0 (250+ tests)
 - **Component Tests**: React Testing Library 16.3.0
 - **E2E Tests**: Playwright 1.56.1 (cross-browser)
@@ -199,6 +215,7 @@
 - **Type Checking**: TypeScript strict mode enabled
 
 #### **Development Tools**
+
 - **Package Manager**: npm 10.0.0+
 - **Bundle Analyzer**: @next/bundle-analyzer
 - **Development**: Hot reload, Turbopack support
@@ -214,6 +231,7 @@
 ### System Requirements
 
 **Minimum:**
+
 - Node.js 20.19.0+
 - PostgreSQL 15+
 - npm 10.0.0+
@@ -221,6 +239,7 @@
 - 10GB free disk space
 
 **Recommended (HP OMEN Optimized):**
+
 - Node.js 20.19.0+
 - PostgreSQL 15+
 - npm 10.0.0+
@@ -231,23 +250,28 @@
 ### **Installation & Setup**
 
 #### 1️⃣ Clone the Repository
+
 ```bash
 git clone https://github.com/yourusername/farmers-market-platform.git
 cd farmers-market-platform
 ```
 
 #### 2️⃣ Install Dependencies
+
 ```bash
 npm install --legacy-peer-deps
 ```
-*Note: `--legacy-peer-deps` is required for React 19 compatibility*
+
+_Note: `--legacy-peer-deps` is required for React 19 compatibility_
 
 #### 3️⃣ Environment Configuration
+
 ```bash
 cp .env.example .env.local
 ```
 
 **Essential Environment Variables:**
+
 ```env
 # Database (Required)
 DATABASE_URL="postgresql://user:password@localhost:5432/farmers_market"
@@ -278,6 +302,7 @@ NEXT_PUBLIC_VERCEL_ANALYTICS_ID="your-analytics-id"
 📖 **Full Configuration Guide:** See `docs/deployment/ENV-SETUP-GUIDE.md`
 
 #### 4️⃣ Database Setup
+
 ```bash
 # Generate Prisma Client
 npx prisma generate
@@ -290,11 +315,13 @@ npm run db:seed:basic
 ```
 
 **Quick Database Setup (All-in-one):**
+
 ```bash
 npm run db:setup
 ```
 
 #### 5️⃣ Start Development Server
+
 ```bash
 # Standard (port 3001)
 npm run dev
@@ -307,13 +334,15 @@ npm run dev:logger
 ```
 
 #### 6️⃣ Access the Platform
+
 - **Frontend**: http://localhost:3001
 - **Admin Login**: http://localhost:3001/admin-login
 - **API Health**: http://localhost:3001/api/health
 - **Prisma Studio**: `npm run db:studio` (http://localhost:5555)
 
 #### 7️⃣ Create Admin Account
-```bash
+
+````bash
 # Using seed script (creates admin@example.com / admin123)
 npm run db:seed:basic
 
@@ -387,7 +416,7 @@ import type { User, Farm } from "@prisma/client";
 // ❌ Wrong - don't do this
 import { PrismaClient } from "@prisma/client";
 const db = new PrismaClient();
-```
+````
 
 **Service Layer Pattern:**
 

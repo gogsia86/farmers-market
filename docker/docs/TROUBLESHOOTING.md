@@ -1,4 +1,5 @@
 # 🔧 Docker Troubleshooting Guide
+
 # Farmers Market Platform - Common Issues & Solutions
 
 **Version**: 3.0  
@@ -12,6 +13,7 @@
 This guide covers common Docker-related issues you might encounter when running the Farmers Market Platform, along with step-by-step solutions.
 
 **Quick Links:**
+
 - [Container Issues](#-container-issues)
 - [Database Problems](#-database-problems)
 - [Network Issues](#-network-issues)
@@ -63,10 +65,12 @@ docker-compose up -d --force-recreate
 ### Issue: Container Won't Start
 
 **Symptoms:**
+
 - Container exits immediately after starting
 - `docker-compose ps` shows "Exit 1" or "Exit 137"
 
 **Diagnosis:**
+
 ```bash
 # Check logs
 docker-compose logs app
@@ -81,6 +85,7 @@ docker inspect farmers-market-app
 **Solutions:**
 
 1. **Out of Memory (Exit 137)**
+
 ```bash
 # Check available memory
 docker stats --no-stream
@@ -95,6 +100,7 @@ services:
 ```
 
 2. **Missing Environment Variables**
+
 ```bash
 # Verify .env file exists
 ls -la .env.local  # Development
@@ -105,6 +111,7 @@ docker-compose config | grep -A 10 environment
 ```
 
 3. **Port Already in Use**
+
 ```bash
 # Find process using port
 lsof -i :3000          # macOS/Linux
@@ -115,6 +122,7 @@ APP_PORT=3002
 ```
 
 4. **Permission Issues**
+
 ```bash
 # Fix volume permissions
 sudo chown -R $USER:$USER ./uploads
@@ -127,10 +135,12 @@ sudo chmod 666 /var/run/docker.sock
 ### Issue: Container Keeps Restarting
 
 **Symptoms:**
+
 - Container starts, then restarts in a loop
 - Health check failures
 
 **Diagnosis:**
+
 ```bash
 # Watch container status
 watch docker-compose ps
@@ -145,6 +155,7 @@ docker inspect farmers-market-app | grep -A 10 Health
 **Solutions:**
 
 1. **Application Crash on Startup**
+
 ```bash
 # Check application logs for errors
 docker-compose logs --tail=50 app
@@ -157,6 +168,7 @@ docker-compose logs --tail=50 app
 ```
 
 2. **Health Check Failing**
+
 ```bash
 # Test health endpoint manually
 docker-compose exec app curl http://localhost:3000/api/health
@@ -166,6 +178,7 @@ docker-compose exec app curl http://localhost:3000/api/health
 ```
 
 3. **Dependencies Not Ready**
+
 ```bash
 # Ensure database is healthy before starting app
 docker-compose up -d db redis
@@ -176,6 +189,7 @@ docker-compose up -d app
 ### Issue: Container Running but Not Responding
 
 **Symptoms:**
+
 - Container status shows "Up"
 - Cannot access application
 - No response on expected ports
@@ -183,6 +197,7 @@ docker-compose up -d app
 **Solutions:**
 
 1. **Check Port Mapping**
+
 ```bash
 # Verify ports are mapped correctly
 docker-compose ps
@@ -195,6 +210,7 @@ curl http://localhost:3000/api/health
 ```
 
 2. **Network Issues**
+
 ```bash
 # Check if container is in correct network
 docker network inspect farmers-network
@@ -206,6 +222,7 @@ docker-compose up -d
 ```
 
 3. **Application Not Listening**
+
 ```bash
 # Check if application is bound to correct interface
 docker-compose exec app netstat -tuln
@@ -220,11 +237,13 @@ docker-compose exec app netstat -tuln
 ### Issue: Database Connection Failed
 
 **Symptoms:**
+
 - "Connection refused" errors
 - "ECONNREFUSED" in logs
 - Application can't connect to database
 
 **Diagnosis:**
+
 ```bash
 # Check database is running
 docker-compose ps db
@@ -239,6 +258,7 @@ docker-compose exec app npx prisma db push --skip-generate
 **Solutions:**
 
 1. **Database Not Ready**
+
 ```bash
 # Wait for database to be fully ready
 docker-compose logs db | grep "ready to accept connections"
@@ -248,6 +268,7 @@ docker-compose exec db pg_isready -U postgres
 ```
 
 2. **Wrong Connection String**
+
 ```bash
 # Verify DATABASE_URL in .env
 # Should use service name 'db', not 'localhost'
@@ -258,12 +279,14 @@ docker-compose exec app env | grep DATABASE_URL
 ```
 
 3. **Database Credentials Wrong**
+
 ```bash
 # Verify credentials match between .env and docker-compose.yml
 # Check POSTGRES_USER and POSTGRES_PASSWORD
 ```
 
 4. **Database Volume Corrupted**
+
 ```bash
 # ⚠️ WARNING: This will delete database data
 docker-compose down -v
@@ -275,6 +298,7 @@ docker-compose exec app npx prisma migrate deploy
 ### Issue: Migrations Failing
 
 **Symptoms:**
+
 - "Migration failed" errors
 - Database schema out of sync
 - Prisma errors
@@ -282,6 +306,7 @@ docker-compose exec app npx prisma migrate deploy
 **Solutions:**
 
 1. **Reset Database (Development)**
+
 ```bash
 # ⚠️ WARNING: Deletes all data
 docker-compose exec app npx prisma migrate reset
@@ -293,6 +318,7 @@ docker-compose exec app npx prisma migrate deploy
 ```
 
 2. **Manual Migration Fix**
+
 ```bash
 # Mark migration as applied (if already applied manually)
 docker-compose exec app npx prisma migrate resolve --applied <migration-name>
@@ -305,6 +331,7 @@ docker-compose exec app npx prisma migrate status
 ```
 
 3. **Schema Sync Issues**
+
 ```bash
 # Push schema without migration
 docker-compose exec app npx prisma db push --skip-generate
@@ -318,6 +345,7 @@ docker-compose exec app npx prisma generate
 **Solutions:**
 
 1. **Increase Database Resources**
+
 ```yaml
 # In docker-compose.yml
 db:
@@ -329,6 +357,7 @@ db:
 ```
 
 2. **Optimize PostgreSQL Configuration**
+
 ```yaml
 # Add to db service command in docker-compose.yml
 command:
@@ -342,6 +371,7 @@ command:
 ```
 
 3. **Check for Slow Queries**
+
 ```bash
 # Enable query logging
 docker-compose exec db psql -U postgres -d farmersmarket
@@ -358,6 +388,7 @@ ALTER DATABASE farmersmarket SET log_duration = on;
 ### Issue: Services Can't Communicate
 
 **Symptoms:**
+
 - App can't connect to database
 - App can't connect to Redis
 - "Network not found" errors
@@ -365,6 +396,7 @@ ALTER DATABASE farmersmarket SET log_duration = on;
 **Solutions:**
 
 1. **Recreate Network**
+
 ```bash
 docker-compose down
 docker network prune -f
@@ -372,6 +404,7 @@ docker-compose up -d
 ```
 
 2. **Check Network Configuration**
+
 ```bash
 # Inspect network
 docker network inspect farmers-network
@@ -381,6 +414,7 @@ docker-compose config | grep networks
 ```
 
 3. **Use Service Names**
+
 ```bash
 # Always use service names in connection strings
 # ✅ Correct: db:5432
@@ -391,12 +425,14 @@ DATABASE_URL="postgresql://postgres:postgres@db:5432/farmersmarket"
 ### Issue: Port Already in Use
 
 **Symptoms:**
+
 - "port is already allocated" error
 - Cannot start service
 
 **Solutions:**
 
 1. **Find and Kill Process**
+
 ```bash
 # macOS/Linux
 lsof -i :3000
@@ -408,6 +444,7 @@ taskkill /PID <PID> /F
 ```
 
 2. **Change Port**
+
 ```bash
 # In .env file
 APP_PORT=3002
@@ -420,6 +457,7 @@ docker-compose up -d
 ```
 
 3. **Stop Conflicting Docker Containers**
+
 ```bash
 # List all running containers
 docker ps -a
@@ -431,12 +469,14 @@ docker stop <container-name>
 ### Issue: Cannot Access from Host
 
 **Symptoms:**
+
 - Container running but can't access from browser
 - `curl localhost:3000` fails
 
 **Solutions:**
 
 1. **Check Port Binding**
+
 ```bash
 # Verify ports are published
 docker-compose ps
@@ -445,6 +485,7 @@ docker-compose ps
 ```
 
 2. **Check Firewall**
+
 ```bash
 # Linux
 sudo ufw status
@@ -455,6 +496,7 @@ sudo ufw allow 3000/tcp
 ```
 
 3. **Use Correct Interface**
+
 ```bash
 # In docker-compose.yml, ensure:
 environment:
@@ -472,6 +514,7 @@ ports:
 **Solutions:**
 
 1. **Enable BuildKit**
+
 ```bash
 # Add to ~/.bashrc or ~/.zshrc
 export DOCKER_BUILDKIT=1
@@ -482,6 +525,7 @@ DOCKER_BUILDKIT=1 docker-compose build
 ```
 
 2. **Use Build Cache**
+
 ```bash
 # Build with cache
 docker-compose build
@@ -494,6 +538,7 @@ docker builder prune -a -f
 ```
 
 3. **Multi-Stage Build Optimization**
+
 ```dockerfile
 # Use .dockerignore to exclude unnecessary files
 # Already configured in docker/.dockerignore
@@ -502,11 +547,13 @@ docker builder prune -a -f
 ### Issue: Slow Application Performance
 
 **Symptoms:**
+
 - Slow page loads
 - High response times
 - CPU/memory maxed out
 
 **Diagnosis:**
+
 ```bash
 # Check resource usage
 docker stats
@@ -521,6 +568,7 @@ docker-compose exec db psql -U postgres -d farmersmarket -c "SELECT count(*) FRO
 **Solutions:**
 
 1. **Increase Resources**
+
 ```yaml
 # In docker-compose.yml
 app:
@@ -532,6 +580,7 @@ app:
 ```
 
 2. **Check for Memory Leaks**
+
 ```bash
 # Monitor memory over time
 watch docker stats
@@ -541,6 +590,7 @@ docker-compose restart app
 ```
 
 3. **Optimize Database**
+
 ```bash
 # Run VACUUM
 docker-compose exec db psql -U postgres -d farmersmarket -c "VACUUM ANALYZE;"
@@ -552,12 +602,14 @@ docker-compose exec db psql -U postgres -d farmersmarket -c "SELECT * FROM pg_st
 ### Issue: Hot Reload Not Working (Development)
 
 **Symptoms:**
+
 - Code changes not reflected
 - Need to rebuild container for changes
 
 **Solutions:**
 
 1. **Enable File Watching**
+
 ```yaml
 # In docker-compose.dev.yml
 environment:
@@ -566,6 +618,7 @@ environment:
 ```
 
 2. **Check Volume Mounts**
+
 ```bash
 # Verify source code is mounted
 docker-compose exec app ls -la /app/src
@@ -577,6 +630,7 @@ volumes:
 ```
 
 3. **Restart Dev Server**
+
 ```bash
 docker-compose restart app
 ```
@@ -590,6 +644,7 @@ docker-compose restart app
 **Common Error Messages:**
 
 #### "ENOSPC: no space left on device"
+
 ```bash
 # Clean up Docker resources
 docker system df  # Check space usage
@@ -600,6 +655,7 @@ df -h
 ```
 
 #### "npm ERR! network"
+
 ```bash
 # Check internet connection
 ping npmjs.org
@@ -612,6 +668,7 @@ docker-compose build --no-cache app
 ```
 
 #### "Cannot find module"
+
 ```bash
 # Clean node_modules and rebuild
 docker-compose down
@@ -621,6 +678,7 @@ docker-compose up -d
 ```
 
 #### "Permission denied"
+
 ```bash
 # Fix Docker socket permissions (Linux)
 sudo chmod 666 /var/run/docker.sock
@@ -635,6 +693,7 @@ newgrp docker
 **Solutions:**
 
 1. **Check for Hanging Processes**
+
 ```bash
 # Cancel build (Ctrl+C)
 
@@ -646,6 +705,7 @@ docker-compose build --progress=plain app
 ```
 
 2. **Increase Build Timeout**
+
 ```bash
 # Set environment variable
 export COMPOSE_HTTP_TIMEOUT=300
@@ -659,12 +719,14 @@ docker-compose build
 ### Issue: Environment Variables Not Loading
 
 **Symptoms:**
+
 - "Environment variable not defined" errors
 - Features not working as expected
 
 **Solutions:**
 
 1. **Verify .env File Location**
+
 ```bash
 # Should be in project root
 ls -la .env.local  # Development
@@ -675,6 +737,7 @@ docker-compose config | grep -A 50 environment
 ```
 
 2. **Check Syntax**
+
 ```bash
 # No spaces around =
 DATABASE_URL=postgresql://...  # ✅ Correct
@@ -686,6 +749,7 @@ PASSWORD=p@ssw0rd!    # ❌ Wrong
 ```
 
 3. **Restart After Changes**
+
 ```bash
 # Environment changes require restart
 docker-compose down
@@ -697,6 +761,7 @@ docker-compose up -d
 **Solutions:**
 
 1. **Never Log Sensitive Data**
+
 ```bash
 # Check logs for exposed secrets
 docker-compose logs app | grep -i "password\|secret\|key"
@@ -705,6 +770,7 @@ docker-compose logs app | grep -i "password\|secret\|key"
 ```
 
 2. **Use Docker Secrets (Swarm)**
+
 ```yaml
 # In production, use Docker secrets
 secrets:
@@ -721,6 +787,7 @@ services:
 ## 📊 Diagnostic Commands
 
 ### System Information
+
 ```bash
 # Docker version
 docker --version
@@ -736,6 +803,7 @@ docker-compose ps
 ```
 
 ### Logs and Debugging
+
 ```bash
 # All logs
 docker-compose logs
@@ -754,6 +822,7 @@ docker-compose logs > debug-logs-$(date +%Y%m%d).log
 ```
 
 ### Network Diagnostics
+
 ```bash
 # List networks
 docker network ls
@@ -767,6 +836,7 @@ docker-compose exec app curl http://redis:6379
 ```
 
 ### Database Diagnostics
+
 ```bash
 # Database shell
 docker-compose exec db psql -U postgres -d farmersmarket
@@ -787,6 +857,7 @@ docker-compose exec db psql -U postgres -c "SELECT pg_size_pretty(pg_database_si
 Collect this information:
 
 1. **System Info**
+
 ```bash
 docker --version
 docker-compose --version
@@ -795,17 +866,20 @@ systeminfo  # Windows
 ```
 
 2. **Container Status**
+
 ```bash
 docker-compose ps
 docker stats --no-stream
 ```
 
 3. **Logs**
+
 ```bash
 docker-compose logs > full-logs.txt
 ```
 
 4. **Configuration**
+
 ```bash
 docker-compose config > docker-config.yml
 cat .env.example > env-template.txt  # Don't share actual .env!
@@ -834,5 +908,5 @@ cat .env.example > env-template.txt  # Don't share actual .env!
 **Last Updated**: November 27, 2024  
 **Status**: ✅ Comprehensive
 
-*For setup instructions, see `SETUP-GUIDE.md`*  
-*For deployment guide, see `DEPLOYMENT-GUIDE.md`*
+_For setup instructions, see `SETUP-GUIDE.md`_  
+_For deployment guide, see `DEPLOYMENT-GUIDE.md`_

@@ -9,10 +9,7 @@
  */
 
 export { FarmLocationMap, FarmLocationMarker } from "./FarmLocationMap";
-export {
-  DeliveryRadiusMap,
-  DeliveryInfo,
-} from "./DeliveryRadiusMap";
+export { DeliveryRadiusMap, DeliveryInfo } from "./DeliveryRadiusMap";
 export {
   MapViewToggle,
   MapViewToggleWithLabels,

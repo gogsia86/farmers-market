@@ -1,4 +1,5 @@
 # 🔐 Authentication Guide
+
 **Farmers Market Platform - Admin Authentication & Troubleshooting**
 
 ---
@@ -9,27 +10,31 @@ If you're seeing 404 errors on admin routes, you need to authenticate first.
 
 ### Admin Login Credentials
 
-| Field    | Value                                    |
-|----------|------------------------------------------|
-| **URL**  | http://localhost:3000/admin-login        |
-| **Email**| gogsia@gmail.com                         |
-| **Password** | Admin123!                            |
+| Field        | Value                             |
+| ------------ | --------------------------------- |
+| **URL**      | http://localhost:3000/admin-login |
+| **Email**    | gogsia@gmail.com                  |
+| **Password** | Admin123!                         |
 
 ### Quick Login Methods
 
 **Method 1: Use LOGIN.bat (Fastest)**
+
 ```bash
 LOGIN.bat
 ```
+
 This opens the login page automatically in your browser.
 
 **Method 2: Manual Browser Access**
+
 1. Open your browser
 2. Navigate to: `http://localhost:3000/admin-login`
 3. Enter credentials above
 4. Click "Sign In"
 
 **Method 3: Command Line**
+
 ```bash
 start http://localhost:3000/admin-login
 ```
@@ -75,11 +80,13 @@ curl http://localhost:3000/api/auth/session
 **Expected Responses:**
 
 **Not Authenticated:**
+
 ```json
 null
 ```
 
 **Authenticated:**
+
 ```json
 {
   "user": {
@@ -98,15 +105,15 @@ null
 
 Once authenticated, you can access:
 
-| Route | Purpose |
-|-------|---------|
-| `/admin` | Main admin dashboard |
-| `/admin/farms` | Farm management & verification |
-| `/admin/products` | Product catalog management |
-| `/admin/financial` | Financial overview & payouts |
-| `/admin/orders` | Order management |
-| `/admin/users` | User management |
-| `/admin/settings` | Platform settings (SUPER_ADMIN only) |
+| Route              | Purpose                              |
+| ------------------ | ------------------------------------ |
+| `/admin`           | Main admin dashboard                 |
+| `/admin/farms`     | Farm management & verification       |
+| `/admin/products`  | Product catalog management           |
+| `/admin/financial` | Financial overview & payouts         |
+| `/admin/orders`    | Order management                     |
+| `/admin/users`     | User management                      |
+| `/admin/settings`  | Platform settings (SUPER_ADMIN only) |
 
 ---
 
@@ -115,10 +122,12 @@ Once authenticated, you can access:
 ### Issue 1: "Cannot access admin routes"
 
 **Symptoms:**
+
 - Admin routes redirect to login
 - Browser shows 404 or login page
 
 **Solution:**
+
 ```bash
 # 1. Check if you're authenticated
 CHECK-AUTH.bat
@@ -134,6 +143,7 @@ Password: Admin123!
 ### Issue 2: "Invalid credentials" or "Sign in failed"
 
 **Causes:**
+
 - Wrong password
 - Database not initialized
 - Admin user not created
@@ -141,23 +151,27 @@ Password: Admin123!
 **Solution:**
 
 **Step 1: Verify Database Connection**
+
 ```bash
 # Check if Postgres is running
 docker ps | findstr postgres
 ```
 
 **Step 2: Recreate Admin User**
+
 ```bash
 # Run admin creation script
 npx tsx create-admin.ts
 ```
 
 This creates/updates the admin user with credentials:
+
 - Email: `gogsia@gmail.com`
 - Password: `Admin123!`
 - Role: `SUPER_ADMIN`
 
 **Step 3: Try Logging In Again**
+
 ```bash
 LOGIN.bat
 ```
@@ -165,6 +179,7 @@ LOGIN.bat
 ### Issue 3: "Session expired" or "Logged out unexpectedly"
 
 **Causes:**
+
 - Dev server restarted
 - Session cookie expired
 - Browser cache issues
@@ -172,22 +187,26 @@ LOGIN.bat
 **Solution:**
 
 **Step 1: Clear Browser Cookies**
+
 1. Open DevTools (F12)
 2. Go to Application > Cookies
 3. Delete cookies for `localhost:3001`
 
 **Step 2: Sign In Again**
+
 ```bash
 LOGIN.bat
 ```
 
 **Step 3: If issue persists, check session config**
+
 ```bash
 # Verify NEXTAUTH_SECRET is set
 echo %NEXTAUTH_SECRET%
 ```
 
 If empty, add to `.env.local`:
+
 ```env
 NEXTAUTH_SECRET=your-super-secret-key-here-min-32-chars
 NEXTAUTH_URL=http://localhost:3000
@@ -196,21 +215,25 @@ NEXTAUTH_URL=http://localhost:3000
 ### Issue 4: "Insufficient permissions"
 
 **Symptoms:**
+
 - Can access some admin routes but not others
 - "Access Denied" errors
 
 **Causes:**
+
 - User role is not ADMIN/SUPER_ADMIN
 - Trying to access SUPER_ADMIN-only routes
 
 **Solution:**
 
 **Check Your Role:**
+
 ```bash
 CHECK-AUTH.bat
 ```
 
 **Update Role in Database:**
+
 ```bash
 # Open Prisma Studio
 npx prisma studio
@@ -221,6 +244,7 @@ npx prisma studio
 ```
 
 Or use SQL:
+
 ```sql
 UPDATE "User"
 SET role = 'SUPER_ADMIN'
@@ -230,12 +254,14 @@ WHERE email = 'gogsia@gmail.com';
 ### Issue 5: "Database connection error during login"
 
 **Symptoms:**
+
 - Login form submits but fails
 - Console shows database errors
 
 **Solution:**
 
 **Step 1: Verify Database is Running**
+
 ```bash
 docker ps
 ```
@@ -243,29 +269,34 @@ docker ps
 Should show `farmers-market-postgres` running.
 
 **Step 2: Check Database Connection**
+
 ```bash
 # Test Prisma connection
 npx prisma db push
 ```
 
 **Step 3: Verify DATABASE_URL**
+
 ```bash
 # Check .env.local
 type .env.local | findstr DATABASE_URL
 ```
 
 Should be:
+
 ```env
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/farmers_market?schema=public
 ```
 
 **Step 4: Restart Docker Services**
+
 ```bash
 docker compose down
 docker compose up -d
 ```
 
 **Step 5: Try Login Again**
+
 ```bash
 LOGIN.bat
 ```
@@ -292,7 +323,7 @@ const hashedPassword = await bcrypt.hash("NewPassword123!", 10);
 
 await database.user.update({
   where: { email: "gogsia@gmail.com" },
-  data: { password: hashedPassword }
+  data: { password: hashedPassword },
 });
 ```
 
@@ -325,6 +356,7 @@ docker exec -it farmers-market-redis redis-cli FLUSHALL
 Location: `src/lib/auth/config.ts`
 
 **Key Settings:**
+
 ```typescript
 session: {
   strategy: "jwt",  // Using JWT tokens
@@ -354,10 +386,10 @@ session: async ({ session, token }) => {
   if (token) {
     session.user.id = token.sub as string;
     session.user.role = token.role as string;
-    session.user.name = token.name || token.email || "User";  // Fallback
+    session.user.name = token.name || token.email || "User"; // Fallback
   }
   return session;
-}
+};
 ```
 
 ---
@@ -405,14 +437,14 @@ Before accessing admin routes, ensure:
 
 ## 🆘 Common Error Messages & Solutions
 
-| Error Message | Cause | Solution |
-|---------------|-------|----------|
-| "Authentication required" | Not signed in | Run `LOGIN.bat` |
-| "Invalid credentials" | Wrong password | Use `Admin123!` |
-| "Insufficient permissions" | Wrong role | Check role in database |
-| "Session expired" | Token expired | Sign in again |
-| "Database connection failed" | Postgres down | Run `docker compose up -d` |
-| "User not found" | Admin not created | Run `npx tsx create-admin.ts` |
+| Error Message                | Cause             | Solution                      |
+| ---------------------------- | ----------------- | ----------------------------- |
+| "Authentication required"    | Not signed in     | Run `LOGIN.bat`               |
+| "Invalid credentials"        | Wrong password    | Use `Admin123!`               |
+| "Insufficient permissions"   | Wrong role        | Check role in database        |
+| "Session expired"            | Token expired     | Sign in again                 |
+| "Database connection failed" | Postgres down     | Run `docker compose up -d`    |
+| "User not found"             | Admin not created | Run `npx tsx create-admin.ts` |
 
 ---
 
@@ -421,23 +453,27 @@ Before accessing admin routes, ensure:
 If authentication issues persist:
 
 1. **Check Logs**
+
    ```bash
    # Dev server logs show auth attempts
    npm run dev:omen
    ```
 
 2. **Verify Environment**
+
    ```bash
    # Check all required env vars
    type .env.local
    ```
 
 3. **Test Database**
+
    ```bash
    npx prisma studio
    ```
 
 4. **Check Session**
+
    ```bash
    CHECK-AUTH.bat
    ```
@@ -480,6 +516,7 @@ If authentication issues persist:
 ## 🌟 Best Practices
 
 ### Security
+
 - ✅ Never commit `.env.local` to Git
 - ✅ Use strong `NEXTAUTH_SECRET` (min 32 chars)
 - ✅ Change default password on first login
@@ -487,12 +524,14 @@ If authentication issues persist:
 - ✅ Enable rate limiting on login endpoints
 
 ### Development
+
 - ✅ Use `CHECK-AUTH.bat` before debugging routes
 - ✅ Clear browser cache when switching users
 - ✅ Keep dev server running during auth testing
 - ✅ Monitor console for auth errors
 
 ### Production
+
 - ✅ Use secure session storage (Redis)
 - ✅ Enable CSRF protection
 - ✅ Set short session timeouts

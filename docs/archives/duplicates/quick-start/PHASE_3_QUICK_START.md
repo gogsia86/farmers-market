@@ -1,4 +1,5 @@
 # 🚀 Phase 3 Quick Start Guide
+
 **Farmers Market Platform - Monitoring Dashboard**
 
 Last Updated: November 26, 2025  
@@ -21,6 +22,7 @@ Version: 1.0.0
 ## 🎯 Overview
 
 Phase 3 implements a **real-time monitoring dashboard** with:
+
 - ✅ Live system health monitoring
 - ✅ Workflow execution tracking
 - ✅ Alert management
@@ -93,6 +95,7 @@ http://localhost:3000/dashboard
 ```
 
 You should see:
+
 - System health status widget
 - Recent workflow executions
 - Active alerts
@@ -157,12 +160,14 @@ Total Tests: 10
 Open the dashboard and verify:
 
 **System Health Widget:**
+
 - [ ] Shows green/red status indicator
 - [ ] Displays 4 service checks (Database, API, Cache, External Services)
 - [ ] Shows last check time
 - [ ] Updates every 30 seconds
 
 **Workflow Execution Widget:**
+
 - [ ] Lists recent workflow runs
 - [ ] Shows status badges (SUCCESS/FAILED/RUNNING)
 - [ ] Displays duration for each execution
@@ -170,6 +175,7 @@ Open the dashboard and verify:
 - [ ] Shows success rate percentage
 
 **Alerts Widget:**
+
 - [ ] Lists active notifications
 - [ ] Filter tabs work (All, Critical, High, Medium)
 - [ ] Shows priority badges with colors
@@ -177,6 +183,7 @@ Open the dashboard and verify:
 - [ ] Shows alert summary counts
 
 **Performance Metrics Widget:**
+
 - [ ] Metric selector switches between Duration/Throughput/Success Rate
 - [ ] Bar chart displays 12-hour data
 - [ ] Hover tooltips appear on chart bars
@@ -222,6 +229,7 @@ curl "http://localhost:3000/api/monitoring/dashboard/metrics?period=24h" | jq '.
 **Purpose:** Get complete dashboard overview including system health, workflow stats, alerts, and performance.
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -261,6 +269,7 @@ curl "http://localhost:3000/api/monitoring/dashboard/metrics?period=24h" | jq '.
 **Endpoint:** `GET /api/monitoring/dashboard/executions`
 
 **Query Parameters:**
+
 - `limit` (default: 50, max: 100)
 - `offset` (default: 0)
 - `status` (SUCCESS | FAILED | RUNNING | PENDING)
@@ -269,6 +278,7 @@ curl "http://localhost:3000/api/monitoring/dashboard/metrics?period=24h" | jq '.
 - `endDate` (ISO date string)
 
 **Example:**
+
 ```bash
 GET /api/monitoring/dashboard/executions?limit=10&status=SUCCESS
 ```
@@ -278,11 +288,13 @@ GET /api/monitoring/dashboard/executions?limit=10&status=SUCCESS
 **Endpoint:** `GET /api/monitoring/dashboard/alerts`
 
 **Query Parameters:**
+
 - `priority` (CRITICAL | HIGH | MEDIUM | LOW)
 - `limit` (default: 50, max: 100)
 - `hours` (look back hours, default: 24)
 
 **Example:**
+
 ```bash
 GET /api/monitoring/dashboard/alerts?priority=CRITICAL&hours=12
 ```
@@ -292,11 +304,13 @@ GET /api/monitoring/dashboard/alerts?priority=CRITICAL&hours=12
 **Endpoint:** `GET /api/monitoring/dashboard/metrics`
 
 **Query Parameters:**
+
 - `period` (1h | 6h | 24h | 7d | 30d) - default: 24h
 - `interval` (1m | 5m | 15m | 1h | 1d) - default: auto
 - `metric` (responseTime | duration | throughput | successRate)
 
 **Example:**
+
 ```bash
 GET /api/monitoring/dashboard/metrics?period=24h&interval=15m
 ```
@@ -310,6 +324,7 @@ GET /api/monitoring/dashboard/metrics?period=24h&interval=15m
 **Cause:** Database connection issue or no monitoring data.
 
 **Solution:**
+
 ```bash
 # 1. Check daemon status
 npm run monitor:daemon:status
@@ -329,6 +344,7 @@ npm run db:studio
 **Cause:** Dev server not running or wrong port.
 
 **Solution:**
+
 ```bash
 # 1. Check if dev server is running
 lsof -ti:3001  # Should return a process ID
@@ -345,6 +361,7 @@ npm run dev
 **Cause:** No workflow executions yet in database.
 
 **Solution:**
+
 ```bash
 # Let the daemon run for 5-10 minutes to collect data
 # The health-check workflow runs every 5 minutes
@@ -361,6 +378,7 @@ npm run monitor:daemon:status
 **Cause:** API endpoints not accessible or server not ready.
 
 **Solution:**
+
 ```bash
 # 1. Ensure dev server is fully started
 npm run dev
@@ -378,6 +396,7 @@ curl http://localhost:3000/api/health
 **Cause:** Known issues in script files (non-blocking).
 
 **Solution:**
+
 ```bash
 # These don't affect dashboard functionality
 # To ignore for now, use:

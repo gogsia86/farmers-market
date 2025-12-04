@@ -1,4 +1,5 @@
 # 🎨 Wireframe Implementation Guide
+
 **Farmers Market Platform - UI/UX Implementation Roadmap**
 
 **Status**: Ready for Implementation  
@@ -40,17 +41,17 @@
 
 ## 🎯 IMPLEMENTATION PRIORITY MATRIX
 
-| Wireframe | Current Status | Priority | Effort | Impact | Implement? |
-|-----------|---------------|----------|--------|--------|------------|
-| **Consumer Dashboard Overview** | Missing | 🔴 P0 | 2 days | HIGH | ✅ YES - NOW |
-| **Order Management View** | Partial | 🔴 P0 | 3 days | HIGH | ✅ YES - Week 1 |
-| **Shopping Cart** | Exists | 🟡 P1 | 1 day | MED | ✅ YES - Enhance |
-| **Product Management UI** | Exists | 🟡 P1 | 2 days | MED | ✅ YES - Enhance |
-| **Farm Profile Tabs** | Partial | 🟡 P1 | 3 days | HIGH | ✅ YES - Week 2 |
-| **Admin Farm Verification** | Exists | 🟢 P2 | 1 day | LOW | ✅ YES - Polish |
-| **Marketplace Filters** | Partial | 🟡 P1 | 3 days | HIGH | ✅ YES - Week 3 |
-| **Homepage Hero** | Exists | 🟢 P3 | 1 day | LOW | 🔵 Later - Polish |
-| **Mobile Navigation** | Exists | 🟢 P3 | 2 days | MED | 🔵 Later - Enhance |
+| Wireframe                       | Current Status | Priority | Effort | Impact | Implement?         |
+| ------------------------------- | -------------- | -------- | ------ | ------ | ------------------ |
+| **Consumer Dashboard Overview** | Missing        | 🔴 P0    | 2 days | HIGH   | ✅ YES - NOW       |
+| **Order Management View**       | Partial        | 🔴 P0    | 3 days | HIGH   | ✅ YES - Week 1    |
+| **Shopping Cart**               | Exists         | 🟡 P1    | 1 day  | MED    | ✅ YES - Enhance   |
+| **Product Management UI**       | Exists         | 🟡 P1    | 2 days | MED    | ✅ YES - Enhance   |
+| **Farm Profile Tabs**           | Partial        | 🟡 P1    | 3 days | HIGH   | ✅ YES - Week 2    |
+| **Admin Farm Verification**     | Exists         | 🟢 P2    | 1 day  | LOW    | ✅ YES - Polish    |
+| **Marketplace Filters**         | Partial        | 🟡 P1    | 3 days | HIGH   | ✅ YES - Week 3    |
+| **Homepage Hero**               | Exists         | 🟢 P3    | 1 day  | LOW    | 🔵 Later - Polish  |
+| **Mobile Navigation**           | Exists         | 🟢 P3    | 2 days | MED    | 🔵 Later - Enhance |
 
 ---
 
@@ -384,38 +385,34 @@ export async function GET() {
     if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: "Authentication required" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     // Fetch stats
-    const [
-      activeOrders,
-      totalOrders,
-      favoriteCount,
-      recentOrders,
-    ] = await Promise.all([
-      database.order.count({
-        where: {
-          customerId: session.user.id,
-          status: { in: ["PENDING", "CONFIRMED", "PREPARING"] },
-        },
-      }),
-      database.order.count({
-        where: { customerId: session.user.id },
-      }),
-      database.favorite.count({
-        where: { userId: session.user.id },
-      }),
-      database.order.findMany({
-        where: { customerId: session.user.id },
-        include: {
-          farm: { select: { name: true } },
-        },
-        orderBy: { createdAt: "desc" },
-        take: 5,
-      }),
-    ]);
+    const [activeOrders, totalOrders, favoriteCount, recentOrders] =
+      await Promise.all([
+        database.order.count({
+          where: {
+            customerId: session.user.id,
+            status: { in: ["PENDING", "CONFIRMED", "PREPARING"] },
+          },
+        }),
+        database.order.count({
+          where: { customerId: session.user.id },
+        }),
+        database.favorite.count({
+          where: { userId: session.user.id },
+        }),
+        database.order.findMany({
+          where: { customerId: session.user.id },
+          include: {
+            farm: { select: { name: true } },
+          },
+          orderBy: { createdAt: "desc" },
+          take: 5,
+        }),
+      ]);
 
     // Count pending reviews
     const completedOrders = await database.order.findMany({
@@ -429,7 +426,7 @@ export async function GET() {
     });
 
     const pendingReviews = completedOrders.filter(
-      (order) => order.reviews.length === 0
+      (order) => order.reviews.length === 0,
     ).length;
 
     return NextResponse.json({
@@ -453,7 +450,7 @@ export async function GET() {
     console.error("Dashboard fetch error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch dashboard data" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -480,7 +477,7 @@ type OrderStatus = "active" | "completed" | "cancelled";
 export default function OrdersPage() {
   const searchParams = useSearchParams();
   const initialTab = (searchParams.get("status") as OrderStatus) || "active";
-  
+
   const [activeTab, setActiveTab] = useState<OrderStatus>(initialTab);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -769,31 +766,31 @@ function OrderListSkeleton() {
 
 :root {
   /* Primary Colors - Matching Wireframe */
-  --color-farm-green: #2D5A27;
-  --color-harvest-orange: #E67E22;
+  --color-farm-green: #2d5a27;
+  --color-harvest-orange: #e67e22;
   --color-earth-brown: #795548;
-  
+
   /* Functional Colors */
-  --color-success: #38A169;
-  --color-warning: #D69E2E;
-  --color-error: #E53E3E;
-  --color-info: #3182CE;
-  
+  --color-success: #38a169;
+  --color-warning: #d69e2e;
+  --color-error: #e53e3e;
+  --color-info: #3182ce;
+
   /* Neutral Palette */
-  --color-gray-50: #F7FAFC;
-  --color-gray-100: #EDF2F7;
-  --color-gray-200: #E2E8F0;
-  --color-gray-300: #CBD5E0;
-  --color-gray-600: #4A5568;
-  --color-gray-900: #1A202C;
-  
+  --color-gray-50: #f7fafc;
+  --color-gray-100: #edf2f7;
+  --color-gray-200: #e2e8f0;
+  --color-gray-300: #cbd5e0;
+  --color-gray-600: #4a5568;
+  --color-gray-900: #1a202c;
+
   /* Status Colors */
-  --status-pending: #FEF3C7;
-  --status-confirmed: #DBEAFE;
-  --status-preparing: #E9D5FF;
-  --status-ready: #D1FAE5;
-  --status-completed: #F3F4F6;
-  --status-cancelled: #FEE2E2;
+  --status-pending: #fef3c7;
+  --status-confirmed: #dbeafe;
+  --status-preparing: #e9d5ff;
+  --status-ready: #d1fae5;
+  --status-completed: #f3f4f6;
+  --status-cancelled: #fee2e2;
 }
 
 /* Utility Classes Matching Wireframe */
@@ -834,14 +831,14 @@ module.exports = {
   theme: {
     extend: {
       screens: {
-        'mobile': '320px',
-        'tablet': '768px',
-        'desktop': '1024px',
+        mobile: "320px",
+        tablet: "768px",
+        desktop: "1024px",
       },
       colors: {
-        'farm-green': '#2D5A27',
-        'harvest-orange': '#E67E22',
-        'earth-brown': '#795548',
+        "farm-green": "#2D5A27",
+        "harvest-orange": "#E67E22",
+        "earth-brown": "#795548",
       },
     },
   },
@@ -853,24 +850,28 @@ module.exports = {
 ## 🎯 IMPLEMENTATION ROADMAP
 
 ### Week 1-2: Consumer Dashboard
+
 - [ ] Day 1-2: Dashboard overview page
 - [ ] Day 3-4: Order management view
 - [ ] Day 5: Shopping cart enhancement
 - [ ] Day 6-7: Profile & favorites pages
 
 ### Week 3-4: Farm Profile Enhancement
+
 - [ ] Day 1-2: Tab-based layout
 - [ ] Day 3-4: Product grid with filters
 - [ ] Day 5: Sidebar order info
 - [ ] Day 6-7: Reviews tab
 
 ### Week 5-6: Marketplace Filters
+
 - [ ] Day 1-2: Sidebar filter component
 - [ ] Day 3-4: Location-based search
 - [ ] Day 5: Category multi-select
 - [ ] Day 6-7: Map view integration
 
 ### Week 7-8: Farmer Dashboard Polish
+
 - [ ] Day 1-2: Product management UI
 - [ ] Day 3-4: Order fulfillment flow
 - [ ] Day 5-6: Analytics dashboard

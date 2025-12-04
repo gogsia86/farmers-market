@@ -773,7 +773,7 @@ The Farmers Market Platform is in **excellent condition** for upgrading to Prism
 - [ ] Product Manager
 - [ ] Database Administrator
 
-**Date:** ******\_\_\_******
+**Date:** **\*\***\_\_\_**\*\***
 
 ---
 

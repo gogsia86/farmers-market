@@ -1,4 +1,5 @@
 # 🗄️ Prisma Schema Reference
+
 ## Quick Reference for TypeScript Error Fixes
 
 **Generated**: 2025  
@@ -12,6 +13,7 @@
 ### Order Model
 
 **Fields**:
+
 ```typescript
 {
   id: string
@@ -54,6 +56,7 @@
 ```
 
 **Relations** (must use `include`):
+
 ```typescript
 {
   fulfillment: Fulfillment?       // ✅ Relation exists!
@@ -70,15 +73,16 @@
 ```
 
 **Common Include Pattern**:
+
 ```typescript
 const order = await database.order.findUnique({
   where: { id },
   include: {
-    items: true,           // For order.items
-    customer: true,        // For order.customer
-    fulfillment: true,     // For order.fulfillment
-    Payment: true,         // For order.Payment
-  }
+    items: true, // For order.items
+    customer: true, // For order.customer
+    fulfillment: true, // For order.fulfillment
+    Payment: true, // For order.Payment
+  },
 });
 ```
 
@@ -87,6 +91,7 @@ const order = await database.order.findUnique({
 ### Product Model
 
 **Fields**:
+
 ```typescript
 {
   id: string
@@ -135,6 +140,7 @@ const order = await database.order.findUnique({
 ```
 
 **Relations**:
+
 ```typescript
 {
   cartItems: CartItem[]
@@ -149,14 +155,15 @@ const order = await database.order.findUnique({
 ```
 
 **Common Include Pattern**:
+
 ```typescript
 const product = await database.product.findUnique({
   where: { id },
   include: {
-    farm: true,              // For product.farm
-    Inventory: true,         // For stock data
+    farm: true, // For product.farm
+    Inventory: true, // For stock data
     reviews: true,
-  }
+  },
 });
 
 // Access stock:
@@ -170,24 +177,23 @@ const stock = product.Inventory?.[0]?.quantity ?? 0;
 ### Farm Model
 
 **Fields**:
+
 ```typescript
 {
-  id: string
-  ownerId: string
-  name: string
-  slug: string
-  description: string?
-  story: string?
-  email: string                    // ✅ Use 'email' not 'contactEmail'
-  phone: string                    // ✅ Use 'phone' not 'contactPhone'
-  website: string?
-  status: FarmStatus
-  verificationStatus: FarmVerificationStatus
+  id: string;
+  ownerId: string;
+  name: string;
+  slug: string;
+  description: string ? story : string ? email : string; // ✅ Use 'email' not 'contactEmail'
+  phone: string; // ✅ Use 'phone' not 'contactPhone'
+  website: string ? status : FarmStatus;
+  verificationStatus: FarmVerificationStatus;
   // ... many more fields
 }
 ```
 
 **Relations**:
+
 ```typescript
 {
   certifications: Certification[]
@@ -203,16 +209,17 @@ const stock = product.Inventory?.[0]?.quantity ?? 0;
 ```
 
 **Common Include Pattern**:
+
 ```typescript
 const farm = await database.farm.findUnique({
   where: { id },
   include: {
     products: {
-      where: { status: 'AVAILABLE' }
+      where: { status: "AVAILABLE" },
     },
     owner: true,
     certifications: true,
-  }
+  },
 });
 ```
 
@@ -221,25 +228,33 @@ const farm = await database.farm.findUnique({
 ### User Model
 
 **Fields**:
+
 ```typescript
 {
-  id: string
-  email: string
-  password: string?
-  firstName: string?
-  lastName: string?
-  name: string?
-  phone: string?
-  avatar: string?                  // ✅ Use 'avatar' not 'image'
-  role: UserRole
-  status: UserStatus
+  id: string;
+  email: string;
+  password: string
+    ? firstName
+    : string
+      ? lastName
+      : string
+        ? name
+        : string
+          ? phone
+          : string
+            ? avatar
+            : string // ✅ Use 'avatar' not 'image'
+              ? role
+              : UserRole;
+  status: UserStatus;
   // ... more fields
-  createdAt: DateTime
-  updatedAt: DateTime
+  createdAt: DateTime;
+  updatedAt: DateTime;
 }
 ```
 
 **Relations**:
+
 ```typescript
 {
   accounts: Account[]
@@ -256,6 +271,7 @@ const farm = await database.farm.findUnique({
 ### Payment Model
 
 **Fields**:
+
 ```typescript
 {
   id: string
@@ -270,9 +286,10 @@ const farm = await database.farm.findUnique({
 ```
 
 **Relations**:
+
 ```typescript
 {
-  order: Order
+  order: Order;
 }
 ```
 
@@ -281,28 +298,29 @@ const farm = await database.farm.findUnique({
 ### Payout Model
 
 **Fields**:
+
 ```typescript
 {
-  id: string
-  farmId: string                   // ✅ Links to Farm, not 'farmer'
-  status: string
-  amount: Decimal
-  currency: string
-  scheduledDate: DateTime
-  paidDate: DateTime?              // ✅ Use 'paidDate' not 'paidAt'
-  periodStart: DateTime
-  periodEnd: DateTime
-  orderCount: number
-  stripePayoutId: string?
-  failureReason: string?
-  createdAt: DateTime
+  id: string;
+  farmId: string; // ✅ Links to Farm, not 'farmer'
+  status: string;
+  amount: Decimal;
+  currency: string;
+  scheduledDate: DateTime;
+  paidDate: DateTime // ✅ Use 'paidDate' not 'paidAt'
+    ? periodStart
+    : DateTime;
+  periodEnd: DateTime;
+  orderCount: number;
+  stripePayoutId: string ? failureReason : string ? createdAt : DateTime;
 }
 ```
 
 **Relations**:
+
 ```typescript
 {
-  farm: Farm                       // ✅ Use 'farm' not 'farmer'
+  farm: Farm; // ✅ Use 'farm' not 'farmer'
   // Access farmer: payout.farm.owner
 }
 ```
@@ -312,6 +330,7 @@ const farm = await database.farm.findUnique({
 ## 🎯 Enums Reference
 
 ### OrderStatus
+
 ```typescript
 enum OrderStatus {
   PENDING
@@ -325,6 +344,7 @@ enum OrderStatus {
 ```
 
 **Invalid values to replace**:
+
 - ❌ "DELIVERED" → ✅ "COMPLETED"
 - ❌ "READY_FOR_PICKUP" → ✅ "READY"
 - ❌ "IN_PROGRESS" → ✅ "PREPARING"
@@ -332,6 +352,7 @@ enum OrderStatus {
 ---
 
 ### PaymentStatus
+
 ```typescript
 enum PaymentStatus {
   PENDING
@@ -343,12 +364,14 @@ enum PaymentStatus {
 ```
 
 **Invalid values to replace**:
+
 - ❌ "COMPLETED" → ✅ "PAID"
 - ❌ "SUCCEEDED" → ✅ "PAID"
 
 ---
 
 ### FarmStatus
+
 ```typescript
 enum FarmStatus {
   PENDING        // ✅ Use this, not "PENDING_VERIFICATION"
@@ -359,12 +382,14 @@ enum FarmStatus {
 ```
 
 **Invalid values to replace**:
+
 - ❌ "PENDING_VERIFICATION" → ✅ "PENDING"
 - ❌ "DRAFT" → ✅ "PENDING" (or check if there's a separate DRAFT status)
 
 ---
 
 ### ProductStatus
+
 ```typescript
 enum ProductStatus {
   DRAFT
@@ -377,6 +402,7 @@ enum ProductStatus {
 ---
 
 ### ProductCategory
+
 ```typescript
 enum ProductCategory {
   VEGETABLES
@@ -396,42 +422,44 @@ enum ProductCategory {
 ```
 
 **Note**: Category is an ENUM, not a relation. No `.name` property!
+
 ```typescript
 // ❌ WRONG
-product.category.name
+product.category.name;
 
 // ✅ CORRECT
-product.category  // Already the string value "VEGETABLES", "FRUITS", etc.
+product.category; // Already the string value "VEGETABLES", "FRUITS", etc.
 ```
 
 ---
 
 ## 🔍 Common Field Name Mappings
 
-| ❌ Common Mistake | ✅ Correct Field | Model |
-|------------------|------------------|-------|
-| `totalAmount` | `total` | Order |
-| `image` | `avatar` | User |
-| `contactEmail` | `email` | Farm |
-| `contactPhone` | `phone` | Farm |
-| `stockQuantity` | `quantityAvailable` | Product |
-| `paidAt` | `paidDate` | Payout |
-| `method` | `stripePaymentMethod` | Payment |
-| `category.name` | `category` | Product (it's an enum!) |
+| ❌ Common Mistake | ✅ Correct Field      | Model                   |
+| ----------------- | --------------------- | ----------------------- |
+| `totalAmount`     | `total`               | Order                   |
+| `image`           | `avatar`              | User                    |
+| `contactEmail`    | `email`               | Farm                    |
+| `contactPhone`    | `phone`               | Farm                    |
+| `stockQuantity`   | `quantityAvailable`   | Product                 |
+| `paidAt`          | `paidDate`            | Payout                  |
+| `method`          | `stripePaymentMethod` | Payment                 |
+| `category.name`   | `category`            | Product (it's an enum!) |
 
 ---
 
 ## 🔗 Common Include Patterns
 
 ### Order with all details:
+
 ```typescript
 const order = await database.order.findUnique({
   where: { id },
   include: {
     items: {
       include: {
-        product: true
-      }
+        product: true,
+      },
     },
     customer: {
       select: {
@@ -440,25 +468,26 @@ const order = await database.order.findUnique({
         email: true,
         phone: true,
         avatar: true,
-      }
+      },
     },
     farm: true,
     Payment: true,
     fulfillment: true,
     reviews: true,
-  }
+  },
 });
 
 // Calculate total:
-const totalAmount = order.total;  // Already on model!
+const totalAmount = order.total; // Already on model!
 // Or from items:
 const calculatedTotal = order.items.reduce(
-  (sum, item) => sum + (item.price * item.quantity), 
-  0
+  (sum, item) => sum + item.price * item.quantity,
+  0,
 );
 ```
 
 ### Product with farm and inventory:
+
 ```typescript
 const product = await database.product.findUnique({
   where: { id },
@@ -469,14 +498,14 @@ const product = await database.product.findUnique({
         name: true,
         slug: true,
         status: true,
-      }
+      },
     },
     Inventory: true,
     reviews: {
       take: 10,
-      orderBy: { createdAt: 'desc' }
-    }
-  }
+      orderBy: { createdAt: "desc" },
+    },
+  },
 });
 
 // Access stock:
@@ -484,16 +513,17 @@ const stock = product.quantityAvailable ?? 0;
 ```
 
 ### Farm with products:
+
 ```typescript
 const farm = await database.farm.findUnique({
   where: { id },
   include: {
     products: {
-      where: { 
-        status: 'AVAILABLE',
-        inStock: true 
+      where: {
+        status: "AVAILABLE",
+        inStock: true,
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
       take: 20,
     },
     owner: {
@@ -502,10 +532,10 @@ const farm = await database.farm.findUnique({
         name: true,
         email: true,
         avatar: true,
-      }
+      },
     },
     certifications: true,
-  }
+  },
 });
 ```
 
@@ -514,6 +544,7 @@ const farm = await database.farm.findUnique({
 ## 💡 Quick Tips
 
 ### 1. Always check relations before accessing:
+
 ```typescript
 // ❌ Will error if not included
 const items = order.items;
@@ -521,21 +552,23 @@ const items = order.items;
 // ✅ Safe access with include
 const order = await database.order.findUnique({
   where: { id },
-  include: { items: true }
+  include: { items: true },
 });
-const items = order.items;  // Now safe!
+const items = order.items; // Now safe!
 ```
 
 ### 2. Enums don't have properties:
+
 ```typescript
 // ❌ WRONG - category IS the enum value
 const categoryName = product.category.name;
 
 // ✅ CORRECT
-const categoryName = product.category;  // "VEGETABLES"
+const categoryName = product.category; // "VEGETABLES"
 ```
 
 ### 3. Use proper field names:
+
 ```typescript
 // ❌ WRONG
 const contact = farm.contactEmail;
@@ -545,14 +578,15 @@ const contact = farm.email;
 ```
 
 ### 4. Calculate totals when needed:
+
 ```typescript
 // Order already has 'total' field
 const orderTotal = order.total;
 
 // Or calculate from items:
 const calculatedTotal = order.items.reduce(
-  (sum, item) => sum + (item.price * item.quantity),
-  0
+  (sum, item) => sum + item.price * item.quantity,
+  0,
 );
 ```
 

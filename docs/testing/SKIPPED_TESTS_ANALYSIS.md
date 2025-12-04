@@ -1,15 +1,16 @@
 # 🧪 Skipped Tests Analysis
+
 **Farmers Market Platform - Divine Agricultural Testing**
 
 ## 📊 Summary
 
-| Category | Skipped Tests | Total Impact | Can Enable? |
-|----------|--------------|--------------|-------------|
-| **Timing/Async Issues** | 4 tests | Low | ⚠️ Risky |
-| **Resource Management** | 1 test | Very Low | ❌ No |
-| **Integration Tests** | 1 suite (~14 tests) | High | ✅ Yes |
-| **Performance/GPU Tests** | 1 suite (~8 tests) | Medium | ⚠️ Conditional |
-| **TOTAL** | 2 suites + 5 individual tests | - | - |
+| Category                  | Skipped Tests                 | Total Impact | Can Enable?    |
+| ------------------------- | ----------------------------- | ------------ | -------------- |
+| **Timing/Async Issues**   | 4 tests                       | Low          | ⚠️ Risky       |
+| **Resource Management**   | 1 test                        | Very Low     | ❌ No          |
+| **Integration Tests**     | 1 suite (~14 tests)           | High         | ✅ Yes         |
+| **Performance/GPU Tests** | 1 suite (~8 tests)            | Medium       | ⚠️ Conditional |
+| **TOTAL**                 | 2 suites + 5 individual tests | -            | -              |
 
 ---
 
@@ -20,6 +21,7 @@
 #### Location: `src/lib/services/__tests__/geocoding.service.test.ts`
 
 **Skipped Tests:**
+
 1. ❌ `should handle API timeout (timing issues with fake timers)`
 2. ❌ `should handle malformed API response (rate limiting causes timeout)`
 3. ❌ `should cache geocoding results efficiently (rate limiting timing issues)`
@@ -29,16 +31,18 @@
 **Impact:** Low - These edge cases are tested manually and work in production
 
 **Recommendation:** ⚠️ **Keep Skipped**
+
 - The timing complexity makes these tests flaky
 - Rate limiting is a production concern, not a test concern
 - The core geocoding functionality is well-tested (other 40+ tests pass)
 - Real-world rate limiting behavior is validated in production monitoring
 
 **If You Want to Fix:**
+
 ```typescript
 // Option 1: Mock the rate limiter completely
-jest.mock('@/lib/middleware/rate-limiter', () => ({
-  waitForRateLimit: jest.fn().mockResolvedValue(undefined)
+jest.mock("@/lib/middleware/rate-limiter", () => ({
+  waitForRateLimit: jest.fn().mockResolvedValue(undefined),
 }));
 
 // Option 2: Use real timers with shorter timeouts
@@ -51,26 +55,27 @@ const TEST_TIMEOUT = 100; // ms instead of 1000ms
 
 #### Location: `src/components/__tests__/ErrorBoundary.test.tsx`
 
-**Skipped Test:**
-4. ❌ `shows retry count when retries have occurred`
+**Skipped Test:** 4. ❌ `shows retry count when retries have occurred`
 
 **Reason:** React 19 concurrent rendering makes retry timing unpredictable
 
 **Impact:** Very Low - Retry mechanism works correctly in production
 
 **Recommendation:** ⚠️ **Keep Skipped for Now**
+
 - React 19's concurrent features change render timing
 - The retry functionality is validated through other tests
 - Wait for React 19 stable testing patterns to emerge
 
 **If You Want to Fix:**
+
 ```typescript
 // Use React Testing Library's waitFor with longer timeouts
 await waitFor(
   () => {
     expect(screen.getByText(/retry attempt/i)).toBeInTheDocument();
   },
-  { timeout: 5000, interval: 100 }
+  { timeout: 5000, interval: 100 },
 );
 ```
 
@@ -80,20 +85,21 @@ await waitFor(
 
 #### Location: `src/lib/performance/__tests__/gpu-processor.test.ts`
 
-**Skipped Test:**
-5. ❌ `cleans up TensorFlow memory`
+**Skipped Test:** 5. ❌ `cleans up TensorFlow memory`
 
 **Reason:** Requires sophisticated tensor tracking mocks
 
 **Impact:** Very Low - Memory cleanup is validated through integration tests
 
 **Recommendation:** ❌ **Keep Skipped**
+
 - This is explicitly marked as a TODO
 - Mocking TensorFlow tensor lifecycle is extremely complex
 - Real memory cleanup is tested in production GPU monitoring
 - The dispose() method functionality is tested through other tests
 
 **Why It's Hard:**
+
 - TensorFlow.js manages its own memory pool
 - Tensors need proper tracking across async operations
 - Mock implementations don't reflect real GPU memory behavior
@@ -107,6 +113,7 @@ await waitFor(
 **Status:** ✅ **CAN BE ENABLED!**
 
 **Current State:**
+
 ```typescript
 describe.skip("🔗 Integration: Complete Order Workflow", () => {
   // Tests complete end-to-end order processing
@@ -114,6 +121,7 @@ describe.skip("🔗 Integration: Complete Order Workflow", () => {
 ```
 
 **Tests Covered:**
+
 - User creation and authentication
 - Farm creation and verification
 - Product creation and inventory management
@@ -127,6 +135,7 @@ describe.skip("🔗 Integration: Complete Order Workflow", () => {
 - Inventory synchronization
 
 **Dependencies Verified:**
+
 - ✅ `OrderService` - Fully implemented with comprehensive methods
 - ✅ `PaymentService` - Exists at `src/lib/services/payment.service.ts`
 - ✅ `ProductService` - Exists with `createProduct()` static method
@@ -134,6 +143,7 @@ describe.skip("🔗 Integration: Complete Order Workflow", () => {
 - ✅ Database connection - Established and working
 
 **Why It Was Skipped:**
+
 - Originally skipped during development
 - Services were incomplete at that time
 - Never re-enabled after services were implemented
@@ -141,6 +151,7 @@ describe.skip("🔗 Integration: Complete Order Workflow", () => {
 **To Enable:**
 
 1. **Change the describe.skip to describe:**
+
 ```typescript
 // Before:
 describe.skip("🔗 Integration: Complete Order Workflow", () => {
@@ -150,6 +161,7 @@ describe("🔗 Integration: Complete Order Workflow", () => {
 ```
 
 2. **Update ProductService call to match current API:**
+
 ```typescript
 // Check current ProductService.createProduct signature
 // May need to adjust the input format
@@ -160,23 +172,26 @@ const testProduct = await ProductService.createProduct(
     category: "VEGETABLES",
     // ... match current CreateProductInput interface
   },
-  testUserId
+  testUserId,
 );
 ```
 
 3. **Ensure test database is available:**
+
 ```bash
 # The tests use real database, ensure TEST_DATABASE_URL is set
 npm run db:test:setup
 ```
 
 **Expected Results:**
+
 - ~14 additional passing tests
 - End-to-end validation of order workflow
 - Confidence in service integration
 - Real database interaction testing
 
 **Recommendation:** ✅ **ENABLE IMMEDIATELY**
+
 - High value tests
 - All dependencies exist
 - Provides critical integration coverage
@@ -191,6 +206,7 @@ npm run db:test:setup
 **Status:** ⚠️ **CONDITIONAL**
 
 **Tests Covered:**
+
 - Single image GPU processing speed (< 100ms target)
 - Batch image processing parallelization
 - Memory usage under load
@@ -199,6 +215,7 @@ npm run db:test:setup
 - Fallback to CPU when GPU unavailable
 
 **Requirements:**
+
 - ✅ NVIDIA RTX 2070 Max-Q GPU
 - ✅ CUDA support enabled
 - ✅ TensorFlow.js GPU backend
@@ -206,6 +223,7 @@ npm run db:test:setup
 - ❌ CI/CD GPU runners
 
 **Why It's Skipped:**
+
 - Hardware-dependent benchmarks
 - Requires GPU hardware
 - CI/CD environments typically don't have GPUs
@@ -214,12 +232,14 @@ npm run db:test:setup
 **To Enable (Local Development Only):**
 
 1. **Create test fixtures:**
+
 ```bash
 mkdir -p tests/fixtures
 # Add test images
 ```
 
 2. **Enable for local testing:**
+
 ```typescript
 // Change describe.skip to describe.skipIf
 const hasGPU = await checkGPUAvailability();
@@ -229,11 +249,13 @@ describe.skipIf(!hasGPU)("GPU Performance Benchmarking", () => {
 ```
 
 3. **Run with GPU flag:**
+
 ```bash
 npm run test:gpu  # Create new script
 ```
 
 **Recommendation:** ⚠️ **KEEP SKIPPED IN CI, ENABLE FOR LOCAL**
+
 - Create separate `npm run test:gpu` script
 - Enable only on developer machines with GPU
 - Skip in CI/CD environments
@@ -273,18 +295,21 @@ npm run test:gpu  # Create new script
 ## 📈 Impact Summary
 
 ### Current State:
+
 ```
 Test Suites: 2 skipped, 51 passed (51 of 53 total)
 Tests:       19 skipped, 1,890 passed (1,909 total)
 ```
 
 ### After Enabling Integration Tests:
+
 ```
 Test Suites: 1 skipped, 52 passed (52 of 53 total)  # +1 suite
 Tests:       5 skipped, 1,904 passed (1,909 total)   # +14 tests
 ```
 
 ### If Also Enabling GPU Tests (on GPU machines):
+
 ```
 Test Suites: 53 passed (53 of 53 total)              # +1 suite
 Tests:       5 skipped, 1,912 passed (1,917 total)   # +8 tests
@@ -295,6 +320,7 @@ Tests:       5 skipped, 1,912 passed (1,917 total)   # +8 tests
 ## 🔧 Quick Fix Commands
 
 ### Enable Integration Tests:
+
 ```bash
 # 1. Update the test file
 sed -i 's/describe.skip/describe/' "src/__tests__/integration/order-workflow.integration.test.ts"
@@ -307,6 +333,7 @@ npm run test
 ```
 
 ### Enable GPU Tests (Local Only):
+
 ```bash
 # 1. Create GPU test script
 npm pkg set scripts.test:gpu="jest tests/performance/gpu-benchmark.test.ts --runInBand"
@@ -323,6 +350,7 @@ npm run test:gpu
 ## 🏆 Recommended Final State
 
 ### Keep Enabled (52 suites, 1,904 tests):
+
 - ✅ All unit tests
 - ✅ All service tests
 - ✅ Integration tests (order workflow)
@@ -330,11 +358,13 @@ npm run test:gpu
 - ✅ API tests
 
 ### Keep Skipped (1 suite, 5 tests):
+
 - ❌ GPU benchmarks (hardware-dependent)
 - ❌ Timing-sensitive tests (flaky)
 - ❌ Memory cleanup test (TODO)
 
 ### Test Coverage Target:
+
 - **Current:** 99.7% tests enabled (1,890/1,909)
 - **After Integration:** 99.7% tests enabled (1,904/1,909)
 - **Goal:** Maintain >99% stable test coverage

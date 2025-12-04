@@ -685,22 +685,22 @@ src/
 
 ### Application URLs
 
-| Service | URL | Credentials |
-|---------|-----|-------------|
-| **Application** | http://localhost:3000 | - |
+| Service         | URL                               | Credentials                  |
+| --------------- | --------------------------------- | ---------------------------- |
+| **Application** | http://localhost:3000             | -                            |
 | **Admin Login** | http://localhost:3000/admin-login | gogsia@gmail.com / Admin123! |
-| **Dashboard** | http://localhost:3000/dashboard | (after login) |
-| **API Health** | http://localhost:3000/api/health | - |
+| **Dashboard**   | http://localhost:3000/dashboard   | (after login)                |
+| **API Health**  | http://localhost:3000/api/health  | -                            |
 
 ### Development Tools
 
-| Tool | URL | Purpose |
-|------|-----|---------|
-| **Prisma Studio** | http://localhost:5555 | Database GUI |
-| **Adminer** | http://localhost:8080 | Database admin |
-| **Redis Commander** | http://localhost:8081 | Cache manager |
-| **MailHog** | http://localhost:8025 | Email testing |
-| **PgAdmin** | http://localhost:8082 | Advanced DB UI |
+| Tool                | URL                   | Purpose        |
+| ------------------- | --------------------- | -------------- |
+| **Prisma Studio**   | http://localhost:5555 | Database GUI   |
+| **Adminer**         | http://localhost:8080 | Database admin |
+| **Redis Commander** | http://localhost:8081 | Cache manager  |
+| **MailHog**         | http://localhost:8025 | Email testing  |
+| **PgAdmin**         | http://localhost:8082 | Advanced DB UI |
 
 ### Ports Reference
 

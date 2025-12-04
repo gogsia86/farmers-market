@@ -1,4 +1,5 @@
 # 🚀 QUICK SETUP COMMANDS
+
 **Copy & Paste - Get Running in 2 Minutes**
 
 ---
@@ -28,12 +29,15 @@ npm run dev:omen
 ## 📋 **ALL SEED OPTIONS**
 
 ### Option 1: Basic Seed (Quick Testing)
+
 ```powershell
 npm run db:seed:basic
 ```
+
 **Creates**: 1 admin, 2 farmers, 2 consumers, 2 farms, ~15 products
 
 **Login Credentials**:
+
 ```
 Admin:     gogsia@gmail.com / Admin123!
 Farmer 1:  farmer1@example.com / Farmer123!
@@ -45,12 +49,15 @@ Consumer2: consumer2@example.com / Consumer123!
 ---
 
 ### Option 2: Admin Only (Fastest)
+
 ```powershell
 npx ts-node prisma/seed-admin.ts
 ```
+
 **Creates**: Just 1 admin user
 
 **Login Credentials**:
+
 ```
 Admin: admin@farmersmarket.app / DivineAdmin123!
 ```
@@ -58,12 +65,15 @@ Admin: admin@farmersmarket.app / DivineAdmin123!
 ---
 
 ### Option 3: Comprehensive (Full Demo)
+
 ```powershell
 npm run db:seed
 ```
+
 **Creates**: 1 admin, 5 farmers, 3 consumers, 5 farms, 50+ products, orders, reviews
 
 **Key Login Credentials**:
+
 ```
 Admin:    admin@farmersmarket.app / DivineAdmin123!
 Farmer:   ana.romana@email.com / FarmLife2024!
@@ -71,6 +81,7 @@ Consumer: divna.kapica@email.com / HealthyEating2024!
 ```
 
 **All Farmer Accounts**:
+
 ```
 ana.romana@email.com / FarmLife2024!
 sarah.greenfield@email.com / OrganicFarm23!
@@ -80,6 +91,7 @@ david.organic@email.com / SustainFarm!45
 ```
 
 **All Consumer Accounts**:
+
 ```
 divna.kapica@email.com / HealthyEating2024!
 emily.conscious@email.com / LocalFood123!
@@ -155,6 +167,7 @@ npm run test:integration
 ## 🛠️ **TROUBLESHOOTING**
 
 ### Database Connection Failed
+
 ```powershell
 # Check if containers are running
 docker ps
@@ -169,6 +182,7 @@ npm run dev:omen
 ---
 
 ### Rate Limited (429 Error)
+
 ```powershell
 # Restart dev server to reset rate limiting
 # In dev server terminal: Ctrl+C, then:
@@ -178,6 +192,7 @@ npm run dev:omen
 ---
 
 ### Prisma Client Issues
+
 ```powershell
 # Regenerate Prisma client
 npx prisma generate
@@ -192,6 +207,7 @@ npm run dev:omen
 ---
 
 ### Clear Everything and Start Fresh
+
 ```powershell
 # 1. Stop dev server (Ctrl+C)
 
@@ -216,6 +232,7 @@ npm run dev:omen
 ## 🎯 **COMMON WORKFLOWS**
 
 ### Full Development Setup
+
 ```powershell
 # Terminal 1: Dev server
 npm run dev:omen
@@ -230,6 +247,7 @@ npm run test:watch
 ---
 
 ### Quick Login Test
+
 ```powershell
 # 1. Ensure database seeded
 npm run db:seed:basic
@@ -244,6 +262,7 @@ npm run dev:omen
 ---
 
 ### Stripe Testing Setup
+
 ```powershell
 # Terminal 1: Dev server (already running)
 # Terminal 2: Stripe webhook listener

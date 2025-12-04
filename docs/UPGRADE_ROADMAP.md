@@ -54,6 +54,7 @@ WEEK 4: ADVANCED FEATURES
 ## 🔥 Critical Path (Week 1)
 
 ### 1️⃣ ESLint v9 Migration
+
 ```
 Current:  .eslintrc.json (deprecated) → Blocks pre-commit hooks
 Target:   eslint.config.js (flat config) → Hooks working
@@ -62,6 +63,7 @@ Impact:   🔥🔥🔥 CRITICAL (unblocks development workflow)
 ```
 
 **What to do:**
+
 1. Create `eslint.config.js` with flat config
 2. Remove `.eslintrc.json`
 3. Test with `npm run lint`
@@ -71,6 +73,7 @@ Impact:   🔥🔥🔥 CRITICAL (unblocks development workflow)
 ---
 
 ### 2️⃣ TypeScript Build Validation
+
 ```
 Current:  ignoreBuildErrors: true → Type errors hidden
 Target:   ignoreBuildErrors: false → Errors caught at build
@@ -79,6 +82,7 @@ Impact:   🔥🔥🔥 CRITICAL (prevents production bugs)
 ```
 
 **What to do:**
+
 1. Edit `next.config.mjs`
 2. Change `ignoreBuildErrors: true` to `false`
 3. Run `npm run build` to verify (should pass - 0 errors)
@@ -87,6 +91,7 @@ Impact:   🔥🔥🔥 CRITICAL (prevents production bugs)
 ---
 
 ### 3️⃣ Prisma 7 Upgrade
+
 ```
 Current:  Prisma 6.19.0 (stable but older)
 Target:   Prisma 7.0.1 (latest + performance improvements)
@@ -95,6 +100,7 @@ Impact:   🔥🔥 HIGH (15% faster queries, 50 MB smaller)
 ```
 
 **What to do:**
+
 1. Review migration guide: https://pris.ly/d/major-version-upgrade
 2. Run `npm install @prisma/client@latest prisma@latest`
 3. Run `npx prisma generate`
@@ -107,6 +113,7 @@ Impact:   🔥🔥 HIGH (15% faster queries, 50 MB smaller)
 ## ⚡ Performance Path (Week 2)
 
 ### 4️⃣ Monitoring Lazy Loading
+
 ```
 Current:  29 KB initial load (largest page)
 Target:   15 KB initial load (widgets load on-demand)
@@ -115,6 +122,7 @@ Impact:   ⭐⭐ MEDIUM (better monitoring UX)
 ```
 
 ### 5️⃣ Static Generation
+
 ```
 Current:  10+ pages server-rendered on every request
 Target:   Static HTML at build time, CDN-served
@@ -123,6 +131,7 @@ Impact:   ⭐⭐ MEDIUM (instant loads, -90% server load)
 ```
 
 ### 6️⃣ Performance Budgets
+
 ```
 Purpose:  Prevent bundle size regressions
 Limits:   Framework <800KB, Vendor <300KB, Pages <50KB
@@ -135,6 +144,7 @@ Impact:   ⭐⭐⭐ HIGH (maintain performance over time)
 ## 💡 Enhancement Path (Weeks 3-4)
 
 ### 7️⃣ React Server Components
+
 ```
 Benefit:  -20-40% client bundle size
 Pages:    /farmer/dashboard, /admin, /farms, /products
@@ -142,6 +152,7 @@ Impact:   ⭐⭐⭐ HIGH (smaller bundles + faster loads)
 ```
 
 ### 8️⃣ Database Optimization
+
 ```
 Action:   Add indexes + query logging middleware
 Benefit:  10-50x faster queries on indexed fields
@@ -149,6 +160,7 @@ Impact:   ⭐⭐⭐ HIGH (scales better with data growth)
 ```
 
 ### 9️⃣ Type-Safe API Client
+
 ```
 Features: Zod validation + TypeScript inference + centralized client
 Benefit:  Catch API errors at compile-time
@@ -156,6 +168,7 @@ Impact:   ⭐⭐ MEDIUM (better DX, fewer bugs)
 ```
 
 ### 🔟 Agricultural Intelligence
+
 ```
 Features: Seasonal recommendations + biodynamic calendar
 Benefit:  Unique platform differentiator
@@ -167,6 +180,7 @@ Impact:   ⭐⭐ MEDIUM (competitive advantage)
 ## 📊 Expected Improvements
 
 ### Performance Gains
+
 ```
 Monitoring Page:      29 KB → 15 KB        (-48%)
 Content Pages:        SSR → Static HTML    (-90% server load)
@@ -175,6 +189,7 @@ Client Bundle (RSC):  Current → -20-40%    (smaller bundles)
 ```
 
 ### Developer Experience
+
 ```
 Linting:        Slow → 50% faster       (ESLint v9)
 Type Safety:    Build time → Enforced   (prevent bugs)
@@ -183,6 +198,7 @@ Development:    +10-20% velocity        (better tooling)
 ```
 
 ### Business Impact
+
 ```
 Page Load Time:    -25-40%              (faster UX)
 Server Costs:      -15-30%              (static pages)
@@ -195,24 +211,28 @@ Unique Features:   Agricultural AI      (differentiator)
 ## ✅ Weekly Milestones
 
 ### End of Week 1
+
 - ✅ Pre-commit hooks functional
 - ✅ TypeScript validation enforced
 - ✅ Prisma 7 in staging
 - ✅ All tests passing
 
 ### End of Week 2
+
 - ✅ Monitoring page optimized
 - ✅ 10+ static pages deployed
 - ✅ Bundle size monitoring active
 - ✅ Performance measured & documented
 
 ### End of Week 3
+
 - ✅ 3-5 pages converted to RSC
 - ✅ Database indexes deployed
 - ✅ Query performance improved
 - ✅ Type-safe API client created
 
 ### End of Week 4
+
 - ✅ Agricultural intelligence features live
 - ✅ All documentation updated
 - ✅ Production deployment ready
@@ -238,6 +258,7 @@ Unique Features:   Agricultural AI      (differentiator)
 ```
 
 **Legend:**
+
 - **Quadrant 1 (High Impact, Low Effort):** DO FIRST ⭐⭐⭐
 - **Quadrant 2 (High Impact, High Effort):** SCHEDULE CAREFULLY ⭐⭐
 - **Quadrant 3 (Low Impact, High Effort):** POSTPONE ⭐
@@ -248,6 +269,7 @@ Unique Features:   Agricultural AI      (differentiator)
 ## 🚦 Risk Assessment
 
 ### Low Risk (Green Light 🟢)
+
 - ESLint v9 migration
 - TypeScript validation
 - Static generation
@@ -255,11 +277,13 @@ Unique Features:   Agricultural AI      (differentiator)
 - Type-safe API client
 
 ### Medium Risk (Yellow Light 🟡)
+
 - Prisma 7 upgrade (test thoroughly)
 - RSC migration (test auth flows)
 - Database optimization (backup first)
 
 ### Mitigation Strategies
+
 1. Test in staging environment first
 2. Deploy during low-traffic periods
 3. Have rollback plan ready
@@ -271,11 +295,13 @@ Unique Features:   Agricultural AI      (differentiator)
 ## 💰 Cost-Benefit Analysis
 
 ### Investment
+
 - **Time:** 2-4 weeks development
 - **Risk:** Low-Medium (mostly additive changes)
 - **Resources:** 1 developer full-time
 
 ### Returns
+
 - **Performance:** 25-40% improvement
 - **Bundle Size:** 20-48% reduction (various pages)
 - **Server Costs:** 15-30% reduction
@@ -284,6 +310,7 @@ Unique Features:   Agricultural AI      (differentiator)
 - **Unique Features:** Agricultural intelligence (competitive edge)
 
 ### ROI Timeline
+
 - **Week 1:** Foundation improvements (tooling + validation)
 - **Week 2:** Measurable performance gains (bundle + static pages)
 - **Week 3:** Scalability improvements (RSC + database)
@@ -296,6 +323,7 @@ Unique Features:   Agricultural AI      (differentiator)
 ## 📝 Quick Start Guide
 
 ### Option A: Full Roadmap (4 weeks)
+
 ```bash
 # Week 1: Critical upgrades
 git checkout -b upgrade/week-1-critical
@@ -311,6 +339,7 @@ git checkout -b upgrade/week-3-4-enhancements
 ```
 
 ### Option B: Phased Approach (Safer)
+
 ```bash
 # Phase 1: Just critical (Week 1)
 git checkout -b upgrade/phase-1-critical
@@ -325,6 +354,7 @@ git checkout -b upgrade/phase-2-performance
 ```
 
 ### Option C: Cherry-Pick (Selective)
+
 ```bash
 # Choose 2-3 highest priority items
 # Example: ESLint v9 + TypeScript validation + Performance budgets
@@ -339,6 +369,7 @@ git checkout -b upgrade/selected-improvements
 ## 🔍 Success Metrics
 
 ### Technical KPIs
+
 ```
 ✅ Pre-commit hooks: PASS rate 100%
 ✅ TypeScript errors: 0 in production builds
@@ -349,6 +380,7 @@ git checkout -b upgrade/selected-improvements
 ```
 
 ### Business KPIs
+
 ```
 ✅ User satisfaction: +10%
 ✅ Page views per session: +15%
@@ -362,6 +394,7 @@ git checkout -b upgrade/selected-improvements
 ## 🎉 Final Checklist
 
 Before starting implementation:
+
 - [ ] Phase 6 merged to main (all TypeScript errors fixed)
 - [ ] Staging environment ready for testing
 - [ ] Team briefed on upgrade plan
@@ -370,6 +403,7 @@ Before starting implementation:
 - [ ] Monitoring tools configured
 
 During implementation:
+
 - [ ] Follow week-by-week plan
 - [ ] Test each upgrade in staging first
 - [ ] Document changes and decisions
@@ -377,6 +411,7 @@ During implementation:
 - [ ] Communicate progress to team
 
 After completion:
+
 - [ ] Measure and document improvements
 - [ ] Update team documentation
 - [ ] Share learnings and best practices

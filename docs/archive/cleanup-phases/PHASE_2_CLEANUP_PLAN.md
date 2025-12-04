@@ -1,4 +1,5 @@
 # 🔧 PHASE 2 CLEANUP PLAN
+
 **Farmers Market Platform - Service Layer Optimization & Logging Standardization**  
 **Version:** 2.0  
 **Timeline:** 2 weeks post-deployment  
@@ -10,15 +11,18 @@
 ## 📊 EXECUTIVE SUMMARY
 
 ### Objective
+
 Replace 600+ console statements with proper structured logging, focusing on critical production code paths (services, API routes) while maintaining acceptable console usage in monitoring infrastructure.
 
 ### Scope
+
 - **Primary Target:** Service layer (`src/lib/services/`)
 - **Secondary Target:** API routes (`src/app/api/`)
 - **Tertiary Target:** Feature services (`src/features/`)
 - **Out of Scope:** Monitoring infrastructure (acceptable usage)
 
 ### Success Criteria
+
 - ✅ Zero console.log in `src/lib/services/`
 - ✅ Zero console.log in `src/app/api/` (except error handling)
 - ✅ Proper logger implementation with OpenTelemetry integration
@@ -30,6 +34,7 @@ Replace 600+ console statements with proper structured logging, focusing on crit
 ## 📈 CURRENT STATE ANALYSIS
 
 ### Console Statement Distribution
+
 ```
 TOTAL: 600 console statements
 
@@ -48,20 +53,22 @@ By Type:
 ```
 
 ### Top 10 Offending Files (Prioritized)
-| Priority | File | Count | Action |
-|----------|------|-------|--------|
-| 🔥 HIGH | `src/lib/performance/gpu-processor.ts` | 39 | Replace with logger |
-| 🟡 MEDIUM | `src/lib/monitoring/workflows/workflow-executor.ts` | 35 | Keep (monitoring) |
-| 🟡 MEDIUM | `src/lib/monitoring/reporter.ts` | 30 | Keep (monitoring) |
-| 🟡 MEDIUM | `src/lib/monitoring/bot.ts` | 27 | Keep (monitoring) |
-| 🔥 HIGH | `src/lib/cache/redis.ts` | 19 | Replace with logger |
-| 🟡 MEDIUM | `src/lib/monitoring/app-insights.ts` | 18 | Keep (monitoring) |
-| 🔥 HIGH | `src/app/api/webhooks/stripe/route.ts` | 18 | Replace with logger |
-| 🟡 MEDIUM | `src/lib/monitoring/storage/database.storage.ts` | 13 | Keep (monitoring) |
-| 🔥 HIGH | `src/lib/email/email-service.ts` | 13 | Replace with logger |
-| 🟡 MEDIUM | `src/lib/monitoring/telemetry.ts` | 11 | Keep (monitoring) |
+
+| Priority  | File                                                | Count | Action              |
+| --------- | --------------------------------------------------- | ----- | ------------------- |
+| 🔥 HIGH   | `src/lib/performance/gpu-processor.ts`              | 39    | Replace with logger |
+| 🟡 MEDIUM | `src/lib/monitoring/workflows/workflow-executor.ts` | 35    | Keep (monitoring)   |
+| 🟡 MEDIUM | `src/lib/monitoring/reporter.ts`                    | 30    | Keep (monitoring)   |
+| 🟡 MEDIUM | `src/lib/monitoring/bot.ts`                         | 27    | Keep (monitoring)   |
+| 🔥 HIGH   | `src/lib/cache/redis.ts`                            | 19    | Replace with logger |
+| 🟡 MEDIUM | `src/lib/monitoring/app-insights.ts`                | 18    | Keep (monitoring)   |
+| 🔥 HIGH   | `src/app/api/webhooks/stripe/route.ts`              | 18    | Replace with logger |
+| 🟡 MEDIUM | `src/lib/monitoring/storage/database.storage.ts`    | 13    | Keep (monitoring)   |
+| 🔥 HIGH   | `src/lib/email/email-service.ts`                    | 13    | Replace with logger |
+| 🟡 MEDIUM | `src/lib/monitoring/telemetry.ts`                   | 11    | Keep (monitoring)   |
 
 ### Critical Service Files (Must Fix)
+
 ```
 🔴 CRITICAL - Production Services
 ├── src/lib/services/geocoding.service.ts       (9 statements)
@@ -83,25 +90,31 @@ By Type:
 ## 🎯 PHASE 2 OBJECTIVES
 
 ### Week 1: Foundation & Critical Services
+
 **Days 1-2: Logger Infrastructure**
+
 - [ ] Create comprehensive logging utility
 - [ ] Integrate with OpenTelemetry
 - [ ] Add structured logging support
 - [ ] Create logging middleware for API routes
 
 **Days 3-5: Critical Service Migration**
+
 - [ ] Replace console in `geocoding.service.ts`
 - [ ] Replace console in `payment.service.ts`
 - [ ] Replace console in `stripe webhook route`
 - [ ] Add tests for logging functionality
 
 ### Week 2: Infrastructure & Validation
+
 **Days 6-8: Infrastructure Services**
+
 - [ ] Replace console in `redis.ts`
 - [ ] Replace console in `email-service.ts`
 - [ ] Replace console in `gpu-processor.ts`
 
 **Days 9-10: Validation & Rollout**
+
 - [ ] Run full test suite
 - [ ] Production deployment
 - [ ] Monitor logging in production
@@ -114,6 +127,7 @@ By Type:
 ### Step 1: Create Enhanced Logger Utility
 
 #### File: `src/lib/logger/index.ts`
+
 ```typescript
 /**
  * 🌟 DIVINE LOGGING UTILITY
@@ -121,13 +135,13 @@ By Type:
  * Reference: 12_ERROR_HANDLING_VALIDATION.instructions.md
  */
 
-import { trace, context as otelContext } from '@opentelemetry/api';
+import { trace, context as otelContext } from "@opentelemetry/api";
 
 export enum LogLevel {
-  DEBUG = 'debug',
-  INFO = 'info',
-  WARN = 'warn',
-  ERROR = 'error',
+  DEBUG = "debug",
+  INFO = "info",
+  WARN = "warn",
+  ERROR = "error",
 }
 
 export interface LogContext {
@@ -150,7 +164,7 @@ export class Logger {
    * Log debug information (development only)
    */
   debug(message: string, context?: LogContext): void {
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === "development") {
       this.log(LogLevel.DEBUG, message, context);
     }
   }
@@ -208,20 +222,20 @@ export class Logger {
     // Add to active span if exists
     if (span) {
       span.addEvent(message, {
-        'log.level': level,
-        'log.service': this.service,
+        "log.level": level,
+        "log.service": this.service,
         ...context,
       });
     }
 
     // Output based on environment
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === "production") {
       // Production: JSON structured logs for log aggregation
       console.log(JSON.stringify(logEntry));
     } else {
       // Development: Human-readable format
       const emoji = this.getLogEmoji(level);
-      const contextStr = context ? JSON.stringify(context, null, 2) : '';
+      const contextStr = context ? JSON.stringify(context, null, 2) : "";
       console.log(`${emoji} [${timestamp}] [${this.service}] ${message}`);
       if (contextStr) {
         console.log(contextStr);
@@ -231,11 +245,16 @@ export class Logger {
 
   private getLogEmoji(level: LogLevel): string {
     switch (level) {
-      case LogLevel.DEBUG: return '🔍';
-      case LogLevel.INFO: return 'ℹ️';
-      case LogLevel.WARN: return '⚠️';
-      case LogLevel.ERROR: return '❌';
-      default: return '📝';
+      case LogLevel.DEBUG:
+        return "🔍";
+      case LogLevel.INFO:
+        return "ℹ️";
+      case LogLevel.WARN:
+        return "⚠️";
+      case LogLevel.ERROR:
+        return "❌";
+      default:
+        return "📝";
     }
   }
 }
@@ -250,10 +269,11 @@ export function createLogger(service: string): Logger {
 /**
  * Default logger for general usage
  */
-export const logger = createLogger('app');
+export const logger = createLogger("app");
 ```
 
 #### File: `src/lib/logger/types.ts`
+
 ```typescript
 /**
  * Agricultural domain-specific logging contexts
@@ -299,12 +319,13 @@ export interface GeocodingContext {
 #### Example 1: Geocoding Service Migration
 
 **Before:**
+
 ```typescript
 // ❌ OLD PATTERN - Using console.log
 export class GeocodingService {
   async geocodeAddress(address: string): Promise<Coordinates> {
     console.log(`🌍 Geocoding address: ${address}`);
-    
+
     // Check cache first
     const cached = await this.cache.get(address);
     if (cached) {
@@ -325,24 +346,25 @@ export class GeocodingService {
 ```
 
 **After:**
+
 ```typescript
 // ✅ NEW PATTERN - Using structured logger
-import { createLogger } from '@/lib/logger';
-import type { GeocodingContext } from '@/lib/logger/types';
+import { createLogger } from "@/lib/logger";
+import type { GeocodingContext } from "@/lib/logger/types";
 
 export class GeocodingService {
-  private logger = createLogger('geocoding-service');
+  private logger = createLogger("geocoding-service");
 
   async geocodeAddress(address: string): Promise<Coordinates> {
     const context: GeocodingContext = { address };
-    
-    this.logger.info('Geocoding address request', context);
-    
+
+    this.logger.info("Geocoding address request", context);
+
     // Check cache first
     const cached = await this.cache.get(address);
     if (cached) {
-      this.logger.info('Geocoding cache hit', { 
-        ...context, 
+      this.logger.info("Geocoding cache hit", {
+        ...context,
         cached: true,
         coordinates: cached,
       });
@@ -351,14 +373,14 @@ export class GeocodingService {
 
     try {
       const result = await this.googleMapsClient.geocode(address);
-      this.logger.info('Geocoding successful', {
+      this.logger.info("Geocoding successful", {
         ...context,
         coordinates: result,
         cached: false,
       });
       return result;
     } catch (error) {
-      this.logger.error('Geocoding failed', error as Error, context);
+      this.logger.error("Geocoding failed", error as Error, context);
       throw error;
     }
   }
@@ -368,6 +390,7 @@ export class GeocodingService {
 #### Example 2: Payment Service Migration
 
 **Before:**
+
 ```typescript
 // ❌ OLD PATTERN
 async handlePaymentSuccess(paymentIntent: PaymentIntent) {
@@ -376,7 +399,7 @@ async handlePaymentSuccess(paymentIntent: PaymentIntent) {
     amount: paymentIntent.amount,
     currency: paymentIntent.currency,
   });
-  
+
   try {
     await this.updateOrder(orderId);
   } catch (error) {
@@ -386,6 +409,7 @@ async handlePaymentSuccess(paymentIntent: PaymentIntent) {
 ```
 
 **After:**
+
 ```typescript
 // ✅ NEW PATTERN
 import { createLogger } from '@/lib/logger';
@@ -402,7 +426,7 @@ async handlePaymentSuccess(paymentIntent: PaymentIntent) {
   };
 
   this.logger.info('Payment successful', context);
-  
+
   try {
     await this.updateOrder(orderId);
     this.logger.info('Order updated after payment', { orderId });
@@ -416,72 +440,74 @@ async handlePaymentSuccess(paymentIntent: PaymentIntent) {
 #### Example 3: Stripe Webhook Migration
 
 **Before:**
+
 ```typescript
 // ❌ OLD PATTERN - Multiple console statements
 export async function POST(request: NextRequest) {
-  const signature = request.headers.get('stripe-signature');
-  
+  const signature = request.headers.get("stripe-signature");
+
   try {
     const event = stripe.webhooks.constructEvent(body, signature, secret);
-    console.log('Stripe webhook received:', event.type);
-    
+    console.log("Stripe webhook received:", event.type);
+
     switch (event.type) {
-      case 'payment_intent.succeeded':
-        console.log('Processing payment success...');
+      case "payment_intent.succeeded":
+        console.log("Processing payment success...");
         await handlePaymentSuccess(event.data.object);
         break;
       // ... more cases
     }
-    
-    console.log('Webhook processed successfully');
+
+    console.log("Webhook processed successfully");
     return NextResponse.json({ received: true });
   } catch (error) {
-    console.error('Webhook error:', error);
-    return NextResponse.json({ error: 'Webhook failed' }, { status: 400 });
+    console.error("Webhook error:", error);
+    return NextResponse.json({ error: "Webhook failed" }, { status: 400 });
   }
 }
 ```
 
 **After:**
+
 ```typescript
 // ✅ NEW PATTERN - Structured logging
-import { createLogger } from '@/lib/logger';
+import { createLogger } from "@/lib/logger";
 
-const logger = createLogger('stripe-webhook');
+const logger = createLogger("stripe-webhook");
 
 export async function POST(request: NextRequest) {
-  const signature = request.headers.get('stripe-signature');
-  
+  const signature = request.headers.get("stripe-signature");
+
   try {
     const event = stripe.webhooks.constructEvent(body, signature, secret);
-    
-    logger.info('Stripe webhook received', {
+
+    logger.info("Stripe webhook received", {
       eventType: event.type,
       eventId: event.id,
       livemode: event.livemode,
     });
-    
+
     switch (event.type) {
-      case 'payment_intent.succeeded':
-        logger.info('Processing payment success', {
+      case "payment_intent.succeeded":
+        logger.info("Processing payment success", {
           paymentIntentId: event.data.object.id,
         });
         await handlePaymentSuccess(event.data.object);
         break;
       // ... more cases
     }
-    
-    logger.info('Webhook processed successfully', {
+
+    logger.info("Webhook processed successfully", {
       eventType: event.type,
       eventId: event.id,
     });
-    
+
     return NextResponse.json({ received: true });
   } catch (error) {
-    logger.error('Webhook processing failed', error as Error, {
-      signature: signature?.substring(0, 20) + '...',
+    logger.error("Webhook processing failed", error as Error, {
+      signature: signature?.substring(0, 20) + "...",
     });
-    return NextResponse.json({ error: 'Webhook failed' }, { status: 400 });
+    return NextResponse.json({ error: "Webhook failed" }, { status: 400 });
   }
 }
 ```
@@ -493,6 +519,7 @@ export async function POST(request: NextRequest) {
 ### Week 1: Critical Services
 
 #### Day 1-2: Logger Infrastructure
+
 - [ ] Create `src/lib/logger/index.ts`
 - [ ] Create `src/lib/logger/types.ts`
 - [ ] Add logger tests: `src/lib/logger/__tests__/logger.test.ts`
@@ -500,6 +527,7 @@ export async function POST(request: NextRequest) {
 - [ ] Document logger usage in README
 
 #### Day 3: Geocoding Service
+
 - [ ] **File:** `src/lib/services/geocoding.service.ts`
 - [ ] Replace 9 console statements
 - [ ] Add GeocodingContext type
@@ -508,6 +536,7 @@ export async function POST(request: NextRequest) {
 - [ ] Verify error logging works
 
 #### Day 4: Payment Service
+
 - [ ] **File:** `src/lib/services/payment.service.ts`
 - [ ] Replace 10 console statements
 - [ ] Add PaymentContext type
@@ -516,6 +545,7 @@ export async function POST(request: NextRequest) {
 - [ ] Test refund logging
 
 #### Day 5: Stripe Webhook
+
 - [ ] **File:** `src/app/api/webhooks/stripe/route.ts`
 - [ ] Replace 18 console statements
 - [ ] Add webhook event context
@@ -526,6 +556,7 @@ export async function POST(request: NextRequest) {
 ### Week 2: Infrastructure Services
 
 #### Day 6: Redis Cache
+
 - [ ] **File:** `src/lib/cache/redis.ts`
 - [ ] Replace 19 console statements
 - [ ] Add cache operation context
@@ -534,6 +565,7 @@ export async function POST(request: NextRequest) {
 - [ ] Test error scenarios
 
 #### Day 7: Email Service
+
 - [ ] **File:** `src/lib/email/email-service.ts`
 - [ ] Replace 13 console statements
 - [ ] Add email context (to, subject, template)
@@ -542,6 +574,7 @@ export async function POST(request: NextRequest) {
 - [ ] Verify no sensitive data logged
 
 #### Day 8: GPU Processor
+
 - [ ] **File:** `src/lib/performance/gpu-processor.ts`
 - [ ] Replace 39 console statements
 - [ ] Add GPU operation context
@@ -550,6 +583,7 @@ export async function POST(request: NextRequest) {
 - [ ] Test with actual GPU operations
 
 #### Day 9-10: Validation & Deployment
+
 - [ ] Run full test suite: `npm test`
 - [ ] Check all tests pass
 - [ ] Run type check: `npm run type-check`
@@ -566,35 +600,36 @@ export async function POST(request: NextRequest) {
 ## 🧪 TESTING STRATEGY
 
 ### Logger Unit Tests
+
 ```typescript
 // src/lib/logger/__tests__/logger.test.ts
-describe('Logger', () => {
-  describe('Structured Logging', () => {
-    it('should log with proper structure', () => {
-      const logger = createLogger('test-service');
-      const logSpy = jest.spyOn(console, 'log');
-      
-      logger.info('Test message', { userId: '123' });
-      
+describe("Logger", () => {
+  describe("Structured Logging", () => {
+    it("should log with proper structure", () => {
+      const logger = createLogger("test-service");
+      const logSpy = jest.spyOn(console, "log");
+
+      logger.info("Test message", { userId: "123" });
+
       expect(logSpy).toHaveBeenCalled();
       const logEntry = JSON.parse(logSpy.mock.calls[0][0]);
       expect(logEntry).toMatchObject({
-        level: 'info',
-        service: 'test-service',
-        message: 'Test message',
-        userId: '123',
+        level: "info",
+        service: "test-service",
+        message: "Test message",
+        userId: "123",
       });
     });
   });
 
-  describe('OpenTelemetry Integration', () => {
-    it('should add events to active span', () => {
+  describe("OpenTelemetry Integration", () => {
+    it("should add events to active span", () => {
       // Test span integration
     });
   });
 
-  describe('Error Logging', () => {
-    it('should log errors with stack traces', () => {
+  describe("Error Logging", () => {
+    it("should log errors with stack traces", () => {
       // Test error logging
     });
   });
@@ -602,14 +637,15 @@ describe('Logger', () => {
 ```
 
 ### Integration Tests
+
 ```typescript
 // src/lib/services/__tests__/geocoding.service.integration.test.ts
-describe('GeocodingService with Logger', () => {
-  it('should log successful geocoding', async () => {
-    const logSpy = jest.spyOn(console, 'log');
-    
-    await geocodingService.geocodeAddress('123 Main St');
-    
+describe("GeocodingService with Logger", () => {
+  it("should log successful geocoding", async () => {
+    const logSpy = jest.spyOn(console, "log");
+
+    await geocodingService.geocodeAddress("123 Main St");
+
     // Verify structured log was created
     expect(logSpy).toHaveBeenCalled();
   });
@@ -621,6 +657,7 @@ describe('GeocodingService with Logger', () => {
 ## 📊 MONITORING & VALIDATION
 
 ### Production Log Monitoring
+
 ```bash
 # Verify structured logging in production
 # Check logs contain required fields
@@ -640,6 +677,7 @@ describe('GeocodingService with Logger', () => {
 ```
 
 ### Success Metrics
+
 - [ ] Zero console.log in critical services
 - [ ] All logs include traceId/spanId
 - [ ] Log aggregation works (Azure/CloudWatch)
@@ -652,6 +690,7 @@ describe('GeocodingService with Logger', () => {
 ## 🚨 ROLLBACK PLAN
 
 ### If Issues Arise
+
 ```bash
 # 1. Revert logger changes
 git revert <phase2-commits>
@@ -666,6 +705,7 @@ curl https://api.farmersmarket.com/health
 ```
 
 ### Partial Rollback
+
 - Keep logger infrastructure
 - Revert specific service changes
 - Debug issues in development
@@ -676,15 +716,17 @@ curl https://api.farmersmarket.com/health
 ## 📈 SUCCESS CRITERIA
 
 ### Quantitative Metrics
-| Metric | Current | Target | Status |
-|--------|---------|--------|--------|
-| Console in Services | 19 | 0 | 📋 Planned |
-| Console in APIs | 18 | 0 | 📋 Planned |
-| Structured Logs | 0% | 100% | 📋 Planned |
-| Tests Passing | 1,870 | 1,870+ | ✅ Maintained |
-| Build Success | ✅ | ✅ | ✅ Maintained |
+
+| Metric              | Current | Target | Status        |
+| ------------------- | ------- | ------ | ------------- |
+| Console in Services | 19      | 0      | 📋 Planned    |
+| Console in APIs     | 18      | 0      | 📋 Planned    |
+| Structured Logs     | 0%      | 100%   | 📋 Planned    |
+| Tests Passing       | 1,870   | 1,870+ | ✅ Maintained |
+| Build Success       | ✅      | ✅     | ✅ Maintained |
 
 ### Qualitative Metrics
+
 - [ ] Team can easily search logs
 - [ ] Errors include full context
 - [ ] Logs are aggregated properly
@@ -696,21 +738,26 @@ curl https://api.farmersmarket.com/health
 ## 🎓 TEAM TRAINING
 
 ### Logger Documentation
+
 ```markdown
 # Using the Divine Logger
 
 ## Import
+
 import { createLogger } from '@/lib/logger';
 
 ## Create Logger
+
 const logger = createLogger('my-service');
 
 ## Usage
+
 logger.info('Operation successful', { userId, orderId });
 logger.warn('Potential issue detected', { details });
 logger.error('Operation failed', error, { context });
 
 ## Best Practices
+
 1. Always include relevant context
 2. Use structured data (objects, not strings)
 3. Never log sensitive data (passwords, tokens)
@@ -719,6 +766,7 @@ logger.error('Operation failed', error, { context });
 ```
 
 ### Migration Training Session
+
 - **Duration:** 1 hour
 - **Topics:**
   - Why structured logging matters
@@ -752,11 +800,13 @@ Total Estimated Time: 72 hours (2 weeks at 80% capacity)
 ## 💰 COST-BENEFIT ANALYSIS
 
 ### Costs
+
 - **Development Time:** 72 hours (~2 weeks)
 - **Testing Time:** Included in above
 - **Deployment Risk:** Low (gradual rollout)
 
 ### Benefits
+
 - **Debugging Efficiency:** 10x improvement in production debugging
 - **Log Aggregation:** Proper integration with monitoring tools
 - **Traceability:** Full request tracing with OpenTelemetry

@@ -17,6 +17,7 @@ npm run dev:omen
 ```
 
 **Expected Output:**
+
 ```
 ✓ Ready in 3.2s
 ○ Local:        http://localhost:3001
@@ -34,6 +35,7 @@ cd "M:\Repo\Farmers Market Platform web and app"
 ```
 
 **Expected Output:**
+
 ```
 Ready! You are using Stripe API Version [2024-XX-XX]. Your webhook signing secret is whsec_...
 ```
@@ -69,8 +71,9 @@ curl http://localhost:3001/api/webhooks/stripe
 ```
 
 **Expected Response:**
+
 ```json
-{"error":"Method not allowed. Use POST."}
+{ "error": "Method not allowed. Use POST." }
 ```
 
 **Success:** Returns 405 Method Not Allowed (correct!)
@@ -84,11 +87,13 @@ curl http://localhost:3001/api/webhooks/stripe
 ```
 
 **Expected Output in Terminal 2:**
+
 ```
 [200] POST http://localhost:3001/api/webhooks/stripe [evt_xxx]
 ```
 
 **Expected Output in Terminal 1:**
+
 ```
 [Webhook] Processing payment_intent.succeeded
 [Webhook] Payment succeeded for order: ...
@@ -105,11 +110,13 @@ curl http://localhost:3001/api/webhooks/stripe
 ```
 
 **Expected Output in Terminal 2:**
+
 ```
 [200] POST http://localhost:3001/api/webhooks/stripe [evt_xxx]
 ```
 
 **Expected Output in Terminal 1:**
+
 ```
 [Webhook] Processing payment_intent.payment_failed
 [Webhook] Payment failed for order: ...
@@ -126,11 +133,13 @@ curl http://localhost:3001/api/webhooks/stripe
 ```
 
 **Expected Output in Terminal 2:**
+
 ```
 [200] POST http://localhost:3001/api/webhooks/stripe [evt_xxx]
 ```
 
 **Expected Output in Terminal 1:**
+
 ```
 [Webhook] Processing charge.refunded
 [Webhook] Refund processed for order: ...
@@ -155,6 +164,7 @@ Key Valid:      Until 2026-02-26
 ## 📝 CHECKLIST
 
 Before you start:
+
 - [ ] Open 3 terminal windows
 - [ ] Terminal 1: Run `npm run dev:omen`
 - [ ] Terminal 2: Run `./.stripe-cli/stripe listen --forward-to localhost:3001/api/webhooks/stripe`
@@ -164,6 +174,7 @@ Before you start:
 - [ ] Terminal 3: Run test commands one by one
 
 During testing:
+
 - [ ] Test 1: Health check passes (405 Method Not Allowed)
 - [ ] Test 2: Payment success shows `[200]`
 - [ ] Test 3: Payment failed shows `[200]`
@@ -194,7 +205,8 @@ npm run dev:omen
 
 ### Problem: No logs in Terminal 1
 
-**Solution:** 
+**Solution:**
+
 1. Verify all 3 terminals are running
 2. Check `.env.local` has all Stripe variables
 3. Restart dev server

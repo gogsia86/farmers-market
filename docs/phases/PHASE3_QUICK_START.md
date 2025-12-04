@@ -1,15 +1,17 @@
 # 🚀 PHASE 3 QUICK START GUIDE
+
 ## Marketplace Discovery & Farm Profile Enhancement
 
 **Last Updated**: January 2025  
 **Phase**: 3 of 6  
-**Estimated Setup Time**: 10 minutes  
+**Estimated Setup Time**: 10 minutes
 
 ---
 
 ## 📋 QUICK OVERVIEW
 
 Phase 3 introduces powerful marketplace discovery features:
+
 - 🔍 Advanced product filtering (8+ filter types)
 - 🌾 Enhanced farm profiles with tabs
 - 🛒 Grid/List product views
@@ -21,9 +23,11 @@ Phase 3 introduces powerful marketplace discovery features:
 ## 🎯 WHAT'S NEW IN PHASE 3
 
 ### 1. Products Marketplace with Advanced Filtering
+
 **Route**: `/marketplace/products`
 
 **Features**:
+
 - Category filters (Fruits, Vegetables, Dairy, etc.)
 - Price range slider
 - Distance/location filter
@@ -35,15 +39,18 @@ Phase 3 introduces powerful marketplace discovery features:
 - Add to cart & favorites
 
 ### 2. Enhanced Farm Profiles with Tabs
+
 **Route**: `/marketplace/farms/[slug]`
 
 **Features**:
+
 - **Products Tab**: Browse farm's products with category filters
 - **About Tab**: Farm story, certifications, farming practices
 - **Reviews Tab**: Customer reviews and ratings summary
 - **Location Tab**: Map placeholder, address, hours, contact info
 
 ### 3. API Endpoints
+
 - `GET /api/marketplace/products` - Filter & search products
 - `GET /api/marketplace/farms/[slug]` - Farm profile data
 - `OPTIONS /api/marketplace/products` - Categories list
@@ -64,6 +71,7 @@ npm run dev:omen
 ```
 
 **Wait for**:
+
 - ✅ Docker containers running
 - ✅ Next.js compiled successfully
 - ✅ Server listening on http://localhost:3001
@@ -71,11 +79,13 @@ npm run dev:omen
 ### Step 2: Open Marketplace Pages
 
 **Products Marketplace**:
+
 ```
 http://localhost:3001/marketplace/products
 ```
 
 **Farm Profiles** (test data):
+
 ```
 http://localhost:3001/marketplace/farms/green-valley-farm
 http://localhost:3001/marketplace/farms/sunny-acres-orchard
@@ -113,6 +123,7 @@ curl -X OPTIONS http://localhost:3001/api/marketplace/products
 ### Test Scenario 1: Product Filtering
 
 1. **Open Products Marketplace**
+
    ```
    http://localhost:3001/marketplace/products
    ```
@@ -167,6 +178,7 @@ curl -X OPTIONS http://localhost:3001/api/marketplace/products
 ### Test Scenario 2: Farm Profile
 
 1. **Open Farm Profile**
+
    ```
    http://localhost:3001/marketplace/farms/green-valley-farm
    ```
@@ -299,11 +311,13 @@ curl -X OPTIONS http://localhost:3001/api/marketplace/products
 ### Using Prisma Studio
 
 1. **Start Prisma Studio**:
+
 ```bash
 npm run db:studio
 ```
 
 2. **Open in Browser**:
+
 ```
 http://localhost:5555
 ```
@@ -311,6 +325,7 @@ http://localhost:5555
 3. **Verify Data**:
 
 **Products Table**:
+
 - At least 5-10 products exist
 - Status = "ACTIVE"
 - Price values are set
@@ -318,6 +333,7 @@ http://localhost:5555
 - StockQuantity > 0 for in-stock items
 
 **Farms Table**:
+
 - At least 2-3 farms exist
 - Status = "ACTIVE"
 - VerificationStatus = "VERIFIED"
@@ -325,12 +341,14 @@ http://localhost:5555
 - City, State fields populated
 
 **Reviews Table**:
+
 - Some reviews exist
 - Status = "APPROVED"
 - Rating values 1-5
 - ReviewText present
 
 **FarmCertification Table**:
+
 - Some certifications exist
 - Status = "APPROVED"
 - Type values match filters
@@ -344,6 +362,7 @@ http://localhost:5555
 **Cause**: Database has no products or they're not ACTIVE
 
 **Solution**:
+
 ```bash
 # Run seed script (if available)
 npm run db:seed
@@ -356,6 +375,7 @@ npm run db:seed
 **Cause**: Farm slug doesn't exist or farm not verified
 
 **Solution**:
+
 1. Open Prisma Studio
 2. Check `Farm` table
 3. Ensure slug = "green-valley-farm" exists
@@ -367,6 +387,7 @@ npm run db:seed
 **Cause**: API endpoint not returning data
 
 **Solution**:
+
 1. Check terminal for errors
 2. Verify DATABASE_URL is set
 3. Test API endpoint directly:
@@ -380,6 +401,7 @@ npm run db:seed
 **Cause**: Image paths are placeholders
 
 **Solution**:
+
 - Images use placeholder paths
 - Real images need to be uploaded
 - For now, alt text and placeholders display
@@ -387,6 +409,7 @@ npm run db:seed
 ### Issue: TypeScript errors
 
 **Solution**:
+
 ```bash
 # Rebuild TypeScript
 npm run build
@@ -436,6 +459,7 @@ npx tsc --noEmit
 ### Filter Sidebar Features
 
 **Test these interactions**:
+
 - ✅ Collapsible sections
 - ✅ Active filter badge count
 - ✅ Reset button (only shows when filters active)
@@ -445,6 +469,7 @@ npx tsc --noEmit
 ### Product Card Features
 
 **Test these elements**:
+
 - ✅ Hover effects (scale, shadow)
 - ✅ Favorite heart toggle
 - ✅ Add to cart button
@@ -456,6 +481,7 @@ npx tsc --noEmit
 ### Tab Navigation Features
 
 **Test these behaviors**:
+
 - ✅ Active tab highlight
 - ✅ Icon display
 - ✅ Count badges
@@ -467,16 +493,19 @@ npx tsc --noEmit
 ## 🔗 QUICK LINKS
 
 ### Pages
+
 - Products Marketplace: http://localhost:3001/marketplace/products
 - Farm Profile 1: http://localhost:3001/marketplace/farms/green-valley-farm
 - Farm Profile 2: http://localhost:3001/marketplace/farms/sunny-acres-orchard
 
 ### API Endpoints
+
 - Products: http://localhost:3001/api/marketplace/products
 - Farm Profile: http://localhost:3001/api/marketplace/farms/green-valley-farm
 - Categories: http://localhost:3001/api/marketplace/products (OPTIONS)
 
 ### Tools
+
 - Prisma Studio: http://localhost:5555
 - Next.js Dev: http://localhost:3001
 
@@ -485,16 +514,19 @@ npx tsc --noEmit
 ## 📈 PERFORMANCE EXPECTATIONS
 
 ### Page Load Times
+
 - Products page: < 1 second
 - Farm profile page: < 1 second
 - API response: < 200ms
 
 ### Filter Response
+
 - Filter update: < 100ms
 - Search typing: Real-time (debounced)
 - Sort change: Instant
 
 ### Mobile Performance
+
 - Lighthouse score target: 90+
 - First Contentful Paint: < 1.5s
 - Time to Interactive: < 3s
@@ -559,15 +591,18 @@ npx prisma db execute --stdin <<< "SELECT 1"
 ### Browser DevTools
 
 **Console Tab**:
+
 - Watch for "Added to cart" logs
 - Check for any error messages
 
 **Network Tab**:
+
 - Monitor API calls to `/api/marketplace/*`
 - Check response times
 - Verify data structure
 
 **Elements Tab**:
+
 - Inspect filter components
 - Check responsive breakpoints
 - Verify accessibility
@@ -595,6 +630,7 @@ A: Check that products have the required fields (category, price, etc.) in the d
 ## 🏆 SUCCESS CRITERIA
 
 Phase 3 is successful if:
+
 - ✅ All filters work correctly
 - ✅ Farm profile tabs display data
 - ✅ API endpoints return proper responses

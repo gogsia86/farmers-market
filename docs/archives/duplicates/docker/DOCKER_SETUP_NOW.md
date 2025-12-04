@@ -142,16 +142,18 @@ docker login -u YOUR_USERNAME --password-stdin <<< "YOUR_ACCESS_TOKEN"
 ## 📦 WHAT WILL BE BUILT
 
 ### Production Image
+
 - **Name**: `YOUR_USERNAME/farmers-market-app:latest`
 - **Size**: ~200MB (optimized with Alpine Linux)
 - **Base**: Node.js 20 Alpine
-- **Features**: 
+- **Features**:
   - Multi-stage build
   - Non-root user
   - Health checks
   - Production-ready
 
 ### What Gets Pushed
+
 ```
 YOUR_USERNAME/farmers-market-app:latest
 YOUR_USERNAME/farmers-market-app:v1.0.0

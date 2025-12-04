@@ -1,151 +1,140 @@
 /**
- * FARMS API ROUTE - WITH DIVINE TRACING & RATE LIMITING
- * Comprehensive tracing for agricultural operations
+ * 🚜 FARMS API ROUTE - USING DIVINE CONTROLLER PATTERN
  *
- * OPTIMIZATION: Uses lazy-loaded tracing to reduce server bundle size
- * - Tracing only loaded when enabled (saves ~50KB in bundle)
- * - Maintains full agricultural consciousness when tracing is active
+ * Handles farm listing and creation endpoints using the controller layer.
+ * Demonstrates clean separation: Route → Controller → Service → Repository → Database
+ *
+ * Divine Patterns Applied:
+ * - Controller pattern (HTTP concerns separated from business logic)
+ * - Unified API response format
+ * - Agricultural consciousness
+ * - Rate limiting
+ * - Lazy tracing integration
+ *
+ * @reference .github/instructions/11_KILO_SCALE_ARCHITECTURE.instructions.md
+ * @reference .github/instructions/04_NEXTJS_DIVINE_IMPLEMENTATION.instructions.md
  */
 
-import { database } from "@/lib/database";
-import {
-  traceIfEnabled,
-  type AgriculturalOperation,
-} from "@/lib/tracing/lazy-tracer";
 import { NextRequest, NextResponse } from "next/server";
+import { farmController } from "@/lib/controllers";
 import {
   rateLimiters,
   createRateLimitResponse,
 } from "@/lib/middleware/rate-limiter";
 
-export async function GET(request: NextRequest) {
-  // Apply rate limiting
+/**
+ * GET /api/farms
+ *
+ * List farms with pagination and filtering
+ *
+ * Query Parameters:
+ * - page: number (default: 1)
+ * - limit: number (default: 20)
+ * - status: "ACTIVE" | "PENDING" | "SUSPENDED" | "INACTIVE"
+ * - city: string
+ * - state: string
+ * - sortBy: "name" | "createdAt" | "rating"
+ * - sortOrder: "asc" | "desc"
+ *
+ * @example
+ * GET /api/farms?page=1&limit=20&city=Seattle&status=ACTIVE
+ *
+ * Response:
+ * {
+ *   "success": true,
+ *   "data": [...farms],
+ *   "meta": {
+ *     "pagination": {
+ *       "page": 1,
+ *       "limit": 20,
+ *       "total": 100,
+ *       "totalPages": 5,
+ *       "hasNext": true,
+ *       "hasPrev": false
+ *     }
+ *   }
+ * }
+ */
+export async function GET(request: NextRequest): Promise<NextResponse> {
+  // Apply rate limiting (public endpoint)
   const rateLimit = await rateLimiters.public.check(request);
   if (!rateLimit.success) {
     return createRateLimitResponse(rateLimit);
   }
 
-  try {
-    const searchParams = request.nextUrl.searchParams;
-    const status = searchParams.get("status") as
-      | "ACTIVE"
-      | "PENDING_VERIFICATION"
-      | "SUSPENDED"
-      | "INACTIVE"
-      | null;
-    const season = searchParams.get("season");
-
-    // Lazy trace database operation (only loads OpenTelemetry if enabled)
-    const farms = await traceIfEnabled(
-      "CROP_PLANNING" as AgriculturalOperation,
-      {
-        "http.method": "GET",
-        "http.route": "/api/farms",
-        "agricultural.resource": "farms",
-        "db.operation": "findMany",
-        "db.table": "farm",
-        "agricultural.season": season || "all",
-        "query.status": status || "all",
-      },
-      async () => {
-        return await database.farm.findMany({
-          where: {
-            ...(status && { status: status as any }),
-            ...(season && { seasonalAlignment: season }),
-          },
-          include: {
-            owner: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
-            products: {
-              where: { inStock: true },
-              take: 5,
-            },
-            _count: {
-              select: {
-                products: true,
-                reviews: true,
-              },
-            },
-          },
-          orderBy: { createdAt: "desc" },
-          take: 20,
-        });
-      },
-    );
-
-    return NextResponse.json({
-      success: true,
-      data: farms,
-      meta: {
-        count: farms.length,
-        season: season || "all",
-        agriculturalConsciousness: "active",
-      },
-    });
-  } catch (error) {
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Failed to fetch farms",
-        message: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 },
-    );
-  }
+  // Delegate to controller
+  return farmController.listFarms(request);
 }
 
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-
-    // Lazy trace farm creation (only loads OpenTelemetry if enabled)
-    const farm = await traceIfEnabled(
-      "PLANTING" as AgriculturalOperation,
-      {
-        "http.method": "POST",
-        "http.route": "/api/farms",
-        "agricultural.operation": "create_farm",
-        "db.operation": "create",
-        "db.table": "farm",
-        "farm.name": body.name,
-        "farm.owner": body.ownerId,
-      },
-      async () => {
-        return await database.farm.create({
-          data: {
-            name: body.name,
-            description: body.description,
-            address: body.address,
-            ownerId: body.ownerId,
-            status: "PENDING_VERIFICATION" as any,
-            latitude: body.coordinates?.lat ?? null,
-            longitude: body.coordinates?.lng ?? null,
-          } as any, // Type assertion for coordinates conversion
-        });
-      },
-    );
-
-    return NextResponse.json(
-      {
-        success: true,
-        data: farm,
-        message: "Farm consciousness manifested successfully",
-      },
-      { status: 201 },
-    );
-  } catch (error) {
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Failed to create farm",
-        message: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 },
-    );
+/**
+ * POST /api/farms
+ *
+ * Create new farm (requires FARMER or ADMIN role)
+ *
+ * Request Body:
+ * {
+ *   "name": string (required, min 3 chars),
+ *   "city": string (required),
+ *   "state": string (required, 2-letter code),
+ *   "description": string (optional),
+ *   "story": string (optional),
+ *   "businessName": string (optional),
+ *   "yearEstablished": number (optional),
+ *   "farmSize": number (optional),
+ *   "address": string (optional),
+ *   "zipCode": string (optional),
+ *   "latitude": number (optional),
+ *   "longitude": number (optional),
+ *   "email": string (optional, must be valid email),
+ *   "phone": string (optional),
+ *   "website": string (optional, must be valid URL),
+ *   "farmingPractices": string[] (optional),
+ *   "productCategories": string[] (optional),
+ *   "deliveryRadius": number (optional)
+ * }
+ *
+ * @example
+ * POST /api/farms
+ * Body: {
+ *   "name": "Divine Acres",
+ *   "city": "Seattle",
+ *   "state": "WA",
+ *   "description": "Organic biodynamic farm",
+ *   "farmingPractices": ["ORGANIC", "BIODYNAMIC"],
+ *   "deliveryRadius": 50
+ * }
+ *
+ * Response (201):
+ * {
+ *   "success": true,
+ *   "data": {
+ *     "id": "farm-id",
+ *     "name": "Divine Acres",
+ *     "slug": "divine-acres-seattle",
+ *     ...
+ *   },
+ *   "meta": {
+ *     "slug": "divine-acres-seattle",
+ *     "agricultural": {
+ *       "consciousness": "DIVINE",
+ *       "operation": "FARM_MANIFESTATION"
+ *     }
+ *   }
+ * }
+ */
+export async function POST(request: NextRequest): Promise<NextResponse> {
+  // Apply rate limiting (authenticated endpoint, stricter limits)
+  const rateLimit = await rateLimiters.api.check(request);
+  if (!rateLimit.success) {
+    return createRateLimitResponse(rateLimit);
   }
+
+  // Delegate to controller (authentication check happens in controller)
+  return farmController.createFarm(request);
 }
+
+/**
+ * Divine farm routes established ✨🚜
+ * Clean architecture with controller separation
+ * Ready for quantum agricultural operations
+ */

@@ -131,7 +131,7 @@ function printSummary() {
   const failed = total - passed;
   const avgDuration = results.reduce((sum, r) => sum + r.duration, 0) / total;
 
-  console.log(`\n${  "=".repeat(60)}`);
+  console.log(`\n${"=".repeat(60)}`);
   console.log("📊 TEST SUMMARY");
   console.log("=".repeat(60));
   console.log(`Total Tests: ${total}`);
@@ -187,7 +187,7 @@ async function checkDatabaseHealth(): Promise<boolean> {
 // ============================================================================
 
 async function testOverviewAPI() {
-  console.log(`\n${  "=".repeat(60)}`);
+  console.log(`\n${"=".repeat(60)}`);
   console.log("🧪 Testing Overview API");
   console.log("=".repeat(60));
 
@@ -197,7 +197,7 @@ async function testOverviewAPI() {
 }
 
 async function testExecutionsAPI() {
-  console.log(`\n${  "=".repeat(60)}`);
+  console.log(`\n${"=".repeat(60)}`);
   console.log("🧪 Testing Executions API");
   console.log("=".repeat(60));
 
@@ -224,7 +224,7 @@ async function testExecutionsAPI() {
 }
 
 async function testAlertsAPI() {
-  console.log(`\n${  "=".repeat(60)}`);
+  console.log(`\n${"=".repeat(60)}`);
   console.log("🧪 Testing Alerts API");
   console.log("=".repeat(60));
 
@@ -251,7 +251,7 @@ async function testAlertsAPI() {
 }
 
 async function testMetricsAPI() {
-  console.log(`\n${  "=".repeat(60)}`);
+  console.log(`\n${"=".repeat(60)}`);
   console.log("🧪 Testing Metrics API");
   console.log("=".repeat(60));
 
@@ -294,7 +294,7 @@ async function main() {
     process.exit(1);
   }
 
-  console.log(`\n📡 Testing API endpoints at: ${  API_BASE_URL}`);
+  console.log(`\n📡 Testing API endpoints at: ${API_BASE_URL}`);
   console.log("💡 Make sure the dev server is running: npm run dev\n");
 
   // Wait a moment for server to be ready

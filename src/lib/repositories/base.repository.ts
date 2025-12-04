@@ -57,9 +57,9 @@ export interface RepositoryOptions {
  * ```
  */
 export abstract class BaseRepository<
-  TEntity = any,
-  TCreateData = any,
-  TUpdateData = any
+  TEntity extends Record<string, unknown> = Record<string, unknown>,
+  TCreateData extends Record<string, unknown> = Record<string, unknown>,
+  TUpdateData extends Record<string, unknown> = Partial<TCreateData>,
 > {
   /**
    * Create a new base repository
@@ -69,11 +69,11 @@ export abstract class BaseRepository<
    */
   constructor(
     protected readonly model: { name: string },
-    protected readonly repositoryName: string
+    protected readonly repositoryName: string,
   ) {
     this.logOperation("initialized", {
       model: this.model.name,
-      repository: this.repositoryName
+      repository: this.repositoryName,
     });
   }
 
@@ -101,19 +101,19 @@ export abstract class BaseRepository<
    */
   async create(
     data: TCreateData,
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<TEntity> {
     try {
       const db = options.tx || this.db;
       const entity = await (db as any)[this.model.name].create({
         data,
         ...this.getDefaultInclude(),
-        ...this.filterOptions(options)
+        ...this.filterOptions(options),
       });
 
       this.logOperation("create", {
         entityId: (entity as any).id,
-        hasTransaction: !!options.tx
+        hasTransaction: !!options.tx,
       });
 
       return entity as TEntity;
@@ -139,14 +139,14 @@ export abstract class BaseRepository<
    */
   async findById(
     id: string,
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<TEntity | null> {
     try {
       const db = options.tx || this.db;
       const entity = await (db as any)[this.model.name].findUnique({
         where: { id },
         ...this.getDefaultInclude(),
-        ...this.filterOptions(options)
+        ...this.filterOptions(options),
       });
 
       return entity as TEntity | null;
@@ -164,14 +164,14 @@ export abstract class BaseRepository<
    */
   async findFirst(
     where: any = {},
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<TEntity | null> {
     try {
       const db = options.tx || this.db;
       const entity = await (db as any)[this.model.name].findFirst({
         where,
         ...this.getDefaultInclude(),
-        ...this.filterOptions(options)
+        ...this.filterOptions(options),
       });
 
       return entity as TEntity | null;
@@ -197,19 +197,19 @@ export abstract class BaseRepository<
    */
   async findMany(
     where: any = {},
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<TEntity[]> {
     try {
       const db = options.tx || this.db;
       const entities = await (db as any)[this.model.name].findMany({
         where,
         ...this.getDefaultInclude(),
-        ...this.filterOptions(options)
+        ...this.filterOptions(options),
       });
 
       this.logOperation("findMany", {
         count: entities.length,
-        hasWhere: Object.keys(where).length > 0
+        hasWhere: Object.keys(where).length > 0,
       });
 
       return entities as TEntity[];
@@ -236,7 +236,7 @@ export abstract class BaseRepository<
   async update(
     id: string,
     data: TUpdateData,
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<TEntity> {
     try {
       const db = options.tx || this.db;
@@ -244,12 +244,12 @@ export abstract class BaseRepository<
         where: { id },
         data,
         ...this.getDefaultInclude(),
-        ...this.filterOptions(options)
+        ...this.filterOptions(options),
       });
 
       this.logOperation("update", {
         entityId: id,
-        hasTransaction: !!options.tx
+        hasTransaction: !!options.tx,
       });
 
       return entity as TEntity;
@@ -269,18 +269,18 @@ export abstract class BaseRepository<
   async updateMany(
     where: any,
     data: TUpdateData,
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<number> {
     try {
       const db = options.tx || this.db;
       const result = await (db as any)[this.model.name].updateMany({
         where,
-        data
+        data,
       });
 
       this.logOperation("updateMany", {
         count: result.count,
-        hasTransaction: !!options.tx
+        hasTransaction: !!options.tx,
       });
 
       return result.count;
@@ -300,19 +300,16 @@ export abstract class BaseRepository<
    * await repository.delete("farm_123");
    * ```
    */
-  async delete(
-    id: string,
-    options: RepositoryOptions = {}
-  ): Promise<void> {
+  async delete(id: string, options: RepositoryOptions = {}): Promise<void> {
     try {
       const db = options.tx || this.db;
       await (db as any)[this.model.name].delete({
-        where: { id }
+        where: { id },
       });
 
       this.logOperation("delete", {
         entityId: id,
-        hasTransaction: !!options.tx
+        hasTransaction: !!options.tx,
       });
     } catch (error) {
       throw this.handleDatabaseError("delete", error);
@@ -328,17 +325,17 @@ export abstract class BaseRepository<
    */
   async deleteMany(
     where: any,
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<number> {
     try {
       const db = options.tx || this.db;
       const result = await (db as any)[this.model.name].deleteMany({
-        where
+        where,
       });
 
       this.logOperation("deleteMany", {
         count: result.count,
-        hasTransaction: !!options.tx
+        hasTransaction: !!options.tx,
       });
 
       return result.count;
@@ -361,12 +358,12 @@ export abstract class BaseRepository<
    */
   async count(
     where: any = {},
-    options: RepositoryOptions = {}
+    options: RepositoryOptions = {},
   ): Promise<number> {
     try {
       const db = options.tx || this.db;
       const count = await (db as any)[this.model.name].count({
-        where
+        where,
       });
 
       return count;
@@ -389,10 +386,7 @@ export abstract class BaseRepository<
    * }
    * ```
    */
-  async exists(
-    id: string,
-    options: RepositoryOptions = {}
-  ): Promise<boolean> {
+  async exists(id: string, options: RepositoryOptions = {}): Promise<boolean> {
     const entity = await this.findById(id, options);
     return entity !== null;
   }
@@ -415,9 +409,7 @@ export abstract class BaseRepository<
    * });
    * ```
    */
-  async withTransaction<T>(
-    callback: (tx: any) => Promise<T>
-  ): Promise<T> {
+  async withTransaction<T>(callback: (tx: any) => Promise<T>): Promise<T> {
     this.logOperation("transaction:start", {});
 
     try {
@@ -429,7 +421,7 @@ export abstract class BaseRepository<
       return result;
     } catch (error) {
       this.logOperation("transaction:rollback", {
-        error: error instanceof Error ? error.message : "Unknown error"
+        error: error instanceof Error ? error.message : "Unknown error",
       });
       throw this.handleDatabaseError("transaction", error);
     }
@@ -503,12 +495,15 @@ export abstract class BaseRepository<
    * @param operation - Operation performed
    * @param meta - Additional metadata
    */
-  protected logOperation(operation: string, meta: Record<string, any> = {}): void {
+  protected logOperation(
+    operation: string,
+    meta: Record<string, any> = {},
+  ): void {
     if (process.env.NODE_ENV === "development") {
       const timestamp = new Date().toISOString();
       console.log(
         `✅ [${timestamp}] [${this.repositoryName}] ${operation}`,
-        Object.keys(meta).length > 0 ? meta : ""
+        Object.keys(meta).length > 0 ? meta : "",
       );
     }
   }

@@ -1,4 +1,5 @@
 # Testing Guide - Farmers Market Platform
+
 **Updated: January 26, 2025**
 
 ## 🎯 Quick Testing Checklist
@@ -35,10 +36,10 @@ Admin User:
 Farmer Users:
   Email: farmer1@example.com
   Password: Farmer123!
-  
+
   Email: farmer2@example.com
   Password: Farmer123!
-  
+
   Email: farmer3@example.com
   Password: Farmer123!
 
@@ -56,6 +57,7 @@ Consumer User:
 **URL:** `http://localhost:3000/`
 
 **What to Test:**
+
 - [ ] Page loads without errors
 - [ ] Featured farms section displays 6 farms
 - [ ] Farm cards show:
@@ -68,6 +70,7 @@ Consumer User:
 - [ ] No "Unable to Load Farms" error
 
 **Expected Farms:**
+
 1. Sunshine Valley Farm (Farmville, CA)
 2. Green Acres Organic (Greenfield, WA)
 3. Harvest Moon Ranch (Harvestville, OR)
@@ -84,6 +87,7 @@ Consumer User:
 **URL:** `http://localhost:3000/signup`
 
 **Steps:**
+
 1. Click "Buy Produce" or navigate to signup page
 2. Fill in registration form:
    - Name: Test Consumer
@@ -93,17 +97,20 @@ Consumer User:
 3. Click "Create Account"
 
 **Expected Result:**
+
 - ✅ Success message: "Account created successfully"
 - ✅ Redirects to login or dashboard
 - ✅ User can log in with created credentials
 
 **Common Issues:**
+
 - ❌ "Email already exists" - Use different email
 - ❌ "Password too weak" - Use min 8 chars with uppercase, lowercase, number
 
 #### B. Farmer Registration
 
 **Steps:**
+
 1. Click "Sell Products" or navigate to signup page
 2. Fill in registration form:
    - Name: Test Farmer
@@ -113,6 +120,7 @@ Consumer User:
 3. Click "Create Account"
 
 **Expected Result:**
+
 - ✅ Success message displayed
 - ✅ User created with FARMER role
 - ✅ Can access farmer dashboard after login
@@ -124,6 +132,7 @@ Consumer User:
 **URL:** `http://localhost:3000/admin-login`
 
 **Steps:**
+
 1. Navigate to admin login page
 2. Enter credentials:
    - Email: gogsia@gmail.com
@@ -131,12 +140,14 @@ Consumer User:
 3. Click "Enter Divine Realm" button
 
 **Expected Result:**
+
 - ✅ No error messages
 - ✅ Successfully authenticates
 - ✅ Redirects to admin dashboard (`/admin`)
 - ✅ Can see admin features and metrics
 
 **If Login Fails:**
+
 1. Check database has admin user:
    ```bash
    docker exec farmers-market-db psql -U postgres -d farmersmarket -c "SELECT email, role FROM users WHERE email='gogsia@gmail.com';"
@@ -153,6 +164,7 @@ Consumer User:
 **URL:** `http://localhost:3000/farms`
 
 **What to Test:**
+
 - [ ] All 6 farms display in list/grid
 - [ ] Each farm card shows complete information
 - [ ] Filters work (if implemented)
@@ -166,11 +178,13 @@ Consumer User:
 **URL:** `http://localhost:3000/farms/[slug]`
 
 **Test URLs:**
+
 - http://localhost:3000/farms/sunshine-valley-farm
 - http://localhost:3000/farms/green-acres-organic
 - http://localhost:3000/farms/harvest-moon-ranch
 
 **What to Test:**
+
 - [ ] Farm details display correctly
 - [ ] Products list shows (should be 5 per farm)
 - [ ] Reviews display with ratings
@@ -184,6 +198,7 @@ Consumer User:
 **URL:** `http://localhost:3000/products`
 
 **What to Test:**
+
 - [ ] Product grid/list displays
 - [ ] Shows 30 total products
 - [ ] Categories work:
@@ -213,6 +228,7 @@ curl http://localhost:3000/api/featured/farms
 ```
 
 **Expected Response:**
+
 ```json
 {
   "success": true,
@@ -257,6 +273,7 @@ curl -X POST http://localhost:3000/api/auth/signup \
 ```
 
 **Expected Response:**
+
 ```json
 {
   "success": true,
@@ -278,6 +295,7 @@ curl http://localhost:3000/api/farms
 ```
 
 **Expected:**
+
 - Status: 200 OK
 - JSON array with farm objects
 - Each farm has required fields
@@ -289,6 +307,7 @@ curl http://localhost:3000/api/products
 ```
 
 **Expected:**
+
 - Status: 200 OK
 - JSON array with 30 products
 - Proper category and pricing info
@@ -335,6 +354,7 @@ npm run test:e2e:debug
 **Cause:** Database not seeded or connection issue
 
 **Fix:**
+
 ```bash
 # Reset and reseed database
 npm run db:reset
@@ -350,6 +370,7 @@ docker restart farmers-market-app
 **Cause:** Database tables missing or connection issue
 
 **Fix:**
+
 ```bash
 # Check database tables exist
 docker exec farmers-market-db psql -U postgres -d farmersmarket -c "\dt"
@@ -364,6 +385,7 @@ npm run db:setup
 **Cause:** Admin user doesn't exist or wrong password
 
 **Fix:**
+
 ```bash
 # Reseed database (recreates admin user)
 npm run db:seed:basic
@@ -376,6 +398,7 @@ npm run db:seed:basic
 ### Issue: Docker container not running
 
 **Fix:**
+
 ```bash
 # Check status
 docker-compose ps
@@ -390,6 +413,7 @@ docker-compose logs -f app
 ### Issue: Database connection refused
 
 **Fix:**
+
 ```bash
 # Check database is running
 docker ps --filter "name=farmers-market-db"
@@ -412,7 +436,7 @@ psql postgresql://postgres:postgres@localhost:5432/farmersmarket
 docker exec -it farmers-market-db psql -U postgres -d farmersmarket
 
 # Check record counts
-SELECT 
+SELECT
   (SELECT COUNT(*) FROM users) as users,
   (SELECT COUNT(*) FROM farms) as farms,
   (SELECT COUNT(*) FROM products) as products,
@@ -472,6 +496,7 @@ lighthouse http://localhost:3000 --view
 ```
 
 **Target Metrics:**
+
 - Performance: > 90
 - Accessibility: > 90
 - Best Practices: > 90
@@ -513,11 +538,13 @@ Use this for manual QA sessions:
 
 ```markdown
 ## Test Session: [Date]
+
 **Tester:** [Name]
 **Environment:** Local / Staging / Production
 **Browser:** Chrome / Firefox / Safari / Edge
 
 ### Core Features
+
 - [ ] Homepage loads successfully
 - [ ] Featured farms display (6 farms)
 - [ ] User registration (Consumer)
@@ -531,6 +558,7 @@ Use this for manual QA sessions:
 - [ ] Checkout flow (if implemented)
 
 ### API Endpoints
+
 - [ ] GET /api/featured/farms
 - [ ] GET /api/farms
 - [ ] GET /api/products
@@ -538,6 +566,7 @@ Use this for manual QA sessions:
 - [ ] POST /api/auth/signin
 
 ### Issues Found
+
 1. [Issue description]
    - Severity: Critical / High / Medium / Low
    - Steps to reproduce:
@@ -545,6 +574,7 @@ Use this for manual QA sessions:
    - Screenshot/logs:
 
 ### Notes
+
 [Any additional observations]
 ```
 
@@ -561,7 +591,7 @@ Platform is considered **ready for testing** when:
 ✅ All API endpoints return valid responses  
 ✅ No console errors on key pages  
 ✅ Database has proper seed data  
-✅ Docker containers are healthy  
+✅ Docker containers are healthy
 
 ---
 
@@ -570,17 +600,20 @@ Platform is considered **ready for testing** when:
 If you encounter issues not covered here:
 
 1. **Check logs:**
+
    ```bash
    docker-compose logs -f app
    docker-compose logs -f db
    ```
 
 2. **Check database:**
+
    ```bash
    npm run db:studio
    ```
 
 3. **Reset everything:**
+
    ```bash
    docker-compose down
    docker-compose up -d

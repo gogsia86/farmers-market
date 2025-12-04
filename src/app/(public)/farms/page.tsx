@@ -1,441 +1,367 @@
-"use client";
-
-import {
-  Award,
-  Filter,
-  Heart,
-  Leaf,
-  MapPin,
-  Search,
-  Star,
-  TrendingUp,
-} from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
-
 /**
- * 🌾 FARMS DISCOVERY PAGE - Fall Harvest Theme
- * Browse, filter, and discover local farms
+ * 🌾 PUBLIC FARMS PAGE - API INTEGRATED
+ * Farmers Market Platform - Browse All Verified Farms
+ * Version: 2.0.0
+ *
+ * Divine Patterns Applied:
+ * - Next.js Server Components (04_NEXTJS_DIVINE_IMPLEMENTATION)
+ * - API Integration with error handling (12_ERROR_HANDLING_VALIDATION)
+ * - Agricultural consciousness (02_AGRICULTURAL_QUANTUM_MASTERY)
+ *
+ * Features:
+ * - Real-time farm data from API
+ * - Server-side rendering for SEO
+ * - Graceful error handling
+ * - Empty state management
+ * - Responsive grid layout
+ *
+ * Reference: WEBPAGE_UPDATE_PLAN.md - High Priority Fix #3
  */
 
-interface Farm {
-  id: string;
-  name: string;
-  description: string;
-  location: string;
-  distance: string;
-  rating: number;
-  reviewCount: number;
-  products: string[];
-  certifications: string[];
-  image: string;
-  featured: boolean;
+import { Metadata } from "next";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { MapPin, Star, Award, Store, ArrowRight } from "lucide-react";
+
+// ============================================================================
+// METADATA - SEO OPTIMIZATION
+// ============================================================================
+
+export const metadata: Metadata = {
+  title: "Browse Local Farms | Farmers Market Platform",
+  description:
+    "Discover local farms in your area. Browse verified farm profiles, read reviews, and shop fresh produce directly from sustainable farms. Support local agriculture.",
+  keywords: [
+    "local farms",
+    "farm directory",
+    "sustainable farming",
+    "organic farms",
+    "farmers market",
+    "fresh produce",
+    "farm to table",
+    "agricultural marketplace",
+  ],
+  openGraph: {
+    title: "Browse Local Farms | Farmers Market Platform",
+    description:
+      "Discover local farms in your area. Browse profiles, read reviews, and shop fresh produce directly from sustainable farms.",
+    type: "website",
+  },
+};
+
+// ============================================================================
+// TYPE DEFINITIONS
+// ============================================================================
+
+interface ApiResponse {
+  success: boolean;
+  data?: any[];
+  error?: {
+    code: string;
+    message: string;
+  };
+  meta?: {
+    total?: number;
+    page?: number;
+    limit?: number;
+  };
 }
 
-// Mock data - Replace with actual API call
-const MOCK_FARMS: Farm[] = [
-  {
-    id: "1",
-    name: "Harvest Moon Farm",
-    description:
-      "Certified organic farm specializing in seasonal vegetables and heritage pumpkins. Family-owned for 3 generations.",
-    location: "Portland, OR",
-    distance: "2.3 miles",
-    rating: 4.9,
-    reviewCount: 127,
-    products: ["Pumpkins", "Squash", "Root Vegetables", "Herbs"],
-    certifications: ["Organic", "Biodynamic"],
-    image: "/images/farms/harvest-moon.jpg",
-    featured: true,
-  },
-  {
-    id: "2",
-    name: "Autumn Ridge Orchard",
-    description:
-      "Apple orchard with over 20 varieties. Pick-your-own and fresh cider available daily.",
-    location: "Hillsboro, OR",
-    distance: "5.7 miles",
-    rating: 4.8,
-    reviewCount: 89,
-    products: ["Apples", "Cider", "Honey", "Preserves"],
-    certifications: ["Organic"],
-    image: "/images/farms/autumn-ridge.jpg",
-    featured: true,
-  },
-  {
-    id: "3",
-    name: "Green Valley Produce",
-    description:
-      "Sustainable farm growing seasonal vegetables, with weekly CSA boxes and farm stand.",
-    location: "Beaverton, OR",
-    distance: "3.1 miles",
-    rating: 4.7,
-    reviewCount: 64,
-    products: ["Mixed Vegetables", "Greens", "Tomatoes", "Peppers"],
-    certifications: ["Sustainable"],
-    image: "/images/farms/green-valley.jpg",
-    featured: false,
-  },
-  {
-    id: "4",
-    name: "Maple Leaf Dairy",
-    description:
-      "Small family dairy producing artisan cheeses, fresh milk, and butter from grass-fed cows.",
-    location: "Forest Grove, OR",
-    distance: "8.4 miles",
-    rating: 4.9,
-    reviewCount: 112,
-    products: ["Cheese", "Milk", "Butter", "Yogurt"],
-    certifications: ["Grass-Fed", "Humane"],
-    image: "/images/farms/maple-leaf.jpg",
-    featured: true,
-  },
-  {
-    id: "5",
-    name: "Sunset Berry Farm",
-    description:
-      "U-pick berry farm with strawberries, blueberries, and seasonal produce from June to October.",
-    location: "Tigard, OR",
-    distance: "4.2 miles",
-    rating: 4.6,
-    reviewCount: 78,
-    products: ["Berries", "Seasonal Produce"],
-    certifications: ["Organic"],
-    image: "/images/farms/sunset-berry.jpg",
-    featured: false,
-  },
-  {
-    id: "6",
-    name: "Heritage Grains Collective",
-    description:
-      "Growing ancient grains and milling flour on-site. Specialty flours and baking mixes available.",
-    location: "Cornelius, OR",
-    distance: "11.2 miles",
-    rating: 4.8,
-    reviewCount: 45,
-    products: ["Flour", "Grains", "Baking Mixes"],
-    certifications: ["Organic", "Heritage"],
-    image: "/images/farms/heritage-grains.jpg",
-    featured: false,
-  },
-];
+// ============================================================================
+// DATA FETCHING - SERVER COMPONENT
+// ============================================================================
 
-export default function FarmsPage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState("distance");
+/**
+ * Fetch farms data from API
+ *
+ * Divine Pattern: Server-side data fetching with graceful degradation
+ * Implements error handling and fallback to empty array
+ */
+async function getFarms(): Promise<any[]> {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
+    const response = await fetch(`${baseUrl}/api/farms`, {
+      cache: "no-store",
+      next: { revalidate: 60 }, // Revalidate every 60 seconds
+    });
 
-  const filters = [
-    "Organic",
-    "Biodynamic",
-    "Sustainable",
-    "Grass-Fed",
-    "Pick-Your-Own",
-    "CSA Available",
-    "Farm Stand",
-    "Online Ordering",
-  ];
-
-  const toggleFilter = (filter: string) => {
-    setSelectedFilters((prev) =>
-      prev.includes(filter)
-        ? prev.filter((f) => f !== filter)
-        : [...prev, filter],
-    );
-  };
-
-  const filteredFarms = MOCK_FARMS.filter((farm) => {
-    const matchesSearch =
-      farm.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      farm.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      farm.products.some((p) =>
-        p.toLowerCase().includes(searchTerm.toLowerCase()),
-      );
-    return matchesSearch;
-  });
-
-  const sortedFarms = [...filteredFarms].sort((a, b) => {
-    switch (sortBy) {
-      case "rating":
-        return b.rating - a.rating;
-      case "distance":
-        return (
-          parseFloat(a.distance.split(" ")[0] || "0") -
-          parseFloat(b.distance.split(" ")[0] || "0")
-        );
-      case "name":
-        return a.name.localeCompare(b.name);
-      default:
-        return 0;
+    if (!response.ok) {
+      console.warn(`[FARMS_API_WARNING] API returned ${response.status}`);
+      return [];
     }
-  });
+
+    const result: ApiResponse = await response.json();
+
+    if (!result.success || !result.data) {
+      console.warn("[FARMS_API_WARNING] Invalid response structure");
+      return [];
+    }
+
+    return result.data;
+  } catch (error) {
+    console.error("[FARMS_FETCH_ERROR]", error);
+    return [];
+  }
+}
+
+// ============================================================================
+// PAGE COMPONENT - SERVER COMPONENT
+// ============================================================================
+
+export default async function FarmsPage() {
+  const farms = await getFarms();
 
   return (
-<main className="min-h-screen bg-background">
-        {/* Hero Section */}
-        <section className="hero-gradient py-16 md:py-20 relative overflow-hidden">
-          <div className="absolute inset-0 opacity-20">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(239,106,37,0.3)_0%,transparent_50%)]"></div>
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(184,56,56,0.3)_0%,transparent_50%)]"></div>
-          </div>
+    <main className="min-h-screen bg-white">
+      {/* Hero Section */}
+      <section className="bg-gradient-to-br from-green-50 via-emerald-50 to-agricultural-50 py-16 sm:py-20 lg:py-24">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center">
+            {/* Icon */}
+            <div className="flex justify-center mb-6">
+              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <Store className="h-8 w-8 text-white" />
+              </div>
+            </div>
 
-          <div className="container mx-auto px-4 relative z-10">
-            <div className="max-w-3xl mx-auto text-center">
-              <span className="inline-flex items-center gap-2 bg-secondary-600/20 border border-secondary-500/30 text-secondary-200 backdrop-blur-md px-5 py-2.5 rounded-full text-sm font-semibold mb-6">
-                <Leaf className="h-5 w-5" />
-                Discover Local Fall Harvest Farms
-              </span>
+            {/* Heading */}
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
+              Discover Local Farms
+            </h1>
+            <p className="text-xl sm:text-2xl text-gray-600 mb-8">
+              Connect with sustainable farms in your community
+            </p>
 
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
-                Browse Local{" "}
-                <span className="text-gradient-warm">Farms & Orchards</span>
-              </h1>
+            {/* CTA Buttons */}
+            <div className="flex flex-wrap gap-4 justify-center">
+              <Button size="lg" variant="default" asChild>
+                <Link href="/marketplace/products">
+                  Shop Products
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                <Link href="/marketplace/farms">Browse Marketplace</Link>
+              </Button>
+            </div>
 
-              <p className="text-lg md:text-xl text-muted-foreground mb-8">
-                Connect with sustainable farms in your area. Support local
-                agriculture and enjoy fresh, seasonal produce.
-              </p>
-
-              {/* Stats */}
-              <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
-                {[
-                  { label: "Local Farms", value: "50+", icon: "🌾" },
-                  { label: "Happy Customers", value: "2,500+", icon: "😊" },
-                  { label: "Products", value: "500+", icon: "🍎" },
-                ].map((stat, idx) => (
-                  <div
-                    key={idx}
-                    className="glass-card p-4 rounded-xl text-center"
-                  >
-                    <div className="text-2xl mb-1">{stat.icon}</div>
-                    <div className="text-2xl font-bold text-gradient-warm">
-                      {stat.value}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {stat.label}
-                    </div>
+            {/* Stats */}
+            {farms.length > 0 && (
+              <div className="mt-12 flex items-center justify-center gap-8 text-center">
+                <div>
+                  <div className="text-3xl font-bold text-green-600">
+                    {farms.length}
                   </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Search and Filters */}
-        <section className="py-8 border-b border-border bg-card">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-6xl mx-auto space-y-6">
-              {/* Search Bar */}
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <input
-                  type="text"
-                  placeholder="Search farms by name, location, or products..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 transition-all"
-                />
-              </div>
-
-              {/* Filter Tags */}
-              <div className="flex flex-wrap gap-2">
-                <button className="flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-border hover:border-primary-500 transition-colors">
-                  <Filter className="h-4 w-4" />
-                  <span className="font-medium">Filters</span>
-                </button>
-                {filters.map((filter) => (
-                  <button
-                    key={filter}
-                    onClick={() => toggleFilter(filter)}
-                    className={`px-4 py-2 rounded-lg border-2 transition-all ${
-                      selectedFilters.includes(filter)
-                        ? "bg-primary-600 border-primary-600 text-white"
-                        : "border-border hover:border-primary-500"
-                    }`}
-                  >
-                    {filter}
-                  </button>
-                ))}
-              </div>
-
-              {/* Sort and Count */}
-              <div className="flex items-center justify-between">
-                <p className="text-muted-foreground">
-                  <span className="font-semibold text-foreground">
-                    {sortedFarms.length}
-                  </span>{" "}
-                  farms found
-                </p>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="px-4 py-2 rounded-lg border-2 border-border bg-background focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20"
-                  aria-label="Sort farms by"
-                >
-                  <option value="distance">Sort by Distance</option>
-                  <option value="rating">Sort by Rating</option>
-                  <option value="name">Sort by Name</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Farm Grid */}
-        <section className="py-12">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              {sortedFarms.length === 0 ? (
-                <div className="text-center py-20">
-                  <div className="text-6xl mb-4">🌾</div>
-                  <h3 className="text-2xl font-bold text-foreground mb-2">
-                    No Farms Found
-                  </h3>
-                  <p className="text-muted-foreground mb-6">
-                    Try adjusting your search or filters
-                  </p>
-                  <button
-                    onClick={() => {
-                      setSearchTerm("");
-                      setSelectedFilters([]);
-                    }}
-                    className="btn-primary px-6 py-3"
-                  >
-                    Clear All Filters
-                  </button>
+                  <div className="text-sm text-gray-600">
+                    {farms.length === 1 ? "Farm" : "Farms"}
+                  </div>
                 </div>
-              ) : (
-                <div className="grid md:grid-cols-2 gap-6">
-                  {sortedFarms.map((farm) => (
+                <div className="h-12 w-px bg-gray-300" />
+                <div>
+                  <div className="text-3xl font-bold text-green-600">
+                    {farms.filter((f) => f.certifications?.length > 0).length}
+                  </div>
+                  <div className="text-sm text-gray-600">Certified</div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Farms Grid Section */}
+      <section className="py-16 sm:py-20 lg:py-24">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            {farms.length === 0 ? (
+              /* Empty State */
+              <EmptyState
+                icon={Store}
+                title="No Farms Available Yet"
+                description="We're actively onboarding local farms to our platform."
+                secondaryDescription="Check back soon as more farms join our marketplace!"
+                action={{
+                  label: "Browse Marketplace",
+                  href: "/marketplace",
+                }}
+                secondaryAction={{
+                  label: "Back to Home",
+                  href: "/",
+                  variant: "outline",
+                }}
+                size="lg"
+                showDecoration
+              />
+            ) : (
+              /* Farms Grid */
+              <>
+                {/* Header */}
+                <div className="mb-8">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+                    All Farms
+                  </h2>
+                  <p className="text-lg text-gray-600">
+                    Showing {farms.length}{" "}
+                    {farms.length === 1 ? "farm" : "farms"}
+                  </p>
+                </div>
+
+                {/* Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                  {farms.map((farm: any) => (
                     <Link
                       key={farm.id}
-                      href={`/farms/${farm.id}`}
+                      href={`/marketplace/farms/${farm.slug || farm.id}`}
                       className="group"
                     >
-                      <div
-                        data-testid="farm-card"
-                        className="glass-card rounded-2xl overflow-hidden hover:shadow-glow-lg transition-all duration-300 h-full"
-                      >
-                        {/* Image */}
-                        <div className="relative h-48 bg-gradient-to-br from-primary-900 to-secondary-900 overflow-hidden">
-                          <div className="absolute inset-0 flex items-center justify-center text-6xl">
-                            🏡
-                          </div>
-                          {farm.featured && (
-                            <div className="absolute top-4 left-4">
-                              <span className="bg-secondary-600 text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
-                                <Award className="h-3 w-3" />
-                                Featured
-                              </span>
-                            </div>
-                          )}
-                          <button
-                            className="absolute top-4 right-4 p-2 rounded-full bg-white/90 hover:bg-white transition-colors"
-                            aria-label="Add to favorites"
-                            title="Add to favorites"
-                          >
-                            <Heart className="h-5 w-5 text-primary-600" />
-                          </button>
-                        </div>
-
-                        {/* Content */}
-                        <div className="p-6">
-                          <div className="flex items-start justify-between mb-3">
-                            <div>
-                              <h3 className="text-xl font-bold text-foreground group-hover:text-primary-600 transition-colors mb-1">
-                                {farm.name}
-                              </h3>
-                              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                <MapPin className="h-4 w-4" />
-                                <span>{farm.location}</span>
-                                <span>•</span>
-                                <span>{farm.distance}</span>
+                      <Card className="h-full hover:shadow-xl transition-all duration-200 border-2 hover:border-green-300">
+                        <CardHeader className="p-0">
+                          {/* Farm Image */}
+                          <div className="relative h-48 sm:h-56 bg-gradient-to-br from-green-400 to-emerald-600 rounded-t-lg overflow-hidden">
+                            {farm.bannerUrl || farm.images?.[0] ? (
+                              <img
+                                src={farm.bannerUrl || farm.images[0]}
+                                alt={farm.name}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              />
+                            ) : (
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <Store className="h-16 w-16 text-white/60" />
                               </div>
-                            </div>
+                            )}
+
+                            {/* Certification Badge */}
+                            {farm.certifications &&
+                              farm.certifications.length > 0 && (
+                                <div className="absolute top-3 right-3">
+                                  <Badge className="bg-white/95 text-green-700 hover:bg-white shadow-lg">
+                                    <Award className="h-3 w-3 mr-1" />
+                                    {farm.certifications[0]}
+                                  </Badge>
+                                </div>
+                              )}
+
+                            {/* Featured Badge */}
+                            {farm.featured && (
+                              <div className="absolute top-3 left-3">
+                                <Badge className="bg-amber-500/95 text-white hover:bg-amber-500 shadow-lg">
+                                  ⭐ Featured
+                                </Badge>
+                              </div>
+                            )}
                           </div>
+                        </CardHeader>
 
-                          <p className="text-muted-foreground mb-4 line-clamp-2">
-                            {farm.description}
-                          </p>
+                        <CardContent className="p-6">
+                          {/* Farm Name */}
+                          <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-green-600 transition-colors line-clamp-1">
+                            {farm.name}
+                          </h3>
 
-                          {/* Products */}
-                          <div className="flex flex-wrap gap-2 mb-4">
-                            {farm.products.slice(0, 3).map((product, idx) => (
-                              <span
-                                key={idx}
-                                className="px-3 py-1 rounded-lg bg-accent-900/20 text-accent-200 text-xs font-medium"
-                              >
-                                {product}
-                              </span>
-                            ))}
-                            {farm.products.length > 3 && (
-                              <span className="px-3 py-1 rounded-lg bg-accent-900/20 text-accent-200 text-xs font-medium">
-                                +{farm.products.length - 3} more
-                              </span>
+                          {/* Description */}
+                          {farm.description && (
+                            <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                              {farm.description}
+                            </p>
+                          )}
+
+                          {/* Farm Details */}
+                          <div className="space-y-2">
+                            {/* Rating */}
+                            {farm.averageRating > 0 && (
+                              <div className="flex items-center gap-2 text-sm">
+                                <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                                <span className="font-semibold text-gray-900">
+                                  {farm.averageRating.toFixed(1)}
+                                </span>
+                                <span className="text-gray-500">
+                                  ({farm.reviewCount || 0}{" "}
+                                  {farm.reviewCount === 1
+                                    ? "review"
+                                    : "reviews"}
+                                  )
+                                </span>
+                              </div>
+                            )}
+
+                            {/* Location */}
+                            {(farm.city || farm.location) && farm.state && (
+                              <div className="flex items-center gap-2 text-sm text-gray-600">
+                                <MapPin className="h-4 w-4 flex-shrink-0" />
+                                <span className="line-clamp-1">
+                                  {farm.city || farm.location}, {farm.state}
+                                </span>
+                              </div>
+                            )}
+
+                            {/* Product Count */}
+                            {farm.productCount > 0 && (
+                              <div className="flex items-center gap-2 text-sm text-gray-600">
+                                <Store className="h-4 w-4" />
+                                <span>
+                                  {farm.productCount}{" "}
+                                  {farm.productCount === 1
+                                    ? "Product"
+                                    : "Products"}
+                                </span>
+                              </div>
                             )}
                           </div>
 
-                          {/* Certifications */}
-                          <div className="flex flex-wrap gap-2 mb-4">
-                            {farm.certifications.map((cert, idx) => (
-                              <span
-                                key={idx}
-                                className="flex items-center gap-1 px-3 py-1 rounded-lg bg-primary-900/20 text-primary-300 text-xs font-medium"
-                              >
-                                <Leaf className="h-3 w-3" />
-                                {cert}
-                              </span>
-                            ))}
-                          </div>
-
-                          {/* Rating */}
-                          <div className="flex items-center justify-between pt-4 border-t border-border">
-                            <div className="flex items-center gap-2">
-                              <div className="flex items-center gap-1">
-                                <Star className="h-4 w-4 fill-secondary-500 text-secondary-500" />
-                                <span className="font-semibold text-foreground">
-                                  {farm.rating}
-                                </span>
-                              </div>
-                              <span className="text-sm text-muted-foreground">
-                                ({farm.reviewCount} reviews)
-                              </span>
+                          {/* Visit Farm Button */}
+                          <div className="mt-4 pt-4 border-t border-gray-100">
+                            <div className="text-green-600 group-hover:text-green-700 font-medium text-sm flex items-center justify-between">
+                              <span>Visit Farm</span>
+                              <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                             </div>
-                            <span className="text-sm font-medium text-primary-600 group-hover:text-primary-500 transition-colors">
-                              View Farm →
-                            </span>
                           </div>
-                        </div>
-                      </div>
+                        </CardContent>
+                      </Card>
                     </Link>
                   ))}
                 </div>
-              )}
-            </div>
+              </>
+            )}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* CTA Section */}
-        <section className="py-16 bg-gradient-to-br from-primary-600 to-secondary-600">
-          <div className="container mx-auto px-4 text-center">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                Are You a Farmer?
-              </h2>
-              <p className="text-xl text-white/90 mb-8">
-                Join our community of local farms and connect with customers who
-                value sustainable agriculture.
-              </p>
-              <Link
-                href="/register-farm"
-                className="inline-flex items-center gap-2 bg-white text-primary-700 px-8 py-4 rounded-xl font-semibold hover:bg-gray-100 transition-colors shadow-lg"
+      {/* CTA Section - Register Farm */}
+      <section className="py-16 sm:py-20 bg-gradient-to-br from-green-600 via-emerald-600 to-agricultural-600 text-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-full mb-6">
+              <Store className="h-8 w-8 text-white" />
+            </div>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+              Are you a farmer?
+            </h2>
+            <p className="text-xl sm:text-2xl text-white/90 mb-8">
+              Join our marketplace and connect with customers who value fresh,
+              local produce
+            </p>
+            <div className="flex gap-4 justify-center flex-wrap">
+              <Button size="lg" variant="secondary" asChild>
+                <Link href="/signup?role=farmer">
+                  Register Your Farm
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="bg-white/10 hover:bg-white/20 text-white border-white/30"
+                asChild
               >
-                <TrendingUp className="h-5 w-5" />
-                Become a Farmer Partner
-              </Link>
+                <Link href="/about">Learn More</Link>
+              </Button>
             </div>
           </div>
-        </section>
-      </main>
+        </div>
+      </section>
+    </main>
   );
 }

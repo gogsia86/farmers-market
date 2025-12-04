@@ -1,6 +1,7 @@
 # 🚀 FINAL COMMANDS - Complete The Fix
 
 ## Current Status
+
 - **TypeScript Errors**: 31 (down from 196)
 - **Critical Errors**: 2
 - **Cache Issues**: 5
@@ -26,6 +27,7 @@ npx tsc --build --clean
 ```
 
 **Then restart TypeScript server in VS Code:**
+
 - Press `Ctrl+Shift+P` (Windows/Linux) or `Cmd+Shift+P` (Mac)
 - Type: "TypeScript: Restart TS Server"
 - Press Enter
@@ -75,6 +77,7 @@ npm run dev
 **Line**: ~160
 
 Find the query around line 160:
+
 ```typescript
 const currentOrders = await database.order.findMany({
   where: {
@@ -104,11 +107,13 @@ Do the same for ALL order queries in this file (there are 3-4 places).
 **Line**: ~187
 
 **Option A**: Remove the function (if not needed yet)
+
 ```typescript
 // Delete lines 183-200 (the entire updatePayoutSchedule function)
 ```
 
 **Option B**: Connect to the dialog (if you want to implement it)
+
 ```typescript
 // In the DialogFooter section (around line 370), add:
 <DialogFooter>
@@ -169,6 +174,7 @@ npm run dev
 ## 🎉 SUCCESS CRITERIA
 
 ### Minimum (Required)
+
 - [x] TypeScript errors reduced to <10
 - [x] All errors are monitoring-related (non-blocking)
 - [x] Build completes successfully
@@ -177,6 +183,7 @@ npm run dev
 - [x] Review system functional
 
 ### Ideal (Nice to Have)
+
 - [ ] All TypeScript errors resolved (including monitoring)
 - [ ] Pre-commit hooks pass
 - [ ] All tests pass
@@ -187,6 +194,7 @@ npm run dev
 ## 🚨 IF SOMETHING GOES WRONG
 
 ### "Module not found" errors
+
 ```bash
 # Reinstall dependencies
 rm -rf node_modules package-lock.json
@@ -195,11 +203,13 @@ npx prisma generate
 ```
 
 ### "Prisma client not found"
+
 ```bash
 npx prisma generate
 ```
 
 ### "Database connection error"
+
 ```bash
 # Check .env file has DATABASE_URL
 # Then push schema
@@ -207,6 +217,7 @@ npx prisma db push
 ```
 
 ### "Cache errors persist"
+
 ```bash
 # Nuclear option - clean everything
 rm -rf node_modules .next .turbo dist build
@@ -221,6 +232,7 @@ npx tsc --build --clean
 ## 📊 EXPECTED RESULTS
 
 ### After Cache Clean
+
 ```
 TypeScript errors: ~26 (cache issues resolved)
 - 2 critical (finance, payout)
@@ -228,6 +240,7 @@ TypeScript errors: ~26 (cache issues resolved)
 ```
 
 ### After Optional Fixes
+
 ```
 TypeScript errors: ~24 (only monitoring)
 - 0 critical
@@ -235,6 +248,7 @@ TypeScript errors: ~24 (only monitoring)
 ```
 
 ### After Full Session
+
 ```
 Starting: 196 errors
 Final: <10 errors

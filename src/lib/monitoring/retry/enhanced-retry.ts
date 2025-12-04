@@ -19,7 +19,13 @@ import { trace, SpanStatusCode } from "@opentelemetry/api";
 // Types & Interfaces
 // ============================================================================
 
-export type ErrorType = "TRANSIENT" | "PERMANENT" | "RATE_LIMIT" | "TIMEOUT" | "NETWORK" | "UNKNOWN";
+export type ErrorType =
+  | "TRANSIENT"
+  | "PERMANENT"
+  | "RATE_LIMIT"
+  | "TIMEOUT"
+  | "NETWORK"
+  | "UNKNOWN";
 
 export interface ErrorClassification {
   type: ErrorType;
@@ -81,7 +87,10 @@ export class ErrorClassifier {
    * Classifies an error to determine if it's retryable and what type it is
    */
   static classify(error: Error | unknown): ErrorClassification {
-    const errorMessage = error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
+    const errorMessage =
+      error instanceof Error
+        ? error.message.toLowerCase()
+        : String(error).toLowerCase();
     const errorName = error instanceof Error ? error.name : "UnknownError";
 
     // Network errors (retryable)
@@ -271,7 +280,10 @@ export class EnhancedRetrySystem {
         try {
           // Check circuit breaker
           if (config.enableCircuitBreaker) {
-            const circuitBreaker = this.getCircuitBreaker(operationName, config);
+            const circuitBreaker = this.getCircuitBreaker(
+              operationName,
+              config,
+            );
             if (!circuitBreaker.canAttempt()) {
               throw new Error(
                 `Circuit breaker is OPEN for ${operationName}. Too many recent failures.`,
@@ -306,7 +318,8 @@ export class EnhancedRetrySystem {
                 totalDurationMs: Date.now() - startTime,
               };
             } catch (error) {
-              lastError = error instanceof Error ? error : new Error(String(error));
+              lastError =
+                error instanceof Error ? error : new Error(String(error));
               const classification = ErrorClassifier.classify(error);
               lastErrorType = classification.type;
 
@@ -405,7 +418,8 @@ export class EnhancedRetrySystem {
     suggestedDelay?: number,
   ): number {
     // Use suggested delay if provided, otherwise exponential backoff
-    const baseDelay = suggestedDelay ||
+    const baseDelay =
+      suggestedDelay ||
       config.initialDelayMs * Math.pow(config.backoffMultiplier, attempt - 1);
 
     // Cap at max delay
@@ -420,7 +434,10 @@ export class EnhancedRetrySystem {
   /**
    * Get or create circuit breaker for an operation
    */
-  private getCircuitBreaker(operationName: string, config: RetryConfig): CircuitBreaker {
+  private getCircuitBreaker(
+    operationName: string,
+    config: RetryConfig,
+  ): CircuitBreaker {
     if (!this.circuitBreakers.has(operationName)) {
       this.circuitBreakers.set(
         operationName,

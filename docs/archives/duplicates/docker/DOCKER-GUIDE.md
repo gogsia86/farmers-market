@@ -1,4 +1,5 @@
 # 🐳 Docker Deployment Guide
+
 **Farmers Market Platform - Complete Docker Setup**
 
 ---
@@ -9,14 +10,14 @@ This guide covers running the **entire Farmers Market Platform** in Docker Deskt
 
 ### What Gets Containerized
 
-| Service | Container | Port | Purpose |
-|---------|-----------|------|---------|
-| **Next.js App** | `farmers-market-dev` | 3001 | Main application (dev mode) |
-| **PostgreSQL** | `farmers-market-db-dev` | 5432 | Database with PostGIS |
-| **Redis** | `farmers-market-redis-dev` | 6379 | Cache & sessions |
-| **MailHog** | `farmers-market-mailhog` | 1025, 8025 | Email testing |
-| **Adminer** | `farmers-market-adminer` | 8080 | Database admin UI |
-| **Redis Commander** | `farmers-market-redis-commander` | 8081 | Redis admin UI |
+| Service             | Container                        | Port       | Purpose                     |
+| ------------------- | -------------------------------- | ---------- | --------------------------- |
+| **Next.js App**     | `farmers-market-dev`             | 3001       | Main application (dev mode) |
+| **PostgreSQL**      | `farmers-market-db-dev`          | 5432       | Database with PostGIS       |
+| **Redis**           | `farmers-market-redis-dev`       | 6379       | Cache & sessions            |
+| **MailHog**         | `farmers-market-mailhog`         | 1025, 8025 | Email testing               |
+| **Adminer**         | `farmers-market-adminer`         | 8080       | Database admin UI           |
+| **Redis Commander** | `farmers-market-redis-commander` | 8081       | Redis admin UI              |
 
 ---
 
@@ -62,12 +63,12 @@ start http://localhost:3000
 
 ### System Requirements
 
-| Component | Minimum | Recommended |
-|-----------|---------|-------------|
-| RAM | 8 GB | 16 GB+ |
-| CPU | 4 cores | 8+ cores |
-| Disk Space | 10 GB | 20 GB+ |
-| Docker Memory | 4 GB | 8 GB+ |
+| Component     | Minimum | Recommended |
+| ------------- | ------- | ----------- |
+| RAM           | 8 GB    | 16 GB+      |
+| CPU           | 4 cores | 8+ cores    |
+| Disk Space    | 10 GB   | 20 GB+      |
+| Docker Memory | 4 GB    | 8 GB+       |
 
 **HP OMEN Optimization:** This project is optimized for high-performance systems (64GB RAM, 12 threads). Adjust resource limits if needed.
 
@@ -107,6 +108,7 @@ DOCKER-SHELL.bat    # Access container shells & run commands
 ### Using DOCKER-LOGS.bat
 
 View logs from any service:
+
 - Application (Next.js dev server)
 - Database (PostgreSQL)
 - Redis cache
@@ -116,6 +118,7 @@ View logs from any service:
 ### Using DOCKER-SHELL.bat
 
 Interactive shell access + quick commands:
+
 - Application container shell
 - Database (psql) shell
 - Redis CLI
@@ -269,14 +272,14 @@ docker exec -i farmers-market-db-dev psql -U postgres farmersmarket < backup.sql
 
 Once containers are running:
 
-| Service | URL | Credentials |
-|---------|-----|-------------|
-| **Application** | http://localhost:3000 | - |
-| **Admin Login** | http://localhost:3000/admin-login | gogsia@gmail.com / Admin123! |
-| **Adminer (DB UI)** | http://localhost:8080 | Server: db, User: postgres, Password: postgres, DB: farmersmarket |
-| **Redis Commander** | http://localhost:8081 | admin / admin |
-| **MailHog (Email)** | http://localhost:8025 | No auth required |
-| **Prisma Studio** | http://localhost:5555 | (Run command first) |
+| Service             | URL                               | Credentials                                                       |
+| ------------------- | --------------------------------- | ----------------------------------------------------------------- |
+| **Application**     | http://localhost:3000             | -                                                                 |
+| **Admin Login**     | http://localhost:3000/admin-login | gogsia@gmail.com / Admin123!                                      |
+| **Adminer (DB UI)** | http://localhost:8080             | Server: db, User: postgres, Password: postgres, DB: farmersmarket |
+| **Redis Commander** | http://localhost:8081             | admin / admin                                                     |
+| **MailHog (Email)** | http://localhost:8025             | No auth required                                                  |
+| **Prisma Studio**   | http://localhost:5555             | (Run command first)                                               |
 
 ---
 
@@ -325,6 +328,7 @@ If containers are slow, increase Docker Desktop resources:
 ### Issue: "Docker Desktop is not running"
 
 **Solution:**
+
 ```bash
 # 1. Open Docker Desktop
 # 2. Wait for whale icon to appear in system tray
@@ -337,6 +341,7 @@ docker info
 **Error:** `Bind for 0.0.0.0:3001 failed: port is already allocated`
 
 **Solution:**
+
 ```bash
 # Option 1: Stop conflicting service
 # Check what's using the port
@@ -349,6 +354,7 @@ netstat -ano | findstr :3001
 ### Issue: "Container keeps restarting"
 
 **Solution:**
+
 ```bash
 # Check logs for errors
 docker logs farmers-market-dev
@@ -362,6 +368,7 @@ docker logs farmers-market-dev
 ### Issue: "Application shows 404 on admin routes"
 
 **Solution:**
+
 ```bash
 # You need to authenticate first!
 # 1. Open http://localhost:3000/admin-login
@@ -375,6 +382,7 @@ curl http://localhost:3000/api/auth/session
 ### Issue: "Database connection failed"
 
 **Solution:**
+
 ```bash
 # 1. Check if database container is running
 docker ps --filter "name=farmers-market-db"
@@ -392,6 +400,7 @@ docker-compose -f docker-compose.dev.yml logs app | findstr DATABASE_URL
 ### Issue: "Hot-reload not working"
 
 **Solution:**
+
 ```bash
 # 1. Verify volumes are mounted correctly
 docker inspect farmers-market-dev | findstr -i "source"
@@ -408,6 +417,7 @@ docker-compose -f docker-compose.dev.yml restart app
 ### Issue: "Out of disk space"
 
 **Solution:**
+
 ```bash
 # Clean up unused Docker resources
 docker system prune -a
@@ -422,6 +432,7 @@ docker system df
 ### Issue: "NPM packages not installing"
 
 **Solution:**
+
 ```bash
 # 1. Access container shell
 docker exec -it farmers-market-dev sh
@@ -715,14 +726,14 @@ docker inspect farmers-market-dev
 
 ### Common Solutions
 
-| Problem | Solution |
-|---------|----------|
-| Containers not starting | Check Docker Desktop is running |
-| Port conflicts | Change ports in docker-compose.dev.yml |
-| Out of memory | Increase Docker memory allocation |
-| Database issues | Wait 30s for DB to initialize |
-| Hot-reload not working | Check volume mounts & polling enabled |
-| Admin routes 404 | Sign in at /admin-login first |
+| Problem                 | Solution                               |
+| ----------------------- | -------------------------------------- |
+| Containers not starting | Check Docker Desktop is running        |
+| Port conflicts          | Change ports in docker-compose.dev.yml |
+| Out of memory           | Increase Docker memory allocation      |
+| Database issues         | Wait 30s for DB to initialize          |
+| Hot-reload not working  | Check volume mounts & polling enabled  |
+| Admin routes 404        | Sign in at /admin-login first          |
 
 ---
 

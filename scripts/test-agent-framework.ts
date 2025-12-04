@@ -28,9 +28,9 @@ const ENABLE_API_CALLS = process.env.OPENAI_API_KEY ? true : false;
 // ============================================================================
 
 function logSection(title: string): void {
-  console.log(`\n${  "=".repeat(80)}`);
+  console.log(`\n${"=".repeat(80)}`);
   console.log(`  ${title}`);
-  console.log(`${"=".repeat(80)  }\n`);
+  console.log(`${"=".repeat(80)}\n`);
 }
 
 function logSuccess(message: string): void {
@@ -107,9 +107,7 @@ async function testAgentCapabilities(): Promise<boolean> {
       );
 
       if (hasCapability) {
-        logSuccess(
-          `${testCase.agent} has capability: ${testCase.capability}`,
-        );
+        logSuccess(`${testCase.agent} has capability: ${testCase.capability}`);
       } else {
         logError(
           `${testCase.agent} missing capability: ${testCase.capability}`,
@@ -175,9 +173,9 @@ async function testFarmAnalystAgent(): Promise<boolean> {
     const response = await invokeAgent(
       "farmAnalyst",
       "Analyze the performance of Sunshine Organic Farm. " +
-      "They have 50 acres, grow tomatoes, lettuce, and carrots. " +
-      "Current yield is 5000 lbs/month with revenue of $15,000. " +
-      "What recommendations do you have?",
+        "They have 50 acres, grow tomatoes, lettuce, and carrots. " +
+        "Current yield is 5000 lbs/month with revenue of $15,000. " +
+        "What recommendations do you have?",
       {
         farmId: "test-farm-001",
         userId: "test-user-001",
@@ -225,9 +223,9 @@ async function testProductCatalogAgent(): Promise<boolean> {
     const response = await invokeAgent(
       "productCatalog",
       "Generate a compelling product description for organic heirloom tomatoes. " +
-      "They are grown without pesticides, harvested at peak ripeness, " +
-      "and come in a variety of colors (red, yellow, purple). " +
-      "Price: $5.99/lb. Also suggest relevant tags and categories.",
+        "They are grown without pesticides, harvested at peak ripeness, " +
+        "and come in a variety of colors (red, yellow, purple). " +
+        "Price: $5.99/lb. Also suggest relevant tags and categories.",
       {
         productId: "test-product-001",
         farmId: "test-farm-001",
@@ -291,7 +289,7 @@ async function testMultiAgentOrchestration(): Promise<boolean> {
     logInfo(`\nReceived ${responses.length} agent responses`);
 
     for (const response of responses) {
-      console.log(`\n${  formatAgentResponse(response)}`);
+      console.log(`\n${formatAgentResponse(response)}`);
     }
 
     if (responses.length > 0) {
@@ -329,7 +327,9 @@ async function testErrorHandling(): Promise<boolean> {
     if (ENABLE_API_CALLS) {
       try {
         const response = await invokeAgent("farmAnalyst", "");
-        logInfo(`Agent handled empty message: ${  response.content.substring(0, 50)}`);
+        logInfo(
+          `Agent handled empty message: ${response.content.substring(0, 50)}`,
+        );
         logSuccess("Agent handled empty message gracefully");
       } catch (error) {
         logSuccess("Correctly rejected empty message");
@@ -349,14 +349,18 @@ async function testErrorHandling(): Promise<boolean> {
 // ============================================================================
 
 async function runAllTests(): Promise<void> {
-  console.log("\n╔════════════════════════════════════════════════════════════╗");
+  console.log(
+    "\n╔════════════════════════════════════════════════════════════╗",
+  );
   console.log("║       AI AGENT FRAMEWORK TEST SUITE                       ║");
   console.log("║       Farmers Market Platform - Phase 6 Day 4            ║");
   console.log("╚════════════════════════════════════════════════════════════╝");
 
   if (!ENABLE_API_CALLS) {
     logWarning("\n⚠️  OpenAI API calls DISABLED (no API key detected)");
-    logInfo("Some tests will be skipped. Set OPENAI_API_KEY to enable all tests.\n");
+    logInfo(
+      "Some tests will be skipped. Set OPENAI_API_KEY to enable all tests.\n",
+    );
   } else {
     logSuccess("\n✅ OpenAI API calls ENABLED\n");
   }
@@ -387,9 +391,7 @@ async function runAllTests(): Promise<void> {
 
   console.log("\nResults:");
   for (const result of results) {
-    console.log(
-      `  ${result.passed ? "✅" : "❌"} ${result.name}`,
-    );
+    console.log(`  ${result.passed ? "✅" : "❌"} ${result.name}`);
   }
 
   console.log(`\n${passed}/${total} tests passed`);
@@ -403,9 +405,13 @@ async function runAllTests(): Promise<void> {
     process.exit(1);
   }
 
-  console.log("\n╔════════════════════════════════════════════════════════════╗");
+  console.log(
+    "\n╔════════════════════════════════════════════════════════════╗",
+  );
   console.log("║       TEST SUITE COMPLETE                                 ║");
-  console.log("╚════════════════════════════════════════════════════════════╝\n");
+  console.log(
+    "╚════════════════════════════════════════════════════════════╝\n",
+  );
 }
 
 // ============================================================================

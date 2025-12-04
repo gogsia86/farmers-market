@@ -8,6 +8,7 @@
 ## 📋 BEFORE YOU START
 
 **You need:**
+
 - ✅ Docker Desktop running (you have this)
 - ✅ Local image built (you have this: 241MB compressed)
 - ✅ Docker Hub account credentials
@@ -24,7 +25,8 @@
 docker login -u gogsiasdocker
 ```
 
-**What happens:** 
+**What happens:**
+
 - Prompts for your Docker Hub password
 - You'll see: "Login Succeeded" ✅
 
@@ -37,6 +39,7 @@ docker tag farmersmarketplatformwebandapp-app:latest gogsiasdocker/farmers-marke
 ```
 
 **What this does:**
+
 - Creates a version tag for your image
 - Doesn't duplicate the image (just adds a label)
 
@@ -49,7 +52,8 @@ docker tag farmersmarketplatformwebandapp-app:latest gogsiasdocker/farmers-marke
 ```
 
 **What this does:**
-- Creates a "latest" tag 
+
+- Creates a "latest" tag
 - Makes it easy for others to pull the newest version
 
 ---
@@ -61,14 +65,16 @@ docker push gogsiasdocker/farmers-market-app:v1.0.0
 ```
 
 **What happens:**
+
 - Uploads layers to Docker Hub
 - Takes 2-10 minutes depending on connection
 - Shows progress bars
 
 **Example output:**
+
 ```
 The push refers to repository [docker.io/gogsiasdocker/farmers-market-app]
-5f70bf18a086: Pushed 
+5f70bf18a086: Pushed
 d8d8f3c29f6b: Pushed
 v1.0.0: digest: sha256:abc123... size: 4321
 ```
@@ -82,6 +88,7 @@ docker push gogsiasdocker/farmers-market-app:latest
 ```
 
 **What happens:**
+
 - Much faster (layers already uploaded)
 - Just updates the "latest" pointer
 - Takes ~30 seconds
@@ -127,6 +134,7 @@ docker manifest inspect gogsiasdocker/farmers-market-app:v1.0.0
 After pushing, you should see:
 
 1. **On Command Line:**
+
    ```
    v1.0.0: digest: sha256:... size: 4321
    latest: digest: sha256:... size: 4321
@@ -163,19 +171,24 @@ docker-compose up -d
 ## 🔍 TROUBLESHOOTING
 
 ### Issue: "unauthorized: authentication required"
+
 **Solution:** Run `docker login -u gogsiasdocker` again
 
 ### Issue: "denied: requested access to the resource is denied"
-**Solution:** 
+
+**Solution:**
+
 - Check you're logged in: `docker info | grep Username`
 - Make sure you own the repository `gogsiasdocker/farmers-market-app`
 
 ### Issue: Push is very slow
+
 **Reason:** Uploading 241MB (compressed) image
 **Normal:** 2-10 minutes depending on your internet connection
 **Progress:** Watch the progress bars - layers upload in parallel
 
 ### Issue: "tag does not exist"
+
 **Solution:** Re-run the tag commands (Step 2 & 3)
 
 ---
@@ -183,6 +196,7 @@ docker-compose up -d
 ## 📊 UPLOAD SIZE
 
 Your image details:
+
 - **Uncompressed:** 953MB
 - **Compressed:** 241MB (this is what uploads)
 - **Upload time:** 2-10 minutes (typical)
@@ -202,6 +216,7 @@ The compressed size is excellent for a full-stack Next.js application! 🎉
    - Update deployment instructions
 
 3. **Deploy to Production**
+
    ```bash
    # On any server with Docker
    docker pull gogsiasdocker/farmers-market-app:v1.0.0
@@ -225,13 +240,13 @@ The compressed size is excellent for a full-stack Next.js application! 🎉
 
 ## 🎯 QUICK REFERENCE
 
-| Command | Purpose |
-|---------|---------|
-| `docker login` | Authenticate to Docker Hub |
-| `docker tag` | Create a new tag for image |
-| `docker push` | Upload image to Docker Hub |
-| `docker pull` | Download image from Docker Hub |
-| `docker manifest inspect` | Verify image exists remotely |
+| Command                   | Purpose                        |
+| ------------------------- | ------------------------------ |
+| `docker login`            | Authenticate to Docker Hub     |
+| `docker tag`              | Create a new tag for image     |
+| `docker push`             | Upload image to Docker Hub     |
+| `docker pull`             | Download image from Docker Hub |
+| `docker manifest inspect` | Verify image exists remotely   |
 
 ---
 
@@ -243,4 +258,4 @@ The compressed size is excellent for a full-stack Next.js application! 🎉
 
 **Ready? Copy the "All Commands in One Block" section and execute! 🚀**
 
-*Divine Agricultural Platform - Now Going Global* 🌾✨
+_Divine Agricultural Platform - Now Going Global_ 🌾✨

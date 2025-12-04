@@ -6,12 +6,12 @@ This guide provides quick copy-paste commands to set up and run tests for the Fa
 
 ## Test Types Summary
 
-| Test Type | Command | Requirements | Duration |
-|-----------|---------|--------------|----------|
-| Unit Tests | `npm test` | None | ~30s |
-| Integration Tests | `npm run test:integration` | Test Database | ~2-5min |
-| GPU Tests | `npm run test:gpu` | NVIDIA GPU | ~1-3min |
-| E2E Tests | `npm run test:e2e` | Browsers | ~5-10min |
+| Test Type         | Command                    | Requirements  | Duration |
+| ----------------- | -------------------------- | ------------- | -------- |
+| Unit Tests        | `npm test`                 | None          | ~30s     |
+| Integration Tests | `npm run test:integration` | Test Database | ~2-5min  |
+| GPU Tests         | `npm run test:gpu`         | NVIDIA GPU    | ~1-3min  |
+| E2E Tests         | `npm run test:e2e`         | Browsers      | ~5-10min |
 
 ## Quick Start (Copy & Paste)
 
@@ -430,22 +430,23 @@ Farmers Market Platform web and app/
 
 ## Quick Reference Table
 
-| Task | Command |
-|------|---------|
-| Run all tests | `npm test` |
-| Run integration tests | `npm run test:integration` |
-| Run GPU tests | `npm run test:gpu` |
-| Run E2E tests | `npm run test:e2e` |
-| Setup test database | `npm run db:test:setup` |
-| Watch mode | `npm run test:watch` |
-| Coverage report | `npm run test:coverage` |
-| Specific test | `npm test -- path/to/test.ts` |
-| Debug test | `node --inspect-brk node_modules/.bin/jest --runInBand` |
-| HP OMEN optimized | `npm run test:omen` |
+| Task                  | Command                                                 |
+| --------------------- | ------------------------------------------------------- |
+| Run all tests         | `npm test`                                              |
+| Run integration tests | `npm run test:integration`                              |
+| Run GPU tests         | `npm run test:gpu`                                      |
+| Run E2E tests         | `npm run test:e2e`                                      |
+| Setup test database   | `npm run db:test:setup`                                 |
+| Watch mode            | `npm run test:watch`                                    |
+| Coverage report       | `npm run test:coverage`                                 |
+| Specific test         | `npm test -- path/to/test.ts`                           |
+| Debug test            | `node --inspect-brk node_modules/.bin/jest --runInBand` |
+| HP OMEN optimized     | `npm run test:omen`                                     |
 
 ## Support
 
 For detailed information, see:
+
 - [TESTING.md](./TESTING.md) - Comprehensive testing guide
 - [Jest Documentation](https://jestjs.io/)
 - [Prisma Testing Guide](https://www.prisma.io/docs/guides/testing)

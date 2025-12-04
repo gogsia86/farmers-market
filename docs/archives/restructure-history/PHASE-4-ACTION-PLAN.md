@@ -10,6 +10,7 @@
 ## 📋 EXECUTIVE SUMMARY
 
 ### Current State
+
 - **50+ scripts** scattered across multiple locations
 - Scripts in root directory (`push-to-dockerhub.bat`, `cleanup-repository-comprehensive.sh`)
 - Existing `scripts/` directory with 48 files (mixed purposes)
@@ -18,6 +19,7 @@
 - No clear categorization or organization
 
 ### Target State
+
 - **Organized `scripts/` directory** with logical subdirectories
 - All root-level scripts moved to appropriate locations
 - Clear categorization by purpose (dev/deployment/maintenance/testing/ci/utils)
@@ -28,6 +30,7 @@
 ### Files Discovered
 
 #### Root Directory Scripts (3)
+
 ```
 ├── push-to-dockerhub.bat           (Docker deployment)
 ├── push-to-dockerhub.sh            (Docker deployment)
@@ -35,6 +38,7 @@
 ```
 
 #### Existing scripts/ Directory (48 files)
+
 ```
 scripts/
 ├── *.ps1 files (22 PowerShell scripts)
@@ -45,6 +49,7 @@ scripts/
 ```
 
 #### docker-scripts/ Directory (7 files)
+
 ```
 docker-scripts/
 ├── README.md
@@ -57,6 +62,7 @@ docker-scripts/
 ```
 
 #### deployment/scripts/ Directory (1 file)
+
 ```
 deployment/scripts/
 └── setup-monitoring.sh
@@ -67,6 +73,7 @@ deployment/scripts/
 ## 🎯 PHASE 4 OBJECTIVES
 
 ### Primary Goals
+
 1. ✅ **Organize** scripts into logical subdirectories
 2. ✅ **Consolidate** duplicate scripts (docker-push variants)
 3. ✅ **Document** all scripts comprehensively
@@ -75,6 +82,7 @@ deployment/scripts/
 6. ✅ **Create** master scripts README
 
 ### Success Metrics
+
 - [ ] All scripts organized into subdirectories
 - [ ] Duplicate scripts consolidated or archived
 - [ ] Comprehensive `scripts/README.md` created
@@ -183,6 +191,7 @@ scripts/
 ## 🔍 SCRIPT CATEGORIZATION
 
 ### Development Scripts (6)
+
 - `start-dev-safe.js` - Safe development server starter
 - `kill-dev-server.js` - Kill running dev processes
 - `pm2-daemon-launcher.js` - PM2 process launcher
@@ -191,6 +200,7 @@ scripts/
 - `diagnostic-check.ts` - System diagnostics
 
 ### Database Scripts (6)
+
 - `setup-database.ps1` - Database initialization
 - `update-database-url.sh` - Update connection strings
 - `test-database-simple.ts` - Simple DB connectivity test
@@ -199,6 +209,7 @@ scripts/
 - `test-db-persistence.ts` - Data persistence test
 
 ### Environment Scripts (7)
+
 - `setup-env.ps1` - Environment setup wizard
 - `manage-env.ps1` - Manage environment variables
 - `verify-env.ps1` - Verify environment config
@@ -208,6 +219,7 @@ scripts/
 - `add-monitoring-env.sh` - Add monitoring variables
 
 ### Testing Scripts (12)
+
 - `e2e-test.js` - End-to-end tests
 - `test-login.ts` - Login functionality test
 - `test-registration.ts` - User registration test
@@ -222,6 +234,7 @@ scripts/
 - `validate-24h.ts` - 24-hour validation test
 
 ### Deployment Scripts (8)
+
 - `docker-deploy.ps1` / `.sh` - Deploy to Docker
 - `docker-push.ps1` / `.sh` / `.bat` - Push to Docker Hub
 - `push-to-dockerhub.sh` / `.bat` - Push to Docker Hub (root)
@@ -230,6 +243,7 @@ scripts/
 - `docker-entrypoint.sh` - Container entrypoint
 
 ### Docker Utility Scripts (6)
+
 - `docker-dev.sh` - Development container
 - `docker-setup.ps1` - Docker environment setup
 - `docker-readiness-check.ps1` - Check Docker readiness
@@ -238,13 +252,16 @@ scripts/
 - `docker-complete-cleanup.ps1` - Complete cleanup variant
 
 ### Maintenance Scripts (6 active + 5 archived)
+
 **Active:**
+
 - `cleanup-repository-comprehensive.sh` - Full repo cleanup
 - `clean-repository.ps1` - Repository cleanup
 - `analyze-duplicates.ps1` - Find duplicate files
 - `restructure-phase1-archive.ps1` - Phase 1 archival
 
 **Archive (obsolete cleanup scripts):**
+
 - `deep-cleanup-aggressive.ps1`
 - `deep-cleanup-final.ps1`
 - `deep-structural-cleanup.ps1`
@@ -252,10 +269,12 @@ scripts/
 - `divine-repository-cleanup.ps1`
 
 ### Monitoring Scripts (2)
+
 - `workflow-monitor.ts` - CI/CD workflow monitoring
 - `validate-analytics-performance.mjs` - Analytics validation
 
 ### Utility Scripts (1)
+
 - `measure-bundle-performance.mjs` - Bundle size analysis
 
 ---
@@ -265,11 +284,13 @@ scripts/
 ### Phase 4.1: Planning & Setup (5 minutes)
 
 **Actions:**
+
 1. Create subdirectory structure
 2. Create individual README.md files for each subdirectory
 3. Document categorization decisions
 
 **Commands:**
+
 ```bash
 # Create subdirectories
 mkdir -p scripts/{dev,database,environment,testing,deployment,docker,maintenance/ARCHIVED,monitoring,utils}
@@ -404,6 +425,7 @@ mv scripts/measure-bundle-performance.mjs scripts/utils/
 ### Phase 4.10: Create README Files (8 minutes)
 
 **Create comprehensive README.md files:**
+
 1. `scripts/README.md` - Master documentation
 2. `scripts/dev/README.md` - Development scripts guide
 3. `scripts/database/README.md` - Database utilities guide
@@ -418,9 +440,11 @@ mv scripts/measure-bundle-performance.mjs scripts/utils/
 ### Phase 4.11: Update References (3 minutes)
 
 **Update package.json:**
+
 - Update script paths if any scripts are referenced
 
 **Update documentation:**
+
 - `docker-scripts/README.md` - Add deprecation notice, point to new location
 - `docs/QUICK-REFERENCE.md` - Update script paths
 - `docs/CONTRIBUTING.md` - Update script references
@@ -441,12 +465,14 @@ rmdir deployment/scripts 2>/dev/null || true
 ## ✅ VERIFICATION CHECKLIST
 
 ### Pre-Organization Checks
+
 - [ ] All script files cataloged (50+ scripts)
 - [ ] Script purposes identified
 - [ ] Categorization plan created
 - [ ] Backup commit created
 
 ### Post-Organization Checks
+
 - [ ] All subdirectories created
 - [ ] All scripts moved to appropriate locations
 - [ ] README files created for each subdirectory
@@ -456,12 +482,14 @@ rmdir deployment/scripts 2>/dev/null || true
 - [ ] `deployment/scripts/` consolidated
 
 ### Reference Updates
+
 - [ ] `package.json` script paths updated (if any)
 - [ ] Documentation updated with new paths
 - [ ] No broken script references
 - [ ] Deprecation notices added where appropriate
 
 ### Quality Checks
+
 - [ ] All scripts executable/runnable
 - [ ] README files comprehensive and helpful
 - [ ] Script purposes clearly documented
@@ -472,6 +500,7 @@ rmdir deployment/scripts 2>/dev/null || true
 ## 🎯 EXPECTED OUTCOMES
 
 ### Quantitative Results
+
 - **Scripts Organized:** 50+ scripts into 10 subdirectories
 - **Obsolete Scripts Archived:** 5 old cleanup scripts
 - **Duplicate Scripts Consolidated:** Docker push variants
@@ -480,6 +509,7 @@ rmdir deployment/scripts 2>/dev/null || true
 - **docker-scripts/ Consolidated:** 7 files → merged into scripts/
 
 ### Qualitative Improvements
+
 - ✅ Clear script categorization by purpose
 - ✅ Easy discovery of scripts for specific tasks
 - ✅ Comprehensive documentation for each category
@@ -492,32 +522,39 @@ rmdir deployment/scripts 2>/dev/null || true
 ## 🚨 RISK MITIGATION
 
 ### Risk: Breaking script references in package.json
-**Mitigation:** 
+
+**Mitigation:**
+
 - Check package.json before moving
 - Update all references
 - Test critical scripts after move
-**Impact:** Low - Most scripts are run directly, not via npm
+  **Impact:** Low - Most scripts are run directly, not via npm
 
 ### Risk: Losing Git history
+
 **Mitigation:** Use `git mv` for all moves
 **Impact:** None - Git tracks moves
 
 ### Risk: Scripts not executable after move
+
 **Mitigation:** Preserve file permissions during move
 **Impact:** Low - Can be fixed with chmod
 
 ### Risk: Developer confusion about new structure
-**Mitigation:** 
+
+**Mitigation:**
+
 - Comprehensive README files
 - Clear documentation
 - Deprecation notices
-**Impact:** Low - Documentation mitigates
+  **Impact:** Low - Documentation mitigates
 
 ---
 
 ## 📊 PROGRESS TRACKING
 
 ### Completion Criteria
+
 - [x] Action plan created and reviewed
 - [ ] Subdirectory structure created
 - [ ] Development scripts moved
@@ -535,32 +572,35 @@ rmdir deployment/scripts 2>/dev/null || true
 - [ ] Phase 4 completion report created
 
 ### Time Allocation
-| Task | Estimated | Actual | Status |
-|------|-----------|--------|--------|
-| Planning & Setup | 5 min | - | ⏳ Pending |
-| Move Dev Scripts | 3 min | - | ⏳ Pending |
-| Move DB Scripts | 3 min | - | ⏳ Pending |
-| Move Env Scripts | 3 min | - | ⏳ Pending |
-| Move Test Scripts | 4 min | - | ⏳ Pending |
-| Consolidate Deployment | 5 min | - | ⏳ Pending |
-| Move Docker Scripts | 3 min | - | ⏳ Pending |
-| Archive Maintenance | 2 min | - | ⏳ Pending |
-| Move Monitoring/Utils | 2 min | - | ⏳ Pending |
-| Create READMEs | 8 min | - | ⏳ Pending |
-| Update References | 3 min | - | ⏳ Pending |
-| Cleanup | 1 min | - | ⏳ Pending |
-| **Total** | **37 min** | **-** | **⏳ Pending** |
+
+| Task                   | Estimated  | Actual | Status         |
+| ---------------------- | ---------- | ------ | -------------- |
+| Planning & Setup       | 5 min      | -      | ⏳ Pending     |
+| Move Dev Scripts       | 3 min      | -      | ⏳ Pending     |
+| Move DB Scripts        | 3 min      | -      | ⏳ Pending     |
+| Move Env Scripts       | 3 min      | -      | ⏳ Pending     |
+| Move Test Scripts      | 4 min      | -      | ⏳ Pending     |
+| Consolidate Deployment | 5 min      | -      | ⏳ Pending     |
+| Move Docker Scripts    | 3 min      | -      | ⏳ Pending     |
+| Archive Maintenance    | 2 min      | -      | ⏳ Pending     |
+| Move Monitoring/Utils  | 2 min      | -      | ⏳ Pending     |
+| Create READMEs         | 8 min      | -      | ⏳ Pending     |
+| Update References      | 3 min      | -      | ⏳ Pending     |
+| Cleanup                | 1 min      | -      | ⏳ Pending     |
+| **Total**              | **37 min** | **-**  | **⏳ Pending** |
 
 ---
 
 ## 📚 RELATED DOCUMENTATION
 
 ### Phase Context
+
 - **Previous:** Phase 3 - Environment Files Consolidation (COMPLETE)
 - **Current:** Phase 4 - Scripts Organization (IN PROGRESS)
 - **Next:** Phase 5 - Docker Organization (~31 minutes)
 
 ### Reference Documents
+
 - `.github/copilot-instructions.md` - Project guidelines
 - `docs/PHASE-3-COMPLETE.md` - Previous phase completion
 - `docs/archives/restructure-history/PHASE-3-VERIFICATION.md` - Phase 3 verification

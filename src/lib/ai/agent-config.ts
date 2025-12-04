@@ -72,7 +72,7 @@ export function getOpenAIClient(): OpenAI {
     if (!apiKey) {
       throw new Error(
         "OPENAI_API_KEY environment variable is not set. " +
-        "Please add it to your .env.local file.",
+          "Please add it to your .env.local file.",
       );
     }
 
@@ -286,7 +286,7 @@ export function getAgentConfig(agentName: string): AgentConfig {
   if (!config) {
     throw new Error(
       `Agent "${agentName}" not found in registry. ` +
-      `Available agents: ${Object.keys(AGENT_REGISTRY).join(", ")}`,
+        `Available agents: ${Object.keys(AGENT_REGISTRY).join(", ")}`,
     );
   }
 
@@ -421,11 +421,7 @@ export async function orchestrateAgents(
   for (let turn = 0; turn < maxTurns; turn++) {
     for (const agentName of task.requiredAgents) {
       try {
-        const response = await invokeAgent(
-          agentName,
-          task.task,
-          task.context,
-        );
+        const response = await invokeAgent(agentName, task.task, task.context);
 
         responses.push(response);
 

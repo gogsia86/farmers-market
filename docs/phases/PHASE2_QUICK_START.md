@@ -1,9 +1,10 @@
 # 🚀 PHASE 2 QUICK START GUIDE
+
 ## Consumer Account Management - Immediate Testing
 
 **Last Updated:** November 2024  
 **Phase:** 2 Complete  
-**Time to Test:** 10 minutes  
+**Time to Test:** 10 minutes
 
 ---
 
@@ -25,6 +26,7 @@ npm run dev:omen
 ## 🎯 TEST THE 4 NEW PAGES
 
 ### Login First
+
 ```
 URL: http://localhost:3001/login
 Email: divna.kapica@email.com
@@ -32,6 +34,7 @@ Password: Consumer123!
 ```
 
 ### 1. Profile Page (/dashboard/profile)
+
 ```
 Direct Link: http://localhost:3001/dashboard/profile
 
@@ -43,6 +46,7 @@ Quick Tests:
 ```
 
 ### 2. Favorites Page (/dashboard/favorites)
+
 ```
 Direct Link: http://localhost:3001/dashboard/favorites
 
@@ -54,6 +58,7 @@ Quick Tests:
 ```
 
 ### 3. Reviews Page (/dashboard/reviews)
+
 ```
 Direct Link: http://localhost:3001/dashboard/reviews
 
@@ -65,6 +70,7 @@ Quick Tests:
 ```
 
 ### 4. Addresses Page (/dashboard/addresses)
+
 ```
 Direct Link: http://localhost:3001/dashboard/addresses
 
@@ -81,11 +87,13 @@ Quick Tests:
 ## 🧪 API TESTING (Optional)
 
 ### Get Your Session Token
+
 1. Login at http://localhost:3001/login
 2. Open Browser DevTools → Application → Cookies
 3. Copy value of `next-auth.session-token`
 
 ### Test Profile API
+
 ```bash
 # Get Profile
 curl http://localhost:3001/api/users/profile \
@@ -99,6 +107,7 @@ curl -X PUT http://localhost:3001/api/users/profile \
 ```
 
 ### Test Addresses API
+
 ```bash
 # Get All Addresses
 curl http://localhost:3001/api/users/addresses \
@@ -140,12 +149,14 @@ npm run db:studio
 ## 🐛 TROUBLESHOOTING
 
 ### Problem: "Database not found"
+
 ```bash
 # Solution: Apply migrations
 npm run db:migrate
 ```
 
 ### Problem: "Session expired"
+
 ```bash
 # Solution: Logout and login again
 1. Go to http://localhost:3001/logout
@@ -153,12 +164,14 @@ npm run db:migrate
 ```
 
 ### Problem: "Avatar upload fails"
+
 ```bash
 # Solution: Create uploads directory
 mkdir -p public/uploads/avatars
 ```
 
 ### Problem: "Port 3001 already in use"
+
 ```bash
 # Solution: Kill existing process
 # Windows:
@@ -174,6 +187,7 @@ lsof -ti:3001 | xargs kill -9
 ## 📊 WHAT TO VERIFY
 
 ### ✅ Profile Page
+
 - [ ] Form fields populate with user data
 - [ ] Avatar preview works
 - [ ] File validation shows errors for large files
@@ -182,6 +196,7 @@ lsof -ti:3001 | xargs kill -9
 - [ ] Notification toggles save
 
 ### ✅ Favorites Page
+
 - [ ] Empty states show when no favorites
 - [ ] Tab badges show correct counts
 - [ ] Farm cards display images and info
@@ -190,6 +205,7 @@ lsof -ti:3001 | xargs kill -9
 - [ ] Stats cards show correct totals
 
 ### ✅ Reviews Page
+
 - [ ] Pending reviews show completed orders
 - [ ] Submitted reviews display correctly
 - [ ] Star ratings are interactive in edit mode
@@ -198,6 +214,7 @@ lsof -ti:3001 | xargs kill -9
 - [ ] Average rating calculates correctly
 
 ### ✅ Addresses Page
+
 - [ ] Default address shows at top with badge
 - [ ] Add address modal opens and closes
 - [ ] Form validation works (required fields)
@@ -211,6 +228,7 @@ lsof -ti:3001 | xargs kill -9
 ## 🎨 VISUAL CHECKS
 
 ### Design System
+
 - [ ] Green buttons for primary actions
 - [ ] Gray outline buttons for secondary
 - [ ] Consistent card styling with shadows
@@ -218,6 +236,7 @@ lsof -ti:3001 | xargs kill -9
 - [ ] Responsive grid layouts work
 
 ### Responsive Design
+
 - [ ] Test on mobile width (375px)
 - [ ] Test on tablet width (768px)
 - [ ] Test on desktop (1440px)
@@ -229,12 +248,14 @@ lsof -ti:3001 | xargs kill -9
 ## 📈 PERFORMANCE CHECKS
 
 ### Page Load Times (Dev Mode)
+
 - Profile: Should load < 500ms
 - Favorites: Should load < 600ms (with images)
 - Reviews: Should load < 500ms
 - Addresses: Should load < 400ms
 
 ### API Response Times
+
 - All endpoints: Should respond < 200ms
 - File upload: Should complete < 2s for 1MB image
 
@@ -243,6 +264,7 @@ lsof -ti:3001 | xargs kill -9
 ## 🔗 NAVIGATION FLOW
 
 Test the full user journey:
+
 ```
 1. Login → Dashboard
 2. Click "Profile" from quick stats
@@ -265,6 +287,7 @@ Test the full user journey:
 ## 🎓 COMMON TASKS
 
 ### Reset Test Data
+
 ```sql
 -- In Prisma Studio or psql:
 
@@ -279,22 +302,25 @@ DELETE FROM reviews WHERE userId = 'USER_ID';
 
 -- Reset password (if locked out)
 -- Use bcrypt online tool to hash "Consumer123!"
-UPDATE users 
+UPDATE users
 SET password = '$2a$10$HASHED_PASSWORD_HERE'
 WHERE email = 'divna.kapica@email.com';
 ```
 
 ### Add Test Favorites
+
 ```javascript
 // In browser console on /farms page:
-fetch('/api/users/favorites', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+fetch("/api/users/favorites", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
-    type: 'farm',
-    farmId: 'COPY_FARM_ID_FROM_PAGE'
-  })
-}).then(r => r.json()).then(console.log)
+    type: "farm",
+    farmId: "COPY_FARM_ID_FROM_PAGE",
+  }),
+})
+  .then((r) => r.json())
+  .then(console.log);
 ```
 
 ---
@@ -302,6 +328,7 @@ fetch('/api/users/favorites', {
 ## 📚 REFERENCE
 
 ### Test Accounts
+
 ```
 Consumer:
   Email: divna.kapica@email.com
@@ -317,6 +344,7 @@ Admin:
 ```
 
 ### Key URLs
+
 ```
 Dashboard:    http://localhost:3001/dashboard
 Profile:      http://localhost:3001/dashboard/profile
@@ -328,6 +356,7 @@ Prisma:       http://localhost:5555
 ```
 
 ### Key Files
+
 ```
 Pages:
   src/app/dashboard/profile/page.tsx
@@ -348,6 +377,7 @@ APIs:
 ## ✨ SUCCESS CRITERIA
 
 Phase 2 is working correctly if:
+
 - ✅ All 4 pages load without errors
 - ✅ Forms submit and show success messages
 - ✅ Data persists after page refresh
@@ -364,6 +394,7 @@ Phase 2 is working correctly if:
 ## 🚀 READY FOR PHASE 3
 
 Once you've verified Phase 2 works:
+
 1. ✅ Mark this phase complete
 2. 📝 Note any bugs found
 3. 🎯 Move to Phase 3 planning
@@ -372,6 +403,7 @@ Once you've verified Phase 2 works:
 ---
 
 **Need Help?**
+
 - Check `IMPLEMENTATION_COMPLETE_PHASE2.md` for full details
 - Review `.github/instructions/` for coding patterns
 - Test accounts are in `prisma/seeds/` folder

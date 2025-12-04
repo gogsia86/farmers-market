@@ -83,7 +83,7 @@ Complete Docker-based development and production environment for the Farmers Mar
 ✅ **Complete stack** - DB, cache, email testing, admin UIs  
 ✅ **Easy to reset** - Fresh start anytime  
 ✅ **Production ready** - Same setup works everywhere  
-✅ **Helper scripts** - Interactive menus make it easy  
+✅ **Helper scripts** - Interactive menus make it easy
 
 ---
 
@@ -140,35 +140,35 @@ Additional Services (Development):
 
 ### Core Services
 
-| Service | Version | Purpose | Port(s) |
-|---------|---------|---------|---------|
-| **Next.js** | 16.0.3 | Application server | 3000/3001 |
-| **PostgreSQL** | 16 + PostGIS | Database with geospatial support | 5432 |
-| **Redis** | 7 Alpine | Cache and session storage | 6379 |
-| **Nginx** | Alpine | Reverse proxy, SSL, load balancer | 80, 443 |
+| Service        | Version      | Purpose                           | Port(s)   |
+| -------------- | ------------ | --------------------------------- | --------- |
+| **Next.js**    | 16.0.3       | Application server                | 3000/3001 |
+| **PostgreSQL** | 16 + PostGIS | Database with geospatial support  | 5432      |
+| **Redis**      | 7 Alpine     | Cache and session storage         | 6379      |
+| **Nginx**      | Alpine       | Reverse proxy, SSL, load balancer | 80, 443   |
 
 ### Development Tools
 
-| Tool | Purpose | Port | URL |
-|------|---------|------|-----|
-| **MailHog** | Email testing and debugging | 8025 | http://localhost:8025 |
-| **Adminer** | Lightweight database management | 8080 | http://localhost:8080 |
-| **Redis Commander** | Redis cache visualization | 8081 | http://localhost:8081 |
-| **PgAdmin** | Advanced PostgreSQL management | 8082 | http://localhost:8082 |
-| **Prisma Studio** | Visual database editor | 5555 | http://localhost:5555 |
+| Tool                | Purpose                         | Port | URL                   |
+| ------------------- | ------------------------------- | ---- | --------------------- |
+| **MailHog**         | Email testing and debugging     | 8025 | http://localhost:8025 |
+| **Adminer**         | Lightweight database management | 8080 | http://localhost:8080 |
+| **Redis Commander** | Redis cache visualization       | 8081 | http://localhost:8081 |
+| **PgAdmin**         | Advanced PostgreSQL management  | 8082 | http://localhost:8082 |
+| **Prisma Studio**   | Visual database editor          | 5555 | http://localhost:5555 |
 
 ### Production Features
 
-| Feature | Description | Status |
-|---------|-------------|--------|
-| **Automated Backups** | Daily PostgreSQL dumps with retention | ✅ Configured |
-| **Health Checks** | All services monitored | ✅ Enabled |
-| **SSL/TLS** | Modern cipher support | ✅ Ready |
-| **Rate Limiting** | API, auth, upload protection | ✅ Enabled |
-| **Security Headers** | CSP, HSTS, X-Frame-Options | ✅ Configured |
-| **Resource Limits** | CPU and memory constraints | ✅ Set |
-| **Horizontal Scaling** | Load balanced instances | ✅ Ready |
-| **Zero-Downtime Updates** | Rolling deployments | ✅ Supported |
+| Feature                   | Description                           | Status        |
+| ------------------------- | ------------------------------------- | ------------- |
+| **Automated Backups**     | Daily PostgreSQL dumps with retention | ✅ Configured |
+| **Health Checks**         | All services monitored                | ✅ Enabled    |
+| **SSL/TLS**               | Modern cipher support                 | ✅ Ready      |
+| **Rate Limiting**         | API, auth, upload protection          | ✅ Enabled    |
+| **Security Headers**      | CSP, HSTS, X-Frame-Options            | ✅ Configured |
+| **Resource Limits**       | CPU and memory constraints            | ✅ Set        |
+| **Horizontal Scaling**    | Load balanced instances               | ✅ Ready      |
+| **Zero-Downtime Updates** | Rolling deployments                   | ✅ Supported  |
 
 ---
 
@@ -187,12 +187,14 @@ Additional Services (Development):
 ### System Requirements
 
 **Development:**
+
 - CPU: 4+ cores recommended (2 minimum)
 - RAM: 8GB minimum, 16GB recommended
 - Disk: 20GB free space
 - Docker: 4GB RAM allocated, 2 CPUs
 
 **Production:**
+
 - CPU: 8+ cores recommended
 - RAM: 16GB minimum, 32GB recommended
 - Disk: 100GB+ free space
@@ -265,13 +267,13 @@ docker ps
 
 ### Step 5: Access Application
 
-| Service | URL | Credentials |
-|---------|-----|-------------|
-| **Application** | http://localhost:3000 | - |
-| **Admin Login** | http://localhost:3000/admin-login | gogsia@gmail.com / Admin123! |
-| **Adminer** | http://localhost:8080 | System: PostgreSQL<br>Server: db<br>User: postgres<br>Password: postgres<br>Database: farmersmarket |
-| **Redis Commander** | http://localhost:8081 | - |
-| **MailHog** | http://localhost:8025 | - |
+| Service             | URL                               | Credentials                                                                                         |
+| ------------------- | --------------------------------- | --------------------------------------------------------------------------------------------------- |
+| **Application**     | http://localhost:3000             | -                                                                                                   |
+| **Admin Login**     | http://localhost:3000/admin-login | gogsia@gmail.com / Admin123!                                                                        |
+| **Adminer**         | http://localhost:8080             | System: PostgreSQL<br>Server: db<br>User: postgres<br>Password: postgres<br>Database: farmersmarket |
+| **Redis Commander** | http://localhost:8081             | -                                                                                                   |
+| **MailHog**         | http://localhost:8025             | -                                                                                                   |
 
 ### Step 6: Run Initial Migrations
 
@@ -410,6 +412,7 @@ DOCKER-START.bat
 ```
 
 **Menu Options:**
+
 1. Development Mode - Start dev stack with hot-reload
 2. Production Mode - Start production stack
 3. Stop All Services - Clean shutdown
@@ -429,6 +432,7 @@ DOCKER-LOGS.bat
 ```
 
 **Options:**
+
 - View specific service logs
 - Follow logs in real-time
 - Show last N lines
@@ -447,6 +451,7 @@ DOCKER-SHELL.bat
 ```
 
 **Quick Commands Menu:**
+
 1. Open Shell (ash/sh)
 2. Open Prisma Studio
 3. Run Database Migrations
@@ -461,6 +466,7 @@ DOCKER-SHELL.bat
 ### Pushing Images to Docker Hub
 
 **Prerequisites:**
+
 - Docker Hub account (create at https://hub.docker.com)
 - Repository created (e.g., `yourusername/farmers-market-app`)
 
@@ -534,6 +540,7 @@ docker run -d \
 ### Image Size Information
 
 Your image details:
+
 - **Uncompressed:** ~950MB
 - **Compressed:** ~240MB (this is what uploads)
 - **Upload time:** 2-10 minutes (depending on connection)
@@ -677,7 +684,7 @@ Services:
       - NODE_ENV=development
       - HOT_RELOAD=true
     depends_on: [db, redis]
-    
+
   db:
     container_name: farmers-market-db-dev
     image: postgis/postgis:16-3.4-alpine
@@ -688,7 +695,7 @@ Services:
       POSTGRES_DB: farmersmarket
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-    
+
   redis:
     container_name: farmers-market-redis-dev
     image: redis:7-alpine
@@ -696,21 +703,21 @@ Services:
     volumes:
       - redis-dev-data:/data
     command: redis-server --appendonly yes
-    
+
   mailhog:
     container_name: farmers-market-mailhog
     image: mailhog/mailhog:latest
     ports:
       - 8025:8025  # Web UI
       - 1025:1025  # SMTP
-      
+
   adminer:
     container_name: farmers-market-adminer
     image: adminer:latest
     ports: 8080:8080
     environment:
       ADMINER_DEFAULT_SERVER: db
-      
+
   redis-commander:
     container_name: farmers-market-redis-commander
     image: rediscommander/redis-commander:latest
@@ -743,14 +750,14 @@ Services:
       replicas: 3
       resources:
         limits:
-          cpus: '2'
+          cpus: "2"
           memory: 4G
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-      
+
   db:
     container_name: farmers-market-db
     image: postgis/postgis:16-3.4-alpine
@@ -765,9 +772,9 @@ Services:
     deploy:
       resources:
         limits:
-          cpus: '2'
+          cpus: "2"
           memory: 2G
-    
+
   redis:
     container_name: farmers-market-redis
     image: redis:7-alpine
@@ -778,9 +785,9 @@ Services:
     deploy:
       resources:
         limits:
-          cpus: '1'
+          cpus: "1"
           memory: 1G
-    
+
   nginx:
     container_name: farmers-market-nginx
     image: nginx:alpine
@@ -794,7 +801,7 @@ Services:
       - nginx-logs:/var/log/nginx
     depends_on: [app]
     restart: unless-stopped
-    
+
   db-backup:
     container_name: farmers-market-backup
     image: postgres:16-alpine
@@ -810,15 +817,13 @@ Services:
     depends_on: [db]
     restart: unless-stopped
 
-Volumes:
-  postgres-data
+Volumes: postgres-data
   postgres-backups
   redis-data
   nginx-cache
   nginx-logs
 
-Networks:
-  farmers-network  # Bridge network with custom subnet
+Networks: farmers-network # Bridge network with custom subnet
 ```
 
 ---
@@ -827,21 +832,21 @@ Networks:
 
 ### Docker Files
 
-| File | Purpose | Lines | Key Features |
-|------|---------|-------|--------------|
-| `Dockerfile` | Production multi-stage build | 143 | Alpine-based, optimized layers, security hardening |
-| `Dockerfile.dev` | Development with hot-reload | 62 | Volume mounts, debugging enabled, Turbopack |
-| `docker-compose.yml` | Production stack | 442 | Nginx, SSL, backups, scaling |
-| `docker-compose.dev.yml` | Development stack | 365 | Dev tools, hot-reload, debugging |
-| `.dockerignore` | Build optimization | 200+ | Excludes node_modules, .git, logs |
+| File                     | Purpose                      | Lines | Key Features                                       |
+| ------------------------ | ---------------------------- | ----- | -------------------------------------------------- |
+| `Dockerfile`             | Production multi-stage build | 143   | Alpine-based, optimized layers, security hardening |
+| `Dockerfile.dev`         | Development with hot-reload  | 62    | Volume mounts, debugging enabled, Turbopack        |
+| `docker-compose.yml`     | Production stack             | 442   | Nginx, SSL, backups, scaling                       |
+| `docker-compose.dev.yml` | Development stack            | 365   | Dev tools, hot-reload, debugging                   |
+| `.dockerignore`          | Build optimization           | 200+  | Excludes node_modules, .git, logs                  |
 
 ### Environment Templates
 
-| File | Purpose | Variables | Stage |
-|------|---------|-----------|-------|
-| `.env.example` | Master template (all variables) | 100+ | All |
-| `.env.local` | Local development config | Custom | Development |
-| `.env.production` | Production config | Custom | Production |
+| File              | Purpose                         | Variables | Stage       |
+| ----------------- | ------------------------------- | --------- | ----------- |
+| `.env.example`    | Master template (all variables) | 100+      | All         |
+| `.env.local`      | Local development config        | Custom    | Development |
+| `.env.production` | Production config               | Custom    | Production  |
 
 > 📖 **Configuration Guide:** See `docs/deployment/ENV-SETUP-GUIDE.md` for comprehensive setup instructions
 
@@ -864,23 +869,23 @@ server {
 server {
     listen 443 ssl http2;
     server_name your-domain.com;
-    
+
     # SSL Configuration
     ssl_certificate /etc/nginx/ssl/cert.pem;
     ssl_certificate_key /etc/nginx/ssl/key.pem;
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers HIGH:!aNULL:!MD5;
-    
+
     # Security Headers
     add_header X-Frame-Options "SAMEORIGIN" always;
     add_header X-Content-Type-Options "nosniff" always;
     add_header X-XSS-Protection "1; mode=block" always;
     add_header Strict-Transport-Security "max-age=31536000" always;
-    
+
     # Rate Limiting
     limit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;
     limit_req zone=api burst=20 nodelay;
-    
+
     # Proxy Settings
     location / {
         proxy_pass http://app_backend;
@@ -895,15 +900,15 @@ server {
 
 ### Helper Scripts
 
-| Script | Purpose | Platform | Lines |
-|--------|---------|----------|-------|
-| `docker-start-dev.sh` | Development starter | Mac/Linux | 272 |
-| `DOCKER-START.bat` | Development starter | Windows | 250 |
-| `docker-start-prod.sh` | Production deployer | Mac/Linux | 454 |
-| `docker-logs.sh` | Log viewer | Mac/Linux | 180 |
-| `DOCKER-LOGS.bat` | Log viewer | Windows | 165 |
-| `docker-shell.sh` | Shell access | Mac/Linux | 210 |
-| `DOCKER-SHELL.bat` | Shell access | Windows | 195 |
+| Script                 | Purpose             | Platform  | Lines |
+| ---------------------- | ------------------- | --------- | ----- |
+| `docker-start-dev.sh`  | Development starter | Mac/Linux | 272   |
+| `DOCKER-START.bat`     | Development starter | Windows   | 250   |
+| `docker-start-prod.sh` | Production deployer | Mac/Linux | 454   |
+| `docker-logs.sh`       | Log viewer          | Mac/Linux | 180   |
+| `DOCKER-LOGS.bat`      | Log viewer          | Windows   | 165   |
+| `docker-shell.sh`      | Shell access        | Mac/Linux | 210   |
+| `DOCKER-SHELL.bat`     | Shell access        | Windows   | 195   |
 
 ---
 
@@ -990,10 +995,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '2'
+          cpus: "2"
           memory: 4G
         reservations:
-          cpus: '1'
+          cpus: "1"
           memory: 2G
 ```
 
@@ -1005,12 +1010,12 @@ services:
   app:
     environment:
       NODE_OPTIONS: "--max-old-space-size=8192 --max-semi-space-size=512"
-      UV_THREADPOOL_SIZE: 12  # Match CPU threads
+      UV_THREADPOOL_SIZE: 12 # Match CPU threads
     deploy:
       resources:
         limits:
-          cpus: '8'  # Use 8 of 12 threads
-          memory: 16G  # Plenty of RAM available
+          cpus: "8" # Use 8 of 12 threads
+          memory: 16G # Plenty of RAM available
 ```
 
 ### Caching Strategy
@@ -1038,11 +1043,13 @@ proxy_cache_valid 404 1m;
 #### Docker Desktop Not Running
 
 **Symptoms:**
+
 ```
 Cannot connect to the Docker daemon at unix:///var/run/docker.sock
 ```
 
 **Solution:**
+
 1. Open Docker Desktop
 2. Wait for whale icon to turn green
 3. Retry command
@@ -1050,6 +1057,7 @@ Cannot connect to the Docker daemon at unix:///var/run/docker.sock
 #### Container Keeps Restarting
 
 **Symptoms:**
+
 ```bash
 docker ps
 # Shows container constantly restarting
@@ -1074,6 +1082,7 @@ docker inspect farmers-market-dev | grep -A 10 Health
 #### Port Already in Use
 
 **Symptoms:**
+
 ```
 Error starting userland proxy: listen tcp 0.0.0.0:3000: bind: address already in use
 ```
@@ -1102,6 +1111,7 @@ ports:
 #### Database Connection Failed
 
 **Symptoms:**
+
 ```
 Error: Can't reach database server at db:5432
 ```
@@ -1156,6 +1166,7 @@ docker restart farmers-market-dev
 #### Out of Memory
 
 **Symptoms:**
+
 ```
 JavaScript heap out of memory
 ```
@@ -1229,7 +1240,7 @@ networks:
         - subnet: 172.20.0.0/16
   backend:
     driver: bridge
-    internal: true  # No external access
+    internal: true # No external access
 
 services:
   app:
@@ -1238,7 +1249,7 @@ services:
       - backend
   db:
     networks:
-      - backend  # Only accessible internally
+      - backend # Only accessible internally
 ```
 
 ### Volume Management
@@ -1308,6 +1319,7 @@ docker run -p 3000:3000 -p 9229:9229 farmers-market:debug
 ### Development Best Practices
 
 ✅ **Do:**
+
 - Use helper scripts (DOCKER-START.bat) for consistency
 - Keep .env.local up to date (reference: docs/deployment/ENV-SETUP-GUIDE.md)
 - Commit docker-compose files to Git
@@ -1319,6 +1331,7 @@ docker run -p 3000:3000 -p 9229:9229 farmers-market:debug
 - Use named volumes for persistence
 
 ❌ **Don't:**
+
 - Commit .env files with secrets
 - Use `latest` tags in production
 - Run as root user
@@ -1330,6 +1343,7 @@ docker run -p 3000:3000 -p 9229:9229 farmers-market:debug
 ### Production Best Practices
 
 ✅ **Do:**
+
 - Use specific version tags (v1.0.0)
 - Enable SSL/TLS
 - Configure automated backups
@@ -1345,6 +1359,7 @@ docker run -p 3000:3000 -p 9229:9229 farmers-market:debug
 - Test deployments in staging first
 
 ❌ **Don't:**
+
 - Use development compose in production
 - Expose database ports externally
 - Skip security headers
@@ -1382,26 +1397,26 @@ docker pull yourusername/farmers-market-app:latest
 
 ### Development Environment
 
-| Component | CPU | Memory | Disk | Notes |
-|-----------|-----|--------|------|-------|
-| Docker Desktop | 2 cores | 4GB | 10GB | Minimum allocation |
-| Next.js App | 1 core | 2GB | 5GB | With hot-reload |
-| PostgreSQL | 0.5 core | 512MB | 2GB | Development data |
-| Redis | 0.25 core | 256MB | 1GB | Cache storage |
-| Dev Tools | 0.25 core | 512MB | 2GB | Adminer, MailHog, etc |
-| **Total** | **4 cores** | **8GB** | **20GB** | **Recommended** |
+| Component      | CPU         | Memory  | Disk     | Notes                 |
+| -------------- | ----------- | ------- | -------- | --------------------- |
+| Docker Desktop | 2 cores     | 4GB     | 10GB     | Minimum allocation    |
+| Next.js App    | 1 core      | 2GB     | 5GB      | With hot-reload       |
+| PostgreSQL     | 0.5 core    | 512MB   | 2GB      | Development data      |
+| Redis          | 0.25 core   | 256MB   | 1GB      | Cache storage         |
+| Dev Tools      | 0.25 core   | 512MB   | 2GB      | Adminer, MailHog, etc |
+| **Total**      | **4 cores** | **8GB** | **20GB** | **Recommended**       |
 
 ### Production Environment
 
-| Component | CPU | Memory | Disk | Notes |
-|-----------|-----|--------|------|-------|
-| Docker Host | 8 cores | 16GB | 100GB | Recommended minimum |
-| Next.js App (×3) | 6 cores | 12GB | 15GB | 3 replicas |
-| PostgreSQL | 2 cores | 4GB | 50GB | With backups |
-| Redis | 1 core | 2GB | 10GB | With persistence |
-| Nginx | 1 core | 512MB | 5GB | Proxy + cache |
-| Monitoring | 1 core | 1GB | 10GB | Logs + metrics |
-| **Total** | **16 cores** | **32GB** | **200GB** | **For 10K users** |
+| Component        | CPU          | Memory   | Disk      | Notes               |
+| ---------------- | ------------ | -------- | --------- | ------------------- |
+| Docker Host      | 8 cores      | 16GB     | 100GB     | Recommended minimum |
+| Next.js App (×3) | 6 cores      | 12GB     | 15GB      | 3 replicas          |
+| PostgreSQL       | 2 cores      | 4GB      | 50GB      | With backups        |
+| Redis            | 1 core       | 2GB      | 10GB      | With persistence    |
+| Nginx            | 1 core       | 512MB    | 5GB       | Proxy + cache       |
+| Monitoring       | 1 core       | 1GB      | 10GB      | Logs + metrics      |
+| **Total**        | **16 cores** | **32GB** | **200GB** | **For 10K users**   |
 
 ---
 
@@ -1424,13 +1439,13 @@ docker pull yourusername/farmers-market-app:latest
 
 ### Image Sizes
 
-| Image | Uncompressed | Compressed | Upload Time |
-|-------|--------------|------------|-------------|
-| App (dev) | 1.2GB | 320MB | 3-8 min |
-| App (prod) | 950MB | 241MB | 2-6 min |
-| PostgreSQL | 180MB | 65MB | 1-2 min |
-| Redis | 40MB | 15MB | <1 min |
-| Nginx | 25MB | 9MB | <1 min |
+| Image      | Uncompressed | Compressed | Upload Time |
+| ---------- | ------------ | ---------- | ----------- |
+| App (dev)  | 1.2GB        | 320MB      | 3-8 min     |
+| App (prod) | 950MB        | 241MB      | 2-6 min     |
+| PostgreSQL | 180MB        | 65MB       | 1-2 min     |
+| Redis      | 40MB         | 15MB       | <1 min      |
+| Nginx      | 25MB         | 9MB        | <1 min      |
 
 ---
 
@@ -1467,6 +1482,7 @@ docker pull yourusername/farmers-market-app:latest
 ### Version 1.0.0 (January 15, 2025)
 
 **Initial Release**
+
 - ✅ Complete Docker development environment
 - ✅ Production-ready compose configuration
 - ✅ Helper scripts (Windows + Mac/Linux)
@@ -1479,6 +1495,7 @@ docker pull yourusername/farmers-market-app:latest
 - ✅ Dev tools integration
 
 **Features:**
+
 - 9 services configured
 - 3 environment presets
 - 6 helper scripts
@@ -1552,7 +1569,7 @@ To improve this guide:
 🚀 **Fast Builds** - Multi-stage builds with layer caching  
 💾 **Auto Backups** - Daily database backups configured  
 📊 **Monitoring** - Health checks and logging built-in  
-🎮 **Easy Scripts** - Interactive menus for common tasks  
+🎮 **Easy Scripts** - Interactive menus for common tasks
 
 ---
 

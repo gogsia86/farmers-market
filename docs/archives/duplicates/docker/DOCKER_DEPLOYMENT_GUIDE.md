@@ -1,6 +1,9 @@
 # 🐋 FARMERS MARKET PLATFORM - DOCKER DEPLOYMENT GUIDE
+
 # Divine Agricultural E-Commerce Platform - Complete Docker Setup
+
 # Version: 3.0 - Production & Development Environments
+
 # Last Updated: 2024
 
 ## 📋 TABLE OF CONTENTS
@@ -50,6 +53,7 @@ The Farmers Market Platform uses Docker for consistent deployment across develop
 ### 📦 Container Services
 
 **Production Stack:**
+
 - **app**: Next.js 15 application (Node.js 20 Alpine)
 - **db**: PostgreSQL 16 with PostGIS extension
 - **redis**: Redis 7 for caching and session storage
@@ -59,6 +63,7 @@ The Farmers Market Platform uses Docker for consistent deployment across develop
 - **redis-commander**: Redis UI (optional, management profile)
 
 **Development Stack:**
+
 - All production services plus:
 - **mailhog**: Email testing service
 - **pgadmin**: Advanced PostgreSQL management (optional, advanced profile)
@@ -82,11 +87,13 @@ docker compose version
 ### System Requirements
 
 **Minimum (Development):**
+
 - CPU: 4 cores
 - RAM: 8 GB
 - Disk: 20 GB free space
 
 **Recommended (Production):**
+
 - CPU: 8+ cores (HP OMEN: 12 threads)
 - RAM: 16+ GB (HP OMEN: 64 GB optimized)
 - Disk: 100+ GB SSD
@@ -95,18 +102,21 @@ docker compose version
 ### Installation
 
 **Windows:**
+
 ```powershell
 # Install Docker Desktop for Windows
 winget install Docker.DockerDesktop
 ```
 
 **macOS:**
+
 ```bash
 # Install Docker Desktop for Mac
 brew install --cask docker
 ```
 
 **Linux (Ubuntu/Debian):**
+
 ```bash
 # Install Docker Engine
 curl -fsSL https://get.docker.com -o get-docker.sh
@@ -188,7 +198,9 @@ docker compose -f docker-compose.dev.yml --profile proxy up -d
 ### Development Workflow
 
 #### Hot Reload
+
 Source code is mounted as volumes for instant hot-reload:
+
 ```yaml
 volumes:
   - ./src:/app/src:delegated
@@ -255,6 +267,7 @@ docker compose -f docker-compose.dev.yml exec -u root app sh
 The development container exposes port 9229 for Node.js debugging.
 
 **VSCode Configuration (.vscode/launch.json):**
+
 ```json
 {
   "version": "0.2.0",
@@ -280,6 +293,7 @@ Open `chrome://inspect` and click "Configure" to add `localhost:9229`
 #### Email Testing with MailHog
 
 All outbound emails are captured by MailHog in development:
+
 - **SMTP Server**: localhost:1025
 - **Web UI**: http://localhost:8025
 
@@ -287,17 +301,17 @@ View all sent emails without actually delivering them.
 
 ### Development URLs
 
-| Service | URL | Credentials |
-|---------|-----|-------------|
-| Next.js App | http://localhost:3000 | - |
-| Prisma Studio | http://localhost:5555 | - |
-| Adminer (DB) | http://localhost:8080 | postgres/postgres |
-| MailHog | http://localhost:8025 | - |
-| Redis Commander | http://localhost:8081 | admin/admin |
-| PgAdmin* | http://localhost:8082 | admin@farmersmarket.local/admin |
-| Nginx (dev)* | http://localhost:8000 | - |
+| Service         | URL                   | Credentials                     |
+| --------------- | --------------------- | ------------------------------- |
+| Next.js App     | http://localhost:3000 | -                               |
+| Prisma Studio   | http://localhost:5555 | -                               |
+| Adminer (DB)    | http://localhost:8080 | postgres/postgres               |
+| MailHog         | http://localhost:8025 | -                               |
+| Redis Commander | http://localhost:8081 | admin/admin                     |
+| PgAdmin\*       | http://localhost:8082 | admin@farmersmarket.local/admin |
+| Nginx (dev)\*   | http://localhost:8000 | -                               |
 
-*Optional services (require `--profile` flag)
+\*Optional services (require `--profile` flag)
 
 ---
 
@@ -308,6 +322,7 @@ View all sent emails without actually delivering them.
 1. **Configure Environment Variables**
 
 Create `.env.production`:
+
 ```bash
 # Application
 NEXT_PUBLIC_APP_URL=https://your-domain.com
@@ -339,6 +354,7 @@ OPENAI_API_KEY=...
 2. **SSL Certificates**
 
 Place SSL certificates in `nginx/ssl/`:
+
 ```bash
 nginx/ssl/
 ├── cert.pem      # SSL certificate
@@ -346,6 +362,7 @@ nginx/ssl/
 ```
 
 For Let's Encrypt:
+
 ```bash
 # Install certbot
 sudo apt-get install certbot
@@ -357,6 +374,7 @@ sudo certbot certonly --standalone -d your-domain.com
 3. **Update Nginx Configuration**
 
 Edit `nginx/nginx.conf` to set your domain:
+
 ```nginx
 server_name your-domain.com www.your-domain.com;
 ```
@@ -382,9 +400,9 @@ docker compose logs -f app
 
 ### Production URLs
 
-| Service | URL | Notes |
-|---------|-----|-------|
-| Application | https://your-domain.com | Main app |
+| Service      | URL                                | Notes               |
+| ------------ | ---------------------------------- | ------------------- |
+| Application  | https://your-domain.com            | Main app            |
 | Health Check | https://your-domain.com/api/health | Monitoring endpoint |
 
 ### Health Checks
@@ -610,6 +628,7 @@ docker compose up -d --scale app=3
 ```
 
 Update `docker-compose.yml` to define multiple app services:
+
 ```yaml
 services:
   app1:
@@ -629,6 +648,7 @@ services:
 ```
 
 Update nginx upstream:
+
 ```nginx
 upstream farmers_market_app {
     least_conn;
@@ -644,6 +664,7 @@ upstream farmers_market_app {
 The application is optimized for HP OMEN hardware (12 threads, 64GB RAM):
 
 **Development:**
+
 ```bash
 # Start with OMEN optimization
 docker compose -f docker-compose.dev.yml up -d
@@ -654,16 +675,17 @@ docker compose -f docker-compose.dev.yml up -d
 
 **Production:**
 Adjust resources in `docker-compose.yml`:
+
 ```yaml
 services:
   app:
     deploy:
       resources:
         limits:
-          cpus: '8'
+          cpus: "8"
           memory: 16G
         reservations:
-          cpus: '4'
+          cpus: "4"
           memory: 8G
 ```
 
@@ -677,9 +699,9 @@ command:
   - "-c"
   - "max_connections=200"
   - "-c"
-  - "shared_buffers=512MB"        # 25% of RAM
+  - "shared_buffers=512MB" # 25% of RAM
   - "-c"
-  - "effective_cache_size=4GB"    # 50-75% of RAM
+  - "effective_cache_size=4GB" # 50-75% of RAM
   - "-c"
   - "maintenance_work_mem=128MB"
   - "-c"
@@ -733,6 +755,7 @@ docker stats --no-stream
 ### Log Aggregation
 
 Production logs are stored in volumes:
+
 ```yaml
 volumes:
   - logs-data:/app/logs
@@ -740,6 +763,7 @@ volumes:
 ```
 
 Access logs:
+
 ```bash
 # Application logs
 docker compose exec app ls -lah /app/logs
@@ -767,12 +791,14 @@ curl http://localhost/health
 ### External Monitoring Integration
 
 **Sentry (Error Tracking):**
+
 ```bash
 SENTRY_DSN=https://...@sentry.io/...
 SENTRY_ENVIRONMENT=production
 ```
 
 **Azure Application Insights:**
+
 ```bash
 APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=...
 ENABLE_TRACING=true
@@ -790,13 +816,14 @@ The `db-backup` service runs automated backups:
 db-backup:
   image: prodrigestivill/postgres-backup-local:16-alpine
   environment:
-    - SCHEDULE=@daily              # Daily backups
-    - BACKUP_KEEP_DAYS=7          # Keep 7 daily backups
-    - BACKUP_KEEP_WEEKS=4         # Keep 4 weekly backups
-    - BACKUP_KEEP_MONTHS=6        # Keep 6 monthly backups
+    - SCHEDULE=@daily # Daily backups
+    - BACKUP_KEEP_DAYS=7 # Keep 7 daily backups
+    - BACKUP_KEEP_WEEKS=4 # Keep 4 weekly backups
+    - BACKUP_KEEP_MONTHS=6 # Keep 6 monthly backups
 ```
 
 Access backups:
+
 ```bash
 # List backups
 docker compose exec db-backup ls -lh /backups
@@ -1014,6 +1041,7 @@ docker compose build --progress=plain app
 **Never commit secrets to Git!**
 
 Use `.env.local` (gitignored):
+
 ```bash
 # .gitignore
 .env
@@ -1023,6 +1051,7 @@ Use `.env.local` (gitignored):
 ```
 
 Use Docker secrets for production:
+
 ```yaml
 secrets:
   db_password:
@@ -1049,7 +1078,7 @@ REDIS_PASSWORD=$(openssl rand -base64 24)
 networks:
   farmers-network:
     driver: bridge
-    internal: true  # Isolate from external network
+    internal: true # Isolate from external network
 
   public-network:
     driver: bridge
@@ -1058,6 +1087,7 @@ networks:
 ### 4. Non-Root User
 
 Containers run as non-root user:
+
 ```dockerfile
 USER node  # or nextjs
 ```
@@ -1081,7 +1111,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '4'
+          cpus: "4"
           memory: 8G
 ```
 
@@ -1111,6 +1141,7 @@ certbot certonly --standalone -d your-domain.com
 ### 9. Rate Limiting
 
 Configured in `nginx/nginx.conf`:
+
 ```nginx
 limit_req_zone $binary_remote_addr zone=api_limit:10m rate=10r/s;
 ```

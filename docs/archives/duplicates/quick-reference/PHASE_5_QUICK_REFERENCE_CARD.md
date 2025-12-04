@@ -295,7 +295,7 @@ If ❌ → fix → npm run bundle:check → git push
 
 **Version**: 1.0.0  
 **Updated**: January 2025  
-**Print Date**: ****\_\_****
+**Print Date**: \***\*\_\_\*\***
 
 ---
 

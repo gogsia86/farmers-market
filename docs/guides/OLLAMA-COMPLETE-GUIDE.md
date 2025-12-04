@@ -35,6 +35,7 @@
 ### Step 1: Install Ollama (2 minutes)
 
 **Windows:**
+
 ```powershell
 # Download and install from official site
 Start-Process "https://ollama.com/download/windows"
@@ -44,6 +45,7 @@ winget install Ollama.Ollama
 ```
 
 **macOS:**
+
 ```bash
 # Download from official site
 open https://ollama.com/download/mac
@@ -53,11 +55,13 @@ brew install ollama
 ```
 
 **Linux:**
+
 ```bash
 curl -fsSL https://ollama.com/install.sh | sh
 ```
 
 **Verify Installation:**
+
 ```bash
 ollama --version
 # Expected: ollama version 0.1.x
@@ -124,7 +128,7 @@ npm run dev
 ✅ **Offline capable** - Works without internet  
 ✅ **Fast** - GPU acceleration for instant responses  
 ✅ **Easy** - Simple installation and usage  
-✅ **Multiple models** - Choose the best model for your needs  
+✅ **Multiple models** - Choose the best model for your needs
 
 ### Use Cases in Farmers Market Platform
 
@@ -225,13 +229,13 @@ ollama run llama2 "Hello"
 
 ### Recommended Models for Farming Platform
 
-| Model | Size | RAM Needed | Best For |
-|-------|------|------------|----------|
-| **deepseek-r1:7b** | 4.7GB | 8GB | General use, fast responses |
-| **deepseek-r1:14b** | 8.9GB | 16GB | Better quality, detailed answers |
-| **llama3.2:3b** | 2.0GB | 4GB | Quick responses, limited RAM |
-| **mistral:7b** | 4.1GB | 8GB | Good balance of speed/quality |
-| **codellama:13b** | 7.4GB | 16GB | Code generation (if needed) |
+| Model               | Size  | RAM Needed | Best For                         |
+| ------------------- | ----- | ---------- | -------------------------------- |
+| **deepseek-r1:7b**  | 4.7GB | 8GB        | General use, fast responses      |
+| **deepseek-r1:14b** | 8.9GB | 16GB       | Better quality, detailed answers |
+| **llama3.2:3b**     | 2.0GB | 4GB        | Quick responses, limited RAM     |
+| **mistral:7b**      | 4.1GB | 8GB        | Good balance of speed/quality    |
+| **codellama:13b**   | 7.4GB | 16GB       | Code generation (if needed)      |
 
 ### Pulling Models
 
@@ -366,44 +370,49 @@ npm install ollama
 Create `src/lib/ai/ollama.service.ts`:
 
 ```typescript
-import { Ollama } from 'ollama'
+import { Ollama } from "ollama";
 
 const ollama = new Ollama({
-  host: process.env.OLLAMA_API_URL || 'http://localhost:11434'
-})
+  host: process.env.OLLAMA_API_URL || "http://localhost:11434",
+});
 
 export class OllamaService {
-  private model = process.env.OLLAMA_MODEL || 'deepseek-r1:7b'
+  private model = process.env.OLLAMA_MODEL || "deepseek-r1:7b";
 
   async generateText(prompt: string): Promise<string> {
     const response = await ollama.generate({
       model: this.model,
       prompt,
-      stream: false
-    })
-    
-    return response.response
+      stream: false,
+    });
+
+    return response.response;
   }
 
-  async chat(messages: Array<{ role: string; content: string }>): Promise<string> {
+  async chat(
+    messages: Array<{ role: string; content: string }>,
+  ): Promise<string> {
     const response = await ollama.chat({
       model: this.model,
       messages,
-      stream: false
-    })
-    
-    return response.message.content
+      stream: false,
+    });
+
+    return response.message.content;
   }
 
-  async generateProductDescription(productName: string, details: string): Promise<string> {
+  async generateProductDescription(
+    productName: string,
+    details: string,
+  ): Promise<string> {
     const prompt = `Generate a compelling product description for a farmers market platform:
     
 Product: ${productName}
 Details: ${details}
 
-Write a 2-3 paragraph description highlighting freshness, quality, and local farming practices.`
+Write a 2-3 paragraph description highlighting freshness, quality, and local farming practices.`;
 
-    return await this.generateText(prompt)
+    return await this.generateText(prompt);
   }
 
   async answerFarmingQuestion(question: string): Promise<string> {
@@ -411,13 +420,13 @@ Write a 2-3 paragraph description highlighting freshness, quality, and local far
 
 Question: ${question}
 
-Provide a practical, detailed answer suitable for farmers and agricultural enthusiasts.`
+Provide a practical, detailed answer suitable for farmers and agricultural enthusiasts.`;
 
-    return await this.generateText(prompt)
+    return await this.generateText(prompt);
   }
 }
 
-export const ollamaService = new OllamaService()
+export const ollamaService = new OllamaService();
 ```
 
 **3. Create API Route:**
@@ -425,42 +434,42 @@ export const ollamaService = new OllamaService()
 Create `src/app/api/ai/generate/route.ts`:
 
 ```typescript
-import { NextRequest, NextResponse } from 'next/server'
-import { ollamaService } from '@/lib/ai/ollama.service'
+import { NextRequest, NextResponse } from "next/server";
+import { ollamaService } from "@/lib/ai/ollama.service";
 
 export async function POST(request: NextRequest) {
   try {
-    const { prompt, type } = await request.json()
+    const { prompt, type } = await request.json();
 
-    let response: string
+    let response: string;
 
     switch (type) {
-      case 'product-description':
+      case "product-description":
         response = await ollamaService.generateProductDescription(
           prompt.productName,
-          prompt.details
-        )
-        break
-      
-      case 'farming-question':
-        response = await ollamaService.answerFarmingQuestion(prompt.question)
-        break
-      
+          prompt.details,
+        );
+        break;
+
+      case "farming-question":
+        response = await ollamaService.answerFarmingQuestion(prompt.question);
+        break;
+
       default:
-        response = await ollamaService.generateText(prompt)
+        response = await ollamaService.generateText(prompt);
     }
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       response,
-      model: process.env.OLLAMA_MODEL 
-    })
+      model: process.env.OLLAMA_MODEL,
+    });
   } catch (error) {
-    console.error('Ollama API error:', error)
+    console.error("Ollama API error:", error);
     return NextResponse.json(
-      { success: false, error: 'Failed to generate response' },
-      { status: 500 }
-    )
+      { success: false, error: "Failed to generate response" },
+      { status: 500 },
+    );
   }
 }
 ```
@@ -470,34 +479,34 @@ export async function POST(request: NextRequest) {
 Create `src/components/ai/AIAssistant.tsx`:
 
 ```tsx
-'use client'
+"use client";
 
-import { useState } from 'react'
+import { useState } from "react";
 
 export function AIAssistant() {
-  const [prompt, setPrompt] = useState('')
-  const [response, setResponse] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [prompt, setPrompt] = useState("");
+  const [response, setResponse] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function handleGenerate() {
-    setLoading(true)
+    setLoading(true);
     try {
-      const res = await fetch('/api/ai/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+      const res = await fetch("/api/ai/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           prompt,
-          type: 'farming-question'
-        })
-      })
-      
-      const data = await res.json()
-      setResponse(data.response)
+          type: "farming-question",
+        }),
+      });
+
+      const data = await res.json();
+      setResponse(data.response);
     } catch (error) {
-      console.error('Error:', error)
-      setResponse('Failed to generate response')
+      console.error("Error:", error);
+      setResponse("Failed to generate response");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -511,7 +520,7 @@ export function AIAssistant() {
         rows={4}
       />
       <button onClick={handleGenerate} disabled={loading}>
-        {loading ? 'Generating...' : 'Ask AI'}
+        {loading ? "Generating..." : "Ask AI"}
       </button>
       {response && (
         <div className="response">
@@ -520,7 +529,7 @@ export function AIAssistant() {
         </div>
       )}
     </div>
-  )
+  );
 }
 ```
 
@@ -564,36 +573,36 @@ curl http://localhost:11434/api/tags
 ### Using Ollama SDK
 
 ```typescript
-import { Ollama } from 'ollama'
+import { Ollama } from "ollama";
 
-const ollama = new Ollama({ host: 'http://localhost:11434' })
+const ollama = new Ollama({ host: "http://localhost:11434" });
 
 // Generate
 const response = await ollama.generate({
-  model: 'deepseek-r1:7b',
-  prompt: 'What is permaculture?'
-})
-console.log(response.response)
+  model: "deepseek-r1:7b",
+  prompt: "What is permaculture?",
+});
+console.log(response.response);
 
 // Chat
 const chatResponse = await ollama.chat({
-  model: 'deepseek-r1:7b',
+  model: "deepseek-r1:7b",
   messages: [
-    { role: 'system', content: 'You are a farming expert.' },
-    { role: 'user', content: 'How do I improve soil health?' }
-  ]
-})
-console.log(chatResponse.message.content)
+    { role: "system", content: "You are a farming expert." },
+    { role: "user", content: "How do I improve soil health?" },
+  ],
+});
+console.log(chatResponse.message.content);
 
 // Streaming
 const stream = await ollama.generate({
-  model: 'deepseek-r1:7b',
-  prompt: 'Explain composting',
-  stream: true
-})
+  model: "deepseek-r1:7b",
+  prompt: "Explain composting",
+  stream: true,
+});
 
 for await (const chunk of stream) {
-  process.stdout.write(chunk.response)
+  process.stdout.write(chunk.response);
 }
 ```
 
@@ -626,10 +635,8 @@ $env:OLLAMA_MAX_VRAM = "8000000000"  # 8GB VRAM
 
 ```typescript
 // Process multiple requests in parallel
-const promises = questions.map(q => 
-  ollamaService.answerFarmingQuestion(q)
-)
-const responses = await Promise.all(promises)
+const promises = questions.map((q) => ollamaService.answerFarmingQuestion(q));
+const responses = await Promise.all(promises);
 ```
 
 ### Model Optimization
@@ -648,15 +655,15 @@ ollama show deepseek-r1:7b
 
 ```typescript
 await ollama.generate({
-  model: 'deepseek-r1:7b',
-  prompt: 'Your prompt',
+  model: "deepseek-r1:7b",
+  prompt: "Your prompt",
   options: {
-    num_ctx: 2048,  // Context window size
+    num_ctx: 2048, // Context window size
     temperature: 0.7,
     top_p: 0.9,
-    num_predict: 512  // Max tokens to generate
-  }
-})
+    num_predict: 512, // Max tokens to generate
+  },
+});
 ```
 
 ---
@@ -707,18 +714,23 @@ ollama pull deepseek-r1:7b
 **Solutions:**
 
 1. **Enable GPU:**
+
 ```bash
 $env:OLLAMA_NUM_GPU = "1"
 ```
 
 2. **Use smaller model:**
+
 ```bash
 ollama pull deepseek-r1:7b  # Instead of 14b
 ```
 
 3. **Reduce context window:**
+
 ```typescript
-options: { num_ctx: 1024 }  // Instead of 4096
+options: {
+  num_ctx: 1024;
+} // Instead of 4096
 ```
 
 4. **Close other GPU applications**
@@ -785,25 +797,22 @@ ollama run farming-expert "How do I start composting?"
 
 ```typescript
 async function batchGenerateDescriptions(products: Product[]) {
-  const batchSize = 5
-  const results = []
+  const batchSize = 5;
+  const results = [];
 
   for (let i = 0; i < products.length; i += batchSize) {
-    const batch = products.slice(i, i + batchSize)
-    const promises = batch.map(product =>
-      ollamaService.generateProductDescription(
-        product.name,
-        product.details
-      )
-    )
-    const batchResults = await Promise.all(promises)
-    results.push(...batchResults)
-    
+    const batch = products.slice(i, i + batchSize);
+    const promises = batch.map((product) =>
+      ollamaService.generateProductDescription(product.name, product.details),
+    );
+    const batchResults = await Promise.all(promises);
+    results.push(...batchResults);
+
     // Small delay between batches
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, 1000));
   }
 
-  return results
+  return results;
 }
 ```
 
@@ -812,15 +821,15 @@ async function batchGenerateDescriptions(products: Product[]) {
 ```typescript
 async function generateEmbeddings(text: string) {
   const response = await ollama.embeddings({
-    model: 'deepseek-r1:7b',
-    prompt: text
-  })
-  
-  return response.embedding
+    model: "deepseek-r1:7b",
+    prompt: text,
+  });
+
+  return response.embedding;
 }
 
 // Use for semantic search
-const productEmbedding = await generateEmbeddings(product.description)
+const productEmbedding = await generateEmbeddings(product.description);
 // Store in vector database for similarity search
 ```
 
@@ -851,13 +860,13 @@ import { logger } from '@/lib/logger'
 
 async generateText(prompt: string): Promise<string> {
   const startTime = Date.now()
-  
+
   try {
     const response = await ollama.generate({
       model: this.model,
       prompt
     })
-    
+
     const duration = Date.now() - startTime
     logger.info('Ollama generation completed', {
       model: this.model,
@@ -865,7 +874,7 @@ async generateText(prompt: string): Promise<string> {
       promptLength: prompt.length,
       responseLength: response.response.length
     })
-    
+
     return response.response
   } catch (error) {
     logger.error('Ollama generation failed', { error, prompt })

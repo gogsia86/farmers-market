@@ -165,7 +165,10 @@ export function CartItemCard({
             </button>
 
             <div className="px-4 py-2 min-w-[3rem] text-center">
-              <span className="font-semibold" aria-label={`Quantity: ${item.quantity}`}>
+              <span
+                className="font-semibold"
+                aria-label={`Quantity: ${item.quantity}`}
+              >
                 {item.quantity}
               </span>
             </div>

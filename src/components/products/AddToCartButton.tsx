@@ -62,8 +62,9 @@ export function AddToCartButton({
     // Check authentication
     if (!isAuthenticated) {
       router.push(
-        "/auth/signin?callbackUrl=" +
-          encodeURIComponent(window.location.pathname),
+        `/auth/signin?callbackUrl=${encodeURIComponent(
+          window.location.pathname,
+        )}`,
       );
       return;
     }

@@ -10,7 +10,10 @@
  */
 
 import { createNotificationManager } from "../src/lib/monitoring/notifiers";
-import type { WorkflowResult, MonitoringReport } from "../src/lib/monitoring/types";
+import type {
+  WorkflowResult,
+  MonitoringReport,
+} from "../src/lib/monitoring/types";
 
 // ============================================================================
 // TEST DATA
@@ -104,7 +107,9 @@ const mockReport: MonitoringReport = {
 // TEST FUNCTIONS
 // ============================================================================
 
-async function testSlack(manager: ReturnType<typeof createNotificationManager>) {
+async function testSlack(
+  manager: ReturnType<typeof createNotificationManager>,
+) {
   console.log("\n📨 Testing Slack Notifications...");
   console.log("─".repeat(60));
 
@@ -113,7 +118,9 @@ async function testSlack(manager: ReturnType<typeof createNotificationManager>) 
   if (!slackStatus.webhookConfigured) {
     console.log("⏭️  Slack webhook not configured (SLACK_WEBHOOK_URL missing)");
     console.log("   To enable Slack notifications:");
-    console.log("   1. Create a Slack Incoming Webhook at https://api.slack.com/messaging/webhooks");
+    console.log(
+      "   1. Create a Slack Incoming Webhook at https://api.slack.com/messaging/webhooks",
+    );
     console.log("   2. Add SLACK_WEBHOOK_URL to your .env file");
     console.log("   3. Optionally add SLACK_CHANNEL to specify a channel");
     return false;
@@ -137,22 +144,28 @@ async function testSlack(manager: ReturnType<typeof createNotificationManager>) 
 
     // Test 2: Workflow failure notification
     console.log("\n2️⃣  Testing workflow failure notification...");
-    const failureResults = await manager.notifyWorkflowFailure(mockWorkflowFailure);
+    const failureResults =
+      await manager.notifyWorkflowFailure(mockWorkflowFailure);
     const slackFailure = failureResults.find((r) => r.channel === "slack");
     if (slackFailure?.success) {
       console.log("✅ Workflow failure notification sent");
     } else {
-      console.log(`❌ Failed to send failure notification: ${slackFailure?.error}`);
+      console.log(
+        `❌ Failed to send failure notification: ${slackFailure?.error}`,
+      );
     }
 
     // Test 3: Workflow success notification (CRITICAL only)
     console.log("\n3️⃣  Testing workflow success notification...");
-    const successResults = await manager.notifyWorkflowSuccess(mockWorkflowSuccess);
+    const successResults =
+      await manager.notifyWorkflowSuccess(mockWorkflowSuccess);
     const slackSuccess = successResults.find((r) => r.channel === "slack");
     if (slackSuccess?.success) {
       console.log("✅ Workflow success notification sent");
     } else {
-      console.log(`❌ Failed to send success notification: ${slackSuccess?.error}`);
+      console.log(
+        `❌ Failed to send success notification: ${slackSuccess?.error}`,
+      );
     }
 
     // Test 4: Report summary
@@ -191,14 +204,18 @@ async function testSlack(manager: ReturnType<typeof createNotificationManager>) 
   }
 }
 
-async function testDiscord(manager: ReturnType<typeof createNotificationManager>) {
+async function testDiscord(
+  manager: ReturnType<typeof createNotificationManager>,
+) {
   console.log("\n📨 Testing Discord Notifications...");
   console.log("─".repeat(60));
 
   const discordStatus = manager.getStatus().discord;
 
   if (!discordStatus.webhookConfigured) {
-    console.log("⏭️  Discord webhook not configured (DISCORD_WEBHOOK_URL missing)");
+    console.log(
+      "⏭️  Discord webhook not configured (DISCORD_WEBHOOK_URL missing)",
+    );
     console.log("   To enable Discord notifications:");
     console.log("   1. Go to Server Settings → Integrations → Webhooks");
     console.log("   2. Create a new webhook and copy the URL");
@@ -221,22 +238,28 @@ async function testDiscord(manager: ReturnType<typeof createNotificationManager>
 
     // Test 2: Workflow failure notification
     console.log("\n2️⃣  Testing workflow failure notification...");
-    const failureResults = await manager.notifyWorkflowFailure(mockWorkflowFailure);
+    const failureResults =
+      await manager.notifyWorkflowFailure(mockWorkflowFailure);
     const discordFailure = failureResults.find((r) => r.channel === "discord");
     if (discordFailure?.success) {
       console.log("✅ Workflow failure notification sent");
     } else {
-      console.log(`❌ Failed to send failure notification: ${discordFailure?.error}`);
+      console.log(
+        `❌ Failed to send failure notification: ${discordFailure?.error}`,
+      );
     }
 
     // Test 3: Workflow success notification
     console.log("\n3️⃣  Testing workflow success notification...");
-    const successResults = await manager.notifyWorkflowSuccess(mockWorkflowSuccess);
+    const successResults =
+      await manager.notifyWorkflowSuccess(mockWorkflowSuccess);
     const discordSuccess = successResults.find((r) => r.channel === "discord");
     if (discordSuccess?.success) {
       console.log("✅ Workflow success notification sent");
     } else {
-      console.log(`❌ Failed to send success notification: ${discordSuccess?.error}`);
+      console.log(
+        `❌ Failed to send success notification: ${discordSuccess?.error}`,
+      );
     }
 
     // Test 4: Report summary
@@ -291,8 +314,12 @@ async function main() {
   // Get overall status
   const status = manager.getStatus();
   console.log("\n📊 Notification Status:");
-  console.log(`   Slack:   ${status.slack.enabled ? "✅ Enabled" : "❌ Disabled"}`);
-  console.log(`   Discord: ${status.discord.enabled ? "✅ Enabled" : "❌ Disabled"}`);
+  console.log(
+    `   Slack:   ${status.slack.enabled ? "✅ Enabled" : "❌ Disabled"}`,
+  );
+  console.log(
+    `   Discord: ${status.discord.enabled ? "✅ Enabled" : "❌ Disabled"}`,
+  );
   console.log();
 
   // Test each channel
@@ -313,11 +340,17 @@ async function main() {
   }
 
   // Final summary
-  console.log("\n╔════════════════════════════════════════════════════════════╗");
+  console.log(
+    "\n╔════════════════════════════════════════════════════════════╗",
+  );
   if (allPassed) {
-    console.log("║  ✅ ALL NOTIFICATION TESTS PASSED                         ║");
+    console.log(
+      "║  ✅ ALL NOTIFICATION TESTS PASSED                         ║",
+    );
   } else {
-    console.log("║  ⚠️  SOME NOTIFICATION TESTS FAILED                       ║");
+    console.log(
+      "║  ⚠️  SOME NOTIFICATION TESTS FAILED                       ║",
+    );
   }
   console.log("╚════════════════════════════════════════════════════════════╝");
   console.log();
@@ -334,7 +367,9 @@ async function main() {
   }
 
   // Test all channels shortcut
-  console.log("💡 Tip: Run 'npm run test:notifications' to test all channels at once");
+  console.log(
+    "💡 Tip: Run 'npm run test:notifications' to test all channels at once",
+  );
   console.log();
 
   process.exit(allPassed ? 0 : 1);

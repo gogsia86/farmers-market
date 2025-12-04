@@ -12,6 +12,7 @@
 ### 🔴 Critical Issues Identified
 
 **Major Theme/Layout Inconsistencies Found:**
+
 - ❌ **18 pages outside route groups** still using manual Header/Footer imports
 - ❌ **Customer route group missing layout** - inconsistent experience
 - ❌ **Mixed theme implementations** across different sections
@@ -19,6 +20,7 @@
 - ❌ **No centralized layout management** for public pages
 
 **Impact:**
+
 - 🔴 Inconsistent user experience across pages
 - 🔴 Maintenance nightmare (18+ files to update for UI changes)
 - 🔴 Performance issues (duplicate component mounting)
@@ -31,18 +33,19 @@
 
 ### Route Groups Status
 
-| Route Group | Status | Layout | Pages | Issues |
-|-------------|--------|--------|-------|--------|
-| **`(public)`** | ✅ Has Layout | Yes | 5 | ⚠️ Many pages should be here but aren't |
-| **`(auth)`** | ✅ Has Layout | Yes | 3 | ✅ Well organized |
-| **`(farmer)`** | ✅ Has Layout | Yes | 10+ | ✅ Well organized |
-| **`(admin)`** | ✅ Has Layout | Yes | 8+ | ✅ Well organized |
-| **`(customer)`** | ❌ NO LAYOUT | **MISSING** | 5 | 🔴 Critical issue |
-| **`(monitoring)`** | ✅ Has Layout | Yes | 2 | ✅ Protected properly |
+| Route Group        | Status        | Layout      | Pages | Issues                                  |
+| ------------------ | ------------- | ----------- | ----- | --------------------------------------- |
+| **`(public)`**     | ✅ Has Layout | Yes         | 5     | ⚠️ Many pages should be here but aren't |
+| **`(auth)`**       | ✅ Has Layout | Yes         | 3     | ✅ Well organized                       |
+| **`(farmer)`**     | ✅ Has Layout | Yes         | 10+   | ✅ Well organized                       |
+| **`(admin)`**      | ✅ Has Layout | Yes         | 8+    | ✅ Well organized                       |
+| **`(customer)`**   | ❌ NO LAYOUT  | **MISSING** | 5     | 🔴 Critical issue                       |
+| **`(monitoring)`** | ✅ Has Layout | Yes         | 2     | ✅ Protected properly                   |
 
 ### Pages Outside Route Groups (❌ PROBLEMATIC)
 
 #### **1. Should Be in `(public)` Group:**
+
 ```
 ❌ /blog              - Has Header/Footer manually
 ❌ /careers           - Has Header/Footer manually
@@ -63,6 +66,7 @@
 **Total: 14 pages with duplicate layout code**
 
 #### **2. Should Be in `(customer)` Group:**
+
 ```
 ❌ /dashboard         - Customer dashboard, no consistent layout
 ❌ /account           - Should exist but missing
@@ -71,6 +75,7 @@
 **Total: 2 pages without proper organization**
 
 #### **3. Special Cases:**
+
 ```
 ⚠️ /demos             - Has own layout (production-blocked)
 ⚠️ /diagnostic        - Needs review
@@ -85,6 +90,7 @@
 #### **✅ CONSISTENT - Route Groups with Layouts:**
 
 **1. Admin Layout** (`(admin)/layout.tsx`)
+
 - ✅ Consistent horizontal navigation
 - ✅ Fixed top header
 - ✅ User profile display
@@ -94,6 +100,7 @@
 - ✅ Green (#22c55e) accent color
 
 **2. Farmer Layout** (`(farmer)/layout.tsx`)
+
 - ✅ Consistent navigation bar
 - ✅ Desktop + mobile responsive
 - ✅ User session display
@@ -102,6 +109,7 @@
 - ✅ Green (#22c55e) accent color
 
 **3. Auth Layout** (`(auth)/layout.tsx`)
+
 - ✅ Centered card design
 - ✅ Gradient background (green-50 to emerald-50)
 - ✅ Minimal header with logo
@@ -109,6 +117,7 @@
 - ✅ Consistent authentication experience
 
 **4. Public Layout** (`(public)/layout.tsx`)
+
 - ✅ Uses shared Header/Footer components
 - ✅ Clean white background
 - ✅ Consistent navigation
@@ -117,6 +126,7 @@
 #### **❌ INCONSISTENT - Pages with Manual Layouts:**
 
 All 14+ pages outside route groups have:
+
 - ❌ Manually imported Header/Footer
 - ❌ No centralized theme management
 - ❌ Different background colors (some white, some gray)
@@ -128,6 +138,7 @@ All 14+ pages outside route groups have:
 ### Customer Pages - CRITICAL ISSUE
 
 **`(customer)` group has NO layout file:**
+
 ```
 src/app/(customer)/
   ├── account/       - ❌ No consistent layout
@@ -138,6 +149,7 @@ src/app/(customer)/
 ```
 
 **Impact:**
+
 - Each page implements its own navigation
 - No consistent user dashboard experience
 - Hard to maintain consistency
@@ -150,12 +162,14 @@ src/app/(customer)/
 ### Issue #1: Missing Customer Layout (🔴 CRITICAL)
 
 **Problem:**
+
 ```typescript
 // Current state - NO LAYOUT
-src/app/(customer)/layout.tsx  // ❌ DOES NOT EXIST
+src / app / customer / layout.tsx; // ❌ DOES NOT EXIST
 ```
 
 **Impact:**
+
 - Inconsistent customer experience
 - No unified customer navigation
 - Can't implement customer-specific features globally
@@ -163,6 +177,7 @@ src/app/(customer)/layout.tsx  // ❌ DOES NOT EXIST
 
 **Required Fix:**
 Create `src/app/(customer)/layout.tsx` with:
+
 - Authenticated customer header
 - Shopping cart widget
 - User profile menu
@@ -173,6 +188,7 @@ Create `src/app/(customer)/layout.tsx` with:
 ### Issue #2: 14 Pages with Duplicate Layout Code (🔴 CRITICAL)
 
 **Problem:**
+
 ```typescript
 // Each page does this:
 import { Header } from "@/components/layout/Header";
@@ -192,6 +208,7 @@ export default function SomePage() {
 ```
 
 **Impact:**
+
 - 18+ files need updating for any header/footer change
 - Inconsistent spacing and styling
 - No centralized SEO management
@@ -204,6 +221,7 @@ Move all 14 pages into `(public)` route group
 ### Issue #3: Inconsistent Container Widths (⚠️ MEDIUM)
 
 **Found Variations:**
+
 ```css
 /* Different pages use different widths */
 .container mx-auto px-4 sm:px-6 lg:px-8              /* Some pages */
@@ -213,6 +231,7 @@ Move all 14 pages into `(public)` route group
 ```
 
 **Impact:**
+
 - Visual inconsistency
 - Content jumps between pages
 - Poor user experience
@@ -221,6 +240,7 @@ Move all 14 pages into `(public)` route group
 ### Issue #4: Missing Dashboard Layout (🔴 CRITICAL)
 
 **Problem:**
+
 ```typescript
 // src/app/dashboard/page.tsx
 // Currently outside any route group
@@ -229,6 +249,7 @@ Move all 14 pages into `(public)` route group
 ```
 
 **Impact:**
+
 - Should be in `(customer)` group
 - Missing consistent customer navigation
 - Duplicate auth logic
@@ -237,6 +258,7 @@ Move all 14 pages into `(public)` route group
 ### Issue #5: Inconsistent Background Colors (⚠️ MEDIUM)
 
 **Found Variations:**
+
 ```css
 bg-white           /* Most pages */
 bg-gray-50         /* Some pages */
@@ -245,6 +267,7 @@ bg-gradient-to-br  /* Auth pages */
 ```
 
 **Impact:**
+
 - Visual inconsistency
 - No clear design system
 - Confusing user experience
@@ -256,8 +279,9 @@ bg-gradient-to-br  /* Auth pages */
 ### 🚀 Phase 1: Critical Fixes (Week 1) - IMMEDIATE
 
 #### 1.1 Create Customer Layout
+
 **Priority:** 🔴 CRITICAL  
-**Effort:** 4 hours  
+**Effort:** 4 hours
 
 Create `src/app/(customer)/layout.tsx`:
 
@@ -292,12 +316,14 @@ export default async function CustomerLayout({
 ```
 
 **Benefits:**
+
 - ✅ Consistent customer experience
 - ✅ Centralized authentication
 - ✅ Unified navigation
 - ✅ Easier maintenance
 
 #### 1.2 Move Dashboard to Customer Group
+
 **Priority:** 🔴 CRITICAL  
 **Effort:** 1 hour
 
@@ -310,18 +336,21 @@ mv src/app/dashboard src/app/(customer)/dashboard
 ```
 
 #### 1.3 Consolidate Public Pages
+
 **Priority:** 🔴 CRITICAL  
 **Effort:** 3 hours
 
 Move these 14 pages into `(public)` group:
+
 ```bash
 # Pages to move
-blog, careers, categories, cookies, farms, 
-markets, privacy, products, register-farm, 
+blog, careers, categories, cookies, farms,
+markets, privacy, products, register-farm,
 resources, search, support, terms, offline
 ```
 
 **Steps:**
+
 1. Create subdirectories in `(public)`
 2. Move pages
 3. Remove Header/Footer imports from each page
@@ -329,6 +358,7 @@ resources, search, support, terms, offline
 5. Update any hardcoded links
 
 **Before:**
+
 ```typescript
 // src/app/blog/page.tsx
 import { Header } from "@/components/layout/Header";
@@ -346,6 +376,7 @@ export default function BlogPage() {
 ```
 
 **After:**
+
 ```typescript
 // src/app/(public)/blog/page.tsx
 export default function BlogPage() {
@@ -362,10 +393,12 @@ export default function BlogPage() {
 ### 🎨 Phase 2: Theme Consistency (Week 2)
 
 #### 2.1 Standardize Container Widths
+
 **Priority:** ⚠️ HIGH  
 **Effort:** 2 hours
 
 Create utility class:
+
 ```typescript
 // src/lib/utils/layout.ts
 export const LAYOUT_CONSTANTS = {
@@ -384,6 +417,7 @@ export const LAYOUT_CONSTANTS = {
 Apply consistently across all pages.
 
 #### 2.2 Create Component Library Layout System
+
 **Priority:** ⚠️ HIGH  
 **Effort:** 4 hours
 
@@ -395,16 +429,16 @@ interface PageContainerProps {
   padding?: "default" | "none";
 }
 
-export function PageContainer({ 
-  children, 
+export function PageContainer({
+  children,
   width = "default",
-  padding = "default" 
+  padding = "default"
 }: PageContainerProps) {
   const containerClass = LAYOUT_CONSTANTS.container[width];
-  const paddingClass = padding === "default" 
-    ? LAYOUT_CONSTANTS.spacing.content 
+  const paddingClass = padding === "default"
+    ? LAYOUT_CONSTANTS.spacing.content
     : "";
-    
+
   return (
     <div className={`${containerClass} ${paddingClass}`}>
       {children}
@@ -414,10 +448,12 @@ export function PageContainer({
 ```
 
 #### 2.3 Standardize Background Colors
+
 **Priority:** ⚠️ MEDIUM  
 **Effort:** 2 hours
 
 **Define color scheme:**
+
 ```typescript
 // tailwind.config.ts
 {
@@ -440,6 +476,7 @@ export function PageContainer({
 ```
 
 #### 2.4 Create CustomerHeader Component
+
 **Priority:** 🔴 CRITICAL  
 **Effort:** 3 hours
 
@@ -461,7 +498,7 @@ interface CustomerHeaderProps {
 
 export function CustomerHeader({ user }: CustomerHeaderProps) {
   const cartCount = useCartStore((state) => state.getTotalItems());
-  
+
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -529,6 +566,7 @@ export function CustomerHeader({ user }: CustomerHeaderProps) {
 ### 🔧 Phase 3: Advanced Improvements (Week 3-4)
 
 #### 3.1 Implement SEO Layout Wrapper
+
 **Priority:** ⚠️ HIGH  
 **Effort:** 4 hours
 
@@ -545,12 +583,12 @@ interface SEOLayoutProps {
   structuredData?: any;
 }
 
-export function SEOLayout({ 
-  children, 
-  title, 
-  description, 
+export function SEOLayout({
+  children,
+  title,
+  description,
   ogImage,
-  structuredData 
+  structuredData
 }: SEOLayoutProps) {
   return (
     <>
@@ -567,16 +605,19 @@ export function SEOLayout({
 ```
 
 #### 3.2 Create Breadcrumb Navigation Component
+
 **Priority:** ⚠️ MEDIUM  
 **Effort:** 3 hours
 
 Add breadcrumbs to all pages for better navigation and SEO.
 
 #### 3.3 Implement Loading States
+
 **Priority:** ⚠️ MEDIUM  
 **Effort:** 2 hours
 
 Create loading.tsx for each route group:
+
 ```typescript
 // src/app/(public)/loading.tsx
 export default function PublicLoading() {
@@ -589,6 +630,7 @@ export default function PublicLoading() {
 ```
 
 #### 3.4 Add Error Boundaries
+
 **Priority:** ⚠️ MEDIUM  
 **Effort:** 2 hours
 
@@ -601,6 +643,7 @@ Create error.tsx for each route group with consistent error UI.
 ### Pages at Risk of Breaking
 
 #### 🔴 HIGH RISK (Will break without updates):
+
 ```
 ❌ /dashboard           - Auth logic in page, needs layout
 ❌ /account             - May not exist yet
@@ -610,6 +653,7 @@ Create error.tsx for each route group with consistent error UI.
 ```
 
 #### ⚠️ MEDIUM RISK (May have visual inconsistencies):
+
 ```
 ⚠️ All 14 public pages  - Manual Header/Footer
 ⚠️ /farms               - Different container widths
@@ -618,6 +662,7 @@ Create error.tsx for each route group with consistent error UI.
 ```
 
 #### 🟢 LOW RISK (Properly organized):
+
 ```
 ✅ (admin)/*            - Has consistent layout
 ✅ (auth)/*             - Has consistent layout
@@ -632,18 +677,21 @@ Create error.tsx for each route group with consistent error UI.
 ### Week 1: Critical Fixes
 
 **Day 1-2: Create Customer Layout**
+
 - [ ] Create `(customer)/layout.tsx`
 - [ ] Create `CustomerHeader.tsx` component
 - [ ] Add authentication checks
 - [ ] Test all customer routes
 
 **Day 3-4: Move Dashboard**
+
 - [ ] Move `/dashboard` to `(customer)/dashboard`
 - [ ] Remove manual auth checks
 - [ ] Update all links
 - [ ] Test dashboard functionality
 
 **Day 5: Testing**
+
 - [ ] Full regression testing
 - [ ] Visual consistency check
 - [ ] Mobile responsiveness test
@@ -652,18 +700,21 @@ Create error.tsx for each route group with consistent error UI.
 ### Week 2: Consolidate Public Pages
 
 **Day 1-2: Move Blog, Careers, Resources**
+
 - [ ] Create subdirectories in `(public)`
 - [ ] Move pages
 - [ ] Remove Header/Footer imports
 - [ ] Test routes
 
 **Day 3-4: Move Legal & Info Pages**
+
 - [ ] Move privacy, terms, cookies
 - [ ] Move support, help
 - [ ] Update any legal page links
 - [ ] Test all pages
 
 **Day 5: Move Marketplace Pages**
+
 - [ ] Move farms, products, categories
 - [ ] Move markets, search
 - [ ] Update navigation links
@@ -672,18 +723,21 @@ Create error.tsx for each route group with consistent error UI.
 ### Week 3: Theme Standardization
 
 **Day 1-2: Container Standardization**
+
 - [ ] Create layout utility classes
 - [ ] Update all pages with consistent containers
 - [ ] Test responsive layouts
 - [ ] Visual QA
 
 **Day 3-4: Color Scheme Standardization**
+
 - [ ] Define color system
 - [ ] Update all background colors
 - [ ] Update component styling
 - [ ] Test dark mode (if applicable)
 
 **Day 5: Component Library**
+
 - [ ] Create PageContainer component
 - [ ] Create Section component
 - [ ] Update pages to use new components
@@ -692,18 +746,21 @@ Create error.tsx for each route group with consistent error UI.
 ### Week 4: SEO & Polish
 
 **Day 1-2: SEO Improvements**
+
 - [ ] Add structured data to all pages
 - [ ] Implement breadcrumbs
 - [ ] Add proper meta tags
 - [ ] Test with Google Rich Results
 
 **Day 3-4: Loading & Error States**
+
 - [ ] Add loading.tsx to all route groups
 - [ ] Add error.tsx to all route groups
 - [ ] Test error scenarios
 - [ ] Test loading states
 
 **Day 5: Final QA**
+
 - [ ] Full platform testing
 - [ ] Performance testing
 - [ ] Accessibility testing
@@ -714,6 +771,7 @@ Create error.tsx for each route group with consistent error UI.
 ## 🔍 Testing Checklist
 
 ### Visual Consistency Tests
+
 - [ ] All pages have consistent header
 - [ ] All pages have consistent footer
 - [ ] Container widths are uniform
@@ -723,6 +781,7 @@ Create error.tsx for each route group with consistent error UI.
 - [ ] Spacing is uniform
 
 ### Functional Tests
+
 - [ ] All routes still work
 - [ ] Authentication works on customer pages
 - [ ] Cart functionality works
@@ -732,12 +791,14 @@ Create error.tsx for each route group with consistent error UI.
 - [ ] Mobile navigation works
 
 ### Performance Tests
+
 - [ ] Page load times acceptable
 - [ ] No duplicate component renders
 - [ ] Bundle size not increased significantly
 - [ ] Lighthouse scores maintained (90+)
 
 ### SEO Tests
+
 - [ ] All pages have proper meta tags
 - [ ] Structured data on all pages
 - [ ] Breadcrumbs functional
@@ -749,6 +810,7 @@ Create error.tsx for each route group with consistent error UI.
 ## 💰 Impact & ROI
 
 ### Current State Problems:
+
 - 🔴 18+ pages with duplicate code
 - 🔴 Inconsistent user experience
 - 🔴 4-6 hours to make global UI changes
@@ -756,6 +818,7 @@ Create error.tsx for each route group with consistent error UI.
 - 🔴 Poor SEO from missing consistency
 
 ### After Implementation:
+
 - ✅ Centralized layout management
 - ✅ Consistent user experience
 - ✅ 30 minutes for global UI changes (95% faster)
@@ -763,6 +826,7 @@ Create error.tsx for each route group with consistent error UI.
 - ✅ Better SEO from consistency
 
 ### Effort vs. Benefit:
+
 - **Investment:** 4 weeks (1 developer)
 - **Return:** Ongoing 80% reduction in maintenance time
 - **ROI:** 400%+ in first year
@@ -774,6 +838,7 @@ Create error.tsx for each route group with consistent error UI.
 ## 🚨 Risk Mitigation
 
 ### Deployment Strategy:
+
 1. ✅ **Create feature branch** for all changes
 2. ✅ **Implement route group by route group**
 3. ✅ **Test thoroughly after each group**
@@ -783,6 +848,7 @@ Create error.tsx for each route group with consistent error UI.
 7. ✅ **Rollback plan ready**
 
 ### Rollback Plan:
+
 ```bash
 # If issues found, immediately rollback
 git revert <commit-hash>
@@ -793,6 +859,7 @@ vercel rollback
 ```
 
 ### Monitoring:
+
 - 📊 Error rate monitoring (Sentry)
 - 📊 Page load time monitoring
 - 📊 User session recordings
@@ -803,16 +870,16 @@ vercel rollback
 
 ## 📋 Summary Table
 
-| Issue | Severity | Pages Affected | Effort | Priority |
-|-------|----------|----------------|--------|----------|
-| Missing customer layout | 🔴 Critical | 5 | 4h | P0 |
-| Dashboard misplaced | 🔴 Critical | 1 | 1h | P0 |
-| Duplicate layout code | 🔴 Critical | 14 | 3h | P0 |
-| Inconsistent containers | ⚠️ High | 18+ | 2h | P1 |
-| Inconsistent colors | ⚠️ High | 18+ | 2h | P1 |
-| Missing SEO components | ⚠️ High | 14 | 4h | P1 |
-| No loading states | ⚠️ Medium | All | 2h | P2 |
-| No error boundaries | ⚠️ Medium | All | 2h | P2 |
+| Issue                   | Severity    | Pages Affected | Effort | Priority |
+| ----------------------- | ----------- | -------------- | ------ | -------- |
+| Missing customer layout | 🔴 Critical | 5              | 4h     | P0       |
+| Dashboard misplaced     | 🔴 Critical | 1              | 1h     | P0       |
+| Duplicate layout code   | 🔴 Critical | 14             | 3h     | P0       |
+| Inconsistent containers | ⚠️ High     | 18+            | 2h     | P1       |
+| Inconsistent colors     | ⚠️ High     | 18+            | 2h     | P1       |
+| Missing SEO components  | ⚠️ High     | 14             | 4h     | P1       |
+| No loading states       | ⚠️ Medium   | All            | 2h     | P2       |
+| No error boundaries     | ⚠️ Medium   | All            | 2h     | P2       |
 
 **Total Effort:** ~22 hours (3 working days)  
 **Expected Completion:** 4 weeks with full testing
@@ -822,18 +889,21 @@ vercel rollback
 ## ✅ Success Criteria
 
 ### Must Have (Week 1):
+
 - [x] Customer layout created and working
 - [x] Dashboard moved to customer group
 - [x] Zero breaking changes
 - [x] All tests passing
 
 ### Should Have (Week 2-3):
+
 - [ ] All public pages in (public) group
 - [ ] Consistent container widths
 - [ ] Consistent color scheme
 - [ ] Component library started
 
 ### Nice to Have (Week 4):
+
 - [ ] Breadcrumb navigation
 - [ ] Loading states everywhere
 - [ ] Error boundaries everywhere
@@ -846,6 +916,7 @@ vercel rollback
 ### ✅ APPROVE IMMEDIATE START
 
 **Priority Order:**
+
 1. 🔴 **P0 - Week 1:** Customer layout + Dashboard move (CRITICAL)
 2. ⚠️ **P1 - Week 2:** Consolidate public pages (HIGH)
 3. ⚠️ **P2 - Week 3:** Theme standardization (HIGH)

@@ -41,6 +41,7 @@ npm run dev:omen
 ```
 
 **Wait for:**
+
 ```
 ✓ Ready in 3.2s
 ○ Local:        http://localhost:3001
@@ -57,8 +58,9 @@ npm run dev:omen
 ```
 
 **Wait for:**
+
 ```
-Ready! You are using Stripe API Version [2024-XX-XX]. 
+Ready! You are using Stripe API Version [2024-XX-XX].
 Your webhook signing secret is whsec_xxxxxxxxxxxxx
 ```
 
@@ -77,6 +79,7 @@ STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx
 (Use the secret from Terminal 2)
 
 Then **go back to Terminal 1** and restart the dev server:
+
 - Press `Ctrl+C` to stop
 - Run `npm run dev:omen` again
 
@@ -89,6 +92,7 @@ Then **go back to Terminal 1** and restart the dev server:
 Now run these commands one by one:
 
 #### Test 1: Health Check
+
 ```bash
 curl http://localhost:3001/api/webhooks/stripe
 ```
@@ -98,6 +102,7 @@ curl http://localhost:3001/api/webhooks/stripe
 ---
 
 #### Test 2: Payment Success
+
 ```bash
 ./.stripe-cli/stripe trigger payment_intent.succeeded
 ```
@@ -107,6 +112,7 @@ curl http://localhost:3001/api/webhooks/stripe
 ---
 
 #### Test 3: Payment Failed
+
 ```bash
 ./.stripe-cli/stripe trigger payment_intent.payment_failed
 ```
@@ -116,6 +122,7 @@ curl http://localhost:3001/api/webhooks/stripe
 ---
 
 #### Test 4: Refund
+
 ```bash
 ./.stripe-cli/stripe trigger charge.refunded
 ```
@@ -129,6 +136,7 @@ curl http://localhost:3001/api/webhooks/stripe
 After running all 4 tests, you should see:
 
 ### Terminal 1 (Dev Server):
+
 ```
 [Webhook] Received Stripe webhook: payment_intent.succeeded
 Payment intent succeeded: { id: 'pi_xxx', amount: 100, ... }
@@ -139,6 +147,7 @@ Charge refunded: { id: 'ch_xxx', amountRefunded: 100, ... }
 ```
 
 ### Terminal 2 (Webhook Listener):
+
 ```
 [200] POST http://localhost:3001/api/webhooks/stripe [evt_xxx]
 [200] POST http://localhost:3001/api/webhooks/stripe [evt_xxx]
@@ -152,22 +161,28 @@ Charge refunded: { id: 'ch_xxx', amountRefunded: 100, ... }
 ## 🚨 TROUBLESHOOTING
 
 ### Problem: Port 3001 already in use
+
 ```bash
 npm run kill-server
 npm run dev:omen
 ```
 
 ### Problem: Webhook returns [401] Unauthorized
+
 **Solution:** Webhook secret is wrong or not loaded
+
 1. Check Terminal 2 for the `whsec_` secret
 2. Update `.env.local` with correct value
 3. Restart Terminal 1 (dev server)
 
 ### Problem: Webhook returns [400] Bad Request
+
 **Solution:** Check dev server logs in Terminal 1 for details
 
 ### Problem: "stripe: command not found"
+
 **Solution:** Use the full path:
+
 ```bash
 ./.stripe-cli/stripe listen --forward-to localhost:3001/api/webhooks/stripe
 ```
@@ -239,6 +254,7 @@ Total Time:            5 minutes
 ## 💡 QUICK COPY-PASTE COMMANDS
 
 ### All-in-One Setup (Terminal 3):
+
 ```bash
 # After dev server and webhook listener are running:
 echo "=== Test 1: Health Check ==="

@@ -1,4 +1,5 @@
 # 🚀 Phase 4 Quick Start Guide
+
 ## Farmer Dashboard Polish - Financial Management & Order Fulfillment
 
 **Status**: ✅ Ready for Testing  
@@ -56,6 +57,7 @@ Password: (your test password)
 **URL**: `/farmer/finances`
 
 #### What to Test:
+
 1. **Stats Cards Display**
    - Available Balance (ready for payout)
    - Pending Balance (processing orders)
@@ -84,6 +86,7 @@ Password: (your test password)
    - Downloads financial statement PDF (mock)
 
 #### Expected Behavior:
+
 ```
 ✅ Stats cards show real-time data
 ✅ Chart renders smoothly
@@ -95,12 +98,14 @@ Password: (your test password)
 #### Test Cases:
 
 **Test Case 1: View Financial Stats**
+
 1. Navigate to `/farmer/finances`
 2. Verify all 4 stat cards display
 3. Check that amounts are formatted as currency ($X.XX)
 4. Confirm revenue change shows percentage with +/- indicator
 
 **Test Case 2: Switch Time Periods**
+
 1. Select "Last 7 days" from dropdown
 2. Wait for data to reload
 3. Verify chart shows ~7 data points
@@ -108,6 +113,7 @@ Password: (your test password)
 5. Verify chart shows ~12 monthly data points
 
 **Test Case 3: Revenue Chart Interaction**
+
 1. Hover over any bar in the chart
 2. Verify tooltip appears with revenue and order count
 3. Move between bars and see tooltip update
@@ -163,6 +169,7 @@ Password: (your test password)
    - Failure reasons shown for failed payouts
 
 #### Expected Behavior:
+
 ```
 ✅ Balance calculates correctly (completed orders - payouts)
 ✅ Minimum $10 validation works
@@ -174,12 +181,14 @@ Password: (your test password)
 #### Test Cases:
 
 **Test Case 1: View Payout Balance**
+
 1. Navigate to `/farmer/payouts`
 2. Check "Available for Payout" card shows balance
 3. Verify it matches: (completed order revenue - total payouts)
 4. Confirm pending balance is separate
 
 **Test Case 2: Request Instant Payout (Sufficient Balance)**
+
 1. Ensure balance is ≥ $10.00
 2. Click "Request Payout" button
 3. Confirm the action in dialog
@@ -188,12 +197,14 @@ Password: (your test password)
 6. Confirm "Request Payout" button is now disabled
 
 **Test Case 3: Request Payout (Insufficient Balance)**
+
 1. Ensure balance is < $10.00 (or use test account)
 2. Note "Request Payout" button is disabled
 3. Verify warning message appears:
    "Minimum payout amount is $10.00. Continue selling to reach the minimum."
 
 **Test Case 4: Manage Payout Schedule**
+
 1. Click "Edit" on Payout Schedule card
 2. Change frequency (Daily → Weekly)
 3. Set minimum amount ($25)
@@ -201,6 +212,7 @@ Password: (your test password)
 5. Verify changes persist after page reload
 
 **Test Case 5: Payout History**
+
 1. Scroll to "Payout History" section
 2. Verify payouts are sorted newest → oldest
 3. Check each payout shows:
@@ -285,6 +297,7 @@ Password: (your test password)
    - Contains order details
 
 #### Expected Behavior:
+
 ```
 ✅ Filters combine correctly (AND logic)
 ✅ Search is real-time and case-insensitive
@@ -297,6 +310,7 @@ Password: (your test password)
 #### Test Cases:
 
 **Test Case 1: Search Orders**
+
 1. Navigate to `/farmer/orders`
 2. Type order number in search box
 3. Verify only matching orders appear
@@ -304,6 +318,7 @@ Password: (your test password)
 5. Verify orders from that customer appear
 
 **Test Case 2: Filter by Status**
+
 1. Select "Pending" from status dropdown
 2. Verify only PENDING orders show
 3. Change to "Confirmed"
@@ -311,6 +326,7 @@ Password: (your test password)
 5. Select "All Status" to reset
 
 **Test Case 3: Batch Status Update**
+
 1. Select 3 orders with PENDING status
 2. Verify batch actions bar appears
 3. Click "Update Status" → "Confirmed"
@@ -320,6 +336,7 @@ Password: (your test password)
 7. Verify selection is cleared
 
 **Test Case 4: Workflow Actions**
+
 1. Find a PENDING order
 2. Verify it shows "Confirm Order" button
 3. Click "Confirm Order"
@@ -327,24 +344,28 @@ Password: (your test password)
 5. Verify button now shows "Start Processing"
 
 **Test Case 5: Print Packing Slips**
+
 1. Select 2-3 READY orders
 2. Click "Print Slips" button
 3. Verify PDF download starts (mock)
 4. Check filename includes date
 
 **Test Case 6: Customer Notifications**
+
 1. Select orders with SHIPPED status
 2. Click "Notify" button
 3. Confirm sending notifications
 4. Verify success message: "Notifications sent to X customer(s)"
 
 **Test Case 7: Export Orders**
+
 1. Select multiple orders
 2. Click "Export" button
 3. Verify CSV download starts (mock)
 4. Check filename includes date
 
 **Test Case 8: Order Details**
+
 1. Find an order with multiple items
 2. Verify all items are listed with:
    - Quantity and unit
@@ -361,6 +382,7 @@ Password: (your test password)
 ### Test with cURL
 
 #### 1. Get Financial Data
+
 ```bash
 curl -X GET 'http://localhost:3001/api/farmer/finances?farmId=YOUR_FARM_ID&period=30d' \
   -H 'Cookie: next-auth.session-token=YOUR_SESSION_TOKEN' \
@@ -368,13 +390,14 @@ curl -X GET 'http://localhost:3001/api/farmer/finances?farmId=YOUR_FARM_ID&perio
 ```
 
 **Expected Response:**
+
 ```json
 {
   "success": true,
   "stats": {
-    "currentBalance": 1250.00,
-    "pendingBalance": 450.00,
-    "totalRevenue": 5000.00,
+    "currentBalance": 1250.0,
+    "pendingBalance": 450.0,
+    "totalRevenue": 5000.0,
     "totalPayout": 0,
     "revenueChange": 15.5,
     "orderCount": 42,
@@ -384,7 +407,7 @@ curl -X GET 'http://localhost:3001/api/farmer/finances?farmId=YOUR_FARM_ID&perio
     {
       "id": "tx_123",
       "type": "SALE",
-      "amount": 125.50,
+      "amount": 125.5,
       "status": "COMPLETED",
       "description": "Order from John Doe",
       "orderNumber": "ORD-2024-001",
@@ -394,7 +417,7 @@ curl -X GET 'http://localhost:3001/api/farmer/finances?farmId=YOUR_FARM_ID&perio
   "revenueData": [
     {
       "date": "2024-01-01T00:00:00Z",
-      "revenue": 450.00,
+      "revenue": 450.0,
       "orders": 8
     }
   ]
@@ -402,6 +425,7 @@ curl -X GET 'http://localhost:3001/api/farmer/finances?farmId=YOUR_FARM_ID&perio
 ```
 
 #### 2. Get Payouts
+
 ```bash
 curl -X GET 'http://localhost:3001/api/farmer/payouts?farmId=YOUR_FARM_ID' \
   -H 'Cookie: next-auth.session-token=YOUR_SESSION_TOKEN' \
@@ -409,6 +433,7 @@ curl -X GET 'http://localhost:3001/api/farmer/payouts?farmId=YOUR_FARM_ID' \
 ```
 
 #### 3. Request Instant Payout
+
 ```bash
 curl -X POST 'http://localhost:3001/api/farmer/payouts' \
   -H 'Content-Type: application/json' \
@@ -418,12 +443,13 @@ curl -X POST 'http://localhost:3001/api/farmer/payouts' \
 ```
 
 **Expected Response (Success):**
+
 ```json
 {
   "success": true,
   "payout": {
     "id": "payout_123",
-    "amount": 1250.00,
+    "amount": 1250.0,
     "status": "PENDING",
     "scheduledDate": "2024-01-15T10:30:00Z"
   },
@@ -432,6 +458,7 @@ curl -X POST 'http://localhost:3001/api/farmer/payouts' \
 ```
 
 **Expected Response (Insufficient Balance):**
+
 ```json
 {
   "success": false,
@@ -451,6 +478,7 @@ curl -X POST 'http://localhost:3001/api/farmer/payouts' \
 #### Verify Financial Data
 
 **Check Order Revenue:**
+
 ```sql
 -- In Prisma Studio, filter Order table:
 farmId = YOUR_FARM_ID
@@ -461,6 +489,7 @@ paymentStatus = "PAID"
 ```
 
 **Check Payouts:**
+
 ```sql
 -- In Prisma Studio, view Payout table:
 farmId = YOUR_FARM_ID
@@ -470,9 +499,10 @@ ORDER BY createdAt DESC
 ```
 
 **Calculate Available Balance:**
+
 ```
-Available Balance = 
-  (Sum of completed order items for your farm) 
+Available Balance =
+  (Sum of completed order items for your farm)
   - (Sum of all payouts COMPLETED + PENDING + PROCESSING)
 ```
 
@@ -481,6 +511,7 @@ Available Balance =
 ## ✅ VALIDATION CHECKLIST
 
 ### Financial Overview Page
+
 - [ ] Page loads without errors
 - [ ] All 4 stat cards display with real data
 - [ ] Revenue chart renders correctly
@@ -492,6 +523,7 @@ Available Balance =
 - [ ] Revenue change shows +/- percentage
 
 ### Payouts Page
+
 - [ ] Page loads without errors
 - [ ] Available balance card displays
 - [ ] Balance calculation is correct
@@ -504,6 +536,7 @@ Available Balance =
 - [ ] Stripe Connect wizard appears (if not connected)
 
 ### Order Fulfillment
+
 - [ ] Order list displays correctly
 - [ ] Search works (order number and customer)
 - [ ] Status filter works
@@ -518,6 +551,7 @@ Available Balance =
 - [ ] Export orders initiates download (mock)
 
 ### API Endpoints
+
 - [ ] GET /api/farmer/finances returns valid data
 - [ ] POST /api/farmer/payouts creates payout
 - [ ] GET /api/farmer/payouts returns history
@@ -530,34 +564,44 @@ Available Balance =
 ## 🐛 TROUBLESHOOTING
 
 ### Issue: "Farm not found or access denied"
-**Solution**: 
+
+**Solution**:
+
 - Verify you're logged in as a FARMER role user
 - Check that the farmId in the URL matches your farm
 - Ensure your farm status is ACTIVE
 
 ### Issue: Financial data is empty
+
 **Solution**:
+
 - Create test orders in Prisma Studio
 - Ensure orders have status DELIVERED or COMPLETED
 - Set paymentStatus to PAID
 - Verify order items link to your farm's products
 
 ### Issue: Cannot request payout
+
 **Solution**:
+
 - Check available balance is ≥ $10.00
 - Ensure no pending payouts exist
 - Verify Stripe Connect account is set up
 - Check farm.stripeConnectAccountId is populated
 
 ### Issue: Revenue chart not showing data
+
 **Solution**:
+
 - Verify orders exist in the selected period
 - Check browser console for errors
 - Ensure order items belong to your farm's products
 - Try switching period (7d → 30d)
 
 ### Issue: Batch operations not working
+
 **Solution**:
+
 - Check that orders are selected (checkbox clicked)
 - Verify batch actions bar appears
 - Check browser console for API errors
@@ -573,6 +617,7 @@ Use Prisma Studio to create test orders:
 
 1. **Navigate to Order table**
 2. **Create new order:**
+
    ```
    orderNumber: ORD-2024-001
    customerId: (select a customer)
@@ -587,6 +632,7 @@ Use Prisma Studio to create test orders:
    ```
 
 3. **Create order items:**
+
    ```
    orderId: (order from step 2)
    productId: (your farm's product)
@@ -621,12 +667,14 @@ Use Prisma Studio to create test orders:
 Phase 4 is complete when:
 
 ✅ **Financial Overview**
+
 - Displays real-time balance and revenue stats
 - Shows interactive revenue chart
 - Lists recent transactions
 - Period selector works correctly
 
 ✅ **Payout Management**
+
 - Calculates available balance accurately
 - Enforces $10 minimum payout
 - Prevents duplicate pending payouts
@@ -634,6 +682,7 @@ Phase 4 is complete when:
 - Bank account management works
 
 ✅ **Order Fulfillment**
+
 - Advanced filtering works
 - Batch operations process multiple orders
 - Workflow actions guide next steps
@@ -641,12 +690,14 @@ Phase 4 is complete when:
 - Customer notifications work (mock)
 
 ✅ **API Endpoints**
+
 - Authentication and authorization enforced
 - Financial data calculations are accurate
 - Payout creation validates correctly
 - Error handling is robust
 
 ✅ **User Experience**
+
 - All pages load quickly (< 2s)
 - Components are responsive
 - Loading states show appropriately
@@ -678,6 +729,7 @@ After testing Phase 4:
 ### Reporting Issues
 
 Include:
+
 - URL where issue occurred
 - Expected behavior
 - Actual behavior

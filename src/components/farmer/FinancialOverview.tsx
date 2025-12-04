@@ -52,7 +52,10 @@ interface FinancialOverviewProps {
   className?: string;
 }
 
-export function FinancialOverview({ farmId, className = "" }: FinancialOverviewProps) {
+export function FinancialOverview({
+  farmId,
+  className = "",
+}: FinancialOverviewProps) {
   const [stats, setStats] = useState<FinancialStats | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [revenueData, setRevenueData] = useState<RevenueData[]>([]);
@@ -66,7 +69,9 @@ export function FinancialOverview({ farmId, className = "" }: FinancialOverviewP
   const fetchFinancialData = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/farmer/finances?farmId=${farmId}&period=${period}`);
+      const response = await fetch(
+        `/api/farmer/finances?farmId=${farmId}&period=${period}`,
+      );
       if (!response.ok) throw new Error("Failed to fetch financial data");
 
       const data = await response.json();
@@ -126,7 +131,9 @@ export function FinancialOverview({ farmId, className = "" }: FinancialOverviewP
 
   const downloadStatement = async () => {
     try {
-      const response = await fetch(`/api/farmer/finances/statement?farmId=${farmId}&period=${period}`);
+      const response = await fetch(
+        `/api/farmer/finances/statement?farmId=${farmId}&period=${period}`,
+      );
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -176,13 +183,18 @@ export function FinancialOverview({ farmId, className = "" }: FinancialOverviewP
       {/* Header with Period Selector */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Financial Overview</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Financial Overview
+          </h2>
           <p className="text-sm text-gray-500 mt-1">
             Track your revenue, payouts, and transactions
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Select value={period} onValueChange={(value: any) => setPeriod(value)}>
+          <Select
+            value={period}
+            onValueChange={(value: any) => setPeriod(value)}
+          >
             <SelectTrigger className="w-[140px]">
               <Calendar className="h-4 w-4 mr-2" />
               <SelectValue />
@@ -215,9 +227,7 @@ export function FinancialOverview({ farmId, className = "" }: FinancialOverviewP
             <div className="text-2xl font-bold text-gray-900">
               {formatCurrency(stats.currentBalance)}
             </div>
-            <p className="text-xs text-gray-500 mt-1">
-              Ready for payout
-            </p>
+            <p className="text-xs text-gray-500 mt-1">Ready for payout</p>
           </CardContent>
         </Card>
 
@@ -233,9 +243,7 @@ export function FinancialOverview({ farmId, className = "" }: FinancialOverviewP
             <div className="text-2xl font-bold text-gray-900">
               {formatCurrency(stats.pendingBalance)}
             </div>
-            <p className="text-xs text-gray-500 mt-1">
-              Processing orders
-            </p>
+            <p className="text-xs text-gray-500 mt-1">Processing orders</p>
           </CardContent>
         </Card>
 
@@ -255,9 +263,11 @@ export function FinancialOverview({ farmId, className = "" }: FinancialOverviewP
             <div className="text-2xl font-bold text-gray-900">
               {formatCurrency(stats.totalRevenue)}
             </div>
-            <p className={`text-xs mt-1 flex items-center ${
-              stats.revenueChange >= 0 ? "text-green-600" : "text-red-600"
-            }`}>
+            <p
+              className={`text-xs mt-1 flex items-center ${
+                stats.revenueChange >= 0 ? "text-green-600" : "text-red-600"
+              }`}
+            >
               {stats.revenueChange >= 0 ? "+" : ""}
               {stats.revenueChange.toFixed(1)}% from last period
             </p>
@@ -295,7 +305,10 @@ export function FinancialOverview({ farmId, className = "" }: FinancialOverviewP
               const height = (data.revenue / maxRevenue) * 100;
 
               return (
-                <div key={index} className="flex-1 flex flex-col items-center gap-2">
+                <div
+                  key={index}
+                  className="flex-1 flex flex-col items-center gap-2"
+                >
                   <div className="w-full flex flex-col items-center">
                     <div className="relative group w-full">
                       <div

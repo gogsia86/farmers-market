@@ -1,4 +1,5 @@
 # 🚀 Docker Deployment Guide
+
 # Farmers Market Platform - Production Deployment
 
 **Version**: 3.0  
@@ -16,24 +17,28 @@ This guide covers deploying the Farmers Market Platform to production using Dock
 ## 🎯 Deployment Options
 
 ### 1. Single Server Deployment
+
 - **Best for**: Small to medium applications
 - **Resources**: 4GB+ RAM, 2+ CPU cores
 - **Complexity**: Low
 - **Cost**: Low
 
 ### 2. Multi-Server Deployment
+
 - **Best for**: High-traffic applications
 - **Resources**: Multiple servers with load balancer
 - **Complexity**: Medium
 - **Cost**: Medium
 
 ### 3. Cloud Container Services
+
 - **Platforms**: AWS ECS, Azure Container Instances, Google Cloud Run
 - **Best for**: Auto-scaling, managed infrastructure
 - **Complexity**: Medium to High
 - **Cost**: Variable based on usage
 
 ### 4. Kubernetes Deployment
+
 - **Best for**: Large-scale, multi-region deployments
 - **Resources**: Kubernetes cluster
 - **Complexity**: High
@@ -399,17 +404,19 @@ docker compose exec app npx prisma migrate resolve --rolled-back <migration-name
 The production stack includes automated daily backups via `db-backup` service.
 
 **Configuration:**
+
 ```yaml
 # In docker-compose.yml
 db-backup:
   environment:
-    - SCHEDULE=@daily          # Daily backups
-    - BACKUP_KEEP_DAYS=7       # Keep 7 days
-    - BACKUP_KEEP_WEEKS=4      # Keep 4 weeks
-    - BACKUP_KEEP_MONTHS=6     # Keep 6 months
+    - SCHEDULE=@daily # Daily backups
+    - BACKUP_KEEP_DAYS=7 # Keep 7 days
+    - BACKUP_KEEP_WEEKS=4 # Keep 4 weeks
+    - BACKUP_KEEP_MONTHS=6 # Keep 6 months
 ```
 
 **Backup Location:**
+
 ```bash
 # List backups
 docker compose exec db-backup ls -lh /backups
@@ -593,12 +600,14 @@ For more troubleshooting, see `TROUBLESHOOTING.md`.
 ## 📞 Support & Resources
 
 ### Documentation
+
 - **Setup Guide**: `SETUP-GUIDE.md`
 - **Troubleshooting**: `TROUBLESHOOTING.md`
 - **Docker README**: `../README.md`
 - **Main Documentation**: `../../docs/`
 
 ### Monitoring Tools
+
 - **Application Health**: `https://yourdomain.com/api/health`
 - **Docker Stats**: `docker stats`
 - **Service Status**: `docker compose ps`
@@ -608,6 +617,7 @@ For more troubleshooting, see `TROUBLESHOOTING.md`.
 ## 📝 Deployment Checklist
 
 ### Pre-Deployment
+
 - [ ] Environment variables configured
 - [ ] SSL certificates installed
 - [ ] Database backups configured
@@ -616,6 +626,7 @@ For more troubleshooting, see `TROUBLESHOOTING.md`.
 - [ ] DNS configured and propagated
 
 ### Deployment
+
 - [ ] Code pulled from repository
 - [ ] Images built successfully
 - [ ] Services started
@@ -625,6 +636,7 @@ For more troubleshooting, see `TROUBLESHOOTING.md`.
 - [ ] Logs being captured
 
 ### Post-Deployment
+
 - [ ] Application accessible via HTTPS
 - [ ] All features tested
 - [ ] Performance monitored
@@ -638,5 +650,5 @@ For more troubleshooting, see `TROUBLESHOOTING.md`.
 **Last Updated**: November 27, 2024  
 **Status**: ✅ Production Ready
 
-*For setup instructions, see `SETUP-GUIDE.md`*
-*For troubleshooting, see `TROUBLESHOOTING.md`*
+_For setup instructions, see `SETUP-GUIDE.md`_
+_For troubleshooting, see `TROUBLESHOOTING.md`_

@@ -30,6 +30,7 @@ npm run dev
 ```
 
 Wait until you see:
+
 ```
 ✓ Ready in 3.2s
 ○ Local:        http://localhost:3000
@@ -46,6 +47,7 @@ npm run monitor:health
 ```
 
 **Expected Output:**
+
 ```
 🏥 Running Health Check...
 
@@ -88,6 +90,7 @@ npm run monitor:list
 ```
 
 **Output:**
+
 ```
 📋 Available Workflows
 
@@ -134,6 +137,7 @@ npm run monitor:critical
 ```
 
 This will test:
+
 - ✅ User Registration
 - ✅ User Login
 - ✅ Order Placement
@@ -173,6 +177,7 @@ npm run monitor:reports
 ```
 
 Reports are saved in `./monitoring-reports/`:
+
 - 📄 `report-{id}.json` - Machine-readable JSON
 - 🌐 `report-{id}.html` - Beautiful HTML report (open in browser!)
 - 📝 `report-{id}.md` - Markdown report
@@ -186,6 +191,7 @@ npm run monitor:start
 ```
 
 This will:
+
 - ⏰ Run workflows on schedule
 - 🏥 Health check every 5 minutes
 - 🔐 Login test every 30 minutes
@@ -200,13 +206,13 @@ This will:
 
 ### Status Icons
 
-| Icon | Meaning |
-|------|---------|
-| ✅ | Test passed successfully |
-| ❌ | Test failed |
-| ⚠️ | Test passed with warnings |
-| ⏭️ | Test was skipped |
-| 🔄 | Test is running |
+| Icon | Meaning                   |
+| ---- | ------------------------- |
+| ✅   | Test passed successfully  |
+| ❌   | Test failed               |
+| ⚠️   | Test passed with warnings |
+| ⏭️   | Test was skipped          |
+| 🔄   | Test is running           |
 
 ### Workflow Status
 
@@ -339,6 +345,7 @@ npm run monitor:critical -- --notify
 ## 📈 Progressive Usage
 
 ### Week 1: Learn the Basics
+
 ```bash
 # Day 1: Health checks
 npm run monitor:health
@@ -357,6 +364,7 @@ npm run monitor:reports
 ```
 
 ### Week 2: Advanced Usage
+
 ```bash
 # Day 1: Run all workflows
 npm run monitor:all
@@ -429,12 +437,14 @@ npm run monitor:reports -- --limit 10
 You now have a powerful monitoring bot watching over your application!
 
 **Next Steps:**
+
 1. ✅ Keep dev server running
 2. 🔄 Run `npm run monitor:critical` before commits
 3. 📊 Review reports after changes
 4. ⏰ Setup `npm run monitor:start` for continuous monitoring
 
 **Need Help?**
+
 - 📖 Read [Full Documentation](./WORKFLOW_MONITORING_BOT.md)
 - 💬 Ask in #monitoring-bot Slack channel
 - 🐛 Report issues on GitHub

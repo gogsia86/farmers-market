@@ -28,7 +28,11 @@ interface OrderCardProps {
   showActions?: boolean;
 }
 
-export function OrderCard({ order, showItems = false, showActions = true }: OrderCardProps) {
+export function OrderCard({
+  order,
+  showItems = false,
+  showActions = true,
+}: OrderCardProps) {
   const statusColors: Record<string, string> = {
     pending: "badge-pending",
     confirmed: "badge-confirmed",

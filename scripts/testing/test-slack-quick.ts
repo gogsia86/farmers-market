@@ -27,9 +27,7 @@ async function testSlackWebhook() {
           type: "section",
           text: {
             type: "mrkdwn",
-            text:
-              `*Status:* The monitoring system is now connected to Slack! 🎉\n*Time:* ${
-              new Date().toLocaleString()}`,
+            text: `*Status:* The monitoring system is now connected to Slack! 🎉\n*Time:* ${new Date().toLocaleString()}`,
           },
         },
         {
@@ -40,14 +38,13 @@ async function testSlackWebhook() {
           fields: [
             {
               type: "mrkdwn",
-              text:
-                `*Environment:*\n${  process.env.NODE_ENV || "development"}`,
+              text: `*Environment:*\n${process.env.NODE_ENV || "development"}`,
             },
             {
               type: "mrkdwn",
-              text:
-                `*Base URL:*\n${
-                process.env.BASE_URL || "http://localhost:3001"}`,
+              text: `*Base URL:*\n${
+                process.env.BASE_URL || "http://localhost:3001"
+              }`,
             },
           ],
         },

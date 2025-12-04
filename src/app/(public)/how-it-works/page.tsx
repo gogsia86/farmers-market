@@ -134,269 +134,92 @@ const BENEFITS_FARMERS = [
 
 export default function HowItWorksPage() {
   return (
-<main className="min-h-screen bg-background">
-        {/* Hero Section */}
-        <section className="hero-gradient py-16 md:py-20 relative overflow-hidden">
-          <div className="absolute inset-0 opacity-20">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(239,106,37,0.3)_0%,transparent_50%)]"></div>
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(184,56,56,0.3)_0%,transparent_50%)]"></div>
+    <main className="min-h-screen bg-background">
+      {/* Hero Section */}
+      <section className="hero-gradient py-16 md:py-20 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(239,106,37,0.3)_0%,transparent_50%)]"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(184,56,56,0.3)_0%,transparent_50%)]"></div>
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-3xl mx-auto text-center">
+            <span className="inline-flex items-center gap-2 bg-secondary-600/20 border border-secondary-500/30 text-secondary-200 backdrop-blur-md px-5 py-2.5 rounded-full text-sm font-semibold mb-6">
+              <Leaf className="h-5 w-5" />
+              Simple, Fresh, Local
+            </span>
+
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
+              How <span className="text-gradient-warm">It Works</span>
+            </h1>
+
+            <p className="text-lg md:text-xl text-muted-foreground">
+              Connecting local farmers with conscious consumers for fresh,
+              seasonal produce and artisan goods.
+            </p>
           </div>
+        </div>
+      </section>
 
-          <div className="container mx-auto px-4 relative z-10">
-            <div className="max-w-3xl mx-auto text-center">
-              <span className="inline-flex items-center gap-2 bg-secondary-600/20 border border-secondary-500/30 text-secondary-200 backdrop-blur-md px-5 py-2.5 rounded-full text-sm font-semibold mb-6">
-                <Leaf className="h-5 w-5" />
-                Simple, Fresh, Local
-              </span>
-
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
-                How <span className="text-gradient-warm">It Works</span>
-              </h1>
-
-              <p className="text-lg md:text-xl text-muted-foreground">
-                Connecting local farmers with conscious consumers for fresh,
-                seasonal produce and artisan goods.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* For Customers Section */}
-        <section className="py-16 bg-accent-900/5">
+      {/* For Customers Section */}
+      <section className="py-16 bg-accent-900/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  For Customers
-                </h2>
-                <p className="text-lg text-muted-foreground">
-                  Four simple steps to fresh, local food
-                </p>
-              </div>
-
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-                {CUSTOMER_STEPS.map((step) => {
-                  const Icon = step.icon;
-                  return (
-                    <div
-                      key={step.number}
-                      className="glass-card rounded-2xl p-6 text-center hover:shadow-glow-lg transition-all relative"
-                    >
-                      <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-12 h-12 bg-gradient-to-br from-primary-600 to-secondary-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-glow">
-                        {step.number}
-                      </div>
-                      <div className="mt-6 mb-4">
-                        <div className="w-16 h-16 bg-gradient-to-br from-primary-100 to-secondary-100 dark:from-primary-900/20 dark:to-secondary-900/20 rounded-2xl flex items-center justify-center mx-auto">
-                          <Icon className="h-8 w-8 text-primary-600" />
-                        </div>
-                      </div>
-                      <h3 className="text-lg font-bold text-foreground mb-3">
-                        {step.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        {step.description}
-                      </p>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Customer Benefits */}
-              <div className="glass-card rounded-2xl p-8">
-                <h3 className="text-2xl font-bold text-foreground mb-6 text-center">
-                  Why Shop With Us?
-                </h3>
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {BENEFITS_CUSTOMERS.map((benefit) => (
-                    <div key={benefit.title} className="text-center">
-                      <div className="text-4xl mb-3">{benefit.emoji}</div>
-                      <h4 className="font-semibold text-foreground mb-2">
-                        {benefit.title}
-                      </h4>
-                      <p className="text-sm text-muted-foreground">
-                        {benefit.description}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-                <div className="text-center mt-8">
-                  <Link
-                    href="/products"
-                    className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-500 text-white px-8 py-4 rounded-xl font-semibold transition-colors shadow-glow"
-                  >
-                    Start Shopping
-                    <ArrowRight className="h-5 w-5" />
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* For Farmers Section */}
-        <section className="py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  For Farmers
-                </h2>
-                <p className="text-lg text-muted-foreground">
-                  Grow your farm business online in four easy steps
-                </p>
-              </div>
-
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-                {FARMER_STEPS.map((step) => {
-                  const Icon = step.icon;
-                  return (
-                    <div
-                      key={step.number}
-                      className="glass-card rounded-2xl p-6 text-center hover:shadow-glow-lg transition-all relative"
-                    >
-                      <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-12 h-12 bg-gradient-to-br from-accent-600 to-primary-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-glow">
-                        {step.number}
-                      </div>
-                      <div className="mt-6 mb-4">
-                        <div className="w-16 h-16 bg-gradient-to-br from-accent-100 to-primary-100 dark:from-accent-900/20 dark:to-primary-900/20 rounded-2xl flex items-center justify-center mx-auto">
-                          <Icon className="h-8 w-8 text-accent-600" />
-                        </div>
-                      </div>
-                      <h3 className="text-lg font-bold text-foreground mb-3">
-                        {step.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        {step.description}
-                      </p>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Farmer Benefits */}
-              <div className="glass-card rounded-2xl p-8">
-                <h3 className="text-2xl font-bold text-foreground mb-6 text-center">
-                  Why Join Our Platform?
-                </h3>
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {BENEFITS_FARMERS.map((benefit) => (
-                    <div key={benefit.title} className="text-center">
-                      <div className="text-4xl mb-3">{benefit.emoji}</div>
-                      <h4 className="font-semibold text-foreground mb-2">
-                        {benefit.title}
-                      </h4>
-                      <p className="text-sm text-muted-foreground">
-                        {benefit.description}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-                <div className="text-center mt-8">
-                  <Link
-                    href="/register-farm"
-                    className="inline-flex items-center gap-2 bg-accent-600 hover:bg-accent-500 text-white px-8 py-4 rounded-xl font-semibold transition-colors shadow-glow"
-                  >
-                    Register Your Farm
-                    <ArrowRight className="h-5 w-5" />
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Pricing Section */}
-        <section className="py-16 bg-accent-900/5">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Simple, Transparent Pricing
-                </h2>
-                <p className="text-lg text-muted-foreground">
-                  No hidden fees, just honest pricing
-                </p>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-8">
-                {/* Customer Pricing */}
-                <div className="glass-card rounded-2xl p-8">
-                  <div className="text-center mb-6">
-                    <div className="w-16 h-16 bg-primary-100 dark:bg-primary-900/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <ShoppingCart className="h-8 w-8 text-primary-600" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-foreground mb-2">
-                      For Customers
-                    </h3>
-                    <div className="text-4xl font-bold text-gradient-warm mb-2">
-                      Free
-                    </div>
-                    <p className="text-muted-foreground">Forever</p>
-                  </div>
-                  <ul className="space-y-3">
-                    {[
-                      "No membership fees",
-                      "No markup on products",
-                      "Secure online payments",
-                      "Direct farm pricing",
-                      "Order tracking",
-                      "Customer support",
-                    ].map((feature) => (
-                      <li key={feature} className="flex items-center gap-3">
-                        <CheckCircle className="h-5 w-5 text-accent-600 flex-shrink-0" />
-                        <span className="text-muted-foreground">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Farmer Pricing */}
-                <div className="glass-card rounded-2xl p-8 border-2 border-accent-500/50">
-                  <div className="text-center mb-6">
-                    <div className="w-16 h-16 bg-accent-100 dark:bg-accent-900/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <Leaf className="h-8 w-8 text-accent-600" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-foreground mb-2">
-                      For Farmers
-                    </h3>
-                    <div className="text-4xl font-bold text-gradient-warm mb-2">
-                      10%
-                    </div>
-                    <p className="text-muted-foreground">Commission on sales</p>
-                  </div>
-                  <ul className="space-y-3">
-                    {[
-                      "Free farm registration",
-                      "Unlimited product listings",
-                      "Farmer dashboard access",
-                      "Weekly payouts",
-                      "Marketing support",
-                      "Customer support",
-                    ].map((feature) => (
-                      <li key={feature} className="flex items-center gap-3">
-                        <CheckCircle className="h-5 w-5 text-accent-600 flex-shrink-0" />
-                        <span className="text-muted-foreground">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* CTA Section */}
-        <section className="py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-4xl mx-auto glass-card rounded-2xl p-12 text-center">
+            <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                Ready to Get Started?
+                For Customers
               </h2>
-              <p className="text-lg text-muted-foreground mb-8">
-                Join our community of farmers and customers supporting local
-                agriculture
+              <p className="text-lg text-muted-foreground">
+                Four simple steps to fresh, local food
               </p>
-              <div className="flex flex-wrap gap-4 justify-center">
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+              {CUSTOMER_STEPS.map((step) => {
+                const Icon = step.icon;
+                return (
+                  <div
+                    key={step.number}
+                    className="glass-card rounded-2xl p-6 text-center hover:shadow-glow-lg transition-all relative"
+                  >
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-12 h-12 bg-gradient-to-br from-primary-600 to-secondary-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-glow">
+                      {step.number}
+                    </div>
+                    <div className="mt-6 mb-4">
+                      <div className="w-16 h-16 bg-gradient-to-br from-primary-100 to-secondary-100 dark:from-primary-900/20 dark:to-secondary-900/20 rounded-2xl flex items-center justify-center mx-auto">
+                        <Icon className="h-8 w-8 text-primary-600" />
+                      </div>
+                    </div>
+                    <h3 className="text-lg font-bold text-foreground mb-3">
+                      {step.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {step.description}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Customer Benefits */}
+            <div className="glass-card rounded-2xl p-8">
+              <h3 className="text-2xl font-bold text-foreground mb-6 text-center">
+                Why Shop With Us?
+              </h3>
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {BENEFITS_CUSTOMERS.map((benefit) => (
+                  <div key={benefit.title} className="text-center">
+                    <div className="text-4xl mb-3">{benefit.emoji}</div>
+                    <h4 className="font-semibold text-foreground mb-2">
+                      {benefit.title}
+                    </h4>
+                    <p className="text-sm text-muted-foreground">
+                      {benefit.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <div className="text-center mt-8">
                 <Link
                   href="/products"
                   className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-500 text-white px-8 py-4 rounded-xl font-semibold transition-colors shadow-glow"
@@ -404,6 +227,71 @@ export default function HowItWorksPage() {
                   Start Shopping
                   <ArrowRight className="h-5 w-5" />
                 </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* For Farmers Section */}
+      <section className="py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                For Farmers
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Grow your farm business online in four easy steps
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+              {FARMER_STEPS.map((step) => {
+                const Icon = step.icon;
+                return (
+                  <div
+                    key={step.number}
+                    className="glass-card rounded-2xl p-6 text-center hover:shadow-glow-lg transition-all relative"
+                  >
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-12 h-12 bg-gradient-to-br from-accent-600 to-primary-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-glow">
+                      {step.number}
+                    </div>
+                    <div className="mt-6 mb-4">
+                      <div className="w-16 h-16 bg-gradient-to-br from-accent-100 to-primary-100 dark:from-accent-900/20 dark:to-primary-900/20 rounded-2xl flex items-center justify-center mx-auto">
+                        <Icon className="h-8 w-8 text-accent-600" />
+                      </div>
+                    </div>
+                    <h3 className="text-lg font-bold text-foreground mb-3">
+                      {step.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {step.description}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Farmer Benefits */}
+            <div className="glass-card rounded-2xl p-8">
+              <h3 className="text-2xl font-bold text-foreground mb-6 text-center">
+                Why Join Our Platform?
+              </h3>
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {BENEFITS_FARMERS.map((benefit) => (
+                  <div key={benefit.title} className="text-center">
+                    <div className="text-4xl mb-3">{benefit.emoji}</div>
+                    <h4 className="font-semibold text-foreground mb-2">
+                      {benefit.title}
+                    </h4>
+                    <p className="text-sm text-muted-foreground">
+                      {benefit.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <div className="text-center mt-8">
                 <Link
                   href="/register-farm"
                   className="inline-flex items-center gap-2 bg-accent-600 hover:bg-accent-500 text-white px-8 py-4 rounded-xl font-semibold transition-colors shadow-glow"
@@ -414,7 +302,119 @@ export default function HowItWorksPage() {
               </div>
             </div>
           </div>
-        </section>
-      </main>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section className="py-16 bg-accent-900/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                Simple, Transparent Pricing
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                No hidden fees, just honest pricing
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Customer Pricing */}
+              <div className="glass-card rounded-2xl p-8">
+                <div className="text-center mb-6">
+                  <div className="w-16 h-16 bg-primary-100 dark:bg-primary-900/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <ShoppingCart className="h-8 w-8 text-primary-600" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-foreground mb-2">
+                    For Customers
+                  </h3>
+                  <div className="text-4xl font-bold text-gradient-warm mb-2">
+                    Free
+                  </div>
+                  <p className="text-muted-foreground">Forever</p>
+                </div>
+                <ul className="space-y-3">
+                  {[
+                    "No membership fees",
+                    "No markup on products",
+                    "Secure online payments",
+                    "Direct farm pricing",
+                    "Order tracking",
+                    "Customer support",
+                  ].map((feature) => (
+                    <li key={feature} className="flex items-center gap-3">
+                      <CheckCircle className="h-5 w-5 text-accent-600 flex-shrink-0" />
+                      <span className="text-muted-foreground">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Farmer Pricing */}
+              <div className="glass-card rounded-2xl p-8 border-2 border-accent-500/50">
+                <div className="text-center mb-6">
+                  <div className="w-16 h-16 bg-accent-100 dark:bg-accent-900/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <Leaf className="h-8 w-8 text-accent-600" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-foreground mb-2">
+                    For Farmers
+                  </h3>
+                  <div className="text-4xl font-bold text-gradient-warm mb-2">
+                    10%
+                  </div>
+                  <p className="text-muted-foreground">Commission on sales</p>
+                </div>
+                <ul className="space-y-3">
+                  {[
+                    "Free farm registration",
+                    "Unlimited product listings",
+                    "Farmer dashboard access",
+                    "Weekly payouts",
+                    "Marketing support",
+                    "Customer support",
+                  ].map((feature) => (
+                    <li key={feature} className="flex items-center gap-3">
+                      <CheckCircle className="h-5 w-5 text-accent-600 flex-shrink-0" />
+                      <span className="text-muted-foreground">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto glass-card rounded-2xl p-12 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Ready to Get Started?
+            </h2>
+            <p className="text-lg text-muted-foreground mb-8">
+              Join our community of farmers and customers supporting local
+              agriculture
+            </p>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <Link
+                href="/products"
+                className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-500 text-white px-8 py-4 rounded-xl font-semibold transition-colors shadow-glow"
+              >
+                Start Shopping
+                <ArrowRight className="h-5 w-5" />
+              </Link>
+              <Link
+                href="/register-farm"
+                className="inline-flex items-center gap-2 bg-accent-600 hover:bg-accent-500 text-white px-8 py-4 rounded-xl font-semibold transition-colors shadow-glow"
+              >
+                Register Your Farm
+                <ArrowRight className="h-5 w-5" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }

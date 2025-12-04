@@ -50,9 +50,13 @@ function info(message: string): void {
 }
 
 function header(message: string): void {
-  console.log(`\n${colors.bright}${colors.blue}${"=".repeat(70)}${colors.reset}`);
+  console.log(
+    `\n${colors.bright}${colors.blue}${"=".repeat(70)}${colors.reset}`,
+  );
   console.log(`${colors.bright}${colors.blue}${message}${colors.reset}`);
-  console.log(`${colors.bright}${colors.blue}${"=".repeat(70)}${colors.reset}\n`);
+  console.log(
+    `${colors.bright}${colors.blue}${"=".repeat(70)}${colors.reset}\n`,
+  );
 }
 
 // ============================================================================
@@ -132,7 +136,8 @@ async function testApiConnection(apiKey: string): Promise<boolean> {
       messages: [
         {
           role: "system",
-          content: "You are a helpful assistant for the Farmers Market Platform.",
+          content:
+            "You are a helpful assistant for the Farmers Market Platform.",
         },
         {
           role: "user",
@@ -203,7 +208,8 @@ Provide farming insights with agricultural consciousness.`,
         },
         {
           role: "user",
-          content: "What are the best crops for spring planting in temperate climates?",
+          content:
+            "What are the best crops for spring planting in temperate climates?",
         },
       ],
       max_tokens: 150,
@@ -213,7 +219,9 @@ Provide farming insights with agricultural consciousness.`,
     if (response.choices[0].message.content) {
       success("Agricultural intelligence test passed");
       console.log("\n📝 Sample Response:");
-      console.log(`${colors.cyan}${response.choices[0].message.content.substring(0, 200)}...${colors.reset}\n`);
+      console.log(
+        `${colors.cyan}${response.choices[0].message.content.substring(0, 200)}...${colors.reset}\n`,
+      );
     }
 
     // Test model availability
@@ -221,7 +229,6 @@ Provide farming insights with agricultural consciousness.`,
     success("GPT-4o (recommended for production)");
     success("GPT-4o-mini (cost-effective for testing)");
     success("GPT-4-turbo-preview (legacy support)");
-
   } catch (err: any) {
     warning("Advanced features test incomplete");
     info(`Reason: ${err.message}`);

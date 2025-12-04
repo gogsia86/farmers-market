@@ -177,10 +177,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               Monitoring Dashboard
             </div>
             <div className="flex items-center space-x-6 text-sm text-gray-600">
-              <a
-                href="/docs"
-                className="hover:text-gray-900 transition-colors"
-              >
+              <a href="/docs" className="hover:text-gray-900 transition-colors">
                 Documentation
               </a>
               <a

@@ -21,18 +21,21 @@
 ### **Option 1: Automated Script (FASTEST - 5 minutes)**
 
 **Windows (PowerShell):**
+
 ```powershell
 cd "M:\Repo\Farmers Market Platform web and app"
 .\scripts\Complete-StripeTesting.ps1
 ```
 
 **Mac/Linux/Git Bash:**
+
 ```bash
 cd "M:/Repo/Farmers Market Platform web and app"
 bash scripts/complete-stripe-testing.sh
 ```
 
 The script will:
+
 - Guide you through Stripe CLI login
 - Prompt for API keys from Stripe Dashboard
 - Update .env.local automatically
@@ -51,6 +54,7 @@ Follow the detailed guide in: **`STRIPE_TESTING_NOW.md`**
 **Quick Start Commands:**
 
 1. **Authenticate Stripe CLI:**
+
    ```bash
    ./.stripe-cli/stripe login
    ```
@@ -58,6 +62,7 @@ Follow the detailed guide in: **`STRIPE_TESTING_NOW.md`**
 2. **Get API keys:** https://dashboard.stripe.com/test/apikeys (Test mode)
 
 3. **Update .env.local** with:
+
    ```env
    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
    STRIPE_SECRET_KEY=sk_test_...
@@ -65,27 +70,31 @@ Follow the detailed guide in: **`STRIPE_TESTING_NOW.md`**
    ```
 
 4. **Terminal 1 - Dev Server:**
+
    ```bash
    npm run dev:omen
    ```
 
 5. **Terminal 2 - Webhook Listener:**
+
    ```bash
    ./.stripe-cli/stripe listen --forward-to localhost:3001/api/webhooks/stripe
    ```
+
    Copy the `whsec_` secret, update `.env.local`, restart dev server
 
 6. **Terminal 3 - Run Tests:**
+
    ```bash
    # Health check
    curl http://localhost:3001/api/webhooks/stripe
-   
+
    # Payment success
    ./.stripe-cli/stripe trigger payment_intent.succeeded
-   
+
    # Payment failed
    ./.stripe-cli/stripe trigger payment_intent.payment_failed
-   
+
    # Refund
    ./.stripe-cli/stripe trigger charge.refunded
    ```
@@ -96,7 +105,7 @@ Follow the detailed guide in: **`STRIPE_TESTING_NOW.md`**
 
 1. **Health Check** - Webhook endpoint is reachable
 2. **Payment Success** - Order status updates to PAID
-3. **Payment Failed** - Order status updates to FAILED  
+3. **Payment Failed** - Order status updates to FAILED
 4. **Refund** - Order status updates to REFUNDED
 
 All tests should return `[200]` in Terminal 2 with detailed logs in Terminal 1.
@@ -106,6 +115,7 @@ All tests should return `[200]` in Terminal 2 with detailed logs in Terminal 1.
 ## ✅ SUCCESS CRITERIA
 
 After completion, you should have:
+
 - ✅ Stripe CLI authenticated
 - ✅ API keys configured in .env.local
 - ✅ Webhook secret configured
@@ -119,6 +129,7 @@ After completion, you should have:
 ### **Immediate Next Steps:**
 
 1. **Deploy to Staging**
+
    ```bash
    # Prepare staging deployment
    npm run build
@@ -147,20 +158,24 @@ After completion, you should have:
 ## 🚨 TROUBLESHOOTING
 
 **Stripe login browser doesn't open:**
+
 - Copy URL from terminal and paste into browser manually
 
 **Webhook shows [401] or [400]:**
+
 - Verify webhook secret in .env.local
 - Restart dev server after updating .env.local
 - Check for typos
 
 **Port 3001 already in use:**
+
 ```bash
 npm run kill-server
 npm run dev:omen
 ```
 
 **No logs in dev server:**
+
 - Confirm all 3 terminals are running
 - Check .env.local has all 3 Stripe variables
 - Verify webhook listener is forwarding to correct port
@@ -197,12 +212,14 @@ bash scripts/complete-stripe-testing.sh
 ## 🎯 YOUR COMMAND TO RUN NOW
 
 **Windows:**
+
 ```powershell
 cd "M:\Repo\Farmers Market Platform web and app"
 .\scripts\Complete-StripeTesting.ps1
 ```
 
 **Mac/Linux:**
+
 ```bash
 cd "M:/Repo/Farmers Market Platform web and app"
 bash scripts/complete-stripe-testing.sh

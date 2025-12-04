@@ -7,21 +7,25 @@ This document outlines the testing standards and practices for the Farmers Marke
 ## Test Types
 
 ### 1. Unit Tests
+
 - Fast, isolated tests for individual functions and components
 - Mocked dependencies
 - Run with: `npm test`
 
 ### 2. Integration Tests
+
 - Test complete workflows with real database
 - Require test database setup
 - Run with: `npm run test:integration`
 
 ### 3. GPU Tests
+
 - Hardware-specific performance tests for RTX 2070 Max-Q
 - Test image processing and ML inference
 - Run locally only with: `npm run test:gpu`
 
 ### 4. E2E Tests
+
 - Full user journey tests with Playwright
 - Run with: `npm run test:e2e`
 
@@ -244,6 +248,7 @@ npm run db:test:setup
 ```
 
 This script will:
+
 - Create a test database
 - Run Prisma migrations
 - Generate Prisma Client
@@ -319,6 +324,7 @@ PAYPAL_CLIENT_ID="test-paypal-client"
 ### Skipping Integration Tests
 
 Integration tests are skipped automatically if:
+
 - `SKIP_INTEGRATION_TESTS=true` is set
 - `DATABASE_URL` points to the mock test database
 
@@ -348,6 +354,7 @@ npm test tests/performance/gpu-benchmark.test.ts
 ### GPU Test Requirements
 
 1. **Test fixtures** - Place test images in `tests/fixtures/`
+
    ```
    tests/fixtures/test-farm.jpg
    ```
@@ -359,18 +366,21 @@ npm test tests/performance/gpu-benchmark.test.ts
 ### GPU Test Categories
 
 #### Image Processing Tests
+
 - Single image processing speed (< 100ms target)
 - Batch processing throughput
 - VRAM usage tracking
 - Memory leak detection
 
 #### ML Recommendation Tests
+
 - Model training on GPU
 - Inference latency (< 50ms target)
 - Batch prediction throughput
 - GPU memory efficiency
 
 #### Hardware Validation
+
 - Confirm GPU backend availability
 - Validate CUDA core utilization
 - Monitor memory bandwidth usage
@@ -413,25 +423,31 @@ GPU tests are skipped by default using `describe.skip`. To enable:
 #### Integration Tests
 
 1. **Database connection errors**
+
    ```
    Error: Cannot connect to database
    ```
+
    - Verify PostgreSQL is running: `pg_isready`
    - Check DATABASE_URL is correct
    - Ensure database exists: `psql -l | grep farmersmarket_test`
 
 2. **Prisma Client errors**
+
    ```
    Error: PrismaClient is not configured
    ```
+
    - Run: `npx prisma generate`
    - Check Prisma schema is up to date
    - Verify DATABASE_URL points to test DB
 
 3. **Schema mismatch errors**
+
    ```
    Error: Table does not exist
    ```
+
    - Run: `npx prisma db push`
    - Check migrations are applied
    - Verify test database schema matches Prisma schema
@@ -440,6 +456,7 @@ GPU tests are skipped by default using `describe.skip`. To enable:
    ```
    Error: Unique constraint violation
    ```
+
    - Use unique identifiers (timestamps, UUIDs)
    - Clean up test data in afterAll hooks
    - Use transactions to isolate tests
@@ -447,17 +464,21 @@ GPU tests are skipped by default using `describe.skip`. To enable:
 #### GPU Tests
 
 1. **GPU backend not available**
+
    ```
    Error: WebGL backend not found
    ```
+
    - Check GPU drivers are installed
    - Verify CUDA toolkit (for node-gpu)
    - Try CPU fallback: `tf.setBackend('cpu')`
 
 2. **Out of memory errors**
+
    ```
    Error: GPU out of memory
    ```
+
    - Dispose tensors after use: `tensor.dispose()`
    - Reduce batch size
    - Monitor VRAM: `tf.memory()`
@@ -466,6 +487,7 @@ GPU tests are skipped by default using `describe.skip`. To enable:
    ```
    Error: Cannot find module '@tensorflow/tfjs-node-gpu'
    ```
+
    - Reinstall: `npm install @tensorflow/tfjs-node-gpu`
    - Check Node.js version compatibility
    - Try WebGL backend instead
@@ -473,18 +495,21 @@ GPU tests are skipped by default using `describe.skip`. To enable:
 ### Debug Tips
 
 #### General
+
 1. Use `screen.debug()` to view rendered output
 2. Console.log mock function calls
 3. Use `test.only()` to run specific tests
 4. Check `jest.setup.js` for global configuration
 
 #### Integration Tests
+
 1. Check `.env.test` configuration
 2. Verify database state with `npx prisma studio`
 3. Run SQL queries directly: `psql farmersmarket_test`
 4. Enable Prisma logging: `DEBUG=prisma:* npm run test:integration`
 
 #### GPU Tests
+
 1. Check GPU availability: `nvidia-smi`
 2. Monitor VRAM usage: `tf.memory()`
 3. Enable TensorFlow logging: `tf.env().set('DEBUG', true)`
@@ -522,6 +547,7 @@ npm run test:all:omen       # Optimized for HP OMEN
 ### GitHub Actions
 
 The CI pipeline runs:
+
 - ✅ Unit tests (all workers)
 - ✅ E2E tests (Playwright)
 - ❌ Integration tests (no database)

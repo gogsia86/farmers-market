@@ -1,4 +1,5 @@
 # 🚀 Docker Setup Guide
+
 # Farmers Market Platform - Complete Setup Instructions
 
 **Version**: 3.0  
@@ -12,6 +13,7 @@
 This guide will walk you through setting up the Farmers Market Platform using Docker, from initial installation to running your first development or production environment.
 
 **What You'll Learn:**
+
 - Installing Docker and prerequisites
 - Setting up development environment
 - Setting up production environment
@@ -26,12 +28,14 @@ This guide will walk you through setting up the Farmers Market Platform using Do
 ### System Requirements
 
 **Minimum Requirements:**
+
 - **OS**: Windows 10/11, macOS 10.15+, or Linux (Ubuntu 20.04+)
 - **RAM**: 8GB (16GB recommended for development)
 - **Disk**: 20GB free space (40GB recommended)
 - **CPU**: 4 cores (8+ recommended)
 
 **Recommended (HP OMEN Specs):**
+
 - **RAM**: 64GB
 - **CPU**: 12 threads
 - **GPU**: RTX 2070 Max-Q (for AI features)
@@ -64,6 +68,7 @@ This guide will walk you through setting up the Farmers Market Platform using Do
 ### Step 1: Install Docker
 
 #### Windows
+
 ```powershell
 # 1. Download Docker Desktop for Windows
 # https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe
@@ -78,6 +83,7 @@ docker-compose --version
 ```
 
 #### macOS
+
 ```bash
 # 1. Download Docker Desktop for Mac
 # https://desktop.docker.com/mac/main/amd64/Docker.dmg (Intel)
@@ -93,6 +99,7 @@ docker-compose --version
 ```
 
 #### Linux (Ubuntu/Debian)
+
 ```bash
 # 1. Update package index
 sudo apt-get update
@@ -134,6 +141,7 @@ docker compose version
 #### Increase Resources
 
 **Docker Desktop (Windows/Mac):**
+
 1. Open Docker Desktop
 2. Go to Settings → Resources
 3. Adjust:
@@ -142,12 +150,14 @@ docker compose version
    - **Disk**: 40GB+
 
 **Linux:**
+
 ```bash
 # Docker uses all available resources by default
 # Configure individual container limits in docker-compose.yml
 ```
 
 #### Enable BuildKit (Faster Builds)
+
 ```bash
 # Add to ~/.bashrc or ~/.zshrc
 export DOCKER_BUILDKIT=1
@@ -213,6 +223,7 @@ nano .env
 ```
 
 **Required Production Variables:**
+
 ```bash
 # Application
 NODE_ENV=production
@@ -291,12 +302,14 @@ docker-compose -f docker-compose.dev.yml exec app npx prisma db seed
 #### Hot Reload Development
 
 The development setup includes:
+
 - ✅ Hot module replacement (HMR)
 - ✅ Turbopack for faster builds
 - ✅ File watching with polling (Docker-compatible)
 - ✅ Node.js debugger on port 9229
 
 **Make changes and see them live:**
+
 ```bash
 # Edit any file in src/
 # Changes will automatically reload in the browser
@@ -417,11 +430,11 @@ Create `docker-compose.override.yml` in `docker/compose/`:
 services:
   app:
     ports:
-      - "3002:3000"  # Custom port
-  
+      - "3002:3000" # Custom port
+
   db:
     ports:
-      - "5433:5432"  # Custom PostgreSQL port
+      - "5433:5432" # Custom PostgreSQL port
 ```
 
 ### Volume Management
@@ -590,4 +603,4 @@ docker-compose exec db psql -U postgres -d farmersmarket
 **Last Updated**: November 27, 2024  
 **Status**: ✅ Complete
 
-*For troubleshooting, see `TROUBLESHOOTING.md`*
+_For troubleshooting, see `TROUBLESHOOTING.md`_

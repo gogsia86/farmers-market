@@ -28,6 +28,7 @@
 ```
 
 **Critical Findings:**
+
 - 🔴 **20 markdown files in root** - Root directory cluttered
 - 🔴 **370+ documentation files** - Massive documentation sprawl
 - 🟡 **9 cleanup scripts** - Redundant automation
@@ -42,6 +43,7 @@
 ### 1. ROOT DIRECTORY ANALYSIS 🔴 CRITICAL
 
 **Current State:**
+
 ```
 Root Directory (/)
 ├── 20 .md files                    ← 🔴 TOO MANY
@@ -55,6 +57,7 @@ Root Directory (/)
 **Problem:** Root directory is overwhelming for new developers.
 
 **Markdown Files in Root:**
+
 1. `100-PERCENT-READY.md` - Status report (archive)
 2. `ACTION-NOW.md` - Status report (archive)
 3. `CLEANUP_REPORT.md` - Historical (archive)
@@ -83,6 +86,7 @@ Root Directory (/)
 ### 2. DOCUMENTATION SPRAWL 🔴 CRITICAL
 
 **Current Structure:**
+
 ```
 Documentation Distribution:
 ├── /docs/                     → 253 .md files (3.5 MB)
@@ -111,13 +115,15 @@ Subdirectories in /docs/:
 ```
 
 **Problems:**
+
 1. **Too many subdirectories** - 17 subdirectories is excessive
 2. **Overlapping categories** - "guides", "development", "deployment" overlap
 3. **Phase documents scattered** - 19 phase docs across multiple folders
 4. **Duplicate content** - Many docs have similar information
 5. **No clear hierarchy** - Hard to find what you need
 
-**Impact:** 
+**Impact:**
+
 - New developers overwhelmed
 - Documentation maintenance nightmare
 - Duplicated information
@@ -128,6 +134,7 @@ Subdirectories in /docs/:
 ### 3. SCRIPTS DIRECTORY ANALYSIS 🟡 MODERATE
 
 **Current State:**
+
 ```
 /scripts/ (49 files)
 ├── Cleanup Scripts (9 files):
@@ -173,6 +180,7 @@ Subdirectories in /docs/:
 ```
 
 **Problems:**
+
 1. **9 cleanup scripts** - Why so many? Should be 1-2 max
 2. **Mixed file extensions** - .ps1, .sh, .js, .ts, .mjs (inconsistent)
 3. **No subdirectories** - All 49 files in one flat directory
@@ -180,6 +188,7 @@ Subdirectories in /docs/:
 5. **Test scripts mixed with utilities** - Should separate
 
 **Redundancy Examples:**
+
 - `docker-clean-all.ps1` vs `docker-clean-complete.ps1` vs `docker-complete-cleanup.ps1`
 - `deep-cleanup-aggressive.ps1` vs `deep-cleanup-final.ps1`
 - `verify-env.js` vs `verify-env.ps1`
@@ -189,6 +198,7 @@ Subdirectories in /docs/:
 ### 4. ENVIRONMENT FILES ANALYSIS 🟡 MODERATE
 
 **Current State:**
+
 ```
 .env.* files in root:
 ├── .env.cloudinary.example
@@ -201,12 +211,14 @@ Subdirectories in /docs/:
 ```
 
 **Issues:**
+
 1. **7 separate env files** - Could consolidate to 3-4
 2. **Service-specific files** - `.env.cloudinary`, `.env.perplexity` (edge cases)
 3. **HP OMEN specific** - `.env.omen.example` (niche)
 4. **Not grouped** - All in root, no organization
 
 **Recommendation:**
+
 - Keep: `.env.example`, `.env.development.example`, `.env.production.example`
 - Move service configs to main `.env.example` with comments
 - Archive HP OMEN specific config (or add to main as optional section)
@@ -216,6 +228,7 @@ Subdirectories in /docs/:
 ### 5. DOCKER FILES ANALYSIS 🟢 GOOD (Minor Issues)
 
 **Current State:**
+
 ```
 Docker-related files:
 ├── Dockerfile                     ✅
@@ -237,6 +250,7 @@ Docker-related files:
 ```
 
 **Recommendation:**
+
 - Keep Docker files in root (industry standard)
 - Consolidate Docker documentation into one comprehensive guide
 - Keep `Dockerfile.simple` only if actively used, otherwise remove
@@ -246,6 +260,7 @@ Docker-related files:
 ### 6. SOURCE CODE STRUCTURE 🟢 EXCELLENT
 
 **Current State:**
+
 ```
 /src/
 ├── app/                           ✅ Next.js App Router
@@ -281,6 +296,7 @@ Docker-related files:
 **Assessment:** ✅ **EXCELLENT - NO CHANGES NEEDED**
 
 The source code follows Next.js 15 best practices:
+
 - Proper route group usage
 - Layered architecture (Controller → Service → Repository)
 - Clear separation of concerns
@@ -294,6 +310,7 @@ The source code follows Next.js 15 best practices:
 ### 7. TESTING STRUCTURE 🟢 GOOD
 
 **Current State:**
+
 ```
 Testing Distribution:
 ├── /src/__tests__/                → Integration tests
@@ -308,6 +325,7 @@ Testing Distribution:
 **Assessment:** ✅ Good structure, follows best practices
 
 **Minor Issues:**
+
 - Some test scripts in `/scripts/` could move to `/tests/utils/`
 - Could add `/tests/fixtures/` for test data
 
@@ -316,6 +334,7 @@ Testing Distribution:
 ### 8. CONFIGURATION FILES 🟢 ACCEPTABLE
 
 **Root Config Files:**
+
 ```
 ✅ package.json
 ✅ tsconfig.json
@@ -333,6 +352,7 @@ Testing Distribution:
 ```
 
 **Recommendation:**
+
 - Keep standard config files in root
 - Consider creating `/config/` for specialized configs (Sentry, PM2)
 
@@ -347,6 +367,7 @@ Testing Distribution:
 **Actions:**
 
 #### Keep in Root (Essential Files):
+
 ```
 / (Root)
 ├── README.md                      ✅ Main entry point
@@ -383,6 +404,7 @@ Total: ~25 files (down from 76)
 ```
 
 #### Move from Root to `/docs/`:
+
 ```
 Move these to /docs/:
 ├── 100-PERCENT-READY.md           → docs/reports/production-ready-certificate.md
@@ -407,6 +429,7 @@ Move these to /docs/:
 ```
 
 #### Consolidate .env Files:
+
 ```
 Keep:
 ├── .env.example                   ✅ Main template (comprehensive)
@@ -525,25 +548,26 @@ Action: Merge service-specific configs into main .env.example with sections
 
 **Consolidation Map:**
 
-| Old Structure | New Structure | Action |
-|---------------|---------------|--------|
-| `/docs/guides/` | `/docs/02-guides/` | Move & consolidate |
-| `/docs/development/` | `/docs/04-development/` | Move & merge |
-| `/docs/deployment/` | `/docs/06-deployment/` | Move & consolidate |
-| `/docs/docker/` | `/docs/06-deployment/` | Merge into deployment |
-| `/docs/testing/` | `/docs/04-development/` | Merge as subsection |
-| `/docs/api/` | `/docs/05-api-reference/` | Rename |
-| `/docs/architecture/` | `/docs/03-architecture/` | Keep structure |
-| `/docs/monitoring/` | `/docs/07-operations/` | Move |
-| `/docs/optimization/` | `/docs/04-development/` | Merge |
-| `/docs/profiling/` | `/docs/04-development/` | Merge |
-| `/docs/reports/` | `/docs/09-archives/reports/` | Archive |
-| `/docs/status/` | `/docs/09-archives/reports/` | Archive |
-| `/docs/quantum-docs/` | `/docs/09-archives/` | Archive (historical) |
-| `/docs/database/` | `/docs/03-architecture/` | Merge |
-| `/docs/vscode-configuration/` | `/docs/04-development/ide-setup/` | Move |
+| Old Structure                 | New Structure                     | Action                |
+| ----------------------------- | --------------------------------- | --------------------- |
+| `/docs/guides/`               | `/docs/02-guides/`                | Move & consolidate    |
+| `/docs/development/`          | `/docs/04-development/`           | Move & merge          |
+| `/docs/deployment/`           | `/docs/06-deployment/`            | Move & consolidate    |
+| `/docs/docker/`               | `/docs/06-deployment/`            | Merge into deployment |
+| `/docs/testing/`              | `/docs/04-development/`           | Merge as subsection   |
+| `/docs/api/`                  | `/docs/05-api-reference/`         | Rename                |
+| `/docs/architecture/`         | `/docs/03-architecture/`          | Keep structure        |
+| `/docs/monitoring/`           | `/docs/07-operations/`            | Move                  |
+| `/docs/optimization/`         | `/docs/04-development/`           | Merge                 |
+| `/docs/profiling/`            | `/docs/04-development/`           | Merge                 |
+| `/docs/reports/`              | `/docs/09-archives/reports/`      | Archive               |
+| `/docs/status/`               | `/docs/09-archives/reports/`      | Archive               |
+| `/docs/quantum-docs/`         | `/docs/09-archives/`              | Archive (historical)  |
+| `/docs/database/`             | `/docs/03-architecture/`          | Merge                 |
+| `/docs/vscode-configuration/` | `/docs/04-development/ide-setup/` | Move                  |
 
 **Benefits:**
+
 - ✅ Clear hierarchy (numbered for logical flow)
 - ✅ Easy to navigate
 - ✅ Reduces from 17 to 9 directories (47% reduction)
@@ -626,6 +650,7 @@ Action: Merge service-specific configs into main .env.example with sections
 **Consolidation Actions:**
 
 1. **Cleanup Scripts (9 → 1):**
+
    ```
    DELETE:
    ├── deep-cleanup-aggressive.ps1
@@ -643,6 +668,7 @@ Action: Merge service-specific configs into main .env.example with sections
    ```
 
 2. **Verify Environment (2 → 1):**
+
    ```
    DELETE: verify-env.js
    KEEP:   verify-env.ps1 (Windows primary)
@@ -658,6 +684,7 @@ Action: Merge service-specific configs into main .env.example with sections
    ```
 
 **Benefits:**
+
 - ✅ Logical grouping
 - ✅ Easier to find scripts
 - ✅ Removes 8+ duplicate scripts
@@ -669,6 +696,7 @@ Action: Merge service-specific configs into main .env.example with sections
 ### PRIORITY 4: .GITHUB DIRECTORY CLEANUP 🟡 MODERATE
 
 **Current Issues:**
+
 - 96 markdown files in `.github/`
 - Multiple instruction files
 - Scattered workflow documentation
@@ -711,6 +739,7 @@ Action: Merge service-specific configs into main .env.example with sections
 ```
 
 **Actions:**
+
 1. Keep essential GitHub-specific files in `.github/`
 2. Move general documentation to main `/docs/`
 3. Archive old workflow documentation
@@ -744,12 +773,14 @@ Action: Merge service-specific configs into main .env.example with sections
 **Steps:**
 
 1. **Create Archive Structure**
+
    ```bash
    mkdir -p docs/09-archives/{reports,phases,deprecated}
    mkdir -p .github/docs/archived
    ```
 
 2. **Move Root Documents to Archives**
+
    ```bash
    # Status reports
    mv 100-PERCENT-READY.md docs/09-archives/reports/
@@ -757,16 +788,17 @@ Action: Merge service-specific configs into main .env.example with sections
    mv OPTIMIZATION-PROGRESS.md docs/09-archives/reports/
    mv READY-TO-DEPLOY.md docs/09-archives/reports/
    mv ACTION-NOW.md docs/09-archives/reports/
-   
+
    # Cleanup reports
    mv CLEANUP_*.md docs/09-archives/reports/cleanup/
    mv POST_CLEANUP_GUIDE.md docs/09-archives/reports/cleanup/
-   
+
    # Project reviews
    mv PROJECT_REVIEW_SUMMARY.md docs/09-archives/reports/
    ```
 
 3. **Move Phase Documents**
+
    ```bash
    find docs -name "*PHASE*" -exec mv {} docs/09-archives/phases/ \;
    ```
@@ -790,34 +822,37 @@ Action: Merge service-specific configs into main .env.example with sections
 **Steps:**
 
 1. **Create New Directory Structure**
+
    ```bash
    mkdir -p docs/{01-getting-started,02-guides,03-architecture,04-development}
    mkdir -p docs/{05-api-reference,06-deployment,07-operations,08-reference}
    ```
 
 2. **Move and Consolidate Docs**
+
    ```bash
    # Getting Started
    mv docs/QUICKSTART.md docs/01-getting-started/quick-start.md
-   
+
    # Guides
    mv docs/guides/* docs/02-guides/
    mv docs/development/DEVELOPMENT_GUIDE.md docs/02-guides/development-guide.md
-   
+
    # Architecture
    mv docs/architecture/* docs/03-architecture/
    mv docs/database/* docs/03-architecture/
-   
+
    # And so on...
    ```
 
 3. **Create Master Index**
+
    ```bash
    cat > docs/README.md << 'EOF'
    # Farmers Market Platform Documentation
-   
+
    ## 📚 Documentation Structure
-   
+
    1. [Getting Started](./01-getting-started/) - New to the project? Start here
    2. [Guides](./02-guides/) - Step-by-step guides for common tasks
    3. [Architecture](./03-architecture/) - System design and decisions
@@ -827,18 +862,19 @@ Action: Merge service-specific configs into main .env.example with sections
    7. [Operations](./07-operations/) - Production operations
    8. [Reference](./08-reference/) - Quick reference materials
    9. [Archives](./09-archives/) - Historical documents
-   
+
    ## 🚀 Quick Links
-   
+
    - [Quick Start Guide](./01-getting-started/quick-start.md)
    - [Development Guide](./02-guides/development-guide.md)
    - [Deployment Guide](./06-deployment/deployment-guide.md)
    - [API Documentation](./05-api-reference/)
-   
+
    EOF
    ```
 
 4. **Update Links in README.md**
+
    ```bash
    # Update main README.md to point to new docs structure
    ```
@@ -863,36 +899,39 @@ Action: Merge service-specific configs into main .env.example with sections
 **Steps:**
 
 1. **Create Script Subdirectories**
+
    ```bash
    mkdir -p scripts/{dev,build,docker,database,env,monitoring,testing,deployment,maintenance,utils}
    ```
 
 2. **Move Scripts**
+
    ```bash
    # Development
    mv scripts/start-dev-safe.js scripts/dev/
    mv scripts/kill-dev-server.js scripts/dev/
    mv scripts/e2e-test.js scripts/dev/
-   
+
    # Build
    mv scripts/build-with-env.ps1 scripts/build/
    mv scripts/setup-build-env.ps1 scripts/build/
-   
+
    # Docker
    mv scripts/docker-deploy.ps1 scripts/docker/
    mv scripts/docker-setup.ps1 scripts/docker/
-   
+
    # And so on...
    ```
 
 3. **Consolidate Cleanup Scripts**
+
    ```bash
    # Create master cleanup script
    cat > scripts/maintenance/cleanup.ps1 << 'EOF'
    # Master cleanup script (consolidated from 9 scripts)
    # ...
    EOF
-   
+
    # Delete old cleanup scripts
    rm scripts/deep-cleanup-*.ps1
    rm scripts/divine-cleanup-*.ps1
@@ -900,6 +939,7 @@ Action: Merge service-specific configs into main .env.example with sections
    ```
 
 4. **Update package.json Scripts**
+
    ```json
    {
      "scripts": {
@@ -911,6 +951,7 @@ Action: Merge service-specific configs into main .env.example with sections
    ```
 
 5. **Create Script READMEs**
+
    ```bash
    # Create README in each script directory
    ```
@@ -935,6 +976,7 @@ Action: Merge service-specific configs into main .env.example with sections
 **Steps:**
 
 1. **Move Docker Documentation**
+
    ```bash
    mv DOCKER_README.md docs/06-deployment/docker-guide.md
    mv DOCKER-HUB-PUSH-MANUAL.md docs/06-deployment/docker-hub-push.md
@@ -942,6 +984,7 @@ Action: Merge service-specific configs into main .env.example with sections
    ```
 
 2. **Move Quick Reference Docs**
+
    ```bash
    mv QUICK_COMMANDS.md docs/08-reference/commands.md
    mv QUICK_REFERENCE.md docs/08-reference/quick-reference.md
@@ -951,6 +994,7 @@ Action: Merge service-specific configs into main .env.example with sections
    ```
 
 3. **Move Documentation Indexes**
+
    ```bash
    mv DOCUMENTATION_INDEX.md docs/index.md
    # Merge DOCUMENTATION_MASTER_INDEX.md into docs/README.md
@@ -958,20 +1002,22 @@ Action: Merge service-specific configs into main .env.example with sections
    ```
 
 4. **Consolidate .env Files**
+
    ```bash
    # Create comprehensive .env.example
    cat .env.cloudinary.example >> .env.example
    cat .env.perplexity.example >> .env.example
-   
+
    # Move specialized configs to docs
    mv .env.omen.example docs/04-development/hp-omen-optimization.md
-   
+
    # Remove redundant files
    rm .env.cloudinary.example
    rm .env.perplexity.example
    ```
 
 5. **Create CHANGELOG.md and CONTRIBUTING.md**
+
    ```bash
    touch CHANGELOG.md
    mv docs/CONTRIBUTING.md ./CONTRIBUTING.md
@@ -996,9 +1042,10 @@ Action: Merge service-specific configs into main .env.example with sections
 **Steps:**
 
 1. **Archive Excessive Markdown Files**
+
    ```bash
    mkdir -p .github/docs/archived
-   
+
    # Keep only essential files
    # Move rest to archived/
    find .github -name "*.md" -not -path "*/instructions/*" \
@@ -1006,18 +1053,19 @@ Action: Merge service-specific configs into main .env.example with sections
    ```
 
 2. **Create .github/README.md**
+
    ```bash
    cat > .github/README.md << 'EOF'
    # GitHub Configuration
-   
+
    This directory contains GitHub-specific configuration:
-   
+
    - `workflows/` - GitHub Actions workflows
    - `copilot/` - GitHub Copilot configuration
    - `instructions/` - Divine development instructions
    - `ISSUE_TEMPLATE/` - Issue templates
    - `PULL_REQUEST_TEMPLATE.md` - PR template
-   
+
    EOF
    ```
 
@@ -1068,31 +1116,34 @@ npm run dev  # Test dev script
 
 ### Before vs After
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| **Root .md files** | 20 files | 2-3 files | 85% reduction ✅ |
-| **Doc subdirs** | 17 subdirs | 9 subdirs | 47% reduction ✅ |
-| **Total .md files** | 369 files | ~300 files | 19% reduction ✅ |
-| **Scripts organized** | Flat (49 files) | 10 subdirs | Better organization ✅ |
-| **Duplicate scripts** | 9 cleanup scripts | 1-2 scripts | 80% reduction ✅ |
-| **Root file count** | 76 files | ~25 files | 67% reduction ✅ |
-| **.env files** | 7 files | 3 files | 57% reduction ✅ |
+| Metric                | Before            | After       | Improvement            |
+| --------------------- | ----------------- | ----------- | ---------------------- |
+| **Root .md files**    | 20 files          | 2-3 files   | 85% reduction ✅       |
+| **Doc subdirs**       | 17 subdirs        | 9 subdirs   | 47% reduction ✅       |
+| **Total .md files**   | 369 files         | ~300 files  | 19% reduction ✅       |
+| **Scripts organized** | Flat (49 files)   | 10 subdirs  | Better organization ✅ |
+| **Duplicate scripts** | 9 cleanup scripts | 1-2 scripts | 80% reduction ✅       |
+| **Root file count**   | 76 files          | ~25 files   | 67% reduction ✅       |
+| **.env files**        | 7 files           | 3 files     | 57% reduction ✅       |
 
 ### Benefits
 
 **For New Developers:**
+
 - ✅ Clear entry point (README → docs/getting-started/)
 - ✅ Logical documentation structure
 - ✅ Less overwhelming root directory
 - ✅ Easy to find what you need
 
 **For Maintainers:**
+
 - ✅ Easier to maintain documentation
 - ✅ Clear where to add new docs
 - ✅ Less duplication
 - ✅ Better organization
 
 **For Production:**
+
 - ✅ No impact on runtime
 - ✅ Cleaner repository
 - ✅ Better professional appearance
@@ -1186,6 +1237,7 @@ if ($cleanupScripts.Count -gt 2) {
 ```
 
 **Add to CI/CD:**
+
 ```yaml
 # .github/workflows/structure-check.yml
 name: Repository Structure Check
@@ -1208,12 +1260,14 @@ jobs:
 Use this checklist when executing the restructure:
 
 ### Pre-Restructure
+
 - [ ] Create backup branch: `git checkout -b restructure-backup`
 - [ ] Document current structure: Take screenshots
 - [ ] Test that everything works: `npm run test && npm run build`
 - [ ] Notify team: Send heads-up about restructure
 
 ### Phase 1: Archive
+
 - [ ] Create archive directories
 - [ ] Move historical documents
 - [ ] Move phase documents
@@ -1221,6 +1275,7 @@ Use this checklist when executing the restructure:
 - [ ] Verify no broken links
 
 ### Phase 2: Documentation
+
 - [ ] Create new directory structure
 - [ ] Move and consolidate docs
 - [ ] Create master index
@@ -1229,6 +1284,7 @@ Use this checklist when executing the restructure:
 - [ ] Update all documentation links
 
 ### Phase 3: Scripts
+
 - [ ] Create script subdirectories
 - [ ] Move scripts
 - [ ] Consolidate cleanup scripts
@@ -1238,6 +1294,7 @@ Use this checklist when executing the restructure:
 - [ ] Test all scripts work
 
 ### Phase 4: Root Cleanup
+
 - [ ] Move Docker docs
 - [ ] Move quick reference docs
 - [ ] Consolidate .env files
@@ -1247,11 +1304,13 @@ Use this checklist when executing the restructure:
 - [ ] Verify root has ~25 files
 
 ### Phase 5: .github Cleanup
+
 - [ ] Archive markdown files
 - [ ] Create .github/README.md
 - [ ] Git commit
 
 ### Phase 6: Verification
+
 - [ ] Build succeeds: `npm run build`
 - [ ] Tests pass: `npm run test`
 - [ ] Docker builds: `docker-compose build`
@@ -1262,6 +1321,7 @@ Use this checklist when executing the restructure:
 - [ ] No broken links
 
 ### Post-Restructure
+
 - [ ] Create PR with changes
 - [ ] Get team review
 - [ ] Merge to main
@@ -1329,6 +1389,7 @@ Use this checklist when executing the restructure:
 4. **Something Broke:** `git revert` to previous commit
 
 **Need help?** Create an issue with:
+
 - What you're looking for
 - Where you expected to find it
 - Error messages (if any)
@@ -1342,12 +1403,14 @@ Use this checklist when executing the restructure:
 Your Farmers Market Platform has **excellent source code** but suffers from **documentation and organizational sprawl**. This is common in projects that have grown organically over time.
 
 **Key Issues:**
+
 - 🔴 Root directory clutter (76 files → should be ~25)
 - 🔴 Documentation sprawl (369 files in 17+ subdirectories)
 - 🟡 Duplicate scripts (9 cleanup scripts)
 - 🟡 Disorganized scripts (49 files in flat structure)
 
 **Recommended Actions:**
+
 1. Archive historical documents (1 hour) ← **DO THIS FIRST**
 2. Clean up root directory (1 hour) ← **HIGH IMPACT**
 3. Consolidate cleanup scripts (30 min) ← **QUICK WIN**
@@ -1355,6 +1418,7 @@ Your Farmers Market Platform has **excellent source code** but suffers from **do
 5. Organize scripts (2 hours) ← **MEDIUM-TERM**
 
 **Expected Results:**
+
 - 67% reduction in root files
 - 47% reduction in doc subdirectories
 - 80% reduction in duplicate scripts
@@ -1373,4 +1437,4 @@ Your Farmers Market Platform has **excellent source code** but suffers from **do
 **Estimated Cleanup Time:** 8-10 hours total  
 **Impact:** High (developer experience)
 
-*Divine Agricultural Platform - Organizing for Excellence* 🌾✨
+_Divine Agricultural Platform - Organizing for Excellence_ 🌾✨

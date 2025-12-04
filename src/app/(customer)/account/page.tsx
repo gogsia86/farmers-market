@@ -1,3 +1,33 @@
+/**
+ * ⚙️ CUSTOMER ACCOUNT - Settings & Profile Management
+ *
+ * Purpose: Account management and configuration hub (Server Component)
+ * Use Cases:
+ * - Update profile information (name, email, phone)
+ * - Manage delivery addresses
+ * - Configure notification preferences
+ * - View order history (settings view)
+ * - Update account security settings
+ *
+ * Technical Details:
+ * - Server component with auth() server function
+ * - Direct database access (no API overhead)
+ * - Server-side rendering for fast initial load
+ * - SEO-friendly static content
+ * - Parallel database queries for optimization
+ *
+ * Related Routes:
+ * - /dashboard - For daily activity monitoring
+ * - /account/orders - For order history
+ * - /account/addresses - For address management
+ * - /account/preferences - For user preferences
+ *
+ * @see /dashboard for daily activity monitoring and real-time updates
+ * @reference DASHBOARD_ACCOUNT_DISTINCTION.md
+ * @reference 04_NEXTJS_DIVINE_IMPLEMENTATION.instructions.md
+ * @pattern Server Component - Direct Database Access
+ */
+
 // 🧠 DIVINE PATTERN: Consumer Account Consciousness Dashboard
 // 📚 Reference: 04_NEXTJS_DIVINE_IMPLEMENTATION.instructions.md
 // 🌾 Domain: Consumer Agricultural Experience Management
@@ -140,7 +170,13 @@ export default async function CustomerAccountPage() {
                 </div>
               </div>
             </div>
-            <div className="mt-4 flex md:ml-4 md:mt-0">
+            <div className="mt-4 flex gap-3 md:ml-4 md:mt-0">
+              <Link
+                href="/dashboard"
+                className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-agricultural-700 shadow-sm border border-agricultural-300 hover:bg-agricultural-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-agricultural-600"
+              >
+                ← Back to Dashboard
+              </Link>
               <Link
                 href="/account/edit"
                 className="inline-flex items-center rounded-md bg-agricultural-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-agricultural-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-agricultural-600"

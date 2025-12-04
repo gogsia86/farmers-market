@@ -104,10 +104,7 @@ function formatNotificationType(type: string): string {
 // COMPONENT
 // ============================================================================
 
-export function AlertsWidget({
-  notifications,
-  alertCount,
-}: AlertsWidgetProps) {
+export function AlertsWidget({ notifications, alertCount }: AlertsWidgetProps) {
   const [filter, setFilter] = useState<string>("all");
   const [showAll, setShowAll] = useState(false);
 
@@ -135,9 +132,7 @@ export function AlertsWidget({
       {/* Widget Header */}
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <h3 className="text-lg font-semibold text-gray-900">
-            Active Alerts
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-900">Active Alerts</h3>
           {alertCount > 0 && (
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white animate-pulse">
               {alertCount}

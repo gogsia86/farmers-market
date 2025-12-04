@@ -94,7 +94,6 @@ declare global {
     __DIVINE_ANALYTICS__?: DivineAnalyticsTracker;
   }
 
-
   var __DIVINE_PERFORMANCE__: DivinePerformanceTracker | undefined;
 
   var __DIVINE_ANALYTICS__: DivineAnalyticsTracker | undefined;

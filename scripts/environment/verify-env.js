@@ -123,7 +123,7 @@ Object.entries(requiredVariables).forEach(([category, variables]) => {
         varName.includes("PASSWORD") ||
         varName.includes("KEY");
       const displayValue = isSensitive
-        ? `***${  value.slice(-4)}`
+        ? `***${value.slice(-4)}`
         : value.slice(0, 50);
 
       console.log(
@@ -171,7 +171,7 @@ Object.entries(optionalVariables).forEach(([category, variables]) => {
         varName.includes("PASSWORD") ||
         varName.includes("KEY");
       const displayValue = isSensitive
-        ? `***${  value.slice(-4)}`
+        ? `***${value.slice(-4)}`
         : value.slice(0, 50);
 
       console.log(

@@ -62,6 +62,7 @@ curl http://localhost:3001/api/webhooks/stripe
 ## ✅ SUCCESS = All show [200] in Terminal 2
 
 **Terminal 2 should show:**
+
 ```
 [200] POST http://localhost:3001/api/webhooks/stripe [evt_xxx]
 [200] POST http://localhost:3001/api/webhooks/stripe [evt_xxx]
@@ -73,16 +74,19 @@ curl http://localhost:3001/api/webhooks/stripe
 ## 🚨 TROUBLESHOOTING
 
 **Port 3001 in use?**
+
 ```bash
 npm run kill-server
 npm run dev:omen
 ```
 
 **Webhook returns [401]?**
+
 - Double-check the `whsec_` secret in `.env.local`
 - Restart Terminal 1 (dev server)
 
 **"stripe: command not found"?**
+
 - Use full path: `./.stripe-cli/stripe`
 
 ---
@@ -90,6 +94,7 @@ npm run dev:omen
 ## 🎉 DONE!
 
 When all 4 tests show `[200]`:
+
 - Press `Ctrl+C` in all terminals to stop
 - **YOU'RE 100% PRODUCTION READY!** 🎊
 

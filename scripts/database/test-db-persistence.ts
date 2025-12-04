@@ -28,11 +28,15 @@ const colors = {
 
 const log = {
   info: (msg: string) => console.log(`${colors.blue}ℹ${colors.reset} ${msg}`),
-  success: (msg: string) => console.log(`${colors.green}✓${colors.reset} ${msg}`),
+  success: (msg: string) =>
+    console.log(`${colors.green}✓${colors.reset} ${msg}`),
   error: (msg: string) => console.log(`${colors.red}✗${colors.reset} ${msg}`),
-  warn: (msg: string) => console.log(`${colors.yellow}⚠${colors.reset} ${msg}`),
-  header: (msg: string) => console.log(`\n${colors.bright}${colors.cyan}${msg}${colors.reset}`),
-  section: (msg: string) => console.log(`\n${colors.magenta}▶${colors.reset} ${msg}`),
+  warn: (msg: string) =>
+    console.log(`${colors.yellow}⚠${colors.reset} ${msg}`),
+  header: (msg: string) =>
+    console.log(`\n${colors.bright}${colors.cyan}${msg}${colors.reset}`),
+  section: (msg: string) =>
+    console.log(`\n${colors.magenta}▶${colors.reset} ${msg}`),
 };
 
 interface TestResult {
@@ -44,7 +48,10 @@ interface TestResult {
 
 const results: TestResult[] = [];
 
-async function runTest(name: string, testFn: () => Promise<void>): Promise<void> {
+async function runTest(
+  name: string,
+  testFn: () => Promise<void>,
+): Promise<void> {
   const startTime = Date.now();
   try {
     await testFn();
@@ -232,7 +239,9 @@ async function testWorkflowExecutions(): Promise<void> {
       where: { status: "FAILURE" },
     });
 
-    log.info(`  Found ${successCount} successful and ${failureCount} failed executions`);
+    log.info(
+      `  Found ${successCount} successful and ${failureCount} failed executions`,
+    );
   });
 
   // DELETE (cleanup)
@@ -384,7 +393,9 @@ async function testSystemHealthChecks(): Promise<void> {
       where: { status: "UNHEALTHY" },
     });
 
-    log.info(`  Found ${healthyCount} healthy and ${unhealthyCount} unhealthy checks`);
+    log.info(
+      `  Found ${healthyCount} healthy and ${unhealthyCount} unhealthy checks`,
+    );
   });
 
   // DELETE (cleanup)
@@ -561,7 +572,9 @@ async function testComplexQueries(): Promise<void> {
       where: { durationMs: { not: null } },
     });
 
-    log.info(`  Average duration: ${avgDuration._avg.durationMs?.toFixed(2)}ms`);
+    log.info(
+      `  Average duration: ${avgDuration._avg.durationMs?.toFixed(2)}ms`,
+    );
   });
 
   await runTest("Query metrics with execution details", async () => {
@@ -579,7 +592,9 @@ async function testComplexQueries(): Promise<void> {
       },
     });
 
-    log.info(`  Found ${metricsWithExecution.length} metrics with execution details`);
+    log.info(
+      `  Found ${metricsWithExecution.length} metrics with execution details`,
+    );
   });
 
   await runTest("Query recent workflow activity", async () => {
@@ -600,7 +615,9 @@ async function testComplexQueries(): Promise<void> {
       },
     });
 
-    log.info(`  Found ${recentActivity.length} recent executions in last 24 hours`);
+    log.info(
+      `  Found ${recentActivity.length} recent executions in last 24 hours`,
+    );
   });
 }
 
@@ -645,7 +662,9 @@ async function testTransactions(): Promise<void> {
 
     // Cleanup
     await database.workflowMetrics.delete({ where: { id: result.metric.id } });
-    await database.workflowExecution.delete({ where: { id: result.execution.id } });
+    await database.workflowExecution.delete({
+      where: { id: result.execution.id },
+    });
   });
 }
 
@@ -684,15 +703,21 @@ async function main(): Promise<void> {
     const failed = results.filter((r) => !r.passed).length;
     const total = results.length;
 
-    log.header("\n╔════════════════════════════════════════════════════════════╗");
+    log.header(
+      "\n╔════════════════════════════════════════════════════════════╗",
+    );
     log.header("║  TEST SUMMARY                                             ║");
-    log.header("╚════════════════════════════════════════════════════════════╝");
+    log.header(
+      "╚════════════════════════════════════════════════════════════╝",
+    );
 
     console.log(`\n${colors.bright}Total Tests:${colors.reset} ${total}`);
     console.log(`${colors.green}✓ Passed:${colors.reset} ${passed}`);
     console.log(`${colors.red}✗ Failed:${colors.reset} ${failed}`);
     console.log(`${colors.cyan}⏱ Duration:${colors.reset} ${duration}ms`);
-    console.log(`${colors.yellow}Success Rate:${colors.reset} ${((passed / total) * 100).toFixed(2)}%\n`);
+    console.log(
+      `${colors.yellow}Success Rate:${colors.reset} ${((passed / total) * 100).toFixed(2)}%\n`,
+    );
 
     // Print failures if any
     if (failed > 0) {
@@ -716,7 +741,9 @@ async function main(): Promise<void> {
       process.exit(0);
     }
   } catch (error) {
-    log.error(`\n❌ Fatal error: ${error instanceof Error ? error.message : String(error)}`);
+    log.error(
+      `\n❌ Fatal error: ${error instanceof Error ? error.message : String(error)}`,
+    );
     console.error(error);
     process.exit(1);
   } finally {

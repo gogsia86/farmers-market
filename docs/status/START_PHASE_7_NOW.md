@@ -38,6 +38,7 @@ STRIPE_WEBHOOK_SECRET=whsec_2a4425148ec4599a0c09c8a59538cc3a0012de15b514dcca8e27
 ```
 
 **Then restart your dev server if still running:**
+
 ```bash
 # Stop with Ctrl+C, then:
 npm run dev:omen
@@ -50,6 +51,7 @@ npm run dev:omen
 Pick one of these platforms for staging deployment:
 
 #### **Option A: Vercel (Recommended - Easiest)**
+
 ```bash
 # Install Vercel CLI
 npm i -g vercel
@@ -67,19 +69,22 @@ vercel env add STRIPE_SECRET_KEY
 # ... etc
 ```
 
-**Pros:** 
+**Pros:**
+
 - Easy Next.js integration
 - Automatic SSL
 - Preview deployments
 - Free hobby tier
 
-**Cons:** 
+**Cons:**
+
 - Database not included
 - Need separate DB hosting
 
 ---
 
 #### **Option B: Railway (All-in-One)**
+
 ```bash
 # Install Railway CLI
 npm i -g @railway/cli
@@ -95,17 +100,20 @@ railway up
 ```
 
 **Pros:**
+
 - Includes PostgreSQL database
 - One-click deployment
 - Good free tier
 - Simple setup
 
 **Cons:**
+
 - Less Next.js-specific features
 
 ---
 
 #### **Option C: Render (Balanced)**
+
 - Go to https://render.com
 - Sign up/login
 - Click "New +" → "Web Service"
@@ -114,11 +122,13 @@ railway up
 - Deploy
 
 **Pros:**
+
 - Includes PostgreSQL
 - Good documentation
 - Free tier available
 
 **Cons:**
+
 - Slower cold starts on free tier
 
 ---
@@ -126,12 +136,14 @@ railway up
 ### 🎯 STEP 3: Set Up Staging Database (30 minutes)
 
 #### **Option A: Use Railway (if using Railway for hosting)**
+
 ```bash
 # Already included with Railway deployment
 railway add postgresql
 ```
 
 #### **Option B: Neon (Serverless PostgreSQL - Recommended)**
+
 1. Go to https://neon.tech
 2. Sign up (free tier: 3GB storage)
 3. Create new project: "farmersmarket-staging"
@@ -139,6 +151,7 @@ railway add postgresql
 5. Add to your staging environment variables
 
 #### **Option C: Supabase**
+
 1. Go to https://supabase.com
 2. Sign up (free tier: 500MB storage)
 3. Create new project: "farmersmarket-staging"
@@ -152,6 +165,7 @@ railway add postgresql
 **A. Configure Environment Variables**
 
 Create a `.env.staging` file with:
+
 ```env
 # Database
 DATABASE_URL="postgresql://user:pass@host:5432/farmersmarket_staging"
@@ -181,6 +195,7 @@ NODE_ENV="production"
 ```
 
 **B. Run Database Migrations**
+
 ```bash
 # Set DATABASE_URL for staging
 export DATABASE_URL="your-staging-database-url"
@@ -198,16 +213,19 @@ npm run db:seed:basic
 **C. Deploy Application**
 
 **If using Vercel:**
+
 ```bash
 vercel --prod=false
 ```
 
 **If using Railway:**
+
 ```bash
 railway up
 ```
 
 **If using Render:**
+
 - Push to GitHub
 - Render will auto-deploy
 
@@ -216,6 +234,7 @@ railway up
 ### 🎯 STEP 5: Verify Staging Deployment (15 minutes)
 
 **Health Checks:**
+
 ```bash
 # Test health endpoint
 curl https://your-staging-url.com/api/health
@@ -227,6 +246,7 @@ curl https://your-staging-url.com/api/webhooks/stripe
 ```
 
 **Manual Verification:**
+
 - [ ] Visit staging URL - homepage loads
 - [ ] Can create an account
 - [ ] Can login
@@ -240,6 +260,7 @@ curl https://your-staging-url.com/api/webhooks/stripe
 ## 📅 YOUR WEEK 1 SCHEDULE
 
 ### **Day 1 (Today): Staging Setup**
+
 - [ ] Update `.env.local` with webhook secret
 - [ ] Choose hosting platform
 - [ ] Set up staging database
@@ -251,6 +272,7 @@ curl https://your-staging-url.com/api/webhooks/stripe
 ---
 
 ### **Day 2: Complete Staging Configuration**
+
 - [ ] Configure custom domain (optional)
 - [ ] Set up email service
 - [ ] Configure file storage
@@ -262,6 +284,7 @@ curl https://your-staging-url.com/api/webhooks/stripe
 ---
 
 ### **Day 3: E2E Testing - Customer Flows**
+
 - [ ] Run Playwright tests: `npm run test:e2e`
 - [ ] Manual testing: Browse → Cart → Checkout
 - [ ] Test payment with Stripe test card: `4242 4242 4242 4242`
@@ -273,6 +296,7 @@ curl https://your-staging-url.com/api/webhooks/stripe
 ---
 
 ### **Day 4: E2E Testing - Farmer & Admin Flows**
+
 - [ ] Test farmer registration and farm creation
 - [ ] Test product management
 - [ ] Test order fulfillment flow
@@ -284,6 +308,7 @@ curl https://your-staging-url.com/api/webhooks/stripe
 ---
 
 ### **Day 5: Bug Fixes & Refinements**
+
 - [ ] Review all test results
 - [ ] Fix critical bugs
 - [ ] Fix high-priority bugs
@@ -297,7 +322,9 @@ curl https://your-staging-url.com/api/webhooks/stripe
 ## 🚨 IMPORTANT REMINDERS
 
 ### Before You Start:
+
 1. **Commit your current work:**
+
    ```bash
    git add .
    git commit -m "✅ Phase 6 complete - Payment integration 100%"
@@ -305,6 +332,7 @@ curl https://your-staging-url.com/api/webhooks/stripe
    ```
 
 2. **Create a Phase 7 branch:**
+
    ```bash
    git checkout -b phase-7/staging-deployment
    ```
@@ -319,6 +347,7 @@ curl https://your-staging-url.com/api/webhooks/stripe
 ## 📊 SUCCESS METRICS FOR WEEK 1
 
 By end of Week 1, you should have:
+
 - ✅ Staging environment live and accessible
 - ✅ Database migrated and seeded
 - ✅ All critical user flows tested
@@ -332,21 +361,25 @@ By end of Week 1, you should have:
 ### Common Issues:
 
 **"Database connection failed"**
+
 - Check DATABASE_URL format
 - Verify database is accessible
 - Check firewall rules
 
 **"Build failed on deployment"**
+
 - Review build logs
 - Check TypeScript errors: `npm run type-check`
 - Verify all dependencies installed
 
 **"Environment variables not loading"**
+
 - Check hosting platform's env var configuration
 - Verify variable names exactly match
 - Restart deployment after adding vars
 
 **"Stripe webhooks not working"**
+
 - Update webhook endpoint in Stripe dashboard
 - Verify webhook secret matches
 - Check webhook logs in Stripe dashboard
@@ -387,11 +420,13 @@ git checkout -b phase-7/staging-deployment
 You're now **75% complete** with the entire project!
 
 **What's left:**
+
 - 2-3 weeks of testing and refinement
 - Production deployment
 - **LAUNCH!** 🚀
 
 **You've built:**
+
 - A complete e-commerce platform
 - 1,890 passing tests
 - Production-grade code

@@ -20,6 +20,7 @@ cd "M:/Repo/Farmers Market Platform web and app"
 ### Command 2: Open Stripe Dashboard (1 min)
 
 **Manually open this URL in your browser:**
+
 ```
 https://dashboard.stripe.com/test/apikeys
 ```
@@ -27,6 +28,7 @@ https://dashboard.stripe.com/test/apikeys
 **Make sure:** Toggle at top says **"Test mode"** ✅
 
 **Copy these 2 keys:**
+
 - Publishable key: `pk_test_...`
 - Secret key: `sk_test_...`
 
@@ -37,6 +39,7 @@ https://dashboard.stripe.com/test/apikeys
 **Open:** `.env.local` file
 
 **Add/Update these lines:**
+
 ```env
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_YOUR_KEY_HERE
 STRIPE_SECRET_KEY=sk_test_YOUR_KEY_HERE
@@ -52,12 +55,15 @@ STRIPE_WEBHOOK_SECRET=whsec_TEMPORARY
 **Open 2 terminals:**
 
 **Terminal 1:**
+
 ```bash
 npm run dev:omen
 ```
+
 Wait for: `✓ Ready in X.Xs`
 
 **Terminal 2:**
+
 ```bash
 ./.stripe-cli/stripe listen --forward-to localhost:3001/api/webhooks/stripe
 ```
@@ -126,7 +132,7 @@ curl http://localhost:3001/api/webhooks/stripe
 - [ ] Updated .env.local with keys
 - [ ] Started dev server (Terminal 1)
 - [ ] Started webhook forwarding (Terminal 2)
-- [ ] Copied whsec_ secret
+- [ ] Copied whsec\_ secret
 - [ ] Updated .env.local again
 - [ ] Restarted dev server
 - [ ] All tests show [200]
@@ -136,6 +142,7 @@ curl http://localhost:3001/api/webhooks/stripe
 ## 🚀 AFTER THIS
 
 You can:
+
 - Deploy to staging
 - Run integration tests
 - Launch to production in 2-3 weeks

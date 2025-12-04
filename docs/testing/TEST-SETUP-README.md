@@ -3,6 +3,7 @@
 ## Status: ✅ COMPLETE & READY TO USE
 
 This repository now includes comprehensive test setup automation for:
+
 - ✅ **Integration Tests** (with real database)
 - ✅ **GPU Performance Tests** (RTX 2070 Max-Q)
 - ✅ **Automated Database Setup**
@@ -28,6 +29,7 @@ scripts\setup-test-db.bat
 ```
 
 **What it does:**
+
 - Creates PostgreSQL test database
 - Pushes Prisma schema
 - Generates Prisma Client
@@ -77,22 +79,26 @@ npm run test:all:omen       # All tests optimized
 ## What Was Added
 
 ### 1. NPM Scripts
+
 - `test:integration` - Run integration tests with real database
 - `test:gpu` - Run GPU performance benchmarks
 - `test:gpu:watch` - GPU tests in watch mode
 - `db:test:setup` - Automated test database setup
 
 ### 2. Setup Scripts
+
 - `scripts/setup-test-db.ts` - TypeScript setup script (cross-platform)
 - `scripts/setup-test-db.sh` - Unix/macOS/Linux shell script
 - `scripts/setup-test-db.bat` - Windows batch script
 
 ### 3. Documentation
+
 - `docs/TESTING.md` - Comprehensive testing guide (updated)
 - `docs/TEST-SETUP-GUIDE.md` - Quick reference with commands
 - `docs/TEST-SETUP-IMPLEMENTATION.md` - Implementation details
 
 ### 4. Test Configuration
+
 - Integration tests skip automatically when DB not configured
 - GPU tests skip by default (no GPU in CI)
 - Clear error messages and troubleshooting
@@ -102,11 +108,13 @@ npm run test:all:omen       # All tests optimized
 ## Prerequisites
 
 ### For Integration Tests
+
 - PostgreSQL 12+ installed and running
 - Node.js 20+ and npm 10+
 - ~100MB disk space for test database
 
 ### For GPU Tests
+
 - NVIDIA GPU (RTX 2070 Max-Q or compatible)
 - CUDA drivers installed
 - Test fixtures in `tests/fixtures/`
@@ -192,12 +200,12 @@ nvcc --version
 
 ## Test Execution Matrix
 
-| Test Type | Command | DB Required | GPU Required | Duration | CI |
-|-----------|---------|-------------|--------------|----------|-----|
-| Unit Tests | `npm test` | ❌ | ❌ | ~30s | ✅ |
-| Integration Tests | `npm run test:integration` | ✅ | ❌ | ~2-5min | ❌ |
-| GPU Tests | `npm run test:gpu` | ❌ | ✅ | ~1-3min | ❌ |
-| E2E Tests | `npm run test:e2e` | ❌ | ❌ | ~5-10min | ✅ |
+| Test Type         | Command                    | DB Required | GPU Required | Duration | CI  |
+| ----------------- | -------------------------- | ----------- | ------------ | -------- | --- |
+| Unit Tests        | `npm test`                 | ❌          | ❌           | ~30s     | ✅  |
+| Integration Tests | `npm run test:integration` | ✅          | ❌           | ~2-5min  | ❌  |
+| GPU Tests         | `npm run test:gpu`         | ❌          | ✅           | ~1-3min  | ❌  |
+| E2E Tests         | `npm run test:e2e`         | ❌          | ❌           | ~5-10min | ✅  |
 
 ---
 
@@ -240,6 +248,7 @@ Farmers Market Platform web and app/
 ## CI/CD Behavior
 
 ### Current CI Pipeline (GitHub Actions)
+
 - ✅ Unit tests run (mocked database)
 - ✅ E2E tests run (Playwright)
 - ⏭️ Integration tests skip (no database)
@@ -252,6 +261,7 @@ This is intentional! Integration and GPU tests are for local development and req
 ## Integration Test Coverage
 
 Current integration tests verify:
+
 - ✅ Complete order workflow (create → pay → ship → deliver)
 - ✅ Inventory management and reservations
 - ✅ Multi-service coordination (Order, Payment, Shipping, Product)
@@ -265,6 +275,7 @@ Current integration tests verify:
 ## GPU Test Coverage
 
 GPU tests validate:
+
 - ✅ Image processing speed (< 100ms target)
 - ✅ Batch processing throughput
 - ✅ ML model training on GPU
@@ -288,6 +299,7 @@ npm run test:all:omen       # Full suite optimized
 ```
 
 ### Why Serial Execution?
+
 - Integration tests use `--runInBand` to prevent database connection pool exhaustion
 - GPU tests use `--runInBand` to avoid GPU resource contention
 - Unit tests run in parallel with 10 workers
@@ -297,12 +309,14 @@ npm run test:all:omen       # Full suite optimized
 ## Development Workflow
 
 ### Daily Development
+
 ```bash
 npm run test:watch          # Unit tests in watch mode
 npm run test:integration    # Verify database changes
 ```
 
 ### Before Commit
+
 ```bash
 npm run quality            # Type-check + lint + format
 npm test                   # Unit tests
@@ -310,6 +324,7 @@ npm run test:integration   # Integration tests
 ```
 
 ### Before Deploy
+
 ```bash
 npm run test:coverage      # Full coverage report
 npm run test:e2e          # E2E tests
@@ -321,11 +336,13 @@ npm run test:integration   # Integration tests
 ## Need Help?
 
 ### Documentation
+
 - **Comprehensive Guide**: [docs/TESTING.md](./docs/TESTING.md)
 - **Quick Reference**: [docs/TEST-SETUP-GUIDE.md](./docs/TEST-SETUP-GUIDE.md)
 - **Implementation Details**: [docs/TEST-SETUP-IMPLEMENTATION.md](./docs/TEST-SETUP-IMPLEMENTATION.md)
 
 ### External Resources
+
 - [Jest Documentation](https://jestjs.io/)
 - [Prisma Testing Guide](https://www.prisma.io/docs/guides/testing)
 - [TensorFlow.js GPU Guide](https://www.tensorflow.org/js/guide/platform_environment)
@@ -336,6 +353,7 @@ npm run test:integration   # Integration tests
 ## Success Metrics
 
 All requirements met:
+
 - ✅ Test database setup automated
 - ✅ Integration tests conditional (skip when DB not available)
 - ✅ GPU tests local-only (skip by default)

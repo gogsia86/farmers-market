@@ -1,4 +1,5 @@
 # Phase 5 Action Plan: Docker Organization
+
 # Repository Restructure Project - Farmers Market Platform
 
 **Phase**: 5 of 6  
@@ -14,6 +15,7 @@
 Consolidate and organize all Docker-related files (Dockerfiles, Docker Compose configurations, and Docker documentation) into a unified `docker/` directory structure with clear separation between development and production environments.
 
 ### Success Criteria
+
 - ✅ Create organized `docker/` directory structure
 - ✅ Consolidate all Dockerfiles into `docker/dockerfiles/`
 - ✅ Consolidate all Docker Compose files into `docker/compose/`
@@ -31,6 +33,7 @@ Consolidate and organize all Docker-related files (Dockerfiles, Docker Compose c
 ### Docker Files Found in Repository
 
 #### Root Directory (5 files)
+
 ```
 ./Dockerfile                    # Main production Dockerfile
 ./Dockerfile.dev                # Development Dockerfile
@@ -40,6 +43,7 @@ Consolidate and organize all Docker-related files (Dockerfiles, Docker Compose c
 ```
 
 #### Documentation (15 files in docs/docker/)
+
 ```
 docs/docker/
 ├── DOCKER_COMPLETE_GUIDE.md
@@ -58,12 +62,14 @@ docs/docker/
 ```
 
 #### Scripts (Already organized in Phase 4)
+
 ```
 scripts/docker/              # Docker utility scripts (organized)
 scripts/deployment/          # Deployment scripts including Docker
 ```
 
 #### Old/Archive Directories
+
 ```
 docker-scripts/              # Only README remains (consolidated in Phase 4)
 docs/archives/docker-old/    # Archived Docker documentation
@@ -71,6 +77,7 @@ docs/archives/duplicates/docker/  # Duplicate Docker files
 ```
 
 ### Problems with Current State
+
 1. ❌ **Scattered Dockerfiles** - 3 Dockerfiles in root directory
 2. ❌ **Compose files in root** - 2 compose files cluttering root
 3. ❌ **Documentation overload** - 15 Docker docs with duplicates/overlaps
@@ -114,6 +121,7 @@ scripts/deployment/                     # Keep deployment scripts here (Phase 4)
 ```
 
 ### Root Directory (Clean)
+
 ```
 # After Phase 5, root should have:
 - package.json
@@ -131,6 +139,7 @@ scripts/deployment/                     # Keep deployment scripts here (Phase 4)
 ## 📋 Execution Plan
 
 ### Step 1: Create Docker Directory Structure (2 minutes)
+
 ```bash
 # Create main docker directory and subdirectories
 mkdir -p docker/dockerfiles
@@ -139,6 +148,7 @@ mkdir -p docker/docs
 ```
 
 ### Step 2: Move Dockerfiles (5 minutes)
+
 ```bash
 # Move all Dockerfiles to docker/dockerfiles/
 git mv Dockerfile docker/dockerfiles/Dockerfile
@@ -154,6 +164,7 @@ fi
 **Verification**: Confirm Dockerfiles moved and Git history preserved
 
 ### Step 3: Move Docker Compose Files (5 minutes)
+
 ```bash
 # Move compose files to docker/compose/
 git mv docker-compose.yml docker/compose/docker-compose.yml
@@ -169,11 +180,13 @@ git mv docker-compose.dev.yml docker/compose/docker-compose.dev.yml
 ### Step 4: Consolidate Docker Documentation (8 minutes)
 
 **Analysis Required**: Review 15 Docker docs to identify:
+
 - Master/canonical documents
 - Duplicates to archive
 - Content to merge
 
 **Proposed Consolidation**:
+
 ```
 # Keep in docs/deployment/ (main deployment reference):
 docs/deployment/DOCKER-COMPLETE-GUIDE.md  (keep, update paths)
@@ -192,6 +205,7 @@ DOCKER-PUSH-GUIDE.md (duplicate of DOCKER_PUSH_GUIDE.md)
 ```
 
 **Actions**:
+
 1. Create consolidated docs in `docker/docs/`
 2. Move unique docs to archive
 3. Update `docs/deployment/DOCKER-COMPLETE-GUIDE.md` with new paths
@@ -199,6 +213,7 @@ DOCKER-PUSH-GUIDE.md (duplicate of DOCKER_PUSH_GUIDE.md)
 ### Step 5: Create Master Docker README (5 minutes)
 
 Create `docker/README.md` with:
+
 - Overview of Docker setup
 - Quick start commands
 - Directory structure explanation
@@ -209,16 +224,18 @@ Create `docker/README.md` with:
 ### Step 6: Update References (7 minutes)
 
 **Files to Update**:
+
 1. **README.md** - Update Docker setup instructions
 2. **docs/QUICK-START.md** - Update Docker quick start paths
 3. **docs/deployment/DOCKER-COMPLETE-GUIDE.md** - Update all paths
 4. **docs/DOCUMENTATION-INDEX.md** - Update Docker doc references
 5. **package.json** - Update any Docker-related scripts
-6. **.github/workflows/*.yml** - Update CI/CD Dockerfile paths
-7. **scripts/docker/*.sh** - Update Dockerfile and compose paths
-8. **scripts/deployment/*.sh** - Update Docker paths
+6. **.github/workflows/\*.yml** - Update CI/CD Dockerfile paths
+7. **scripts/docker/\*.sh** - Update Dockerfile and compose paths
+8. **scripts/deployment/\*.sh** - Update Docker paths
 
 **Search & Replace Patterns**:
+
 ```bash
 # Find all references to update:
 grep -r "Dockerfile" --include="*.md" --include="*.json" --include="*.yml" --include="*.sh" . | grep -v node_modules | grep -v ".git/"
@@ -229,6 +246,7 @@ grep -r "\./Dockerfile" . --include="*.yml" --include="*.yaml" --include="*.sh" 
 ### Step 7: Verify Docker Functionality (3 minutes)
 
 **Verification Tests**:
+
 ```bash
 # Test 1: Docker build with new paths
 cd docker/dockerfiles
@@ -251,46 +269,48 @@ docker-compose -f docker-compose.dev.yml config
 
 ### Dockerfiles Migration
 
-| Source | Destination | Action | Priority |
-|--------|------------|--------|----------|
-| `./Dockerfile` | `docker/dockerfiles/Dockerfile` | Move | High |
-| `./Dockerfile.dev` | `docker/dockerfiles/Dockerfile.dev` | Move | High |
-| `./Dockerfile.simple` | `docker/dockerfiles/Dockerfile.simple` | Move | Medium |
-| `./.dockerignore` | `docker/.dockerignore` | Move | Medium |
+| Source                | Destination                            | Action | Priority |
+| --------------------- | -------------------------------------- | ------ | -------- |
+| `./Dockerfile`        | `docker/dockerfiles/Dockerfile`        | Move   | High     |
+| `./Dockerfile.dev`    | `docker/dockerfiles/Dockerfile.dev`    | Move   | High     |
+| `./Dockerfile.simple` | `docker/dockerfiles/Dockerfile.simple` | Move   | Medium   |
+| `./.dockerignore`     | `docker/.dockerignore`                 | Move   | Medium   |
 
 ### Compose Files Migration
 
-| Source | Destination | Action | Priority |
-|--------|------------|--------|----------|
-| `./docker-compose.yml` | `docker/compose/docker-compose.yml` | Move | High |
-| `./docker-compose.dev.yml` | `docker/compose/docker-compose.dev.yml` | Move | High |
+| Source                     | Destination                             | Action | Priority |
+| -------------------------- | --------------------------------------- | ------ | -------- |
+| `./docker-compose.yml`     | `docker/compose/docker-compose.yml`     | Move   | High     |
+| `./docker-compose.dev.yml` | `docker/compose/docker-compose.dev.yml` | Move   | High     |
 
 ### Documentation Consolidation
 
-| Current File | Action | New Location/Archive |
-|-------------|--------|---------------------|
-| `DOCKER_COMPLETE_GUIDE.md` | Keep & Update | `docs/deployment/DOCKER-COMPLETE-GUIDE.md` |
-| `DOCKER_DEPLOYMENT_GUIDE.md` | Merge | → `docker/docs/DEPLOYMENT-GUIDE.md` |
-| `DOCKER_SETUP_NOW.md` | Merge | → `docker/docs/SETUP-GUIDE.md` |
-| `DOCKER_QUICK_START.md` | Merge | → `docker/docs/SETUP-GUIDE.md` |
-| `DOCKER-COMPLETE-SETUP.md` | Merge | → `docker/docs/SETUP-GUIDE.md` |
-| `DOCKER_GUIDE.md` | Merge | → `docker/docs/REFERENCE.md` |
-| `DOCKER-GUIDE.md` | Merge | → `docker/docs/REFERENCE.md` |
-| `DOCKER_PUSH_GUIDE.md` | Merge | → `docker/docs/DEPLOYMENT-GUIDE.md` |
-| `DOCKER-PUSH-GUIDE.md` | Archive | → `docs/archives/duplicates/docker/` |
-| `DOCKER-DESKTOP-PUSH.md` | Merge | → `docker/docs/DEPLOYMENT-GUIDE.md` |
-| `DOCKER_DEPLOYMENT_STATUS.md` | Archive | → `docs/archives/duplicates/docker/` |
-| `DOCKER_UPDATE_SUMMARY.md` | Archive | → `docs/archives/duplicates/docker/` |
-| `DOCKER-SUCCESS-SUMMARY.md` | Archive | → `docs/archives/duplicates/docker/` |
+| Current File                  | Action        | New Location/Archive                       |
+| ----------------------------- | ------------- | ------------------------------------------ |
+| `DOCKER_COMPLETE_GUIDE.md`    | Keep & Update | `docs/deployment/DOCKER-COMPLETE-GUIDE.md` |
+| `DOCKER_DEPLOYMENT_GUIDE.md`  | Merge         | → `docker/docs/DEPLOYMENT-GUIDE.md`        |
+| `DOCKER_SETUP_NOW.md`         | Merge         | → `docker/docs/SETUP-GUIDE.md`             |
+| `DOCKER_QUICK_START.md`       | Merge         | → `docker/docs/SETUP-GUIDE.md`             |
+| `DOCKER-COMPLETE-SETUP.md`    | Merge         | → `docker/docs/SETUP-GUIDE.md`             |
+| `DOCKER_GUIDE.md`             | Merge         | → `docker/docs/REFERENCE.md`               |
+| `DOCKER-GUIDE.md`             | Merge         | → `docker/docs/REFERENCE.md`               |
+| `DOCKER_PUSH_GUIDE.md`        | Merge         | → `docker/docs/DEPLOYMENT-GUIDE.md`        |
+| `DOCKER-PUSH-GUIDE.md`        | Archive       | → `docs/archives/duplicates/docker/`       |
+| `DOCKER-DESKTOP-PUSH.md`      | Merge         | → `docker/docs/DEPLOYMENT-GUIDE.md`        |
+| `DOCKER_DEPLOYMENT_STATUS.md` | Archive       | → `docs/archives/duplicates/docker/`       |
+| `DOCKER_UPDATE_SUMMARY.md`    | Archive       | → `docs/archives/duplicates/docker/`       |
+| `DOCKER-SUCCESS-SUMMARY.md`   | Archive       | → `docs/archives/duplicates/docker/`       |
 
 ---
 
 ## 🔍 Reference Updates Required
 
 ### 1. GitHub Actions Workflows
+
 **Location**: `.github/workflows/*.yml`
 
 **Updates Needed**:
+
 ```yaml
 # Before:
 dockerfile: ./Dockerfile
@@ -302,15 +322,18 @@ context: .
 ```
 
 **Files to Check**:
+
 - `.github/workflows/deploy.yml`
 - `.github/workflows/build.yml`
 - `.github/workflows/docker-build.yml`
 - Any other workflow files
 
 ### 2. Docker Scripts
+
 **Location**: `scripts/docker/*.sh`, `scripts/deployment/*.sh`
 
 **Updates Needed**:
+
 ```bash
 # Before:
 docker build -f Dockerfile -t ...
@@ -320,20 +343,24 @@ docker build -f docker/dockerfiles/Dockerfile -t ...
 ```
 
 **Files to Check**:
+
 - `scripts/docker/build.sh`
 - `scripts/docker/run.sh`
 - `scripts/deployment/deploy-docker.sh`
 - Any script referencing Dockerfiles
 
 ### 3. Documentation
+
 **Location**: `README.md`, `docs/*.md`, `docs/deployment/*.md`
 
 **Updates Needed**:
+
 - Update all Dockerfile paths
 - Update all docker-compose paths
 - Update all Docker documentation links
 
 **Files to Check**:
+
 - `README.md`
 - `docs/QUICK-START.md`
 - `docs/deployment/DOCKER-COMPLETE-GUIDE.md`
@@ -341,9 +368,11 @@ docker build -f docker/dockerfiles/Dockerfile -t ...
 - `docs/DOCUMENTATION-INDEX.md`
 
 ### 4. Package.json Scripts
+
 **Location**: `package.json`
 
 **Updates Needed**:
+
 ```json
 // Before:
 "docker:build": "docker build -f Dockerfile -t ..."
@@ -353,9 +382,11 @@ docker build -f docker/dockerfiles/Dockerfile -t ...
 ```
 
 ### 5. Docker Compose Files (Internal References)
+
 **Location**: `docker/compose/docker-compose*.yml`
 
 **Updates Needed**:
+
 ```yaml
 # Before:
 build:
@@ -373,6 +404,7 @@ build:
 ## ⚠️ Risk Assessment & Mitigation
 
 ### High Risk Items
+
 1. **CI/CD Pipeline Breakage**
    - Risk: Dockerfile path changes break automated builds
    - Mitigation: Update all workflow files before pushing; test in feature branch
@@ -389,6 +421,7 @@ build:
    - Verification: Clear communication in PR
 
 ### Medium Risk Items
+
 4. **Documentation Reference Breaks**
    - Risk: Links to Docker docs may break
    - Mitigation: Use find/replace to update all references
@@ -400,6 +433,7 @@ build:
    - Verification: Run script test suite
 
 ### Low Risk Items
+
 6. **Git History Concerns**
    - Risk: File history could be lost
    - Mitigation: Use `git mv` for all moves
@@ -410,12 +444,14 @@ build:
 ## ✅ Verification Checklist
 
 ### Pre-Execution Checklist
+
 - [ ] Backup current state (Git commit or branch)
 - [ ] Document current Docker file locations
 - [ ] Identify all files referencing Docker paths
 - [ ] Review Docker documentation for consolidation
 
 ### During Execution Checklist
+
 - [ ] Create docker/ directory structure
 - [ ] Move Dockerfiles (preserve Git history)
 - [ ] Move Docker Compose files (preserve Git history)
@@ -426,6 +462,7 @@ build:
 - [ ] Update GitHub Actions workflows
 
 ### Post-Execution Verification
+
 - [ ] Docker build test (production)
 - [ ] Docker build test (development)
 - [ ] Docker Compose validation (production)
@@ -441,6 +478,7 @@ build:
 ## 📊 Expected Outcomes
 
 ### Before Phase 5
+
 ```
 Root Directory:
 ├── Dockerfile
@@ -455,6 +493,7 @@ docs/docker/
 ```
 
 ### After Phase 5
+
 ```
 Root Directory:
 ├── (only project essentials - clean!)
@@ -486,27 +525,29 @@ docs/archives/duplicates/docker/
 
 ## 🎯 Success Metrics
 
-| Metric | Target | Measurement |
-|--------|--------|-------------|
-| Docker files in root | 0 | File count in root |
-| Docker directory organization | Complete | Structure created |
-| Documentation consolidation | 4 core docs | File count in docker/docs/ |
-| Duplicate docs archived | 100% | Docs in archives/ |
-| Git history preserved | 100% | Git log --follow check |
-| CI/CD builds passing | 100% | Workflow run results |
-| Documentation references updated | 100% | Grep verification |
-| Root directory cleanliness | Clean | Visual inspection |
+| Metric                           | Target      | Measurement                |
+| -------------------------------- | ----------- | -------------------------- |
+| Docker files in root             | 0           | File count in root         |
+| Docker directory organization    | Complete    | Structure created          |
+| Documentation consolidation      | 4 core docs | File count in docker/docs/ |
+| Duplicate docs archived          | 100%        | Docs in archives/          |
+| Git history preserved            | 100%        | Git log --follow check     |
+| CI/CD builds passing             | 100%        | Workflow run results       |
+| Documentation references updated | 100%        | Grep verification          |
+| Root directory cleanliness       | Clean       | Visual inspection          |
 
 ---
 
 ## 📅 Timeline & Dependencies
 
 ### Dependencies
+
 - ✅ Phase 4 (Scripts Organization) - COMPLETE
 - ✅ Phase 3 (Environment Files) - COMPLETE
 - ✅ Phase 2 (Documentation) - COMPLETE
 
 ### Estimated Duration Breakdown
+
 - Directory structure creation: 2 minutes
 - Dockerfile migration: 5 minutes
 - Compose file migration: 5 minutes
@@ -522,6 +563,7 @@ docs/archives/duplicates/docker/
 ## 🚀 Ready to Execute
 
 **Prerequisites Met**:
+
 - ✅ Phase 4 (Scripts) completed
 - ✅ Current state analyzed
 - ✅ Target structure designed
@@ -550,4 +592,4 @@ docs/archives/duplicates/docker/
 
 ---
 
-*End of Phase 5 Action Plan*
+_End of Phase 5 Action Plan_

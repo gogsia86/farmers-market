@@ -85,16 +85,42 @@ const MONITOR_CONFIG = {
 
 function printHeader() {
   console.log("\n");
-  console.log(chalk.green("╔════════════════════════════════════════════════════════════╗"));
-  console.log(chalk.green("║                                                            ║"));
-  console.log(chalk.green("║     🌟 ENHANCED WEBSITE MONITORING BOT v2.0               ║"));
-  console.log(chalk.green("║        Farmers Market Platform Health Check              ║"));
-  console.log(chalk.green("║                                                            ║"));
-  console.log(chalk.green("╚════════════════════════════════════════════════════════════╝"));
+  console.log(
+    chalk.green(
+      "╔════════════════════════════════════════════════════════════╗",
+    ),
+  );
+  console.log(
+    chalk.green(
+      "║                                                            ║",
+    ),
+  );
+  console.log(
+    chalk.green(
+      "║     🌟 ENHANCED WEBSITE MONITORING BOT v2.0               ║",
+    ),
+  );
+  console.log(
+    chalk.green("║        Farmers Market Platform Health Check              ║"),
+  );
+  console.log(
+    chalk.green(
+      "║                                                            ║",
+    ),
+  );
+  console.log(
+    chalk.green(
+      "╚════════════════════════════════════════════════════════════╝",
+    ),
+  );
   console.log("");
   console.log(chalk.gray(`   🌐 Base URL: ${MONITOR_CONFIG.baseUrl}`));
-  console.log(chalk.gray(`   📄 Pages to check: ${MONITOR_CONFIG.pages.length}`));
-  console.log(chalk.gray(`   📊 Report directory: ${MONITOR_CONFIG.reportDir}`));
+  console.log(
+    chalk.gray(`   📄 Pages to check: ${MONITOR_CONFIG.pages.length}`),
+  );
+  console.log(
+    chalk.gray(`   📊 Report directory: ${MONITOR_CONFIG.reportDir}`),
+  );
   console.log("");
 }
 
@@ -102,7 +128,7 @@ function printProgress(current: number, total: number, pagePath: string) {
   const percent = Math.round((current / total) * 100);
   const progressBar = "█".repeat(percent / 5) + "░".repeat(20 - percent / 5);
   console.log(
-    chalk.cyan(`   [${progressBar}] ${percent}% - Checking ${pagePath}`)
+    chalk.cyan(`   [${progressBar}] ${percent}% - Checking ${pagePath}`),
   );
 }
 
@@ -110,10 +136,14 @@ function printPageResult(
   pagePath: string,
   status: "PASS" | "FAIL" | "WARN",
   duration: number,
-  errors: string[]
+  errors: string[],
 ) {
   const icon =
-    status === "PASS" ? chalk.green("✅") : status === "FAIL" ? chalk.red("❌") : chalk.yellow("⚠️");
+    status === "PASS"
+      ? chalk.green("✅")
+      : status === "FAIL"
+        ? chalk.red("❌")
+        : chalk.yellow("⚠️");
   const statusText =
     status === "PASS"
       ? chalk.green(status)
@@ -121,7 +151,9 @@ function printPageResult(
         ? chalk.red(status)
         : chalk.yellow(status);
 
-  console.log(`   ${icon} ${pagePath.padEnd(40)} ${statusText} (${duration}ms)`);
+  console.log(
+    `   ${icon} ${pagePath.padEnd(40)} ${statusText} (${duration}ms)`,
+  );
 
   if (errors.length > 0 && status === "FAIL") {
     errors.forEach((error) => {
@@ -132,12 +164,18 @@ function printPageResult(
 
 function printDetailedResults(report: WebsiteHealthReport) {
   console.log("\n");
-  console.log(chalk.bold("═══════════════════════════════════════════════════════════"));
-  console.log(chalk.bold("                    DETAILED RESULTS                      "));
-  console.log(chalk.bold("═══════════════════════════════════════════════════════════"));
+  console.log(
+    chalk.bold("═══════════════════════════════════════════════════════════"),
+  );
+  console.log(
+    chalk.bold("                    DETAILED RESULTS                      "),
+  );
+  console.log(
+    chalk.bold("═══════════════════════════════════════════════════════════"),
+  );
 
   // Overall Status
-  console.log("\n" + chalk.bold("📊 Overall Status"));
+  console.log(`\n${chalk.bold("📊 Overall Status")}`);
   const statusColor =
     report.overallStatus === "HEALTHY"
       ? chalk.green
@@ -145,33 +183,36 @@ function printDetailedResults(report: WebsiteHealthReport) {
         ? chalk.yellow
         : chalk.red;
   console.log(`   Status: ${statusColor(report.overallStatus)}`);
-  console.log(`   Duration: ${chalk.cyan(Math.round(report.duration / 1000))}s`);
+  console.log(
+    `   Duration: ${chalk.cyan(Math.round(report.duration / 1000))}s`,
+  );
 
   // Summary Statistics
-  console.log("\n" + chalk.bold("📈 Summary Statistics"));
+  console.log(`\n${chalk.bold("📈 Summary Statistics")}`);
   console.log(`   Total Pages: ${chalk.cyan(report.summary.totalPages)}`);
   console.log(`   ✅ Passed: ${chalk.green(report.summary.passed)}`);
   console.log(`   ❌ Failed: ${chalk.red(report.summary.failed)}`);
   console.log(`   ⚠️  Warnings: ${chalk.yellow(report.summary.warnings)}`);
   console.log(
-    `   ⚡ Avg Performance: ${chalk.cyan(report.summary.avgPerformance)}ms`
+    `   ⚡ Avg Performance: ${chalk.cyan(report.summary.avgPerformance)}ms`,
   );
   console.log(
-    `   ♿ Avg Accessibility: ${chalk.cyan(report.summary.avgAccessibility)}/100`
+    `   ♿ Avg Accessibility: ${chalk.cyan(report.summary.avgAccessibility)}/100`,
   );
 
   // Performance Details
-  console.log("\n" + chalk.bold("⚡ Performance Overview"));
+  console.log(`\n${chalk.bold("⚡ Performance Overview")}`);
   report.pages.forEach((page) => {
     const perf = page.checks.performance;
-    const statusIcon = perf.status === "PASS" ? "✅" : perf.status === "FAIL" ? "❌" : "⚠️";
+    const statusIcon =
+      perf.status === "PASS" ? "✅" : perf.status === "FAIL" ? "❌" : "⚠️";
     console.log(`   ${statusIcon} ${page.url}`);
     console.log(`      Load Time: ${chalk.cyan(perf.metrics.loadTime)}ms`);
     console.log(`      TTFB: ${chalk.cyan(perf.metrics.TTFB || 0)}ms`);
     console.log(`      Resources: ${chalk.cyan(perf.metrics.resourceCount)}`);
 
     if (perf.budgetViolations.length > 0) {
-      console.log(chalk.yellow(`      ⚠️  Budget Violations:`));
+      console.log(chalk.yellow("      ⚠️  Budget Violations:"));
       perf.budgetViolations.forEach((violation) => {
         console.log(chalk.yellow(`         - ${violation}`));
       });
@@ -179,20 +220,25 @@ function printDetailedResults(report: WebsiteHealthReport) {
   });
 
   // SEO Details
-  console.log("\n" + chalk.bold("🔍 SEO Overview"));
+  console.log(`\n${chalk.bold("🔍 SEO Overview")}`);
   report.pages.forEach((page) => {
     const seo = page.checks.seo;
-    const statusIcon = seo.status === "PASS" ? "✅" : seo.status === "FAIL" ? "❌" : "⚠️";
+    const statusIcon =
+      seo.status === "PASS" ? "✅" : seo.status === "FAIL" ? "❌" : "⚠️";
     console.log(`   ${statusIcon} ${page.url}`);
-    console.log(`      Title: ${seo.meta.title.present ? "✓" : "✗"} (${seo.meta.title.length} chars)`);
     console.log(
-      `      Description: ${seo.meta.description.present ? "✓" : "✗"} (${seo.meta.description.length} chars)`
+      `      Title: ${seo.meta.title.present ? "✓" : "✗"} (${seo.meta.title.length} chars)`,
+    );
+    console.log(
+      `      Description: ${seo.meta.description.present ? "✓" : "✗"} (${seo.meta.description.length} chars)`,
     );
     console.log(`      H1: ${seo.headings.h1Count} found`);
-    console.log(`      Structured Data: ${seo.structuredData.present ? "✓" : "✗"}`);
+    console.log(
+      `      Structured Data: ${seo.structuredData.present ? "✓" : "✗"}`,
+    );
 
     if (seo.issues.length > 0) {
-      console.log(chalk.yellow(`      ⚠️  Issues:`));
+      console.log(chalk.yellow("      ⚠️  Issues:"));
       seo.issues.slice(0, 3).forEach((issue) => {
         console.log(chalk.yellow(`         - ${issue}`));
       });
@@ -200,10 +246,11 @@ function printDetailedResults(report: WebsiteHealthReport) {
   });
 
   // Accessibility Details
-  console.log("\n" + chalk.bold("♿ Accessibility Overview"));
+  console.log(`\n${chalk.bold("♿ Accessibility Overview")}`);
   report.pages.forEach((page) => {
     const a11y = page.checks.accessibility;
-    const statusIcon = a11y.status === "PASS" ? "✅" : a11y.status === "FAIL" ? "❌" : "⚠️";
+    const statusIcon =
+      a11y.status === "PASS" ? "✅" : a11y.status === "FAIL" ? "❌" : "⚠️";
     const scoreColor =
       a11y.score >= 90
         ? chalk.green
@@ -226,9 +273,10 @@ function printDetailedResults(report: WebsiteHealthReport) {
   });
 
   // API Health
-  console.log("\n" + chalk.bold("🔌 API Endpoints"));
+  console.log(`\n${chalk.bold("🔌 API Endpoints")}`);
   report.apiEndpoints.forEach((api) => {
-    const statusIcon = api.status === "PASS" ? "✅" : api.status === "FAIL" ? "❌" : "⚠️";
+    const statusIcon =
+      api.status === "PASS" ? "✅" : api.status === "FAIL" ? "❌" : "⚠️";
     const timeColor =
       api.responseTime < 500
         ? chalk.green
@@ -236,7 +284,7 @@ function printDetailedResults(report: WebsiteHealthReport) {
           ? chalk.yellow
           : chalk.red;
     console.log(
-      `   ${statusIcon} ${api.method} ${api.endpoint} - ${timeColor(api.responseTime)}ms`
+      `   ${statusIcon} ${api.method} ${api.endpoint} - ${timeColor(api.responseTime)}ms`,
     );
     if (api.issues.length > 0) {
       api.issues.forEach((issue) => {
@@ -246,16 +294,16 @@ function printDetailedResults(report: WebsiteHealthReport) {
   });
 
   // Database Health
-  console.log("\n" + chalk.bold("🗄️  Database"));
+  console.log(`\n${chalk.bold("🗄️  Database")}`);
   const dbIcon =
-    report.database.status === "PASS"
-      ? chalk.green("✅")
-      : chalk.red("❌");
+    report.database.status === "PASS" ? chalk.green("✅") : chalk.red("❌");
   console.log(
-    `   ${dbIcon} ${report.database.connected ? "Connected" : "Disconnected"}`
+    `   ${dbIcon} ${report.database.connected ? "Connected" : "Disconnected"}`,
   );
   if (report.database.responseTime) {
-    console.log(`   Response Time: ${chalk.cyan(report.database.responseTime)}ms`);
+    console.log(
+      `   Response Time: ${chalk.cyan(report.database.responseTime)}ms`,
+    );
   }
   if (report.database.issues.length > 0) {
     report.database.issues.forEach((issue) => {
@@ -265,13 +313,15 @@ function printDetailedResults(report: WebsiteHealthReport) {
 
   // Critical Issues
   if (report.summary.criticalIssues.length > 0) {
-    console.log("\n" + chalk.bold.red("🚨 CRITICAL ISSUES"));
+    console.log(`\n${chalk.bold.red("🚨 CRITICAL ISSUES")}`);
     report.summary.criticalIssues.forEach((issue, index) => {
       console.log(chalk.red(`   ${index + 1}. ${issue}`));
     });
   }
 
-  console.log("\n" + chalk.bold("═══════════════════════════════════════════════════════════"));
+  console.log(
+    `\n${chalk.bold("═══════════════════════════════════════════════════════════")}`,
+  );
 }
 
 async function saveReport(report: WebsiteHealthReport): Promise<string> {
@@ -293,7 +343,10 @@ async function saveReport(report: WebsiteHealthReport): Promise<string> {
   await fs.writeFile(mdFilepath, markdown, "utf-8");
 
   // Save latest report (always overwrite)
-  const latestJsonPath = path.join(MONITOR_CONFIG.reportDir, "latest-report.json");
+  const latestJsonPath = path.join(
+    MONITOR_CONFIG.reportDir,
+    "latest-report.json",
+  );
   await fs.writeFile(latestJsonPath, JSON.stringify(report, null, 2), "utf-8");
 
   const latestMdPath = path.join(MONITOR_CONFIG.reportDir, "latest-report.md");
@@ -306,7 +359,7 @@ function generateMarkdownReport(report: WebsiteHealthReport): string {
   const timestamp = report.timestamp.toISOString();
   const duration = Math.round(report.duration / 1000);
 
-  let md = `# 🌟 Website Health Report\n\n`;
+  let md = "# 🌟 Website Health Report\n\n";
   md += `**Generated:** ${timestamp}\n`;
   md += `**Duration:** ${duration}s\n`;
   md += `**Base URL:** ${report.baseUrl}\n\n`;
@@ -321,9 +374,9 @@ function generateMarkdownReport(report: WebsiteHealthReport): string {
   md += `## ${statusEmoji} Overall Status: ${report.overallStatus}\n\n`;
 
   // Summary
-  md += `## 📊 Summary\n\n`;
-  md += `| Metric | Value |\n`;
-  md += `|--------|-------|\n`;
+  md += "## 📊 Summary\n\n";
+  md += "| Metric | Value |\n";
+  md += "|--------|-------|\n";
   md += `| Total Pages | ${report.summary.totalPages} |\n`;
   md += `| ✅ Passed | ${report.summary.passed} |\n`;
   md += `| ❌ Failed | ${report.summary.failed} |\n`;
@@ -332,72 +385,74 @@ function generateMarkdownReport(report: WebsiteHealthReport): string {
   md += `| ♿ Avg Accessibility | ${report.summary.avgAccessibility}/100 |\n\n`;
 
   // Page Results
-  md += `## 📄 Page Results\n\n`;
+  md += "## 📄 Page Results\n\n";
   report.pages.forEach((page) => {
-    const icon = page.status === "PASS" ? "✅" : page.status === "FAIL" ? "❌" : "⚠️";
+    const icon =
+      page.status === "PASS" ? "✅" : page.status === "FAIL" ? "❌" : "⚠️";
     md += `### ${icon} ${page.url}\n\n`;
     md += `**Status:** ${page.status}\n`;
     md += `**Duration:** ${page.duration}ms\n\n`;
 
-    md += `#### Performance\n`;
+    md += "#### Performance\n";
     md += `- Load Time: ${page.checks.performance.metrics.loadTime}ms\n`;
     md += `- TTFB: ${page.checks.performance.metrics.TTFB || "N/A"}ms\n`;
     md += `- Resources: ${page.checks.performance.metrics.resourceCount}\n\n`;
 
-    md += `#### SEO\n`;
+    md += "#### SEO\n";
     md += `- Title: ${page.checks.seo.meta.title.present ? "✓" : "✗"}\n`;
     md += `- Description: ${page.checks.seo.meta.description.present ? "✓" : "✗"}\n`;
     md += `- Structured Data: ${page.checks.seo.structuredData.present ? "✓" : "✗"}\n\n`;
 
-    md += `#### Accessibility\n`;
+    md += "#### Accessibility\n";
     md += `- Score: ${page.checks.accessibility.score}/100\n`;
     md += `- WCAG Level: ${page.checks.accessibility.wcagLevel}\n`;
     md += `- Violations: ${page.checks.accessibility.violations.length}\n\n`;
 
     if (page.errors.length > 0) {
-      md += `#### ❌ Errors\n`;
+      md += "#### ❌ Errors\n";
       page.errors.forEach((error) => {
         md += `- ${error}\n`;
       });
-      md += `\n`;
+      md += "\n";
     }
 
     if (page.warnings.length > 0) {
-      md += `#### ⚠️ Warnings\n`;
+      md += "#### ⚠️ Warnings\n";
       page.warnings.forEach((warning) => {
         md += `- ${warning}\n`;
       });
-      md += `\n`;
+      md += "\n";
     }
   });
 
   // API Endpoints
-  md += `## 🔌 API Endpoints\n\n`;
-  md += `| Endpoint | Method | Status | Response Time |\n`;
-  md += `|----------|--------|--------|---------------|\n`;
+  md += "## 🔌 API Endpoints\n\n";
+  md += "| Endpoint | Method | Status | Response Time |\n";
+  md += "|----------|--------|--------|---------------|\n";
   report.apiEndpoints.forEach((api) => {
-    const icon = api.status === "PASS" ? "✅" : api.status === "FAIL" ? "❌" : "⚠️";
+    const icon =
+      api.status === "PASS" ? "✅" : api.status === "FAIL" ? "❌" : "⚠️";
     md += `| ${api.endpoint} | ${api.method} | ${icon} ${api.status} | ${api.responseTime}ms |\n`;
   });
-  md += `\n`;
+  md += "\n";
 
   // Database
-  md += `## 🗄️ Database\n\n`;
+  md += "## 🗄️ Database\n\n";
   const dbIcon = report.database.status === "PASS" ? "✅" : "❌";
   md += `**Status:** ${dbIcon} ${report.database.status}\n`;
   md += `**Connected:** ${report.database.connected ? "Yes" : "No"}\n\n`;
 
   // Critical Issues
   if (report.summary.criticalIssues.length > 0) {
-    md += `## 🚨 Critical Issues\n\n`;
+    md += "## 🚨 Critical Issues\n\n";
     report.summary.criticalIssues.forEach((issue, index) => {
       md += `${index + 1}. ${issue}\n`;
     });
-    md += `\n`;
+    md += "\n";
   }
 
-  md += `---\n`;
-  md += `*Report generated by Enhanced Website Monitoring Bot v2.0*\n`;
+  md += "---\n";
+  md += "*Report generated by Enhanced Website Monitoring Bot v2.0*\n";
 
   return md;
 }
@@ -414,7 +469,7 @@ function checkAlerts(report: WebsiteHealthReport): string[] {
   const failureRate = report.summary.failed / report.summary.totalPages;
   if (failureRate > MONITOR_CONFIG.alertThresholds.errorRate) {
     alerts.push(
-      `⚠️ HIGH FAILURE RATE: ${Math.round(failureRate * 100)}% of pages failed`
+      `⚠️ HIGH FAILURE RATE: ${Math.round(failureRate * 100)}% of pages failed`,
     );
   }
 
@@ -423,16 +478,17 @@ function checkAlerts(report: WebsiteHealthReport): string[] {
     report.summary.avgPerformance > MONITOR_CONFIG.alertThresholds.performance
   ) {
     alerts.push(
-      `⚡ SLOW PERFORMANCE: Average load time ${report.summary.avgPerformance}ms exceeds threshold`
+      `⚡ SLOW PERFORMANCE: Average load time ${report.summary.avgPerformance}ms exceeds threshold`,
     );
   }
 
   // Accessibility issues
   if (
-    report.summary.avgAccessibility < MONITOR_CONFIG.alertThresholds.accessibility
+    report.summary.avgAccessibility <
+    MONITOR_CONFIG.alertThresholds.accessibility
   ) {
     alerts.push(
-      `♿ ACCESSIBILITY ISSUES: Average score ${report.summary.avgAccessibility} below threshold`
+      `♿ ACCESSIBILITY ISSUES: Average score ${report.summary.avgAccessibility} below threshold`,
     );
   }
 
@@ -454,9 +510,21 @@ function printAlerts(alerts: string[]) {
   if (alerts.length === 0) return;
 
   console.log("\n");
-  console.log(chalk.bold.red("╔════════════════════════════════════════════════════════════╗"));
-  console.log(chalk.bold.red("║                    🚨 ALERTS 🚨                            ║"));
-  console.log(chalk.bold.red("╚════════════════════════════════════════════════════════════╝"));
+  console.log(
+    chalk.bold.red(
+      "╔════════════════════════════════════════════════════════════╗",
+    ),
+  );
+  console.log(
+    chalk.bold.red(
+      "║                    🚨 ALERTS 🚨                            ║",
+    ),
+  );
+  console.log(
+    chalk.bold.red(
+      "╚════════════════════════════════════════════════════════════╝",
+    ),
+  );
   console.log("");
 
   alerts.forEach((alert) => {
@@ -511,20 +579,36 @@ async function main() {
     console.log(chalk.bold("\n💾 Saving report..."));
     const reportPath = await saveReport(report);
     console.log(chalk.green(`   ✅ Report saved to: ${reportPath}`));
-    console.log(chalk.green(`   ✅ Latest report: ${MONITOR_CONFIG.reportDir}/latest-report.md`));
+    console.log(
+      chalk.green(
+        `   ✅ Latest report: ${MONITOR_CONFIG.reportDir}/latest-report.md`,
+      ),
+    );
 
     // Final summary
     const totalDuration = Math.round((Date.now() - startTime) / 1000);
     console.log("\n");
-    console.log(chalk.bold.green("╔════════════════════════════════════════════════════════════╗"));
-    console.log(chalk.bold.green("║                  ✅ MONITORING COMPLETE                     ║"));
-    console.log(chalk.bold.green("╚════════════════════════════════════════════════════════════╝"));
+    console.log(
+      chalk.bold.green(
+        "╔════════════════════════════════════════════════════════════╗",
+      ),
+    );
+    console.log(
+      chalk.bold.green(
+        "║                  ✅ MONITORING COMPLETE                     ║",
+      ),
+    );
+    console.log(
+      chalk.bold.green(
+        "╚════════════════════════════════════════════════════════════╝",
+      ),
+    );
     console.log("");
     console.log(chalk.gray(`   ⏱️  Total Duration: ${totalDuration}s`));
-    console.log(chalk.gray(`   📄 Pages Checked: ${report.summary.totalPages}`));
     console.log(
-      chalk.gray(`   🎯 Overall Status: ${report.overallStatus}`)
+      chalk.gray(`   📄 Pages Checked: ${report.summary.totalPages}`),
     );
+    console.log(chalk.gray(`   🎯 Overall Status: ${report.overallStatus}`));
     console.log("");
 
     // Exit with appropriate code
@@ -537,7 +621,9 @@ async function main() {
     }
   } catch (error) {
     console.error(chalk.red("\n❌ Monitoring failed:"));
-    console.error(chalk.red(`   ${error instanceof Error ? error.message : String(error)}`));
+    console.error(
+      chalk.red(`   ${error instanceof Error ? error.message : String(error)}`),
+    );
     if (error instanceof Error && error.stack) {
       console.error(chalk.gray(`\n${error.stack}`));
     }

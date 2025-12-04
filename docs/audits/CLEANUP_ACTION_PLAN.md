@@ -1,4 +1,5 @@
 # 🔧 CLEANUP ACTION PLAN - IMMEDIATE FIXES
+
 **Farmers Market Platform - Pre-Deployment Cleanup**
 
 **Created:** January 2025  
@@ -14,16 +15,20 @@ This plan is ordered by **priority and dependency**. Complete each phase before 
 ---
 
 ## 📋 PHASE 1: TYPESCRIPT FIXES (P0 - BLOCKING)
+
 **Time:** 4-6 hours  
 **Status:** 🔴 BLOCKING DEPLOYMENT
 
 ### Step 1.1: Run Type Check and Capture Errors
+
 ```bash
 npm run type-check 2>&1 | tee typescript-errors-full.log
 ```
 
 ### Step 1.2: Fix Unused Imports/Variables (Quick Wins)
+
 **Files to fix:**
+
 ```bash
 # Remove unused imports
 src/app/(customer)/marketplace/farms/[slug]/page.tsx
@@ -31,6 +36,7 @@ src/app/(customer)/marketplace/products/page.tsx
 ```
 
 **Commands:**
+
 ```bash
 # Auto-fix with ESLint
 npm run lint -- --fix
@@ -40,7 +46,9 @@ npm run type-check
 ```
 
 ### Step 1.3: Fix Prisma Schema Mismatches
+
 **Common pattern:**
+
 ```typescript
 # FIND & REPLACE across codebase:
 stripeConnectAccountId → stripeAccountId
@@ -50,6 +58,7 @@ include: { payment: true } → include: { Payment: true }
 ```
 
 **Commands:**
+
 ```bash
 # Global search and replace (use with caution!)
 find src -type f -name "*.ts" -exec sed -i 's/stripeConnectAccountId/stripeAccountId/g' {} +
@@ -60,11 +69,14 @@ git diff
 ```
 
 ### Step 1.4: Fix OrderStatus Enum Issues
+
 **Files affected:**
+
 - `src/app/api/farmer/finances/route.ts`
 - `src/app/api/farmer/payouts/route.ts`
 
 **Fix pattern:**
+
 ```typescript
 // REMOVE invalid statuses:
 // ❌ "REFUNDED"
@@ -79,7 +91,9 @@ npx prisma studio
 ```
 
 ### Step 1.5: Fix Unused Request Parameters
+
 **Files to fix (prefix with underscore):**
+
 ```bash
 src/app/api/farming/advice/route.ts
 src/app/api/farming/education/route.ts
@@ -89,6 +103,7 @@ src/app/api/farming/support/route.ts
 ```
 
 **Find & Replace:**
+
 ```typescript
 export async function POST(request: NextRequest)
 ↓
@@ -96,12 +111,14 @@ export async function POST(_request: NextRequest)
 ```
 
 ### Step 1.6: Verify All Tests Pass
+
 ```bash
 npm run test
 npm run test:integration
 ```
 
 **✅ Phase 1 Complete When:**
+
 - [ ] `npm run type-check` shows 0 errors
 - [ ] All tests still passing
 - [ ] No build errors
@@ -109,10 +126,12 @@ npm run test:integration
 ---
 
 ## 📦 PHASE 2: CONSOLIDATE VALIDATIONS (P1 - HIGH)
+
 **Time:** 2-3 hours  
 **Status:** 🟡 HIGH PRIORITY
 
 ### Step 2.1: Audit Both Validation Folders
+
 ```bash
 # Compare contents
 ls -la src/lib/validation/
@@ -123,6 +142,7 @@ diff src/lib/validation/product.validation.ts src/lib/validations/product.ts
 ```
 
 ### Step 2.2: Create Consolidated Structure
+
 ```bash
 # Keep src/lib/validations/ (plural)
 # Move files from validation/ to validations/
@@ -135,7 +155,9 @@ mv src/lib/validation/farm.validation.ts src/lib/validations/farm.ts
 ```
 
 ### Step 2.3: Create Central Export
+
 **Create:** `src/lib/validations/index.ts`
+
 ```typescript
 // Central validation export
 export * from "./agricultural";
@@ -148,11 +170,7 @@ export * from "./user";
 export * from "./payment";
 
 // Re-export commonly used schemas
-export {
-  farmSchema,
-  createFarmSchema,
-  updateFarmSchema,
-} from "./farm";
+export { farmSchema, createFarmSchema, updateFarmSchema } from "./farm";
 
 export {
   productSchema,
@@ -162,6 +180,7 @@ export {
 ```
 
 ### Step 2.4: Update All Imports
+
 ```bash
 # Find all validation imports
 grep -r "from '@/lib/validation/" src/ | wc -l
@@ -172,6 +191,7 @@ find src -type f \( -name "*.ts" -o -name "*.tsx" \) -exec sed -i "s|@/lib/valid
 ```
 
 ### Step 2.5: Delete Old Folder
+
 ```bash
 # After verifying all imports updated
 rm -rf src/lib/validation/
@@ -181,6 +201,7 @@ npm run type-check
 ```
 
 **✅ Phase 2 Complete When:**
+
 - [ ] Only one validation folder exists
 - [ ] All imports updated
 - [ ] No TypeScript errors
@@ -189,10 +210,12 @@ npm run type-check
 ---
 
 ## 🚨 PHASE 3: CONSOLIDATE ERROR HANDLING (P1 - HIGH)
+
 **Time:** 2-3 hours  
 **Status:** 🟡 HIGH PRIORITY
 
 ### Step 3.1: Audit Error Implementations
+
 ```bash
 # Check main error file
 wc -l src/lib/errors.ts
@@ -206,7 +229,9 @@ grep -r "from '@/lib/errors/" src/ | wc -l
 ```
 
 ### Step 3.2: Identify Unique Logic in errors/ Folder
+
 **Review each file:**
+
 ```bash
 src/lib/errors/
 ├── ApplicationError.ts      # Check for unique logic
@@ -218,7 +243,9 @@ src/lib/errors/
 ```
 
 ### Step 3.3: Merge Unique Logic
+
 **If unique logic found:**
+
 ```typescript
 // Add to src/lib/errors.ts
 
@@ -227,12 +254,12 @@ export class SecurityError extends DivineError {
   constructor(
     message: string,
     code: string = "SECURITY_VIOLATION",
-    context?: Record<string, unknown>
+    context?: Record<string, unknown>,
   ) {
     super(message, code, 403, context, [
       "Review security policies",
       "Check authentication status",
-      "Contact security team"
+      "Contact security team",
     ]);
     this.name = "SecurityError";
   }
@@ -240,6 +267,7 @@ export class SecurityError extends DivineError {
 ```
 
 ### Step 3.4: Update All Error Imports
+
 ```bash
 # Find all imports from errors/ folder
 grep -r "from '@/lib/errors/" src/ > error-imports.txt
@@ -249,6 +277,7 @@ find src -type f \( -name "*.ts" -o -name "*.tsx" \) -exec sed -i 's|@/lib/error
 ```
 
 ### Step 3.5: Delete errors/ Folder
+
 ```bash
 # After verifying all imports work
 rm -rf src/lib/errors/
@@ -259,6 +288,7 @@ npm run test
 ```
 
 **✅ Phase 3 Complete When:**
+
 - [ ] Single error handling file (errors.ts)
 - [ ] All unique logic preserved
 - [ ] All imports updated
@@ -267,10 +297,12 @@ npm run test
 ---
 
 ## 🗂️ PHASE 4: RESTRUCTURE API ROUTES (P2 - MEDIUM)
+
 **Time:** 4-6 hours  
 **Status:** 🟢 MEDIUM PRIORITY
 
 ### Step 4.1: Create Migration Plan
+
 ```bash
 # Document current routes
 find src/app/api -name "route.ts" > current-routes.txt
@@ -287,6 +319,7 @@ EOF
 ```
 
 ### Step 4.2: Move Farmer Routes
+
 ```bash
 # Move individual farmer routes to farmers/
 mv src/app/api/farmer/finances src/app/api/farmers/
@@ -298,6 +331,7 @@ rmdir src/app/api/farmer
 ```
 
 ### Step 4.3: Rename Farming to Agricultural
+
 ```bash
 # Rename folder
 mv src/app/api/farming src/app/api/agricultural
@@ -307,6 +341,7 @@ find src -type f \( -name "*.ts" -o -name "*.tsx" \) -exec sed -i 's|/api/farmin
 ```
 
 ### Step 4.4: Move Product Recommendations
+
 ```bash
 # Move farming products to main products
 mv src/app/api/agricultural/products/recommendations src/app/api/products/
@@ -316,6 +351,7 @@ find src/app/api/agricultural -type d -empty -delete
 ```
 
 ### Step 4.5: Update Frontend API Calls
+
 ```bash
 # Find all API calls in frontend
 grep -r "fetch.*'/api/farmer" src/
@@ -328,6 +364,7 @@ grep -r "fetch.*'/api/farming" src/
 ```
 
 ### Step 4.6: Update API Documentation
+
 ```bash
 # Update any API docs to reflect new structure
 # Update Swagger/OpenAPI specs if they exist
@@ -335,6 +372,7 @@ grep -r "fetch.*'/api/farming" src/
 ```
 
 **✅ Phase 4 Complete When:**
+
 - [ ] Farmer routes consolidated under /api/farmers/
 - [ ] Farming renamed to /api/agricultural/
 - [ ] Product routes consolidated
@@ -344,10 +382,12 @@ grep -r "fetch.*'/api/farming" src/
 ---
 
 ## 🏠 PHASE 5: CONSOLIDATE DASHBOARDS (P2 - MEDIUM)
+
 **Time:** 3-4 hours  
 **Status:** 🟢 MEDIUM PRIORITY
 
 ### Step 5.1: Audit Dashboard Routes
+
 ```bash
 # Find all dashboard routes
 find src/app -type d -name "*dashboard*"
@@ -363,7 +403,9 @@ find src/app -type d -name "*dashboard*"
 ```
 
 ### Step 5.2: Keep Route Group Structure
+
 **Decision:** Use route groups (best practice)
+
 ```bash
 # KEEP:
 src/app/(customer)/dashboard/    # Customer dashboard
@@ -376,6 +418,7 @@ src/app/(admin)/dashboard/       # Admin dashboard
 ```
 
 ### Step 5.3: Move Farmer Dashboard
+
 ```bash
 # Check if (farmer)/dashboard exists
 ls src/app/\(farmer\)/farmer/dashboard/
@@ -390,6 +433,7 @@ rm -rf src/app/farmer-dashboard/
 ```
 
 ### Step 5.4: Consolidate API Dashboard Routes
+
 ```bash
 # Create central dashboard API
 mkdir -p src/app/api/dashboard
@@ -407,6 +451,7 @@ mkdir -p src/app/api/dashboard/[role]
 ```
 
 ### Step 5.5: Update Navigation Links
+
 ```bash
 # Find all dashboard links in components
 grep -r "href=\"/dashboard\"" src/
@@ -418,6 +463,7 @@ grep -r "href=\"/farmer-dashboard\"" src/
 ```
 
 **✅ Phase 5 Complete When:**
+
 - [ ] Route groups used for dashboards
 - [ ] No duplicate dashboard folders
 - [ ] API dashboard routes consolidated
@@ -427,15 +473,18 @@ grep -r "href=\"/farmer-dashboard\"" src/
 ---
 
 ## 📚 PHASE 6: ORGANIZE DOCUMENTATION (P3 - LOW)
+
 **Time:** 2-3 hours  
 **Status:** 🔵 LOW PRIORITY
 
 ### Step 6.1: Create docs/ Structure
+
 ```bash
 mkdir -p docs/{guides/{setup,testing,deployment},phases,architecture,status}
 ```
 
 ### Step 6.2: Move Phase Documentation
+
 ```bash
 # Move phase summaries
 mv PHASE_*_*.md docs/phases/
@@ -444,6 +493,7 @@ mv *_SUMMARY.md docs/status/
 ```
 
 ### Step 6.3: Move Setup Guides
+
 ```bash
 # Move setup documents
 mv DATABASE_AND_AUTH_SETUP_GUIDE.md docs/guides/setup/
@@ -453,6 +503,7 @@ mv PRISMA_7_*.md docs/guides/setup/
 ```
 
 ### Step 6.4: Move Execution Plans
+
 ```bash
 # Move planning docs
 mv WEEK_1_*.md docs/phases/phase-7-week-1/
@@ -461,7 +512,9 @@ mv *_CHECKLIST.md docs/guides/deployment/
 ```
 
 ### Step 6.5: Create Single Entry Point
+
 **Create:** `docs/00-START-HERE.md`
+
 ```bash
 cat > docs/00-START-HERE.md << 'EOF'
 # 🌾 Farmers Market Platform - Documentation Hub
@@ -488,7 +541,9 @@ EOF
 ```
 
 ### Step 6.6: Update Root README
+
 **Update:** `README.md`
+
 ```markdown
 # Add to README.md:
 
@@ -500,6 +555,7 @@ All documentation has been organized in the `docs/` directory.
 ```
 
 ### Step 6.7: Clean Up Root
+
 ```bash
 # Keep only essentials in root:
 # - README.md
@@ -512,6 +568,7 @@ All documentation has been organized in the `docs/` directory.
 ```
 
 **✅ Phase 6 Complete When:**
+
 - [ ] docs/ structure created
 - [ ] All documentation moved
 - [ ] Single entry point created
@@ -521,11 +578,14 @@ All documentation has been organized in the `docs/` directory.
 ---
 
 ## 🧪 PHASE 7: STANDARDIZE API RESPONSES (P2 - MEDIUM)
+
 **Time:** 6-8 hours  
 **Status:** 🟢 MEDIUM PRIORITY
 
 ### Step 7.1: Create Response Helpers
+
 **Create:** `src/lib/api/response-helpers.ts`
+
 ```typescript
 import { NextResponse } from "next/server";
 
@@ -550,7 +610,7 @@ export interface ApiResponse<T = any> {
 
 export function successResponse<T>(
   data: T,
-  meta?: ApiResponse<T>["meta"]
+  meta?: ApiResponse<T>["meta"],
 ): NextResponse {
   return NextResponse.json({
     success: true,
@@ -563,19 +623,20 @@ export function errorResponse(
   code: string,
   message: string,
   status: number = 500,
-  details?: Record<string, any>
+  details?: Record<string, any>,
 ): NextResponse {
   return NextResponse.json(
     {
       success: false,
       error: { code, message, details },
     },
-    { status }
+    { status },
   );
 }
 ```
 
 ### Step 7.2: Audit Current API Routes
+
 ```bash
 # Find all API route handlers
 find src/app/api -name "route.ts" > api-routes.txt
@@ -585,7 +646,9 @@ grep -n "NextResponse.json" src/app/api/**/*.ts
 ```
 
 ### Step 7.3: Update API Routes
+
 **Pattern to apply:**
+
 ```typescript
 // BEFORE:
 export async function GET() {
@@ -601,16 +664,13 @@ export async function GET() {
     const farms = await getFarms();
     return successResponse(farms);
   } catch (error) {
-    return errorResponse(
-      "FARMS_FETCH_ERROR",
-      error.message,
-      500
-    );
+    return errorResponse("FARMS_FETCH_ERROR", error.message, 500);
   }
 }
 ```
 
 ### Step 7.4: Update Frontend API Clients
+
 ```bash
 # Find all fetch calls
 grep -r "fetch.*'/api/" src/app src/components src/features
@@ -619,7 +679,9 @@ grep -r "fetch.*'/api/" src/app src/components src/features
 ```
 
 ### Step 7.5: Add TypeScript Types
+
 **Create:** `src/types/api.types.ts`
+
 ```typescript
 export type { ApiResponse } from "@/lib/api/response-helpers";
 
@@ -627,16 +689,17 @@ export type { ApiResponse } from "@/lib/api/response-helpers";
 export async function fetchFarms(): Promise<Farm[]> {
   const response = await fetch("/api/farms");
   const json: ApiResponse<Farm[]> = await response.json();
-  
+
   if (!json.success) {
     throw new Error(json.error?.message || "Unknown error");
   }
-  
+
   return json.data!;
 }
 ```
 
 **✅ Phase 7 Complete When:**
+
 - [ ] Response helpers created
 - [ ] All API routes standardized
 - [ ] Frontend updated
@@ -648,6 +711,7 @@ export async function fetchFarms(): Promise<Farm[]> {
 ## ✅ FINAL VERIFICATION
 
 ### Pre-Deployment Checklist
+
 ```bash
 # Run all checks
 npm run type-check          # 0 errors
@@ -670,6 +734,7 @@ find src/app/api/agricultural  # Should exist
 ```
 
 ### Git Commit Strategy
+
 ```bash
 # Commit after each phase
 git add .
@@ -712,6 +777,7 @@ git push origin cleanup/pre-deployment-fixes
 ## 🆘 TROUBLESHOOTING
 
 ### If TypeScript errors persist:
+
 ```bash
 # Clear cache
 rm -rf .next node_modules
@@ -721,6 +787,7 @@ npm run type-check
 ```
 
 ### If tests fail after refactoring:
+
 ```bash
 # Update test imports
 # Check mock implementations
@@ -729,6 +796,7 @@ npm run test -- --verbose
 ```
 
 ### If build fails:
+
 ```bash
 # Check Next.js config
 # Verify all imports resolve

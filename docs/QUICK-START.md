@@ -25,21 +25,24 @@
 
 ### Required Software
 
-| Software | Version | Download |
-|----------|---------|----------|
-| **Node.js** | 20.x or higher | https://nodejs.org/ |
-| **npm** | 10.x or higher | (included with Node.js) |
-| **Git** | Latest | https://git-scm.com/ |
+| Software    | Version        | Download                |
+| ----------- | -------------- | ----------------------- |
+| **Node.js** | 20.x or higher | https://nodejs.org/     |
+| **npm**     | 10.x or higher | (included with Node.js) |
+| **Git**     | Latest         | https://git-scm.com/    |
 
 ### Optional (Choose One)
 
 **Option A: Local Database**
+
 - **PostgreSQL** 15+ | https://www.postgresql.org/download/
 
 **Option B: Docker (Recommended)**
+
 - **Docker Desktop** Latest | https://docs.docker.com/desktop/
 
 **Option C: Managed Database**
+
 - Neon (https://neon.tech) - Free tier available
 - Supabase (https://supabase.com) - Free tier available
 - Vercel Postgres - Integrated with Vercel
@@ -76,6 +79,7 @@ npm install
 ```
 
 **Expected output:**
+
 ```
 added 1200 packages in 2m
 ```
@@ -137,6 +141,7 @@ npx prisma db seed
 ```
 
 **Expected output:**
+
 ```
 ✓ Generated Prisma Client
 ✓ Database schema pushed successfully
@@ -153,6 +158,7 @@ npm run dev
 ```
 
 **Expected output:**
+
 ```
 ▲ Next.js 16.0.3
 - Local:        http://localhost:3000
@@ -166,6 +172,7 @@ npm run dev
 Open your browser: **http://localhost:3000**
 
 You should see:
+
 - ✅ Homepage loads
 - ✅ Product listings appear
 - ✅ Navigation works
@@ -180,6 +187,7 @@ You should see:
 ### Step 1: Install Docker Desktop (5 minutes)
 
 Download and install Docker Desktop:
+
 - **Windows/Mac:** https://docs.docker.com/desktop/
 - **Linux:** https://docs.docker.com/engine/install/
 
@@ -195,12 +203,14 @@ cd farmers-market-platform
 ### Step 3: Start with Helper Script
 
 **Windows:**
+
 ```bash
 DOCKER-START.bat
 # Select [1] Development Mode
 ```
 
 **Mac/Linux:**
+
 ```bash
 ./docker-start-dev.sh
 # Select [1] Development Mode
@@ -209,6 +219,7 @@ DOCKER-START.bat
 ### Step 4: Wait for Services (60 seconds)
 
 The script will:
+
 1. Start PostgreSQL database
 2. Start Redis cache
 3. Start Next.js app
@@ -217,14 +228,17 @@ The script will:
 ### Step 5: Access Application
 
 **Main Application:**
+
 - http://localhost:3000
 
 **Development Tools:**
+
 - http://localhost:8080 - Adminer (Database UI)
 - http://localhost:8081 - Redis Commander (Cache UI)
 - http://localhost:8025 - MailHog (Email testing)
 
 **Admin Login:**
+
 - URL: http://localhost:3000/admin-login
 - Email: `gogsia@gmail.com`
 - Password: `Admin123!`
@@ -282,10 +296,12 @@ git push -u origin main
 ### Step 4: Configure Database
 
 **Option A: Vercel Postgres (Easiest)**
+
 1. Dashboard → Storage → Create Database → Postgres
 2. Automatic environment variable integration
 
 **Option B: Neon (Recommended)**
+
 1. Sign up: https://neon.tech
 2. Create project and database
 3. Copy connection string
@@ -517,6 +533,7 @@ console.log('DB URL:', process.env.DATABASE_URL?.substring(0, 20))
 ### For Development
 
 1. **Explore the codebase:**
+
    ```bash
    src/
    ├── app/          # Next.js App Router (pages, layouts, API)
@@ -532,6 +549,7 @@ console.log('DB URL:', process.env.DATABASE_URL?.substring(0, 20))
    - [Divine Instructions](.github/instructions/)
 
 3. **Setup development tools:**
+
    ```bash
    # Open Prisma Studio (Database GUI)
    npx prisma studio
@@ -579,18 +597,22 @@ console.log('DB URL:', process.env.DATABASE_URL?.substring(0, 20))
 ## 📚 PLATFORM-SPECIFIC GUIDES
 
 ### Docker Complete Setup
+
 - **Guide:** [docs/deployment/DOCKER-COMPLETE-GUIDE.md](docs/deployment/DOCKER-COMPLETE-GUIDE.md)
 - **Topics:** Development, production, Docker Hub, troubleshooting
 
 ### Vercel Deployment
+
 - **Guide:** [docs/deployment/DEPLOYMENT-COMPLETE.md](docs/deployment/DEPLOYMENT-COMPLETE.md)
 - **Topics:** Environment setup, database options, custom domains
 
 ### Local Development
+
 - **Guide:** [docs/DEVELOPMENT_GUIDE.md](docs/DEVELOPMENT_GUIDE.md)
 - **Topics:** Architecture, coding standards, testing, workflows
 
 ### Performance Optimization
+
 - **Guide:** [docs/QUICK-REFERENCE.md](docs/QUICK-REFERENCE.md)
 - **Topics:** HP OMEN optimization, caching, build performance
 
@@ -638,12 +660,14 @@ npm run type-check && npm test && npm run build && curl http://localhost:3000/ap
 ## 📊 EXPECTED PERFORMANCE
 
 ### Development
+
 - **First install:** 2-3 minutes
 - **Dev server startup:** 2-3 seconds
 - **Hot reload:** < 1 second
 - **Test suite:** 5-7 seconds
 
 ### Production
+
 - **Build time:** 35-45 seconds
 - **Page load (cold start):** < 2 seconds
 - **Page load (cached):** < 500ms
@@ -654,6 +678,7 @@ npm run type-check && npm test && npm run build && curl http://localhost:3000/ap
 ## 🎓 LEARNING PATH
 
 ### Beginner (Week 1)
+
 1. Complete this Quick Start guide
 2. Explore homepage and admin panel
 3. Read [README.md](README.md)
@@ -661,6 +686,7 @@ npm run type-check && npm test && npm run build && curl http://localhost:3000/ap
 5. Make small UI changes
 
 ### Intermediate (Week 2-4)
+
 1. Read [Development Guide](docs/DEVELOPMENT_GUIDE.md)
 2. Create new API endpoint
 3. Add new React component
@@ -668,6 +694,7 @@ npm run type-check && npm test && npm run build && curl http://localhost:3000/ap
 5. Deploy to Vercel
 
 ### Advanced (Month 2+)
+
 1. Study [Divine Instructions](.github/instructions/)
 2. Implement new feature end-to-end
 3. Optimize database queries
@@ -679,17 +706,20 @@ npm run type-check && npm test && npm run build && curl http://localhost:3000/ap
 ## 🆘 GETTING HELP
 
 ### Documentation
+
 - **Quick Reference:** [docs/QUICK-REFERENCE.md](docs/QUICK-REFERENCE.md) - Daily commands
 - **Documentation Index:** [docs/DOCUMENTATION-INDEX.md](docs/DOCUMENTATION-INDEX.md) - All docs
 - **API Docs:** [docs/API_DOCUMENTATION.md](docs/API_DOCUMENTATION.md) - API reference
 
 ### Troubleshooting
+
 - Check [Common Issues](#-common-issues) above
 - View logs: `npm run dev` (console output)
 - Search GitHub Issues
 - Check Sentry (if configured)
 
 ### Community
+
 - GitHub Discussions
 - Team Slack/Discord
 - Stack Overflow (tag: farmers-market-platform)

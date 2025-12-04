@@ -1,6 +1,7 @@
 # 🚀 Quick Next Steps Guide
 
 ## Current Status
+
 - **TypeScript Errors**: ~53 remaining (down from ~196)
 - **Progress**: 73% reduction achieved ✅
 - **Build Status**: ⚠️ Needs cache cleanup and minor fixes
@@ -10,6 +11,7 @@
 ## 🔥 IMMEDIATE FIXES (30 minutes)
 
 ### Step 1: Clean TypeScript Cache
+
 ```bash
 # Windows (PowerShell)
 Remove-Item -Recurse -Force node_modules\.cache
@@ -25,10 +27,13 @@ npx tsc --build --clean
 ### Step 2: Create Missing UI Components
 
 #### label.tsx
+
 ```bash
 # Create file: src/components/ui/label.tsx
 ```
+
 Copy this pattern:
+
 ```typescript
 "use client";
 
@@ -63,32 +68,38 @@ export { Label };
 ```
 
 #### slider.tsx
+
 ```bash
 # Create file: src/components/ui/slider.tsx
 ```
+
 Basic implementation needed for ProductFilters.
 
 #### dialog.tsx
+
 ```bash
 # Create file: src/components/ui/dialog.tsx
 ```
+
 Basic implementation needed for PayoutManagement.
 
 ### Step 3: Fix Badge Variant Issue
 
 **Option A** (Recommended): Add "outline" variant to Badge
+
 ```typescript
 // In src/components/ui/badge.tsx
-export type BadgeVariant = 
-  | "default" 
-  | "secondary" 
-  | "outline"  // Add this
-  | "success" 
-  | "warning" 
+export type BadgeVariant =
+  | "default"
+  | "secondary"
+  | "outline" // Add this
+  | "success"
+  | "warning"
   | "error";
 ```
 
 **Option B**: Change all usages from "outline" to "secondary"
+
 - Search: `variant="outline"`
 - Replace with: `variant="secondary"`
 
@@ -97,21 +108,26 @@ export type BadgeVariant =
 ## ✅ VERIFICATION (15 minutes)
 
 ### Run Type Check
+
 ```bash
 npx tsc --noEmit 2>&1 | tee typescript-errors.log
 ```
 
 ### Expected Result
+
 After cache clean and UI component creation:
+
 - **Target**: <20 errors remaining
 - Most should be monitoring/OpenTelemetry issues (non-critical)
 
 ### Quick Smoke Test
+
 ```bash
 npm run dev
 ```
 
 Visit:
+
 - http://localhost:3000/marketplace/products
 - http://localhost:3000/marketplace/farms
 - Check console for errors
@@ -121,11 +137,13 @@ Visit:
 ## 📋 REMAINING WORK BY PRIORITY
 
 ### Priority 1: Critical for Build (1 hour)
+
 - [ ] Fix finance route Payment type issue
 - [ ] Remove unused imports (Filter, Calendar, Link)
 - [ ] Test build: `npm run build`
 
 ### Priority 2: Quality (2 hours)
+
 - [ ] Add proper Slider component with range support
 - [ ] Add proper Dialog component with overlay
 - [ ] Test all Favorites API endpoints
@@ -133,6 +151,7 @@ Visit:
 - [ ] Verify OrderStatus changes work end-to-end
 
 ### Priority 3: Future Session (3-4 hours)
+
 - [ ] Fix OpenTelemetry version conflicts
 - [ ] Add missing `applicationinsights` package or remove dependency
 - [ ] Update semantic conventions imports
@@ -144,21 +163,24 @@ Visit:
 ## 🎯 SUCCESS CRITERIA
 
 ### Minimum Viable
+
 ✅ `npx tsc --noEmit` shows <10 errors  
 ✅ `npm run build` completes successfully  
-✅ Dev server starts without crashes  
+✅ Dev server starts without crashes
 
 ### Full Success
+
 ✅ All TypeScript errors resolved  
 ✅ Pre-commit hooks pass  
 ✅ All major features functional in browser  
-✅ No console errors during normal usage  
+✅ No console errors during normal usage
 
 ---
 
 ## 🆘 TROUBLESHOOTING
 
 ### "File casing differs" errors persist
+
 ```bash
 # Restart TypeScript server in VS Code
 Ctrl+Shift+P → "TypeScript: Restart TS Server"
@@ -167,6 +189,7 @@ Ctrl+Shift+P → "TypeScript: Restart TS Server"
 ```
 
 ### Module not found errors
+
 ```bash
 # Reinstall dependencies
 rm -rf node_modules
@@ -174,6 +197,7 @@ npm install
 ```
 
 ### Prisma errors
+
 ```bash
 # Regenerate client
 npx prisma generate

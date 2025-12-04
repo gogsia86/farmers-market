@@ -9,11 +9,13 @@ This guide helps you set up the PostgreSQL database for the Farmers Market Platf
 ## 🚨 Current Issue: Prisma 7 Configuration
 
 **Problem:** Prisma 7.0.0 introduced breaking changes:
+
 - The `url` property is no longer supported in `schema.prisma`
 - Requires `prisma.config.ts` for migrations
 - The config file parser is currently having issues
 
 **Impact:**
+
 - ✅ App runs fine (uses runtime adapter configuration)
 - ❌ Cannot run `prisma migrate` or `prisma db push`
 - ❌ Database tables are not created initially
@@ -36,6 +38,7 @@ npm install prisma@6.22.0 @prisma/client@6.22.0 @prisma/adapter-pg@6.22.0
 ```
 
 Then edit `prisma/schema.prisma` datasource section:
+
 ```prisma
 datasource db {
   provider     = "postgresql"
@@ -45,12 +48,14 @@ datasource db {
 ```
 
 Run migrations:
+
 ```bash
 npx prisma db push --accept-data-loss
 npx prisma generate
 ```
 
 Start the dev server:
+
 ```bash
 npm run dev:omen
 ```
@@ -82,6 +87,7 @@ cd prisma/migrations
 ```
 
 Or run directly:
+
 ```bash
 docker exec -i farmers-market-db-dev psql -U postgres -d farmersmarket < prisma/migrations/20251117162745_newfmmigration/migration.sql
 ```
@@ -128,6 +134,7 @@ docker exec -it farmers-market-db-dev psql -U postgres -d farmersmarket -c "\dt"
 ```
 
 **If tables exist:** ✅ You're good! Just need to generate Prisma Client:
+
 ```bash
 npx prisma generate
 ```
@@ -139,11 +146,13 @@ npx prisma generate
 ## 🗃️ DATABASE CONNECTION DETAILS
 
 From your `.env.local`:
+
 ```
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/farmersmarket?schema=public"
 ```
 
 **Connection Info:**
+
 - Host: `localhost`
 - Port: `5432`
 - User: `postgres`
@@ -157,38 +166,46 @@ DATABASE_URL="postgresql://postgres:postgres@localhost:5432/farmersmarket?schema
 We tried multiple formats for `prisma.config.ts`:
 
 ### Format 1: TypeScript Export
+
 ```typescript
 export default {
   datasource: {
     db: {
-      url: process.env.DATABASE_URL || "postgresql://..."
-    }
-  }
-}
+      url: process.env.DATABASE_URL || "postgresql://...",
+    },
+  },
+};
 ```
+
 **Result:** ❌ "Failed to parse syntax of config file"
 
 ### Format 2: CommonJS Module
+
 ```javascript
 module.exports = {
-  datasource: { db: { url: process.env.DATABASE_URL } }
-}
+  datasource: { db: { url: process.env.DATABASE_URL } },
+};
 ```
+
 **Result:** ❌ "Failed to parse syntax of config file"
 
 ### Format 3: ES Module (.mjs)
+
 ```javascript
 export default {
-  datasource: { db: { url: process.env.DATABASE_URL } }
-}
+  datasource: { db: { url: process.env.DATABASE_URL } },
+};
 ```
+
 **Result:** ❌ "Failed to parse syntax of config file"
 
 ### Format 4: With defineConfig
+
 ```typescript
 import { defineConfig } from '@prisma/client'
 export default defineConfig({ ... })
 ```
+
 **Result:** ❌ "defineConfig is not a function"
 
 ---
@@ -198,17 +215,20 @@ export default defineConfig({ ... })
 **For Immediate Development:**
 
 1. **Option A - Downgrade to Prisma 6** (Fastest)
+
    ```bash
    npm install prisma@6.22.0 @prisma/client@6.22.0 @prisma/adapter-pg@6.22.0
    ```
 
 2. **Option B - Manual SQL Import**
+
    ```bash
    # Import the latest migration
    docker exec -i farmers-market-db-dev psql -U postgres -d farmersmarket < prisma/migrations/20251117162745_newfmmigration/migration.sql
    ```
 
 3. **Generate Prisma Client**
+
    ```bash
    npx prisma generate
    ```
@@ -225,11 +245,13 @@ export default defineConfig({ ... })
 After setting up the database, verify everything works:
 
 ### 1. Check Tables Exist
+
 ```bash
 docker exec -it farmers-market-db-dev psql -U postgres -d farmersmarket -c "SELECT table_name FROM information_schema.tables WHERE table_schema='public';"
 ```
 
 Expected tables:
+
 - User
 - Farm
 - Product
@@ -257,6 +279,7 @@ Should return JSON with `"success": true` instead of errors.
 ### 3. Check Homepage
 
 Visit `http://localhost:3000` - you should see:
+
 - ✅ Platform statistics (not "Failed to fetch")
 - ✅ Featured farms section (not "Failed to fetch")
 - ✅ No console errors
@@ -272,6 +295,7 @@ Visit `http://localhost:3000` - you should see:
 ### Error: "Prisma Client not generated"
 
 **Solution:**
+
 ```bash
 npx prisma generate
 ```
@@ -279,11 +303,13 @@ npx prisma generate
 ### Error: "Can't reach database server"
 
 **Solution:** Check Docker containers are running:
+
 ```bash
 docker ps | grep farmers-market
 ```
 
 Start if needed:
+
 ```bash
 docker compose -f docker-compose.dev.yml up -d db
 ```
@@ -291,6 +317,7 @@ docker compose -f docker-compose.dev.yml up -d db
 ### Error: "Connection refused on port 5432"
 
 **Solution:** PostgreSQL container not running:
+
 ```bash
 docker compose -f docker-compose.dev.yml restart db
 ```
@@ -329,19 +356,21 @@ npx prisma format
 Once Prisma 7 stabilizes and the config file format is fixed:
 
 1. Create `prisma.config.ts` in root:
+
 ```typescript
 export default {
   datasource: {
     db: {
-      url: process.env.DATABASE_URL
-    }
-  }
-}
+      url: process.env.DATABASE_URL,
+    },
+  },
+};
 ```
 
 2. Remove `url` from `prisma/schema.prisma`
 
 3. Use `prisma migrate` commands normally:
+
 ```bash
 npx prisma migrate dev
 npx prisma migrate deploy
@@ -352,6 +381,7 @@ npx prisma migrate deploy
 ## 🌟 QUICK REFERENCE
 
 ### Start Fresh Database
+
 ```bash
 # 1. Stop dev server
 # 2. Reset database
@@ -370,6 +400,7 @@ npm run dev:omen
 ```
 
 ### Backup Database
+
 ```bash
 # Backup
 docker exec farmers-market-db-dev pg_dump -U postgres farmersmarket > backup.sql

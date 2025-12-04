@@ -8,7 +8,7 @@
 
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import CredentialsProvider from "next-auth/providers/credentials";
+import Credentials from "next-auth/providers/credentials";
 import { database } from "@/lib/database";
 import { compare } from "bcryptjs";
 import type { UserRole, UserStatus } from "@prisma/client";
@@ -36,7 +36,7 @@ const nextAuthResult = NextAuth({
 
   // Authentication providers
   providers: [
-    CredentialsProvider({
+    Credentials({
       name: "credentials",
       credentials: {
         email: {

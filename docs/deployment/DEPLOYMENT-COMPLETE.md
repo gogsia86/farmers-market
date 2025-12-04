@@ -239,11 +239,13 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 #### 5. Database Options for Vercel
 
 **Option A: Vercel Postgres (Easiest)**
+
 - Dashboard → Storage → Create Database → Postgres
 - Automatic integration with environment variables
 - Built-in connection pooling
 
 **Option B: Neon (Serverless Postgres)**
+
 ```bash
 # 1. Sign up: https://neon.tech
 # 2. Create database
@@ -252,6 +254,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 ```
 
 **Option C: Supabase (Full Backend)**
+
 ```bash
 # 1. Sign up: https://supabase.com
 # 2. Create project
@@ -294,6 +297,7 @@ npx prisma db seed
 5. Automatic SSL certificate issued
 
 **DNS Configuration:**
+
 ```
 Type: A
 Name: @
@@ -645,6 +649,7 @@ ENABLE_MONITORING=true
 ### Environment-Specific Configurations
 
 **Development:**
+
 ```env
 NODE_ENV=development
 NEXT_PUBLIC_APP_URL=http://localhost:3000
@@ -652,6 +657,7 @@ DATABASE_URL=postgresql://postgres:postgres@localhost:5432/farmersmarket
 ```
 
 **Staging:**
+
 ```env
 NODE_ENV=production
 NEXT_PUBLIC_APP_URL=https://staging.your-domain.com
@@ -659,6 +665,7 @@ DATABASE_URL=postgresql://user:pass@staging-db:5432/farmers_market
 ```
 
 **Production:**
+
 ```env
 NODE_ENV=production
 NEXT_PUBLIC_APP_URL=https://your-domain.com
@@ -689,6 +696,7 @@ DATABASE_URL=postgresql://user:pass@prod-db:5432/farmers_market
 ```
 
 **Connection String Format:**
+
 ```
 postgresql://user:password@ep-xxx.us-east-2.aws.neon.tech/farmers_market?sslmode=require
 ```
@@ -857,24 +865,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
-      
+          node-version: "20"
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Type check
         run: npm run type-check
-      
+
       - name: Lint
         run: npm run lint
-      
+
       - name: Run tests
         run: npm test
-      
+
       - name: Build
         run: npm run build
 
@@ -884,7 +892,7 @@ jobs:
     needs: test
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
@@ -897,14 +905,14 @@ jobs:
     needs: test
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
-      
+          vercel-args: "--prod"
+
       - name: Run migrations
         run: |
           npm install -g vercel
@@ -934,45 +942,45 @@ NEXTAUTH_SECRET=your-secret
 // next.config.js
 const securityHeaders = [
   {
-    key: 'X-DNS-Prefetch-Control',
-    value: 'on'
+    key: "X-DNS-Prefetch-Control",
+    value: "on",
   },
   {
-    key: 'Strict-Transport-Security',
-    value: 'max-age=63072000; includeSubDomains; preload'
+    key: "Strict-Transport-Security",
+    value: "max-age=63072000; includeSubDomains; preload",
   },
   {
-    key: 'X-Frame-Options',
-    value: 'SAMEORIGIN'
+    key: "X-Frame-Options",
+    value: "SAMEORIGIN",
   },
   {
-    key: 'X-Content-Type-Options',
-    value: 'nosniff'
+    key: "X-Content-Type-Options",
+    value: "nosniff",
   },
   {
-    key: 'X-XSS-Protection',
-    value: '1; mode=block'
+    key: "X-XSS-Protection",
+    value: "1; mode=block",
   },
   {
-    key: 'Referrer-Policy',
-    value: 'origin-when-cross-origin'
+    key: "Referrer-Policy",
+    value: "origin-when-cross-origin",
   },
   {
-    key: 'Permissions-Policy',
-    value: 'camera=(), microphone=(), geolocation=()'
-  }
-]
+    key: "Permissions-Policy",
+    value: "camera=(), microphone=(), geolocation=()",
+  },
+];
 
 module.exports = {
   async headers() {
     return [
       {
-        source: '/:path*',
+        source: "/:path*",
         headers: securityHeaders,
       },
-    ]
+    ];
   },
-}
+};
 ```
 
 ### Environment Security
@@ -990,19 +998,19 @@ module.exports = {
 
 ```typescript
 // src/lib/rate-limit.ts
-import rateLimit from 'express-rate-limit'
+import rateLimit from "express-rate-limit";
 
 export const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP'
-})
+  message: "Too many requests from this IP",
+});
 
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 5, // 5 login attempts per 15 minutes
-  message: 'Too many login attempts'
-})
+  message: "Too many login attempts",
+});
 ```
 
 ---
@@ -1016,54 +1024,54 @@ export const authLimiter = rateLimit({
 module.exports = {
   // Enable React strict mode
   reactStrictMode: true,
-  
+
   // Image optimization
   images: {
-    domains: ['your-cdn.com'],
-    formats: ['image/avif', 'image/webp'],
+    domains: ["your-cdn.com"],
+    formats: ["image/avif", "image/webp"],
   },
-  
+
   // Enable SWC minification (faster)
   swcMinify: true,
-  
+
   // Compress static files
   compress: true,
-  
+
   // Standalone output for Docker
-  output: 'standalone',
-  
+  output: "standalone",
+
   // Experimental features
   experimental: {
     optimizeCss: true,
     scrollRestoration: true,
-  }
-}
+  },
+};
 ```
 
 ### Caching Strategy
 
 ```typescript
 // Cache control headers
-export const revalidate = 3600 // Revalidate every hour
+export const revalidate = 3600; // Revalidate every hour
 
 // ISR pages
 export async function generateStaticParams() {
-  const farms = await prisma.farm.findMany()
+  const farms = await prisma.farm.findMany();
   return farms.map((farm) => ({
     id: farm.id,
-  }))
+  }));
 }
 
 // Redis caching
-import { redis } from '@/lib/redis'
+import { redis } from "@/lib/redis";
 
 export async function getCachedData(key: string) {
-  const cached = await redis.get(key)
-  if (cached) return JSON.parse(cached)
-  
-  const data = await fetchData()
-  await redis.setex(key, 3600, JSON.stringify(data))
-  return data
+  const cached = await redis.get(key);
+  if (cached) return JSON.parse(cached);
+
+  const data = await fetchData();
+  await redis.setex(key, 3600, JSON.stringify(data));
+  return data;
 }
 ```
 
@@ -1112,20 +1120,20 @@ npx @sentry/wizard@latest -i nextjs
 
 ```javascript
 // sentry.client.config.js
-import * as Sentry from '@sentry/nextjs'
+import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
   tracesSampleRate: 1.0,
   environment: process.env.NODE_ENV,
-})
+});
 ```
 
 ### Vercel Analytics
 
 ```javascript
 // app/layout.tsx
-import { Analytics } from '@vercel/analytics/react'
+import { Analytics } from "@vercel/analytics/react";
 
 export default function RootLayout({ children }) {
   return (
@@ -1135,7 +1143,7 @@ export default function RootLayout({ children }) {
         <Analytics />
       </body>
     </html>
-  )
+  );
 }
 ```
 
@@ -1143,21 +1151,23 @@ export default function RootLayout({ children }) {
 
 ```typescript
 // src/lib/logger.ts
-import winston from 'winston'
+import winston from "winston";
 
 export const logger = winston.createLogger({
-  level: 'info',
+  level: "info",
   format: winston.format.json(),
   transports: [
-    new winston.transports.File({ filename: 'error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'combined.log' }),
+    new winston.transports.File({ filename: "error.log", level: "error" }),
+    new winston.transports.File({ filename: "combined.log" }),
   ],
-})
+});
 
-if (process.env.NODE_ENV !== 'production') {
-  logger.add(new winston.transports.Console({
-    format: winston.format.simple(),
-  }))
+if (process.env.NODE_ENV !== "production") {
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    }),
+  );
 }
 ```
 

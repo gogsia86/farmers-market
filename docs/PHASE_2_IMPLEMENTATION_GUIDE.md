@@ -1,4 +1,5 @@
 # 🚀 Phase 2 Implementation Guide
+
 **Workflow Monitoring Bot - Enhanced Features**
 
 **Version:** 2.0.0  
@@ -72,6 +73,7 @@ Phase 2 builds upon Phase 1's foundation by adding enterprise-grade features for
 **Location:** `src/lib/monitoring/retry/enhanced-retry.ts`
 
 **Features:**
+
 - ✅ Exponential backoff with jitter
 - ✅ Intelligent error classification (transient vs permanent)
 - ✅ Circuit breaker pattern
@@ -79,6 +81,7 @@ Phase 2 builds upon Phase 1's foundation by adding enterprise-grade features for
 - ✅ OpenTelemetry tracing integration
 
 **Benefits:**
+
 - Reduces false positives from transient failures
 - Prevents cascading failures with circuit breakers
 - Optimizes retry timing to avoid thundering herd
@@ -89,6 +92,7 @@ Phase 2 builds upon Phase 1's foundation by adding enterprise-grade features for
 **Location:** `src/lib/monitoring/alerts/alert-rules-engine.ts`
 
 **Features:**
+
 - ✅ Configurable alert rules with conditions
 - ✅ Multiple severity levels (INFO, WARNING, ERROR, CRITICAL)
 - ✅ Alert cooldowns and deduplication
@@ -97,6 +101,7 @@ Phase 2 builds upon Phase 1's foundation by adding enterprise-grade features for
 - ✅ Alert acknowledgement and resolution
 
 **Benefits:**
+
 - Fine-grained control over alerting
 - Reduces alert fatigue with intelligent deduplication
 - Supports complex alerting scenarios
@@ -107,6 +112,7 @@ Phase 2 builds upon Phase 1's foundation by adding enterprise-grade features for
 **Location:** `src/app/api/monitoring/metrics/route.ts`
 
 **Features:**
+
 - ✅ Real-time metrics endpoint
 - ✅ Historical data with time periods
 - ✅ Per-workflow statistics
@@ -115,6 +121,7 @@ Phase 2 builds upon Phase 1's foundation by adding enterprise-grade features for
 - ✅ Alert summaries
 
 **Benefits:**
+
 - Comprehensive monitoring data in one endpoint
 - Easy integration with dashboards
 - Historical trend analysis
@@ -143,29 +150,32 @@ The Enhanced Retry System intelligently handles failures by:
 ### Error Classification
 
 ```typescript
-export type ErrorType = 
-  | "TRANSIENT"    // Temporary server errors (500, 502, 503)
-  | "PERMANENT"    // Client errors (400, 401, 403, 404)
-  | "RATE_LIMIT"   // Rate limiting (429, Too Many Requests)
-  | "TIMEOUT"      // Operation timeouts
-  | "NETWORK"      // Network connectivity issues
-  | "UNKNOWN";     // Unknown errors (retried cautiously)
+export type ErrorType =
+  | "TRANSIENT" // Temporary server errors (500, 502, 503)
+  | "PERMANENT" // Client errors (400, 401, 403, 404)
+  | "RATE_LIMIT" // Rate limiting (429, Too Many Requests)
+  | "TIMEOUT" // Operation timeouts
+  | "NETWORK" // Network connectivity issues
+  | "UNKNOWN"; // Unknown errors (retried cautiously)
 ```
 
 ### Configuration
 
 ```typescript
-import { RetryConfig, DEFAULT_RETRY_CONFIG } from "@/lib/monitoring/retry/enhanced-retry";
+import {
+  RetryConfig,
+  DEFAULT_RETRY_CONFIG,
+} from "@/lib/monitoring/retry/enhanced-retry";
 
 const customConfig: RetryConfig = {
-  maxAttempts: 3,                    // Maximum retry attempts
-  initialDelayMs: 1000,               // Initial delay (1 second)
-  maxDelayMs: 30000,                  // Maximum delay (30 seconds)
-  backoffMultiplier: 2,               // Exponential multiplier
-  jitterFactor: 0.1,                  // Jitter to prevent thundering herd
-  enableCircuitBreaker: true,         // Enable circuit breaker
-  circuitBreakerThreshold: 5,         // Failures before opening circuit
-  circuitBreakerResetTimeMs: 60000,   // Time to reset circuit (1 minute)
+  maxAttempts: 3, // Maximum retry attempts
+  initialDelayMs: 1000, // Initial delay (1 second)
+  maxDelayMs: 30000, // Maximum delay (30 seconds)
+  backoffMultiplier: 2, // Exponential multiplier
+  jitterFactor: 0.1, // Jitter to prevent thundering herd
+  enableCircuitBreaker: true, // Enable circuit breaker
+  circuitBreakerThreshold: 5, // Failures before opening circuit
+  circuitBreakerResetTimeMs: 60000, // Time to reset circuit (1 minute)
 };
 ```
 
@@ -177,14 +187,11 @@ const customConfig: RetryConfig = {
 import { withRetry } from "@/lib/monitoring/retry/enhanced-retry";
 
 // Execute operation with retry
-const result = await withRetry(
-  async () => {
-    // Your operation here
-    const response = await fetch("https://api.example.com/data");
-    return response.json();
-  },
-  "fetch-api-data"
-);
+const result = await withRetry(async () => {
+  // Your operation here
+  const response = await fetch("https://api.example.com/data");
+  return response.json();
+}, "fetch-api-data");
 
 if (result.success) {
   console.log("Data:", result.data);
@@ -207,11 +214,11 @@ const result = await withRetry(
   },
   "critical-db-operation",
   {
-    maxAttempts: 5,           // More attempts
-    initialDelayMs: 2000,     // Longer initial delay
-    maxDelayMs: 60000,        // Longer max delay
-    backoffMultiplier: 3,     // More aggressive backoff
-  }
+    maxAttempts: 5, // More attempts
+    initialDelayMs: 2000, // Longer initial delay
+    maxDelayMs: 60000, // Longer max delay
+    backoffMultiplier: 3, // More aggressive backoff
+  },
 );
 ```
 
@@ -221,12 +228,9 @@ const result = await withRetry(
 import { withAggressiveRetry } from "@/lib/monitoring/retry/enhanced-retry";
 
 // For important operations that need more retries
-const result = await withAggressiveRetry(
-  async () => {
-    return await importantOperation();
-  },
-  "important-operation"
-);
+const result = await withAggressiveRetry(async () => {
+  return await importantOperation();
+}, "important-operation");
 ```
 
 #### Fast Retry
@@ -235,12 +239,9 @@ const result = await withAggressiveRetry(
 import { withFastRetry } from "@/lib/monitoring/retry/enhanced-retry";
 
 // For quick operations that shouldn't retry much
-const result = await withFastRetry(
-  async () => {
-    return await quickHealthCheck();
-  },
-  "quick-health-check"
-);
+const result = await withFastRetry(async () => {
+  return await quickHealthCheck();
+}, "quick-health-check");
 ```
 
 #### Advanced Usage with Circuit Breaker
@@ -258,9 +259,9 @@ const retrySystem = new EnhancedRetrySystem({
 for (let i = 0; i < 10; i++) {
   const result = await retrySystem.executeWithRetry(
     async () => await unreliableService(),
-    "unreliable-service"
+    "unreliable-service",
   );
-  
+
   // Circuit breaker will open after threshold failures
   // and prevent further attempts until reset time
 }
@@ -277,12 +278,12 @@ retrySystem.resetCircuitBreaker("unreliable-service");
 
 ```typescript
 interface RetryResult<T> {
-  success: boolean;           // Whether operation succeeded
-  data?: T;                   // Result data (if successful)
-  error?: Error;              // Error object (if failed)
-  attempts: number;           // Number of attempts made
-  totalDurationMs: number;    // Total time spent (including delays)
-  errorType?: ErrorType;      // Classified error type
+  success: boolean; // Whether operation succeeded
+  data?: T; // Result data (if successful)
+  error?: Error; // Error object (if failed)
+  attempts: number; // Number of attempts made
+  totalDurationMs: number; // Total time spent (including delays)
+  errorType?: ErrorType; // Classified error type
 }
 ```
 
@@ -304,18 +305,18 @@ The Alert Rules Engine provides:
 
 ```typescript
 interface AlertRule {
-  id: string;                      // Unique identifier
-  name: string;                    // Human-readable name
-  description: string;             // What this rule does
-  enabled: boolean;                // Enable/disable rule
-  severity: AlertSeverity;         // INFO | WARNING | ERROR | CRITICAL
-  conditions: AlertCondition[];    // Array of conditions
-  conditionLogic: "AND" | "OR";    // How to combine conditions
-  channels: AlertChannel[];        // Where to send alerts
-  cooldownMs: number;              // Minimum time between alerts
-  escalationDelayMs?: number;      // Time before escalating
-  escalationRule?: string;         // Rule to escalate to
-  tags: string[];                  // Tags for filtering
+  id: string; // Unique identifier
+  name: string; // Human-readable name
+  description: string; // What this rule does
+  enabled: boolean; // Enable/disable rule
+  severity: AlertSeverity; // INFO | WARNING | ERROR | CRITICAL
+  conditions: AlertCondition[]; // Array of conditions
+  conditionLogic: "AND" | "OR"; // How to combine conditions
+  channels: AlertChannel[]; // Where to send alerts
+  cooldownMs: number; // Minimum time between alerts
+  escalationDelayMs?: number; // Time before escalating
+  escalationRule?: string; // Rule to escalate to
+  tags: string[]; // Tags for filtering
 }
 ```
 
@@ -324,11 +325,11 @@ interface AlertRule {
 ```typescript
 interface AlertCondition {
   type: "THRESHOLD" | "RATE" | "PATTERN" | "DURATION" | "CUSTOM";
-  metric: string;              // Metric to evaluate (e.g., "workflow.status")
+  metric: string; // Metric to evaluate (e.g., "workflow.status")
   operator: ">" | "<" | ">=" | "<=" | "==" | "!=" | "CONTAINS";
   value: number | string | boolean;
-  duration?: number;           // For duration-based conditions
-  window?: number;             // For rate-based conditions
+  duration?: number; // For duration-based conditions
+  window?: number; // For rate-based conditions
 }
 ```
 
@@ -348,18 +349,21 @@ Six predefined rules are included:
 #### Basic Setup
 
 ```typescript
-import { AlertRulesEngine, PREDEFINED_RULES } from "@/lib/monitoring/alerts/alert-rules-engine";
+import {
+  AlertRulesEngine,
+  PREDEFINED_RULES,
+} from "@/lib/monitoring/alerts/alert-rules-engine";
 
 // Create engine with predefined rules
 const alertEngine = new AlertRulesEngine(
   {
     enableDeduplication: true,
-    defaultCooldownMs: 300000,  // 5 minutes
+    defaultCooldownMs: 300000, // 5 minutes
     maxActiveAlerts: 100,
     autoResolveAfterMs: 3600000, // 1 hour
     enableEscalation: true,
   },
-  PREDEFINED_RULES
+  PREDEFINED_RULES,
 );
 ```
 
@@ -387,7 +391,7 @@ for (const alert of triggeredAlerts) {
   console.log(`🚨 Alert: ${alert.ruleName}`);
   console.log(`   Severity: ${alert.severity}`);
   console.log(`   Message: ${alert.message}`);
-  
+
   // Send notifications (Slack, Email, etc.)
   await sendNotifications(alert);
 }
@@ -480,21 +484,21 @@ import { globalAlertEngine } from "@/lib/monitoring/alerts/alert-rules-engine";
 class MonitoringBotWithAlerts extends DivineMonitoringBot {
   async runWorkflow(workflowId: string) {
     const result = await super.runWorkflow(workflowId);
-    
+
     // Evaluate alerts after workflow execution
     const alerts = await globalAlertEngine.evaluate({
       workflowResult: result,
       timestamp: new Date(),
     });
-    
+
     // Handle triggered alerts
     for (const alert of alerts) {
       await this.handleAlert(alert);
     }
-    
+
     return result;
   }
-  
+
   private async handleAlert(alert: Alert) {
     // Send to appropriate channels
     if (alert.channels.includes("SLACK")) {
@@ -519,10 +523,10 @@ GET /api/monitoring/metrics
 
 ### Query Parameters
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `period` | string | `24h` | Time period for metrics (`1h`, `24h`, `7d`, `30d`) |
-| `details` | boolean | `false` | Include detailed workflow breakdowns |
+| Parameter | Type    | Default | Description                                        |
+| --------- | ------- | ------- | -------------------------------------------------- |
+| `period`  | string  | `24h`   | Time period for metrics (`1h`, `24h`, `7d`, `30d`) |
+| `details` | boolean | `false` | Include detailed workflow breakdowns               |
 
 ### Response Structure
 
@@ -542,11 +546,11 @@ interface MetricsResponse {
 }
 
 interface MetricsData {
-  summary: MetricsSummary;        // Overall metrics
-  workflows: WorkflowMetrics[];   // Per-workflow metrics
-  system: SystemMetrics;          // System health
-  trends: MetricsTrends;          // Historical trends
-  alerts: AlertMetrics;           // Alert statistics
+  summary: MetricsSummary; // Overall metrics
+  workflows: WorkflowMetrics[]; // Per-workflow metrics
+  system: SystemMetrics; // System health
+  trends: MetricsTrends; // Historical trends
+  alerts: AlertMetrics; // Alert statistics
 }
 ```
 
@@ -566,7 +570,10 @@ const { success, data } = await response.json();
 if (success) {
   console.log("Total executions:", data.summary.totalExecutions);
   console.log("Success rate:", data.summary.successRate.toFixed(2) + "%");
-  console.log("Average duration:", data.summary.averageDuration.toFixed(0) + "ms");
+  console.log(
+    "Average duration:",
+    data.summary.averageDuration.toFixed(0) + "ms",
+  );
 }
 ```
 
@@ -598,7 +605,7 @@ console.log(`   Success Rate: ${data.summary.successRate.toFixed(2)}%`);
 
 // Per-workflow metrics
 console.log("\n📈 Workflows");
-data.workflows.forEach(workflow => {
+data.workflows.forEach((workflow) => {
   console.log(`   ${workflow.workflowName}`);
   console.log(`      Executions: ${workflow.executionCount}`);
   console.log(`      Success Rate: ${workflow.successRate.toFixed(2)}%`);
@@ -642,7 +649,7 @@ export function MonitoringDashboard() {
     }
 
     fetchMetrics();
-    
+
     // Refresh every 5 minutes
     const interval = setInterval(fetchMetrics, 5 * 60 * 1000);
     return () => clearInterval(interval);
@@ -654,30 +661,30 @@ export function MonitoringDashboard() {
   return (
     <div>
       <h1>Monitoring Dashboard</h1>
-      
+
       {/* Summary Cards */}
       <div className="grid grid-cols-4 gap-4">
-        <MetricCard 
-          title="Total Executions" 
+        <MetricCard
+          title="Total Executions"
           value={metrics.summary.totalExecutions}
         />
-        <MetricCard 
-          title="Success Rate" 
+        <MetricCard
+          title="Success Rate"
           value={`${metrics.summary.successRate.toFixed(1)}%`}
         />
-        <MetricCard 
-          title="Avg Duration" 
+        <MetricCard
+          title="Avg Duration"
           value={`${metrics.summary.averageDuration.toFixed(0)}ms`}
         />
-        <MetricCard 
-          title="Active Alerts" 
+        <MetricCard
+          title="Active Alerts"
           value={metrics.system.activeAlerts}
         />
       </div>
-      
+
       {/* Workflow Table */}
       <WorkflowTable workflows={metrics.workflows} />
-      
+
       {/* Hourly Chart */}
       <HourlyChart data={metrics.trends.hourlyExecutions} />
     </div>
@@ -692,6 +699,7 @@ export function MonitoringDashboard() {
 ### Step 1: Install Phase 2 Components
 
 All Phase 2 components are already implemented in:
+
 - `src/lib/monitoring/retry/` - Enhanced retry system
 - `src/lib/monitoring/alerts/` - Alert rules engine
 - `src/app/api/monitoring/metrics/` - Metrics API
@@ -709,21 +717,21 @@ class EnhancedMonitoringBot extends DivineMonitoringBot {
     // Wrap workflow execution with retry
     const retryResult = await globalRetrySystem.executeWithRetry(
       async () => await super.runWorkflow(workflowId),
-      `workflow-${workflowId}`
+      `workflow-${workflowId}`,
     );
-    
+
     if (retryResult.success) {
       // Evaluate alert rules
       const alerts = await globalAlertEngine.evaluate({
         workflowResult: retryResult.data,
         timestamp: new Date(),
       });
-      
+
       // Handle alerts
       for (const alert of alerts) {
         await this.handleAlert(alert);
       }
-      
+
       return retryResult.data;
     } else {
       throw retryResult.error;
@@ -780,7 +788,7 @@ export const RETRY_CONFIGS: Record<string, RetryConfig> = {
     circuitBreakerThreshold: 3,
     circuitBreakerResetTimeMs: 30000,
   },
-  
+
   // For standard operations
   standard: {
     maxAttempts: 3,
@@ -792,7 +800,7 @@ export const RETRY_CONFIGS: Record<string, RetryConfig> = {
     circuitBreakerThreshold: 5,
     circuitBreakerResetTimeMs: 60000,
   },
-  
+
   // For quick operations
   quick: {
     maxAttempts: 2,
@@ -835,7 +843,7 @@ export const CUSTOM_ALERT_RULES: AlertRule[] = [
     escalationDelayMs: 300000, // 5 minutes
     tags: ["database", "critical"],
   },
-  
+
   // Add more custom rules...
 ];
 ```
@@ -870,7 +878,7 @@ async function runEnhancedMonitoring() {
       );
     })
   );
-  
+
   // 2. Evaluate alert rules
   for (const result of results) {
     if (result.success) {
@@ -878,21 +886,21 @@ async function runEnhancedMonitoring() {
         workflowResult: result.data,
         timestamp: new Date(),
       });
-      
+
       // 3. Handle triggered alerts
       for (const alert of alerts) {
         await handleAlert(alert);
       }
     }
   }
-  
+
   // 4. Generate report
   const report = monitoringBot.generateReport();
-  
+
   // 5. Fetch metrics from API
   const metricsResponse = await fetch("/api/monitoring/metrics?period=24h");
   const { data: metrics } = await metricsResponse.json();
-  
+
   // 6. Send summary
   await sendDailySummary(report, metrics);
 }
@@ -910,11 +918,13 @@ setInterval(runEnhancedMonitoring, 60 * 60 * 1000);
 See `src/lib/monitoring/retry/enhanced-retry.ts` for complete API.
 
 **Key Classes:**
+
 - `EnhancedRetrySystem` - Main retry orchestrator
 - `ErrorClassifier` - Error classification logic
 - `CircuitBreaker` - Circuit breaker implementation
 
 **Key Functions:**
+
 - `withRetry()` - Execute with default retry
 - `withAggressiveRetry()` - Execute with more retries
 - `withFastRetry()` - Execute with fewer retries
@@ -924,9 +934,11 @@ See `src/lib/monitoring/retry/enhanced-retry.ts` for complete API.
 See `src/lib/monitoring/alerts/alert-rules-engine.ts` for complete API.
 
 **Key Classes:**
+
 - `AlertRulesEngine` - Main alert orchestrator
 
 **Key Methods:**
+
 - `addRule()` - Add alert rule
 - `evaluate()` - Evaluate rules against context
 - `acknowledgeAlert()` - Acknowledge alert
@@ -938,9 +950,11 @@ See `src/lib/monitoring/alerts/alert-rules-engine.ts` for complete API.
 See `src/app/api/monitoring/metrics/route.ts` for complete API.
 
 **Endpoints:**
+
 - `GET /api/monitoring/metrics` - Get metrics
 
 **Query Parameters:**
+
 - `period` - Time period (1h, 24h, 7d, 30d)
 - `details` - Include detailed data
 
@@ -951,6 +965,7 @@ See `src/app/api/monitoring/metrics/route.ts` for complete API.
 ### Retry System Issues
 
 **Issue: Too many retries**
+
 ```typescript
 // Solution: Reduce maxAttempts
 const result = await withRetry(operation, "my-op", {
@@ -959,6 +974,7 @@ const result = await withRetry(operation, "my-op", {
 ```
 
 **Issue: Circuit breaker stuck open**
+
 ```typescript
 // Solution: Reset circuit breaker
 globalRetrySystem.resetCircuitBreaker("operation-name");
@@ -967,6 +983,7 @@ globalRetrySystem.resetCircuitBreaker("operation-name");
 ### Alert Engine Issues
 
 **Issue: Too many alerts**
+
 ```typescript
 // Solution: Increase cooldown
 const rule = alertEngine.getRule("rule-id");
@@ -976,6 +993,7 @@ alertEngine.updateRule("rule-id", {
 ```
 
 **Issue: Alerts not triggering**
+
 ```typescript
 // Solution: Check rule conditions
 const evaluation = await alertEngine.evaluate({
@@ -988,6 +1006,7 @@ console.log("Evaluation:", evaluation);
 ### Metrics API Issues
 
 **Issue: No data returned**
+
 ```bash
 # Check database connection
 docker-compose ps db
@@ -999,6 +1018,7 @@ docker-compose exec -T db psql -U postgres -d farmersmarket -c "
 ```
 
 **Issue: Slow response**
+
 ```typescript
 // Solution: Add database indexes
 // See database/migrations for index creation
@@ -1034,6 +1054,7 @@ See `CONTRIBUTING.md` for guidelines on contributing to Phase 2 features.
 ## 🙏 Acknowledgments
 
 Built with:
+
 - Next.js 15
 - TypeScript
 - Prisma

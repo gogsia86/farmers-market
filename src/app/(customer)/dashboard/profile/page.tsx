@@ -50,10 +50,15 @@ export default function ProfilePage() {
   const { data: session, status, update } = useSession();
   const router = useRouter();
 
-  const [activeTab, setActiveTab] = useState<"profile" | "password" | "notifications">("profile");
+  const [activeTab, setActiveTab] = useState<
+    "profile" | "password" | "notifications"
+  >("profile");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   const [profile, setProfile] = useState<ProfileData>({
     firstName: "",
@@ -112,7 +117,9 @@ export default function ProfilePage() {
           phone: data.profile.phone || "",
           avatar: data.profile.avatar || null,
           dietaryPreferences: data.profile.dietaryPreferences || [],
-          notificationPreferences: data.profile.notificationPreferences || profile.notificationPreferences,
+          notificationPreferences:
+            data.profile.notificationPreferences ||
+            profile.notificationPreferences,
         });
         setAvatarPreview(data.profile.avatar);
       }
@@ -157,7 +164,10 @@ export default function ProfilePage() {
       formData.append("firstName", profile.firstName);
       formData.append("lastName", profile.lastName);
       formData.append("phone", profile.phone);
-      formData.append("dietaryPreferences", JSON.stringify(profile.dietaryPreferences));
+      formData.append(
+        "dietaryPreferences",
+        JSON.stringify(profile.dietaryPreferences),
+      );
 
       if (avatarFile) {
         formData.append("avatar", avatarFile);
@@ -183,11 +193,17 @@ export default function ProfilePage() {
         });
         setAvatarFile(null);
       } else {
-        setMessage({ type: "error", text: data.error || "Failed to update profile" });
+        setMessage({
+          type: "error",
+          text: data.error || "Failed to update profile",
+        });
       }
     } catch (error) {
       console.error("Profile update error:", error);
-      setMessage({ type: "error", text: "An error occurred. Please try again." });
+      setMessage({
+        type: "error",
+        text: "An error occurred. Please try again.",
+      });
     } finally {
       setSaving(false);
     }
@@ -200,7 +216,10 @@ export default function ProfilePage() {
 
     // Validation
     if (passwordData.newPassword.length < 8) {
-      setMessage({ type: "error", text: "Password must be at least 8 characters" });
+      setMessage({
+        type: "error",
+        text: "Password must be at least 8 characters",
+      });
       setSaving(false);
       return;
     }
@@ -231,11 +250,17 @@ export default function ProfilePage() {
           confirmPassword: "",
         });
       } else {
-        setMessage({ type: "error", text: data.error || "Failed to change password" });
+        setMessage({
+          type: "error",
+          text: data.error || "Failed to change password",
+        });
       }
     } catch (error) {
       console.error("Password change error:", error);
-      setMessage({ type: "error", text: "An error occurred. Please try again." });
+      setMessage({
+        type: "error",
+        text: "An error occurred. Please try again.",
+      });
     } finally {
       setSaving(false);
     }
@@ -258,13 +283,22 @@ export default function ProfilePage() {
       const data = await response.json();
 
       if (data.success) {
-        setMessage({ type: "success", text: "Notification preferences updated!" });
+        setMessage({
+          type: "success",
+          text: "Notification preferences updated!",
+        });
       } else {
-        setMessage({ type: "error", text: data.error || "Failed to update preferences" });
+        setMessage({
+          type: "error",
+          text: data.error || "Failed to update preferences",
+        });
       }
     } catch (error) {
       console.error("Notification update error:", error);
-      setMessage({ type: "error", text: "An error occurred. Please try again." });
+      setMessage({
+        type: "error",
+        text: "An error occurred. Please try again.",
+      });
     } finally {
       setSaving(false);
     }
@@ -646,7 +680,9 @@ export default function ProfilePage() {
                   <label className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
                     <input
                       type="checkbox"
-                      checked={profile.notificationPreferences.email.orderUpdates}
+                      checked={
+                        profile.notificationPreferences.email.orderUpdates
+                      }
                       onChange={(e) =>
                         setProfile({
                           ...profile,
@@ -756,7 +792,9 @@ export default function ProfilePage() {
                   <label className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
                     <input
                       type="checkbox"
-                      checked={profile.notificationPreferences.sms.deliveryAlerts}
+                      checked={
+                        profile.notificationPreferences.sms.deliveryAlerts
+                      }
                       onChange={(e) =>
                         setProfile({
                           ...profile,
@@ -772,7 +810,9 @@ export default function ProfilePage() {
                       className="w-5 h-5 text-green-600 rounded"
                     />
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900">Delivery Alerts</p>
+                      <p className="font-medium text-gray-900">
+                        Delivery Alerts
+                      </p>
                       <p className="text-sm text-gray-600">
                         When your order is out for delivery
                       </p>
@@ -788,7 +828,9 @@ export default function ProfilePage() {
                   <label className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
                     <input
                       type="checkbox"
-                      checked={profile.notificationPreferences.push.orderUpdates}
+                      checked={
+                        profile.notificationPreferences.push.orderUpdates
+                      }
                       onChange={(e) =>
                         setProfile({
                           ...profile,

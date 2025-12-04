@@ -2,7 +2,7 @@
 
 **Version**: 2.0.0  
 **Status**: ✅ PRODUCTION READY  
-**Last Updated**: 2024  
+**Last Updated**: 2024
 
 ---
 
@@ -47,12 +47,14 @@ The Enhanced Monitoring Bot V2.0 is a comprehensive website health monitoring sy
 ## 🚀 FEATURES
 
 ### 1. **Page Availability Monitoring**
+
 - HTTP status code validation
 - Response time tracking
 - Redirect detection
 - Error page identification
 
 ### 2. **Performance Monitoring**
+
 - **Core Web Vitals**:
   - LCP (Largest Contentful Paint)
   - FID (First Input Delay)
@@ -65,6 +67,7 @@ The Enhanced Monitoring Bot V2.0 is a comprehensive website health monitoring sy
 - Performance budget validation
 
 ### 3. **SEO Validation**
+
 - **Meta Tags**:
   - Title (presence, length)
   - Description (presence, length)
@@ -81,6 +84,7 @@ The Enhanced Monitoring Bot V2.0 is a comprehensive website health monitoring sy
   - Heading hierarchy
 
 ### 4. **Accessibility Audits (WCAG 2.1 AA)**
+
 - Image alt text validation
 - Form label validation
 - Button accessible names
@@ -90,6 +94,7 @@ The Enhanced Monitoring Bot V2.0 is a comprehensive website health monitoring sy
 - Accessibility score (0-100)
 
 ### 5. **Image Optimization**
+
 - Total image count
 - Missing alt text detection
 - Oversized image detection
@@ -97,12 +102,14 @@ The Enhanced Monitoring Bot V2.0 is a comprehensive website health monitoring sy
 - Optimization recommendations
 
 ### 6. **Link Validation**
+
 - Total link count
 - Internal vs external links
 - Broken link detection (404s)
 - Slow link detection (>1s)
 
 ### 7. **Security Header Validation**
+
 - Content-Security-Policy
 - Strict-Transport-Security
 - X-Frame-Options
@@ -112,6 +119,7 @@ The Enhanced Monitoring Bot V2.0 is a comprehensive website health monitoring sy
 - Mixed content detection
 
 ### 8. **Agricultural Consciousness**
+
 - Seasonal content detection
 - Farm data validation
 - Product categorization
@@ -119,12 +127,14 @@ The Enhanced Monitoring Bot V2.0 is a comprehensive website health monitoring sy
 - Agricultural terminology presence
 
 ### 9. **API Endpoint Monitoring**
+
 - Response time tracking
 - Status code validation
 - Error detection
 - Slow endpoint identification
 
 ### 10. **Database Health**
+
 - Connection status
 - Response time
 - Pool size monitoring
@@ -321,23 +331,23 @@ pages: [
   "/about",
   "/farms",
   "/products",
-  
+
   // Farm detail pages
   "/farms/harvest-moon-farm",
   "/farms/sunny-valley-farm",
-  
+
   // Marketplace
   "/marketplace/farms",
   "/marketplace/products",
-  
+
   // Auth pages
   "/auth/login",
   "/auth/register",
-  
+
   // Static pages
   "/privacy",
   "/terms",
-]
+];
 ```
 
 ---
@@ -347,14 +357,17 @@ pages: [
 ### Availability Check
 
 **What it checks:**
+
 - HTTP status codes (200, 300, 400, 500)
 - Page loading success
 - Redirect detection
 
 **Pass Criteria:**
+
 - Status code 2xx (200-299)
 
 **Example Output:**
+
 ```
 ✅ Page loaded successfully (200)
 ⚠️ Redirect detected (301)
@@ -366,6 +379,7 @@ pages: [
 ### Performance Check
 
 **What it checks:**
+
 - Load time (full page)
 - DOM content loaded
 - Time to First Byte (TTFB)
@@ -373,11 +387,13 @@ pages: [
 - Performance budget violations
 
 **Pass Criteria:**
+
 - Load time < 3000ms (configurable)
 - TTFB < 800ms (configurable)
 - No critical budget violations
 
 **Example Output:**
+
 ```
 Performance Metrics:
 - Load Time: 2145ms ✅
@@ -393,6 +409,7 @@ Budget Violations: None
 ### SEO Check
 
 **What it checks:**
+
 - **Title Tag**: Presence, length (30-60 chars optimal)
 - **Meta Description**: Presence, length (120-160 chars optimal)
 - **Open Graph**: Title, description, image
@@ -401,12 +418,14 @@ Budget Violations: None
 - **Heading Structure**: H1 count (should be 1), hierarchy
 
 **Pass Criteria:**
+
 - All critical meta tags present
 - Title and description within optimal lengths
 - Single H1 tag
 - Structured data present
 
 **Example Output:**
+
 ```
 SEO Validation:
 - Title: ✓ (52 chars)
@@ -423,6 +442,7 @@ Issues: None
 ### Accessibility Check
 
 **What it checks:**
+
 - Image alt text
 - Form input labels
 - Button accessible names
@@ -430,18 +450,20 @@ Issues: None
 - WCAG 2.1 AA compliance
 
 **Pass Criteria:**
+
 - Score >= 80
 - WCAG Level AA or higher
 - No critical violations
 
 **Example Output:**
+
 ```
 Accessibility Audit:
 - Score: 92/100 ✅
 - WCAG Level: AA ✅
 - Violations: 2 minor
   - 2 images missing alt text
-  
+
 Compliance: WCAG 2.1 AA ✅
 ```
 
@@ -450,16 +472,19 @@ Compliance: WCAG 2.1 AA ✅
 ### Image Check
 
 **What it checks:**
+
 - Total image count
 - Missing alt text
-- Oversized images (actual > display size * 2)
+- Oversized images (actual > display size \* 2)
 - Optimization opportunities
 
 **Pass Criteria:**
+
 - < 10% missing alt text
 - < 20% oversized images
 
 **Example Output:**
+
 ```
 Image Analysis:
 - Total Images: 24
@@ -477,16 +502,19 @@ Issues:
 ### Link Check
 
 **What it checks:**
+
 - Total link count
 - Internal vs external links
 - Broken links (404s)
 - Slow links (>1s response)
 
 **Pass Criteria:**
+
 - No broken links
 - < 5% slow links
 
 **Example Output:**
+
 ```
 Link Validation:
 - Total Links: 67
@@ -503,6 +531,7 @@ All links functional ✅
 ### Security Check
 
 **What it checks:**
+
 - Content-Security-Policy header
 - Strict-Transport-Security header
 - X-Frame-Options header
@@ -512,11 +541,13 @@ All links functional ✅
 - Mixed content detection
 
 **Pass Criteria:**
+
 - HTTPS enforced
 - All critical security headers present
 - No mixed content
 
 **Example Output:**
+
 ```
 Security Audit:
 - HTTPS: ✅
@@ -534,16 +565,19 @@ Security: Strong ✅
 ### Agricultural Consciousness Check
 
 **What it checks:**
+
 - Seasonal content (spring, summer, fall, winter)
 - Farm data validation (structured data)
 - Product categorization
 - Biodynamic/organic indicators
 
 **Pass Criteria:**
+
 - Seasonal awareness present
 - Agricultural terminology detected
 
 **Example Output:**
+
 ```
 Agricultural Consciousness:
 - Seasonal Content: ✓ (harvest, planting)
@@ -563,6 +597,7 @@ Agricultural Consciousness: Validated ✅
 #### 1. Console Output (Real-time)
 
 Beautiful, color-coded console output with:
+
 - Progress indicators
 - Status icons (✅ ❌ ⚠️)
 - Detailed metrics
@@ -594,12 +629,14 @@ Full machine-readable report:
 ```
 
 Saved to:
+
 - `monitoring-reports/health-report-{timestamp}.json`
 - `monitoring-reports/latest-report.json` (always latest)
 
 #### 3. Markdown Report
 
 Human-readable report with:
+
 - Overall status
 - Summary table
 - Page-by-page results
@@ -608,6 +645,7 @@ Human-readable report with:
 - Critical issues
 
 Saved to:
+
 - `monitoring-reports/health-report-{timestamp}.md`
 - `monitoring-reports/latest-report.md` (always latest)
 
@@ -623,6 +661,7 @@ Alerts are triggered when:
 6. **API Failures**: Any endpoint returning errors
 
 **Alert Output:**
+
 ```
 ╔════════════════════════════════════════════════════════════╗
 ║                    🚨 ALERTS 🚨                            ║
@@ -644,7 +683,7 @@ name: Website Health Check
 
 on:
   schedule:
-    - cron: '0 */6 * * *'  # Every 6 hours
+    - cron: "0 */6 * * *" # Every 6 hours
   push:
     branches: [main, staging]
   workflow_dispatch:
@@ -652,40 +691,40 @@ on:
 jobs:
   health-check:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          
+          node-version: "18"
+
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Install Playwright browsers
         run: npx playwright install chromium
-        
+
       - name: Run health check
         env:
           BASE_URL: ${{ secrets.BASE_URL }}
           HEADLESS: true
         run: npm run monitor:website
-        
+
       - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v3
         with:
           name: health-reports
           path: monitoring-reports/
-          
+
       - name: Notify on failure
         if: failure()
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          text: '🚨 Website health check failed!'
+          text: "🚨 Website health check failed!"
           webhook_url: ${{ secrets.SLACK_WEBHOOK }}
 ```
 
@@ -717,11 +756,13 @@ Use in deployment pipeline:
 #### 1. Browser Launch Failed
 
 **Error:**
+
 ```
 Error: Failed to launch browser
 ```
 
 **Solution:**
+
 ```bash
 # Reinstall Playwright browsers
 npx playwright install chromium
@@ -735,11 +776,13 @@ npx playwright install-deps
 #### 2. Timeout Errors
 
 **Error:**
+
 ```
 Error: Page.goto: Timeout 30000ms exceeded
 ```
 
 **Solutions:**
+
 - Increase timeout in config:
   ```typescript
   timeout: 60000, // 60 seconds
@@ -752,11 +795,13 @@ Error: Page.goto: Timeout 30000ms exceeded
 #### 3. Memory Issues
 
 **Error:**
+
 ```
 FATAL ERROR: Ineffective mark-compacts near heap limit
 ```
 
 **Solutions:**
+
 ```bash
 # Increase Node.js memory limit
 NODE_OPTIONS="--max-old-space-size=4096" npm run monitor:website
@@ -770,11 +815,13 @@ NODE_OPTIONS="--max-old-space-size=4096" npm run monitor:website
 #### 4. Permission Denied (Linux)
 
 **Error:**
+
 ```
 Error: EACCES: permission denied
 ```
 
 **Solution:**
+
 ```bash
 # Make script executable
 chmod +x scripts/monitoring/enhanced-website-monitor.ts
@@ -789,11 +836,13 @@ chmod 755 monitoring-reports
 #### 5. Port Already in Use
 
 **Error:**
+
 ```
 Error: Port 3001 is already in use
 ```
 
 **Solution:**
+
 ```bash
 # Check what's using the port
 lsof -ti:3001
@@ -818,15 +867,16 @@ constructor(config: WebsiteCheckConfig)
 ```
 
 **Config Options:**
+
 ```typescript
 interface WebsiteCheckConfig {
   baseUrl: string;
-  headless?: boolean;              // Default: true
-  timeout?: number;                // Default: 30000ms
+  headless?: boolean; // Default: true
+  timeout?: number; // Default: 30000ms
   userAgent?: string;
   viewport?: {
-    width: number;                 // Default: 1920
-    height: number;                // Default: 1080
+    width: number; // Default: 1920
+    height: number; // Default: 1080
   };
   enableVisualRegression?: boolean; // Default: false
   performanceBudgets?: PerformanceBudgets;
@@ -836,15 +886,19 @@ interface WebsiteCheckConfig {
 #### Methods
 
 ##### `initialize(): Promise<void>`
+
 Initialize browser and context.
 
 ##### `cleanup(): Promise<void>`
+
 Close browser and clean up resources.
 
 ##### `runFullHealthCheck(pages: string[]): Promise<WebsiteHealthReport>`
+
 Run comprehensive health check on specified pages.
 
 ##### `checkPage(url: string): Promise<PageCheckResult>`
+
 Check a single page with all validations.
 
 ---
@@ -915,6 +969,7 @@ post-deploy: npm run monitor:website
 ### 2. Performance Budgets
 
 Set realistic budgets based on your infrastructure:
+
 - **Good**: LCP <2.5s, TTFB <800ms
 - **Needs Improvement**: LCP 2.5-4s, TTFB 800-1.8s
 - **Poor**: LCP >4s, TTFB >1.8s
@@ -922,6 +977,7 @@ Set realistic budgets based on your infrastructure:
 ### 3. Accessibility Standards
 
 Target WCAG 2.1 AA compliance:
+
 - Score: >80 (good), >90 (excellent)
 - Zero critical violations
 - < 5 serious violations
@@ -995,6 +1051,7 @@ Target WCAG 2.1 AA compliance:
 ### Contributing
 
 Contributions welcome! Please:
+
 1. Fork the repository
 2. Create a feature branch
 3. Add tests for new features
@@ -1006,6 +1063,7 @@ Contributions welcome! Please:
 ## 📝 CHANGELOG
 
 ### Version 2.0.0 (Current)
+
 - ✨ Complete rewrite with comprehensive checks
 - ✨ Core Web Vitals monitoring
 - ✨ WCAG 2.1 AA accessibility validation
@@ -1015,6 +1073,7 @@ Contributions welcome! Please:
 - ✨ CI/CD integration ready
 
 ### Version 1.0.0 (Legacy)
+
 - Basic workflow monitoring
 - Simple health checks
 - Playwright integration
@@ -1029,4 +1088,4 @@ This monitoring system is part of the Farmers Market Platform and follows the pr
 
 **Happy Monitoring! 🌟🚀**
 
-*Built with agricultural consciousness and divine precision.*
+_Built with agricultural consciousness and divine precision._

@@ -9,6 +9,7 @@
 I successfully fixed **172 out of 196 TypeScript errors** (88% reduction)!
 
 However, **one file has unsaved changes** in your editor and I cannot modify it:
+
 - `src/components/agricultural/BiodynamicCalendarWidget.tsx`
 
 This file needs a simple import fix to reach 100% completion.
@@ -18,25 +19,29 @@ This file needs a simple import fix to reach 100% completion.
 ## 📝 WHAT YOU NEED TO DO (2 minutes)
 
 ### Step 1: Open the File
+
 Open: `src/components/agricultural/BiodynamicCalendarWidget.tsx`
 
 ### Step 2: Fix Lines 13-14
 
 **Find these lines (around line 12-14):**
+
 ```typescript
-import { Badge } from "@/components/ui/badge";  // ✅ This one is correct
-import { Card } from "@/components/ui/Card";     // ❌ Change this
-import { Skeleton } from "@/components/ui/Skeleton";  // ❌ Change this
+import { Badge } from "@/components/ui/badge"; // ✅ This one is correct
+import { Card } from "@/components/ui/Card"; // ❌ Change this
+import { Skeleton } from "@/components/ui/Skeleton"; // ❌ Change this
 ```
 
 **Change to:**
+
 ```typescript
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";         // ✅ Changed to lowercase
+import { Card } from "@/components/ui/card"; // ✅ Changed to lowercase
 import { Skeleton } from "@/components/ui/skeleton"; // ✅ Changed to lowercase
 ```
 
 ### Step 3: Save the File
+
 Press `Ctrl+S` (Windows) or `Cmd+S` (Mac)
 
 ---
@@ -62,6 +67,7 @@ npm run dev
 ## 📊 WHAT I FIXED TODAY
 
 ### ✅ Critical Issues (100% Complete)
+
 - [x] Review API alignment with Prisma schema
 - [x] Favorites model added to schema
 - [x] Favorites API endpoints created (GET/POST/DELETE)
@@ -73,6 +79,7 @@ npm run dev
 - [x] 100+ implicit `any` types fixed
 
 ### 🟡 Remaining Issues (Non-Critical)
+
 - [ ] BiodynamicCalendarWidget imports (← YOU FIX THIS)
 - [ ] Monitoring/OpenTelemetry errors (defer to separate session)
 
@@ -94,6 +101,7 @@ The remaining ~22 errors are monitoring-related (OpenTelemetry version conflicts
 ## 📚 FULL DETAILS
 
 For comprehensive information, see:
+
 - `SESSION_FINAL_STATUS.md` - Complete session summary
 - `QUICK_FIX_CARD.md` - Quick reference guide
 
@@ -114,6 +122,7 @@ Test these features to verify everything works:
 ## 💡 WHY THIS HAPPENED
 
 Windows/TypeScript has case-sensitive file caching. When we renamed:
+
 - `Card.tsx` → `card.tsx`
 - `Badge.tsx` → `badge.tsx`
 - `Skeleton.tsx` → `skeleton.tsx`
@@ -125,12 +134,14 @@ Most imports were updated, but BiodynamicCalendarWidget had unsaved changes in y
 ## 🆘 IF YOU NEED HELP
 
 ### Can't Find the File?
+
 ```bash
 # Full path:
 # src/components/agricultural/BiodynamicCalendarWidget.tsx
 ```
 
 ### TypeScript Still Showing Errors After Fix?
+
 ```bash
 # Clear TypeScript cache
 Remove-Item -Recurse -Force node_modules\.cache
@@ -142,6 +153,7 @@ npx tsc --build --clean
 ```
 
 ### Build Issues?
+
 ```bash
 # Regenerate Prisma Client
 npx prisma generate
@@ -156,6 +168,7 @@ npm run build
 ## 📞 MONITORING FIXES (Optional - Separate Session)
 
 The remaining ~22 TypeScript errors are in monitoring files:
+
 - `src/lib/monitoring/telemetry.ts`
 - `src/lib/monitoring/app-insights.ts`
 - `src/lib/monitoring/tracing/workflow-tracer.ts`
@@ -177,4 +190,4 @@ The remaining ~22 TypeScript errors are in monitoring files:
 
 **Let's finish this! You got this! 🚀🌾**
 
-*After you fix the file, run the commands above and you're done!*
+_After you fix the file, run the commands above and you're done!_

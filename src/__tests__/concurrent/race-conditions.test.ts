@@ -318,21 +318,19 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
         farm: { ownerId: "user-123" },
       } as any);
 
-      jest
-        .mocked(database.product.update)
-        .mockImplementation(
-          async () =>
-            new Promise((resolve) =>
-              setTimeout(
-                () =>
-                  resolve({
-                    id: "product-deadlock-test",
-                    isActive: true,
-                  } as any),
-                100,
-              ),
+      jest.mocked(database.product.update).mockImplementation(
+        async () =>
+          new Promise((resolve) =>
+            setTimeout(
+              () =>
+                resolve({
+                  id: "product-deadlock-test",
+                  isActive: true,
+                } as any),
+              100,
             ),
-        );
+          ),
+      );
 
       const operations = [
         ProductService.updateProduct(

@@ -53,28 +53,28 @@ The **Divine Workflow Monitoring Bot** is an automated testing and monitoring sy
 
 ### Core Features
 
-| Feature | Description |
-|---------|-------------|
-| **Automated Workflows** | Pre-configured tests for common user journeys |
-| **Health Checks** | API, database, and system health monitoring |
-| **Parallel Execution** | Run multiple workflows concurrently |
-| **Retry Logic** | Automatic retry on failures with exponential backoff |
-| **Screenshot Capture** | Automatic screenshots on test failures |
-| **Trace Recording** | Detailed execution traces for debugging |
-| **Performance Metrics** | Page load times, API response times, etc. |
-| **Report Generation** | HTML, JSON, and Markdown reports |
-| **Notification System** | Email, Slack, Discord, and webhook notifications |
-| **Scheduler** | Run workflows on a schedule |
-| **CLI Interface** | Easy-to-use command-line interface |
+| Feature                 | Description                                          |
+| ----------------------- | ---------------------------------------------------- |
+| **Automated Workflows** | Pre-configured tests for common user journeys        |
+| **Health Checks**       | API, database, and system health monitoring          |
+| **Parallel Execution**  | Run multiple workflows concurrently                  |
+| **Retry Logic**         | Automatic retry on failures with exponential backoff |
+| **Screenshot Capture**  | Automatic screenshots on test failures               |
+| **Trace Recording**     | Detailed execution traces for debugging              |
+| **Performance Metrics** | Page load times, API response times, etc.            |
+| **Report Generation**   | HTML, JSON, and Markdown reports                     |
+| **Notification System** | Email, Slack, Discord, and webhook notifications     |
+| **Scheduler**           | Run workflows on a schedule                          |
+| **CLI Interface**       | Easy-to-use command-line interface                   |
 
 ### Agricultural Features
 
-| Feature | Description |
-|---------|-------------|
-| **Seasonal Awareness** | Tests adapt to current season |
-| **Biodynamic Validation** | Ensures agricultural pattern compliance |
-| **Farm Health Scoring** | Monitors farm data integrity |
-| **Seasonal Optimization** | Recommendations for seasonal alignment |
+| Feature                   | Description                                   |
+| ------------------------- | --------------------------------------------- |
+| **Seasonal Awareness**    | Tests adapt to current season                 |
+| **Biodynamic Validation** | Ensures agricultural pattern compliance       |
+| **Farm Health Scoring**   | Monitors farm data integrity                  |
+| **Seasonal Optimization** | Recommendations for seasonal alignment        |
 | **Agricultural Insights** | Biodynamic suggestions and farm health trends |
 
 ---
@@ -177,6 +177,7 @@ npm run monitor:health
 ```
 
 **Expected Output:**
+
 ```
 🏥 Running Health Check...
 
@@ -194,6 +195,7 @@ npm run monitor:all
 ```
 
 **Expected Output:**
+
 ```
 🚀 Running All Workflows...
 
@@ -224,6 +226,7 @@ npm run monitor:start
 ```
 
 This will:
+
 - Run workflows on schedule
 - Health check every 5 minutes
 - User login test every 30 minutes
@@ -249,6 +252,7 @@ npm run monitor:list -- --critical-only
 ```
 
 **Output:**
+
 ```
 📋 Available Workflows
 
@@ -286,6 +290,7 @@ npm run monitor:reports -- --limit 10
 ```
 
 **Output:**
+
 ```
 📊 Recent Monitoring Reports
 
@@ -328,6 +333,7 @@ npm run monitor:start -- --config ./monitoring-config.json
 **Schedule:** Every 60 minutes
 
 **Steps:**
+
 1. Navigate to signup page
 2. Fill registration form
 3. Submit registration
@@ -344,6 +350,7 @@ npm run monitor:start -- --config ./monitoring-config.json
 **Schedule:** Every 30 minutes
 
 **Steps:**
+
 1. Navigate to login page
 2. Fill login credentials
 3. Submit login
@@ -360,12 +367,14 @@ npm run monitor:start -- --config ./monitoring-config.json
 **Schedule:** Every 2 hours
 
 **Steps:**
+
 1. Navigate to farm creation page
 2. Fill farm details (seasonal-aware)
 3. Submit farm creation
 4. Verify farm was created
 
 **Agricultural Features:**
+
 - ✅ Seasonal awareness
 - ✅ Biodynamic validation
 - ✅ Farm data integrity checks
@@ -381,12 +390,14 @@ npm run monitor:start -- --config ./monitoring-config.json
 **Schedule:** Every 3 hours
 
 **Steps:**
+
 1. Navigate to product creation
 2. Fill product details (seasonal products)
 3. Submit product listing
 4. Verify product appears
 
 **Agricultural Features:**
+
 - ✅ Seasonal product selection
 - ✅ Agricultural metadata validation
 
@@ -401,6 +412,7 @@ npm run monitor:start -- --config ./monitoring-config.json
 **Schedule:** Every 60 minutes
 
 **Steps:**
+
 1. Navigate to products page
 2. Add product to cart
 3. Navigate to cart
@@ -417,6 +429,7 @@ npm run monitor:start -- --config ./monitoring-config.json
 **Schedule:** Every 5 minutes
 
 **Steps:**
+
 1. Check API health endpoint
 2. Check database connectivity
 3. Check homepage load time
@@ -541,6 +554,7 @@ npm run monitor:all -- --notify
 ```
 
 **Slack Message Format:**
+
 ```
 🚨 Workflow Monitoring Report - 6 workflows, 83.3% success
 
@@ -594,6 +608,7 @@ npm run monitor:all -- --notify
 ### Notification Triggers
 
 Notifications are sent when:
+
 - ❌ Any workflow fails
 - 🚨 Critical workflow fails (always)
 - ⚠️ Success rate drops below 90%
@@ -612,6 +627,7 @@ The bot generates three report formats:
 **Location:** `./monitoring-reports/report-{id}.json`
 
 **Contents:**
+
 ```json
 {
   "reportId": "report_1234567890_abc123xyz",
@@ -636,6 +652,7 @@ The bot generates three report formats:
 ```
 
 **Use Cases:**
+
 - API integration
 - Data analysis
 - Automated processing
@@ -645,6 +662,7 @@ The bot generates three report formats:
 **Location:** `./monitoring-reports/report-{id}.html`
 
 **Features:**
+
 - 🎨 Beautiful UI with charts
 - 📊 Visual summary statistics
 - 🔍 Detailed workflow breakdown
@@ -653,6 +671,7 @@ The bot generates three report formats:
 - 📱 Mobile-responsive
 
 **Use Cases:**
+
 - Human-readable reports
 - Email attachments
 - Dashboard display
@@ -662,12 +681,14 @@ The bot generates three report formats:
 **Location:** `./monitoring-reports/report-{id}.md`
 
 **Features:**
+
 - 📝 Plain text format
 - 📊 Organized sections
 - ✅ Status indicators
 - 📋 Bullet-point summaries
 
 **Use Cases:**
+
 - GitHub issues
 - Documentation
 - Slack/Discord messages
@@ -733,7 +754,7 @@ const myCustomSteps: WorkflowStep[] = [
     execute: async (context) => {
       const { page, baseUrl } = context;
       await page.goto(`${baseUrl}/custom-page`);
-      
+
       return {
         success: true,
         duration: 0,
@@ -748,7 +769,7 @@ const myCustomSteps: WorkflowStep[] = [
     execute: async (context) => {
       const { page } = context;
       await page.click("#custom-button");
-      
+
       return {
         success: true,
         duration: 0,
@@ -801,24 +822,29 @@ await bot.runWorkflow("my-custom-workflow");
 The bot automatically adjusts workflows based on the current season:
 
 **Spring (March-May):**
+
 - Tests focus on planting-related features
 - Products: Lettuce, Radishes, Peas, Strawberries
 
 **Summer (June-August):**
+
 - Tests focus on harvest-related features
 - Products: Tomatoes, Corn, Peppers, Watermelon
 
 **Fall (September-November):**
+
 - Tests focus on preservation features
 - Products: Pumpkins, Squash, Apples, Brussels Sprouts
 
 **Winter (December-February):**
+
 - Tests focus on planning features
 - Products: Kale, Carrots, Potatoes, Winter Squash
 
 ### Biodynamic Validation
 
 The bot validates:
+
 - ✅ Lunar phase compliance
 - ✅ Seasonal product appropriateness
 - ✅ Agricultural metadata completeness
@@ -849,7 +875,7 @@ name: Workflow Monitoring
 
 on:
   schedule:
-    - cron: '0 */6 * * *'  # Every 6 hours
+    - cron: "0 */6 * * *" # Every 6 hours
   workflow_dispatch:
 
 jobs:
@@ -857,23 +883,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          
+          node-version: "20"
+
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Install Playwright browsers
         run: npx playwright install chromium
-        
+
       - name: Run monitoring
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: npm run monitor:critical -- --notify
-        
+
       - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v4
@@ -939,6 +965,7 @@ Error: Chromium browser not found
 ```
 
 **Solution:**
+
 ```bash
 npx playwright install chromium
 ```
@@ -952,6 +979,7 @@ Error: connect ECONNREFUSED 127.0.0.1:3000
 ```
 
 **Solution:**
+
 ```bash
 # Make sure dev server is running
 npm run dev
@@ -969,6 +997,7 @@ Error: Timeout 30000ms exceeded
 ```
 
 **Solution:**
+
 ```typescript
 // Increase timeout in config
 {
@@ -983,6 +1012,7 @@ Error: Timeout 30000ms exceeded
 #### Issue: "Screenshots not saving"
 
 **Solution:**
+
 ```bash
 # Create test-results directory
 mkdir -p test-results
@@ -996,6 +1026,7 @@ chmod 755 test-results
 #### Issue: "Notifications not sending"
 
 **Solution:**
+
 ```bash
 # Verify environment variables
 echo $SLACK_WEBHOOK_URL
@@ -1027,10 +1058,13 @@ node --inspect scripts/workflow-monitor.ts health
 ### createMonitoringBot
 
 ```typescript
-function createMonitoringBot(config: Partial<DivineBotConfig>): DivineMonitoringBot
+function createMonitoringBot(
+  config: Partial<DivineBotConfig>,
+): DivineMonitoringBot;
 ```
 
 **Example:**
+
 ```typescript
 const bot = createMonitoringBot({
   baseUrl: "http://localhost:3000",
@@ -1110,7 +1144,7 @@ Retrieve historical monitoring reports.
 
 ```typescript
 const reports = await bot.getReportHistory(10);
-reports.forEach(report => {
+reports.forEach((report) => {
   console.log(`${report.reportId}: ${report.summary.successRate}%`);
 });
 ```
@@ -1140,7 +1174,9 @@ if (result.status === "PASSED") {
 import { runCriticalChecks } from "@/lib/monitoring/bot";
 
 const report = await runCriticalChecks("http://localhost:3000");
-console.log(`Critical workflows: ${report.summary.passedWorkflows}/${report.summary.totalWorkflows} passed`);
+console.log(
+  `Critical workflows: ${report.summary.passedWorkflows}/${report.summary.totalWorkflows} passed`,
+);
 ```
 
 ---
@@ -1241,11 +1277,13 @@ Set appropriate timeouts:
 
 ```json
 {
-  "workflows": [{
-    "timeout": 30000,  // 30s for simple workflows
-  }],
+  "workflows": [
+    {
+      "timeout": 30000 // 30s for simple workflows
+    }
+  ],
   "performance": {
-    "timeout": 300000  // 5min for complex workflows
+    "timeout": 300000 // 5min for complex workflows
   }
 }
 ```
@@ -1257,7 +1295,7 @@ Limit concurrent workflows on resource-constrained systems:
 ```json
 {
   "performance": {
-    "maxConcurrency": 3  // Limit to 3 concurrent workflows
+    "maxConcurrency": 3 // Limit to 3 concurrent workflows
   }
 }
 ```
@@ -1274,13 +1312,13 @@ Never hardcode credentials:
 // ❌ DON'T DO THIS
 const testData = {
   email: "admin@example.com",
-  password: "RealPassword123"
+  password: "RealPassword123",
 };
 
 // ✅ DO THIS
 const testData = {
   email: process.env.TEST_USER_EMAIL || "test@example.com",
-  password: process.env.TEST_USER_PASSWORD || "TestPassword123"
+  password: process.env.TEST_USER_PASSWORD || "TestPassword123",
 };
 ```
 
@@ -1316,7 +1354,7 @@ Secure report storage in production:
 The bot tracks a **Divine Perfection Score** for your application:
 
 ```
-Divine Perfection Score = 
+Divine Perfection Score =
   (Success Rate × 40%) +
   (Performance Score × 30%) +
   (Agricultural Consciousness × 20%) +

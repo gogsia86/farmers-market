@@ -144,187 +144,183 @@ export default function SearchPage() {
   };
 
   return (
-<main className="min-h-screen bg-background py-12">
+    <main className="min-h-screen bg-background py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Search Header */}
-            <div className="mb-8">
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-                Search
-              </h1>
-              <p className="text-muted-foreground">
-                Find farms, products, and categories
-              </p>
+          {/* Search Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+              Search
+            </h1>
+            <p className="text-muted-foreground">
+              Find farms, products, and categories
+            </p>
+          </div>
+
+          {/* Search Bar */}
+          <div className="glass-card rounded-2xl p-6 mb-6">
+            <div className="relative mb-4">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => handleSearch(e.target.value)}
+                placeholder="Search for farms, products, or categories..."
+                className="w-full pl-14 pr-4 py-4 text-lg rounded-xl border-2 border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 transition-all"
+                autoFocus
+              />
             </div>
 
-            {/* Search Bar */}
-            <div className="glass-card rounded-2xl p-6 mb-6">
-              <div className="relative mb-4">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => handleSearch(e.target.value)}
-                  placeholder="Search for farms, products, or categories..."
-                  className="w-full pl-14 pr-4 py-4 text-lg rounded-xl border-2 border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 transition-all"
-                  autoFocus
-                />
-              </div>
-
-              {/* Filter by Type */}
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                  <Filter className="h-4 w-4" />
-                  Show:
-                </span>
-                {[
-                  { value: "all", label: "All Results" },
-                  { value: "farm", label: "Farms" },
-                  { value: "product", label: "Products" },
-                  { value: "category", label: "Categories" },
-                ].map((filter) => (
-                  <button
-                    key={filter.value}
-                    onClick={() =>
-                      setSelectedType(filter.value as typeof selectedType)
-                    }
-                    className={`px-4 py-2 rounded-lg border-2 transition-all ${
-                      selectedType === filter.value
-                        ? "bg-primary-600 border-primary-600 text-white"
-                        : "border-border hover:border-primary-500"
-                    }`}
-                  >
-                    {filter.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Results */}
-            <div className="mb-6">
-              <p className="text-muted-foreground">
-                <span className="font-semibold text-foreground">
-                  {filteredResults.length}
-                </span>{" "}
-                results {searchQuery && `for "${searchQuery}"`}
-              </p>
-            </div>
-
-            {filteredResults.length === 0 ? (
-              <div className="glass-card rounded-2xl p-12 text-center">
-                <div className="text-6xl mb-4">🔍</div>
-                <h3 className="text-2xl font-bold text-foreground mb-2">
-                  No Results Found
-                </h3>
-                <p className="text-muted-foreground mb-6">
-                  Try searching with different keywords
-                </p>
+            {/* Filter by Type */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                <Filter className="h-4 w-4" />
+                Show:
+              </span>
+              {[
+                { value: "all", label: "All Results" },
+                { value: "farm", label: "Farms" },
+                { value: "product", label: "Products" },
+                { value: "category", label: "Categories" },
+              ].map((filter) => (
                 <button
-                  onClick={() => {
-                    setSearchQuery("");
-                    setSelectedType("all");
-                    setResults(MOCK_RESULTS);
-                  }}
-                  className="btn-primary px-6 py-3"
+                  key={filter.value}
+                  onClick={() =>
+                    setSelectedType(filter.value as typeof selectedType)
+                  }
+                  className={`px-4 py-2 rounded-lg border-2 transition-all ${
+                    selectedType === filter.value
+                      ? "bg-primary-600 border-primary-600 text-white"
+                      : "border-border hover:border-primary-500"
+                  }`}
                 >
-                  Clear Search
+                  {filter.label}
                 </button>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {filteredResults.map((result) => (
-                  <Link
-                    key={result.id}
-                    href={result.url}
-                    className="block group"
-                  >
-                    <div className="glass-card rounded-2xl p-6 hover:shadow-glow-lg transition-all duration-300">
-                      <div className="flex gap-4">
-                        {/* Result Image */}
-                        <div className="w-24 h-24 bg-gradient-to-br from-primary-900 to-secondary-900 rounded-xl flex items-center justify-center flex-shrink-0">
-                          <span className="text-4xl">
-                            {getTypeIcon(result.type)}
-                          </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Results */}
+          <div className="mb-6">
+            <p className="text-muted-foreground">
+              <span className="font-semibold text-foreground">
+                {filteredResults.length}
+              </span>{" "}
+              results {searchQuery && `for "${searchQuery}"`}
+            </p>
+          </div>
+
+          {filteredResults.length === 0 ? (
+            <div className="glass-card rounded-2xl p-12 text-center">
+              <div className="text-6xl mb-4">🔍</div>
+              <h3 className="text-2xl font-bold text-foreground mb-2">
+                No Results Found
+              </h3>
+              <p className="text-muted-foreground mb-6">
+                Try searching with different keywords
+              </p>
+              <button
+                onClick={() => {
+                  setSearchQuery("");
+                  setSelectedType("all");
+                  setResults(MOCK_RESULTS);
+                }}
+                className="btn-primary px-6 py-3"
+              >
+                Clear Search
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {filteredResults.map((result) => (
+                <Link key={result.id} href={result.url} className="block group">
+                  <div className="glass-card rounded-2xl p-6 hover:shadow-glow-lg transition-all duration-300">
+                    <div className="flex gap-4">
+                      {/* Result Image */}
+                      <div className="w-24 h-24 bg-gradient-to-br from-primary-900 to-secondary-900 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <span className="text-4xl">
+                          {getTypeIcon(result.type)}
+                        </span>
+                      </div>
+
+                      {/* Result Info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-4 mb-2">
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <span
+                                className={`px-2 py-0.5 rounded text-xs font-semibold ${getTypeBadgeColor(
+                                  result.type,
+                                )}`}
+                              >
+                                {result.type.charAt(0).toUpperCase() +
+                                  result.type.slice(1)}
+                              </span>
+                              {result.metadata?.rating && (
+                                <div className="flex items-center gap-1">
+                                  <Star className="h-4 w-4 fill-secondary-500 text-secondary-500" />
+                                  <span className="text-sm font-semibold">
+                                    {result.metadata.rating}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                            <h3 className="text-lg font-bold text-foreground group-hover:text-primary-600 transition-colors">
+                              {result.name}
+                            </h3>
+                          </div>
+                          {result.metadata?.price && (
+                            <div className="text-lg font-bold text-gradient-warm whitespace-nowrap">
+                              {result.metadata.price}
+                            </div>
+                          )}
                         </div>
 
-                        {/* Result Info */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-4 mb-2">
-                            <div>
-                              <div className="flex items-center gap-2 mb-1">
-                                <span
-                                  className={`px-2 py-0.5 rounded text-xs font-semibold ${getTypeBadgeColor(
-                                    result.type,
-                                  )}`}
-                                >
-                                  {result.type.charAt(0).toUpperCase() +
-                                    result.type.slice(1)}
-                                </span>
-                                {result.metadata?.rating && (
-                                  <div className="flex items-center gap-1">
-                                    <Star className="h-4 w-4 fill-secondary-500 text-secondary-500" />
-                                    <span className="text-sm font-semibold">
-                                      {result.metadata.rating}
-                                    </span>
-                                  </div>
-                                )}
-                              </div>
-                              <h3 className="text-lg font-bold text-foreground group-hover:text-primary-600 transition-colors">
-                                {result.name}
-                              </h3>
+                        <p className="text-sm text-muted-foreground mb-3">
+                          {result.description}
+                        </p>
+
+                        <div className="flex items-center gap-4 text-sm">
+                          {result.metadata?.location && (
+                            <div className="flex items-center gap-1 text-muted-foreground">
+                              <MapPin className="h-4 w-4" />
+                              <span>{result.metadata.location}</span>
                             </div>
-                            {result.metadata?.price && (
-                              <div className="text-lg font-bold text-gradient-warm whitespace-nowrap">
-                                {result.metadata.price}
-                              </div>
-                            )}
-                          </div>
-
-                          <p className="text-sm text-muted-foreground mb-3">
-                            {result.description}
-                          </p>
-
-                          <div className="flex items-center gap-4 text-sm">
-                            {result.metadata?.location && (
-                              <div className="flex items-center gap-1 text-muted-foreground">
-                                <MapPin className="h-4 w-4" />
-                                <span>{result.metadata.location}</span>
-                              </div>
-                            )}
-                            {result.metadata?.farm && (
-                              <div className="flex items-center gap-1 text-muted-foreground">
-                                <Leaf className="h-4 w-4" />
-                                <span>{result.metadata.farm}</span>
-                              </div>
-                            )}
-                            {result.metadata?.productCount && (
-                              <div className="text-muted-foreground">
-                                {result.metadata.productCount} products
-                              </div>
-                            )}
-                            {result.type === "product" && (
-                              <button
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  alert("Added to cart!");
-                                }}
-                                data-testid="add-to-cart-button"
-                                className="ml-auto flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-lg transition-colors"
-                              >
-                                <ShoppingCart className="h-4 w-4" />
-                                <span>Add to Cart</span>
-                              </button>
-                            )}
-                          </div>
+                          )}
+                          {result.metadata?.farm && (
+                            <div className="flex items-center gap-1 text-muted-foreground">
+                              <Leaf className="h-4 w-4" />
+                              <span>{result.metadata.farm}</span>
+                            </div>
+                          )}
+                          {result.metadata?.productCount && (
+                            <div className="text-muted-foreground">
+                              {result.metadata.productCount} products
+                            </div>
+                          )}
+                          {result.type === "product" && (
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                alert("Added to cart!");
+                              }}
+                              data-testid="add-to-cart-button"
+                              className="ml-auto flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-lg transition-colors"
+                            >
+                              <ShoppingCart className="h-4 w-4" />
+                              <span>Add to Cart</span>
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
-      </main>
+      </div>
+    </main>
   );
 }

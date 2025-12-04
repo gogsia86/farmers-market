@@ -64,6 +64,7 @@ For the image you want to push:
 ### Step 5: Click "Push to Hub"
 
 A dropdown menu will appear with options:
+
 - Run
 - Pull
 - **Push to Hub** ← Click this!
@@ -90,6 +91,7 @@ If you haven't logged in yet, Docker Desktop will show a login prompt:
 ```
 
 **Enter**:
+
 - Username: `gogsiasdocker`
 - Password: Your Docker Hub password or access token
 
@@ -176,13 +178,16 @@ Repeat the process for the `latest` tag:
 ## ✅ Verify Upload
 
 ### Option 1: Docker Desktop
+
 - Click the image
 - Look for "Remote" status: ✅ Available on Docker Hub
 
 ### Option 2: Web Browser
+
 Visit: https://hub.docker.com/r/gogsiasdocker/farmers-market-app
 
 You should see:
+
 - Repository name
 - Tags: `latest`, `v1.0.0`
 - Last pushed: Just now
@@ -205,26 +210,34 @@ Some Docker Desktop versions have a simpler flow:
 ## 🛠️ Troubleshooting
 
 ### "Not Logged In" Error
+
 **Solution**: Click "Sign In" in top-right corner of Docker Desktop
 
 ### "Repository Not Found" Error
+
 **Solution**: Repository already created at https://hub.docker.com/r/gogsiasdocker/farmers-market-app
 
 ### Upload Fails or Stalls
-**Solution**: 
+
+**Solution**:
+
 1. Check internet connection
 2. Try again (Docker resumes from last successful layer)
 3. Restart Docker Desktop
 4. Try pushing smaller tag first (test connectivity)
 
 ### "Permission Denied" Error
+
 **Solution**:
+
 1. Sign out: Click username → "Sign out"
 2. Sign in again with correct credentials
 3. Retry push
 
 ### Push Takes Forever
-**Tip**: 
+
+**Tip**:
+
 - Docker only uploads changed layers
 - First push is slowest
 - Subsequent pushes are much faster
@@ -236,15 +249,15 @@ Some Docker Desktop versions have a simpler flow:
 
 The push uploads **15 layers**:
 
-| Layer | Content | Size | Notes |
-|-------|---------|------|-------|
-| Base | Alpine Linux | ~5MB | Usually cached |
-| Node | Node.js 20 | ~50MB | Usually cached |
-| Dependencies | node_modules | ~200MB | Largest layer |
-| Application | Built .next | ~100MB | Your code |
-| Prisma | Database client | ~30MB | Generated files |
-| Config | Env & configs | <1MB | Small files |
-| ... | Other layers | ~300MB | Various |
+| Layer        | Content         | Size   | Notes           |
+| ------------ | --------------- | ------ | --------------- |
+| Base         | Alpine Linux    | ~5MB   | Usually cached  |
+| Node         | Node.js 20      | ~50MB  | Usually cached  |
+| Dependencies | node_modules    | ~200MB | Largest layer   |
+| Application  | Built .next     | ~100MB | Your code       |
+| Prisma       | Database client | ~30MB  | Generated files |
+| Config       | Env & configs   | <1MB   | Small files     |
+| ...          | Other layers    | ~300MB | Various         |
 
 **Total**: 698MB uncompressed → ~160MB compressed on Docker Hub
 
@@ -253,11 +266,13 @@ The push uploads **15 layers**:
 ## 🚀 After Successful Push
 
 ### Test Pull:
+
 ```bash
 docker pull gogsiasdocker/farmers-market-app:v1.0.0
 ```
 
 ### Deploy on Server:
+
 ```bash
 docker run -d \
   --name farmers-market \
@@ -267,6 +282,7 @@ docker run -d \
 ```
 
 ### Use in Docker Compose:
+
 ```yaml
 services:
   app:
@@ -280,17 +296,20 @@ services:
 ## 💡 Pro Tips
 
 ### Speed Up Future Pushes:
+
 - Only changed layers get uploaded
 - Use multi-stage builds (already done!)
 - Tag incrementally (v1.0.1, v1.0.2)
 
 ### Security Best Practices:
+
 - Use access tokens instead of password
 - Create token: https://hub.docker.com/settings/security
 - Set token to "Read, Write" only (not Delete)
 - Name it: "Docker Desktop Push"
 
 ### Manage Multiple Tags:
+
 - Always keep `latest` pointing to stable version
 - Use semantic versions: `v1.0.0`, `v1.1.0`
 - Can have environment tags: `dev`, `staging`, `prod`
@@ -317,6 +336,7 @@ Your Docker image is now available globally at:
 **Docker Hub**: https://hub.docker.com/r/gogsiasdocker/farmers-market-app
 
 **Pull Command**:
+
 ```bash
 docker pull gogsiasdocker/farmers-market-app:v1.0.0
 ```

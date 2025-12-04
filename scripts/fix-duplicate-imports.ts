@@ -32,11 +32,14 @@ const colors = {
 };
 
 const log = {
-  success: (msg: string) => console.log(`${colors.green}✅ ${msg}${colors.reset}`),
+  success: (msg: string) =>
+    console.log(`${colors.green}✅ ${msg}${colors.reset}`),
   error: (msg: string) => console.log(`${colors.red}❌ ${msg}${colors.reset}`),
-  warning: (msg: string) => console.log(`${colors.yellow}⚠️  ${msg}${colors.reset}`),
+  warning: (msg: string) =>
+    console.log(`${colors.yellow}⚠️  ${msg}${colors.reset}`),
   info: (msg: string) => console.log(`${colors.blue}ℹ️  ${msg}${colors.reset}`),
-  section: (msg: string) => console.log(`\n${colors.cyan}${colors.bright}${msg}${colors.reset}\n`),
+  section: (msg: string) =>
+    console.log(`\n${colors.cyan}${colors.bright}${msg}${colors.reset}\n`),
   debug: (msg: string) => console.log(`${colors.dim}🔧 ${msg}${colors.reset}`),
 };
 
@@ -114,10 +117,16 @@ async function analyzeFile(filePath: string): Promise<FileToFix | null> {
   const content = await fs.readFile(fullPath, "utf-8");
 
   // Check for Header import
-  const hasHeaderImport = /import\s*{\s*Header\s*}\s*from\s*["']@\/components\/layout\/Header["'];?/.test(content);
+  const hasHeaderImport =
+    /import\s*{\s*Header\s*}\s*from\s*["']@\/components\/layout\/Header["'];?/.test(
+      content,
+    );
 
   // Check for Footer import
-  const hasFooterImport = /import\s*{\s*Footer\s*}\s*from\s*["']@\/components\/layout\/Footer["'];?/.test(content);
+  const hasFooterImport =
+    /import\s*{\s*Footer\s*}\s*from\s*["']@\/components\/layout\/Footer["'];?/.test(
+      content,
+    );
 
   // Check for Header JSX usage
   const hasHeaderJSX = /<Header\s*\/?>/.test(content);
@@ -160,13 +169,13 @@ function removeImports(content: string): string {
   // Remove Header import
   newContent = newContent.replace(
     /import\s*{\s*Header\s*}\s*from\s*["']@\/components\/layout\/Header["'];?\s*\n?/g,
-    ""
+    "",
   );
 
   // Remove Footer import
   newContent = newContent.replace(
     /import\s*{\s*Footer\s*}\s*from\s*["']@\/components\/layout\/Footer["'];?\s*\n?/g,
-    ""
+    "",
   );
 
   return newContent;
@@ -310,7 +319,9 @@ ${colors.cyan}${colors.bright}╔═══════════════�
       if (analysis.hasFooterJSX) issues.push("Footer JSX");
 
       log.warning(`${filePath}`);
-      console.log(`  ${colors.dim}Route group: ${analysis.routeGroup}${colors.reset}`);
+      console.log(
+        `  ${colors.dim}Route group: ${analysis.routeGroup}${colors.reset}`,
+      );
       console.log(`  ${colors.red}Issues: ${issues.join(", ")}${colors.reset}`);
     }
   }
@@ -323,15 +334,20 @@ ${colors.cyan}${colors.bright}╔═══════════════�
   log.section(`🔧 Found ${filesToFix.length} files to fix`);
 
   // Group by route group
-  const byRouteGroup = filesToFix.reduce((acc, file) => {
-    if (!acc[file.routeGroup]) acc[file.routeGroup] = [];
-    acc[file.routeGroup].push(file);
-    return acc;
-  }, {} as Record<string, FileToFix[]>);
+  const byRouteGroup = filesToFix.reduce(
+    (acc, file) => {
+      if (!acc[file.routeGroup]) acc[file.routeGroup] = [];
+      acc[file.routeGroup].push(file);
+      return acc;
+    },
+    {} as Record<string, FileToFix[]>,
+  );
 
   console.log("Files by route group:");
   for (const [group, files] of Object.entries(byRouteGroup)) {
-    console.log(`  ${colors.cyan}${group}${colors.reset}: ${files.length} file(s)`);
+    console.log(
+      `  ${colors.cyan}${group}${colors.reset}: ${files.length} file(s)`,
+    );
   }
 
   // Apply fixes
@@ -354,7 +370,9 @@ ${colors.cyan}${colors.bright}╔═══════════════�
 
   console.log(`Total files analyzed: ${TARGET_FILES.length}`);
   console.log(`Files needing fixes: ${filesToFix.length}`);
-  console.log(`${colors.green}Successfully ${dryRun ? "analyzed" : "fixed"}: ${fixedCount}${colors.reset}`);
+  console.log(
+    `${colors.green}Successfully ${dryRun ? "analyzed" : "fixed"}: ${fixedCount}${colors.reset}`,
+  );
 
   if (failedCount > 0) {
     console.log(`${colors.red}Failed: ${failedCount}${colors.reset}`);
@@ -374,30 +392,34 @@ ${colors.cyan}${colors.bright}╔═══════════════�
   }
 
   // Special notes
-  if (filesToFix.some(f => f.routeGroup === "homepage")) {
+  if (filesToFix.some((f) => f.routeGroup === "homepage")) {
     log.section("📝 Special Note: Homepage");
     log.warning("The homepage (src/app/page.tsx) was modified.");
-    log.info("Ensure the root layout (src/app/layout.tsx) includes Header/Footer,");
+    log.info(
+      "Ensure the root layout (src/app/layout.tsx) includes Header/Footer,",
+    );
     log.info("or the homepage may need special handling.");
   }
 
-  if (filesToFix.some(f => f.routeGroup === "demos")) {
+  if (filesToFix.some((f) => f.routeGroup === "demos")) {
     log.section("📝 Special Note: Demo Pages");
     log.warning("Demo pages were modified. Consider:");
     log.info("1. Moving demos to (monitoring) route group");
     log.info("2. Creating a dedicated (demos) route group with layout");
   }
 
-  const orphanedFiles = filesToFix.filter(f =>
-    f.path.includes("account/notifications")
+  const orphanedFiles = filesToFix.filter((f) =>
+    f.path.includes("account/notifications"),
   );
 
   if (orphanedFiles.length > 0) {
     log.section("📝 Special Note: Orphaned Pages");
     log.warning("Found pages outside route groups:");
-    orphanedFiles.forEach(f => console.log(`  - ${f.path}`));
+    orphanedFiles.forEach((f) => console.log(`  - ${f.path}`));
     log.info("\nRecommendation:");
-    log.info("Move src/app/account/notifications to src/app/(customer)/account/notifications");
+    log.info(
+      "Move src/app/account/notifications to src/app/(customer)/account/notifications",
+    );
   }
 
   process.exit(failedCount > 0 ? 1 : 0);

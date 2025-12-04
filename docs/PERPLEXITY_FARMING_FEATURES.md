@@ -40,6 +40,7 @@ The Perplexity Farming Features provide AI-powered agricultural intelligence to 
 Real-time agricultural research answering farmer questions with expert guidance.
 
 **Capabilities:**
+
 - Instant answers to farming questions
 - Category-specific advice (pest control, soil health, irrigation, etc.)
 - Seasonal context awareness
@@ -47,6 +48,7 @@ Real-time agricultural research answering farmer questions with expert guidance.
 - Related questions for exploration
 
 **Use Cases:**
+
 - Pest and disease identification
 - Soil preparation guidance
 - Planting timing recommendations
@@ -58,6 +60,7 @@ Real-time agricultural research answering farmer questions with expert guidance.
 Season-aware product suggestions with reasoning and market context.
 
 **Capabilities:**
+
 - Seasonal product recommendations
 - Location-specific suggestions
 - Budget-aware filtering
@@ -66,6 +69,7 @@ Season-aware product suggestions with reasoning and market context.
 - Priority-based ranking
 
 **Use Cases:**
+
 - Seasonal supply planning
 - Equipment recommendations
 - Seed and plant selection
@@ -77,6 +81,7 @@ Season-aware product suggestions with reasoning and market context.
 Current trends in organic farming and local food markets.
 
 **Capabilities:**
+
 - Market trend analysis
 - Consumer demand insights
 - Price trend monitoring
@@ -85,6 +90,7 @@ Current trends in organic farming and local food markets.
 - Regional market data
 
 **Use Cases:**
+
 - Market entry planning
 - Pricing strategy
 - Product selection
@@ -96,6 +102,7 @@ Current trends in organic farming and local food markets.
 Research-backed farming guides and tutorials with structured learning.
 
 **Capabilities:**
+
 - Comprehensive farming guides
 - Step-by-step tutorials
 - Skill-level appropriate content (Beginner/Intermediate/Advanced)
@@ -104,6 +111,7 @@ Research-backed farming guides and tutorials with structured learning.
 - Common mistakes to avoid
 
 **Use Cases:**
+
 - Farmer education and training
 - New technique adoption
 - Skill development
@@ -115,6 +123,7 @@ Research-backed farming guides and tutorials with structured learning.
 Intelligent conversational support for farmer questions and challenges.
 
 **Capabilities:**
+
 - Context-aware responses
 - Conversation history tracking
 - Suggested actions
@@ -123,6 +132,7 @@ Intelligent conversational support for farmer questions and challenges.
 - Multi-turn conversations
 
 **Use Cases:**
+
 - Real-time problem solving
 - Troubleshooting assistance
 - Planning guidance
@@ -187,6 +197,7 @@ All endpoints require authentication and return standardized JSON responses.
 **Endpoint:** `POST /api/farming/advice`
 
 **Request Body:**
+
 ```json
 {
   "question": "How do I prevent blight in my tomato plants organically?",
@@ -200,6 +211,7 @@ All endpoints require authentication and return standardized JSON responses.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -234,6 +246,7 @@ All endpoints require authentication and return standardized JSON responses.
 **Endpoint:** `POST /api/farming/products/recommendations`
 
 **Request Body:**
+
 ```json
 {
   "season": "SPRING",
@@ -249,6 +262,7 @@ All endpoints require authentication and return standardized JSON responses.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -289,6 +303,7 @@ All endpoints require authentication and return standardized JSON responses.
 **Endpoint:** `POST /api/farming/market`
 
 **Request Body:**
+
 ```json
 {
   "region": "Pacific Northwest",
@@ -300,6 +315,7 @@ All endpoints require authentication and return standardized JSON responses.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -347,6 +363,7 @@ All endpoints require authentication and return standardized JSON responses.
 **Endpoint:** `POST /api/farming/education`
 
 **Request Body:**
+
 ```json
 {
   "topic": "Companion planting for organic gardens",
@@ -358,6 +375,7 @@ All endpoints require authentication and return standardized JSON responses.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -411,6 +429,7 @@ All endpoints require authentication and return standardized JSON responses.
 **Endpoint:** `POST /api/farming/support`
 
 **Request Body:**
+
 ```json
 {
   "conversationId": "conv_123456",
@@ -426,6 +445,7 @@ All endpoints require authentication and return standardized JSON responses.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -468,15 +488,15 @@ All endpoints require authentication and return standardized JSON responses.
 
 ```typescript
 // 1. Smart Farming Advice
-const adviceResponse = await fetch('/api/farming/advice', {
-  method: 'POST',
+const adviceResponse = await fetch("/api/farming/advice", {
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    question: 'How do I prepare soil for spring planting?',
-    category: 'SOIL_HEALTH',
-    depth: 'comprehensive',
+    question: "How do I prepare soil for spring planting?",
+    category: "SOIL_HEALTH",
+    depth: "comprehensive",
   }),
 });
 
@@ -485,32 +505,32 @@ console.log(advice.data.answer);
 console.log(advice.data.citations);
 
 // 2. Product Recommendations
-const recsResponse = await fetch('/api/farming/products/recommendations', {
-  method: 'POST',
+const recsResponse = await fetch("/api/farming/products/recommendations", {
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    season: 'SUMMER',
-    location: 'California',
+    season: "SUMMER",
+    location: "California",
   }),
 });
 
 const recommendations = await recsResponse.json();
-recommendations.data.recommendations.forEach(rec => {
+recommendations.data.recommendations.forEach((rec) => {
   console.log(`${rec.productName}: ${rec.reasoning}`);
 });
 
 // 3. Market Intelligence
-const marketResponse = await fetch('/api/farming/market', {
-  method: 'POST',
+const marketResponse = await fetch("/api/farming/market", {
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    region: 'United States',
-    topics: ['organic farming', 'local markets'],
-    timeframe: 'month',
+    region: "United States",
+    topics: ["organic farming", "local markets"],
+    timeframe: "month",
   }),
 });
 
@@ -518,15 +538,15 @@ const marketData = await marketResponse.json();
 console.log(marketData.data.trends);
 
 // 4. Educational Content
-const eduResponse = await fetch('/api/farming/education', {
-  method: 'POST',
+const eduResponse = await fetch("/api/farming/education", {
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    topic: 'Organic pest management',
-    level: 'INTERMEDIATE',
-    format: 'GUIDE',
+    topic: "Organic pest management",
+    level: "INTERMEDIATE",
+    format: "GUIDE",
   }),
 });
 
@@ -535,16 +555,16 @@ console.log(guide.data.title);
 console.log(guide.data.content.keyPoints);
 
 // 5. AI Support
-const supportResponse = await fetch('/api/farming/support', {
-  method: 'POST',
+const supportResponse = await fetch("/api/farming/support", {
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    message: 'My tomato plants have yellow leaves',
+    message: "My tomato plants have yellow leaves",
     context: {
-      currentSeason: 'SUMMER',
-      location: 'Texas',
+      currentSeason: "SUMMER",
+      location: "Texas",
     },
   }),
 });
@@ -563,34 +583,34 @@ import {
   getMarketIntelligence,
   getEducationalContent,
   handleSupportRequest,
-} from '@/lib/services/perplexity-farming.service';
+} from "@/lib/services/perplexity-farming.service";
 
 // Direct service layer usage (server-side only)
 const advice = await getFarmingAdvice({
-  question: 'Best practices for organic tomato farming?',
-  category: 'CROP_MANAGEMENT',
-  depth: 'comprehensive',
+  question: "Best practices for organic tomato farming?",
+  category: "CROP_MANAGEMENT",
+  depth: "comprehensive",
 });
 
 const recommendations = await getProductRecommendations({
-  season: 'SPRING',
-  location: 'Oregon',
+  season: "SPRING",
+  location: "Oregon",
 });
 
 const intelligence = await getMarketIntelligence({
-  region: 'West Coast',
-  topics: ['organic produce'],
+  region: "West Coast",
+  topics: ["organic produce"],
 });
 
 const content = await getEducationalContent({
-  topic: 'Composting techniques',
-  level: 'BEGINNER',
+  topic: "Composting techniques",
+  level: "BEGINNER",
 });
 
 const support = await handleSupportRequest({
-  userId: 'user123',
-  message: 'Help with pest control',
-  context: { currentSeason: 'SUMMER' },
+  userId: "user123",
+  message: "Help with pest control",
+  context: { currentSeason: "SUMMER" },
 });
 ```
 
@@ -605,6 +625,7 @@ npm run test:perplexity:farming
 ```
 
 This comprehensive test suite verifies:
+
 - ✅ Smart Farming Advice with multiple categories
 - ✅ Product Recommendations across seasons
 - ✅ Market Intelligence with regional data
@@ -675,13 +696,13 @@ PERPLEXITY_BASE_URL=https://api.perplexity.ai
 The service can be customized via constructor:
 
 ```typescript
-import { PerplexityFarmingService } from '@/lib/services/perplexity-farming.service';
+import { PerplexityFarmingService } from "@/lib/services/perplexity-farming.service";
 
 // Custom instance
-const service = new PerplexityFarmingService('custom-api-key');
+const service = new PerplexityFarmingService("custom-api-key");
 
 // Use singleton (recommended)
-import { getPerplexityFarmingService } from '@/lib/services/perplexity-farming.service';
+import { getPerplexityFarmingService } from "@/lib/services/perplexity-farming.service";
 const service = getPerplexityFarmingService();
 ```
 
@@ -703,7 +724,7 @@ Available farming categories:
 ### Seasons
 
 ```typescript
-type Season = 'SPRING' | 'SUMMER' | 'FALL' | 'WINTER';
+type Season = "SPRING" | "SUMMER" | "FALL" | "WINTER";
 ```
 
 Auto-detected via `getCurrentSeason()` utility.
@@ -734,7 +755,7 @@ Always display citations to maintain credibility:
 
 ```typescript
 if (result.data.citations && result.data.citations.length > 0) {
-  console.log('Sources:');
+  console.log("Sources:");
   result.data.citations.forEach((citation, i) => {
     console.log(`${i + 1}. ${citation.url}`);
   });
@@ -750,7 +771,7 @@ Implement delays between requests:
 await delay(2000);
 
 async function delay(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 ```
 
@@ -760,10 +781,10 @@ Provide seasonal and location context:
 
 ```typescript
 const request = {
-  question: 'When should I plant tomatoes?',
-  farmLocation: 'California',
+  question: "When should I plant tomatoes?",
+  farmLocation: "California",
   currentSeason: getCurrentSeason(),
-  depth: 'comprehensive',
+  depth: "comprehensive",
 };
 ```
 
@@ -814,8 +835,8 @@ const session = await auth();
 
 if (!session?.user) {
   return NextResponse.json(
-    { success: false, error: { code: 'AUTHENTICATION_REQUIRED' } },
-    { status: 401 }
+    { success: false, error: { code: "AUTHENTICATION_REQUIRED" } },
+    { status: 401 },
   );
 }
 ```
@@ -829,8 +850,8 @@ const validation = FarmingAdviceSchema.safeParse(body);
 
 if (!validation.success) {
   return NextResponse.json(
-    { success: false, error: { code: 'VALIDATION_ERROR' } },
-    { status: 400 }
+    { success: false, error: { code: "VALIDATION_ERROR" } },
+    { status: 400 },
   );
 }
 ```
@@ -849,6 +870,7 @@ if (!validation.success) {
 ### Optimization Tips
 
 1. **Parallel Requests**: When fetching multiple features:
+
 ```typescript
 const [advice, recommendations, intelligence] = await Promise.all([
   getFarmingAdvice(adviceRequest),
@@ -858,16 +880,19 @@ const [advice, recommendations, intelligence] = await Promise.all([
 ```
 
 2. **Depth Selection**:
+
 - Use `quick` for simple questions
 - Use `comprehensive` for detailed guidance
 - Use `expert` for complex research
 
 3. **Caching Strategy**:
+
 - Cache static educational content
 - Cache seasonal recommendations
 - Cache market intelligence (with TTL)
 
 4. **Selective Fields**: Request only needed data:
+
 ```typescript
 {
   includeRelatedQuestions: false, // If not needed
@@ -882,46 +907,56 @@ const [advice, recommendations, intelligence] = await Promise.all([
 ### Common Issues
 
 **1. API Key Not Found**
+
 ```
 Error: PERPLEXITY_API_KEY not configured
 ```
+
 **Solution**: Add `PERPLEXITY_API_KEY` to `.env` file
 
 **2. Rate Limiting**
+
 ```
 Error: Rate limit exceeded
 ```
+
 **Solution**: Implement delays between requests, use caching
 
 **3. Low Confidence Scores**
+
 ```
 Confidence: 0.45 (low)
 ```
+
 **Solution**: Rephrase question, add more context, use higher depth level
 
 **4. No Citations**
+
 ```
 Citations: []
 ```
+
 **Solution**: Perplexity couldn't find sources; try different search terms
 
 **5. Authentication Errors**
+
 ```
 Error: AUTHENTICATION_REQUIRED
 ```
+
 **Solution**: Ensure user is logged in before calling API
 
 ---
 
 ## 📝 API Response Codes
 
-| Code | Meaning | Action |
-|------|---------|--------|
-| 200 | Success | Process response data |
-| 400 | Validation Error | Check request format |
-| 401 | Unauthorized | Authenticate user |
-| 403 | Forbidden | Check permissions |
-| 500 | Server Error | Retry or contact support |
+| Code | Meaning          | Action                   |
+| ---- | ---------------- | ------------------------ |
+| 200  | Success          | Process response data    |
+| 400  | Validation Error | Check request format     |
+| 401  | Unauthorized     | Authenticate user        |
+| 403  | Forbidden        | Check permissions        |
+| 500  | Server Error     | Retry or contact support |
 
 ---
 
@@ -977,12 +1012,10 @@ Track these metrics to measure feature success:
   - API requests per feature
   - Average response time
   - Error rates
-  
 - **Quality Metrics**:
   - Average confidence scores
   - Citation counts
   - User satisfaction ratings
-  
 - **Business Metrics**:
   - Farmer engagement
   - Time saved per query
@@ -993,6 +1026,7 @@ Track these metrics to measure feature success:
 ## 🙏 Credits
 
 Built with:
+
 - **Perplexity AI** - Search-enabled AI models
 - **Next.js 15** - React framework
 - **TypeScript** - Type safety

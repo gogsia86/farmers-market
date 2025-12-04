@@ -48,7 +48,7 @@ export function Header() {
               Home
             </Link>
             <Link
-              href="/markets"
+              href="/marketplace"
               className="text-base font-medium text-gray-700 hover:text-agricultural-700 transition-colors"
             >
               Marketplace

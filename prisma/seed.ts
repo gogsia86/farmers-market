@@ -418,8 +418,10 @@ async function main() {
   const farmPhotos = farmsCreated.flatMap((farm) => [
     {
       farmId: farm.id,
-      photoUrl: "https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=1200",
-      thumbnailUrl: "https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=400",
+      photoUrl:
+        "https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=1200",
+      thumbnailUrl:
+        "https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=400",
       caption: "Main farm view",
       altText: `${farm.name} main view`,
       sortOrder: 0,
@@ -429,8 +431,10 @@ async function main() {
     },
     {
       farmId: farm.id,
-      photoUrl: "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1200",
-      thumbnailUrl: "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=400",
+      photoUrl:
+        "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1200",
+      thumbnailUrl:
+        "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=400",
       caption: "Our fields",
       altText: `${farm.name} fields`,
       sortOrder: 1,

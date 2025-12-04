@@ -43,9 +43,13 @@ function info(message: string): void {
 }
 
 function header(message: string): void {
-  console.log(`\n${colors.bright}${colors.blue}${"=".repeat(70)}${colors.reset}`);
+  console.log(
+    `\n${colors.bright}${colors.blue}${"=".repeat(70)}${colors.reset}`,
+  );
   console.log(`${colors.bright}${colors.blue}${message}${colors.reset}`);
-  console.log(`${colors.bright}${colors.blue}${"=".repeat(70)}${colors.reset}\n`);
+  console.log(
+    `${colors.bright}${colors.blue}${"=".repeat(70)}${colors.reset}\n`,
+  );
 }
 
 // ============================================================================
@@ -79,7 +83,8 @@ function validateApiKey(key: string): { valid: boolean; message?: string } {
   if (!key.startsWith("sk-")) {
     return {
       valid: false,
-      message: 'Invalid format. OpenAI keys should start with "sk-" or "sk-proj-"',
+      message:
+        'Invalid format. OpenAI keys should start with "sk-" or "sk-proj-"',
     };
   }
 
@@ -114,8 +119,14 @@ function writeEnvFile(filename: string, content: string): void {
 
 function backupEnvFile(filename: string): void {
   const filePath = path.resolve(process.cwd(), filename);
-  const timestamp = new Date().toISOString().replace(/[:.]/g, "-").split("T")[0];
-  const backupPath = path.resolve(process.cwd(), `${filename}.backup.${timestamp}`);
+  const timestamp = new Date()
+    .toISOString()
+    .replace(/[:.]/g, "-")
+    .split("T")[0];
+  const backupPath = path.resolve(
+    process.cwd(),
+    `${filename}.backup.${timestamp}`,
+  );
 
   if (fs.existsSync(filePath)) {
     fs.copyFileSync(filePath, backupPath);
@@ -123,11 +134,15 @@ function backupEnvFile(filename: string): void {
   }
 }
 
-function updateOrAddEnvVariable(content: string, key: string, value: string): string {
+function updateOrAddEnvVariable(
+  content: string,
+  key: string,
+  value: string,
+): string {
   const lines = content.split("\n");
   let found = false;
 
-  const updatedLines = lines.map(line => {
+  const updatedLines = lines.map((line) => {
     const trimmedLine = line.trim();
 
     // Check if this line sets the OPENAI_API_KEY
@@ -142,12 +157,18 @@ function updateOrAddEnvVariable(content: string, key: string, value: string): st
   // If not found, add it
   if (!found) {
     // Find a good place to add it (after comments or at the end)
-    const insertIndex = updatedLines.findIndex(line =>
-      line.trim() && !line.trim().startsWith("#"),
+    const insertIndex = updatedLines.findIndex(
+      (line) => line.trim() && !line.trim().startsWith("#"),
     );
 
     if (insertIndex > 0) {
-      updatedLines.splice(insertIndex, 0, "", "# OpenAI Configuration", `${key}=${value}`);
+      updatedLines.splice(
+        insertIndex,
+        0,
+        "",
+        "# OpenAI Configuration",
+        `${key}=${value}`,
+      );
     } else {
       updatedLines.push("", "# OpenAI Configuration", `${key}=${value}`);
     }
@@ -183,7 +204,10 @@ async function main(): Promise<void> {
     console.log("  2. An API key from your OpenAI dashboard");
     console.log("");
 
-    const ready = await question(rl, `${colors.cyan}Ready to continue? (y/n): ${colors.reset}`);
+    const ready = await question(
+      rl,
+      `${colors.cyan}Ready to continue? (y/n): ${colors.reset}`,
+    );
     if (ready.toLowerCase() !== "y" && ready.toLowerCase() !== "yes") {
       console.log("\nSetup cancelled.");
       process.exit(0);
@@ -215,7 +239,10 @@ async function main(): Promise<void> {
         `${colors.yellow}Do you want to update it? (y/n): ${colors.reset}`,
       );
 
-      if (overwrite.toLowerCase() !== "y" && overwrite.toLowerCase() !== "yes") {
+      if (
+        overwrite.toLowerCase() !== "y" &&
+        overwrite.toLowerCase() !== "yes"
+      ) {
         console.log("\nSetup cancelled. Existing key preserved.");
         process.exit(0);
       }
@@ -234,7 +261,10 @@ async function main(): Promise<void> {
     let valid = false;
 
     while (!valid) {
-      apiKey = await question(rl, `${colors.green}Paste your API key: ${colors.reset}`);
+      apiKey = await question(
+        rl,
+        `${colors.green}Paste your API key: ${colors.reset}`,
+      );
 
       const validation = validateApiKey(apiKey);
 
@@ -243,7 +273,10 @@ async function main(): Promise<void> {
         success("API key format looks good!");
       } else {
         error(validation.message || "Invalid API key");
-        const retry = await question(rl, `${colors.yellow}Try again? (y/n): ${colors.reset}`);
+        const retry = await question(
+          rl,
+          `${colors.yellow}Try again? (y/n): ${colors.reset}`,
+        );
         if (retry.toLowerCase() !== "y" && retry.toLowerCase() !== "yes") {
           console.log("\nSetup cancelled.");
           process.exit(0);
@@ -259,7 +292,10 @@ async function main(): Promise<void> {
     console.log("  2. .env.local (alternative, gitignored by default)");
     console.log("");
 
-    const fileChoice = await question(rl, `${colors.cyan}Choose (1 or 2): ${colors.reset}`);
+    const fileChoice = await question(
+      rl,
+      `${colors.cyan}Choose (1 or 2): ${colors.reset}`,
+    );
     const targetFile = fileChoice === "2" ? ".env.local" : ".env";
 
     // Step 5: Backup and Update
@@ -270,7 +306,11 @@ async function main(): Promise<void> {
     }
 
     const currentContent = readEnvFile(targetFile);
-    const updatedContent = updateOrAddEnvVariable(currentContent, "OPENAI_API_KEY", apiKey);
+    const updatedContent = updateOrAddEnvVariable(
+      currentContent,
+      "OPENAI_API_KEY",
+      apiKey,
+    );
 
     writeEnvFile(targetFile, updatedContent);
     success(`OpenAI API key added to ${targetFile}`);
@@ -305,7 +345,10 @@ async function main(): Promise<void> {
         console.log("Choose OpenAI model:");
         console.log("  1. gpt-4o (best quality, production)");
         console.log("  2. gpt-4o-mini (cost-effective, development)");
-        const modelChoice = await question(rl, `${colors.cyan}Choose (1 or 2): ${colors.reset}`);
+        const modelChoice = await question(
+          rl,
+          `${colors.cyan}Choose (1 or 2): ${colors.reset}`,
+        );
         const model = modelChoice === "1" ? "gpt-4o" : "gpt-4o-mini";
 
         finalContent += `\n# Model Configuration\nOPENAI_MODEL=${model}\n`;
@@ -379,7 +422,6 @@ async function main(): Promise<void> {
 ╚════════════════════════════════════════════════════════════════════════╝
 `);
     }
-
   } catch (error: any) {
     error(`Setup failed: ${error.message}`);
     rl.close();

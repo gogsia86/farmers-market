@@ -21,9 +21,11 @@ GET /api/farms/[slug]
 ```
 
 **Parameters**:
+
 - `slug` (string, required) - Unique farm identifier (URL-friendly)
 
 **Example**:
+
 ```
 GET /api/farms/organic-valley-farm
 GET /api/farms/green-acres-produce
@@ -46,7 +48,7 @@ GET /api/farms/green-acres-produce
     "story": "Our journey started with a passion for sustainable farming...",
     "status": "ACTIVE",
     "verificationStatus": "VERIFIED",
-    
+
     "address": "123 Farm Road",
     "city": "Springfield",
     "state": "CA",
@@ -55,11 +57,11 @@ GET /api/farms/green-acres-produce
     "latitude": 37.7749,
     "longitude": -122.4194,
     "deliveryRadius": 25,
-    
+
     "businessName": "Organic Valley LLC",
     "yearEstablished": 1985,
     "farmSize": 50.5,
-    
+
     "averageRating": 4.8,
     "reviewCount": 127,
     "reviews": [
@@ -75,29 +77,29 @@ GET /api/farms/green-acres-produce
         }
       }
     ],
-    
+
     "email": "contact@organicvalley.com",
     "phone": "+1-555-0123",
     "website": "https://organicvalley.com",
-    
+
     "images": [
       "https://cloudinary.com/farm-image-1.jpg",
       "https://cloudinary.com/farm-image-2.jpg"
     ],
     "logoUrl": "https://cloudinary.com/logo.jpg",
     "bannerUrl": "https://cloudinary.com/banner.jpg",
-    
+
     "certifications": ["USDA Organic", "Non-GMO"],
     "farmingPractices": ["Organic", "Biodynamic", "Sustainable"],
     "productCategories": ["Vegetables", "Fruits", "Herbs"],
-    
+
     "owner": {
       "id": "usr456",
       "name": "Jane Smith",
       "avatar": "https://...",
       "joinedYear": 2020
     },
-    
+
     "products": [
       {
         "id": "prod123",
@@ -115,14 +117,14 @@ GET /api/farms/green-acres-produce
         "reviewCount": 45
       }
     ],
-    
+
     "stats": {
       "totalProducts": 35,
       "totalReviews": 127,
       "totalOrders": 1250,
       "profileViews": 5432
     },
-    
+
     "createdAt": "2020-03-15T08:00:00Z",
     "updatedAt": "2024-12-01T14:30:00Z"
   },
@@ -138,6 +140,7 @@ GET /api/farms/green-acres-produce
 ## ❌ Error Responses
 
 ### 400 Bad Request - Invalid Slug
+
 ```json
 {
   "success": false,
@@ -149,6 +152,7 @@ GET /api/farms/green-acres-produce
 ```
 
 ### 403 Forbidden - Farm Not Available
+
 ```json
 {
   "success": false,
@@ -160,6 +164,7 @@ GET /api/farms/green-acres-produce
 ```
 
 ### 404 Not Found - Farm Does Not Exist
+
 ```json
 {
   "success": false,
@@ -171,6 +176,7 @@ GET /api/farms/green-acres-produce
 ```
 
 ### 500 Internal Server Error
+
 ```json
 {
   "success": false,
@@ -187,6 +193,7 @@ GET /api/farms/green-acres-produce
 ## 🎯 Features
 
 ### Included Data
+
 - ✅ Complete farm profile information
 - ✅ Owner details (public information only)
 - ✅ Active products (up to 20, in stock only)
@@ -197,6 +204,7 @@ GET /api/farms/green-acres-produce
 - ✅ Location and delivery information
 
 ### Business Logic
+
 - Only returns **ACTIVE** and **VERIFIED** farms for public viewing
 - Automatically increments profile view count
 - Products filtered: `inStock: true` and `status: ACTIVE`
@@ -205,6 +213,7 @@ GET /api/farms/green-acres-produce
 - Products sorted by creation date (newest first)
 
 ### Performance
+
 - Single database query with includes (optimized)
 - Profile view count updated asynchronously (non-blocking)
 - Proper indexing on `slug` field
@@ -220,16 +229,16 @@ GET /api/farms/green-acres-produce
 async function getFarmDetails(slug: string) {
   const response = await fetch(`/api/farms/${slug}`);
   const result = await response.json();
-  
+
   if (!result.success) {
     throw new Error(result.error.message);
   }
-  
+
   return result.data;
 }
 
 // Usage
-const farm = await getFarmDetails('organic-valley-farm');
+const farm = await getFarmDetails("organic-valley-farm");
 console.log(farm.name); // "Organic Valley Farm"
 console.log(farm.products.length); // Number of products
 ```
@@ -237,41 +246,45 @@ console.log(farm.products.length); // Number of products
 ### React Component Example
 
 ```tsx
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 function FarmDetailPage({ slug }: { slug: string }) {
   const [farm, setFarm] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   useEffect(() => {
     fetch(`/api/farms/${slug}`)
-      .then(res => res.json())
-      .then(result => {
+      .then((res) => res.json())
+      .then((result) => {
         if (result.success) {
           setFarm(result.data);
         } else {
           setError(result.error.message);
         }
       })
-      .catch(err => setError(err.message))
+      .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, [slug]);
-  
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
   if (!farm) return <div>Farm not found</div>;
-  
+
   return (
     <div>
       <h1>{farm.name}</h1>
       <p>{farm.description}</p>
-      <p>Rating: {farm.averageRating} ⭐ ({farm.reviewCount} reviews)</p>
+      <p>
+        Rating: {farm.averageRating} ⭐ ({farm.reviewCount} reviews)
+      </p>
       <h2>Products ({farm.products.length})</h2>
-      {farm.products.map(product => (
+      {farm.products.map((product) => (
         <div key={product.id}>
           <h3>{product.name}</h3>
-          <p>${product.price} / {product.unit}</p>
+          <p>
+            ${product.price} / {product.unit}
+          </p>
         </div>
       ))}
     </div>
@@ -294,12 +307,14 @@ curl -X GET https://yourdomain.com/api/farms/organic-valley-farm | jq
 ## 🔒 Security
 
 ### Public Access
+
 - ✅ No authentication required
 - ✅ Only shows verified and active farms
 - ✅ Owner email/phone protected (only shown if farm owner approves)
 - ✅ Reviews pre-moderated (only approved reviews shown)
 
 ### Data Protection
+
 - Owner's sensitive information filtered
 - Only public-facing data returned
 - SQL injection protection (Prisma ORM)
@@ -319,44 +334,46 @@ curl -X GET https://yourdomain.com/api/farms/organic-valley-farm | jq
 ## 📊 Response Schema
 
 ### Farm Object
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | string | Unique farm identifier |
-| `name` | string | Farm display name |
-| `slug` | string | URL-friendly identifier |
-| `description` | string \| null | Short description |
-| `story` | string \| null | Farm's story/history |
-| `status` | enum | ACTIVE, PENDING, SUSPENDED, INACTIVE |
-| `verificationStatus` | enum | VERIFIED, PENDING, REJECTED |
-| `address` | string | Street address |
-| `city` | string | City |
-| `state` | string | State/Province |
-| `zipCode` | string | ZIP/Postal code |
-| `country` | string | Country code (default: "US") |
-| `latitude` | number \| null | Latitude coordinate |
-| `longitude` | number \| null | Longitude coordinate |
-| `deliveryRadius` | number \| null | Delivery radius in miles |
-| `averageRating` | number \| null | Average rating (0-5) |
-| `reviewCount` | number | Total number of reviews |
-| `email` | string | Contact email |
-| `phone` | string | Contact phone |
-| `website` | string \| null | Farm website |
-| `images` | string[] | Array of image URLs |
-| `logoUrl` | string \| null | Logo image URL |
-| `bannerUrl` | string \| null | Banner image URL |
-| `certifications` | string[] | Certifications array |
-| `farmingPractices` | string[] | Farming practices |
-| `productCategories` | string[] | Product categories |
-| `owner` | object | Owner information |
-| `products` | array | Active products |
-| `reviews` | array | Recent reviews |
-| `stats` | object | Farm statistics |
+
+| Field                | Type           | Description                          |
+| -------------------- | -------------- | ------------------------------------ |
+| `id`                 | string         | Unique farm identifier               |
+| `name`               | string         | Farm display name                    |
+| `slug`               | string         | URL-friendly identifier              |
+| `description`        | string \| null | Short description                    |
+| `story`              | string \| null | Farm's story/history                 |
+| `status`             | enum           | ACTIVE, PENDING, SUSPENDED, INACTIVE |
+| `verificationStatus` | enum           | VERIFIED, PENDING, REJECTED          |
+| `address`            | string         | Street address                       |
+| `city`               | string         | City                                 |
+| `state`              | string         | State/Province                       |
+| `zipCode`            | string         | ZIP/Postal code                      |
+| `country`            | string         | Country code (default: "US")         |
+| `latitude`           | number \| null | Latitude coordinate                  |
+| `longitude`          | number \| null | Longitude coordinate                 |
+| `deliveryRadius`     | number \| null | Delivery radius in miles             |
+| `averageRating`      | number \| null | Average rating (0-5)                 |
+| `reviewCount`        | number         | Total number of reviews              |
+| `email`              | string         | Contact email                        |
+| `phone`              | string         | Contact phone                        |
+| `website`            | string \| null | Farm website                         |
+| `images`             | string[]       | Array of image URLs                  |
+| `logoUrl`            | string \| null | Logo image URL                       |
+| `bannerUrl`          | string \| null | Banner image URL                     |
+| `certifications`     | string[]       | Certifications array                 |
+| `farmingPractices`   | string[]       | Farming practices                    |
+| `productCategories`  | string[]       | Product categories                   |
+| `owner`              | object         | Owner information                    |
+| `products`           | array          | Active products                      |
+| `reviews`            | array          | Recent reviews                       |
+| `stats`              | object         | Farm statistics                      |
 
 ---
 
 ## 🧪 Testing
 
 ### Manual Testing
+
 ```bash
 # Test valid farm
 curl http://localhost:3001/api/farms/test-farm-slug
@@ -369,24 +386,25 @@ curl http://localhost:3001/api/farms/
 ```
 
 ### Unit Test Example
-```typescript
-import { GET } from './route';
-import { NextRequest } from 'next/server';
 
-describe('GET /api/farms/[slug]', () => {
-  it('should return farm details for valid slug', async () => {
-    const request = new NextRequest('http://localhost/api/farms/test-farm');
-    const response = await GET(request, { params: { slug: 'test-farm' } });
+```typescript
+import { GET } from "./route";
+import { NextRequest } from "next/server";
+
+describe("GET /api/farms/[slug]", () => {
+  it("should return farm details for valid slug", async () => {
+    const request = new NextRequest("http://localhost/api/farms/test-farm");
+    const response = await GET(request, { params: { slug: "test-farm" } });
     const data = await response.json();
-    
+
     expect(data.success).toBe(true);
-    expect(data.data.slug).toBe('test-farm');
+    expect(data.data.slug).toBe("test-farm");
   });
-  
-  it('should return 404 for non-existent farm', async () => {
-    const request = new NextRequest('http://localhost/api/farms/invalid');
-    const response = await GET(request, { params: { slug: 'invalid' } });
-    
+
+  it("should return 404 for non-existent farm", async () => {
+    const request = new NextRequest("http://localhost/api/farms/invalid");
+    const response = await GET(request, { params: { slug: "invalid" } });
+
     expect(response.status).toBe(404);
   });
 });

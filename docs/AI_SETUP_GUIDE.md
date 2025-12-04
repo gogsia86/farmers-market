@@ -1,4 +1,5 @@
 # 🤖 OpenAI API Setup Guide
+
 **Farmers Market Platform - AI Integration**
 
 ## 📋 Overview
@@ -76,6 +77,7 @@ npx tsx scripts/verify-openai.ts
 ```
 
 This will:
+
 - ✅ Check if API key is configured
 - ✅ Test connection to OpenAI
 - ✅ Validate key format
@@ -143,6 +145,7 @@ The application will now run with full AI capabilities!
 **Location**: `src/lib/monitoring/ai/failure-analyzer.ts`
 
 **Features**:
+
 - Analyzes workflow failures
 - Identifies root causes (70-95% confidence)
 - Provides remediation steps
@@ -150,13 +153,14 @@ The application will now run with full AI capabilities!
 - Generates executive summaries
 
 **Usage**:
+
 ```typescript
-import { AIFailureAnalyzer } from '@/lib/monitoring/ai/failure-analyzer';
+import { AIFailureAnalyzer } from "@/lib/monitoring/ai/failure-analyzer";
 
 const analyzer = new AIFailureAnalyzer({
   apiKey: process.env.OPENAI_API_KEY,
-  model: 'gpt-4o',
-  temperature: 0.3
+  model: "gpt-4o",
+  temperature: 0.3,
 });
 
 const analysis = await analyzer.analyzeFailure(workflowResult);
@@ -169,17 +173,19 @@ console.log(analysis.remediationSteps);
 **Location**: `src/lib/monitoring/agents/workflow-agent-orchestrator.ts`
 
 **Features**:
+
 - Collaborative agent workflows
 - Distributed problem solving
 - Specialized agent roles
 - Consensus building
 
 **Usage**:
+
 ```typescript
-import { WorkflowAgentOrchestrator } from '@/lib/monitoring/agents/workflow-agent-orchestrator';
+import { WorkflowAgentOrchestrator } from "@/lib/monitoring/agents/workflow-agent-orchestrator";
 
 const orchestrator = new WorkflowAgentOrchestrator({
-  openaiApiKey: process.env.OPENAI_API_KEY
+  openaiApiKey: process.env.OPENAI_API_KEY,
 });
 
 const result = await orchestrator.analyzeWithAgents(workflowResult);
@@ -190,22 +196,24 @@ const result = await orchestrator.analyzeWithAgents(workflowResult);
 **Location**: `src/lib/ai/agent-config.ts`
 
 **Features**:
+
 - Farm operations analysis
 - Product recommendations
 - Order processing intelligence
 - Seasonal awareness
 
 **Usage**:
+
 ```typescript
-import { getOpenAIClient, FARM_ANALYST_AGENT } from '@/lib/ai/agent-config';
+import { getOpenAIClient, FARM_ANALYST_AGENT } from "@/lib/ai/agent-config";
 
 const client = getOpenAIClient();
 const response = await client.chat.completions.create({
-  model: 'gpt-4o',
+  model: "gpt-4o",
   messages: [
-    { role: 'system', content: FARM_ANALYST_AGENT.systemPrompt },
-    { role: 'user', content: 'Analyze this farm data...' }
-  ]
+    { role: "system", content: FARM_ANALYST_AGENT.systemPrompt },
+    { role: "user", content: "Analyze this farm data..." },
+  ],
 });
 ```
 
@@ -213,11 +221,11 @@ const response = await client.chat.completions.create({
 
 ### Model Pricing (as of 2024)
 
-| Model | Input (per 1M tokens) | Output (per 1M tokens) | Best For |
-|-------|----------------------|------------------------|----------|
-| gpt-4o | $5.00 | $15.00 | Production, best quality |
-| gpt-4o-mini | $0.15 | $0.60 | Development, cost-effective |
-| gpt-4-turbo | $10.00 | $30.00 | Legacy support |
+| Model       | Input (per 1M tokens) | Output (per 1M tokens) | Best For                    |
+| ----------- | --------------------- | ---------------------- | --------------------------- |
+| gpt-4o      | $5.00                 | $15.00                 | Production, best quality    |
+| gpt-4o-mini | $0.15                 | $0.60                  | Development, cost-effective |
+| gpt-4-turbo | $10.00                | $30.00                 | Legacy support              |
 
 ### Cost Optimization Tips
 
@@ -278,18 +286,16 @@ npx tsx scripts/verify-openai.ts
 Create `test.ts`:
 
 ```typescript
-import { OpenAI } from 'openai';
+import { OpenAI } from "openai";
 
 async function test() {
   const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
+    apiKey: process.env.OPENAI_API_KEY,
   });
 
   const response = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
-    messages: [
-      { role: 'user', content: 'Say "Hello Farmers Market!"' }
-    ]
+    model: "gpt-4o-mini",
+    messages: [{ role: "user", content: 'Say "Hello Farmers Market!"' }],
   });
 
   console.log(response.choices[0].message.content);
@@ -305,6 +311,7 @@ Run: `npx tsx test.ts`
 ### Error: "OPENAI_API_KEY not found"
 
 **Solution**: Add key to `.env` file
+
 ```bash
 echo "OPENAI_API_KEY=sk-proj-..." >> .env
 ```
@@ -312,6 +319,7 @@ echo "OPENAI_API_KEY=sk-proj-..." >> .env
 ### Error: "Authentication failed - Invalid API key"
 
 **Causes**:
+
 - Key is incorrect or expired
 - Key format is wrong (should start with `sk-`)
 - Key doesn't have permissions
@@ -321,11 +329,13 @@ echo "OPENAI_API_KEY=sk-proj-..." >> .env
 ### Error: "Rate limit exceeded"
 
 **Causes**:
+
 - Too many requests
 - Free tier limits reached
 - Billing issue
 
-**Solution**: 
+**Solution**:
+
 1. Check OpenAI billing dashboard
 2. Add payment method
 3. Wait for rate limit reset
@@ -334,11 +344,13 @@ echo "OPENAI_API_KEY=sk-proj-..." >> .env
 ### Error: "Network connection failed"
 
 **Causes**:
+
 - No internet connection
 - Firewall blocking
 - OpenAI service down
 
 **Solution**:
+
 1. Check internet connection
 2. Test with: `curl https://api.openai.com`
 3. Check OpenAI status page
@@ -346,6 +358,7 @@ echo "OPENAI_API_KEY=sk-proj-..." >> .env
 ### Error: "Module 'openai' not found"
 
 **Solution**: Install OpenAI package
+
 ```bash
 npm install openai
 ```
@@ -364,6 +377,7 @@ npm install openai
 ### Application Monitoring
 
 Check logs for AI usage:
+
 ```bash
 # View AI analyzer logs
 npm run dev | grep "AI Failure Analyzer"

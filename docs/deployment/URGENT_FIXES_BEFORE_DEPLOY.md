@@ -1,4 +1,5 @@
 # 🚨 URGENT FIXES BEFORE DEPLOY
+
 ## Critical Issues Found During Audit
 
 **Date**: November 29, 2024  
@@ -19,14 +20,17 @@ During the comprehensive audit, **3 critical gaps** were discovered between docu
 ## ❌ CRITICAL ISSUE #1: Favorites Not Persisted on Products Page
 
 ### Problem
+
 The products marketplace page (`src/app/(customer)/marketplace/products/page.tsx`) has a favorites UI, but clicking the heart icon **only updates local state** - it does NOT save to the database.
 
 ### Impact
+
 - Users click favorites but they disappear on page refresh
 - Creates poor user experience and confusion
 - Data not synced with dashboard
 
 ### Current Code (Line 314-323)
+
 ```typescript
 const toggleFavorite = (productId: string) => {
   setFavorites((prev) => {
@@ -51,7 +55,7 @@ const toggleFavorite = (productId: string) => {
 ```typescript
 const toggleFavorite = async (productId: string) => {
   const isCurrentlyFavorite = favorites.has(productId);
-  
+
   // Optimistic update
   setFavorites((prev) => {
     const newFavorites = new Set(prev);
@@ -62,17 +66,17 @@ const toggleFavorite = async (productId: string) => {
     }
     return newFavorites;
   });
-  
+
   try {
-    const response = await fetch('/api/users/favorites', {
-      method: isCurrentlyFavorite ? 'DELETE' : 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        productId, 
-        type: 'product' 
+    const response = await fetch("/api/users/favorites", {
+      method: isCurrentlyFavorite ? "DELETE" : "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        productId,
+        type: "product",
       }),
     });
-    
+
     if (!response.ok) {
       // Rollback on error
       setFavorites((prev) => {
@@ -84,7 +88,7 @@ const toggleFavorite = async (productId: string) => {
         }
         return newFavorites;
       });
-      console.error('Failed to toggle favorite');
+      console.error("Failed to toggle favorite");
     }
   } catch (error) {
     // Rollback on error
@@ -97,7 +101,7 @@ const toggleFavorite = async (productId: string) => {
       }
       return newFavorites;
     });
-    console.error('Failed to toggle favorite:', error);
+    console.error("Failed to toggle favorite:", error);
   }
 };
 ```
@@ -109,20 +113,18 @@ const toggleFavorite = async (productId: string) => {
 useEffect(() => {
   const loadFavorites = async () => {
     try {
-      const response = await fetch('/api/users/favorites');
+      const response = await fetch("/api/users/favorites");
       const data = await response.json();
-      
+
       if (data.success && data.products) {
-        const favoriteIds = new Set(
-          data.products.map((p: any) => p.id)
-        );
+        const favoriteIds = new Set(data.products.map((p: any) => p.id));
         setFavorites(favoriteIds);
       }
     } catch (error) {
-      console.error('Failed to load favorites:', error);
+      console.error("Failed to load favorites:", error);
     }
   };
-  
+
   loadFavorites();
 }, []);
 ```
@@ -136,6 +138,7 @@ onToggleFavorite={() => toggleFavorite(product.id)}
 (No change needed here, but verify it's called correctly)
 
 **Testing**:
+
 1. Login as customer
 2. Navigate to `/marketplace/products`
 3. Click heart icon on any product
@@ -150,14 +153,17 @@ onToggleFavorite={() => toggleFavorite(product.id)}
 ## ❌ CRITICAL ISSUE #2: Payout Schedule API Missing
 
 ### Problem
+
 The `PayoutManagement` component calls `/api/farmer/payout-schedule` API endpoint (line 189), but **this endpoint doesn't exist**.
 
 ### Impact
+
 - Clicking "Save Schedule" button will fail with 404
 - Farmers cannot update their payout schedules
 - Feature appears broken
 
 ### Current Code (Line 189-202)
+
 ```typescript
 const updatePayoutSchedule = async (newSchedule: PayoutSchedule) => {
   try {
@@ -202,14 +208,14 @@ export async function GET(request: NextRequest) {
     if (!session?.user) {
       return NextResponse.json(
         { success: false, error: "Authentication required" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     if (session.user.role !== "FARMER") {
       return NextResponse.json(
         { success: false, error: "Only farmers can access payout schedules" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -219,7 +225,7 @@ export async function GET(request: NextRequest) {
     if (!farmId) {
       return NextResponse.json(
         { success: false, error: "Farm ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -238,7 +244,7 @@ export async function GET(request: NextRequest) {
     if (!farm) {
       return NextResponse.json(
         { success: false, error: "Farm not found or access denied" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -261,7 +267,7 @@ export async function GET(request: NextRequest) {
         error: "Failed to fetch payout schedule",
         details: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -277,14 +283,14 @@ export async function PUT(request: NextRequest) {
     if (!session?.user) {
       return NextResponse.json(
         { success: false, error: "Authentication required" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     if (session.user.role !== "FARMER") {
       return NextResponse.json(
         { success: false, error: "Only farmers can update payout schedules" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -294,17 +300,17 @@ export async function PUT(request: NextRequest) {
     if (!farmId) {
       return NextResponse.json(
         { success: false, error: "Farm ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!schedule || !schedule.frequency || !schedule.minimumAmount) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: "Schedule must include frequency and minimumAmount" 
+        {
+          success: false,
+          error: "Schedule must include frequency and minimumAmount",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -312,22 +318,22 @@ export async function PUT(request: NextRequest) {
     const validFrequencies = ["DAILY", "WEEKLY", "MONTHLY"];
     if (!validFrequencies.includes(schedule.frequency)) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: "Invalid frequency. Must be DAILY, WEEKLY, or MONTHLY" 
+        {
+          success: false,
+          error: "Invalid frequency. Must be DAILY, WEEKLY, or MONTHLY",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Validate minimum amount
     if (schedule.minimumAmount < 10) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: "Minimum amount must be at least $10" 
+        {
+          success: false,
+          error: "Minimum amount must be at least $10",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -342,7 +348,7 @@ export async function PUT(request: NextRequest) {
     if (!farm) {
       return NextResponse.json(
         { success: false, error: "Farm not found or access denied" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -368,7 +374,7 @@ export async function PUT(request: NextRequest) {
         error: "Failed to update payout schedule",
         details: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -385,12 +391,14 @@ model Farm {
 ```
 
 Then run:
+
 ```bash
 npx prisma generate
 npx prisma db push
 ```
 
 **Testing**:
+
 1. Login as farmer
 2. Navigate to `/farmer/payouts` or wherever PayoutManagement is rendered
 3. Click "Edit" on payout schedule
@@ -405,9 +413,11 @@ npx prisma db push
 ## ⚠️ MEDIUM ISSUE #3: Farm Profile Favorites Not Implemented
 
 ### Problem
+
 Documentation claims farm profile page has "Favorite/Save farm functionality", but the feature is **not implemented**.
 
 ### Impact
+
 - Users cannot favorite farms from farm profile page
 - They must go to dashboard to manage farm favorites
 - Inconsistent UX (products have favorites, farms don't)
@@ -419,15 +429,17 @@ Documentation claims farm profile page has "Favorite/Save farm functionality", b
 Add to `src/app/(customer)/marketplace/farms/[slug]/page.tsx`:
 
 1. Add state for favorites:
+
 ```typescript
 const [isFavorite, setIsFavorite] = useState(false);
 ```
 
 2. Load favorite status:
+
 ```typescript
 useEffect(() => {
   const checkFavorite = async () => {
-    const response = await fetch('/api/users/favorites');
+    const response = await fetch("/api/users/favorites");
     const data = await response.json();
     if (data.success) {
       const farmIds = new Set(data.farms.map((f: any) => f.id));
@@ -439,25 +451,27 @@ useEffect(() => {
 ```
 
 3. Add toggle function:
+
 ```typescript
 const toggleFavorite = async () => {
   try {
-    const response = await fetch('/api/users/favorites', {
-      method: isFavorite ? 'DELETE' : 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ farmId: farm.id, type: 'farm' }),
+    const response = await fetch("/api/users/favorites", {
+      method: isFavorite ? "DELETE" : "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ farmId: farm.id, type: "farm" }),
     });
-    
+
     if (response.ok) {
       setIsFavorite(!isFavorite);
     }
   } catch (error) {
-    console.error('Failed to toggle favorite:', error);
+    console.error("Failed to toggle favorite:", error);
   }
 };
 ```
 
 4. Add button in JSX (around the header area):
+
 ```typescript
 <button
   onClick={toggleFavorite}
@@ -474,6 +488,7 @@ const toggleFavorite = async () => {
 **Option B: Remove from Documentation** (~2 min)
 
 Remove line 22 from farm page comments:
+
 ```typescript
 // - Favorite/Save farm functionality  // ❌ DELETE THIS LINE
 ```
@@ -485,6 +500,7 @@ Remove line 22 from farm page comments:
 After implementing fixes, verify:
 
 ### Favorites Integration
+
 - [ ] Products page favorites persist after refresh
 - [ ] Favorites appear in `/dashboard/favorites`
 - [ ] Network tab shows POST/DELETE to `/api/users/favorites`
@@ -492,6 +508,7 @@ After implementing fixes, verify:
 - [ ] Heart icon updates immediately (optimistic UI)
 
 ### Payout Schedule API
+
 - [ ] GET `/api/farmer/payout-schedule?farmId=X` returns schedule
 - [ ] PUT `/api/farmer/payout-schedule` updates successfully
 - [ ] Validation errors return proper status codes
@@ -499,6 +516,7 @@ After implementing fixes, verify:
 - [ ] Unauthenticated users get 401 Unauthorized
 
 ### Farm Profile (if Option A chosen)
+
 - [ ] Favorite button appears on farm profile
 - [ ] Clicking heart adds farm to favorites
 - [ ] Favorites persist after refresh
@@ -509,6 +527,7 @@ After implementing fixes, verify:
 ## 📋 DEPLOYMENT STEPS
 
 1. **Apply Fixes** (2-3 hours)
+
    ```bash
    # 1. Update products page favorites
    # 2. Create payout schedule API
@@ -516,18 +535,21 @@ After implementing fixes, verify:
    ```
 
 2. **Run Tests** (30 min)
+
    ```bash
    # Manual testing of all 3 fixes
    # Verify each item in checklist above
    ```
 
 3. **Commit Changes**
+
    ```bash
    git add .
    git commit -m "fix: Complete favorites integration and payout schedule API"
    ```
 
 4. **Deploy to Staging** (15 min)
+
    ```bash
    # Deploy and test in staging environment
    ```
@@ -551,12 +573,14 @@ All critical gaps will be closed and the application will be fully production-re
 ## 📞 NEED HELP?
 
 If you encounter issues:
+
 1. Check browser console for error messages
 2. Check Network tab for API request/response
 3. Verify authentication is working
 4. Check server logs for backend errors
 
 Reference files:
+
 - Full audit: `AUDIT_REPORT.md`
 - API docs: `README_FIXES.md`
 - Deployment: `DEPLOY_CHECKLIST.md`

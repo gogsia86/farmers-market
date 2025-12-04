@@ -151,7 +151,12 @@ export function DialogContent({
 
 export function DialogHeader({ children, className }: DialogHeaderProps) {
   return (
-    <div className={cn("flex flex-col space-y-1.5 text-center sm:text-left", className)}>
+    <div
+      className={cn(
+        "flex flex-col space-y-1.5 text-center sm:text-left",
+        className,
+      )}
+    >
       {children}
     </div>
   );
@@ -187,7 +192,5 @@ export function DialogDescription({
   children,
   className,
 }: DialogDescriptionProps) {
-  return (
-    <p className={cn("text-sm text-gray-500", className)}>{children}</p>
-  );
+  return <p className={cn("text-sm text-gray-500", className)}>{children}</p>;
 }

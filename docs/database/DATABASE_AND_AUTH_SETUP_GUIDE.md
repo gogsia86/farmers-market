@@ -1,4 +1,5 @@
 # 🌾 DATABASE & AUTHENTICATION SETUP GUIDE
+
 **Farmers Market Platform - Complete Setup Instructions**
 
 ---
@@ -6,6 +7,7 @@
 ## 📋 **Overview**
 
 Your platform is **architecturally ready** but needs:
+
 1. ✅ **Database population** (users, farms, products)
 2. ✅ **Test accounts** for all user roles (Admin, Farmer, Consumer)
 
@@ -16,7 +18,9 @@ Your platform is **architecturally ready** but needs:
 ## 🎯 **Quick Setup (5 Minutes)**
 
 ### **Option 1: Basic Setup** (Recommended for Testing)
+
 **What it creates**: Minimal data to test all features
+
 - 1 Admin user
 - 2 Farmers
 - 2 Consumers
@@ -28,6 +32,7 @@ npm run db:seed:basic
 ```
 
 **Login Credentials Created**:
+
 ```
 Admin:
   Email: gogsia@gmail.com
@@ -53,6 +58,7 @@ Consumer 2:
 ---
 
 ### **Option 2: Admin Only** (Quick Login Test)
+
 **What it creates**: Just one admin user
 
 ```powershell
@@ -61,6 +67,7 @@ npx ts-node prisma/seed-admin.ts
 ```
 
 **Login Credentials Created**:
+
 ```
 Admin:
   Email: admin@farmersmarket.app
@@ -72,7 +79,9 @@ Admin:
 ---
 
 ### **Option 3: Comprehensive Seed** (Full Demo Data)
+
 **What it creates**: Production-like dataset
+
 - 1 Admin (Mile Mochwara)
 - 5 Farmers (Ana Romana, Sarah Greenfield, John Harvest, Maria Flores, David Organicson)
 - 3 Consumers (Divna Kapica, Emily Conscious, Michael Green)
@@ -86,6 +95,7 @@ npm run db:seed
 ```
 
 **Key Login Credentials**:
+
 ```
 Admin:
   Email: admin@farmersmarket.app
@@ -102,6 +112,7 @@ Featured Consumer (Divna Kapica):
 ```
 
 **All Credentials from Comprehensive Seed**:
+
 ```
 FARMERS:
   ana.romana@email.com / FarmLife2024!
@@ -143,16 +154,19 @@ docker-compose -f docker/compose/docker-compose.dev.yml up -d db redis
 Pick one based on your needs:
 
 #### **For Quick Testing** → Use Basic Seed
+
 ```powershell
 npm run db:seed:basic
 ```
 
 #### **For Demo/Presentation** → Use Comprehensive Seed
+
 ```powershell
 npm run db:seed
 ```
 
 #### **Just Need Admin Access** → Use Admin Only
+
 ```powershell
 npx ts-node prisma/seed-admin.ts
 ```
@@ -162,6 +176,7 @@ npx ts-node prisma/seed-admin.ts
 ### **Step 3: Verify Seeding Success**
 
 You should see console output like:
+
 ```
 🌾 Seeding database with basic data...
 
@@ -191,17 +206,20 @@ You should see console output like:
 ### **Step 4: Test Authentication**
 
 #### **Test Admin Login**:
+
 1. Navigate to: http://localhost:3001/admin-login
 2. Enter credentials (based on your seed choice)
 3. Click "Sign In"
 4. Should redirect to `/admin` dashboard ✅
 
 #### **Test Farmer Login**:
+
 1. Navigate to: http://localhost:3001/login
 2. Enter farmer credentials
 3. Should redirect to farmer dashboard ✅
 
 #### **Test Consumer Login**:
+
 1. Navigate to: http://localhost:3001/login
 2. Enter consumer credentials
 3. Should redirect to home page (authenticated) ✅
@@ -211,7 +229,9 @@ You should see console output like:
 ## 🔧 **Troubleshooting**
 
 ### **Issue: "User not found or no password set"**
+
 **Solution**: Database not seeded yet
+
 ```powershell
 npm run db:seed:basic
 ```
@@ -219,7 +239,9 @@ npm run db:seed:basic
 ---
 
 ### **Issue: Rate Limit Exceeded (429)**
+
 **Solution**: Too many failed login attempts. Restart dev server:
+
 ```powershell
 # Press Ctrl+C in dev server terminal, then:
 npm run dev:omen
@@ -228,7 +250,9 @@ npm run dev:omen
 ---
 
 ### **Issue: "Database connection failed"**
+
 **Solution**: Docker containers not running
+
 ```powershell
 # Start database and Redis:
 docker-compose -f docker/compose/docker-compose.dev.yml up -d db redis
@@ -242,7 +266,9 @@ docker ps
 ---
 
 ### **Issue: "Prisma Client not generated"**
+
 **Solution**: Regenerate Prisma client
+
 ```powershell
 npx prisma generate
 ```
@@ -250,7 +276,9 @@ npx prisma generate
 ---
 
 ### **Issue: Want to Start Fresh**
+
 **Solution**: Reset database and reseed
+
 ```powershell
 # ⚠️ WARNING: This deletes ALL data!
 npm run db:reset
@@ -265,6 +293,7 @@ npm run db:seed:basic
 ## 📊 **What Gets Created**
 
 ### **Database Schema Populated**:
+
 - ✅ Users (Admin, Farmers, Consumers)
 - ✅ Farms (with profiles, locations, stories)
 - ✅ Products (across all categories)
@@ -274,6 +303,7 @@ npm run db:seed:basic
 - ✅ Addresses (delivery locations)
 
 ### **Authentication Features Enabled**:
+
 - ✅ Email/Password login
 - ✅ Role-based access control (RBAC)
 - ✅ Session management
@@ -286,7 +316,9 @@ npm run db:seed:basic
 ## 🎭 **User Role Capabilities**
 
 ### **ADMIN** (`admin@farmersmarket.app`)
+
 **Access**:
+
 - `/admin` - Dashboard overview
 - `/admin/users` - User management
 - `/admin/farms` - Farm verification
@@ -295,6 +327,7 @@ npm run db:seed:basic
 - `/admin/settings` - System configuration
 
 **Powers**:
+
 - View all platform data
 - Verify/reject farms
 - Manage users (suspend, activate)
@@ -304,13 +337,16 @@ npm run db:seed:basic
 ---
 
 ### **FARMER** (e.g., `ana.romana@email.com`)
+
 **Access**:
+
 - `/farmer/dashboard` - Farmer dashboard
 - `/farmer/products` - Product management
 - `/farmer/orders` - Incoming orders
 - `/farmer/farm` - Farm profile editing
 
 **Powers**:
+
 - Create/edit/delete products
 - Manage farm profile
 - Process orders
@@ -320,7 +356,9 @@ npm run db:seed:basic
 ---
 
 ### **CONSUMER** (e.g., `divna.kapica@email.com`)
+
 **Access**:
+
 - `/` - Browse farms and products
 - `/cart` - Shopping cart
 - `/checkout` - Order placement
@@ -328,6 +366,7 @@ npm run db:seed:basic
 - `/profile` - Profile management
 
 **Powers**:
+
 - Browse and search products
 - Add to cart and checkout
 - Track orders
@@ -378,6 +417,7 @@ Once database is seeded and authentication works:
    - Test payment flow end-to-end
 
 3. **✅ Run Full Test Suite**
+
    ```powershell
    npm run test:coverage
    ```
@@ -390,6 +430,7 @@ Once database is seeded and authentication works:
 ## 💡 **Pro Tips**
 
 ### **Development Workflow**:
+
 ```powershell
 # Terminal 1: Dev server
 npm run dev:omen
@@ -403,6 +444,7 @@ npm run db:studio
 ```
 
 ### **View Data Visually**:
+
 ```powershell
 # Launch Prisma Studio:
 npm run db:studio
@@ -412,6 +454,7 @@ npm run db:studio
 ```
 
 ### **Create Custom Test User**:
+
 ```powershell
 # Open Prisma Studio
 npm run db:studio
@@ -426,10 +469,11 @@ npm run db:studio
 ```
 
 **Hash Password for Manual Creation**:
+
 ```javascript
 // In Node.js console or new file:
-const bcrypt = require('bcryptjs');
-const hash = bcrypt.hashSync('YourPassword123!', 12);
+const bcrypt = require("bcryptjs");
+const hash = bcrypt.hashSync("YourPassword123!", 12);
 console.log(hash);
 // Copy the output and paste into password field
 ```
@@ -450,11 +494,13 @@ If you encounter issues not covered here:
 ## ✨ **Summary**
 
 **TL;DR** - Run this one command to get started:
+
 ```powershell
 npm run db:seed:basic
 ```
 
 Then log in at:
+
 - **Admin**: http://localhost:3001/admin-login
   - Email: `gogsia@gmail.com`
   - Password: `Admin123!`
