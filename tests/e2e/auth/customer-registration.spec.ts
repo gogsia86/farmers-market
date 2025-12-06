@@ -7,7 +7,7 @@
  * @reference 13_TESTING_PERFORMANCE_MASTERY.instructions.md
  */
 
-import { test, expect } from "@playwright/test";
+$1import { TEST_USERS } from "../helpers/auth";
 
 // Test data factory
 function generateTestCustomer() {
@@ -31,8 +31,8 @@ function generateTestCustomer() {
 test.describe("🌾 Customer Registration Flow", () => {
   test.beforeEach(async ({ page }) => {
     // Start from homepage
-    await page.goto("/");
-  });
+    $1
+    await page.waitForLoadState("networkidle");$2});
 
   test("should complete full customer registration successfully", async ({
     page,
@@ -40,98 +40,78 @@ test.describe("🌾 Customer Registration Flow", () => {
     const customer = generateTestCustomer();
 
     // Step 1: Navigate to registration page
-    await page.click('a[href="/register"]');
-    await expect(page).toHaveURL(/\/register/);
+    await page.click('a[href="/signup"]');
+    await expect(page).toHaveURL(/\/signup/);
     await expect(
       page.getByRole("heading", { name: /create account/i }),
     ).toBeVisible();
 
-    // Step 2: Select customer role
-    await page.click('button:has-text("Customer")');
-
-    // Step 3: Fill registration form
-    await page.fill('input[name="firstName"]', customer.firstName);
-    await page.fill('input[name="lastName"]', customer.lastName);
+    // Step 2: Fill registration form
+    await page.fill(
+      'input[name="name"]',
+      `${customer.firstName} ${customer.lastName}`,
+    );
     await page.fill('input[name="email"]', customer.email);
     await page.fill('input[name="password"]', customer.password);
     await page.fill('input[name="confirmPassword"]', customer.password);
 
-    // Add phone (optional)
-    const phoneInput = page.locator('input[name="phone"]');
-    if (await phoneInput.isVisible()) {
-      await phoneInput.fill(customer.phone);
-    }
+    // Step 3: Select customer role (CONSUMER)
+    await page.click('input[type="radio"][value="CONSUMER"]');
 
     // Step 4: Accept terms and conditions
-    await page.check('input[type="checkbox"][name="terms"]');
+    await page.check('input[name="agreeToTerms"]');
 
     // Step 5: Submit registration
-    await page.click('button[type="submit"]:has-text("Create Account")');
+    await page.click('button[type="submit"]');
 
     // Step 6: Verify successful registration
-    // Should redirect to dashboard or verification page
-    await page.waitForURL(/\/(dashboard|verify-email)/);
-
-    // Check for success message
-    const successMessage = page.locator('text=/account created|welcome/i');
-    await expect(successMessage).toBeVisible({ timeout: 10000 });
+    // Should redirect to login page with registered=true
+    await page.waitForURL(/\/login\?registered=true/);
   });
 
   test("should show validation errors for invalid email", async ({ page }) => {
-    await page.goto("/register");
-
-    // Select customer role
-    await page.click('button:has-text("Customer")');
-
-    // Fill with invalid email
-    await page.fill('input[name="firstName"]', "John");
-    await page.fill('input[name="lastName"]', "Doe");
+    $1
+    await page.waitForLoadState("networkidle");$2// Fill form with invalid email
+    await page.fill('input[name="name"]', "John Doe");
     await page.fill('input[name="email"]', "invalid-email");
     await page.fill('input[name="password"]', "SecurePass123!");
     await page.fill('input[name="confirmPassword"]', "SecurePass123!");
-    await page.check('input[type="checkbox"][name="terms"]');
+    await page.click('input[type="radio"][value="CONSUMER"]');
+    await page.check('input[name="agreeToTerms"]');
 
     // Submit form
-    await page.click('button[type="submit"]:has-text("Create Account")');
+    await page.click('button[type="submit"]');
 
     // Should show validation error
-    const errorMessage = page.locator('text=/invalid email|valid email/i');
+    const errorMessage = page.locator("text=/invalid email|valid email/i");
     await expect(errorMessage).toBeVisible();
   });
 
   test("should show error for mismatched passwords", async ({ page }) => {
-    await page.goto("/register");
-
-    await page.click('button:has-text("Customer")');
-
-    await page.fill('input[name="firstName"]', "John");
-    await page.fill('input[name="lastName"]', "Doe");
-    await page.fill('input[name="email"]', "test@example.com");
-    await page.fill('input[name="password"]', "Password123!");
+    $1
+    await page.waitForLoadState("networkidle");$2await page.fill('input[name="name"]', "John Doe");
+    await page.fill('input[name="email"]', "test.temp@example.com");
+    await page.fill('input[name="password"]', "SecurePass123!");
     await page.fill('input[name="confirmPassword"]', "DifferentPass123!");
-    await page.check('input[type="checkbox"][name="terms"]');
+    await page.click('input[type="radio"][value="CONSUMER"]');
+    await page.check('input[name="agreeToTerms"]');
 
     await page.click('button[type="submit"]');
 
     // Should show password mismatch error
-    const errorMessage = page.locator('text=/passwords.*match/i');
+    const errorMessage = page.locator("text=/passwords.*match/i");
     await expect(errorMessage).toBeVisible();
   });
 
   test("should require strong password", async ({ page }) => {
-    await page.goto("/register");
-
-    await page.click('button:has-text("Customer")');
-
-    await page.fill('input[name="firstName"]', "John");
-    await page.fill('input[name="lastName"]', "Doe");
-    await page.fill('input[name="email"]', "test@example.com");
-    await page.fill('input[name="password"]', "weak"); // Weak password
-    await page.fill('input[name="confirmPassword"]', "weak");
+    $1
+    await page.waitForLoadState("networkidle");$2await page.fill('input[name="name"]', "John Doe");
+    await page.fill('input[name="email"]', "test.temp@example.com");
+    await page.fill('input[name="password"]', "weak");
 
     // Should show password strength indicator or error
     const passwordError = page.locator(
-      'text=/password.*strong|password.*8 characters/i',
+      "text=/password.*strong|password.*8 characters/i",
     );
     await expect(passwordError).toBeVisible();
   });
@@ -141,62 +121,50 @@ test.describe("🌾 Customer Registration Flow", () => {
   }) => {
     const customer = generateTestCustomer();
 
-    await page.goto("/register");
-    await page.click('button:has-text("Customer")');
-
-    await page.fill('input[name="firstName"]', customer.firstName);
-    await page.fill('input[name="lastName"]', customer.lastName);
+    $1
+    await page.waitForLoadState("networkidle");$2await page.fill(
+      'input[name="name"]',
+      `${customer.firstName} ${customer.lastName}`,
+    );
     await page.fill('input[name="email"]', customer.email);
     await page.fill('input[name="password"]', customer.password);
     await page.fill('input[name="confirmPassword"]', customer.password);
+    await page.click('input[type="radio"][value="CONSUMER"]');
 
-    // Don't check terms checkbox
+    // Do NOT check terms
+    // await page.check('input[name="agreeToTerms"]');
 
     // Try to submit
-    const submitButton = page.locator(
-      'button[type="submit"]:has-text("Create Account")',
-    );
+    await page.click('button[type="submit"]');
 
-    // Button should be disabled or show error
-    const isDisabled = await submitButton.isDisabled();
-    if (!isDisabled) {
-      await submitButton.click();
-      // Should show terms error
-      const termsError = page.locator('text=/accept.*terms/i');
-      await expect(termsError).toBeVisible();
-    } else {
-      expect(isDisabled).toBe(true);
-    }
+    // Should show terms error or stay on page
+    const termsError = page.locator("text=/accept.*terms|must agree/i");
+    await expect(termsError).toBeVisible();
   });
 
   test("should show error for duplicate email", async ({ page }) => {
     // Note: This test assumes a known test account exists
-    await page.goto("/register");
-
-    await page.click('button:has-text("Customer")');
-
-    // Try to register with existing email
-    await page.fill('input[name="firstName"]', "John");
-    await page.fill('input[name="lastName"]', "Doe");
-    await page.fill('input[name="email"]', "existing@example.com");
-    await page.fill('input[name="password"]', "SecurePass123!");
-    await page.fill('input[name="confirmPassword"]', "SecurePass123!");
-    await page.check('input[type="checkbox"][name="terms"]');
+    $1
+    await page.waitForLoadState("networkidle");$2// Use a known existing email (from test setup)
+    await page.fill('input[name="name"]', "Test User");
+    await page.fill('input[name="email"]', "customer@farmersmarket.app");
+    await page.fill('input[name="password"]', "TestPassword123!");
+    await page.fill('input[name="confirmPassword"]', "TestPassword123!");
+    await page.click('input[type="radio"][value="CONSUMER"]');
+    await page.check('input[name="agreeToTerms"]');
 
     await page.click('button[type="submit"]');
 
-    // Should show duplicate email error (or redirect to login)
+    // Should show duplicate email error
     const errorMessage = page.locator(
-      'text=/email.*already.*exists|email.*taken/i',
+      "text=/email.*already|already.*registered|user.*exists/i",
     );
-    // Wait a bit for potential API response
-    await expect(errorMessage).toBeVisible({ timeout: 5000 });
+    await expect(errorMessage).toBeVisible({ timeout: 10000 });
   });
 
   test("should have link to login page", async ({ page }) => {
-    await page.goto("/register");
-
-    // Should have link to login
+    $1
+    await page.waitForLoadState("networkidle");$2// Should have link to login
     const loginLink = page.locator('a[href="/login"]');
     await expect(loginLink).toBeVisible();
 
@@ -209,15 +177,14 @@ test.describe("🌾 Customer Registration Flow", () => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 }); // iPhone SE
 
-    await page.goto("/register");
-
-    // Form should be visible and usable
-    const firstNameInput = page.locator('input[name="firstName"]');
-    await expect(firstNameInput).toBeVisible();
+    $1
+    await page.waitForLoadState("networkidle");$2// Form should be visible and usable
+    const nameInput = page.locator('input[name="name"]');
+    await expect(nameInput).toBeVisible();
 
     // Check if form is scrollable and inputs are accessible
-    await firstNameInput.fill("John");
-    await expect(firstNameInput).toHaveValue("John");
+    await nameInput.fill("John Doe");
+    await expect(nameInput).toHaveValue("John Doe");
 
     // Submit button should be visible
     const submitButton = page.locator('button[type="submit"]');
@@ -228,39 +195,36 @@ test.describe("🌾 Customer Registration Flow", () => {
 test.describe("🔐 Customer Login Flow", () => {
   test("should login successfully with valid credentials", async ({ page }) => {
     // Note: This assumes a test account exists
-    await page.goto("/login");
-
-    await page.fill('input[name="email"]', "test.customer@example.com");
-    await page.fill('input[name="password"]', "TestPass123!");
+    $1
+    await page.waitForLoadState("networkidle");$2await page.fill('input[name="email"]', TEST_USERS.customer.email);
+    await page.fill('input[name="password"]', TEST_USERS.customer.password);
 
     await page.click('button[type="submit"]:has-text("Sign In")');
 
-    // Should redirect to dashboard
-    await page.waitForURL(/\/dashboard/);
+    // Should redirect after login (customers may not have dedicated dashboard)
+    await page.waitForURL((url) => !url.pathname.includes("/login"), { timeout: 10000 });
     await expect(page).toHaveURL(/\/dashboard/);
 
     // Should see user info or dashboard elements
-    const welcomeMessage = page.locator('text=/welcome|dashboard/i');
+    const welcomeMessage = page.locator("text=/welcome|dashboard/i");
     await expect(welcomeMessage).toBeVisible();
   });
 
   test("should show error for invalid credentials", async ({ page }) => {
-    await page.goto("/login");
-
-    await page.fill('input[name="email"]', "nonexistent@example.com");
+    $1
+    await page.waitForLoadState("networkidle");$2await page.fill('input[name="email"]', "nonexistent@example.com");
     await page.fill('input[name="password"]', "WrongPassword123!");
 
     await page.click('button[type="submit"]');
 
     // Should show error message
-    const errorMessage = page.locator('text=/invalid.*credentials|incorrect/i');
+    const errorMessage = page.locator("text=/invalid.*credentials|incorrect/i");
     await expect(errorMessage).toBeVisible();
   });
 
   test("should have forgot password link", async ({ page }) => {
-    await page.goto("/login");
-
-    const forgotPasswordLink = page.locator('a:has-text("Forgot Password")');
+    $1
+    await page.waitForLoadState("networkidle");$2const forgotPasswordLink = page.locator('a:has-text("Forgot Password")');
     await expect(forgotPasswordLink).toBeVisible();
 
     await forgotPasswordLink.click();
@@ -268,53 +232,50 @@ test.describe("🔐 Customer Login Flow", () => {
   });
 
   test("should have link to registration page", async ({ page }) => {
-    await page.goto("/login");
-
-    const registerLink = page.locator('a[href="/register"]');
+    $1
+    await page.waitForLoadState("networkidle");$2const registerLink = page.locator('a[href="/signup"]');
     await expect(registerLink).toBeVisible();
 
     await registerLink.click();
-    await expect(page).toHaveURL(/\/register/);
+    await expect(page).toHaveURL(/\/signup/);
   });
 });
 
 test.describe("👤 Customer Profile Management", () => {
   test.beforeEach(async ({ page }) => {
     // Login first
-    await page.goto("/login");
-    await page.fill('input[name="email"]', "test.customer@example.com");
-    await page.fill('input[name="password"]', "TestPass123!");
+    $1
+    await page.waitForLoadState("networkidle");$2await page.fill('input[name="email"]', TEST_USERS.customer.email);
+    await page.fill('input[name="password"]', TEST_USERS.customer.password);
     await page.click('button[type="submit"]');
     await page.waitForURL(/\/dashboard/);
   });
 
   test("should navigate to account settings", async ({ page }) => {
     // Navigate to account page
-    await page.goto("/account");
-
-    // Should see account information
+    $1
+    await page.waitForLoadState("networkidle");$2// Should see account information
     await expect(page.getByRole("heading", { name: /account/i })).toBeVisible();
 
     // Should see profile fields
-    await expect(page.locator('text=/email|name/i')).toBeVisible();
+    await expect(page.locator("text=/email|name/i")).toBeVisible();
   });
 
   test("should view account details", async ({ page }) => {
-    await page.goto("/account");
-
-    // Should display user information
-    const emailElement = page.locator('text=/test.customer@example.com/i');
+    $1
+    await page.waitForLoadState("networkidle");$2// Should display user information
+    const emailElement = page.locator("text=/test.customer@example.com/i");
     await expect(emailElement).toBeVisible();
 
     // Should have statistics
-    const statsElements = page.locator('text=/total orders|total spent/i');
+    const statsElements = page.locator("text=/total orders|total spent/i");
     await expect(statsElements.first()).toBeVisible();
   });
 
   test("should navigate between dashboard and account", async ({ page }) => {
     // Start at dashboard
-    await page.goto("/dashboard");
-    await expect(page).toHaveURL(/\/dashboard/);
+    $1
+    await page.waitForLoadState("networkidle");$2await expect(page).toHaveURL(/\/dashboard/);
 
     // Navigate to account
     const accountLink = page.locator('a[href="/account"]');
@@ -331,9 +292,9 @@ test.describe("👤 Customer Profile Management", () => {
 test.describe("🚪 Customer Logout", () => {
   test("should logout successfully", async ({ page }) => {
     // Login first
-    await page.goto("/login");
-    await page.fill('input[name="email"]', "test.customer@example.com");
-    await page.fill('input[name="password"]', "TestPass123!");
+    $1
+    await page.waitForLoadState("networkidle");$2await page.fill('input[name="email"]', TEST_USERS.customer.email);
+    await page.fill('input[name="password"]', TEST_USERS.customer.password);
     await page.click('button[type="submit"]');
     await page.waitForURL(/\/dashboard/);
 
@@ -345,7 +306,7 @@ test.describe("🚪 Customer Logout", () => {
     await page.waitForURL(/\/|\/login/);
 
     // Should not be able to access protected pages
-    await page.goto("/dashboard");
-    await expect(page).toHaveURL(/\/login/);
+    $1
+    await page.waitForLoadState("networkidle");$2await expect(page).toHaveURL(/\/login/);
   });
 });

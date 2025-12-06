@@ -53,7 +53,7 @@ interface OrderNotificationData {
  * @returns Promise<boolean> - true if sent successfully
  */
 export async function sendEmailLazy(options: EmailOptions): Promise<boolean> {
-  const { emailService } = await import("./email-service");
+  const { emailService } = await import("./email.service");
   return emailService.sendEmail(options);
 }
 
@@ -67,8 +67,14 @@ export async function sendFarmerWelcomeLazy(
   email: string,
   data: FarmerWelcomeData,
 ): Promise<boolean> {
-  const { emailService } = await import("./email-service");
-  return emailService.sendFarmerWelcome(email, data);
+  const { emailService } = await import("./email.service");
+  // Note: email.service uses sendWelcomeEmail, not sendFarmerWelcome
+  // Need to adapt the data structure
+  return emailService.sendWelcomeEmail({
+    firstName: data.farmerName,
+    email: email,
+    loginUrl: `${process.env.NEXTAUTH_URL}/farmer/dashboard`,
+  });
 }
 
 /**
@@ -79,8 +85,15 @@ export async function sendFarmerWelcomeLazy(
 export async function sendSupportTicketConfirmationLazy(
   data: SupportTicketData,
 ): Promise<boolean> {
-  const { emailService } = await import("./email-service");
-  return emailService.sendSupportTicketConfirmation(data);
+  const { emailService } = await import("./email.service");
+  return emailService.sendSupportTicketEmail({
+    ticketId: data.ticketId,
+    userName: data.name,
+    email: data.email,
+    subject: data.subject,
+    message: "", // Not available in old interface
+    priority: "MEDIUM", // Default priority
+  });
 }
 
 /**
@@ -93,8 +106,16 @@ export async function sendOrderNotificationLazy(
   farmerEmail: string,
   data: OrderNotificationData,
 ): Promise<boolean> {
-  const { emailService } = await import("./email-service");
-  return emailService.sendOrderNotification(farmerEmail, data);
+  const { emailService } = await import("./email.service");
+  return emailService.sendOrderConfirmationEmail({
+    orderNumber: data.orderNumber,
+    customerName: data.customerName,
+    email: farmerEmail,
+    items: data.items,
+    total: data.total,
+    deliveryDate: data.pickupDate,
+    trackingUrl: `${process.env.NEXTAUTH_URL}/farmer/orders/${data.orderNumber}`,
+  });
 }
 
 /**
@@ -107,8 +128,16 @@ export async function sendOrderConfirmationLazy(
   customerEmail: string,
   data: OrderNotificationData,
 ): Promise<boolean> {
-  const { emailService } = await import("./email-service");
-  return emailService.sendOrderConfirmation(customerEmail, data);
+  const { emailService } = await import("./email.service");
+  return emailService.sendOrderConfirmationEmail({
+    orderNumber: data.orderNumber,
+    customerName: data.customerName,
+    email: customerEmail,
+    items: data.items,
+    total: data.total,
+    deliveryDate: data.pickupDate,
+    trackingUrl: `${process.env.NEXTAUTH_URL}/orders/${data.orderNumber}`,
+  });
 }
 
 /**
@@ -118,7 +147,7 @@ export async function sendOrderConfirmationLazy(
  */
 export async function isEmailServiceConfiguredLazy(): Promise<boolean> {
   try {
-    const { emailService } = await import("./email-service");
+    const { emailService } = await import("./email.service");
     // Access through a method since isConfigured is private
     await emailService.sendEmail({
       to: "test@example.com",
@@ -140,7 +169,7 @@ export async function isEmailServiceConfiguredLazy(): Promise<boolean> {
 export async function sendBatchEmailsLazy(
   emails: EmailOptions[],
 ): Promise<boolean[]> {
-  const { emailService } = await import("./email-service");
+  const { emailService } = await import("./email.service");
 
   return Promise.all(emails.map((options) => emailService.sendEmail(options)));
 }
@@ -154,7 +183,7 @@ export async function sendSeasonalNewsletterLazy(
   season: "SPRING" | "SUMMER" | "FALL" | "WINTER",
   content: string,
 ): Promise<boolean> {
-  const { emailService } = await import("./email-service");
+  const { emailService } = await import("./email.service");
 
   const seasonEmoji = {
     SPRING: "🌱",
@@ -178,7 +207,7 @@ export async function sendSeasonalNewsletterLazy(
  */
 export function createDeferredEmailSender(options: EmailOptions) {
   return async (): Promise<boolean> => {
-    const { emailService } = await import("./email-service");
+    const { emailService } = await import("./email.service");
     return emailService.sendEmail(options);
   };
 }

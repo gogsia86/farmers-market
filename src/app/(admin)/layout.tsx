@@ -1,4 +1,4 @@
-import { requireAdmin } from "@/lib/auth";
+import { auth } from "@/lib/auth";
 import {
   ArrowRightStartOnRectangleIcon,
   BanknotesIcon,
@@ -18,13 +18,17 @@ export const dynamic = "force-dynamic";
 /**
  * Modern Horizontal Admin Layout
  * Clean, compact top navigation design
+ *
+ * Note: Authentication and authorization are handled by middleware.
+ * This layout assumes the user is authenticated and has admin role (ADMIN, SUPER_ADMIN, or MODERATOR).
  */
 export default async function AdminLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await requireAdmin();
+  // Get session (middleware ensures user is authenticated and has admin role)
+  const session = await auth();
 
   // Icon mapping for serialization safety
   const iconMap = {

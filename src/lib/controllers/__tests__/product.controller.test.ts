@@ -18,7 +18,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { productController } from "../product.controller";
-import { ProductService } from "@/lib/services/product.service.refactored";
+import { ProductService } from "@/lib/services/product.service";
 import { auth } from "@/lib/auth";
 import { ProductCategory } from "@/types/product";
 

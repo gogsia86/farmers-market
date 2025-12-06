@@ -33,9 +33,9 @@ export async function GET(request: NextRequest) {
       OR: [
         { name: { contains: query, mode: "insensitive" } },
         { description: { contains: query, mode: "insensitive" } },
-        { category: { contains: query, mode: "insensitive" } },
       ],
-      isActive: true,
+      inStock: true,
+      status: "ACTIVE",
     };
 
     if (category) {
@@ -64,10 +64,10 @@ export async function GET(request: NextRequest) {
     const results = products.map((product) => ({
       id: product.id,
       name: product.name,
-      category: product.category || "Uncategorized",
-      price: product.price,
+      category: product.category,
+      price: Number(product.price),
       image: product.images?.[0] || "/placeholder-product.jpg",
-      inStock: true, // Simplified for now
+      unit: product.unit,
     }));
 
     return NextResponse.json({

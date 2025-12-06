@@ -3,8 +3,19 @@
  * Seeds database with test users and data before E2E tests run
  */
 
-import { database } from "@/lib/database";
+import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 import * as bcrypt from "bcryptjs";
+
+// Use test database URL directly
+const TEST_DATABASE_URL =
+  "postgresql://postgres:test_password_123@localhost:5433/farmersmarket_test";
+
+// Create dedicated Prisma Client for E2E tests
+const pool = new Pool({ connectionString: TEST_DATABASE_URL });
+const adapter = new PrismaPg(pool);
+const database = new PrismaClient({ adapter });
 
 async function globalSetup() {
   console.log(
@@ -133,22 +144,18 @@ async function globalSetup() {
         description: "A biodynamic test farm for E2E testing",
         ownerId: farmer.id,
         status: "ACTIVE",
-        verified: true,
-        location: {
-          address: "123 Farm Road",
-          city: "Sacramento",
-          state: "CA",
-          zipCode: "95814",
-          country: "USA",
-          coordinates: {
-            latitude: 38.5816,
-            longitude: -121.4944,
-          },
-        },
-        certifications: ["ORGANIC", "BIODYNAMIC"],
-        practices: ["NO_TILL", "COVER_CROPPING", "COMPOSTING"],
-        contactEmail: farmer.email,
-        contactPhone: "+1-555-0100",
+        verificationStatus: "VERIFIED",
+        email: farmer.email,
+        phone: "+1-555-0100",
+        address: "123 Farm Road",
+        city: "Sacramento",
+        state: "CA",
+        zipCode: "95814",
+        country: "US",
+        latitude: 38.5816,
+        longitude: -121.4944,
+        images: [],
+        certificationsArray: ["ORGANIC", "BIODYNAMIC"],
       },
     });
     console.log(`✅ Farm: ${farm.name}`);
@@ -163,12 +170,16 @@ async function globalSetup() {
           description: "Fresh, juicy organic tomatoes",
           farmId: farm.id,
           category: "VEGETABLES",
+          status: "ACTIVE",
           price: 4.99,
           unit: "LB",
-          stockQuantity: 100,
-          available: true,
+          quantityAvailable: 100,
+          inStock: true,
+          organic: true,
           seasonal: true,
           harvestDate: new Date(),
+          primaryPhotoUrl:
+            "https://images.unsplash.com/photo-1546470427-e26264be0b3d",
           images: ["https://images.unsplash.com/photo-1546470427-e26264be0b3d"],
         },
       }),
@@ -179,12 +190,16 @@ async function globalSetup() {
           description: "Crispy organic lettuce",
           farmId: farm.id,
           category: "VEGETABLES",
+          status: "ACTIVE",
           price: 3.49,
           unit: "HEAD",
-          stockQuantity: 50,
-          available: true,
+          quantityAvailable: 50,
+          inStock: true,
+          organic: true,
           seasonal: true,
           harvestDate: new Date(),
+          primaryPhotoUrl:
+            "https://images.unsplash.com/photo-1556801712-76c8eb07bbc9",
           images: ["https://images.unsplash.com/photo-1556801712-76c8eb07bbc9"],
         },
       }),
@@ -195,12 +210,16 @@ async function globalSetup() {
           description: "Sweet and crunchy organic carrots",
           farmId: farm.id,
           category: "VEGETABLES",
+          status: "ACTIVE",
           price: 2.99,
           unit: "LB",
-          stockQuantity: 75,
-          available: true,
+          quantityAvailable: 75,
+          inStock: true,
+          organic: true,
           seasonal: true,
           harvestDate: new Date(),
+          primaryPhotoUrl:
+            "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37",
           images: [
             "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37",
           ],
@@ -232,22 +251,18 @@ async function globalSetup() {
         description: "Organic vegetables and fruits",
         ownerId: farmer2.id,
         status: "ACTIVE",
-        verified: true,
-        location: {
-          address: "456 Valley Road",
-          city: "Davis",
-          state: "CA",
-          zipCode: "95616",
-          country: "USA",
-          coordinates: {
-            latitude: 38.5449,
-            longitude: -121.7405,
-          },
-        },
-        certifications: ["ORGANIC"],
-        practices: ["COMPOSTING", "CROP_ROTATION"],
-        contactEmail: farmer2.email,
-        contactPhone: "+1-555-0101",
+        verificationStatus: "VERIFIED",
+        email: farmer2.email,
+        phone: "+1-555-0101",
+        address: "456 Valley Road",
+        city: "Davis",
+        state: "CA",
+        zipCode: "95616",
+        country: "US",
+        latitude: 38.5449,
+        longitude: -121.7405,
+        images: [],
+        certificationsArray: ["ORGANIC"],
       },
     });
     console.log(`✅ Farm: ${farm2.name}`);
@@ -280,7 +295,9 @@ async function globalSetup() {
     console.error("❌ E2E setup failed:", error);
     throw error;
   } finally {
-    // Database connection managed by singleton, no need to disconnect
+    // Disconnect test database client
+    await database.$disconnect();
+    await pool.end();
   }
 }
 

@@ -23,7 +23,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { BaseController } from "./base.controller";
-import { OrderService } from "@/lib/services/order.service";
+import { OrderService, orderService } from "@/lib/services/order.service";
 import {
   CreateOrderSchema,
   UpdateOrderSchema,
@@ -69,9 +69,9 @@ import type {
 export class OrderController extends BaseController {
   private orderService: OrderService;
 
-  constructor(orderService?: OrderService) {
+  constructor(orderServiceInstance?: OrderService) {
     super("OrderController");
-    this.orderService = orderService || new OrderService();
+    this.orderService = orderServiceInstance || orderService;
   }
 
   // ==========================================================================
@@ -225,6 +225,7 @@ export class OrderController extends BaseController {
         status: validated.status,
         customerId: validated.customerId,
         farmId: validated.farmId,
+        fulfillmentMethod: validated.fulfillmentMethod,
         startDate: validated.startDate
           ? new Date(validated.startDate)
           : undefined,
@@ -423,6 +424,7 @@ export class OrderController extends BaseController {
         limit: validated.limit,
         farmId: farmId,
         status: validated.status,
+        fulfillmentMethod: validated.fulfillmentMethod,
       };
 
       // Call service layer
@@ -674,6 +676,7 @@ export class OrderController extends BaseController {
       // Build service request
       const statsRequest: OrderStatisticsRequest = {
         farmId: validated.farmId || "",
+        customerId: validated.customerId,
         startDate: validated.startDate
           ? new Date(validated.startDate)
           : undefined,
@@ -681,10 +684,9 @@ export class OrderController extends BaseController {
       };
 
       // Authorization: Customers can only see their own statistics
-      // Note: Customer filtering is handled by service layer based on session
-      // if (session.user.role === "CUSTOMER") {
-      //   // OrderStatisticsRequest doesn't have customerId field
-      // }
+      if (session.user.role === "CUSTOMER") {
+        statsRequest.customerId = session.user.id;
+      }
 
       // Call service layer
       const statistics =
@@ -726,13 +728,8 @@ export class OrderController extends BaseController {
 // ============================================================================
 
 /**
- * Singleton instance of OrderService for dependency injection
- */
-export const orderService = new OrderService();
-
-/**
  * Singleton instance of OrderController
- * Use this instance in API routes for consistency
+ * Uses the consolidated orderService singleton from order.service.consolidated
  *
  * @example
  * ```typescript

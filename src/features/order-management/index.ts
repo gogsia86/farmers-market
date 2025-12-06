@@ -42,12 +42,10 @@ export type {
   StateTransition,
 } from "./types";
 
-// Services
-export {
-  orderService,
-  OrderService,
-  OrderValidationError as OrderValidationServiceError,
-} from "./services/order.service";
+// Services - Re-export from canonical location
+export { orderService, OrderService } from "@/lib/services/order.service";
+
+export type { OrderValidationError as OrderValidationServiceError } from "@/lib/services/order.service";
 
 // Hooks
 export { useOrders, useSingleOrder } from "./hooks/useOrders";

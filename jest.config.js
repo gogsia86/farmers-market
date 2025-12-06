@@ -32,15 +32,15 @@ module.exports = {
     "^@/tests/(.*)$": "<rootDir>/tests/$1",
 
     // Mock next-auth ESM modules
-    "^next-auth$": "<rootDir>/tests/__mocks__/next-auth.js",
-    "^next-auth/(.*)$": "<rootDir>/tests/__mocks__/next-auth.js",
-    "^@auth/(.*)$": "<rootDir>/tests/__mocks__/auth.js",
+    "^next-auth$": "<rootDir>/__mocks__/next-auth.ts",
+    "^next-auth/(.*)$": "<rootDir>/__mocks__/next-auth.ts",
+    "^@auth/(.*)$": "<rootDir>/__mocks__/@auth/prisma-adapter.ts",
 
     // Mock CSS modules
     "\\.(css|less|scss|sass)$": "identity-obj-proxy",
 
     // Mock image imports
-    "\\.(jpg|jpeg|png|gif|svg|webp)$": "<rootDir>/tests/__mocks__/fileMock.js",
+    "\\.(jpg|jpeg|png|gif|svg|webp)$": "<rootDir>/__mocks__/fileMock.js",
   },
 
   // Test match patterns

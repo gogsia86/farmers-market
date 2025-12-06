@@ -90,7 +90,7 @@ describe("🛒 Product Service - Divine Product Operations", () => {
         reservedQuantity: 0,
         lowStockThreshold: 20,
       },
-      images: [{ url: "https://example.com/tomato.jpg", isPrimary: true }],
+      images: ["https://example.com/tomato.jpg"],
     };
 
     it("should create product with valid data", async () => {

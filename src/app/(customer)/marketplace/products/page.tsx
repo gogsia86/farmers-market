@@ -41,7 +41,16 @@ export const metadata: Metadata = generateMeta({
 
 interface ApiResponse {
   success: boolean;
-  data?: any[];
+  data?: {
+    products: any[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+      hasMore: boolean;
+    };
+  };
   error?: {
     code: string;
     message: string;
@@ -64,11 +73,11 @@ async function getProducts() {
 
     const result: ApiResponse = await response.json();
 
-    if (!result.success || !result.data) {
+    if (!result.success || !result.data || !result.data.products) {
       return [];
     }
 
-    return result.data;
+    return result.data.products;
   } catch (error) {
     console.error("[MARKETPLACE_PRODUCTS_FETCH_ERROR]", error);
     return [];

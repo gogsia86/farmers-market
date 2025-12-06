@@ -1,0 +1,605 @@
+name: 🌾 E2E Tests & Monitoring
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+    inputs:
+      test_type:
+        description: "Test type to run"
+        required: true
+        default: "e2e"
+        type: choice
+        options:
+          - e2e
+          - load
+          - monitoring
+          - all
+
+env:
+  NODE_VERSION: "22"
+  DATABASE_URL: postgresql://postgres:test_password_123@localhost:5433/farmersmarket_test
+  NEXTAUTH_URL: http://localhost:3001
+  NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'divine-test-secret-for-ci-cd-testing-only-1234567890' }}
+
+jobs:
+  # ============================================================================
+  # JOB 1: E2E TESTS
+  # ============================================================================
+  e2e-tests:
+    name: 🧪 E2E Tests (Playwright)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: test_password_123
+          POSTGRES_DB: farmersmarket_test
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🎭 Install Playwright browsers
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: 🔧 Generate Prisma Client
+        run: npx prisma generate
+
+      - name: 🗄️ Push database schema
+        run: npx prisma db push --accept-data-loss
+        env:
+          DATABASE_URL: ${{ env.DATABASE_URL }}
+
+      - name: 🚀 Start dev server
+        run: |
+          npm run dev &
+          echo "DEV_SERVER_PID=$!" >> $GITHUB_ENV
+        env:
+          DATABASE_URL: postgresql://postgres:test_password_123@localhost:5432/farmersmarket
+          PORT: 3001
+
+      - name: ⏳ Wait for server to be ready
+        run: |
+          echo "Waiting for dev server to be ready..."
+          npx wait-on http://localhost:3001 --timeout 120000
+          echo "✅ Dev server is ready!"
+
+      - name: 🧪 Run E2E tests
+        run: npx playwright test --config=playwright.config.temp.ts --workers=4
+        env:
+          DATABASE_URL: ${{ env.DATABASE_URL }}
+          CI: true
+
+      - name: 📊 Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+      - name: 📸 Upload failure screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-failures
+          path: test-results/
+          retention-days: 7
+
+      - name: 📈 Publish test results
+        if: always()
+        uses: mikepenz/action-junit-report@v4
+        with:
+          report_paths: "test-results/junit.xml"
+          fail_on_failure: true
+          require_tests: true
+
+      - name: 💬 Comment PR with results
+        if: github.event_name == 'pull_request' && always()
+        uses: daun/playwright-report-comment@v3
+        with:
+          report-path: playwright-report/
+
+      - name: 📢 Notify Slack - E2E Tests Success
+        if: success() && env.SLACK_WEBHOOK_URL != ''
+        run: |
+          node -e "
+          const https = require('https');
+          const url = new URL(process.env.SLACK_WEBHOOK_URL);
+          const data = JSON.stringify({
+            text: '✅ E2E Tests Passed',
+            attachments: [{
+              color: '#36a64f',
+              title: '✅ E2E Tests Completed Successfully',
+              fields: [
+                { title: 'Branch', value: '${{ github.ref_name }}', short: true },
+                { title: 'Commit', value: '${{ github.sha }}'.substring(0, 7), short: true },
+                { title: 'Actor', value: '${{ github.actor }}', short: true },
+                { title: 'Workflow', value: '${{ github.workflow }}', short: true }
+              ],
+              footer: 'Farmers Market Platform CI/CD',
+              ts: Math.floor(Date.now() / 1000)
+            }]
+          });
+          const req = https.request({ hostname: url.hostname, port: 443, path: url.pathname + url.search, method: 'POST', headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) }}, (res) => { console.log('Slack notified:', res.statusCode); });
+          req.on('error', (e) => { console.error('Error:', e.message); });
+          req.write(data);
+          req.end();
+          "
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: 📢 Notify Slack - E2E Tests Failure
+        if: failure() && env.SLACK_WEBHOOK_URL != ''
+        run: |
+          node -e "
+          const https = require('https');
+          const url = new URL(process.env.SLACK_WEBHOOK_URL);
+          const data = JSON.stringify({
+            text: '❌ E2E Tests Failed',
+            attachments: [{
+              color: '#ff0000',
+              title: '❌ E2E Tests Failed',
+              title_link: '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}',
+              fields: [
+                { title: 'Branch', value: '${{ github.ref_name }}', short: true },
+                { title: 'Commit', value: '${{ github.sha }}'.substring(0, 7), short: true },
+                { title: 'Actor', value: '${{ github.actor }}', short: true },
+                { title: 'Workflow', value: '${{ github.workflow }}', short: true }
+              ],
+              text: 'Click the title to view workflow logs',
+              footer: 'Farmers Market Platform CI/CD',
+              ts: Math.floor(Date.now() / 1000)
+            }]
+          });
+          const req = https.request({ hostname: url.hostname, port: 443, path: url.pathname + url.search, method: 'POST', headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) }}, (res) => { console.log('Slack notified:', res.statusCode); });
+          req.on('error', (e) => { console.error('Error:', e.message); });
+          req.write(data);
+          req.end();
+          "
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: 🧹 Cleanup
+        if: always()
+        run: |
+          if [ ! -z "$DEV_SERVER_PID" ]; then
+            kill $DEV_SERVER_PID || true
+          fi
+
+  # ============================================================================
+  # JOB 2: LOAD TESTING (K6)
+  # ============================================================================
+  load-tests:
+    name: 🚀 Load Tests (K6)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: github.event_name == 'schedule' || github.event.inputs.test_type == 'load' || github.event.inputs.test_type == 'all'
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: test_password_123
+          POSTGRES_DB: farmersmarket_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🔧 Generate Prisma Client
+        run: npx prisma generate
+
+      - name: 🗄️ Setup database
+        run: npx prisma db push --accept-data-loss
+
+      - name: 🚀 Start dev server
+        run: |
+          npm run dev &
+          echo "DEV_SERVER_PID=$!" >> $GITHUB_ENV
+
+      - name: ⏳ Wait for server
+        run: npx wait-on http://localhost:3001 --timeout 120000
+
+      - name: 📥 Install K6
+        run: |
+          sudo gpg -k
+          sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update
+          sudo apt-get install k6
+
+      - name: 🔥 Run marketplace load test
+        run: k6 run --duration 3m --vus 50 tests/load/marketplace-load.js
+        env:
+          BASE_URL: http://localhost:3001
+
+      - name: 🔥 Run API stress test
+        run: k6 run --duration 3m --vus 100 tests/load/api-stress-test.js
+        env:
+          BASE_URL: http://localhost:3001
+
+      - name: 📊 Upload K6 results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-results
+          path: tests/load/results/
+          retention-days: 30
+
+      - name: 📢 Notify Slack - Load Tests Complete
+        if: always() && env.SLACK_WEBHOOK_URL != ''
+        run: |
+          node -e "
+          const https = require('https');
+          const url = new URL(process.env.SLACK_WEBHOOK_URL);
+          const status = '${{ job.status }}';
+          const color = status === 'success' ? '#36a64f' : '#ff0000';
+          const emoji = status === 'success' ? '✅' : '❌';
+          const data = JSON.stringify({
+            text: emoji + ' Load Tests ' + (status === 'success' ? 'Completed' : 'Failed'),
+            attachments: [{
+              color: color,
+              title: emoji + ' Load Tests ' + (status === 'success' ? 'Completed' : 'Failed'),
+              fields: [
+                { title: 'Branch', value: '${{ github.ref_name }}', short: true },
+                { title: 'Duration', value: '3 minutes', short: true },
+                { title: 'VUs', value: '50-100', short: true },
+                { title: 'Tests', value: 'Marketplace + API Stress', short: true }
+              ],
+              footer: 'Farmers Market Platform - Load Testing',
+              ts: Math.floor(Date.now() / 1000)
+            }]
+          });
+          const req = https.request({ hostname: url.hostname, port: 443, path: url.pathname + url.search, method: 'POST', headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) }}, (res) => { console.log('Slack notified:', res.statusCode); });
+          req.on('error', (e) => { console.error('Error:', e.message); });
+          req.write(data);
+          req.end();
+          "
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: 🧹 Cleanup
+        if: always()
+        run: |
+          if [ ! -z "$DEV_SERVER_PID" ]; then
+            kill $DEV_SERVER_PID || true
+          fi
+
+  # ============================================================================
+  # JOB 3: CONTINUOUS MONITORING
+  # ============================================================================
+  monitoring:
+    name: 📊 Continuous Monitoring
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.event_name == 'schedule' || github.event.inputs.test_type == 'monitoring' || github.event.inputs.test_type == 'all'
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🔍 Run monitoring checks
+        run: |
+          # Check if monitoring script exists
+          if [ -f "scripts/workflow-monitor.ts" ]; then
+            npx tsx scripts/workflow-monitor.ts --mode critical
+          else
+            echo "⚠️ Monitoring script not found, skipping..."
+          fi
+        env:
+          BASE_URL: ${{ secrets.STAGING_URL || 'http://localhost:3001' }}
+
+      - name: 📢 Notify Slack - Monitoring Alert
+        if: failure() && env.SLACK_WEBHOOK_URL != ''
+        run: |
+          node -e "
+          const https = require('https');
+          const url = new URL(process.env.SLACK_WEBHOOK_URL);
+          const data = JSON.stringify({
+            text: '🚨 Monitoring Alert Detected',
+            attachments: [{
+              color: '#ff0000',
+              title: '🚨 Monitoring Check Failed',
+              title_link: '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}',
+              text: 'Critical monitoring checks have failed. Immediate attention required.',
+              fields: [
+                { title: 'Branch', value: '${{ github.ref_name }}', short: true },
+                { title: 'Check Type', value: 'Continuous Monitoring', short: true }
+              ],
+              footer: 'Farmers Market Platform - Monitoring',
+              ts: Math.floor(Date.now() / 1000)
+            }]
+          });
+          const req = https.request({ hostname: url.hostname, port: 443, path: url.pathname + url.search, method: 'POST', headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) }}, (res) => { console.log('Slack notified:', res.statusCode); });
+          req.on('error', (e) => { console.error('Error:', e.message); });
+          req.write(data);
+          req.end();
+          "
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: 📊 Upload monitoring results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: monitoring-results
+          path: monitoring-*.json
+          retention-days: 7
+
+  # ============================================================================
+  # JOB 4: UNIT TESTS
+  # ============================================================================
+  unit-tests:
+    name: 🧪 Unit Tests (Jest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🧪 Run unit tests
+        run: npm run test -- --coverage --maxWorkers=4
+
+      - name: 📊 Upload coverage reports
+        if: always()
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+
+  # ============================================================================
+  # JOB 5: CODE QUALITY
+  # ============================================================================
+  code-quality:
+    name: 🔍 Code Quality & Linting
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🔍 Run ESLint
+        run: npm run lint
+
+      - name: 🎨 Check TypeScript
+        run: npx tsc --noEmit
+
+      - name: 🎨 Check Prettier formatting
+        run: npx prettier --check "src/**/*.{ts,tsx,js,jsx,json,css,md}"
+
+  # ============================================================================
+  # JOB 6: SECURITY SCAN
+  # ============================================================================
+  security-scan:
+    name: 🔒 Security Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🔍 Run npm audit
+        run: npm audit --audit-level=moderate
+        continue-on-error: true
+
+      - name: 🔒 Run Snyk security scan
+        uses: snyk/actions/node@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+
+  # ============================================================================
+  # JOB 7: DEPLOYMENT GATE
+  # ============================================================================
+  deployment-gate:
+    name: 🚦 Deployment Gate
+    runs-on: ubuntu-latest
+    needs: [e2e-tests, unit-tests, code-quality]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+
+    steps:
+      - name: ✅ All checks passed
+        run: |
+          echo "╔════════════════════════════════════════════════════════════╗"
+          echo "║  ✅ ALL TESTS PASSED - READY FOR DEPLOYMENT               ║"
+          echo "╠════════════════════════════════════════════════════════════╣"
+          echo "║  • E2E Tests: PASSED                                       ║"
+          echo "║  • Unit Tests: PASSED                                      ║"
+          echo "║  • Code Quality: PASSED                                    ║"
+          echo "║  • Ready to deploy to ${{ github.ref }}                    ║"
+          echo "╚════════════════════════════════════════════════════════════╝"
+
+      - name: 💬 Notify success
+        if: success()
+        run: |
+          echo "🎉 Deployment gate passed! Ready for production."
+
+      - name: ⚠️ Notify failure
+        if: failure()
+        run: |
+          echo "❌ Deployment gate failed. Fix issues before deploying."
+          exit 1
+
+  # ============================================================================
+  # JOB 8: NOTIFICATION
+  # ============================================================================
+  notify:
+    name: 📢 Notify Results
+    runs-on: ubuntu-latest
+    needs: [e2e-tests, unit-tests, code-quality, security-scan]
+    if: always()
+
+    steps:
+      - name: 📊 Determine overall status
+        id: status
+        run: |
+          if [ "${{ needs.e2e-tests.result }}" == "success" ] && \
+             [ "${{ needs.unit-tests.result }}" == "success" ] && \
+             [ "${{ needs.code-quality.result }}" == "success" ]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "emoji=✅" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            echo "emoji=❌" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 💬 Send Slack notification
+        if: github.event_name != 'pull_request'
+        uses: slackapi/slack-github-action@v1.26.0
+        continue-on-error: true
+        with:
+          payload: |
+            {
+              "text": "${{ steps.status.outputs.emoji }} CI/CD Pipeline ${{ steps.status.outputs.status }}",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "${{ steps.status.outputs.emoji }} Farmers Market Platform - CI/CD Results"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Repository:*\n${{ github.repository }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Branch:*\n${{ github.ref_name }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Commit:*\n${{ github.sha }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Status:*\n${{ steps.status.outputs.status }}"
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Test Results:*\n• E2E: ${{ needs.e2e-tests.result }}\n• Unit: ${{ needs.unit-tests.result }}\n• Quality: ${{ needs.code-quality.result }}\n• Security: ${{ needs.security-scan.result }}"
+                  }
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Run"
+                      },
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+# ============================================================================
+# WORKFLOW CONFIGURATION
+# ============================================================================
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write

@@ -30,7 +30,7 @@ export type QuantumProduct = Product & {
     slug: string;
     city: string;
     state: string;
-    isActive: boolean;
+    status: string;
   };
   _count: {
     orderItems: number;
@@ -166,7 +166,7 @@ export class QuantumProductRepository extends BaseRepository<
     return await this.findMany(
       {
         farmId,
-        isActive: true,
+        status: "ACTIVE",
       },
       {
         ...options,
@@ -194,7 +194,7 @@ export class QuantumProductRepository extends BaseRepository<
     return await this.findMany(
       {
         category,
-        isActive: true,
+        status: "ACTIVE",
       },
       {
         ...options,
@@ -631,21 +631,23 @@ export class QuantumProductRepository extends BaseRepository<
    *
    * @returns Prisma include configuration with proper types
    */
-  protected getDefaultInclude(): Prisma.ProductInclude {
+  protected getDefaultInclude(): any {
     return {
-      farm: {
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          city: true,
-          state: true,
-          status: true,
+      include: {
+        farm: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            city: true,
+            state: true,
+            status: true,
+          },
         },
-      },
-      _count: {
-        select: {
-          orderItems: true,
+        _count: {
+          select: {
+            orderItems: true,
+          },
         },
       },
     };

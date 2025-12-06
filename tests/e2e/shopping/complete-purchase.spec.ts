@@ -16,9 +16,9 @@ import { test, expect } from "@playwright/test";
 test.describe("🛒 Complete Shopping Flow", () => {
   test.beforeEach(async ({ page }) => {
     // Login as customer
-    await page.goto("/login");
-    await page.fill('input[name="email"]', "test.customer@example.com");
-    await page.fill('input[name="password"]', "TestPass123!");
+    $1
+    await page.waitForLoadState("networkidle");$2await page.fill('input[name="email"]', TEST_USERS.customer.email);
+    await page.fill('input[name="password"]', TEST_USERS.customer.password);
     await page.click('button[type="submit"]');
     await page.waitForURL(/\/dashboard/);
   });
@@ -27,8 +27,8 @@ test.describe("🛒 Complete Shopping Flow", () => {
     page,
   }) => {
     // Step 1: Browse to marketplace
-    await page.goto("/marketplace");
-    await expect(page.getByRole("heading", { name: /marketplace/i })).toBeVisible();
+    $1
+    await page.waitForLoadState("networkidle");$2await expect(page.getByRole("heading", { name: /marketplace/i })).toBeVisible();
 
     // Step 2: Browse products
     await page.click('a[href*="/marketplace/products"]');
@@ -58,8 +58,8 @@ test.describe("🛒 Complete Shopping Flow", () => {
     await expect(successMessage).toBeVisible({ timeout: 5000 });
 
     // Step 5: View cart
-    await page.goto("/cart");
-    await expect(page.getByRole("heading", { name: /cart/i })).toBeVisible();
+    $1
+    await page.waitForLoadState("networkidle");$2await expect(page.getByRole("heading", { name: /cart/i })).toBeVisible();
 
     // Cart should have items
     const cartItems = page.locator('[data-testid="cart-item"]');
@@ -110,9 +110,8 @@ test.describe("🛒 Complete Shopping Flow", () => {
   });
 
   test("should add multiple products to cart", async ({ page }) => {
-    await page.goto("/marketplace/products");
-
-    // Add first product
+    $1
+    await page.waitForLoadState("networkidle");$2// Add first product
     const firstProduct = page.locator('[data-testid="product-card"]').first();
     await firstProduct.locator('button:has-text("Add to Cart")').click();
 
@@ -124,22 +123,20 @@ test.describe("🛒 Complete Shopping Flow", () => {
     await secondProduct.locator('button:has-text("Add to Cart")').click();
 
     // Go to cart
-    await page.goto("/cart");
-
-    // Should have 2 items
+    $1
+    await page.waitForLoadState("networkidle");$2// Should have 2 items
     const cartItems = page.locator('[data-testid="cart-item"]');
     await expect(cartItems).toHaveCount(2);
   });
 
   test("should update product quantity in cart", async ({ page }) => {
     // Add product to cart first
-    await page.goto("/marketplace/products");
-    const firstProduct = page.locator('[data-testid="product-card"]').first();
+    $1
+    await page.waitForLoadState("networkidle");$2const firstProduct = page.locator('[data-testid="product-card"]').first();
     await firstProduct.locator('button:has-text("Add to Cart")').click();
 
-    await page.goto("/cart");
-
-    // Find quantity input
+    $1
+    await page.waitForLoadState("networkidle");$2// Find quantity input
     const quantityInput = page.locator('input[type="number"]').first();
     await quantityInput.fill("3");
 
@@ -150,13 +147,12 @@ test.describe("🛒 Complete Shopping Flow", () => {
 
   test("should remove product from cart", async ({ page }) => {
     // Add product to cart
-    await page.goto("/marketplace/products");
-    const firstProduct = page.locator('[data-testid="product-card"]').first();
+    $1
+    await page.waitForLoadState("networkidle");$2const firstProduct = page.locator('[data-testid="product-card"]').first();
     await firstProduct.locator('button:has-text("Add to Cart")').click();
 
-    await page.goto("/cart");
-
-    // Click remove button
+    $1
+    await page.waitForLoadState("networkidle");$2// Click remove button
     const removeButton = page.locator('button:has-text("Remove")').first();
     await removeButton.click();
 
@@ -172,9 +168,8 @@ test.describe("🛒 Complete Shopping Flow", () => {
   });
 
   test("should calculate cart total correctly", async ({ page }) => {
-    await page.goto("/marketplace/products");
-
-    // Add product with known price
+    $1
+    await page.waitForLoadState("networkidle");$2// Add product with known price
     await page.locator('[data-testid="product-card"]').first().click();
 
     // Get product price
@@ -184,9 +179,8 @@ test.describe("🛒 Complete Shopping Flow", () => {
     // Add to cart
     await page.locator('button:has-text("Add to Cart")').click();
 
-    await page.goto("/cart");
-
-    // Check subtotal
+    $1
+    await page.waitForLoadState("networkidle");$2// Check subtotal
     const subtotalText = await page.locator('[data-testid="cart-subtotal"]').textContent();
     const subtotal = parseFloat(subtotalText?.replace(/[^0-9.]/g, "") || "0");
 
@@ -197,12 +191,12 @@ test.describe("🛒 Complete Shopping Flow", () => {
     page,
   }) => {
     // Add product to cart
-    await page.goto("/marketplace/products");
-    await page.locator('[data-testid="product-card"]').first().click();
+    $1
+    await page.waitForLoadState("networkidle");$2await page.locator('[data-testid="product-card"]').first().click();
     await page.locator('button:has-text("Add to Cart")').click();
 
-    await page.goto("/cart");
-    await page.click('button:has-text("Checkout")');
+    $1
+    await page.waitForLoadState("networkidle");$2await page.click('button:has-text("Checkout")');
 
     // Try to proceed without filling form
     await page.click('button:has-text("Continue to Payment")');
@@ -213,12 +207,12 @@ test.describe("🛒 Complete Shopping Flow", () => {
   });
 
   test("should apply fulfillment method correctly", async ({ page }) => {
-    await page.goto("/marketplace/products");
-    await page.locator('[data-testid="product-card"]').first().click();
+    $1
+    await page.waitForLoadState("networkidle");$2await page.locator('[data-testid="product-card"]').first().click();
     await page.locator('button:has-text("Add to Cart")').click();
 
-    await page.goto("/cart");
-    await page.click('button:has-text("Checkout")');
+    $1
+    await page.waitForLoadState("networkidle");$2await page.click('button:has-text("Checkout")');
 
     // Fill address
     await page.fill('input[name="address"]', "456 Farm Road");
@@ -238,17 +232,16 @@ test.describe("🛒 Complete Shopping Flow", () => {
 
   test("should persist cart across page refreshes", async ({ page }) => {
     // Add product to cart
-    await page.goto("/marketplace/products");
-    await page.locator('[data-testid="product-card"]').first().click();
+    $1
+    await page.waitForLoadState("networkidle");$2await page.locator('[data-testid="product-card"]').first().click();
     await page.locator('button:has-text("Add to Cart")').click();
 
     // Refresh page
     await page.reload();
 
     // Go to cart
-    await page.goto("/cart");
-
-    // Cart should still have items
+    $1
+    await page.waitForLoadState("networkidle");$2// Cart should still have items
     const cartItems = page.locator('[data-testid="cart-item"]');
     await expect(cartItems.first()).toBeVisible();
   });
@@ -256,9 +249,8 @@ test.describe("🛒 Complete Shopping Flow", () => {
 
 test.describe("🌾 Browse Farms & Products", () => {
   test("should browse and filter farms", async ({ page }) => {
-    await page.goto("/farms");
-
-    // Wait for farms to load
+    $1
+    await page.waitForLoadState("networkidle");$2// Wait for farms to load
     await page.waitForSelector('[data-testid="farm-card"]', { timeout: 10000 });
 
     // Should see farm cards
@@ -274,8 +266,8 @@ test.describe("🌾 Browse Farms & Products", () => {
   });
 
   test("should view farm profile and products", async ({ page }) => {
-    await page.goto("/farms");
-    await page.waitForSelector('[data-testid="farm-card"]', { timeout: 10000 });
+    $1
+    await page.waitForLoadState("networkidle");$2await page.waitForSelector('[data-testid="farm-card"]', { timeout: 10000 });
 
     // Click on first farm
     const firstFarm = page.locator('[data-testid="farm-card"]').first();
@@ -297,9 +289,8 @@ test.describe("🌾 Browse Farms & Products", () => {
   });
 
   test("should filter products by category", async ({ page }) => {
-    await page.goto("/marketplace/products");
-
-    // Wait for products
+    $1
+    await page.waitForLoadState("networkidle");$2// Wait for products
     await page.waitForSelector('[data-testid="product-card"]', { timeout: 10000 });
 
     // Click on category filter (e.g., Vegetables)
@@ -317,9 +308,8 @@ test.describe("🌾 Browse Farms & Products", () => {
   });
 
   test("should search for products", async ({ page }) => {
-    await page.goto("/marketplace/products");
-
-    // Find search input
+    $1
+    await page.waitForLoadState("networkidle");$2// Find search input
     const searchInput = page.locator('input[type="search"]');
     if (await searchInput.isVisible()) {
       await searchInput.fill("tomato");
@@ -343,8 +333,8 @@ test.describe("🌾 Browse Farms & Products", () => {
   });
 
   test("should add product to favorites", async ({ page }) => {
-    await page.goto("/marketplace/products");
-    await page.waitForSelector('[data-testid="product-card"]', { timeout: 10000 });
+    $1
+    await page.waitForLoadState("networkidle");$2await page.waitForSelector('[data-testid="product-card"]', { timeout: 10000 });
 
     // Find favorite button
     const favoriteButton = page.locator('button[aria-label*="favorite"]').first();
@@ -360,30 +350,28 @@ test.describe("🌾 Browse Farms & Products", () => {
 
 test.describe("📦 Order Management", () => {
   test("should view order history", async ({ page }) => {
-    await page.goto("/login");
-    await page.fill('input[name="email"]', "test.customer@example.com");
-    await page.fill('input[name="password"]', "TestPass123!");
+    $1
+    await page.waitForLoadState("networkidle");$2await page.fill('input[name="email"]', TEST_USERS.customer.email);
+    await page.fill('input[name="password"]', TEST_USERS.customer.password);
     await page.click('button[type="submit"]');
     await page.waitForURL(/\/dashboard/);
 
     // Navigate to orders
-    await page.goto("/orders");
-
-    // Should see orders list or empty state
+    $1
+    await page.waitForLoadState("networkidle");$2// Should see orders list or empty state
     const ordersHeading = page.getByRole("heading", { name: /orders|order history/i });
     await expect(ordersHeading).toBeVisible();
   });
 
   test("should view order details", async ({ page }) => {
-    await page.goto("/login");
-    await page.fill('input[name="email"]', "test.customer@example.com");
-    await page.fill('input[name="password"]', "TestPass123!");
+    $1
+    await page.waitForLoadState("networkidle");$2await page.fill('input[name="email"]', TEST_USERS.customer.email);
+    await page.fill('input[name="password"]', TEST_USERS.customer.password);
     await page.click('button[type="submit"]');
     await page.waitForURL(/\/dashboard/);
 
-    await page.goto("/orders");
-
-    // Click on first order if exists
+    $1
+    await page.waitForLoadState("networkidle");$2// Click on first order if exists
     const firstOrder = page.locator('[data-testid="order-card"]').first();
     if (await firstOrder.isVisible()) {
       await firstOrder.click();
@@ -395,9 +383,9 @@ test.describe("📦 Order Management", () => {
   });
 
   test("should track order status", async ({ page }) => {
-    await page.goto("/login");
-    await page.fill('input[name="email"]', "test.customer@example.com");
-    await page.fill('input[name="password"]', "TestPass123!");
+    $1
+    await page.waitForLoadState("networkidle");$2await page.fill('input[name="email"]', TEST_USERS.customer.email);
+    await page.fill('input[name="password"]', TEST_USERS.customer.password);
     await page.click('button[type="submit"]');
     await page.waitForURL(/\/dashboard/);
 
@@ -413,9 +401,8 @@ test.describe("🎯 Performance & Accessibility", () => {
   test("should load marketplace within acceptable time", async ({ page }) => {
     const startTime = Date.now();
 
-    await page.goto("/marketplace");
-
-    const endTime = Date.now();
+    $1
+    await page.waitForLoadState("networkidle");$2const endTime = Date.now();
     const loadTime = endTime - startTime;
 
     // Should load in less than 3 seconds
@@ -423,9 +410,8 @@ test.describe("🎯 Performance & Accessibility", () => {
   });
 
   test("should be keyboard navigable", async ({ page }) => {
-    await page.goto("/marketplace");
-
-    // Tab through interactive elements
+    $1
+    await page.waitForLoadState("networkidle");$2// Tab through interactive elements
     await page.keyboard.press("Tab");
     await page.keyboard.press("Tab");
     await page.keyboard.press("Tab");
@@ -436,9 +422,8 @@ test.describe("🎯 Performance & Accessibility", () => {
   });
 
   test("should have proper heading hierarchy", async ({ page }) => {
-    await page.goto("/marketplace");
-
-    // Should have h1
+    $1
+    await page.waitForLoadState("networkidle");$2// Should have h1
     const h1 = page.locator("h1");
     await expect(h1).toBeVisible();
   });
@@ -446,9 +431,8 @@ test.describe("🎯 Performance & Accessibility", () => {
   test("should work on mobile viewport", async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
 
-    await page.goto("/marketplace");
-
-    // Page should be responsive
+    $1
+    await page.waitForLoadState("networkidle");$2// Page should be responsive
     const content = page.locator("main");
     await expect(content).toBeVisible();
 

@@ -1,8 +1,8 @@
 // src/__tests__/services/order.service.test.ts
 
 import { database } from "@/lib/database";
-import type { CreateOrderInput } from "@/lib/services/order.service";
-import { OrderService } from "@/lib/services/order.service";
+import type { CreateOrderRequest } from "@/lib/services/order.service";
+import { OrderService, orderService } from "@/lib/services/order.service";
 import { afterEach, beforeEach, describe, expect, it } from "@jest/globals";
 
 // Mock database
@@ -11,6 +11,7 @@ jest.mock("@/lib/database", () => ({
     order: {
       create: jest.fn(),
       findUnique: jest.fn(),
+      findFirst: jest.fn(),
       findMany: jest.fn(),
       update: jest.fn(),
       count: jest.fn(),
@@ -24,6 +25,9 @@ jest.mock("@/lib/database", () => ({
       findUnique: jest.fn(),
     },
     farm: {
+      findUnique: jest.fn(),
+    },
+    address: {
       findUnique: jest.fn(),
     },
     orderItem: {
@@ -45,33 +49,22 @@ describe("OrderService - Divine Order Management", () => {
 
   describe("createOrder", () => {
     it("creates order with items", async () => {
-      const mockInput: CreateOrderInput = {
-        userId: "user-123",
+      const mockInput: CreateOrderRequest = {
+        customerId: "user-123",
         farmId: "farm-456",
         items: [
           {
             productId: "prod-1",
-            productName: "Product 1",
             quantity: 2,
-            price: 10,
-            unit: "lb",
           },
           {
             productId: "prod-2",
-            productName: "Product 2",
             quantity: 1,
-            price: 20,
-            unit: "lb",
           },
         ],
-        shippingAddress: {
-          street: "123 Main St",
-          city: "Portland",
-          state: "OR",
-          zipCode: "97201",
-        },
         fulfillmentMethod: "DELIVERY",
-        notes: "Test order",
+        deliveryAddressId: "addr-123",
+        specialInstructions: "Test order",
       };
 
       const mockUser = {
@@ -85,6 +78,7 @@ describe("OrderService - Divine Order Management", () => {
         id: "farm-456",
         name: "Test Farm",
         status: "ACTIVE",
+        ownerId: "farmer-1",
       };
 
       const mockProducts = [
@@ -95,6 +89,7 @@ describe("OrderService - Divine Order Management", () => {
           quantityAvailable: 100,
           status: "ACTIVE",
           farmId: "farm-456",
+          unit: "lb",
         },
         {
           id: "prod-2",
@@ -103,28 +98,53 @@ describe("OrderService - Divine Order Management", () => {
           quantityAvailable: 100,
           status: "ACTIVE",
           farmId: "farm-456",
+          unit: "lb",
         },
       ];
+
+      const mockAddress = {
+        id: "addr-123",
+        userId: "user-123",
+        street: "123 Main St",
+        city: "Portland",
+        state: "OR",
+        zipCode: "97201",
+      };
 
       const mockResult = {
         id: "order-1",
         orderNumber: "ORD-123",
+        status: "PENDING",
+        total: 40,
         items: [],
         customer: mockUser,
         farm: mockFarm,
       };
 
+      // Mock validation dependencies
       (database.user.findUnique as any).mockResolvedValue(mockUser);
       (database.farm.findUnique as any).mockResolvedValue(mockFarm);
+      (database.address.findUnique as any).mockResolvedValue(mockAddress);
+
+      // Mock product lookups for validation
+      (database.product.findUnique as any).mockImplementation((args: any) => {
+        const product = mockProducts.find((p) => p.id === args.where.id);
+        return Promise.resolve(product || null);
+      });
+
       (database.product.findMany as any).mockResolvedValue(mockProducts);
+
+      // Mock transaction
       (database.$transaction as any).mockImplementation(
         async (callback: any) => {
           return await callback(database);
         },
       );
       (database.order.create as any).mockResolvedValue(mockResult);
+      (database.order.findFirst as any).mockResolvedValue(null); // No existing order with same number
 
-      const result = await OrderService.createOrder(mockInput);
+      const service = new OrderService();
+      const result = await service.createOrder(mockInput);
 
       expect(result).toBeDefined();
       expect(result.id).toBe("order-1");
@@ -202,7 +222,9 @@ describe("OrderService - Divine Order Management", () => {
 
       const result = await OrderService.getUserOrders("user-1");
 
-      expect(result).toEqual(mockOrders);
+      expect(result.orders).toEqual(mockOrders);
+      expect(result.pagination).toBeDefined();
+      expect(result.pagination.total).toBe(2);
     });
   });
 
@@ -228,7 +250,9 @@ describe("OrderService - Divine Order Management", () => {
 
       const result = await OrderService.getFarmOrders("farm-1");
 
-      expect(result).toEqual(mockOrders);
+      expect(result.orders).toEqual(mockOrders);
+      expect(result.pagination).toBeDefined();
+      expect(result.pagination.total).toBe(2);
     });
   });
 });

@@ -22,11 +22,11 @@ import { useCartStore } from "@/stores/cartStore";
 import { useRouter } from "next/navigation";
 
 interface CustomerHeaderProps {
-  user: {
+  user?: {
     name?: string | null;
     email?: string | null;
     image?: string | null;
-  };
+  } | null;
 }
 
 export function CustomerHeader({ user }: CustomerHeaderProps) {
@@ -148,23 +148,23 @@ export function CustomerHeader({ user }: CustomerHeaderProps) {
                 className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 aria-label="User menu"
               >
-                {user.image ? (
+                {user?.image ? (
                   <img
                     src={user.image}
-                    alt={user.name || "User"}
+                    alt={user?.name || "User"}
                     className="h-8 w-8 rounded-full object-cover"
                   />
                 ) : (
                   <div className="h-8 w-8 rounded-full bg-green-600 flex items-center justify-center">
                     <span className="text-white text-sm font-semibold">
-                      {user.name?.charAt(0).toUpperCase() ||
-                        user.email?.charAt(0).toUpperCase() ||
+                      {user?.name?.charAt(0).toUpperCase() ||
+                        user?.email?.charAt(0).toUpperCase() ||
                         "U"}
                     </span>
                   </div>
                 )}
                 <span className="text-sm font-medium text-gray-700">
-                  {user.name?.split(" ")[0] || "Account"}
+                  {user?.name?.split(" ")[0] || "Account"}
                 </span>
               </button>
 
@@ -180,10 +180,10 @@ export function CustomerHeader({ user }: CustomerHeaderProps) {
                   <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                     <div className="px-4 py-3 border-b border-gray-200">
                       <p className="text-sm font-medium text-gray-900">
-                        {user.name || "User"}
+                        {user?.name || "User"}
                       </p>
                       <p className="text-xs text-gray-500 truncate">
-                        {user.email}
+                        {user?.email}
                       </p>
                     </div>
                     <div className="py-2">
@@ -231,26 +231,26 @@ export function CustomerHeader({ user }: CustomerHeaderProps) {
           <div className="md:hidden border-t border-gray-200 py-4">
             {/* User Info */}
             <div className="flex items-center gap-3 px-4 py-3 mb-4 bg-gray-50 rounded-lg">
-              {user.image ? (
+              {user?.image ? (
                 <img
                   src={user.image}
-                  alt={user.name || "User"}
+                  alt={user?.name || "User"}
                   className="h-10 w-10 rounded-full object-cover"
                 />
               ) : (
                 <div className="h-10 w-10 rounded-full bg-green-600 flex items-center justify-center">
                   <span className="text-white font-semibold">
-                    {user.name?.charAt(0).toUpperCase() ||
-                      user.email?.charAt(0).toUpperCase() ||
+                    {user?.name?.charAt(0).toUpperCase() ||
+                      user?.email?.charAt(0).toUpperCase() ||
                       "U"}
                   </span>
                 </div>
               )}
               <div>
-                <p className="text-sm font-medium text-gray-900">
-                  {user.name || "User"}
+                <p className="font-semibold text-gray-900">
+                  {user?.name || "User"}
                 </p>
-                <p className="text-xs text-gray-500">{user.email}</p>
+                <p className="text-sm text-gray-500">{user?.email}</p>
               </div>
             </div>
 

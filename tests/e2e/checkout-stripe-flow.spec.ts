@@ -13,7 +13,7 @@
  * - Agricultural consciousness throughout
  */
 
-import { test, expect, Page } from "@playwright/test";
+$1import { TEST_USERS } from "../helpers/auth";
 
 // ============================================================================
 // TEST CONFIGURATION
@@ -47,8 +47,8 @@ const STRIPE_TEST_CARDS = {
 // ============================================================================
 
 async function loginAsCustomer(page: Page) {
-  await page.goto("/auth/login");
-  await page.fill('input[name="email"]', TEST_USER.email);
+  $1
+    await page.waitForLoadState("networkidle");$2await page.fill('input[name="email"]', TEST_USER.email);
   await page.fill('input[name="password"]', TEST_USER.password);
   await page.click('button[type="submit"]');
   await page.waitForURL("/", { timeout: 10000 });
@@ -56,8 +56,8 @@ async function loginAsCustomer(page: Page) {
 
 async function addProductToCart(page: Page, productId = "product_1") {
   // Navigate to products page
-  await page.goto("/products");
-  await page.waitForLoadState("networkidle");
+  $1
+    await page.waitForLoadState("networkidle");$2 await page.waitForLoadState("networkidle");
 
   // Find and click on a product
   const productCard = page
@@ -141,8 +141,8 @@ async function fillStripePaymentDetails(
 test.describe("Checkout Flow with Stripe Payment", () => {
   test.beforeEach(async ({ page }) => {
     // Set test mode
-    await page.goto("/");
-    await page.evaluate(() => {
+    $1
+    await page.waitForLoadState("networkidle");$2await page.evaluate(() => {
       localStorage.setItem("TEST_MODE", "true");
     });
   });
@@ -220,8 +220,8 @@ test.describe("Checkout Flow with Stripe Payment", () => {
     await fillShippingAddress(page);
 
     // Add another product and checkout again
-    await page.goto("/products");
-    await addProductToCart(page);
+    $1
+    await page.waitForLoadState("networkidle");$2await addProductToCart(page);
     await navigateToCheckout(page);
 
     // Verify saved address is available
@@ -368,9 +368,8 @@ test.describe("Checkout Flow with Stripe Payment", () => {
     await loginAsCustomer(page);
 
     // Try to navigate to checkout directly
-    await page.goto("/checkout");
-
-    // Should redirect to cart or show error
+    $1
+    await page.waitForLoadState("networkidle");$2// Should redirect to cart or show error
     await expect(page.locator('text="Your cart is empty"')).toBeVisible({
       timeout: 5000,
     });
@@ -401,8 +400,8 @@ test.describe("Checkout Flow with Stripe Payment", () => {
 
     await loginAsCustomer(page);
     // Add out-of-stock product
-    await page.goto("/products/out-of-stock-product");
-    await page.click('button:has-text("Add to Cart")');
+    $1
+    await page.waitForLoadState("networkidle");$2await page.click('button:has-text("Add to Cart")');
 
     // Should show out of stock message
     await expect(
@@ -546,9 +545,8 @@ test.describe("Checkout Flow with Stripe Payment", () => {
     page,
   }) => {
     await loginAsCustomer(page);
-    await page.goto("/checkout");
-
-    // Check for consciousness indicators in footer or header
+    $1
+    await page.waitForLoadState("networkidle");$2// Check for consciousness indicators in footer or header
     const consciousnessText = await page.textContent("body");
     expect(consciousnessText).toMatch(
       /biodynamic|consciousness|agricultural|divine/i,

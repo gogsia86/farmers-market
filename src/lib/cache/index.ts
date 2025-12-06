@@ -16,9 +16,14 @@ const REDIS_CONFIG = {
   keyPrefix: "fm:", // Farmers Market prefix
   maxRetriesPerRequest: 3,
   retryStrategy: (times: number) => {
+    // Stop retrying if Redis is disabled
+    if (process.env.REDIS_ENABLED !== "true") {
+      return null;
+    }
     const delay = Math.min(times * 50, 2000);
     return delay;
   },
+  lazyConnect: true, // Don't connect immediately
 };
 
 /**
@@ -116,9 +121,15 @@ class MemoryCache implements CacheLayer {
 class RedisCache implements CacheLayer {
   private client: Redis | null = null;
   private isConnected = false;
+  private isEnabled = false;
 
   constructor() {
-    this.connect();
+    this.isEnabled = process.env.REDIS_ENABLED === "true";
+    if (this.isEnabled) {
+      this.connect();
+    } else {
+      logger.info("Redis cache disabled - using memory-only cache");
+    }
   }
 
   private connect() {
@@ -127,20 +138,35 @@ class RedisCache implements CacheLayer {
 
       this.client.on("connect", () => {
         this.isConnected = true;
-        logger.info("Redis cache connected");
+        logger.info("Redis cache connected", {
+          host: REDIS_CONFIG.host,
+          port: REDIS_CONFIG.port,
+        });
       });
 
       this.client.on("error", (error) => {
-        logger.error("Redis cache error", { error });
+        // Only log errors if Redis is explicitly enabled
+        if (this.isEnabled) {
+          logger.error("Redis cache error", { error });
+        }
         this.isConnected = false;
       });
+
+      // Attempt connection
+      this.client.connect().catch((error) => {
+        if (this.isEnabled) {
+          logger.error("Failed to connect to Redis", { error });
+        }
+      });
     } catch (error) {
-      logger.error("Failed to initialize Redis", { error });
+      if (this.isEnabled) {
+        logger.error("Failed to initialize Redis", { error });
+      }
     }
   }
 
   async get<T>(key: string): Promise<T | null> {
-    if (!this.client || !this.isConnected) return null;
+    if (!this.isEnabled || !this.client || !this.isConnected) return null;
 
     try {
       const value = await this.client.get(key);
@@ -154,7 +180,7 @@ class RedisCache implements CacheLayer {
   }
 
   async set<T>(key: string, value: T, ttl: number = 300): Promise<void> {
-    if (!this.client || !this.isConnected) return;
+    if (!this.isEnabled || !this.client || !this.isConnected) return;
 
     try {
       await this.client.setex(key, ttl, JSON.stringify(value));
@@ -164,7 +190,7 @@ class RedisCache implements CacheLayer {
   }
 
   async del(key: string): Promise<void> {
-    if (!this.client || !this.isConnected) return;
+    if (!this.isEnabled || !this.client || !this.isConnected) return;
 
     try {
       await this.client.del(key);
@@ -174,7 +200,7 @@ class RedisCache implements CacheLayer {
   }
 
   async delPattern(pattern: string): Promise<void> {
-    if (!this.client || !this.isConnected) return;
+    if (!this.isEnabled || !this.client || !this.isConnected) return;
 
     try {
       const keys = await this.client.keys(pattern);
@@ -187,7 +213,7 @@ class RedisCache implements CacheLayer {
   }
 
   async clear(): Promise<void> {
-    if (!this.client || !this.isConnected) return;
+    if (!this.isEnabled || !this.client || !this.isConnected) return;
 
     try {
       await this.client.flushdb();

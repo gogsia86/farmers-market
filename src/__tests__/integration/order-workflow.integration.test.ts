@@ -13,7 +13,7 @@ jest.unmock("@/lib/database");
 jest.unmock("@prisma/client");
 
 import { database } from "@/lib/database";
-import { OrderService } from "@/lib/services/order.service";
+import { OrderService, orderService } from "@/lib/services/order.service";
 import { ProductService } from "@/lib/services/product.service";
 import { afterAll, beforeAll, describe, expect, it } from "@jest/globals";
 import {
@@ -21,7 +21,7 @@ import {
   createTestFarm,
   createTestProduct,
   disconnectTestDatabase,
-} from "@/tests/utils/api-test-helpers";
+} from "../../../tests/helpers/api-test-helpers";
 
 // Test data
 let testFarmId: string;

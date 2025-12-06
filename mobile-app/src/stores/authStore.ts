@@ -3,22 +3,23 @@
  *
  * Global state management for authentication using Zustand.
  * Handles user login, logout, registration, and session management.
+ *
+ * ⚠️ MIGRATION NOTICE: User type now imported from core-entities
+ * This ensures type consistency across web and mobile platforms.
  */
 
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import apiClient from '@/services/api';
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import apiClient from "@/services/api";
 
-// User type definition
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  role: 'CUSTOMER' | 'FARMER' | 'ADMIN';
-  avatar?: string;
-  phone?: string;
-  emailVerified: boolean;
+// Import core User type from main web app (shared types)
+// This ensures type consistency across platforms
+import type { User, UserRole } from "../../../src/types/core-entities";
+
+// Mobile-specific user extension for local storage
+export interface MobileUser extends Omit<User, "createdAt" | "updatedAt"> {
+  // Override date fields for JSON serialization
   createdAt: string;
   farmId?: string;
 }
@@ -26,7 +27,7 @@ export interface User {
 // Auth state interface
 interface AuthState {
   // State
-  user: User | null;
+  user: MobileUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
@@ -36,7 +37,7 @@ interface AuthState {
   login: (email: string, password: string) => Promise<void>;
   register: (data: RegisterData) => Promise<void>;
   logout: () => Promise<void>;
-  updateUser: (user: Partial<User>) => void;
+  updateUser: (user: Partial<MobileUser>) => void;
   getCurrentUser: () => Promise<void>;
   clearError: () => void;
   setHasHydrated: (value: boolean) => void;
@@ -48,7 +49,7 @@ interface RegisterData {
   email: string;
   password: string;
   name: string;
-  role: 'CUSTOMER' | 'FARMER';
+  role: "CUSTOMER" | "FARMER";
   phone?: string;
 }
 
@@ -79,7 +80,10 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true, error: null });
 
         try {
-          const { user, accessToken } = await apiClient.auth.login(email, password);
+          const { user, accessToken } = await apiClient.auth.login(
+            email,
+            password,
+          );
 
           set({
             user,
@@ -88,9 +92,10 @@ export const useAuthStore = create<AuthState>()(
             error: null,
           });
 
-          console.log('✅ Login successful:', user.email);
+          console.log("✅ Login successful:", user.email);
         } catch (error: any) {
-          const errorMessage = error.message || 'Login failed. Please try again.';
+          const errorMessage =
+            error.message || "Login failed. Please try again.";
 
           set({
             user: null,
@@ -99,7 +104,7 @@ export const useAuthStore = create<AuthState>()(
             error: errorMessage,
           });
 
-          console.error('❌ Login error:', errorMessage);
+          console.error("❌ Login error:", errorMessage);
           throw error;
         }
       },
@@ -120,9 +125,10 @@ export const useAuthStore = create<AuthState>()(
             error: null,
           });
 
-          console.log('✅ Registration successful:', user.email);
+          console.log("✅ Registration successful:", user.email);
         } catch (error: any) {
-          const errorMessage = error.message || 'Registration failed. Please try again.';
+          const errorMessage =
+            error.message || "Registration failed. Please try again.";
 
           set({
             user: null,
@@ -131,7 +137,7 @@ export const useAuthStore = create<AuthState>()(
             error: errorMessage,
           });
 
-          console.error('❌ Registration error:', errorMessage);
+          console.error("❌ Registration error:", errorMessage);
           throw error;
         }
       },
@@ -146,7 +152,7 @@ export const useAuthStore = create<AuthState>()(
           // Call API to invalidate token on server
           await apiClient.auth.logout();
         } catch (error) {
-          console.error('Logout API call failed:', error);
+          console.error("Logout API call failed:", error);
           // Continue with logout even if API call fails
         }
 
@@ -158,7 +164,7 @@ export const useAuthStore = create<AuthState>()(
           hasHydrated: true, // Keep hydrated state
         });
 
-        console.log('✅ Logout successful');
+        console.log("✅ Logout successful");
       },
 
       /**
@@ -168,7 +174,7 @@ export const useAuthStore = create<AuthState>()(
         const currentUser = get().user;
 
         if (!currentUser) {
-          console.warn('No user to update');
+          console.warn("No user to update");
           return;
         }
 
@@ -179,7 +185,7 @@ export const useAuthStore = create<AuthState>()(
           },
         });
 
-        console.log('✅ User updated:', userData);
+        console.log("✅ User updated:", userData);
       },
 
       /**
@@ -206,9 +212,9 @@ export const useAuthStore = create<AuthState>()(
             error: null,
           });
 
-          console.log('✅ Current user fetched:', user.email);
+          console.log("✅ Current user fetched:", user.email);
         } catch (error: any) {
-          const errorMessage = error.message || 'Failed to fetch user data';
+          const errorMessage = error.message || "Failed to fetch user data";
 
           // If token is invalid, clear auth state
           if (error.statusCode === 401) {
@@ -226,7 +232,7 @@ export const useAuthStore = create<AuthState>()(
             });
           }
 
-          console.error('❌ Get current user error:', errorMessage);
+          console.error("❌ Get current user error:", errorMessage);
         }
       },
 
@@ -255,7 +261,7 @@ export const useAuthStore = create<AuthState>()(
       },
     }),
     {
-      name: 'auth-storage',
+      name: "auth-storage",
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (state) => ({
         // Only persist these fields
@@ -263,25 +269,26 @@ export const useAuthStore = create<AuthState>()(
         isAuthenticated: state.isAuthenticated,
       }),
       onRehydrateStorage: () => (state) => {
-        console.log('🔄 Auth store rehydrated');
+        console.log("🔄 Auth store rehydrated");
         state?.setHasHydrated(true);
       },
-    }
-  )
+    },
+  ),
 );
 
 /**
  * Selector hooks for optimized re-renders
  */
 export const useUser = () => useAuthStore((state) => state.user);
-export const useIsAuthenticated = () => useAuthStore((state) => state.isAuthenticated);
+export const useIsAuthenticated = () =>
+  useAuthStore((state) => state.isAuthenticated);
 export const useAuthLoading = () => useAuthStore((state) => state.isLoading);
 export const useAuthError = () => useAuthStore((state) => state.error);
 
 /**
  * Helper function to check if user has specific role
  */
-export const useHasRole = (role: User['role']) => {
+export const useHasRole = (role: User["role"]) => {
   const user = useUser();
   return user?.role === role;
 };
@@ -291,7 +298,7 @@ export const useHasRole = (role: User['role']) => {
  */
 export const useIsFarmer = () => {
   const user = useUser();
-  return user?.role === 'FARMER';
+  return user?.role === "FARMER";
 };
 
 /**
@@ -299,7 +306,7 @@ export const useIsFarmer = () => {
  */
 export const useIsCustomer = () => {
   const user = useUser();
-  return user?.role === 'CUSTOMER';
+  return user?.role === "CUSTOMER";
 };
 
 /**
@@ -307,7 +314,7 @@ export const useIsCustomer = () => {
  */
 export const useIsAdmin = () => {
   const user = useUser();
-  return user?.role === 'ADMIN';
+  return user?.role === "ADMIN";
 };
 
 /**

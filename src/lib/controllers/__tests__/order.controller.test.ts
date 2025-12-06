@@ -19,20 +19,20 @@
 
 import { NextRequest } from "next/server";
 import { orderController } from "../order.controller";
-import { OrderService } from "@/lib/services/order.service.refactored";
+import { OrderService } from "@/lib/services/order.service";
 import { auth } from "@/lib/auth";
 import type {
   OrderWithDetails,
   GetOrdersResponse,
   OrderStatistics,
-} from "@/lib/services/order.service.refactored";
+} from "@/lib/services/order.service";
 
 // ============================================
 // MOCK SETUP
 // ============================================
 
 // Mock the OrderService
-jest.mock("@/lib/services/order.service.refactored", () => {
+jest.mock("@/lib/services/order.service", () => {
   return {
     OrderService: jest.fn().mockImplementation(() => ({
       createOrder: jest.fn(),
@@ -820,7 +820,6 @@ describe("OrderController - HTTP Request Handlers", () => {
           status: "PREPARING",
           specialInstructions: "Updated instructions",
         }),
-        mockFarmerSession.user.id,
       );
     });
 

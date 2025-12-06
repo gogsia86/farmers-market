@@ -174,8 +174,10 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     // Silently fail - view counting is non-critical
   });
 
-  // Calculate available quantity
-  const availableQuantity = ProductService.calculateAvailableQuantity(product);
+  // Use available quantity from product
+  const availableQuantity = product.quantityAvailable
+    ? Number(product.quantityAvailable)
+    : 0;
 
   // Fetch related products
   const relatedProducts = await ProductService.getRelatedProducts(

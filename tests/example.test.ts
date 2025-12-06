@@ -49,7 +49,7 @@ describe("Test Infrastructure Validation", () => {
 
   describe("Mock Infrastructure", () => {
     it("provides mocked database client", () => {
-      const { database } = require("./mocks/database.mock");
+      const { database } = require("./helpers/mocks/database.mock");
 
       expect(database).toBeDefined();
       expect(database.farm).toBeDefined();
@@ -58,7 +58,10 @@ describe("Test Infrastructure Validation", () => {
     });
 
     it("provides mocked authentication", () => {
-      const { mockAuth, mockSession } = require("./mocks/next-auth.mock");
+      const {
+        mockAuth,
+        mockSession,
+      } = require("./helpers/mocks/next-auth.mock");
 
       expect(mockAuth).toBeDefined();
       expect(mockSession).toBeDefined();

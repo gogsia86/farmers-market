@@ -105,9 +105,12 @@ export abstract class BaseRepository<
   ): Promise<TEntity> {
     try {
       const db = options.tx || this.db;
+      const defaultInclude = this.getDefaultInclude();
       const entity = await (db as any)[this.model.name].create({
         data,
-        ...this.getDefaultInclude(),
+        ...(Object.keys(defaultInclude).length > 0
+          ? { include: defaultInclude }
+          : {}),
         ...this.filterOptions(options),
       });
 
@@ -143,9 +146,12 @@ export abstract class BaseRepository<
   ): Promise<TEntity | null> {
     try {
       const db = options.tx || this.db;
+      const defaultInclude = this.getDefaultInclude();
       const entity = await (db as any)[this.model.name].findUnique({
         where: { id },
-        ...this.getDefaultInclude(),
+        ...(Object.keys(defaultInclude).length > 0
+          ? { include: defaultInclude }
+          : {}),
         ...this.filterOptions(options),
       });
 
@@ -168,9 +174,12 @@ export abstract class BaseRepository<
   ): Promise<TEntity | null> {
     try {
       const db = options.tx || this.db;
+      const defaultInclude = this.getDefaultInclude();
       const entity = await (db as any)[this.model.name].findFirst({
         where,
-        ...this.getDefaultInclude(),
+        ...(Object.keys(defaultInclude).length > 0
+          ? { include: defaultInclude }
+          : {}),
         ...this.filterOptions(options),
       });
 
@@ -201,9 +210,12 @@ export abstract class BaseRepository<
   ): Promise<TEntity[]> {
     try {
       const db = options.tx || this.db;
+      const defaultInclude = this.getDefaultInclude();
       const entities = await (db as any)[this.model.name].findMany({
         where,
-        ...this.getDefaultInclude(),
+        ...(Object.keys(defaultInclude).length > 0
+          ? { include: defaultInclude }
+          : {}),
         ...this.filterOptions(options),
       });
 
@@ -240,10 +252,13 @@ export abstract class BaseRepository<
   ): Promise<TEntity> {
     try {
       const db = options.tx || this.db;
+      const defaultInclude = this.getDefaultInclude();
       const entity = await (db as any)[this.model.name].update({
         where: { id },
         data,
-        ...this.getDefaultInclude(),
+        ...(Object.keys(defaultInclude).length > 0
+          ? { include: defaultInclude }
+          : {}),
         ...this.filterOptions(options),
       });
 

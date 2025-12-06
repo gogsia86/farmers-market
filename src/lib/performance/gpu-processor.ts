@@ -6,8 +6,8 @@
  * ⚡ PERFORMANCE: Uses lazy loading for TensorFlow and Sharp (~120-170 KB savings)
  */
 
-import type { StructuredLogger } from "@/lib/logging/logger";
-import { LoggerFactory } from "@/lib/logging/logger";
+import type { Logger } from "@/lib/logger";
+import { createLogger } from "@/lib/logger";
 import { loadTensorFlow } from "@/lib/lazy/ml.lazy";
 import { loadSharp } from "@/lib/lazy/image.lazy";
 import type * as tf from "@tensorflow/tfjs";
@@ -198,7 +198,7 @@ export async function initializeTensorFlowGPU(): Promise<void> {
 
 export class GPUProcessor {
   private tfBackend: string;
-  private logger: StructuredLogger;
+  private logger: Logger;
   private metrics: Map<string, ProcessingMetrics[]> = new Map();
   private gpuMetrics: GPUMetrics = {
     utilization: 0,
@@ -210,7 +210,7 @@ export class GPUProcessor {
 
   constructor() {
     this.tfBackend = "cpu";
-    this.logger = LoggerFactory.getLogger("GPUProcessor");
+    this.logger = createLogger("GPUProcessor");
 
     // Initialize TensorFlow GPU backend asynchronously
     initializeTensorFlowGPU().then(() => {

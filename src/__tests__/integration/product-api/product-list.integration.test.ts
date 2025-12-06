@@ -18,7 +18,7 @@ import {
   createTestProduct,
   cleanupTestUser,
   disconnectTestDatabase,
-} from "@/tests/utils/api-test-helpers";
+} from "../../../../tests/helpers/api-test-helpers";
 
 import {
   testApiRoute,
@@ -26,7 +26,7 @@ import {
   ResponseHelpers,
   expectApiSuccess,
   ApiSuccessResponse,
-} from "@/tests/utils/route-test-helpers";
+} from "../../../../tests/helpers/route-test-helpers";
 
 // Check if we should skip integration tests (no real database available)
 const shouldSkipIntegrationTests =

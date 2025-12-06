@@ -19,7 +19,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { BaseController } from "./base.controller";
-import { ProductService } from "@/lib/services/product.service.refactored";
+import { ProductService } from "@/lib/services/product.service";
 import type { ProductFilters } from "@/types/product";
 import { ProductCategory } from "@/types/product";
 import { z } from "zod";

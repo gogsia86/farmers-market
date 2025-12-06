@@ -3,7 +3,7 @@
  * Common utilities for testing
  */
 
-import { mockSession } from "../mocks/next-auth.mock";
+import { mockSession } from "../helpers/mocks/next-auth.mock";
 
 /**
  * Create test user data

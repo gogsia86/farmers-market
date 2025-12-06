@@ -7,11 +7,13 @@
  * - Agricultural Quantum Mastery (02_AGRICULTURAL_QUANTUM_MASTERY)
  *
  * Functional Requirements: FR-003 (Farmer Management)
+ *
+ * Note: Authentication and authorization are handled by middleware.
+ * This layout assumes the user is authenticated and has FARMER role.
  */
 
-import { requireFarmer } from "@/lib/auth";
+import { auth } from "@/lib/auth";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import {
   HomeIcon,
   CubeIcon,
@@ -26,13 +28,8 @@ export default async function FarmerLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Require farmer authentication
-  let session;
-  try {
-    session = await requireFarmer();
-  } catch (error) {
-    redirect("/login");
-  }
+  // Get session (middleware ensures user is authenticated and has FARMER role)
+  const session = await auth();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -95,7 +92,7 @@ export default async function FarmerLayout({
             {/* User Menu */}
             <div className="flex items-center gap-4">
               <span className="text-sm text-gray-700" data-testid="user-name">
-                {session.name || session.email}
+                {session?.user?.name || session?.user?.email}
               </span>
               <Link
                 href="/api/auth/signout"

@@ -1,7 +1,10 @@
-import { PrismaClient, ProductCategory } from "@prisma/client";
-import * as bcrypt from "bcryptjs";
+// Load environment variables FIRST before any imports that use DATABASE_URL
+import { config } from "dotenv";
+config();
 
-const prisma = new PrismaClient();
+import { ProductCategory } from "@prisma/client";
+import * as bcrypt from "bcryptjs";
+import { database as prisma } from "../src/lib/database/index";
 
 async function main() {
   console.log("🌾 Seeding database with basic data...");

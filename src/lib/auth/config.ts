@@ -29,8 +29,8 @@ const nextAuthResult = NextAuth({
 
   // Custom pages
   pages: {
-    signIn: "/admin-login",
-    error: "/admin-login",
+    signIn: "/login",
+    error: "/login",
     signOut: "/",
   },
 
@@ -94,12 +94,13 @@ const nextAuthResult = NextAuth({
             return null;
           }
 
-          // Verify admin/farmer role for admin login
+          // Allow all active users to login (role-based access control handled by middleware)
           const allowedRoles: UserRole[] = [
             "ADMIN",
             "SUPER_ADMIN",
             "MODERATOR",
             "FARMER",
+            "CONSUMER",
           ];
           if (!allowedRoles.includes(user.role)) {
             console.error("User does not have required role:", user.role);

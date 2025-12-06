@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { MapPin, Star, ShoppingCart, Leaf } from "lucide-react";
+import { MapPin, Star, ShoppingCart, Leaf, ArrowRight } from "lucide-react";
 import {
   generateMetadata as generateMeta,
   generateOrganizationJsonLd,
@@ -11,11 +11,13 @@ import {
 
 /**
  * 🍎 PRODUCTS CATALOG PAGE - Server Component
+ * Version: 3.0.0 - UNIFIED AGRICULTURAL DESIGN
  * Browse and shop fresh, local products
  * Features:
  * - Product grid with filtering
  * - SEO optimized with metadata
  * - Server-side data fetching
+ * - Consistent agricultural color scheme
  */
 
 // Generate metadata for SEO
@@ -85,25 +87,37 @@ export default async function ProductsPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
       />
 
-      <main className="min-h-screen bg-background">
+      <main className="min-h-screen bg-white">
         {/* Header Section */}
-        <section className="bg-gradient-to-br from-green-50 to-emerald-50 py-16">
-          <div className="container mx-auto px-4">
+        <section className="relative bg-gradient-to-br from-agricultural-50 via-white to-green-50 py-16 overflow-hidden">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] bg-repeat"></div>
+          </div>
+
+          <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4">
+              {/* Badge */}
+              <span className="inline-flex items-center gap-2 bg-agricultural-100 text-agricultural-800 px-5 py-2.5 rounded-full text-sm font-semibold mb-6">
+                <Leaf className="h-5 w-5" />
+                Fresh & Organic
+              </span>
+
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4">
                 Fresh, Local Products
               </h1>
-              <p className="text-xl text-muted-foreground mb-8">
+              <p className="text-xl text-gray-600 mb-8">
                 Shop organic produce and artisan goods from sustainable farms in
                 your area
               </p>
               <div className="flex flex-wrap gap-4 justify-center">
-                <Button size="lg" variant="default">
+                <Button size="lg" variant="default" className="bg-agricultural-600 hover:bg-agricultural-700">
                   <ShoppingCart className="h-5 w-5 mr-2" />
                   Shop Now
                 </Button>
-                <Button size="lg" variant="outline">
+                <Button size="lg" variant="outline" className="border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50">
                   View Categories
+                  <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </div>
             </div>
@@ -116,17 +130,17 @@ export default async function ProductsPage() {
             <div className="max-w-7xl mx-auto">
               {products.length === 0 ? (
                 <div className="text-center py-16">
-                  <p className="text-xl text-muted-foreground mb-4">
+                  <p className="text-xl text-gray-600 mb-4">
                     No products available at the moment
                   </p>
-                  <p className="text-muted-foreground">
+                  <p className="text-gray-600">
                     Check back soon for fresh seasonal products!
                   </p>
                 </div>
               ) : (
                 <>
                   <div className="mb-8">
-                    <p className="text-lg text-muted-foreground">
+                    <p className="text-lg text-gray-600">
                       Showing {products.length}{" "}
                       {products.length === 1 ? "product" : "products"}
                     </p>
@@ -136,11 +150,11 @@ export default async function ProductsPage() {
                     {products.map((product: any) => (
                       <Card
                         key={product.id}
-                        className="h-full hover:shadow-lg transition-shadow duration-200"
+                        className="h-full hover:shadow-xl transition-all duration-200 border-2 hover:border-agricultural-200"
                       >
                         <CardHeader className="p-0">
                           {/* Product Image */}
-                          <div className="relative h-48 bg-gradient-to-br from-green-400 to-emerald-600 rounded-t-lg overflow-hidden">
+                          <div className="relative h-48 bg-gradient-to-br from-agricultural-400 to-agricultural-600 rounded-t-lg overflow-hidden">
                             {product.images && product.images.length > 0 ? (
                               <img
                                 src={product.images[0]}
@@ -157,7 +171,7 @@ export default async function ProductsPage() {
                             {/* Organic Badge */}
                             {product.organic && (
                               <div className="absolute top-3 right-3">
-                                <Badge className="bg-green-600 text-white hover:bg-green-700">
+                                <Badge className="bg-agricultural-600 text-white hover:bg-agricultural-700">
                                   <Leaf className="h-3 w-3 mr-1" />
                                   Organic
                                 </Badge>
@@ -179,24 +193,24 @@ export default async function ProductsPage() {
 
                         <CardContent className="p-6">
                           {/* Product Name */}
-                          <h3 className="text-lg font-bold text-foreground mb-2">
+                          <h3 className="text-lg font-bold text-gray-900 mb-2">
                             {product.name}
                           </h3>
 
                           {/* Description */}
                           {product.description && (
-                            <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                            <p className="text-sm text-gray-600 line-clamp-2 mb-3">
                               {product.description}
                             </p>
                           )}
 
                           {/* Farm Info */}
                           {product.farm && (
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
+                            <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
                               <MapPin className="h-4 w-4" />
                               <Link
                                 href={`/farms/${product.farm.slug || product.farm.id}`}
-                                className="hover:text-primary hover:underline"
+                                className="hover:text-agricultural-600 hover:underline"
                               >
                                 {product.farm.name}
                               </Link>
@@ -207,10 +221,10 @@ export default async function ProductsPage() {
                           {product.averageRating > 0 && (
                             <div className="flex items-center gap-2 text-sm mb-3">
                               <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                              <span className="font-semibold">
+                              <span className="font-semibold text-gray-900">
                                 {product.averageRating.toFixed(1)}
                               </span>
-                              <span className="text-muted-foreground">
+                              <span className="text-gray-600">
                                 ({product.reviewCount || 0} reviews)
                               </span>
                             </div>
@@ -219,17 +233,17 @@ export default async function ProductsPage() {
                           {/* Price and Add to Cart */}
                           <div className="flex items-center justify-between pt-3 border-t">
                             <div>
-                              <p className="text-2xl font-bold text-primary">
+                              <p className="text-2xl font-bold text-agricultural-600">
                                 ${product.price.toFixed(2)}
                               </p>
-                              <p className="text-xs text-muted-foreground">
+                              <p className="text-xs text-gray-600">
                                 per {product.unit || "unit"}
                               </p>
                             </div>
                             <Button
                               size="sm"
                               disabled={!product.inStock}
-                              className="gap-2"
+                              className="gap-2 bg-agricultural-600 hover:bg-agricultural-700"
                             >
                               <ShoppingCart className="h-4 w-4" />
                               Add
@@ -255,26 +269,26 @@ export default async function ProductsPage() {
         </section>
 
         {/* Categories CTA */}
-        <section className="py-16 bg-gradient-to-br from-primary-50 to-secondary-50">
+        <section className="py-16 bg-gradient-to-br from-agricultural-50 via-white to-green-50">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                 Shop by Category
               </h2>
-              <p className="text-lg text-muted-foreground mb-8">
+              <p className="text-lg text-gray-600 mb-8">
                 Discover fresh produce, dairy, meats, and artisan goods
               </p>
               <div className="flex flex-wrap gap-4 justify-center">
-                <Button size="lg" variant="outline" asChild>
+                <Button size="lg" variant="outline" asChild className="border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50">
                   <Link href="/products/categories/vegetables">Vegetables</Link>
                 </Button>
-                <Button size="lg" variant="outline" asChild>
+                <Button size="lg" variant="outline" asChild className="border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50">
                   <Link href="/products/categories/fruits">Fruits</Link>
                 </Button>
-                <Button size="lg" variant="outline" asChild>
+                <Button size="lg" variant="outline" asChild className="border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50">
                   <Link href="/products/categories/dairy">Dairy</Link>
                 </Button>
-                <Button size="lg" variant="outline" asChild>
+                <Button size="lg" variant="outline" asChild className="border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50">
                   <Link href="/categories">View All</Link>
                 </Button>
               </div>

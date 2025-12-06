@@ -51,7 +51,7 @@ export function FeaturedFarms() {
       try {
         setLoading(true);
         const response = await fetch(
-          "/api/featured/farms?limit=6&strategy=top-rated",
+          "/api/featured/farms?limit=6&strategy=random",
         );
 
         if (!response.ok) {
