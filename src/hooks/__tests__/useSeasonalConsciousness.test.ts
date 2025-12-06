@@ -74,8 +74,21 @@ describe("useSeasonalConsciousness", () => {
     it("should return valid season for current date", () => {
       const { result } = renderHook(() => useSeasonalConsciousness());
 
-      // November should be FALL
-      const expectedSeason: Season = "FALL";
+      // Dynamically determine expected season based on current month
+      const now = new Date();
+      const month = now.getMonth();
+
+      let expectedSeason: Season;
+      if (month >= 2 && month <= 4) {
+        expectedSeason = "SPRING";
+      } else if (month >= 5 && month <= 7) {
+        expectedSeason = "SUMMER";
+      } else if (month >= 8 && month <= 10) {
+        expectedSeason = "FALL";
+      } else {
+        expectedSeason = "WINTER";
+      }
+
       expect(result.current.season).toBe(expectedSeason);
     });
   });

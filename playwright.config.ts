@@ -3,9 +3,11 @@
  * Updated to handle port conflicts and provide better error messages
  */
 import { defineConfig, devices } from "@playwright/test";
+import path from "path";
 
 // Determine the port to use (allow override via env)
-const PORT = process.env.TEST_PORT || process.env.PORT || "3001";
+// Default to 3000 (Docker) - use TEST_PORT=3001 for dev script
+const PORT = process.env.TEST_PORT || process.env.PORT || "3000";
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || `http://localhost:${PORT}`;
 
 export default defineConfig({
@@ -16,6 +18,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : 6, // Use 6 workers on local (HP OMEN optimization)
   reporter: "html",
   timeout: 30000, // 30 second timeout per test
+  globalSetup: path.join(__dirname, "tests", "global-setup.ts"),
   use: {
     baseURL: BASE_URL,
     trace: "on-first-retry",
@@ -54,11 +57,16 @@ export default defineConfig({
     stdout: "pipe", // Show server output for debugging
     stderr: "pipe",
     env: {
-      // Use test database or skip DB if DATABASE_URL not set
+      // Use test database - explicitly set to port 5433 for E2E tests
       DATABASE_URL:
-        process.env.DATABASE_URL || process.env.TEST_DATABASE_URL || "",
+        process.env.TEST_DATABASE_URL ||
+        "postgresql://postgres:test_password_123@127.0.0.1:5433/farmersmarket_test",
+      NEXTAUTH_URL: "http://localhost:3001",
+      NEXTAUTH_SECRET:
+        process.env.NEXTAUTH_SECRET ||
+        "nOgEpp7IZzT6Nzf3moPRGI7HX2S9m5HOVl4eIR5+MQw=",
       NODE_ENV: process.env.CI ? "test" : "development",
-      PORT: PORT,
+      PORT,
     },
     // Ignore HTTP errors on server startup (e.g., port already in use)
     ignoreHTTPSErrors: true,

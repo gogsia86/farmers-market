@@ -1,0 +1,302 @@
+import { NextRequest, NextResponse } from "next/server";
+import { database } from "@/lib/database";
+
+/**
+ * 🌾 FARM DETAIL API ENDPOINT
+ * Fetch complete farm details by slug for public viewing
+ *
+ * GET /api/farms/[slug]
+ * Returns: Complete farm profile with products, reviews, owner info, and statistics
+ *
+ * Features:
+ * - Public access (no authentication required)
+ * - Returns only ACTIVE and VERIFIED farms
+ * - Includes related products (active only)
+ * - Includes review statistics
+ * - Includes owner information
+ * - Agricultural consciousness enabled
+ */
+
+interface RouteParams {
+  params: {
+    slug: string;
+  };
+}
+
+export async function GET(
+  _request: NextRequest,
+  { params }: RouteParams,
+): Promise<NextResponse> {
+  try {
+    const { slug } = params;
+
+    // Validate slug parameter
+    if (!slug || typeof slug !== "string") {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: "INVALID_SLUG",
+            message: "Farm slug is required and must be a valid string",
+          },
+        },
+        { status: 400 },
+      );
+    }
+
+    // Fetch farm with all related data
+    const farm = await database.farm.findUnique({
+      where: {
+        slug,
+      },
+      include: {
+        owner: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            name: true,
+            email: true,
+            avatar: true,
+            createdAt: true,
+          },
+        },
+        products: {
+          where: {
+            inStock: true,
+            status: "ACTIVE",
+          },
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            description: true,
+            price: true,
+            unit: true,
+            inStock: true,
+            images: true,
+            category: true,
+            organic: true,
+            featured: true,
+            averageRating: true,
+            reviewCount: true,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+          take: 20,
+        },
+        reviews: {
+          where: {
+            status: "APPROVED",
+          },
+          select: {
+            id: true,
+            rating: true,
+            reviewText: true,
+            createdAt: true,
+            customer: {
+              select: {
+                id: true,
+                name: true,
+                avatar: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+          take: 10,
+        },
+        _count: {
+          select: {
+            products: true,
+            reviews: true,
+            orders: true,
+          },
+        },
+      },
+    });
+
+    // Check if farm exists
+    if (!farm) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: "FARM_NOT_FOUND",
+            message: "Farm not found",
+          },
+        },
+        { status: 404 },
+      );
+    }
+
+    // Check if farm is accessible (active and verified for public viewing)
+    // Note: Remove this check if you want to allow viewing of all farms
+    if (farm.status !== "ACTIVE" || farm.verificationStatus !== "VERIFIED") {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: "FARM_NOT_AVAILABLE",
+            message: "This farm is not currently available for viewing",
+          },
+        },
+        { status: 403 },
+      );
+    }
+
+    // Increment profile views count (fire and forget)
+    database.farm
+      .update({
+        where: { id: farm.id },
+        data: {
+          profileViewsCount: {
+            increment: 1,
+          },
+        },
+      })
+      .catch((error) => {
+        console.error("[FARM_VIEW_COUNT_ERROR]", error);
+        // Don't fail the request if view count update fails
+      });
+
+    // Format response data with proper type conversions
+    const farmData = {
+      id: farm.id,
+      name: farm.name,
+      slug: farm.slug,
+      description: farm.description,
+      story: farm.story,
+      status: farm.status,
+      verificationStatus: farm.verificationStatus,
+
+      // Location information
+      address: farm.address,
+      city: farm.city,
+      state: farm.state,
+      zipCode: farm.zipCode,
+      country: farm.country,
+      latitude: farm.latitude ? Number(farm.latitude) : null,
+      longitude: farm.longitude ? Number(farm.longitude) : null,
+      deliveryRadius: farm.deliveryRadius,
+
+      // Business details
+      businessName: farm.businessName,
+      yearEstablished: farm.yearEstablished,
+      farmSize: farm.farmSize ? Number(farm.farmSize) : null,
+
+      // Ratings and reviews
+      averageRating: farm.averageRating ? Number(farm.averageRating) : null,
+      reviewCount: farm.reviewCount,
+      reviews: farm.reviews.map((review) => ({
+        id: review.id,
+        rating: Number(review.rating),
+        comment: review.reviewText,
+        createdAt: review.createdAt.toISOString(),
+        customer: {
+          id: review.customer.id,
+          name: review.customer.name,
+          avatar: review.customer.avatar,
+        },
+      })),
+
+      // Contact information
+      email: farm.email,
+      phone: farm.phone,
+      website: farm.website,
+
+      // Images
+      images: farm.images || [],
+      logoUrl: farm.logoUrl,
+      bannerUrl: farm.bannerUrl,
+
+      // Metadata
+      certifications: farm.certificationsArray || [],
+      farmingPractices: farm.farmingPractices || [],
+      productCategories: farm.productCategories || [],
+
+      // Owner information
+      owner: {
+        id: farm.owner.id,
+        name:
+          farm.owner.name ||
+          `${farm.owner.firstName || ""} ${farm.owner.lastName || ""}`.trim(),
+        avatar: farm.owner.avatar,
+        joinedYear: farm.owner.createdAt.getFullYear(),
+      },
+
+      // Products
+      products: farm.products.map((product) => ({
+        id: product.id,
+        name: product.name,
+        slug: product.slug,
+        description: product.description,
+        price: Number(product.price),
+        unit: product.unit,
+        inStock: product.inStock,
+        images: product.images || [],
+        category: product.category,
+        organic: product.organic,
+        featured: product.featured,
+        averageRating: product.averageRating
+          ? Number(product.averageRating)
+          : null,
+        reviewCount: product.reviewCount,
+      })),
+
+      // Statistics
+      stats: {
+        totalProducts: farm._count.products,
+        totalReviews: farm._count.reviews,
+        totalOrders: farm._count.orders,
+        profileViews: farm.profileViewsCount,
+      },
+
+      // Timestamps
+      createdAt: farm.createdAt.toISOString(),
+      updatedAt: farm.updatedAt.toISOString(),
+    };
+
+    return NextResponse.json(
+      {
+        success: true,
+        data: farmData,
+        agricultural: {
+          consciousness: "active",
+          season: getCurrentSeason(),
+        },
+      },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error("[FARM_DETAIL_API_ERROR]", error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: "FARM_FETCH_ERROR",
+          message: "Failed to fetch farm details",
+          details:
+            error instanceof Error ? error.message : "Unknown error occurred",
+        },
+      },
+      { status: 500 },
+    );
+  }
+}
+
+/**
+ * Helper function to determine current agricultural season
+ * Can be expanded with more sophisticated logic based on location
+ */
+function getCurrentSeason(): string {
+  const month = new Date().getMonth() + 1; // 1-12
+
+  if (month >= 3 && month <= 5) return "SPRING";
+  if (month >= 6 && month <= 8) return "SUMMER";
+  if (month >= 9 && month <= 11) return "FALL";
+  return "WINTER";
+}

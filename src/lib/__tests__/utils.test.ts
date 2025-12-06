@@ -35,7 +35,8 @@ describe("🔧 Utility Functions - Divine Helper System", () => {
     });
 
     it("should remove false/undefined/null classes", () => {
-      const result = cn("valid", false && "false-class", null, undefined);
+      const isFalse = false;
+      const result = cn("valid", isFalse && "false-class", null, undefined);
       expect(result).toBe("valid");
       expect(result).not.toContain("false-class");
     });

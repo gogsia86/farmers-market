@@ -29,7 +29,7 @@ export default function InventoryDemoPage() {
           {/* Breadcrumb Navigation */}
           <div className="mb-6">
             <Link
-              href="/farmer-dashboard"
+              href="/farmer/dashboard"
               className="inline-flex items-center gap-2 text-agricultural-600 hover:text-agricultural-700 font-medium transition-colors"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -149,7 +149,7 @@ export default function InventoryDemoPage() {
               </p>
             </Link>
             <Link
-              href="/farmer-dashboard"
+              href="/farmer/dashboard"
               className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
             >
               <h3 className="font-semibold text-gray-900 mb-2">Dashboard</h3>

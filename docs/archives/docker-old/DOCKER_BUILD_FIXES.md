@@ -94,8 +94,8 @@ docker-compose up --build
 
 1. **Build succeeds without errors**
 2. **Container starts on port 3001**
-3. **Health check passes**: `curl http://localhost:3001/api/health`
-4. **Application is accessible**: `http://localhost:3001`
+3. **Health check passes**: `curl http://localhost:3000/api/health`
+4. **Application is accessible**: `http://localhost:3000`
 
 ## Production Deployment
 

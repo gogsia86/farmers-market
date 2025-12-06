@@ -1,183 +1,236 @@
 #!/usr/bin/env node
 
 /**
- * E2E Test Helper Script
- * Checks if dev server is running before executing E2E tests
- * Provides clear instructions and error handling
+ * 🧪 E2E TEST RUNNER
+ * Divine end-to-end testing orchestration
+ *
+ * This script:
+ * - Starts the Next.js dev server
+ * - Waits for server to be ready
+ * - Runs Playwright tests
+ * - Cleans up gracefully on exit
  */
 
-const http = require("http");
 const { spawn } = require("child_process");
-const chalk = require("chalk") || {
-  green: (s) => s,
-  red: (s) => s,
-  yellow: (s) => s,
-  blue: (s) => s,
-};
+const http = require("http");
 
-const PORT = process.env.TEST_PORT || process.env.PORT || 3001;
-const HOST = "localhost";
-const BASE_URL = `http://${HOST}:${PORT}`;
-const MAX_RETRIES = 3;
-const RETRY_DELAY = 2000;
+// ============================================================================
+// CONFIGURATION
+// ============================================================================
 
-// ASCII Art Banner
-console.log(`
-╔════════════════════════════════════════════════════════════╗
-║  🌾 Farmers Market Platform - E2E Test Runner             ║
-║  Divine Agricultural Testing Infrastructure               ║
-╚════════════════════════════════════════════════════════════╝
-`);
+const DEV_SERVER_PORT = process.env.PORT || 3000;
+const DEV_SERVER_URL = `http://localhost:${DEV_SERVER_PORT}`;
+const MAX_WAIT_TIME = 120000; // 2 minutes
+const CHECK_INTERVAL = 1000; // 1 second
+
+// ============================================================================
+// UTILITIES
+// ============================================================================
 
 /**
- * Check if server is running on the specified port
+ * Check if server is ready by making an HTTP request
  */
-function checkServerRunning(retries = 0) {
-  return new Promise((resolve, reject) => {
-    const req = http.get(BASE_URL, (res) => {
-      if (res.statusCode === 200 || res.statusCode === 404) {
-        resolve(true);
-      } else {
-        resolve(false);
-      }
+function checkServerReady() {
+  return new Promise((resolve) => {
+    const request = http.get(DEV_SERVER_URL, (res) => {
+      resolve(res.statusCode === 200 || res.statusCode === 304);
     });
 
-    req.on("error", (err) => {
-      if (err.code === "ECONNREFUSED") {
-        if (retries < MAX_RETRIES) {
-          console.log(
-            `⏳ Waiting for server to start... (attempt ${retries + 1}/${MAX_RETRIES})`,
-          );
-          setTimeout(() => {
-            checkServerRunning(retries + 1)
-              .then(resolve)
-              .catch(reject);
-          }, RETRY_DELAY);
-        } else {
-          resolve(false);
-        }
-      } else {
-        resolve(false);
-      }
+    request.on("error", () => {
+      resolve(false);
     });
 
-    req.setTimeout(5000, () => {
-      req.destroy();
+    request.setTimeout(2000, () => {
+      request.destroy();
       resolve(false);
     });
   });
 }
 
 /**
- * Display instructions for manual server start
+ * Wait for server to be ready
  */
-function displayManualStartInstructions() {
-  console.log(`
-❌ Server is not running on ${BASE_URL}
+async function waitForServer() {
+  console.log(`⏳ Waiting for dev server at ${DEV_SERVER_URL}...`);
 
-📋 To run E2E tests, you need to start the dev server first:
+  const startTime = Date.now();
 
-Option 1: Manual Start (Recommended)
-────────────────────────────────────────────────────────────
-1. Open a new terminal window
-2. Run: npm run dev
-3. Wait for "Ready on http://localhost:${PORT}"
-4. Then run: npm run test:e2e
+  while (Date.now() - startTime < MAX_WAIT_TIME) {
+    const isReady = await checkServerReady();
 
-Option 2: Automatic with PM2 (Advanced)
-────────────────────────────────────────────────────────────
-1. Install PM2: npm install -g pm2
-2. Start server: pm2 start "npm run dev" --name farmers-market
-3. Run tests: npm run test:e2e
-4. Stop server: pm2 stop farmers-market
+    if (isReady) {
+      console.log("✅ Dev server is ready!");
+      return true;
+    }
 
-Option 3: Use Playwright's webServer (Automatic)
-────────────────────────────────────────────────────────────
-The Playwright config will automatically start the server,
-but you need to ensure no other process is using port ${PORT}.
+    await new Promise((resolve) => setTimeout(resolve, CHECK_INTERVAL));
+  }
 
-To check what's using port ${PORT}:
-  Windows: netstat -ano | findstr :${PORT}
-  Linux/Mac: lsof -i :${PORT}
-
-To kill process on port ${PORT}:
-  Windows: taskkill /PID <PID> /F
-  Linux/Mac: kill -9 <PID>
-
-────────────────────────────────────────────────────────────
-🌾 Agricultural Consciousness: Patience is key in farming!
-────────────────────────────────────────────────────────────
-`);
+  console.error("❌ Dev server failed to start within timeout");
+  return false;
 }
 
 /**
- * Run Playwright E2E tests
+ * Kill process gracefully
  */
-function runPlaywrightTests() {
-  console.log(`✅ Server is running on ${BASE_URL}`);
-  console.log(`🧪 Starting Playwright E2E tests...\n`);
+function killProcess(proc) {
+  if (!proc || proc.killed) return;
 
-  const playwrightArgs = process.argv.slice(2);
-  const playwrightCmd = process.platform === "win32" ? "npx.cmd" : "npx";
+  try {
+    // On Windows, use taskkill to kill the entire process tree
+    if (process.platform === "win32") {
+      spawn("taskkill", ["/pid", proc.pid, "/f", "/t"]);
+    } else {
+      proc.kill("SIGTERM");
 
-  const playwright = spawn(
-    playwrightCmd,
-    ["playwright", "test", ...playwrightArgs],
-    {
+      // Force kill after 5 seconds if still running
+      setTimeout(() => {
+        if (!proc.killed) {
+          proc.kill("SIGKILL");
+        }
+      }, 5000);
+    }
+  } catch (error) {
+    console.error("Error killing process:", error.message);
+  }
+}
+
+// ============================================================================
+// MAIN EXECUTION
+// ============================================================================
+
+async function main() {
+  console.log("🚀 Starting E2E Test Runner...\n");
+
+  let devServer = null;
+  let playwrightProcess = null;
+  let exitCode = 0;
+  let alreadyRunning = false;
+
+  try {
+    // Step 1: Check if server is already running
+    console.log("🔍 Checking if dev server is already running...");
+    alreadyRunning = await checkServerReady();
+
+    if (!alreadyRunning) {
+      // Step 2: Start dev server
+      console.log("🏗️  Starting Next.js dev server...\n");
+
+      devServer = spawn("npm", ["run", "dev"], {
+        stdio: ["ignore", "pipe", "pipe"],
+        shell: true,
+        env: {
+          ...process.env,
+          PORT: DEV_SERVER_PORT.toString(),
+          NODE_ENV: "development",
+        },
+      });
+
+      // Log dev server output
+      devServer.stdout.on("data", (data) => {
+        const output = data.toString();
+        if (output.includes("Ready") || output.includes("started server")) {
+          console.log("📡", output.trim());
+        }
+      });
+
+      devServer.stderr.on("data", (data) => {
+        const error = data.toString();
+        // Ignore common Next.js warnings
+        if (!error.includes("webpack") && !error.includes("source-map")) {
+          console.error("🔴", error.trim());
+        }
+      });
+
+      devServer.on("error", (error) => {
+        console.error("❌ Failed to start dev server:", error);
+      });
+
+      // Step 3: Wait for server to be ready
+      const serverReady = await waitForServer();
+
+      if (!serverReady) {
+        throw new Error("Dev server failed to start");
+      }
+    } else {
+      console.log("✅ Dev server already running!\n");
+    }
+
+    // Step 4: Run Playwright tests
+    console.log("\n🎭 Running Playwright tests...\n");
+
+    const playwrightArgs = [
+      "playwright",
+      "test",
+      "--workers=6",
+      ...process.argv.slice(2), // Pass through any additional arguments
+    ];
+
+    playwrightProcess = spawn("npx", playwrightArgs, {
       stdio: "inherit",
       shell: true,
       env: {
         ...process.env,
-        BASE_URL: BASE_URL,
-        TEST_PORT: PORT,
+        BASE_URL: DEV_SERVER_URL,
       },
-    },
-  );
+    });
 
-  playwright.on("close", (code) => {
-    if (code === 0) {
-      console.log(`\n✅ E2E tests completed successfully!`);
+    // Wait for Playwright to complete
+    exitCode = await new Promise((resolve) => {
+      playwrightProcess.on("close", (code) => {
+        resolve(code || 0);
+      });
+
+      playwrightProcess.on("error", (error) => {
+        console.error("❌ Failed to run Playwright:", error);
+        resolve(1);
+      });
+    });
+
+    if (exitCode === 0) {
+      console.log("\n✅ E2E tests completed successfully!");
     } else {
-      console.log(`\n❌ E2E tests failed with exit code ${code}`);
+      console.error(`\n❌ E2E tests failed with exit code ${exitCode}`);
     }
-    process.exit(code);
-  });
+  } catch (error) {
+    console.error("\n❌ E2E test runner failed:", error.message);
+    exitCode = 1;
+  } finally {
+    // Cleanup
+    console.log("\n🧹 Cleaning up...");
 
-  playwright.on("error", (err) => {
-    console.error(`\n❌ Failed to start Playwright:`, err);
-    process.exit(1);
-  });
-}
+    if (devServer && !alreadyRunning) {
+      console.log("🛑 Stopping dev server...");
+      killProcess(devServer);
+    }
 
-/**
- * Main execution
- */
-async function main() {
-  console.log(`🔍 Checking if server is running on ${BASE_URL}...`);
+    if (playwrightProcess) {
+      killProcess(playwrightProcess);
+    }
 
-  const isRunning = await checkServerRunning();
-
-  if (isRunning) {
-    runPlaywrightTests();
-  } else {
-    displayManualStartInstructions();
-    process.exit(1);
+    console.log("✅ Cleanup complete");
   }
+
+  process.exit(exitCode);
 }
 
-// Handle termination signals
+// ============================================================================
+// SIGNAL HANDLERS
+// ============================================================================
+
+// Handle CTRL+C and other termination signals
 process.on("SIGINT", () => {
-  console.log("\n\n🛑 E2E tests interrupted by user");
+  console.log("\n⚠️  Received SIGINT, shutting down gracefully...");
   process.exit(130);
 });
 
 process.on("SIGTERM", () => {
-  console.log("\n\n🛑 E2E tests terminated");
+  console.log("\n⚠️  Received SIGTERM, shutting down gracefully...");
   process.exit(143);
 });
 
-// Run main function
-main().catch((err) => {
-  console.error("❌ Unexpected error:", err);
-  process.exit(1);
-});
+// ============================================================================
+// RUN
+// ============================================================================
+
+main();

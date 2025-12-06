@@ -2,7 +2,37 @@
  * PRODUCT TYPE SYSTEM
  * Divine TypeScript definitions for agricultural product catalog
  * Quantum patterns for farm product consciousness
+ *
+ * ⚠️ MIGRATION NOTICE: Core Product entity moved to @/types/core-entities
+ * This file now contains product-specific enums, attributes, and extensions.
+ *
+ * @reference .github/instructions/01_DIVINE_CORE_PRINCIPLES.instructions.md
  */
+
+// ============================================
+// CORE TYPE RE-EXPORTS
+// ============================================
+
+/**
+ * Re-export core Product types from single source of truth
+ */
+export type {
+  Product as PrismaProduct,
+  ProductStatus as PrismaProductStatus,
+  ProductCategory as PrismaProductCategory,
+} from "@prisma/client";
+
+export type {
+  Product,
+  ProductCard,
+  ProductWithRelations,
+  CreateProductRequest,
+  UpdateProductRequest,
+  ProductFilterOptions,
+} from "@/types/core-entities";
+
+// Import Product type for use in this file
+import type { Product } from "@/types/core-entities";
 
 // ============================================
 // PRODUCT CATEGORIES & CLASSIFICATIONS
@@ -197,11 +227,14 @@ export interface ProductImage {
 // ============================================
 
 /**
- * Complete product profile with quantum agricultural consciousness
- * Holographic product entity containing all product intelligence
+ * Extended product with all agricultural consciousness attributes
+ * Use ProductWithRelations from core-entities for basic needs
+ * Use this for full quantum product consciousness
+ *
+ * @deprecated Consider using ProductWithRelations from @/types/core-entities
  */
-export interface Product {
-  // Identity
+export interface ExtendedProduct {
+  // Base Product fields (from Prisma)
   id: string;
   farmId: string;
   name: string;

@@ -1,0 +1,1 @@
+bash: k6: command not found

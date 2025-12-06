@@ -159,7 +159,7 @@ export class BiodynamicCacheManager {
     this.memoryCache.clear();
     // Note: We don't clear ALL of Redis, just invalidate patterns
     await this.invalidatePattern("biodynamic:*");
-    console.log(`🗑️ Cache cleared`);
+    console.log("🗑️ Cache cleared");
   }
 
   /**

@@ -8,7 +8,7 @@
 
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import CredentialsProvider from "next-auth/providers/credentials";
+import Credentials from "next-auth/providers/credentials";
 import { database } from "@/lib/database";
 import { compare } from "bcryptjs";
 import type { UserRole, UserStatus } from "@prisma/client";
@@ -29,14 +29,14 @@ const nextAuthResult = NextAuth({
 
   // Custom pages
   pages: {
-    signIn: "/admin-login",
-    error: "/admin-login",
+    signIn: "/login",
+    error: "/login",
     signOut: "/",
   },
 
   // Authentication providers
   providers: [
-    CredentialsProvider({
+    Credentials({
       name: "credentials",
       credentials: {
         email: {
@@ -94,12 +94,13 @@ const nextAuthResult = NextAuth({
             return null;
           }
 
-          // Verify admin/farmer role for admin login
+          // Allow all active users to login (role-based access control handled by middleware)
           const allowedRoles: UserRole[] = [
             "ADMIN",
             "SUPER_ADMIN",
             "MODERATOR",
             "FARMER",
+            "CONSUMER",
           ];
           if (!allowedRoles.includes(user.role)) {
             console.error("User does not have required role:", user.role);
@@ -156,7 +157,8 @@ const nextAuthResult = NextAuth({
         session.user.id = token.id as string;
         session.user.role = token.role as UserRole;
         session.user.status = token.status as UserStatus;
-        session.user.name = token.name as string;
+        session.user.name =
+          (token.name as string) || (token.email as string) || "User";
         session.user.email = token.email as string;
       }
 

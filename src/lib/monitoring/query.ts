@@ -92,7 +92,7 @@ export async function measureParallelQueries<T extends unknown[]>(
       {
         individual: queries.map((q, i) => ({
           name: q.name,
-          duration: individualDurations[i]?.toFixed(2) + "ms",
+          duration: `${individualDurations[i]?.toFixed(2)}ms`,
         })),
       },
     );

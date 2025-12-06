@@ -87,7 +87,7 @@
 
 ### **Open in Browser**
 
-Navigate to: `http://localhost:3001/auth/register/consumer`
+Navigate to: `http://localhost:3000/auth/register/consumer`
 
 ### **Test Flow**
 
@@ -248,13 +248,13 @@ Create `useAuth()` hook for:
 
 ## 🚀 **READY TO TEST**
 
-**Server**: Running at <http://localhost:3001>
+**Server**: Running at <http://localhost:3000>
 
 **All Registration URLs**:
 
-1. **Login**: <http://localhost:3001/auth/login>
-2. **Farmer Registration**: <http://localhost:3001/auth/register/farmer>
-3. **Consumer Registration**: <http://localhost:3001/auth/register/consumer> 🎉
+1. **Login**: <http://localhost:3000/auth/login>
+2. **Farmer Registration**: <http://localhost:3000/auth/register/farmer>
+3. **Consumer Registration**: <http://localhost:3000/auth/register/consumer> 🎉
 
 **Test Flow**:
 

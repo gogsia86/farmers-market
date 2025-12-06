@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     let farms;
 
     switch (strategy) {
-      case "top-rated":
+      case "top-rated": {
         // Get farms with highest average ratings
         farms = await database.farm.findMany({
           where: {
@@ -86,8 +86,9 @@ export async function GET(request: NextRequest) {
 
         farms = farmsWithRatings;
         break;
+      }
 
-      case "recent":
+      case "recent": {
         // Get recently active farms (with recent products)
         farms = await database.farm.findMany({
           where: {
@@ -125,8 +126,9 @@ export async function GET(request: NextRequest) {
           take: limit,
         });
         break;
+      }
 
-      case "random":
+      case "random": {
         // Get random selection of active farms
         const totalFarms = await database.farm.count({
           where: {
@@ -167,6 +169,7 @@ export async function GET(request: NextRequest) {
           take: limit,
         });
         break;
+      }
 
       default:
         // Default to top-rated

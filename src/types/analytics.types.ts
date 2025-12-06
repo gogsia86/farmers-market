@@ -627,13 +627,14 @@ export function getTimeRangeForPeriod(
       end.setHours(23, 59, 59, 999);
       break;
 
-    case "week":
+    case "week": {
       const day = start.getDay();
       start.setDate(start.getDate() - day);
       start.setHours(0, 0, 0, 0);
       end.setDate(end.getDate() + (6 - day));
       end.setHours(23, 59, 59, 999);
       break;
+    }
 
     case "month":
       start.setDate(1);
@@ -642,13 +643,14 @@ export function getTimeRangeForPeriod(
       end.setHours(23, 59, 59, 999);
       break;
 
-    case "quarter":
+    case "quarter": {
       const quarter = getQuarterFromDate(date);
       start.setMonth((quarter - 1) * 3, 1);
       start.setHours(0, 0, 0, 0);
       end.setMonth(quarter * 3, 0);
       end.setHours(23, 59, 59, 999);
       break;
+    }
 
     case "year":
       start.setMonth(0, 1);

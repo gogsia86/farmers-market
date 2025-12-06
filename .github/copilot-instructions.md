@@ -222,7 +222,7 @@ This codebase is optimized for:
 2. **Don't bypass services** - API routes should call services, not Prisma directly
 3. **Don't forget RBAC** - admin features must be in `(admin)` route group or check `session.user.role`
 4. **Don't ignore tests** - all services should have test coverage (use mocked `database`)
-5. **Don't hardcode ports** - dev server runs on 3001 (not 3000) per `package.json`
+5. **Don't hardcode ports** - dev server runs on 3000 (Docker standard), dev scripts use 3001
 
 ## References for deep dives
 

@@ -6,12 +6,12 @@
 
 ## 🚀 SERVER STATUS
 
-**✅ Server Running**: <http://localhost:3001>
+**✅ Server Running**: <http://localhost:3000>
 **📍 Test Pages**:
 
-- Products: <http://localhost:3001/products>
-- Farms: <http://localhost:3001/farms>
-- Homepage: <http://localhost:3001/>
+- Products: <http://localhost:3000/products>
+- Farms: <http://localhost:3000/farms>
+- Homepage: <http://localhost:3000/>
 
 ---
 
@@ -21,7 +21,7 @@
 
 #### Add Item to Cart
 
-- [ ] Navigate to http://localhost:3001/products
+- [ ] Navigate to http://localhost:3000/products
 - [ ] Click "🛒 Add to Cart" on any product
 - [ ] **Expected**: Cart sidebar opens automatically
 - [ ] **Expected**: Product appears in cart with correct details
@@ -115,7 +115,7 @@
 
 - [ ] Add items to cart
 - [ ] Close browser completely
-- [ ] Reopen browser and go to http://localhost:3001
+- [ ] Reopen browser and go to http://localhost:3000
 - [ ] **Expected**: Cart items restored from localStorage
 
 #### Clear Browser Data Test

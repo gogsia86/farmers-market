@@ -211,3 +211,32 @@ docs/build/
 # 🌟 Custom Project-Specific Ignores
 # ═══════════════════════════════════════════════════════════
 # Add your custom ignore patterns below:
+nul
+
+# Monitoring Reports (runtime generated)
+monitoring-reports/
+
+# Visual Studio
+.vs/
+*.slnx
+
+# ═══════════════════════════════════════════════════════════
+# 🧹 Additional Cleanup Rules
+# ═══════════════════════════════════════════════════════════
+# Backup directories
+*-backup*/
+backup-*/
+.import-fix-backups/
+.migration-backups/
+
+# Visual Studio Solution
+*.slnx
+
+# Verification reports
+verification-report*.json
+
+# Lint reports
+lint-report.txt
+
+# IDE workspace files
+*.code-workspace

@@ -38,6 +38,37 @@ export function CardHeader({
   );
 }
 
+export function CardTitle({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <h3
+      className={cn(
+        "text-lg font-semibold leading-none tracking-tight",
+        className,
+      )}
+    >
+      {children}
+    </h3>
+  );
+}
+
+export function CardDescription({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <p className={cn("text-sm text-muted-foreground", className)}>{children}</p>
+  );
+}
+
 export function CardBody({
   children,
   className,
@@ -47,6 +78,9 @@ export function CardBody({
 }) {
   return <div className={cn("px-6 py-4", className)}>{children}</div>;
 }
+
+// Alias for compatibility with shadcn/ui naming
+export const CardContent = CardBody;
 
 export function CardFooter({
   children,

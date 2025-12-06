@@ -1,221 +1,377 @@
+# ╔════════════════════════════════════════════════════════════════════╗
+# ║ 🌾 FARMERS MARKET PLATFORM - DOCKER IGNORE FILE                   ║
+# ║ Divine Agricultural E-Commerce System                              ║
+# ║ Exclude unnecessary files from Docker build context               ║
+# ╚════════════════════════════════════════════════════════════════════╝
+
 # ============================================================================
-# FARMERS MARKET - DIVINE DOCKER IGNORE
-# Optimize Docker builds by excluding unnecessary files
+# NODE.JS DEPENDENCIES
 # ============================================================================
-
-# === NEXT.JS BUILD ARTIFACTS (rebuilt in container) ===
-.next/
-out/
-build/
-dist/
-.turbo/
-
-# === GIT & VERSION CONTROL ===
-.git/
-.github/
-.gitignore
-.gitattributes
-.husky/
-
-# === NODE MODULES & DEPENDENCIES ===
-node_modules/
+node_modules
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
-.npm/
-.yarn/
-# Keep package-lock.json for reproducible builds
-# package-lock.json
-yarn.lock
-pnpm-lock.yaml
+lerna-debug.log*
+package-lock.json.bak
 
-# === TESTING & COVERAGE ===
-coverage/
-test-results/
-.jest-cache/
-.playwright/
-playwright-report/
-junit.xml
-e2e/
-tests/
-__tests__/
-**/*.test.ts
-**/*.test.tsx
-**/*.spec.ts
-**/*.spec.tsx
-
-# === IMPORTANT: Allow source files for build ===
-!src/
-!public/
-!next.config.mjs
-!next.config.js
-!tsconfig.json
-!tailwind.config.ts
-!postcss.config.js
-!components.json
-
-# === PROFILING & PERFORMANCE DATA ===
-*.prof
-*.nsys-rep
-*.ncu-rep
-*.heapsnapshot
-profiling_output/
-performance_logs/
-profiling_scripts/
-
-# === ENVIRONMENT & SECRETS ===
+# ============================================================================
+# ENVIRONMENT VARIABLES
+# ============================================================================
 .env
 .env.local
+.env.development
 .env.development.local
+.env.test
 .env.test.local
+.env.production
 .env.production.local
-.env.secrets
-.env.keys
-secrets/
-config/local.*
-*.secret.txt
-*.pem
-*.key
-*.crt
+.env.staging
+.env.*.local
+*.env
 
-# === DIVINE CLEANUP LOGS ===
-DIVINE_CLEANUP_LOG_*.txt
-cleanup_reports/
-cleanup-logs/
-cleanup-backup-*/
-archive_logs/
-.cleanup-backups/
+# ============================================================================
+# BUILD OUTPUTS
+# ============================================================================
+.next
+out
+dist
+build
+.nuxt
+.vuepress/dist
+.serverless
+.fusebox
 
-# === AGRICULTURAL CONSCIOUSNESS PATTERNS ===
-**/farm-temp-*
-**/harvest-cache-*
-**/soil-analysis-*
-seasonal_backups/
-agricultural_cache/
-quantum_snapshots/
-consciousness_backup/
+# ============================================================================
+# TESTING
+# ============================================================================
+coverage
+*.lcov
+.nyc_output
+.jest-cache
+__tests__/__snapshots__
+playwright-report
+test-results
+e2e-results
 
-# === OS & EDITOR PATTERNS ===
-Thumbs.db
-.DS_Store
+# ============================================================================
+# LOGS
+# ============================================================================
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ============================================================================
+# RUNTIME DATA
+# ============================================================================
+pids
+*.pid
+*.seed
+*.pid.lock
+lib-cov
+
+# ============================================================================
+# IDE AND EDITOR FILES
+# ============================================================================
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea
 *.swp
 *.swo
+*.swn
 *~
-.vscode/
-.idea/
-*.code-workspace
-.vscode-test/
+.DS_Store
+.project
+.classpath
+.settings
+*.sublime-project
+*.sublime-workspace
 
-# === DOCUMENTATION (keep only essential) ===
-*.md
-!README.md
-docs/
-LICENSE
-CHANGELOG.md
-CONTRIBUTING.md
-CODE_OF_CONDUCT.md
-planning/
-DIVINE_*.md
-PROJECT_*.md
-COMPREHENSIVE_*.md
-DEPLOYMENT_*.md
-DEVELOPMENT_*.md
-API_DOCUMENTATION.md
-DATABASE_SCHEMA.md
+# ============================================================================
+# OS FILES
+# ============================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
 
-# === DOCKER FILES (don't copy into image) ===
-Dockerfile
-Dockerfile.*
-docker-compose.yml
-docker-compose.*.yml
+# ============================================================================
+# DOCKER FILES (DON'T INCLUDE DOCKER FILES IN DOCKER BUILD)
+# ============================================================================
 .dockerignore
-*.dockerfile
-docker-build-log.txt
-deploy-docker.ps1
-DOCKER_*.md
+Dockerfile*
+docker-compose*.yml
+.docker
 
-# === CI/CD & DEPLOYMENT SCRIPTS ===
-.github/
+# ============================================================================
+# GIT
+# ============================================================================
+.git
+.gitignore
+.gitattributes
+.github
+**/.git
+**/.gitignore
+
+# ============================================================================
+# CI/CD
+# ============================================================================
 .gitlab-ci.yml
-.circleci/
 .travis.yml
+.circleci
 azure-pipelines.yml
-deploy/
-scripts/*.ps1
-scripts/*.sh
-*.ps1
-*.sh
+bitbucket-pipelines.yml
+.drone.yml
 
-# === TEMPORARY FILES & LOGS ===
+# ============================================================================
+# TEMPORARY FILES
+# ============================================================================
+tmp
+temp
 *.tmp
-*.temp
-*.log
-temp/
-tmp/
-logs/
-build-output.txt
-build-error-log.txt
-build-errors.txt
-build-full-output.txt
-test-output.txt
-typescript-errors.txt
-npm-install-debug.log
-
-# === CACHE & BUILD INFO ===
-.cache/
-.parcel-cache/
-.nuxt/
-.nitro/
-.output/
-*.tsbuildinfo
-.eslintcache
-.stylelintcache
-
-# === DATABASE & SEEDS (handled separately) ===
-*.db
-*.sqlite
-*.sqlite3
-# Keep prisma schema for client generation
-!prisma/schema.prisma
-prisma/seed.ts
-prisma/seeds/
-
-# === MEDIA & LARGE FILES (use volumes) ===
-uploads/
-public/uploads/
-*.mp4
-*.avi
-*.mov
-*.mp3
-*.wav
-
-# === BACKUP & ARCHIVE ===
 *.bak
 *.backup
 *.old
-archive/
-old-scripts/
+.cache
+.temp
+
+# ============================================================================
+# DOCUMENTATION
+# ============================================================================
+docs
+documentation
+*.md
+!README.md
+CHANGELOG.md
+CONTRIBUTING.md
+LICENSE
+AUTHORS
+CONTRIBUTORS
+CODE_OF_CONDUCT.md
+
+# Documentation folders
+docs/
+documentation/
+.storybook
+
+# ============================================================================
+# MEDIA AND UPLOADS (SHOULD BE VOLUME MOUNTED)
+# ============================================================================
+uploads
+public/uploads
+static/uploads
+media
+
+# ============================================================================
+# DATABASE FILES
+# ============================================================================
+*.db
+*.sqlite
+*.sqlite3
+db.json
+*.dump
+*.sql
+!prisma/schema.prisma
+
+# Database directories
+data
+database
+
+# ============================================================================
+# PRISMA
+# ============================================================================
+prisma/migrations
+prisma/seed-data
+!prisma/schema.prisma
+!prisma/seed.ts
+!prisma/seed-basic.ts
+
+# ============================================================================
+# TYPESCRIPT
+# ============================================================================
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# ============================================================================
+# DEPLOYMENT SCRIPTS
+# ============================================================================
+deploy.sh
+deployment
+scripts/deploy
+.deployment
+
+# ============================================================================
+# MONITORING AND REPORTS
+# ============================================================================
+monitoring-reports
+reports
+coverage-reports
+test-reports
+benchmark-results
+
+# ============================================================================
+# BACKUP FILES
+# ============================================================================
+*.backup
+*.bak
+*.old
+*~
 backup/
+backups/
 
-# === CLOUD PROVIDER SPECIFIC ===
-.vercel/
-.netlify/
-.serverless/
+# ============================================================================
+# CONFIGURATION FILES (EXCLUDE SENSITIVE)
+# ============================================================================
+.npmrc
+.yarnrc
+.eslintcache
+.prettierignore
+.lintstagedrc*
+.editorconfig
 
-# === OPTIMIZATION REPORTS ===
-*_STATUS*.md
-*_REPORT*.md
-*_REVIEW*.md
-OPTIMIZATION_*.md
-TESTING_*.md
-cursorrules-compliance-report.md
-DEPENDENCY_OPTIMIZATION_REPORT.md
+# ============================================================================
+# HUSKY
+# ============================================================================
+.husky/_
 
-# === MISCELLANEOUS ===
-TODO.md
-NOTES.md
-ROADMAP.md
-*.draft
-*.wip
-.sentry/
+# ============================================================================
+# MISCELLANEOUS
+# ============================================================================
+.vercel
+.vercel.json
+vercel.json
+now.json
+.netlify
+
+# Sentry
+.sentryclirc
+
+# Next.js cache
+.next/cache
+
+# Turbo
+.turbo
+
+# ============================================================================
+# DEVELOPMENT TOOLS
+# ============================================================================
+.vscode-test
+*.code-workspace
+
+# ============================================================================
+# PACKAGE MANAGERS
+# ============================================================================
+.yarn
+.yarnrc.yml
+.pnp.*
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# pnpm
+.pnpm-store
+
+# ============================================================================
+# SECURITY
+# ============================================================================
+*.pem
+*.key
+*.cert
+*.crt
+!docker/nginx/ssl/*.crt
+!docker/nginx/ssl/*.key
+secrets
+.secrets
+credentials
+.credentials
+
+# ============================================================================
+# LOCAL DEVELOPMENT FILES
+# ============================================================================
+*.local
+local
+.local
+.dev
+dev
+
+# ============================================================================
+# SOURCE MAPS (OPTIONAL - EXCLUDE FOR SMALLER IMAGE)
+# ============================================================================
+**/*.map
+
+# ============================================================================
+# EXAMPLE FILES
+# ============================================================================
+*.example
+examples/
+example/
+sample/
+samples/
+
+# ============================================================================
+# ARCHIVE FILES
+# ============================================================================
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+
+# ============================================================================
+# CONSOLIDATION AND CLEANUP FILES
+# ============================================================================
+consolidation-backup/
+*CLEANUP*.md
+*AUDIT*.md
+*REVIEW*.md
+*ANALYSIS*.md
+*CHECKLIST*.md
+*ARCHIVE*.md
+*BACKUP*.md
+*DUPLICATE*.md
+
+# ============================================================================
+# CUSTOM PROJECT-SPECIFIC EXCLUSIONS
+# ============================================================================
+
+# Validation reports
+VALIDATION*.md
+VERIFICATION*.md
+platform-validation-report.md
+
+# Action plans and documentation
+ACTION_PLAN.md
+NEXT_STEPS.md
+IMPROVEMENTS*.md
+CHANGES.md
+PHASE*.md
+PROJECT_REVIEW.md
+ARCHITECTURAL_ISSUES*.md
+ARCHITECTURE_CLEANUP*.md
+
+# Test and diagnostic files
+error-detection-report.json
+check-pages.js
+check-server.ps1
+*.bat
+*.ps1
+
+# Temporary scripts
+cleanup-*.sh
+deep-clean.sh
+master-cleanup.sh
+stage-consolidation.*

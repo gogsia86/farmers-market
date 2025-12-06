@@ -3,16 +3,16 @@
 import { useComponentConsciousness } from "@/hooks/useComponentConsciousness";
 import { useSeasonalConsciousness } from "@/hooks/useSeasonalConsciousness";
 import { cn } from "@/lib/utils";
-import type { Product } from "@/types/product.types";
+import type { ProductCard } from "@/types/core-entities";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
 export interface BiodynamicProductGridProps {
-  products: Product[];
+  products: ProductCard[];
   farmId?: string;
   seasonalFilter?: boolean;
   organicOnly?: boolean;
-  onProductClick?: (product: Product) => void;
+  onProductClick?: (product: ProductCard) => void;
   onAddToCart?: (productId: string) => void;
   columns?: 2 | 3 | 4;
   className?: string;
@@ -45,7 +45,8 @@ export function BiodynamicProductGrid({
     harvestWindow,
   } = useSeasonalConsciousness();
 
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
+  const [filteredProducts, setFilteredProducts] =
+    useState<ProductCard[]>(products);
 
   // Apply filters
   useEffect(() => {
@@ -64,7 +65,7 @@ export function BiodynamicProductGrid({
     setFilteredProducts(filtered);
   }, [products, seasonalFilter, organicOnly, currentSeason]);
 
-  const handleProductClick = (product: Product) => {
+  const handleProductClick = (product: ProductCard) => {
     const measurement = consciousness.startMeasurement("product_click");
     try {
       onProductClick?.(product);
@@ -177,25 +178,12 @@ export function BiodynamicProductGrid({
             </div>
 
             {/* Quantity */}
-            {product.quantity !== null && product.quantity !== undefined && (
-              <p className="text-sm text-gray-600 mb-3">
-                {product.quantity} {product.unit}s available
-              </p>
-            )}
-
-            {/* Tags */}
-            {product.tags && product.tags.length > 0 && (
-              <div className="flex flex-wrap gap-1 mb-3">
-                {product.tags.slice(0, 3).map((tag) => (
-                  <span
-                    key={tag}
-                    className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
+            {product.quantityAvailable !== null &&
+              product.quantityAvailable !== undefined && (
+                <p className="text-sm text-gray-600 mb-3">
+                  {product.quantityAvailable} {product.unit}s available
+                </p>
+              )}
 
             {/* Add to Cart Button */}
             <button

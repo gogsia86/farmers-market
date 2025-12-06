@@ -33,7 +33,7 @@ The admin login isn't working because there's no database connection. You need t
 DATABASE_URL="postgres://default:xxx@xxx.postgres.vercel-storage.com:5432/verceldb?sslmode=require&pgbouncer=true"
 DIRECT_URL="postgres://default:xxx@xxx.postgres.vercel-storage.com:5432/verceldb?sslmode=require"
 NEXTAUTH_SECRET="your-secret-key-change-this-in-production"
-NEXTAUTH_URL="http://localhost:3001"
+NEXTAUTH_URL="http://localhost:3000"
 ```
 
 ### **Step 4: Run Database Migration**
@@ -57,7 +57,7 @@ npm run dev
 
 ### **Step 6: Login**
 
-- **URL**: http://localhost:3001/admin-login
+- **URL**: http://localhost:3000/admin-login
 - **Email**: `admin@farmersmarket.app`
 - **Password**: `DivineAdmin123!`
 
@@ -162,7 +162,7 @@ If successful, you'll see:
 1. ✅ Run migrations: `npx prisma migrate deploy`
 2. ✅ Seed database: `npx prisma db seed`
 3. ✅ Restart server: `npm run dev`
-4. ✅ Login at: http://localhost:3001/admin-login
+4. ✅ Login at: http://localhost:3000/admin-login
 5. ✅ Credentials: `admin@farmersmarket.app` / `DivineAdmin123!`
 
 ---

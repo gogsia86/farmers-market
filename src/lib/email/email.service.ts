@@ -11,10 +11,13 @@
  * - Performance Reality Bending (03_PERFORMANCE_REALITY_BENDING)
  * - Testing & Security Divinity (05_TESTING_SECURITY_DIVINITY)
  *
+ * ⚡ PERFORMANCE: Uses lazy loading for nodemailer (~50-80 KB savings)
+ *
  * @module EmailService
  */
 
-import nodemailer from "nodemailer";
+import { createTransporter } from "@/lib/lazy/email.lazy";
+import type { Transporter } from "nodemailer";
 
 // ============================================================================
 // TYPES
@@ -84,17 +87,19 @@ export interface OrderConfirmationEmailData {
 // ============================================================================
 
 export class EmailService {
-  private transporter: nodemailer.Transporter | null = null;
+  private transporter: Transporter | null = null;
   private isConfigured: boolean = false;
+  private initPromise: Promise<void> | null = null;
 
   constructor() {
-    this.initializeTransporter();
+    // Start initialization but don't wait
+    this.initPromise = this.initializeTransporter();
   }
 
   /**
-   * Initialize nodemailer transporter
+   * Initialize nodemailer transporter (lazy-loaded)
    */
-  private initializeTransporter(): void {
+  private async initializeTransporter(): Promise<void> {
     try {
       // Check if SMTP is configured
       const smtpHost = process.env.SMTP_HOST;
@@ -111,7 +116,7 @@ export class EmailService {
         return;
       }
 
-      this.transporter = nodemailer.createTransport({
+      this.transporter = await createTransporter({
         host: smtpHost,
         port: smtpPort,
         secure: smtpSecure, // true for 465, false for other ports
@@ -133,16 +138,28 @@ export class EmailService {
   }
 
   /**
+   * Ensure transporter is initialized
+   */
+  private async ensureInitialized(): Promise<void> {
+    if (this.initPromise) {
+      await this.initPromise;
+      this.initPromise = null;
+    }
+  }
+
+  /**
    * Send a generic email
    */
   async sendEmail(options: EmailOptions): Promise<boolean> {
+    await this.ensureInitialized();
+
     try {
       // If not configured, log and return success (dev mode)
       if (!this.isConfigured || !this.transporter) {
         console.log("📧 [EMAIL DEV MODE]", {
           to: options.to,
           subject: options.subject,
-          html: options.html?.substring(0, 100) + "...",
+          html: `${options.html?.substring(0, 100)}...`,
         });
         return true;
       }

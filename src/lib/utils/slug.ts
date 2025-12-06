@@ -30,8 +30,8 @@ export function generateSlug(
   slug = slug
     .trim()
     .replace(/[\s_]+/g, separator) // Replace spaces and underscores
-    .replace(/[^\w\-]+/g, "") // Remove non-word chars except hyphens
-    .replace(/\-\-+/g, separator) // Replace multiple hyphens with single
+    .replace(/[^\w-]+/g, "") // Remove non-word chars except hyphens
+    .replace(/--+/g, separator) // Replace multiple hyphens with single
     .replace(/^-+/, "") // Trim hyphens from start
     .replace(/-+$/, ""); // Trim hyphens from end
 

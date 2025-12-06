@@ -626,7 +626,7 @@ export class CodeGenerationAgent {
 `;
     }
 
-    prompt += `\nProvide the code with clear explanations.`;
+    prompt += "\nProvide the code with clear explanations.";
 
     return prompt;
   }

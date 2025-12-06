@@ -1,4 +1,4 @@
-import { requireAdmin } from "@/lib/auth";
+import { auth } from "@/lib/auth";
 import {
   ArrowRightStartOnRectangleIcon,
   BanknotesIcon,
@@ -18,13 +18,17 @@ export const dynamic = "force-dynamic";
 /**
  * Modern Horizontal Admin Layout
  * Clean, compact top navigation design
+ *
+ * Note: Authentication and authorization are handled by middleware.
+ * This layout assumes the user is authenticated and has admin role (ADMIN, SUPER_ADMIN, or MODERATOR).
  */
 export default async function AdminLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await requireAdmin();
+  // Get session (middleware ensures user is authenticated and has admin role)
+  const session = await auth();
 
   // Icon mapping for serialization safety
   const iconMap = {
@@ -124,14 +128,20 @@ export default async function AdminLayout({
                 <div className="flex items-center space-x-2">
                   <div className="h-8 w-8 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 flex items-center justify-center">
                     <span className="text-sm font-semibold text-white">
-                      {session.user.name?.charAt(0).toUpperCase() || "A"}
+                      {session.user?.name?.charAt(0).toUpperCase() ||
+                        session.user?.email?.charAt(0).toUpperCase() ||
+                        "A"}
                     </span>
                   </div>
                   <div className="hidden sm:block">
                     <p className="text-sm font-medium text-gray-900">
-                      {session.user.name}
+                      {session.user?.name ||
+                        session.user?.email ||
+                        "Admin User"}
                     </p>
-                    <p className="text-xs text-gray-500">{session.user.role}</p>
+                    <p className="text-xs text-gray-500">
+                      {session.user?.role || "ADMIN"}
+                    </p>
                   </div>
                 </div>
 

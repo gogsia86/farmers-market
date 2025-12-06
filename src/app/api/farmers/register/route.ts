@@ -1,6 +1,6 @@
 import { database } from "@/lib/database";
 import { sendFarmerWelcomeLazy } from "@/lib/email/email-service-lazy";
-import { GeocodingService } from "@/lib/services/geocoding.service";
+import { geocodingService } from "@/lib/services";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -93,12 +93,27 @@ export async function POST(request: NextRequest) {
       .replace(/^-+|-+$/g, "");
 
     // Geocode address to get coordinates
-    const geocodeResult = await GeocodingService.geocodeAddress(
+    const geocodeResult = await geocodingService.geocodeAddress(
       validatedData.address,
       validatedData.city,
       validatedData.state,
       validatedData.zipCode,
     );
+
+    // Handle geocoding failure
+    if (!geocodeResult) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: "GEOCODING_FAILED",
+            message:
+              "Failed to geocode address. Please verify the address is correct.",
+          },
+        },
+        { status: 400 },
+      );
+    }
 
     const farm = await database.farm.create({
       data: {

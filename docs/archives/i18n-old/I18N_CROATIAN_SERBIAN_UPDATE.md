@@ -47,17 +47,17 @@ Your Farmers Market Platform now supports **Croatian (Hrvatski)** and **Serbian 
 ### Access Croatian Version
 
 ```
-http://localhost:3001/hr/
-http://localhost:3001/hr/products
-http://localhost:3001/hr/farms
+http://localhost:3000/hr/
+http://localhost:3000/hr/products
+http://localhost:3000/hr/farms
 ```
 
 ### Access Serbian Version
 
 ```
-http://localhost:3001/sr/
-http://localhost:3001/sr/products
-http://localhost:3001/sr/farms
+http://localhost:3000/sr/
+http://localhost:3000/sr/products
+http://localhost:3000/sr/farms
 ```
 
 ### Language Switcher
@@ -264,8 +264,8 @@ npm run dev
 
 Then visit:
 
-- Croatian: `http://localhost:3001/hr/`
-- Serbian: `http://localhost:3001/sr/`
+- Croatian: `http://localhost:3000/hr/`
+- Serbian: `http://localhost:3000/sr/`
 
 **Dobrodošli! 🇭🇷 Добродошли! 🇷🇸**
 

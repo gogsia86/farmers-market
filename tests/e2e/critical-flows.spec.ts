@@ -3,15 +3,14 @@
  * Comprehensive end-to-end testing for Farmers Market Platform
  */
 
-import { expect, test } from "@playwright/test";
+$1import { TEST_USERS } from "../helpers/auth";
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
 
 test.describe("🔐 Authentication Flows", () => {
   test("Admin can login successfully", async ({ page }) => {
-    await page.goto(`${BASE_URL}/admin-login`);
-
-    await page.fill('input[name="email"]', "admin@farmersmarket.app");
+    $1
+    await page.waitForLoadState("networkidle");$2await page.fill('input[name="email"]', "admin@farmersmarket.app");
     await page.fill('input[name="password"]', "DivineAdmin123!");
     await page.click('button[type="submit"]');
 
@@ -21,9 +20,8 @@ test.describe("🔐 Authentication Flows", () => {
   });
 
   test("Failed login shows error message", async ({ page }) => {
-    await page.goto(`${BASE_URL}/admin-login`);
-
-    await page.fill('input[name="email"]', "wrong@email.com");
+    $1
+    await page.waitForLoadState("networkidle");$2await page.fill('input[name="email"]', "wrong@email.com");
     await page.fill('input[name="password"]', "wrongpassword");
     await page.click('button[type="submit"]');
 
@@ -34,9 +32,8 @@ test.describe("🔐 Authentication Flows", () => {
 
 test.describe("🌾 Customer Shopping Flow", () => {
   test("Customer can browse farms and products", async ({ page }) => {
-    await page.goto(BASE_URL);
-
-    // Navigate to farms
+    $1
+    await page.waitForLoadState("networkidle");$2// Navigate to farms
     await page.click("text=Browse Farms");
     await expect(page).toHaveURL(/\/farms/);
 
@@ -53,9 +50,8 @@ test.describe("🌾 Customer Shopping Flow", () => {
   });
 
   test("Customer can add product to cart", async ({ page }) => {
-    await page.goto(`${BASE_URL}/products`);
-
-    // Add product to cart
+    $1
+    await page.waitForLoadState("networkidle");$2// Add product to cart
     await page.locator('[data-testid="add-to-cart"]').first().click();
 
     // Cart count should increase
@@ -71,8 +67,8 @@ test.describe("🌾 Customer Shopping Flow", () => {
 
   test("Customer can complete checkout", async ({ page }) => {
     // First, add item to cart
-    await page.goto(`${BASE_URL}/products`);
-    await page.locator('[data-testid="add-to-cart"]').first().click();
+    $1
+    await page.waitForLoadState("networkidle");$2await page.locator('[data-testid="add-to-cart"]').first().click();
 
     // Go to cart and checkout
     await page.click('[data-testid="cart-button"]');
@@ -104,9 +100,9 @@ test.describe("🌾 Customer Shopping Flow", () => {
 test.describe("🚜 Farmer Management Flow", () => {
   test("Farmer can view their dashboard", async ({ page }) => {
     // Login as farmer
-    await page.goto(`${BASE_URL}/login`);
-    await page.fill('input[name="email"]', "ana.romana@email.com");
-    await page.fill('input[name="password"]', "FarmLife2024!");
+    $1
+    await page.waitForLoadState("networkidle");$2await page.fill('input[name="email"]', "farmer@farmersmarket.app");
+    await page.fill('input[name="password"]', "DivineFarmer123!");
     await page.click('button[type="submit"]');
 
     // Should redirect to farmer dashboard
@@ -116,9 +112,9 @@ test.describe("🚜 Farmer Management Flow", () => {
 
   test("Farmer can add new product", async ({ page }) => {
     // Login as farmer first
-    await page.goto(`${BASE_URL}/login`);
-    await page.fill('input[name="email"]', "ana.romana@email.com");
-    await page.fill('input[name="password"]', "FarmLife2024!");
+    $1
+    await page.waitForLoadState("networkidle");$2await page.fill('input[name="email"]', "farmer@farmersmarket.app");
+    await page.fill('input[name="password"]', "DivineFarmer123!");
     await page.click('button[type="submit"]');
 
     // Navigate to products
@@ -142,9 +138,9 @@ test.describe("🚜 Farmer Management Flow", () => {
 
   test("Farmer can view orders", async ({ page }) => {
     // Login as farmer
-    await page.goto(`${BASE_URL}/login`);
-    await page.fill('input[name="email"]', "ana.romana@email.com");
-    await page.fill('input[name="password"]', "FarmLife2024!");
+    $1
+    await page.waitForLoadState("networkidle");$2await page.fill('input[name="email"]', "farmer@farmersmarket.app");
+    await page.fill('input[name="password"]', "DivineFarmer123!");
     await page.click('button[type="submit"]');
 
     // Navigate to orders
@@ -158,8 +154,8 @@ test.describe("🚜 Farmer Management Flow", () => {
 test.describe("👨‍💼 Admin Management Flow", () => {
   test.beforeEach(async ({ page }) => {
     // Login as admin
-    await page.goto(`${BASE_URL}/admin-login`);
-    await page.fill('input[name="email"]', "admin@farmersmarket.app");
+    $1
+    await page.waitForLoadState("networkidle");$2await page.fill('input[name="email"]', "admin@farmersmarket.app");
     await page.fill('input[name="password"]', "DivineAdmin123!");
     await page.click('button[type="submit"]');
   });
@@ -201,9 +197,8 @@ test.describe("👨‍💼 Admin Management Flow", () => {
 
 test.describe("🔍 Search and Filter Flows", () => {
   test("Customer can search for products", async ({ page }) => {
-    await page.goto(`${BASE_URL}/products`);
-
-    // Search for tomatoes
+    $1
+    await page.waitForLoadState("networkidle");$2// Search for tomatoes
     await page.fill('input[placeholder*="Search"]', "tomato");
     await page.press('input[placeholder*="Search"]', "Enter");
 
@@ -212,9 +207,8 @@ test.describe("🔍 Search and Filter Flows", () => {
   });
 
   test("Customer can filter by category", async ({ page }) => {
-    await page.goto(`${BASE_URL}/products`);
-
-    // Filter by category
+    $1
+    await page.waitForLoadState("networkidle");$2// Filter by category
     await page.selectOption('select[name="category"]', "VEGETABLES");
 
     // Should see only vegetables
@@ -227,9 +221,8 @@ test.describe("📱 Responsive Design", () => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
 
-    await page.goto(BASE_URL);
-
-    // Open mobile menu
+    $1
+    await page.waitForLoadState("networkidle");$2// Open mobile menu
     await page.click('[data-testid="mobile-menu-button"]');
 
     // Menu should be visible
@@ -243,9 +236,8 @@ test.describe("📱 Responsive Design", () => {
 
 test.describe("♿ Accessibility", () => {
   test("Homepage has proper heading structure", async ({ page }) => {
-    await page.goto(BASE_URL);
-
-    // Should have h1
+    $1
+    await page.waitForLoadState("networkidle");$2// Should have h1
     await expect(page.locator("h1")).toBeVisible();
 
     // Navigation should have proper landmarks
@@ -254,9 +246,8 @@ test.describe("♿ Accessibility", () => {
   });
 
   test("Forms have proper labels", async ({ page }) => {
-    await page.goto(`${BASE_URL}/admin-login`);
-
-    // Check for label associations
+    $1
+    await page.waitForLoadState("networkidle");$2// Check for label associations
     const emailInput = page.locator('input[name="email"]');
     await expect(emailInput).toHaveAttribute("aria-label", /.+/);
 

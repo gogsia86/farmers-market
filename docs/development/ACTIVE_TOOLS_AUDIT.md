@@ -8,7 +8,7 @@
 - **Port**: 3001 (configured to avoid Grafana on 3000)
 - **Server**: Started successfully (✓ Ready in 1731ms)
 - **Issue**: Watchpack regex error causing crashes (hot reload broken)
-- **Access**: <http://localhost:3001> (may be unstable)
+- **Access**: <http://localhost:3000> (may be unstable)
 - **Action Required**: Fix watchpack regex in next.config.js
 
 ### Docker Performance Testing

@@ -7,9 +7,9 @@
 npm run dev
 
 # Access different languages
-http://localhost:3001/en/
-http://localhost:3001/es/
-http://localhost:3001/fr/
+http://localhost:3000/en/
+http://localhost:3000/es/
+http://localhost:3000/fr/
 ```
 
 ---

@@ -10,7 +10,7 @@ Object.defineProperty(process.env, "NODE_ENV", {
 });
 process.env.DATABASE_URL = "postgresql://test:test@localhost:5432/test_db";
 process.env.NEXTAUTH_SECRET = "test-secret-key-for-testing";
-process.env.NEXTAUTH_URL = "http://localhost:3000";
+process.env.NEXTAUTH_URL = "http://localhost:3001";
 
 // Extend test timeout for integration tests
 jest.setTimeout(30000);

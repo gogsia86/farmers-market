@@ -1,209 +1,337 @@
-# ============================================================================
-# FARMERS MARKET - PRODUCTION DOCKER COMPOSE
-# Divine Agricultural Platform with Quantum Consciousness
-# Docker Compose v2+ (version attribute removed as obsolete)
-# ============================================================================
+# ╔════════════════════════════════════════════════════════════════════╗
+# ║ 🌾 FARMERS MARKET PLATFORM - PRODUCTION DOCKER COMPOSE            ║
+# ║ Divine Agricultural E-Commerce System                              ║
+# ║ Complete multi-service orchestration for production deployment    ║
+# ╚════════════════════════════════════════════════════════════════════╝
+
+version: '3.9'
 
 services:
   # ============================================================================
-  # NEXT.JS DIVINE APPLICATION
+  # POSTGRESQL DATABASE
   # ============================================================================
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: runner
-      args:
-        - NODE_ENV=production
-    container_name: farmers-market-app
-    restart: unless-stopped
-    ports:
-      - "3001:3000"
-    environment:
-      # Application
-      - NODE_ENV=production
-      - DOCKER_BUILD=true
-      - PORT=3000
-      - HOSTNAME=0.0.0.0
-      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:3000/api}
-
-      # Database
-      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/farmers_market
-      - DIRECT_URL=postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/farmers_market
-
-      # Redis Cache
-      - REDIS_URL=redis://:${REDIS_PASSWORD:-quantum_cache_password}@redis:6379
-
-      # Authentication
-      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
-      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-change-this-to-a-random-secret-in-production}
-
-      # Stripe Payment
-      - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
-      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
-      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
-
-      # AI Services (optional - features disabled if not set)
-      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
-      - PERPLEXITY_API_KEY=${PERPLEXITY_API_KEY:-}
-      - PERPLEXITY_DEFAULT_MODEL=${PERPLEXITY_DEFAULT_MODEL:-SONAR_PRO}
-
-      # Email (optional - uses console logging if not configured)
-      - SMTP_HOST=${SMTP_HOST:-smtp.gmail.com}
-      - SMTP_PORT=${SMTP_PORT:-587}
-      - SMTP_SECURE=${SMTP_SECURE:-false}
-      - SMTP_USER=${SMTP_USER:-}
-      - SMTP_PASSWORD=${SMTP_PASSWORD:-}
-      - SMTP_FROM=${SMTP_FROM:-noreply@farmersmarket.app}
-
-      # Monitoring
-      - SENTRY_DSN=${SENTRY_DSN}
-      - ENABLE_TRACING=${ENABLE_TRACING:-false}
-
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    networks:
-      - divine-network
-    volumes:
-      # Persistent uploads
-      - uploads-data:/app/uploads
-      # Logs
-      - logs-data:/app/logs
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "wget",
-          "--no-verbose",
-          "--tries=1",
-          "--spider",
-          "http://localhost:3000/api/health",
-        ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-    labels:
-      - "com.farmersmarket.service=app"
-      - "com.farmersmarket.environment=production"
-
-  # ============================================================================
-  # POSTGRESQL DIVINE DATABASE
-  # ============================================================================
-  db:
-    image: postgis/postgis:16-3.4-alpine
+  postgres:
+    image: postgres:16-alpine
     container_name: farmers-market-db
+    restart: unless-stopped
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
-      - POSTGRES_DB=farmersmarket
-    ports:
-      - "5432:5432"
+      POSTGRES_USER: ${POSTGRES_USER:-farmers_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme123}
+      POSTGRES_DB: ${POSTGRES_DB:-farmers_market}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --lc-collate=C --lc-ctype=C"
+      PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
-      - postgres-data:/var/lib/postgresql/data
-    networks:
-      - divine-network
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # ============================================================================
-  # REDIS DIVINE CACHE
-  # ============================================================================
-  redis:
-    image: redis:7-alpine
-    container_name: farmers-market-cache
-    restart: unless-stopped
-    command: >
-      redis-server
-      --appendonly yes
-      --requirepass ${REDIS_PASSWORD:-quantum_cache_password}
-      --maxmemory 2gb
-      --maxmemory-policy allkeys-lru
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./logs/postgres:/var/log/postgresql
     ports:
-      - "6379:6379"
-    volumes:
-      - redis-data:/data
-    networks:
-      - divine-network
+      - "${POSTGRES_PORT:-5432}:5432"
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "quantum_cache_password", "ping"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-farmers_user} -d ${POSTGRES_DB:-farmers_market}"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
+    networks:
+      - farmers-network
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=200"
+      - "-c"
+      - "shared_buffers=256MB"
+      - "-c"
+      - "effective_cache_size=1GB"
+      - "-c"
+      - "maintenance_work_mem=64MB"
+      - "-c"
+      - "checkpoint_completion_target=0.9"
+      - "-c"
+      - "wal_buffers=16MB"
+      - "-c"
+      - "default_statistics_target=100"
+      - "-c"
+      - "random_page_cost=1.1"
+      - "-c"
+      - "effective_io_concurrency=200"
+      - "-c"
+      - "work_mem=2621kB"
+      - "-c"
+      - "min_wal_size=1GB"
+      - "-c"
+      - "max_wal_size=4GB"
     labels:
-      - "com.farmersmarket.service=cache"
-      - "com.farmersmarket.environment=production"
+      - "com.farmers-market.service=database"
+      - "com.farmers-market.environment=production"
 
   # ============================================================================
-  # NGINX DIVINE REVERSE PROXY (Optional - for production deployment)
+  # REDIS CACHE & SESSION STORE
   # ============================================================================
-  nginx:
-    image: nginx:alpine
-    container_name: farmers-market-proxy
+  redis:
+    image: redis:7-alpine
+    container_name: farmers-market-redis
     restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
+    command: >
+      redis-server
+      --appendonly yes
+      --requirepass ${REDIS_PASSWORD:-redispass123}
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --save 900 1
+      --save 300 10
+      --save 60 10000
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/ssl:/etc/nginx/ssl:ro
-      - ./public:/usr/share/nginx/html/public:ro
-    depends_on:
-      - app
-    networks:
-      - divine-network
+      - redis_data:/data
+      - ./logs/redis:/var/log/redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
     healthcheck:
-      test:
-        [
-          "CMD",
-          "wget",
-          "--no-verbose",
-          "--tries=1",
-          "--spider",
-          "http://localhost/health",
-        ]
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - farmers-network
+    labels:
+      - "com.farmers-market.service=cache"
+      - "com.farmers-market.environment=production"
+
+  # ============================================================================
+  # NEXT.JS APPLICATION
+  # ============================================================================
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        NODE_ENV: production
+    image: farmers-market-app:${VERSION:-latest}
+    container_name: farmers-market-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      # Node.js
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+
+      # Database
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-farmers_user}:${POSTGRES_PASSWORD:-changeme123}@postgres:5432/${POSTGRES_DB:-farmers_market}?schema=public&connection_limit=10&pool_timeout=20
+
+      # Redis
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-redispass123}@redis:6379/0
+
+      # Application URLs
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-https://farmersmarket.local}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-https://farmersmarket.local}
+      - NEXTAUTH_URL_INTERNAL=http://app:3000
+
+      # NextAuth
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+
+      # Stripe Payment
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
+
+      # Email Service
+      - EMAIL_PROVIDER=${EMAIL_PROVIDER:-resend}
+      - EMAIL_API_KEY=${EMAIL_API_KEY}
+      - EMAIL_FROM=${EMAIL_FROM:-noreply@farmersmarket.com}
+
+      # Error Tracking
+      - SENTRY_DSN=${SENTRY_DSN}
+      - SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
+      - NEXT_PUBLIC_SENTRY_DSN=${NEXT_PUBLIC_SENTRY_DSN}
+
+      # Google Services
+      - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}
+      - NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=${NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
+      - GOOGLE_ANALYTICS_ID=${GOOGLE_ANALYTICS_ID}
+
+      # OpenAI (for AI features)
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+
+      # Cloudinary (image uploads)
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+
+      # Feature Flags
+      - ENABLE_AI_FEATURES=${ENABLE_AI_FEATURES:-true}
+      - ENABLE_BIODYNAMIC_CALENDAR=${ENABLE_BIODYNAMIC_CALENDAR:-true}
+      - ENABLE_REAL_TIME_NOTIFICATIONS=${ENABLE_REAL_TIME_NOTIFICATIONS:-true}
+
+      # Logging & Monitoring
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - ENABLE_TELEMETRY=${ENABLE_TELEMETRY:-true}
+
+      # Rate Limiting
+      - RATE_LIMIT_WINDOW_MS=${RATE_LIMIT_WINDOW_MS:-60000}
+      - RATE_LIMIT_MAX_REQUESTS=${RATE_LIMIT_MAX_REQUESTS:-100}
+
+      # File Upload
+      - UPLOAD_MAX_SIZE=${UPLOAD_MAX_SIZE:-10485760}
+      - UPLOAD_PATH=/app/uploads
+
+      # CORS
+      - CORS_ORIGIN=${CORS_ORIGIN:-https://farmersmarket.local}
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    volumes:
+      - ./logs/app:/app/logs
+      - app_uploads:/app/uploads
+      - ./monitoring-reports:/app/monitoring-reports
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 60s
+    networks:
+      - farmers-network
     labels:
-      - "com.farmersmarket.service=proxy"
-      - "com.farmersmarket.environment=production"
+      - "traefik.enable=true"
+      - "traefik.http.routers.farmers-market.rule=Host(`${DOMAIN:-farmersmarket.local}`)"
+      - "traefik.http.routers.farmers-market.entrypoints=websecure"
+      - "traefik.http.routers.farmers-market.tls=true"
+      - "traefik.http.services.farmers-market.loadbalancer.server.port=3000"
+      - "com.farmers-market.service=application"
+      - "com.farmers-market.environment=production"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 2G
+
+  # ============================================================================
+  # NGINX REVERSE PROXY
+  # ============================================================================
+  nginx:
+    image: nginx:alpine
+    container_name: farmers-market-nginx
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/ssl:/etc/nginx/ssl:ro
+      - ./logs/nginx:/var/log/nginx
+      - ./public:/var/www/public:ro
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - farmers-network
+    labels:
+      - "com.farmers-market.service=proxy"
+      - "com.farmers-market.environment=production"
+
+  # ============================================================================
+  # PGADMIN (DATABASE ADMIN INTERFACE)
+  # ============================================================================
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: farmers-market-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@farmersmarket.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin123}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+      - ./logs/pgadmin:/var/log/pgadmin
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - farmers-network
+    labels:
+      - "com.farmers-market.service=database-admin"
+      - "com.farmers-market.environment=production"
+    profiles:
+      - admin
+
+  # ============================================================================
+  # REDIS COMMANDER (OPTIONAL - REDIS ADMIN INTERFACE)
+  # ============================================================================
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: farmers-market-redis-commander
+    restart: unless-stopped
+    environment:
+      - REDIS_HOSTS=local:redis:6379:0:${REDIS_PASSWORD:-redispass123}
+      - HTTP_USER=${REDIS_COMMANDER_USER:-admin}
+      - HTTP_PASSWORD=${REDIS_COMMANDER_PASSWORD:-admin123}
+    ports:
+      - "${REDIS_COMMANDER_PORT:-8081}:8081"
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - farmers-network
+    labels:
+      - "com.farmers-market.service=cache-admin"
+      - "com.farmers-market.environment=production"
+    profiles:
+      - admin
 
 # ============================================================================
-# VOLUMES - PERSISTENT DATA STORAGE
-# ============================================================================
-volumes:
-  postgres-data:
-    driver: local
-    labels:
-      - "com.farmersmarket.volume=database"
-  redis-data:
-    driver: local
-    labels:
-      - "com.farmersmarket.volume=cache"
-  uploads-data:
-    driver: local
-    labels:
-      - "com.farmersmarket.volume=uploads"
-  logs-data:
-    driver: local
-    labels:
-      - "com.farmersmarket.volume=logs"
-
-# ============================================================================
-# NETWORKS - SERVICE COMMUNICATION
+# NETWORKS
 # ============================================================================
 networks:
-  divine-network:
+  farmers-network:
     driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
     labels:
-      - "com.farmersmarket.network=main"
+      - "com.farmers-market.network=main"
+      - "com.farmers-market.environment=production"
+
+# ============================================================================
+# VOLUMES
+# ============================================================================
+volumes:
+  postgres_data:
+    driver: local
+    labels:
+      - "com.farmers-market.volume=database"
+      - "com.farmers-market.environment=production"
+
+  redis_data:
+    driver: local
+    labels:
+      - "com.farmers-market.volume=cache"
+      - "com.farmers-market.environment=production"
+
+  pgadmin_data:
+    driver: local
+    labels:
+      - "com.farmers-market.volume=database-admin"
+      - "com.farmers-market.environment=production"
+
+  app_uploads:
+    driver: local
+    labels:
+      - "com.farmers-market.volume=uploads"
+      - "com.farmers-market.environment=production"

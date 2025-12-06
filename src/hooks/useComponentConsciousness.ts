@@ -94,9 +94,8 @@ declare global {
     __DIVINE_ANALYTICS__?: DivineAnalyticsTracker;
   }
 
-  // eslint-disable-next-line no-var
   var __DIVINE_PERFORMANCE__: DivinePerformanceTracker | undefined;
-  // eslint-disable-next-line no-var
+
   var __DIVINE_ANALYTICS__: DivineAnalyticsTracker | undefined;
 }
 

@@ -191,13 +191,13 @@
 
 ### **Navigate to Farm Profile**
 
-1. Go to http://localhost:3001/farms
+1. Go to http://localhost:3000/farms
 2. Click any farm card
 3. Arrives at `/farms/[id]`
 
 **Or direct URL**:
 
-- http://localhost:3001/farms/[paste-farm-id-here]
+- http://localhost:3000/farms/[paste-farm-id-here]
 
 ### **Test Features**
 
@@ -385,13 +385,13 @@
 
 ## 🚀 **READY TO TEST**
 
-**Server**: <http://localhost:3001>
+**Server**: <http://localhost:3000>
 
 **Test URLs**:
 
-1. **Homepage**: <http://localhost:3001/>
-2. **Farm Discovery**: <http://localhost:3001/farms>
-3. **Farm Profile**: <http://localhost:3001/farms/[id]> 🎉 (NEW!)
+1. **Homepage**: <http://localhost:3000/>
+2. **Farm Discovery**: <http://localhost:3000/farms>
+3. **Farm Profile**: <http://localhost:3000/farms/[id]> 🎉 (NEW!)
 
 **Full User Flow**:
 

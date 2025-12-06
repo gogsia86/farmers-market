@@ -72,9 +72,9 @@ export default function ProductsPage() {
 
 Just change the URL:
 
-- **English**: `http://localhost:3001/en/products`
-- **Spanish**: `http://localhost:3001/es/products`
-- **French**: `http://localhost:3001/fr/products`
+- **English**: `http://localhost:3000/en/products`
+- **Spanish**: `http://localhost:3000/es/products`
+- **French**: `http://localhost:3000/fr/products`
 
 The middleware will auto-redirect `/products` → `/en/products`
 

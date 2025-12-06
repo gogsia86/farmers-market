@@ -2,15 +2,21 @@
  * 🎮 TensorFlow.js GPU Acceleration Module
  * Divine GPU acceleration for agricultural computations
  * Uses RTX 2070 Max-Q (2304 CUDA cores, 8GB VRAM)
+ *
+ * ⚡ PERFORMANCE: Uses lazy loading for TensorFlow (~80-120 KB savings)
+ * Phase 6 - Day 3: Migrated to lazy loading pattern
  */
 
-import * as tf from "@tensorflow/tfjs";
+import { loadTensorFlow } from "@/lib/lazy/ml.lazy";
+import type * as tf from "@tensorflow/tfjs";
 
 /**
  * Initialize TensorFlow.js with WebGL backend for GPU acceleration
  */
 export async function initializeGPU(): Promise<boolean> {
   try {
+    const tf = await loadTensorFlow();
+
     // Set WebGL backend for GPU acceleration
     await tf.setBackend("webgl");
     await tf.ready();
@@ -35,10 +41,11 @@ export async function initializeGPU(): Promise<boolean> {
 /**
  * Matrix multiplication using GPU acceleration
  */
-export function gpuMatrixMultiply(
+export async function gpuMatrixMultiply(
   matrixA: number[][],
   matrixB: number[][],
-): number[][] {
+): Promise<number[][]> {
+  const tf = await loadTensorFlow();
   return tf.tidy(() => {
     const tensorA = tf.tensor2d(matrixA);
     const tensorB = tf.tensor2d(matrixB);
@@ -50,10 +57,11 @@ export function gpuMatrixMultiply(
 /**
  * Parallel array processing using GPU
  */
-export function gpuArrayProcess<T extends number>(
+export async function gpuArrayProcess<T extends number>(
   data: T[],
   _operation: (value: number) => number,
-): T[] {
+): Promise<T[]> {
+  const tf = await loadTensorFlow();
   return tf.tidy(() => {
     const tensor = tf.tensor1d(data);
     // Apply operation (example: square each value)
@@ -66,10 +74,11 @@ export function gpuArrayProcess<T extends number>(
  * Agricultural data transformation using GPU
  * Process large datasets efficiently
  */
-export function gpuAgriculturalTransform(
+export async function gpuAgriculturalTransform(
   cropYields: number[],
   weatherFactors: number[],
-): number[] {
+): Promise<number[]> {
+  const tf = await loadTensorFlow();
   return tf.tidy(() => {
     const yields = tf.tensor1d(cropYields);
     const weather = tf.tensor1d(weatherFactors);
@@ -83,14 +92,16 @@ export function gpuAgriculturalTransform(
 /**
  * Get GPU memory info
  */
-export function getGPUMemoryInfo(): tf.MemoryInfo {
+export async function getGPUMemoryInfo(): Promise<tf.MemoryInfo> {
+  const tf = await loadTensorFlow();
   return tf.memory();
 }
 
 /**
  * Clean up GPU resources
  */
-export function cleanupGPU(): void {
+export async function cleanupGPU(): Promise<void> {
+  const tf = await loadTensorFlow();
   tf.disposeVariables();
   console.log("🧹 GPU resources cleaned");
 }

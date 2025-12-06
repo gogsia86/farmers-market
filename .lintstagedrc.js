@@ -14,14 +14,25 @@ module.exports = {
   "**/*.{ts,tsx}": (filenames) => {
     // Properly escape filenames with spaces for shell commands
     const fileList = filenames.map((f) => `"${f}"`).join(" ");
-    return [
+
+    // Separate prisma config files from other TS files
+    const otherFiles = filenames.filter((f) => !f.includes("prisma/"));
+
+    const commands = [
       // Type check all TypeScript files
       "npx tsc --noEmit",
-      // Lint and auto-fix
-      `npx eslint ${fileList} --fix --max-warnings=0`,
-      // Format with Prettier
-      `npx prettier --write ${fileList}`,
     ];
+
+    // Only lint non-prisma files with ESLint
+    if (otherFiles.length > 0) {
+      const otherFileList = otherFiles.map((f) => `"${f}"`).join(" ");
+      commands.push(`npx eslint ${otherFileList} --fix --max-warnings=0`);
+    }
+
+    // Format all files with Prettier
+    commands.push(`npx prettier --write ${fileList}`);
+
+    return commands;
   },
 
   // JavaScript files - format only (ESLint 9 flat config doesn't support .js in root)

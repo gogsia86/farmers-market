@@ -1,77 +1,121 @@
+/**
+ * 🛟 SUPPORT TICKETS API
+ * Divine agricultural support ticket system with quantum consciousness
+ *
+ * @module api/support/tickets
+ * @implements {POST} Create support ticket
+ * @implements {GET} Get user's tickets
+ */
+
+import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
 import { sendSupportTicketConfirmationLazy } from "@/lib/email/email-service-lazy";
 import { NextRequest, NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
 /**
- * 🛟 SUPPORT TICKETS API
- * POST /api/support/tickets - Create support ticket
- * GET /api/support/tickets - Get user's tickets
+ * Validation schema for creating support tickets
  */
-
-const supportTicketSchema = z.object({
-  name: z.string().min(2),
+const CreateSupportTicketSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
   farmName: z.string().min(3).optional(),
-  email: z.string().email(),
-  subject: z.enum([
-    "ACCOUNT",
-    "ORDERS",
-    "PRODUCTS",
-    "PAYMENTS",
-    "TECHNICAL",
-    "OTHER",
-  ]),
-  message: z.string().min(20),
-  priority: z.enum(["LOW", "MEDIUM", "HIGH"]).default("MEDIUM"),
+  email: z.string().email("Invalid email address"),
+  subject: z.string().min(5, "Subject must be at least 5 characters").max(255),
+  description: z.string().min(20, "Description must be at least 20 characters"),
+  category: z
+    .enum(["ACCOUNT", "ORDERS", "PRODUCTS", "PAYMENTS", "TECHNICAL", "GENERAL"])
+    .default("GENERAL"),
+  priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]).default("MEDIUM"),
+  relatedOrderId: z.string().optional(),
+  relatedFarmId: z.string().optional(),
 });
 
+/**
+ * POST - Create a new support ticket
+ * Handles both authenticated and guest users
+ */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // Validate input
-    const validatedData = supportTicketSchema.parse(body);
-
-    // Find or create user
-    let user = await database.user.findUnique({
-      where: { email: validatedData.email },
-    });
-
-    if (!user) {
-      // Create temporary user for support tickets
-      user = await database.user.create({
-        data: {
-          email: validatedData.email,
-          firstName: validatedData.name.split(" ")[0] || validatedData.name,
-          lastName: validatedData.name.split(" ").slice(1).join(" ") || "",
+    // Validate input with divine precision
+    const validation = CreateSupportTicketSchema.safeParse(body);
+    if (!validation.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Validation failed",
+          details: validation.error.issues,
         },
-      });
+        { status: 400 },
+      );
     }
 
-    // Create support ticket (you'll need to add SupportTicket model to Prisma schema)
-    // For now, we'll simulate it
-    const ticketId = `TICKET-${Date.now()}`;
+    const validatedData = validation.data;
 
-    // TODO: Store in database when SupportTicket model is added
-    // const ticket = await database.supportTicket.create({
-    //   data: {
-    //     ticketNumber: ticketId,
-    //     userId: user.id,
-    //     farmName: validatedData.farmName,
-    //     subject: validatedData.subject,
-    //     message: validatedData.message,
-    //     priority: validatedData.priority,
-    //     status: "OPEN",
-    //   },
-    // });
+    // Check for authenticated session
+    const session = await auth();
+    let userId: string;
+
+    if (session?.user?.id) {
+      // Use authenticated user
+      userId = session.user.id;
+    } else {
+      // Find or create user for guest submissions
+      let user = await database.user.findUnique({
+        where: { email: validatedData.email },
+      });
+
+      if (!user) {
+        // Create temporary user for support tickets
+        const nameParts = validatedData.name.split(" ");
+        user = await database.user.create({
+          data: {
+            email: validatedData.email,
+            firstName: nameParts[0] || validatedData.name,
+            lastName: nameParts.slice(1).join(" ") || "",
+            role: "CONSUMER",
+            status: "ACTIVE",
+          },
+        });
+      }
+
+      userId = user.id;
+    }
+
+    // Create support ticket in database with agricultural consciousness
+    const ticket = await database.supportTicket.create({
+      data: {
+        userId,
+        subject: validatedData.subject,
+        description: validatedData.description,
+        category: validatedData.category,
+        priority: validatedData.priority,
+        status: "OPEN",
+        relatedOrderId: validatedData.relatedOrderId,
+        relatedFarmId: validatedData.relatedFarmId,
+        tags: validatedData.farmName ? [validatedData.farmName] : [],
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
+    });
 
     // Send confirmation email (lazy-loaded to reduce bundle size)
     try {
       await sendSupportTicketConfirmationLazy({
-        ticketId,
-        subject: validatedData.subject,
+        ticketId: ticket.id,
+        subject: ticket.subject,
         name: validatedData.name,
-        email: user.email,
+        email: ticket.user.email,
       });
     } catch (emailError) {
       // Log email error but don't fail ticket creation
@@ -83,11 +127,14 @@ export async function POST(request: NextRequest) {
         success: true,
         message: "Support ticket created successfully",
         data: {
-          ticketId,
-          email: user.email,
-          subject: validatedData.subject,
-          status: "OPEN",
-          estimatedResponse: "24 hours",
+          id: ticket.id,
+          ticketNumber: ticket.id.slice(0, 8).toUpperCase(),
+          subject: ticket.subject,
+          category: ticket.category,
+          priority: ticket.priority,
+          status: ticket.status,
+          createdAt: ticket.createdAt,
+          estimatedResponse: getEstimatedResponseTime(ticket.priority),
         },
       },
       { status: 201 },
@@ -96,6 +143,7 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
+          success: false,
           error: "Validation failed",
           details: error.issues,
         },
@@ -103,60 +151,154 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.error("Support ticket error:", error);
+    console.error("Support ticket creation error:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      {
+        success: false,
+        error: "Failed to create support ticket",
+      },
       { status: 500 },
     );
   }
 }
 
+/**
+ * GET - Retrieve support tickets for authenticated user
+ * Supports filtering and pagination
+ */
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const email = searchParams.get("email");
+    const session = await auth();
 
-    if (!email) {
+    // Allow email-based lookup for guests
+    const email = searchParams.get("email");
+    const status = searchParams.get("status");
+    const category = searchParams.get("category");
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
+
+    let userId: string | undefined;
+
+    if (session?.user?.id) {
+      userId = session.user.id;
+    } else if (email) {
+      const user = await database.user.findUnique({
+        where: { email },
+        select: { id: true },
+      });
+
+      if (!user) {
+        return NextResponse.json({
+          success: true,
+          data: {
+            tickets: [],
+            total: 0,
+            page,
+            limit,
+          },
+        });
+      }
+
+      userId = user.id;
+    } else {
       return NextResponse.json(
-        { error: "Email parameter required" },
-        { status: 400 },
+        {
+          success: false,
+          error: "Authentication required or email parameter needed",
+        },
+        { status: 401 },
       );
     }
 
-    const user = await database.user.findUnique({
-      where: { email },
-    });
+    // Build filter conditions
+    const where: Prisma.SupportTicketWhereInput = { userId };
 
-    if (!user) {
-      return NextResponse.json({
-        success: true,
-        data: {
-          tickets: [],
-          total: 0,
-        },
-      });
+    if (status) {
+      where.status = status as Prisma.EnumSupportTicketStatusFilter;
     }
 
-    // TODO: Query support tickets from database
-    // const tickets = await database.supportTicket.findMany({
-    //   where: { userId: user.id },
-    //   orderBy: { createdAt: 'desc' },
-    // });
+    if (category) {
+      where.category = category as Prisma.EnumSupportTicketCategoryFilter;
+    }
 
-    // Mock response
+    // Fetch tickets with pagination
+    const [tickets, total] = await Promise.all([
+      database.supportTicket.findMany({
+        where,
+        include: {
+          messages: {
+            orderBy: { createdAt: "desc" },
+            take: 1, // Last message only for list view
+          },
+          files: {
+            select: {
+              id: true,
+              filename: true,
+              url: true,
+              createdAt: true,
+            },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      database.supportTicket.count({ where }),
+    ]);
+
     return NextResponse.json({
       success: true,
       data: {
-        tickets: [],
-        total: 0,
-        message: "Support ticket system ready for implementation",
+        tickets: tickets.map((ticket) => ({
+          id: ticket.id,
+          ticketNumber: ticket.id.slice(0, 8).toUpperCase(),
+          subject: ticket.subject,
+          description: ticket.description,
+          category: ticket.category,
+          priority: ticket.priority,
+          status: ticket.status,
+          createdAt: ticket.createdAt,
+          updatedAt: ticket.updatedAt,
+          resolvedAt: ticket.resolvedAt,
+          messageCount: ticket.messages.length,
+          lastMessage: ticket.messages[0] || null,
+          hasFiles: ticket.files.length > 0,
+        })),
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
       },
     });
   } catch (error) {
-    console.error("Get tickets error:", error);
+    console.error("Get support tickets error:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      {
+        success: false,
+        error: "Failed to fetch support tickets",
+      },
       { status: 500 },
     );
+  }
+}
+
+/**
+ * Helper function to estimate response time based on priority
+ */
+function getEstimatedResponseTime(
+  priority: "LOW" | "MEDIUM" | "HIGH" | "URGENT",
+): string {
+  switch (priority) {
+    case "URGENT":
+      return "4 hours";
+    case "HIGH":
+      return "12 hours";
+    case "MEDIUM":
+      return "24 hours";
+    case "LOW":
+      return "48 hours";
+    default:
+      return "24 hours";
   }
 }

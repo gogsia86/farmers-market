@@ -148,7 +148,7 @@
 
 ### **Navigate to Homepage**
 
-Simply go to: `http://localhost:3001/`
+Simply go to: `http://localhost:3000/`
 
 **What you'll see**:
 
@@ -314,7 +314,7 @@ Simply go to: `http://localhost:3001/`
 
 ## 🚀 **READY TO TEST**
 
-**Server**: Running at http://localhost:3001
+**Server**: Running at http://localhost:3000
 
 **Test Checklist**:
 

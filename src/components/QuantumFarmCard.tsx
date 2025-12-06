@@ -171,9 +171,11 @@ export const QuantumFarmCard = forwardRef<HTMLDivElement, QuantumFarmCardProps>(
                     "bg-green-500": biodynamicScore >= 70,
                     "w-[var(--biodynamic-width)]": true,
                   })}
-                  {...({
-                    style: { "--biodynamic-width": `${biodynamicScore}%` },
-                  } as any)}
+                  style={
+                    {
+                      "--biodynamic-width": `${biodynamicScore}%`,
+                    } as React.CSSProperties
+                  }
                 />
               </div>
             </div>

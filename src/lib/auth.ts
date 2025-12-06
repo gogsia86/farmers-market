@@ -9,6 +9,9 @@
  * for easy importing throughout the application.
  */
 
+// Import User type from core entities
+import type { User } from "@/types/core-entities";
+
 // Re-export NextAuth v5 core functions
 export {
   auth,
@@ -89,21 +92,18 @@ export {
  */
 
 /**
- * Legacy compatibility interface
- * Maintains backward compatibility with old auth.ts structure
+ * Session interface for NextAuth
+ * Uses core User type from single source of truth
  */
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: "CUSTOMER" | "FARMER" | "ADMIN" | "SUPER_ADMIN" | "MODERATOR";
-  status?: "ACTIVE" | "SUSPENDED" | "DELETED";
-}
-
 export interface Session {
-  user: User;
+  user: User & {
+    name: string; // Computed from firstName + lastName
+  };
   expires: string;
 }
+
+// Re-export core types for convenience
+export type { User, UserRole } from "@/types/core-entities";
 
 /**
  * Check if user is authenticated

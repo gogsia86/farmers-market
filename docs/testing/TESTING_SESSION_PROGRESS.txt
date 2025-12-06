@@ -1,0 +1,30 @@
+================================================================================
+PRIORITY 2: MANUAL TESTING SESSION PROGRESS
+================================================================================
+Started: [Date/Time]
+Session Guide: PRIORITY_2_SETUP_SESSION.md
+
+SETUP CHECKLIST:
+----------------
+[ ] 1. Install Stripe CLI
+[ ] 2. Authenticate with Stripe (stripe login)
+[ ] 3. Get API keys from dashboard
+[ ] 4. Configure .env.local
+[ ] 5. Start dev server (npm run dev:omen)
+[ ] 6. Start webhook forwarding (stripe listen)
+[ ] 7. Update webhook secret in .env.local
+[ ] 8. Restart dev server
+
+TESTING CHECKLIST:
+------------------
+[ ] Test 1: Webhook health check
+[ ] Test 2: Create payment intent
+[ ] Test 3: Successful payment webhook
+[ ] Test 4: Failed payment webhook
+[ ] Test 5: Refund webhook
+[ ] Test 6: Edge cases (invalid signature, etc.)
+
+CURRENT STATUS: Ready to begin setup
+NEXT STEP: Install Stripe CLI (see PRIORITY_2_SETUP_SESSION.md Part 1)
+
+================================================================================

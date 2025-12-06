@@ -1,0 +1,527 @@
+openapi: 3.0.0
+info:
+  title: Farmers Market Platform - Products API
+  version: 1.0.0
+  description: |
+    🌾 **Divine Agricultural E-Commerce Platform**
+
+    Complete API documentation for the product catalog and marketplace features.
+
+    ## Authentication
+    Most endpoints require JWT authentication via NextAuth.
+    Include the session token in requests via cookies or Authorization header.
+
+    ## Rate Limiting
+    - Anonymous: 100 requests/15min
+    - Authenticated: 1000 requests/15min
+    - Farmers: 5000 requests/15min
+
+    ## Pagination
+    All list endpoints support pagination with `page` and `limit` query parameters.
+
+  contact:
+    name: Farmers Market Platform Support
+    email: support@farmersmarket.com
+  license:
+    name: Proprietary
+
+servers:
+  - url: https://farmersmarket.com/api
+    description: Production
+  - url: https://staging.farmersmarket.com/api
+    description: Staging
+  - url: http://localhost:3001/api
+    description: Development
+
+tags:
+  - name: Products
+    description: Product catalog and discovery
+  - name: Search
+    description: Product search and filtering
+  - name: Inventory
+    description: Inventory management (farmer only)
+  - name: Analytics
+    description: Product analytics and insights
+
+paths:
+  /products:
+    get:
+      summary: List all products
+      description: Retrieve a paginated list of all products with optional filtering
+      tags: [Products]
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - in: query
+          name: category
+          schema:
+            type: string
+          description: Filter by product category
+        - in: query
+          name: farmId
+          schema:
+            type: string
+          description: Filter by farm ID
+        - in: query
+          name: inStock
+          schema:
+            type: boolean
+          description: Filter by stock availability
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductListResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+
+    post:
+      summary: Create a new product
+      description: Create a new product (farmer only)
+      tags: [Products]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProductRequest"
+      responses:
+        "201":
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/UnauthorizedResponse"
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
+
+  /products/{id}:
+    get:
+      summary: Get product by ID
+      description: Retrieve detailed information about a specific product
+      tags: [Products]
+      parameters:
+        - $ref: "#/components/parameters/ProductIdParam"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductResponse"
+        "404":
+          $ref: "#/components/responses/NotFoundResponse"
+
+    patch:
+      summary: Update product
+      description: Update an existing product (farmer only, own products)
+      tags: [Products]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/ProductIdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProductRequest"
+      responses:
+        "200":
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductResponse"
+        "404":
+          $ref: "#/components/responses/NotFoundResponse"
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
+
+    delete:
+      summary: Delete product
+      description: Delete a product (farmer only, own products)
+      tags: [Products]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/ProductIdParam"
+      responses:
+        "204":
+          description: Product deleted successfully
+        "404":
+          $ref: "#/components/responses/NotFoundResponse"
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
+
+  /products/slug/{slug}:
+    get:
+      summary: Get product by slug
+      description: Retrieve product information using URL-friendly slug
+      tags: [Products]
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+          description: Product slug
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductResponse"
+        "404":
+          $ref: "#/components/responses/NotFoundResponse"
+
+  /products/search:
+    get:
+      summary: Search products
+      description: Full-text search across product catalog
+      tags: [Search]
+      parameters:
+        - in: query
+          name: q
+          required: true
+          schema:
+            type: string
+          description: Search query
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductListResponse"
+
+  /products/{id}/inventory:
+    get:
+      summary: Get product inventory
+      description: Get current inventory levels
+      tags: [Inventory]
+      parameters:
+        - $ref: "#/components/parameters/ProductIdParam"
+      responses:
+        "200":
+          description: Inventory information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InventoryResponse"
+
+    patch:
+      summary: Update inventory
+      description: Update product inventory (farmer only)
+      tags: [Inventory]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/ProductIdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateInventoryRequest"
+      responses:
+        "200":
+          description: Inventory updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InventoryResponse"
+
+  /products/{id}/stats:
+    get:
+      summary: Get product statistics
+      description: Get analytics and statistics for a product
+      tags: [Analytics]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/ProductIdParam"
+      responses:
+        "200":
+          description: Product statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductStatsResponse"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    PageParam:
+      in: query
+      name: page
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+      description: Page number for pagination
+
+    LimitParam:
+      in: query
+      name: limit
+      schema:
+        type: integer
+        default: 20
+        minimum: 1
+        maximum: 100
+      description: Number of items per page
+
+    ProductIdParam:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: string
+      description: Product ID
+
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique product identifier
+        name:
+          type: string
+          description: Product name
+        slug:
+          type: string
+          description: URL-friendly slug
+        description:
+          type: string
+          description: Product description
+        price:
+          type: number
+          format: float
+          description: Price in dollars
+        unit:
+          type: string
+          enum: [lb, oz, each, bunch, dozen, pint, quart, gallon]
+          description: Unit of measurement
+        category:
+          type: string
+          description: Product category
+        imageUrl:
+          type: string
+          description: Product image URL
+        stock:
+          type: integer
+          description: Available quantity
+        isAvailable:
+          type: boolean
+          description: Product availability status
+        farmId:
+          type: string
+          description: Associated farm ID
+        farm:
+          $ref: "#/components/schemas/FarmSummary"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    FarmSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        location:
+          type: string
+
+    CreateProductRequest:
+      type: object
+      required:
+        - name
+        - description
+        - price
+        - unit
+        - category
+        - farmId
+      properties:
+        name:
+          type: string
+          minLength: 3
+          maxLength: 100
+        description:
+          type: string
+          minLength: 10
+        price:
+          type: number
+          minimum: 0
+        unit:
+          type: string
+        category:
+          type: string
+        stock:
+          type: integer
+          minimum: 0
+        farmId:
+          type: string
+
+    UpdateProductRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        unit:
+          type: string
+        category:
+          type: string
+        stock:
+          type: integer
+        isAvailable:
+          type: boolean
+
+    UpdateInventoryRequest:
+      type: object
+      required:
+        - stock
+      properties:
+        stock:
+          type: integer
+          minimum: 0
+        isAvailable:
+          type: boolean
+
+    ProductResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: "#/components/schemas/Product"
+
+    ProductListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Product"
+        meta:
+          $ref: "#/components/schemas/PaginationMeta"
+
+    InventoryResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            productId:
+              type: string
+            stock:
+              type: integer
+            isAvailable:
+              type: boolean
+            lastUpdated:
+              type: string
+              format: date-time
+
+    ProductStatsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            productId:
+              type: string
+            views:
+              type: integer
+            orders:
+              type: integer
+            revenue:
+              type: number
+
+    PaginationMeta:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        totalPages:
+          type: integer
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details:
+              type: object
+
+  responses:
+    ErrorResponse:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
+    UnauthorizedResponse:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
+    ForbiddenResponse:
+      description: Insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
+    NotFoundResponse:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"

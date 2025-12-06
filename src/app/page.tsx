@@ -12,10 +12,13 @@
  * - CTA sections
  */
 
+"use client";
+
 import { Header } from "@/components/layout/Header";
 import { SearchAutocomplete } from "@/components/homepage/SearchAutocomplete";
 import { PlatformStats } from "@/components/homepage/PlatformStats";
 import { FeaturedFarms } from "@/components/homepage/FeaturedFarms";
+import { useCartStore } from "@/stores/cartStore";
 import {
   ArrowRight,
   Award,
@@ -33,6 +36,23 @@ import Link from "next/link";
 export const dynamic = "force-dynamic";
 
 export default function HomePage() {
+  const addItem = useCartStore((state) => state.addItem);
+
+  const handleAddToCart = (product: {
+    name: string;
+    price: string;
+    image: string;
+  }) => {
+    const priceNum = parseFloat(product.price.replace(/[^0-9.]/g, ""));
+    addItem({
+      id: `${Date.now()}-${product.name}`,
+      productId: `product-${product.name.toLowerCase().replace(/\s+/g, "-")}`,
+      name: product.name,
+      price: priceNum,
+      image: product.image,
+      quantity: 1,
+    });
+  };
   return (
     <>
       <Header />
@@ -189,7 +209,10 @@ export default function HomePage() {
                       <span className="text-2xl font-bold text-agricultural-600">
                         {product.price}
                       </span>
-                      <button className="bg-agricultural-600 hover:bg-agricultural-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2">
+                      <button
+                        onClick={() => handleAddToCart(product)}
+                        className="bg-agricultural-600 hover:bg-agricultural-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+                      >
                         <ShoppingBag className="h-4 w-4" />
                         Add
                       </button>

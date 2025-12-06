@@ -363,7 +363,7 @@ async function main() {
               ? randomDate(new Date(2023, 0, 1), new Date())
               : null,
           profileImage: `https://api.dicebear.com/7.x/avataaars/svg?seed=${name.firstName}`,
-          bio: `Passionate farmer dedicated to sustainable agriculture and providing fresh, quality produce to the community.`,
+          bio: "Passionate farmer dedicated to sustainable agriculture and providing fresh, quality produce to the community.",
         },
       });
     }),
@@ -482,12 +482,12 @@ async function main() {
     });
   }
 
-  console.log(`  ✅ Created addresses for consumers\n`);
+  console.log("  ✅ Created addresses for consumers\n");
 
   // ========================================================================
   // STEP 6: CREATE FARMS
   // ========================================================================
-  console.log(`🏡 Creating farms...`);
+  console.log("🏡 Creating farms...");
 
   const farms = [];
   let farmIndex = 0;
@@ -591,7 +591,7 @@ async function main() {
   // ========================================================================
   // STEP 7: CREATE PRODUCTS
   // ========================================================================
-  console.log(`🥬 Creating products for farms...`);
+  console.log("🥬 Creating products for farms...");
 
   let productCount = 0;
 
@@ -617,8 +617,8 @@ async function main() {
           category: productTemplate.category,
           price: new Prisma.Decimal(price),
           unit: productTemplate.unit,
-          quantity: quantity,
-          inStock: inStock,
+          quantity,
+          inStock,
           organic: Math.random() > 0.3,
           seasonal: randomElement([
             "SPRING",
@@ -668,7 +668,7 @@ async function main() {
   // ========================================================================
   // STEP 8: CREATE ORDERS
   // ========================================================================
-  console.log(`🛒 Creating orders...`);
+  console.log("🛒 Creating orders...");
 
   const orderStatuses = [
     "PENDING",
@@ -735,7 +735,7 @@ async function main() {
         data: {
           orderId: order.id,
           productId: product.id,
-          quantity: quantity,
+          quantity,
           price: product.price,
           subtotal: new Prisma.Decimal(itemPrice),
         },
@@ -762,7 +762,7 @@ async function main() {
   // ========================================================================
   // STEP 9: CREATE REVIEWS
   // ========================================================================
-  console.log(`⭐ Creating reviews...`);
+  console.log("⭐ Creating reviews...");
 
   let reviewCount = 0;
 
@@ -795,7 +795,7 @@ async function main() {
   // ========================================================================
   // STEP 10: CREATE NOTIFICATIONS
   // ========================================================================
-  console.log(`🔔 Creating notifications...`);
+  console.log("🔔 Creating notifications...");
 
   const notificationTypes = [
     {
@@ -856,7 +856,7 @@ async function main() {
   // ========================================================================
   // STEP 11: CREATE MESSAGES
   // ========================================================================
-  console.log(`💬 Creating messages...`);
+  console.log("💬 Creating messages...");
 
   for (let i = 0; i < CONFIG.MESSAGES_COUNT; i++) {
     const consumer = randomElement(consumers);

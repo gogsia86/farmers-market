@@ -138,7 +138,7 @@ webServer: {
 ```typescript
 // tests/e2e/critical-flows.spec.ts
 test.beforeEach(async ({ page }) => {
-  await page.goto("http://localhost:3001"); // ← Changed from 3000
+  await page.goto("http://localhost:3000"); // ← Changed from 3000
 });
 ```
 
@@ -156,9 +156,9 @@ Check actual routes and update test:
 
 ```typescript
 // Instead of '/farms', use existing route
-await page.goto("http://localhost:3001/search");
+await page.goto("http://localhost:3000/search");
 // or
-await page.goto("http://localhost:3001/farmer-dashboard");
+await page.goto("http://localhost:3000/farmer-dashboard");
 ```
 
 ### Step 5: Add Environment Variables
@@ -167,7 +167,7 @@ Create `.env.test` if needed:
 
 ```env
 DATABASE_URL="postgresql://user:password@localhost:5432/farmers_market_test"
-NEXT_PUBLIC_API_URL="http://localhost:3001"
+NEXT_PUBLIC_API_URL="http://localhost:3000"
 ```
 
 ---

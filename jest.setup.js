@@ -5,6 +5,31 @@
  */
 
 // ============================================
+// ENVIRONMENT CONFIGURATION - LOAD TEST ENV FIRST
+// ============================================
+const dotenv = require("dotenv");
+const path = require("path");
+
+// Load .env.test for integration tests
+const envTestPath = path.resolve(__dirname, ".env.test");
+const envResult = dotenv.config({ path: envTestPath });
+
+if (envResult.error) {
+  console.warn("⚠️  No .env.test file found, using default .env");
+  // Fallback to default .env
+  dotenv.config();
+} else {
+  console.log("✅ Loaded test environment from .env.test");
+}
+
+// ============================================
+// TEXT ENCODER/DECODER POLYFILL - FIX FOR PRISMA/PG
+// ============================================
+const { TextEncoder, TextDecoder } = require("util");
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
+
+// ============================================
 // TESTING LIBRARY SETUP
 // ============================================
 require("@testing-library/jest-dom");
@@ -25,9 +50,18 @@ global.agriculturalConsciousness = {
 // ENVIRONMENT VARIABLES - TEST REALITY
 // ============================================
 process.env.NODE_ENV = "test";
-process.env.DATABASE_URL = "postgresql://test:test@localhost:5432/test";
-process.env.NEXTAUTH_SECRET = "divine-test-secret-for-quantum-authentication";
-process.env.NEXTAUTH_URL = "http://localhost:3000";
+// Only set DATABASE_URL if not already set by jest.env.js from .env.test
+if (!process.env.DATABASE_URL) {
+  process.env.DATABASE_URL = "postgresql://test:test@localhost:5432/test";
+  console.warn("⚠️  Using fallback DATABASE_URL - no .env.test found");
+}
+// Only set auth secrets if not already set
+if (!process.env.NEXTAUTH_SECRET) {
+  process.env.NEXTAUTH_SECRET = "divine-test-secret-for-quantum-authentication";
+}
+if (!process.env.NEXTAUTH_URL) {
+  process.env.NEXTAUTH_URL = "http://localhost:3001";
+}
 process.env.PAYPAL_CLIENT_ID = "test-paypal-client-id";
 process.env.PAYPAL_CLIENT_SECRET = "test-paypal-client-secret";
 process.env.STRIPE_SECRET_KEY = "test-stripe-secret-key";
@@ -203,6 +237,7 @@ const mockDatabase = {
     findMany: jest.fn(),
     create: jest.fn(),
     update: jest.fn(),
+    updateMany: jest.fn(),
     delete: jest.fn(),
     count: jest.fn(),
     upsert: jest.fn(),
@@ -235,6 +270,26 @@ const mockDatabase = {
     delete: jest.fn(),
     count: jest.fn(),
   },
+  userAddress: {
+    findUnique: jest.fn(),
+    findFirst: jest.fn(),
+    findMany: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+    count: jest.fn(),
+  },
+  cartItem: {
+    findUnique: jest.fn(),
+    findFirst: jest.fn(),
+    findMany: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    updateMany: jest.fn(),
+    delete: jest.fn(),
+    deleteMany: jest.fn(),
+    count: jest.fn(),
+  },
   $connect: jest.fn().mockResolvedValue(undefined),
   $disconnect: jest.fn().mockResolvedValue(undefined),
   $transaction: jest.fn((callback) => callback(mockDatabase)),
@@ -265,7 +320,74 @@ global.mockQueryFirst = (model, result) => {
 };
 
 // ============================================
-// NEXT.JS QUANTUM MOCKS - NAVIGATION & ROUTING
+// CART SERVICE MOCKS
+// ============================================
+
+const mockCartService = {
+  getCart: jest.fn(),
+  addItem: jest.fn(),
+  updateItemQuantity: jest.fn(),
+  removeItem: jest.fn(),
+  clearCart: jest.fn(),
+  validateCart: jest.fn(),
+  reserveCartItems: jest.fn(),
+  releaseReservations: jest.fn(),
+};
+
+jest.mock(
+  "./src/lib/services/cart.service",
+  () => ({
+    cartService: mockCartService,
+    CartService: jest.fn().mockImplementation(() => mockCartService),
+  }),
+  { virtual: true },
+);
+
+global.mockCartService = mockCartService;
+
+// ============================================
+// STRUCTURED LOGGER MOCK - MUST BE BEFORE DATABASE
+// ============================================
+
+// Create a factory that always returns a working logger
+const createMockLogger = () => {
+  const logger = {
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    fatal: jest.fn(),
+    businessEvent: jest.fn(),
+    child: jest.fn(),
+  };
+  // Make child return a new logger instance
+  logger.child.mockImplementation(() => createMockLogger());
+  return logger;
+};
+
+// Create global instance
+const mockLoggerInstance = createMockLogger();
+
+// Mock the module BEFORE any other mocks
+jest.mock(
+  "@/lib/monitoring/StructuredLogger",
+  () => ({
+    StructuredLogger: jest.fn().mockImplementation(() => createMockLogger()),
+    LoggerFactory: {
+      getLogger: jest.fn().mockImplementation(() => createMockLogger()),
+      createRequestLogger: jest
+        .fn()
+        .mockImplementation(() => createMockLogger()),
+    },
+  }),
+  { virtual: true },
+);
+
+global.mockLogger = mockLoggerInstance;
+global.createMockLogger = createMockLogger;
+
+// ============================================
+// PRISMA DATABASE QUANTUM MOCKS
 // ============================================
 
 jest.mock("next/navigation", () => ({
@@ -310,9 +432,43 @@ jest.mock("next/headers", () => ({
 // NEXT-AUTH MOCKS
 // ============================================
 
-jest.mock("next-auth", () => ({
-  default: jest.fn(),
+// Mock @auth/prisma-adapter to avoid ESM import issues
+jest.mock("@auth/prisma-adapter", () => ({
+  PrismaAdapter: jest.fn(() => ({})),
 }));
+
+const mockAuth = jest.fn().mockResolvedValue({
+  user: {
+    id: "test-user-id",
+    email: "test@example.com",
+    name: "Test User",
+    role: "CUSTOMER",
+  },
+  expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+});
+
+jest.mock("next-auth", () => ({
+  default: jest.fn(() => ({
+    handlers: { GET: jest.fn(), POST: jest.fn() },
+    auth: mockAuth,
+    signIn: jest.fn(),
+    signOut: jest.fn(),
+  })),
+}));
+
+jest.mock("next-auth/providers/credentials", () => {
+  const mockProvider = jest.fn(() => ({
+    id: "credentials",
+    name: "Credentials",
+    type: "credentials",
+    credentials: {},
+    authorize: jest.fn(),
+  }));
+  return {
+    __esModule: true,
+    default: mockProvider,
+  };
+});
 
 jest.mock("next-auth/react", () => ({
   useSession: () => ({
@@ -323,6 +479,43 @@ jest.mock("next-auth/react", () => ({
   signOut: jest.fn(),
   SessionProvider: ({ children }) => children,
 }));
+
+jest.mock(
+  "./src/lib/auth",
+  () => ({
+    auth: mockAuth,
+    signIn: jest.fn(),
+    signOut: jest.fn(),
+  }),
+  { virtual: true },
+);
+
+// Mock the entire auth config module to avoid next-auth provider issues
+jest.mock(
+  "./src/lib/auth/config",
+  () => ({
+    __esModule: true,
+    authConfig: {
+      providers: [],
+      callbacks: {
+        jwt: jest.fn(),
+        session: jest.fn(),
+      },
+      pages: {
+        signIn: "/auth/signin",
+        signOut: "/auth/signout",
+        error: "/auth/error",
+      },
+    },
+    handlers: { GET: jest.fn(), POST: jest.fn() },
+    auth: mockAuth,
+    signIn: jest.fn(),
+    signOut: jest.fn(),
+  }),
+  { virtual: true },
+);
+
+global.mockAuth = mockAuth;
 
 // ============================================
 // NATIVE MODULE MOCKS - C++ DEPENDENCIES
@@ -431,9 +624,9 @@ jest.mock("@/lib/utils", () => ({
   ),
   truncate: jest.fn((text, length) => {
     if (text.length <= length) return text;
-    return text.slice(0, length) + "...";
+    return `${text.slice(0, length)}...`;
   }),
-  sleep: jest.fn((ms) => Promise.resolve()),
+  sleep: jest.fn((_ms) => Promise.resolve()),
   debounce: jest.fn((func, wait) => {
     let timeout = null;
     return (...args) => {
@@ -519,8 +712,67 @@ global.createTestProduct = (overrides = {}) => ({
   category: "VEGETABLES",
   season: "FALL",
   stock: 100,
+  unit: "lb",
+  available: true,
+  purchaseCount: 0,
   createdAt: new Date(),
   updatedAt: new Date(),
+  ...overrides,
+});
+
+global.createTestCartItem = (overrides = {}) => ({
+  id: "test-cart-item-id",
+  userId: "test-user-id",
+  productId: "test-product-id",
+  quantity: 1,
+  addedAt: new Date(),
+  reservedUntil: null,
+  product: global.createTestProduct(),
+  ...overrides,
+});
+
+global.createTestCart = (items = [global.createTestCartItem()]) => ({
+  items,
+  subtotal: items.reduce(
+    (sum, item) => sum + (item.product?.price || 0) * item.quantity,
+    0,
+  ),
+  itemCount: items.reduce((sum, item) => sum + item.quantity, 0),
+  farmCount: new Set(items.map((item) => item.product?.farmId)).size,
+});
+
+global.createTestAddress = (overrides = {}) => ({
+  id: "test-address-id",
+  userId: "test-user-id",
+  type: "HOME",
+  street: "123 Test St",
+  city: "Test City",
+  state: "TS",
+  zipCode: "12345",
+  country: "US",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  ...overrides,
+});
+
+global.createTestOrder = (overrides = {}) => ({
+  id: "test-order-id",
+  orderNumber: "FM-TEST-123456",
+  customerId: "test-user-id",
+  farmId: "test-farm-id",
+  status: "PENDING",
+  paymentStatus: "PENDING",
+  fulfillmentMethod: "DELIVERY",
+  subtotal: 9.99,
+  deliveryFee: 5.0,
+  tax: 1.2,
+  platformFee: 0.5,
+  discount: 0,
+  total: 16.69,
+  farmerAmount: 14.49,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  items: [],
   ...overrides,
 });
 
