@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { FarmProfileTabs } from "@/components/marketplace/FarmProfileTabs";
 import { FarmProfileActions } from "@/components/marketplace/FarmProfileActions";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/button";
 import { Award, MapPin, Star, Truck, Calendar } from "lucide-react";
 import { generateFarmMetadata, generateFarmJsonLd } from "@/lib/utils/metadata";

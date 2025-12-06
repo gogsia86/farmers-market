@@ -9,7 +9,7 @@ import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import type { OrderWithRelations } from "../types";
 
-import { Card, CardHeader, CardBody } from "@/components/ui/card";
+import { Card, CardHeader, CardBody } from "@/components/ui/Card";
 import type {
   OrderStatus,
   PaymentStatus,

@@ -20,9 +20,9 @@
 
 import { Metadata } from "next";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { MapPin, Star, Award, Store, ArrowRight, Leaf } from "lucide-react";
 
@@ -141,13 +141,23 @@ export default async function FarmsPage() {
 
             {/* CTA Buttons */}
             <div className="flex flex-wrap gap-4 justify-center">
-              <Button size="lg" variant="default" asChild className="bg-agricultural-600 hover:bg-agricultural-700">
+              <Button
+                size="lg"
+                variant="default"
+                asChild
+                className="bg-agricultural-600 hover:bg-agricultural-700"
+              >
                 <Link href="/marketplace/products">
                   Shop Products
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild className="border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50">
+              <Button
+                size="lg"
+                variant="outline"
+                asChild
+                className="border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50"
+              >
                 <Link href="/marketplace">Browse Marketplace</Link>
               </Button>
             </div>
@@ -348,7 +358,12 @@ export default async function FarmsPage() {
               local produce
             </p>
             <div className="flex gap-4 justify-center flex-wrap">
-              <Button size="lg" variant="secondary" asChild className="bg-white text-agricultural-700 hover:bg-gray-100">
+              <Button
+                size="lg"
+                variant="secondary"
+                asChild
+                className="bg-white text-agricultural-700 hover:bg-gray-100"
+              >
                 <Link href="/signup?role=farmer">
                   Register Your Farm
                   <ArrowRight className="ml-2 h-5 w-5" />

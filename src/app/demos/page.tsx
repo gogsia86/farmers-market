@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/button";
 import {
   BarChart3,
@@ -24,7 +24,8 @@ export default function DemosPage() {
   const demos = [
     {
       title: "Analytics Dashboard",
-      description: "Advanced analytics with dynamic loading and real-time charts",
+      description:
+        "Advanced analytics with dynamic loading and real-time charts",
       icon: BarChart3,
       href: "/demos/analytics",
       color: "from-blue-500 to-cyan-500",
@@ -133,9 +134,7 @@ export default function DemosPage() {
                     100%
                   </div>
                   <p className="text-gray-600 font-medium">Code Splitting</p>
-                  <p className="text-sm text-gray-500">
-                    Optimized delivery
-                  </p>
+                  <p className="text-sm text-gray-500">Optimized delivery</p>
                 </div>
               </div>
             </div>

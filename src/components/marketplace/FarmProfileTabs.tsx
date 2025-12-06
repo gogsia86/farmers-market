@@ -17,7 +17,7 @@ import {
   Share2,
 } from "lucide-react";
 import Image from "next/image";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/Badge";
 
 /**
  * 🏪 FARM PROFILE TABS COMPONENT - Phase 3

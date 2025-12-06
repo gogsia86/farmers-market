@@ -9,7 +9,7 @@ import { useState, useEffect } from "react";
 import { OrderCard } from "./OrderCard";
 import type { OrderWithRelations, OrderFilterOptions } from "../types";
 import type { OrderStatus } from "@prisma/client";
-import { Card, CardHeader, CardBody } from "@/components/ui/card";
+import { Card, CardHeader, CardBody } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
 
 // ============================================================================

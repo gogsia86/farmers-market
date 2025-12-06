@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { MapPin, Star, ShoppingCart, Leaf, ArrowRight } from "lucide-react";
 import {
   generateMetadata as generateMeta,
@@ -111,11 +111,19 @@ export default async function ProductsPage() {
                 your area
               </p>
               <div className="flex flex-wrap gap-4 justify-center">
-                <Button size="lg" variant="default" className="bg-agricultural-600 hover:bg-agricultural-700">
+                <Button
+                  size="lg"
+                  variant="default"
+                  className="bg-agricultural-600 hover:bg-agricultural-700"
+                >
                   <ShoppingCart className="h-5 w-5 mr-2" />
                   Shop Now
                 </Button>
-                <Button size="lg" variant="outline" className="border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50"
+                >
                   View Categories
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
@@ -279,16 +287,36 @@ export default async function ProductsPage() {
                 Discover fresh produce, dairy, meats, and artisan goods
               </p>
               <div className="flex flex-wrap gap-4 justify-center">
-                <Button size="lg" variant="outline" asChild className="border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  asChild
+                  className="border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50"
+                >
                   <Link href="/products/categories/vegetables">Vegetables</Link>
                 </Button>
-                <Button size="lg" variant="outline" asChild className="border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  asChild
+                  className="border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50"
+                >
                   <Link href="/products/categories/fruits">Fruits</Link>
                 </Button>
-                <Button size="lg" variant="outline" asChild className="border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  asChild
+                  className="border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50"
+                >
                   <Link href="/products/categories/dairy">Dairy</Link>
                 </Button>
-                <Button size="lg" variant="outline" asChild className="border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  asChild
+                  className="border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50"
+                >
                   <Link href="/categories">View All</Link>
                 </Button>
               </div>
