@@ -39,7 +39,7 @@
     "fix:quick": "tsx scripts/quick-fix.ts --all",
     "fix:quick:dry": "tsx scripts/quick-fix.ts --all --dry-run",
     "fix:logger": "tsx scripts/quick-fix.ts logger",
-    "fix:auth": "tsx scripts/quick-fix.ts auth",
+    "fix:auth": "tsx scripts/fix-nextauth.ts",
     "fix:email": "tsx scripts/quick-fix.ts email",
     "fix:imports": "tsx scripts/quick-fix.ts --all",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
@@ -78,7 +78,6 @@
     "bot:run": "tsx scripts/workflow-monitor.ts all",
     "bot:critical": "tsx scripts/workflow-monitor.ts critical",
     "bot:health": "tsx scripts/workflow-monitor.ts health",
-    "fix:auth": "tsx scripts/fix-nextauth.ts",
     "fix:e2e-tests": "tsx scripts/fix-e2e-tests.ts",
     "test:cursorrules": "tsx scripts/test-cursorrules-compliance.ts",
     "test:perplexity": "tsx scripts/testing/test-perplexity.ts",
@@ -164,7 +163,7 @@
     "docker:stats": "docker stats"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.20.0",
+    "@anthropic-ai/sdk": "^0.71.2",
     "@auth/prisma-adapter": "^2.11.1",
     "@azure/monitor-opentelemetry-exporter": "^1.0.0-beta.28",
     "@azure/openai": "^2.0.0",
