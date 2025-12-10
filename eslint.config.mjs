@@ -151,6 +151,42 @@ const eslintConfig = [
     },
   },
 
+  // K6 load test files configuration
+  {
+    files: [
+      "**/tests/load/**/*.js",
+      "**/tests/load/**/*.ts",
+      "**/tests/performance/**/*.k6.js",
+    ],
+    languageOptions: {
+      globals: {
+        // K6 built-in globals
+        __ENV: "readonly",
+        __VU: "readonly",
+        __ITER: "readonly",
+        __K6_EXECUTION_CONTEXT_ID: "readonly",
+        open: "readonly",
+        // Common JS globals used in k6
+        console: "readonly",
+        JSON: "readonly",
+        Math: "readonly",
+        Date: "readonly",
+        encodeURIComponent: "readonly",
+        decodeURIComponent: "readonly",
+      },
+    },
+    rules: {
+      // K6 allows duplicate keys in thresholds objects for different percentiles
+      "no-dupe-keys": "off",
+      // K6 globals are defined by the runtime
+      "no-undef": "off",
+      // K6 scripts often use regex patterns that ESLint flags
+      "no-useless-escape": "off",
+      // Allow console statements in load tests
+      "no-console": "off",
+    },
+  },
+
   // All files - general rules
   {
     files: ["**/*.{js,jsx,ts,tsx,mjs,cjs,mts,cts}"],

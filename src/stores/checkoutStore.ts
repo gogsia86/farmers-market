@@ -364,7 +364,7 @@ export const useCheckoutStore = create<CheckoutStore>()(
               state.orderPreview !== null && state.orderPreview.itemCount > 0
             );
 
-          case "address":
+          case "address": {
             // Can proceed if shipping address is set
             if (!state.shippingAddress) {
               state.addError({
@@ -387,6 +387,7 @@ export const useCheckoutStore = create<CheckoutStore>()(
             }
 
             return true;
+          }
 
           case "payment":
             // Can proceed if payment method is set
