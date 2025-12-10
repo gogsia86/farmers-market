@@ -48,7 +48,9 @@ function logResult(result: FixResult) {
     console.log(chalk.gray(`   Action: ${result.action}`));
   }
   if (result.details) {
-    console.log(chalk.gray(`   Details: ${JSON.stringify(result.details, null, 2)}`));
+    console.log(
+      chalk.gray(`   Details: ${JSON.stringify(result.details, null, 2)}`),
+    );
   }
 }
 
@@ -57,7 +59,9 @@ function logResult(result: FixResult) {
  */
 function generateSecret(): string {
   try {
-    const secret = execSync("openssl rand -base64 32", { encoding: "utf-8" }).trim();
+    const secret = execSync("openssl rand -base64 32", {
+      encoding: "utf-8",
+    }).trim();
     return secret;
   } catch {
     // Fallback if openssl not available
@@ -101,7 +105,7 @@ function writeEnvFile(envPath: string, env: Record<string, string>) {
     return `${key}=${needsQuotes ? `"${value}"` : value}`;
   });
 
-  fs.writeFileSync(envPath, lines.join("\n") + "\n", "utf-8");
+  fs.writeFileSync(envPath, `${lines.join("\n")}\n`, "utf-8");
 }
 
 /**
@@ -150,7 +154,9 @@ async function fixEnvironmentVariables() {
 
     logResult({
       step: ".env.test",
-      action: updated ? "Updated with required variables" : "Already configured",
+      action: updated
+        ? "Updated with required variables"
+        : "Already configured",
       success: true,
       message: updated ? "Environment file updated" : "Environment file OK",
     });
@@ -169,7 +175,8 @@ async function fixEnvironmentVariables() {
     let updated = false;
 
     if (!envLocal.DATABASE_URL) {
-      envLocal.DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/farmersmarket";
+      envLocal.DATABASE_URL =
+        "postgresql://postgres:postgres@localhost:5432/farmersmarket";
       updated = true;
     }
 
@@ -192,7 +199,9 @@ async function fixEnvironmentVariables() {
 
     logResult({
       step: ".env.local",
-      action: updated ? "Updated with required variables" : "Already configured",
+      action: updated
+        ? "Updated with required variables"
+        : "Already configured",
       success: true,
       message: updated ? "Environment file updated" : "Environment file OK",
     });
@@ -287,13 +296,18 @@ async function fixDatabaseAndUsers() {
         });
 
         // Verify password works
-        const passwordValid = await bcrypt.compare(userData.password, hashedPassword);
+        const passwordValid = await bcrypt.compare(
+          userData.password,
+          hashedPassword,
+        );
 
         logResult({
           step: `Create User: ${userData.email}`,
           action: "Created with hashed password",
           success: passwordValid,
-          message: passwordValid ? "User created successfully" : "Password verification failed",
+          message: passwordValid
+            ? "User created successfully"
+            : "Password verification failed",
           details: {
             role: user.role,
             status: user.status,
@@ -332,7 +346,13 @@ async function fixDatabaseAndUsers() {
 async function verifyAuthConfig() {
   console.log(chalk.bold.blue("\n⚙️  STEP 3: Verify Auth Configuration\n"));
 
-  const configPath = path.join(process.cwd(), "src", "lib", "auth", "config.ts");
+  const configPath = path.join(
+    process.cwd(),
+    "src",
+    "lib",
+    "auth",
+    "config.ts",
+  );
 
   try {
     if (!fs.existsSync(configPath)) {
@@ -348,8 +368,13 @@ async function verifyAuthConfig() {
     const configContent = fs.readFileSync(configPath, "utf-8");
 
     // Check for CONSUMER role support
-    if (!configContent.includes('"CONSUMER"') && !configContent.includes("'CONSUMER'")) {
-      console.log(chalk.yellow("   ⚠️  CONSUMER role not found in allowed roles"));
+    if (
+      !configContent.includes('"CONSUMER"') &&
+      !configContent.includes("'CONSUMER'")
+    ) {
+      console.log(
+        chalk.yellow("   ⚠️  CONSUMER role not found in allowed roles"),
+      );
       console.log(chalk.yellow("   Adding CONSUMER role to auth config..."));
 
       // Update config to include CONSUMER
@@ -357,10 +382,13 @@ async function verifyAuthConfig() {
         /const allowedRoles:\s*UserRole\[\]\s*=\s*\[([\s\S]*?)\];/,
         (match, roles) => {
           if (!roles.includes("CONSUMER")) {
-            return match.replace("];", ',\n            "CONSUMER",\n          ];');
+            return match.replace(
+              "];",
+              ',\n            "CONSUMER",\n          ];',
+            );
           }
           return match;
-        }
+        },
       );
 
       fs.writeFileSync(configPath, updatedConfig, "utf-8");
@@ -388,7 +416,7 @@ async function verifyAuthConfig() {
 
       const updatedConfig = configContent.replace(
         /signIn:\s*["']\/admin-login["']/g,
-        'signIn: "/login"'
+        'signIn: "/login"',
       );
 
       fs.writeFileSync(configPath, updatedConfig, "utf-8");
@@ -493,13 +521,17 @@ function generateSummary() {
 
     const failures = results.filter((r) => !r.success);
     failures.forEach((failure, index) => {
-      console.log(chalk.red(`${index + 1}. ${failure.step}: ${failure.message}`));
+      console.log(
+        chalk.red(`${index + 1}. ${failure.step}: ${failure.message}`),
+      );
     });
 
     console.log(chalk.yellow("\n💡 NEXT STEPS:\n"));
     console.log(chalk.yellow("1. Review the errors above"));
     console.log(chalk.yellow("2. Run diagnostic: npm run debug:auth"));
-    console.log(chalk.yellow("3. Check documentation: docs/NEXTAUTH_DEBUG_GUIDE.md\n"));
+    console.log(
+      chalk.yellow("3. Check documentation: docs/NEXTAUTH_DEBUG_GUIDE.md\n"),
+    );
   } else {
     console.log(chalk.bold.green("🎉 ALL FIXES APPLIED SUCCESSFULLY!\n"));
     console.log(chalk.green("Next steps:"));
@@ -514,9 +546,21 @@ function generateSummary() {
  * Main fix function
  */
 async function runFixes() {
-  console.log(chalk.bold.cyan("\n╔════════════════════════════════════════════════════════════╗"));
-  console.log(chalk.bold.cyan("║  🔧 NextAuth Automatic Fix Tool                           ║"));
-  console.log(chalk.bold.cyan("╚════════════════════════════════════════════════════════════╝"));
+  console.log(
+    chalk.bold.cyan(
+      "\n╔════════════════════════════════════════════════════════════╗",
+    ),
+  );
+  console.log(
+    chalk.bold.cyan(
+      "║  🔧 NextAuth Automatic Fix Tool                           ║",
+    ),
+  );
+  console.log(
+    chalk.bold.cyan(
+      "╚════════════════════════════════════════════════════════════╝",
+    ),
+  );
 
   try {
     await fixEnvironmentVariables();

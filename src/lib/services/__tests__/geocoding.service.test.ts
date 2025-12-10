@@ -3,7 +3,7 @@
  * Agricultural consciousness meets geographic precision
  */
 
-import { GeocodingService, GeocodeResult } from "../geocoding.service";
+import { geocodingService, GeocodeResult } from "../geocoding.service";
 
 // Mock fetch for testing
 global.fetch = jest.fn();
@@ -13,7 +13,8 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
     jest.clearAllMocks();
     jest.useRealTimers(); // Use real timers by default
     // Clear the cache between tests
-    (GeocodingService as any).geocodeCache?.clear();
+    // Clear the instance cache
+    (geocodingService as any).cache?.clear();
   });
 
   describe("🎯 geocodeAddress - Address to Coordinates", () => {
@@ -29,7 +30,7 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
         json: async () => [mockResponse],
       });
 
-      const result = await GeocodingService.geocodeAddress(
+      const result = await geocodingService.geocodeAddress(
         "123 Farm Road",
         "Sacramento",
         "CA",
@@ -58,7 +59,7 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
       });
 
       // First call - should fetch
-      const result1 = await GeocodingService.geocodeAddress(
+      const result1 = await geocodingService.geocodeAddress(
         "123 Main St",
         "New York",
         "NY",
@@ -66,7 +67,7 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
       );
 
       // Second call - should use cache
-      const result2 = await GeocodingService.geocodeAddress(
+      const result2 = await geocodingService.geocodeAddress(
         "123 Main St",
         "New York",
         "NY",
@@ -89,7 +90,7 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
         json: async () => [mockResponse],
       });
 
-      const result = await GeocodingService.geocodeAddress(
+      const result = await geocodingService.geocodeAddress(
         "Organic Valley Farm",
         "Fresno",
         "CA",
@@ -107,7 +108,7 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
         json: async () => [],
       });
 
-      const result = await GeocodingService.geocodeAddress(
+      const result = await geocodingService.geocodeAddress(
         "Invalid Address",
         "Unknown City",
         "CA",
@@ -128,7 +129,7 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
           json: async () => [],
         });
 
-        const result = await GeocodingService.geocodeAddress(
+        const result = await geocodingService.geocodeAddress(
           "Test Address",
           "Test City",
           state,
@@ -156,7 +157,7 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
         json: async () => [mockResponse],
       });
 
-      const result = await GeocodingService.geocodeAddress(
+      const result = await geocodingService.geocodeAddress(
         "456 Sunset Blvd",
         "Los Angeles",
         "CA",
@@ -172,7 +173,7 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
         new Error("Network error"),
       );
 
-      const result = await GeocodingService.geocodeAddress(
+      const result = await geocodingService.geocodeAddress(
         "123 Farm St",
         "TestCity",
         "CA",
@@ -199,9 +200,9 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
 
       // Make multiple requests quickly
       const promises = [
-        GeocodingService.geocodeAddress("1 Main St", "Boston", "MA", "02101"),
-        GeocodingService.geocodeAddress("2 Main St", "Boston", "MA", "02102"),
-        GeocodingService.geocodeAddress("3 Main St", "Boston", "MA", "02103"),
+        geocodingService.geocodeAddress("1 Main St", "Boston", "MA", "02101"),
+        geocodingService.geocodeAddress("2 Main St", "Boston", "MA", "02102"),
+        geocodingService.geocodeAddress("3 Main St", "Boston", "MA", "02103"),
       ];
 
       const results = await Promise.all(promises);
@@ -219,7 +220,7 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
       const farm1 = { lat: 37.7749, lng: -122.4194 }; // San Francisco
       const farm2 = { lat: 34.0522, lng: -118.2437 }; // Los Angeles
 
-      const distance = GeocodingService.calculateDistance(
+      const distance = geocodingService.calculateDistance(
         farm1.lat,
         farm1.lng,
         farm2.lat,
@@ -232,7 +233,7 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
     });
 
     it("should calculate zero distance for same location", () => {
-      const distance = GeocodingService.calculateDistance(
+      const distance = geocodingService.calculateDistance(
         40.7128,
         -74.006,
         40.7128,
@@ -246,7 +247,7 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
       const farm1 = { lat: 38.5816, lng: -121.4944 }; // Sacramento
       const farm2 = { lat: 38.5, lng: -121.5 }; // Nearby
 
-      const distance = GeocodingService.calculateDistance(
+      const distance = geocodingService.calculateDistance(
         farm1.lat,
         farm1.lng,
         farm2.lat,
@@ -261,7 +262,7 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
       const eastCoast = { lat: 40.7128, lng: -74.006 }; // New York
       const westCoast = { lat: 37.7749, lng: -122.4194 }; // San Francisco
 
-      const distance = GeocodingService.calculateDistance(
+      const distance = geocodingService.calculateDistance(
         eastCoast.lat,
         eastCoast.lng,
         westCoast.lat,
@@ -273,7 +274,7 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
     });
 
     it("should handle negative coordinates", () => {
-      const distance = GeocodingService.calculateDistance(
+      const distance = geocodingService.calculateDistance(
         -33.8688,
         151.2093,
         -37.8136,
@@ -288,7 +289,7 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
       const northHemisphere = { lat: 10, lng: 0 };
       const southHemisphere = { lat: -10, lng: 0 };
 
-      const distance = GeocodingService.calculateDistance(
+      const distance = geocodingService.calculateDistance(
         northHemisphere.lat,
         northHemisphere.lng,
         southHemisphere.lat,
@@ -303,13 +304,13 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
       const point1 = { lat: 45.5231, lng: -122.6765 };
       const point2 = { lat: 47.6062, lng: -122.3321 };
 
-      const distance1 = GeocodingService.calculateDistance(
+      const distance1 = geocodingService.calculateDistance(
         point1.lat,
         point1.lng,
         point2.lat,
         point2.lng,
       );
-      const distance2 = GeocodingService.calculateDistance(
+      const distance2 = geocodingService.calculateDistance(
         point1.lat,
         point1.lng,
         point2.lat,
@@ -329,7 +330,7 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
         { id: "3", name: "Farm C", lat: 40.0, lng: -120.0, distance: 0 },
       ];
 
-      const nearbyFarms = await GeocodingService.findNearbyFarms(
+      const nearbyFarms = await geocodingService.findNearbyFarms(
         userLocation.lat,
         userLocation.lng,
         farms,
@@ -364,7 +365,7 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
         },
       ];
 
-      const nearbyFarms = await GeocodingService.findNearbyFarms(
+      const nearbyFarms = await geocodingService.findNearbyFarms(
         userLocation.lat,
         userLocation.lng,
         farms,
@@ -379,7 +380,7 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
     });
 
     it("should handle empty farm list", async () => {
-      const nearbyFarms = await GeocodingService.findNearbyFarms(
+      const nearbyFarms = await geocodingService.findNearbyFarms(
         38.5816,
         -121.4944,
         [],
@@ -401,7 +402,7 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
         },
       ];
 
-      const nearbyFarms = await GeocodingService.findNearbyFarms(
+      const nearbyFarms = await geocodingService.findNearbyFarms(
         userLocation.lat,
         userLocation.lng,
         farms,
@@ -423,7 +424,7 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
         },
       ];
 
-      const nearbyFarms = await GeocodingService.findNearbyFarms(
+      const nearbyFarms = await geocodingService.findNearbyFarms(
         userLocation.lat,
         userLocation.lng,
         farms,
@@ -441,7 +442,7 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
         { id: "2", name: "Farm B", lat: 35.0, lng: -118.0, distance: 0 },
       ];
 
-      const nearbyFarms = await GeocodingService.findNearbyFarms(
+      const nearbyFarms = await geocodingService.findNearbyFarms(
         userLocation.lat,
         userLocation.lng,
         farms,
@@ -465,7 +466,7 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
         json: async () => [mockResponse],
       });
 
-      const result = await GeocodingService.geocodeAddress(
+      const result = await geocodingService.geocodeAddress(
         "Biodynamic Acres",
         "Sacramento",
         "CA",
@@ -492,7 +493,7 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
       ];
 
       const deliveryRadius = 25; // 25 miles
-      const availableFarms = await GeocodingService.findNearbyFarms(
+      const availableFarms = await geocodingService.findNearbyFarms(
         customerLocation.lat,
         customerLocation.lng,
         farms,
@@ -509,7 +510,7 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
       const farmLocation = { lat: 38.5816, lng: -121.4944 };
       const customerLocation = { lat: 38.6, lng: -121.5 };
 
-      const distance = GeocodingService.calculateDistance(
+      const distance = geocodingService.calculateDistance(
         farmLocation.lat,
         farmLocation.lng,
         customerLocation.lat,
@@ -527,7 +528,7 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
         json: async () => [],
       });
 
-      const result = await GeocodingService.geocodeAddress(
+      const result = await geocodingService.geocodeAddress(
         "123 Main St",
         "City",
         "XX",
@@ -539,40 +540,35 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
       expect(result.longitude).toBeDefined();
     });
 
-    it.skip("should handle API timeout (timing issues with fake timers)", async () => {
-      // TODO: Fix this test - requires proper fake timer handling with nested promises
-      jest.useFakeTimers();
-
-      (global.fetch as jest.Mock).mockImplementationOnce(
-        () =>
-          new Promise((resolve) => {
-            setTimeout(() => resolve({ ok: false }), 30000);
-          }),
+    it("should handle API timeout gracefully", async () => {
+      // Mock a fetch that rejects with a timeout-like error
+      (global.fetch as jest.Mock).mockRejectedValueOnce(
+        new Error("AbortError: The operation was aborted"),
       );
 
-      const resultPromise = GeocodingService.geocodeAddress(
+      const result = await geocodingService.geocodeAddress(
         "Test",
         "Test",
         "CA",
         "00000",
       );
 
-      jest.advanceTimersByTime(30000);
-
-      const result = await resultPromise;
+      // Should fallback to state center on timeout
       expect(result).toBeDefined();
-
-      jest.useRealTimers();
+      expect(result.latitude).toBeDefined();
+      expect(result.longitude).toBeDefined();
+      // Should be California's center coordinates
+      expect(result.latitude).toBeCloseTo(36.1162, 1);
     });
 
-    it.skip("should handle malformed API response (rate limiting causes timeout)", async () => {
-      // TODO: Mock rate limiting to make this test faster
+    it("should handle malformed API response", async () => {
+      // Mock a response with invalid format (not an array)
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ invalid: "format" }),
       });
 
-      const result = await GeocodingService.geocodeAddress(
+      const result = await geocodingService.geocodeAddress(
         "Test",
         "Test",
         "CA",
@@ -583,16 +579,18 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
       // Should fall back to state center when API response is malformed
       expect(result.latitude).toBeDefined();
       expect(result.longitude).toBeDefined();
+      // California center fallback
+      expect(result.latitude).toBeCloseTo(36.1162, 1);
     });
 
     it("should handle extreme coordinates", () => {
-      const distance = GeocodingService.calculateDistance(90, 0, -90, 0);
+      const distance = geocodingService.calculateDistance(90, 0, -90, 0);
       expect(distance).toBeGreaterThan(0);
       expect(isFinite(distance)).toBe(true);
     });
 
     it("should handle same coordinates with precision", () => {
-      const distance = GeocodingService.calculateDistance(
+      const distance = geocodingService.calculateDistance(
         38.58165432,
         -121.49446789,
         38.58165432,
@@ -603,57 +601,53 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
   });
 
   describe("⚡ Performance & Caching", () => {
-    beforeEach(() => {
-      jest.useFakeTimers();
-    });
-
-    afterEach(() => {
-      jest.useRealTimers();
-    });
-
-    it.skip("should cache geocoding results efficiently (rate limiting timing issues)", async () => {
-      // TODO: Properly mock rate limiting for this test
+    it("should cache geocoding results efficiently", async () => {
       const mockResponse = {
         lat: "38.5816",
         lon: "-121.4944",
-        display_name: "Test Location",
+        display_name: "Test Location for Cache",
       };
 
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      (global.fetch as jest.Mock).mockResolvedValue({
         ok: true,
         json: async () => [mockResponse],
       });
 
-      const startTime = Date.now();
-
-      // First call - cache miss
-      const firstCallPromise = GeocodingService.geocodeAddress(
-        "Test",
-        "Test",
+      // First call - cache miss (unique address to avoid cache from other tests)
+      const uniqueAddress = `CacheTest-${Date.now()}`;
+      const firstResult = await geocodingService.geocodeAddress(
+        uniqueAddress,
+        "CacheCity",
         "CA",
-        "00000",
+        "11111",
       );
 
-      // Fast-forward through rate limiting
-      jest.runAllTimers();
-      await firstCallPromise;
+      expect(firstResult.latitude).toBeCloseTo(38.5816, 2);
 
-      // Multiple cached calls (should use cache, no rate limiting)
-      for (let i = 0; i < 100; i++) {
-        await GeocodingService.geocodeAddress("Test", "Test", "CA", "00000");
+      // Clear mock call count after first call
+      const callsAfterFirst = (global.fetch as jest.Mock).mock.calls.length;
+
+      // Multiple cached calls (should use cache, no additional API calls)
+      for (let i = 0; i < 5; i++) {
+        const cachedResult = await geocodingService.geocodeAddress(
+          uniqueAddress,
+          "CacheCity",
+          "CA",
+          "11111",
+        );
+        expect(cachedResult.latitude).toBeCloseTo(38.5816, 2);
       }
 
-      const duration = Date.now() - startTime;
-
-      expect(duration).toBeLessThan(1000); // 100 calls in < 1 second
-      expect(global.fetch).toHaveBeenCalledTimes(1); // Only one API call
+      // Should not have made additional fetch calls due to caching
+      const callsAfterCached = (global.fetch as jest.Mock).mock.calls.length;
+      expect(callsAfterCached).toBe(callsAfterFirst); // No new calls
     });
 
     it("should calculate distances efficiently in bulk", () => {
       const startTime = Date.now();
 
       for (let i = 0; i < 1000; i++) {
-        GeocodingService.calculateDistance(
+        geocodingService.calculateDistance(
           38.5 + Math.random(),
           -121.5 + Math.random(),
           38.6 + Math.random(),
@@ -678,7 +672,7 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
       });
 
       const promises = Array.from({ length: 10 }, (_, i) =>
-        GeocodingService.geocodeAddress(
+        geocodingService.geocodeAddress(
           `Address ${i}`,
           "City",
           "CA",
@@ -786,7 +780,7 @@ describe("🌍 Geocoding Service - Divine Location Intelligence", () => {
 
       // Call all services concurrently with fake timers
       const promises = states.map((state) =>
-        GeocodingService.geocodeAddress("Test", "Test", state, "00000"),
+        geocodingService.geocodeAddress("Test", "Test", state, "00000"),
       );
 
       // Fast-forward through all rate limiting

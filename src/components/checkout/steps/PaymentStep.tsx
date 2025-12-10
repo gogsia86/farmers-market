@@ -11,6 +11,7 @@
  * - Secure payment processing
  * - 3D Secure (SCA) support
  * - Agricultural consciousness UI
+ * - E2E test ID attributes for automated testing
  */
 
 import { useState, useEffect } from "react";
@@ -127,19 +128,28 @@ export function PaymentStep() {
   // Error state
   if (error && !clientSecret) {
     return (
-      <div className="space-y-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+      <div className="space-y-6" data-testid="payment-error-state">
+        <div
+          className="bg-red-50 border border-red-200 rounded-lg p-4"
+          data-testid="payment-error"
+        >
           <div className="flex items-start gap-3">
             <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
             <div>
               <h4 className="font-semibold text-red-900 mb-1">Payment Error</h4>
-              <p className="text-sm text-red-800">{error}</p>
+              <p
+                className="text-sm text-red-800"
+                data-testid="payment-error-message"
+              >
+                {error}
+              </p>
             </div>
           </div>
         </div>
         <button
           onClick={() => window.location.reload()}
           className="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-semibold rounded-lg"
+          data-testid="payment-retry-button"
         >
           Try Again
         </button>
@@ -150,17 +160,26 @@ export function PaymentStep() {
   // Success state
   if (paymentSuccess) {
     return (
-      <div className="space-y-6">
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+      <div className="space-y-6" data-testid="payment-success-state">
+        <div
+          className="bg-green-50 border border-green-200 rounded-lg p-4"
+          data-testid="payment-success"
+        >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
               <CheckCircle2 className="h-5 w-5 text-green-600" />
             </div>
             <div>
-              <h4 className="font-semibold text-green-900 mb-1">
+              <h4
+                className="font-semibold text-green-900 mb-1"
+                data-testid="payment-success-title"
+              >
                 Payment Successful! 🎉
               </h4>
-              <p className="text-sm text-green-800">
+              <p
+                className="text-sm text-green-800"
+                data-testid="payment-success-message"
+              >
                 Your payment has been processed successfully. You can now
                 complete your order.
               </p>
@@ -173,15 +192,17 @@ export function PaymentStep() {
 
   // Render Stripe payment element
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-testid="payment-step">
       {clientSecret && orderPreview && (
-        <StripePaymentElement
-          clientSecret={clientSecret}
-          amount={Math.round(orderPreview.total * 100)} // Convert to cents
-          onSuccess={handlePaymentSuccess}
-          onError={handlePaymentError}
-          returnUrl={`${window.location.origin}/checkout/confirmation`}
-        />
+        <div data-testid="stripe-payment-container">
+          <StripePaymentElement
+            clientSecret={clientSecret}
+            amount={Math.round(orderPreview.total * 100)} // Convert to cents
+            onSuccess={handlePaymentSuccess}
+            onError={handlePaymentError}
+            returnUrl={`${window.location.origin}/checkout/confirmation`}
+          />
+        </div>
       )}
     </div>
   );
@@ -193,7 +214,7 @@ export function PaymentStep() {
 
 function PaymentSkeleton() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-testid="payment-loading">
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <Loader2 className="h-12 w-12 text-amber-500 animate-spin mx-auto mb-4" />

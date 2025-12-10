@@ -1,0 +1,43 @@
+# ============================================================================
+# FARMERS MARKET PLATFORM - STRIPE MOCK
+# Docker Compose for running stripe-mock for contract testing
+# ============================================================================
+#
+# Usage:
+#   docker-compose -f docker-compose.stripe-mock.yml up -d
+#   npm run test:contracts:stripe:mock
+#   docker-compose -f docker-compose.stripe-mock.yml down
+#
+# ============================================================================
+
+version: "3.8"
+
+services:
+  # ============================================================================
+  # STRIPE MOCK SERVER
+  # Hermetic testing environment for Stripe API
+  # https://github.com/stripe/stripe-mock
+  # ============================================================================
+  stripe-mock:
+    image: stripe/stripe-mock:latest
+    container_name: farmers-market-stripe-mock
+    restart: unless-stopped
+    ports:
+      - "12111:12111"  # HTTP port
+      - "12112:12112"  # HTTPS port
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:12111/v1/customers"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    networks:
+      - stripe-mock-network
+    labels:
+      - "com.farmersmarket.service=stripe-mock"
+      - "com.farmersmarket.environment=test"
+
+networks:
+  stripe-mock-network:
+    driver: bridge
+    name: farmers-market-stripe-mock-network

@@ -23,32 +23,39 @@ const REPLACEMENTS: Replacement[] = [
   // Test credential replacements
   {
     from: '"test.customer@example.com"',
-    to: 'TEST_USERS.customer.email',
+    to: "TEST_USERS.customer.email",
     description: "Replace test.customer@example.com with TEST_USERS",
   },
   {
     from: "'test.customer@example.com'",
-    to: 'TEST_USERS.customer.email',
-    description: "Replace test.customer@example.com with TEST_USERS (single quotes)",
+    to: "TEST_USERS.customer.email",
+    description:
+      "Replace test.customer@example.com with TEST_USERS (single quotes)",
   },
   {
     from: '"TestPass123!"',
-    to: 'TEST_USERS.customer.password',
+    to: "TEST_USERS.customer.password",
     description: "Replace TestPass123! with TEST_USERS",
   },
   {
     from: "'TestPass123!'",
-    to: 'TEST_USERS.customer.password',
+    to: "TEST_USERS.customer.password",
     description: "Replace TestPass123! with TEST_USERS (single quotes)",
   },
 ];
 
 async function main() {
-  console.log("\n╔════════════════════════════════════════════════════════════╗");
+  console.log(
+    "\n╔════════════════════════════════════════════════════════════╗",
+  );
   console.log("║  🔧 E2E Test Simple Fix Script                            ║");
   console.log("╠════════════════════════════════════════════════════════════╣");
-  console.log(`║  Mode: ${DRY_RUN ? "DRY RUN" : "LIVE"}                                          ║`);
-  console.log("╚════════════════════════════════════════════════════════════╝\n");
+  console.log(
+    `║  Mode: ${DRY_RUN ? "DRY RUN" : "LIVE"}                                          ║`,
+  );
+  console.log(
+    "╚════════════════════════════════════════════════════════════╝\n",
+  );
 
   // Find all test files
   const pattern = path.join(TESTS_DIR, "**", "*.spec.ts").replace(/\\/g, "/");
@@ -66,14 +73,22 @@ async function main() {
     let fileReplacements = 0;
 
     // Check if file needs TEST_USERS import
-    const needsImport = content.includes("TEST_USERS") &&
-                       !content.includes('from "../helpers/auth"') &&
-                       !content.includes("from '../helpers/auth'");
+    const needsImport =
+      content.includes("TEST_USERS") &&
+      !content.includes('from "../helpers/auth"') &&
+      !content.includes("from '../helpers/auth'");
 
     // Apply replacements
     for (const replacement of REPLACEMENTS) {
       if (content.includes(replacement.from)) {
-        const count = (content.match(new RegExp(replacement.from.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
+        const count = (
+          content.match(
+            new RegExp(
+              replacement.from.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+              "g",
+            ),
+          ) || []
+        ).length;
         content = content.split(replacement.from).join(replacement.to);
         fileReplacements += count;
         fileModified = true;
@@ -88,7 +103,10 @@ async function main() {
       const importMatch = content.match(/^import .+ from .+;$/m);
       if (importMatch && importMatch.index !== undefined) {
         const insertPosition = importMatch.index + importMatch[0].length + 1;
-        content = content.slice(0, insertPosition) + importLine + content.slice(insertPosition);
+        content =
+          content.slice(0, insertPosition) +
+          importLine +
+          content.slice(insertPosition);
         fileReplacements++;
         fileModified = true;
       }
@@ -99,12 +117,19 @@ async function main() {
     if (gotoMatches) {
       for (const gotoStatement of gotoMatches) {
         const gotoIndex = content.indexOf(gotoStatement);
-        const nextLineStart = content.indexOf('\n', gotoIndex);
+        const nextLineStart = content.indexOf("\n", gotoIndex);
         if (nextLineStart !== -1) {
-          const nextLine = content.slice(nextLineStart + 1, content.indexOf('\n', nextLineStart + 1));
-          if (!nextLine.includes('waitForLoadState')) {
-            const waitStatement = '\n    await page.waitForLoadState("networkidle");';
-            content = content.slice(0, nextLineStart) + waitStatement + content.slice(nextLineStart);
+          const nextLine = content.slice(
+            nextLineStart + 1,
+            content.indexOf("\n", nextLineStart + 1),
+          );
+          if (!nextLine.includes("waitForLoadState")) {
+            const waitStatement =
+              '\n    await page.waitForLoadState("networkidle");';
+            content =
+              content.slice(0, nextLineStart) +
+              waitStatement +
+              content.slice(nextLineStart);
             fileReplacements++;
             fileModified = true;
           }
@@ -123,12 +148,18 @@ async function main() {
     }
   }
 
-  console.log("\n╔════════════════════════════════════════════════════════════╗");
+  console.log(
+    "\n╔════════════════════════════════════════════════════════════╗",
+  );
   console.log("║  📊 Summary                                                ║");
   console.log("╠════════════════════════════════════════════════════════════╣");
   console.log(`║  Files Modified: ${totalModified.toString().padEnd(44)} ║`);
-  console.log(`║  Total Replacements: ${totalReplacements.toString().padEnd(40)} ║`);
-  console.log("╚════════════════════════════════════════════════════════════╝\n");
+  console.log(
+    `║  Total Replacements: ${totalReplacements.toString().padEnd(40)} ║`,
+  );
+  console.log(
+    "╚════════════════════════════════════════════════════════════╝\n",
+  );
 
   if (DRY_RUN) {
     console.log("⚠️  DRY RUN - No files were modified");
@@ -138,7 +169,9 @@ async function main() {
     console.log("\nNext steps:");
     console.log("1. Review: git diff tests/");
     console.log("2. Test: npx playwright test");
-    console.log("3. Commit: git commit -m 'fix(tests): standardize test credentials'\n");
+    console.log(
+      "3. Commit: git commit -m 'fix(tests): standardize test credentials'\n",
+    );
   }
 }
 

@@ -47,7 +47,6 @@ export default async function OrdersPage() {
       break;
 
     case "CONSUMER":
-    case "CUSTOMER":
       // Customers view their order history (canonical route)
       redirect("/dashboard/orders");
       break;

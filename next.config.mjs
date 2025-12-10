@@ -225,7 +225,9 @@ const nextConfig = {
   // TYPESCRIPT CONFIGURATION (12 THREAD COMPILATION)
   // ============================================
   typescript: {
-    ignoreBuildErrors: true, // Ignore monitoring/telemetry dependency conflicts (non-critical)
+    // WARNING: Set to false for production builds to catch type errors
+    // Only set to true temporarily if you need to debug specific issues
+    ignoreBuildErrors: false,
     tsconfigPath: "./tsconfig.json",
   },
 

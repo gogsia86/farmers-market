@@ -8,6 +8,7 @@ import {
   generateMetadata as generateMeta,
   generateOrganizationJsonLd,
 } from "@/lib/utils/metadata";
+import { database } from "@/lib/database";
 
 /**
  * 🍎 PRODUCTS CATALOG PAGE - Server Component
@@ -38,35 +39,71 @@ export const metadata: Metadata = generateMeta({
   ],
 });
 
-interface ApiResponse {
-  success: boolean;
-  data?: any[];
-  error?: {
-    code: string;
-    message: string;
-  };
-}
-
-// Fetch products data from API
+// Direct database access for Server Component (no API fetch needed)
 async function getProducts() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
-    const response = await fetch(`${baseUrl}/api/products`, {
-      cache: "no-store",
-      next: { revalidate: 60 }, // Revalidate every 60 seconds
+    const products = await database.product.findMany({
+      where: {
+        status: "ACTIVE",
+        inStock: true,
+      },
+      include: {
+        farm: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            city: true,
+            state: true,
+          },
+        },
+        _count: {
+          select: {
+            reviews: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 50,
     });
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch products: ${response.statusText}`);
-    }
+    // Transform to expected format with proper type casting for JSON fields
+    return products.map((product) => {
+      const images = Array.isArray(product.images)
+        ? (product.images as string[])
+        : [];
 
-    const result: ApiResponse = await response.json();
-
-    if (!result.success || !result.data) {
-      return [];
-    }
-
-    return result.data;
+      return {
+        id: product.id,
+        name: product.name,
+        slug: product.slug,
+        description: product.description,
+        price: Number(product.price),
+        compareAtPrice: product.compareAtPrice
+          ? Number(product.compareAtPrice)
+          : null,
+        unit: product.unit,
+        category: product.category,
+        organic: product.organic,
+        seasonal: product.seasonal,
+        featured: product.featured,
+        inStock: product.inStock,
+        images,
+        averageRating: product.averageRating
+          ? Number(product.averageRating)
+          : null,
+        reviewCount: product.reviewCount,
+        farm: {
+          id: product.farm.id,
+          name: product.farm.name,
+          slug: product.farm.slug,
+          city: product.farm.city,
+          state: product.farm.state,
+        },
+      };
+    });
   } catch (error) {
     console.error("[PRODUCTS_FETCH_ERROR]", error);
     return [];
@@ -154,11 +191,15 @@ export default async function ProductsPage() {
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {products.map((product: any) => (
+                  <div
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                    data-testid="products-grid"
+                  >
+                    {products.map((product: any, index: number) => (
                       <Card
                         key={product.id}
                         className="h-full hover:shadow-xl transition-all duration-200 border-2 hover:border-agricultural-200"
+                        data-testid={`product-card-${index}`}
                       >
                         <CardHeader className="p-0">
                           {/* Product Image */}
@@ -241,7 +282,10 @@ export default async function ProductsPage() {
                           {/* Price and Add to Cart */}
                           <div className="flex items-center justify-between pt-3 border-t">
                             <div>
-                              <p className="text-2xl font-bold text-agricultural-600">
+                              <p
+                                className="text-2xl font-bold text-agricultural-600"
+                                data-testid="product-price"
+                              >
                                 ${product.price.toFixed(2)}
                               </p>
                               <p className="text-xs text-gray-600">
@@ -252,6 +296,7 @@ export default async function ProductsPage() {
                               size="sm"
                               disabled={!product.inStock}
                               className="gap-2 bg-agricultural-600 hover:bg-agricultural-700"
+                              data-testid="add-to-cart-button"
                             >
                               <ShoppingCart className="h-4 w-4" />
                               Add

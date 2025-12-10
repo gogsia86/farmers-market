@@ -122,7 +122,11 @@ export class SlackNotifier {
   /**
    * Send an error notification
    */
-  async sendError(title: string, error: Error | string, details?: string): Promise<void> {
+  async sendError(
+    title: string,
+    error: Error | string,
+    details?: string,
+  ): Promise<void> {
     const errorMessage = error instanceof Error ? error.message : error;
     const stackTrace = error instanceof Error ? error.stack : undefined;
 
@@ -203,14 +207,20 @@ export class SlackNotifier {
     url?: string;
   }): Promise<void> {
     const passRate = ((results.passed / results.total) * 100).toFixed(1);
-    const color = results.failed === 0 ? "#36a64f" : results.failed < 10 ? "#ffa500" : "#ff0000";
-    const emoji = results.failed === 0 ? "✅" : results.failed < 10 ? "⚠️" : "❌";
+    const color =
+      results.failed === 0
+        ? "#36a64f"
+        : results.failed < 10
+          ? "#ffa500"
+          : "#ff0000";
+    const emoji =
+      results.failed === 0 ? "✅" : results.failed < 10 ? "⚠️" : "❌";
 
     const message: SlackMessage = {
       text: `${emoji} Test Results: ${results.passed}/${results.total} passed (${passRate}%)`,
       attachments: [
         {
-          color: color,
+          color,
           title: `${emoji} E2E Test Results`,
           fields: [
             {
@@ -261,16 +271,31 @@ export class SlackNotifier {
   /**
    * Send deployment notification
    */
-  async sendDeployment(status: "started" | "success" | "failed", environment: string, details?: {
-    version?: string;
-    deployer?: string;
-    commitSha?: string;
-    commitMessage?: string;
-    url?: string;
-  }): Promise<void> {
-    const emoji = status === "success" ? "🚀" : status === "failed" ? "❌" : "⏳";
-    const color = status === "success" ? "#36a64f" : status === "failed" ? "#ff0000" : "#0080ff";
-    const statusText = status === "success" ? "Deployed Successfully" : status === "failed" ? "Deployment Failed" : "Deployment Started";
+  async sendDeployment(
+    status: "started" | "success" | "failed",
+    environment: string,
+    details?: {
+      version?: string;
+      deployer?: string;
+      commitSha?: string;
+      commitMessage?: string;
+      url?: string;
+    },
+  ): Promise<void> {
+    const emoji =
+      status === "success" ? "🚀" : status === "failed" ? "❌" : "⏳";
+    const color =
+      status === "success"
+        ? "#36a64f"
+        : status === "failed"
+          ? "#ff0000"
+          : "#0080ff";
+    const statusText =
+      status === "success"
+        ? "Deployed Successfully"
+        : status === "failed"
+          ? "Deployment Failed"
+          : "Deployment Started";
 
     const fields: Array<{ title: string; value: string; short: boolean }> = [
       {
@@ -321,10 +346,10 @@ export class SlackNotifier {
       text: `${emoji} ${statusText} - ${environment}`,
       attachments: [
         {
-          color: color,
+          color,
           title: `${emoji} Deployment - ${environment}`,
           title_link: details?.url,
-          fields: fields,
+          fields,
           footer: "Farmers Market Platform - CI/CD",
           ts: Math.floor(Date.now() / 1000),
         },
@@ -346,14 +371,20 @@ export class SlackNotifier {
     requestsPerSecond: number;
     errors: number;
   }): Promise<void> {
-    const emoji = results.successRate > 95 ? "✅" : results.successRate > 80 ? "⚠️" : "❌";
-    const color = results.successRate > 95 ? "#36a64f" : results.successRate > 80 ? "#ffa500" : "#ff0000";
+    const emoji =
+      results.successRate > 95 ? "✅" : results.successRate > 80 ? "⚠️" : "❌";
+    const color =
+      results.successRate > 95
+        ? "#36a64f"
+        : results.successRate > 80
+          ? "#ffa500"
+          : "#ff0000";
 
     const message: SlackMessage = {
       text: `${emoji} Load Test Results: ${results.successRate.toFixed(1)}% success rate`,
       attachments: [
         {
-          color: color,
+          color,
           title: `${emoji} Load Test Results`,
           fields: [
             {
@@ -405,14 +436,24 @@ export class SlackNotifier {
   /**
    * Send monitoring alert
    */
-  async sendAlert(severity: "critical" | "warning" | "info", title: string, details: {
-    metric?: string;
-    value?: string | number;
-    threshold?: string | number;
-    url?: string;
-  }): Promise<void> {
-    const emoji = severity === "critical" ? "🚨" : severity === "warning" ? "⚠️" : "ℹ️";
-    const color = severity === "critical" ? "#ff0000" : severity === "warning" ? "#ffa500" : "#0080ff";
+  async sendAlert(
+    severity: "critical" | "warning" | "info",
+    title: string,
+    details: {
+      metric?: string;
+      value?: string | number;
+      threshold?: string | number;
+      url?: string;
+    },
+  ): Promise<void> {
+    const emoji =
+      severity === "critical" ? "🚨" : severity === "warning" ? "⚠️" : "ℹ️";
+    const color =
+      severity === "critical"
+        ? "#ff0000"
+        : severity === "warning"
+          ? "#ffa500"
+          : "#0080ff";
 
     const fields: Array<{ title: string; value: string; short: boolean }> = [];
 
@@ -444,7 +485,7 @@ export class SlackNotifier {
       text: `${emoji} [${severity.toUpperCase()}] ${title}`,
       attachments: [
         {
-          color: color,
+          color,
           title: `${emoji} [${severity.toUpperCase()}] ${title}`,
           title_link: details.url,
           fields: fields.length > 0 ? fields : undefined,
@@ -488,8 +529,14 @@ export class SlackNotifier {
             console.log("✅ Slack notification sent successfully");
             resolve();
           } else {
-            console.error(`❌ Slack notification failed: ${res.statusCode} ${responseBody}`);
-            reject(new Error(`Slack API returned ${res.statusCode}: ${responseBody}`));
+            console.error(
+              `❌ Slack notification failed: ${res.statusCode} ${responseBody}`,
+            );
+            reject(
+              new Error(
+                `Slack API returned ${res.statusCode}: ${responseBody}`,
+              ),
+            );
           }
         });
       });

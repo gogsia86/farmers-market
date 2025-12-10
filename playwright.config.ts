@@ -50,10 +50,10 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: "npm run dev",
-    url: BASE_URL,
+    command: `npx next dev --turbo -p ${PORT} -H 0.0.0.0`,
+    url: `http://localhost:${PORT}/api/health`,
     reuseExistingServer: !process.env.CI, // Always reuse existing server locally
-    timeout: 300 * 1000, // Increased timeout to 5 minutes for initial build
+    timeout: 180 * 1000, // 3 minutes timeout for server startup
     stdout: "pipe", // Show server output for debugging
     stderr: "pipe",
     env: {
@@ -61,12 +61,12 @@ export default defineConfig({
       DATABASE_URL:
         process.env.TEST_DATABASE_URL ||
         "postgresql://postgres:test_password_123@127.0.0.1:5433/farmersmarket_test",
-      NEXTAUTH_URL: "http://localhost:3001",
+      NEXTAUTH_URL: `http://localhost:${PORT}`,
       NEXTAUTH_SECRET:
         process.env.NEXTAUTH_SECRET ||
         "nOgEpp7IZzT6Nzf3moPRGI7HX2S9m5HOVl4eIR5+MQw=",
-      NODE_ENV: process.env.CI ? "test" : "development",
-      PORT,
+      NODE_ENV: "development",
+      NODE_OPTIONS: "--max-old-space-size=8192",
     },
     // Ignore HTTP errors on server startup (e.g., port already in use)
     ignoreHTTPSErrors: true,

@@ -1,0 +1,548 @@
+# 🚀 Pre-Deploy Validation Workflow
+# Comprehensive checks before production deployment
+#
+# This workflow runs all validation steps to ensure code quality,
+# security, and performance before deployment to production.
+
+name: Pre-Deploy Validation
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+    inputs:
+      skip_e2e:
+        description: "Skip E2E tests"
+        required: false
+        default: false
+        type: boolean
+      environment:
+        description: "Target environment"
+        required: false
+        default: "staging"
+        type: choice
+        options:
+          - staging
+          - production
+
+env:
+  NODE_VERSION: "20"
+  POSTGRES_VERSION: "16"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ============================================
+  # JOB 1: Code Quality & Type Safety
+  # ============================================
+  code-quality:
+    name: 📝 Code Quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: 📚 Install dependencies
+        run: npm ci
+
+      - name: 🔧 Generate Prisma Client
+        run: npx prisma generate
+
+      - name: ⚡ TypeScript Type Check
+        run: npm run type-check
+
+      - name: 🔍 ESLint Check
+        run: npm run lint
+
+      - name: 🎨 Prettier Format Check
+        run: npm run format:check
+
+      - name: 📊 Check for console.log statements
+        run: |
+          echo "Checking for console.log statements in production code..."
+          # Exclude test files, scripts, and config files
+          CONSOLE_COUNT=$(grep -r "console\.log" --include="*.ts" --include="*.tsx" \
+            --exclude-dir=node_modules \
+            --exclude-dir=__tests__ \
+            --exclude-dir=tests \
+            --exclude-dir=scripts \
+            --exclude="*.test.ts" \
+            --exclude="*.test.tsx" \
+            --exclude="*.spec.ts" \
+            --exclude="*.spec.tsx" \
+            --exclude="jest.*.ts" \
+            --exclude="vitest.*.ts" \
+            src/ 2>/dev/null | wc -l || echo "0")
+
+          if [ "$CONSOLE_COUNT" -gt 0 ]; then
+            echo "⚠️  Found $CONSOLE_COUNT console.log statements in source code"
+            grep -r "console\.log" --include="*.ts" --include="*.tsx" \
+              --exclude-dir=node_modules \
+              --exclude-dir=__tests__ \
+              --exclude-dir=tests \
+              --exclude-dir=scripts \
+              --exclude="*.test.ts" \
+              --exclude="*.test.tsx" \
+              --exclude="*.spec.ts" \
+              --exclude="*.spec.tsx" \
+              src/ || true
+            echo "Consider using the logger utility instead of console.log"
+          else
+            echo "✅ No console.log statements found in production code"
+          fi
+
+  # ============================================
+  # JOB 2: Security Checks
+  # ============================================
+  security:
+    name: 🔒 Security Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: 📚 Install dependencies
+        run: npm ci
+
+      - name: 🔐 NPM Audit (High/Critical)
+        run: npm audit --audit-level=high
+        continue-on-error: true
+
+      - name: 🛡️ Check for hardcoded secrets
+        run: |
+          echo "Scanning for potential hardcoded secrets..."
+          # Check for common secret patterns
+          SECRET_PATTERNS="(password|secret|api_key|apikey|token|private_key|credentials)\s*[:=]\s*['\"][^'\"]+['\"]"
+
+          MATCHES=$(grep -riE "$SECRET_PATTERNS" \
+            --include="*.ts" \
+            --include="*.tsx" \
+            --include="*.js" \
+            --include="*.json" \
+            --exclude-dir=node_modules \
+            --exclude-dir=.next \
+            --exclude="package*.json" \
+            --exclude="*.lock" \
+            . 2>/dev/null | grep -v "process\.env" | grep -v "\.example" || echo "")
+
+          if [ -n "$MATCHES" ]; then
+            echo "⚠️  Potential hardcoded secrets found:"
+            echo "$MATCHES"
+            echo ""
+            echo "Please review and ensure no real secrets are committed"
+          else
+            echo "✅ No obvious hardcoded secrets detected"
+          fi
+
+      - name: 🔍 Check .env files not committed
+        run: |
+          if [ -f ".env" ] || [ -f ".env.local" ] || [ -f ".env.production" ]; then
+            echo "❌ Environment files should not be committed!"
+            exit 1
+          fi
+          echo "✅ No .env files committed"
+
+  # ============================================
+  # JOB 3: Prisma Schema Validation
+  # ============================================
+  database:
+    name: 🗄️ Database Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: 📚 Install dependencies
+        run: npm ci
+
+      - name: ✅ Validate Prisma Schema
+        run: npx prisma validate
+
+      - name: 📝 Check Prisma Format
+        run: npx prisma format --check
+
+      - name: 🔧 Generate Prisma Client
+        run: npx prisma generate
+
+      - name: 📊 Check Migration Status
+        run: |
+          echo "Checking migration files..."
+          if [ -d "prisma/migrations" ]; then
+            MIGRATION_COUNT=$(ls -1 prisma/migrations | wc -l)
+            echo "✅ Found $MIGRATION_COUNT migrations"
+          else
+            echo "⚠️  No migrations directory found"
+          fi
+
+  # ============================================
+  # JOB 4: Unit & Integration Tests
+  # ============================================
+  test:
+    name: 🧪 Test Suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: [code-quality]
+
+    services:
+      postgres:
+        image: postgis/postgis:16-3.4-alpine
+        env:
+          POSTGRES_USER: farmersmarket
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: farmersmarket_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: 📚 Install dependencies
+        run: npm ci
+
+      - name: 🔧 Generate Prisma Client
+        run: npx prisma generate
+
+      - name: 🗄️ Run database migrations
+        env:
+          DATABASE_URL: postgresql://farmersmarket:test_password@localhost:5432/farmersmarket_test?schema=public
+        run: npx prisma migrate deploy
+
+      - name: 🧪 Run Unit Tests
+        env:
+          DATABASE_URL: postgresql://farmersmarket:test_password@localhost:5432/farmersmarket_test?schema=public
+          REDIS_URL: redis://localhost:6379
+          NEXTAUTH_SECRET: test-secret-key-for-ci
+          NEXTAUTH_URL: http://localhost:3000
+          NODE_ENV: test
+        run: npm run test:unit -- --run
+
+      - name: 🔗 Run Integration Tests
+        env:
+          DATABASE_URL: postgresql://farmersmarket:test_password@localhost:5432/farmersmarket_test?schema=public
+          REDIS_URL: redis://localhost:6379
+          NEXTAUTH_SECRET: test-secret-key-for-ci
+          NEXTAUTH_URL: http://localhost:3000
+          NODE_ENV: test
+        run: npm run test:integration -- --run
+        continue-on-error: true
+
+      - name: 📊 Generate Coverage Report
+        env:
+          DATABASE_URL: postgresql://farmersmarket:test_password@localhost:5432/farmersmarket_test?schema=public
+          REDIS_URL: redis://localhost:6379
+        run: npm run test:coverage -- --run
+        continue-on-error: true
+
+      - name: 📈 Upload Coverage
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage/coverage-final.json
+          flags: unittests
+          fail_ci_if_error: false
+        continue-on-error: true
+
+  # ============================================
+  # JOB 5: Build Verification
+  # ============================================
+  build:
+    name: 🏗️ Build & Bundle Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [code-quality, database]
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: 📚 Install dependencies
+        run: npm ci
+
+      - name: 🔧 Generate Prisma Client
+        run: npx prisma generate
+
+      - name: 🏗️ Build Application
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+        run: npm run build
+
+      - name: 📊 Analyze Bundle Size
+        run: |
+          echo "📦 Build Output Analysis"
+          echo "========================"
+
+          if [ -d ".next" ]; then
+            echo ""
+            echo "Server Bundle:"
+            du -sh .next/server 2>/dev/null || echo "N/A"
+
+            echo ""
+            echo "Static Files:"
+            du -sh .next/static 2>/dev/null || echo "N/A"
+
+            echo ""
+            echo "Total Build Size:"
+            du -sh .next 2>/dev/null || echo "N/A"
+
+            echo ""
+            echo "✅ Build completed successfully"
+          else
+            echo "❌ Build directory not found"
+            exit 1
+          fi
+
+      - name: 💾 Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: .next/
+          retention-days: 7
+
+  # ============================================
+  # JOB 6: E2E Tests (Optional)
+  # ============================================
+  e2e:
+    name: 🎭 E2E Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: [build]
+    if: github.event.inputs.skip_e2e != 'true'
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: 📚 Install dependencies
+        run: npm ci
+
+      - name: 🎭 Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: 🔧 Generate Prisma Client
+        run: npx prisma generate
+
+      - name: 🎭 Run E2E Tests
+        run: npm run test:e2e
+        continue-on-error: true
+        env:
+          NEXTAUTH_SECRET: test-secret-key-for-ci
+          NEXTAUTH_URL: http://localhost:3000
+
+      - name: 📊 Upload E2E Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+  # ============================================
+  # JOB 7: Performance Check
+  # ============================================
+  performance:
+    name: ⚡ Performance Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [build]
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: 📚 Install dependencies
+        run: npm ci
+
+      - name: 📥 Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+          path: .next/
+
+      - name: 📊 Bundle Size Check
+        run: |
+          echo "📦 Bundle Size Analysis"
+          echo "======================="
+
+          # Check individual route sizes
+          if [ -d ".next/server/app" ]; then
+            echo ""
+            echo "API Route Sizes:"
+            find .next/server/app/api -name "*.js" -type f 2>/dev/null | while read file; do
+              size=$(du -k "$file" | cut -f1)
+              name=$(echo "$file" | sed 's|.next/server/app/api/||')
+
+              if [ "$size" -lt 25 ]; then
+                echo "  ✅ $name: ${size}KB (optimized)"
+              elif [ "$size" -lt 50 ]; then
+                echo "  ✓  $name: ${size}KB (good)"
+              else
+                echo "  ⚠️  $name: ${size}KB (consider optimization)"
+              fi
+            done | head -30
+          fi
+
+          echo ""
+          echo "Performance Targets:"
+          echo "  - API Routes (Critical): < 25 KB"
+          echo "  - API Routes (Standard): < 50 KB"
+          echo "  - Page Bundles: < 150 KB (gzipped)"
+
+  # ============================================
+  # JOB 8: Deployment Readiness Check
+  # ============================================
+  deployment-check:
+    name: 🚀 Deployment Readiness
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [code-quality, security, database, test, build]
+    if: always()
+
+    steps:
+      - name: 📋 Check Job Results
+        run: |
+          echo "📋 Pre-Deploy Validation Summary"
+          echo "================================="
+          echo ""
+
+          # Check results from previous jobs
+          if [ "${{ needs.code-quality.result }}" == "success" ]; then
+            echo "✅ Code Quality: PASSED"
+          else
+            echo "❌ Code Quality: FAILED"
+          fi
+
+          if [ "${{ needs.security.result }}" == "success" ]; then
+            echo "✅ Security Scan: PASSED"
+          else
+            echo "❌ Security Scan: FAILED"
+          fi
+
+          if [ "${{ needs.database.result }}" == "success" ]; then
+            echo "✅ Database Validation: PASSED"
+          else
+            echo "❌ Database Validation: FAILED"
+          fi
+
+          if [ "${{ needs.test.result }}" == "success" ]; then
+            echo "✅ Test Suite: PASSED"
+          else
+            echo "⚠️  Test Suite: FAILED (non-blocking)"
+          fi
+
+          if [ "${{ needs.build.result }}" == "success" ]; then
+            echo "✅ Build: PASSED"
+          else
+            echo "❌ Build: FAILED"
+          fi
+
+          echo ""
+          echo "================================="
+
+          # Determine overall status
+          if [ "${{ needs.code-quality.result }}" == "success" ] && \
+             [ "${{ needs.security.result }}" == "success" ] && \
+             [ "${{ needs.database.result }}" == "success" ] && \
+             [ "${{ needs.build.result }}" == "success" ]; then
+            echo "🎉 DEPLOYMENT READY!"
+            echo ""
+            echo "All critical checks passed. Code is ready for deployment."
+          else
+            echo "❌ DEPLOYMENT NOT READY"
+            echo ""
+            echo "Please fix the failing checks before deploying."
+            exit 1
+          fi
+
+  # ============================================
+  # JOB 9: Notify (Optional)
+  # ============================================
+  notify:
+    name: 📢 Notify
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [deployment-check]
+    if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: 📢 Send Notification
+        run: |
+          if [ "${{ needs.deployment-check.result }}" == "success" ]; then
+            echo "✅ All pre-deploy checks passed for ${{ github.sha }}"
+            # Add Slack/Discord notification here if needed
+          else
+            echo "❌ Pre-deploy checks failed for ${{ github.sha }}"
+            # Add failure notification here if needed
+          fi

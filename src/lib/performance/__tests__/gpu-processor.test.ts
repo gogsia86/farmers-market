@@ -163,6 +163,8 @@ class GPUProcessor {
   dispose() {
     this.metrics.vramUsed = 0;
     this.metrics.kernelExecutions = 0;
+    // Call TensorFlow cleanup functions
+    tf.disposeVariables();
   }
 }
 
@@ -414,12 +416,23 @@ describe("GPUProcessor Divine Tests", () => {
   });
 
   describe("Resource Management", () => {
-    it.skip("cleans up TensorFlow memory", async () => {
-      // TODO: Mock implementation needs proper tensor tracking
-      // The dispose functionality works correctly in production
-      // but requires more sophisticated mock setup for testing
-      // Temporarily skipped to achieve 100% test suite stability
-      // Memory management is verified through integration tests
+    it("cleans up TensorFlow memory on dispose", async () => {
+      // Test that dispose method calls TensorFlow cleanup functions
+      const localProcessor = new GPUProcessor();
+
+      // Process some images to create tensors
+      const imageData = createTestImageData(100, 100);
+      await localProcessor.processImages([imageData]);
+
+      // Dispose should call TensorFlow cleanup
+      localProcessor.dispose();
+
+      // Verify TensorFlow dispose functions were called
+      expect(tf.disposeVariables).toHaveBeenCalled();
+
+      // Processor should report clean status after dispose
+      const status = localProcessor.getStatus();
+      expect(status).toBeDefined();
     });
 
     it("provides disposal method", () => {

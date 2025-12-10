@@ -274,20 +274,53 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
     });
 
     it("should handle 50 concurrent batch updates", async () => {
+      // Mock product lookup (used by productRepository.findById)
       jest.mocked(database.product.findUnique).mockResolvedValue({
         id: "product-123",
-        farm: { ownerId: "user-123" },
+        name: "Test Product",
+        slug: "test-product",
+        farmId: "farm-123",
+        status: "AVAILABLE",
+        isActive: true,
+        inventory: {
+          quantity: 100,
+          reservedQuantity: 0,
+          availableQuantity: 100,
+        },
+        farm: {
+          id: "farm-123",
+          name: "Test Farm",
+          slug: "test-farm",
+          city: "Test City",
+          state: "TS",
+          status: "ACTIVE",
+        },
       } as any);
 
+      // Mock farm lookup (used by updateProduct for ownership check)
+      jest.mocked(database.farm.findUnique).mockResolvedValue({
+        id: "farm-123",
+        ownerId: "user-123",
+      } as any);
+
+      // Mock product update
       jest.mocked(database.product.update).mockResolvedValue({
         id: "product-123",
         isActive: true,
+        farm: {
+          id: "farm-123",
+          name: "Test Farm",
+          slug: "test-farm",
+          city: "Test City",
+          state: "TS",
+          status: "ACTIVE",
+        },
       } as any);
 
+      // Use correct signature: Array<{ id: string; data: UpdateProductInput }>
       const updates = Array.from({ length: 50 }, (_, i) =>
         ProductService.batchUpdateProducts(
-          [`product-${i}`],
-          { isActive: true } as any,
+          [{ id: `product-${i}`, data: { isActive: true } as any }],
           "user-123",
         ),
       );

@@ -118,9 +118,16 @@ function PaymentForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-6"
+      data-testid="stripe-payment-form"
+    >
       {/* Security Badge */}
-      <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+      <div
+        className="bg-green-50 border border-green-200 rounded-lg p-4"
+        data-testid="payment-security-badge"
+      >
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
             <Lock className="h-5 w-5 text-green-600" />
@@ -138,7 +145,10 @@ function PaymentForm({
       </div>
 
       {/* Order Amount */}
-      <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-4">
+      <div
+        className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-4"
+        data-testid="payment-amount-display"
+      >
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium text-gray-700">
             Total Amount
@@ -150,7 +160,10 @@ function PaymentForm({
       </div>
 
       {/* Stripe Payment Element */}
-      <div className="border border-gray-300 rounded-lg p-4 bg-white">
+      <div
+        className="border border-gray-300 rounded-lg p-4 bg-white"
+        data-testid="stripe-elements-container"
+      >
         <PaymentElement
           onReady={() => setIsReady(true)}
           options={{
@@ -171,12 +184,20 @@ function PaymentForm({
 
       {/* Error Message */}
       {errorMessage && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div
+          className="bg-red-50 border border-red-200 rounded-lg p-4"
+          data-testid="stripe-payment-error"
+        >
           <div className="flex items-start gap-3">
             <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
             <div>
               <h4 className="font-semibold text-red-900 mb-1">Payment Error</h4>
-              <p className="text-sm text-red-800">{errorMessage}</p>
+              <p
+                className="text-sm text-red-800"
+                data-testid="stripe-error-message"
+              >
+                {errorMessage}
+              </p>
             </div>
           </div>
         </div>
@@ -187,6 +208,7 @@ function PaymentForm({
         type="submit"
         disabled={!stripe || !elements || isProcessing || !isReady}
         className="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+        data-testid="stripe-submit-button"
       >
         {isProcessing ? (
           <>
@@ -202,11 +224,17 @@ function PaymentForm({
       </button>
 
       {/* Payment Methods Accepted */}
-      <div className="pt-4 border-t border-gray-200">
+      <div
+        className="pt-4 border-t border-gray-200"
+        data-testid="payment-methods-accepted"
+      >
         <p className="text-sm text-gray-600 mb-3 text-center">
           We accept all major payment methods
         </p>
-        <div className="flex items-center justify-center gap-3">
+        <div
+          className="flex items-center justify-center gap-3"
+          data-testid="payment-card-icons"
+        >
           <div className="w-12 h-8 bg-gray-100 rounded border border-gray-300 flex items-center justify-center text-xs font-medium text-gray-600">
             VISA
           </div>
@@ -223,7 +251,10 @@ function PaymentForm({
       </div>
 
       {/* Stripe Badge */}
-      <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
+      <div
+        className="flex items-center justify-center gap-2 text-sm text-gray-500"
+        data-testid="stripe-powered-badge"
+      >
         <span>Powered by</span>
         <span className="font-semibold text-blue-600">Stripe</span>
       </div>
@@ -274,7 +305,7 @@ export function StripePaymentElement({
   }
 
   if (!isStripeLoaded) {
-    return <PaymentElementSkeleton />;
+    return <PaymentElementSkeleton data-testid="stripe-loading" />;
   }
 
   // Stripe Elements configuration
@@ -324,9 +355,13 @@ export function StripePaymentElement({
 // LOADING SKELETON
 // ============================================================================
 
-function PaymentElementSkeleton() {
+function PaymentElementSkeleton({
+  "data-testid": testId,
+}: {
+  "data-testid"?: string;
+}) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-testid={testId || "stripe-skeleton"}>
       {/* Security badge skeleton */}
       <div className="h-24 bg-gray-200 rounded-lg animate-pulse" />
 

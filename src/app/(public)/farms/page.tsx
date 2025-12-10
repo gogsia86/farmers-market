@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { MapPin, Star, Award, Store, ArrowRight, Leaf } from "lucide-react";
+import { database } from "@/lib/database";
 
 // ============================================================================
 // METADATA - SEO OPTIMIZATION
@@ -53,54 +54,99 @@ export const metadata: Metadata = {
 };
 
 // ============================================================================
-// TYPE DEFINITIONS
-// ============================================================================
-
-interface ApiResponse {
-  success: boolean;
-  data?: any[];
-  error?: {
-    code: string;
-    message: string;
-  };
-  meta?: {
-    total?: number;
-    page?: number;
-    limit?: number;
-  };
-}
-
-// ============================================================================
-// DATA FETCHING - SERVER COMPONENT
+// DATA FETCHING - SERVER COMPONENT (Direct Database Access)
 // ============================================================================
 
 /**
- * Fetch farms data from API
+ * Fetch farms data directly from database
  *
- * Divine Pattern: Server-side data fetching with graceful degradation
- * Implements error handling and fallback to empty array
+ * Divine Pattern: Direct database access for Server Components
+ * More efficient than API fetch - no network round-trip needed
  */
 async function getFarms(): Promise<any[]> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
-    const response = await fetch(`${baseUrl}/api/farms`, {
-      cache: "no-store",
-      next: { revalidate: 60 }, // Revalidate every 60 seconds
+    const farms = await database.farm.findMany({
+      where: {
+        status: "ACTIVE",
+        verificationStatus: "VERIFIED",
+      },
+      include: {
+        owner: {
+          select: {
+            id: true,
+            name: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+        products: {
+          where: {
+            status: "ACTIVE",
+            inStock: true,
+          },
+          select: {
+            id: true,
+            category: true,
+          },
+        },
+        _count: {
+          select: {
+            products: true,
+            reviews: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 50,
     });
 
-    if (!response.ok) {
-      console.warn(`[FARMS_API_WARNING] API returned ${response.status}`);
-      return [];
-    }
+    // Transform to expected format with proper type casting for JSON fields
+    return farms.map((farm) => {
+      const certifications = Array.isArray(farm.certificationsArray)
+        ? (farm.certificationsArray as string[])
+        : [];
+      const farmingPractices = Array.isArray(farm.farmingPractices)
+        ? (farm.farmingPractices as string[])
+        : [];
+      const productCategories = Array.isArray(farm.productCategories)
+        ? (farm.productCategories as string[])
+        : [];
+      const images = Array.isArray(farm.images)
+        ? (farm.images as string[])
+        : [];
 
-    const result: ApiResponse = await response.json();
-
-    if (!result.success || !result.data) {
-      console.warn("[FARMS_API_WARNING] Invalid response structure");
-      return [];
-    }
-
-    return result.data;
+      return {
+        id: farm.id,
+        name: farm.name,
+        slug: farm.slug,
+        description: farm.description,
+        city: farm.city,
+        state: farm.state,
+        address: farm.address,
+        deliveryRadius: farm.deliveryRadius,
+        averageRating: farm.averageRating ? Number(farm.averageRating) : null,
+        reviewCount: farm.reviewCount,
+        yearEstablished: farm.yearEstablished,
+        certifications,
+        farmingPractices,
+        productCategories,
+        images,
+        bannerUrl: farm.bannerUrl,
+        logoUrl: farm.logoUrl,
+        owner: {
+          id: farm.owner.id,
+          name:
+            farm.owner.name ||
+            `${farm.owner.firstName || ""} ${farm.owner.lastName || ""}`.trim(),
+        },
+        stats: {
+          totalProducts: farm._count.products,
+          totalReviews: farm._count.reviews,
+        },
+      };
+    });
   } catch (error) {
     console.error("[FARMS_FETCH_ERROR]", error);
     return [];

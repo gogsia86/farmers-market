@@ -15,7 +15,7 @@
  * - Quantum data loading
  * - Biodynamic user experience
  *
- * ✅ WIRED TO API - Uses /api/farms/[slug]
+ * ✅ DIRECT DATABASE ACCESS - Server Component pattern
  */
 
 import {
@@ -36,6 +36,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { database } from "@/lib/database";
 
 interface PageProps {
   readonly params: Promise<{
@@ -47,37 +48,204 @@ interface PageProps {
 export const dynamic = "force-dynamic";
 export const dynamicParams = true;
 
-interface ApiResponse {
-  success: boolean;
-  data?: any;
-  error?: {
-    code: string;
-    message: string;
-  };
-}
-
-// Fetch farm data from API
+// Direct database access for Server Component (no API fetch needed)
 async function getFarmBySlug(slug: string) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
-    const response = await fetch(`${baseUrl}/api/farms/${slug}`, {
-      cache: "no-store", // Always fetch fresh data
+    // Fetch farm with all related data directly from database
+    const farm = await database.farm.findUnique({
+      where: {
+        slug,
+      },
+      include: {
+        owner: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            name: true,
+            email: true,
+            avatar: true,
+            createdAt: true,
+          },
+        },
+        products: {
+          where: {
+            inStock: true,
+            status: "ACTIVE",
+          },
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            description: true,
+            price: true,
+            unit: true,
+            inStock: true,
+            images: true,
+            category: true,
+            organic: true,
+            featured: true,
+            averageRating: true,
+            reviewCount: true,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+          take: 20,
+        },
+        reviews: {
+          where: {
+            status: "APPROVED",
+          },
+          select: {
+            id: true,
+            rating: true,
+            reviewText: true,
+            createdAt: true,
+            customer: {
+              select: {
+                id: true,
+                name: true,
+                avatar: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+          take: 10,
+        },
+        _count: {
+          select: {
+            products: true,
+            reviews: true,
+            orders: true,
+          },
+        },
+      },
     });
 
-    if (!response.ok) {
-      if (response.status === 404) {
-        return null;
-      }
-      throw new Error(`Failed to fetch farm: ${response.statusText}`);
-    }
-
-    const result: ApiResponse = await response.json();
-
-    if (!result.success || !result.data) {
+    // Check if farm exists
+    if (!farm) {
       return null;
     }
 
-    return result.data;
+    // Check if farm is accessible (active and verified for public viewing)
+    if (farm.status !== "ACTIVE" || farm.verificationStatus !== "VERIFIED") {
+      return null;
+    }
+
+    // Increment profile views count (fire and forget)
+    database.farm
+      .update({
+        where: { id: farm.id },
+        data: {
+          profileViewsCount: {
+            increment: 1,
+          },
+        },
+      })
+      .catch((error) => {
+        console.error("[FARM_VIEW_COUNT_ERROR]", error);
+        // Don't fail the request if view count update fails
+      });
+
+    // Format response data with proper type conversions
+    return {
+      id: farm.id,
+      name: farm.name,
+      slug: farm.slug,
+      description: farm.description,
+      story: farm.story,
+      status: farm.status,
+      verificationStatus: farm.verificationStatus,
+
+      // Location information
+      address: farm.address,
+      city: farm.city,
+      state: farm.state,
+      zipCode: farm.zipCode,
+      country: farm.country,
+      latitude: farm.latitude ? Number(farm.latitude) : null,
+      longitude: farm.longitude ? Number(farm.longitude) : null,
+      deliveryRadius: farm.deliveryRadius,
+
+      // Business details
+      businessName: farm.businessName,
+      yearEstablished: farm.yearEstablished,
+      farmSize: farm.farmSize ? Number(farm.farmSize) : null,
+
+      // Ratings and reviews
+      averageRating: farm.averageRating ? Number(farm.averageRating) : null,
+      reviewCount: farm.reviewCount,
+      reviews: farm.reviews.map((review) => ({
+        id: review.id,
+        rating: Number(review.rating),
+        comment: review.reviewText,
+        createdAt: review.createdAt.toISOString(),
+        customer: {
+          id: review.customer.id,
+          name: review.customer.name,
+          avatar: review.customer.avatar,
+        },
+      })),
+
+      // Contact information
+      email: farm.email,
+      phone: farm.phone,
+      website: farm.website,
+
+      // Images
+      images: farm.images || [],
+      logoUrl: farm.logoUrl,
+      bannerUrl: farm.bannerUrl,
+
+      // Metadata
+      certifications: farm.certificationsArray || [],
+      farmingPractices: farm.farmingPractices || [],
+      productCategories: farm.productCategories || [],
+
+      // Owner information
+      owner: {
+        id: farm.owner.id,
+        name:
+          farm.owner.name ||
+          `${farm.owner.firstName || ""} ${farm.owner.lastName || ""}`.trim(),
+        avatar: farm.owner.avatar,
+        joinedYear: farm.owner.createdAt.getFullYear(),
+      },
+
+      // Products
+      products: farm.products.map((product) => ({
+        id: product.id,
+        name: product.name,
+        slug: product.slug,
+        description: product.description,
+        price: Number(product.price),
+        unit: product.unit,
+        inStock: product.inStock,
+        images: product.images || [],
+        category: product.category,
+        organic: product.organic,
+        featured: product.featured,
+        averageRating: product.averageRating
+          ? Number(product.averageRating)
+          : null,
+        reviewCount: product.reviewCount,
+      })),
+
+      // Statistics
+      stats: {
+        totalProducts: farm._count.products,
+        totalReviews: farm._count.reviews,
+        totalOrders: farm._count.orders,
+        profileViews: farm.profileViewsCount,
+      },
+
+      // Timestamps
+      createdAt: farm.createdAt.toISOString(),
+      updatedAt: farm.updatedAt.toISOString(),
+    };
   } catch (error) {
     console.error("[FARM_FETCH_ERROR]", error);
     return null;
@@ -93,6 +261,17 @@ export default async function FarmDetailPage({ params }: PageProps) {
   }
 
   // Transform API data to match component expectations
+  // Cast JSON fields to proper arrays
+  const certifications = Array.isArray(farm.certifications)
+    ? (farm.certifications as string[])
+    : [];
+  const farmingPractices = Array.isArray(farm.farmingPractices)
+    ? (farm.farmingPractices as string[])
+    : [];
+  const productCategories = Array.isArray(farm.productCategories)
+    ? (farm.productCategories as string[])
+    : [];
+
   const transformedFarm = {
     id: farm.id,
     name: farm.name,
@@ -110,23 +289,28 @@ export default async function FarmDetailPage({ params }: PageProps) {
     establishedYear: farm.yearEstablished || new Date().getFullYear(),
     rating: farm.averageRating || 0,
     reviewCount: farm.reviewCount || 0,
-    certifications: farm.certifications || [],
-    farmingPractices: farm.farmingPractices || [],
-    specialties: farm.productCategories || [],
+    certifications,
+    farmingPractices,
+    specialties: productCategories,
     email: farm.email || "",
     phone: farm.phone || "",
     website: farm.website || "",
-    products: farm.products.map((product: any) => ({
-      id: product.id,
-      name: product.name,
-      description: product.description || "",
-      price: product.price,
-      unit: product.unit || "each",
-      category: product.category || "general",
-      inStock: product.inStock,
-      image: product.images?.[0] || "🌾",
-      organic: product.organic || false,
-    })),
+    products: farm.products.map((product) => {
+      const productImages = Array.isArray(product.images)
+        ? (product.images as string[])
+        : [];
+      return {
+        id: product.id,
+        name: product.name,
+        description: product.description || "",
+        price: product.price,
+        unit: product.unit || "each",
+        category: product.category || "general",
+        inStock: product.inStock,
+        image: productImages[0] || "🌾",
+        organic: product.organic || false,
+      };
+    }),
     owner: {
       name: farm.owner?.name || "Farm Owner",
       bio: "",
@@ -135,7 +319,7 @@ export default async function FarmDetailPage({ params }: PageProps) {
   };
 
   const categories = Array.from(
-    new Set(transformedFarm.products.map((p: any) => p.category)),
+    new Set(transformedFarm.products.map((p) => p.category)),
   );
 
   return (
@@ -312,21 +496,19 @@ export default async function FarmDetailPage({ params }: PageProps) {
                     Our Practices
                   </h2>
                   <div className="grid sm:grid-cols-2 gap-3">
-                    {transformedFarm.farmingPractices.map(
-                      (practice: string) => (
-                        <div
-                          key={practice}
-                          className="flex items-center gap-3 p-3 bg-green-50 rounded-lg"
-                        >
-                          <div className="w-8 h-8 bg-agricultural-600 rounded-full flex items-center justify-center flex-shrink-0">
-                            <Leaf className="h-4 w-4 text-white" />
-                          </div>
-                          <span className="text-gray-900 font-medium">
-                            {practice}
-                          </span>
+                    {transformedFarm.farmingPractices.map((practice) => (
+                      <div
+                        key={practice}
+                        className="flex items-center gap-3 p-3 bg-green-50 rounded-lg"
+                      >
+                        <div className="w-8 h-8 bg-agricultural-600 rounded-full flex items-center justify-center flex-shrink-0">
+                          <Leaf className="h-4 w-4 text-white" />
                         </div>
-                      ),
-                    )}
+                        <span className="text-gray-900 font-medium">
+                          {practice}
+                        </span>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
@@ -354,7 +536,7 @@ export default async function FarmDetailPage({ params }: PageProps) {
 
                   {/* Products Grid */}
                   <div className="grid sm:grid-cols-2 gap-4">
-                    {transformedFarm.products.map((product: any) => (
+                    {transformedFarm.products.map((product) => (
                       <div
                         key={product.id}
                         className="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow"
@@ -500,7 +682,7 @@ export default async function FarmDetailPage({ params }: PageProps) {
                       Specialties
                     </h3>
                     <div className="flex flex-wrap gap-2">
-                      {transformedFarm.specialties.map((specialty: string) => (
+                      {transformedFarm.specialties.map((specialty) => (
                         <span
                           key={specialty}
                           className="px-3 py-1.5 bg-agricultural-50 text-agricultural-700 rounded-full text-sm font-medium"

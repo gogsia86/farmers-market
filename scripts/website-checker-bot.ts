@@ -71,7 +71,7 @@ function log(message: string, color: keyof typeof CONFIG.colors = "reset") {
 
 function logSection(title: string) {
   const c = CONFIG.colors;
-  console.log("\n" + "═".repeat(70));
+  console.log(`\n${"═".repeat(70)}`);
   console.log(`${c.bright}${c.cyan}${title}${c.reset}`);
   console.log("═".repeat(70));
 }
@@ -499,11 +499,11 @@ class WebsiteChecker {
     const warnCount = report.checks.filter((c) => c.status === "warn").length;
     const failCount = report.checks.filter((c) => c.status === "fail").length;
 
-    console.log("\n" + "─".repeat(70));
+    console.log(`\n${"─".repeat(70)}`);
     log(
       `${c.green}✅ Passed: ${passCount}${c.reset}  ${c.yellow}⚠️  Warnings: ${warnCount}${c.reset}  ${c.red}❌ Failed: ${failCount}${c.reset}`,
     );
-    console.log("─".repeat(70) + "\n");
+    console.log(`${"─".repeat(70)}\n`);
   }
 }
 

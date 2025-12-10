@@ -11,6 +11,7 @@ import {
 import { MarketplaceSearch } from "@/components/marketplace/MarketplaceSearch";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ShoppingCart as ShoppingCartIcon } from "lucide-react";
+import { database } from "@/lib/database";
 
 /**
  * 🛒 MARKETPLACE PRODUCTS PAGE - Server Component
@@ -18,7 +19,7 @@ import { ShoppingCart as ShoppingCartIcon } from "lucide-react";
  * Features:
  * - Product grid with key information
  * - SEO optimized with metadata
- * - Server-side data fetching
+ * - Direct database access (Server Component pattern)
  */
 
 // Generate metadata for SEO
@@ -39,45 +40,71 @@ export const metadata: Metadata = generateMeta({
   ],
 });
 
-interface ApiResponse {
-  success: boolean;
-  data?: {
-    products: any[];
-    pagination: {
-      page: number;
-      limit: number;
-      total: number;
-      totalPages: number;
-      hasMore: boolean;
-    };
-  };
-  error?: {
-    code: string;
-    message: string;
-  };
-}
-
-// Fetch products data from API
+// Direct database access for Server Component (no API fetch needed)
 async function getProducts() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
-    const response = await fetch(`${baseUrl}/api/products`, {
-      cache: "no-store",
-      next: { revalidate: 60 },
+    const products = await database.product.findMany({
+      where: {
+        status: "ACTIVE",
+        inStock: true,
+      },
+      include: {
+        farm: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            city: true,
+            state: true,
+          },
+        },
+        _count: {
+          select: {
+            reviews: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 50,
     });
 
-    if (!response.ok) {
-      console.warn(`Products API returned ${response.status}`);
-      return [];
-    }
+    // Transform to expected format with proper type casting for JSON fields
+    return products.map((product) => {
+      const images = Array.isArray(product.images)
+        ? (product.images as string[])
+        : [];
 
-    const result: ApiResponse = await response.json();
-
-    if (!result.success || !result.data || !result.data.products) {
-      return [];
-    }
-
-    return result.data.products;
+      return {
+        id: product.id,
+        name: product.name,
+        slug: product.slug,
+        description: product.description,
+        price: Number(product.price),
+        compareAtPrice: product.compareAtPrice
+          ? Number(product.compareAtPrice)
+          : null,
+        unit: product.unit,
+        category: product.category,
+        organic: product.organic,
+        seasonal: product.seasonal,
+        featured: product.featured,
+        inStock: product.inStock,
+        images,
+        averageRating: product.averageRating
+          ? Number(product.averageRating)
+          : null,
+        reviewCount: product.reviewCount,
+        farm: {
+          id: product.farm.id,
+          name: product.farm.name,
+          slug: product.farm.slug,
+          city: product.farm.city,
+          state: product.farm.state,
+        },
+      };
+    });
   } catch (error) {
     console.error("[MARKETPLACE_PRODUCTS_FETCH_ERROR]", error);
     return [];
@@ -168,11 +195,15 @@ export default async function MarketplaceProductsPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {products.map((product: any) => (
+                  <div
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                    data-testid="products-grid"
+                  >
+                    {products.map((product: any, index: number) => (
                       <Card
                         key={product.id}
-                        className="h-full hover:shadow-lg transition-shadow duration-200 group"
+                        className="h-full hover:shadow-lg transition-shadow duration-200 group product-card"
+                        data-testid={`product-card-${index}`}
                       >
                         <CardHeader className="p-0">
                           {/* Product Image */}
@@ -224,8 +255,14 @@ export default async function MarketplaceProductsPage() {
 
                         <CardContent className="p-4">
                           {/* Product Name */}
-                          <Link href={`/products/${product.id}`}>
-                            <h3 className="text-lg font-bold text-foreground mb-2 hover:text-primary transition-colors line-clamp-2">
+                          <Link
+                            href={`/products/${product.id}`}
+                            data-testid={`product-link-${product.id}`}
+                          >
+                            <h3
+                              className="text-lg font-bold text-foreground mb-2 hover:text-primary transition-colors line-clamp-2"
+                              data-testid="product-name"
+                            >
                               {product.name}
                             </h3>
                           </Link>
@@ -277,6 +314,7 @@ export default async function MarketplaceProductsPage() {
                               size="sm"
                               disabled={!product.inStock}
                               className="gap-2"
+                              data-testid={`add-to-cart-${product.id}`}
                             >
                               <ShoppingCart className="h-4 w-4" />
                               Add

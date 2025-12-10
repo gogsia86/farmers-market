@@ -20,7 +20,7 @@
  * @reference .github/instructions/02_AGRICULTURAL_QUANTUM_MASTERY.instructions.md
  */
 
-import { Prisma } from "@prisma/client";
+import { Prisma, FarmStatus } from "@prisma/client";
 import {
   farmRepository,
   type QuantumFarm,
@@ -747,7 +747,7 @@ export class FarmService {
     };
 
     if (status) {
-      where.status = status as any; // Override with specific status if provided
+      where.status = status as FarmStatus; // Override with specific status if provided
     }
 
     if (city) {

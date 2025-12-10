@@ -16,6 +16,7 @@ import {
   generateMetadata as generateMeta,
   generateOrganizationJsonLd,
 } from "@/lib/utils/metadata";
+import { database } from "@/lib/database";
 
 /**
  * 🛒 MARKETPLACE LANDING PAGE - Server Component
@@ -23,7 +24,7 @@ import {
  * Features:
  * - Product grid with product cards
  * - SEO optimized with metadata
- * - Server-side data fetching
+ * - Direct database access (Server Component pattern)
  * - Agricultural consciousness
  */
 
@@ -45,46 +46,71 @@ export const metadata: Metadata = generateMeta({
   ],
 });
 
-interface ApiResponse {
-  success: boolean;
-  data?:
-    | any[]
-    | {
-        products: any[];
-        pagination?: any;
-      };
-  error?: {
-    code: string;
-    message: string;
-  };
-}
-
-// Fetch products data from API
+// Direct database access for Server Component (no API fetch needed)
 async function getProducts(): Promise<any[]> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
-    const response = await fetch(`${baseUrl}/api/products?limit=12`, {
-      cache: "no-store",
-      next: { revalidate: 60 },
+    const products = await database.product.findMany({
+      where: {
+        status: "ACTIVE",
+        inStock: true,
+      },
+      include: {
+        farm: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            city: true,
+            state: true,
+          },
+        },
+        _count: {
+          select: {
+            reviews: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 12,
     });
 
-    if (!response.ok) {
-      console.warn(`Products API returned ${response.status}`);
-      return [];
-    }
+    // Transform to expected format with proper type casting for JSON fields
+    return products.map((product) => {
+      const images = Array.isArray(product.images)
+        ? (product.images as string[])
+        : [];
 
-    const result: ApiResponse = await response.json();
-
-    if (!result.success || !result.data) {
-      return [];
-    }
-
-    // Handle both response structures
-    if (Array.isArray(result.data)) {
-      return result.data;
-    }
-
-    return result.data.products || [];
+      return {
+        id: product.id,
+        name: product.name,
+        slug: product.slug,
+        description: product.description,
+        price: Number(product.price),
+        compareAtPrice: product.compareAtPrice
+          ? Number(product.compareAtPrice)
+          : null,
+        unit: product.unit,
+        category: product.category,
+        organic: product.organic,
+        seasonal: product.seasonal,
+        featured: product.featured,
+        inStock: product.inStock,
+        images,
+        averageRating: product.averageRating
+          ? Number(product.averageRating)
+          : null,
+        reviewCount: product.reviewCount,
+        farm: {
+          id: product.farm.id,
+          name: product.farm.name,
+          slug: product.farm.slug,
+          city: product.farm.city,
+          state: product.farm.state,
+        },
+      };
+    });
   } catch (error) {
     console.error("[MARKETPLACE_FETCH_ERROR]", error);
     return [];

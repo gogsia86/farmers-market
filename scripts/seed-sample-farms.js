@@ -11,7 +11,8 @@ const sampleFarms = [
   {
     name: "Green Valley Organic Farm",
     slug: "green-valley-organic",
-    description: "Family-owned organic farm specializing in fresh vegetables and herbs. We've been farming sustainably for over 30 years.",
+    description:
+      "Family-owned organic farm specializing in fresh vegetables and herbs. We've been farming sustainably for over 30 years.",
     address: "123 Farm Road",
     city: "Portland",
     state: "OR",
@@ -28,7 +29,8 @@ const sampleFarms = [
   {
     name: "Sunset Ridge Dairy",
     slug: "sunset-ridge-dairy",
-    description: "Premium grass-fed dairy products from happy cows. Fresh milk, cheese, and yogurt delivered daily.",
+    description:
+      "Premium grass-fed dairy products from happy cows. Fresh milk, cheese, and yogurt delivered daily.",
     address: "456 Meadow Lane",
     city: "Eugene",
     state: "OR",
@@ -45,7 +47,8 @@ const sampleFarms = [
   {
     name: "Riverside Fruit Orchards",
     slug: "riverside-fruit-orchards",
-    description: "Seasonal fruits picked at peak ripeness. Specializing in apples, pears, and stone fruits.",
+    description:
+      "Seasonal fruits picked at peak ripeness. Specializing in apples, pears, and stone fruits.",
     address: "789 Orchard Drive",
     city: "Salem",
     state: "OR",
@@ -62,7 +65,8 @@ const sampleFarms = [
   {
     name: "Heritage Farm & Market",
     slug: "heritage-farm-market",
-    description: "Heirloom vegetables, pasture-raised meats, and farm-fresh eggs. Supporting local food systems since 1985.",
+    description:
+      "Heirloom vegetables, pasture-raised meats, and farm-fresh eggs. Supporting local food systems since 1985.",
     address: "321 Heritage Way",
     city: "Bend",
     state: "OR",
@@ -79,7 +83,8 @@ const sampleFarms = [
   {
     name: "Mountain View Honey",
     slug: "mountain-view-honey",
-    description: "Raw, unfiltered honey from our mountain apiaries. Also producing beeswax candles and bee pollen.",
+    description:
+      "Raw, unfiltered honey from our mountain apiaries. Also producing beeswax candles and bee pollen.",
     address: "555 Hillside Road",
     city: "Ashland",
     state: "OR",
@@ -96,7 +101,8 @@ const sampleFarms = [
   {
     name: "Pacific Coast Greens",
     slug: "pacific-coast-greens",
-    description: "Hydroponic lettuce, microgreens, and specialty salad mixes. Fresh harvests available year-round.",
+    description:
+      "Hydroponic lettuce, microgreens, and specialty salad mixes. Fresh harvests available year-round.",
     address: "678 Coastal Highway",
     city: "Newport",
     state: "OR",
@@ -135,9 +141,15 @@ const sampleProducts = [
 
 const sampleReviews = [
   { rating: 5, comment: "Amazing quality! Best vegetables in town." },
-  { rating: 5, comment: "Love supporting this farm. Always fresh and delicious." },
+  {
+    rating: 5,
+    comment: "Love supporting this farm. Always fresh and delicious.",
+  },
   { rating: 4, comment: "Great products, friendly service. Highly recommend!" },
-  { rating: 5, comment: "The freshness is unmatched. Will be a regular customer!" },
+  {
+    rating: 5,
+    comment: "The freshness is unmatched. Will be a regular customer!",
+  },
   { rating: 4, comment: "Quality produce at fair prices. Very satisfied." },
 ];
 
@@ -186,7 +198,8 @@ async function main() {
       const startIdx = i * 3;
 
       for (let j = 0; j < productCount; j++) {
-        const productData = sampleProducts[(startIdx + j) % sampleProducts.length];
+        const productData =
+          sampleProducts[(startIdx + j) % sampleProducts.length];
 
         const product = await prisma.product.create({
           data: {
@@ -227,12 +240,12 @@ async function main() {
     }
 
     console.log("\n✨ Sample farms seeded successfully!");
-    console.log(`\n📊 Created:`);
+    console.log("\n📊 Created:");
     console.log(`   - ${sampleFarms.length} farms`);
     console.log(`   - ~${sampleFarms.length * 3} products`);
     console.log(`   - ~${sampleFarms.length * 2} reviews`);
-    console.log(`\n🌐 View farms at: http://localhost:3001/farms`);
-    console.log(`🏠 Homepage featured: http://localhost:3001/`);
+    console.log("\n🌐 View farms at: http://localhost:3001/farms");
+    console.log("🏠 Homepage featured: http://localhost:3001/");
   } catch (error) {
     console.error("❌ Error seeding farms:", error);
     throw error;

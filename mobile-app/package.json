@@ -12,7 +12,8 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "type-check": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.0",
@@ -21,6 +22,7 @@
     "@react-navigation/bottom-tabs": "^6.5.20",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.9.26",
+    "@stripe/stripe-react-native": "^0.38.6",
     "axios": "^1.7.2",
     "expo": "^54.0.25",
     "expo-constants": "~15.4.6",
@@ -47,9 +49,22 @@
     "@babel/plugin-transform-template-literals": "^7.25.9",
     "@babel/preset-env": "^7.25.9",
     "@types/react": "~18.2.45",
+    "babel-plugin-module-resolver": "^5.0.0",
     "eslint": "^8.57.0",
+    "patch-package": "^8.0.0",
     "prettier": "^3.2.5",
     "typescript": "^5.3.3"
   },
-  "private": true
+  "private": true,
+  "expo": {
+    "plugins": [
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "merchant.com.farmersmarket",
+          "enableGooglePay": true
+        }
+      ]
+    ]
+  }
 }

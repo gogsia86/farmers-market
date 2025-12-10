@@ -135,9 +135,9 @@ export function CheckoutFlow() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto" data-testid="checkout-flow">
       {/* Progress Steps */}
-      <div className="mb-8">
+      <div className="mb-8" data-testid="checkout-progress">
         <StepProgress
           steps={steps}
           currentStep={currentStep}
@@ -167,8 +167,11 @@ export function CheckoutFlow() {
       {/* Main Content Grid */}
       <div className="grid lg:grid-cols-3 gap-8">
         {/* Step Content */}
-        <div className="lg:col-span-2">
-          <div className="bg-white rounded-xl shadow-md p-6 lg:p-8">
+        <div className="lg:col-span-2" data-testid="checkout-main-content">
+          <div
+            className="bg-white rounded-xl shadow-md p-6 lg:p-8"
+            data-testid="checkout-step-container"
+          >
             {/* Step Header */}
             <div className="mb-6 pb-6 border-b border-gray-200">
               <div className="flex items-center gap-3 mb-2">
@@ -191,18 +194,23 @@ export function CheckoutFlow() {
             {/* Step Component */}
             <div
               className={isProcessing ? "opacity-50 pointer-events-none" : ""}
+              data-testid={`checkout-step-${currentStep}`}
             >
               <CurrentStepComponent />
             </div>
 
             {/* Navigation Buttons */}
             {currentStep !== "confirmation" && (
-              <div className="mt-8 pt-6 border-t border-gray-200 flex justify-between">
+              <div
+                className="mt-8 pt-6 border-t border-gray-200 flex justify-between"
+                data-testid="checkout-navigation"
+              >
                 {showBackButton && (
                   <button
                     onClick={handleBack}
                     disabled={isProcessing}
                     className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border-2 border-gray-300 hover:border-amber-500 text-gray-700 hover:text-amber-700 font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    data-testid="checkout-back-button"
                   >
                     <ArrowLeft className="h-4 w-4" />
                     Back
@@ -213,6 +221,7 @@ export function CheckoutFlow() {
                   onClick={nextStep}
                   disabled={isProcessing}
                   className="ml-auto inline-flex items-center gap-2 px-8 py-3 rounded-lg bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  data-testid="checkout-continue-button"
                 >
                   {isProcessing ? (
                     <>
@@ -232,7 +241,7 @@ export function CheckoutFlow() {
         </div>
 
         {/* Order Summary Sidebar */}
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1" data-testid="checkout-sidebar">
           <OrderSummary />
         </div>
       </div>

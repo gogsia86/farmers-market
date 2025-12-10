@@ -10,10 +10,10 @@
  * - Cart totals calculation
  */
 
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import apiClient from '@/services/api';
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import apiClient from "@/services/api";
 
 // Cart item interface
 export interface CartItem {
@@ -53,7 +53,7 @@ interface CartState {
   pendingChanges: boolean;
 
   // Actions
-  addItem: (item: Omit<CartItem, 'id'>) => Promise<void>;
+  addItem: (item: Omit<CartItem, "id">) => Promise<void>;
   updateQuantity: (itemId: string, quantity: number) => Promise<void>;
   removeItem: (itemId: string) => Promise<void>;
   clearCart: () => Promise<void>;
@@ -87,7 +87,10 @@ const STANDARD_SHIPPING = 5.99;
  * Calculate cart totals from items
  */
 const calculateCartTotals = (items: CartItem[]): CartTotals => {
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = items.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0,
+  );
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const tax = subtotal * TAX_RATE;
   const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : STANDARD_SHIPPING;
@@ -124,11 +127,13 @@ export const useCartStore = create<CartState>()(
        * Add item to cart
        * Optimistic update with server sync
        */
-      addItem: async (newItem: Omit<CartItem, 'id'>) => {
+      addItem: async (newItem: Omit<CartItem, "id">) => {
         const { items } = get();
 
         // Check if item already exists
-        const existingItem = items.find((item) => item.productId === newItem.productId);
+        const existingItem = items.find(
+          (item) => item.productId === newItem.productId,
+        );
 
         let updatedItems: CartItem[];
 
@@ -138,14 +143,14 @@ export const useCartStore = create<CartState>()(
 
           // Check stock limit
           if (newQuantity > existingItem.stock) {
-            set({ error: 'Not enough stock available' });
+            set({ error: "Not enough stock available" });
             return;
           }
 
           updatedItems = items.map((item) =>
             item.productId === newItem.productId
               ? { ...item, quantity: newQuantity }
-              : item
+              : item,
           );
         } else {
           // Add new item
@@ -167,14 +172,14 @@ export const useCartStore = create<CartState>()(
         try {
           await apiClient.cart.add(newItem.productId, newItem.quantity);
           await get().syncWithServer();
-          console.log('✅ Item added to cart:', newItem.productName);
+          console.log("✅ Item added to cart:", newItem.productName);
         } catch (error: any) {
-          console.error('❌ Failed to add item to server cart:', error);
+          console.error("❌ Failed to add item to server cart:", error);
           // Revert on error
           set({
             items,
             totals: calculateCartTotals(items),
-            error: error.message || 'Failed to add item to cart',
+            error: error.message || "Failed to add item to cart",
             pendingChanges: false,
           });
         }
@@ -188,7 +193,7 @@ export const useCartStore = create<CartState>()(
         const item = items.find((i) => i.id === itemId);
 
         if (!item) {
-          set({ error: 'Item not found in cart' });
+          set({ error: "Item not found in cart" });
           return;
         }
 
@@ -199,7 +204,7 @@ export const useCartStore = create<CartState>()(
         }
 
         if (quantity > item.stock) {
-          set({ error: 'Not enough stock available' });
+          set({ error: "Not enough stock available" });
           return;
         }
 
@@ -207,7 +212,7 @@ export const useCartStore = create<CartState>()(
 
         // Optimistic update
         const updatedItems = items.map((i) =>
-          i.id === itemId ? { ...i, quantity } : i
+          i.id === itemId ? { ...i, quantity } : i,
         );
 
         set({
@@ -220,14 +225,14 @@ export const useCartStore = create<CartState>()(
         try {
           await apiClient.cart.update(itemId, quantity);
           await get().syncWithServer();
-          console.log('✅ Cart item quantity updated');
+          console.log("✅ Cart item quantity updated");
         } catch (error: any) {
-          console.error('❌ Failed to update quantity on server:', error);
+          console.error("❌ Failed to update quantity on server:", error);
           // Revert on error
           set({
             items: oldItems,
             totals: calculateCartTotals(oldItems),
-            error: error.message || 'Failed to update quantity',
+            error: error.message || "Failed to update quantity",
             pendingChanges: false,
           });
         }
@@ -253,14 +258,14 @@ export const useCartStore = create<CartState>()(
         try {
           await apiClient.cart.remove(itemId);
           await get().syncWithServer();
-          console.log('✅ Item removed from cart');
+          console.log("✅ Item removed from cart");
         } catch (error: any) {
-          console.error('❌ Failed to remove item from server cart:', error);
+          console.error("❌ Failed to remove item from server cart:", error);
           // Revert on error
           set({
             items: oldItems,
             totals: calculateCartTotals(oldItems),
-            error: error.message || 'Failed to remove item',
+            error: error.message || "Failed to remove item",
             pendingChanges: false,
           });
         }
@@ -287,14 +292,14 @@ export const useCartStore = create<CartState>()(
             lastSyncedAt: new Date().toISOString(),
             pendingChanges: false,
           });
-          console.log('✅ Cart cleared');
+          console.log("✅ Cart cleared");
         } catch (error: any) {
-          console.error('❌ Failed to clear cart on server:', error);
+          console.error("❌ Failed to clear cart on server:", error);
           // Revert on error
           set({
             items: oldItems,
             totals: calculateCartTotals(oldItems),
-            error: error.message || 'Failed to clear cart',
+            error: error.message || "Failed to clear cart",
             pendingChanges: false,
           });
         }
@@ -315,7 +320,7 @@ export const useCartStore = create<CartState>()(
             id: item.id,
             productId: item.product.id,
             productName: item.product.name,
-            productImage: item.product.images[0] || '',
+            productImage: item.product.images[0] || "",
             price: item.product.price,
             quantity: item.quantity,
             unit: item.product.unit,
@@ -334,12 +339,12 @@ export const useCartStore = create<CartState>()(
             error: null,
           });
 
-          console.log('✅ Cart synced with server:', items.length, 'items');
+          console.log("✅ Cart synced with server:", items.length, "items");
         } catch (error: any) {
-          console.error('❌ Cart sync failed:', error);
+          console.error("❌ Cart sync failed:", error);
           set({
             isSyncing: false,
-            error: error.message || 'Failed to sync cart',
+            error: error.message || "Failed to sync cart",
           });
         }
       },
@@ -353,9 +358,9 @@ export const useCartStore = create<CartState>()(
         try {
           await get().syncWithServer();
         } catch (error: any) {
-          console.error('❌ Failed to fetch cart:', error);
+          console.error("❌ Failed to fetch cart:", error);
           set({
-            error: error.message || 'Failed to fetch cart',
+            error: error.message || "Failed to fetch cart",
           });
         } finally {
           set({ isLoading: false });
@@ -417,7 +422,7 @@ export const useCartStore = create<CartState>()(
       },
     }),
     {
-      name: 'cart-storage',
+      name: "cart-storage",
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (state) => ({
         // Persist these fields
@@ -427,19 +432,19 @@ export const useCartStore = create<CartState>()(
         pendingChanges: state.pendingChanges,
       }),
       onRehydrateStorage: () => (state) => {
-        console.log('🔄 Cart store rehydrated');
+        console.log("🔄 Cart store rehydrated");
         state?.setHasHydrated(true);
 
         // Sync with server after hydration if authenticated
         if (state?.items.length && state?.pendingChanges) {
-          console.log('📡 Syncing pending cart changes...');
+          console.log("📡 Syncing pending cart changes...");
           state.syncWithServer().catch((error) => {
-            console.error('❌ Post-hydration sync failed:', error);
+            console.error("❌ Post-hydration sync failed:", error);
           });
         }
       },
-    }
-  )
+    },
+  ),
 );
 
 /**
@@ -447,7 +452,8 @@ export const useCartStore = create<CartState>()(
  */
 export const useCartItems = () => useCartStore((state) => state.items);
 export const useCartTotals = () => useCartStore((state) => state.totals);
-export const useCartItemCount = () => useCartStore((state) => state.totals.itemCount);
+export const useCartItemCount = () =>
+  useCartStore((state) => state.totals.itemCount);
 export const useCartTotal = () => useCartStore((state) => state.totals.total);
 export const useCartLoading = () => useCartStore((state) => state.isLoading);
 export const useCartSyncing = () => useCartStore((state) => state.isSyncing);
@@ -474,7 +480,9 @@ export const useIsCartEmpty = () => {
  * Helper hook to check if free shipping is reached
  */
 export const useIsFreeShipping = () => {
-  return useCartStore((state) => state.totals.subtotal >= FREE_SHIPPING_THRESHOLD);
+  return useCartStore(
+    (state) => state.totals.subtotal >= FREE_SHIPPING_THRESHOLD,
+  );
 };
 
 /**

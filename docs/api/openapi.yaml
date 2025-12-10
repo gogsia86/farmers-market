@@ -14,10 +14,20 @@ servers:
   - url: http://localhost:3000/api
     description: Local Development
 tags:
+  - name: Auth
+    description: Authentication and authorization operations
   - name: Products
     description: Operations related to marketplace products
   - name: Farms
     description: Operations related to farm entities
+  - name: Orders
+    description: Order management operations
+  - name: Cart
+    description: Shopping cart operations
+  - name: Payments
+    description: Payment processing operations
+  - name: Health
+    description: System health and monitoring
 components:
   securitySchemes:
     bearerAuth:
@@ -75,6 +85,220 @@ components:
           description: Error message
       required:
         - error
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+        orderNumber:
+          type: string
+        customerId:
+          type: string
+        farmId:
+          type: string
+        status:
+          type: string
+          enum:
+            [
+              PENDING,
+              CONFIRMED,
+              PREPARING,
+              READY,
+              FULFILLED,
+              COMPLETED,
+              CANCELLED,
+            ]
+        paymentStatus:
+          type: string
+          enum: [PENDING, PAID, FAILED, REFUNDED]
+        fulfillmentMethod:
+          type: string
+          enum: [DELIVERY, PICKUP]
+        subtotal:
+          type: number
+        deliveryFee:
+          type: number
+        platformFee:
+          type: number
+        tax:
+          type: number
+        total:
+          type: number
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItem"
+        deliveryAddress:
+          $ref: "#/components/schemas/Address"
+        specialInstructions:
+          type: string
+        scheduledDate:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    OrderItem:
+      type: object
+      properties:
+        id:
+          type: string
+        productId:
+          type: string
+        productName:
+          type: string
+        quantity:
+          type: integer
+        unitPrice:
+          type: number
+        subtotal:
+          type: number
+        unit:
+          type: string
+    CartItem:
+      type: object
+      properties:
+        id:
+          type: string
+        productId:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+        quantity:
+          type: integer
+        unit:
+          type: string
+        image:
+          type: string
+        farmId:
+          type: string
+        farmName:
+          type: string
+        organic:
+          type: boolean
+        inStock:
+          type: boolean
+        maxQuantity:
+          type: integer
+        fulfillmentMethod:
+          type: string
+    Cart:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/CartItem"
+        subtotal:
+          type: number
+        tax:
+          type: number
+        deliveryFee:
+          type: number
+        total:
+          type: number
+        itemCount:
+          type: integer
+        farmCount:
+          type: integer
+    Address:
+      type: object
+      properties:
+        id:
+          type: string
+        street:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        postalCode:
+          type: string
+        country:
+          type: string
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          format: email
+        firstName:
+          type: string
+        lastName:
+          type: string
+        role:
+          type: string
+          enum: [CUSTOMER, FARMER, ADMIN, SUPER_ADMIN, MODERATOR]
+        emailVerified:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+    PaymentIntent:
+      type: object
+      properties:
+        id:
+          type: string
+        clientSecret:
+          type: string
+        amount:
+          type: number
+        currency:
+          type: string
+        status:
+          type: string
+        orderId:
+          type: string
+    HealthCheck:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [healthy, unhealthy, degraded]
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+        services:
+          type: object
+          properties:
+            database:
+              type: string
+            redis:
+              type: string
+            stripe:
+              type: string
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details:
+              type: object
+        meta:
+          type: object
+          properties:
+            pagination:
+              type: object
+            requestId:
+              type: string
 paths:
   /products:
     get:
@@ -473,3 +697,753 @@ paths:
         - Farms
       x-usage-notes:
         - "No authentication required for public farm listings."
+
+  # ============================================
+  # AUTH ENDPOINTS
+  # ============================================
+  /auth/signup:
+    post:
+      summary: Register a new user
+      description: Creates a new user account
+      operationId: signup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - firstName
+                - lastName
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                role:
+                  type: string
+                  enum: [CUSTOMER, FARMER]
+                  default: CUSTOMER
+            examples:
+              customer:
+                summary: Customer registration
+                value:
+                  email: "john@example.com"
+                  password: "SecurePass123!"
+                  firstName: "John"
+                  lastName: "Doe"
+                  role: "CUSTOMER"
+      responses:
+        "201":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  user:
+                    $ref: "#/components/schemas/User"
+        "400":
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Email already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      tags:
+        - Auth
+
+  /auth/session:
+    get:
+      summary: Get current session
+      description: Returns the current user session if authenticated
+      operationId: getSession
+      responses:
+        "200":
+          description: Session data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/User"
+                  expires:
+                    type: string
+                    format: date-time
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - bearerAuth: []
+      tags:
+        - Auth
+
+  # ============================================
+  # ORDER ENDPOINTS
+  # ============================================
+  /orders:
+    get:
+      summary: List orders
+      description: Returns paginated list of orders for the authenticated user
+      operationId: listOrders
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum:
+              [
+                PENDING,
+                CONFIRMED,
+                PREPARING,
+                READY,
+                FULFILLED,
+                COMPLETED,
+                CANCELLED,
+              ]
+          description: Filter by order status
+        - in: query
+          name: farmId
+          schema:
+            type: string
+          description: Filter by farm ID (for farmers)
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date
+          description: Filter orders created after this date
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date
+          description: Filter orders created before this date
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          description: Number of orders per page
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orders:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Order"
+                  pagination:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                      page:
+                        type: integer
+                      limit:
+                        type: integer
+                      totalPages:
+                        type: integer
+                      hasNext:
+                        type: boolean
+                      hasPrevious:
+                        type: boolean
+        "401":
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - bearerAuth: []
+      tags:
+        - Orders
+
+    post:
+      summary: Create a new order
+      description: Creates a new order from cart items
+      operationId: createOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - farmId
+                - items
+                - fulfillmentMethod
+              properties:
+                farmId:
+                  type: string
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      productId:
+                        type: string
+                      quantity:
+                        type: integer
+                fulfillmentMethod:
+                  type: string
+                  enum: [DELIVERY, PICKUP]
+                deliveryAddressId:
+                  type: string
+                specialInstructions:
+                  type: string
+                scheduledDate:
+                  type: string
+                  format: date-time
+            examples:
+              delivery:
+                summary: Delivery order
+                value:
+                  farmId: "farm_001"
+                  items:
+                    - productId: "prod_123"
+                      quantity: 5
+                  fulfillmentMethod: "DELIVERY"
+                  deliveryAddressId: "addr_001"
+                  specialInstructions: "Leave at back door"
+      responses:
+        "201":
+          description: Order created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "400":
+          description: Invalid order data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - bearerAuth: []
+      tags:
+        - Orders
+
+  /orders/{id}:
+    get:
+      summary: Get order by ID
+      description: Returns details for a single order
+      operationId: getOrderById
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Order ID
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "404":
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - bearerAuth: []
+      tags:
+        - Orders
+
+    patch:
+      summary: Update order
+      description: Updates an existing order (status, special instructions)
+      operationId: updateOrder
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Order ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [CONFIRMED, PREPARING, READY, FULFILLED, COMPLETED]
+                specialInstructions:
+                  type: string
+                scheduledDate:
+                  type: string
+                  format: date-time
+      responses:
+        "200":
+          description: Order updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "400":
+          description: Invalid update data or status transition
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - bearerAuth: []
+      tags:
+        - Orders
+
+  /orders/{id}/cancel:
+    post:
+      summary: Cancel order
+      description: Cancels an existing order
+      operationId: cancelOrder
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Order ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - reason
+              properties:
+                reason:
+                  type: string
+                  description: Cancellation reason
+      responses:
+        "200":
+          description: Order cancelled successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "400":
+          description: Order cannot be cancelled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - bearerAuth: []
+      tags:
+        - Orders
+
+  # ============================================
+  # CART ENDPOINTS
+  # ============================================
+  /cart:
+    get:
+      summary: Get current cart
+      description: Returns the current user's shopping cart
+      operationId: getCart
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
+        "401":
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - bearerAuth: []
+      tags:
+        - Cart
+
+    delete:
+      summary: Clear cart
+      description: Removes all items from the cart
+      operationId: clearCart
+      responses:
+        "200":
+          description: Cart cleared successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        "401":
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - bearerAuth: []
+      tags:
+        - Cart
+
+  /cart/items:
+    post:
+      summary: Add item to cart
+      description: Adds a product to the shopping cart
+      operationId: addToCart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - productId
+                - quantity
+              properties:
+                productId:
+                  type: string
+                quantity:
+                  type: integer
+                  minimum: 1
+                fulfillmentMethod:
+                  type: string
+                  enum: [DELIVERY, PICKUP]
+            examples:
+              add:
+                summary: Add item example
+                value:
+                  productId: "prod_123"
+                  quantity: 3
+                  fulfillmentMethod: "DELIVERY"
+      responses:
+        "200":
+          description: Item added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  cartItem:
+                    $ref: "#/components/schemas/CartItem"
+        "400":
+          description: Invalid item data or insufficient stock
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - bearerAuth: []
+      tags:
+        - Cart
+
+  /cart/items/{id}:
+    patch:
+      summary: Update cart item
+      description: Updates the quantity of a cart item
+      operationId: updateCartItem
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Cart item ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - quantity
+              properties:
+                quantity:
+                  type: integer
+                  minimum: 1
+      responses:
+        "200":
+          description: Item updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        "400":
+          description: Invalid quantity or insufficient stock
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Cart item not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - bearerAuth: []
+      tags:
+        - Cart
+
+    delete:
+      summary: Remove cart item
+      description: Removes an item from the cart
+      operationId: removeCartItem
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Cart item ID
+      responses:
+        "200":
+          description: Item removed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        "404":
+          description: Cart item not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - bearerAuth: []
+      tags:
+        - Cart
+
+  /cart/validate:
+    post:
+      summary: Validate cart
+      description: Validates all cart items for availability and pricing
+      operationId: validateCart
+      responses:
+        "200":
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid:
+                    type: boolean
+                  issues:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        itemId:
+                          type: string
+                        message:
+                          type: string
+      security:
+        - bearerAuth: []
+      tags:
+        - Cart
+
+  # ============================================
+  # PAYMENT ENDPOINTS
+  # ============================================
+  /payments/create-intent:
+    post:
+      summary: Create payment intent
+      description: Creates a Stripe payment intent for an order
+      operationId: createPaymentIntent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - orderId
+                - amount
+              properties:
+                orderId:
+                  type: string
+                amount:
+                  type: number
+                currency:
+                  type: string
+                  default: "usd"
+      responses:
+        "200":
+          description: Payment intent created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentIntent"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - bearerAuth: []
+      tags:
+        - Payments
+
+  /payments/webhook:
+    post:
+      summary: Stripe webhook
+      description: Handles Stripe webhook events
+      operationId: stripeWebhook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Webhook processed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: boolean
+        "400":
+          description: Invalid webhook signature
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      tags:
+        - Payments
+      x-usage-notes:
+        - "This endpoint is called by Stripe and should not be called directly"
+
+  # ============================================
+  # HEALTH ENDPOINTS
+  # ============================================
+  /health:
+    get:
+      summary: Health check
+      description: Returns the health status of the application
+      operationId: healthCheck
+      responses:
+        "200":
+          description: Application is healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthCheck"
+              examples:
+                healthy:
+                  summary: Healthy status
+                  value:
+                    status: "healthy"
+                    timestamp: "2025-01-15T10:00:00Z"
+                    version: "1.0.0"
+                    services:
+                      database: "connected"
+                      redis: "connected"
+                      stripe: "configured"
+        "503":
+          description: Application is unhealthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthCheck"
+              examples:
+                unhealthy:
+                  summary: Unhealthy status
+                  value:
+                    status: "unhealthy"
+                    timestamp: "2025-01-15T10:00:00Z"
+                    version: "1.0.0"
+                    services:
+                      database: "disconnected"
+                      redis: "connected"
+                      stripe: "configured"
+      tags:
+        - Health
+      x-usage-notes:
+        - "This endpoint should be used by load balancers for health checks"
+        - "No authentication required"

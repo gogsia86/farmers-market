@@ -1,25 +1,28 @@
 /**
- * NEXTAUTH V5 (AUTH.JS) CONFIGURATION
+ * 🔐 NEXTAUTH V4 CONFIGURATION
  * Divine authentication with agricultural consciousness
  *
+ * CANONICAL AUTH IMPLEMENTATION
+ * This is the single source of truth for authentication configuration.
+ *
  * Updated: January 2025
- * Version: NextAuth v5.0.0-beta
+ * Version: NextAuth v4.24.x
  */
 
-import NextAuth from "next-auth";
+import NextAuth, { type NextAuthOptions } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import Credentials from "next-auth/providers/credentials";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { database } from "@/lib/database";
 import { compare } from "bcryptjs";
 import type { UserRole, UserStatus } from "@prisma/client";
+import type { Adapter } from "next-auth/adapters";
 
 /**
- * NextAuth v5 Configuration
- * New API with better App Router support
+ * NextAuth v4 Options Configuration
  */
-const nextAuthResult = NextAuth({
+export const authOptions: NextAuthOptions = {
   // Prisma adapter for database sessions
-  adapter: PrismaAdapter(database) as any,
+  adapter: PrismaAdapter(database) as Adapter,
 
   // JWT strategy for stateless sessions
   session: {
@@ -36,7 +39,7 @@ const nextAuthResult = NextAuth({
 
   // Authentication providers
   providers: [
-    Credentials({
+    CredentialsProvider({
       name: "credentials",
       credentials: {
         email: {
@@ -59,7 +62,7 @@ const nextAuthResult = NextAuth({
         try {
           // Find user by email
           const user = await database.user.findUnique({
-            where: { email: credentials.email as string },
+            where: { email: credentials.email },
             select: {
               id: true,
               email: true,
@@ -79,7 +82,7 @@ const nextAuthResult = NextAuth({
 
           // Verify password
           const isValidPassword = await compare(
-            credentials.password as string,
+            credentials.password,
             user.password,
           );
 
@@ -135,11 +138,11 @@ const nextAuthResult = NextAuth({
       // Initial sign in
       if (user) {
         token.id = user.id;
-        token.role = user.role as UserRole;
-        token.status = user.status as UserStatus;
+        token.role = (user as any).role as UserRole;
+        token.status = (user as any).status as UserStatus;
       }
 
-      // Update session (NextAuth v5 feature)
+      // Update session
       if (trigger === "update" && session) {
         token.name = session.name;
         token.email = session.email;
@@ -155,8 +158,8 @@ const nextAuthResult = NextAuth({
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string;
-        session.user.role = token.role as UserRole;
-        session.user.status = token.status as UserStatus;
+        (session.user as any).role = token.role as UserRole;
+        (session.user as any).status = token.status as UserStatus;
         session.user.name =
           (token.name as string) || (token.email as string) || "User";
         session.user.email = token.email as string;
@@ -164,69 +167,14 @@ const nextAuthResult = NextAuth({
 
       return session;
     },
-
-    /**
-     * Authorized Callback - Control page access
-     * Called by middleware to check if user can access route
-     */
-    authorized({ auth, request }) {
-      const { pathname } = request.nextUrl;
-
-      // Public routes - always allow
-      const publicRoutes = [
-        "/",
-        "/login",
-        "/admin-login",
-        "/register",
-        "/register-farm",
-        "/farms",
-        "/products",
-        "/about",
-        "/contact",
-      ];
-
-      const isPublicRoute = publicRoutes.some((route) =>
-        pathname.startsWith(route),
-      );
-
-      if (isPublicRoute) {
-        return true;
-      }
-
-      // Protected routes - require authentication
-      if (!auth?.user) {
-        return false;
-      }
-
-      // Admin routes - require admin role
-      if (pathname.startsWith("/admin")) {
-        const adminRoles: UserRole[] = ["ADMIN", "SUPER_ADMIN", "MODERATOR"];
-        return adminRoles.includes(auth.user.role as UserRole);
-      }
-
-      // Farmer routes - require farmer or admin role
-      if (pathname.startsWith("/farmer") || pathname.startsWith("/dashboard")) {
-        const farmerRoles: UserRole[] = [
-          "FARMER",
-          "ADMIN",
-          "SUPER_ADMIN",
-          "MODERATOR",
-        ];
-        return farmerRoles.includes(auth.user.role as UserRole);
-      }
-
-      // Default - allow if authenticated
-      return true;
-    },
   },
 
   // Events for logging
   events: {
-    async signIn({ user, account: _account, profile: _profile }) {
-      console.log(`✅ User signed in: ${user.email} (${user.role})`);
+    async signIn({ user }) {
+      console.log(`✅ User signed in: ${user.email} (${(user as any).role})`);
     },
-    async signOut(params) {
-      const token = "token" in params ? params.token : null;
+    async signOut({ token }) {
       console.log(`👋 User signed out: ${token?.email}`);
     },
     async createUser({ user }) {
@@ -237,19 +185,38 @@ const nextAuthResult = NextAuth({
   // Debug mode (disable in production)
   debug: process.env.NODE_ENV === "development",
 
-  // Trust host in production
-  trustHost: true,
-});
-
-export const { handlers, signIn, signOut } = nextAuthResult;
-export const auth: any = nextAuthResult.auth;
-export const authConfig = nextAuthResult;
+  // Secret for JWT encryption
+  secret: process.env.NEXTAUTH_SECRET,
+};
 
 /**
- * Export type-safe auth helper
- * Use this in Server Components and API routes
+ * NextAuth handler for App Router
+ * Export GET and POST handlers
  */
-export const getServerSession: any = auth;
+const handler = NextAuth(authOptions);
+
+export const handlers = {
+  GET: handler,
+  POST: handler,
+};
+
+// Export individual handlers for route.ts
+export { handler as GET, handler as POST };
+
+// Default export for convenience
+export default handler;
+
+/**
+ * Server-side auth helper
+ * Import getServerSession from next-auth for server components
+ */
+import { getServerSession as nextAuthGetServerSession } from "next-auth";
+
+export async function auth() {
+  return nextAuthGetServerSession(authOptions);
+}
+
+export const getServerSession = auth;
 
 /**
  * Helper function to get current user
@@ -285,9 +252,9 @@ export async function requireRole(
   }
 
   const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
-  if (!roles.includes(session.user.role as UserRole)) {
+  if (!roles.includes((session.user as any).role as UserRole)) {
     throw new Error(
-      `Unauthorized: Required role ${roles.join(" or ")}, but user has ${session.user.role}`,
+      `Unauthorized: Required role ${roles.join(" or ")}, but user has ${(session.user as any).role}`,
     );
   }
 
@@ -338,3 +305,9 @@ export async function isAdmin(): Promise<boolean> {
 export async function isFarmer(): Promise<boolean> {
   return hasRole(["FARMER", "ADMIN", "SUPER_ADMIN", "MODERATOR"]);
 }
+
+// Re-export signIn and signOut from next-auth/react for client components
+export { signIn, signOut } from "next-auth/react";
+
+// Alias for compatibility with code expecting authConfig
+export const authConfig = authOptions;

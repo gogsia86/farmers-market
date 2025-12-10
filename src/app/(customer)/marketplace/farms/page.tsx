@@ -10,6 +10,7 @@ import {
 } from "@/lib/utils/metadata";
 import { MarketplaceSearch } from "@/components/marketplace/MarketplaceSearch";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { database } from "@/lib/database";
 
 /**
  * 🌾 MARKETPLACE FARMS INDEX PAGE
@@ -19,7 +20,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
  * - Filtering and search (future enhancement)
  * - SEO optimized with metadata and JSON-LD
  *
- * ✅ WIRED TO API - Uses /api/farms
+ * ✅ DIRECT DATABASE ACCESS - Server Component pattern
  */
 
 // Generate metadata for SEO
@@ -39,34 +40,91 @@ export const metadata: Metadata = generateMetadata({
   ],
 });
 
-interface ApiResponse {
-  success: boolean;
-  data?: any[];
-  error?: {
-    code: string;
-    message: string;
-  };
-}
-
-// Fetch farms data from API
+// Direct database access for Server Component (no API fetch needed)
 async function getFarms() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
-    const response = await fetch(`${baseUrl}/api/farms`, {
-      cache: "no-store",
+    const farms = await database.farm.findMany({
+      where: {
+        status: "ACTIVE",
+        verificationStatus: "VERIFIED",
+      },
+      include: {
+        owner: {
+          select: {
+            id: true,
+            name: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+        products: {
+          where: {
+            status: "ACTIVE",
+            inStock: true,
+          },
+          select: {
+            id: true,
+            category: true,
+          },
+        },
+        _count: {
+          select: {
+            products: true,
+            reviews: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 50,
     });
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch farms: ${response.statusText}`);
-    }
+    // Transform to expected format
+    return farms.map((farm) => {
+      const certifications = Array.isArray(farm.certificationsArray)
+        ? (farm.certificationsArray as string[])
+        : [];
+      const farmingPractices = Array.isArray(farm.farmingPractices)
+        ? (farm.farmingPractices as string[])
+        : [];
+      const productCategories = Array.isArray(farm.productCategories)
+        ? (farm.productCategories as string[])
+        : [];
+      const images = Array.isArray(farm.images)
+        ? (farm.images as string[])
+        : [];
 
-    const result: ApiResponse = await response.json();
-
-    if (!result.success || !result.data) {
-      return [];
-    }
-
-    return result.data;
+      return {
+        id: farm.id,
+        name: farm.name,
+        slug: farm.slug,
+        description: farm.description,
+        city: farm.city,
+        state: farm.state,
+        address: farm.address,
+        deliveryRadius: farm.deliveryRadius,
+        averageRating: farm.averageRating ? Number(farm.averageRating) : null,
+        reviewCount: farm.reviewCount,
+        yearEstablished: farm.yearEstablished,
+        certifications,
+        farmingPractices,
+        productCategories,
+        images,
+        bannerUrl: farm.bannerUrl,
+        logoUrl: farm.logoUrl,
+        owner: {
+          id: farm.owner.id,
+          name:
+            farm.owner.name ||
+            `${farm.owner.firstName || ""} ${farm.owner.lastName || ""}`.trim(),
+        },
+        stats: {
+          totalProducts: farm._count.products,
+          totalReviews: farm._count.reviews,
+        },
+      };
+    });
   } catch (error) {
     console.error("[FARMS_FETCH_ERROR]", error);
     return [];

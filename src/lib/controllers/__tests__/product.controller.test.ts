@@ -27,7 +27,7 @@ import { ProductCategory } from "@/types/product";
 // ============================================
 
 // Mock the ProductService with static methods
-jest.mock("@/lib/services/product.service.refactored", () => ({
+jest.mock("@/lib/services/product.service", () => ({
   ProductService: {
     listProducts: jest.fn(),
     createProduct: jest.fn(),

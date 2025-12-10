@@ -60,13 +60,21 @@ export async function loginAsFarmer(page: Page) {
  * Login as customer user
  */
 export async function loginAsCustomer(page: Page) {
-  await page.goto(`${BASE_URL}/login`);
+  await page.goto(`${BASE_URL}/login`, { waitUntil: "domcontentloaded" });
+  // Wait for login form - element-based wait instead of networkIdle
+  await page.waitForSelector('input[name="email"]', {
+    state: "visible",
+    timeout: 10000,
+  });
+
   await page.fill('input[name="email"]', TEST_USERS.customer.email);
   await page.fill('input[name="password"]', TEST_USERS.customer.password);
   await page.click('button[type="submit"]');
 
-  // Wait for navigation to complete
-  await page.waitForLoadState("networkidle");
+  // Wait for redirect away from login page - element-based wait instead of networkIdle
+  await page.waitForURL((url: URL) => !url.pathname.includes("/login"), {
+    timeout: 10000,
+  });
   console.log("✅ Logged in as Customer");
 }
 
@@ -79,7 +87,13 @@ export async function login(
   password: string,
   expectedRedirect?: string | RegExp,
 ) {
-  await page.goto(`${BASE_URL}/login`);
+  await page.goto(`${BASE_URL}/login`, { waitUntil: "domcontentloaded" });
+  // Wait for login form - element-based wait instead of networkIdle
+  await page.waitForSelector('input[name="email"]', {
+    state: "visible",
+    timeout: 10000,
+  });
+
   await page.fill('input[name="email"]', email);
   await page.fill('input[name="password"]', password);
   await page.click('button[type="submit"]');
@@ -87,7 +101,10 @@ export async function login(
   if (expectedRedirect) {
     await page.waitForURL(expectedRedirect, { timeout: 10000 });
   } else {
-    await page.waitForLoadState("networkidle");
+    // Wait for redirect away from login page - element-based wait instead of networkIdle
+    await page.waitForURL((url: URL) => !url.pathname.includes("/login"), {
+      timeout: 10000,
+    });
   }
 
   console.log(`✅ Logged in as ${email}`);

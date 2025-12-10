@@ -1,7 +1,7 @@
 // 🌾 Farmers Market Mobile App - Login Screen
 // Divine authentication with agricultural consciousness
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -12,11 +12,11 @@ import {
   ScrollView,
   Alert,
   TouchableOpacity,
-} from 'react-native';
-import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
-import { theme } from '../../theme';
-import { useAuthStore } from '../../stores/authStore';
+} from "react-native";
+import { Button } from "../../components/ui/Button";
+import { Input } from "../../components/ui/Input";
+import { theme } from "../../theme";
+import { useAuthStore } from "../../stores/authStore";
 
 // ========================================
 // 🎯 TYPES
@@ -42,8 +42,8 @@ export const LoginScreen = ({ navigation }: any) => {
   // ========================================
 
   const [formData, setFormData] = useState<LoginFormData>({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
 
   const [errors, setErrors] = useState<LoginFormErrors>({});
@@ -64,9 +64,9 @@ export const LoginScreen = ({ navigation }: any) => {
     // Show alert if auth error occurs
     if (authError) {
       Alert.alert(
-        'Login Failed',
-        authError || 'Invalid credentials. Please try again.',
-        [{ text: 'OK', onPress: clearError }]
+        "Login Failed",
+        authError || "Invalid credentials. Please try again.",
+        [{ text: "OK", onPress: clearError }],
       );
     }
   }, [authError]);
@@ -77,12 +77,12 @@ export const LoginScreen = ({ navigation }: any) => {
 
   const validateEmail = (email: string): string | undefined => {
     if (!email) {
-      return 'Email is required';
+      return "Email is required";
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return 'Please enter a valid email address';
+      return "Please enter a valid email address";
     }
 
     return undefined;
@@ -90,11 +90,11 @@ export const LoginScreen = ({ navigation }: any) => {
 
   const validatePassword = (password: string): string | undefined => {
     if (!password) {
-      return 'Password is required';
+      return "Password is required";
     }
 
     if (password.length < 6) {
-      return 'Password must be at least 6 characters';
+      return "Password must be at least 6 characters";
     }
 
     return undefined;
@@ -151,24 +151,24 @@ export const LoginScreen = ({ navigation }: any) => {
       // based on authentication state change
     } catch (error: any) {
       // Error handling is done via useEffect watching authError
-      console.error('Login error:', error);
+      console.error("Login error:", error);
     }
   };
 
   const handleForgotPassword = () => {
-    navigation.navigate('ForgotPassword');
+    navigation.navigate("ForgotPassword");
   };
 
   const handleRegister = () => {
-    navigation.navigate('Register');
+    navigation.navigate("Register");
   };
 
   const handleGuestContinue = () => {
     // TODO: Implement guest browsing
     Alert.alert(
-      'Guest Mode',
-      'Guest browsing will be available soon. Please log in or register.',
-      [{ text: 'OK' }]
+      "Guest Mode",
+      "Guest browsing will be available soon. Please log in or register.",
+      [{ text: "OK" }],
     );
   };
 
@@ -179,7 +179,7 @@ export const LoginScreen = ({ navigation }: any) => {
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
         <ScrollView
@@ -255,7 +255,7 @@ export const LoginScreen = ({ navigation }: any) => {
               size="lg"
               style={styles.loginButton}
             >
-              {isLoading ? 'Logging In...' : 'Log In'}
+              {isLoading ? "Logging In..." : "Log In"}
             </Button>
 
             {/* Divider */}
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
   // Header
   header: {
     marginBottom: theme.spacing[8],
-    alignItems: 'center',
+    alignItems: "center",
   },
 
   emoji: {
@@ -332,13 +332,13 @@ const styles = StyleSheet.create({
     ...theme.typography.styles.h2,
     color: theme.colors.text.primary,
     marginBottom: theme.spacing[2],
-    textAlign: 'center',
+    textAlign: "center",
   },
 
   subtitle: {
     ...theme.typography.styles.body1,
     color: theme.colors.text.secondary,
-    textAlign: 'center',
+    textAlign: "center",
     paddingHorizontal: theme.spacing[4],
     lineHeight: theme.typography.fontSize.base * 1.5,
   },
@@ -354,15 +354,15 @@ const styles = StyleSheet.create({
 
   // Options Row
   optionsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: theme.spacing[6],
   },
 
   rememberMeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
 
   checkbox: {
@@ -372,8 +372,8 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.primary[500],
     borderRadius: theme.borderRadius.sm,
     marginRight: theme.spacing[2],
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: theme.colors.background.primary,
   },
 
@@ -401,8 +401,8 @@ const styles = StyleSheet.create({
 
   // Divider
   divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginVertical: theme.spacing[6],
   },
 
@@ -420,9 +420,9 @@ const styles = StyleSheet.create({
 
   // Footer
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: theme.spacing[6],
   },
 
@@ -443,21 +443,21 @@ const styles = StyleSheet.create({
     paddingTop: theme.spacing[6],
     borderTopWidth: 1,
     borderTopColor: theme.colors.border.light,
-    alignItems: 'center',
+    alignItems: "center",
   },
 
   quoteText: {
     ...theme.typography.styles.body2,
     color: theme.colors.text.tertiary,
-    fontStyle: 'italic',
-    textAlign: 'center',
+    fontStyle: "italic",
+    textAlign: "center",
     marginBottom: theme.spacing[1],
   },
 
   quoteAuthor: {
     ...theme.typography.styles.caption,
     color: theme.colors.text.tertiary,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });
 

@@ -97,7 +97,7 @@ async function checkEnvironmentVariables() {
       step: `ENV: ${key}`,
       success: exists,
       message: exists ? "Set" : "MISSING - This will cause auth failures!",
-      details: exists ? value.substring(0, 50) + "..." : undefined,
+      details: exists ? `${value.substring(0, 50)}...` : undefined,
     });
   }
 
@@ -222,7 +222,7 @@ async function verifyTestUsers() {
           roleMatch: user.role === testUser.expectedRole,
           status: user.status,
           emailVerified: user.emailVerified,
-          passwordHash: user.password.substring(0, 20) + "...",
+          passwordHash: `${user.password.substring(0, 20)}...`,
         },
       });
 
@@ -269,7 +269,7 @@ async function testPasswordHashing() {
       step: "Password Hashing",
       success: true,
       message: "Successfully hashed test password",
-      details: { hash: hash.substring(0, 30) + "..." },
+      details: { hash: `${hash.substring(0, 30)}...` },
     });
 
     // Verify password

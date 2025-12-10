@@ -53,9 +53,17 @@ export function CartSummary({
   const hasDeliveryFee = summary.deliveryFee > 0;
 
   return (
-    <div className="glass-card rounded-2xl p-6 sticky top-24">
+    <div
+      className="glass-card rounded-2xl p-6 sticky top-24"
+      data-testid="cart-summary"
+    >
       {/* Header */}
-      <h2 className="text-xl font-bold text-foreground mb-6">Order Summary</h2>
+      <h2
+        className="text-xl font-bold text-foreground mb-6"
+        data-testid="cart-summary-title"
+      >
+        Order Summary
+      </h2>
 
       {/* Promo Code (Optional) */}
       {showPromoCode && !isEmpty && (
@@ -78,6 +86,7 @@ export function CartSummary({
                 disabled={isApplyingPromo || disabled}
                 className="w-full pl-10 pr-3 py-2 border-2 border-border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 aria-describedby={promoError ? "promo-error" : undefined}
+                data-testid="promo-code-input"
               />
             </div>
             <button
@@ -85,6 +94,7 @@ export function CartSummary({
               disabled={!promoCode.trim() || isApplyingPromo || disabled}
               className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
               type="button"
+              data-testid="apply-promo-button"
             >
               {isApplyingPromo ? "Applying..." : "Apply"}
             </button>
@@ -101,34 +111,50 @@ export function CartSummary({
       )}
 
       {/* Price Breakdown */}
-      <div className="space-y-4 mb-6">
+      <div className="space-y-4 mb-6" data-testid="price-breakdown">
         {/* Subtotal */}
-        <div className="flex justify-between text-muted-foreground">
+        <div
+          className="flex justify-between text-muted-foreground"
+          data-testid="subtotal-line"
+        >
           <span>
             Subtotal ({summary.itemCount}{" "}
             {summary.itemCount === 1 ? "item" : "items"})
           </span>
-          <span className="font-medium">${summary.subtotal.toFixed(2)}</span>
+          <span className="font-medium" data-testid="subtotal-amount">
+            ${summary.subtotal.toFixed(2)}
+          </span>
         </div>
 
         {/* Tax */}
-        <div className="flex justify-between text-muted-foreground">
+        <div
+          className="flex justify-between text-muted-foreground"
+          data-testid="tax-line"
+        >
           <span>Tax (8%)</span>
-          <span className="font-medium">${summary.tax.toFixed(2)}</span>
+          <span className="font-medium" data-testid="tax-amount">
+            ${summary.tax.toFixed(2)}
+          </span>
         </div>
 
         {/* Delivery Fee */}
-        <div className="flex justify-between text-muted-foreground">
+        <div
+          className="flex justify-between text-muted-foreground"
+          data-testid="delivery-line"
+        >
           <span className="flex items-center gap-2">
             <Truck className="h-4 w-4" aria-hidden="true" />
             Delivery
           </span>
           {hasDeliveryFee ? (
-            <span className="font-medium">
+            <span className="font-medium" data-testid="delivery-amount">
               ${summary.deliveryFee.toFixed(2)}
             </span>
           ) : (
-            <span className="text-green-600 dark:text-green-400 font-medium">
+            <span
+              className="text-green-600 dark:text-green-400 font-medium"
+              data-testid="delivery-free"
+            >
               Free
             </span>
           )}
@@ -143,10 +169,16 @@ export function CartSummary({
         )}
 
         {/* Divider & Total */}
-        <div className="pt-4 border-t border-border">
+        <div
+          className="pt-4 border-t border-border"
+          data-testid="total-section"
+        >
           <div className="flex justify-between text-lg font-bold text-foreground">
             <span>Total</span>
-            <span className="text-2xl bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
+            <span
+              className="text-2xl bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent"
+              data-testid="total-amount"
+            >
               ${summary.total.toFixed(2)}
             </span>
           </div>
@@ -172,6 +204,7 @@ export function CartSummary({
         `}
         aria-disabled={isEmpty || disabled}
         tabIndex={isEmpty || disabled ? -1 : 0}
+        data-testid="checkout-button"
       >
         {isEmpty ? (
           "Cart is Empty"

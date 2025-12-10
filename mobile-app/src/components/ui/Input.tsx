@@ -1,7 +1,7 @@
 // 🌾 Farmers Market Mobile App - Divine Input Component
 // Comprehensive text input with agricultural consciousness and full validation support
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   TextInput,
   View,
@@ -11,14 +11,14 @@ import {
   TouchableOpacity,
   ViewStyle,
   TextStyle,
-} from 'react-native';
-import { theme } from '../../theme';
+} from "react-native";
+import { theme } from "../../theme";
 
 // ========================================
 // 🎯 TYPES & INTERFACES
 // ========================================
 
-export interface InputProps extends Omit<TextInputProps, 'style'> {
+export interface InputProps extends Omit<TextInputProps, "style"> {
   // Labels & Help Text
   label?: string;
   placeholder?: string;
@@ -143,11 +143,7 @@ export const Input: React.FC<InputProps> = ({
   const renderLeftIcon = () => {
     if (!leftIcon) return null;
 
-    return (
-      <View style={baseStyles.leftIcon}>
-        {leftIcon}
-      </View>
-    );
+    return <View style={baseStyles.leftIcon}>{leftIcon}</View>;
   };
 
   const renderRightIcon = () => {
@@ -160,7 +156,7 @@ export const Input: React.FC<InputProps> = ({
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
           <Text style={baseStyles.passwordToggle}>
-            {showPassword ? '🙈' : '👁️'}
+            {showPassword ? "🙈" : "👁️"}
           </Text>
         </TouchableOpacity>
       );
@@ -168,28 +164,16 @@ export const Input: React.FC<InputProps> = ({
 
     if (!rightIcon) return null;
 
-    return (
-      <View style={baseStyles.rightIcon}>
-        {rightIcon}
-      </View>
-    );
+    return <View style={baseStyles.rightIcon}>{rightIcon}</View>;
   };
 
   const renderHelperText = () => {
     if (error) {
-      return (
-        <Text style={baseStyles.errorText}>
-          {error}
-        </Text>
-      );
+      return <Text style={baseStyles.errorText}>{error}</Text>;
     }
 
     if (helperText) {
-      return (
-        <Text style={baseStyles.helperText}>
-          {helperText}
-        </Text>
-      );
+      return <Text style={baseStyles.helperText}>{helperText}</Text>;
     }
 
     return null;
@@ -246,8 +230,8 @@ const baseStyles = StyleSheet.create({
 
   // Label
   labelContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: theme.spacing[2],
   },
 
@@ -264,8 +248,8 @@ const baseStyles = StyleSheet.create({
 
   // Input Container
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: theme.colors.background.secondary,
     borderWidth: 1,
     borderColor: theme.colors.border.main,
@@ -313,14 +297,14 @@ const baseStyles = StyleSheet.create({
   // Icons
   leftIcon: {
     marginRight: theme.spacing[2],
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   rightIcon: {
     marginLeft: theme.spacing[2],
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   passwordToggle: {

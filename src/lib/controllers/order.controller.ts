@@ -356,7 +356,7 @@ export class OrderController extends BaseController {
       const getRequest: GetOrdersRequest = {
         page: validated.page,
         limit: validated.limit,
-        customerId: customerId,
+        customerId,
         status: validated.status,
       };
 
@@ -373,7 +373,7 @@ export class OrderController extends BaseController {
         },
         {
           message: "Customer orders retrieved successfully",
-          customerId: customerId,
+          customerId,
         },
       );
     });
@@ -422,7 +422,7 @@ export class OrderController extends BaseController {
       const getRequest: GetOrdersRequest = {
         page: validated.page,
         limit: validated.limit,
-        farmId: farmId,
+        farmId,
         status: validated.status,
         fulfillmentMethod: validated.fulfillmentMethod,
       };
@@ -440,7 +440,7 @@ export class OrderController extends BaseController {
         },
         {
           message: "Farm orders retrieved successfully",
-          farmId: farmId,
+          farmId,
           agricultural: {
             consciousness: "BIODYNAMIC",
             operation: "FARM_ORDER_HARVEST",

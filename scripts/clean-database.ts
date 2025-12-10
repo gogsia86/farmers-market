@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -30,7 +30,7 @@ interface CleanupReport {
 }
 
 async function cleanupDatabase(): Promise<CleanupReport> {
-  console.log('🔍 Starting database cleanup check...\n');
+  console.log("🔍 Starting database cleanup check...\n");
 
   const report: CleanupReport = {
     orphanedProducts: [],
@@ -61,27 +61,31 @@ async function cleanupDatabase(): Promise<CleanupReport> {
 
   try {
     // 1. Find orphaned products (products without farms)
-    console.log('📦 Checking for orphaned products...');
+    console.log("📦 Checking for orphaned products...");
     report.orphanedProducts = await prisma.$queryRaw`
       SELECT p.id, p.name, p."farmId"
       FROM products p
       LEFT JOIN farms f ON p."farmId" = f.id
       WHERE f.id IS NULL
     `;
-    console.log(`   Found ${report.orphanedProducts.length} orphaned products\n`);
+    console.log(
+      `   Found ${report.orphanedProducts.length} orphaned products\n`,
+    );
 
     // 2. Find orphaned order items
-    console.log('🛒 Checking for orphaned order items...');
+    console.log("🛒 Checking for orphaned order items...");
     report.orphanedOrderItems = await prisma.$queryRaw`
       SELECT oi.id, oi."orderId", oi."productId"
       FROM order_items oi
       LEFT JOIN orders o ON oi."orderId" = o.id
       WHERE o.id IS NULL
     `;
-    console.log(`   Found ${report.orphanedOrderItems.length} orphaned order items\n`);
+    console.log(
+      `   Found ${report.orphanedOrderItems.length} orphaned order items\n`,
+    );
 
     // 3. Find orphaned reviews
-    console.log('⭐ Checking for orphaned reviews...');
+    console.log("⭐ Checking for orphaned reviews...");
     report.orphanedReviews = await prisma.$queryRaw`
       SELECT r.id, r."farmId", r."userId"
       FROM reviews r
@@ -92,18 +96,26 @@ async function cleanupDatabase(): Promise<CleanupReport> {
     console.log(`   Found ${report.orphanedReviews.length} orphaned reviews\n`);
 
     // 4. Find orphaned addresses
-    console.log('📍 Checking for orphaned addresses...');
+    console.log("📍 Checking for orphaned addresses...");
     report.orphanedAddresses = await prisma.$queryRaw`
       SELECT a.id, a."userId"
       FROM addresses a
       LEFT JOIN users u ON a."userId" = u.id
       WHERE u.id IS NULL
     `;
-    console.log(`   Found ${report.orphanedAddresses.length} orphaned addresses\n`);
+    console.log(
+      `   Found ${report.orphanedAddresses.length} orphaned addresses\n`,
+    );
 
     // 5. Check for invalid order statuses
-    console.log('📊 Checking for invalid statuses...');
-    const validOrderStatuses = ['PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'];
+    console.log("📊 Checking for invalid statuses...");
+    const validOrderStatuses = [
+      "PENDING",
+      "PROCESSING",
+      "SHIPPED",
+      "DELIVERED",
+      "CANCELLED",
+    ];
     report.invalidStatuses.orders = await prisma.order.findMany({
       where: {
         status: {
@@ -116,10 +128,12 @@ async function cleanupDatabase(): Promise<CleanupReport> {
         createdAt: true,
       },
     });
-    console.log(`   Found ${report.invalidStatuses.orders.length} orders with invalid status\n`);
+    console.log(
+      `   Found ${report.invalidStatuses.orders.length} orders with invalid status\n`,
+    );
 
     // 6. Check for invalid user statuses
-    const validUserStatuses = ['ACTIVE', 'INACTIVE', 'SUSPENDED', 'DELETED'];
+    const validUserStatuses = ["ACTIVE", "INACTIVE", "SUSPENDED", "DELETED"];
     report.invalidStatuses.users = await prisma.user.findMany({
       where: {
         status: {
@@ -132,10 +146,12 @@ async function cleanupDatabase(): Promise<CleanupReport> {
         status: true,
       },
     });
-    console.log(`   Found ${report.invalidStatuses.users.length} users with invalid status\n`);
+    console.log(
+      `   Found ${report.invalidStatuses.users.length} users with invalid status\n`,
+    );
 
     // 7. Find old soft-deleted records (older than 30 days)
-    console.log('🗑️  Checking for old soft-deleted records...');
+    console.log("🗑️  Checking for old soft-deleted records...");
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
     try {
@@ -152,41 +168,45 @@ async function cleanupDatabase(): Promise<CleanupReport> {
         },
       });
     } catch (e) {
-      console.log('   (Users table may not have deletedAt field)');
+      console.log("   (Users table may not have deletedAt field)");
     }
 
-    console.log(`   Found ${report.oldSoftDeletes.users.length} old soft-deleted users\n`);
+    console.log(
+      `   Found ${report.oldSoftDeletes.users.length} old soft-deleted users\n`,
+    );
 
     // 8. Check for products without prices
-    console.log('💰 Checking for products without prices...');
-    report.inconsistentData.productsWithoutPrices = await prisma.product.findMany({
-      where: {
-        OR: [
-          { price: { lte: 0 } },
-          { price: null },
-        ],
-      },
-      select: {
-        id: true,
-        name: true,
-        price: true,
-        farmId: true,
-      },
-    });
-    console.log(`   Found ${report.inconsistentData.productsWithoutPrices.length} products without valid prices\n`);
+    console.log("💰 Checking for products without prices...");
+    report.inconsistentData.productsWithoutPrices =
+      await prisma.product.findMany({
+        where: {
+          OR: [{ price: { lte: 0 } }, { price: null }],
+        },
+        select: {
+          id: true,
+          name: true,
+          price: true,
+          farmId: true,
+        },
+      });
+    console.log(
+      `   Found ${report.inconsistentData.productsWithoutPrices.length} products without valid prices\n`,
+    );
 
     // 9. Check for orders without items
-    console.log('🛍️  Checking for orders without items...');
+    console.log("🛍️  Checking for orders without items...");
     report.inconsistentData.ordersWithoutItems = await prisma.$queryRaw`
       SELECT o.id, o."userId", o.status, o.total
       FROM orders o
       LEFT JOIN order_items oi ON o.id = oi."orderId"
       WHERE oi.id IS NULL
     `;
-    console.log(`   Found ${report.inconsistentData.ordersWithoutItems.length} orders without items\n`);
+    console.log(
+      `   Found ${report.inconsistentData.ordersWithoutItems.length} orders without items\n`,
+    );
 
     // 10. Check for farms without location
-    console.log('🌾 Checking for farms without location data...');
+    console.log("🌾 Checking for farms without location data...");
     report.inconsistentData.farmsWithoutLocation = await prisma.farm.findMany({
       where: {
         OR: [
@@ -205,10 +225,12 @@ async function cleanupDatabase(): Promise<CleanupReport> {
         state: true,
       },
     });
-    console.log(`   Found ${report.inconsistentData.farmsWithoutLocation.length} farms with incomplete location data\n`);
+    console.log(
+      `   Found ${report.inconsistentData.farmsWithoutLocation.length} farms with incomplete location data\n`,
+    );
 
     // 11. Check for duplicate emails
-    console.log('📧 Checking for duplicate emails...');
+    console.log("📧 Checking for duplicate emails...");
     report.dataIntegrity.duplicateEmails = await prisma.$queryRaw`
       SELECT email, COUNT(*) as count
       FROM users
@@ -216,10 +238,12 @@ async function cleanupDatabase(): Promise<CleanupReport> {
       GROUP BY email
       HAVING COUNT(*) > 1
     `;
-    console.log(`   Found ${report.dataIntegrity.duplicateEmails.length} duplicate emails\n`);
+    console.log(
+      `   Found ${report.dataIntegrity.duplicateEmails.length} duplicate emails\n`,
+    );
 
     // 12. Check for duplicate slugs in farms
-    console.log('🔗 Checking for duplicate farm slugs...');
+    console.log("🔗 Checking for duplicate farm slugs...");
     report.dataIntegrity.duplicateSlugs = await prisma.$queryRaw`
       SELECT slug, COUNT(*) as count
       FROM farms
@@ -227,10 +251,11 @@ async function cleanupDatabase(): Promise<CleanupReport> {
       GROUP BY slug
       HAVING COUNT(*) > 1
     `;
-    console.log(`   Found ${report.dataIntegrity.duplicateSlugs.length} duplicate farm slugs\n`);
-
+    console.log(
+      `   Found ${report.dataIntegrity.duplicateSlugs.length} duplicate farm slugs\n`,
+    );
   } catch (error) {
-    console.error('❌ Error during database cleanup check:', error);
+    console.error("❌ Error during database cleanup check:", error);
     throw error;
   }
 
@@ -238,18 +263,20 @@ async function cleanupDatabase(): Promise<CleanupReport> {
 }
 
 function printReport(report: CleanupReport) {
-  console.log('\n═══════════════════════════════════════════════════════');
-  console.log('📊 DATABASE CLEANUP REPORT');
-  console.log('═══════════════════════════════════════════════════════\n');
+  console.log("\n═══════════════════════════════════════════════════════");
+  console.log("📊 DATABASE CLEANUP REPORT");
+  console.log("═══════════════════════════════════════════════════════\n");
 
   let hasIssues = false;
 
   // Orphaned records
   if (report.orphanedProducts.length > 0) {
     hasIssues = true;
-    console.log('⚠️  ORPHANED PRODUCTS:');
+    console.log("⚠️  ORPHANED PRODUCTS:");
     report.orphanedProducts.slice(0, 5).forEach((p: any) => {
-      console.log(`   - Product ID: ${p.id}, Name: ${p.name}, Farm ID: ${p.farmId}`);
+      console.log(
+        `   - Product ID: ${p.id}, Name: ${p.name}, Farm ID: ${p.farmId}`,
+      );
     });
     if (report.orphanedProducts.length > 5) {
       console.log(`   ... and ${report.orphanedProducts.length - 5} more\n`);
@@ -260,26 +287,30 @@ function printReport(report: CleanupReport) {
 
   if (report.orphanedOrderItems.length > 0) {
     hasIssues = true;
-    console.log('⚠️  ORPHANED ORDER ITEMS:');
-    console.log(`   Found ${report.orphanedOrderItems.length} orphaned order items\n`);
+    console.log("⚠️  ORPHANED ORDER ITEMS:");
+    console.log(
+      `   Found ${report.orphanedOrderItems.length} orphaned order items\n`,
+    );
   }
 
   if (report.orphanedReviews.length > 0) {
     hasIssues = true;
-    console.log('⚠️  ORPHANED REVIEWS:');
+    console.log("⚠️  ORPHANED REVIEWS:");
     console.log(`   Found ${report.orphanedReviews.length} orphaned reviews\n`);
   }
 
   if (report.orphanedAddresses.length > 0) {
     hasIssues = true;
-    console.log('⚠️  ORPHANED ADDRESSES:');
-    console.log(`   Found ${report.orphanedAddresses.length} orphaned addresses\n`);
+    console.log("⚠️  ORPHANED ADDRESSES:");
+    console.log(
+      `   Found ${report.orphanedAddresses.length} orphaned addresses\n`,
+    );
   }
 
   // Invalid statuses
   if (report.invalidStatuses.orders.length > 0) {
     hasIssues = true;
-    console.log('⚠️  INVALID ORDER STATUSES:');
+    console.log("⚠️  INVALID ORDER STATUSES:");
     report.invalidStatuses.orders.forEach((o: any) => {
       console.log(`   - Order ID: ${o.id}, Status: ${o.status}`);
     });
@@ -288,7 +319,7 @@ function printReport(report: CleanupReport) {
 
   if (report.invalidStatuses.users.length > 0) {
     hasIssues = true;
-    console.log('⚠️  INVALID USER STATUSES:');
+    console.log("⚠️  INVALID USER STATUSES:");
     report.invalidStatuses.users.forEach((u: any) => {
       console.log(`   - User: ${u.email}, Status: ${u.status}`);
     });
@@ -298,19 +329,27 @@ function printReport(report: CleanupReport) {
   // Old soft deletes
   if (report.oldSoftDeletes.users.length > 0) {
     hasIssues = true;
-    console.log('🗑️  OLD SOFT-DELETED USERS (>30 days):');
-    console.log(`   Found ${report.oldSoftDeletes.users.length} users that can be hard deleted\n`);
+    console.log("🗑️  OLD SOFT-DELETED USERS (>30 days):");
+    console.log(
+      `   Found ${report.oldSoftDeletes.users.length} users that can be hard deleted\n`,
+    );
   }
 
   // Inconsistent data
   if (report.inconsistentData.productsWithoutPrices.length > 0) {
     hasIssues = true;
-    console.log('⚠️  PRODUCTS WITHOUT VALID PRICES:');
-    report.inconsistentData.productsWithoutPrices.slice(0, 5).forEach((p: any) => {
-      console.log(`   - Product ID: ${p.id}, Name: ${p.name}, Price: ${p.price}`);
-    });
+    console.log("⚠️  PRODUCTS WITHOUT VALID PRICES:");
+    report.inconsistentData.productsWithoutPrices
+      .slice(0, 5)
+      .forEach((p: any) => {
+        console.log(
+          `   - Product ID: ${p.id}, Name: ${p.name}, Price: ${p.price}`,
+        );
+      });
     if (report.inconsistentData.productsWithoutPrices.length > 5) {
-      console.log(`   ... and ${report.inconsistentData.productsWithoutPrices.length - 5} more\n`);
+      console.log(
+        `   ... and ${report.inconsistentData.productsWithoutPrices.length - 5} more\n`,
+      );
     } else {
       console.log();
     }
@@ -318,18 +357,26 @@ function printReport(report: CleanupReport) {
 
   if (report.inconsistentData.ordersWithoutItems.length > 0) {
     hasIssues = true;
-    console.log('⚠️  ORDERS WITHOUT ITEMS:');
-    console.log(`   Found ${report.inconsistentData.ordersWithoutItems.length} empty orders\n`);
+    console.log("⚠️  ORDERS WITHOUT ITEMS:");
+    console.log(
+      `   Found ${report.inconsistentData.ordersWithoutItems.length} empty orders\n`,
+    );
   }
 
   if (report.inconsistentData.farmsWithoutLocation.length > 0) {
     hasIssues = true;
-    console.log('⚠️  FARMS WITH INCOMPLETE LOCATION DATA:');
-    report.inconsistentData.farmsWithoutLocation.slice(0, 5).forEach((f: any) => {
-      console.log(`   - Farm: ${f.name}, Lat: ${f.latitude}, Lng: ${f.longitude}, City: ${f.city}, State: ${f.state}`);
-    });
+    console.log("⚠️  FARMS WITH INCOMPLETE LOCATION DATA:");
+    report.inconsistentData.farmsWithoutLocation
+      .slice(0, 5)
+      .forEach((f: any) => {
+        console.log(
+          `   - Farm: ${f.name}, Lat: ${f.latitude}, Lng: ${f.longitude}, City: ${f.city}, State: ${f.state}`,
+        );
+      });
     if (report.inconsistentData.farmsWithoutLocation.length > 5) {
-      console.log(`   ... and ${report.inconsistentData.farmsWithoutLocation.length - 5} more\n`);
+      console.log(
+        `   ... and ${report.inconsistentData.farmsWithoutLocation.length - 5} more\n`,
+      );
     } else {
       console.log();
     }
@@ -338,7 +385,7 @@ function printReport(report: CleanupReport) {
   // Data integrity
   if (report.dataIntegrity.duplicateEmails.length > 0) {
     hasIssues = true;
-    console.log('⚠️  DUPLICATE EMAILS:');
+    console.log("⚠️  DUPLICATE EMAILS:");
     report.dataIntegrity.duplicateEmails.forEach((e: any) => {
       console.log(`   - Email: ${e.email}, Count: ${e.count}`);
     });
@@ -347,7 +394,7 @@ function printReport(report: CleanupReport) {
 
   if (report.dataIntegrity.duplicateSlugs.length > 0) {
     hasIssues = true;
-    console.log('⚠️  DUPLICATE FARM SLUGS:');
+    console.log("⚠️  DUPLICATE FARM SLUGS:");
     report.dataIntegrity.duplicateSlugs.forEach((s: any) => {
       console.log(`   - Slug: ${s.slug}, Count: ${s.count}`);
     });
@@ -355,25 +402,43 @@ function printReport(report: CleanupReport) {
   }
 
   if (!hasIssues) {
-    console.log('✅ No database integrity issues found! Your database looks clean.\n');
+    console.log(
+      "✅ No database integrity issues found! Your database looks clean.\n",
+    );
   }
 
   // Summary
-  console.log('═══════════════════════════════════════════════════════');
-  console.log('📊 SUMMARY:');
+  console.log("═══════════════════════════════════════════════════════");
+  console.log("📊 SUMMARY:");
   console.log(`   Orphaned products: ${report.orphanedProducts.length}`);
   console.log(`   Orphaned order items: ${report.orphanedOrderItems.length}`);
   console.log(`   Orphaned reviews: ${report.orphanedReviews.length}`);
   console.log(`   Orphaned addresses: ${report.orphanedAddresses.length}`);
-  console.log(`   Invalid order statuses: ${report.invalidStatuses.orders.length}`);
-  console.log(`   Invalid user statuses: ${report.invalidStatuses.users.length}`);
-  console.log(`   Old soft-deleted users: ${report.oldSoftDeletes.users.length}`);
-  console.log(`   Products without prices: ${report.inconsistentData.productsWithoutPrices.length}`);
-  console.log(`   Orders without items: ${report.inconsistentData.ordersWithoutItems.length}`);
-  console.log(`   Farms without location: ${report.inconsistentData.farmsWithoutLocation.length}`);
-  console.log(`   Duplicate emails: ${report.dataIntegrity.duplicateEmails.length}`);
-  console.log(`   Duplicate farm slugs: ${report.dataIntegrity.duplicateSlugs.length}`);
-  console.log('═══════════════════════════════════════════════════════\n');
+  console.log(
+    `   Invalid order statuses: ${report.invalidStatuses.orders.length}`,
+  );
+  console.log(
+    `   Invalid user statuses: ${report.invalidStatuses.users.length}`,
+  );
+  console.log(
+    `   Old soft-deleted users: ${report.oldSoftDeletes.users.length}`,
+  );
+  console.log(
+    `   Products without prices: ${report.inconsistentData.productsWithoutPrices.length}`,
+  );
+  console.log(
+    `   Orders without items: ${report.inconsistentData.ordersWithoutItems.length}`,
+  );
+  console.log(
+    `   Farms without location: ${report.inconsistentData.farmsWithoutLocation.length}`,
+  );
+  console.log(
+    `   Duplicate emails: ${report.dataIntegrity.duplicateEmails.length}`,
+  );
+  console.log(
+    `   Duplicate farm slugs: ${report.dataIntegrity.duplicateSlugs.length}`,
+  );
+  console.log("═══════════════════════════════════════════════════════\n");
 }
 
 async function main() {
@@ -382,11 +447,11 @@ async function main() {
     printReport(report);
 
     // Save report to file
-    const fs = require('fs');
-    const path = require('path');
-    const reportPath = path.join(process.cwd(), 'database-cleanup-report.json');
+    const fs = require("fs");
+    const path = require("path");
+    const reportPath = path.join(process.cwd(), "database-cleanup-report.json");
     fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
-    console.log(`📝 Detailed report saved to: database-cleanup-report.json\n`);
+    console.log("📝 Detailed report saved to: database-cleanup-report.json\n");
 
     // Exit with appropriate code
     const hasIssues =
@@ -400,7 +465,7 @@ async function main() {
 
     process.exit(hasIssues ? 1 : 0);
   } catch (error) {
-    console.error('❌ Error running database cleanup:', error);
+    console.error("❌ Error running database cleanup:", error);
     process.exit(1);
   } finally {
     await prisma.$disconnect();

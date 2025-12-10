@@ -18,6 +18,12 @@ import { spawn, exec } from "child_process";
 import { promisify } from "util";
 import * as http from "http";
 import * as fs from "fs";
+import * as path from "path";
+import { config } from "dotenv";
+
+// Load environment variables from .env.local
+config({ path: path.resolve(process.cwd(), ".env.local") });
+config({ path: path.resolve(process.cwd(), ".env") });
 
 const execAsync = promisify(exec);
 
@@ -38,9 +44,9 @@ function log(message: string, color: keyof typeof colors = "reset") {
 }
 
 function section(title: string) {
-  console.log("\n" + "=".repeat(70));
+  console.log(`\n${"=".repeat(70)}`);
   log(title, "bright");
-  console.log("=".repeat(70) + "\n");
+  console.log(`${"=".repeat(70)}\n`);
 }
 
 // Check if port is in use
@@ -75,7 +81,7 @@ async function checkServer(url: string, maxAttempts = 30): Promise<boolean> {
         });
       });
 
-      log(`✅ Server is responding!`, "green");
+      log("✅ Server is responding!", "green");
       return true;
     } catch (error) {
       if (attempt < maxAttempts) {
@@ -173,7 +179,7 @@ async function startDevServer(): Promise<void> {
   const inUse = await isPortInUse(port);
   if (inUse) {
     log(`⚠️  Port ${port} is already in use`, "yellow");
-    log(`Attempting to kill existing process...`, "yellow");
+    log("Attempting to kill existing process...", "yellow");
     await killPortProcess(port);
     await new Promise((resolve) => setTimeout(resolve, 2000));
   }
@@ -276,7 +282,7 @@ async function runMonitoringBot(): Promise<void> {
     log(`⏱️  Duration: ${report.duration.toFixed(2)}ms`, "cyan");
 
     // Show individual results
-    console.log("\n" + "-".repeat(70));
+    console.log(`\n${"-".repeat(70)}`);
     for (const result of report.results) {
       const icon = result.status === "PASSED" ? "✅" : "❌";
       const color = result.status === "PASSED" ? "green" : "red";
@@ -310,7 +316,7 @@ async function runMonitoringBot(): Promise<void> {
     );
 
     if (error instanceof Error && error.stack) {
-      log("\n" + error.stack, "red");
+      log(`\n${error.stack}`, "red");
     }
 
     throw error;

@@ -49,6 +49,8 @@ module.exports = {
     "<rootDir>/src/**/*.{spec,test}.{ts,tsx}",
     // Exclude Playwright tests from Jest
     "!<rootDir>/tests/e2e/**/*.{spec,test}.{ts,tsx}",
+    // Exclude integration tests (require Docker - run separately with jest.config.integration.js)
+    "!<rootDir>/tests/integration/**/*.{spec,test}.{ts,tsx}",
     "<rootDir>/tests/**/*.{spec,test}.{ts,tsx}",
   ],
 
@@ -105,6 +107,7 @@ module.exports = {
     "/out/",
     "/dist/",
     "<rootDir>/tests/e2e/",
+    "<rootDir>/tests/integration/", // Integration tests require Docker - run separately
     "<rootDir>/src/__tests__/benchmarks/",
   ],
 

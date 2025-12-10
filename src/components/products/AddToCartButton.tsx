@@ -214,6 +214,7 @@ export function AddToCartButton({
         }
         aria-busy={buttonState === "loading"}
         aria-live="polite"
+        data-testid="add-to-cart-button"
       >
         {getButtonContent()}
       </button>
@@ -223,6 +224,7 @@ export function AddToCartButton({
         <div
           className="rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-800"
           role="alert"
+          data-testid="add-to-cart-error"
         >
           <div className="flex items-start gap-2">
             <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
@@ -236,6 +238,7 @@ export function AddToCartButton({
         <div
           className="rounded-md bg-green-50 border border-green-200 p-3 text-sm text-green-800"
           role="status"
+          data-testid="add-to-cart-success"
         >
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
@@ -245,6 +248,7 @@ export function AddToCartButton({
             <button
               onClick={() => router.push("/cart")}
               className="text-green-700 underline hover:text-green-800 font-medium"
+              data-testid="view-cart-link"
             >
               View Cart
             </button>

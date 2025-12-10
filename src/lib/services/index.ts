@@ -69,10 +69,87 @@ export {
 export { orderService, OrderService } from "./order.service";
 
 // ============================================================================
+// ORDER CREATION SERVICE
+// ============================================================================
+
+export {
+  orderCreationService,
+  OrderCreationService,
+  type CreateOrderRequest,
+  type OrderItemInput,
+  type FulfillmentMethod,
+  type OrderTotals,
+  type CartToOrderRequest,
+  type OrderValidationResult,
+  type CreatedOrder,
+} from "./order-creation.service";
+
+// ============================================================================
+// ORDER FULFILLMENT SERVICE
+// ============================================================================
+
+export {
+  orderFulfillmentService,
+  OrderFulfillmentService,
+} from "./order-fulfillment.service";
+
+// ============================================================================
+// ORDER VALIDATION SERVICE
+// ============================================================================
+
+export {
+  orderValidationService,
+  OrderValidationService,
+  type OrderValidationError,
+  type OrderValidationWarning,
+  type ValidationResult,
+  type StatusTransitionValidation,
+  type ProductValidation,
+  type SeasonalValidation,
+  VALID_STATUS_TRANSITIONS,
+  CANCELLABLE_STATUSES,
+} from "./order-validation.service";
+
+// ============================================================================
+// ORDER ANALYTICS SERVICE
+// ============================================================================
+
+export {
+  orderAnalyticsService,
+  OrderAnalyticsService,
+  type OrderStatisticsRequest,
+  type OrderStatistics,
+  type MonthlyRevenueData,
+  type TopProductData,
+  type TopCustomerData,
+  type ConsciousnessMetrics,
+  type OrderConsciousness,
+  type AgriculturalAlignment,
+  type SeasonalAnalysis,
+  type RevenueBreakdown,
+  type OrderTrendData,
+} from "./order-analytics.service";
+
+// ============================================================================
 // CART SERVICE
 // ============================================================================
 
 export { cartService, CartService } from "./cart.service";
+
+// ============================================================================
+// CART SYNC SERVICE
+// ============================================================================
+
+export {
+  cartSyncService,
+  CartSyncService,
+  type CartItemInput,
+  type CartItemWithProduct,
+  type ServerCart,
+  type CartTotals,
+  type MergeStrategy,
+  type MergeResult,
+} from "./cart-sync.service";
 
 // ============================================================================
 // MARKETPLACE SERVICE

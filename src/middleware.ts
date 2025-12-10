@@ -8,6 +8,7 @@
  * - Role-based access control (RBAC)
  * - Agricultural consciousness tracking
  * - Performance reality bending (minimal overhead)
+ * - Environment-aware logging (no sensitive data in production)
  *
  * Features:
  * - Centralized authentication for all protected routes
@@ -35,6 +36,57 @@ import {
   getAccessDeniedUrl,
   isAgriculturalRoute,
 } from "@/lib/middleware/route-config";
+
+// ============================================================================
+// ENVIRONMENT-AWARE LOGGING
+// ============================================================================
+
+const isDevelopment = process.env.NODE_ENV !== "production";
+
+interface LogMetadata {
+  path?: string;
+  authenticated?: boolean;
+  userRole?: string;
+  timestamp?: string;
+  redirectTo?: string;
+  reason?: string;
+}
+
+/**
+ * Environment-aware logger for middleware
+ * Only outputs in development mode to prevent info leakage in production
+ */
+const middlewareLog = {
+  debug: (message: string, metadata?: LogMetadata): void => {
+    if (isDevelopment) {
+      console.debug(`🛡️  [Middleware] ${message}`, metadata || "");
+    }
+  },
+  info: (message: string, metadata?: LogMetadata): void => {
+    if (isDevelopment) {
+      console.info(`🛡️  [Middleware] ${message}`, metadata || "");
+    }
+  },
+  warn: (message: string, metadata?: LogMetadata): void => {
+    if (isDevelopment) {
+      console.warn(`⚠️  [Middleware] ${message}`, metadata || "");
+    }
+  },
+  error: (message: string, metadata?: LogMetadata): void => {
+    // Errors are logged in both environments but with less detail in production
+    if (isDevelopment) {
+      console.error(`❌ [Middleware] ${message}`, metadata || "");
+    } else {
+      // In production, log minimal info without sensitive details
+      console.error(`[Middleware Error] ${message}`);
+    }
+  },
+  auth: (action: string, metadata: LogMetadata): void => {
+    if (isDevelopment) {
+      console.log(`🔐 [Middleware Auth] ${action}`, metadata);
+    }
+  },
+};
 
 // ============================================================================
 // GLOBAL CONSCIOUSNESS TRACKING
@@ -99,10 +151,10 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  console.log("🛡️  Middleware Auth Check:", {
+  middlewareLog.auth("Auth Check", {
     path: pathname,
     authenticated: !!token,
-    userRole: token?.role || "none",
+    userRole: (token?.role as string) || "none",
     timestamp: new Date().toISOString(),
   });
 
@@ -116,7 +168,9 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     if (token) {
       const userRole = token.role as UserRole;
       const redirectUrl = getDefaultRedirectUrl(userRole);
-      console.log(`✅ Already authenticated, redirecting to ${redirectUrl}`);
+      middlewareLog.info("Already authenticated, redirecting", {
+        redirectTo: redirectUrl,
+      });
       return NextResponse.redirect(new URL(redirectUrl, request.url));
     }
 
@@ -130,7 +184,9 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 
   // If not authenticated, redirect to login
   if (!token) {
-    console.log("❌ Not authenticated, redirecting to login");
+    middlewareLog.debug("Not authenticated, redirecting to login", {
+      path: pathname,
+    });
     const loginUrl = getLoginUrl(pathname, baseUrl);
     return NextResponse.redirect(loginUrl);
   }
@@ -144,7 +200,11 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 
   // Check if user has required role for this route
   if (!hasRequiredRole(userRole, pathname)) {
-    console.log(`❌ Insufficient permissions for ${userRole} on ${pathname}`);
+    middlewareLog.warn("Insufficient permissions", {
+      userRole,
+      path: pathname,
+      reason: "insufficient_permissions",
+    });
     const accessDeniedUrl = getAccessDeniedUrl(
       baseUrl,
       "insufficient_permissions",
@@ -158,7 +218,11 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 
   // Check if action is restricted for user role (e.g., moderators can't delete)
   if (isActionRestricted(userRole, pathname)) {
-    console.log(`❌ Action restricted for ${userRole} on ${pathname}`);
+    middlewareLog.warn("Action restricted", {
+      userRole,
+      path: pathname,
+      reason: "action_restricted",
+    });
     const referrer =
       request.headers.get("referer") || getDefaultRedirectUrl(userRole);
     const backUrl = new URL(referrer);
@@ -172,7 +236,11 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 
   // Extra check for super admin only routes (settings, critical admin functions)
   if (pathname.startsWith("/admin/settings") && userRole !== "SUPER_ADMIN") {
-    console.log(`❌ Super admin only route accessed by ${userRole}`);
+    middlewareLog.warn("Super admin route access denied", {
+      userRole,
+      path: pathname,
+      reason: "super_admin_only",
+    });
     const dashboardUrl = new URL("/admin?error=super_admin_only", request.url);
     return NextResponse.redirect(dashboardUrl);
   }
@@ -181,7 +249,7 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
   // SUCCESS - ADD DIVINE HEADERS
   // ========================================
 
-  console.log(`✅ Access granted: ${userRole} -> ${pathname}`);
+  middlewareLog.debug("Access granted", { userRole, path: pathname });
 
   const response = NextResponse.next();
 

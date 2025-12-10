@@ -1,28 +1,27 @@
 /**
- * DIVINE AUTH UTILITIES - NEXTAUTH V5
+ * 🔐 DIVINE AUTH UTILITIES - NEXTAUTH V4
  * Quantum authentication with agricultural consciousness
  *
  * Updated: January 2025
- * Version: NextAuth v5.0.0-beta
+ * Version: NextAuth v4.24.x
  *
+ * CANONICAL IMPORT POINT
  * This file re-exports all authentication utilities from the config
  * for easy importing throughout the application.
+ *
+ * Usage: import { auth, requireAuth, signIn } from "@/lib/auth"
  */
 
-// Import User type from core entities
-import type { User } from "@/types/core-entities";
-
-// Re-export NextAuth v5 core functions
+// Re-export all auth utilities from the canonical config
 export {
+  // Core auth functions
   auth,
-  signIn,
-  signOut,
+  authOptions,
   handlers,
+  GET,
+  POST,
   getServerSession,
-} from "@/lib/auth/config";
-
-// Re-export helper functions
-export {
+  // Helper functions
   getCurrentUser,
   requireAuth,
   requireRole,
@@ -31,86 +30,13 @@ export {
   hasRole,
   isAdmin,
   isFarmer,
+  // Client-side functions (re-exported from next-auth/react)
+  signIn,
+  signOut,
 } from "@/lib/auth/config";
 
-// Export types for use in components
-// Note: Commenting out to avoid conflicts with Prisma User type
-// export type { User, Session } from "next-auth";
+// Re-export isAuthenticated from index
+export { isAuthenticated } from "@/lib/auth/index";
 
-/**
- * USAGE EXAMPLES:
- *
- * 1. In Server Components:
- * ```typescript
- * import { auth } from "@/lib/auth";
- *
- * export default async function Page() {
- *   const session = await auth();
- *   if (!session) {
- *     redirect("/login");
- *   }
- *   return <div>Hello {session.user.name}</div>;
- * }
- * ```
- *
- * 2. In API Routes:
- * ```typescript
- * import { requireAuth } from "@/lib/auth";
- *
- * export async function GET() {
- *   const user = await requireAuth();
- *   // User is guaranteed to exist here
- *   return NextResponse.json({ user });
- * }
- * ```
- *
- * 3. Require Specific Role:
- * ```typescript
- * import { requireAdmin } from "@/lib/auth";
- *
- * export async function POST() {
- *   const user = await requireAdmin();
- *   // User is guaranteed to be admin
- *   return NextResponse.json({ message: "Admin action" });
- * }
- * ```
- *
- * 4. Check Role Without Throwing:
- * ```typescript
- * import { hasRole } from "@/lib/auth";
- *
- * export default async function Page() {
- *   const isAdminUser = await hasRole(["ADMIN", "SUPER_ADMIN"]);
- *   return (
- *     <div>
- *       {isAdminUser && <AdminPanel />}
- *       <RegularContent />
- *     </div>
- *   );
- * }
- * ```
- */
-
-/**
- * Session interface for NextAuth
- * Uses core User type from single source of truth
- */
-export interface Session {
-  user: User & {
-    name: string; // Computed from firstName + lastName
-  };
-  expires: string;
-}
-
-// Re-export core types for convenience
-export type { User, UserRole } from "@/types/core-entities";
-
-/**
- * Check if user is authenticated
- * @returns {Promise<boolean>} True if user is authenticated
- */
-export async function isAuthenticated(): Promise<boolean> {
-  const { auth } = await import("@/lib/auth/config");
-  const session = await auth();
-  return !!session?.user;
-}
+// Export types for convenience
+export type { UserRole } from "@/types/core-entities";

@@ -69,7 +69,8 @@ const FIXES: Fix[] = [
     description: "Fix customer login redirect expectations",
     pattern:
       /\/\/\s*Should redirect to dashboard\s*\n\s*await page\.waitForURL\(\/\\\/dashboard\/\);/g,
-    replacement: `// Should redirect after login (customers may not have dedicated dashboard)\n    await page.waitForURL((url) => !url.pathname.includes("/login"), { timeout: 10000 });`,
+    replacement:
+      '// Should redirect after login (customers may not have dedicated dashboard)\n    await page.waitForURL((url) => !url.pathname.includes("/login"), { timeout: 10000 });',
   },
 
   // Fix 5: Add TEST_USERS import if missing - handled in ensureTestUsersImport function
@@ -287,7 +288,7 @@ async function main() {
       totalFixesApplied += fileFixCount;
       log(`Modified: ${relativePath} (${fileFixCount} fixes)`, "success");
     } else {
-      verbose(`  No changes needed`);
+      verbose("  No changes needed");
     }
   }
 

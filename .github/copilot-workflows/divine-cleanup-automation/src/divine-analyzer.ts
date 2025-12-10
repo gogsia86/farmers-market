@@ -232,7 +232,7 @@ export class QuantumFileAnalyzer {
    */
   private async analyzeFileChunk(
     files: string[],
-    chunkIndex: number,
+    _chunkIndex: number,
   ): Promise<QuantumFileNode[]> {
     const analyzed: QuantumFileNode[] = [];
 
@@ -537,7 +537,7 @@ export class QuantumFileAnalyzer {
    */
   private findUnusedFiles(
     files: QuantumFileNode[],
-    dependencyGraph: DependencyEdge[],
+    _dependencyGraph: DependencyEdge[],
   ): QuantumFileNode[] {
     const entryPoints = new Set([
       "src/app/layout.tsx",

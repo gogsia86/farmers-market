@@ -132,7 +132,7 @@ export function isPublicRoute(pathname: string): boolean {
     if (route.endsWith("/*")) {
       return pathname.startsWith(route.slice(0, -2));
     }
-    return pathname === route || pathname.startsWith(route + "/");
+    return pathname === route || pathname.startsWith(`${route}/`);
   });
 }
 

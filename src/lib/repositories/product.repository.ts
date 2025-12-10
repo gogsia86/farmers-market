@@ -228,7 +228,7 @@ export class QuantumProductRepository extends BaseRepository<
           seasonal: true,
           inStock: true,
         },
-        ...this.getDefaultInclude(),
+        include: this.getDefaultInclude(),
         ...this.filterOptions(options),
       })) as QuantumProduct[];
 
@@ -297,7 +297,7 @@ export class QuantumProductRepository extends BaseRepository<
             },
           ],
         },
-        ...this.getDefaultInclude(),
+        include: this.getDefaultInclude(),
         ...this.filterOptions(options),
       })) as QuantumProduct[];
 
@@ -493,7 +493,7 @@ export class QuantumProductRepository extends BaseRepository<
             decrement: quantity,
           },
         },
-        ...this.getDefaultInclude(),
+        include: this.getDefaultInclude(),
       })) as QuantumProduct;
 
       this.logOperation("decrementStock", {
@@ -531,7 +531,7 @@ export class QuantumProductRepository extends BaseRepository<
             increment: quantity,
           },
         },
-        ...this.getDefaultInclude(),
+        include: this.getDefaultInclude(),
       })) as QuantumProduct;
 
       this.logOperation("incrementStock", {
@@ -633,21 +633,19 @@ export class QuantumProductRepository extends BaseRepository<
    */
   protected getDefaultInclude(): any {
     return {
-      include: {
-        farm: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-            city: true,
-            state: true,
-            status: true,
-          },
+      farm: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          city: true,
+          state: true,
+          status: true,
         },
-        _count: {
-          select: {
-            orderItems: true,
-          },
+      },
+      _count: {
+        select: {
+          orderItems: true,
         },
       },
     };

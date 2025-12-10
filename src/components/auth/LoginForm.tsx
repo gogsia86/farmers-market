@@ -107,6 +107,7 @@ export default function LoginForm({
           className="rounded-md bg-red-50 p-4 border border-red-200"
           role="alert"
           aria-live="assertive"
+          data-testid="login-error-message"
         >
           <div className="flex">
             <div className="flex-shrink-0">
@@ -146,6 +147,7 @@ export default function LoginForm({
           aria-required="true"
           aria-invalid={errors.email ? "true" : "false"}
           aria-describedby={errors.email ? "email-error" : undefined}
+          data-testid="login-email-input"
           className={`
             appearance-none block w-full px-3 py-2 border rounded-md shadow-sm
             placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2
@@ -186,6 +188,7 @@ export default function LoginForm({
           aria-required="true"
           aria-invalid={errors.password ? "true" : "false"}
           aria-describedby={errors.password ? "password-error" : undefined}
+          data-testid="login-password-input"
           className={`
             appearance-none block w-full px-3 py-2 border rounded-md shadow-sm
             placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2
@@ -219,6 +222,7 @@ export default function LoginForm({
             type="checkbox"
             className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded cursor-pointer"
             disabled={isLoading}
+            data-testid="login-remember-checkbox"
             {...register("rememberMe")}
           />
           <label
@@ -247,6 +251,7 @@ export default function LoginForm({
             }
           `}
           aria-busy={isLoading}
+          data-testid="login-submit-button"
         >
           {isLoading ? (
             <>
@@ -298,6 +303,7 @@ export default function LoginForm({
             onClick={() => signIn("google", { callbackUrl })}
             disabled={isLoading}
             className="w-full inline-flex justify-center items-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            data-testid="login-google-button"
           >
             <svg
               className="w-5 h-5 mr-2"
@@ -315,6 +321,7 @@ export default function LoginForm({
             onClick={() => signIn("github", { callbackUrl })}
             disabled={isLoading}
             className="w-full inline-flex justify-center items-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            data-testid="login-github-button"
           >
             <svg
               className="w-5 h-5 mr-2"

@@ -1,7 +1,7 @@
 // 🌾 Farmers Market Mobile App - Divine Button Component
 // Comprehensive button with agricultural consciousness and quantum efficiency
 
-import React from 'react';
+import React from "react";
 import {
   TouchableOpacity,
   Text,
@@ -11,18 +11,24 @@ import {
   ViewStyle,
   TextStyle,
   TouchableOpacityProps,
-} from 'react-native';
-import { theme } from '../../theme';
+} from "react-native";
+import { theme } from "../../theme";
 
 // ========================================
 // 🎯 TYPES & INTERFACES
 // ========================================
 
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success';
-export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
-export type ButtonIconPosition = 'left' | 'right';
+export type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "outline"
+  | "ghost"
+  | "danger"
+  | "success";
+export type ButtonSize = "sm" | "md" | "lg" | "xl";
+export type ButtonIconPosition = "left" | "right";
 
-export interface ButtonProps extends Omit<TouchableOpacityProps, 'style'> {
+export interface ButtonProps extends Omit<TouchableOpacityProps, "style"> {
   // Content
   children: React.ReactNode;
 
@@ -40,7 +46,7 @@ export interface ButtonProps extends Omit<TouchableOpacityProps, 'style'> {
   rightIcon?: React.ReactNode;
 
   // Agricultural Consciousness
-  seasonal?: 'spring' | 'summer' | 'fall' | 'winter';
+  seasonal?: "spring" | "summer" | "fall" | "winter";
 
   // Custom Styles
   style?: ViewStyle;
@@ -56,8 +62,8 @@ export interface ButtonProps extends Omit<TouchableOpacityProps, 'style'> {
 
 export const Button: React.FC<ButtonProps> = ({
   children,
-  variant = 'primary',
-  size = 'md',
+  variant = "primary",
+  size = "md",
   fullWidth = false,
   loading = false,
   disabled = false,
@@ -107,7 +113,7 @@ export const Button: React.FC<ButtonProps> = ({
       <View
         style={[
           styles.iconContainer,
-          position === 'left' ? styles.iconLeft : styles.iconRight,
+          position === "left" ? styles.iconLeft : styles.iconRight,
         ]}
       >
         {icon}
@@ -121,7 +127,7 @@ export const Button: React.FC<ButtonProps> = ({
         <View style={styles.loadingContainer}>
           <ActivityIndicator
             color={getLoaderColor(variant)}
-            size={size === 'sm' ? 'small' : 'small'}
+            size={size === "sm" ? "small" : "small"}
           />
           <Text style={[buttonTextStyle, styles.loadingText]}>Loading...</Text>
         </View>
@@ -130,9 +136,9 @@ export const Button: React.FC<ButtonProps> = ({
 
     return (
       <>
-        {renderIcon(leftIcon, 'left')}
+        {renderIcon(leftIcon, "left")}
         <Text style={buttonTextStyle}>{children}</Text>
-        {renderIcon(rightIcon, 'right')}
+        {renderIcon(rightIcon, "right")}
       </>
     );
   };
@@ -160,20 +166,22 @@ export const Button: React.FC<ButtonProps> = ({
 
 function getLoaderColor(variant: ButtonVariant): string {
   switch (variant) {
-    case 'primary':
-    case 'secondary':
-    case 'danger':
-    case 'success':
+    case "primary":
+    case "secondary":
+    case "danger":
+    case "success":
       return theme.colors.text.inverse;
-    case 'outline':
-    case 'ghost':
+    case "outline":
+    case "ghost":
       return theme.colors.primary[500];
     default:
       return theme.colors.text.inverse;
   }
 }
 
-function getSeasonalStyle(season: 'spring' | 'summer' | 'fall' | 'winter'): ViewStyle {
+function getSeasonalStyle(
+  season: "spring" | "summer" | "fall" | "winter",
+): ViewStyle {
   const seasonalColors = theme.colors.seasonal[season];
   return {
     backgroundColor: seasonalColors.primary,
@@ -188,17 +196,17 @@ function getSeasonalStyle(season: 'spring' | 'summer' | 'fall' | 'winter'): View
 const styles = StyleSheet.create({
   // Base Styles
   base: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: theme.borderRadius.base,
     borderWidth: 1,
-    borderColor: 'transparent',
+    borderColor: "transparent",
     ...theme.shadows.sm,
   },
 
   fullWidth: {
-    width: '100%',
+    width: "100%",
   },
 
   disabled: {
@@ -228,7 +236,7 @@ const styles = StyleSheet.create({
   },
 
   outline: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     borderColor: theme.colors.primary[500],
     borderWidth: 2,
   },
@@ -238,13 +246,13 @@ const styles = StyleSheet.create({
   },
 
   ghost: {
-    backgroundColor: 'transparent',
-    borderColor: 'transparent',
+    backgroundColor: "transparent",
+    borderColor: "transparent",
     ...theme.shadows.none,
   },
 
   ghost_disabled: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
 
   danger: {
@@ -295,7 +303,7 @@ const styles = StyleSheet.create({
   // Text Styles
   text: {
     fontWeight: theme.typography.fontWeight.semibold,
-    textAlign: 'center',
+    textAlign: "center",
   },
 
   text_primary: {
@@ -348,8 +356,8 @@ const styles = StyleSheet.create({
 
   // Icon Styles
   iconContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   iconLeft: {
@@ -362,9 +370,9 @@ const styles = StyleSheet.create({
 
   // Loading Styles
   loadingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   loadingText: {

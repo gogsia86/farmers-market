@@ -11,6 +11,7 @@
  * - Fulfillment method selection (Delivery/Pickup)
  * - Delivery instructions
  * - Agricultural consciousness UI
+ * - E2E test ID attributes for automated testing
  */
 
 import { useState, useEffect } from "react";
@@ -162,15 +163,16 @@ export function AddressStep() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-testid="address-step">
       {/* Fulfillment Method Selection */}
-      <div>
+      <div data-testid="fulfillment-method-section">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
           Fulfillment Method
         </h3>
         <div className="grid grid-cols-2 gap-4">
           <button
             onClick={() => setFulfillmentMethod("DELIVERY")}
+            data-testid="fulfillment-delivery"
             className={`p-4 border-2 rounded-lg transition-all ${
               fulfillmentMethod === "DELIVERY"
                 ? "border-amber-500 bg-amber-50"
@@ -188,6 +190,7 @@ export function AddressStep() {
 
           <button
             onClick={() => setFulfillmentMethod("FARM_PICKUP")}
+            data-testid="fulfillment-pickup"
             className={`p-4 border-2 rounded-lg transition-all ${
               fulfillmentMethod === "FARM_PICKUP"
                 ? "border-amber-500 bg-amber-50"
@@ -206,18 +209,19 @@ export function AddressStep() {
       {/* Address Selection (only for delivery) */}
       {fulfillmentMethod === "DELIVERY" && (
         <>
-          <div>
+          <div data-testid="shipping-address-section">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Shipping Address
             </h3>
 
             {/* Saved Addresses */}
             {localSavedAddresses.length > 0 && !showNewAddressForm && (
-              <div className="space-y-3 mb-4">
+              <div className="space-y-3 mb-4" data-testid="saved-addresses">
                 {localSavedAddresses.map((address) => (
                   <button
                     key={address.id}
                     onClick={() => handleSelectAddress(address)}
+                    data-testid={`saved-address-${address.id}`}
                     className={`w-full p-4 border-2 rounded-lg text-left transition-all ${
                       selectedAddressId === address.id
                         ? "border-amber-500 bg-amber-50"
@@ -260,6 +264,7 @@ export function AddressStep() {
             {!showNewAddressForm && (
               <button
                 onClick={() => setShowNewAddressForm(true)}
+                data-testid="add-new-address-button"
                 className="w-full p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-amber-500 hover:bg-amber-50 transition-all text-gray-600 hover:text-amber-700 flex items-center justify-center gap-2"
               >
                 <Plus className="h-5 w-5" />
@@ -269,36 +274,51 @@ export function AddressStep() {
 
             {/* New Address Form */}
             {showNewAddressForm && (
-              <div className="border-2 border-gray-300 rounded-lg p-6 space-y-4">
+              <div
+                className="border-2 border-gray-300 rounded-lg p-6 space-y-4"
+                data-testid="new-address-form"
+              >
                 <h4 className="font-semibold text-gray-900 mb-4">
                   New Address
                 </h4>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="street-address"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Street Address *
                   </label>
                   <input
+                    id="street-address"
                     type="text"
                     value={newAddress.street}
                     onChange={(e) =>
                       setNewAddress({ ...newAddress, street: e.target.value })
                     }
+                    data-testid="address-street"
+                    aria-label="Street Address"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                     placeholder="123 Main Street"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="street-address-2"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Apartment, suite, etc. (optional)
                   </label>
                   <input
+                    id="street-address-2"
                     type="text"
                     value={newAddress.street2}
                     onChange={(e) =>
                       setNewAddress({ ...newAddress, street2: e.target.value })
                     }
+                    data-testid="address-street2"
+                    aria-label="Apartment or Suite"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                     placeholder="Apt 4B"
                   />
@@ -306,30 +326,42 @@ export function AddressStep() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      htmlFor="city"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
                       City *
                     </label>
                     <input
+                      id="city"
                       type="text"
                       value={newAddress.city}
                       onChange={(e) =>
                         setNewAddress({ ...newAddress, city: e.target.value })
                       }
+                      data-testid="address-city"
+                      aria-label="City"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                       placeholder="Portland"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      htmlFor="state"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
                       State *
                     </label>
                     <input
+                      id="state"
                       type="text"
                       value={newAddress.state}
                       onChange={(e) =>
                         setNewAddress({ ...newAddress, state: e.target.value })
                       }
+                      data-testid="address-state"
+                      aria-label="State"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                       placeholder="OR"
                       maxLength={2}
@@ -338,15 +370,21 @@ export function AddressStep() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="zip-code"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     ZIP Code *
                   </label>
                   <input
+                    id="zip-code"
                     type="text"
                     value={newAddress.zipCode}
                     onChange={(e) =>
                       setNewAddress({ ...newAddress, zipCode: e.target.value })
                     }
+                    data-testid="address-zipcode"
+                    aria-label="ZIP Code"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                     placeholder="97201"
                     maxLength={10}
@@ -356,12 +394,14 @@ export function AddressStep() {
                 <div className="flex gap-3 pt-4">
                   <button
                     onClick={() => setShowNewAddressForm(false)}
+                    data-testid="cancel-address-button"
                     className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-gray-700"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSubmitNewAddress}
+                    data-testid="use-address-button"
                     className="flex-1 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-semibold rounded-lg"
                   >
                     Use This Address
@@ -372,14 +412,20 @@ export function AddressStep() {
           </div>
 
           {/* Delivery Instructions */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div data-testid="delivery-instructions-section">
+            <label
+              htmlFor="delivery-instructions"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Delivery Instructions (Optional)
             </label>
             <textarea
+              id="delivery-instructions"
               value={deliveryInstructions}
               onChange={(e) => setDeliveryInstructions(e.target.value)}
               rows={3}
+              data-testid="delivery-instructions"
+              aria-label="Delivery Instructions"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 resize-none"
               placeholder="Leave at front door, ring doorbell, etc."
             />
@@ -390,7 +436,10 @@ export function AddressStep() {
       {/* Pickup Instructions */}
       {(fulfillmentMethod === "FARM_PICKUP" ||
         fulfillmentMethod === "MARKET_PICKUP") && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div
+          className="bg-blue-50 border border-blue-200 rounded-lg p-4"
+          data-testid="pickup-info"
+        >
           <h4 className="font-semibold text-blue-900 mb-2">
             Pickup Information
           </h4>

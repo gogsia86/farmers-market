@@ -19,8 +19,13 @@ setup("authenticate as admin", async ({ page }) => {
   const adminUser = TEST_USERS.admin;
 
   // Navigate to login page
-  await page.goto("/login");
-  await page.waitForLoadState("networkidle");
+  await page.goto("/login", { waitUntil: "domcontentloaded" });
+
+  // Wait for login form to be ready - element-based wait instead of networkIdle
+  await page.waitForSelector('input[name="email"], input[type="email"]', {
+    state: "visible",
+    timeout: 15000,
+  });
 
   // Fill in login form
   const emailInput = page.locator('input[name="email"], input[type="email"]');
@@ -45,7 +50,7 @@ setup("authenticate as admin", async ({ page }) => {
   // Verify we're logged in
   await expect(page).not.toHaveURL(/.*login.*/);
 
-  console.log(`✅ Admin authenticated successfully`);
+  console.log("✅ Admin authenticated successfully");
 
   // Save authentication state
   await page.context().storageState({ path: `${authDir}/admin.json` });
@@ -61,8 +66,13 @@ setup("authenticate as farmer", async ({ page }) => {
   const farmerUser = TEST_USERS.farmer;
 
   // Navigate to login page
-  await page.goto("/login");
-  await page.waitForLoadState("networkidle");
+  await page.goto("/login", { waitUntil: "domcontentloaded" });
+
+  // Wait for login form to be ready - element-based wait instead of networkIdle
+  await page.waitForSelector('input[name="email"], input[type="email"]', {
+    state: "visible",
+    timeout: 15000,
+  });
 
   // Fill in login form
   const emailInput = page.locator('input[name="email"], input[type="email"]');
@@ -87,7 +97,7 @@ setup("authenticate as farmer", async ({ page }) => {
   // Verify we're logged in
   await expect(page).not.toHaveURL(/.*login.*/);
 
-  console.log(`✅ Farmer authenticated successfully`);
+  console.log("✅ Farmer authenticated successfully");
 
   // Save authentication state
   await page.context().storageState({ path: `${authDir}/farmer.json` });
@@ -103,8 +113,13 @@ setup("authenticate as customer", async ({ page }) => {
   const customerUser = TEST_USERS.customer;
 
   // Navigate to login page
-  await page.goto("/login");
-  await page.waitForLoadState("networkidle");
+  await page.goto("/login", { waitUntil: "domcontentloaded" });
+
+  // Wait for login form to be ready - element-based wait instead of networkIdle
+  await page.waitForSelector('input[name="email"], input[type="email"]', {
+    state: "visible",
+    timeout: 15000,
+  });
 
   // Fill in login form
   const emailInput = page.locator('input[name="email"], input[type="email"]');
@@ -129,7 +144,7 @@ setup("authenticate as customer", async ({ page }) => {
   // Verify we're logged in
   await expect(page).not.toHaveURL(/.*login.*/);
 
-  console.log(`✅ Customer authenticated successfully`);
+  console.log("✅ Customer authenticated successfully");
 
   // Save authentication state
   await page.context().storageState({ path: `${authDir}/customer.json` });

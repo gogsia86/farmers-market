@@ -213,7 +213,10 @@ export function CartPageClient({
   // Require authentication
   if (!userId) {
     return (
-      <main className="min-h-screen bg-background py-12">
+      <main
+        className="min-h-screen bg-background py-12"
+        data-testid="cart-login-required"
+      >
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
             <div className="glass-card rounded-2xl p-12 text-center">
@@ -227,6 +230,7 @@ export function CartPageClient({
               <Link
                 href="/auth/login?callbackUrl=/cart"
                 className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-500 text-white px-6 py-3 rounded-xl font-semibold transition-colors"
+                data-testid="cart-login-button"
               >
                 Sign In
               </Link>
@@ -238,7 +242,7 @@ export function CartPageClient({
   }
 
   return (
-    <main className="min-h-screen bg-background py-12">
+    <main className="min-h-screen bg-background py-12" data-testid="cart-page">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           {/* Skip to content link for accessibility */}
@@ -250,11 +254,11 @@ export function CartPageClient({
           </a>
 
           {/* Header */}
-          <div className="mb-8">
+          <div className="mb-8" data-testid="cart-header">
             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
               Shopping Cart
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground" data-testid="cart-item-count">
               {cartSummary?.itemCount || 0}{" "}
               {cartSummary?.itemCount === 1 ? "item" : "items"} in your cart
             </p>
@@ -290,11 +294,15 @@ export function CartPageClient({
             <div
               className="glass-card rounded-2xl p-12 text-center"
               id="cart-items"
+              data-testid="empty-cart"
             >
               <div className="text-6xl mb-4" role="img" aria-label="Empty cart">
                 🛒
               </div>
-              <h2 className="text-2xl font-bold text-foreground mb-3">
+              <h2
+                className="text-2xl font-bold text-foreground mb-3"
+                data-testid="empty-cart-message"
+              >
                 Your Cart is Empty
               </h2>
               <p className="text-muted-foreground mb-6">
@@ -303,19 +311,28 @@ export function CartPageClient({
               <Link
                 href="/products"
                 className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-500 text-white px-6 py-3 rounded-xl font-semibold transition-colors shadow-lg hover:shadow-xl"
+                data-testid="browse-products-button"
               >
                 <ShoppingBag className="h-5 w-5" aria-hidden="true" />
                 Browse Products
               </Link>
             </div>
           ) : (
-            <div className="grid lg:grid-cols-3 gap-8">
+            <div
+              className="grid lg:grid-cols-3 gap-8"
+              data-testid="cart-content"
+            >
               {/* Cart Items */}
-              <div className="lg:col-span-2 space-y-6" id="cart-items">
+              <div
+                className="lg:col-span-2 space-y-6"
+                id="cart-items"
+                data-testid="cart-items-list"
+              >
                 {Object.values(itemsByFarm).map((farmGroup) => (
                   <div
                     key={farmGroup.farmId}
                     className="glass-card rounded-2xl p-6"
+                    data-testid={`cart-farm-group-${farmGroup.farmId}`}
                   >
                     {/* Farm Header */}
                     <div className="flex items-center gap-3 mb-4 pb-4 border-b border-border">
@@ -359,13 +376,14 @@ export function CartPageClient({
                 <Link
                   href="/products"
                   className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-500 font-medium transition-colors"
+                  data-testid="continue-shopping-link"
                 >
                   ← Continue Shopping
                 </Link>
               </div>
 
               {/* Order Summary Sidebar */}
-              <div className="lg:col-span-1">
+              <div className="lg:col-span-1" data-testid="cart-summary-section">
                 {cartSummary && (
                   <CartSummary
                     summary={cartSummary}

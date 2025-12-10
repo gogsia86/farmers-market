@@ -5,8 +5,6 @@
  * @version 3.0.0 - Using Global Stripe Mock
  */
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import {
   describe,
   it,

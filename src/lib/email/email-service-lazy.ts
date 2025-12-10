@@ -72,7 +72,7 @@ export async function sendFarmerWelcomeLazy(
   // Need to adapt the data structure
   return emailService.sendWelcomeEmail({
     firstName: data.farmerName,
-    email: email,
+    email,
     loginUrl: `${process.env.NEXTAUTH_URL}/farmer/dashboard`,
   });
 }

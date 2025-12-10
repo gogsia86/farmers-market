@@ -1,6 +1,6 @@
 /**
  * 🌾 Farmers Market Mobile App - Main Entry Point
- * Simplified working version with minimal dependencies
+ * Full-featured version with Stripe payment integration
  */
 
 import React, { useEffect, useState } from "react";
@@ -14,11 +14,18 @@ import { StatusBar } from "expo-status-bar";
 // Store
 import { useAuthStore } from "./src/stores/authStore";
 
+// Providers
+import { StripePaymentProvider } from "./src/providers/StripeProvider";
+
 // Navigation
 import RootNavigator from "./src/navigation/RootNavigator";
 
 // Keep splash screen visible while loading
 SplashScreen.preventAutoHideAsync();
+
+// Stripe publishable key from environment
+const STRIPE_PUBLISHABLE_KEY =
+  process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || "";
 
 /**
  * Main App Component
@@ -40,6 +47,15 @@ export default function App() {
         while (!hasHydrated && attempts < 50) {
           await new Promise((resolve) => setTimeout(resolve, 100));
           attempts++;
+        }
+
+        // Log Stripe initialization status
+        if (STRIPE_PUBLISHABLE_KEY) {
+          console.log("💳 Stripe integration enabled");
+        } else {
+          console.warn(
+            "⚠️ Stripe publishable key not found. Payment features may be limited.",
+          );
         }
 
         console.log("✅ App initialization complete");
@@ -68,10 +84,15 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <NavigationContainer>
-          <StatusBar style="auto" />
-          <RootNavigator />
-        </NavigationContainer>
+        <StripePaymentProvider
+          publishableKey={STRIPE_PUBLISHABLE_KEY}
+          merchantIdentifier="merchant.com.farmersmarket"
+        >
+          <NavigationContainer>
+            <StatusBar style="auto" />
+            <RootNavigator />
+          </NavigationContainer>
+        </StripePaymentProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

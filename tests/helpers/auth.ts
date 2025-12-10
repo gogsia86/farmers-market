@@ -6,6 +6,24 @@
 
 import { Page, BrowserContext } from "@playwright/test";
 
+// Timeouts for various operations
+const TIMEOUTS = {
+  navigation: 15000,
+  elementVisible: 10000,
+  formSubmit: 10000,
+};
+
+/**
+ * Wait for page to be ready with element-based wait (not networkIdle)
+ * This is more reliable with Next.js dev servers and SPAs
+ */
+async function waitForPageReady(page: Page, selector: string): Promise<void> {
+  await page.waitForSelector(selector, {
+    state: "visible",
+    timeout: TIMEOUTS.elementVisible,
+  });
+}
+
 /**
  * Test user credentials
  */
@@ -63,10 +81,10 @@ export async function login(
   console.log(`🔐 Logging in as ${credentials.role}: ${credentials.email}`);
 
   // Navigate to login page
-  await page.goto("/login");
+  await page.goto("/login", { waitUntil: "domcontentloaded" });
 
-  // Wait for page to load
-  await page.waitForLoadState("networkidle");
+  // Wait for login form to be ready - element-based wait instead of networkIdle
+  await waitForPageReady(page, 'input[name="email"], input[type="email"]');
 
   // Fill login form
   await page.fill('input[name="email"]', credentials.email);
@@ -75,13 +93,15 @@ export async function login(
   // Submit form
   await page.click('button[type="submit"]');
 
-  // Wait for navigation after login
-  await page.waitForLoadState("networkidle");
+  // Wait for navigation after login - element-based wait instead of networkIdle
+  await page.waitForURL((url: URL) => !url.pathname.includes("/login"), {
+    timeout: TIMEOUTS.navigation,
+  });
 
   // Verify login succeeded by checking we're not on login page
   const currentUrl = page.url();
   if (currentUrl.includes("/login")) {
-    console.error(`❌ Login failed - still on login page`);
+    console.error("❌ Login failed - still on login page");
     // Take screenshot for debugging
     await page.screenshot({
       path: `test-results/login-failed-${credentials.role}.png`,
@@ -112,7 +132,8 @@ export async function logout(page: Page): Promise<void> {
   for (const selector of logoutSelectors) {
     try {
       await page.click(selector, { timeout: 2000 });
-      await page.waitForLoadState("networkidle");
+      // Wait for redirect to login/home page - element-based wait instead of networkIdle
+      await page.waitForURL(/\/login|\/$/i, { timeout: TIMEOUTS.navigation });
       console.log("✅ Successfully logged out");
       return;
     } catch {
@@ -257,8 +278,9 @@ export async function loginAndNavigate(
   path: string,
 ): Promise<void> {
   await ensureLoggedIn(page, role);
-  await page.goto(path);
-  await page.waitForLoadState("networkidle");
+  await page.goto(path, { waitUntil: "domcontentloaded" });
+  // Wait for page content - element-based wait instead of networkIdle
+  await waitForPageReady(page, "body");
 }
 
 /**
@@ -290,10 +312,7 @@ export async function verifyUserRole(
     const roleIndicators: Record<string, string[]> = {
       ADMIN: ['a[href="/admin"]', '[data-testid="admin-panel"]'],
       FARMER: ['a[href="/farmer/dashboard"]', '[data-testid="farmer-tools"]'],
-      CONSUMER: [
-        'a[href="/dashboard"]',
-        '[data-testid="customer-dashboard"]',
-      ],
+      CONSUMER: ['a[href="/dashboard"]', '[data-testid="customer-dashboard"]'],
     };
 
     const indicators = roleIndicators[expectedRole] || [];

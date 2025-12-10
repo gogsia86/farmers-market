@@ -10,27 +10,27 @@
  * - Request retry logic
  */
 
-import axios, { AxiosInstance, AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
-import * as SecureStore from 'expo-secure-store';
-import NetInfo from '@react-native-community/netinfo';
-import { Platform } from 'react-native';
+import axios, { AxiosInstance, AxiosError, AxiosRequestConfig } from "axios";
+import * as SecureStore from "expo-secure-store";
+import NetInfo from "@react-native-community/netinfo";
+import { Platform } from "react-native";
 
 // Environment configuration
 const API_BASE_URL = __DEV__
-  ? Platform.OS === 'android'
-    ? 'http://10.0.2.2:3001/api' // Android emulator
-    : 'http://localhost:3001/api' // iOS simulator
-  : 'https://farmersmarket.com/api'; // Production
+  ? Platform.OS === "android"
+    ? "http://10.0.2.2:3001/api" // Android emulator
+    : "http://localhost:3001/api" // iOS simulator
+  : "https://farmersmarket.com/api"; // Production
 
 // Token storage keys
-const TOKEN_KEY = 'auth_token';
-const REFRESH_TOKEN_KEY = 'refresh_token';
+const TOKEN_KEY = "auth_token";
+const REFRESH_TOKEN_KEY = "refresh_token";
 
 // Request queue for offline support
 interface QueuedRequest {
   config: AxiosRequestConfig;
-  resolve: (value: any) => void;
-  reject: (reason?: any) => void;
+  resolve: (value: unknown) => void;
+  reject: (reason?: unknown) => void;
 }
 
 class APIClient {
@@ -45,10 +45,10 @@ class APIClient {
       baseURL: API_BASE_URL,
       timeout: 30000,
       headers: {
-        'Content-Type': 'application/json',
-        'X-Client-Type': 'mobile',
-        'X-Platform': Platform.OS,
-        'X-App-Version': '1.0.0',
+        "Content-Type": "application/json",
+        "X-Client-Type": "mobile",
+        "X-Platform": Platform.OS,
+        "X-App-Version": "1.0.0",
       },
     });
 
@@ -85,25 +85,27 @@ class APIClient {
         }
 
         // Check if offline for non-GET requests
-        if (!this.isOnline && config.method !== 'get') {
-          return Promise.reject(new Error('OFFLINE'));
+        if (!this.isOnline && config.method !== "get") {
+          return Promise.reject(new Error("OFFLINE"));
         }
 
         return config;
       },
       (error) => {
         return Promise.reject(error);
-      }
+      },
     );
 
     // Response interceptor - handle errors and token refresh
     this.axiosInstance.interceptors.response.use(
       (response) => response,
       async (error: AxiosError) => {
-        const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
+        const originalRequest = error.config as AxiosRequestConfig & {
+          _retry?: boolean;
+        };
 
         // Handle offline errors
-        if (error.message === 'OFFLINE') {
+        if (error.message === "OFFLINE") {
           return this.queueOfflineRequest(originalRequest);
         }
 
@@ -111,7 +113,11 @@ class APIClient {
         if (error.response?.status === 401 && !originalRequest._retry) {
           if (this.isRefreshing) {
             return new Promise((resolve, reject) => {
-              this.failedQueue.push({ config: originalRequest, resolve, reject });
+              this.failedQueue.push({
+                config: originalRequest,
+                resolve,
+                reject,
+              });
             });
           }
 
@@ -136,14 +142,14 @@ class APIClient {
         }
 
         return Promise.reject(this.handleError(error));
-      }
+      },
     );
   }
 
   /**
    * Process queued requests after token refresh
    */
-  private processQueue(error: any) {
+  private processQueue(error: unknown) {
     this.failedQueue.forEach((promise) => {
       if (error) {
         promise.reject(error);
@@ -157,7 +163,7 @@ class APIClient {
   /**
    * Queue request for offline processing
    */
-  private queueOfflineRequest(config: AxiosRequestConfig): Promise<any> {
+  private queueOfflineRequest(config: AxiosRequestConfig): Promise<unknown> {
     return new Promise((resolve, reject) => {
       this.offlineQueue.push({ config, resolve, reject });
     });
@@ -189,7 +195,7 @@ class APIClient {
     try {
       const refreshToken = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
       if (!refreshToken) {
-        throw new Error('No refresh token available');
+        throw new Error("No refresh token available");
       }
 
       const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
@@ -205,7 +211,7 @@ class APIClient {
 
       return accessToken;
     } catch (error) {
-      console.error('Token refresh failed:', error);
+      console.error("Token refresh failed:", error);
       return null;
     }
   }
@@ -216,26 +222,26 @@ class APIClient {
   private handleError(error: AxiosError): ApiError {
     if (error.response) {
       // Server responded with error status
-      const data = error.response.data as any;
+      const data = error.response.data as Record<string, unknown>;
       return {
-        message: data?.message || 'An error occurred',
+        message: (data?.message as string) || "An error occurred",
         statusCode: error.response.status,
-        errors: data?.errors || [],
-        code: data?.code,
+        errors: (data?.errors as string[]) || [],
+        code: data?.code as string | undefined,
       };
     } else if (error.request) {
       // Request made but no response
       return {
-        message: 'Network error. Please check your connection.',
+        message: "Network error. Please check your connection.",
         statusCode: 0,
-        code: 'NETWORK_ERROR',
+        code: "NETWORK_ERROR",
       };
     } else {
       // Error in request setup
       return {
-        message: error.message || 'An unexpected error occurred',
+        message: error.message || "An unexpected error occurred",
         statusCode: 0,
-        code: 'UNKNOWN_ERROR',
+        code: "UNKNOWN_ERROR",
       };
     }
   }
@@ -247,7 +253,7 @@ class APIClient {
     try {
       return await SecureStore.getItemAsync(TOKEN_KEY);
     } catch (error) {
-      console.error('Error getting token:', error);
+      console.error("Error getting token:", error);
       return null;
     }
   }
@@ -259,7 +265,7 @@ class APIClient {
     try {
       await SecureStore.setItemAsync(TOKEN_KEY, token);
     } catch (error) {
-      console.error('Error setting token:', error);
+      console.error("Error setting token:", error);
     }
   }
 
@@ -270,7 +276,7 @@ class APIClient {
     try {
       await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refreshToken);
     } catch (error) {
-      console.error('Error setting refresh token:', error);
+      console.error("Error setting refresh token:", error);
     }
   }
 
@@ -282,7 +288,7 @@ class APIClient {
       await SecureStore.deleteItemAsync(TOKEN_KEY);
       await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
     } catch (error) {
-      console.error('Error clearing tokens:', error);
+      console.error("Error clearing tokens:", error);
     }
   }
 
@@ -303,7 +309,10 @@ class APIClient {
    */
   auth = {
     login: async (email: string, password: string) => {
-      const response = await this.axiosInstance.post('/auth/login', { email, password });
+      const response = await this.axiosInstance.post("/auth/login", {
+        email,
+        password,
+      });
       const { accessToken, refreshToken, user } = response.data;
       await this.setToken(accessToken);
       await this.setRefreshToken(refreshToken);
@@ -311,7 +320,7 @@ class APIClient {
     },
 
     register: async (data: RegisterData) => {
-      const response = await this.axiosInstance.post('/auth/register', data);
+      const response = await this.axiosInstance.post("/auth/register", data);
       const { accessToken, refreshToken, user } = response.data;
       await this.setToken(accessToken);
       await this.setRefreshToken(refreshToken);
@@ -320,19 +329,21 @@ class APIClient {
 
     logout: async () => {
       try {
-        await this.axiosInstance.post('/auth/logout');
+        await this.axiosInstance.post("/auth/logout");
       } finally {
         await this.clearTokens();
       }
     },
 
     forgotPassword: async (email: string) => {
-      const response = await this.axiosInstance.post('/auth/forgot-password', { email });
+      const response = await this.axiosInstance.post("/auth/forgot-password", {
+        email,
+      });
       return response.data;
     },
 
     resetPassword: async (token: string, password: string) => {
-      const response = await this.axiosInstance.post('/auth/reset-password', {
+      const response = await this.axiosInstance.post("/auth/reset-password", {
         token,
         password,
       });
@@ -340,7 +351,7 @@ class APIClient {
     },
 
     getCurrentUser: async () => {
-      const response = await this.axiosInstance.get('/auth/me');
+      const response = await this.axiosInstance.get("/auth/me");
       return response.data;
     },
   };
@@ -350,7 +361,7 @@ class APIClient {
    */
   products = {
     getAll: async (params?: ProductQueryParams) => {
-      const response = await this.axiosInstance.get('/products', { params });
+      const response = await this.axiosInstance.get("/products", { params });
       return response.data;
     },
 
@@ -360,26 +371,29 @@ class APIClient {
     },
 
     search: async (query: string, filters?: ProductFilters) => {
-      const response = await this.axiosInstance.get('/products/search', {
+      const response = await this.axiosInstance.get("/products/search", {
         params: { q: query, ...filters },
       });
       return response.data;
     },
 
     getByCategory: async (category: string, params?: ProductQueryParams) => {
-      const response = await this.axiosInstance.get(`/products/category/${category}`, {
-        params,
-      });
+      const response = await this.axiosInstance.get(
+        `/products/category/${category}`,
+        {
+          params,
+        },
+      );
       return response.data;
     },
 
     getFeatured: async () => {
-      const response = await this.axiosInstance.get('/products/featured');
+      const response = await this.axiosInstance.get("/products/featured");
       return response.data;
     },
 
     create: async (data: CreateProductData) => {
-      const response = await this.axiosInstance.post('/products', data);
+      const response = await this.axiosInstance.post("/products", data);
       return response.data;
     },
 
@@ -399,7 +413,7 @@ class APIClient {
    */
   farms = {
     getAll: async (params?: FarmQueryParams) => {
-      const response = await this.axiosInstance.get('/farms', { params });
+      const response = await this.axiosInstance.get("/farms", { params });
       return response.data;
     },
 
@@ -408,27 +422,31 @@ class APIClient {
       return response.data;
     },
 
-    getNearby: async (latitude: number, longitude: number, radius: number = 50) => {
-      const response = await this.axiosInstance.get('/farms/nearby', {
+    getNearby: async (
+      latitude: number,
+      longitude: number,
+      radius: number = 50,
+    ) => {
+      const response = await this.axiosInstance.get("/farms/nearby", {
         params: { lat: latitude, lng: longitude, radius },
       });
       return response.data;
     },
 
     search: async (query: string) => {
-      const response = await this.axiosInstance.get('/farms/search', {
+      const response = await this.axiosInstance.get("/farms/search", {
         params: { q: query },
       });
       return response.data;
     },
 
     getMyFarm: async () => {
-      const response = await this.axiosInstance.get('/farms/me');
+      const response = await this.axiosInstance.get("/farms/me");
       return response.data;
     },
 
     create: async (data: CreateFarmData) => {
-      const response = await this.axiosInstance.post('/farms', data);
+      const response = await this.axiosInstance.post("/farms", data);
       return response.data;
     },
 
@@ -443,37 +461,64 @@ class APIClient {
    */
   cart = {
     get: async () => {
-      const response = await this.axiosInstance.get('/cart');
+      const response = await this.axiosInstance.get("/cart");
       return response.data;
     },
 
-    add: async (productId: string, quantity: number) => {
-      const response = await this.axiosInstance.post('/cart/items', {
+    add: async (productId: string, quantity: number, farmId?: string) => {
+      const response = await this.axiosInstance.post("/cart", {
         productId,
         quantity,
+        farmId,
       });
       return response.data;
     },
 
     update: async (itemId: string, quantity: number) => {
-      const response = await this.axiosInstance.put(`/cart/items/${itemId}`, {
+      const response = await this.axiosInstance.put(`/cart/${itemId}`, {
         quantity,
       });
       return response.data;
     },
 
     remove: async (itemId: string) => {
-      const response = await this.axiosInstance.delete(`/cart/items/${itemId}`);
+      const response = await this.axiosInstance.delete(`/cart/${itemId}`);
       return response.data;
     },
 
     clear: async () => {
-      const response = await this.axiosInstance.delete('/cart');
+      const response = await this.axiosInstance.delete("/cart");
       return response.data;
     },
 
-    sync: async (items: CartItem[]) => {
-      const response = await this.axiosInstance.post('/cart/sync', { items });
+    /**
+     * Sync local cart with server cart on login
+     * Merges items based on strategy (default: sum quantities)
+     */
+    sync: async (localItems: CartSyncItem[], strategy?: CartMergeStrategy) => {
+      const response = await this.axiosInstance.post("/cart/sync", {
+        localItems,
+        strategy,
+      });
+      return response.data;
+    },
+
+    /**
+     * Validate cart items are still available and in stock
+     * Returns validation results and any auto-adjustments made
+     */
+    validate: async () => {
+      const response = await this.axiosInstance.get("/cart/validate");
+      return response.data;
+    },
+
+    /**
+     * Refresh cart item reservations to prevent expiry
+     */
+    refreshReservations: async () => {
+      const response = await this.axiosInstance.post(
+        "/cart/refresh-reservations",
+      );
       return response.data;
     },
   };
@@ -483,7 +528,7 @@ class APIClient {
    */
   orders = {
     getAll: async (params?: OrderQueryParams) => {
-      const response = await this.axiosInstance.get('/orders', { params });
+      const response = await this.axiosInstance.get("/orders", { params });
       return response.data;
     },
 
@@ -493,7 +538,7 @@ class APIClient {
     },
 
     create: async (data: CreateOrderData) => {
-      const response = await this.axiosInstance.post('/orders', data);
+      const response = await this.axiosInstance.post("/orders", data);
       return response.data;
     },
 
@@ -508,44 +553,105 @@ class APIClient {
     },
 
     updateStatus: async (id: string, status: string) => {
-      const response = await this.axiosInstance.put(`/orders/${id}/status`, { status });
+      const response = await this.axiosInstance.put(`/orders/${id}/status`, {
+        status,
+      });
       return response.data;
     },
   };
 
   /**
    * Payments endpoints
+   * Integrates with Stripe via server-side payment intent creation
    */
   payments = {
-    createPaymentIntent: async (amount: number, orderId: string) => {
-      const response = await this.axiosInstance.post('/payments/intent', {
-        amount,
-        orderId,
-      });
+    /**
+     * Create a payment intent for the given amount
+     * @param amount - Amount in cents (e.g., 1000 = $10.00)
+     * @param currency - Currency code (default: 'usd')
+     * @param metadata - Optional metadata for the payment
+     */
+    createPaymentIntent: async (
+      amount: number,
+      currency: string = "usd",
+      metadata?: Record<string, string>,
+    ) => {
+      const response = await this.axiosInstance.post(
+        "/checkout/create-payment-intent",
+        {
+          amount,
+          currency,
+          metadata,
+        },
+      );
       return response.data;
     },
 
-    confirmPayment: async (paymentIntentId: string) => {
-      const response = await this.axiosInstance.post('/payments/confirm', {
+    /**
+     * Confirm a payment with optional payment method
+     */
+    confirmPayment: async (
+      paymentIntentId: string,
+      paymentMethodId?: string,
+    ) => {
+      const response = await this.axiosInstance.post("/payments/confirm", {
         paymentIntentId,
-      });
-      return response.data;
-    },
-
-    getPaymentMethods: async () => {
-      const response = await this.axiosInstance.get('/payments/methods');
-      return response.data;
-    },
-
-    addPaymentMethod: async (paymentMethodId: string) => {
-      const response = await this.axiosInstance.post('/payments/methods', {
         paymentMethodId,
       });
       return response.data;
     },
 
+    /**
+     * Get saved payment methods for the current user
+     */
+    getPaymentMethods: async () => {
+      const response = await this.axiosInstance.get("/payments/methods");
+      return response.data;
+    },
+
+    /**
+     * Add a new payment method to the user's account
+     */
+    addPaymentMethod: async (paymentMethodId: string) => {
+      const response = await this.axiosInstance.post("/payments/methods", {
+        paymentMethodId,
+      });
+      return response.data;
+    },
+
+    /**
+     * Remove a saved payment method
+     */
     removePaymentMethod: async (id: string) => {
-      const response = await this.axiosInstance.delete(`/payments/methods/${id}`);
+      const response = await this.axiosInstance.delete(
+        `/payments/methods/${id}`,
+      );
+      return response.data;
+    },
+
+    /**
+     * Set a payment method as the default
+     */
+    setDefaultPaymentMethod: async (paymentMethodId: string) => {
+      const response = await this.axiosInstance.put(
+        `/payments/methods/${paymentMethodId}/default`,
+      );
+      return response.data;
+    },
+
+    /**
+     * Get customer's Stripe ephemeral key (for Payment Sheet)
+     */
+    getEphemeralKey: async () => {
+      const response = await this.axiosInstance.get("/payments/ephemeral-key");
+      return response.data;
+    },
+
+    /**
+     * Create a setup intent for saving cards without immediate payment
+     */
+    createSetupIntent: async () => {
+      const response = await this.axiosInstance.post("/payments/setup-intent");
       return response.data;
     },
   };
@@ -555,7 +661,9 @@ class APIClient {
    */
   reviews = {
     getByProduct: async (productId: string) => {
-      const response = await this.axiosInstance.get(`/products/${productId}/reviews`);
+      const response = await this.axiosInstance.get(
+        `/products/${productId}/reviews`,
+      );
       return response.data;
     },
 
@@ -565,7 +673,7 @@ class APIClient {
     },
 
     create: async (data: CreateReviewData) => {
-      const response = await this.axiosInstance.post('/reviews', data);
+      const response = await this.axiosInstance.post("/reviews", data);
       return response.data;
     },
 
@@ -585,17 +693,17 @@ class APIClient {
    */
   user = {
     getProfile: async () => {
-      const response = await this.axiosInstance.get('/users/me');
+      const response = await this.axiosInstance.get("/users/me");
       return response.data;
     },
 
     updateProfile: async (data: UpdateProfileData) => {
-      const response = await this.axiosInstance.put('/users/me', data);
+      const response = await this.axiosInstance.put("/users/me", data);
       return response.data;
     },
 
     changePassword: async (currentPassword: string, newPassword: string) => {
-      const response = await this.axiosInstance.put('/users/me/password', {
+      const response = await this.axiosInstance.put("/users/me/password", {
         currentPassword,
         newPassword,
       });
@@ -604,35 +712,48 @@ class APIClient {
 
     uploadAvatar: async (imageUri: string) => {
       const formData = new FormData();
-      formData.append('avatar', {
+      // React Native FormData requires this format for file uploads
+      formData.append("avatar", {
         uri: imageUri,
-        type: 'image/jpeg',
-        name: 'avatar.jpg',
-      } as any);
+        type: "image/jpeg",
+        name: "avatar.jpg",
+      } as unknown as Blob);
 
-      const response = await this.axiosInstance.post('/users/me/avatar', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      const response = await this.axiosInstance.post(
+        "/users/me/avatar",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        },
+      );
       return response.data;
     },
 
     getAddresses: async () => {
-      const response = await this.axiosInstance.get('/users/me/addresses');
+      const response = await this.axiosInstance.get("/users/me/addresses");
       return response.data;
     },
 
     addAddress: async (data: AddressData) => {
-      const response = await this.axiosInstance.post('/users/me/addresses', data);
+      const response = await this.axiosInstance.post(
+        "/users/me/addresses",
+        data,
+      );
       return response.data;
     },
 
     updateAddress: async (id: string, data: AddressData) => {
-      const response = await this.axiosInstance.put(`/users/me/addresses/${id}`, data);
+      const response = await this.axiosInstance.put(
+        `/users/me/addresses/${id}`,
+        data,
+      );
       return response.data;
     },
 
     deleteAddress: async (id: string) => {
-      const response = await this.axiosInstance.delete(`/users/me/addresses/${id}`);
+      const response = await this.axiosInstance.delete(
+        `/users/me/addresses/${id}`,
+      );
       return response.data;
     },
   };
@@ -642,35 +763,45 @@ class APIClient {
    */
   notifications = {
     getAll: async () => {
-      const response = await this.axiosInstance.get('/notifications');
+      const response = await this.axiosInstance.get("/notifications");
       return response.data;
     },
 
     markAsRead: async (id: string) => {
-      const response = await this.axiosInstance.put(`/notifications/${id}/read`);
+      const response = await this.axiosInstance.put(
+        `/notifications/${id}/read`,
+      );
       return response.data;
     },
 
     markAllAsRead: async () => {
-      const response = await this.axiosInstance.put('/notifications/read-all');
+      const response = await this.axiosInstance.put("/notifications/read-all");
       return response.data;
     },
 
     updatePushToken: async (token: string) => {
-      const response = await this.axiosInstance.post('/notifications/push-token', {
-        token,
-        platform: Platform.OS,
-      });
+      const response = await this.axiosInstance.post(
+        "/notifications/push-token",
+        {
+          token,
+          platform: Platform.OS,
+        },
+      );
       return response.data;
     },
 
     getPreferences: async () => {
-      const response = await this.axiosInstance.get('/notifications/preferences');
+      const response = await this.axiosInstance.get(
+        "/notifications/preferences",
+      );
       return response.data;
     },
 
     updatePreferences: async (preferences: NotificationPreferences) => {
-      const response = await this.axiosInstance.put('/notifications/preferences', preferences);
+      const response = await this.axiosInstance.put(
+        "/notifications/preferences",
+        preferences,
+      );
       return response.data;
     },
   };
@@ -679,22 +810,22 @@ class APIClient {
    * Analytics endpoints
    */
   analytics = {
-    getSalesSummary: async (period: 'day' | 'week' | 'month' | 'year') => {
-      const response = await this.axiosInstance.get('/analytics/sales', {
+    getSalesSummary: async (period: "day" | "week" | "month" | "year") => {
+      const response = await this.axiosInstance.get("/analytics/sales", {
         params: { period },
       });
       return response.data;
     },
 
     getTopProducts: async (limit: number = 10) => {
-      const response = await this.axiosInstance.get('/analytics/products/top', {
+      const response = await this.axiosInstance.get("/analytics/products/top", {
         params: { limit },
       });
       return response.data;
     },
 
     getOrderStats: async () => {
-      const response = await this.axiosInstance.get('/analytics/orders');
+      const response = await this.axiosInstance.get("/analytics/orders");
       return response.data;
     },
   };
@@ -703,23 +834,24 @@ class APIClient {
    * Upload file (images, etc.)
    */
   upload = {
-    image: async (imageUri: string, folder: string = 'products') => {
+    image: async (imageUri: string, folder: string = "products") => {
       const formData = new FormData();
 
-      const filename = imageUri.split('/').pop() || 'image.jpg';
+      const filename = imageUri.split("/").pop() || "image.jpg";
       const match = /\.(\w+)$/.exec(filename);
-      const type = match ? `image/${match[1]}` : 'image/jpeg';
+      const type = match ? `image/${match[1]}` : "image/jpeg";
 
-      formData.append('file', {
+      // React Native FormData requires this format for file uploads
+      formData.append("file", {
         uri: imageUri,
         type,
         name: filename,
-      } as any);
+      } as unknown as Blob);
 
-      formData.append('folder', folder);
+      formData.append("folder", folder);
 
-      const response = await this.axiosInstance.post('/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+      const response = await this.axiosInstance.post("/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
         timeout: 60000, // 60 seconds for upload
       });
 
@@ -736,14 +868,14 @@ export interface ApiError {
   message: string;
   statusCode: number;
   code?: string;
-  errors?: any[];
+  errors?: string[];
 }
 
 export interface RegisterData {
   email: string;
   password: string;
   name: string;
-  role: 'CUSTOMER' | 'FARMER';
+  role: "CUSTOMER" | "FARMER";
   phone?: string;
 }
 
@@ -751,7 +883,7 @@ export interface ProductQueryParams {
   page?: number;
   limit?: number;
   sort?: string;
-  order?: 'asc' | 'desc';
+  order?: "asc" | "desc";
   category?: string;
   minPrice?: number;
   maxPrice?: number;
@@ -806,6 +938,69 @@ export interface CartItem {
   id: string;
   productId: string;
   quantity: number;
+}
+
+export interface CartSyncItem {
+  productId: string;
+  quantity: number;
+  farmId?: string;
+}
+
+export interface CartMergeStrategy {
+  /** How to handle items that exist in both local and server cart */
+  conflictResolution: "local" | "server" | "sum" | "max";
+  /** Whether to clear local cart after merge */
+  clearLocalAfterMerge: boolean;
+}
+
+export interface CartValidationResult {
+  valid: boolean;
+  cart: {
+    items: CartItemWithProduct[];
+    totals: CartTotals;
+  };
+  validation: {
+    validItemCount: number;
+    issueCount: number;
+    hasAdjustments: boolean;
+    hasRemovals: boolean;
+    issues: CartValidationIssue[];
+  };
+  recommendations: CartRecommendation[];
+}
+
+export interface CartItemWithProduct {
+  id: string;
+  productId: string;
+  productName: string;
+  productImage: string;
+  price: number;
+  quantity: number;
+  unit: string;
+  farmId: string;
+  farmName: string;
+  stock: number;
+}
+
+export interface CartTotals {
+  subtotal: number;
+  tax: number;
+  shipping: number;
+  total: number;
+  itemCount: number;
+}
+
+export interface CartValidationIssue {
+  itemId: string;
+  productId: string;
+  issue: "out_of_stock" | "insufficient_stock" | "product_unavailable";
+  available?: number;
+}
+
+export interface CartRecommendation {
+  type: "warning" | "error" | "info";
+  message: string;
+  action?: string;
 }
 
 export interface OrderQueryParams {

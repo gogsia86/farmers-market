@@ -85,10 +85,13 @@ test.describe("Product Discovery Workflow", () => {
   });
 
   test("should filter products by category", async ({ page }) => {
-    await page.goto(`${BASE_URL}/products`);
+    await page.goto(`${BASE_URL}/products`, { waitUntil: "domcontentloaded" });
 
-    // Wait for page to load
-    await page.waitForLoadState("networkidle");
+    // Wait for products to load - element-based wait instead of networkIdle
+    await page.waitForSelector(
+      '[data-testid="product-card"], .product-card, [data-testid="products-grid"]',
+      { state: "visible", timeout: 10000 },
+    );
 
     // Look for category filter
     const categoryFilter = page
@@ -292,10 +295,15 @@ test.describe("Product Discovery Workflow", () => {
   });
 
   test("should clear filters and search", async ({ page }) => {
-    await page.goto(`${BASE_URL}/products?category=VEGETABLES&q=tomato`);
+    await page.goto(`${BASE_URL}/products?category=VEGETABLES&q=tomato`, {
+      waitUntil: "domcontentloaded",
+    });
 
-    // Wait for filtered results
-    await page.waitForLoadState("networkidle");
+    // Wait for filtered results - element-based wait instead of networkIdle
+    await page.waitForSelector(
+      '[data-testid="product-card"], .product-card, [data-testid="products-grid"], body',
+      { state: "visible", timeout: 10000 },
+    );
 
     // Look for "Clear Filters" or "Reset" button
     const clearButton = page
@@ -344,10 +352,13 @@ test.describe("Product Discovery Workflow", () => {
   });
 
   test("should maintain pagination state", async ({ page }) => {
-    await page.goto(`${BASE_URL}/products`);
+    await page.goto(`${BASE_URL}/products`, { waitUntil: "domcontentloaded" });
 
-    // Wait for products to load
-    await page.waitForLoadState("networkidle");
+    // Wait for products to load - element-based wait instead of networkIdle
+    await page.waitForSelector(
+      '[data-testid="product-card"], .product-card, [data-testid="products-grid"]',
+      { state: "visible", timeout: 10000 },
+    );
 
     // Look for pagination controls
     const nextButton = page

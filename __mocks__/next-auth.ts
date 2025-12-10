@@ -4,7 +4,13 @@
  * Location: __mocks__/next-auth.ts
  */
 
-const mockCredentialsProvider = jest.fn((config: any) => ({
+interface CredentialsConfig {
+  name?: string;
+  credentials?: Record<string, unknown>;
+  authorize?: (...args: unknown[]) => unknown;
+}
+
+const mockCredentialsProvider = jest.fn((config: CredentialsConfig) => ({
   id: "credentials",
   name: config?.name || "Credentials",
   type: "credentials",

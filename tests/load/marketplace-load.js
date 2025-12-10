@@ -10,22 +10,22 @@
  * @reference .github/instructions/13_TESTING_PERFORMANCE_MASTERY.instructions.md
  */
 
-import http from 'k6/http';
-import { check, group, sleep } from 'k6';
-import { Rate, Trend, Counter } from 'k6/metrics';
+import http from "k6/http";
+import { check, group, sleep } from "k6";
+import { Rate, Trend, Counter } from "k6/metrics";
 
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
 
-const BASE_URL = __ENV.BASE_URL || 'http://localhost:3001';
+const BASE_URL = __ENV.BASE_URL || "http://localhost:3001";
 
 // Custom Metrics
-const errorRate = new Rate('errors');
-const apiResponseTime = new Trend('api_response_time');
-const pageLoadTime = new Trend('page_load_time');
-const successfulRequests = new Counter('successful_requests');
-const failedRequests = new Counter('failed_requests');
+const errorRate = new Rate("errors");
+const apiResponseTime = new Trend("api_response_time");
+const pageLoadTime = new Trend("page_load_time");
+const successfulRequests = new Counter("successful_requests");
+const failedRequests = new Counter("failed_requests");
 
 // ============================================================================
 // TEST CONFIGURATION
@@ -34,37 +34,37 @@ const failedRequests = new Counter('failed_requests');
 export const options = {
   // Stages define load pattern
   stages: [
-    { duration: '1m', target: 10 },   // Warm up: Ramp to 10 users
-    { duration: '2m', target: 50 },   // Load up: Ramp to 50 users
-    { duration: '3m', target: 100 },  // Peak load: 100 concurrent users
-    { duration: '2m', target: 150 },  // Stress: Push to 150 users
-    { duration: '1m', target: 50 },   // Scale down
-    { duration: '1m', target: 0 },    // Cool down
+    { duration: "1m", target: 10 }, // Warm up: Ramp to 10 users
+    { duration: "2m", target: 50 }, // Load up: Ramp to 50 users
+    { duration: "3m", target: 100 }, // Peak load: 100 concurrent users
+    { duration: "2m", target: 150 }, // Stress: Push to 150 users
+    { duration: "1m", target: 50 }, // Scale down
+    { duration: "1m", target: 0 }, // Cool down
   ],
 
   // Thresholds define success criteria
   thresholds: {
     // HTTP errors should be less than 1%
-    'errors': ['rate<0.01'],
+    errors: ["rate<0.01"],
 
     // 95% of requests should complete under 2s
-    'http_req_duration': ['p(95)<2000'],
+    http_req_duration: ["p(95)<2000"],
 
     // 99% of requests should complete under 5s
-    'http_req_duration': ['p(99)<5000'],
+    http_req_duration: ["p(99)<5000"],
 
     // API response time should be under 500ms for 95% of requests
-    'api_response_time': ['p(95)<500'],
+    api_response_time: ["p(95)<500"],
 
     // Page load time should be under 2s for 95% of requests
-    'page_load_time': ['p(95)<2000'],
+    page_load_time: ["p(95)<2000"],
 
     // Success rate should be above 99%
-    'http_req_failed': ['rate<0.01'],
+    http_req_failed: ["rate<0.01"],
   },
 
   // HTTP configuration
-  httpDebug: 'full', // Use 'full' for debugging, remove for production runs
+  httpDebug: "full", // Use 'full' for debugging, remove for production runs
 };
 
 // ============================================================================
@@ -72,26 +72,26 @@ export const options = {
 // ============================================================================
 
 const SEARCH_TERMS = [
-  'tomato',
-  'lettuce',
-  'carrot',
-  'organic',
-  'fresh',
-  'vegetables',
-  'fruits',
-  'dairy',
-  'eggs',
-  'herbs',
+  "tomato",
+  "lettuce",
+  "carrot",
+  "organic",
+  "fresh",
+  "vegetables",
+  "fruits",
+  "dairy",
+  "eggs",
+  "herbs",
 ];
 
 const PRODUCT_CATEGORIES = [
-  'VEGETABLES',
-  'FRUITS',
-  'DAIRY',
-  'EGGS',
-  'MEAT',
-  'HERBS',
-  'GRAINS',
+  "VEGETABLES",
+  "FRUITS",
+  "DAIRY",
+  "EGGS",
+  "MEAT",
+  "HERBS",
+  "GRAINS",
 ];
 
 // ============================================================================
@@ -114,7 +114,9 @@ function checkResponse(res, name) {
   } else {
     failedRequests.add(1);
     errorRate.add(1);
-    console.error(`❌ ${name} failed: Status ${res.status}, Duration: ${res.timings.duration}ms`);
+    console.error(
+      `❌ ${name} failed: Status ${res.status}, Duration: ${res.timings.duration}ms`,
+    );
   }
 
   return success;
@@ -128,16 +130,19 @@ function checkResponse(res, name) {
  * Scenario 1: Homepage Load
  */
 export function testHomepage() {
-  group('Homepage Load', () => {
+  group("Homepage Load", () => {
     const startTime = Date.now();
     const res = http.get(BASE_URL);
     const duration = Date.now() - startTime;
 
     pageLoadTime.add(duration);
-    checkResponse(res, 'Homepage');
+    checkResponse(res, "Homepage");
 
     check(res, {
-      'homepage contains "Farmers Market"': (r) => r.body.includes('Farmers Market') || r.body.includes('farmers') || r.body.includes('market'),
+      'homepage contains "Farmers Market"': (r) =>
+        r.body.includes("Farmers Market") ||
+        r.body.includes("farmers") ||
+        r.body.includes("market"),
     });
   });
 }
@@ -146,13 +151,13 @@ export function testHomepage() {
  * Scenario 2: Marketplace Browsing
  */
 export function testMarketplaceBrowsing() {
-  group('Marketplace Browsing', () => {
+  group("Marketplace Browsing", () => {
     const startTime = Date.now();
     const res = http.get(`${BASE_URL}/marketplace`);
     const duration = Date.now() - startTime;
 
     pageLoadTime.add(duration);
-    checkResponse(res, 'Marketplace');
+    checkResponse(res, "Marketplace");
   });
 }
 
@@ -160,7 +165,7 @@ export function testMarketplaceBrowsing() {
  * Scenario 3: Product Search
  */
 export function testProductSearch() {
-  group('Product Search', () => {
+  group("Product Search", () => {
     const searchTerm = randomItem(SEARCH_TERMS);
     const startTime = Date.now();
     const res = http.get(`${BASE_URL}/marketplace?search=${searchTerm}`);
@@ -175,7 +180,7 @@ export function testProductSearch() {
  * Scenario 4: Category Filtering
  */
 export function testCategoryFilter() {
-  group('Category Filter', () => {
+  group("Category Filter", () => {
     const category = randomItem(PRODUCT_CATEGORIES);
     const startTime = Date.now();
     const res = http.get(`${BASE_URL}/marketplace?category=${category}`);
@@ -190,11 +195,11 @@ export function testCategoryFilter() {
  * Scenario 5: API - Products Endpoint
  */
 export function testProductsAPI() {
-  group('Products API', () => {
+  group("Products API", () => {
     const startTime = Date.now();
     const res = http.get(`${BASE_URL}/api/products`, {
       headers: {
-        'Accept': 'application/json',
+        Accept: "application/json",
       },
     });
     const duration = Date.now() - startTime;
@@ -202,9 +207,10 @@ export function testProductsAPI() {
     apiResponseTime.add(duration);
 
     const success = check(res, {
-      'API: status is 200': (r) => r.status === 200,
-      'API: response time < 500ms': (r) => r.timings.duration < 500,
-      'API: is JSON': (r) => r.headers['Content-Type']?.includes('application/json'),
+      "API: status is 200": (r) => r.status === 200,
+      "API: response time < 500ms": (r) => r.timings.duration < 500,
+      "API: is JSON": (r) =>
+        r.headers["Content-Type"]?.includes("application/json"),
     });
 
     if (success) {
@@ -220,11 +226,11 @@ export function testProductsAPI() {
  * Scenario 6: API - Farms Endpoint
  */
 export function testFarmsAPI() {
-  group('Farms API', () => {
+  group("Farms API", () => {
     const startTime = Date.now();
     const res = http.get(`${BASE_URL}/api/farms`, {
       headers: {
-        'Accept': 'application/json',
+        Accept: "application/json",
       },
     });
     const duration = Date.now() - startTime;
@@ -232,9 +238,10 @@ export function testFarmsAPI() {
     apiResponseTime.add(duration);
 
     const success = check(res, {
-      'Farms API: status is 200': (r) => r.status === 200,
-      'Farms API: response time < 500ms': (r) => r.timings.duration < 500,
-      'Farms API: is JSON': (r) => r.headers['Content-Type']?.includes('application/json'),
+      "Farms API: status is 200": (r) => r.status === 200,
+      "Farms API: response time < 500ms": (r) => r.timings.duration < 500,
+      "Farms API: is JSON": (r) =>
+        r.headers["Content-Type"]?.includes("application/json"),
     });
 
     if (success) {
@@ -250,20 +257,21 @@ export function testFarmsAPI() {
  * Scenario 7: Static Assets
  */
 export function testStaticAssets() {
-  group('Static Assets', () => {
+  group("Static Assets", () => {
     const assets = [
-      '/_next/static/css/app.css',
-      '/favicon.ico',
-      '/images/logo.png',
+      "/_next/static/css/app.css",
+      "/favicon.ico",
+      "/images/logo.png",
     ];
 
     const responses = http.batch(
-      assets.map(asset => ['GET', `${BASE_URL}${asset}`])
+      assets.map((asset) => ["GET", `${BASE_URL}${asset}`]),
     );
 
     responses.forEach((res, index) => {
       check(res, {
-        [`Asset ${assets[index]}: loads successfully`]: (r) => r.status === 200 || r.status === 304,
+        [`Asset ${assets[index]}: loads successfully`]: (r) =>
+          r.status === 200 || r.status === 304,
       });
     });
   });
@@ -273,32 +281,32 @@ export function testStaticAssets() {
  * Scenario 8: Full User Journey
  */
 export function testUserJourney() {
-  group('Complete User Journey', () => {
+  group("Complete User Journey", () => {
     // 1. Visit homepage
     let res = http.get(BASE_URL);
-    checkResponse(res, 'Journey: Homepage');
+    checkResponse(res, "Journey: Homepage");
     sleep(1);
 
     // 2. Browse marketplace
     res = http.get(`${BASE_URL}/marketplace`);
-    checkResponse(res, 'Journey: Marketplace');
+    checkResponse(res, "Journey: Marketplace");
     sleep(2);
 
     // 3. Search for products
     const searchTerm = randomItem(SEARCH_TERMS);
     res = http.get(`${BASE_URL}/marketplace?search=${searchTerm}`);
-    checkResponse(res, 'Journey: Search');
+    checkResponse(res, "Journey: Search");
     sleep(1);
 
     // 4. Filter by category
     const category = randomItem(PRODUCT_CATEGORIES);
     res = http.get(`${BASE_URL}/marketplace?category=${category}`);
-    checkResponse(res, 'Journey: Filter');
+    checkResponse(res, "Journey: Filter");
     sleep(2);
 
     // 5. View farms
     res = http.get(`${BASE_URL}/farms`);
-    checkResponse(res, 'Journey: Farms');
+    checkResponse(res, "Journey: Farms");
     sleep(1);
   });
 }
@@ -307,11 +315,11 @@ export function testUserJourney() {
 // MAIN TEST EXECUTION
 // ============================================================================
 
-export default function() {
+export default function () {
   // Randomly select a scenario to simulate diverse user behavior
   const scenario = Math.random();
 
-  if (scenario < 0.20) {
+  if (scenario < 0.2) {
     // 20% - Complete user journey
     testUserJourney();
   } else if (scenario < 0.35) {
@@ -320,13 +328,13 @@ export default function() {
   } else if (scenario < 0.55) {
     // 20% - Marketplace browsing
     testMarketplaceBrowsing();
-  } else if (scenario < 0.70) {
+  } else if (scenario < 0.7) {
     // 15% - Product search
     testProductSearch();
-  } else if (scenario < 0.80) {
+  } else if (scenario < 0.8) {
     // 10% - Category filtering
     testCategoryFilter();
-  } else if (scenario < 0.90) {
+  } else if (scenario < 0.9) {
     // 10% - Products API
     testProductsAPI();
   } else if (scenario < 0.95) {
@@ -346,27 +354,35 @@ export default function() {
 // ============================================================================
 
 export function setup() {
-  console.log('\n╔════════════════════════════════════════════════════════════╗');
-  console.log('║  🚀 K6 Load Testing - Farmers Market Platform             ║');
-  console.log('╠════════════════════════════════════════════════════════════╣');
+  console.log(
+    "\n╔════════════════════════════════════════════════════════════╗",
+  );
+  console.log("║  🚀 K6 Load Testing - Farmers Market Platform             ║");
+  console.log("╠════════════════════════════════════════════════════════════╣");
   console.log(`║  Base URL: ${BASE_URL.padEnd(47)}║`);
-  console.log('║  Test Duration: ~10 minutes                                ║');
-  console.log('║  Peak Load: 150 concurrent users                           ║');
-  console.log('╚════════════════════════════════════════════════════════════╝\n');
+  console.log("║  Test Duration: ~10 minutes                                ║");
+  console.log("║  Peak Load: 150 concurrent users                           ║");
+  console.log(
+    "╚════════════════════════════════════════════════════════════╝\n",
+  );
 
   // Warm up the server
-  console.log('🔥 Warming up server...');
+  console.log("🔥 Warming up server...");
   http.get(BASE_URL);
-  console.log('✅ Server warmed up\n');
+  console.log("✅ Server warmed up\n");
 }
 
 export function teardown(data) {
-  console.log('\n╔════════════════════════════════════════════════════════════╗');
-  console.log('║  ✅ Load Test Complete                                     ║');
-  console.log('╠════════════════════════════════════════════════════════════╣');
-  console.log('║  Check the summary below for detailed metrics              ║');
-  console.log('║  Green = Pass, Red = Fail                                  ║');
-  console.log('╚════════════════════════════════════════════════════════════╝\n');
+  console.log(
+    "\n╔════════════════════════════════════════════════════════════╗",
+  );
+  console.log("║  ✅ Load Test Complete                                     ║");
+  console.log("╠════════════════════════════════════════════════════════════╣");
+  console.log("║  Check the summary below for detailed metrics              ║");
+  console.log("║  Green = Pass, Red = Fail                                  ║");
+  console.log(
+    "╚════════════════════════════════════════════════════════════╝\n",
+  );
 }
 
 // ============================================================================
@@ -374,23 +390,34 @@ export function teardown(data) {
 // ============================================================================
 
 export function handleSummary(data) {
-  const successRate = (data.metrics.successful_requests.values.count /
-    (data.metrics.successful_requests.values.count + data.metrics.failed_requests.values.count)) * 100;
+  const successRate =
+    (data.metrics.successful_requests.values.count /
+      (data.metrics.successful_requests.values.count +
+        data.metrics.failed_requests.values.count)) *
+    100;
 
-  console.log('\n📊 CUSTOM METRICS SUMMARY:');
-  console.log('═'.repeat(60));
-  console.log(`✅ Successful Requests: ${data.metrics.successful_requests.values.count}`);
-  console.log(`❌ Failed Requests: ${data.metrics.failed_requests.values.count}`);
+  console.log("\n📊 CUSTOM METRICS SUMMARY:");
+  console.log("═".repeat(60));
+  console.log(
+    `✅ Successful Requests: ${data.metrics.successful_requests.values.count}`,
+  );
+  console.log(
+    `❌ Failed Requests: ${data.metrics.failed_requests.values.count}`,
+  );
   console.log(`📈 Success Rate: ${successRate.toFixed(2)}%`);
-  console.log(`⚡ Average Response Time: ${data.metrics.http_req_duration.values.avg.toFixed(2)}ms`);
-  console.log(`🎯 95th Percentile: ${data.metrics.http_req_duration.values['p(95)'].toFixed(2)}ms`);
-  console.log(`🔥 Peak RPS: ${(data.metrics.http_reqs.values.rate).toFixed(2)}`);
-  console.log('═'.repeat(60) + '\n');
+  console.log(
+    `⚡ Average Response Time: ${data.metrics.http_req_duration.values.avg.toFixed(2)}ms`,
+  );
+  console.log(
+    `🎯 95th Percentile: ${data.metrics.http_req_duration.values["p(95)"].toFixed(2)}ms`,
+  );
+  console.log(`🔥 Peak RPS: ${data.metrics.http_reqs.values.rate.toFixed(2)}`);
+  console.log(`${"═".repeat(60)}\n`);
 
   return {
-    'stdout': JSON.stringify(data, null, 2),
-    'summary.json': JSON.stringify(data),
-    'summary.html': generateHTMLReport(data),
+    stdout: JSON.stringify(data, null, 2),
+    "summary.json": JSON.stringify(data),
+    "summary.html": generateHTMLReport(data),
   };
 }
 
@@ -436,7 +463,7 @@ function generateHTMLReport(data) {
 
       <div class="metric">
         <div class="metric-title">95th Percentile</div>
-        <div class="metric-value">${data.metrics.http_req_duration.values['p(95)'].toFixed(2)}ms</div>
+        <div class="metric-value">${data.metrics.http_req_duration.values["p(95)"].toFixed(2)}ms</div>
       </div>
     </div>
 

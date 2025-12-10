@@ -7,7 +7,15 @@
  * @reference 13_TESTING_PERFORMANCE_MASTERY.instructions.md
  */
 
-$1import { TEST_USERS } from "../helpers/auth";
+import { test, expect } from "@playwright/test";
+import { TEST_USERS } from "../../helpers/auth";
+
+// Timeouts for various operations
+const TIMEOUTS = {
+  navigation: 15000,
+  elementVisible: 10000,
+  formSubmit: 10000,
+};
 
 // Test data factory
 function generateTestCustomer() {
@@ -28,11 +36,23 @@ function generateTestCustomer() {
   };
 }
 
+/**
+ * Wait for page to be ready with element-based wait (not networkIdle)
+ */
+async function waitForPageReady(page: any, selector: string) {
+  await page.waitForSelector(selector, {
+    state: "visible",
+    timeout: TIMEOUTS.elementVisible,
+  });
+}
+
 test.describe("🌾 Customer Registration Flow", () => {
   test.beforeEach(async ({ page }) => {
     // Start from homepage
-    $1
-    await page.waitForLoadState("networkidle");$2});
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    // Wait for page content - element-based wait instead of networkIdle
+    await waitForPageReady(page, "body");
+  });
 
   test("should complete full customer registration successfully", async ({
     page,
@@ -66,12 +86,17 @@ test.describe("🌾 Customer Registration Flow", () => {
 
     // Step 6: Verify successful registration
     // Should redirect to login page with registered=true
-    await page.waitForURL(/\/login\?registered=true/);
+    await page.waitForURL(/\/login\?registered=true/, {
+      timeout: TIMEOUTS.navigation,
+    });
   });
 
   test("should show validation errors for invalid email", async ({ page }) => {
-    $1
-    await page.waitForLoadState("networkidle");$2// Fill form with invalid email
+    await page.goto("/signup", { waitUntil: "domcontentloaded" });
+    // Wait for form to be ready - element-based wait
+    await waitForPageReady(page, 'input[name="email"]');
+
+    // Fill form with invalid email
     await page.fill('input[name="name"]', "John Doe");
     await page.fill('input[name="email"]', "invalid-email");
     await page.fill('input[name="password"]', "SecurePass123!");
@@ -84,12 +109,17 @@ test.describe("🌾 Customer Registration Flow", () => {
 
     // Should show validation error
     const errorMessage = page.locator("text=/invalid email|valid email/i");
-    await expect(errorMessage).toBeVisible();
+    await expect(errorMessage).toBeVisible({
+      timeout: TIMEOUTS.elementVisible,
+    });
   });
 
   test("should show error for mismatched passwords", async ({ page }) => {
-    $1
-    await page.waitForLoadState("networkidle");$2await page.fill('input[name="name"]', "John Doe");
+    await page.goto("/signup", { waitUntil: "domcontentloaded" });
+    // Wait for form to be ready - element-based wait
+    await waitForPageReady(page, 'input[name="email"]');
+
+    await page.fill('input[name="name"]', "John Doe");
     await page.fill('input[name="email"]', "test.temp@example.com");
     await page.fill('input[name="password"]', "SecurePass123!");
     await page.fill('input[name="confirmPassword"]', "DifferentPass123!");
@@ -100,12 +130,17 @@ test.describe("🌾 Customer Registration Flow", () => {
 
     // Should show password mismatch error
     const errorMessage = page.locator("text=/passwords.*match/i");
-    await expect(errorMessage).toBeVisible();
+    await expect(errorMessage).toBeVisible({
+      timeout: TIMEOUTS.elementVisible,
+    });
   });
 
   test("should require strong password", async ({ page }) => {
-    $1
-    await page.waitForLoadState("networkidle");$2await page.fill('input[name="name"]', "John Doe");
+    await page.goto("/signup", { waitUntil: "domcontentloaded" });
+    // Wait for form to be ready - element-based wait
+    await waitForPageReady(page, 'input[name="email"]');
+
+    await page.fill('input[name="name"]', "John Doe");
     await page.fill('input[name="email"]', "test.temp@example.com");
     await page.fill('input[name="password"]', "weak");
 
@@ -113,7 +148,9 @@ test.describe("🌾 Customer Registration Flow", () => {
     const passwordError = page.locator(
       "text=/password.*strong|password.*8 characters/i",
     );
-    await expect(passwordError).toBeVisible();
+    await expect(passwordError).toBeVisible({
+      timeout: TIMEOUTS.elementVisible,
+    });
   });
 
   test("should prevent registration without accepting terms", async ({
@@ -121,8 +158,11 @@ test.describe("🌾 Customer Registration Flow", () => {
   }) => {
     const customer = generateTestCustomer();
 
-    $1
-    await page.waitForLoadState("networkidle");$2await page.fill(
+    await page.goto("/signup", { waitUntil: "domcontentloaded" });
+    // Wait for form to be ready - element-based wait
+    await waitForPageReady(page, 'input[name="email"]');
+
+    await page.fill(
       'input[name="name"]',
       `${customer.firstName} ${customer.lastName}`,
     );
@@ -139,13 +179,16 @@ test.describe("🌾 Customer Registration Flow", () => {
 
     // Should show terms error or stay on page
     const termsError = page.locator("text=/accept.*terms|must agree/i");
-    await expect(termsError).toBeVisible();
+    await expect(termsError).toBeVisible({ timeout: TIMEOUTS.elementVisible });
   });
 
   test("should show error for duplicate email", async ({ page }) => {
     // Note: This test assumes a known test account exists
-    $1
-    await page.waitForLoadState("networkidle");$2// Use a known existing email (from test setup)
+    await page.goto("/signup", { waitUntil: "domcontentloaded" });
+    // Wait for form to be ready - element-based wait
+    await waitForPageReady(page, 'input[name="email"]');
+
+    // Use a known existing email (from test setup)
     await page.fill('input[name="name"]', "Test User");
     await page.fill('input[name="email"]', "customer@farmersmarket.app");
     await page.fill('input[name="password"]', "TestPassword123!");
@@ -159,12 +202,15 @@ test.describe("🌾 Customer Registration Flow", () => {
     const errorMessage = page.locator(
       "text=/email.*already|already.*registered|user.*exists/i",
     );
-    await expect(errorMessage).toBeVisible({ timeout: 10000 });
+    await expect(errorMessage).toBeVisible({ timeout: TIMEOUTS.formSubmit });
   });
 
   test("should have link to login page", async ({ page }) => {
-    $1
-    await page.waitForLoadState("networkidle");$2// Should have link to login
+    await page.goto("/signup", { waitUntil: "domcontentloaded" });
+    // Wait for page content - element-based wait
+    await waitForPageReady(page, 'a[href="/login"]');
+
+    // Should have link to login
     const loginLink = page.locator('a[href="/login"]');
     await expect(loginLink).toBeVisible();
 
@@ -177,8 +223,11 @@ test.describe("🌾 Customer Registration Flow", () => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 }); // iPhone SE
 
-    $1
-    await page.waitForLoadState("networkidle");$2// Form should be visible and usable
+    await page.goto("/signup", { waitUntil: "domcontentloaded" });
+    // Wait for form to be ready - element-based wait
+    await waitForPageReady(page, 'input[name="name"]');
+
+    // Form should be visible and usable
     const nameInput = page.locator('input[name="name"]');
     await expect(nameInput).toBeVisible();
 
@@ -195,36 +244,51 @@ test.describe("🌾 Customer Registration Flow", () => {
 test.describe("🔐 Customer Login Flow", () => {
   test("should login successfully with valid credentials", async ({ page }) => {
     // Note: This assumes a test account exists
-    $1
-    await page.waitForLoadState("networkidle");$2await page.fill('input[name="email"]', TEST_USERS.customer.email);
+    await page.goto("/login", { waitUntil: "domcontentloaded" });
+    // Wait for form to be ready - element-based wait
+    await waitForPageReady(page, 'input[name="email"]');
+
+    await page.fill('input[name="email"]', TEST_USERS.customer.email);
     await page.fill('input[name="password"]', TEST_USERS.customer.password);
 
     await page.click('button[type="submit"]:has-text("Sign In")');
 
     // Should redirect after login (customers may not have dedicated dashboard)
-    await page.waitForURL((url) => !url.pathname.includes("/login"), { timeout: 10000 });
+    await page.waitForURL((url: URL) => !url.pathname.includes("/login"), {
+      timeout: TIMEOUTS.formSubmit,
+    });
     await expect(page).toHaveURL(/\/dashboard/);
 
     // Should see user info or dashboard elements
     const welcomeMessage = page.locator("text=/welcome|dashboard/i");
-    await expect(welcomeMessage).toBeVisible();
+    await expect(welcomeMessage).toBeVisible({
+      timeout: TIMEOUTS.elementVisible,
+    });
   });
 
   test("should show error for invalid credentials", async ({ page }) => {
-    $1
-    await page.waitForLoadState("networkidle");$2await page.fill('input[name="email"]', "nonexistent@example.com");
+    await page.goto("/login", { waitUntil: "domcontentloaded" });
+    // Wait for form to be ready - element-based wait
+    await waitForPageReady(page, 'input[name="email"]');
+
+    await page.fill('input[name="email"]', "nonexistent@example.com");
     await page.fill('input[name="password"]', "WrongPassword123!");
 
     await page.click('button[type="submit"]');
 
     // Should show error message
     const errorMessage = page.locator("text=/invalid.*credentials|incorrect/i");
-    await expect(errorMessage).toBeVisible();
+    await expect(errorMessage).toBeVisible({
+      timeout: TIMEOUTS.elementVisible,
+    });
   });
 
   test("should have forgot password link", async ({ page }) => {
-    $1
-    await page.waitForLoadState("networkidle");$2const forgotPasswordLink = page.locator('a:has-text("Forgot Password")');
+    await page.goto("/login", { waitUntil: "domcontentloaded" });
+    // Wait for page content - element-based wait
+    await waitForPageReady(page, 'a:has-text("Forgot Password")');
+
+    const forgotPasswordLink = page.locator('a:has-text("Forgot Password")');
     await expect(forgotPasswordLink).toBeVisible();
 
     await forgotPasswordLink.click();
@@ -232,8 +296,11 @@ test.describe("🔐 Customer Login Flow", () => {
   });
 
   test("should have link to registration page", async ({ page }) => {
-    $1
-    await page.waitForLoadState("networkidle");$2const registerLink = page.locator('a[href="/signup"]');
+    await page.goto("/login", { waitUntil: "domcontentloaded" });
+    // Wait for page content - element-based wait
+    await waitForPageReady(page, 'a[href="/signup"]');
+
+    const registerLink = page.locator('a[href="/signup"]');
     await expect(registerLink).toBeVisible();
 
     await registerLink.click();
@@ -244,28 +311,41 @@ test.describe("🔐 Customer Login Flow", () => {
 test.describe("👤 Customer Profile Management", () => {
   test.beforeEach(async ({ page }) => {
     // Login first
-    $1
-    await page.waitForLoadState("networkidle");$2await page.fill('input[name="email"]', TEST_USERS.customer.email);
+    await page.goto("/login", { waitUntil: "domcontentloaded" });
+    // Wait for form to be ready - element-based wait
+    await waitForPageReady(page, 'input[name="email"]');
+
+    await page.fill('input[name="email"]', TEST_USERS.customer.email);
     await page.fill('input[name="password"]', TEST_USERS.customer.password);
     await page.click('button[type="submit"]');
-    await page.waitForURL(/\/dashboard/);
+    await page.waitForURL(/\/dashboard/, { timeout: TIMEOUTS.navigation });
   });
 
   test("should navigate to account settings", async ({ page }) => {
     // Navigate to account page
-    $1
-    await page.waitForLoadState("networkidle");$2// Should see account information
-    await expect(page.getByRole("heading", { name: /account/i })).toBeVisible();
+    await page.goto("/account", { waitUntil: "domcontentloaded" });
+    // Wait for page content - element-based wait
+    await waitForPageReady(page, "body");
+
+    // Should see account information
+    await expect(page.getByRole("heading", { name: /account/i })).toBeVisible({
+      timeout: TIMEOUTS.elementVisible,
+    });
 
     // Should see profile fields
     await expect(page.locator("text=/email|name/i")).toBeVisible();
   });
 
   test("should view account details", async ({ page }) => {
-    $1
-    await page.waitForLoadState("networkidle");$2// Should display user information
+    await page.goto("/account", { waitUntil: "domcontentloaded" });
+    // Wait for page content - element-based wait
+    await waitForPageReady(page, "body");
+
+    // Should display user information
     const emailElement = page.locator("text=/test.customer@example.com/i");
-    await expect(emailElement).toBeVisible();
+    await expect(emailElement).toBeVisible({
+      timeout: TIMEOUTS.elementVisible,
+    });
 
     // Should have statistics
     const statsElements = page.locator("text=/total orders|total spent/i");
@@ -274,8 +354,11 @@ test.describe("👤 Customer Profile Management", () => {
 
   test("should navigate between dashboard and account", async ({ page }) => {
     // Start at dashboard
-    $1
-    await page.waitForLoadState("networkidle");$2await expect(page).toHaveURL(/\/dashboard/);
+    await page.goto("/dashboard", { waitUntil: "domcontentloaded" });
+    // Wait for page content - element-based wait
+    await waitForPageReady(page, "body");
+
+    await expect(page).toHaveURL(/\/dashboard/);
 
     // Navigate to account
     const accountLink = page.locator('a[href="/account"]');
@@ -292,21 +375,27 @@ test.describe("👤 Customer Profile Management", () => {
 test.describe("🚪 Customer Logout", () => {
   test("should logout successfully", async ({ page }) => {
     // Login first
-    $1
-    await page.waitForLoadState("networkidle");$2await page.fill('input[name="email"]', TEST_USERS.customer.email);
+    await page.goto("/login", { waitUntil: "domcontentloaded" });
+    // Wait for form to be ready - element-based wait
+    await waitForPageReady(page, 'input[name="email"]');
+
+    await page.fill('input[name="email"]', TEST_USERS.customer.email);
     await page.fill('input[name="password"]', TEST_USERS.customer.password);
     await page.click('button[type="submit"]');
-    await page.waitForURL(/\/dashboard/);
+    await page.waitForURL(/\/dashboard/, { timeout: TIMEOUTS.navigation });
 
     // Find and click logout button
     const logoutButton = page.locator('button:has-text("Logout")');
     await logoutButton.click();
 
     // Should redirect to homepage or login page
-    await page.waitForURL(/\/|\/login/);
+    await page.waitForURL(/\/|\/login/, { timeout: TIMEOUTS.navigation });
 
     // Should not be able to access protected pages
-    $1
-    await page.waitForLoadState("networkidle");$2await expect(page).toHaveURL(/\/login/);
+    await page.goto("/dashboard", { waitUntil: "domcontentloaded" });
+    // Wait for redirect or page load - element-based wait
+    await waitForPageReady(page, "body");
+
+    await expect(page).toHaveURL(/\/login/);
   });
 });

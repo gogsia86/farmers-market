@@ -41,9 +41,9 @@ function log(message: string, color: keyof typeof colors = "reset") {
 }
 
 function section(title: string) {
-  console.log("\n" + "=".repeat(70));
+  console.log(`\n${"=".repeat(70)}`);
   log(title, "bright");
-  console.log("=".repeat(70) + "\n");
+  console.log(`${"=".repeat(70)}\n`);
 }
 
 interface DiagnosticResult {
@@ -247,7 +247,7 @@ async function testApiRoutes() {
         const hasPost = content.includes("export async function POST");
 
         addResult({
-          test: `  └─ HTTP Methods`,
+          test: "  └─ HTTP Methods",
           status: "INFO",
           message: `GET: ${hasGet ? "✓" : "✗"} | POST: ${hasPost ? "✓" : "✗"}`,
         });
@@ -376,7 +376,7 @@ async function testServerConnectivity() {
       addResult({
         test: `Port ${port}`,
         status: "INFO",
-        message: `Port is in use (server might be running)`,
+        message: "Port is in use (server might be running)",
       });
 
       // Try to make request
@@ -387,14 +387,14 @@ async function testServerConnectivity() {
 
         if (status === 200) {
           addResult({
-            test: `  └─ Health Check`,
+            test: "  └─ Health Check",
             status: "PASS",
             message: "Server is responding",
             details: `Status: ${status}`,
           });
         } else {
           addResult({
-            test: `  └─ Health Check`,
+            test: "  └─ Health Check",
             status: "WARN",
             message: "Server responded but not OK",
             details: `Status: ${status}`,
@@ -402,7 +402,7 @@ async function testServerConnectivity() {
         }
       } catch (error) {
         addResult({
-          test: `  └─ Health Check`,
+          test: "  └─ Health Check",
           status: "WARN",
           message: "Could not connect to server",
           details: error instanceof Error ? error.message : "Unknown error",
@@ -586,7 +586,7 @@ function printSummary() {
   }
 
   // Overall status
-  console.log("\n" + "=".repeat(70));
+  console.log(`\n${"=".repeat(70)}`);
   if (failed === 0 && warnings === 0) {
     log("✅ ALL SYSTEMS OPERATIONAL", "green");
   } else if (failed > 0) {
@@ -594,7 +594,7 @@ function printSummary() {
   } else {
     log("⚠️  WARNINGS FOUND - REVIEW RECOMMENDED", "yellow");
   }
-  console.log("=".repeat(70) + "\n");
+  console.log(`${"=".repeat(70)}\n`);
 }
 
 // Quick fix suggestions

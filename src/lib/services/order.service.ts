@@ -1036,7 +1036,7 @@ export class OrderService {
       if (product.farmId !== request.farmId) {
         errors.push({
           field: `items[${i}].productId`,
-          message: `Product does not belong to specified farm`,
+          message: "Product does not belong to specified farm",
           code: "PRODUCT_FARM_MISMATCH",
         } as OrderValidationError);
       }
