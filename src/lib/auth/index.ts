@@ -24,9 +24,10 @@ export {
   hasRole,
   isAdmin,
   isFarmer,
-  signIn,
-  signOut,
 } from "./config";
+
+// For client-side signIn/signOut, import from next-auth/react directly
+// For server-side auth, use the functions above
 
 // Export types for convenience
 export type { UserRole } from "@/types/core-entities";

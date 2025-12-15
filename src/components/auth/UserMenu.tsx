@@ -23,7 +23,7 @@ import {
   ShoppingBag,
   User,
 } from "lucide-react";
-import { signOut, useSession } from "@/lib/auth";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { Fragment } from "react";
 

@@ -7,22 +7,35 @@
  *
  * Updated: January 2025
  * Version: NextAuth v4.24.x
+ *
+ * IMPORTANT: Uses lazy loading for database to prevent client-side import errors
  */
 
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { database } from "@/lib/database";
 import { compare } from "bcryptjs";
 import type { UserRole, UserStatus } from "@prisma/client";
 import type { Adapter } from "next-auth/adapters";
 
 /**
+ * Lazy load database to prevent client-side import errors
+ * This function is only called on the server during authentication
+ */
+async function getDatabase() {
+  const { database } = await import("@/lib/database");
+  return database;
+}
+
+/**
  * NextAuth v4 Options Configuration
  */
 export const authOptions: NextAuthOptions = {
-  // Prisma adapter for database sessions
-  adapter: PrismaAdapter(database) as Adapter,
+  // Prisma adapter for database sessions (lazy loaded)
+  adapter: (async () => {
+    const db = await getDatabase();
+    return PrismaAdapter(db) as Adapter;
+  })() as any,
 
   // JWT strategy for stateless sessions
   session: {
@@ -60,8 +73,11 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
+          // Lazy load database for authentication
+          const db = await getDatabase();
+
           // Find user by email
-          const user = await database.user.findUnique({
+          const user = await db.user.findUnique({
             where: { email: credentials.email },
             select: {
               id: true,
@@ -306,8 +322,9 @@ export async function isFarmer(): Promise<boolean> {
   return hasRole(["FARMER", "ADMIN", "SUPER_ADMIN", "MODERATOR"]);
 }
 
-// Re-export signIn and signOut from next-auth/react for client components
-export { signIn, signOut } from "@/lib/auth";
+// NOTE: Do NOT re-export signIn/signOut here as it causes circular dependencies
+// Use @/lib/auth/client for client-side auth utilities
+// Use @/lib/auth/server for server-side auth utilities
 
 // Alias for compatibility with code expecting authConfig
 export const authConfig = authOptions;

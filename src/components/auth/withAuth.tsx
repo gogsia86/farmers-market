@@ -12,7 +12,7 @@
 
 "use client";
 
-import { useSession } from "@/lib/auth";
+import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import { ComponentType, useEffect } from "react";
 

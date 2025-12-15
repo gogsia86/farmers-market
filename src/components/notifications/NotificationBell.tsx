@@ -15,7 +15,7 @@
 import { Bell } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NotificationDropdown } from "./NotificationDropdown";
-import { useSession } from "@/lib/auth";
+import { useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
 
 export interface Notification {
