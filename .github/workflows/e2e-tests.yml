@@ -113,7 +113,7 @@ jobs:
 
       - name: 📈 Publish test results
         if: always()
-        uses: mikepenz/action-junit-report@v4
+        uses: mikepenz/action-junit-report@v6
         with:
           report_paths: "test-results/junit.xml"
           fail_on_failure: true
