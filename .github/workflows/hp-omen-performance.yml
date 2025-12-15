@@ -118,7 +118,7 @@ jobs:
           Write-Host "============================================`n" -ForegroundColor Cyan
 
       - name: 📦 Upload Build Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v6
         with:
           name: hp-omen-build-${{ github.sha }}
           path: |

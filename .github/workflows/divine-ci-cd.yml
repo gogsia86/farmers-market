@@ -120,7 +120,7 @@ jobs:
         run: npm run build
 
       - name: 📦 Upload Build Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v6
         with:
           name: next-build-${{ github.sha }}
           path: farmers-market/.next
@@ -218,7 +218,7 @@ jobs:
 
       - name: 📊 Upload Performance Results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v6
         with:
           name: performance-results-${{ github.sha }}
           path: |
