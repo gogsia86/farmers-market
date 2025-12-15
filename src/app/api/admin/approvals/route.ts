@@ -1,6 +1,6 @@
 import { requireFarmerAuth } from "@/lib/auth/farmer-auth";
 import { database } from "@/lib/database";
-import { sendEmailLazy } from "@/lib/email/email-service-lazy";
+import { sendEmailLazy } from "@/lib/email/email.service";
 import { NextRequest, NextResponse } from "next/server";
 
 /**

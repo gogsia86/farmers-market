@@ -550,3 +550,20 @@ export class EmailService {
 // ============================================================================
 
 export const emailService = new EmailService();
+
+// ============================================================================
+// LAZY EMAIL FUNCTIONS - Re-export from email-service-lazy
+// ============================================================================
+
+export {
+  sendEmailLazy,
+  sendFarmerWelcomeLazy,
+  sendSupportTicketConfirmationLazy,
+  sendOrderNotificationLazy,
+  sendOrderConfirmationLazy,
+  sendBatchEmailsLazy,
+  sendSeasonalNewsletterLazy,
+  isEmailServiceConfiguredLazy,
+  getEmailServiceStatusLazy,
+  createDeferredEmailSender,
+} from "./email-service-lazy";

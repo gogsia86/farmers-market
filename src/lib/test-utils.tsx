@@ -7,7 +7,7 @@
  */
 
 import { RenderOptions, render as rtlRender } from "@testing-library/react";
-import { SessionProvider } from "next-auth/react";
+import { SessionProvider } from "@/lib/auth";
 import React from "react";
 
 /**

@@ -1,6 +1,6 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import { signIn } from "@/lib/auth";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 

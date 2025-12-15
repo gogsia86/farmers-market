@@ -9,7 +9,7 @@
 
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
-import { sendSupportTicketConfirmationLazy } from "@/lib/email/email-service-lazy";
+import { sendSupportTicketConfirmationLazy } from "@/lib/email/email.service";
 import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import { z } from "zod";

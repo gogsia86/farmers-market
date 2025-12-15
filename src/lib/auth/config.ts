@@ -307,7 +307,7 @@ export async function isFarmer(): Promise<boolean> {
 }
 
 // Re-export signIn and signOut from next-auth/react for client components
-export { signIn, signOut } from "next-auth/react";
+export { signIn, signOut } from "@/lib/auth";
 
 // Alias for compatibility with code expecting authConfig
 export const authConfig = authOptions;

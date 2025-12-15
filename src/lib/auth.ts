@@ -9,7 +9,7 @@
  * This file re-exports all authentication utilities from the config
  * for easy importing throughout the application.
  *
- * Usage: import { auth, requireAuth, signIn } from "@/lib/auth"
+ * Usage: import { auth, requireAuth, signIn, useSession } from "@/lib/auth"
  */
 
 // Re-export all auth utilities from the canonical config
@@ -30,10 +30,10 @@ export {
   hasRole,
   isAdmin,
   isFarmer,
-  // Client-side functions (re-exported from next-auth/react)
-  signIn,
-  signOut,
 } from "@/lib/auth/config";
+
+// Re-export client-side functions from next-auth/react
+export { signIn, signOut, useSession, SessionProvider } from "next-auth/react";
 
 // Re-export isAuthenticated from index
 export { isAuthenticated } from "@/lib/auth/index";

@@ -32,7 +32,7 @@
 
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";

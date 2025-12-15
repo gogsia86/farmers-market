@@ -204,6 +204,7 @@ export default async function MarketplaceProductsPage() {
                         key={product.id}
                         className="h-full hover:shadow-lg transition-shadow duration-200 group product-card"
                         data-testid={`product-card-${index}`}
+                        data-product-slug={product.slug ?? product.id}
                       >
                         <CardHeader className="p-0">
                           {/* Product Image */}
@@ -256,8 +257,8 @@ export default async function MarketplaceProductsPage() {
                         <CardContent className="p-4">
                           {/* Product Name */}
                           <Link
-                            href={`/products/${product.id}`}
-                            data-testid={`product-link-${product.id}`}
+                            href={`/marketplace/products/${product.slug ?? product.id}`}
+                            data-testid={`product-link-${product.slug ?? product.id}`}
                           >
                             <h3
                               className="text-lg font-bold text-foreground mb-2 hover:text-primary transition-colors line-clamp-2"

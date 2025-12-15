@@ -1,5 +1,5 @@
 import { database } from "@/lib/database";
-import { sendFarmerWelcomeLazy } from "@/lib/email/email-service-lazy";
+import { sendFarmerWelcomeLazy } from "@/lib/email/email.service";
 import { geocodingService } from "@/lib/services";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";

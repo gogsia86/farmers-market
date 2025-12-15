@@ -5,6 +5,7 @@
 
 import { database } from "@/lib/database";
 import { NextResponse } from "next/server";
+import v8 from "v8";
 
 export const dynamic = "force-dynamic";
 
@@ -69,13 +70,18 @@ export async function GET() {
 
   // Check memory usage
   const memUsage = process.memoryUsage();
-  const totalMemory = memUsage.heapTotal;
+  const heapStats = v8.getHeapStatistics();
   const usedMemory = memUsage.heapUsed;
+  const rawHeapLimit = heapStats.heap_size_limit;
+  const heapLimit =
+    rawHeapLimit > 0
+      ? rawHeapLimit
+      : Math.max(memUsage.heapTotal, usedMemory || 1);
 
   health.checks.memory = {
     used: Math.round(usedMemory / 1024 / 1024), // MB
-    total: Math.round(totalMemory / 1024 / 1024), // MB
-    percentage: Math.round((usedMemory / totalMemory) * 100),
+    total: Math.round(heapLimit / 1024 / 1024), // MB
+    percentage: Math.round((usedMemory / heapLimit) * 100),
   };
 
   // Determine overall status

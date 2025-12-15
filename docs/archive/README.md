@@ -1,23 +1,21 @@
-# Documentation Archive
+# 📦 Documentation Archive
 
-This directory contains archived documentation from previous development phases.
+This directory contains historical documents, session reports, and deprecated guides.
 
-## Directory Structure
+## 📁 Archive Structure
 
-- **status-reports/** - Historical status and completion reports
-- **cleanup-phases/** - Documentation from cleanup and refactoring phases
-- **reviews/** - Platform reviews and analyses
-- **guides/** - Old setup and quick start guides
+- **session-reports/** - Session summaries and conversation logs
+- **phase-reports/** - Phase completion reports and progress tracking
+- **analysis-reports/** - Analysis, reviews, and assessments
+- **audit-reports/** - Audit results and cleanup reports
+- **old-guides/** - Deprecated guides and outdated documentation
+- **duplicate-docs/** - Duplicate files for reference
 
-## Current Documentation
+## ⚠️ Note
 
-For current documentation, refer to the root directory:
+These documents are kept for historical reference only. For current documentation, see the main [docs/](../) directory.
 
-- `README.md` - Main project documentation
-- `QUICK_REFERENCE.md` - Command reference
-- `BUILD_SUCCESS.md` - Latest build status
-- `CURRENT_STATUS_AND_NEXT_STEPS.md` - Current status
+---
 
-## Note
-
-These files are preserved for historical reference. They may contain outdated information.
+**Archive Date:** Auto-generated
+**Purpose:** Historical reference

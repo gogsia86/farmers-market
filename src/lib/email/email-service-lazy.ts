@@ -9,7 +9,7 @@
  *
  * USAGE:
  * Replace: import { emailService } from '@/lib/email/email-service';
- * With:    import { sendEmailLazy } from '@/lib/email/email-service-lazy';
+ * With:    import { sendEmailLazy } from '@/lib/email/email.service';
  *
  * PERFORMANCE:
  * - First call: +10-50ms (dynamic import overhead)

@@ -23,7 +23,7 @@ import {
   ShoppingBag,
   User,
 } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "@/lib/auth";
 import Link from "next/link";
 import { Fragment } from "react";
 
@@ -45,7 +45,7 @@ export default function UserMenu() {
   const initials =
     user.name
       ?.split(" ")
-      .map((n) => n[0])
+      .map((n: string) => n[0])
       .join("")
       .toUpperCase()
       .slice(0, 2) || "U";
