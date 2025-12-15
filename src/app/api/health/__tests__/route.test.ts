@@ -5,12 +5,18 @@
 
 import { GET } from "../route";
 import { database } from "@/lib/database";
+import v8 from "v8";
 
 // Mock database
 jest.mock("@/lib/database", () => ({
   database: {
     $queryRaw: jest.fn(),
   },
+}));
+
+// Mock v8
+jest.mock("v8", () => ({
+  getHeapStatistics: jest.fn(),
 }));
 
 describe("🏥 Health Check API - GET /api/health", () => {
@@ -35,6 +41,15 @@ describe("🏥 Health Check API - GET /api/health", () => {
       rss: 100 * 1024 * 1024,
       arrayBuffers: 0,
     })) as any;
+
+    // Mock v8.getHeapStatistics with default values
+    (v8.getHeapStatistics as jest.Mock).mockReturnValue({
+      heap_size_limit: 100 * 1024 * 1024, // 100 MB
+      total_heap_size: 100 * 1024 * 1024,
+      used_heap_size: 50 * 1024 * 1024,
+      malloced_memory: 0,
+      peak_malloced_memory: 0,
+    });
   });
 
   afterEach(() => {
@@ -229,6 +244,14 @@ describe("🏥 Health Check API - GET /api/health", () => {
         arrayBuffers: 0,
       })) as any;
 
+      (v8.getHeapStatistics as jest.Mock).mockReturnValue({
+        heap_size_limit: 10000 * 1024 * 1024, // 10000 MB
+        total_heap_size: 10000 * 1024 * 1024,
+        used_heap_size: 5000 * 1024 * 1024,
+        malloced_memory: 0,
+        peak_malloced_memory: 0,
+      });
+
       const response = await GET();
       const data = await response.json();
 
@@ -245,6 +268,14 @@ describe("🏥 Health Check API - GET /api/health", () => {
         rss: 1024 * 1024 * 200,
         arrayBuffers: 0,
       })) as any;
+
+      (v8.getHeapStatistics as jest.Mock).mockReturnValue({
+        heap_size_limit: 1024 * 1024 * 200, // 200 MB
+        total_heap_size: 1024 * 1024 * 200,
+        used_heap_size: 1024 * 1024 * 100,
+        malloced_memory: 0,
+        peak_malloced_memory: 0,
+      });
 
       const response = await GET();
       const data = await response.json();
@@ -402,6 +433,14 @@ describe("🏥 Health Check API - GET /api/health", () => {
         rss: 10000 * 1024 * 1024,
         arrayBuffers: 0,
       })) as any;
+
+      (v8.getHeapStatistics as jest.Mock).mockReturnValue({
+        heap_size_limit: 10000 * 1024 * 1024, // 10000 MB
+        total_heap_size: 10000 * 1024 * 1024,
+        used_heap_size: 10000 * 1024 * 1024,
+        malloced_memory: 0,
+        peak_malloced_memory: 0,
+      });
 
       const response = await GET();
       const data = await response.json();

@@ -54,6 +54,9 @@ describe("Logger Utility", () => {
     console.log = jest.fn();
     // Reset NODE_ENV to development for predictable tests
     process.env.NODE_ENV = "development";
+    // Clear LOG_LEVEL to prevent env override
+    delete process.env.LOG_LEVEL;
+    delete process.env.LOG_ENABLED;
   });
 
   // Restore original console methods after each test
@@ -91,6 +94,9 @@ describe("Logger Utility", () => {
           timestamps: false,
         };
         const testLogger = new Logger("Test", customConfig);
+
+        // Clear any calls from logger initialization
+        jest.clearAllMocks();
 
         testLogger.debug("Debug message"); // Should not log
         testLogger.info("Info message"); // Should not log
