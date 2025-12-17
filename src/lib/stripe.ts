@@ -21,7 +21,7 @@ function getStripeInstance(): Stripe {
     }
 
     stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2025-11-17.clover", // Latest Stripe API version for 100% compatibility
+      apiVersion: "2025-12-15.clover", // Latest Stripe API version for 100% compatibility
       typescript: true,
       appInfo: {
         name: "Farmers Market Platform",
