@@ -261,6 +261,7 @@ const nextConfig = {
 
   // ============================================
   // IMAGE OPTIMIZATION (RTX 2070 HARDWARE ACCELERATION)
+  // Week 1 Day 3: Enhanced with extended cache and remote patterns
   // ============================================
   images: {
     remotePatterns: [
@@ -276,11 +277,47 @@ const nextConfig = {
         protocol: "https",
         hostname: "via.placeholder.com",
       },
+      // Cloudinary CDN
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+      {
+        protocol: "https",
+        hostname: "*.cloudinary.com",
+      },
+      // Supabase Storage
+      {
+        protocol: "https",
+        hostname: "*.supabase.co",
+      },
+      {
+        protocol: "https",
+        hostname: "*.supabase.in",
+      },
+      // AWS S3
+      {
+        protocol: "https",
+        hostname: "*.amazonaws.com",
+      },
+      {
+        protocol: "https",
+        hostname: "s3.amazonaws.com",
+      },
+      // Vercel Blob Storage
+      {
+        protocol: "https",
+        hostname: "*.vercel-storage.com",
+      },
+      {
+        protocol: "https",
+        hostname: "*.public.blob.vercel-storage.com",
+      },
     ],
-    formats: ["image/webp", "image/avif"], // AVIF for RTX hardware acceleration
+    formats: ["image/avif", "image/webp"], // AVIF first for RTX hardware acceleration
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    minimumCacheTTL: 86400, // 24 hours (we have the storage)
+    minimumCacheTTL: 31536000, // 1 year (365 days) - we have the storage
     dangerouslyAllowSVG: true,
     contentDispositionType: "attachment",
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",

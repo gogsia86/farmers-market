@@ -10,9 +10,19 @@
  * - Agricultural consciousness
  * - Rate limiting
  * - Lazy tracing integration
+ * - Redis caching with stale-while-revalidate (NEW - Day 5)
+ * - Response compression (Brotli/Gzip) (NEW - Day 5)
+ * - 50ms target response time (NEW - Day 5)
+ *
+ * Performance Enhancements (Week 1, Day 5):
+ * - GET requests cached for 10 minutes (600s TTL)
+ * - Stale-while-revalidate: 2 minutes
+ * - Automatic compression (Brotli preferred, Gzip fallback)
+ * - Cache invalidation on POST/PUT/DELETE
  *
  * @reference .github/instructions/11_KILO_SCALE_ARCHITECTURE.instructions.md
  * @reference .github/instructions/04_NEXTJS_DIVINE_IMPLEMENTATION.instructions.md
+ * @reference .github/instructions/03_PERFORMANCE_REALITY_BENDING.instructions.md
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -21,6 +31,8 @@ import {
   rateLimiters,
   createRateLimitResponse,
 } from "@/lib/middleware/rate-limiter";
+import { withApiCache, invalidateCacheByTag } from "@/lib/middleware/api-cache";
+import { withCompression } from "@/lib/middleware/compression";
 
 /**
  * GET /api/farms
@@ -55,16 +67,19 @@ import {
  *   }
  * }
  */
-export async function GET(request: NextRequest): Promise<NextResponse> {
-  // Apply rate limiting (public endpoint)
-  const rateLimit = await rateLimiters.public.check(request);
-  if (!rateLimit.success) {
-    return createRateLimitResponse(rateLimit);
-  }
+export const GET = withCompression(
+  withApiCache(async (request: NextRequest): Promise<NextResponse> => {
+    // Apply rate limiting (public endpoint)
+    const rateLimit = await rateLimiters.public.check(request);
+    if (!rateLimit.success) {
+      return createRateLimitResponse(rateLimit);
+    }
 
-  // Delegate to controller
-  return farmController.listFarms(request);
-}
+    // Delegate to controller
+    // Response will be automatically cached (10 min TTL) and compressed
+    return farmController.listFarms(request);
+  }),
+);
 
 /**
  * POST /api/farms
@@ -130,11 +145,24 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   // Delegate to controller (authentication check happens in controller)
-  return farmController.createFarm(request);
+  const response = await farmController.createFarm(request);
+
+  // Invalidate farms cache on successful creation
+  if (response.status === 201) {
+    await invalidateCacheByTag("farms");
+    await invalidateCacheByTag("public");
+  }
+
+  return response;
 }
 
 /**
  * Divine farm routes established ✨🚜
  * Clean architecture with controller separation
- * Ready for quantum agricultural operations
+ * Performance optimizations applied:
+ * - ⚡ Redis caching (10min TTL, 2min stale)
+ * - 🗜️ Response compression (Brotli/Gzip)
+ * - 🎯 Target: 50ms response time
+ * - 📊 Cache hit ratio: 70%+ expected
+ * Ready for quantum agricultural operations at scale
  */

@@ -1,0 +1,17 @@
+# Security Test Reports Directory
+
+This directory contains generated security test reports.
+
+Reports are generated in multiple formats:
+- HTML: Visual dashboards with charts and graphs
+- JSON: Machine-readable data for CI/CD integration
+- Markdown: Documentation-friendly format
+
+Generated files:
+- security-report-{timestamp}.html
+- security-report-{timestamp}.json
+- security-report-{timestamp}.md
+- ci-security-status.json
+- penetration-{timestamp}.json
+
+Note: Reports are gitignored but this directory structure is preserved.

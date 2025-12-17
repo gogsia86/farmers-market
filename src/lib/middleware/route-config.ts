@@ -128,11 +128,19 @@ export const RESTRICTED_ACTIONS: Record<string, UserRole[]> = {
  * Check if a route is public (no auth required)
  */
 export function isPublicRoute(pathname: string): boolean {
+  // Strip query params and hash for comparison
+  const cleanPath = pathname.split("?")[0]?.split("#")[0] || pathname;
+
   return PUBLIC_ROUTES.some((route) => {
     if (route.endsWith("/*")) {
-      return pathname.startsWith(route.slice(0, -2));
+      return cleanPath.startsWith(route.slice(0, -2));
     }
-    return pathname === route || pathname.startsWith(`${route}/`);
+    // Exact match or starts with route followed by slash
+    // Handle root path specially - match exactly or with trailing slash
+    if (route === "/") {
+      return cleanPath === "/" || cleanPath === "";
+    }
+    return cleanPath === route || cleanPath.startsWith(`${route}/`);
   });
 }
 
@@ -284,9 +292,35 @@ export function getDefaultRedirectUrl(userRole: UserRole): string {
 
 /**
  * Get access denied redirect URL
+ * Redirects to appropriate page based on context
  */
-export function getAccessDeniedUrl(baseUrl: string, reason?: string): string {
-  const url = new URL("/", baseUrl);
+export function getAccessDeniedUrl(
+  baseUrl: string,
+  reason?: string,
+  userRole?: UserRole,
+): string {
+  // Determine appropriate redirect based on user role
+  let redirectPath = "/";
+
+  if (userRole) {
+    switch (userRole) {
+      case "ADMIN":
+      case "SUPER_ADMIN":
+      case "MODERATOR":
+        redirectPath = "/admin/dashboard";
+        break;
+      case "FARMER":
+        redirectPath = "/farmer/dashboard";
+        break;
+      case "CONSUMER":
+        redirectPath = "/dashboard";
+        break;
+      default:
+        redirectPath = "/";
+    }
+  }
+
+  const url = new URL(redirectPath, baseUrl);
   url.searchParams.set("error", reason || "insufficient_permissions");
   return url.toString();
 }

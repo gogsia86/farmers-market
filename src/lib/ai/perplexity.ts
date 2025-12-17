@@ -131,8 +131,11 @@ export class PerplexityAI {
   constructor(apiKey?: string) {
     this.apiKey = apiKey || process.env.PERPLEXITY_API_KEY || "";
 
-    if (!this.apiKey) {
-      throw new Error("PERPLEXITY_API_KEY not configured");
+    // Don't throw during build time - allow graceful degradation
+    if (!this.apiKey && process.env.NODE_ENV !== "production") {
+      console.warn(
+        "⚠️  PERPLEXITY_API_KEY not configured - Perplexity features will be disabled",
+      );
     }
   }
 

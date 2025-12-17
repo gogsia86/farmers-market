@@ -223,6 +223,11 @@ model Farm {
   @@index([status])
   @@index([latitude, longitude])
   @@index([createdAt])
+  @@index([status, verificationStatus])
+  @@index([verificationStatus])
+  @@index([stripeOnboarded])
+  @@index([averageRating])
+  @@index([totalRevenueUSD])
   @@map("farms")
 }
 
@@ -538,6 +543,12 @@ model Product {
   @@index([organic])
   @@index([createdAt])
   @@index([farmId, inStock])
+  @@index([status, category])
+  @@index([farmId, status])
+  @@index([featured, status])
+  @@index([seasonal, status])
+  @@index([price])
+  @@index([averageRating])
   @@index([farmId, category, inStock])
   @@index([quantityAvailable])
   @@map("products")
@@ -655,6 +666,10 @@ model Order {
   @@index([farmId, createdAt])
   @@index([customerId, createdAt])
   @@index([status, createdAt])
+  @@index([status, farmId])
+  @@index([status, customerId])
+  @@index([paymentStatus, status])
+  @@index([scheduledDate])
   @@map("orders")
 }
 

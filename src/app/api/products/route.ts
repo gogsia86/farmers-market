@@ -8,12 +8,24 @@
  * - GET /api/products - List products with filters
  * - POST /api/products - Create new product
  *
+ * Performance Enhancements (Week 1, Day 5):
+ * - GET requests cached for 5 minutes (300s TTL) with seasonal awareness
+ * - Shorter cache during harvest season (June-October): 2.5 minutes
+ * - Stale-while-revalidate: 1 minute
+ * - Automatic compression (Brotli preferred, Gzip fallback)
+ * - Cache invalidation on POST/PUT/DELETE
+ * - Target response time: 50ms
+ *
  * @phase Phase 4: API Route Integration
  * @reference PHASE4_QUICK_START.md
+ * @reference .github/instructions/03_PERFORMANCE_REALITY_BENDING.instructions.md
+ * @reference .github/instructions/02_AGRICULTURAL_QUANTUM_MASTERY.instructions.md
  */
 
 import { NextRequest } from "next/server";
 import { productController } from "@/lib/controllers/product.controller";
+import { withApiCache, invalidateCacheByTag } from "@/lib/middleware/api-cache";
+import { withCompression } from "@/lib/middleware/compression";
 
 /**
  * GET /api/products
@@ -38,10 +50,19 @@ import { productController } from "@/lib/controllers/product.controller";
  * GET /api/products?organic=true&category=VEGETABLES&page=1&limit=20
  *
  * @returns {Object} Response with products array and pagination meta
+ *
+ * Performance:
+ * - ⚡ Cached: 5 min (2.5 min during harvest season)
+ * - 🗜️ Compressed: Brotli/Gzip automatic
+ * - 🎯 Target: <50ms response time
  */
-export async function GET(request: NextRequest) {
-  return productController.listProducts(request);
-}
+export const GET = withCompression(
+  withApiCache(async (request: NextRequest) => {
+    // Response will be automatically cached with seasonal awareness
+    // Cache TTL: 300s normally, 150s during harvest (June-October)
+    return productController.listProducts(request);
+  }),
+);
 
 /**
  * POST /api/products
@@ -93,5 +114,25 @@ export async function GET(request: NextRequest) {
  * @returns {Object} Response with created product data
  */
 export async function POST(request: NextRequest) {
-  return productController.createProduct(request);
+  const response = await productController.createProduct(request);
+
+  // Invalidate product caches on successful creation
+  if (response.status === 201) {
+    await invalidateCacheByTag("products");
+    await invalidateCacheByTag("public");
+    await invalidateCacheByTag("marketplace");
+  }
+
+  return response;
 }
+
+/**
+ * Divine product routes optimized ✨🌾
+ * Performance enhancements applied:
+ * - ⚡ Redis caching with seasonal awareness
+ * - 🗜️ Response compression (Brotli/Gzip)
+ * - 🎯 Target: 50ms response time
+ * - 📊 Cache hit ratio: 70%+ expected
+ * - 🌱 Agricultural consciousness: Active
+ * Ready for quantum agricultural commerce at scale
+ */

@@ -1,0 +1,119 @@
+# ╔════════════════════════════════════════════════════════════════════╗
+# ║ 🌾 FARMERS MARKET PLATFORM - DEVELOPMENT DOCKER COMPOSE           ║
+# ║ Lightweight setup for local development and testing               ║
+# ╚════════════════════════════════════════════════════════════════════╝
+
+version: "3.9"
+
+services:
+  # ============================================================================
+  # POSTGRESQL TEST DATABASE (Port 5433)
+  # ============================================================================
+  postgres-test:
+    image: postgis/postgis:16-3.4-alpine
+    container_name: farmers-market-db-test
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: test_password_123
+      POSTGRES_DB: farmersmarket_test
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8"
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d farmersmarket_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - farmers-dev-network
+
+  # ============================================================================
+  # POSTGRESQL DEVELOPMENT DATABASE (Port 5432)
+  # ============================================================================
+  postgres-dev:
+    image: postgis/postgis:16-3.4-alpine
+    container_name: farmers-market-db-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: farmers_user
+      POSTGRES_PASSWORD: changeme123
+      POSTGRES_DB: farmers_market
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U farmers_user -d farmers_market"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - farmers-dev-network
+
+  # ============================================================================
+  # REDIS CACHE (Port 6379)
+  # ============================================================================
+  redis-dev:
+    image: redis:7-alpine
+    container_name: farmers-market-redis-dev
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass redispass123
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_dev_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - farmers-dev-network
+
+  # ============================================================================
+  # PGADMIN (Optional - Database UI on port 5050)
+  # ============================================================================
+  pgadmin-dev:
+    image: dpage/pgadmin4:latest
+    container_name: farmers-market-pgadmin-dev
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@farmersmarket.dev
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_dev_data:/var/lib/pgadmin
+    depends_on:
+      - postgres-dev
+      - postgres-test
+    networks:
+      - farmers-dev-network
+    profiles:
+      - tools
+
+# ============================================================================
+# NETWORKS
+# ============================================================================
+networks:
+  farmers-dev-network:
+    driver: bridge
+    name: farmers-dev-network
+
+# ============================================================================
+# VOLUMES
+# ============================================================================
+volumes:
+  postgres_test_data:
+    name: farmers-market-test-db
+  postgres_dev_data:
+    name: farmers-market-dev-db
+  redis_dev_data:
+    name: farmers-market-dev-redis
+  pgadmin_dev_data:
+    name: farmers-market-dev-pgadmin

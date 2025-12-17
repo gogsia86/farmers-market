@@ -61,7 +61,14 @@ export class PerplexityFarmingService {
     const key = apiKey || process.env.PERPLEXITY_API_KEY;
 
     if (!key) {
-      throw new Error("PERPLEXITY_API_KEY not configured");
+      // Don't throw during build time - defer to runtime when service is actually used
+      if (process.env.NODE_ENV === "production" && !process.env.NEXT_PHASE) {
+        throw new Error("PERPLEXITY_API_KEY not configured");
+      }
+      // Use empty string for build time, will fail gracefully at runtime if actually called
+      this.client = new PerplexityAI(key || "");
+      this.researchAgent = new AgriculturalResearchAgent(key || "");
+      return;
     }
 
     this.client = new PerplexityAI(key);
@@ -953,7 +960,17 @@ let farmingServiceInstance: PerplexityFarmingService | null = null;
 
 export function getPerplexityFarmingService(): PerplexityFarmingService {
   if (!farmingServiceInstance) {
-    farmingServiceInstance = new PerplexityFarmingService();
+    try {
+      farmingServiceInstance = new PerplexityFarmingService();
+    } catch (error) {
+      // If we're in build phase, create a mock instance
+      if (process.env.NEXT_PHASE === "phase-production-build") {
+        console.warn("Creating mock PerplexityFarmingService for build phase");
+        farmingServiceInstance = new PerplexityFarmingService("");
+      } else {
+        throw error;
+      }
+    }
   }
   return farmingServiceInstance;
 }

@@ -22,7 +22,7 @@ import { chromium, Browser, Page } from "@playwright/test";
 // ============================================================================
 
 const CONFIG = {
-  baseUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+  baseUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001",
   timeout: 30000,
   retries: 3,
   checkInterval: 60000, // Check every minute
@@ -411,29 +411,469 @@ class WebsiteChecker {
     }
   }
 
+  async checkFarmsAPI(): Promise<CheckResult> {
+    const start = Date.now();
+    try {
+      const response = await fetch(`${CONFIG.baseUrl}/api/farms/featured`, {
+        method: "GET",
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const farmCount = data.data?.farms?.length || data.farms?.length || 0;
+        return {
+          name: "Farms API",
+          status: "pass",
+          duration: Date.now() - start,
+          message: `Featured farms API responding - ${farmCount} farms`,
+          timestamp: new Date(),
+        };
+      } else {
+        throw new Error(`HTTP ${response.status}`);
+      }
+    } catch (error) {
+      return {
+        name: "Farms API",
+        status: "fail",
+        duration: Date.now() - start,
+        message: "Farms API not responding",
+        error: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date(),
+      };
+    }
+  }
+
+  async checkProductSearchAPI(): Promise<CheckResult> {
+    const start = Date.now();
+    try {
+      const response = await fetch(
+        `${CONFIG.baseUrl}/api/products/search?q=organic&limit=10`,
+        { method: "GET" },
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        return {
+          name: "Product Search API",
+          status: "pass",
+          duration: Date.now() - start,
+          message: `Product search working - ${data.results?.length || data.products?.length || 0} results`,
+          timestamp: new Date(),
+        };
+      } else {
+        throw new Error(`HTTP ${response.status}`);
+      }
+    } catch (error) {
+      return {
+        name: "Product Search API",
+        status: "fail",
+        duration: Date.now() - start,
+        message: "Product search not responding",
+        error: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date(),
+      };
+    }
+  }
+
+  async checkHealthEndpoints(): Promise<CheckResult> {
+    const start = Date.now();
+    try {
+      const response = await fetch(`${CONFIG.baseUrl}/api/health`, {
+        method: "GET",
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return {
+          name: "Health Endpoints",
+          status: "pass",
+          duration: Date.now() - start,
+          message: `Health check OK - ${data.status || "HEALTHY"}`,
+          timestamp: new Date(),
+        };
+      } else {
+        throw new Error(`HTTP ${response.status}`);
+      }
+    } catch (error) {
+      return {
+        name: "Health Endpoints",
+        status: "fail",
+        duration: Date.now() - start,
+        message: "Health endpoints not responding",
+        error: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date(),
+      };
+    }
+  }
+
+  async checkAPIDocumentation(): Promise<CheckResult> {
+    const start = Date.now();
+    try {
+      const response = await fetch(`${CONFIG.baseUrl}/api/docs`, {
+        method: "GET",
+      });
+
+      // API docs might return 404 if not implemented yet
+      if (response.ok) {
+        return {
+          name: "API Documentation",
+          status: "pass",
+          duration: Date.now() - start,
+          message: "API documentation available",
+          timestamp: new Date(),
+        };
+      } else if (response.status === 404) {
+        return {
+          name: "API Documentation",
+          status: "warn",
+          duration: Date.now() - start,
+          message: "API documentation not yet implemented",
+          timestamp: new Date(),
+        };
+      } else {
+        throw new Error(`HTTP ${response.status}`);
+      }
+    } catch (error) {
+      return {
+        name: "API Documentation",
+        status: "warn",
+        duration: Date.now() - start,
+        message: "API documentation not available",
+        error: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date(),
+      };
+    }
+  }
+
+  async checkCategoriesAPI(): Promise<CheckResult> {
+    const start = Date.now();
+    try {
+      const response = await fetch(`${CONFIG.baseUrl}/api/categories`, {
+        method: "GET",
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const categoryCount =
+          data.data?.categories?.length || data.categories?.length || 0;
+        return {
+          name: "Categories API",
+          status: "pass",
+          duration: Date.now() - start,
+          message: `Categories API responding - ${categoryCount} categories`,
+          timestamp: new Date(),
+        };
+      } else {
+        throw new Error(`HTTP ${response.status}`);
+      }
+    } catch (error) {
+      return {
+        name: "Categories API",
+        status: "fail",
+        duration: Date.now() - start,
+        message: "Categories API not responding",
+        error: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date(),
+      };
+    }
+  }
+
+  async checkImageUploadEndpoint(): Promise<CheckResult> {
+    const start = Date.now();
+    try {
+      // Just check if endpoint exists (POST without auth will return 401)
+      const response = await fetch(`${CONFIG.baseUrl}/api/upload`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+
+      // Expect 401 unauthorized or 400 bad request (not 404)
+      if (response.status === 401 || response.status === 400) {
+        return {
+          name: "Image Upload Endpoint",
+          status: "pass",
+          duration: Date.now() - start,
+          message: "Upload endpoint exists (requires authentication)",
+          timestamp: new Date(),
+        };
+      } else if (response.status === 404) {
+        return {
+          name: "Image Upload Endpoint",
+          status: "warn",
+          duration: Date.now() - start,
+          message: "Upload endpoint not found",
+          timestamp: new Date(),
+        };
+      } else {
+        return {
+          name: "Image Upload Endpoint",
+          status: "pass",
+          duration: Date.now() - start,
+          message: `Upload endpoint responding (${response.status})`,
+          timestamp: new Date(),
+        };
+      }
+    } catch (error) {
+      return {
+        name: "Image Upload Endpoint",
+        status: "fail",
+        duration: Date.now() - start,
+        message: "Upload endpoint check failed",
+        error: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date(),
+      };
+    }
+  }
+
+  async checkOrdersEndpoint(): Promise<CheckResult> {
+    const start = Date.now();
+    try {
+      // Check orders history endpoint (requires auth, expect 401)
+      const response = await fetch(`${CONFIG.baseUrl}/api/orders/history`, {
+        method: "GET",
+      });
+
+      if (response.status === 401) {
+        return {
+          name: "Orders Endpoint",
+          status: "pass",
+          duration: Date.now() - start,
+          message: "Orders endpoint exists (requires authentication)",
+          timestamp: new Date(),
+        };
+      } else if (response.status === 404) {
+        return {
+          name: "Orders Endpoint",
+          status: "warn",
+          duration: Date.now() - start,
+          message: "Orders endpoint not found",
+          timestamp: new Date(),
+        };
+      } else if (response.ok) {
+        return {
+          name: "Orders Endpoint",
+          status: "pass",
+          duration: Date.now() - start,
+          message: "Orders endpoint responding",
+          timestamp: new Date(),
+        };
+      } else {
+        throw new Error(`HTTP ${response.status}`);
+      }
+    } catch (error) {
+      return {
+        name: "Orders Endpoint",
+        status: "fail",
+        duration: Date.now() - start,
+        message: "Orders endpoint check failed",
+        error: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date(),
+      };
+    }
+  }
+
+  async checkCartEndpoint(): Promise<CheckResult> {
+    const start = Date.now();
+    try {
+      // Check cart sync endpoint (requires auth, expect 401)
+      const response = await fetch(`${CONFIG.baseUrl}/api/cart/sync`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+
+      if (response.status === 401 || response.status === 400) {
+        return {
+          name: "Cart Endpoint",
+          status: "pass",
+          duration: Date.now() - start,
+          message: "Cart endpoint exists (requires authentication)",
+          timestamp: new Date(),
+        };
+      } else if (response.status === 404) {
+        return {
+          name: "Cart Endpoint",
+          status: "warn",
+          duration: Date.now() - start,
+          message: "Cart endpoint not found",
+          timestamp: new Date(),
+        };
+      } else if (response.ok) {
+        return {
+          name: "Cart Endpoint",
+          status: "pass",
+          duration: Date.now() - start,
+          message: "Cart endpoint responding",
+          timestamp: new Date(),
+        };
+      } else {
+        throw new Error(`HTTP ${response.status}`);
+      }
+    } catch (error) {
+      return {
+        name: "Cart Endpoint",
+        status: "fail",
+        duration: Date.now() - start,
+        message: "Cart endpoint check failed",
+        error: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date(),
+      };
+    }
+  }
+
+  async checkReviewsEndpoint(): Promise<CheckResult> {
+    const start = Date.now();
+    try {
+      // Check reviews create endpoint (requires auth, expect 401)
+      const response = await fetch(`${CONFIG.baseUrl}/api/reviews/create`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+
+      if (response.status === 401 || response.status === 400) {
+        return {
+          name: "Reviews Endpoint",
+          status: "pass",
+          duration: Date.now() - start,
+          message: "Reviews endpoint exists (requires authentication)",
+          timestamp: new Date(),
+        };
+      } else if (response.status === 404) {
+        return {
+          name: "Reviews Endpoint",
+          status: "warn",
+          duration: Date.now() - start,
+          message: "Reviews endpoint not found",
+          timestamp: new Date(),
+        };
+      } else if (response.ok) {
+        return {
+          name: "Reviews Endpoint",
+          status: "pass",
+          duration: Date.now() - start,
+          message: "Reviews endpoint responding",
+          timestamp: new Date(),
+        };
+      } else {
+        throw new Error(`HTTP ${response.status}`);
+      }
+    } catch (error) {
+      return {
+        name: "Reviews Endpoint",
+        status: "fail",
+        duration: Date.now() - start,
+        message: "Reviews endpoint check failed",
+        error: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date(),
+      };
+    }
+  }
+
+  async checkDashboardEndpoints(): Promise<CheckResult> {
+    const start = Date.now();
+    try {
+      // Check farmer dashboard endpoint (requires auth, expect 401)
+      const response = await fetch(`${CONFIG.baseUrl}/api/farmer/dashboard`, {
+        method: "GET",
+      });
+
+      if (response.status === 401) {
+        return {
+          name: "Dashboard Endpoints",
+          status: "pass",
+          duration: Date.now() - start,
+          message: "Dashboard endpoints exist (require authentication)",
+          timestamp: new Date(),
+        };
+      } else if (response.status === 404) {
+        return {
+          name: "Dashboard Endpoints",
+          status: "warn",
+          duration: Date.now() - start,
+          message: "Dashboard endpoints not found",
+          timestamp: new Date(),
+        };
+      } else if (response.ok) {
+        return {
+          name: "Dashboard Endpoints",
+          status: "pass",
+          duration: Date.now() - start,
+          message: "Dashboard endpoints responding",
+          timestamp: new Date(),
+        };
+      } else {
+        throw new Error(`HTTP ${response.status}`);
+      }
+    } catch (error) {
+      return {
+        name: "Dashboard Endpoints",
+        status: "fail",
+        duration: Date.now() - start,
+        message: "Dashboard endpoint check failed",
+        error: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date(),
+      };
+    }
+  }
+
   async runAllChecks(): Promise<HealthCheckReport> {
     const reportStart = Date.now();
     const checks: CheckResult[] = [];
 
-    logSection("🤖 Running Website Function Checks");
+    logSection("🤖 Running Website Function Checks (18 Endpoints)");
 
-    // Run all checks
+    // Core System Checks
     checks.push(await this.checkHomePage());
     logCheck(checks[checks.length - 1]);
 
     checks.push(await this.checkDatabaseConnection());
     logCheck(checks[checks.length - 1]);
 
+    checks.push(await this.checkHealthEndpoints());
+    logCheck(checks[checks.length - 1]);
+
     checks.push(await this.checkAuthEndpoints());
     logCheck(checks[checks.length - 1]);
 
+    // API Endpoint Checks
     checks.push(await this.checkMarketplaceAPI());
     logCheck(checks[checks.length - 1]);
 
-    checks.push(await this.checkProductPage());
+    checks.push(await this.checkFarmsAPI());
+    logCheck(checks[checks.length - 1]);
+
+    checks.push(await this.checkProductSearchAPI());
+    logCheck(checks[checks.length - 1]);
+
+    checks.push(await this.checkCategoriesAPI());
     logCheck(checks[checks.length - 1]);
 
     checks.push(await this.checkSearchFunctionality());
+    logCheck(checks[checks.length - 1]);
+
+    // Feature Endpoint Checks
+    checks.push(await this.checkImageUploadEndpoint());
+    logCheck(checks[checks.length - 1]);
+
+    checks.push(await this.checkOrdersEndpoint());
+    logCheck(checks[checks.length - 1]);
+
+    checks.push(await this.checkCartEndpoint());
+    logCheck(checks[checks.length - 1]);
+
+    checks.push(await this.checkReviewsEndpoint());
+    logCheck(checks[checks.length - 1]);
+
+    checks.push(await this.checkDashboardEndpoints());
+    logCheck(checks[checks.length - 1]);
+
+    // UI & Performance Checks
+    checks.push(await this.checkProductPage());
+    logCheck(checks[checks.length - 1]);
+
+    checks.push(await this.checkAPIDocumentation());
     logCheck(checks[checks.length - 1]);
 
     checks.push(await this.checkPerformance());

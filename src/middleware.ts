@@ -208,6 +208,7 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     const accessDeniedUrl = getAccessDeniedUrl(
       baseUrl,
       "insufficient_permissions",
+      userRole,
     );
     return NextResponse.redirect(accessDeniedUrl);
   }

@@ -1,0 +1,35 @@
+# Visual Testing - Ignore temporary and generated files
+
+# Current test run screenshots (regenerated each run)
+current/
+current/*.png
+
+# Diff images (generated on test failures)
+diffs/
+diffs/*.png
+diffs/*.jpg
+
+# Test reports
+playwright-report/
+test-results/
+
+# Approval workflow pending items
+baselines/.approvals/*.json
+
+# Archived baselines (optional - remove if you want to track archives)
+baselines/.archive/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Keep baseline images and metadata (tracked in Git)
+!baselines/*.png
+!baselines/.metadata/*.json

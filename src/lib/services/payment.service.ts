@@ -9,12 +9,7 @@
 import Stripe from "stripe";
 import { database } from "@/lib/database";
 import type { Order } from "@prisma/client";
-
-// ✅ Initialize Stripe with proper configuration
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  apiVersion: "2025-11-17.clover",
-  typescript: true,
-});
+import { stripe } from "@/lib/stripe";
 
 // ✅ DIVINE TYPE DEFINITIONS
 export interface PaymentIntent {
@@ -86,19 +81,11 @@ export class RefundError extends PaymentServiceError {
 export class PaymentService {
   /**
    * Validate Stripe configuration
+   * Note: Validation moved to stripe.ts lazy initialization
    */
   private static validateStripeConfig(): void {
-    if (!process.env.STRIPE_SECRET_KEY) {
-      throw new StripeConfigurationError(
-        "STRIPE_SECRET_KEY is not configured in environment variables",
-      );
-    }
-
-    if (!process.env.STRIPE_SECRET_KEY.startsWith("sk_")) {
-      throw new StripeConfigurationError(
-        "STRIPE_SECRET_KEY appears to be invalid (should start with 'sk_')",
-      );
-    }
+    // Stripe validation is now handled by the lazy-loaded stripe instance
+    // This method is kept for backwards compatibility
   }
 
   /**

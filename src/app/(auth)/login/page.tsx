@@ -88,10 +88,10 @@ export default function LoginPage() {
         } else if (session?.user?.role === "FARMER") {
           router.push("/farmer/dashboard");
         } else if (session?.user?.role === "CONSUMER") {
-          router.push("/");
+          router.push("/dashboard");
         } else {
-          // Fallback to home
-          router.push("/");
+          // Fallback to dashboard for any authenticated user
+          router.push("/dashboard");
         }
         router.refresh();
       }
