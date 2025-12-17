@@ -5,13 +5,22 @@
  * Note: Rate limiting is handled in the controller layer, not the route
  */
 
-import { GET, POST } from "../route";
 import { NextRequest, NextResponse } from "next/server";
 import { productController } from "@/lib/controllers/product.controller";
 import {
   createMockNextRequest,
   createMockProduct,
 } from "../../__mocks__/api-test-utils";
+
+// Mock middleware to avoid test interference
+jest.mock("@/lib/middleware/compression", () => ({
+  withCompression: (handler: any) => handler,
+}));
+
+jest.mock("@/lib/middleware/api-cache", () => ({
+  withApiCache: (handler: any) => handler,
+  invalidateCacheByTag: jest.fn(),
+}));
 
 // Mock dependencies
 jest.mock("@/lib/controllers/product.controller", () => ({
@@ -20,6 +29,9 @@ jest.mock("@/lib/controllers/product.controller", () => ({
     createProduct: jest.fn(),
   },
 }));
+
+// Import route handlers after mocks are set up
+import { GET, POST } from "../route";
 
 describe("🌾 Products API - GET /api/products", () => {
   beforeEach(() => {

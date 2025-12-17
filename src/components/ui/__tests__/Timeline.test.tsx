@@ -1,3 +1,4 @@
+import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { Timeline, OrderTimeline, TimelineEvent } from "../Timeline";
 
@@ -56,17 +57,15 @@ describe("Timeline Component", () => {
         <Timeline events={mockEvents} agriculturalTheme />,
       );
 
-      expect(
-        container.querySelector(".agricultural-timeline"),
-      ).toBeInTheDocument();
+      const element = container.querySelector(".agricultural-timeline");
+      expect(element).not.toBeNull();
     });
   });
 
   describe("Orientation", () => {
     it("should render vertical timeline by default", () => {
       const { container } = render(<Timeline events={mockEvents} />);
-
-      expect(container.querySelector(".space-y-4")).toBeInTheDocument();
+      expect(container.querySelector(".space-y-4")).not.toBeNull();
     });
 
     it("should render horizontal timeline when specified", () => {
@@ -74,9 +73,8 @@ describe("Timeline Component", () => {
         <Timeline events={mockEvents} orientation="horizontal" />,
       );
 
-      expect(
-        container.querySelector(".flex.items-start.space-x-8"),
-      ).toBeInTheDocument();
+      const element = container.querySelector(".flex.items-start.space-x-8");
+      expect(element).not.toBeNull();
     });
   });
 
@@ -85,21 +83,21 @@ describe("Timeline Component", () => {
       const { container } = render(<Timeline events={mockEvents} />);
       const completedNode = container.querySelector(".bg-green-100");
 
-      expect(completedNode).toBeInTheDocument();
+      expect(completedNode).not.toBeNull();
     });
 
     it("should display correct status colors for processing events", () => {
       const { container } = render(<Timeline events={mockEvents} />);
       const processingNode = container.querySelector(".bg-blue-100");
 
-      expect(processingNode).toBeInTheDocument();
+      expect(processingNode).not.toBeNull();
     });
 
     it("should display correct status colors for pending events", () => {
       const { container } = render(<Timeline events={mockEvents} />);
       const pendingNode = container.querySelector(".bg-yellow-100");
 
-      expect(pendingNode).toBeInTheDocument();
+      expect(pendingNode).not.toBeNull();
     });
 
     it("should handle failed status", () => {
@@ -113,7 +111,7 @@ describe("Timeline Component", () => {
       const { container } = render(<Timeline events={[failedEvent]} />);
       const failedNode = container.querySelector(".bg-red-100");
 
-      expect(failedNode).toBeInTheDocument();
+      expect(failedNode).not.toBeNull();
     });
 
     it("should handle cancelled status", () => {
@@ -127,7 +125,7 @@ describe("Timeline Component", () => {
       const { container } = render(<Timeline events={[cancelledEvent]} />);
       const cancelledNode = container.querySelector(".bg-gray-100");
 
-      expect(cancelledNode).toBeInTheDocument();
+      expect(cancelledNode).not.toBeNull();
     });
   });
 
@@ -417,7 +415,8 @@ describe("OrderTimeline Component", () => {
         <OrderTimeline {...baseProps} className="custom-class" />,
       );
 
-      expect(container.querySelector(".custom-class")).toBeInTheDocument();
+      const customElement = container.querySelector(".custom-class");
+      expect(customElement).not.toBeNull();
     });
   });
 });
@@ -472,6 +471,7 @@ describe("Timeline Timestamp Formatting", () => {
 
     render(<Timeline events={[justNowEvent]} />);
 
-    expect(screen.getByText(/just now/i)).toBeInTheDocument();
+    const justNowElements = screen.getAllByText(/just now/i);
+    expect(justNowElements.length).toBeGreaterThan(0);
   });
 });

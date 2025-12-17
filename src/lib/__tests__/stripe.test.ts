@@ -22,7 +22,9 @@ describe("🌾 Stripe Client - Divine Payment Processing", () => {
 
       expect(() => {
         jest.isolateModules(() => {
-          require("../stripe");
+          const { stripe } = require("../stripe");
+          // Error should throw when accessing the stripe instance
+          stripe.customers; // Access any property to trigger error
         });
       }).toThrow("STRIPE_SECRET_KEY is not defined in environment variables");
     });
@@ -143,11 +145,13 @@ describe("🌾 Stripe Client - Divine Payment Processing", () => {
 
   describe("🔒 Security & Environment Handling", () => {
     it("should handle undefined STRIPE_SECRET_KEY", () => {
-      process.env.STRIPE_SECRET_KEY = undefined;
+      delete process.env.STRIPE_SECRET_KEY;
 
       expect(() => {
         jest.isolateModules(() => {
-          require("../stripe");
+          const { stripe } = require("../stripe");
+          // Error should throw when accessing the stripe instance
+          stripe.customers; // Access any property to trigger error
         });
       }).toThrow("STRIPE_SECRET_KEY is not defined in environment variables");
     });
@@ -157,7 +161,9 @@ describe("🌾 Stripe Client - Divine Payment Processing", () => {
 
       expect(() => {
         jest.isolateModules(() => {
-          require("../stripe");
+          const { stripe } = require("../stripe");
+          // Error should throw when accessing the stripe instance
+          stripe.customers; // Access any property to trigger error
         });
       }).toThrow("STRIPE_SECRET_KEY is not defined in environment variables");
     });
@@ -301,23 +307,28 @@ describe("🌾 Stripe Client - Divine Payment Processing", () => {
 
       expect(() => {
         jest.isolateModules(() => {
-          require("../stripe");
+          const { stripe } = require("../stripe");
+          // Error should throw when accessing the stripe instance
+          stripe.customers; // Access any property to trigger error
         });
       }).toThrow(/STRIPE_SECRET_KEY/);
     });
 
-    it("should throw error immediately on import", () => {
+    it("should throw error immediately on access", () => {
       delete process.env.STRIPE_SECRET_KEY;
-      const startTime = Date.now();
 
-      try {
-        jest.isolateModules(() => {
-          require("../stripe");
-        });
-      } catch (error) {
-        const duration = Date.now() - startTime;
-        expect(duration).toBeLessThan(100); // Should fail fast
-      }
+      jest.isolateModules(() => {
+        const { stripe } = require("../stripe");
+        const startTime = Date.now();
+
+        try {
+          stripe.customers; // Access property to trigger error
+        } catch (error) {
+          const duration = Date.now() - startTime;
+          expect(duration).toBeLessThan(100); // Should fail fast
+          expect(error).toBeDefined();
+        }
+      });
     });
   });
 

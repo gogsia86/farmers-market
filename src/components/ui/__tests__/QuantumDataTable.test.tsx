@@ -162,7 +162,7 @@ describe("QuantumDataTable - Basic Rendering", () => {
 
   it("renders loading state", () => {
     const columns = createMockColumns();
-    render(
+    const { container } = render(
       <QuantumDataTable
         data={mockFarms}
         columns={columns}
@@ -171,9 +171,15 @@ describe("QuantumDataTable - Basic Rendering", () => {
       />,
     );
 
-    // Loading state should show skeleton
-    const skeletons = screen.getAllByRole("img", { hidden: true });
-    expect(skeletons.length).toBeGreaterThan(0);
+    // Should have animate-pulse class for loading state
+    const animatedElement = container.querySelector(".animate-pulse");
+    expect(animatedElement).toBeInTheDocument();
+
+    // Should have skeleton rows (5 loading rows)
+    const skeletonRows = container.querySelectorAll(
+      ".border-b.border-agricultural-100",
+    );
+    expect(skeletonRows.length).toBe(5);
   });
 });
 

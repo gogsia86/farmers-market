@@ -28,6 +28,16 @@ jest.mock("next-auth", () => ({
   })),
 }));
 
+// Mock middleware to avoid test interference
+jest.mock("@/lib/middleware/compression", () => ({
+  withCompression: (handler: any) => handler,
+}));
+
+jest.mock("@/lib/middleware/api-cache", () => ({
+  withApiCache: (handler: any) => handler,
+  invalidateCacheByTag: jest.fn(),
+}));
+
 jest.mock("@/lib/auth/config", () => ({
   __esModule: true,
   authConfig: {

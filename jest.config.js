@@ -47,11 +47,6 @@ module.exports = {
   testMatch: [
     "<rootDir>/src/**/__tests__/**/*.{ts,tsx}",
     "<rootDir>/src/**/*.{spec,test}.{ts,tsx}",
-    // Exclude Playwright tests from Jest
-    "!<rootDir>/tests/e2e/**/*.{spec,test}.{ts,tsx}",
-    // Exclude integration tests (require Docker - run separately with jest.config.integration.js)
-    "!<rootDir>/tests/integration/**/*.{spec,test}.{ts,tsx}",
-    "<rootDir>/tests/**/*.{spec,test}.{ts,tsx}",
   ],
 
   // Coverage configuration
@@ -106,8 +101,7 @@ module.exports = {
     "/.next/",
     "/out/",
     "/dist/",
-    "<rootDir>/tests/e2e/",
-    "<rootDir>/tests/integration/", // Integration tests require Docker - run separately
+    "/tests/", // Exclude all Playwright tests (e2e, accessibility, mobile, api, database, chaos, etc.)
     "<rootDir>/src/__tests__/benchmarks/",
   ],
 
