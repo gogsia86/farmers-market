@@ -26,9 +26,7 @@ import { SearchAutocomplete } from "@/components/homepage/SearchAutocomplete";
 import { PlatformStats } from "@/components/homepage/PlatformStats";
 import { FeaturedFarms } from "@/components/homepage/FeaturedFarms";
 import {
-  getFeaturedFarms,
   getTrendingProducts,
-  getPlatformStats,
   getSeasonalProducts,
 } from "@/lib/services/homepage.service";
 import {
@@ -55,13 +53,10 @@ export const revalidate = 300;
 
 export default async function HomePage() {
   // Parallel data fetching for optimal performance
-  const [featuredFarms, trendingProducts, platformStats, seasonalProducts] =
-    await Promise.all([
-      getFeaturedFarms({ limit: 6, featured: true }),
-      getTrendingProducts({ limit: 8 }),
-      getPlatformStats(),
-      getSeasonalProducts({ limit: 4 }),
-    ]);
+  const [trendingProducts, seasonalProducts] = await Promise.all([
+    getTrendingProducts({ limit: 8 }),
+    getSeasonalProducts({ limit: 4 }),
+  ]);
 
   return (
     <>
@@ -131,7 +126,7 @@ export default async function HomePage() {
         <section className="py-12 bg-white border-b">
           <div className="container mx-auto px-4">
             <Suspense fallback={<StatsSkeleton />}>
-              <PlatformStats stats={platformStats} />
+              <PlatformStats />
             </Suspense>
           </div>
         </section>
@@ -150,7 +145,7 @@ export default async function HomePage() {
             </div>
 
             <Suspense fallback={<FarmsSkeleton />}>
-              <FeaturedFarms farms={featuredFarms} />
+              <FeaturedFarms />
             </Suspense>
 
             <div className="text-center mt-12">
@@ -185,9 +180,13 @@ export default async function HomePage() {
                   className="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all border border-gray-100 overflow-hidden transform hover:-translate-y-1"
                 >
                   <div className="relative h-48 bg-gray-100">
-                    {product.imageUrl ? (
+                    {product.primaryPhotoUrl || product.images?.[0] ? (
                       <Image
-                        src={product.imageUrl}
+                        src={
+                          product.primaryPhotoUrl ||
+                          product.images?.[0] ||
+                          "/placeholder-product.jpg"
+                        }
                         alt={product.name}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -198,7 +197,7 @@ export default async function HomePage() {
                         <Leaf className="h-16 w-16 text-gray-300" />
                       </div>
                     )}
-                    {product.isOrganic && (
+                    {product.organic && (
                       <div className="absolute top-2 right-2 bg-green-600 text-white px-2 py-1 rounded-full text-xs font-semibold">
                         Organic
                       </div>
@@ -273,9 +272,13 @@ export default async function HomePage() {
                     className="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all border-2 border-amber-200 overflow-hidden transform hover:-translate-y-1"
                   >
                     <div className="relative h-48 bg-gray-100">
-                      {product.imageUrl ? (
+                      {product.primaryPhotoUrl || product.images?.[0] ? (
                         <Image
-                          src={product.imageUrl}
+                          src={
+                            product.primaryPhotoUrl ||
+                            product.images?.[0] ||
+                            "/placeholder-product.jpg"
+                          }
                           alt={product.name}
                           fill
                           className="object-cover group-hover:scale-105 transition-transform duration-300"

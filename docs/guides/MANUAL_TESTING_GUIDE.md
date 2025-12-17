@@ -57,6 +57,7 @@ npm run dev
 ```
 
 **Expected Output:**
+
 ```
 ✔ Console Ninja extension is connected to Next.js
    ▲ Next.js 16.0.3 (Turbopack)
@@ -70,12 +71,14 @@ npm run dev
 ```
 
 **✅ SUCCESS INDICATORS:**
+
 - No Redis `ENOTFOUND` errors
 - Database connection established
 - Server ready in <5 seconds
 - Listening on port 3001
 
 **❌ FAILURE INDICATORS:**
+
 - Redis connection errors (means Redis not disabled)
 - Database connection failed
 - Port 3001 already in use
@@ -113,6 +116,7 @@ curl http://localhost:3001/api/health
 ```
 
 **Expected Response:**
+
 ```json
 {
   "status": "healthy",
@@ -136,12 +140,14 @@ curl http://localhost:3001/api/health
 ```
 
 **✅ PASS IF:**
+
 - `status` is `"healthy"` or `"degraded"` (not `"unhealthy"`)
 - `database.status` is `"up"`
 - `memory.percentage` < 95%
 - Response time < 500ms
 
 **❌ FAIL IF:**
+
 - 500 error
 - Connection refused
 - `status` is `"unhealthy"`
@@ -161,6 +167,7 @@ curl http://localhost:3001/api/farms
 ```
 
 **Expected Response Structure:**
+
 ```json
 {
   "success": true,
@@ -186,6 +193,7 @@ curl http://localhost:3001/api/farms
 ```
 
 **✅ PASS IF:**
+
 - Status 200
 - `success: true`
 - `data` is an array
@@ -193,6 +201,7 @@ curl http://localhost:3001/api/farms
 - No Prisma validation errors in console
 
 **❌ FAIL IF:**
+
 - Status 500
 - `success: false`
 - Error message contains "Unknown argument"
@@ -208,6 +217,7 @@ curl http://localhost:3001/api/products
 ```
 
 **Expected Response Structure:**
+
 ```json
 {
   "success": true,
@@ -224,6 +234,7 @@ curl http://localhost:3001/api/products
 ```
 
 **✅ PASS IF:**
+
 - Status 200
 - `success: true`
 - `data.products` is an array
@@ -247,6 +258,7 @@ curl http://localhost:3001/api/auth/session
 **URL:** http://localhost:3001/
 
 **✅ PASS IF:**
+
 - Page loads without errors
 - No console errors about undefined properties
 - Content renders correctly
@@ -259,18 +271,21 @@ curl http://localhost:3001/api/auth/session
 **URL:** http://localhost:3001/marketplace/products
 
 **Test Steps:**
+
 1. Navigate to marketplace products page
 2. Open browser DevTools Console (F12)
 3. Check for errors
 4. Verify products display correctly
 
 **✅ PASS IF:**
+
 - Page loads successfully
 - Products are displayed in a grid/list
 - No `map is not a function` errors
 - Filter/search works (if applicable)
 
 **❌ FAIL IF:**
+
 - White screen
 - Console error: "products.map is not a function"
 - Page shows error message
@@ -280,17 +295,20 @@ curl http://localhost:3001/api/auth/session
 **Fixed Issue:** `Cannot read properties of undefined (reading 'image')` when user is null
 
 **Test Steps:**
+
 1. Navigate to any customer page (marketplace, products, etc.)
 2. Check header renders correctly
 3. Test both logged-in and logged-out states
 
 **✅ PASS IF:**
+
 - Header displays without errors
 - User avatar/profile works when logged in
 - No errors when logged out (user is null)
 - Navigation links work
 
 **❌ FAIL IF:**
+
 - Console error about undefined properties
 - Header doesn't render
 - Crashes when user is null
@@ -312,6 +330,7 @@ npm run bot:watch:dev
 ```
 
 **Expected Output:**
+
 ```
 🤖 Running Website Function Checks
 ══════════════════════════════════════════════════════════════════════
@@ -333,12 +352,14 @@ npm run bot:watch:dev
 ```
 
 **✅ PASS IF:**
+
 - All checks pass (✅)
 - Success rate: 100%
 - No connection errors
 - Overall status: HEALTHY
 
 **❌ FAIL IF:**
+
 - Any checks fail (❌)
 - Connection refused errors
 - Success rate < 100%
@@ -360,6 +381,7 @@ npm run monitor:health
 ```
 
 **Expected Output:**
+
 ```
 🔍 Monitoring Workflows...
 ✅ User Registration Flow - 100% Success
@@ -379,16 +401,19 @@ npm run monitor:health
 ### 10. Memory Usage Check
 
 **From Health Endpoint:**
+
 ```bash
 curl -s http://localhost:3001/api/health | grep -o '"percentage":[0-9]*'
 ```
 
 **Acceptable Ranges:**
+
 - **Healthy:** < 85%
 - **Elevated:** 85-94%
 - **Critical:** 95%+
 
 **If Memory is High:**
+
 1. Restart dev server
 2. Clear Next.js cache: `rm -rf .next`
 3. Check for memory leaks in logs
@@ -396,6 +421,7 @@ curl -s http://localhost:3001/api/health | grep -o '"percentage":[0-9]*'
 ### 11. Response Time Check
 
 **Test API Response Times:**
+
 ```bash
 # Using curl with timing
 curl -w "@-" -o /dev/null -s http://localhost:3001/api/farms <<< "
@@ -410,6 +436,7 @@ curl -w "@-" -o /dev/null -s http://localhost:3001/api/farms <<< "
 ```
 
 **Acceptable Times:**
+
 - **API Endpoints:** < 500ms
 - **Page Load:** < 2s
 - **Database Queries:** < 100ms
@@ -421,11 +448,13 @@ curl -w "@-" -o /dev/null -s http://localhost:3001/api/farms <<< "
 ### Issue 1: Redis Connection Errors
 
 **Symptoms:**
+
 ```
 Error: getaddrinfo ENOTFOUND redis
 ```
 
 **Solution:**
+
 ```bash
 # Edit .env.local
 echo "REDIS_ENABLED=false" >> .env.local
@@ -438,11 +467,13 @@ echo "REDIS_ENABLED=false" >> .env.local
 ### Issue 2: Prisma Validation Errors
 
 **Symptoms:**
+
 ```
 Error: Unknown argument 'owner'. Did you mean 'where'?
 ```
 
 **Solution:**
+
 - Already fixed in `src/lib/repositories/base.repository.ts`
 - Ensure using latest code
 - Check repository uses `include: { owner: true }` not spreading at top level
@@ -450,11 +481,13 @@ Error: Unknown argument 'owner'. Did you mean 'where'?
 ### Issue 3: React Undefined Property Errors
 
 **Symptoms:**
+
 ```
 Cannot read properties of undefined (reading 'image')
 ```
 
 **Solution:**
+
 - Already fixed in `src/components/layout/CustomerHeader.tsx`
 - Component now handles null user safely
 - Uses optional chaining (`user?.image`)
@@ -462,11 +495,13 @@ Cannot read properties of undefined (reading 'image')
 ### Issue 4: Products Map Error
 
 **Symptoms:**
+
 ```
 products.map is not a function
 ```
 
 **Solution:**
+
 - Already fixed in `src/app/(customer)/marketplace/products/page.tsx`
 - Now correctly unwraps `result.data.products`
 - Handles API response shape properly
@@ -474,6 +509,7 @@ products.map is not a function
 ### Issue 5: Port 3001 Already in Use
 
 **Solution:**
+
 ```bash
 # Find process on port 3001
 netstat -ano | findstr ":3001"
@@ -490,6 +526,7 @@ npm run dev
 ## Checklist Summary
 
 ### 🎯 Pre-Flight Checklist
+
 - [ ] Environment configured (`.env.local`)
 - [ ] Redis disabled (`REDIS_ENABLED=false`)
 - [ ] Database connection working
@@ -497,12 +534,14 @@ npm run dev
 - [ ] Dependencies installed
 
 ### 🚀 Server Startup
+
 - [ ] Dev server starts without errors
 - [ ] No Redis connection errors in logs
 - [ ] Database connection established
 - [ ] Server listening on port 3001
 
 ### 🔍 API Endpoints
+
 - [ ] `/api/health` returns healthy status
 - [ ] `/api/farms` returns farm list (200)
 - [ ] `/api/products` returns products (200)
@@ -510,6 +549,7 @@ npm run dev
 - [ ] No 500 errors in any endpoint
 
 ### 🌐 Frontend Pages
+
 - [ ] Homepage loads successfully
 - [ ] Marketplace products page works
 - [ ] Customer header renders (logged in & out)
@@ -517,18 +557,21 @@ npm run dev
 - [ ] All navigation works
 
 ### 🤖 Automated Tests
+
 - [ ] Website checker bot: 100% pass rate
 - [ ] Workflow monitor: All workflows successful
 - [ ] No connection errors
 - [ ] Overall status: HEALTHY
 
 ### ⚡ Performance
+
 - [ ] Memory usage < 85% (healthy)
 - [ ] API response times < 500ms
 - [ ] Page load times < 2s
 - [ ] No performance warnings
 
 ### 📝 Logs Review
+
 - [ ] No Redis `ENOTFOUND` errors
 - [ ] No Prisma validation errors
 - [ ] No React undefined property errors
@@ -598,11 +641,13 @@ npm run monitor:all
 ### After Pulling Latest Changes:
 
 1. **Always regenerate Prisma client:**
+
    ```bash
    npx prisma generate
    ```
 
 2. **Check environment configuration:**
+
    ```bash
    cat .env.local | grep REDIS_ENABLED
    ```

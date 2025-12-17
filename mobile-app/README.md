@@ -136,12 +136,14 @@ Before you begin, ensure you have the following installed:
 ### Development Environment
 
 #### For iOS Development:
+
 - **macOS**: Required for iOS development
 - **Xcode**: Latest version (15+)
 - **iOS Simulator**: Included with Xcode
 - **CocoaPods**: `sudo gem install cocoapods`
 
 #### For Android Development:
+
 - **Android Studio**: Latest version
 - **Android SDK**: API Level 31+
 - **Android Emulator**: Configured in Android Studio
@@ -362,9 +364,9 @@ The app uses strict TypeScript with path aliases:
 
 ```typescript
 // Use path aliases in imports
-import Button from '@/components/base/Button';
-import { useAuthStore } from '@/stores/authStore';
-import apiClient from '@/services/api';
+import Button from "@/components/base/Button";
+import { useAuthStore } from "@/stores/authStore";
+import apiClient from "@/services/api";
 ```
 
 ### Theme Configuration
@@ -374,9 +376,9 @@ Customize the app theme in `src/config/theme.ts`:
 ```typescript
 export const theme = {
   colors: {
-    primary: '#10b981',      // Green
-    secondary: '#f59e0b',    // Amber
-    accent: '#3b82f6',       // Blue
+    primary: "#10b981", // Green
+    secondary: "#f59e0b", // Amber
+    accent: "#3b82f6", // Blue
     // ... more colors
   },
   spacing: {
@@ -487,11 +489,13 @@ npm run test:e2e
 ### iOS Deployment (App Store)
 
 1. **Build production version**:
+
    ```bash
    eas build --platform ios --profile production
    ```
 
 2. **Submit to App Store**:
+
    ```bash
    eas submit --platform ios
    ```
@@ -505,11 +509,13 @@ npm run test:e2e
 ### Android Deployment (Google Play)
 
 1. **Build production version**:
+
    ```bash
    eas build --platform android --profile production
    ```
 
 2. **Submit to Google Play**:
+
    ```bash
    eas submit --platform android
    ```
@@ -622,6 +628,7 @@ npm start
 ### Flipper
 
 Flipper is automatically configured for:
+
 - Network inspection
 - Layout inspector
 - Performance monitoring
@@ -663,6 +670,7 @@ npx react-native log-android
 ### Development Workflow
 
 1. **Create a feature branch**:
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
@@ -673,6 +681,7 @@ npx react-native log-android
    - Update documentation
 
 3. **Run quality checks**:
+
    ```bash
    npm run type-check
    npm run lint:fix
@@ -680,6 +689,7 @@ npx react-native log-android
    ```
 
 4. **Commit your changes**:
+
    ```bash
    git commit -m "feat: add new feature"
    ```
@@ -704,24 +714,28 @@ npx react-native log-android
 ### Common Issues
 
 #### Metro Bundler Issues
+
 ```bash
 # Clear cache and restart
 npm start -- --reset-cache
 ```
 
 #### iOS Simulator Issues
+
 ```bash
 # Reset simulator
 xcrun simctl erase all
 ```
 
 #### Android Emulator Issues
+
 ```bash
 # Cold boot emulator
 # In Android Studio: Tools > AVD Manager > Cold Boot Now
 ```
 
 #### Node Modules Issues
+
 ```bash
 # Clean install
 rm -rf node_modules package-lock.json
@@ -756,6 +770,7 @@ This project is licensed under the MIT License - see the [LICENSE](../LICENSE) f
 ## 🎉 Acknowledgments
 
 Special thanks to:
+
 - The Expo team for an amazing development experience
 - React Native community for excellent libraries
 - All contributors who have helped improve this app

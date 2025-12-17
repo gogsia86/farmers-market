@@ -83,7 +83,9 @@ export default function ProductsLoading() {
             <div className="lg:hidden mb-6">
               <button className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg border shadow-sm">
                 <SlidersHorizontal className="h-4 w-4 text-gray-600" />
-                <span className="text-sm font-medium text-gray-700">Filters</span>
+                <span className="text-sm font-medium text-gray-700">
+                  Filters
+                </span>
               </button>
             </div>
 
@@ -150,7 +152,10 @@ export default function ProductsLoading() {
               <div className="flex items-center gap-2">
                 <div className="h-10 w-10 bg-gray-200 rounded animate-pulse"></div>
                 {[...Array(5)].map((_, i) => (
-                  <div key={i} className="h-10 w-10 bg-gray-200 rounded animate-pulse"></div>
+                  <div
+                    key={i}
+                    className="h-10 w-10 bg-gray-200 rounded animate-pulse"
+                  ></div>
                 ))}
                 <div className="h-10 w-10 bg-gray-200 rounded animate-pulse"></div>
               </div>
@@ -162,7 +167,9 @@ export default function ProductsLoading() {
       {/* Loading Indicator */}
       <div className="fixed bottom-8 right-8 bg-white rounded-full shadow-lg px-4 py-2 flex items-center gap-2 border border-green-200 animate-pulse">
         <div className="h-2 w-2 bg-green-500 rounded-full animate-ping"></div>
-        <span className="text-sm font-medium text-gray-700">Loading products...</span>
+        <span className="text-sm font-medium text-gray-700">
+          Loading products...
+        </span>
       </div>
     </div>
   );

@@ -133,15 +133,18 @@ export class AdvancedVisualUtils {
     baselinePath: string,
     currentPath: string,
     diffPath: string,
-    options: ComparisonOptions = {}
+    options: ComparisonOptions = {},
   ): Promise<ComparisonResult> {
     const baseline = await this.loadImage(baselinePath);
     const current = await this.loadImage(currentPath);
 
     // Validate dimensions
-    if (baseline.width !== current.width || baseline.height !== current.height) {
+    if (
+      baseline.width !== current.width ||
+      baseline.height !== current.height
+    ) {
       throw new Error(
-        `Image dimensions don't match: ${baseline.width}x${baseline.height} vs ${current.width}x${current.height}`
+        `Image dimensions don't match: ${baseline.width}x${baseline.height} vs ${current.width}x${current.height}`,
       );
     }
 
@@ -165,21 +168,29 @@ export class AdvancedVisualUtils {
         alpha: options.alpha ?? 0.1,
         diffColor: options.diffColor ?? [255, 0, 0],
         diffMask: options.diffMask,
-      }
+      },
     );
 
     const pixelDiff = (diffPixels / totalPixels) * 100;
 
     // 2. SSIM (Structural Similarity)
-    const ssimResult = await this.calculateSSIM(baseline, current, options.ssimWindow);
+    const ssimResult = await this.calculateSSIM(
+      baseline,
+      current,
+      options.ssimWindow,
+    );
     const ssim = ssimResult.ssim;
 
     // 3. Perceptual Diff
-    const perceptualDiff = await this.calculatePerceptualDiff(baseline, current, {
-      threshold: options.threshold ?? 0.1,
-      gamma: 2.2,
-      luminanceOnly: false,
-    });
+    const perceptualDiff = await this.calculatePerceptualDiff(
+      baseline,
+      current,
+      {
+        threshold: options.threshold ?? 0.1,
+        gamma: 2.2,
+        luminanceOnly: false,
+      },
+    );
 
     // 4. Anti-aliasing detection
     const antiAliasing = this.detectAntiAliasing(baseline, current, diffPixels);
@@ -188,7 +199,11 @@ export class AdvancedVisualUtils {
     const regions = this.identifyDiffRegions(diff, width, height);
 
     // 6. Color difference analysis
-    const colorDifferences = this.analyzeColorDifferences(baseline, current, regions);
+    const colorDifferences = this.analyzeColorDifferences(
+      baseline,
+      current,
+      regions,
+    );
 
     // 7. Layout shift detection
     const layoutShifts = await this.detectLayoutShifts(baseline, current);
@@ -204,7 +219,7 @@ export class AdvancedVisualUtils {
       ssim,
       pixelDiff,
       perceptualDiff,
-      antiAliasing
+      antiAliasing,
     );
 
     // Determine if test passed
@@ -235,7 +250,7 @@ export class AdvancedVisualUtils {
   async calculateSSIM(
     img1: ImageData,
     img2: ImageData,
-    windowSize: number = this.SSIM_WINDOW_SIZE
+    windowSize: number = this.SSIM_WINDOW_SIZE,
   ): Promise<SSIMResult> {
     const cacheKey = this.getImageHash(img1) + this.getImageHash(img2);
     if (this.ssimCache.has(cacheKey)) {
@@ -252,13 +267,7 @@ export class AdvancedVisualUtils {
     // Iterate over image in windows
     for (let y = halfWindow; y < height - halfWindow; y += window) {
       for (let x = halfWindow; x < width - halfWindow; x += window) {
-        const ssimWindow = this.calculateSSIMWindow(
-          img1,
-          img2,
-          x,
-          y,
-          window
-        );
+        const ssimWindow = this.calculateSSIMWindow(img1, img2, x, y, window);
         ssimSum += ssimWindow.ssim;
         windowCount++;
       }
@@ -285,7 +294,7 @@ export class AdvancedVisualUtils {
     img2: ImageData,
     centerX: number,
     centerY: number,
-    windowSize: number
+    windowSize: number,
   ): SSIMResult {
     const halfWindow = Math.floor(windowSize / 2);
     const pixels1: number[] = [];
@@ -302,12 +311,12 @@ export class AdvancedVisualUtils {
           const lum1 = this.rgbToLuminance(
             img1.data[idx],
             img1.data[idx + 1],
-            img1.data[idx + 2]
+            img1.data[idx + 2],
           );
           const lum2 = this.rgbToLuminance(
             img2.data[idx],
             img2.data[idx + 1],
-            img2.data[idx + 2]
+            img2.data[idx + 2],
           );
           pixels1.push(lum1);
           pixels2.push(lum2);
@@ -347,7 +356,7 @@ export class AdvancedVisualUtils {
   async calculatePerceptualDiff(
     img1: ImageData,
     img2: ImageData,
-    options: PerceptualDiffOptions
+    options: PerceptualDiffOptions,
   ): Promise<number> {
     const { width, height } = img1;
     let diffPixels = 0;
@@ -388,7 +397,7 @@ export class AdvancedVisualUtils {
   private detectAntiAliasing(
     img1: ImageData,
     img2: ImageData,
-    diffPixels: number
+    diffPixels: number,
   ): boolean {
     // If diff is very small and localized, likely AA differences
     const diffPercentage = (diffPixels / (img1.width * img1.height)) * 100;
@@ -440,7 +449,11 @@ export class AdvancedVisualUtils {
    */
   private isEdgePixel(img: ImageData, x: number, y: number): boolean {
     const idx = (y * img.width + x) * 4;
-    const lum = this.rgbToLuminance(img.data[idx], img.data[idx + 1], img.data[idx + 2]);
+    const lum = this.rgbToLuminance(
+      img.data[idx],
+      img.data[idx + 1],
+      img.data[idx + 2],
+    );
 
     // Check neighbors
     const neighbors = [
@@ -459,7 +472,7 @@ export class AdvancedVisualUtils {
         const nLum = this.rgbToLuminance(
           img.data[nIdx],
           img.data[nIdx + 1],
-          img.data[nIdx + 2]
+          img.data[nIdx + 2],
         );
 
         // High gradient = edge
@@ -478,7 +491,7 @@ export class AdvancedVisualUtils {
   private identifyDiffRegions(
     diff: PNG,
     width: number,
-    height: number
+    height: number,
   ): DiffRegion[] {
     const visited = new Set<number>();
     const regions: DiffRegion[] = [];
@@ -509,7 +522,7 @@ export class AdvancedVisualUtils {
     diff: PNG,
     startX: number,
     startY: number,
-    visited: Set<number>
+    visited: Set<number>,
   ): DiffRegion {
     const stack: Array<{ x: number; y: number }> = [{ x: startX, y: startY }];
     const width = diff.width;
@@ -525,13 +538,7 @@ export class AdvancedVisualUtils {
       const { x, y } = stack.pop()!;
       const key = y * width + x;
 
-      if (
-        x < 0 ||
-        x >= width ||
-        y < 0 ||
-        y >= height ||
-        visited.has(key)
-      ) {
+      if (x < 0 || x >= width || y < 0 || y >= height || visited.has(key)) {
         continue;
       }
 
@@ -581,7 +588,7 @@ export class AdvancedVisualUtils {
   private analyzeColorDifferences(
     img1: ImageData,
     img2: ImageData,
-    regions: DiffRegion[]
+    regions: DiffRegion[],
   ): ColorDiff[] {
     const colorDiffs: ColorDiff[] = [];
 
@@ -591,7 +598,10 @@ export class AdvancedVisualUtils {
         { x: region.x, y: region.y },
         { x: region.x + Math.floor(region.width / 2), y: region.y },
         { x: region.x, y: region.y + Math.floor(region.height / 2) },
-        { x: region.x + Math.floor(region.width / 2), y: region.y + Math.floor(region.height / 2) },
+        {
+          x: region.x + Math.floor(region.width / 2),
+          y: region.y + Math.floor(region.height / 2),
+        },
       ];
 
       for (const { x, y } of samplePoints) {
@@ -633,7 +643,7 @@ export class AdvancedVisualUtils {
    */
   async detectLayoutShifts(
     img1: ImageData,
-    img2: ImageData
+    img2: ImageData,
   ): Promise<LayoutShift[]> {
     // Simplified layout shift detection
     // In production, use computer vision techniques like ORB or SIFT
@@ -650,7 +660,7 @@ export class AdvancedVisualUtils {
   private detectTextChanges(
     img1: ImageData,
     img2: ImageData,
-    regions: DiffRegion[]
+    regions: DiffRegion[],
   ): TextChange[] {
     const textChanges: TextChange[] = [];
 
@@ -714,7 +724,7 @@ export class AdvancedVisualUtils {
     ssim: number,
     pixelDiff: number,
     perceptualDiff: number,
-    antiAliasing: boolean
+    antiAliasing: boolean,
   ): number {
     // Weighted average of metrics
     let score = 0;
@@ -805,10 +815,10 @@ export class AdvancedVisualUtils {
     values1: number[],
     values2: number[],
     mean1: number,
-    mean2: number
+    mean2: number,
   ): number {
     const products = values1.map(
-      (val1, i) => (val1 - mean1) * (values2[i] - mean2)
+      (val1, i) => (val1 - mean1) * (values2[i] - mean2),
     );
     return this.mean(products);
   }
@@ -851,10 +861,14 @@ export class SmartElementComparison {
    * 🎯 Compare specific elements instead of full page
    */
   async compareElements(
-    page: any,
+    page: {
+      locator: (selector: string) => {
+        screenshot: (options?: unknown) => Promise<Buffer>;
+      };
+    },
     selector: string,
     baselinePath: string,
-    options: ComparisonOptions = {}
+    options: ComparisonOptions = {},
   ): Promise<ComparisonResult> {
     const element = await page.$(selector);
     if (!element) {
@@ -871,7 +885,7 @@ export class SmartElementComparison {
       baselinePath,
       currentPath,
       diffPath,
-      options
+      options,
     );
   }
 
@@ -883,7 +897,7 @@ export class SmartElementComparison {
     currentPath: string,
     diffPath: string,
     options: ComparisonOptions = {},
-    maxRetries: number = 3
+    maxRetries: number = 3,
   ): Promise<ComparisonResult> {
     let lastResult: ComparisonResult | null = null;
 
@@ -892,7 +906,7 @@ export class SmartElementComparison {
         baselinePath,
         currentPath,
         diffPath,
-        options
+        options,
       );
 
       if (result.passed) {

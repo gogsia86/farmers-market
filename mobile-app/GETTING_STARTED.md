@@ -22,16 +22,19 @@ Before you begin, ensure you have the following installed:
 Choose your development platform:
 
 #### For iOS Development (macOS only)
+
 - **Xcode** (latest version) - [Mac App Store](https://apps.apple.com/us/app/xcode/id497799835)
 - **iOS Simulator** (comes with Xcode)
 - **CocoaPods** - Install: `sudo gem install cocoapods`
 
 #### For Android Development
+
 - **Android Studio** - [Download](https://developer.android.com/studio)
 - **Android SDK** (API 33 or higher)
 - **Android Emulator** or physical device
 
 #### For Quick Testing (Easiest!)
+
 - **Expo Go App** - Install on your physical device:
   - [iOS App Store](https://apps.apple.com/app/expo-go/id982107779)
   - [Google Play Store](https://play.google.com/store/apps/details?id=host.exp.exponent)
@@ -115,6 +118,7 @@ VERBOSE_LOGGING=true
 ```
 
 > **💡 Finding Your Local IP Address:**
+>
 > - **Windows:** Open CMD and run `ipconfig`, look for "IPv4 Address"
 > - **macOS/Linux:** Open Terminal and run `ifconfig | grep "inet "` or `ip addr`
 > - Usually starts with `192.168.x.x` or `10.0.x.x`
@@ -141,6 +145,7 @@ npm run dev
 ```
 
 **Verify backend is running:**
+
 - Open browser to `http://localhost:3001/api/health` (or your configured port)
 - You should see a health check response
 
@@ -194,6 +199,7 @@ npm run ios
 ```
 
 **First time setup:**
+
 - Xcode will install necessary components
 - Select a simulator (iPhone 14 Pro recommended)
 
@@ -206,6 +212,7 @@ npm run android
 ```
 
 **First time setup:**
+
 - Make sure you have an Android Virtual Device (AVD) created in Android Studio
 - Go to Android Studio → Tools → AVD Manager → Create Virtual Device
 - Recommended: Pixel 5 with Android 13 (API 33)
@@ -474,6 +481,7 @@ git push origin feature/login-screen
 ### Divine Instructions (in `.github/instructions/`)
 
 Review these for advanced patterns:
+
 - `04_NEXTJS_DIVINE_IMPLEMENTATION.instructions.md`
 - `09_AI_WORKFLOW_AUTOMATION.instructions.md`
 - `10_AGRICULTURAL_FEATURE_PATTERNS.instructions.md`
@@ -524,7 +532,9 @@ Check `TROUBLESHOOTING.md` (will be created) for comprehensive issue resolution.
 
 **Error messages:**
 ```
+
 [Paste relevant errors]
+
 ```
 
 **Screenshots:**
@@ -554,6 +564,7 @@ Head over to `IMPLEMENTATION_ROADMAP.md` to see what features to build next, or 
 ## 🌾 Divine Agricultural Development Principles
 
 Remember to code with:
+
 - **🧬 Agricultural Consciousness** - Every feature serves farmers and customers
 - **⚡ Quantum Efficiency** - Optimize for performance (your HP OMEN can handle it!)
 - **🎯 Type Safety** - TypeScript strict mode, always

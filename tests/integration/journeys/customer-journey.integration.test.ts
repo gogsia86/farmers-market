@@ -23,7 +23,12 @@
  * - Farm discovery ✅
  */
 
-import { PrismaClient, OrderStatus, ProductCategory, Season } from "@prisma/client";
+import {
+  PrismaClient,
+  OrderStatus,
+  ProductCategory,
+  Season,
+} from "@prisma/client";
 import {
   getTestPrismaClient,
   cleanTestDatabase,
@@ -156,7 +161,7 @@ describe("🌾 Customer Journey Integration Tests", () => {
       // Calculate totals
       const subtotal = updatedCart.items.reduce(
         (sum, item) => sum + item.price * item.quantity,
-        0
+        0,
       );
       const discount = subtotal * (promoCode.discount / 100);
       const total = subtotal - discount;
@@ -339,7 +344,7 @@ describe("🌾 Customer Journey Integration Tests", () => {
             quantity: 1,
             price: product?.price || 0,
           },
-        })
+        }),
       ).resolves.toBeDefined(); // Cart item created but checkout should fail
 
       // Order creation should validate inventory
@@ -349,7 +354,7 @@ describe("🌾 Customer Journey Integration Tests", () => {
       });
 
       const hasOutOfStock = cartWithItems?.items.some(
-        (item) => item.product.inventory < item.quantity
+        (item) => item.product.inventory < item.quantity,
       );
 
       expect(hasOutOfStock).toBe(true);
@@ -391,7 +396,7 @@ describe("🌾 Customer Journey Integration Tests", () => {
       // Calculate subtotal
       const subtotal = cart.items.reduce(
         (sum, item) => sum + item.price * item.quantity,
-        0
+        0,
       );
 
       expect(subtotal).toBeCloseTo(14.97 + 6.98 + 5.99, 2); // 27.94
@@ -588,7 +593,9 @@ describe("🌾 Customer Journey Integration Tests", () => {
       });
 
       expect(mockEmailService.getSentEmails().length).toBeGreaterThanOrEqual(1);
-      expect(mockNotificationService.getSentNotifications().length).toBeGreaterThanOrEqual(1);
+      expect(
+        mockNotificationService.getSentNotifications().length,
+      ).toBeGreaterThanOrEqual(1);
     });
   });
 
@@ -845,7 +852,7 @@ describe("🌾 Customer Journey Integration Tests", () => {
 
       const total = cart.items.reduce(
         (sum, item) => sum + item.price * item.quantity,
-        0
+        0,
       );
 
       expect(total).toBeLessThan(minOrderAmount);
@@ -886,7 +893,7 @@ describe("🌾 Customer Journey Integration Tests", () => {
               increment: 1,
             },
           },
-        })
+        }),
       );
 
       await Promise.all(addOperations);
@@ -944,7 +951,8 @@ describe("🌾 Customer Journey Integration Tests", () => {
       const organicProducts =
         farm?.products.filter((p) => p.isOrganic).length || 0;
       const sustainabilityScore =
-        (certificationBonus * 10 + organicProducts * 5) / (farm?.products.length || 1);
+        (certificationBonus * 10 + organicProducts * 5) /
+        (farm?.products.length || 1);
 
       expect(sustainabilityScore).toBeGreaterThanOrEqual(0);
       expect(sustainabilityScore).toBeLessThanOrEqual(100);

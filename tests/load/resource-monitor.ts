@@ -18,26 +18,37 @@
  * @reference .github/instructions/13_TESTING_PERFORMANCE_MASTERY.instructions.md
  */
 
-import { execSync } from 'child_process';
-import fs from 'fs';
-import path from 'path';
-import http from 'http';
-import https from 'https';
+import { execSync } from "child_process";
+import fs from "fs";
+import path from "path";
+import http from "http";
+import https from "https";
 
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
 
-const RESULTS_DIR = path.join(process.cwd(), 'tests', 'load', 'results');
-const MONITORING_DIR = path.join(RESULTS_DIR, 'monitoring');
-const MONITORING_DATA_FILE = path.join(MONITORING_DIR, 'current-monitoring-session.json');
-const MONITORING_LOG_FILE = path.join(MONITORING_DIR, 'monitoring.log');
+const RESULTS_DIR = path.join(process.cwd(), "tests", "load", "results");
+const MONITORING_DIR = path.join(RESULTS_DIR, "monitoring");
+const MONITORING_DATA_FILE = path.join(
+  MONITORING_DIR,
+  "current-monitoring-session.json",
+);
+const MONITORING_LOG_FILE = path.join(MONITORING_DIR, "monitoring.log");
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3001';
-const MONITORING_INTERVAL = parseInt(process.env.MONITORING_INTERVAL || '5000', 10); // 5 seconds
-const ALERT_CPU_THRESHOLD = parseFloat(process.env.ALERT_CPU_THRESHOLD || '80'); // 80%
-const ALERT_MEMORY_THRESHOLD = parseFloat(process.env.ALERT_MEMORY_THRESHOLD || '85'); // 85%
-const ALERT_LATENCY_THRESHOLD = parseInt(process.env.ALERT_LATENCY_THRESHOLD || '2000', 10); // 2s
+const BASE_URL = process.env.BASE_URL || "http://localhost:3001";
+const MONITORING_INTERVAL = parseInt(
+  process.env.MONITORING_INTERVAL || "5000",
+  10,
+); // 5 seconds
+const ALERT_CPU_THRESHOLD = parseFloat(process.env.ALERT_CPU_THRESHOLD || "80"); // 80%
+const ALERT_MEMORY_THRESHOLD = parseFloat(
+  process.env.ALERT_MEMORY_THRESHOLD || "85",
+); // 85%
+const ALERT_LATENCY_THRESHOLD = parseInt(
+  process.env.ALERT_LATENCY_THRESHOLD || "2000",
+  10,
+); // 2s
 
 // ============================================================================
 // TYPES
@@ -83,8 +94,8 @@ interface MonitoringSession {
 
 interface Alert {
   timestamp: string;
-  level: 'warning' | 'critical';
-  type: 'cpu' | 'memory' | 'latency' | 'api';
+  level: "warning" | "critical";
+  type: "cpu" | "memory" | "latency" | "api";
   message: string;
   value: number;
   threshold: number;
@@ -142,7 +153,7 @@ function loadCurrentSession(): MonitoringSession | null {
   }
 
   try {
-    const content = fs.readFileSync(MONITORING_DATA_FILE, 'utf-8');
+    const content = fs.readFileSync(MONITORING_DATA_FILE, "utf-8");
     return JSON.parse(content);
   } catch (error) {
     log(`❌ Failed to load monitoring session: ${error}`);
@@ -157,7 +168,7 @@ function saveSession(session: MonitoringSession): void {
 
 function archiveSession(session: MonitoringSession): void {
   ensureDirectories();
-  const timestamp = session.startTime.replace(/[:.]/g, '-');
+  const timestamp = session.startTime.replace(/[:.]/g, "-");
   const archiveFile = path.join(MONITORING_DIR, `session-${timestamp}.json`);
   fs.writeFileSync(archiveFile, JSON.stringify(session, null, 2));
   log(`✅ Session archived to ${archiveFile}`);
@@ -169,19 +180,19 @@ function archiveSession(session: MonitoringSession): void {
 
 function getCPUUsage(): number {
   try {
-    if (process.platform === 'win32') {
+    if (process.platform === "win32") {
       // Windows
-      const output = execSync(
-        'wmic cpu get loadpercentage',
-        { encoding: 'utf-8', timeout: 5000 }
-      );
+      const output = execSync("wmic cpu get loadpercentage", {
+        encoding: "utf-8",
+        timeout: 5000,
+      });
       const match = output.match(/\d+/);
       return match ? parseInt(match[0], 10) : 0;
     } else {
       // Linux/Mac
       const output = execSync(
         "top -bn1 | grep 'Cpu(s)' | sed 's/.*, *\\([0-9.]*\\)%* id.*/\\1/' | awk '{print 100 - $1}'",
-        { encoding: 'utf-8', timeout: 5000 }
+        { encoding: "utf-8", timeout: 5000 },
       );
       return parseFloat(output.trim()) || 0;
     }
@@ -192,16 +203,20 @@ function getCPUUsage(): number {
 
 function getLoadAverage(): number[] {
   try {
-    if (process.platform === 'win32') {
+    if (process.platform === "win32") {
       // Windows doesn't have load average, return CPU-based estimate
       const cpu = getCPUUsage();
       return [cpu / 100, cpu / 100, cpu / 100];
     } else {
       // Linux/Mac
-      const output = execSync('uptime', { encoding: 'utf-8', timeout: 5000 });
+      const output = execSync("uptime", { encoding: "utf-8", timeout: 5000 });
       const match = output.match(/load average: ([\d.]+), ([\d.]+), ([\d.]+)/);
       if (match) {
-        return [parseFloat(match[1]), parseFloat(match[2]), parseFloat(match[3])];
+        return [
+          parseFloat(match[1]),
+          parseFloat(match[2]),
+          parseFloat(match[3]),
+        ];
       }
       return [0, 0, 0];
     }
@@ -210,16 +225,21 @@ function getLoadAverage(): number[] {
   }
 }
 
-function getMemoryUsage(): { total: number; used: number; free: number; usagePercent: number } {
+function getMemoryUsage(): {
+  total: number;
+  used: number;
+  free: number;
+  usagePercent: number;
+} {
   try {
-    if (process.platform === 'win32') {
+    if (process.platform === "win32") {
       // Windows
-      const totalOutput = execSync('wmic OS get TotalVisibleMemorySize', {
-        encoding: 'utf-8',
+      const totalOutput = execSync("wmic OS get TotalVisibleMemorySize", {
+        encoding: "utf-8",
         timeout: 5000,
       });
-      const freeOutput = execSync('wmic OS get FreePhysicalMemory', {
-        encoding: 'utf-8',
+      const freeOutput = execSync("wmic OS get FreePhysicalMemory", {
+        encoding: "utf-8",
         timeout: 5000,
       });
 
@@ -236,9 +256,9 @@ function getMemoryUsage(): { total: number; used: number; free: number; usagePer
       }
     } else {
       // Linux/Mac
-      const output = execSync('free -b', { encoding: 'utf-8', timeout: 5000 });
-      const lines = output.split('\n');
-      const memLine = lines.find((line) => line.startsWith('Mem:'));
+      const output = execSync("free -b", { encoding: "utf-8", timeout: 5000 });
+      const lines = output.split("\n");
+      const memLine = lines.find((line) => line.startsWith("Mem:"));
 
       if (memLine) {
         const parts = memLine.split(/\s+/);
@@ -252,8 +272,8 @@ function getMemoryUsage(): { total: number; used: number; free: number; usagePer
     }
   } catch {
     // Fallback to Node.js memory info
-    const total = require('os').totalmem();
-    const free = require('os').freemem();
+    const total = require("os").totalmem();
+    const free = require("os").freemem();
     const used = total - free;
     const usagePercent = (used / total) * 100;
     return { total, used, free, usagePercent };
@@ -264,7 +284,7 @@ function getMemoryUsage(): { total: number; used: number; free: number; usagePer
 
 function getProcessMemory(): { memory: number; memoryPercent: number } {
   const memUsage = process.memoryUsage();
-  const systemMemory = require('os').totalmem();
+  const systemMemory = require("os").totalmem();
   const processMemory = memUsage.heapUsed + memUsage.external;
   const memoryPercent = (processMemory / systemMemory) * 100;
 
@@ -277,15 +297,18 @@ function getProcessMemory(): { memory: number; memoryPercent: number } {
 function getProcessCPU(): number {
   try {
     const pid = process.pid;
-    if (process.platform === 'win32') {
+    if (process.platform === "win32") {
       const output = execSync(
         `wmic path win32_perfformatteddata_perfproc_process where IDProcess=${pid} get PercentProcessorTime`,
-        { encoding: 'utf-8', timeout: 5000 }
+        { encoding: "utf-8", timeout: 5000 },
       );
       const match = output.match(/\d+/);
       return match ? parseInt(match[0], 10) : 0;
     } else {
-      const output = execSync(`ps -p ${pid} -o %cpu`, { encoding: 'utf-8', timeout: 5000 });
+      const output = execSync(`ps -p ${pid} -o %cpu`, {
+        encoding: "utf-8",
+        timeout: 5000,
+      });
       const match = output.match(/[\d.]+/);
       return match ? parseFloat(match[0]) : 0;
     }
@@ -302,7 +325,7 @@ async function checkAPIHealth(): Promise<{
   return new Promise((resolve) => {
     const startTime = Date.now();
     const url = new URL(`${BASE_URL}/api/health`);
-    const client = url.protocol === 'https:' ? https : http;
+    const client = url.protocol === "https:" ? https : http;
 
     const req = client.get(url, { timeout: 10000 }, (res) => {
       const latency = Date.now() - startTime;
@@ -314,7 +337,7 @@ async function checkAPIHealth(): Promise<{
       res.resume(); // Consume response
     });
 
-    req.on('error', () => {
+    req.on("error", () => {
       const latency = Date.now() - startTime;
       resolve({
         available: false,
@@ -323,7 +346,7 @@ async function checkAPIHealth(): Promise<{
       });
     });
 
-    req.on('timeout', () => {
+    req.on("timeout", () => {
       req.destroy();
       resolve({
         available: false,
@@ -374,8 +397,8 @@ function checkThresholds(snapshot: ResourceSnapshot): Alert[] {
   if (snapshot.cpu.usage > ALERT_CPU_THRESHOLD) {
     alerts.push({
       timestamp: snapshot.timestamp,
-      level: snapshot.cpu.usage > 95 ? 'critical' : 'warning',
-      type: 'cpu',
+      level: snapshot.cpu.usage > 95 ? "critical" : "warning",
+      type: "cpu",
       message: `High CPU usage: ${snapshot.cpu.usage.toFixed(2)}%`,
       value: snapshot.cpu.usage,
       threshold: ALERT_CPU_THRESHOLD,
@@ -386,8 +409,8 @@ function checkThresholds(snapshot: ResourceSnapshot): Alert[] {
   if (snapshot.memory.usagePercent > ALERT_MEMORY_THRESHOLD) {
     alerts.push({
       timestamp: snapshot.timestamp,
-      level: snapshot.memory.usagePercent > 95 ? 'critical' : 'warning',
-      type: 'memory',
+      level: snapshot.memory.usagePercent > 95 ? "critical" : "warning",
+      type: "memory",
       message: `High memory usage: ${snapshot.memory.usagePercent.toFixed(2)}%`,
       value: snapshot.memory.usagePercent,
       threshold: ALERT_MEMORY_THRESHOLD,
@@ -398,8 +421,8 @@ function checkThresholds(snapshot: ResourceSnapshot): Alert[] {
   if (snapshot.api.latency > ALERT_LATENCY_THRESHOLD) {
     alerts.push({
       timestamp: snapshot.timestamp,
-      level: snapshot.api.latency > 5000 ? 'critical' : 'warning',
-      type: 'latency',
+      level: snapshot.api.latency > 5000 ? "critical" : "warning",
+      type: "latency",
       message: `High API latency: ${snapshot.api.latency}ms`,
       value: snapshot.api.latency,
       threshold: ALERT_LATENCY_THRESHOLD,
@@ -410,9 +433,9 @@ function checkThresholds(snapshot: ResourceSnapshot): Alert[] {
   if (!snapshot.api.available) {
     alerts.push({
       timestamp: snapshot.timestamp,
-      level: 'critical',
-      type: 'api',
-      message: 'API is unavailable',
+      level: "critical",
+      type: "api",
+      message: "API is unavailable",
       value: 0,
       threshold: 1,
     });
@@ -423,7 +446,7 @@ function checkThresholds(snapshot: ResourceSnapshot): Alert[] {
 
 function logAlerts(alerts: Alert[]): void {
   alerts.forEach((alert) => {
-    const icon = alert.level === 'critical' ? '🔴' : '⚠️';
+    const icon = alert.level === "critical" ? "🔴" : "⚠️";
     log(`${icon} ${alert.level.toUpperCase()}: ${alert.message}`);
   });
 }
@@ -435,7 +458,7 @@ function logAlerts(alerts: Alert[]): void {
 let monitoringInterval: NodeJS.Timeout | null = null;
 
 async function startMonitoring(): Promise<void> {
-  log('🚀 Starting resource monitoring...');
+  log("🚀 Starting resource monitoring...");
 
   const session: MonitoringSession = {
     sessionId: generateSessionId(),
@@ -451,7 +474,7 @@ async function startMonitoring(): Promise<void> {
   log(`🎯 CPU threshold: ${ALERT_CPU_THRESHOLD}%`);
   log(`🎯 Memory threshold: ${ALERT_MEMORY_THRESHOLD}%`);
   log(`🎯 Latency threshold: ${ALERT_LATENCY_THRESHOLD}ms`);
-  log('');
+  log("");
 
   let snapshotCount = 0;
 
@@ -471,7 +494,7 @@ async function startMonitoring(): Promise<void> {
       // Log snapshot (every 10th snapshot to avoid spam)
       if (snapshotCount % 10 === 0) {
         log(
-          `📊 Snapshot #${snapshotCount}: CPU ${snapshot.cpu.usage.toFixed(1)}% | Memory ${snapshot.memory.usagePercent.toFixed(1)}% | API ${snapshot.api.latency}ms`
+          `📊 Snapshot #${snapshotCount}: CPU ${snapshot.cpu.usage.toFixed(1)}% | Memory ${snapshot.memory.usagePercent.toFixed(1)}% | API ${snapshot.api.latency}ms`,
         );
       }
 
@@ -481,7 +504,7 @@ async function startMonitoring(): Promise<void> {
     }
   }, MONITORING_INTERVAL);
 
-  log('✅ Monitoring started. Press Ctrl+C or run with --stop to end.\n');
+  log("✅ Monitoring started. Press Ctrl+C or run with --stop to end.\n");
 }
 
 function stopMonitoring(): void {
@@ -493,11 +516,11 @@ function stopMonitoring(): void {
   const session = loadCurrentSession();
 
   if (!session) {
-    log('❌ No active monitoring session found.');
+    log("❌ No active monitoring session found.");
     return;
   }
 
-  log('\n🛑 Stopping resource monitoring...');
+  log("\n🛑 Stopping resource monitoring...");
 
   session.endTime = new Date().toISOString();
   session.duration =
@@ -517,7 +540,7 @@ function stopMonitoring(): void {
     fs.unlinkSync(MONITORING_DATA_FILE);
   }
 
-  log('✅ Monitoring stopped and session saved.\n');
+  log("✅ Monitoring stopped and session saved.\n");
 }
 
 // ============================================================================
@@ -544,15 +567,21 @@ function calculateSummary(session: MonitoringSession): MonitoringSummary {
   const availableCount = snapshots.filter((s) => s.api.available).length;
 
   const avgCpu = cpuUsages.reduce((a, b) => a + b, 0) / cpuUsages.length;
-  const avgMemory = memoryUsages.reduce((a, b) => a + b, 0) / memoryUsages.length;
-  const avgLatency = apiLatencies.reduce((a, b) => a + b, 0) / apiLatencies.length;
+  const avgMemory =
+    memoryUsages.reduce((a, b) => a + b, 0) / memoryUsages.length;
+  const avgLatency =
+    apiLatencies.reduce((a, b) => a + b, 0) / apiLatencies.length;
 
   const peakCpu = Math.max(...cpuUsages);
   const peakMemory = Math.max(...memoryUsages);
   const peakLatency = Math.max(...apiLatencies);
 
-  const warningCount = session.alerts.filter((a) => a.level === 'warning').length;
-  const criticalCount = session.alerts.filter((a) => a.level === 'critical').length;
+  const warningCount = session.alerts.filter(
+    (a) => a.level === "warning",
+  ).length;
+  const criticalCount = session.alerts.filter(
+    (a) => a.level === "critical",
+  ).length;
 
   const availability = (availableCount / snapshots.length) * 100;
 
@@ -581,44 +610,44 @@ function generateReport(session: MonitoringSession): void {
   const summary = session.summary;
 
   if (!summary) {
-    log('❌ No summary available for report generation.');
+    log("❌ No summary available for report generation.");
     return;
   }
 
-  console.log('\n' + '═'.repeat(80));
-  console.log('📊 RESOURCE MONITORING REPORT');
-  console.log('═'.repeat(80));
+  console.log("\n" + "═".repeat(80));
+  console.log("📊 RESOURCE MONITORING REPORT");
+  console.log("═".repeat(80));
 
   console.log(`\n🆔 Session ID: ${session.sessionId}`);
   console.log(`⏰ Start Time: ${session.startTime}`);
   console.log(`⏰ End Time: ${session.endTime}`);
   console.log(
-    `⏱️  Duration: ${(summary.duration / 1000 / 60).toFixed(2)} minutes`
+    `⏱️  Duration: ${(summary.duration / 1000 / 60).toFixed(2)} minutes`,
   );
   console.log(`📸 Snapshots: ${summary.totalSnapshots}`);
 
-  console.log('\n📊 AVERAGE METRICS:');
+  console.log("\n📊 AVERAGE METRICS:");
   console.log(`   CPU Usage: ${summary.averages.cpuUsage.toFixed(2)}%`);
   console.log(`   Memory Usage: ${summary.averages.memoryUsage.toFixed(2)}%`);
   console.log(`   API Latency: ${summary.averages.apiLatency.toFixed(2)}ms`);
 
-  console.log('\n🔥 PEAK METRICS:');
+  console.log("\n🔥 PEAK METRICS:");
   console.log(`   CPU Usage: ${summary.peaks.cpuUsage.toFixed(2)}%`);
   console.log(`   Memory Usage: ${summary.peaks.memoryUsage.toFixed(2)}%`);
   console.log(`   API Latency: ${summary.peaks.apiLatency.toFixed(2)}ms`);
 
-  console.log('\n🎯 AVAILABILITY:');
+  console.log("\n🎯 AVAILABILITY:");
   console.log(`   API Availability: ${summary.availability.toFixed(2)}%`);
 
-  console.log('\n⚠️  ALERTS:');
+  console.log("\n⚠️  ALERTS:");
   console.log(`   Warnings: ${summary.alertCounts.warning}`);
   console.log(`   Critical: ${summary.alertCounts.critical}`);
 
-  console.log('\n' + '═'.repeat(80) + '\n');
+  console.log("\n" + "═".repeat(80) + "\n");
 
   // Generate HTML report
   const htmlReport = generateHTMLReport(session);
-  const timestamp = session.startTime.replace(/[:.]/g, '-');
+  const timestamp = session.startTime.replace(/[:.]/g, "-");
   const reportFile = path.join(MONITORING_DIR, `report-${timestamp}.html`);
   fs.writeFileSync(reportFile, htmlReport);
 
@@ -708,17 +737,25 @@ function generateHTMLReport(session: MonitoringSession): string {
       <canvas id="latencyChart"></canvas>
     </div>
 
-    ${session.alerts.length > 0 ? `
+    ${
+      session.alerts.length > 0
+        ? `
     <div class="alert-list">
       <h2>Alerts (${session.alerts.length})</h2>
-      ${session.alerts.map(alert => `
+      ${session.alerts
+        .map(
+          (alert) => `
         <div class="alert-item alert-${alert.level}">
           <strong>${alert.level.toUpperCase()}</strong> - ${alert.message}
           <br><small>${new Date(alert.timestamp).toLocaleString()}</small>
         </div>
-      `).join('')}
+      `,
+        )
+        .join("")}
     </div>
-    ` : ''}
+    `
+        : ""
+    }
   </div>
 
   <script>
@@ -794,48 +831,65 @@ async function main(): Promise<void> {
   ensureDirectories();
 
   switch (command) {
-    case '--start':
-    case 'start':
+    case "--start":
+    case "start":
       await startMonitoring();
       // Keep process alive
       await new Promise(() => {});
       break;
 
-    case '--stop':
-    case 'stop':
+    case "--stop":
+    case "stop":
       stopMonitoring();
       break;
 
-    case '--report':
-    case 'report':
+    case "--report":
+    case "report": {
       const session = loadCurrentSession();
       if (session) {
         generateReport(session);
       } else {
-        log('❌ No active monitoring session found.');
+        log("❌ No active monitoring session found.");
       }
       break;
+    }
 
-    case '--help':
-    case 'help':
+    case "--help":
+    case "help":
     case undefined:
-      console.log('🔍 Resource Monitoring for Load Tests\n');
-      console.log('Usage:');
-      console.log('  tsx tests/load/resource-monitor.ts --start   # Start monitoring');
-      console.log('  tsx tests/load/resource-monitor.ts --stop    # Stop monitoring');
-      console.log('  tsx tests/load/resource-monitor.ts --report  # Generate report');
-      console.log('\nEnvironment Variables:');
-      console.log('  BASE_URL                 - API base URL (default: http://localhost:3001)');
-      console.log('  MONITORING_INTERVAL      - Snapshot interval in ms (default: 5000)');
-      console.log('  ALERT_CPU_THRESHOLD      - CPU alert threshold % (default: 80)');
-      console.log('  ALERT_MEMORY_THRESHOLD   - Memory alert threshold % (default: 85)');
-      console.log('  ALERT_LATENCY_THRESHOLD  - Latency alert threshold ms (default: 2000)');
-      console.log('');
+      console.log("🔍 Resource Monitoring for Load Tests\n");
+      console.log("Usage:");
+      console.log(
+        "  tsx tests/load/resource-monitor.ts --start   # Start monitoring",
+      );
+      console.log(
+        "  tsx tests/load/resource-monitor.ts --stop    # Stop monitoring",
+      );
+      console.log(
+        "  tsx tests/load/resource-monitor.ts --report  # Generate report",
+      );
+      console.log("\nEnvironment Variables:");
+      console.log(
+        "  BASE_URL                 - API base URL (default: http://localhost:3001)",
+      );
+      console.log(
+        "  MONITORING_INTERVAL      - Snapshot interval in ms (default: 5000)",
+      );
+      console.log(
+        "  ALERT_CPU_THRESHOLD      - CPU alert threshold % (default: 80)",
+      );
+      console.log(
+        "  ALERT_MEMORY_THRESHOLD   - Memory alert threshold % (default: 85)",
+      );
+      console.log(
+        "  ALERT_LATENCY_THRESHOLD  - Latency alert threshold ms (default: 2000)",
+      );
+      console.log("");
       break;
 
     default:
       console.error(`❌ Unknown command: ${command}`);
-      console.log('Run with --help for usage information.\n');
+      console.log("Run with --help for usage information.\n");
       process.exit(1);
   }
 }
@@ -843,20 +897,20 @@ async function main(): Promise<void> {
 // Run if executed directly
 if (require.main === module) {
   main().catch((error) => {
-    console.error('❌ Monitoring failed:', error);
+    console.error("❌ Monitoring failed:", error);
     process.exit(1);
   });
 }
 
 // Handle Ctrl+C gracefully
-process.on('SIGINT', () => {
-  log('\n⚠️  Received SIGINT signal. Stopping monitoring...');
+process.on("SIGINT", () => {
+  log("\n⚠️  Received SIGINT signal. Stopping monitoring...");
   stopMonitoring();
   process.exit(0);
 });
 
-process.on('SIGTERM', () => {
-  log('\n⚠️  Received SIGTERM signal. Stopping monitoring...');
+process.on("SIGTERM", () => {
+  log("\n⚠️  Received SIGTERM signal. Stopping monitoring...");
   stopMonitoring();
   process.exit(0);
 });

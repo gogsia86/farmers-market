@@ -1,4 +1,5 @@
 # 🚀 NEXT STEPS: ORDER SERVICE CONSOLIDATION
+
 ## Complete Guide for PR Creation and Deployment
 
 **Branch**: `consolidate/order-service`  
@@ -10,6 +11,7 @@
 ## 📊 CURRENT STATUS OVERVIEW
 
 ### ✅ Consolidation Complete
+
 - **Canonical Service**: `src/lib/services/order.service.ts` (1,418 lines)
 - **Code Reduction**: 50.7% (-1,457 lines eliminated)
 - **File Reduction**: 83% (-5 duplicate files removed)
@@ -18,6 +20,7 @@
 - **Import Consistency**: 100% (all using canonical path)
 
 ### 📁 Changes Summary
+
 ```
 Deleted Files (5):
   ❌ src/lib/services/order.service.refactored.ts
@@ -47,16 +50,19 @@ Backups Preserved:
 ## 🎯 RECOMMENDED PATH: THREE OPTIONS
 
 ### Option 1: Create Pull Request (Recommended for Team Review)
+
 **Best for**: Multi-person teams, formal review process  
 **Time**: 30 minutes + review time  
 **Go to**: [Section A - Pull Request Creation](#section-a-pull-request-creation)
 
 ### Option 2: Deploy to Staging (Fast Track)
+
 **Best for**: Solo dev or trusted code, want immediate testing  
 **Time**: 1-2 hours  
 **Go to**: [Section B - Staging Deployment](#section-b-staging-deployment)
 
 ### Option 3: Merge to Main Directly (Quick Path)
+
 **Best for**: Small teams, confident in changes, local testing complete  
 **Time**: 15 minutes  
 **Go to**: [Section C - Direct Merge to Main](#section-c-direct-merge-to-main)
@@ -196,21 +202,25 @@ gh pr create \
 ## 🎯 Pull Request: Order Service Consolidation
 
 ### Summary
+
 Consolidated 3 duplicate order service implementations into a single, canonical service with zero breaking changes.
 
 ### Problem
+
 - 3 competing implementations across codebase (2,875 total lines)
 - Mixed import paths causing confusion
 - Duplicate maintenance burden
 - Inconsistent feature sets
 
 ### Solution
+
 - Single canonical service at `src/lib/services/order.service.ts` (1,418 lines)
 - Merged best features from all implementations
 - Updated all imports to canonical path
 - 50.7% code reduction, 83% file reduction
 
 ### Changes
+
 - ✅ Created canonical `order.service.ts` (combines all 3 implementations)
 - ✅ Deleted 3 duplicate implementations
 - ✅ Deleted 2 orphaned test files
@@ -220,11 +230,13 @@ Consolidated 3 duplicate order service implementations into a single, canonical 
 
 ### Testing
 ```
+
 Test Suites: 59 passed, 3 skipped
-Tests:       2,245 passed, 45 skipped
-TypeScript:  0 errors (strict mode)
-Coverage:    Maintained at 80%+
-```
+Tests: 2,245 passed, 45 skipped
+TypeScript: 0 errors (strict mode)
+Coverage: Maintained at 80%+
+
+````
 
 ### Breaking Changes
 **None** - Fully backward compatible:
@@ -250,17 +262,19 @@ Coverage:    Maintained at 80%+
 # Restore from backups if needed
 cp consolidation-backup/order-service/order.service.STANDARD.ts \
    src/lib/services/order.service.ts
-```
+````
 
 ### Metrics
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| Order Service Files | 3 | 1 | -67% |
-| Lines of Code | 2,875 | 1,418 | -50.7% |
-| Import Paths | 3 different | 1 canonical | 100% consistent |
-| Test Pass Rate | 100% | 100% | Maintained |
+
+| Metric              | Before      | After       | Improvement     |
+| ------------------- | ----------- | ----------- | --------------- |
+| Order Service Files | 3           | 1           | -67%            |
+| Lines of Code       | 2,875       | 1,418       | -50.7%          |
+| Import Paths        | 3 different | 1 canonical | 100% consistent |
+| Test Pass Rate      | 100%        | 100%        | Maintained      |
 
 ### Checklist
+
 - [x] All tests passing
 - [x] TypeScript compilation clean
 - [x] No breaking changes
@@ -271,11 +285,14 @@ cp consolidation-backup/order-service/order.service.STANDARD.ts \
 - [ ] Staging deployment planned
 
 ### Reviewers
+
 @team-leads @backend-team
 
 ### Related Issues
+
 Closes #ISSUE-NUMBER (if applicable)
-```
+
+````
 
 ### Step A5: PR Review Process
 
@@ -297,9 +314,10 @@ code src/lib/services/order.service.ts
 # Compare with backups
 diff consolidation-backup/order-service/order.service.STANDARD.ts \
      src/lib/services/order.service.ts
-```
+````
 
 **Review Checklist**:
+
 - [ ] All tests passing locally
 - [ ] TypeScript compiles cleanly
 - [ ] Code follows project conventions
@@ -363,6 +381,7 @@ npm run lint  # If available
 ### Step B3: Deploy to Staging Environment
 
 **Option 1: Vercel/Netlify (Automatic)**
+
 ```bash
 # Push to staging branch (triggers auto-deploy)
 git push origin staging
@@ -371,6 +390,7 @@ git push origin staging
 ```
 
 **Option 2: Docker Deployment**
+
 ```bash
 # Build Docker image
 docker build -t farmers-market:staging .
@@ -392,6 +412,7 @@ docker-compose -f docker-compose.staging.yml up -d
 ```
 
 **Option 3: Manual Deployment**
+
 ```bash
 # SSH to staging server
 ssh user@staging-server
@@ -424,6 +445,7 @@ STAGING_URL=https://staging.yoursite.com npm run test:e2e
 ```
 
 **Manual Test Checklist**:
+
 ```
 Staging URL: https://staging.yoursite.com
 
@@ -470,6 +492,7 @@ vercel logs --app farmers-market --env staging --follow
 ```
 
 **Monitoring Checklist** (Monitor for 2-3 days):
+
 - [ ] No increase in error rates
 - [ ] Order creation success rate: >99%
 - [ ] API response times normal
@@ -574,6 +597,7 @@ curl -X POST https://yoursite.com/api/orders \
 ```
 
 **Manual Verification Checklist**:
+
 - [ ] Homepage loads
 - [ ] Order creation works
 - [ ] Order list displays
@@ -586,6 +610,7 @@ curl -X POST https://yoursite.com/api/orders \
 ### Short-Term Monitoring (24 hours)
 
 **Metrics to Monitor**:
+
 ```
 Order Service Metrics:
 - Order creation success rate: >99%
@@ -601,6 +626,7 @@ Application Health:
 ```
 
 **Error Tracking**:
+
 ```bash
 # Check error logs
 grep -i "order" /var/log/production.log | grep -i "error"
@@ -620,6 +646,7 @@ grep -i "order" /var/log/production.log | grep -i "error"
 ### Success Criteria
 
 **Deployment is successful if**:
+
 - ✅ All orders processing normally
 - ✅ No increase in error rates
 - ✅ API response times normal
@@ -635,6 +662,7 @@ grep -i "order" /var/log/production.log | grep -i "error"
 ### When to Rollback
 
 Rollback immediately if:
+
 - 🚨 Order creation failure rate >5%
 - 🚨 Critical errors in order processing
 - 🚨 Database corruption or data loss
@@ -721,6 +749,7 @@ curl https://yoursite.com/api/orders
 ### Short-Term (1-2 months)
 
 1. **Complete Repository Pattern** (4-6 hours)
+
    ```
    - Migrate direct database calls to orderRepository
    - Add transaction helpers
@@ -728,6 +757,7 @@ curl https://yoursite.com/api/orders
    ```
 
 2. **Type Consolidation** (1 hour)
+
    ```
    - Extract types to src/types/order.types.ts
    - Remove embedded types from service
@@ -735,6 +765,7 @@ curl https://yoursite.com/api/orders
    ```
 
 3. **Add Telemetry** (2-3 hours)
+
    ```
    - OpenTelemetry tracing for all operations
    - Performance monitoring
@@ -751,6 +782,7 @@ curl https://yoursite.com/api/orders
 ### Long-Term (2-3 months)
 
 1. **Address Other Duplicates**
+
    ```
    Apply same consolidation to:
    - farm.types.ts (3 copies)
@@ -760,6 +792,7 @@ curl https://yoursite.com/api/orders
    ```
 
 2. **CI/CD Improvements**
+
    ```
    - Add ESLint rule for import consistency
    - Pre-commit hooks for duplicate detection
@@ -778,12 +811,14 @@ curl https://yoursite.com/api/orders
 ## 📞 SUPPORT & RESOURCES
 
 ### Documentation
+
 - `PHASE_6_FINAL_COMPLETION_REPORT.md` - Complete Phase 6 details
 - `ORDER_SERVICE_CONSOLIDATION_COMPLETE.md` - Project summary
 - `CONSOLIDATION_PROGRESS.md` - Full progress tracking
 - `PHASE_6_VERIFICATION_STATUS.md` - Verification after file rejection
 
 ### Backups
+
 - `consolidation-backup/order-service/order.service.STANDARD.ts`
 - `consolidation-backup/order-service/order.service.FEATURE.ts`
 - `consolidation-backup/order-service/order.service.REFACTORED.ts`
@@ -823,13 +858,15 @@ Based on your project setup, I recommend:
 
 ### 🎯 **OPTION 1: CREATE PULL REQUEST** (Best Practice)
 
-**Why**: 
+**Why**:
+
 - Team visibility and code review
 - Documentation trail
 - Safe deployment process
 - Can test on staging first
 
 **Steps**:
+
 1. Follow [Section A: Pull Request Creation](#section-a-pull-request-creation)
 2. Get team approval
 3. Merge to main

@@ -22,12 +22,12 @@ This guide documents the comprehensive API performance optimizations implemented
 
 ## 🎯 Performance Goals & Achievements
 
-| Metric | Baseline | Target | Status |
-|--------|----------|--------|--------|
-| Average Response Time | 80ms | 50ms | ✅ On Track |
-| Cache Hit Ratio | 0% | 70%+ | ✅ Achieved |
-| Bandwidth Savings | 0% | 30%+ | ✅ Achieved |
-| Database Load Reduction | 0% | 60% | ✅ Achieved |
+| Metric                  | Baseline | Target | Status      |
+| ----------------------- | -------- | ------ | ----------- |
+| Average Response Time   | 80ms     | 50ms   | ✅ On Track |
+| Cache Hit Ratio         | 0%       | 70%+   | ✅ Achieved |
+| Bandwidth Savings       | 0%       | 30%+   | ✅ Achieved |
+| Database Load Reduction | 0%       | 60%    | ✅ Achieved |
 
 ---
 
@@ -103,14 +103,14 @@ const ROUTE_CACHE_CONFIGS: Record<string, CacheConfig> = {
     tags: ["farms", "public"],
     seasonal: false,
   },
-  
+
   "/api/products": {
     ttl: 300, // 5 minutes
     staleWhileRevalidate: 60, // 1 minute
     tags: ["products", "public"],
     seasonal: true, // ⚡ Shorter TTL during harvest (June-Oct)
   },
-  
+
   // Dashboard data - very short cache
   "/api/farmer/dashboard": {
     ttl: 60, // 1 minute
@@ -135,11 +135,11 @@ export const GET = withApiCache(async (request: NextRequest) => {
 // On POST/PUT/DELETE - invalidate cache
 export async function POST(request: NextRequest) {
   const response = await farmController.createFarm(request);
-  
+
   if (response.status === 201) {
     await invalidateCacheByTag("farms");
   }
-  
+
   return response;
 }
 ```
@@ -314,15 +314,15 @@ Authorization: Bearer <super-admin-token>
 
 ### Currently Optimized
 
-| Endpoint | Cache TTL | Stale Time | Compression | Status |
-|----------|-----------|------------|-------------|--------|
-| `GET /api/farms` | 10 min | 2 min | ✅ Brotli/Gzip | ✅ |
-| `GET /api/products` | 5 min* | 1 min | ✅ Brotli/Gzip | ✅ |
-| `GET /api/marketplace` | 5 min* | 1 min | ✅ Brotli/Gzip | ✅ |
-| `GET /api/farms/[id]` | 15 min | 3 min | ✅ Brotli/Gzip | ✅ |
-| `GET /api/products/[id]` | 10 min | 2 min | ✅ Brotli/Gzip | ✅ |
+| Endpoint                 | Cache TTL | Stale Time | Compression    | Status |
+| ------------------------ | --------- | ---------- | -------------- | ------ |
+| `GET /api/farms`         | 10 min    | 2 min      | ✅ Brotli/Gzip | ✅     |
+| `GET /api/products`      | 5 min\*   | 1 min      | ✅ Brotli/Gzip | ✅     |
+| `GET /api/marketplace`   | 5 min\*   | 1 min      | ✅ Brotli/Gzip | ✅     |
+| `GET /api/farms/[id]`    | 15 min    | 3 min      | ✅ Brotli/Gzip | ✅     |
+| `GET /api/products/[id]` | 10 min    | 2 min      | ✅ Brotli/Gzip | ✅     |
 
-**Note**: * = Seasonal awareness (2.5 min during harvest)
+**Note**: \* = Seasonal awareness (2.5 min during harvest)
 
 ### Pending Optimization (Week 2+)
 
@@ -379,6 +379,7 @@ sudo systemctl start redis
 ### Redis Setup (Production)
 
 **Recommended Services**:
+
 - **Upstash** (Serverless Redis): https://upstash.com
 - **Redis Cloud**: https://redis.com/cloud
 - **AWS ElastiCache**: https://aws.amazon.com/elasticache
@@ -436,12 +437,12 @@ Endpoint: GET /api/products
 
 **For 1,000 requests/minute**:
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| Database Queries/min | 4,500 | 630 | -86% |
-| Bandwidth/hour | 27 GB | 7.5 GB | -72% |
-| Average Load Time | 80ms | 40ms | -50% |
-| Carbon Footprint | Baseline | -75% | 🌱 |
+| Metric               | Before   | After  | Improvement |
+| -------------------- | -------- | ------ | ----------- |
+| Database Queries/min | 4,500    | 630    | -86%        |
+| Bandwidth/hour       | 27 GB    | 7.5 GB | -72%        |
+| Average Load Time    | 80ms     | 40ms   | -50%        |
+| Carbon Footprint     | Baseline | -75%   | 🌱          |
 
 ---
 
@@ -453,34 +454,34 @@ Endpoint: GET /api/products
 // On resource creation
 export async function POST(request: NextRequest) {
   const resource = await createResource(data);
-  
+
   // Invalidate related caches
   await invalidateCacheByTag("resources");
   await invalidateCacheByTag("public");
-  
+
   return NextResponse.json({ data: resource }, { status: 201 });
 }
 
 // On resource update
 export async function PUT(request: NextRequest) {
   const resource = await updateResource(id, data);
-  
+
   // Invalidate specific resource and list caches
   await invalidateCacheByPattern(`api:/api/resources/${id}*`);
   await invalidateCacheByTag("resources");
-  
+
   return NextResponse.json({ data: resource });
 }
 
 // On resource deletion
 export async function DELETE(request: NextRequest) {
   await deleteResource(id);
-  
+
   // Invalidate all related caches
   await invalidateCacheByPattern(`api:/api/resources/${id}*`);
   await invalidateCacheByTag("resources");
   await invalidateCacheByTag("public");
-  
+
   return NextResponse.json({ success: true });
 }
 ```
@@ -518,6 +519,7 @@ Timeline:
 ```
 
 **Benefits**:
+
 - User always gets instant response
 - Cache updates in background
 - Zero perceived latency for cache hits
@@ -528,7 +530,7 @@ Timeline:
 // Products cache during harvest season (June-October)
 if (config.seasonal) {
   const month = new Date().getMonth();
-  
+
   if (month >= 5 && month <= 9) {
     // Harvest season: Shorter TTL for inventory freshness
     config.ttl = Math.floor(config.ttl * 0.5);
@@ -588,11 +590,11 @@ describe("API Cache Middleware", () => {
     });
 
     const request = new NextRequest("http://localhost/api/test");
-    
+
     // First request - cache miss
     const response1 = await handler(request);
     expect(response1.headers.get("X-Cache")).toBe("MISS");
-    
+
     // Second request - cache hit
     const response2 = await handler(request);
     expect(response2.headers.get("X-Cache")).toBe("HIT");
@@ -613,6 +615,7 @@ https://your-domain.com/admin/performance
 ```
 
 **Metrics Tracked**:
+
 - Cache hit ratio (real-time)
 - Average response times
 - Compression savings
@@ -632,9 +635,9 @@ tracer.startActiveSpan("api.farms.list", async (span) => {
   span.setAttribute("cache.hit", true);
   span.setAttribute("compression.algorithm", "brotli");
   span.setAttribute("response.time.ms", 42);
-  
+
   // ... handler logic
-  
+
   span.end();
 });
 ```
@@ -667,11 +670,13 @@ await cloudwatch.putMetricData({
 ### Issue: Redis Connection Failed
 
 **Symptoms**:
+
 - Logs show "Redis connection closed"
 - Cache hit ratio = 0%
 - API still works but slower
 
 **Solution**:
+
 ```bash
 # Check Redis status
 redis-cli ping
@@ -691,10 +696,12 @@ redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASSWORD ping
 ### Issue: Compression Not Working
 
 **Symptoms**:
+
 - `X-Compression: none` header
 - Response size not reduced
 
 **Checklist**:
+
 1. Client sends `Accept-Encoding: br, gzip` header
 2. Response size > 1KB (compression threshold)
 3. Content-Type is compressible (`application/json`)
@@ -703,10 +710,12 @@ redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASSWORD ping
 ### Issue: Stale Data Served
 
 **Symptoms**:
+
 - Recently updated data not reflected
 - Old prices/inventory showing
 
 **Solution**:
+
 ```typescript
 // Force cache invalidation
 await invalidateCacheByTag("products");
@@ -722,10 +731,12 @@ const config = {
 ### Issue: Cache Memory Overflow
 
 **Symptoms**:
+
 - Redis memory usage at 100%
 - Eviction warnings in logs
 
 **Solution**:
+
 ```bash
 # Set Redis maxmemory policy
 redis-cli CONFIG SET maxmemory 256mb
@@ -770,17 +781,20 @@ redis-cli INFO memory
 ## 📚 References
 
 ### Documentation
+
 - [Redis Documentation](https://redis.io/docs/)
 - [Next.js Caching](https://nextjs.org/docs/app/building-your-application/caching)
 - [MDN: HTTP Caching](https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching)
 - [Brotli Compression](https://github.com/google/brotli)
 
 ### Internal References
+
 - `.github/instructions/03_PERFORMANCE_REALITY_BENDING.instructions.md`
 - `.github/instructions/04_NEXTJS_DIVINE_IMPLEMENTATION.instructions.md`
 - `.github/instructions/11_KILO_SCALE_ARCHITECTURE.instructions.md`
 
 ### Code Files
+
 - `src/lib/middleware/api-cache.ts` - Cache middleware
 - `src/lib/middleware/compression.ts` - Compression middleware
 - `src/lib/cache/cache-service.ts` - Cache service layer
@@ -793,6 +807,7 @@ redis-cli INFO memory
 **Week 1, Day 5 Completion**: ⭐⭐⭐⭐⭐ (100/100)
 
 ### Achievements
+
 - ✅ Redis caching layer implemented (474 lines)
 - ✅ Response compression middleware (457 lines)
 - ✅ Performance monitoring API (397 lines)

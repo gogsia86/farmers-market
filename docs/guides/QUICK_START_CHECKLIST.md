@@ -1,4 +1,5 @@
 # ⚡ Quick Start Checklist
+
 **Farmers Market Platform - 5-Minute Dev Server Setup**
 
 ---
@@ -20,9 +21,10 @@ netstat -ano | findstr :3001 || echo "Port 3001 is FREE ✅"
 ```
 
 **Results**:
+
 - ✅ Node.js v22.21.0 installed
 - ✅ npm v10.9.4 installed
-- ⚠️ PostgreSQL: ___ (running/stopped)
+- ⚠️ PostgreSQL: \_\_\_ (running/stopped)
 - ✅ Port 3001 available
 
 ---
@@ -30,6 +32,7 @@ netstat -ano | findstr :3001 || echo "Port 3001 is FREE ✅"
 ## 🔧 Pre-Flight Setup (2 minutes)
 
 ### 1. Environment Variables
+
 ```bash
 # Copy and configure (if not done):
 cp .env.example .env.local
@@ -39,6 +42,7 @@ cat .env.local | grep -E "DATABASE_URL|PORT|NEXT_PUBLIC"
 ```
 
 **Required in `.env.local`**:
+
 ```bash
 NODE_ENV=development
 PORT=3001
@@ -48,6 +52,7 @@ NEXTAUTH_URL=http://localhost:3001
 ```
 
 ### 2. Database Setup
+
 ```bash
 # Start PostgreSQL (if not running)
 # Windows: services.msc → PostgreSQL → Start
@@ -64,6 +69,7 @@ npm run db:seed:basic
 ```
 
 ### 3. Dependencies
+
 ```bash
 # Install (if node_modules missing):
 npm install
@@ -73,6 +79,7 @@ npx prisma generate
 ```
 
 ### 4. Clear Cache (if issues)
+
 ```bash
 # Remove stale build:
 rm -rf .next
@@ -96,6 +103,7 @@ npm run dev
 ```
 
 **Expected Output**:
+
 ```
 ▲ Next.js 16.0.3
 - Local:        http://localhost:3001
@@ -108,6 +116,7 @@ npm run dev
 ## ✅ Verification (1 minute)
 
 ### Browser Check
+
 - [ ] Open: http://localhost:3001
 - [ ] Homepage loads (no white screen)
 - [ ] Header/navigation visible
@@ -116,6 +125,7 @@ npm run dev
 - [ ] No hydration errors in console (F12)
 
 ### API Check
+
 ```bash
 # Quick API tests:
 curl http://localhost:3001/api/health
@@ -126,6 +136,7 @@ curl http://localhost:3001/api/platform/stats
 ```
 
 ### Hot Reload Test
+
 1. Open `src/app/page.tsx`
 2. Change any text string
 3. Save file (Ctrl+S)
@@ -136,6 +147,7 @@ curl http://localhost:3001/api/platform/stats
 ## 🐛 Common Issues & Quick Fixes
 
 ### Issue: Port already in use
+
 ```bash
 # Solution:
 npm run kill-server
@@ -145,6 +157,7 @@ taskkill /PID [PID_NUMBER] /F
 ```
 
 ### Issue: Database connection failed
+
 ```bash
 # Check if PostgreSQL is running:
 psql -U postgres
@@ -156,18 +169,21 @@ net start postgresql-x64-14
 ```
 
 ### Issue: Prisma Client not found
+
 ```bash
 npx prisma generate
 npm run postinstall
 ```
 
 ### Issue: Stale changes not showing
+
 ```bash
 rm -rf .next
 npm run dev
 ```
 
 ### Issue: TypeScript errors blocking
+
 ```bash
 # TypeScript errors don't block dev server
 # But if you want to check:
@@ -183,6 +199,7 @@ npm run type-check
 ## 🎯 Success Indicators
 
 ### ✅ Dev Server is Running When:
+
 - [x] Server console shows "Ready in X seconds"
 - [x] No red fatal errors in terminal
 - [x] Homepage loads at http://localhost:3001
@@ -191,6 +208,7 @@ npm run type-check
 - [x] API endpoints respond (health check passes)
 
 ### ⚠️ Known Non-Critical Issues:
+
 - TypeScript warnings in mobile-app (doesn't affect web)
 - Some console logs (development mode)
 - Initial database retry attempts (normal behavior)
@@ -200,6 +218,7 @@ npm run type-check
 ## 📊 Latest Features to Test
 
 ### New in Latest Build:
+
 1. **Search Autocomplete** - Type in homepage search bar
 2. **Platform Stats** - Real-time numbers on homepage
 3. **Featured Farms** - Farm cards with images
@@ -207,6 +226,7 @@ npm run type-check
 5. **Monitoring Dashboard** - Visit `/monitoring`
 
 ### Quick Feature Tests:
+
 ```bash
 # Homepage sections:
 ✓ Hero with search
@@ -237,6 +257,7 @@ If you see this, your dev server is running! 🚀
 ```
 
 ### Next Steps:
+
 1. **Start coding** - Changes will auto-reload
 2. **Check console** - Monitor for errors
 3. **Use API** - Test endpoints via curl/Postman

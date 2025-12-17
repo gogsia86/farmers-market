@@ -1,4 +1,5 @@
 # 🔍 ARCHITECTURAL ISSUES AUDIT REPORT
+
 **Farmers Market Platform - Critical Architecture Review**
 
 **Generated**: 2025-01-XX  
@@ -11,13 +12,13 @@
 
 This audit identified **5 critical architectural anti-patterns** that violate the Divine Coding Principles and create technical debt:
 
-| Issue | Severity | Instances | Impact |
-|-------|----------|-----------|--------|
-| Canonical Import Violations | 🔴 CRITICAL | 12+ | Database connection pooling issues |
-| Type Definition Conflicts | 🟠 HIGH | 5+ | Type safety compromised |
-| Route Group Conflicts | 🟡 MEDIUM | 9+ | Navigation confusion, SEO issues |
-| Service Layer Duplication | 🟡 MEDIUM | Unknown | Code duplication, maintenance burden |
-| Middleware Auth Conflicts | 🟢 LOW | 3 | Potential auth race conditions |
+| Issue                       | Severity    | Instances | Impact                               |
+| --------------------------- | ----------- | --------- | ------------------------------------ |
+| Canonical Import Violations | 🔴 CRITICAL | 12+       | Database connection pooling issues   |
+| Type Definition Conflicts   | 🟠 HIGH     | 5+        | Type safety compromised              |
+| Route Group Conflicts       | 🟡 MEDIUM   | 9+        | Navigation confusion, SEO issues     |
+| Service Layer Duplication   | 🟡 MEDIUM   | Unknown   | Code duplication, maintenance burden |
+| Middleware Auth Conflicts   | 🟢 LOW      | 3         | Potential auth race conditions       |
 
 **Overall Architecture Health**: 65/100 ⚠️
 
@@ -26,6 +27,7 @@ This audit identified **5 critical architectural anti-patterns** that violate th
 ## 🚨 ISSUE 1: CANONICAL IMPORT VIOLATIONS
 
 ### Problem Statement
+
 Multiple files are creating new `PrismaClient` instances instead of using the canonical database singleton, violating the core principle in `.cursorrules`.
 
 ### ❌ Current State (WRONG)
@@ -52,7 +54,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 // 🔴 VIOLATION 6: scripts/clean-database.ts
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 // 🔴 VIOLATION 7: scripts/debug-nextauth.ts
@@ -86,6 +88,7 @@ const users = await database.user.findMany();
 ```
 
 ### Impact Analysis
+
 - **Connection Pool Exhaustion**: Each `new PrismaClient()` creates a new connection pool (10 connections default)
 - **Memory Leaks**: Connections not properly closed in seed scripts
 - **Performance Degradation**: Unnecessary database connections
@@ -93,23 +96,24 @@ const users = await database.user.findMany();
 
 ### Files Requiring Immediate Fix
 
-| File | Lines | Priority |
-|------|-------|----------|
-| `prisma/seed-admin.ts` | L1-4 | 🔴 HIGH |
-| `prisma/seed-basic.ts` | L1-4 | 🔴 HIGH |
-| `prisma/seed-comprehensive.ts` | L10-13 | 🔴 HIGH |
-| `prisma/seed-test.ts` | L5-7 | 🔴 HIGH |
-| `prisma/seed.ts` | L10-13 | 🔴 HIGH |
-| `scripts/clean-database.ts` | L1-3 | 🔴 HIGH |
-| `scripts/debug-nextauth.ts` | L40-57 | 🟠 MEDIUM |
-| `scripts/fix-nextauth.ts` | L14-226 | 🟠 MEDIUM |
-| `scripts/seed-test-users-quick.ts` | L7-9 | 🔴 HIGH |
-| `tests/global-setup.ts` | L16-18 | 🟡 LOW (acceptable for tests) |
-| `tests/utils/api-test-helpers.ts` | L73-78 | 🟡 LOW (acceptable for tests) |
+| File                               | Lines   | Priority                      |
+| ---------------------------------- | ------- | ----------------------------- |
+| `prisma/seed-admin.ts`             | L1-4    | 🔴 HIGH                       |
+| `prisma/seed-basic.ts`             | L1-4    | 🔴 HIGH                       |
+| `prisma/seed-comprehensive.ts`     | L10-13  | 🔴 HIGH                       |
+| `prisma/seed-test.ts`              | L5-7    | 🔴 HIGH                       |
+| `prisma/seed.ts`                   | L10-13  | 🔴 HIGH                       |
+| `scripts/clean-database.ts`        | L1-3    | 🔴 HIGH                       |
+| `scripts/debug-nextauth.ts`        | L40-57  | 🟠 MEDIUM                     |
+| `scripts/fix-nextauth.ts`          | L14-226 | 🟠 MEDIUM                     |
+| `scripts/seed-test-users-quick.ts` | L7-9    | 🔴 HIGH                       |
+| `tests/global-setup.ts`            | L16-18  | 🟡 LOW (acceptable for tests) |
+| `tests/utils/api-test-helpers.ts`  | L73-78  | 🟡 LOW (acceptable for tests) |
 
 ### Recommended Solution
 
 **Option A: For Seed Scripts** (Acceptable exception)
+
 ```typescript
 // prisma/seed-*.ts - Can use direct instantiation for standalone scripts
 import { PrismaClient } from "@prisma/client";
@@ -131,6 +135,7 @@ main()
 ```
 
 **Option B: For Application Code** (REQUIRED)
+
 ```typescript
 // ANY application code (services, API routes, etc.)
 import { database } from "@/lib/database";
@@ -140,6 +145,7 @@ const users = await database.user.findMany();
 ```
 
 **Option C: For Scripts That Need Integration**
+
 ```typescript
 // scripts/*.ts - Better approach
 import { database } from "@/lib/database";
@@ -159,6 +165,7 @@ cleanDatabase()
 ## 🚨 ISSUE 2: TYPE DEFINITION CONFLICTS
 
 ### Problem Statement
+
 Multiple definitions of core entities (`Farm`, `Product`, `Order`, `User`) exist across different files, creating type inconsistencies and potential runtime errors.
 
 ### ❌ Duplicate Type Definitions Found
@@ -171,7 +178,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'CUSTOMER' | 'FARMER' | 'ADMIN';
+  role: "CUSTOMER" | "FARMER" | "ADMIN";
   avatar?: string;
   phone?: string;
   emailVerified: boolean;
@@ -261,6 +268,7 @@ export interface Farm {
 ```
 
 ### Impact Analysis
+
 - **Type Safety Broken**: TypeScript cannot guarantee type correctness across modules
 - **Runtime Errors**: Objects may be missing expected properties
 - **IDE Confusion**: Autocomplete shows wrong properties
@@ -270,17 +278,18 @@ export interface Farm {
 ### ✅ Recommended Solution: Single Source of Truth
 
 **Create: `src/types/core-entities.ts`**
+
 ```typescript
 /**
  * 🎯 CORE ENTITY TYPES - SINGLE SOURCE OF TRUTH
- * 
+ *
  * RULE: All entity types MUST be imported from here OR from @prisma/client
  * NEVER define duplicate types elsewhere!
- * 
+ *
  * @reference .github/instructions/01_DIVINE_CORE_PRINCIPLES.instructions.md
  */
 
-import type { 
+import type {
   User as PrismaUser,
   Farm as PrismaFarm,
   Product as PrismaProduct,
@@ -408,11 +417,13 @@ import type { User } from "@prisma/client";
 ## 🚨 ISSUE 3: ROUTE GROUP CONFLICTS
 
 ### Problem Statement
+
 Multiple route groups have pages with identical names, creating confusion and potential routing conflicts.
 
 ### 🔴 Duplicate Routes Detected
 
 #### **Orders Page** - 5 Different Implementations
+
 ```
 src/app/(admin)/admin/orders/page.tsx         ← Admin view (all orders)
 src/app/(customer)/account/orders/page.tsx    ← Customer orders (nested)
@@ -422,28 +433,33 @@ src/app/(farmer)/farmer/orders/page.tsx       ← Farmer orders
 ```
 
 **Issues**:
+
 - Why 3 different customer order pages?
 - Confusing URL structure: `/orders`, `/account/orders`, `/dashboard/orders`
 - Duplicate code across implementations
 - SEO issues with multiple similar pages
 
 #### **Settings Page** - 2 Implementations
+
 ```
 src/app/(admin)/admin/settings/page.tsx       ← Admin settings
 src/app/(farmer)/farmer/settings/page.tsx     ← Farmer settings
 ```
 
 **Questions**:
+
 - Where is customer settings page?
 - Should there be a unified settings component?
 
 #### **Dashboard Page** - 2 Implementations
+
 ```
 src/app/(customer)/dashboard/page.tsx         ← Customer dashboard
 src/app/(farmer)/farmer/dashboard/page.tsx    ← Farmer dashboard
 ```
 
 ### Impact Analysis
+
 - **User Confusion**: Inconsistent URL patterns
 - **Code Duplication**: Similar functionality implemented multiple times
 - **SEO Penalties**: Duplicate content issues
@@ -521,11 +537,12 @@ MONITORING ROUTES
    - All admin pages under `/admin/*`
 
 3. **Create shared components**:
+
    ```typescript
    // src/components/orders/OrderList.tsx
-   export function OrderList({ 
-     orders, 
-     viewMode = 'customer' // 'customer' | 'farmer' | 'admin'
+   export function OrderList({
+     orders,
+     viewMode = "customer", // 'customer' | 'farmer' | 'admin'
    }) {
      // Shared order list logic
    }
@@ -538,6 +555,7 @@ MONITORING ROUTES
 ## 🚨 ISSUE 4: SERVICE LAYER DUPLICATION
 
 ### Problem Statement
+
 Potential code duplication across service files. Need to verify if similar business logic is implemented multiple times.
 
 ### Services Identified (20+ services)
@@ -568,6 +586,7 @@ Potential code duplication across service files. Need to verify if similar busin
 ### 🔴 Confirmed Duplications
 
 #### **GeocodingService** - 2 implementations!
+
 ```typescript
 // src/lib/geocoding/geocoding.service.ts
 export class GeocodingService {
@@ -582,7 +601,7 @@ export class GeocodingService {
     address: string,
     city: string,
     state: string,
-    zipCode: string
+    zipCode: string,
   ): Promise<GeocodingResult> {
     // Implementation 2 - Different signature!
   }
@@ -592,6 +611,7 @@ export class GeocodingService {
 **Impact**: Which one is the canonical implementation? Different method signatures cause confusion.
 
 #### **EmailService** - 2 implementations!
+
 ```typescript
 // src/lib/email/email-service.ts
 class EmailService {
@@ -614,46 +634,49 @@ export class EmailService {
 
 1. **Audit all service files**: Create dependency graph
 2. **Consolidate duplicates**:
+
    ```
    ❌ Delete: src/lib/services/geocoding.service.ts
    ✅ Keep: src/lib/geocoding/geocoding.service.ts (more comprehensive)
-   
+
    ❌ Delete: src/lib/email/email-service.ts
    ✅ Keep: src/lib/email/email.service.ts (better error handling)
    ```
 
 3. **Create service index**: Single import point
+
    ```typescript
    // src/lib/services/index.ts
-   export { FarmService } from './farm.service';
-   export { ProductService } from './product.service';
-   export { OrderService } from './order.service';
-   export { CartService } from './cart.service';
-   export { CheckoutService } from './checkout.service';
-   export { PaymentService } from './payment.service';
-   export { ShippingService } from './shipping.service';
-   export { BiodynamicCalendarService } from './biodynamic-calendar.service';
-   export { SoilAnalysisService } from './soil-analysis.service';
-   export { PerplexityFarmingService } from './perplexity-farming.service';
-   
+   export { FarmService } from "./farm.service";
+   export { ProductService } from "./product.service";
+   export { OrderService } from "./order.service";
+   export { CartService } from "./cart.service";
+   export { CheckoutService } from "./checkout.service";
+   export { PaymentService } from "./payment.service";
+   export { ShippingService } from "./shipping.service";
+   export { BiodynamicCalendarService } from "./biodynamic-calendar.service";
+   export { SoilAnalysisService } from "./soil-analysis.service";
+   export { PerplexityFarmingService } from "./perplexity-farming.service";
+
    // External services (organized)
-   export { GeocodingService } from '@/lib/geocoding/geocoding.service';
-   export { EmailService } from '@/lib/email/email.service';
-   export { NotificationService } from '@/lib/notifications/notification-service';
-   export { SearchService } from '@/lib/search/search-service';
+   export { GeocodingService } from "@/lib/geocoding/geocoding.service";
+   export { EmailService } from "@/lib/email/email.service";
+   export { NotificationService } from "@/lib/notifications/notification-service";
+   export { SearchService } from "@/lib/search/search-service";
    ```
 
 4. **Standardize service patterns**:
+
    ```typescript
    // All services should follow this pattern
    export class ServiceName {
      constructor(
        private repository = repositoryInstance,
-       private cache = cacheInstance
+       private cache = cacheInstance,
      ) {}
-     
+
      async operationName(params: ParamsType): Promise<ResultType> {
-       return traceServiceOperation('ServiceName.operationName', async () => {
+       return traceServiceOperation("ServiceName.operationName", async () => {
          // Business logic
        });
      }
@@ -665,6 +688,7 @@ export class EmailService {
 ## 🚨 ISSUE 5: MIDDLEWARE AUTH CONFLICTS
 
 ### Problem Statement
+
 Authentication logic spread across middleware and multiple layouts could cause race conditions or inconsistent auth checks.
 
 ### Current Authentication Architecture
@@ -710,6 +734,7 @@ export default async function FarmerLayout({ children }) {
 4. **Error Handling**: Different error handling strategies
 
 ### Impact Analysis
+
 - **Race Conditions**: Middleware redirect vs layout redirect
 - **Performance**: Unnecessary duplicate auth checks
 - **User Experience**: Inconsistent redirect behavior
@@ -718,34 +743,35 @@ export default async function FarmerLayout({ children }) {
 ### ✅ Recommended Solution: Unified Auth Strategy
 
 **Option A: Middleware-First (Recommended)**
+
 ```typescript
 // src/middleware.ts - SINGLE SOURCE OF AUTH
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  
+
   // Public routes - no auth needed
   if (isPublicRoute(pathname)) {
     return NextResponse.next();
   }
-  
+
   // Get session
   const token = await getToken({ req: request });
-  
+
   // Not authenticated - redirect to login
   if (!token) {
     const loginUrl = getLoginUrl(pathname);
     return NextResponse.redirect(loginUrl);
   }
-  
+
   // Check role-based access
   if (pathname.startsWith("/admin") && !isAdmin(token.role)) {
     return NextResponse.redirect(new URL("/?error=forbidden", request.url));
   }
-  
+
   if (pathname.startsWith("/farmer") && !isFarmer(token.role)) {
     return NextResponse.redirect(new URL("/?error=forbidden", request.url));
   }
-  
+
   // ✅ Passed all checks - attach user to request
   const response = NextResponse.next();
   response.headers.set("X-User-Id", token.sub);
@@ -757,7 +783,7 @@ export async function middleware(request: NextRequest) {
 export default async function AdminLayout({ children }) {
   // Middleware already verified auth - just get session for UI
   const session = await auth(); // Will never be null here
-  
+
   return (
     <div>
       <AdminNav user={session.user} />
@@ -800,8 +826,8 @@ export function isPublicRoute(pathname: string): boolean {
     '/about',
     '/contact',
   ];
-  
-  return publicRoutes.some(route => 
+
+  return publicRoutes.some(route =>
     pathname === route || pathname.startsWith(`${route}/`)
   );
 }
@@ -822,6 +848,7 @@ export function isFarmer(role: string): boolean {
 ```
 
 **Benefits**:
+
 - ✅ Single auth check per request
 - ✅ Consistent redirect behavior
 - ✅ Better performance
@@ -833,6 +860,7 @@ export function isFarmer(role: string): boolean {
 ## 📊 PRIORITY MATRIX
 
 ### Immediate Action (This Week)
+
 1. 🔴 **Fix Canonical Import Violations** (Highest Impact)
    - Create database import wrapper for seed scripts
    - Update all non-test files to use canonical import
@@ -844,6 +872,7 @@ export function isFarmer(role: string): boolean {
    - Delete duplicate type files
 
 ### Short Term (This Month)
+
 3. 🟠 **Resolve Route Conflicts** (Medium Impact)
    - Delete duplicate order routes
    - Standardize URL structure
@@ -855,6 +884,7 @@ export function isFarmer(role: string): boolean {
    - Create service index
 
 ### Medium Term (Next Sprint)
+
 5. 🟡 **Unify Auth Strategy** (Low-Medium Impact)
    - Implement middleware-first auth
    - Remove layout-level auth checks
@@ -865,6 +895,7 @@ export function isFarmer(role: string): boolean {
 ## 🛠️ IMPLEMENTATION CHECKLIST
 
 ### Week 1: Database & Types
+
 - [ ] Create `src/lib/database/seed-database.ts` wrapper
 - [ ] Update all seed scripts to use wrapper
 - [ ] Create `src/types/core-entities.ts`
@@ -873,6 +904,7 @@ export function isFarmer(role: string): boolean {
 - [ ] Delete old type definition files
 
 ### Week 2: Routes & Services
+
 - [ ] Audit all route groups
 - [ ] Delete duplicate customer order routes
 - [ ] Update navigation components
@@ -882,6 +914,7 @@ export function isFarmer(role: string): boolean {
 - [ ] Create `src/lib/services/index.ts`
 
 ### Week 3: Middleware & Auth
+
 - [ ] Create `src/lib/middleware/route-config.ts`
 - [ ] Update `src/middleware.ts` with unified auth
 - [ ] Remove auth checks from layouts
@@ -889,6 +922,7 @@ export function isFarmer(role: string): boolean {
 - [ ] Update auth documentation
 
 ### Week 4: Testing & Validation
+
 - [ ] Write integration tests for auth flow
 - [ ] Test all route groups
 - [ ] Validate database connections
@@ -900,6 +934,7 @@ export function isFarmer(role: string): boolean {
 ## 📈 METRICS & SUCCESS CRITERIA
 
 ### Before Fix
+
 - ❌ Database singleton violations: **12+**
 - ❌ Type definition conflicts: **5+**
 - ❌ Duplicate routes: **9**
@@ -907,6 +942,7 @@ export function isFarmer(role: string): boolean {
 - ❌ Auth checks per request: **2**
 
 ### After Fix (Target)
+
 - ✅ Database singleton violations: **0**
 - ✅ Type definition conflicts: **0**
 - ✅ Duplicate routes: **0**
@@ -914,6 +950,7 @@ export function isFarmer(role: string): boolean {
 - ✅ Auth checks per request: **1**
 
 ### Quality Metrics
+
 - Type safety coverage: **95%+**
 - Code duplication: **<5%**
 - Architecture compliance: **90%+**

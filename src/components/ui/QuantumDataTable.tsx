@@ -224,7 +224,8 @@ export function QuantumDataTable<T>({
       return sortedData;
     }
 
-    const startIndex = (paginationState.currentPage - 1) * paginationState.pageSize;
+    const startIndex =
+      (paginationState.currentPage - 1) * paginationState.pageSize;
     const endIndex = startIndex + paginationState.pageSize;
     return sortedData.slice(startIndex, endIndex);
   }, [sortedData, pagination, paginationState]);
@@ -275,7 +276,7 @@ export function QuantumDataTable<T>({
         onSelectionChange([...selectedKeys, key]);
       }
     },
-    [selectedKeys, onSelectionChange]
+    [selectedKeys, onSelectionChange],
   );
 
   const handlePageChange = useCallback((page: number) => {
@@ -323,16 +324,25 @@ export function QuantumDataTable<T>({
             <div className="border-b border-agricultural-200 bg-agricultural-50 px-6 py-4">
               <div className="flex space-x-4">
                 {columns.slice(0, 3).map((col) => (
-                  <div key={col.key} className="h-5 bg-agricultural-300 rounded flex-1" />
+                  <div
+                    key={col.key}
+                    className="h-5 bg-agricultural-300 rounded flex-1"
+                  />
                 ))}
               </div>
             </div>
             {/* Rows skeleton */}
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="border-b border-agricultural-100 px-6 py-4">
+              <div
+                key={i}
+                className="border-b border-agricultural-100 px-6 py-4"
+              >
                 <div className="flex space-x-4">
                   {columns.slice(0, 3).map((col) => (
-                    <div key={col.key} className="h-4 bg-agricultural-200 rounded flex-1" />
+                    <div
+                      key={col.key}
+                      className="h-4 bg-agricultural-200 rounded flex-1"
+                    />
                   ))}
                 </div>
               </div>
@@ -371,7 +381,8 @@ export function QuantumDataTable<T>({
   // MAIN RENDER
   // ============================================================================
 
-  const allSelected = paginatedData.length > 0 && selectedKeys.length === paginatedData.length;
+  const allSelected =
+    paginatedData.length > 0 && selectedKeys.length === paginatedData.length;
   const someSelected = selectedKeys.length > 0 && !allSelected;
 
   return (
@@ -407,19 +418,25 @@ export function QuantumDataTable<T>({
                     onClick={() => column.sortable && handleSort(column.key)}
                   >
                     <div className="flex items-center space-x-1">
-                      {column.headerRender ? column.headerRender() : <span>{column.label}</span>}
+                      {column.headerRender ? (
+                        column.headerRender()
+                      ) : (
+                        <span>{column.label}</span>
+                      )}
                       {column.sortable && (
                         <span className="flex flex-col">
                           <ChevronUpIcon
                             className={`h-3 w-3 ${
-                              sortState.key === column.key && sortState.direction === "asc"
+                              sortState.key === column.key &&
+                              sortState.direction === "asc"
                                 ? "text-agricultural-600"
                                 : "text-agricultural-400"
                             }`}
                           />
                           <ChevronDownIcon
                             className={`h-3 w-3 -mt-1 ${
-                              sortState.key === column.key && sortState.direction === "desc"
+                              sortState.key === column.key &&
+                              sortState.direction === "desc"
                                 ? "text-agricultural-600"
                                 : "text-agricultural-400"
                             }`}
@@ -507,22 +524,30 @@ export function QuantumDataTable<T>({
               <div className="text-sm text-gray-700">
                 Showing{" "}
                 <span className="font-medium">
-                  {(paginationState.currentPage - 1) * paginationState.pageSize + 1}
+                  {(paginationState.currentPage - 1) *
+                    paginationState.pageSize +
+                    1}
                 </span>{" "}
                 to{" "}
                 <span className="font-medium">
                   {Math.min(
                     paginationState.currentPage * paginationState.pageSize,
-                    paginationState.totalItems
+                    paginationState.totalItems,
                   )}
                 </span>{" "}
-                of <span className="font-medium">{paginationState.totalItems}</span> results
+                of{" "}
+                <span className="font-medium">
+                  {paginationState.totalItems}
+                </span>{" "}
+                results
               </div>
 
               {/* Page navigation */}
               <div className="flex items-center space-x-2">
                 <button
-                  onClick={() => handlePageChange(paginationState.currentPage - 1)}
+                  onClick={() =>
+                    handlePageChange(paginationState.currentPage - 1)
+                  }
                   disabled={paginationState.currentPage === 1}
                   className="px-3 py-1 border border-agricultural-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-agricultural-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -567,8 +592,12 @@ export function QuantumDataTable<T>({
                 </div>
 
                 <button
-                  onClick={() => handlePageChange(paginationState.currentPage + 1)}
-                  disabled={paginationState.currentPage === paginationState.totalPages}
+                  onClick={() =>
+                    handlePageChange(paginationState.currentPage + 1)
+                  }
+                  disabled={
+                    paginationState.currentPage === paginationState.totalPages
+                  }
                   className="px-3 py-1 border border-agricultural-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-agricultural-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next

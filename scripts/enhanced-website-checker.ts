@@ -115,7 +115,9 @@ function logCheck(result: CheckResult) {
     console.log(`   ${c.red}Error: ${result.error}${c.reset}`);
   }
   if (result.metadata) {
-    console.log(`   ${c.cyan}Metadata: ${JSON.stringify(result.metadata)}${c.reset}`);
+    console.log(
+      `   ${c.cyan}Metadata: ${JSON.stringify(result.metadata)}${c.reset}`,
+    );
   }
 }
 
@@ -255,8 +257,14 @@ class EnhancedWebsiteChecker {
     try {
       await this.page!.goto(`${CONFIG.baseUrl}/auth/login`);
 
-      await this.page!.fill('[name="email"]', CONFIG.testCredentials.customer.email);
-      await this.page!.fill('[name="password"]', CONFIG.testCredentials.customer.password);
+      await this.page!.fill(
+        '[name="email"]',
+        CONFIG.testCredentials.customer.email,
+      );
+      await this.page!.fill(
+        '[name="password"]',
+        CONFIG.testCredentials.customer.password,
+      );
       await this.page!.locator('button[type="submit"]').click();
 
       // Wait for redirect or error
@@ -296,7 +304,9 @@ class EnhancedWebsiteChecker {
       );
 
       const data = await response.json();
-      const productCount = Array.isArray(data) ? data.length : data.data?.length || 0;
+      const productCount = Array.isArray(data)
+        ? data.length
+        : data.data?.length || 0;
 
       return {
         name: "Marketplace API",
@@ -327,7 +337,9 @@ class EnhancedWebsiteChecker {
       );
 
       const data = await response.json();
-      const resultCount = Array.isArray(data) ? data.length : data.results?.length || 0;
+      const resultCount = Array.isArray(data)
+        ? data.length
+        : data.results?.length || 0;
 
       return {
         name: "Product Search",
@@ -358,7 +370,9 @@ class EnhancedWebsiteChecker {
       );
 
       const data = await response.json();
-      const filteredCount = Array.isArray(data) ? data.length : data.data?.length || 0;
+      const filteredCount = Array.isArray(data)
+        ? data.length
+        : data.data?.length || 0;
 
       return {
         name: "Product Filtering",
@@ -429,9 +443,7 @@ class EnhancedWebsiteChecker {
         `${CONFIG.baseUrl}/api/checkout/create`,
         {
           data: {
-            items: [
-              { productId: "test-product-id", quantity: 1, price: 10 },
-            ],
+            items: [{ productId: "test-product-id", quantity: 1, price: 10 }],
             shippingAddress: {
               street: "123 Farm Road",
               city: "Agricultural Valley",
@@ -576,7 +588,10 @@ class EnhancedWebsiteChecker {
 
       return {
         name: "Admin Dashboard API",
-        status: response.status() === 401 || response.status() === 403 ? "pass" : "fail",
+        status:
+          response.status() === 401 || response.status() === 403
+            ? "pass"
+            : "fail",
         duration: Date.now() - start,
         message:
           response.status() === 401 || response.status() === 403
@@ -606,7 +621,10 @@ class EnhancedWebsiteChecker {
 
       return {
         name: "Admin Users API",
-        status: response.status() === 401 || response.status() === 403 ? "pass" : "fail",
+        status:
+          response.status() === 401 || response.status() === 403
+            ? "pass"
+            : "fail",
         duration: Date.now() - start,
         message:
           response.status() === 401 || response.status() === 403
@@ -636,7 +654,10 @@ class EnhancedWebsiteChecker {
 
       return {
         name: "Admin Farms API",
-        status: response.status() === 401 || response.status() === 403 ? "pass" : "fail",
+        status:
+          response.status() === 401 || response.status() === 403
+            ? "pass"
+            : "fail",
         duration: Date.now() - start,
         message:
           response.status() === 401 || response.status() === 403
@@ -730,12 +751,11 @@ class EnhancedWebsiteChecker {
         name: "File Upload API",
         status: response.ok() || response.status() === 401 ? "pass" : "warn",
         duration: Date.now() - start,
-        message:
-          response.ok()
-            ? "Upload API responding"
-            : response.status() === 401
-              ? "Upload requires auth (expected)"
-              : "Upload API may need configuration",
+        message: response.ok()
+          ? "Upload API responding"
+          : response.status() === 401
+            ? "Upload requires auth (expected)"
+            : "Upload API may need configuration",
         timestamp: new Date(),
       };
     } catch (error) {
@@ -795,7 +815,9 @@ class EnhancedWebsiteChecker {
       return {
         name: "Order Tracking API",
         status:
-          response.ok() || response.status() === 404 || response.status() === 401
+          response.ok() ||
+          response.status() === 404 ||
+          response.status() === 401
             ? "pass"
             : "fail",
         duration: Date.now() - start,
@@ -904,9 +926,15 @@ class EnhancedWebsiteChecker {
       await this.page!.waitForLoadState("networkidle");
 
       // Check for agricultural indicators
-      const seasonalBadge = await this.page!.locator('[data-testid*="seasonal"]').count();
-      const organicBadge = await this.page!.locator('[data-testid*="organic"]').count();
-      const farmInfo = await this.page!.locator('[data-testid*="farm"]').count();
+      const seasonalBadge = await this.page!.locator(
+        '[data-testid*="seasonal"]',
+      ).count();
+      const organicBadge = await this.page!.locator(
+        '[data-testid*="organic"]',
+      ).count();
+      const farmInfo = await this.page!.locator(
+        '[data-testid*="farm"]',
+      ).count();
 
       const agricultureScore = seasonalBadge + organicBadge + farmInfo;
 

@@ -20,6 +20,7 @@ The E2E test suite was showing ~12.9% pass rate (56/435 tests passing) due to au
 ## ✅ Fixes Applied
 
 ### 1. Updated NextAuth Configuration
+
 **File:** `src/lib/auth/config.ts`
 
 - ✅ Added `CONSUMER` role to allowed roles array
@@ -27,10 +28,12 @@ The E2E test suite was showing ~12.9% pass rate (56/435 tests passing) due to au
 - ✅ Ensured all three user roles (ADMIN, FARMER, CONSUMER) can authenticate
 
 ### 2. Created Diagnostic Tool
+
 **File:** `scripts/debug-nextauth.ts`  
 **Command:** `npm run debug:auth`
 
 Comprehensive diagnostic script that checks:
+
 - Environment variables (DATABASE_URL, NEXTAUTH_URL, NEXTAUTH_SECRET)
 - Database connection and user table
 - Test users exist with correct passwords
@@ -39,10 +42,12 @@ Comprehensive diagnostic script that checks:
 - Simulated authentication flow
 
 ### 3. Created Automatic Fix Tool
+
 **File:** `scripts/fix-nextauth.ts`  
 **Command:** `npm run fix:auth`
 
 Automatic repair script that:
+
 - Generates NEXTAUTH_SECRET if missing
 - Creates/updates `.env.test` and `.env.local`
 - Recreates test users with correct bcrypt hashes
@@ -51,9 +56,11 @@ Automatic repair script that:
 - Creates auth directory for Playwright
 
 ### 4. Comprehensive Documentation
+
 **File:** `docs/NEXTAUTH_DEBUG_GUIDE.md`
 
 Complete troubleshooting guide with:
+
 - Quick fix checklist
 - Environment setup instructions
 - Common issues and solutions
@@ -112,13 +119,14 @@ npm run debug:auth
 
 After running the fix, use these credentials:
 
-| Role     | Email                        | Password            |
-|----------|------------------------------|---------------------|
-| Admin    | admin@farmersmarket.app      | DivineAdmin123!     |
-| Farmer   | farmer@farmersmarket.app     | DivineFarmer123!    |
-| Customer | customer@farmersmarket.app   | DivineCustomer123!  |
+| Role     | Email                      | Password           |
+| -------- | -------------------------- | ------------------ |
+| Admin    | admin@farmersmarket.app    | DivineAdmin123!    |
+| Farmer   | farmer@farmersmarket.app   | DivineFarmer123!   |
+| Customer | customer@farmersmarket.app | DivineCustomer123! |
 
 All users have:
+
 - ✅ Status: ACTIVE
 - ✅ Email verified: true
 - ✅ Password hashed with bcrypt (12 rounds)
@@ -189,6 +197,7 @@ npx playwright test tests/e2e/auth.setup.ts --config=playwright.config.temp.ts -
 ```
 
 Expected output:
+
 ```
 ✅ Admin authenticated successfully
 ✅ Farmer authenticated successfully
@@ -208,6 +217,7 @@ npm run test:e2e
 ```
 
 Expected results:
+
 - ✅ ~90%+ pass rate (390+ tests passing)
 - ✅ Auth-dependent tests now working
 - ✅ Significant reduction in failures
@@ -311,19 +321,19 @@ curl http://localhost:3001/api/auth/session  # Check session endpoint
 
 After applying these fixes, you should see:
 
-| Metric                  | Before | After  | Improvement |
-|-------------------------|--------|--------|-------------|
-| E2E Pass Rate           | 12.9%  | ~90%   | +77.1%      |
-| Auth Setup Success      | ❌     | ✅     | Fixed       |
-| Manual Login            | ❌     | ✅     | Fixed       |
-| Diagnostic Pass Rate    | ~40%   | 100%   | Fixed       |
-| StorageState Generation | ❌     | ✅     | Fixed       |
+| Metric                  | Before | After | Improvement |
+| ----------------------- | ------ | ----- | ----------- |
+| E2E Pass Rate           | 12.9%  | ~90%  | +77.1%      |
+| Auth Setup Success      | ❌     | ✅    | Fixed       |
+| Manual Login            | ❌     | ✅    | Fixed       |
+| Diagnostic Pass Rate    | ~40%   | 100%  | Fixed       |
+| StorageState Generation | ❌     | ✅    | Fixed       |
 
 ---
 
 ## 🔐 Security Notes
 
-1. **NEXTAUTH_SECRET**: 
+1. **NEXTAUTH_SECRET**:
    - Must be set in production
    - Should be different for test/dev/prod
    - Never commit to git
@@ -344,11 +354,13 @@ After applying these fixes, you should see:
 ## 🎯 Next Steps
 
 1. **Run the fix:**
+
    ```bash
    npm run fix:auth
    ```
 
 2. **Verify it worked:**
+
    ```bash
    npm run debug:auth
    ```
@@ -359,6 +371,7 @@ After applying these fixes, you should see:
    - Login with: farmer@farmersmarket.app / DivineFarmer123!
 
 4. **Run E2E tests:**
+
    ```bash
    $env:BASE_URL = "http://localhost:3001"
    .\run-e2e-with-auth.ps1

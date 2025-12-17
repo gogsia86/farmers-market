@@ -10,11 +10,13 @@
 ## ⚠️ CRITICAL - Do These First
 
 ### 1. Review Audit Results (2 min)
+
 - [ ] Read `docs/DUPLICATE_AUDIT_SUMMARY.md` (executive summary)
 - [ ] Review `docs/DUPLICATE_FILES_ANALYSIS.md` (full 582-line analysis)
 - [ ] Understand which files will be deleted
 
 ### 2. Create Safety Backup (2 min)
+
 ```bash
 # Create backup branch
 git branch backup-before-duplicate-cleanup-$(date +%Y%m%d)
@@ -26,6 +28,7 @@ git commit -m "chore: backup before duplicate cleanup"
 ```
 
 ### 3. Security Check (1 min)
+
 - [ ] Verify `.env.local` is NOT in git: `git ls-files | grep .env.local`
 - [ ] Verify `.env.test` is NOT in git: `git ls-files | grep .env.test`
 - [ ] If found: `git rm --cached .env.local .env.test`
@@ -35,6 +38,7 @@ git commit -m "chore: backup before duplicate cleanup"
 ## 🚀 Duplicate Files Cleanup (5-20 min)
 
 ### Option A: Automated Cleanup (Recommended - 5 min)
+
 ```bash
 # 1. Preview changes (dry run)
 bash scripts/cleanup-duplicates.sh --dry-run
@@ -51,6 +55,7 @@ npm run test
 ### Option B: Manual Cleanup (15-20 min)
 
 #### Phase 1: Delete Safe Duplicates (2 min)
+
 ```bash
 # Delete temporary Playwright config
 rm playwright.config.temp.ts
@@ -68,6 +73,7 @@ rmdir src/app/marketplace/farms
 ```
 
 #### Phase 2: Handle Route Conflict (5 min)
+
 ```bash
 # ⚠️ CRITICAL: Root /marketplace conflicts with (customer)/marketplace
 
@@ -87,6 +93,7 @@ npm run dev
 ```
 
 #### Phase 3: Clear Turbopack Cache (1 min)
+
 ```bash
 # REQUIRED after any environment or route changes
 rm -rf .next
@@ -98,6 +105,7 @@ npm run dev
 ## ✅ Verification (10 min)
 
 ### After Cleanup, Run These Checks:
+
 ```bash
 # 1. Check for remaining duplicates (should be 0)
 find . -name "*.backup" -o -name "*.temp" -o -name "*.old" | grep -v node_modules
@@ -151,6 +159,7 @@ Your cleanup is complete when:
 - [ ] Seed scripts documented
 
 **Expected Results:**
+
 - ✅ 5 duplicate files deleted
 - ✅ 1 empty directory removed
 - ✅ 1 route conflict resolved
@@ -179,6 +188,7 @@ git reset --hard HEAD
 ### Common Issues & Solutions
 
 **Issue: Routes not working**
+
 ```bash
 # Solution: Clear Turbopack cache
 rm -rf .next
@@ -186,6 +196,7 @@ npm run dev
 ```
 
 **Issue: Database connection errors**
+
 ```bash
 # Solution: Verify canonical import used
 grep -r "new PrismaClient" src
@@ -193,6 +204,7 @@ grep -r "new PrismaClient" src
 ```
 
 **Issue: Seed script not found**
+
 ```bash
 # Solution: Use correct seed script
 ls -la prisma/seed*
@@ -205,6 +217,7 @@ ls -la prisma/seed*
 ## 📈 Before/After Comparison
 
 ### Before Cleanup
+
 - 7 duplicate files cluttering codebase
 - 1 critical route conflict (/marketplace)
 - 1 empty orphaned directory
@@ -212,6 +225,7 @@ ls -la prisma/seed*
 - Potential routing ambiguity
 
 ### After Cleanup
+
 - 0 duplicate files ✅
 - 0 route conflicts ✅
 - 0 empty directories ✅
@@ -296,21 +310,25 @@ Audit: docs/DUPLICATE_FILES_ANALYSIS.md"
 ## 🆘 Need Help?
 
 ### Documentation
+
 - **Executive Summary:** `docs/DUPLICATE_AUDIT_SUMMARY.md` (high-level overview)
 - **Full Analysis:** `docs/DUPLICATE_FILES_ANALYSIS.md` (582-line detailed audit)
 - **Quick Guide:** `docs/DUPLICATE_CLEANUP_GUIDE.md` (step-by-step with troubleshooting)
 - **This Checklist:** `CLEANUP_CHECKLIST.md` (you are here)
 
 ### Scripts
+
 - **Automated Cleanup:** `scripts/cleanup-duplicates.sh` (257 lines, safe deletion)
 - **Usage:** `bash scripts/cleanup-duplicates.sh --dry-run`
 
 ### Recovery
+
 - **Restore Branch:** `git checkout backup-before-duplicate-cleanup-YYYYMMDD`
 - **Restore File:** `git checkout HEAD -- path/to/file`
 - **Restore Marketplace:** `cp -r src/app/marketplace.backup.YYYYMMDD src/app/marketplace`
 
 ### Support
+
 - **Routing Issues:** Clear `.next` cache: `rm -rf .next && npm run dev`
 - **Database Errors:** Verify `@/lib/database` import used consistently
 - **Seed Issues:** See `docs/DUPLICATE_CLEANUP_GUIDE.md` seed strategy section
@@ -319,20 +337,20 @@ Audit: docs/DUPLICATE_FILES_ANALYSIS.md"
 
 ## 📊 Quick Stats
 
-| Metric | Value |
-|--------|-------|
-| **Files to Delete** | 5 duplicates |
-| **Directories to Remove** | 1 empty + 1 conflict |
-| **Time Required** | 5-20 minutes |
-| **Risk Level** | 🟢 Low (with backup) |
-| **Impact** | 🟢 High (cleaner codebase) |
-| **Automation Available** | ✅ Yes |
+| Metric                    | Value                      |
+| ------------------------- | -------------------------- |
+| **Files to Delete**       | 5 duplicates               |
+| **Directories to Remove** | 1 empty + 1 conflict       |
+| **Time Required**         | 5-20 minutes               |
+| **Risk Level**            | 🟢 Low (with backup)       |
+| **Impact**                | 🟢 High (cleaner codebase) |
+| **Automation Available**  | ✅ Yes                     |
 
 ---
 
 **Time Estimate:** 5-20 minutes (5 min automated, 20 min manual)  
 **Risk Level:** 🟢 Low (if backed up with git branch)  
-**Impact:** 🟢 High benefit (removes ambiguity, improves clarity)  
+**Impact:** 🟢 High benefit (removes ambiguity, improves clarity)
 
 **Ready to start?** → `bash scripts/cleanup-duplicates.sh --dry-run`
 

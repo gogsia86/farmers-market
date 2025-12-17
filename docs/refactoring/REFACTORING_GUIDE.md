@@ -1,4 +1,5 @@
 # 🔧 DIVINE REFACTORING IMPLEMENTATION GUIDE
+
 ## Step-by-Step Instructions to Achieve 100/100 Perfection
 
 **Current Score**: 97/100
@@ -31,6 +32,7 @@
 **Status**: ✅ Already completed in previous refactoring
 
 **Changes Made**:
+
 ```typescript
 // Changed from:
 export abstract class BaseRepository<
@@ -54,6 +56,7 @@ export abstract class BaseRepository<
 **Status**: ✅ Already created with comprehensive implementation
 
 **What was added**:
+
 - Branded type definitions for all major entities
 - Helper functions for casting and validation
 - Type guards for runtime checking
@@ -70,33 +73,39 @@ export abstract class BaseRepository<
 
 ```typescript
 // Add imports at the top
-import type { FarmId, UserId, brandId, unbrandId } from '@/types/branded';
+import type { FarmId, UserId, brandId, unbrandId } from "@/types/branded";
 
 // Update method signatures
 export class FarmService {
   // BEFORE
-  async getFarmById(id: string): Promise<QuantumFarm | null>
-  
+  async getFarmById(id: string): Promise<QuantumFarm | null>;
+
   // AFTER
   async getFarmById(id: FarmId): Promise<QuantumFarm | null> {
     return await this.repository.findById(unbrandId(id));
   }
 
   // BEFORE
-  async getFarmsByOwnerId(ownerId: string): Promise<QuantumFarm[]>
-  
+  async getFarmsByOwnerId(ownerId: string): Promise<QuantumFarm[]>;
+
   // AFTER
   async getFarmsByOwnerId(ownerId: UserId): Promise<QuantumFarm[]> {
     return await this.repository.findMany({
-      where: { ownerId: unbrandId(ownerId) }
+      where: { ownerId: unbrandId(ownerId) },
     });
   }
 
   // BEFORE
-  async updateFarm(id: string, updates: UpdateFarmRequest): Promise<QuantumFarm>
-  
+  async updateFarm(
+    id: string,
+    updates: UpdateFarmRequest,
+  ): Promise<QuantumFarm>;
+
   // AFTER
-  async updateFarm(id: FarmId, updates: UpdateFarmRequest): Promise<QuantumFarm> {
+  async updateFarm(
+    id: FarmId,
+    updates: UpdateFarmRequest,
+  ): Promise<QuantumFarm> {
     const existingFarm = await this.getFarmById(id);
     if (!existingFarm) {
       throw new NotFoundError("Farm", unbrandId(id));
@@ -105,8 +114,8 @@ export class FarmService {
   }
 
   // BEFORE
-  async deleteFarm(id: string): Promise<void>
-  
+  async deleteFarm(id: string): Promise<void>;
+
   // AFTER
   async deleteFarm(id: FarmId): Promise<void> {
     const existingFarm = await this.getFarmById(id);
@@ -124,17 +133,20 @@ export class FarmService {
 
 ```typescript
 // Add imports at the top
-import { validateAndBrandFarmId, type FarmId } from '@/types/branded';
+import { validateAndBrandFarmId, type FarmId } from "@/types/branded";
 
 export class FarmController extends BaseController {
   // Update getFarmById method
-  async getFarmById(request: NextRequest, params: { id: string }): Promise<NextResponse> {
+  async getFarmById(
+    request: NextRequest,
+    params: { id: string },
+  ): Promise<NextResponse> {
     return this.handleRequest(request, async () => {
       // Validate and brand the ID
       const farmId = validateAndBrandFarmId(params.id);
-      
+
       const farm = await farmService.getFarmById(farmId);
-      
+
       if (!farm) {
         throw new NotFoundError("Farm", params.id);
       }
@@ -142,8 +154,8 @@ export class FarmController extends BaseController {
       return this.success(farm, {
         agricultural: {
           consciousness: "ACTIVE",
-          operation: "GET_FARM"
-        }
+          operation: "GET_FARM",
+        },
       });
     });
   }
@@ -157,11 +169,11 @@ export class FarmController extends BaseController {
 **File**: `src/app/api/farms/[id]/route.ts` (if exists)
 
 ```typescript
-import { validateAndBrandFarmId } from '@/types/branded';
+import { validateAndBrandFarmId } from "@/types/branded";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   // The controller will handle branding internally
   return farmController.getFarmById(request, params);
@@ -174,11 +186,13 @@ export async function GET(
 **Line**: 176 (approximately)
 
 **Find this pattern**:
+
 ```typescript
 const someValue: any = ...;
 ```
 
 **Replace with type guard pattern**:
+
 ```typescript
 const someValue: unknown = ...;
 
@@ -199,6 +213,7 @@ if (isValidValue(someValue)) {
 ```
 
 **Steps**:
+
 1. Read the file around line 176
 2. Identify what the `any` type is being used for
 3. Replace with `unknown` + appropriate type guard
@@ -216,46 +231,46 @@ if (isValidValue(someValue)) {
 
 **Template to use**:
 
-```typescript
+````typescript
 /**
  * [Brief one-line description]
- * 
+ *
  * [Detailed description with agricultural consciousness if applicable]
- * 
+ *
  * @param paramName - Description of parameter with constraints
  * @returns Description of return value
  * @throws {ErrorType} Description of when this error is thrown
- * 
+ *
  * @example
  * ```typescript
  * const result = await service.method(params);
  * console.log(result);
  * ```
  */
-```
+````
 
 #### 2.1.1 FarmService Documentation
 
 **File**: `src/lib/services/farm.service.ts`
 
-```typescript
+````typescript
 export class FarmService {
   /**
    * Create a new farm with agricultural consciousness
-   * 
+   *
    * Validates farm data, generates unique slug, and manifests the farm
    * into the database with biodynamic awareness. Sets initial status to
    * PENDING_VERIFICATION for admin review.
-   * 
+   *
    * @param ownerId - User ID of the farm owner (must have FARMER role)
    * @param farmData - Farm creation data including name, location, and practices
    * @returns Created farm with complete profile and quantum consciousness
    * @throws {ValidationError} If farm data fails validation (name too short, invalid email, etc.)
    * @throws {ConflictError} If farm with same name/location already exists
    * @throws {AuthorizationError} If user lacks FARMER role
-   * 
+   *
    * Functional Requirement: FR-011 (Farm Profile Creation)
-   * 
+   *
    * @example
    * ```typescript
    * const farm = await farmService.createFarm(userId, {
@@ -269,33 +284,33 @@ export class FarmService {
    *   farmingPractices: ["ORGANIC", "BIODYNAMIC"],
    *   deliveryRadius: 50
    * });
-   * 
+   *
    * console.log(farm.slug); // "divine-acres-biodynamic-farm-seattle"
    * console.log(farm.status); // "PENDING_VERIFICATION"
    * ```
    */
   async createFarm(
     ownerId: UserId,
-    farmData: CreateFarmRequest
+    farmData: CreateFarmRequest,
   ): Promise<FarmServiceResult> {
     // Implementation
   }
 
   /**
    * Retrieve farm by unique identifier with quantum consciousness
-   * 
+   *
    * Fetches farm with all relations (owner, products, counts) and
    * agricultural metadata. Results are cached for performance.
-   * 
+   *
    * @param id - Branded farm identifier
    * @returns Farm entity with all relations, or null if not found
    * @throws {ValidationError} If farm ID format is invalid
-   * 
+   *
    * @example
    * ```typescript
    * const farmId = brandId<FarmId>("farm_clh8x1a2b3c4d5e6f7g8h9i0");
    * const farm = await farmService.getFarmById(farmId);
-   * 
+   *
    * if (farm) {
    *   console.log(`${farm.name} has ${farm._count.products} products`);
    * }
@@ -307,13 +322,13 @@ export class FarmService {
 
   /**
    * List farms with pagination and filtering
-   * 
+   *
    * Supports filtering by status, location (city/state), and farming practices.
    * Results include pagination metadata for UI rendering.
-   * 
+   *
    * @param options - Pagination and filtering options
    * @returns Paginated list of farms with total count
-   * 
+   *
    * @example
    * ```typescript
    * const result = await farmService.listFarms({
@@ -324,7 +339,7 @@ export class FarmService {
    *   sortBy: "name",
    *   sortOrder: "asc"
    * });
-   * 
+   *
    * console.log(`Page ${result.page} of ${result.totalPages}`);
    * console.log(`Found ${result.total} farms`);
    * result.farms.forEach(farm => console.log(farm.name));
@@ -334,11 +349,12 @@ export class FarmService {
     // Implementation
   }
 }
-```
+````
 
 #### 2.1.2 Document Other Services
 
 Repeat similar documentation for:
+
 - `ProductService`
 - `OrderService`
 - `CartService`
@@ -351,21 +367,21 @@ Repeat similar documentation for:
 
 **File**: `src/lib/controllers/farm.controller.ts`
 
-```typescript
+````typescript
 /**
  * Farm Controller - HTTP request handlers with divine consciousness
- * 
+ *
  * Handles all farm-related API endpoints following the divine controller pattern.
  * Validates input, checks authentication/authorization, delegates to service layer,
  * and formats unified API responses.
- * 
+ *
  * Architecture: Route → Controller → Service → Repository → Database
- * 
+ *
  * @example
  * ```typescript
  * // In API route
  * import { farmController } from '@/lib/controllers';
- * 
+ *
  * export const GET = (req: NextRequest) => farmController.listFarms(req);
  * export const POST = (req: NextRequest) => farmController.createFarm(req);
  * ```
@@ -373,10 +389,10 @@ Repeat similar documentation for:
 export class FarmController extends BaseController {
   /**
    * Handle GET /api/farms - List farms with pagination
-   * 
+   *
    * Public endpoint with rate limiting. Supports filtering by status,
    * location, and farming practices. Returns paginated results.
-   * 
+   *
    * Query Parameters:
    * - page: number (default: 1)
    * - limit: number (default: 20, max: 100)
@@ -385,10 +401,10 @@ export class FarmController extends BaseController {
    * - state: string (2-letter code)
    * - sortBy: "name" | "createdAt" | "rating"
    * - sortOrder: "asc" | "desc"
-   * 
+   *
    * @param request - Next.js request object
    * @returns Paginated farm list with metadata
-   * 
+   *
    * @example
    * GET /api/farms?page=1&limit=20&city=Seattle&status=ACTIVE&sortBy=name
    */
@@ -396,7 +412,7 @@ export class FarmController extends BaseController {
     // Implementation
   }
 }
-```
+````
 
 ### Step 2.3: Document Repository Layer
 
@@ -419,11 +435,13 @@ Add JSDoc to exported utility functions with examples.
 ### Step 3.1: Install OpenTelemetry Dependencies
 
 **Check if already installed**:
+
 ```bash
 npm list @opentelemetry/api @opentelemetry/sdk-trace-node
 ```
 
 **If not installed**:
+
 ```bash
 npm install @opentelemetry/api @opentelemetry/sdk-trace-node @opentelemetry/instrumentation
 ```
@@ -432,13 +450,13 @@ npm install @opentelemetry/api @opentelemetry/sdk-trace-node @opentelemetry/inst
 
 **File**: `src/lib/tracing/service-tracer.ts` (NEW FILE)
 
-```typescript
+````typescript
 /**
  * 🔍 SERVICE LAYER TRACING UTILITY
- * 
+ *
  * Provides convenient tracing helpers for service layer operations.
  * Integrates with OpenTelemetry for distributed tracing.
- * 
+ *
  * @reference .github/instructions/06_AUTOMATION_INFRASTRUCTURE.instructions.md
  */
 
@@ -446,13 +464,13 @@ import { trace, Span, SpanStatusCode, context } from "@opentelemetry/api";
 
 /**
  * Trace a service operation with automatic span management
- * 
+ *
  * @param serviceName - Name of the service (e.g., "FarmService")
  * @param operationName - Name of the operation (e.g., "createFarm")
  * @param attributes - Additional span attributes
  * @param fn - Async function to execute within span
  * @returns Result of the function
- * 
+ *
  * @example
  * ```typescript
  * const farm = await traceServiceOperation(
@@ -471,39 +489,36 @@ export async function traceServiceOperation<T>(
   serviceName: string,
   operationName: string,
   attributes: Record<string, string | number | boolean>,
-  fn: (span: Span) => Promise<T>
+  fn: (span: Span) => Promise<T>,
 ): Promise<T> {
   const tracer = trace.getTracer(serviceName);
 
-  return await tracer.startActiveSpan(
-    operationName,
-    async (span: Span) => {
-      try {
-        // Set initial attributes
-        span.setAttributes(attributes);
+  return await tracer.startActiveSpan(operationName, async (span: Span) => {
+    try {
+      // Set initial attributes
+      span.setAttributes(attributes);
 
-        // Execute the operation
-        const result = await fn(span);
+      // Execute the operation
+      const result = await fn(span);
 
-        // Mark as successful
-        span.setStatus({ code: SpanStatusCode.OK });
+      // Mark as successful
+      span.setStatus({ code: SpanStatusCode.OK });
 
-        return result;
-      } catch (error) {
-        // Record the error
-        span.recordException(error as Error);
-        span.setStatus({
-          code: SpanStatusCode.ERROR,
-          message: error instanceof Error ? error.message : "Unknown error",
-        });
+      return result;
+    } catch (error) {
+      // Record the error
+      span.recordException(error as Error);
+      span.setStatus({
+        code: SpanStatusCode.ERROR,
+        message: error instanceof Error ? error.message : "Unknown error",
+      });
 
-        // Re-throw to maintain error flow
-        throw error;
-      } finally {
-        span.end();
-      }
+      // Re-throw to maintain error flow
+      throw error;
+    } finally {
+      span.end();
     }
-  );
+  });
 }
 
 /**
@@ -513,7 +528,7 @@ export async function traceServiceOperation<T>(
 export function createChildSpan(
   serviceName: string,
   operationName: string,
-  attributes?: Record<string, string | number | boolean>
+  attributes?: Record<string, string | number | boolean>,
 ): Span {
   const tracer = trace.getTracer(serviceName);
   const span = tracer.startSpan(operationName);
@@ -524,7 +539,7 @@ export function createChildSpan(
 
   return span;
 }
-```
+````
 
 ### Step 3.3: Integrate Tracing into FarmService
 
@@ -536,7 +551,7 @@ import { traceServiceOperation } from "@/lib/tracing/service-tracer";
 export class FarmService {
   async createFarm(
     ownerId: UserId,
-    farmData: CreateFarmRequest
+    farmData: CreateFarmRequest,
   ): Promise<FarmServiceResult> {
     return await traceServiceOperation(
       "FarmService",
@@ -557,13 +572,16 @@ export class FarmService {
         if (existingCheck.exists) {
           throw new ConflictError(
             `Farm already exists: ${existingCheck.farm?.name}`,
-            { existingFarmId: existingCheck.farm?.id }
+            { existingFarmId: existingCheck.farm?.id },
           );
         }
         span.addEvent("existing_check_completed");
 
         // 3. Generate slug
-        const slug = await this.generateUniqueSlug(farmData.name, farmData.city);
+        const slug = await this.generateUniqueSlug(
+          farmData.name,
+          farmData.city,
+        );
         span.setAttribute("farm.slug", slug);
         span.addEvent("slug_generated");
 
@@ -584,7 +602,7 @@ export class FarmService {
         span.addEvent("cache_invalidated");
 
         return { farm, slug };
-      }
+      },
     );
   }
 
@@ -612,7 +630,7 @@ export class FarmService {
         }
 
         return farm;
-      }
+      },
     );
   }
 
@@ -623,6 +641,7 @@ export class FarmService {
 ### Step 3.4: Add Tracing to Other Services
 
 Repeat for:
+
 - ProductService
 - OrderService
 - CartService
@@ -630,6 +649,7 @@ Repeat for:
 - PaymentService
 
 **Priority Order**:
+
 1. FarmService (most critical)
 2. ProductService (high usage)
 3. OrderService (business critical)
@@ -758,6 +778,7 @@ npm run dev
 ### Completion Checklist
 
 #### Phase 1: Type Safety ✅
+
 - [x] Fix BaseRepository generic constraints
 - [x] Create branded types file
 - [ ] Integrate branded types into FarmService
@@ -766,6 +787,7 @@ npm run dev
 - [ ] Run type checking
 
 #### Phase 2: Documentation
+
 - [ ] Document FarmService methods
 - [ ] Document ProductService methods
 - [ ] Document OrderService methods
@@ -774,6 +796,7 @@ npm run dev
 - [ ] Generate API documentation
 
 #### Phase 3: Observability
+
 - [ ] Create tracing utility
 - [ ] Add tracing to FarmService
 - [ ] Add tracing to ProductService
@@ -782,6 +805,7 @@ npm run dev
 - [ ] Test tracing output
 
 #### Verification
+
 - [ ] TypeScript compiles with zero errors
 - [ ] All tests pass
 - [ ] Linting passes
@@ -794,24 +818,28 @@ npm run dev
 ## 🎯 SUCCESS CRITERIA
 
 ### Phase 1 Complete When:
+
 - ✅ Zero TypeScript `any` warnings in refactored files
 - ✅ Branded types defined and exported
 - ✅ All tests pass
 - ✅ Application builds successfully
 
 ### Phase 2 Complete When:
+
 - ✅ All public service methods have JSDoc
 - ✅ All controller methods have JSDoc
 - ✅ Examples provided for complex operations
 - ✅ Documentation generates without errors
 
 ### Phase 3 Complete When:
+
 - ✅ Tracing utility created and tested
 - ✅ Service methods emit spans
 - ✅ Spans visible in logs/monitoring
 - ✅ Performance impact negligible
 
 ### Overall Success:
+
 - ✅ Divine Perfection Score: 100/100
 - ✅ Zero compromises in functionality
 - ✅ Improved developer experience
@@ -838,17 +866,20 @@ Before deploying to production:
 ## 📞 SUPPORT & RESOURCES
 
 ### Reference Documents
+
 - `DIVINE_CODE_ANALYSIS_REPORT.md` - Full analysis
 - `.cursorrules` - Divine coding standards
 - `.github/instructions/` - Comprehensive patterns
 
 ### Key Patterns
+
 - **Branded Types**: `src/types/branded.ts`
 - **Service Layer**: `src/lib/services/farm.service.ts`
 - **Repository Pattern**: `src/lib/repositories/base.repository.ts`
 - **Error Handling**: `src/lib/errors.ts`
 
 ### Testing
+
 - Run specific test: `npm run test -- --testNamePattern="Farm"`
 - Coverage report: `npm run test:coverage`
 - Watch mode: `npm run test:watch`
@@ -858,12 +889,14 @@ Before deploying to production:
 ## 🎉 AFTER COMPLETION
 
 ### Update Documentation
+
 1. Mark this guide as completed
 2. Update README.md with new features
 3. Update CHANGELOG.md
 4. Tag release: `v2.0.0` (if appropriate)
 
 ### Celebrate!
+
 You've achieved divine perfection! 🌟✨
 
 - Code quality: 100/100

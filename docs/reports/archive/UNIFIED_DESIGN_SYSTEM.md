@@ -1,4 +1,5 @@
 # 🌾 Unified Agricultural Design System
+
 ## Farmers Market Platform - Complete Design Guidelines
 
 **Version:** 3.0.0  
@@ -125,16 +126,21 @@ amber: {
       </h1>
 
       {/* Subtitle */}
-      <p className="text-xl md:text-2xl text-gray-600 mb-8">
-        Description text
-      </p>
+      <p className="text-xl md:text-2xl text-gray-600 mb-8">Description text</p>
 
       {/* CTA Buttons */}
       <div className="flex flex-wrap gap-4 justify-center">
-        <Button size="lg" className="bg-agricultural-600 hover:bg-agricultural-700">
+        <Button
+          size="lg"
+          className="bg-agricultural-600 hover:bg-agricultural-700"
+        >
           Primary Action
         </Button>
-        <Button size="lg" variant="outline" className="border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50">
+        <Button
+          size="lg"
+          variant="outline"
+          className="border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50"
+        >
           Secondary Action
         </Button>
       </div>
@@ -155,7 +161,7 @@ amber: {
       {/* Image or icon */}
     </div>
   </CardHeader>
-  
+
   <CardContent className="p-6">
     <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-agricultural-600 transition-colors">
       Title
@@ -198,17 +204,20 @@ amber: {
 <section className="py-16 bg-gradient-to-br from-agricultural-600 via-agricultural-700 to-secondary-600 text-white">
   <div className="container mx-auto px-4">
     <div className="max-w-3xl mx-auto text-center">
-      <h2 className="text-3xl md:text-4xl font-bold mb-4">
-        CTA Heading
-      </h2>
-      <p className="text-xl text-white/90 mb-8">
-        Supporting text
-      </p>
+      <h2 className="text-3xl md:text-4xl font-bold mb-4">CTA Heading</h2>
+      <p className="text-xl text-white/90 mb-8">Supporting text</p>
       <div className="flex gap-4 justify-center flex-wrap">
-        <Button size="lg" className="bg-white text-agricultural-700 hover:bg-gray-100">
+        <Button
+          size="lg"
+          className="bg-white text-agricultural-700 hover:bg-gray-100"
+        >
           Primary Action
         </Button>
-        <Button size="lg" variant="outline" className="bg-transparent border-white text-white hover:bg-white/10">
+        <Button
+          size="lg"
+          variant="outline"
+          className="bg-transparent border-white text-white hover:bg-white/10"
+        >
           Secondary Action
         </Button>
       </div>
@@ -226,7 +235,7 @@ amber: {
       <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12">
         Section Title
       </h2>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="text-center">
           <div className="text-5xl font-bold text-agricultural-600 mb-2">
@@ -235,9 +244,7 @@ amber: {
           <p className="text-lg font-semibold text-gray-900 mb-2">
             Metric Title
           </p>
-          <p className="text-gray-600">
-            Description
-          </p>
+          <p className="text-gray-600">Description</p>
         </div>
         {/* Repeat for other stats */}
       </div>
@@ -337,7 +344,7 @@ export default function Page() {
   return (
     <>
       <Header />
-      
+
       <main className="min-h-screen bg-white">
         {/* Hero Section */}
         <section className="relative bg-gradient-to-br from-agricultural-50 via-white to-green-50 py-20">
@@ -345,9 +352,7 @@ export default function Page() {
         </section>
 
         {/* Main Content Section */}
-        <section className="py-16">
-          {/* Main content */}
-        </section>
+        <section className="py-16">{/* Main content */}</section>
 
         {/* Secondary Section (Optional) */}
         <section className="py-16 bg-gradient-to-br from-agricultural-50 via-white to-green-50">

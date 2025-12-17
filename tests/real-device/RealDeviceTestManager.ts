@@ -9,20 +9,32 @@
  * @divine-pattern AGRICULTURAL_CONSCIOUSNESS
  */
 
-import { EventEmitter } from 'events';
-import type { Page, BrowserContext } from '@playwright/test';
+import { EventEmitter } from "events";
+import type { Page, BrowserContext } from "@playwright/test";
 
 // ============================================================================
 // Type Definitions
 // ============================================================================
 
-export type CloudProvider = 'browserstack' | 'aws-device-farm' | 'sauce-labs' | 'lambda-test' | 'local';
+export type CloudProvider =
+  | "browserstack"
+  | "aws-device-farm"
+  | "sauce-labs"
+  | "lambda-test"
+  | "local";
 
-export type DeviceType = 'mobile' | 'tablet' | 'desktop' | 'tv' | 'watch';
+export type DeviceType = "mobile" | "tablet" | "desktop" | "tv" | "watch";
 
-export type OS = 'iOS' | 'Android' | 'Windows' | 'macOS' | 'Linux';
+export type OS = "iOS" | "Android" | "Windows" | "macOS" | "Linux";
 
-export type NetworkCondition = '4G' | '3G' | '2G' | 'WiFi' | 'Offline' | 'LTE' | '5G';
+export type NetworkCondition =
+  | "4G"
+  | "3G"
+  | "2G"
+  | "WiFi"
+  | "Offline"
+  | "LTE"
+  | "5G";
 
 export interface RealDeviceConfig {
   provider: CloudProvider;
@@ -37,7 +49,7 @@ export interface RealDeviceConfig {
   location?: string;
   timezone?: string;
   locale?: string;
-  orientation?: 'portrait' | 'landscape';
+  orientation?: "portrait" | "landscape";
   autoAcceptAlerts?: boolean;
   autoGrantPermissions?: boolean;
   captureVideo?: boolean;
@@ -54,7 +66,7 @@ export interface TestSession {
   videoUrl?: string;
   startTime: Date;
   endTime?: Date;
-  status: 'pending' | 'running' | 'passed' | 'failed' | 'error';
+  status: "pending" | "running" | "passed" | "failed" | "error";
   logs: TestLog[];
   screenshots: Screenshot[];
   metrics: SessionMetrics;
@@ -62,16 +74,16 @@ export interface TestSession {
 
 export interface TestLog {
   timestamp: Date;
-  level: 'info' | 'warn' | 'error' | 'debug';
+  level: "info" | "warn" | "error" | "debug";
   message: string;
-  data?: any;
+  data?: Record<string, unknown>;
 }
 
 export interface Screenshot {
   timestamp: Date;
   url: string;
   name: string;
-  type: 'automatic' | 'manual' | 'error';
+  type: "automatic" | "manual" | "error";
 }
 
 export interface SessionMetrics {
@@ -87,7 +99,7 @@ export interface SessionMetrics {
 }
 
 export interface DeviceCapabilities {
-  [key: string]: any;
+  [key: string]: string | number | boolean | undefined;
   platformName: string;
   platformVersion: string;
   deviceName: string;
@@ -148,7 +160,7 @@ export class RealDeviceTestManager extends EventEmitter {
 
   constructor(
     credentials: CloudProviderCredentials,
-    defaultProvider: CloudProvider = 'local'
+    defaultProvider: CloudProvider = "local",
   ) {
     super();
     this.credentials = credentials;
@@ -166,7 +178,7 @@ export class RealDeviceTestManager extends EventEmitter {
       provider: config.provider,
       deviceConfig: config,
       startTime: new Date(),
-      status: 'pending',
+      status: "pending",
       logs: [],
       screenshots: [],
       metrics: {
@@ -177,16 +189,16 @@ export class RealDeviceTestManager extends EventEmitter {
     };
 
     this.sessions.set(sessionId, session);
-    this.emit('session:started', session);
+    this.emit("session:started", session);
 
     try {
       // Initialize provider-specific session
       await this.initializeProviderSession(session);
-      session.status = 'running';
-      this.emit('session:running', session);
+      session.status = "running";
+      this.emit("session:running", session);
     } catch (error) {
-      session.status = 'error';
-      this.logError(sessionId, 'Failed to initialize session', error);
+      session.status = "error";
+      this.logError(sessionId, "Failed to initialize session", error);
       throw error;
     }
 
@@ -196,14 +208,17 @@ export class RealDeviceTestManager extends EventEmitter {
   /**
    * End a test session
    */
-  async endSession(sessionId: string, passed: boolean): Promise<RealDeviceTestResult> {
+  async endSession(
+    sessionId: string,
+    passed: boolean,
+  ): Promise<RealDeviceTestResult> {
     const session = this.sessions.get(sessionId);
     if (!session) {
       throw new Error(`Session ${sessionId} not found`);
     }
 
     session.endTime = new Date();
-    session.status = passed ? 'passed' : 'failed';
+    session.status = passed ? "passed" : "failed";
 
     const duration = session.endTime.getTime() - session.startTime.getTime();
     session.metrics.totalTestTime = duration;
@@ -222,11 +237,11 @@ export class RealDeviceTestManager extends EventEmitter {
       videoUrl: session.videoUrl,
       reportUrl: session.sessionUrl,
       errors: session.logs
-        .filter(log => log.level === 'error')
-        .map(log => new Error(log.message)),
+        .filter((log) => log.level === "error")
+        .map((log) => new Error(log.message)),
     };
 
-    this.emit('session:ended', result);
+    this.emit("session:ended", result);
     return result;
   }
 
@@ -235,19 +250,19 @@ export class RealDeviceTestManager extends EventEmitter {
    */
   private async initializeProviderSession(session: TestSession): Promise<void> {
     switch (session.provider) {
-      case 'browserstack':
+      case "browserstack":
         await this.initializeBrowserStack(session);
         break;
-      case 'aws-device-farm':
+      case "aws-device-farm":
         await this.initializeAWSDeviceFarm(session);
         break;
-      case 'sauce-labs':
+      case "sauce-labs":
         await this.initializeSauceLabs(session);
         break;
-      case 'lambda-test':
+      case "lambda-test":
         await this.initializeLambdaTest(session);
         break;
-      case 'local':
+      case "local":
         await this.initializeLocal(session);
         break;
       default:
@@ -263,19 +278,19 @@ export class RealDeviceTestManager extends EventEmitter {
     const credentials = this.credentials.browserstack;
 
     if (!credentials) {
-      throw new Error('BrowserStack credentials not configured');
+      throw new Error("BrowserStack credentials not configured");
     }
 
     const capabilities: DeviceCapabilities = {
       platformName: deviceConfig.os,
       platformVersion: deviceConfig.osVersion,
       deviceName: deviceConfig.deviceName,
-      browserName: deviceConfig.browserName || 'Chrome',
-      'bstack:options': {
+      browserName: deviceConfig.browserName || "Chrome",
+      "bstack:options": {
         userName: credentials.username,
         accessKey: credentials.accessKey,
-        buildName: credentials.buildName || 'Farmers Market Real Device Tests',
-        projectName: credentials.projectName || 'Farmers Market Platform',
+        buildName: credentials.buildName || "Farmers Market Real Device Tests",
+        projectName: credentials.projectName || "Farmers Market Platform",
         sessionName: `${deviceConfig.deviceName} - ${deviceConfig.os} ${deviceConfig.osVersion}`,
         video: deviceConfig.captureVideo !== false,
         networkLogs: deviceConfig.captureLogs !== false,
@@ -286,7 +301,9 @@ export class RealDeviceTestManager extends EventEmitter {
       },
     };
 
-    this.log(session.id, 'info', 'BrowserStack session initialized', { capabilities });
+    this.log(session.id, "info", "BrowserStack session initialized", {
+      capabilities,
+    });
     session.sessionUrl = `https://automate.browserstack.com/dashboard/v2/builds/${credentials.buildName}`;
   }
 
@@ -298,25 +315,27 @@ export class RealDeviceTestManager extends EventEmitter {
     const credentials = this.credentials.awsDeviceFarm;
 
     if (!credentials) {
-      throw new Error('AWS Device Farm credentials not configured');
+      throw new Error("AWS Device Farm credentials not configured");
     }
 
     const capabilities: DeviceCapabilities = {
       platformName: deviceConfig.os,
       platformVersion: deviceConfig.osVersion,
       deviceName: deviceConfig.deviceName,
-      automationName: deviceConfig.os === 'iOS' ? 'XCUITest' : 'UiAutomator2',
-      'aws:options': {
+      automationName: deviceConfig.os === "iOS" ? "XCUITest" : "UiAutomator2",
+      "aws:options": {
         accessKeyId: credentials.accessKeyId,
         secretAccessKey: credentials.secretAccessKey,
-        region: credentials.region || 'us-west-2',
+        region: credentials.region || "us-west-2",
         projectArn: credentials.projectArn,
         videoCapture: deviceConfig.captureVideo !== false,
-        appiumVersion: deviceConfig.appiumVersion || '2.0.0',
+        appiumVersion: deviceConfig.appiumVersion || "2.0.0",
       },
     };
 
-    this.log(session.id, 'info', 'AWS Device Farm session initialized', { capabilities });
+    this.log(session.id, "info", "AWS Device Farm session initialized", {
+      capabilities,
+    });
     session.sessionUrl = `https://${credentials.region}.console.aws.amazon.com/devicefarm/home`;
   }
 
@@ -328,28 +347,30 @@ export class RealDeviceTestManager extends EventEmitter {
     const credentials = this.credentials.sauceLabs;
 
     if (!credentials) {
-      throw new Error('Sauce Labs credentials not configured');
+      throw new Error("Sauce Labs credentials not configured");
     }
 
     const capabilities: DeviceCapabilities = {
       platformName: deviceConfig.os,
       platformVersion: deviceConfig.osVersion,
       deviceName: deviceConfig.deviceName,
-      browserName: deviceConfig.browserName || 'Chrome',
-      'sauce:options': {
+      browserName: deviceConfig.browserName || "Chrome",
+      "sauce:options": {
         username: credentials.username,
         accessKey: credentials.accessKey,
         name: `${deviceConfig.deviceName} Test`,
-        build: 'Farmers Market Real Device Tests',
+        build: "Farmers Market Real Device Tests",
         recordVideo: deviceConfig.captureVideo !== false,
         recordScreenshots: deviceConfig.captureScreenshots !== false,
         recordLogs: deviceConfig.captureLogs !== false,
         extendedDebugging: true,
-        dataCenter: credentials.dataCenter || 'us-west-1',
+        dataCenter: credentials.dataCenter || "us-west-1",
       },
     };
 
-    this.log(session.id, 'info', 'Sauce Labs session initialized', { capabilities });
+    this.log(session.id, "info", "Sauce Labs session initialized", {
+      capabilities,
+    });
     session.sessionUrl = `https://app.saucelabs.com/tests`;
   }
 
@@ -361,28 +382,30 @@ export class RealDeviceTestManager extends EventEmitter {
     const credentials = this.credentials.lambdaTest;
 
     if (!credentials) {
-      throw new Error('LambdaTest credentials not configured');
+      throw new Error("LambdaTest credentials not configured");
     }
 
     const capabilities: DeviceCapabilities = {
       platformName: deviceConfig.os,
       platformVersion: deviceConfig.osVersion,
       deviceName: deviceConfig.deviceName,
-      browserName: deviceConfig.browserName || 'Chrome',
-      'lt:options': {
+      browserName: deviceConfig.browserName || "Chrome",
+      "lt:options": {
         username: credentials.username,
         accessKey: credentials.accessKey,
-        build: 'Farmers Market Real Device Tests',
+        build: "Farmers Market Real Device Tests",
         name: `${deviceConfig.deviceName} - ${deviceConfig.os}`,
         video: deviceConfig.captureVideo !== false,
         network: true,
         console: deviceConfig.captureLogs !== false,
-        region: credentials.region || 'us',
+        region: credentials.region || "us",
         tunnel: deviceConfig.tunneling || false,
       },
     };
 
-    this.log(session.id, 'info', 'LambdaTest session initialized', { capabilities });
+    this.log(session.id, "info", "LambdaTest session initialized", {
+      capabilities,
+    });
     session.sessionUrl = `https://automation.lambdatest.com/timeline`;
   }
 
@@ -392,8 +415,8 @@ export class RealDeviceTestManager extends EventEmitter {
   private async initializeLocal(session: TestSession): Promise<void> {
     const { deviceConfig } = session;
 
-    this.log(session.id, 'info', 'Local session initialized', { deviceConfig });
-    session.sessionUrl = 'local://playwright';
+    this.log(session.id, "info", "Local session initialized", { deviceConfig });
+    session.sessionUrl = "local://playwright";
   }
 
   /**
@@ -401,7 +424,7 @@ export class RealDeviceTestManager extends EventEmitter {
    */
   private async finalizeProviderSession(session: TestSession): Promise<void> {
     // Update session status on provider
-    this.log(session.id, 'info', 'Session finalized', {
+    this.log(session.id, "info", "Session finalized", {
       status: session.status,
       duration: session.metrics.totalTestTime,
     });
@@ -417,11 +440,11 @@ export class RealDeviceTestManager extends EventEmitter {
    */
   private async getVideoUrl(session: TestSession): Promise<string | undefined> {
     switch (session.provider) {
-      case 'browserstack':
+      case "browserstack":
         return `https://automate.browserstack.com/sessions/${session.id}/video`;
-      case 'sauce-labs':
+      case "sauce-labs":
         return `https://app.saucelabs.com/tests/${session.id}/video`;
-      case 'lambda-test':
+      case "lambda-test":
         return `https://automation.lambdatest.com/logs/?testID=${session.id}`;
       default:
         return undefined;
@@ -434,7 +457,7 @@ export class RealDeviceTestManager extends EventEmitter {
   async captureScreenshot(
     sessionId: string,
     name: string,
-    type: Screenshot['type'] = 'manual'
+    type: Screenshot["type"] = "manual",
   ): Promise<Screenshot> {
     const session = this.sessions.get(sessionId);
     if (!session) {
@@ -449,7 +472,7 @@ export class RealDeviceTestManager extends EventEmitter {
     };
 
     session.screenshots.push(screenshot);
-    this.emit('screenshot:captured', screenshot);
+    this.emit("screenshot:captured", screenshot);
 
     return screenshot;
   }
@@ -457,7 +480,12 @@ export class RealDeviceTestManager extends EventEmitter {
   /**
    * Log message to session
    */
-  log(sessionId: string, level: TestLog['level'], message: string, data?: any): void {
+  log(
+    sessionId: string,
+    level: TestLog["level"],
+    message: string,
+    data?: Record<string, unknown>,
+  ): void {
     const session = this.sessions.get(sessionId);
     if (!session) {
       console.warn(`Session ${sessionId} not found for logging`);
@@ -473,22 +501,26 @@ export class RealDeviceTestManager extends EventEmitter {
 
     session.logs.push(log);
 
-    if (level === 'error') {
+    if (level === "error") {
       session.metrics.errorCount++;
-    } else if (level === 'warn') {
+    } else if (level === "warn") {
       session.metrics.warningCount++;
     }
 
-    this.emit('log', log);
+    this.emit("log", log);
   }
 
   /**
    * Log error to session
    */
-  private logError(sessionId: string, message: string, error: any): void {
-    this.log(sessionId, 'error', message, {
-      error: error.message || error,
-      stack: error.stack,
+  private logError(
+    sessionId: string,
+    message: string,
+    error: Error | unknown,
+  ): void {
+    this.log(sessionId, "error", message, {
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
     });
   }
 
@@ -502,7 +534,7 @@ export class RealDeviceTestManager extends EventEmitter {
     }
 
     session.metrics = { ...session.metrics, ...metrics };
-    this.emit('metrics:updated', session.metrics);
+    this.emit("metrics:updated", session.metrics);
   }
 
   /**
@@ -533,14 +565,14 @@ export class RealDeviceTestManager extends EventEmitter {
    */
   async setNetworkCondition(
     sessionId: string,
-    condition: NetworkCondition
+    condition: NetworkCondition,
   ): Promise<void> {
     const session = this.sessions.get(sessionId);
     if (!session) {
       throw new Error(`Session ${sessionId} not found`);
     }
 
-    this.log(sessionId, 'info', `Network condition changed to ${condition}`);
+    this.log(sessionId, "info", `Network condition changed to ${condition}`);
 
     // Provider-specific network throttling would be implemented here
     // For now, just log the change
@@ -552,14 +584,14 @@ export class RealDeviceTestManager extends EventEmitter {
    */
   async setOrientation(
     sessionId: string,
-    orientation: 'portrait' | 'landscape'
+    orientation: "portrait" | "landscape",
   ): Promise<void> {
     const session = this.sessions.get(sessionId);
     if (!session) {
       throw new Error(`Session ${sessionId} not found`);
     }
 
-    this.log(sessionId, 'info', `Device orientation changed to ${orientation}`);
+    this.log(sessionId, "info", `Device orientation changed to ${orientation}`);
     session.deviceConfig.orientation = orientation;
   }
 
@@ -572,7 +604,7 @@ export class RealDeviceTestManager extends EventEmitter {
       throw new Error(`Session ${sessionId} not found`);
     }
 
-    this.log(sessionId, 'info', 'Device shake simulated');
+    this.log(sessionId, "info", "Device shake simulated");
     // Provider-specific device shake implementation
   }
 
@@ -595,7 +627,7 @@ export class RealDeviceTestManager extends EventEmitter {
   clearSessions(): void {
     this.sessions.clear();
     this.sessionCounter = 0;
-    this.emit('sessions:cleared');
+    this.emit("sessions:cleared");
   }
 
   /**
@@ -604,17 +636,28 @@ export class RealDeviceTestManager extends EventEmitter {
   generateReport(): RealDeviceTestReport {
     const sessions = this.getAllSessions();
     const totalSessions = sessions.length;
-    const passedSessions = sessions.filter(s => s.status === 'passed').length;
-    const failedSessions = sessions.filter(s => s.status === 'failed').length;
-    const errorSessions = sessions.filter(s => s.status === 'error').length;
+    const passedSessions = sessions.filter((s) => s.status === "passed").length;
+    const failedSessions = sessions.filter((s) => s.status === "failed").length;
+    const errorSessions = sessions.filter((s) => s.status === "error").length;
 
-    const totalErrors = sessions.reduce((sum, s) => sum + s.metrics.errorCount, 0);
-    const totalWarnings = sessions.reduce((sum, s) => sum + s.metrics.warningCount, 0);
-    const totalCrashes = sessions.reduce((sum, s) => sum + s.metrics.crashCount, 0);
+    const totalErrors = sessions.reduce(
+      (sum, s) => sum + s.metrics.errorCount,
+      0,
+    );
+    const totalWarnings = sessions.reduce(
+      (sum, s) => sum + s.metrics.warningCount,
+      0,
+    );
+    const totalCrashes = sessions.reduce(
+      (sum, s) => sum + s.metrics.crashCount,
+      0,
+    );
 
-    const avgTestTime = sessions.length > 0
-      ? sessions.reduce((sum, s) => sum + (s.metrics.totalTestTime || 0), 0) / sessions.length
-      : 0;
+    const avgTestTime =
+      sessions.length > 0
+        ? sessions.reduce((sum, s) => sum + (s.metrics.totalTestTime || 0), 0) /
+          sessions.length
+        : 0;
 
     return {
       timestamp: new Date(),
@@ -623,13 +666,14 @@ export class RealDeviceTestManager extends EventEmitter {
         passedSessions,
         failedSessions,
         errorSessions,
-        passRate: totalSessions > 0 ? (passedSessions / totalSessions) * 100 : 0,
+        passRate:
+          totalSessions > 0 ? (passedSessions / totalSessions) * 100 : 0,
         totalErrors,
         totalWarnings,
         totalCrashes,
         avgTestTime,
       },
-      sessions: sessions.map(s => ({
+      sessions: sessions.map((s) => ({
         id: s.id,
         device: `${s.deviceConfig.deviceName} - ${s.deviceConfig.os} ${s.deviceConfig.osVersion}`,
         provider: s.provider,
@@ -649,10 +693,12 @@ export class RealDeviceTestManager extends EventEmitter {
   /**
    * Calculate device coverage
    */
-  private calculateDeviceCoverage(sessions: TestSession[]): DeviceCoverageStats {
+  private calculateDeviceCoverage(
+    sessions: TestSession[],
+  ): DeviceCoverageStats {
     const deviceMap = new Map<string, number>();
 
-    sessions.forEach(session => {
+    sessions.forEach((session) => {
       const device = session.deviceConfig.deviceName;
       deviceMap.set(device, (deviceMap.get(device) || 0) + 1);
     });
@@ -675,16 +721,18 @@ export class RealDeviceTestManager extends EventEmitter {
   private calculateOSCoverage(sessions: TestSession[]): OSCoverageStats {
     const osMap = new Map<string, number>();
 
-    sessions.forEach(session => {
+    sessions.forEach((session) => {
       const os = `${session.deviceConfig.os} ${session.deviceConfig.osVersion}`;
       osMap.set(os, (osMap.get(os) || 0) + 1);
     });
 
-    const operatingSystems = Array.from(osMap.entries()).map(([name, count]) => ({
-      name,
-      count,
-      percentage: (count / sessions.length) * 100,
-    }));
+    const operatingSystems = Array.from(osMap.entries()).map(
+      ([name, count]) => ({
+        name,
+        count,
+        percentage: (count / sessions.length) * 100,
+      }),
+    );
 
     return {
       totalOSVersions: osMap.size,
@@ -714,7 +762,7 @@ export interface RealDeviceTestReport {
     id: string;
     device: string;
     provider: CloudProvider;
-    status: TestSession['status'];
+    status: TestSession["status"];
     duration: number;
     errors: number;
     warnings: number;

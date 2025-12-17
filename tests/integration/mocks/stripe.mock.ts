@@ -16,7 +16,7 @@ import { randomUUID } from "crypto";
 interface PaymentIntentRequest {
   amount: number;
   currency: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   customer?: string;
   payment_method?: string;
 }
@@ -26,8 +26,15 @@ interface PaymentIntent {
   object: "payment_intent";
   amount: number;
   currency: string;
-  status: "requires_payment_method" | "requires_confirmation" | "requires_action" | "processing" | "succeeded" | "canceled" | "failed";
-  metadata: Record<string, any>;
+  status:
+    | "requires_payment_method"
+    | "requires_confirmation"
+    | "requires_action"
+    | "processing"
+    | "succeeded"
+    | "canceled"
+    | "failed";
+  metadata: Record<string, unknown>;
   customer: string | null;
   payment_method: string | null;
   created: number;
@@ -38,7 +45,7 @@ interface RefundRequest {
   payment_intent: string;
   amount?: number;
   reason?: "duplicate" | "fraudulent" | "requested_by_customer";
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface Refund {
@@ -56,7 +63,7 @@ interface WebhookEvent {
   object: "event";
   type: string;
   data: {
-    object: any;
+    object: PaymentIntent | Refund | Record<string, unknown>;
   };
   created: number;
 }
@@ -99,7 +106,9 @@ class StripePaymentMock {
   /**
    * Create a payment intent
    */
-  async createPaymentIntent(request: PaymentIntentRequest): Promise<PaymentIntent> {
+  async createPaymentIntent(
+    request: PaymentIntentRequest,
+  ): Promise<PaymentIntent> {
     if (!this.initialized) {
       throw new Error("Stripe mock not initialized. Call initialize() first.");
     }
@@ -126,7 +135,8 @@ class StripePaymentMock {
       status,
       metadata: request.metadata || {},
       customer: request.customer || null,
-      payment_method: request.payment_method || `pm_mock_${randomUUID().slice(0, 8)}`,
+      payment_method:
+        request.payment_method || `pm_mock_${randomUUID().slice(0, 8)}`,
       created: now,
       updated: now,
     };
@@ -158,7 +168,7 @@ class StripePaymentMock {
    */
   async updatePaymentIntent(
     id: string,
-    updates: Partial<Pick<PaymentIntent, "metadata" | "status">>
+    updates: Partial<Pick<PaymentIntent, "metadata" | "status">>,
   ): Promise<PaymentIntent | null> {
     const intent = this.paymentIntents.get(id);
     if (!intent) {
@@ -246,14 +256,17 @@ class StripePaymentMock {
    */
   async listRefunds(paymentIntentId: string): Promise<Refund[]> {
     return Array.from(this.refunds.values()).filter(
-      (refund) => refund.payment_intent === paymentIntentId
+      (refund) => refund.payment_intent === paymentIntentId,
     );
   }
 
   /**
    * Emit a webhook event
    */
-  private emitWebhookEvent(type: string, data: any): void {
+  private emitWebhookEvent(
+    type: string,
+    data: PaymentIntent | Refund | Record<string, unknown>,
+  ): void {
     const event: WebhookEvent = {
       id: `evt_mock_${randomUUID().replace(/-/g, "")}`,
       object: "event",
@@ -300,7 +313,7 @@ class StripePaymentMock {
    */
   getPaymentIntentsByStatus(status: PaymentIntent["status"]): PaymentIntent[] {
     return Array.from(this.paymentIntents.values()).filter(
-      (intent) => intent.status === status
+      (intent) => intent.status === status,
     );
   }
 
@@ -375,4 +388,10 @@ class StripePaymentMock {
 export const mockStripePayment = new StripePaymentMock();
 
 // Export types
-export type { PaymentIntent, PaymentIntentRequest, Refund, RefundRequest, WebhookEvent };
+export type {
+  PaymentIntent,
+  PaymentIntentRequest,
+  Refund,
+  RefundRequest,
+  WebhookEvent,
+};

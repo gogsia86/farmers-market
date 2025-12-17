@@ -607,10 +607,7 @@ export async function getFeaturedProducts(options: {
           },
         },
       },
-      orderBy: [
-        { averageRating: "desc" },
-        { viewsCount: "desc" },
-      ],
+      orderBy: [{ averageRating: "desc" }, { viewsCount: "desc" }],
       take: limit,
     });
 
@@ -639,9 +636,9 @@ export function getCurrentSeason(): "SPRING" | "SUMMER" | "FALL" | "WINTER" {
 // ============================================================================
 
 export async function getCachedData<T>(
-  key: string,
+  _key: string,
   fetcher: () => Promise<T>,
-  ttl: number = 300 // 5 minutes default
+  _ttl: number = 300, // 5 minutes default
 ): Promise<T> {
   // For now, just call the fetcher
   // In the future, integrate Redis caching here

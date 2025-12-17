@@ -1100,9 +1100,9 @@ curl https://staging.farmersmarket.com/api/health
 
 **Emergency Contacts:**
 
-- Tech Lead: ******\_\_\_******
-- DevOps: ******\_\_\_******
-- On-call engineer: ******\_\_\_******
+- Tech Lead: **\*\***\_\_\_**\*\***
+- DevOps: **\*\***\_\_\_**\*\***
+- On-call engineer: **\*\***\_\_\_**\*\***
 
 ---
 

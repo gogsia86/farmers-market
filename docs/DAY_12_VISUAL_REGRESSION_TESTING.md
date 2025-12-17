@@ -91,20 +91,20 @@ const VIEWPORTS = {
 ```typescript
 class VisualTestingUtils {
   // Screenshot path management
-  getScreenshotPath(testName, viewport, browser, type)
-  
+  getScreenshotPath(testName, viewport, browser, type);
+
   // Image comparison with pixelmatch
-  compareScreenshots(baseline, current, diff, threshold)
-  
+  compareScreenshots(baseline, current, diff, threshold);
+
   // Animation handling
-  waitForAnimations(page)
-  
+  waitForAnimations(page);
+
   // Dynamic content management
-  hideDynamicContent(page, selectors)
-  maskContent(page, selectors)
-  
+  hideDynamicContent(page, selectors);
+  maskContent(page, selectors);
+
   // Agricultural awareness
-  getCurrentSeason() // Returns SPRING/SUMMER/FALL/WINTER
+  getCurrentSeason(); // Returns SPRING/SUMMER/FALL/WINTER
 }
 ```
 
@@ -117,26 +117,26 @@ class VisualTestingUtils {
 ```typescript
 export class BaselineManager {
   // 🎨 Baseline Generation
-  async createBaseline(testName, viewport, browser, screenshot, options)
-  async updateBaseline(testName, viewport, browser, newScreenshot)
-  async updateAllBaselines(currentDir) // Batch update
-  
+  async createBaseline(testName, viewport, browser, screenshot, options);
+  async updateBaseline(testName, viewport, browser, newScreenshot);
+  async updateAllBaselines(currentDir); // Batch update
+
   // 📊 Baseline Comparison
-  async compareWithBaseline(testName, viewport, browser, current, threshold)
-  
+  async compareWithBaseline(testName, viewport, browser, current, threshold);
+
   // 🗂️ Baseline Management
-  async listBaselines() // Returns all baselines with metadata
-  async deleteBaseline(testName, viewport, browser)
-  async archiveBaselines(olderThanDays) // Archive old baselines
-  
+  async listBaselines(); // Returns all baselines with metadata
+  async deleteBaseline(testName, viewport, browser);
+  async archiveBaselines(olderThanDays); // Archive old baselines
+
   // 🌾 Agricultural Consciousness
-  async generateSeasonalBaselines(testName, viewport, browser, base)
-  async validateAgriculturalConsciousness() // Returns score & issues
-  
+  async generateSeasonalBaselines(testName, viewport, browser, base);
+  async validateAgriculturalConsciousness(); // Returns score & issues
+
   // 🔐 Approval Workflow
-  async requestApproval(testName, viewport, browser, current, diff)
-  async approveBaseline(approvalId, approver)
-  async rejectBaseline(approvalId, approver, reason)
+  async requestApproval(testName, viewport, browser, current, diff);
+  async approveBaseline(approvalId, approver);
+  async rejectBaseline(approvalId, approver, reason);
 }
 ```
 
@@ -346,20 +346,23 @@ npm run baseline:archive 60
 ### 1. Homepage Visual Tests
 
 ```typescript
-test("should match homepage baseline - desktop", async ({ page, browserName }) => {
+test("should match homepage baseline - desktop", async ({
+  page,
+  browserName,
+}) => {
   await page.setViewportSize(VIEWPORTS.desktop);
   await page.goto("/");
-  
+
   // Wait for content
   await page.waitForSelector('[data-testid="featured-farms"]');
   await utils.waitForAnimations(page);
-  
+
   // Hide dynamic content (timestamps, counters)
   await utils.hideDynamicContent(page, [
     '[data-testid="timestamp"]',
     '[data-testid="online-users"]',
   ]);
-  
+
   // Screenshot and compare
   const result = await utils.compareScreenshots(baseline, current, diff);
   expect(result.passed).toBeTruthy();
@@ -369,19 +372,22 @@ test("should match homepage baseline - desktop", async ({ page, browserName }) =
 ### 2. Seasonal Theme Validation
 
 ```typescript
-test("should match homepage with seasonal theme", async ({ page, browserName }) => {
+test("should match homepage with seasonal theme", async ({
+  page,
+  browserName,
+}) => {
   const season = utils.getCurrentSeason(); // Auto-detects current season
   await page.goto("/");
-  
+
   // Verify seasonal indicator
   const seasonalBadge = page.locator('[data-testid="seasonal-indicator"]');
   await expect(seasonalBadge).toContainText(season);
-  
+
   // Screenshot with seasonal context
   const result = await utils.compareScreenshots(
     `homepage-seasonal-${season.toLowerCase()}`,
     currentPath,
-    diffPath
+    diffPath,
   );
   expect(result.passed).toBeTruthy();
 });
@@ -392,15 +398,15 @@ test("should match homepage with seasonal theme", async ({ page, browserName }) 
 ```typescript
 test("should match farm card hover state", async ({ page, browserName }) => {
   await page.goto("/farms");
-  
+
   // Hover over first farm card
   const firstCard = page.locator('[data-testid="farm-card"]').first();
   await firstCard.hover();
   await page.waitForTimeout(500); // Wait for animation
-  
+
   // Screenshot just the card
   await firstCard.screenshot({ path: currentPath });
-  
+
   const result = await utils.compareScreenshots(baseline, current, diff);
   expect(result.passed).toBeTruthy();
 });
@@ -413,13 +419,13 @@ test("should match dark mode homepage", async ({ page, browserName }) => {
   // Enable dark mode
   await page.emulateMedia({ colorScheme: "dark" });
   await page.goto("/");
-  
+
   await utils.waitForAnimations(page);
-  
+
   const result = await utils.compareScreenshots(
     "homepage-dark-mode",
     currentPath,
-    diffPath
+    diffPath,
   );
   expect(result.passed).toBeTruthy();
 });
@@ -428,15 +434,18 @@ test("should match dark mode homepage", async ({ page, browserName }) => {
 ### 5. Accessibility Visual Checks
 
 ```typescript
-test("should match focus indicators on navigation", async ({ page, browserName }) => {
+test("should match focus indicators on navigation", async ({
+  page,
+  browserName,
+}) => {
   await page.goto("/");
-  
+
   // Tab to first focusable element
   await page.keyboard.press("Tab");
   await page.waitForTimeout(300);
-  
+
   await page.screenshot({ path: currentPath });
-  
+
   const result = await utils.compareScreenshots(baseline, current, diff);
   expect(result.passed).toBeTruthy();
 });
@@ -448,18 +457,18 @@ test("should match focus indicators on navigation", async ({ page, browserName }
 
 ### Test Coverage
 
-| Category | Tests | Viewports | Browsers | Total Checks |
-|----------|-------|-----------|----------|--------------|
-| Homepage | 3 | 2 | 3 | 18 |
-| Farm Listings | 3 | 3 | 3 | 27 |
-| Product Catalog | 3 | 1 | 3 | 9 |
-| Shopping Cart | 2 | 1 | 3 | 6 |
-| Admin Dashboard | 1 | 1 | 3 | 3 |
-| Dark Mode | 2 | 1 | 3 | 6 |
-| Accessibility | 2 | 1 | 3 | 6 |
-| Images | 1 | 1 | 3 | 3 |
-| Agricultural | 2 | 1 | 3 | 6 |
-| **TOTAL** | **19** | **9** | **3** | **84** |
+| Category        | Tests  | Viewports | Browsers | Total Checks |
+| --------------- | ------ | --------- | -------- | ------------ |
+| Homepage        | 3      | 2         | 3        | 18           |
+| Farm Listings   | 3      | 3         | 3        | 27           |
+| Product Catalog | 3      | 1         | 3        | 9            |
+| Shopping Cart   | 2      | 1         | 3        | 6            |
+| Admin Dashboard | 1      | 1         | 3        | 3            |
+| Dark Mode       | 2      | 1         | 3        | 6            |
+| Accessibility   | 2      | 1         | 3        | 6            |
+| Images          | 1      | 1         | 3        | 3            |
+| Agricultural    | 2      | 1         | 3        | 6            |
+| **TOTAL**       | **19** | **9**     | **3**    | **84**       |
 
 ### Viewport Coverage
 
@@ -504,7 +513,7 @@ const diffPixels = pixelmatch(
   diffImg.data,
   width,
   height,
-  { threshold: 0.1 } // 0.1% tolerance
+  { threshold: 0.1 }, // 0.1% tolerance
 );
 
 const diffPercentage = (diffPixels / totalPixels) * 100;
@@ -549,7 +558,7 @@ await manager.generateSeasonalBaselines(
   "homepage-desktop",
   "desktop-1920x1080",
   "chromium",
-  baseScreenshot
+  baseScreenshot,
 );
 
 // Creates:
@@ -576,12 +585,12 @@ getCurrentSeason(): "SPRING" | "SUMMER" | "FALL" | "WINTER" {
 ```typescript
 test("should display biodynamic farm badges consistently", async ({ page }) => {
   await page.goto("/farms?biodynamic=true");
-  
+
   const biodynamicBadges = page.locator('[data-testid="biodynamic-badge"]');
   const firstBadge = biodynamicBadges.first();
-  
+
   await firstBadge.screenshot({ path: currentPath });
-  
+
   const result = await utils.compareScreenshots(baseline, current, diff);
   expect(result.passed).toBeTruthy();
 });
@@ -619,27 +628,27 @@ on:
 jobs:
   visual-tests:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
-      
+          node-version: "20"
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
-      
+
       - name: Run visual regression tests
         run: npm run test:visual:ci
         env:
           CI: true
-      
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
@@ -649,7 +658,7 @@ jobs:
             playwright-report/
             tests/visual/diffs/
           retention-days: 30
-      
+
       - name: Upload diff images on failure
         if: failure()
         uses: actions/upload-artifact@v4
@@ -657,7 +666,7 @@ jobs:
           name: visual-diffs
           path: tests/visual/diffs/
           retention-days: 7
-      
+
       - name: Comment PR with results
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
@@ -719,25 +728,25 @@ echo "✅ Visual tests passed"
 // Playwright workers configuration for HP OMEN
 export default defineConfig({
   workers: 6, // Leverages 12 threads (6 parallel test files)
-  
+
   use: {
     // GPU acceleration for screenshot capture
     launchOptions: {
-      args: ['--enable-gpu-rasterization']
-    }
-  }
+      args: ["--enable-gpu-rasterization"],
+    },
+  },
 });
 ```
 
 ### Performance Characteristics
 
-| Operation | Duration | Parallelization |
-|-----------|----------|-----------------|
-| Single screenshot | 50-200ms | N/A |
-| Full-page screenshot | 200-500ms | N/A |
-| Image comparison | 10-50ms | Yes (6 workers) |
-| Baseline update | 100-300ms | Yes |
-| Full test suite | 2-5 minutes | Yes (6 workers) |
+| Operation            | Duration    | Parallelization |
+| -------------------- | ----------- | --------------- |
+| Single screenshot    | 50-200ms    | N/A             |
+| Full-page screenshot | 200-500ms   | N/A             |
+| Image comparison     | 10-50ms     | Yes (6 workers) |
+| Baseline update      | 100-300ms   | Yes             |
+| Full test suite      | 2-5 minutes | Yes (6 workers) |
 
 ### Memory Usage
 
@@ -783,12 +792,14 @@ export default defineConfig({
 ### 1. Baseline Management
 
 ✅ **DO**:
+
 - Review diff images before updating baselines
 - Use approval workflow for sensitive changes
 - Archive old baselines regularly
 - Document baseline changes in commit messages
 
 ❌ **DON'T**:
+
 - Blindly update all baselines without review
 - Commit diff images to Git
 - Delete baselines without archiving first
@@ -797,6 +808,7 @@ export default defineConfig({
 ### 2. Test Writing
 
 ✅ **DO**:
+
 - Wait for animations to complete
 - Hide dynamic content (timestamps, counters)
 - Mask sensitive data (emails, phone numbers)
@@ -804,6 +816,7 @@ export default defineConfig({
 - Test critical user journeys
 
 ❌ **DON'T**:
+
 - Screenshot rapidly changing content
 - Include random data in screenshots
 - Test every possible viewport combination
@@ -812,12 +825,14 @@ export default defineConfig({
 ### 3. CI/CD Integration
 
 ✅ **DO**:
+
 - Run visual tests on every PR
 - Upload diff artifacts on failure
 - Comment PR with visual results
 - Use dedicated visual testing environment
 
 ❌ **DON'T**:
+
 - Block deploys on minor pixel differences
 - Run full visual suite on every commit
 - Store large baseline files in Git LFS
@@ -826,12 +841,14 @@ export default defineConfig({
 ### 4. Performance Optimization
 
 ✅ **DO**:
+
 - Use parallel workers (6 for HP OMEN)
 - Reuse browser contexts when possible
 - Cache baseline metadata in memory
 - Batch screenshot captures
 
 ❌ **DON'T**:
+
 - Run tests sequentially
 - Load images from disk repeatedly
 - Create new browser instances per test
@@ -846,6 +863,7 @@ export default defineConfig({
 **Symptom**: `Image dimensions mismatch: baseline 1920x1080 vs current 1920x1079`
 
 **Solution**:
+
 ```bash
 # Update baseline for affected test
 npm run test:visual:update -- --grep "homepage-desktop"
@@ -859,6 +877,7 @@ npm run baseline:update-all
 **Symptom**: Tests pass/fail randomly, diff shows mid-animation states
 
 **Solution**:
+
 ```typescript
 // Add animation wait
 await utils.waitForAnimations(page);
@@ -870,7 +889,7 @@ await page.addStyleTag({
       animation-duration: 0s !important;
       transition-duration: 0s !important;
     }
-  `
+  `,
 });
 ```
 
@@ -879,6 +898,7 @@ await page.addStyleTag({
 **Symptom**: Timestamps, counters, or live data causing diffs
 
 **Solution**:
+
 ```typescript
 // Hide dynamic elements
 await utils.hideDynamicContent(page, [
@@ -893,6 +913,7 @@ await utils.hideDynamicContent(page, [
 **Symptom**: Text appears slightly different in CI vs local
 
 **Solution**:
+
 ```bash
 # Install consistent fonts in CI
 apt-get install -y fonts-liberation fonts-noto-color-emoji
@@ -906,6 +927,7 @@ npx playwright install --with-deps
 **Symptom**: `tests/visual/diffs/` directory growing large
 
 **Solution**:
+
 ```bash
 # Diffs are gitignored by default
 # Clean periodically
@@ -978,15 +1000,15 @@ npm run baseline:archive 7
 
 ### Coverage Achievements
 
-| Metric | Before Day 12 | After Day 12 | Improvement |
-|--------|--------------|--------------|-------------|
-| Visual Test Coverage | 0% | 100% | +100% |
-| Viewport Configurations | 0 | 9 | +9 |
-| Browser Coverage | 0 | 5 | +5 |
-| Screenshot Tests | 0 | 19 | +19 |
-| Total Visual Checks | 0 | 84 | +84 |
-| Baseline Management | ❌ | ✅ | Full system |
-| CI/CD Integration | ❌ | ✅ | Complete |
+| Metric                  | Before Day 12 | After Day 12 | Improvement |
+| ----------------------- | ------------- | ------------ | ----------- |
+| Visual Test Coverage    | 0%            | 100%         | +100%       |
+| Viewport Configurations | 0             | 9            | +9          |
+| Browser Coverage        | 0             | 5            | +5          |
+| Screenshot Tests        | 0             | 19           | +19         |
+| Total Visual Checks     | 0             | 84           | +84         |
+| Baseline Management     | ❌            | ✅           | Full system |
+| CI/CD Integration       | ❌            | ✅           | Complete    |
 
 ### Quality Improvements
 
@@ -1012,6 +1034,7 @@ npm run baseline:archive 7
 Day 12 successfully delivers enterprise-grade visual regression testing infrastructure with comprehensive screenshot baseline management, multi-viewport validation, and unwavering agricultural consciousness. The system provides automated pixel-perfect UI validation across browsers, devices, and seasonal themes while maintaining divine perfection standards.
 
 **Key Deliverables**:
+
 - ✅ 1,782 lines of production-ready code
 - ✅ 19 NPM scripts for complete workflow automation
 - ✅ 84 visual checks across 19 test scenarios

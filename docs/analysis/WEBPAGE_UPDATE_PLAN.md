@@ -1,4 +1,5 @@
 # 🎯 Webpage Update Action Plan
+
 **Farmers Market Platform - Quick Fix Guide**  
 **Generated**: December 3, 2024  
 **Estimated Time**: 4-6 hours total  
@@ -24,6 +25,7 @@
 **Issue**: Two auth folder structures causing routing confusion
 
 **Files to DELETE**:
+
 ```bash
 # Navigate to project
 cd "Farmers Market Platform web and app"
@@ -38,6 +40,7 @@ rm -rf src/app/auth/register
 ```
 
 **Verify**:
+
 ```bash
 # Check only route group versions remain
 ls src/app/(auth)/
@@ -47,7 +50,8 @@ ls src/app/auth/
 # Should show: (only if NextAuth handler exists)
 ```
 
-**Impact**: 
+**Impact**:
+
 - Eliminates routing confusion
 - Prevents duplicate page renders
 - Cleaner project structure
@@ -63,6 +67,7 @@ ls src/app/auth/
 **Files to Update**:
 
 1. **Header Component** (`src/components/layout/Header.tsx`):
+
 ```typescript
 // Line ~50: Change from
 <Link href="/markets">Marketplace</Link>
@@ -72,26 +77,30 @@ ls src/app/auth/
 ```
 
 2. **Homepage** (`src/app/page.tsx`):
+
 ```typescript
 // Search all links pointing to /markets
 // Replace with /marketplace/products
 ```
 
 3. **Add Redirect** (`src/app/markets/page.tsx` - CREATE):
+
 ```typescript
-import { redirect } from 'next/navigation';
+import { redirect } from "next/navigation";
 
 export default function MarketsRedirect() {
-  redirect('/marketplace/products');
+  redirect("/marketplace/products");
 }
 ```
 
 **Verify**:
+
 - Test all marketplace links work
 - Check navigation consistency
 - Verify redirect works
 
 **Impact**:
+
 - Consistent user navigation
 - Clear marketplace structure
 - Better SEO
@@ -107,6 +116,7 @@ export default function MarketsRedirect() {
 **File**: `src/app/(public)/farms/page.tsx`
 
 **Current Code** (Lines 36-121):
+
 ```typescript
 const MOCK_FARMS = [
   { id: "1", name: "Green Valley Organic Farm", ... },
@@ -115,6 +125,7 @@ const MOCK_FARMS = [
 ```
 
 **NEW CODE** (Replace with):
+
 ```typescript
 /**
  * 🌾 PUBLIC FARMS PAGE - API INTEGRATED
@@ -324,6 +335,7 @@ export default async function FarmsPage() {
 ```
 
 **Steps**:
+
 1. Backup original file: `cp src/app/(public)/farms/page.tsx src/app/(public)/farms/page.tsx.backup`
 2. Replace entire file with new code above
 3. Test page loads: `http://localhost:3001/farms`
@@ -331,6 +343,7 @@ export default async function FarmsPage() {
 5. Remove backup if successful
 
 **Impact**:
+
 - Shows real, current farm data
 - Matches marketplace design
 - Better user experience
@@ -342,28 +355,31 @@ export default async function FarmsPage() {
 **File**: `src/app/products/categories/[category]/page.tsx`
 
 **Tasks**:
+
 1. Check if file exists and uses API
 2. Verify it calls `/api/products?category=[category]`
 3. Ensure SEO metadata present
 4. Test with: `http://localhost:3001/products/categories/vegetables`
 
 **If Not API-Integrated**, update to:
+
 ```typescript
 async function getProductsByCategory(category: string) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
-  const response = await fetch(
-    `${baseUrl}/api/products?category=${category}`,
-    { cache: "no-store", next: { revalidate: 60 } }
-  );
-  
+  const response = await fetch(`${baseUrl}/api/products?category=${category}`, {
+    cache: "no-store",
+    next: { revalidate: 60 },
+  });
+
   if (!response.ok) return [];
-  
+
   const result = await response.json();
   return result.success ? result.data : [];
 }
 ```
 
 **Impact**:
+
 - Dynamic category filtering
 - Real product data
 - Consistent with marketplace
@@ -379,24 +395,28 @@ async function getProductsByCategory(category: string) {
 **Recommendation**: Redirect `/account` → `/dashboard`
 
 **File to Create**: `src/app/(customer)/account/page.tsx`
+
 ```typescript
-import { redirect } from 'next/navigation';
+import { redirect } from "next/navigation";
 
 export default function AccountRedirect() {
-  redirect('/dashboard');
+  redirect("/dashboard");
 }
 ```
 
 **Update Links**:
+
 - Search codebase for `/account` links
 - Replace with `/dashboard`
 - Keep `/account/notifications` and `/account/orders` as-is (sub-routes)
 
 **Or Alternative**: Keep both if they serve different purposes
+
 - `/dashboard` = Overview
 - `/account` = Settings only
 
 **Impact**:
+
 - Clear user paths
 - Reduced confusion
 - Better UX
@@ -411,11 +431,13 @@ export default function AccountRedirect() {
 **Goal**: Add to other key pages
 
 **Pages to Update**:
+
 1. `src/app/(customer)/marketplace/products/page.tsx`
 2. `src/app/(public)/products/page.tsx`
 3. `src/app/(public)/farms/page.tsx`
 
 **Add to each page** (in hero section):
+
 ```typescript
 import { SearchAutocomplete } from "@/components/homepage/SearchAutocomplete";
 
@@ -426,6 +448,7 @@ import { SearchAutocomplete } from "@/components/homepage/SearchAutocomplete";
 ```
 
 **Impact**:
+
 - Consistent search experience
 - Better UX
 - More engagement
@@ -476,6 +499,7 @@ export function EmptyState({
 ```
 
 **Usage Example**:
+
 ```typescript
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ShoppingBag } from "lucide-react";
@@ -493,6 +517,7 @@ import { ShoppingBag } from "lucide-react";
 ```
 
 **Pages to Update**:
+
 - Marketplace products page
 - Marketplace farms page
 - Dashboard orders page
@@ -500,6 +525,7 @@ import { ShoppingBag } from "lucide-react";
 - Search results page
 
 **Impact**:
+
 - Consistent empty states
 - Better UX
 - Reusable component
@@ -511,6 +537,7 @@ import { ShoppingBag } from "lucide-react";
 After completing updates:
 
 ### Functional Testing
+
 - [ ] All navigation links work
 - [ ] Marketplace routes consistent
 - [ ] API data displays correctly
@@ -519,6 +546,7 @@ After completing updates:
 - [ ] No duplicate routes exist
 
 ### Visual Testing
+
 - [ ] Pages maintain consistent design
 - [ ] Mobile responsive
 - [ ] Images load correctly
@@ -526,12 +554,14 @@ After completing updates:
 - [ ] Colors match theme
 
 ### Performance Testing
+
 - [ ] Page load times <3s
 - [ ] API calls optimized
 - [ ] No console errors
 - [ ] Smooth navigation
 
 ### SEO Testing
+
 - [ ] Metadata present on all pages
 - [ ] Proper heading hierarchy
 - [ ] Alt text on images
@@ -542,17 +572,20 @@ After completing updates:
 ## 🎯 Implementation Schedule
 
 ### Day 1 (2 hours)
+
 - ✅ Remove duplicate auth routes (15 min)
 - ✅ Consolidate marketplace navigation (15 min)
 - ✅ Update public farms page to API (1 hour)
 - ✅ Test and verify (30 min)
 
 ### Day 2 (2 hours)
+
 - ✅ Verify product category page (30 min)
 - ✅ Consolidate customer dashboard (30 min)
 - ✅ Expand SearchAutocomplete usage (1 hour)
 
 ### Day 3 (2 hours)
+
 - ✅ Create EmptyState component (30 min)
 - ✅ Update all pages with EmptyState (1 hour)
 - ✅ Final testing and verification (30 min)
@@ -586,12 +619,14 @@ npm run build
 ## 📊 Success Metrics
 
 ### Before Updates
+
 - Consistency Score: 95/100
 - API Integration: 92%
 - Pages with Mock Data: 1
 - Duplicate Routes: 2
 
 ### After Updates (Target)
+
 - Consistency Score: 100/100
 - API Integration: 100%
 - Pages with Mock Data: 0
@@ -602,6 +637,7 @@ npm run build
 ## 🎉 Completion Criteria
 
 ### All Updates Complete When:
+
 - [ ] No duplicate auth routes exist
 - [ ] All marketplace links point to `/marketplace`
 - [ ] Public farms page uses API data
@@ -614,6 +650,7 @@ npm run build
 - [ ] Pages load quickly
 
 ### Documentation Updated:
+
 - [ ] WEBPAGE_CONSISTENCY_ANALYSIS.md updated
 - [ ] README.md reflects changes
 - [ ] Commit messages are clear
@@ -623,6 +660,7 @@ npm run build
 ## 💡 Tips for Implementation
 
 1. **Work in Branches**:
+
    ```bash
    git checkout -b feature/webpage-consistency-updates
    ```
@@ -633,6 +671,7 @@ npm run build
    - Commit if successful
 
 3. **Keep Backups**:
+
    ```bash
    # Before modifying a file:
    cp src/app/(public)/farms/page.tsx src/app/(public)/farms/page.tsx.backup

@@ -23,7 +23,7 @@ interface EmailRequest {
     filename: string;
     content: string | Buffer;
   }>;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface SentEmail {
@@ -37,7 +37,7 @@ interface SentEmail {
     filename: string;
     content: string | Buffer;
   }>;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   sentAt: Date;
   status: "sent" | "failed" | "bounced" | "delivered";
 }
@@ -122,7 +122,9 @@ class EmailServiceMock {
    */
   async send(request: EmailRequest): Promise<SentEmail> {
     if (!this.initialized) {
-      throw new Error("Email service mock not initialized. Call initialize() first.");
+      throw new Error(
+        "Email service mock not initialized. Call initialize() first.",
+      );
     }
 
     // Simulate failure based on failure rate
@@ -153,11 +155,13 @@ class EmailServiceMock {
   /**
    * Send order confirmation email
    */
-  async sendOrderConfirmation(request: OrderConfirmationRequest): Promise<SentEmail> {
+  async sendOrderConfirmation(
+    request: OrderConfirmationRequest,
+  ): Promise<SentEmail> {
     const itemsList = request.items
       .map(
         (item) =>
-          `${item.quantity}x ${item.product.name} - $${(item.price * item.quantity).toFixed(2)}`
+          `${item.quantity}x ${item.product.name} - $${(item.price * item.quantity).toFixed(2)}`,
       )
       .join("\n");
 
@@ -201,7 +205,9 @@ We'll notify you when your order is ready for pickup or delivery.
   /**
    * Send order status update email
    */
-  async sendOrderStatusUpdate(request: OrderStatusUpdateRequest): Promise<SentEmail> {
+  async sendOrderStatusUpdate(
+    request: OrderStatusUpdateRequest,
+  ): Promise<SentEmail> {
     const html = `
       <h1>Order Status Update</h1>
       <p>Order #${request.orderId.slice(0, 8)}</p>
@@ -235,7 +241,9 @@ ${request.message}
   /**
    * Send order cancellation email
    */
-  async sendOrderCancellation(request: OrderCancellationRequest): Promise<SentEmail> {
+  async sendOrderCancellation(
+    request: OrderCancellationRequest,
+  ): Promise<SentEmail> {
     const html = `
       <h1>Order Cancelled</h1>
       <p>Your order #${request.orderId.slice(0, 8)} has been cancelled.</p>
@@ -270,7 +278,9 @@ If you were charged, a refund will be processed within 5-7 business days.
   /**
    * Send farm verification email
    */
-  async sendFarmVerificationEmail(request: FarmVerificationRequest): Promise<SentEmail> {
+  async sendFarmVerificationEmail(
+    request: FarmVerificationRequest,
+  ): Promise<SentEmail> {
     const html = `
       <h1>🎉 Farm Verified!</h1>
       <p>Congratulations! Your farm "${request.farmName}" has been verified.</p>
@@ -303,7 +313,9 @@ Visit your dashboard: https://farmersmarket.test/farmer/dashboard
   /**
    * Send farm announcement email
    */
-  async sendFarmAnnouncement(request: FarmAnnouncementRequest): Promise<SentEmail> {
+  async sendFarmAnnouncement(
+    request: FarmAnnouncementRequest,
+  ): Promise<SentEmail> {
     const html = `
       <h1>Announcement from ${request.farmName}</h1>
       <p>${request.message}</p>
@@ -368,7 +380,10 @@ Explore Products: https://farmersmarket.test/explore
   /**
    * Send password reset email
    */
-  async sendPasswordResetEmail(to: string, resetToken: string): Promise<SentEmail> {
+  async sendPasswordResetEmail(
+    to: string,
+    resetToken: string,
+  ): Promise<SentEmail> {
     const resetUrl = `https://farmersmarket.test/reset-password?token=${resetToken}`;
 
     const html = `
@@ -475,7 +490,8 @@ If you didn't request this, please ignore this email.
       },
       successRate:
         this.sentEmails.length > 0
-          ? (this.getEmailsByStatus("sent").length / this.sentEmails.length) * 100
+          ? (this.getEmailsByStatus("sent").length / this.sentEmails.length) *
+            100
           : 100,
     };
   }

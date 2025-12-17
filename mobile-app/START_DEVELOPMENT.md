@@ -112,23 +112,27 @@ src/
 ### Day 1: Base UI Components (Today!)
 
 **Priority 1: Input Component** (30 min)
+
 - Text input with label
 - Error states
 - Password visibility toggle
 - Form validation support
 
 **Priority 2: Card Component** (15 min)
+
 - Container for content
 - Shadow and elevation
 - Padding variants
 
 **Priority 3: LoadingSpinner** (10 min)
+
 - Activity indicator wrapper
 - Full-screen overlay option
 
 ### Day 2: Authentication Screens
 
 **Morning: Login Screen** (2-3 hours)
+
 - Email + Password inputs
 - Remember me checkbox
 - Login button with loading state
@@ -138,6 +142,7 @@ src/
 - API integration with authStore
 
 **Afternoon: Register Screen** (2-3 hours)
+
 - Full name input
 - Email input
 - Password input with strength indicator
@@ -150,11 +155,13 @@ src/
 ### Day 3: Welcome & Navigation
 
 **Morning: Welcome Screen** (1-2 hours)
+
 - Splash/intro carousel
 - Get Started button
 - Skip option
 
 **Afternoon: Navigation Setup** (2 hours)
+
 - Stack navigator configuration
 - Auth flow vs Main flow
 - Conditional navigation based on auth state
@@ -217,14 +224,14 @@ export const Input: React.FC<InputProps> = ({
   return (
     <View style={[styles.container, containerStyle]}>
       {label && <Text style={styles.label}>{label}</Text>}
-      
+
       <View style={[
         styles.inputContainer,
         isFocused && styles.inputContainerFocused,
         error && styles.inputContainerError,
       ]}>
         {leftIcon && <View style={styles.leftIcon}>{leftIcon}</View>}
-        
+
         <TextInput
           style={[styles.input, style]}
           onFocus={() => setIsFocused(true)}
@@ -232,10 +239,10 @@ export const Input: React.FC<InputProps> = ({
           placeholderTextColor={theme.colors.text.tertiary}
           {...props}
         />
-        
+
         {rightIcon && <View style={styles.rightIcon}>{rightIcon}</View>}
       </View>
-      
+
       {error && <Text style={styles.error}>{error}</Text>}
     </View>
   );
@@ -315,24 +322,24 @@ export const LoginScreen = ({ navigation }: any) => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<any>({});
-  
+
   const { login, isLoading } = useAuthStore();
 
   const validateForm = () => {
     const newErrors: any = {};
-    
+
     if (!email) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(email)) {
       newErrors.email = 'Email is invalid';
     }
-    
+
     if (!password) {
       newErrors.password = 'Password is required';
     } else if (password.length < 6) {
       newErrors.password = 'Password must be at least 6 characters';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -487,17 +494,20 @@ export default LoginScreen;
 If something doesn't work, check these in order:
 
 ### 1. Dependencies Issue
+
 ```bash
 rm -rf node_modules package-lock.json
 npm install
 ```
 
 ### 2. Metro Cache Issue
+
 ```bash
 npm start -- --clear
 ```
 
 ### 3. Backend Not Running
+
 ```bash
 # In separate terminal
 cd "Farmers Market Platform web and app"
@@ -505,6 +515,7 @@ npm run dev
 ```
 
 ### 4. Environment Variables
+
 ```bash
 # Check .env exists
 ls -la .env
@@ -514,11 +525,13 @@ cat .env | grep API_BASE_URL
 ```
 
 ### 5. Simulator/Emulator Issue
+
 - Restart simulator/emulator
 - Close and reopen Expo Go app
 - Press 'r' in terminal to reload
 
 ### 6. TypeScript Errors
+
 ```bash
 npm run type-check
 # Fix reported errors
@@ -531,6 +544,7 @@ npm run type-check
 Track your implementation progress:
 
 ### Week 1: Foundation ✅
+
 - [x] Environment setup
 - [x] Dependencies installed
 - [x] Backend running
@@ -541,6 +555,7 @@ Track your implementation progress:
 - [ ] Authentication flow working
 
 ### Week 2: Core Features
+
 - [ ] Product list screen
 - [ ] Product detail screen
 - [ ] Search functionality
@@ -548,12 +563,14 @@ Track your implementation progress:
 - [ ] Checkout flow (basic)
 
 ### Week 3: Farmer Features
+
 - [ ] Farm profile screen
 - [ ] Product management
 - [ ] Order management
 - [ ] Inventory tracking
 
 ### Week 4: Polish & Testing
+
 - [ ] Unit tests (>80% coverage)
 - [ ] Integration tests
 - [ ] E2E tests (critical paths)
@@ -581,22 +598,26 @@ By end of today, you should have:
 ### Quick Fixes
 
 **"Can't find module..."**
+
 ```bash
 npm install
 npm start -- --clear
 ```
 
 **"Network request failed"**
+
 - Check backend is running
 - Verify API_BASE_URL in .env
 - Try http://10.0.2.2:3001/api for Android
 
 **"Undefined is not an object"**
+
 - Check import paths
 - Ensure all files are saved
 - Restart Metro bundler
 
 **"Type error..."**
+
 - Run: `npm run type-check`
 - Fix reported errors
 - Restart TypeScript server in IDE
@@ -627,23 +648,27 @@ npm start -- --clear
 **Commands to have running:**
 
 Terminal 1:
+
 ```bash
 cd "Farmers Market Platform web and app"
 npm run dev
 ```
 
 Terminal 2:
+
 ```bash
 cd "Farmers Market Platform web and app/mobile-app"
 npm start
 ```
 
 **Open your IDE:**
+
 ```bash
 code "Farmers Market Platform web and app/mobile-app"
 ```
 
 **Create first file:**
+
 ```bash
 touch src/components/ui/Input.tsx
 ```
@@ -652,9 +677,10 @@ touch src/components/ui/Input.tsx
 
 ## 🎉 Let's Build!
 
-You have everything you need to start building the Farmers Market mobile app. 
+You have everything you need to start building the Farmers Market mobile app.
 
 Remember:
+
 - **Start small** - One component at a time
 - **Test often** - Reload and verify after each change
 - **Ask questions** - Better to ask than waste time

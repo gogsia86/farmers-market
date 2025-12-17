@@ -85,11 +85,13 @@ Redis: ">= 7.0" (optional but recommended)
 ### Recommended System Resources
 
 **Minimum:**
+
 - CPU: 2 cores
 - RAM: 4 GB
 - Disk: 20 GB
 
 **Recommended (HP OMEN Optimized):**
+
 - CPU: 6+ cores (12 threads)
 - RAM: 16+ GB (64 GB for OMEN profile)
 - GPU: RTX 2070 or better (for GPU acceleration)
@@ -129,13 +131,16 @@ DIRECT_URL=postgresql://username:password@host:5432/database_name
 ```
 
 **Popular Providers:**
+
 - **Supabase** (Recommended): https://supabase.com
+
   ```env
   DATABASE_URL=postgresql://postgres.xxxxx:[YOUR-PASSWORD]@aws-0-us-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true
   DIRECT_URL=postgresql://postgres.xxxxx:[YOUR-PASSWORD]@aws-0-us-east-1.pooler.supabase.com:5432/postgres
   ```
 
 - **Neon**: https://neon.tech
+
   ```env
   DATABASE_URL=postgresql://user:password@ep-xxx-xxx.us-east-2.aws.neon.tech/neondb
   ```
@@ -181,6 +186,7 @@ STRIPE_WEBHOOK_SECRET=whsec_xxxxx                  # Webhook signing secret
 ```
 
 **Setup Steps:**
+
 1. Sign up at https://stripe.com
 2. Get keys from https://dashboard.stripe.com/apikeys
 3. Create webhook endpoint at https://dashboard.stripe.com/webhooks
@@ -196,6 +202,7 @@ CONTACT_EMAIL=noreply@yourdomain.com  # Must be verified in Resend
 ```
 
 **Setup Steps:**
+
 1. Sign up at https://resend.com
 2. Get API key from https://resend.com/api-keys
 3. Verify your domain at https://resend.com/domains
@@ -217,7 +224,9 @@ REDIS_KEY_PREFIX=farmers_market:
 ```
 
 **Popular Providers:**
+
 - **Upstash**: https://upstash.com (Recommended)
+
   ```env
   REDIS_URL=rediss://default:xxxxx@us1-xxxxx.upstash.io:6379
   ```
@@ -369,6 +378,7 @@ npm run build:docker
 ```
 
 **Expected Output:**
+
 ```
 ✓ Linting and checking validity of types
 ✓ Collecting page data
@@ -512,7 +522,7 @@ docker restart farmers-market
 Create `docker-compose.production.yml`:
 
 ```yaml
-version: '3.8'
+version: "3.8"
 
 services:
   app:
@@ -557,6 +567,7 @@ volumes:
 ```
 
 Start with:
+
 ```bash
 docker compose -f docker-compose.production.yml up -d
 ```
@@ -581,6 +592,7 @@ vercel env add STRIPE_SECRET_KEY production
 ```
 
 Or use Vercel Dashboard:
+
 1. Connect GitHub repository
 2. Add environment variables in Project Settings
 3. Deploy automatically on push to main branch
@@ -588,6 +600,7 @@ Or use Vercel Dashboard:
 ### Method 4: AWS/Azure/GCP Deployment
 
 See detailed guides:
+
 - AWS: `docs/deployment/AWS-DEPLOYMENT.md`
 - Azure: `docs/deployment/AZURE-DEPLOYMENT.md`
 - GCP: `docs/deployment/GCP-DEPLOYMENT.md`
@@ -646,6 +659,7 @@ htop
 ### Error Tracking
 
 If Sentry is configured:
+
 1. Visit https://sentry.io/organizations/[org]/issues/
 2. Monitor real-time errors
 3. Set up alerts for critical issues
@@ -657,6 +671,7 @@ If Sentry is configured:
 ### Issue 1: Application Won't Start
 
 **Symptoms:**
+
 - Server crashes immediately
 - Port already in use errors
 
@@ -682,6 +697,7 @@ env | grep DATABASE
 ### Issue 2: Database Connection Errors
 
 **Symptoms:**
+
 - "Can't reach database server"
 - "Connection refused"
 
@@ -704,6 +720,7 @@ npx prisma generate
 ### Issue 3: Authentication Errors
 
 **Symptoms:**
+
 - "Invalid session"
 - "NextAuth configuration error"
 
@@ -725,6 +742,7 @@ echo $NEXTAUTH_URL
 ### Issue 4: Payment/Stripe Errors
 
 **Symptoms:**
+
 - "Invalid API key"
 - "Webhook signature verification failed"
 
@@ -745,6 +763,7 @@ stripe listen --forward-to localhost:3001/api/webhooks/stripe
 ### Issue 5: Build Errors
 
 **Symptoms:**
+
 - TypeScript errors
 - Module not found
 
@@ -910,7 +929,7 @@ Your application is production-ready when:
 ✅ **Database**: Migrations applied, connections stable  
 ✅ **Security**: HTTPS enabled, secrets secured  
 ✅ **Monitoring**: Health checks operational  
-✅ **Performance**: Response times < 200ms for key routes  
+✅ **Performance**: Response times < 200ms for key routes
 
 ---
 

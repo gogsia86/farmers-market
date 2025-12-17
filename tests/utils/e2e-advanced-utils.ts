@@ -214,7 +214,10 @@ export class MultiUserOrchestrator {
   /**
    * Execute action for specific user
    */
-  async executeAsUser(userId: string, action: (page: Page) => Promise<void>): Promise<void> {
+  async executeAsUser(
+    userId: string,
+    action: (page: Page) => Promise<void>,
+  ): Promise<void> {
     const page = this.pages.get(userId);
     if (!page) {
       throw new Error(`Page not found for user ${userId}`);
@@ -226,10 +229,10 @@ export class MultiUserOrchestrator {
    * Execute actions in parallel for multiple users
    */
   async executeParallel(
-    actions: Array<{ userId: string; action: (page: Page) => Promise<void> }>
+    actions: Array<{ userId: string; action: (page: Page) => Promise<void> }>,
   ): Promise<void> {
     await Promise.all(
-      actions.map(({ userId, action }) => this.executeAsUser(userId, action))
+      actions.map(({ userId, action }) => this.executeAsUser(userId, action)),
     );
   }
 
@@ -237,7 +240,7 @@ export class MultiUserOrchestrator {
    * Execute actions sequentially
    */
   async executeSequential(
-    actions: Array<{ userId: string; action: (page: Page) => Promise<void> }>
+    actions: Array<{ userId: string; action: (page: Page) => Promise<void> }>,
   ): Promise<void> {
     for (const { userId, action } of actions) {
       await this.executeAsUser(userId, action);
@@ -293,7 +296,7 @@ export class StateManager {
   async waitForState(
     key: string,
     condition: (value: any) => boolean,
-    timeout = E2E_CONFIG.timeouts.medium
+    timeout = E2E_CONFIG.timeouts.medium,
   ): Promise<void> {
     const startTime = Date.now();
 
@@ -373,7 +376,7 @@ export class NetworkController {
       body?: any;
       headers?: Record<string, string>;
       delay?: number;
-    }
+    },
   ): Promise<void> {
     await this.page.route(pattern, async (route) => {
       if (response.delay) {
@@ -429,7 +432,9 @@ export class NetworkController {
     return Array.from(this.interceptedRequests.entries())
       .filter(([key]) => {
         const [reqMethod, reqUrl] = key.split("_");
-        return (!method || reqMethod === method) && (!url || reqUrl.includes(url));
+        return (
+          (!method || reqMethod === method) && (!url || reqUrl.includes(url))
+        );
       })
       .flatMap(([_, requests]) => requests);
   }
@@ -440,7 +445,7 @@ export class NetworkController {
   async waitForRequest(
     method: string,
     urlPattern: string,
-    timeout = E2E_CONFIG.timeouts.apiCall
+    timeout = E2E_CONFIG.timeouts.apiCall,
   ): Promise<any> {
     const startTime = Date.now();
 
@@ -477,11 +482,13 @@ export class PerformanceMonitor {
     const metrics = await this.page.evaluate(() => {
       return new Promise<PerformanceMetrics>((resolve) => {
         const navigation = performance.getEntriesByType(
-          "navigation"
+          "navigation",
         )[0] as PerformanceNavigationTiming;
 
         const paint = performance.getEntriesByType("paint");
-        const fcp = paint.find((entry) => entry.name === "first-contentful-paint");
+        const fcp = paint.find(
+          (entry) => entry.name === "first-contentful-paint",
+        );
 
         resolve({
           pageLoadTime: navigation.loadEventEnd - navigation.fetchStart,
@@ -514,7 +521,7 @@ export class PerformanceMonitor {
   async measureApiCall(
     method: string,
     url: string,
-    body?: any
+    body?: any,
   ): Promise<number> {
     const startTime = Date.now();
 
@@ -526,7 +533,7 @@ export class PerformanceMonitor {
           body: body ? JSON.stringify(body) : undefined,
         });
       },
-      { method, url, body }
+      { method, url, body },
     );
 
     return Date.now() - startTime;
@@ -537,7 +544,7 @@ export class PerformanceMonitor {
    */
   async assertPerformance(
     metric: keyof typeof E2E_CONFIG.thresholds,
-    actualValue: number
+    actualValue: number,
   ): Promise<void> {
     const threshold = E2E_CONFIG.thresholds[metric];
     expect(actualValue).toBeLessThanOrEqual(threshold);
@@ -574,7 +581,7 @@ export class PerformanceMonitor {
 export class ScenarioExecutor {
   constructor(
     private page: Page,
-    private stateManager: StateManager
+    private stateManager: StateManager,
   ) {}
 
   /**
@@ -586,7 +593,9 @@ export class ScenarioExecutor {
 
     for (let i = 0; i < scenario.steps.length; i++) {
       const step = scenario.steps[i];
-      console.log(`  ▶ Step ${i + 1}/${scenario.steps.length}: ${step.action}`);
+      console.log(
+        `  ▶ Step ${i + 1}/${scenario.steps.length}: ${step.action}`,
+      );
 
       await this.executeStep(step);
 
@@ -651,7 +660,7 @@ export class ScenarioExecutor {
    */
   async executeWithRetry(
     scenario: TestScenario,
-    maxRetries = E2E_CONFIG.retries.default
+    maxRetries = E2E_CONFIG.retries.default,
   ): Promise<void> {
     let lastError: Error | undefined;
 
@@ -661,7 +670,9 @@ export class ScenarioExecutor {
         return;
       } catch (error) {
         lastError = error as Error;
-        console.warn(`⚠️ Attempt ${attempt}/${maxRetries} failed: ${lastError.message}`);
+        console.warn(
+          `⚠️ Attempt ${attempt}/${maxRetries} failed: ${lastError.message}`,
+        );
 
         if (attempt < maxRetries) {
           await this.page.waitForTimeout(1000 * attempt);
@@ -670,7 +681,7 @@ export class ScenarioExecutor {
     }
 
     throw new Error(
-      `Scenario failed after ${maxRetries} attempts: ${lastError?.message}`
+      `Scenario failed after ${maxRetries} attempts: ${lastError?.message}`,
     );
   }
 }
@@ -708,7 +719,9 @@ export class TestDataFactory {
   /**
    * Generate product data
    */
-  static generateProductData(overrides?: Partial<TestProduct>): Partial<TestProduct> {
+  static generateProductData(
+    overrides?: Partial<TestProduct>,
+  ): Partial<TestProduct> {
     return {
       name: `Test Product ${Date.now()}`,
       price: 9.99,
@@ -732,7 +745,9 @@ export class TestDataFactory {
   /**
    * Create test user
    */
-  static async createTestUser(role: "ADMIN" | "FARMER" | "CUSTOMER"): Promise<TestUser> {
+  static async createTestUser(
+    role: "ADMIN" | "FARMER" | "CUSTOMER",
+  ): Promise<TestUser> {
     const email = this.generateEmail(role.toLowerCase());
     const password = "TestPassword123!";
 
@@ -758,7 +773,10 @@ export class TestDataFactory {
   /**
    * Create test farm
    */
-  static async createTestFarm(ownerId: string, data?: Partial<TestFarm>): Promise<TestFarm> {
+  static async createTestFarm(
+    ownerId: string,
+    data?: Partial<TestFarm>,
+  ): Promise<TestFarm> {
     const farmData = this.generateFarmData(data);
 
     const farm = await database.farm.create({
@@ -792,7 +810,7 @@ export class TestDataFactory {
    */
   static async createTestProduct(
     farmId: string,
-    data?: Partial<TestProduct>
+    data?: Partial<TestProduct>,
   ): Promise<TestProduct> {
     const productData = this.generateProductData(data);
 
@@ -901,10 +919,7 @@ export abstract class BasePage {
   /**
    * Click element with retry
    */
-  async clickWithRetry(
-    selector: string,
-    maxRetries = 3
-  ): Promise<void> {
+  async clickWithRetry(selector: string, maxRetries = 3): Promise<void> {
     for (let i = 0; i < maxRetries; i++) {
       try {
         await this.page.click(selector, { timeout: 5000 });
@@ -934,7 +949,7 @@ export async function waitFor(ms: number): Promise<void> {
 export async function retry<T>(
   fn: () => Promise<T>,
   maxRetries = 3,
-  baseDelay = 1000
+  baseDelay = 1000,
 ): Promise<T> {
   let lastError: Error;
 
@@ -958,7 +973,7 @@ export async function retry<T>(
 export async function pollUntil(
   condition: () => Promise<boolean>,
   timeout = 10000,
-  interval = 100
+  interval = 100,
 ): Promise<void> {
   const startTime = Date.now();
 

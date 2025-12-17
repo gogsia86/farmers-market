@@ -1,4 +1,5 @@
 # 🌾 E2E Test Execution Report
+
 ## Farmers Market Platform - End-to-End Testing Status
 
 **Report Date:** December 5, 2025  
@@ -27,6 +28,7 @@
 **Problem:** Product and Farm models in seed script didn't match current Prisma schema
 
 **Solution Applied:**
+
 - Updated Product creation fields:
   - `stockQuantity` → `quantityAvailable` (Decimal field)
   - `available` → `inStock` (Boolean field)
@@ -42,9 +44,11 @@
 **Problem:** Prisma singleton was connecting to wrong database (default instead of test)
 
 **Solution Applied:**
+
 ```typescript
 // Created dedicated Prisma Client for E2E tests with direct connection
-const TEST_DATABASE_URL = "postgresql://postgres:test_password_123@localhost:5433/farmersmarket_test";
+const TEST_DATABASE_URL =
+  "postgresql://postgres:test_password_123@localhost:5433/farmersmarket_test";
 const pool = new Pool({ connectionString: TEST_DATABASE_URL });
 const adapter = new PrismaPg(pool);
 const database = new PrismaClient({ adapter });
@@ -55,6 +59,7 @@ const database = new PrismaClient({ adapter });
 ### 3. Test Infrastructure
 
 **Created Files:**
+
 - `run-e2e-tests.bat` - Windows batch script for running tests
 - `run-e2e-tests.ps1` - PowerShell script with advanced options
 - `E2E_TEST_EXECUTION_REPORT.md` - This report
@@ -86,6 +91,7 @@ const database = new PrismaClient({ adapter });
 **Browsers:** 5 (Chromium, Firefox, WebKit, Mobile Chrome, Mobile Safari)  
 **Workers:** 4 parallel workers  
 **Test Categories:**
+
 - 🔐 Authentication Flows
 - 🌾 Customer Shopping Flow
 - 🚜 Farmer Management Flow
@@ -101,6 +107,7 @@ const database = new PrismaClient({ adapter });
 ### Sample Test Results (Initial Run)
 
 **Passing Tests (✅):**
+
 - Customer registration page link to login
 - Login page forgot password link
 - Homepage heading structure (accessibility)
@@ -113,6 +120,7 @@ const database = new PrismaClient({ adapter });
 - Mobile viewport compatibility
 
 **Tests Requiring Attention (❌):**
+
 - Customer registration with validation
 - Login flows (authentication issues)
 - Cart operations (add/update/remove)
@@ -121,6 +129,7 @@ const database = new PrismaClient({ adapter });
 - Order history viewing
 
 **Skipped Tests (⏭️):**
+
 - Stripe payment integration tests (requires Stripe test keys)
 - Out-of-stock item handling
 - Payment decline scenarios
@@ -133,20 +142,23 @@ const database = new PrismaClient({ adapter });
 **Database:** PostgreSQL 16 (Docker container)  
 **Host:** localhost:5433  
 **Database Name:** farmersmarket_test  
-**Status:** ✅ Running and Healthy  
+**Status:** ✅ Running and Healthy
 
 **Connection String:**
+
 ```
 postgresql://postgres:test_password_123@localhost:5433/farmersmarket_test
 ```
 
 **Schema Status:**
+
 - ✅ 38+ tables created
 - ✅ All enums defined
 - ✅ Foreign keys and relations established
 - ✅ Indexes created
 
 **Test Data:**
+
 - 3 Users (Admin, Farmer, Customer)
 - 2 Farms (Divine Test Farm, Green Valley Organics)
 - 3 Products (Tomatoes, Lettuce, Carrots)
@@ -156,11 +168,13 @@ postgresql://postgres:test_password_123@localhost:5433/farmersmarket_test
 ## 🚀 How to Run E2E Tests
 
 ### Method 1: Batch Script (Recommended for Windows)
+
 ```bash
 run-e2e-tests.bat
 ```
 
 **Options:**
+
 ```bash
 run-e2e-tests.bat --workers 4 --headed
 run-e2e-tests.bat --grep "login"
@@ -168,16 +182,19 @@ run-e2e-tests.bat --debug
 ```
 
 ### Method 2: Direct Playwright Command
+
 ```bash
 npx playwright test --config=playwright.config.temp.ts --workers=4
 ```
 
 ### Method 3: PowerShell Script
+
 ```powershell
 .\run-e2e-tests.ps1 --workers 6 --headed
 ```
 
 ### Prerequisites
+
 1. ✅ Test database running: `docker-compose -f docker-compose.test.yml up -d`
 2. ✅ Dev server running on port 3001: `npm run dev`
 3. ✅ Prisma schema pushed to test DB
@@ -228,6 +245,7 @@ npx playwright test --config=playwright.config.temp.ts --workers=4
 ### Long-term Actions (Priority 3)
 
 7. **Integrate into CI/CD Pipeline**
+
    ```yaml
    # Example GitHub Actions step
    - name: Run E2E Tests
@@ -259,13 +277,14 @@ npx playwright test --config=playwright.config.temp.ts --workers=4
 
 All test accounts use strong passwords and are created fresh for each test run.
 
-| Role     | Email                           | Password            |
-|----------|--------------------------------|---------------------|
-| Admin    | admin@farmersmarket.app        | DivineAdmin123!     |
-| Farmer   | farmer@farmersmarket.app       | DivineFarmer123!    |
-| Customer | customer@farmersmarket.app     | DivineCustomer123!  |
+| Role     | Email                      | Password           |
+| -------- | -------------------------- | ------------------ |
+| Admin    | admin@farmersmarket.app    | DivineAdmin123!    |
+| Farmer   | farmer@farmersmarket.app   | DivineFarmer123!   |
+| Customer | customer@farmersmarket.app | DivineCustomer123! |
 
 **Additional Test Accounts:**
+
 - Farmer: farmer1@test.farmersmarket.app (TestFarmer123!)
 
 ---
@@ -273,6 +292,7 @@ All test accounts use strong passwords and are created fresh for each test run.
 ## 📊 Test Coverage Analysis
 
 ### Routes Tested
+
 - ✅ `/` - Homepage
 - ✅ `/register` - Customer registration
 - ✅ `/login` - Authentication
@@ -285,6 +305,7 @@ All test accounts use strong passwords and are created fresh for each test run.
 - ✅ `/admin/dashboard` - Admin portal
 
 ### User Flows Covered
+
 1. **Customer Journey:** Browse → Add to Cart → Checkout → Order Confirmation
 2. **Farmer Journey:** Login → Add Product → Manage Inventory → View Orders
 3. **Admin Journey:** Login → Verify Farm → View Analytics → Manage Users
@@ -292,6 +313,7 @@ All test accounts use strong passwords and are created fresh for each test run.
 5. **Mobile Journey:** Responsive navigation → Mobile checkout → Touch interactions
 
 ### Accessibility Testing
+
 - ✅ Heading hierarchy validation
 - ✅ Form label verification
 - ✅ Keyboard navigation
@@ -303,34 +325,39 @@ All test accounts use strong passwords and are created fresh for each test run.
 ## 🐛 Known Issues & Blockers
 
 ### Issue 1: Authentication Flow Failures
+
 **Severity:** HIGH  
 **Impact:** Blocks dependent tests (cart, checkout, profile)  
 **Possible Cause:** NextAuth session not persisting in test context  
-**Workaround:** Use API calls to create sessions directly  
+**Workaround:** Use API calls to create sessions directly
 
 ### Issue 2: Stripe Payment Tests Skipped
+
 **Severity:** MEDIUM  
 **Impact:** Cannot test full checkout flow  
 **Cause:** Stripe test keys not configured in test environment  
-**Fix:** Add test keys to `.env.test` file  
+**Fix:** Add test keys to `.env.test` file
 
 ### Issue 3: Some Mobile Tests Failing
+
 **Severity:** LOW  
 **Impact:** Mobile-specific features not verified  
 **Cause:** Viewport/touch interaction differences  
-**Investigation Needed:** Review Playwright mobile device configs  
+**Investigation Needed:** Review Playwright mobile device configs
 
 ---
 
 ## 📚 Resources & Documentation
 
 ### Test Documentation
+
 - Playwright Config: `playwright.config.temp.ts`
 - Global Setup: `tests/global-setup.ts`
 - Test Specs: `tests/e2e/**/*.spec.ts`
 - Test Utils: Check for `tests/utils/` or `tests/helpers/`
 
 ### Commands Reference
+
 ```bash
 # Run all tests
 npx playwright test --config=playwright.config.temp.ts
@@ -358,6 +385,7 @@ npx playwright test --update-snapshots
 ```
 
 ### Docker Commands
+
 ```bash
 # Start test database
 docker-compose -f docker-compose.test.yml up -d
@@ -420,6 +448,7 @@ docker-compose -f docker-compose.test.yml up -d
 ## 📞 Support & Troubleshooting
 
 ### Test Database Won't Connect
+
 ```bash
 # Check if container is running
 docker ps | findstr postgres
@@ -432,6 +461,7 @@ netstat -ano | findstr 5433
 ```
 
 ### Tests Hanging
+
 ```bash
 # Check for zombie processes
 tasklist | findstr node
@@ -445,6 +475,7 @@ npx playwright test --config=playwright.config.temp.ts
 ```
 
 ### Prisma Client Errors
+
 ```bash
 # Regenerate Prisma Client
 npx prisma generate
@@ -459,12 +490,14 @@ npx prisma db push --accept-data-loss
 ## 🎯 Success Metrics
 
 ### Current Status
+
 - **Test Execution:** ✅ OPERATIONAL
 - **Test Database:** ✅ HEALTHY
 - **Dev Server:** ✅ RUNNING
 - **Test Coverage:** 🟡 PARTIAL (435 tests created, pass rate TBD)
 
 ### Target Metrics
+
 - ✅ Test suite runs without crashing: **ACHIEVED**
 - 🎯 Pass rate > 80%: **IN PROGRESS**
 - 🎯 Test duration < 10 minutes: **MEASURING**
@@ -478,4 +511,4 @@ npx prisma db push --accept-data-loss
 
 ---
 
-*"From schema chaos to test harmony - the divine debugging journey continues!"* 🌾⚡
+_"From schema chaos to test harmony - the divine debugging journey continues!"_ 🌾⚡

@@ -22,7 +22,11 @@ npx tsx scripts/enhanced-website-checker.ts watch
 ### Workflow Tests
 
 ```typescript
-import { createMonitoringBot, quickHealthCheck, runCriticalChecks } from "@/lib/monitoring/bot";
+import {
+  createMonitoringBot,
+  quickHealthCheck,
+  runCriticalChecks,
+} from "@/lib/monitoring/bot";
 
 // Quick health check
 const result = await quickHealthCheck("http://localhost:3001");
@@ -108,10 +112,10 @@ const myCustomSteps: WorkflowStep[] = [
     description: "Click button and verify",
     execute: async ({ page }) => {
       const start = Date.now();
-      
+
       await page.locator('[data-testid="my-button"]').click();
       await page.waitForTimeout(1000);
-      
+
       const result = await page.locator('[data-testid="result"]').textContent();
 
       return {
@@ -277,16 +281,25 @@ async checkProtectedEndpoint(): Promise<CheckResult> {
 
 ```typescript
 function printCustomReport(report: HealthCheckReport) {
-  console.log("\n╔════════════════════════════════════════════════════════════╗");
+  console.log(
+    "\n╔════════════════════════════════════════════════════════════╗",
+  );
   console.log("║ 📊 CUSTOM HEALTH CHECK REPORT                             ║");
   console.log("╠════════════════════════════════════════════════════════════╣");
   console.log(`║ Status: ${report.overall.toUpperCase().padEnd(48)} ║`);
-  console.log(`║ Duration: ${report.totalDuration}ms${" ".repeat(46 - String(report.totalDuration).length)} ║`);
-  console.log(`║ Success Rate: ${report.successRate.toFixed(1)}%${" ".repeat(42 - String(report.successRate.toFixed(1)).length)} ║`);
-  console.log("╚════════════════════════════════════════════════════════════╝\n");
+  console.log(
+    `║ Duration: ${report.totalDuration}ms${" ".repeat(46 - String(report.totalDuration).length)} ║`,
+  );
+  console.log(
+    `║ Success Rate: ${report.successRate.toFixed(1)}%${" ".repeat(42 - String(report.successRate.toFixed(1)).length)} ║`,
+  );
+  console.log(
+    "╚════════════════════════════════════════════════════════════╝\n",
+  );
 
   report.checks.forEach((check) => {
-    const icon = check.status === "pass" ? "✅" : check.status === "fail" ? "❌" : "⚠️";
+    const icon =
+      check.status === "pass" ? "✅" : check.status === "fail" ? "❌" : "⚠️";
     console.log(`${icon} ${check.name} (${check.duration}ms)`);
     console.log(`   ${check.message}`);
   });
@@ -304,8 +317,18 @@ async function sendSlackNotification(report: HealthCheckReport) {
   const webhookUrl = process.env.SLACK_WEBHOOK_URL;
   if (!webhookUrl) return;
 
-  const color = report.overall === "healthy" ? "good" : report.overall === "degraded" ? "warning" : "danger";
-  const emoji = report.overall === "healthy" ? "✅" : report.overall === "degraded" ? "⚠️" : "❌";
+  const color =
+    report.overall === "healthy"
+      ? "good"
+      : report.overall === "degraded"
+        ? "warning"
+        : "danger";
+  const emoji =
+    report.overall === "healthy"
+      ? "✅"
+      : report.overall === "degraded"
+        ? "⚠️"
+        : "❌";
 
   await fetch(webhookUrl, {
     method: "POST",
@@ -317,8 +340,16 @@ async function sendSlackNotification(report: HealthCheckReport) {
           title: `${emoji} Health Check Report`,
           fields: [
             { title: "Status", value: report.overall, short: true },
-            { title: "Success Rate", value: `${report.successRate.toFixed(1)}%`, short: true },
-            { title: "Duration", value: `${report.totalDuration}ms`, short: true },
+            {
+              title: "Success Rate",
+              value: `${report.successRate.toFixed(1)}%`,
+              short: true,
+            },
+            {
+              title: "Duration",
+              value: `${report.totalDuration}ms`,
+              short: true,
+            },
             { title: "Checks", value: `${report.checks.length}`, short: true },
           ],
           footer: "Farmers Market Platform Bot",
@@ -359,19 +390,27 @@ async function sendEmailNotification(report: HealthCheckReport) {
       <p><strong>Success Rate:</strong> ${report.successRate.toFixed(1)}%</p>
       <p><strong>Duration:</strong> ${report.totalDuration}ms</p>
       
-      ${failedChecks.length > 0 ? `
+      ${
+        failedChecks.length > 0
+          ? `
         <h3>❌ Failed Checks (${failedChecks.length})</h3>
         <ul>
           ${failedChecks.map((c) => `<li>${c.name}: ${c.message}</li>`).join("")}
         </ul>
-      ` : ""}
+      `
+          : ""
+      }
       
-      ${warnChecks.length > 0 ? `
+      ${
+        warnChecks.length > 0
+          ? `
         <h3>⚠️ Warnings (${warnChecks.length})</h3>
         <ul>
           ${warnChecks.map((c) => `<li>${c.name}: ${c.message}</li>`).join("")}
         </ul>
-      ` : ""}
+      `
+          : ""
+      }
     `,
   });
 }
@@ -401,7 +440,7 @@ CMD ["npm", "run", "bot:check"]
 ### Docker Compose
 
 ```yaml
-version: '3.8'
+version: "3.8"
 
 services:
   bot-checker:
@@ -436,12 +475,12 @@ on:
   pull_request:
     branches: [main, develop]
   schedule:
-    - cron: '0 */4 * * *' # Every 4 hours
+    - cron: "0 */4 * * *" # Every 4 hours
 
 jobs:
   health-check:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -449,8 +488,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -483,7 +522,7 @@ jobs:
           script: |
             const fs = require('fs');
             const report = JSON.parse(fs.readFileSync('monitoring-reports/latest.json', 'utf8'));
-            
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
@@ -558,18 +597,18 @@ function sendToDatadog(report: HealthCheckReport) {
   statsd.gauge("health_check.success_rate", report.successRate);
   statsd.timing("health_check.duration", report.totalDuration);
   statsd.gauge("health_check.total_checks", report.checks.length);
-  
+
   // Count by status
   const statusCounts = {
     pass: report.checks.filter((c) => c.status === "pass").length,
     warn: report.checks.filter((c) => c.status === "warn").length,
     fail: report.checks.filter((c) => c.status === "fail").length,
   };
-  
+
   statsd.gauge("health_check.passed", statusCounts.pass);
   statsd.gauge("health_check.warnings", statusCounts.warn);
   statsd.gauge("health_check.failed", statusCounts.fail);
-  
+
   // Tag by overall status
   statsd.increment("health_check.run", 1, [`status:${report.overall}`]);
 }
@@ -589,28 +628,30 @@ describe("EnhancedWebsiteChecker", () => {
   it("should check homepage successfully", async () => {
     const checker = new EnhancedWebsiteChecker();
     await checker.initialize();
-    
+
     const result = await checker.checkHomePage();
-    
+
     expect(result.name).toBe("Homepage Load");
     expect(result.status).toBe("pass");
     expect(result.duration).toBeGreaterThan(0);
-    
+
     await checker.cleanup();
   });
 
   it("should handle endpoint failures gracefully", async () => {
     const checker = new EnhancedWebsiteChecker();
     await checker.initialize();
-    
+
     // Mock a failing endpoint
-    vi.spyOn(checker.page!.request, "get").mockRejectedValue(new Error("Network error"));
-    
+    vi.spyOn(checker.page!.request, "get").mockRejectedValue(
+      new Error("Network error"),
+    );
+
     const result = await checker.checkDatabaseConnection();
-    
+
     expect(result.status).toBe("fail");
     expect(result.error).toBe("Network error");
-    
+
     await checker.cleanup();
   });
 });
@@ -652,7 +693,7 @@ async checkWithScreenshot(): Promise<CheckResult> {
       path: `./screenshots/failure-${Date.now()}.png`,
       fullPage: true,
     });
-    
+
     return {
       name: "Check Name",
       status: "fail",

@@ -44,6 +44,7 @@ start.bat
 ```
 
 This script will:
+
 - Check for dependencies
 - Clear cache automatically
 - Start Expo with fresh QR code
@@ -55,22 +56,26 @@ This script will:
 Once Expo starts, you have these options:
 
 ### Option A: Physical Device (Best!)
+
 1. Install **Expo Go** app on your phone
 2. **Scan the QR code** in the terminal
 3. Wait for app to load
 
 ### Option B: Android Emulator
+
 ```bash
 # Make sure Android Studio AVD is running first!
 # Then press 'a' in the Expo terminal
 ```
 
 ### Option C: iOS Simulator (Mac Only)
+
 ```bash
 # Press 'i' in the Expo terminal
 ```
 
 ### Option D: Web Browser (Quick Test)
+
 ```bash
 # Press 'w' in the Expo terminal
 ```
@@ -82,6 +87,7 @@ Once Expo starts, you have these options:
 ### QR Code Still Not Working?
 
 **Try Tunnel Mode:**
+
 ```bash
 npx expo start --tunnel
 ```
@@ -159,9 +165,11 @@ npx expo start --web
 ## 📱 EXPO GO APP LINKS
 
 ### iOS
+
 https://apps.apple.com/app/expo-go/id982107779
 
 ### Android
+
 https://play.google.com/store/apps/details?id=host.exp.exponent
 
 ---
@@ -233,11 +241,13 @@ DEBUG_MODE=true
 ```
 
 For physical device, change to:
+
 ```
 API_BASE_URL=http://YOUR_COMPUTER_IP:3001/api
 ```
 
 Find your IP:
+
 ```bash
 ipconfig
 # Look for "IPv4 Address" under your WiFi adapter
@@ -248,6 +258,7 @@ ipconfig
 ## 🎉 YOU'RE BACK!
 
 Once you see the QR code:
+
 1. Open Expo Go on your phone
 2. Scan the QR code
 3. Wait 30-60 seconds for first load

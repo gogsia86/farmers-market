@@ -12,7 +12,7 @@
  * - Agricultural mobile user journeys
  */
 
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 import {
   createMobileHelper,
   MOBILE_DEVICES,
@@ -20,13 +20,13 @@ import {
   waitForMobileReady,
   captureMobileMetrics,
   AgriculturalMobileHelper,
-} from './mobile-utils';
+} from "./mobile-utils";
 
 // ============================================
 // TEST CONFIGURATION
 // ============================================
 
-test.describe('Mobile Navigation Tests', () => {
+test.describe("Mobile Navigation Tests", () => {
   test.beforeEach(async ({ page }) => {
     await waitForMobileReady(page);
   });
@@ -35,36 +35,54 @@ test.describe('Mobile Navigation Tests', () => {
   // MOBILE MENU TESTS
   // ============================================
 
-  test.describe('Mobile Menu', () => {
-    test('should display mobile menu on small screens', async ({ page, context }) => {
+  test.describe("Mobile Menu", () => {
+    test("should display mobile menu on small screens", async ({
+      page,
+      context,
+    }) => {
       const mobile = createMobileHelper(page, context);
 
       // Set mobile viewport
-      await mobile.viewport.setBreakpoint('mobile');
-      await page.goto('/');
+      await mobile.viewport.setBreakpoint("mobile");
+      await page.goto("/");
 
       // Check for mobile menu button (hamburger)
-      const mobileMenuButton = page.locator('[data-mobile-menu], button[aria-label*="menu" i], button:has-text("Menu")').first();
+      const mobileMenuButton = page
+        .locator(
+          '[data-mobile-menu], button[aria-label*="menu" i], button:has-text("Menu")',
+        )
+        .first();
       await expect(mobileMenuButton).toBeVisible();
 
       // Open mobile menu
-      await mobile.touch.tap('[data-mobile-menu], button[aria-label*="menu" i], button:has-text("Menu")');
+      await mobile.touch.tap(
+        '[data-mobile-menu], button[aria-label*="menu" i], button:has-text("Menu")',
+      );
 
       // Verify menu is open
-      const mobileMenu = page.locator('[data-mobile-menu-content], nav[role="navigation"]').first();
+      const mobileMenu = page
+        .locator('[data-mobile-menu-content], nav[role="navigation"]')
+        .first();
       await expect(mobileMenu).toBeVisible({ timeout: 2000 });
     });
 
-    test('should navigate through mobile menu items', async ({ page, context }) => {
+    test("should navigate through mobile menu items", async ({
+      page,
+      context,
+    }) => {
       const mobile = createMobileHelper(page, context);
 
-      await mobile.viewport.setBreakpoint('mobile');
-      await page.goto('/');
+      await mobile.viewport.setBreakpoint("mobile");
+      await page.goto("/");
 
       // Open mobile menu
-      const menuButton = page.locator('[data-mobile-menu], button[aria-label*="menu" i]').first();
-      if (await menuButton.count() > 0) {
-        await mobile.touch.tap('[data-mobile-menu], button[aria-label*="menu" i]');
+      const menuButton = page
+        .locator('[data-mobile-menu], button[aria-label*="menu" i]')
+        .first();
+      if ((await menuButton.count()) > 0) {
+        await mobile.touch.tap(
+          '[data-mobile-menu], button[aria-label*="menu" i]',
+        );
 
         // Wait for menu to open
         await page.waitForTimeout(300);
@@ -83,52 +101,68 @@ test.describe('Mobile Navigation Tests', () => {
       }
     });
 
-    test('should close mobile menu on outside tap', async ({ page, context }) => {
+    test("should close mobile menu on outside tap", async ({
+      page,
+      context,
+    }) => {
       const mobile = createMobileHelper(page, context);
 
-      await mobile.viewport.setBreakpoint('mobile');
-      await page.goto('/');
+      await mobile.viewport.setBreakpoint("mobile");
+      await page.goto("/");
 
       // Open mobile menu
-      const menuButton = page.locator('[data-mobile-menu], button[aria-label*="menu" i]').first();
-      if (await menuButton.count() > 0) {
-        await mobile.touch.tap('[data-mobile-menu], button[aria-label*="menu" i]');
+      const menuButton = page
+        .locator('[data-mobile-menu], button[aria-label*="menu" i]')
+        .first();
+      if ((await menuButton.count()) > 0) {
+        await mobile.touch.tap(
+          '[data-mobile-menu], button[aria-label*="menu" i]',
+        );
         await page.waitForTimeout(300);
 
         // Tap outside menu (on overlay or body)
-        const overlay = page.locator('[data-overlay], .overlay, [role="dialog"]').first();
-        if (await overlay.count() > 0) {
-          await mobile.touch.tap('[data-overlay], .overlay');
+        const overlay = page
+          .locator('[data-overlay], .overlay, [role="dialog"]')
+          .first();
+        if ((await overlay.count()) > 0) {
+          await mobile.touch.tap("[data-overlay], .overlay");
           await page.waitForTimeout(300);
 
           // Menu should be closed
-          const menu = page.locator('[data-mobile-menu-content]').first();
-          if (await menu.count() > 0) {
+          const menu = page.locator("[data-mobile-menu-content]").first();
+          if ((await menu.count()) > 0) {
             await expect(menu).not.toBeVisible();
           }
         }
       }
     });
 
-    test('should support keyboard navigation in mobile menu', async ({ page, context }) => {
+    test("should support keyboard navigation in mobile menu", async ({
+      page,
+      context,
+    }) => {
       const mobile = createMobileHelper(page, context);
 
-      await mobile.viewport.setBreakpoint('mobile');
-      await page.goto('/');
+      await mobile.viewport.setBreakpoint("mobile");
+      await page.goto("/");
 
       // Open mobile menu
-      const menuButton = page.locator('[data-mobile-menu], button[aria-label*="menu" i]').first();
-      if (await menuButton.count() > 0) {
+      const menuButton = page
+        .locator('[data-mobile-menu], button[aria-label*="menu" i]')
+        .first();
+      if ((await menuButton.count()) > 0) {
         await menuButton.focus();
-        await page.keyboard.press('Enter');
+        await page.keyboard.press("Enter");
         await page.waitForTimeout(300);
 
         // Tab through menu items
-        await page.keyboard.press('Tab');
+        await page.keyboard.press("Tab");
 
         // Focused element should be in menu
-        const focusedElement = await page.evaluate(() => document.activeElement?.tagName);
-        expect(['A', 'BUTTON', 'INPUT']).toContain(focusedElement);
+        const focusedElement = await page.evaluate(
+          () => document.activeElement?.tagName,
+        );
+        expect(["A", "BUTTON", "INPUT"]).toContain(focusedElement);
       }
     });
   });
@@ -137,12 +171,15 @@ test.describe('Mobile Navigation Tests', () => {
   // TOUCH INTERACTION TESTS
   // ============================================
 
-  test.describe('Touch Interactions', () => {
-    test('should handle tap interactions on buttons', async ({ page, context }) => {
+  test.describe("Touch Interactions", () => {
+    test("should handle tap interactions on buttons", async ({
+      page,
+      context,
+    }) => {
       const mobile = createMobileHelper(page, context);
 
-      await mobile.viewport.setBreakpoint('mobile');
-      await page.goto('/');
+      await mobile.viewport.setBreakpoint("mobile");
+      await page.goto("/");
 
       // Find any clickable button
       const button = page.locator('button, a[role="button"]').first();
@@ -156,31 +193,38 @@ test.describe('Mobile Navigation Tests', () => {
       await page.waitForTimeout(200);
     });
 
-    test('should handle swipe gestures on carousels', async ({ page, context }) => {
+    test("should handle swipe gestures on carousels", async ({
+      page,
+      context,
+    }) => {
       const mobile = createMobileHelper(page, context);
 
-      await mobile.viewport.setBreakpoint('mobile');
-      await page.goto('/');
+      await mobile.viewport.setBreakpoint("mobile");
+      await page.goto("/");
 
       // Look for carousel or swipeable content
-      const carousel = page.locator('[data-carousel], .carousel, [role="region"][aria-roledescription="carousel"]').first();
+      const carousel = page
+        .locator(
+          '[data-carousel], .carousel, [role="region"][aria-roledescription="carousel"]',
+        )
+        .first();
 
-      if (await carousel.count() > 0) {
+      if ((await carousel.count()) > 0) {
         // Swipe left on carousel
-        await mobile.touch.swipe('[data-carousel], .carousel', 'left', 200);
+        await mobile.touch.swipe("[data-carousel], .carousel", "left", 200);
         await page.waitForTimeout(500);
 
         // Swipe right
-        await mobile.touch.swipe('[data-carousel], .carousel', 'right', 200);
+        await mobile.touch.swipe("[data-carousel], .carousel", "right", 200);
         await page.waitForTimeout(500);
       }
     });
 
-    test('should handle pull-to-refresh gesture', async ({ page, context }) => {
+    test("should handle pull-to-refresh gesture", async ({ page, context }) => {
       const mobile = createMobileHelper(page, context);
 
-      await mobile.viewport.setBreakpoint('mobile');
-      await page.goto('/products');
+      await mobile.viewport.setBreakpoint("mobile");
+      await page.goto("/products");
 
       // Attempt pull-to-refresh
       await mobile.touch.pullToRefresh();
@@ -190,18 +234,26 @@ test.describe('Mobile Navigation Tests', () => {
       await expect(page).toHaveURL(/\/products/);
     });
 
-    test('should support long press interactions', async ({ page, context }) => {
+    test("should support long press interactions", async ({
+      page,
+      context,
+    }) => {
       const mobile = createMobileHelper(page, context);
 
-      await mobile.viewport.setBreakpoint('mobile');
-      await page.goto('/');
+      await mobile.viewport.setBreakpoint("mobile");
+      await page.goto("/");
 
       // Find an element that might support long press (like product cards)
-      const element = page.locator('[data-product-card], .product-card, article').first();
+      const element = page
+        .locator("[data-product-card], .product-card, article")
+        .first();
 
-      if (await element.count() > 0) {
+      if ((await element.count()) > 0) {
         // Perform long press
-        await mobile.touch.longPress('[data-product-card], .product-card, article', 1000);
+        await mobile.touch.longPress(
+          "[data-product-card], .product-card, article",
+          1000,
+        );
         await page.waitForTimeout(500);
       }
     });
@@ -211,62 +263,68 @@ test.describe('Mobile Navigation Tests', () => {
   // RESPONSIVE NAVIGATION TESTS
   // ============================================
 
-  test.describe('Responsive Navigation', () => {
-    test('should adapt navigation for different screen sizes', async ({ page, context }) => {
+  test.describe("Responsive Navigation", () => {
+    test("should adapt navigation for different screen sizes", async ({
+      page,
+      context,
+    }) => {
       const mobile = createMobileHelper(page, context);
 
       // Test mobile
-      await mobile.viewport.setBreakpoint('mobile');
-      await page.goto('/');
+      await mobile.viewport.setBreakpoint("mobile");
+      await page.goto("/");
       await mobile.assert.assertMobileNavigation();
 
       // Test tablet
-      await mobile.viewport.setBreakpoint('tablet');
-      await page.goto('/');
+      await mobile.viewport.setBreakpoint("tablet");
+      await page.goto("/");
       await page.waitForTimeout(300);
 
       // Test desktop
-      await mobile.viewport.setBreakpoint('desktop');
-      await page.goto('/');
+      await mobile.viewport.setBreakpoint("desktop");
+      await page.goto("/");
       await page.waitForTimeout(300);
 
       // Desktop should show full navigation
-      const desktopNav = page.locator('nav a').first();
+      const desktopNav = page.locator("nav a").first();
       await expect(desktopNav).toBeVisible();
     });
 
-    test('should handle orientation changes', async ({ page, context }) => {
+    test("should handle orientation changes", async ({ page, context }) => {
       const mobile = createMobileHelper(page, context);
 
       // Start in portrait
-      await mobile.viewport.setBreakpoint('mobile');
-      await page.goto('/');
+      await mobile.viewport.setBreakpoint("mobile");
+      await page.goto("/");
 
       const portraitMetrics = await captureMobileMetrics(page);
-      expect(portraitMetrics.orientation).toBe('portrait');
+      expect(portraitMetrics.orientation).toBe("portrait");
 
       // Rotate to landscape
       await mobile.viewport.rotate();
       await page.waitForTimeout(500);
 
       const landscapeMetrics = await captureMobileMetrics(page);
-      expect(landscapeMetrics.orientation).toBe('landscape');
+      expect(landscapeMetrics.orientation).toBe("landscape");
 
       // Content should still be accessible
       await mobile.assert.assertNoHorizontalScroll();
     });
 
-    test('should not cause horizontal scroll on mobile', async ({ page, context }) => {
+    test("should not cause horizontal scroll on mobile", async ({
+      page,
+      context,
+    }) => {
       const mobile = createMobileHelper(page, context);
 
-      await mobile.viewport.setBreakpoint('mobile');
+      await mobile.viewport.setBreakpoint("mobile");
 
       // Test multiple pages
-      const pages = ['/', '/products', '/farms', '/search'];
+      const pages = ["/", "/products", "/farms", "/search"];
 
       for (const url of pages) {
         await page.goto(url);
-        await page.waitForLoadState('domcontentloaded');
+        await page.waitForLoadState("domcontentloaded");
         await mobile.assert.assertNoHorizontalScroll();
       }
     });
@@ -276,11 +334,11 @@ test.describe('Mobile Navigation Tests', () => {
   // DEVICE-SPECIFIC TESTS
   // ============================================
 
-  test.describe('Device-Specific Navigation', () => {
+  test.describe("Device-Specific Navigation", () => {
     const testDevices: Array<keyof typeof MOBILE_DEVICES> = [
-      'iPhone 12',
-      'Pixel 5',
-      'iPad Mini',
+      "iPhone 12",
+      "Pixel 5",
+      "iPad Mini",
     ];
 
     for (const deviceName of testDevices) {
@@ -288,21 +346,21 @@ test.describe('Mobile Navigation Tests', () => {
         const mobile = createMobileHelper(page, context);
 
         await mobile.viewport.setDevice(deviceName);
-        await page.goto('/');
+        await page.goto("/");
 
         // Capture device metrics
         const metrics = await captureMobileMetrics(page);
         expect(metrics.touchSupport).toBe(true);
 
         // Test basic navigation
-        const links = page.locator('a[href]');
+        const links = page.locator("a[href]");
         const count = await links.count();
         expect(count).toBeGreaterThan(0);
 
         // Test touch interaction
-        const firstButton = page.locator('button').first();
-        if (await firstButton.count() > 0) {
-          await mobile.touch.tap('button');
+        const firstButton = page.locator("button").first();
+        if ((await firstButton.count()) > 0) {
+          await mobile.touch.tap("button");
         }
       });
     }
@@ -312,31 +370,34 @@ test.describe('Mobile Navigation Tests', () => {
   // AGRICULTURAL MOBILE NAVIGATION
   // ============================================
 
-  test.describe('Agricultural Mobile Navigation', () => {
-    test('should navigate to farm profiles on mobile', async ({ page, context }) => {
+  test.describe("Agricultural Mobile Navigation", () => {
+    test("should navigate to farm profiles on mobile", async ({
+      page,
+      context,
+    }) => {
       const mobile = createMobileHelper(page, context);
       const agMobile = new AgriculturalMobileHelper(page);
 
-      await mobile.viewport.setBreakpoint('mobile');
-      await page.goto('/');
+      await mobile.viewport.setBreakpoint("mobile");
+      await page.goto("/");
 
       // Look for farm links
       const farmLink = page.locator('a[href*="/farms/"]').first();
 
-      if (await farmLink.count() > 0) {
+      if ((await farmLink.count()) > 0) {
         await mobile.touch.tap('a[href*="/farms/"]');
-        await page.waitForLoadState('domcontentloaded');
+        await page.waitForLoadState("domcontentloaded");
 
         // Should be on farm page
         await expect(page).toHaveURL(/\/farms\//);
       }
     });
 
-    test('should browse products on mobile', async ({ page, context }) => {
+    test("should browse products on mobile", async ({ page, context }) => {
       const mobile = createMobileHelper(page, context);
       const agMobile = new AgriculturalMobileHelper(page);
 
-      await mobile.viewport.setBreakpoint('mobile');
+      await mobile.viewport.setBreakpoint("mobile");
 
       // Test mobile product catalog
       const catalogFeatures = await agMobile.testMobileProductCatalog();
@@ -345,74 +406,89 @@ test.describe('Mobile Navigation Tests', () => {
       // Filters and infinite scroll are optional
     });
 
-    test('should handle cart navigation on mobile', async ({ page, context }) => {
+    test("should handle cart navigation on mobile", async ({
+      page,
+      context,
+    }) => {
       const mobile = createMobileHelper(page, context);
 
-      await mobile.viewport.setBreakpoint('mobile');
-      await page.goto('/');
+      await mobile.viewport.setBreakpoint("mobile");
+      await page.goto("/");
 
       // Look for cart button/icon
-      const cartButton = page.locator('[data-cart], a[href="/cart"], button:has-text("Cart")').first();
+      const cartButton = page
+        .locator('[data-cart], a[href="/cart"], button:has-text("Cart")')
+        .first();
 
-      if (await cartButton.count() > 0) {
-        await mobile.touch.tap('[data-cart], a[href="/cart"], button:has-text("Cart")');
+      if ((await cartButton.count()) > 0) {
+        await mobile.touch.tap(
+          '[data-cart], a[href="/cart"], button:has-text("Cart")',
+        );
         await page.waitForTimeout(500);
 
         // Should navigate to cart or open cart drawer
-        const isOnCartPage = page.url().includes('/cart');
-        const hasCartDrawer = await page.locator('[data-cart-drawer], [role="dialog"]').count() > 0;
+        const isOnCartPage = page.url().includes("/cart");
+        const hasCartDrawer =
+          (await page.locator('[data-cart-drawer], [role="dialog"]').count()) >
+          0;
 
         expect(isOnCartPage || hasCartDrawer).toBe(true);
       }
     });
 
-    test('should access user account on mobile', async ({ page, context }) => {
+    test("should access user account on mobile", async ({ page, context }) => {
       const mobile = createMobileHelper(page, context);
 
-      await mobile.viewport.setBreakpoint('mobile');
-      await page.goto('/');
+      await mobile.viewport.setBreakpoint("mobile");
+      await page.goto("/");
 
       // Look for account/profile button
-      const accountButton = page.locator(
-        '[data-account], a[href*="/account"], a[href*="/login"], button:has-text("Account"), button:has-text("Login")'
-      ).first();
+      const accountButton = page
+        .locator(
+          '[data-account], a[href*="/account"], a[href*="/login"], button:has-text("Account"), button:has-text("Login")',
+        )
+        .first();
 
-      if (await accountButton.count() > 0) {
+      if ((await accountButton.count()) > 0) {
         await expect(accountButton).toBeVisible();
 
         // Should be tappable
         await mobile.assert.assertTouchTargetSize(
           '[data-account], a[href*="/account"], a[href*="/login"]',
-          44
+          44,
         );
       }
     });
 
-    test('should navigate search on mobile', async ({ page, context }) => {
+    test("should navigate search on mobile", async ({ page, context }) => {
       const mobile = createMobileHelper(page, context);
 
-      await mobile.viewport.setBreakpoint('mobile');
-      await page.goto('/');
+      await mobile.viewport.setBreakpoint("mobile");
+      await page.goto("/");
 
       // Look for search button or input
-      const searchElement = page.locator(
-        'input[type="search"], input[placeholder*="search" i], button:has-text("Search"), a[href="/search"]'
-      ).first();
+      const searchElement = page
+        .locator(
+          'input[type="search"], input[placeholder*="search" i], button:has-text("Search"), a[href="/search"]',
+        )
+        .first();
 
-      if (await searchElement.count() > 0) {
+      if ((await searchElement.count()) > 0) {
         await expect(searchElement).toBeVisible();
 
         // Tap on search
         await mobile.touch.tap(
-          'input[type="search"], input[placeholder*="search" i], button:has-text("Search"), a[href="/search"]'
+          'input[type="search"], input[placeholder*="search" i], button:has-text("Search"), a[href="/search"]',
         );
 
         await page.waitForTimeout(500);
 
         // Should activate search interface
         const searchInput = page.locator('input[type="search"]').first();
-        if (await searchInput.count() > 0) {
-          const isFocused = await searchInput.evaluate((el) => el === document.activeElement);
+        if ((await searchInput.count()) > 0) {
+          const isFocused = await searchInput.evaluate(
+            (el) => el === document.activeElement,
+          );
           // Focus might not work in all scenarios, so just check visibility
           await expect(searchInput).toBeVisible();
         }
@@ -424,12 +500,15 @@ test.describe('Mobile Navigation Tests', () => {
   // SCROLL BEHAVIOR TESTS
   // ============================================
 
-  test.describe('Mobile Scroll Behavior', () => {
-    test('should support smooth scrolling on mobile', async ({ page, context }) => {
+  test.describe("Mobile Scroll Behavior", () => {
+    test("should support smooth scrolling on mobile", async ({
+      page,
+      context,
+    }) => {
       const mobile = createMobileHelper(page, context);
 
-      await mobile.viewport.setBreakpoint('mobile');
-      await page.goto('/products');
+      await mobile.viewport.setBreakpoint("mobile");
+      await page.goto("/products");
 
       // Scroll down
       await page.evaluate(() => window.scrollBy(0, 500));
@@ -443,36 +522,46 @@ test.describe('Mobile Navigation Tests', () => {
       await page.waitForTimeout(300);
     });
 
-    test('should support infinite scroll on product listings', async ({ page, context }) => {
+    test("should support infinite scroll on product listings", async ({
+      page,
+      context,
+    }) => {
       const mobile = createMobileHelper(page, context);
 
-      await mobile.viewport.setBreakpoint('mobile');
-      await page.goto('/products');
+      await mobile.viewport.setBreakpoint("mobile");
+      await page.goto("/products");
 
       // Get initial product count
-      const initialCount = await page.locator('[data-product], .product-card, article').count();
+      const initialCount = await page
+        .locator("[data-product], .product-card, article")
+        .count();
 
       // Scroll to bottom
       await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
       await page.waitForTimeout(2000); // Wait for potential infinite scroll
 
       // Check if more products loaded (if infinite scroll is implemented)
-      const finalCount = await page.locator('[data-product], .product-card, article').count();
+      const finalCount = await page
+        .locator("[data-product], .product-card, article")
+        .count();
 
       // At minimum, initial products should be visible
       expect(finalCount).toBeGreaterThanOrEqual(initialCount);
     });
 
-    test('should handle sticky headers on scroll', async ({ page, context }) => {
+    test("should handle sticky headers on scroll", async ({
+      page,
+      context,
+    }) => {
       const mobile = createMobileHelper(page, context);
 
-      await mobile.viewport.setBreakpoint('mobile');
-      await page.goto('/');
+      await mobile.viewport.setBreakpoint("mobile");
+      await page.goto("/");
 
       // Check for sticky header
       const header = page.locator('header, [role="banner"]').first();
 
-      if (await header.count() > 0) {
+      if ((await header.count()) > 0) {
         // Get initial position
         const initialBox = await header.boundingBox();
 
@@ -498,15 +587,15 @@ test.describe('Mobile Navigation Tests', () => {
   // PERFORMANCE TESTS
   // ============================================
 
-  test.describe('Mobile Navigation Performance', () => {
-    test('should navigate quickly on mobile', async ({ page, context }) => {
+  test.describe("Mobile Navigation Performance", () => {
+    test("should navigate quickly on mobile", async ({ page, context }) => {
       const mobile = createMobileHelper(page, context);
 
-      await mobile.viewport.setBreakpoint('mobile');
+      await mobile.viewport.setBreakpoint("mobile");
 
       // Measure navigation time
       const startTime = Date.now();
-      await page.goto('/');
+      await page.goto("/");
       const endTime = Date.now();
 
       const loadTime = endTime - startTime;
@@ -515,11 +604,14 @@ test.describe('Mobile Navigation Tests', () => {
       expect(loadTime).toBeLessThan(5000); // 5 seconds
     });
 
-    test('should have minimal layout shift on mobile', async ({ page, context }) => {
+    test("should have minimal layout shift on mobile", async ({
+      page,
+      context,
+    }) => {
       const mobile = createMobileHelper(page, context);
 
-      await mobile.viewport.setBreakpoint('mobile');
-      await page.goto('/');
+      await mobile.viewport.setBreakpoint("mobile");
+      await page.goto("/");
 
       // Measure CLS
       const cls = await mobile.performance.measureCLS();
@@ -528,12 +620,15 @@ test.describe('Mobile Navigation Tests', () => {
       expect(cls).toBeLessThan(0.25);
     });
 
-    test('should load resources efficiently on mobile', async ({ page, context }) => {
+    test("should load resources efficiently on mobile", async ({
+      page,
+      context,
+    }) => {
       const mobile = createMobileHelper(page, context);
 
-      await mobile.viewport.setBreakpoint('mobile');
+      await mobile.viewport.setBreakpoint("mobile");
 
-      const perf = await mobile.performance.measurePageLoad('/');
+      const perf = await mobile.performance.measurePageLoad("/");
 
       // Total load time should be reasonable
       expect(perf.totalTime).toBeLessThan(10000); // 10 seconds
@@ -547,28 +642,28 @@ test.describe('Mobile Navigation Tests', () => {
   // ACCESSIBILITY ON MOBILE
   // ============================================
 
-  test.describe('Mobile Accessibility', () => {
-    test('should have readable text on mobile', async ({ page, context }) => {
+  test.describe("Mobile Accessibility", () => {
+    test("should have readable text on mobile", async ({ page, context }) => {
       const mobile = createMobileHelper(page, context);
 
-      await mobile.viewport.setBreakpoint('mobile');
-      await page.goto('/');
+      await mobile.viewport.setBreakpoint("mobile");
+      await page.goto("/");
 
       // Check main text elements
-      const textElements = page.locator('p, h1, h2, h3, span, a');
+      const textElements = page.locator("p, h1, h2, h3, span, a");
       const count = await textElements.count();
 
       if (count > 0) {
         const firstText = textElements.first();
-        await mobile.assert.assertReadableText('p, h1, h2, h3', 14);
+        await mobile.assert.assertReadableText("p, h1, h2, h3", 14);
       }
     });
 
-    test('should have adequate touch targets', async ({ page, context }) => {
+    test("should have adequate touch targets", async ({ page, context }) => {
       const mobile = createMobileHelper(page, context);
 
-      await mobile.viewport.setBreakpoint('mobile');
-      await page.goto('/');
+      await mobile.viewport.setBreakpoint("mobile");
+      await page.goto("/");
 
       // Check button sizes
       const buttons = page.locator('button, a[role="button"]');
@@ -587,17 +682,20 @@ test.describe('Mobile Navigation Tests', () => {
       }
     });
 
-    test('should support screen reader navigation on mobile', async ({ page, context }) => {
+    test("should support screen reader navigation on mobile", async ({
+      page,
+      context,
+    }) => {
       const mobile = createMobileHelper(page, context);
 
-      await mobile.viewport.setBreakpoint('mobile');
-      await page.goto('/');
+      await mobile.viewport.setBreakpoint("mobile");
+      await page.goto("/");
 
       // Check for proper ARIA labels on navigation
-      const navButton = page.locator('[aria-label], [aria-labelledby]').first();
+      const navButton = page.locator("[aria-label], [aria-labelledby]").first();
 
-      if (await navButton.count() > 0) {
-        const ariaLabel = await navButton.getAttribute('aria-label');
+      if ((await navButton.count()) > 0) {
+        const ariaLabel = await navButton.getAttribute("aria-label");
         expect(ariaLabel).toBeTruthy();
       }
     });

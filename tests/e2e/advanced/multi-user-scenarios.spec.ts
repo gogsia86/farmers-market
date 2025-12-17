@@ -24,9 +24,9 @@ import {
 test.describe("Advanced Multi-User Scenarios", () => {
   let orchestrator: MultiUserOrchestrator;
   let stateManager: StateManager;
-  let testUsers: any[] = [];
-  let testFarms: any[] = [];
-  let testProducts: any[] = [];
+  const testUsers: any[] = [];
+  const testFarms: any[] = [];
+  const testProducts: any[] = [];
 
   // ==========================================
   // 🔧 SETUP & TEARDOWN
@@ -61,7 +61,7 @@ test.describe("Advanced Multi-User Scenarios", () => {
             name: `Product ${testProducts.length + 1}`,
             price: 10 + i * 5,
             inventory: 50,
-          })
+          }),
         );
       }
     }
@@ -95,11 +95,16 @@ test.describe("Advanced Multi-User Scenarios", () => {
           await page.waitForSelector('[data-testid="farm-edit-button"]');
           await page.click('[data-testid="farm-edit-button"]');
 
-          await page.fill('input[name="description"]', "Updated farm description 1");
+          await page.fill(
+            'input[name="description"]',
+            "Updated farm description 1",
+          );
           await page.click('button[type="submit"]');
 
           // Verify update
-          await expect(page.locator("text=Updated farm description 1")).toBeVisible();
+          await expect(
+            page.locator("text=Updated farm description 1"),
+          ).toBeVisible();
         },
       },
       {
@@ -110,11 +115,16 @@ test.describe("Advanced Multi-User Scenarios", () => {
           await page.waitForSelector('[data-testid="farm-edit-button"]');
           await page.click('[data-testid="farm-edit-button"]');
 
-          await page.fill('input[name="description"]', "Updated farm description 2");
+          await page.fill(
+            'input[name="description"]',
+            "Updated farm description 2",
+          );
           await page.click('button[type="submit"]');
 
           // Verify update
-          await expect(page.locator("text=Updated farm description 2")).toBeVisible();
+          await expect(
+            page.locator("text=Updated farm description 2"),
+          ).toBeVisible();
         },
       },
     ]);
@@ -124,10 +134,14 @@ test.describe("Advanced Multi-User Scenarios", () => {
     const page2 = orchestrator.getPage(farmer2.id);
 
     await page1.reload();
-    await expect(page1.locator("text=Updated farm description 1")).toBeVisible();
+    await expect(
+      page1.locator("text=Updated farm description 1"),
+    ).toBeVisible();
 
     await page2.reload();
-    await expect(page2.locator("text=Updated farm description 2")).toBeVisible();
+    await expect(
+      page2.locator("text=Updated farm description 2"),
+    ).toBeVisible();
   });
 
   // ==========================================
@@ -160,7 +174,9 @@ test.describe("Advanced Multi-User Scenarios", () => {
           await page.waitForTimeout(1000);
 
           // Check if successful
-          const cartCount = await page.locator('[data-testid="cart-count"]').textContent();
+          const cartCount = await page
+            .locator('[data-testid="cart-count"]')
+            .textContent();
           return { success: parseInt(cartCount || "0") > 0 };
         },
       },
@@ -177,7 +193,9 @@ test.describe("Advanced Multi-User Scenarios", () => {
           await page.waitForTimeout(1000);
 
           // Check if successful
-          const cartCount = await page.locator('[data-testid="cart-count"]').textContent();
+          const cartCount = await page
+            .locator('[data-testid="cart-count"]')
+            .textContent();
           return { success: parseInt(cartCount || "0") > 0 };
         },
       },
@@ -280,7 +298,9 @@ test.describe("Advanced Multi-User Scenarios", () => {
           await page.waitForTimeout(1000);
 
           // Approve products as they appear
-          const approveButtons = await page.locator('[data-testid="approve-button"]').all();
+          const approveButtons = await page
+            .locator('[data-testid="approve-button"]')
+            .all();
 
           for (const button of approveButtons) {
             await button.click();
@@ -300,7 +320,9 @@ test.describe("Advanced Multi-User Scenarios", () => {
 
     await orchestrator.executeAsUser(customer.id, async (page: Page) => {
       // Add products from Farm 1
-      const farm1Products = testProducts.filter((p) => p.farmId === testFarms[0].id);
+      const farm1Products = testProducts.filter(
+        (p) => p.farmId === testFarms[0].id,
+      );
       for (const product of farm1Products.slice(0, 2)) {
         await page.goto(`/products/${product.id}`);
         await page.fill('[data-testid="quantity-input"]', "2");
@@ -309,7 +331,9 @@ test.describe("Advanced Multi-User Scenarios", () => {
       }
 
       // Add products from Farm 2
-      const farm2Products = testProducts.filter((p) => p.farmId === testFarms[1].id);
+      const farm2Products = testProducts.filter(
+        (p) => p.farmId === testFarms[1].id,
+      );
       for (const product of farm2Products.slice(0, 2)) {
         await page.goto(`/products/${product.id}`);
         await page.fill('[data-testid="quantity-input"]', "1");
@@ -321,7 +345,9 @@ test.describe("Advanced Multi-User Scenarios", () => {
       await page.goto("/cart");
 
       // Verify cart has items from multiple farms
-      await expect(page.locator('[data-testid="cart-farm-section"]')).toHaveCount(2);
+      await expect(
+        page.locator('[data-testid="cart-farm-section"]'),
+      ).toHaveCount(2);
 
       // Verify correct quantities
       const cartItems = await page.locator('[data-testid="cart-item"]').all();
@@ -347,7 +373,9 @@ test.describe("Advanced Multi-User Scenarios", () => {
           await page.goto(`/dashboard/products/${farm1Product?.id}/edit`);
           await page.fill('input[name="price"]', "25.99");
           await page.click('button[type="submit"]');
-          await expect(page.locator("text=Product updated successfully")).toBeVisible();
+          await expect(
+            page.locator("text=Product updated successfully"),
+          ).toBeVisible();
         },
       },
       {
@@ -356,7 +384,9 @@ test.describe("Advanced Multi-User Scenarios", () => {
           await page.goto(`/dashboard/products/${farm2Product?.id}/edit`);
           await page.fill('input[name="price"]', "30.99");
           await page.click('button[type="submit"]');
-          await expect(page.locator("text=Product updated successfully")).toBeVisible();
+          await expect(
+            page.locator("text=Product updated successfully"),
+          ).toBeVisible();
         },
       },
     ]);
@@ -389,7 +419,9 @@ test.describe("Advanced Multi-User Scenarios", () => {
     // Switch to farmer session
     await sessionManager.switchSession(page, farmer.id);
     await page.goto("/dashboard");
-    await expect(page.locator('[data-testid="farmer-dashboard"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="farmer-dashboard"]'),
+    ).toBeVisible();
 
     // Switch back to customer session
     await sessionManager.switchSession(page, customer.id);
@@ -417,7 +449,9 @@ test.describe("Advanced Multi-User Scenarios", () => {
             timeout: 15000,
           });
 
-          await expect(page.locator('[data-testid="notification-badge"]')).toBeVisible();
+          await expect(
+            page.locator('[data-testid="notification-badge"]'),
+          ).toBeVisible();
         },
       },
       {
@@ -437,7 +471,9 @@ test.describe("Advanced Multi-User Scenarios", () => {
           await page.fill('input[name="shippingAddress"]', "456 Test Ave");
           await page.click('[data-testid="place-order-button"]');
 
-          await expect(page.locator("text=Order placed successfully")).toBeVisible();
+          await expect(
+            page.locator("text=Order placed successfully"),
+          ).toBeVisible();
         },
       },
     ]);
@@ -459,7 +495,9 @@ test.describe("Advanced Multi-User Scenarios", () => {
           await page.fill('[data-testid="search-input"]', "Product 1");
           await page.waitForTimeout(500);
 
-          const resultCount = await page.locator('[data-testid="product-card"]').count();
+          const resultCount = await page
+            .locator('[data-testid="product-card"]')
+            .count();
           return { search: "Product 1", count: resultCount };
         },
       },
@@ -470,7 +508,9 @@ test.describe("Advanced Multi-User Scenarios", () => {
           await page.fill('[data-testid="search-input"]', "Product 2");
           await page.waitForTimeout(500);
 
-          const resultCount = await page.locator('[data-testid="product-card"]').count();
+          const resultCount = await page
+            .locator('[data-testid="product-card"]')
+            .count();
           return { search: "Product 2", count: resultCount };
         },
       },
@@ -498,7 +538,9 @@ test.describe("Advanced Multi-User Scenarios", () => {
       await page.selectOption('select[name="category"]', "VEGETABLES");
       await page.click('button[type="submit"]');
 
-      await expect(page.locator("text=Product created successfully")).toBeVisible();
+      await expect(
+        page.locator("text=Product created successfully"),
+      ).toBeVisible();
       stateManager.setState("newProductId", page.url().split("/").pop());
     });
 
@@ -522,7 +564,9 @@ test.describe("Advanced Multi-User Scenarios", () => {
       await page.fill('input[name="shippingAddress"]', "789 Farm Road");
       await page.click('[data-testid="place-order-button"]');
 
-      await expect(page.locator("text=Order placed successfully")).toBeVisible();
+      await expect(
+        page.locator("text=Order placed successfully"),
+      ).toBeVisible();
       stateManager.setState("orderId", page.url().split("/").pop());
     });
 
@@ -535,7 +579,9 @@ test.describe("Advanced Multi-User Scenarios", () => {
       await page.selectOption('select[name="status"]', "SHIPPED");
       await page.click('[data-testid="confirm-update-button"]');
 
-      await expect(page.locator("text=Order updated successfully")).toBeVisible();
+      await expect(
+        page.locator("text=Order updated successfully"),
+      ).toBeVisible();
     });
 
     // Step 5: Customer receives and reviews order

@@ -114,7 +114,8 @@ describe("🛡️ SQL Injection (SQLi) Security Tests", () => {
             passed: false,
             severity: "CRITICAL",
             details: `Failed to protect: ${payload}`,
-            recommendation: "Implement prepared statements and input validation",
+            recommendation:
+              "Implement prepared statements and input validation",
           });
           throw error;
         }
@@ -255,7 +256,8 @@ describe("🛡️ Cross-Site Scripting (XSS) Security Tests", () => {
     it("should sanitize HTML in product names and descriptions", async () => {
       const maliciousProduct = {
         name: "<img src=x onerror=alert('XSS')>Tomatoes",
-        description: "<script>document.location='http://evil.com'</script>Fresh tomatoes",
+        description:
+          "<script>document.location='http://evil.com'</script>Fresh tomatoes",
         price: 5.99,
       };
 
@@ -405,7 +407,7 @@ describe("🛡️ Cross-Site Request Forgery (CSRF) Security Tests", () => {
         // Should have SameSite=Lax or SameSite=Strict
         expect(
           setCookieHeader.toLowerCase().includes("samesite=lax") ||
-            setCookieHeader.toLowerCase().includes("samesite=strict")
+            setCookieHeader.toLowerCase().includes("samesite=strict"),
         ).toBe(true);
       }
 
@@ -458,7 +460,8 @@ describe("🛡️ Authentication Bypass Security Tests", () => {
 
   describe("JWT Token Validation", () => {
     it("should reject expired tokens", async () => {
-      const expiredToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiZXhwIjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+      const expiredToken =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiZXhwIjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 
       const response = await fetch(`${API_BASE}/users/profile`, {
         method: "GET",
@@ -572,16 +575,19 @@ describe("🛡️ Authorization Flaws Security Tests", () => {
     });
 
     it("should prevent farmers from modifying other farmers' products", async () => {
-      const response = await fetch(`${API_BASE}/products/other-farmer-product-id`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer valid-farmer-token",
+      const response = await fetch(
+        `${API_BASE}/products/other-farmer-product-id`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer valid-farmer-token",
+          },
+          body: JSON.stringify({
+            price: 999.99,
+          }),
         },
-        body: JSON.stringify({
-          price: 999.99,
-        }),
-      });
+      );
 
       expect([403, 404]).toContain(response.status);
 
@@ -692,7 +698,7 @@ describe("🛡️ Rate Limiting Security Tests", () => {
               email: "test@example.com",
               password: "wrong-password",
             }),
-          })
+          }),
         );
       }
 
@@ -700,7 +706,9 @@ describe("🛡️ Rate Limiting Security Tests", () => {
       const statusCodes = responses.map((r) => r.status);
 
       // At least one should be rate limited (429)
-      const rateLimitedCount = statusCodes.filter((status) => status === 429).length;
+      const rateLimitedCount = statusCodes.filter(
+        (status) => status === 429,
+      ).length;
 
       expect(rateLimitedCount).toBeGreaterThan(0);
 
@@ -725,14 +733,17 @@ describe("🛡️ Rate Limiting Security Tests", () => {
       const rateLimitRemaining = response.headers.get("X-RateLimit-Remaining");
 
       // Headers should be present (or rate limiting should exist)
-      const hasRateLimitHeaders = rateLimitLimit !== null || rateLimitRemaining !== null;
+      const hasRateLimitHeaders =
+        rateLimitLimit !== null || rateLimitRemaining !== null;
 
       securityResults.push({
         testName: "Rate Limiting - Headers Present",
         category: "Rate Limiting",
         passed: hasRateLimitHeaders,
         severity: "MEDIUM",
-        details: hasRateLimitHeaders ? "Rate limit headers found" : "No rate limit headers",
+        details: hasRateLimitHeaders
+          ? "Rate limit headers found"
+          : "No rate limit headers",
       });
     });
   });
@@ -748,7 +759,7 @@ describe("🛡️ Rate Limiting Security Tests", () => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ query: `test${i}` }),
-          })
+          }),
         );
       }
 
@@ -862,7 +873,9 @@ describe("🛡️ Security Headers Tests", () => {
       category: "Security Headers",
       passed: permissionsPolicy !== null,
       severity: "LOW",
-      details: permissionsPolicy ? "Permissions-Policy present" : "No Permissions-Policy",
+      details: permissionsPolicy
+        ? "Permissions-Policy present"
+        : "No Permissions-Policy",
     });
   });
 });
@@ -908,13 +921,7 @@ describe("🛡️ Input Validation Security Tests", () => {
 
   describe("Password Validation", () => {
     it("should enforce password strength requirements", async () => {
-      const weakPasswords = [
-        "123",
-        "password",
-        "abc",
-        "12345678",
-        "qwerty",
-      ];
+      const weakPasswords = ["123", "password", "abc", "12345678", "qwerty"];
 
       for (const password of weakPasswords) {
         const response = await fetch(`${API_BASE}/auth/signup`, {
@@ -978,16 +985,24 @@ describe("🛡️ Input Validation Security Tests", () => {
 
 afterAll(() => {
   console.log("\n");
-  console.log("╔═══════════════════════════════════════════════════════════════════════╗");
-  console.log("║                   🔒 SECURITY TEST SUMMARY                            ║");
-  console.log("╚═══════════════════════════════════════════════════════════════════════╝");
+  console.log(
+    "╔═══════════════════════════════════════════════════════════════════════╗",
+  );
+  console.log(
+    "║                   🔒 SECURITY TEST SUMMARY                            ║",
+  );
+  console.log(
+    "╚═══════════════════════════════════════════════════════════════════════╝",
+  );
   console.log("\n");
 
   // Group results by category
   const categories = [...new Set(securityResults.map((r) => r.category))];
 
   categories.forEach((category) => {
-    const categoryResults = securityResults.filter((r) => r.category === category);
+    const categoryResults = securityResults.filter(
+      (r) => r.category === category,
+    );
     const passed = categoryResults.filter((r) => r.passed).length;
     const failed = categoryResults.filter((r) => !r.passed).length;
     const total = categoryResults.length;
@@ -1005,19 +1020,29 @@ afterAll(() => {
   const totalTests = securityResults.length;
   const successRate = ((totalPassed / totalTests) * 100).toFixed(1);
 
-  console.log("╔═══════════════════════════════════════════════════════════════════════╗");
-  console.log("║                       OVERALL SECURITY SCORE                          ║");
-  console.log("╠═══════════════════════════════════════════════════════════════════════╣");
+  console.log(
+    "╔═══════════════════════════════════════════════════════════════════════╗",
+  );
+  console.log(
+    "║                       OVERALL SECURITY SCORE                          ║",
+  );
+  console.log(
+    "╠═══════════════════════════════════════════════════════════════════════╣",
+  );
   console.log(`║  Total Tests:    ${totalTests.toString().padEnd(52)} ║`);
   console.log(`║  Passed:         ${totalPassed.toString().padEnd(52)} ║`);
   console.log(`║  Failed:         ${totalFailed.toString().padEnd(52)} ║`);
-  console.log(`║  Success Rate:   ${successRate}%${" ".repeat(50 - successRate.length)} ║`);
-  console.log("╚═══════════════════════════════════════════════════════════════════════╝");
+  console.log(
+    `║  Success Rate:   ${successRate}%${" ".repeat(50 - successRate.length)} ║`,
+  );
+  console.log(
+    "╚═══════════════════════════════════════════════════════════════════════╝",
+  );
   console.log("\n");
 
   // Critical failures
   const criticalFailures = securityResults.filter(
-    (r) => !r.passed && r.severity === "CRITICAL"
+    (r) => !r.passed && r.severity === "CRITICAL",
   );
 
   if (criticalFailures.length > 0) {
@@ -1025,7 +1050,8 @@ afterAll(() => {
     criticalFailures.forEach((failure) => {
       console.log(`   ❌ ${failure.testName}`);
       if (failure.details) console.log(`      Details: ${failure.details}`);
-      if (failure.recommendation) console.log(`      Fix: ${failure.recommendation}`);
+      if (failure.recommendation)
+        console.log(`      Fix: ${failure.recommendation}`);
     });
     console.log("\n");
   }

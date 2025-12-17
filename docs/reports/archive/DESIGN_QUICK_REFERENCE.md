@@ -1,4 +1,5 @@
 # 🎨 Design System Quick Reference
+
 ## Farmers Market Platform - Copy & Paste Guide
 
 **Version:** 3.0.0  
@@ -15,23 +16,28 @@ Copy and paste these patterns for instant consistency!
 ## 🎨 Colors
 
 ### Primary Actions
+
 ```jsx
-className="bg-agricultural-600 hover:bg-agricultural-700"
+className = "bg-agricultural-600 hover:bg-agricultural-700";
 ```
 
 ### Secondary Actions
+
 ```jsx
-className="bg-secondary-600 hover:bg-secondary-700"
+className = "bg-secondary-600 hover:bg-secondary-700";
 ```
 
 ### Outline Buttons
+
 ```jsx
-className="border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50"
+className =
+  "border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50";
 ```
 
 ### White Buttons (on dark backgrounds)
+
 ```jsx
-className="bg-white text-agricultural-700 hover:bg-gray-100"
+className = "bg-white text-agricultural-700 hover:bg-gray-100";
 ```
 
 ---
@@ -65,11 +71,18 @@ className="bg-white text-agricultural-700 hover:bg-gray-100"
 
       {/* CTA Buttons */}
       <div className="flex flex-wrap gap-4 justify-center">
-        <Button size="lg" className="bg-agricultural-600 hover:bg-agricultural-700">
+        <Button
+          size="lg"
+          className="bg-agricultural-600 hover:bg-agricultural-700"
+        >
           Primary Action
           <ArrowRight className="ml-2 h-5 w-5" />
         </Button>
-        <Button size="lg" variant="outline" className="border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50">
+        <Button
+          size="lg"
+          variant="outline"
+          className="border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50"
+        >
           Secondary Action
         </Button>
       </div>
@@ -98,12 +111,10 @@ className="bg-white text-agricultural-700 hover:bg-gray-100"
           <Icon className="h-16 w-16 text-white/60" />
         </div>
       )}
-      
+
       {/* Optional Badge */}
       <div className="absolute top-3 right-3">
-        <Badge className="bg-agricultural-600 text-white">
-          Featured
-        </Badge>
+        <Badge className="bg-agricultural-600 text-white">Featured</Badge>
       </div>
     </div>
   </CardHeader>
@@ -143,11 +154,18 @@ className="bg-white text-agricultural-700 hover:bg-gray-100"
         Supporting text that explains the value proposition
       </p>
       <div className="flex gap-4 justify-center flex-wrap">
-        <Button size="lg" className="bg-white text-agricultural-700 hover:bg-gray-100">
+        <Button
+          size="lg"
+          className="bg-white text-agricultural-700 hover:bg-gray-100"
+        >
           Primary Action
           <ArrowRight className="ml-2 h-5 w-5" />
         </Button>
-        <Button size="lg" variant="outline" className="bg-transparent border-white text-white hover:bg-white/10">
+        <Button
+          size="lg"
+          variant="outline"
+          className="bg-transparent border-white text-white hover:bg-white/10"
+        >
           Secondary Action
         </Button>
       </div>
@@ -176,9 +194,7 @@ className="bg-white text-agricultural-700 hover:bg-gray-100"
           <p className="text-lg font-semibold text-gray-900 mb-2">
             Metric Title
           </p>
-          <p className="text-gray-600">
-            Description text
-          </p>
+          <p className="text-gray-600">Description text</p>
         </div>
         {/* Repeat for other stats */}
       </div>
@@ -192,6 +208,7 @@ className="bg-white text-agricultural-700 hover:bg-gray-100"
 ## 🔘 Buttons
 
 ### Primary Button
+
 ```jsx
 <Button className="bg-agricultural-600 hover:bg-agricultural-700">
   Click Me
@@ -199,20 +216,24 @@ className="bg-white text-agricultural-700 hover:bg-gray-100"
 ```
 
 ### Secondary Button
+
 ```jsx
-<Button className="bg-secondary-600 hover:bg-secondary-700">
-  Click Me
-</Button>
+<Button className="bg-secondary-600 hover:bg-secondary-700">Click Me</Button>
 ```
 
 ### Outline Button
+
 ```jsx
-<Button variant="outline" className="border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50">
+<Button
+  variant="outline"
+  className="border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50"
+>
   Click Me
 </Button>
 ```
 
 ### White Button (on dark)
+
 ```jsx
 <Button className="bg-white text-agricultural-700 hover:bg-gray-100">
   Click Me
@@ -220,6 +241,7 @@ className="bg-white text-agricultural-700 hover:bg-gray-100"
 ```
 
 ### Button with Icon
+
 ```jsx
 <Button className="bg-agricultural-600 hover:bg-agricultural-700">
   <ShoppingCart className="h-5 w-5 mr-2" />
@@ -232,6 +254,7 @@ className="bg-white text-agricultural-700 hover:bg-gray-100"
 ## 📝 Typography
 
 ### H1 - Page Title
+
 ```jsx
 <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6">
   Main Heading
@@ -239,6 +262,7 @@ className="bg-white text-agricultural-700 hover:bg-gray-100"
 ```
 
 ### H2 - Section Title
+
 ```jsx
 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
   Section Title
@@ -246,31 +270,27 @@ className="bg-white text-agricultural-700 hover:bg-gray-100"
 ```
 
 ### H3 - Card Title
+
 ```jsx
-<h3 className="text-xl font-bold text-gray-900 mb-2">
-  Card Title
-</h3>
+<h3 className="text-xl font-bold text-gray-900 mb-2">Card Title</h3>
 ```
 
 ### Large Body
+
 ```jsx
-<p className="text-xl md:text-2xl text-gray-600 mb-8">
-  Large description text
-</p>
+<p className="text-xl md:text-2xl text-gray-600 mb-8">Large description text</p>
 ```
 
 ### Regular Body
+
 ```jsx
-<p className="text-gray-600 mb-4">
-  Regular body text
-</p>
+<p className="text-gray-600 mb-4">Regular body text</p>
 ```
 
 ### Small Text
+
 ```jsx
-<p className="text-sm text-gray-600">
-  Small text for metadata
-</p>
+<p className="text-sm text-gray-600">Small text for metadata</p>
 ```
 
 ---
@@ -278,15 +298,23 @@ className="bg-white text-agricultural-700 hover:bg-gray-100"
 ## 🔗 Links
 
 ### Inline Link
+
 ```jsx
-<Link href="/path" className="text-agricultural-600 hover:text-agricultural-700 hover:underline">
+<Link
+  href="/path"
+  className="text-agricultural-600 hover:text-agricultural-700 hover:underline"
+>
   Link Text
 </Link>
 ```
 
 ### Link with Icon
+
 ```jsx
-<Link href="/path" className="text-agricultural-600 hover:text-agricultural-700 font-semibold flex items-center gap-2">
+<Link
+  href="/path"
+  className="text-agricultural-600 hover:text-agricultural-700 font-semibold flex items-center gap-2"
+>
   View All
   <ArrowRight className="h-5 w-5" />
 </Link>
@@ -297,6 +325,7 @@ className="bg-white text-agricultural-700 hover:bg-gray-100"
 ## 🏷️ Badges
 
 ### Primary Badge
+
 ```jsx
 <Badge className="bg-agricultural-600 text-white hover:bg-agricultural-700">
   <Leaf className="h-3 w-3 mr-1" />
@@ -305,6 +334,7 @@ className="bg-white text-agricultural-700 hover:bg-gray-100"
 ```
 
 ### Light Badge
+
 ```jsx
 <span className="inline-flex items-center gap-2 bg-agricultural-100 text-agricultural-800 px-4 py-2 rounded-full text-sm font-medium">
   <Icon className="h-4 w-4" />
@@ -317,6 +347,7 @@ className="bg-white text-agricultural-700 hover:bg-gray-100"
 ## 📐 Grid Layouts
 
 ### Product/Farm Grid
+
 ```jsx
 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
   {/* Cards */}
@@ -324,6 +355,7 @@ className="bg-white text-agricultural-700 hover:bg-gray-100"
 ```
 
 ### Category Grid
+
 ```jsx
 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
   {/* Categories */}
@@ -331,10 +363,9 @@ className="bg-white text-agricultural-700 hover:bg-gray-100"
 ```
 
 ### Stats Grid
+
 ```jsx
-<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-  {/* Stats */}
-</div>
+<div className="grid grid-cols-1 md:grid-cols-3 gap-8">{/* Stats */}</div>
 ```
 
 ---
@@ -352,7 +383,7 @@ export default function YourPage() {
   return (
     <>
       <Header />
-      
+
       <main className="min-h-screen bg-white">
         {/* Hero Section */}
         <section className="relative bg-gradient-to-br from-agricultural-50 via-white to-green-50 py-20 overflow-hidden">
@@ -367,20 +398,27 @@ export default function YourPage() {
                 <Leaf className="h-5 w-5" />
                 Badge Text
               </span>
-              
+
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6">
                 Your Page Title
               </h1>
-              
+
               <p className="text-xl md:text-2xl text-gray-600 mb-8">
                 Your page description
               </p>
-              
+
               <div className="flex flex-wrap gap-4 justify-center">
-                <Button size="lg" className="bg-agricultural-600 hover:bg-agricultural-700">
+                <Button
+                  size="lg"
+                  className="bg-agricultural-600 hover:bg-agricultural-700"
+                >
                   Primary Action
                 </Button>
-                <Button size="lg" variant="outline" className="border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-agricultural-300 text-agricultural-700 hover:bg-agricultural-50"
+                >
                   Secondary Action
                 </Button>
               </div>
@@ -391,9 +429,7 @@ export default function YourPage() {
         {/* Main Content Section */}
         <section className="py-16">
           <div className="container mx-auto px-4">
-            <div className="max-w-7xl mx-auto">
-              {/* Your content here */}
-            </div>
+            <div className="max-w-7xl mx-auto">{/* Your content here */}</div>
           </div>
         </section>
 
@@ -404,10 +440,11 @@ export default function YourPage() {
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
                 Call to Action
               </h2>
-              <p className="text-xl text-white/90 mb-8">
-                Supporting text
-              </p>
-              <Button size="lg" className="bg-white text-agricultural-700 hover:bg-gray-100">
+              <p className="text-xl text-white/90 mb-8">Supporting text</p>
+              <Button
+                size="lg"
+                className="bg-white text-agricultural-700 hover:bg-gray-100"
+              >
                 Get Started
               </Button>
             </div>
@@ -425,19 +462,19 @@ export default function YourPage() {
 
 ## 🎨 Color Reference
 
-| Color | Class | Hex |
-|-------|-------|-----|
-| Agricultural 50 | `bg-agricultural-50` | `#fdf8f3` |
-| Agricultural 100 | `bg-agricultural-100` | `#f9ede3` |
-| Agricultural 200 | `bg-agricultural-200` | `#f1d4bf` |
-| Agricultural 300 | `bg-agricultural-300` | `#e8b896` |
-| Agricultural 400 | `bg-agricultural-400` | `#d89561` |
+| Color            | Class                 | Hex          |
+| ---------------- | --------------------- | ------------ |
+| Agricultural 50  | `bg-agricultural-50`  | `#fdf8f3`    |
+| Agricultural 100 | `bg-agricultural-100` | `#f9ede3`    |
+| Agricultural 200 | `bg-agricultural-200` | `#f1d4bf`    |
+| Agricultural 300 | `bg-agricultural-300` | `#e8b896`    |
+| Agricultural 400 | `bg-agricultural-400` | `#d89561`    |
 | Agricultural 600 | `bg-agricultural-600` | `#a85d32` ⭐ |
-| Agricultural 700 | `bg-agricultural-700` | `#8b4a2b` |
-| Secondary 600 | `bg-secondary-600` | `#e0511b` |
-| Secondary 700 | `bg-secondary-700` | `#b93d18` |
-| Gray 600 | `text-gray-600` | `#4b5563` |
-| Gray 900 | `text-gray-900` | `#111827` |
+| Agricultural 700 | `bg-agricultural-700` | `#8b4a2b`    |
+| Secondary 600    | `bg-secondary-600`    | `#e0511b`    |
+| Secondary 700    | `bg-secondary-700`    | `#b93d18`    |
+| Gray 600         | `text-gray-600`       | `#4b5563`    |
+| Gray 900         | `text-gray-900`       | `#111827`    |
 
 ---
 

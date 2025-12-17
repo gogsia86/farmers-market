@@ -59,11 +59,11 @@ Configuration:
 ## 🎯 Import Aliases
 
 ```typescript
-import Button from '@/components/base/Button';
-import apiClient from '@/services/api';
-import { useAuthStore } from '@/stores/authStore';
-import { useCartStore } from '@/stores/cartStore';
-import { formatCurrency } from '@/utils/formatting';
+import Button from "@/components/base/Button";
+import apiClient from "@/services/api";
+import { useAuthStore } from "@/stores/authStore";
+import { useCartStore } from "@/stores/cartStore";
+import { formatCurrency } from "@/utils/formatting";
 ```
 
 ---
@@ -101,8 +101,8 @@ const isFarmer = useIsFarmer();
 // Add item
 const { addItem } = useCartStore();
 await addItem({
-  productId: 'prod_123',
-  productName: 'Organic Apples',
+  productId: "prod_123",
+  productName: "Organic Apples",
   price: 4.99,
   quantity: 2,
   // ... other fields
@@ -132,7 +132,7 @@ await syncWithServer();
 ## 🌐 API Calls
 
 ```typescript
-import apiClient from '@/services/api';
+import apiClient from "@/services/api";
 
 // Products
 const products = await apiClient.products.getAll({ page: 1, limit: 20 });
@@ -167,25 +167,25 @@ await apiClient.user.uploadAvatar(imageUri);
 ## 🧭 Navigation
 
 ```typescript
-import { useNavigation } from '@react-navigation/native';
-import type { RootStackParamList } from '@/navigation/RootNavigator';
+import { useNavigation } from "@react-navigation/native";
+import type { RootStackParamList } from "@/navigation/RootNavigator";
 
 const navigation = useNavigation();
 
 // Navigate to screen
-navigation.navigate('ProductDetail', { productId: '123' });
-navigation.navigate('Cart');
+navigation.navigate("ProductDetail", { productId: "123" });
+navigation.navigate("Cart");
 
 // Go back
 navigation.goBack();
 
 // Replace current screen
-navigation.replace('Login');
+navigation.replace("Login");
 
 // Reset navigation stack
 navigation.reset({
   index: 0,
-  routes: [{ name: 'Home' }],
+  routes: [{ name: "Home" }],
 });
 ```
 
@@ -194,36 +194,37 @@ navigation.reset({
 ## 🎨 Styling
 
 ```typescript
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   text: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#374151',
+    fontWeight: "600",
+    color: "#374151",
   },
   button: {
-    backgroundColor: '#10b981',
+    backgroundColor: "#10b981",
     padding: 16,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
 });
 ```
 
 ### Theme Colors
+
 ```typescript
-primary: '#10b981'      // Green
-secondary: '#f59e0b'    // Amber
-accent: '#3b82f6'       // Blue
-success: '#22c55e'      // Green
-error: '#ef4444'        // Red
-warning: '#f59e0b'      // Amber
+primary: "#10b981"; // Green
+secondary: "#f59e0b"; // Amber
+accent: "#3b82f6"; // Blue
+success: "#22c55e"; // Green
+error: "#ef4444"; // Red
+warning: "#f59e0b"; // Amber
 ```
 
 ---
@@ -231,7 +232,7 @@ warning: '#f59e0b'      // Amber
 ## 📸 Image Handling
 
 ```typescript
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from "expo-image-picker";
 
 // Pick from gallery
 const result = await ImagePicker.launchImageLibraryAsync({
@@ -243,7 +244,7 @@ const result = await ImagePicker.launchImageLibraryAsync({
 
 if (!result.canceled) {
   const imageUri = result.assets[0].uri;
-  await apiClient.upload.image(imageUri, 'products');
+  await apiClient.upload.image(imageUri, "products");
 }
 
 // Take photo
@@ -259,7 +260,7 @@ const photo = await ImagePicker.launchCameraAsync({
 ## 📍 Location
 
 ```typescript
-import * as Location from 'expo-location';
+import * as Location from "expo-location";
 
 // Request permissions
 const { status } = await Location.requestForegroundPermissionsAsync();
@@ -277,7 +278,7 @@ const farms = await apiClient.farms.getNearby(latitude, longitude, 50);
 ## 🔔 Notifications
 
 ```typescript
-import * as Notifications from 'expo-notifications';
+import * as Notifications from "expo-notifications";
 
 // Request permissions
 const { status } = await Notifications.requestPermissionsAsync();
@@ -306,11 +307,11 @@ import { render, fireEvent, waitFor } from '@testing-library/react-native';
 describe('LoginScreen', () => {
   it('handles login successfully', async () => {
     const { getByPlaceholderText, getByText } = render(<LoginScreen />);
-    
+
     fireEvent.changeText(getByPlaceholderText('Email'), 'test@example.com');
     fireEvent.changeText(getByPlaceholderText('Password'), 'password123');
     fireEvent.press(getByText('Login'));
-    
+
     await waitFor(() => {
       expect(mockLogin).toHaveBeenCalledWith('test@example.com', 'password123');
     });
@@ -323,30 +324,35 @@ describe('LoginScreen', () => {
 ## 🐛 Common Issues
 
 ### Metro Bundler Won't Start
+
 ```bash
 npm start -- --reset-cache
 rm -rf node_modules/.cache
 ```
 
 ### Module Not Found
+
 ```bash
 rm -rf node_modules
 npm install
 ```
 
 ### TypeScript Errors
+
 ```bash
 npm run type-check
 # Fix errors in editor
 ```
 
 ### Expo Go Won't Connect
+
 ```bash
 npm start -- --tunnel
 # OR ensure devices on same network
 ```
 
 ### Build Fails
+
 ```bash
 npm run prebuild:clean
 npm run prebuild
@@ -357,6 +363,7 @@ npm run prebuild
 ## 💡 Best Practices
 
 ### ✅ Do's
+
 - Use TypeScript strict mode
 - Write tests for business logic
 - Handle loading and error states
@@ -367,6 +374,7 @@ npm run prebuild
 - Use proper error boundaries
 
 ### ❌ Don'ts
+
 - Don't hardcode API URLs
 - Don't ignore TypeScript errors
 - Don't skip testing on devices

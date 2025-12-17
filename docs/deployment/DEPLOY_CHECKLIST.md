@@ -325,9 +325,9 @@ npm run build:optimized  # Or use build:docker
 
 ## ✅ FINAL APPROVAL
 
-**Approved By**: ********\_********  
-**Date**: ********\_********  
-**Deployment Window**: ********\_********
+**Approved By**: **\*\*\*\***\_**\*\*\*\***  
+**Date**: **\*\*\*\***\_**\*\*\*\***  
+**Deployment Window**: **\*\*\*\***\_**\*\*\*\***
 
 ---
 

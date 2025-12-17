@@ -115,11 +115,13 @@ This guide will help you set up the Android SDK and Android Studio so you can ru
 1. **Close and reopen PowerShell** (to load new environment variables)
 
 2. **Navigate to mobile app directory**:
+
    ```powershell
    cd "M:\Repo\Farmers Market Platform web and app\mobile-app"
    ```
 
 3. **Start Expo**:
+
    ```powershell
    npx expo start
    ```
@@ -131,31 +133,41 @@ This guide will help you set up the Android SDK and Android Studio so you can ru
 ## Troubleshooting
 
 ### "ANDROID_HOME not found" Error
-**Solution**: 
+
+**Solution**:
+
 - Make sure you **closed and reopened PowerShell** after setting environment variables
 - Verify with: `echo $env:ANDROID_HOME`
 - If empty, double-check Step 3
 
 ### Emulator is Very Slow
+
 **Solutions**:
+
 - Enable **Hardware Acceleration (HAXM for Intel or WHPX for AMD)**
 - Go to Windows Features → Enable "Windows Hypervisor Platform"
 - Allocate more RAM to AVD (edit AVD settings in Device Manager)
 - Use a lower resolution device (e.g., Pixel 4 instead of Pixel 6 Pro)
 
 ### "adb: command not found"
+
 **Solution**:
+
 - Verify PATH includes `%ANDROID_HOME%\platform-tools`
 - Restart PowerShell
 - Run: `adb --version` to verify
 
 ### Emulator Doesn't Connect to Metro Bundler
+
 **Solution**:
+
 - Run in Expo: `npx expo start --localhost`
 - Or configure ADB reverse: `adb reverse tcp:8081 tcp:8081`
 
 ### HAXM Installation Fails
+
 **Solution**:
+
 - If using AMD CPU, you can't use HAXM - use Windows Hypervisor Platform instead
 - Enable virtualization in BIOS
 - Disable Hyper-V if HAXM installation fails:
@@ -165,11 +177,14 @@ This guide will help you set up the Android SDK and Android Studio so you can ru
   Then restart computer
 
 ### "License Not Accepted" Errors
+
 **Solution**:
+
 ```powershell
 cd $env:ANDROID_HOME\tools\bin
 ./sdkmanager --licenses
 ```
+
 Accept all licenses by typing `y`
 
 ## Alternative: Use Physical Device (Easier!)

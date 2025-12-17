@@ -329,7 +329,7 @@ export function withCompression(
 
       // Skip compression for small responses
       if (bodySize < finalConfig.threshold) {
-        return new Response(body, {
+        return new NextResponse(body, {
           status: response.status,
           headers: {
             ...Object.fromEntries(response.headers.entries()),
@@ -374,7 +374,7 @@ export function withCompression(
       };
 
       // Return compressed response
-      return new Response(compressedBuffer, {
+      return new NextResponse(compressedBuffer.toString("utf-8"), {
         status: response.status,
         headers,
       });
@@ -433,7 +433,7 @@ export async function createCompressedResponse(
 
     compressionTracker.recordCompression(stats);
 
-    return new NextResponse(compressedBuffer, {
+    return new NextResponse(compressedBuffer.toString("utf-8"), {
       status: 200,
       headers: {
         "Content-Type": "application/json",

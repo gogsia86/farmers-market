@@ -22,6 +22,7 @@
 **Difficulty**: ⭐ Easy
 
 #### Windows Users:
+
 ```powershell
 # 1. Run automated setup
 .\setup-production.ps1
@@ -33,6 +34,7 @@
 ```
 
 #### Linux/Mac Users:
+
 ```bash
 # 1. Make scripts executable
 chmod +x setup-production.sh start-production.sh
@@ -103,6 +105,7 @@ docker compose up -d
 **Difficulty**: ⭐ Easy
 
 #### Vercel:
+
 ```bash
 npm install -g vercel
 vercel login
@@ -110,6 +113,7 @@ vercel --prod
 ```
 
 #### Railway:
+
 ```bash
 npm install -g @railway/cli
 railway login
@@ -197,13 +201,13 @@ curl http://localhost:3001/api/health/redis
 
 Once running, access these URLs:
 
-| Service | URL |
-|---------|-----|
-| **Homepage** | http://localhost:3001 |
-| **Admin Dashboard** | http://localhost:3001/admin |
-| **API Health Check** | http://localhost:3001/api/health |
-| **Farms Marketplace** | http://localhost:3001/farms |
-| **Products Catalog** | http://localhost:3001/products |
+| Service               | URL                              |
+| --------------------- | -------------------------------- |
+| **Homepage**          | http://localhost:3001            |
+| **Admin Dashboard**   | http://localhost:3001/admin      |
+| **API Health Check**  | http://localhost:3001/api/health |
+| **Farms Marketplace** | http://localhost:3001/farms      |
+| **Products Catalog**  | http://localhost:3001/products   |
 
 ---
 
@@ -268,6 +272,7 @@ npm run start:omen
 ### Issue 1: Server Won't Start
 
 **Check port availability:**
+
 ```bash
 # Linux/Mac
 lsof -i :3001
@@ -277,6 +282,7 @@ netstat -ano | findstr :3001
 ```
 
 **Solution:**
+
 ```bash
 # Use different port
 PORT=3002 npm run start
@@ -285,11 +291,13 @@ PORT=3002 npm run start
 ### Issue 2: Database Connection Failed
 
 **Test connection:**
+
 ```bash
 npx prisma db push
 ```
 
 **Common fixes:**
+
 - Verify `DATABASE_URL` format in `.env.production`
 - Ensure database is running and accessible
 - Check firewall rules
@@ -298,6 +306,7 @@ npx prisma db push
 ### Issue 3: Authentication Errors
 
 **Verify secret:**
+
 ```bash
 # Check length (must be >= 32 characters)
 echo $NEXTAUTH_SECRET | wc -c
@@ -307,6 +316,7 @@ openssl rand -base64 32
 ```
 
 **Update in `.env.production`:**
+
 ```env
 NEXTAUTH_SECRET=<new-secret-here>
 ```
@@ -314,6 +324,7 @@ NEXTAUTH_SECRET=<new-secret-here>
 ### Issue 4: Build Errors
 
 **Clean and rebuild:**
+
 ```bash
 npm run clean:all
 rm -rf node_modules
@@ -324,6 +335,7 @@ npm run build
 ### Issue 5: Port Already in Use
 
 **Kill existing process:**
+
 ```bash
 # Linux/Mac
 lsof -ti :3001 | xargs kill -9
@@ -336,30 +348,30 @@ Get-Process -Id (Get-NetTCPConnection -LocalPort 3001).OwningProcess | Stop-Proc
 
 ## 📚 DETAILED DOCUMENTATION
 
-| Document | Purpose |
-|----------|---------|
-| **QUICK_START_PRODUCTION.md** | Fast 5-minute guide |
-| **PRODUCTION_SETUP_GUIDE.md** | Complete step-by-step setup (900+ lines) |
-| **PRODUCTION_COMMANDS_REFERENCE.md** | All available commands (900+ lines) |
-| **DEPLOYMENT_CHECKLIST.md** | Pre-deployment checklist |
-| **PRODUCTION_BUILD_REPORT.md** | Build analysis and results |
-| **ALL_ERRORS_FIXED_SUMMARY.md** | Error resolution history |
-| **.env.example** | Environment variables reference |
+| Document                             | Purpose                                  |
+| ------------------------------------ | ---------------------------------------- |
+| **QUICK_START_PRODUCTION.md**        | Fast 5-minute guide                      |
+| **PRODUCTION_SETUP_GUIDE.md**        | Complete step-by-step setup (900+ lines) |
+| **PRODUCTION_COMMANDS_REFERENCE.md** | All available commands (900+ lines)      |
+| **DEPLOYMENT_CHECKLIST.md**          | Pre-deployment checklist                 |
+| **PRODUCTION_BUILD_REPORT.md**       | Build analysis and results               |
+| **ALL_ERRORS_FIXED_SUMMARY.md**      | Error resolution history                 |
+| **.env.example**                     | Environment variables reference          |
 
 ---
 
 ## 🎯 RECOMMENDED PRODUCTION STACK
 
-| Component | Recommended Service | Alternative |
-|-----------|-------------------|-------------|
-| **Hosting** | Vercel, Railway | AWS, Azure, GCP |
-| **Database** | Supabase, Neon | Railway, PlanetScale |
-| **Caching** | Upstash Redis | Redis Labs |
-| **Email** | Resend | SendGrid, Mailgun |
-| **Payments** | Stripe | PayPal |
-| **Monitoring** | Sentry | Azure Insights |
-| **CDN** | Cloudinary | AWS S3 |
-| **SSL** | Let's Encrypt | Cloudflare |
+| Component      | Recommended Service | Alternative          |
+| -------------- | ------------------- | -------------------- |
+| **Hosting**    | Vercel, Railway     | AWS, Azure, GCP      |
+| **Database**   | Supabase, Neon      | Railway, PlanetScale |
+| **Caching**    | Upstash Redis       | Redis Labs           |
+| **Email**      | Resend              | SendGrid, Mailgun    |
+| **Payments**   | Stripe              | PayPal               |
+| **Monitoring** | Sentry              | Azure Insights       |
+| **CDN**        | Cloudinary          | AWS S3               |
+| **SSL**        | Let's Encrypt       | Cloudflare           |
 
 ---
 
@@ -385,19 +397,20 @@ Before deploying to production, ensure:
 
 ## 🚀 DEPLOYMENT SPEED COMPARISON
 
-| Method | Setup Time | Difficulty | Best For | Auto-Restart |
-|--------|-----------|-----------|----------|--------------|
-| **Automated Script** | 5 min | ⭐ Easy | Quick start, first deployment | ❌ |
-| **Manual Setup** | 10 min | ⭐⭐ Medium | Learning, custom config | ❌ |
-| **Docker** | 3 min | ⭐⭐ Medium | Containers, isolation | ✅ |
-| **Vercel/Railway** | 2 min | ⭐ Easy | Serverless, PaaS | ✅ |
-| **PM2** | 5 min | ⭐⭐ Medium | VPS, dedicated server | ✅ |
+| Method               | Setup Time | Difficulty  | Best For                      | Auto-Restart |
+| -------------------- | ---------- | ----------- | ----------------------------- | ------------ |
+| **Automated Script** | 5 min      | ⭐ Easy     | Quick start, first deployment | ❌           |
+| **Manual Setup**     | 10 min     | ⭐⭐ Medium | Learning, custom config       | ❌           |
+| **Docker**           | 3 min      | ⭐⭐ Medium | Containers, isolation         | ✅           |
+| **Vercel/Railway**   | 2 min      | ⭐ Easy     | Serverless, PaaS              | ✅           |
+| **PM2**              | 5 min      | ⭐⭐ Medium | VPS, dedicated server         | ✅           |
 
 ---
 
 ## 📖 COMMON COMMANDS QUICK REFERENCE
 
 ### Setup & Configuration
+
 ```bash
 ./setup-production.sh          # Automated setup (Linux/Mac)
 .\setup-production.ps1         # Automated setup (Windows)
@@ -405,6 +418,7 @@ cp .env.example .env.production  # Manual env setup
 ```
 
 ### Start & Stop
+
 ```bash
 npm run start                  # Start production server
 ./start-production.sh          # Start with script (Linux/Mac)
@@ -414,6 +428,7 @@ pm2 stop farmers-market        # Stop PM2 process
 ```
 
 ### Build & Deploy
+
 ```bash
 npm run build                  # Production build
 npm run build:omen             # HP OMEN optimized build
@@ -422,6 +437,7 @@ vercel --prod                  # Vercel deployment
 ```
 
 ### Database
+
 ```bash
 npx prisma generate            # Generate Prisma Client
 npx prisma migrate deploy      # Run migrations
@@ -430,6 +446,7 @@ npm run db:seed:basic          # Seed initial data
 ```
 
 ### Monitoring
+
 ```bash
 curl http://localhost:3001/api/health  # Health check
 pm2 logs farmers-market        # View PM2 logs
@@ -438,6 +455,7 @@ docker compose logs -f         # Docker logs
 ```
 
 ### Testing
+
 ```bash
 npm test                       # Run all tests
 npm run test:coverage          # Coverage report
@@ -464,16 +482,19 @@ npm run test:e2e               # End-to-end tests
 ## 🎓 LEARNING PATH
 
 ### For Beginners:
+
 1. Start with **Automated Setup** (Path 1)
 2. Read **QUICK_START_PRODUCTION.md**
 3. Deploy to **Vercel** for easiest experience
 
 ### For Intermediate:
+
 1. Use **Manual Setup** (Path 2)
 2. Read **PRODUCTION_SETUP_GUIDE.md**
 3. Deploy with **PM2** on VPS
 
 ### For Advanced:
+
 1. Use **Docker** (Path 3)
 2. Read **PRODUCTION_COMMANDS_REFERENCE.md**
 3. Deploy to **AWS/Azure/GCP**
@@ -483,34 +504,41 @@ npm run test:e2e               # End-to-end tests
 ## 🌐 DEPLOYMENT PLATFORMS
 
 ### Vercel (Easiest)
+
 ```bash
 npm install -g vercel
 vercel login
 vercel --prod
 ```
+
 - ✅ Zero configuration
 - ✅ Automatic HTTPS
 - ✅ Global CDN
 - ✅ Serverless functions
 
 ### Railway
+
 - Connect GitHub repository
 - Add environment variables
 - Deploy automatically on push
 
 ### Docker (Self-Hosted)
+
 ```bash
 docker compose up -d
 ```
+
 - ✅ Complete control
 - ✅ Isolated environment
 - ✅ Easy scaling
 
 ### Traditional VPS
+
 ```bash
 npm run build
 pm2 start npm -- run start
 ```
+
 - ✅ Full control
 - ✅ Cost-effective
 - ✅ Custom configuration

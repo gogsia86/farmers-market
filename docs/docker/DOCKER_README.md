@@ -7,6 +7,7 @@
 ## 🎯 What This Is
 
 Complete Docker containerization for the Farmers Market Platform, allowing you to:
+
 - ✅ Run the entire application stack with a single command
 - ✅ Develop locally with hot reload
 - ✅ Deploy to production with optimized builds
@@ -62,6 +63,7 @@ open https://localhost:443
 ## 🎯 Common Commands
 
 ### Start & Stop
+
 ```bash
 npm run docker:up-dev              # Start development
 npm run docker:down-dev            # Stop development
@@ -69,6 +71,7 @@ npm run docker:logs-dev            # View logs
 ```
 
 ### Database
+
 ```bash
 npm run docker:migrate             # Run migrations
 npm run docker:seed                # Seed database
@@ -77,6 +80,7 @@ npm run docker:db-shell            # Database shell
 ```
 
 ### Monitoring
+
 ```bash
 npm run docker:health              # Health check
 npm run docker:logs                # View logs
@@ -89,6 +93,7 @@ npm run docker:stats               # Resource usage
 ## 🌐 Access URLs
 
 ### Development
+
 - **Application**: http://localhost:3000
 - **pgAdmin**: http://localhost:5051 (dev@farmersmarket.local / dev_admin123)
 - **Mailhog**: http://localhost:8025
@@ -96,6 +101,7 @@ npm run docker:stats               # Resource usage
 - **Prisma Studio**: http://localhost:5555 (after `npm run docker:prisma-studio`)
 
 ### Production
+
 - **Application**: https://localhost:443
 - **pgAdmin**: http://localhost:5050
 
@@ -152,6 +158,7 @@ openssl rand -base64 32
 ## 🐳 Services Included
 
 ### Development
+
 - Next.js Application (with Turbopack hot reload)
 - PostgreSQL 16 Database
 - Redis 7 Cache
@@ -160,6 +167,7 @@ openssl rand -base64 32
 - Redis Commander (Cache Admin)
 
 ### Production
+
 - Next.js Application (optimized build)
 - PostgreSQL 16 Database
 - Redis 7 Cache
@@ -171,6 +179,7 @@ openssl rand -base64 32
 ## 🔍 Troubleshooting
 
 ### Container Won't Start?
+
 ```bash
 npm run docker:logs              # Check logs
 npm run docker:down              # Stop everything
@@ -178,12 +187,14 @@ npm run docker:up-build-dev      # Rebuild and start
 ```
 
 ### Database Connection Error?
+
 ```bash
 npm run docker:health-db         # Check database
 npm run docker:logs-db           # View database logs
 ```
 
 ### Port Already in Use?
+
 ```bash
 # Windows
 netstat -ano | findstr :3000
@@ -194,6 +205,7 @@ lsof -ti :3000 | xargs kill -9
 ```
 
 ### Out of Disk Space?
+
 ```bash
 docker system df                 # Check usage
 npm run docker:clean             # Clean up
@@ -228,6 +240,7 @@ docker scan farmers-market-app:latest
 ## 📊 What's Included
 
 ### Features ✨
+
 - 🔥 Hot reload with Turbopack (dev)
 - 📧 Email testing with Mailhog (dev)
 - 🗄️ Database admin with pgAdmin
@@ -236,6 +249,7 @@ docker scan farmers-market-app:latest
 - 🧪 Isolated test environments
 
 ### Infrastructure 🏗️
+
 - 🐳 Multi-stage Docker builds
 - 🔗 Docker Compose orchestration
 - 📦 Persistent volumes
@@ -245,6 +259,7 @@ docker scan farmers-market-app:latest
 - 🛠️ Easy maintenance commands
 
 ### Production Ready 🚀
+
 - ⚡ Optimized builds
 - 🔒 SSL/TLS support
 - 🛡️ Security headers
@@ -258,6 +273,7 @@ docker scan farmers-market-app:latest
 ## 💡 Pro Tips
 
 ### Daily Development
+
 ```bash
 # Morning - Start work
 npm run docker:up-dev
@@ -270,6 +286,7 @@ npm run docker:down-dev
 ```
 
 ### Quick Database Access
+
 ```bash
 # Method 1: Prisma Studio
 npm run docker:prisma-studio
@@ -282,6 +299,7 @@ open http://localhost:5051
 ```
 
 ### Debugging
+
 ```bash
 # Execute shell in container
 npm run docker:exec
@@ -299,6 +317,7 @@ npm run docker:health
 ## 🔄 Updates & Maintenance
 
 ### Update Application
+
 ```bash
 # 1. Pull latest code
 git pull origin main
@@ -312,6 +331,7 @@ npm run docker:migrate
 ```
 
 ### Backup Database
+
 ```bash
 # Create backup
 npm run docker:backup-db
@@ -327,16 +347,19 @@ cat backup.sql | docker-compose exec -T postgres psql -U dev_user farmers_market
 ## 🎓 Learn More
 
 ### Full Guides
+
 - **Quick Start**: `DOCKER_QUICK_START.md` - Daily usage guide
 - **Complete Guide**: `DOCKER_DEPLOYMENT_COMPLETE.md` - Everything you need
 - **Setup Summary**: `DOCKER_SETUP_SUMMARY.md` - Overview of what's included
 
 ### Configuration
+
 - **Environment**: `.env.docker.example` - Template with all variables
 - **Nginx**: `docker/nginx/nginx.conf` - Reverse proxy config
 - **Database**: `docker/postgres/init.sql` - Database setup
 
 ### Scripts
+
 - **Entrypoint**: `docker/scripts/docker-entrypoint.sh` - Startup logic
 - **Health Check**: `docker/scripts/healthcheck.sh` - Health monitoring
 - **Database Wait**: `docker/scripts/wait-for-db.sh` - Readiness check
@@ -346,6 +369,7 @@ cat backup.sql | docker-compose exec -T postgres psql -U dev_user farmers_market
 ## 🆘 Getting Help
 
 ### Quick Diagnostics
+
 ```bash
 # Run comprehensive diagnostics
 npm run diagnose:api
@@ -358,12 +382,13 @@ npm run docker:logs > debug.log
 ```
 
 ### Common Issues
-| Issue | Command to Fix |
-|-------|----------------|
-| Port in use | Change PORT in .env |
-| Database error | `npm run docker:health-db` |
-| Build fails | `npm run docker:clean` |
-| Out of memory | Increase Docker memory limit |
+
+| Issue          | Command to Fix               |
+| -------------- | ---------------------------- |
+| Port in use    | Change PORT in .env          |
+| Database error | `npm run docker:health-db`   |
+| Build fails    | `npm run docker:clean`       |
+| Out of memory  | Increase Docker memory limit |
 
 ---
 
@@ -383,6 +408,7 @@ Your Docker deployment is working when:
 ## 🎉 You're Ready!
 
 ### Next Steps
+
 1. ✅ Start development environment
 2. ✅ Register a test user
 3. ✅ Create a test farm
@@ -390,6 +416,7 @@ Your Docker deployment is working when:
 5. ✅ Test the checkout flow
 
 ### Need Help?
+
 - Check logs: `npm run docker:logs`
 - Test health: `npm run docker:health`
 - Run diagnostics: `npm run diagnose:api`
@@ -430,6 +457,6 @@ npm run docker:clean           # Clean up
 
 ---
 
-*Built with divine agricultural consciousness for sustainable e-commerce* 🌾✨
+_Built with divine agricultural consciousness for sustainable e-commerce_ 🌾✨
 
 For detailed information, see the comprehensive guides in the documentation folder.

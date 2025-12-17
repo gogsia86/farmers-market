@@ -89,6 +89,7 @@ mobile-app/
 ### **Phase 1: Foundation & Setup (Weeks 1-2)** 🔴 CRITICAL
 
 #### Week 1: Project Initialization
+
 - [ ] Set up Expo project with TypeScript
 - [ ] Configure ESLint, Prettier, Husky
 - [ ] Set up React Navigation structure
@@ -98,6 +99,7 @@ mobile-app/
 - [ ] Set up development environment (iOS simulator, Android emulator)
 
 #### Week 2: Authentication & API Integration
+
 - [ ] Implement authentication flow (login, register, forgot password)
 - [ ] Set up Expo SecureStore for token management
 - [ ] Create API client layer (Axios/Fetch wrapper)
@@ -107,12 +109,14 @@ mobile-app/
 - [ ] Configure environment variables
 
 **Deliverables:**
+
 - Working authentication flow
 - API integration framework
 - Base UI components
 - Navigation structure
 
 **Testing:**
+
 - Unit tests for auth logic (50+ tests)
 - Integration tests for API client
 - E2E tests for login/register flows
@@ -122,6 +126,7 @@ mobile-app/
 ### **Phase 2: Core Shopping Experience (Weeks 3-5)** 🟡 HIGH PRIORITY
 
 #### Week 3: Product Discovery
+
 - [ ] Products listing screen with infinite scroll
 - [ ] Product detail screen with image gallery
 - [ ] Product search with filters
@@ -131,6 +136,7 @@ mobile-app/
 - [ ] Product image zoom and carousel
 
 #### Week 4: Shopping Cart & Checkout
+
 - [ ] Shopping cart screen
 - [ ] Cart persistence (local + server sync)
 - [ ] Quantity adjustment UI
@@ -140,6 +146,7 @@ mobile-app/
 - [ ] Address autocomplete with Google Places
 
 #### Week 5: Payment Integration
+
 - [ ] Stripe payment sheet integration
 - [ ] Apple Pay / Google Pay setup
 - [ ] Saved payment methods
@@ -149,11 +156,13 @@ mobile-app/
 - [ ] Offline order queuing
 
 **Deliverables:**
+
 - Complete shopping flow from browse to checkout
 - Working payment integration
 - Cart sync across devices
 
 **Testing:**
+
 - E2E checkout flow tests (30+ scenarios)
 - Payment integration tests (sandbox)
 - Cart synchronization tests
@@ -163,6 +172,7 @@ mobile-app/
 ### **Phase 3: User Profiles & Orders (Weeks 6-7)** 🟡 MEDIUM-HIGH
 
 #### Week 6: Customer Features
+
 - [ ] User profile screen and editing
 - [ ] Order history with status tracking
 - [ ] Order details with timeline
@@ -173,6 +183,7 @@ mobile-app/
 - [ ] Profile image upload
 
 #### Week 7: Farmer Features (Part 1)
+
 - [ ] Farm dashboard (mobile-optimized)
 - [ ] Product management (create, edit, delete)
 - [ ] Inventory tracking
@@ -183,11 +194,13 @@ mobile-app/
 - [ ] Barcode scanning for inventory
 
 **Deliverables:**
+
 - Complete customer profile management
 - Order tracking and history
 - Basic farmer dashboard
 
 **Testing:**
+
 - Profile management tests
 - Order flow tests
 - Image upload tests
@@ -197,6 +210,7 @@ mobile-app/
 ### **Phase 4: Advanced Features (Weeks 8-10)** 🟢 MEDIUM
 
 #### Week 8: Maps & Location
+
 - [ ] Interactive map of local farms
 - [ ] Farm locator with GPS
 - [ ] Delivery tracking (real-time)
@@ -206,6 +220,7 @@ mobile-app/
 - [ ] Location-based farm recommendations
 
 #### Week 9: Push Notifications & Real-time
+
 - [ ] Push notification setup (Expo Notifications)
 - [ ] Order status notifications
 - [ ] New product alerts
@@ -216,6 +231,7 @@ mobile-app/
 - [ ] Real-time order updates (WebSocket)
 
 #### Week 10: Offline & Performance
+
 - [ ] Offline product browsing (cached data)
 - [ ] Offline cart management
 - [ ] Background sync when online
@@ -226,11 +242,13 @@ mobile-app/
 - [ ] App size optimization
 
 **Deliverables:**
+
 - Location-based features
 - Push notifications
 - Offline capability
 
 **Testing:**
+
 - Location services tests
 - Notification delivery tests
 - Offline sync tests
@@ -240,6 +258,7 @@ mobile-app/
 ### **Phase 5: Polish & Enhancement (Weeks 11-12)** 🟢 MEDIUM
 
 #### Week 11: UI/UX Polish
+
 - [ ] Animations and micro-interactions
 - [ ] Loading states and skeletons
 - [ ] Error boundaries and error screens
@@ -250,6 +269,7 @@ mobile-app/
 - [ ] Accessibility improvements (screen reader)
 
 #### Week 12: Advanced Farmer Tools
+
 - [ ] Inventory bulk updates
 - [ ] CSV import/export for products
 - [ ] Advanced analytics dashboard
@@ -260,11 +280,13 @@ mobile-app/
 - [ ] QR code generation for products
 
 **Deliverables:**
+
 - Polished UI with animations
 - Advanced farmer tools
 - Dark mode support
 
 **Testing:**
+
 - Accessibility tests (screen reader)
 - Animation performance tests
 - Farmer workflow tests
@@ -274,6 +296,7 @@ mobile-app/
 ### **Phase 6: Testing & Launch Prep (Weeks 13-14)** 🎯 FINAL
 
 #### Week 13: Comprehensive Testing
+
 - [ ] Full regression testing suite
 - [ ] Performance testing (Detox)
 - [ ] Security audit (API, data storage)
@@ -284,6 +307,7 @@ mobile-app/
 - [ ] Beta testing program (TestFlight/Google Play Beta)
 
 #### Week 14: App Store Preparation
+
 - [ ] App Store listing (screenshots, description)
 - [ ] Google Play listing
 - [ ] Privacy policy update (mobile addendum)
@@ -294,11 +318,13 @@ mobile-app/
 - [ ] Support documentation
 
 **Deliverables:**
+
 - 95%+ test coverage
 - App Store ready builds
 - Beta testing complete
 
 **Testing:**
+
 - 500+ automated tests
 - 50+ manual test scenarios
 - 20+ device compatibility checks
@@ -308,6 +334,7 @@ mobile-app/
 ### **Phase 7: Launch & Monitoring (Weeks 15-16)** 🚀 LAUNCH
 
 #### Week 15: Soft Launch
+
 - [ ] Internal team testing
 - [ ] Soft launch to 10% of users
 - [ ] Monitor crash reports (Sentry)
@@ -318,6 +345,7 @@ mobile-app/
 - [ ] Monitor API performance
 
 #### Week 16: Full Launch
+
 - [ ] Gradual rollout to 100% (staged)
 - [ ] Monitor server load
 - [ ] Customer support readiness
@@ -328,6 +356,7 @@ mobile-app/
 - [ ] Post-launch retrospective
 
 **Deliverables:**
+
 - App live on App Store and Google Play
 - Monitoring dashboards operational
 - Support team trained
@@ -338,43 +367,43 @@ mobile-app/
 
 ### Priority 1: Must-Have Features (MVP)
 
-| Feature | Web Platform | Mobile Status | Implementation |
-|---------|--------------|---------------|----------------|
-| Authentication | ✅ Complete | Phase 1 | NextAuth + JWT |
-| Product Browsing | ✅ Complete | Phase 2 | Infinite scroll |
-| Product Search | ✅ Complete | Phase 2 | Debounced API |
-| Shopping Cart | ✅ Complete | Phase 2 | Zustand + API sync |
-| Checkout Flow | ✅ Complete | Phase 2 | Multi-step form |
-| Stripe Payment | ✅ Complete | Phase 2 | Native payment sheet |
-| Order History | ✅ Complete | Phase 3 | Order list + detail |
-| User Profile | ✅ Complete | Phase 3 | Edit profile |
-| Farm Profiles | ✅ Complete | Phase 2 | View only MVP |
-| Product Management | ✅ Complete | Phase 3 | Farmer dashboard |
+| Feature            | Web Platform | Mobile Status | Implementation       |
+| ------------------ | ------------ | ------------- | -------------------- |
+| Authentication     | ✅ Complete  | Phase 1       | NextAuth + JWT       |
+| Product Browsing   | ✅ Complete  | Phase 2       | Infinite scroll      |
+| Product Search     | ✅ Complete  | Phase 2       | Debounced API        |
+| Shopping Cart      | ✅ Complete  | Phase 2       | Zustand + API sync   |
+| Checkout Flow      | ✅ Complete  | Phase 2       | Multi-step form      |
+| Stripe Payment     | ✅ Complete  | Phase 2       | Native payment sheet |
+| Order History      | ✅ Complete  | Phase 3       | Order list + detail  |
+| User Profile       | ✅ Complete  | Phase 3       | Edit profile         |
+| Farm Profiles      | ✅ Complete  | Phase 2       | View only MVP        |
+| Product Management | ✅ Complete  | Phase 3       | Farmer dashboard     |
 
 ### Priority 2: Enhanced Features
 
-| Feature | Web Platform | Mobile Status | Implementation |
-|---------|--------------|---------------|----------------|
-| Push Notifications | ❌ Web only | Phase 4 | Expo Notifications |
-| Camera Integration | ❌ Web only | Phase 3 | Expo Camera |
-| GPS/Maps | ❌ Limited | Phase 4 | React Native Maps |
-| Offline Mode | ❌ None | Phase 4 | Local DB + Sync |
-| Barcode Scanning | ❌ None | Phase 3 | Expo BarCodeScanner |
-| Real-time Tracking | ✅ WebSocket | Phase 4 | WebSocket client |
-| Reviews/Ratings | ✅ Complete | Phase 3 | Star rating UI |
-| Analytics | ✅ Complete | Phase 5 | Charts (Victory Native) |
+| Feature            | Web Platform | Mobile Status | Implementation          |
+| ------------------ | ------------ | ------------- | ----------------------- |
+| Push Notifications | ❌ Web only  | Phase 4       | Expo Notifications      |
+| Camera Integration | ❌ Web only  | Phase 3       | Expo Camera             |
+| GPS/Maps           | ❌ Limited   | Phase 4       | React Native Maps       |
+| Offline Mode       | ❌ None      | Phase 4       | Local DB + Sync         |
+| Barcode Scanning   | ❌ None      | Phase 3       | Expo BarCodeScanner     |
+| Real-time Tracking | ✅ WebSocket | Phase 4       | WebSocket client        |
+| Reviews/Ratings    | ✅ Complete  | Phase 3       | Star rating UI          |
+| Analytics          | ✅ Complete  | Phase 5       | Charts (Victory Native) |
 
 ### Priority 3: Future Enhancements
 
-| Feature | Timeline | Effort | Impact |
-|---------|----------|--------|--------|
-| AR Product Preview | Q2 2026 | High | High |
-| Voice Search | Q2 2026 | Medium | Medium |
-| Social Sharing | Q1 2026 | Low | Medium |
-| Multi-language | Q1 2026 | Medium | High |
-| Subscription Products | Q2 2026 | High | High |
-| Farmer Marketplace Chat | Q1 2026 | Medium | High |
-| Video Product Tours | Q2 2026 | Medium | Medium |
+| Feature                 | Timeline | Effort | Impact |
+| ----------------------- | -------- | ------ | ------ |
+| AR Product Preview      | Q2 2026  | High   | High   |
+| Voice Search            | Q2 2026  | Medium | Medium |
+| Social Sharing          | Q1 2026  | Low    | Medium |
+| Multi-language          | Q1 2026  | Medium | High   |
+| Subscription Products   | Q2 2026  | High   | High   |
+| Farmer Marketplace Chat | Q1 2026  | Medium | High   |
+| Video Product Tours     | Q2 2026  | Medium | Medium |
 
 ---
 
@@ -430,64 +459,64 @@ mobile-app/
 ```typescript
 // Colors (NativeWind compatible)
 const colors = {
-  primary: '#10b981',      // green-500 (farmers market green)
-  secondary: '#f59e0b',    // amber-500
-  accent: '#3b82f6',       // blue-500
-  success: '#22c55e',      // green-500
-  error: '#ef4444',        // red-500
-  warning: '#f59e0b',      // amber-500
-  info: '#3b82f6',         // blue-500
-  
+  primary: "#10b981", // green-500 (farmers market green)
+  secondary: "#f59e0b", // amber-500
+  accent: "#3b82f6", // blue-500
+  success: "#22c55e", // green-500
+  error: "#ef4444", // red-500
+  warning: "#f59e0b", // amber-500
+  info: "#3b82f6", // blue-500
+
   // Neutral
   gray: {
-    50: '#f9fafb',
-    100: '#f3f4f6',
-    200: '#e5e7eb',
-    300: '#d1d5db',
-    400: '#9ca3af',
-    500: '#6b7280',
-    600: '#4b5563',
-    700: '#374151',
-    800: '#1f2937',
-    900: '#111827',
+    50: "#f9fafb",
+    100: "#f3f4f6",
+    200: "#e5e7eb",
+    300: "#d1d5db",
+    400: "#9ca3af",
+    500: "#6b7280",
+    600: "#4b5563",
+    700: "#374151",
+    800: "#1f2937",
+    900: "#111827",
   },
-  
+
   // Backgrounds
-  background: '#ffffff',
-  surface: '#f9fafb',
-  
+  background: "#ffffff",
+  surface: "#f9fafb",
+
   // Dark mode
   dark: {
-    background: '#111827',
-    surface: '#1f2937',
-  }
+    background: "#111827",
+    surface: "#1f2937",
+  },
 };
 
 // Typography
 const typography = {
   fontFamily: {
-    regular: 'Inter-Regular',
-    medium: 'Inter-Medium',
-    semibold: 'Inter-SemiBold',
-    bold: 'Inter-Bold',
+    regular: "Inter-Regular",
+    medium: "Inter-Medium",
+    semibold: "Inter-SemiBold",
+    bold: "Inter-Bold",
   },
-  
+
   fontSize: {
     xs: 12,
     sm: 14,
     base: 16,
     lg: 18,
     xl: 20,
-    '2xl': 24,
-    '3xl': 30,
-    '4xl': 36,
+    "2xl": 24,
+    "3xl": 30,
+    "4xl": 36,
   },
-  
+
   lineHeight: {
     tight: 1.25,
     normal: 1.5,
     relaxed: 1.75,
-  }
+  },
 };
 
 // Spacing (matches Tailwind)
@@ -513,28 +542,28 @@ const borderRadius = {
   md: 8,
   lg: 12,
   xl: 16,
-  '2xl': 24,
+  "2xl": 24,
   full: 9999,
 };
 
 // Shadows
 const shadows = {
   sm: {
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 1,
   },
   md: {
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
   lg: {
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8,
@@ -743,7 +772,7 @@ on:
   push:
     branches: [main, develop]
     paths:
-      - 'mobile-app/**'
+      - "mobile-app/**"
   pull_request:
     branches: [main]
 
@@ -935,34 +964,36 @@ TOTAL MARKETING: $9,500
 
 ### High-Risk Items
 
-| Risk | Impact | Probability | Mitigation |
-|------|--------|-------------|------------|
-| API Changes Breaking Mobile | High | Medium | Version API, backward compatibility |
-| App Store Rejection | High | Low | Follow guidelines strictly, pre-review |
-| Performance Issues | High | Medium | Performance testing, profiling early |
-| Security Breach | Critical | Low | Security audit, penetration testing |
-| Stripe Integration Issues | High | Medium | Thorough testing in sandbox |
+| Risk                        | Impact   | Probability | Mitigation                             |
+| --------------------------- | -------- | ----------- | -------------------------------------- |
+| API Changes Breaking Mobile | High     | Medium      | Version API, backward compatibility    |
+| App Store Rejection         | High     | Low         | Follow guidelines strictly, pre-review |
+| Performance Issues          | High     | Medium      | Performance testing, profiling early   |
+| Security Breach             | Critical | Low         | Security audit, penetration testing    |
+| Stripe Integration Issues   | High     | Medium      | Thorough testing in sandbox            |
 
 ### Medium-Risk Items
 
-| Risk | Impact | Probability | Mitigation |
-|------|--------|-------------|------------|
-| Timeline Slippage | Medium | Medium | Buffer time, agile sprints |
-| Resource Availability | Medium | Low | Cross-training, documentation |
-| Third-party Library Issues | Medium | Medium | Evaluate alternatives, vendor lock-in |
-| Device Compatibility | Medium | High | Test on 20+ devices, use polyfills |
+| Risk                       | Impact | Probability | Mitigation                            |
+| -------------------------- | ------ | ----------- | ------------------------------------- |
+| Timeline Slippage          | Medium | Medium      | Buffer time, agile sprints            |
+| Resource Availability      | Medium | Low         | Cross-training, documentation         |
+| Third-party Library Issues | Medium | Medium      | Evaluate alternatives, vendor lock-in |
+| Device Compatibility       | Medium | High        | Test on 20+ devices, use polyfills    |
 
 ---
 
 ## 📈 Post-Launch Roadmap (Q1-Q2 2026)
 
 ### Month 1-2: Stabilization
+
 - Bug fixes based on user feedback
 - Performance optimization
 - A/B testing onboarding flow
 - Feature parity improvements
 
 ### Month 3-4: Enhancement
+
 - AR product preview
 - Voice search
 - Advanced filters
@@ -970,6 +1001,7 @@ TOTAL MARKETING: $9,500
 - Multi-language (Spanish, French)
 
 ### Month 5-6: Growth
+
 - Referral program
 - Loyalty rewards
 - Subscription products
@@ -1010,11 +1042,13 @@ TOTAL MARKETING: $9,500
 ## 📞 Communication & Reporting
 
 ### Daily Standups (15 min)
+
 - What was accomplished yesterday
 - What's planned for today
 - Any blockers
 
 ### Weekly Progress Report
+
 - Features completed
 - Test coverage metrics
 - Performance benchmarks
@@ -1022,12 +1056,14 @@ TOTAL MARKETING: $9,500
 - Next week goals
 
 ### Bi-weekly Sprint Review
+
 - Demo completed features
 - Review metrics
 - Gather stakeholder feedback
 - Adjust priorities
 
 ### Monthly Executive Summary
+
 - Progress vs. timeline
 - Budget vs. actual
 - Risk assessment
@@ -1040,6 +1076,7 @@ TOTAL MARKETING: $9,500
 ### Immediate Actions (This Week)
 
 1. **Set up Development Environment**
+
    ```bash
    npm install -g expo-cli eas-cli
    expo init farmers-market-mobile --template expo-template-blank-typescript
@@ -1070,6 +1107,7 @@ TOTAL MARKETING: $9,500
 ## 📚 Resources & Documentation
 
 ### Essential Reading
+
 - [React Native Documentation](https://reactnative.dev/)
 - [Expo Documentation](https://docs.expo.dev/)
 - [React Navigation](https://reactnavigation.org/)
@@ -1078,11 +1116,13 @@ TOTAL MARKETING: $9,500
 - [Material Design Guidelines](https://material.io/design)
 
 ### Code Repositories
+
 - Web Platform: `/Farmers Market Platform web and app/src`
 - Mobile App: `/Farmers Market Platform web and app/mobile-app`
 - Shared Types: Can be symlinked or published as internal package
 
 ### Support Channels
+
 - Tech Lead: Architecture decisions
 - Backend Team: API questions
 - Design Team: UI/UX questions

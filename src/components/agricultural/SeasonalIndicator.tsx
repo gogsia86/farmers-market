@@ -2,16 +2,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import {
-  Leaf,
-  Sun,
-  CloudRain,
-  Snowflake,
-  Sprout,
-  Wheat,
-  Wind,
-  Thermometer
-} from "lucide-react";
+import { Leaf, Sun, Snowflake, Sprout, Thermometer } from "lucide-react";
 
 // ============================================================================
 // TYPES & INTERFACES - Divine Agricultural Type System
@@ -66,7 +57,7 @@ const SEASON_CONFIG: Record<Season, SeasonConfig> = {
     description: "Season of renewal and planting",
     activities: ["Plant", "Prepare Soil", "Prune", "Start Seeds"],
     temperatureRange: "10-20°C",
-    emoji: "🌱"
+    emoji: "🌱",
   },
   SUMMER: {
     name: "Summer",
@@ -78,7 +69,7 @@ const SEASON_CONFIG: Record<Season, SeasonConfig> = {
     description: "Season of growth and abundance",
     activities: ["Water", "Weed", "Monitor", "Harvest Early Crops"],
     temperatureRange: "20-35°C",
-    emoji: "☀️"
+    emoji: "☀️",
   },
   FALL: {
     name: "Fall",
@@ -90,7 +81,7 @@ const SEASON_CONFIG: Record<Season, SeasonConfig> = {
     description: "Season of harvest and preservation",
     activities: ["Harvest", "Preserve", "Compost", "Plant Cover Crops"],
     temperatureRange: "10-20°C",
-    emoji: "🍂"
+    emoji: "🍂",
   },
   WINTER: {
     name: "Winter",
@@ -102,8 +93,8 @@ const SEASON_CONFIG: Record<Season, SeasonConfig> = {
     description: "Season of rest and planning",
     activities: ["Rest", "Plan", "Repair", "Indoor Growing"],
     temperatureRange: "-5-10°C",
-    emoji: "❄️"
-  }
+    emoji: "❄️",
+  },
 };
 
 // ============================================================================
@@ -118,7 +109,7 @@ export function SeasonalIndicator({
   showActivities = true,
   className,
   animated = true,
-  onSeasonClick
+  onSeasonClick,
 }: SeasonalIndicatorProps) {
   const config = SEASON_CONFIG[season];
   const Icon = config.icon;
@@ -133,7 +124,7 @@ export function SeasonalIndicator({
           config.borderColor,
           animated && "transition-all duration-300 hover:shadow-md",
           onSeasonClick && "cursor-pointer",
-          className
+          className,
         )}
         onClick={() => onSeasonClick?.(season)}
         role={onSeasonClick ? "button" : undefined}
@@ -169,7 +160,7 @@ export function SeasonalIndicator({
           config.bgColor,
           config.borderColor,
           animated && "transition-all duration-300",
-          className
+          className,
         )}
         role="region"
         aria-label={`${config.name} season information`}
@@ -180,7 +171,7 @@ export function SeasonalIndicator({
             className={cn(
               "inline-flex items-center gap-3 px-4 py-2 rounded-lg bg-gradient-to-r",
               config.gradient,
-              "text-white shadow-md"
+              "text-white shadow-md",
             )}
           >
             <Icon className="h-6 w-6" aria-hidden="true" />
@@ -194,7 +185,10 @@ export function SeasonalIndicator({
         {/* Temperature info */}
         {showTemperature && (
           <div className="mb-4 flex items-center gap-2">
-            <Thermometer className={cn("h-5 w-5", config.color)} aria-hidden="true" />
+            <Thermometer
+              className={cn("h-5 w-5", config.color)}
+              aria-hidden="true"
+            />
             <div>
               <p className="text-sm font-medium text-gray-700">
                 {temperature !== undefined ? (
@@ -228,7 +222,7 @@ export function SeasonalIndicator({
                     "inline-flex items-center px-3 py-1 rounded-full text-xs font-medium",
                     "bg-white border",
                     config.borderColor,
-                    config.color
+                    config.color,
                   )}
                 >
                   {activity}
@@ -250,7 +244,7 @@ export function SeasonalIndicator({
         config.borderColor,
         animated && "transition-all duration-300 hover:shadow-lg",
         onSeasonClick && "cursor-pointer",
-        className
+        className,
       )}
       onClick={() => onSeasonClick?.(season)}
       role={onSeasonClick ? "button" : "region"}
@@ -269,7 +263,7 @@ export function SeasonalIndicator({
           className={cn(
             "flex-shrink-0 p-3 rounded-lg bg-gradient-to-br",
             config.gradient,
-            "text-white shadow-md"
+            "text-white shadow-md",
           )}
         >
           <Icon className="h-6 w-6" aria-hidden="true" />
@@ -300,7 +294,7 @@ export function SeasonalIndicator({
                     "inline-flex items-center px-2 py-0.5 rounded text-xs font-medium",
                     "bg-white border",
                     config.borderColor,
-                    config.color
+                    config.color,
                   )}
                 >
                   {activity}
@@ -342,7 +336,7 @@ export function getSeasonConfig(season: Season): SeasonConfig {
  */
 export function isSeasonalActivity(season: Season, activity: string): boolean {
   return SEASON_CONFIG[season].activities.some(
-    (a) => a.toLowerCase() === activity.toLowerCase()
+    (a) => a.toLowerCase() === activity.toLowerCase(),
   );
 }
 

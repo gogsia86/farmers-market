@@ -16,14 +16,14 @@ Add these scripts to the `scripts` section of `package.json`:
     // ============================================================================
     // 🤖 DAY 20: AI-Powered Visual Testing
     // ============================================================================
-    
+
     // AI Test Generation & Discovery
     "ai:visual:discover": "tsx tests/visual/ai-visual-test-generator.ts discover",
     "ai:visual:generate": "tsx tests/visual/ai-visual-test-generator.ts generate",
     "ai:visual:analyze": "tsx tests/visual/ai-visual-test-generator.ts analyze",
     "ai:visual:heal": "tsx tests/visual/ai-visual-test-generator.ts heal",
     "ai:visual:report": "tsx tests/visual/ai-visual-test-generator.ts report",
-    
+
     // Run AI-Generated Tests
     "test:visual:ai": "playwright test tests/visual/ai-generated --workers=6",
     "test:visual:ai:ui": "playwright test tests/visual/ai-generated --ui",
@@ -32,68 +32,68 @@ Add these scripts to the `scripts` section of `package.json`:
     "test:visual:ai:chromium": "playwright test tests/visual/ai-generated --project=chromium",
     "test:visual:ai:firefox": "playwright test tests/visual/ai-generated --project=firefox",
     "test:visual:ai:webkit": "playwright test tests/visual/ai-generated --project=webkit",
-    
+
     // Advanced Visual Comparison Algorithms
     "test:visual:advanced": "playwright test tests/visual --grep @advanced --workers=6",
     "test:visual:ssim": "playwright test tests/visual --grep @ssim --workers=6",
     "test:visual:perceptual": "playwright test tests/visual --grep @perceptual --workers=6",
     "test:visual:deltaE": "playwright test tests/visual --grep @deltaE --workers=6",
     "test:visual:multi-algo": "playwright test tests/visual --grep @multi-algorithm --workers=6",
-    
+
     // Self-Healing Operations
     "visual:heal:all": "tsx tests/visual/ai-visual-test-generator.ts heal --all",
     "visual:heal:critical": "tsx tests/visual/ai-visual-test-generator.ts heal --critical",
     "visual:heal:dry-run": "tsx tests/visual/ai-visual-test-generator.ts heal --dry-run",
     "visual:heal:report": "tsx tests/visual/ai-visual-test-generator.ts heal --report",
-    
+
     // AI Analysis & Insights
     "visual:analyze:failures": "tsx tests/visual/ai-visual-test-generator.ts analyze --failures",
     "visual:analyze:diff": "tsx tests/visual/ai-visual-test-generator.ts analyze --diff",
     "visual:analyze:accessibility": "tsx tests/visual/ai-visual-test-generator.ts analyze --a11y",
     "visual:insights": "tsx tests/visual/ai-visual-test-generator.ts insights",
-    
+
     // Component Discovery
     "visual:discover:homepage": "tsx tests/visual/ai-visual-test-generator.ts discover /",
     "visual:discover:farms": "tsx tests/visual/ai-visual-test-generator.ts discover /farms",
     "visual:discover:products": "tsx tests/visual/ai-visual-test-generator.ts discover /products",
     "visual:discover:checkout": "tsx tests/visual/ai-visual-test-generator.ts discover /checkout",
-    
+
     // Test Generation by Page
     "visual:generate:homepage": "tsx tests/visual/ai-visual-test-generator.ts generate / --priority=critical",
     "visual:generate:farms": "tsx tests/visual/ai-visual-test-generator.ts generate /farms --season=SUMMER",
     "visual:generate:products": "tsx tests/visual/ai-visual-test-generator.ts generate /products --season=SUMMER",
     "visual:generate:checkout": "tsx tests/visual/ai-visual-test-generator.ts generate /checkout --priority=critical",
-    
+
     // Reports & Dashboards
     "visual:report:html": "playwright show-report playwright-report/visual",
     "visual:report:ai": "playwright show-report playwright-report/ai-visual",
     "visual:report:json": "cat playwright-report/visual/results.json",
     "visual:dashboard": "tsx tests/visual/dashboard.ts",
-    
+
     // Batch Operations
     "visual:batch:generate": "tsx scripts/batch-visual-generate.ts",
     "visual:batch:heal": "tsx scripts/batch-visual-heal.ts",
     "visual:batch:analyze": "tsx scripts/batch-visual-analyze.ts",
-    
+
     // CI/CD Optimized
     "test:visual:ci": "playwright test tests/visual --workers=12 --reporter=github",
     "test:visual:ci:critical": "playwright test tests/visual --grep @critical --workers=12",
     "test:visual:ci:ai": "playwright test tests/visual/ai-generated --workers=12 --reporter=github",
-    
+
     // Performance Optimized (HP OMEN)
     "test:visual:omen": "cross-env NODE_OPTIONS='--max-old-space-size=16384' playwright test tests/visual --workers=12",
     "test:visual:ai:omen": "cross-env NODE_OPTIONS='--max-old-space-size=16384' playwright test tests/visual/ai-generated --workers=12",
-    
+
     // Maintenance
     "visual:clean": "rimraf tests/visual/current tests/visual/diffs tests/visual/ai-screenshots",
     "visual:clean:ai": "rimraf tests/visual/ai-generated tests/visual/ai-screenshots",
     "visual:backup": "tsx scripts/backup-visual-baselines.ts",
     "visual:restore": "tsx scripts/restore-visual-baselines.ts",
-    
+
     // Cost Tracking
     "visual:cost:report": "tsx tests/visual/cost-tracker.ts report",
     "visual:cost:estimate": "tsx tests/visual/cost-tracker.ts estimate",
-    
+
     // Development Helpers
     "visual:dev:discover": "tsx tests/visual/ai-visual-test-generator.ts discover http://localhost:3001",
     "visual:dev:generate": "tsx tests/visual/ai-visual-test-generator.ts generate http://localhost:3001",
@@ -270,6 +270,7 @@ npm run test:visual:ai:omen
 ## 📊 Script Categories
 
 ### Essential (Use Daily)
+
 ```bash
 npm run ai:visual:generate <url>      # Generate tests
 npm run test:visual:ai                # Run AI tests
@@ -278,6 +279,7 @@ npm run visual:report:ai              # View report
 ```
 
 ### Development
+
 ```bash
 npm run visual:dev:discover           # Discover locally
 npm run visual:dev:generate           # Generate locally
@@ -285,6 +287,7 @@ npm run visual:dev:test               # Test locally
 ```
 
 ### Maintenance
+
 ```bash
 npm run visual:clean                  # Clean temp files
 npm run visual:backup                 # Backup baselines
@@ -292,6 +295,7 @@ npm run visual:restore                # Restore baselines
 ```
 
 ### CI/CD
+
 ```bash
 npm run test:visual:ci                # CI pipeline
 npm run test:visual:ci:critical       # Critical only
@@ -299,6 +303,7 @@ npm run test:visual:ci:ai             # AI tests
 ```
 
 ### Analysis
+
 ```bash
 npm run visual:analyze:failures       # Analyze failures
 npm run visual:insights               # Get insights
@@ -310,6 +315,7 @@ npm run visual:cost:report            # Cost tracking
 ## 🎯 Recommended Workflow
 
 ### Daily Development
+
 ```bash
 # 1. Make UI changes
 # 2. Generate new tests if needed
@@ -329,6 +335,7 @@ npm run visual:report:ai
 ```
 
 ### Feature Branch
+
 ```bash
 # Generate tests for new features
 npm run ai:visual:generate /new-feature
@@ -341,6 +348,7 @@ npm run test:visual:multi-algo
 ```
 
 ### Before PR Merge
+
 ```bash
 # Run critical tests
 npm run test:visual:ci:critical
@@ -353,6 +361,7 @@ npm run test:visual:update
 ```
 
 ### Production Deploy
+
 ```bash
 # Full visual regression suite
 npm run test:visual:omen
@@ -393,6 +402,7 @@ AI_CACHE_RESULTS=true                # Cache responses
 ## 📈 Integration with CI/CD
 
 ### GitHub Actions
+
 ```yaml
 # .github/workflows/visual-tests.yml
 name: Visual Regression Tests
@@ -406,23 +416,23 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '20'
-      
+          node-version: "20"
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
-      
+
       - name: Run AI visual tests
         run: npm run test:visual:ci:ai
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      
+
       - name: Auto-heal baselines
         if: failure()
         run: npm run visual:heal:dry-run
-      
+
       - name: Upload report
         if: always()
         uses: actions/upload-artifact@v3
@@ -432,6 +442,7 @@ jobs:
 ```
 
 ### GitLab CI
+
 ```yaml
 # .gitlab-ci.yml
 visual-tests:
@@ -455,6 +466,7 @@ visual-tests:
 ## 🎓 Advanced Usage
 
 ### Custom Test Generation
+
 ```bash
 # With full context
 npm run ai:visual:generate /products -- \
@@ -469,6 +481,7 @@ npm run visual:batch:generate -- \
 ```
 
 ### Selective Healing
+
 ```bash
 # Heal only high confidence (>90%)
 npm run ai:visual:heal -- --confidence 90
@@ -481,6 +494,7 @@ npm run ai:visual:heal -- --include homepage,farms
 ```
 
 ### Cost Management
+
 ```bash
 # Estimate cost before running
 npm run visual:cost:estimate -- --tests 100
@@ -497,6 +511,7 @@ AI_DAILY_BUDGET=10 npm run test:visual:ai
 ## 📞 Troubleshooting
 
 ### Scripts Not Found
+
 ```bash
 # Ensure tsx is installed
 npm install -D tsx
@@ -507,6 +522,7 @@ npx playwright install --with-deps
 ```
 
 ### Permission Errors
+
 ```bash
 # Make scripts executable (Unix/Mac)
 chmod +x tests/visual/*.ts
@@ -516,6 +532,7 @@ npx tsx tests/visual/ai-visual-test-generator.ts discover
 ```
 
 ### Memory Issues
+
 ```bash
 # Increase Node memory
 NODE_OPTIONS='--max-old-space-size=8192' npm run test:visual:ai

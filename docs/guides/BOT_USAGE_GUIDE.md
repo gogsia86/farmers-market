@@ -17,6 +17,7 @@ The Website Function Checker Bot is an automated monitoring tool that validates 
 ### Prerequisites
 
 1. **Server Running**: Make sure your development server is running
+
    ```bash
    npm run dev
    # Server starts on http://localhost:3001
@@ -30,11 +31,13 @@ The Website Function Checker Bot is an automated monitoring tool that validates 
 ### Run the Bot
 
 **Single Check** (runs once and exits):
+
 ```bash
 npm run bot:check:dev
 ```
 
 **Continuous Monitoring** (checks every minute):
+
 ```bash
 npm run bot:watch:dev
 ```
@@ -89,45 +92,53 @@ NEXT_PUBLIC_APP_URL=https://farmersmarket.com npm run bot:check
 The bot performs **8 critical health checks**:
 
 ### 1. ✅ Homepage Load
+
 - Verifies the homepage loads successfully
 - Checks page title and body visibility
 - Measures load time
 - **Pass criteria**: Page loads within 30 seconds
 
 ### 2. ✅ Database Connection
+
 - Tests database connectivity via health endpoint
 - Validates Prisma connection
 - **Pass criteria**: `/api/health/database` returns 200 OK
 
 ### 3. ✅ Auth Endpoints
+
 - Checks NextAuth configuration
 - Validates auth provider endpoints
 - **Pass criteria**: `/api/auth/providers` returns 200 OK
 
 ### 4. ✅ Marketplace API
+
 - Tests product listing API
 - Validates API response structure
 - **Pass criteria**: `/api/products` returns valid product data
 
 ### 5. ✅ Product Pages
+
 - Verifies marketplace page renders
 - Checks for product cards
 - **Pass criteria**: Marketplace page loads with products
 
 ### 6. ✅ Search Functionality
+
 - Tests search API endpoint
 - Validates search results
 - **Pass criteria**: `/api/search?q=tomato` returns results
 
 ### 7. ✅ Performance Check
+
 - Measures page load time
 - Evaluates performance metrics
-- **Pass criteria**: 
+- **Pass criteria**:
   - Excellent: < 3 seconds
   - Acceptable: 3-5 seconds
   - Slow: > 5 seconds
 
 ### 8. ✅ Static Assets
+
 - Counts loaded images, scripts, stylesheets
 - Validates asset loading
 - **Pass criteria**: Assets load successfully
@@ -207,10 +218,10 @@ Edit `scripts/website-checker-bot.ts` to customize:
 ```typescript
 const CONFIG = {
   baseUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-  timeout: 30000,        // 30 seconds
-  retries: 3,            // Retry failed checks 3 times
-  checkInterval: 60000,  // Check every 60 seconds in continuous mode
-  headless: true,        // Run browser in headless mode
+  timeout: 30000, // 30 seconds
+  retries: 3, // Retry failed checks 3 times
+  checkInterval: 60000, // Check every 60 seconds in continuous mode
+  headless: true, // Run browser in headless mode
 };
 ```
 
@@ -280,6 +291,7 @@ npm run bot:check || exit 1  # Exit with error if checks fail
 **Error**: "Failed to load homepage - Connection refused"
 
 **Solutions**:
+
 1. Make sure dev server is running: `npm run dev`
 2. Check if server is on port 3001: `lsof -i :3001` (Mac/Linux) or `netstat -ano | findstr :3001` (Windows)
 3. Verify URL: `NEXT_PUBLIC_APP_URL=http://localhost:3001 npm run bot:check`
@@ -289,6 +301,7 @@ npm run bot:check || exit 1  # Exit with error if checks fail
 **Error**: "Database connection failed"
 
 **Solutions**:
+
 1. Check database is running: `docker ps` (if using Docker)
 2. Verify DATABASE_URL in `.env.local`
 3. Run migrations: `npx prisma migrate dev`
@@ -299,6 +312,7 @@ npm run bot:check || exit 1  # Exit with error if checks fail
 **Warning**: "Load time: 6000ms - Too slow!"
 
 **Solutions**:
+
 1. Check server resources (CPU, RAM)
 2. Clear Next.js cache: `rm -rf .next`
 3. Rebuild: `npm run build`
@@ -310,6 +324,7 @@ npm run bot:check || exit 1  # Exit with error if checks fail
 **Error**: "Auth endpoints not responding"
 
 **Solutions**:
+
 1. Verify NEXTAUTH_SECRET is set in `.env.local`
 2. Check NEXTAUTH_URL matches your server URL
 3. Restart dev server
@@ -329,9 +344,10 @@ CHECK_INTERVAL=30000 npm run bot:watch:dev
 ### Run in Headed Mode (See Browser)
 
 Edit `scripts/website-checker-bot.ts`:
+
 ```typescript
 const CONFIG = {
-  headless: false,  // Set to false to see browser
+  headless: false, // Set to false to see browser
   // ...
 };
 ```
@@ -348,7 +364,7 @@ async checkCustomFeature(): Promise<CheckResult> {
   try {
     // Your custom check logic here
     const response = await fetch(`${CONFIG.baseUrl}/api/your-endpoint`);
-    
+
     if (response.ok) {
       return {
         name: "Custom Feature",
@@ -374,10 +390,10 @@ async checkCustomFeature(): Promise<CheckResult> {
 // Then add to runAllChecks():
 async runAllChecks(): Promise<HealthCheckReport> {
   // ...existing checks...
-  
+
   checks.push(await this.checkCustomFeature());
   logCheck(checks[checks.length - 1]);
-  
+
   // ...
 }
 ```
@@ -396,7 +412,7 @@ on:
   push:
     branches: [main, develop]
   schedule:
-    - cron: '*/30 * * * *'  # Every 30 minutes
+    - cron: "*/30 * * * *" # Every 30 minutes
 
 jobs:
   health-check:
@@ -405,20 +421,20 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '20'
-      
+          node-version: "20"
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Build
         run: npm run build
-      
+
       - name: Start server
         run: npm start &
-        
+
       - name: Wait for server
         run: sleep 10
-      
+
       - name: Run health checks
         run: npm run bot:check
         env:
@@ -429,14 +445,14 @@ jobs:
 
 ```yaml
 # docker-compose.monitor.yml
-version: '3.8'
+version: "3.8"
 
 services:
   app:
     build: .
     ports:
       - "3000:3000"
-    
+
   health-checker:
     build: .
     depends_on:
@@ -535,7 +551,7 @@ Your website is **healthy** when:
 ✅ Load times are under 3 seconds  
 ✅ Success rate is 100%  
 ✅ No errors in console  
-✅ All APIs respond correctly  
+✅ All APIs respond correctly
 
 ---
 

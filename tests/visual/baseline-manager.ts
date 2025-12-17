@@ -89,13 +89,16 @@ export class BaselineManager {
     this.metadataCache = new Map();
 
     // Ensure directories exist
-    [this.baselineDir, this.metadataDir, this.diffsDir, this.approvalsDir].forEach(
-      (dir) => {
-        if (!fs.existsSync(dir)) {
-          fs.mkdirSync(dir, { recursive: true });
-        }
+    [
+      this.baselineDir,
+      this.metadataDir,
+      this.diffsDir,
+      this.approvalsDir,
+    ].forEach((dir) => {
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
       }
-    );
+    });
 
     // Initialize .gitignore for diffs
     this.ensureGitignore();
@@ -120,7 +123,7 @@ export class BaselineManager {
         consciousness: string;
         biodynamicMode: boolean;
       };
-    } = {}
+    } = {},
   ): Promise<BaselineMetadata> {
     const baselinePath = this.getBaselinePath(testName, viewport, browser);
 
@@ -174,7 +177,7 @@ export class BaselineManager {
     testName: string,
     viewport: string,
     browser: string,
-    newScreenshotPath: string
+    newScreenshotPath: string,
   ): Promise<void> {
     const baselinePath = this.getBaselinePath(testName, viewport, browser);
 
@@ -217,8 +220,12 @@ export class BaselineManager {
   /**
    * Batch update all baselines from current screenshots
    */
-  async updateAllBaselines(currentDir: string): Promise<BaselineComparisonReport> {
-    const currentFiles = fs.readdirSync(currentDir).filter((f) => f.endsWith(".png"));
+  async updateAllBaselines(
+    currentDir: string,
+  ): Promise<BaselineComparisonReport> {
+    const currentFiles = fs
+      .readdirSync(currentDir)
+      .filter((f) => f.endsWith(".png"));
     const report: BaselineComparisonReport = {
       added: [],
       removed: [],
@@ -251,7 +258,9 @@ export class BaselineManager {
     }
 
     // Check for removed baselines
-    const baselineFiles = fs.readdirSync(this.baselineDir).filter((f) => f.endsWith(".png"));
+    const baselineFiles = fs
+      .readdirSync(this.baselineDir)
+      .filter((f) => f.endsWith(".png"));
     for (const filename of baselineFiles) {
       if (!currentFiles.includes(filename)) {
         report.removed.push(filename);
@@ -277,7 +286,7 @@ export class BaselineManager {
     viewport: string,
     browser: string,
     currentPath: string,
-    threshold: number = 0.1
+    threshold: number = 0.1,
   ): Promise<{
     passed: boolean;
     diffPercentage: number;
@@ -286,7 +295,9 @@ export class BaselineManager {
     const baselinePath = this.getBaselinePath(testName, viewport, browser);
 
     if (!fs.existsSync(baselinePath)) {
-      console.warn(`⚠️  No baseline found for ${testName}. Creating new baseline...`);
+      console.warn(
+        `⚠️  No baseline found for ${testName}. Creating new baseline...`,
+      );
       await this.createBaseline(testName, viewport, browser, currentPath);
       return { passed: true, diffPercentage: 0 };
     }
@@ -299,7 +310,7 @@ export class BaselineManager {
       baselineImg.height !== currentImg.height
     ) {
       throw new Error(
-        `Image dimensions mismatch: baseline ${baselineImg.width}x${baselineImg.height} vs current ${currentImg.width}x${currentImg.height}`
+        `Image dimensions mismatch: baseline ${baselineImg.width}x${baselineImg.height} vs current ${currentImg.width}x${currentImg.height}`,
       );
     }
 
@@ -313,7 +324,7 @@ export class BaselineManager {
       diffImg.data,
       width,
       height,
-      { threshold }
+      { threshold },
     );
 
     const totalPixels = width * height;
@@ -323,7 +334,7 @@ export class BaselineManager {
     if (diffPixels > 0) {
       diffPath = path.join(
         this.diffsDir,
-        `${testName}_${viewport}_${browser}_diff.png`
+        `${testName}_${viewport}_${browser}_diff.png`,
       );
       fs.writeFileSync(diffPath, PNG.sync.write(diffImg));
     }
@@ -343,7 +354,9 @@ export class BaselineManager {
    * List all baselines with metadata
    */
   async listBaselines(): Promise<BaselineMetadata[]> {
-    const files = fs.readdirSync(this.baselineDir).filter((f) => f.endsWith(".png"));
+    const files = fs
+      .readdirSync(this.baselineDir)
+      .filter((f) => f.endsWith(".png"));
     const baselines: BaselineMetadata[] = [];
 
     for (const file of files) {
@@ -362,7 +375,11 @@ export class BaselineManager {
   /**
    * Delete baseline and its metadata
    */
-  async deleteBaseline(testName: string, viewport: string, browser: string): Promise<void> {
+  async deleteBaseline(
+    testName: string,
+    viewport: string,
+    browser: string,
+  ): Promise<void> {
     const baselinePath = this.getBaselinePath(testName, viewport, browser);
     const metadataPath = this.getMetadataPath(baselinePath);
 
@@ -398,7 +415,7 @@ export class BaselineManager {
         const baselinePath = this.getBaselinePath(
           baseline.testName,
           baseline.viewport,
-          baseline.browser
+          baseline.browser,
         );
         const archivePath = path.join(archiveDir, path.basename(baselinePath));
 
@@ -407,7 +424,9 @@ export class BaselineManager {
       }
     }
 
-    console.log(`📦 Archived ${archivedCount} baselines older than ${olderThanDays} days`);
+    console.log(
+      `📦 Archived ${archivedCount} baselines older than ${olderThanDays} days`,
+    );
     return archivedCount;
   }
 
@@ -422,7 +441,7 @@ export class BaselineManager {
     testName: string,
     viewport: string,
     browser: string,
-    baseScreenshot: string
+    baseScreenshot: string,
   ): Promise<void> {
     const seasons: Array<"SPRING" | "SUMMER" | "FALL" | "WINTER"> = [
       "SPRING",
@@ -463,7 +482,7 @@ export class BaselineManager {
         // Check for biodynamic mode
         if (!baseline.agriculturalContext.biodynamicMode) {
           issues.push(
-            `${baseline.testName}: Missing biodynamic mode in agricultural context`
+            `${baseline.testName}: Missing biodynamic mode in agricultural context`,
           );
           totalScore += 50;
         } else {
@@ -477,7 +496,8 @@ export class BaselineManager {
       }
     }
 
-    const avgScore = scoreableBaselines > 0 ? totalScore / scoreableBaselines : 0;
+    const avgScore =
+      scoreableBaselines > 0 ? totalScore / scoreableBaselines : 0;
 
     return {
       score: avgScore,
@@ -497,7 +517,7 @@ export class BaselineManager {
     viewport: string,
     browser: string,
     currentPath: string,
-    diffPath?: string
+    diffPath?: string,
   ): Promise<string> {
     const baselinePath = this.getBaselinePath(testName, viewport, browser);
     const metadata = await this.loadMetadata(baselinePath);
@@ -545,7 +565,7 @@ export class BaselineManager {
     }
 
     const approval: BaselineApprovalRequest = JSON.parse(
-      fs.readFileSync(approvalPath, "utf-8")
+      fs.readFileSync(approvalPath, "utf-8"),
     );
 
     // Update baseline
@@ -556,13 +576,19 @@ export class BaselineManager {
     approval.approver = approver;
     fs.writeFileSync(approvalPath, JSON.stringify(approval, null, 2));
 
-    console.log(`✅ Baseline approved by ${approver}: ${approval.metadata.testName}`);
+    console.log(
+      `✅ Baseline approved by ${approver}: ${approval.metadata.testName}`,
+    );
   }
 
   /**
    * Reject baseline change
    */
-  async rejectBaseline(approvalId: string, approver: string, reason: string): Promise<void> {
+  async rejectBaseline(
+    approvalId: string,
+    approver: string,
+    reason: string,
+  ): Promise<void> {
     const approvalPath = path.join(this.approvalsDir, `${approvalId}.json`);
 
     if (!fs.existsSync(approvalPath)) {
@@ -570,7 +596,7 @@ export class BaselineManager {
     }
 
     const approval: BaselineApprovalRequest = JSON.parse(
-      fs.readFileSync(approvalPath, "utf-8")
+      fs.readFileSync(approvalPath, "utf-8"),
     );
 
     approval.approvalStatus = "REJECTED";
@@ -578,7 +604,9 @@ export class BaselineManager {
     approval.notes = reason;
     fs.writeFileSync(approvalPath, JSON.stringify(approval, null, 2));
 
-    console.log(`❌ Baseline rejected by ${approver}: ${approval.metadata.testName}`);
+    console.log(
+      `❌ Baseline rejected by ${approver}: ${approval.metadata.testName}`,
+    );
     console.log(`   Reason: ${reason}`);
   }
 
@@ -586,7 +614,11 @@ export class BaselineManager {
   // 🛠️ UTILITY METHODS
   // ═══════════════════════════════════════════════════════════
 
-  private getBaselinePath(testName: string, viewport: string, browser: string): string {
+  private getBaselinePath(
+    testName: string,
+    viewport: string,
+    browser: string,
+  ): string {
     const sanitizedName = testName.replace(/[^a-z0-9]/gi, "-").toLowerCase();
     const filename = `${sanitizedName}_${viewport}_${browser}.png`;
     return path.join(this.baselineDir, filename);
@@ -604,7 +636,7 @@ export class BaselineManager {
 
   private async saveMetadata(
     baselinePath: string,
-    metadata: BaselineMetadata
+    metadata: BaselineMetadata,
   ): Promise<void> {
     const metadataPath = this.getMetadataPath(baselinePath);
     fs.writeFileSync(metadataPath, JSON.stringify(metadata, null, 2));
@@ -641,7 +673,7 @@ export class BaselineManager {
     }
 
     const metadata: BaselineMetadata = JSON.parse(
-      fs.readFileSync(metadataPath, "utf-8")
+      fs.readFileSync(metadataPath, "utf-8"),
     );
     this.metadataCache.set(baselinePath, metadata);
     return metadata;
@@ -681,32 +713,38 @@ export async function runBaselineManager(): Promise<void> {
   const command = process.argv[2];
 
   switch (command) {
-    case "list":
+    case "list": {
       const baselines = await manager.listBaselines();
       console.log(`Found ${baselines.length} baselines`);
       baselines.forEach((b) => {
         console.log(`  - ${b.testName} (${b.viewport}, ${b.browser})`);
       });
       break;
+    }
 
-    case "update-all":
+    case "update-all": {
       const currentDir = process.argv[3] || path.join(__dirname, "current");
       await manager.updateAllBaselines(currentDir);
       break;
+    }
 
-    case "validate":
+    case "validate": {
       const validation = await manager.validateAgriculturalConsciousness();
-      console.log(`🌾 Agricultural Consciousness Score: ${validation.score}/100`);
+      console.log(
+        `🌾 Agricultural Consciousness Score: ${validation.score}/100`,
+      );
       if (validation.issues.length > 0) {
         console.log("\n⚠️  Issues found:");
         validation.issues.forEach((issue) => console.log(`  - ${issue}`));
       }
       break;
+    }
 
-    case "archive":
+    case "archive": {
       const days = parseInt(process.argv[3] || "30", 10);
       await manager.archiveBaselines(days);
       break;
+    }
 
     default:
       console.log(`

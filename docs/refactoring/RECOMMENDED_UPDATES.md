@@ -1,4 +1,5 @@
 # 🔧 Recommended Updates & Improvements
+
 **Farmers Market Platform - Priority Action Items**  
 **Generated**: December 3, 2024  
 **Status**: Ready for Implementation
@@ -10,6 +11,7 @@
 This document outlines recommended updates and improvements needed to ensure the dev server shows all latest changes optimally and maintains code quality.
 
 **Priority Levels**:
+
 - 🔴 **CRITICAL** - Blocks functionality or causes errors
 - 🟡 **HIGH** - Improves reliability and user experience
 - 🟢 **MEDIUM** - Code quality and maintainability
@@ -24,6 +26,7 @@ This document outlines recommended updates and improvements needed to ensure the
 **Issue**: Orders API routes use `orderId` but service expects `id`
 
 **Files to Update**:
+
 ```typescript
 // src/app/api/orders/[orderId]/route.ts
 // src/app/api/orders/[orderId]/cancel/route.ts
@@ -36,10 +39,12 @@ const order = await orderService.getOrder({ id: params.orderId });
 ```
 
 **Affected Files**:
+
 - `src/app/api/orders/[orderId]/route.ts` (Line 33, 87, 125)
 - `src/app/api/orders/[orderId]/cancel/route.ts` (Line 95)
 
 **Fix Steps**:
+
 1. Open each file
 2. Find `orderService.getOrder({ orderId: ... })`
 3. Replace with `orderService.getOrder({ id: ... })`
@@ -58,6 +63,7 @@ const order = await orderService.getOrder({ id: params.orderId });
 **File**: `.env.local`
 
 **Required Configuration**:
+
 ```bash
 # Development Database (Local PostgreSQL)
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/farmersmarket
@@ -67,6 +73,7 @@ DATABASE_URL=postgresql://postgres:postgres@localhost:5432/farmersmarket
 ```
 
 **Verification**:
+
 ```bash
 # Check current value:
 cat .env.local | grep DATABASE_URL
@@ -84,6 +91,7 @@ psql -U postgres -d farmersmarket -c "SELECT COUNT(*) FROM users;"
 **Issue**: Stale `.next` cache may show old code
 
 **Action**:
+
 ```bash
 # Remove build cache:
 rm -rf .next
@@ -96,6 +104,7 @@ npm run clean:all
 ```
 
 **When to Do This**:
+
 - Before first `npm run dev` after pulling changes
 - After major dependency updates
 - When experiencing unexplained UI issues
@@ -114,6 +123,7 @@ npm run clean:all
 **Solution**: Create separate TypeScript config for mobile app
 
 **File**: `mobile-app/tsconfig.json` (CREATE NEW)
+
 ```json
 {
   "extends": "../tsconfig.json",
@@ -124,30 +134,27 @@ npm run clean:all
     "skipLibCheck": true,
     "strict": false
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
 }
 ```
 
 **Update**: `tsconfig.json` (ROOT)
+
 ```json
 {
   "exclude": [
     "node_modules",
     ".next",
-    "mobile-app/**",  // ADD THIS LINE
-    "scripts/**",
+    "mobile-app/**", // ADD THIS LINE
+    "scripts/**"
     // ... rest of excludes
   ]
 }
 ```
 
-**Test**: 
+**Test**:
+
 ```bash
 npm run type-check
 # Should show ~12 fewer errors
@@ -203,6 +210,7 @@ export { env };
 ```
 
 **Usage**: Import in `src/lib/database/index.ts`
+
 ```typescript
 import { env } from "@/lib/config/env";
 
@@ -258,7 +266,9 @@ async function runHealthCheck() {
     if (!passed) allPassed = false;
   }
 
-  console.log("\n" + (allPassed ? "✅ All checks passed!" : "❌ Some checks failed"));
+  console.log(
+    "\n" + (allPassed ? "✅ All checks passed!" : "❌ Some checks failed"),
+  );
   process.exit(allPassed ? 0 : 1);
 }
 
@@ -266,6 +276,7 @@ runHealthCheck();
 ```
 
 **Add to `package.json`**:
+
 ```json
 {
   "scripts": {
@@ -275,6 +286,7 @@ runHealthCheck();
 ```
 
 **Usage**:
+
 ```bash
 # Start dev server in one terminal:
 npm run dev
@@ -294,12 +306,14 @@ npm run dev:check
 **Issue**: Some docs reference old port (3000) instead of current port (3001)
 
 **Files to Check & Update**:
+
 - `README.md`
 - `START_HERE.md`
 - `.github/instructions/*.md`
 - `docs/*.md`
 
 **Find & Replace**:
+
 ```bash
 # Find all references:
 grep -r "localhost:3000" --include="*.md"
@@ -389,6 +403,7 @@ echo "🚀 Restart dev server: npm run dev"
 ```
 
 **Add to `package.json`**:
+
 ```json
 {
   "scripts": {
@@ -435,10 +450,7 @@ async function testHotReload() {
   }
 
   console.log("1️⃣  Adding test marker to page.tsx...");
-  const modified = original.replace(
-    "</main>",
-    `  ${TEST_MARKER}\n  </main>`
-  );
+  const modified = original.replace("</main>", `  ${TEST_MARKER}\n  </main>`);
   fs.writeFileSync(TEST_FILE, modified);
 
   console.log("2️⃣  Waiting 3 seconds for hot reload...");
@@ -455,6 +467,7 @@ testHotReload();
 ```
 
 **Usage**:
+
 ```bash
 # With dev server running:
 tsx scripts/test-hot-reload.ts
@@ -471,12 +484,14 @@ tsx scripts/test-hot-reload.ts
 **Goal**: Track dev server performance metrics
 
 **Tools to Integrate**:
+
 - Next.js build analyzer (already configured)
 - Bundle size tracking
 - Compilation time logging
 - Memory usage monitoring
 
 **Files to Create**:
+
 - `scripts/monitor-dev-performance.ts`
 - `scripts/analyze-bundle.ts`
 
@@ -487,6 +502,7 @@ tsx scripts/test-hot-reload.ts
 **Goal**: Visual dashboard showing dev server status
 
 **Features**:
+
 - Server uptime
 - API response times
 - Database connection status
@@ -503,11 +519,13 @@ tsx scripts/test-hot-reload.ts
 **Goal**: Containerized development for consistency
 
 **Files to Create**:
+
 - `docker-compose.dev.yml`
 - `Dockerfile.dev`
 - `.dockerignore`
 
 **Benefits**:
+
 - Consistent environment across machines
 - No need to install PostgreSQL locally
 - Easy onboarding for new developers
@@ -521,25 +539,29 @@ tsx scripts/test-hot-reload.ts
 **Tool**: PM2 with ecosystem config
 
 **File**: `ecosystem.dev.js` (CREATE NEW)
+
 ```javascript
 module.exports = {
-  apps: [{
-    name: "farmers-market-dev",
-    script: "npm",
-    args: "run dev",
-    watch: false,
-    autorestart: true,
-    max_restarts: 5,
-    min_uptime: "10s",
-    env: {
-      NODE_ENV: "development",
-      PORT: 3001
-    }
-  }]
+  apps: [
+    {
+      name: "farmers-market-dev",
+      script: "npm",
+      args: "run dev",
+      watch: false,
+      autorestart: true,
+      max_restarts: 5,
+      min_uptime: "10s",
+      env: {
+        NODE_ENV: "development",
+        PORT: 3001,
+      },
+    },
+  ],
 };
 ```
 
 **Usage**:
+
 ```bash
 pm2 start ecosystem.dev.js
 pm2 logs farmers-market-dev
@@ -550,25 +572,31 @@ pm2 logs farmers-market-dev
 ## 📋 Implementation Plan
 
 ### Week 1 (Critical + High)
+
 **Day 1** (1 hour):
+
 - [ ] Fix API route parameter naming (30 min)
 - [ ] Verify database connection (5 min)
 - [ ] Clear build cache (1 min)
 - [ ] Add env validation (20 min)
 
 **Day 2** (1 hour):
+
 - [ ] Exclude mobile app from TS check (15 min)
 - [ ] Add dev server health check (15 min)
 - [ ] Update documentation (30 min)
 
 ### Week 2 (Medium Priority)
+
 **Day 3** (1 hour):
+
 - [ ] Add pre-commit hook (15 min)
 - [ ] Create database reset script (20 min)
 - [ ] Add hot reload test (10 min)
 - [ ] Test all changes (15 min)
 
 ### Future (Low Priority)
+
 - Implement as needed based on team requirements
 - Consider after core functionality is stable
 
@@ -577,18 +605,21 @@ pm2 logs farmers-market-dev
 ## 🎯 Success Metrics
 
 ### After Implementing Critical Items:
+
 - ✅ Zero blocking TypeScript errors
 - ✅ All API endpoints functional
 - ✅ Database connects on first try
 - ✅ Dev server starts in <5 seconds
 
 ### After Implementing High Priority:
+
 - ✅ Clean `npm run type-check` output
 - ✅ Environment variables validated
 - ✅ Automated health checks pass
 - ✅ Developer onboarding <10 minutes
 
 ### After Implementing Medium Priority:
+
 - ✅ Consistent documentation
 - ✅ Pre-commit hooks prevent bad commits
 - ✅ Easy database resets
@@ -599,6 +630,7 @@ pm2 logs farmers-market-dev
 ## 🔄 Maintenance Schedule
 
 ### Daily (Before Starting Work):
+
 ```bash
 git pull
 npm install          # If package.json changed
@@ -608,6 +640,7 @@ npm run dev
 ```
 
 ### Weekly:
+
 ```bash
 npm run quality      # Type check + lint + format
 npm run test         # Run test suite
@@ -615,6 +648,7 @@ npm outdated         # Check for updates
 ```
 
 ### Monthly:
+
 ```bash
 npm update           # Update dependencies
 npm audit            # Security check
@@ -626,12 +660,14 @@ npm run build        # Test production build
 ## 📞 Support & Resources
 
 ### Quick Reference:
+
 - **Full Analysis**: `DEV_SERVER_ANALYSIS_CHECKLIST.md`
 - **Quick Start**: `QUICK_START_CHECKLIST.md`
 - **Project Status**: `PROJECT_STATUS.md`
 - **Divine Rules**: `.cursorrules`
 
 ### Common Commands:
+
 ```bash
 # Fix most issues:
 rm -rf .next && npm run dev
@@ -653,24 +689,28 @@ npm run type-check
 Track your progress:
 
 ### Critical (Do Now)
+
 - [ ] Fixed API route parameters
 - [ ] Verified database connection
 - [ ] Cleared build cache
 - [ ] Tested dev server starts
 
 ### High Priority (This Week)
+
 - [ ] Excluded mobile app from TS
 - [ ] Added env validation
 - [ ] Created health check script
 - [ ] Tested all changes
 
 ### Medium Priority (As Needed)
+
 - [ ] Updated documentation
 - [ ] Added pre-commit hooks
 - [ ] Created DB reset script
 - [ ] Verified hot reload
 
 ### Low Priority (Future)
+
 - [ ] Performance monitoring
 - [ ] Dev dashboard
 - [ ] Docker dev environment

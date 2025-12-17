@@ -21,13 +21,13 @@
 
 ## 🌐 ACCESS YOUR APPLICATION
 
-| Service | URL | Status |
-|---------|-----|--------|
-| **Homepage** | http://localhost:3001 | ✅ HTTP 200 |
-| **Health Check** | http://localhost:3001/api/health | ✅ Responding |
-| **Admin Dashboard** | http://localhost:3001/admin | ✅ Available |
-| **Farms Marketplace** | http://localhost:3001/farms | ✅ Available |
-| **Products Catalog** | http://localhost:3001/products | ✅ Available |
+| Service               | URL                              | Status        |
+| --------------------- | -------------------------------- | ------------- |
+| **Homepage**          | http://localhost:3001            | ✅ HTTP 200   |
+| **Health Check**      | http://localhost:3001/api/health | ✅ Responding |
+| **Admin Dashboard**   | http://localhost:3001/admin      | ✅ Available  |
+| **Farms Marketplace** | http://localhost:3001/farms      | ✅ Available  |
+| **Products Catalog**  | http://localhost:3001/products   | ✅ Available  |
 
 ---
 
@@ -62,6 +62,7 @@
 ## 📝 CONFIGURATION
 
 ### Environment Variables (.env.production)
+
 - ✅ NODE_ENV=production
 - ✅ NEXTAUTH_SECRET (secure 32-byte secret generated)
 - ✅ DATABASE_URL=file:./production.db
@@ -69,6 +70,7 @@
 - ✅ All security settings enabled
 
 ### Performance Settings
+
 - Memory Limit: 8192MB
 - Hardware Profile: standard
 - Query Cache: enabled
@@ -80,27 +82,32 @@
 ## 🔧 MANAGEMENT COMMANDS
 
 ### View Logs
+
 ```bash
 tail -f logs/production.log
 ```
 
 ### Check Server Process
+
 ```bash
 ps aux | grep "next start"
 netstat -an | grep ":3001"
 ```
 
 ### Stop Server
+
 ```bash
 pkill -f "next start"
 ```
 
 ### Restart Server
+
 ```bash
 npm run start
 ```
 
 ### Health Check
+
 ```bash
 curl http://localhost:3001/api/health
 ```
@@ -144,22 +151,26 @@ curl http://localhost:3001/api/health
 ## 🆘 TROUBLESHOOTING
 
 ### If Server Stops
+
 ```bash
 npm run start
 ```
 
 ### If Port is Already in Use
+
 ```bash
 pkill -f "next start"
 PORT=3002 npm run start
 ```
 
 ### View Recent Logs
+
 ```bash
 tail -50 logs/production.log
 ```
 
 ### Database Issues
+
 ```bash
 npx prisma generate
 npx prisma db push

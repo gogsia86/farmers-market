@@ -1,4 +1,5 @@
 # 🧪 Test Coverage Improvement Plan
+
 ## From 13% to 90% Coverage
 
 **Created:** January 2025  
@@ -12,6 +13,7 @@
 ## 📊 Current State Analysis
 
 ### Coverage Breakdown
+
 ```
 Statements:   13.29% (Target: 90%)
 Branches:     67.55% (Target: 90%)
@@ -20,12 +22,14 @@ Lines:        13.29% (Target: 90%)
 ```
 
 ### Test Suite Status
+
 - **Total Tests:** 2,235
 - **Passing:** 2,190 (98% pass rate) ✅
 - **Skipped:** 45
 - **Failed:** 0 ✅
 
 ### Files with 0% Coverage (Priority Targets)
+
 1. `src/lib/utils/metadata.ts` (557 lines)
 2. `src/lib/validations/agricultural.ts` (208 lines)
 3. `src/lib/validations/farm.ts` (206 lines)
@@ -38,18 +42,22 @@ Lines:        13.29% (Target: 90%)
 ## 🎯 4-Phase Coverage Strategy
 
 ### Phase 1: Critical Security & Validation (Weeks 1-3)
+
 **Goal:** 13% → 35% coverage  
 **Focus:** Input validation, security-critical code
 
 ### Phase 2: Business Logic & Services (Weeks 4-6)
+
 **Goal:** 35% → 60% coverage  
 **Focus:** Service layer, business rules
 
 ### Phase 3: API Routes & Integration (Weeks 7-9)
+
 **Goal:** 60% → 80% coverage  
 **Focus:** API endpoints, integration tests
 
 ### Phase 4: Complete & Polish (Weeks 10-12)
+
 **Goal:** 80% → 90%+ coverage  
 **Focus:** Edge cases, error handling, utilities
 
@@ -60,10 +68,12 @@ Lines:        13.29% (Target: 90%)
 ## PHASE 1: CRITICAL SECURITY (Weeks 1-3)
 
 ### Week 1: Validation Layer Foundation
+
 **Target:** +8% coverage (13% → 21%)  
 **Effort:** 40 hours
 
 #### Day 1-2: Farm Validation Tests
+
 **File:** `src/lib/validations/__tests__/farm.validation.test.ts` (NEW)
 
 ```typescript
@@ -86,7 +96,7 @@ describe("Farm Validation", () => {
         latitude: 37.7749,
         longitude: -122.4194,
       };
-      
+
       expect(() => createFarmSchema.parse(validData)).not.toThrow();
     });
 
@@ -96,19 +106,19 @@ describe("Farm Validation", () => {
     });
 
     it("should validate latitude range (-90 to 90)", () => {
-      const invalidData = { 
+      const invalidData = {
         name: "Test Farm",
-        latitude: 91, 
-        longitude: -122 
+        latitude: 91,
+        longitude: -122,
       };
       expect(() => createFarmSchema.parse(invalidData)).toThrow();
     });
 
     it("should validate longitude range (-180 to 180)", () => {
-      const invalidData = { 
+      const invalidData = {
         name: "Test Farm",
-        latitude: 37, 
-        longitude: 181 
+        latitude: 37,
+        longitude: 181,
       };
       expect(() => createFarmSchema.parse(invalidData)).toThrow();
     });
@@ -155,6 +165,7 @@ describe("Farm Validation", () => {
 **Expected Coverage:** farm.ts 0% → 85%
 
 #### Day 3-4: Agricultural Validation Tests
+
 **File:** `src/lib/validations/__tests__/agricultural.validation.test.ts` (NEW)
 
 ```typescript
@@ -197,7 +208,9 @@ describe("Agricultural Validation", () => {
 **Expected Coverage:** agricultural.ts 0% → 80%
 
 #### Day 5: Product & Order Validation
-**Files:** 
+
+**Files:**
+
 - `src/lib/validations/__tests__/product.validation.test.ts`
 - `src/lib/validations/__tests__/order.validation.test.ts`
 
@@ -206,10 +219,12 @@ describe("Agricultural Validation", () => {
 ---
 
 ### Week 2: State Management & Stores
+
 **Target:** +7% coverage (21% → 28%)  
 **Effort:** 40 hours
 
 #### Day 1-3: Checkout Store Tests
+
 **File:** `src/stores/__tests__/checkoutStore.test.ts` (NEW)
 
 ```typescript
@@ -346,6 +361,7 @@ describe("CheckoutStore", () => {
 **Expected Coverage:** checkoutStore.ts 0% → 90%
 
 #### Day 4-5: Cart Store Tests
+
 **File:** `src/stores/__tests__/cartStore.test.ts` (existing, enhance)
 
 **Coverage:** cartStore.ts 100% → maintain
@@ -353,10 +369,12 @@ describe("CheckoutStore", () => {
 ---
 
 ### Week 3: Utility Functions
+
 **Target:** +7% coverage (28% → 35%)  
 **Effort:** 40 hours
 
 #### Day 1-3: Metadata Utilities
+
 **File:** `src/lib/utils/__tests__/metadata.test.ts` (NEW)
 
 ```typescript
@@ -442,6 +460,7 @@ describe("Metadata Utilities", () => {
 **Expected Coverage:** metadata.ts 0% → 85%
 
 #### Day 4-5: Other Utility Functions
+
 - Currency formatting tests
 - Date utility tests
 - Slug generation tests
@@ -454,9 +473,11 @@ describe("Metadata Utilities", () => {
 ## PHASE 2: BUSINESS LOGIC (Weeks 4-6)
 
 ### Week 4: Service Layer - Farm & Product
+
 **Target:** +10% coverage (35% → 45%)
 
 #### Farm Service Tests
+
 **File:** `src/lib/services/__tests__/farm.service.test.ts` (enhance existing)
 
 ```typescript
@@ -484,11 +505,11 @@ describe("FarmService", () => {
     it("should generate unique slug when name conflicts", async () => {
       // Create first farm
       await farmService.createFarm({ name: "Test Farm", ownerId: "user_1" });
-      
+
       // Create second farm with same name
-      const farm2 = await farmService.createFarm({ 
-        name: "Test Farm", 
-        ownerId: "user_2" 
+      const farm2 = await farmService.createFarm({
+        name: "Test Farm",
+        ownerId: "user_2",
       });
 
       expect(farm2.slug).toMatch(/test-farm-\d+/);
@@ -500,7 +521,7 @@ describe("FarmService", () => {
           name: "Test Farm",
           latitude: 91, // Invalid
           longitude: -122,
-        })
+        }),
       ).rejects.toThrow("Invalid coordinates");
     });
 
@@ -544,6 +565,7 @@ describe("FarmService", () => {
 ```
 
 #### Product Service Tests
+
 **File:** `src/lib/services/__tests__/product.service.test.ts` (enhance)
 
 ```typescript
@@ -617,9 +639,11 @@ describe("ProductService", () => {
 ---
 
 ### Week 5: Service Layer - Orders & Payments
+
 **Target:** +10% coverage (45% → 55%)
 
 #### Order Service Tests
+
 **File:** `src/lib/services/__tests__/order.service.test.ts` (enhance)
 
 ```typescript
@@ -627,9 +651,7 @@ describe("OrderService", () => {
   describe("createOrder", () => {
     it("should create order from cart", async () => {
       const cart = {
-        items: [
-          { productId: "prod_1", quantity: 2, price: 10 },
-        ],
+        items: [{ productId: "prod_1", quantity: 2, price: 10 }],
         customerId: "user_123",
         farmId: "farm_123",
       };
@@ -689,6 +711,7 @@ describe("OrderService", () => {
 ```
 
 #### Payment Service Tests
+
 **File:** `src/lib/services/__tests__/payment.service.test.ts` (enhance)
 
 ```typescript
@@ -744,6 +767,7 @@ describe("PaymentService", () => {
 ---
 
 ### Week 6: Additional Services
+
 **Target:** +5% coverage (55% → 60%)
 
 - Cart service tests (enhance)
@@ -757,9 +781,11 @@ describe("PaymentService", () => {
 ## PHASE 3: API INTEGRATION (Weeks 7-9)
 
 ### Week 7: API Routes - Farms & Products
+
 **Target:** +8% coverage (60% → 68%)
 
 #### Farm API Tests
+
 **File:** `src/app/api/farms/__tests__/route.test.ts` (NEW)
 
 ```typescript
@@ -780,7 +806,7 @@ describe("Farms API", () => {
 
     it("should filter by location", async () => {
       const request = new NextRequest(
-        "http://localhost:3001/api/farms?lat=37.7749&lng=-122.4194&radius=25"
+        "http://localhost:3001/api/farms?lat=37.7749&lng=-122.4194&radius=25",
       );
       const response = await GET(request);
       const data = await response.json();
@@ -791,7 +817,7 @@ describe("Farms API", () => {
 
     it("should paginate results", async () => {
       const request = new NextRequest(
-        "http://localhost:3001/api/farms?page=1&limit=10"
+        "http://localhost:3001/api/farms?page=1&limit=10",
       );
       const response = await GET(request);
       const data = await response.json();
@@ -846,6 +872,7 @@ describe("Farms API", () => {
 ```
 
 #### Product API Tests
+
 - GET /api/products - List products
 - POST /api/products - Create product
 - GET /api/products/[id] - Get product
@@ -855,9 +882,11 @@ describe("Farms API", () => {
 ---
 
 ### Week 8: API Routes - Orders & Cart
+
 **Target:** +6% coverage (68% → 74%)
 
 #### Order API Tests
+
 - POST /api/orders - Create order
 - GET /api/orders - List orders
 - GET /api/orders/[id] - Get order details
@@ -865,6 +894,7 @@ describe("Farms API", () => {
 - POST /api/orders/[id]/cancel - Cancel order
 
 #### Cart API Tests
+
 - GET /api/cart - Get cart
 - POST /api/cart/items - Add item
 - PATCH /api/cart/items/[id] - Update quantity
@@ -874,14 +904,17 @@ describe("Farms API", () => {
 ---
 
 ### Week 9: API Routes - Payments & Admin
+
 **Target:** +6% coverage (74% → 80%)
 
 #### Payment API Tests
+
 - POST /api/payments/intent - Create payment intent
 - POST /api/webhooks/stripe - Stripe webhook handler
 - POST /api/payments/refund - Process refund
 
 #### Admin API Tests
+
 - GET /api/admin/dashboard - Admin dashboard data
 - GET /api/admin/users - User management
 - PATCH /api/admin/farms/[id]/verify - Farm verification
@@ -892,9 +925,11 @@ describe("Farms API", () => {
 ## PHASE 4: POLISH & EDGE CASES (Weeks 10-12)
 
 ### Week 10: Error Handling & Edge Cases
+
 **Target:** +5% coverage (80% → 85%)
 
 #### Error Scenarios
+
 - Network failures
 - Database connection errors
 - Invalid authentication tokens
@@ -903,6 +938,7 @@ describe("Farms API", () => {
 - Data race conditions
 
 #### Edge Cases
+
 - Empty datasets
 - Maximum value boundaries
 - Special characters in input
@@ -913,9 +949,11 @@ describe("Farms API", () => {
 ---
 
 ### Week 11: Component & Hook Tests
+
 **Target:** +3% coverage (85% → 88%)
 
 #### Component Tests (Enhance existing)
+
 - Form components
 - Product cards
 - Farm profiles
@@ -924,6 +962,7 @@ describe("Farms API", () => {
 - Filter components
 
 #### Hook Tests
+
 - useCart
 - useAuth
 - useFarms
@@ -933,9 +972,11 @@ describe("Farms API", () => {
 ---
 
 ### Week 12: Integration & E2E Enhancement
+
 **Target:** +2% coverage (88% → 90%+)
 
 #### Full User Flows
+
 - User registration → browse → purchase → order tracking
 - Farmer onboarding → farm creation → product listing
 - Admin verification workflows
@@ -943,6 +984,7 @@ describe("Farms API", () => {
 - Payment processing flows
 
 #### Performance Tests
+
 - Load testing coverage
 - Stress testing
 - Concurrent user scenarios
@@ -954,6 +996,7 @@ describe("Farms API", () => {
 ### Test Setup
 
 #### Jest Configuration
+
 ```javascript
 // jest.config.js
 module.exports = {
@@ -966,17 +1009,18 @@ module.exports = {
     },
   },
   collectCoverageFrom: [
-    'src/**/*.{ts,tsx}',
-    '!src/**/*.d.ts',
-    '!src/**/__tests__/**',
-    '!src/**/*.test.{ts,tsx}',
-    '!src/app/layout.tsx',
-    '!src/app/**/loading.tsx',
+    "src/**/*.{ts,tsx}",
+    "!src/**/*.d.ts",
+    "!src/**/__tests__/**",
+    "!src/**/*.test.{ts,tsx}",
+    "!src/app/layout.tsx",
+    "!src/app/**/loading.tsx",
   ],
 };
 ```
 
 #### Test Utilities
+
 ```typescript
 // src/lib/test-utils.tsx
 import { render } from '@testing-library/react';
@@ -1028,6 +1072,7 @@ export function createMockProduct() {
 ## 📊 Progress Tracking
 
 ### Daily Checklist
+
 ```markdown
 - [ ] Write tests for target files
 - [ ] Run coverage report: `npm run test:coverage`
@@ -1037,6 +1082,7 @@ export function createMockProduct() {
 ```
 
 ### Weekly Review
+
 ```markdown
 - [ ] Calculate coverage gain
 - [ ] Identify blockers
@@ -1046,6 +1092,7 @@ export function createMockProduct() {
 ```
 
 ### Coverage Reporting
+
 ```bash
 # Generate coverage report
 npm run test:coverage
@@ -1065,22 +1112,24 @@ npm run test:coverage -- src/lib/services/farm.service.ts
 ## 🎯 Success Metrics
 
 ### Week-by-Week Targets
-| Week | Target Coverage | Focus Area | Key Files |
-|------|-----------------|------------|-----------|
-| 1 | 21% | Validation | farm.ts, agricultural.ts |
-| 2 | 28% | Stores | checkoutStore.ts |
-| 3 | 35% | Utils | metadata.ts |
-| 4 | 45% | Services | farm.service.ts |
-| 5 | 55% | Services | order.service.ts, payment.service.ts |
-| 6 | 60% | Services | Additional services |
-| 7 | 68% | API | Farms & Products APIs |
-| 8 | 74% | API | Orders & Cart APIs |
-| 9 | 80% | API | Payments & Admin APIs |
-| 10 | 85% | Edge Cases | Error handling |
-| 11 | 88% | Components | React components |
-| 12 | 90%+ | Integration | E2E flows |
+
+| Week | Target Coverage | Focus Area  | Key Files                            |
+| ---- | --------------- | ----------- | ------------------------------------ |
+| 1    | 21%             | Validation  | farm.ts, agricultural.ts             |
+| 2    | 28%             | Stores      | checkoutStore.ts                     |
+| 3    | 35%             | Utils       | metadata.ts                          |
+| 4    | 45%             | Services    | farm.service.ts                      |
+| 5    | 55%             | Services    | order.service.ts, payment.service.ts |
+| 6    | 60%             | Services    | Additional services                  |
+| 7    | 68%             | API         | Farms & Products APIs                |
+| 8    | 74%             | API         | Orders & Cart APIs                   |
+| 9    | 80%             | API         | Payments & Admin APIs                |
+| 10   | 85%             | Edge Cases  | Error handling                       |
+| 11   | 88%             | Components  | React components                     |
+| 12   | 90%+            | Integration | E2E flows                            |
 
 ### Quality Gates
+
 - All tests must pass
 - No TypeScript errors
 - No ESLint errors
@@ -1119,6 +1168,7 @@ npm run test -- --verbose
 ## 📝 Test Writing Guidelines
 
 ### Good Test Structure
+
 ```typescript
 describe("Feature/Component Name", () => {
   // Setup
@@ -1142,19 +1192,21 @@ describe("Feature/Component Name", () => {
 ```
 
 ### Test Naming Convention
+
 ```typescript
 // ✅ Good
-it("should create farm with valid data")
-it("should throw error when name is too short")
-it("should return 401 when user not authenticated")
+it("should create farm with valid data");
+it("should throw error when name is too short");
+it("should return 401 when user not authenticated");
 
 // ❌ Bad
-it("test farm creation")
-it("error test")
-it("works")
+it("test farm creation");
+it("error test");
+it("works");
 ```
 
 ### Coverage vs Quality
+
 - Don't write tests just for coverage percentage
 - Focus on testing behavior, not implementation
 - Test edge cases and error conditions
@@ -1166,6 +1218,7 @@ it("works")
 ## 🔄 Continuous Integration
 
 ### GitHub Actions Integration
+
 ```yaml
 # .github/workflows/test-coverage.yml
 name: Test Coverage
@@ -1194,40 +1247,43 @@ jobs:
 ## 💡 Tips & Best Practices
 
 ### Mocking Best Practices
+
 ```typescript
 // Mock external dependencies
-jest.mock('@/lib/database');
-jest.mock('@/lib/stripe');
+jest.mock("@/lib/database");
+jest.mock("@/lib/stripe");
 
 // Mock only what you need
-jest.mock('@/lib/services/email', () => ({
+jest.mock("@/lib/services/email", () => ({
   sendEmail: jest.fn(),
 }));
 
 // Use factory functions
 const createMockUser = (overrides = {}) => ({
-  id: 'user_123',
-  email: 'test@example.com',
+  id: "user_123",
+  email: "test@example.com",
   ...overrides,
 });
 ```
 
 ### Async Testing
+
 ```typescript
 // ✅ Use async/await
-it('should fetch data', async () => {
+it("should fetch data", async () => {
   const data = await fetchData();
   expect(data).toBeDefined();
 });
 
 // ❌ Don't forget await
-it('should fetch data', () => {
+it("should fetch data", () => {
   const data = fetchData(); // This returns a Promise!
   expect(data).toBeDefined(); // Will fail
 });
 ```
 
 ### Test Isolation
+
 ```typescript
 // ✅ Clean up after each test
 beforeEach(() => {
@@ -1247,6 +1303,7 @@ let globalState = {}; // Bad! Tests will interfere
 ## 📈 Expected Results
 
 ### Coverage Progression
+
 ```
 Week 1:  13% → 21% (+8%)  [Validation]
 Week 2:  21% → 28% (+7%)  [Stores]
@@ -1263,6 +1320,7 @@ Week 12: 88% → 90%+ (+2%) [Integration]
 ```
 
 ### Team Capacity
+
 - 1-2 engineers full-time
 - 40 hours per week per engineer
 - ~480 hours total effort
@@ -1273,30 +1331,35 @@ Week 12: 88% → 90%+ (+2%) [Integration]
 ## ✅ Completion Criteria
 
 ### Phase 1 Complete When:
+
 - [ ] All validation schemas have tests
 - [ ] Checkout store fully tested
 - [ ] Utility functions covered
 - [ ] Coverage ≥ 35%
 
 ### Phase 2 Complete When:
+
 - [ ] All service classes have tests
 - [ ] Business logic validated
 - [ ] Error handling tested
 - [ ] Coverage ≥ 60%
 
 ### Phase 3 Complete When:
+
 - [ ] All API routes have integration tests
 - [ ] Auth/authorization tested
 - [ ] Request/response formats validated
 - [ ] Coverage ≥ 80%
 
 ### Phase 4 Complete When:
+
 - [ ] Edge cases covered
 - [ ] Component tests enhanced
 - [ ] E2E flows validated
 - [ ] Coverage ≥ 90%
 
 ### Final Checklist:
+
 - [ ] Coverage ≥ 90% for statements
 - [ ] Coverage ≥ 90% for branches
 - [ ] Coverage ≥ 90% for functions

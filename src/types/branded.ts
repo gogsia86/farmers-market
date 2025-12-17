@@ -181,9 +181,7 @@ export function isNotificationId(id: string): id is NotificationId {
  * const farmIds = brandIds<FarmId>(rawIds);
  * ```
  */
-export function brandIds<T extends Brand<string, string>>(
-  ids: string[],
-): T[] {
+export function brandIds<T extends Brand<string, string>>(ids: string[]): T[] {
   return ids.map((id) => id as T);
 }
 
@@ -196,7 +194,9 @@ export function brandIds<T extends Brand<string, string>>(
  * const rawIds = unbrandIds(farmIds);
  * ```
  */
-export function unbrandIds<T extends Brand<string, string>>(ids: T[]): string[] {
+export function unbrandIds<T extends Brand<string, string>>(
+  ids: T[],
+): string[] {
   return ids.map((id) => id as string);
 }
 

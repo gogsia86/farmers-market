@@ -80,10 +80,10 @@ SLACK_ICON_EMOJI=:tractor:
 3. Click **New repository secret**
 4. Add the following secrets:
 
-   | Name | Value |
-   |------|-------|
-   | `SLACK_WEBHOOK_URL` | Your webhook URL from Step 1 |
-   | `SLACK_CHANNEL` | `#farmers-market-ci` (optional) |
+   | Name                | Value                           |
+   | ------------------- | ------------------------------- |
+   | `SLACK_WEBHOOK_URL` | Your webhook URL from Step 1    |
+   | `SLACK_CHANNEL`     | `#farmers-market-ci` (optional) |
 
 ### Step 3: Test the Integration
 
@@ -106,7 +106,7 @@ You should see a message in your Slack channel!
 ### From Node.js/TypeScript
 
 ```typescript
-import { SlackNotifier, createSlackNotifier } from './scripts/slack-notify';
+import { SlackNotifier, createSlackNotifier } from "./scripts/slack-notify";
 
 // Create notifier from environment variables
 const notifier = createSlackNotifier();
@@ -114,16 +114,22 @@ const notifier = createSlackNotifier();
 // Send different types of notifications
 
 // ✅ Success
-await notifier.sendSuccess('Deployment Completed', 'Version 1.2.3 deployed to production');
+await notifier.sendSuccess(
+  "Deployment Completed",
+  "Version 1.2.3 deployed to production",
+);
 
 // ❌ Error
-await notifier.sendError('Build Failed', new Error('Compilation error in auth module'));
+await notifier.sendError(
+  "Build Failed",
+  new Error("Compilation error in auth module"),
+);
 
 // ⚠️ Warning
-await notifier.sendWarning('High Memory Usage', 'Memory usage at 85%');
+await notifier.sendWarning("High Memory Usage", "Memory usage at 85%");
 
 // ℹ️ Info
-await notifier.sendInfo('Build Started', 'Building version 1.2.3');
+await notifier.sendInfo("Build Started", "Building version 1.2.3");
 
 // 📊 Test Results
 await notifier.sendTestResults({
@@ -132,16 +138,16 @@ await notifier.sendTestResults({
   skipped: 5,
   total: 435,
   duration: 150000, // milliseconds
-  url: 'https://yoursite.com/test-report'
+  url: "https://yoursite.com/test-report",
 });
 
 // 🚀 Deployment
-await notifier.sendDeployment('success', 'production', {
-  version: '1.2.3',
-  deployer: 'John Doe',
-  commitSha: 'abc123def456',
-  commitMessage: 'Fix authentication bug',
-  url: 'https://farmersmarket.app'
+await notifier.sendDeployment("success", "production", {
+  version: "1.2.3",
+  deployer: "John Doe",
+  commitSha: "abc123def456",
+  commitMessage: "Fix authentication bug",
+  url: "https://farmersmarket.app",
 });
 
 // 📈 Load Test Results
@@ -152,15 +158,15 @@ await notifier.sendLoadTestResults({
   avgResponseTime: 250,
   p95ResponseTime: 450,
   requestsPerSecond: 12.5,
-  errors: 23
+  errors: 23,
 });
 
 // 🚨 Monitoring Alert
-await notifier.sendAlert('critical', 'Database Connection Lost', {
-  metric: 'Database Availability',
-  value: '0%',
-  threshold: '100%',
-  url: 'https://monitoring.yoursite.com'
+await notifier.sendAlert("critical", "Database Connection Lost", {
+  metric: "Database Availability",
+  value: "0%",
+  threshold: "100%",
+  url: "https://monitoring.yoursite.com",
 });
 ```
 
@@ -217,17 +223,17 @@ You can create multiple notifiers for different purposes:
 // Production alerts channel
 const prodNotifier = new SlackNotifier({
   webhookUrl: process.env.SLACK_WEBHOOK_PROD!,
-  channel: '#production-alerts',
-  username: 'Production Monitor',
-  iconEmoji: ':rotating_light:'
+  channel: "#production-alerts",
+  username: "Production Monitor",
+  iconEmoji: ":rotating_light:",
 });
 
 // Development notifications channel
 const devNotifier = new SlackNotifier({
   webhookUrl: process.env.SLACK_WEBHOOK_DEV!,
-  channel: '#dev-notifications',
-  username: 'Dev Bot',
-  iconEmoji: ':construction:'
+  channel: "#dev-notifications",
+  username: "Dev Bot",
+  iconEmoji: ":construction:",
 });
 ```
 
@@ -237,7 +243,7 @@ Use Slack's mrkdwn formatting in messages:
 
 ```typescript
 await notifier.sendInfo(
-  'Deployment Update',
+  "Deployment Update",
   `
 *Environment*: Production
 *Version*: \`1.2.3\`
@@ -245,7 +251,7 @@ await notifier.sendInfo(
 *ETA*: 5 minutes
 
 View deployment: https://yoursite.com/deployments/123
-  `.trim()
+  `.trim(),
 );
 ```
 
@@ -266,7 +272,7 @@ pipeline {
   environment {
     SLACK_WEBHOOK_URL = credentials('slack-webhook')
   }
-  
+
   post {
     success {
       sh 'npx ts-node scripts/slack-notify.ts "✅ Build Successful"'
@@ -389,6 +395,7 @@ SLACK_WEBHOOK_URL_DEV=https://hooks.slack.com/services/DEV/WEBHOOK/URL
 ### 3. Limit Sensitive Information
 
 Avoid sending:
+
 - API keys or secrets
 - User passwords or tokens
 - Full stack traces with sensitive paths
@@ -401,12 +408,14 @@ Avoid sending:
 ### No Messages Appearing in Slack
 
 **Check:**
+
 1. ✅ Webhook URL is correct and starts with `https://hooks.slack.com/`
 2. ✅ Environment variable `SLACK_WEBHOOK_URL` is set
 3. ✅ Bot has permission to post in the channel
 4. ✅ Network/firewall allows HTTPS requests to Slack
 
 **Test:**
+
 ```bash
 curl -X POST -H 'Content-type: application/json' \
   --data '{"text":"Test message"}' \
@@ -416,6 +425,7 @@ curl -X POST -H 'Content-type: application/json' \
 ### "channel_not_found" Error
 
 The webhook is tied to a specific channel. Either:
+
 - Use the webhook's default channel (remove `channel` from config)
 - Create a new webhook for a different channel
 
@@ -426,6 +436,7 @@ The webhook URL is invalid or has been revoked. Create a new webhook.
 ### TypeScript Compilation Errors
 
 Make sure dependencies are installed:
+
 ```bash
 npm install --save-dev @types/node
 ```
@@ -442,13 +453,13 @@ Slack has rate limits. For high-volume notifications, implement queuing:
 class RateLimitedNotifier extends SlackNotifier {
   private queue: Promise<void>[] = [];
   private readonly maxPerMinute = 30;
-  
+
   async send(message: SlackMessage): Promise<void> {
     // Implement rate limiting logic
     await this.waitForSlot();
     return super.send(message);
   }
-  
+
   private async waitForSlot() {
     // Rate limiting implementation
   }
@@ -462,14 +473,10 @@ For multiple notifications, batch them:
 ```typescript
 const notifier = createSlackNotifier();
 
-const messages = [
-  'Test 1 passed',
-  'Test 2 passed',
-  'Test 3 failed'
-];
+const messages = ["Test 1 passed", "Test 2 passed", "Test 3 failed"];
 
 // Send as single message
-await notifier.sendInfo('Test Summary', messages.join('\n'));
+await notifier.sendInfo("Test Summary", messages.join("\n"));
 ```
 
 ### Custom Message Blocks
@@ -478,30 +485,30 @@ Use Slack's Block Kit for rich formatting:
 
 ```typescript
 await notifier.send({
-  text: 'Test Results',
+  text: "Test Results",
   blocks: [
     {
-      type: 'header',
+      type: "header",
       text: {
-        type: 'plain_text',
-        text: '🧪 E2E Test Results',
-        emoji: true
-      }
+        type: "plain_text",
+        text: "🧪 E2E Test Results",
+        emoji: true,
+      },
     },
     {
-      type: 'section',
+      type: "section",
       fields: [
         {
-          type: 'mrkdwn',
-          text: '*Passed:*\n420'
+          type: "mrkdwn",
+          text: "*Passed:*\n420",
         },
         {
-          type: 'mrkdwn',
-          text: '*Failed:*\n15'
-        }
-      ]
-    }
-  ]
+          type: "mrkdwn",
+          text: "*Failed:*\n15",
+        },
+      ],
+    },
+  ],
 });
 ```
 

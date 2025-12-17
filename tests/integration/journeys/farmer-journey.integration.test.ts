@@ -23,7 +23,13 @@
  * - Certification management ✅
  */
 
-import { PrismaClient, OrderStatus, ProductCategory, Season, FarmStatus } from "@prisma/client";
+import {
+  PrismaClient,
+  OrderStatus,
+  ProductCategory,
+  Season,
+  FarmStatus,
+} from "@prisma/client";
 import {
   getTestPrismaClient,
   cleanTestDatabase,
@@ -71,7 +77,8 @@ describe("🚜 Farmer Journey Integration Tests", () => {
       const farm = await prisma.farm.create({
         data: {
           name: "Green Valley Organic Farm",
-          description: "Family-owned organic farm specializing in seasonal vegetables",
+          description:
+            "Family-owned organic farm specializing in seasonal vegetables",
           ownerId: farmerId,
           slug: `green-valley-${Date.now()}`,
           status: FarmStatus.PENDING_VERIFICATION,
@@ -290,8 +297,8 @@ describe("🚜 Farmer Journey Integration Tests", () => {
           prisma.product.update({
             where: { id: update.id },
             data: { inventory: update.inventory },
-          })
-        )
+          }),
+        ),
       );
 
       // Verify updates
@@ -301,7 +308,7 @@ describe("🚜 Farmer Journey Integration Tests", () => {
 
       updatedProducts.forEach((product, index) => {
         expect(product.inventory).toBeGreaterThanOrEqual(
-          products[index].inventory
+          products[index].inventory,
         );
       });
     });
@@ -566,7 +573,7 @@ describe("🚜 Farmer Journey Integration Tests", () => {
 
       const dailyRevenue = dailyOrders.reduce(
         (sum, order) => sum + order.total,
-        0
+        0,
       );
 
       expect(dailyRevenue).toBeGreaterThanOrEqual(0);
@@ -630,7 +637,10 @@ describe("🚜 Farmer Journey Integration Tests", () => {
 
       const report = {
         totalOrders: monthlyOrders.length,
-        totalRevenue: monthlyOrders.reduce((sum, order) => sum + order.total, 0),
+        totalRevenue: monthlyOrders.reduce(
+          (sum, order) => sum + order.total,
+          0,
+        ),
         averageOrderValue:
           monthlyOrders.length > 0
             ? monthlyOrders.reduce((sum, order) => sum + order.total, 0) /
@@ -640,7 +650,7 @@ describe("🚜 Farmer Journey Integration Tests", () => {
           (sum, order) =>
             sum +
             order.items.reduce((itemSum, item) => itemSum + item.quantity, 0),
-          0
+          0,
         ),
       };
 
@@ -672,7 +682,7 @@ describe("🚜 Farmer Journey Integration Tests", () => {
       });
 
       const uniqueCustomers = Array.from(
-        new Map(customers.map((o) => [o.customer.id, o.customer])).values()
+        new Map(customers.map((o) => [o.customer.id, o.customer])).values(),
       );
 
       // Send announcement
@@ -688,7 +698,7 @@ describe("🚜 Farmer Journey Integration Tests", () => {
       }
 
       expect(mockEmailService.getSentEmails().length).toBe(
-        uniqueCustomers.length
+        uniqueCustomers.length,
       );
     });
 
@@ -715,7 +725,8 @@ describe("🚜 Farmer Journey Integration Tests", () => {
         await prisma.review.update({
           where: { id: review.id },
           data: {
-            farmerResponse: "Thank you for your feedback! We're glad you enjoyed our products.",
+            farmerResponse:
+              "Thank you for your feedback! We're glad you enjoyed our products.",
             farmerRespondedAt: new Date(),
           },
         });
@@ -788,7 +799,7 @@ describe("🚜 Farmer Journey Integration Tests", () => {
       });
 
       expect(allSeasonalProducts.length).toBeGreaterThanOrEqual(
-        newSeasonalProducts.length
+        newSeasonalProducts.length,
       );
     });
 

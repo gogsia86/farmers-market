@@ -12,7 +12,7 @@ import {
   CheckCircle,
   Sparkles,
   Sun,
-  Moon
+  Moon,
 } from "lucide-react";
 
 // ============================================================================
@@ -83,7 +83,7 @@ const CERTIFICATION_CONFIG: Record<CertificationType, CertificationConfig> = {
     borderColor: "border-green-500",
     gradient: "from-green-500 to-emerald-600",
     description: "Grown without synthetic pesticides or fertilizers",
-    emoji: "🌿"
+    emoji: "🌿",
   },
   BIODYNAMIC: {
     label: "Biodynamic Certified",
@@ -94,7 +94,7 @@ const CERTIFICATION_CONFIG: Record<CertificationType, CertificationConfig> = {
     borderColor: "border-purple-500",
     gradient: "from-purple-500 to-indigo-600",
     description: "Holistic farming aligned with natural cycles",
-    emoji: "🌙"
+    emoji: "🌙",
   },
   REGENERATIVE: {
     label: "Regenerative Agriculture",
@@ -105,7 +105,7 @@ const CERTIFICATION_CONFIG: Record<CertificationType, CertificationConfig> = {
     borderColor: "border-teal-500",
     gradient: "from-teal-500 to-cyan-600",
     description: "Practices that restore and improve soil health",
-    emoji: "🌱"
+    emoji: "🌱",
   },
   NON_GMO: {
     label: "Non-GMO Verified",
@@ -116,7 +116,7 @@ const CERTIFICATION_CONFIG: Record<CertificationType, CertificationConfig> = {
     borderColor: "border-blue-500",
     gradient: "from-blue-500 to-cyan-600",
     description: "No genetically modified organisms",
-    emoji: "🛡️"
+    emoji: "🛡️",
   },
   FAIR_TRADE: {
     label: "Fair Trade Certified",
@@ -127,7 +127,7 @@ const CERTIFICATION_CONFIG: Record<CertificationType, CertificationConfig> = {
     borderColor: "border-rose-500",
     gradient: "from-rose-500 to-pink-600",
     description: "Ethical labor practices and fair compensation",
-    emoji: "❤️"
+    emoji: "❤️",
   },
   LOCAL: {
     label: "Locally Grown",
@@ -138,7 +138,7 @@ const CERTIFICATION_CONFIG: Record<CertificationType, CertificationConfig> = {
     borderColor: "border-amber-500",
     gradient: "from-amber-500 to-orange-600",
     description: "Grown within your local community",
-    emoji: "☀️"
+    emoji: "☀️",
   },
   SUSTAINABLE: {
     label: "Sustainable Practices",
@@ -149,7 +149,7 @@ const CERTIFICATION_CONFIG: Record<CertificationType, CertificationConfig> = {
     borderColor: "border-emerald-500",
     gradient: "from-emerald-500 to-green-600",
     description: "Environmentally responsible farming methods",
-    emoji: "♻️"
+    emoji: "♻️",
   },
   PERMACULTURE: {
     label: "Permaculture Design",
@@ -160,7 +160,7 @@ const CERTIFICATION_CONFIG: Record<CertificationType, CertificationConfig> = {
     borderColor: "border-lime-500",
     gradient: "from-lime-500 to-green-600",
     description: "Ecological design principles for sustainable systems",
-    emoji: "✨"
+    emoji: "✨",
   },
   PESTICIDE_FREE: {
     label: "Pesticide Free",
@@ -171,7 +171,7 @@ const CERTIFICATION_CONFIG: Record<CertificationType, CertificationConfig> = {
     borderColor: "border-cyan-500",
     gradient: "from-cyan-500 to-teal-600",
     description: "Grown without any pesticide use",
-    emoji: "✓"
+    emoji: "✓",
   },
   HEIRLOOM: {
     label: "Heirloom Varieties",
@@ -182,8 +182,8 @@ const CERTIFICATION_CONFIG: Record<CertificationType, CertificationConfig> = {
     borderColor: "border-orange-500",
     gradient: "from-orange-500 to-red-600",
     description: "Traditional, non-hybrid plant varieties",
-    emoji: "⭐"
-  }
+    emoji: "⭐",
+  },
 };
 
 // ============================================================================
@@ -195,26 +195,26 @@ const SIZE_CONFIG = {
     container: "px-2 py-1 gap-1",
     icon: "h-3 w-3",
     text: "text-xs",
-    badge: "h-3 w-3"
+    badge: "h-3 w-3",
   },
   md: {
     container: "px-3 py-1.5 gap-1.5",
     icon: "h-4 w-4",
     text: "text-sm",
-    badge: "h-4 w-4"
+    badge: "h-4 w-4",
   },
   lg: {
     container: "px-4 py-2 gap-2",
     icon: "h-5 w-5",
     text: "text-base",
-    badge: "h-5 w-5"
+    badge: "h-5 w-5",
   },
   xl: {
     container: "px-5 py-3 gap-2.5",
     icon: "h-6 w-6",
     text: "text-lg",
-    badge: "h-6 w-6"
-  }
+    badge: "h-6 w-6",
+  },
 };
 
 // ============================================================================
@@ -231,7 +231,7 @@ export function BiodynamicBadge({
   tooltip,
   className,
   animated = true,
-  onClick
+  onClick,
 }: BiodynamicBadgeProps) {
   const config = CERTIFICATION_CONFIG[type];
   const sizeConfig = SIZE_CONFIG[size];
@@ -250,7 +250,7 @@ export function BiodynamicBadge({
           config.color,
           isInteractive && "cursor-pointer hover:opacity-80",
           animated && "transition-opacity",
-          className
+          className,
         )}
         onClick={onClick}
         role={isInteractive ? "button" : undefined}
@@ -275,7 +275,7 @@ export function BiodynamicBadge({
           config.color,
           isInteractive && "cursor-pointer hover:bg-gray-50",
           animated && "transition-colors",
-          className
+          className,
         )}
         onClick={onClick}
         role={isInteractive ? "button" : undefined}
@@ -296,7 +296,10 @@ export function BiodynamicBadge({
           </span>
         )}
         {showVerified && (
-          <CheckCircle className={cn(sizeConfig.icon, "ml-0.5")} aria-hidden="true" />
+          <CheckCircle
+            className={cn(sizeConfig.icon, "ml-0.5")}
+            aria-hidden="true"
+          />
         )}
       </div>
     );
@@ -313,7 +316,7 @@ export function BiodynamicBadge({
           config.gradient,
           isInteractive && "cursor-pointer hover:shadow-lg",
           animated && "transition-shadow",
-          className
+          className,
         )}
         onClick={onClick}
         role={isInteractive ? "button" : undefined}
@@ -334,7 +337,10 @@ export function BiodynamicBadge({
           </span>
         )}
         {showVerified && (
-          <CheckCircle className={cn(sizeConfig.icon, "ml-0.5")} aria-hidden="true" />
+          <CheckCircle
+            className={cn(sizeConfig.icon, "ml-0.5")}
+            aria-hidden="true"
+          />
         )}
       </div>
     );
@@ -351,7 +357,7 @@ export function BiodynamicBadge({
         config.color,
         isInteractive && "cursor-pointer hover:shadow-md",
         animated && "transition-shadow",
-        className
+        className,
       )}
       onClick={onClick}
       role={isInteractive ? "button" : undefined}
@@ -372,7 +378,10 @@ export function BiodynamicBadge({
         </span>
       )}
       {showVerified && (
-        <CheckCircle className={cn(sizeConfig.icon, "ml-0.5")} aria-hidden="true" />
+        <CheckCircle
+          className={cn(sizeConfig.icon, "ml-0.5")}
+          aria-hidden="true"
+        />
       )}
       {verifiedDate && (
         <span className={cn("text-xs opacity-75 ml-1")}>
@@ -414,7 +423,7 @@ export function BiodynamicBadgeGroup({
   maxVisible = 3,
   direction = "horizontal",
   className,
-  onBadgeClick
+  onBadgeClick,
 }: BiodynamicBadgeGroupProps) {
   const visibleCerts = certifications.slice(0, maxVisible);
   const remainingCount = certifications.length - maxVisible;
@@ -423,8 +432,10 @@ export function BiodynamicBadgeGroup({
     <div
       className={cn(
         "flex items-center",
-        direction === "horizontal" ? "flex-row flex-wrap gap-2" : "flex-col gap-2",
-        className
+        direction === "horizontal"
+          ? "flex-row flex-wrap gap-2"
+          : "flex-col gap-2",
+        className,
       )}
       role="list"
       aria-label="Certifications and practices"
@@ -445,7 +456,7 @@ export function BiodynamicBadgeGroup({
           className={cn(
             "inline-flex items-center px-2 py-1 rounded-full",
             "bg-gray-100 border border-gray-300 text-gray-600",
-            "text-xs font-medium"
+            "text-xs font-medium",
           )}
         >
           +{remainingCount} more
@@ -462,7 +473,9 @@ export function BiodynamicBadgeGroup({
 /**
  * Get certification configuration
  */
-export function getCertificationConfig(type: CertificationType): CertificationConfig {
+export function getCertificationConfig(
+  type: CertificationType,
+): CertificationConfig {
   return CERTIFICATION_CONFIG[type];
 }
 
@@ -483,11 +496,20 @@ export function getAllCertificationTypes(): CertificationType[] {
 /**
  * Filter certifications by category
  */
-export function getCertificationsByCategory(category: "environmental" | "social" | "quality"): CertificationType[] {
+export function getCertificationsByCategory(
+  category: "environmental" | "social" | "quality",
+): CertificationType[] {
   const categories: Record<string, CertificationType[]> = {
-    environmental: ["ORGANIC", "BIODYNAMIC", "REGENERATIVE", "SUSTAINABLE", "PERMACULTURE", "PESTICIDE_FREE"],
+    environmental: [
+      "ORGANIC",
+      "BIODYNAMIC",
+      "REGENERATIVE",
+      "SUSTAINABLE",
+      "PERMACULTURE",
+      "PESTICIDE_FREE",
+    ],
     social: ["FAIR_TRADE", "LOCAL"],
-    quality: ["NON_GMO", "HEIRLOOM"]
+    quality: ["NON_GMO", "HEIRLOOM"],
   };
   return categories[category] || [];
 }

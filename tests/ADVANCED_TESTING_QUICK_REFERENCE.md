@@ -47,19 +47,22 @@ npm run test:e2e:advanced:debug
 
 ```typescript
 import { test } from "@playwright/test";
-import { MultiUserOrchestrator, TestDataFactory } from "@/tests/utils/e2e-advanced-utils";
+import {
+  MultiUserOrchestrator,
+  TestDataFactory,
+} from "@/tests/utils/e2e-advanced-utils";
 
 test("Multi-user workflow", async ({ browser }) => {
   const context = await browser.newContext();
   const orchestrator = new MultiUserOrchestrator(context);
-  
+
   // Create test users
   const farmer = await TestDataFactory.createTestUser("FARMER");
   const customer = await TestDataFactory.createTestUser("CUSTOMER");
-  
+
   // Setup
   await orchestrator.setupUsers([farmer, customer]);
-  
+
   // Execute parallel actions
   await orchestrator.executeParallel([
     {
@@ -68,17 +71,17 @@ test("Multi-user workflow", async ({ browser }) => {
         await page.goto("/dashboard/products/new");
         await page.fill('input[name="name"]', "Fresh Tomatoes");
         await page.click('button[type="submit"]');
-      }
+      },
     },
     {
       userId: customer.id,
       action: async (page) => {
         await page.goto("/products");
         await page.click("text=Fresh Tomatoes");
-      }
-    }
+      },
+    },
   ]);
-  
+
   // Cleanup
   await orchestrator.cleanup();
 });
@@ -92,24 +95,29 @@ import { ApiClient, ApiAssertions } from "@/tests/utils/api-integration-utils";
 
 test("API workflow", async () => {
   const client = new ApiClient();
-  
+
   // Authenticate
   await client.authenticate("user@example.com", "password");
-  
+
   // Create resource
   const response = await client.post("/api/farms", {
     name: "Test Farm",
-    location: { address: "123 Test St", city: "Test City", state: "TS", zipCode: "12345" }
+    location: {
+      address: "123 Test St",
+      city: "Test City",
+      state: "TS",
+      zipCode: "12345",
+    },
   });
-  
+
   // Assert success
   ApiAssertions.assertSuccess(response);
   expect(response.data).toHaveProperty("id");
-  
+
   // Test performance
   await ApiAssertions.assertResponseTime(
     () => client.get(`/api/farms/${response.data.id}`),
-    1000 // Max 1 second
+    1000, // Max 1 second
   );
 });
 ```
@@ -124,24 +132,27 @@ import { database } from "@/lib/database";
 test("Transaction rollback", async () => {
   const tester = new TransactionTester();
   let userId: string;
-  
+
   try {
-    await tester.testRollback([
-      async () => {
-        const user = await database.user.create({
-          data: { email: "test@example.com", name: "Test", role: "CUSTOMER" }
-        });
-        userId = user.id;
-        return user;
-      },
-      async () => {
-        throw new Error("Intentional rollback");
-      }
-    ], 1);
+    await tester.testRollback(
+      [
+        async () => {
+          const user = await database.user.create({
+            data: { email: "test@example.com", name: "Test", role: "CUSTOMER" },
+          });
+          userId = user.id;
+          return user;
+        },
+        async () => {
+          throw new Error("Intentional rollback");
+        },
+      ],
+      1,
+    );
   } catch (error) {
     // Expected
   }
-  
+
   // Verify rollback
   const user = await database.user.findUnique({ where: { id: userId } });
   expect(user).toBeNull();
@@ -162,14 +173,34 @@ await orchestrator.setupUsers([user1, user2, user3]);
 
 // Execute parallel
 await orchestrator.executeParallel([
-  { userId: user1.id, action: async (page) => { /* ... */ } },
-  { userId: user2.id, action: async (page) => { /* ... */ } }
+  {
+    userId: user1.id,
+    action: async (page) => {
+      /* ... */
+    },
+  },
+  {
+    userId: user2.id,
+    action: async (page) => {
+      /* ... */
+    },
+  },
 ]);
 
 // Execute sequential
 await orchestrator.executeSequential([
-  { userId: user1.id, action: async (page) => { /* ... */ } },
-  { userId: user2.id, action: async (page) => { /* ... */ } }
+  {
+    userId: user1.id,
+    action: async (page) => {
+      /* ... */
+    },
+  },
+  {
+    userId: user2.id,
+    action: async (page) => {
+      /* ... */
+    },
+  },
 ]);
 
 // Get specific page
@@ -190,14 +221,14 @@ await network.interceptRequests(/api\/products/);
 // Mock response
 await network.mockResponse(/api\/farms/, {
   status: 200,
-  body: { success: true, data: mockData }
+  body: { success: true, data: mockData },
 });
 
 // Simulate slow network
 await network.setNetworkConditions({
   downloadThroughput: 50 * 1024,
   uploadThroughput: 20 * 1024,
-  latency: 500
+  latency: 500,
 });
 
 // Go offline
@@ -226,7 +257,7 @@ const deleted = await client.delete("/api/products/123");
 
 // With params
 const filtered = await client.get("/api/products", {
-  params: { category: "VEGETABLES", page: "1" }
+  params: { category: "VEGETABLES", page: "1" },
 });
 ```
 
@@ -242,20 +273,17 @@ ApiAssertions.assertError(response, "NOT_FOUND");
 // Assert pagination
 ApiAssertions.assertPagination(response.meta.pagination, {
   page: 1,
-  pageSize: 10
+  pageSize: 10,
 });
 
 // Assert response time
-await ApiAssertions.assertResponseTime(
-  () => client.get("/api/products"),
-  1000
-);
+await ApiAssertions.assertResponseTime(() => client.get("/api/products"), 1000);
 
 // Assert structure
 ApiAssertions.assertStructure(response.data, {
   id: "string",
   name: "string",
-  price: "number"
+  price: "number",
 });
 
 // Assert array
@@ -301,14 +329,24 @@ const analyzer = new QueryPerformanceAnalyzer();
 // Measure single query
 const { result, metrics } = await analyzer.measureQuery(
   async () => database.product.findMany(),
-  "product-list"
+  "product-list",
 );
 console.log("Duration:", metrics.duration, "ms");
 
 // Compare queries
 const comparison = await analyzer.compareQueries([
-  { name: "method-1", fn: async () => { /* ... */ } },
-  { name: "method-2", fn: async () => { /* ... */ } }
+  {
+    name: "method-1",
+    fn: async () => {
+      /* ... */
+    },
+  },
+  {
+    name: "method-2",
+    fn: async () => {
+      /* ... */
+    },
+  },
 ]);
 console.log("Fastest:", comparison.fastest);
 
@@ -326,9 +364,11 @@ const { valid, checks, violations } = await validator.validateAll();
 
 if (!valid) {
   console.error(`Found ${violations} violations`);
-  checks.filter(c => !c.valid).forEach(check => {
-    console.error(`${check.table}: ${check.constraint}`);
-  });
+  checks
+    .filter((c) => !c.valid)
+    .forEach((check) => {
+      console.error(`${check.table}: ${check.constraint}`);
+    });
 }
 
 // Validate specific constraints
@@ -356,7 +396,7 @@ const customer = await TestDataFactory.createTestUser("CUSTOMER");
 ```typescript
 const farm = await TestDataFactory.createTestFarm(farmerId, {
   name: "Custom Farm Name",
-  slug: "custom-slug"
+  slug: "custom-slug",
 });
 ```
 
@@ -366,7 +406,7 @@ const farm = await TestDataFactory.createTestFarm(farmerId, {
 const product = await TestDataFactory.createTestProduct(farmId, {
   name: "Custom Product",
   price: 19.99,
-  inventory: 50
+  inventory: 50,
 });
 ```
 
@@ -386,7 +426,7 @@ await TestDataFactory.cleanup({
   userIds: [user1.id, user2.id],
   farmIds: [farm1.id],
   productIds: [product1.id, product2.id],
-  orderIds: [order1.id]
+  orderIds: [order1.id],
 });
 ```
 
@@ -419,7 +459,7 @@ npx playwright show-trace trace.zip
 ### Console Logs
 
 ```typescript
-page.on("console", msg => console.log("Browser log:", msg.text()));
+page.on("console", (msg) => console.log("Browser log:", msg.text()));
 ```
 
 ### Pause Test
@@ -463,9 +503,8 @@ import { ApiPerformanceMonitor } from "@/tests/utils/api-integration-utils";
 const monitor = new ApiPerformanceMonitor();
 
 // Measure API call
-const duration = await monitor.measure(
-  "/api/products",
-  () => client.get("/api/products")
+const duration = await monitor.measure("/api/products", () =>
+  client.get("/api/products"),
 );
 
 // Get statistics
@@ -484,6 +523,7 @@ console.log(monitor.generateReport());
 ### Issue: Tests timeout
 
 **Solution:**
+
 ```typescript
 test.setTimeout(60000); // 60 seconds
 ```
@@ -491,6 +531,7 @@ test.setTimeout(60000); // 60 seconds
 ### Issue: Database connection errors
 
 **Solution:**
+
 ```bash
 npm run db:test:setup
 ```
@@ -498,6 +539,7 @@ npm run db:test:setup
 ### Issue: Flaky tests
 
 **Solution:**
+
 ```typescript
 // Use explicit waits
 await page.waitForSelector('[data-testid="element"]', { state: "visible" });
@@ -509,6 +551,7 @@ test.describe.configure({ retries: 3 });
 ### Issue: Port conflicts
 
 **Solution:**
+
 ```bash
 npm run kill-server
 lsof -ti:3000 | xargs kill -9
@@ -517,6 +560,7 @@ lsof -ti:3000 | xargs kill -9
 ### Issue: Stale test data
 
 **Solution:**
+
 ```typescript
 test.beforeEach(async () => {
   await dbManager.cleanDatabase();

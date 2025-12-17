@@ -10,9 +10,13 @@ import * as fs from "fs";
 import * as path from "path";
 
 async function globalAuthSetup(config: FullConfig) {
-  console.log("\n╔════════════════════════════════════════════════════════════╗");
+  console.log(
+    "\n╔════════════════════════════════════════════════════════════╗",
+  );
   console.log("║  🔐 Setting up authenticated browser states                ║");
-  console.log("╚════════════════════════════════════════════════════════════╝\n");
+  console.log(
+    "╚════════════════════════════════════════════════════════════╝\n",
+  );
 
   // Ensure auth directory exists
   const authDir = path.join(__dirname, ".auth");
@@ -44,14 +48,30 @@ async function globalAuthSetup(config: FullConfig) {
     await setupAuthContext(customerContext, "customer");
     await customerContext.close();
 
-    console.log("\n╔════════════════════════════════════════════════════════════╗");
-    console.log("║  ✅ Authentication setup complete!                         ║");
-    console.log("╠════════════════════════════════════════════════════════════╣");
-    console.log("║  Generated auth states:                                    ║");
-    console.log("║  • tests/auth/.auth/admin.json                             ║");
-    console.log("║  • tests/auth/.auth/farmer.json                            ║");
-    console.log("║  • tests/auth/.auth/customer.json                          ║");
-    console.log("╚════════════════════════════════════════════════════════════╝\n");
+    console.log(
+      "\n╔════════════════════════════════════════════════════════════╗",
+    );
+    console.log(
+      "║  ✅ Authentication setup complete!                         ║",
+    );
+    console.log(
+      "╠════════════════════════════════════════════════════════════╣",
+    );
+    console.log(
+      "║  Generated auth states:                                    ║",
+    );
+    console.log(
+      "║  • tests/auth/.auth/admin.json                             ║",
+    );
+    console.log(
+      "║  • tests/auth/.auth/farmer.json                            ║",
+    );
+    console.log(
+      "║  • tests/auth/.auth/customer.json                          ║",
+    );
+    console.log(
+      "╚════════════════════════════════════════════════════════════╝\n",
+    );
   } catch (error) {
     console.error("❌ Authentication setup failed:", error);
     throw error;

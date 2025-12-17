@@ -110,8 +110,8 @@ function parseSizeToBytes(sizeStr: string): number {
   const match = sizeStr.match(/^([\d.]+)\s*(\w+)$/);
   if (!match) return 0;
 
-  const value = parseFloat(match[1]);
-  const unit = match[2].toUpperCase();
+  const value = parseFloat(match[1]!);
+  const unit = match[2]!.toUpperCase();
 
   const multipliers: Record<string, number> = {
     B: 1,
@@ -164,7 +164,7 @@ function calculateBandwidthSavings(
  *   }
  * }
  */
-export async function GET(request: NextRequest): Promise<NextResponse> {
+export async function GET(_request: NextRequest): Promise<NextResponse> {
   try {
     // Authentication check (admin only)
     const session = await auth();
@@ -291,7 +291,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         error: {
           code: "PERFORMANCE_METRICS_ERROR",
           message:
-            error instanceof Error ? error.message : "Failed to retrieve metrics",
+            error instanceof Error
+              ? error.message
+              : "Failed to retrieve metrics",
         },
       },
       { status: 500 },
@@ -313,7 +315,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
  *   "message": "Performance statistics reset successfully"
  * }
  */
-export async function POST(request: NextRequest): Promise<NextResponse> {
+export async function POST(_request: NextRequest): Promise<NextResponse> {
   try {
     // Authentication check (admin only)
     const session = await auth();
@@ -345,7 +347,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // Get action from query params
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(_request.url);
     const action = searchParams.get("action");
 
     if (action === "reset") {
@@ -381,7 +383,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         error: {
           code: "PERFORMANCE_RESET_ERROR",
           message:
-            error instanceof Error ? error.message : "Failed to reset statistics",
+            error instanceof Error
+              ? error.message
+              : "Failed to reset statistics",
         },
       },
       { status: 500 },

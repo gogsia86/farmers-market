@@ -18,6 +18,7 @@ npm run fix:auth
 ```
 
 **What this does:**
+
 - ✅ Generates NEXTAUTH_SECRET
 - ✅ Creates/updates .env.test and .env.local
 - ✅ Recreates test users with correct passwords
@@ -34,6 +35,7 @@ npm run debug:auth
 ```
 
 **Expected output:**
+
 ```
 ✅ Passed: 23
 ❌ Failed: 0
@@ -43,6 +45,7 @@ Success Rate: 100.0%
 ```
 
 **If you see failures:**
+
 - Read the error messages
 - See "Common Issues" section below
 - Check `docs/NEXTAUTH_DEBUG_GUIDE.md`
@@ -57,6 +60,7 @@ npm run dev
 ```
 
 Wait for:
+
 ```
 ✓ Ready in 3.2s
 ○ Local:        http://localhost:3001
@@ -87,6 +91,7 @@ npx playwright test tests/e2e/auth.setup.ts --config=playwright.config.temp.ts -
 ```
 
 **Expected output:**
+
 ```
 ✅ Admin authenticated successfully
 ✅ Farmer authenticated successfully
@@ -105,6 +110,7 @@ npm run test:e2e
 ```
 
 **Expected results:**
+
 - Pass rate: ~90% (390+ tests passing)
 - Most auth-related failures resolved
 - StorageState files generated in `tests/auth/.auth/`
@@ -165,6 +171,7 @@ npm run dev
 ### Issue: Manual login still fails after fix
 
 **Check server logs in Terminal 1:**
+
 - Look for error messages when you click "Sign In"
 - Common errors:
   - "User not found" → Run `tsx tests/global-setup.ts`
@@ -172,10 +179,12 @@ npm run dev
   - "Invalid role" → Check `src/lib/auth/config.ts` includes "CONSUMER"
 
 **Check browser console (F12):**
+
 - Look for JavaScript errors
 - Check Network tab for failed requests to `/api/auth/*`
 
 **Test API directly (PowerShell):**
+
 ```powershell
 $body = @{
     email = "farmer@farmersmarket.app"
@@ -209,6 +218,7 @@ Before running E2E tests:
 ## 🎯 What Success Looks Like
 
 ### 1. Diagnostic Output
+
 ```
 ✅ ALL CHECKS PASSED!
 Total Checks: 23
@@ -216,11 +226,13 @@ Success Rate: 100.0%
 ```
 
 ### 2. Manual Login
+
 - ✅ No "Authentication Failed" error
 - ✅ Redirects to appropriate dashboard
 - ✅ User menu shows in top right
 
 ### 3. E2E Auth Setup
+
 ```
 Running 4 tests using 1 worker
 ✓ [setup] › tests/e2e/auth.setup.ts:10:1 › authenticate as admin
@@ -232,6 +244,7 @@ Running 4 tests using 1 worker
 ```
 
 ### 4. E2E Tests
+
 ```
 435 tests across 5 browser projects
 390+ passed (~90% pass rate)
@@ -244,16 +257,19 @@ Authentication-related tests now passing
 ## 🆘 Still Stuck?
 
 ### 1. Run Full Diagnostic with Logs
+
 ```bash
 npm run debug:auth > auth-debug.log 2>&1
 notepad auth-debug.log
 ```
 
 ### 2. Check Documentation
+
 - `docs/NEXTAUTH_DEBUG_GUIDE.md` - Comprehensive troubleshooting
 - `NEXTAUTH_FIX_SUMMARY.md` - What was fixed and why
 
 ### 3. Reset Everything and Start Fresh
+
 ```bash
 # 1. Kill all servers
 npm run kill-server
@@ -287,6 +303,7 @@ If you're still having issues after trying all of the above:
    - Screenshots of error messages
 
 2. **Check recent changes:**
+
    ```bash
    git log --oneline -5 -- "src/lib/auth/**"
    ```
@@ -304,13 +321,14 @@ If you're still having issues after trying all of the above:
 ✅ Manual login works without errors  
 ✅ Auth setup creates 3 JSON files in `tests/auth/.auth/`  
 ✅ E2E tests run with ~90% pass rate  
-✅ No more "Authentication Failed" messages  
+✅ No more "Authentication Failed" messages
 
 **Congratulations!** 🎊 NextAuth is now working correctly!
 
 ---
 
 **Quick Reference:**
+
 - Fix: `npm run fix:auth`
 - Diagnose: `npm run debug:auth`
 - Test: `npm run test:e2e`

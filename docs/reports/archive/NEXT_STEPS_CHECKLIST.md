@@ -1,4 +1,5 @@
 # ✅ Next Steps Checklist - Farmers Market Platform
+
 ## Post E2E Test Suite Success
 
 **Date:** December 5, 2025  
@@ -10,11 +11,13 @@
 ## 🎯 Immediate Actions (Do Now)
 
 ### 1. View Test Results in HTML Report
+
 ```bash
 npx playwright show-report
 ```
 
 **What to look for:**
+
 - [ ] Count passing vs failing tests
 - [ ] Identify any authentication failures
 - [ ] Check cart/checkout flow results
@@ -22,6 +25,7 @@ npx playwright show-report
 - [ ] Note any browser-specific issues
 
 **Expected:** Most tests passing, some may fail due to:
+
 - Missing Stripe test keys
 - Session handling edge cases
 - API route timing issues
@@ -29,14 +33,15 @@ npx playwright show-report
 ---
 
 ### 2. Document Test Results
+
 - [ ] Take screenshot of HTML report summary
 - [ ] Create test results spreadsheet
 - [ ] Note pass rate by category:
-  - [ ] Authentication: ___%
-  - [ ] Shopping flows: ___%
-  - [ ] Checkout: ___%
-  - [ ] Admin/Farmer: ___%
-  - [ ] Mobile: ___%
+  - [ ] Authentication: \_\_\_%
+  - [ ] Shopping flows: \_\_\_%
+  - [ ] Checkout: \_\_\_%
+  - [ ] Admin/Farmer: \_\_\_%
+  - [ ] Mobile: \_\_\_%
 - [ ] List top 5 failing tests (if any)
 
 ---
@@ -44,6 +49,7 @@ npx playwright show-report
 ### 3. Fix Critical Failures (If Any Found)
 
 **Priority Order:**
+
 1. [ ] Authentication failures (blocks other tests)
 2. [ ] Cart operations (core functionality)
 3. [ ] Checkout completion (revenue critical)
@@ -51,6 +57,7 @@ npx playwright show-report
 5. [ ] Mobile-specific issues (50% of traffic)
 
 **Common Fixes:**
+
 ```typescript
 // Session persistence issue?
 // Check: src/lib/auth/config.ts
@@ -67,6 +74,7 @@ npx playwright show-report
 ## 🚀 Short-term Goals (This Week)
 
 ### 4. Add Stripe Test Keys
+
 - [ ] Get Stripe test keys from Stripe Dashboard
 - [ ] Add to `.env.test`:
   ```env
@@ -79,6 +87,7 @@ npx playwright show-report
 - [ ] Test webhook handling
 
 **Command:**
+
 ```bash
 npx playwright test tests/e2e/checkout-stripe-flow.spec.ts --grep "payment"
 ```
@@ -86,6 +95,7 @@ npx playwright test tests/e2e/checkout-stripe-flow.spec.ts --grep "payment"
 ---
 
 ### 5. Optimize Test Performance
+
 - [ ] Review tests timing out at 30s
 - [ ] Replace `page.waitForTimeout()` with `page.waitForSelector()`
 - [ ] Reduce unnecessary waits
@@ -100,6 +110,7 @@ npx playwright test tests/e2e/checkout-stripe-flow.spec.ts --grep "payment"
 ---
 
 ### 6. Expand Test Coverage
+
 - [ ] Add farmer dashboard detailed tests
 - [ ] Add admin panel comprehensive tests
 - [ ] Add error boundary tests
@@ -116,6 +127,7 @@ npx playwright test tests/e2e/checkout-stripe-flow.spec.ts --grep "payment"
 ### 7. Implement Load Testing (ORIGINAL OBJECTIVE #4)
 
 **Option A: K6 (Recommended)**
+
 ```bash
 # Install K6
 choco install k6  # Windows
@@ -126,31 +138,33 @@ brew install k6   # Mac
 ```
 
 **Sample K6 Script:**
+
 ```javascript
-import http from 'k6/http';
-import { check, sleep } from 'k6';
+import http from "k6/http";
+import { check, sleep } from "k6";
 
 export const options = {
   stages: [
-    { duration: '1m', target: 50 },   // Ramp up to 50 users
-    { duration: '3m', target: 100 },  // Stay at 100 users
-    { duration: '1m', target: 0 },    // Ramp down
+    { duration: "1m", target: 50 }, // Ramp up to 50 users
+    { duration: "3m", target: 100 }, // Stay at 100 users
+    { duration: "1m", target: 0 }, // Ramp down
   ],
 };
 
 export default function () {
   // Test homepage
-  const res = http.get('http://localhost:3001');
-  check(res, { 'status is 200': (r) => r.status === 200 });
-  
+  const res = http.get("http://localhost:3001");
+  check(res, { "status is 200": (r) => r.status === 200 });
+
   // Test marketplace
-  http.get('http://localhost:3001/marketplace');
-  
+  http.get("http://localhost:3001/marketplace");
+
   sleep(1);
 }
 ```
 
 **Tasks:**
+
 - [ ] Install K6
 - [ ] Create `tests/load/` directory
 - [ ] Write load test scenarios:
@@ -164,6 +178,7 @@ export default function () {
 - [ ] Set performance thresholds
 
 **Run:**
+
 ```bash
 k6 run tests/load/marketplace-load.js
 ```
@@ -171,6 +186,7 @@ k6 run tests/load/marketplace-load.js
 ---
 
 **Option B: Artillery**
+
 ```bash
 npm install -g artillery
 
@@ -178,6 +194,7 @@ npm install -g artillery
 ```
 
 **Sample Artillery Config:**
+
 ```yaml
 config:
   target: "http://localhost:3001"
@@ -188,7 +205,7 @@ config:
     - duration: 180
       arrivalRate: 20
       name: "Sustained load"
-  
+
 scenarios:
   - name: "Browse and shop"
     flow:
@@ -201,6 +218,7 @@ scenarios:
 ```
 
 **Run:**
+
 ```bash
 artillery run tests/load/artillery.yml
 ```
@@ -210,6 +228,7 @@ artillery run tests/load/artillery.yml
 ### 8. Set Up Continuous Monitoring (ORIGINAL OBJECTIVE #5)
 
 **Use the existing workflow monitor:**
+
 ```bash
 # Start continuous monitoring
 npm run monitor:start
@@ -218,6 +237,7 @@ npm run monitor:start
 ```
 
 **Tasks:**
+
 - [ ] Configure monitoring schedule
 - [ ] Set up alerting (email/Slack)
 - [ ] Create monitoring dashboard
@@ -228,6 +248,7 @@ npm run monitor:start
   - [ ] Uptime > 99.9%
 
 **Integration with staging:**
+
 ```bash
 # Update scripts/workflow-monitor.ts
 const STAGING_URL = "https://staging.farmersmarket.app";
@@ -240,6 +261,7 @@ const STAGING_URL = "https://staging.farmersmarket.app";
 **GitHub Actions Workflow:**
 
 File: `.github/workflows/e2e-tests.yml`
+
 ```yaml
 name: E2E Tests
 
@@ -251,7 +273,7 @@ on:
 jobs:
   e2e:
     runs-on: ubuntu-latest
-    
+
     services:
       postgres:
         image: postgres:16
@@ -260,34 +282,34 @@ jobs:
           POSTGRES_DB: farmersmarket_test
         ports:
           - 5433:5432
-    
+
     steps:
       - uses: actions/checkout@v3
-      
+
       - uses: actions/setup-node@v3
         with:
-          node-version: '22'
-      
+          node-version: "22"
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Setup database
         run: npx prisma db push --accept-data-loss
         env:
           DATABASE_URL: postgresql://postgres:test_password_123@localhost:5433/farmersmarket_test
-      
+
       - name: Start dev server
         run: npm run dev &
-        
+
       - name: Wait for server
         run: npx wait-on http://localhost:3001
-      
+
       - name: Install Playwright
         run: npx playwright install --with-deps
-      
+
       - name: Run E2E tests
         run: npx playwright test --config=playwright.config.temp.ts
-      
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v3
@@ -297,6 +319,7 @@ jobs:
 ```
 
 **Tasks:**
+
 - [ ] Create `.github/workflows/e2e-tests.yml`
 - [ ] Test workflow on feature branch
 - [ ] Add status badge to README
@@ -308,6 +331,7 @@ jobs:
 ## 🎓 Long-term Goals (Next Quarter)
 
 ### 10. Visual Regression Testing
+
 - [ ] Enable Playwright screenshot comparison
 - [ ] Create baseline screenshots
 - [ ] Add visual tests to critical pages
@@ -317,6 +341,7 @@ jobs:
 ---
 
 ### 11. Performance Monitoring Dashboard
+
 - [ ] Set up Grafana + Prometheus
 - [ ] Track test metrics over time
 - [ ] Monitor pass rates
@@ -326,6 +351,7 @@ jobs:
 ---
 
 ### 12. Test Documentation
+
 - [ ] Write test authoring guide
 - [ ] Document page object patterns
 - [ ] Create test data management guide
@@ -337,16 +363,19 @@ jobs:
 ## 📈 Success Criteria
 
 **Week 1:**
+
 - [ ] All E2E tests passing (>95% pass rate)
 - [ ] Stripe payments working in test mode
 - [ ] Test suite < 20 minutes
 
 **Week 2:**
+
 - [ ] Load testing operational
 - [ ] Performance baselines documented
 - [ ] CI/CD integration complete
 
 **Month 1:**
+
 - [ ] Continuous monitoring running
 - [ ] 500+ E2E tests
 - [ ] Visual regression testing enabled
@@ -357,6 +386,7 @@ jobs:
 ## 🛠️ Quick Commands Reference
 
 ### Test Execution
+
 ```bash
 # Full suite
 npx playwright test --config=playwright.config.temp.ts
@@ -378,6 +408,7 @@ npx playwright show-report
 ```
 
 ### Database
+
 ```bash
 # Start test DB
 docker-compose -f docker-compose.test.yml up -d
@@ -391,6 +422,7 @@ docker-compose -f docker-compose.test.yml up -d
 ```
 
 ### Monitoring
+
 ```bash
 # Run all checks
 npm run monitor:all
@@ -407,6 +439,7 @@ npm run monitor:start
 ## 📞 Getting Help
 
 **Test failing?**
+
 1. Check HTML report for details
 2. Run test in headed mode: `--headed`
 3. Use debug mode: `--debug`
@@ -414,12 +447,14 @@ npm run monitor:start
 5. Verify dev server running on port 3001
 
 **Performance issues?**
+
 1. Check network tab in browser dev tools
 2. Review slow query logs
 3. Profile with Chrome DevTools
 4. Run load tests to identify bottlenecks
 
 **Need to add new tests?**
+
 1. Copy existing test as template
 2. Follow naming conventions
 3. Use page object patterns
@@ -430,6 +465,7 @@ npm run monitor:start
 ## 🎉 Celebrate Wins!
 
 **You've accomplished:**
+
 - ✅ Fixed broken E2E test suite
 - ✅ Executed 435 tests across 5 browsers
 - ✅ Validated entire platform end-to-end

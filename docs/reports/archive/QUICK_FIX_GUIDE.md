@@ -3,7 +3,7 @@
 **Issue**: Tests fail because they look for `/register` but app uses `/signup`  
 **Impact**: 68/87 tests failing (78% failure rate)  
 **Fix Time**: 30 minutes  
-**Expected Result**: 70-80% pass rate  
+**Expected Result**: 70-80% pass rate
 
 ---
 
@@ -24,6 +24,7 @@ await expect(page).toHaveURL(/\/register/);
 ## ✅ Step-by-Step Fix
 
 ### Step 1: Find All Occurrences (2 minutes)
+
 ```bash
 cd "M:\Repo\Farmers Market Platform web and app"
 
@@ -44,6 +45,7 @@ grep -r '/\\\/register/' tests/e2e/
 #### File: `tests/e2e/auth/customer-registration.spec.ts`
 
 **Find and replace:**
+
 ```typescript
 // OLD:
 await page.click('a[href="/register"]');
@@ -55,17 +57,20 @@ await expect(page).toHaveURL(/\/signup/);
 ```
 
 **Specific lines to update (approximate):**
+
 - Line 43: `await page.click('a[href="/register"]');` → `await page.click('a[href="/signup"]');`
 - Line 44: `await expect(page).toHaveURL(/\/register/);` → `await expect(page).toHaveURL(/\/signup/);`
 - Any other occurrences in the file
 
 #### Check Other Test Files:
+
 ```bash
 # Search for any other files with "register" references
 grep -l "register" tests/e2e/*.ts tests/e2e/**/*.ts
 ```
 
 Common patterns to replace:
+
 ```typescript
 // Pattern 1: Link clicks
 'a[href="/register"]' → 'a[href="/signup"]'
@@ -81,6 +86,7 @@ page.goto('/register') → page.goto('/signup')
 ```
 
 ### Step 3: Start Dev Server (1 minute)
+
 ```bash
 cd "M:\Repo\Farmers Market Platform web and app"
 
@@ -91,6 +97,7 @@ npm run dev
 Wait for: `✓ Ready on http://localhost:3001`
 
 ### Step 4: Manual Verification (3 minutes)
+
 ```bash
 # 1. Check login page has correct link
 curl -s http://localhost:3001/login | grep signup
@@ -102,6 +109,7 @@ curl -s http://localhost:3001/signup | grep -i "sign up\|create account"
 ```
 
 **OR** Open browser:
+
 1. Go to: http://localhost:3001/login
 2. Look for "Create Account" or "Sign Up" link
 3. Click it
@@ -109,6 +117,7 @@ curl -s http://localhost:3001/signup | grep -i "sign up\|create account"
 5. Verify registration form appears
 
 ### Step 5: Run Tests (6 minutes)
+
 ```bash
 cd "M:\Repo\Farmers Market Platform web and app"
 
@@ -124,9 +133,11 @@ npx playwright test tests/e2e/auth/customer-registration.spec.ts --project=chrom
 ```
 
 ### Step 6: Verify Results (2 minutes)
+
 Check the output for:
+
 ```
-✅ Expected: 
+✅ Expected:
 - Registration tests passing (6-8 tests)
 - Login tests passing (3-4 tests)
 - Overall pass rate: 60-70 tests passing
@@ -141,6 +152,7 @@ Check the output for:
 ## 🔍 Troubleshooting
 
 ### Tests Still Timeout?
+
 ```bash
 # Run in headed mode to see what's happening
 npx playwright test --headed --project=chromium tests/e2e/auth/customer-registration.spec.ts:37
@@ -150,6 +162,7 @@ npx playwright test --headed --debug tests/e2e/auth/customer-registration.spec.t
 ```
 
 ### Can't Find Signup Link?
+
 ```bash
 # Check what the actual link text is
 curl -s http://localhost:3001/login | grep -i "sign\|account\|register"
@@ -159,7 +172,9 @@ await page.click('text="Sign Up"'); // or whatever text is used
 ```
 
 ### Wrong Redirect After Signup?
+
 Check `src/lib/auth/config.ts`:
+
 ```typescript
 // Verify signIn callback redirects correctly
 callbacks: {
@@ -170,6 +185,7 @@ callbacks: {
 ```
 
 ### Still Getting Auth Errors?
+
 ```bash
 # Verify environment variables
 cat .env.local | grep NEXTAUTH_SECRET
@@ -183,6 +199,7 @@ cat .env.test | grep NEXTAUTH_SECRET
 ## 📊 Expected Test Results
 
 ### Before Fix:
+
 ```
 Running 87 tests
   12 passed (13.8%)
@@ -191,6 +208,7 @@ Running 87 tests
 ```
 
 ### After Fix:
+
 ```
 Running 87 tests
   60-70 passed (70-80%)
@@ -199,6 +217,7 @@ Running 87 tests
 ```
 
 ### Tests That Should Now Pass:
+
 - ✅ Customer Registration Flow (8 tests)
 - ✅ Customer Login Flow (4 tests)
 - ✅ Customer Profile Management (3 tests)
@@ -245,6 +264,7 @@ Set-Content tests/e2e/auth/customer-registration.spec.ts
 ## 🆘 Emergency Rollback
 
 If something breaks:
+
 ```bash
 # Restore backup
 cp tests/e2e/auth/customer-registration.spec.ts.backup tests/e2e/auth/customer-registration.spec.ts
@@ -258,6 +278,7 @@ git checkout tests/e2e/auth/customer-registration.spec.ts
 ## 📞 Need Help?
 
 ### View Detailed Logs:
+
 ```bash
 # Check test report
 npx playwright show-report
@@ -267,12 +288,14 @@ ls -la test-results/
 ```
 
 ### Debug Specific Test:
+
 ```bash
 # Run one test in debug mode
 npx playwright test --headed --debug tests/e2e/auth/customer-registration.spec.ts:37 --timeout=60000
 ```
 
 ### Check Server Logs:
+
 ```bash
 # If server issues
 cat dev-server.log | tail -50
@@ -283,6 +306,7 @@ cat dev-server.log | tail -50
 ## ✨ Success Indicators
 
 You'll know it worked when you see:
+
 ```
 ✅ 🌾 Customer Registration Flow › should complete full customer registration successfully
 ✅ 🌾 Customer Registration Flow › should show validation errors for invalid email
@@ -306,6 +330,6 @@ You'll know it worked when you see:
 
 **Time to Fix**: ~30 minutes  
 **Difficulty**: ⭐ Easy (find & replace)  
-**Impact**: 🚀 Massive (+400% pass rate increase)  
+**Impact**: 🚀 Massive (+400% pass rate increase)
 
 **Status**: Ready to implement! 🔧

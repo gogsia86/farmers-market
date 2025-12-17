@@ -21,18 +21,18 @@ import {
   SoilHealthMeter,
   BiodynamicBadge,
   BiodynamicBadgeGroup,
-  
+
   // Types
   Season,
   HarvestEvent,
   WeatherData,
   SoilHealthData,
   CertificationType,
-  
+
   // Utilities
   getCurrentSeason,
   calculateSoilHealth,
-  getCertificationConfig
+  getCertificationConfig,
 } from "@/components/agricultural";
 ```
 
@@ -45,13 +45,13 @@ import {
 <SeasonalIndicator season="SPRING" />
 
 // With temperature
-<SeasonalIndicator 
+<SeasonalIndicator
   season="SPRING"
   temperature={22}
 />
 
 // Full featured
-<SeasonalIndicator 
+<SeasonalIndicator
   season={getCurrentSeason()}
   temperature={22}
   variant="default"
@@ -89,7 +89,7 @@ const events: HarvestEvent[] = [
 ];
 
 // Use the calendar
-<HarvestCalendar 
+<HarvestCalendar
   events={events}
   onEventClick={(event) => console.log("Event:", event)}
   onDateClick={(date) => console.log("Date:", date)}
@@ -126,7 +126,7 @@ const forecast: ForecastDay[] = [
 ];
 
 // Use the widget
-<WeatherWidget 
+<WeatherWidget
   weather={weather}
   location="My Farm"
   variant="default"
@@ -160,7 +160,7 @@ const soilData: SoilHealthData = {
 };
 
 // Use the meter
-<SoilHealthMeter 
+<SoilHealthMeter
   data={soilData}
   variant="detailed"
   showMetrics={true}
@@ -182,7 +182,7 @@ console.log(`Score: ${score}/100, Status: ${status}`);
 
 ```typescript
 // Single badge
-<BiodynamicBadge 
+<BiodynamicBadge
   type="ORGANIC"
   size="md"
   variant="filled"
@@ -190,7 +190,7 @@ console.log(`Score: ${score}/100, Status: ${status}`);
 />
 
 // Multiple badges
-<BiodynamicBadgeGroup 
+<BiodynamicBadgeGroup
   certifications={["ORGANIC", "BIODYNAMIC", "LOCAL", "NON_GMO"]}
   size="md"
   maxVisible={3}
@@ -199,6 +199,7 @@ console.log(`Score: ${score}/100, Status: ${status}`);
 ```
 
 **Certifications**:
+
 - `ORGANIC` - Certified Organic 🌿
 - `BIODYNAMIC` - Biodynamic 🌙
 - `REGENERATIVE` - Regenerative 🌱
@@ -236,7 +237,7 @@ import {
 export function FarmDashboard() {
   // Get current season
   const currentSeason = getCurrentSeason();
-  
+
   // Weather data
   const weather: WeatherData = {
     condition: "CLEAR",
@@ -244,7 +245,7 @@ export function FarmDashboard() {
     humidity: 65,
     windSpeed: 12
   };
-  
+
   // Soil data
   const soilData: SoilHealthData = {
     ph: 6.5,
@@ -255,7 +256,7 @@ export function FarmDashboard() {
     moisture: 52,
     lastTested: new Date()
   };
-  
+
   // Harvest events
   const harvestEvents: HarvestEvent[] = [
     {
@@ -266,7 +267,7 @@ export function FarmDashboard() {
       status: "PLANNED"
     }
   ];
-  
+
   // Certifications
   const certifications: CertificationType[] = [
     "ORGANIC",
@@ -277,37 +278,37 @@ export function FarmDashboard() {
   return (
     <div className="container mx-auto p-6 space-y-6">
       <h1 className="text-3xl font-bold">Farm Dashboard</h1>
-      
+
       {/* Season and Weather */}
       <div className="grid md:grid-cols-2 gap-4">
-        <SeasonalIndicator 
+        <SeasonalIndicator
           season={currentSeason}
           temperature={weather.temperature}
         />
-        <WeatherWidget 
+        <WeatherWidget
           weather={weather}
           location="My Farm"
           showAgriculturalTips={true}
         />
       </div>
-      
+
       {/* Soil Health */}
-      <SoilHealthMeter 
+      <SoilHealthMeter
         data={soilData}
         variant="default"
         showMetrics={true}
       />
-      
+
       {/* Harvest Calendar */}
-      <HarvestCalendar 
+      <HarvestCalendar
         events={harvestEvents}
         onEventClick={(e) => alert(`Clicked: ${e.cropName}`)}
       />
-      
+
       {/* Certifications */}
       <div>
         <h2 className="text-xl font-semibold mb-4">Certifications</h2>
-        <BiodynamicBadgeGroup 
+        <BiodynamicBadgeGroup
           certifications={certifications}
           size="lg"
         />
@@ -322,6 +323,7 @@ export function FarmDashboard() {
 ## 🔧 Common Patterns
 
 ### Auto-detect season
+
 ```typescript
 import { getCurrentSeason } from "@/components/agricultural";
 
@@ -330,6 +332,7 @@ const season = getCurrentSeason(); // Returns current season
 ```
 
 ### Calculate soil health
+
 ```typescript
 import { calculateSoilHealth } from "@/components/agricultural";
 
@@ -339,6 +342,7 @@ const { status, score } = calculateSoilHealth(soilData);
 ```
 
 ### Validate certification
+
 ```typescript
 import { isValidCertification } from "@/components/agricultural";
 
@@ -348,6 +352,7 @@ if (isValidCertification("ORGANIC")) {
 ```
 
 ### Get all certifications
+
 ```typescript
 import { getAllCertificationTypes } from "@/components/agricultural";
 
@@ -360,6 +365,7 @@ const allCerts = getAllCertificationTypes();
 ## 📱 Responsive Examples
 
 ### Mobile-friendly layout
+
 ```typescript
 <div className="space-y-4">
   <SeasonalIndicator season="SPRING" variant="compact" />
@@ -369,6 +375,7 @@ const allCerts = getAllCertificationTypes();
 ```
 
 ### Desktop detailed view
+
 ```typescript
 <div className="grid lg:grid-cols-2 gap-6">
   <SeasonalIndicator season="SPRING" variant="detailed" />
@@ -387,10 +394,7 @@ const allCerts = getAllCertificationTypes();
 2. **Disable animations** on slow devices: `animated={false}`
 3. **Memoize calculations**:
    ```typescript
-   const soilScore = useMemo(() => 
-     calculateSoilHealth(soilData), 
-     [soilData]
-   );
+   const soilScore = useMemo(() => calculateSoilHealth(soilData), [soilData]);
    ```
 
 ---
@@ -417,11 +421,13 @@ const allCerts = getAllCertificationTypes();
 ## 🆘 Need Help?
 
 **Common Issues**:
+
 - Import error? Check path: `@/components/agricultural`
 - Type error? Ensure data matches interface
 - Date issue? Use `new Date()` not strings
 
 **Still stuck?**
+
 - Check inline code documentation
 - Review test examples
 - See troubleshooting in full docs
@@ -430,4 +436,4 @@ const allCerts = getAllCertificationTypes();
 
 **Happy farming! 🌾**
 
-*Status: ✅ Production Ready | Version: 1.0.0*
+_Status: ✅ Production Ready | Version: 1.0.0_

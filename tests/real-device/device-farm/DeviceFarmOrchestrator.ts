@@ -9,8 +9,12 @@
  * @divine-pattern AGRICULTURAL_DEVICE_MASTERY
  */
 
-import { EventEmitter } from 'events';
-import type { RealDeviceConfig, TestSession, RealDeviceTestResult } from '../RealDeviceTestManager';
+import { EventEmitter } from "events";
+import type {
+  RealDeviceConfig,
+  TestSession,
+  RealDeviceTestResult,
+} from "../RealDeviceTestManager";
 
 // ============================================================================
 // Type Definitions
@@ -35,7 +39,7 @@ export interface DeviceInfo {
   osVersion: string;
   manufacturer: string;
   screenResolution: string;
-  status: 'available' | 'in-use' | 'maintenance' | 'offline';
+  status: "available" | "in-use" | "maintenance" | "offline";
   lastUsed?: Date;
   totalTestsRun: number;
   successRate: number;
@@ -61,7 +65,12 @@ export interface DeviceCapabilities {
 }
 
 export interface TestDistributionStrategy {
-  type: 'round-robin' | 'least-loaded' | 'priority' | 'random' | 'capability-based';
+  type:
+    | "round-robin"
+    | "least-loaded"
+    | "priority"
+    | "random"
+    | "capability-based";
   maxRetries?: number;
   timeout?: number;
   parallelism?: number;
@@ -87,19 +96,19 @@ export interface TestJob {
   priority: number;
   maxDuration?: number;
   retryCount: number;
-  status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
+  status: "pending" | "running" | "completed" | "failed" | "cancelled";
   createdAt: Date;
   startedAt?: Date;
   completedAt?: Date;
   assignedDevices: string[];
   results: TestJobResult[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface TestJobResult {
   deviceId: string;
   deviceName: string;
-  status: 'passed' | 'failed' | 'error' | 'timeout';
+  status: "passed" | "failed" | "error" | "timeout";
   duration: number;
   startTime: Date;
   endTime: Date;
@@ -144,7 +153,9 @@ export class DeviceFarmOrchestrator extends EventEmitter {
   private jobs: Map<string, TestJob> = new Map();
   private activeAllocations: Map<string, DeviceAllocation> = new Map();
   private jobQueue: TestJob[] = [];
-  private distributionStrategy: TestDistributionStrategy = { type: 'round-robin' };
+  private distributionStrategy: TestDistributionStrategy = {
+    type: "round-robin",
+  };
   private metrics: OrchestratorMetrics;
   private jobCounter = 0;
 
@@ -164,17 +175,17 @@ export class DeviceFarmOrchestrator extends EventEmitter {
     this.devicePools.set(pool.id, pool);
 
     // Add devices to global device map
-    pool.devices.forEach(device => {
+    pool.devices.forEach((device) => {
       this.devices.set(device.id, device);
       this.metrics.totalDevices++;
-      if (device.status === 'available') {
+      if (device.status === "available") {
         this.metrics.availableDevices++;
-      } else if (device.status === 'offline') {
+      } else if (device.status === "offline") {
         this.metrics.offlineDevices++;
       }
     });
 
-    this.emit('pool:registered', pool);
+    this.emit("pool:registered", pool);
   }
 
   /**
@@ -190,11 +201,11 @@ export class DeviceFarmOrchestrator extends EventEmitter {
     this.devices.set(device.id, device);
     this.metrics.totalDevices++;
 
-    if (device.status === 'available') {
+    if (device.status === "available") {
       this.metrics.availableDevices++;
     }
 
-    this.emit('device:added', device);
+    this.emit("device:added", device);
   }
 
   /**
@@ -208,25 +219,25 @@ export class DeviceFarmOrchestrator extends EventEmitter {
 
     // Remove from all pools
     for (const pool of this.devicePools.values()) {
-      pool.devices = pool.devices.filter(d => d.id !== deviceId);
+      pool.devices = pool.devices.filter((d) => d.id !== deviceId);
     }
 
     this.devices.delete(deviceId);
     this.metrics.totalDevices--;
 
-    if (device.status === 'available') {
+    if (device.status === "available") {
       this.metrics.availableDevices--;
-    } else if (device.status === 'offline') {
+    } else if (device.status === "offline") {
       this.metrics.offlineDevices--;
     }
 
-    this.emit('device:removed', device);
+    this.emit("device:removed", device);
   }
 
   /**
    * Update device status
    */
-  updateDeviceStatus(deviceId: string, status: DeviceInfo['status']): void {
+  updateDeviceStatus(deviceId: string, status: DeviceInfo["status"]): void {
     const device = this.devices.get(deviceId);
     if (!device) {
       throw new Error(`Device ${deviceId} not found`);
@@ -236,33 +247,37 @@ export class DeviceFarmOrchestrator extends EventEmitter {
     device.status = status;
 
     // Update metrics
-    if (oldStatus === 'available' && status !== 'available') {
+    if (oldStatus === "available" && status !== "available") {
       this.metrics.availableDevices--;
-    } else if (oldStatus !== 'available' && status === 'available') {
+    } else if (oldStatus !== "available" && status === "available") {
       this.metrics.availableDevices++;
     }
 
-    if (oldStatus === 'in-use' && status !== 'in-use') {
+    if (oldStatus === "in-use" && status !== "in-use") {
       this.metrics.inUseDevices--;
-    } else if (oldStatus !== 'in-use' && status === 'in-use') {
+    } else if (oldStatus !== "in-use" && status === "in-use") {
       this.metrics.inUseDevices++;
     }
 
-    if (oldStatus === 'offline' && status !== 'offline') {
+    if (oldStatus === "offline" && status !== "offline") {
       this.metrics.offlineDevices--;
-    } else if (oldStatus !== 'offline' && status === 'offline') {
+    } else if (oldStatus !== "offline" && status === "offline") {
       this.metrics.offlineDevices++;
     }
 
-    this.emit('device:status-changed', { device, oldStatus, newStatus: status });
+    this.emit("device:status-changed", {
+      device,
+      oldStatus,
+      newStatus: status,
+    });
   }
 
   /**
    * Get available devices matching requirements
    */
   getAvailableDevices(requirements?: DevicePreference[]): DeviceInfo[] {
-    let availableDevices = Array.from(this.devices.values()).filter(
-      d => d.status === 'available'
+    const availableDevices = Array.from(this.devices.values()).filter(
+      (d) => d.status === "available",
     );
 
     if (!requirements || requirements.length === 0) {
@@ -270,15 +285,20 @@ export class DeviceFarmOrchestrator extends EventEmitter {
     }
 
     // Filter by requirements
-    return availableDevices.filter(device => {
-      return requirements.some(req => this.deviceMatchesRequirement(device, req));
+    return availableDevices.filter((device) => {
+      return requirements.some((req) =>
+        this.deviceMatchesRequirement(device, req),
+      );
     });
   }
 
   /**
    * Check if device matches requirement
    */
-  private deviceMatchesRequirement(device: DeviceInfo, requirement: DevicePreference): boolean {
+  private deviceMatchesRequirement(
+    device: DeviceInfo,
+    requirement: DevicePreference,
+  ): boolean {
     if (requirement.os && device.os !== requirement.os) {
       return false;
     }
@@ -287,7 +307,10 @@ export class DeviceFarmOrchestrator extends EventEmitter {
       return false;
     }
 
-    if (requirement.manufacturer && device.manufacturer !== requirement.manufacturer) {
+    if (
+      requirement.manufacturer &&
+      device.manufacturer !== requirement.manufacturer
+    ) {
       return false;
     }
 
@@ -299,7 +322,11 @@ export class DeviceFarmOrchestrator extends EventEmitter {
       return false;
     }
 
-    if (requirement.maxCost && device.cost && device.cost > requirement.maxCost) {
+    if (
+      requirement.maxCost &&
+      device.cost &&
+      device.cost > requirement.maxCost
+    ) {
       return false;
     }
 
@@ -321,11 +348,16 @@ export class DeviceFarmOrchestrator extends EventEmitter {
   /**
    * Submit a test job
    */
-  async submitJob(job: Omit<TestJob, 'id' | 'status' | 'createdAt' | 'results' | 'assignedDevices'>): Promise<string> {
+  async submitJob(
+    job: Omit<
+      TestJob,
+      "id" | "status" | "createdAt" | "results" | "assignedDevices"
+    >,
+  ): Promise<string> {
     const testJob: TestJob = {
       ...job,
       id: this.generateJobId(),
-      status: 'pending',
+      status: "pending",
       createdAt: new Date(),
       results: [],
       assignedDevices: [],
@@ -335,7 +367,7 @@ export class DeviceFarmOrchestrator extends EventEmitter {
     this.jobQueue.push(testJob);
     this.metrics.totalJobs++;
 
-    this.emit('job:submitted', testJob);
+    this.emit("job:submitted", testJob);
 
     // Try to execute immediately
     await this.processJobQueue();
@@ -351,7 +383,7 @@ export class DeviceFarmOrchestrator extends EventEmitter {
     this.jobQueue.sort((a, b) => b.priority - a.priority);
 
     for (const job of [...this.jobQueue]) {
-      if (job.status !== 'pending') {
+      if (job.status !== "pending") {
         continue;
       }
 
@@ -362,7 +394,7 @@ export class DeviceFarmOrchestrator extends EventEmitter {
         await this.executeJob(job, availableDevices);
 
         // Remove from queue
-        this.jobQueue = this.jobQueue.filter(j => j.id !== job.id);
+        this.jobQueue = this.jobQueue.filter((j) => j.id !== job.id);
       }
     }
   }
@@ -370,32 +402,35 @@ export class DeviceFarmOrchestrator extends EventEmitter {
   /**
    * Execute a test job
    */
-  private async executeJob(job: TestJob, availableDevices: DeviceInfo[]): Promise<void> {
-    job.status = 'running';
+  private async executeJob(
+    job: TestJob,
+    availableDevices: DeviceInfo[],
+  ): Promise<void> {
+    job.status = "running";
     job.startedAt = new Date();
 
     // Select devices based on distribution strategy
     const selectedDevices = this.selectDevices(availableDevices, job);
 
     if (selectedDevices.length === 0) {
-      job.status = 'failed';
+      job.status = "failed";
       job.completedAt = new Date();
-      this.emit('job:failed', { job, reason: 'No suitable devices available' });
+      this.emit("job:failed", { job, reason: "No suitable devices available" });
       return;
     }
 
-    this.emit('job:started', { job, devices: selectedDevices });
+    this.emit("job:started", { job, devices: selectedDevices });
 
     // Allocate devices
-    selectedDevices.forEach(device => {
+    selectedDevices.forEach((device) => {
       job.assignedDevices.push(device.id);
       this.allocateDevice(job.id, device.id, job.maxDuration || 3600000);
-      this.updateDeviceStatus(device.id, 'in-use');
+      this.updateDeviceStatus(device.id, "in-use");
     });
 
     // Execute tests in parallel
-    const testPromises = selectedDevices.map(device =>
-      this.executeTestOnDevice(job, device)
+    const testPromises = selectedDevices.map((device) =>
+      this.executeTestOnDevice(job, device),
     );
 
     try {
@@ -405,23 +440,25 @@ export class DeviceFarmOrchestrator extends EventEmitter {
       results.forEach((result, index) => {
         const device = selectedDevices[index];
 
-        if (result.status === 'fulfilled') {
+        if (result.status === "fulfilled") {
           job.results.push(result.value);
           device.totalTestsRun++;
           device.lastUsed = new Date();
 
-          if (result.value.status === 'passed') {
-            device.successRate = (device.successRate * (device.totalTestsRun - 1) + 100) / device.totalTestsRun;
+          if (result.value.status === "passed") {
+            device.successRate =
+              (device.successRate * (device.totalTestsRun - 1) + 100) /
+              device.totalTestsRun;
           }
         } else {
           job.results.push({
             deviceId: device.id,
             deviceName: device.name,
-            status: 'error',
+            status: "error",
             duration: 0,
             startTime: new Date(),
             endTime: new Date(),
-            errorMessage: result.reason?.message || 'Unknown error',
+            errorMessage: result.reason?.message || "Unknown error",
             screenshots: [],
             logs: [],
           });
@@ -429,12 +466,12 @@ export class DeviceFarmOrchestrator extends EventEmitter {
 
         // Release device
         this.releaseDevice(device.id);
-        this.updateDeviceStatus(device.id, 'available');
+        this.updateDeviceStatus(device.id, "available");
       });
 
       // Determine job status
-      const allPassed = job.results.every(r => r.status === 'passed');
-      job.status = allPassed ? 'completed' : 'failed';
+      const allPassed = job.results.every((r) => r.status === "passed");
+      job.status = allPassed ? "completed" : "failed";
       job.completedAt = new Date();
 
       this.metrics.completedJobs++;
@@ -444,21 +481,24 @@ export class DeviceFarmOrchestrator extends EventEmitter {
 
       // Update metrics
       const jobDuration = job.completedAt.getTime() - job.startedAt!.getTime();
-      this.metrics.avgJobDuration = (this.metrics.avgJobDuration * (this.metrics.completedJobs - 1) + jobDuration) / this.metrics.completedJobs;
+      this.metrics.avgJobDuration =
+        (this.metrics.avgJobDuration * (this.metrics.completedJobs - 1) +
+          jobDuration) /
+        this.metrics.completedJobs;
 
-      this.emit('job:completed', job);
+      this.emit("job:completed", job);
     } catch (error) {
-      job.status = 'failed';
+      job.status = "failed";
       job.completedAt = new Date();
       this.metrics.failedJobs++;
 
       // Release all allocated devices
-      selectedDevices.forEach(device => {
+      selectedDevices.forEach((device) => {
         this.releaseDevice(device.id);
-        this.updateDeviceStatus(device.id, 'available');
+        this.updateDeviceStatus(device.id, "available");
       });
 
-      this.emit('job:failed', { job, error });
+      this.emit("job:failed", { job, error });
     }
 
     // Process next jobs in queue
@@ -468,7 +508,10 @@ export class DeviceFarmOrchestrator extends EventEmitter {
   /**
    * Execute test on specific device
    */
-  private async executeTestOnDevice(job: TestJob, device: DeviceInfo): Promise<TestJobResult> {
+  private async executeTestOnDevice(
+    job: TestJob,
+    device: DeviceInfo,
+  ): Promise<TestJobResult> {
     const startTime = new Date();
 
     try {
@@ -479,14 +522,16 @@ export class DeviceFarmOrchestrator extends EventEmitter {
       const duration = endTime.getTime() - startTime.getTime();
 
       // Update device metrics
-      device.avgTestDuration = (device.avgTestDuration * (device.totalTestsRun - 1) + duration) / device.totalTestsRun;
+      device.avgTestDuration =
+        (device.avgTestDuration * (device.totalTestsRun - 1) + duration) /
+        device.totalTestsRun;
 
       this.metrics.totalTestsRun++;
 
       return {
         deviceId: device.id,
         deviceName: device.name,
-        status: Math.random() > 0.1 ? 'passed' : 'failed',
+        status: Math.random() > 0.1 ? "passed" : "failed",
         duration,
         startTime,
         endTime,
@@ -499,11 +544,11 @@ export class DeviceFarmOrchestrator extends EventEmitter {
       return {
         deviceId: device.id,
         deviceName: device.name,
-        status: 'error',
+        status: "error",
         duration: endTime.getTime() - startTime.getTime(),
         startTime,
         endTime,
-        errorMessage: error instanceof Error ? error.message : 'Unknown error',
+        errorMessage: error instanceof Error ? error.message : "Unknown error",
         screenshots: [],
         logs: [],
       };
@@ -513,33 +558,40 @@ export class DeviceFarmOrchestrator extends EventEmitter {
   /**
    * Select devices based on distribution strategy
    */
-  private selectDevices(availableDevices: DeviceInfo[], job: TestJob): DeviceInfo[] {
-    const maxDevices = this.distributionStrategy.parallelism || availableDevices.length;
+  private selectDevices(
+    availableDevices: DeviceInfo[],
+    job: TestJob,
+  ): DeviceInfo[] {
+    const maxDevices =
+      this.distributionStrategy.parallelism || availableDevices.length;
     let selectedDevices: DeviceInfo[] = [];
 
     switch (this.distributionStrategy.type) {
-      case 'round-robin':
+      case "round-robin":
         selectedDevices = availableDevices.slice(0, maxDevices);
         break;
 
-      case 'least-loaded':
+      case "least-loaded":
         selectedDevices = [...availableDevices]
           .sort((a, b) => a.totalTestsRun - b.totalTestsRun)
           .slice(0, maxDevices);
         break;
 
-      case 'priority':
+      case "priority":
         // Prefer devices with higher success rate
         selectedDevices = [...availableDevices]
           .sort((a, b) => b.successRate - a.successRate)
           .slice(0, maxDevices);
         break;
 
-      case 'random':
-        selectedDevices = this.shuffleArray([...availableDevices]).slice(0, maxDevices);
+      case "random":
+        selectedDevices = this.shuffleArray([...availableDevices]).slice(
+          0,
+          maxDevices,
+        );
         break;
 
-      case 'capability-based':
+      case "capability-based":
         // Select devices that best match requirements
         selectedDevices = availableDevices.slice(0, maxDevices);
         break;
@@ -554,7 +606,11 @@ export class DeviceFarmOrchestrator extends EventEmitter {
   /**
    * Allocate device to job
    */
-  private allocateDevice(jobId: string, deviceId: string, expectedDuration: number): void {
+  private allocateDevice(
+    jobId: string,
+    deviceId: string,
+    expectedDuration: number,
+  ): void {
     const allocation: DeviceAllocation = {
       jobId,
       deviceId,
@@ -563,7 +619,7 @@ export class DeviceFarmOrchestrator extends EventEmitter {
     };
 
     this.activeAllocations.set(deviceId, allocation);
-    this.emit('device:allocated', allocation);
+    this.emit("device:allocated", allocation);
   }
 
   /**
@@ -574,7 +630,7 @@ export class DeviceFarmOrchestrator extends EventEmitter {
     if (allocation) {
       allocation.actualDuration = Date.now() - allocation.allocatedAt.getTime();
       this.activeAllocations.delete(deviceId);
-      this.emit('device:released', allocation);
+      this.emit("device:released", allocation);
     }
   }
 
@@ -587,23 +643,23 @@ export class DeviceFarmOrchestrator extends EventEmitter {
       throw new Error(`Job ${jobId} not found`);
     }
 
-    if (job.status === 'completed' || job.status === 'failed') {
+    if (job.status === "completed" || job.status === "failed") {
       throw new Error(`Job ${jobId} is already ${job.status}`);
     }
 
-    job.status = 'cancelled';
+    job.status = "cancelled";
     job.completedAt = new Date();
 
     // Release allocated devices
-    job.assignedDevices.forEach(deviceId => {
+    job.assignedDevices.forEach((deviceId) => {
       this.releaseDevice(deviceId);
-      this.updateDeviceStatus(deviceId, 'available');
+      this.updateDeviceStatus(deviceId, "available");
     });
 
     // Remove from queue
-    this.jobQueue = this.jobQueue.filter(j => j.id !== jobId);
+    this.jobQueue = this.jobQueue.filter((j) => j.id !== jobId);
 
-    this.emit('job:cancelled', job);
+    this.emit("job:cancelled", job);
   }
 
   // ============================================================================
@@ -615,7 +671,7 @@ export class DeviceFarmOrchestrator extends EventEmitter {
    */
   setDistributionStrategy(strategy: TestDistributionStrategy): void {
     this.distributionStrategy = strategy;
-    this.emit('strategy:changed', strategy);
+    this.emit("strategy:changed", strategy);
   }
 
   /**
@@ -623,14 +679,18 @@ export class DeviceFarmOrchestrator extends EventEmitter {
    */
   getMetrics(): OrchestratorMetrics {
     // Calculate device utilization
-    this.metrics.deviceUtilization = this.metrics.totalDevices > 0
-      ? (this.metrics.inUseDevices / this.metrics.totalDevices) * 100
-      : 0;
+    this.metrics.deviceUtilization =
+      this.metrics.totalDevices > 0
+        ? (this.metrics.inUseDevices / this.metrics.totalDevices) * 100
+        : 0;
 
     // Calculate success rate
-    this.metrics.successRate = this.metrics.completedJobs > 0
-      ? ((this.metrics.completedJobs - this.metrics.failedJobs) / this.metrics.completedJobs) * 100
-      : 0;
+    this.metrics.successRate =
+      this.metrics.completedJobs > 0
+        ? ((this.metrics.completedJobs - this.metrics.failedJobs) /
+            this.metrics.completedJobs) *
+          100
+        : 0;
 
     return { ...this.metrics };
   }
@@ -721,7 +781,7 @@ export class DeviceFarmOrchestrator extends EventEmitter {
    * Sleep utility
    */
   private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**
@@ -739,14 +799,14 @@ export class DeviceFarmOrchestrator extends EventEmitter {
         available: this.metrics.availableDevices,
         inUse: this.metrics.inUseDevices,
         offline: this.metrics.offlineDevices,
-        maintenance: devices.filter(d => d.status === 'maintenance').length,
+        maintenance: devices.filter((d) => d.status === "maintenance").length,
       },
       jobSummary: {
         total: this.metrics.totalJobs,
         completed: this.metrics.completedJobs,
         failed: this.metrics.failedJobs,
-        pending: jobs.filter(j => j.status === 'pending').length,
-        running: jobs.filter(j => j.status === 'running').length,
+        pending: jobs.filter((j) => j.status === "pending").length,
+        running: jobs.filter((j) => j.status === "running").length,
       },
       topDevices: this.getTopDevices(5),
       recentJobs: jobs.slice(-10),
@@ -771,24 +831,35 @@ export class DeviceFarmOrchestrator extends EventEmitter {
     const metrics = this.getMetrics();
 
     if (metrics.deviceUtilization < 30) {
-      recommendations.push('Device utilization is low. Consider reducing device pool size to optimize costs.');
+      recommendations.push(
+        "Device utilization is low. Consider reducing device pool size to optimize costs.",
+      );
     }
 
     if (metrics.deviceUtilization > 90) {
-      recommendations.push('Device utilization is very high. Consider adding more devices to the pool.');
+      recommendations.push(
+        "Device utilization is very high. Consider adding more devices to the pool.",
+      );
     }
 
     if (metrics.successRate < 80) {
-      recommendations.push('Success rate is below 80%. Review failed tests and device stability.');
+      recommendations.push(
+        "Success rate is below 80%. Review failed tests and device stability.",
+      );
     }
 
     if (metrics.avgWaitTime > 300000) {
-      recommendations.push('Average wait time exceeds 5 minutes. Consider increasing parallelism or device count.');
+      recommendations.push(
+        "Average wait time exceeds 5 minutes. Consider increasing parallelism or device count.",
+      );
     }
 
-    const offlinePercent = (metrics.offlineDevices / metrics.totalDevices) * 100;
+    const offlinePercent =
+      (metrics.offlineDevices / metrics.totalDevices) * 100;
     if (offlinePercent > 10) {
-      recommendations.push('More than 10% of devices are offline. Check device connectivity and maintenance.');
+      recommendations.push(
+        "More than 10% of devices are offline. Check device connectivity and maintenance.",
+      );
     }
 
     return recommendations;
@@ -805,7 +876,7 @@ export class DeviceFarmOrchestrator extends EventEmitter {
     this.jobQueue = [];
     this.metrics = this.initializeMetrics();
     this.jobCounter = 0;
-    this.emit('cleared');
+    this.emit("cleared");
   }
 }
 

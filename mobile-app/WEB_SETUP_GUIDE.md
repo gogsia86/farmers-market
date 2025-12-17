@@ -60,6 +60,7 @@ npm run web
 When you see the QR code and menu, press **`w`** on your keyboard.
 
 Your default browser will open with the app running at:
+
 ```
 http://localhost:8081
 ```
@@ -71,16 +72,19 @@ http://localhost:8081
 ### "Unable to resolve dependency tree" Error
 
 **Solution 1 - Use Legacy Peer Deps:**
+
 ```powershell
 npm install --legacy-peer-deps
 ```
 
 **Solution 2 - Force Install:**
+
 ```powershell
 npm install --force
 ```
 
 **Solution 3 - Clean Install:**
+
 ```powershell
 # Remove node_modules and package-lock
 Remove-Item -Recurse -Force node_modules
@@ -96,6 +100,7 @@ npm install --legacy-peer-deps
 ### "react-native-web not found" Error
 
 Install it specifically:
+
 ```powershell
 npm install react-native-web@~0.19.6 react-dom@18.2.0 --legacy-peer-deps
 ```
@@ -115,11 +120,13 @@ npx expo start --port 8082
 ### Metro Bundler Crashes
 
 Clear Metro cache:
+
 ```powershell
 npx expo start --clear
 ```
 
 Or clear all caches:
+
 ```powershell
 npx expo start --clear --reset-cache
 ```
@@ -131,10 +138,11 @@ npx expo start --clear --reset-cache
    - Look at the Console tab for error messages
 
 2. **Common Fixes:**
+
    ```powershell
    # Clear Expo cache and restart
    npx expo start --clear
-   
+
    # Or clear everything
    npx expo start --clear --reset-cache --no-dev
    ```
@@ -189,6 +197,7 @@ We've created a batch script that automates the entire process:
 ```
 
 This script will:
+
 1. ✅ Clean npm cache
 2. ✅ Remove old node_modules
 3. ✅ Install all dependencies
@@ -209,18 +218,21 @@ cd "M:\Repo\Farmers Market Platform web and app"
 ```
 
 This opens two windows:
+
 - Backend API (port 3000)
 - Mobile App (port 8081)
 
 ### Option 2: Manual
 
 **Terminal 1 - Backend:**
+
 ```powershell
 cd "M:\Repo\Farmers Market Platform web and app"
 npm run dev
 ```
 
 **Terminal 2 - Mobile App:**
+
 ```powershell
 cd "M:\Repo\Farmers Market Platform web and app\mobile-app"
 npx expo start
@@ -273,12 +285,14 @@ Requires Android Studio setup. See: `docs/ANDROID_SDK_SETUP.md`
 
 ### Option C: Web Browser (Current Option)
 
-**Pros:** 
+**Pros:**
+
 - Instant setup
 - Fast development
 - No emulator overhead
 
 **Cons:**
+
 - Some React Native features don't work on web
 - Different behavior than native
 
@@ -339,6 +353,7 @@ If you've tried everything and it still doesn't work:
    - Copy browser console errors (F12)
 
 2. **Check Environment:**
+
    ```powershell
    node --version  # Should be 18.x or higher
    npm --version   # Should be 9.x or higher

@@ -53,16 +53,16 @@ npx playwright test tests/accessibility/ --trace on
 ### Basic WCAG Test
 
 ```typescript
-import { test, expect } from '@playwright/test';
-import { assertNoA11yViolations } from './a11y-utils';
+import { test, expect } from "@playwright/test";
+import { assertNoA11yViolations } from "./a11y-utils";
 
-test.describe('My Component Accessibility', () => {
+test.describe("My Component Accessibility", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:3000/my-page');
+    await page.goto("http://localhost:3000/my-page");
   });
 
-  test('should have no WCAG violations', async ({ page }) => {
-    await assertNoA11yViolations(page, { wcagLevel: 'AA' });
+  test("should have no WCAG violations", async ({ page }) => {
+    await assertNoA11yViolations(page, { wcagLevel: "AA" });
   });
 });
 ```
@@ -70,15 +70,15 @@ test.describe('My Component Accessibility', () => {
 ### Keyboard Navigation Test
 
 ```typescript
-import { testTabOrder } from './a11y-utils';
+import { testTabOrder } from "./a11y-utils";
 
-test('should support Tab navigation', async ({ page }) => {
+test("should support Tab navigation", async ({ page }) => {
   const selectors = [
     'input[name="email"]',
     'input[name="password"]',
-    'button[type="submit"]'
+    'button[type="submit"]',
   ];
-  
+
   await testTabOrder(page, selectors);
 });
 ```
@@ -86,15 +86,11 @@ test('should support Tab navigation', async ({ page }) => {
 ### Focus Indicator Test
 
 ```typescript
-import { testFocusIndicators } from './a11y-utils';
+import { testFocusIndicators } from "./a11y-utils";
 
-test('should have visible focus indicators', async ({ page }) => {
-  const elements = [
-    'button',
-    'a[href]',
-    'input'
-  ];
-  
+test("should have visible focus indicators", async ({ page }) => {
+  const elements = ["button", "a[href]", "input"];
+
   await testFocusIndicators(page, elements);
 });
 ```
@@ -102,13 +98,13 @@ test('should have visible focus indicators', async ({ page }) => {
 ### Color Contrast Test
 
 ```typescript
-import { checkColorContrast } from './a11y-utils';
+import { checkColorContrast } from "./a11y-utils";
 
-test('should meet color contrast requirements', async ({ page }) => {
-  await checkColorContrast(page, 'button', {
+test("should meet color contrast requirements", async ({ page }) => {
+  await checkColorContrast(page, "button", {
     minRatio: 4.5,
-    level: 'AA',
-    textSize: 'normal'
+    level: "AA",
+    textSize: "normal",
   });
 });
 ```
@@ -116,17 +112,17 @@ test('should meet color contrast requirements', async ({ page }) => {
 ### ARIA Validation Test
 
 ```typescript
-import { validateAriaAttributes } from './a11y-utils';
+import { validateAriaAttributes } from "./a11y-utils";
 
-test('should have proper ARIA attributes', async ({ page }) => {
+test("should have proper ARIA attributes", async ({ page }) => {
   await validateAriaAttributes(page, [
     {
       selector: '[role="dialog"]',
       expectedAttributes: {
-        'aria-modal': 'true',
-        'aria-labelledby': 'dialog-title'
-      }
-    }
+        "aria-modal": "true",
+        "aria-labelledby": "dialog-title",
+      },
+    },
   ]);
 });
 ```
@@ -134,15 +130,15 @@ test('should have proper ARIA attributes', async ({ page }) => {
 ### Modal Focus Trap Test
 
 ```typescript
-import { assertNoKeyboardTraps } from './a11y-utils';
+import { assertNoKeyboardTraps } from "./a11y-utils";
 
-test('should trap focus within modal', async ({ page }) => {
+test("should trap focus within modal", async ({ page }) => {
   const openButton = page.locator('button:has-text("Open")');
   await openButton.click();
-  
+
   const modal = page.locator('[role="dialog"]');
   await expect(modal).toBeVisible();
-  
+
   await assertNoKeyboardTraps(page, '[role="dialog"]');
 });
 ```
@@ -150,16 +146,16 @@ test('should trap focus within modal', async ({ page }) => {
 ### Semantic HTML Test
 
 ```typescript
-import { validateSemanticHTML, validateHeadingHierarchy } from './a11y-utils';
+import { validateSemanticHTML, validateHeadingHierarchy } from "./a11y-utils";
 
-test('should have proper semantic structure', async ({ page }) => {
+test("should have proper semantic structure", async ({ page }) => {
   await validateSemanticHTML(page);
   await validateHeadingHierarchy(page);
-  
-  const header = page.locator('header');
+
+  const header = page.locator("header");
   await expect(header).toBeVisible();
-  
-  const main = page.locator('main');
+
+  const main = page.locator("main");
   await expect(main).toBeVisible();
 });
 ```
@@ -167,9 +163,9 @@ test('should have proper semantic structure', async ({ page }) => {
 ### Image Alt Text Test
 
 ```typescript
-import { validateImageAltText } from './a11y-utils';
+import { validateImageAltText } from "./a11y-utils";
 
-test('should have accessible images', async ({ page }) => {
+test("should have accessible images", async ({ page }) => {
   await validateImageAltText(page);
 });
 ```
@@ -182,60 +178,63 @@ test('should have accessible images', async ({ page }) => {
 
 ```typescript
 // Element is visible
-await expect(page.locator('button')).toBeVisible();
+await expect(page.locator("button")).toBeVisible();
 
 // Element is focused
-await expect(page.locator('input')).toBeFocused();
+await expect(page.locator("input")).toBeFocused();
 
 // Element has attribute
-await expect(page.locator('[role="dialog"]')).toHaveAttribute('aria-modal', 'true');
+await expect(page.locator('[role="dialog"]')).toHaveAttribute(
+  "aria-modal",
+  "true",
+);
 
 // Element has text
-await expect(page.locator('h1')).toContainText('Homepage');
+await expect(page.locator("h1")).toContainText("Homepage");
 
 // Element is enabled
-await expect(page.locator('button')).toBeEnabled();
+await expect(page.locator("button")).toBeEnabled();
 ```
 
 ### Keyboard Actions
 
 ```typescript
 // Tab forward
-await page.keyboard.press('Tab');
+await page.keyboard.press("Tab");
 
 // Tab backward
-await page.keyboard.press('Shift+Tab');
+await page.keyboard.press("Shift+Tab");
 
 // Activate with Enter
-await page.keyboard.press('Enter');
+await page.keyboard.press("Enter");
 
 // Activate with Space
-await page.keyboard.press('Space');
+await page.keyboard.press("Space");
 
 // Arrow navigation
-await page.keyboard.press('ArrowDown');
-await page.keyboard.press('ArrowUp');
+await page.keyboard.press("ArrowDown");
+await page.keyboard.press("ArrowUp");
 
 // Escape key
-await page.keyboard.press('Escape');
+await page.keyboard.press("Escape");
 
 // Keyboard shortcut
-await page.keyboard.press('Control+KeyK');
+await page.keyboard.press("Control+KeyK");
 ```
 
 ### Focus Management
 
 ```typescript
 // Focus element
-await page.locator('button').focus();
+await page.locator("button").focus();
 
 // Check focused element
 const focused = await page.evaluate(() => document.activeElement?.tagName);
-expect(focused).toBe('BUTTON');
+expect(focused).toBe("BUTTON");
 
 // Wait for focus
 await page.waitForTimeout(100);
-await expect(page.locator('input')).toBeFocused();
+await expect(page.locator("input")).toBeFocused();
 ```
 
 ---
@@ -245,11 +244,7 @@ await expect(page.locator('input')).toBeFocused();
 ### Button
 
 ```tsx
-<button
-  type="button"
-  aria-label="Close dialog"
-  aria-pressed="false"
->
+<button type="button" aria-label="Close dialog" aria-pressed="false">
   <CloseIcon aria-hidden="true" />
 </button>
 ```
@@ -289,8 +284,14 @@ await expect(page.locator('input')).toBeFocused();
 ```tsx
 <nav aria-label="Main navigation">
   <ul>
-    <li><a href="/" aria-current="page">Home</a></li>
-    <li><a href="/products">Products</a></li>
+    <li>
+      <a href="/" aria-current="page">
+        Home
+      </a>
+    </li>
+    <li>
+      <a href="/products">Products</a>
+    </li>
   </ul>
 </nav>
 ```
@@ -298,11 +299,7 @@ await expect(page.locator('input')).toBeFocused();
 ### Live Region
 
 ```tsx
-<div
-  role="status"
-  aria-live="polite"
-  aria-atomic="true"
->
+<div role="status" aria-live="polite" aria-atomic="true">
   {statusMessage}
 </div>
 ```
@@ -386,13 +383,13 @@ button:focus-visible {
 
 ## 🔍 WCAG Contrast Ratios
 
-| Text Type | Level AA | Level AAA |
-|-----------|----------|-----------|
-| Normal text (< 18px) | 4.5:1 | 7:1 |
-| Large text (≥ 18px) | 3:1 | 4.5:1 |
-| Bold text (≥ 14px bold) | 3:1 | 4.5:1 |
-| UI Components | 3:1 | - |
-| Graphical Objects | 3:1 | - |
+| Text Type               | Level AA | Level AAA |
+| ----------------------- | -------- | --------- |
+| Normal text (< 18px)    | 4.5:1    | 7:1       |
+| Large text (≥ 18px)     | 3:1      | 4.5:1     |
+| Bold text (≥ 14px bold) | 3:1      | 4.5:1     |
+| UI Components           | 3:1      | -         |
+| Graphical Objects       | 3:1      | -         |
 
 ### Color Contrast Examples
 
@@ -419,10 +416,10 @@ button:focus-visible {
 ### Farm Profile Test
 
 ```typescript
-import { testFarmProfileAccessibility } from './a11y-utils';
+import { testFarmProfileAccessibility } from "./a11y-utils";
 
-test('should have accessible farm profile', async ({ page }) => {
-  await page.goto('/farms/sunny-acres');
+test("should have accessible farm profile", async ({ page }) => {
+  await page.goto("/farms/sunny-acres");
   await testFarmProfileAccessibility(page);
 });
 ```
@@ -430,10 +427,10 @@ test('should have accessible farm profile', async ({ page }) => {
 ### Product Catalog Test
 
 ```typescript
-import { testProductCatalogAccessibility } from './a11y-utils';
+import { testProductCatalogAccessibility } from "./a11y-utils";
 
-test('should have accessible product catalog', async ({ page }) => {
-  await page.goto('/products');
+test("should have accessible product catalog", async ({ page }) => {
+  await page.goto("/products");
   await testProductCatalogAccessibility(page);
 });
 ```
@@ -441,11 +438,11 @@ test('should have accessible product catalog', async ({ page }) => {
 ### Seasonal Accessibility Test
 
 ```typescript
-import { testSeasonalAccessibility } from './a11y-utils';
+import { testSeasonalAccessibility } from "./a11y-utils";
 
-test('should support seasonal patterns', async ({ page }) => {
-  await page.goto('/products/seasonal');
-  await testSeasonalAccessibility(page, 'SUMMER');
+test("should support seasonal patterns", async ({ page }) => {
+  await page.goto("/products/seasonal");
+  await testSeasonalAccessibility(page, "SUMMER");
 });
 ```
 
@@ -501,13 +498,13 @@ button:focus {
 /* ❌ Bad - insufficient contrast (2.5:1) */
 .text {
   color: #999999;
-  background: #FFFFFF;
+  background: #ffffff;
 }
 
 /* ✅ Good - sufficient contrast (4.6:1) */
 .text {
   color: #595959;
-  background: #FFFFFF;
+  background: #ffffff;
 }
 ```
 

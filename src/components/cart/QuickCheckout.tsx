@@ -25,12 +25,10 @@ import {
   MapPin,
   Calendar,
   Clock,
-  Truck,
   ShieldCheck,
   AlertCircle,
   CheckCircle,
   Edit2,
-  ChevronRight,
   Loader2,
   Apple,
   Smartphone,
@@ -131,13 +129,15 @@ export function QuickCheckout({
   enableExpressCheckout = true,
   className,
 }: QuickCheckoutProps) {
-  const [currentStep, setCurrentStep] = useState<CheckoutStep>("REVIEW");
+  const [_currentStep, _setCurrentStep] = useState<CheckoutStep>("REVIEW");
   const [selectedAddress, setSelectedAddress] = useState<SavedAddress | null>(
-    savedAddresses.find((a) => a.isDefault) || savedAddresses[0] || null
+    savedAddresses.find((a) => a.isDefault) || savedAddresses[0] || null,
   );
   const [selectedPayment, setSelectedPayment] =
     useState<SavedPaymentMethod | null>(
-      savedPaymentMethods.find((p) => p.isDefault) || savedPaymentMethods[0] || null
+      savedPaymentMethods.find((p) => p.isDefault) ||
+        savedPaymentMethods[0] ||
+        null,
     );
   const [selectedDeliverySlot, setSelectedDeliverySlot] =
     useState<DeliverySlot | null>(null);
@@ -154,7 +154,8 @@ export function QuickCheckout({
     itemCount: items.reduce((sum, item) => sum + item.quantity, 0),
   };
   orderSummary.tax = orderSummary.subtotal * 0.08; // 8% tax rate
-  orderSummary.total = orderSummary.subtotal + orderSummary.deliveryFee + orderSummary.tax;
+  orderSummary.total =
+    orderSummary.subtotal + orderSummary.deliveryFee + orderSummary.tax;
 
   // Validate checkout readiness
   useEffect(() => {
@@ -184,7 +185,9 @@ export function QuickCheckout({
   }, [items, selectedAddress, selectedPayment, selectedDeliverySlot]);
 
   // Handle express checkout
-  const handleExpressCheckout = async (method: "APPLE_PAY" | "GOOGLE_PAY" | "PAYPAL") => {
+  const handleExpressCheckout = async (
+    method: "APPLE_PAY" | "GOOGLE_PAY" | "PAYPAL",
+  ) => {
     if (validationErrors.length > 0) {
       setError("Please complete all required fields");
       return;
@@ -297,44 +300,46 @@ export function QuickCheckout({
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Express Checkout Options */}
-          {enableExpressCheckout && savedAddresses.length > 0 && savedPaymentMethods.length > 0 && (
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Express Checkout
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <button
-                  onClick={() => handleExpressCheckout("APPLE_PAY")}
-                  disabled={isProcessing || validationErrors.length > 0}
-                  className="flex items-center justify-center gap-2 px-4 py-3 bg-black hover:bg-gray-900 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <Apple className="h-5 w-5" />
-                  Apple Pay
-                </button>
-                <button
-                  onClick={() => handleExpressCheckout("GOOGLE_PAY")}
-                  disabled={isProcessing || validationErrors.length > 0}
-                  className="flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <Smartphone className="h-5 w-5" />
-                  Google Pay
-                </button>
-                <button
-                  onClick={() => handleExpressCheckout("PAYPAL")}
-                  disabled={isProcessing || validationErrors.length > 0}
-                  className="flex items-center justify-center gap-2 px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <DollarSign className="h-5 w-5" />
-                  PayPal
-                </button>
+          {enableExpressCheckout &&
+            savedAddresses.length > 0 &&
+            savedPaymentMethods.length > 0 && (
+              <div className="bg-white rounded-lg border border-gray-200 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Express Checkout
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <button
+                    onClick={() => handleExpressCheckout("APPLE_PAY")}
+                    disabled={isProcessing || validationErrors.length > 0}
+                    className="flex items-center justify-center gap-2 px-4 py-3 bg-black hover:bg-gray-900 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Apple className="h-5 w-5" />
+                    Apple Pay
+                  </button>
+                  <button
+                    onClick={() => handleExpressCheckout("GOOGLE_PAY")}
+                    disabled={isProcessing || validationErrors.length > 0}
+                    className="flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Smartphone className="h-5 w-5" />
+                    Google Pay
+                  </button>
+                  <button
+                    onClick={() => handleExpressCheckout("PAYPAL")}
+                    disabled={isProcessing || validationErrors.length > 0}
+                    className="flex items-center justify-center gap-2 px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <DollarSign className="h-5 w-5" />
+                    PayPal
+                  </button>
+                </div>
+                <div className="mt-4 flex items-center gap-2">
+                  <div className="flex-1 h-px bg-gray-200" />
+                  <span className="text-sm text-gray-500 px-2">or</span>
+                  <div className="flex-1 h-px bg-gray-200" />
+                </div>
               </div>
-              <div className="mt-4 flex items-center gap-2">
-                <div className="flex-1 h-px bg-gray-200" />
-                <span className="text-sm text-gray-500 px-2">or</span>
-                <div className="flex-1 h-px bg-gray-200" />
-              </div>
-            </div>
-          )}
+            )}
 
           {/* Order Items */}
           <div className="bg-white rounded-lg border border-gray-200 p-6">
@@ -482,7 +487,10 @@ export function QuickCheckout({
             {validationErrors.length > 0 && (
               <div className="space-y-1">
                 {validationErrors.map((error, index) => (
-                  <p key={index} className="text-xs text-red-600 flex items-start gap-1">
+                  <p
+                    key={index}
+                    className="text-xs text-red-600 flex items-start gap-1"
+                  >
                     <AlertCircle className="h-3 w-3 flex-shrink-0 mt-0.5" />
                     {error}
                   </p>
@@ -537,9 +545,7 @@ function OrderItemRow({ item }: { item: CartItem }) {
         <p className="font-semibold text-gray-900">
           ${(item.price * item.quantity).toFixed(2)}
         </p>
-        {!item.inStock && (
-          <p className="text-xs text-red-600">Out of stock</p>
-        )}
+        {!item.inStock && <p className="text-xs text-red-600">Out of stock</p>}
       </div>
     </div>
   );
@@ -564,7 +570,7 @@ function AddressOption({
         "w-full flex items-start gap-3 p-4 rounded-lg border-2 transition-all text-left",
         isSelected
           ? "border-green-600 bg-green-50"
-          : "border-gray-200 hover:border-gray-300 bg-white"
+          : "border-gray-200 hover:border-gray-300 bg-white",
       )}
     >
       <div
@@ -572,7 +578,7 @@ function AddressOption({
           "flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5",
           isSelected
             ? "border-green-600 bg-green-600"
-            : "border-gray-300 bg-white"
+            : "border-gray-300 bg-white",
         )}
       >
         {isSelected && <CheckCircle className="h-4 w-4 text-white" />}
@@ -616,7 +622,7 @@ function DeliverySlotOption({
         "w-full p-4 rounded-lg border-2 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed",
         isSelected
           ? "border-green-600 bg-green-50"
-          : "border-gray-200 hover:border-gray-300 bg-white"
+          : "border-gray-200 hover:border-gray-300 bg-white",
       )}
     >
       <div className="flex items-start justify-between mb-2">
@@ -633,9 +639,13 @@ function DeliverySlotOption({
         {slot.timeWindow}
       </div>
       {slot.fee === 0 ? (
-        <p className="text-sm font-semibold text-green-600 mt-2">FREE Delivery</p>
+        <p className="text-sm font-semibold text-green-600 mt-2">
+          FREE Delivery
+        </p>
       ) : (
-        <p className="text-sm text-gray-700 mt-2">${slot.fee.toFixed(2)} delivery fee</p>
+        <p className="text-sm text-gray-700 mt-2">
+          ${slot.fee.toFixed(2)} delivery fee
+        </p>
       )}
       {!slot.available && (
         <p className="text-xs text-red-600 mt-2">Not available</p>
@@ -684,7 +694,7 @@ function PaymentMethodOption({
         "w-full flex items-center gap-3 p-4 rounded-lg border-2 transition-all text-left",
         isSelected
           ? "border-green-600 bg-green-50"
-          : "border-gray-200 hover:border-gray-300 bg-white"
+          : "border-gray-200 hover:border-gray-300 bg-white",
       )}
     >
       <div
@@ -692,7 +702,7 @@ function PaymentMethodOption({
           "flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center",
           isSelected
             ? "border-green-600 bg-green-600"
-            : "border-gray-300 bg-white"
+            : "border-gray-300 bg-white",
         )}
       >
         {isSelected && <CheckCircle className="h-4 w-4 text-white" />}
@@ -701,11 +711,13 @@ function PaymentMethodOption({
         <div className="text-gray-600">{getPaymentIcon()}</div>
         <div className="flex-1">
           <p className="font-medium text-gray-900">{getPaymentLabel()}</p>
-          {payment.type === "CARD" && payment.expiryMonth && payment.expiryYear && (
-            <p className="text-sm text-gray-600">
-              Expires {payment.expiryMonth}/{payment.expiryYear}
-            </p>
-          )}
+          {payment.type === "CARD" &&
+            payment.expiryMonth &&
+            payment.expiryYear && (
+              <p className="text-sm text-gray-600">
+                Expires {payment.expiryMonth}/{payment.expiryYear}
+              </p>
+            )}
         </div>
         {payment.isDefault && (
           <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded">

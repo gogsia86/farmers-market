@@ -157,9 +157,7 @@ export function EmptyState({
 
         {/* Description */}
         <div className="space-y-2">
-          <p className={`${sizes.description} text-gray-600`}>
-            {description}
-          </p>
+          <p className={`${sizes.description} text-gray-600`}>{description}</p>
 
           {/* Secondary Description */}
           {secondaryDescription && (
@@ -290,9 +288,7 @@ export const EmptyStateVariants = {
     <EmptyState
       icon={props.icon || require("lucide-react").Package}
       title={props.title || "No Orders Yet"}
-      description={
-        props.description || "You haven't placed any orders yet."
-      }
+      description={props.description || "You haven't placed any orders yet."}
       secondaryDescription="Start shopping to see your orders here!"
       action={{
         label: "Start Shopping",
@@ -310,9 +306,7 @@ export const EmptyStateVariants = {
     <EmptyState
       icon={props.icon || require("lucide-react").Heart}
       title={props.title || "No Favorites Yet"}
-      description={
-        props.description || "You haven't added any favorites yet."
-      }
+      description={props.description || "You haven't added any favorites yet."}
       secondaryDescription="Save farms and products you love to find them easily later!"
       action={{
         label: "Discover Farms",

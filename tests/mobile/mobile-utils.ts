@@ -9,7 +9,7 @@
  * and mobile-specific validations.
  */
 
-import { Page, BrowserContext, devices, expect } from '@playwright/test';
+import { Page, BrowserContext, devices, expect } from "@playwright/test";
 
 // ============================================
 // DEVICE PROFILES & CONFIGURATIONS
@@ -20,89 +20,89 @@ import { Page, BrowserContext, devices, expect } from '@playwright/test';
  */
 export const MOBILE_DEVICES = {
   // iOS Devices
-  'iPhone SE': {
-    ...devices['iPhone SE'],
+  "iPhone SE": {
+    ...devices["iPhone SE"],
     isMobile: true,
     hasTouch: true,
-    defaultBrowserType: 'webkit',
+    defaultBrowserType: "webkit",
   },
-  'iPhone 12': {
-    ...devices['iPhone 12'],
+  "iPhone 12": {
+    ...devices["iPhone 12"],
     isMobile: true,
     hasTouch: true,
-    defaultBrowserType: 'webkit',
+    defaultBrowserType: "webkit",
   },
-  'iPhone 12 Pro': {
-    ...devices['iPhone 12 Pro'],
+  "iPhone 12 Pro": {
+    ...devices["iPhone 12 Pro"],
     isMobile: true,
     hasTouch: true,
-    defaultBrowserType: 'webkit',
+    defaultBrowserType: "webkit",
   },
-  'iPhone 13': {
-    ...devices['iPhone 13'],
+  "iPhone 13": {
+    ...devices["iPhone 13"],
     isMobile: true,
     hasTouch: true,
-    defaultBrowserType: 'webkit',
+    defaultBrowserType: "webkit",
   },
-  'iPhone 14': {
-    ...devices['iPhone 14'],
+  "iPhone 14": {
+    ...devices["iPhone 14"],
     isMobile: true,
     hasTouch: true,
-    defaultBrowserType: 'webkit',
+    defaultBrowserType: "webkit",
   },
-  'iPhone 14 Pro Max': {
-    ...devices['iPhone 14 Pro Max'],
+  "iPhone 14 Pro Max": {
+    ...devices["iPhone 14 Pro Max"],
     isMobile: true,
     hasTouch: true,
-    defaultBrowserType: 'webkit',
+    defaultBrowserType: "webkit",
   },
-  'iPad Mini': {
-    ...devices['iPad Mini'],
+  "iPad Mini": {
+    ...devices["iPad Mini"],
     isMobile: true,
     hasTouch: true,
-    defaultBrowserType: 'webkit',
+    defaultBrowserType: "webkit",
   },
-  'iPad Pro': {
-    ...devices['iPad (gen 7)'],
+  "iPad Pro": {
+    ...devices["iPad (gen 7)"],
     isMobile: true,
     hasTouch: true,
-    defaultBrowserType: 'webkit',
+    defaultBrowserType: "webkit",
   },
 
   // Android Devices
-  'Pixel 5': {
-    ...devices['Pixel 5'],
+  "Pixel 5": {
+    ...devices["Pixel 5"],
     isMobile: true,
     hasTouch: true,
-    defaultBrowserType: 'chromium',
+    defaultBrowserType: "chromium",
   },
-  'Pixel 7': {
-    ...devices['Pixel 5'], // Use Pixel 5 as base, adjust viewport
+  "Pixel 7": {
+    ...devices["Pixel 5"], // Use Pixel 5 as base, adjust viewport
     viewport: { width: 412, height: 915 },
     isMobile: true,
     hasTouch: true,
-    defaultBrowserType: 'chromium',
+    defaultBrowserType: "chromium",
   },
-  'Galaxy S9+': {
-    ...devices['Galaxy S9+'],
+  "Galaxy S9+": {
+    ...devices["Galaxy S9+"],
     isMobile: true,
     hasTouch: true,
-    defaultBrowserType: 'chromium',
+    defaultBrowserType: "chromium",
   },
-  'Galaxy S21': {
-    ...devices['Galaxy S9+'], // Use S9+ as base
+  "Galaxy S21": {
+    ...devices["Galaxy S9+"], // Use S9+ as base
     viewport: { width: 360, height: 800 },
     isMobile: true,
     hasTouch: true,
-    defaultBrowserType: 'chromium',
+    defaultBrowserType: "chromium",
   },
-  'Galaxy Tab S7': {
+  "Galaxy Tab S7": {
     viewport: { width: 1200, height: 753 },
-    userAgent: 'Mozilla/5.0 (Linux; Android 12; SM-T870) AppleWebKit/537.36',
+    userAgent: "Mozilla/5.0 (Linux; Android 12; SM-T870) AppleWebKit/537.36",
     deviceScaleFactor: 2,
     isMobile: true,
     hasTouch: true,
-    defaultBrowserType: 'chromium',
+    defaultBrowserType: "chromium",
   },
 } as const;
 
@@ -110,11 +110,11 @@ export const MOBILE_DEVICES = {
  * Viewport breakpoints for responsive testing
  */
 export const VIEWPORT_BREAKPOINTS = {
-  mobile: { width: 375, height: 667 },      // Small mobile
+  mobile: { width: 375, height: 667 }, // Small mobile
   mobileLarge: { width: 428, height: 926 }, // Large mobile
-  tablet: { width: 768, height: 1024 },     // Tablet portrait
+  tablet: { width: 768, height: 1024 }, // Tablet portrait
   tabletLandscape: { width: 1024, height: 768 }, // Tablet landscape
-  desktop: { width: 1280, height: 720 },    // Small desktop
+  desktop: { width: 1280, height: 720 }, // Small desktop
   desktopLarge: { width: 1920, height: 1080 }, // Large desktop
 } as const;
 
@@ -122,22 +122,22 @@ export const VIEWPORT_BREAKPOINTS = {
  * Network conditions for mobile testing
  */
 export const NETWORK_CONDITIONS = {
-  '4G': {
-    downloadThroughput: 4 * 1024 * 1024 / 8, // 4 Mbps
-    uploadThroughput: 3 * 1024 * 1024 / 8,   // 3 Mbps
+  "4G": {
+    downloadThroughput: (4 * 1024 * 1024) / 8, // 4 Mbps
+    uploadThroughput: (3 * 1024 * 1024) / 8, // 3 Mbps
     latency: 20,
   },
-  '3G': {
-    downloadThroughput: 1.5 * 1024 * 1024 / 8, // 1.5 Mbps
-    uploadThroughput: 750 * 1024 / 8,          // 750 Kbps
+  "3G": {
+    downloadThroughput: (1.5 * 1024 * 1024) / 8, // 1.5 Mbps
+    uploadThroughput: (750 * 1024) / 8, // 750 Kbps
     latency: 40,
   },
-  'Slow 3G': {
-    downloadThroughput: 500 * 1024 / 8, // 500 Kbps
-    uploadThroughput: 500 * 1024 / 8,   // 500 Kbps
+  "Slow 3G": {
+    downloadThroughput: (500 * 1024) / 8, // 500 Kbps
+    uploadThroughput: (500 * 1024) / 8, // 500 Kbps
     latency: 400,
   },
-  'Offline': {
+  Offline: {
     downloadThroughput: 0,
     uploadThroughput: 0,
     latency: 0,
@@ -157,7 +157,10 @@ export class MobileTouchHelper {
   /**
    * Simulate mobile tap on element
    */
-  async tap(selector: string, options?: { force?: boolean; timeout?: number }): Promise<void> {
+  async tap(
+    selector: string,
+    options?: { force?: boolean; timeout?: number },
+  ): Promise<void> {
     await this.page.tap(selector, options);
   }
 
@@ -183,8 +186,8 @@ export class MobileTouchHelper {
    */
   async swipe(
     startSelector: string,
-    direction: 'up' | 'down' | 'left' | 'right',
-    distance: number = 200
+    direction: "up" | "down" | "left" | "right",
+    distance: number = 200,
   ): Promise<void> {
     const element = await this.page.locator(startSelector);
     const box = await element.boundingBox();
@@ -198,16 +201,16 @@ export class MobileTouchHelper {
     let endY = startY;
 
     switch (direction) {
-      case 'up':
+      case "up":
         endY -= distance;
         break;
-      case 'down':
+      case "down":
         endY += distance;
         break;
-      case 'left':
+      case "left":
         endX -= distance;
         break;
-      case 'right':
+      case "right":
         endX += distance;
         break;
     }
@@ -222,7 +225,7 @@ export class MobileTouchHelper {
    */
   async pinchZoom(
     selector: string,
-    scale: number // 0.5 = zoom out, 2 = zoom in
+    scale: number, // 0.5 = zoom out, 2 = zoom in
   ): Promise<void> {
     const element = await this.page.locator(selector);
     const box = await element.boundingBox();
@@ -282,7 +285,7 @@ export class MobileTouchHelper {
       window.scrollTo(0, 0);
     });
     await this.page.waitForTimeout(200);
-    await this.swipe('body', 'down', 150);
+    await this.swipe("body", "down", 150);
     await this.page.waitForTimeout(500); // Wait for refresh
   }
 }
@@ -310,7 +313,9 @@ export class ViewportHelper {
   /**
    * Set viewport to specific breakpoint
    */
-  async setBreakpoint(breakpoint: keyof typeof VIEWPORT_BREAKPOINTS): Promise<void> {
+  async setBreakpoint(
+    breakpoint: keyof typeof VIEWPORT_BREAKPOINTS,
+  ): Promise<void> {
     await this.page.setViewportSize(VIEWPORT_BREAKPOINTS[breakpoint]);
   }
 
@@ -390,15 +395,19 @@ export class MobilePerformanceHelper {
     await this.page.goto(url);
 
     const performanceData = await this.page.evaluate(() => {
-      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-      const paint = performance.getEntriesByType('paint');
+      const navigation = performance.getEntriesByType(
+        "navigation",
+      )[0] as PerformanceNavigationTiming;
+      const paint = performance.getEntriesByType("paint");
 
       return {
         navigationStart: navigation.fetchStart,
         loadComplete: navigation.loadEventEnd,
         domContentLoaded: navigation.domContentLoadedEventEnd,
-        firstPaint: paint.find(p => p.name === 'first-paint')?.startTime || 0,
-        firstContentfulPaint: paint.find(p => p.name === 'first-contentful-paint')?.startTime || 0,
+        firstPaint: paint.find((p) => p.name === "first-paint")?.startTime || 0,
+        firstContentfulPaint:
+          paint.find((p) => p.name === "first-contentful-paint")?.startTime ||
+          0,
       };
     });
 
@@ -414,14 +423,14 @@ export class MobilePerformanceHelper {
   async measureTTI(): Promise<number> {
     return await this.page.evaluate(() => {
       return new Promise<number>((resolve) => {
-        if ('PerformanceObserver' in window) {
+        if ("PerformanceObserver" in window) {
           const observer = new PerformanceObserver((list) => {
             for (const entry of list.getEntries()) {
               // Approximate TTI with long tasks
               resolve(entry.startTime + entry.duration);
             }
           });
-          observer.observe({ entryTypes: ['longtask'] });
+          observer.observe({ entryTypes: ["longtask"] });
 
           // Fallback timeout
           setTimeout(() => resolve(0), 5000);
@@ -437,7 +446,9 @@ export class MobilePerformanceHelper {
    */
   async measureJSExecutionTime(): Promise<number> {
     return await this.page.evaluate(() => {
-      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+      const navigation = performance.getEntriesByType(
+        "navigation",
+      )[0] as PerformanceNavigationTiming;
       return navigation.domInteractive - navigation.domLoading;
     });
   }
@@ -453,7 +464,9 @@ export class MobilePerformanceHelper {
     total: number;
   }> {
     return await this.page.evaluate(() => {
-      const resources = performance.getEntriesByType('resource') as PerformanceResourceTiming[];
+      const resources = performance.getEntriesByType(
+        "resource",
+      ) as PerformanceResourceTiming[];
 
       const timings = {
         scripts: 0,
@@ -463,16 +476,19 @@ export class MobilePerformanceHelper {
         total: 0,
       };
 
-      resources.forEach(resource => {
+      resources.forEach((resource) => {
         const duration = resource.responseEnd - resource.startTime;
 
-        if (resource.initiatorType === 'script') {
+        if (resource.initiatorType === "script") {
           timings.scripts += duration;
-        } else if (resource.initiatorType === 'link' || resource.initiatorType === 'css') {
+        } else if (
+          resource.initiatorType === "link" ||
+          resource.initiatorType === "css"
+        ) {
           timings.stylesheets += duration;
-        } else if (resource.initiatorType === 'img') {
+        } else if (resource.initiatorType === "img") {
           timings.images += duration;
-        } else if (resource.initiatorType === 'font') {
+        } else if (resource.initiatorType === "font") {
           timings.fonts += duration;
         }
 
@@ -491,16 +507,20 @@ export class MobilePerformanceHelper {
       return new Promise<number>((resolve) => {
         let cls = 0;
 
-        if ('PerformanceObserver' in window) {
+        if ("PerformanceObserver" in window) {
           const observer = new PerformanceObserver((list) => {
             for (const entry of list.getEntries()) {
-              if (!(entry as any).hadRecentInput) {
-                cls += (entry as any).value;
+              const layoutShift = entry as PerformanceEntry & {
+                hadRecentInput?: boolean;
+                value?: number;
+              };
+              if (!layoutShift.hadRecentInput) {
+                cls += layoutShift.value || 0;
               }
             }
           });
 
-          observer.observe({ entryTypes: ['layout-shift'] });
+          observer.observe({ entryTypes: ["layout-shift"] });
 
           // Resolve after 3 seconds
           setTimeout(() => {
@@ -523,14 +543,17 @@ export class MobilePerformanceHelper {
  * PWA functionality testing utilities
  */
 export class PWAHelper {
-  constructor(private page: Page, private context: BrowserContext) {}
+  constructor(
+    private page: Page,
+    private context: BrowserContext,
+  ) {}
 
   /**
    * Check if service worker is registered
    */
   async isServiceWorkerRegistered(): Promise<boolean> {
     return await this.page.evaluate(async () => {
-      if (!('serviceWorker' in navigator)) return false;
+      if (!("serviceWorker" in navigator)) return false;
 
       const registration = await navigator.serviceWorker.getRegistration();
       return registration !== undefined;
@@ -545,7 +568,7 @@ export class PWAHelper {
 
     while (Date.now() - startTime < timeout) {
       const isActive = await this.page.evaluate(async () => {
-        if (!('serviceWorker' in navigator)) return false;
+        if (!("serviceWorker" in navigator)) return false;
 
         const registration = await navigator.serviceWorker.getRegistration();
         return registration?.active !== null;
@@ -563,15 +586,19 @@ export class PWAHelper {
    * Check if manifest is loaded
    */
   async hasManifest(): Promise<boolean> {
-    const manifestLink = await this.page.locator('link[rel="manifest"]').count();
+    const manifestLink = await this.page
+      .locator('link[rel="manifest"]')
+      .count();
     return manifestLink > 0;
   }
 
   /**
    * Get manifest data
    */
-  async getManifest(): Promise<any> {
-    const manifestUrl = await this.page.locator('link[rel="manifest"]').getAttribute('href');
+  async getManifest(): Promise<Record<string, unknown>> {
+    const manifestUrl = await this.page
+      .locator('link[rel="manifest"]')
+      .getAttribute("href");
 
     if (!manifestUrl) return null;
 
@@ -587,7 +614,7 @@ export class PWAHelper {
       return new Promise<boolean>((resolve) => {
         let isInstallable = false;
 
-        window.addEventListener('beforeinstallprompt', () => {
+        window.addEventListener("beforeinstallprompt", () => {
           isInstallable = true;
           resolve(true);
         });
@@ -622,7 +649,7 @@ export class PWAHelper {
   }> {
     // First, load the page online to cache it
     await this.page.goto(url);
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState("networkidle");
 
     // Wait for service worker to cache the page
     await this.page.waitForTimeout(2000);
@@ -635,7 +662,10 @@ export class PWAHelper {
       await this.page.goto(url);
 
       const hasCachedContent = await this.page.evaluate(() => {
-        return document.body.textContent !== null && document.body.textContent.length > 0;
+        return (
+          document.body.textContent !== null &&
+          document.body.textContent.length > 0
+        );
       });
 
       return {
@@ -646,7 +676,7 @@ export class PWAHelper {
       return {
         canLoadOffline: false,
         hasCachedContent: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       };
     } finally {
       // Go back online
@@ -659,7 +689,7 @@ export class PWAHelper {
    */
   async getCachedResources(): Promise<string[]> {
     return await this.page.evaluate(async () => {
-      if (!('caches' in window)) return [];
+      if (!("caches" in window)) return [];
 
       const cacheNames = await caches.keys();
       const cachedUrls: string[] = [];
@@ -667,7 +697,7 @@ export class PWAHelper {
       for (const cacheName of cacheNames) {
         const cache = await caches.open(cacheName);
         const requests = await cache.keys();
-        requests.forEach(request => cachedUrls.push(request.url));
+        requests.forEach((request) => cachedUrls.push(request.url));
       }
 
       return cachedUrls;
@@ -705,7 +735,10 @@ export class MobileAssertions {
   /**
    * Assert touch target size (minimum 44x44 for mobile)
    */
-  async assertTouchTargetSize(selector: string, minSize: number = 44): Promise<void> {
+  async assertTouchTargetSize(
+    selector: string,
+    minSize: number = 44,
+  ): Promise<void> {
     const element = this.page.locator(selector);
     const box = await element.boundingBox();
 
@@ -720,7 +753,10 @@ export class MobileAssertions {
   /**
    * Assert text is readable on mobile (font size check)
    */
-  async assertReadableText(selector: string, minFontSize: number = 16): Promise<void> {
+  async assertReadableText(
+    selector: string,
+    minFontSize: number = 16,
+  ): Promise<void> {
     const fontSize = await this.page.locator(selector).evaluate((el) => {
       return parseFloat(window.getComputedStyle(el).fontSize);
     });
@@ -733,7 +769,10 @@ export class MobileAssertions {
    */
   async assertNoHorizontalScroll(): Promise<void> {
     const hasHorizontalScroll = await this.page.evaluate(() => {
-      return document.documentElement.scrollWidth > document.documentElement.clientWidth;
+      return (
+        document.documentElement.scrollWidth >
+        document.documentElement.clientWidth
+      );
     });
 
     expect(hasHorizontalScroll).toBe(false);
@@ -743,14 +782,16 @@ export class MobileAssertions {
    * Assert responsive image loading
    */
   async assertResponsiveImages(selector: string): Promise<void> {
-    const hasResponsiveAttrs = await this.page.locator(selector).evaluate((el: Element) => {
-      const img = el as HTMLImageElement;
-      return (
-        img.hasAttribute('srcset') ||
-        img.hasAttribute('sizes') ||
-        img.loading === 'lazy'
-      );
-    });
+    const hasResponsiveAttrs = await this.page
+      .locator(selector)
+      .evaluate((el: Element) => {
+        const img = el as HTMLImageElement;
+        return (
+          img.hasAttribute("srcset") ||
+          img.hasAttribute("sizes") ||
+          img.loading === "lazy"
+        );
+      });
 
     expect(hasResponsiveAttrs).toBe(true);
   }
@@ -763,7 +804,9 @@ export class MobileAssertions {
     const viewport = this.page.viewportSize();
 
     if (viewport && viewport.width < 768) {
-      const hasMobileMenu = await this.page.locator('[data-mobile-menu], button[aria-label*="menu" i]').count();
+      const hasMobileMenu = await this.page
+        .locator('[data-mobile-menu], button[aria-label*="menu" i]')
+        .count();
       expect(hasMobileMenu).toBeGreaterThan(0);
     }
   }
@@ -791,14 +834,14 @@ export function createMobileHelper(page: Page, context: BrowserContext) {
  */
 export async function setNetworkConditions(
   context: BrowserContext,
-  condition: keyof typeof NETWORK_CONDITIONS
+  condition: keyof typeof NETWORK_CONDITIONS,
 ): Promise<void> {
   const network = NETWORK_CONDITIONS[condition];
 
   // Note: Playwright doesn't have direct CDP throttling like Puppeteer
   // This is a placeholder for future implementation with CDP
-  await context.route('**/*', async (route) => {
-    if (condition === 'Offline') {
+  await context.route("**/*", async (route) => {
+    if (condition === "Offline") {
       await route.abort();
     } else {
       await route.continue();
@@ -812,10 +855,10 @@ export async function setNetworkConditions(
 export async function setGeolocation(
   context: BrowserContext,
   latitude: number,
-  longitude: number
+  longitude: number,
 ): Promise<void> {
   await context.setGeolocation({ latitude, longitude });
-  await context.grantPermissions(['geolocation']);
+  await context.grantPermissions(["geolocation"]);
 }
 
 /**
@@ -829,11 +872,11 @@ export async function waitForMobileReady(page: Page): Promise<void> {
 
   // Wait for touch events to be available
   await page.waitForFunction(() => {
-    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    return "ontouchstart" in window || navigator.maxTouchPoints > 0;
   });
 
   // Wait for mobile-specific styles to load
-  await page.waitForLoadState('domcontentloaded');
+  await page.waitForLoadState("domcontentloaded");
 }
 
 /**
@@ -843,7 +886,7 @@ export async function captureMobileMetrics(page: Page): Promise<{
   viewport: { width: number; height: number } | null;
   devicePixelRatio: number;
   touchSupport: boolean;
-  orientation: 'portrait' | 'landscape';
+  orientation: "portrait" | "landscape";
   connection?: string;
 }> {
   return await page.evaluate(() => {
@@ -852,14 +895,19 @@ export async function captureMobileMetrics(page: Page): Promise<{
       height: window.innerHeight,
     };
 
-    const orientation = window.innerWidth < window.innerHeight ? 'portrait' : 'landscape';
+    const orientation =
+      window.innerWidth < window.innerHeight ? "portrait" : "landscape";
 
     return {
       viewport,
       devicePixelRatio: window.devicePixelRatio,
-      touchSupport: 'ontouchstart' in window || navigator.maxTouchPoints > 0,
+      touchSupport: "ontouchstart" in window || navigator.maxTouchPoints > 0,
       orientation,
-      connection: (navigator as any).connection?.effectiveType,
+      connection: (
+        navigator as Navigator & {
+          connection?: { effectiveType?: string };
+        }
+      ).connection?.effectiveType,
     };
   });
 }
@@ -884,8 +932,12 @@ export class AgriculturalMobileHelper {
   }> {
     await this.page.goto(`/farms/${farmId}`);
 
-    const hasLocation = await this.page.locator('[data-farm-location]').count() > 0;
-    const canNavigate = await this.page.locator('a[href*="maps"], button:has-text("Directions")').count() > 0;
+    const hasLocation =
+      (await this.page.locator("[data-farm-location]").count()) > 0;
+    const canNavigate =
+      (await this.page
+        .locator('a[href*="maps"], button:has-text("Directions")')
+        .count()) > 0;
 
     return { hasLocation, canNavigate };
   }
@@ -898,13 +950,19 @@ export class AgriculturalMobileHelper {
     hasSearch: boolean;
     hasInfiniteScroll: boolean;
   }> {
-    await this.page.goto('/products');
+    await this.page.goto("/products");
 
     return {
-      hasFilters: await this.page.locator('[data-filter], button:has-text("Filter")').count() > 0,
-      hasSearch: await this.page.locator('input[type="search"], input[placeholder*="search" i]').count() > 0,
+      hasFilters:
+        (await this.page
+          .locator('[data-filter], button:has-text("Filter")')
+          .count()) > 0,
+      hasSearch:
+        (await this.page
+          .locator('input[type="search"], input[placeholder*="search" i]')
+          .count()) > 0,
       hasInfiniteScroll: await this.page.evaluate(() => {
-        return 'IntersectionObserver' in window;
+        return "IntersectionObserver" in window;
       }),
     };
   }
@@ -918,18 +976,20 @@ export class AgriculturalMobileHelper {
     hasPaymentMethods: boolean;
   }> {
     // Assume cart has items
-    await this.page.goto('/checkout');
+    await this.page.goto("/checkout");
 
     return {
-      isMobileFriendly: await this.page.locator('form').evaluate((form) => {
-        const inputs = form.querySelectorAll('input');
-        return Array.from(inputs).every(input => {
+      isMobileFriendly: await this.page.locator("form").evaluate((form) => {
+        const inputs = form.querySelectorAll("input");
+        return Array.from(inputs).every((input) => {
           const fontSize = parseFloat(window.getComputedStyle(input).fontSize);
           return fontSize >= 16; // Prevents zoom on iOS
         });
       }),
-      hasAutocomplete: await this.page.locator('input[autocomplete]').count() > 0,
-      hasPaymentMethods: await this.page.locator('[data-payment-method]').count() > 0,
+      hasAutocomplete:
+        (await this.page.locator("input[autocomplete]").count()) > 0,
+      hasPaymentMethods:
+        (await this.page.locator("[data-payment-method]").count()) > 0,
     };
   }
 }
@@ -937,7 +997,14 @@ export class AgriculturalMobileHelper {
 /**
  * Divine mobile testing summary
  */
-export function generateMobileTestSummary(results: any): string {
+export function generateMobileTestSummary(results: {
+  deviceTests?: number;
+  touchTests?: number;
+  pwaTests?: number;
+  performanceTests?: number;
+  offlineTests?: number;
+  consciousnessScore?: number;
+}): string {
   return `
 ╔════════════════════════════════════════════════════════════╗
 ║ 🌾 MOBILE AGRICULTURAL CONSCIOUSNESS TEST SUMMARY         ║

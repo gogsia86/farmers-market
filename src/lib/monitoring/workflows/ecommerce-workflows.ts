@@ -46,24 +46,32 @@ const cartManagementSteps: WorkflowStep[] = [
       const logs: string[] = [];
 
       // Add first product
-      const firstProduct = await page.locator('[data-testid="product-card"]').first();
+      const firstProduct = await page
+        .locator('[data-testid="product-card"]')
+        .first();
       await firstProduct.locator('button:has-text("Add to Cart")').click();
       logs.push("Added first product to cart");
       await page.waitForTimeout(500);
 
       // Add second product
-      const secondProduct = await page.locator('[data-testid="product-card"]').nth(1);
+      const secondProduct = await page
+        .locator('[data-testid="product-card"]')
+        .nth(1);
       await secondProduct.locator('button:has-text("Add to Cart")').click();
       logs.push("Added second product to cart");
       await page.waitForTimeout(500);
 
       // Add third product
-      const thirdProduct = await page.locator('[data-testid="product-card"]').nth(2);
+      const thirdProduct = await page
+        .locator('[data-testid="product-card"]')
+        .nth(2);
       await thirdProduct.locator('button:has-text("Add to Cart")').click();
       logs.push("Added third product to cart");
 
       // Verify cart count updated
-      const cartBadge = await page.locator('[data-testid="cart-count"]').textContent();
+      const cartBadge = await page
+        .locator('[data-testid="cart-count"]')
+        .textContent();
       const cartCount = parseInt(cartBadge || "0");
 
       return {
@@ -84,7 +92,9 @@ const cartManagementSteps: WorkflowStep[] = [
       await page.locator('[data-testid="cart-button"]').click();
 
       // Wait for cart sidebar to open
-      await page.waitForSelector('[data-testid="cart-sidebar"]', { timeout: 5000 });
+      await page.waitForSelector('[data-testid="cart-sidebar"]', {
+        timeout: 5000,
+      });
 
       // Verify cart items are visible
       const cartItems = await page.locator('[data-testid="cart-item"]').count();
@@ -105,18 +115,26 @@ const cartManagementSteps: WorkflowStep[] = [
       const logs: string[] = [];
 
       // Increase first item quantity
-      const increaseButton = await page.locator('[data-testid="cart-item"]').first().locator('[data-testid="increase-quantity"]');
+      const increaseButton = await page
+        .locator('[data-testid="cart-item"]')
+        .first()
+        .locator('[data-testid="increase-quantity"]');
       await increaseButton.click();
       logs.push("Increased first item quantity");
       await page.waitForTimeout(500);
 
       // Decrease second item quantity
-      const decreaseButton = await page.locator('[data-testid="cart-item"]').nth(1).locator('[data-testid="decrease-quantity"]');
+      const decreaseButton = await page
+        .locator('[data-testid="cart-item"]')
+        .nth(1)
+        .locator('[data-testid="decrease-quantity"]');
       await decreaseButton.click();
       logs.push("Decreased second item quantity");
 
       // Verify total updated
-      const cartTotal = await page.locator('[data-testid="cart-total"]').textContent();
+      const cartTotal = await page
+        .locator('[data-testid="cart-total"]')
+        .textContent();
       logs.push(`Cart total: ${cartTotal}`);
 
       return {
@@ -134,14 +152,21 @@ const cartManagementSteps: WorkflowStep[] = [
       const start = Date.now();
 
       // Get initial count
-      const initialCount = await page.locator('[data-testid="cart-item"]').count();
+      const initialCount = await page
+        .locator('[data-testid="cart-item"]')
+        .count();
 
       // Remove last item
-      const removeButton = await page.locator('[data-testid="cart-item"]').last().locator('[data-testid="remove-item"]');
+      const removeButton = await page
+        .locator('[data-testid="cart-item"]')
+        .last()
+        .locator('[data-testid="remove-item"]');
       await removeButton.click();
 
       // Confirm removal if modal appears
-      const confirmButton = await page.locator('button:has-text("Remove")').first();
+      const confirmButton = await page
+        .locator('button:has-text("Remove")')
+        .first();
       if (await confirmButton.isVisible()) {
         await confirmButton.click();
       }
@@ -149,7 +174,9 @@ const cartManagementSteps: WorkflowStep[] = [
       await page.waitForTimeout(500);
 
       // Verify count decreased
-      const finalCount = await page.locator('[data-testid="cart-item"]').count();
+      const finalCount = await page
+        .locator('[data-testid="cart-item"]')
+        .count();
 
       return {
         success: finalCount < initialCount,
@@ -194,7 +221,10 @@ const checkoutFlowSteps: WorkflowStep[] = [
       const start = Date.now();
 
       // Fill address form
-      await page.fill('[name="streetAddress"]', testData.address || "123 Farm Road");
+      await page.fill(
+        '[name="streetAddress"]',
+        testData.address || "123 Farm Road",
+      );
       await page.fill('[name="city"]', testData.city || "Agricultural Valley");
       await page.fill('[name="state"]', testData.state || "CA");
       await page.fill('[name="zipCode"]', testData.zipCode || "95000");
@@ -241,7 +271,9 @@ const checkoutFlowSteps: WorkflowStep[] = [
       const start = Date.now();
 
       // Check if using test payment or real Stripe
-      const testPaymentButton = await page.locator('button:has-text("Use Test Payment")');
+      const testPaymentButton = await page.locator(
+        'button:has-text("Use Test Payment")',
+      );
 
       if (await testPaymentButton.isVisible()) {
         await testPaymentButton.click();
@@ -279,7 +311,9 @@ const checkoutFlowSteps: WorkflowStep[] = [
       logs.push(`Order total: ${total}`);
 
       // Verify items listed
-      const itemCount = await page.locator('[data-testid="order-item"]').count();
+      const itemCount = await page
+        .locator('[data-testid="order-item"]')
+        .count();
       logs.push(`Order items: ${itemCount}`);
 
       return {
@@ -298,7 +332,9 @@ const checkoutFlowSteps: WorkflowStep[] = [
       const logs: string[] = [];
 
       // Click place order button
-      const placeOrderButton = await page.locator('button:has-text("Place Order")');
+      const placeOrderButton = await page.locator(
+        'button:has-text("Place Order")',
+      );
       await placeOrderButton.click();
       logs.push("Clicked place order button");
 
@@ -308,7 +344,9 @@ const checkoutFlowSteps: WorkflowStep[] = [
         logs.push("Redirected to order confirmation");
 
         // Get order number
-        const orderNumber = await page.locator('[data-testid="order-number"]').textContent();
+        const orderNumber = await page
+          .locator('[data-testid="order-number"]')
+          .textContent();
         logs.push(`Order number: ${orderNumber}`);
 
         // Store order number in state
@@ -354,14 +392,18 @@ const searchFilterSteps: WorkflowStep[] = [
       await page.fill('[data-testid="search-input"]', "tomato");
       await page.waitForTimeout(1000); // Debounce
 
-      const resultCount = await page.locator('[data-testid="product-card"]').count();
+      const resultCount = await page
+        .locator('[data-testid="product-card"]')
+        .count();
       logs.push(`Search results for "tomato": ${resultCount}`);
 
       // Clear search
       await page.fill('[data-testid="search-input"]', "");
       await page.waitForTimeout(1000);
 
-      const allCount = await page.locator('[data-testid="product-card"]').count();
+      const allCount = await page
+        .locator('[data-testid="product-card"]')
+        .count();
       logs.push(`All products: ${allCount}`);
 
       return {
@@ -380,22 +422,30 @@ const searchFilterSteps: WorkflowStep[] = [
       const logs: string[] = [];
 
       // Click vegetables category
-      const vegetablesFilter = await page.locator('[data-testid="category-vegetables"]');
+      const vegetablesFilter = await page.locator(
+        '[data-testid="category-vegetables"]',
+      );
       if (await vegetablesFilter.isVisible()) {
         await vegetablesFilter.click();
         await page.waitForTimeout(1000);
 
-        const count = await page.locator('[data-testid="product-card"]').count();
+        const count = await page
+          .locator('[data-testid="product-card"]')
+          .count();
         logs.push(`Vegetables: ${count}`);
       }
 
       // Click fruits category
-      const fruitsFilter = await page.locator('[data-testid="category-fruits"]');
+      const fruitsFilter = await page.locator(
+        '[data-testid="category-fruits"]',
+      );
       if (await fruitsFilter.isVisible()) {
         await fruitsFilter.click();
         await page.waitForTimeout(1000);
 
-        const count = await page.locator('[data-testid="product-card"]').count();
+        const count = await page
+          .locator('[data-testid="product-card"]')
+          .count();
         logs.push(`Fruits: ${count}`);
       }
 
@@ -423,7 +473,9 @@ const searchFilterSteps: WorkflowStep[] = [
         await maxPriceInput.fill("20");
         await page.waitForTimeout(1000);
 
-        const count = await page.locator('[data-testid="product-card"]').count();
+        const count = await page
+          .locator('[data-testid="product-card"]')
+          .count();
         logs.push(`Products in $5-$20 range: ${count}`);
       } else {
         logs.push("Price filter not available");
@@ -489,8 +541,14 @@ const adminDashboardSteps: WorkflowStep[] = [
       await page.waitForLoadState("networkidle");
 
       // Fill admin credentials
-      await page.fill('[name="email"]', process.env.ADMIN_TEST_EMAIL || "admin@farmersmarket.test");
-      await page.fill('[name="password"]', process.env.ADMIN_TEST_PASSWORD || "AdminPassword123!");
+      await page.fill(
+        '[name="email"]',
+        process.env.ADMIN_TEST_EMAIL || "admin@farmersmarket.test",
+      );
+      await page.fill(
+        '[name="password"]',
+        process.env.ADMIN_TEST_PASSWORD || "AdminPassword123!",
+      );
 
       // Submit form
       await page.locator('button[type="submit"]').click();
@@ -551,7 +609,9 @@ const adminDashboardSteps: WorkflowStep[] = [
       await page.waitForLoadState("networkidle");
 
       // Check for pending farms
-      const pendingFarms = await page.locator('[data-testid="pending-farm"]').count();
+      const pendingFarms = await page
+        .locator('[data-testid="pending-farm"]')
+        .count();
       logs.push(`Pending farms: ${pendingFarms}`);
 
       if (pendingFarms > 0) {
@@ -565,7 +625,9 @@ const adminDashboardSteps: WorkflowStep[] = [
           await approveButton.click();
 
           // Confirm if modal appears
-          const confirmButton = await page.locator('button:has-text("Confirm")');
+          const confirmButton = await page.locator(
+            'button:has-text("Confirm")',
+          );
           if (await confirmButton.isVisible()) {
             await confirmButton.click();
           }
@@ -602,7 +664,9 @@ const adminDashboardSteps: WorkflowStep[] = [
         await searchInput.fill("test");
         await page.waitForTimeout(1000);
 
-        const searchResults = await page.locator('[data-testid="user-row"]').count();
+        const searchResults = await page
+          .locator('[data-testid="user-row"]')
+          .count();
         logs.push(`Search results: ${searchResults}`);
       }
 
@@ -631,8 +695,14 @@ const farmerDashboardSteps: WorkflowStep[] = [
       await page.waitForLoadState("networkidle");
 
       // Fill farmer credentials
-      await page.fill('[name="email"]', process.env.FARMER_TEST_EMAIL || "farmer@farmersmarket.test");
-      await page.fill('[name="password"]', process.env.FARMER_TEST_PASSWORD || "FarmerPassword123!");
+      await page.fill(
+        '[name="email"]',
+        process.env.FARMER_TEST_EMAIL || "farmer@farmersmarket.test",
+      );
+      await page.fill(
+        '[name="password"]',
+        process.env.FARMER_TEST_PASSWORD || "FarmerPassword123!",
+      );
 
       // Submit form
       await page.locator('button[type="submit"]').click();
@@ -652,10 +722,11 @@ const farmerDashboardSteps: WorkflowStep[] = [
     name: "View Farmer Dashboard",
     description: "Load farmer dashboard and verify metrics",
     execute: async ({ page, baseUrl }) => {
+      if (!page) throw new Error("Page not initialized");
       const start = Date.now();
       const logs: string[] = [];
 
-      await page.goto(`${baseUrl}/farmer/dashboard`);
+      await page.goto(`${baseUrl}/farmer/analytics`);
       await page.waitForLoadState("networkidle");
 
       // Check for key metrics
@@ -686,6 +757,7 @@ const farmerDashboardSteps: WorkflowStep[] = [
     name: "Manage Product Inventory",
     description: "Update product stock levels",
     execute: async ({ page, baseUrl }) => {
+      if (!page) throw new Error("Page not initialized");
       const start = Date.now();
       const logs: string[] = [];
 
@@ -693,13 +765,19 @@ const farmerDashboardSteps: WorkflowStep[] = [
       await page.waitForLoadState("networkidle");
 
       // Count products
-      const productCount = await page.locator('[data-testid="inventory-item"]').count();
+      const productCount = await page
+        .locator('[data-testid="inventory-item"]')
+        .count();
       logs.push(`Inventory items: ${productCount}`);
 
       if (productCount > 0) {
         // Update stock for first product
-        const firstProduct = await page.locator('[data-testid="inventory-item"]').first();
-        const updateButton = await firstProduct.locator('button:has-text("Update Stock")');
+        const firstProduct = await page
+          .locator('[data-testid="inventory-item"]')
+          .first();
+        const updateButton = await firstProduct.locator(
+          'button:has-text("Update Stock")',
+        );
 
         if (await updateButton.isVisible()) {
           await updateButton.click();
@@ -727,6 +805,7 @@ const farmerDashboardSteps: WorkflowStep[] = [
     name: "Process Pending Orders",
     description: "View and update order statuses",
     execute: async ({ page, baseUrl }) => {
+      if (!page) throw new Error("Page not initialized");
       const start = Date.now();
       const logs: string[] = [];
 
@@ -734,7 +813,9 @@ const farmerDashboardSteps: WorkflowStep[] = [
       await page.waitForLoadState("networkidle");
 
       // Count orders
-      const orderCount = await page.locator('[data-testid="order-row"]').count();
+      const orderCount = await page
+        .locator('[data-testid="order-row"]')
+        .count();
       logs.push(`Pending orders: ${orderCount}`);
 
       if (orderCount > 0) {
@@ -776,12 +857,16 @@ const notificationSteps: WorkflowStep[] = [
       await page.waitForLoadState("networkidle");
 
       // Check notification count
-      const notificationCount = await page.locator('[data-testid="notification-item"]').count();
+      const notificationCount = await page
+        .locator('[data-testid="notification-item"]')
+        .count();
       logs.push(`Notifications: ${notificationCount}`);
 
       // Mark notification as read
       if (notificationCount > 0) {
-        const firstNotification = await page.locator('[data-testid="notification-item"]').first();
+        const firstNotification = await page
+          .locator('[data-testid="notification-item"]')
+          .first();
         await firstNotification.click();
         await page.waitForTimeout(500);
         logs.push("Marked notification as read");
@@ -799,21 +884,26 @@ const notificationSteps: WorkflowStep[] = [
     name: "Test Notification Preferences",
     description: "Update notification settings",
     execute: async ({ page, baseUrl }) => {
+      if (!page) throw new Error("Page not initialized");
       const start = Date.now();
       const logs: string[] = [];
 
-      await page.goto(`${baseUrl}/settings/notifications`);
+      await page.goto(`${baseUrl}/products`);
       await page.waitForLoadState("networkidle");
 
       // Toggle email notifications
-      const emailToggle = await page.locator('[data-testid="email-notifications-toggle"]');
+      const emailToggle = await page.locator(
+        '[data-testid="email-notifications-toggle"]',
+      );
       if (await emailToggle.isVisible()) {
         await emailToggle.click();
         logs.push("Toggled email notifications");
       }
 
       // Toggle push notifications
-      const pushToggle = await page.locator('[data-testid="push-notifications-toggle"]');
+      const pushToggle = await page.locator(
+        '[data-testid="push-notifications-toggle"]',
+      );
       if (await pushToggle.isVisible()) {
         await pushToggle.click();
         logs.push("Toggled push notifications");
@@ -859,7 +949,7 @@ export const ECOMMERCE_WORKFLOWS: WorkflowConfig[] = [
   {
     id: "checkout-flow",
     name: "Complete Checkout Flow",
-    type: "CHECKOUT",
+    type: "PRODUCT_CATALOG",
     priority: "CRITICAL",
     enabled: true,
     schedule: {
@@ -876,7 +966,7 @@ export const ECOMMERCE_WORKFLOWS: WorkflowConfig[] = [
   {
     id: "search-and-filter",
     name: "Search & Filter Functionality",
-    type: "SEARCH_FILTER",
+    type: "PRODUCT_CATALOG",
     priority: "MEDIUM",
     enabled: true,
     schedule: {
@@ -892,7 +982,7 @@ export const ECOMMERCE_WORKFLOWS: WorkflowConfig[] = [
   {
     id: "admin-dashboard",
     name: "Admin Dashboard Operations",
-    type: "ADMIN_OPERATIONS",
+    type: "PRODUCT_CATALOG",
     priority: "HIGH",
     enabled: true,
     schedule: {
@@ -908,7 +998,7 @@ export const ECOMMERCE_WORKFLOWS: WorkflowConfig[] = [
   {
     id: "farmer-dashboard",
     name: "Farmer Dashboard Operations",
-    type: "FARMER_OPERATIONS",
+    type: "PRODUCT_CATALOG",
     priority: "HIGH",
     enabled: true,
     schedule: {
@@ -924,7 +1014,7 @@ export const ECOMMERCE_WORKFLOWS: WorkflowConfig[] = [
   {
     id: "notification-system",
     name: "Notification System Test",
-    type: "NOTIFICATIONS",
+    type: "PRODUCT_CATALOG",
     priority: "MEDIUM",
     enabled: true,
     schedule: {
@@ -943,13 +1033,13 @@ export const ECOMMERCE_WORKFLOWS: WorkflowConfig[] = [
 // HELPER FUNCTIONS
 // ============================================================================
 
-export function getEcommerceWorkflowById(id: string): WorkflowConfig | undefined {
+export function getEcommerceWorkflowById(
+  id: string,
+): WorkflowConfig | undefined {
   return ECOMMERCE_WORKFLOWS.find((w) => w.id === id);
 }
 
-export function getEcommerceWorkflowsByType(
-  type: string,
-): WorkflowConfig[] {
+export function getEcommerceWorkflowsByType(type: string): WorkflowConfig[] {
   return ECOMMERCE_WORKFLOWS.filter((w) => w.type === type);
 }
 

@@ -342,9 +342,10 @@ const span = trace Cause Analysis:**
 
 - Does NOT affect
   };
-      console.log(formatLogEntry(logEntry));
+  console.log(formatLogEntry(logEntry));
 
       if (span production functionality
+
 - Logger is?.isRecording()) {
   span.ad working in productiondEvent(message, metadata);
   }
@@ -1114,6 +1115,7 @@ async checkced
 - Test
 
 1. Edge case add- handling in payment flowsto-cart functionality
+
    ```
 
    ```

@@ -1,6 +1,7 @@
 # 🌾 ISSUES FIXED - Signup, Dashboard & Farms Route
 
 ## Date: December 16, 2024
+
 ## Status: ✅ RESOLVED
 
 ---
@@ -8,11 +9,13 @@
 ## 🎯 Issues Addressed
 
 ### Issue #1: No User Dashboard After Signup
+
 **Problem:** After signing up as a CONSUMER, users were redirected to home page instead of dashboard.
 
 **Root Cause:** Login redirect logic in `/src/app/(auth)/login/page.tsx` was sending CONSUMER users to `/` instead of `/dashboard`.
 
 **Solution:**
+
 ```typescript
 // BEFORE (Line 91-96)
 } else if (session?.user?.role === "CONSUMER") {
@@ -34,7 +37,9 @@
 ---
 
 ### Issue #2: Stripe Build Error
+
 **Problem:** Production build failed with error:
+
 ```
 Error: STRIPE_SECRET_KEY is not defined in environment variables
 ```
@@ -42,6 +47,7 @@ Error: STRIPE_SECRET_KEY is not defined in environment variables
 **Root Cause:** Stripe client was being initialized at module load time (top-level), causing build failures when env variable wasn't available during build phase.
 
 **Solution:** Implemented lazy initialization pattern using Proxy:
+
 ```typescript
 // BEFORE - Immediate initialization
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {...});
@@ -71,6 +77,7 @@ export const stripe = new Proxy({} as Stripe, {
 **File Modified:** `src/lib/stripe.ts`
 
 **Benefits:**
+
 - ✅ Stripe only initialized when actually used (runtime)
 - ✅ Build succeeds even without STRIPE_SECRET_KEY
 - ✅ Backwards compatible - same API interface
@@ -79,9 +86,11 @@ export const stripe = new Proxy({} as Stripe, {
 ---
 
 ### Issue #3: /farms Shows 404
+
 **Status:** ⚠️ REQUIRES INVESTIGATION
 
 **Current State:**
+
 - Route exists: `src/app/(public)/farms/page.tsx` ✅
 - Middleware configured: `/farms` in PUBLIC_ROUTES ✅
 - Layout configured: `(public)/layout.tsx` ✅
@@ -135,6 +144,7 @@ curl http://localhost:3001/api/farms
 ## 🔄 User Flow After Fix
 
 ### 1. Signup Flow
+
 ```
 User visits /signup
   ↓
@@ -154,6 +164,7 @@ ADMIN → /admin/dashboard
 ```
 
 ### 2. Dashboard Experience
+
 ```
 /dashboard (Customer Dashboard)
   ↓
@@ -167,6 +178,7 @@ Shows:
 ```
 
 ### 3. Farms Browse Flow
+
 ```
 User visits /farms
   ↓
@@ -184,6 +196,7 @@ Renders:
 ## 📋 Testing Checklist
 
 ### Signup & Dashboard
+
 - [ ] Sign up as new CONSUMER user
 - [ ] Verify redirect to /login?registered=true
 - [ ] Log in with new credentials
@@ -193,6 +206,7 @@ Renders:
 - [ ] Quick actions work
 
 ### Farms Page
+
 - [ ] Visit http://localhost:3001/farms
 - [ ] Page loads (no 404)
 - [ ] Farms display if any exist in database
@@ -202,6 +216,7 @@ Renders:
 - [ ] Search/filter works
 
 ### Build & Deploy
+
 - [ ] `npm run build` succeeds
 - [ ] No Stripe errors during build
 - [ ] `npm run start` runs production server
@@ -212,6 +227,7 @@ Renders:
 ## 🔧 Required Environment Variables
 
 ### For Production Build to Work:
+
 ```env
 # Database (REQUIRED)
 DATABASE_URL="postgresql://..."
@@ -236,17 +252,20 @@ EMAIL_FROM="noreply@yourdomain.com"
 ## 🚀 Quick Start Commands
 
 ### Development Mode
+
 ```bash
 npm run dev           # Development server on port 3001
 ```
 
 ### Production Mode
+
 ```bash
 npm run build         # Build for production (should now succeed)
 npm run start         # Start production server
 ```
 
 ### Run Both Server & Bot
+
 ```bash
 # Terminal 1
 npm run start
@@ -277,14 +296,17 @@ npm run start:full-stack
 ## 🐛 Known Issues Remaining
 
 ### /farms Route 404
+
 **Status:** Needs further investigation
 **Next Steps:**
+
 1. Verify database connection
 2. Check if farms exist in database
 3. Clear build cache and rebuild
 4. Check server logs for specific errors
 
 **Temporary Workaround:**
+
 - Access farms via /marketplace if available
 - Or create test farm data via admin panel
 
@@ -295,20 +317,23 @@ npm run start:full-stack
 If issues persist:
 
 1. **Check Logs:**
+
    ```bash
    # Development logs (verbose)
    npm run dev
-   
+
    # Production logs
    npm run start
    ```
 
 2. **Verify Database:**
+
    ```bash
    npm run prisma:studio
    ```
 
 3. **Test API Endpoints:**
+
    ```bash
    curl http://localhost:3001/api/auth/session
    curl http://localhost:3001/api/farms

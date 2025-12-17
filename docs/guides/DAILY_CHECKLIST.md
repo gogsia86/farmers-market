@@ -9,8 +9,10 @@
 ## 🎯 DAY 1: CRITICAL TYPESCRIPT FIXES (TODAY)
 
 ### Morning (2 hours)
+
 - [ ] **Save tsconfig.json** (if unsaved changes exist)
 - [ ] **Backup current state**
+
   ```bash
   git add -A
   git commit -m "checkpoint: before TypeScript fixes"
@@ -38,6 +40,7 @@
   - [ ] Verify: productId error resolved
 
 ### Afternoon (2 hours)
+
 - [ ] **Fix 5: Fix Decimal type conflicts**
   - [ ] Edit `src/types/core-entities.ts`
   - [ ] Import: `import { Decimal } from '@prisma/client/runtime/library'`
@@ -52,12 +55,14 @@
   - [ ] Verify: Page compiles without errors
 
 - [ ] **Run automated fixes**
+
   ```bash
   npx tsx scripts/quick-fix.ts --dry-run
   npx tsx scripts/quick-fix.ts --logger --auth --email
   ```
 
 - [ ] **Final validation**
+
   ```bash
   npx tsc --noEmit
   # Target: <10 errors (from 27)
@@ -71,16 +76,19 @@
   ```
 
 ### End of Day Metrics
-- [ ] TypeScript Errors: _____ (Target: <10, Was: 27)
-- [ ] Files Fixed: _____
-- [ ] Validation Score: _____ (Run: `npm run validate:platform`)
+
+- [ ] TypeScript Errors: **\_** (Target: <10, Was: 27)
+- [ ] Files Fixed: **\_**
+- [ ] Validation Score: **\_** (Run: `npm run validate:platform`)
 
 ---
 
 ## 🎯 DAY 2: CANONICAL IMPORT FIXES
 
 ### Morning (2 hours)
+
 - [ ] **Run error detection**
+
   ```bash
   npm run validate:errors > day2-start.txt
   ```
@@ -91,7 +99,6 @@
     - [ ] Add error handling with try/catch
     - [ ] Add logger: `const logger = createLogger('farm-service')`
     - [ ] Test: Service still works
-  
   - [ ] Edit `src/lib/services/geocoding.service.ts`
     - [ ] Same pattern as farm.service.ts
     - [ ] Ensure all database calls use `database.` prefix
@@ -102,7 +109,9 @@
   ```
 
 ### Afternoon (1 hour)
+
 - [ ] **Verify all changes**
+
   ```bash
   npx tsc --noEmit
   npm test
@@ -110,6 +119,7 @@
   ```
 
 - [ ] **Review git diff**
+
   ```bash
   git diff --stat
   git diff src/lib/services/
@@ -123,15 +133,17 @@
   ```
 
 ### End of Day Metrics
-- [ ] Import Violations: _____ (Target: <10, Was: 67)
-- [ ] Services Using Canonical DB: _____ / 12 (Target: 12/12)
-- [ ] TypeScript Errors: _____ (Target: 0)
+
+- [ ] Import Violations: **\_** (Target: <10, Was: 67)
+- [ ] Services Using Canonical DB: **\_** / 12 (Target: 12/12)
+- [ ] TypeScript Errors: **\_** (Target: 0)
 
 ---
 
 ## 🎯 DAY 3-4: CREATE MISSING SERVICES
 
 ### Day 3 Morning (2 hours)
+
 - [ ] **Create marketplace.service.ts**
   - [ ] Copy template from NEXT_STEPS.md
   - [ ] Implement getProducts() with filters
@@ -148,6 +160,7 @@
   - [ ] Test: Verify service works
 
 ### Day 3 Afternoon (1 hour)
+
 - [ ] **Update services barrel export**
   - [ ] Edit `src/lib/services/index.ts`
   - [ ] Export marketplaceService
@@ -165,6 +178,7 @@
   ```
 
 ### Day 4 (Test Integration)
+
 - [ ] **Update API routes to use new services**
   - [ ] Update marketplace API routes
   - [ ] Update farmer API routes
@@ -177,16 +191,19 @@
   ```
 
 ### End of Day 4 Metrics
-- [ ] Services Created: _____ (Target: 2)
-- [ ] APIs with Services: _____ / 7 (Target: 7/7)
-- [ ] Services with Error Handling: _____ / 12 (Target: 12/12)
+
+- [ ] Services Created: **\_** (Target: 2)
+- [ ] APIs with Services: **\_** / 7 (Target: 7/7)
+- [ ] Services with Error Handling: **\_** / 12 (Target: 12/12)
 
 ---
 
 ## 🎯 DAY 5-7: TEST COVERAGE SPRINT
 
 ### Day 5: Service Tests (4 hours)
+
 - [ ] **Setup test environment**
+
   ```bash
   npm test
   # Ensure tests run successfully
@@ -215,6 +232,7 @@
   ```
 
 ### Day 6: More Service Tests (4 hours)
+
 - [ ] **Create order.service.test.ts**
   - [ ] Test createOrder()
   - [ ] Test updateOrderStatus()
@@ -234,6 +252,7 @@
   ```
 
 ### Day 7: API and Component Tests (4 hours)
+
 - [ ] **Create marketplace API tests**
   - [ ] Test GET /api/marketplace
   - [ ] Test filtering
@@ -255,15 +274,17 @@
   ```
 
 ### End of Week 1 Metrics
-- [ ] Test Files Created: _____
-- [ ] Test Coverage: _____% (Target: 30%+)
-- [ ] All Tests Passing: _____ (Yes/No)
+
+- [ ] Test Files Created: **\_**
+- [ ] Test Coverage: **\_**% (Target: 30%+)
+- [ ] All Tests Passing: **\_** (Yes/No)
 
 ---
 
 ## 🎯 WEEK 2: QUALITY & CI/CD
 
 ### Week 2 Goals
+
 - [ ] Increase test coverage to 50%+
 - [ ] Add E2E tests for critical flows
 - [ ] Setup CI/CD pipeline
@@ -272,6 +293,7 @@
 - [ ] Payment config consolidation
 
 ### Daily Tasks (Week 2)
+
 - [ ] **Monday:** E2E test setup + critical flow tests
 - [ ] **Tuesday:** CI/CD GitHub Actions workflow
 - [ ] **Wednesday:** Pre-commit hooks + linting
@@ -283,49 +305,56 @@
 ## 📊 WEEKLY VALIDATION CHECKLIST
 
 Run every Monday morning:
+
 ```bash
 npm run validate:all > weekly-report.txt
 ```
 
 ### Metrics to Track
-- [ ] TypeScript Errors: _____
-- [ ] Test Coverage: _____%
-- [ ] Import Violations: _____
-- [ ] Service Quality Score: _____
-- [ ] API Coverage: _____ / 7
-- [ ] Overall Platform Score: _____%
+
+- [ ] TypeScript Errors: **\_**
+- [ ] Test Coverage: **\_**%
+- [ ] Import Violations: **\_**
+- [ ] Service Quality Score: **\_**
+- [ ] API Coverage: **\_** / 7
+- [ ] Overall Platform Score: **\_**%
 
 ### Compare Week-over-Week
-| Metric | Week 1 | Week 2 | Target | Status |
-|--------|--------|--------|--------|--------|
-| TS Errors | 27 | ___ | 0 | ⏳ |
-| Coverage | 4.1% | ___% | 80% | ⏳ |
-| Violations | 67 | ___ | 0 | ⏳ |
-| Platform Score | 92.3% | ___% | 99%+ | ⏳ |
+
+| Metric         | Week 1 | Week 2  | Target | Status |
+| -------------- | ------ | ------- | ------ | ------ |
+| TS Errors      | 27     | \_\_\_  | 0      | ⏳     |
+| Coverage       | 4.1%   | \_\_\_% | 80%    | ⏳     |
+| Violations     | 67     | \_\_\_  | 0      | ⏳     |
+| Platform Score | 92.3%  | \_\_\_% | 99%+   | ⏳     |
 
 ---
 
 ## 🎉 COMPLETION CRITERIA
 
 ### Phase 1 Complete When:
+
 - [x] TypeScript errors: 0
 - [x] Canonical imports: 100%
 - [x] All services use database singleton
 - [x] Logger imports fixed
 
 ### Phase 2 Complete When:
+
 - [ ] Marketplace service created
 - [ ] Farmer service created
 - [ ] All APIs have services
 - [ ] Error handling in all services
 
 ### Phase 3 Complete When:
+
 - [ ] Test coverage: 30%+
 - [ ] All critical services tested
 - [ ] API routes tested
 - [ ] Key components tested
 
 ### PRODUCTION READY When:
+
 - [ ] TypeScript errors: 0
 - [ ] Test coverage: 80%+
 - [ ] Import violations: 0
@@ -338,6 +367,7 @@ npm run validate:all > weekly-report.txt
 ## 💡 QUICK COMMANDS
 
 ### Start of Day
+
 ```bash
 git pull
 npm install
@@ -345,6 +375,7 @@ npm run validate:quick
 ```
 
 ### During Development
+
 ```bash
 # Type check (watch mode)
 npx tsc --noEmit --watch
@@ -357,6 +388,7 @@ npm run validate:quick
 ```
 
 ### End of Day
+
 ```bash
 # Final checks
 npx tsc --noEmit
@@ -370,6 +402,7 @@ git push
 ```
 
 ### Emergency Rollback
+
 ```bash
 git log --oneline -5
 git reset --hard HEAD~1  # Undo last commit
@@ -381,18 +414,21 @@ git reset --hard <commit-hash>  # Go to specific commit
 ## 📞 SUPPORT & RESOURCES
 
 ### Documentation
+
 - `NEXT_STEPS.md` - Detailed action plan
 - `VALIDATION_SUMMARY.md` - Current platform health
 - `.cursorrules` - Coding standards
 - `.github/instructions/` - Implementation guides
 
 ### Commands
+
 - `npm run validate:all` - Full validation
 - `npm run validate:quick` - Quick check
 - `npm test` - Run tests
 - `npx tsc --noEmit` - Type check
 
 ### Getting Stuck?
+
 1. Check `NEXT_STEPS.md` for detailed solutions
 2. Run `npm run validate:errors` to see specific issues
 3. Review `.cursorrules` for patterns
@@ -402,4 +438,4 @@ git reset --hard <commit-hash>  # Go to specific commit
 
 **Remember:** Progress over perfection. Fix one thing at a time, validate, commit, repeat! 🚀
 
-*Last Updated: December 5, 2024*
+_Last Updated: December 5, 2024_

@@ -1,4 +1,5 @@
 # 🐳 DOCKER QUICK START GUIDE
+
 **Farmers Market Platform - Get Running in 5 Minutes**
 
 ---
@@ -108,6 +109,7 @@ npm run docker:clean-all        # Remove EVERYTHING (nuclear option)
 ## 🌐 Access URLs
 
 ### Development
+
 - **Application**: http://localhost:3000
 - **pgAdmin**: http://localhost:5051
   - Email: `dev@farmersmarket.local`
@@ -117,6 +119,7 @@ npm run docker:clean-all        # Remove EVERYTHING (nuclear option)
 - **Prisma Studio**: http://localhost:5555 (after running `npm run docker:prisma-studio`)
 
 ### Production
+
 - **Application**: https://localhost:443
 - **pgAdmin**: http://localhost:5050
 
@@ -211,6 +214,7 @@ DATABASE_URL=postgresql://farmers_user:STRONG_PASSWORD@postgres:5432/farmers_mar
 ```
 
 Generate secure secret:
+
 ```bash
 openssl rand -base64 32
 ```
@@ -363,12 +367,14 @@ After starting Docker services:
 If you can access http://localhost:3000 and see the application, you're all set!
 
 ### Next Steps:
+
 1. Register a test user
 2. Create a test farm
 3. Add some products
 4. Test the checkout flow
 
 ### Need Help?
+
 - Check logs: `npm run docker:logs`
 - View diagnostics: `npm run diagnose:api`
 - Read full guide: `DOCKER_DEPLOYMENT_COMPLETE.md`
@@ -393,4 +399,4 @@ npm run docker:clean           # Last resort
 
 **Status**: ✅ Ready to Rock! 🚀
 
-*Built with divine agricultural consciousness* 🌾✨
+_Built with divine agricultural consciousness_ 🌾✨

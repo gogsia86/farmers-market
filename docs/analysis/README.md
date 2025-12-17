@@ -1,4 +1,5 @@
 # 🤖 Bot & AI Analysis Documentation
+
 ## Farmers Market Platform - Agricultural Intelligence
 
 **Last Updated**: December 2024  
@@ -92,6 +93,7 @@ npm run dev
 ### For Users
 
 Access the AI chat assistant at:
+
 - **Demo Page**: `/demos/chat`
 - **Help Page**: `/help` (Live Chat option)
 - **Support Page**: `/support` (Bot assistance)
@@ -135,30 +137,35 @@ Access the AI chat assistant at:
 ## 🎯 Key Features
 
 ### 🚜 Farm Analyst Agent
+
 - Performance analysis and yield prediction
 - Crop rotation optimization
 - Seasonal planning
 - Sustainability assessment
 
 ### 📦 Product Catalog Manager
+
 - AI-generated product descriptions
 - Pricing strategy recommendations
 - Inventory management
 - SEO optimization
 
 ### 📋 Order Processor
+
 - Order validation and allocation
 - Delivery route optimization
 - Issue resolution
 - Customer communication
 
 ### 💬 Customer Support
+
 - 24/7 AI-powered assistance
 - Product recommendations
 - Agricultural education
 - Multi-language ready (future)
 
 ### 🏠 Local Chat Interface
+
 - Real-time conversational AI
 - Agricultural consciousness embedded
 - Performance metrics displayed
@@ -170,6 +177,7 @@ Access the AI chat assistant at:
 ## 📈 Performance Metrics
 
 ### Ollama DeepSeek-R1:7b (Local)
+
 - **Response Time**: 2-5 seconds
 - **Tokens/Second**: 30-50 tok/s
 - **GPU Usage**: 70-85%
@@ -177,6 +185,7 @@ Access the AI chat assistant at:
 - **Concurrent Threads**: 6-12
 
 ### OpenAI GPT-4o Agents
+
 - **Response Time**: 2-4 seconds
 - **Max Tokens**: 1200-2000
 - **Rate Limit**: 60 requests/min
@@ -184,6 +193,7 @@ Access the AI chat assistant at:
 - **Retries**: 3 attempts
 
 ### Bundle Optimization
+
 - **Component Size**: 50-80 KB (deferred)
 - **Load Time Saved**: 200-400ms
 - **Dynamic Load**: <200ms
@@ -212,11 +222,13 @@ AZURE_APPLICATION_INSIGHTS_CONNECTION_STRING=...
 ## 🧪 Testing
 
 ### Run Agent Tests
+
 ```bash
 npm run test:agents
 ```
 
 ### Test Coverage
+
 - ✅ Agent registry validation
 - ✅ Capability checks
 - ✅ Individual agent invocation
@@ -229,6 +241,7 @@ npm run test:agents
 ## 📖 API Reference
 
 ### Chat Endpoint
+
 ```http
 POST /api/ai/ollama
 Content-Type: application/json
@@ -245,6 +258,7 @@ Content-Type: application/json
 ```
 
 ### Health Check
+
 ```http
 GET /api/ai/ollama
 
@@ -260,6 +274,7 @@ Response:
 ```
 
 ### Agricultural Analysis
+
 ```http
 POST /api/ai/ollama/analyze
 
@@ -281,29 +296,27 @@ POST /api/ai/ollama/analyze
 
 ```typescript
 // Invoke single agent
-import { invokeAgent } from '@/lib/ai/agent-config';
+import { invokeAgent } from "@/lib/ai/agent-config";
 
-const response = await invokeAgent(
-  'farmAnalyst',
-  'Analyze crop yield trends',
-  { farmId: 'farm-123' }
-);
+const response = await invokeAgent("farmAnalyst", "Analyze crop yield trends", {
+  farmId: "farm-123",
+});
 ```
 
 ```typescript
 // Multi-agent orchestration
-import { orchestrateAgents } from '@/lib/ai/agent-config';
+import { orchestrateAgents } from "@/lib/ai/agent-config";
 
 const responses = await orchestrateAgents({
-  task: 'Optimize farm operations for spring',
-  context: { farmId: 'farm-123' },
-  requiredAgents: ['farmAnalyst', 'productCatalog']
+  task: "Optimize farm operations for spring",
+  context: { farmId: "farm-123" },
+  requiredAgents: ["farmAnalyst", "productCatalog"],
 });
 ```
 
 ```tsx
 // React Component
-import { OllamaChatBotDynamic } from '@/components/features/ai/OllamaChatBotDynamic';
+import { OllamaChatBotDynamic } from "@/components/features/ai/OllamaChatBotDynamic";
 
 export default function MyPage() {
   return (
@@ -320,6 +333,7 @@ export default function MyPage() {
 ## 🔒 Security & Privacy
 
 ### Data Protection
+
 - ✅ Local AI processing (Ollama)
 - ✅ No external data transmission for local chat
 - ✅ API key encryption
@@ -328,6 +342,7 @@ export default function MyPage() {
 - ✅ GDPR compliant
 
 ### Best Practices
+
 - ✅ Input validation (Zod schemas)
 - ✅ Error boundaries
 - ✅ Graceful degradation
@@ -339,6 +354,7 @@ export default function MyPage() {
 ## 🗺️ Roadmap
 
 ### Completed ✅
+
 - Multi-agent framework
 - Ollama chat integration
 - Dynamic component loading
@@ -346,12 +362,14 @@ export default function MyPage() {
 - Performance optimization
 
 ### In Progress 🚧
+
 - Voice input/output
 - Image analysis (crop disease detection)
 - Mobile app chat integration
 - Advanced conversation analytics
 
 ### Planned 📋
+
 - Fine-tuned agricultural model
 - Multi-language support
 - Sentiment analysis
@@ -364,18 +382,21 @@ export default function MyPage() {
 ## 📞 Support & Resources
 
 ### Documentation
+
 - **Main Analysis**: [BOT_WEB_ANALYSIS.md](./BOT_WEB_ANALYSIS.md)
 - **Architecture Diagrams**: [BOT_ARCHITECTURE_DIAGRAM.md](./BOT_ARCHITECTURE_DIAGRAM.md)
 - **API Code**: `src/lib/ai/agent-config.ts`
 - **Component Code**: `src/components/features/ai/OllamaChatBot.tsx`
 
 ### External Resources
+
 - [OpenAI GPT-4o Docs](https://platform.openai.com/docs/models/gpt-4o)
 - [Ollama Documentation](https://ollama.ai/docs)
 - [DeepSeek-R1 Model](https://github.com/deepseek-ai/DeepSeek-R1)
 - [Microsoft Agent Framework](https://github.com/microsoft/autogen)
 
 ### Getting Help
+
 - **Code Issues**: Check inline JSDoc comments
 - **Setup Problems**: See configuration section above
 - **Feature Requests**: GitHub Issues
@@ -425,7 +446,7 @@ export default function MyPage() {
 ✅ **Test Coverage**: Comprehensive agent & integration tests  
 ✅ **Documentation**: Complete and accessible  
 ✅ **Scalability**: Ready for 1 to 1 billion users  
-✅ **Security**: Privacy-first, rate-limited, validated  
+✅ **Security**: Privacy-first, rate-limited, validated
 
 ---
 

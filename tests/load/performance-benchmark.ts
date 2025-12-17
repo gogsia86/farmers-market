@@ -17,37 +17,37 @@
  * @reference .github/instructions/13_TESTING_PERFORMANCE_MASTERY.instructions.md
  */
 
-import { execSync } from 'child_process';
-import fs from 'fs';
-import path from 'path';
+import { execSync } from "child_process";
+import fs from "fs";
+import path from "path";
 
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
 
-const RESULTS_DIR = path.join(process.cwd(), 'tests', 'load', 'results');
-const BASELINES_DIR = path.join(RESULTS_DIR, 'baselines');
-const REPORTS_DIR = path.join(RESULTS_DIR, 'reports');
+const RESULTS_DIR = path.join(process.cwd(), "tests", "load", "results");
+const BASELINES_DIR = path.join(RESULTS_DIR, "baselines");
+const REPORTS_DIR = path.join(RESULTS_DIR, "reports");
 
-const BASELINE_FILE = path.join(BASELINES_DIR, 'performance-baseline.json');
-const HISTORY_FILE = path.join(BASELINES_DIR, 'performance-history.json');
+const BASELINE_FILE = path.join(BASELINES_DIR, "performance-baseline.json");
+const HISTORY_FILE = path.join(BASELINES_DIR, "performance-history.json");
 
 // Performance thresholds (acceptable regression limits)
 const THRESHOLDS = {
   latency: {
-    p50: 200,    // 50th percentile should be under 200ms
-    p95: 1000,   // 95th percentile should be under 1s
-    p99: 2000,   // 99th percentile should be under 2s
-    max: 5000,   // Max latency should be under 5s
+    p50: 200, // 50th percentile should be under 200ms
+    p95: 1000, // 95th percentile should be under 1s
+    p99: 2000, // 99th percentile should be under 2s
+    max: 5000, // Max latency should be under 5s
   },
-  successRate: 99.5,  // Minimum 99.5% success rate
-  rps: 100,           // Minimum 100 requests per second
-  errorRate: 0.5,     // Maximum 0.5% error rate
-  consciousness: 80,  // Minimum 80/100 agricultural consciousness
+  successRate: 99.5, // Minimum 99.5% success rate
+  rps: 100, // Minimum 100 requests per second
+  errorRate: 0.5, // Maximum 0.5% error rate
+  consciousness: 80, // Minimum 80/100 agricultural consciousness
   regression: {
-    latency: 20,      // Max 20% regression in latency
-    successRate: 1,   // Max 1% regression in success rate
-    rps: 15,          // Max 15% regression in throughput
+    latency: 20, // Max 20% regression in latency
+    successRate: 1, // Max 1% regression in success rate
+    rps: 15, // Max 15% regression in throughput
   },
 };
 
@@ -116,7 +116,7 @@ interface RegressionResult {
   change: number;
   changePercent: number;
   threshold: number;
-  severity: 'critical' | 'warning' | 'minor';
+  severity: "critical" | "warning" | "minor";
 }
 
 interface ImprovementResult {
@@ -141,11 +141,13 @@ function ensureDirectories(): void {
 
 function getGitInfo(): { commit: string; branch: string } {
   try {
-    const commit = execSync('git rev-parse HEAD').toString().trim();
-    const branch = execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
+    const commit = execSync("git rev-parse HEAD").toString().trim();
+    const branch = execSync("git rev-parse --abbrev-ref HEAD")
+      .toString()
+      .trim();
     return { commit, branch };
   } catch {
-    return { commit: 'unknown', branch: 'unknown' };
+    return { commit: "unknown", branch: "unknown" };
   }
 }
 
@@ -155,10 +157,10 @@ function loadBaseline(): PerformanceMetrics | null {
   }
 
   try {
-    const content = fs.readFileSync(BASELINE_FILE, 'utf-8');
+    const content = fs.readFileSync(BASELINE_FILE, "utf-8");
     return JSON.parse(content);
   } catch (error) {
-    console.error('❌ Failed to load baseline:', error);
+    console.error("❌ Failed to load baseline:", error);
     return null;
   }
 }
@@ -175,7 +177,7 @@ function loadHistory(): PerformanceMetrics[] {
   }
 
   try {
-    const content = fs.readFileSync(HISTORY_FILE, 'utf-8');
+    const content = fs.readFileSync(HISTORY_FILE, "utf-8");
     return JSON.parse(content);
   } catch {
     return [];
@@ -195,18 +197,21 @@ function saveToHistory(metrics: PerformanceMetrics): void {
 }
 
 function loadLatestTestResults(): PerformanceMetrics | null {
-  const metricsFile = path.join(RESULTS_DIR, 'comprehensive-load-test-metrics.json');
+  const metricsFile = path.join(
+    RESULTS_DIR,
+    "comprehensive-load-test-metrics.json",
+  );
 
   if (!fs.existsSync(metricsFile)) {
-    console.error('❌ No test results found. Run load tests first.');
+    console.error("❌ No test results found. Run load tests first.");
     return null;
   }
 
   try {
-    const content = fs.readFileSync(metricsFile, 'utf-8');
+    const content = fs.readFileSync(metricsFile, "utf-8");
     return JSON.parse(content);
   } catch (error) {
-    console.error('❌ Failed to load test results:', error);
+    console.error("❌ Failed to load test results:", error);
     return null;
   }
 }
@@ -220,10 +225,11 @@ function calculateRegression(
   baselineValue: number,
   currentValue: number,
   threshold: number,
-  higherIsBetter = true
+  higherIsBetter = true,
 ): RegressionResult | null {
   const change = currentValue - baselineValue;
-  const changePercent = baselineValue !== 0 ? (change / baselineValue) * 100 : 0;
+  const changePercent =
+    baselineValue !== 0 ? (change / baselineValue) * 100 : 0;
 
   // Determine if this is a regression
   const isRegression = higherIsBetter
@@ -235,13 +241,13 @@ function calculateRegression(
   }
 
   // Determine severity
-  let severity: 'critical' | 'warning' | 'minor' = 'minor';
+  let severity: "critical" | "warning" | "minor" = "minor";
   const absChangePercent = Math.abs(changePercent);
 
   if (absChangePercent > threshold * 3) {
-    severity = 'critical';
+    severity = "critical";
   } else if (absChangePercent > threshold * 1.5) {
-    severity = 'warning';
+    severity = "warning";
   }
 
   return {
@@ -259,10 +265,11 @@ function calculateImprovement(
   metric: string,
   baselineValue: number,
   currentValue: number,
-  higherIsBetter = true
+  higherIsBetter = true,
 ): ImprovementResult | null {
   const change = currentValue - baselineValue;
-  const changePercent = baselineValue !== 0 ? (change / baselineValue) * 100 : 0;
+  const changePercent =
+    baselineValue !== 0 ? (change / baselineValue) * 100 : 0;
 
   const isImprovement = higherIsBetter
     ? changePercent > 5 // At least 5% improvement
@@ -283,20 +290,20 @@ function calculateImprovement(
 
 function compareWithBaseline(
   current: PerformanceMetrics,
-  baseline: PerformanceMetrics
-): BenchmarkResult['comparison'] {
+  baseline: PerformanceMetrics,
+): BenchmarkResult["comparison"] {
   const regressions: RegressionResult[] = [];
   const improvements: ImprovementResult[] = [];
 
   // Check latency regressions (lower is better)
-  ['avg', 'p50', 'p95', 'p99', 'max'].forEach((percentile) => {
+  ["avg", "p50", "p95", "p99", "max"].forEach((percentile) => {
     const key = percentile as keyof typeof current.metrics.latency;
     const regression = calculateRegression(
       `latency.${percentile}`,
       baseline.metrics.latency[key],
       current.metrics.latency[key],
       THRESHOLDS.regression.latency,
-      false // lower is better
+      false, // lower is better
     );
 
     if (regression) {
@@ -307,7 +314,7 @@ function compareWithBaseline(
       `latency.${percentile}`,
       baseline.metrics.latency[key],
       current.metrics.latency[key],
-      false // lower is better
+      false, // lower is better
     );
 
     if (improvement) {
@@ -317,11 +324,11 @@ function compareWithBaseline(
 
   // Check success rate (higher is better)
   const successRateRegression = calculateRegression(
-    'successRate',
+    "successRate",
     baseline.metrics.successRate,
     current.metrics.successRate,
     THRESHOLDS.regression.successRate,
-    true
+    true,
   );
 
   if (successRateRegression) {
@@ -329,10 +336,10 @@ function compareWithBaseline(
   }
 
   const successRateImprovement = calculateImprovement(
-    'successRate',
+    "successRate",
     baseline.metrics.successRate,
     current.metrics.successRate,
-    true
+    true,
   );
 
   if (successRateImprovement) {
@@ -341,11 +348,11 @@ function compareWithBaseline(
 
   // Check RPS (higher is better)
   const rpsRegression = calculateRegression(
-    'rps',
+    "rps",
     baseline.metrics.rps,
     current.metrics.rps,
     THRESHOLDS.regression.rps,
-    true
+    true,
   );
 
   if (rpsRegression) {
@@ -353,10 +360,10 @@ function compareWithBaseline(
   }
 
   const rpsImprovement = calculateImprovement(
-    'rps',
+    "rps",
     baseline.metrics.rps,
     current.metrics.rps,
-    true
+    true,
   );
 
   if (rpsImprovement) {
@@ -365,11 +372,11 @@ function compareWithBaseline(
 
   // Check consciousness level (higher is better)
   const consciousnessRegression = calculateRegression(
-    'agriculturalConsciousness.consciousnessLevel',
+    "agriculturalConsciousness.consciousnessLevel",
     baseline.metrics.agriculturalConsciousness.consciousnessLevel,
     current.metrics.agriculturalConsciousness.consciousnessLevel,
     10, // 10% regression threshold
-    true
+    true,
   );
 
   if (consciousnessRegression) {
@@ -377,15 +384,17 @@ function compareWithBaseline(
   }
 
   // Determine overall result
-  const criticalRegressions = regressions.filter((r) => r.severity === 'critical');
+  const criticalRegressions = regressions.filter(
+    (r) => r.severity === "critical",
+  );
   const passed = criticalRegressions.length === 0;
 
   // Generate summary
-  let summary = '';
+  let summary = "";
   if (passed && regressions.length === 0 && improvements.length > 0) {
     summary = `✅ Performance improved! ${improvements.length} metrics show improvement.`;
   } else if (passed && regressions.length === 0) {
-    summary = '✅ Performance maintained at baseline level.';
+    summary = "✅ Performance maintained at baseline level.";
   } else if (passed) {
     summary = `⚠️ Minor regressions detected (${regressions.length}), but within acceptable thresholds.`;
   } else {
@@ -409,40 +418,40 @@ function validateThresholds(metrics: PerformanceMetrics): {
   // Check latency thresholds
   if (metrics.metrics.latency.p50 > THRESHOLDS.latency.p50) {
     violations.push(
-      `P50 latency ${metrics.metrics.latency.p50.toFixed(2)}ms exceeds threshold ${THRESHOLDS.latency.p50}ms`
+      `P50 latency ${metrics.metrics.latency.p50.toFixed(2)}ms exceeds threshold ${THRESHOLDS.latency.p50}ms`,
     );
   }
 
   if (metrics.metrics.latency.p95 > THRESHOLDS.latency.p95) {
     violations.push(
-      `P95 latency ${metrics.metrics.latency.p95.toFixed(2)}ms exceeds threshold ${THRESHOLDS.latency.p95}ms`
+      `P95 latency ${metrics.metrics.latency.p95.toFixed(2)}ms exceeds threshold ${THRESHOLDS.latency.p95}ms`,
     );
   }
 
   if (metrics.metrics.latency.p99 > THRESHOLDS.latency.p99) {
     violations.push(
-      `P99 latency ${metrics.metrics.latency.p99.toFixed(2)}ms exceeds threshold ${THRESHOLDS.latency.p99}ms`
+      `P99 latency ${metrics.metrics.latency.p99.toFixed(2)}ms exceeds threshold ${THRESHOLDS.latency.p99}ms`,
     );
   }
 
   // Check success rate
   if (metrics.metrics.successRate < THRESHOLDS.successRate) {
     violations.push(
-      `Success rate ${metrics.metrics.successRate.toFixed(2)}% below threshold ${THRESHOLDS.successRate}%`
+      `Success rate ${metrics.metrics.successRate.toFixed(2)}% below threshold ${THRESHOLDS.successRate}%`,
     );
   }
 
   // Check RPS
   if (metrics.metrics.rps < THRESHOLDS.rps) {
     violations.push(
-      `RPS ${metrics.metrics.rps.toFixed(2)} below threshold ${THRESHOLDS.rps}`
+      `RPS ${metrics.metrics.rps.toFixed(2)} below threshold ${THRESHOLDS.rps}`,
     );
   }
 
   // Check error rate
   if (metrics.metrics.errorRate > THRESHOLDS.errorRate) {
     violations.push(
-      `Error rate ${metrics.metrics.errorRate.toFixed(2)}% exceeds threshold ${THRESHOLDS.errorRate}%`
+      `Error rate ${metrics.metrics.errorRate.toFixed(2)}% exceeds threshold ${THRESHOLDS.errorRate}%`,
     );
   }
 
@@ -452,7 +461,7 @@ function validateThresholds(metrics: PerformanceMetrics): {
     THRESHOLDS.consciousness
   ) {
     violations.push(
-      `Consciousness level ${metrics.metrics.agriculturalConsciousness.consciousnessLevel.toFixed(2)} below threshold ${THRESHOLDS.consciousness}`
+      `Consciousness level ${metrics.metrics.agriculturalConsciousness.consciousnessLevel.toFixed(2)} below threshold ${THRESHOLDS.consciousness}`,
     );
   }
 
@@ -467,9 +476,9 @@ function validateThresholds(metrics: PerformanceMetrics): {
 // ============================================================================
 
 function generateConsoleReport(result: BenchmarkResult): void {
-  console.log('\n' + '═'.repeat(80));
-  console.log('🎯 PERFORMANCE BENCHMARK REPORT');
-  console.log('═'.repeat(80));
+  console.log("\n" + "═".repeat(80));
+  console.log("🎯 PERFORMANCE BENCHMARK REPORT");
+  console.log("═".repeat(80));
 
   const { current, baseline, comparison } = result;
 
@@ -481,54 +490,64 @@ function generateConsoleReport(result: BenchmarkResult): void {
     console.log(`📝 Commit: ${current.gitCommit.substring(0, 8)}`);
   }
 
-  console.log('\n📊 CURRENT PERFORMANCE:');
-  console.log(`   Total Requests: ${current.metrics.totalRequests.toLocaleString()}`);
+  console.log("\n📊 CURRENT PERFORMANCE:");
+  console.log(
+    `   Total Requests: ${current.metrics.totalRequests.toLocaleString()}`,
+  );
   console.log(`   Success Rate: ${current.metrics.successRate.toFixed(2)}%`);
   console.log(`   RPS: ${current.metrics.rps.toFixed(2)}`);
   console.log(`   Avg Latency: ${current.metrics.latency.avg.toFixed(2)}ms`);
   console.log(`   P95 Latency: ${current.metrics.latency.p95.toFixed(2)}ms`);
   console.log(`   P99 Latency: ${current.metrics.latency.p99.toFixed(2)}ms`);
   console.log(
-    `   Consciousness: ${current.metrics.agriculturalConsciousness.consciousnessLevel.toFixed(2)}/100`
+    `   Consciousness: ${current.metrics.agriculturalConsciousness.consciousnessLevel.toFixed(2)}/100`,
   );
 
   // Threshold validation
   const thresholdCheck = validateThresholds(current);
-  console.log(`\n⚖️  THRESHOLD VALIDATION: ${thresholdCheck.passed ? '✅ PASSED' : '❌ FAILED'}`);
+  console.log(
+    `\n⚖️  THRESHOLD VALIDATION: ${thresholdCheck.passed ? "✅ PASSED" : "❌ FAILED"}`,
+  );
   if (!thresholdCheck.passed) {
-    console.log('\n   Violations:');
+    console.log("\n   Violations:");
     thresholdCheck.violations.forEach((v) => console.log(`   • ${v}`));
   }
 
   // Baseline comparison
   if (baseline && comparison) {
-    console.log(`\n📈 BASELINE COMPARISON: ${comparison.passed ? '✅ PASSED' : '❌ FAILED'}`);
+    console.log(
+      `\n📈 BASELINE COMPARISON: ${comparison.passed ? "✅ PASSED" : "❌ FAILED"}`,
+    );
     console.log(`   ${comparison.summary}`);
 
     if (comparison.regressions.length > 0) {
-      console.log('\n   🔻 Regressions:');
+      console.log("\n   🔻 Regressions:");
       comparison.regressions.forEach((r) => {
         const icon =
-          r.severity === 'critical' ? '🔴' : r.severity === 'warning' ? '🟡' : '🟠';
+          r.severity === "critical"
+            ? "🔴"
+            : r.severity === "warning"
+              ? "🟡"
+              : "🟠";
         console.log(
-          `   ${icon} ${r.metric}: ${r.baseline.toFixed(2)} → ${r.current.toFixed(2)} (${r.changePercent > 0 ? '+' : ''}${r.changePercent.toFixed(2)}%)`
+          `   ${icon} ${r.metric}: ${r.baseline.toFixed(2)} → ${r.current.toFixed(2)} (${r.changePercent > 0 ? "+" : ""}${r.changePercent.toFixed(2)}%)`,
         );
       });
     }
 
     if (comparison.improvements.length > 0) {
-      console.log('\n   🔺 Improvements:');
+      console.log("\n   🔺 Improvements:");
       comparison.improvements.forEach((i) => {
         console.log(
-          `   🟢 ${i.metric}: ${i.baseline.toFixed(2)} → ${i.current.toFixed(2)} (${i.improvementPercent.toFixed(2)}% better)`
+          `   🟢 ${i.metric}: ${i.baseline.toFixed(2)} → ${i.current.toFixed(2)} (${i.improvementPercent.toFixed(2)}% better)`,
         );
       });
     }
   } else {
-    console.log('\n📊 BASELINE: Not available (first run or baseline not set)');
+    console.log("\n📊 BASELINE: Not available (first run or baseline not set)");
   }
 
-  console.log('\n' + '═'.repeat(80) + '\n');
+  console.log("\n" + "═".repeat(80) + "\n");
 }
 
 function generateHTMLReport(result: BenchmarkResult): string {
@@ -644,14 +663,14 @@ function generateHTMLReport(result: BenchmarkResult): string {
         <p><strong>Timestamp:</strong> ${current.timestamp}</p>
         <p><strong>Environment:</strong> ${current.environment}</p>
         <p><strong>Scenario:</strong> ${current.scenario}</p>
-        ${current.gitBranch ? `<p><strong>Branch:</strong> ${current.gitBranch}</p>` : ''}
-        ${current.gitCommit ? `<p><strong>Commit:</strong> ${current.gitCommit.substring(0, 8)}</p>` : ''}
+        ${current.gitBranch ? `<p><strong>Branch:</strong> ${current.gitBranch}</p>` : ""}
+        ${current.gitCommit ? `<p><strong>Commit:</strong> ${current.gitCommit.substring(0, 8)}</p>` : ""}
         ${
           comparison
-            ? `<span class="status-badge ${comparison.passed ? 'status-pass' : 'status-fail'}">
-                 ${comparison.passed ? '✅ PASSED' : '❌ FAILED'}
+            ? `<span class="status-badge ${comparison.passed ? "status-pass" : "status-fail"}">
+                 ${comparison.passed ? "✅ PASSED" : "❌ FAILED"}
                </span>`
-            : ''
+            : ""
         }
       </div>
 
@@ -724,15 +743,15 @@ function generateHTMLReport(result: BenchmarkResult): string {
                 <strong>${r.metric}</strong><br>
                 <small>${r.baseline.toFixed(2)} → ${r.current.toFixed(2)}</small>
               </div>
-              <span class="change-badge change-negative">${r.changePercent > 0 ? '+' : ''}${r.changePercent.toFixed(2)}%</span>
+              <span class="change-badge change-negative">${r.changePercent > 0 ? "+" : ""}${r.changePercent.toFixed(2)}%</span>
             </li>
-          `
+          `,
             )
-            .join('')}
+            .join("")}
         </ul>
       </div>
       `
-          : ''
+          : ""
       }
 
       ${
@@ -752,13 +771,13 @@ function generateHTMLReport(result: BenchmarkResult): string {
               </div>
               <span class="change-badge change-positive">${i.improvementPercent.toFixed(2)}% better</span>
             </li>
-          `
+          `,
             )
-            .join('')}
+            .join("")}
         </ul>
       </div>
       `
-          : ''
+          : ""
       }
     </div>
 
@@ -774,7 +793,7 @@ function generateHTMLReport(result: BenchmarkResult): string {
 function saveReport(result: BenchmarkResult): void {
   ensureDirectories();
 
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
   const reportFile = path.join(REPORTS_DIR, `benchmark-${timestamp}.html`);
 
   const html = generateHTMLReport(result);
@@ -794,7 +813,7 @@ function saveReport(result: BenchmarkResult): void {
 // ============================================================================
 
 async function runBenchmark(): Promise<void> {
-  console.log('🚀 Running performance benchmark...\n');
+  console.log("🚀 Running performance benchmark...\n");
 
   // Load baseline if exists
   const baseline = loadBaseline();
@@ -802,7 +821,7 @@ async function runBenchmark(): Promise<void> {
   if (baseline) {
     console.log(`📊 Baseline loaded from ${baseline.timestamp}`);
   } else {
-    console.log('📊 No baseline found. This will be the first benchmark run.');
+    console.log("📊 No baseline found. This will be the first benchmark run.");
   }
 
   // Load latest test results
@@ -810,7 +829,7 @@ async function runBenchmark(): Promise<void> {
 
   if (!current) {
     console.error(
-      '\n❌ No test results found. Run load tests first:\n   k6 run tests/load/comprehensive-load-test.ts\n'
+      "\n❌ No test results found. Run load tests first:\n   k6 run tests/load/comprehensive-load-test.ts\n",
     );
     process.exit(1);
   }
@@ -821,7 +840,7 @@ async function runBenchmark(): Promise<void> {
   current.gitBranch = gitInfo.branch;
 
   // Compare with baseline if available
-  let comparison: BenchmarkResult['comparison'] | undefined;
+  let comparison: BenchmarkResult["comparison"] | undefined;
 
   if (baseline) {
     comparison = compareWithBaseline(current, baseline);
@@ -845,22 +864,22 @@ async function runBenchmark(): Promise<void> {
   const passed = thresholdCheck.passed && (!comparison || comparison.passed);
 
   if (!passed) {
-    console.log('❌ Benchmark failed. Performance regression detected.\n');
+    console.log("❌ Benchmark failed. Performance regression detected.\n");
     process.exit(1);
   } else {
-    console.log('✅ Benchmark passed. Performance is acceptable.\n');
+    console.log("✅ Benchmark passed. Performance is acceptable.\n");
     process.exit(0);
   }
 }
 
 async function setBaseline(): Promise<void> {
-  console.log('📊 Setting performance baseline...\n');
+  console.log("📊 Setting performance baseline...\n");
 
   const metrics = loadLatestTestResults();
 
   if (!metrics) {
     console.error(
-      '\n❌ No test results found. Run load tests first:\n   k6 run tests/load/comprehensive-load-test.ts\n'
+      "\n❌ No test results found. Run load tests first:\n   k6 run tests/load/comprehensive-load-test.ts\n",
     );
     process.exit(1);
   }
@@ -872,17 +891,19 @@ async function setBaseline(): Promise<void> {
 
   saveBaseline(metrics);
 
-  console.log('\n✅ Baseline has been set successfully.');
-  console.log('   Future benchmark runs will compare against this baseline.\n');
+  console.log("\n✅ Baseline has been set successfully.");
+  console.log("   Future benchmark runs will compare against this baseline.\n");
 }
 
 async function compareWithBaselineCmd(): Promise<void> {
-  console.log('📊 Comparing with baseline...\n');
+  console.log("📊 Comparing with baseline...\n");
 
   const baseline = loadBaseline();
 
   if (!baseline) {
-    console.error('❌ No baseline found. Set a baseline first:\n   tsx tests/load/performance-benchmark.ts --baseline\n');
+    console.error(
+      "❌ No baseline found. Set a baseline first:\n   tsx tests/load/performance-benchmark.ts --baseline\n",
+    );
     process.exit(1);
   }
 
@@ -890,7 +911,7 @@ async function compareWithBaselineCmd(): Promise<void> {
 
   if (!current) {
     console.error(
-      '\n❌ No test results found. Run load tests first:\n   k6 run tests/load/comprehensive-load-test.ts\n'
+      "\n❌ No test results found. Run load tests first:\n   k6 run tests/load/comprehensive-load-test.ts\n",
     );
     process.exit(1);
   }
@@ -919,13 +940,13 @@ async function showHistory(): Promise<void> {
   const history = loadHistory();
 
   if (history.length === 0) {
-    console.log('📊 No performance history available.\n');
+    console.log("📊 No performance history available.\n");
     return;
   }
 
-  console.log('\n' + '═'.repeat(80));
-  console.log('📊 PERFORMANCE HISTORY');
-  console.log('═'.repeat(80));
+  console.log("\n" + "═".repeat(80));
+  console.log("📊 PERFORMANCE HISTORY");
+  console.log("═".repeat(80));
   console.log(`\nTotal runs: ${history.length}\n`);
 
   history.slice(-10).forEach((run, index) => {
@@ -934,7 +955,7 @@ async function showHistory(): Promise<void> {
     console.log(`   Success Rate: ${run.metrics.successRate.toFixed(2)}%`);
     console.log(`   P95 Latency: ${run.metrics.latency.p95.toFixed(2)}ms`);
     console.log(`   RPS: ${run.metrics.rps.toFixed(2)}`);
-    console.log('');
+    console.log("");
   });
 }
 
@@ -946,45 +967,53 @@ async function main(): Promise<void> {
   const args = process.argv.slice(2);
   const command = args[0];
 
-  console.log('\n🎯 Performance Benchmarking System\n');
+  console.log("\n🎯 Performance Benchmarking System\n");
 
   ensureDirectories();
 
   switch (command) {
-    case '--run':
-    case 'run':
+    case "--run":
+    case "run":
       await runBenchmark();
       break;
 
-    case '--baseline':
-    case 'baseline':
+    case "--baseline":
+    case "baseline":
       await setBaseline();
       break;
 
-    case '--compare':
-    case 'compare':
+    case "--compare":
+    case "compare":
       await compareWithBaselineCmd();
       break;
 
-    case '--history':
-    case 'history':
+    case "--history":
+    case "history":
       await showHistory();
       break;
 
-    case '--help':
-    case 'help':
+    case "--help":
+    case "help":
     case undefined:
-      console.log('Usage:');
-      console.log('  tsx tests/load/performance-benchmark.ts --run       # Run full benchmark');
-      console.log('  tsx tests/load/performance-benchmark.ts --baseline  # Set baseline');
-      console.log('  tsx tests/load/performance-benchmark.ts --compare   # Compare with baseline');
-      console.log('  tsx tests/load/performance-benchmark.ts --history   # Show history');
-      console.log('');
+      console.log("Usage:");
+      console.log(
+        "  tsx tests/load/performance-benchmark.ts --run       # Run full benchmark",
+      );
+      console.log(
+        "  tsx tests/load/performance-benchmark.ts --baseline  # Set baseline",
+      );
+      console.log(
+        "  tsx tests/load/performance-benchmark.ts --compare   # Compare with baseline",
+      );
+      console.log(
+        "  tsx tests/load/performance-benchmark.ts --history   # Show history",
+      );
+      console.log("");
       break;
 
     default:
       console.error(`❌ Unknown command: ${command}`);
-      console.log('Run with --help for usage information.\n');
+      console.log("Run with --help for usage information.\n");
       process.exit(1);
   }
 }
@@ -992,7 +1021,7 @@ async function main(): Promise<void> {
 // Run if executed directly
 if (require.main === module) {
   main().catch((error) => {
-    console.error('❌ Benchmark failed:', error);
+    console.error("❌ Benchmark failed:", error);
     process.exit(1);
   });
 }

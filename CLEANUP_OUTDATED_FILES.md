@@ -9,6 +9,7 @@
 ## 📋 Files to Remove (Outdated/Redundant)
 
 ### Category 1: Old Fix/Error Reports (SAFE TO DELETE)
+
 These are historical fix reports that are no longer needed:
 
 ```bash
@@ -114,6 +115,7 @@ These are historical fix reports that are no longer needed:
 ## ✅ Files to KEEP (Essential Documentation)
 
 ### Master Documentation Files:
+
 ```bash
 # Core platform documentation
 ./README.md                                    # Main project README
@@ -200,7 +202,7 @@ $miscOldFiles = @(
 )
 
 # Combine all files to delete
-$allFilesToDelete = $oldFixReports + $cleanupReports + $quickStartDupes + 
+$allFilesToDelete = $oldFixReports + $cleanupReports + $quickStartDupes +
                     $productionDupes + $botDupes + $miscOldFiles
 
 # Create backup directory
@@ -253,31 +255,31 @@ FILES_TO_ARCHIVE=(
     "DEBUG_PERMISSIONS.md"
     "PERMISSION_ERROR_FIX.txt"
     "FIX_INSTRUCTIONS.md"
-    
+
     # Category 2: Redundant Cleanup Reports
     "CLEANUP_EXECUTION_REPORT.md"
     "CLEANUP_GUIDE.md"
     "CLEANUP_SUMMARY.md"
     "MARKDOWN_CLEANUP_REPORT.md"
-    
+
     # Category 3: Duplicate Quick Start Guides
     "QUICK_START.txt"
     "QUICK_START_PRODUCTION.md"
     "START_HERE_PRODUCTION.md"
     "RUN_SERVER_NOW.md"
     "FINAL_CHECKLIST.txt"
-    
+
     # Category 4: Redundant Production Guides
     "PRODUCTION_FIX_PLAN.md"
     "PRODUCTION_BUILD_REPORT.md"
     "PRODUCTION_RUNNING_STATUS.md"
     "PRODUCTION_COMMANDS_REFERENCE.md"
-    
+
     # Category 5: Old Bot Documentation
     "BOT_QUICK_START.md"
     "COMPREHENSIVE_BOT_IMPLEMENTATION.md"
     "WORKFLOW_BOT_FINAL_SUMMARY.md"
-    
+
     # Category 6: Miscellaneous
     "GIT_AUTHENTICATION_GUIDE.md"
     "GIT_SCRIPTS_README.md"
@@ -308,16 +310,19 @@ echo "💡 Tip: If needed, restore files from archive"
 ## 📊 Cleanup Summary
 
 ### Before Cleanup:
+
 - **Total Documentation Files**: ~45 markdown/text files
 - **Redundant/Outdated**: ~35 files
 - **Essential Documentation**: ~10 files
 
 ### After Cleanup:
+
 - **Archived Files**: 35 files → `docs-archive-YYYY-MM-DD/`
 - **Active Documentation**: 10 essential files
 - **New Upgrade Docs**: 4 files (analysis, checklist, visual, progress)
 
 ### Final Documentation Structure:
+
 ```
 Farmers Market Platform web and app/
 ├── README.md                                    # Main README
@@ -366,12 +371,14 @@ Farmers Market Platform web and app/
 ## 🚀 Execute Cleanup
 
 ### Option 1: PowerShell (Windows)
+
 ```powershell
 # Run from project root
 .\cleanup-outdated-docs.ps1
 ```
 
 ### Option 2: Bash (Linux/Mac)
+
 ```bash
 # Run from project root
 chmod +x cleanup-outdated-docs.sh
@@ -379,6 +386,7 @@ chmod +x cleanup-outdated-docs.sh
 ```
 
 ### Option 3: Manual Cleanup
+
 ```bash
 # Create archive directory
 mkdir docs-archive-2025-12
@@ -404,6 +412,7 @@ mv ALL_FIXES_APPLIED.md docs-archive-2025-12/
 ## 🔒 Archive Retention Policy
 
 ### Recommended:
+
 - **Keep archive for**: 3-6 months
 - **Then**: Delete archive if no longer needed
 - **Git History**: All docs remain in git history permanently
@@ -427,4 +436,4 @@ mv ALL_FIXES_APPLIED.md docs-archive-2025-12/
 
 ---
 
-*"A clean codebase starts with clean documentation."* 📚✨
+_"A clean codebase starts with clean documentation."_ 📚✨

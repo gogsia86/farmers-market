@@ -7,16 +7,19 @@
 ## ⚡ Quick Commands
 
 ### Run Bot Once (Manual Check)
+
 ```bash
 npm run bot:check
 ```
 
 ### Run Continuous Monitoring
+
 ```bash
 npm run bot:watch
 ```
 
 ### Start Server + Bot Together
+
 ```bash
 npm run dev:with-bot
 ```
@@ -28,6 +31,7 @@ npm run dev:with-bot
 The bot automatically validates **22 critical functions**:
 
 ### ✅ Always Checked
+
 - Homepage loading
 - Database connectivity
 - Authentication endpoints
@@ -46,6 +50,7 @@ The bot automatically validates **22 critical functions**:
 ## 🎯 Reading the Results
 
 ### Status Indicators
+
 ```
 ✅ PASS  - Everything working perfectly
 ⚠️ WARN  - Working but needs attention (e.g., no data seeded)
@@ -53,6 +58,7 @@ The bot automatically validates **22 critical functions**:
 ```
 
 ### Example Output
+
 ```
 🤖 Running Website Function Checks
 ══════════════════════════════════════════════
@@ -76,6 +82,7 @@ The bot automatically validates **22 critical functions**:
 ## 🔧 Configuration
 
 ### Change Port (Default: 3001)
+
 ```bash
 # Set environment variable
 export NEXT_PUBLIC_APP_URL=http://localhost:3001
@@ -85,7 +92,9 @@ NEXT_PUBLIC_APP_URL=http://localhost:3001 npm run bot:check
 ```
 
 ### Adjust Check Interval (Continuous Mode)
+
 Edit `scripts/website-checker-bot.ts`:
+
 ```typescript
 const CONFIG = {
   checkInterval: 60000, // milliseconds (default: 1 minute)
@@ -98,23 +107,29 @@ const CONFIG = {
 ## 🚨 Troubleshooting
 
 ### Bot Won't Start
+
 **Problem**: `Error: Browser not initialized`
-**Solution**: 
+**Solution**:
+
 ```bash
 # Install Playwright browsers
 npx playwright install chromium
 ```
 
 ### Connection Refused
+
 **Problem**: `fetch failed... ECONNREFUSED`
-**Solution**: 
+**Solution**:
+
 1. Make sure server is running on port 3001
 2. Check `npm run dev` is active
 3. Verify database is connected
 
 ### Timeout Errors
+
 **Problem**: `timeout exceeded`
 **Solution**:
+
 1. Increase timeout in CONFIG (default: 30s)
 2. Check server performance
 3. Verify database queries aren't slow
@@ -124,12 +139,14 @@ npx playwright install chromium
 ## 📈 Understanding Performance Metrics
 
 ### Response Time Ratings
+
 - **< 100ms**: ⚡ Excellent (most endpoints)
 - **100-500ms**: ✅ Good (complex queries)
 - **500-1000ms**: ⚠️ Acceptable (page renders)
 - **> 1000ms**: 🔴 Needs optimization
 
 ### Current Benchmarks
+
 ```
 Database queries:    20ms   ⚡
 API endpoints:       5-30ms ⚡
@@ -142,19 +159,22 @@ Full page render:    275ms  ✅
 ## 🎓 Advanced Usage
 
 ### Run Specific Check Only
+
 Edit `scripts/website-checker-bot.ts` and comment out unwanted checks:
+
 ```typescript
 // checks.push(await this.checkHomePage());  // Skip this
-checks.push(await this.checkDatabaseConnection());  // Run this
+checks.push(await this.checkDatabaseConnection()); // Run this
 ```
 
 ### Add Custom Check
+
 ```typescript
 async checkMyFeature(): Promise<CheckResult> {
   const start = Date.now();
   try {
     const response = await fetch(`${CONFIG.baseUrl}/api/my-endpoint`);
-    
+
     if (response.ok) {
       return {
         name: "My Feature",
@@ -179,6 +199,7 @@ async checkMyFeature(): Promise<CheckResult> {
 ```
 
 Then add to `runAllChecks()`:
+
 ```typescript
 checks.push(await this.checkMyFeature());
 logCheck(checks[checks.length - 1]);
@@ -189,6 +210,7 @@ logCheck(checks[checks.length - 1]);
 ## 📋 Checklist: What's Covered?
 
 ### ✅ Fully Monitored
+
 - [x] Core infrastructure (homepage, health, database)
 - [x] Authentication & security
 - [x] Product marketplace & search
@@ -203,9 +225,11 @@ logCheck(checks[checks.length - 1]);
 - [x] Performance metrics
 
 ### 🔄 Partially Monitored
+
 - [x] Stripe integration (basic check only)
 
 ### ❌ Not Yet Monitored
+
 - [ ] Admin dashboard (requires auth)
 - [ ] AI agent orchestration
 - [ ] File uploads
@@ -218,6 +242,7 @@ logCheck(checks[checks.length - 1]);
 ## 🎯 Common Scenarios
 
 ### Before Deployment
+
 ```bash
 # Run full check
 npm run bot:check
@@ -229,6 +254,7 @@ npm run bot:check
 ```
 
 ### During Development
+
 ```bash
 # Run continuous monitoring
 npm run bot:watch
@@ -239,6 +265,7 @@ npm run bot:watch
 ```
 
 ### After Database Changes
+
 ```bash
 # Check database connectivity first
 npm run bot:check | grep "Database"
@@ -248,6 +275,7 @@ npm run bot:check | grep "Database"
 ```
 
 ### Testing New Features
+
 1. Add custom check for your feature (see Advanced Usage)
 2. Run bot: `npm run bot:check`
 3. Verify feature shows ✅ PASS
@@ -258,6 +286,7 @@ npm run bot:check | grep "Database"
 ## 📊 Success Criteria
 
 ### Production Ready ✅
+
 ```
 Overall Status:  HEALTHY or DEGRADED
 Success Rate:    > 95%
@@ -266,6 +295,7 @@ Response Times:  < 100ms average
 ```
 
 ### Needs Investigation ⚠️
+
 ```
 Overall Status:  DEGRADED
 Success Rate:    90-95%
@@ -274,6 +304,7 @@ Response Times:  100-500ms average
 ```
 
 ### Critical Issues 🔴
+
 ```
 Overall Status:  DOWN
 Success Rate:    < 90%
@@ -325,12 +356,14 @@ npm run start            # Start production server
 ## 🆘 Need Help?
 
 ### Bot isn't working?
+
 1. Check server is running: `curl http://localhost:3001`
 2. Verify database: `npm run db:studio`
 3. Reinstall dependencies: `npm install`
 4. Clear cache: `rm -rf .next`
 
 ### Still having issues?
+
 - Check bot source code: `scripts/website-checker-bot.ts`
 - Review error messages carefully
 - Verify all endpoints exist in `src/app/api/`
@@ -339,13 +372,14 @@ npm run start            # Start production server
 
 **Last Updated**: December 15, 2025  
 **Bot Version**: 2.0 - Enhanced Edition  
-**Status**: ✅ Production Ready  
+**Status**: ✅ Production Ready
 
 ---
 
 ## 🎉 You're Ready!
 
 Run your first check now:
+
 ```bash
 npm run bot:check
 ```

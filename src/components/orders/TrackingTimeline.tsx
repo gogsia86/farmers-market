@@ -39,7 +39,6 @@ import {
   AlertCircle,
   RefreshCw,
   ExternalLink,
-  ChevronRight,
   Navigation,
   Calendar,
   Bell,
@@ -266,11 +265,15 @@ export function TrackingTimeline({
                   "px-3 py-1 rounded-full text-sm font-semibold",
                   statusConfig.color === "gray" && "bg-gray-100 text-gray-700",
                   statusConfig.color === "blue" && "bg-blue-100 text-blue-700",
-                  statusConfig.color === "amber" && "bg-amber-100 text-amber-700",
-                  statusConfig.color === "purple" && "bg-purple-100 text-purple-700",
-                  statusConfig.color === "indigo" && "bg-indigo-100 text-indigo-700",
-                  statusConfig.color === "green" && "bg-green-100 text-green-700",
-                  statusConfig.color === "red" && "bg-red-100 text-red-700"
+                  statusConfig.color === "amber" &&
+                    "bg-amber-100 text-amber-700",
+                  statusConfig.color === "purple" &&
+                    "bg-purple-100 text-purple-700",
+                  statusConfig.color === "indigo" &&
+                    "bg-indigo-100 text-indigo-700",
+                  statusConfig.color === "green" &&
+                    "bg-green-100 text-green-700",
+                  statusConfig.color === "red" && "bg-red-100 text-red-700",
                 )}
               >
                 {statusConfig.label}
@@ -288,9 +291,13 @@ export function TrackingTimeline({
                   "p-2 rounded-lg border transition-colors",
                   notificationsEnabled
                     ? "bg-green-50 border-green-200 text-green-600"
-                    : "bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100"
+                    : "bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100",
                 )}
-                title={notificationsEnabled ? "Notifications enabled" : "Enable notifications"}
+                title={
+                  notificationsEnabled
+                    ? "Notifications enabled"
+                    : "Enable notifications"
+                }
               >
                 <Bell className="h-5 w-5" />
               </button>
@@ -301,7 +308,9 @@ export function TrackingTimeline({
                 disabled={isRefreshing}
                 className="flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50"
               >
-                <RefreshCw className={cn("h-4 w-4", isRefreshing && "animate-spin")} />
+                <RefreshCw
+                  className={cn("h-4 w-4", isRefreshing && "animate-spin")}
+                />
                 Refresh
               </button>
             )}
@@ -328,15 +337,20 @@ export function TrackingTimeline({
       </div>
 
       {/* Live Tracking Map */}
-      {enableLiveTracking && deliveryLocation && currentStatus === "OUT_FOR_DELIVERY" && (
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-4">
-            <Navigation className="h-5 w-5 text-indigo-600" />
-            Live Tracking
-          </h3>
-          <LiveTrackingMap location={deliveryLocation} destination={deliveryAddress} />
-        </div>
-      )}
+      {enableLiveTracking &&
+        deliveryLocation &&
+        currentStatus === "OUT_FOR_DELIVERY" && (
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-4">
+              <Navigation className="h-5 w-5 text-indigo-600" />
+              Live Tracking
+            </h3>
+            <LiveTrackingMap
+              location={deliveryLocation}
+              destination={deliveryAddress}
+            />
+          </div>
+        )}
 
       {/* Driver Information */}
       {driver && currentStatus === "OUT_FOR_DELIVERY" && (
@@ -391,7 +405,8 @@ export function TrackingTimeline({
             <p className="font-medium">{deliveryAddress.name}</p>
             <p>{deliveryAddress.streetAddress}</p>
             <p>
-              {deliveryAddress.city}, {deliveryAddress.state} {deliveryAddress.zipCode}
+              {deliveryAddress.city}, {deliveryAddress.state}{" "}
+              {deliveryAddress.zipCode}
             </p>
           </div>
         </div>
@@ -399,9 +414,7 @@ export function TrackingTimeline({
 
       {/* Help Section */}
       <div className="bg-blue-50 rounded-lg border border-blue-200 p-6">
-        <h3 className="text-lg font-semibold text-blue-900 mb-2">
-          Need Help?
-        </h3>
+        <h3 className="text-lg font-semibold text-blue-900 mb-2">Need Help?</h3>
         <p className="text-sm text-blue-700 mb-4">
           Contact our support team if you have any questions about your order.
         </p>
@@ -446,8 +459,8 @@ function TimelineEventItem({
             event.isCompleted
               ? "bg-green-600 border-green-600"
               : event.isCurrent
-              ? "bg-white border-indigo-600 ring-4 ring-indigo-100"
-              : "bg-white border-gray-300"
+                ? "bg-white border-indigo-600 ring-4 ring-indigo-100"
+                : "bg-white border-gray-300",
           )}
         >
           <IconComponent
@@ -456,8 +469,8 @@ function TimelineEventItem({
               event.isCompleted
                 ? "text-white"
                 : event.isCurrent
-                ? "text-indigo-600"
-                : "text-gray-400"
+                  ? "text-indigo-600"
+                  : "text-gray-400",
             )}
           />
         </div>
@@ -465,7 +478,7 @@ function TimelineEventItem({
           <div
             className={cn(
               "w-0.5 flex-1 min-h-[60px]",
-              event.isCompleted ? "bg-green-600" : "bg-gray-300"
+              event.isCompleted ? "bg-green-600" : "bg-gray-300",
             )}
           />
         )}
@@ -480,8 +493,8 @@ function TimelineEventItem({
               event.isCurrent
                 ? "text-indigo-900"
                 : event.isCompleted
-                ? "text-gray-900"
-                : "text-gray-600"
+                  ? "text-gray-900"
+                  : "text-gray-600",
             )}
           >
             {event.title}
@@ -519,7 +532,9 @@ function TimelineEventItem({
               </p>
             )}
             {event.metadata.notes && (
-              <p className="text-sm text-gray-600 italic">{event.metadata.notes}</p>
+              <p className="text-sm text-gray-600 italic">
+                {event.metadata.notes}
+              </p>
             )}
             {event.metadata.photoUrl && (
               <div className="relative w-32 h-32 rounded-lg overflow-hidden border border-gray-200 mt-2">
@@ -581,7 +596,7 @@ function DriverCard({ driver }: { driver: DeliveryDriver }) {
                     "text-sm",
                     i < Math.floor(driver.rating || 0)
                       ? "text-yellow-400"
-                      : "text-gray-300"
+                      : "text-gray-300",
                   )}
                 >
                   ★
@@ -651,7 +666,9 @@ function FarmStatusCard({ farmStatus }: { farmStatus: FarmOrderStatus }) {
           {farmStatus.itemCount} {farmStatus.itemCount === 1 ? "item" : "items"}
         </p>
         {farmStatus.notes && (
-          <p className="text-xs text-gray-500 italic mt-1">{farmStatus.notes}</p>
+          <p className="text-xs text-gray-500 italic mt-1">
+            {farmStatus.notes}
+          </p>
         )}
       </div>
 
@@ -664,7 +681,7 @@ function FarmStatusCard({ farmStatus }: { farmStatus: FarmOrderStatus }) {
             statusConfig.color === "blue" && "bg-blue-100 text-blue-700",
             statusConfig.color === "amber" && "bg-amber-100 text-amber-700",
             statusConfig.color === "purple" && "bg-purple-100 text-purple-700",
-            statusConfig.color === "green" && "bg-green-100 text-green-700"
+            statusConfig.color === "green" && "bg-green-100 text-green-700",
           )}
         >
           {statusConfig.label}

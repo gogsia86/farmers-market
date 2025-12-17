@@ -9,6 +9,7 @@
 ### Option 1: Automated Setup (Recommended)
 
 #### Windows (PowerShell)
+
 ```powershell
 # 1. Run automated setup
 .\setup-production.ps1
@@ -18,6 +19,7 @@
 ```
 
 #### Linux/Mac (Bash)
+
 ```bash
 # 1. Make scripts executable
 chmod +x setup-production.sh start-production.sh
@@ -378,19 +380,20 @@ For more detailed information:
 
 ## 🚀 DEPLOYMENT SPEED COMPARISON
 
-| Method | Setup Time | Difficulty | Best For |
-|--------|-----------|-----------|----------|
-| Automated Script | 5 min | ⭐ Easy | Quick start |
-| Manual Setup | 10 min | ⭐⭐ Medium | Learning/Control |
-| Docker | 3 min | ⭐⭐ Medium | Containers |
-| Vercel | 2 min | ⭐ Easy | Serverless |
-| PM2 | 5 min | ⭐⭐ Medium | VPS/Dedicated |
+| Method           | Setup Time | Difficulty  | Best For         |
+| ---------------- | ---------- | ----------- | ---------------- |
+| Automated Script | 5 min      | ⭐ Easy     | Quick start      |
+| Manual Setup     | 10 min     | ⭐⭐ Medium | Learning/Control |
+| Docker           | 3 min      | ⭐⭐ Medium | Containers       |
+| Vercel           | 2 min      | ⭐ Easy     | Serverless       |
+| PM2              | 5 min      | ⭐⭐ Medium | VPS/Dedicated    |
 
 ---
 
 ## ✨ YOU'RE READY!
 
 Your Farmers Market Platform is:
+
 - ✅ **100% tested** (2,493 passing tests)
 - ✅ **Production-ready** (successful build)
 - ✅ **Fully documented**

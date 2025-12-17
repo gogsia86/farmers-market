@@ -1,537 +1,537 @@
 {
-    "root_group": {
-        "name": "",
-        "path": "",
-        "id": "d41d8cd98f00b204e9800998ecf8427e",
-        "groups": {
-            "Products API": {
-                "checks": {
-                    "API: status is 200": {
-                        "passes": 0,
-                        "fails": 3,
-                        "name": "API: status is 200",
-                        "path": "::Products API::API: status is 200",
-                        "id": "47ecc2c475f75da52054f66c42edee45"
-                    },
-                    "API: response time < 500ms": {
-                        "name": "API: response time < 500ms",
-                        "path": "::Products API::API: response time < 500ms",
-                        "id": "550a946b0795b517175f4706d5ed4911",
-                        "passes": 0,
-                        "fails": 3
-                    },
-                    "API: is JSON": {
-                        "passes": 3,
-                        "fails": 0,
-                        "name": "API: is JSON",
-                        "path": "::Products API::API: is JSON",
-                        "id": "313ad24ba80632610c8d1f0a360c5155"
-                    }
-                },
-                "name": "Products API",
-                "path": "::Products API",
-                "id": "58622bad63f6b68c8a9cca9415fdfe63",
-                "groups": {}
-            },
-            "Farms API": {
-                "name": "Farms API",
-                "path": "::Farms API",
-                "id": "5a581cd533589f6bdd00f1bb7d508c4f",
-                "groups": {},
-                "checks": {
-                        "Farms API: status is 200": {
-                            "passes": 0,
-                            "fails": 2,
-                            "name": "Farms API: status is 200",
-                            "path": "::Farms API::Farms API: status is 200",
-                            "id": "7f0e3b0c989a219971b0f56e32de9eb7"
-                        },
-                        "Farms API: response time < 500ms": {
-                            "id": "d120a893ab4690fa0823564ae7c08ba5",
-                            "passes": 0,
-                            "fails": 2,
-                            "name": "Farms API: response time < 500ms",
-                            "path": "::Farms API::Farms API: response time < 500ms"
-                        },
-                        "Farms API: is JSON": {
-                            "name": "Farms API: is JSON",
-                            "path": "::Farms API::Farms API: is JSON",
-                            "id": "7f77f180a96a49fa89724f1a4271e98a",
-                            "passes": 2,
-                            "fails": 0
-                        }
-                    }
-            },
-            "Product Search": {
-                "path": "::Product Search",
-                "id": "0a5fc52ea576f1f16f411704033ec721",
-                "groups": {},
-                "checks": {
-                        "Search: vegetables: status is 200": {
-                            "path": "::Product Search::Search: vegetables: status is 200",
-                            "id": "a7deae8b65529cf94153aa9525b27d63",
-                            "passes": 1,
-                            "fails": 0,
-                            "name": "Search: vegetables: status is 200"
-                        },
-                        "Search: vegetables: response time < 3s": {
-                            "path": "::Product Search::Search: vegetables: response time < 3s",
-                            "id": "bbc80f703bdd1675e039973d206a87bb",
-                            "passes": 1,
-                            "fails": 0,
-                            "name": "Search: vegetables: response time < 3s"
-                        },
-                        "Search: vegetables: has content": {
-                            "path": "::Product Search::Search: vegetables: has content",
-                            "id": "9759f442e690b822361a34868a43417d",
-                            "passes": 1,
-                            "fails": 0,
-                            "name": "Search: vegetables: has content"
-                        },
-                        "Search: fruits: status is 200": {
-                            "name": "Search: fruits: status is 200",
-                            "path": "::Product Search::Search: fruits: status is 200",
-                            "id": "ee74a4491a676263afaa816d05cced06",
-                            "passes": 2,
-                            "fails": 0
-                        },
-                        "Search: fruits: response time < 3s": {
-                            "name": "Search: fruits: response time < 3s",
-                            "path": "::Product Search::Search: fruits: response time < 3s",
-                            "id": "9fd1d7175940c2ae7c9a7a69540bf7c5",
-                            "passes": 0,
-                            "fails": 2
-                        },
-                        "Search: fruits: has content": {
-                            "fails": 0,
-                            "name": "Search: fruits: has content",
-                            "path": "::Product Search::Search: fruits: has content",
-                            "id": "3c108f6e6023c3becf4545f6f7af7200",
-                            "passes": 2
-                        },
-                        "Search: herbs: status is 200": {
-                            "passes": 1,
-                            "fails": 0,
-                            "name": "Search: herbs: status is 200",
-                            "path": "::Product Search::Search: herbs: status is 200",
-                            "id": "6d48f261fb4185090cbc9ab7fde4c5f2"
-                        },
-                        "Search: herbs: response time < 3s": {
-                            "name": "Search: herbs: response time < 3s",
-                            "path": "::Product Search::Search: herbs: response time < 3s",
-                            "id": "986079c92ca7fdd4cde15db4907eb054",
-                            "passes": 0,
-                            "fails": 1
-                        },
-                        "Search: herbs: has content": {
-                            "name": "Search: herbs: has content",
-                            "path": "::Product Search::Search: herbs: has content",
-                            "id": "8fbf84d2288b89c2164f33949bbee7a4",
-                            "passes": 1,
-                            "fails": 0
-                        },
-                        "Search: organic: status is 200": {
-                            "name": "Search: organic: status is 200",
-                            "path": "::Product Search::Search: organic: status is 200",
-                            "id": "6ef1a0548db58dac65fb8b3ed6378a5e",
-                            "passes": 1,
-                            "fails": 0
-                        },
-                        "Search: organic: response time < 3s": {
-                            "passes": 1,
-                            "fails": 0,
-                            "name": "Search: organic: response time < 3s",
-                            "path": "::Product Search::Search: organic: response time < 3s",
-                            "id": "03aec9858feb7e2bbc9800693fbda13b"
-                        },
-                        "Search: organic: has content": {
-                            "name": "Search: organic: has content",
-                            "path": "::Product Search::Search: organic: has content",
-                            "id": "61ea737182ea7d5baea22535ac20cf45",
-                            "passes": 1,
-                            "fails": 0
-                        },
-                        "Search: dairy: status is 200": {
-                            "path": "::Product Search::Search: dairy: status is 200",
-                            "id": "c43b1f9eaab6464ce1eefeb0c251563b",
-                            "passes": 1,
-                            "fails": 0,
-                            "name": "Search: dairy: status is 200"
-                        },
-                        "Search: dairy: response time < 3s": {
-                            "id": "b251dc72ebc41569627285c6692e1a01",
-                            "passes": 1,
-                            "fails": 0,
-                            "name": "Search: dairy: response time < 3s",
-                            "path": "::Product Search::Search: dairy: response time < 3s"
-                        },
-                        "Search: dairy: has content": {
-                            "id": "5ea4841090f1e6e43ce3955dfa0c4561",
-                            "passes": 1,
-                            "fails": 0,
-                            "name": "Search: dairy: has content",
-                            "path": "::Product Search::Search: dairy: has content"
-                        }
-                    },
-                "name": "Product Search"
-            },
-            "Complete User Journey": {
-                "groups": {},
-                "checks": {
-                        "Journey: Homepage: status is 200": {
-                            "name": "Journey: Homepage: status is 200",
-                            "path": "::Complete User Journey::Journey: Homepage: status is 200",
-                            "id": "511aa46fdfd722bce3f1c9e6f7611413",
-                            "passes": 7,
-                            "fails": 0
-                        },
-                        "Journey: Homepage: response time < 3s": {
-                            "id": "7a4c1afd81a8bfe7972c111c6b56d752",
-                            "passes": 5,
-                            "fails": 2,
-                            "name": "Journey: Homepage: response time < 3s",
-                            "path": "::Complete User Journey::Journey: Homepage: response time < 3s"
-                        },
-                        "Journey: Homepage: has content": {
-                            "name": "Journey: Homepage: has content",
-                            "path": "::Complete User Journey::Journey: Homepage: has content",
-                            "id": "bf1a2a7f3e4d4df5beeb10adea446b2c",
-                            "passes": 7,
-                            "fails": 0
-                        },
-                        "Journey: Marketplace: status is 200": {
-                            "name": "Journey: Marketplace: status is 200",
-                            "path": "::Complete User Journey::Journey: Marketplace: status is 200",
-                            "id": "2d86f9203a2fea0c946e5a16e1eaf571",
-                            "passes": 3,
-                            "fails": 0
-                        },
-                        "Journey: Marketplace: response time < 3s": {
-                            "fails": 0,
-                            "name": "Journey: Marketplace: response time < 3s",
-                            "path": "::Complete User Journey::Journey: Marketplace: response time < 3s",
-                            "id": "044058d04c5494fc7d27fc02dc8b7f2c",
-                            "passes": 3
-                        },
-                        "Journey: Marketplace: has content": {
-                            "id": "42f52cac943fe7e2d27c15d9abb6e197",
-                            "passes": 3,
-                            "fails": 0,
-                            "name": "Journey: Marketplace: has content",
-                            "path": "::Complete User Journey::Journey: Marketplace: has content"
-                        }
-                    },
-                "name": "Complete User Journey",
-                "path": "::Complete User Journey",
-                "id": "fc500dab3e1a812a0b94d4abb8ce05b9"
-            },
-            "Category Filter": {
-                "path": "::Category Filter",
-                "id": "c7370c5e7ab17158c59afe16ece287fd",
-                "groups": {},
-                "checks": {
-                        "Category: GRAINS: status is 200": {
-                            "name": "Category: GRAINS: status is 200",
-                            "path": "::Category Filter::Category: GRAINS: status is 200",
-                            "id": "11c5a42a389aad753011de008f6c11ba",
-                            "passes": 1,
-                            "fails": 0
-                        },
-                        "Category: GRAINS: response time < 3s": {
-                            "name": "Category: GRAINS: response time < 3s",
-                            "path": "::Category Filter::Category: GRAINS: response time < 3s",
-                            "id": "4045b6c50b5ccc78cf467f195191a470",
-                            "passes": 1,
-                            "fails": 0
-                        },
-                        "Category: GRAINS: has content": {
-                            "name": "Category: GRAINS: has content",
-                            "path": "::Category Filter::Category: GRAINS: has content",
-                            "id": "d095ce7a4604f97d638e1965f5d3a7e5",
-                            "passes": 1,
-                            "fails": 0
-                        },
-                        "Category: VEGETABLES: status is 200": {
-                            "id": "fb39752fcafba491768bdec07067f7a5",
-                            "passes": 1,
-                            "fails": 0,
-                            "name": "Category: VEGETABLES: status is 200",
-                            "path": "::Category Filter::Category: VEGETABLES: status is 200"
-                        },
-                        "Category: VEGETABLES: response time < 3s": {
-                            "name": "Category: VEGETABLES: response time < 3s",
-                            "path": "::Category Filter::Category: VEGETABLES: response time < 3s",
-                            "id": "a44e9f15fca786e64835143ee88af692",
-                            "passes": 1,
-                            "fails": 0
-                        },
-                        "Category: VEGETABLES: has content": {
-                            "id": "e4058addf7c3e44a8241c524ac68c9b5",
-                            "passes": 1,
-                            "fails": 0,
-                            "name": "Category: VEGETABLES: has content",
-                            "path": "::Category Filter::Category: VEGETABLES: has content"
-                        }
-                    },
-                "name": "Category Filter"
-            },
-            "Marketplace Browsing": {
-                "name": "Marketplace Browsing",
-                "path": "::Marketplace Browsing",
-                "id": "656af844c415f8a52286f0cf1cd048a2",
-                "groups": {},
-                "checks": {
-                        "Marketplace: status is 200": {
-                            "fails": 0,
-                            "name": "Marketplace: status is 200",
-                            "path": "::Marketplace Browsing::Marketplace: status is 200",
-                            "id": "9a16f29da4f1c8538fb7a53c3e5b838b",
-                            "passes": 5
-                        },
-                        "Marketplace: response time < 3s": {
-                            "path": "::Marketplace Browsing::Marketplace: response time < 3s",
-                            "id": "6fc68fc7b020148005019edfc2ebef2f",
-                            "passes": 3,
-                            "fails": 2,
-                            "name": "Marketplace: response time < 3s"
-                        },
-                        "Marketplace: has content": {
-                            "name": "Marketplace: has content",
-                            "path": "::Marketplace Browsing::Marketplace: has content",
-                            "id": "a7c46702e3b768d80c8c47b754d1a045",
-                            "passes": 5,
-                            "fails": 0
-                        }
-                    }
-            },
-            "Homepage Load": {
-                "name": "Homepage Load",
-                "path": "::Homepage Load",
-                "id": "a9d34785b8c522e15cd83ba6db7d2305",
-                "groups": {},
-                "checks": {
-                        "Homepage: status is 200": {
-                            "path": "::Homepage Load::Homepage: status is 200",
-                            "id": "87bbc52670fb6578c4e0df488178938f",
-                            "passes": 2,
-                            "fails": 0,
-                            "name": "Homepage: status is 200"
-                        },
-                        "Homepage: response time < 3s": {
-                            "name": "Homepage: response time < 3s",
-                            "path": "::Homepage Load::Homepage: response time < 3s",
-                            "id": "9316f94c3bd2b9d95b24cc253f53de6f",
-                            "passes": 0,
-                            "fails": 2
-                        },
-                        "Homepage: has content": {
-                            "name": "Homepage: has content",
-                            "path": "::Homepage Load::Homepage: has content",
-                            "id": "869f378f2214965bc933bafcba6c7b33",
-                            "passes": 2,
-                            "fails": 0
-                        },
-                        "homepage contains \"Farmers Market\"": {
-                            "name": "homepage contains \"Farmers Market\"",
-                            "path": "::Homepage Load::homepage contains \"Farmers Market\"",
-                            "id": "281ac036b9a87f83d8d7755910f888f6",
-                            "passes": 2,
-                            "fails": 0
-                        }
-                    }
-            },
-            "Static Assets": {
-                "groups": {},
-                "checks": {
-                        "Asset /_next/static/css/app.css: loads successfully": {
-                            "name": "Asset /_next/static/css/app.css: loads successfully",
-                            "path": "::Static Assets::Asset /_next/static/css/app.css: loads successfully",
-                            "id": "fa61691b29998949186946146a1600f7",
-                            "passes": 0,
-                            "fails": 2
-                        },
-                        "Asset /favicon.ico: loads successfully": {
-                            "fails": 2,
-                            "name": "Asset /favicon.ico: loads successfully",
-                            "path": "::Static Assets::Asset /favicon.ico: loads successfully",
-                            "id": "80da5883451d88c16135ce4e1b20d44e",
-                            "passes": 0
-                        },
-                        "Asset /images/logo.png: loads successfully": {
-                            "passes": 0,
-                            "fails": 2,
-                            "name": "Asset /images/logo.png: loads successfully",
-                            "path": "::Static Assets::Asset /images/logo.png: loads successfully",
-                            "id": "53a2f56d1937cac3f0ec7ae37832f060"
-                        }
-                    },
-                "name": "Static Assets",
-                "path": "::Static Assets",
-                "id": "b6262206bbbc8623d7be393034ea6de0"
-            }
-        },
-        "checks": {}
-    },
-    "metrics": {
-        "successful_requests": {
-            "count": 16,
-            "rate": 0.07532678699864778
-        },
-        "iterations": {
-            "count": 22,
-            "rate": 0.10357433212314071
-        },
-        "api_response_time": {
-            "avg": 1983,
-            "min": 1713,
-            "med": 2022,
-            "max": 2146,
-            "p(90)": 2121.2,
-            "p(95)": 2133.6,
-            "thresholds": {
-                "p(95)<500": true
-            }
-        },
-        "http_req_connecting": {
-            "avg": 0.4236657894736843,
-            "min": 0,
-            "med": 0.541,
-            "max": 1.225,
-            "p(90)": 0.8105,
-            "p(95)": 0.9997349999999999
-        },
-        "http_req_duration": {
-            "avg": 20226.144718421052,
-            "min": 114.2959,
-            "med": 2530.6581,
-            "max": 55929.3601,
-            "p(90)": 55918.38676,
-            "p(95)": 55924.354054999996,
-            "thresholds": {
-                "p(99)<5000": true
-            }
-        },
-        "data_sent": {
-            "count": 4075,
-            "rate": 19.18479106371811
-        },
-        "http_req_duration{expected_response:true}": {
-            "avg": 20538.541342307697,
-            "min": 114.2959,
-            "med": 2548.9806,
-            "max": 55926.7423,
-            "p(90)": 55918.6468,
-            "p(95)": 55922.773675000004
-        },
-        "http_req_failed": {
-            "passes": 12,
-            "fails": 26,
-            "thresholds": {
-                "rate<0.01": true
-            },
-            "value": 0.3157894736842105
-        },
-        "http_req_sending": {
-            "med": 0,
-            "max": 0.9993,
-            "p(90)": 0,
-            "p(95)": 0.07937999999999924,
-            "avg": 0.040223684210526314,
-            "min": 0
-        },
-        "http_req_waiting": {
-            "med": 2165.55965,
-            "max": 2819.2219,
-            "p(90)": 2650.3501500000007,
-            "p(95)": 2789.67409,
-            "avg": 1803.2759289473688,
-            "min": 102.9498
-        },
+  "root_group": {
+    "name": "",
+    "path": "",
+    "id": "d41d8cd98f00b204e9800998ecf8427e",
+    "groups": {
+      "Products API": {
         "checks": {
-            "passes": 73,
-            "fails": 25,
-            "value": 0.7448979591836735
-        },
-        "group_duration": {
-            "avg": 30817.528295454544,
-            "min": 1712.7845,
-            "med": 50745.97215,
-            "max": 55934.8812,
-            "p(90)": 55934.26765,
-            "p(95)": 55934.853775
-        },
-        "http_req_receiving": {
-            "p(95)": 53722.61432,
-            "avg": 18422.828565789474,
-            "min": 0,
-            "med": 388.6337,
-            "max": 53735.5355,
-            "p(90)": 53317.88309
-        },
-        "failed_requests": {
-            "count": 14,
-            "rate": 0.0659109386238168
-        },
-        "iteration_duration": {
-            "min": 2743.1536,
-            "med": 52165.10025,
-            "max": 60878.5694,
-            "p(90)": 60270.86148000001,
-            "p(95)": 60706.695435,
-            "avg": 34050.08463636364
-        },
-        "http_req_tls_handshaking": {
-            "max": 0,
-            "p(90)": 0,
-            "p(95)": 0,
-            "avg": 0,
-            "min": 0,
-            "med": 0
-        },
-        "page_load_time": {
-            "avg": 37076.13333333333,
-            "min": 2163,
-            "med": 50829,
-            "max": 55931,
-            "p(90)": 55921.2,
-            "p(95)": 55924.7,
-            "thresholds": {
-                "p(95)<2000": true
-            }
-        },
-        "http_req_blocked": {
-            "min": 0,
-            "med": 0.5419,
-            "max": 4.5723,
-            "p(90)": 0.9993,
-            "p(95)": 1.0356199999999998,
-            "avg": 0.5829078947368421
-        },
-        "vus_max": {
-            "value": 25,
-            "min": 25,
-            "max": 25
-        },
-        "http_reqs": {
-            "count": 38,
-            "rate": 0.1789011191217885
-        },
-        "data_received": {
-            "count": 4373169,
-            "rate": 20588.548110755597
-        },
-        "vus": {
-            "value": 25,
-            "min": 25,
-            "max": 25
-        },
-        "errors": {
-            "passes": 14,
+          "API: status is 200": {
+            "passes": 0,
+            "fails": 3,
+            "name": "API: status is 200",
+            "path": "::Products API::API: status is 200",
+            "id": "47ecc2c475f75da52054f66c42edee45"
+          },
+          "API: response time < 500ms": {
+            "name": "API: response time < 500ms",
+            "path": "::Products API::API: response time < 500ms",
+            "id": "550a946b0795b517175f4706d5ed4911",
+            "passes": 0,
+            "fails": 3
+          },
+          "API: is JSON": {
+            "passes": 3,
             "fails": 0,
-            "thresholds": {
-                "rate<0.01": true
-            },
-            "value": 1
+            "name": "API: is JSON",
+            "path": "::Products API::API: is JSON",
+            "id": "313ad24ba80632610c8d1f0a360c5155"
+          }
+        },
+        "name": "Products API",
+        "path": "::Products API",
+        "id": "58622bad63f6b68c8a9cca9415fdfe63",
+        "groups": {}
+      },
+      "Farms API": {
+        "name": "Farms API",
+        "path": "::Farms API",
+        "id": "5a581cd533589f6bdd00f1bb7d508c4f",
+        "groups": {},
+        "checks": {
+          "Farms API: status is 200": {
+            "passes": 0,
+            "fails": 2,
+            "name": "Farms API: status is 200",
+            "path": "::Farms API::Farms API: status is 200",
+            "id": "7f0e3b0c989a219971b0f56e32de9eb7"
+          },
+          "Farms API: response time < 500ms": {
+            "id": "d120a893ab4690fa0823564ae7c08ba5",
+            "passes": 0,
+            "fails": 2,
+            "name": "Farms API: response time < 500ms",
+            "path": "::Farms API::Farms API: response time < 500ms"
+          },
+          "Farms API: is JSON": {
+            "name": "Farms API: is JSON",
+            "path": "::Farms API::Farms API: is JSON",
+            "id": "7f77f180a96a49fa89724f1a4271e98a",
+            "passes": 2,
+            "fails": 0
+          }
         }
+      },
+      "Product Search": {
+        "path": "::Product Search",
+        "id": "0a5fc52ea576f1f16f411704033ec721",
+        "groups": {},
+        "checks": {
+          "Search: vegetables: status is 200": {
+            "path": "::Product Search::Search: vegetables: status is 200",
+            "id": "a7deae8b65529cf94153aa9525b27d63",
+            "passes": 1,
+            "fails": 0,
+            "name": "Search: vegetables: status is 200"
+          },
+          "Search: vegetables: response time < 3s": {
+            "path": "::Product Search::Search: vegetables: response time < 3s",
+            "id": "bbc80f703bdd1675e039973d206a87bb",
+            "passes": 1,
+            "fails": 0,
+            "name": "Search: vegetables: response time < 3s"
+          },
+          "Search: vegetables: has content": {
+            "path": "::Product Search::Search: vegetables: has content",
+            "id": "9759f442e690b822361a34868a43417d",
+            "passes": 1,
+            "fails": 0,
+            "name": "Search: vegetables: has content"
+          },
+          "Search: fruits: status is 200": {
+            "name": "Search: fruits: status is 200",
+            "path": "::Product Search::Search: fruits: status is 200",
+            "id": "ee74a4491a676263afaa816d05cced06",
+            "passes": 2,
+            "fails": 0
+          },
+          "Search: fruits: response time < 3s": {
+            "name": "Search: fruits: response time < 3s",
+            "path": "::Product Search::Search: fruits: response time < 3s",
+            "id": "9fd1d7175940c2ae7c9a7a69540bf7c5",
+            "passes": 0,
+            "fails": 2
+          },
+          "Search: fruits: has content": {
+            "fails": 0,
+            "name": "Search: fruits: has content",
+            "path": "::Product Search::Search: fruits: has content",
+            "id": "3c108f6e6023c3becf4545f6f7af7200",
+            "passes": 2
+          },
+          "Search: herbs: status is 200": {
+            "passes": 1,
+            "fails": 0,
+            "name": "Search: herbs: status is 200",
+            "path": "::Product Search::Search: herbs: status is 200",
+            "id": "6d48f261fb4185090cbc9ab7fde4c5f2"
+          },
+          "Search: herbs: response time < 3s": {
+            "name": "Search: herbs: response time < 3s",
+            "path": "::Product Search::Search: herbs: response time < 3s",
+            "id": "986079c92ca7fdd4cde15db4907eb054",
+            "passes": 0,
+            "fails": 1
+          },
+          "Search: herbs: has content": {
+            "name": "Search: herbs: has content",
+            "path": "::Product Search::Search: herbs: has content",
+            "id": "8fbf84d2288b89c2164f33949bbee7a4",
+            "passes": 1,
+            "fails": 0
+          },
+          "Search: organic: status is 200": {
+            "name": "Search: organic: status is 200",
+            "path": "::Product Search::Search: organic: status is 200",
+            "id": "6ef1a0548db58dac65fb8b3ed6378a5e",
+            "passes": 1,
+            "fails": 0
+          },
+          "Search: organic: response time < 3s": {
+            "passes": 1,
+            "fails": 0,
+            "name": "Search: organic: response time < 3s",
+            "path": "::Product Search::Search: organic: response time < 3s",
+            "id": "03aec9858feb7e2bbc9800693fbda13b"
+          },
+          "Search: organic: has content": {
+            "name": "Search: organic: has content",
+            "path": "::Product Search::Search: organic: has content",
+            "id": "61ea737182ea7d5baea22535ac20cf45",
+            "passes": 1,
+            "fails": 0
+          },
+          "Search: dairy: status is 200": {
+            "path": "::Product Search::Search: dairy: status is 200",
+            "id": "c43b1f9eaab6464ce1eefeb0c251563b",
+            "passes": 1,
+            "fails": 0,
+            "name": "Search: dairy: status is 200"
+          },
+          "Search: dairy: response time < 3s": {
+            "id": "b251dc72ebc41569627285c6692e1a01",
+            "passes": 1,
+            "fails": 0,
+            "name": "Search: dairy: response time < 3s",
+            "path": "::Product Search::Search: dairy: response time < 3s"
+          },
+          "Search: dairy: has content": {
+            "id": "5ea4841090f1e6e43ce3955dfa0c4561",
+            "passes": 1,
+            "fails": 0,
+            "name": "Search: dairy: has content",
+            "path": "::Product Search::Search: dairy: has content"
+          }
+        },
+        "name": "Product Search"
+      },
+      "Complete User Journey": {
+        "groups": {},
+        "checks": {
+          "Journey: Homepage: status is 200": {
+            "name": "Journey: Homepage: status is 200",
+            "path": "::Complete User Journey::Journey: Homepage: status is 200",
+            "id": "511aa46fdfd722bce3f1c9e6f7611413",
+            "passes": 7,
+            "fails": 0
+          },
+          "Journey: Homepage: response time < 3s": {
+            "id": "7a4c1afd81a8bfe7972c111c6b56d752",
+            "passes": 5,
+            "fails": 2,
+            "name": "Journey: Homepage: response time < 3s",
+            "path": "::Complete User Journey::Journey: Homepage: response time < 3s"
+          },
+          "Journey: Homepage: has content": {
+            "name": "Journey: Homepage: has content",
+            "path": "::Complete User Journey::Journey: Homepage: has content",
+            "id": "bf1a2a7f3e4d4df5beeb10adea446b2c",
+            "passes": 7,
+            "fails": 0
+          },
+          "Journey: Marketplace: status is 200": {
+            "name": "Journey: Marketplace: status is 200",
+            "path": "::Complete User Journey::Journey: Marketplace: status is 200",
+            "id": "2d86f9203a2fea0c946e5a16e1eaf571",
+            "passes": 3,
+            "fails": 0
+          },
+          "Journey: Marketplace: response time < 3s": {
+            "fails": 0,
+            "name": "Journey: Marketplace: response time < 3s",
+            "path": "::Complete User Journey::Journey: Marketplace: response time < 3s",
+            "id": "044058d04c5494fc7d27fc02dc8b7f2c",
+            "passes": 3
+          },
+          "Journey: Marketplace: has content": {
+            "id": "42f52cac943fe7e2d27c15d9abb6e197",
+            "passes": 3,
+            "fails": 0,
+            "name": "Journey: Marketplace: has content",
+            "path": "::Complete User Journey::Journey: Marketplace: has content"
+          }
+        },
+        "name": "Complete User Journey",
+        "path": "::Complete User Journey",
+        "id": "fc500dab3e1a812a0b94d4abb8ce05b9"
+      },
+      "Category Filter": {
+        "path": "::Category Filter",
+        "id": "c7370c5e7ab17158c59afe16ece287fd",
+        "groups": {},
+        "checks": {
+          "Category: GRAINS: status is 200": {
+            "name": "Category: GRAINS: status is 200",
+            "path": "::Category Filter::Category: GRAINS: status is 200",
+            "id": "11c5a42a389aad753011de008f6c11ba",
+            "passes": 1,
+            "fails": 0
+          },
+          "Category: GRAINS: response time < 3s": {
+            "name": "Category: GRAINS: response time < 3s",
+            "path": "::Category Filter::Category: GRAINS: response time < 3s",
+            "id": "4045b6c50b5ccc78cf467f195191a470",
+            "passes": 1,
+            "fails": 0
+          },
+          "Category: GRAINS: has content": {
+            "name": "Category: GRAINS: has content",
+            "path": "::Category Filter::Category: GRAINS: has content",
+            "id": "d095ce7a4604f97d638e1965f5d3a7e5",
+            "passes": 1,
+            "fails": 0
+          },
+          "Category: VEGETABLES: status is 200": {
+            "id": "fb39752fcafba491768bdec07067f7a5",
+            "passes": 1,
+            "fails": 0,
+            "name": "Category: VEGETABLES: status is 200",
+            "path": "::Category Filter::Category: VEGETABLES: status is 200"
+          },
+          "Category: VEGETABLES: response time < 3s": {
+            "name": "Category: VEGETABLES: response time < 3s",
+            "path": "::Category Filter::Category: VEGETABLES: response time < 3s",
+            "id": "a44e9f15fca786e64835143ee88af692",
+            "passes": 1,
+            "fails": 0
+          },
+          "Category: VEGETABLES: has content": {
+            "id": "e4058addf7c3e44a8241c524ac68c9b5",
+            "passes": 1,
+            "fails": 0,
+            "name": "Category: VEGETABLES: has content",
+            "path": "::Category Filter::Category: VEGETABLES: has content"
+          }
+        },
+        "name": "Category Filter"
+      },
+      "Marketplace Browsing": {
+        "name": "Marketplace Browsing",
+        "path": "::Marketplace Browsing",
+        "id": "656af844c415f8a52286f0cf1cd048a2",
+        "groups": {},
+        "checks": {
+          "Marketplace: status is 200": {
+            "fails": 0,
+            "name": "Marketplace: status is 200",
+            "path": "::Marketplace Browsing::Marketplace: status is 200",
+            "id": "9a16f29da4f1c8538fb7a53c3e5b838b",
+            "passes": 5
+          },
+          "Marketplace: response time < 3s": {
+            "path": "::Marketplace Browsing::Marketplace: response time < 3s",
+            "id": "6fc68fc7b020148005019edfc2ebef2f",
+            "passes": 3,
+            "fails": 2,
+            "name": "Marketplace: response time < 3s"
+          },
+          "Marketplace: has content": {
+            "name": "Marketplace: has content",
+            "path": "::Marketplace Browsing::Marketplace: has content",
+            "id": "a7c46702e3b768d80c8c47b754d1a045",
+            "passes": 5,
+            "fails": 0
+          }
+        }
+      },
+      "Homepage Load": {
+        "name": "Homepage Load",
+        "path": "::Homepage Load",
+        "id": "a9d34785b8c522e15cd83ba6db7d2305",
+        "groups": {},
+        "checks": {
+          "Homepage: status is 200": {
+            "path": "::Homepage Load::Homepage: status is 200",
+            "id": "87bbc52670fb6578c4e0df488178938f",
+            "passes": 2,
+            "fails": 0,
+            "name": "Homepage: status is 200"
+          },
+          "Homepage: response time < 3s": {
+            "name": "Homepage: response time < 3s",
+            "path": "::Homepage Load::Homepage: response time < 3s",
+            "id": "9316f94c3bd2b9d95b24cc253f53de6f",
+            "passes": 0,
+            "fails": 2
+          },
+          "Homepage: has content": {
+            "name": "Homepage: has content",
+            "path": "::Homepage Load::Homepage: has content",
+            "id": "869f378f2214965bc933bafcba6c7b33",
+            "passes": 2,
+            "fails": 0
+          },
+          "homepage contains \"Farmers Market\"": {
+            "name": "homepage contains \"Farmers Market\"",
+            "path": "::Homepage Load::homepage contains \"Farmers Market\"",
+            "id": "281ac036b9a87f83d8d7755910f888f6",
+            "passes": 2,
+            "fails": 0
+          }
+        }
+      },
+      "Static Assets": {
+        "groups": {},
+        "checks": {
+          "Asset /_next/static/css/app.css: loads successfully": {
+            "name": "Asset /_next/static/css/app.css: loads successfully",
+            "path": "::Static Assets::Asset /_next/static/css/app.css: loads successfully",
+            "id": "fa61691b29998949186946146a1600f7",
+            "passes": 0,
+            "fails": 2
+          },
+          "Asset /favicon.ico: loads successfully": {
+            "fails": 2,
+            "name": "Asset /favicon.ico: loads successfully",
+            "path": "::Static Assets::Asset /favicon.ico: loads successfully",
+            "id": "80da5883451d88c16135ce4e1b20d44e",
+            "passes": 0
+          },
+          "Asset /images/logo.png: loads successfully": {
+            "passes": 0,
+            "fails": 2,
+            "name": "Asset /images/logo.png: loads successfully",
+            "path": "::Static Assets::Asset /images/logo.png: loads successfully",
+            "id": "53a2f56d1937cac3f0ec7ae37832f060"
+          }
+        },
+        "name": "Static Assets",
+        "path": "::Static Assets",
+        "id": "b6262206bbbc8623d7be393034ea6de0"
+      }
+    },
+    "checks": {}
+  },
+  "metrics": {
+    "successful_requests": {
+      "count": 16,
+      "rate": 0.07532678699864778
+    },
+    "iterations": {
+      "count": 22,
+      "rate": 0.10357433212314071
+    },
+    "api_response_time": {
+      "avg": 1983,
+      "min": 1713,
+      "med": 2022,
+      "max": 2146,
+      "p(90)": 2121.2,
+      "p(95)": 2133.6,
+      "thresholds": {
+        "p(95)<500": true
+      }
+    },
+    "http_req_connecting": {
+      "avg": 0.4236657894736843,
+      "min": 0,
+      "med": 0.541,
+      "max": 1.225,
+      "p(90)": 0.8105,
+      "p(95)": 0.9997349999999999
+    },
+    "http_req_duration": {
+      "avg": 20226.144718421052,
+      "min": 114.2959,
+      "med": 2530.6581,
+      "max": 55929.3601,
+      "p(90)": 55918.38676,
+      "p(95)": 55924.354054999996,
+      "thresholds": {
+        "p(99)<5000": true
+      }
+    },
+    "data_sent": {
+      "count": 4075,
+      "rate": 19.18479106371811
+    },
+    "http_req_duration{expected_response:true}": {
+      "avg": 20538.541342307697,
+      "min": 114.2959,
+      "med": 2548.9806,
+      "max": 55926.7423,
+      "p(90)": 55918.6468,
+      "p(95)": 55922.773675000004
+    },
+    "http_req_failed": {
+      "passes": 12,
+      "fails": 26,
+      "thresholds": {
+        "rate<0.01": true
+      },
+      "value": 0.3157894736842105
+    },
+    "http_req_sending": {
+      "med": 0,
+      "max": 0.9993,
+      "p(90)": 0,
+      "p(95)": 0.07937999999999924,
+      "avg": 0.040223684210526314,
+      "min": 0
+    },
+    "http_req_waiting": {
+      "med": 2165.55965,
+      "max": 2819.2219,
+      "p(90)": 2650.3501500000007,
+      "p(95)": 2789.67409,
+      "avg": 1803.2759289473688,
+      "min": 102.9498
+    },
+    "checks": {
+      "passes": 73,
+      "fails": 25,
+      "value": 0.7448979591836735
+    },
+    "group_duration": {
+      "avg": 30817.528295454544,
+      "min": 1712.7845,
+      "med": 50745.97215,
+      "max": 55934.8812,
+      "p(90)": 55934.26765,
+      "p(95)": 55934.853775
+    },
+    "http_req_receiving": {
+      "p(95)": 53722.61432,
+      "avg": 18422.828565789474,
+      "min": 0,
+      "med": 388.6337,
+      "max": 53735.5355,
+      "p(90)": 53317.88309
+    },
+    "failed_requests": {
+      "count": 14,
+      "rate": 0.0659109386238168
+    },
+    "iteration_duration": {
+      "min": 2743.1536,
+      "med": 52165.10025,
+      "max": 60878.5694,
+      "p(90)": 60270.86148000001,
+      "p(95)": 60706.695435,
+      "avg": 34050.08463636364
+    },
+    "http_req_tls_handshaking": {
+      "max": 0,
+      "p(90)": 0,
+      "p(95)": 0,
+      "avg": 0,
+      "min": 0,
+      "med": 0
+    },
+    "page_load_time": {
+      "avg": 37076.13333333333,
+      "min": 2163,
+      "med": 50829,
+      "max": 55931,
+      "p(90)": 55921.2,
+      "p(95)": 55924.7,
+      "thresholds": {
+        "p(95)<2000": true
+      }
+    },
+    "http_req_blocked": {
+      "min": 0,
+      "med": 0.5419,
+      "max": 4.5723,
+      "p(90)": 0.9993,
+      "p(95)": 1.0356199999999998,
+      "avg": 0.5829078947368421
+    },
+    "vus_max": {
+      "value": 25,
+      "min": 25,
+      "max": 25
+    },
+    "http_reqs": {
+      "count": 38,
+      "rate": 0.1789011191217885
+    },
+    "data_received": {
+      "count": 4373169,
+      "rate": 20588.548110755597
+    },
+    "vus": {
+      "value": 25,
+      "min": 25,
+      "max": 25
+    },
+    "errors": {
+      "passes": 14,
+      "fails": 0,
+      "thresholds": {
+        "rate<0.01": true
+      },
+      "value": 1
     }
+  }
 }

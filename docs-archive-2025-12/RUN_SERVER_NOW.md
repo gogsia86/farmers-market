@@ -10,11 +10,13 @@
 ### **Option 1: Using Batch File (Windows - EASIEST)**
 
 Double-click this file:
+
 ```
 run-production.bat
 ```
 
 Or run from command line:
+
 ```cmd
 run-production.bat
 ```
@@ -68,14 +70,14 @@ Once the server starts, you'll see:
 
 ### **URLs:**
 
-| Service | URL |
-|---------|-----|
-| 🏠 **Homepage** | http://localhost:3001 |
-| 📝 **Signup** | http://localhost:3001/signup |
-| 🔐 **Login** | http://localhost:3001/login |
-| 👨‍💼 **Admin** | http://localhost:3001/admin |
-| 🌾 **Farms** | http://localhost:3001/farms |
-| 📦 **Products** | http://localhost:3001/products |
+| Service             | URL                              |
+| ------------------- | -------------------------------- |
+| 🏠 **Homepage**     | http://localhost:3001            |
+| 📝 **Signup**       | http://localhost:3001/signup     |
+| 🔐 **Login**        | http://localhost:3001/login      |
+| 👨‍💼 **Admin**        | http://localhost:3001/admin      |
+| 🌾 **Farms**        | http://localhost:3001/farms      |
+| 📦 **Products**     | http://localhost:3001/products   |
 | 🏥 **Health Check** | http://localhost:3001/api/health |
 
 ---
@@ -83,14 +85,17 @@ Once the server starts, you'll see:
 ## ✅ VERIFY SERVER IS RUNNING
 
 ### **1. Check in Browser**
+
 Open: http://localhost:3001
 
 ### **2. Check Health Endpoint**
+
 ```bash
 curl http://localhost:3001/api/health
 ```
 
 Expected response:
+
 ```json
 {
   "status": "healthy",
@@ -100,6 +105,7 @@ Expected response:
 ```
 
 ### **3. Check Port Status**
+
 ```bash
 # Windows
 netstat -an | findstr "3001"
@@ -142,9 +148,11 @@ PORT=3002 node server.js
 ## 🛑 STOP THE SERVER
 
 **If running in foreground:**
+
 - Press `Ctrl + C`
 
 **If running in background:**
+
 ```bash
 # Windows
 taskkill /F /IM node.exe
@@ -164,6 +172,7 @@ The signup registration issue has been **completely fixed**!
 1. **Start Server** (using any method above)
 
 2. **Open Signup Page**
+
    ```
    http://localhost:3001/signup
    ```
@@ -184,6 +193,7 @@ The signup registration issue has been **completely fixed**!
    - ✅ User created in database
 
 ### **What Was Fixed:**
+
 - ✅ Name field now splits into firstName + lastName
 - ✅ Database field mapping corrected
 - ✅ Enhanced error logging
@@ -196,6 +206,7 @@ The signup registration issue has been **completely fixed**!
 ### **Server Won't Start**
 
 **Problem**: "Port already in use"
+
 ```bash
 # Find and kill process on port 3001
 # Windows
@@ -207,6 +218,7 @@ lsof -ti :3001 | xargs kill -9
 ```
 
 **Problem**: "Build not found"
+
 ```bash
 # Run production build first
 npm run build
@@ -215,6 +227,7 @@ npm run build
 ### **Database Connection Issues**
 
 **Check database is running:**
+
 ```bash
 # PostgreSQL
 pg_isready -h localhost -p 5433
@@ -225,6 +238,7 @@ echo $DATABASE_URL   # Linux/Mac
 ```
 
 **Regenerate Prisma Client:**
+
 ```bash
 npx prisma generate
 ```
@@ -233,6 +247,7 @@ npx prisma generate
 
 **Check logs:**
 The signup route now has detailed logging. Look for:
+
 - 📝 "Signup request received"
 - 🔍 "Checking if user exists"
 - 🔒 "Hashing password"
@@ -241,6 +256,7 @@ The signup route now has detailed logging. Look for:
 - ❌ Any error messages
 
 **Test with curl:**
+
 ```bash
 curl -X POST http://localhost:3001/api/auth/signup \
   -H "Content-Type: application/json" \
@@ -271,11 +287,12 @@ type logs\app.log
 ### **Health Check Status**
 
 Monitor continuously:
+
 ```bash
 # Windows PowerShell
-while($true) { 
+while($true) {
   Invoke-WebRequest http://localhost:3001/api/health
-  Start-Sleep 10 
+  Start-Sleep 10
 }
 
 # Linux/Mac
@@ -289,6 +306,7 @@ watch -n 10 curl http://localhost:3001/api/health
 Your server is running correctly when you see:
 
 ✅ **Console Output:**
+
 ```
    ▲ Next.js 16.0.10
    - Local:         http://localhost:3001
@@ -299,6 +317,7 @@ Your server is running correctly when you see:
 ```
 
 ✅ **Health Check Response:**
+
 ```json
 {
   "status": "healthy",
@@ -307,11 +326,13 @@ Your server is running correctly when you see:
 ```
 
 ✅ **Port Listening:**
+
 ```
 TCP    0.0.0.0:3001           0.0.0.0:0              LISTENING
 ```
 
 ✅ **Signup Works:**
+
 - Users can register successfully
 - Redirect to login page after registration
 - No error messages
@@ -331,21 +352,25 @@ TCP    0.0.0.0:3001           0.0.0.0:0              LISTENING
 ## 🚀 DEPLOYMENT OPTIONS
 
 ### **1. Local Development/Testing**
+
 ```bash
 npm run start  # Port 3001
 ```
 
 ### **2. Docker**
+
 ```bash
 docker compose up -d
 ```
 
 ### **3. Vercel**
+
 ```bash
 vercel --prod
 ```
 
 ### **4. PM2 (Process Manager)**
+
 ```bash
 pm2 start npm --name "farmers-market" -- run start
 ```

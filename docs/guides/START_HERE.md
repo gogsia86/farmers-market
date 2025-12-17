@@ -9,32 +9,36 @@
 ### First Time Setup
 
 1. **Install Dependencies**
+
    ```bash
    npm install
    ```
 
 2. **Setup Database**
+
    ```bash
    # Create PostgreSQL database
    createdb farmersmarket
-   
+
    # Push schema
    npm run db:push
-   
+
    # (Optional) Seed data
    npm run db:seed
    ```
 
 3. **Configure Environment**
+
    ```bash
    # Copy example env file
    cp .env.example .env
-   
+
    # Edit .env with your credentials
    # At minimum, set DATABASE_URL
    ```
 
 4. **Run Development Server**
+
    ```bash
    npm run dev
    ```
@@ -49,11 +53,13 @@
 ## 📚 Essential Documentation
 
 ### Main Documents (Root Directory)
+
 - **[PROJECT_STATUS.md](./PROJECT_STATUS.md)** - Current project status, test results, recent achievements
 - **[README.md](./README.md)** - Full project overview and detailed setup
 - **[.cursorrules](./.cursorrules)** - AI coding assistant rules and patterns
 
 ### Developer Guides (docs/)
+
 - **[docs/QUICK_START.md](./docs/QUICK_START.md)** - Quick reference guide
 - **[docs/QUICK_START_GUIDE.md](./docs/QUICK_START_GUIDE.md)** - Detailed setup instructions
 - **[docs/COMMANDS.md](./docs/COMMANDS.md)** - Common CLI commands
@@ -61,7 +67,9 @@
 - **[docs/CONTROLLER_PATTERN_QUICK_REFERENCE.md](./docs/CONTROLLER_PATTERN_QUICK_REFERENCE.md)** - Architecture patterns
 
 ### Divine Instructions (.github/instructions/)
+
 Advanced architectural patterns and best practices:
+
 - `01_DIVINE_CORE_PRINCIPLES.instructions.md` - Core architecture
 - `04_NEXTJS_DIVINE_IMPLEMENTATION.instructions.md` - Next.js patterns
 - `07_DATABASE_QUANTUM_MASTERY.instructions.md` - Database best practices
@@ -118,7 +126,7 @@ npx prisma db push
 ├── prisma/               # Database schema and migrations
 ├── public/               # Static assets
 ├── docs/                 # Developer documentation
-├── .github/              
+├── .github/
 │   └── instructions/     # 16 divine instruction files
 ├── PROJECT_STATUS.md     # ⭐ Current status & progress
 ├── README.md             # Full project documentation
@@ -152,15 +160,18 @@ See **[PROJECT_STATUS.md](./PROJECT_STATUS.md)** for detailed status and metrics
 ## 🔗 Quick Links
 
 ### Development
+
 - Local: http://localhost:3000
 - Admin: http://localhost:3000/admin
 - API: http://localhost:3000/api
 
 ### External Services
+
 - Database: PostgreSQL (localhost:5432)
 - Redis: localhost:6379 (optional)
 
 ### Documentation
+
 - [Next.js Docs](https://nextjs.org/docs)
 - [Prisma Docs](https://www.prisma.io/docs)
 - [NextAuth Docs](https://authjs.dev)

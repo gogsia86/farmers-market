@@ -17,8 +17,8 @@
  * - Agricultural domain-specific patterns
  */
 
-import { Page } from '@playwright/test';
-import { expect } from '@playwright/test';
+import { Page } from "@playwright/test";
+import { expect } from "@playwright/test";
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -26,7 +26,7 @@ import { expect } from '@playwright/test';
 
 export interface A11yViolation {
   id: string;
-  impact: 'minor' | 'moderate' | 'serious' | 'critical';
+  impact: "minor" | "moderate" | "serious" | "critical";
   description: string;
   help: string;
   helpUrl: string;
@@ -44,7 +44,7 @@ export interface A11yResult {
   inapplicable: number;
   url?: string;
   timestamp: string;
-  wcagLevel: 'A' | 'AA' | 'AAA';
+  wcagLevel: "A" | "AA" | "AAA";
 }
 
 export interface KeyboardNavigationTest {
@@ -56,8 +56,8 @@ export interface KeyboardNavigationTest {
 
 export interface ColorContrastRequirement {
   minRatio: number;
-  level: 'AA' | 'AAA';
-  textSize: 'normal' | 'large';
+  level: "AA" | "AAA";
+  textSize: "normal" | "large";
 }
 
 export interface FocusManagementTest {
@@ -82,7 +82,7 @@ export interface AriaValidation {
  */
 export async function injectAxe(page: Page): Promise<void> {
   await page.addScriptTag({
-    url: 'https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.9.1/axe.min.js',
+    url: "https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.9.1/axe.min.js",
   });
 }
 
@@ -92,24 +92,19 @@ export async function injectAxe(page: Page): Promise<void> {
 export async function runAxeScan(
   page: Page,
   options: {
-    wcagLevel?: 'A' | 'AA' | 'AAA';
+    wcagLevel?: "A" | "AA" | "AAA";
     tags?: string[];
     include?: string[];
     exclude?: string[];
-  } = {}
+  } = {},
 ): Promise<A11yResult> {
-  const {
-    wcagLevel = 'AA',
-    tags = [],
-    include = [],
-    exclude = [],
-  } = options;
+  const { wcagLevel = "AA", tags = [], include = [], exclude = [] } = options;
 
   // Build tag list based on WCAG level
   const wcagTags = [
-    'wcag2a',
-    ...(wcagLevel === 'AA' || wcagLevel === 'AAA' ? ['wcag2aa'] : []),
-    ...(wcagLevel === 'AAA' ? ['wcag2aaa'] : []),
+    "wcag2a",
+    ...(wcagLevel === "AA" || wcagLevel === "AAA" ? ["wcag2aa"] : []),
+    ...(wcagLevel === "AAA" ? ["wcag2aaa"] : []),
     ...tags,
   ];
 
@@ -118,7 +113,7 @@ export async function runAxeScan(
       // @ts-ignore - axe is injected globally
       const results = await axe.run({
         runOnly: {
-          type: 'tag',
+          type: "tag",
           values: tags,
         },
         ...(include.length > 0 && { include: [include] }),
@@ -132,7 +127,7 @@ export async function runAxeScan(
         inapplicable: results.inapplicable.length,
       };
     },
-    { tags: wcagTags, include, exclude }
+    { tags: wcagTags, include, exclude },
   );
 
   return {
@@ -149,18 +144,18 @@ export async function runAxeScan(
 export async function assertNoA11yViolations(
   page: Page,
   options: {
-    wcagLevel?: 'A' | 'AA' | 'AAA';
+    wcagLevel?: "A" | "AA" | "AAA";
     allowedViolations?: string[];
-  } = {}
+  } = {},
 ): Promise<void> {
-  const { wcagLevel = 'AA', allowedViolations = [] } = options;
+  const { wcagLevel = "AA", allowedViolations = [] } = options;
 
   await injectAxe(page);
   const results = await runAxeScan(page, { wcagLevel });
 
   // Filter out allowed violations
   const criticalViolations = results.violations.filter(
-    (v) => !allowedViolations.includes(v.id)
+    (v) => !allowedViolations.includes(v.id),
   );
 
   if (criticalViolations.length > 0) {
@@ -178,14 +173,14 @@ export async function assertNoA11yViolations(
 ║ Affected Elements (${v.nodes.length}):
 ${v.nodes
   .map(
-    (node, idx) => `║   ${idx + 1}. ${node.target.join(' > ')}
-║      ${node.failureSummary}`
+    (node, idx) => `║   ${idx + 1}. ${node.target.join(" > ")}
+║      ${node.failureSummary}`,
   )
-  .join('\n')}
+  .join("\n")}
 ╚════════════════════════════════════════════════════════════╝
-    `
+    `,
       )
-      .join('\n');
+      .join("\n");
 
     throw new Error(`
 🚨 ACCESSIBILITY VIOLATIONS DETECTED (WCAG ${wcagLevel})
@@ -207,7 +202,7 @@ Incomplete: ${results.incomplete}
  */
 export async function testKeyboardNavigation(
   page: Page,
-  tests: KeyboardNavigationTest[]
+  tests: KeyboardNavigationTest[],
 ): Promise<void> {
   for (const test of tests) {
     console.log(`🎹 Testing keyboard navigation: ${test.expectedBehavior}`);
@@ -237,9 +232,9 @@ export async function testKeyboardNavigation(
  */
 export async function testTabOrder(
   page: Page,
-  selectors: string[]
+  selectors: string[],
 ): Promise<void> {
-  console.log('🎹 Testing Tab order...');
+  console.log("🎹 Testing Tab order...");
 
   for (let i = 0; i < selectors.length; i++) {
     const element = page.locator(selectors[i]);
@@ -248,7 +243,7 @@ export async function testTabOrder(
     if (i === 0) {
       await element.focus();
     } else {
-      await page.keyboard.press('Tab');
+      await page.keyboard.press("Tab");
     }
 
     await expect(element).toBeFocused({
@@ -264,9 +259,9 @@ export async function testTabOrder(
  */
 export async function testReverseTabOrder(
   page: Page,
-  selectors: string[]
+  selectors: string[],
 ): Promise<void> {
-  console.log('🎹 Testing Shift+Tab order...');
+  console.log("🎹 Testing Shift+Tab order...");
 
   // Focus last element first
   const lastElement = page.locator(selectors[selectors.length - 1]);
@@ -275,7 +270,7 @@ export async function testReverseTabOrder(
 
   // Navigate backwards
   for (let i = selectors.length - 2; i >= 0; i--) {
-    await page.keyboard.press('Shift+Tab');
+    await page.keyboard.press("Shift+Tab");
     const element = page.locator(selectors[i]);
     await expect(element).toBeFocused({
       timeout: 2000,
@@ -295,13 +290,13 @@ export async function testKeyboardShortcuts(
     modifiers?: string[];
     expectedAction: string;
     verify: () => Promise<void>;
-  }>
+  }>,
 ): Promise<void> {
   for (const shortcut of shortcuts) {
     console.log(`⌨️  Testing shortcut: ${shortcut.expectedAction}`);
 
     const modifiers = shortcut.modifiers || [];
-    const keyCombo = [...modifiers, shortcut.key].join('+');
+    const keyCombo = [...modifiers, shortcut.key].join("+");
 
     await page.keyboard.press(keyCombo);
     await page.waitForTimeout(300); // Allow for action to complete
@@ -316,9 +311,9 @@ export async function testKeyboardShortcuts(
  */
 export async function assertNoKeyboardTraps(
   page: Page,
-  containerSelector: string
+  containerSelector: string,
 ): Promise<void> {
-  console.log('🔓 Verifying no keyboard traps exist...');
+  console.log("🔓 Verifying no keyboard traps exist...");
 
   const container = page.locator(containerSelector);
   await expect(container).toBeVisible();
@@ -329,44 +324,44 @@ export async function assertNoKeyboardTraps(
     if (!container) return [];
 
     const focusableSelectors = [
-      'a[href]',
-      'button:not([disabled])',
-      'input:not([disabled])',
-      'select:not([disabled])',
-      'textarea:not([disabled])',
+      "a[href]",
+      "button:not([disabled])",
+      "input:not([disabled])",
+      "select:not([disabled])",
+      "textarea:not([disabled])",
       '[tabindex]:not([tabindex="-1"])',
     ];
 
     return Array.from(
-      container.querySelectorAll(focusableSelectors.join(','))
+      container.querySelectorAll(focusableSelectors.join(",")),
     ).map((el, idx) => {
-      (el as HTMLElement).setAttribute('data-focus-idx', idx.toString());
+      (el as HTMLElement).setAttribute("data-focus-idx", idx.toString());
       return `[data-focus-idx="${idx}"]`;
     });
   }, containerSelector);
 
   if (focusableElements.length === 0) {
-    console.log('  ⚠️  No focusable elements found');
+    console.log("  ⚠️  No focusable elements found");
     return;
   }
 
   // Tab through all elements and ensure we can escape
   for (const selector of focusableElements) {
-    await page.keyboard.press('Tab');
+    await page.keyboard.press("Tab");
   }
 
   // Press Tab one more time - should exit container
-  await page.keyboard.press('Tab');
+  await page.keyboard.press("Tab");
 
   const lastElement = page.locator(
-    focusableElements[focusableElements.length - 1]
+    focusableElements[focusableElements.length - 1],
   );
   const isStillFocused = await lastElement.evaluate((el) =>
-    el.matches(':focus')
+    el.matches(":focus"),
   );
 
   expect(isStillFocused).toBe(false);
-  console.log('  ✓ No keyboard trap detected - focus can escape');
+  console.log("  ✓ No keyboard trap detected - focus can escape");
 }
 
 // ============================================================================
@@ -379,7 +374,7 @@ export async function assertNoKeyboardTraps(
 export async function checkColorContrast(
   page: Page,
   selector: string,
-  requirement: ColorContrastRequirement
+  requirement: ColorContrastRequirement,
 ): Promise<void> {
   console.log(`🎨 Checking color contrast for: ${selector}`);
 
@@ -422,7 +417,7 @@ export async function checkColorContrast(
 
   expect(contrastRatio).toBeGreaterThanOrEqual(requirement.minRatio);
   console.log(
-    `  ✓ Contrast ratio: ${contrastRatio.toFixed(2)}:1 (required: ${requirement.minRatio}:1)`
+    `  ✓ Contrast ratio: ${contrastRatio.toFixed(2)}:1 (required: ${requirement.minRatio}:1)`,
   );
 }
 
@@ -431,7 +426,7 @@ export async function checkColorContrast(
  */
 export async function validateAllTextContrast(
   page: Page,
-  containerSelector: string
+  containerSelector: string,
 ): Promise<void> {
   console.log(`🎨 Validating all text contrast in: ${containerSelector}`);
 
@@ -439,17 +434,17 @@ export async function validateAllTextContrast(
     const container = document.querySelector(selector);
     if (!container) return [];
 
-    const textElements = Array.from(
-      container.querySelectorAll('*')
-    ).filter((el) => {
-      const style = window.getComputedStyle(el);
-      return (
-        el.textContent &&
-        el.textContent.trim().length > 0 &&
-        style.display !== 'none' &&
-        style.visibility !== 'hidden'
-      );
-    });
+    const textElements = Array.from(container.querySelectorAll("*")).filter(
+      (el) => {
+        const style = window.getComputedStyle(el);
+        return (
+          el.textContent &&
+          el.textContent.trim().length > 0 &&
+          style.display !== "none" &&
+          style.visibility !== "hidden"
+        );
+      },
+    );
 
     const violations: Array<{
       selector: string;
@@ -460,7 +455,8 @@ export async function validateAllTextContrast(
     textElements.forEach((el) => {
       const style = window.getComputedStyle(el);
       const fontSize = parseFloat(style.fontSize);
-      const isLargeText = fontSize >= 18 || (fontSize >= 14 && style.fontWeight >= '700');
+      const isLargeText =
+        fontSize >= 18 || (fontSize >= 14 && style.fontWeight >= "700");
 
       // Get contrast ratio (simplified - same logic as above)
       const color = style.color;
@@ -475,7 +471,7 @@ export async function validateAllTextContrast(
         violations.push({
           selector: el.tagName.toLowerCase(),
           ratio,
-          textSize: isLargeText ? 'large' : 'normal',
+          textSize: isLargeText ? "large" : "normal",
         });
       }
     });
@@ -496,7 +492,7 @@ export async function validateAllTextContrast(
  */
 export async function testFocusManagement(
   page: Page,
-  tests: FocusManagementTest[]
+  tests: FocusManagementTest[],
 ): Promise<void> {
   for (const test of tests) {
     console.log(`🎯 Testing focus management: ${test.description}`);
@@ -521,10 +517,10 @@ export async function testFocusManagement(
  * Test skip links functionality
  */
 export async function testSkipLinks(page: Page): Promise<void> {
-  console.log('⏭️  Testing skip links...');
+  console.log("⏭️  Testing skip links...");
 
   // Focus first element (usually skip link)
-  await page.keyboard.press('Tab');
+  await page.keyboard.press("Tab");
 
   const skipLink = page.locator('a[href^="#"]').first();
   const isVisible = await skipLink.isVisible();
@@ -535,17 +531,17 @@ export async function testSkipLinks(page: Page): Promise<void> {
   }
 
   // Activate skip link
-  await page.keyboard.press('Enter');
+  await page.keyboard.press("Enter");
   await page.waitForTimeout(200);
 
   // Verify focus moved to main content
   const mainContent = page.locator('main, [role="main"]').first();
   const mainIsFocused = await mainContent.evaluate((el) =>
-    el.matches(':focus, :focus-within')
+    el.matches(":focus, :focus-within"),
   );
 
   expect(mainIsFocused).toBe(true);
-  console.log('  ✓ Skip link successfully moved focus to main content');
+  console.log("  ✓ Skip link successfully moved focus to main content");
 }
 
 /**
@@ -553,9 +549,9 @@ export async function testSkipLinks(page: Page): Promise<void> {
  */
 export async function testFocusIndicators(
   page: Page,
-  selectors: string[]
+  selectors: string[],
 ): Promise<void> {
-  console.log('👁️  Testing visible focus indicators...');
+  console.log("👁️  Testing visible focus indicators...");
 
   for (const selector of selectors) {
     const element = page.locator(selector);
@@ -564,13 +560,11 @@ export async function testFocusIndicators(
     const hasVisibleOutline = await element.evaluate((el) => {
       const style = window.getComputedStyle(el);
       return (
-        style.outline !== 'none' &&
-        style.outline !== '0px' &&
-        style.outlineWidth !== '0px' &&
-        style.outlineColor !== 'transparent'
-      ) || (
-        style.boxShadow !== 'none' &&
-        style.boxShadow.includes('focus')
+        (style.outline !== "none" &&
+          style.outline !== "0px" &&
+          style.outlineWidth !== "0px" &&
+          style.outlineColor !== "transparent") ||
+        (style.boxShadow !== "none" && style.boxShadow.includes("focus"))
       );
     });
 
@@ -588,24 +582,24 @@ export async function testFocusIndicators(
  */
 export async function validateAriaAttributes(
   page: Page,
-  validations: AriaValidation[]
+  validations: AriaValidation[],
 ): Promise<void> {
-  console.log('🏷️  Validating ARIA attributes...');
+  console.log("🏷️  Validating ARIA attributes...");
 
   for (const validation of validations) {
     const element = page.locator(validation.selector);
     await expect(element).toBeVisible();
 
     if (validation.expectedRole) {
-      await expect(element).toHaveAttribute('role', validation.expectedRole);
+      await expect(element).toHaveAttribute("role", validation.expectedRole);
       console.log(
-        `  ✓ ${validation.selector} has role="${validation.expectedRole}"`
+        `  ✓ ${validation.selector} has role="${validation.expectedRole}"`,
       );
     }
 
     if (validation.expectedLabel) {
-      const ariaLabel = await element.getAttribute('aria-label');
-      const ariaLabelledBy = await element.getAttribute('aria-labelledby');
+      const ariaLabel = await element.getAttribute("aria-label");
+      const ariaLabelledBy = await element.getAttribute("aria-labelledby");
 
       if (ariaLabelledBy) {
         const labelElement = page.locator(`#${ariaLabelledBy}`);
@@ -616,13 +610,13 @@ export async function validateAriaAttributes(
       }
 
       console.log(
-        `  ✓ ${validation.selector} has correct label: "${validation.expectedLabel}"`
+        `  ✓ ${validation.selector} has correct label: "${validation.expectedLabel}"`,
       );
     }
 
     if (validation.expectedAttributes) {
       for (const [attr, value] of Object.entries(
-        validation.expectedAttributes
+        validation.expectedAttributes,
       )) {
         await expect(element).toHaveAttribute(attr, value);
         console.log(`  ✓ ${validation.selector} has ${attr}="${value}"`);
@@ -640,16 +634,16 @@ export async function testLiveRegions(
     triggerAction: () => Promise<void>;
     liveRegionSelector: string;
     expectedAnnouncement: string;
-  }>
+  }>,
 ): Promise<void> {
-  console.log('📢 Testing live regions...');
+  console.log("📢 Testing live regions...");
 
   for (const test of tests) {
     const liveRegion = page.locator(test.liveRegionSelector);
 
     // Verify live region has correct attributes
-    await expect(liveRegion).toHaveAttribute('aria-live', /.+/);
-    const ariaLive = await liveRegion.getAttribute('aria-live');
+    await expect(liveRegion).toHaveAttribute("aria-live", /.+/);
+    const ariaLive = await liveRegion.getAttribute("aria-live");
     console.log(`  • Live region mode: ${ariaLive}`);
 
     // Trigger the action that updates the live region
@@ -670,41 +664,49 @@ export async function testLiveRegions(
  * Validate semantic HTML structure
  */
 export async function validateSemanticHTML(page: Page): Promise<void> {
-  console.log('🏗️  Validating semantic HTML structure...');
+  console.log("🏗️  Validating semantic HTML structure...");
 
   const semanticElements = await page.evaluate(() => {
     return {
-      hasHeader: !!document.querySelector('header'),
-      hasNav: !!document.querySelector('nav'),
-      hasMain: !!document.querySelector('main'),
-      hasFooter: !!document.querySelector('footer'),
-      hasHeadings: document.querySelectorAll('h1, h2, h3, h4, h5, h6').length > 0,
-      hasLandmarks: document.querySelectorAll('[role="banner"], [role="navigation"], [role="main"], [role="contentinfo"]').length > 0,
+      hasHeader: !!document.querySelector("header"),
+      hasNav: !!document.querySelector("nav"),
+      hasMain: !!document.querySelector("main"),
+      hasFooter: !!document.querySelector("footer"),
+      hasHeadings:
+        document.querySelectorAll("h1, h2, h3, h4, h5, h6").length > 0,
+      hasLandmarks:
+        document.querySelectorAll(
+          '[role="banner"], [role="navigation"], [role="main"], [role="contentinfo"]',
+        ).length > 0,
     };
   });
 
-  expect(semanticElements.hasHeader || semanticElements.hasLandmarks).toBe(true);
+  expect(semanticElements.hasHeader || semanticElements.hasLandmarks).toBe(
+    true,
+  );
   expect(semanticElements.hasMain).toBe(true);
-  expect(semanticElements.hasFooter || semanticElements.hasLandmarks).toBe(true);
+  expect(semanticElements.hasFooter || semanticElements.hasLandmarks).toBe(
+    true,
+  );
   expect(semanticElements.hasHeadings).toBe(true);
 
-  console.log('  ✓ Page has proper semantic structure');
+  console.log("  ✓ Page has proper semantic structure");
 }
 
 /**
  * Validate heading hierarchy
  */
 export async function validateHeadingHierarchy(page: Page): Promise<void> {
-  console.log('📝 Validating heading hierarchy...');
+  console.log("📝 Validating heading hierarchy...");
 
   const headings = await page.evaluate(() => {
     const headingElements = Array.from(
-      document.querySelectorAll('h1, h2, h3, h4, h5, h6')
+      document.querySelectorAll("h1, h2, h3, h4, h5, h6"),
     );
 
     return headingElements.map((el) => ({
       level: parseInt(el.tagName.substring(1)),
-      text: el.textContent?.trim() || '',
+      text: el.textContent?.trim() || "",
     }));
   });
 
@@ -724,12 +726,12 @@ export async function validateHeadingHierarchy(page: Page): Promise<void> {
  * Validate image alternative text
  */
 export async function validateImageAltText(page: Page): Promise<void> {
-  console.log('🖼️  Validating image alternative text...');
+  console.log("🖼️  Validating image alternative text...");
 
   const imagesWithoutAlt = await page.evaluate(() => {
-    const images = Array.from(document.querySelectorAll('img'));
+    const images = Array.from(document.querySelectorAll("img"));
     return images
-      .filter((img) => !img.hasAttribute('alt'))
+      .filter((img) => !img.hasAttribute("alt"))
       .map((img) => img.src);
   });
 
@@ -741,7 +743,7 @@ export async function validateImageAltText(page: Page): Promise<void> {
   });
 
   console.log(
-    `  ✓ All images have alt attributes (${decorativeImages} decorative)`
+    `  ✓ All images have alt attributes (${decorativeImages} decorative)`,
   );
 }
 
@@ -754,12 +756,12 @@ export async function validateImageAltText(page: Page): Promise<void> {
  */
 export async function testSeasonalAccessibility(
   page: Page,
-  season: 'SPRING' | 'SUMMER' | 'FALL' | 'WINTER'
+  season: "SPRING" | "SUMMER" | "FALL" | "WINTER",
 ): Promise<void> {
   console.log(`🌾 Testing seasonal accessibility patterns for ${season}...`);
 
   // Verify seasonal indicators are accessible
-  const seasonalIndicators = page.locator('[data-season], .season-indicator');
+  const seasonalIndicators = page.locator("[data-season], .season-indicator");
   const count = await seasonalIndicators.count();
 
   if (count > 0) {
@@ -768,8 +770,8 @@ export async function testSeasonalAccessibility(
 
       // Should have accessible label
       const hasLabel =
-        (await indicator.getAttribute('aria-label')) ||
-        (await indicator.getAttribute('aria-labelledby')) ||
+        (await indicator.getAttribute("aria-label")) ||
+        (await indicator.getAttribute("aria-labelledby")) ||
         (await indicator.textContent());
 
       expect(hasLabel).toBeTruthy();
@@ -783,38 +785,38 @@ export async function testSeasonalAccessibility(
  * Test farm profile accessibility
  */
 export async function testFarmProfileAccessibility(page: Page): Promise<void> {
-  console.log('🚜 Testing farm profile accessibility...');
+  console.log("🚜 Testing farm profile accessibility...");
 
   // Verify farm name is in a heading
-  const farmNameHeading = page.locator('h1, h2').filter({
-    has: page.locator('[data-farm-name], .farm-name'),
+  const farmNameHeading = page.locator("h1, h2").filter({
+    has: page.locator("[data-farm-name], .farm-name"),
   });
   await expect(farmNameHeading.first()).toBeVisible();
 
   // Verify contact information is accessible
-  const contactInfo = page.locator('[data-contact], .contact-info');
+  const contactInfo = page.locator("[data-contact], .contact-info");
   if ((await contactInfo.count()) > 0) {
     await validateAriaAttributes(page, [
       {
-        selector: '[data-contact], .contact-info',
-        expectedRole: 'region',
+        selector: "[data-contact], .contact-info",
+        expectedRole: "region",
         expectedAttributes: {
-          'aria-label': 'Contact Information',
+          "aria-label": "Contact Information",
         },
       },
     ]);
   }
 
-  console.log('  ✓ Farm profile is accessible');
+  console.log("  ✓ Farm profile is accessible");
 }
 
 /**
  * Test product catalog accessibility
  */
 export async function testProductCatalogAccessibility(
-  page: Page
+  page: Page,
 ): Promise<void> {
-  console.log('🥕 Testing product catalog accessibility...');
+  console.log("🥕 Testing product catalog accessibility...");
 
   // Verify product grid has proper structure
   const productGrid = page.locator('[role="list"], .product-grid');
@@ -830,18 +832,18 @@ export async function testProductCatalogAccessibility(
     const product = products.nth(i);
 
     // Should have product name in heading
-    const heading = product.locator('h2, h3, h4');
+    const heading = product.locator("h2, h3, h4");
     await expect(heading).toBeVisible();
 
     // Should have price
-    const price = product.locator('[data-price], .price');
+    const price = product.locator("[data-price], .price");
     await expect(price).toBeVisible();
 
     // Add to cart button should be accessible
     const addToCartBtn = product.locator('button:has-text("Add to Cart")');
     if ((await addToCartBtn.count()) > 0) {
       await expect(addToCartBtn).toBeEnabled();
-      const label = await addToCartBtn.getAttribute('aria-label');
+      const label = await addToCartBtn.getAttribute("aria-label");
       expect(label || (await addToCartBtn.textContent())).toBeTruthy();
     }
   }
@@ -857,20 +859,20 @@ export async function testProductCatalogAccessibility(
  * Generate accessibility report
  */
 export async function generateA11yReport(
-  results: A11yResult[]
+  results: A11yResult[],
 ): Promise<string> {
   const totalViolations = results.reduce(
     (sum, r) => sum + r.violations.length,
-    0
+    0,
   );
   const totalPasses = results.reduce((sum, r) => sum + r.passes, 0);
 
   const criticalViolations = results.flatMap((r) =>
-    r.violations.filter((v) => v.impact === 'critical')
+    r.violations.filter((v) => v.impact === "critical"),
   );
 
   const seriousViolations = results.flatMap((r) =>
-    r.violations.filter((v) => v.impact === 'serious')
+    r.violations.filter((v) => v.impact === "serious"),
   );
 
   return `
@@ -878,7 +880,7 @@ export async function generateA11yReport(
 ║           🌟 ACCESSIBILITY TEST REPORT                     ║
 ╠════════════════════════════════════════════════════════════╣
 ║ Total Tests: ${results.length}
-║ WCAG Level: ${results[0]?.wcagLevel || 'AA'}
+║ WCAG Level: ${results[0]?.wcagLevel || "AA"}
 ║
 ║ RESULTS:
 ║   ✓ Passes: ${totalPasses}
@@ -887,7 +889,7 @@ export async function generateA11yReport(
 ║     - Serious: ${seriousViolations.length}
 ║
 ║ COMPLIANCE STATUS:
-║   ${totalViolations === 0 ? '✅ FULLY COMPLIANT' : '❌ VIOLATIONS FOUND'}
+║   ${totalViolations === 0 ? "✅ FULLY COMPLIANT" : "❌ VIOLATIONS FOUND"}
 ║
 ║ Timestamp: ${new Date().toISOString()}
 ╚════════════════════════════════════════════════════════════╝
@@ -898,9 +900,9 @@ ${
 CRITICAL VIOLATIONS:
 ${criticalViolations
   .map((v) => `  • ${v.id}: ${v.description}\n    ${v.helpUrl}`)
-  .join('\n')}
+  .join("\n")}
 `
-    : ''
+    : ""
 }
   `.trim();
 }
@@ -910,11 +912,11 @@ ${criticalViolations
  */
 export async function saveA11yReport(
   results: A11yResult[],
-  filename: string
+  filename: string,
 ): Promise<void> {
   const report = await generateA11yReport(results);
-  const fs = await import('fs/promises');
-  await fs.writeFile(filename, report, 'utf-8');
+  const fs = await import("fs/promises");
+  await fs.writeFile(filename, report, "utf-8");
   console.log(`📄 Accessibility report saved to: ${filename}`);
 }
 
@@ -926,10 +928,10 @@ export async function saveA11yReport(
  * Run comprehensive WCAG 2.1 AA compliance check
  */
 export async function checkWCAG21AA(page: Page): Promise<A11yResult> {
-  console.log('🔍 Running WCAG 2.1 AA compliance check...');
+  console.log("🔍 Running WCAG 2.1 AA compliance check...");
 
   await injectAxe(page);
-  const result = await runAxeScan(page, { wcagLevel: 'AA' });
+  const result = await runAxeScan(page, { wcagLevel: "AA" });
 
   console.log(`  • Violations: ${result.violations.length}`);
   console.log(`  • Passes: ${result.passes}`);
@@ -941,10 +943,10 @@ export async function checkWCAG21AA(page: Page): Promise<A11yResult> {
  * Run comprehensive WCAG 2.1 AAA compliance check
  */
 export async function checkWCAG21AAA(page: Page): Promise<A11yResult> {
-  console.log('🔍 Running WCAG 2.1 AAA compliance check...');
+  console.log("🔍 Running WCAG 2.1 AAA compliance check...");
 
   await injectAxe(page);
-  const result = await runAxeScan(page, { wcagLevel: 'AAA' });
+  const result = await runAxeScan(page, { wcagLevel: "AAA" });
 
   console.log(`  • Violations: ${result.violations.length}`);
   console.log(`  • Passes: ${result.passes}`);
@@ -956,14 +958,14 @@ export async function checkWCAG21AAA(page: Page): Promise<A11yResult> {
  * Divine accessibility consciousness score
  */
 export async function calculateDivineA11yScore(
-  results: A11yResult[]
+  results: A11yResult[],
 ): Promise<number> {
   const totalTests = results.length;
   const passedTests = results.filter((r) => r.violations.length === 0).length;
 
   const totalViolations = results.reduce(
     (sum, r) => sum + r.violations.length,
-    0
+    0,
   );
   const totalPasses = results.reduce((sum, r) => sum + r.passes, 0);
 

@@ -51,6 +51,7 @@ const events: TimelineEvent[] = [
 ```
 
 **Props:**
+
 - `events` - Array of timeline events
 - `orientation` - "vertical" (default) or "horizontal"
 - `agriculturalTheme` - Apply agricultural color scheme
@@ -58,6 +59,7 @@ const events: TimelineEvent[] = [
 - `showConnectors` - Show lines between events
 
 **Status Types:**
+
 - `pending` - Awaiting action
 - `processing` - In progress
 - `completed` - Successfully finished
@@ -107,6 +109,7 @@ const farmEvents: CalendarEvent[] = [
 ```
 
 **Props:**
+
 - `events` - Array of calendar events
 - `selectedDate` - Currently selected date
 - `onDateSelect` - Callback when date is clicked
@@ -117,6 +120,7 @@ const farmEvents: CalendarEvent[] = [
 - `minDate` / `maxDate` - Restrict selectable dates
 
 **Event Types:**
+
 - `planting` - Planting activities (green)
 - `harvest` - Harvest time (amber)
 - `maintenance` - Farm maintenance (blue)
@@ -124,12 +128,14 @@ const farmEvents: CalendarEvent[] = [
 - `other` - General events (gray)
 
 **Seasons:**
+
 - 🌱 Spring (March-May) - Green theme
 - ☀️ Summer (June-August) - Yellow theme
 - 🍂 Fall (September-November) - Orange theme
 - ❄️ Winter (December-February) - Blue theme
 
 **Lunar Phases:**
+
 - 🌑 New Moon, 🌒 Waxing Crescent, 🌓 First Quarter, 🌔 Waxing Gibbous
 - 🌕 Full Moon, 🌖 Waning Gibbous, 🌗 Last Quarter, 🌘 Waning Crescent
 
@@ -193,6 +199,7 @@ const farms = [
 ```
 
 **Props:**
+
 - `locations` - Array of map locations
 - `center` - Map center coordinates `{ lat, lng }`
 - `zoom` - Zoom level (1-20, default 12)
@@ -203,6 +210,7 @@ const farms = [
 - `onLocationClick` - Callback when location is clicked
 
 **Location Types:**
+
 - 🌾 `farm` - Farm locations (green)
 - 🛒 `market` - Farmers markets (blue)
 - 📦 `pickup` - Pickup points (purple)
@@ -210,6 +218,7 @@ const farms = [
 - 📍 `other` - General locations (gray)
 
 **Controls:**
+
 - Zoom In/Out - Adjust map zoom (1x to 20x)
 - Recenter - Reset to initial view
 - My Location - Jump to user's current location (requires permission)
@@ -225,7 +234,7 @@ import { OrderTimeline } from "@/components/ui/Timeline";
 
 export default async function OrderPage({ params }: { params: { id: string } }) {
   const order = await getOrder(params.id);
-  
+
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-2xl font-bold mb-6">Track Your Order</h1>
@@ -252,7 +261,7 @@ import { useState } from "react";
 export default function FarmDashboard() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  
+
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-2xl font-bold mb-6">Farm Calendar</h1>
@@ -277,7 +286,7 @@ import { useRouter } from "next/navigation";
 export default async function FarmFinderPage() {
   const farms = await getFarms({ status: "ACTIVE" });
   const router = useRouter();
-  
+
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-2xl font-bold mb-6">Find Local Farms</h1>
@@ -298,7 +307,7 @@ export default async function FarmFinderPage() {
 All components accept a `className` prop for custom styling:
 
 ```typescript
-<Timeline 
+<Timeline
   events={events}
   className="bg-white shadow-lg rounded-xl p-6"
 />
@@ -353,20 +362,24 @@ npm test -- --coverage Timeline Calendar Map
 ## 📚 Additional Resources
 
 ### Component Files
+
 - Timeline: `src/components/ui/Timeline.tsx` (369 lines)
 - Calendar: `src/components/ui/Calendar.tsx` (457 lines)
 - Map: `src/components/ui/Map.tsx` (417 lines)
 
 ### Test Files
+
 - Timeline Tests: `src/components/ui/__tests__/Timeline.test.tsx` (453 lines)
 - Calendar Tests: `src/components/ui/__tests__/Calendar.test.tsx` (488 lines)
 - Map Tests: `src/components/ui/__tests__/Map.test.tsx` (616 lines)
 
 ### Documentation
+
 - Complete Summary: `docs/UI_COMPONENTS_COMPLETION_SUMMARY.md`
 - Implementation Progress: `IMPLEMENTATION_PROGRESS.md`
 
 ### Divine Instructions
+
 - Core Principles: `.github/instructions/01_DIVINE_CORE_PRINCIPLES.instructions.md`
 - Agricultural Mastery: `.github/instructions/02_AGRICULTURAL_QUANTUM_MASTERY.instructions.md`
 - UX Design: `.github/instructions/08_UX_DESIGN_CONSCIOUSNESS.instructions.md`
@@ -378,6 +391,7 @@ npm test -- --coverage Timeline Calendar Map
 ### Issue: Component not rendering
 
 **Solution:** Ensure you're importing from the correct path:
+
 ```typescript
 // ✅ Correct
 import { Timeline } from "@/components/ui/Timeline";
@@ -389,6 +403,7 @@ import { Timeline } from "@/components/Timeline";
 ### Issue: TypeScript errors
 
 **Solution:** Make sure your TypeScript version is up to date:
+
 ```bash
 npm install typescript@latest
 ```
@@ -402,6 +417,7 @@ npm install typescript@latest
 ## 🌟 Features
 
 ### Timeline
+
 - ✅ Vertical & horizontal layouts
 - ✅ 5 status types with color coding
 - ✅ Animated transitions
@@ -410,6 +426,7 @@ npm install typescript@latest
 - ✅ Agricultural theme
 
 ### Calendar
+
 - ✅ Seasonal awareness (4 seasons)
 - ✅ Lunar phase tracking (8 phases)
 - ✅ 5 event types
@@ -418,6 +435,7 @@ npm install typescript@latest
 - ✅ Event legend
 
 ### Map
+
 - ✅ Static map (no external dependencies)
 - ✅ 5 location types with icons
 - ✅ Zoom controls (1x-20x)

@@ -1,4 +1,5 @@
 # ⚡ QUICK REFERENCE CARD
+
 **Farmers Market Platform - Developer Cheat Sheet**
 
 ---
@@ -90,24 +91,29 @@ npx prisma migrate reset
 ## 🧪 Testing Patterns
 
 ### Direct Route Handler Testing (NEW!)
+
 ```typescript
-import { testApiRoute, expectApiSuccess } from '@/tests/utils/route-test-helpers';
-import { GET } from '@/app/api/products/route';
+import {
+  testApiRoute,
+  expectApiSuccess,
+} from "@/tests/utils/route-test-helpers";
+import { GET } from "@/app/api/products/route";
 
 const response = await testApiRoute(GET, {
-  searchParams: { page: '1' }
+  searchParams: { page: "1" },
 });
 const data = await expectApiSuccess(response);
 ```
 
 ### Authenticated Route Testing
+
 ```typescript
-import { testAuthenticatedApiRoute } from '@/tests/utils/route-test-helpers';
+import { testAuthenticatedApiRoute } from "@/tests/utils/route-test-helpers";
 
 const response = await testAuthenticatedApiRoute(POST, {
-  userId: 'user_123',
-  role: 'FARMER',
-  body: { name: 'Tomatoes' }
+  userId: "user_123",
+  role: "FARMER",
+  body: { name: "Tomatoes" },
 });
 ```
 
@@ -137,6 +143,7 @@ src/
 ## 🌐 Key URLs
 
 ### Local Development
+
 - Homepage: http://localhost:3001
 - Dashboard: http://localhost:3001/dashboard
 - Account: http://localhost:3001/account
@@ -144,6 +151,7 @@ src/
 - API Health: http://localhost:3001/api/health
 
 ### Staging
+
 - Homepage: https://staging.farmersmarket.com
 - API Health: https://staging.farmersmarket.com/api/health
 
@@ -152,35 +160,38 @@ src/
 ## 🔧 Common Tasks
 
 ### Add New API Route
+
 ```typescript
 // src/app/api/your-route/route.ts
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-  return NextResponse.json({ message: 'Hello' });
+  return NextResponse.json({ message: "Hello" });
 }
 ```
 
 ### Test New API Route
+
 ```typescript
 // src/__tests__/integration/your-route.test.ts
-import { testApiRoute } from '@/tests/utils/route-test-helpers';
-import { GET } from '@/app/api/your-route/route';
+import { testApiRoute } from "@/tests/utils/route-test-helpers";
+import { GET } from "@/app/api/your-route/route";
 
-it('should work', async () => {
+it("should work", async () => {
   const response = await testApiRoute(GET);
   expect(response.status).toBe(200);
 });
 ```
 
 ### Add New E2E Test
+
 ```typescript
 // tests/e2e/your-feature.spec.ts
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test('should do something', async ({ page }) => {
-  await page.goto('/your-page');
-  await expect(page.getByText('Hello')).toBeVisible();
+test("should do something", async ({ page }) => {
+  await page.goto("/your-page");
+  await expect(page.getByText("Hello")).toBeVisible();
 });
 ```
 
@@ -189,6 +200,7 @@ test('should do something', async ({ page }) => {
 ## 🔐 Environment Variables
 
 ### Required for Development
+
 ```bash
 DATABASE_URL="postgresql://..."
 NEXTAUTH_SECRET="generate-with-openssl"
@@ -196,6 +208,7 @@ NEXTAUTH_URL="http://localhost:3001"
 ```
 
 ### Required for Staging
+
 See `.env.staging.example` for complete list
 
 ---
@@ -213,6 +226,7 @@ See `.env.staging.example` for complete list
 ## 🆘 Troubleshooting
 
 ### Tests Failing
+
 ```bash
 # Clear cache
 npm run clean:cache
@@ -225,6 +239,7 @@ DATABASE_URL=$TEST_DATABASE_URL npm run db:reset
 ```
 
 ### Build Failing
+
 ```bash
 # Check types
 npm run type-check
@@ -237,6 +252,7 @@ npm run build
 ```
 
 ### Database Issues
+
 ```bash
 # Check connection
 npx prisma db execute --stdin <<< "SELECT 1;"

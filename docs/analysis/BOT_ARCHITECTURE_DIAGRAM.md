@@ -1,4 +1,5 @@
 # 🏗️ Bot & AI Architecture Diagram
+
 ## Farmers Market Platform - Visual System Overview
 
 ```

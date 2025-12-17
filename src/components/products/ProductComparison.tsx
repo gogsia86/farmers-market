@@ -163,9 +163,7 @@ export function ProductComparison({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">
-            Compare Products
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-900">Compare Products</h2>
           <p className="text-sm text-gray-600 mt-1">
             Comparing {displayProducts.length} of {maxProducts} products
           </p>
@@ -236,9 +234,7 @@ export function ProductComparison({
                     <ComparisonRow
                       label="Stock Status"
                       products={displayProducts}
-                      renderCell={(product) => (
-                        <StockBadge product={product} />
-                      )}
+                      renderCell={(product) => <StockBadge product={product} />}
                     />
                     <ComparisonRow
                       label="Rating"
@@ -251,13 +247,17 @@ export function ProductComparison({
                 )}
 
                 {/* Pricing & Value */}
-                {(selectedFeature === "all" || selectedFeature === "pricing") && (
+                {(selectedFeature === "all" ||
+                  selectedFeature === "pricing") && (
                   <>
                     <ComparisonRow
                       label="Price"
                       products={displayProducts}
                       renderCell={(product) => (
-                        <PriceDisplay product={product} allProducts={displayProducts} />
+                        <PriceDisplay
+                          product={product}
+                          allProducts={displayProducts}
+                        />
                       )}
                       highlight
                     />
@@ -265,7 +265,9 @@ export function ProductComparison({
                       label="Unit"
                       products={displayProducts}
                       renderCell={(product) => (
-                        <span className="text-sm text-gray-900">{product.unit}</span>
+                        <span className="text-sm text-gray-900">
+                          {product.unit}
+                        </span>
                       )}
                     />
                   </>
@@ -305,7 +307,9 @@ export function ProductComparison({
                       products={displayProducts}
                       renderCell={(product) => (
                         <span className="text-sm text-gray-700">
-                          {product.shelfLife ? `${product.shelfLife} days` : "N/A"}
+                          {product.shelfLife
+                            ? `${product.shelfLife} days`
+                            : "N/A"}
                         </span>
                       )}
                     />
@@ -313,12 +317,15 @@ export function ProductComparison({
                 )}
 
                 {/* Seasonal Availability */}
-                {(selectedFeature === "all" || selectedFeature === "seasonal") && (
+                {(selectedFeature === "all" ||
+                  selectedFeature === "seasonal") && (
                   <ComparisonRow
                     label="Seasonal Availability"
                     products={displayProducts}
                     renderCell={(product) => (
-                      <SeasonalDisplay availability={product.seasonalAvailability} />
+                      <SeasonalDisplay
+                        availability={product.seasonalAvailability}
+                      />
                     )}
                   />
                 )}
@@ -357,13 +364,16 @@ export function ProductComparison({
                     label="Certifications"
                     products={displayProducts}
                     renderCell={(product) => (
-                      <CertificationsList certifications={product.certifications} />
+                      <CertificationsList
+                        certifications={product.certifications}
+                      />
                     )}
                   />
                 )}
 
                 {/* Nutritional Info */}
-                {(selectedFeature === "all" || selectedFeature === "nutrition") && (
+                {(selectedFeature === "all" ||
+                  selectedFeature === "nutrition") && (
                   <ComparisonRow
                     label="Nutritional Highlights"
                     products={displayProducts}
@@ -378,7 +388,9 @@ export function ProductComparison({
                   <ComparisonRow
                     label="Farm"
                     products={displayProducts}
-                    renderCell={(product) => <FarmDisplay farm={product.farm} />}
+                    renderCell={(product) => (
+                      <FarmDisplay farm={product.farm} />
+                    )}
                   />
                 )}
               </tbody>
@@ -397,7 +409,7 @@ export function ProductComparison({
               "px-4 py-2 text-sm font-medium rounded-lg transition-colors",
               selectedFeature === "all"
                 ? "bg-green-600 text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200",
             )}
           >
             All Features
@@ -410,7 +422,7 @@ export function ProductComparison({
                 "px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2",
                 selectedFeature === feature.id
                   ? "bg-green-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200",
               )}
             >
               <feature.icon className="h-4 w-4" />
@@ -543,7 +555,7 @@ function StockBadge({ product }: { product: ComparisonProduct }) {
         "inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-full",
         isLowStock
           ? "bg-yellow-100 text-yellow-700"
-          : "bg-green-100 text-green-700"
+          : "bg-green-100 text-green-700",
       )}
     >
       <Check className="h-3 w-3" />
@@ -638,7 +650,7 @@ function GrowingMethodBadge({
         config.color === "gray" && "bg-gray-100 text-gray-700",
         config.color === "green" && "bg-green-100 text-green-700",
         config.color === "purple" && "bg-purple-100 text-purple-700",
-        config.color === "blue" && "bg-blue-100 text-blue-700"
+        config.color === "blue" && "bg-blue-100 text-blue-700",
       )}
     >
       <Leaf className="h-3 w-3" />
@@ -675,7 +687,7 @@ function SeasonalDisplay({
             "px-2 py-1 text-xs rounded-full",
             availability[season.key]
               ? "bg-green-100 text-green-700 font-semibold"
-              : "bg-gray-100 text-gray-400"
+              : "bg-gray-100 text-gray-400",
           )}
           title={season.label}
         >
@@ -700,7 +712,10 @@ function SustainabilityBadge({
     return <span className="text-sm text-gray-500">N/A</span>;
   }
 
-  const config = {
+  const config: {
+    soil: Record<string, { label: string; color: "green" | "yellow" | "red" }>;
+    water: Record<string, { label: string; color: "green" | "yellow" | "red" }>;
+  } = {
     soil: {
       POSITIVE: { label: "Positive", color: "green" },
       NEUTRAL: { label: "Neutral", color: "yellow" },
@@ -714,7 +729,7 @@ function SustainabilityBadge({
   };
 
   const typeConfig = config[type];
-  const valueConfig = typeConfig[value as keyof typeof typeConfig];
+  const valueConfig = value ? typeConfig[value] : undefined;
 
   if (!valueConfig) {
     return <span className="text-sm text-gray-500">N/A</span>;
@@ -726,7 +741,7 @@ function SustainabilityBadge({
         "inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-full",
         valueConfig.color === "green" && "bg-green-100 text-green-700",
         valueConfig.color === "yellow" && "bg-yellow-100 text-yellow-700",
-        valueConfig.color === "red" && "bg-red-100 text-red-700"
+        valueConfig.color === "red" && "bg-red-100 text-red-700",
       )}
     >
       {type === "soil" ? (
@@ -742,11 +757,7 @@ function SustainabilityBadge({
 /**
  * Certifications List
  */
-function CertificationsList({
-  certifications,
-}: {
-  certifications?: string[];
-}) {
+function CertificationsList({ certifications }: { certifications?: string[] }) {
   if (!certifications || certifications.length === 0) {
     return <span className="text-sm text-gray-500">None</span>;
   }

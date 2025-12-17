@@ -1,6 +1,7 @@
 # 🔧 FIX INSTRUCTIONS - Complete Setup Guide
 
 ## Date: December 16, 2024
+
 ## Issues: Signup/Dashboard Flow + Farms 404 + Build Errors
 
 ---
@@ -36,6 +37,7 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_fake_key_for_testing_only
 ```
 
 **Where to get real Stripe keys:**
+
 1. Go to https://dashboard.stripe.com/test/apikeys
 2. Copy "Publishable key" → `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
 3. Click "Reveal test key" → Copy "Secret key" → `STRIPE_SECRET_KEY`
@@ -63,11 +65,13 @@ npm run build
 ```
 
 **Expected Output:**
+
 - ✅ Should succeed without Stripe errors
 - ✅ Should compile all pages including /farms
 - ✅ Should show "Compiled successfully"
 
 If build fails, check:
+
 - DATABASE_URL is set in .env
 - NEXTAUTH_SECRET is set in .env
 - STRIPE_SECRET_KEY is set (even a fake one)
@@ -81,6 +85,7 @@ npm run start
 ```
 
 **Expected Output:**
+
 ```
 > farmers-market@1.0.0 start
 > cross-env NODE_OPTIONS='--max-old-space-size=8192' next start -p 3001
@@ -142,10 +147,12 @@ npm run prisma:studio
 ```
 
 **If NO farms exist:**
+
 - The page should show "No Farms Available Yet" (not 404)
 - If you see 404, continue to Fix Option B
 
 **If farms exist but page shows 404:**
+
 - Continue to Fix Option B
 
 #### Fix Option B: Verify Route Files
@@ -209,6 +216,7 @@ npm run prisma:seed
 ## 🧪 COMPLETE TEST CHECKLIST
 
 ### Authentication & Dashboard
+
 - [ ] Can sign up as CONSUMER
 - [ ] Redirects to /login after signup
 - [ ] Can log in with new account
@@ -218,6 +226,7 @@ npm run prisma:seed
 - [ ] Quick actions work
 
 ### Farms Route
+
 - [ ] http://localhost:3001/farms loads (no 404)
 - [ ] If farms exist, they display in grid
 - [ ] If no farms, shows empty state (not 404)
@@ -225,6 +234,7 @@ npm run prisma:seed
 - [ ] Farm detail page loads
 
 ### Build & Production
+
 - [ ] `npm run build` succeeds
 - [ ] No Stripe errors
 - [ ] No TypeScript errors
@@ -238,6 +248,7 @@ npm run prisma:seed
 ### Issue: Build Still Fails with Stripe Error
 
 **Solution:**
+
 ```bash
 # Verify .env.local exists
 ls .env.local
@@ -254,6 +265,7 @@ echo "STRIPE_SECRET_KEY=sk_test_fake_key_for_testing" >> .env.local
 **Symptoms:** Redirects back to login, or shows "Authentication required"
 
 **Solution:**
+
 ```bash
 # Check NEXTAUTH_SECRET is set
 grep NEXTAUTH_SECRET .env.local
@@ -274,6 +286,7 @@ NEXTAUTH_SECRET=<generated-value>
 **Debug Steps:**
 
 1. **Check server mode:**
+
    ```bash
    # Are you running dev or production?
    # Dev: npm run dev
@@ -281,36 +294,40 @@ NEXTAUTH_SECRET=<generated-value>
    ```
 
 2. **Check route group:**
+
    ```bash
    # Verify file structure
    ls -la "src/app/(public)/farms/"
-   
+
    # Should show:
    # page.tsx
    # [slug]/ (directory)
    ```
 
 3. **Check middleware logs:**
+
    ```bash
    # In src/middleware.ts, search for:
    middlewareLog.debug
-   
+
    # These should show request processing
    ```
 
 4. **Test API directly:**
+
    ```bash
    # Check if farm data is accessible
    curl http://localhost:3001/api/farms
-   
+
    # Should return JSON with farms data
    ```
 
 5. **Check database:**
+
    ```bash
    # Verify DATABASE_URL is correct
    grep DATABASE_URL .env.local
-   
+
    # Test connection
    npm run prisma:db:pull
    ```
@@ -318,6 +335,7 @@ NEXTAUTH_SECRET=<generated-value>
 ### Issue: "Module not found" Errors
 
 **Solution:**
+
 ```bash
 # Reinstall dependencies
 npm install
@@ -357,6 +375,7 @@ NEXT_PUBLIC_APP_URL="http://localhost:3001"
 ## 🎯 EXPECTED RESULTS AFTER FIXES
 
 ### ✅ Signup Flow
+
 ```
 /signup → Fill form → Create Account
   ↓
@@ -366,6 +385,7 @@ NEXT_PUBLIC_APP_URL="http://localhost:3001"
 ```
 
 ### ✅ Dashboard
+
 ```
 /dashboard
   ├── Welcome message: "Welcome Back, [Name]!"
@@ -376,6 +396,7 @@ NEXT_PUBLIC_APP_URL="http://localhost:3001"
 ```
 
 ### ✅ Farms Route
+
 ```
 /farms
   ├── Hero section with stats
@@ -393,12 +414,14 @@ After everything works:
 ### Option 1: Two Terminal Tabs
 
 **Tab 1 - Production Server:**
+
 ```bash
 cd "M:\Repo\Farmers Market Platform web and app"
 npm run start
 ```
 
 **Tab 2 - Workflow Bot:**
+
 ```bash
 cd "M:\Repo\Farmers Market Platform web and app"
 npm run bot:run          # All workflows
@@ -415,6 +438,7 @@ npm run start:full-stack
 ```
 
 This starts:
+
 - Next.js production server
 - Divine Workflow Monitoring Bot
 - Auto-remediation system
@@ -427,10 +451,11 @@ This starts:
 If problems persist after following ALL steps:
 
 1. **Capture Error Details:**
+
    ```bash
    # Run with debug logging
    DEBUG=* npm run start 2>&1 | tee error.log
-   
+
    # Try accessing the failing route
    # Check error.log file
    ```
@@ -442,21 +467,23 @@ If problems persist after following ALL steps:
    - RAM: At least 8GB available
 
 3. **Verify Database:**
+
    ```bash
    # Check if Prisma can connect
    npx prisma db pull
-   
+
    # Should succeed without errors
    ```
 
 4. **Check Port Conflicts:**
+
    ```bash
    # On Windows:
    netstat -ano | findstr :3001
-   
+
    # On Linux/Mac:
    lsof -i :3001
-   
+
    # Kill existing process if needed
    ```
 
@@ -480,6 +507,7 @@ You'll know everything is working when:
 **Good luck! 🌾**
 
 If you complete all steps and still have issues, please provide:
+
 1. Exact error message
 2. Which step failed
 3. Content of error.log

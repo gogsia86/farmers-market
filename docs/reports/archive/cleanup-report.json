@@ -221,23 +221,14 @@
       "features\\order-management\\services\\order.service.ts",
       "lib\\services\\order.service.ts"
     ],
-    "prisma.ts": [
-      "generated\\prisma.ts",
-      "lib\\prisma.ts"
-    ],
+    "prisma.ts": ["generated\\prisma.ts", "lib\\prisma.ts"],
     "config.ts": [
       "i18n\\config.ts",
       "lib\\auth\\config.ts",
       "lib\\telemetry\\config.ts"
     ],
-    "utils.ts": [
-      "i18n\\utils.ts",
-      "lib\\utils.ts"
-    ],
-    "tracing.ts": [
-      "lib\\ai\\tracing.ts",
-      "lib\\telemetry\\tracing.ts"
-    ],
+    "utils.ts": ["i18n\\utils.ts", "lib\\utils.ts"],
+    "tracing.ts": ["lib\\ai\\tracing.ts", "lib\\telemetry\\tracing.ts"],
     "types.ts": [
       "lib\\cache\\types.ts",
       "lib\\logger\\types.ts",
@@ -255,26 +246,14 @@
       "lib\\gpu\\tensorflow-gpu.ts",
       "lib\\gpu\\__mocks__\\tensorflow-gpu.ts"
     ],
-    "logger.ts": [
-      "lib\\logging\\logger.ts",
-      "lib\\monitoring\\logger.ts"
-    ],
+    "logger.ts": ["lib\\logging\\logger.ts", "lib\\monitoring\\logger.ts"],
     "order.service.test.ts": [
       "lib\\services\\__tests__\\order.service.test.ts",
       "__tests__\\services\\order.service.test.ts"
     ],
-    "test-utils.tsx": [
-      "lib\\test-utils.tsx",
-      "test-utils\\test-utils.tsx"
-    ],
-    "crop.ts": [
-      "lib\\validations\\crop.ts",
-      "types\\crop.ts"
-    ],
-    "product.ts": [
-      "lib\\validations\\product.ts",
-      "types\\product.ts"
-    ]
+    "test-utils.tsx": ["lib\\test-utils.tsx", "test-utils\\test-utils.tsx"],
+    "crop.ts": ["lib\\validations\\crop.ts", "types\\crop.ts"],
+    "product.ts": ["lib\\validations\\product.ts", "types\\product.ts"]
   },
   "caseInsensitiveDuplicates": {
     "loading.tsx": [

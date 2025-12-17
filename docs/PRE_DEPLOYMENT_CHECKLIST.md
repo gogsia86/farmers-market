@@ -337,13 +337,13 @@ This checklist ensures all critical steps are completed before deploying the Far
 
 ### Deployment Approval
 
-**Deployment Approved By:** ************\_************
+**Deployment Approved By:** \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
 
-**Date:** ************\_************
+**Date:** \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
 
 **Environment:** Production
 
-**Version/Tag:** ************\_************
+**Version/Tag:** \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
 
 ---
 

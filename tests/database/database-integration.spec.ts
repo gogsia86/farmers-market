@@ -75,7 +75,7 @@ test.describe("Database Integration Tests", () => {
               emailVerified: new Date(),
             },
           }),
-        "create-user"
+        "create-user",
       );
 
       expect(result).toHaveProperty("id");
@@ -92,7 +92,7 @@ test.describe("Database Integration Tests", () => {
 
       const { result, metrics } = await performanceAnalyzer.measureQuery(
         async () => database.user.findUnique({ where: { id: userId } }),
-        "read-user"
+        "read-user",
       );
 
       expect(result).toHaveProperty("id", userId);
@@ -109,7 +109,7 @@ test.describe("Database Integration Tests", () => {
             where: { id: userId },
             data: { name: "Updated Name" },
           }),
-        "update-user"
+        "update-user",
       );
 
       expect(result.name).toBe("Updated Name");
@@ -154,7 +154,7 @@ test.describe("Database Integration Tests", () => {
               },
             },
           }),
-        "complex-join"
+        "complex-join",
       );
 
       expect(Array.isArray(result)).toBe(true);
@@ -183,7 +183,7 @@ test.describe("Database Integration Tests", () => {
               },
             },
           }),
-        "nested-query"
+        "nested-query",
       );
 
       expect(Array.isArray(result)).toBe(true);
@@ -202,7 +202,7 @@ test.describe("Database Integration Tests", () => {
               inventory: true,
             },
           }),
-        "aggregate-query"
+        "aggregate-query",
       );
 
       expect(Array.isArray(result)).toBe(true);
@@ -224,7 +224,7 @@ test.describe("Database Integration Tests", () => {
             },
             take: 10,
           }),
-        "full-text-search"
+        "full-text-search",
       );
 
       expect(Array.isArray(result)).toBe(true);
@@ -309,7 +309,7 @@ test.describe("Database Integration Tests", () => {
               throw new Error("Intentional error");
             },
           ],
-          1
+          1,
         );
       } catch (error) {
         // Expected to throw
@@ -327,20 +327,21 @@ test.describe("Database Integration Tests", () => {
       const testUsers = dbManager.getTestData("users");
       const userId = testUsers[0]?.id;
 
-      const { results, errors } = await transactionTester.testConcurrentTransactions(
-        async () => {
-          return database.user.update({
-            where: { id: userId },
-            data: { name: "Transaction 1" },
-          });
-        },
-        async () => {
-          return database.user.update({
-            where: { id: userId },
-            data: { name: "Transaction 2" },
-          });
-        }
-      );
+      const { results, errors } =
+        await transactionTester.testConcurrentTransactions(
+          async () => {
+            return database.user.update({
+              where: { id: userId },
+              data: { name: "Transaction 1" },
+            });
+          },
+          async () => {
+            return database.user.update({
+              where: { id: userId },
+              data: { name: "Transaction 2" },
+            });
+          },
+        );
 
       // One should succeed
       expect(results.length + errors.length).toBe(2);
@@ -436,13 +437,14 @@ test.describe("Database Integration Tests", () => {
             database.product.findMany({
               skip: page * pageSize,
               take: pageSize,
-            })
+            }),
         );
         measurements.push(duration);
       }
 
       // All pages should have similar performance
-      const avgTime = measurements.reduce((a, b) => a + b) / measurements.length;
+      const avgTime =
+        measurements.reduce((a, b) => a + b) / measurements.length;
       measurements.forEach((time) => {
         expect(time).toBeLessThan(avgTime * 2);
       });
@@ -450,28 +452,32 @@ test.describe("Database Integration Tests", () => {
 
     test("Should optimize with indexes", async () => {
       // Query with indexed field (email)
-      const { metrics: indexedMetrics } = await performanceAnalyzer.measureQuery(
-        async () =>
-          database.user.findUnique({
-            where: { email: "test_farmer1@example.com" },
-          }),
-        "indexed-query"
-      );
+      const { metrics: indexedMetrics } =
+        await performanceAnalyzer.measureQuery(
+          async () =>
+            database.user.findUnique({
+              where: { email: "test_farmer1@example.com" },
+            }),
+          "indexed-query",
+        );
 
       // Query with non-indexed field
-      const { metrics: nonIndexedMetrics } = await performanceAnalyzer.measureQuery(
-        async () =>
-          database.user.findFirst({
-            where: { name: { contains: "Test" } },
-          }),
-        "non-indexed-query"
-      );
+      const { metrics: nonIndexedMetrics } =
+        await performanceAnalyzer.measureQuery(
+          async () =>
+            database.user.findFirst({
+              where: { name: { contains: "Test" } },
+            }),
+          "non-indexed-query",
+        );
 
       console.log("Indexed query:", indexedMetrics.duration, "ms");
       console.log("Non-indexed query:", nonIndexedMetrics.duration, "ms");
 
       // Indexed query should be faster
-      expect(indexedMetrics.duration).toBeLessThan(nonIndexedMetrics.duration * 2);
+      expect(indexedMetrics.duration).toBeLessThan(
+        nonIndexedMetrics.duration * 2,
+      );
     });
   });
 
@@ -486,7 +492,10 @@ test.describe("Database Integration Tests", () => {
       checks.forEach((check) => {
         expect(check.valid).toBe(true);
         if (!check.valid) {
-          console.error(`Foreign key violation in ${check.table}:`, check.violations);
+          console.error(
+            `Foreign key violation in ${check.table}:`,
+            check.violations,
+          );
         }
       });
     });
@@ -497,7 +506,10 @@ test.describe("Database Integration Tests", () => {
       checks.forEach((check) => {
         expect(check.valid).toBe(true);
         if (!check.valid) {
-          console.error(`Unique constraint violation in ${check.table}:`, check.violations);
+          console.error(
+            `Unique constraint violation in ${check.table}:`,
+            check.violations,
+          );
         }
       });
     });
@@ -508,7 +520,10 @@ test.describe("Database Integration Tests", () => {
       checks.forEach((check) => {
         expect(check.valid).toBe(true);
         if (!check.valid) {
-          console.error(`Data consistency issue in ${check.table}:`, check.violations);
+          console.error(
+            `Data consistency issue in ${check.table}:`,
+            check.violations,
+          );
         }
       });
     });
@@ -526,7 +541,7 @@ test.describe("Database Integration Tests", () => {
         if (farms.length > 0) {
           // Should not be able to delete user with farms
           await expect(
-            database.user.delete({ where: { id: farmerUser.id } })
+            database.user.delete({ where: { id: farmerUser.id } }),
           ).rejects.toThrow();
         }
       }
@@ -551,7 +566,7 @@ test.describe("Database Integration Tests", () => {
             name: "Second User",
             role: "CUSTOMER",
           },
-        })
+        }),
       ).rejects.toThrow();
 
       // Cleanup
@@ -713,7 +728,7 @@ test.describe("Database Integration Tests", () => {
 
       const { result, metrics } = await performanceAnalyzer.measureQuery(
         async () => database.user.createMany({ data: users }),
-        "bulk-insert"
+        "bulk-insert",
       );
 
       expect(result.count).toBe(100);
@@ -734,7 +749,7 @@ test.describe("Database Integration Tests", () => {
             where: { status: "ACTIVE" },
             data: { updatedAt: new Date() },
           }),
-        "bulk-update"
+        "bulk-update",
       );
 
       expect(metrics.duration).toBeLessThan(3000);
@@ -758,7 +773,7 @@ test.describe("Database Integration Tests", () => {
               email: { contains: "bulk_delete_" },
             },
           }),
-        "bulk-delete"
+        "bulk-delete",
       );
 
       expect(result.count).toBe(50);

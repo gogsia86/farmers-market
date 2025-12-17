@@ -1,4 +1,5 @@
 # 🧹 Project Cleanup Analysis Report
+
 ## Farmers Market Platform - Server Build Optimization
 
 **Analysis Date:** December 2024  
@@ -12,6 +13,7 @@
 The project contains **significant clutter** that will impact server build performance and deployment. The root directory alone contains **38 markdown documentation files**, **multiple environment files with potential secrets**, and **243MB of build artifacts** that should be cleaned before production deployment.
 
 ### Critical Metrics
+
 - **Root MD Files:** 38 (should be 1-2)
 - **Build Artifacts:** 243MB (.next, dist, coverage, .jest-cache)
 - **Environment Files:** 9 (3 contain actual secrets ⚠️)
@@ -23,14 +25,17 @@ The project contains **significant clutter** that will impact server build perfo
 ## 🚨 Critical Issues (Fix Immediately)
 
 ### 1. Environment Files with Secrets ⚠️ HIGH PRIORITY
+
 **Files that MUST NOT be committed:**
+
 ```
 ❌ .env                    (6.3KB) - Contains actual secrets
-❌ .env.local              (6.5KB) - Contains actual secrets  
+❌ .env.local              (6.5KB) - Contains actual secrets
 ❌ .env.production         (3.8KB) - Contains production secrets
 ```
 
 **Action Required:**
+
 ```bash
 # Immediately remove from git history if committed
 git rm --cached .env .env.local .env.production
@@ -41,6 +46,7 @@ grep -E "^\.env$|^\.env\.local$" .gitignore
 ```
 
 **Safe Environment Files (Keep):**
+
 ```
 ✅ .env.example            (13KB) - Template file
 ✅ .env.docker             (6KB)  - Docker configuration
@@ -56,14 +62,15 @@ grep -E "^\.env$|^\.env\.local$" .gitignore
 
 ### Current Build Output Size: **243MB**
 
-| Directory | Size | Status | Action |
-|-----------|------|--------|--------|
-| `.next/` | 170MB | Build cache | Clean before production build |
-| `coverage/` | 41MB | Test reports | Move to CI artifacts |
-| `.jest-cache/` | 27MB | Test cache | Clean periodically |
-| `dist/` | 5MB | Build output | Verify necessary |
+| Directory      | Size  | Status       | Action                        |
+| -------------- | ----- | ------------ | ----------------------------- |
+| `.next/`       | 170MB | Build cache  | Clean before production build |
+| `coverage/`    | 41MB  | Test reports | Move to CI artifacts          |
+| `.jest-cache/` | 27MB  | Test cache   | Clean periodically            |
+| `dist/`        | 5MB   | Build output | Verify necessary              |
 
 **Cleanup Commands:**
+
 ```bash
 # Safe cleanup (preserves source)
 npm run clean:cache
@@ -80,6 +87,7 @@ npm run build
 ## 📄 Root Directory Clutter (38 MD Files)
 
 ### Status/Completion Reports (Should Move to /docs/archive/)
+
 ```
 ❌ 100_PERCENT_COMPLETION.md           (16KB)
 ❌ ANALYSIS_COMPLETE.md                (12KB)
@@ -99,6 +107,7 @@ npm run build
 ```
 
 ### Developer Documentation (Should Move to /docs/)
+
 ```
 ❌ DEV_SERVER_ANALYSIS_CHECKLIST.md    (28KB)
 ❌ DEV_SERVER_DOCS_INDEX.md            (11KB)
@@ -112,6 +121,7 @@ npm run build
 ```
 
 ### Refactoring Documentation (Should Move to /docs/refactoring/)
+
 ```
 ❌ REFACTORING_GUIDE.md
 ❌ REFACTORING_QUICK_START.md
@@ -120,6 +130,7 @@ npm run build
 ```
 
 ### Deployment/Testing Documentation (Should Move to /docs/deployment/)
+
 ```
 ❌ STAGING_DEPLOYMENT_GUIDE.md
 ❌ TEST_UPDATES.md
@@ -127,6 +138,7 @@ npm run build
 ```
 
 ### Webpage Analysis (Should Move to /docs/analysis/)
+
 ```
 ❌ WEBPAGE_ANALYSIS_SUMMARY.md
 ❌ WEBPAGE_CONSISTENCY_ANALYSIS.md
@@ -135,6 +147,7 @@ npm run build
 ```
 
 ### Keep in Root (Essential Only)
+
 ```
 ✅ README.md                           - Main project README
 ✅ LICENSE                             - License file
@@ -145,6 +158,7 @@ npm run build
 ## 🗂️ Proposed Directory Restructure
 
 ### Recommended Organization
+
 ```
 /
 ├── README.md                          ✅ KEEP
@@ -187,6 +201,7 @@ npm run build
 ## 🔧 Script Files Organization
 
 ### Current Location (Root)
+
 ```
 ⚠️ cleanup-project.sh       (7.5KB)  - Should stay or move to /scripts/cleanup/
 ⚠️ deep-clean.sh            (14KB)   - Should stay or move to /scripts/cleanup/
@@ -208,6 +223,7 @@ npm run build
 ```
 
 **Action:**
+
 ```bash
 # Remove log file
 rm deep-clean-20251202-173018.log
@@ -221,23 +237,29 @@ grep "*.log" .gitignore
 ## 🎯 Other Files Requiring Review
 
 ### Visual Studio Files
+
 ```
 ⚠️ Farmers Market Platform web and app.slnx  (90B)
 ```
+
 **Status:** Already in .gitignore as `*.slnx`, but file exists  
 **Action:** Remove if not needed: `rm "Farmers Market Platform web and app.slnx"`
 
 ### Mystery File
+
 ```
 ⚠️ Market Platform web and app
 ```
+
 **Status:** Listed in directory but cannot be accessed  
 **Action:** Investigate and remove if orphaned
 
 ### Root TypeScript Utility
+
 ```
 ❌ create-admin.ts
 ```
+
 **Action:** Move to `/scripts/admin/create-admin.ts`
 
 ---
@@ -245,6 +267,7 @@ grep "*.log" .gitignore
 ## 📋 Cleanup Action Plan
 
 ### Phase 1: Critical Security (DO NOW) ⚠️
+
 ```bash
 # 1. Remove environment files with secrets from git
 git rm --cached .env .env.local .env.production
@@ -256,6 +279,7 @@ echo ".env*.local" >> .gitignore  # Should already be there
 ```
 
 ### Phase 2: Build Artifacts Cleanup
+
 ```bash
 # Clean build caches
 npm run clean:cache
@@ -271,6 +295,7 @@ npm run build
 ```
 
 ### Phase 3: Documentation Reorganization
+
 ```bash
 # Create new documentation structure
 mkdir -p docs/archive docs/guides docs/analysis docs/refactoring
@@ -293,6 +318,7 @@ mv COMMIT_MESSAGE*.md PR_SUMMARY.md TASKS_*.md docs/archive/
 ```
 
 ### Phase 4: Script Organization
+
 ```bash
 # Move admin utilities
 mkdir -p scripts/admin
@@ -304,6 +330,7 @@ mv cleanup-project.sh deep-clean.sh master-cleanup.sh scripts/cleanup/
 ```
 
 ### Phase 5: Remove Orphaned Files
+
 ```bash
 # Remove Visual Studio solution file
 rm "Farmers Market Platform web and app.slnx"
@@ -317,6 +344,7 @@ rm "Farmers Market Platform web and app.slnx"
 ## 🎯 Clean Build Verification
 
 ### After Cleanup, Verify:
+
 ```bash
 # 1. Clean build succeeds
 npm run build
@@ -342,24 +370,28 @@ npm run type-check
 ## 📊 Expected Results After Cleanup
 
 ### Root Directory (Before → After)
+
 ```
 Before: 38 MD files, 9 env files, 6 script files, log files
 After:  1-2 MD files, 3-4 env files (.example only), 3-4 script files (convenience only)
 ```
 
 ### Documentation Structure
+
 ```
 Before: All in root (chaotic)
 After:  Organized in /docs/ with logical subdirectories
 ```
 
 ### Build Performance
+
 ```
 Before: 243MB of stale artifacts
 After:  Clean build from scratch, faster deployment
 ```
 
 ### Security
+
 ```
 Before: ⚠️ 3 files with actual secrets potentially committed
 After:  ✅ All secrets properly gitignored, only templates committed
@@ -389,6 +421,7 @@ Before deploying to production, ensure:
 ## 🔍 Monitoring & Maintenance
 
 ### Regular Cleanup Schedule
+
 ```bash
 # Weekly (automated in CI/CD)
 npm run clean:cache
@@ -404,6 +437,7 @@ npm outdated
 ```
 
 ### .gitignore Effectiveness Check
+
 ```bash
 # Run this monthly to ensure no build artifacts leak
 git status --ignored
@@ -414,14 +448,18 @@ git status --ignored
 ## 📝 Additional Recommendations
 
 ### 1. Update .vercelignore
+
 Already good! Contains proper exclusions for:
+
 - ✅ Tests (`tests/**`)
 - ✅ Documentation (`docs/**`, `*.md` except README)
 - ✅ Build artifacts
 - ✅ Development files
 
 ### 2. Add Build Size Budget
+
 Consider adding to `next.config.mjs`:
+
 ```javascript
 experimental: {
   bundlePagesRouterDependencies: true,
@@ -430,7 +468,9 @@ experimental: {
 ```
 
 ### 3. CI/CD Integration
+
 Ensure your CI/CD pipeline:
+
 - Runs on clean environment (no local artifacts)
 - Validates no secrets in commits
 - Runs full test suite
@@ -441,6 +481,7 @@ Ensure your CI/CD pipeline:
 ## ✅ Current Project Health
 
 ### What's Good ✅
+
 - **Type Safety:** No TypeScript errors
 - **Test Coverage:** 68 test files across the project
 - **Configuration:** Proper config files for all tools
@@ -448,6 +489,7 @@ Ensure your CI/CD pipeline:
 - **Architecture:** Follows Next.js 15 best practices
 
 ### What Needs Work ⚠️
+
 - **Root Directory Clutter:** 38 MD files (should be ~2)
 - **Environment Files:** Secrets potentially committed
 - **Build Artifacts:** 243MB that should be cleaned

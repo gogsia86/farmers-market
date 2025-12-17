@@ -12,7 +12,7 @@ Add these scripts to `package.json` in the `scripts` section:
     "test:e2e:advanced:debug": "playwright test tests/e2e/advanced --debug",
     "test:e2e:advanced:multi-user": "playwright test tests/e2e/advanced/multi-user-scenarios.spec.ts",
     "test:e2e:advanced:ci": "cross-env CI=true playwright test tests/e2e/advanced --workers=4 --reporter=json",
-    
+
     // API Integration Testing
     "test:api:integration": "playwright test tests/api --workers=6",
     "test:api:integration:ui": "playwright test tests/api --ui",
@@ -29,7 +29,7 @@ Add these scripts to `package.json` in the `scripts` section:
     "test:api:errors": "playwright test tests/api --grep \"Error Handling\"",
     "test:api:ratelimit": "playwright test tests/api --grep \"Rate Limiting\"",
     "test:api:validation": "playwright test tests/api --grep \"Data Validation\"",
-    
+
     // Database Testing
     "test:database:integration": "playwright test tests/database --workers=4",
     "test:database:integration:ui": "playwright test tests/database --ui",
@@ -42,20 +42,20 @@ Add these scripts to `package.json` in the `scripts` section:
     "test:database:integrity": "playwright test tests/database --grep \"Integrity\"",
     "test:database:bulk": "playwright test tests/database --grep \"Bulk Operations\"",
     "test:database:race": "playwright test tests/database --grep \"Race Conditions\"",
-    
+
     // Combined Advanced Testing
     "test:advanced:all": "npm run test:e2e:advanced && npm run test:api:integration && npm run test:database:integration",
     "test:advanced:ci": "cross-env CI=true npm run test:advanced:all",
     "test:advanced:coverage": "npm run test:advanced:all -- --reporter=html",
     "test:advanced:report": "playwright show-report",
-    
+
     // Performance Testing
     "test:performance:all": "npm run test:api:performance && npm run test:database:performance && npm run test:e2e:advanced -- --grep \"Performance\"",
     "test:performance:report": "npm run test:performance:all && npm run test:advanced:report",
     "test:performance:monitor": "npm run test:performance:all -- --reporter=json",
     "test:performance:baseline": "npm run test:performance:all -- --update-snapshots",
     "test:performance:compare": "npm run test:performance:all -- --reporter=html",
-    
+
     // Utility Scripts
     "test:advanced:clean": "rm -rf test-results playwright-report",
     "test:advanced:setup": "npm run db:test:setup && npm run test:advanced:clean",
@@ -147,6 +147,7 @@ npm run test:advanced:full
 ## 🎯 Test Categories
 
 ### Advanced E2E Tests
+
 - Multi-user scenarios
 - Race condition testing
 - Real-time updates
@@ -155,6 +156,7 @@ npm run test:advanced:full
 - Performance monitoring
 
 ### API Integration Tests
+
 - Health checks
 - Authentication flows
 - CRUD operations (Farms, Products, Orders, Users)
@@ -164,6 +166,7 @@ npm run test:advanced:full
 - Data validation
 
 ### Database Tests
+
 - CRUD operations
 - Transaction management
 - Query performance
@@ -174,35 +177,39 @@ npm run test:advanced:full
 
 ## 📊 Performance Targets
 
-| Test Type | Target | Command |
-|-----------|--------|---------|
-| E2E Page Load | < 3s | `npm run test:e2e:advanced` |
-| API Response | < 1s | `npm run test:api:performance` |
-| Database Query | < 500ms | `npm run test:database:performance` |
-| Transaction | < 1s | `npm run test:database:transactions` |
+| Test Type      | Target  | Command                              |
+| -------------- | ------- | ------------------------------------ |
+| E2E Page Load  | < 3s    | `npm run test:e2e:advanced`          |
+| API Response   | < 1s    | `npm run test:api:performance`       |
+| Database Query | < 500ms | `npm run test:database:performance`  |
+| Transaction    | < 1s    | `npm run test:database:transactions` |
 
 ## 🔧 Troubleshooting
 
 ### Common Issues
 
 **Tests timeout:**
+
 ```bash
 # Increase timeout in playwright.config.ts
 timeout: 60000
 ```
 
 **Database connection errors:**
+
 ```bash
 npm run db:test:setup
 ```
 
 **Port conflicts:**
+
 ```bash
 npm run kill-server
 npm run test:advanced:setup
 ```
 
 **Flaky tests:**
+
 ```bash
 # Run with retries
 npm run test:e2e:advanced -- --retries=3

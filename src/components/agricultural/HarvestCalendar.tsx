@@ -12,7 +12,7 @@ import {
   Carrot,
   Check,
   Clock,
-  AlertCircle
+  AlertCircle,
 } from "lucide-react";
 
 // ============================================================================
@@ -63,36 +63,39 @@ interface DayCell {
 // CONFIGURATION - Biodynamic Consciousness
 // ============================================================================
 
-const STATUS_CONFIG: Record<HarvestStatus, {
-  label: string;
-  color: string;
-  bgColor: string;
-  icon: React.ElementType;
-}> = {
+const STATUS_CONFIG: Record<
+  HarvestStatus,
+  {
+    label: string;
+    color: string;
+    bgColor: string;
+    icon: React.ElementType;
+  }
+> = {
   PLANNED: {
     label: "Planned",
     color: "text-blue-600",
     bgColor: "bg-blue-100",
-    icon: Clock
+    icon: Clock,
   },
   IN_PROGRESS: {
     label: "In Progress",
     color: "text-amber-600",
     bgColor: "bg-amber-100",
-    icon: Sprout
+    icon: Sprout,
   },
   COMPLETED: {
     label: "Completed",
     color: "text-green-600",
     bgColor: "bg-green-100",
-    icon: Check
+    icon: Check,
   },
   DELAYED: {
     label: "Delayed",
     color: "text-red-600",
     bgColor: "bg-red-100",
-    icon: AlertCircle
-  }
+    icon: AlertCircle,
+  },
 };
 
 const CROP_ICONS: Record<CropType, React.ElementType> = {
@@ -100,13 +103,23 @@ const CROP_ICONS: Record<CropType, React.ElementType> = {
   FRUIT: Apple,
   GRAIN: Leaf,
   HERB: Sprout,
-  OTHER: Leaf
+  OTHER: Leaf,
 };
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTHS = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 // ============================================================================
@@ -145,7 +158,7 @@ export function HarvestCalendar({
   onEventClick,
   onDateClick,
   className,
-  animated = true
+  animated = true,
 }: HarvestCalendarProps) {
   const [currentDate, setCurrentDate] = useState(initialDate);
   const today = new Date();
@@ -167,7 +180,7 @@ export function HarvestCalendar({
         date,
         isCurrentMonth: false,
         isToday: highlightToday && isSameDay(date, today),
-        events: getEventsForDate(events, date)
+        events: getEventsForDate(events, date),
       });
     }
 
@@ -178,7 +191,7 @@ export function HarvestCalendar({
         date,
         isCurrentMonth: true,
         isToday: highlightToday && isSameDay(date, today),
-        events: getEventsForDate(events, date)
+        events: getEventsForDate(events, date),
       });
     }
 
@@ -190,7 +203,7 @@ export function HarvestCalendar({
         date,
         isCurrentMonth: false,
         isToday: highlightToday && isSameDay(date, today),
-        events: getEventsForDate(events, date)
+        events: getEventsForDate(events, date),
       });
     }
 
@@ -215,7 +228,7 @@ export function HarvestCalendar({
     <div
       className={cn(
         "rounded-lg border border-gray-200 bg-white shadow-sm",
-        className
+        className,
       )}
       role="region"
       aria-label="Harvest planning calendar"
@@ -235,7 +248,7 @@ export function HarvestCalendar({
               "px-3 py-1.5 text-sm font-medium rounded-md",
               "border border-gray-300 text-gray-700",
               "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500",
-              animated && "transition-colors"
+              animated && "transition-colors",
             )}
             aria-label="Go to today"
           >
@@ -247,7 +260,7 @@ export function HarvestCalendar({
               className={cn(
                 "p-1.5 rounded-l-md hover:bg-gray-50",
                 "focus:outline-none focus:ring-2 focus:ring-green-500",
-                animated && "transition-colors"
+                animated && "transition-colors",
               )}
               aria-label="Previous month"
             >
@@ -258,7 +271,7 @@ export function HarvestCalendar({
               className={cn(
                 "p-1.5 rounded-r-md hover:bg-gray-50",
                 "focus:outline-none focus:ring-2 focus:ring-green-500",
-                animated && "transition-colors"
+                animated && "transition-colors",
               )}
               aria-label="Next month"
             >
@@ -284,9 +297,10 @@ export function HarvestCalendar({
       <div className="grid grid-cols-7">
         {calendar.map((cell, index) => {
           const hasEvents = cell.events.length > 0;
-          const CropIcon = hasEvents && showCropIcons
-            ? CROP_ICONS[cell.events[0].cropType]
-            : null;
+          const CropIcon =
+            hasEvents && showCropIcons && cell.events[0]
+              ? CROP_ICONS[cell.events[0].cropType]
+              : null;
 
           return (
             <div
@@ -296,7 +310,7 @@ export function HarvestCalendar({
                 "hover:bg-gray-50 cursor-pointer",
                 animated && "transition-colors",
                 !cell.isCurrentMonth && "bg-gray-50/50",
-                cell.isToday && "bg-green-50 ring-2 ring-green-500 ring-inset"
+                cell.isToday && "bg-green-50 ring-2 ring-green-500 ring-inset",
               )}
               onClick={() => onDateClick?.(cell.date)}
               role="button"
@@ -314,14 +328,19 @@ export function HarvestCalendar({
                 <span
                   className={cn(
                     "inline-flex items-center justify-center w-6 h-6 text-sm rounded-full",
-                    cell.isCurrentMonth ? "text-gray-900 font-medium" : "text-gray-400",
-                    cell.isToday && "bg-green-600 text-white font-bold"
+                    cell.isCurrentMonth
+                      ? "text-gray-900 font-medium"
+                      : "text-gray-400",
+                    cell.isToday && "bg-green-600 text-white font-bold",
                   )}
                 >
                   {cell.date.getDate()}
                 </span>
                 {CropIcon && (
-                  <CropIcon className="h-3.5 w-3.5 text-gray-400" aria-hidden="true" />
+                  <CropIcon
+                    className="h-3.5 w-3.5 text-gray-400"
+                    aria-hidden="true"
+                  />
                 )}
               </div>
 
@@ -336,7 +355,7 @@ export function HarvestCalendar({
                         "text-xs px-2 py-1 rounded truncate",
                         STATUS_CONFIG[event.status].bgColor,
                         "cursor-pointer hover:shadow-sm",
-                        animated && "transition-shadow"
+                        animated && "transition-shadow",
                       )}
                       onClick={(e) => {
                         e.stopPropagation();
@@ -348,11 +367,16 @@ export function HarvestCalendar({
                         <StatusIcon
                           className={cn(
                             "h-3 w-3 flex-shrink-0",
-                            STATUS_CONFIG[event.status].color
+                            STATUS_CONFIG[event.status].color,
                           )}
                           aria-hidden="true"
                         />
-                        <span className={cn("truncate", STATUS_CONFIG[event.status].color)}>
+                        <span
+                          className={cn(
+                            "truncate",
+                            STATUS_CONFIG[event.status].color,
+                          )}
+                        >
                           {event.cropName}
                         </span>
                       </div>
@@ -378,7 +402,10 @@ export function HarvestCalendar({
             const Icon = config.icon;
             return (
               <div key={status} className="flex items-center gap-1.5">
-                <Icon className={cn("h-3.5 w-3.5", config.color)} aria-hidden="true" />
+                <Icon
+                  className={cn("h-3.5 w-3.5", config.color)}
+                  aria-hidden="true"
+                />
                 <span className="text-xs text-gray-600">{config.label}</span>
               </div>
             );

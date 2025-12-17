@@ -1,4 +1,5 @@
 # 🏗️ Website Structure Analysis
+
 ## Farmers Market Platform - Complete Architecture Overview
 
 **Generated:** January 2025  
@@ -45,14 +46,14 @@
 
 ### Quick Stats
 
-| Metric | Count |
-|--------|-------|
-| **Total Pages** | 75+ |
-| **API Endpoints** | 150+ |
-| **Components** | 200+ |
-| **Route Groups** | 6 |
-| **Database Models** | 40+ |
-| **Lines of Code** | 50,000+ |
+| Metric              | Count   |
+| ------------------- | ------- |
+| **Total Pages**     | 75+     |
+| **API Endpoints**   | 150+    |
+| **Components**      | 200+    |
+| **Route Groups**    | 6       |
+| **Database Models** | 40+     |
+| **Lines of Code**   | 50,000+ |
 
 ---
 
@@ -222,6 +223,7 @@ farmers-market/
 ### Architectural Patterns
 
 **1. Layered Architecture**
+
 ```
 Presentation Layer    → Pages & Components (src/app, src/components)
 Application Layer     → Controllers & Services (src/lib/controllers, src/lib/services)
@@ -230,16 +232,19 @@ Data Access Layer     → Prisma & Database (src/lib/database)
 ```
 
 **2. Domain-Driven Design**
+
 - Organized by business domains (farms, products, orders, users)
 - Clear separation of concerns
 - Rich domain models
 
 **3. API Route Organization**
+
 - RESTful API design
 - Grouped by resource type
 - Consistent response formats
 
 **4. Component Architecture**
+
 - Atomic design principles
 - Reusable UI components
 - Feature-based organization
@@ -380,6 +385,7 @@ marketplace/                    # Root marketplace (redirect)
 #### Core Resources
 
 **1. Authentication & Authorization**
+
 ```
 /api/auth/                      # NextAuth endpoints
   ├── [...nextauth]/            # NextAuth handler
@@ -388,6 +394,7 @@ marketplace/                    # Root marketplace (redirect)
 ```
 
 **2. User Management**
+
 ```
 /api/users/                     # User operations
   ├── GET /api/users            # List users
@@ -398,6 +405,7 @@ marketplace/                    # Root marketplace (redirect)
 ```
 
 **3. Farm Management**
+
 ```
 /api/farms/                     # Farm operations
   ├── GET /api/farms            # List farms
@@ -409,6 +417,7 @@ marketplace/                    # Root marketplace (redirect)
 ```
 
 **4. Product Management**
+
 ```
 /api/products/                  # Product operations
   ├── GET /api/products         # List products
@@ -419,6 +428,7 @@ marketplace/                    # Root marketplace (redirect)
 ```
 
 **5. Order Management**
+
 ```
 /api/orders/                    # Order operations
   ├── GET /api/orders           # List orders
@@ -429,6 +439,7 @@ marketplace/                    # Root marketplace (redirect)
 ```
 
 **6. Cart & Checkout**
+
 ```
 /api/cart/                      # Cart operations
   ├── GET /api/cart             # Get cart
@@ -443,6 +454,7 @@ marketplace/                    # Root marketplace (redirect)
 ```
 
 **7. Payment Processing**
+
 ```
 /api/payments/                  # Payment operations
   ├── POST /api/payments/intent # Create payment intent
@@ -451,6 +463,7 @@ marketplace/                    # Root marketplace (redirect)
 ```
 
 **8. Reviews & Ratings**
+
 ```
 /api/reviews/                   # Review operations
   ├── GET /api/reviews          # List reviews
@@ -462,6 +475,7 @@ marketplace/                    # Root marketplace (redirect)
 #### Advanced Features
 
 **9. Search & Discovery**
+
 ```
 /api/search/                    # Search operations
   ├── GET /api/search/products  # Search products
@@ -470,6 +484,7 @@ marketplace/                    # Root marketplace (redirect)
 ```
 
 **10. Analytics**
+
 ```
 /api/analytics/                 # Analytics endpoints
   ├── GET /api/analytics/sales  # Sales analytics
@@ -478,6 +493,7 @@ marketplace/                    # Root marketplace (redirect)
 ```
 
 **11. Notifications**
+
 ```
 /api/notifications/             # Notification system
   ├── GET /api/notifications    # List notifications
@@ -487,6 +503,7 @@ marketplace/                    # Root marketplace (redirect)
 ```
 
 **12. AI Features**
+
 ```
 /api/ai/                        # AI endpoints
   ├── POST /api/ai/recommend    # Product recommendations
@@ -495,6 +512,7 @@ marketplace/                    # Root marketplace (redirect)
 ```
 
 **13. Agricultural Intelligence**
+
 ```
 /api/agricultural/              # Agricultural features
   ├── GET /api/agricultural/season # Seasonal data
@@ -506,6 +524,7 @@ marketplace/                    # Root marketplace (redirect)
 ```
 
 **14. Marketplace**
+
 ```
 /api/marketplace/               # Marketplace operations
   ├── GET /api/marketplace/featured # Featured items
@@ -514,6 +533,7 @@ marketplace/                    # Root marketplace (redirect)
 ```
 
 **15. Featured Content**
+
 ```
 /api/featured/                  # Featured content
   ├── GET /api/featured/farms   # Featured farms
@@ -523,6 +543,7 @@ marketplace/                    # Root marketplace (redirect)
 #### System & Administration
 
 **16. Admin Operations**
+
 ```
 /api/admin/                     # Admin endpoints
   ├── GET /api/admin/stats      # Platform statistics
@@ -531,6 +552,7 @@ marketplace/                    # Root marketplace (redirect)
 ```
 
 **17. Monitoring & Health**
+
 ```
 /api/health/                    # Health checks
 /api/ready/                     # Readiness probe
@@ -540,6 +562,7 @@ marketplace/                    # Root marketplace (redirect)
 ```
 
 **18. Platform Statistics**
+
 ```
 /api/platform/                  # Platform data
   └── GET /api/platform/stats   # Platform statistics
@@ -548,6 +571,7 @@ marketplace/                    # Root marketplace (redirect)
 #### Supporting Services
 
 **19. Upload Management**
+
 ```
 /api/upload/                    # File upload
   ├── POST /api/upload/image    # Upload image
@@ -555,6 +579,7 @@ marketplace/                    # Root marketplace (redirect)
 ```
 
 **20. Customer Support**
+
 ```
 /api/support/                   # Support tickets
   ├── GET /api/support/tickets  # List tickets
@@ -563,6 +588,7 @@ marketplace/                    # Root marketplace (redirect)
 ```
 
 **21. Resources**
+
 ```
 /api/resources/                 # Resource library
   ├── GET /api/resources/articles # Articles
@@ -570,6 +596,7 @@ marketplace/                    # Root marketplace (redirect)
 ```
 
 **22. Webhooks**
+
 ```
 /api/webhooks/                  # Webhook handlers
   ├── POST /api/webhooks/stripe # Stripe webhooks
@@ -612,6 +639,7 @@ layout/
 #### Feature Components
 
 **Homepage (src/components/homepage)**
+
 ```
 homepage/
 ├── FeaturedFarms.tsx           # Featured farms section
@@ -621,6 +649,7 @@ homepage/
 ```
 
 **Marketplace (src/components/marketplace)**
+
 ```
 marketplace/
 ├── ProductCard.tsx             # Product card
@@ -631,6 +660,7 @@ marketplace/
 ```
 
 **Cart & Checkout (src/components/cart, src/components/checkout)**
+
 ```
 cart/
 ├── CartItem.tsx                # Cart item display
@@ -645,6 +675,7 @@ checkout/
 ```
 
 **Dashboard Components (src/components/dashboard)**
+
 ```
 dashboard/
 ├── StatCard.tsx                # Statistic card
@@ -654,6 +685,7 @@ dashboard/
 ```
 
 **Farmer Components (src/components/farmer)**
+
 ```
 farmer/
 ├── ProductForm.tsx             # Product form
@@ -663,6 +695,7 @@ farmer/
 ```
 
 **Admin Components (src/components/admin)**
+
 ```
 admin/
 ├── UserTable.tsx               # User management table
@@ -674,6 +707,7 @@ admin/
 #### Domain-Specific Components
 
 **Agricultural (src/components/agricultural)**
+
 ```
 agricultural/
 ├── SeasonalIndicator.tsx       # Seasonal display
@@ -683,6 +717,7 @@ agricultural/
 ```
 
 **Divine Components (src/components/divine)**
+
 ```
 divine/
 ├── QuantumButton.tsx           # Divine button
@@ -691,6 +726,7 @@ divine/
 ```
 
 **Maps (src/components/maps)**
+
 ```
 maps/
 ├── FarmMap.tsx                 # Farm location map
@@ -699,6 +735,7 @@ maps/
 ```
 
 **Monitoring (src/components/monitoring)**
+
 ```
 monitoring/
 ├── SystemMetrics.tsx           # System metrics display
@@ -715,6 +752,7 @@ monitoring/
 #### User Management
 
 **User Model**
+
 ```prisma
 model User {
   id                      String
@@ -747,6 +785,7 @@ enum UserStatus {
 ```
 
 **Session & Account**
+
 ```prisma
 model Session {
   id           String   @id
@@ -769,6 +808,7 @@ model Account {
 #### Farm Management
 
 **Farm Model**
+
 ```prisma
 model Farm {
   id              String
@@ -784,7 +824,7 @@ model Farm {
   reviews         Review[]
   teamMembers     FarmTeamMember[]
   // ... more fields
-  
+
   owner           User         @relation(...)
 }
 
@@ -799,6 +839,7 @@ enum FarmStatus {
 #### Product Management
 
 **Product Model**
+
 ```prisma
 model Product {
   id              String
@@ -814,7 +855,7 @@ model Product {
   seasonal        Boolean      @default(false)
   images          String[]
   inventory       Int          @default(0)
-  
+
   farm            Farm         @relation(...)
   category        Category?    @relation(...)
   orderItems      OrderItem[]
@@ -835,6 +876,7 @@ model Category {
 #### Order Management
 
 **Order Model**
+
 ```prisma
 model Order {
   id              String
@@ -847,7 +889,7 @@ model Order {
   deliveryFee     Decimal
   total           Decimal
   paymentStatus   PaymentStatus @default(PENDING)
-  
+
   customer        User         @relation(...)
   farm            Farm         @relation(...)
   items           OrderItem[]
@@ -873,7 +915,7 @@ model OrderItem {
   quantity    Int
   price       Decimal
   subtotal    Decimal
-  
+
   order       Order      @relation(...)
   product     Product    @relation(...)
 }
@@ -882,6 +924,7 @@ model OrderItem {
 #### Payment & Delivery
 
 **Payment Model**
+
 ```prisma
 model Payment {
   id              String
@@ -890,7 +933,7 @@ model Payment {
   status          PaymentStatus
   method          PaymentMethod
   stripeId        String?
-  
+
   order           Order        @relation(...)
 }
 
@@ -908,7 +951,7 @@ model Delivery {
   status          DeliveryStatus
   scheduledFor    DateTime?
   deliveredAt     DateTime?
-  
+
   order           Order        @relation(...)
 }
 ```
@@ -916,6 +959,7 @@ model Delivery {
 #### Reviews & Ratings
 
 **Review Model**
+
 ```prisma
 model Review {
   id          String
@@ -925,7 +969,7 @@ model Review {
   rating      Int
   comment     String?
   verified    Boolean      @default(false)
-  
+
   user        User         @relation(...)
   product     Product?     @relation(...)
   farm        Farm?        @relation(...)
@@ -957,6 +1001,7 @@ model DownloadLog { ... }
 ### Unified Agricultural Theme (v3.0.0)
 
 **Primary Color Palette**
+
 ```css
 agricultural: {
   50:  #fdf8f3  /* Lightest background */
@@ -973,6 +1018,7 @@ secondary: {
 ```
 
 **Component Patterns**
+
 - Hero sections with SVG grid pattern
 - Cards with agricultural gradient backgrounds
 - Buttons with consistent hover states
@@ -980,6 +1026,7 @@ secondary: {
 - Footer component (reusable)
 
 **Documentation**
+
 - `UNIFIED_DESIGN_SYSTEM.md` - Complete guide (618 lines)
 - `DESIGN_QUICK_REFERENCE.md` - Copy-paste snippets (484 lines)
 - `DESIGN_UNIFICATION_SUMMARY.md` - Implementation details (517 lines)
@@ -991,11 +1038,13 @@ secondary: {
 ### Deployment Platforms
 
 **Primary: Vercel**
+
 - Production: https://farmersmarket.com
 - Staging: https://staging.farmersmarket.com
 - Preview: Automatic PR deployments
 
 **Secondary: Docker**
+
 - Containerized deployment
 - Multi-stage builds
 - Nginx reverse proxy
@@ -1040,15 +1089,17 @@ SMTP_PASS=
 ### CI/CD Pipeline
 
 **GitHub Actions**
+
 ```yaml
 Workflows:
-  - lint-and-test.yml       # Linting and unit tests
-  - e2e-tests.yml           # End-to-end tests
-  - build-and-deploy.yml    # Build and deploy
-  - security-scan.yml       # Security scanning
+  - lint-and-test.yml # Linting and unit tests
+  - e2e-tests.yml # End-to-end tests
+  - build-and-deploy.yml # Build and deploy
+  - security-scan.yml # Security scanning
 ```
 
 **Husky Hooks**
+
 ```bash
 pre-commit:  npm run lint-staged
 pre-push:    npm run type-check && npm run test
@@ -1057,15 +1108,18 @@ pre-push:    npm run type-check && npm run test
 ### Monitoring & Logging
 
 **Error Tracking**
+
 - Sentry for error monitoring
 - Source maps for production
 
 **Performance Monitoring**
+
 - Vercel Analytics
 - Speed Insights
 - Custom performance metrics
 
 **Telemetry**
+
 - OpenTelemetry instrumentation
 - Azure Application Insights
 - Custom tracing
@@ -1097,6 +1151,7 @@ npm run build
 ### Available Scripts (100+)
 
 **Development**
+
 ```bash
 npm run dev              # Start dev server (Turbo)
 npm run dev:safe         # Safe mode dev server
@@ -1104,6 +1159,7 @@ npm run dev:omen         # HP OMEN optimized
 ```
 
 **Building**
+
 ```bash
 npm run build            # Production build
 npm run build:analyze    # Build with bundle analysis
@@ -1111,6 +1167,7 @@ npm run build:omen       # Optimized for HP OMEN
 ```
 
 **Testing**
+
 ```bash
 npm run test             # Unit tests
 npm run test:e2e         # End-to-end tests
@@ -1119,6 +1176,7 @@ npm run test:integration # Integration tests
 ```
 
 **Database**
+
 ```bash
 npm run db:migrate       # Run migrations
 npm run db:seed          # Seed database
@@ -1127,6 +1185,7 @@ npm run db:reset         # Reset database
 ```
 
 **Quality**
+
 ```bash
 npm run lint             # ESLint
 npm run format           # Prettier
@@ -1135,6 +1194,7 @@ npm run quality          # Run all checks
 ```
 
 **Monitoring**
+
 ```bash
 npm run monitor          # Run monitoring
 npm run monitor:website  # Website monitoring
@@ -1144,6 +1204,7 @@ npm run diagnostic       # System diagnostics
 ### Code Organization Best Practices
 
 **1. File Naming**
+
 ```
 Components:    PascalCase.tsx    (FarmCard.tsx)
 Pages:         kebab-case/       (farm-details/)
@@ -1153,6 +1214,7 @@ Types:         PascalCase.ts     (User.types.ts)
 ```
 
 **2. Import Order**
+
 ```typescript
 // 1. External packages
 import { useState } from "react";
@@ -1171,6 +1233,7 @@ import type { Farm, Product } from "@/types";
 ```
 
 **3. Component Structure**
+
 ```typescript
 // 1. Imports
 // 2. Types/Interfaces
@@ -1301,16 +1364,16 @@ The Farmers Market Platform is a **comprehensive, enterprise-grade e-commerce pl
 ✅ **Unified design system** for consistency  
 ✅ **Complete documentation** for developers  
 ✅ **Enterprise monitoring** and observability  
-✅ **Agricultural intelligence** and AI features  
+✅ **Agricultural intelligence** and AI features
 
 **Scale:** Designed to handle 1 to 1 billion users  
 **Quality:** Divine architectural patterns  
-**Status:** Production-ready with continuous improvement  
+**Status:** Production-ready with continuous improvement
 
 ---
 
 **Generated:** January 2025  
 **Version:** 3.0.0  
-**Document Lines:** 1,500+  
+**Document Lines:** 1,500+
 
 _"One platform, infinite agricultural possibilities."_ 🌾✨

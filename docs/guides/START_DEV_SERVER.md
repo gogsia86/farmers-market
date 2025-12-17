@@ -1,4 +1,5 @@
 # 🚀 START DEV SERVER - Quick Guide
+
 **Farmers Market Platform - Get Running in 5 Minutes**
 
 ---
@@ -23,35 +24,45 @@ http://localhost:3001
 ### Choose Your Documentation:
 
 #### 👤 **I'm a Manager/PM**
+
 → Read: [**DEV_SERVER_SUMMARY.md**](./DEV_SERVER_SUMMARY.md) (2 minutes)
+
 - Executive overview
 - Current status (95/100 ✅)
 - What's working, what's not
 - Bottom line recommendation
 
 #### 🆕 **I'm a New Developer**
+
 → Read: [**QUICK_START_CHECKLIST.md**](./QUICK_START_CHECKLIST.md) (5 minutes)
+
 - Step-by-step setup
 - Quick verification
 - Common issues & fixes
 - Success indicators
 
 #### 👨‍💻 **I'm an Experienced Developer**
+
 → Read: [**DEV_SERVER_ANALYSIS_CHECKLIST.md**](./DEV_SERVER_ANALYSIS_CHECKLIST.md) (15 minutes)
+
 - Complete technical deep dive
 - All configurations explained
 - Performance tuning
 - Troubleshooting guide
 
 #### 🎯 **I'm a Tech Lead**
+
 → Read: [**RECOMMENDED_UPDATES.md**](./RECOMMENDED_UPDATES.md) (10 minutes)
+
 - Prioritized action items
 - Implementation timeline
 - Sprint planning guide
 - Technical debt tracking
 
 #### 🗺️ **I Want to Navigate All Docs**
+
 → Read: [**DEV_SERVER_DOCS_INDEX.md**](./DEV_SERVER_DOCS_INDEX.md) (Index)
+
 - Complete documentation map
 - Quick topic finder
 - Training guides
@@ -62,11 +73,13 @@ http://localhost:3001
 ## 🔍 Quick Troubleshooting
 
 ### Issue: Port Already in Use
+
 ```bash
 npm run kill-server
 ```
 
 ### Issue: Database Connection Failed
+
 ```bash
 # Windows:
 net start postgresql-x64-14
@@ -76,12 +89,14 @@ psql -U postgres -l | grep farmersmarket
 ```
 
 ### Issue: Stale Changes Not Showing
+
 ```bash
 rm -rf .next
 npm run dev
 ```
 
 ### Issue: Prisma Client Not Found
+
 ```bash
 npx prisma generate
 ```
@@ -104,6 +119,7 @@ npx prisma generate
 ```
 
 **Minor Issues** (non-blocking):
+
 - ⚠️ 22 TypeScript warnings (mainly mobile-app)
 - ⚠️ Database may need retry on first connect
 
@@ -163,13 +179,13 @@ Dev server is running when you see:
 
 **Total**: 2,709 lines | 5 documents | ~72KB
 
-| Document | Size | Time | Purpose |
-|----------|------|------|---------|
-| [Summary](./DEV_SERVER_SUMMARY.md) | 11KB | 2 min | Executive overview |
-| [Quick Start](./QUICK_START_CHECKLIST.md) | 6KB | 5 min | Fast setup |
-| [Analysis](./DEV_SERVER_ANALYSIS_CHECKLIST.md) | 28KB | 15 min | Deep dive |
-| [Updates](./RECOMMENDED_UPDATES.md) | 16KB | 10 min | Action items |
-| [Index](./DEV_SERVER_DOCS_INDEX.md) | 11KB | - | Navigation |
+| Document                                       | Size | Time   | Purpose            |
+| ---------------------------------------------- | ---- | ------ | ------------------ |
+| [Summary](./DEV_SERVER_SUMMARY.md)             | 11KB | 2 min  | Executive overview |
+| [Quick Start](./QUICK_START_CHECKLIST.md)      | 6KB  | 5 min  | Fast setup         |
+| [Analysis](./DEV_SERVER_ANALYSIS_CHECKLIST.md) | 28KB | 15 min | Deep dive          |
+| [Updates](./RECOMMENDED_UPDATES.md)            | 16KB | 10 min | Action items       |
+| [Index](./DEV_SERVER_DOCS_INDEX.md)            | 11KB | -      | Navigation         |
 
 ---
 

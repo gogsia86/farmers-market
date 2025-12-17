@@ -22,6 +22,7 @@
 ### STEP 1: Stage the Consolidation Changes
 
 **Option A: Use Helper Script (Easiest)**
+
 ```bash
 # Windows (PowerShell)
 .\stage-consolidation.ps1
@@ -32,6 +33,7 @@ chmod +x stage-consolidation.sh
 ```
 
 **Option B: Manual Staging**
+
 ```bash
 # Stage core files
 git add src/lib/services/order.service.ts
@@ -102,7 +104,8 @@ find src -name "*order.service*.ts" -type f | grep -v test
 
 **I recommend**: Create Pull Request → Review → Merge → Deploy to Staging
 
-**Why**: 
+**Why**:
+
 - Safe, documented process
 - Team visibility
 - Can test on staging first

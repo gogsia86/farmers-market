@@ -1,4 +1,5 @@
 # 🤖 Bot & AI Analysis for Web Platform
+
 ## Farmers Market Platform - Agricultural Intelligence Architecture
 
 **Analysis Date**: 2024
@@ -11,6 +12,7 @@
 ## 📋 Executive Summary
 
 The Farmers Market Platform web application features a comprehensive AI/bot architecture with:
+
 - **4 Specialized AI Agents** (OpenAI GPT-4o based)
 - **1 Local AI Chat Interface** (Ollama DeepSeek-R1:7b)
 - **Multi-Agent Orchestration** for complex tasks
@@ -26,6 +28,7 @@ The Farmers Market Platform web application features a comprehensive AI/bot arch
 **Location**: `src/lib/ai/agent-config.ts`
 
 #### Core Components:
+
 ```typescript
 - OpenAI Client (GPT-4o)
 - Agent Registry (4 specialized agents)
@@ -36,6 +39,7 @@ The Farmers Market Platform web application features a comprehensive AI/bot arch
 #### Specialized Agents:
 
 ##### 🚜 **Farm Analyst Agent**
+
 ```yaml
 Name: FarmAnalyst
 Model: GPT-4o
@@ -61,6 +65,7 @@ Use Cases:
 ```
 
 ##### 📦 **Product Catalog Manager Agent**
+
 ```yaml
 Name: ProductCatalogManager
 Model: GPT-4o
@@ -86,6 +91,7 @@ Use Cases:
 ```
 
 ##### 📋 **Order Processing Agent**
+
 ```yaml
 Name: OrderProcessor
 Model: GPT-4o
@@ -111,6 +117,7 @@ Use Cases:
 ```
 
 ##### 💬 **Customer Support Agent**
+
 ```yaml
 Name: CustomerSupport
 Model: GPT-4o
@@ -161,6 +168,7 @@ Features:
 ```
 
 #### API Endpoint:
+
 ```typescript
 POST /api/ai/ollama
   - Message processing
@@ -175,6 +183,7 @@ GET /api/ai/ollama
 ```
 
 #### Dynamic Loading Pattern:
+
 ```typescript
 Location: src/components/features/ai/OllamaChatBotDynamic.tsx
 
@@ -189,17 +198,20 @@ Benefits:
 #### User Interface Features:
 
 **Header Section:**
+
 - Bot status indicator (online/offline)
 - Model information (DeepSeek-R1:7b)
 - Refresh status button
 - Agricultural AI branding
 
 **Status Banner:**
+
 - Ollama availability warning
 - Start command instructions
 - Visual alert system
 
 **Message Area:**
+
 - Welcome message with suggestions
 - User/Assistant message differentiation
 - Avatar icons (User/Bot)
@@ -208,6 +220,7 @@ Benefits:
 - Auto-scroll to latest message
 
 **Input Section:**
+
 - Multi-line textarea with auto-resize
 - Send button with loading state
 - Keyboard shortcuts (Enter to send, Shift+Enter for newline)
@@ -215,6 +228,7 @@ Benefits:
 - Disabled state when Ollama unavailable
 
 **Suggested Prompts:**
+
 - "What is crop rotation?"
 - "How do I improve soil health?"
 - "Best practices for organic farming"
@@ -258,24 +272,29 @@ Advanced Features:
 #### Analysis Capabilities:
 
 **Confidence Assessment:**
+
 - Detects uncertain language
 - Identifies confident statements
 - Calculates weighted confidence score (0-1)
 
 **Agricultural Relevance:**
+
 - Keyword matching (organic, sustainable, biodynamic, etc.)
 - Relevance scoring (0-1)
 
 **Risk Level Assessment:**
+
 - High risk: disease, pest, drought, failure
 - Medium risk: challenging, difficult, careful, concern
 - Low risk: everything else
 
 **Biodynamic Score:**
+
 - Measures alignment with biodynamic principles
 - Keywords: biodynamic, regenerative, holistic, lunar, cosmic
 
 **Quantum Coherence:**
+
 - Measures agricultural consciousness alignment
 - Keywords: consciousness, energy, harmony, balance, vibration
 
@@ -286,6 +305,7 @@ Advanced Features:
 ### Demo Pages
 
 #### 1. **Chat Demo Page**
+
 ```typescript
 Location: src/app/demos/chat/page.tsx
 Route: /demos/chat
@@ -301,6 +321,7 @@ Features:
 ```
 
 #### 2. **Analytics Demo**
+
 ```typescript
 Location: src/app/demos/analytics/page.tsx
 Route: /demos/analytics
@@ -308,6 +329,7 @@ Purpose: Advanced analytics dashboard
 ```
 
 #### 3. **Inventory Demo**
+
 ```typescript
 Location: src/app/demos/inventory/page.tsx
 Route: /demos/inventory
@@ -317,6 +339,7 @@ Purpose: Inventory management dashboard
 ### Public Pages with Bot References
 
 #### Help Page
+
 ```typescript
 Location: src/app/(public)/help/page.tsx
 Contact Options:
@@ -326,6 +349,7 @@ Contact Options:
 ```
 
 #### Support Page
+
 ```typescript
 Location: src/app/(public)/support/page.tsx
 Support Channels:
@@ -341,6 +365,7 @@ Support Channels:
 ### Ollama API Routes
 
 #### 1. **Chat Endpoint**
+
 ```http
 POST /api/ai/ollama
 Content-Type: application/json
@@ -372,6 +397,7 @@ Response:
 ```
 
 #### 2. **Health Check Endpoint**
+
 ```http
 GET /api/ai/ollama
 
@@ -388,6 +414,7 @@ Response:
 ```
 
 #### 3. **Analysis Endpoint**
+
 ```http
 POST /api/ai/ollama/analyze
 Content-Type: application/json
@@ -437,6 +464,7 @@ Response (Farming Advisory):
 ### Test Scripts
 
 #### 1. **Agent Framework Tests**
+
 ```bash
 Location: scripts/test-agent-framework.ts
 Command: npm run test:agents
@@ -452,6 +480,7 @@ Test Coverage:
 ```
 
 #### 2. **Telemetry Tests**
+
 ```bash
 Location: scripts/test-telemetry.ts
 
@@ -462,6 +491,7 @@ Includes:
 ```
 
 #### 3. **AI Verification**
+
 ```bash
 Location: scripts/verify-all-ai.ts
 
@@ -500,9 +530,9 @@ const task = {
   task: "Analyze Sunshine Organic Farm performance and provide optimization recommendations",
   context: {
     farmId: "farm-123",
-    userId: "user-456"
+    userId: "user-456",
   },
-  requiredAgents: ["farmAnalyst", "productCatalog", "orderProcessor"]
+  requiredAgents: ["farmAnalyst", "productCatalog", "orderProcessor"],
 };
 
 const responses = await orchestrateAgents(task);
@@ -516,8 +546,8 @@ const responses = await orchestrateAgents(task);
 const response = await invokeAgent(
   "productCatalog",
   "Generate a compelling description for organic heirloom tomatoes. " +
-  "They are pesticide-free, harvested at peak ripeness, variety of colors.",
-  { productId: "prod-789" }
+    "They are pesticide-free, harvested at peak ripeness, variety of colors.",
+  { productId: "prod-789" },
 );
 
 // Returns: SEO-optimized description, tags, categories
@@ -530,7 +560,7 @@ const response = await invokeAgent(
 const response = await invokeAgent(
   "customerSupport",
   "Customer wants to know about organic certification and delivery options",
-  { userId: "customer-123", sessionId: "session-456" }
+  { userId: "customer-123", sessionId: "session-456" },
 );
 
 // Returns: Detailed response with recommendations
@@ -675,14 +705,12 @@ Visual Feedback:
 ### Data Protection
 
 ```yaml
-Local AI Processing:
-  ✅ Messages processed locally (Ollama)
+Local AI Processing: ✅ Messages processed locally (Ollama)
   ✅ No data sent to external servers
   ✅ User privacy maintained
   ✅ GDPR compliant
 
-API Security:
-  ✅ API key encryption
+API Security: ✅ API key encryption
   ✅ Rate limiting applied
   ✅ Request validation
   ✅ Error sanitization
@@ -760,8 +788,7 @@ Cloud Integration:
 ### Production Checklist
 
 ```yaml
-Required:
-  ✅ Set OPENAI_API_KEY
+Required: ✅ Set OPENAI_API_KEY
   ✅ Configure Ollama service
   ✅ Pull DeepSeek-R1:7b model
   ✅ Test health endpoints
@@ -771,8 +798,7 @@ Required:
   ✅ Enable rate limiting
   ✅ Configure error tracking
 
-Optional:
-  ⚠️ Set up Redis for session storage
+Optional: ⚠️ Set up Redis for session storage
   ⚠️ Configure CDN for static assets
   ⚠️ Enable advanced tracing
   ⚠️ Set up load balancing
@@ -806,13 +832,14 @@ Alerting Thresholds:
 ### Code Examples
 
 #### Invoking a Single Agent
+
 ```typescript
-import { invokeAgent } from '@/lib/ai/agent-config';
+import { invokeAgent } from "@/lib/ai/agent-config";
 
 const response = await invokeAgent(
-  'farmAnalyst',
-  'Analyze crop yield for 2024',
-  { farmId: 'farm-123' }
+  "farmAnalyst",
+  "Analyze crop yield for 2024",
+  { farmId: "farm-123" },
 );
 
 console.log(response.content);
@@ -820,22 +847,24 @@ console.log(`Confidence: ${response.confidence}`);
 ```
 
 #### Multi-Agent Orchestration
+
 ```typescript
-import { orchestrateAgents } from '@/lib/ai/agent-config';
+import { orchestrateAgents } from "@/lib/ai/agent-config";
 
 const responses = await orchestrateAgents({
-  task: 'Optimize farm operations for spring season',
-  context: { farmId: 'farm-123', season: 'spring' },
-  requiredAgents: ['farmAnalyst', 'productCatalog'],
-  maxTurns: 3
+  task: "Optimize farm operations for spring season",
+  context: { farmId: "farm-123", season: "spring" },
+  requiredAgents: ["farmAnalyst", "productCatalog"],
+  maxTurns: 3,
 });
 
-responses.forEach(r => console.log(r.agent, r.content));
+responses.forEach((r) => console.log(r.agent, r.content));
 ```
 
 #### Using Chat Component
+
 ```tsx
-import { OllamaChatBotDynamic } from '@/components/features/ai/OllamaChatBotDynamic';
+import { OllamaChatBotDynamic } from "@/components/features/ai/OllamaChatBotDynamic";
 
 export default function MyPage() {
   return (
@@ -843,7 +872,7 @@ export default function MyPage() {
       <OllamaChatBotDynamic
         placeholder="Ask about your farm..."
         onResponse={(response) => {
-          console.log('Bot responded:', response);
+          console.log("Bot responded:", response);
         }}
       />
     </div>
@@ -852,12 +881,13 @@ export default function MyPage() {
 ```
 
 #### Agricultural Analysis
+
 ```typescript
-import { analyzeAgriculturalQuery } from '@/lib/ai/ollama';
+import { analyzeAgriculturalQuery } from "@/lib/ai/ollama";
 
 const result = await analyzeAgriculturalQuery(
-  'How to improve soil health naturally?',
-  { farmId: 'farm-123', season: 'spring' }
+  "How to improve soil health naturally?",
+  { farmId: "farm-123", season: "spring" },
 );
 
 console.log(result.analysis);
@@ -932,8 +962,7 @@ Examples:
 ### Performance Optimization ✅
 
 ```yaml
-HP OMEN Optimization:
-  ✅ GPU acceleration (RTX 2070)
+HP OMEN Optimization: ✅ GPU acceleration (RTX 2070)
   ✅ Parallel processing (12 threads)
   ✅ Memory efficiency (64GB RAM)
   ✅ Local AI processing
@@ -952,8 +981,7 @@ Metrics:
 ### Code Quality ✅
 
 ```yaml
-Standards:
-  ✅ TypeScript strict mode
+Standards: ✅ TypeScript strict mode
   ✅ ESLint compliance
   ✅ Comprehensive error handling
   ✅ Type safety throughout
@@ -962,8 +990,7 @@ Standards:
   ✅ Divine naming conventions
   ✅ Separation of concerns
 
-Architecture:
-  ✅ Layered pattern (Route → Controller → Service)
+Architecture: ✅ Layered pattern (Route → Controller → Service)
   ✅ Single responsibility
   ✅ Dependency injection
   ✅ Interface segregation

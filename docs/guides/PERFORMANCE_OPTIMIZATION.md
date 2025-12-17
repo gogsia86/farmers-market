@@ -27,6 +27,7 @@
 ### Baseline Measurements (December 6, 2025)
 
 #### Development Environment
+
 ```yaml
 Server Startup Time: ~1.5s ✅
 Memory Usage: 80-84% (within acceptable range)
@@ -46,6 +47,7 @@ Page Load Times:
 ```
 
 #### Performance Targets
+
 ```yaml
 API Response Time: < 500ms
 Page Load Time: < 3s
@@ -61,6 +63,7 @@ Server Startup: < 3s
 ## 🖥️ Hardware-Specific Optimizations
 
 ### Development Machine Specifications
+
 ```yaml
 CPU: Intel i7 (12 threads, 2.6-4.5 GHz)
 GPU: NVIDIA RTX 2070 Max-Q (2304 CUDA cores)
@@ -72,6 +75,7 @@ OS: Windows 11
 ### Node.js Memory Allocation
 
 #### Current Configuration (package.json)
+
 ```json
 {
   "scripts": {
@@ -81,6 +85,7 @@ OS: Windows 11
 ```
 
 **Optimization:** 16GB heap allocated (16384 MB)
+
 - **Rationale:** With 64GB total RAM, allocating 16GB to Node.js allows:
   - Large build processes without OOM errors
   - In-memory caching of entire datasets
@@ -108,6 +113,7 @@ OS: Windows 11
 #### Leverage 12 CPU Threads
 
 **Parallel Processing Pattern:**
+
 ```typescript
 // ✅ OPTIMIZED - Parallel execution across threads
 export async function processFarmsInParallel(farmIds: string[]) {
@@ -115,7 +121,7 @@ export async function processFarmsInParallel(farmIds: string[]) {
   const results = await Promise.all(
     farmIds.map(async (id) => {
       return await processHeavyFarmOperation(id);
-    })
+    }),
   );
   return results;
 }
@@ -131,16 +137,15 @@ export async function processFarmsSequentially(farmIds: string[]) {
 ```
 
 **Batch Processing with Concurrency Control:**
+
 ```typescript
-import pLimit from 'p-limit';
+import pLimit from "p-limit";
 
 // Limit to 12 concurrent operations (match CPU threads)
 const limit = pLimit(12);
 
 export async function batchProcessWithLimit(items: any[]) {
-  const tasks = items.map((item) =>
-    limit(() => processItem(item))
-  );
+  const tasks = items.map((item) => limit(() => processItem(item)));
   return await Promise.all(tasks);
 }
 ```
@@ -148,24 +153,28 @@ export async function batchProcessWithLimit(items: any[]) {
 ### GPU Acceleration (Optional for Intensive Operations)
 
 **Use Cases for RTX 2070:**
+
 - Image processing and optimization
 - ML inference (product recommendations)
 - Large-scale data transformations
 
 **Example with gpu.js:**
-```typescript
-import { GPU } from 'gpu.js';
 
-const gpu = new GPU({ mode: 'gpu' });
+```typescript
+import { GPU } from "gpu.js";
+
+const gpu = new GPU({ mode: "gpu" });
 
 // GPU-accelerated matrix operations
-const multiplyMatrix = gpu.createKernel(function(a: number[][], b: number[][]) {
-  let sum = 0;
-  for (let i = 0; i < 512; i++) {
-    sum += a[this.thread.y][i] * b[i][this.thread.x];
-  }
-  return sum;
-}).setOutput([512, 512]);
+const multiplyMatrix = gpu
+  .createKernel(function (a: number[][], b: number[][]) {
+    let sum = 0;
+    for (let i = 0; i < 512; i++) {
+      sum += a[this.thread.y][i] * b[i][this.thread.x];
+    }
+    return sum;
+  })
+  .setOutput([512, 512]);
 
 // Use for ML model inference, image processing, etc.
 ```
@@ -177,6 +186,7 @@ const multiplyMatrix = gpu.createKernel(function(a: number[][], b: number[][]) {
 ### Memory Monitoring
 
 #### Health Check Integration
+
 ```typescript
 // src/app/api/health/route.ts (current implementation)
 const memoryUsage = process.memoryUsage();
@@ -187,32 +197,34 @@ return {
   memory: {
     used: Math.round(usedMemory / 1024 / 1024),
     total: Math.round(totalMemory / 1024 / 1024),
-    percentage: Math.round((usedMemory / totalMemory) * 100)
-  }
+    percentage: Math.round((usedMemory / totalMemory) * 100),
+  },
 };
 ```
 
 #### Memory Leak Detection
+
 ```typescript
 // Add to instrumentation.ts for production monitoring
 export function registerMemoryMonitoring() {
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === "production") {
     setInterval(() => {
       const usage = process.memoryUsage();
-      
+
       // Log if heap usage exceeds 85%
       if (usage.heapUsed / usage.heapTotal > 0.85) {
-        console.warn('⚠️ High heap usage:', {
-          heapUsed: Math.round(usage.heapUsed / 1024 / 1024) + 'MB',
-          heapTotal: Math.round(usage.heapTotal / 1024 / 1024) + 'MB',
-          percentage: Math.round((usage.heapUsed / usage.heapTotal) * 100) + '%'
+        console.warn("⚠️ High heap usage:", {
+          heapUsed: Math.round(usage.heapUsed / 1024 / 1024) + "MB",
+          heapTotal: Math.round(usage.heapTotal / 1024 / 1024) + "MB",
+          percentage:
+            Math.round((usage.heapUsed / usage.heapTotal) * 100) + "%",
         });
       }
-      
+
       // Force GC if available and memory is very high
-      if (global.gc && usage.heapUsed / usage.heapTotal > 0.90) {
+      if (global.gc && usage.heapUsed / usage.heapTotal > 0.9) {
         global.gc();
-        console.info('🗑️ Forced garbage collection');
+        console.info("🗑️ Forced garbage collection");
       }
     }, 60000); // Check every minute
   }
@@ -222,9 +234,10 @@ export function registerMemoryMonitoring() {
 ### In-Memory Caching Strategy
 
 #### Multi-Layer Cache (64GB RAM Advantage)
+
 ```typescript
 // src/lib/cache/memory-cache.ts
-import { LRUCache } from 'lru-cache';
+import { LRUCache } from "lru-cache";
 
 interface CacheLayer<K, V> {
   get(key: K): V | undefined;
@@ -237,10 +250,10 @@ interface CacheLayer<K, V> {
 class MemoryCacheManager {
   // L1: Hot cache (most frequently accessed, 100MB)
   private hotCache: LRUCache<string, any>;
-  
+
   // L2: Warm cache (frequently accessed, 500MB)
   private warmCache: LRUCache<string, any>;
-  
+
   // L3: Cold cache (infrequently accessed, 2GB)
   private coldCache: LRUCache<string, any>;
 
@@ -250,21 +263,21 @@ class MemoryCacheManager {
       max: 1000,
       maxSize: 100 * 1024 * 1024, // 100MB
       ttl: 1000 * 60 * 5, // 5 minutes
-      sizeCalculation: (value) => JSON.stringify(value).length
+      sizeCalculation: (value) => JSON.stringify(value).length,
     });
 
     this.warmCache = new LRUCache({
       max: 5000,
       maxSize: 500 * 1024 * 1024, // 500MB
       ttl: 1000 * 60 * 15, // 15 minutes
-      sizeCalculation: (value) => JSON.stringify(value).length
+      sizeCalculation: (value) => JSON.stringify(value).length,
     });
 
     this.coldCache = new LRUCache({
       max: 20000,
       maxSize: 2 * 1024 * 1024 * 1024, // 2GB
       ttl: 1000 * 60 * 60, // 1 hour
-      sizeCalculation: (value) => JSON.stringify(value).length
+      sizeCalculation: (value) => JSON.stringify(value).length,
     });
   }
 
@@ -294,15 +307,19 @@ class MemoryCacheManager {
     return null;
   }
 
-  set(key: string, value: any, priority: 'hot' | 'warm' | 'cold' = 'warm'): void {
+  set(
+    key: string,
+    value: any,
+    priority: "hot" | "warm" | "cold" = "warm",
+  ): void {
     switch (priority) {
-      case 'hot':
+      case "hot":
         this.hotCache.set(key, value);
         break;
-      case 'warm':
+      case "warm":
         this.warmCache.set(key, value);
         break;
-      case 'cold':
+      case "cold":
         this.coldCache.set(key, value);
         break;
     }
@@ -321,7 +338,7 @@ class MemoryCacheManager {
       cold: {
         size: this.coldCache.size,
         calculatedSize: this.coldCache.calculatedSize,
-      }
+      },
     };
   }
 }
@@ -336,6 +353,7 @@ export const memoryCache = new MemoryCacheManager();
 ### Prisma Query Patterns
 
 #### ✅ Optimized: Selective Field Loading
+
 ```typescript
 // Only load fields you need
 const farms = await database.farm.findMany({
@@ -345,40 +363,43 @@ const farms = await database.farm.findMany({
     slug: true,
     location: true,
     // Don't load description, images, etc. if not needed
-  }
+  },
 });
 ```
 
 #### ✅ Optimized: Parallel Queries
+
 ```typescript
 // Execute multiple queries concurrently
 const [farms, products, totalFarms, totalProducts] = await Promise.all([
   database.farm.findMany({ take: 20 }),
   database.product.findMany({ take: 20 }),
   database.farm.count(),
-  database.product.count()
+  database.product.count(),
 ]);
 ```
 
 #### ❌ Avoid: N+1 Query Problem
+
 ```typescript
 // BAD - N+1 queries
 const farms = await database.farm.findMany();
 for (const farm of farms) {
   const products = await database.product.findMany({
-    where: { farmId: farm.id }
+    where: { farmId: farm.id },
   }); // This runs N times!
 }
 
 // GOOD - Single query with include
 const farms = await database.farm.findMany({
-  include: { products: true }
+  include: { products: true },
 });
 ```
 
 ### Database Indexing Strategy
 
 **Recommended Indexes:**
+
 ```sql
 -- High-frequency lookups
 CREATE INDEX idx_farms_slug ON farms(slug);
@@ -398,6 +419,7 @@ CREATE INDEX idx_orders_customer_date ON orders(customer_id, created_at DESC);
 ### Connection Pooling
 
 **Prisma Configuration (.env):**
+
 ```env
 # Development
 DATABASE_URL="postgresql://user:pass@localhost:5432/db?schema=public&connection_limit=10"
@@ -448,8 +470,8 @@ export async function getCachedData<T>(
   fetchFn: () => Promise<T>,
   options: {
     ttl?: number;
-    priority?: 'hot' | 'warm' | 'cold';
-  } = {}
+    priority?: "hot" | "warm" | "cold";
+  } = {},
 ): Promise<T> {
   // 1. Try memory cache
   const cached = await memoryCache.get<T>(key);
@@ -458,7 +480,7 @@ export async function getCachedData<T>(
   }
 
   // 2. Try Redis (production only)
-  if (process.env.REDIS_ENABLED === 'true') {
+  if (process.env.REDIS_ENABLED === "true") {
     const redisCached = await redis.get(key);
     if (redisCached) {
       const parsed = JSON.parse(redisCached);
@@ -473,14 +495,9 @@ export async function getCachedData<T>(
 
   // 4. Store in caches
   memoryCache.set(key, data, options.priority);
-  
-  if (process.env.REDIS_ENABLED === 'true') {
-    await redis.set(
-      key,
-      JSON.stringify(data),
-      'EX',
-      options.ttl || 3600
-    );
+
+  if (process.env.REDIS_ENABLED === "true") {
+    await redis.set(key, JSON.stringify(data), "EX", options.ttl || 3600);
   }
 
   return data;
@@ -491,7 +508,7 @@ export async function getFarmById(id: string) {
   return getCachedData(
     `farm:${id}`,
     () => database.farm.findUnique({ where: { id } }),
-    { ttl: 300, priority: 'hot' }
+    { ttl: 300, priority: "hot" },
   );
 }
 ```
@@ -506,14 +523,14 @@ export class CacheInvalidator {
       `farm:${farmId}`,
       `farm:${farmId}:products`,
       `farms:list`,
-      `farms:by-owner:*`
+      `farms:by-owner:*`,
     ];
 
     // Clear from all cache layers
     for (const key of keys) {
       memoryCache.delete(key);
-      if (process.env.REDIS_ENABLED === 'true') {
-        if (key.includes('*')) {
+      if (process.env.REDIS_ENABLED === "true") {
+        if (key.includes("*")) {
           await redis.del(await redis.keys(key));
         } else {
           await redis.del(key);
@@ -532,12 +549,12 @@ export class CacheInvalidator {
 export async function updateFarm(id: string, data: UpdateFarmData) {
   const updated = await database.farm.update({
     where: { id },
-    data
+    data,
   });
-  
+
   // Invalidate cache
   await CacheInvalidator.invalidateFarm(id);
-  
+
   return updated;
 }
 ```
@@ -549,18 +566,19 @@ export async function updateFarm(id: string, data: UpdateFarmData) {
 ### Current Configuration
 
 **next.config.ts:**
+
 ```typescript
 const config: NextConfig = {
   experimental: {
     memoryBasedWorkersCount: true, // ✅ Leverage 64GB RAM
-    optimizeCss: true,              // ✅ CSS optimization
-    scrollRestoration: true,        // ✅ Better UX
+    optimizeCss: true, // ✅ CSS optimization
+    scrollRestoration: true, // ✅ Better UX
   },
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production', // Remove console.logs
+    removeConsole: process.env.NODE_ENV === "production", // Remove console.logs
   },
   images: {
-    formats: ['image/avif', 'image/webp'], // Modern formats
+    formats: ["image/avif", "image/webp"], // Modern formats
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
@@ -601,7 +619,7 @@ export default async function ProductsPage() {
 // Static Generation (fastest, use when possible)
 export async function generateStaticParams() {
   const farms = await database.farm.findMany({
-    select: { slug: true }
+    select: { slug: true },
   });
   return farms.map((farm) => ({ slug: farm.slug }));
 }
@@ -610,7 +628,7 @@ export async function generateStaticParams() {
 export const revalidate = 3600;
 
 // Dynamic - Server render on each request
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 ```
 
 ---
@@ -620,6 +638,7 @@ export const dynamic = 'force-dynamic';
 ### Component Optimization Patterns
 
 #### Memoization
+
 ```typescript
 import { memo, useMemo, useCallback } from 'react';
 
@@ -646,6 +665,7 @@ function ProductsList({ products }: { products: Product[] }) {
 ```
 
 #### Virtual Scrolling for Large Lists
+
 ```typescript
 import { useVirtualizer } from '@tanstack/react-virtual';
 
@@ -706,19 +726,20 @@ const ImageEditor = dynamic(() => import('@/components/ImageEditor'), {
 ### Response Compression
 
 **Middleware configuration:**
+
 ```typescript
 // src/middleware.ts (or proxy.ts in Next.js 16)
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
   const response = NextResponse.next();
-  
+
   // Enable compression for API routes
-  if (request.nextUrl.pathname.startsWith('/api')) {
-    response.headers.set('Content-Encoding', 'gzip');
+  if (request.nextUrl.pathname.startsWith("/api")) {
+    response.headers.set("Content-Encoding", "gzip");
   }
-  
+
   return response;
 }
 ```
@@ -731,7 +752,7 @@ export async function getProductsPaginated(cursor?: string, limit = 20) {
   const products = await database.product.findMany({
     take: limit + 1, // Fetch one extra to know if there's a next page
     cursor: cursor ? { id: cursor } : undefined,
-    orderBy: { createdAt: 'desc' }
+    orderBy: { createdAt: "desc" },
   });
 
   const hasNextPage = products.length > limit;
@@ -740,7 +761,7 @@ export async function getProductsPaginated(cursor?: string, limit = 20) {
   return {
     items,
     nextCursor: hasNextPage ? items[items.length - 1].id : null,
-    hasNextPage
+    hasNextPage,
   };
 }
 ```
@@ -754,24 +775,24 @@ export async function GET(request: NextRequest) {
   const stream = new ReadableStream({
     async start(controller) {
       const farms = await database.farm.findMany();
-      
+
       controller.enqueue(encoder.encode('{"farms":['));
-      
+
       for (let i = 0; i < farms.length; i++) {
         const json = JSON.stringify(farms[i]);
         controller.enqueue(encoder.encode(json));
         if (i < farms.length - 1) {
-          controller.enqueue(encoder.encode(','));
+          controller.enqueue(encoder.encode(","));
         }
       }
-      
-      controller.enqueue(encoder.encode(']}'));
+
+      controller.enqueue(encoder.encode("]}"));
       controller.close();
-    }
+    },
   });
 
   return new Response(stream, {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { "Content-Type": "application/json" },
   });
 }
 ```
@@ -791,12 +812,12 @@ export const performanceConfig = {
       redis: false,
       memory: {
         maxSize: 2 * 1024 * 1024 * 1024, // 2GB
-      }
+      },
     },
     logging: {
-      level: 'debug',
-      performance: true
-    }
+      level: "debug",
+      performance: true,
+    },
   },
   production: {
     caching: {
@@ -804,21 +825,23 @@ export const performanceConfig = {
       redis: true,
       memory: {
         maxSize: 512 * 1024 * 1024, // 512MB (Redis is primary)
-      }
+      },
     },
     logging: {
-      level: 'warn',
-      performance: false
-    }
-  }
+      level: "warn",
+      performance: false,
+    },
+  },
 };
 
-export const config = performanceConfig[process.env.NODE_ENV as 'development' | 'production'];
+export const config =
+  performanceConfig[process.env.NODE_ENV as "development" | "production"];
 ```
 
 ### Docker Configuration for Production
 
 **Dockerfile (optimized):**
+
 ```dockerfile
 FROM node:22-alpine AS base
 
@@ -861,15 +884,16 @@ CMD ["node", "server.js"]
 ### CDN Configuration
 
 **For static assets:**
+
 ```typescript
 // next.config.ts
 const config: NextConfig = {
-  assetPrefix: process.env.CDN_URL || '',
+  assetPrefix: process.env.CDN_URL || "",
   images: {
-    domains: ['cdn.yourdomain.com'],
-    loader: 'custom',
-    loaderFile: './src/lib/image-loader.ts'
-  }
+    domains: ["cdn.yourdomain.com"],
+    loader: "custom",
+    loaderFile: "./src/lib/image-loader.ts",
+  },
 };
 ```
 
@@ -897,6 +921,7 @@ export async function GET() {
 ### Profiling Tools
 
 **Development:**
+
 ```bash
 # Node.js profiling
 node --prof npm run dev
@@ -911,10 +936,11 @@ clinic doctor -- node server.js
 ```
 
 **Production:**
+
 ```typescript
 // OpenTelemetry integration (src/instrumentation.ts)
-import { NodeSDK } from '@opentelemetry/sdk-node';
-import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
 
 const sdk = new NodeSDK({
   instrumentations: [getNodeAutoInstrumentations()],
@@ -926,6 +952,7 @@ sdk.start();
 ### Key Performance Indicators (KPIs)
 
 **Monitor these metrics:**
+
 ```yaml
 Response Times:
   - P50: < 200ms
@@ -952,6 +979,7 @@ Database:
 ## ✅ Performance Checklist
 
 ### Development Environment
+
 - [x] Node.js memory allocated (16GB)
 - [x] Turbopack enabled
 - [x] Memory-based worker count enabled
@@ -961,6 +989,7 @@ Database:
 - [x] Source maps optimized
 
 ### Code Optimization
+
 - [x] Prisma queries use selective fields
 - [x] No N+1 query problems
 - [x] Parallel Promise.all() where applicable
@@ -969,6 +998,7 @@ Database:
 - [ ] Virtual scrolling for long lists (implement as needed)
 
 ### Production Readiness
+
 - [ ] Redis enabled and configured
 - [ ] CDN configured for static assets
 - [ ] Image optimization enabled
@@ -1016,11 +1046,13 @@ Database:
 ## 📖 Resources
 
 ### Documentation
+
 - [Next.js Performance Docs](https://nextjs.org/docs/app/building-your-application/optimizing)
 - [Prisma Performance Guide](https://www.prisma.io/docs/guides/performance-and-optimization)
 - [React Performance](https://react.dev/learn/render-and-commit)
 
 ### Tools
+
 - [Lighthouse](https://developers.google.com/web/tools/lighthouse)
 - [WebPageTest](https://www.webpagetest.org/)
 - [Clinic.js](https://clinicjs.org/)

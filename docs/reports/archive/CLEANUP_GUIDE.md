@@ -24,6 +24,7 @@
 This guide provides comprehensive instructions for identifying and cleaning up problematic files, duplicate code, and database inconsistencies in the Farmers Market Platform.
 
 ### Goals
+
 - ✅ Eliminate duplicate files and conflicting code
 - ✅ Remove deprecated patterns and old code
 - ✅ Ensure database integrity
@@ -50,6 +51,7 @@ npm run cleanup:full
 ### View Detailed Reports
 
 After running the checks, view the generated reports:
+
 - `cleanup-report.json` - Codebase issues
 - `database-cleanup-report.json` - Database issues
 
@@ -62,6 +64,7 @@ After running the checks, view the generated reports:
 **Location:** `scripts/cleanup-check.js`
 
 **Checks for:**
+
 - ✅ Duplicate filenames
 - ✅ Case-insensitive duplicates
 - ✅ Old/deprecated patterns (getServerSideProps, class components, etc.)
@@ -73,6 +76,7 @@ After running the checks, view the generated reports:
 - ✅ Missing exports
 
 **Usage:**
+
 ```bash
 npm run cleanup:check
 ```
@@ -82,6 +86,7 @@ npm run cleanup:check
 **Location:** `scripts/clean-database.ts`
 
 **Checks for:**
+
 - ✅ Orphaned records (products without farms, etc.)
 - ✅ Invalid statuses
 - ✅ Old soft-deleted records (>30 days)
@@ -90,6 +95,7 @@ npm run cleanup:check
 - ✅ Duplicate slugs
 
 **Usage:**
+
 ```bash
 npm run cleanup:db
 ```
@@ -105,6 +111,7 @@ npm run cleanup:db
 **Problem:** Multiple files with same name causing potential conflicts
 
 **High Priority Duplicates:**
+
 ```
 actions.ts
 ├── app/(admin)/admin/farms/actions.ts
@@ -133,6 +140,7 @@ geocoding.service.ts
 **Problem:** Files marked with "use client" but using server-only features
 
 **Files to Fix:**
+
 - `app/(admin)/admin/farms/FarmsTable.tsx`
 - `app/(auth)/admin-login/page.tsx`
 - `app/error.tsx`
@@ -142,6 +150,7 @@ geocoding.service.ts
 - `features/order-management/hooks/useOrders.ts`
 
 **Resolution:**
+
 1. Remove server-only features from client components
 2. OR move server logic to Server Components
 3. OR remove "use client" directive if not needed
@@ -161,6 +170,7 @@ Loading.tsx vs loading.tsx
 #### 4. Large Files (>500 lines)
 
 **Files that should be refactored:**
+
 - `app/(customer)/dashboard/profile/page.tsx` (918 lines)
 - `app/(customer)/dashboard/addresses/page.tsx` (784 lines)
 - `app/(farmer)/farmer/settings/page.tsx` (683 lines)
@@ -245,6 +255,7 @@ npm run cleanup:db
 #### Orphaned Records
 
 **Products without farms:**
+
 ```sql
 -- Find orphaned products
 SELECT p.id, p.name, p."farmId"
@@ -258,6 +269,7 @@ WHERE "farmId" NOT IN (SELECT id FROM farms);
 ```
 
 **Order items without orders:**
+
 ```sql
 -- Find orphaned order items
 SELECT oi.id, oi."orderId"
@@ -338,6 +350,7 @@ src/
 ### Naming Conventions
 
 **Files:**
+
 - Components: PascalCase (`FarmCard.tsx`)
 - Utilities: camelCase (`formatPrice.ts`)
 - Types: camelCase with `.types.ts` suffix (`farm.types.ts`)
@@ -345,6 +358,7 @@ src/
 - Tests: Match filename with `.test.ts` suffix
 
 **Directories:**
+
 - kebab-case for multi-word (`farm-management/`)
 - PascalCase for component directories (`FarmCard/`)
 
@@ -355,6 +369,7 @@ src/
 ### 1. Prevent Duplicates
 
 **Before creating a new file:**
+
 ```bash
 # Search for existing similar files
 find src -name "*farm*" -type f
@@ -362,6 +377,7 @@ rg "export.*FarmCard" src/
 ```
 
 **Use path aliases:**
+
 ```typescript
 // tsconfig.json
 {
@@ -388,11 +404,13 @@ rg "export.*FarmCard" src/
 ### 3. Regular Maintenance
 
 **Weekly:**
+
 ```bash
 npm run cleanup:check
 ```
 
 **Monthly:**
+
 ```bash
 npm run cleanup:full
 npm run build  # Check for build errors
@@ -400,6 +418,7 @@ npm run test   # Run all tests
 ```
 
 **Quarterly:**
+
 - Review and update dependencies
 - Analyze bundle size
 - Database performance audit
@@ -425,28 +444,28 @@ on:
 jobs:
   cleanup-check:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
-          cache: 'npm'
-      
+          node-version: "20"
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Run cleanup check
         run: npm run cleanup:check || true
-      
+
       - name: Upload cleanup report
         uses: actions/upload-artifact@v3
         with:
           name: cleanup-report
           path: cleanup-report.json
-      
+
       - name: Comment on PR
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v6
@@ -454,22 +473,22 @@ jobs:
           script: |
             const fs = require('fs');
             const report = JSON.parse(fs.readFileSync('cleanup-report.json', 'utf8'));
-            
+
             const duplicates = Object.keys(report.duplicateNames).length;
             const oldPatterns = report.oldPatterns.length;
             const routeConflicts = report.routeConflicts.length;
-            
+
             let comment = '## 🧹 Cleanup Check Results\n\n';
             comment += `- Duplicate filenames: ${duplicates}\n`;
             comment += `- Old patterns: ${oldPatterns}\n`;
             comment += `- Route conflicts: ${routeConflicts}\n`;
-            
+
             if (duplicates > 0 || oldPatterns > 0 || routeConflicts > 0) {
               comment += '\n⚠️ Issues found. Please review the cleanup report.';
             } else {
               comment += '\n✅ No issues found!';
             }
-            
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
@@ -510,6 +529,7 @@ npm run cleanup:db | grep "SUMMARY" -A 15
 ### Metrics to Track
 
 **Codebase Health:**
+
 - Number of duplicate files: **Target: 0**
 - Files with old patterns: **Target: 0**
 - Route conflicts: **Target: 0**
@@ -517,6 +537,7 @@ npm run cleanup:db | grep "SUMMARY" -A 15
 - Test coverage: **Target: >80%**
 
 **Database Health:**
+
 - Orphaned records: **Target: 0**
 - Invalid statuses: **Target: 0**
 - Duplicate keys: **Target: 0**
@@ -529,6 +550,7 @@ npm run cleanup:db | grep "SUMMARY" -A 15
 ### Issue: "Cannot find module" after cleanup
 
 **Solution:**
+
 1. Clear Next.js cache: `rm -rf .next`
 2. Reinstall dependencies: `npm ci`
 3. Rebuild: `npm run build`
@@ -536,6 +558,7 @@ npm run cleanup:db | grep "SUMMARY" -A 15
 ### Issue: Tests failing after refactor
 
 **Solution:**
+
 1. Update test imports
 2. Check mock paths
 3. Run tests with verbose: `npm test -- --verbose`
@@ -543,6 +566,7 @@ npm run cleanup:db | grep "SUMMARY" -A 15
 ### Issue: Build errors after cleanup
 
 **Solution:**
+
 1. Check TypeScript errors: `npm run type-check`
 2. Review ESLint warnings: `npm run lint`
 3. Verify all imports are correct
@@ -573,6 +597,7 @@ When contributing to the cleanup effort:
 ## 📝 Changelog
 
 ### 2024-01-XX - Initial Cleanup Guide
+
 - Created automated cleanup scripts
 - Documented current issues
 - Established cleanup procedures

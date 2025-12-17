@@ -126,13 +126,13 @@ const scenarios = await generator.generateTestScenarios(
     pageType: "farm-listings",
     season: "SUMMER",
     agriculturalFeatures: ["farm-cards", "seasonal-badges"],
-  }
+  },
 );
 
 // Generate test file
 const testFile = await generator.generateTestFile(
   scenarios,
-  "farm-listings.spec.ts"
+  "farm-listings.spec.ts",
 );
 
 console.log(`Generated ${scenarios.length} test scenarios`);
@@ -159,7 +159,7 @@ const page = await browser.newPage();
 // Discover components
 const components = await generator.discoverComponents(
   page,
-  "https://localhost:3001/products"
+  "https://localhost:3001/products",
 );
 
 console.log(`Discovered ${components.length} components:`);
@@ -196,7 +196,7 @@ const result = await utils.compareImages(
     perceptual: true,
     ignoreAntialiasing: true,
     ssimWindow: 11,
-  }
+  },
 );
 
 console.log(`
@@ -218,7 +218,10 @@ Diff Regions: ${result.regions.length}
 Color Differences: ${result.colorDifferences.length}
   ${result.colorDifferences
     .slice(0, 3)
-    .map((cd) => `- ΔE=${cd.deltaE.toFixed(2)} at (${cd.location.x},${cd.location.y})`)
+    .map(
+      (cd) =>
+        `- ΔE=${cd.deltaE.toFixed(2)} at (${cd.location.x},${cd.location.y})`,
+    )
     .join("\n  ")}
 `);
 ```
@@ -239,7 +242,7 @@ const healed = await generator.autoHealBaseline(
   "product-catalog-grid",
   "baselines/product-catalog-grid.png",
   "current/product-catalog-grid.png",
-  "diffs/product-catalog-grid.png"
+  "diffs/product-catalog-grid.png",
 );
 
 if (healed) {
@@ -281,7 +284,7 @@ ${report.details
   ${d.status === "healed" ? "✅" : d.status === "failed" ? "⚠️" : "⏭️"} ${d.testName}
      Reason: ${d.reason}
      Confidence: ${d.confidence}%
-`
+`,
   )
   .join("")}
 `);
@@ -307,7 +310,7 @@ const result = await comparison.compareElements(
   {
     threshold: 0.1,
     perceptual: true,
-  }
+  },
 );
 
 console.log(`Element comparison: ${result.passed ? "PASSED" : "FAILED"}`);
@@ -319,7 +322,7 @@ const resultWithRetry = await comparison.compareWithRetry(
   "current/animated-button.png",
   "diffs/animated-button.png",
   { threshold: 0.1 },
-  3 // max retries
+  3, // max retries
 );
 
 await browser.close();
@@ -340,7 +343,7 @@ const generator = new AIVisualTestGenerator({
 const analysis = await generator.analyzeVisualDifference(
   "baselines/checkout-form.png",
   "current/checkout-form.png",
-  "diffs/checkout-form.png"
+  "diffs/checkout-form.png",
 );
 
 console.log(`
@@ -359,7 +362,7 @@ ${analysis.visualBugs
   Location: ${bug.location}
   Description: ${bug.description}
   Fix: ${bug.suggestedFix || "N/A"}
-`
+`,
   )
   .join("")}
 
@@ -371,7 +374,7 @@ ${analysis.accessibility
   Element: ${issue.element}
   Description: ${issue.description}
   WCAG: ${issue.wcagCriteria}
-`
+`,
   )
   .join("")}
 
@@ -486,6 +489,7 @@ Error: Invalid API key
 ```
 
 **Solution:**
+
 ```bash
 # Check environment variable
 echo $OPENAI_API_KEY
@@ -506,6 +510,7 @@ Error: Rate limit exceeded (429)
 ```
 
 **Solution:**
+
 ```typescript
 // Add retry logic with exponential backoff
 async function callAIWithRetry(fn: () => Promise<any>, maxRetries = 3) {
@@ -526,7 +531,7 @@ async function callAIWithRetry(fn: () => Promise<any>, maxRetries = 3) {
 
 // Use it
 const scenarios = await callAIWithRetry(() =>
-  generator.generateTestScenarios(page, url, context)
+  generator.generateTestScenarios(page, url, context),
 );
 ```
 
@@ -538,6 +543,7 @@ Status: FAILED (but looks identical)
 ```
 
 **Solution:**
+
 ```typescript
 // Option 1: Increase threshold
 const result = await utils.compareImages(baseline, current, diff, {
@@ -572,6 +578,7 @@ SSIM: 2.5s per image (too slow)
 ```
 
 **Solution:**
+
 ```typescript
 // Option 1: Reduce window size
 const result = await utils.compareImages(baseline, current, diff, {
@@ -602,6 +609,7 @@ But: Actual bug was introduced!
 ```
 
 **Solution:**
+
 ```typescript
 // Option 1: Increase confidence threshold
 selfHealingConfig.confidenceThreshold = 90; // Was 85
@@ -640,6 +648,7 @@ Generated tests are too generic
 ```
 
 **Solution:**
+
 ```typescript
 // Provide better context
 const scenarios = await generator.generateTestScenarios(page, url, {
@@ -684,6 +693,7 @@ Error: JavaScript heap out of memory
 ```
 
 **Solution:**
+
 ```bash
 # Increase Node memory
 NODE_OPTIONS=--max-old-space-size=8192 npm run test:visual:ai
@@ -750,7 +760,7 @@ const comparison = new SmartElementComparison();
 await comparison.compareElements(
   page,
   "[data-testid='product-grid']",
-  baseline
+  baseline,
 );
 
 // 2. Skip SSIM for low-priority tests
@@ -760,7 +770,9 @@ if (test.priority < 5) {
 
 // 3. Parallel processing
 const results = await Promise.all(
-  tests.map((test) => utils.compareImages(test.baseline, test.current, test.diff))
+  tests.map((test) =>
+    utils.compareImages(test.baseline, test.current, test.diff),
+  ),
 );
 
 // 4. Sample instead of full scan
@@ -775,6 +787,7 @@ const sampledResult = await utils.compareImages(baseline, current, diff, {
 ## 🎯 Best Practices Checklist
 
 ### Test Generation
+
 - [ ] Provide detailed context to AI
 - [ ] Set appropriate importance levels
 - [ ] Include agricultural context
@@ -782,6 +795,7 @@ const sampledResult = await utils.compareImages(baseline, current, diff, {
 - [ ] Organize by priority (critical, high, medium, low)
 
 ### Visual Comparison
+
 - [ ] Use appropriate algorithm for test type
 - [ ] Set realistic thresholds
 - [ ] Enable anti-aliasing detection
@@ -789,6 +803,7 @@ const sampledResult = await utils.compareImages(baseline, current, diff, {
 - [ ] Mask sensitive data
 
 ### Self-Healing
+
 - [ ] Set conservative confidence threshold (85%+)
 - [ ] Require manual review for critical paths
 - [ ] Always backup baselines
@@ -796,6 +811,7 @@ const sampledResult = await utils.compareImages(baseline, current, diff, {
 - [ ] Log healing decisions
 
 ### Cost Optimization
+
 - [ ] Cache AI responses
 - [ ] Batch analysis operations
 - [ ] Limit API calls per run
@@ -803,6 +819,7 @@ const sampledResult = await utils.compareImages(baseline, current, diff, {
 - [ ] Only use AI for failed tests
 
 ### Maintenance
+
 - [ ] Review AI-generated tests weekly
 - [ ] Update baselines after intentional changes
 - [ ] Archive old baselines (30+ days)
@@ -814,31 +831,37 @@ const sampledResult = await utils.compareImages(baseline, current, diff, {
 ## 📞 Quick Help
 
 ### Get Component List
+
 ```bash
 npm run ai:visual:discover <url>
 ```
 
 ### Generate New Tests
+
 ```bash
 npm run ai:visual:generate <url>
 ```
 
 ### Fix Failed Tests
+
 ```bash
 npm run ai:visual:heal
 ```
 
 ### Analyze Failure
+
 ```bash
 npm run ai:visual:analyze <test-name>
 ```
 
 ### Update Baselines
+
 ```bash
 npm run test:visual:update
 ```
 
 ### View Report
+
 ```bash
 npm run visual:report
 ```

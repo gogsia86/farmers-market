@@ -9,11 +9,13 @@
 ## 🎯 Quick Start
 
 ### Run All Integration Tests
+
 ```bash
 npm run test:integration
 ```
 
 ### Run Specific Test Suites
+
 ```bash
 # Customer journey tests
 npm run test:integration:customer
@@ -149,7 +151,7 @@ it("should complete full purchase flow", async () => {
 
   const subtotal = cartWithItems!.items.reduce(
     (sum, item) => sum + item.price * item.quantity,
-    0
+    0,
   );
   const discount = subtotal * (promoCode.discount / 100);
   const total = subtotal - discount;
@@ -319,7 +321,7 @@ expect(sentEmails).toHaveLength(3);
 
 // Get emails by recipient
 const customerEmails = mockEmailService.getEmailsByRecipient(
-  "customer@example.com"
+  "customer@example.com",
 );
 expect(customerEmails).toHaveLength(2);
 
@@ -336,7 +338,7 @@ await expect(
     orderNumber: "12345678",
     items: [],
     total: 0,
-  })
+  }),
 ).rejects.toThrow();
 
 // Reset
@@ -384,9 +386,8 @@ await mockNotificationService.sendFarmerNotification({
 });
 
 // Get notifications by user
-const userNotifications = mockNotificationService.getNotificationsByUser(
-  "user-123"
-);
+const userNotifications =
+  mockNotificationService.getNotificationsByUser("user-123");
 expect(userNotifications).toHaveLength(2);
 
 // Get unread notifications
@@ -444,17 +445,14 @@ const processedImage = await mockImageUploadService.uploadAndProcess(
     quality: 85,
     format: "webp",
     generateThumbnails: true,
-  }
+  },
 );
 
 expect(processedImage.metadata.width).toBe(800);
 expect(processedImage.thumbnails).toBeDefined();
 
 // Get thumbnail URL
-const thumbnailUrl = mockImageUploadService.getThumbnailUrl(
-  imageUrl,
-  "small"
-);
+const thumbnailUrl = mockImageUploadService.getThumbnailUrl(imageUrl, "small");
 expect(thumbnailUrl).toContain("/thumbnails/small/");
 
 // Get statistics
@@ -673,7 +671,7 @@ it("should generate farm dashboard analytics", async () => {
 
   expect(dashboard.orders._count).toBeGreaterThanOrEqual(0);
   expect(dashboard.products._count).toBeGreaterThan(0);
-  
+
   console.log("Dashboard:", dashboard);
 });
 ```
@@ -751,31 +749,31 @@ it("should handle payment failures gracefully", async () => {
 
 ```typescript
 // Pre-defined test IDs from fixtures
-TEST_IDS.ADMIN_USER
-TEST_IDS.FARMER_USER_1
-TEST_IDS.FARMER_USER_2
-TEST_IDS.CUSTOMER_USER_1
-TEST_IDS.CUSTOMER_USER_2
-TEST_IDS.FARM_1
-TEST_IDS.FARM_2
-TEST_IDS.PRODUCT_TOMATOES
-TEST_IDS.PRODUCT_LETTUCE
-TEST_IDS.PRODUCT_CARROTS
-TEST_IDS.PRODUCT_EGGS
-TEST_IDS.PRODUCT_HONEY
-TEST_IDS.PRODUCT_OUT_OF_STOCK
-TEST_IDS.ORDER_PENDING
-TEST_IDS.ORDER_COMPLETED
-TEST_IDS.ORDER_CANCELLED
+TEST_IDS.ADMIN_USER;
+TEST_IDS.FARMER_USER_1;
+TEST_IDS.FARMER_USER_2;
+TEST_IDS.CUSTOMER_USER_1;
+TEST_IDS.CUSTOMER_USER_2;
+TEST_IDS.FARM_1;
+TEST_IDS.FARM_2;
+TEST_IDS.PRODUCT_TOMATOES;
+TEST_IDS.PRODUCT_LETTUCE;
+TEST_IDS.PRODUCT_CARROTS;
+TEST_IDS.PRODUCT_EGGS;
+TEST_IDS.PRODUCT_HONEY;
+TEST_IDS.PRODUCT_OUT_OF_STOCK;
+TEST_IDS.ORDER_PENDING;
+TEST_IDS.ORDER_COMPLETED;
+TEST_IDS.ORDER_CANCELLED;
 ```
 
 ### Test Credentials
 
 ```typescript
 // Pre-defined test credentials
-TEST_CREDENTIALS.ADMIN.email        // "admin@test.farmersmarket.app"
-TEST_CREDENTIALS.FARMER_1.email     // "farmer1@test.farmersmarket.app"
-TEST_CREDENTIALS.CUSTOMER_1.email   // "customer1@test.farmersmarket.app"
+TEST_CREDENTIALS.ADMIN.email; // "admin@test.farmersmarket.app"
+TEST_CREDENTIALS.FARMER_1.email; // "farmer1@test.farmersmarket.app"
+TEST_CREDENTIALS.CUSTOMER_1.email; // "customer1@test.farmersmarket.app"
 ```
 
 ---
@@ -837,20 +835,21 @@ beforeEach(async () => {
 
 ## 📊 Test Coverage Requirements
 
-| Category | Minimum Coverage |
-|----------|-----------------|
-| Customer Journeys | 95% |
-| Farmer Journeys | 95% |
-| Payment Integration | 100% |
-| Email Notifications | 100% |
-| Order Fulfillment | 100% |
-| Agricultural Features | 90% |
+| Category              | Minimum Coverage |
+| --------------------- | ---------------- |
+| Customer Journeys     | 95%              |
+| Farmer Journeys       | 95%              |
+| Payment Integration   | 100%             |
+| Email Notifications   | 100%             |
+| Order Fulfillment     | 100%             |
+| Agricultural Features | 90%              |
 
 ---
 
 ## 🎓 Best Practices
 
 ### 1. Always Clean Database Between Tests
+
 ```typescript
 beforeEach(async () => {
   await cleanTestDatabase();
@@ -859,6 +858,7 @@ beforeEach(async () => {
 ```
 
 ### 2. Use Deterministic Test Data
+
 ```typescript
 // ✅ Good
 const productId = TEST_IDS.PRODUCT_TOMATOES;
@@ -868,6 +868,7 @@ const productId = (await prisma.product.findFirst())?.id;
 ```
 
 ### 3. Test Complete Flows, Not Individual Steps
+
 ```typescript
 // ✅ Good - Test entire journey
 it("should complete purchase flow from cart to delivery", async () => {
@@ -880,6 +881,7 @@ it("should checkout", async () => { ... });
 ```
 
 ### 4. Assert on Mock Service Calls
+
 ```typescript
 // Always verify external service interactions
 expect(mockEmailService.getSentEmails()).toHaveLength(1);
@@ -887,11 +889,12 @@ expect(mockStripePayment.getStatistics().successRate).toBe(100);
 ```
 
 ### 5. Include Agricultural Consciousness
+
 ```typescript
 // Test seasonal awareness
 const season = Season.SPRING;
 const products = await prisma.product.findMany({
-  where: { season, status: "ACTIVE" }
+  where: { season, status: "ACTIVE" },
 });
 ```
 
@@ -910,4 +913,4 @@ const products = await prisma.product.findMany({
 **Last Updated**: January 2025  
 **Status**: Production Ready ✅
 
-*"Copy, paste, and test with agricultural consciousness."* 🌾✨
+_"Copy, paste, and test with agricultural consciousness."_ 🌾✨

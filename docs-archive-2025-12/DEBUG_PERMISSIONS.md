@@ -13,9 +13,9 @@ You're seeing this error because the middleware is blocking access to a route. T
 1. **Open browser console** (F12)
 2. **Run this command:**
    ```javascript
-   fetch('/api/auth/session')
-     .then(r => r.json())
-     .then(d => console.log('Session:', d))
+   fetch("/api/auth/session")
+     .then((r) => r.json())
+     .then((d) => console.log("Session:", d));
    ```
 3. **Look for the output:**
    ```json
@@ -24,7 +24,7 @@ You're seeing this error because the middleware is blocking access to a route. T
        "id": "...",
        "email": "test@example.com",
        "name": "Test User",
-       "role": "CONSUMER",  // ← Check this!
+       "role": "CONSUMER", // ← Check this!
        "status": "ACTIVE"
      }
    }
@@ -33,6 +33,7 @@ You're seeing this error because the middleware is blocking access to a route. T
 ### Step 2: Verify Database Role
 
 1. **Open Prisma Studio:**
+
    ```bash
    npm run prisma:studio
    ```
@@ -54,6 +55,7 @@ You're seeing this error because the middleware is blocking access to a route. T
 **Problem:** User role is `null` or invalid in database.
 
 **Fix:**
+
 ```bash
 # Open Prisma Studio
 npm run prisma:studio
@@ -65,10 +67,11 @@ npm run prisma:studio
 ```
 
 **Or via SQL:**
+
 ```sql
 -- Update user role directly
-UPDATE "User" 
-SET role = 'CONSUMER' 
+UPDATE "User"
+SET role = 'CONSUMER'
 WHERE email = 'your@email.com';
 ```
 
@@ -79,11 +82,14 @@ WHERE email = 'your@email.com';
 **Problem:** Old JWT token from before role was set.
 
 **Fix:**
+
 1. **Sign out completely:**
+
    ```javascript
    // In browser console
-   fetch('/api/auth/signout', { method: 'POST' })
-     .then(() => window.location.href = '/login')
+   fetch("/api/auth/signout", { method: "POST" }).then(
+     () => (window.location.href = "/login"),
+   );
    ```
 
 2. **Or clear cookies manually:**
@@ -100,6 +106,7 @@ WHERE email = 'your@email.com';
 **Problem:** NextAuth session callback not working.
 
 **Debug:**
+
 ```bash
 # Check server logs when you login
 # Look for:
@@ -110,6 +117,7 @@ WHERE email = 'your@email.com';
 ```
 
 **Fix:** Restart the server
+
 ```bash
 # Stop server (Ctrl+C)
 npm run start
@@ -124,6 +132,7 @@ npm run start
 **Check file:** `src/lib/middleware/route-config.ts`
 
 **Verify `/dashboard` is in PROTECTED_ROUTES:**
+
 ```typescript
 export const PROTECTED_ROUTES: Record<string, UserRole[]> = {
   "/dashboard": ["CONSUMER", "FARMER", "ADMIN", "SUPER_ADMIN", "MODERATOR"],
@@ -143,25 +152,25 @@ Run this in your browser console to diagnose:
 ```javascript
 // Check session
 async function debugAuth() {
-  console.log('🔍 Checking authentication...\n');
-  
+  console.log("🔍 Checking authentication...\n");
+
   // 1. Check session
-  const session = await fetch('/api/auth/session').then(r => r.json());
-  console.log('📋 Session:', session);
-  
+  const session = await fetch("/api/auth/session").then((r) => r.json());
+  console.log("📋 Session:", session);
+
   if (session?.user) {
-    console.log('✅ Authenticated');
-    console.log('👤 User:', session.user.email);
-    console.log('🎭 Role:', session.user.role || '❌ MISSING!');
-    console.log('📊 Status:', session.user.status);
-    
+    console.log("✅ Authenticated");
+    console.log("👤 User:", session.user.email);
+    console.log("🎭 Role:", session.user.role || "❌ MISSING!");
+    console.log("📊 Status:", session.user.status);
+
     if (!session.user.role) {
-      console.error('❌ PROBLEM: Role is missing from session!');
-      console.log('🔧 FIX: Update role in database and re-login');
+      console.error("❌ PROBLEM: Role is missing from session!");
+      console.log("🔧 FIX: Update role in database and re-login");
     }
   } else {
-    console.log('❌ Not authenticated');
-    console.log('🔧 FIX: Login at /login');
+    console.log("❌ Not authenticated");
+    console.log("🔧 FIX: Login at /login");
   }
 }
 
@@ -175,9 +184,11 @@ debugAuth();
 ### For CONSUMER users:
 
 1. **Check database role:**
+
    ```bash
    npm run prisma:studio
    ```
+
    - User table → Find your user → role = `CONSUMER` ✅
 
 2. **Sign out and clear session:**
@@ -197,6 +208,7 @@ debugAuth();
 ## 📊 EXPECTED USER FLOW
 
 ### Correct Flow:
+
 ```
 1. Signup → Creates user with role="CONSUMER"
 2. Login → JWT token includes role
@@ -205,6 +217,7 @@ debugAuth();
 ```
 
 ### Broken Flow:
+
 ```
 1. Signup → Creates user but role is null/missing
 2. Login → JWT token missing role OR has wrong role
@@ -325,6 +338,7 @@ To prevent this in the future:
 5. Verify redirect to `/dashboard` works
 
 **Check order:**
+
 1. Database role → Must be valid
 2. Session role → Must include role from DB
 3. Middleware → Must allow role for route
@@ -338,31 +352,34 @@ Run this comprehensive debug script:
 
 ```javascript
 async function fullDebug() {
-  console.log('=== FULL AUTH DEBUG ===\n');
-  
+  console.log("=== FULL AUTH DEBUG ===\n");
+
   // Check session
-  const session = await fetch('/api/auth/session').then(r => r.json());
-  console.log('1. Session:', JSON.stringify(session, null, 2));
-  
+  const session = await fetch("/api/auth/session").then((r) => r.json());
+  console.log("1. Session:", JSON.stringify(session, null, 2));
+
   // Check current URL
-  console.log('\n2. Current URL:', window.location.href);
-  console.log('3. Has error param:', new URLSearchParams(window.location.search).get('error'));
-  
+  console.log("\n2. Current URL:", window.location.href);
+  console.log(
+    "3. Has error param:",
+    new URLSearchParams(window.location.search).get("error"),
+  );
+
   // Check cookies
-  console.log('\n4. Cookies:', document.cookie);
-  
+  console.log("\n4. Cookies:", document.cookie);
+
   // Check role
   if (session?.user?.role) {
-    console.log('\n✅ Role found:', session.user.role);
-    console.log('✅ Should have access to:');
-    if (session.user.role === 'CONSUMER') {
-      console.log('  - /dashboard ✅');
-      console.log('  - /cart ✅');
-      console.log('  - /orders ✅');
+    console.log("\n✅ Role found:", session.user.role);
+    console.log("✅ Should have access to:");
+    if (session.user.role === "CONSUMER") {
+      console.log("  - /dashboard ✅");
+      console.log("  - /cart ✅");
+      console.log("  - /orders ✅");
     }
   } else {
-    console.log('\n❌ Role MISSING!');
-    console.log('🔧 Fix: Update role in database and re-login');
+    console.log("\n❌ Role MISSING!");
+    console.log("🔧 Fix: Update role in database and re-login");
   }
 }
 

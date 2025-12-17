@@ -121,7 +121,7 @@ class VisualTestingUtils {
     testName: string,
     viewport: string,
     browser: string,
-    type: "baseline" | "current" | "diff"
+    type: "baseline" | "current" | "diff",
   ): string {
     const sanitizedName = testName.replace(/[^a-z0-9]/gi, "-").toLowerCase();
     const filename = `${sanitizedName}_${viewport}_${browser}.png`;
@@ -145,7 +145,7 @@ class VisualTestingUtils {
     baselinePath: string,
     currentPath: string,
     diffPath: string,
-    threshold: number = 0.1
+    threshold: number = 0.1,
   ): Promise<VisualComparisonResult> {
     // Check if baseline exists
     if (!fs.existsSync(baselinePath)) {
@@ -171,7 +171,7 @@ class VisualTestingUtils {
       baselineImg.height !== currentImg.height
     ) {
       throw new Error(
-        `Image dimensions mismatch: baseline ${baselineImg.width}x${baselineImg.height} vs current ${currentImg.width}x${currentImg.height}`
+        `Image dimensions mismatch: baseline ${baselineImg.width}x${baselineImg.height} vs current ${currentImg.width}x${currentImg.height}`,
       );
     }
 
@@ -186,7 +186,7 @@ class VisualTestingUtils {
       diffImg.data,
       width,
       height,
-      { threshold }
+      { threshold },
     );
 
     const totalPixels = width * height;
@@ -214,7 +214,7 @@ class VisualTestingUtils {
   async waitForAnimations(page: Page): Promise<void> {
     await page.evaluate(() => {
       return Promise.all(
-        document.getAnimations().map((animation) => animation.finished)
+        document.getAnimations().map((animation) => animation.finished),
       );
     });
   }
@@ -266,12 +266,17 @@ class VisualTestingUtils {
 test.describe("🌾 Visual Regression - Homepage", () => {
   const utils = new VisualTestingUtils();
 
-  test("should match homepage baseline - desktop", async ({ page, browserName }) => {
+  test("should match homepage baseline - desktop", async ({
+    page,
+    browserName,
+  }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
     await page.goto("/");
 
     // Wait for content to load
-    await page.waitForSelector('[data-testid="featured-farms"]', { timeout: 10000 });
+    await page.waitForSelector('[data-testid="featured-farms"]', {
+      timeout: 10000,
+    });
     await utils.waitForAnimations(page);
 
     // Hide dynamic content
@@ -286,7 +291,7 @@ test.describe("🌾 Visual Regression - Homepage", () => {
       "homepage-desktop",
       VIEWPORTS.desktop.name,
       browserName,
-      "current"
+      "current",
     );
     await page.screenshot({ path: currentPath, fullPage: true });
 
@@ -295,20 +300,20 @@ test.describe("🌾 Visual Regression - Homepage", () => {
       "homepage-desktop",
       VIEWPORTS.desktop.name,
       browserName,
-      "baseline"
+      "baseline",
     );
     const diffPath = utils.getScreenshotPath(
       "homepage-desktop",
       VIEWPORTS.desktop.name,
       browserName,
-      "diff"
+      "diff",
     );
 
     const result = await utils.compareScreenshots(
       baselinePath,
       currentPath,
       diffPath,
-      0.1 // 0.1% threshold
+      0.1, // 0.1% threshold
     );
 
     expect(result.passed).toBeTruthy();
@@ -332,18 +337,23 @@ test.describe("🌾 Visual Regression - Homepage", () => {
     }
   });
 
-  test("should match homepage baseline - mobile", async ({ page, browserName }) => {
+  test("should match homepage baseline - mobile", async ({
+    page,
+    browserName,
+  }) => {
     await page.setViewportSize(VIEWPORTS.mobile);
     await page.goto("/");
 
-    await page.waitForSelector('[data-testid="featured-farms"]', { timeout: 10000 });
+    await page.waitForSelector('[data-testid="featured-farms"]', {
+      timeout: 10000,
+    });
     await utils.waitForAnimations(page);
 
     const currentPath = utils.getScreenshotPath(
       "homepage-mobile",
       VIEWPORTS.mobile.name,
       browserName,
-      "current"
+      "current",
     );
     await page.screenshot({ path: currentPath, fullPage: true });
 
@@ -351,20 +361,27 @@ test.describe("🌾 Visual Regression - Homepage", () => {
       "homepage-mobile",
       VIEWPORTS.mobile.name,
       browserName,
-      "baseline"
+      "baseline",
     );
     const diffPath = utils.getScreenshotPath(
       "homepage-mobile",
       VIEWPORTS.mobile.name,
       browserName,
-      "diff"
+      "diff",
     );
 
-    const result = await utils.compareScreenshots(baselinePath, currentPath, diffPath);
+    const result = await utils.compareScreenshots(
+      baselinePath,
+      currentPath,
+      diffPath,
+    );
     expect(result.passed).toBeTruthy();
   });
 
-  test("should match homepage with seasonal theme", async ({ page, browserName }) => {
+  test("should match homepage with seasonal theme", async ({
+    page,
+    browserName,
+  }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
     const season = utils.getCurrentSeason();
 
@@ -373,7 +390,9 @@ test.describe("🌾 Visual Regression - Homepage", () => {
     await utils.waitForAnimations(page);
 
     // Verify seasonal styling is applied
-    const seasonalBadge = await page.locator('[data-testid="seasonal-indicator"]');
+    const seasonalBadge = await page.locator(
+      '[data-testid="seasonal-indicator"]',
+    );
     if (await seasonalBadge.isVisible()) {
       await expect(seasonalBadge).toContainText(season);
     }
@@ -382,7 +401,7 @@ test.describe("🌾 Visual Regression - Homepage", () => {
       `homepage-seasonal-${season.toLowerCase()}`,
       VIEWPORTS.desktop.name,
       browserName,
-      "current"
+      "current",
     );
     await page.screenshot({ path: currentPath, fullPage: true });
 
@@ -390,16 +409,20 @@ test.describe("🌾 Visual Regression - Homepage", () => {
       `homepage-seasonal-${season.toLowerCase()}`,
       VIEWPORTS.desktop.name,
       browserName,
-      "baseline"
+      "baseline",
     );
     const diffPath = utils.getScreenshotPath(
       `homepage-seasonal-${season.toLowerCase()}`,
       VIEWPORTS.desktop.name,
       browserName,
-      "diff"
+      "diff",
     );
 
-    const result = await utils.compareScreenshots(baselinePath, currentPath, diffPath);
+    const result = await utils.compareScreenshots(
+      baselinePath,
+      currentPath,
+      diffPath,
+    );
     expect(result.passed).toBeTruthy();
   });
 });
@@ -407,21 +430,30 @@ test.describe("🌾 Visual Regression - Homepage", () => {
 test.describe("🌾 Visual Regression - Farm Listings", () => {
   const utils = new VisualTestingUtils();
 
-  test("should match farm listings page - all viewports", async ({ page, browserName }) => {
-    const viewportsToTest = [VIEWPORTS.desktop, VIEWPORTS.tablet, VIEWPORTS.mobile];
+  test("should match farm listings page - all viewports", async ({
+    page,
+    browserName,
+  }) => {
+    const viewportsToTest = [
+      VIEWPORTS.desktop,
+      VIEWPORTS.tablet,
+      VIEWPORTS.mobile,
+    ];
 
     for (const viewport of viewportsToTest) {
       await page.setViewportSize(viewport);
       await page.goto("/farms");
 
-      await page.waitForSelector('[data-testid="farm-grid"]', { timeout: 10000 });
+      await page.waitForSelector('[data-testid="farm-grid"]', {
+        timeout: 10000,
+      });
       await utils.waitForAnimations(page);
 
       const currentPath = utils.getScreenshotPath(
         "farm-listings",
         viewport.name,
         browserName,
-        "current"
+        "current",
       );
       await page.screenshot({ path: currentPath, fullPage: true });
 
@@ -429,16 +461,20 @@ test.describe("🌾 Visual Regression - Farm Listings", () => {
         "farm-listings",
         viewport.name,
         browserName,
-        "baseline"
+        "baseline",
       );
       const diffPath = utils.getScreenshotPath(
         "farm-listings",
         viewport.name,
         browserName,
-        "diff"
+        "diff",
       );
 
-      const result = await utils.compareScreenshots(baselinePath, currentPath, diffPath);
+      const result = await utils.compareScreenshots(
+        baselinePath,
+        currentPath,
+        diffPath,
+      );
       expect(result.passed).toBeTruthy();
     }
   });
@@ -458,7 +494,7 @@ test.describe("🌾 Visual Regression - Farm Listings", () => {
       "farm-card-hover",
       VIEWPORTS.desktop.name,
       browserName,
-      "current"
+      "current",
     );
     await firstCard.screenshot({ path: currentPath });
 
@@ -466,16 +502,20 @@ test.describe("🌾 Visual Regression - Farm Listings", () => {
       "farm-card-hover",
       VIEWPORTS.desktop.name,
       browserName,
-      "baseline"
+      "baseline",
     );
     const diffPath = utils.getScreenshotPath(
       "farm-card-hover",
       VIEWPORTS.desktop.name,
       browserName,
-      "diff"
+      "diff",
     );
 
-    const result = await utils.compareScreenshots(baselinePath, currentPath, diffPath);
+    const result = await utils.compareScreenshots(
+      baselinePath,
+      currentPath,
+      diffPath,
+    );
     expect(result.passed).toBeTruthy();
   });
 
@@ -488,7 +528,9 @@ test.describe("🌾 Visual Regression - Farm Listings", () => {
     await page.locator('[data-testid="farm-card"]').first().click();
 
     // Wait for farm detail page
-    await page.waitForSelector('[data-testid="farm-profile"]', { timeout: 10000 });
+    await page.waitForSelector('[data-testid="farm-profile"]', {
+      timeout: 10000,
+    });
     await utils.waitForAnimations(page);
 
     // Mask user-specific content
@@ -501,7 +543,7 @@ test.describe("🌾 Visual Regression - Farm Listings", () => {
       "farm-detail",
       VIEWPORTS.desktop.name,
       browserName,
-      "current"
+      "current",
     );
     await page.screenshot({ path: currentPath, fullPage: true });
 
@@ -509,16 +551,20 @@ test.describe("🌾 Visual Regression - Farm Listings", () => {
       "farm-detail",
       VIEWPORTS.desktop.name,
       browserName,
-      "baseline"
+      "baseline",
     );
     const diffPath = utils.getScreenshotPath(
       "farm-detail",
       VIEWPORTS.desktop.name,
       browserName,
-      "diff"
+      "diff",
     );
 
-    const result = await utils.compareScreenshots(baselinePath, currentPath, diffPath);
+    const result = await utils.compareScreenshots(
+      baselinePath,
+      currentPath,
+      diffPath,
+    );
     expect(result.passed).toBeTruthy();
   });
 });
@@ -530,14 +576,16 @@ test.describe("🌾 Visual Regression - Product Catalog", () => {
     await page.setViewportSize(VIEWPORTS.desktop);
     await page.goto("/products");
 
-    await page.waitForSelector('[data-testid="product-grid"]', { timeout: 10000 });
+    await page.waitForSelector('[data-testid="product-grid"]', {
+      timeout: 10000,
+    });
     await utils.waitForAnimations(page);
 
     const currentPath = utils.getScreenshotPath(
       "product-catalog",
       VIEWPORTS.desktop.name,
       browserName,
-      "current"
+      "current",
     );
     await page.screenshot({ path: currentPath, fullPage: true });
 
@@ -545,34 +593,43 @@ test.describe("🌾 Visual Regression - Product Catalog", () => {
       "product-catalog",
       VIEWPORTS.desktop.name,
       browserName,
-      "baseline"
+      "baseline",
     );
     const diffPath = utils.getScreenshotPath(
       "product-catalog",
       VIEWPORTS.desktop.name,
       browserName,
-      "diff"
+      "diff",
     );
 
-    const result = await utils.compareScreenshots(baselinePath, currentPath, diffPath);
+    const result = await utils.compareScreenshots(
+      baselinePath,
+      currentPath,
+      diffPath,
+    );
     expect(result.passed).toBeTruthy();
   });
 
-  test("should match product card with seasonal badge", async ({ page, browserName }) => {
+  test("should match product card with seasonal badge", async ({
+    page,
+    browserName,
+  }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
     await page.goto("/products");
 
     await page.waitForSelector('[data-testid="product-card"]');
 
     // Find product with seasonal badge
-    const seasonalProduct = page.locator('[data-testid="product-card"][data-seasonal="true"]').first();
+    const seasonalProduct = page
+      .locator('[data-testid="product-card"][data-seasonal="true"]')
+      .first();
 
     if (await seasonalProduct.isVisible()) {
       const currentPath = utils.getScreenshotPath(
         "product-seasonal",
         VIEWPORTS.desktop.name,
         browserName,
-        "current"
+        "current",
       );
       await seasonalProduct.screenshot({ path: currentPath });
 
@@ -580,21 +637,28 @@ test.describe("🌾 Visual Regression - Product Catalog", () => {
         "product-seasonal",
         VIEWPORTS.desktop.name,
         browserName,
-        "baseline"
+        "baseline",
       );
       const diffPath = utils.getScreenshotPath(
         "product-seasonal",
         VIEWPORTS.desktop.name,
         browserName,
-        "diff"
+        "diff",
       );
 
-      const result = await utils.compareScreenshots(baselinePath, currentPath, diffPath);
+      const result = await utils.compareScreenshots(
+        baselinePath,
+        currentPath,
+        diffPath,
+      );
       expect(result.passed).toBeTruthy();
     }
   });
 
-  test("should match product filters sidebar", async ({ page, browserName }) => {
+  test("should match product filters sidebar", async ({
+    page,
+    browserName,
+  }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
     await page.goto("/products");
 
@@ -605,7 +669,7 @@ test.describe("🌾 Visual Regression - Product Catalog", () => {
       "product-filters",
       VIEWPORTS.desktop.name,
       browserName,
-      "current"
+      "current",
     );
     await filters.screenshot({ path: currentPath });
 
@@ -613,16 +677,20 @@ test.describe("🌾 Visual Regression - Product Catalog", () => {
       "product-filters",
       VIEWPORTS.desktop.name,
       browserName,
-      "baseline"
+      "baseline",
     );
     const diffPath = utils.getScreenshotPath(
       "product-filters",
       VIEWPORTS.desktop.name,
       browserName,
-      "diff"
+      "diff",
     );
 
-    const result = await utils.compareScreenshots(baselinePath, currentPath, diffPath);
+    const result = await utils.compareScreenshots(
+      baselinePath,
+      currentPath,
+      diffPath,
+    );
     expect(result.passed).toBeTruthy();
   });
 });
@@ -640,7 +708,7 @@ test.describe("🌾 Visual Regression - Shopping Cart & Checkout", () => {
       "cart-empty",
       VIEWPORTS.desktop.name,
       browserName,
-      "current"
+      "current",
     );
     await page.screenshot({ path: currentPath, fullPage: true });
 
@@ -648,16 +716,20 @@ test.describe("🌾 Visual Regression - Shopping Cart & Checkout", () => {
       "cart-empty",
       VIEWPORTS.desktop.name,
       browserName,
-      "baseline"
+      "baseline",
     );
     const diffPath = utils.getScreenshotPath(
       "cart-empty",
       VIEWPORTS.desktop.name,
       browserName,
-      "diff"
+      "diff",
     );
 
-    const result = await utils.compareScreenshots(baselinePath, currentPath, diffPath);
+    const result = await utils.compareScreenshots(
+      baselinePath,
+      currentPath,
+      diffPath,
+    );
     expect(result.passed).toBeTruthy();
   });
 
@@ -665,7 +737,9 @@ test.describe("🌾 Visual Regression - Shopping Cart & Checkout", () => {
     await page.setViewportSize(VIEWPORTS.desktop);
     await page.goto("/checkout");
 
-    await page.waitForSelector('[data-testid="checkout-form"]', { timeout: 10000 });
+    await page.waitForSelector('[data-testid="checkout-form"]', {
+      timeout: 10000,
+    });
 
     // Mask sensitive inputs
     await utils.maskContent(page, [
@@ -678,7 +752,7 @@ test.describe("🌾 Visual Regression - Shopping Cart & Checkout", () => {
       "checkout-form",
       VIEWPORTS.desktop.name,
       browserName,
-      "current"
+      "current",
     );
     await page.screenshot({ path: currentPath, fullPage: true });
 
@@ -686,16 +760,20 @@ test.describe("🌾 Visual Regression - Shopping Cart & Checkout", () => {
       "checkout-form",
       VIEWPORTS.desktop.name,
       browserName,
-      "baseline"
+      "baseline",
     );
     const diffPath = utils.getScreenshotPath(
       "checkout-form",
       VIEWPORTS.desktop.name,
       browserName,
-      "diff"
+      "diff",
     );
 
-    const result = await utils.compareScreenshots(baselinePath, currentPath, diffPath);
+    const result = await utils.compareScreenshots(
+      baselinePath,
+      currentPath,
+      diffPath,
+    );
     expect(result.passed).toBeTruthy();
   });
 });
@@ -709,13 +787,18 @@ test.describe("🌾 Visual Regression - Admin Dashboard", () => {
     // Note: Requires authentication - skip if not logged in
     await page.goto("/admin/dashboard");
 
-    const isLoginPage = await page.locator('[data-testid="login-form"]').isVisible().catch(() => false);
+    const isLoginPage = await page
+      .locator('[data-testid="login-form"]')
+      .isVisible()
+      .catch(() => false);
     if (isLoginPage) {
       test.skip();
       return;
     }
 
-    await page.waitForSelector('[data-testid="admin-stats"]', { timeout: 10000 });
+    await page.waitForSelector('[data-testid="admin-stats"]', {
+      timeout: 10000,
+    });
     await utils.waitForAnimations(page);
 
     // Hide dynamic stats
@@ -729,7 +812,7 @@ test.describe("🌾 Visual Regression - Admin Dashboard", () => {
       "admin-dashboard",
       VIEWPORTS.desktop.name,
       browserName,
-      "current"
+      "current",
     );
     await page.screenshot({ path: currentPath, fullPage: true });
 
@@ -737,16 +820,20 @@ test.describe("🌾 Visual Regression - Admin Dashboard", () => {
       "admin-dashboard",
       VIEWPORTS.desktop.name,
       browserName,
-      "baseline"
+      "baseline",
     );
     const diffPath = utils.getScreenshotPath(
       "admin-dashboard",
       VIEWPORTS.desktop.name,
       browserName,
-      "diff"
+      "diff",
     );
 
-    const result = await utils.compareScreenshots(baselinePath, currentPath, diffPath);
+    const result = await utils.compareScreenshots(
+      baselinePath,
+      currentPath,
+      diffPath,
+    );
     expect(result.passed).toBeTruthy();
   });
 });
@@ -761,14 +848,16 @@ test.describe("🌾 Visual Regression - Dark Mode", () => {
     await page.emulateMedia({ colorScheme: "dark" });
     await page.goto("/");
 
-    await page.waitForSelector('[data-testid="featured-farms"]', { timeout: 10000 });
+    await page.waitForSelector('[data-testid="featured-farms"]', {
+      timeout: 10000,
+    });
     await utils.waitForAnimations(page);
 
     const currentPath = utils.getScreenshotPath(
       "homepage-dark-mode",
       VIEWPORTS.desktop.name,
       browserName,
-      "current"
+      "current",
     );
     await page.screenshot({ path: currentPath, fullPage: true });
 
@@ -776,32 +865,41 @@ test.describe("🌾 Visual Regression - Dark Mode", () => {
       "homepage-dark-mode",
       VIEWPORTS.desktop.name,
       browserName,
-      "baseline"
+      "baseline",
     );
     const diffPath = utils.getScreenshotPath(
       "homepage-dark-mode",
       VIEWPORTS.desktop.name,
       browserName,
-      "diff"
+      "diff",
     );
 
-    const result = await utils.compareScreenshots(baselinePath, currentPath, diffPath);
+    const result = await utils.compareScreenshots(
+      baselinePath,
+      currentPath,
+      diffPath,
+    );
     expect(result.passed).toBeTruthy();
   });
 
-  test("should match dark mode product catalog", async ({ page, browserName }) => {
+  test("should match dark mode product catalog", async ({
+    page,
+    browserName,
+  }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
     await page.emulateMedia({ colorScheme: "dark" });
     await page.goto("/products");
 
-    await page.waitForSelector('[data-testid="product-grid"]', { timeout: 10000 });
+    await page.waitForSelector('[data-testid="product-grid"]', {
+      timeout: 10000,
+    });
     await utils.waitForAnimations(page);
 
     const currentPath = utils.getScreenshotPath(
       "products-dark-mode",
       VIEWPORTS.desktop.name,
       browserName,
-      "current"
+      "current",
     );
     await page.screenshot({ path: currentPath, fullPage: true });
 
@@ -809,16 +907,20 @@ test.describe("🌾 Visual Regression - Dark Mode", () => {
       "products-dark-mode",
       VIEWPORTS.desktop.name,
       browserName,
-      "baseline"
+      "baseline",
     );
     const diffPath = utils.getScreenshotPath(
       "products-dark-mode",
       VIEWPORTS.desktop.name,
       browserName,
-      "diff"
+      "diff",
     );
 
-    const result = await utils.compareScreenshots(baselinePath, currentPath, diffPath);
+    const result = await utils.compareScreenshots(
+      baselinePath,
+      currentPath,
+      diffPath,
+    );
     expect(result.passed).toBeTruthy();
   });
 });
@@ -826,7 +928,10 @@ test.describe("🌾 Visual Regression - Dark Mode", () => {
 test.describe("🌾 Visual Regression - Accessibility Indicators", () => {
   const utils = new VisualTestingUtils();
 
-  test("should match focus indicators on navigation", async ({ page, browserName }) => {
+  test("should match focus indicators on navigation", async ({
+    page,
+    browserName,
+  }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
     await page.goto("/");
 
@@ -838,7 +943,7 @@ test.describe("🌾 Visual Regression - Accessibility Indicators", () => {
       "nav-focus-state",
       VIEWPORTS.desktop.name,
       browserName,
-      "current"
+      "current",
     );
     await page.screenshot({ path: currentPath });
 
@@ -846,20 +951,27 @@ test.describe("🌾 Visual Regression - Accessibility Indicators", () => {
       "nav-focus-state",
       VIEWPORTS.desktop.name,
       browserName,
-      "baseline"
+      "baseline",
     );
     const diffPath = utils.getScreenshotPath(
       "nav-focus-state",
       VIEWPORTS.desktop.name,
       browserName,
-      "diff"
+      "diff",
     );
 
-    const result = await utils.compareScreenshots(baselinePath, currentPath, diffPath);
+    const result = await utils.compareScreenshots(
+      baselinePath,
+      currentPath,
+      diffPath,
+    );
     expect(result.passed).toBeTruthy();
   });
 
-  test("should match button focus and active states", async ({ page, browserName }) => {
+  test("should match button focus and active states", async ({
+    page,
+    browserName,
+  }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
     await page.goto("/");
 
@@ -873,7 +985,7 @@ test.describe("🌾 Visual Regression - Accessibility Indicators", () => {
       "button-focus",
       VIEWPORTS.desktop.name,
       browserName,
-      "current"
+      "current",
     );
     await button.screenshot({ path: focusPath });
 
@@ -881,16 +993,20 @@ test.describe("🌾 Visual Regression - Accessibility Indicators", () => {
       "button-focus",
       VIEWPORTS.desktop.name,
       browserName,
-      "baseline"
+      "baseline",
     );
     const focusDiff = utils.getScreenshotPath(
       "button-focus",
       VIEWPORTS.desktop.name,
       browserName,
-      "diff"
+      "diff",
     );
 
-    const focusResult = await utils.compareScreenshots(focusBaseline, focusPath, focusDiff);
+    const focusResult = await utils.compareScreenshots(
+      focusBaseline,
+      focusPath,
+      focusDiff,
+    );
     expect(focusResult.passed).toBeTruthy();
   });
 });
@@ -898,18 +1014,25 @@ test.describe("🌾 Visual Regression - Accessibility Indicators", () => {
 test.describe("🌾 Visual Regression - Responsive Images", () => {
   const utils = new VisualTestingUtils();
 
-  test("should match image loading and optimization", async ({ page, browserName }) => {
+  test("should match image loading and optimization", async ({
+    page,
+    browserName,
+  }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
     await page.goto("/farms");
 
     // Wait for images to load
     await page.waitForLoadState("networkidle");
-    await page.waitForSelector('img[data-testid="farm-image"]', { timeout: 10000 });
+    await page.waitForSelector('img[data-testid="farm-image"]', {
+      timeout: 10000,
+    });
 
     // Check that images are properly sized
     const images = await page.locator('img[data-testid="farm-image"]').all();
     for (const img of images) {
-      const isLoaded = await img.evaluate((el) => (el as HTMLImageElement).complete);
+      const isLoaded = await img.evaluate(
+        (el) => (el as HTMLImageElement).complete,
+      );
       expect(isLoaded).toBeTruthy();
     }
 
@@ -917,7 +1040,7 @@ test.describe("🌾 Visual Regression - Responsive Images", () => {
       "farm-images",
       VIEWPORTS.desktop.name,
       browserName,
-      "current"
+      "current",
     );
     await page.screenshot({ path: currentPath, fullPage: true });
 
@@ -925,16 +1048,20 @@ test.describe("🌾 Visual Regression - Responsive Images", () => {
       "farm-images",
       VIEWPORTS.desktop.name,
       browserName,
-      "baseline"
+      "baseline",
     );
     const diffPath = utils.getScreenshotPath(
       "farm-images",
       VIEWPORTS.desktop.name,
       browserName,
-      "diff"
+      "diff",
     );
 
-    const result = await utils.compareScreenshots(baselinePath, currentPath, diffPath);
+    const result = await utils.compareScreenshots(
+      baselinePath,
+      currentPath,
+      diffPath,
+    );
     expect(result.passed).toBeTruthy();
   });
 });
@@ -946,7 +1073,10 @@ test.describe("🌾 Visual Regression - Responsive Images", () => {
 test.describe("🌾 Agricultural Visual Consciousness", () => {
   const utils = new VisualTestingUtils();
 
-  test("should maintain seasonal color harmony", async ({ page, browserName }) => {
+  test("should maintain seasonal color harmony", async ({
+    page,
+    browserName,
+  }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
     const season = utils.getCurrentSeason();
     await page.goto("/");
@@ -971,7 +1101,7 @@ test.describe("🌾 Agricultural Visual Consciousness", () => {
       `seasonal-colors-${season.toLowerCase()}`,
       VIEWPORTS.desktop.name,
       browserName,
-      "current"
+      "current",
     );
     await page.screenshot({ path: currentPath, fullPage: true });
 
@@ -979,20 +1109,27 @@ test.describe("🌾 Agricultural Visual Consciousness", () => {
       `seasonal-colors-${season.toLowerCase()}`,
       VIEWPORTS.desktop.name,
       browserName,
-      "baseline"
+      "baseline",
     );
     const diffPath = utils.getScreenshotPath(
       `seasonal-colors-${season.toLowerCase()}`,
       VIEWPORTS.desktop.name,
       browserName,
-      "diff"
+      "diff",
     );
 
-    const result = await utils.compareScreenshots(baselinePath, currentPath, diffPath);
+    const result = await utils.compareScreenshots(
+      baselinePath,
+      currentPath,
+      diffPath,
+    );
     expect(result.passed).toBeTruthy();
   });
 
-  test("should display biodynamic farm badges consistently", async ({ page, browserName }) => {
+  test("should display biodynamic farm badges consistently", async ({
+    page,
+    browserName,
+  }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
     await page.goto("/farms?biodynamic=true");
 
@@ -1008,7 +1145,7 @@ test.describe("🌾 Agricultural Visual Consciousness", () => {
         "biodynamic-badge",
         VIEWPORTS.desktop.name,
         browserName,
-        "current"
+        "current",
       );
       await firstBadge.screenshot({ path: currentPath });
 
@@ -1016,16 +1153,20 @@ test.describe("🌾 Agricultural Visual Consciousness", () => {
         "biodynamic-badge",
         VIEWPORTS.desktop.name,
         browserName,
-        "baseline"
+        "baseline",
       );
       const diffPath = utils.getScreenshotPath(
         "biodynamic-badge",
         VIEWPORTS.desktop.name,
         browserName,
-        "diff"
+        "diff",
       );
 
-      const result = await utils.compareScreenshots(baselinePath, currentPath, diffPath);
+      const result = await utils.compareScreenshots(
+        baselinePath,
+        currentPath,
+        diffPath,
+      );
       expect(result.passed).toBeTruthy();
     }
   });
@@ -1036,7 +1177,10 @@ test.describe("🌾 Agricultural Visual Consciousness", () => {
 // ═════════════════════════════════════════════════════════════
 
 test.describe("🛠️ Baseline Management", () => {
-  test("should update all baselines when UPDATE_BASELINES=true", async ({ page, browserName }) => {
+  test("should update all baselines when UPDATE_BASELINES=true", async ({
+    page,
+    browserName,
+  }) => {
     if (process.env.UPDATE_BASELINES !== "true") {
       test.skip();
       return;

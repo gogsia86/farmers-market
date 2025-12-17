@@ -48,7 +48,12 @@ import {
 // ============================================================================
 
 export type Season = "SPRING" | "SUMMER" | "FALL" | "WINTER";
-export type MetricFormat = "number" | "currency" | "percentage" | "decimal" | "custom";
+export type MetricFormat =
+  | "number"
+  | "currency"
+  | "percentage"
+  | "decimal"
+  | "custom";
 export type TrendDirection = "up" | "down" | "neutral";
 export type MetricSize = "sm" | "md" | "lg" | "xl";
 
@@ -266,7 +271,10 @@ export function BiodynamicMetric({
   // Format the display value
   const displayValue = customFormat
     ? customFormat(value)
-    : formatValue(typeof value === "number" ? value : parseFloat(String(value)) || 0, format);
+    : formatValue(
+        typeof value === "number" ? value : parseFloat(String(value)) || 0,
+        format,
+      );
 
   // Get trend icon
   const TrendIcon =
@@ -288,10 +296,16 @@ export function BiodynamicMetric({
         <div className="animate-pulse">
           <div className="flex items-center justify-between mb-3">
             <div className="h-4 bg-agricultural-200 rounded w-24" />
-            {Icon && <div className={`${sizeClasses.iconSize} bg-agricultural-200 rounded`} />}
+            {Icon && (
+              <div
+                className={`${sizeClasses.iconSize} bg-agricultural-200 rounded`}
+              />
+            )}
           </div>
           <div className="h-8 bg-agricultural-300 rounded w-32 mb-2" />
-          {(trend || comparison) && <div className="h-3 bg-agricultural-200 rounded w-20" />}
+          {(trend || comparison) && (
+            <div className="h-3 bg-agricultural-200 rounded w-20" />
+          )}
         </div>
       </div>
     );
@@ -319,7 +333,9 @@ export function BiodynamicMetric({
     >
       {/* Header: Label and Icon */}
       <div className="flex items-center justify-between mb-2">
-        <h3 className={`${sizeClasses.labelText} font-medium text-gray-600 uppercase tracking-wide`}>
+        <h3
+          className={`${sizeClasses.labelText} font-medium text-gray-600 uppercase tracking-wide`}
+        >
           {label}
         </h3>
         {Icon && (
@@ -343,14 +359,24 @@ export function BiodynamicMetric({
             >
               <TrendIcon className="h-4 w-4" />
               <span>
-                {trend.direction === "up" ? "+" : trend.direction === "down" ? "-" : ""}
+                {trend.direction === "up"
+                  ? "+"
+                  : trend.direction === "down"
+                    ? "-"
+                    : ""}
                 {Math.abs(trend.value)}%
               </span>
-              {trend.label && <span className="text-gray-500 font-normal ml-1">{trend.label}</span>}
+              {trend.label && (
+                <span className="text-gray-500 font-normal ml-1">
+                  {trend.label}
+                </span>
+              )}
             </div>
           )}
           {comparison && (
-            <span className={`${sizeClasses.trendText} text-gray-500`}>{comparison}</span>
+            <span className={`${sizeClasses.trendText} text-gray-500`}>
+              {comparison}
+            </span>
           )}
         </div>
       )}
@@ -401,7 +427,9 @@ export function BiodynamicMetricGrid({
   };
 
   return (
-    <div className={`biodynamic-metric-grid grid ${gridCols[columns]} ${gapClass} ${className}`}>
+    <div
+      className={`biodynamic-metric-grid grid ${gridCols[columns]} ${gapClass} ${className}`}
+    >
       {metrics.map((metric, index) => (
         <BiodynamicMetric key={index} {...metric} />
       ))}
@@ -418,7 +446,7 @@ export function BiodynamicMetricGrid({
  */
 export function calculateTrend(
   current: number,
-  previous: number
+  previous: number,
 ): { value: number; direction: TrendDirection } {
   if (previous === 0) {
     return { value: 0, direction: "neutral" };
@@ -437,7 +465,9 @@ export function calculateTrend(
 /**
  * Create metric props helper
  */
-export function createMetric(props: BiodynamicMetricProps): BiodynamicMetricProps {
+export function createMetric(
+  props: BiodynamicMetricProps,
+): BiodynamicMetricProps {
   return props;
 }
 
@@ -445,7 +475,7 @@ export function createMetric(props: BiodynamicMetricProps): BiodynamicMetricProp
  * Batch create metrics
  */
 export function createMetrics(
-  metrics: BiodynamicMetricProps[]
+  metrics: BiodynamicMetricProps[],
 ): BiodynamicMetricProps[] {
   return metrics;
 }

@@ -11,6 +11,7 @@
 This roadmap breaks down the mobile app development into **actionable tasks** with clear deliverables, time estimates, and dependencies. Follow this guide to systematically build a production-ready mobile application.
 
 **Key Milestones:**
+
 - ✅ Week 2: Authentication & Navigation
 - ✅ Week 5: Complete Shopping Flow
 - ✅ Week 7: User Profiles & Orders
@@ -26,6 +27,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 ### Week 1: Project Setup & Core Infrastructure
 
 #### Day 1-2: Environment Setup
+
 - [ ] **Install development tools** (2 hours)
   - Node.js v20+, npm v10+
   - Expo CLI, EAS CLI
@@ -53,6 +55,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 **Deliverable**: Running Expo app with "Hello World"
 
 #### Day 3-5: Design System & Base Components
+
 - [ ] **Create theme configuration** (4 hours)
   - Define color palette (src/config/theme.ts)
   - Typography scale
@@ -61,6 +64,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
   - Border radius values
 
 - [ ] **Build base UI components** (12 hours)
+
   ```
   src/components/base/
   ├── Button.tsx           (2 hours)
@@ -92,6 +96,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 ### Week 2: Authentication & API Integration
 
 #### Day 1-2: API Client Setup
+
 - [ ] **Create API service** (6 hours)
   - Set up Axios instance (src/services/api.ts)
   - Configure interceptors (auth, errors)
@@ -114,6 +119,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 **Deliverable**: Fully functional API client with offline support
 
 #### Day 3-5: Authentication Flow
+
 - [ ] **Create auth store** (4 hours)
   - Zustand store setup (src/stores/authStore.ts)
   - Login action
@@ -123,6 +129,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
   - Persist auth state
 
 - [ ] **Build auth screens** (12 hours)
+
   ```
   src/screens/auth/
   ├── OnboardingScreen.tsx     (3 hours)
@@ -153,6 +160,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 ### Week 3: Product Discovery
 
 #### Day 1-2: Product Listing
+
 - [ ] **Create product service** (4 hours)
   - API endpoints in api.ts
   - Product types/interfaces
@@ -178,6 +186,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 **Deliverable**: Working product list with pagination
 
 #### Day 3-4: Search & Filters
+
 - [ ] **Create search bar component** (4 hours)
   - Search input with icon
   - Debounced search
@@ -200,6 +209,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 **Deliverable**: Full-text search with filters
 
 #### Day 5: Product Detail
+
 - [ ] **Product detail screen** (8 hours)
   - Image carousel with zoom
   - Product information
@@ -216,6 +226,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 ### Week 4: Shopping Cart
 
 #### Day 1-2: Cart Store & Logic
+
 - [ ] **Create cart store** (6 hours)
   - Zustand store (src/stores/cartStore.ts)
   - Add item action
@@ -235,6 +246,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 **Deliverable**: Cart state management with sync
 
 #### Day 3-4: Cart UI
+
 - [ ] **Cart item component** (4 hours)
   - Product thumbnail
   - Name, price, quantity
@@ -258,6 +270,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 **Deliverable**: Functional shopping cart
 
 #### Day 5: Quick Add Features
+
 - [ ] **Add to cart animations** (4 hours)
   - Fly-to-cart animation
   - Success feedback
@@ -276,6 +289,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 ### Week 5: Checkout & Payments
 
 #### Day 1-2: Shipping Address
+
 - [ ] **Address form component** (4 hours)
   - Street, city, state, zip
   - Country selector
@@ -297,6 +311,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 **Deliverable**: Address management system
 
 #### Day 3-4: Payment Integration
+
 - [ ] **Stripe setup** (4 hours)
   - Install @stripe/stripe-react-native
   - Configure Stripe provider
@@ -317,6 +332,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 **Deliverable**: Complete payment integration
 
 #### Day 5: Checkout Flow
+
 - [ ] **Checkout screen** (8 hours)
   - Step 1: Review cart
   - Step 2: Shipping address
@@ -342,6 +358,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 ### Week 6: Customer Profile
 
 #### Day 1-2: Profile Screen
+
 - [ ] **Profile overview screen** (6 hours)
   - User avatar
   - Name and email
@@ -367,6 +384,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 **Deliverable**: Complete profile management
 
 #### Day 3-4: Order History
+
 - [ ] **Order list screen** (6 hours)
   - Orders grouped by status
   - Order cards
@@ -393,6 +411,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 **Deliverable**: Order management system
 
 #### Day 5: Reviews & Ratings
+
 - [ ] **Review modal** (4 hours)
   - Star rating selector
   - Comment textarea
@@ -412,6 +431,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 ### Week 7: Farmer Dashboard
 
 #### Day 1-2: Farmer Navigation
+
 - [ ] **Farmer tab navigator** (4 hours)
   - Dashboard tab
   - Products tab
@@ -429,6 +449,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 **Deliverable**: Farmer navigation structure
 
 #### Day 3-4: Product Management
+
 - [ ] **Farmer product list** (4 hours)
   - My products list
   - Stock status indicators
@@ -451,6 +472,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 **Deliverable**: Complete product CRUD for farmers
 
 #### Day 5: Order Management
+
 - [ ] **Farmer orders screen** (6 hours)
   - Pending orders
   - In progress orders
@@ -473,6 +495,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 ### Week 8: Maps & Location
 
 #### Day 1-3: Farm Locator
+
 - [ ] **Install React Native Maps** (2 hours)
   - Setup for iOS and Android
   - Configure API keys
@@ -493,6 +516,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 **Deliverable**: Interactive farm map
 
 #### Day 4-5: Delivery Tracking
+
 - [ ] **Real-time tracking** (8 hours)
   - WebSocket connection
   - Live location updates
@@ -512,6 +536,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 ### Week 9: Push Notifications
 
 #### Day 1-2: Notification Setup
+
 - [ ] **Expo Notifications config** (4 hours)
   - Install expo-notifications
   - Request permissions
@@ -533,6 +558,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 **Deliverable**: Working push notifications
 
 #### Day 3-4: In-App Notifications
+
 - [ ] **Notification center** (6 hours)
   - Notifications list
   - Mark as read
@@ -548,6 +574,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 **Deliverable**: Complete notification system
 
 #### Day 5: Real-time Features
+
 - [ ] **WebSocket integration** (8 hours)
   - Connect to WebSocket server
   - Subscribe to events
@@ -562,6 +589,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 ### Week 10: Offline & Performance
 
 #### Day 1-2: Offline Support
+
 - [ ] **SQLite database** (6 hours)
   - Install react-native-sqlite-storage
   - Database schema
@@ -582,6 +610,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 **Deliverable**: Offline-first experience
 
 #### Day 3-4: Performance Optimization
+
 - [ ] **Image optimization** (4 hours)
   - Expo Image implementation
   - Image caching
@@ -603,6 +632,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 **Deliverable**: Optimized performance
 
 #### Day 5: Analytics & Monitoring
+
 - [ ] **Sentry setup** (4 hours)
   - Install sentry-expo
   - Configure error tracking
@@ -624,6 +654,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 ### Week 11: UI/UX Polish
 
 #### Day 1-2: Animations
+
 - [ ] **Screen transitions** (4 hours)
   - Custom animations
   - Gesture-based navigation
@@ -644,6 +675,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 **Deliverable**: Polished animations
 
 #### Day 3-5: Accessibility & Dark Mode
+
 - [ ] **Screen reader support** (6 hours)
   - Add accessibility labels
   - Accessibility hints
@@ -668,6 +700,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 ### Week 12: Advanced Farmer Tools
 
 #### Day 1-2: Analytics Dashboard
+
 - [ ] **Sales charts** (6 hours)
   - Install victory-native
   - Revenue chart
@@ -683,6 +716,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 **Deliverable**: Analytics dashboard
 
 #### Day 3-5: Advanced Features
+
 - [ ] **Bulk operations** (6 hours)
   - Bulk product updates
   - CSV import/export
@@ -706,6 +740,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 ### Week 13: Comprehensive Testing
 
 #### Day 1-2: Unit Tests
+
 - [ ] **Component tests** (8 hours)
   - Test all base components
   - Test product components
@@ -725,6 +760,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 **Deliverable**: 80%+ unit test coverage
 
 #### Day 3-4: Integration Tests
+
 - [ ] **Flow tests** (8 hours)
   - Login flow
   - Shopping flow
@@ -739,6 +775,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 **Deliverable**: Critical flows tested
 
 #### Day 5: E2E Tests
+
 - [ ] **Detox setup** (4 hours)
   - Install and configure
   - Build test apps
@@ -757,6 +794,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 ### Week 14: Bug Fixes & Beta Testing
 
 #### Day 1-2: Bug Fixes
+
 - [ ] **Fix critical bugs** (12 hours)
   - Review all issues
   - Prioritize fixes
@@ -764,6 +802,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
   - Regression testing
 
 #### Day 3-5: Beta Testing
+
 - [ ] **TestFlight/Beta release** (4 hours)
   - Create beta build
   - Upload to TestFlight
@@ -785,6 +824,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 ### Week 15: App Store Assets
 
 #### Day 1-2: Design Assets
+
 - [ ] **App icons** (4 hours)
   - iOS app icon (1024x1024)
   - Android adaptive icon
@@ -805,6 +845,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 **Deliverable**: Complete app store assets
 
 #### Day 3-5: Submission Preparation
+
 - [ ] **Privacy policy** (4 hours)
   - Mobile addendum
   - Data collection disclosure
@@ -828,6 +869,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 ### Week 16: Launch
 
 #### Day 1-2: Soft Launch
+
 - [ ] **Submit to app stores** (4 hours)
   - Apple App Store submission
   - Google Play Store submission
@@ -839,6 +881,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
   - Gather initial feedback
 
 #### Day 3-5: Full Launch
+
 - [ ] **Marketing coordination** (4 hours)
   - Social media posts
   - Email announcement
@@ -864,31 +907,37 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 ## 📊 Success Metrics
 
 ### Week 2 Checkpoint
+
 - [ ] Authentication works
 - [ ] API client functional
 - [ ] 0 TypeScript errors
 
 ### Week 5 Checkpoint
+
 - [ ] Complete shopping flow
 - [ ] Cart synchronization
 - [ ] Stripe integration working
 
 ### Week 7 Checkpoint
+
 - [ ] User profiles complete
 - [ ] Order management working
 - [ ] Farmer dashboard functional
 
 ### Week 10 Checkpoint
+
 - [ ] All features implemented
 - [ ] Offline support working
 - [ ] Performance optimized
 
 ### Week 14 Checkpoint
+
 - [ ] 80%+ test coverage
 - [ ] Beta testing complete
 - [ ] All critical bugs fixed
 
 ### Week 16 Checkpoint
+
 - [ ] App approved and live
 - [ ] Monitoring operational
 - [ ] Support ready
@@ -898,12 +947,14 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 ## 🎯 Daily Workflow
 
 ### Morning Routine (30 min)
+
 1. Pull latest changes
 2. Review yesterday's work
 3. Check task list
 4. Standup meeting
 
 ### During Development (7 hours)
+
 1. Pick task from roadmap
 2. Create feature branch
 3. Implement feature
@@ -912,6 +963,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 6. Create PR
 
 ### End of Day (30 min)
+
 1. Push changes
 2. Update roadmap
 3. Document blockers
@@ -922,12 +974,14 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 ## 🚨 Risk Mitigation
 
 ### High-Risk Items
+
 - **Stripe Integration**: Test thoroughly in sandbox
 - **Push Notifications**: Handle all permission scenarios
 - **Offline Sync**: Conflict resolution strategy
 - **App Store Rejection**: Follow guidelines strictly
 
 ### Contingency Plans
+
 - **Timeline Slippage**: 2-week buffer built in
 - **Technical Blockers**: Escalate to senior devs
 - **Third-party Issues**: Have backup solutions
@@ -938,12 +992,14 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 ## 📝 Notes
 
 ### Task Estimation
+
 - **Small task**: 1-4 hours
 - **Medium task**: 4-8 hours
 - **Large task**: 8-16 hours
 - **Buffer**: 20% added to estimates
 
 ### Definition of Done
+
 - [ ] Code implemented
 - [ ] Tests written and passing
 - [ ] Documentation updated
@@ -957,6 +1013,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 ## 🎉 Launch Checklist
 
 ### Pre-Launch
+
 - [ ] All features complete
 - [ ] All tests passing
 - [ ] No critical bugs
@@ -967,6 +1024,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 - [ ] Support docs ready
 
 ### Launch Day
+
 - [ ] App submitted to stores
 - [ ] Monitoring dashboards ready
 - [ ] Support team trained
@@ -976,6 +1034,7 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 - [ ] Email sent to users
 
 ### Post-Launch (Week 1)
+
 - [ ] Daily metrics review
 - [ ] Bug triage and fixes
 - [ ] User feedback collection
@@ -987,6 +1046,6 @@ This roadmap breaks down the mobile app development into **actionable tasks** wi
 
 **Document Version**: 1.0  
 **Last Updated**: December 2025  
-**Status**: Ready for Implementation  
+**Status**: Ready for Implementation
 
 **Let's build something amazing! 🚀**

@@ -10,7 +10,7 @@
  * - Search and filter skeletons
  */
 
-import { MapPin, Search, SlidersHorizontal, Star } from "lucide-react";
+import { MapPin, Search } from "lucide-react";
 
 export default function FarmsLoading() {
   return (
@@ -132,7 +132,10 @@ export default function FarmsLoading() {
           <div className="flex items-center gap-2">
             <div className="h-10 w-10 bg-gray-200 rounded animate-pulse"></div>
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-10 w-10 bg-gray-200 rounded animate-pulse"></div>
+              <div
+                key={i}
+                className="h-10 w-10 bg-gray-200 rounded animate-pulse"
+              ></div>
             ))}
             <div className="h-10 w-10 bg-gray-200 rounded animate-pulse"></div>
           </div>
@@ -145,7 +148,9 @@ export default function FarmsLoading() {
           <div className="h-2 w-2 bg-green-500 rounded-full animate-ping"></div>
           <div className="h-2 w-2 bg-green-500 rounded-full absolute top-0 left-0"></div>
         </div>
-        <span className="text-sm font-medium text-gray-700">Loading farms...</span>
+        <span className="text-sm font-medium text-gray-700">
+          Loading farms...
+        </span>
       </div>
     </div>
   );

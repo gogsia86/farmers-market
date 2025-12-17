@@ -9,12 +9,13 @@ This directory contains specialized React components designed for agricultural c
 ## Components
 
 ### 1. 🌱 SeasonalIndicator
+
 Displays current season with activities, temperature, and visual indicators.
 
 ```typescript
 import { SeasonalIndicator, getCurrentSeason } from "@/components/agricultural";
 
-<SeasonalIndicator 
+<SeasonalIndicator
   season={getCurrentSeason()}
   temperature={22}
   variant="default"
@@ -25,6 +26,7 @@ import { SeasonalIndicator, getCurrentSeason } from "@/components/agricultural";
 **Variants**: `default` | `compact` | `detailed`
 
 ### 2. 📅 HarvestCalendar
+
 Full-featured calendar for planning and tracking harvest schedules.
 
 ```typescript
@@ -40,7 +42,7 @@ const events: HarvestEvent[] = [
   }
 ];
 
-<HarvestCalendar 
+<HarvestCalendar
   events={events}
   onEventClick={handleEventClick}
   onDateClick={handleDateClick}
@@ -50,12 +52,13 @@ const events: HarvestEvent[] = [
 **Features**: Monthly view, event tracking, crop types, status indicators
 
 ### 3. ☀️ WeatherWidget
+
 Weather conditions display with agricultural recommendations.
 
 ```typescript
 import { WeatherWidget } from "@/components/agricultural";
 
-<WeatherWidget 
+<WeatherWidget
   weather={currentWeather}
   location="Green Valley Farm"
   variant="detailed"
@@ -68,6 +71,7 @@ import { WeatherWidget } from "@/components/agricultural";
 **Conditions**: Clear, Cloudy, Rain, Snow, Thunderstorm, Fog, Windy, etc.
 
 ### 4. 🌍 SoilHealthMeter
+
 Soil health metrics visualization with recommendations.
 
 ```typescript
@@ -83,7 +87,7 @@ const soilData: SoilHealthData = {
   lastTested: new Date()
 };
 
-<SoilHealthMeter 
+<SoilHealthMeter
   data={soilData}
   variant="detailed"
   showMetrics={true}
@@ -95,13 +99,14 @@ const soilData: SoilHealthData = {
 **Status Levels**: Excellent, Good, Fair, Poor, Critical
 
 ### 5. 🏆 BiodynamicBadge
+
 Certification and farming practice badges.
 
 ```typescript
 import { BiodynamicBadge, BiodynamicBadgeGroup } from "@/components/agricultural";
 
 // Single badge
-<BiodynamicBadge 
+<BiodynamicBadge
   type="ORGANIC"
   size="md"
   variant="filled"
@@ -109,7 +114,7 @@ import { BiodynamicBadge, BiodynamicBadgeGroup } from "@/components/agricultural
 />
 
 // Multiple badges
-<BiodynamicBadgeGroup 
+<BiodynamicBadgeGroup
   certifications={["ORGANIC", "BIODYNAMIC", "LOCAL", "NON_GMO"]}
   maxVisible={3}
   onBadgeClick={handleClick}
@@ -173,34 +178,40 @@ export function FarmDashboard() {
 ## Features
 
 ✅ **Agricultural Intelligence**
+
 - Seasonal awareness and recommendations
 - Weather-based farming tips
 - Soil health optimization guidance
 - Certification tracking
 
 ✅ **Accessibility**
+
 - WCAG 2.1 AA compliant
 - Full keyboard navigation
 - Screen reader support
 - ARIA labels and roles
 
 ✅ **Type Safety**
+
 - TypeScript strict mode
 - Comprehensive type definitions
 - Type guards and utilities
 
 ✅ **Performance**
+
 - Zero external dependencies (except Lucide icons)
 - Optimized rendering
 - Lightweight components
 - Optional animations
 
 ✅ **Responsive Design**
+
 - Mobile-first approach
 - Tablet and desktop optimized
 - Flexible layouts
 
 ✅ **Fully Tested**
+
 - 100% test coverage
 - Unit, integration, and accessibility tests
 - 726 lines of comprehensive tests
@@ -235,13 +246,32 @@ type HarvestStatus = "PLANNED" | "IN_PROGRESS" | "COMPLETED" | "DELAYED";
 type CropType = "VEGETABLE" | "FRUIT" | "GRAIN" | "HERB" | "OTHER";
 
 // Weather
-type WeatherCondition = "CLEAR" | "PARTLY_CLOUDY" | "CLOUDY" | "RAIN" | "DRIZZLE" | "SNOW" | "THUNDERSTORM" | "FOG" | "WINDY";
+type WeatherCondition =
+  | "CLEAR"
+  | "PARTLY_CLOUDY"
+  | "CLOUDY"
+  | "RAIN"
+  | "DRIZZLE"
+  | "SNOW"
+  | "THUNDERSTORM"
+  | "FOG"
+  | "WINDY";
 
 // Soil Health
 type SoilHealthStatus = "EXCELLENT" | "GOOD" | "FAIR" | "POOR" | "CRITICAL";
 
 // Certifications
-type CertificationType = "ORGANIC" | "BIODYNAMIC" | "REGENERATIVE" | "NON_GMO" | "FAIR_TRADE" | "LOCAL" | "SUSTAINABLE" | "PERMACULTURE" | "PESTICIDE_FREE" | "HEIRLOOM";
+type CertificationType =
+  | "ORGANIC"
+  | "BIODYNAMIC"
+  | "REGENERATIVE"
+  | "NON_GMO"
+  | "FAIR_TRADE"
+  | "LOCAL"
+  | "SUSTAINABLE"
+  | "PERMACULTURE"
+  | "PESTICIDE_FREE"
+  | "HEIRLOOM";
 ```
 
 ## Testing
@@ -264,7 +294,11 @@ npm test -- --watch agricultural-components.test.tsx
 ### Season Utilities
 
 ```typescript
-import { getCurrentSeason, getSeasonConfig, isSeasonalActivity } from "@/components/agricultural";
+import {
+  getCurrentSeason,
+  getSeasonConfig,
+  isSeasonalActivity,
+} from "@/components/agricultural";
 
 const season = getCurrentSeason(); // "SPRING" | "SUMMER" | "FALL" | "WINTER"
 const config = getSeasonConfig("SPRING"); // Get season configuration
@@ -286,11 +320,11 @@ const metrics = getMetrics(soilData); // Array of SoilMetric
 ### Certification Utilities
 
 ```typescript
-import { 
-  getCertificationConfig, 
+import {
+  getCertificationConfig,
   isValidCertification,
   getAllCertificationTypes,
-  getCertificationsByCategory 
+  getCertificationsByCategory,
 } from "@/components/agricultural";
 
 const config = getCertificationConfig("ORGANIC");
@@ -304,7 +338,7 @@ const envCerts = getCertificationsByCategory("environmental"); // Environmental 
 All components accept a `className` prop for custom styling:
 
 ```typescript
-<SeasonalIndicator 
+<SeasonalIndicator
   season="SPRING"
   className="shadow-lg rounded-xl border-2"
 />
@@ -362,7 +396,7 @@ const soilScore = useMemo(() => calculateSoilHealth(soilData), [soilData]);
 <div className="product-card">
   <img src={product.image} alt={product.name} />
   <h3>{product.name}</h3>
-  <BiodynamicBadgeGroup 
+  <BiodynamicBadgeGroup
     certifications={product.certifications}
     size="sm"
     maxVisible={2}
@@ -393,17 +427,19 @@ const soilScore = useMemo(() => calculateSoilHealth(soilData), [soilData]);
 ### Date issues in HarvestCalendar?
 
 Ensure dates are Date objects, not strings:
+
 ```typescript
 // ❌ Wrong
-harvestDate: "2024-06-15"
+harvestDate: "2024-06-15";
 
 // ✅ Correct
-harvestDate: new Date(2024, 5, 15) // Month is 0-indexed
+harvestDate: new Date(2024, 5, 15); // Month is 0-indexed
 ```
 
 ### Soil health score seems wrong?
 
 Verify your data uses the correct units:
+
 - pH: 4.0-9.0 (optimal: 6.0-7.0)
 - Nitrogen: ppm (optimal: 20-50)
 - Phosphorus: ppm (optimal: 30-60)
@@ -432,6 +468,7 @@ When adding or modifying components:
 ## Support
 
 For issues or questions:
+
 - Check inline code documentation
 - Review test examples
 - See full documentation in `AGRICULTURAL_COMPONENTS_SUMMARY.md`
@@ -442,6 +479,6 @@ For issues or questions:
 **Status**: ✅ Production Ready  
 **Version**: 1.0.0  
 **Last Updated**: December 2025  
-**Test Coverage**: 100%  
+**Test Coverage**: 100%
 
-*"Code with agricultural consciousness, architect with divine precision."* 🌾⚡
+_"Code with agricultural consciousness, architect with divine precision."_ 🌾⚡

@@ -1,4 +1,5 @@
 # 🧪 Testing Guide for Webpage Updates
+
 **Farmers Market Platform - Update Verification**  
 **Date**: December 3, 2024  
 **Purpose**: Verify all webpage updates are working correctly
@@ -8,6 +9,7 @@
 ## 🚀 Quick Start Testing
 
 ### 1. Start Development Server
+
 ```bash
 cd "Farmers Market Platform web and app"
 npm run dev
@@ -22,9 +24,11 @@ Server will start at: `http://localhost:3001`
 ### 🔴 CRITICAL FIXES - Test These First
 
 #### ✅ Test #1: Auth Routes (No Duplicates)
+
 **What Changed**: Removed duplicate auth routes
 
 **Test Steps**:
+
 1. ✅ Visit `http://localhost:3001/login`
    - Should show login page (from route group)
    - Check URL stays `/login` (not `/auth/login`)
@@ -44,9 +48,11 @@ Server will start at: `http://localhost:3001`
 ---
 
 #### ✅ Test #2: Marketplace Navigation
+
 **What Changed**: Consolidated `/markets` to `/marketplace`
 
 **Test Steps**:
+
 1. ✅ Click "Marketplace" in header
    - Should navigate to `/marketplace`
    - Page should load correctly
@@ -66,9 +72,11 @@ Server will start at: `http://localhost:3001`
 ### 🟡 HIGH PRIORITY FIXES
 
 #### ✅ Test #3: Public Farms Page (API Integration)
+
 **What Changed**: Replaced mock data with real API
 
 **Test Steps**:
+
 1. ✅ Visit `http://localhost:3001/farms`
    - Page should load without errors
 
@@ -96,9 +104,11 @@ Server will start at: `http://localhost:3001`
 ---
 
 #### ✅ Test #4: Product Category Pages
+
 **What Changed**: Verified API integration and redirect pattern
 
 **Test Steps**:
+
 1. ✅ Visit `http://localhost:3001/products/categories/vegetables`
    - Should redirect to `/products?category=vegetables`
 
@@ -120,9 +130,11 @@ Server will start at: `http://localhost:3001`
 ---
 
 #### ⏳ Test #5: Customer Dashboard/Account
+
 **What Changed**: Under review (both routes exist)
 
 **Test Steps**:
+
 1. ✅ Visit `http://localhost:3001/dashboard` (login required)
    - Should show customer dashboard
    - Check what features are shown
@@ -145,6 +157,7 @@ Server will start at: `http://localhost:3001`
 ### Navigation Flow Testing
 
 #### Header Navigation
+
 ```
 Test all header links:
 ✅ Logo → Home (/)
@@ -158,6 +171,7 @@ Test all header links:
 ```
 
 #### Footer Navigation (if applicable)
+
 ```
 Test all footer links work
 No broken links
@@ -168,12 +182,14 @@ No broken links
 ### API Integration Testing
 
 #### Farms API
+
 ```bash
 # Test API directly
 curl http://localhost:3001/api/farms
 ```
 
 **Expected Response**:
+
 ```json
 {
   "success": true,
@@ -193,6 +209,7 @@ curl http://localhost:3001/api/farms
 ```
 
 **Or if no farms**:
+
 ```json
 {
   "success": true,
@@ -203,6 +220,7 @@ curl http://localhost:3001/api/farms
 ---
 
 #### Products API
+
 ```bash
 # Test API directly
 curl http://localhost:3001/api/products
@@ -212,6 +230,7 @@ curl "http://localhost:3001/api/products?category=vegetables"
 ```
 
 **Expected Response**:
+
 ```json
 {
   "success": true,
@@ -235,6 +254,7 @@ curl "http://localhost:3001/api/products?category=vegetables"
 ### Error Handling Testing
 
 #### Test Graceful Failures
+
 ```
 1. ✅ Disconnect internet (or pause network in DevTools)
 2. ✅ Reload `/farms` page
@@ -248,6 +268,7 @@ curl "http://localhost:3001/api/products?category=vegetables"
 ## 🎨 Visual/UI Testing
 
 ### Responsive Design
+
 ```
 Test at different screen sizes:
 ✅ Desktop (1920x1080)
@@ -257,6 +278,7 @@ Test at different screen sizes:
 ```
 
 ### Farm Cards Visual Check
+
 - ✅ Images display correctly (or placeholder)
 - ✅ Text is readable
 - ✅ Badges show (Certified, Featured)
@@ -270,6 +292,7 @@ Test at different screen sizes:
 ## 📊 Performance Testing
 
 ### Page Load Times
+
 ```
 Check in Network tab (F12):
 ✅ /farms should load < 2 seconds
@@ -278,6 +301,7 @@ Check in Network tab (F12):
 ```
 
 ### Lighthouse Audit (Optional)
+
 ```
 1. Open DevTools (F12)
 2. Go to "Lighthouse" tab
@@ -299,23 +323,28 @@ Target Scores:
 ## 🐛 Known Issues to Watch For
 
 ### TypeScript Errors
+
 ```bash
 # Run type check
 npm run type-check
 ```
 
-**Expected**: 
+**Expected**:
+
 - May have errors in `mobile-app/` (can be ignored)
 - Should have NO errors in `src/` directory
 
 ---
 
 ### Console Warnings
+
 **Acceptable Warnings**:
+
 - Next.js dev mode warnings
 - React DevTools warnings
 
 **NOT Acceptable** (report if seen):
+
 - Unhandled Promise rejections
 - 404 errors for routes that should exist
 - Authentication errors on public pages
@@ -326,6 +355,7 @@ npm run type-check
 ## ✅ Success Criteria
 
 ### All Tests Pass When:
+
 - [x] Login/signup pages work (no duplicate auth routes)
 - [x] `/markets` redirects to `/marketplace`
 - [x] Header marketplace link points to `/marketplace`
@@ -343,6 +373,7 @@ npm run type-check
 ## 🚨 If Tests Fail
 
 ### Login/Signup Not Working
+
 ```
 Check:
 1. Are you on correct URL? (/login not /auth/login)
@@ -352,6 +383,7 @@ Check:
 ```
 
 ### Farms Page Empty (But Should Have Data)
+
 ```
 Check:
 1. Database has farms: npm run db:seed:basic
@@ -361,6 +393,7 @@ Check:
 ```
 
 ### Redirect Not Working (/markets)
+
 ```
 Check:
 1. Clear browser cache
@@ -370,6 +403,7 @@ Check:
 ```
 
 ### API Errors
+
 ```
 Check:
 1. Dev server is running (npm run dev)
@@ -383,6 +417,7 @@ Check:
 ## 📱 Mobile Testing
 
 ### Test on Real Device (Optional)
+
 ```
 1. Find your local IP: ipconfig (Windows) or ifconfig (Mac/Linux)
 2. On mobile, visit: http://[YOUR_IP]:3001
@@ -420,6 +455,7 @@ npm run dev
 ## 📞 Support
 
 ### If You Find Issues:
+
 1. Note the URL where error occurs
 2. Copy console error messages
 3. Check Network tab for failed requests
@@ -427,6 +463,7 @@ npm run dev
 5. Document steps to reproduce
 
 ### Related Documents:
+
 - `WEBPAGE_UPDATES_PROGRESS.md` - Implementation details
 - `WEBPAGE_UPDATE_PLAN.md` - Original plan
 - `DEV_SERVER_ANALYSIS_CHECKLIST.md` - Server setup

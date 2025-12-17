@@ -1,4 +1,5 @@
 # 🚀 TESTING QUICK REFERENCE
+
 **Farmers Market Platform - Essential Commands**
 
 ---
@@ -27,6 +28,7 @@ npm run test:omen
 ## 🐳 TEST DATABASE
 
 ### Start/Stop Database
+
 ```bash
 # Start test database
 docker-compose -f docker-compose.test.yml up -d
@@ -45,6 +47,7 @@ docker ps --filter name=farmers-market-test-db
 ```
 
 ### Database Management
+
 ```bash
 # Push schema to test database
 bash -c 'export DATABASE_URL="postgresql://postgres:test_password_123@localhost:5433/farmersmarket_test" && npx prisma db push --accept-data-loss'
@@ -60,6 +63,7 @@ docker exec farmers-market-test-db psql -U postgres -d farmersmarket_test -c "\d
 ```
 
 ### Connection String
+
 ```
 postgresql://postgres:test_password_123@localhost:5433/farmersmarket_test
 ```
@@ -69,12 +73,14 @@ postgresql://postgres:test_password_123@localhost:5433/farmersmarket_test
 ## 🎭 E2E TESTS (PLAYWRIGHT)
 
 ### Prerequisites
+
 ```bash
 # Install Playwright browsers (first time only)
 npx playwright install
 ```
 
 ### Run E2E Tests
+
 ```bash
 # Run all E2E tests (with existing dev server)
 bash -c 'export DATABASE_URL="postgresql://postgres:test_password_123@localhost:5433/farmersmarket_test" && npx playwright test --config=playwright.config.temp.ts --workers=6'
@@ -100,6 +106,7 @@ npx playwright show-report
 ## 🤖 WORKFLOW MONITORING BOT
 
 ### Single Checks
+
 ```bash
 # Complete health check
 npm run monitor:all
@@ -118,6 +125,7 @@ npm run monitor:list
 ```
 
 ### Continuous Monitoring
+
 ```bash
 # Start monitoring daemon (checks every 30 seconds)
 npm run monitor:start
@@ -126,6 +134,7 @@ npm run monitor:start
 ```
 
 ### Different Environments
+
 ```bash
 # Monitor staging
 BASE_URL=https://staging.farmersmarket.com npm run monitor:all
@@ -157,6 +166,7 @@ npm run dev:safe
 ## ✅ VERIFICATION COMMANDS
 
 ### Page Verification
+
 ```bash
 # Check all pages (requires dev server running)
 node check-pages.js
@@ -166,6 +176,7 @@ verify-pages.bat
 ```
 
 ### Type Checking
+
 ```bash
 # Type check
 npm run type-check
@@ -175,6 +186,7 @@ npm run type-check:omen
 ```
 
 ### Linting
+
 ```bash
 # Lint all files
 npm run lint
@@ -191,6 +203,7 @@ npm run format:check
 ## 🎯 COMMON WORKFLOWS
 
 ### Full Test Suite
+
 ```bash
 # 1. Start test database
 docker-compose -f docker-compose.test.yml up -d
@@ -209,6 +222,7 @@ npm run monitor:all
 ```
 
 ### Quick Smoke Test
+
 ```bash
 # Check server, critical pages, and workflows
 npm run dev &
@@ -218,6 +232,7 @@ npm run monitor:workflow
 ```
 
 ### Pre-Deployment Check
+
 ```bash
 # Type check, lint, test, verify
 npm run type-check && npm run lint && npm test && npm run monitor:all
@@ -228,6 +243,7 @@ npm run type-check && npm run lint && npm test && npm run monitor:all
 ## 🐞 DEBUGGING
 
 ### Playwright Debugging
+
 ```bash
 # Debug specific test
 npx playwright test tests/e2e/critical-flows.spec.ts --debug
@@ -240,6 +256,7 @@ npx playwright show-trace trace.zip
 ```
 
 ### Database Debugging
+
 ```bash
 # Connect to database
 docker exec -it farmers-market-test-db psql -U postgres -d farmersmarket_test
@@ -256,6 +273,7 @@ docker exec farmers-market-test-db psql -U postgres -d farmersmarket_test -c "SE
 ## 📦 CLEANUP
 
 ### Reset Everything
+
 ```bash
 # Stop and remove test database
 docker-compose -f docker-compose.test.yml down -v
@@ -283,6 +301,7 @@ Customer: customer@farmersmarket.app / DivineCustomer123!
 ## 📊 PERFORMANCE BENCHMARKS
 
 **Target Metrics**:
+
 - Page Load: < 200ms (currently ~54ms avg ✅)
 - API Response: < 100ms (currently ~11ms avg ✅)
 - Test Suite: < 5 minutes (currently ~2-3 min ✅)
@@ -293,6 +312,7 @@ Customer: customer@farmersmarket.app / DivineCustomer123!
 ## 🆘 TROUBLESHOOTING
 
 ### Port Already in Use
+
 ```bash
 # Find process on port 3001
 netstat -ano | findstr :3001
@@ -302,6 +322,7 @@ taskkill /F /PID <PID>
 ```
 
 ### Database Connection Issues
+
 ```bash
 # Check container health
 docker ps --filter name=farmers-market-test-db
@@ -314,6 +335,7 @@ docker logs farmers-market-test-db --tail 50
 ```
 
 ### Playwright Installation Issues
+
 ```bash
 # Reinstall browsers
 npx playwright install --force
@@ -323,6 +345,7 @@ npx playwright install --with-deps
 ```
 
 ### Prisma Schema Issues
+
 ```bash
 # Regenerate client
 npx prisma generate
@@ -352,6 +375,7 @@ tests/global-setup.ts            # E2E test setup
 ## 🎯 CI/CD INTEGRATION
 
 ### GitHub Actions Example
+
 ```yaml
 - name: Run Tests
   run: |
@@ -361,12 +385,13 @@ tests/global-setup.ts            # E2E test setup
 ```
 
 ### Azure Pipelines Example
+
 ```yaml
 - script: |
     docker-compose -f docker-compose.test.yml up -d
     npm test
     npx playwright test
-  displayName: 'Run All Tests'
+  displayName: "Run All Tests"
 ```
 
 ---

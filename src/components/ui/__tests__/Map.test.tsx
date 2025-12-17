@@ -5,12 +5,12 @@ import { StaticMap, FarmLocationMap, MapLocation } from "../Map";
 const mockGeolocation = {
   getCurrentPosition: jest.fn(),
   watchPosition: jest.fn(),
-  clearWatch: jest.fn()
+  clearWatch: jest.fn(),
 };
 
 Object.defineProperty(global.navigator, "geolocation", {
   writable: true,
-  value: mockGeolocation
+  value: mockGeolocation,
 });
 
 describe("StaticMap Component", () => {
@@ -18,30 +18,30 @@ describe("StaticMap Component", () => {
     {
       id: "1",
       lat: 40.7128,
-      lng: -74.0060,
+      lng: -74.006,
       title: "Sunrise Valley Farm",
       description: "Organic vegetables and fruits",
       type: "farm",
       farmName: "Sunrise Valley Farm",
-      address: "123 Farm Road, NY"
+      address: "123 Farm Road, NY",
     },
     {
       id: "2",
-      lat: 40.7580,
+      lat: 40.758,
       lng: -73.9855,
       title: "Green Meadows Market",
       description: "Weekly farmers market",
       type: "market",
-      address: "456 Market St, NY"
+      address: "456 Market St, NY",
     },
     {
       id: "3",
       lat: 40.7489,
-      lng: -73.9680,
+      lng: -73.968,
       title: "Downtown Pickup Point",
       type: "pickup",
-      address: "789 Main St, NY"
-    }
+      address: "789 Main St, NY",
+    },
   ];
 
   beforeEach(() => {
@@ -77,7 +77,7 @@ describe("StaticMap Component", () => {
 
     it("should apply custom height", () => {
       const { container } = render(
-        <StaticMap locations={mockLocations} height="600px" />
+        <StaticMap locations={mockLocations} height="600px" />,
       );
 
       const mapContainer = container.querySelector(".map-container");
@@ -86,7 +86,7 @@ describe("StaticMap Component", () => {
 
     it("should apply custom className", () => {
       const { container } = render(
-        <StaticMap locations={mockLocations} className="custom-map" />
+        <StaticMap locations={mockLocations} className="custom-map" />,
       );
 
       expect(container.querySelector(".custom-map")).toBeInTheDocument();
@@ -116,9 +116,9 @@ describe("StaticMap Component", () => {
       const deliveryLocation: MapLocation = {
         id: "delivery-1",
         lat: 40.7128,
-        lng: -74.0060,
+        lng: -74.006,
         title: "Delivery Point",
-        type: "delivery"
+        type: "delivery",
       };
 
       render(<StaticMap locations={[deliveryLocation]} />);
@@ -130,9 +130,9 @@ describe("StaticMap Component", () => {
       const otherLocation: MapLocation = {
         id: "other-1",
         lat: 40.7128,
-        lng: -74.0060,
+        lng: -74.006,
         title: "Other Location",
-        type: "other"
+        type: "other",
       };
 
       render(<StaticMap locations={[otherLocation]} />);
@@ -151,7 +151,9 @@ describe("StaticMap Component", () => {
     it("should display location description when provided", () => {
       render(<StaticMap locations={mockLocations} />);
 
-      expect(screen.getByText("Organic vegetables and fruits")).toBeInTheDocument();
+      expect(
+        screen.getByText("Organic vegetables and fruits"),
+      ).toBeInTheDocument();
     });
 
     it("should display coordinates", () => {
@@ -166,7 +168,9 @@ describe("StaticMap Component", () => {
     it("should highlight selected location on click", () => {
       const { container } = render(<StaticMap locations={mockLocations} />);
 
-      const firstLocation = screen.getByText("Sunrise Valley Farm").closest("button");
+      const firstLocation = screen
+        .getByText("Sunrise Valley Farm")
+        .closest("button");
       if (firstLocation) {
         fireEvent.click(firstLocation);
 
@@ -178,10 +182,15 @@ describe("StaticMap Component", () => {
       const onLocationClick = jest.fn();
 
       render(
-        <StaticMap locations={mockLocations} onLocationClick={onLocationClick} />
+        <StaticMap
+          locations={mockLocations}
+          onLocationClick={onLocationClick}
+        />,
       );
 
-      const firstLocation = screen.getByText("Sunrise Valley Farm").closest("button");
+      const firstLocation = screen
+        .getByText("Sunrise Valley Farm")
+        .closest("button");
       if (firstLocation) {
         fireEvent.click(firstLocation);
         expect(onLocationClick).toHaveBeenCalledWith(mockLocations[0]);
@@ -191,19 +200,25 @@ describe("StaticMap Component", () => {
     it("should show selected location details", () => {
       render(<StaticMap locations={mockLocations} />);
 
-      const firstLocation = screen.getByText("Sunrise Valley Farm").closest("button");
+      const firstLocation = screen
+        .getByText("Sunrise Valley Farm")
+        .closest("button");
       if (firstLocation) {
         fireEvent.click(firstLocation);
 
         // Details panel should appear
-        expect(screen.getAllByText("Sunrise Valley Farm").length).toBeGreaterThan(1);
+        expect(
+          screen.getAllByText("Sunrise Valley Farm").length,
+        ).toBeGreaterThan(1);
       }
     });
 
     it("should close details panel when close button is clicked", () => {
       render(<StaticMap locations={mockLocations} />);
 
-      const firstLocation = screen.getByText("Sunrise Valley Farm").closest("button");
+      const firstLocation = screen
+        .getByText("Sunrise Valley Farm")
+        .closest("button");
       if (firstLocation) {
         fireEvent.click(firstLocation);
 
@@ -291,7 +306,9 @@ describe("StaticMap Component", () => {
     });
 
     it("should not request geolocation when showCurrentLocation is false", () => {
-      render(<StaticMap locations={mockLocations} showCurrentLocation={false} />);
+      render(
+        <StaticMap locations={mockLocations} showCurrentLocation={false} />,
+      );
 
       expect(mockGeolocation.getCurrentPosition).not.toHaveBeenCalled();
     });
@@ -301,15 +318,15 @@ describe("StaticMap Component", () => {
         success({
           coords: {
             latitude: 40.7128,
-            longitude: -74.0060,
+            longitude: -74.006,
             accuracy: 10,
             altitude: null,
             altitudeAccuracy: null,
             heading: null,
-            speed: null
+            speed: null,
           },
-          timestamp: Date.now()
-        })
+          timestamp: Date.now(),
+        }),
       );
 
       render(<StaticMap locations={mockLocations} showCurrentLocation />);
@@ -324,15 +341,15 @@ describe("StaticMap Component", () => {
         success({
           coords: {
             latitude: 40.7128,
-            longitude: -74.0060,
+            longitude: -74.006,
             accuracy: 10,
             altitude: null,
             altitudeAccuracy: null,
             heading: null,
-            speed: null
+            speed: null,
           },
-          timestamp: Date.now()
-        })
+          timestamp: Date.now(),
+        }),
       );
 
       render(<StaticMap locations={mockLocations} showCurrentLocation />);
@@ -351,8 +368,8 @@ describe("StaticMap Component", () => {
           message: "User denied geolocation",
           PERMISSION_DENIED: 1,
           POSITION_UNAVAILABLE: 2,
-          TIMEOUT: 3
-        })
+          TIMEOUT: 3,
+        }),
       );
 
       render(<StaticMap locations={mockLocations} showCurrentLocation />);
@@ -365,7 +382,7 @@ describe("StaticMap Component", () => {
   describe("Agricultural Theme", () => {
     it("should apply agricultural theme colors when enabled", () => {
       const { container } = render(
-        <StaticMap locations={mockLocations} agriculturalTheme />
+        <StaticMap locations={mockLocations} agriculturalTheme />,
       );
 
       const mapContainer = container.querySelector(".map-container");
@@ -374,7 +391,7 @@ describe("StaticMap Component", () => {
 
     it("should apply default colors when agricultural theme is disabled", () => {
       const { container } = render(
-        <StaticMap locations={mockLocations} agriculturalTheme={false} />
+        <StaticMap locations={mockLocations} agriculturalTheme={false} />,
       );
 
       const mapContainer = container.querySelector(".map-container");
@@ -386,14 +403,18 @@ describe("StaticMap Component", () => {
     it("should provide Google Maps link for selected location", () => {
       render(<StaticMap locations={mockLocations} />);
 
-      const firstLocation = screen.getByText("Sunrise Valley Farm").closest("button");
+      const firstLocation = screen
+        .getByText("Sunrise Valley Farm")
+        .closest("button");
       if (firstLocation) {
         fireEvent.click(firstLocation);
 
-        const googleMapsLink = screen.getByText(/Open in Google Maps/i).closest("a");
+        const googleMapsLink = screen
+          .getByText(/Open in Google Maps/i)
+          .closest("a");
         expect(googleMapsLink).toHaveAttribute(
           "href",
-          expect.stringContaining("google.com/maps")
+          expect.stringContaining("google.com/maps"),
         );
         expect(googleMapsLink).toHaveAttribute("target", "_blank");
         expect(googleMapsLink).toHaveAttribute("rel", "noopener noreferrer");
@@ -406,7 +427,7 @@ describe("StaticMap Component", () => {
       render(<StaticMap locations={mockLocations} />);
 
       expect(
-        screen.getByRole("application", { name: /farm locations map/i })
+        screen.getByRole("application", { name: /farm locations map/i }),
       ).toBeInTheDocument();
     });
 
@@ -415,7 +436,7 @@ describe("StaticMap Component", () => {
 
       const buttons = screen.getAllByRole("button");
       const locationButton = buttons.find((btn) =>
-        btn.getAttribute("aria-label")?.includes("Sunrise Valley Farm")
+        btn.getAttribute("aria-label")?.includes("Sunrise Valley Farm"),
       );
 
       expect(locationButton).toBeInTheDocument();
@@ -441,9 +462,9 @@ describe("StaticMap Component", () => {
       const locationWithoutAddress: MapLocation = {
         id: "1",
         lat: 40.7128,
-        lng: -74.0060,
+        lng: -74.006,
         title: "Test Location",
-        type: "farm"
+        type: "farm",
       };
 
       render(<StaticMap locations={[locationWithoutAddress]} />);
@@ -455,10 +476,10 @@ describe("StaticMap Component", () => {
       const locationWithoutDesc: MapLocation = {
         id: "1",
         lat: 40.7128,
-        lng: -74.0060,
+        lng: -74.006,
         title: "Test Location",
         type: "farm",
-        address: "123 Test St"
+        address: "123 Test St",
       };
 
       render(<StaticMap locations={[locationWithoutDesc]} />);
@@ -476,7 +497,7 @@ describe("StaticMap Component", () => {
     it("should handle center prop when provided", () => {
       const customCenter = { lat: 41.0, lng: -75.0 };
       const { container } = render(
-        <StaticMap locations={mockLocations} center={customCenter} />
+        <StaticMap locations={mockLocations} center={customCenter} />,
       );
 
       expect(container.querySelector(".map-canvas")).toBeInTheDocument();
@@ -491,19 +512,19 @@ describe("FarmLocationMap Component", () => {
       name: "Sunrise Valley Farm",
       location: {
         address: "123 Farm Road, NY",
-        coordinates: { lat: 40.7128, lng: -74.0060 }
+        coordinates: { lat: 40.7128, lng: -74.006 },
       },
-      description: "Organic vegetables and fruits"
+      description: "Organic vegetables and fruits",
     },
     {
       id: "farm-2",
       name: "Green Meadows Farm",
       location: {
         address: "456 Meadow Lane, NY",
-        coordinates: { lat: 40.7580, lng: -73.9855 }
+        coordinates: { lat: 40.758, lng: -73.9855 },
       },
-      description: "Fresh dairy products"
-    }
+      description: "Fresh dairy products",
+    },
   ];
 
   describe("Rendering", () => {
@@ -524,7 +545,9 @@ describe("FarmLocationMap Component", () => {
     it("should display farm descriptions", () => {
       render(<FarmLocationMap farms={mockFarms} />);
 
-      expect(screen.getByText("Organic vegetables and fruits")).toBeInTheDocument();
+      expect(
+        screen.getByText("Organic vegetables and fruits"),
+      ).toBeInTheDocument();
       expect(screen.getByText("Fresh dairy products")).toBeInTheDocument();
     });
 
@@ -542,7 +565,9 @@ describe("FarmLocationMap Component", () => {
 
       render(<FarmLocationMap farms={mockFarms} onFarmClick={onFarmClick} />);
 
-      const firstFarm = screen.getByText("Sunrise Valley Farm").closest("button");
+      const firstFarm = screen
+        .getByText("Sunrise Valley Farm")
+        .closest("button");
       if (firstFarm) {
         fireEvent.click(firstFarm);
         expect(onFarmClick).toHaveBeenCalledWith("farm-1");
@@ -573,7 +598,7 @@ describe("FarmLocationMap Component", () => {
 
     it("should apply custom height", () => {
       const { container } = render(
-        <FarmLocationMap farms={mockFarms} height="600px" />
+        <FarmLocationMap farms={mockFarms} height="600px" />,
       );
 
       const mapContainer = container.querySelector(".map-container");
@@ -582,7 +607,7 @@ describe("FarmLocationMap Component", () => {
 
     it("should apply custom className", () => {
       const { container } = render(
-        <FarmLocationMap farms={mockFarms} className="custom-farm-map" />
+        <FarmLocationMap farms={mockFarms} className="custom-farm-map" />,
       );
 
       expect(container.querySelector(".custom-farm-map")).toBeInTheDocument();
@@ -603,9 +628,9 @@ describe("FarmLocationMap Component", () => {
           name: "Test Farm",
           location: {
             address: "123 Test St",
-            coordinates: { lat: 40.7128, lng: -74.0060 }
-          }
-        }
+            coordinates: { lat: 40.7128, lng: -74.006 },
+          },
+        },
       ];
 
       render(<FarmLocationMap farms={farmWithoutDesc} />);

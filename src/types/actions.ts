@@ -122,9 +122,7 @@ export function isSuccessResult<T>(
 /**
  * Type guard to check if result is error
  */
-export function isErrorResult(
-  result: ActionResult,
-): result is ActionResult & {
+export function isErrorResult(result: ActionResult): result is ActionResult & {
   success: false;
   error: NonNullable<ActionResult["error"]>;
 } {

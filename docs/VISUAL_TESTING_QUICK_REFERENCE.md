@@ -88,44 +88,44 @@ import { test, expect } from "@playwright/test";
 test("should match [page-name] baseline", async ({ page, browserName }) => {
   const utils = new VisualTestingUtils();
   const viewport = VIEWPORTS.desktop;
-  
+
   await page.setViewportSize(viewport);
   await page.goto("/your-page");
-  
+
   // Wait for main content
   await page.waitForSelector('[data-testid="main-content"]');
   await utils.waitForAnimations(page);
-  
+
   // Take screenshot
   const currentPath = utils.getScreenshotPath(
     "page-name",
     viewport.name,
     browserName,
-    "current"
+    "current",
   );
   await page.screenshot({ path: currentPath, fullPage: true });
-  
+
   // Compare with baseline
   const baselinePath = utils.getScreenshotPath(
     "page-name",
     viewport.name,
     browserName,
-    "baseline"
+    "baseline",
   );
   const diffPath = utils.getScreenshotPath(
     "page-name",
     viewport.name,
     browserName,
-    "diff"
+    "diff",
   );
-  
+
   const result = await utils.compareScreenshots(
     baselinePath,
     currentPath,
     diffPath,
-    0.1 // 0.1% threshold
+    0.1, // 0.1% threshold
   );
-  
+
   expect(result.passed).toBeTruthy();
 });
 ```
@@ -133,28 +133,41 @@ test("should match [page-name] baseline", async ({ page, browserName }) => {
 ### Pattern 2: Component Screenshot
 
 ```typescript
-test("should match [component-name] appearance", async ({ page, browserName }) => {
+test("should match [component-name] appearance", async ({
+  page,
+  browserName,
+}) => {
   const utils = new VisualTestingUtils();
-  
+
   await page.goto("/page-with-component");
   await page.waitForSelector('[data-testid="component"]');
-  
+
   // Screenshot just the component
   const component = page.locator('[data-testid="component"]').first();
   const currentPath = utils.getScreenshotPath(
     "component-name",
     "desktop-1920x1080",
     browserName,
-    "current"
+    "current",
   );
   await component.screenshot({ path: currentPath });
-  
+
   const result = await utils.compareScreenshots(
-    utils.getScreenshotPath("component-name", "desktop-1920x1080", browserName, "baseline"),
+    utils.getScreenshotPath(
+      "component-name",
+      "desktop-1920x1080",
+      browserName,
+      "baseline",
+    ),
     currentPath,
-    utils.getScreenshotPath("component-name", "desktop-1920x1080", browserName, "diff")
+    utils.getScreenshotPath(
+      "component-name",
+      "desktop-1920x1080",
+      browserName,
+      "diff",
+    ),
   );
-  
+
   expect(result.passed).toBeTruthy();
 });
 ```
@@ -164,30 +177,40 @@ test("should match [component-name] appearance", async ({ page, browserName }) =
 ```typescript
 test("should match [element] hover state", async ({ page, browserName }) => {
   const utils = new VisualTestingUtils();
-  
+
   await page.goto("/page");
   await page.waitForSelector('[data-testid="interactive-element"]');
-  
+
   const element = page.locator('[data-testid="interactive-element"]').first();
-  
+
   // Hover over element
   await element.hover();
   await page.waitForTimeout(500); // Wait for hover animation
-  
+
   const currentPath = utils.getScreenshotPath(
     "element-hover",
     "desktop-1920x1080",
     browserName,
-    "current"
+    "current",
   );
   await element.screenshot({ path: currentPath });
-  
+
   const result = await utils.compareScreenshots(
-    utils.getScreenshotPath("element-hover", "desktop-1920x1080", browserName, "baseline"),
+    utils.getScreenshotPath(
+      "element-hover",
+      "desktop-1920x1080",
+      browserName,
+      "baseline",
+    ),
     currentPath,
-    utils.getScreenshotPath("element-hover", "desktop-1920x1080", browserName, "diff")
+    utils.getScreenshotPath(
+      "element-hover",
+      "desktop-1920x1080",
+      browserName,
+      "diff",
+    ),
   );
-  
+
   expect(result.passed).toBeTruthy();
 });
 ```
@@ -195,35 +218,43 @@ test("should match [element] hover state", async ({ page, browserName }) => {
 ### Pattern 4: Multi-Viewport Testing
 
 ```typescript
-test("should match [page] across all viewports", async ({ page, browserName }) => {
+test("should match [page] across all viewports", async ({
+  page,
+  browserName,
+}) => {
   const utils = new VisualTestingUtils();
   const viewportsToTest = [
     VIEWPORTS.desktop,
     VIEWPORTS.tabletLandscape,
-    VIEWPORTS.mobile
+    VIEWPORTS.mobile,
   ];
-  
+
   for (const viewport of viewportsToTest) {
     await page.setViewportSize(viewport);
     await page.goto("/page");
-    
+
     await page.waitForSelector('[data-testid="content"]');
     await utils.waitForAnimations(page);
-    
+
     const currentPath = utils.getScreenshotPath(
       "page-name",
       viewport.name,
       browserName,
-      "current"
+      "current",
     );
     await page.screenshot({ path: currentPath, fullPage: true });
-    
+
     const result = await utils.compareScreenshots(
-      utils.getScreenshotPath("page-name", viewport.name, browserName, "baseline"),
+      utils.getScreenshotPath(
+        "page-name",
+        viewport.name,
+        browserName,
+        "baseline",
+      ),
       currentPath,
-      utils.getScreenshotPath("page-name", viewport.name, browserName, "diff")
+      utils.getScreenshotPath("page-name", viewport.name, browserName, "diff"),
     );
-    
+
     expect(result.passed).toBeTruthy();
   }
 });
@@ -234,28 +265,38 @@ test("should match [page] across all viewports", async ({ page, browserName }) =
 ```typescript
 test("should match [page] in dark mode", async ({ page, browserName }) => {
   const utils = new VisualTestingUtils();
-  
+
   // Enable dark mode
   await page.emulateMedia({ colorScheme: "dark" });
   await page.goto("/page");
-  
+
   await page.waitForSelector('[data-testid="content"]');
   await utils.waitForAnimations(page);
-  
+
   const currentPath = utils.getScreenshotPath(
     "page-dark-mode",
     "desktop-1920x1080",
     browserName,
-    "current"
+    "current",
   );
   await page.screenshot({ path: currentPath, fullPage: true });
-  
+
   const result = await utils.compareScreenshots(
-    utils.getScreenshotPath("page-dark-mode", "desktop-1920x1080", browserName, "baseline"),
+    utils.getScreenshotPath(
+      "page-dark-mode",
+      "desktop-1920x1080",
+      browserName,
+      "baseline",
+    ),
     currentPath,
-    utils.getScreenshotPath("page-dark-mode", "desktop-1920x1080", browserName, "diff")
+    utils.getScreenshotPath(
+      "page-dark-mode",
+      "desktop-1920x1080",
+      browserName,
+      "diff",
+    ),
   );
-  
+
   expect(result.passed).toBeTruthy();
 });
 ```
@@ -263,35 +304,48 @@ test("should match [page] in dark mode", async ({ page, browserName }) => {
 ### Pattern 6: Hide Dynamic Content
 
 ```typescript
-test("should match [page] with stable content", async ({ page, browserName }) => {
+test("should match [page] with stable content", async ({
+  page,
+  browserName,
+}) => {
   const utils = new VisualTestingUtils();
-  
+
   await page.goto("/page");
   await page.waitForSelector('[data-testid="content"]');
   await utils.waitForAnimations(page);
-  
+
   // Hide timestamps, counters, and other dynamic content
   await utils.hideDynamicContent(page, [
     '[data-testid="timestamp"]',
     '[data-testid="online-counter"]',
     '[data-testid="live-updates"]',
-    '.real-time-data'
+    ".real-time-data",
   ]);
-  
+
   const currentPath = utils.getScreenshotPath(
     "page-stable",
     "desktop-1920x1080",
     browserName,
-    "current"
+    "current",
   );
   await page.screenshot({ path: currentPath, fullPage: true });
-  
+
   const result = await utils.compareScreenshots(
-    utils.getScreenshotPath("page-stable", "desktop-1920x1080", browserName, "baseline"),
+    utils.getScreenshotPath(
+      "page-stable",
+      "desktop-1920x1080",
+      browserName,
+      "baseline",
+    ),
     currentPath,
-    utils.getScreenshotPath("page-stable", "desktop-1920x1080", browserName, "diff")
+    utils.getScreenshotPath(
+      "page-stable",
+      "desktop-1920x1080",
+      browserName,
+      "diff",
+    ),
   );
-  
+
   expect(result.passed).toBeTruthy();
 });
 ```
@@ -299,35 +353,48 @@ test("should match [page] with stable content", async ({ page, browserName }) =>
 ### Pattern 7: Mask Sensitive Data
 
 ```typescript
-test("should match [page] with masked sensitive data", async ({ page, browserName }) => {
+test("should match [page] with masked sensitive data", async ({
+  page,
+  browserName,
+}) => {
   const utils = new VisualTestingUtils();
-  
+
   await page.goto("/profile");
   await page.waitForSelector('[data-testid="profile-content"]');
-  
+
   // Mask emails, phone numbers, addresses
   await utils.maskContent(page, [
     '[data-testid="email"]',
     '[data-testid="phone"]',
     '[data-testid="address"]',
     'input[type="email"]',
-    'input[type="tel"]'
+    'input[type="tel"]',
   ]);
-  
+
   const currentPath = utils.getScreenshotPath(
     "profile-masked",
     "desktop-1920x1080",
     browserName,
-    "current"
+    "current",
   );
   await page.screenshot({ path: currentPath, fullPage: true });
-  
+
   const result = await utils.compareScreenshots(
-    utils.getScreenshotPath("profile-masked", "desktop-1920x1080", browserName, "baseline"),
+    utils.getScreenshotPath(
+      "profile-masked",
+      "desktop-1920x1080",
+      browserName,
+      "baseline",
+    ),
     currentPath,
-    utils.getScreenshotPath("profile-masked", "desktop-1920x1080", browserName, "diff")
+    utils.getScreenshotPath(
+      "profile-masked",
+      "desktop-1920x1080",
+      browserName,
+      "diff",
+    ),
   );
-  
+
   expect(result.passed).toBeTruthy();
 });
 ```
@@ -335,34 +402,47 @@ test("should match [page] with masked sensitive data", async ({ page, browserNam
 ### Pattern 8: Seasonal Theme Testing
 
 ```typescript
-test("should match [page] with seasonal theme", async ({ page, browserName }) => {
+test("should match [page] with seasonal theme", async ({
+  page,
+  browserName,
+}) => {
   const utils = new VisualTestingUtils();
   const season = utils.getCurrentSeason(); // Auto-detects SPRING/SUMMER/FALL/WINTER
-  
+
   await page.goto("/page");
   await page.waitForSelector('[data-testid="content"]');
   await utils.waitForAnimations(page);
-  
+
   // Verify seasonal indicator is present
   const seasonalBadge = page.locator('[data-testid="seasonal-indicator"]');
   if (await seasonalBadge.isVisible()) {
     await expect(seasonalBadge).toContainText(season);
   }
-  
+
   const currentPath = utils.getScreenshotPath(
     `page-seasonal-${season.toLowerCase()}`,
     "desktop-1920x1080",
     browserName,
-    "current"
+    "current",
   );
   await page.screenshot({ path: currentPath, fullPage: true });
-  
+
   const result = await utils.compareScreenshots(
-    utils.getScreenshotPath(`page-seasonal-${season.toLowerCase()}`, "desktop-1920x1080", browserName, "baseline"),
+    utils.getScreenshotPath(
+      `page-seasonal-${season.toLowerCase()}`,
+      "desktop-1920x1080",
+      browserName,
+      "baseline",
+    ),
     currentPath,
-    utils.getScreenshotPath(`page-seasonal-${season.toLowerCase()}`, "desktop-1920x1080", browserName, "diff")
+    utils.getScreenshotPath(
+      `page-seasonal-${season.toLowerCase()}`,
+      "desktop-1920x1080",
+      browserName,
+      "diff",
+    ),
   );
-  
+
   expect(result.passed).toBeTruthy();
 });
 ```
@@ -370,29 +450,42 @@ test("should match [page] with seasonal theme", async ({ page, browserName }) =>
 ### Pattern 9: Accessibility Focus Indicators
 
 ```typescript
-test("should match focus indicators on [element]", async ({ page, browserName }) => {
+test("should match focus indicators on [element]", async ({
+  page,
+  browserName,
+}) => {
   const utils = new VisualTestingUtils();
-  
+
   await page.goto("/page");
-  
+
   // Tab to focus element
   await page.keyboard.press("Tab");
   await page.waitForTimeout(300); // Wait for focus styles
-  
+
   const currentPath = utils.getScreenshotPath(
     "element-focus",
     "desktop-1920x1080",
     browserName,
-    "current"
+    "current",
   );
   await page.screenshot({ path: currentPath });
-  
+
   const result = await utils.compareScreenshots(
-    utils.getScreenshotPath("element-focus", "desktop-1920x1080", browserName, "baseline"),
+    utils.getScreenshotPath(
+      "element-focus",
+      "desktop-1920x1080",
+      browserName,
+      "baseline",
+    ),
     currentPath,
-    utils.getScreenshotPath("element-focus", "desktop-1920x1080", browserName, "diff")
+    utils.getScreenshotPath(
+      "element-focus",
+      "desktop-1920x1080",
+      browserName,
+      "diff",
+    ),
   );
-  
+
   expect(result.passed).toBeTruthy();
 });
 ```
@@ -400,11 +493,14 @@ test("should match focus indicators on [element]", async ({ page, browserName })
 ### Pattern 10: Disable Animations for Stable Screenshots
 
 ```typescript
-test("should match [page] with disabled animations", async ({ page, browserName }) => {
+test("should match [page] with disabled animations", async ({
+  page,
+  browserName,
+}) => {
   const utils = new VisualTestingUtils();
-  
+
   await page.goto("/page");
-  
+
   // Disable all animations and transitions
   await page.addStyleTag({
     content: `
@@ -414,25 +510,35 @@ test("should match [page] with disabled animations", async ({ page, browserName 
         transition-duration: 0s !important;
         transition-delay: 0s !important;
       }
-    `
+    `,
   });
-  
+
   await page.waitForSelector('[data-testid="content"]');
-  
+
   const currentPath = utils.getScreenshotPath(
     "page-no-animations",
     "desktop-1920x1080",
     browserName,
-    "current"
+    "current",
   );
   await page.screenshot({ path: currentPath, fullPage: true });
-  
+
   const result = await utils.compareScreenshots(
-    utils.getScreenshotPath("page-no-animations", "desktop-1920x1080", browserName, "baseline"),
+    utils.getScreenshotPath(
+      "page-no-animations",
+      "desktop-1920x1080",
+      browserName,
+      "baseline",
+    ),
     currentPath,
-    utils.getScreenshotPath("page-no-animations", "desktop-1920x1080", browserName, "diff")
+    utils.getScreenshotPath(
+      "page-no-animations",
+      "desktop-1920x1080",
+      browserName,
+      "diff",
+    ),
   );
-  
+
   expect(result.passed).toBeTruthy();
 });
 ```
@@ -465,7 +571,7 @@ class VisualTestingUtils {
     testName: string,
     viewport: string,
     browser: string,
-    type: "baseline" | "current" | "diff"
+    type: "baseline" | "current" | "diff",
   ): string {
     const sanitizedName = testName.replace(/[^a-z0-9]/gi, "-").toLowerCase();
     const filename = `${sanitizedName}_${viewport}_${browser}.png`;
@@ -484,7 +590,7 @@ class VisualTestingUtils {
     baselinePath: string,
     currentPath: string,
     diffPath: string,
-    threshold: number = 0.1
+    threshold: number = 0.1,
   ): Promise<{ passed: boolean; diffPercentage: number; diffPath?: string }> {
     if (!fs.existsSync(baselinePath)) {
       fs.copyFileSync(currentPath, baselinePath);
@@ -502,7 +608,7 @@ class VisualTestingUtils {
       diffImg.data,
       width,
       height,
-      { threshold }
+      { threshold },
     );
 
     const totalPixels = width * height;
@@ -522,7 +628,7 @@ class VisualTestingUtils {
   async waitForAnimations(page: Page): Promise<void> {
     await page.evaluate(() => {
       return Promise.all(
-        document.getAnimations().map((animation) => animation.finished)
+        document.getAnimations().map((animation) => animation.finished),
       );
     });
   }
@@ -593,6 +699,7 @@ npm run baseline:list
 ```
 
 **Output**:
+
 ```
 Found 45 baselines
   - homepage-desktop (desktop-1920x1080, chromium)
@@ -610,6 +717,7 @@ npm run baseline:update-all ./tests/visual/current
 ```
 
 **Output**:
+
 ```
 ╔════════════════════════════════════════════════════════════╗
 ║ 🌾 BASELINE UPDATE REPORT                                  ║
@@ -631,6 +739,7 @@ npm run baseline:validate
 ```
 
 **Output**:
+
 ```
 🌾 Agricultural Consciousness Score: 95/100
 
@@ -647,6 +756,7 @@ npm run baseline:archive 60    # Archives baselines older than 60 days
 ```
 
 **Output**:
+
 ```
 📦 Archived 12 baselines older than 30 days
 ```
@@ -672,13 +782,13 @@ await page.addStyleTag({
       animation-duration: 0s !important;
       transition-duration: 0s !important;
     }
-  `
+  `,
 });
 
 // 3. Hide dynamic content
 await utils.hideDynamicContent(page, [
   '[data-testid="timestamp"]',
-  '[data-testid="live-counter"]'
+  '[data-testid="live-counter"]',
 ]);
 
 // 4. Wait for network idle
@@ -747,24 +857,24 @@ on:
 jobs:
   visual-tests:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-      
+          node-version: "20"
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Install Playwright
         run: npx playwright install --with-deps
-      
+
       - name: Run visual tests
         run: npm run test:visual:ci
-      
+
       - name: Upload diffs on failure
         if: failure()
         uses: actions/upload-artifact@v4
@@ -812,18 +922,18 @@ npm run test:visual:chromium || {
 
 ## 📚 CHEAT SHEET
 
-| Task | Command |
-|------|---------|
-| Run all tests | `npm run test:visual` |
-| Update baselines | `npm run test:visual:update` |
-| View report | `npm run visual:report` |
-| List baselines | `npm run baseline:list` |
-| Validate baselines | `npm run baseline:validate` |
-| Archive old baselines | `npm run baseline:archive` |
-| Debug test | `npm run test:visual:debug` |
-| Chromium only | `npm run test:visual:chromium` |
-| Mobile only | `npm run test:visual:mobile` |
-| Dark mode | `npm run test:visual:dark` |
+| Task                  | Command                        |
+| --------------------- | ------------------------------ |
+| Run all tests         | `npm run test:visual`          |
+| Update baselines      | `npm run test:visual:update`   |
+| View report           | `npm run visual:report`        |
+| List baselines        | `npm run baseline:list`        |
+| Validate baselines    | `npm run baseline:validate`    |
+| Archive old baselines | `npm run baseline:archive`     |
+| Debug test            | `npm run test:visual:debug`    |
+| Chromium only         | `npm run test:visual:chromium` |
+| Mobile only           | `npm run test:visual:mobile`   |
+| Dark mode             | `npm run test:visual:dark`     |
 
 ---
 

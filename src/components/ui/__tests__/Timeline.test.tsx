@@ -8,21 +8,21 @@ describe("Timeline Component", () => {
       title: "Order Placed",
       description: "Your order has been received",
       timestamp: new Date("2024-01-15T10:00:00"),
-      status: "completed"
+      status: "completed",
     },
     {
       id: "2",
       title: "Processing",
       description: "Preparing your items",
       timestamp: new Date("2024-01-15T12:00:00"),
-      status: "processing"
+      status: "processing",
     },
     {
       id: "3",
       title: "Shipped",
       timestamp: new Date("2024-01-15T15:00:00"),
-      status: "pending"
-    }
+      status: "pending",
+    },
   ];
 
   describe("Rendering", () => {
@@ -37,22 +37,28 @@ describe("Timeline Component", () => {
     it("should render event descriptions when provided", () => {
       render(<Timeline events={mockEvents} />);
 
-      expect(screen.getByText("Your order has been received")).toBeInTheDocument();
+      expect(
+        screen.getByText("Your order has been received"),
+      ).toBeInTheDocument();
       expect(screen.getByText("Preparing your items")).toBeInTheDocument();
     });
 
     it("should render empty state when no events provided", () => {
       render(<Timeline events={[]} />);
 
-      expect(screen.getByText("No timeline events to display")).toBeInTheDocument();
+      expect(
+        screen.getByText("No timeline events to display"),
+      ).toBeInTheDocument();
     });
 
     it("should apply agricultural theme when enabled", () => {
       const { container } = render(
-        <Timeline events={mockEvents} agriculturalTheme />
+        <Timeline events={mockEvents} agriculturalTheme />,
       );
 
-      expect(container.querySelector(".agricultural-timeline")).toBeInTheDocument();
+      expect(
+        container.querySelector(".agricultural-timeline"),
+      ).toBeInTheDocument();
     });
   });
 
@@ -65,10 +71,12 @@ describe("Timeline Component", () => {
 
     it("should render horizontal timeline when specified", () => {
       const { container } = render(
-        <Timeline events={mockEvents} orientation="horizontal" />
+        <Timeline events={mockEvents} orientation="horizontal" />,
       );
 
-      expect(container.querySelector(".flex.items-start.space-x-8")).toBeInTheDocument();
+      expect(
+        container.querySelector(".flex.items-start.space-x-8"),
+      ).toBeInTheDocument();
     });
   });
 
@@ -99,7 +107,7 @@ describe("Timeline Component", () => {
         id: "failed",
         title: "Failed",
         timestamp: new Date(),
-        status: "failed"
+        status: "failed",
       };
 
       const { container } = render(<Timeline events={[failedEvent]} />);
@@ -113,7 +121,7 @@ describe("Timeline Component", () => {
         id: "cancelled",
         title: "Cancelled",
         timestamp: new Date(),
-        status: "cancelled"
+        status: "cancelled",
       };
 
       const { container } = render(<Timeline events={[cancelledEvent]} />);
@@ -126,7 +134,7 @@ describe("Timeline Component", () => {
   describe("Active State", () => {
     it("should highlight active event when activeIndex is provided", () => {
       const { container } = render(
-        <Timeline events={mockEvents} activeIndex={1} />
+        <Timeline events={mockEvents} activeIndex={1} />,
       );
 
       const activeElements = container.querySelectorAll(".scale-105");
@@ -154,7 +162,7 @@ describe("Timeline Component", () => {
 
     it("should hide connectors when showConnectors is false", () => {
       const { container } = render(
-        <Timeline events={mockEvents} showConnectors={false} />
+        <Timeline events={mockEvents} showConnectors={false} />,
       );
       const connectors = container.querySelectorAll(".timeline-connector");
 
@@ -180,9 +188,9 @@ describe("Timeline Component", () => {
           status: "completed",
           metadata: {
             tracking_number: "ABC123",
-            carrier: "FedEx"
-          }
-        }
+            carrier: "FedEx",
+          },
+        },
       ];
 
       render(<Timeline events={eventWithMetadata} />);
@@ -205,7 +213,9 @@ describe("Timeline Component", () => {
     it("should have proper ARIA labels", () => {
       render(<Timeline events={mockEvents} />);
 
-      expect(screen.getByRole("list", { name: /timeline/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("list", { name: /timeline/i }),
+      ).toBeInTheDocument();
     });
 
     it("should have proper ARIA labels for status", () => {
@@ -232,7 +242,9 @@ describe("Timeline Component", () => {
     });
 
     it("should not apply animation classes when animated is false", () => {
-      const { container } = render(<Timeline events={mockEvents} animated={false} />);
+      const { container } = render(
+        <Timeline events={mockEvents} animated={false} />,
+      );
       const timelineEvents = container.querySelectorAll(".timeline-event");
 
       timelineEvents.forEach((event) => {
@@ -246,7 +258,7 @@ describe("OrderTimeline Component", () => {
   const baseProps = {
     orderId: "ORDER123",
     status: "placed" as const,
-    placedAt: new Date("2024-01-15T10:00:00")
+    placedAt: new Date("2024-01-15T10:00:00"),
   };
 
   describe("Order Status Flow", () => {
@@ -266,7 +278,7 @@ describe("OrderTimeline Component", () => {
           {...baseProps}
           status="preparing"
           preparedAt={new Date("2024-01-15T12:00:00")}
-        />
+        />,
       );
 
       expect(screen.getByText("Farmer Preparing")).toBeInTheDocument();
@@ -279,7 +291,7 @@ describe("OrderTimeline Component", () => {
           status="ready"
           preparedAt={new Date("2024-01-15T12:00:00")}
           readyAt={new Date("2024-01-15T14:00:00")}
-        />
+        />,
       );
 
       expect(screen.getByText("Ready for Pickup")).toBeInTheDocument();
@@ -292,7 +304,7 @@ describe("OrderTimeline Component", () => {
           status="in_transit"
           preparedAt={new Date("2024-01-15T12:00:00")}
           readyAt={new Date("2024-01-15T14:00:00")}
-        />
+        />,
       );
 
       expect(screen.getByText("Out for Delivery")).toBeInTheDocument();
@@ -306,11 +318,13 @@ describe("OrderTimeline Component", () => {
           preparedAt={new Date("2024-01-15T12:00:00")}
           readyAt={new Date("2024-01-15T14:00:00")}
           deliveredAt={new Date("2024-01-15T16:00:00")}
-        />
+        />,
       );
 
       expect(screen.getByText("Delivered")).toBeInTheDocument();
-      expect(screen.getByText("Enjoy your fresh farm products!")).toBeInTheDocument();
+      expect(
+        screen.getByText("Enjoy your fresh farm products!"),
+      ).toBeInTheDocument();
     });
 
     it("should handle cancelled orders", () => {
@@ -319,11 +333,13 @@ describe("OrderTimeline Component", () => {
           {...baseProps}
           status="cancelled"
           cancelledAt={new Date("2024-01-15T12:00:00")}
-        />
+        />,
       );
 
       expect(screen.getByText("Order Cancelled")).toBeInTheDocument();
-      expect(screen.getByText("This order has been cancelled")).toBeInTheDocument();
+      expect(
+        screen.getByText("This order has been cancelled"),
+      ).toBeInTheDocument();
     });
   });
 
@@ -335,10 +351,12 @@ describe("OrderTimeline Component", () => {
           farmName="Sunrise Valley Farm"
           status="preparing"
           preparedAt={new Date()}
-        />
+        />,
       );
 
-      expect(screen.getByText(/Harvest in progress at Sunrise Valley Farm/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Harvest in progress at Sunrise Valley Farm/i),
+      ).toBeInTheDocument();
     });
 
     it("should display delivery address when provided", () => {
@@ -348,10 +366,12 @@ describe("OrderTimeline Component", () => {
           deliveryAddress="123 Main St, City, State"
           status="in_transit"
           readyAt={new Date()}
-        />
+        />,
       );
 
-      expect(screen.getByText(/En route to 123 Main St, City, State/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/En route to 123 Main St, City, State/i),
+      ).toBeInTheDocument();
     });
 
     it("should show default text when farm name is not provided", () => {
@@ -360,10 +380,12 @@ describe("OrderTimeline Component", () => {
           {...baseProps}
           status="preparing"
           preparedAt={new Date()}
-        />
+        />,
       );
 
-      expect(screen.getByText(/Preparing your fresh produce/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Preparing your fresh produce/i),
+      ).toBeInTheDocument();
     });
 
     it("should show default text when delivery address is not provided", () => {
@@ -372,7 +394,7 @@ describe("OrderTimeline Component", () => {
           {...baseProps}
           status="in_transit"
           readyAt={new Date()}
-        />
+        />,
       );
 
       expect(screen.getByText(/On the way to you/i)).toBeInTheDocument();
@@ -383,14 +405,16 @@ describe("OrderTimeline Component", () => {
     it("should apply agricultural theme by default", () => {
       const { container } = render(<OrderTimeline {...baseProps} />);
 
-      expect(container.querySelector(".agricultural-timeline")).toBeInTheDocument();
+      expect(
+        container.querySelector(".agricultural-timeline"),
+      ).toBeInTheDocument();
     });
   });
 
   describe("Custom Styling", () => {
     it("should apply custom className", () => {
       const { container } = render(
-        <OrderTimeline {...baseProps} className="custom-class" />
+        <OrderTimeline {...baseProps} className="custom-class" />,
       );
 
       expect(container.querySelector(".custom-class")).toBeInTheDocument();
@@ -404,7 +428,7 @@ describe("Timeline Timestamp Formatting", () => {
       id: "1",
       title: "Recent Event",
       timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
-      status: "completed"
+      status: "completed",
     };
 
     render(<Timeline events={[recentEvent]} />);
@@ -417,7 +441,7 @@ describe("Timeline Timestamp Formatting", () => {
       id: "1",
       title: "Hour Old Event",
       timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
-      status: "completed"
+      status: "completed",
     };
 
     render(<Timeline events={[hourOldEvent]} />);
@@ -430,7 +454,7 @@ describe("Timeline Timestamp Formatting", () => {
       id: "1",
       title: "Day Old Event",
       timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3), // 3 days ago
-      status: "completed"
+      status: "completed",
     };
 
     render(<Timeline events={[dayOldEvent]} />);
@@ -443,7 +467,7 @@ describe("Timeline Timestamp Formatting", () => {
       id: "1",
       title: "Just Now Event",
       timestamp: new Date(Date.now() - 1000 * 30), // 30 seconds ago
-      status: "completed"
+      status: "completed",
     };
 
     render(<Timeline events={[justNowEvent]} />);

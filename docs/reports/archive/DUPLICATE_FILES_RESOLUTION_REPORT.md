@@ -1,4 +1,5 @@
 # 🔍 DUPLICATE FILES RESOLUTION REPORT
+
 **Farmers Market Platform - Comprehensive Analysis & Resolution Plan**
 **Generated:** 2024
 **Status:** READY FOR EXECUTION
@@ -8,6 +9,7 @@
 ## 📊 EXECUTIVE SUMMARY
 
 ### Critical Issues Found
+
 - **3 Prisma Configuration Files** (conflicting)
 - **4 Mock Directories** (scattered, unorganized)
 - **2 Test Utility Files** (duplicate functionality)
@@ -17,6 +19,7 @@
 - **80+ Documentation Files** (cluttering root directory)
 
 ### Impact Assessment
+
 - ⚠️ **HIGH**: Configuration conflicts may cause build issues
 - ⚠️ **MEDIUM**: Developer confusion with multiple mock locations
 - ⚠️ **LOW**: Documentation clutter (organizational only)
@@ -28,6 +31,7 @@
 ### 1. PRISMA CONFIGURATION FILES ⚠️ HIGH PRIORITY
 
 #### Files Found
+
 ```
 📁 Root Level:
 ├── prisma.config.ts (Prisma 7 format, uses env variables)
@@ -40,27 +44,31 @@
 #### Content Analysis
 
 **✅ KEEP: `/prisma.config.ts` (ROOT)**
+
 ```typescript
 // Most complete, uses defineConfig, proper Prisma 7 format
 import { defineConfig, env } from "prisma/config";
 export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: { path: "prisma/migrations", seed: "tsx prisma/seed-basic.ts" },
-  datasource: { url: env("DATABASE_URL") }
+  datasource: { url: env("DATABASE_URL") },
 });
 ```
 
 **❌ DELETE: `/prisma/prisma.config.ts`**
+
 - Older format without defineConfig
 - Less comprehensive
 - Redundant
 
 **❌ DELETE: `/prisma/prisma.config.mjs`**
+
 - ESM variant, not needed
 - Duplicates functionality
 - Non-TypeScript
 
 #### Resolution Action
+
 ```bash
 # Delete duplicates
 rm "prisma/prisma.config.ts"
@@ -73,6 +81,7 @@ rm "prisma/prisma.config.mjs"
 ### 2. MOCK DIRECTORIES ⚠️ MEDIUM PRIORITY
 
 #### Directory Structure Found
+
 ```
 📁 Project Root:
 ├── __mocks__/                    # Jest module mocks (correct location)
@@ -96,12 +105,14 @@ rm "prisma/prisma.config.mjs"
 ```
 
 #### Analysis
+
 - **`/__mocks__/`** - ✅ CORRECT (Jest convention for module mocks)
 - **`/tests/__mocks__/`** - ⚠️ REDUNDANT (.js files, old format)
 - **`/tests/mocks/`** - ⚠️ SHOULD CONSOLIDATE (mock factories)
 - **`/src/app/api/__mocks__/`** - ✅ OK (component-specific mocks)
 
 #### Resolution Action
+
 ```bash
 # Consolidate test mocks
 # Move tests/__mocks__/*.js → __mocks__/ (convert to .ts)
@@ -111,6 +122,7 @@ rm "prisma/prisma.config.mjs"
 ```
 
 **Recommended Structure:**
+
 ```
 __mocks__/               # Jest module mocks only
 ├── @/
@@ -132,6 +144,7 @@ tests/helpers/
 ### 3. TEST UTILITY FILES ⚠️ MEDIUM PRIORITY
 
 #### Files Found
+
 ```
 📁 src/
 ├── lib/
@@ -142,12 +155,15 @@ tests/helpers/
 ```
 
 #### Content Comparison
+
 Both files likely contain:
+
 - Custom render functions with providers
 - Mock setup utilities
 - Testing Library wrappers
 
 #### Resolution Action
+
 ```bash
 # DELETE: src/test-utils/ directory
 rm -rf "src/test-utils/"
@@ -157,6 +173,7 @@ rm -rf "src/test-utils/"
 ```
 
 **Canonical Import:**
+
 ```typescript
 import { render, screen } from "@/lib/test-utils";
 ```
@@ -166,6 +183,7 @@ import { render, screen } from "@/lib/test-utils";
 ### 4. VALIDATION DIRECTORIES ⚠️ MEDIUM PRIORITY
 
 #### Directories Found
+
 ```
 📁 src/lib/
 ├── validation/                  # Farm & product validation
@@ -181,11 +199,13 @@ import { render, screen } from "@/lib/test-utils";
 ```
 
 #### Analysis
+
 - **Naming inconsistency**: `validation` vs `validations`
 - **Split concerns**: Farm/product in one, cart/order in another
 - **Duplicate product validation**: Both directories have product validation
 
 #### Resolution Action
+
 ```bash
 # CONSOLIDATE INTO: src/lib/validations/ (plural form)
 # Move all validation files to single directory
@@ -193,6 +213,7 @@ import { render, screen } from "@/lib/test-utils";
 ```
 
 **Recommended Structure:**
+
 ```
 src/lib/validations/
 ├── agricultural-validation.ts  # Biodynamic/seasonal validation
@@ -204,6 +225,7 @@ src/lib/validations/
 ```
 
 **Update all imports:**
+
 ```typescript
 // OLD
 import { validateFarm } from "@/lib/validation/farm.validation";
@@ -219,6 +241,7 @@ import { validateCart } from "@/lib/validations/cart";
 ### 5. LOGGING DIRECTORIES ⚠️ MEDIUM PRIORITY
 
 #### Directories Found
+
 ```
 📁 src/lib/
 ├── logger/                      # Logger implementation
@@ -230,11 +253,13 @@ import { validateCart } from "@/lib/validations/cart";
 ```
 
 #### Analysis
+
 - **Duplicate functionality**: Both implement logging
 - **Naming inconsistency**: `logger` vs `logging`
 - **Need to check which is actively used**
 
 #### Resolution Action
+
 ```bash
 # CONSOLIDATE INTO: src/lib/logger/ (noun form)
 # Check imports, migrate if needed
@@ -242,6 +267,7 @@ import { validateCart } from "@/lib/validations/cart";
 ```
 
 **Check imports first:**
+
 ```bash
 # Find all logger imports
 grep -r "from.*@/lib/logger" src/
@@ -249,6 +275,7 @@ grep -r "from.*@/lib/logging" src/
 ```
 
 **Canonical structure:**
+
 ```
 src/lib/logger/
 ├── index.ts        # Main logger export
@@ -260,6 +287,7 @@ src/lib/logger/
 ### 6. TEST DIRECTORIES ⚠️ LOW PRIORITY
 
 #### Directories Found
+
 ```
 📁 src/
 ├── __tests__/                   # Unit & integration tests ✅
@@ -272,10 +300,12 @@ src/lib/logger/
 ```
 
 #### Analysis
+
 - **Convention confusion**: Jest looks for `__tests__` by default
 - **Need to verify if `src/tests/` is actively used**
 
 #### Resolution Action
+
 ```bash
 # Check if src/tests/ has content
 # If empty or minimal → DELETE
@@ -290,6 +320,7 @@ src/lib/logger/
 ### 7. DOCUMENTATION CLUTTER ⚠️ LOW PRIORITY
 
 #### Files Found (80+ in root)
+
 ```
 📁 Root Directory:
 ├── CLEANUP_*.md (8 files)
@@ -302,6 +333,7 @@ src/lib/logger/
 ```
 
 #### Resolution Action
+
 ```bash
 # CREATE: docs/reports/ directory
 mkdir -p docs/reports/archive/
@@ -322,6 +354,7 @@ mv *_REPORT.md docs/reports/archive/
 ```
 
 **New Structure:**
+
 ```
 📁 Root:
 ├── README.md
@@ -380,7 +413,7 @@ if [ -d "src/lib/logging" ]; then
   # Check which is used more
   LOGGER_IMPORTS=$(grep -r "@/lib/logger" src/ | wc -l)
   LOGGING_IMPORTS=$(grep -r "@/lib/logging" src/ | wc -l)
-  
+
   if [ $LOGGING_IMPORTS -gt $LOGGER_IMPORTS ]; then
     echo "⚠️ More imports use 'logging' - need manual migration"
   else
@@ -448,6 +481,7 @@ echo "🎉 Cleanup complete!"
 ### Items Needing Human Decision
 
 1. **Logger vs Logging**: Check which is more widely used
+
    ```bash
    grep -r "@/lib/logger" src/ | wc -l
    grep -r "@/lib/logging" src/ | wc -l
@@ -471,6 +505,7 @@ echo "🎉 Cleanup complete!"
 ## 🎯 POST-CLEANUP CANONICAL STRUCTURE
 
 ### Final Directory Organization
+
 ```
 Farmers Market Platform web and app/
 ├── 📄 Root Files (4 essential docs only)
@@ -565,6 +600,7 @@ import { createMockDatabase } from "@tests/helpers/mocks/database.mock";
 ## 📊 IMPACT SUMMARY
 
 ### Before Cleanup
+
 - 3 Prisma config files
 - 4 mock directories
 - 2 test utility files
@@ -574,6 +610,7 @@ import { createMockDatabase } from "@tests/helpers/mocks/database.mock";
 - **Developer Confusion: HIGH** 😵
 
 ### After Cleanup
+
 - 1 Prisma config file ✅
 - 2 mock directories (organized by purpose) ✅
 - 1 test utility file ✅
@@ -583,6 +620,7 @@ import { createMockDatabase } from "@tests/helpers/mocks/database.mock";
 - **Developer Confusion: LOW** 😊
 
 ### Benefits
+
 - 🎯 Clear canonical locations for all utilities
 - 📦 Better code organization
 - 🚀 Faster onboarding for new developers
@@ -617,7 +655,7 @@ git checkout HEAD -- *.md
 **Status**: Analysis Complete ✅  
 **Risk Level**: LOW-MEDIUM (mostly organizational changes)  
 **Estimated Time**: 30-45 minutes  
-**Requires**: Code review after execution  
+**Requires**: Code review after execution
 
 **Recommendation**: Execute Phase 1 immediately (Prisma config), then proceed with Phase 2 and 3 systematically.
 

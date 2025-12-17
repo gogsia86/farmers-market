@@ -28,9 +28,9 @@ test.describe("API Integration Tests", () => {
   let apiClient: ApiClient;
   let testRunner: ApiTestRunner;
   let performanceMonitor: ApiPerformanceMonitor;
-  let testUsers: any[] = [];
-  let testFarms: any[] = [];
-  let testProducts: any[] = [];
+  const testUsers: any[] = [];
+  const testFarms: any[] = [];
+  const testProducts: any[] = [];
 
   // ==========================================
   // 🔧 SETUP & TEARDOWN
@@ -88,7 +88,7 @@ test.describe("API Integration Tests", () => {
     test("GET /api/health - should respond within 1 second", async () => {
       await ApiAssertions.assertResponseTime(
         () => apiClient.get("/api/health"),
-        1000
+        1000,
       );
     });
   });
@@ -106,7 +106,10 @@ test.describe("API Integration Tests", () => {
         role: "CUSTOMER",
       };
 
-      const response = await apiClient.post(API_CONFIG.endpoints.auth.register, userData);
+      const response = await apiClient.post(
+        API_CONFIG.endpoints.auth.register,
+        userData,
+      );
 
       ApiAssertions.assertSuccess(response);
       expect(response.data).toHaveProperty("id");
@@ -115,11 +118,14 @@ test.describe("API Integration Tests", () => {
     });
 
     test("POST /api/auth/register - should reject invalid email", async () => {
-      const response = await apiClient.post(API_CONFIG.endpoints.auth.register, {
-        email: "invalid-email",
-        password: "SecurePass123!",
-        name: "Test User",
-      });
+      const response = await apiClient.post(
+        API_CONFIG.endpoints.auth.register,
+        {
+          email: "invalid-email",
+          password: "SecurePass123!",
+          name: "Test User",
+        },
+      );
 
       ApiAssertions.assertError(response, "VALIDATION_ERROR");
     });
@@ -164,7 +170,9 @@ test.describe("API Integration Tests", () => {
 
   test.describe("Farms API", () => {
     test("GET /api/farms - should return list of farms", async () => {
-      const response = await apiClient.get<any[]>(API_CONFIG.endpoints.farms.list);
+      const response = await apiClient.get<any[]>(
+        API_CONFIG.endpoints.farms.list,
+      );
 
       ApiAssertions.assertSuccess(response);
       ApiAssertions.assertArray(response.data, 1);
@@ -188,7 +196,7 @@ test.describe("API Integration Tests", () => {
     test("GET /api/farms/:id - should return farm details", async () => {
       const farm = testFarms[0];
       const response = await apiClient.get(
-        API_CONFIG.endpoints.farms.detail(farm.id)
+        API_CONFIG.endpoints.farms.detail(farm.id),
       );
 
       ApiAssertions.assertSuccess(response);
@@ -200,7 +208,7 @@ test.describe("API Integration Tests", () => {
 
     test("GET /api/farms/:id - should return 404 for non-existent farm", async () => {
       const response = await apiClient.get(
-        API_CONFIG.endpoints.farms.detail("non-existent-id")
+        API_CONFIG.endpoints.farms.detail("non-existent-id"),
       );
 
       ApiAssertions.assertError(response, "NOT_FOUND");
@@ -221,7 +229,7 @@ test.describe("API Integration Tests", () => {
 
       const response = await apiClient.post(
         API_CONFIG.endpoints.farms.create,
-        farmData
+        farmData,
       );
 
       ApiAssertions.assertSuccess(response);
@@ -249,11 +257,14 @@ test.describe("API Integration Tests", () => {
 
       const response = await apiClient.put(
         API_CONFIG.endpoints.farms.update(farm.id),
-        updateData
+        updateData,
       );
 
       ApiAssertions.assertSuccess(response);
-      expect(response.data).toHaveProperty("description", updateData.description);
+      expect(response.data).toHaveProperty(
+        "description",
+        updateData.description,
+      );
     });
 
     test("DELETE /api/farms/:id - should delete farm", async () => {
@@ -261,14 +272,14 @@ test.describe("API Integration Tests", () => {
       const farm = await TestDataFactory.createTestFarm(testUsers[0].id);
 
       const response = await apiClient.delete(
-        API_CONFIG.endpoints.farms.delete(farm.id)
+        API_CONFIG.endpoints.farms.delete(farm.id),
       );
 
       ApiAssertions.assertSuccess(response);
 
       // Verify deletion
       const getResponse = await apiClient.get(
-        API_CONFIG.endpoints.farms.detail(farm.id)
+        API_CONFIG.endpoints.farms.detail(farm.id),
       );
       ApiAssertions.assertError(getResponse, "NOT_FOUND");
     });
@@ -281,7 +292,7 @@ test.describe("API Integration Tests", () => {
   test.describe("Products API", () => {
     test("GET /api/products - should return list of products", async () => {
       const response = await apiClient.get<any[]>(
-        API_CONFIG.endpoints.products.list
+        API_CONFIG.endpoints.products.list,
       );
 
       ApiAssertions.assertSuccess(response);
@@ -303,7 +314,7 @@ test.describe("API Integration Tests", () => {
     test("GET /api/products/:id - should return product details", async () => {
       const product = testProducts[0];
       const response = await apiClient.get(
-        API_CONFIG.endpoints.products.detail(product.id)
+        API_CONFIG.endpoints.products.detail(product.id),
       );
 
       ApiAssertions.assertSuccess(response);
@@ -325,7 +336,7 @@ test.describe("API Integration Tests", () => {
 
       const response = await apiClient.post(
         API_CONFIG.endpoints.products.create,
-        productData
+        productData,
       );
 
       ApiAssertions.assertSuccess(response);
@@ -336,12 +347,15 @@ test.describe("API Integration Tests", () => {
     });
 
     test("POST /api/products - should reject negative price", async () => {
-      const response = await apiClient.post(API_CONFIG.endpoints.products.create, {
-        name: "Test Product",
-        price: -5.0,
-        inventory: 10,
-        farmId: testFarms[0].id,
-      });
+      const response = await apiClient.post(
+        API_CONFIG.endpoints.products.create,
+        {
+          name: "Test Product",
+          price: -5.0,
+          inventory: 10,
+          farmId: testFarms[0].id,
+        },
+      );
 
       ApiAssertions.assertValidationError(response, "price");
     });
@@ -355,7 +369,7 @@ test.describe("API Integration Tests", () => {
 
       const response = await apiClient.put(
         API_CONFIG.endpoints.products.update(product.id),
-        updateData
+        updateData,
       );
 
       ApiAssertions.assertSuccess(response);
@@ -364,9 +378,12 @@ test.describe("API Integration Tests", () => {
     });
 
     test("GET /api/products/search - should search products", async () => {
-      const response = await apiClient.get(API_CONFIG.endpoints.products.search, {
-        params: { q: "test" },
-      });
+      const response = await apiClient.get(
+        API_CONFIG.endpoints.products.search,
+        {
+          params: { q: "test" },
+        },
+      );
 
       ApiAssertions.assertSuccess(response);
       expect(response.data).toBeInstanceOf(Array);
@@ -400,7 +417,7 @@ test.describe("API Integration Tests", () => {
 
       const response = await apiClient.post(
         API_CONFIG.endpoints.orders.create,
-        orderData
+        orderData,
       );
 
       ApiAssertions.assertSuccess(response);
@@ -420,7 +437,7 @@ test.describe("API Integration Tests", () => {
 
     test("GET /api/orders/:id - should return order details", async () => {
       const response = await apiClient.get(
-        API_CONFIG.endpoints.orders.detail(testOrderId)
+        API_CONFIG.endpoints.orders.detail(testOrderId),
       );
 
       ApiAssertions.assertSuccess(response);
@@ -432,7 +449,7 @@ test.describe("API Integration Tests", () => {
     test("PUT /api/orders/:id - should update order status", async () => {
       const response = await apiClient.put(
         API_CONFIG.endpoints.orders.update(testOrderId),
-        { status: "PROCESSING" }
+        { status: "PROCESSING" },
       );
 
       ApiAssertions.assertSuccess(response);
@@ -441,7 +458,7 @@ test.describe("API Integration Tests", () => {
 
     test("POST /api/orders/:id/cancel - should cancel order", async () => {
       const response = await apiClient.post(
-        API_CONFIG.endpoints.orders.cancel(testOrderId)
+        API_CONFIG.endpoints.orders.cancel(testOrderId),
       );
 
       ApiAssertions.assertSuccess(response);
@@ -471,7 +488,7 @@ test.describe("API Integration Tests", () => {
 
       const response = await apiClient.put(
         API_CONFIG.endpoints.users.update,
-        updateData
+        updateData,
       );
 
       ApiAssertions.assertSuccess(response);
@@ -480,7 +497,7 @@ test.describe("API Integration Tests", () => {
 
     test("GET /api/users/preferences - should return user preferences", async () => {
       const response = await apiClient.get(
-        API_CONFIG.endpoints.users.preferences
+        API_CONFIG.endpoints.users.preferences,
       );
 
       ApiAssertions.assertSuccess(response);
@@ -495,7 +512,7 @@ test.describe("API Integration Tests", () => {
   test.describe("API Performance", () => {
     test("Should handle concurrent requests efficiently", async () => {
       const requests = Array.from({ length: 10 }, () =>
-        apiClient.get(API_CONFIG.endpoints.products.list)
+        apiClient.get(API_CONFIG.endpoints.products.list),
       );
 
       const startTime = Date.now();
@@ -513,14 +530,14 @@ test.describe("API Integration Tests", () => {
       const measurements: number[] = [];
 
       for (let i = 0; i < 20; i++) {
-        const duration = await performanceMonitor.measure(
-          "/api/products",
-          () => apiClient.get(API_CONFIG.endpoints.products.list)
+        const duration = await performanceMonitor.measure("/api/products", () =>
+          apiClient.get(API_CONFIG.endpoints.products.list),
         );
         measurements.push(duration);
       }
 
-      const avgTime = measurements.reduce((a, b) => a + b) / measurements.length;
+      const avgTime =
+        measurements.reduce((a, b) => a + b) / measurements.length;
       const maxTime = Math.max(...measurements);
 
       console.log(`Average response time: ${avgTime.toFixed(2)}ms`);
@@ -549,9 +566,12 @@ test.describe("API Integration Tests", () => {
     });
 
     test("Should handle malformed JSON gracefully", async () => {
-      const response = await apiClient.post(API_CONFIG.endpoints.products.create, {
-        invalidData: "malformed",
-      });
+      const response = await apiClient.post(
+        API_CONFIG.endpoints.products.create,
+        {
+          invalidData: "malformed",
+        },
+      );
 
       expect(response.success).toBe(false);
     });
@@ -593,7 +613,7 @@ test.describe("API Integration Tests", () => {
     test("Should validate required fields", async () => {
       const response = await apiClient.post(
         API_CONFIG.endpoints.products.create,
-        {}
+        {},
       );
 
       ApiAssertions.assertError(response, "VALIDATION_ERROR");
@@ -607,7 +627,7 @@ test.describe("API Integration Tests", () => {
           price: "not-a-number",
           inventory: 10,
           farmId: testFarms[0].id,
-        }
+        },
       );
 
       ApiAssertions.assertError(response, "VALIDATION_ERROR");
@@ -620,25 +640,22 @@ test.describe("API Integration Tests", () => {
           email: "invalid-email",
           password: "Password123!",
           name: "Test User",
-        }
+        },
       );
 
       ApiAssertions.assertValidationError(response, "email");
     });
 
     test("Should enforce string length constraints", async () => {
-      const response = await apiClient.post(
-        API_CONFIG.endpoints.farms.create,
-        {
-          name: "ab", // Too short
-          location: {
-            address: "123 Test St",
-            city: "Test City",
-            state: "TS",
-            zipCode: "12345",
-          },
-        }
-      );
+      const response = await apiClient.post(API_CONFIG.endpoints.farms.create, {
+        name: "ab", // Too short
+        location: {
+          address: "123 Test St",
+          city: "Test City",
+          state: "TS",
+          zipCode: "12345",
+        },
+      });
 
       ApiAssertions.assertValidationError(response, "name");
     });
@@ -655,12 +672,12 @@ test.describe("API Integration Tests", () => {
 
       const response1 = await apiClient.put(
         API_CONFIG.endpoints.products.update(product.id),
-        updateData
+        updateData,
       );
 
       const response2 = await apiClient.put(
         API_CONFIG.endpoints.products.update(product.id),
-        updateData
+        updateData,
       );
 
       ApiAssertions.assertSuccess(response1);
@@ -678,11 +695,11 @@ test.describe("API Integration Tests", () => {
       const endpoint = API_CONFIG.endpoints.products.list;
 
       const response1Time = await performanceMonitor.measure(endpoint, () =>
-        apiClient.get(endpoint)
+        apiClient.get(endpoint),
       );
 
       const response2Time = await performanceMonitor.measure(endpoint, () =>
-        apiClient.get(endpoint)
+        apiClient.get(endpoint),
       );
 
       console.log(`First request: ${response1Time}ms`);

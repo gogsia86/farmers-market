@@ -76,7 +76,13 @@ interface AIVisualAnalysis {
 }
 
 interface VisualBug {
-  type: "layout" | "color" | "typography" | "spacing" | "alignment" | "overflow";
+  type:
+    | "layout"
+    | "color"
+    | "typography"
+    | "spacing"
+    | "alignment"
+    | "overflow";
   severity: "critical" | "high" | "medium" | "low";
   location: string;
   description: string;
@@ -125,14 +131,11 @@ interface HealingDetail {
 abstract class AIVisionProvider {
   constructor(protected config: AIProviderConfig) {}
 
-  abstract analyzeImage(
-    imageBase64: string,
-    prompt: string
-  ): Promise<string>;
+  abstract analyzeImage(imageBase64: string, prompt: string): Promise<string>;
 
   abstract generateTestScenarios(
     screenshotBase64: string,
-    context: Record<string, any>
+    context: Record<string, unknown>,
   ): Promise<TestScenario[]>;
 
   protected async encodeImageToBase64(imagePath: string): Promise<string> {
@@ -177,7 +180,7 @@ class OpenAIVisionProvider extends AIVisionProvider {
 
   async generateTestScenarios(
     screenshotBase64: string,
-    context: Record<string, any>
+    context: Record<string, unknown>,
   ): Promise<TestScenario[]> {
     const prompt = `
 Analyze this Farmers Market Platform screenshot and generate visual regression test scenarios.
@@ -269,7 +272,7 @@ class AnthropicVisionProvider extends AIVisionProvider {
 
   async generateTestScenarios(
     screenshotBase64: string,
-    context: Record<string, any>
+    context: Record<string, unknown>,
   ): Promise<TestScenario[]> {
     const prompt = `
 Analyze this agricultural e-commerce platform screenshot with divine consciousness.
@@ -337,7 +340,7 @@ export class AIVisualTestGenerator {
 
   constructor(
     aiConfig: AIProviderConfig,
-    baseDir: string = path.join(process.cwd(), "tests", "visual")
+    baseDir: string = path.join(process.cwd(), "tests", "visual"),
   ) {
     this.baseDir = baseDir;
     this.generatedDir = path.join(baseDir, "ai-generated");
@@ -356,14 +359,17 @@ export class AIVisualTestGenerator {
   /**
    * 🔍 Automatically discover components on a page
    */
-  async discoverComponents(page: Page, url: string): Promise<ComponentDiscovery[]> {
+  async discoverComponents(
+    page: Page,
+    url: string,
+  ): Promise<ComponentDiscovery[]> {
     await page.goto(url);
     await page.waitForLoadState("networkidle");
 
     // Take screenshot for AI analysis
     const screenshotPath = path.join(
       this.screenshotsDir,
-      `discovery-${this.sanitizeName(url)}.png`
+      `discovery-${this.sanitizeName(url)}.png`,
     );
     await fs.mkdir(this.screenshotsDir, { recursive: true });
     await page.screenshot({ path: screenshotPath, fullPage: true });
@@ -419,7 +425,7 @@ Return JSON array:
   async generateTestScenarios(
     page: Page,
     url: string,
-    context: Record<string, any> = {}
+    context: Record<string, unknown> = {},
   ): Promise<TestScenario[]> {
     await page.goto(url);
     await page.waitForLoadState("networkidle");
@@ -427,7 +433,7 @@ Return JSON array:
     // Take screenshot
     const screenshotPath = path.join(
       this.screenshotsDir,
-      `scenario-${this.sanitizeName(url)}.png`
+      `scenario-${this.sanitizeName(url)}.png`,
     );
     await fs.mkdir(this.screenshotsDir, { recursive: true });
     await page.screenshot({ path: screenshotPath, fullPage: true });
@@ -442,7 +448,10 @@ Return JSON array:
       agriculturalFeatures: context.agriculturalFeatures || [],
     };
 
-    return await this.aiProvider.generateTestScenarios(imageBase64, fullContext);
+    return await this.aiProvider.generateTestScenarios(
+      imageBase64,
+      fullContext,
+    );
   }
 
   /**
@@ -450,7 +459,7 @@ Return JSON array:
    */
   async generateTestFile(
     scenarios: TestScenario[],
-    fileName: string
+    fileName: string,
   ): Promise<GeneratedTest> {
     const testContent = this.generateTestCode(scenarios);
     const filePath = path.join(this.generatedDir, fileName);
@@ -479,7 +488,7 @@ Return JSON array:
   async analyzeVisualDifference(
     baselineImage: string,
     currentImage: string,
-    diffImage: string
+    diffImage: string,
   ): Promise<AIVisualAnalysis> {
     const baselineBase64 = await this.encodeImage(baselineImage);
     const currentBase64 = await this.encodeImage(currentImage);
@@ -532,7 +541,7 @@ Return JSON:
     // Send all three images for analysis
     const response = await this.aiProvider.analyzeImage(
       currentBase64, // Primary image
-      prompt
+      prompt,
     );
 
     try {
@@ -563,12 +572,12 @@ Return JSON:
     testName: string,
     baselineImage: string,
     currentImage: string,
-    diffImage: string
+    diffImage: string,
   ): Promise<boolean> {
     const analysis = await this.analyzeVisualDifference(
       baselineImage,
       currentImage,
-      diffImage
+      diffImage,
     );
 
     // Healing logic
@@ -608,7 +617,7 @@ Return JSON:
       baselineImage: string;
       currentImage: string;
       diffImage: string;
-    }>
+    }>,
   ): Promise<SelfHealingReport> {
     const report: SelfHealingReport = {
       healed: 0,
@@ -623,13 +632,13 @@ Return JSON:
           test.testName,
           test.baselineImage,
           test.currentImage,
-          test.diffImage
+          test.diffImage,
         );
 
         const analysis = await this.analyzeVisualDifference(
           test.baselineImage,
           test.currentImage,
-          test.diffImage
+          test.diffImage,
         );
 
         if (healed) {
@@ -673,7 +682,7 @@ Return JSON:
       passed: boolean;
       diffPercentage: number;
       screenshotPath: string;
-    }>
+    }>,
   ): Promise<string> {
     const failedTests = testResults.filter((t) => !t.passed);
 
@@ -705,7 +714,10 @@ Return JSON:
       try {
         const imageBase64 = await this.encodeImage(test.screenshotPath);
         const prompt = `Briefly describe what's visible in this failed visual test screenshot and potential issues.`;
-        const analysis = await this.aiProvider.analyzeImage(imageBase64, prompt);
+        const analysis = await this.aiProvider.analyzeImage(
+          imageBase64,
+          prompt,
+        );
 
         report += `### ${test.testName}\n\n`;
         report += `- **Diff**: ${test.diffPercentage.toFixed(2)}%\n`;
@@ -882,7 +894,9 @@ const utils = new VisualTestingUtils();
 
   private calculateAverageConfidence(scenarios: TestScenario[]): number {
     if (scenarios.length === 0) return 0;
-    return scenarios.reduce((sum, s) => sum + (s.priority * 10), 0) / scenarios.length;
+    return (
+      scenarios.reduce((sum, s) => sum + s.priority * 10, 0) / scenarios.length
+    );
   }
 }
 
@@ -895,7 +909,7 @@ async function main() {
   const command = args[0];
 
   const aiConfig: AIProviderConfig = {
-    provider: (process.env.AI_PROVIDER as any) || "openai",
+    provider: (process.env.AI_PROVIDER as "openai" | "anthropic") || "openai",
     model: process.env.AI_MODEL || "gpt-4-vision-preview",
     apiKey: process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY,
   };

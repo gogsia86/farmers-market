@@ -420,9 +420,9 @@ npm run build
 - [ ] Issues logged (if any)
 - [ ] Ready for deployment
 
-**Tested By:** ********\_********  
-**Date:** ********\_********  
-**Sign-Off:** ********\_********
+**Tested By:** **\*\*\*\***\_**\*\*\*\***  
+**Date:** **\*\*\*\***\_**\*\*\*\***  
+**Sign-Off:** **\*\*\*\***\_**\*\*\*\***
 
 ### Engineering Team
 
@@ -431,9 +431,9 @@ npm run build
 - [ ] Documentation updated
 - [ ] Ready for deployment
 
-**Reviewed By:** ********\_********  
-**Date:** ********\_********  
-**Sign-Off:** ********\_********
+**Reviewed By:** **\*\*\*\***\_**\*\*\*\***  
+**Date:** **\*\*\*\***\_**\*\*\*\***  
+**Sign-Off:** **\*\*\*\***\_**\*\*\*\***
 
 ### Product/Leadership
 
@@ -441,9 +441,9 @@ npm run build
 - [ ] Risks accepted
 - [ ] Deployment approved
 
-**Approved By:** ********\_********  
-**Date:** ********\_********  
-**Sign-Off:** ********\_********
+**Approved By:** **\*\*\*\***\_**\*\*\*\***  
+**Date:** **\*\*\*\***\_**\*\*\*\***  
+**Sign-Off:** **\*\*\*\***\_**\*\*\*\***
 
 ---
 

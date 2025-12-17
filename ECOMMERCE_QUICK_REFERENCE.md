@@ -8,19 +8,39 @@
 
 ```typescript
 // Product Comparison
-import { ProductComparison, type ComparisonProduct } from "@/components/products/ProductComparison";
+import {
+  ProductComparison,
+  type ComparisonProduct,
+} from "@/components/products/ProductComparison";
 
 // Product Recommendations
-import { ProductRecommendations, type RecommendedProduct, type RecommendationType } from "@/components/products/ProductRecommendations";
+import {
+  ProductRecommendations,
+  type RecommendedProduct,
+  type RecommendationType,
+} from "@/components/products/ProductRecommendations";
 
 // Quick Checkout
-import { QuickCheckout, type CartItem, type SavedAddress, type SavedPaymentMethod } from "@/components/cart/QuickCheckout";
+import {
+  QuickCheckout,
+  type CartItem,
+  type SavedAddress,
+  type SavedPaymentMethod,
+} from "@/components/cart/QuickCheckout";
 
 // Order Summary Enhanced
-import { OrderSummaryEnhanced, type OrderItem, type PromoCode } from "@/components/checkout/OrderSummaryEnhanced";
+import {
+  OrderSummaryEnhanced,
+  type OrderItem,
+  type PromoCode,
+} from "@/components/checkout/OrderSummaryEnhanced";
 
 // Tracking Timeline
-import { TrackingTimeline, type OrderStatus, type TimelineEvent } from "@/components/orders/TrackingTimeline";
+import {
+  TrackingTimeline,
+  type OrderStatus,
+  type TimelineEvent,
+} from "@/components/orders/TrackingTimeline";
 ```
 
 ---
@@ -28,6 +48,7 @@ import { TrackingTimeline, type OrderStatus, type TimelineEvent } from "@/compon
 ## 1️⃣ ProductComparison
 
 ### Basic Usage
+
 ```tsx
 <ProductComparison
   products={[product1, product2, product3]}
@@ -37,6 +58,7 @@ import { TrackingTimeline, type OrderStatus, type TimelineEvent } from "@/compon
 ```
 
 ### Full Configuration
+
 ```tsx
 <ProductComparison
   products={comparisonProducts}
@@ -48,6 +70,7 @@ import { TrackingTimeline, type OrderStatus, type TimelineEvent } from "@/compon
 ```
 
 ### Product Data Structure
+
 ```typescript
 const comparisonProduct: ComparisonProduct = {
   id: "prod_123",
@@ -96,6 +119,7 @@ const comparisonProduct: ComparisonProduct = {
 ## 2️⃣ ProductRecommendations
 
 ### Basic Usage
+
 ```tsx
 <ProductRecommendations
   recommendationType="SIMILAR"
@@ -104,6 +128,7 @@ const comparisonProduct: ComparisonProduct = {
 ```
 
 ### Full Configuration
+
 ```tsx
 <ProductRecommendations
   contextProductId={product.id}
@@ -120,17 +145,19 @@ const comparisonProduct: ComparisonProduct = {
 ```
 
 ### Recommendation Types
+
 ```typescript
-type RecommendationType = 
-  | "SIMILAR"              // Based on product characteristics
-  | "COMPLEMENTARY"        // Products that pair well
-  | "SEASONAL"             // Fresh this season
-  | "POPULAR"              // Customer favorites
-  | "PERSONALIZED"         // Based on user history
-  | "FREQUENTLY_BOUGHT_TOGETHER";  // Collaborative filtering
+type RecommendationType =
+  | "SIMILAR" // Based on product characteristics
+  | "COMPLEMENTARY" // Products that pair well
+  | "SEASONAL" // Fresh this season
+  | "POPULAR" // Customer favorites
+  | "PERSONALIZED" // Based on user history
+  | "FREQUENTLY_BOUGHT_TOGETHER"; // Collaborative filtering
 ```
 
 ### Multiple Recommendation Sections
+
 ```tsx
 <>
   <ProductRecommendations
@@ -138,13 +165,13 @@ type RecommendationType =
     contextProductId={product.id}
     maxProducts={8}
   />
-  
+
   <ProductRecommendations
     recommendationType="SEASONAL"
     category={product.category}
     maxProducts={8}
   />
-  
+
   <ProductRecommendations
     recommendationType="FREQUENTLY_BOUGHT_TOGETHER"
     contextProductId={product.id}
@@ -158,6 +185,7 @@ type RecommendationType =
 ## 3️⃣ QuickCheckout
 
 ### Basic Usage
+
 ```tsx
 <QuickCheckout
   items={cartItems}
@@ -169,6 +197,7 @@ type RecommendationType =
 ```
 
 ### Full Configuration
+
 ```tsx
 <QuickCheckout
   items={cartItems}
@@ -183,6 +212,7 @@ type RecommendationType =
 ```
 
 ### Data Structures
+
 ```typescript
 // Cart Item
 const cartItem: CartItem = {
@@ -237,14 +267,13 @@ const slot: DeliverySlot = {
 ## 4️⃣ OrderSummaryEnhanced
 
 ### Basic Usage
+
 ```tsx
-<OrderSummaryEnhanced
-  items={orderItems}
-  showSustainability={true}
-/>
+<OrderSummaryEnhanced items={orderItems} showSustainability={true} />
 ```
 
 ### Full Configuration
+
 ```tsx
 <OrderSummaryEnhanced
   items={orderItems}
@@ -264,6 +293,7 @@ const slot: DeliverySlot = {
 ```
 
 ### Order Item Structure
+
 ```typescript
 const orderItem: OrderItem = {
   id: "item_123",
@@ -282,19 +312,20 @@ const orderItem: OrderItem = {
   inStock: true,
   category: "Vegetables",
   // Agricultural attributes
-  carbonFootprint: 0.5,  // kg CO2 per unit
-  localDistance: 15,      // miles
+  carbonFootprint: 0.5, // kg CO2 per unit
+  localDistance: 15, // miles
 };
 ```
 
 ### In Checkout Flow
+
 ```tsx
 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
   {/* Main checkout content */}
   <div className="lg:col-span-2">
     <CheckoutSteps />
   </div>
-  
+
   {/* Order Summary Sidebar */}
   <div className="lg:col-span-1">
     <OrderSummaryEnhanced
@@ -312,6 +343,7 @@ const orderItem: OrderItem = {
 ## 5️⃣ TrackingTimeline
 
 ### Basic Usage
+
 ```tsx
 <TrackingTimeline
   orderId={order.id}
@@ -321,6 +353,7 @@ const orderItem: OrderItem = {
 ```
 
 ### Full Configuration
+
 ```tsx
 <TrackingTimeline
   orderId={order.id}
@@ -357,6 +390,7 @@ const orderItem: OrderItem = {
 ```
 
 ### Timeline Event Structure
+
 ```typescript
 const timelineEvent: TimelineEvent = {
   id: "event_123",
@@ -376,18 +410,20 @@ const timelineEvent: TimelineEvent = {
 ```
 
 ### Order Status Flow
+
 ```typescript
-type OrderStatus = 
-  | "PENDING"              // Order received, awaiting confirmation
-  | "CONFIRMED"            // Order confirmed by farms
-  | "PREPARING"            // Being harvested/packed
-  | "READY_FOR_PICKUP"     // Ready, waiting for driver
-  | "OUT_FOR_DELIVERY"     // On the way
-  | "DELIVERED"            // Successfully delivered
-  | "CANCELLED";           // Order cancelled
+type OrderStatus =
+  | "PENDING" // Order received, awaiting confirmation
+  | "CONFIRMED" // Order confirmed by farms
+  | "PREPARING" // Being harvested/packed
+  | "READY_FOR_PICKUP" // Ready, waiting for driver
+  | "OUT_FOR_DELIVERY" // On the way
+  | "DELIVERED" // Successfully delivered
+  | "CANCELLED"; // Order cancelled
 ```
 
 ### Farm Status Structure
+
 ```typescript
 const farmStatus: FarmOrderStatus = {
   farmId: "farm_123",
@@ -406,13 +442,14 @@ const farmStatus: FarmOrderStatus = {
 ## 🎨 Common Patterns
 
 ### Page Integration
+
 ```tsx
 // Product Detail Page
 export default function ProductPage({ product }: { product: Product }) {
   return (
     <div className="container mx-auto py-8">
       <ProductDetails product={product} />
-      
+
       {/* Recommendations */}
       <ProductRecommendations
         contextProductId={product.id}
@@ -420,7 +457,7 @@ export default function ProductPage({ product }: { product: Product }) {
         maxProducts={8}
         className="mt-12"
       />
-      
+
       <ProductRecommendations
         contextProductId={product.id}
         recommendationType="FREQUENTLY_BOUGHT_TOGETHER"
@@ -462,9 +499,9 @@ export default function CheckoutPage() {
 // Order Tracking Page
 export default function OrderTrackingPage({ orderId }: { orderId: string }) {
   const { order, events, isLoading } = useOrder(orderId);
-  
+
   if (isLoading) return <LoadingSpinner />;
-  
+
   return (
     <div className="container mx-auto py-8">
       <TrackingTimeline
@@ -488,6 +525,7 @@ export default function OrderTrackingPage({ orderId }: { orderId: string }) {
 ## 🔌 API Integration
 
 ### Recommendations API
+
 ```typescript
 // GET /api/recommendations
 interface RecommendationsQuery {
@@ -506,6 +544,7 @@ interface RecommendationsResponse {
 ```
 
 ### Quick Checkout API
+
 ```typescript
 // POST /api/checkout/quick-order
 interface QuickOrderRequest {
@@ -524,6 +563,7 @@ interface QuickOrderResponse {
 ```
 
 ### Promo Code API
+
 ```typescript
 // POST /api/promo-codes/validate
 interface PromoCodeRequest {
@@ -542,6 +582,7 @@ interface PromoCodeResponse {
 ```
 
 ### Order Tracking API
+
 ```typescript
 // GET /api/orders/{orderId}/tracking
 interface OrderTrackingResponse {
@@ -560,27 +601,29 @@ interface OrderTrackingResponse {
 ## 🎯 Best Practices
 
 ### Performance
+
 ```typescript
 // Lazy load heavy components
 const ProductComparison = dynamic(
   () => import("@/components/products/ProductComparison"),
-  { ssr: false }
+  { ssr: false },
 );
 
 // Memoize expensive calculations
-const sustainabilityMetrics = useMemo(() => 
-  calculateSustainability(items),
-  [items]
+const sustainabilityMetrics = useMemo(
+  () => calculateSustainability(items),
+  [items],
 );
 
 // Debounce API calls
 const debouncedFetch = useDebouncedCallback(
   (query) => fetchRecommendations(query),
-  300
+  300,
 );
 ```
 
 ### Error Handling
+
 ```typescript
 // Graceful fallbacks
 <ProductRecommendations
@@ -596,6 +639,7 @@ const debouncedFetch = useDebouncedCallback(
 ```
 
 ### Accessibility
+
 ```typescript
 // Always provide labels
 <button
@@ -617,6 +661,7 @@ const handleKeyDown = (e: KeyboardEvent) => {
 ## 🐛 Troubleshooting
 
 ### ProductComparison not showing
+
 ```typescript
 // Check: Are products provided?
 console.log("Products:", products.length);
@@ -629,6 +674,7 @@ const product = await fetchProductWithFarm(productId);
 ```
 
 ### ProductRecommendations loading forever
+
 ```typescript
 // Check: Is API endpoint accessible?
 const response = await fetch("/api/recommendations?type=SIMILAR");
@@ -640,6 +686,7 @@ const response = await fetch("/api/recommendations?type=SIMILAR");
 ```
 
 ### QuickCheckout validation errors
+
 ```typescript
 // Check: Required data present?
 console.log("Items:", items.length);
@@ -651,6 +698,7 @@ if (!items.length) return <EmptyCart />;
 ```
 
 ### TrackingTimeline not auto-refreshing
+
 ```typescript
 // Check: Is onRefresh provided?
 <TrackingTimeline

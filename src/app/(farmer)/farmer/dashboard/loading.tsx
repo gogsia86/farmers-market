@@ -72,11 +72,11 @@ export default function FarmerDashboardLoading() {
                       className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-t"
                       style={{ height: `${height}%` }}
                     ></div>
-                  )
+                  ),
                 )}
               </div>
               <div className="flex justify-between pt-2">
-                {["Jan", "Feb", "Mar", "Apr", "May", "Jun"].map((month, i) => (
+                {["Jan", "Feb", "Mar", "Apr", "May", "Jun"].map((_, i) => (
                   <div
                     key={i}
                     className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-8"

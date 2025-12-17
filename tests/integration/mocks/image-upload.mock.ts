@@ -109,18 +109,18 @@ class ImageUploadServiceMock {
    */
   async upload(
     request: ImageUploadRequest,
-    options?: ImageProcessingOptions
+    options?: ImageProcessingOptions,
   ): Promise<string> {
     if (!this.initialized) {
       throw new Error(
-        "Image upload service mock not initialized. Call initialize() first."
+        "Image upload service mock not initialized. Call initialize() first.",
       );
     }
 
     // Validate file size
     if (request.size > this.maxFileSize) {
       throw new Error(
-        `File size ${request.size} bytes exceeds maximum ${this.maxFileSize} bytes`
+        `File size ${request.size} bytes exceeds maximum ${this.maxFileSize} bytes`,
       );
     }
 
@@ -136,7 +136,8 @@ class ImageUploadServiceMock {
     }
 
     const id = randomUUID();
-    const extension = request.type?.split("/")[1] || request.name.split(".").pop() || "jpg";
+    const extension =
+      request.type?.split("/")[1] || request.name.split(".").pop() || "jpg";
     const filename = `${id}.${extension}`;
     const url = `${this.baseUrl}/images/${filename}`;
 
@@ -177,9 +178,11 @@ class ImageUploadServiceMock {
    */
   async uploadMultiple(
     requests: ImageUploadRequest[],
-    options?: ImageProcessingOptions
+    options?: ImageProcessingOptions,
   ): Promise<string[]> {
-    const uploadPromises = requests.map((request) => this.upload(request, options));
+    const uploadPromises = requests.map((request) =>
+      this.upload(request, options),
+    );
     return Promise.all(uploadPromises);
   }
 
@@ -188,7 +191,7 @@ class ImageUploadServiceMock {
    */
   async uploadAndProcess(
     request: ImageUploadRequest,
-    options: ImageProcessingOptions
+    options: ImageProcessingOptions,
   ): Promise<UploadedImage> {
     const url = await this.upload(request, options);
     const image = this.uploadedImages.find((img) => img.url === url);
@@ -316,9 +319,14 @@ class ImageUploadServiceMock {
     totalSize: number;
     averageSize: number;
   } {
-    const totalSize = this.uploadedImages.reduce((sum, img) => sum + img.size, 0);
+    const totalSize = this.uploadedImages.reduce(
+      (sum, img) => sum + img.size,
+      0,
+    );
     const averageSize =
-      this.uploadedImages.length > 0 ? totalSize / this.uploadedImages.length : 0;
+      this.uploadedImages.length > 0
+        ? totalSize / this.uploadedImages.length
+        : 0;
 
     return {
       totalImages: this.uploadedImages.length,
@@ -332,7 +340,7 @@ class ImageUploadServiceMock {
    */
   getImagesByDateRange(startDate: Date, endDate: Date): UploadedImage[] {
     return this.uploadedImages.filter(
-      (img) => img.uploadedAt >= startDate && img.uploadedAt <= endDate
+      (img) => img.uploadedAt >= startDate && img.uploadedAt <= endDate,
     );
   }
 
@@ -341,7 +349,7 @@ class ImageUploadServiceMock {
    */
   getImagesBySizeRange(minSize: number, maxSize: number): UploadedImage[] {
     return this.uploadedImages.filter(
-      (img) => img.size >= minSize && img.size <= maxSize
+      (img) => img.size >= minSize && img.size <= maxSize,
     );
   }
 
@@ -363,12 +371,12 @@ class ImageUploadServiceMock {
         acc[format] = (acc[format] || 0) + 1;
         return acc;
       },
-      {} as Record<string, number>
+      {} as Record<string, number>,
     );
 
     const recentUploads = this.getImagesByDateRange(
       new Date(Date.now() - 24 * 60 * 60 * 1000),
-      new Date()
+      new Date(),
     );
 
     return {
@@ -379,7 +387,8 @@ class ImageUploadServiceMock {
       averageSizeKB: (usage.averageSize / 1024).toFixed(2),
       byFormat,
       recentUploads: recentUploads.length,
-      withThumbnails: this.uploadedImages.filter((img) => img.thumbnails).length,
+      withThumbnails: this.uploadedImages.filter((img) => img.thumbnails)
+        .length,
     };
   }
 
@@ -401,7 +410,7 @@ class ImageUploadServiceMock {
    */
   async generatePresignedUrl(
     filename: string,
-    expiresIn: number = 3600
+    expiresIn: number = 3600,
   ): Promise<{ url: string; fields: Record<string, string> }> {
     const uploadId = randomUUID();
     const presignedUrl = `${this.baseUrl}/upload/${uploadId}`;
@@ -422,7 +431,7 @@ class ImageUploadServiceMock {
    */
   async batchUpload(
     requests: ImageUploadRequest[],
-    onProgress?: (progress: number) => void
+    onProgress?: (progress: number) => void,
   ): Promise<string[]> {
     const urls: string[] = [];
 
@@ -444,7 +453,7 @@ class ImageUploadServiceMock {
    */
   async convertFormat(
     url: string,
-    targetFormat: "jpeg" | "png" | "webp"
+    targetFormat: "jpeg" | "png" | "webp",
   ): Promise<string> {
     const image = this.getImageByUrl(url);
     if (!image) {

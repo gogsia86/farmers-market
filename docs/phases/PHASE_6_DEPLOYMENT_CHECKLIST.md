@@ -21,7 +21,7 @@
 
 ### Environment Preparation
 
-- [ ] Staging environment URL confirmed: ****\*\*\*\*****\_****\*\*\*\*****
+- [ ] Staging environment URL confirmed: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
 - [ ] Staging database URL configured
 - [ ] Environment variables prepared
 - [ ] Monitoring tools ready (Application Insights, logs, etc.)
@@ -31,8 +31,8 @@
 ### Database Preparation
 
 - [ ] Staging database backed up
-  - Backup location: ****\*\*\*\*****\_****\*\*\*\*****
-  - Backup timestamp: ****\*\*\*\*****\_****\*\*\*\*****
+  - Backup location: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
+  - Backup timestamp: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
 - [ ] Database connection verified
 - [ ] Migration status checked: `npx prisma migrate status`
 - [ ] No pending migrations (or migrations reviewed)
@@ -44,8 +44,8 @@
 ### Step 1: Deploy Application
 
 - [ ] Branch deployed to staging
-  - Deployment method: ****\*\*\*\*****\_****\*\*\*\*****
-  - Deployment time: ****\*\*\*\*****\_****\*\*\*\*****
+  - Deployment method: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
+  - Deployment time: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
 - [ ] Build completed successfully
 - [ ] Prisma Client 7.0.1 generated during build
 
@@ -68,10 +68,10 @@
 ### Health Checks
 
 - [ ] Health endpoint responds: `/api/health`
-  - Status: ****\*\*\*\*****\_****\*\*\*\*****
-  - Prisma version shown: ****\*\*\*\*****\_****\*\*\*\*****
+  - Status: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
+  - Prisma version shown: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
 - [ ] Database connection verified: `/api/health/db`
-  - Connection status: ****\*\*\*\*****\_****\*\*\*\*****
+  - Connection status: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
   - Latency: \***\*\_\*\*** ms
 
 ### Log Verification
@@ -96,8 +96,8 @@
 ### Authentication
 
 - [ ] User login works
-  - Test user: ****\*\*\*\*****\_****\*\*\*\*****
-  - Result: ****\*\*\*\*****\_****\*\*\*\*****
+  - Test user: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
+  - Result: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
 - [ ] Session creation/validation works
 - [ ] JWT token generation works
 - [ ] Logout works
@@ -107,7 +107,7 @@
 - [ ] View farm list (with pagination)
 - [ ] View farm details (with relations)
 - [ ] Create new farm (if permissions allow)
-  - Test farm ID: ****\*\*\*\*****\_****\*\*\*\*****
+  - Test farm ID: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
 - [ ] Update farm information
 - [ ] Images display correctly
 
@@ -118,14 +118,14 @@
 - [ ] Search products works
 - [ ] Filter products works
 - [ ] Create product (if permissions allow)
-  - Test product ID: ****\*\*\*\*****\_****\*\*\*\*****
+  - Test product ID: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
 
 ### Order Processing
 
 - [ ] View order list
 - [ ] View order details (with relations)
 - [ ] Create test order (if safe in staging)
-  - Test order ID: ****\*\*\*\*****\_****\*\*\*\*****
+  - Test order ID: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
 - [ ] Order status updates work
 
 ### Database Operations
@@ -168,20 +168,20 @@
 ### Smoke Tests
 
 - [ ] `npm run test:e2e:direct -- --grep "@smoke"` executed
-  - Result: ****\*\*\*\*****\_****\*\*\*\*****
-  - Pass rate: ****\*\*\*\*****\_****\*\*\*\*****
+  - Result: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
+  - Pass rate: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
 
 ### Integration Tests (if available)
 
 - [ ] Integration tests executed
-  - Result: ****\*\*\*\*****\_****\*\*\*\*****
-  - Pass rate: ****\*\*\*\*****\_****\*\*\*\*****
+  - Result: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
+  - Pass rate: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
 
 ### Load Tests (optional)
 
 - [ ] Basic load test executed
-  - Result: ****\*\*\*\*****\_****\*\*\*\*****
-  - Any errors: ****\*\*\*\*****\_****\*\*\*\*****
+  - Result: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
+  - Any errors: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
 
 ---
 
@@ -194,7 +194,7 @@
 - [ ] Add to cart (2 minutes)
 - [ ] Checkout process (5 minutes)
 - [ ] View order confirmation (1 minute)
-- **Notes**: **********\*\*\*\***********\_**********\*\*\*\***********
+- **Notes**: \***\*\*\*\*\***\*\*\*\*\***\*\*\*\*\***\_\***\*\*\*\*\***\*\*\*\*\***\*\*\*\*\***
 
 ### Scenario 2: Farmer Journey ✅ / ❌ / ⚠️
 
@@ -202,7 +202,7 @@
 - [ ] View dashboard (2 minutes)
 - [ ] Update farm info (3 minutes)
 - [ ] Manage products (4 minutes)
-- **Notes**: **********\*\*\*\***********\_**********\*\*\*\***********
+- **Notes**: \***\*\*\*\*\***\*\*\*\*\***\*\*\*\*\***\_\***\*\*\*\*\***\*\*\*\*\***\*\*\*\*\***
 
 ### Scenario 3: Admin Journey ✅ / ❌ / ⚠️
 
@@ -210,7 +210,7 @@
 - [ ] View dashboard (2 minutes)
 - [ ] User management (3 minutes)
 - [ ] Farm verification (2 minutes)
-- **Notes**: **********\*\*\*\***********\_**********\*\*\*\***********
+- **Notes**: \***\*\*\*\*\***\*\*\*\*\***\*\*\*\*\***\_\***\*\*\*\*\***\*\*\*\*\***\*\*\*\*\***
 
 ---
 
@@ -221,7 +221,7 @@
 #### Morning Check (\_**\_:\_\_** AM/PM)
 
 - [ ] Review overnight logs
-  - Errors found: ****\*\*\*\*****\_****\*\*\*\*****
+  - Errors found: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
 - [ ] Error rate: \***\*\_\*\*** % (target: <1%)
 - [ ] Avg response time: \***\*\_\*\*** ms (target: <200ms)
 - [ ] Database query avg: \***\*\_\*\*** ms (target: <50ms)
@@ -234,7 +234,7 @@
 - [ ] Error rate during peak: \***\*\_\*\*** %
 - [ ] Response time under load: \***\*\_\*\*** ms
 - [ ] Connection pool usage: \***\*\_\*\*** %
-- [ ] Any user reports: ****\*\*\*\*****\_****\*\*\*\*****
+- [ ] Any user reports: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
 - **Status**: ✅ Healthy / ⚠️ Monitoring / ❌ Issues
 
 #### Evening Check (\_**\_:\_\_** AM/PM)
@@ -242,7 +242,7 @@
 - [ ] Full day metrics reviewed
 - [ ] Memory leak check: ✅ None / ❌ Detected
 - [ ] Data consistency verified
-- [ ] Issues documented: ****\*\*\*\*****\_****\*\*\*\*****
+- [ ] Issues documented: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
 - **Status**: ✅ Healthy / ⚠️ Monitoring / ❌ Issues
 
 ### Day 2 - Date: **\*\***\_**\*\***
@@ -253,14 +253,14 @@
 - [ ] Error rate: \***\*\_\*\*** %
 - [ ] Avg response time: \***\*\_\*\*** ms
 - [ ] Memory usage: \***\*\_\*\*** GB
-- [ ] Any new issues: ****\*\*\*\*****\_****\*\*\*\*****
+- [ ] Any new issues: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
 - **Status**: ✅ Healthy / ⚠️ Monitoring / ❌ Issues
 
 #### Mid-Day Check (\_**\_:\_\_** AM/PM)
 
 - [ ] Performance consistent with Day 1
 - [ ] No degradation detected
-- [ ] User feedback: ****\*\*\*\*****\_****\*\*\*\*****
+- [ ] User feedback: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
 - **Status**: ✅ Healthy / ⚠️ Monitoring / ❌ Issues
 
 #### Evening Check (\_**\_:\_\_** AM/PM)
@@ -288,15 +288,15 @@
 
 ### Issues Found
 
-1. **Issue #1**: **********\*\*\*\***********\_**********\*\*\*\***********
+1. **Issue #1**: \***\*\*\*\*\***\*\*\*\*\***\*\*\*\*\***\_\***\*\*\*\*\***\*\*\*\*\***\*\*\*\*\***
    - Severity: Critical / High / Medium / Low
    - Status: Resolved / In Progress / Blocked
-   - Resolution: **********\*\*\*\***********\_**********\*\*\*\***********
+   - Resolution: \***\*\*\*\*\***\*\*\*\*\***\*\*\*\*\***\_\***\*\*\*\*\***\*\*\*\*\***\*\*\*\*\***
 
-2. **Issue #2**: **********\*\*\*\***********\_**********\*\*\*\***********
+2. **Issue #2**: \***\*\*\*\*\***\*\*\*\*\***\*\*\*\*\***\_\***\*\*\*\*\***\*\*\*\*\***\*\*\*\*\***
    - Severity: Critical / High / Medium / Low
    - Status: Resolved / In Progress / Blocked
-   - Resolution: **********\*\*\*\***********\_**********\*\*\*\***********
+   - Resolution: \***\*\*\*\*\***\*\*\*\*\***\*\*\*\*\***\_\***\*\*\*\*\***\*\*\*\*\***\*\*\*\*\***
 
 ---
 
@@ -333,7 +333,7 @@
 
 **Final Decision**: ✅ GO / ❌ NO-GO / ⚠️ CONDITIONAL GO
 
-**Rationale**: **********\*\*\*\***********\_**********\*\*\*\***********
+**Rationale**: \***\*\*\*\*\***\*\*\*\*\***\*\*\*\*\***\_\***\*\*\*\*\***\*\*\*\*\***\*\*\*\*\***
 
 ---
 
@@ -341,10 +341,10 @@
 
 **Signed Off By**:
 
-- Tech Lead: ****\*\*\*\*****\_****\*\*\*\***** Date: **\*\***\_**\*\***
-- DevOps: ****\*\*\*\*****\_****\*\*\*\***** Date: **\*\***\_**\*\***
-- QA Lead: ****\*\*\*\*****\_****\*\*\*\***** Date: **\*\***\_**\*\***
-- Product Manager: ****\*\*\*\*****\_****\*\*\*\***** Date: **\*\***\_**\*\***
+- Tech Lead: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\*** Date: **\*\***\_**\*\***
+- DevOps: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\*** Date: **\*\***\_**\*\***
+- QA Lead: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\*** Date: **\*\***\_**\*\***
+- Product Manager: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\*** Date: **\*\***\_**\*\***
 
 ---
 
@@ -353,14 +353,14 @@
 ### Rollback Decision Made
 
 - [ ] Rollback required
-- Date/Time: ****\*\*\*\*****\_****\*\*\*\*****
-- Reason: **********\*\*\*\***********\_**********\*\*\*\***********
+- Date/Time: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
+- Reason: \***\*\*\*\*\***\*\*\*\*\***\*\*\*\*\***\_\***\*\*\*\*\***\*\*\*\*\***\*\*\*\*\***
 
 ### Rollback Execution
 
 - [ ] Application stopped (if needed)
 - [ ] Database backup restored (if needed)
-  - Backup used: ****\*\*\*\*****\_****\*\*\*\*****
+  - Backup used: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
 - [ ] Prisma downgraded to 6.19.0
 - [ ] Application rebuilt and redeployed
 - [ ] Rollback verified successfully
@@ -378,8 +378,8 @@
 
 ### Deployment Notification Sent
 
-- [ ] Date/Time: ****\*\*\*\*****\_****\*\*\*\*****
-- [ ] Recipients: ****\*\*\*\*****\_****\*\*\*\*****
+- [ ] Date/Time: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
+- [ ] Recipients: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
 - [ ] Method: Email / Slack / Teams / Other: **\*\***\_**\*\***
 
 ### Daily Status Updates Sent
@@ -391,7 +391,7 @@
 ### Production Approval Meeting
 
 - [ ] Meeting scheduled: Date: **\*\***\_**\*\*** Time: **\*\***\_**\*\***
-- [ ] Attendees: **********\*\*\*\***********\_**********\*\*\*\***********
+- [ ] Attendees: \***\*\*\*\*\***\*\*\*\*\***\*\*\*\*\***\_\***\*\*\*\*\***\*\*\*\*\***\*\*\*\*\***
 - [ ] Decision documented
 - [ ] Next steps agreed
 
@@ -414,15 +414,15 @@
 
 ### Phase 6 Completion
 
-- **Completed Date**: ****\*\*\*\*****\_****\*\*\*\*****
+- **Completed Date**: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\***
 - **Overall Status**: ✅ Success / ⚠️ Success with Issues / ❌ Failed
 - **Ready for Production**: ✅ Yes / ❌ No
 
 ### Sign-Off
 
-- **Tech Lead**: ****\*\*\*\*****\_****\*\*\*\***** Date: **\*\***\_**\*\***
-- **DevOps Lead**: ****\*\*\*\*****\_****\*\*\*\***** Date: **\*\***\_**\*\***
-- **Project Manager**: ****\*\*\*\*****\_****\*\*\*\***** Date: **\*\***\_**\*\***
+- **Tech Lead**: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\*** Date: **\*\***\_**\*\***
+- **DevOps Lead**: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\*** Date: **\*\***\_**\*\***
+- **Project Manager**: \***\*\*\*\*\*\*\***\_\***\*\*\*\*\*\*\*** Date: **\*\***\_**\*\***
 
 ---
 

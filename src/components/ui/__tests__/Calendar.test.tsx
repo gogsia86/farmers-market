@@ -8,21 +8,21 @@ describe("Calendar Component", () => {
       title: "Plant Tomatoes",
       date: new Date("2024-04-15"),
       type: "planting",
-      farmName: "Sunrise Valley Farm"
+      farmName: "Sunrise Valley Farm",
     },
     {
       id: "2",
       title: "Harvest Lettuce",
       date: new Date("2024-04-20"),
       type: "harvest",
-      description: "First harvest of spring lettuce"
+      description: "First harvest of spring lettuce",
     },
     {
       id: "3",
       title: "Farmers Market",
       date: new Date("2024-04-25"),
-      type: "market"
-    }
+      type: "market",
+    },
   ];
 
   describe("Rendering", () => {
@@ -31,7 +31,7 @@ describe("Calendar Component", () => {
 
       const currentMonth = new Date().toLocaleDateString("en-US", {
         month: "long",
-        year: "numeric"
+        year: "numeric",
       });
 
       expect(screen.getByText(currentMonth)).toBeInTheDocument();
@@ -55,7 +55,10 @@ describe("Calendar Component", () => {
 
     it("should apply seasonal theme", () => {
       const { container } = render(
-        <Calendar selectedDate={new Date("2024-04-15")} showSeasonalIndicators />
+        <Calendar
+          selectedDate={new Date("2024-04-15")}
+          showSeasonalIndicators
+        />,
       );
 
       expect(screen.getByText(/spring season/i)).toBeInTheDocument();
@@ -90,7 +93,7 @@ describe("Calendar Component", () => {
 
       const currentMonth = new Date().toLocaleDateString("en-US", {
         month: "long",
-        year: "numeric"
+        year: "numeric",
       });
 
       expect(screen.getByText(currentMonth)).toBeInTheDocument();
@@ -104,12 +107,14 @@ describe("Calendar Component", () => {
         <Calendar
           selectedDate={new Date("2024-04-15")}
           onDateSelect={onDateSelect}
-        />
+        />,
       );
 
       // Find and click a date button
       const dateButtons = screen.getAllByRole("button");
-      const dayButton = dateButtons.find((btn) => btn.textContent?.trim() === "15");
+      const dayButton = dateButtons.find(
+        (btn) => btn.textContent?.trim() === "15",
+      );
 
       if (dayButton) {
         fireEvent.click(dayButton);
@@ -121,7 +126,9 @@ describe("Calendar Component", () => {
       const selectedDate = new Date("2024-04-15");
       const { container } = render(<Calendar selectedDate={selectedDate} />);
 
-      const selectedButtons = container.querySelectorAll('[aria-selected="true"]');
+      const selectedButtons = container.querySelectorAll(
+        '[aria-selected="true"]',
+      );
       expect(selectedButtons.length).toBeGreaterThan(0);
     });
 
@@ -131,7 +138,7 @@ describe("Calendar Component", () => {
       const todayDate = new Date().getDate();
       const dateButtons = screen.getAllByRole("button");
       const todayButton = dateButtons.find(
-        (btn) => btn.textContent?.trim() === todayDate.toString()
+        (btn) => btn.textContent?.trim() === todayDate.toString(),
       );
 
       expect(todayButton).toBeInTheDocument();
@@ -141,11 +148,13 @@ describe("Calendar Component", () => {
   describe("Event Display", () => {
     it("should show event indicators on dates with events", () => {
       const { container } = render(
-        <Calendar events={mockEvents} selectedDate={new Date("2024-04-01")} />
+        <Calendar events={mockEvents} selectedDate={new Date("2024-04-01")} />,
       );
 
       // Event indicators should be visible as colored dots
-      const eventDots = container.querySelectorAll(".bg-green-500, .bg-amber-500, .bg-purple-500");
+      const eventDots = container.querySelectorAll(
+        ".bg-green-500, .bg-amber-500, .bg-purple-500",
+      );
       expect(eventDots.length).toBeGreaterThan(0);
     });
 
@@ -173,7 +182,7 @@ describe("Calendar Component", () => {
           events={mockEvents}
           selectedDate={selectedDate}
           onEventClick={onEventClick}
-        />
+        />,
       );
 
       const eventButton = screen.getByText("Plant Tomatoes").closest("button");
@@ -190,24 +199,24 @@ describe("Calendar Component", () => {
           id: "4",
           title: "Event 4",
           date: new Date("2024-04-15"),
-          type: "other"
+          type: "other",
         },
         {
           id: "5",
           title: "Event 5",
           date: new Date("2024-04-15"),
-          type: "other"
+          type: "other",
         },
         {
           id: "6",
           title: "Event 6",
           date: new Date("2024-04-15"),
-          type: "other"
-        }
+          type: "other",
+        },
       ];
 
       const { container } = render(
-        <Calendar events={manyEvents} selectedDate={new Date("2024-04-01")} />
+        <Calendar events={manyEvents} selectedDate={new Date("2024-04-01")} />,
       );
 
       expect(screen.getByText(/\+\d+/)).toBeInTheDocument();
@@ -220,7 +229,7 @@ describe("Calendar Component", () => {
         <Calendar
           selectedDate={new Date("2024-04-15")}
           showSeasonalIndicators
-        />
+        />,
       );
 
       expect(screen.getByText(/spring season/i)).toBeInTheDocument();
@@ -231,7 +240,7 @@ describe("Calendar Component", () => {
         <Calendar
           selectedDate={new Date("2024-07-15")}
           showSeasonalIndicators
-        />
+        />,
       );
 
       expect(screen.getByText(/summer season/i)).toBeInTheDocument();
@@ -242,7 +251,7 @@ describe("Calendar Component", () => {
         <Calendar
           selectedDate={new Date("2024-10-15")}
           showSeasonalIndicators
-        />
+        />,
       );
 
       expect(screen.getByText(/fall season/i)).toBeInTheDocument();
@@ -253,7 +262,7 @@ describe("Calendar Component", () => {
         <Calendar
           selectedDate={new Date("2024-01-15")}
           showSeasonalIndicators
-        />
+        />,
       );
 
       expect(screen.getByText(/winter season/i)).toBeInTheDocument();
@@ -264,7 +273,7 @@ describe("Calendar Component", () => {
         <Calendar
           selectedDate={new Date("2024-04-15")}
           showSeasonalIndicators={false}
-        />
+        />,
       );
 
       expect(screen.queryByText(/season/i)).not.toBeInTheDocument();
@@ -274,16 +283,15 @@ describe("Calendar Component", () => {
   describe("Lunar Phases", () => {
     it("should show lunar phase indicators when enabled", () => {
       const { container } = render(
-        <Calendar
-          selectedDate={new Date("2024-04-15")}
-          showLunarPhases
-        />
+        <Calendar selectedDate={new Date("2024-04-15")} showLunarPhases />,
       );
 
       // Lunar phases are displayed as emoji moon icons
       const text = container.textContent || "";
       const hasMoonEmoji = /[\u{1F311}-\u{1F318}]/u.test(text);
-      expect(hasMoonEmoji || text.includes("🌑") || text.includes("🌕")).toBe(true);
+      expect(hasMoonEmoji || text.includes("🌑") || text.includes("🌕")).toBe(
+        true,
+      );
     });
 
     it("should not show lunar phases when disabled", () => {
@@ -291,7 +299,7 @@ describe("Calendar Component", () => {
         <Calendar
           selectedDate={new Date("2024-04-15")}
           showLunarPhases={false}
-        />
+        />,
       );
 
       const text = container.textContent || "";
@@ -303,10 +311,7 @@ describe("Calendar Component", () => {
   describe("Weekend Highlighting", () => {
     it("should highlight weekends when enabled", () => {
       const { container } = render(
-        <Calendar
-          selectedDate={new Date("2024-04-15")}
-          highlightWeekends
-        />
+        <Calendar selectedDate={new Date("2024-04-15")} highlightWeekends />,
       );
 
       // Weekends should have special styling
@@ -319,7 +324,7 @@ describe("Calendar Component", () => {
         <Calendar
           selectedDate={new Date("2024-04-15")}
           highlightWeekends={false}
-        />
+        />,
       );
 
       // This just ensures the component renders without errors
@@ -331,11 +336,13 @@ describe("Calendar Component", () => {
     it("should disable dates before minDate", () => {
       const minDate = new Date("2024-04-15");
       const { container } = render(
-        <Calendar selectedDate={new Date("2024-04-01")} minDate={minDate} />
+        <Calendar selectedDate={new Date("2024-04-01")} minDate={minDate} />,
       );
 
       const dateButtons = screen.getAllByRole("button");
-      const earlyDateButton = dateButtons.find((btn) => btn.textContent?.trim() === "10");
+      const earlyDateButton = dateButtons.find(
+        (btn) => btn.textContent?.trim() === "10",
+      );
 
       if (earlyDateButton) {
         expect(earlyDateButton).toBeDisabled();
@@ -345,11 +352,13 @@ describe("Calendar Component", () => {
     it("should disable dates after maxDate", () => {
       const maxDate = new Date("2024-04-15");
       const { container } = render(
-        <Calendar selectedDate={new Date("2024-04-01")} maxDate={maxDate} />
+        <Calendar selectedDate={new Date("2024-04-01")} maxDate={maxDate} />,
       );
 
       const dateButtons = screen.getAllByRole("button");
-      const lateDate = dateButtons.find((btn) => btn.textContent?.trim() === "20");
+      const lateDate = dateButtons.find(
+        (btn) => btn.textContent?.trim() === "20",
+      );
 
       if (lateDate) {
         expect(lateDate).toBeDisabled();
@@ -365,12 +374,13 @@ describe("Calendar Component", () => {
           selectedDate={new Date("2024-04-01")}
           minDate={minDate}
           onDateSelect={onDateSelect}
-        />
+        />,
       );
 
       const dateButtons = screen.getAllByRole("button");
       const disabledButton = dateButtons.find(
-        (btn) => btn.textContent?.trim() === "10" && btn.hasAttribute("disabled")
+        (btn) =>
+          btn.textContent?.trim() === "10" && btn.hasAttribute("disabled"),
       );
 
       if (disabledButton) {
@@ -395,7 +405,7 @@ describe("Calendar Component", () => {
 
       // Check for colored dots in legend
       const legendDots = container.querySelectorAll(
-        ".bg-green-500, .bg-amber-500, .bg-blue-500, .bg-purple-500, .bg-gray-500"
+        ".bg-green-500, .bg-amber-500, .bg-blue-500, .bg-purple-500, .bg-gray-500",
       );
       expect(legendDots.length).toBeGreaterThan(0);
     });
@@ -406,18 +416,18 @@ describe("Calendar Component", () => {
       render(<Calendar />);
 
       expect(
-        screen.getByRole("application", { name: /agricultural calendar/i })
+        screen.getByRole("application", { name: /agricultural calendar/i }),
       ).toBeInTheDocument();
     });
 
     it("should have accessible date buttons with labels", () => {
       render(
-        <Calendar events={mockEvents} selectedDate={new Date("2024-04-15")} />
+        <Calendar events={mockEvents} selectedDate={new Date("2024-04-15")} />,
       );
 
       const dateButtons = screen.getAllByRole("button");
       const buttonWithEvents = dateButtons.find((btn) =>
-        btn.getAttribute("aria-label")?.includes("events")
+        btn.getAttribute("aria-label")?.includes("events"),
       );
 
       expect(buttonWithEvents).toBeInTheDocument();
@@ -425,10 +435,12 @@ describe("Calendar Component", () => {
 
     it("should indicate selected state with aria-selected", () => {
       const { container } = render(
-        <Calendar selectedDate={new Date("2024-04-15")} />
+        <Calendar selectedDate={new Date("2024-04-15")} />,
       );
 
-      const selectedButtons = container.querySelectorAll('[aria-selected="true"]');
+      const selectedButtons = container.querySelectorAll(
+        '[aria-selected="true"]',
+      );
       expect(selectedButtons.length).toBeGreaterThan(0);
     });
   });
@@ -442,11 +454,16 @@ describe("Calendar Component", () => {
 
     it("should apply seasonal theme colors", () => {
       const { container } = render(
-        <Calendar selectedDate={new Date("2024-04-15")} showSeasonalIndicators />
+        <Calendar
+          selectedDate={new Date("2024-04-15")}
+          showSeasonalIndicators
+        />,
       );
 
       // Spring theme should apply green colors
-      const springElements = container.querySelectorAll(".bg-green-50, .border-green-300");
+      const springElements = container.querySelectorAll(
+        ".bg-green-50, .border-green-300",
+      );
       expect(springElements.length).toBeGreaterThan(0);
     });
   });

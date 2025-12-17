@@ -60,7 +60,12 @@ test.describe("🎯 Advanced SQL Injection Penetration Tests", () => {
     ];
 
     let vulnerable = false;
-    const responses: any[] = [];
+    const responses: Array<{
+      payload: string;
+      status: number;
+      body: unknown;
+      expected: boolean;
+    }> = [];
 
     for (const payload of payloads) {
       const response = await request.post(`${API_BASE}/farms/search`, {

@@ -3,11 +3,13 @@
 ## ⚡ Quick Start
 
 ### Run Bot Now (Server on Port 3001)
+
 ```bash
 npm run bot:check
 ```
 
 ### Run Continuous Monitoring
+
 ```bash
 npm run bot:watch
 ```
@@ -17,6 +19,7 @@ npm run bot:watch
 ## 📊 What Gets Checked?
 
 ✅ **53+ Endpoints Validated**
+
 - Core infrastructure (homepage, health, database)
 - Authentication & security
 - Marketplace & products
@@ -56,6 +59,7 @@ npm run bot:watch
 ## 🔧 Configuration
 
 ### Change Server Port
+
 ```bash
 # Current: Port 3001
 NEXT_PUBLIC_APP_URL=http://localhost:3001 npm run bot:check
@@ -68,10 +72,12 @@ NEXT_PUBLIC_APP_URL=https://yourdomain.com npm run bot:check
 ```
 
 ### Adjust Concurrent Users (Load Test)
+
 Edit `scripts/website-checker-bot.ts`:
+
 ```typescript
 const CONFIG = {
-  loadTestUsers: 10,  // Change this number
+  loadTestUsers: 10, // Change this number
   // ...
 };
 ```
@@ -80,13 +86,14 @@ const CONFIG = {
 
 ## 📈 Status Indicators
 
-| Status | Meaning |
-|--------|---------|
-| ✅ PASS | Everything working perfectly |
+| Status  | Meaning                                            |
+| ------- | -------------------------------------------------- |
+| ✅ PASS | Everything working perfectly                       |
 | ⚠️ WARN | Working but needs attention (e.g., no data seeded) |
-| ❌ FAIL | Critical issue detected |
+| ❌ FAIL | Critical issue detected                            |
 
 ### Overall Status
+
 - **HEALTHY** = All pass, no warnings
 - **DEGRADED** = Some warnings (e.g., empty database)
 - **DOWN** = Critical failures
@@ -96,10 +103,13 @@ const CONFIG = {
 ## 🚨 Common Issues
 
 ### Server Not Running
+
 ```
 Error: fetch failed / Connection refused
 ```
+
 **Fix**: Start the server first
+
 ```bash
 npm run dev
 # Then in another terminal:
@@ -107,18 +117,23 @@ npm run bot:check
 ```
 
 ### Wrong Port
+
 ```
 Error: ERR_CONNECTION_REFUSED at http://localhost:3000
 ```
+
 **Fix**: Server is on port 3001
+
 ```bash
 NEXT_PUBLIC_APP_URL=http://localhost:3001 npm run bot:check
 ```
 
 ### Timeout Errors
+
 ```
 Error: timeout exceeded
 ```
+
 **Fix**: Server is slow, increase timeout in `scripts/website-checker-bot.ts`
 
 ---
@@ -135,16 +150,19 @@ Error: timeout exceeded
 ## 🎯 Daily Workflow
 
 1. **Morning**: Run bot to check system health
+
    ```bash
    npm run bot:check
    ```
 
 2. **During Development**: Run continuous monitoring
+
    ```bash
    npm run bot:watch
    ```
 
 3. **Before Commit**: Run final check
+
    ```bash
    npm run bot:check
    ```
@@ -159,6 +177,7 @@ Error: timeout exceeded
 ## ✅ Success Criteria
 
 **Ready for Production** when you see:
+
 - ✅ Success Rate > 95%
 - ✅ Failed Checks = 0
 - ✅ Average Response < 100ms
@@ -169,6 +188,7 @@ Error: timeout exceeded
 ## 🎉 That's It!
 
 Just run:
+
 ```bash
 npm run bot:check
 ```

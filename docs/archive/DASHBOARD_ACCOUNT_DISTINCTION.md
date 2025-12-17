@@ -1,4 +1,5 @@
 # 📋 Dashboard vs Account - Purpose Documentation
+
 **Farmers Market Platform - Customer Routes Distinction**  
 **Date**: December 3, 2024  
 **Decision**: Keep Both Routes (Option A)  
@@ -18,24 +19,26 @@ After careful analysis, we have decided to **KEEP BOTH** `/dashboard` and `/acco
 
 ## 📊 Route Comparison
 
-| Aspect | `/dashboard` | `/account` |
-|--------|-------------|------------|
-| **Purpose** | Activity overview & quick actions | Account settings & profile management |
-| **Implementation** | Client component | Server component |
-| **Data Fetching** | API calls (client-side) | Direct database (server-side) |
-| **Authentication** | useSession() hook | auth() server function |
-| **Rendering** | Client-side interactive | Server-side static |
-| **Primary Use** | Daily monitoring | Profile updates |
-| **Update Frequency** | Real-time/frequent | Infrequent |
-| **Performance** | Interactive, reactive | Fast initial load, SEO-friendly |
+| Aspect               | `/dashboard`                      | `/account`                            |
+| -------------------- | --------------------------------- | ------------------------------------- |
+| **Purpose**          | Activity overview & quick actions | Account settings & profile management |
+| **Implementation**   | Client component                  | Server component                      |
+| **Data Fetching**    | API calls (client-side)           | Direct database (server-side)         |
+| **Authentication**   | useSession() hook                 | auth() server function                |
+| **Rendering**        | Client-side interactive           | Server-side static                    |
+| **Primary Use**      | Daily monitoring                  | Profile updates                       |
+| **Update Frequency** | Real-time/frequent                | Infrequent                            |
+| **Performance**      | Interactive, reactive             | Fast initial load, SEO-friendly       |
 
 ---
 
 ## 🎨 User Experience Distinction
 
 ### `/dashboard` - Activity Hub
+
 **When users visit**: Daily/frequently  
 **What they see**:
+
 - Welcome message with personalized greeting
 - Quick stats (active orders, total orders, favorites, pending reviews)
 - Recent orders list with status
@@ -46,6 +49,7 @@ After careful analysis, we have decided to **KEEP BOTH** `/dashboard` and `/acco
 **User Intent**: "What's happening with my orders and activity?"
 
 **Example User Stories**:
+
 - "I want to check my order status"
 - "I want to see my favorite farms"
 - "I want quick access to shopping"
@@ -54,8 +58,10 @@ After careful analysis, we have decided to **KEEP BOTH** `/dashboard` and `/acco
 ---
 
 ### `/account` - Settings & Profile
+
 **When users visit**: Occasionally (when updating info)  
 **What they see**:
+
 - Account information (name, email, phone)
 - Profile statistics (lifetime orders, total spent)
 - Account settings navigation:
@@ -69,6 +75,7 @@ After careful analysis, we have decided to **KEEP BOTH** `/dashboard` and `/acco
 **User Intent**: "I need to update my account information or settings"
 
 **Example User Stories**:
+
 - "I need to update my email address"
 - "I want to add a new delivery address"
 - "I need to change my notification preferences"
@@ -79,6 +86,7 @@ After careful analysis, we have decided to **KEEP BOTH** `/dashboard` and `/acco
 ## 🏗️ Technical Implementation
 
 ### `/dashboard` - Client Component
+
 ```typescript
 // src/app/(customer)/dashboard/page.tsx
 "use client";
@@ -89,22 +97,24 @@ import { useEffect, useState } from "react";
 export default function CustomerDashboard() {
   const { data: session, status } = useSession();
   const [stats, setStats] = useState<DashboardStats | null>(null);
-  
+
   useEffect(() => {
     fetchDashboardData(); // Client-side API call
   }, []);
-  
+
   // Interactive, real-time updates
 }
 ```
 
 **Advantages**:
+
 - ✅ Real-time interactivity
 - ✅ Dynamic updates without page reload
 - ✅ Rich client-side interactions
 - ✅ Stateful components
 
 **Best For**:
+
 - Frequently changing data
 - User interactions
 - Real-time updates
@@ -113,6 +123,7 @@ export default function CustomerDashboard() {
 ---
 
 ### `/account` - Server Component
+
 ```typescript
 // src/app/(customer)/account/page.tsx
 import { auth } from "@/lib/auth";
@@ -122,25 +133,27 @@ export const dynamic = "force-dynamic";
 
 export default async function CustomerAccountPage() {
   const session = await auth();
-  
+
   // Parallel database queries
   const [user, orders, stats] = await Promise.all([
     database.user.findUnique({ where: { id: session.user.id } }),
     database.order.findMany({ where: { customerId: session.user.id } }),
-    database.order.aggregate({ where: { customerId: session.user.id } })
+    database.order.aggregate({ where: { customerId: session.user.id } }),
   ]);
-  
+
   // Server-rendered, SEO-friendly
 }
 ```
 
 **Advantages**:
+
 - ✅ Fast initial load
 - ✅ SEO-friendly (server-rendered)
 - ✅ Direct database access (no API overhead)
 - ✅ Better for static/infrequent data
 
 **Best For**:
+
 - Profile information
 - Account settings
 - Historical data
@@ -153,6 +166,7 @@ export default async function CustomerAccountPage() {
 ### Cross-Linking Strategy
 
 #### From `/dashboard` to `/account`:
+
 ```typescript
 <Link href="/account">
   <Button variant="outline">
@@ -162,6 +176,7 @@ export default async function CustomerAccountPage() {
 ```
 
 #### From `/account` to `/dashboard`:
+
 ```typescript
 <Link href="/dashboard">
   <Button variant="outline">
@@ -205,17 +220,20 @@ Customer Menu:
 ## 🎯 Use Case Examples
 
 ### Scenario 1: Daily User Check-in
+
 ```
 User logs in → Redirected to /dashboard
              → Sees "2 active orders"
              → Clicks order → Views details
              → Returns to dashboard
 ```
+
 **Route Used**: `/dashboard` ✅
 
 ---
 
 ### Scenario 2: Update Email Address
+
 ```
 User logs in → Goes to /dashboard
              → Clicks "Account Settings"
@@ -224,22 +242,26 @@ User logs in → Goes to /dashboard
              → Updates email
              → Saves changes
 ```
+
 **Routes Used**: `/dashboard` → `/account` ✅
 
 ---
 
 ### Scenario 3: Check Order Status
+
 ```
 User visits /dashboard
            → Views "Recent Orders" section
            → Sees real-time status updates
            → No page reload needed
 ```
+
 **Route Used**: `/dashboard` ✅
 
 ---
 
 ### Scenario 4: Add New Address
+
 ```
 User visits /account
            → Clicks "Delivery Addresses"
@@ -247,6 +269,7 @@ User visits /account
            → Adds new address
            → Saves
 ```
+
 **Route Used**: `/account` family ✅
 
 ---
@@ -254,6 +277,7 @@ User visits /account
 ## 🛣️ Route Family Structure
 
 ### Dashboard Family (`/dashboard/*`)
+
 ```
 /dashboard                    # Overview & quick actions
 /dashboard/orders             # All orders list
@@ -268,6 +292,7 @@ User visits /account
 ---
 
 ### Account Family (`/account/*`)
+
 ```
 /account                      # Account overview & settings
 /account/orders               # Order history (settings view)
@@ -284,6 +309,7 @@ User visits /account
 ## 🎨 UI/UX Guidelines
 
 ### Dashboard Design
+
 - **Style**: Active, dynamic, colorful
 - **Widgets**: Cards with live data
 - **Actions**: Prominent CTA buttons
@@ -291,6 +317,7 @@ User visits /account
 - **Tone**: Welcoming, activity-focused
 
 ### Account Design
+
 - **Style**: Clean, organized, form-heavy
 - **Layout**: Settings lists, forms
 - **Actions**: Save/Update buttons
@@ -302,6 +329,7 @@ User visits /account
 ## 🔐 Authentication & Redirect
 
 ### Login Redirects
+
 ```typescript
 // Default after login
 redirect("/dashboard");
@@ -312,7 +340,9 @@ redirect("/login?callbackUrl=/dashboard");
 ```
 
 ### Protected Routes
+
 Both routes require authentication:
+
 - `/dashboard` → Check with `useSession()`
 - `/account` → Check with `auth()`
 
@@ -323,12 +353,14 @@ Both routes require authentication:
 ### Recommended Metrics
 
 **Dashboard Metrics**:
+
 - Page views per session
 - Time spent on page
 - Interactions with quick actions
 - Order status checks
 
 **Account Metrics**:
+
 - Profile update frequency
 - Settings changed
 - Address modifications
@@ -339,6 +371,7 @@ Both routes require authentication:
 ## 🚀 Future Enhancements
 
 ### Dashboard
+
 - [ ] Real-time order tracking
 - [ ] Notification center
 - [ ] Recommended products widget
@@ -346,6 +379,7 @@ Both routes require authentication:
 - [ ] Quick reorder functionality
 
 ### Account
+
 - [ ] Two-factor authentication
 - [ ] Payment methods management
 - [ ] Download account data
@@ -385,12 +419,14 @@ Both routes require authentication:
 ## ✅ Implementation Checklist
 
 ### Completed
+
 - [x] Document purpose distinction
 - [x] Define use cases
 - [x] Clarify navigation flow
 - [x] Explain technical differences
 
 ### Recommended Actions
+
 - [ ] Add cross-links between dashboard and account
 - [ ] Update header/sidebar menu to show both
 - [ ] Add breadcrumbs for clarity
@@ -402,33 +438,35 @@ Both routes require authentication:
 ## 📝 Code Comments to Add
 
 ### In `/dashboard/page.tsx`
+
 ```typescript
 /**
  * CUSTOMER DASHBOARD - Activity Overview
- * 
+ *
  * Purpose: Daily monitoring hub for customer activity
  * Use Cases:
  * - Check order status
  * - View favorite farms
  * - Quick actions for shopping
  * - Monitor account activity
- * 
+ *
  * See: /account for profile settings and management
  */
 ```
 
 ### In `/account/page.tsx`
+
 ```typescript
 /**
  * CUSTOMER ACCOUNT - Settings & Profile
- * 
+ *
  * Purpose: Account management and configuration
  * Use Cases:
  * - Update profile information
  * - Manage delivery addresses
  * - Configure preferences
  * - View order history (settings view)
- * 
+ *
  * See: /dashboard for activity monitoring
  */
 ```
@@ -443,6 +481,7 @@ Both routes require authentication:
 **Impact**: ✅ **Positive UX Separation**
 
 Both `/dashboard` and `/account` serve distinct and valuable purposes in the customer experience. Keeping both provides:
+
 - Better user experience
 - Clear separation of concerns
 - Technical optimization (client vs server)

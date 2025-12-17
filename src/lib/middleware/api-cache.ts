@@ -20,7 +20,8 @@
  * @module ApiCacheMiddleware
  */
 
-import type { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import type { NextResponse as NextResponseType } from "next/server";
 import { cacheService, CacheKeys } from "@/lib/cache/cache-service";
 import { logger } from "@/lib/monitoring/logger";
 import crypto from "crypto";
@@ -170,10 +171,7 @@ const statsTracker = new CacheStatsTracker();
 /**
  * Generate cache key from request
  */
-function generateCacheKey(
-  request: NextRequest,
-  config: CacheConfig
-): string {
+function generateCacheKey(request: NextRequest, config: CacheConfig): string {
   const url = new URL(request.url);
   const pathname = url.pathname;
   const searchParams = url.searchParams.toString();
@@ -306,7 +304,7 @@ function buildCacheControlHeader(config: CacheConfig): string {
  * ```
  */
 export function withApiCache(
-  handler: (request: NextRequest) => Promise<NextResponse>
+  handler: (request: NextRequest) => Promise<NextResponse>,
 ) {
   return async (request: NextRequest): Promise<NextResponse> => {
     const pathname = new URL(request.url).pathname;
@@ -335,7 +333,7 @@ export function withApiCache(
       const ifNoneMatch = request.headers.get("if-none-match");
       if (ifNoneMatch && ifNoneMatch === cached.etag) {
         statsTracker.recordHit();
-        return new Response(null, {
+        return NextResponse.json(null, {
           status: 304,
           headers: {
             "X-Cache": "HIT",
@@ -351,7 +349,7 @@ export function withApiCache(
       const age = Math.floor((Date.now() - cached.timestamp) / 1000);
       const isStale = age > cacheConfig.ttl;
 
-      return new Response(cached.body, {
+      return new NextResponse(cached.body, {
         status: cached.status,
         headers: {
           ...cached.headers,
@@ -377,7 +375,8 @@ export function withApiCache(
         const cachedResponse: CachedResponse = {
           status: response.status,
           headers: {
-            "Content-Type": response.headers.get("content-type") || "application/json",
+            "Content-Type":
+              response.headers.get("content-type") || "application/json",
             "Cache-Control": buildCacheControlHeader(cacheConfig),
           },
           body,
@@ -392,7 +391,7 @@ export function withApiCache(
         });
 
         // Return response with cache headers
-        return new Response(body, {
+        return new NextResponse(body, {
           status: response.status,
           headers: {
             ...cachedResponse.headers,

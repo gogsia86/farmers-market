@@ -181,7 +181,10 @@ function formatNumber(value: number): string {
   return value.toFixed(0);
 }
 
-function generatePath(points: [number, number][], smooth: boolean = false): string {
+function generatePath(
+  points: [number, number][],
+  smooth: boolean = false,
+): string {
   if (points.length === 0) return "";
 
   if (!smooth) {
@@ -240,7 +243,10 @@ export function LineChart({
     // Calculate points
     const pts: [number, number][] = data.map((d, i) => {
       const x = padding.left + (i / (data.length - 1 || 1)) * chartWidth;
-      const y = padding.top + chartHeight - ((Number(d[yKey]) - min) / range) * chartHeight;
+      const y =
+        padding.top +
+        chartHeight -
+        ((Number(d[yKey]) - min) / range) * chartHeight;
       return [x, y];
     });
 
@@ -253,11 +259,18 @@ export function LineChart({
     // Y-axis labels
     const yLbls = Array.from({ length: 5 }, (_, i) => {
       const value = min + (range / 4) * i;
-      const y = padding.top + chartHeight - ((value - min) / range) * chartHeight;
+      const y =
+        padding.top + chartHeight - ((value - min) / range) * chartHeight;
       return { y, label: formatNumber(value) };
     });
 
-    return { points: pts, xLabels: xLbls, yLabels: yLbls, maxY: max, minY: min };
+    return {
+      points: pts,
+      xLabels: xLbls,
+      yLabels: yLbls,
+      maxY: max,
+      minY: min,
+    };
   }, [data, xKey, yKey, width, height]);
 
   const chartWidth = width || 600;
@@ -266,7 +279,9 @@ export function LineChart({
   return (
     <div className={`agricultural-chart ${className}`}>
       {title && (
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">{title}</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">
+          {title}
+        </h3>
       )}
       <svg
         width="100%"
@@ -325,7 +340,13 @@ export function LineChart({
         })}
 
         {/* Line path */}
-        <path d={path} fill="none" stroke={lineColor} strokeWidth="3" strokeLinecap="round" />
+        <path
+          d={path}
+          fill="none"
+          stroke={lineColor}
+          strokeWidth="3"
+          strokeLinecap="round"
+        />
 
         {/* Data points */}
         {showPoints &&
@@ -345,7 +366,14 @@ export function LineChart({
           ))}
 
         {/* Axes */}
-        <line x1={60} y1={40} x2={60} y2={height - 50} stroke="#374151" strokeWidth="2" />
+        <line
+          x1={60}
+          y1={40}
+          x2={60}
+          y2={height - 50}
+          stroke="#374151"
+          strokeWidth="2"
+        />
         <line
           x1={60}
           y1={height - 50}
@@ -427,7 +455,9 @@ export function BarChart({
   return (
     <div className={`agricultural-chart ${className}`}>
       {title && (
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">{title}</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">
+          {title}
+        </h3>
       )}
       <svg
         width="100%"
@@ -507,7 +537,14 @@ export function BarChart({
         ))}
 
         {/* Axes */}
-        <line x1={60} y1={40} x2={60} y2={height - 60} stroke="#374151" strokeWidth="2" />
+        <line
+          x1={60}
+          y1={40}
+          x2={60}
+          y2={height - 60}
+          stroke="#374151"
+          strokeWidth="2"
+        />
         <line
           x1={60}
           y1={height - 60}
@@ -644,7 +681,9 @@ export function PieChart({
   return (
     <div className={`agricultural-chart ${className}`}>
       {title && (
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">{title}</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">
+          {title}
+        </h3>
       )}
       <div className="flex flex-col md:flex-row items-center justify-center gap-8">
         <svg
@@ -669,13 +708,25 @@ export function PieChart({
               {/* Label */}
               {slice.percentage > 5 && (
                 <text
-                  x={polarToCartesian((slice.startAngle + slice.endAngle) / 2, radius * 0.7).x}
-                  y={polarToCartesian((slice.startAngle + slice.endAngle) / 2, radius * 0.7).y}
+                  x={
+                    polarToCartesian(
+                      (slice.startAngle + slice.endAngle) / 2,
+                      radius * 0.7,
+                    ).x
+                  }
+                  y={
+                    polarToCartesian(
+                      (slice.startAngle + slice.endAngle) / 2,
+                      radius * 0.7,
+                    ).y
+                  }
                   textAnchor="middle"
                   alignmentBaseline="middle"
                   className="text-sm font-bold fill-white"
                 >
-                  {showPercentages ? `${slice.percentage.toFixed(0)}%` : slice.value}
+                  {showPercentages
+                    ? `${slice.percentage.toFixed(0)}%`
+                    : slice.value}
                 </text>
               )}
             </g>
@@ -705,7 +756,9 @@ export function PieChart({
                   style={{ backgroundColor: slice.color }}
                 />
                 <div className="text-sm">
-                  <span className="font-medium text-gray-900">{slice.label}</span>
+                  <span className="font-medium text-gray-900">
+                    {slice.label}
+                  </span>
                   <span className="text-gray-600 ml-2">
                     {formatNumber(slice.value)} ({slice.percentage.toFixed(1)}%)
                   </span>
@@ -718,7 +771,8 @@ export function PieChart({
 
       {consciousness === "DIVINE" && (
         <div className="mt-4 text-xs text-center text-agricultural-600">
-          🌾 Quantum Pie Coherence: {slices.length} segments • Total: {formatNumber(total)}
+          🌾 Quantum Pie Coherence: {slices.length} segments • Total:{" "}
+          {formatNumber(total)}
         </div>
       )}
     </div>
@@ -759,7 +813,10 @@ export function AreaChart({
     // Points
     const pts: [number, number][] = data.map((d, i) => {
       const x = padding.left + (i / (data.length - 1 || 1)) * chartWidth;
-      const y = padding.top + chartHeight - ((Number(d[yKey]) - min) / range) * chartHeight;
+      const y =
+        padding.top +
+        chartHeight -
+        ((Number(d[yKey]) - min) / range) * chartHeight;
       return [x, y];
     });
 
@@ -776,7 +833,8 @@ export function AreaChart({
 
     const yLbls = Array.from({ length: 5 }, (_, i) => {
       const value = min + (range / 4) * i;
-      const y = padding.top + chartHeight - ((value - min) / range) * chartHeight;
+      const y =
+        padding.top + chartHeight - ((value - min) / range) * chartHeight;
       return { y, label: formatNumber(value) };
     });
 
@@ -788,7 +846,9 @@ export function AreaChart({
   return (
     <div className={`agricultural-chart ${className}`}>
       {title && (
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">{title}</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">
+          {title}
+        </h3>
       )}
       <svg
         width="100%"
@@ -858,7 +918,14 @@ export function AreaChart({
         />
 
         {/* Axes */}
-        <line x1={60} y1={40} x2={60} y2={height - 50} stroke="#374151" strokeWidth="2" />
+        <line
+          x1={60}
+          y1={40}
+          x2={60}
+          y2={height - 50}
+          stroke="#374151"
+          strokeWidth="2"
+        />
         <line
           x1={60}
           y1={height - 50}

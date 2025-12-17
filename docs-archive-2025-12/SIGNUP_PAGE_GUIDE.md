@@ -16,6 +16,7 @@ The signup page allows new users to create accounts for the Farmers Market Platf
 ### The signup page provides TWO account type options:
 
 ### **Option 1: Buy Products (CONSUMER Account)** 🛒
+
 - **Icon**: Shopping cart emoji 🛒
 - **Label**: "Buy Products"
 - **User Type**: CONSUMER
@@ -23,6 +24,7 @@ The signup page allows new users to create accounts for the Farmers Market Platf
 - **Access**: Browse farms, view products, place orders, manage cart
 
 ### **Option 2: Sell Products (FARMER Account)** 🌾
+
 - **Icon**: Wheat emoji 🌾
 - **Label**: "Sell Products"
 - **User Type**: FARMER
@@ -96,6 +98,7 @@ The signup page allows new users to create accounts for the Farmers Market Platf
 ## 📝 Form Fields Explained
 
 ### 1. **Full Name**
+
 - **Required**: Yes
 - **Min Length**: 2 characters
 - **Max Length**: 50 characters
@@ -103,15 +106,17 @@ The signup page allows new users to create accounts for the Farmers Market Platf
 - **Note**: Will be automatically split into firstName and lastName in database
 
 ### 2. **Email Address**
+
 - **Required**: Yes
 - **Format**: Valid email format
 - **Example**: "john.doe@example.com"
 - **Validation**: Must be unique (no duplicate accounts)
 
 ### 3. **Password**
+
 - **Required**: Yes
 - **Min Length**: 8 characters
-- **Requirements**: 
+- **Requirements**:
   - At least one uppercase letter (A-Z)
   - At least one lowercase letter (a-z)
   - At least one number (0-9)
@@ -123,12 +128,14 @@ The signup page allows new users to create accounts for the Farmers Market Platf
   - Very Strong (Emerald)
 
 ### 4. **Confirm Password**
+
 - **Required**: Yes
 - **Validation**: Must exactly match the password field
 
 ### 5. **Account Type Selection**
+
 - **Required**: Yes
-- **Options**: 
+- **Options**:
   - **CONSUMER** (Buy Products) 🛒
   - **FARMER** (Sell Products) 🌾
 - **Visual Feedback**: Selected option is highlighted with:
@@ -137,9 +144,10 @@ The signup page allows new users to create accounts for the Farmers Market Platf
   - Checkmark icon in top-right corner ✓
 
 ### 6. **Terms Agreement**
+
 - **Required**: Yes
 - **Type**: Checkbox
-- **Links**: 
+- **Links**:
   - Terms of Service: `/terms`
   - Privacy Policy: `/privacy`
 
@@ -150,6 +158,7 @@ The signup page allows new users to create accounts for the Farmers Market Platf
 ### **Account Type Selection Visual Feedback:**
 
 #### **CONSUMER Selected (Default):**
+
 ```
 ┌──────────────────────┐  ┌──────────────────────┐
 │  ✓                   │  │                      │
@@ -161,6 +170,7 @@ The signup page allows new users to create accounts for the Farmers Market Platf
 ```
 
 #### **FARMER Selected:**
+
 ```
 ┌──────────────────────┐  ┌──────────────────────┐
 │                      │  │  ✓                   │
@@ -216,11 +226,13 @@ The signup page allows new users to create accounts for the Farmers Market Platf
 ### **Issue 1: "No account type options visible"**
 
 **Possible Causes:**
+
 - CSS not loading properly
 - JavaScript not executing
 - Page not fully loaded
 
 **Solutions:**
+
 1. **Hard refresh the page**: Press `Ctrl + F5` (Windows) or `Cmd + Shift + R` (Mac)
 2. **Clear browser cache**: Settings → Clear browsing data
 3. **Try a different browser**: Chrome, Firefox, Edge, Safari
@@ -230,6 +242,7 @@ The signup page allows new users to create accounts for the Farmers Market Platf
 ### **Issue 2: "Account type cards are gray/not clickable"**
 
 **Solution:**
+
 - The cards ARE clickable! Even if they look gray initially
 - Click directly on the card area
 - You should see it turn green when selected
@@ -238,6 +251,7 @@ The signup page allows new users to create accounts for the Farmers Market Platf
 ### **Issue 3: "Form validation errors"**
 
 **Common Validation Errors:**
+
 - ❌ "Name must be at least 2 characters"
 - ❌ "Please enter a valid email address"
 - ❌ "Password must be at least 8 characters"
@@ -247,6 +261,7 @@ The signup page allows new users to create accounts for the Farmers Market Platf
 - ❌ "You must agree to the terms"
 
 **Solution:**
+
 - Read the error message carefully
 - Fix the indicated field
 - All fields must be valid before submission
@@ -254,6 +269,7 @@ The signup page allows new users to create accounts for the Farmers Market Platf
 ### **Issue 4: "An account with this email already exists"**
 
 **Solution:**
+
 - The email is already registered
 - Try logging in instead: http://localhost:3001/login
 - Or use a different email address
@@ -262,17 +278,21 @@ The signup page allows new users to create accounts for the Farmers Market Platf
 ### **Issue 5: "Failed to create account"**
 
 **Possible Causes:**
+
 - Database connection issue
 - Server error
 - Network problem
 
 **Solutions:**
+
 1. **Check server is running**:
+
    ```bash
    curl http://localhost:3001/api/health
    ```
 
 2. **Check database is running**:
+
    ```bash
    netstat -an | findstr ":5433"
    ```
@@ -301,6 +321,7 @@ The signup page allows new users to create accounts for the Farmers Market Platf
 ### **After Account Creation:**
 
 The account type determines:
+
 - **CONSUMER**: Redirected to product browsing/shopping features
 - **FARMER**: Redirected to farm management/product listing features
 
@@ -318,6 +339,7 @@ The signup page works on:
 ✅ **Opera**
 
 **Minimum Requirements:**
+
 - JavaScript enabled
 - Cookies enabled
 - Modern browser (released within last 2 years)
@@ -350,15 +372,16 @@ The signup page is fully responsive:
 
 ### **Strength Levels:**
 
-| Strength | Requirements | Color | Example |
-|----------|-------------|-------|---------|
-| **Weak** | < 8 chars | 🔴 Red | `pass123` |
-| **Fair** | 8+ chars, basic mix | 🟠 Orange | `Password1` |
-| **Good** | 12+ chars, good mix | 🟡 Yellow | `MyPass123!` |
-| **Strong** | 12+ chars, all types | 🟢 Green | `MyStr0ng!Pass` |
-| **Very Strong** | 12+ chars, complex | 🟢 Emerald | `MyV3ry$tr0ng!P@ss` |
+| Strength        | Requirements         | Color      | Example             |
+| --------------- | -------------------- | ---------- | ------------------- |
+| **Weak**        | < 8 chars            | 🔴 Red     | `pass123`           |
+| **Fair**        | 8+ chars, basic mix  | 🟠 Orange  | `Password1`         |
+| **Good**        | 12+ chars, good mix  | 🟡 Yellow  | `MyPass123!`        |
+| **Strong**      | 12+ chars, all types | 🟢 Green   | `MyStr0ng!Pass`     |
+| **Very Strong** | 12+ chars, complex   | 🟢 Emerald | `MyV3ry$tr0ng!P@ss` |
 
 ### **Tips for Strong Passwords:**
+
 - Use at least 12 characters
 - Mix uppercase and lowercase
 - Include numbers and symbols
@@ -371,6 +394,7 @@ The signup page is fully responsive:
 ## 🛠️ Testing the Signup
 
 ### **Test Account 1: Consumer**
+
 ```
 Name: Test Consumer
 Email: consumer@test.com
@@ -379,6 +403,7 @@ Account Type: Buy Products (CONSUMER)
 ```
 
 ### **Test Account 2: Farmer**
+
 ```
 Name: Test Farmer
 Email: farmer@test.com
@@ -387,6 +412,7 @@ Account Type: Sell Products (FARMER)
 ```
 
 ### **Verification Steps:**
+
 1. Fill in the form with test data
 2. **Click on either "Buy Products" or "Sell Products" card**
 3. Verify the card turns green with checkmark

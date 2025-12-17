@@ -5,23 +5,25 @@ import { cn } from "@/lib/utils";
 import {
   Leaf,
   Droplets,
-  ThermometerSun,
   Beaker,
   Activity,
-  TrendingUp,
-  TrendingDown,
   Minus,
   CheckCircle,
   AlertTriangle,
   XCircle,
-  Info
+  Info,
 } from "lucide-react";
 
 // ============================================================================
 // TYPES & INTERFACES - Divine Agricultural Type System
 // ============================================================================
 
-export type SoilHealthStatus = "EXCELLENT" | "GOOD" | "FAIR" | "POOR" | "CRITICAL";
+export type SoilHealthStatus =
+  | "EXCELLENT"
+  | "GOOD"
+  | "FAIR"
+  | "POOR"
+  | "CRITICAL";
 
 export interface SoilMetric {
   label: string;
@@ -82,7 +84,7 @@ const STATUS_CONFIG: Record<SoilHealthStatus, StatusConfig> = {
     bgColor: "bg-green-50",
     borderColor: "border-green-500",
     icon: CheckCircle,
-    description: "Optimal soil conditions for plant growth"
+    description: "Optimal soil conditions for plant growth",
   },
   GOOD: {
     label: "Good",
@@ -90,7 +92,7 @@ const STATUS_CONFIG: Record<SoilHealthStatus, StatusConfig> = {
     bgColor: "bg-green-50",
     borderColor: "border-green-400",
     icon: CheckCircle,
-    description: "Healthy soil with minor improvements possible"
+    description: "Healthy soil with minor improvements possible",
   },
   FAIR: {
     label: "Fair",
@@ -98,7 +100,7 @@ const STATUS_CONFIG: Record<SoilHealthStatus, StatusConfig> = {
     bgColor: "bg-yellow-50",
     borderColor: "border-yellow-400",
     icon: AlertTriangle,
-    description: "Adequate soil health, improvements recommended"
+    description: "Adequate soil health, improvements recommended",
   },
   POOR: {
     label: "Poor",
@@ -106,7 +108,7 @@ const STATUS_CONFIG: Record<SoilHealthStatus, StatusConfig> = {
     bgColor: "bg-orange-50",
     borderColor: "border-orange-400",
     icon: AlertTriangle,
-    description: "Below optimal conditions, action needed"
+    description: "Below optimal conditions, action needed",
   },
   CRITICAL: {
     label: "Critical",
@@ -114,8 +116,8 @@ const STATUS_CONFIG: Record<SoilHealthStatus, StatusConfig> = {
     bgColor: "bg-red-50",
     borderColor: "border-red-500",
     icon: XCircle,
-    description: "Immediate intervention required"
-  }
+    description: "Immediate intervention required",
+  },
 };
 
 // ============================================================================
@@ -130,53 +132,87 @@ function calculateSoilHealth(data: SoilHealthData): {
   let metrics = 0;
 
   // pH score (optimal: 6.0-7.0)
-  const phScore = data.ph >= 6.0 && data.ph <= 7.0 ? 100 :
-    data.ph >= 5.5 && data.ph <= 7.5 ? 80 :
-    data.ph >= 5.0 && data.ph <= 8.0 ? 60 :
-    data.ph >= 4.5 && data.ph <= 8.5 ? 40 : 20;
+  const phScore =
+    data.ph >= 6.0 && data.ph <= 7.0
+      ? 100
+      : data.ph >= 5.5 && data.ph <= 7.5
+        ? 80
+        : data.ph >= 5.0 && data.ph <= 8.0
+          ? 60
+          : data.ph >= 4.5 && data.ph <= 8.5
+            ? 40
+            : 20;
   totalScore += phScore;
   metrics++;
 
   // NPK scores (simplified ranges)
-  const nScore = data.nitrogen >= 20 && data.nitrogen <= 50 ? 100 :
-    data.nitrogen >= 10 && data.nitrogen <= 70 ? 70 : 40;
+  const nScore =
+    data.nitrogen >= 20 && data.nitrogen <= 50
+      ? 100
+      : data.nitrogen >= 10 && data.nitrogen <= 70
+        ? 70
+        : 40;
   totalScore += nScore;
   metrics++;
 
-  const pScore = data.phosphorus >= 30 && data.phosphorus <= 60 ? 100 :
-    data.phosphorus >= 15 && data.phosphorus <= 80 ? 70 : 40;
+  const pScore =
+    data.phosphorus >= 30 && data.phosphorus <= 60
+      ? 100
+      : data.phosphorus >= 15 && data.phosphorus <= 80
+        ? 70
+        : 40;
   totalScore += pScore;
   metrics++;
 
-  const kScore = data.potassium >= 150 && data.potassium <= 250 ? 100 :
-    data.potassium >= 100 && data.potassium <= 300 ? 70 : 40;
+  const kScore =
+    data.potassium >= 150 && data.potassium <= 250
+      ? 100
+      : data.potassium >= 100 && data.potassium <= 300
+        ? 70
+        : 40;
   totalScore += kScore;
   metrics++;
 
   // Organic matter score (optimal: 3-6%)
-  const omScore = data.organicMatter >= 3 && data.organicMatter <= 6 ? 100 :
-    data.organicMatter >= 2 && data.organicMatter <= 8 ? 70 : 40;
+  const omScore =
+    data.organicMatter >= 3 && data.organicMatter <= 6
+      ? 100
+      : data.organicMatter >= 2 && data.organicMatter <= 8
+        ? 70
+        : 40;
   totalScore += omScore;
   metrics++;
 
   // Moisture score (optimal: 40-60%)
-  const moistScore = data.moisture >= 40 && data.moisture <= 60 ? 100 :
-    data.moisture >= 30 && data.moisture <= 70 ? 70 : 40;
+  const moistScore =
+    data.moisture >= 40 && data.moisture <= 60
+      ? 100
+      : data.moisture >= 30 && data.moisture <= 70
+        ? 70
+        : 40;
   totalScore += moistScore;
   metrics++;
 
   const avgScore = totalScore / metrics;
 
   const status: SoilHealthStatus =
-    avgScore >= 90 ? "EXCELLENT" :
-    avgScore >= 75 ? "GOOD" :
-    avgScore >= 60 ? "FAIR" :
-    avgScore >= 40 ? "POOR" : "CRITICAL";
+    avgScore >= 90
+      ? "EXCELLENT"
+      : avgScore >= 75
+        ? "GOOD"
+        : avgScore >= 60
+          ? "FAIR"
+          : avgScore >= 40
+            ? "POOR"
+            : "CRITICAL";
 
   return { status, score: Math.round(avgScore) };
 }
 
-function getMetricStatus(value: number, optimal: { min: number; max: number }): {
+function getMetricStatus(
+  value: number,
+  optimal: { min: number; max: number },
+): {
   status: "optimal" | "acceptable" | "suboptimal";
   icon: React.ElementType;
   color: string;
@@ -188,7 +224,11 @@ function getMetricStatus(value: number, optimal: { min: number; max: number }): 
   if (value >= optimal.min - buffer && value <= optimal.max + buffer) {
     return { status: "acceptable", icon: Minus, color: "text-yellow-600" };
   }
-  return { status: "suboptimal", icon: AlertTriangle, color: "text-orange-600" };
+  return {
+    status: "suboptimal",
+    icon: AlertTriangle,
+    color: "text-orange-600",
+  };
 }
 
 function getMetrics(data: SoilHealthData): SoilMetric[] {
@@ -200,7 +240,7 @@ function getMetrics(data: SoilHealthData): SoilMetric[] {
       min: 4.0,
       max: 9.0,
       optimal: { min: 6.0, max: 7.0 },
-      icon: Beaker
+      icon: Beaker,
     },
     {
       label: "Nitrogen (N)",
@@ -209,7 +249,7 @@ function getMetrics(data: SoilHealthData): SoilMetric[] {
       min: 0,
       max: 100,
       optimal: { min: 20, max: 50 },
-      icon: Activity
+      icon: Activity,
     },
     {
       label: "Phosphorus (P)",
@@ -218,7 +258,7 @@ function getMetrics(data: SoilHealthData): SoilMetric[] {
       min: 0,
       max: 100,
       optimal: { min: 30, max: 60 },
-      icon: Activity
+      icon: Activity,
     },
     {
       label: "Potassium (K)",
@@ -227,7 +267,7 @@ function getMetrics(data: SoilHealthData): SoilMetric[] {
       min: 0,
       max: 400,
       optimal: { min: 150, max: 250 },
-      icon: Activity
+      icon: Activity,
     },
     {
       label: "Organic Matter",
@@ -236,7 +276,7 @@ function getMetrics(data: SoilHealthData): SoilMetric[] {
       min: 0,
       max: 15,
       optimal: { min: 3, max: 6 },
-      icon: Leaf
+      icon: Leaf,
     },
     {
       label: "Moisture",
@@ -245,8 +285,8 @@ function getMetrics(data: SoilHealthData): SoilMetric[] {
       min: 0,
       max: 100,
       optimal: { min: 40, max: 60 },
-      icon: Droplets
-    }
+      icon: Droplets,
+    },
   ];
 }
 
@@ -255,9 +295,12 @@ function getMetrics(data: SoilHealthData): SoilMetric[] {
 // ============================================================================
 
 function MetricBar({ metric }: { metric: SoilMetric }) {
-  const percentage = ((metric.value - metric.min) / (metric.max - metric.min)) * 100;
-  const optimalStart = ((metric.optimal.min - metric.min) / (metric.max - metric.min)) * 100;
-  const optimalEnd = ((metric.optimal.max - metric.min) / (metric.max - metric.min)) * 100;
+  const percentage =
+    ((metric.value - metric.min) / (metric.max - metric.min)) * 100;
+  const optimalStart =
+    ((metric.optimal.min - metric.min) / (metric.max - metric.min)) * 100;
+  const optimalEnd =
+    ((metric.optimal.max - metric.min) / (metric.max - metric.min)) * 100;
   const status = getMetricStatus(metric.value, metric.optimal);
   const Icon = metric.icon || Activity;
   const StatusIcon = status.icon;
@@ -267,13 +310,18 @@ function MetricBar({ metric }: { metric: SoilMetric }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Icon className="h-4 w-4 text-gray-400" aria-hidden="true" />
-          <span className="text-sm font-medium text-gray-700">{metric.label}</span>
+          <span className="text-sm font-medium text-gray-700">
+            {metric.label}
+          </span>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="text-sm font-bold text-gray-900">
             {metric.value.toFixed(1)} {metric.unit}
           </span>
-          <StatusIcon className={cn("h-4 w-4", status.color)} aria-hidden="true" />
+          <StatusIcon
+            className={cn("h-4 w-4", status.color)}
+            aria-hidden="true"
+          />
         </div>
       </div>
 
@@ -284,15 +332,18 @@ function MetricBar({ metric }: { metric: SoilMetric }) {
           className="absolute top-0 h-full bg-green-100"
           style={{
             left: `${optimalStart}%`,
-            width: `${optimalEnd - optimalStart}%`
+            width: `${optimalEnd - optimalStart}%`,
           }}
         />
         {/* Value indicator */}
         <div
           className={cn(
             "absolute top-0 h-full transition-all duration-500",
-            status.status === "optimal" ? "bg-green-500" :
-            status.status === "acceptable" ? "bg-yellow-500" : "bg-orange-500"
+            status.status === "optimal"
+              ? "bg-green-500"
+              : status.status === "acceptable"
+                ? "bg-yellow-500"
+                : "bg-orange-500",
           )}
           style={{ width: `${Math.min(100, Math.max(0, percentage))}%` }}
         />
@@ -321,7 +372,7 @@ export function SoilHealthMeter({
   showMetrics = true,
   className,
   animated = true,
-  onMetricClick
+  onMetricClick,
 }: SoilHealthMeterProps) {
   const { status, score } = calculateSoilHealth(data);
   const config = STATUS_CONFIG[status];
@@ -337,18 +388,23 @@ export function SoilHealthMeter({
           config.bgColor,
           config.borderColor,
           animated && "transition-all duration-300",
-          className
+          className,
         )}
         role="region"
         aria-label={`Soil health: ${config.label}`}
       >
-        <StatusIcon className={cn("h-5 w-5", config.color)} aria-hidden="true" />
+        <StatusIcon
+          className={cn("h-5 w-5", config.color)}
+          aria-hidden="true"
+        />
         <div>
           <div className="flex items-baseline gap-2">
             <span className="text-2xl font-bold text-gray-900">{score}</span>
             <span className="text-sm text-gray-500">/ 100</span>
           </div>
-          <p className={cn("text-xs font-medium", config.color)}>{config.label}</p>
+          <p className={cn("text-xs font-medium", config.color)}>
+            {config.label}
+          </p>
         </div>
       </div>
     );
@@ -361,7 +417,7 @@ export function SoilHealthMeter({
         className={cn(
           "rounded-lg border bg-white shadow-lg overflow-hidden",
           config.borderColor,
-          className
+          className,
         )}
         role="region"
         aria-label="Detailed soil health analysis"
@@ -379,10 +435,17 @@ export function SoilHealthMeter({
             </div>
             <div className="text-right">
               <div className="flex items-center gap-2 justify-end mb-1">
-                <span className="text-3xl font-bold text-gray-900">{score}</span>
+                <span className="text-3xl font-bold text-gray-900">
+                  {score}
+                </span>
                 <span className="text-lg text-gray-500">/ 100</span>
               </div>
-              <div className={cn("flex items-center gap-1.5 justify-end", config.color)}>
+              <div
+                className={cn(
+                  "flex items-center gap-1.5 justify-end",
+                  config.color,
+                )}
+              >
                 <StatusIcon className="h-4 w-4" aria-hidden="true" />
                 <span className="text-sm font-semibold">{config.label}</span>
               </div>
@@ -394,10 +457,15 @@ export function SoilHealthMeter({
             <div
               className={cn(
                 "absolute top-0 left-0 h-full rounded-full transition-all duration-700",
-                score >= 90 ? "bg-green-500" :
-                score >= 75 ? "bg-green-400" :
-                score >= 60 ? "bg-yellow-500" :
-                score >= 40 ? "bg-orange-500" : "bg-red-500"
+                score >= 90
+                  ? "bg-green-500"
+                  : score >= 75
+                    ? "bg-green-400"
+                    : score >= 60
+                      ? "bg-yellow-500"
+                      : score >= 40
+                        ? "bg-orange-500"
+                        : "bg-red-500",
               )}
               style={{ width: `${score}%` }}
             />
@@ -416,8 +484,9 @@ export function SoilHealthMeter({
                 key={index}
                 onClick={() => onMetricClick?.(metric.label)}
                 className={cn(
-                  onMetricClick && "cursor-pointer hover:bg-gray-50 p-2 -m-2 rounded-lg",
-                  animated && "transition-colors"
+                  onMetricClick &&
+                    "cursor-pointer hover:bg-gray-50 p-2 -m-2 rounded-lg",
+                  animated && "transition-colors",
                 )}
               >
                 <MetricBar metric={metric} />
@@ -427,26 +496,34 @@ export function SoilHealthMeter({
         )}
 
         {/* Recommendations */}
-        {showRecommendations && data.recommendations && data.recommendations.length > 0 && (
-          <div className="border-t border-gray-200 bg-blue-50 p-6">
-            <div className="flex items-start gap-3">
-              <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
-              <div className="flex-1">
-                <h4 className="text-sm font-semibold text-blue-900 mb-2">
-                  Recommendations
-                </h4>
-                <ul className="space-y-1.5">
-                  {data.recommendations.map((rec, index) => (
-                    <li key={index} className="text-sm text-blue-800 flex items-start gap-2">
-                      <span className="text-blue-400 mt-1">•</span>
-                      <span>{rec}</span>
-                    </li>
-                  ))}
-                </ul>
+        {showRecommendations &&
+          data.recommendations &&
+          data.recommendations.length > 0 && (
+            <div className="border-t border-gray-200 bg-blue-50 p-6">
+              <div className="flex items-start gap-3">
+                <Info
+                  className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5"
+                  aria-hidden="true"
+                />
+                <div className="flex-1">
+                  <h4 className="text-sm font-semibold text-blue-900 mb-2">
+                    Recommendations
+                  </h4>
+                  <ul className="space-y-1.5">
+                    {data.recommendations.map((rec, index) => (
+                      <li
+                        key={index}
+                        className="text-sm text-blue-800 flex items-start gap-2"
+                      >
+                        <span className="text-blue-400 mt-1">•</span>
+                        <span>{rec}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
       </div>
     );
   }
@@ -457,7 +534,7 @@ export function SoilHealthMeter({
       className={cn(
         "rounded-lg border bg-white shadow-sm overflow-hidden",
         config.borderColor,
-        className
+        className,
       )}
       role="region"
       aria-label="Soil health meter"
@@ -467,10 +544,15 @@ export function SoilHealthMeter({
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-3">
             <div className={cn("p-2 rounded-lg", "bg-white/50")}>
-              <StatusIcon className={cn("h-6 w-6", config.color)} aria-hidden="true" />
+              <StatusIcon
+                className={cn("h-6 w-6", config.color)}
+                aria-hidden="true"
+              />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-gray-900">Soil Health</h3>
+              <h3 className="text-sm font-semibold text-gray-900">
+                Soil Health
+              </h3>
               <p className={cn("text-xs font-medium", config.color)}>
                 {config.label} Condition
               </p>
@@ -489,10 +571,15 @@ export function SoilHealthMeter({
           <div
             className={cn(
               "absolute top-0 left-0 h-full rounded-full transition-all duration-700",
-              score >= 90 ? "bg-green-500" :
-              score >= 75 ? "bg-green-400" :
-              score >= 60 ? "bg-yellow-500" :
-              score >= 40 ? "bg-orange-500" : "bg-red-500"
+              score >= 90
+                ? "bg-green-500"
+                : score >= 75
+                  ? "bg-green-400"
+                  : score >= 60
+                    ? "bg-yellow-500"
+                    : score >= 40
+                      ? "bg-orange-500"
+                      : "bg-red-500",
             )}
             style={{ width: `${score}%` }}
           />
@@ -511,13 +598,15 @@ export function SoilHealthMeter({
                 className={cn(
                   "flex items-center gap-2 p-2 rounded border border-gray-200",
                   onMetricClick && "cursor-pointer hover:bg-gray-50",
-                  animated && "transition-colors"
+                  animated && "transition-colors",
                 )}
                 onClick={() => onMetricClick?.(metric.label)}
               >
                 <Icon className="h-4 w-4 text-gray-400" aria-hidden="true" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-gray-600 truncate">{metric.label}</p>
+                  <p className="text-xs text-gray-600 truncate">
+                    {metric.label}
+                  </p>
                   <div className="flex items-center gap-1">
                     <span className="text-sm font-semibold text-gray-900">
                       {metric.value.toFixed(1)}
@@ -525,7 +614,10 @@ export function SoilHealthMeter({
                     <span className="text-xs text-gray-500">{metric.unit}</span>
                   </div>
                 </div>
-                <status.icon className={cn("h-3.5 w-3.5", status.color)} aria-hidden="true" />
+                <status.icon
+                  className={cn("h-3.5 w-3.5", status.color)}
+                  aria-hidden="true"
+                />
               </div>
             );
           })}

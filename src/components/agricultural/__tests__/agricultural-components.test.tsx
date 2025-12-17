@@ -45,7 +45,9 @@ describe("SeasonalIndicator", () => {
     it("should render with default variant", () => {
       render(<SeasonalIndicator season="SPRING" />);
       expect(screen.getByText("Spring")).toBeInTheDocument();
-      expect(screen.getByText("Season of renewal and planting")).toBeInTheDocument();
+      expect(
+        screen.getByText("Season of renewal and planting"),
+      ).toBeInTheDocument();
     });
 
     it("should render compact variant", () => {
@@ -130,7 +132,7 @@ describe("SeasonalIndicator", () => {
     it("should have proper ARIA labels", () => {
       render(<SeasonalIndicator season="SPRING" />);
       expect(
-        screen.getByLabelText(/Current season: Spring/i)
+        screen.getByLabelText(/Current season: Spring/i),
       ).toBeInTheDocument();
     });
 
@@ -230,10 +232,7 @@ describe("HarvestCalendar", () => {
     it("should call onEventClick when event is clicked", () => {
       const handleEventClick = jest.fn();
       render(
-        <HarvestCalendar
-          events={mockEvents}
-          onEventClick={handleEventClick}
-        />
+        <HarvestCalendar events={mockEvents} onEventClick={handleEventClick} />,
       );
 
       fireEvent.click(screen.getByText("Tomatoes"));
@@ -243,7 +242,7 @@ describe("HarvestCalendar", () => {
     it("should call onDateClick when date cell is clicked", () => {
       const handleDateClick = jest.fn();
       render(
-        <HarvestCalendar events={mockEvents} onDateClick={handleDateClick} />
+        <HarvestCalendar events={mockEvents} onDateClick={handleDateClick} />,
       );
 
       const dateCells = screen.getAllByRole("button");
@@ -256,7 +255,7 @@ describe("HarvestCalendar", () => {
     it("should have proper ARIA labels", () => {
       render(<HarvestCalendar events={mockEvents} />);
       expect(
-        screen.getByLabelText("Harvest planning calendar")
+        screen.getByLabelText("Harvest planning calendar"),
       ).toBeInTheDocument();
     });
   });
@@ -312,7 +311,7 @@ describe("WeatherWidget", () => {
           weather={mockWeather}
           location="Test Farm"
           variant="compact"
-        />
+        />,
       );
       expect(screen.getByText("Test Farm")).toBeInTheDocument();
     });
@@ -323,7 +322,7 @@ describe("WeatherWidget", () => {
           weather={mockWeather}
           location="Test Farm"
           variant="detailed"
-        />
+        />,
       );
       expect(screen.getByText("Test Farm")).toBeInTheDocument();
       expect(screen.getByText("Humidity")).toBeInTheDocument();
@@ -336,10 +335,10 @@ describe("WeatherWidget", () => {
           weather={mockWeather}
           location="Test Farm"
           showAgriculturalTips={true}
-        />
+        />,
       );
       expect(
-        screen.getByText(/Perfect for outdoor work and harvesting/i)
+        screen.getByText(/Perfect for outdoor work and harvesting/i),
       ).toBeInTheDocument();
     });
 
@@ -350,7 +349,7 @@ describe("WeatherWidget", () => {
           location="Test Farm"
           forecast={mockForecast}
           showForecast={true}
-        />
+        />,
       );
       // Forecast should be visible
     });
@@ -364,7 +363,7 @@ describe("WeatherWidget", () => {
           weather={mockWeather}
           location="Test Farm"
           onRefresh={handleRefresh}
-        />
+        />,
       );
 
       const refreshButton = screen.getByLabelText("Refresh weather");
@@ -377,7 +376,7 @@ describe("WeatherWidget", () => {
     it("should have proper ARIA labels", () => {
       render(<WeatherWidget weather={mockWeather} location="Test Farm" />);
       expect(
-        screen.getByLabelText(/Weather for Test Farm/i)
+        screen.getByLabelText(/Weather for Test Farm/i),
       ).toBeInTheDocument();
     });
   });
@@ -432,10 +431,12 @@ describe("SoilHealthMeter", () => {
           data={mockSoilData}
           variant="detailed"
           showRecommendations={true}
-        />
+        />,
       );
       expect(screen.getByText("Recommendations")).toBeInTheDocument();
-      expect(screen.getByText("Maintain current practices")).toBeInTheDocument();
+      expect(
+        screen.getByText("Maintain current practices"),
+      ).toBeInTheDocument();
     });
   });
 
@@ -482,7 +483,7 @@ describe("SoilHealthMeter", () => {
           variant="detailed"
           showMetrics={true}
           onMetricClick={handleMetricClick}
-        />
+        />,
       );
 
       const phMetric = screen.getByText("pH Level");
@@ -512,7 +513,7 @@ describe("BiodynamicBadge", () => {
 
     it("should render with different variants", () => {
       const { rerender } = render(
-        <BiodynamicBadge type="ORGANIC" variant="outlined" />
+        <BiodynamicBadge type="ORGANIC" variant="outlined" />,
       );
       expect(screen.getByText("Organic")).toBeInTheDocument();
 
@@ -525,7 +526,7 @@ describe("BiodynamicBadge", () => {
 
     it("should render with different sizes", () => {
       const { rerender } = render(
-        <BiodynamicBadge type="BIODYNAMIC" size="sm" />
+        <BiodynamicBadge type="BIODYNAMIC" size="sm" />,
       );
       expect(screen.getByText("Biodynamic")).toBeInTheDocument();
 
@@ -555,7 +556,7 @@ describe("BiodynamicBadge", () => {
           type="ORGANIC"
           showVerified={true}
           verifiedDate={verifiedDate}
-        />
+        />,
       );
       expect(screen.getByText("2023")).toBeInTheDocument();
     });
@@ -603,7 +604,7 @@ describe("BiodynamicBadge", () => {
       const badge = screen.getByLabelText("Certified Organic");
       expect(badge).toHaveAttribute(
         "title",
-        "Grown without synthetic pesticides or fertilizers"
+        "Grown without synthetic pesticides or fertilizers",
       );
     });
   });
@@ -632,7 +633,7 @@ describe("BiodynamicBadgeGroup", () => {
 
     it("should limit visible badges and show count", () => {
       render(
-        <BiodynamicBadgeGroup certifications={certifications} maxVisible={2} />
+        <BiodynamicBadgeGroup certifications={certifications} maxVisible={2} />,
       );
       expect(screen.getByText("Organic")).toBeInTheDocument();
       expect(screen.getByText("Biodynamic")).toBeInTheDocument();
@@ -644,7 +645,7 @@ describe("BiodynamicBadgeGroup", () => {
         <BiodynamicBadgeGroup
           certifications={certifications}
           direction="horizontal"
-        />
+        />,
       );
       // Check layout class
     });
@@ -654,7 +655,7 @@ describe("BiodynamicBadgeGroup", () => {
         <BiodynamicBadgeGroup
           certifications={certifications}
           direction="vertical"
-        />
+        />,
       );
       // Check layout class
     });
@@ -667,7 +668,7 @@ describe("BiodynamicBadgeGroup", () => {
         <BiodynamicBadgeGroup
           certifications={certifications}
           onBadgeClick={handleBadgeClick}
-        />
+        />,
       );
 
       fireEvent.click(screen.getByText("Organic"));
@@ -679,7 +680,7 @@ describe("BiodynamicBadgeGroup", () => {
     it("should have proper ARIA structure", () => {
       render(<BiodynamicBadgeGroup certifications={certifications} />);
       expect(
-        screen.getByLabelText("Certifications and practices")
+        screen.getByLabelText("Certifications and practices"),
       ).toBeInTheDocument();
     });
   });
@@ -715,7 +716,7 @@ describe("Agricultural Components Integration", () => {
         <WeatherWidget weather={weather} location="Test Farm" />
         <SoilHealthMeter data={soilData} />
         <BiodynamicBadge type="ORGANIC" />
-      </div>
+      </div>,
     );
 
     expect(screen.getByText("Spring")).toBeInTheDocument();

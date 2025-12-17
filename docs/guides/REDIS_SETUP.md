@@ -22,6 +22,7 @@ REDIS_ENABLED=false
 Or simply **don't set** `REDIS_ENABLED` - it defaults to disabled.
 
 ### Benefits of Disabling Redis Locally
+
 - ✅ No need to run Redis server
 - ✅ Faster startup
 - ✅ Simpler development environment
@@ -36,17 +37,20 @@ If you want to test Redis-specific features locally:
 ### Step 1: Install Redis
 
 **Windows (using Chocolatey):**
+
 ```bash
 choco install redis-64
 ```
 
 **macOS (using Homebrew):**
+
 ```bash
 brew install redis
 brew services start redis
 ```
 
 **Linux (Ubuntu/Debian):**
+
 ```bash
 sudo apt-get install redis-server
 sudo systemctl start redis
@@ -75,11 +79,13 @@ REDIS_RETRY_DELAY=1000
 ### Step 3: Verify Connection
 
 Start your dev server:
+
 ```bash
 npm run dev
 ```
 
 You should see in the logs:
+
 ```
 [info] Redis cache connected { host: 'localhost', port: 6379 }
 ```
@@ -100,6 +106,7 @@ docker-compose up -d
 ```
 
 Environment variables for Docker (already in `.env`):
+
 ```bash
 REDIS_ENABLED=true
 REDIS_HOST=redis
@@ -113,6 +120,7 @@ REDIS_URL=redis://:quantum_cache_password@redis:6379
 ## 🚀 Production
 
 ### Requirements
+
 - Redis server (managed service recommended)
 - Secure password
 - Connection pooling
@@ -135,6 +143,7 @@ REDIS_POOL_SIZE=20
 ```
 
 ### Recommended Managed Redis Services
+
 - **AWS ElastiCache** (Redis)
 - **Azure Cache for Redis**
 - **Google Cloud Memorystore**
@@ -147,23 +156,24 @@ REDIS_POOL_SIZE=20
 
 ### Environment Variables
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `REDIS_ENABLED` | `false` | Enable/disable Redis cache |
-| `REDIS_HOST` | `localhost` | Redis server hostname |
-| `REDIS_PORT` | `6379` | Redis server port |
-| `REDIS_PASSWORD` | (none) | Redis authentication password |
-| `REDIS_URL` | (none) | Full Redis connection URL |
-| `REDIS_KEY_PREFIX` | `fm:` | Prefix for all cache keys |
-| `REDIS_MAX_RETRIES` | `3` | Max connection retry attempts |
-| `REDIS_RETRY_DELAY` | `1000` | Delay between retries (ms) |
-| `REDIS_MAX_MEMORY` | `2gb` | Max memory (Docker only) |
+| Variable            | Default     | Description                   |
+| ------------------- | ----------- | ----------------------------- |
+| `REDIS_ENABLED`     | `false`     | Enable/disable Redis cache    |
+| `REDIS_HOST`        | `localhost` | Redis server hostname         |
+| `REDIS_PORT`        | `6379`      | Redis server port             |
+| `REDIS_PASSWORD`    | (none)      | Redis authentication password |
+| `REDIS_URL`         | (none)      | Full Redis connection URL     |
+| `REDIS_KEY_PREFIX`  | `fm:`       | Prefix for all cache keys     |
+| `REDIS_MAX_RETRIES` | `3`         | Max connection retry attempts |
+| `REDIS_RETRY_DELAY` | `1000`      | Delay between retries (ms)    |
+| `REDIS_MAX_MEMORY`  | `2gb`       | Max memory (Docker only)      |
 
 ---
 
 ## 🎯 Cache Behavior
 
 ### With Redis Enabled
+
 ```
 Request → Memory Cache (L1) → Redis Cache (L2) → Database
 ```
@@ -173,6 +183,7 @@ Request → Memory Cache (L1) → Redis Cache (L2) → Database
 - **Slower**: Database - ~50-200ms
 
 ### With Redis Disabled
+
 ```
 Request → Memory Cache → Database
 ```
@@ -189,6 +200,7 @@ Request → Memory Cache → Database
 **Problem**: App trying to connect to hostname "redis" (Docker name) but not running in Docker.
 
 **Solution**: Disable Redis in `.env.local`:
+
 ```bash
 REDIS_ENABLED=false
 ```
@@ -198,19 +210,22 @@ REDIS_ENABLED=false
 **Problem**: Redis server not running.
 
 **Solutions**:
+
 1. **Option A**: Disable Redis (recommended for dev):
+
    ```bash
    REDIS_ENABLED=false
    ```
 
 2. **Option B**: Start Redis server:
+
    ```bash
    # macOS
    brew services start redis
-   
+
    # Linux
    sudo systemctl start redis
-   
+
    # Windows
    redis-server
    ```
@@ -226,6 +241,7 @@ REDIS_ENABLED=false
 ## 🧪 Testing Cache
 
 ### Test Memory Cache (No Redis)
+
 ```bash
 # .env.local
 REDIS_ENABLED=false
@@ -237,6 +253,7 @@ npm run dev
 ```
 
 ### Test Redis Cache
+
 ```bash
 # .env.local
 REDIS_ENABLED=true
@@ -256,6 +273,7 @@ npm run dev
 ## 📊 Monitoring
 
 ### View Cache Keys (Redis CLI)
+
 ```bash
 # Connect to Redis
 redis-cli
@@ -271,6 +289,7 @@ MONITOR
 ```
 
 ### View Cache Stats
+
 ```bash
 # Memory info
 redis-cli INFO memory
@@ -284,11 +303,13 @@ redis-cli INFO stats
 ## 🎓 Best Practices
 
 ### Development
+
 - ✅ **Disable Redis** - simpler setup
 - ✅ Use memory cache - sufficient for dev
 - ✅ Only enable Redis when testing distributed features
 
 ### Staging/Production
+
 - ✅ **Enable Redis** - required for multi-instance
 - ✅ Use managed Redis service
 - ✅ Set strong password
@@ -301,6 +322,7 @@ redis-cli INFO stats
 ## 📝 Quick Start Commands
 
 ### Local Development (No Redis)
+
 ```bash
 # Add to .env.local
 echo "REDIS_ENABLED=false" >> .env.local
@@ -310,6 +332,7 @@ npm run dev
 ```
 
 ### Local Development (With Redis)
+
 ```bash
 # Install Redis
 brew install redis  # macOS
@@ -329,6 +352,7 @@ npm run dev
 ```
 
 ### Docker (With Redis)
+
 ```bash
 # Start all services
 docker-compose up -d

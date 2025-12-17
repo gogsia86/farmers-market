@@ -10,14 +10,13 @@ import {
   CloudDrizzle,
   Wind,
   Droplets,
-  Thermometer,
   Eye,
   Gauge,
   Sunrise,
   Sunset,
   CloudFog,
   Zap,
-  CloudSun
+  CloudSun,
 } from "lucide-react";
 
 // ============================================================================
@@ -102,7 +101,7 @@ const WEATHER_CONFIG: Record<WeatherCondition, WeatherConfig> = {
     bgColor: "bg-amber-50",
     gradient: "from-amber-400 to-orange-500",
     description: "Clear skies",
-    agriculturalTip: "Perfect for outdoor work and harvesting"
+    agriculturalTip: "Perfect for outdoor work and harvesting",
   },
   PARTLY_CLOUDY: {
     label: "Partly Cloudy",
@@ -111,7 +110,7 @@ const WEATHER_CONFIG: Record<WeatherCondition, WeatherConfig> = {
     bgColor: "bg-blue-50",
     gradient: "from-blue-400 to-cyan-400",
     description: "Partly cloudy",
-    agriculturalTip: "Good conditions for most farm activities"
+    agriculturalTip: "Good conditions for most farm activities",
   },
   CLOUDY: {
     label: "Cloudy",
@@ -120,7 +119,7 @@ const WEATHER_CONFIG: Record<WeatherCondition, WeatherConfig> = {
     bgColor: "bg-gray-50",
     gradient: "from-gray-400 to-gray-500",
     description: "Overcast",
-    agriculturalTip: "Ideal for transplanting and shade-tolerant work"
+    agriculturalTip: "Ideal for transplanting and shade-tolerant work",
   },
   RAIN: {
     label: "Rain",
@@ -129,7 +128,7 @@ const WEATHER_CONFIG: Record<WeatherCondition, WeatherConfig> = {
     bgColor: "bg-blue-100",
     gradient: "from-blue-500 to-blue-700",
     description: "Rainy",
-    agriculturalTip: "Natural irrigation - avoid soil compaction"
+    agriculturalTip: "Natural irrigation - avoid soil compaction",
   },
   DRIZZLE: {
     label: "Drizzle",
@@ -138,7 +137,7 @@ const WEATHER_CONFIG: Record<WeatherCondition, WeatherConfig> = {
     bgColor: "bg-cyan-50",
     gradient: "from-cyan-400 to-blue-500",
     description: "Light rain",
-    agriculturalTip: "Light watering - good for seedlings"
+    agriculturalTip: "Light watering - good for seedlings",
   },
   SNOW: {
     label: "Snow",
@@ -147,7 +146,7 @@ const WEATHER_CONFIG: Record<WeatherCondition, WeatherConfig> = {
     bgColor: "bg-blue-50",
     gradient: "from-blue-200 to-blue-400",
     description: "Snowing",
-    agriculturalTip: "Protect sensitive plants and check greenhouses"
+    agriculturalTip: "Protect sensitive plants and check greenhouses",
   },
   THUNDERSTORM: {
     label: "Thunderstorm",
@@ -156,7 +155,7 @@ const WEATHER_CONFIG: Record<WeatherCondition, WeatherConfig> = {
     bgColor: "bg-purple-50",
     gradient: "from-purple-500 to-indigo-600",
     description: "Stormy",
-    agriculturalTip: "Seek shelter - avoid outdoor activities"
+    agriculturalTip: "Seek shelter - avoid outdoor activities",
   },
   FOG: {
     label: "Foggy",
@@ -165,7 +164,7 @@ const WEATHER_CONFIG: Record<WeatherCondition, WeatherConfig> = {
     bgColor: "bg-gray-50",
     gradient: "from-gray-300 to-gray-400",
     description: "Foggy",
-    agriculturalTip: "Reduced visibility - be cautious with equipment"
+    agriculturalTip: "Reduced visibility - be cautious with equipment",
   },
   WINDY: {
     label: "Windy",
@@ -174,8 +173,8 @@ const WEATHER_CONFIG: Record<WeatherCondition, WeatherConfig> = {
     bgColor: "bg-teal-50",
     gradient: "from-teal-400 to-cyan-500",
     description: "Windy conditions",
-    agriculturalTip: "Secure loose items and check plant supports"
-  }
+    agriculturalTip: "Secure loose items and check plant supports",
+  },
 };
 
 // ============================================================================
@@ -186,17 +185,17 @@ function getWindDirection(degrees?: string): string {
   if (!degrees) return "N";
   const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
   const index = Math.round(parseFloat(degrees) / 45) % 8;
-  return directions[index];
+  return directions[index] || "N";
 }
 
 function formatTime(timeString?: string): string {
   if (!timeString) return "--:--";
   try {
     const [hours, minutes] = timeString.split(":");
-    const hour = parseInt(hours);
+    const hour = parseInt(hours || "0");
     const ampm = hour >= 12 ? "PM" : "AM";
     const displayHour = hour % 12 || 12;
-    return `${displayHour}:${minutes} ${ampm}`;
+    return `${displayHour}:${minutes || "00"} ${ampm}`;
   } catch {
     return "--:--";
   }
@@ -215,7 +214,7 @@ export function WeatherWidget({
   showAgriculturalTips = true,
   className,
   animated = true,
-  onRefresh
+  onRefresh,
 }: WeatherWidgetProps) {
   const config = WEATHER_CONFIG[weather.condition];
   const WeatherIcon = config.icon;
@@ -229,12 +228,15 @@ export function WeatherWidget({
           config.bgColor,
           "border-gray-200",
           animated && "transition-all duration-300",
-          className
+          className,
         )}
         role="region"
         aria-label={`Weather: ${config.label}, ${weather.temperature}°C`}
       >
-        <WeatherIcon className={cn("h-5 w-5", config.color)} aria-hidden="true" />
+        <WeatherIcon
+          className={cn("h-5 w-5", config.color)}
+          aria-hidden="true"
+        />
         <div>
           <div className="flex items-baseline gap-1">
             <span className="text-2xl font-bold text-gray-900">
@@ -254,17 +256,14 @@ export function WeatherWidget({
       <div
         className={cn(
           "rounded-lg border border-gray-200 bg-white shadow-lg overflow-hidden",
-          className
+          className,
         )}
         role="region"
         aria-label={`Detailed weather for ${location}`}
       >
         {/* Header with gradient */}
         <div
-          className={cn(
-            "p-6 bg-gradient-to-br text-white",
-            config.gradient
-          )}
+          className={cn("p-6 bg-gradient-to-br text-white", config.gradient)}
         >
           <div className="flex items-start justify-between mb-4">
             <div>
@@ -281,7 +280,7 @@ export function WeatherWidget({
                 className={cn(
                   "p-2 rounded-full hover:bg-white/20",
                   "focus:outline-none focus:ring-2 focus:ring-white/50",
-                  animated && "transition-colors"
+                  animated && "transition-colors",
                 )}
                 aria-label="Refresh weather"
               >
@@ -306,7 +305,9 @@ export function WeatherWidget({
             <WeatherIcon className="h-16 w-16" aria-hidden="true" />
             <div>
               <div className="flex items-baseline gap-2">
-                <span className="text-5xl font-bold">{weather.temperature}°</span>
+                <span className="text-5xl font-bold">
+                  {weather.temperature}°
+                </span>
                 {weather.feelsLike && (
                   <span className="text-lg opacity-75">
                     Feels {weather.feelsLike}°
@@ -335,7 +336,8 @@ export function WeatherWidget({
             <div>
               <p className="text-xs text-gray-500">Wind</p>
               <p className="text-sm font-semibold text-gray-900">
-                {weather.windSpeed} km/h {getWindDirection(weather.windDirection)}
+                {weather.windSpeed} km/h{" "}
+                {getWindDirection(weather.windDirection)}
               </p>
             </div>
           </div>
@@ -427,7 +429,7 @@ export function WeatherWidget({
                 const dayConfig = WEATHER_CONFIG[day.condition];
                 const DayIcon = dayConfig.icon;
                 const dayName = new Date(day.date).toLocaleDateString("en-US", {
-                  weekday: "short"
+                  weekday: "short",
                 });
 
                 return (
@@ -436,7 +438,7 @@ export function WeatherWidget({
                     className={cn(
                       "text-center p-2 rounded-lg border border-gray-200",
                       "hover:bg-gray-50",
-                      animated && "transition-colors"
+                      animated && "transition-colors",
                     )}
                   >
                     <p className="text-xs font-medium text-gray-600 mb-1">
@@ -468,7 +470,7 @@ export function WeatherWidget({
     <div
       className={cn(
         "rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden",
-        className
+        className,
       )}
       role="region"
       aria-label={`Weather for ${location}`}
@@ -486,7 +488,7 @@ export function WeatherWidget({
               className={cn(
                 "p-1.5 rounded-full hover:bg-white/50",
                 "focus:outline-none focus:ring-2 focus:ring-gray-300",
-                animated && "transition-colors"
+                animated && "transition-colors",
               )}
               aria-label="Refresh weather"
             >
@@ -508,7 +510,10 @@ export function WeatherWidget({
         </div>
 
         <div className="flex items-center gap-4">
-          <WeatherIcon className={cn("h-12 w-12", config.color)} aria-hidden="true" />
+          <WeatherIcon
+            className={cn("h-12 w-12", config.color)}
+            aria-hidden="true"
+          />
           <div>
             <div className="flex items-baseline gap-1">
               <span className="text-4xl font-bold text-gray-900">
@@ -538,9 +543,7 @@ export function WeatherWidget({
       {/* Agricultural tip */}
       {showAgriculturalTips && (
         <div className="border-t border-gray-200 bg-green-50 p-3">
-          <p className="text-xs text-green-800">
-            💡 {config.agriculturalTip}
-          </p>
+          <p className="text-xs text-green-800">💡 {config.agriculturalTip}</p>
         </div>
       )}
 
@@ -552,7 +555,7 @@ export function WeatherWidget({
               const dayConfig = WEATHER_CONFIG[day.condition];
               const DayIcon = dayConfig.icon;
               const dayName = new Date(day.date).toLocaleDateString("en-US", {
-                weekday: "short"
+                weekday: "short",
               });
 
               return (

@@ -1,4 +1,5 @@
 # 🚀 STAGING DEPLOYMENT GUIDE
+
 **Farmers Market Platform - Complete Staging Deployment**  
 **Version**: 1.0  
 **Last Updated**: January 2025  
@@ -50,6 +51,7 @@ This guide walks you through deploying the Farmers Market Platform to a staging 
 ## ✅ Prerequisites
 
 ### Required Accounts
+
 - [ ] **Vercel Account** - Free or Pro tier
 - [ ] **Database** - PostgreSQL 14+ (Vercel Postgres, Supabase, or Railway)
 - [ ] **Stripe Account** - Test mode enabled
@@ -58,6 +60,7 @@ This guide walks you through deploying the Farmers Market Platform to a staging 
 - [ ] **SendGrid/Resend** - Email service
 
 ### Required Tools
+
 - [ ] Node.js 20.19.0+
 - [ ] npm 10.0.0+
 - [ ] Git
@@ -65,6 +68,7 @@ This guide walks you through deploying the Farmers Market Platform to a staging 
 - [ ] Prisma CLI (included in project)
 
 ### Required Access
+
 - [ ] GitHub repository access
 - [ ] Domain name (e.g., `staging.farmersmarket.com`)
 - [ ] DNS management access
@@ -197,6 +201,7 @@ chmod +x scripts/staging-migration.sh
 ```
 
 **Expected Output**:
+
 ```
 ================================
 🚀 Farmers Market Platform - Staging Migration
@@ -281,6 +286,7 @@ vercel deploy --debug
 ```
 
 **Expected Output**:
+
 ```
 🔍 Inspect: https://vercel.com/...
 ✅ Preview: https://farmersmarket-staging-xyz123.vercel.app
@@ -322,12 +328,14 @@ curl https://staging.farmersmarket.com/api/health
 ## 🧪 Manual Testing Checklist
 
 ### Homepage & Navigation
+
 - [ ] Homepage loads (https://staging.farmersmarket.com)
 - [ ] Navigation menu works
 - [ ] Mobile menu functions
 - [ ] All links work
 
 ### Authentication
+
 - [ ] Registration page loads
 - [ ] Can create new customer account
 - [ ] Email validation works
@@ -335,6 +343,7 @@ curl https://staging.farmersmarket.com/api/health
 - [ ] Logout works
 
 ### Marketplace
+
 - [ ] Browse farms page loads
 - [ ] Browse products page loads
 - [ ] Product filters work
@@ -342,6 +351,7 @@ curl https://staging.farmersmarket.com/api/health
 - [ ] Farm profiles display correctly
 
 ### Shopping Flow
+
 - [ ] Add product to cart
 - [ ] Cart updates correctly
 - [ ] Checkout page loads
@@ -349,12 +359,14 @@ curl https://staging.farmersmarket.com/api/health
 - [ ] Stripe test payment works (4242 4242 4242 4242)
 
 ### Dashboard
+
 - [ ] Customer dashboard loads
 - [ ] Order history displays
 - [ ] Account settings accessible
 - [ ] Profile editing works
 
 ### API Endpoints
+
 - [ ] GET /api/farms returns data
 - [ ] GET /api/products returns data
 - [ ] POST /api/orders (protected) works
@@ -399,16 +411,18 @@ npx lighthouse https://staging.farmersmarket.com --view
    - Copy DSN
 
 2. **Configure Environment**:
+
    ```bash
    vercel env add SENTRY_DSN staging
    vercel env add NEXT_PUBLIC_SENTRY_DSN staging
    ```
 
 3. **Verify Errors are Tracked**:
+
    ```bash
    # Trigger test error
    curl https://staging.farmersmarket.com/api/test-error
-   
+
    # Check Sentry dashboard for error
    ```
 
@@ -442,6 +456,7 @@ vercel analytics
 **Symptoms**: Vercel build fails with TypeScript errors
 
 **Solution**:
+
 ```bash
 # Test build locally first
 npm run build
@@ -458,6 +473,7 @@ vercel deploy
 **Symptoms**: App loads but shows database errors
 
 **Solution**:
+
 ```bash
 # Verify DATABASE_URL is set
 vercel env pull .env.local
@@ -475,6 +491,7 @@ DATABASE_URL="postgresql://..." npx prisma db execute --stdin <<< "SELECT 1;"
 **Symptoms**: Features don't work, missing API keys
 
 **Solution**:
+
 ```bash
 # Pull latest environment variables
 vercel env pull
@@ -491,6 +508,7 @@ vercel deploy --force
 **Symptoms**: Checkout completes but payment fails
 
 **Solution**:
+
 ```bash
 # Verify Stripe test mode keys
 echo $STRIPE_SECRET_KEY | grep "sk_test"
@@ -508,6 +526,7 @@ curl https://staging.farmersmarket.com/api/webhooks/stripe
 **Symptoms**: Product images fail to upload
 
 **Solution**:
+
 ```bash
 # Verify AWS credentials
 vercel env ls | grep AWS
@@ -524,6 +543,7 @@ aws s3 ls s3://farmersmarket-staging --profile staging
 **Symptoms**: Pages load slowly
 
 **Solution**:
+
 ```bash
 # Check database query performance
 # Enable Prisma query logging
@@ -578,6 +598,7 @@ curl https://staging.farmersmarket.com/api/health
 ## 📋 Deployment Checklist
 
 ### Pre-Deployment
+
 - [ ] All tests passing locally
 - [ ] Test coverage >98%
 - [ ] TypeScript builds without errors
@@ -586,6 +607,7 @@ curl https://staging.farmersmarket.com/api/health
 - [ ] Backup strategy in place
 
 ### Deployment
+
 - [ ] Environment variables configured
 - [ ] Database migrations run
 - [ ] Seed data loaded
@@ -594,6 +616,7 @@ curl https://staging.farmersmarket.com/api/health
 - [ ] SSL certificate active
 
 ### Post-Deployment
+
 - [ ] Health check passes
 - [ ] Manual testing complete
 - [ ] E2E tests passing
@@ -602,6 +625,7 @@ curl https://staging.farmersmarket.com/api/health
 - [ ] Team notified
 
 ### Monitoring
+
 - [ ] Sentry receiving errors
 - [ ] Analytics tracking pageviews
 - [ ] Logs accessible
@@ -651,17 +675,20 @@ npx prisma studio              # Open Prisma Studio
 ## 📞 Support & Resources
 
 ### Documentation
+
 - **Vercel Docs**: https://vercel.com/docs
 - **Next.js Docs**: https://nextjs.org/docs
 - **Prisma Docs**: https://www.prisma.io/docs
 
 ### Project Documentation
+
 - `README.md` - Project overview
 - `TASKS_COMPLETION_SUMMARY.md` - Recent implementation details
 - `DASHBOARD_ACCOUNT_DISTINCTION.md` - Feature documentation
 - `.github/instructions/` - Divine coding patterns
 
 ### Getting Help
+
 - **Team Chat**: [Your team Slack/Discord]
 - **Issue Tracker**: [GitHub Issues]
 - **Emergency Contact**: [On-call engineer contact]
@@ -717,6 +744,6 @@ Your staging deployment is successful when:
 
 **Document Version**: 1.0  
 **Last Updated**: January 2025  
-**Status**: ✅ READY FOR DEPLOYMENT  
+**Status**: ✅ READY FOR DEPLOYMENT
 
 _"Deploy with confidence, monitor with consciousness, scale with divine precision."_ 🌾🚀✨

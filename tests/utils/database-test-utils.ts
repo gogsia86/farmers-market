@@ -22,7 +22,12 @@ export const DB_TEST_CONFIG = {
     migration: 30000,
   },
   isolation: {
-    levels: ["READ UNCOMMITTED", "READ COMMITTED", "REPEATABLE READ", "SERIALIZABLE"] as const,
+    levels: [
+      "READ UNCOMMITTED",
+      "READ COMMITTED",
+      "REPEATABLE READ",
+      "SERIALIZABLE",
+    ] as const,
   },
   cleanup: {
     order: ["Order", "Product", "Farm", "User"] as const,
@@ -149,7 +154,7 @@ export class DatabaseTestManager {
           role: "ADMIN",
           emailVerified: new Date(),
         },
-      })
+      }),
     );
 
     // Farmer users
@@ -162,7 +167,7 @@ export class DatabaseTestManager {
             role: "FARMER",
             emailVerified: new Date(),
           },
-        })
+        }),
       );
     }
 
@@ -176,7 +181,7 @@ export class DatabaseTestManager {
             role: "CUSTOMER",
             emailVerified: new Date(),
           },
-        })
+        }),
       );
     }
 
@@ -207,7 +212,7 @@ export class DatabaseTestManager {
               coordinates: { lat: 40.7128, lng: -74.006 },
             },
           },
-        })
+        }),
       );
     }
 
@@ -235,7 +240,7 @@ export class DatabaseTestManager {
               unit: "lb",
               status: "ACTIVE",
             },
-          })
+          }),
         );
       }
     }
@@ -289,7 +294,7 @@ export class DatabaseTestManager {
    */
   compareSnapshots(
     snapshot1: string,
-    snapshot2: string
+    snapshot2: string,
   ): {
     added: Record<string, number>;
     removed: Record<string, number>;
@@ -346,7 +351,7 @@ export class TransactionTester {
    */
   async testRollback(
     operations: Array<() => Promise<any>>,
-    errorIndex: number
+    errorIndex: number,
   ): Promise<void> {
     try {
       await database.$transaction(async (tx) => {
@@ -367,14 +372,18 @@ export class TransactionTester {
    */
   async testConcurrentTransactions(
     transaction1: () => Promise<any>,
-    transaction2: () => Promise<any>
+    transaction2: () => Promise<any>,
   ): Promise<{ results: any[]; errors: Error[] }> {
     const results: any[] = [];
     const errors: Error[] = [];
 
     const promises = [
-      transaction1().then((r) => results.push(r)).catch((e) => errors.push(e)),
-      transaction2().then((r) => results.push(r)).catch((e) => errors.push(e)),
+      transaction1()
+        .then((r) => results.push(r))
+        .catch((e) => errors.push(e)),
+      transaction2()
+        .then((r) => results.push(r))
+        .catch((e) => errors.push(e)),
     ];
 
     await Promise.all(promises);
@@ -386,8 +395,12 @@ export class TransactionTester {
    * Test transaction isolation levels
    */
   async testIsolationLevel(
-    level: "READ UNCOMMITTED" | "READ COMMITTED" | "REPEATABLE READ" | "SERIALIZABLE",
-    operation: () => Promise<any>
+    level:
+      | "READ UNCOMMITTED"
+      | "READ COMMITTED"
+      | "REPEATABLE READ"
+      | "SERIALIZABLE",
+    operation: () => Promise<any>,
   ): Promise<any> {
     // Note: Prisma doesn't directly support isolation levels
     // This would require raw SQL execution
@@ -439,7 +452,7 @@ export class QueryPerformanceAnalyzer {
    */
   async measureQuery<T>(
     queryFn: () => Promise<T>,
-    queryName: string
+    queryName: string,
   ): Promise<{ result: T; metrics: QueryPerformanceMetrics }> {
     const startTime = Date.now();
     const result = await queryFn();
@@ -461,7 +474,7 @@ export class QueryPerformanceAnalyzer {
    * Compare query performance
    */
   async compareQueries(
-    queries: Array<{ name: string; fn: () => Promise<any> }>
+    queries: Array<{ name: string; fn: () => Promise<any> }>,
   ): Promise<{
     fastest: string;
     slowest: string;
@@ -474,7 +487,9 @@ export class QueryPerformanceAnalyzer {
       results[query.name] = metrics;
     }
 
-    const sorted = Object.entries(results).sort(([, a], [, b]) => a.duration - b.duration);
+    const sorted = Object.entries(results).sort(
+      ([, a], [, b]) => a.duration - b.duration,
+    );
 
     return {
       fastest: sorted[0][0],
@@ -489,7 +504,7 @@ export class QueryPerformanceAnalyzer {
   async testScalability(
     setupFn: (count: number) => Promise<void>,
     queryFn: () => Promise<any>,
-    dataSizes: number[]
+    dataSizes: number[],
   ): Promise<Record<number, QueryPerformanceMetrics>> {
     const results: Record<number, QueryPerformanceMetrics> = {};
 
@@ -670,7 +685,11 @@ export class DataIntegrityValidator {
     const uniqueChecks = await this.validateUniqueConstraints();
     const consistencyChecks = await this.validateConsistency();
 
-    const allChecks = [...foreignKeyChecks, ...uniqueChecks, ...consistencyChecks];
+    const allChecks = [
+      ...foreignKeyChecks,
+      ...uniqueChecks,
+      ...consistencyChecks,
+    ];
     const violations = allChecks.filter((c) => !c.valid).length;
 
     return {
@@ -756,7 +775,10 @@ export class DatabaseStatistics {
 /**
  * Execute raw SQL
  */
-export async function executeRawSql<T = any>(sql: string, params?: any[]): Promise<T> {
+export async function executeRawSql<T = any>(
+  sql: string,
+  params?: any[],
+): Promise<T> {
   return await database.$queryRawUnsafe(sql, ...(params || []));
 }
 
@@ -799,7 +821,7 @@ export async function createBackup(): Promise<DatabaseSnapshot> {
  */
 export async function waitForDatabase(
   condition: () => Promise<boolean>,
-  timeout = 10000
+  timeout = 10000,
 ): Promise<void> {
   const startTime = Date.now();
 

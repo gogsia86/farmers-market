@@ -149,6 +149,7 @@ npm run update            # Push OTA update
 ### Add Your First Feature (Example: New Screen)
 
 1. **Create Screen Component**
+
    ```typescript
    // src/screens/example/ExampleScreen.tsx
    import React from 'react';
@@ -176,6 +177,7 @@ npm run update            # Push OTA update
    ```
 
 2. **Add Route to Navigator**
+
    ```typescript
    // src/navigation/RootNavigator.tsx
    import ExampleScreen from '@/screens/example/ExampleScreen';
@@ -185,12 +187,13 @@ npm run update            # Push OTA update
    ```
 
 3. **Navigate to Screen**
+
    ```typescript
    // From any component
-   import { useNavigation } from '@react-navigation/native';
+   import { useNavigation } from "@react-navigation/native";
 
    const navigation = useNavigation();
-   navigation.navigate('Example');
+   navigation.navigate("Example");
    ```
 
 ### Add API Endpoint
@@ -201,12 +204,12 @@ npm run update            # Push OTA update
 // Add new endpoint group
 myFeature = {
   getData: async () => {
-    const response = await this.axiosInstance.get('/my-feature');
+    const response = await this.axiosInstance.get("/my-feature");
     return response.data;
   },
 
   createItem: async (data: any) => {
-    const response = await this.axiosInstance.post('/my-feature', data);
+    const response = await this.axiosInstance.post("/my-feature", data);
     return response.data;
   },
 };
@@ -216,7 +219,7 @@ myFeature = {
 
 ```typescript
 // src/stores/myFeatureStore.ts
-import { create } from 'zustand';
+import { create } from "zustand";
 
 interface MyFeatureState {
   data: any[];
@@ -333,6 +336,7 @@ export const useMyFeatureStore = create<MyFeatureState>((set) => ({
 ## 🧩 Copy-Paste Components
 
 ### Button Component
+
 ```typescript
 // src/components/base/Button.tsx
 import React from 'react';
@@ -346,12 +350,12 @@ interface ButtonProps {
   disabled?: boolean;
 }
 
-export default function Button({ 
-  title, 
-  onPress, 
-  variant = 'primary', 
+export default function Button({
+  title,
+  onPress,
+  variant = 'primary',
   loading = false,
-  disabled = false 
+  disabled = false
 }: ButtonProps) {
   return (
     <TouchableOpacity
@@ -402,6 +406,7 @@ const styles = StyleSheet.create({
 ```
 
 ### Input Component
+
 ```typescript
 // src/components/base/Input.tsx
 import React from 'react';
@@ -473,12 +478,14 @@ const styles = StyleSheet.create({
 ## 🐛 Common Issues & Fixes
 
 ### Issue: "Cannot connect to Metro"
+
 ```bash
 # Fix: Clear cache and restart
 npm start -- --reset-cache
 ```
 
 ### Issue: "Module not found"
+
 ```bash
 # Fix: Reinstall dependencies
 rm -rf node_modules
@@ -486,6 +493,7 @@ npm install
 ```
 
 ### Issue: "Build failed"
+
 ```bash
 # Fix: Clean and rebuild
 npm run prebuild:clean
@@ -493,6 +501,7 @@ npm run prebuild
 ```
 
 ### Issue: "Expo Go won't connect"
+
 ```bash
 # Fix: Make sure devices are on same network
 # OR use tunnel mode
@@ -500,6 +509,7 @@ npm start -- --tunnel
 ```
 
 ### Issue: "Type errors"
+
 ```bash
 # Fix: Regenerate types
 npm run type-check

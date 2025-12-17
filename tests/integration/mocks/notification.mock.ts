@@ -17,7 +17,7 @@ interface PushNotificationRequest {
   userId: string;
   title: string;
   body: string;
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
   imageUrl?: string;
   actionUrl?: string;
   priority?: "high" | "normal" | "low";
@@ -26,7 +26,7 @@ interface PushNotificationRequest {
 interface SmsNotificationRequest {
   phoneNumber: string;
   message: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface FarmerNotificationRequest {
@@ -34,7 +34,7 @@ interface FarmerNotificationRequest {
   type: string;
   orderId?: string;
   message: string;
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
 }
 
 interface InAppNotificationRequest {
@@ -42,7 +42,7 @@ interface InAppNotificationRequest {
   title: string;
   message: string;
   type: "order" | "farm" | "product" | "system" | "promotion";
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
 }
 
 interface Notification {
@@ -53,7 +53,7 @@ interface Notification {
   title?: string;
   body?: string;
   message?: string;
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
   sentAt: Date;
   status: "sent" | "failed" | "delivered" | "read";
   deliveredAt?: Date;
@@ -101,10 +101,12 @@ class NotificationServiceMock {
   /**
    * Send a push notification
    */
-  async sendPushNotification(request: PushNotificationRequest): Promise<Notification> {
+  async sendPushNotification(
+    request: PushNotificationRequest,
+  ): Promise<Notification> {
     if (!this.initialized) {
       throw new Error(
-        "Notification service mock not initialized. Call initialize() first."
+        "Notification service mock not initialized. Call initialize() first.",
       );
     }
 
@@ -130,7 +132,9 @@ class NotificationServiceMock {
     this.notifications.push(notification);
 
     if (shouldFail) {
-      throw new Error(`Failed to send push notification to user ${request.userId}`);
+      throw new Error(
+        `Failed to send push notification to user ${request.userId}`,
+      );
     }
 
     // Simulate delivery delay
@@ -146,10 +150,12 @@ class NotificationServiceMock {
   /**
    * Send an SMS notification
    */
-  async sendSmsNotification(request: SmsNotificationRequest): Promise<Notification> {
+  async sendSmsNotification(
+    request: SmsNotificationRequest,
+  ): Promise<Notification> {
     if (!this.initialized) {
       throw new Error(
-        "Notification service mock not initialized. Call initialize() first."
+        "Notification service mock not initialized. Call initialize() first.",
       );
     }
 
@@ -185,10 +191,12 @@ class NotificationServiceMock {
   /**
    * Send an in-app notification
    */
-  async sendInAppNotification(request: InAppNotificationRequest): Promise<Notification> {
+  async sendInAppNotification(
+    request: InAppNotificationRequest,
+  ): Promise<Notification> {
     if (!this.initialized) {
       throw new Error(
-        "Notification service mock not initialized. Call initialize() first."
+        "Notification service mock not initialized. Call initialize() first.",
       );
     }
 
@@ -214,7 +222,9 @@ class NotificationServiceMock {
   /**
    * Send farmer notification
    */
-  async sendFarmerNotification(request: FarmerNotificationRequest): Promise<Notification> {
+  async sendFarmerNotification(
+    request: FarmerNotificationRequest,
+  ): Promise<Notification> {
     const notification: Notification = {
       id: `farmer_${randomUUID()}`,
       type: "push",
@@ -239,10 +249,10 @@ class NotificationServiceMock {
    * Send bulk push notifications
    */
   async sendBulkPushNotifications(
-    requests: PushNotificationRequest[]
+    requests: PushNotificationRequest[],
   ): Promise<Notification[]> {
     const notifications = await Promise.all(
-      requests.map((request) => this.sendPushNotification(request))
+      requests.map((request) => this.sendPushNotification(request)),
     );
 
     return notifications;
@@ -252,10 +262,10 @@ class NotificationServiceMock {
    * Send bulk SMS notifications
    */
   async sendBulkSmsNotifications(
-    requests: SmsNotificationRequest[]
+    requests: SmsNotificationRequest[],
   ): Promise<Notification[]> {
     const notifications = await Promise.all(
-      requests.map((request) => this.sendSmsNotification(request))
+      requests.map((request) => this.sendSmsNotification(request)),
     );
 
     return notifications;
@@ -272,21 +282,27 @@ class NotificationServiceMock {
    * Get notifications by user ID
    */
   getNotificationsByUser(userId: string): Notification[] {
-    return this.notifications.filter((notification) => notification.userId === userId);
+    return this.notifications.filter(
+      (notification) => notification.userId === userId,
+    );
   }
 
   /**
    * Get notifications by type
    */
   getNotificationsByType(type: Notification["type"]): Notification[] {
-    return this.notifications.filter((notification) => notification.type === type);
+    return this.notifications.filter(
+      (notification) => notification.type === type,
+    );
   }
 
   /**
    * Get notifications by status
    */
   getNotificationsByStatus(status: Notification["status"]): Notification[] {
-    return this.notifications.filter((notification) => notification.status === status);
+    return this.notifications.filter(
+      (notification) => notification.status === status,
+    );
   }
 
   /**
@@ -304,7 +320,7 @@ class NotificationServiceMock {
       (notification) =>
         notification.userId === userId &&
         notification.type === "in_app" &&
-        notification.status !== "read"
+        notification.status !== "read",
     );
   }
 
@@ -312,7 +328,9 @@ class NotificationServiceMock {
    * Mark notification as read
    */
   async markAsRead(notificationId: string): Promise<void> {
-    const notification = this.notifications.find((n) => n.id === notificationId);
+    const notification = this.notifications.find(
+      (n) => n.id === notificationId,
+    );
     if (notification) {
       notification.status = "read";
       notification.readAt = new Date();
@@ -325,7 +343,8 @@ class NotificationServiceMock {
   async markAllAsRead(userId: string): Promise<void> {
     this.notifications
       .filter(
-        (n) => n.userId === userId && n.type === "in_app" && n.status !== "read"
+        (n) =>
+          n.userId === userId && n.type === "in_app" && n.status !== "read",
       )
       .forEach((n) => {
         n.status = "read";
@@ -337,7 +356,9 @@ class NotificationServiceMock {
    * Simulate notification delivery
    */
   async simulateDelivery(notificationId: string): Promise<void> {
-    const notification = this.notifications.find((n) => n.id === notificationId);
+    const notification = this.notifications.find(
+      (n) => n.id === notificationId,
+    );
     if (notification && notification.status === "sent") {
       notification.status = "delivered";
       notification.deliveredAt = new Date();
@@ -407,7 +428,8 @@ class NotificationServiceMock {
           : 100,
       readRate:
         this.notifications.length > 0
-          ? (this.getNotificationsByStatus("read").length / this.notifications.length) *
+          ? (this.getNotificationsByStatus("read").length /
+              this.notifications.length) *
             100
           : 0,
     };
@@ -419,7 +441,7 @@ class NotificationServiceMock {
   getNotificationsInTimeRange(startDate: Date, endDate: Date): Notification[] {
     return this.notifications.filter(
       (notification) =>
-        notification.sentAt >= startDate && notification.sentAt <= endDate
+        notification.sentAt >= startDate && notification.sentAt <= endDate,
     );
   }
 

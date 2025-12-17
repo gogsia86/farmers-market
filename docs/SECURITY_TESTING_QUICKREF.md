@@ -92,6 +92,7 @@ open tests/security/reports/security-report-*.html
 ## 🎯 Test Categories
 
 ### SQL Injection
+
 ```bash
 npm run security:injection
 
@@ -104,6 +105,7 @@ npm run security:injection
 ```
 
 ### Cross-Site Scripting (XSS)
+
 ```bash
 npm run security:xss
 
@@ -116,6 +118,7 @@ npm run security:xss
 ```
 
 ### Authentication & Authorization
+
 ```bash
 npm run security:auth
 
@@ -128,6 +131,7 @@ npm run security:auth
 ```
 
 ### Security Headers
+
 ```bash
 npm run security:headers
 
@@ -145,6 +149,7 @@ npm run security:headers
 ## 📊 Report Formats
 
 ### JSON (CI/CD)
+
 ```bash
 npm run security:ci
 
@@ -153,6 +158,7 @@ npm run security:ci
 ```
 
 ### HTML (Human-Readable)
+
 ```bash
 npm run security:report
 
@@ -161,6 +167,7 @@ npm run security:report
 ```
 
 ### Markdown (Documentation)
+
 ```bash
 npm run security:report
 
@@ -173,6 +180,7 @@ npm run security:report
 ## 🔧 Troubleshooting Commands
 
 ### Tests Timing Out
+
 ```bash
 # Increase timeout
 npm run security:scan -- --testTimeout=60000
@@ -182,6 +190,7 @@ npm run security:scan -- --runInBand
 ```
 
 ### Server Not Running
+
 ```bash
 # Start server and wait
 npm run dev &
@@ -190,18 +199,21 @@ npm run security:scan
 ```
 
 ### False Positives in Development
+
 ```bash
 # Run with development mode
 NODE_ENV=development npm run security:scan
 ```
 
 ### Rate Limiting Issues
+
 ```bash
 # Disable rate limiting for tests
 DISABLE_RATE_LIMIT=true npm run security:scan
 ```
 
 ### Missing Dependencies
+
 ```bash
 # Reinstall everything
 rm -rf node_modules
@@ -213,34 +225,38 @@ npx playwright install
 
 ## 📈 Reading Security Scores
 
-| Score | Status | Action Required |
-|-------|--------|-----------------|
-| 95-100% | 🛡️ Divine Fortress | Maintain vigilance |
-| 85-94% | ✅ Secure | Monitor trends |
-| 70-84% | ⚠️ Fair | Address issues within 1 week |
-| 50-69% | 🚨 Poor | Immediate action required |
-| <50% | 🔴 Critical | Emergency response |
+| Score   | Status             | Action Required              |
+| ------- | ------------------ | ---------------------------- |
+| 95-100% | 🛡️ Divine Fortress | Maintain vigilance           |
+| 85-94%  | ✅ Secure          | Monitor trends               |
+| 70-84%  | ⚠️ Fair            | Address issues within 1 week |
+| 50-69%  | 🚨 Poor            | Immediate action required    |
+| <50%    | 🔴 Critical        | Emergency response           |
 
 ---
 
 ## 🚨 Severity Levels
 
 ### Critical (🔴)
+
 - **Timeline**: Fix within 24 hours
 - **Examples**: SQLi, Authentication bypass, RCE
 - **Command**: `npm run security:scan -- --testNamePattern="CRITICAL"`
 
 ### High (🟠)
+
 - **Timeline**: Fix within 1 week
 - **Examples**: XSS, CSRF, privilege escalation
 - **Command**: `npm run security:scan -- --testNamePattern="HIGH"`
 
 ### Medium (🟡)
+
 - **Timeline**: Fix within 1 month
 - **Examples**: Information disclosure, rate limiting issues
 - **Command**: `npm run security:scan -- --testNamePattern="MEDIUM"`
 
 ### Low (🟢)
+
 - **Timeline**: Fix in next sprint
 - **Examples**: Minor header issues, info leakage
 
@@ -249,31 +265,33 @@ npx playwright install
 ## 🎨 Copy-Paste Test Patterns
 
 ### Add New SQLi Test
+
 ```typescript
 it("should reject new SQLi payload", async () => {
   const payload = "' OR 1=1--";
-  
+
   const response = await fetch(`${API_BASE}/endpoint`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query: payload })
+    body: JSON.stringify({ query: payload }),
   });
 
   expect([400, 422]).toContain(response.status);
-  
+
   const data = await response.json();
   expect(data.error?.toLowerCase()).not.toContain("sql");
 });
 ```
 
 ### Add New XSS Test
+
 ```typescript
 it("should sanitize XSS in user input", async () => {
   const xssPayload = "<script>alert('XSS')</script>";
-  
+
   const response = await fetch(`${API_BASE}/endpoint`, {
     method: "POST",
-    body: JSON.stringify({ content: xssPayload })
+    body: JSON.stringify({ content: xssPayload }),
   });
 
   if (response.ok) {
@@ -284,10 +302,11 @@ it("should sanitize XSS in user input", async () => {
 ```
 
 ### Add New Auth Test
+
 ```typescript
 it("should require authentication", async () => {
   const response = await fetch(`${API_BASE}/protected`, {
-    method: "GET"
+    method: "GET",
     // No Authorization header
   });
 
@@ -296,14 +315,15 @@ it("should require authentication", async () => {
 ```
 
 ### Add New Rate Limit Test
+
 ```typescript
 it("should rate limit excessive requests", async () => {
-  const requests = Array(50).fill(null).map(() =>
-    fetch(`${API_BASE}/endpoint`, { method: "POST" })
-  );
+  const requests = Array(50)
+    .fill(null)
+    .map(() => fetch(`${API_BASE}/endpoint`, { method: "POST" }));
 
   const responses = await Promise.all(requests);
-  const rateLimited = responses.filter(r => r.status === 429).length;
+  const rateLimited = responses.filter((r) => r.status === 429).length;
 
   expect(rateLimited).toBeGreaterThan(0);
 });
@@ -314,27 +334,32 @@ it("should rate limit excessive requests", async () => {
 ## 🔍 Useful Filters
 
 ### Run Only Failed Tests
+
 ```bash
 npm run security:scan -- --onlyFailures
 ```
 
 ### Run Specific Test File
+
 ```bash
 npm run security:scan -- tests/security/security-scanner.test.ts
 ```
 
 ### Run Tests Matching Pattern
+
 ```bash
 npm run security:scan -- --testNamePattern="SQL Injection"
 npm run security:scan -- --testNamePattern="XSS|CSRF"
 ```
 
 ### Verbose Output
+
 ```bash
 npm run security:scan -- --verbose
 ```
 
 ### Update Snapshots
+
 ```bash
 npm run security:scan -- --updateSnapshot
 ```
@@ -344,13 +369,14 @@ npm run security:scan -- --updateSnapshot
 ## 📦 Integration Snippets
 
 ### GitHub Actions
+
 ```yaml
 - name: Security Testing
   run: |
     npm run dev &
     sleep 10
     npm run security:ci
-    
+
 - name: Check Status
   run: |
     STATUS=$(jq -r '.status' tests/security/reports/ci-security-status.json)
@@ -360,6 +386,7 @@ npm run security:scan -- --updateSnapshot
 ```
 
 ### Jenkins
+
 ```groovy
 stage('Security') {
     steps {
@@ -375,6 +402,7 @@ stage('Security') {
 ```
 
 ### Pre-commit Hook
+
 ```bash
 #!/bin/bash
 npm run security:quick
@@ -385,6 +413,7 @@ fi
 ```
 
 ### Docker
+
 ```dockerfile
 RUN npm run security:scan
 RUN npm run security:ci
@@ -412,6 +441,7 @@ npm run security:scan -- --testNamePattern="farm"
 ## 📞 Support
 
 ### Security Issue Found?
+
 ```bash
 # Generate detailed report
 npm run security:full
@@ -422,6 +452,7 @@ npm run security:report
 ```
 
 ### Bug Bounty Submission
+
 ```bash
 # Include full test results
 npm run security:pentest
@@ -431,6 +462,7 @@ npm run security:report
 ```
 
 ### Emergency Security Incident
+
 ```bash
 # Run all tests
 npm run security:full
@@ -465,7 +497,8 @@ npm run security:report
 **High Issues**: ≤2
 **Test Coverage**: 100% of OWASP Top 10
 
-**Current Status**: 
+**Current Status**:
+
 ```bash
 npm run security:full && cat tests/security/reports/ci-security-status.json
 ```

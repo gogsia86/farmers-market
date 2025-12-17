@@ -115,44 +115,45 @@ interface RecommendationConfig {
 // 🌾 RECOMMENDATION TYPE CONFIGURATIONS
 // ============================================
 
-const RECOMMENDATION_CONFIGS: Record<RecommendationType, RecommendationConfig> = {
-  SIMILAR: {
-    icon: Sparkles,
-    title: "Similar Products You May Like",
-    description: "Based on this product's characteristics",
-    color: "purple",
-  },
-  COMPLEMENTARY: {
-    icon: ThumbsUp,
-    title: "Perfect Pairings",
-    description: "Products that go great together",
-    color: "blue",
-  },
-  SEASONAL: {
-    icon: Calendar,
-    title: "Fresh This Season",
-    description: "Peak harvest and availability",
-    color: "green",
-  },
-  POPULAR: {
-    icon: TrendingUp,
-    title: "Customer Favorites",
-    description: "Most loved by our community",
-    color: "orange",
-  },
-  PERSONALIZED: {
-    icon: Zap,
-    title: "Picked Just For You",
-    description: "Based on your preferences and history",
-    color: "pink",
-  },
-  FREQUENTLY_BOUGHT_TOGETHER: {
-    icon: ShoppingCart,
-    title: "Frequently Bought Together",
-    description: "Customers also purchased these items",
-    color: "indigo",
-  },
-};
+const RECOMMENDATION_CONFIGS: Record<RecommendationType, RecommendationConfig> =
+  {
+    SIMILAR: {
+      icon: Sparkles,
+      title: "Similar Products You May Like",
+      description: "Based on this product's characteristics",
+      color: "purple",
+    },
+    COMPLEMENTARY: {
+      icon: ThumbsUp,
+      title: "Perfect Pairings",
+      description: "Products that go great together",
+      color: "blue",
+    },
+    SEASONAL: {
+      icon: Calendar,
+      title: "Fresh This Season",
+      description: "Peak harvest and availability",
+      color: "green",
+    },
+    POPULAR: {
+      icon: TrendingUp,
+      title: "Customer Favorites",
+      description: "Most loved by our community",
+      color: "orange",
+    },
+    PERSONALIZED: {
+      icon: Zap,
+      title: "Picked Just For You",
+      description: "Based on your preferences and history",
+      color: "pink",
+    },
+    FREQUENTLY_BOUGHT_TOGETHER: {
+      icon: ShoppingCart,
+      title: "Frequently Bought Together",
+      description: "Customers also purchased these items",
+      color: "indigo",
+    },
+  };
 
 // ============================================
 // 🎨 MAIN COMPONENT
@@ -193,7 +194,7 @@ export function ProductRecommendations({
         params.append("limit", maxProducts.toString());
 
         const response = await fetch(
-          `/api/recommendations?${params.toString()}`
+          `/api/recommendations?${params.toString()}`,
         );
 
         if (!response.ok) {
@@ -275,7 +276,7 @@ export function ProductRecommendations({
               config.color === "green" && "bg-green-100",
               config.color === "orange" && "bg-orange-100",
               config.color === "pink" && "bg-pink-100",
-              config.color === "indigo" && "bg-indigo-100"
+              config.color === "indigo" && "bg-indigo-100",
             )}
           >
             <IconComponent
@@ -286,7 +287,7 @@ export function ProductRecommendations({
                 config.color === "green" && "text-green-600",
                 config.color === "orange" && "text-orange-600",
                 config.color === "pink" && "text-pink-600",
-                config.color === "indigo" && "text-indigo-600"
+                config.color === "indigo" && "text-indigo-600",
               )}
             />
           </div>
@@ -339,7 +340,9 @@ export function ProductRecommendations({
               <div
                 key={product.id}
                 className="flex-shrink-0"
-                style={{ width: `calc(${100 / visibleCount}% - ${(visibleCount - 1) * 16 / visibleCount}px)` }}
+                style={{
+                  width: `calc(${100 / visibleCount}% - ${((visibleCount - 1) * 16) / visibleCount}px)`,
+                }}
               >
                 <RecommendationCard
                   product={product}
@@ -366,7 +369,7 @@ export function ProductRecommendations({
                 "w-2 h-2 rounded-full transition-all",
                 Math.floor(currentIndex / visibleCount) === i
                   ? "w-6 bg-green-600"
-                  : "bg-gray-300 hover:bg-gray-400"
+                  : "bg-gray-300 hover:bg-gray-400",
               )}
               aria-label={`Go to slide ${i + 1}`}
             />
@@ -402,28 +405,29 @@ function RecommendationCard({
     <div
       className={cn(
         "group relative flex flex-col h-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md",
-        isOutOfStock && "opacity-75"
+        isOutOfStock && "opacity-75",
       )}
     >
       {/* Match Badge */}
-      {product.matchPercentage !== undefined && product.matchPercentage >= 80 && (
-        <div className="absolute top-2 right-2 z-10">
-          <span
-            className={cn(
-              "inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold text-white shadow-lg",
-              accentColor === "purple" && "bg-purple-600",
-              accentColor === "blue" && "bg-blue-600",
-              accentColor === "green" && "bg-green-600",
-              accentColor === "orange" && "bg-orange-600",
-              accentColor === "pink" && "bg-pink-600",
-              accentColor === "indigo" && "bg-indigo-600"
-            )}
-          >
-            <Sparkles className="h-3 w-3" />
-            {product.matchPercentage}% Match
-          </span>
-        </div>
-      )}
+      {product.matchPercentage !== undefined &&
+        product.matchPercentage >= 80 && (
+          <div className="absolute top-2 right-2 z-10">
+            <span
+              className={cn(
+                "inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold text-white shadow-lg",
+                accentColor === "purple" && "bg-purple-600",
+                accentColor === "blue" && "bg-blue-600",
+                accentColor === "green" && "bg-green-600",
+                accentColor === "orange" && "bg-orange-600",
+                accentColor === "pink" && "bg-pink-600",
+                accentColor === "indigo" && "bg-indigo-600",
+              )}
+            >
+              <Sparkles className="h-3 w-3" />
+              {product.matchPercentage}% Match
+            </span>
+          </div>
+        )}
 
       {/* Product Image */}
       <Link
@@ -559,9 +563,7 @@ function ProductCardSkeleton() {
 /**
  * Generate mock recommendations for demo/fallback
  */
-function generateMockRecommendations(
-  count: number
-): RecommendedProduct[] {
+function generateMockRecommendations(count: number): RecommendedProduct[] {
   const categories = ["Vegetables", "Fruits", "Herbs", "Dairy", "Eggs"];
   const units = ["lb", "dozen", "bunch", "pint", "each"];
 
@@ -571,8 +573,9 @@ function generateMockRecommendations(
     slug: `product-${i + 1}`,
     description: "Fresh from local farms",
     price: Math.random() * 20 + 5,
-    unit: units[Math.floor(Math.random() * units.length)],
-    category: categories[Math.floor(Math.random() * categories.length)],
+    unit: units[Math.floor(Math.random() * units.length)] || "lb",
+    category:
+      categories[Math.floor(Math.random() * categories.length)] || "Vegetables",
     organic: Math.random() > 0.5,
     inStock: Math.random() > 0.2,
     quantityAvailable: Math.floor(Math.random() * 50) + 10,

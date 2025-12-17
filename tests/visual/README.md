@@ -136,6 +136,7 @@ npm run visual:report:open       # Open report in browser (Windows)
    - Biodynamic badges
 
 ### Total: 84 Visual Checks
+
 - 19 tests × 3 browsers × ~1.5 viewports = 84 checks
 
 ---
@@ -149,39 +150,39 @@ import { test, expect } from "@playwright/test";
 
 test("should match [component] baseline", async ({ page, browserName }) => {
   const utils = new VisualTestingUtils();
-  
+
   await page.goto("/your-page");
   await page.waitForSelector('[data-testid="content"]');
   await utils.waitForAnimations(page);
-  
+
   const currentPath = utils.getScreenshotPath(
     "test-name",
     "desktop-1920x1080",
     browserName,
-    "current"
+    "current",
   );
   await page.screenshot({ path: currentPath, fullPage: true });
-  
+
   const baselinePath = utils.getScreenshotPath(
     "test-name",
     "desktop-1920x1080",
     browserName,
-    "baseline"
+    "baseline",
   );
   const diffPath = utils.getScreenshotPath(
     "test-name",
     "desktop-1920x1080",
     browserName,
-    "diff"
+    "diff",
   );
-  
+
   const result = await utils.compareScreenshots(
     baselinePath,
     currentPath,
     diffPath,
-    0.1 // 0.1% threshold
+    0.1, // 0.1% threshold
   );
-  
+
   expect(result.passed).toBeTruthy();
 });
 ```
@@ -192,7 +193,7 @@ test("should match [component] baseline", async ({ page, browserName }) => {
 await utils.hideDynamicContent(page, [
   '[data-testid="timestamp"]',
   '[data-testid="online-counter"]',
-  '[data-testid="live-updates"]'
+  '[data-testid="live-updates"]',
 ]);
 ```
 
@@ -202,7 +203,7 @@ await utils.hideDynamicContent(page, [
 await utils.maskContent(page, [
   '[data-testid="email"]',
   '[data-testid="phone"]',
-  'input[type="email"]'
+  'input[type="email"]',
 ]);
 ```
 
@@ -242,6 +243,7 @@ npm run test:visual:update -- --grep "homepage"
 ### Seasonal Testing
 
 Tests automatically detect current season:
+
 - **SPRING**: March - May
 - **SUMMER**: June - August
 - **FALL**: September - November
@@ -267,6 +269,7 @@ npm run baseline:validate
 **Problem**: Tests pass locally but fail in CI
 
 **Solution**:
+
 ```bash
 # Ensure consistent fonts
 npx playwright install --with-deps
@@ -275,6 +278,7 @@ npx playwright install --with-deps
 **Problem**: Flaky tests due to animations
 
 **Solution**:
+
 ```typescript
 // Add animation wait
 await utils.waitForAnimations(page);
@@ -286,18 +290,19 @@ await page.addStyleTag({
       animation-duration: 0s !important;
       transition-duration: 0s !important;
     }
-  `
+  `,
 });
 ```
 
 **Problem**: Dynamic content causing failures
 
 **Solution**:
+
 ```typescript
 // Hide timestamps, counters, etc.
 await utils.hideDynamicContent(page, [
   '[data-testid="timestamp"]',
-  '[data-testid="live-counter"]'
+  '[data-testid="live-counter"]',
 ]);
 ```
 
@@ -316,12 +321,14 @@ npm run baseline:archive 30
 ## 📈 METRICS
 
 ### Performance
+
 - Single screenshot: 50-200ms
 - Full-page screenshot: 200-500ms
 - Image comparison: 10-50ms
 - Full suite: 2-5 minutes (6 workers)
 
 ### Coverage
+
 - **Visual Tests**: 19 scenarios
 - **Viewports**: 9 configurations
 - **Browsers**: 5 combinations
@@ -340,6 +347,7 @@ npm run baseline:archive 30
 ## 🎯 BEST PRACTICES
 
 ### ✅ DO
+
 - Wait for animations before screenshots
 - Hide timestamps and dynamic counters
 - Mask sensitive data (emails, phones)
@@ -349,6 +357,7 @@ npm run baseline:archive 30
 - Commit baselines to Git
 
 ### ❌ DON'T
+
 - Screenshot rapidly changing content
 - Include random test data
 - Test every viewport combination
@@ -375,6 +384,7 @@ When adding new visual tests:
 ## 📞 SUPPORT
 
 For questions or issues:
+
 - Review [Troubleshooting Guide](../../docs/DAY_12_VISUAL_REGRESSION_TESTING.md#troubleshooting)
 - Check [Quick Reference](../../docs/VISUAL_TESTING_QUICK_REFERENCE.md)
 - Run: `npm run baseline:validate` for consciousness check

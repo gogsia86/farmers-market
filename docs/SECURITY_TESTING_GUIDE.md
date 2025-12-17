@@ -96,11 +96,13 @@ npm run security:pentest
 Tests for common vulnerabilities automatically:
 
 #### SQL Injection Tests
+
 ```bash
 npm run security:injection
 ```
 
 **Coverage**:
+
 - Classic SQLi (`' OR '1'='1`)
 - Boolean-based blind SQLi
 - Time-based blind SQLi
@@ -109,6 +111,7 @@ npm run security:injection
 - Error-based SQLi
 
 **Example Output**:
+
 ```
 ✅ SQL Injection - Farm Search - Payload 1: PASS
 ✅ SQL Injection - Product Search: PASS
@@ -116,11 +119,13 @@ npm run security:injection
 ```
 
 #### Cross-Site Scripting (XSS) Tests
+
 ```bash
 npm run security:xss
 ```
 
 **Coverage**:
+
 - Stored XSS in user content
 - Reflected XSS in URLs
 - DOM-based XSS
@@ -129,6 +134,7 @@ npm run security:xss
 - Encoded XSS payloads
 
 **Example Test**:
+
 ```typescript
 // Farm profile with XSS payload
 const maliciousDescription = "<script>alert('XSS')</script>";
@@ -138,22 +144,26 @@ expect(sanitizedOutput).not.toContain("<script");
 ```
 
 #### CSRF Protection Tests
+
 ```bash
 npm run security:quick
 ```
 
 **Coverage**:
+
 - CSRF token validation
 - SameSite cookie configuration
 - Origin header validation
 - State-changing operations protection
 
 #### Authentication & Authorization Tests
+
 ```bash
 npm run security:auth
 ```
 
 **Coverage**:
+
 - JWT token validation
 - Session fixation prevention
 - Brute force protection
@@ -162,10 +172,11 @@ npm run security:auth
 - IDOR (Insecure Direct Object References)
 
 **Example**:
+
 ```typescript
 // Attempt to access another user's data
-const response = await fetch('/api/orders/other-user-order-id', {
-  headers: { Authorization: `Bearer ${validToken}` }
+const response = await fetch("/api/orders/other-user-order-id", {
+  headers: { Authorization: `Bearer ${validToken}` },
 });
 
 // Should return 403 Forbidden
@@ -173,11 +184,13 @@ expect([403, 404]).toContain(response.status);
 ```
 
 #### Security Headers Tests
+
 ```bash
 npm run security:headers
 ```
 
 **Validated Headers**:
+
 - `X-Frame-Options: DENY`
 - `X-Content-Type-Options: nosniff`
 - `Strict-Transport-Security` (HSTS)
@@ -192,18 +205,21 @@ npm run security:headers
 Advanced attack simulations:
 
 #### Advanced SQLi Attacks
+
 - Blind boolean-based SQLi
 - Time-based blind SQLi with SLEEP()
 - UNION-based data extraction
 - Second-order SQLi exploitation
 
 #### Advanced XSS Attacks
+
 - DOM-based XSS exploitation
 - Stored XSS chain attacks
 - Mutation XSS (mXSS)
 - dangerouslySetInnerHTML validation
 
 #### Authentication Attacks
+
 - Session hijacking attempts
 - Brute force password attacks
 - Credential stuffing
@@ -211,48 +227,52 @@ Advanced attack simulations:
 - Password reset token prediction
 
 #### Business Logic Vulnerabilities
+
 - Negative price manipulation
 - Quantity overflow attacks
 - Race conditions in stock management
 - Seasonal product validation bypass
 
 #### API Security
+
 - Mass assignment privilege escalation
 - HTTP verb tampering
 - Content-Type validation
 - Parameter pollution
 
 #### Server-Side Request Forgery (SSRF)
+
 - Internal network access attempts
 - Cloud metadata endpoint access
 - File protocol exploitation
 
 #### Path Traversal
+
 - Directory traversal attacks
 - System file access attempts
 - Encoded path manipulation
 
 **Example Penetration Test**:
+
 ```typescript
 test("should resist blind boolean-based SQLi", async ({ request }) => {
   const payloads = [
     { query: "' AND 1=1--", expected: true },
-    { query: "' AND 1=2--", expected: false }
+    { query: "' AND 1=2--", expected: false },
   ];
 
   // Responses should be identical (not vulnerable)
-  const response1 = await request.post('/api/farms/search', {
-    data: { query: payloads[0].query }
+  const response1 = await request.post("/api/farms/search", {
+    data: { query: payloads[0].query },
   });
 
-  const response2 = await request.post('/api/farms/search', {
-    data: { query: payloads[1].query }
+  const response2 = await request.post("/api/farms/search", {
+    data: { query: payloads[1].query },
   });
 
   // Check if responses differ (vulnerability indicator)
   const difference = Math.abs(
-    JSON.stringify(response1).length - 
-    JSON.stringify(response2).length
+    JSON.stringify(response1).length - JSON.stringify(response2).length,
   );
 
   expect(difference).toBeLessThan(100); // No significant difference
@@ -267,18 +287,14 @@ test("should resist blind boolean-based SQLi", async ({ request }) => {
 
 ```typescript
 describe("🛡️ Vulnerability Category", () => {
-  const maliciousPayloads = [
-    "payload1",
-    "payload2",
-    "payload3"
-  ];
+  const maliciousPayloads = ["payload1", "payload2", "payload3"];
 
   maliciousPayloads.forEach((payload, index) => {
     it(`should reject payload #${index + 1}`, async () => {
       const response = await fetch(`${API_BASE}/endpoint`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ input: payload })
+        body: JSON.stringify({ input: payload }),
       });
 
       // Verify protection
@@ -289,7 +305,7 @@ describe("🛡️ Vulnerability Category", () => {
         testName: `Protection - Payload ${index + 1}`,
         category: "Vulnerability Category",
         passed: true,
-        severity: "HIGH"
+        severity: "HIGH",
       });
     });
   });
@@ -302,7 +318,7 @@ describe("🛡️ Vulnerability Category", () => {
 describe("🔐 Authentication Security", () => {
   it("should require authentication", async () => {
     const response = await fetch(`${API_BASE}/protected`, {
-      method: "GET"
+      method: "GET",
       // No Authorization header
     });
 
@@ -313,8 +329,8 @@ describe("🔐 Authentication Security", () => {
     const response = await fetch(`${API_BASE}/protected`, {
       method: "GET",
       headers: {
-        Authorization: "Bearer invalid-token"
-      }
+        Authorization: "Bearer invalid-token",
+      },
     });
 
     expect([401, 403]).toContain(response.status);
@@ -327,15 +343,17 @@ describe("🔐 Authentication Security", () => {
 ```typescript
 describe("⏱️ Rate Limiting", () => {
   it("should rate limit rapid requests", async () => {
-    const requests = Array(50).fill(null).map(() =>
-      fetch(`${API_BASE}/search`, {
-        method: "POST",
-        body: JSON.stringify({ query: "test" })
-      })
-    );
+    const requests = Array(50)
+      .fill(null)
+      .map(() =>
+        fetch(`${API_BASE}/search`, {
+          method: "POST",
+          body: JSON.stringify({ query: "test" }),
+        }),
+      );
 
     const responses = await Promise.all(requests);
-    const rateLimited = responses.filter(r => r.status === 429).length;
+    const rateLimited = responses.filter((r) => r.status === 429).length;
 
     expect(rateLimited).toBeGreaterThan(0);
   });
@@ -349,14 +367,14 @@ describe("✅ Input Validation", () => {
   const invalidInputs = [
     { email: "not-an-email" },
     { email: "@example.com" },
-    { email: "../etc/passwd" }
+    { email: "../etc/passwd" },
   ];
 
-  invalidInputs.forEach(input => {
+  invalidInputs.forEach((input) => {
     it(`should reject invalid input: ${input.email}`, async () => {
       const response = await fetch(`${API_BASE}/signup`, {
         method: "POST",
-        body: JSON.stringify(input)
+        body: JSON.stringify(input),
       });
 
       expect([400, 422]).toContain(response.status);
@@ -380,7 +398,7 @@ on:
   pull_request:
     branches: [main]
   schedule:
-    - cron: '0 2 * * *' # Daily at 2 AM
+    - cron: "0 2 * * *" # Daily at 2 AM
 
 jobs:
   security-tests:
@@ -392,8 +410,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -439,10 +457,10 @@ jobs:
             const report = JSON.parse(
               fs.readFileSync('tests/security/reports/ci-security-status.json', 'utf8')
             );
-            
+
             const comment = `
             ## 🔒 Security Test Results
-            
+
             - **Status**: ${report.status === 'PASS' ? '✅ PASS' : '❌ FAIL'}
             - **Security Score**: ${report.securityScore.toFixed(1)}%
             - **Total Tests**: ${report.totalTests}
@@ -451,7 +469,7 @@ jobs:
             - **Critical Issues**: ${report.criticalIssues}
             - **High Issues**: ${report.highIssues}
             `;
-            
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
@@ -585,6 +603,7 @@ npm run security:report
 **Output**: `tests/security/reports/security-report-{timestamp}.html`
 
 Features:
+
 - 🎨 Beautiful visual dashboard
 - 📊 Interactive charts and graphs
 - 🚨 Color-coded severity levels
@@ -601,6 +620,7 @@ npm run security:report
 **Output**: `tests/security/reports/security-report-{timestamp}.md`
 
 Perfect for:
+
 - GitHub/GitLab issue creation
 - Documentation embedding
 - Team communication
@@ -650,6 +670,7 @@ tests/security/reports/
 **Symptom**: Security tests hang or timeout
 
 **Solution**:
+
 ```bash
 # Increase timeout for security tests
 npm run security:scan -- --testTimeout=60000
@@ -663,13 +684,14 @@ npm run security:scan -- --runInBand
 **Symptom**: Tests fail but application is secure
 
 **Solution**:
+
 1. Check test environment configuration
 2. Verify API endpoints are accessible
 3. Review security headers in development mode
 
 ```typescript
 // Adjust expectations for development
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === "development") {
   expect([200, 401, 403]).toContain(response.status);
 } else {
   expect([401, 403]).toContain(response.status);
@@ -681,6 +703,7 @@ if (process.env.NODE_ENV === 'development') {
 **Symptom**: Tests fail due to rate limiting
 
 **Solution**:
+
 ```bash
 # Disable rate limiting for tests
 export DISABLE_RATE_LIMIT=true
@@ -694,6 +717,7 @@ npm run security:scan
 **Symptom**: Connection refused errors
 
 **Solution**:
+
 ```bash
 # Start development server first
 npm run dev &
@@ -708,6 +732,7 @@ npm run security:scan
 **Symptom**: Module not found errors
 
 **Solution**:
+
 ```bash
 # Install all dependencies
 npm install
@@ -736,6 +761,7 @@ npm run security:pentest
 ### 2. Fix Critical Issues Immediately
 
 **Priority Levels**:
+
 - 🔴 **Critical**: Fix within 24 hours
 - 🟠 **High**: Fix within 1 week
 - 🟡 **Medium**: Fix within 1 month
@@ -747,7 +773,7 @@ npm run security:pentest
 // Add new attack vectors regularly
 const newXSSPayloads = [
   "<svg/onload=alert('New XSS')>",
-  "{{constructor.constructor('alert(1)')()}}"
+  "{{constructor.constructor('alert(1)')()}}",
 ];
 ```
 
@@ -766,13 +792,13 @@ open tests/security/reports/security-report-latest.html
 
 ```typescript
 // Log security events
-import { logSecurityEvent } from '@/lib/monitoring';
+import { logSecurityEvent } from "@/lib/monitoring";
 
 logSecurityEvent({
-  type: 'SECURITY_TEST_RUN',
-  status: 'PASS',
+  type: "SECURITY_TEST_RUN",
+  status: "PASS",
   score: 98.8,
-  timestamp: new Date()
+  timestamp: new Date(),
 });
 ```
 
@@ -793,18 +819,18 @@ it.skip("should reject XSS - Known limitation in legacy API", () => {
 
 ### OWASP Top 10 Coverage
 
-| Category | Coverage | Status |
-|----------|----------|--------|
-| A01: Broken Access Control | 100% | ✅ PASS |
-| A02: Cryptographic Failures | 95% | ✅ PASS |
-| A03: Injection | 100% | ✅ PASS |
-| A04: Insecure Design | 90% | ✅ PASS |
-| A05: Security Misconfiguration | 100% | ✅ PASS |
-| A06: Vulnerable Components | 85% | ⚠️ PARTIAL |
-| A07: Authentication Failures | 100% | ✅ PASS |
-| A08: Data Integrity Failures | 90% | ✅ PASS |
-| A09: Security Logging Failures | 80% | ⚠️ PARTIAL |
-| A10: SSRF | 100% | ✅ PASS |
+| Category                       | Coverage | Status     |
+| ------------------------------ | -------- | ---------- |
+| A01: Broken Access Control     | 100%     | ✅ PASS    |
+| A02: Cryptographic Failures    | 95%      | ✅ PASS    |
+| A03: Injection                 | 100%     | ✅ PASS    |
+| A04: Insecure Design           | 90%      | ✅ PASS    |
+| A05: Security Misconfiguration | 100%     | ✅ PASS    |
+| A06: Vulnerable Components     | 85%      | ⚠️ PARTIAL |
+| A07: Authentication Failures   | 100%     | ✅ PASS    |
+| A08: Data Integrity Failures   | 90%      | ✅ PASS    |
+| A09: Security Logging Failures | 80%      | ⚠️ PARTIAL |
+| A10: SSRF                      | 100%     | ✅ PASS    |
 
 ### CWE Mapping
 
@@ -852,6 +878,7 @@ it.skip("should reject XSS - Known limitation in legacy API", () => {
 ## 📝 Change Log
 
 ### Version 1.0.0 (2025-01-15)
+
 - ✅ Initial security testing infrastructure
 - ✅ Automated vulnerability scanner
 - ✅ Penetration testing suite

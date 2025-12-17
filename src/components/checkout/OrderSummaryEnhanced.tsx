@@ -31,10 +31,7 @@ import {
   ChevronUp,
   MapPin,
   Calendar,
-  DollarSign,
-  Percent,
   Info,
-  CheckCircle,
   AlertCircle,
   Sparkles,
   TreePine,
@@ -176,11 +173,16 @@ export function OrderSummaryEnhanced({
   // Calculate order summary
   const subtotal = items.reduce(
     (sum, item) => sum + item.price * item.quantity,
-    0
+    0,
   );
 
-  const baseDeliveryFee = farmGroups.reduce((sum, group) => sum + group.deliveryFee, 0);
-  const isFreeDelivery = subtotal >= freeDeliveryThreshold || appliedPromo?.discountType === "FREE_DELIVERY";
+  const baseDeliveryFee = farmGroups.reduce(
+    (sum, group) => sum + group.deliveryFee,
+    0,
+  );
+  const isFreeDelivery =
+    subtotal >= freeDeliveryThreshold ||
+    appliedPromo?.discountType === "FREE_DELIVERY";
   const deliveryFee = isFreeDelivery ? 0 : baseDeliveryFee;
 
   let discount = 0;
@@ -199,12 +201,15 @@ export function OrderSummaryEnhanced({
   const sustainabilityMetrics: SustainabilityMetrics = {
     totalCarbonFootprint: items.reduce(
       (sum, item) => sum + (item.carbonFootprint || 0) * item.quantity,
-      0
+      0,
     ),
     averageDistance:
-      items.reduce((sum, item) => sum + (item.localDistance || 0), 0) / items.length,
-    organicPercentage: (items.filter((i) => i.organic).length / items.length) * 100,
-    seasonalPercentage: (items.filter((i) => i.seasonal).length / items.length) * 100,
+      items.reduce((sum, item) => sum + (item.localDistance || 0), 0) /
+      items.length,
+    organicPercentage:
+      (items.filter((i) => i.organic).length / items.length) * 100,
+    seasonalPercentage:
+      (items.filter((i) => i.seasonal).length / items.length) * 100,
     localFarmsCount: farmGroups.length,
   };
 
@@ -235,7 +240,10 @@ export function OrderSummaryEnhanced({
         const promo: PromoCode = {
           code: promoCode.toUpperCase(),
           description: getPromoDescription(promoCode.toUpperCase()),
-          discountType: promoCode.toUpperCase() === "FREEDEL" ? "FREE_DELIVERY" : "PERCENTAGE",
+          discountType:
+            promoCode.toUpperCase() === "FREEDEL"
+              ? "FREE_DELIVERY"
+              : "PERCENTAGE",
           discountValue: promoCode.toUpperCase() === "FRESH10" ? 10 : 20,
           isValid: true,
         };
@@ -262,7 +270,12 @@ export function OrderSummaryEnhanced({
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <div className={cn("bg-white rounded-lg border border-gray-200 shadow-sm", className)}>
+    <div
+      className={cn(
+        "bg-white rounded-lg border border-gray-200 shadow-sm",
+        className,
+      )}
+    >
       {/* Header */}
       <div className="p-6 border-b border-gray-200">
         <button
@@ -277,8 +290,8 @@ export function OrderSummaryEnhanced({
             <div>
               <h2 className="text-lg font-bold text-gray-900">Order Summary</h2>
               <p className="text-sm text-gray-600">
-                {itemCount} {itemCount === 1 ? "item" : "items"} from {farmGroups.length}{" "}
-                {farmGroups.length === 1 ? "farm" : "farms"}
+                {itemCount} {itemCount === 1 ? "item" : "items"} from{" "}
+                {farmGroups.length} {farmGroups.length === 1 ? "farm" : "farms"}
               </p>
             </div>
           </div>
@@ -310,7 +323,9 @@ export function OrderSummaryEnhanced({
           <div className="space-y-3">
             <div className="flex items-center justify-between text-sm text-gray-600">
               <span>Subtotal ({itemCount} items)</span>
-              <span className="font-medium text-gray-900">${subtotal.toFixed(2)}</span>
+              <span className="font-medium text-gray-900">
+                ${subtotal.toFixed(2)}
+              </span>
             </div>
 
             {/* Delivery Fee */}
@@ -324,7 +339,14 @@ export function OrderSummaryEnhanced({
                   </span>
                 )}
               </div>
-              <span className={cn("font-medium", isFreeDelivery ? "text-green-600 line-through" : "text-gray-900")}>
+              <span
+                className={cn(
+                  "font-medium",
+                  isFreeDelivery
+                    ? "text-green-600 line-through"
+                    : "text-gray-900",
+                )}
+              >
                 {isFreeDelivery && subtotal >= freeDeliveryThreshold ? (
                   <span className="text-green-600">
                     FREE (saved ${baseDeliveryFee.toFixed(2)})
@@ -341,13 +363,16 @@ export function OrderSummaryEnhanced({
                 <div className="flex items-center gap-2 text-sm text-blue-900 mb-2">
                   <Info className="h-4 w-4" />
                   <span className="font-medium">
-                    Add ${(freeDeliveryThreshold - subtotal).toFixed(2)} more for FREE delivery!
+                    Add ${(freeDeliveryThreshold - subtotal).toFixed(2)} more
+                    for FREE delivery!
                   </span>
                 </div>
                 <div className="w-full bg-blue-200 rounded-full h-2">
                   <div
                     className="bg-blue-600 h-2 rounded-full transition-all"
-                    style={{ width: `${(subtotal / freeDeliveryThreshold) * 100}%` }}
+                    style={{
+                      width: `${(subtotal / freeDeliveryThreshold) * 100}%`,
+                    }}
                   />
                 </div>
               </div>
@@ -356,7 +381,9 @@ export function OrderSummaryEnhanced({
             {/* Tax */}
             <div className="flex items-center justify-between text-sm text-gray-600">
               <span>Tax (8%)</span>
-              <span className="font-medium text-gray-900">${tax.toFixed(2)}</span>
+              <span className="font-medium text-gray-900">
+                ${tax.toFixed(2)}
+              </span>
             </div>
 
             {/* Applied Promo Code */}
@@ -368,7 +395,9 @@ export function OrderSummaryEnhanced({
                     <p className="text-sm font-semibold text-green-900">
                       {appliedPromo.code}
                     </p>
-                    <p className="text-xs text-green-700">{appliedPromo.description}</p>
+                    <p className="text-xs text-green-700">
+                      {appliedPromo.description}
+                    </p>
                   </div>
                 </div>
                 <button
@@ -408,8 +437,12 @@ export function OrderSummaryEnhanced({
                       <input
                         type="text"
                         value={promoCode}
-                        onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-                        onKeyDown={(e) => e.key === "Enter" && handleApplyPromo()}
+                        onChange={(e) =>
+                          setPromoCode(e.target.value.toUpperCase())
+                        }
+                        onKeyDown={(e) =>
+                          e.key === "Enter" && handleApplyPromo()
+                        }
                         placeholder="Enter code"
                         className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                       />
@@ -447,7 +480,9 @@ export function OrderSummaryEnhanced({
               <div className="flex items-center gap-2 p-3 bg-amber-50 rounded-lg border border-amber-200">
                 <Sparkles className="h-4 w-4 text-amber-600" />
                 <p className="text-sm text-amber-900">
-                  <span className="font-semibold">You're saving approximately ${estimatedSavings.toFixed(2)}</span>{" "}
+                  <span className="font-semibold">
+                    You're saving approximately ${estimatedSavings.toFixed(2)}
+                  </span>{" "}
                   by buying seasonal and organic!
                 </p>
               </div>
@@ -494,10 +529,12 @@ export function OrderSummaryEnhanced({
           <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
             <Calendar className="h-5 w-5 text-gray-600" />
             <div>
-              <p className="text-sm font-medium text-gray-900">Estimated Delivery</p>
+              <p className="text-sm font-medium text-gray-900">
+                Estimated Delivery
+              </p>
               <p className="text-xs text-gray-600">
-                {getEstimatedDeliveryDate()} • Coordinated from {farmGroups.length}{" "}
-                {farmGroups.length === 1 ? "farm" : "farms"}
+                {getEstimatedDeliveryDate()} • Coordinated from{" "}
+                {farmGroups.length} {farmGroups.length === 1 ? "farm" : "farms"}
               </p>
             </div>
           </div>
@@ -525,8 +562,12 @@ function FarmGroupSection({ group }: { group: FarmGroup }) {
       >
         <div className="flex items-center gap-2 flex-1">
           <MapPin className="h-4 w-4 text-gray-600" />
-          <span className="text-sm font-medium text-gray-900">{group.farmName}</span>
-          <span className="text-xs text-gray-500">({group.items.length} items)</span>
+          <span className="text-sm font-medium text-gray-900">
+            {group.farmName}
+          </span>
+          <span className="text-xs text-gray-500">
+            ({group.items.length} items)
+          </span>
         </div>
         <div className="flex items-center gap-3">
           <span className="text-sm font-semibold text-gray-900">
@@ -558,7 +599,9 @@ function FarmGroupSection({ group }: { group: FarmGroup }) {
                   {item.productName}
                 </p>
                 <div className="flex items-center gap-2 text-xs text-gray-600">
-                  <span>{item.quantity} × ${item.price.toFixed(2)}</span>
+                  <span>
+                    {item.quantity} × ${item.price.toFixed(2)}
+                  </span>
                   {item.organic && (
                     <span className="px-1 py-0.5 bg-green-100 text-green-700 font-semibold rounded">
                       Organic
@@ -602,7 +645,7 @@ function SustainabilityMetric({
         "flex items-center gap-2 p-2 rounded-lg",
         color === "green" && "bg-green-50",
         color === "blue" && "bg-blue-50",
-        color === "amber" && "bg-amber-50"
+        color === "amber" && "bg-amber-50",
       )}
     >
       <Icon
@@ -610,7 +653,7 @@ function SustainabilityMetric({
           "h-4 w-4",
           color === "green" && "text-green-600",
           color === "blue" && "text-blue-600",
-          color === "amber" && "text-amber-600"
+          color === "amber" && "text-amber-600",
         )}
       />
       <div className="flex-1">
@@ -620,7 +663,7 @@ function SustainabilityMetric({
             "text-sm font-semibold",
             color === "green" && "text-green-900",
             color === "blue" && "text-blue-900",
-            color === "amber" && "text-amber-900"
+            color === "amber" && "text-amber-900",
           )}
         >
           {value}

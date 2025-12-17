@@ -27,6 +27,7 @@ This guide provides comprehensive instructions for validating the entire Farmers
 ### Purpose
 
 The validation framework ensures:
+
 - ✅ **Architecture Integrity** - All layers properly structured
 - ✅ **Service Consolidation** - No duplicate services
 - ✅ **Type Safety** - TypeScript compliance
@@ -79,6 +80,7 @@ npm run type-check         # TypeScript validation
 **Script:** `scripts/validate-platform.ts`
 
 **What it checks:**
+
 - ✅ Architecture layers (app, components, services, database)
 - ✅ Route groups (admin, customer, farmer, auth, public, monitoring)
 - ✅ API integration (30+ endpoints)
@@ -94,11 +96,13 @@ npm run type-check         # TypeScript validation
 - ✅ Capability matrix (25+ platform capabilities)
 
 **Run:**
+
 ```bash
 npm run validate:platform
 ```
 
 **Output:**
+
 - Console report with detailed results
 - `platform-validation-report.md` with full details
 
@@ -107,6 +111,7 @@ npm run validate:platform
 **Script:** `scripts/detect-errors.ts`
 
 **What it checks:**
+
 - ❌ Duplicate files (by content hash)
 - ❌ Import conflicts (non-canonical imports)
 - ❌ Type conflicts (duplicate type definitions)
@@ -117,17 +122,20 @@ npm run validate:platform
 - ❌ Build errors (TypeScript compilation)
 
 **Run:**
+
 ```bash
 npm run validate:errors
 ```
 
 **Output:**
+
 - Console report with actionable fixes
 - `error-detection-report.json` with structured data
 
 ### 3. Quick Validation (`validate:quick`)
 
 **What it runs:**
+
 ```bash
 npx tsc --noEmit  # TypeScript check
 npm test          # Jest unit tests
@@ -138,6 +146,7 @@ npm test          # Jest unit tests
 ### 4. Complete Validation (`validate:all`)
 
 **What it runs:**
+
 ```bash
 npm run validate:platform  # Full platform scan
 npm run validate:errors    # Error detection
@@ -178,12 +187,12 @@ npm run type-check         # TypeScript validation
 
 ```typescript
 // ✅ CORRECT - Canonical service usage
-import { farmService } from '@/lib/services';
+import { farmService } from "@/lib/services";
 
 const farm = await farmService.createFarm(farmData);
 
 // ❌ INCORRECT - Direct Prisma usage
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 ```
 
@@ -204,10 +213,10 @@ Critical APIs Checked:
 
 ```typescript
 // ✅ CORRECT - Canonical database import
-import { database } from '@/lib/database';
+import { database } from "@/lib/database";
 
 // ❌ INCORRECT - Direct instantiation
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 const db = new PrismaClient(); // DON'T DO THIS
 ```
 
@@ -216,6 +225,7 @@ const db = new PrismaClient(); // DON'T DO THIS
 The validator checks 25+ platform capabilities:
 
 **Core Marketplace** (Weight: 10)
+
 - Product Catalog
 - Shopping Cart
 - Checkout Process
@@ -223,16 +233,19 @@ The validator checks 25+ platform capabilities:
 - Order Management
 
 **User Management** (Weight: 8-9)
+
 - User Authentication
 - Profile Management
 - Role-Based Access Control
 
 **Farmer Features** (Weight: 9-10)
+
 - Farm Management
 - Inventory Management
 - Order Fulfillment
 
 **Technical Capabilities** (Weight: 5-8)
+
 - Search & Filter
 - Error Tracking
 - Performance Monitoring
@@ -275,21 +288,21 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
-          
+          node-version: "20"
+
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Run validation suite
         run: npm run validate:all
-        
+
       - name: Upload validation reports
         uses: actions/upload-artifact@v3
         with:
@@ -398,6 +411,7 @@ CAPABILITIES: 10/13
 ```
 
 **Score Interpretation:**
+
 - **90-100%**: Excellent - Production ready
 - **70-89%**: Good - Minor features missing
 - **50-69%**: Fair - Core features present, enhancements needed
@@ -410,14 +424,16 @@ CAPABILITIES: 10/13
 ### Issue 1: Duplicate Services
 
 **Error:**
+
 ```
 ❌ SERVICE DUPLICATIONS:
   Service: geocoding
-  Files: src/lib/services/geocoding.service.ts, 
+  Files: src/lib/services/geocoding.service.ts,
          src/lib/geocoding/geocoding.service.ts
 ```
 
 **Fix:**
+
 ```bash
 # 1. Compare files
 diff src/lib/services/geocoding.service.ts \
@@ -437,6 +453,7 @@ find src -name "*.ts" -exec sed -i '' \
 ### Issue 2: Import Conflicts
 
 **Error:**
+
 ```
 ❌ IMPORT CONFLICTS:
   File: src/lib/email/email-service-lazy.ts
@@ -445,17 +462,19 @@ find src -name "*.ts" -exec sed -i '' \
 ```
 
 **Fix:**
+
 ```typescript
 // ❌ BEFORE
-import { sendEmail } from './email-service-duplicate';
+import { sendEmail } from "./email-service-duplicate";
 
 // ✅ AFTER
-import { sendEmail } from './email.service';
+import { sendEmail } from "./email.service";
 ```
 
 ### Issue 3: Type Conflicts
 
 **Error:**
+
 ```
 ❌ TYPE CONFLICTS:
   Type: GeoCoordinates (3 definitions)
@@ -465,6 +484,7 @@ import { sendEmail } from './email.service';
 ```
 
 **Fix:**
+
 ```typescript
 // 1. Choose canonical location
 // Keep: src/types/geocoding.ts
@@ -478,12 +498,13 @@ export interface GeoCoordinates {
 
 // 3. Update other files to import
 // src/lib/services/farm.service.ts
-import type { GeoCoordinates } from '@/types/geocoding';
+import type { GeoCoordinates } from "@/types/geocoding";
 ```
 
 ### Issue 4: Missing Service Exports
 
 **Error:**
+
 ```
 ⚠️  MISSING EXPORTS:
   File: src/lib/services/index.ts
@@ -491,16 +512,18 @@ import type { GeoCoordinates } from '@/types/geocoding';
 ```
 
 **Fix:**
+
 ```typescript
 // src/lib/services/index.ts
-export { farmService } from './farm.service';
-export { productService } from './product.service';
-export { geocodingService } from './geocoding.service'; // ADD THIS
+export { farmService } from "./farm.service";
+export { productService } from "./product.service";
+export { geocodingService } from "./geocoding.service"; // ADD THIS
 ```
 
 ### Issue 5: Canonical Database Import Violations
 
 **Error:**
+
 ```
 ❌ CANONICAL IMPORT VIOLATIONS:
   File: src/app/api/farms/route.ts
@@ -510,19 +533,21 @@ export { geocodingService } from './geocoding.service'; // ADD THIS
 ```
 
 **Fix:**
+
 ```typescript
 // ❌ BEFORE
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 // ✅ AFTER
-import { database } from '@/lib/database';
+import { database } from "@/lib/database";
 // Use 'database' instead of 'prisma'
 ```
 
 ### Issue 6: TypeScript Build Errors
 
 **Fix Process:**
+
 ```bash
 # 1. Run TypeScript in watch mode
 npx tsc --noEmit --watch
@@ -589,27 +614,27 @@ Target Coverage:
 ```typescript
 // Service Test Example
 // src/lib/services/__tests__/farm.service.test.ts
-import { farmService } from '../farm.service';
-import { database } from '@/lib/database';
+import { farmService } from "../farm.service";
+import { database } from "@/lib/database";
 
-describe('FarmService', () => {
-  describe('createFarm', () => {
-    it('should create farm with valid data', async () => {
+describe("FarmService", () => {
+  describe("createFarm", () => {
+    it("should create farm with valid data", async () => {
       const farmData = {
-        name: 'Test Farm',
-        location: { lat: 40.7128, lng: -74.0060 }
+        name: "Test Farm",
+        location: { lat: 40.7128, lng: -74.006 },
       };
 
       const farm = await farmService.createFarm(farmData);
 
       expect(farm).toBeDefined();
-      expect(farm.name).toBe('Test Farm');
+      expect(farm.name).toBe("Test Farm");
     });
 
-    it('should throw ValidationError for invalid data', async () => {
-      await expect(
-        farmService.createFarm({ name: '' })
-      ).rejects.toThrow('ValidationError');
+    it("should throw ValidationError for invalid data", async () => {
+      await expect(farmService.createFarm({ name: "" })).rejects.toThrow(
+        "ValidationError",
+      );
     });
   });
 });
@@ -732,6 +757,7 @@ npm run validate:all
 ### Documentation Updates
 
 Keep these docs in sync with validation:
+
 - README.md - Installation & setup
 - ARCHITECTURE.md - System architecture
 - API_DOCUMENTATION.md - API endpoints
@@ -852,4 +878,4 @@ After successful validation:
 
 ---
 
-*"Code with agricultural consciousness, architect with divine precision, deliver with quantum efficiency."* 🌾⚡
+_"Code with agricultural consciousness, architect with divine precision, deliver with quantum efficiency."_ 🌾⚡

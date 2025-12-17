@@ -35,6 +35,7 @@ chmod +x setup-production.sh
 ```
 
 **What it does:**
+
 - Creates `.env.production` from template
 - Generates secure secrets
 - Installs dependencies
