@@ -16,9 +16,8 @@ export async function register() {
 
     if (tracingEnabled) {
       try {
-        const { initializeTracing } = await import(
-          "./src/lib/tracing/instrumentation"
-        );
+        const { initializeTracing } =
+          await import("./src/lib/tracing/instrumentation");
         initializeTracing();
         console.log(
           "🌾 Divine Tracing initialized with agricultural consciousness",

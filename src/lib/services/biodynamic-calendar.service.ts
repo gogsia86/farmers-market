@@ -15,6 +15,20 @@ import { database } from "@/lib/database";
 import type { LunarPhase, Season } from "@prisma/client";
 
 // ============================================================================
+// ERROR CLASSES
+// ============================================================================
+
+export class BiodynamicCalendarError extends Error {
+  constructor(
+    message: string,
+    public cause?: unknown,
+  ) {
+    super(message);
+    this.name = "BiodynamicCalendarError";
+  }
+}
+
+// ============================================================================
 // TYPES & INTERFACES
 // ============================================================================
 
@@ -39,22 +53,42 @@ export class BiodynamicCalendarService {
    * Divine consciousness: moon cycles affect plant growth
    */
   static calculateLunarPhase(date: Date): LunarPhase {
-    // Known new moon reference: January 6, 2000
-    const knownNewMoon = new Date("2000-01-06T18:14:00Z");
-    const lunarCycle = 29.53059; // days
+    try {
+      // Validate input
+      if (!(date instanceof Date) || isNaN(date.getTime())) {
+        throw new BiodynamicCalendarError(
+          "Invalid date provided for lunar phase calculation",
+        );
+      }
 
-    const daysSinceKnownNewMoon =
-      (date.getTime() - knownNewMoon.getTime()) / (1000 * 60 * 60 * 24);
-    const cyclePosition = (daysSinceKnownNewMoon % lunarCycle) / lunarCycle;
+      // Known new moon reference: January 6, 2000
+      const knownNewMoon = new Date("2000-01-06T18:14:00Z");
+      const lunarCycle = 29.53059; // days
 
-    if (cyclePosition < 0.03 || cyclePosition >= 0.97) return "NEW_MOON";
-    if (cyclePosition >= 0.03 && cyclePosition < 0.22) return "WAXING_CRESCENT";
-    if (cyclePosition >= 0.22 && cyclePosition < 0.28) return "FIRST_QUARTER";
-    if (cyclePosition >= 0.28 && cyclePosition < 0.47) return "WAXING_GIBBOUS";
-    if (cyclePosition >= 0.47 && cyclePosition < 0.53) return "FULL_MOON";
-    if (cyclePosition >= 0.53 && cyclePosition < 0.72) return "WANING_GIBBOUS";
-    if (cyclePosition >= 0.72 && cyclePosition < 0.78) return "LAST_QUARTER";
-    return "WANING_CRESCENT";
+      const daysSinceKnownNewMoon =
+        (date.getTime() - knownNewMoon.getTime()) / (1000 * 60 * 60 * 24);
+      const cyclePosition = (daysSinceKnownNewMoon % lunarCycle) / lunarCycle;
+
+      if (cyclePosition < 0.03 || cyclePosition >= 0.97) return "NEW_MOON";
+      if (cyclePosition >= 0.03 && cyclePosition < 0.22)
+        return "WAXING_CRESCENT";
+      if (cyclePosition >= 0.22 && cyclePosition < 0.28) return "FIRST_QUARTER";
+      if (cyclePosition >= 0.28 && cyclePosition < 0.47)
+        return "WAXING_GIBBOUS";
+      if (cyclePosition >= 0.47 && cyclePosition < 0.53) return "FULL_MOON";
+      if (cyclePosition >= 0.53 && cyclePosition < 0.72)
+        return "WANING_GIBBOUS";
+      if (cyclePosition >= 0.72 && cyclePosition < 0.78) return "LAST_QUARTER";
+      return "WANING_CRESCENT";
+    } catch (error) {
+      if (error instanceof BiodynamicCalendarError) {
+        throw error;
+      }
+      throw new BiodynamicCalendarError(
+        "Failed to calculate lunar phase",
+        error,
+      );
+    }
   }
 
   /**
@@ -64,58 +98,72 @@ export class BiodynamicCalendarService {
     date: Date,
     hemisphere: "north" | "south" = "north",
   ): Season {
-    const month = date.getMonth();
-    const day = date.getDate();
+    try {
+      // Validate input
+      if (!(date instanceof Date) || isNaN(date.getTime())) {
+        throw new BiodynamicCalendarError(
+          "Invalid date provided for season calculation",
+        );
+      }
 
-    // Northern hemisphere seasons
-    if (hemisphere === "north") {
+      const month = date.getMonth();
+      const day = date.getDate();
+
+      // Northern hemisphere seasons
+      if (hemisphere === "north") {
+        if (
+          (month === 2 && day >= 20) ||
+          (month > 2 && month < 5) ||
+          (month === 5 && day < 21)
+        ) {
+          return "SPRING";
+        }
+        if (
+          (month === 5 && day >= 21) ||
+          (month > 5 && month < 8) ||
+          (month === 8 && day < 22)
+        ) {
+          return "SUMMER";
+        }
+        if (
+          (month === 8 && day >= 22) ||
+          (month > 8 && month < 11) ||
+          (month === 11 && day < 21)
+        ) {
+          return "FALL";
+        }
+        return "WINTER";
+      }
+
+      // Southern hemisphere (reversed)
       if (
         (month === 2 && day >= 20) ||
         (month > 2 && month < 5) ||
         (month === 5 && day < 21)
       ) {
-        return "SPRING";
+        return "FALL";
       }
       if (
         (month === 5 && day >= 21) ||
         (month > 5 && month < 8) ||
         (month === 8 && day < 22)
       ) {
-        return "SUMMER";
+        return "WINTER";
       }
       if (
         (month === 8 && day >= 22) ||
         (month > 8 && month < 11) ||
         (month === 11 && day < 21)
       ) {
-        return "FALL";
+        return "SPRING";
       }
-      return "WINTER";
+      return "SUMMER";
+    } catch (error) {
+      if (error instanceof BiodynamicCalendarError) {
+        throw error;
+      }
+      throw new BiodynamicCalendarError("Failed to calculate season", error);
     }
-
-    // Southern hemisphere (reversed)
-    if (
-      (month === 2 && day >= 20) ||
-      (month > 2 && month < 5) ||
-      (month === 5 && day < 21)
-    ) {
-      return "FALL";
-    }
-    if (
-      (month === 5 && day >= 21) ||
-      (month > 5 && month < 8) ||
-      (month === 8 && day < 22)
-    ) {
-      return "WINTER";
-    }
-    if (
-      (month === 8 && day >= 22) ||
-      (month > 8 && month < 11) ||
-      (month === 11 && day < 21)
-    ) {
-      return "SPRING";
-    }
-    return "SUMMER";
   }
 
   /**

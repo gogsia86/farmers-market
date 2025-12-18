@@ -303,9 +303,8 @@ async function startMonitoringBot(config: StartupConfig): Promise<boolean> {
   // Dynamically import the bot module
   try {
     const { DivineMonitoringBot } = await import("../src/lib/monitoring/bot");
-    const { PREDEFINED_WORKFLOWS } = await import(
-      "../src/lib/monitoring/workflows/predefined-workflows"
-    );
+    const { PREDEFINED_WORKFLOWS } =
+      await import("../src/lib/monitoring/workflows/predefined-workflows");
 
     const bot = new DivineMonitoringBot({
       baseUrl: config.baseUrl,
@@ -356,9 +355,8 @@ async function startSelfHealingSystem(config: StartupConfig): Promise<boolean> {
       log("OPENAI_API_KEY not found - AI features will be limited", "warning");
     }
 
-    const { createOrchestratorBridge } = await import(
-      "../src/lib/monitoring/integration/orchestrator-bridge"
-    );
+    const { createOrchestratorBridge } =
+      await import("../src/lib/monitoring/integration/orchestrator-bridge");
 
     const bridge = createOrchestratorBridge({
       enabled: true,

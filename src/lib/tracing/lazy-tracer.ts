@@ -98,9 +98,8 @@ export async function traceIfEnabled<T>(
 
   // Lazy load tracing infrastructure
   try {
-    const { traceAgriculturalOperation } = await import(
-      "./agricultural-tracer"
-    );
+    const { traceAgriculturalOperation } =
+      await import("./agricultural-tracer");
 
     return await traceAgriculturalOperation(
       operation as AgriculturalOperation,
@@ -153,9 +152,8 @@ export async function traceWithTiming<T>(
 
   // Execute with full tracing
   try {
-    const { traceAgriculturalOperation } = await import(
-      "./agricultural-tracer"
-    );
+    const { traceAgriculturalOperation } =
+      await import("./agricultural-tracer");
 
     const result = await traceAgriculturalOperation(
       operation as AgriculturalOperation,

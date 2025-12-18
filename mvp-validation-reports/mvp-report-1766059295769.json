@@ -1,0 +1,169 @@
+{
+  "startTime": "2025-12-18T11:57:12.453Z",
+  "endTime": "2025-12-18T12:01:35.768Z",
+  "totalDuration": 263315,
+  "checks": [
+    {
+      "id": "mvp-01",
+      "name": "Farmer Registration & Approval Workflow",
+      "category": "CRITICAL",
+      "status": "FAILED",
+      "duration": 82695,
+      "message": "Farmer registration workflow failed",
+      "error": "Farm name input field not found. Page might not have loaded correctly.",
+      "screenshot": "mvp-validation-screenshots\\farmer-registration-error-1766059121249.png",
+      "timestamp": "2025-12-18T11:58:41.384Z"
+    },
+    {
+      "id": "mvp-02",
+      "name": "Admin Farm Approval",
+      "category": "CRITICAL",
+      "status": "FAILED",
+      "duration": 10915,
+      "message": "Admin farm approval failed",
+      "error": "No pending farms found in admin panel",
+      "screenshot": "mvp-validation-screenshots\\admin-approval-error-1766059132137.png",
+      "timestamp": "2025-12-18T11:58:52.299Z"
+    },
+    {
+      "id": "mvp-03",
+      "name": "Farmer Add/Edit Products with Photos",
+      "category": "CRITICAL",
+      "status": "FAILED",
+      "duration": 17936,
+      "message": "Farmer product management failed",
+      "error": "page.waitForSelector: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#name') to be visible\u001b[22m\n",
+      "screenshot": "mvp-validation-screenshots\\product-management-error-1766059150010.png",
+      "timestamp": "2025-12-18T11:59:10.235Z"
+    },
+    {
+      "id": "mvp-04",
+      "name": "Customer Browse and Search Products",
+      "category": "CRITICAL",
+      "status": "PASSED",
+      "duration": 19386,
+      "message": "Customers can browse 0 products and search functionality works",
+      "screenshot": "mvp-validation-screenshots\\customer-browse-search-1766059169309.png",
+      "timestamp": "2025-12-18T11:59:29.621Z"
+    },
+    {
+      "id": "mvp-05",
+      "name": "Shopping Cart and Checkout Flow",
+      "category": "CRITICAL",
+      "status": "FAILED",
+      "duration": 70797,
+      "message": "Shopping cart and checkout failed",
+      "error": "Add to Cart button not found",
+      "screenshot": "mvp-validation-screenshots\\cart-checkout-error-1766059240100.png",
+      "timestamp": "2025-12-18T12:00:40.418Z"
+    },
+    {
+      "id": "mvp-06",
+      "name": "Stripe Payment Processing",
+      "category": "CRITICAL",
+      "status": "WARNING",
+      "duration": 2320,
+      "message": "Could not fully verify Stripe payment (requires manual testing)",
+      "error": "Stripe payment form not found on checkout page",
+      "screenshot": "mvp-validation-screenshots\\stripe-payment-error-1766059242428.png",
+      "timestamp": "2025-12-18T12:00:42.738Z"
+    },
+    {
+      "id": "mvp-07",
+      "name": "Orders Appear in Farmer Dashboard",
+      "category": "CRITICAL",
+      "status": "FAILED",
+      "duration": 12990,
+      "message": "Farmer order dashboard failed",
+      "error": "Orders section not found in farmer dashboard",
+      "screenshot": "mvp-validation-screenshots\\farmer-orders-error-1766059255569.png",
+      "timestamp": "2025-12-18T12:00:55.728Z"
+    },
+    {
+      "id": "mvp-08",
+      "name": "Email Notifications Work",
+      "category": "HIGH",
+      "status": "WARNING",
+      "duration": 198,
+      "message": "Email configuration needs verification",
+      "error": "Email service not configured (no SMTP or email service env vars)",
+      "screenshot": "mvp-validation-screenshots\\email-error-1766059255755.png",
+      "timestamp": "2025-12-18T12:00:55.926Z"
+    },
+    {
+      "id": "mvp-09",
+      "name": "Admin Can Manage Farms and Orders",
+      "category": "CRITICAL",
+      "status": "PASSED",
+      "duration": 17177,
+      "message": "Admin has access to 3/3 management sections (farms, orders, users)",
+      "screenshot": "mvp-validation-screenshots\\admin-management-1766059272856.png",
+      "timestamp": "2025-12-18T12:01:13.104Z"
+    },
+    {
+      "id": "mvp-10",
+      "name": "Site Works on Mobile Phones",
+      "category": "HIGH",
+      "status": "PASSED",
+      "duration": 7329,
+      "message": "Site is mobile responsive. Products load on mobile: false",
+      "screenshot": "mvp-validation-screenshots\\mobile-responsiveness-1766059280345.png",
+      "timestamp": "2025-12-18T12:01:20.433Z"
+    },
+    {
+      "id": "mvp-11",
+      "name": "Critical Security Measures",
+      "category": "CRITICAL",
+      "status": "PASSED",
+      "duration": 7497,
+      "message": "Security: 4/5 checks passed. HTTPS: ✅, X-Frame-Options: ✅, X-Content-Type-Options: ✅, Protected Routes: ❌, Password Validation: ✅",
+      "screenshot": "mvp-validation-screenshots\\security-measures-1766059287742.png",
+      "timestamp": "2025-12-18T12:01:27.930Z"
+    },
+    {
+      "id": "mvp-12",
+      "name": "Terms of Service and Privacy Policy",
+      "category": "HIGH",
+      "status": "PASSED",
+      "duration": 4960,
+      "message": "Legal pages: 2/2 found. Links in footer: Terms=false, Privacy=false",
+      "screenshot": "mvp-validation-screenshots\\legal-pages-1766059292100.png",
+      "timestamp": "2025-12-18T12:01:32.890Z"
+    },
+    {
+      "id": "mvp-13",
+      "name": "Customer Support Contact",
+      "category": "MEDIUM",
+      "status": "PASSED",
+      "duration": 2878,
+      "message": "Customer support: 1 channel(s) available (Contact Page: true, Email: false)",
+      "screenshot": "mvp-validation-screenshots\\customer-support-1766059295015.png",
+      "timestamp": "2025-12-18T12:01:35.768Z"
+    }
+  ],
+  "summary": {
+    "total": 13,
+    "passed": 6,
+    "failed": 5,
+    "warnings": 2,
+    "skipped": 0,
+    "successRate": 46.15384615384615
+  },
+  "mvpReady": false,
+  "blockers": [
+    "Farmer Registration & Approval Workflow: Farm name input field not found. Page might not have loaded correctly.",
+    "Admin Farm Approval: No pending farms found in admin panel",
+    "Farmer Add/Edit Products with Photos: page.waitForSelector: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#name') to be visible\u001b[22m\n",
+    "Shopping Cart and Checkout Flow: Add to Cart button not found",
+    "Orders Appear in Farmer Dashboard: Orders section not found in farmer dashboard"
+  ],
+  "recommendations": [
+    "Farmer Registration & Approval Workflow: Farmer registration workflow failed",
+    "Admin Farm Approval: Admin farm approval failed",
+    "Farmer Add/Edit Products with Photos: Farmer product management failed",
+    "Shopping Cart and Checkout Flow: Shopping cart and checkout failed",
+    "Stripe Payment Processing: Could not fully verify Stripe payment (requires manual testing)",
+    "Orders Appear in Farmer Dashboard: Farmer order dashboard failed",
+    "Email Notifications Work: Email configuration needs verification"
+  ]
+}

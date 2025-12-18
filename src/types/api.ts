@@ -79,8 +79,7 @@ export interface FilterParams {
  * Query parameters combining pagination, sorting, filtering
  */
 export interface QueryParams
-  extends Partial<PaginationParams>,
-    Partial<SortParams> {
+  extends Partial<PaginationParams>, Partial<SortParams> {
   filters?: FilterParams;
   search?: string;
 }

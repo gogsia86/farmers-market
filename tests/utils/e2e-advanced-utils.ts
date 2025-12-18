@@ -593,9 +593,7 @@ export class ScenarioExecutor {
 
     for (let i = 0; i < scenario.steps.length; i++) {
       const step = scenario.steps[i];
-      console.log(
-        `  ▶ Step ${i + 1}/${scenario.steps.length}: ${step.action}`,
-      );
+      console.log(`  ▶ Step ${i + 1}/${scenario.steps.length}: ${step.action}`);
 
       await this.executeStep(step);
 

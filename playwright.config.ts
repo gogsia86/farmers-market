@@ -27,25 +27,38 @@ export default defineConfig({
   },
 
   projects: [
+    // Setup project - runs authentication before all tests
+    {
+      name: "setup",
+      testMatch: /.*\.setup\.ts/,
+      // Continue even if some setup tests fail (customer auth may fail)
+      retries: 0,
+    },
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
+      // Don't block on setup failures - auth files may already exist
+      // dependencies: ["setup"],
     },
     {
       name: "firefox",
       use: { ...devices["Desktop Firefox"] },
+      dependencies: ["setup"],
     },
     {
       name: "webkit",
       use: { ...devices["Desktop Safari"] },
+      dependencies: ["setup"],
     },
     {
       name: "Mobile Chrome",
       use: { ...devices["Pixel 5"] },
+      dependencies: ["setup"],
     },
     {
       name: "Mobile Safari",
       use: { ...devices["iPhone 12"] },
+      dependencies: ["setup"],
     },
   ],
 

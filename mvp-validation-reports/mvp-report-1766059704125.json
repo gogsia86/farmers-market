@@ -1,0 +1,172 @@
+{
+  "startTime": "2025-12-18T12:03:02.612Z",
+  "endTime": "2025-12-18T12:08:24.123Z",
+  "totalDuration": 321511,
+  "checks": [
+    {
+      "id": "mvp-01",
+      "name": "Farmer Registration & Approval Workflow",
+      "category": "CRITICAL",
+      "status": "FAILED",
+      "duration": 103637,
+      "message": "Farmer registration workflow failed",
+      "error": "Farm name input field not found. Page might not have loaded correctly.",
+      "screenshot": "mvp-validation-screenshots\\farmer-registration-error-1766059492381.png",
+      "timestamp": "2025-12-18T12:04:52.512Z"
+    },
+    {
+      "id": "mvp-02",
+      "name": "Admin Farm Approval",
+      "category": "CRITICAL",
+      "status": "FAILED",
+      "duration": 10891,
+      "message": "Admin farm approval failed",
+      "error": "No pending farms found in admin panel",
+      "screenshot": "mvp-validation-screenshots\\admin-approval-error-1766059503236.png",
+      "timestamp": "2025-12-18T12:05:03.404Z"
+    },
+    {
+      "id": "mvp-03",
+      "name": "Farmer Add/Edit Products with Photos",
+      "category": "CRITICAL",
+      "status": "FAILED",
+      "duration": 38945,
+      "message": "Farmer product management failed",
+      "error": "Product name field not found - check if product form loaded",
+      "screenshot": "mvp-validation-screenshots\\product-management-error-1766059542113.png",
+      "timestamp": "2025-12-18T12:05:42.350Z"
+    },
+    {
+      "id": "mvp-04",
+      "name": "Customer Browse and Search Products",
+      "category": "CRITICAL",
+      "status": "FAILED",
+      "duration": 19798,
+      "message": "Customer browse and search failed",
+      "error": "gridCount is not defined",
+      "screenshot": "mvp-validation-screenshots\\browse-search-error-1766059561771.png",
+      "timestamp": "2025-12-18T12:06:02.148Z"
+    },
+    {
+      "id": "mvp-05",
+      "name": "Shopping Cart and Checkout Flow",
+      "category": "CRITICAL",
+      "status": "FAILED",
+      "duration": 86791,
+      "message": "Shopping cart and checkout failed",
+      "error": "Cart is empty after adding product",
+      "screenshot": "mvp-validation-screenshots\\cart-checkout-error-1766059648772.png",
+      "timestamp": "2025-12-18T12:07:28.939Z"
+    },
+    {
+      "id": "mvp-06",
+      "name": "Stripe Payment Processing",
+      "category": "CRITICAL",
+      "status": "WARNING",
+      "duration": 2169,
+      "message": "Could not fully verify Stripe payment (requires manual testing)",
+      "error": "Stripe payment form not found on checkout page",
+      "screenshot": "mvp-validation-screenshots\\stripe-payment-error-1766059650943.png",
+      "timestamp": "2025-12-18T12:07:31.108Z"
+    },
+    {
+      "id": "mvp-07",
+      "name": "Orders Appear in Farmer Dashboard",
+      "category": "CRITICAL",
+      "status": "FAILED",
+      "duration": 12969,
+      "message": "Farmer order dashboard failed",
+      "error": "Orders section not found in farmer dashboard",
+      "screenshot": "mvp-validation-screenshots\\farmer-orders-error-1766059663914.png",
+      "timestamp": "2025-12-18T12:07:44.077Z"
+    },
+    {
+      "id": "mvp-08",
+      "name": "Email Notifications Work",
+      "category": "HIGH",
+      "status": "WARNING",
+      "duration": 199,
+      "message": "Email configuration needs verification",
+      "error": "Email service not configured (no SMTP or email service env vars)",
+      "screenshot": "mvp-validation-screenshots\\email-error-1766059664104.png",
+      "timestamp": "2025-12-18T12:07:44.276Z"
+    },
+    {
+      "id": "mvp-09",
+      "name": "Admin Can Manage Farms and Orders",
+      "category": "CRITICAL",
+      "status": "PASSED",
+      "duration": 17188,
+      "message": "Admin has access to 3/3 management sections (farms, orders, users)",
+      "screenshot": "mvp-validation-screenshots\\admin-management-1766059681201.png",
+      "timestamp": "2025-12-18T12:08:01.464Z"
+    },
+    {
+      "id": "mvp-10",
+      "name": "Site Works on Mobile Phones",
+      "category": "HIGH",
+      "status": "PASSED",
+      "duration": 7304,
+      "message": "Site is mobile responsive. Products load on mobile: false",
+      "screenshot": "mvp-validation-screenshots\\mobile-responsiveness-1766059688673.png",
+      "timestamp": "2025-12-18T12:08:08.769Z"
+    },
+    {
+      "id": "mvp-11",
+      "name": "Critical Security Measures",
+      "category": "CRITICAL",
+      "status": "PASSED",
+      "duration": 7514,
+      "message": "Security: 4/5 checks passed. HTTPS: ✅, X-Frame-Options: ✅, X-Content-Type-Options: ✅, Protected Routes: ❌, Password Validation: ✅",
+      "screenshot": "mvp-validation-screenshots\\security-measures-1766059696087.png",
+      "timestamp": "2025-12-18T12:08:16.285Z"
+    },
+    {
+      "id": "mvp-12",
+      "name": "Terms of Service and Privacy Policy",
+      "category": "HIGH",
+      "status": "PASSED",
+      "duration": 4952,
+      "message": "Legal pages: 2/2 found. Links in footer: Terms=false, Privacy=false",
+      "screenshot": "mvp-validation-screenshots\\legal-pages-1766059700442.png",
+      "timestamp": "2025-12-18T12:08:21.237Z"
+    },
+    {
+      "id": "mvp-13",
+      "name": "Customer Support Contact",
+      "category": "MEDIUM",
+      "status": "PASSED",
+      "duration": 2886,
+      "message": "Customer support: 1 channel(s) available (Contact Page: true, Email: false)",
+      "screenshot": "mvp-validation-screenshots\\customer-support-1766059703375.png",
+      "timestamp": "2025-12-18T12:08:24.123Z"
+    }
+  ],
+  "summary": {
+    "total": 13,
+    "passed": 5,
+    "failed": 6,
+    "warnings": 2,
+    "skipped": 0,
+    "successRate": 38.46153846153847
+  },
+  "mvpReady": false,
+  "blockers": [
+    "Farmer Registration & Approval Workflow: Farm name input field not found. Page might not have loaded correctly.",
+    "Admin Farm Approval: No pending farms found in admin panel",
+    "Farmer Add/Edit Products with Photos: Product name field not found - check if product form loaded",
+    "Customer Browse and Search Products: gridCount is not defined",
+    "Shopping Cart and Checkout Flow: Cart is empty after adding product",
+    "Orders Appear in Farmer Dashboard: Orders section not found in farmer dashboard"
+  ],
+  "recommendations": [
+    "Farmer Registration & Approval Workflow: Farmer registration workflow failed",
+    "Admin Farm Approval: Admin farm approval failed",
+    "Farmer Add/Edit Products with Photos: Farmer product management failed",
+    "Customer Browse and Search Products: Customer browse and search failed",
+    "Shopping Cart and Checkout Flow: Shopping cart and checkout failed",
+    "Stripe Payment Processing: Could not fully verify Stripe payment (requires manual testing)",
+    "Orders Appear in Farmer Dashboard: Farmer order dashboard failed",
+    "Email Notifications Work: Email configuration needs verification"
+  ]
+}

@@ -1,0 +1,172 @@
+{
+  "startTime": "2025-12-18T09:04:58.512Z",
+  "endTime": "2025-12-18T09:07:38.515Z",
+  "totalDuration": 160003,
+  "checks": [
+    {
+      "id": "mvp-01",
+      "name": "Farmer Registration & Approval Workflow",
+      "category": "CRITICAL",
+      "status": "FAILED",
+      "duration": 63025,
+      "message": "Farmer registration workflow failed",
+      "error": "page.click: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[value=\"FARMER\"]')\u001b[22m\n\u001b[2m    - locator resolved to <input type=\"radio\" value=\"FARMER\" class=\"sr-only\" name=\"userType\"/>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <span class=\"text-2xl block mb-1\">🌾</span> from <div class=\"flex-1 text-center\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <span class=\"text-2xl block mb-1\">🌾</span> from <div class=\"flex-1 text-center\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    115 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m        - element is visible, enabled and stable\u001b[22m\n\u001b[2m        - scrolling into view if needed\u001b[22m\n\u001b[2m        - done scrolling\u001b[22m\n\u001b[2m        - <span class=\"text-2xl block mb-1\">🌾</span> from <div class=\"flex-1 text-center\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m      - retrying click action\u001b[22m\n\u001b[2m        - waiting 500ms\u001b[22m\n",
+      "screenshot": "mvp-validation-screenshots\\farmer-registration-error-1766048761330.png",
+      "timestamp": "2025-12-18T09:06:01.538Z"
+    },
+    {
+      "id": "mvp-02",
+      "name": "Admin Farm Approval",
+      "category": "CRITICAL",
+      "status": "FAILED",
+      "duration": 9657,
+      "message": "Admin farm approval failed",
+      "error": "No pending farms found in admin panel",
+      "screenshot": "mvp-validation-screenshots\\admin-approval-error-1766048770963.png",
+      "timestamp": "2025-12-18T09:06:11.195Z"
+    },
+    {
+      "id": "mvp-03",
+      "name": "Farmer Add/Edit Products with Photos",
+      "category": "CRITICAL",
+      "status": "FAILED",
+      "duration": 14505,
+      "message": "Farmer product management failed",
+      "error": "page.waitForSelector: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#name') to be visible\u001b[22m\n",
+      "screenshot": "mvp-validation-screenshots\\product-management-error-1766048785502.png",
+      "timestamp": "2025-12-18T09:06:25.701Z"
+    },
+    {
+      "id": "mvp-04",
+      "name": "Customer Browse and Search Products",
+      "category": "CRITICAL",
+      "status": "FAILED",
+      "duration": 15819,
+      "message": "Customer browse and search failed",
+      "error": "No products found on browse page",
+      "screenshot": "mvp-validation-screenshots\\browse-search-error-1766048801198.png",
+      "timestamp": "2025-12-18T09:06:41.520Z"
+    },
+    {
+      "id": "mvp-05",
+      "name": "Shopping Cart and Checkout Flow",
+      "category": "CRITICAL",
+      "status": "FAILED",
+      "duration": 8234,
+      "message": "Shopping cart and checkout failed",
+      "error": "Add to Cart button not found",
+      "screenshot": "mvp-validation-screenshots\\cart-checkout-error-1766048809422.png",
+      "timestamp": "2025-12-18T09:06:49.754Z"
+    },
+    {
+      "id": "mvp-06",
+      "name": "Stripe Payment Processing",
+      "category": "CRITICAL",
+      "status": "WARNING",
+      "duration": 2329,
+      "message": "Could not fully verify Stripe payment (requires manual testing)",
+      "error": "Stripe payment form not found on checkout page",
+      "screenshot": "mvp-validation-screenshots\\stripe-payment-error-1766048811767.png",
+      "timestamp": "2025-12-18T09:06:52.083Z"
+    },
+    {
+      "id": "mvp-07",
+      "name": "Orders Appear in Farmer Dashboard",
+      "category": "CRITICAL",
+      "status": "FAILED",
+      "duration": 11617,
+      "message": "Farmer order dashboard failed",
+      "error": "Orders section not found in farmer dashboard",
+      "screenshot": "mvp-validation-screenshots\\farmer-orders-error-1766048823498.png",
+      "timestamp": "2025-12-18T09:07:03.700Z"
+    },
+    {
+      "id": "mvp-08",
+      "name": "Email Notifications Work",
+      "category": "HIGH",
+      "status": "WARNING",
+      "duration": 227,
+      "message": "Email configuration needs verification",
+      "error": "Email service not configured (no SMTP or email service env vars)",
+      "screenshot": "mvp-validation-screenshots\\email-error-1766048823734.png",
+      "timestamp": "2025-12-18T09:07:03.928Z"
+    },
+    {
+      "id": "mvp-09",
+      "name": "Admin Can Manage Farms and Orders",
+      "category": "CRITICAL",
+      "status": "PASSED",
+      "duration": 14382,
+      "message": "Admin has access to 3/3 management sections (farms, orders, users)",
+      "screenshot": "mvp-validation-screenshots\\admin-management-1766048838068.png",
+      "timestamp": "2025-12-18T09:07:18.310Z"
+    },
+    {
+      "id": "mvp-10",
+      "name": "Site Works on Mobile Phones",
+      "category": "HIGH",
+      "status": "PASSED",
+      "duration": 7274,
+      "message": "Site is mobile responsive. Products load on mobile: false",
+      "screenshot": "mvp-validation-screenshots\\mobile-responsiveness-1766048845496.png",
+      "timestamp": "2025-12-18T09:07:25.584Z"
+    },
+    {
+      "id": "mvp-11",
+      "name": "Critical Security Measures",
+      "category": "CRITICAL",
+      "status": "PASSED",
+      "duration": 5147,
+      "message": "Security: 5/5 checks passed. HTTPS: ✅, X-Frame-Options: ✅, X-Content-Type-Options: ✅, Protected Routes: ✅, Password Validation: ✅",
+      "screenshot": "mvp-validation-screenshots\\security-measures-1766048850543.png",
+      "timestamp": "2025-12-18T09:07:30.731Z"
+    },
+    {
+      "id": "mvp-12",
+      "name": "Terms of Service and Privacy Policy",
+      "category": "HIGH",
+      "status": "PASSED",
+      "duration": 4955,
+      "message": "Legal pages: 2/2 found. Links in footer: Terms=false, Privacy=false",
+      "screenshot": "mvp-validation-screenshots\\legal-pages-1766048854916.png",
+      "timestamp": "2025-12-18T09:07:35.686Z"
+    },
+    {
+      "id": "mvp-13",
+      "name": "Customer Support Contact",
+      "category": "MEDIUM",
+      "status": "PASSED",
+      "duration": 2829,
+      "message": "Customer support: 1 channel(s) available (Contact Page: true, Email: false)",
+      "screenshot": "mvp-validation-screenshots\\customer-support-1766048857842.png",
+      "timestamp": "2025-12-18T09:07:38.515Z"
+    }
+  ],
+  "summary": {
+    "total": 13,
+    "passed": 5,
+    "failed": 6,
+    "warnings": 2,
+    "skipped": 0,
+    "successRate": 38.46153846153847
+  },
+  "mvpReady": false,
+  "blockers": [
+    "Farmer Registration & Approval Workflow: page.click: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[value=\"FARMER\"]')\u001b[22m\n\u001b[2m    - locator resolved to <input type=\"radio\" value=\"FARMER\" class=\"sr-only\" name=\"userType\"/>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <span class=\"text-2xl block mb-1\">🌾</span> from <div class=\"flex-1 text-center\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <span class=\"text-2xl block mb-1\">🌾</span> from <div class=\"flex-1 text-center\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    115 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m        - element is visible, enabled and stable\u001b[22m\n\u001b[2m        - scrolling into view if needed\u001b[22m\n\u001b[2m        - done scrolling\u001b[22m\n\u001b[2m        - <span class=\"text-2xl block mb-1\">🌾</span> from <div class=\"flex-1 text-center\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m      - retrying click action\u001b[22m\n\u001b[2m        - waiting 500ms\u001b[22m\n",
+    "Admin Farm Approval: No pending farms found in admin panel",
+    "Farmer Add/Edit Products with Photos: page.waitForSelector: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#name') to be visible\u001b[22m\n",
+    "Customer Browse and Search Products: No products found on browse page",
+    "Shopping Cart and Checkout Flow: Add to Cart button not found",
+    "Orders Appear in Farmer Dashboard: Orders section not found in farmer dashboard"
+  ],
+  "recommendations": [
+    "Farmer Registration & Approval Workflow: Farmer registration workflow failed",
+    "Admin Farm Approval: Admin farm approval failed",
+    "Farmer Add/Edit Products with Photos: Farmer product management failed",
+    "Customer Browse and Search Products: Customer browse and search failed",
+    "Shopping Cart and Checkout Flow: Shopping cart and checkout failed",
+    "Stripe Payment Processing: Could not fully verify Stripe payment (requires manual testing)",
+    "Orders Appear in Farmer Dashboard: Farmer order dashboard failed",
+    "Email Notifications Work: Email configuration needs verification"
+  ]
+}

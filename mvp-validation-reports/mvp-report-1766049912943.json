@@ -1,0 +1,172 @@
+{
+  "startTime": "2025-12-18T09:21:35.215Z",
+  "endTime": "2025-12-18T09:25:12.942Z",
+  "totalDuration": 217726,
+  "checks": [
+    {
+      "id": "mvp-01",
+      "name": "Farmer Registration & Approval Workflow",
+      "category": "CRITICAL",
+      "status": "FAILED",
+      "duration": 66487,
+      "message": "Farmer registration workflow failed",
+      "error": "Farmer registration failed - not redirected to login. URL: http://localhost:3001/signup. Screenshot: mvp-validation-screenshots\\farmer-signup-no-redirect-1766049761318.png",
+      "screenshot": "mvp-validation-screenshots\\farmer-registration-error-1766049761518.png",
+      "timestamp": "2025-12-18T09:22:41.703Z"
+    },
+    {
+      "id": "mvp-02",
+      "name": "Admin Farm Approval",
+      "category": "CRITICAL",
+      "status": "FAILED",
+      "duration": 9578,
+      "message": "Admin farm approval failed",
+      "error": "No pending farms found in admin panel",
+      "screenshot": "mvp-validation-screenshots\\admin-approval-error-1766049771042.png",
+      "timestamp": "2025-12-18T09:22:51.281Z"
+    },
+    {
+      "id": "mvp-03",
+      "name": "Farmer Add/Edit Products with Photos",
+      "category": "CRITICAL",
+      "status": "FAILED",
+      "duration": 14495,
+      "message": "Farmer product management failed",
+      "error": "page.waitForSelector: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#name') to be visible\u001b[22m\n",
+      "screenshot": "mvp-validation-screenshots\\product-management-error-1766049785573.png",
+      "timestamp": "2025-12-18T09:23:05.776Z"
+    },
+    {
+      "id": "mvp-04",
+      "name": "Customer Browse and Search Products",
+      "category": "CRITICAL",
+      "status": "FAILED",
+      "duration": 10439,
+      "message": "Customer browse and search failed",
+      "error": "No products found on browse page",
+      "screenshot": "mvp-validation-screenshots\\browse-search-error-1766049795896.png",
+      "timestamp": "2025-12-18T09:23:16.215Z"
+    },
+    {
+      "id": "mvp-05",
+      "name": "Shopping Cart and Checkout Flow",
+      "category": "CRITICAL",
+      "status": "FAILED",
+      "duration": 68257,
+      "message": "Shopping cart and checkout failed",
+      "error": "Customer registration failed - not redirected to login. URL: http://localhost:3001/signup. Screenshot: mvp-validation-screenshots\\customer-signup-no-redirect-1766049864106.png",
+      "screenshot": "mvp-validation-screenshots\\cart-checkout-error-1766049864304.png",
+      "timestamp": "2025-12-18T09:24:24.472Z"
+    },
+    {
+      "id": "mvp-06",
+      "name": "Stripe Payment Processing",
+      "category": "CRITICAL",
+      "status": "WARNING",
+      "duration": 2185,
+      "message": "Could not fully verify Stripe payment (requires manual testing)",
+      "error": "Stripe payment form not found on checkout page",
+      "screenshot": "mvp-validation-screenshots\\stripe-payment-error-1766049866475.png",
+      "timestamp": "2025-12-18T09:24:26.657Z"
+    },
+    {
+      "id": "mvp-07",
+      "name": "Orders Appear in Farmer Dashboard",
+      "category": "CRITICAL",
+      "status": "FAILED",
+      "duration": 11582,
+      "message": "Farmer order dashboard failed",
+      "error": "Orders section not found in farmer dashboard",
+      "screenshot": "mvp-validation-screenshots\\farmer-orders-error-1766049878046.png",
+      "timestamp": "2025-12-18T09:24:38.240Z"
+    },
+    {
+      "id": "mvp-08",
+      "name": "Email Notifications Work",
+      "category": "HIGH",
+      "status": "WARNING",
+      "duration": 213,
+      "message": "Email configuration needs verification",
+      "error": "Email service not configured (no SMTP or email service env vars)",
+      "screenshot": "mvp-validation-screenshots\\email-error-1766049878265.png",
+      "timestamp": "2025-12-18T09:24:38.453Z"
+    },
+    {
+      "id": "mvp-09",
+      "name": "Admin Can Manage Farms and Orders",
+      "category": "CRITICAL",
+      "status": "PASSED",
+      "duration": 14397,
+      "message": "Admin has access to 3/3 management sections (farms, orders, users)",
+      "screenshot": "mvp-validation-screenshots\\admin-management-1766049892607.png",
+      "timestamp": "2025-12-18T09:24:52.851Z"
+    },
+    {
+      "id": "mvp-10",
+      "name": "Site Works on Mobile Phones",
+      "category": "HIGH",
+      "status": "PASSED",
+      "duration": 7171,
+      "message": "Site is mobile responsive. Products load on mobile: false",
+      "screenshot": "mvp-validation-screenshots\\mobile-responsiveness-1766049899936.png",
+      "timestamp": "2025-12-18T09:25:00.023Z"
+    },
+    {
+      "id": "mvp-11",
+      "name": "Critical Security Measures",
+      "category": "CRITICAL",
+      "status": "PASSED",
+      "duration": 5114,
+      "message": "Security: 5/5 checks passed. HTTPS: ✅, X-Frame-Options: ✅, X-Content-Type-Options: ✅, Protected Routes: ✅, Password Validation: ✅",
+      "screenshot": "mvp-validation-screenshots\\security-measures-1766049904956.png",
+      "timestamp": "2025-12-18T09:25:05.138Z"
+    },
+    {
+      "id": "mvp-12",
+      "name": "Terms of Service and Privacy Policy",
+      "category": "HIGH",
+      "status": "PASSED",
+      "duration": 4959,
+      "message": "Legal pages: 2/2 found. Links in footer: Terms=false, Privacy=false",
+      "screenshot": "mvp-validation-screenshots\\legal-pages-1766049909305.png",
+      "timestamp": "2025-12-18T09:25:10.097Z"
+    },
+    {
+      "id": "mvp-13",
+      "name": "Customer Support Contact",
+      "category": "MEDIUM",
+      "status": "PASSED",
+      "duration": 2845,
+      "message": "Customer support: 1 channel(s) available (Contact Page: true, Email: false)",
+      "screenshot": "mvp-validation-screenshots\\customer-support-1766049912207.png",
+      "timestamp": "2025-12-18T09:25:12.942Z"
+    }
+  ],
+  "summary": {
+    "total": 13,
+    "passed": 5,
+    "failed": 6,
+    "warnings": 2,
+    "skipped": 0,
+    "successRate": 38.46153846153847
+  },
+  "mvpReady": false,
+  "blockers": [
+    "Farmer Registration & Approval Workflow: Farmer registration failed - not redirected to login. URL: http://localhost:3001/signup. Screenshot: mvp-validation-screenshots\\farmer-signup-no-redirect-1766049761318.png",
+    "Admin Farm Approval: No pending farms found in admin panel",
+    "Farmer Add/Edit Products with Photos: page.waitForSelector: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#name') to be visible\u001b[22m\n",
+    "Customer Browse and Search Products: No products found on browse page",
+    "Shopping Cart and Checkout Flow: Customer registration failed - not redirected to login. URL: http://localhost:3001/signup. Screenshot: mvp-validation-screenshots\\customer-signup-no-redirect-1766049864106.png",
+    "Orders Appear in Farmer Dashboard: Orders section not found in farmer dashboard"
+  ],
+  "recommendations": [
+    "Farmer Registration & Approval Workflow: Farmer registration workflow failed",
+    "Admin Farm Approval: Admin farm approval failed",
+    "Farmer Add/Edit Products with Photos: Farmer product management failed",
+    "Customer Browse and Search Products: Customer browse and search failed",
+    "Shopping Cart and Checkout Flow: Shopping cart and checkout failed",
+    "Stripe Payment Processing: Could not fully verify Stripe payment (requires manual testing)",
+    "Orders Appear in Farmer Dashboard: Farmer order dashboard failed",
+    "Email Notifications Work: Email configuration needs verification"
+  ]
+}

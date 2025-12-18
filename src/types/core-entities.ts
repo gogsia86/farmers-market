@@ -122,8 +122,10 @@ export interface FarmWithRelations extends Omit<PrismaFarm, "averageRating"> {
  * Product with computed metrics and relations
  * Use this for full product details
  */
-export interface ProductWithRelations
-  extends Omit<PrismaProduct, "averageRating"> {
+export interface ProductWithRelations extends Omit<
+  PrismaProduct,
+  "averageRating"
+> {
   // Computed fields
   averageRating: number; // Average from reviews (converted from Decimal)
   totalReviews: number; // Count of reviews

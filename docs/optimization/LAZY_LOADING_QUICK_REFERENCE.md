@@ -383,9 +383,8 @@ export async function middleware(request: NextRequest) {
 
   // API routes: load rate limiter
   if (pathname.startsWith("/api")) {
-    const { checkRateLimit } = await import(
-      "@/lib/middleware/rate-limiter-lazy"
-    );
+    const { checkRateLimit } =
+      await import("@/lib/middleware/rate-limiter-lazy");
     const rateLimit = await checkRateLimit(request);
     if (!rateLimit.success) {
       return NextResponse.json(
@@ -551,9 +550,8 @@ import { describe, it, expect, jest } from "@jest/globals";
 
 describe("Lazy Service", () => {
   it("should load service dynamically", async () => {
-    const { processHeavyOperationLazy } = await import(
-      "@/lib/services/heavy-service-lazy"
-    );
+    const { processHeavyOperationLazy } =
+      await import("@/lib/services/heavy-service-lazy");
 
     const result = await processHeavyOperationLazy({ test: "data" });
     expect(result).toBeDefined();

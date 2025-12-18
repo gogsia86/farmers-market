@@ -10,6 +10,8 @@
  * - Type-safe operations with agricultural consciousness
  * - Enlightening error messages
  * - Quantum entity manifestation
+ * - Comprehensive error handling
+ * - Canonical database usage
  *
  * Architecture:
  * Controller → Service → Repository → Database
@@ -21,6 +23,7 @@
  */
 
 import { Prisma, FarmStatus } from "@prisma/client";
+import { database } from "@/lib/database";
 import {
   farmRepository,
   type QuantumFarm,
@@ -38,6 +41,24 @@ import {
   addSpanEvent,
   setSpanAttributes,
 } from "@/lib/tracing/service-tracer";
+
+// ============================================================================
+// ERROR CLASSES
+// ============================================================================
+
+/**
+ * Custom error class for farm service operations
+ */
+export class FarmServiceError extends Error {
+  constructor(
+    message: string,
+    public code: string,
+    public cause?: unknown,
+  ) {
+    super(message);
+    this.name = "FarmServiceError";
+  }
+}
 
 // ============================================================================
 // TYPE DEFINITIONS
