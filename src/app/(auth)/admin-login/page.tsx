@@ -4,6 +4,16 @@ import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
+/**
+ * 👑 ADMIN LOGIN PAGE
+ * Divine admin authentication with agricultural consciousness
+ *
+ * Note: This page is at /admin-login for backward compatibility.
+ * Admin users can also access via /login with their admin credentials.
+ *
+ * @divine-pattern Holographic Component Architecture
+ * @reference 05_TESTING_SECURITY_DIVINITY.instructions.md
+ */
 export default function AdminLoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
