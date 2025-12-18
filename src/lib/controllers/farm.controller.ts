@@ -87,11 +87,19 @@ const ListFarmsQuerySchema = z.object({
   page: z
     .string()
     .optional()
-    .transform((val) => (val ? parseInt(val) : 1)),
+    .transform((val) => {
+      if (!val) return 1;
+      const parsed = parseInt(val);
+      return isNaN(parsed) || parsed < 1 ? 1 : parsed;
+    }),
   limit: z
     .string()
     .optional()
-    .transform((val) => (val ? parseInt(val) : 20)),
+    .transform((val) => {
+      if (!val) return 20;
+      const parsed = parseInt(val);
+      return isNaN(parsed) || parsed < 1 ? 20 : Math.min(parsed, 100);
+    }),
   status: z.enum(["ACTIVE", "PENDING", "SUSPENDED", "INACTIVE"]).optional(),
   city: z.string().optional(),
   state: z.string().optional(),

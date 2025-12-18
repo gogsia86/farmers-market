@@ -29,7 +29,8 @@ const createPrismaClient = (): PrismaClient => {
 
   const pool = new Pool({
     connectionString:
-      connectionString || "postgresql://localhost:5432/farmersmarket",
+      connectionString ||
+      "postgresql://farmers_user:changeme123@localhost:5432/farmers_market",
   });
 
   // Create Prisma adapter for PostgreSQL

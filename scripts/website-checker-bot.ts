@@ -414,13 +414,16 @@ class WebsiteChecker {
   async checkFarmsAPI(): Promise<CheckResult> {
     const start = Date.now();
     try {
-      const response = await fetch(`${CONFIG.baseUrl}/api/farms/featured`, {
-        method: "GET",
-      });
+      const response = await fetch(
+        `${CONFIG.baseUrl}/api/farms/featured?limit=10`,
+        {
+          method: "GET",
+        },
+      );
 
       if (response.ok) {
         const data = await response.json();
-        const farmCount = data.data?.farms?.length || data.farms?.length || 0;
+        const farmCount = data.data?.farms?.length || data.data?.count || 0;
         return {
           name: "Farms API",
           status: "pass",
@@ -726,7 +729,7 @@ class WebsiteChecker {
     const start = Date.now();
     try {
       // Check reviews create endpoint (requires auth, expect 401)
-      const response = await fetch(`${CONFIG.baseUrl}/api/reviews/create`, {
+      const response = await fetch(`${CONFIG.baseUrl}/api/reviews`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({}),
@@ -740,12 +743,12 @@ class WebsiteChecker {
           message: "Reviews endpoint exists (requires authentication)",
           timestamp: new Date(),
         };
-      } else if (response.status === 404) {
+      } else if (response.status === 404 || response.status === 405) {
         return {
           name: "Reviews Endpoint",
           status: "warn",
           duration: Date.now() - start,
-          message: "Reviews endpoint not found",
+          message: "Reviews endpoint not found or method not allowed",
           timestamp: new Date(),
         };
       } else if (response.ok) {

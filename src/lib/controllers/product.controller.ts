@@ -187,7 +187,7 @@ const ListProductsQuerySchema = z.object({
  * Product search query parameters schema
  */
 const SearchProductsQuerySchema = z.object({
-  query: z.string().min(1, "Search query is required"),
+  query: z.string().optional().default(""),
   limit: z
     .string()
     .optional()
@@ -474,14 +474,17 @@ export class ProductController extends BaseController {
       const searchParams = Object.fromEntries(request.nextUrl.searchParams);
       const validated = SearchProductsQuerySchema.parse(searchParams);
 
+      // If no query provided, return empty results or all products based on limit
+      const query = validated.query || "";
+
       // Call service layer
       const products = await ProductService.searchProducts(
-        validated.query,
+        query,
         validated.limit || 20,
       );
 
       return this.success(
-        { products, total: products.length },
+        { products, total: products.length, query },
         { message: "Search completed successfully" },
       );
     });

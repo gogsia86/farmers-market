@@ -10,6 +10,7 @@
   "scripts": {
     "postinstall": "prisma generate || true",
     "prepare": "husky",
+    "seed": "tsx scripts/seed-test-data.ts",
     "dev": "cross-env NODE_OPTIONS='--max-old-space-size=16384' NODE_ENV=development next dev --turbo -p 3001",
     "dev:safe": "node scripts/start-dev-safe.js",
     "dev:webpack": "cross-env NODE_OPTIONS='--max-old-space-size=16384' NODE_ENV=development next dev -p 3001",

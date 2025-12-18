@@ -18,20 +18,30 @@ import { database } from "@/lib/database";
  */
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: RouteParams,
 ): Promise<NextResponse> {
   try {
-    const { slug } = params;
+    // In Next.js 15, params is a Promise that needs to be awaited
+    const resolvedParams = await params;
+    const { slug } = resolvedParams;
+
+    // Debug logging
+    console.log("🔍 [Farms API] Request URL:", request.url);
+    console.log("🔍 [Farms API] Slug value:", slug);
 
     // Validate slug parameter
     if (!slug || typeof slug !== "string") {
+      console.error("❌ [Farms API] Invalid slug:", {
+        slug,
+        type: typeof slug,
+      });
       return NextResponse.json(
         {
           success: false,
@@ -42,6 +52,92 @@ export async function GET(
         },
         { status: 400 },
       );
+    }
+
+    // Handle special endpoint: /api/farms/featured
+    console.log("🔍 [Farms API] Checking slug:", slug);
+    if (slug.toLowerCase() === "featured") {
+      console.log("✨ [Farms API] Featured endpoint detected!");
+      const { searchParams } = new URL(request.url);
+      const limit = Math.min(parseInt(searchParams.get("limit") || "6"), 20);
+
+      // Fetch featured farms with optimized query
+      const farms = await database.farm.findMany({
+        where: {
+          status: "ACTIVE",
+          name: { not: "" },
+          city: { not: "" },
+          state: { not: "" },
+        },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          description: true,
+          city: true,
+          state: true,
+          logoUrl: true,
+          bannerUrl: true,
+          averageRating: true,
+          reviewCount: true,
+          farmingPractices: true,
+          productCategories: true,
+          deliveryRadius: true,
+          createdAt: true,
+          _count: {
+            select: {
+              products: {
+                where: {
+                  status: "ACTIVE",
+                },
+              },
+            },
+          },
+        },
+        orderBy: [
+          { averageRating: "desc" },
+          { reviewCount: "desc" },
+          { createdAt: "desc" },
+        ],
+        take: limit,
+      });
+
+      const formattedFarms = farms.map((farm) => ({
+        id: farm.id,
+        name: farm.name,
+        slug: farm.slug,
+        description: farm.description,
+        location: {
+          city: farm.city,
+          state: farm.state,
+        },
+        images: {
+          avatar: farm.logoUrl,
+          cover: farm.bannerUrl,
+        },
+        rating: farm.averageRating,
+        reviewCount: farm.reviewCount,
+        farmingPractices: farm.farmingPractices,
+        productCategories: farm.productCategories,
+        deliveryRadius: farm.deliveryRadius,
+        activeProductCount: farm._count.products,
+        createdAt: farm.createdAt.toISOString(),
+      }));
+
+      return NextResponse.json({
+        success: true,
+        data: {
+          farms: formattedFarms,
+          count: formattedFarms.length,
+        },
+        meta: {
+          cached: true,
+          agricultural: {
+            consciousness: "DIVINE",
+            operation: "FEATURED_MANIFESTATION",
+          },
+        },
+      });
     }
 
     // Fetch farm with all related data

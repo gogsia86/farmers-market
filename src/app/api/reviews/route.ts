@@ -5,133 +5,168 @@ import { database } from "@/lib/database";
 /**
  * GET /api/reviews
  *
- * Fetch authenticated user's reviews and pending reviews
+ * Public endpoint to fetch reviews with optional filters
+ * If authenticated, also returns user's pending reviews
+ *
+ * Query Parameters:
+ * - productId?: string - Filter by product ID
+ * - farmId?: string - Filter by farm ID
+ * - limit?: number - Limit results (default: 20, max: 100)
+ * - offset?: number - Offset for pagination (default: 0)
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const productId = searchParams.get("productId");
+    const farmId = searchParams.get("farmId");
+    const limit = Math.min(parseInt(searchParams.get("limit") || "20"), 100);
+    const offset = parseInt(searchParams.get("offset") || "0");
+
+    // Check if user is authenticated (optional)
     const session = await auth();
 
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { success: false, error: "Authentication required" },
-        { status: 401 },
-      );
+    // Build where clause for public reviews
+    const where: any = {
+      status: "APPROVED", // Only show approved reviews publicly
+    };
+
+    if (productId) {
+      where.productId = productId;
     }
 
-    // Fetch submitted reviews
-    const reviews = await database.review.findMany({
-      where: { customerId: session.user.id },
-      include: {
-        farm: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
-        product: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
-        order: {
-          select: {
-            id: true,
-            orderNumber: true,
-          },
-        },
-      },
-      orderBy: { createdAt: "desc" },
-    });
+    if (farmId) {
+      where.farmId = farmId;
+    }
 
-    // Fetch completed orders without reviews for pending reviews
-    const completedOrders = await database.order.findMany({
-      where: {
-        customerId: session.user.id,
-        status: "COMPLETED",
-      },
-      include: {
-        farm: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
+    // Fetch reviews with pagination
+    const [reviews, total] = await Promise.all([
+      database.review.findMany({
+        where,
+        take: limit,
+        skip: offset,
+        include: {
+          customer: {
+            select: {
+              id: true,
+              name: true,
+              avatar: true,
+            },
           },
-        },
-        items: {
-          include: {
-            product: {
-              select: {
-                id: true,
-                name: true,
-                slug: true,
-              },
+          farm: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+            },
+          },
+          product: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
             },
           },
         },
-        reviews: true,
-      },
-      orderBy: { updatedAt: "desc" },
-    });
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+      database.review.count({ where }),
+    ]);
 
-    // Filter orders that don't have reviews yet
-    const pendingReviews = completedOrders
-      .filter((order) => !order.reviews || order.reviews.length === 0)
-      .map((order) => ({
-        orderId: order.id,
-        orderNumber: order.orderNumber,
-        farmId: order.farm.id,
-        farmName: order.farm.name,
-        farmSlug: order.farm.slug,
-        completedAt: order.updatedAt.toISOString(),
-        items: order.items.map((item) => ({
-          productId: item.product.id,
-          productName: item.product.name,
-          productSlug: item.product.slug,
-        })),
-      }));
-
-    // Format submitted reviews
+    // Format reviews
     const formattedReviews = reviews.map((review) => ({
       id: review.id,
       rating: review.rating,
       comment: review.reviewText,
+      customerName: (review as any).customer?.name || "Anonymous",
+      customerImage: (review as any).customer?.avatar,
       farmId: review.farmId || undefined,
-      farmName: review.farm?.name || undefined,
-      farmSlug: review.farm?.slug || undefined,
+      farmName: (review as any).farm?.name || undefined,
+      farmSlug: (review as any).farm?.slug || undefined,
       productId: review.productId || undefined,
-      productName: review.product?.name || undefined,
-      productSlug: review.product?.slug || undefined,
-      orderId: review.orderId || undefined,
-      orderNumber: review.order?.orderNumber || undefined,
+      productName: (review as any).product?.name || undefined,
+      productSlug: (review as any).product?.slug || undefined,
       createdAt: review.createdAt.toISOString(),
       updatedAt: review.updatedAt.toISOString(),
       helpful: review.helpfulCount || 0,
       notHelpful: review.unhelpfulCount || 0,
     }));
 
+    // If authenticated, also fetch user's pending reviews
+    let pendingReviews: any[] = [];
+    if (session?.user?.id) {
+      const completedOrders = await database.order.findMany({
+        where: {
+          customerId: session.user.id,
+          status: "COMPLETED",
+        },
+        include: {
+          farm: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+            },
+          },
+          items: {
+            include: {
+              product: {
+                select: {
+                  id: true,
+                  name: true,
+                  slug: true,
+                },
+              },
+            },
+          },
+          reviews: true,
+        },
+        orderBy: { updatedAt: "desc" },
+        take: 10, // Limit pending reviews
+      });
+
+      // Filter orders without reviews
+      pendingReviews = completedOrders
+        .filter((order) => !order.reviews || order.reviews.length === 0)
+        .map((order) => ({
+          orderId: order.id,
+          orderNumber: order.orderNumber,
+          farmId: order.farm.id,
+          farmName: order.farm.name,
+          farmSlug: order.farm.slug,
+          completedAt: order.updatedAt.toISOString(),
+          items: order.items.map((item) => ({
+            productId: item.product.id,
+            productName: item.product.name,
+            productSlug: item.product.slug,
+          })),
+        }));
+    }
+
     return NextResponse.json({
       success: true,
-      reviews: formattedReviews,
-      pending: pendingReviews,
-      stats: {
-        submitted: reviews.length,
-        pending: pendingReviews.length,
-        averageRating:
-          reviews.length > 0
-            ? reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length
-            : 0,
+      data: formattedReviews,
+      meta: {
+        total,
+        limit,
+        offset,
+        hasMore: offset + limit < total,
       },
+      pending: pendingReviews.length > 0 ? pendingReviews : undefined,
     });
   } catch (error) {
-    console.error("Reviews fetch error:", error);
+    console.error("Reviews GET error:", error);
     return NextResponse.json(
       {
         success: false,
         error: "Failed to fetch reviews",
-        details: error instanceof Error ? error.message : "Unknown error",
+        details:
+          process.env.NODE_ENV === "development"
+            ? error instanceof Error
+              ? error.message
+              : "Unknown error"
+            : undefined,
       },
       { status: 500 },
     );
