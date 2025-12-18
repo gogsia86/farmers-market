@@ -558,16 +558,20 @@ class HumanTester {
 
   async cleanup() {
     log.step("Cleaning up...");
-    this.rl.close();
 
     if (this.browser) {
+      // Ask before closing readline
       const keepOpen = await this.askQuestion("Keep browser open? (y/N):");
+      this.rl.close();
+
       if (keepOpen.toLowerCase() !== "y") {
         await this.browser.close();
         log.success("Browser closed");
       } else {
         log.info("Browser left open for manual inspection");
       }
+    } else {
+      this.rl.close();
     }
   }
 
