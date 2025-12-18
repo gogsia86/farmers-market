@@ -5,7 +5,20 @@
  */
 
 import "dotenv/config";
-import { defineConfig, env } from "prisma/config";
+import { defineConfig } from "prisma/config";
+
+// Helper to get DATABASE_URL with fallback for build-time
+function getDatabaseUrl(): string {
+  const url = process.env.DATABASE_URL;
+  if (url) {
+    return url;
+  }
+
+  // Fallback for build-time when DATABASE_URL is not set
+  // This allows Prisma to generate the client without a real database
+  console.warn("⚠️  DATABASE_URL not set, using placeholder for build");
+  return "postgresql://placeholder:placeholder@localhost:5432/placeholder";
+}
 
 export default defineConfig({
   // Schema location
@@ -19,7 +32,7 @@ export default defineConfig({
 
   // Database datasource configuration
   datasource: {
-    // Use DATABASE_URL from environment
-    url: env("DATABASE_URL"),
+    // Use DATABASE_URL from environment, with fallback for build-time
+    url: getDatabaseUrl(),
   },
 });
