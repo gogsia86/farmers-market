@@ -24,7 +24,7 @@ const updateSavedSearchSchema = z.object({
   name: z.string().min(1).max(255).optional(),
   description: z.string().optional(),
   query: z.string().max(500).optional(),
-  filters: z.record(z.any()).optional(),
+  filters: z.record(z.string(), z.any()).optional(),
   sortBy: z.string().max(50).optional(),
   location: z.object({
     lat: z.number(),
@@ -129,7 +129,7 @@ export async function PUT(
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid input', details: error.errors },
+        { error: 'Invalid input', details: error.issues },
         { status: 400 }
       );
     }

@@ -123,7 +123,7 @@ export interface UseSearchSuggestionsReturn {
  */
 async function fetchSuggestions(
   query: string,
-  limit?: number
+  limit?: number,
 ): Promise<SuggestionsResponse> {
   const params = new URLSearchParams();
   params.append("q", query);
@@ -239,7 +239,7 @@ function useDebounce<T>(value: T, delay: number): T {
  * ```
  */
 export function useSearchSuggestions(
-  options: UseSearchSuggestionsOptions = {}
+  options: UseSearchSuggestionsOptions = {},
 ): UseSearchSuggestionsReturn {
   const {
     minLength = 2,
@@ -264,12 +264,7 @@ export function useSearchSuggestions(
   }, [enabled, debouncedQuery, minLength]);
 
   // Fetch suggestions with React Query
-  const {
-    data,
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: productKeys.suggestions(debouncedQuery),
     queryFn: () => fetchSuggestions(debouncedQuery, limit),
     enabled: shouldFetch,
@@ -287,28 +282,25 @@ export function useSearchSuggestions(
   // Group suggestions by type
   const productSuggestions = useMemo(
     () => suggestions.filter((s) => s.type === "PRODUCT"),
-    [suggestions]
+    [suggestions],
   );
 
   const farmSuggestions = useMemo(
     () => suggestions.filter((s) => s.type === "FARM"),
-    [suggestions]
+    [suggestions],
   );
 
   const categorySuggestions = useMemo(
     () => suggestions.filter((s) => s.type === "CATEGORY"),
-    [suggestions]
+    [suggestions],
   );
 
   // Computed values
-  const hasSuggestions = useMemo(
-    () => suggestions.length > 0,
-    [suggestions]
-  );
+  const hasSuggestions = useMemo(() => suggestions.length > 0, [suggestions]);
 
   const isEmpty = useMemo(
     () => shouldFetch && !isLoading && suggestions.length === 0,
-    [shouldFetch, isLoading, suggestions]
+    [shouldFetch, isLoading, suggestions],
   );
 
   // Clear suggestions
@@ -324,7 +316,7 @@ export function useSearchSuggestions(
       setSelectedIndex(-1);
       onSelect?.(suggestion);
     },
-    [onSelect]
+    [onSelect],
   );
 
   // Keyboard navigation - Select next
@@ -350,7 +342,10 @@ export function useSearchSuggestions(
   // Keyboard navigation - Select current
   const selectCurrent = useCallback(() => {
     if (selectedIndex >= 0 && selectedIndex < suggestions.length) {
-      selectSuggestion(suggestions[selectedIndex]);
+      const suggestion = suggestions[selectedIndex];
+      if (suggestion) {
+        selectSuggestion(suggestion);
+      }
     }
   }, [selectedIndex, suggestions, selectSuggestion]);
 
@@ -479,7 +474,7 @@ export function useRecentSearches(maxItems: number = 10) {
         return updated.slice(0, maxItems);
       });
     },
-    [maxItems]
+    [maxItems],
   );
 
   // Remove specific search

@@ -10,27 +10,21 @@ import { NextRequest, NextResponse } from "next/server";
 import { analyticsService } from "@/lib/services/analytics.service";
 import type { SearchAnalyticsQuery } from "@/lib/services/analytics.service";
 import { z } from "zod";
-import { Season, PeriodType } from "@prisma/client";
+import { PeriodType } from "@prisma/client";
 
 // ============================================
 // VALIDATION SCHEMA
 // ============================================
 
 const AggregateSearchAnalyticsSchema = z.object({
-  query: z.string().max(500).optional(),
-  categoryId: z.string().optional(),
-  farmId: z.string().optional(),
-  season: z.nativeEnum(Season).optional(),
-  period: z.nativeEnum(PeriodType, {
-    errorMap: () => ({ message: "Invalid period type" }),
-  }),
+  period: z.nativeEnum(PeriodType),
   periodKey: z
     .string()
     .min(1, "Period key is required")
     .max(50)
     .regex(
       /^(\d{4}(-W\d{2}|-\d{2}|-Q[1-4])?|\d{4})$/,
-      "Invalid period key format (e.g., 2024-W23, 2024-06, 2024-Q2, 2024)"
+      "Invalid period key format (e.g., 2024-W23, 2024-06, 2024-Q2, 2024)",
     ),
 });
 
@@ -60,78 +54,56 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           error: {
             code: "VALIDATION_ERROR",
             message: "Invalid aggregation request",
-            details: validation.error.errors,
+            details: validation.error.issues,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const queryData = validation.data as SearchAnalyticsQuery;
 
     // Perform aggregation
-    const analytics = await analyticsService.aggregateSearchAnalytics(
-      queryData
-    );
+    const analytics =
+      await analyticsService.aggregateSearchAnalytics(queryData);
 
     return NextResponse.json(
       {
         success: true,
         data: {
           id: analytics.id,
-          query: analytics.query,
-          categoryId: analytics.categoryId,
-          farmId: analytics.farmId,
-          season: analytics.season,
-          period: analytics.period,
-          periodKey: analytics.periodKey,
+          periodType: analytics.periodType,
+          periodStart: analytics.periodStart,
+          periodEnd: analytics.periodEnd,
           metrics: {
             volume: {
               totalSearches: analytics.totalSearches,
               uniqueUsers: analytics.uniqueUsers,
-              uniqueSessions: analytics.uniqueSessions,
-              averageResultsCount: Number(analytics.averageResultsCount),
-              noResultsCount: analytics.noResultsCount,
-              noResultsRate:
-                analytics.totalSearches > 0
-                  ? analytics.noResultsCount / analytics.totalSearches
-                  : 0,
+              uniqueQueries: analytics.uniqueQueries,
+              avgResultsCount: Number(analytics.avgResultsCount),
             },
             engagement: {
-              refinementRate: Number(analytics.refinementRate),
-              saveRate: Number(analytics.saveRate),
-              clickThroughRate: Number(analytics.clickThroughRate),
+              avgClickThrough: Number(analytics.avgClickThrough),
               conversionRate: Number(analytics.conversionRate),
-              bounceRate: Number(analytics.bounceRate),
             },
             performance: {
-              averageResponseTime: Number(analytics.averageResponseTime),
-              cacheHitRate: Number(analytics.cacheHitRate),
-              p95ResponseTime: Number(analytics.p95ResponseTime),
-              p99ResponseTime: Number(analytics.p99ResponseTime),
-            },
-            agricultural: {
-              seasonalRelevanceAvg: analytics.seasonalRelevanceAvg
-                ? Number(analytics.seasonalRelevanceAvg)
-                : null,
-              biodynamicEngagement: analytics.biodynamicEngagement
-                ? Number(analytics.biodynamicEngagement)
-                : null,
+              avgResponseTime: analytics.avgResponseTime,
+              p95ResponseTime: analytics.p95ResponseTime,
             },
           },
-          topResults: {
-            clicked: analytics.topClickedResults,
-            converted: analytics.topConvertedItems,
-          },
-          calculatedAt: analytics.calculatedAt,
-          updatedAt: analytics.updatedAt,
+          topQueries: analytics.topQueries,
+          topFilters: analytics.topFilters,
+          topCategories: analytics.topCategories,
+          seasonalTrends: analytics.seasonalTrends,
+          farmPopularity: analytics.farmPopularity,
+          createdAt: analytics.createdAt,
         },
         meta: {
           timestamp: new Date().toISOString(),
           aggregationType: "search_analytics",
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Analytics aggregation failed:", error);
@@ -147,7 +119,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -163,38 +135,34 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 /**
  * 📊 GET - Retrieve existing aggregated analytics
- * Query params: query, categoryId, farmId, season, period, periodKey
+ * Query params: period, periodStart
  */
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const { searchParams } = new URL(request.url);
 
     // Extract query parameters
-    const query = searchParams.get("query") || undefined;
-    const categoryId = searchParams.get("categoryId") || undefined;
-    const farmId = searchParams.get("farmId") || undefined;
-    const seasonParam = searchParams.get("season");
     const periodParam = searchParams.get("period");
-    const periodKey = searchParams.get("periodKey");
+    const periodStartParam = searchParams.get("periodStart");
 
     // Validate required parameters
-    if (!periodParam || !periodKey) {
+    if (!periodParam || !periodStartParam) {
       return NextResponse.json(
         {
           success: false,
           error: {
             code: "MISSING_PARAMETERS",
-            message: "Period and periodKey are required",
+            message: "Period and periodStart are required",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -208,32 +176,34 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             message: "Invalid period type",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    const season = seasonParam
-      ? Object.values(Season).includes(seasonParam as Season)
-        ? (seasonParam as Season)
-        : undefined
-      : undefined;
+    // Parse date
+    const periodStart = new Date(periodStartParam);
+    if (isNaN(periodStart.getTime())) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: "INVALID_DATE",
+            message: "Invalid periodStart date format",
+          },
+        },
+        { status: 400 },
+      );
+    }
 
     // Fetch from database
     const { database } = await import("@/lib/database");
 
-    const whereClause: any = {
-      period: periodParam as PeriodType,
-      periodKey,
-    };
-
-    if (query !== undefined) whereClause.query = query;
-    if (categoryId) whereClause.categoryId = categoryId;
-    if (farmId) whereClause.farmId = farmId;
-    if (season) whereClause.season = season;
-
     const analytics = await database.searchAnalytics.findFirst({
-      where: whereClause,
-      orderBy: { calculatedAt: "desc" },
+      where: {
+        periodType: periodParam as PeriodType,
+        periodStart,
+      },
+      orderBy: { createdAt: "desc" },
     });
 
     if (!analytics) {
@@ -245,7 +215,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             message: "No analytics found for the specified parameters",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -254,54 +224,37 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         success: true,
         data: {
           id: analytics.id,
-          query: analytics.query,
-          categoryId: analytics.categoryId,
-          farmId: analytics.farmId,
-          season: analytics.season,
-          period: analytics.period,
-          periodKey: analytics.periodKey,
+          periodType: analytics.periodType,
+          periodStart: analytics.periodStart,
+          periodEnd: analytics.periodEnd,
           metrics: {
             volume: {
               totalSearches: analytics.totalSearches,
               uniqueUsers: analytics.uniqueUsers,
-              uniqueSessions: analytics.uniqueSessions,
-              averageResultsCount: Number(analytics.averageResultsCount),
-              noResultsCount: analytics.noResultsCount,
+              uniqueQueries: analytics.uniqueQueries,
+              avgResultsCount: Number(analytics.avgResultsCount),
             },
             engagement: {
-              refinementRate: Number(analytics.refinementRate),
-              saveRate: Number(analytics.saveRate),
-              clickThroughRate: Number(analytics.clickThroughRate),
+              avgClickThrough: Number(analytics.avgClickThrough),
               conversionRate: Number(analytics.conversionRate),
-              bounceRate: Number(analytics.bounceRate),
             },
             performance: {
-              averageResponseTime: Number(analytics.averageResponseTime),
-              cacheHitRate: Number(analytics.cacheHitRate),
-              p95ResponseTime: Number(analytics.p95ResponseTime),
-              p99ResponseTime: Number(analytics.p99ResponseTime),
-            },
-            agricultural: {
-              seasonalRelevanceAvg: analytics.seasonalRelevanceAvg
-                ? Number(analytics.seasonalRelevanceAvg)
-                : null,
-              biodynamicEngagement: analytics.biodynamicEngagement
-                ? Number(analytics.biodynamicEngagement)
-                : null,
+              avgResponseTime: analytics.avgResponseTime,
+              p95ResponseTime: analytics.p95ResponseTime,
             },
           },
-          topResults: {
-            clicked: analytics.topClickedResults,
-            converted: analytics.topConvertedItems,
-          },
-          calculatedAt: analytics.calculatedAt,
-          updatedAt: analytics.updatedAt,
+          topQueries: analytics.topQueries,
+          topFilters: analytics.topFilters,
+          topCategories: analytics.topCategories,
+          seasonalTrends: analytics.seasonalTrends,
+          farmPopularity: analytics.farmPopularity,
+          createdAt: analytics.createdAt,
         },
         meta: {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Failed to retrieve analytics:", error);
@@ -318,7 +271,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -336,6 +289,6 @@ export async function OPTIONS(request: NextRequest): Promise<NextResponse> {
         "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, Authorization",
       },
-    }
+    },
   );
 }

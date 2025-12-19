@@ -14,7 +14,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/Badge";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -100,17 +100,29 @@ export function SearchFilters({
   };
 
   // Handle price range change
-  const handlePriceRangeChange = (value: [number, number]) => {
-    setLocalPriceRange(value);
+  const handlePriceRangeChange = (value: number[]) => {
+    if (
+      value.length === 2 &&
+      value[0] !== undefined &&
+      value[1] !== undefined
+    ) {
+      setLocalPriceRange([value[0], value[1]]);
+    }
   };
 
   // Apply price range on mouse up
-  const handlePriceRangeCommit = (value: [number, number]) => {
-    onFiltersChange({
-      ...filters,
-      minPrice: value[0],
-      maxPrice: value[1],
-    });
+  const handlePriceRangeCommit = (value: number[]) => {
+    if (
+      value.length === 2 &&
+      value[0] !== undefined &&
+      value[1] !== undefined
+    ) {
+      onFiltersChange({
+        ...filters,
+        minPrice: value[0],
+        maxPrice: value[1],
+      });
+    }
   };
 
   // Handle preset price range
@@ -129,7 +141,7 @@ export function SearchFilters({
 
   // Handle availability toggle
   const handleAvailabilityToggle = (
-    value: "IN_STOCK" | "OUT_OF_STOCK" | "ALL"
+    value: "IN_STOCK" | "OUT_OF_STOCK" | "ALL",
   ) => {
     onFiltersChange({
       ...filters,
@@ -179,7 +191,7 @@ export function SearchFilters({
     <div
       className={cn(
         "w-full space-y-6 rounded-lg border bg-card p-6 shadow-sm",
-        className
+        className,
       )}
     >
       {/* Header */}
@@ -209,7 +221,11 @@ export function SearchFilters({
       <Separator />
 
       {/* Filters Accordion */}
-      <Accordion type="multiple" defaultValue={["availability", "price"]} className="w-full">
+      <Accordion
+        type="multiple"
+        defaultValue={["availability", "price"]}
+        className="w-full"
+      >
         {/* Availability */}
         <AccordionItem value="availability">
           <AccordionTrigger className="text-sm font-medium">
@@ -276,8 +292,7 @@ export function SearchFilters({
                   max={priceRange.max}
                   step={1}
                   value={localPriceRange}
-                  onValueChange={handlePriceRangeChange}
-                  onValueCommit={handlePriceRangeCommit}
+                  onValueChange={handlePriceRangeCommit}
                   className="mb-4"
                 />
                 <div className="flex items-center justify-between text-sm text-muted-foreground">

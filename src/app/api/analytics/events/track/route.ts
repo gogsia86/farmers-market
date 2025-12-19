@@ -20,7 +20,7 @@ const TrackSearchEventSchema = z.object({
   userId: z.string().optional(),
   sessionId: z.string().min(1, "Session ID is required"),
   query: z.string().min(1, "Search query is required").max(500),
-  filters: z.record(z.any()).optional(),
+  filters: z.record(z.string(), z.any()).optional(),
   sortBy: z.string().optional(),
   categoryId: z.string().optional(),
   farmId: z.string().optional(),
@@ -46,7 +46,7 @@ const TrackSearchEventSchema = z.object({
       currentSeason: z.nativeEnum(Season),
       biodynamicPhase: z.string().optional(),
       lunarCycle: z.string().optional(),
-      regionalConditions: z.record(z.any()).optional(),
+      regionalConditions: z.record(z.string(), z.any()).optional(),
     })
     .optional(),
   cacheHit: z.boolean().optional(),
@@ -78,10 +78,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           error: {
             code: "VALIDATION_ERROR",
             message: "Invalid search event data",
-            details: validation.error.errors,
+            details: validation.error.issues,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -113,17 +113,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           sessionId: searchEvent.sessionId,
           query: searchEvent.query,
           resultsCount: searchEvent.resultsCount,
-          responseTimeMs: searchEvent.responseTimeMs,
+          responseTime: searchEvent.responseTime,
           agriculturalConsciousness: {
-            seasonalRelevance: searchEvent.seasonalRelevance,
-            biodynamicFactors: searchEvent.biodynamicFactors,
+            currentSeason: searchEvent.currentSeason,
+            lunarPhase: searchEvent.lunarPhase,
           },
         },
         meta: {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error("Search event tracking failed:", error);
@@ -140,7 +140,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -158,6 +158,6 @@ export async function OPTIONS(request: NextRequest): Promise<NextResponse> {
         "Access-Control-Allow-Methods": "POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, Authorization",
       },
-    }
+    },
   );
 }

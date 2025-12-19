@@ -24,7 +24,7 @@ const trackInteractionSchema = z.object({
   entityType: z.string().min(1),
   entityId: z.string().min(1),
   source: z.string().optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
   value: z.number().optional(),
   sessionId: z.string().optional(),
 });
@@ -32,14 +32,14 @@ const trackInteractionSchema = z.object({
 const trackViewSchema = z.object({
   productId: z.string().min(1),
   sessionId: z.string().optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 const trackClickSchema = z.object({
   productId: z.string().min(1),
   sessionId: z.string().optional(),
   source: z.string().optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 const trackAddToCartSchema = z.object({
@@ -47,7 +47,7 @@ const trackAddToCartSchema = z.object({
   quantity: z.number().int().min(1),
   price: z.number().min(0),
   sessionId: z.string().optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 const trackPurchaseSchema = z.object({
@@ -56,7 +56,7 @@ const trackPurchaseSchema = z.object({
   quantity: z.number().int().min(1),
   price: z.number().min(0),
   sessionId: z.string().optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 const trackFavoriteSchema = z.object({
@@ -68,7 +68,7 @@ const trackReviewSchema = z.object({
   productId: z.string().min(1),
   rating: z.number().min(1).max(5),
   sessionId: z.string().optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 const trackShareSchema = z.object({

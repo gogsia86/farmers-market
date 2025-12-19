@@ -23,7 +23,7 @@ const createSavedSearchSchema = z.object({
   name: z.string().min(1).max(255),
   description: z.string().optional(),
   query: z.string().max(500).optional(),
-  filters: z.record(z.any()).optional(),
+  filters: z.record(z.string(), z.any()).optional(),
   sortBy: z.string().max(50).optional(),
   location: z.object({
     lat: z.number(),
@@ -94,7 +94,7 @@ export async function GET(req: NextRequest) {
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid parameters', details: error.errors },
+        { error: 'Invalid parameters', details: error.issues },
         { status: 400 }
       );
     }
@@ -145,7 +145,7 @@ export async function POST(req: NextRequest) {
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid input', details: error.errors },
+        { error: 'Invalid input', details: error.issues },
         { status: 400 }
       );
     }

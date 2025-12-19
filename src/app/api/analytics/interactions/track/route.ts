@@ -19,20 +19,18 @@ import { InteractionType } from "@prisma/client";
 const TrackInteractionSchema = z.object({
   userId: z.string().optional(),
   sessionId: z.string().min(1, "Session ID is required"),
-  type: z.nativeEnum(InteractionType, {
-    errorMap: () => ({ message: "Invalid interaction type" }),
-  }),
+  type: z.nativeEnum(InteractionType),
   entityType: z.string().min(1, "Entity type is required").max(50),
   entityId: z.string().min(1, "Entity ID is required"),
   searchEventId: z.string().optional(),
   recommendationId: z.string().optional(),
   abTestId: z.string().optional(),
   abTestVariant: z.string().max(50).optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
   durationMs: z.number().int().min(0).optional(),
   scrollDepth: z.number().min(0).max(100).optional(),
   clickPosition: z.number().int().min(0).optional(),
-  agriculturalContext: z.record(z.any()).optional(),
+  agriculturalContext: z.record(z.string(), z.any()).optional(),
   sessionDepth: z.number().int().min(1).optional(),
   timeInSession: z.number().int().min(0).optional(),
   userAgent: z.string().optional(),
@@ -59,10 +57,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           error: {
             code: "VALIDATION_ERROR",
             message: "Invalid interaction data",
-            details: validation.error.errors,
+            details: validation.error.issues,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -75,9 +73,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // Track interaction
-    const interaction = await analyticsService.trackInteraction(
-      interactionData
-    );
+    const interaction =
+      await analyticsService.trackInteraction(interactionData);
 
     return NextResponse.json(
       {
@@ -94,7 +91,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error("Interaction tracking failed:", error);
@@ -111,7 +108,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -129,6 +126,6 @@ export async function OPTIONS(request: NextRequest): Promise<NextResponse> {
         "Access-Control-Allow-Methods": "POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, Authorization",
       },
-    }
+    },
   );
 }

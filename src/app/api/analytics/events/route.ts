@@ -20,7 +20,7 @@ import { Season } from '@prisma/client';
 
 const trackSearchSchema = z.object({
   query: z.string().optional(),
-  filters: z.record(z.any()),
+  filters: z.record(z.string(), z.any()),
   sortBy: z.string().optional(),
   resultsCount: z.number().int().min(0),
   resultsShown: z.number().int().min(0),

@@ -14,9 +14,9 @@
  * @module ErrorHandler
  */
 
-import { NextResponse } from 'next/server';
-import { Prisma } from '@prisma/client';
-import { ZodError } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
+import { ZodError } from "zod";
 
 // ============================================================================
 // ERROR CLASSES
@@ -34,7 +34,7 @@ export class AppError extends Error {
     message: string,
     statusCode: number = 500,
     isOperational: boolean = true,
-    code?: string
+    code?: string,
   ) {
     super(message);
     this.statusCode = statusCode;
@@ -50,8 +50,8 @@ export class AppError extends Error {
  * 400 Bad Request - Validation Error
  */
 export class ValidationError extends AppError {
-  constructor(message: string = 'Validation failed', code?: string) {
-    super(message, 400, true, code || 'VALIDATION_ERROR');
+  constructor(message: string = "Validation failed", code?: string) {
+    super(message, 400, true, code || "VALIDATION_ERROR");
   }
 }
 
@@ -59,8 +59,8 @@ export class ValidationError extends AppError {
  * 401 Unauthorized - Authentication Error
  */
 export class AuthenticationError extends AppError {
-  constructor(message: string = 'Authentication required', code?: string) {
-    super(message, 401, true, code || 'AUTHENTICATION_ERROR');
+  constructor(message: string = "Authentication required", code?: string) {
+    super(message, 401, true, code || "AUTHENTICATION_ERROR");
   }
 }
 
@@ -68,8 +68,8 @@ export class AuthenticationError extends AppError {
  * 403 Forbidden - Authorization Error
  */
 export class AuthorizationError extends AppError {
-  constructor(message: string = 'Insufficient permissions', code?: string) {
-    super(message, 403, true, code || 'AUTHORIZATION_ERROR');
+  constructor(message: string = "Insufficient permissions", code?: string) {
+    super(message, 403, true, code || "AUTHORIZATION_ERROR");
   }
 }
 
@@ -77,8 +77,8 @@ export class AuthorizationError extends AppError {
  * 404 Not Found - Resource Not Found
  */
 export class NotFoundError extends AppError {
-  constructor(message: string = 'Resource not found', code?: string) {
-    super(message, 404, true, code || 'NOT_FOUND');
+  constructor(message: string = "Resource not found", code?: string) {
+    super(message, 404, true, code || "NOT_FOUND");
   }
 }
 
@@ -86,8 +86,8 @@ export class NotFoundError extends AppError {
  * 409 Conflict - Resource Conflict
  */
 export class ConflictError extends AppError {
-  constructor(message: string = 'Resource conflict', code?: string) {
-    super(message, 409, true, code || 'CONFLICT_ERROR');
+  constructor(message: string = "Resource conflict", code?: string) {
+    super(message, 409, true, code || "CONFLICT_ERROR");
   }
 }
 
@@ -95,8 +95,8 @@ export class ConflictError extends AppError {
  * 500 Internal Server Error
  */
 export class InternalServerError extends AppError {
-  constructor(message: string = 'Internal server error', code?: string) {
-    super(message, 500, false, code || 'INTERNAL_SERVER_ERROR');
+  constructor(message: string = "Internal server error", code?: string) {
+    super(message, 500, false, code || "INTERNAL_SERVER_ERROR");
   }
 }
 
@@ -122,59 +122,59 @@ interface ErrorResponse {
 function mapPrismaError(error: Prisma.PrismaClientKnownRequestError): AppError {
   switch (error.code) {
     // Unique constraint violation
-    case 'P2002': {
+    case "P2002": {
       const target = (error.meta?.target as string[]) || [];
-      const field = target[0] || 'field';
+      const field = target[0] || "field";
       return new ConflictError(
         `A record with this ${field} already exists`,
-        'UNIQUE_CONSTRAINT_VIOLATION'
+        "UNIQUE_CONSTRAINT_VIOLATION",
       );
     }
 
     // Record not found
-    case 'P2025':
+    case "P2025":
       return new NotFoundError(
-        'The requested record was not found',
-        'RECORD_NOT_FOUND'
+        "The requested record was not found",
+        "RECORD_NOT_FOUND",
       );
 
     // Foreign key constraint violation
-    case 'P2003': {
-      const field = (error.meta?.field_name as string) || 'field';
+    case "P2003": {
+      const field = (error.meta?.field_name as string) || "field";
       return new ValidationError(
         `Invalid reference: ${field}`,
-        'FOREIGN_KEY_CONSTRAINT_VIOLATION'
+        "FOREIGN_KEY_CONSTRAINT_VIOLATION",
       );
     }
 
     // Record to delete does not exist
-    case 'P2016':
+    case "P2016":
       return new NotFoundError(
-        'Record to delete does not exist',
-        'DELETE_RECORD_NOT_FOUND'
+        "Record to delete does not exist",
+        "DELETE_RECORD_NOT_FOUND",
       );
 
     // Required field missing
-    case 'P2011':
+    case "P2011":
       return new ValidationError(
-        'Required field is missing',
-        'REQUIRED_FIELD_MISSING'
+        "Required field is missing",
+        "REQUIRED_FIELD_MISSING",
       );
 
     // Value too long for field
-    case 'P2000': {
-      const field = (error.meta?.column_name as string) || 'field';
+    case "P2000": {
+      const field = (error.meta?.column_name as string) || "field";
       return new ValidationError(
         `Value too long for ${field}`,
-        'VALUE_TOO_LONG'
+        "VALUE_TOO_LONG",
       );
     }
 
     // Default case
     default:
       return new InternalServerError(
-        'Database operation failed',
-        'DATABASE_ERROR'
+        "Database operation failed",
+        "DATABASE_ERROR",
       );
   }
 }
@@ -187,13 +187,13 @@ function mapPrismaError(error: Prisma.PrismaClientKnownRequestError): AppError {
  * Format Zod validation errors
  */
 function formatZodError(error: ZodError): { message: string; details: any } {
-  const errors = error.errors.map((err) => ({
-    path: err.path.join('.'),
+  const errors = error.issues.map((err) => ({
+    path: err.path.join("."),
     message: err.message,
   }));
 
   return {
-    message: 'Validation failed',
+    message: "Validation failed",
     details: errors,
   };
 }
@@ -202,26 +202,26 @@ function formatZodError(error: ZodError): { message: string; details: any } {
 // ERROR HANDLER
 // ============================================================================
 
-const isDevelopment = process.env.NODE_ENV !== 'production';
+const isDevelopment = process.env.NODE_ENV !== "production";
 
 /**
  * Main error handler - converts all errors to NextResponse
  */
 export function handleError(
   error: unknown,
-  path?: string
+  path?: string,
 ): NextResponse<ErrorResponse> {
   // Log error (with stack trace in development)
   if (isDevelopment) {
-    console.error('❌ [API Error]', {
+    console.error("❌ [API Error]", {
       error,
       path,
       timestamp: new Date().toISOString(),
     });
   } else {
     // Production logging (minimal, no sensitive data)
-    console.error('[API Error]', {
-      message: error instanceof Error ? error.message : 'Unknown error',
+    console.error("[API Error]", {
+      message: error instanceof Error ? error.message : "Unknown error",
       path,
       timestamp: new Date().toISOString(),
     });
@@ -236,7 +236,7 @@ export function handleError(
         timestamp: new Date().toISOString(),
         path,
       },
-      { status: error.statusCode }
+      { status: error.statusCode },
     );
   }
 
@@ -246,12 +246,12 @@ export function handleError(
     return NextResponse.json<ErrorResponse>(
       {
         error: formatted.message,
-        code: 'VALIDATION_ERROR',
+        code: "VALIDATION_ERROR",
         details: formatted.details,
         timestamp: new Date().toISOString(),
         path,
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -265,7 +265,7 @@ export function handleError(
         timestamp: new Date().toISOString(),
         path,
       },
-      { status: mappedError.statusCode }
+      { status: mappedError.statusCode },
     );
   }
 
@@ -273,13 +273,13 @@ export function handleError(
   if (error instanceof Prisma.PrismaClientValidationError) {
     return NextResponse.json<ErrorResponse>(
       {
-        error: 'Invalid data provided',
-        code: 'PRISMA_VALIDATION_ERROR',
+        error: "Invalid data provided",
+        code: "PRISMA_VALIDATION_ERROR",
         details: isDevelopment ? error.message : undefined,
         timestamp: new Date().toISOString(),
         path,
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -287,27 +287,25 @@ export function handleError(
   if (error instanceof Error) {
     return NextResponse.json<ErrorResponse>(
       {
-        error: isDevelopment
-          ? error.message
-          : 'An unexpected error occurred',
-        code: 'INTERNAL_SERVER_ERROR',
+        error: isDevelopment ? error.message : "An unexpected error occurred",
+        code: "INTERNAL_SERVER_ERROR",
         details: isDevelopment ? error.stack : undefined,
         timestamp: new Date().toISOString(),
         path,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
   // Handle unknown errors
   return NextResponse.json<ErrorResponse>(
     {
-      error: 'An unexpected error occurred',
-      code: 'UNKNOWN_ERROR',
+      error: "An unexpected error occurred",
+      code: "UNKNOWN_ERROR",
       timestamp: new Date().toISOString(),
       path,
     },
-    { status: 500 }
+    { status: 500 },
   );
 }
 
@@ -316,8 +314,8 @@ export function handleError(
 // ============================================================================
 
 type AsyncRouteHandler = (
-  request: Request,
-  context?: any
+  request: NextRequest,
+  context?: any,
 ) => Promise<NextResponse | Response>;
 
 /**
@@ -329,7 +327,7 @@ type AsyncRouteHandler = (
  * });
  */
 export function asyncHandler(handler: AsyncRouteHandler): AsyncRouteHandler {
-  return async (request: Request, context?: any) => {
+  return async (request: NextRequest, context?: any) => {
     try {
       return await handler(request, context);
     } catch (error) {
@@ -349,7 +347,7 @@ export function asyncHandler(handler: AsyncRouteHandler): AsyncRouteHandler {
  */
 export function validateRequest<T>(
   schema: { parse: (data: unknown) => T },
-  data: unknown
+  data: unknown,
 ): T {
   try {
     return schema.parse(data);
@@ -371,7 +369,7 @@ export function validateRequest<T>(
  */
 export function logError(error: unknown, context?: Record<string, any>): void {
   if (isDevelopment) {
-    console.error('🔴 [Error Log]', {
+    console.error("🔴 [Error Log]", {
       error,
       context,
       timestamp: new Date().toISOString(),

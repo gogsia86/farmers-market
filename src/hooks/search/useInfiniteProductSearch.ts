@@ -70,7 +70,7 @@ export interface UseInfiniteProductSearchReturn {
  */
 async function fetchProductsPage(
   filters: ProductSearchFilters,
-  pageParam: number = 1
+  pageParam: number = 1,
 ): Promise<ProductSearchResponse> {
   const params = new URLSearchParams();
 
@@ -158,7 +158,7 @@ async function fetchProductsPage(
  * ```
  */
 export function useInfiniteProductSearch(
-  filters: ProductSearchFilters = {}
+  filters: ProductSearchFilters = {},
 ): UseInfiniteProductSearchReturn {
   const queryClient = useQueryClient();
 
@@ -168,7 +168,7 @@ export function useInfiniteProductSearch(
       ...filters,
       limit: filters.limit || 20,
     }),
-    [filters]
+    [filters],
   );
 
   // Infinite query for products
@@ -208,20 +208,20 @@ export function useInfiniteProductSearch(
   // Get metadata from last page
   const lastPage = useMemo(
     () => data?.pages[data.pages.length - 1],
-    [data?.pages]
+    [data?.pages],
   );
 
   const totalItems = useMemo(() => lastPage?.meta.totalItems ?? 0, [lastPage]);
   const totalPages = useMemo(() => lastPage?.meta.totalPages ?? 0, [lastPage]);
   const currentPage = useMemo(
     () => lastPage?.meta.currentPage ?? 1,
-    [lastPage]
+    [lastPage],
   );
 
   // Computed values
   const isEmpty = useMemo(
     () => products.length === 0 && !isLoading,
-    [products, isLoading]
+    [products, isLoading],
   );
   const hasResults = useMemo(() => products.length > 0, [products]);
 
@@ -324,14 +324,14 @@ export function useInfiniteScroll({
       // Create new observer
       const observer = new IntersectionObserver(
         (entries) => {
-          if (entries[0].isIntersecting && hasNextPage) {
+          if (entries[0]?.isIntersecting && hasNextPage) {
             fetchNextPage();
           }
         },
         {
           threshold,
           rootMargin,
-        }
+        },
       );
 
       // Observe new element
@@ -343,7 +343,14 @@ export function useInfiniteScroll({
         observer.disconnect();
       };
     },
-    [isFetchingNextPage, hasNextPage, fetchNextPage, threshold, rootMargin, observerRef]
+    [
+      isFetchingNextPage,
+      hasNextPage,
+      fetchNextPage,
+      threshold,
+      rootMargin,
+      observerRef,
+    ],
   );
 
   return {
@@ -383,7 +390,7 @@ export function useInfiniteSeasonalProducts(limit: number = 20) {
  */
 export function useInfiniteProductsByCategory(
   categoryId: string,
-  limit: number = 20
+  limit: number = 20,
 ) {
   return useInfiniteProductSearch({
     categoryId,

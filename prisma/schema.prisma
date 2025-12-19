@@ -2532,3 +2532,155 @@ enum TrendDirection {
   VOLATILE
   SEASONAL
 }
+
+// ============================================
+// PHASE 5: MACHINE LEARNING MODELS
+// ============================================
+
+model MLModel {
+  id String @id @default(cuid())
+
+  // Model Metadata
+  name        String @unique @db.VarChar(100)
+  version     String @db.VarChar(20)
+  type        MLModelType
+  description String? @db.Text
+  status      MLModelStatus @default(TRAINING)
+
+  // Training Info
+  trainedAt     DateTime?
+  trainingJobId String?
+  accuracy      Decimal? @db.Decimal(5, 4)
+  precision     Decimal? @db.Decimal(5, 4)
+  recall        Decimal? @db.Decimal(5, 4)
+  f1Score       Decimal? @db.Decimal(5, 4)
+
+  // Model Configuration
+  hyperparameters Json?
+  features        Json
+  modelPath       String? @db.VarChar(500)
+  modelSize       Int? // in bytes
+
+  // Performance Metrics
+  inferenceTime   Int? // in milliseconds
+  predictionsCount Int @default(0)
+  successRate     Decimal? @db.Decimal(5, 4)
+
+  // Metadata
+  createdBy String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  predictions    MLPrediction[]
+  trainingJobs   MLTrainingJob[]
+
+  @@index([type])
+  @@index([status])
+  @@index([trainedAt])
+  @@map("ml_models")
+}
+
+model MLPrediction {
+  id String @id @default(cuid())
+
+  // Model Reference
+  modelId String
+  model   MLModel @relation(fields: [modelId], references: [id], onDelete: Cascade)
+
+  // Input/Output
+  input      Json
+  output     Json
+  confidence Decimal @db.Decimal(5, 4)
+
+  // Context
+  userId    String?
+  sessionId String?
+  context   Json?
+
+  // Performance
+  inferenceTime Int // in milliseconds
+  wasCorrect    Boolean?
+  feedback      String? @db.Text
+
+  // Metadata
+  createdAt DateTime @default(now())
+
+  @@index([modelId])
+  @@index([userId])
+  @@index([createdAt])
+  @@map("ml_predictions")
+}
+
+model MLTrainingJob {
+  id String @id @default(cuid())
+
+  // Model Reference
+  modelId String
+  model   MLModel @relation(fields: [modelId], references: [id], onDelete: Cascade)
+
+  // Job Info
+  status      MLTrainingStatus @default(PENDING)
+  startedAt   DateTime?
+  completedAt DateTime?
+  duration    Int? // in seconds
+
+  // Training Data
+  datasetSize    Int
+  trainingSize   Int
+  validationSize Int
+  testSize       Int
+
+  // Results
+  finalAccuracy  Decimal? @db.Decimal(5, 4)
+  finalLoss      Decimal? @db.Decimal(10, 6)
+  bestEpoch      Int?
+  totalEpochs    Int?
+
+  // Configuration
+  config Json?
+  logs   Json?
+
+  // Error Handling
+  error String? @db.Text
+
+  // Metadata
+  createdBy String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([modelId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("ml_training_jobs")
+}
+
+// ============================================
+// PHASE 5: ML ENUMS
+// ============================================
+
+enum MLModelType {
+  RECOMMENDATION
+  DEMAND_FORECASTING
+  PRICE_OPTIMIZATION
+  CHURN_PREDICTION
+  SEASONALITY_DETECTION
+  QUALITY_PREDICTION
+  SENTIMENT_ANALYSIS
+}
+
+enum MLModelStatus {
+  TRAINING
+  READY
+  DEPLOYED
+  DEPRECATED
+  FAILED
+}
+
+enum MLTrainingStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
