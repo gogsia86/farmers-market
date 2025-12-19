@@ -15,6 +15,7 @@ npm list react-dropzone @radix-ui/react-toast @radix-ui/react-progress
 ```
 
 **Expected Output**:
+
 ```
 ├── react-dropzone@14.2.3
 ├── @radix-ui/react-toast@1.1.5
@@ -31,9 +32,9 @@ npm list react-dropzone @radix-ui/react-toast @radix-ui/react-progress
 Add the CartProvider and Toaster to your root layout:
 
 ```tsx
-import { CartProvider } from '@/context/CartContext';
-import { Toaster } from '@/components/ui/toaster';
-import { SessionProvider } from 'next-auth/react';
+import { CartProvider } from "@/context/CartContext";
+import { Toaster } from "@/components/ui/toaster";
+import { SessionProvider } from "next-auth/react";
 
 export default function RootLayout({
   children,
@@ -44,9 +45,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <SessionProvider>
-          <CartProvider>
-            {children}
-          </CartProvider>
+          <CartProvider>{children}</CartProvider>
           <Toaster />
         </SessionProvider>
       </body>
@@ -106,31 +105,29 @@ ls src/components/ErrorBoundary.tsx
 Create a test file: `src/app/test-cart/page.tsx`
 
 ```tsx
-'use client';
+"use client";
 
-import { useCart } from '@/context/CartContext';
-import { Button } from '@/components/ui/button';
+import { useCart } from "@/context/CartContext";
+import { Button } from "@/components/ui/button";
 
 export default function TestCartPage() {
   const { addItem, items, totalAmount, removeItem } = useCart();
 
   const testProduct = {
-    productId: 'test-1',
-    name: 'Test Tomatoes',
+    productId: "test-1",
+    name: "Test Tomatoes",
     price: 5.99,
     maxStock: 10,
-    farmName: 'Test Farm',
-    farmId: 'farm-1',
-    image: '/placeholder.jpg',
+    farmName: "Test Farm",
+    farmId: "farm-1",
+    image: "/placeholder.jpg",
   };
 
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold mb-4">Cart Test</h1>
-      
-      <Button onClick={() => addItem(testProduct, 1)}>
-        Add Test Product
-      </Button>
+
+      <Button onClick={() => addItem(testProduct, 1)}>Add Test Product</Button>
 
       <div className="mt-4">
         <p>Items in cart: {items.length}</p>
@@ -140,10 +137,10 @@ export default function TestCartPage() {
       <div className="mt-4">
         {items.map((item) => (
           <div key={item.productId} className="flex gap-4 items-center">
-            <span>{item.name} x {item.quantity}</span>
-            <Button onClick={() => removeItem(item.productId)}>
-              Remove
-            </Button>
+            <span>
+              {item.name} x {item.quantity}
+            </span>
+            <Button onClick={() => removeItem(item.productId)}>Remove</Button>
           </div>
         ))}
       </div>
@@ -155,6 +152,7 @@ export default function TestCartPage() {
 **Visit**: http://localhost:3000/test-cart
 
 **Expected**:
+
 - ✅ Click "Add Test Product" → Toast appears
 - ✅ Item appears in cart list
 - ✅ Total updates
@@ -168,10 +166,10 @@ export default function TestCartPage() {
 Create: `src/app/test-toast/page.tsx`
 
 ```tsx
-'use client';
+"use client";
 
-import { useToast } from '@/hooks/use-toast';
-import { Button } from '@/components/ui/button';
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 
 export default function TestToastPage() {
   const { toast } = useToast();
@@ -180,32 +178,29 @@ export default function TestToastPage() {
     <div className="p-8 space-y-4">
       <h1 className="text-2xl font-bold">Toast Test</h1>
 
-      <Button onClick={() => toast.success('Success!', 'Operation completed')}>
+      <Button onClick={() => toast.success("Success!", "Operation completed")}>
         Success Toast
       </Button>
 
-      <Button onClick={() => toast.error('Error!', 'Something went wrong')}>
+      <Button onClick={() => toast.error("Error!", "Something went wrong")}>
         Error Toast
       </Button>
 
-      <Button onClick={() => toast.warning('Warning!', 'Please be careful')}>
+      <Button onClick={() => toast.warning("Warning!", "Please be careful")}>
         Warning Toast
       </Button>
 
-      <Button onClick={() => toast.info('Info', 'Here is some information')}>
+      <Button onClick={() => toast.info("Info", "Here is some information")}>
         Info Toast
       </Button>
 
       <Button
         onClick={() =>
-          toast.promise(
-            new Promise((resolve) => setTimeout(resolve, 2000)),
-            {
-              loading: 'Processing...',
-              success: 'Done!',
-              error: 'Failed!',
-            }
-          )
+          toast.promise(new Promise((resolve) => setTimeout(resolve, 2000)), {
+            loading: "Processing...",
+            success: "Done!",
+            error: "Failed!",
+          })
         }
       >
         Promise Toast
@@ -218,6 +213,7 @@ export default function TestToastPage() {
 **Visit**: http://localhost:3000/test-toast
 
 **Expected**:
+
 - ✅ Each button shows different toast variant
 - ✅ Toasts auto-dismiss after 5 seconds
 - ✅ Promise toast shows loading → success
@@ -230,11 +226,11 @@ export default function TestToastPage() {
 Create: `src/app/test-upload/page.tsx`
 
 ```tsx
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { ImageUpload } from '@/components/shared/ImageUpload';
-import { Button } from '@/components/ui/button';
+import { useState } from "react";
+import { ImageUpload } from "@/components/shared/ImageUpload";
+import { Button } from "@/components/ui/button";
 
 export default function TestUploadPage() {
   const [urls, setUrls] = useState<string[]>([]);
@@ -243,11 +239,7 @@ export default function TestUploadPage() {
     <div className="p-8">
       <h1 className="text-2xl font-bold mb-4">Image Upload Test</h1>
 
-      <ImageUpload
-        folder="test"
-        maxFiles={3}
-        onUploadComplete={setUrls}
-      />
+      <ImageUpload folder="test" maxFiles={3} onUploadComplete={setUrls} />
 
       <div className="mt-4">
         <p className="font-semibold">Uploaded URLs:</p>
@@ -263,6 +255,7 @@ export default function TestUploadPage() {
 **Visit**: http://localhost:3000/test-upload
 
 **Expected**:
+
 - ✅ Drag & drop area appears
 - ✅ Click to select files works
 - ✅ Progress bars show during upload
@@ -277,25 +270,29 @@ export default function TestUploadPage() {
 Create: `src/app/api/test-error/route.ts`
 
 ```typescript
-import { asyncHandler, NotFoundError, ValidationError } from '@/lib/api/error-handler';
-import { NextResponse } from 'next/server';
+import {
+  asyncHandler,
+  NotFoundError,
+  ValidationError,
+} from "@/lib/api/error-handler";
+import { NextResponse } from "next/server";
 
 export const GET = asyncHandler(async (req) => {
   const { searchParams } = new URL(req.url);
-  const errorType = searchParams.get('type');
+  const errorType = searchParams.get("type");
 
   switch (errorType) {
-    case 'not-found':
-      throw new NotFoundError('Resource not found');
-    
-    case 'validation':
-      throw new ValidationError('Invalid input data');
-    
-    case 'server':
-      throw new Error('Something went wrong');
-    
+    case "not-found":
+      throw new NotFoundError("Resource not found");
+
+    case "validation":
+      throw new ValidationError("Invalid input data");
+
+    case "server":
+      throw new Error("Something went wrong");
+
     default:
-      return NextResponse.json({ message: 'Test endpoint working' });
+      return NextResponse.json({ message: "Test endpoint working" });
   }
 });
 ```
@@ -317,6 +314,7 @@ curl http://localhost:3000/api/test-error?type=server
 ```
 
 **Expected Response Format**:
+
 ```json
 {
   "error": "Resource not found",
@@ -351,6 +349,7 @@ curl http://localhost:3000/api/test-error?type=server
 Replace manual error handling with `asyncHandler`:
 
 **Before**:
+
 ```typescript
 export async function POST(req: Request) {
   try {
@@ -359,21 +358,22 @@ export async function POST(req: Request) {
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json(
-      { error: 'Something went wrong' },
-      { status: 500 }
+      { error: "Something went wrong" },
+      { status: 500 },
     );
   }
 }
 ```
 
 **After**:
+
 ```typescript
-import { asyncHandler, NotFoundError } from '@/lib/api/error-handler';
+import { asyncHandler, NotFoundError } from "@/lib/api/error-handler";
 
 export const POST = asyncHandler(async (req) => {
   const data = await req.json();
   // ... logic
-  if (!result) throw new NotFoundError('Item not found');
+  if (!result) throw new NotFoundError("Item not found");
   return NextResponse.json(result);
 });
 ```
@@ -401,6 +401,7 @@ curl -X POST http://localhost:3000/api/upload \
 ```
 
 **Expected Response**:
+
 ```json
 {
   "url": "https://res.cloudinary.com/...",
@@ -417,6 +418,7 @@ curl -X POST http://localhost:3000/api/upload \
 ### Issue 1: "Cannot find module 'react-dropzone'"
 
 **Solution**:
+
 ```bash
 npm install react-dropzone
 ```
@@ -424,9 +426,10 @@ npm install react-dropzone
 ### Issue 2: Toast not appearing
 
 **Solution**: Verify `<Toaster />` is in root layout:
+
 ```tsx
 // src/app/layout.tsx
-import { Toaster } from '@/components/ui/toaster';
+import { Toaster } from "@/components/ui/toaster";
 
 export default function RootLayout({ children }) {
   return (
@@ -443,6 +446,7 @@ export default function RootLayout({ children }) {
 ### Issue 3: Cart not persisting
 
 **Solution**: Check localStorage in DevTools:
+
 - Open DevTools → Application → Local Storage
 - Look for key: `farmers-market-cart`
 - Should contain JSON array of cart items
@@ -450,6 +454,7 @@ export default function RootLayout({ children }) {
 ### Issue 4: Image upload fails
 
 **Solution**: Check Cloudinary credentials:
+
 ```bash
 # Verify env vars are loaded
 echo $CLOUDINARY_CLOUD_NAME
@@ -463,6 +468,7 @@ npm run dev
 ### Issue 5: Middleware redirects not working
 
 **Solution**: Check NextAuth configuration:
+
 ```typescript
 // src/app/api/auth/[...nextauth]/route.ts
 export const authOptions = {
@@ -523,6 +529,7 @@ After installation, verify each component:
 Once all checks pass, you're ready for **Run 2: Search & Discovery**!
 
 **Next components**:
+
 1. Product Filters UI
 2. Search API with pagination
 3. Loading Skeletons
@@ -533,17 +540,20 @@ Once all checks pass, you're ready for **Run 2: Search & Discovery**!
 ## 📚 ADDITIONAL RESOURCES
 
 ### Documentation
+
 - [React Dropzone](https://react-dropzone.js.org/)
 - [Radix UI Toast](https://www.radix-ui.com/primitives/docs/components/toast)
 - [Next.js Middleware](https://nextjs.org/docs/app/building-your-application/routing/middleware)
 
 ### Example Implementations
+
 - Cart Context: `src/context/CartContext.tsx`
 - Image Upload: `src/components/shared/ImageUpload.tsx`
 - Error Handler: `src/lib/api/error-handler.ts`
 - Toast Hook: `src/hooks/use-toast.ts`
 
 ### Support
+
 - Check existing tests: `src/__tests__/`
 - Review error logs: `npm run dev` terminal output
 - Debug with DevTools: Console, Network, Application tabs

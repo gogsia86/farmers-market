@@ -130,7 +130,9 @@ export class RecommendationEventsService {
   /**
    * Track user action and trigger recommendations
    */
-  async trackUserAction(event: UserActionEvent): Promise<EventProcessingResult> {
+  async trackUserAction(
+    event: UserActionEvent,
+  ): Promise<EventProcessingResult> {
     const startTime = Date.now();
 
     try {
@@ -168,7 +170,10 @@ export class RecommendationEventsService {
         processingTime: Date.now() - startTime,
       };
     } catch (error) {
-      console.error("[RecommendationEvents] Error tracking user action:", error);
+      console.error(
+        "[RecommendationEvents] Error tracking user action:",
+        error,
+      );
       return {
         success: false,
         recommendationsGenerated: false,
@@ -182,7 +187,11 @@ export class RecommendationEventsService {
   /**
    * Track product view
    */
-  async trackProductView(userId: string, productId: string, metadata?: Record<string, any>): Promise<void> {
+  async trackProductView(
+    userId: string,
+    productId: string,
+    metadata?: Record<string, any>,
+  ): Promise<void> {
     await this.trackUserAction({
       userId,
       action: "VIEW_PRODUCT",
@@ -196,7 +205,11 @@ export class RecommendationEventsService {
   /**
    * Track add to cart
    */
-  async trackAddToCart(userId: string, productId: string, quantity: number): Promise<void> {
+  async trackAddToCart(
+    userId: string,
+    productId: string,
+    quantity: number,
+  ): Promise<void> {
     await this.trackUserAction({
       userId,
       action: "ADD_TO_CART",
@@ -210,7 +223,11 @@ export class RecommendationEventsService {
   /**
    * Track search
    */
-  async trackSearch(userId: string, searchQuery: string, resultsCount: number): Promise<void> {
+  async trackSearch(
+    userId: string,
+    searchQuery: string,
+    resultsCount: number,
+  ): Promise<void> {
     await this.trackUserAction({
       userId,
       action: "SEARCH",
@@ -223,7 +240,12 @@ export class RecommendationEventsService {
   /**
    * Track purchase completion
    */
-  async trackPurchase(userId: string, orderId: string, totalAmount: number, itemCount: number): Promise<void> {
+  async trackPurchase(
+    userId: string,
+    orderId: string,
+    totalAmount: number,
+    itemCount: number,
+  ): Promise<void> {
     await this.trackUserAction({
       userId,
       action: "COMPLETE_PURCHASE",
@@ -312,7 +334,10 @@ export class RecommendationEventsService {
           break;
       }
     } catch (error) {
-      console.error(`[RecommendationEvents] Error processing ${event.action} event:`, error);
+      console.error(
+        `[RecommendationEvents] Error processing ${event.action} event:`,
+        error,
+      );
     }
   }
 
@@ -336,7 +361,10 @@ export class RecommendationEventsService {
 
     // Send via WebSocket if user is connected
     if (recommendationWebSocket.isUserConnected(event.userId)) {
-      await recommendationWebSocket["sendRecommendations"](event.userId, recommendations);
+      await recommendationWebSocket["sendRecommendations"](
+        event.userId,
+        recommendations,
+      );
       this.stats.recommendationsTriggers++;
     }
   }
@@ -348,10 +376,8 @@ export class RecommendationEventsService {
     if (!event.entityId) return;
 
     // Get "frequently bought together" recommendations
-    const recommendations = await recommendationEngine.getFrequentlyBoughtTogether(
-      event.entityId,
-      6
-    );
+    const recommendations =
+      await recommendationEngine.getFrequentlyBoughtTogether(event.entityId, 6);
 
     // Send cart-specific recommendations
     if (recommendationWebSocket.isUserConnected(event.userId)) {
@@ -389,7 +415,10 @@ export class RecommendationEventsService {
     });
 
     if (recommendationWebSocket.isUserConnected(event.userId)) {
-      await recommendationWebSocket["sendRecommendations"](event.userId, recommendations);
+      await recommendationWebSocket["sendRecommendations"](
+        event.userId,
+        recommendations,
+      );
       this.stats.recommendationsTriggers++;
     }
   }
@@ -401,15 +430,16 @@ export class RecommendationEventsService {
     if (!event.entityId) return;
 
     // Get new arrivals from favorite farms
-    const recommendations = await recommendationEngine.getNewArrivalsFromFavoriteFarms(
-      event.userId,
-      8
-    );
+    const recommendations =
+      await recommendationEngine.getNewArrivalsFromFavoriteFarms(
+        event.userId,
+        8,
+      );
 
     if (recommendationWebSocket.isUserConnected(event.userId)) {
       await recommendationWebSocket.sendNewArrivalAlert(
         event.userId,
-        recommendations.recommendations.map((r) => r.product)
+        recommendations.recommendations.map((r) => r.product),
       );
       this.stats.recommendationsTriggers++;
     }
@@ -427,7 +457,9 @@ export class RecommendationEventsService {
     });
 
     // Store recommendations for future use
-    console.log(`[RecommendationEvents] Generated post-purchase recommendations for user ${event.userId}`);
+    console.log(
+      `[RecommendationEvents] Generated post-purchase recommendations for user ${event.userId}`,
+    );
   }
 
   /**
@@ -440,7 +472,8 @@ export class RecommendationEventsService {
     const farmProducts = await database.product.findMany({
       where: {
         farmId: event.entityId,
-        available: true,
+        status: "ACTIVE",
+        inStock: true,
       },
       include: { farm: true },
       take: 10,
@@ -526,12 +559,17 @@ export class RecommendationEventsService {
     try {
       // Create user activity log entry
       // This would be stored in a dedicated analytics table
-      console.log(`[RecommendationEvents] Logged event: ${event.action} by user ${event.userId}`);
+      console.log(
+        `[RecommendationEvents] Logged event: ${event.action} by user ${event.userId}`,
+      );
 
       // In production, this would write to a time-series database or analytics service
       // await database.userActivityLog.create({ data: event });
     } catch (error) {
-      console.error("[RecommendationEvents] Error logging event to database:", error);
+      console.error(
+        "[RecommendationEvents] Error logging event to database:",
+        error,
+      );
     }
   }
 
@@ -540,7 +578,8 @@ export class RecommendationEventsService {
    */
   private updateStats(event: UserActionEvent): void {
     this.stats.totalEvents++;
-    this.stats.eventsByType[event.action] = (this.stats.eventsByType[event.action] || 0) + 1;
+    this.stats.eventsByType[event.action] =
+      (this.stats.eventsByType[event.action] || 0) + 1;
 
     // Update time-based counters (simplified for now)
     this.stats.eventsLast24h++;
@@ -580,9 +619,12 @@ export class RecommendationEventsService {
         try {
           await handler(event);
         } catch (error) {
-          console.error(`[RecommendationEvents] Error in custom handler:`, error);
+          console.error(
+            `[RecommendationEvents] Error in custom handler:`,
+            error,
+          );
         }
-      })
+      }),
     );
   }
 
@@ -600,7 +642,10 @@ export class RecommendationEventsService {
   /**
    * Get user behavior patterns
    */
-  async getUserBehaviorPatterns(userId: string, limit = 10): Promise<BehaviorPattern[]> {
+  async getUserBehaviorPatterns(
+    userId: string,
+    limit = 10,
+  ): Promise<BehaviorPattern[]> {
     // Analyze user's recent actions to identify patterns
     // This is a simplified version
     return [];

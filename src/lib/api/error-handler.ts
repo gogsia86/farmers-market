@@ -25,7 +25,7 @@ import { ZodError } from "zod";
 /**
  * Base Application Error
  */
-export class AppError extends Error {
+class AppError extends Error {
   public readonly statusCode: number;
   public readonly isOperational: boolean;
   public readonly code?: string;
@@ -49,7 +49,7 @@ export class AppError extends Error {
 /**
  * 400 Bad Request - Validation Error
  */
-export class ValidationError extends AppError {
+class ValidationError extends AppError {
   constructor(message: string = "Validation failed", code?: string) {
     super(message, 400, true, code || "VALIDATION_ERROR");
   }
@@ -58,7 +58,7 @@ export class ValidationError extends AppError {
 /**
  * 401 Unauthorized - Authentication Error
  */
-export class AuthenticationError extends AppError {
+class AuthenticationError extends AppError {
   constructor(message: string = "Authentication required", code?: string) {
     super(message, 401, true, code || "AUTHENTICATION_ERROR");
   }
@@ -67,7 +67,7 @@ export class AuthenticationError extends AppError {
 /**
  * 403 Forbidden - Authorization Error
  */
-export class AuthorizationError extends AppError {
+class AuthorizationError extends AppError {
   constructor(message: string = "Insufficient permissions", code?: string) {
     super(message, 403, true, code || "AUTHORIZATION_ERROR");
   }
@@ -76,7 +76,7 @@ export class AuthorizationError extends AppError {
 /**
  * 404 Not Found - Resource Not Found
  */
-export class NotFoundError extends AppError {
+class NotFoundError extends AppError {
   constructor(message: string = "Resource not found", code?: string) {
     super(message, 404, true, code || "NOT_FOUND");
   }
@@ -85,7 +85,7 @@ export class NotFoundError extends AppError {
 /**
  * 409 Conflict - Resource Conflict
  */
-export class ConflictError extends AppError {
+class ConflictError extends AppError {
   constructor(message: string = "Resource conflict", code?: string) {
     super(message, 409, true, code || "CONFLICT_ERROR");
   }
@@ -94,7 +94,7 @@ export class ConflictError extends AppError {
 /**
  * 500 Internal Server Error
  */
-export class InternalServerError extends AppError {
+class InternalServerError extends AppError {
   constructor(message: string = "Internal server error", code?: string) {
     super(message, 500, false, code || "INTERNAL_SERVER_ERROR");
   }
@@ -207,7 +207,7 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 /**
  * Main error handler - converts all errors to NextResponse
  */
-export function handleError(
+function handleError(
   error: unknown,
   path?: string,
 ): NextResponse<ErrorResponse> {
@@ -326,7 +326,7 @@ type AsyncRouteHandler = (
  *   // Your code here
  * });
  */
-export function asyncHandler(handler: AsyncRouteHandler): AsyncRouteHandler {
+function asyncHandler(handler: AsyncRouteHandler): AsyncRouteHandler {
   return async (request: NextRequest, context?: any) => {
     try {
       return await handler(request, context);
@@ -345,7 +345,7 @@ export function asyncHandler(handler: AsyncRouteHandler): AsyncRouteHandler {
  * Validate request data against Zod schema
  * Throws ValidationError if invalid
  */
-export function validateRequest<T>(
+function validateRequest<T>(
   schema: { parse: (data: unknown) => T },
   data: unknown,
 ): T {
@@ -367,7 +367,7 @@ export function validateRequest<T>(
 /**
  * Log error for monitoring (can be integrated with Sentry, etc.)
  */
-export function logError(error: unknown, context?: Record<string, any>): void {
+function logError(error: unknown, context?: Record<string, any>): void {
   if (isDevelopment) {
     console.error("🔴 [Error Log]", {
       error,

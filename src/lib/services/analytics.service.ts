@@ -8,12 +8,7 @@
  */
 
 import { database } from "@/lib/database";
-import {
-  Season,
-  InteractionType,
-  PeriodType,
-  Prisma,
-} from "@prisma/client";
+import { Season, InteractionType, PeriodType, Prisma } from "@prisma/client";
 import type {
   SearchEvent,
   UserInteraction,
@@ -143,17 +138,17 @@ export class AnalyticsService {
    * 🔮 Track search event with agricultural consciousness
    */
   async trackSearchEvent(
-    request: TrackSearchEventRequest
+    request: TrackSearchEventRequest,
   ): Promise<SearchEvent> {
     try {
       // Calculate agricultural consciousness metrics
       const biodynamicFactors = this.calculateBiodynamicFactors(
-        request.agriculturalContext
+        request.agriculturalContext,
       );
       const seasonalRelevance = this.calculateSeasonalRelevance(
         request.query,
         request.seasonalFilter,
-        request.agriculturalContext
+        request.agriculturalContext,
       );
 
       const searchEvent = await database.searchEvent.create({
@@ -171,9 +166,11 @@ export class AnalyticsService {
           resultsCount: request.resultsCount,
           responseTimeMs: request.responseTimeMs,
           hasResults: request.resultsCount > 0,
-          clickedResultIds: request.clickedResultIds || Prisma.JsonNull,
+          clickedResultIds: request.clickedResultIds
+            ? request.clickedResultIds
+            : Prisma.JsonNull,
           agriculturalContext: request.agriculturalContext || Prisma.JsonNull,
-          biodynamicFactors: biodynamicFactors,
+          biodynamicFactors: biodynamicFactors as Prisma.InputJsonValue,
           seasonalRelevance: seasonalRelevance,
           cacheHit: request.cacheHit || false,
           databaseTimeMs: request.databaseTimeMs,
@@ -193,7 +190,9 @@ export class AnalyticsService {
       return searchEvent;
     } catch (error) {
       console.error("Failed to track search event:", error);
-      throw new Error(`Search event tracking failed: ${error.message}`);
+      throw new Error(
+        `Search event tracking failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
@@ -201,7 +200,7 @@ export class AnalyticsService {
    * 🎯 Track user interaction with quantum precision
    */
   async trackInteraction(
-    request: TrackInteractionRequest
+    request: TrackInteractionRequest,
   ): Promise<UserInteraction> {
     try {
       const interaction = await database.userInteraction.create({
@@ -211,7 +210,7 @@ export class AnalyticsService {
           type: request.type,
           entityType: request.entityType,
           entityId: request.entityId,
-          searchEventId: request.searchEventId,
+          searchEventId: request.searchEventId || undefined,
           recommendationId: request.recommendationId,
           abTestId: request.abTestId,
           abTestVariant: request.abTestVariant,
@@ -231,7 +230,7 @@ export class AnalyticsService {
       if (request.searchEventId && request.type === InteractionType.CLICK) {
         await this.updateSearchEventClicks(
           request.searchEventId,
-          request.entityId
+          request.entityId,
         ).catch((error) => {
           console.error("Failed to update search event clicks:", error);
         });
@@ -240,7 +239,9 @@ export class AnalyticsService {
       return interaction;
     } catch (error) {
       console.error("Failed to track interaction:", error);
-      throw new Error(`Interaction tracking failed: ${error.message}`);
+      throw new Error(
+        `User interaction tracking failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
@@ -248,7 +249,7 @@ export class AnalyticsService {
    * 📊 Aggregate search analytics for period
    */
   async aggregateSearchAnalytics(
-    query: SearchAnalyticsQuery
+    query: SearchAnalyticsQuery,
   ): Promise<SearchAnalytics> {
     try {
       const whereClause: Prisma.SearchEventWhereInput = {
@@ -262,11 +263,6 @@ export class AnalyticsService {
       // Fetch all events for the period
       const events = await database.searchEvent.findMany({
         where: whereClause,
-        include: {
-          _count: {
-            select: { clickedResultIds: true },
-          },
-        },
       });
 
       if (events.length === 0) {
@@ -298,7 +294,7 @@ export class AnalyticsService {
           saveRate: metrics.saveRate,
           averageResponseTime: metrics.averageResponseTime,
           cacheHitRate: metrics.cacheHitRate,
-          p95ResponseTime: metrics.p95ResponseTime,
+          p95ResponseTime: metrics.p95ResponseTime || 0,
           p99ResponseTime: metrics.p99ResponseTime,
           clickThroughRate: metrics.clickThroughRate,
           conversionRate: metrics.conversionRate,
@@ -316,31 +312,45 @@ export class AnalyticsService {
           season: query.season,
           period: query.period,
           periodKey: query.periodKey,
+          periodType: query.period,
+          periodStart: new Date(),
+          periodEnd: new Date(),
           totalSearches: metrics.totalSearches,
           uniqueUsers: metrics.uniqueUsers,
           uniqueSessions: metrics.uniqueSessions,
+          uniqueQueries: 0,
           averageResultsCount: metrics.averageResultsCount,
           noResultsCount: metrics.noResultsCount,
           refinementRate: metrics.refinementRate,
           saveRate: metrics.saveRate,
+          avgResponseTime: Math.round(metrics.averageResponseTime),
           averageResponseTime: metrics.averageResponseTime,
           cacheHitRate: metrics.cacheHitRate,
-          p95ResponseTime: metrics.p95ResponseTime,
+          p95ResponseTime: metrics.p95ResponseTime || 0,
           p99ResponseTime: metrics.p99ResponseTime,
+          avgResultsCount: metrics.averageResultsCount,
+          avgClickThrough: metrics.clickThroughRate,
           clickThroughRate: metrics.clickThroughRate,
           conversionRate: metrics.conversionRate,
           bounceRate: metrics.bounceRate,
           seasonalRelevanceAvg: metrics.seasonalRelevanceAvg,
           biodynamicEngagement: metrics.biodynamicEngagement,
+          topQueries: Prisma.JsonNull,
+          topFilters: Prisma.JsonNull,
+          topCategories: Prisma.JsonNull,
           topClickedResults: metrics.topClickedResults,
           topConvertedItems: metrics.topConvertedItems,
+          seasonalTrends: Prisma.JsonNull,
+          farmPopularity: Prisma.JsonNull,
         },
       });
 
       return analytics;
     } catch (error) {
       console.error("Failed to aggregate search analytics:", error);
-      throw new Error(`Search analytics aggregation failed: ${error.message}`);
+      throw new Error(
+        `Analytics aggregation failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
@@ -432,7 +442,9 @@ export class AnalyticsService {
       return userProfile;
     } catch (error) {
       console.error("Failed to build user search profile:", error);
-      throw new Error(`User profile building failed: ${error.message}`);
+      throw new Error(
+        `User profile building failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
@@ -440,7 +452,7 @@ export class AnalyticsService {
    * ⚡ Track performance metric with hardware awareness
    */
   async trackPerformanceMetric(
-    request: PerformanceMetricRequest
+    request: PerformanceMetricRequest,
   ): Promise<void> {
     try {
       // Get existing metric for this period
@@ -521,7 +533,7 @@ export class AnalyticsService {
    * 📈 Analyze search trends with temporal consciousness
    */
   async analyzeSearchTrends(
-    request: TrendAnalysisRequest
+    request: TrendAnalysisRequest,
   ): Promise<SearchTrend[]> {
     try {
       // Get current period analytics
@@ -555,7 +567,7 @@ export class AnalyticsService {
         comparisonAnalytics.map((a) => [
           `${a.query}-${a.categoryId}-${a.farmId}`,
           a,
-        ])
+        ]),
       );
 
       // Calculate trends
@@ -570,13 +582,13 @@ export class AnalyticsService {
           previousVolume > 0
             ? (current.totalSearches - previousVolume) / previousVolume
             : current.totalSearches > 0
-            ? 1
-            : 0;
+              ? 1
+              : 0;
 
         const trendType = this.determineTrendType(
           growthRate,
           current.totalSearches,
-          previousVolume
+          previousVolume,
         );
 
         const trend = await database.searchTrend.upsert({
@@ -627,7 +639,9 @@ export class AnalyticsService {
       return trends;
     } catch (error) {
       console.error("Failed to analyze search trends:", error);
-      throw new Error(`Trend analysis failed: ${error.message}`);
+      throw new Error(
+        `Event retrieval failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
@@ -635,7 +649,7 @@ export class AnalyticsService {
    * 📊 Generate analytics dashboard with quantum insights
    */
   async generateDashboard(
-    request: DashboardRequest
+    request: DashboardRequest,
   ): Promise<AnalyticsDashboard> {
     try {
       // Fetch relevant data based on dashboard type
@@ -688,7 +702,9 @@ export class AnalyticsService {
       return dashboard;
     } catch (error) {
       console.error("Failed to generate dashboard:", error);
-      throw new Error(`Dashboard generation failed: ${error.message}`);
+      throw new Error(
+        `Dashboard generation failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
@@ -697,8 +713,8 @@ export class AnalyticsService {
   // ============================================
 
   private calculateBiodynamicFactors(
-    context?: Record<string, any>
-  ): Prisma.JsonValue {
+    context?: Record<string, any>,
+  ): Prisma.InputJsonValue | typeof Prisma.JsonNull {
     if (!context) return Prisma.JsonNull;
 
     return {
@@ -712,7 +728,7 @@ export class AnalyticsService {
   private calculateSeasonalRelevance(
     query: string,
     seasonalFilter?: Season,
-    context?: Record<string, any>
+    context?: Record<string, any>,
   ): number | null {
     if (!context?.currentSeason) return null;
 
@@ -753,7 +769,7 @@ export class AnalyticsService {
 
   private async updateSearchEventClicks(
     searchEventId: string,
-    entityId: string
+    entityId: string,
   ): Promise<void> {
     const event = await database.searchEvent.findUnique({
       where: { id: searchEventId },
@@ -773,7 +789,7 @@ export class AnalyticsService {
 
   private getPeriodDateRange(
     period: PeriodType,
-    periodKey: string
+    periodKey: string,
   ): Prisma.DateTimeFilter {
     // Parse periodKey and return date range
     // Format examples: "2024-W23", "2024-06", "2024-Q2", "2024"
@@ -825,10 +841,7 @@ export class AnalyticsService {
     };
   }
 
-  private calculateUserProfile(
-    searchEvents: any[],
-    interactions: any[]
-  ): any {
+  private calculateUserProfile(searchEvents: any[], interactions: any[]): any {
     const uniqueQueries = new Set(searchEvents.map((e) => e.query)).size;
     const firstSearch = searchEvents[searchEvents.length - 1]?.createdAt;
     const lastSearch = searchEvents[0]?.createdAt;
@@ -870,13 +883,13 @@ export class AnalyticsService {
     if (values.length === 0) return 0;
     const sorted = [...values].sort((a, b) => a - b);
     const index = Math.ceil((p / 100) * sorted.length) - 1;
-    return sorted[Math.max(0, index)];
+    return sorted[Math.max(0, index)] ?? 0;
   }
 
   private determineTrendType(
     growthRate: number,
     current: number,
-    previous: number
+    previous: number,
   ): string {
     if (growthRate > 0.5) return "rising";
     if (growthRate < -0.5) return "falling";
@@ -933,25 +946,29 @@ export class AnalyticsService {
     };
   }
 
-  private async generateTimeSeriesData(request: DashboardRequest): Promise<any> {
+  private async generateTimeSeriesData(
+    request: DashboardRequest,
+  ): Promise<any> {
     // Generate time series for charts
     return [];
   }
 
   private async generateDistributionData(
-    request: DashboardRequest
+    request: DashboardRequest,
   ): Promise<any> {
     // Generate distribution data for pie/bar charts
     return [];
   }
 
-  private async generateComparisonData(request: DashboardRequest): Promise<any> {
+  private async generateComparisonData(
+    request: DashboardRequest,
+  ): Promise<any> {
     // Generate period-over-period comparison
     return null;
   }
 
   private async generateSeasonalInsights(
-    request: DashboardRequest
+    request: DashboardRequest,
   ): Promise<any> {
     // Generate agricultural seasonal insights
     return {

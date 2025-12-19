@@ -21,10 +21,10 @@
  * @since Run 4
  */
 
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { queryKeys } from '@/lib/react-query/query-keys';
-import { Season, NotificationFrequency } from '@prisma/client';
-import { useToast } from '@/hooks/use-toast';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/lib/react-query/query-keys";
+import { Season, NotificationFrequency } from "@prisma/client";
+import { useToast } from "@/hooks/use-toast";
 
 // ============================================
 // TYPES
@@ -85,17 +85,17 @@ export interface ExecuteSavedSearchInput {
  * Create a new saved search
  */
 async function createSavedSearch(input: CreateSavedSearchInput) {
-  const response = await fetch('/api/saved-searches', {
-    method: 'POST',
+  const response = await fetch("/api/saved-searches", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(input),
   });
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to create saved search');
+    throw new Error(error.error || "Failed to create saved search");
   }
 
   return response.json();
@@ -106,16 +106,16 @@ async function createSavedSearch(input: CreateSavedSearchInput) {
  */
 async function updateSavedSearch(id: string, input: UpdateSavedSearchInput) {
   const response = await fetch(`/api/saved-searches/${id}`, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(input),
   });
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to update saved search');
+    throw new Error(error.error || "Failed to update saved search");
   }
 
   return response.json();
@@ -126,15 +126,15 @@ async function updateSavedSearch(id: string, input: UpdateSavedSearchInput) {
  */
 async function deleteSavedSearch(id: string) {
   const response = await fetch(`/api/saved-searches/${id}`, {
-    method: 'DELETE',
+    method: "DELETE",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
   });
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to delete saved search');
+    throw new Error(error.error || "Failed to delete saved search");
   }
 
   return response.json();
@@ -143,18 +143,21 @@ async function deleteSavedSearch(id: string) {
 /**
  * Execute a saved search
  */
-async function executeSavedSearch(id: string, params: ExecuteSavedSearchInput = {}) {
+async function executeSavedSearch(
+  id: string,
+  params: ExecuteSavedSearchInput = {},
+) {
   const response = await fetch(`/api/saved-searches/${id}/execute`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(params),
   });
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to execute saved search');
+    throw new Error(error.error || "Failed to execute saved search");
   }
 
   return response.json();
@@ -180,16 +183,16 @@ export function useCreateSavedSearch() {
       });
 
       toast({
-        title: 'Saved search created',
+        title: "Saved search created",
         description: `"${data.savedSearch.name}" has been saved successfully.`,
-        variant: 'success',
+        variant: "success",
       });
     },
     onError: (error: Error) => {
       toast({
-        title: 'Failed to create saved search',
+        title: "Failed to create saved search",
         description: error.message,
-        variant: 'destructive',
+        variant: "destructive",
       });
     },
   });
@@ -225,16 +228,16 @@ export function useUpdateSavedSearch() {
       });
 
       toast({
-        title: 'Saved search updated',
+        title: "Saved search updated",
         description: `"${data.savedSearch.name}" has been updated successfully.`,
-        variant: 'success',
+        variant: "success",
       });
     },
     onError: (error: Error) => {
       toast({
-        title: 'Failed to update saved search',
+        title: "Failed to update saved search",
         description: error.message,
-        variant: 'destructive',
+        variant: "destructive",
       });
     },
   });
@@ -264,16 +267,16 @@ export function useDeleteSavedSearch() {
       });
 
       toast({
-        title: 'Saved search deleted',
-        description: 'The saved search has been deleted successfully.',
-        variant: 'success',
+        title: "Saved search deleted",
+        description: "The saved search has been deleted successfully.",
+        variant: "success",
       });
     },
     onError: (error: Error) => {
       toast({
-        title: 'Failed to delete saved search',
+        title: "Failed to delete saved search",
         description: error.message,
-        variant: 'destructive',
+        variant: "destructive",
       });
     },
   });
@@ -294,8 +297,13 @@ export function useExecuteSavedSearch() {
   const { toast } = useToast();
 
   const mutation = useMutation({
-    mutationFn: ({ id, params }: { id: string; params?: ExecuteSavedSearchInput }) =>
-      executeSavedSearch(id, params),
+    mutationFn: ({
+      id,
+      params,
+    }: {
+      id: string;
+      params?: ExecuteSavedSearchInput;
+    }) => executeSavedSearch(id, params),
     onSuccess: (data, variables) => {
       // Update execution stats in cache
       queryClient.invalidateQueries({
@@ -305,14 +313,14 @@ export function useExecuteSavedSearch() {
       // Cache the results
       queryClient.setQueryData(
         queryKeys.savedSearches.execute(variables.id, variables.params),
-        data
+        data,
       );
     },
     onError: (error: Error) => {
       toast({
-        title: 'Failed to execute saved search',
+        title: "Failed to execute saved search",
         description: error.message,
-        variant: 'destructive',
+        variant: "destructive",
       });
     },
   });
@@ -340,7 +348,7 @@ export function useDuplicateSavedSearch() {
       const response = await fetch(`/api/saved-searches/${id}`);
 
       if (!response.ok) {
-        throw new Error('Failed to fetch saved search');
+        throw new Error("Failed to fetch saved search");
       }
 
       const original = await response.json();
@@ -369,16 +377,16 @@ export function useDuplicateSavedSearch() {
       });
 
       toast({
-        title: 'Saved search duplicated',
-        description: 'The search has been duplicated successfully.',
-        variant: 'success',
+        title: "Saved search duplicated",
+        description: "The search has been duplicated successfully.",
+        variant: "success",
       });
     },
     onError: (error: Error) => {
       toast({
-        title: 'Failed to duplicate saved search',
+        title: "Failed to duplicate saved search",
         description: error.message,
-        variant: 'destructive',
+        variant: "destructive",
       });
     },
   });

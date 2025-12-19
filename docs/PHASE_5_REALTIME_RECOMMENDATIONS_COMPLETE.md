@@ -4,7 +4,7 @@
 **Version**: 2.0.0  
 **Completion Date**: 2025  
 **Code Quality**: 💯 100% Lint-Free, Type-Safe  
-**Agricultural Consciousness**: 🌾 MAXIMUM  
+**Agricultural Consciousness**: 🌾 MAXIMUM
 
 ---
 
@@ -45,7 +45,7 @@ Real-time Capabilities: WebSocket-powered
 Response Time: <100ms average
 Lint Errors: 0
 Type Errors: 0
-Test Coverage Target: >80%
+Test Coverage Target: >80
 ```
 
 ### System Capabilities
@@ -145,6 +145,7 @@ Test Coverage Target: >80%
 ### Component Overview
 
 #### 1. **Recommendation Engine Service**
+
 - **File**: `src/lib/services/recommendation-engine.service.ts`
 - **Lines**: ~885 lines
 - **Purpose**: Core recommendation generation using hybrid algorithms
@@ -159,6 +160,7 @@ Test Coverage Target: >80%
   - `getNewArrivalsFromFavoriteFarms()` - Farm-based suggestions
 
 #### 2. **WebSocket Service**
+
 - **File**: `src/lib/services/recommendation-websocket.service.ts`
 - **Lines**: ~654 lines
 - **Purpose**: Real-time recommendation delivery via WebSocket
@@ -171,6 +173,7 @@ Test Coverage Target: >80%
   - `sendCartRecommendations()` - Cart-based suggestions
 
 #### 3. **Event Listener Service**
+
 - **File**: `src/lib/services/recommendation-events.service.ts`
 - **Lines**: ~665 lines
 - **Purpose**: Track user actions and trigger contextual recommendations
@@ -200,6 +203,7 @@ Algorithm Weights:
 ```
 
 **Benefits**:
+
 - Higher accuracy through algorithm fusion
 - Mitigates cold-start problem
 - Balances exploration and exploitation
@@ -208,6 +212,7 @@ Algorithm Weights:
 ### 2. Real-time WebSocket Communication
 
 **Connection Flow**:
+
 ```
 1. Client connects: ws://api.example.com/ws/recommendations?userId=user123
 2. Server sends: CONNECTION_ACK with server time
@@ -218,6 +223,7 @@ Algorithm Weights:
 ```
 
 **Message Types**:
+
 - `RECOMMENDATION_UPDATE` - New personalized recommendations
 - `PRICE_DROP_ALERT` - Product price decreased
 - `STOCK_ALERT` - Out-of-stock item back in stock
@@ -229,6 +235,7 @@ Algorithm Weights:
 ### 3. Event-Driven Recommendations
 
 **Trigger Events**:
+
 ```typescript
 User Action → Event Detection → Recommendation Generation → Real-time Delivery
 
@@ -241,6 +248,7 @@ Examples:
 ```
 
 **Debouncing**:
+
 - Prevents spam from rapid repeated actions
 - 500ms debounce window per action
 - Batch processing every 1 second
@@ -248,6 +256,7 @@ Examples:
 ### 4. Agricultural Consciousness
 
 **Seasonal Intelligence**:
+
 ```typescript
 SPRING (Mar-May):
   → Vegetables, Herbs, Greens, Berries
@@ -263,6 +272,7 @@ WINTER (Dec-Feb):
 ```
 
 **Farm Preference Learning**:
+
 - Tracks which farms user purchases from
 - Boosts recommendations from preferred farms
 - Notifies about new arrivals from favorites
@@ -280,13 +290,15 @@ Step 5: Rank by frequency and diversity
 ```
 
 **Confidence Calculation**:
+
 ```typescript
-confidence = min(number_of_similar_users / 10, 1.0)
+confidence = min(number_of_similar_users / 10, 1.0);
 ```
 
 ### 6. Content-Based Filtering
 
 **Similarity Factors**:
+
 ```typescript
 Score Calculation:
 ├── Same Category: +0.4
@@ -371,11 +383,13 @@ interface ClientConnection {
 ```
 
 **Heartbeat System**:
+
 - Interval: 30 seconds
 - Timeout: 60 seconds of inactivity
 - Auto-cleanup of dead connections
 
 **Subscription Topics**:
+
 ```typescript
 Available Topics:
 ├── "price_drops" - Price decrease notifications
@@ -422,6 +436,7 @@ type UserActionType =
 ```
 
 **Processing Stats Tracking**:
+
 ```typescript
 Stats Collected:
 ├── Total events processed
@@ -443,6 +458,7 @@ Stats Collected:
 **Description**: Get personalized recommendations for a user
 
 **Query Parameters**:
+
 ```typescript
 {
   userId: string;          // Required
@@ -457,11 +473,13 @@ Stats Collected:
 ```
 
 **Example Request**:
+
 ```bash
 GET /api/recommendations?userId=user123&limit=10&context=HOME
 ```
 
 **Example Response**:
+
 ```json
 {
   "success": true,
@@ -487,7 +505,13 @@ GET /api/recommendations?userId=user123&limit=10&context=HOME
         }
       }
     ],
-    "algorithms": ["collaborative_filtering", "content_based", "trending", "seasonal", "user_behavior"],
+    "algorithms": [
+      "collaborative_filtering",
+      "content_based",
+      "trending",
+      "seasonal",
+      "user_behavior"
+    ],
     "timestamp": "2025-01-15T10:30:00Z",
     "userId": "user123"
   },
@@ -500,6 +524,7 @@ GET /api/recommendations?userId=user123&limit=10&context=HOME
 ```
 
 **Response Codes**:
+
 - `200` - Success
 - `400` - Bad Request (missing userId, invalid limit)
 - `500` - Server Error
@@ -513,6 +538,7 @@ GET /api/recommendations?userId=user123&limit=10&context=HOME
 **Description**: Track user action and optionally get recommendations
 
 **Request Body**:
+
 ```typescript
 {
   userId: string;              // Required
@@ -527,6 +553,7 @@ GET /api/recommendations?userId=user123&limit=10&context=HOME
 ```
 
 **Example Request**:
+
 ```bash
 POST /api/recommendations
 Content-Type: application/json
@@ -542,6 +569,7 @@ Content-Type: application/json
 ```
 
 **Example Response**:
+
 ```json
 {
   "success": true,
@@ -562,6 +590,7 @@ Content-Type: application/json
 ```
 
 **Response Codes**:
+
 - `200` - Success
 - `400` - Bad Request (missing userId or action)
 - `500` - Server Error
@@ -573,6 +602,7 @@ Content-Type: application/json
 **Description**: Get products frequently purchased with a specific product
 
 **Query Parameters**:
+
 ```typescript
 {
   productId: string;  // Required
@@ -581,11 +611,13 @@ Content-Type: application/json
 ```
 
 **Example Request**:
+
 ```bash
 GET /api/recommendations/frequently-bought-together?productId=prod123&limit=5
 ```
 
 **Example Response**:
+
 ```json
 {
   "success": true,
@@ -626,6 +658,7 @@ GET /api/recommendations/frequently-bought-together?productId=prod123&limit=5
 **Description**: Get recommendation system statistics and health metrics
 
 **Query Parameters**:
+
 ```typescript
 {
   detailed?: boolean;  // Optional - include detailed breakdown
@@ -633,11 +666,13 @@ GET /api/recommendations/frequently-bought-together?productId=prod123&limit=5
 ```
 
 **Example Request**:
+
 ```bash
 GET /api/recommendations/stats?detailed=true
 ```
 
 **Example Response**:
+
 ```json
 {
   "success": true,
@@ -713,69 +748,73 @@ DELETE /api/recommendations/stats?adminKey=admin-secret
 
 ```typescript
 // Initialize WebSocket connection
-const ws = new WebSocket(`wss://api.example.com/ws/recommendations?userId=user123`);
+const ws = new WebSocket(
+  `wss://api.example.com/ws/recommendations?userId=user123`,
+);
 
 // Connection opened
 ws.onopen = () => {
-  console.log('Connected to recommendation stream');
-  
+  console.log("Connected to recommendation stream");
+
   // Subscribe to topics
-  ws.send(JSON.stringify({
-    type: 'SUBSCRIBE',
-    payload: {
-      topics: ['price_drops', 'stock_alerts', 'trending', 'personalized']
-    }
-  }));
+  ws.send(
+    JSON.stringify({
+      type: "SUBSCRIBE",
+      payload: {
+        topics: ["price_drops", "stock_alerts", "trending", "personalized"],
+      },
+    }),
+  );
 };
 
 // Receive messages
 ws.onmessage = (event) => {
   const message = JSON.parse(event.data);
-  
+
   switch (message.type) {
-    case 'CONNECTION_ACK':
-      console.log('Connection acknowledged:', message.payload);
+    case "CONNECTION_ACK":
+      console.log("Connection acknowledged:", message.payload);
       break;
-      
-    case 'RECOMMENDATION_UPDATE':
+
+    case "RECOMMENDATION_UPDATE":
       displayRecommendations(message.payload.recommendations);
       break;
-      
-    case 'PRICE_DROP_ALERT':
+
+    case "PRICE_DROP_ALERT":
       showPriceDropNotification(message.payload);
       break;
-      
-    case 'STOCK_ALERT':
+
+    case "STOCK_ALERT":
       showStockAlert(message.payload);
       break;
-      
-    case 'TRENDING_UPDATE':
+
+    case "TRENDING_UPDATE":
       updateTrendingSection(message.payload.products);
       break;
-      
-    case 'NEW_ARRIVAL_ALERT':
+
+    case "NEW_ARRIVAL_ALERT":
       showNewArrivalNotification(message.payload.products);
       break;
-      
-    case 'CART_RECOMMENDATION':
+
+    case "CART_RECOMMENDATION":
       displayCartSuggestions(message.payload.recommendations);
       break;
-      
-    case 'HEARTBEAT':
+
+    case "HEARTBEAT":
       // Connection is alive
-      console.log('Heartbeat received');
+      console.log("Heartbeat received");
       break;
-      
-    case 'ERROR':
-      console.error('WebSocket error:', message.payload.error);
+
+    case "ERROR":
+      console.error("WebSocket error:", message.payload.error);
       break;
   }
 };
 
 // Connection closed
 ws.onclose = (event) => {
-  console.log('Connection closed:', event.code, event.reason);
-  
+  console.log("Connection closed:", event.code, event.reason);
+
   // Implement reconnection logic
   setTimeout(() => {
     reconnect();
@@ -784,39 +823,45 @@ ws.onclose = (event) => {
 
 // Error handler
 ws.onerror = (error) => {
-  console.error('WebSocket error:', error);
+  console.error("WebSocket error:", error);
 };
 
 // Send user action
 function trackAction(action, entityId) {
-  ws.send(JSON.stringify({
-    type: 'USER_ACTION',
-    payload: {
-      type: action,
-      entityId: entityId,
-      timestamp: new Date().toISOString()
-    }
-  }));
+  ws.send(
+    JSON.stringify({
+      type: "USER_ACTION",
+      payload: {
+        type: action,
+        entityId: entityId,
+        timestamp: new Date().toISOString(),
+      },
+    }),
+  );
 }
 
 // Request recommendations
 function requestRecommendations(productId) {
-  ws.send(JSON.stringify({
-    type: 'REQUEST_RECOMMENDATIONS',
-    payload: {
-      productId: productId,
-      limit: 10,
-      context: { pageType: 'PRODUCT_DETAIL' }
-    }
-  }));
+  ws.send(
+    JSON.stringify({
+      type: "REQUEST_RECOMMENDATIONS",
+      payload: {
+        productId: productId,
+        limit: 10,
+        context: { pageType: "PRODUCT_DETAIL" },
+      },
+    }),
+  );
 }
 
 // Unsubscribe from topics
 function unsubscribe(topics) {
-  ws.send(JSON.stringify({
-    type: 'UNSUBSCRIBE',
-    payload: { topics }
-  }));
+  ws.send(
+    JSON.stringify({
+      type: "UNSUBSCRIBE",
+      payload: { topics },
+    }),
+  );
 }
 ```
 
@@ -962,17 +1007,20 @@ async getCollaborativeFilteringScores(userId: string, limit: number) {
 ```
 
 **Score Calculation**:
+
 ```
 score = co_occurrence_count / total_similar_users
 confidence = min(number_of_similar_users / 10, 1.0)
 ```
 
 **Advantages**:
+
 - Discovers unexpected connections
 - Leverages wisdom of the crowd
 - Good for cross-category recommendations
 
 **Limitations**:
+
 - Cold start problem for new users
 - Requires substantial order history
 - Computationally expensive
@@ -985,6 +1033,7 @@ confidence = min(number_of_similar_users / 10, 1.0)
 **Use Case**: "Products similar to this one"
 
 **Similarity Features**:
+
 ```typescript
 Features Used:
 ├── Category (weight: 0.4)
@@ -1009,15 +1058,15 @@ async getContentBasedScores(productId: string, limit: number) {
   // Calculate similarity scores
   const scores = candidates.map(product => {
     let score = 0;
-    
+
     if (product.category === sourceProduct.category) score += 0.4;
     if (product.farmId === sourceProduct.farmId) score += 0.3;
-    
+
     const priceDiff = Math.abs(product.price - sourceProduct.price) / sourceProduct.price;
     if (priceDiff <= 0.2) score += 0.2;
-    
+
     if (product.organic === sourceProduct.organic) score += 0.1;
-    
+
     return { productId: product.id, score };
   });
 
@@ -1026,11 +1075,13 @@ async getContentBasedScores(productId: string, limit: number) {
 ```
 
 **Advantages**:
+
 - No cold start problem
 - Transparent reasoning
 - Fast computation
 
 **Limitations**:
+
 - Limited serendipity
 - Requires good product metadata
 - May create filter bubbles
@@ -1043,6 +1094,7 @@ async getContentBasedScores(productId: string, limit: number) {
 **Use Case**: "What's hot right now"
 
 **Metrics Tracked**:
+
 ```typescript
 Trending Factors:
 ├── Order volume (last 7 days)
@@ -1067,7 +1119,7 @@ async getTrendingScores(location, limit) {
     const orderCount = product.orderCount;
     const recencyBoost = calculateRecencyBoost(product.lastOrderDate);
     const normalizedRank = 1 - (index / trendingProducts.length);
-    
+
     return {
       productId: product.id,
       score: normalizedRank * recencyBoost,
@@ -1080,6 +1132,7 @@ async getTrendingScores(location, limit) {
 ```
 
 **Time Decay Function**:
+
 ```
 recency_boost = 1 / (1 + days_since_last_order * 0.1)
 ```
@@ -1095,10 +1148,10 @@ recency_boost = 1 / (1 + days_since_last_order * 0.1)
 
 ```typescript
 const SEASONAL_CATEGORIES = {
-  SPRING: ['Vegetables', 'Herbs', 'Greens', 'Berries'],
-  SUMMER: ['Fruits', 'Vegetables', 'Berries', 'Melons'],
-  FALL: ['Root Vegetables', 'Squash', 'Apples', 'Pumpkins'],
-  WINTER: ['Root Vegetables', 'Preserved', 'Citrus', 'Greens']
+  SPRING: ["Vegetables", "Herbs", "Greens", "Berries"],
+  SUMMER: ["Fruits", "Vegetables", "Berries", "Melons"],
+  FALL: ["Root Vegetables", "Squash", "Apples", "Pumpkins"],
+  WINTER: ["Root Vegetables", "Preserved", "Citrus", "Greens"],
 };
 ```
 
@@ -1133,6 +1186,7 @@ async getSeasonalScores(userProfile, limit) {
 ```
 
 **Agricultural Consciousness**:
+
 - Respects natural growing seasons
 - Promotes local, fresh produce
 - Educational for consumers
@@ -1146,6 +1200,7 @@ async getSeasonalScores(userProfile, limit) {
 **Use Case**: "Based on your preferences"
 
 **Behavior Signals**:
+
 ```typescript
 Tracked Behaviors:
 ├── Purchase history (weight: 0.6)
@@ -1234,13 +1289,13 @@ function combineScores(algorithms, excludeIds) {
 
   // Aggregate scores from all algorithms
   algorithms.forEach(({ scores, weight }) => {
-    scores.forEach(score => {
+    scores.forEach((score) => {
       if (excludeIds.has(score.productId)) return;
 
       const existing = combinedMap.get(score.productId) || {
         totalScore: 0,
         reasons: new Set(),
-        confidences: []
+        confidences: [],
       };
 
       existing.totalScore += score.score * weight;
@@ -1252,12 +1307,14 @@ function combineScores(algorithms, excludeIds) {
   });
 
   // Calculate final scores
-  const finalScores = Array.from(combinedMap.entries()).map(([productId, data]) => ({
-    productId,
-    score: data.totalScore,
-    confidence: average(data.confidences),
-    reasons: Array.from(data.reasons)
-  }));
+  const finalScores = Array.from(combinedMap.entries()).map(
+    ([productId, data]) => ({
+      productId,
+      score: data.totalScore,
+      confidence: average(data.confidences),
+      reasons: Array.from(data.reasons),
+    }),
+  );
 
   // Sort and apply diversity filter
   return applyDiversityFilter(sortByScore(finalScores));
@@ -1265,6 +1322,7 @@ function combineScores(algorithms, excludeIds) {
 ```
 
 **Diversity Filter**:
+
 - Limits products from same farm
 - Ensures category variety
 - Balances price points
@@ -1310,15 +1368,13 @@ Priority Check
 ### High Priority Events
 
 **Immediate Processing**:
+
 ```typescript
-HIGH_PRIORITY_ACTIONS = [
-  'ADD_TO_CART',
-  'VIEW_PRODUCT',
-  'COMPLETE_PURCHASE'
-]
+HIGH_PRIORITY_ACTIONS = ["ADD_TO_CART", "VIEW_PRODUCT", "COMPLETE_PURCHASE"];
 ```
 
 **Why Immediate?**
+
 - User expects instant feedback
 - Time-sensitive actions
 - High conversion impact
@@ -1326,6 +1382,7 @@ HIGH_PRIORITY_ACTIONS = [
 ### Event Handlers
 
 **Product View Handler**:
+
 ```typescript
 async handleProductView(event) {
   const recommendations = await recommendationEngine.getRecommendations({
@@ -1345,6 +1402,7 @@ async handleProductView(event) {
 ```
 
 **Add to Cart Handler**:
+
 ```typescript
 async handleAddToCart(event) {
   // Get frequently bought together
@@ -1358,6 +1416,7 @@ async handleAddToCart(event) {
 ```
 
 **Search Handler**:
+
 ```typescript
 async handleSearch(event) {
   const recommendations = await recommendationEngine.getRecommendations({
@@ -1375,6 +1434,7 @@ async handleSearch(event) {
 ```
 
 **Purchase Completion Handler**:
+
 ```typescript
 async handlePurchase(event) {
   // Generate post-purchase recommendations
@@ -1394,6 +1454,7 @@ async handlePurchase(event) {
 **Purpose**: Prevent recommendation spam from rapid repeated actions
 
 **Implementation**:
+
 ```typescript
 const lastEventTime = new Map<string, number>();
 const DEBOUNCE_TIME = 500; // 500ms
@@ -1410,6 +1471,7 @@ function shouldDebounce(event) {
 ```
 
 **Example Scenario**:
+
 ```
 User rapidly clicks product images on carousel:
 ├── Click 1 (0ms) → Process ✅
@@ -1422,6 +1484,7 @@ User rapidly clicks product images on carousel:
 ### Event Statistics
 
 **Metrics Collected**:
+
 ```typescript
 interface EventStats {
   totalEvents: number;
@@ -1434,11 +1497,14 @@ interface EventStats {
 ```
 
 **Usage**:
+
 ```typescript
 const stats = recommendationEvents.getStats();
 console.log(`Total events: ${stats.totalEvents}`);
 console.log(`Recommendations triggered: ${stats.recommendationsTriggers}`);
-console.log(`Success rate: ${(stats.recommendationsTriggers / stats.totalEvents * 100).toFixed(2)}%`);
+console.log(
+  `Success rate: ${((stats.recommendationsTriggers / stats.totalEvents) * 100).toFixed(2)}%`,
+);
 ```
 
 ---
@@ -1493,6 +1559,7 @@ Recommended Production Limits:
 ### Optimization Techniques
 
 **1. Parallel Processing**:
+
 ```typescript
 // Leverage 12 CPU threads
 const [collab, content, trending, seasonal, behavior] = await Promise.all([
@@ -1500,11 +1567,12 @@ const [collab, content, trending, seasonal, behavior] = await Promise.all([
   getContentBasedScores(productId, limit * 2),
   getTrendingScores(location, limit * 2),
   getSeasonalScores(userProfile, limit * 2),
-  getUserBehaviorScores(userProfile, limit * 2)
+  getUserBehaviorScores(userProfile, limit * 2),
 ]);
 ```
 
 **2. Memory Caching (64GB RAM)**:
+
 ```typescript
 // In-memory user profiles
 const userProfileCache = new Map<string, UserBehaviorProfile>();
@@ -1517,14 +1585,15 @@ async function getCachedUserProfile(userId: string) {
 
   const profile = await buildUserProfile(userId);
   userProfileCache.set(userId, profile);
-  
+
   setTimeout(() => userProfileCache.delete(userId), CACHE_TTL);
-  
+
   return profile;
 }
 ```
 
 **3. Database Query Optimization**:
+
 ```typescript
 // Use selective fields instead of full objects
 const products = await database.product.findMany({
@@ -1533,13 +1602,14 @@ const products = await database.product.findMany({
     name: true,
     price: true,
     category: true,
-    farmId: true
+    farmId: true,
   },
-  where: { available: true }
+  where: { available: true },
 });
 ```
 
 **4. Batch Processing**:
+
 ```typescript
 // Process events in batches every 1 second
 setInterval(async () => {
@@ -1568,6 +1638,7 @@ Layer 3: Database (Source of Truth)
 ```
 
 **Cache Invalidation**:
+
 ```typescript
 Events That Trigger Invalidation:
 ├── User completes purchase → Clear user profile cache
@@ -1603,7 +1674,7 @@ export default function ProductPage({ product }) {
   return (
     <div>
       <ProductDetails product={product} />
-      
+
       <section className="recommendations">
         <h2>You Might Also Like</h2>
         <div className="grid">
@@ -1623,11 +1694,12 @@ export default function ProductPage({ product }) {
 ```
 
 **Backend API Call** (Alternative to WebSocket):
+
 ```typescript
 // API call approach
 async function loadRecommendations(productId: string) {
   const response = await fetch(
-    `/api/recommendations?userId=user123&productId=${productId}&limit=8&context=PRODUCT_DETAIL`
+    `/api/recommendations?userId=user123&productId=${productId}&limit=8&context=PRODUCT_DETAIL`,
   );
   const { data } = await response.json();
   return data.recommendations;
@@ -1651,7 +1723,7 @@ export function ShoppingCart({ cartItems, userId }) {
     // Track add to cart
     async function trackAndGetSuggestions() {
       const lastItem = cartItems[cartItems.length - 1];
-      
+
       // Track action and get recommendations
       const response = await fetch('/api/recommendations', {
         method: 'POST',
@@ -1678,7 +1750,7 @@ export function ShoppingCart({ cartItems, userId }) {
   return (
     <div className="cart">
       <h2>Shopping Cart ({cartItems.length})</h2>
-      
+
       {cartItems.map(item => (
         <CartItem key={item.id} item={item} />
       ))}
@@ -1704,10 +1776,11 @@ export function ShoppingCart({ cartItems, userId }) {
 ```
 
 **Frequently Bought Together API**:
+
 ```typescript
 async function getFrequentlyBoughtTogether(productId: string) {
   const response = await fetch(
-    `/api/recommendations/frequently-bought-together?productId=${productId}&limit=4`
+    `/api/recommendations/frequently-bought-together?productId=${productId}&limit=4`,
   );
   const { data } = await response.json();
   return data.recommendations;
@@ -2002,6 +2075,7 @@ STATS_UPDATE_INTERVAL=60000  # 1 minute
 ### Docker Deployment
 
 **Dockerfile**:
+
 ```dockerfile
 FROM node:22-alpine
 
@@ -2028,8 +2102,9 @@ CMD ["npm", "start"]
 ```
 
 **docker-compose.yml**:
+
 ```yaml
-version: '3.8'
+version: "3.8"
 
 services:
   app:
@@ -2071,8 +2146,7 @@ volumes:
 ### Production Checklist
 
 ```yaml
-Pre-Deployment:
-  ☐ Run all tests
+Pre-Deployment: ☐ Run all tests
   ☐ Check for TypeScript errors
   ☐ Verify lint passes
   ☐ Update environment variables
@@ -2083,8 +2157,7 @@ Pre-Deployment:
   ☐ Verify API endpoints
   ☐ Load test with expected traffic
 
-Post-Deployment:
-  ☐ Monitor error rates
+Post-Deployment: ☐ Monitor error rates
   ☐ Check WebSocket connection stability
   ☐ Verify recommendation generation
   ☐ Monitor response times
@@ -2099,6 +2172,7 @@ Post-Deployment:
 ### Monitoring Setup
 
 **Application Insights (Azure)**:
+
 ```typescript
 // lib/monitoring/telemetry.ts
 import { TelemetryClient } from 'applicationinsights';
@@ -2108,3 +2182,4 @@ const client = new TelemetryClient(process.env.APPINSIGHTS_CONNECTION_STRING);
 export function trackRecommendationGenerated(userId: string, count: number, duration: number) {
   client.trackEvent({
     name: 'RecommendationGenerated',
+```

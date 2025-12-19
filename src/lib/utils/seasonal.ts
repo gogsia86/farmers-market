@@ -51,7 +51,7 @@ export function getAllSeasons(): Season[] {
 export function getNextSeason(currentSeason: Season): Season {
   const seasons: Season[] = ["SPRING", "SUMMER", "FALL", "WINTER"];
   const currentIndex = seasons.indexOf(currentSeason);
-  return seasons[(currentIndex + 1) % 4];
+  return seasons[(currentIndex + 1) % 4] || "SPRING";
 }
 
 /**
@@ -60,7 +60,7 @@ export function getNextSeason(currentSeason: Season): Season {
 export function getPreviousSeason(currentSeason: Season): Season {
   const seasons: Season[] = ["SPRING", "SUMMER", "FALL", "WINTER"];
   const currentIndex = seasons.indexOf(currentSeason);
-  return seasons[(currentIndex - 1 + 4) % 4];
+  return seasons[(currentIndex - 1 + 4) % 4] || "WINTER";
 }
 
 /**
@@ -75,7 +75,7 @@ export function getAdjacentSeasons(currentSeason: Season): Season[] {
  */
 export function isInSeason(
   productSeasons: Season[],
-  season: Season = getCurrentSeason()
+  season: Season = getCurrentSeason(),
 ): boolean {
   return productSeasons.includes(season);
 }
@@ -126,7 +126,7 @@ export function getSeasonMonths(season: Season): number[] {
   const months: Record<Season, number[]> = {
     SPRING: [2, 3, 4], // March, April, May
     SUMMER: [5, 6, 7], // June, July, August
-    FALL: [8, 9, 10],  // September, October, November
+    FALL: [8, 9, 10], // September, October, November
     WINTER: [11, 0, 1], // December, January, February
   };
   return months[season];
@@ -142,9 +142,9 @@ export function daysUntilNextSeason(date: Date = new Date()): number {
 
   // Season transition dates (first day of each season)
   const transitions = [
-    { season: "SPRING" as Season, month: 2, day: 1 },  // March 1
-    { season: "SUMMER" as Season, month: 5, day: 1 },  // June 1
-    { season: "FALL" as Season, month: 8, day: 1 },    // September 1
+    { season: "SPRING" as Season, month: 2, day: 1 }, // March 1
+    { season: "SUMMER" as Season, month: 5, day: 1 }, // June 1
+    { season: "FALL" as Season, month: 8, day: 1 }, // September 1
     { season: "WINTER" as Season, month: 11, day: 1 }, // December 1
   ];
 

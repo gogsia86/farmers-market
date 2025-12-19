@@ -4,7 +4,7 @@
 **Version**: 2.0.0  
 **Completion Date**: January 2025  
 **Code Quality**: 💯 100% Lint-Free, Type-Safe  
-**Agricultural Consciousness**: 🌾 MAXIMUM  
+**Agricultural Consciousness**: 🌾 MAXIMUM
 
 ---
 
@@ -137,6 +137,7 @@ Code Quality Score: 100/100
 ### 1. Hybrid Recommendation Algorithm
 
 **Algorithm Weights**:
+
 ```
 ├── Collaborative Filtering: 30%
 ├── Content-Based Filtering: 25%
@@ -146,6 +147,7 @@ Code Quality Score: 100/100
 ```
 
 **How It Works**:
+
 1. Run 5 algorithms in parallel
 2. Aggregate scores with weights
 3. Apply diversity filter
@@ -154,6 +156,7 @@ Code Quality Score: 100/100
 ### 2. Real-time WebSocket Communication
 
 **Message Types**:
+
 - `RECOMMENDATION_UPDATE` - New personalized recommendations
 - `PRICE_DROP_ALERT` - Product price decreased
 - `STOCK_ALERT` - Item back in stock
@@ -163,6 +166,7 @@ Code Quality Score: 100/100
 - `PERSONALIZED_SUGGESTION` - Action-triggered recommendations
 
 **Connection Flow**:
+
 ```
 Client → ws://api.example.com/ws/recommendations?userId=user123
 Server → CONNECTION_ACK
@@ -173,6 +177,7 @@ Server → Stream recommendations in real-time
 ### 3. Event-Driven Recommendations
 
 **Trigger Events**:
+
 ```
 VIEW_PRODUCT → Similar products
 ADD_TO_CART → Frequently bought together
@@ -182,6 +187,7 @@ COMPLETE_PURCHASE → Post-purchase recommendations
 ```
 
 **Processing Pipeline**:
+
 ```
 Event → Debounce → Priority Check → Generate → WebSocket Delivery
 ```
@@ -189,6 +195,7 @@ Event → Debounce → Priority Check → Generate → WebSocket Delivery
 ### 4. Agricultural Consciousness
 
 **Seasonal Intelligence**:
+
 ```yaml
 SPRING: Vegetables, Herbs, Greens, Berries
 SUMMER: Fruits, Vegetables, Berries, Melons
@@ -197,6 +204,7 @@ WINTER: Root Vegetables, Preserved, Citrus, Greens
 ```
 
 **Farm Preference Learning**:
+
 - Tracks user's favorite farms
 - Boosts recommendations from preferred farms
 - Notifies about new arrivals
@@ -208,6 +216,7 @@ WINTER: Root Vegetables, Preserved, Citrus, Greens
 ### 1. Backend Setup
 
 **Import Services**:
+
 ```typescript
 import { recommendationEngine } from "@/lib/services/recommendation-engine.service";
 import { recommendationEvents } from "@/lib/services/recommendation-events.service";
@@ -215,6 +224,7 @@ import { recommendationWebSocket } from "@/lib/services/recommendation-websocket
 ```
 
 **Initialize WebSocket (in server.ts)**:
+
 ```typescript
 import { createServer } from "http";
 
@@ -229,11 +239,13 @@ httpServer.listen(3000);
 ### 2. REST API Usage
 
 **Get Recommendations**:
+
 ```bash
 GET /api/recommendations?userId=user123&limit=10&context=HOME
 ```
 
 **Track User Action**:
+
 ```bash
 POST /api/recommendations
 {
@@ -245,11 +257,13 @@ POST /api/recommendations
 ```
 
 **Frequently Bought Together**:
+
 ```bash
 GET /api/recommendations/frequently-bought-together?productId=prod123&limit=5
 ```
 
 **System Stats**:
+
 ```bash
 GET /api/recommendations/stats?detailed=true
 ```
@@ -257,8 +271,9 @@ GET /api/recommendations/stats?detailed=true
 ### 3. WebSocket Integration (Frontend)
 
 **React Hook Example**:
+
 ```typescript
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 function useRecommendations(userId: string) {
   const [ws, setWs] = useState<WebSocket | null>(null);
@@ -266,20 +281,22 @@ function useRecommendations(userId: string) {
 
   useEffect(() => {
     const websocket = new WebSocket(
-      `wss://api.example.com/ws/recommendations?userId=${userId}`
+      `wss://api.example.com/ws/recommendations?userId=${userId}`,
     );
 
     websocket.onopen = () => {
-      websocket.send(JSON.stringify({
-        type: 'SUBSCRIBE',
-        payload: { topics: ['personalized', 'price_drops'] }
-      }));
+      websocket.send(
+        JSON.stringify({
+          type: "SUBSCRIBE",
+          payload: { topics: ["personalized", "price_drops"] },
+        }),
+      );
     };
 
     websocket.onmessage = (event) => {
       const message = JSON.parse(event.data);
-      
-      if (message.type === 'RECOMMENDATION_UPDATE') {
+
+      if (message.type === "RECOMMENDATION_UPDATE") {
         setRecommendations(message.payload.recommendations);
       }
     };
@@ -290,10 +307,12 @@ function useRecommendations(userId: string) {
 
   const trackAction = (action: string, entityId?: string) => {
     if (ws?.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify({
-        type: 'USER_ACTION',
-        payload: { type: action, entityId }
-      }));
+      ws.send(
+        JSON.stringify({
+          type: "USER_ACTION",
+          payload: { type: action, entityId },
+        }),
+      );
     }
   };
 
@@ -302,6 +321,7 @@ function useRecommendations(userId: string) {
 ```
 
 **Usage in Component**:
+
 ```typescript
 function ProductPage({ product }) {
   const { recommendations, trackAction } = useRecommendations('user123');
@@ -329,6 +349,7 @@ function ProductPage({ product }) {
 **Use Case**: "Users who bought this also bought..."
 
 **Score Calculation**:
+
 ```
 score = co_occurrence_count / total_similar_users
 confidence = min(number_of_similar_users / 10, 1.0)
@@ -337,6 +358,7 @@ confidence = min(number_of_similar_users / 10, 1.0)
 ### 2. Content-Based Filtering
 
 **Similarity Features**:
+
 ```
 ├── Same Category: +0.4
 ├── Same Farm: +0.3
@@ -347,6 +369,7 @@ confidence = min(number_of_similar_users / 10, 1.0)
 ### 3. Trending Analysis
 
 **Factors**:
+
 - Order volume (last 7 days)
 - Unique buyers
 - Regional relevance
@@ -355,6 +378,7 @@ confidence = min(number_of_similar_users / 10, 1.0)
 ### 4. Seasonal Intelligence
 
 **Algorithm**:
+
 - Detects current agricultural season
 - Filters products by seasonal categories
 - Boosts user's preferred categories
@@ -363,6 +387,7 @@ confidence = min(number_of_similar_users / 10, 1.0)
 ### 5. User Behavior Analysis
 
 **Tracked Behaviors**:
+
 ```
 ├── Purchase history (60%)
 ├── Browse history (20%)
@@ -504,19 +529,19 @@ Weekly Metrics:
 
 ```typescript
 // Test recommendation engine
-describe('RecommendationEngine', () => {
-  it('should generate personalized recommendations', async () => {
+describe("RecommendationEngine", () => {
+  it("should generate personalized recommendations", async () => {
     const recommendations = await recommendationEngine.getRecommendations({
-      userId: 'test-user',
-      limit: 10
+      userId: "test-user",
+      limit: 10,
     });
     expect(recommendations.recommendations).toHaveLength(10);
   });
 
-  it('should handle frequently bought together', async () => {
+  it("should handle frequently bought together", async () => {
     const result = await recommendationEngine.getFrequentlyBoughtTogether(
-      'product-123',
-      5
+      "product-123",
+      5,
     );
     expect(result.recommendations.length).toBeLessThanOrEqual(5);
   });
@@ -527,9 +552,11 @@ describe('RecommendationEngine', () => {
 
 ```typescript
 // Test API endpoints
-describe('Recommendations API', () => {
-  it('GET /api/recommendations should return recommendations', async () => {
-    const response = await fetch('/api/recommendations?userId=user123&limit=10');
+describe("Recommendations API", () => {
+  it("GET /api/recommendations should return recommendations", async () => {
+    const response = await fetch(
+      "/api/recommendations?userId=user123&limit=10",
+    );
     const data = await response.json();
     expect(data.success).toBe(true);
     expect(data.data.recommendations).toBeDefined();
@@ -541,14 +568,16 @@ describe('Recommendations API', () => {
 
 ```typescript
 // Test WebSocket connection
-describe('WebSocket Service', () => {
-  it('should establish connection and receive recommendations', (done) => {
-    const ws = new WebSocket('ws://localhost:3001/ws/recommendations?userId=test');
-    
+describe("WebSocket Service", () => {
+  it("should establish connection and receive recommendations", (done) => {
+    const ws = new WebSocket(
+      "ws://localhost:3001/ws/recommendations?userId=test",
+    );
+
     ws.onmessage = (event) => {
       const message = JSON.parse(event.data);
-      if (message.type === 'CONNECTION_ACK') {
-        expect(message.payload.userId).toBe('test');
+      if (message.type === "CONNECTION_ACK") {
+        expect(message.payload.userId).toBe("test");
         ws.close();
         done();
       }
@@ -564,8 +593,7 @@ describe('WebSocket Service', () => {
 ### Production Checklist
 
 ```yaml
-Pre-Deployment:
-  ☐ Run all tests (npm test)
+Pre-Deployment: ☐ Run all tests (npm test)
   ☐ Check TypeScript (npx tsc --noEmit)
   ☐ Verify linting (npm run lint)
   ☐ Update environment variables
@@ -575,8 +603,7 @@ Pre-Deployment:
   ☐ Test WebSocket connectivity
   ☐ Load test expected traffic
 
-Post-Deployment:
-  ☐ Monitor error rates
+Post-Deployment: ☐ Monitor error rates
   ☐ Check WebSocket stability
   ☐ Verify recommendation generation
   ☐ Monitor response times
@@ -588,7 +615,7 @@ Post-Deployment:
 
 ```yaml
 # docker-compose.yml
-version: '3.8'
+version: "3.8"
 services:
   app:
     build: .
@@ -729,22 +756,27 @@ Features:
 ### Common Patterns
 
 **Product Detail Page**:
+
 ```typescript
 // Track view + get similar products
-trackAction('VIEW_PRODUCT', productId);
+trackAction("VIEW_PRODUCT", productId);
 // WebSocket automatically sends recommendations
 ```
 
 **Shopping Cart**:
+
 ```typescript
 // Track add to cart + get frequently bought together
-await fetch('/api/recommendations/frequently-bought-together?productId=' + productId);
+await fetch(
+  "/api/recommendations/frequently-bought-together?productId=" + productId,
+);
 ```
 
 **Home Page**:
+
 ```typescript
 // Get personalized recommendations
-await fetch('/api/recommendations?userId=' + userId + '&context=HOME&limit=20');
+await fetch("/api/recommendations?userId=" + userId + "&context=HOME&limit=20");
 ```
 
 ---
@@ -772,17 +804,20 @@ curl -X DELETE "https://api.example.com/api/recommendations/stats?adminKey=your-
 ### Troubleshooting
 
 **High Event Queue Size**:
+
 - Increase `RECOMMENDATION_BATCH_SIZE`
 - Decrease `RECOMMENDATION_PROCESSING_INTERVAL`
 - Scale horizontally
 
 **Slow Recommendations**:
+
 - Enable Redis caching
 - Optimize database queries
 - Increase server resources
 - Review algorithm complexity
 
 **WebSocket Disconnections**:
+
 - Check network stability
 - Verify heartbeat interval
 - Review connection timeout settings
@@ -802,15 +837,16 @@ The Real-time Recommendations system is **production-ready** with:
 ✅ **Agricultural consciousness**  
 ✅ **Comprehensive documentation**  
 ✅ **Performance optimized** (<100ms)  
-✅ **Production deployment guide**  
+✅ **Production deployment guide**
 
 **Ready for testing and deployment! 🚀**
 
 ---
 
 **Phase 5 Progress**:
+
 - ✅ Smart Search Ranking: 100% Complete
-- ✅ Campaign Automation: 100% Complete  
+- ✅ Campaign Automation: 100% Complete
 - ✅ **Real-time Recommendations: 100% Complete** ⭐
 - ⏳ ML Models Integration: Not Started
 - ⏳ Predictive Inventory: Not Started

@@ -861,7 +861,35 @@ export class SmartSearchRankingService {
 }
 
 // ============================================================================
-// EXPORT SINGLETON
+// EXPORT SINGLETON (Lazy-loaded to avoid build-time initialization)
 // ============================================================================
 
-export const smartSearchRankingService = new SmartSearchRankingService();
+let smartSearchRankingServiceInstance: SmartSearchRankingService | null = null;
+
+function getSmartSearchRankingService(): SmartSearchRankingService {
+  if (!smartSearchRankingServiceInstance) {
+    smartSearchRankingServiceInstance = new SmartSearchRankingService();
+  }
+  return smartSearchRankingServiceInstance;
+}
+
+export const smartSearchRankingService = {
+  // Proxy all methods to the lazy-loaded singleton instance
+  async rankSearchResults(request: SearchRankingRequest) {
+    return getSmartSearchRankingService().rankSearchResults(request);
+  },
+
+  async calculatePersonalizedScore(userId: string, productId: string) {
+    return getSmartSearchRankingService().calculatePersonalizedScore(
+      userId,
+      productId,
+    );
+  },
+
+  async calculatePersonalizedScoresBatch(userId: string, productIds: string[]) {
+    return getSmartSearchRankingService().calculatePersonalizedScoresBatch(
+      userId,
+      productIds,
+    );
+  },
+};

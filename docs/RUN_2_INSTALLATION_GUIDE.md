@@ -88,17 +88,17 @@ model Product {
   stockQuantity  Int      @default(0)
   isOrganic      Boolean  @default(false)
   isSeasonal     Boolean  @default(false)
-  
+
   // Relations
   categoryId     String?
   category       Category? @relation(fields: [categoryId], references: [id])
   farmId         String
   farm           Farm      @relation(fields: [farmId], references: [id])
   images         ProductImage[]
-  
+
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
-  
+
   @@index([name])
   @@index([categoryId])
   @@index([farmId])
@@ -112,12 +112,12 @@ model Farm {
   description String?  @db.Text
   logo        String?
   isVerified  Boolean  @default(false)
-  
+
   products    Product[]
-  
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
+
   @@index([name])
   @@index([isVerified])
 }
@@ -126,10 +126,10 @@ model Category {
   id       String    @id @default(cuid())
   name     String    @unique
   products Product[]
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   @@index([name])
 }
 ```
@@ -200,18 +200,21 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { SearchFilters } from "@/components/features/search/SearchFilters";
 import { ProductGridSkeleton } from "@/components/ui/skeleton";
-import { parseSearchParams, filtersToSearchParams } from "@/lib/utils/search.utils";
+import {
+  parseSearchParams,
+  filtersToSearchParams,
+} from "@/lib/utils/search.utils";
 import type { ProductSearchFilters } from "@/types/search";
 
 export default function ProductSearchPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   // Parse URL to filters
-  const [filters, setFilters] = useState<ProductSearchFilters>(() => 
-    parseSearchParams(searchParams)
+  const [filters, setFilters] = useState<ProductSearchFilters>(() =>
+    parseSearchParams(searchParams),
   );
-  
+
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState<any>({
     data: [],
@@ -347,7 +350,9 @@ export function SearchBar() {
     }
 
     try {
-      const res = await fetch(`/api/search/suggestions?q=${encodeURIComponent(q)}`);
+      const res = await fetch(
+        `/api/search/suggestions?q=${encodeURIComponent(q)}`,
+      );
       const data = await res.json();
 
       if (data.success) {
@@ -436,7 +441,7 @@ import { SearchBar } from "@/components/features/search/SearchBar";
     <SearchBar />
     <Navigation />
   </div>
-</header>
+</header>;
 ```
 
 ---
@@ -564,7 +569,7 @@ import { SearchBar } from "@/components/features/search/SearchBar";
 <section className="hero">
   <h1>Find Fresh Local Products</h1>
   <SearchBar />
-</section>
+</section>;
 ```
 
 ---
@@ -581,7 +586,7 @@ import { getCurrentSeason } from "@/lib/utils/search.utils";
 
 export function SeasonalBadge() {
   const season = getCurrentSeason();
-  
+
   const seasonColors = {
     SPRING: "bg-green-500",
     SUMMER: "bg-yellow-500",
@@ -641,6 +646,7 @@ import { database } from "@/lib/database";
 ### Issue: Suggestions not showing
 
 **Solution**: Check:
+
 1. API is returning data
 2. `showSuggestions` state is true
 3. CSS z-index is high enough
@@ -663,19 +669,21 @@ import type { ProductSearchFilters } from "@/types/search";
 ## 🚀 Performance Tips
 
 1. **Enable Response Caching**:
+
 ```tsx
 export const revalidate = 60; // Cache for 60 seconds
 ```
 
 2. **Use React Query** (Coming in Run 3):
+
 ```tsx
-const { data, isLoading } = useQuery(
-  ['products', filters],
-  () => fetchProducts(filters)
+const { data, isLoading } = useQuery(["products", filters], () =>
+  fetchProducts(filters),
 );
 ```
 
 3. **Add Indexes to Database** (if not already):
+
 ```sql
 CREATE INDEX idx_products_name ON Product(name);
 CREATE INDEX idx_products_price ON Product(price);
@@ -708,6 +716,7 @@ Once Run 2 is installed:
 ## ✨ You're Done!
 
 Your Farmers Market Platform now has:
+
 - ✅ Full-text product search
 - ✅ Advanced filtering (8 filter types)
 - ✅ Autocomplete suggestions
@@ -720,4 +729,4 @@ Your Farmers Market Platform now has:
 
 ---
 
-*Divine Agricultural Search Consciousness Activated* 🌾🔍✨
+_Divine Agricultural Search Consciousness Activated_ 🌾🔍✨

@@ -23,10 +23,26 @@ import { Redis } from "@upstash/redis";
 // REDIS CONFIGURATION
 // ============================================================================
 
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-});
+let redis: Redis | null = null;
+
+function getRedis(): Redis {
+  if (!redis) {
+    // Only initialize Redis when actually needed (not during build)
+    if (
+      !process.env.UPSTASH_REDIS_REST_URL ||
+      !process.env.UPSTASH_REDIS_REST_TOKEN
+    ) {
+      throw new Error(
+        "Redis configuration missing - rate limiting will use memory fallback",
+      );
+    }
+    redis = new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN,
+    });
+  }
+  return redis;
+}
 
 // ============================================================================
 // IN-MEMORY FALLBACK (When Redis is unavailable)
@@ -96,94 +112,6 @@ memoryLimiter.startCleanup();
 // RATE LIMITER INSTANCES
 // ============================================================================
 
-/**
- * General API rate limiter
- * Protects all API routes from excessive requests
- *
- * Limit: 100 requests per minute per IP
- * Suitable for: General browsing, product listings, farm searches
- */
-export const apiRateLimiter = new Ratelimit({
-  redis,
-  limiter: Ratelimit.slidingWindow(100, "1 m"),
-  analytics: true,
-  prefix: "ratelimit:api",
-});
-
-/**
- * Authentication rate limiter
- * Stricter limits for login/signup to prevent brute force attacks
- *
- * Limit: 5 requests per minute per IP
- * Suitable for: Login, signup, password reset
- */
-export const authRateLimiter = new Ratelimit({
-  redis,
-  limiter: Ratelimit.slidingWindow(5, "1 m"),
-  analytics: true,
-  prefix: "ratelimit:auth",
-});
-
-/**
- * Search rate limiter
- * Moderate limits for search endpoints (computationally expensive)
- *
- * Limit: 30 requests per minute per IP
- * Suitable for: Product search, farm search, geocoding
- */
-export const searchRateLimiter = new Ratelimit({
-  redis,
-  limiter: Ratelimit.slidingWindow(30, "1 m"),
-  analytics: true,
-  prefix: "ratelimit:search",
-});
-
-/**
- * Admin rate limiter
- * Higher limits for authenticated admin users
- *
- * Limit: 500 requests per minute per user
- * Suitable for: Admin dashboard, bulk operations
- */
-export const adminRateLimiter = new Ratelimit({
-  redis,
-  limiter: Ratelimit.slidingWindow(500, "1 m"),
-  analytics: true,
-  prefix: "ratelimit:admin",
-});
-
-/**
- * Upload rate limiter
- * Strict limits for file uploads (resource intensive)
- *
- * Limit: 10 requests per minute per user
- * Suitable for: Product images, farm photos, documents
- */
-export const uploadRateLimiter = new Ratelimit({
-  redis,
-  limiter: Ratelimit.slidingWindow(10, "1 m"),
-  analytics: true,
-  prefix: "ratelimit:upload",
-});
-
-/**
- * Payment rate limiter
- * Very strict limits for payment endpoints
- *
- * Limit: 3 requests per minute per user
- * Suitable for: Checkout, payment processing
- */
-export const paymentRateLimiter = new Ratelimit({
-  redis,
-  limiter: Ratelimit.slidingWindow(3, "1 m"),
-  analytics: true,
-  prefix: "ratelimit:payment",
-});
-
-// ============================================================================
-// RATE LIMITER WRAPPER WITH FALLBACK
-// ============================================================================
-
 export interface RateLimitResult {
   success: boolean;
   limit: number;
@@ -193,23 +121,201 @@ export interface RateLimitResult {
 }
 
 /**
+ * General API rate limiter
+ * Protects all API routes from excessive requests
+ *
+ * Limit: 100 requests per minute per IP
+ * Suitable for: General browsing, product listings, farm searches
+ */
+export const apiRateLimiter = {
+  limit: async (identifier: string): Promise<RateLimitResult> => {
+    try {
+      const limiter = new Ratelimit({
+        redis: getRedis(),
+        limiter: Ratelimit.slidingWindow(100, "1 m"),
+        analytics: true,
+        prefix: "ratelimit:api",
+      });
+      return (await limiter.limit(identifier)) as RateLimitResult;
+    } catch (error) {
+      // Fallback to memory limiter
+      const result = await memoryLimiter.limit(identifier, 100, 60000);
+      return {
+        ...result,
+        limit: 100,
+        pending: Promise.resolve(),
+      };
+    }
+  },
+};
+
+/**
+ * Authentication rate limiter
+ * Stricter limits for login/signup to prevent brute force attacks
+ *
+ * Limit: 5 requests per minute per IP
+ * Suitable for: Login, signup, password reset
+ */
+export const authRateLimiter = {
+  limit: async (identifier: string): Promise<RateLimitResult> => {
+    try {
+      const limiter = new Ratelimit({
+        redis: getRedis(),
+        limiter: Ratelimit.slidingWindow(5, "1 m"),
+        analytics: true,
+        prefix: "ratelimit:auth",
+      });
+      return (await limiter.limit(identifier)) as RateLimitResult;
+    } catch (error) {
+      // Fallback to memory limiter
+      const result = await memoryLimiter.limit(identifier, 5, 60000);
+      return {
+        ...result,
+        limit: 5,
+        pending: Promise.resolve(),
+      };
+    }
+  },
+};
+
+/**
+ * Search rate limiter
+ * Moderate limits for search endpoints (computationally expensive)
+ *
+ * Limit: 30 requests per minute per IP
+ * Suitable for: Product search, farm search, geocoding
+ */
+export const searchRateLimiter = {
+  limit: async (identifier: string): Promise<RateLimitResult> => {
+    try {
+      const limiter = new Ratelimit({
+        redis: getRedis(),
+        limiter: Ratelimit.slidingWindow(30, "1 m"),
+        analytics: true,
+        prefix: "ratelimit:search",
+      });
+      return (await limiter.limit(identifier)) as RateLimitResult;
+    } catch (error) {
+      // Fallback to memory limiter
+      const result = await memoryLimiter.limit(identifier, 30, 60000);
+      return {
+        ...result,
+        limit: 30,
+        pending: Promise.resolve(),
+      };
+    }
+  },
+};
+
+/**
+ * Admin rate limiter
+ * Higher limits for authenticated admin users
+ *
+ * Limit: 500 requests per minute per user
+ * Suitable for: Admin dashboard, bulk operations
+ */
+export const adminRateLimiter = {
+  limit: async (identifier: string): Promise<RateLimitResult> => {
+    try {
+      const limiter = new Ratelimit({
+        redis: getRedis(),
+        limiter: Ratelimit.slidingWindow(500, "1 m"),
+        analytics: true,
+        prefix: "ratelimit:admin",
+      });
+      return (await limiter.limit(identifier)) as RateLimitResult;
+    } catch (error) {
+      // Fallback to memory limiter
+      const result = await memoryLimiter.limit(identifier, 500, 60000);
+      return {
+        ...result,
+        limit: 500,
+        pending: Promise.resolve(),
+      };
+    }
+  },
+};
+
+/**
+ * Upload rate limiter
+ * Strict limits for file uploads (resource intensive)
+ *
+ * Limit: 10 requests per minute per user
+ * Suitable for: Product images, farm photos, documents
+ */
+export const uploadRateLimiter = {
+  limit: async (identifier: string): Promise<RateLimitResult> => {
+    try {
+      const limiter = new Ratelimit({
+        redis: getRedis(),
+        limiter: Ratelimit.slidingWindow(10, "1 m"),
+        analytics: true,
+        prefix: "ratelimit:upload",
+      });
+      return (await limiter.limit(identifier)) as RateLimitResult;
+    } catch (error) {
+      // Fallback to memory limiter
+      const result = await memoryLimiter.limit(identifier, 10, 60000);
+      return {
+        ...result,
+        limit: 10,
+        pending: Promise.resolve(),
+      };
+    }
+  },
+};
+
+/**
+ * Payment rate limiter
+ * Very strict limits for payment endpoints
+ *
+ * Limit: 3 requests per minute per user
+ * Suitable for: Checkout, payment processing
+ */
+export const paymentRateLimiter = {
+  limit: async (identifier: string): Promise<RateLimitResult> => {
+    try {
+      const limiter = new Ratelimit({
+        redis: getRedis(),
+        limiter: Ratelimit.slidingWindow(3, "1 m"),
+        analytics: true,
+        prefix: "ratelimit:payment",
+      });
+      return (await limiter.limit(identifier)) as RateLimitResult;
+    } catch (error) {
+      // Fallback to memory limiter
+      const result = await memoryLimiter.limit(identifier, 3, 60000);
+      return {
+        ...result,
+        limit: 3,
+        pending: Promise.resolve(),
+      };
+    }
+  },
+};
+
+// ============================================================================
+// RATE LIMITER WRAPPER WITH FALLBACK
+// ============================================================================
+
+/**
  * Rate limit with automatic fallback to memory cache
  *
- * @param limiter - Upstash rate limiter instance
+ * @param limiter - Rate limiter instance
  * @param identifier - Unique identifier (IP address, user ID, etc.)
  * @param fallbackConfig - Fallback configuration for memory limiter
  */
 export async function checkRateLimit(
-  limiter: Ratelimit,
+  limiter: { limit: (identifier: string) => Promise<RateLimitResult> },
   identifier: string,
   fallbackConfig?: { maxRequests: number; windowMs: number },
 ): Promise<RateLimitResult> {
   try {
-    // Try Upstash Redis first
+    // Try rate limiter (with built-in fallback)
     const result = await limiter.limit(identifier);
     return result;
   } catch (error) {
-    console.error("⚠️ Rate limiter Redis error, using memory fallback:", error);
+    console.error("⚠️ Rate limiter error, using memory fallback:", error);
 
     // Fallback to memory limiter
     if (fallbackConfig) {
@@ -327,7 +433,7 @@ export function createRateLimitError(result: RateLimitResult) {
  */
 export async function applyRateLimit(
   request: Request,
-  limiter: Ratelimit,
+  limiter: { limit: (identifier: string) => Promise<RateLimitResult> },
   userId?: string,
   fallbackConfig?: { maxRequests: number; windowMs: number },
 ): Promise<RateLimitResult> {
@@ -376,12 +482,31 @@ export function getSeasonalMultiplier(): number {
 export function createSeasonalRateLimiter(baseLimit: number) {
   const adjustedLimit = Math.floor(baseLimit * getSeasonalMultiplier());
 
-  return new Ratelimit({
-    redis,
-    limiter: Ratelimit.slidingWindow(adjustedLimit, "1 m"),
-    analytics: true,
-    prefix: "ratelimit:seasonal",
-  });
+  return {
+    limit: async (identifier: string): Promise<RateLimitResult> => {
+      try {
+        const limiter = new Ratelimit({
+          redis: getRedis(),
+          limiter: Ratelimit.slidingWindow(adjustedLimit, "1 m"),
+          analytics: true,
+          prefix: "ratelimit:seasonal",
+        });
+        return (await limiter.limit(identifier)) as RateLimitResult;
+      } catch (error) {
+        // Fallback to memory limiter
+        const result = await memoryLimiter.limit(
+          identifier,
+          adjustedLimit,
+          60000,
+        );
+        return {
+          ...result,
+          limit: adjustedLimit,
+          pending: Promise.resolve(),
+        };
+      }
+    },
+  };
 }
 
 // ============================================================================
@@ -416,7 +541,7 @@ export async function logRateLimitEvent(event: {
 // EXPORTS
 // ============================================================================
 
-export { redis, memoryLimiter };
+export { getRedis as redis, memoryLimiter };
 
 /**
  * Pre-configured rate limiters for common use cases

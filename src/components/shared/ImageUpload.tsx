@@ -14,16 +14,22 @@
  * @module ImageUpload
  */
 
-'use client';
+"use client";
 
-import React, { useState, useCallback, useEffect } from 'react';
-import { Upload, X, Loader2, Image as ImageIcon, AlertCircle } from 'lucide-react';
-import { useDropzone } from 'react-dropzone';
-import Image from 'next/image';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
+import React, { useState, useCallback, useEffect } from "react";
+import {
+  Upload,
+  X,
+  Loader2,
+  Image as ImageIcon,
+  AlertCircle,
+} from "lucide-react";
+import { useDropzone } from "react-dropzone";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -44,7 +50,7 @@ interface UploadingFile {
   file: File;
   preview: string;
   progress: number;
-  status: 'uploading' | 'success' | 'error';
+  status: "uploading" | "success" | "error";
   error?: string;
   url?: string;
 }
@@ -55,7 +61,7 @@ interface UploadingFile {
 
 const DEFAULT_MAX_FILES = 3;
 const DEFAULT_MAX_SIZE = 5; // 5MB
-const DEFAULT_ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const DEFAULT_ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 // ============================================================================
 // COMPONENT
@@ -85,21 +91,21 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   // Upload single file to Cloudinary
   const uploadToCloudinary = async (
     file: File,
-    fileIndex: number
+    fileIndex: number,
   ): Promise<string> => {
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('folder', folder);
+    formData.append("file", file);
+    formData.append("folder", folder);
 
     try {
-      const response = await fetch('/api/upload', {
-        method: 'POST',
+      const response = await fetch("/api/upload", {
+        method: "POST",
         body: formData,
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Upload failed');
+        throw new Error(error.error || "Upload failed");
       }
 
       const data = await response.json();
@@ -108,23 +114,21 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       setUploadingFiles((prev) =>
         prev.map((f, i) =>
           i === fileIndex
-            ? { ...f, progress: 100, status: 'success', url: data.url }
-            : f
-        )
+            ? { ...f, progress: 100, status: "success", url: data.url }
+            : f,
+        ),
       );
 
       return data.url;
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Upload failed';
+        error instanceof Error ? error.message : "Upload failed";
 
       // Update status to error
       setUploadingFiles((prev) =>
         prev.map((f, i) =>
-          i === fileIndex
-            ? { ...f, status: 'error', error: errorMessage }
-            : f
-        )
+          i === fileIndex ? { ...f, status: "error", error: errorMessage } : f,
+        ),
       );
 
       throw error;
@@ -136,13 +140,14 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
     async (acceptedFiles: File[]) => {
       if (disabled) return;
 
-      const totalFiles = uploadedUrls.length + uploadingFiles.length + acceptedFiles.length;
+      const totalFiles =
+        uploadedUrls.length + uploadingFiles.length + acceptedFiles.length;
 
       if (totalFiles > maxFiles) {
         toast({
-          title: 'Too Many Files',
+          title: "Too Many Files",
           description: `Maximum ${maxFiles} images allowed`,
-          variant: 'destructive',
+          variant: "destructive",
         });
         return;
       }
@@ -153,9 +158,9 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         // Check file type
         if (!acceptedTypes.includes(file.type)) {
           toast({
-            title: 'Invalid File Type',
+            title: "Invalid File Type",
             description: `${file.name} is not a supported image format`,
-            variant: 'destructive',
+            variant: "destructive",
           });
           continue;
         }
@@ -164,9 +169,9 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         const fileSizeMB = file.size / (1024 * 1024);
         if (fileSizeMB > maxSize) {
           toast({
-            title: 'File Too Large',
+            title: "File Too Large",
             description: `${file.name} exceeds ${maxSize}MB limit`,
-            variant: 'destructive',
+            variant: "destructive",
           });
           continue;
         }
@@ -181,7 +186,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         file,
         preview: URL.createObjectURL(file),
         progress: 0,
-        status: 'uploading',
+        status: "uploading",
       }));
 
       setUploadingFiles((prev) => [...prev, ...newFiles]);
@@ -197,7 +202,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         setUploadedUrls((prev) => [...prev, ...urls]);
 
         toast({
-          title: 'Upload Successful',
+          title: "Upload Successful",
           description: `${urls.length} image(s) uploaded successfully`,
         });
 
@@ -206,11 +211,11 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
           setUploadingFiles([]);
         }, 1000);
       } catch (error) {
-        console.error('Upload error:', error);
+        console.error("Upload error:", error);
         toast({
-          title: 'Upload Failed',
-          description: 'Some images failed to upload. Please try again.',
-          variant: 'destructive',
+          title: "Upload Failed",
+          description: "Some images failed to upload. Please try again.",
+          variant: "destructive",
         });
       }
     },
@@ -223,16 +228,13 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       maxSize,
       folder,
       toast,
-    ]
+    ],
   );
 
   // Setup dropzone
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: acceptedTypes.reduce(
-      (acc, type) => ({ ...acc, [type]: [] }),
-      {}
-    ),
+    accept: acceptedTypes.reduce((acc, type) => ({ ...acc, [type]: [] }), {}),
     maxFiles,
     disabled,
     multiple: maxFiles > 1,
@@ -261,8 +263,10 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
 
     setUploadingFiles((prev) =>
       prev.map((f, i) =>
-        i === index ? { ...f, status: 'uploading', progress: 0, error: undefined } : f
-      )
+        i === index
+          ? { ...f, status: "uploading", progress: 0, error: undefined }
+          : f,
+      ),
     );
 
     try {
@@ -273,7 +277,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         setUploadingFiles((prev) => prev.filter((_, i) => i !== index));
       }, 1000);
     } catch (error) {
-      console.error('Retry upload error:', error);
+      console.error("Retry upload error:", error);
     }
   };
 
@@ -281,17 +285,17 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
     uploadedUrls.length + uploadingFiles.length < maxFiles && !disabled;
 
   return (
-    <div className={cn('space-y-4', className)}>
+    <div className={cn("space-y-4", className)}>
       {/* Dropzone */}
       {canUploadMore && (
         <div
           {...getRootProps()}
           className={cn(
-            'relative border-2 border-dashed rounded-lg p-6 transition-colors cursor-pointer',
+            "relative border-2 border-dashed rounded-lg p-6 transition-colors cursor-pointer",
             isDragActive
-              ? 'border-primary bg-primary/5'
-              : 'border-gray-300 hover:border-gray-400',
-            disabled && 'opacity-50 cursor-not-allowed'
+              ? "border-primary bg-primary/5"
+              : "border-gray-300 hover:border-gray-400",
+            disabled && "opacity-50 cursor-not-allowed",
           )}
         >
           <input {...getInputProps()} />
@@ -303,11 +307,12 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
               ) : (
                 <>
                   <p className="font-medium">
-                    Drag & drop images, or{' '}
+                    Drag & drop images, or{" "}
                     <span className="text-primary">browse</span>
                   </p>
                   <p className="text-xs text-gray-500 mt-1">
-                    Max {maxFiles} files • Up to {maxSize}MB each • JPG, PNG, WEBP
+                    Max {maxFiles} files • Up to {maxSize}MB each • JPG, PNG,
+                    WEBP
                   </p>
                 </>
               )}
@@ -381,12 +386,12 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
                 </p>
 
                 {/* Progress Bar */}
-                {file.status === 'uploading' && (
+                {file.status === "uploading" && (
                   <Progress value={file.progress} className="mt-2 h-1" />
                 )}
 
                 {/* Error Message */}
-                {file.status === 'error' && file.error && (
+                {file.status === "error" && file.error && (
                   <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
                     <AlertCircle className="h-3 w-3" />
                     {file.error}
@@ -396,10 +401,10 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
 
               {/* Status Icon / Actions */}
               <div className="flex-shrink-0">
-                {file.status === 'uploading' && (
+                {file.status === "uploading" && (
                   <Loader2 className="h-5 w-5 text-primary animate-spin" />
                 )}
-                {file.status === 'success' && (
+                {file.status === "success" && (
                   <div className="h-5 w-5 rounded-full bg-green-500 flex items-center justify-center">
                     <svg
                       className="h-3 w-3 text-white"
@@ -414,7 +419,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
                     </svg>
                   </div>
                 )}
-                {file.status === 'error' && (
+                {file.status === "error" && (
                   <div className="flex gap-2">
                     <Button
                       type="button"
@@ -442,11 +447,13 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       )}
 
       {/* Empty State */}
-      {uploadedUrls.length === 0 && uploadingFiles.length === 0 && !canUploadMore && (
-        <div className="text-center py-8 text-gray-500 text-sm">
-          No images uploaded
-        </div>
-      )}
+      {uploadedUrls.length === 0 &&
+        uploadingFiles.length === 0 &&
+        !canUploadMore && (
+          <div className="text-center py-8 text-gray-500 text-sm">
+            No images uploaded
+          </div>
+        )}
     </div>
   );
 };

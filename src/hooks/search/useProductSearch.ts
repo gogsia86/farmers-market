@@ -1,6 +1,10 @@
 "use client";
 
-import { useQuery, useQueryClient, type UseQueryResult } from "@tanstack/react-query";
+import {
+  useQuery,
+  useQueryClient,
+  type UseQueryResult,
+} from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
 import { productKeys } from "@/lib/react-query/query-keys";
 import type { ProductSearchFilters } from "@/lib/react-query/query-keys";
@@ -106,7 +110,7 @@ export interface UseProductSearchReturn {
  * Fetch products with search filters
  */
 async function fetchProducts(
-  filters: ProductSearchFilters
+  filters: ProductSearchFilters,
 ): Promise<ProductSearchResponse> {
   // Build query parameters
   const params = new URLSearchParams();
@@ -114,11 +118,15 @@ async function fetchProducts(
   if (filters.query) params.append("q", filters.query);
   if (filters.categoryId) params.append("category", filters.categoryId);
   if (filters.farmId) params.append("farm", filters.farmId);
-  if (filters.minPrice !== undefined) params.append("minPrice", String(filters.minPrice));
-  if (filters.maxPrice !== undefined) params.append("maxPrice", String(filters.maxPrice));
+  if (filters.minPrice !== undefined)
+    params.append("minPrice", String(filters.minPrice));
+  if (filters.maxPrice !== undefined)
+    params.append("maxPrice", String(filters.maxPrice));
   if (filters.availability) params.append("availability", filters.availability);
-  if (filters.organic !== undefined) params.append("organic", String(filters.organic));
-  if (filters.seasonal !== undefined) params.append("seasonal", String(filters.seasonal));
+  if (filters.organic !== undefined)
+    params.append("organic", String(filters.organic));
+  if (filters.seasonal !== undefined)
+    params.append("seasonal", String(filters.seasonal));
   if (filters.sortBy) params.append("sortBy", filters.sortBy);
   if (filters.page) params.append("page", String(filters.page));
   if (filters.limit) params.append("limit", String(filters.limit));
@@ -176,19 +184,12 @@ async function fetchProducts(
  * ```
  */
 export function useProductSearch(
-  filters: ProductSearchFilters = {}
+  filters: ProductSearchFilters = {},
 ): UseProductSearchReturn {
   const queryClient = useQueryClient();
 
   // Query for products
-  const {
-    data,
-    isLoading,
-    isError,
-    error,
-    isFetching,
-    refetch,
-  } = useQuery({
+  const { data, isLoading, isError, error, isFetching, refetch } = useQuery({
     queryKey: productKeys.list(filters),
     queryFn: () => fetchProducts(filters),
     staleTime: 60 * 1000, // 1 minute - products don't change frequently
@@ -217,7 +218,10 @@ export function useProductSearch(
 
   // Computed values
   const products = useMemo(() => data?.data ?? [], [data]);
-  const isEmpty = useMemo(() => products.length === 0 && !isLoading, [products, isLoading]);
+  const isEmpty = useMemo(
+    () => products.length === 0 && !isLoading,
+    [products, isLoading],
+  );
   const hasResults = useMemo(() => products.length > 0, [products]);
 
   return {
@@ -316,7 +320,7 @@ export function useOrganicProducts(limit: number = 12) {
  */
 export function useProductsByCategory(
   categoryId: string,
-  additionalFilters?: Partial<ProductSearchFilters>
+  additionalFilters?: Partial<ProductSearchFilters>,
 ) {
   return useProductSearch({
     categoryId,
@@ -329,7 +333,7 @@ export function useProductsByCategory(
  */
 export function useProductsByFarm(
   farmId: string,
-  additionalFilters?: Partial<ProductSearchFilters>
+  additionalFilters?: Partial<ProductSearchFilters>,
 ) {
   return useProductSearch({
     farmId,

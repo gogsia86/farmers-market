@@ -55,7 +55,12 @@ export interface ClientConnection {
 }
 
 export interface RecommendationEvent {
-  type: "VIEW_PRODUCT" | "ADD_TO_CART" | "COMPLETE_PURCHASE" | "SEARCH" | "FAVORITE";
+  type:
+    | "VIEW_PRODUCT"
+    | "ADD_TO_CART"
+    | "COMPLETE_PURCHASE"
+    | "SEARCH"
+    | "FAVORITE";
   userId: string;
   productId?: string;
   category?: string;
@@ -96,7 +101,8 @@ export class RecommendationWebSocketService {
 
   public static getInstance(): RecommendationWebSocketService {
     if (!RecommendationWebSocketService.instance) {
-      RecommendationWebSocketService.instance = new RecommendationWebSocketService();
+      RecommendationWebSocketService.instance =
+        new RecommendationWebSocketService();
     }
     return RecommendationWebSocketService.instance;
   }
@@ -208,7 +214,9 @@ export class RecommendationWebSocketService {
     // Send initial recommendations
     this.sendInitialRecommendations(userId);
 
-    console.log(`[RecommendationWS] ✅ Client connected: ${userId} (Total: ${this.clients.size})`);
+    console.log(
+      `[RecommendationWS] ✅ Client connected: ${userId} (Total: ${this.clients.size})`,
+    );
   }
 
   /**
@@ -216,7 +224,9 @@ export class RecommendationWebSocketService {
    */
   private handleDisconnection(userId: string): void {
     this.clients.delete(userId);
-    console.log(`[RecommendationWS] Client disconnected: ${userId} (Remaining: ${this.clients.size})`);
+    console.log(
+      `[RecommendationWS] Client disconnected: ${userId} (Remaining: ${this.clients.size})`,
+    );
   }
 
   /**
@@ -265,10 +275,15 @@ export class RecommendationWebSocketService {
           break;
 
         default:
-          console.warn(`[RecommendationWS] Unknown message type: ${message.type}`);
+          console.warn(
+            `[RecommendationWS] Unknown message type: ${message.type}`,
+          );
       }
     } catch (error) {
-      console.error(`[RecommendationWS] Error handling message from ${userId}:`, error);
+      console.error(
+        `[RecommendationWS] Error handling message from ${userId}:`,
+        error,
+      );
       this.sendError(userId, "Failed to process message");
     }
   }
@@ -287,7 +302,9 @@ export class RecommendationWebSocketService {
     const { topics } = payload;
     if (Array.isArray(topics)) {
       topics.forEach((topic: string) => client.subscriptions.add(topic));
-      console.log(`[RecommendationWS] Client ${userId} subscribed to: ${topics.join(", ")}`);
+      console.log(
+        `[RecommendationWS] Client ${userId} subscribed to: ${topics.join(", ")}`,
+      );
     }
   }
 
@@ -301,14 +318,19 @@ export class RecommendationWebSocketService {
     const { topics } = payload;
     if (Array.isArray(topics)) {
       topics.forEach((topic: string) => client.subscriptions.delete(topic));
-      console.log(`[RecommendationWS] Client ${userId} unsubscribed from: ${topics.join(", ")}`);
+      console.log(
+        `[RecommendationWS] Client ${userId} unsubscribed from: ${topics.join(", ")}`,
+      );
     }
   }
 
   /**
    * Handle recommendation requests
    */
-  private async handleRecommendationRequest(userId: string, payload: any): Promise<void> {
+  private async handleRecommendationRequest(
+    userId: string,
+    payload: any,
+  ): Promise<void> {
     try {
       const recommendations = await recommendationEngine.getRecommendations({
         userId,
@@ -320,7 +342,10 @@ export class RecommendationWebSocketService {
 
       this.sendRecommendations(userId, recommendations);
     } catch (error) {
-      console.error(`[RecommendationWS] Error generating recommendations for ${userId}:`, error);
+      console.error(
+        `[RecommendationWS] Error generating recommendations for ${userId}:`,
+        error,
+      );
       this.sendError(userId, "Failed to generate recommendations");
     }
   }
@@ -328,10 +353,15 @@ export class RecommendationWebSocketService {
   /**
    * Handle user actions (view, cart, purchase, etc.)
    */
-  private async handleUserAction(userId: string, payload: RecommendationEvent): Promise<void> {
+  private async handleUserAction(
+    userId: string,
+    payload: RecommendationEvent,
+  ): Promise<void> {
     try {
       // Process the user action
-      console.log(`[RecommendationWS] User action: ${payload.type} by ${userId}`);
+      console.log(
+        `[RecommendationWS] User action: ${payload.type} by ${userId}`,
+      );
 
       // Generate contextual recommendations based on action
       let recommendations: RecommendationResult | null = null;
@@ -351,10 +381,11 @@ export class RecommendationWebSocketService {
         case "ADD_TO_CART":
           if (payload.productId) {
             // Get "frequently bought together" recommendations
-            recommendations = await recommendationEngine.getFrequentlyBoughtTogether(
-              payload.productId,
-              5
-            );
+            recommendations =
+              await recommendationEngine.getFrequentlyBoughtTogether(
+                payload.productId,
+                5,
+              );
           }
           break;
 
@@ -374,10 +405,11 @@ export class RecommendationWebSocketService {
 
         case "FAVORITE":
           // Get new arrivals from favorite farms
-          recommendations = await recommendationEngine.getNewArrivalsFromFavoriteFarms(
-            userId,
-            10
-          );
+          recommendations =
+            await recommendationEngine.getNewArrivalsFromFavoriteFarms(
+              userId,
+              10,
+            );
           break;
       }
 
@@ -414,14 +446,20 @@ export class RecommendationWebSocketService {
 
       this.sendRecommendations(userId, recommendations);
     } catch (error) {
-      console.error(`[RecommendationWS] Error sending initial recommendations:`, error);
+      console.error(
+        `[RecommendationWS] Error sending initial recommendations:`,
+        error,
+      );
     }
   }
 
   /**
    * Send recommendations to a specific user
    */
-  private sendRecommendations(userId: string, recommendations: RecommendationResult): void {
+  private sendRecommendations(
+    userId: string,
+    recommendations: RecommendationResult,
+  ): void {
     const client = this.clients.get(userId);
     if (!client) return;
 
@@ -469,7 +507,9 @@ export class RecommendationWebSocketService {
    * Broadcast price drop alert to interested users
    */
   async broadcastPriceDropAlert(alert: PriceDropAlert): Promise<void> {
-    console.log(`[RecommendationWS] Broadcasting price drop: ${alert.productName}`);
+    console.log(
+      `[RecommendationWS] Broadcasting price drop: ${alert.productName}`,
+    );
 
     // Find users who have viewed or wishlisted this product
     // For now, broadcast to all connected users
@@ -489,7 +529,9 @@ export class RecommendationWebSocketService {
    * Broadcast stock alert (back in stock)
    */
   async broadcastStockAlert(alert: StockAlert): Promise<void> {
-    console.log(`[RecommendationWS] Broadcasting stock alert: ${alert.productName}`);
+    console.log(
+      `[RecommendationWS] Broadcasting stock alert: ${alert.productName}`,
+    );
 
     this.clients.forEach((client) => {
       if (client.subscriptions.has("stock_alerts")) {
@@ -507,7 +549,9 @@ export class RecommendationWebSocketService {
    * Broadcast trending products update
    */
   async broadcastTrendingUpdate(trendingProducts: any[]): Promise<void> {
-    console.log(`[RecommendationWS] Broadcasting trending update: ${trendingProducts.length} products`);
+    console.log(
+      `[RecommendationWS] Broadcasting trending update: ${trendingProducts.length} products`,
+    );
 
     this.clients.forEach((client) => {
       if (client.subscriptions.has("trending")) {
@@ -539,7 +583,10 @@ export class RecommendationWebSocketService {
   /**
    * Send cart-based recommendations
    */
-  async sendCartRecommendations(userId: string, cartItems: string[]): Promise<void> {
+  async sendCartRecommendations(
+    userId: string,
+    cartItems: string[],
+  ): Promise<void> {
     try {
       const client = this.clients.get(userId);
       if (!client) return;
@@ -561,7 +608,10 @@ export class RecommendationWebSocketService {
         userId,
       });
     } catch (error) {
-      console.error(`[RecommendationWS] Error sending cart recommendations:`, error);
+      console.error(
+        `[RecommendationWS] Error sending cart recommendations:`,
+        error,
+      );
     }
   }
 
@@ -581,7 +631,9 @@ export class RecommendationWebSocketService {
 
         // Close connection if no activity for CLIENT_TIMEOUT
         if (timeSinceLastActivity > this.CLIENT_TIMEOUT) {
-          console.log(`[RecommendationWS] Closing inactive connection: ${userId}`);
+          console.log(
+            `[RecommendationWS] Closing inactive connection: ${userId}`,
+          );
           client.ws.close(1000, "Connection timeout");
           this.clients.delete(userId);
           return;
@@ -628,7 +680,8 @@ export class RecommendationWebSocketService {
       totalConnections: this.clients.size,
       activeConnections: this.clients.size,
       connectionsBySubscription: subscriptionCounts,
-      averageConnectionDuration: this.clients.size > 0 ? totalDuration / this.clients.size : 0,
+      averageConnectionDuration:
+        this.clients.size > 0 ? totalDuration / this.clients.size : 0,
     };
   }
 
@@ -651,4 +704,5 @@ export class RecommendationWebSocketService {
 // 🌟 SINGLETON EXPORT
 // ═══════════════════════════════════════════════════════════════════════════
 
-export const recommendationWebSocket = RecommendationWebSocketService.getInstance();
+export const recommendationWebSocket =
+  RecommendationWebSocketService.getInstance();

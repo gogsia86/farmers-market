@@ -58,7 +58,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             message: "userId is required",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             message: "limit must be between 1 and 100",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -97,7 +97,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     // Generate recommendations
     const recommendations = await recommendationEngine.getRecommendations(
-      recommendationRequest
+      recommendationRequest,
     );
 
     const duration = Date.now() - startTime;
@@ -117,7 +117,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         headers: {
           "Cache-Control": "private, max-age=60", // Cache for 1 minute
         },
-      }
+      },
     );
   } catch (error) {
     console.error("[RecommendationsAPI] Error:", error);
@@ -127,11 +127,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         success: false,
         error: {
           code: "RECOMMENDATION_ERROR",
-          message: error instanceof Error ? error.message : "Failed to generate recommendations",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Failed to generate recommendations",
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -179,7 +182,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             message: "userId is required",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -192,7 +195,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             message: "action is required",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -234,7 +237,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           requestId: crypto.randomUUID(),
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("[RecommendationsAPI] Error:", error);
@@ -244,11 +247,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         success: false,
         error: {
           code: "TRACKING_ERROR",
-          message: error instanceof Error ? error.message : "Failed to track user action",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Failed to track user action",
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

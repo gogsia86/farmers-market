@@ -135,9 +135,9 @@ export class ABTestingService {
       data: {
         name: request.name,
         description: request.description,
-        variants: request.variants,
-        trafficSplit: request.trafficSplit,
-        targetAudience: request.targetAudience,
+        variants: request.variants as any,
+        trafficSplit: request.trafficSplit as any,
+        targetAudience: request.targetAudience as any,
         status: "DRAFT",
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -166,7 +166,7 @@ export class ABTestingService {
     return await database.aBTest.update({
       where: { id: testId },
       data: {
-        status: "RUNNING",
+        status: "ACTIVE",
         startedAt: new Date(),
         updatedAt: new Date(),
       },
@@ -180,7 +180,7 @@ export class ABTestingService {
     return await database.aBTest.update({
       where: { id: testId },
       data: {
-        status: "STOPPED",
+        status: "COMPLETED",
         endedAt: new Date(),
         updatedAt: new Date(),
       },
@@ -220,7 +220,7 @@ export class ABTestingService {
       where: { id: testId },
     });
 
-    if (!test || test.status !== "RUNNING") {
+    if (!test || test.status !== "ACTIVE") {
       throw new Error("Test is not running");
     }
 
@@ -257,6 +257,7 @@ export class ABTestingService {
       data: {
         testId,
         userId,
+        sessionId: context?.sessionId || `session-${Date.now()}`,
         variantId,
         assignedAt: new Date(),
       },
@@ -285,7 +286,7 @@ export class ABTestingService {
     }
 
     // Fallback to first variant
-    return Object.keys(trafficSplit)[0];
+    return Object.keys(trafficSplit)[0] || "";
   }
 
   /**
@@ -312,8 +313,8 @@ export class ABTestingService {
     if (audience.minOrders || audience.maxOrders) {
       const orderCount = await database.order.count({
         where: {
-          userId,
-          status: { in: ["DELIVERED", "COMPLETED"] },
+          customerId: userId,
+          status: { in: ["FULFILLED", "COMPLETED"] },
         },
       });
 
@@ -382,7 +383,7 @@ export class ABTestingService {
       throw new Error("Test not found");
     }
 
-    const variants = test.variants as TestVariant[];
+    const variants = test.variants as unknown as TestVariant[];
     const variantResults: VariantResults[] = [];
 
     // Analyze each variant
@@ -429,11 +430,20 @@ export class ABTestingService {
 
     // Calculate statistical significance vs control (first variant)
     const control = variantResults[0];
+
+    if (!control) {
+      throw new Error("No control variant found");
+    }
+
     let winnerVariant: string | undefined;
     let maxConfidence = 0;
 
     for (let i = 1; i < variantResults.length; i++) {
       const variant = variantResults[i];
+
+      if (!variant) {
+        continue;
+      }
 
       // Check minimum sample size
       if (
@@ -594,7 +604,7 @@ export class ABTestingService {
    */
   async getRunningTests(): Promise<ABTest[]> {
     return await database.aBTest.findMany({
-      where: { status: "RUNNING" },
+      where: { status: "ACTIVE" },
       orderBy: { startedAt: "desc" },
     });
   }
@@ -639,7 +649,7 @@ export class ABTestingService {
       where: { testId },
     });
 
-    const variants = test.variants as TestVariant[];
+    const variants = test.variants as unknown as TestVariant[];
     const variantStats = await Promise.all(
       variants.map(async (variant) => {
         const assignments = await database.aBTestAssignment.count({
@@ -684,7 +694,7 @@ export class ABTestingService {
 
     const result = await database.aBTest.deleteMany({
       where: {
-        status: { in: ["COMPLETED", "STOPPED"] },
+        status: { in: ["COMPLETED", "ARCHIVED"] },
         endedAt: { lt: cutoffDate },
       },
     });

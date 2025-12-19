@@ -8,12 +8,12 @@
  * @since Run 4 - Phase 2
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { SearchAlertService } from '@/lib/services/saved-searches/search-alert.service';
-import { z } from 'zod';
-import { SearchAlertType } from '@prisma/client';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { SearchAlertService } from "@/lib/services/saved-searches/search-alert.service";
+import { z } from "zod";
+import { SearchAlertType } from "@prisma/client";
 
 // ============================================
 // VALIDATION SCHEMAS
@@ -40,9 +40,18 @@ const createAlertSchema = z.object({
 const listQuerySchema = z.object({
   savedSearchId: z.string().optional(),
   type: z.nativeEnum(SearchAlertType).optional(),
-  isActive: z.string().optional().transform(val => val === 'true'),
-  limit: z.string().optional().transform(val => val ? parseInt(val) : 50),
-  offset: z.string().optional().transform(val => val ? parseInt(val) : 0),
+  isActive: z
+    .string()
+    .optional()
+    .transform((val) => val === "true"),
+  limit: z
+    .string()
+    .optional()
+    .transform((val) => (val ? parseInt(val) : 50)),
+  offset: z
+    .string()
+    .optional()
+    .transform((val) => (val ? parseInt(val) : 0)),
 });
 
 // ============================================
@@ -55,10 +64,7 @@ export async function GET(req: NextRequest) {
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Parse query parameters
@@ -78,20 +84,19 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json(result, { status: 200 });
-
   } catch (error) {
-    console.error('[SearchAlerts GET] Error:', error);
+    console.error("[SearchAlerts GET] Error:", error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid parameters', details: error.issues },
-        { status: 400 }
+        { error: "Invalid parameters", details: error.issues },
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
-      { error: 'Failed to fetch alerts' },
-      { status: 500 }
+      { error: "Failed to fetch alerts" },
+      { status: 500 },
     );
   }
 }
@@ -106,10 +111,7 @@ export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Parse and validate request body
@@ -124,32 +126,28 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       {
-        message: 'Alert created successfully',
+        message: "Alert created successfully",
         alert,
       },
-      { status: 201 }
+      { status: 201 },
     );
-
   } catch (error) {
-    console.error('[SearchAlerts POST] Error:', error);
+    console.error("[SearchAlerts POST] Error:", error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid input', details: error.issues },
-        { status: 400 }
+        { error: "Invalid input", details: error.issues },
+        { status: 400 },
       );
     }
 
     if (error instanceof Error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
     return NextResponse.json(
-      { error: 'Failed to create alert' },
-      { status: 500 }
+      { error: "Failed to create alert" },
+      { status: 500 },
     );
   }
 }

@@ -7,13 +7,13 @@
  * @module /api/analytics/events/stats
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { SearchEventService } from '@/lib/services/analytics/search-event.service';
-import { asyncHandler, validateRequest } from '@/lib/api/error-handler';
-import { z } from 'zod';
-import { Season } from '@prisma/client';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { SearchEventService } from "@/lib/services/analytics/search-event.service";
+import { asyncHandler, validateRequest } from "@/lib/api/error-handler";
+import { z } from "zod";
+import { Season } from "@prisma/client";
 
 // ============================================================================
 // Validation Schema
@@ -53,7 +53,7 @@ export const GET = asyncHandler(async (req: NextRequest) => {
   }
 
   // If user is not admin, only allow viewing their own stats
-  if (!session?.user?.role || session.user.role !== 'ADMIN') {
+  if (!session?.user?.role || session.user.role !== "ADMIN") {
     filters.userId = session?.user?.id;
   }
 

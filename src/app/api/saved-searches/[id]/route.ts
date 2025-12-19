@@ -9,12 +9,12 @@
  * @since Run 4
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { SavedSearchService } from '@/lib/services/saved-searches/saved-search.service';
-import { z } from 'zod';
-import { NotificationFrequency, Season } from '@prisma/client';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { SavedSearchService } from "@/lib/services/saved-searches/saved-search.service";
+import { z } from "zod";
+import { NotificationFrequency, Season } from "@prisma/client";
 
 // ============================================
 // VALIDATION SCHEMAS
@@ -26,11 +26,13 @@ const updateSavedSearchSchema = z.object({
   query: z.string().max(500).optional(),
   filters: z.record(z.string(), z.any()).optional(),
   sortBy: z.string().max(50).optional(),
-  location: z.object({
-    lat: z.number(),
-    lng: z.number(),
-    radius: z.number().positive(),
-  }).optional(),
+  location: z
+    .object({
+      lat: z.number(),
+      lng: z.number(),
+      radius: z.number().positive(),
+    })
+    .optional(),
   isPublic: z.boolean().optional(),
   folderId: z.string().optional(),
   tags: z.array(z.string()).optional(),
@@ -47,39 +49,35 @@ const updateSavedSearchSchema = z.object({
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     // Get user session
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const searchId = params.id;
 
     // Fetch saved search
-    const savedSearch = await SavedSearchService.getById(searchId, session.user.id);
+    const savedSearch = await SavedSearchService.getById(
+      searchId,
+      session.user.id,
+    );
 
     return NextResponse.json(savedSearch, { status: 200 });
-
   } catch (error) {
-    console.error('[SavedSearch GET] Error:', error);
+    console.error("[SavedSearch GET] Error:", error);
 
-    if (error instanceof Error && error.message.includes('not found')) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 404 }
-      );
+    if (error instanceof Error && error.message.includes("not found")) {
+      return NextResponse.json({ error: error.message }, { status: 404 });
     }
 
     return NextResponse.json(
-      { error: 'Failed to fetch saved search' },
-      { status: 500 }
+      { error: "Failed to fetch saved search" },
+      { status: 500 },
     );
   }
 }
@@ -90,17 +88,14 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     // Get user session
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const searchId = params.id;
@@ -113,44 +108,37 @@ export async function PUT(
     const savedSearch = await SavedSearchService.update(
       searchId,
       session.user.id,
-      validatedData
+      validatedData,
     );
 
     return NextResponse.json(
       {
-        message: 'Saved search updated successfully',
+        message: "Saved search updated successfully",
         savedSearch,
       },
-      { status: 200 }
+      { status: 200 },
     );
-
   } catch (error) {
-    console.error('[SavedSearch PUT] Error:', error);
+    console.error("[SavedSearch PUT] Error:", error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid input', details: error.issues },
-        { status: 400 }
+        { error: "Invalid input", details: error.issues },
+        { status: 400 },
       );
     }
 
     if (error instanceof Error) {
-      if (error.message.includes('not found')) {
-        return NextResponse.json(
-          { error: error.message },
-          { status: 404 }
-        );
+      if (error.message.includes("not found")) {
+        return NextResponse.json({ error: error.message }, { status: 404 });
       }
 
-      return NextResponse.json(
-        { error: error.message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
     return NextResponse.json(
-      { error: 'Failed to update saved search' },
-      { status: 500 }
+      { error: "Failed to update saved search" },
+      { status: 500 },
     );
   }
 }
@@ -161,17 +149,14 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     // Get user session
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const searchId = params.id;
@@ -180,23 +165,19 @@ export async function DELETE(
     await SavedSearchService.delete(searchId, session.user.id);
 
     return NextResponse.json(
-      { message: 'Saved search deleted successfully' },
-      { status: 200 }
+      { message: "Saved search deleted successfully" },
+      { status: 200 },
     );
-
   } catch (error) {
-    console.error('[SavedSearch DELETE] Error:', error);
+    console.error("[SavedSearch DELETE] Error:", error);
 
-    if (error instanceof Error && error.message.includes('not found')) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 404 }
-      );
+    if (error instanceof Error && error.message.includes("not found")) {
+      return NextResponse.json({ error: error.message }, { status: 404 });
     }
 
     return NextResponse.json(
-      { error: 'Failed to delete saved search' },
-      { status: 500 }
+      { error: "Failed to delete saved search" },
+      { status: 500 },
     );
   }
 }

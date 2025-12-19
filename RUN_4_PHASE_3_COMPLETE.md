@@ -12,6 +12,7 @@
 Phase 3 successfully implements a comprehensive analytics and tracking system with agricultural consciousness. The platform now tracks all user interactions, search events, and generates actionable insights through aggregated metrics and real-time dashboards.
 
 ### Key Achievements
+
 - ✅ **3 Analytics Services** - 2,012+ lines of enterprise-grade code
 - ✅ **12 API Endpoints** - Complete REST API for analytics
 - ✅ **Real-time Tracking** - Search events, clicks, views, purchases
@@ -24,24 +25,26 @@ Phase 3 successfully implements a comprehensive analytics and tracking system wi
 
 ## 📊 Implementation Statistics
 
-| Metric | Count | Details |
-|--------|-------|---------|
-| **Services Created** | 3 | SearchEvent, UserInteraction, Aggregation |
-| **Total Service LOC** | 2,012 | High-quality, production-ready code |
-| **API Endpoints** | 12 | Full CRUD + analytics endpoints |
-| **Tracking Methods** | 15+ | Views, clicks, cart, purchases, favorites, etc. |
-| **Aggregation Types** | 6 | Hourly, daily, weekly, monthly, quarterly, yearly |
-| **Interaction Types** | 8 | Search, view, click, cart, purchase, favorite, review, share |
-| **Time Invested** | ~4 hours | As estimated in planning |
+| Metric                | Count    | Details                                                      |
+| --------------------- | -------- | ------------------------------------------------------------ |
+| **Services Created**  | 3        | SearchEvent, UserInteraction, Aggregation                    |
+| **Total Service LOC** | 2,012    | High-quality, production-ready code                          |
+| **API Endpoints**     | 12       | Full CRUD + analytics endpoints                              |
+| **Tracking Methods**  | 15+      | Views, clicks, cart, purchases, favorites, etc.              |
+| **Aggregation Types** | 6        | Hourly, daily, weekly, monthly, quarterly, yearly            |
+| **Interaction Types** | 8        | Search, view, click, cart, purchase, favorite, review, share |
+| **Time Invested**     | ~4 hours | As estimated in planning                                     |
 
 ---
 
 ## 🗄️ Services Implemented
 
 ### 1. SearchEventService (609 lines)
+
 **File**: `src/lib/services/analytics/search-event.service.ts`
 
 #### Core Methods
+
 ```typescript
 ✅ trackSearch()              // Track search events with filters
 ✅ trackClick()               // Track clicks on search results
@@ -55,6 +58,7 @@ Phase 3 successfully implements a comprehensive analytics and tracking system wi
 ```
 
 #### Key Features
+
 - **Agricultural Consciousness**: Automatic seasonal detection and tracking
 - **Performance Metrics**: Response time tracking (avg, p95)
 - **Click-through Tracking**: Track which results users click
@@ -66,9 +70,11 @@ Phase 3 successfully implements a comprehensive analytics and tracking system wi
 ---
 
 ### 2. UserInteractionService (744 lines)
+
 **File**: `src/lib/services/analytics/user-interaction.service.ts`
 
 #### Core Methods
+
 ```typescript
 ✅ track()                    // Generic interaction tracking
 ✅ trackView()                // Track product views
@@ -88,6 +94,7 @@ Phase 3 successfully implements a comprehensive analytics and tracking system wi
 ```
 
 #### Key Features
+
 - **8 Interaction Types**: Complete user action tracking
 - **User Behavior Profiles**: Engagement scoring, preferences, patterns
 - **Conversion Funnel**: View → Click → Cart → Purchase tracking
@@ -100,9 +107,11 @@ Phase 3 successfully implements a comprehensive analytics and tracking system wi
 ---
 
 ### 3. AnalyticsAggregationService (659 lines)
+
 **File**: `src/lib/services/analytics/analytics-aggregation.service.ts`
 
 #### Core Methods
+
 ```typescript
 ✅ aggregatePeriod()          // Aggregate for any time period
 ✅ aggregateHourly()          // Hourly metrics aggregation
@@ -119,6 +128,7 @@ Phase 3 successfully implements a comprehensive analytics and tracking system wi
 ```
 
 #### Key Features
+
 - **6 Period Types**: Hour, day, week, month, quarter, year
 - **Automatic Aggregation**: Scheduled batch processing
 - **Time Series Data**: Ready for charting libraries
@@ -135,9 +145,11 @@ Phase 3 successfully implements a comprehensive analytics and tracking system wi
 ### Search Event Endpoints
 
 #### 1. POST /api/analytics/events
+
 Track a search event with filters and results.
 
 **Request Body**:
+
 ```typescript
 {
   query?: string;
@@ -161,6 +173,7 @@ Track a search event with filters and results.
 ```
 
 **Response**:
+
 ```typescript
 {
   eventId: string;
@@ -169,17 +182,18 @@ Track a search event with filters and results.
 ```
 
 **Usage**:
+
 ```typescript
-const response = await fetch('/api/analytics/events', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+const response = await fetch("/api/analytics/events", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
-    query: 'organic tomatoes',
-    filters: { category: 'VEGETABLES', organic: true },
+    query: "organic tomatoes",
+    filters: { category: "VEGETABLES", organic: true },
     resultsCount: 42,
     resultsShown: 20,
     responseTime: 125,
-    source: 'search_page',
+    source: "search_page",
   }),
 });
 ```
@@ -187,9 +201,11 @@ const response = await fetch('/api/analytics/events', {
 ---
 
 #### 2. GET /api/analytics/events
+
 Retrieve search events with filtering.
 
 **Query Parameters**:
+
 ```typescript
 {
   userId?: string;
@@ -207,6 +223,7 @@ Retrieve search events with filtering.
 ```
 
 **Response**:
+
 ```typescript
 {
   events: SearchEvent[];
@@ -220,9 +237,11 @@ Retrieve search events with filtering.
 ---
 
 #### 3. POST /api/analytics/events/click
+
 Track a click on a search result.
 
 **Request Body**:
+
 ```typescript
 {
   searchEventId?: string;
@@ -234,6 +253,7 @@ Track a click on a search result.
 ```
 
 **Response**:
+
 ```typescript
 {
   success: true;
@@ -244,9 +264,11 @@ Track a click on a search result.
 ---
 
 #### 4. GET /api/analytics/events/stats
+
 Get aggregated search statistics.
 
 **Query Parameters**:
+
 ```typescript
 {
   userId?: string;
@@ -258,6 +280,7 @@ Get aggregated search statistics.
 ```
 
 **Response**:
+
 ```typescript
 {
   totalSearches: number;
@@ -276,9 +299,11 @@ Get aggregated search statistics.
 ---
 
 #### 5. GET /api/analytics/events/trending
+
 Get trending searches with growth metrics.
 
 **Query Parameters**:
+
 ```typescript
 {
   limit?: number;          // default: 10
@@ -287,19 +312,20 @@ Get trending searches with growth metrics.
 ```
 
 **Response**:
+
 ```typescript
 {
   trending: Array<{
     query: string;
     count: number;
-    growth: number;        // Percentage growth
+    growth: number; // Percentage growth
     season: Season;
   }>;
   period: {
     days: number;
     endDate: Date;
     startDate: Date;
-  };
+  }
 }
 ```
 
@@ -308,9 +334,11 @@ Get trending searches with growth metrics.
 ### User Interaction Endpoints
 
 #### 6. POST /api/analytics/interactions
+
 Track user interactions (generic or specific actions).
 
 **Request Body (Generic)**:
+
 ```typescript
 {
   type: InteractionType;
@@ -324,6 +352,7 @@ Track user interactions (generic or specific actions).
 ```
 
 **Request Body (Specific Actions)**:
+
 ```typescript
 // View
 {
@@ -389,6 +418,7 @@ Track user interactions (generic or specific actions).
 ```
 
 **Response**:
+
 ```typescript
 {
   interactionId: string;
@@ -397,38 +427,39 @@ Track user interactions (generic or specific actions).
 ```
 
 **Usage Examples**:
+
 ```typescript
 // Track a view
-await fetch('/api/analytics/interactions', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+await fetch("/api/analytics/interactions", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
-    action: 'view',
-    productId: 'prod_123',
-    sessionId: 'sess_abc',
+    action: "view",
+    productId: "prod_123",
+    sessionId: "sess_abc",
   }),
 });
 
 // Track add to cart
-await fetch('/api/analytics/interactions', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+await fetch("/api/analytics/interactions", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
-    action: 'add_to_cart',
-    productId: 'prod_123',
+    action: "add_to_cart",
+    productId: "prod_123",
     quantity: 2,
     price: 5.99,
   }),
 });
 
 // Track purchase
-await fetch('/api/analytics/interactions', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+await fetch("/api/analytics/interactions", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
-    action: 'purchase',
-    orderId: 'order_456',
-    productId: 'prod_123',
+    action: "purchase",
+    orderId: "order_456",
+    productId: "prod_123",
     quantity: 2,
     price: 5.99,
   }),
@@ -438,9 +469,11 @@ await fetch('/api/analytics/interactions', {
 ---
 
 #### 7. GET /api/analytics/interactions
+
 Retrieve user interactions with filtering.
 
 **Query Parameters**:
+
 ```typescript
 {
   userId?: string;
@@ -457,6 +490,7 @@ Retrieve user interactions with filtering.
 ```
 
 **Response**:
+
 ```typescript
 {
   interactions: UserInteraction[];
@@ -536,11 +570,11 @@ export function ProductCard({ product, position, searchQuery }) {
 ```typescript
 // Track product views
 useEffect(() => {
-  fetch('/api/analytics/interactions', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+  fetch("/api/analytics/interactions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      action: 'view',
+      action: "view",
       productId: product.id,
       sessionId: getSessionId(),
       metadata: {
@@ -554,12 +588,12 @@ useEffect(() => {
 // Track add to cart
 const handleAddToCart = async () => {
   await addToCart(product, quantity);
-  
-  await fetch('/api/analytics/interactions', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+
+  await fetch("/api/analytics/interactions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      action: 'add_to_cart',
+      action: "add_to_cart",
       productId: product.id,
       quantity,
       price: product.price,
@@ -679,7 +713,7 @@ export function SearchStatsDashboard() {
 ### 6. Conversion Funnel Metrics
 
 ```typescript
-import { SearchEventService } from '@/lib/services/analytics/search-event.service';
+import { SearchEventService } from "@/lib/services/analytics/search-event.service";
 
 // Get conversion metrics for the last 30 days
 const startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
@@ -687,14 +721,20 @@ const endDate = new Date();
 
 const conversion = await SearchEventService.getConversionRate(
   startDate,
-  endDate
+  endDate,
 );
 
-console.log('Conversion Funnel:');
+console.log("Conversion Funnel:");
 console.log(`  Total Searches: ${conversion.totalSearches}`);
-console.log(`  With Clicks: ${conversion.searchesWithClicks} (${conversion.clickThroughRate.toFixed(2)}%)`);
-console.log(`  With Cart: ${conversion.searchesWithCart} (${conversion.cartConversionRate.toFixed(2)}%)`);
-console.log(`  With Purchase: ${conversion.searchesWithPurchase} (${conversion.purchaseConversionRate.toFixed(2)}%)`);
+console.log(
+  `  With Clicks: ${conversion.searchesWithClicks} (${conversion.clickThroughRate.toFixed(2)}%)`,
+);
+console.log(
+  `  With Cart: ${conversion.searchesWithCart} (${conversion.cartConversionRate.toFixed(2)}%)`,
+);
+console.log(
+  `  With Purchase: ${conversion.searchesWithPurchase} (${conversion.purchaseConversionRate.toFixed(2)}%)`,
+);
 ```
 
 ---
@@ -702,18 +742,18 @@ console.log(`  With Purchase: ${conversion.searchesWithPurchase} (${conversion.p
 ### 7. User Behavior Profile
 
 ```typescript
-import { UserInteractionService } from '@/lib/services/analytics/user-interaction.service';
+import { UserInteractionService } from "@/lib/services/analytics/user-interaction.service";
 
 // Generate behavior profile for a user
 const profile = await UserInteractionService.getUserProfile(
   userId,
-  90 // lookback days
+  90, // lookback days
 );
 
-console.log('User Profile:');
+console.log("User Profile:");
 console.log(`  Total Interactions: ${profile.totalInteractions}`);
-console.log(`  Favorite Categories: ${profile.favoriteCategories.join(', ')}`);
-console.log(`  Favorite Farms: ${profile.favoriteFarms.join(', ')}`);
+console.log(`  Favorite Categories: ${profile.favoriteCategories.join(", ")}`);
+console.log(`  Favorite Farms: ${profile.favoriteFarms.join(", ")}`);
 console.log(`  Avg Session Duration: ${profile.averageSessionDuration}s`);
 console.log(`  Preferred Time: ${profile.preferredTimeOfDay}:00`);
 console.log(`  Purchase Frequency: ${profile.purchaseFrequency} per day`);
@@ -726,7 +766,7 @@ console.log(`  Engagement Score: ${profile.engagementScore}/100`);
 ### 8. Popular Products Analysis
 
 ```typescript
-import { UserInteractionService } from '@/lib/services/analytics/user-interaction.service';
+import { UserInteractionService } from "@/lib/services/analytics/user-interaction.service";
 
 const startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 const endDate = new Date();
@@ -734,10 +774,10 @@ const endDate = new Date();
 const popularProducts = await UserInteractionService.getPopularProducts(
   startDate,
   endDate,
-  20 // limit
+  20, // limit
 );
 
-popularProducts.forEach(product => {
+popularProducts.forEach((product) => {
   console.log(`Product ${product.productId}:`);
   console.log(`  Views: ${product.views}`);
   console.log(`  Clicks: ${product.clicks}`);
@@ -796,6 +836,7 @@ docs/
 ### Manual Testing
 
 #### Search Event Tracking
+
 - [ ] Track a search with filters → Event created in database
 - [ ] Track a click on result → Click recorded in event
 - [ ] Get search events → Returns filtered events
@@ -803,6 +844,7 @@ docs/
 - [ ] Get trending searches → Returns searches with growth
 
 #### User Interaction Tracking
+
 - [ ] Track product view → Interaction created
 - [ ] Track product click → Interaction created
 - [ ] Track add to cart → Interaction with value created
@@ -812,6 +854,7 @@ docs/
 - [ ] Track share → Interaction with platform created
 
 #### Analytics Aggregation
+
 - [ ] Run hourly aggregation → Creates aggregated record
 - [ ] Run daily aggregation → Creates daily metrics
 - [ ] Get time series data → Returns chart-ready data
@@ -819,6 +862,7 @@ docs/
 - [ ] Compare periods → Returns growth metrics
 
 #### API Endpoints
+
 - [ ] POST /api/analytics/events → 201 with event ID
 - [ ] GET /api/analytics/events → Returns paginated events
 - [ ] POST /api/analytics/events/click → 201 success
@@ -832,6 +876,7 @@ docs/
 ## 🎯 What's Working
 
 ### Search Event Tracking ✅
+
 - Complete search event capture with filters
 - Click-through tracking on results
 - Performance metrics (response time)
@@ -840,6 +885,7 @@ docs/
 - Location and user agent capture
 
 ### User Interaction Tracking ✅
+
 - 8 interaction types fully implemented
 - Revenue tracking for purchases
 - Session timeline reconstruction
@@ -848,6 +894,7 @@ docs/
 - Cohort retention analysis
 
 ### Analytics Aggregation ✅
+
 - 6 period types (hour to year)
 - Automatic metric calculation
 - Time series data generation
@@ -856,6 +903,7 @@ docs/
 - Period comparison
 
 ### Agricultural Consciousness ✅
+
 - Automatic season detection
 - Seasonal trend analysis
 - Lunar phase tracking (optional)
@@ -867,25 +915,27 @@ docs/
 ## 🔄 Integration with Previous Phases
 
 ### Phase 1: Saved Searches ✅
+
 ```typescript
 // Track when saved searches are executed
 const result = await SavedSearchService.execute(searchId, params);
 
 // Track the search event
-await fetch('/api/analytics/events', {
-  method: 'POST',
+await fetch("/api/analytics/events", {
+  method: "POST",
   body: JSON.stringify({
     query: savedSearch.name,
     filters: savedSearch.filters,
     resultsCount: result.total,
     resultsShown: result.products.length,
     responseTime: result.responseTime,
-    source: 'saved_search',
+    source: "saved_search",
   }),
 });
 ```
 
 ### Phase 2: Search Alerts ✅
+
 ```typescript
 // Track alert executions
 const alertResult = await SearchAlertService.executeAlert(alertId);
@@ -898,11 +948,12 @@ await SearchEventService.trackSearch({
   resultsCount: alertResult.matchCount,
   resultsShown: alertResult.matchCount,
   responseTime: alertResult.executionTime,
-  source: 'search_alert',
+  source: "search_alert",
 });
 ```
 
 ### Run 3: React Query ✅
+
 ```typescript
 // Hooks can track searches automatically
 export function useProductSearch(filters: ProductFilters) {
@@ -915,14 +966,14 @@ export function useProductSearch(filters: ProductFilters) {
       const responseTime = Date.now() - startTime.current;
 
       // Track search event
-      await fetch('/api/analytics/events', {
-        method: 'POST',
+      await fetch("/api/analytics/events", {
+        method: "POST",
         body: JSON.stringify({
           filters,
           resultsCount: data.total,
           resultsShown: data.products.length,
           responseTime,
-          source: 'react_query',
+          source: "react_query",
         }),
       });
 
@@ -1147,17 +1198,20 @@ export function AnalyticsDashboard() {
 ## 📊 Performance Considerations
 
 ### Database Optimization
+
 - **Indexed Fields**: timestamp, userId, sessionId, entityType+entityId, query
 - **Aggregation Strategy**: Pre-compute hourly/daily to reduce query load
 - **Data Retention**: Auto-delete old raw events, keep aggregations
 
 ### Caching Strategy
+
 - **Real-time Metrics**: No cache (always fresh)
 - **Hourly Stats**: Cache for 5 minutes
 - **Daily Stats**: Cache for 1 hour
 - **Weekly/Monthly**: Cache for 24 hours
 
 ### Performance Metrics
+
 - **Event Tracking**: < 50ms (async, non-blocking)
 - **Stats Query**: < 500ms (with proper indexes)
 - **Aggregation**: < 2s per hour of data
@@ -1172,6 +1226,7 @@ export function AnalyticsDashboard() {
 ### Planned Features
 
 #### 1. Recommendation Engine
+
 - Product recommendations based on user behavior
 - Similar products algorithm
 - Frequently bought together
@@ -1179,6 +1234,7 @@ export function AnalyticsDashboard() {
 - Seasonal recommendations
 
 #### 2. Personalization Scoring
+
 - User preference learning
 - Category affinity scoring
 - Farm loyalty tracking
@@ -1186,18 +1242,21 @@ export function AnalyticsDashboard() {
 - Time-of-day preferences
 
 #### 3. Smart Search Ranking
+
 - Personalized search result ranking
 - Boost based on user preferences
 - Farm affinity adjustments
 - Purchase history influence
 
 #### 4. User Segmentation
+
 - Behavior-based segments
 - RFM (Recency, Frequency, Monetary) analysis
 - Lifecycle stage identification
 - Churn prediction
 
 #### 5. A/B Testing Framework
+
 - Experiment management
 - Variant assignment
 - Statistical significance testing
@@ -1208,18 +1267,21 @@ export function AnalyticsDashboard() {
 ## 🐛 Known Limitations & Future Enhancements
 
 ### Current Limitations
+
 1. **Dashboard UI**: API complete, UI components pending
 2. **Scheduled Jobs**: Aggregation works, cron scheduling needed
 3. **Real-time Updates**: WebSocket integration pending
 4. **Advanced Filtering**: Complex query builder pending
 
 ### Ready for Integration
+
 - ✅ All services tested and working
 - ✅ All API endpoints functional
 - ✅ Database models optimized
 - ✅ Type safety throughout
 
 ### Future Enhancements
+
 1. **Machine Learning**: Predictive analytics models
 2. **Real-time Dashboard**: WebSocket-powered live metrics
 3. **Export Features**: CSV/Excel export of analytics
@@ -1232,16 +1294,19 @@ export function AnalyticsDashboard() {
 ## 📚 Documentation
 
 ### Service Documentation
+
 - **SearchEventService**: See inline JSDoc in `search-event.service.ts`
 - **UserInteractionService**: See inline JSDoc in `user-interaction.service.ts`
 - **AnalyticsAggregationService**: See inline JSDoc in `analytics-aggregation.service.ts`
 
 ### API Documentation
+
 - All endpoints have OpenAPI-style comments
 - Request/response schemas defined with Zod
 - Error handling documented
 
 ### Integration Examples
+
 - Search tracking patterns
 - Interaction tracking patterns
 - Dashboard component examples
@@ -1252,6 +1317,7 @@ export function AnalyticsDashboard() {
 ## ✅ Phase 3 Sign-Off
 
 ### Deliverables ✅
+
 - [x] SearchEventService (609 lines)
 - [x] UserInteractionService (744 lines)
 - [x] AnalyticsAggregationService (659 lines)
@@ -1266,6 +1332,7 @@ export function AnalyticsDashboard() {
 - [x] Comprehensive documentation
 
 ### Quality Metrics ✅
+
 - ✅ **Type Safety**: 100% TypeScript with strict types
 - ✅ **Error Handling**: Comprehensive error handling
 - ✅ **Performance**: Optimized queries with indexes
@@ -1274,6 +1341,7 @@ export function AnalyticsDashboard() {
 - ✅ **Testing Ready**: Structured for unit/integration tests
 
 ### Integration Status ✅
+
 - ✅ **Phase 1**: Saved searches can be tracked
 - ✅ **Phase 2**: Search alerts can be monitored
 - ✅ **Run 3**: React Query hooks can auto-track
@@ -1286,6 +1354,7 @@ export function AnalyticsDashboard() {
 **Analytics & Tracking System - COMPLETE** 🎉📊✨
 
 You have successfully implemented:
+
 - ✅ Complete event tracking system
 - ✅ 8 interaction types tracked
 - ✅ Real-time and aggregated analytics
@@ -1336,13 +1405,13 @@ npx prisma studio
 
 ## 📈 Run 4 Progress Tracker
 
-| Phase | Status | Progress | LOC |
-|-------|--------|----------|-----|
-| **Phase 1: Foundation** | ✅ Complete | 100% | ~2,800 |
-| **Phase 2: Notifications & Sharing** | ✅ Complete | 100% | ~2,900 |
-| **Phase 3: Analytics & Tracking** | ✅ Complete | 100% | ~2,012 |
-| **Phase 4: Personalization** | 🔄 Next | 0% | ~TBD |
-| **Phase 5: Advanced Features** | 📋 Planned | 0% | ~TBD |
+| Phase                                | Status      | Progress | LOC    |
+| ------------------------------------ | ----------- | -------- | ------ |
+| **Phase 1: Foundation**              | ✅ Complete | 100%     | ~2,800 |
+| **Phase 2: Notifications & Sharing** | ✅ Complete | 100%     | ~2,900 |
+| **Phase 3: Analytics & Tracking**    | ✅ Complete | 100%     | ~2,012 |
+| **Phase 4: Personalization**         | 🔄 Next     | 0%       | ~TBD   |
+| **Phase 5: Advanced Features**       | 📋 Planned  | 0%       | ~TBD   |
 
 **Overall Progress**: 60% Complete (3/5 phases)
 
@@ -1366,7 +1435,7 @@ npx prisma studio
 
 ---
 
-*"Track with precision, analyze with wisdom, optimize with agricultural consciousness."* 🌾📊⚡
+_"Track with precision, analyze with wisdom, optimize with agricultural consciousness."_ 🌾📊⚡
 
 **Phase 3: Analytics & Tracking - COMPLETE** ✅
 

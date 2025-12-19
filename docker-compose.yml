@@ -4,8 +4,6 @@
 # ║ Complete multi-service orchestration for production deployment    ║
 # ╚════════════════════════════════════════════════════════════════════╝
 
-version: "3.9"
-
 services:
   # ============================================================================
   # POSTGRESQL DATABASE
@@ -143,28 +141,28 @@ services:
       - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
       - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
 
-      # Email Service
+      # Email Service (Optional - defaults to console logging if not set)
       - EMAIL_PROVIDER=${EMAIL_PROVIDER:-resend}
-      - EMAIL_API_KEY=${EMAIL_API_KEY}
+      - EMAIL_API_KEY=${EMAIL_API_KEY:-}
       - EMAIL_FROM=${EMAIL_FROM:-noreply@farmersmarket.com}
 
-      # Error Tracking
-      - SENTRY_DSN=${SENTRY_DSN}
-      - SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
-      - NEXT_PUBLIC_SENTRY_DSN=${NEXT_PUBLIC_SENTRY_DSN}
+      # Error Tracking (Optional - Sentry)
+      - SENTRY_DSN=${SENTRY_DSN:-}
+      - SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN:-}
+      - NEXT_PUBLIC_SENTRY_DSN=${NEXT_PUBLIC_SENTRY_DSN:-}
 
-      # Google Services
-      - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}
-      - NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=${NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
-      - GOOGLE_ANALYTICS_ID=${GOOGLE_ANALYTICS_ID}
+      # Google Services (Optional)
+      - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY:-}
+      - NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=${NEXT_PUBLIC_GOOGLE_MAPS_API_KEY:-}
+      - GOOGLE_ANALYTICS_ID=${GOOGLE_ANALYTICS_ID:-}
 
-      # OpenAI (for AI features)
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      # OpenAI (Optional - for AI features)
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
 
-      # Cloudinary (image uploads)
-      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
-      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
-      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+      # Cloudinary (Optional - for image uploads, falls back to local storage)
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME:-}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY:-}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET:-}
 
       # Feature Flags
       - ENABLE_AI_FEATURES=${ENABLE_AI_FEATURES:-true}

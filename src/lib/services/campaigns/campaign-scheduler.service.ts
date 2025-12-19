@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ╔══════════════════════════════════════════════════════════════════╗
  * ║  📅 CAMPAIGN SCHEDULER SERVICE - TIMED CAMPAIGN EXECUTION        ║

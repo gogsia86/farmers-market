@@ -22,6 +22,7 @@
 ## Prerequisites
 
 ### Required
+
 - ✅ Node.js 18+ installed
 - ✅ Run 1: Core Infrastructure complete
 - ✅ Run 2: Search & Discovery complete
@@ -30,6 +31,7 @@
 - ✅ Prisma database setup
 
 ### Verify Prerequisites
+
 ```bash
 # Check Node version
 node --version  # Should be 18+
@@ -64,6 +66,7 @@ npm install @tanstack/react-query-devtools@latest
 ```
 
 Expected output:
+
 ```
 @tanstack/react-query@5.x.x
 @tanstack/react-query-devtools@5.x.x
@@ -84,6 +87,7 @@ ls -R src/hooks/search
 ```
 
 Expected structure:
+
 ```
 src/
 ├── lib/
@@ -240,39 +244,36 @@ interface ProductSearchFilters {
 
 async function fetchProducts(filters: ProductSearchFilters) {
   const params = new URLSearchParams();
-  
+
   if (filters.query) params.append("q", filters.query);
   if (filters.categoryId) params.append("category", filters.categoryId);
   if (filters.farmId) params.append("farm", filters.farmId);
-  if (filters.minPrice !== undefined) params.append("minPrice", String(filters.minPrice));
-  if (filters.maxPrice !== undefined) params.append("maxPrice", String(filters.maxPrice));
+  if (filters.minPrice !== undefined)
+    params.append("minPrice", String(filters.minPrice));
+  if (filters.maxPrice !== undefined)
+    params.append("maxPrice", String(filters.maxPrice));
   if (filters.availability) params.append("availability", filters.availability);
-  if (filters.organic !== undefined) params.append("organic", String(filters.organic));
-  if (filters.seasonal !== undefined) params.append("seasonal", String(filters.seasonal));
+  if (filters.organic !== undefined)
+    params.append("organic", String(filters.organic));
+  if (filters.seasonal !== undefined)
+    params.append("seasonal", String(filters.seasonal));
   if (filters.sortBy) params.append("sortBy", filters.sortBy);
   if (filters.page) params.append("page", String(filters.page));
   if (filters.limit) params.append("limit", String(filters.limit));
 
   const response = await fetch(`/api/search/products?${params.toString()}`);
-  
+
   if (!response.ok) {
     throw new Error(`Product search failed: ${response.statusText}`);
   }
-  
+
   return response.json();
 }
 
 export function useProductSearch(filters: ProductSearchFilters = {}) {
   const queryClient = useQueryClient();
 
-  const {
-    data,
-    isLoading,
-    isError,
-    error,
-    isFetching,
-    refetch,
-  } = useQuery({
+  const { data, isLoading, isError, error, isFetching, refetch } = useQuery({
     queryKey: productKeys.list(filters),
     queryFn: () => fetchProducts(filters),
     staleTime: 60 * 1000,
@@ -297,7 +298,10 @@ export function useProductSearch(filters: ProductSearchFilters = {}) {
   }, [data?.meta, filters, queryClient]);
 
   const products = useMemo(() => data?.data ?? [], [data]);
-  const isEmpty = useMemo(() => products.length === 0 && !isLoading, [products, isLoading]);
+  const isEmpty = useMemo(
+    () => products.length === 0 && !isLoading,
+    [products, isLoading],
+  );
   const hasResults = useMemo(() => products.length > 0, [products]);
 
   return {
@@ -309,7 +313,9 @@ export function useProductSearch(filters: ProductSearchFilters = {}) {
     meta: data?.meta ?? null,
     filters: data?.filters ?? null,
     seasonal: data?.seasonal ?? null,
-    refetch: () => { refetch(); },
+    refetch: () => {
+      refetch();
+    },
     prefetchNextPage,
     isEmpty,
     hasResults,
@@ -350,6 +356,7 @@ export default function RootLayout({
 ### Verify Provider
 
 1. Start dev server:
+
 ```bash
 npm run dev
 ```
@@ -405,7 +412,7 @@ export default function ProductsPage() {
           ) : (
             <>
               <ProductGrid products={products} />
-              
+
               {meta && (
                 <div className="mt-8 flex justify-center gap-2">
                   <button
@@ -415,11 +422,11 @@ export default function ProductsPage() {
                   >
                     Previous
                   </button>
-                  
+
                   <span className="px-4 py-2">
                     Page {meta.currentPage} of {meta.totalPages}
                   </span>
-                  
+
                   <button
                     disabled={!meta.hasNextPage}
                     onClick={() => setFilters({ ...filters, page: filters.page! + 1 })}
@@ -460,7 +467,7 @@ export function FeaturedSection() {
     <section className="py-16">
       <div className="container mx-auto">
         <h2 className="text-3xl font-bold mb-8">Featured Products</h2>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {isLoading ? (
             <ProductCardSkeleton count={8} />
@@ -574,6 +581,7 @@ open http://localhost:3000
 ```
 
 **Expected**:
+
 - No console errors
 - React Query DevTools button visible (bottom-right)
 - DevTools show empty cache initially
@@ -620,6 +628,7 @@ open http://localhost:3000
 **Cause**: Provider not wrapping components
 
 **Solution**:
+
 ```typescript
 // Make sure ReactQueryProvider is in layout.tsx
 export default function RootLayout({ children }) {
@@ -640,6 +649,7 @@ export default function RootLayout({ children }) {
 **Cause**: Missing `"use client"` directive
 
 **Solution**:
+
 ```typescript
 // Add to top of file using useQuery
 "use client";
@@ -653,16 +663,17 @@ import { useQuery } from "@tanstack/react-query";
 **Cause**: Query keys not stable
 
 **Solution**:
+
 ```typescript
 // ❌ BAD - new object every render
 const { data } = useQuery({
-  queryKey: ["products", { page: 1 }],  // New object!
+  queryKey: ["products", { page: 1 }], // New object!
   // ...
 });
 
 // ✅ GOOD - use query key factory
 const { data } = useQuery({
-  queryKey: productKeys.list({ page: 1 }),  // Stable reference
+  queryKey: productKeys.list({ page: 1 }), // Stable reference
   // ...
 });
 ```
@@ -672,12 +683,13 @@ const { data } = useQuery({
 **Cause**: staleTime too long
 
 **Solution**:
+
 ```typescript
 // Reduce staleTime for frequently changing data
 const { data } = useQuery({
   queryKey: productKeys.list(filters),
   queryFn: () => fetchProducts(filters),
-  staleTime: 30 * 1000,  // 30 seconds instead of 1 minute
+  staleTime: 30 * 1000, // 30 seconds instead of 1 minute
 });
 ```
 
@@ -686,13 +698,14 @@ const { data } = useQuery({
 **Cause**: Missing query key or refetching too often
 
 **Solution**:
+
 ```typescript
 // Check DevTools for duplicate queries
 // Ensure stable query keys
 // Adjust refetchOnWindowFocus if needed
 const { data } = useQuery({
   // ...
-  refetchOnWindowFocus: false,  // Disable if too frequent
+  refetchOnWindowFocus: false, // Disable if too frequent
 });
 ```
 
@@ -728,21 +741,25 @@ const mutation = useMutation({
   mutationFn: updateProduct,
   onMutate: async (newProduct) => {
     // Cancel outgoing refetches
-    await queryClient.cancelQueries({ queryKey: productKeys.detail(newProduct.id) });
-    
+    await queryClient.cancelQueries({
+      queryKey: productKeys.detail(newProduct.id),
+    });
+
     // Snapshot previous value
-    const previous = queryClient.getQueryData(productKeys.detail(newProduct.id));
-    
+    const previous = queryClient.getQueryData(
+      productKeys.detail(newProduct.id),
+    );
+
     // Optimistically update
     queryClient.setQueryData(productKeys.detail(newProduct.id), newProduct);
-    
+
     return { previous };
   },
   onError: (err, newProduct, context) => {
     // Rollback on error
     queryClient.setQueryData(
       productKeys.detail(newProduct.id),
-      context?.previous
+      context?.previous,
     );
   },
 });
@@ -770,6 +787,7 @@ const mutation = useMutation({
 ## ✅ Installation Complete
 
 You should now have:
+
 - ✅ React Query provider configured
 - ✅ Query key factory created
 - ✅ Product search hook working
@@ -781,4 +799,4 @@ You should now have:
 
 ---
 
-*"Install with divine precision, configure with agricultural consciousness, deliver with quantum efficiency."* 🌾⚡✨
+_"Install with divine precision, configure with agricultural consciousness, deliver with quantum efficiency."_ 🌾⚡✨

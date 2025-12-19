@@ -8,9 +8,9 @@
  * @category Analytics
  */
 
-import { database } from '@/lib/database';
-import { Season, InteractionType } from '@prisma/client';
-import { nanoid } from 'nanoid';
+import { database } from "@/lib/database";
+import { Season, InteractionType } from "@prisma/client";
+import { nanoid } from "nanoid";
 
 // ============================================================================
 // Types & Interfaces
@@ -100,7 +100,7 @@ export class SearchEventService {
         resultsShown: input.resultsShown,
         clickedResults: [],
         responseTime: input.responseTime,
-        source: input.source || 'web',
+        source: input.source || "web",
         location: input.location || {},
         userAgent: input.userAgent,
         currentSeason: input.currentSeason || this.getCurrentSeason(),
@@ -117,9 +117,9 @@ export class SearchEventService {
           userId: input.userId,
           sessionId,
           type: InteractionType.SEARCH,
-          entityType: 'search',
+          entityType: "search",
           entityId: event.id,
-          source: input.source || 'web',
+          source: input.source || "web",
           metadata: {
             query: input.query,
             resultsCount: input.resultsCount,
@@ -164,9 +164,9 @@ export class SearchEventService {
         userId: input.userId,
         sessionId: input.sessionId,
         type: InteractionType.CLICK,
-        entityType: 'product',
+        entityType: "product",
         entityId: input.productId,
-        source: 'search_results',
+        source: "search_results",
         metadata: {
           position: input.position,
           query: input.query,
@@ -201,14 +201,16 @@ export class SearchEventService {
 
     if (filters.minResponseTime || filters.maxResponseTime) {
       where.responseTime = {};
-      if (filters.minResponseTime) where.responseTime.gte = filters.minResponseTime;
-      if (filters.maxResponseTime) where.responseTime.lte = filters.maxResponseTime;
+      if (filters.minResponseTime)
+        where.responseTime.gte = filters.minResponseTime;
+      if (filters.maxResponseTime)
+        where.responseTime.lte = filters.maxResponseTime;
     }
 
     const [events, total] = await Promise.all([
       database.searchEvent.findMany({
         where,
-        orderBy: { timestamp: 'desc' },
+        orderBy: { timestamp: "desc" },
         take: limit,
         skip: offset,
       }),
@@ -227,7 +229,9 @@ export class SearchEventService {
   /**
    * Get search event statistics
    */
-  static async getStats(filters: SearchEventFilters): Promise<SearchEventStats> {
+  static async getStats(
+    filters: SearchEventFilters,
+  ): Promise<SearchEventStats> {
     const where: any = {};
 
     if (filters.userId) where.userId = filters.userId;
@@ -255,21 +259,30 @@ export class SearchEventService {
 
     // Calculate basic metrics
     const totalSearches = events.length;
-    const uniqueUsers = new Set(events.filter(e => e.userId).map(e => e.userId)).size;
-    const uniqueSessions = new Set(events.map(e => e.sessionId)).size;
+    const uniqueUsers = new Set(
+      events.filter((e) => e.userId).map((e) => e.userId),
+    ).size;
+    const uniqueSessions = new Set(events.map((e) => e.sessionId)).size;
 
     // Response time metrics
-    const responseTimes = events.map(e => e.responseTime).sort((a, b) => a - b);
-    const avgResponseTime = responseTimes.reduce((sum, t) => sum + t, 0) / responseTimes.length || 0;
+    const responseTimes = events
+      .map((e) => e.responseTime)
+      .filter((t): t is number => t !== null)
+      .sort((a, b) => a - b);
+    const avgResponseTime =
+      responseTimes.length > 0
+        ? responseTimes.reduce((sum, t) => sum + t, 0) / responseTimes.length
+        : 0;
     const p95Index = Math.floor(responseTimes.length * 0.95);
     const p95ResponseTime = responseTimes[p95Index] || 0;
 
     // Results count
-    const avgResultsCount = events.reduce((sum, e) => sum + e.resultsCount, 0) / totalSearches || 0;
+    const avgResultsCount =
+      events.reduce((sum, e) => sum + e.resultsCount, 0) / totalSearches || 0;
 
     // Top queries
     const queryCount = new Map<string, number>();
-    events.forEach(e => {
+    events.forEach((e) => {
       if (e.query) {
         queryCount.set(e.query, (queryCount.get(e.query) || 0) + 1);
       }
@@ -281,8 +294,8 @@ export class SearchEventService {
 
     // Top filters
     const filterCount = new Map<string, number>();
-    events.forEach(e => {
-      Object.keys(e.filters || {}).forEach(filter => {
+    events.forEach((e) => {
+      Object.keys(e.filters || {}).forEach((filter) => {
         const key = `${filter}:${JSON.stringify((e.filters as any)[filter])}`;
         filterCount.set(key, (filterCount.get(key) || 0) + 1);
       });
@@ -299,7 +312,7 @@ export class SearchEventService {
       [Season.FALL]: 0,
       [Season.WINTER]: 0,
     };
-    events.forEach(e => {
+    events.forEach((e) => {
       if (e.currentSeason) {
         seasonalBreakdown[e.currentSeason]++;
       }
@@ -307,7 +320,7 @@ export class SearchEventService {
 
     // Source breakdown
     const sourceBreakdown: Record<string, number> = {};
-    events.forEach(e => {
+    events.forEach((e) => {
       if (e.source) {
         sourceBreakdown[e.source] = (sourceBreakdown[e.source] || 0) + 1;
       }
@@ -332,11 +345,15 @@ export class SearchEventService {
    */
   static async getTrendingSearches(
     limit = 10,
-    lookbackDays = 7
+    lookbackDays = 7,
   ): Promise<TrendingSearch[]> {
     const now = new Date();
-    const currentPeriodStart = new Date(now.getTime() - lookbackDays * 24 * 60 * 60 * 1000);
-    const previousPeriodStart = new Date(currentPeriodStart.getTime() - lookbackDays * 24 * 60 * 60 * 1000);
+    const currentPeriodStart = new Date(
+      now.getTime() - lookbackDays * 24 * 60 * 60 * 1000,
+    );
+    const previousPeriodStart = new Date(
+      currentPeriodStart.getTime() - lookbackDays * 24 * 60 * 60 * 1000,
+    );
 
     // Get current period searches
     const currentSearches = await database.searchEvent.findMany({
@@ -369,7 +386,7 @@ export class SearchEventService {
 
     // Count queries in both periods
     const currentCounts = new Map<string, { count: number; season: Season }>();
-    currentSearches.forEach(s => {
+    currentSearches.forEach((s) => {
       if (s.query) {
         const existing = currentCounts.get(s.query);
         currentCounts.set(s.query, {
@@ -380,7 +397,7 @@ export class SearchEventService {
     });
 
     const previousCounts = new Map<string, number>();
-    previousSearches.forEach(s => {
+    previousSearches.forEach((s) => {
       if (s.query) {
         previousCounts.set(s.query, (previousCounts.get(s.query) || 0) + 1);
       }
@@ -390,9 +407,12 @@ export class SearchEventService {
     const trending: TrendingSearch[] = [];
     currentCounts.forEach((current, query) => {
       const previous = previousCounts.get(query) || 0;
-      const growth = previous > 0
-        ? ((current.count - previous) / previous) * 100
-        : current.count > 0 ? 100 : 0;
+      const growth =
+        previous > 0
+          ? ((current.count - previous) / previous) * 100
+          : current.count > 0
+            ? 100
+            : 0;
 
       trending.push({
         query,
@@ -417,7 +437,7 @@ export class SearchEventService {
   static async getConversionRate(
     startDate: Date,
     endDate: Date,
-    userId?: string
+    userId?: string,
   ): Promise<{
     totalSearches: number;
     searchesWithClicks: number;
@@ -455,7 +475,7 @@ export class SearchEventService {
       };
     }
 
-    const sessionIds = searches.map(s => s.sessionId);
+    const sessionIds = searches.map((s) => s.sessionId);
 
     // Get interactions for these sessions
     const interactions = await database.userInteraction.findMany({
@@ -474,10 +494,12 @@ export class SearchEventService {
     const sessionsWithCart = new Set<string>();
     const sessionsWithPurchase = new Set<string>();
 
-    interactions.forEach(i => {
+    interactions.forEach((i) => {
       if (i.type === InteractionType.CLICK) sessionsWithClick.add(i.sessionId);
-      if (i.type === InteractionType.ADD_TO_CART) sessionsWithCart.add(i.sessionId);
-      if (i.type === InteractionType.PURCHASE) sessionsWithPurchase.add(i.sessionId);
+      if (i.type === InteractionType.ADD_TO_CART)
+        sessionsWithCart.add(i.sessionId);
+      if (i.type === InteractionType.PURCHASE)
+        sessionsWithPurchase.add(i.sessionId);
     });
 
     const searchesWithClicks = sessionsWithClick.size;
@@ -501,8 +523,10 @@ export class SearchEventService {
   static async getPopularFilters(
     startDate: Date,
     endDate: Date,
-    limit = 10
-  ): Promise<Array<{ filter: string; value: any; count: number; percentage: number }>> {
+    limit = 10,
+  ): Promise<
+    Array<{ filter: string; value: any; count: number; percentage: number }>
+  > {
     const events = await database.searchEvent.findMany({
       where: {
         timestamp: { gte: startDate, lte: endDate },
@@ -515,7 +539,7 @@ export class SearchEventService {
     const filterCount = new Map<string, number>();
     const totalSearches = events.length;
 
-    events.forEach(e => {
+    events.forEach((e) => {
       const filters = e.filters as Record<string, any>;
       Object.entries(filters).forEach(([key, value]) => {
         const filterKey = `${key}:${JSON.stringify(value)}`;
@@ -525,10 +549,12 @@ export class SearchEventService {
 
     return Array.from(filterCount.entries())
       .map(([filterKey, count]) => {
-        const [filter, value] = filterKey.split(':');
+        const parts = filterKey.split(":");
+        const filter = parts[0] || "";
+        const value = parts.slice(1).join(":");
         return {
           filter,
-          value: JSON.parse(value),
+          value: value ? JSON.parse(value) : null,
           count,
           percentage: (count / totalSearches) * 100,
         };
@@ -542,8 +568,10 @@ export class SearchEventService {
    */
   static async getPerformanceByTimeOfDay(
     startDate: Date,
-    endDate: Date
-  ): Promise<Array<{ hour: number; avgResponseTime: number; searchCount: number }>> {
+    endDate: Date,
+  ): Promise<
+    Array<{ hour: number; avgResponseTime: number; searchCount: number }>
+  > {
     const events = await database.searchEvent.findMany({
       where: {
         timestamp: { gte: startDate, lte: endDate },
@@ -556,21 +584,28 @@ export class SearchEventService {
 
     const hourlyData = new Map<number, { totalTime: number; count: number }>();
 
-    events.forEach(e => {
-      const hour = e.timestamp.getHours();
-      const existing = hourlyData.get(hour) || { totalTime: 0, count: 0 };
-      hourlyData.set(hour, {
-        totalTime: existing.totalTime + e.responseTime,
-        count: existing.count + 1,
-      });
+    events.forEach((e) => {
+      if (e.responseTime !== null) {
+        const hour = e.timestamp.getHours();
+        const existing = hourlyData.get(hour) || { totalTime: 0, count: 0 };
+        hourlyData.set(hour, {
+          totalTime: existing.totalTime + e.responseTime,
+          count: existing.count + 1,
+        });
+      }
     });
 
-    const result: Array<{ hour: number; avgResponseTime: number; searchCount: number }> = [];
+    const result: Array<{
+      hour: number;
+      avgResponseTime: number;
+      searchCount: number;
+    }> = [];
     for (let hour = 0; hour < 24; hour++) {
       const data = hourlyData.get(hour) || { totalTime: 0, count: 0 };
       result.push({
         hour,
-        avgResponseTime: data.count > 0 ? Math.round(data.totalTime / data.count) : 0,
+        avgResponseTime:
+          data.count > 0 ? Math.round(data.totalTime / data.count) : 0,
         searchCount: data.count,
       });
     }

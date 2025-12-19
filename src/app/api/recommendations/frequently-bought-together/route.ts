@@ -46,7 +46,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             message: "productId is required",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -60,15 +60,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             message: "limit must be between 1 and 20",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Get frequently bought together recommendations
-    const recommendations = await recommendationEngine.getFrequentlyBoughtTogether(
-      productId,
-      limit
-    );
+    const recommendations =
+      await recommendationEngine.getFrequentlyBoughtTogether(productId, limit);
 
     const duration = Date.now() - startTime;
 
@@ -92,7 +90,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         headers: {
           "Cache-Control": "public, max-age=300", // Cache for 5 minutes
         },
-      }
+      },
     );
   } catch (error) {
     console.error("[FrequentlyBoughtTogetherAPI] Error:", error);
@@ -109,7 +107,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

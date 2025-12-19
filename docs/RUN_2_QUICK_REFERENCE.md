@@ -10,7 +10,9 @@
 
 ```typescript
 // Fetch products with filters
-const response = await fetch('/api/search/products?q=tomato&category=vegetables&minPrice=5&maxPrice=20&availability=IN_STOCK');
+const response = await fetch(
+  "/api/search/products?q=tomato&category=vegetables&minPrice=5&maxPrice=20&availability=IN_STOCK",
+);
 const { success, data, filters, seasonal } = await response.json();
 ```
 
@@ -25,7 +27,7 @@ import { SearchFilters } from "@/components/features/search/SearchFilters";
   availableCategories={categories}
   availableFarms={farms}
   priceRange={{ min: 0, max: 100 }}
-/>
+/>;
 ```
 
 ### 3. Show Loading Skeleton
@@ -33,11 +35,13 @@ import { SearchFilters } from "@/components/features/search/SearchFilters";
 ```tsx
 import { ProductGridSkeleton } from "@/components/ui/skeleton";
 
-{isLoading ? (
-  <ProductGridSkeleton count={12} />
-) : (
-  <ProductGrid products={products} />
-)}
+{
+  isLoading ? (
+    <ProductGridSkeleton count={12} />
+  ) : (
+    <ProductGrid products={products} />
+  );
+}
 ```
 
 ---
@@ -53,15 +57,18 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { SearchFilters } from "@/components/features/search/SearchFilters";
 import { ProductGridSkeleton } from "@/components/ui/skeleton";
-import { parseSearchParams, filtersToSearchParams } from "@/lib/utils/search.utils";
+import {
+  parseSearchParams,
+  filtersToSearchParams,
+} from "@/lib/utils/search.utils";
 import type { ProductSearchFilters } from "@/types/search";
 
 export default function ProductSearchPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
-  const [filters, setFilters] = useState<ProductSearchFilters>(() => 
-    parseSearchParams(searchParams)
+
+  const [filters, setFilters] = useState<ProductSearchFilters>(() =>
+    parseSearchParams(searchParams),
   );
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState<any>(null);
@@ -138,7 +145,9 @@ export function SearchBar() {
 
   const fetchSuggestions = debounce(async (q: string) => {
     if (q.length < 2) return;
-    const res = await fetch(`/api/search/suggestions?q=${encodeURIComponent(q)}`);
+    const res = await fetch(
+      `/api/search/suggestions?q=${encodeURIComponent(q)}`,
+    );
     const data = await res.json();
     if (data.success) {
       setSuggestions(data.suggestions);
@@ -152,10 +161,12 @@ export function SearchBar() {
 
   return (
     <div className="relative w-full max-w-lg">
-      <form onSubmit={(e) => {
-        e.preventDefault();
-        router.push(`/products/search?q=${encodeURIComponent(query)}`);
-      }}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          router.push(`/products/search?q=${encodeURIComponent(query)}`);
+        }}
+      >
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
         <Input
           type="search"
@@ -248,7 +259,9 @@ const context = getSeasonalContext(season);
 ```tsx
 import { ProductGridSkeleton } from "@/components/ui/skeleton";
 
-{isLoading ? <ProductGridSkeleton count={12} /> : <ProductGrid />}
+{
+  isLoading ? <ProductGridSkeleton count={12} /> : <ProductGrid />;
+}
 ```
 
 ### Dashboard Loading
@@ -256,7 +269,9 @@ import { ProductGridSkeleton } from "@/components/ui/skeleton";
 ```tsx
 import { DashboardSkeleton } from "@/components/ui/skeleton";
 
-{isLoading ? <DashboardSkeleton /> : <Dashboard />}
+{
+  isLoading ? <DashboardSkeleton /> : <Dashboard />;
+}
 ```
 
 ### Table Loading
@@ -264,7 +279,9 @@ import { DashboardSkeleton } from "@/components/ui/skeleton";
 ```tsx
 import { TableSkeleton } from "@/components/ui/skeleton";
 
-{isLoading ? <TableSkeleton rows={10} columns={5} /> : <DataTable />}
+{
+  isLoading ? <TableSkeleton rows={10} columns={5} /> : <DataTable />;
+}
 ```
 
 ### Custom Skeleton
@@ -284,16 +301,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 ### Simple GET Request
 
 ```typescript
-const res = await fetch('/api/search/products?q=tomato');
+const res = await fetch("/api/search/products?q=tomato");
 const { success, data, filters, seasonal } = await res.json();
 ```
 
 ### Advanced POST Request
 
 ```typescript
-const res = await fetch('/api/search/products', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+const res = await fetch("/api/search/products", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
     filters: {
       query: "tomato",
@@ -316,7 +333,9 @@ const data = await res.json();
 ### Autocomplete Suggestions
 
 ```typescript
-const res = await fetch(`/api/search/suggestions?q=${encodeURIComponent(query)}&limit=10`);
+const res = await fetch(
+  `/api/search/suggestions?q=${encodeURIComponent(query)}&limit=10`,
+);
 const { success, suggestions, query: sanitizedQuery } = await res.json();
 ```
 
@@ -351,12 +370,10 @@ describe("SearchFilters", () => {
       <SearchFilters
         filters={{}}
         onFiltersChange={onFiltersChange}
-        availableCategories={[
-          { label: "Vegetables", value: "veg", count: 42 }
-        ]}
-      />
+        availableCategories={[{ label: "Vegetables", value: "veg", count: 42 }]}
+      />,
     );
-    
+
     await userEvent.click(screen.getByLabelText("Vegetables"));
     expect(onFiltersChange).toHaveBeenCalledWith({ categoryId: "veg" });
   });
@@ -434,7 +451,9 @@ const res = await fetch(`/api/search/products?minPrice=5&maxPrice=20`);
 
 ```typescript
 const filters = { availability: "IN_STOCK", organic: true };
-const res = await fetch(`/api/search/products?availability=IN_STOCK&organic=true`);
+const res = await fetch(
+  `/api/search/products?availability=IN_STOCK&organic=true`,
+);
 ```
 
 ### 5. Seasonal Products from Specific Farm
@@ -517,7 +536,9 @@ const [products, count, categories] = await Promise.all([
 ### 3. Use Skeleton Loading
 
 ```tsx
-{isLoading ? <ProductGridSkeleton /> : <ProductGrid />}
+{
+  isLoading ? <ProductGridSkeleton /> : <ProductGrid />;
+}
 ```
 
 ---
@@ -540,7 +561,7 @@ import { Filter } from "lucide-react";
   <SheetContent side="left">
     <SearchFilters {...props} />
   </SheetContent>
-</Sheet>
+</Sheet>;
 ```
 
 ---
@@ -558,7 +579,7 @@ const season = getCurrentSeason();
 <Badge variant="outline">
   <Calendar className="mr-1 h-3 w-3" />
   {season}
-</Badge>
+</Badge>;
 ```
 
 ### Show Organic Badge
@@ -566,12 +587,14 @@ const season = getCurrentSeason();
 ```tsx
 import { Leaf } from "lucide-react";
 
-{product.isOrganic && (
-  <Badge variant="success">
-    <Leaf className="mr-1 h-3 w-3" />
-    Organic
-  </Badge>
-)}
+{
+  product.isOrganic && (
+    <Badge variant="success">
+      <Leaf className="mr-1 h-3 w-3" />
+      Organic
+    </Badge>
+  );
+}
 ```
 
 ---
@@ -609,4 +632,4 @@ import { Leaf } from "lucide-react";
 
 ---
 
-*Divine Agricultural Search Consciousness - Quick Reference* 🌾🔍✨
+_Divine Agricultural Search Consciousness - Quick Reference_ 🌾🔍✨

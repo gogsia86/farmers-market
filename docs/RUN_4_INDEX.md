@@ -9,14 +9,17 @@
 ## 🎯 Quick Navigation
 
 ### 🚀 Start Here
+
 1. **[RUN_4_READY_TO_START.md](./RUN_4_READY_TO_START.md)** - Executive summary and kickoff guide
 2. **[RUN_4_QUICK_START.md](./RUN_4_QUICK_START.md)** - Get started in 5 minutes
 
 ### 📖 Core Documentation
+
 3. **[RUN_4_PLAN.md](./RUN_4_PLAN.md)** - Complete architecture and implementation plan
 4. **[RUN_4_INSTALLATION_GUIDE.md](./RUN_4_INSTALLATION_GUIDE.md)** - Step-by-step setup instructions
 
 ### 🗄️ Database
+
 5. **[DRAFT_run4_saved_searches_analytics_personalization.sql](../prisma/migrations/DRAFT_run4_saved_searches_analytics_personalization.sql)** - Database migration SQL
 
 ---
@@ -24,10 +27,12 @@
 ## 📋 Document Summaries
 
 ### 1. RUN_4_READY_TO_START.md (639 lines)
+
 **Purpose:** Executive kickoff document  
 **Audience:** Team leads, product managers, developers
 
 **Contents:**
+
 - Executive summary
 - Complete documentation package overview
 - Database schema overview (15 new models)
@@ -41,7 +46,8 @@
 - Expected outcomes by phase
 - Suggested timeline (3-week plan)
 
-**When to Use:** 
+**When to Use:**
+
 - Before starting Run 4
 - For team alignment meetings
 - To understand overall scope
@@ -50,10 +56,12 @@
 ---
 
 ### 2. RUN_4_QUICK_START.md (721 lines)
+
 **Purpose:** Developer quick reference  
 **Audience:** Frontend and backend developers
 
 **Contents:**
+
 - 5-minute quickstart guide
 - Essential copy-paste code patterns
 - Common use cases with examples
@@ -66,6 +74,7 @@
 - Pro tips and best practices
 
 **When to Use:**
+
 - Daily development work
 - When you need quick examples
 - For troubleshooting common issues
@@ -75,10 +84,12 @@
 ---
 
 ### 3. RUN_4_PLAN.md (1,831 lines)
+
 **Purpose:** Complete technical specification  
 **Audience:** Architects, senior developers, technical leads
 
 **Contents:**
+
 - System architecture diagrams
 - Detailed feature breakdown (5 phases)
 - Complete database schema with all models
@@ -97,6 +108,7 @@
 - Success metrics and acceptance criteria
 
 **When to Use:**
+
 - System design reviews
 - Architecture decisions
 - API contract discussions
@@ -107,10 +119,12 @@
 ---
 
 ### 4. RUN_4_INSTALLATION_GUIDE.md (2,099 lines)
+
 **Purpose:** Step-by-step implementation guide  
 **Audience:** All developers implementing features
 
 **Contents:**
+
 - Prerequisites checklist
 - Phase 1-7 detailed steps
 - Complete Prisma schema additions
@@ -143,6 +157,7 @@
 - Verification checklist
 
 **When to Use:**
+
 - During active development
 - When implementing specific features
 - For code review reference
@@ -153,10 +168,12 @@
 ---
 
 ### 5. DRAFT Migration SQL (535 lines)
+
 **Purpose:** Database schema migration  
 **Audience:** Database administrators, backend developers
 
 **Contents:**
+
 - 8 new enum types
 - 15 new table definitions
 - Foreign key constraints
@@ -166,6 +183,7 @@
 - Column-level comments
 
 **Tables Created:**
+
 - saved_search_folders
 - saved_searches
 - saved_search_shares
@@ -180,6 +198,7 @@
 - ab_test_assignments
 
 **When to Use:**
+
 - Before running Prisma migration
 - For database review
 - To understand schema changes
@@ -191,15 +210,18 @@
 ## 🎯 Implementation Roadmap
 
 ### Phase 1: Foundation (Day 1)
+
 **Time:** 4-6 hours  
 **Focus:** Database and basic CRUD
 
 **Documents to Reference:**
+
 1. RUN_4_INSTALLATION_GUIDE.md - Phase 1
 2. RUN_4_QUICK_START.md - Database commands
 3. DRAFT migration SQL - Schema reference
 
 **Deliverables:**
+
 - ✅ Database migration complete
 - ✅ SavedSearchService implemented
 - ✅ Basic API routes working
@@ -210,15 +232,18 @@
 ---
 
 ### Phase 2: Notifications & Sharing (Day 2)
+
 **Time:** 6-8 hours  
 **Focus:** Search alerts and collaboration
 
 **Documents to Reference:**
+
 1. RUN_4_INSTALLATION_GUIDE.md - Phase 2
 2. RUN_4_PLAN.md - Alert specifications
 3. RUN_4_QUICK_START.md - Notification patterns
 
 **Deliverables:**
+
 - ✅ Search alerts functional
 - ✅ Share functionality working
 - ✅ Email notifications sent
@@ -227,15 +252,18 @@
 ---
 
 ### Phase 3: Analytics & Tracking (Day 3)
+
 **Time:** 6-8 hours  
 **Focus:** Event tracking and insights
 
 **Documents to Reference:**
+
 1. RUN_4_INSTALLATION_GUIDE.md - Phase 3
 2. RUN_4_PLAN.md - Analytics pipeline design
 3. RUN_4_QUICK_START.md - Tracking patterns
 
 **Deliverables:**
+
 - ✅ Search events tracked
 - ✅ User interactions recorded
 - ✅ Analytics aggregation running
@@ -244,15 +272,18 @@
 ---
 
 ### Phase 4: Personalization (Day 4)
+
 **Time:** 8-10 hours  
 **Focus:** Preferences and recommendations
 
 **Documents to Reference:**
+
 1. RUN_4_INSTALLATION_GUIDE.md - Phase 4
 2. RUN_4_PLAN.md - Recommendation algorithms
 3. RUN_4_QUICK_START.md - Personalization patterns
 
 **Deliverables:**
+
 - ✅ User preferences working
 - ✅ Recommendations generated
 - ✅ Seasonal awareness active
@@ -261,15 +292,18 @@
 ---
 
 ### Phase 5: Advanced Features (Day 5+)
+
 **Time:** 8-12 hours  
 **Focus:** A/B testing and optimization
 
 **Documents to Reference:**
+
 1. RUN_4_INSTALLATION_GUIDE.md - Phase 5
 2. RUN_4_PLAN.md - A/B testing framework
 3. RUN_4_QUICK_START.md - Advanced patterns
 
 **Deliverables:**
+
 - ✅ A/B testing operational
 - ✅ Collaborative filtering active
 - ✅ Advanced analytics available
@@ -280,6 +314,7 @@
 ## 📊 Feature Checklist
 
 ### Saved Searches ✅
+
 - [ ] Create saved search
 - [ ] List saved searches
 - [ ] Execute saved search
@@ -290,6 +325,7 @@
 - [ ] Track execution stats
 
 ### Search Alerts ✅
+
 - [ ] Subscribe to search
 - [ ] Configure alert frequency
 - [ ] Email notifications
@@ -298,6 +334,7 @@
 - [ ] Unsubscribe from alerts
 
 ### Analytics ✅
+
 - [ ] Track search events
 - [ ] Track user interactions
 - [ ] Aggregate hourly metrics
@@ -306,6 +343,7 @@
 - [ ] Export analytics data
 
 ### User Preferences ✅
+
 - [ ] Manage dietary preferences
 - [ ] Set favorite farms
 - [ ] Configure auto-apply filters
@@ -315,6 +353,7 @@
 - [ ] Privacy controls
 
 ### Recommendations ✅
+
 - [ ] Similar products
 - [ ] Complementary products
 - [ ] Trending products
@@ -324,6 +363,7 @@
 - [ ] Track recommendation performance
 
 ### A/B Testing ✅
+
 - [ ] Create test variants
 - [ ] Assign users to variants
 - [ ] Track variant performance
@@ -336,7 +376,9 @@
 ## 🧪 Testing Documentation
 
 ### Unit Tests
+
 **Location:** `src/__tests__/lib/`
+
 - saved-search.service.test.ts
 - analytics.service.test.ts
 - user-preferences.service.test.ts
@@ -345,7 +387,9 @@
 **Reference:** RUN_4_INSTALLATION_GUIDE.md - Phase 6
 
 ### Integration Tests
+
 **Location:** `src/__tests__/api/`
+
 - saved-searches.test.ts
 - analytics-events.test.ts
 - user-preferences.test.ts
@@ -354,7 +398,9 @@
 **Reference:** RUN_4_INSTALLATION_GUIDE.md - Phase 6
 
 ### Hook Tests
+
 **Location:** `src/__tests__/hooks/`
+
 - useSavedSearches.test.ts
 - useUserPreferences.test.ts
 - useRecommendations.test.ts
@@ -362,7 +408,9 @@
 **Reference:** RUN_4_INSTALLATION_GUIDE.md - Phase 6
 
 ### E2E Tests
+
 **Location:** `e2e/`
+
 - saved-searches.spec.ts
 - personalization.spec.ts
 - recommendations.spec.ts
@@ -374,6 +422,7 @@
 ## 🎨 UI Components Reference
 
 ### Saved Searches Components
+
 - `SavedSearchList` - Display all saved searches
 - `SaveSearchButton` - Save current search
 - `SavedSearchCard` - Individual search card
@@ -383,6 +432,7 @@
 **Code:** RUN_4_INSTALLATION_GUIDE.md - Phase 5
 
 ### Preference Components
+
 - `PreferenceManager` - Main preferences UI
 - `DietaryPreferences` - Dietary settings
 - `FavoritesList` - Manage favorites
@@ -391,6 +441,7 @@
 **Code:** RUN_4_INSTALLATION_GUIDE.md - Phase 5
 
 ### Analytics Components
+
 - `InsightsDashboard` - Personal insights
 - `SearchAnalyticsCard` - Analytics summary
 - `FarmerAnalytics` - Farmer-specific metrics
@@ -398,6 +449,7 @@
 **Patterns:** RUN_4_QUICK_START.md
 
 ### Recommendation Components
+
 - `RecommendationCard` - Single recommendation
 - `RecommendationGrid` - Multiple recommendations
 - `SimilarProducts` - Product suggestions
@@ -410,6 +462,7 @@
 ## 🔑 Key Code Locations
 
 ### Services
+
 ```
 src/lib/services/
 ├── base.service.ts
@@ -420,6 +473,7 @@ src/lib/services/
 ```
 
 ### API Routes
+
 ```
 src/app/api/
 ├── saved-searches/
@@ -434,6 +488,7 @@ src/app/api/
 ```
 
 ### Hooks
+
 ```
 src/hooks/
 ├── saved-searches/
@@ -445,6 +500,7 @@ src/hooks/
 ```
 
 ### Components
+
 ```
 src/components/
 ├── saved-searches/
@@ -461,17 +517,20 @@ src/components/
 ## 📈 Performance Targets
 
 ### API Response Times
+
 - GET /api/saved-searches: < 50ms
 - POST /api/saved-searches: < 150ms
 - GET /api/recommendations: < 500ms
 - POST /api/analytics/events: < 50ms
 
 ### Database Queries
+
 - Saved search list: < 20ms
 - Recommendation generation: < 300ms
 - Analytics aggregation: < 2s
 
 ### Client Performance
+
 - Saved search page load: < 1s (LCP)
 - Recommendation rendering: < 100ms
 - Analytics dashboard: < 2s
@@ -483,21 +542,25 @@ src/components/
 ## 🔒 Security Guidelines
 
 ### Authentication
+
 - All endpoints require authentication
 - User ID validation on all operations
 - Session management via NextAuth
 
 ### Authorization
+
 - Users can only access their own data
 - Farmers can access farm-specific analytics
 - Admins can access A/B test management
 
 ### Data Protection
+
 - Encrypt sensitive preferences
 - Anonymize analytics after 90 days
 - GDPR compliance (export/delete)
 
 ### Rate Limiting
+
 - 100 req/min per user (general)
 - 1000 events/min per user (analytics)
 - 60 req/min per user (recommendations)
@@ -509,18 +572,21 @@ src/components/
 ## 🌾 Agricultural Consciousness
 
 ### Seasonal Features
+
 - Auto-adjust recommendations by season
 - Seasonal preference templates
 - Harvest calendar integration
 - Planting day highlights
 
 ### Biodynamic Features
+
 - Lunar phase awareness
 - Crop rotation patterns
 - Soil health indicators
 - Biodynamic calendar integration
 
 ### Rural Connectivity
+
 - Offline-first architecture
 - Sync queue for events
 - Progressive enhancement
@@ -533,12 +599,14 @@ src/components/
 ## 🎓 Learning Resources
 
 ### Internal Documentation
+
 - .cursorrules - Coding standards
 - .github/instructions/ - Divine patterns
 - docs/RUN_3_COMPLETE.md - React Query patterns
 - docs/ROUTE_MAP.md - Application structure
 
 ### External Resources
+
 - React Query: https://tanstack.com/query/latest
 - Prisma: https://www.prisma.io/docs
 - Next.js: https://nextjs.org/docs
@@ -549,17 +617,20 @@ src/components/
 ## 📞 Support
 
 ### Questions?
+
 - Check RUN_4_QUICK_START.md for common patterns
 - Review RUN_4_INSTALLATION_GUIDE.md for detailed steps
 - Reference RUN_4_PLAN.md for architecture decisions
 - Create GitHub issue with `[Run 4]` prefix
 
 ### Issues?
+
 - See troubleshooting in RUN_4_INSTALLATION_GUIDE.md
 - Check common fixes in RUN_4_QUICK_START.md
 - Review error handling patterns in RUN_4_PLAN.md
 
 ### Ideas?
+
 - Open discussion in planning doc
 - Propose improvements via PR
 - Share in team standup
@@ -569,6 +640,7 @@ src/components/
 ## ✅ Documentation Completeness
 
 ### Planning Phase ✅
+
 - [x] Architecture designed
 - [x] Database schema defined
 - [x] API endpoints specified
@@ -578,6 +650,7 @@ src/components/
 - [x] Security controls defined
 
 ### Implementation Phase 🚀
+
 - [ ] Phase 1: Foundation
 - [ ] Phase 2: Notifications
 - [ ] Phase 3: Analytics
@@ -592,16 +665,19 @@ src/components/
 ## 🎯 Next Actions
 
 ### 1. Review Documentation (30 min)
+
 - Read RUN_4_READY_TO_START.md
 - Scan RUN_4_PLAN.md
 - Bookmark RUN_4_QUICK_START.md
 
 ### 2. Setup Environment (15 min)
+
 - Create feature branch
 - Backup database
 - Verify dependencies
 
 ### 3. Start Implementation (4-6 hours)
+
 - Follow RUN_4_INSTALLATION_GUIDE.md Phase 1
 - Copy Prisma models
 - Create migration
@@ -611,6 +687,7 @@ src/components/
 - Write tests
 
 ### 4. Track Progress
+
 - Use GitHub Issues
 - Update this checklist
 - Commit frequently
@@ -646,6 +723,7 @@ Run 4 documentation is **100% complete** and ready for implementation. Every asp
 ✅ Agricultural consciousness integration
 
 **Ready to Start?**
+
 1. Open **RUN_4_READY_TO_START.md**
 2. Review the checklist
 3. Follow **RUN_4_INSTALLATION_GUIDE.md** Phase 1

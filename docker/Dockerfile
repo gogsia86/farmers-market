@@ -29,10 +29,15 @@ COPY prisma ./prisma/
 
 # Install dependencies
 # Use npm ci for reproducible builds
-RUN npm ci --only=production --legacy-peer-deps
+# Set environment variables to skip Husky and other dev-only scripts
+ENV HUSKY=0
+ENV CI=true
+RUN npm ci --only=production --legacy-peer-deps --ignore-scripts
 
-# Generate Prisma client (production)
-RUN npx prisma generate
+# Run only necessary postinstall scripts
+RUN npm rebuild && npx prisma generate
+
+
 
 # ============================================================================
 # STAGE 2: BUILDER
@@ -59,6 +64,8 @@ COPY . .
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV SKIP_ENV_VALIDATION=true
+ENV HUSKY=0
+ENV CI=true
 
 # Generate Prisma client again in builder context
 RUN npx prisma generate

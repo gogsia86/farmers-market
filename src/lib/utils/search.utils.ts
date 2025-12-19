@@ -20,7 +20,7 @@ import type { Prisma } from "@prisma/client";
  * @returns Prisma query configuration
  */
 export function buildProductSearchQuery(
-  filters: ProductSearchFilters
+  filters: ProductSearchFilters,
 ): SearchQueryBuilder {
   const where: ProductWhereInput = {};
   const orderBy: ProductOrderByInput[] = [];
@@ -45,7 +45,7 @@ export function buildProductSearchQuery(
 
   // Category filter
   if (filters.categoryId) {
-    where.categoryId = filters.categoryId;
+    where.category = filters.categoryId as any;
   }
 
   // Price range
@@ -66,19 +66,19 @@ export function buildProductSearchQuery(
 
   // Availability filter
   if (filters.availability === "IN_STOCK") {
-    where.stockQuantity = { gt: 0 };
+    where.inStock = true;
   } else if (filters.availability === "OUT_OF_STOCK") {
-    where.stockQuantity = { lte: 0 };
+    where.inStock = false;
   }
 
   // Organic filter
   if (filters.organic === true) {
-    where.isOrganic = true;
+    where.organic = true;
   }
 
   // Seasonal filter
   if (filters.seasonal === true) {
-    where.isSeasonal = true;
+    where.seasonal = true;
   }
 
   // Sorting
@@ -122,7 +122,6 @@ export function buildProductSearchQuery(
     skip,
     take: limit,
     include: {
-      category: true,
       farm: {
         include: {
           owner: {
@@ -134,7 +133,6 @@ export function buildProductSearchQuery(
           },
         },
       },
-      images: true,
     },
   };
 }
@@ -149,7 +147,7 @@ export function buildProductSearchQuery(
 export function calculatePaginationMeta(
   totalItems: number,
   currentPage: number,
-  itemsPerPage: number
+  itemsPerPage: number,
 ): PaginationMeta {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
@@ -292,7 +290,7 @@ export function calculateDistance(
   lat1: number,
   lon1: number,
   lat2: number,
-  lon2: number
+  lon2: number,
 ): number {
   const R = 6371; // Earth's radius in km
   const dLat = toRad(lat2 - lat1);
@@ -321,9 +319,7 @@ function toRad(degrees: number): number {
  * @param filters - Search filters
  * @returns Cache key string
  */
-export function generateSearchCacheKey(
-  filters: ProductSearchFilters
-): string {
+export function generateSearchCacheKey(filters: ProductSearchFilters): string {
   const parts = [
     `q:${filters.query || ""}`,
     `cat:${filters.categoryId || ""}`,
@@ -347,7 +343,7 @@ export function generateSearchCacheKey(
  */
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
-  wait: number
+  wait: number,
 ): (...args: Parameters<T>) => void {
   let timeout: NodeJS.Timeout | null = null;
 
@@ -383,7 +379,7 @@ export function formatPrice(price: number, currency: string = "USD"): string {
  * @returns Product search filters
  */
 export function parseSearchParams(
-  searchParams: URLSearchParams
+  searchParams: URLSearchParams,
 ): ProductSearchFilters {
   const filters: ProductSearchFilters = {};
 
@@ -431,7 +427,7 @@ export function parseSearchParams(
  * @returns URLSearchParams object
  */
 export function filtersToSearchParams(
-  filters: ProductSearchFilters
+  filters: ProductSearchFilters,
 ): URLSearchParams {
   const params = new URLSearchParams();
 

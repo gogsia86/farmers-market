@@ -11,7 +11,7 @@
 ✅ Vercel project created: https://vercel.com/gogsias-projects/farmers-market  
 ✅ Build configuration optimized  
 ✅ Documentation complete  
-✅ Environment file partially generated  
+✅ Environment file partially generated
 
 **Status:** READY TO DEPLOY - Just need 3 values from you!
 
@@ -24,15 +24,17 @@
 You need to get 3 things:
 
 #### A. Database URL (5 minutes)
+
 1. Go to: https://neon.tech
 2. Click "Sign up" (use GitHub - it's free)
 3. Click "Create Project"
 4. Name it: **"farmers-market-prod"**
-5. Click "Connection String" 
+5. Click "Connection String"
 6. Copy the full URL (looks like: `postgresql://user:pass@host.neon.tech/db?sslmode=require`)
 7. **Save it** - you'll need it in Step 2
 
 #### B. Stripe Secret Key (3 minutes)
+
 1. Go to: https://dashboard.stripe.com/test/apikeys
 2. Sign up if you don't have account (use GitHub)
 3. Click "Reveal test key" in the "Secret key" row
@@ -40,6 +42,7 @@ You need to get 3 things:
 5. **Save it** - you'll need it in Step 2
 
 #### C. Stripe Publishable Key (2 minutes)
+
 1. Same page as above
 2. Copy "Publishable key" (already visible, starts with `pk_test_`)
 3. **Save it** - you'll need it in Step 2 (used twice)
@@ -54,21 +57,25 @@ You need to get 3 things:
 ```
 DATABASE_URL=postgresql://YOUR_USERNAME:YOUR_PASSWORD@YOUR_HOST.neon.tech/YOUR_DATABASE?sslmode=require
 ```
+
 → Replace with the full URL from Neon (Step 1A)
 
 ```
 STRIPE_SECRET_KEY=sk_test_YOUR_STRIPE_SECRET_KEY_HERE
 ```
+
 → Replace with your Stripe secret key (Step 1B)
 
 ```
 STRIPE_PUBLISHABLE_KEY=pk_test_YOUR_STRIPE_PUBLISHABLE_KEY_HERE
 ```
+
 → Replace with your Stripe publishable key (Step 1C)
 
 ```
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_YOUR_STRIPE_PUBLISHABLE_KEY_HERE
 ```
+
 → Replace with the SAME publishable key (Step 1C again)
 
 3. **Save** the file
@@ -81,6 +88,7 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_YOUR_STRIPE_PUBLISHABLE_KEY_HERE
 #### Upload Environment Variables
 
 **Option A: Upload File (Easiest)**
+
 1. Go to: https://vercel.com/gogsias-projects/farmers-market/settings/environment-variables
 2. Click the **"..."** menu (three dots in top right)
 3. Click **"Import .env File"**
@@ -89,6 +97,7 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_YOUR_STRIPE_PUBLISHABLE_KEY_HERE
 6. Click **"Save"**
 
 **Option B: Copy-Paste Manually**
+
 1. Go to: https://vercel.com/gogsias-projects/farmers-market/settings/environment-variables
 2. Click **"Add New"**
 3. For each of the 6 variables in your file:
@@ -138,6 +147,7 @@ npm run db:seed:basic
 ```
 
 **This creates:**
+
 - Admin account: `admin@farmersmarket.com` / `Admin123!`
 - 2 Sample farmers with farms
 - 10+ Sample products
@@ -167,20 +177,24 @@ Visit your deployment URL and test:
 ## 🔧 TROUBLESHOOTING
 
 **Build fails?**
+
 - Check all 6 environment variables are added
 - Verify DATABASE_URL includes `?sslmode=require`
 - Check Stripe keys start with `sk_test_` and `pk_test_`
 
 **Authentication doesn't work?**
+
 - Update NEXTAUTH_URL to exact deployment URL
 - Must be HTTPS, no trailing slash
 - Redeploy after updating
 
 **Stripe checkout doesn't load?**
+
 - Verify both publishable keys are identical
 - Check all 3 Stripe variables are set
 
 **Need more help?**
+
 - See: `🎯_VERCEL_PROJECT_READY.md` (detailed guide)
 - Check: Vercel logs in Deployments tab
 
@@ -209,6 +223,7 @@ Visit your deployment URL and test:
 ## 📚 MORE HELP
 
 **In your project folder:**
+
 - `READY-TO-UPLOAD.env` ← Fill this out!
 - `🎯_VERCEL_PROJECT_READY.md` ← Complete deployment guide
 - `📋_VERCEL_UPLOAD_INSTRUCTIONS.md` ← Upload instructions
@@ -218,6 +233,7 @@ Visit your deployment URL and test:
 https://vercel.com/gogsias-projects/farmers-market
 
 **External Services:**
+
 - Database: https://neon.tech
 - Payments: https://dashboard.stripe.com
 - Docs: https://vercel.com/docs

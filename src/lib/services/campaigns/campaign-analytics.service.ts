@@ -16,7 +16,10 @@
  */
 
 import { database } from "@/lib/database";
-import type { CampaignType, CampaignMetrics } from "./campaign-automation.service";
+import type {
+  CampaignType,
+  CampaignMetrics,
+} from "./campaign-automation.service";
 
 // ═══════════════════════════════════════════════════════════════════
 // 🎯 TYPES & INTERFACES
@@ -114,7 +117,7 @@ export class CampaignAnalyticsService {
     campaignId: string,
     campaignType: CampaignType,
     metrics: CampaignMetrics,
-    cost = 0
+    cost = 0,
   ): void {
     const performance: CampaignPerformance = {
       campaignId,
@@ -134,7 +137,7 @@ export class CampaignAnalyticsService {
    */
   updateCampaignMetrics(
     campaignId: string,
-    updates: Partial<CampaignMetrics>
+    updates: Partial<CampaignMetrics>,
   ): boolean {
     const campaign = this.campaignData.get(campaignId);
     if (!campaign) return false;
@@ -150,12 +153,18 @@ export class CampaignAnalyticsService {
   /**
    * Calculate performance rates
    */
-  private calculateRates(metrics: CampaignMetrics): CampaignPerformance["rates"] {
-    const deliveryRate = metrics.sent > 0 ? metrics.delivered / metrics.sent : 0;
-    const openRate = metrics.delivered > 0 ? metrics.opened / metrics.delivered : 0;
+  private calculateRates(
+    metrics: CampaignMetrics,
+  ): CampaignPerformance["rates"] {
+    const deliveryRate =
+      metrics.sent > 0 ? metrics.delivered / metrics.sent : 0;
+    const openRate =
+      metrics.delivered > 0 ? metrics.opened / metrics.delivered : 0;
     const clickRate = metrics.opened > 0 ? metrics.clicked / metrics.opened : 0;
-    const conversionRate = metrics.clicked > 0 ? metrics.converted / metrics.clicked : 0;
-    const unsubscribeRate = metrics.sent > 0 ? metrics.unsubscribed / metrics.sent : 0;
+    const conversionRate =
+      metrics.clicked > 0 ? metrics.converted / metrics.clicked : 0;
+    const unsubscribeRate =
+      metrics.sent > 0 ? metrics.unsubscribed / metrics.sent : 0;
 
     return {
       deliveryRate: Math.round(deliveryRate * 10000) / 100,
@@ -169,7 +178,10 @@ export class CampaignAnalyticsService {
   /**
    * Calculate ROI
    */
-  private calculateROI(metrics: CampaignMetrics, cost: number): CampaignPerformance["roi"] {
+  private calculateROI(
+    metrics: CampaignMetrics,
+    cost: number,
+  ): CampaignPerformance["roi"] {
     const revenue = metrics.revenue || 0;
     const profit = revenue - cost;
     const roiPercentage = cost > 0 ? (profit / cost) * 100 : 0;
@@ -198,31 +210,44 @@ export class CampaignAnalyticsService {
    */
   getCampaignsByType(campaignType: CampaignType): CampaignPerformance[] {
     return Array.from(this.campaignData.values()).filter(
-      (c) => c.campaignType === campaignType
+      (c) => c.campaignType === campaignType,
     );
   }
 
   /**
    * Get campaigns in date range
    */
-  getCampaignsInDateRange(startDate: Date, endDate: Date): CampaignPerformance[] {
+  getCampaignsInDateRange(
+    startDate: Date,
+    endDate: Date,
+  ): CampaignPerformance[] {
     return Array.from(this.campaignData.values()).filter(
-      (c) => c.sentDate >= startDate && c.sentDate <= endDate
+      (c) => c.sentDate >= startDate && c.sentDate <= endDate,
     );
   }
 
   /**
    * Generate comprehensive campaign report
    */
-  async generateReport(startDate: Date, endDate: Date): Promise<CampaignReport> {
+  async generateReport(
+    startDate: Date,
+    endDate: Date,
+  ): Promise<CampaignReport> {
     const campaigns = this.getCampaignsInDateRange(startDate, endDate);
 
     // Summary calculations
     const totalCampaigns = campaigns.length;
-    const totalRecipients = campaigns.reduce((sum, c) => sum + c.metrics.sent, 0);
-    const totalRevenue = campaigns.reduce((sum, c) => sum + (c.roi.revenue || 0), 0);
+    const totalRecipients = campaigns.reduce(
+      (sum, c) => sum + c.metrics.sent,
+      0,
+    );
+    const totalRevenue = campaigns.reduce(
+      (sum, c) => sum + (c.roi.revenue || 0),
+      0,
+    );
     const totalCost = campaigns.reduce((sum, c) => sum + c.roi.cost, 0);
-    const totalROI = totalCost > 0 ? ((totalRevenue - totalCost) / totalCost) * 100 : 0;
+    const totalROI =
+      totalCost > 0 ? ((totalRevenue - totalCost) / totalCost) * 100 : 0;
 
     // Group by type
     const byType: Partial<Record<CampaignType, CampaignMetrics>> = {};
@@ -248,7 +273,8 @@ export class CampaignAnalyticsService {
       typeMetrics.converted += campaign.metrics.converted;
       typeMetrics.bounced += campaign.metrics.bounced;
       typeMetrics.unsubscribed += campaign.metrics.unsubscribed;
-      typeMetrics.revenue = (typeMetrics.revenue || 0) + (campaign.roi.revenue || 0);
+      typeMetrics.revenue =
+        (typeMetrics.revenue || 0) + (campaign.roi.revenue || 0);
     }
 
     // Time series data
@@ -277,7 +303,7 @@ export class CampaignAnalyticsService {
   private generateTimeSeries(
     campaigns: CampaignPerformance[],
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): TimeSeriesData[] {
     const timeSeries: TimeSeriesData[] = [];
     const currentDate = new Date(startDate);
@@ -288,7 +314,7 @@ export class CampaignAnalyticsService {
       dayEnd.setHours(23, 59, 59, 999);
 
       const dayCampaigns = campaigns.filter(
-        (c) => c.sentDate >= dayStart && c.sentDate <= dayEnd
+        (c) => c.sentDate >= dayStart && c.sentDate <= dayEnd,
       );
 
       timeSeries.push({
@@ -296,7 +322,10 @@ export class CampaignAnalyticsService {
         sent: dayCampaigns.reduce((sum, c) => sum + c.metrics.sent, 0),
         opened: dayCampaigns.reduce((sum, c) => sum + c.metrics.opened, 0),
         clicked: dayCampaigns.reduce((sum, c) => sum + c.metrics.clicked, 0),
-        converted: dayCampaigns.reduce((sum, c) => sum + c.metrics.converted, 0),
+        converted: dayCampaigns.reduce(
+          (sum, c) => sum + c.metrics.converted,
+          0,
+        ),
         revenue: dayCampaigns.reduce((sum, c) => sum + (c.roi.revenue || 0), 0),
       });
 
@@ -325,14 +354,18 @@ export class CampaignAnalyticsService {
 
     // Calculate averages
     const avgOpenRate =
-      campaigns.reduce((sum, c) => sum + c.rates.openRate, 0) / campaigns.length;
+      campaigns.reduce((sum, c) => sum + c.rates.openRate, 0) /
+      campaigns.length;
     const avgClickRate =
-      campaigns.reduce((sum, c) => sum + c.rates.clickRate, 0) / campaigns.length;
+      campaigns.reduce((sum, c) => sum + c.rates.clickRate, 0) /
+      campaigns.length;
     const avgConversionRate =
-      campaigns.reduce((sum, c) => sum + c.rates.conversionRate, 0) / campaigns.length;
+      campaigns.reduce((sum, c) => sum + c.rates.conversionRate, 0) /
+      campaigns.length;
     const totalRevenue = campaigns.reduce((sum, c) => sum + c.roi.revenue, 0);
     const totalCost = campaigns.reduce((sum, c) => sum + c.roi.cost, 0);
-    const totalROI = totalCost > 0 ? ((totalRevenue - totalCost) / totalCost) * 100 : 0;
+    const totalROI =
+      totalCost > 0 ? ((totalRevenue - totalCost) / totalCost) * 100 : 0;
 
     // Find best and worst performing types
     const typePerformance = new Map<CampaignType, number>();
@@ -340,36 +373,49 @@ export class CampaignAnalyticsService {
       const current = typePerformance.get(campaign.campaignType) || 0;
       typePerformance.set(
         campaign.campaignType,
-        current + campaign.rates.conversionRate
+        current + campaign.rates.conversionRate,
       );
     }
 
     const sortedTypes = Array.from(typePerformance.entries()).sort(
-      (a, b) => b[1] - a[1]
+      (a, b) => b[1] - a[1],
     );
     const bestPerformingType = sortedTypes[0]?.[0] || "CHURN_PREVENTION";
-    const worstPerformingType = sortedTypes[sortedTypes.length - 1]?.[0] || "CHURN_PREVENTION";
+    const worstPerformingType =
+      sortedTypes[sortedTypes.length - 1]?.[0] || "CHURN_PREVENTION";
 
     // Generate recommendations
     const recommendations: string[] = [];
 
     if (avgOpenRate < 20) {
-      recommendations.push("📧 Open rates are low. Consider improving subject lines and send times.");
+      recommendations.push(
+        "📧 Open rates are low. Consider improving subject lines and send times.",
+      );
     }
     if (avgClickRate < 10) {
-      recommendations.push("🔗 Click rates are low. Improve email content and CTAs.");
+      recommendations.push(
+        "🔗 Click rates are low. Improve email content and CTAs.",
+      );
     }
     if (avgConversionRate < 5) {
-      recommendations.push("💰 Conversion rates need improvement. Review landing pages and offers.");
+      recommendations.push(
+        "💰 Conversion rates need improvement. Review landing pages and offers.",
+      );
     }
     if (totalROI < 200) {
-      recommendations.push("📈 ROI could be better. Focus on high-converting campaign types.");
+      recommendations.push(
+        "📈 ROI could be better. Focus on high-converting campaign types.",
+      );
     }
     if (avgOpenRate > 30) {
-      recommendations.push("✅ Great open rates! Maintain current subject line strategies.");
+      recommendations.push(
+        "✅ Great open rates! Maintain current subject line strategies.",
+      );
     }
     if (totalROI > 500) {
-      recommendations.push("🎉 Excellent ROI! Scale up successful campaign types.");
+      recommendations.push(
+        "🎉 Excellent ROI! Scale up successful campaign types.",
+      );
     }
 
     return {
@@ -393,7 +439,7 @@ export class CampaignAnalyticsService {
    */
   compareCampaigns(
     campaignIdA: string,
-    campaignIdB: string
+    campaignIdB: string,
   ): CampaignComparison | null {
     const campaignA = this.campaignData.get(campaignIdA);
     const campaignB = this.campaignData.get(campaignIdB);
@@ -403,13 +449,15 @@ export class CampaignAnalyticsService {
     // Determine winner based on conversion rate
     let winner: "A" | "B" | "TIE" = "TIE";
     const conversionDiff = Math.abs(
-      campaignA.rates.conversionRate - campaignB.rates.conversionRate
+      campaignA.rates.conversionRate - campaignB.rates.conversionRate,
     );
 
     if (conversionDiff > 5) {
       // 5% difference threshold
       winner =
-        campaignA.rates.conversionRate > campaignB.rates.conversionRate ? "A" : "B";
+        campaignA.rates.conversionRate > campaignB.rates.conversionRate
+          ? "A"
+          : "B";
     }
 
     // Calculate confidence level (simplified)
@@ -417,16 +465,20 @@ export class CampaignAnalyticsService {
       (Math.abs(campaignA.metrics.converted - campaignB.metrics.converted) /
         Math.max(campaignA.metrics.converted, campaignB.metrics.converted)) *
         100,
-      95
+      95,
     );
 
     // Generate insights
     const insights: string[] = [];
 
     if (winner !== "TIE") {
-      insights.push(`Campaign ${winner} is the clear winner with ${conversionDiff.toFixed(1)}% higher conversion rate`);
+      insights.push(
+        `Campaign ${winner} is the clear winner with ${conversionDiff.toFixed(1)}% higher conversion rate`,
+      );
     } else {
-      insights.push("Both campaigns performed similarly. Consider testing different variables.");
+      insights.push(
+        "Both campaigns performed similarly. Consider testing different variables.",
+      );
     }
 
     if (campaignA.rates.openRate > campaignB.rates.openRate + 5) {
@@ -492,7 +544,8 @@ export class CampaignAnalyticsService {
     return {
       totalCampaigns: campaigns.length,
       avgOpenRate:
-        campaigns.reduce((sum, c) => sum + c.rates.openRate, 0) / campaigns.length,
+        campaigns.reduce((sum, c) => sum + c.rates.openRate, 0) /
+        campaigns.length,
       avgConversionRate:
         campaigns.reduce((sum, c) => sum + c.rates.conversionRate, 0) /
         campaigns.length,

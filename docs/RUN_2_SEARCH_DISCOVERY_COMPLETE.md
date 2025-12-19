@@ -82,6 +82,7 @@ src/
 ```
 
 **Features**:
+
 - ✅ Strict TypeScript types
 - ✅ Seasonal awareness
 - ✅ Agricultural metadata
@@ -119,6 +120,7 @@ getSortOptions()                       // Sort dropdown options
 ```
 
 **Features**:
+
 - ✅ Prisma query builder with full support for filters
 - ✅ Seasonal awareness (Spring/Summer/Fall/Winter)
 - ✅ Distance calculation (Haversine formula)
@@ -130,10 +132,10 @@ getSortOptions()                       // Sort dropdown options
 **Seasonal Recommendations**:
 
 ```typescript
-SPRING: ["Leafy Greens", "Herbs", "Asparagus", "Peas"]
-SUMMER: ["Tomatoes", "Peppers", "Berries", "Stone Fruits"]
-FALL: ["Squash", "Root Vegetables", "Apples", "Pumpkins"]
-WINTER: ["Kale", "Cabbage", "Citrus", "Storage Crops"]
+SPRING: ["Leafy Greens", "Herbs", "Asparagus", "Peas"];
+SUMMER: ["Tomatoes", "Peppers", "Berries", "Stone Fruits"];
+FALL: ["Squash", "Root Vegetables", "Apples", "Pumpkins"];
+WINTER: ["Kale", "Cabbage", "Citrus", "Storage Crops"];
 ```
 
 ---
@@ -147,6 +149,7 @@ WINTER: ["Kale", "Cabbage", "Citrus", "Storage Crops"]
 Search products with URL query parameters.
 
 **Query Parameters**:
+
 ```
 q          - Search query
 category   - Category ID
@@ -162,6 +165,7 @@ limit      - Items per page
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -194,6 +198,7 @@ limit      - Items per page
 Advanced search with body parameters for complex queries.
 
 **Request Body**:
+
 ```json
 {
   "filters": {
@@ -214,6 +219,7 @@ Advanced search with body parameters for complex queries.
 ```
 
 **Features**:
+
 - ✅ Full-text search (name, description)
 - ✅ Category filtering
 - ✅ Price range filtering
@@ -236,12 +242,14 @@ Advanced search with body parameters for complex queries.
 **Purpose**: Autocomplete suggestions for search bar
 
 **Query Parameters**:
+
 ```
 q      - Search query (minimum 2 characters)
 limit  - Maximum suggestions (default: 10)
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -278,6 +286,7 @@ limit  - Maximum suggestions (default: 10)
 ```
 
 **Features**:
+
 - ✅ Multi-source search (products, farms, categories)
 - ✅ Parallel query execution
 - ✅ Smart result distribution (60% products, 20% farms, 20% categories)
@@ -329,24 +338,25 @@ limit  - Maximum suggestions (default: 10)
 
 ```tsx
 // Product grid loading
-{isLoading ? (
-  <ProductGridSkeleton count={12} />
-) : (
-  <ProductGrid products={products} />
-)}
+{
+  isLoading ? (
+    <ProductGridSkeleton count={12} />
+  ) : (
+    <ProductGrid products={products} />
+  );
+}
 
 // Dashboard loading
-{isLoading ? (
-  <DashboardSkeleton />
-) : (
-  <DashboardContent data={data} />
-)}
+{
+  isLoading ? <DashboardSkeleton /> : <DashboardContent data={data} />;
+}
 
 // Custom skeleton
-<Skeleton className="h-12 w-12 rounded-full" />
+<Skeleton className="h-12 w-12 rounded-full" />;
 ```
 
 **Features**:
+
 - ✅ 15 pre-built skeleton components
 - ✅ Matches actual component layouts
 - ✅ Configurable counts for grids
@@ -362,6 +372,7 @@ limit  - Maximum suggestions (default: 10)
 **Purpose**: Divine agricultural filter consciousness panel
 
 **Props**:
+
 ```typescript
 interface SearchFiltersProps {
   filters: ProductSearchFilters;
@@ -403,6 +414,7 @@ interface SearchFiltersProps {
    - Seasonal (with current season, e.g., "SPRING")
 
 **UI Components**:
+
 - ✅ Accordion for collapsible sections
 - ✅ Active filter count badge
 - ✅ Clear All button
@@ -412,12 +424,14 @@ interface SearchFiltersProps {
 - ✅ Mobile-friendly
 
 **Agricultural Consciousness**:
+
 - ✅ Seasonal awareness (displays current season)
 - ✅ Organic certification support
 - ✅ Farm-centric filtering
 - ✅ Biodynamic product discovery
 
 **Example Usage**:
+
 ```tsx
 const [filters, setFilters] = useState<ProductSearchFilters>({
   page: 1,
@@ -430,7 +444,7 @@ const [filters, setFilters] = useState<ProductSearchFilters>({
   availableCategories={categories}
   availableFarms={farms}
   priceRange={{ min: 0, max: 100 }}
-/>
+/>;
 ```
 
 ---
@@ -456,7 +470,7 @@ const products = await database.product.findMany(queryConfig);
 
 ```typescript
 // Optimize performance with Promise.all
-const [products, totalCount, categories, farms, priceStats] = 
+const [products, totalCount, categories, farms, priceStats] =
   await Promise.all([
     database.product.findMany(queryConfig),
     database.product.count({ where }),
@@ -542,7 +556,7 @@ describe("SearchFilters", () => {
         availableCategories={[...]}
       />
     );
-    
+
     await userEvent.click(screen.getByLabelText("Vegetables"));
     expect(onFiltersChange).toHaveBeenCalledWith({
       categoryId: "vegetables-id"
@@ -565,7 +579,7 @@ describe("buildProductSearchQuery", () => {
   it("should handle price range", () => {
     const query = buildProductSearchQuery({
       minPrice: 5,
-      maxPrice: 20
+      maxPrice: 20,
     });
     expect(query.where.price.gte).toBe(5);
     expect(query.where.price.lte).toBe(20);
@@ -659,12 +673,15 @@ export function ProductSearchPage() {
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { parseSearchParams, filtersToSearchParams } from "@/lib/utils/search.utils";
+import {
+  parseSearchParams,
+  filtersToSearchParams,
+} from "@/lib/utils/search.utils";
 
 export function ProductSearchWithURL() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   // Parse URL to filters
   const filters = parseSearchParams(searchParams);
 
@@ -675,10 +692,7 @@ export function ProductSearchWithURL() {
   };
 
   return (
-    <SearchFilters
-      filters={filters}
-      onFiltersChange={handleFiltersChange}
-    />
+    <SearchFilters filters={filters} onFiltersChange={handleFiltersChange} />
   );
 }
 ```
@@ -778,10 +792,10 @@ const sanitized = sanitizeSearchQuery(userInput);
 database.product.findMany({
   where: {
     name: {
-      contains: sanitized,  // Parameterized query
-      mode: "insensitive"
-    }
-  }
+      contains: sanitized, // Parameterized query
+      mode: "insensitive",
+    },
+  },
 });
 ```
 
@@ -816,7 +830,7 @@ if (filters.farmId) {
   const session = await auth();
   const farm = await database.farm.findUnique({
     where: { id: filters.farmId },
-    select: { ownerId: true }
+    select: { ownerId: true },
   });
 
   if (farm.ownerId !== session?.user?.id) {
@@ -996,4 +1010,4 @@ const distance = calculateDistance(
 
 ---
 
-*Divine Agricultural Search Consciousness Activated* 🌾🔍✨
+_Divine Agricultural Search Consciousness Activated_ 🌾🔍✨

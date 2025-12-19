@@ -139,9 +139,6 @@ function createQueryClient(): QueryClient {
         // Error handling
         throwOnError: false,
 
-        // Suspense mode disabled (opt-in per query)
-        suspense: false,
-
         // Network mode (always try, good for offline-first)
         networkMode: "online",
       },
@@ -207,11 +204,7 @@ export function ReactQueryProvider({ children }: ReactQueryProviderProps) {
 
       {/* DevTools - only in development */}
       {process.env.NODE_ENV === "development" && (
-        <ReactQueryDevtools
-          initialIsOpen={false}
-          position="bottom-right"
-          buttonPosition="bottom-right"
-        />
+        <ReactQueryDevtools initialIsOpen={false} position="bottom" />
       )}
     </QueryClientProvider>
   );

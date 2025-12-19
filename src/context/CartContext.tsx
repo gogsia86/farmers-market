@@ -13,7 +13,7 @@
  * @module CartContext
  */
 
-'use client';
+"use client";
 
 import React, {
   createContext,
@@ -22,8 +22,8 @@ import React, {
   useEffect,
   useCallback,
   type ReactNode,
-} from 'react';
-import { useToast } from '@/hooks/use-toast';
+} from "react";
+import { useToast } from "@/hooks/use-toast";
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -48,17 +48,17 @@ export interface CartState {
 }
 
 type CartAction =
-  | { type: 'ADD_ITEM'; payload: CartItem }
-  | { type: 'REMOVE_ITEM'; payload: { productId: string } }
+  | { type: "ADD_ITEM"; payload: CartItem }
+  | { type: "REMOVE_ITEM"; payload: { productId: string } }
   | {
-      type: 'UPDATE_QUANTITY';
+      type: "UPDATE_QUANTITY";
       payload: { productId: string; quantity: number };
     }
-  | { type: 'CLEAR_CART' }
-  | { type: 'LOAD_CART'; payload: CartItem[] };
+  | { type: "CLEAR_CART" }
+  | { type: "LOAD_CART"; payload: CartItem[] };
 
 interface CartContextType extends CartState {
-  addItem: (item: Omit<CartItem, 'quantity'>, quantity?: number) => void;
+  addItem: (item: Omit<CartItem, "quantity">, quantity?: number) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
@@ -76,13 +76,15 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 // REDUCER
 // ============================================================================
 
-const calculateTotals = (items: CartItem[]): Pick<CartState, 'totalAmount' | 'itemCount'> => {
+const calculateTotals = (
+  items: CartItem[],
+): Pick<CartState, "totalAmount" | "itemCount"> => {
   return items.reduce(
     (acc, item) => ({
       totalAmount: acc.totalAmount + item.price * item.quantity,
       itemCount: acc.itemCount + item.quantity,
     }),
-    { totalAmount: 0, itemCount: 0 }
+    { totalAmount: 0, itemCount: 0 },
   );
 };
 
@@ -90,9 +92,9 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
   let newItems: CartItem[];
 
   switch (action.type) {
-    case 'ADD_ITEM': {
+    case "ADD_ITEM": {
       const existingItemIndex = state.items.findIndex(
-        (item) => item.productId === action.payload.productId
+        (item) => item.productId === action.payload.productId,
       );
 
       if (existingItemIndex > -1) {
@@ -101,7 +103,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
           if (index === existingItemIndex) {
             const newQuantity = Math.min(
               item.quantity + action.payload.quantity,
-              item.maxStock
+              item.maxStock,
             );
             return { ...item, quantity: newQuantity };
           }
@@ -116,15 +118,15 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
       return { items: newItems, ...totals };
     }
 
-    case 'REMOVE_ITEM': {
+    case "REMOVE_ITEM": {
       newItems = state.items.filter(
-        (item) => item.productId !== action.payload.productId
+        (item) => item.productId !== action.payload.productId,
       );
       const totals = calculateTotals(newItems);
       return { items: newItems, ...totals };
     }
 
-    case 'UPDATE_QUANTITY': {
+    case "UPDATE_QUANTITY": {
       const { productId, quantity } = action.payload;
 
       if (quantity <= 0) {
@@ -144,7 +146,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
       return { items: newItems, ...totals };
     }
 
-    case 'CLEAR_CART': {
+    case "CLEAR_CART": {
       return {
         items: [],
         totalAmount: 0,
@@ -152,7 +154,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
       };
     }
 
-    case 'LOAD_CART': {
+    case "LOAD_CART": {
       const totals = calculateTotals(action.payload);
       return { items: action.payload, ...totals };
     }
@@ -166,7 +168,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 // PROVIDER COMPONENT
 // ============================================================================
 
-const CART_STORAGE_KEY = 'farmers-market-cart';
+const CART_STORAGE_KEY = "farmers-market-cart";
 
 interface CartProviderProps {
   children: ReactNode;
@@ -187,10 +189,10 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       const savedCart = localStorage.getItem(CART_STORAGE_KEY);
       if (savedCart) {
         const items = JSON.parse(savedCart) as CartItem[];
-        dispatch({ type: 'LOAD_CART', payload: items });
+        dispatch({ type: "LOAD_CART", payload: items });
       }
     } catch (error) {
-      console.error('Failed to load cart from localStorage:', error);
+      console.error("Failed to load cart from localStorage:", error);
       localStorage.removeItem(CART_STORAGE_KEY);
     }
   }, []);
@@ -200,58 +202,58 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     try {
       localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(state.items));
     } catch (error) {
-      console.error('Failed to save cart to localStorage:', error);
+      console.error("Failed to save cart to localStorage:", error);
     }
   }, [state.items]);
 
   // Add item to cart
   const addItem = useCallback(
-    (item: Omit<CartItem, 'quantity'>, quantity: number = 1) => {
+    (item: Omit<CartItem, "quantity">, quantity: number = 1) => {
       if (quantity <= 0) {
         toast({
-          title: 'Invalid Quantity',
-          description: 'Quantity must be greater than 0',
-          variant: 'destructive',
+          title: "Invalid Quantity",
+          description: "Quantity must be greater than 0",
+          variant: "destructive",
         });
         return;
       }
 
       if (quantity > item.maxStock) {
         toast({
-          title: 'Stock Limit Exceeded',
+          title: "Stock Limit Exceeded",
           description: `Only ${item.maxStock} items available`,
-          variant: 'destructive',
+          variant: "destructive",
         });
         return;
       }
 
       const existingItem = state.items.find(
-        (i) => i.productId === item.productId
+        (i) => i.productId === item.productId,
       );
 
       if (existingItem) {
         const newQuantity = existingItem.quantity + quantity;
         if (newQuantity > item.maxStock) {
           toast({
-            title: 'Stock Limit Exceeded',
+            title: "Stock Limit Exceeded",
             description: `Only ${item.maxStock} items available`,
-            variant: 'destructive',
+            variant: "destructive",
           });
           return;
         }
       }
 
       dispatch({
-        type: 'ADD_ITEM',
+        type: "ADD_ITEM",
         payload: { ...item, quantity },
       });
 
       toast({
-        title: 'Added to Cart',
+        title: "Added to Cart",
         description: `${item.name} added to your cart`,
       });
     },
-    [state.items, toast]
+    [state.items, toast],
   );
 
   // Remove item from cart
@@ -259,16 +261,16 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     (productId: string) => {
       const item = state.items.find((i) => i.productId === productId);
 
-      dispatch({ type: 'REMOVE_ITEM', payload: { productId } });
+      dispatch({ type: "REMOVE_ITEM", payload: { productId } });
 
       if (item) {
         toast({
-          title: 'Removed from Cart',
+          title: "Removed from Cart",
           description: `${item.name} removed from your cart`,
         });
       }
     },
-    [state.items, toast]
+    [state.items, toast],
   );
 
   // Update item quantity
@@ -287,28 +289,28 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
       if (quantity > item.maxStock) {
         toast({
-          title: 'Stock Limit Exceeded',
+          title: "Stock Limit Exceeded",
           description: `Only ${item.maxStock} items available`,
-          variant: 'destructive',
+          variant: "destructive",
         });
         return;
       }
 
       dispatch({
-        type: 'UPDATE_QUANTITY',
+        type: "UPDATE_QUANTITY",
         payload: { productId, quantity },
       });
     },
-    [state.items, removeItem, toast]
+    [state.items, removeItem, toast],
   );
 
   // Clear entire cart
   const clearCart = useCallback(() => {
-    dispatch({ type: 'CLEAR_CART' });
+    dispatch({ type: "CLEAR_CART" });
 
     toast({
-      title: 'Cart Cleared',
-      description: 'All items removed from your cart',
+      title: "Cart Cleared",
+      description: "All items removed from your cart",
     });
   }, [toast]);
 
@@ -317,7 +319,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     (productId: string): boolean => {
       return state.items.some((item) => item.productId === productId);
     },
-    [state.items]
+    [state.items],
   );
 
   // Get item quantity
@@ -326,7 +328,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       const item = state.items.find((i) => i.productId === productId);
       return item?.quantity || 0;
     },
-    [state.items]
+    [state.items],
   );
 
   const value: CartContextType = {
@@ -354,7 +356,7 @@ export const useCart = (): CartContextType => {
   const context = useContext(CartContext);
 
   if (context === undefined) {
-    throw new Error('useCart must be used within a CartProvider');
+    throw new Error("useCart must be used within a CartProvider");
   }
 
   return context;

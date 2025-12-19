@@ -619,7 +619,7 @@ export class SearchAlertService {
       totalAlerts: alerts.length,
       alertsExecuted: alertsToRun.length,
       results: results.map((result, index) => ({
-        alertId: alertsToRun[index].id,
+        alertId: alertsToRun[index]?.id ?? "",
         success: result.status === "fulfilled",
         result: result.status === "fulfilled" ? result.value : undefined,
         error: result.status === "rejected" ? result.reason : undefined,

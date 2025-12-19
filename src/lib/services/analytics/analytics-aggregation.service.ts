@@ -8,10 +8,10 @@
  * @category Analytics
  */
 
-import { database } from '@/lib/database';
-import { PeriodType, Season } from '@prisma/client';
-import { SearchEventService } from './search-event.service';
-import { UserInteractionService } from './user-interaction.service';
+import { database } from "@/lib/database";
+import { PeriodType, Season } from "@prisma/client";
+import { SearchEventService } from "./search-event.service";
+import { UserInteractionService } from "./user-interaction.service";
 
 // ============================================================================
 // Types & Interfaces
@@ -89,7 +89,9 @@ export class AnalyticsAggregationService {
   /**
    * Aggregate analytics for a specific period
    */
-  static async aggregatePeriod(input: AggregationInput): Promise<AggregationResult> {
+  static async aggregatePeriod(
+    input: AggregationInput,
+  ): Promise<AggregationResult> {
     const { periodType, periodStart, periodEnd } = input;
 
     // Get search events for the period
@@ -133,37 +135,48 @@ export class AnalyticsAggregationService {
     // Calculate metrics
     const totalSearches = searchEvents.length;
     const uniqueUsers = new Set(
-      searchEvents.filter(e => e.userId).map(e => e.userId)
+      searchEvents.filter((e) => e.userId).map((e) => e.userId),
     ).size;
 
     const uniqueQueries = new Set(
-      searchEvents.filter(e => e.query).map(e => e.query)
+      searchEvents.filter((e) => e.query).map((e) => e.query),
     ).size;
 
     // Response time metrics
-    const responseTimes = searchEvents.map(e => e.responseTime).sort((a, b) => a - b);
-    const avgResponseTime = responseTimes.length > 0
-      ? Math.round(responseTimes.reduce((sum, t) => sum + t, 0) / responseTimes.length)
-      : 0;
+    const responseTimes = searchEvents
+      .map((e) => e.responseTime)
+      .filter((t): t is number => t !== null)
+      .sort((a, b) => a - b);
+    const avgResponseTime =
+      responseTimes.length > 0
+        ? Math.round(
+            responseTimes.reduce((sum, t) => sum + t, 0) / responseTimes.length,
+          )
+        : 0;
     const p95Index = Math.floor(responseTimes.length * 0.95);
     const p95ResponseTime = responseTimes[p95Index] || 0;
 
     // Average results count
-    const avgResultsCount = totalSearches > 0
-      ? searchEvents.reduce((sum, e) => sum + e.resultsCount, 0) / totalSearches
-      : 0;
+    const avgResultsCount =
+      totalSearches > 0
+        ? searchEvents.reduce((sum, e) => sum + e.resultsCount, 0) /
+          totalSearches
+        : 0;
 
     // Click-through rate
-    const searchesWithClicks = searchEvents.filter(e => e.clickedResults.length > 0).length;
-    const avgClickThrough = totalSearches > 0 ? searchesWithClicks / totalSearches : 0;
+    const searchesWithClicks = searchEvents.filter(
+      (e) => e.clickedResults.length > 0,
+    ).length;
+    const avgClickThrough =
+      totalSearches > 0 ? searchesWithClicks / totalSearches : 0;
 
     // Conversion rate
-    const purchases = interactions.filter(i => i.type === 'PURCHASE').length;
+    const purchases = interactions.filter((i) => i.type === "PURCHASE").length;
     const conversionRate = totalSearches > 0 ? purchases / totalSearches : 0;
 
     // Top queries
     const queryCount = new Map<string, number>();
-    searchEvents.forEach(e => {
+    searchEvents.forEach((e) => {
       if (e.query) {
         queryCount.set(e.query, (queryCount.get(e.query) || 0) + 1);
       }
@@ -175,9 +188,9 @@ export class AnalyticsAggregationService {
 
     // Top filters
     const filterCount = new Map<string, number>();
-    searchEvents.forEach(e => {
+    searchEvents.forEach((e) => {
       const filters = e.filters as Record<string, any>;
-      Object.keys(filters).forEach(key => {
+      Object.keys(filters).forEach((key) => {
         const filterKey = `${key}:${JSON.stringify(filters[key])}`;
         filterCount.set(filterKey, (filterCount.get(filterKey) || 0) + 1);
       });
@@ -189,12 +202,12 @@ export class AnalyticsAggregationService {
 
     // Top categories
     const categoryCount = new Map<string, number>();
-    searchEvents.forEach(e => {
+    searchEvents.forEach((e) => {
       const filters = e.filters as Record<string, any>;
       if (filters.category) {
         categoryCount.set(
           filters.category,
-          (categoryCount.get(filters.category) || 0) + 1
+          (categoryCount.get(filters.category) || 0) + 1,
         );
       }
     });
@@ -210,7 +223,7 @@ export class AnalyticsAggregationService {
       [Season.FALL]: 0,
       [Season.WINTER]: 0,
     };
-    searchEvents.forEach(e => {
+    searchEvents.forEach((e) => {
       if (e.currentSeason) {
         seasonalTrends[e.currentSeason]++;
       }
@@ -219,11 +232,10 @@ export class AnalyticsAggregationService {
     // Farm popularity
     const farmInteractions = new Map<string, number>();
     interactions
-      .filter(i => i.entityType === 'farm' || (i.metadata as any)?.farmId)
-      .forEach(i => {
-        const farmId = i.entityType === 'farm'
-          ? i.entityId
-          : (i.metadata as any)?.farmId;
+      .filter((i) => i.entityType === "farm" || (i.metadata as any)?.farmId)
+      .forEach((i) => {
+        const farmId =
+          i.entityType === "farm" ? i.entityId : (i.metadata as any)?.farmId;
         if (farmId) {
           farmInteractions.set(farmId, (farmInteractions.get(farmId) || 0) + 1);
         }
@@ -252,6 +264,16 @@ export class AnalyticsAggregationService {
         topCategories,
         seasonalTrends,
         farmPopularity,
+        // Additional required fields
+        period: periodType,
+        averageResultsCount: avgResultsCount,
+        refinementRate: 0,
+        saveRate: 0,
+        bounceRate: 0,
+        averageResponseTime: avgResponseTime,
+        cacheHitRate: 0,
+        p99ResponseTime: p95ResponseTime,
+        clickThroughRate: avgClickThrough,
       },
     });
 
@@ -281,7 +303,9 @@ export class AnalyticsAggregationService {
   /**
    * Aggregate hourly analytics
    */
-  static async aggregateHourly(date: Date = new Date()): Promise<AggregationResult> {
+  static async aggregateHourly(
+    date: Date = new Date(),
+  ): Promise<AggregationResult> {
     const periodStart = new Date(date);
     periodStart.setMinutes(0, 0, 0);
 
@@ -298,7 +322,9 @@ export class AnalyticsAggregationService {
   /**
    * Aggregate daily analytics
    */
-  static async aggregateDaily(date: Date = new Date()): Promise<AggregationResult> {
+  static async aggregateDaily(
+    date: Date = new Date(),
+  ): Promise<AggregationResult> {
     const periodStart = new Date(date);
     periodStart.setHours(0, 0, 0, 0);
 
@@ -315,7 +341,9 @@ export class AnalyticsAggregationService {
   /**
    * Aggregate weekly analytics
    */
-  static async aggregateWeekly(date: Date = new Date()): Promise<AggregationResult> {
+  static async aggregateWeekly(
+    date: Date = new Date(),
+  ): Promise<AggregationResult> {
     const periodStart = new Date(date);
     periodStart.setHours(0, 0, 0, 0);
     periodStart.setDate(periodStart.getDate() - periodStart.getDay());
@@ -333,7 +361,9 @@ export class AnalyticsAggregationService {
   /**
    * Aggregate monthly analytics
    */
-  static async aggregateMonthly(date: Date = new Date()): Promise<AggregationResult> {
+  static async aggregateMonthly(
+    date: Date = new Date(),
+  ): Promise<AggregationResult> {
     const periodStart = new Date(date.getFullYear(), date.getMonth(), 1);
 
     const periodEnd = new Date(date.getFullYear(), date.getMonth() + 1, 1);
@@ -351,7 +381,7 @@ export class AnalyticsAggregationService {
   static async getAggregation(
     periodType: PeriodType,
     periodStart: Date,
-    periodEnd: Date
+    periodEnd: Date,
   ) {
     const aggregation = await database.searchAnalytics.findFirst({
       where: {
@@ -362,7 +392,7 @@ export class AnalyticsAggregationService {
         },
       },
       orderBy: {
-        periodStart: 'desc',
+        periodStart: "desc",
       },
     });
 
@@ -375,7 +405,7 @@ export class AnalyticsAggregationService {
   static async getTimeSeries(
     startDate: Date,
     endDate: Date,
-    periodType: PeriodType = PeriodType.DAY
+    periodType: PeriodType = PeriodType.DAY,
   ) {
     const aggregations = await database.searchAnalytics.findMany({
       where: {
@@ -386,11 +416,11 @@ export class AnalyticsAggregationService {
         },
       },
       orderBy: {
-        periodStart: 'asc',
+        periodStart: "asc",
       },
     });
 
-    return aggregations.map(a => ({
+    return aggregations.map((a) => ({
       date: a.periodStart,
       totalSearches: a.totalSearches,
       uniqueUsers: a.uniqueUsers,
@@ -404,7 +434,7 @@ export class AnalyticsAggregationService {
    */
   static async getDashboardMetrics(
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<DashboardMetrics> {
     // Get search stats
     const searchStats = await SearchEventService.getStats({
@@ -425,19 +455,19 @@ export class AnalyticsAggregationService {
     const popularProducts = await UserInteractionService.getPopularProducts(
       startDate,
       endDate,
-      10
+      10,
     );
 
     // Get conversion metrics
     const conversionMetrics = await SearchEventService.getConversionRate(
       startDate,
-      endDate
+      endDate,
     );
 
     // Calculate revenue (sum of purchase interactions)
     const purchases = await database.userInteraction.findMany({
       where: {
-        type: 'PURCHASE',
+        type: "PURCHASE",
         timestamp: {
           gte: startDate,
           lte: endDate,
@@ -466,13 +496,19 @@ export class AnalyticsAggregationService {
       },
     });
 
-    const growthRate = previousSearches > 0
-      ? ((searchStats.totalSearches - previousSearches) / previousSearches) * 100
-      : 100;
+    const growthRate =
+      previousSearches > 0
+        ? ((searchStats.totalSearches - previousSearches) / previousSearches) *
+          100
+        : 100;
 
     // Get time series data
-    const timeSeries = await this.getTimeSeries(startDate, endDate, PeriodType.DAY);
-    const timeSeriesData = timeSeries.map(t => ({
+    const timeSeries = await this.getTimeSeries(
+      startDate,
+      endDate,
+      PeriodType.DAY,
+    );
+    const timeSeriesData = timeSeries.map((t) => ({
       date: t.date,
       searches: t.totalSearches,
       interactions: interactionStats.totalInteractions / timeSeries.length, // Average per period
@@ -492,7 +528,7 @@ export class AnalyticsAggregationService {
         p95ResponseTime: searchStats.p95ResponseTime,
         avgResultsCount: searchStats.avgResultsCount,
         topQueries: searchStats.topQueries,
-        trendingSearches: trendingSearches.map(t => ({
+        trendingSearches: trendingSearches.map((t) => ({
           query: t.query,
           growth: t.growth,
         })),
@@ -503,7 +539,7 @@ export class AnalyticsAggregationService {
         cartToPurchase: interactionStats.conversionFunnel.cartToPurchase,
         overallConversion: interactionStats.conversionFunnel.viewToPurchase,
       },
-      popularProducts: popularProducts.map(p => ({
+      popularProducts: popularProducts.map((p) => ({
         productId: p.productId,
         views: p.views,
         purchases: p.purchases,
@@ -540,7 +576,7 @@ export class AnalyticsAggregationService {
     try {
       results.daily = await this.aggregateDaily(date);
     } catch (error) {
-      console.error('Failed to aggregate daily:', error);
+      console.error("Failed to aggregate daily:", error);
     }
 
     return results;
@@ -603,7 +639,7 @@ export class AnalyticsAggregationService {
       select: {
         userId: true,
       },
-      distinct: ['userId'],
+      distinct: ["userId"],
     });
 
     return {
@@ -621,7 +657,7 @@ export class AnalyticsAggregationService {
     period1Start: Date,
     period1End: Date,
     period2Start: Date,
-    period2End: Date
+    period2End: Date,
   ) {
     const [metrics1, metrics2] = await Promise.all([
       this.getDashboardMetrics(period1Start, period1End),
@@ -634,13 +670,15 @@ export class AnalyticsAggregationService {
       comparison: {
         searchGrowth:
           metrics2.overview.totalSearches > 0
-            ? ((metrics1.overview.totalSearches - metrics2.overview.totalSearches) /
+            ? ((metrics1.overview.totalSearches -
+                metrics2.overview.totalSearches) /
                 metrics2.overview.totalSearches) *
               100
             : 0,
         revenueGrowth:
           metrics2.overview.totalRevenue > 0
-            ? ((metrics1.overview.totalRevenue - metrics2.overview.totalRevenue) /
+            ? ((metrics1.overview.totalRevenue -
+                metrics2.overview.totalRevenue) /
                 metrics2.overview.totalRevenue) *
               100
             : 0,

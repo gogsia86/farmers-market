@@ -1965,34 +1965,62 @@ model SearchEvent {
 
   // Search Details
   query   String? @db.VarChar(500)
-  filters Json
+  filters Json?
   sortBy  String? @db.VarChar(50)
 
+  // Search Context
+  categoryId     String?
+  farmId         String?
+  location       Json?
+  priceRange     Json?
+  seasonalFilter Season?
+
   // Results
-  resultsCount   Int
-  resultsShown   Int
-  clickedResults String[]
+  resultsCount     Int
+  resultsShown     Int?
+  clickedResults   String[]
+  clickedResultIds Json?
+  hasResults       Boolean?
+
+  // Performance Metrics
+  responseTime   Int?
+  responseTimeMs Int?
+  cacheHit       Boolean @default(false)
+  databaseTimeMs Int?
+  renderTimeMs   Int?
 
   // Context
   source    String? @db.VarChar(50)
-  location  Json?
   userAgent String? @db.VarChar(500)
-
-  // Timing
-  responseTime Int
-  timestamp    DateTime @default(now())
+  ipAddress String? @db.VarChar(45)
+  referrer  String? @db.VarChar(500)
+  deviceId  String? @db.VarChar(100)
 
   // Agricultural Context
-  currentSeason Season?
-  lunarPhase    String? @db.VarChar(50)
+  currentSeason       Season?
+  lunarPhase          String?  @db.VarChar(50)
+  agriculturalContext Json?
+  biodynamicFactors   Json?
+  seasonalRelevance   Decimal? @db.Decimal(5, 2)
+
+  // User Behavior
+  savedSearch   Boolean   @default(false)
+  refinedSearch Boolean   @default(false)
+  exitedAt      DateTime?
+  sessionDepth  Int       @default(1)
 
   // A/B Testing
   abTestVariant String? @db.VarChar(50)
+
+  // Timestamps
+  timestamp DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@index([userId])
   @@index([sessionId])
   @@index([timestamp])
   @@index([query])
+  @@index([userId, sessionId, query, createdAt])
   @@map("search_events")
 }
 
@@ -2006,58 +2034,114 @@ model UserInteraction {
   entityType String          @db.VarChar(50)
   entityId   String
 
+  // Linked Events
+  searchEventId    String?
+  recommendationId String?
+  abTestId         String?
+  abTestVariant    String? @db.VarChar(50)
+
   // Context
   source   String? @db.VarChar(50)
   metadata Json?
 
+  // Engagement Metrics
+  durationMs    Int?
+  scrollDepth   Decimal? @db.Decimal(5, 2)
+  clickPosition Int?
+  timeInSession Int?
+  sessionDepth  Int      @default(1)
+
+  // Agricultural Context
+  agriculturalContext Json?
+
+  // Device Info
+  userAgent String? @db.VarChar(500)
+  deviceId  String? @db.VarChar(100)
+
   // Value
   value Decimal? @db.Decimal(10, 2)
 
+  // Timestamps
   timestamp DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@index([userId])
   @@index([sessionId])
   @@index([entityType, entityId])
   @@index([type])
   @@index([timestamp])
+  @@index([userId, sessionId, type, entityType, entityId])
   @@map("user_interactions")
 }
 
 model SearchAnalytics {
   id String @id @default(cuid())
 
+  // Search Context
+  query      String? @db.VarChar(500)
+  categoryId String?
+  farmId     String?
+  season     Season?
+
   // Time Window
   periodType  PeriodType
+  period      PeriodType?
+  periodKey   String?     @db.VarChar(50)
   periodStart DateTime
   periodEnd   DateTime
 
   // Aggregated Metrics
-  totalSearches Int @default(0)
-  uniqueUsers   Int @default(0)
-  uniqueQueries Int @default(0)
+  totalSearches  Int @default(0)
+  uniqueUsers    Int @default(0)
+  uniqueSessions Int @default(0)
+  uniqueQueries  Int @default(0)
+
+  // Results Metrics
+  averageResultsCount Decimal @db.Decimal(10, 2)
+  noResultsCount      Int     @default(0)
+
+  // User Behavior
+  refinementRate Decimal @db.Decimal(5, 4)
+  saveRate       Decimal @db.Decimal(5, 4)
+  bounceRate     Decimal @db.Decimal(5, 4)
 
   // Performance
-  avgResponseTime Int
-  p95ResponseTime Int
+  avgResponseTime     Int
+  averageResponseTime Decimal @db.Decimal(10, 2)
+  cacheHitRate        Decimal @db.Decimal(5, 4)
+  p95ResponseTime     Int
+  p99ResponseTime     Decimal @db.Decimal(10, 2)
 
   // Engagement
-  avgResultsCount Decimal @db.Decimal(10, 2)
-  avgClickThrough Decimal @db.Decimal(5, 4)
-  conversionRate  Decimal @db.Decimal(5, 4)
-
-  // Top Queries (JSONB)
-  topQueries    Json
-  topFilters    Json
-  topCategories Json
+  avgResultsCount  Decimal @db.Decimal(10, 2)
+  avgClickThrough  Decimal @db.Decimal(5, 4)
+  clickThroughRate Decimal @db.Decimal(5, 4)
+  conversionRate   Decimal @db.Decimal(5, 4)
 
   // Agricultural Insights
-  seasonalTrends Json
-  farmPopularity Json
+  seasonalRelevanceAvg Decimal? @db.Decimal(5, 2)
+  biodynamicEngagement Decimal? @db.Decimal(5, 4)
+  seasonalTrends       Json?
+  farmPopularity       Json?
 
-  createdAt DateTime @default(now())
+  // Top Items (JSONB)
+  topQueries        Json?
+  topFilters        Json?
+  topCategories     Json?
+  topClickedResults Json?
+  topConvertedItems Json?
+
+  // Timestamps
+  createdAt    DateTime  @default(now())
+  calculatedAt DateTime  @default(now())
+  updatedAt    DateTime?
 
   @@unique([periodType, periodStart])
+  @@unique([query, categoryId, farmId, season, period, periodKey])
   @@index([periodType, periodStart])
+  @@index([query])
+  @@index([categoryId])
+  @@index([farmId])
   @@map("search_analytics")
 }
 
@@ -2343,41 +2427,41 @@ model UserSearchProfile {
   userId String @unique
 
   // Search Behavior
-  totalSearches          Int
-  uniqueQueriesCount     Int
-  averageSessionDepth    Decimal @db.Decimal(5, 2)
-  averageSearchesPerDay  Decimal @db.Decimal(10, 2)
-  preferredSortBy        String? @db.VarChar(50)
+  totalSearches         Int
+  uniqueQueriesCount    Int
+  averageSessionDepth   Decimal @db.Decimal(5, 2)
+  averageSearchesPerDay Decimal @db.Decimal(10, 2)
+  preferredSortBy       String? @db.VarChar(50)
 
   // Agricultural Preferences (JSONB)
-  topCategories         Json // [{categoryId, count, percentage}]
-  favoriteFarms         Json // [{farmId, interactionCount, lastVisit}]
-  seasonalPreferences   Json // {SPRING: score, SUMMER: score, ...}
-  dietaryPatterns       Json?
-  priceRangeTendency    Json // {min, max, average}
+  topCategories       Json // [{categoryId, count, percentage}]
+  favoriteFarms       Json // [{farmId, interactionCount, lastVisit}]
+  seasonalPreferences Json // {SPRING: score, SUMMER: score, ...}
+  dietaryPatterns     Json?
+  priceRangeTendency  Json // {min, max, average}
 
   // Interaction Patterns
-  clickThroughRate      Decimal @db.Decimal(5, 4)
-  conversionRate        Decimal @db.Decimal(5, 4)
-  averageOrderValue     Decimal? @db.Decimal(10, 2)
-  repeatPurchaseRate    Decimal? @db.Decimal(5, 4)
+  clickThroughRate   Decimal  @db.Decimal(5, 4)
+  conversionRate     Decimal  @db.Decimal(5, 4)
+  averageOrderValue  Decimal? @db.Decimal(10, 2)
+  repeatPurchaseRate Decimal? @db.Decimal(5, 4)
 
   // Time Patterns
-  peakSearchHours       Json // [hour1, hour2, ...]
-  peakSearchDays        Json // [day1, day2, ...]
-  lastSearchAt          DateTime?
-  firstSearchAt         DateTime?
+  peakSearchHours Json // [hour1, hour2, ...]
+  peakSearchDays  Json // [day1, day2, ...]
+  lastSearchAt    DateTime?
+  firstSearchAt   DateTime?
 
   // Engagement Metrics
-  savedSearchesCount    Int @default(0)
-  activeAlertsCount     Int @default(0)
-  sharedSearchesCount   Int @default(0)
-  reviewsCount          Int @default(0)
+  savedSearchesCount  Int @default(0)
+  activeAlertsCount   Int @default(0)
+  sharedSearchesCount Int @default(0)
+  reviewsCount        Int @default(0)
 
   // Agricultural Consciousness
-  biodynamicEngagement  Decimal @db.Decimal(5, 4)
-  seasonalAwareness     Decimal @db.Decimal(5, 4)
-  localFarmSupport      Decimal @db.Decimal(5, 4)
+  biodynamicEngagement Decimal @db.Decimal(5, 4)
+  seasonalAwareness    Decimal @db.Decimal(5, 4)
+  localFarmSupport     Decimal @db.Decimal(5, 4)
 
   calculatedAt DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -2398,18 +2482,18 @@ model PerformanceMetric {
   periodKey  String     @db.VarChar(50)
 
   // Statistical Measures
-  count      Int
-  sum        Decimal @db.Decimal(15, 2)
-  average    Decimal @db.Decimal(10, 2)
-  min        Decimal @db.Decimal(10, 2)
-  max        Decimal @db.Decimal(10, 2)
-  median     Decimal @db.Decimal(10, 2)
-  p50        Decimal @db.Decimal(10, 2)
-  p75        Decimal @db.Decimal(10, 2)
-  p90        Decimal @db.Decimal(10, 2)
-  p95        Decimal @db.Decimal(10, 2)
-  p99        Decimal @db.Decimal(10, 2)
-  stdDev     Decimal @db.Decimal(10, 4)
+  count   Int
+  sum     Decimal @db.Decimal(15, 2)
+  average Decimal @db.Decimal(10, 2)
+  min     Decimal @db.Decimal(10, 2)
+  max     Decimal @db.Decimal(10, 2)
+  median  Decimal @db.Decimal(10, 2)
+  p50     Decimal @db.Decimal(10, 2)
+  p75     Decimal @db.Decimal(10, 2)
+  p90     Decimal @db.Decimal(10, 2)
+  p95     Decimal @db.Decimal(10, 2)
+  p99     Decimal @db.Decimal(10, 2)
+  stdDev  Decimal @db.Decimal(10, 4)
 
   // Context
   context Json?
@@ -2434,37 +2518,39 @@ model SearchTrend {
   id String @id @default(cuid())
 
   // Trend Identity
-  query      String?     @db.VarChar(500)
+  query      String? @db.VarChar(500)
   categoryId String?
   farmId     String?
   season     Season?
-  trendType  String      @db.VarChar(50) // "rising", "falling", "stable", "seasonal"
+  trendType  String  @db.VarChar(50) // "rising", "falling", "stable", "seasonal"
 
   // Trend Metrics
-  currentVolume   Int
-  previousVolume  Int
-  growthRate      Decimal @db.Decimal(10, 4)
-  volatility      Decimal @db.Decimal(5, 4)
-  trendScore      Decimal @db.Decimal(5, 2)
+  currentVolume  Int
+  previousVolume Int
+  growthRate     Decimal @db.Decimal(10, 4)
+  volatility     Decimal @db.Decimal(5, 4)
+  trendScore     Decimal @db.Decimal(5, 2)
 
   // Temporal Analysis
-  period          PeriodType
-  periodKey       String      @db.VarChar(50)
-  comparisonPeriodKey String  @db.VarChar(50)
+  period              PeriodType
+  periodKey           String     @db.VarChar(50)
+  comparisonPeriodKey String     @db.VarChar(50)
 
   // Forecasting (JSONB)
-  forecast        Json? // {nextPeriod: volume, confidence: 0.85}
-  seasonality     Json? // Pattern detection
+  forecast    Json? // {nextPeriod: volume, confidence: 0.85}
+  seasonality Json? // Pattern detection
 
   // Agricultural Context
   agriculturalFactors Json?
   biodynamicInfluence Decimal? @db.Decimal(5, 2)
 
   // Ranking
-  rank            Int?
-  previousRank    Int?
+  rank         Int?
+  previousRank Int?
 
+  // Timestamps
   calculatedAt DateTime @default(now())
+  updatedAt    DateTime @updatedAt
   expiresAt    DateTime
 
   @@unique([query, categoryId, farmId, season, period, periodKey])
@@ -2492,14 +2578,14 @@ model AnalyticsDashboard {
   kpis Json // {totalSearches, totalUsers, conversionRate, ...}
 
   // Charts Data (JSONB arrays)
-  timeSeriesData Json? // For trend charts
+  timeSeriesData   Json? // For trend charts
   distributionData Json? // For pie/bar charts
-  comparisonData Json? // For period-over-period
+  comparisonData   Json? // For period-over-period
 
   // Agricultural Insights
   seasonalInsights Json?
-  farmPerformance Json?
-  productTrends Json?
+  farmPerformance  Json?
+  productTrends    Json?
 
   calculatedAt DateTime @default(now())
   expiresAt    DateTime
@@ -2541,19 +2627,19 @@ model MLModel {
   id String @id @default(cuid())
 
   // Model Metadata
-  name        String @unique @db.VarChar(100)
-  version     String @db.VarChar(20)
+  name        String        @unique @db.VarChar(100)
+  version     String        @db.VarChar(20)
   type        MLModelType
-  description String? @db.Text
+  description String?       @db.Text
   status      MLModelStatus @default(TRAINING)
 
   // Training Info
   trainedAt     DateTime?
   trainingJobId String?
-  accuracy      Decimal? @db.Decimal(5, 4)
-  precision     Decimal? @db.Decimal(5, 4)
-  recall        Decimal? @db.Decimal(5, 4)
-  f1Score       Decimal? @db.Decimal(5, 4)
+  accuracy      Decimal?  @db.Decimal(5, 4)
+  precision     Decimal?  @db.Decimal(5, 4)
+  recall        Decimal?  @db.Decimal(5, 4)
+  f1Score       Decimal?  @db.Decimal(5, 4)
 
   // Model Configuration
   hyperparameters Json?
@@ -2562,9 +2648,9 @@ model MLModel {
   modelSize       Int? // in bytes
 
   // Performance Metrics
-  inferenceTime   Int? // in milliseconds
-  predictionsCount Int @default(0)
-  successRate     Decimal? @db.Decimal(5, 4)
+  inferenceTime    Int? // in milliseconds
+  predictionsCount Int      @default(0)
+  successRate      Decimal? @db.Decimal(5, 4)
 
   // Metadata
   createdBy String?
@@ -2572,8 +2658,8 @@ model MLModel {
   updatedAt DateTime @updatedAt
 
   // Relations
-  predictions    MLPrediction[]
-  trainingJobs   MLTrainingJob[]
+  predictions  MLPrediction[]
+  trainingJobs MLTrainingJob[]
 
   @@index([type])
   @@index([status])
@@ -2601,7 +2687,7 @@ model MLPrediction {
   // Performance
   inferenceTime Int // in milliseconds
   wasCorrect    Boolean?
-  feedback      String? @db.Text
+  feedback      String?  @db.Text
 
   // Metadata
   createdAt DateTime @default(now())
@@ -2632,10 +2718,10 @@ model MLTrainingJob {
   testSize       Int
 
   // Results
-  finalAccuracy  Decimal? @db.Decimal(5, 4)
-  finalLoss      Decimal? @db.Decimal(10, 6)
-  bestEpoch      Int?
-  totalEpochs    Int?
+  finalAccuracy Decimal? @db.Decimal(5, 4)
+  finalLoss     Decimal? @db.Decimal(10, 6)
+  bestEpoch     Int?
+  totalEpochs   Int?
 
   // Configuration
   config Json?

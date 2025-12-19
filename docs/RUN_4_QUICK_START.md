@@ -48,7 +48,7 @@ export function SearchPage() {
   return (
     <div>
       {/* Your search UI */}
-      
+
       <SaveSearchButton
         query={query}
         filters={filters}
@@ -83,22 +83,24 @@ import { analyticsService } from "@/lib/services/analytics.service";
 // In your search function
 async function performSearch(query: string, filters: any) {
   const startTime = Date.now();
-  
+
   const results = await searchProducts(query, filters);
-  
+
   const responseTime = Date.now() - startTime;
-  
+
   // Track event (async, non-blocking)
-  analyticsService.trackSearchEvent({
-    sessionId: getSessionId(),
-    query,
-    filters,
-    resultsCount: results.length,
-    resultsShown: Math.min(results.length, 20),
-    responseTime,
-    source: "web",
-  }).catch(console.error);
-  
+  analyticsService
+    .trackSearchEvent({
+      sessionId: getSessionId(),
+      query,
+      filters,
+      resultsCount: results.length,
+      resultsShown: Math.min(results.length, 20),
+      responseTime,
+      source: "web",
+    })
+    .catch(console.error);
+
   return results;
 }
 ```
@@ -113,20 +115,20 @@ import { useProductSearch } from "@/hooks/search/useProductSearch";
 
 export function SearchWithPreferences() {
   const { data: preferences } = useUserPreferences();
-  
+
   // Auto-apply user preferences to search
   const filters = useMemo(() => {
     if (!preferences?.autoApplyFilters) return {};
-    
+
     return {
       certifications: preferences.certifications,
       dietaryRestrictions: preferences.dietaryRestrictions,
       favoriteFarms: preferences.favoriteFarms,
     };
   }, [preferences]);
-  
+
   const { data: products } = useProductSearch({ filters });
-  
+
   return <ProductGrid products={products} />;
 }
 ```
@@ -138,40 +140,46 @@ import { analyticsService } from "@/lib/services/analytics.service";
 
 // Track product click
 const handleProductClick = (productId: string) => {
-  analyticsService.trackInteraction({
-    sessionId: getSessionId(),
-    type: "CLICK",
-    entityType: "product",
-    entityId: productId,
-    source: "search-results",
-  }).catch(console.error);
-  
+  analyticsService
+    .trackInteraction({
+      sessionId: getSessionId(),
+      type: "CLICK",
+      entityType: "product",
+      entityId: productId,
+      source: "search-results",
+    })
+    .catch(console.error);
+
   router.push(`/products/${productId}`);
 };
 
 // Track add to cart
 const handleAddToCart = (productId: string, price: number) => {
-  analyticsService.trackInteraction({
-    sessionId: getSessionId(),
-    type: "ADD_TO_CART",
-    entityType: "product",
-    entityId: productId,
-    value: price,
-    metadata: { quantity: 1 },
-  }).catch(console.error);
+  analyticsService
+    .trackInteraction({
+      sessionId: getSessionId(),
+      type: "ADD_TO_CART",
+      entityType: "product",
+      entityId: productId,
+      value: price,
+      metadata: { quantity: 1 },
+    })
+    .catch(console.error);
 };
 
 // Track purchase
 const handlePurchase = (orderId: string, total: number, items: any[]) => {
-  items.forEach(item => {
-    analyticsService.trackInteraction({
-      sessionId: getSessionId(),
-      type: "PURCHASE",
-      entityType: "product",
-      entityId: item.productId,
-      value: item.price * item.quantity,
-      metadata: { orderId, quantity: item.quantity },
-    }).catch(console.error);
+  items.forEach((item) => {
+    analyticsService
+      .trackInteraction({
+        sessionId: getSessionId(),
+        type: "PURCHASE",
+        entityType: "product",
+        entityId: item.productId,
+        value: item.price * item.quantity,
+        metadata: { orderId, quantity: item.quantity },
+      })
+      .catch(console.error);
   });
 };
 ```
@@ -192,7 +200,7 @@ export function PreferencesPage() {
     const updated = current.includes(cert)
       ? current.filter(c => c !== cert)
       : [...current, cert];
-    
+
     updateMutation.mutate({ certifications: updated });
   };
 
@@ -214,7 +222,7 @@ export function PreferencesPage() {
         />
         Organic Only
       </label>
-      
+
       <h2>Favorite Farms</h2>
       {/* Farm selection UI */}
     </div>
@@ -326,17 +334,17 @@ interface UserInteraction {
 import { queryKeys } from "@/lib/react-query/query-keys";
 
 // Saved searches
-queryKeys.savedSearches.all                    // ['saved-searches']
-queryKeys.savedSearches.list()                 // ['saved-searches', 'list', { filters }]
-queryKeys.savedSearches.detail(id)             // ['saved-searches', 'detail', id]
+queryKeys.savedSearches.all; // ['saved-searches']
+queryKeys.savedSearches.list(); // ['saved-searches', 'list', { filters }]
+queryKeys.savedSearches.detail(id); // ['saved-searches', 'detail', id]
 
 // User preferences
-queryKeys.preferences.all                      // ['preferences']
-queryKeys.preferences.current()                // ['preferences', 'current']
+queryKeys.preferences.all; // ['preferences']
+queryKeys.preferences.current(); // ['preferences', 'current']
 
 // Analytics
-queryKeys.analytics.all                        // ['analytics']
-queryKeys.analytics.search(period)             // ['analytics', 'search', period]
+queryKeys.analytics.all; // ['analytics']
+queryKeys.analytics.search(period); // ['analytics', 'search', period]
 ```
 
 ---
@@ -468,10 +476,7 @@ const validated = SearchSchema.parse(userInput);
 // ✅ Rate limit analytics endpoints
 // (Add to API route)
 if (await isRateLimited(userId, "analytics")) {
-  return NextResponse.json(
-    { error: "Too many requests" },
-    { status: 429 }
-  );
+  return NextResponse.json({ error: "Too many requests" }, { status: 429 });
 }
 
 // ✅ Sanitize JSONB data
@@ -491,17 +496,17 @@ const metrics = {
   totalSavedSearches: 0,
   savedSearchesPerUser: 0,
   savedSearchExecutionRate: 0,
-  
+
   // Search Analytics
   averageSearchResponseTime: 0, // < 200ms target
   searchesPerDay: 0,
   uniqueSearchQueries: 0,
   searchConversionRate: 0, // % searches leading to purchase
-  
+
   // User Preferences
   usersWithPreferences: 0, // Target: 60%
   preferencesAutoApplyRate: 0, // Target: 80%
-  
+
   // Engagement
   returnUserRate: 0, // Target: +20%
   averageSessionDuration: 0, // Target: +15%
@@ -637,13 +642,13 @@ export function useUpdateSavedSearch() {
 
       // Snapshot previous value
       const previous = queryClient.getQueryData(
-        queryKeys.savedSearches.detail(newData.id)
+        queryKeys.savedSearches.detail(newData.id),
       );
 
       // Optimistically update
       queryClient.setQueryData(
         queryKeys.savedSearches.detail(newData.id),
-        newData
+        newData,
       );
 
       return { previous };
@@ -652,7 +657,7 @@ export function useUpdateSavedSearch() {
       // Rollback on error
       queryClient.setQueryData(
         queryKeys.savedSearches.detail(newData.id),
-        context?.previous
+        context?.previous,
       );
     },
   });
@@ -668,11 +673,11 @@ class AnalyticsBatcher {
 
   track(event: Event) {
     this.queue.push(event);
-    
+
     if (!this.timer) {
       this.timer = setTimeout(() => this.flush(), 5000);
     }
-    
+
     if (this.queue.length >= 10) {
       this.flush();
     }
@@ -680,11 +685,11 @@ class AnalyticsBatcher {
 
   private async flush() {
     if (this.queue.length === 0) return;
-    
+
     const batch = [...this.queue];
     this.queue = [];
     this.timer = null;
-    
+
     await fetch("/api/analytics/events", {
       method: "POST",
       body: JSON.stringify({ events: batch }),

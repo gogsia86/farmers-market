@@ -53,7 +53,7 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_... (Same as above)
 **Method B: Manual Entry (Alternative)**
 
 1. Go to: https://vercel.com/gogsias-projects/farmers-market/settings/environment-variables
-2. Click **"Add New"** 
+2. Click **"Add New"**
 3. Copy each variable from `env-production-FILLME.txt`:
    - Name: `DATABASE_URL`
    - Value: `postgresql://...`
@@ -75,6 +75,7 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_... (Same as above)
 ## 📝 WHERE TO GET EACH VALUE
 
 ### 1. DATABASE_URL
+
 - **Go to:** https://neon.tech
 - **Sign up:** Free account with GitHub
 - **Create Project:** "farmers-market-prod"
@@ -82,12 +83,14 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_... (Same as above)
 - **Example:** `postgresql://user:pass@ep-abc-123.us-east-2.aws.neon.tech/db?sslmode=require`
 
 ### 2. NEXTAUTH_SECRET
+
 - **Open:** Git Bash or Terminal
 - **Run:** `openssl rand -base64 32`
 - **Copy:** The output (32+ characters)
 - **Or use test value:** `dGhpc2lzYXRlc3RzZWNyZXRmb3JuZXh0YXV0aGNoYW5nZWlucHJvZHVjdGlvbg==`
 
 ### 3. NEXTAUTH_URL
+
 - **Format:** `https://your-project-name.vercel.app`
 - **After first deploy:** Update to actual Vercel URL
 - **Example:** `https://farmers-market-gogsias.vercel.app`
@@ -95,18 +98,21 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_... (Same as above)
 - ⚠️ **No trailing slash**
 
 ### 4. STRIPE_SECRET_KEY
+
 - **Go to:** https://dashboard.stripe.com/test/apikeys
 - **Click:** "Reveal test key" (Secret key section)
 - **Copy:** Full key starting with `sk_test_`
 - **Example:** `sk_test_51Abc123...`
 
 ### 5. STRIPE_PUBLISHABLE_KEY
+
 - **Go to:** https://dashboard.stripe.com/test/apikeys
 - **Copy:** Publishable key (already visible)
 - **Copy:** Full key starting with `pk_test_`
 - **Example:** `pk_test_51Abc123...`
 
 ### 6. NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+
 - **Value:** SAME as Variable #5
 - **Copy:** The exact same publishable key from above
 - ⚠️ **Must be identical to STRIPE_PUBLISHABLE_KEY**
@@ -182,15 +188,18 @@ npm run db:seed:basic
 ## 📞 NEED HELP?
 
 **Can't find a value?**
+
 - See detailed instructions in `env-production-FILLME.txt`
 - See complete guide in `🎯_VERCEL_PROJECT_READY.md`
 - See variable details in `VERCEL_ENV_VARS_CHECKLIST.md`
 
 **Deployment issues?**
+
 - Check Vercel logs: Deployments → Latest → View Logs
 - See troubleshooting in `🎯_VERCEL_PROJECT_READY.md`
 
 **Questions?**
+
 - Vercel support: https://vercel.com/support
 - Your project: https://vercel.com/gogsias-projects/farmers-market
 

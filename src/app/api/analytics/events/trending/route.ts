@@ -6,12 +6,12 @@
  * @module /api/analytics/events/trending
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { SearchEventService } from '@/lib/services/analytics/search-event.service';
-import { asyncHandler, validateRequest } from '@/lib/api/error-handler';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { SearchEventService } from "@/lib/services/analytics/search-event.service";
+import { asyncHandler, validateRequest } from "@/lib/api/error-handler";
+import { z } from "zod";
 
 // ============================================================================
 // Validation Schema
@@ -34,9 +34,14 @@ export const GET = asyncHandler(async (req: NextRequest) => {
   const validated = validateRequest(trendingQuerySchema, query);
 
   const limit = validated.limit ? parseInt(validated.limit) : 10;
-  const lookbackDays = validated.lookbackDays ? parseInt(validated.lookbackDays) : 7;
+  const lookbackDays = validated.lookbackDays
+    ? parseInt(validated.lookbackDays)
+    : 7;
 
-  const trending = await SearchEventService.getTrendingSearches(limit, lookbackDays);
+  const trending = await SearchEventService.getTrendingSearches(
+    limit,
+    lookbackDays,
+  );
 
   return NextResponse.json({
     trending,

@@ -55,9 +55,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       // Recommendation generation metrics
       recommendations: {
         totalTriggered: eventStats.recommendationsTriggers,
-        successRate: eventStats.totalEvents > 0
-          ? `${((eventStats.recommendationsTriggers / eventStats.totalEvents) * 100).toFixed(2)}%`
-          : "N/A",
+        successRate:
+          eventStats.totalEvents > 0
+            ? `${((eventStats.recommendationsTriggers / eventStats.totalEvents) * 100).toFixed(2)}%`
+            : "N/A",
       },
 
       // WebSocket connection metrics
@@ -65,7 +66,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         totalConnections: wsStats.totalConnections,
         activeConnections: wsStats.activeConnections,
         averageConnectionDuration: `${(wsStats.averageConnectionDuration / 1000).toFixed(2)}s`,
-        subscriptionBreakdown: detailed ? wsStats.connectionsBySubscription : undefined,
+        subscriptionBreakdown: detailed
+          ? wsStats.connectionsBySubscription
+          : undefined,
       },
 
       // System health
@@ -98,7 +101,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         headers: {
           "Cache-Control": "no-cache, no-store, must-revalidate",
         },
-      }
+      },
     );
   } catch (error) {
     console.error("[RecommendationStatsAPI] Error:", error);
@@ -108,11 +111,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         success: false,
         error: {
           code: "STATS_ERROR",
-          message: error instanceof Error ? error.message : "Failed to retrieve statistics",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Failed to retrieve statistics",
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -152,7 +158,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             message: "Invalid admin credentials",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -175,7 +181,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("[RecommendationStatsAPI] Error resetting stats:", error);
@@ -185,11 +191,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         success: false,
         error: {
           code: "RESET_ERROR",
-          message: error instanceof Error ? error.message : "Failed to reset statistics",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Failed to reset statistics",
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -222,7 +231,7 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
             message: "Invalid admin credentials",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -237,7 +246,7 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("[RecommendationStatsAPI] Error clearing queue:", error);
@@ -247,11 +256,14 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
         success: false,
         error: {
           code: "CLEAR_QUEUE_ERROR",
-          message: error instanceof Error ? error.message : "Failed to clear event queue",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Failed to clear event queue",
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

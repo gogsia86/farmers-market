@@ -123,6 +123,8 @@
     "src/components/ui/Map.tsx", // Exclude UI library component (optional feature)
     "src/components/ui/QuantumComponents.example.tsx", // Exclude example component
     "src/lib/middleware/api-cache.ts", // Exclude middleware (optional optimization)
-    "src/lib/middleware/compression.ts" // Exclude middleware (optional optimization)
+    "src/lib/middleware/compression.ts", // Exclude middleware (optional optimization)
+    "**/*.md", // Exclude all markdown files (contain code examples)
+    "COMPREHENSIVE_CODE_REVIEW.md" // Exclude code review documentation
   ]
 }

@@ -7,11 +7,11 @@
  * @since Run 4
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { SavedSearchService } from '@/lib/services/saved-searches/saved-search.service';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { SavedSearchService } from "@/lib/services/saved-searches/saved-search.service";
+import { z } from "zod";
 
 // ============================================
 // VALIDATION SCHEMAS
@@ -28,17 +28,14 @@ const executeQuerySchema = z.object({
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     // Get user session
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const searchId = params.id;
@@ -52,8 +49,8 @@ export async function POST(
     } catch {
       // If no body, use defaults
       const { searchParams } = new URL(req.url);
-      const limit = searchParams.get('limit');
-      const offset = searchParams.get('offset');
+      const limit = searchParams.get("limit");
+      const offset = searchParams.get("offset");
 
       queryParams = executeQuerySchema.parse({
         limit: limit ? parseInt(limit) : 20,
@@ -70,34 +67,27 @@ export async function POST(
     });
 
     return NextResponse.json(result, { status: 200 });
-
   } catch (error) {
-    console.error('[SavedSearch Execute] Error:', error);
+    console.error("[SavedSearch Execute] Error:", error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid parameters', details: error.issues },
-        { status: 400 }
+        { error: "Invalid parameters", details: error.issues },
+        { status: 400 },
       );
     }
 
     if (error instanceof Error) {
-      if (error.message.includes('not found')) {
-        return NextResponse.json(
-          { error: error.message },
-          { status: 404 }
-        );
+      if (error.message.includes("not found")) {
+        return NextResponse.json({ error: error.message }, { status: 404 });
       }
 
-      return NextResponse.json(
-        { error: error.message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
     return NextResponse.json(
-      { error: 'Failed to execute saved search' },
-      { status: 500 }
+      { error: "Failed to execute saved search" },
+      { status: 500 },
     );
   }
 }

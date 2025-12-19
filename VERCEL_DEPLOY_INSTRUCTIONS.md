@@ -1,4 +1,5 @@
 # 🚀 VERCEL DEPLOYMENT - STEP-BY-STEP INSTRUCTIONS
+
 ## Deploy to: https://vercel.com/gogsias-projects
 
 **Status:** ✅ CODE READY - DEPLOY NOW  
@@ -13,9 +14,11 @@
 ### METHOD 1: Vercel Dashboard (Recommended - Easiest)
 
 #### Step 1: Open Your Vercel Dashboard
+
 👉 **Go to:** https://vercel.com/gogsias-projects
 
 #### Step 2: Import Git Repository
+
 1. Click the **"Add New..."** button (top right)
 2. Select **"Project"**
 3. In "Import Git Repository" section:
@@ -23,12 +26,15 @@
    - Click **"Import"**
 
 **If you don't see your repository:**
+
 - Click "Adjust GitHub App Permissions"
 - Grant access to the farmers-market repository
 - Return to Vercel and refresh
 
 #### Step 3: Configure Project (Auto-detected)
+
 Vercel will automatically detect:
+
 ```
 ✅ Framework Preset: Next.js
 ✅ Root Directory: ./
@@ -47,11 +53,14 @@ Click **"Environment Variables"** section before deploying.
 Add these **6 REQUIRED variables** one by one:
 
 ##### Variable 1: DATABASE_URL
+
 ```
 Name: DATABASE_URL
 Value: postgresql://user:password@host:5432/database?sslmode=require
 ```
+
 **Where to get:**
+
 - Option A (Recommended): Create at https://neon.tech
   - Sign up → Create Project → Copy connection string
 - Option B: Use Vercel Postgres
@@ -61,31 +70,39 @@ Value: postgresql://user:password@host:5432/database?sslmode=require
 **Enable for:** ✅ Production ✅ Preview ✅ Development
 
 ##### Variable 2: NEXTAUTH_SECRET
+
 ```
 Name: NEXTAUTH_SECRET
 Value: [Generate 32+ character secret]
 ```
+
 **Generate it:**
+
 - Open Git Bash and run: `openssl rand -base64 32`
 - Or use this temporary test secret: `dGhpc2lzYXRlc3RzZWNyZXRmb3JuZXh0YXV0aGNoYW5nZWlucHJvZHVjdGlvbg==`
 
 **Enable for:** ✅ Production ✅ Preview ✅ Development
 
 ##### Variable 3: NEXTAUTH_URL
+
 ```
 Name: NEXTAUTH_URL
 Value: https://farmers-market-your-username.vercel.app
 ```
+
 **Note:** This will be your actual Vercel URL. After first deployment, update this to match your exact URL.
 
 **Enable for:** ✅ Production ✅ Preview ✅ Development
 
 ##### Variable 4: STRIPE_SECRET_KEY
+
 ```
 Name: STRIPE_SECRET_KEY
 Value: sk_test_51xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
+
 **Where to get:**
+
 - Go to: https://dashboard.stripe.com/test/apikeys
 - Copy "Secret key" (click "Reveal test key")
 - Paste the full key starting with `sk_test_`
@@ -93,31 +110,38 @@ Value: sk_test_51xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 **Enable for:** ✅ Production ✅ Preview ✅ Development
 
 ##### Variable 5: STRIPE_PUBLISHABLE_KEY
+
 ```
 Name: STRIPE_PUBLISHABLE_KEY
 Value: pk_test_51xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
+
 **Where to get:**
+
 - Same place as above: https://dashboard.stripe.com/test/apikeys
 - Copy "Publishable key"
 
 **Enable for:** ✅ Production ✅ Preview ✅ Development
 
 ##### Variable 6: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+
 ```
 Name: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 Value: pk_test_51xxxxxxxxxxxxxxxxxxxxxxxxxxxxx (SAME as Variable 5)
 ```
-**Note:** This is the same as STRIPE_PUBLISHABLE_KEY but with NEXT_PUBLIC_ prefix for browser access.
+
+**Note:** This is the same as STRIPE*PUBLISHABLE_KEY but with NEXT_PUBLIC* prefix for browser access.
 
 **Enable for:** ✅ Production ✅ Preview ✅ Development
 
 #### Step 5: Deploy! 🚀
+
 1. **Click** the **"Deploy"** button
 2. **Wait** 6-8 minutes for the build to complete
 3. **Watch** the build logs for progress
 
 **Expected Build Output:**
+
 ```
 ▲ Vercel CLI 48.9.0
 ○ Installing dependencies...
@@ -129,6 +153,7 @@ Value: pk_test_51xxxxxxxxxxxxxxxxxxxxxxxxxxxxx (SAME as Variable 5)
 ```
 
 #### Step 6: Update NEXTAUTH_URL (After First Deploy)
+
 1. **Copy** your actual deployment URL (e.g., `https://farmers-market-abc123.vercel.app`)
 2. Go to: **Settings** → **Environment Variables**
 3. **Find** `NEXTAUTH_URL`
@@ -154,6 +179,7 @@ npx prisma db push
 ```
 
 **Expected Output:**
+
 ```
 ✓ Generated Prisma Client
 ✓ Database schema deployed
@@ -167,6 +193,7 @@ npm run db:seed:basic
 ```
 
 **This creates:**
+
 - ✅ Admin account (admin@farmersmarket.com / Admin123!)
 - ✅ 2 Sample farmers
 - ✅ 3 Sample farms
@@ -224,7 +251,9 @@ After deployment completes, visit your live site and test:
 ## 🔧 TROUBLESHOOTING
 
 ### Issue: Build Fails with "DATABASE_URL not found"
+
 **Solution:**
+
 1. Go to Vercel Dashboard → Your Project → Settings
 2. Click "Environment Variables"
 3. Verify DATABASE_URL is added
@@ -232,13 +261,17 @@ After deployment completes, visit your live site and test:
 5. Click "Redeploy" in Deployments tab
 
 ### Issue: Build Fails with "Module not found: @prisma/client"
+
 **Solution:**
+
 - This is already fixed with our `postinstall` script
 - If still occurs: Clear Vercel cache and redeploy
 - Check that prisma is in dependencies (not devDependencies) in package.json
 
 ### Issue: "500 Internal Server Error" on live site
+
 **Solution:**
+
 1. Check Vercel logs:
    - Dashboard → Deployments → Latest → Click "View Function Logs"
 2. Common causes:
@@ -248,7 +281,9 @@ After deployment completes, visit your live site and test:
 3. Verify all 6 environment variables are set correctly
 
 ### Issue: Authentication doesn't work
+
 **Solution:**
+
 1. Update NEXTAUTH_URL to match EXACT deployment URL:
    - Must be: `https://your-project.vercel.app` (exact)
    - NOT: `http://...` (must be HTTPS)
@@ -258,7 +293,9 @@ After deployment completes, visit your live site and test:
 4. Check browser console (F12) for errors
 
 ### Issue: Stripe checkout doesn't load
+
 **Solution:**
+
 1. Verify all 3 Stripe variables are set:
    - STRIPE_SECRET_KEY
    - STRIPE_PUBLISHABLE_KEY
@@ -268,9 +305,11 @@ After deployment completes, visit your live site and test:
 4. Test with card: 4242 4242 4242 4242
 
 ### Issue: Images don't load
+
 **Solution:**
+
 1. Check next.config.mjs has correct image domains
-2. For Cloudinary: Add CLOUDINARY_* environment variables
+2. For Cloudinary: Add CLOUDINARY\_\* environment variables
 3. Check browser Network tab for 404 errors
 4. Verify image URLs are correct
 
@@ -279,6 +318,7 @@ After deployment completes, visit your live site and test:
 ## 📈 MONITORING SETUP (After Deployment)
 
 ### Enable Vercel Analytics (Free)
+
 1. Go to: Your Project → Analytics
 2. Click "Enable Analytics"
 3. Metrics tracked automatically:
@@ -288,6 +328,7 @@ After deployment completes, visit your live site and test:
    - Geographic data
 
 ### Enable Speed Insights (Free)
+
 1. Go to: Your Project → Speed Insights
 2. Click "Enable Speed Insights"
 3. Core Web Vitals tracked:
@@ -296,6 +337,7 @@ After deployment completes, visit your live site and test:
    - CLS (Cumulative Layout Shift)
 
 ### Set Up Uptime Monitoring (Recommended)
+
 1. Use UptimeRobot (free): https://uptimerobot.com
 2. Create monitor:
    - Type: HTTPS
@@ -330,16 +372,19 @@ Your deployment is successful when:
 ## 📞 GETTING HELP
 
 ### Vercel Support
+
 - Dashboard: https://vercel.com/support
 - Documentation: https://vercel.com/docs
 - Community: https://github.com/vercel/next.js/discussions
 
 ### Platform Documentation
+
 - Complete deployment guide: `🚀_DEPLOYMENT_EXECUTION_GUIDE.md`
 - Route map: `docs/ROUTE_MAP.md`
 - Fixes completed: `FIXES_COMPLETED_REPORT.md`
 
 ### Stripe Support
+
 - Dashboard: https://dashboard.stripe.com
 - Documentation: https://stripe.com/docs
 - Support: https://support.stripe.com
@@ -349,6 +394,7 @@ Your deployment is successful when:
 ## 🔗 QUICK REFERENCE LINKS
 
 **Essential URLs:**
+
 - 🚀 Your Vercel Dashboard: https://vercel.com/gogsias-projects
 - 📦 GitHub Repository: https://github.com/gogsia86/farmers-market
 - 💳 Stripe Dashboard: https://dashboard.stripe.com
@@ -356,6 +402,7 @@ Your deployment is successful when:
 - 📊 Vercel Status: https://www.vercel-status.com
 
 **Test Credentials (After Seeding):**
+
 ```
 Admin:
   Email: admin@farmersmarket.com
@@ -398,6 +445,7 @@ Total Time to Production:              25-30 minutes
 ## 🎯 YOUR DEPLOYMENT SUMMARY
 
 **What You're Deploying:**
+
 - 🌾 Farmers Market Platform v1.0.0
 - ⚡ 64 pages, 7 route groups
 - 🔐 Complete authentication system
@@ -408,6 +456,7 @@ Total Time to Production:              25-30 minutes
 - 📊 Real-time monitoring
 
 **Quality Metrics:**
+
 - ✅ 2,702 tests passing (100%)
 - ✅ Zero build errors
 - ✅ TypeScript strict mode
@@ -422,6 +471,7 @@ Total Time to Production:              25-30 minutes
 👉 https://vercel.com/gogsias-projects
 
 **Steps:**
+
 1. Click "Add New..." → "Project"
 2. Import "farmers-market" repository
 3. Add 6 environment variables (see above)

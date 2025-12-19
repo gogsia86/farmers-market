@@ -93,42 +93,42 @@ model SavedSearch {
   userId                String
   name                  String                 @db.VarChar(255)
   description           String?
-  
+
   // Search Parameters
   query                 String?                @db.VarChar(500)
   filters               Json                   @default("{}")
   sortBy                String?                @db.VarChar(50)
   location              Json?
-  
+
   // Metadata
   isPublic              Boolean                @default(false)
   shareToken            String?                @unique @db.VarChar(100)
   folderId              String?
   tags                  String[]
-  
+
   // Notifications
   notificationsEnabled  Boolean                @default(true)
   notificationFrequency NotificationFrequency  @default(DAILY)
   lastNotificationSent  DateTime?
-  
+
   // Stats
   executionCount        Int                    @default(0)
   lastExecutedAt        DateTime?
   resultsCount          Int?
-  
+
   // Agricultural Consciousness
   seasonalPreference    Season?
   preferredFarms        String[]
   biodynamicOnly        Boolean                @default(false)
-  
+
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
-  
+
   user                  User                   @relation("UserSavedSearches", fields: [userId], references: [id], onDelete: Cascade)
   folder                SavedSearchFolder?     @relation(fields: [folderId], references: [id])
   alerts                SearchAlert[]
   shares                SavedSearchShare[]
-  
+
   @@index([userId])
   @@index([shareToken])
   @@index([createdAt])
@@ -144,13 +144,13 @@ model SavedSearchFolder {
   icon        String?       @db.VarChar(50)
   sortOrder   Int           @default(0)
   color       String?       @db.VarChar(20)
-  
+
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-  
+
   user        User          @relation("UserSavedSearchFolders", fields: [userId], references: [id], onDelete: Cascade)
   searches    SavedSearch[]
-  
+
   @@index([userId])
   @@map("saved_search_folders")
 }
@@ -162,11 +162,11 @@ model SavedSearchShare {
   sharedWithId    String?
   permission      SharePermission @default(VIEW)
   expiresAt       DateTime?
-  
+
   createdAt       DateTime        @default(now())
-  
+
   savedSearch     SavedSearch     @relation(fields: [savedSearchId], references: [id], onDelete: Cascade)
-  
+
   @@unique([savedSearchId, sharedWithEmail])
   @@index([savedSearchId])
   @@map("saved_search_shares")
@@ -176,21 +176,21 @@ model SearchAlert {
   id              String          @id @default(cuid())
   savedSearchId   String
   userId          String
-  
+
   type            SearchAlertType @default(NEW_PRODUCTS)
   conditions      Json            @default("{}")
-  
+
   isActive        Boolean         @default(true)
   lastTriggered   DateTime?
   triggerCount    Int             @default(0)
-  
+
   channels        Json            @default("{\"email\": true, \"push\": false}")
-  
+
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
-  
+
   savedSearch     SavedSearch     @relation(fields: [savedSearchId], references: [id], onDelete: Cascade)
-  
+
   @@index([savedSearchId])
   @@index([userId])
   @@index([isActive])
@@ -201,27 +201,27 @@ model SearchEvent {
   id              String    @id @default(cuid())
   userId          String?
   sessionId       String    @db.VarChar(100)
-  
+
   query           String?   @db.VarChar(500)
   filters         Json      @default("{}")
   sortBy          String?   @db.VarChar(50)
-  
+
   resultsCount    Int
   resultsShown    Int
   clickedResults  String[]
-  
+
   source          String?   @db.VarChar(50)
   location        Json?
   userAgent       String?   @db.VarChar(500)
-  
+
   responseTime    Int
   timestamp       DateTime  @default(now())
-  
+
   currentSeason   Season?
   lunarPhase      String?   @db.VarChar(50)
-  
+
   abTestVariant   String?   @db.VarChar(50)
-  
+
   @@index([userId])
   @@index([sessionId])
   @@index([timestamp])
@@ -233,18 +233,18 @@ model UserInteraction {
   id         String          @id @default(cuid())
   userId     String?
   sessionId  String          @db.VarChar(100)
-  
+
   type       InteractionType
   entityType String          @db.VarChar(50)
   entityId   String
-  
+
   source     String?         @db.VarChar(50)
   metadata   Json?
-  
+
   value      Decimal?        @db.Decimal(10, 2)
-  
+
   timestamp  DateTime        @default(now())
-  
+
   @@index([userId])
   @@index([sessionId])
   @@index([entityType, entityId])
@@ -255,31 +255,31 @@ model UserInteraction {
 
 model SearchAnalytics {
   id              String     @id @default(cuid())
-  
+
   periodType      PeriodType
   periodStart     DateTime
   periodEnd       DateTime
-  
+
   totalSearches   Int        @default(0)
   uniqueUsers     Int        @default(0)
   uniqueQueries   Int        @default(0)
-  
+
   avgResponseTime Int
   p95ResponseTime Int
-  
+
   avgResultsCount Decimal    @db.Decimal(10, 2)
   avgClickThrough Decimal    @db.Decimal(5, 4)
   conversionRate  Decimal    @db.Decimal(5, 4)
-  
+
   topQueries      Json       @default("[]")
   topFilters      Json       @default("[]")
   topCategories   Json       @default("[]")
-  
+
   seasonalTrends  Json       @default("{}")
   farmPopularity  Json       @default("{}")
-  
+
   createdAt       DateTime   @default(now())
-  
+
   @@unique([periodType, periodStart])
   @@index([periodType, periodStart])
   @@map("search_analytics")
@@ -288,40 +288,40 @@ model SearchAnalytics {
 model UserPreference {
   id                    String   @id @default(cuid())
   userId                String   @unique
-  
+
   dietaryRestrictions   String[]
   allergens             String[]
   certifications        String[]
-  
+
   favoriteFarms         String[]
   favoriteCategories    String[]
   budgetRange           Json?
-  
+
   preferredLocations    Json[]
   maxDistance           Int?
-  
+
   preferredPickupDays   String[]
   preferredDeliveryTime String?
-  
+
   springPreferences     Json?
   summerPreferences     Json?
   fallPreferences       Json?
   winterPreferences     Json?
-  
+
   lunarPhaseAware       Boolean  @default(false)
   biodynamicOnly        Boolean  @default(false)
-  
+
   allowPersonalization  Boolean  @default(true)
   shareDataForAnalytics Boolean  @default(true)
-  
+
   autoApplyFilters      Boolean  @default(true)
   autoApplySort         Boolean  @default(true)
-  
+
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
-  
+
   user                  User     @relation("UserPreferences", fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@index([userId])
   @@map("user_preferences")
 }
@@ -331,19 +331,19 @@ model PersonalizationScore {
   userId          String
   entityType      String   @db.VarChar(50)
   entityId        String
-  
+
   relevanceScore  Int
   affinityScore   Int
   seasonalScore   Int
   proximityScore  Int
   popularityScore Int
-  
+
   totalScore      Int
-  
+
   season          Season
   calculatedAt    DateTime @default(now())
   expiresAt       DateTime
-  
+
   @@unique([userId, entityType, entityId, season])
   @@index([userId])
   @@index([entityType, entityId])
@@ -355,30 +355,30 @@ model PersonalizationScore {
 model Recommendation {
   id          String             @id @default(cuid())
   userId      String
-  
+
   type        RecommendationType
-  
+
   entityType  String             @db.VarChar(50)
   entityId    String
-  
+
   score       Decimal            @db.Decimal(5, 2)
   confidence  Decimal            @db.Decimal(5, 4)
-  
+
   reasons     Json               @default("[]")
-  
+
   season      Season?
   source      String?            @db.VarChar(50)
-  
+
   shown       Boolean            @default(false)
   shownAt     DateTime?
   clicked     Boolean            @default(false)
   clickedAt   DateTime?
   converted   Boolean            @default(false)
   convertedAt DateTime?
-  
+
   createdAt   DateTime           @default(now())
   expiresAt   DateTime
-  
+
   @@index([userId])
   @@index([type])
   @@index([entityType, entityId])
@@ -391,24 +391,24 @@ model ABTest {
   id              String           @id @default(cuid())
   name            String           @db.VarChar(255)
   description     String?
-  
+
   variants        Json             @default("[]")
   trafficSplit    Json             @default("{}")
-  
+
   targetAudience  Json?
-  
+
   status          ABTestStatus     @default(DRAFT)
   startedAt       DateTime?
   endedAt         DateTime?
-  
+
   results         Json?
   winnerVariant   String?
-  
+
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
-  
+
   assignments     ABTestAssignment[]
-  
+
   @@index([status])
   @@index([startedAt, endedAt])
   @@map("ab_tests")
@@ -419,12 +419,12 @@ model ABTestAssignment {
   testId     String
   userId     String?
   sessionId  String   @db.VarChar(100)
-  
+
   variant    String   @db.VarChar(50)
   assignedAt DateTime @default(now())
-  
+
   test       ABTest   @relation(fields: [testId], references: [id], onDelete: Cascade)
-  
+
   @@unique([testId, userId])
   @@unique([testId, sessionId])
   @@index([testId])
@@ -533,6 +533,7 @@ npx prisma generate
 ```
 
 **Expected output:**
+
 ```
 ✓ Prisma Migrate created and applied the migration
 ✓ Generated Prisma Client
@@ -569,18 +570,18 @@ export abstract class BaseService {
   protected db = database;
 
   protected async withTransaction<T>(
-    callback: (tx: Prisma.TransactionClient) => Promise<T>
+    callback: (tx: Prisma.TransactionClient) => Promise<T>,
   ): Promise<T> {
     return await this.db.$transaction(callback);
   }
 
   protected handleError(error: unknown, context: string): never {
     console.error(`[${context}] Error:`, error);
-    
+
     if (error instanceof Error) {
       throw error;
     }
-    
+
     throw new Error(`Unknown error in ${context}`);
   }
 }
@@ -609,7 +610,12 @@ export interface CreateSavedSearchInput {
   folderId?: string;
   tags?: string[];
   notificationsEnabled?: boolean;
-  notificationFrequency?: "REALTIME" | "HOURLY" | "DAILY" | "WEEKLY" | "MONTHLY";
+  notificationFrequency?:
+    | "REALTIME"
+    | "HOURLY"
+    | "DAILY"
+    | "WEEKLY"
+    | "MONTHLY";
 }
 
 export interface UpdateSavedSearchInput extends Partial<CreateSavedSearchInput> {
@@ -622,7 +628,7 @@ export class SavedSearchService extends BaseService {
    */
   async create(
     userId: string,
-    data: CreateSavedSearchInput
+    data: CreateSavedSearchInput,
   ): Promise<SavedSearch> {
     try {
       const savedSearch = await this.db.savedSearch.create({
@@ -662,10 +668,7 @@ export class SavedSearchService extends BaseService {
           folder: true,
           alerts: true,
         },
-        orderBy: [
-          { folder: { sortOrder: "asc" } },
-          { createdAt: "desc" },
-        ],
+        orderBy: [{ folder: { sortOrder: "asc" } }, { createdAt: "desc" }],
       });
     } catch (error) {
       return this.handleError(error, "SavedSearchService.getByUserId");
@@ -695,7 +698,7 @@ export class SavedSearchService extends BaseService {
    */
   async update(
     userId: string,
-    data: UpdateSavedSearchInput
+    data: UpdateSavedSearchInput,
   ): Promise<SavedSearch> {
     try {
       const { id, ...updateData } = data;
@@ -823,7 +826,15 @@ export interface TrackSearchEventInput {
 export interface TrackInteractionInput {
   userId?: string;
   sessionId: string;
-  type: "SEARCH" | "VIEW" | "CLICK" | "ADD_TO_CART" | "PURCHASE" | "FAVORITE" | "REVIEW" | "SHARE";
+  type:
+    | "SEARCH"
+    | "VIEW"
+    | "CLICK"
+    | "ADD_TO_CART"
+    | "PURCHASE"
+    | "FAVORITE"
+    | "REVIEW"
+    | "SHARE";
   entityType: string;
   entityId: string;
   source?: string;
@@ -863,7 +874,9 @@ export class AnalyticsService extends BaseService {
   /**
    * Track user interaction
    */
-  async trackInteraction(data: TrackInteractionInput): Promise<UserInteraction> {
+  async trackInteraction(
+    data: TrackInteractionInput,
+  ): Promise<UserInteraction> {
     try {
       return await this.db.userInteraction.create({
         data: {
@@ -889,7 +902,7 @@ export class AnalyticsService extends BaseService {
    */
   async getUserSearchAnalytics(
     userId: string,
-    period: "WEEK" | "MONTH" | "YEAR" = "MONTH"
+    period: "WEEK" | "MONTH" | "YEAR" = "MONTH",
   ) {
     try {
       const startDate = this.getStartDate(period);
@@ -933,13 +946,18 @@ export class AnalyticsService extends BaseService {
     }
   }
 
-  private calculateSummary(searches: SearchEvent[], interactions: UserInteraction[]) {
+  private calculateSummary(
+    searches: SearchEvent[],
+    interactions: UserInteraction[],
+  ) {
     const totalSearches = searches.length;
-    const uniqueQueries = new Set(searches.map(s => s.query).filter(Boolean)).size;
-    const avgResponseTime = searches.reduce((acc, s) => acc + s.responseTime, 0) / totalSearches || 0;
+    const uniqueQueries = new Set(searches.map((s) => s.query).filter(Boolean))
+      .size;
+    const avgResponseTime =
+      searches.reduce((acc, s) => acc + s.responseTime, 0) / totalSearches || 0;
 
-    const clicks = interactions.filter(i => i.type === "CLICK").length;
-    const purchases = interactions.filter(i => i.type === "PURCHASE").length;
+    const clicks = interactions.filter((i) => i.type === "CLICK").length;
+    const purchases = interactions.filter((i) => i.type === "PURCHASE").length;
 
     return {
       totalSearches,
@@ -1008,7 +1026,7 @@ export class UserPreferencesService extends BaseService {
    */
   async update(
     userId: string,
-    data: UpdateUserPreferencesInput
+    data: UpdateUserPreferencesInput,
   ): Promise<UserPreference> {
     try {
       return await this.db.userPreference.upsert({
@@ -1017,12 +1035,14 @@ export class UserPreferencesService extends BaseService {
           userId,
           ...data,
           budgetRange: data.budgetRange as Prisma.InputJsonValue,
-          preferredLocations: data.preferredLocations as Prisma.InputJsonValue[],
+          preferredLocations:
+            data.preferredLocations as Prisma.InputJsonValue[],
         },
         update: {
           ...data,
           budgetRange: data.budgetRange as Prisma.InputJsonValue,
-          preferredLocations: data.preferredLocations as Prisma.InputJsonValue[],
+          preferredLocations:
+            data.preferredLocations as Prisma.InputJsonValue[],
         },
       });
     } catch (error) {
@@ -1033,10 +1053,13 @@ export class UserPreferencesService extends BaseService {
   /**
    * Add favorite farm
    */
-  async addFavoriteFarm(userId: string, farmId: string): Promise<UserPreference> {
+  async addFavoriteFarm(
+    userId: string,
+    farmId: string,
+  ): Promise<UserPreference> {
     try {
       const prefs = await this.getOrCreate(userId);
-      
+
       if (prefs.favoriteFarms.includes(farmId)) {
         return prefs;
       }
@@ -1057,18 +1080,24 @@ export class UserPreferencesService extends BaseService {
   /**
    * Remove favorite farm
    */
-  async removeFavoriteFarm(userId: string, farmId: string): Promise<UserPreference> {
+  async removeFavoriteFarm(
+    userId: string,
+    farmId: string,
+  ): Promise<UserPreference> {
     try {
       const prefs = await this.getOrCreate(userId);
-      
+
       return await this.db.userPreference.update({
         where: { userId },
         data: {
-          favoriteFarms: prefs.favoriteFarms.filter(id => id !== farmId),
+          favoriteFarms: prefs.favoriteFarms.filter((id) => id !== farmId),
         },
       });
     } catch (error) {
-      return this.handleError(error, "UserPreferencesService.removeFavoriteFarm");
+      return this.handleError(
+        error,
+        "UserPreferencesService.removeFavoriteFarm",
+      );
     }
   }
 }
@@ -1096,15 +1125,19 @@ const CreateSavedSearchSchema = z.object({
   query: z.string().optional(),
   filters: z.record(z.any()),
   sortBy: z.string().optional(),
-  location: z.object({
-    lat: z.number(),
-    lng: z.number(),
-    radius: z.number().optional(),
-  }).optional(),
+  location: z
+    .object({
+      lat: z.number(),
+      lng: z.number(),
+      radius: z.number().optional(),
+    })
+    .optional(),
   folderId: z.string().optional(),
   tags: z.array(z.string()).optional(),
   notificationsEnabled: z.boolean().optional(),
-  notificationFrequency: z.enum(["REALTIME", "HOURLY", "DAILY", "WEEKLY", "MONTHLY"]).optional(),
+  notificationFrequency: z
+    .enum(["REALTIME", "HOURLY", "DAILY", "WEEKLY", "MONTHLY"])
+    .optional(),
 });
 
 /**
@@ -1114,11 +1147,11 @@ const CreateSavedSearchSchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
-    
+
     if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: "Unauthorized" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -1133,7 +1166,7 @@ export async function GET(request: NextRequest) {
     console.error("[GET /api/saved-searches] Error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch saved searches" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -1145,11 +1178,11 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = await auth();
-    
+
     if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: "Unauthorized" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -1158,25 +1191,29 @@ export async function POST(request: NextRequest) {
 
     if (!validation.success) {
       return NextResponse.json(
-        { success: false, error: "Validation failed", details: validation.error },
-        { status: 400 }
+        {
+          success: false,
+          error: "Validation failed",
+          details: validation.error,
+        },
+        { status: 400 },
       );
     }
 
     const savedSearch = await savedSearchService.create(
       session.user.id,
-      validation.data
+      validation.data,
     );
 
     return NextResponse.json(
       { success: true, data: savedSearch },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error("[POST /api/saved-searches] Error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to create saved search" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -1194,27 +1231,27 @@ import { savedSearchService } from "@/lib/services/saved-search.service";
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const session = await auth();
-    
+
     if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: "Unauthorized" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     const savedSearch = await savedSearchService.getById(
       params.id,
-      session.user.id
+      session.user.id,
     );
 
     if (!savedSearch) {
       return NextResponse.json(
         { success: false, error: "Saved search not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -1223,7 +1260,7 @@ export async function GET(
     console.error("[GET /api/saved-searches/[id]] Error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch saved search" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -1233,20 +1270,20 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const session = await auth();
-    
+
     if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: "Unauthorized" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     const body = await request.json();
-    
+
     const updatedSearch = await savedSearchService.update(session.user.id, {
       id: params.id,
       ...body,
@@ -1257,7 +1294,7 @@ export async function PUT(
     console.error("[PUT /api/saved-searches/[id]] Error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to update saved search" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -1267,15 +1304,15 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const session = await auth();
-    
+
     if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: "Unauthorized" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -1286,7 +1323,7 @@ export async function DELETE(
     console.error("[DELETE /api/saved-searches/[id]] Error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to delete saved search" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -1320,7 +1357,7 @@ export async function POST(request: NextRequest) {
     if (!validation.success) {
       return NextResponse.json(
         { success: false, error: "Invalid event data" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -1328,17 +1365,21 @@ export async function POST(request: NextRequest) {
 
     // Track asynchronously (don't await)
     if (type === "search") {
-      analyticsService.trackSearchEvent({
-        userId: session?.user?.id,
-        sessionId: data.sessionId,
-        ...data,
-      }).catch(console.error);
+      analyticsService
+        .trackSearchEvent({
+          userId: session?.user?.id,
+          sessionId: data.sessionId,
+          ...data,
+        })
+        .catch(console.error);
     } else if (type === "interaction") {
-      analyticsService.trackInteraction({
-        userId: session?.user?.id,
-        sessionId: data.sessionId,
-        ...data,
-      }).catch(console.error);
+      analyticsService
+        .trackInteraction({
+          userId: session?.user?.id,
+          sessionId: data.sessionId,
+          ...data,
+        })
+        .catch(console.error);
     }
 
     // Return immediately
@@ -1365,22 +1406,24 @@ import { userPreferencesService } from "@/lib/services/user-preferences.service"
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
-    
+
     if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: "Unauthorized" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
-    const preferences = await userPreferencesService.getOrCreate(session.user.id);
+    const preferences = await userPreferencesService.getOrCreate(
+      session.user.id,
+    );
 
     return NextResponse.json({ success: true, data: preferences });
   } catch (error) {
     console.error("[GET /api/user/preferences] Error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch preferences" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -1391,19 +1434,19 @@ export async function GET(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const session = await auth();
-    
+
     if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: "Unauthorized" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     const body = await request.json();
-    
+
     const preferences = await userPreferencesService.update(
       session.user.id,
-      body
+      body,
     );
 
     return NextResponse.json({ success: true, data: preferences });
@@ -1411,7 +1454,7 @@ export async function PUT(request: NextRequest) {
     console.error("[PUT /api/user/preferences] Error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to update preferences" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -1434,26 +1477,25 @@ export const queryKeys = {
 
   // Saved Searches
   savedSearches: {
-    all: ['saved-searches'] as const,
-    lists: () => [...queryKeys.savedSearches.all, 'list'] as const,
-    list: (filters?: Record<string, any>) => 
+    all: ["saved-searches"] as const,
+    lists: () => [...queryKeys.savedSearches.all, "list"] as const,
+    list: (filters?: Record<string, any>) =>
       [...queryKeys.savedSearches.lists(), { filters }] as const,
-    details: () => [...queryKeys.savedSearches.all, 'detail'] as const,
-    detail: (id: string) => 
-      [...queryKeys.savedSearches.details(), id] as const,
+    details: () => [...queryKeys.savedSearches.all, "detail"] as const,
+    detail: (id: string) => [...queryKeys.savedSearches.details(), id] as const,
   },
 
   // User Preferences
   preferences: {
-    all: ['preferences'] as const,
-    current: () => [...queryKeys.preferences.all, 'current'] as const,
+    all: ["preferences"] as const,
+    current: () => [...queryKeys.preferences.all, "current"] as const,
   },
 
   // Analytics
   analytics: {
-    all: ['analytics'] as const,
-    search: (period: string) => 
-      [...queryKeys.analytics.all, 'search', period] as const,
+    all: ["analytics"] as const,
+    search: (period: string) =>
+      [...queryKeys.analytics.all, "search", period] as const,
   },
 };
 ```
@@ -1539,7 +1581,10 @@ export function useUpdateSavedSearch() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, ...data }: Partial<CreateSavedSearchInput> & { id: string }) => {
+    mutationFn: async ({
+      id,
+      ...data
+    }: Partial<CreateSavedSearchInput> & { id: string }) => {
       const res = await fetch(`/api/saved-searches/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -1764,7 +1809,7 @@ export function SaveSearchButton({ query, filters, sortBy }: SaveSearchButtonPro
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  
+
   const createMutation = useCreateSavedSearch();
   const { toast } = useToast();
 

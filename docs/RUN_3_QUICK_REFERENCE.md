@@ -615,7 +615,7 @@ function MyComponent() {
   const handleAction = async () => {
     // Invalidate all product queries
     await queryClient.invalidateQueries({
-      queryKey: productKeys.all
+      queryKey: productKeys.all,
     });
   };
 }
@@ -626,7 +626,7 @@ function MyComponent() {
 ```typescript
 // After updating a product
 await queryClient.invalidateQueries({
-  queryKey: productKeys.detail(productId)
+  queryKey: productKeys.detail(productId),
 });
 ```
 
@@ -635,7 +635,7 @@ await queryClient.invalidateQueries({
 ```typescript
 // After creating/deleting a product
 await queryClient.invalidateQueries({
-  queryKey: productKeys.lists()
+  queryKey: productKeys.lists(),
 });
 ```
 
@@ -646,7 +646,7 @@ import { getProductInvalidationKeys } from "@/lib/react-query/query-keys";
 
 // After product update
 const keys = getProductInvalidationKeys(productId);
-keys.forEach(key => {
+keys.forEach((key) => {
   queryClient.invalidateQueries({ queryKey: key });
 });
 ```
@@ -655,10 +655,7 @@ keys.forEach(key => {
 
 ```typescript
 // Update cache directly (no refetch)
-queryClient.setQueryData(
-  productKeys.detail(productId),
-  updatedProduct
-);
+queryClient.setQueryData(productKeys.detail(productId), updatedProduct);
 ```
 
 ---
@@ -715,7 +712,7 @@ import { prefetchHelpers } from "@/lib/react-query/query-keys";
 
 // Prefetch all data for product detail page
 const keys = prefetchHelpers.productDetail(productId);
-keys.forEach(key => {
+keys.forEach((key) => {
   queryClient.prefetchQuery({
     queryKey: key,
     queryFn: () => fetchData(key),
@@ -733,25 +730,25 @@ keys.forEach(key => {
 import { productKeys } from "@/lib/react-query/query-keys";
 
 // All products
-productKeys.all                          // ["products"]
+productKeys.all; // ["products"]
 
 // Product lists
-productKeys.lists()                      // ["products", "list"]
-productKeys.list({ page: 1 })            // ["products", "list", { page: 1 }]
+productKeys.lists(); // ["products", "list"]
+productKeys.list({ page: 1 }); // ["products", "list", { page: 1 }]
 
 // Product details
-productKeys.details()                    // ["products", "detail"]
-productKeys.detail("123")                // ["products", "detail", "123"]
+productKeys.details(); // ["products", "detail"]
+productKeys.detail("123"); // ["products", "detail", "123"]
 
 // Searches
-productKeys.search("tomato", filters)    // ["products", "search", "tomato", {...}]
-productKeys.suggestions("tom")           // ["products", "suggestions", "tom"]
+productKeys.search("tomato", filters); // ["products", "search", "tomato", {...}]
+productKeys.suggestions("tom"); // ["products", "suggestions", "tom"]
 
 // Specialized
-productKeys.featured()                   // ["products", "featured"]
-productKeys.seasonal("SPRING")           // ["products", "seasonal", "SPRING"]
-productKeys.byFarm("farm-123")           // ["products", "by-farm", "farm-123"]
-productKeys.byCategory("cat-123")        // ["products", "by-category", "cat-123"]
+productKeys.featured(); // ["products", "featured"]
+productKeys.seasonal("SPRING"); // ["products", "seasonal", "SPRING"]
+productKeys.byFarm("farm-123"); // ["products", "by-farm", "farm-123"]
+productKeys.byCategory("cat-123"); // ["products", "by-category", "cat-123"]
 ```
 
 ### Farm Keys
@@ -759,11 +756,11 @@ productKeys.byCategory("cat-123")        // ["products", "by-category", "cat-123
 ```typescript
 import { farmKeys } from "@/lib/react-query/query-keys";
 
-farmKeys.all                             // ["farms"]
-farmKeys.list(filters)                   // ["farms", "list", {...}]
-farmKeys.detail("123")                   // ["farms", "detail", "123"]
-farmKeys.products("farm-123")            // ["farms", "products", "farm-123"]
-farmKeys.nearby(lat, lng, radius)        // ["farms", "nearby", {...}]
+farmKeys.all; // ["farms"]
+farmKeys.list(filters); // ["farms", "list", {...}]
+farmKeys.detail("123"); // ["farms", "detail", "123"]
+farmKeys.products("farm-123"); // ["farms", "products", "farm-123"]
+farmKeys.nearby(lat, lng, radius); // ["farms", "nearby", {...}]
 ```
 
 ### Cart Keys
@@ -771,10 +768,10 @@ farmKeys.nearby(lat, lng, radius)        // ["farms", "nearby", {...}]
 ```typescript
 import { cartKeys } from "@/lib/react-query/query-keys";
 
-cartKeys.all                             // ["cart"]
-cartKeys.items()                         // ["cart", "items"]
-cartKeys.count()                         // ["cart", "count"]
-cartKeys.total()                         // ["cart", "total"]
+cartKeys.all; // ["cart"]
+cartKeys.items(); // ["cart", "items"]
+cartKeys.count(); // ["cart", "count"]
+cartKeys.total(); // ["cart", "total"]
 ```
 
 ---
@@ -955,35 +952,39 @@ export default function FarmerDashboard() {
 ## 🚀 Performance Tips
 
 1. **Use Query Keys Properly**
+
    ```typescript
    // ✅ Good
-   productKeys.list({ page: 1 })
-   
-   // ❌ Bad
-   ["products", "list", { page: 1 }]
+   productKeys.list({ page: 1 })[
+     // ❌ Bad
+     ("products", "list", { page: 1 })
+   ];
    ```
 
 2. **Prefetch Aggressively**
+
    ```typescript
    // Prefetch on hover/focus
    onMouseEnter={() => queryClient.prefetchQuery(...)}
    ```
 
 3. **Adjust Stale Time**
+
    ```typescript
    // Longer for static data
-   staleTime: 10 * 60 * 1000  // 10 minutes
-   
+   staleTime: 10 * 60 * 1000; // 10 minutes
+
    // Shorter for dynamic data
-   staleTime: 30 * 1000  // 30 seconds
+   staleTime: 30 * 1000; // 30 seconds
    ```
 
 4. **Use Optimistic Updates**
+
    ```typescript
    onMutate: async (newData) => {
      // Update cache immediately
      queryClient.setQueryData(key, newData);
-   }
+   };
    ```
 
 5. **Disable Unnecessary Refetches**
@@ -994,4 +995,4 @@ export default function FarmerDashboard() {
 
 ---
 
-*"Copy with confidence, paste with precision, deliver with divine speed."* 🌾⚡✨
+_"Copy with confidence, paste with precision, deliver with divine speed."_ 🌾⚡✨

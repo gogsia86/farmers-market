@@ -6,13 +6,13 @@
  * @module /api/analytics/events
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { SearchEventService } from '@/lib/services/analytics/search-event.service';
-import { asyncHandler, validateRequest } from '@/lib/api/error-handler';
-import { z } from 'zod';
-import { Season } from '@prisma/client';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { SearchEventService } from "@/lib/services/analytics/search-event.service";
+import { asyncHandler, validateRequest } from "@/lib/api/error-handler";
+import { z } from "zod";
+import { Season } from "@prisma/client";
 
 // ============================================================================
 // Validation Schemas
@@ -26,11 +26,13 @@ const trackSearchSchema = z.object({
   resultsShown: z.number().int().min(0),
   responseTime: z.number().int().min(0),
   source: z.string().optional(),
-  location: z.object({
-    latitude: z.number().optional(),
-    longitude: z.number().optional(),
-    region: z.string().optional(),
-  }).optional(),
+  location: z
+    .object({
+      latitude: z.number().optional(),
+      longitude: z.number().optional(),
+      region: z.string().optional(),
+    })
+    .optional(),
   userAgent: z.string().optional(),
   currentSeason: z.nativeEnum(Season).optional(),
   lunarPhase: z.string().optional(),
@@ -81,7 +83,7 @@ export const POST = asyncHandler(async (req: NextRequest) => {
     responseTime: data.responseTime,
     source: data.source,
     location: data.location,
-    userAgent: req.headers.get('user-agent') || undefined,
+    userAgent: req.headers.get("user-agent") || undefined,
     currentSeason: data.currentSeason,
     lunarPhase: data.lunarPhase,
     abTestVariant: data.abTestVariant,
@@ -128,7 +130,7 @@ export const GET = asyncHandler(async (req: NextRequest) => {
   const offset = validated.offset ? parseInt(validated.offset) : 0;
 
   // If user is not admin, only allow viewing their own events
-  if (!session?.user?.role || session.user.role !== 'ADMIN') {
+  if (!session?.user?.role || session.user.role !== "ADMIN") {
     filters.userId = session?.user?.id;
   }
 

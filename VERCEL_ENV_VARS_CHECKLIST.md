@@ -11,8 +11,9 @@
 Copy these into Vercel Dashboard → Settings → Environment Variables
 
 **For ALL variables, enable:**
+
 - ✅ Production
-- ✅ Preview  
+- ✅ Preview
 - ✅ Development
 
 ---
@@ -20,22 +21,26 @@ Copy these into Vercel Dashboard → Settings → Environment Variables
 ### 1️⃣ DATABASE_URL
 
 **Name:**
+
 ```
 DATABASE_URL
 ```
 
 **Value Format:**
+
 ```
 postgresql://username:password@host:5432/database?sslmode=require
 ```
 
 **Where to Get:**
+
 - **Neon (Recommended):** https://neon.tech
   - Sign up → Create Project → Copy connection string
 - **Vercel Postgres:** Dashboard → Storage → Create Database → Copy POSTGRES_PRISMA_URL
 - **Railway:** https://railway.app → New Project → PostgreSQL → Copy DATABASE_URL
 
 **Example:**
+
 ```
 postgresql://user123:pass456@ep-cool-farm-123456.us-east-2.aws.neon.tech/farmersdb?sslmode=require
 ```
@@ -47,6 +52,7 @@ postgresql://user123:pass456@ep-cool-farm-123456.us-east-2.aws.neon.tech/farmers
 ### 2️⃣ NEXTAUTH_SECRET
 
 **Name:**
+
 ```
 NEXTAUTH_SECRET
 ```
@@ -54,6 +60,7 @@ NEXTAUTH_SECRET
 **Value:** (Generate 32+ character random string)
 
 **How to Generate:**
+
 ```bash
 # Option 1: Git Bash (Recommended)
 openssl rand -base64 32
@@ -66,6 +73,7 @@ dGhpc2lzYXRlc3RzZWNyZXRmb3JuZXh0YXV0aGNoYW5nZWlucHJvZHVjdGlvbg==
 ```
 
 **Example:**
+
 ```
 7x9KpL3mN8qR2tV5wY1zA4cF6hJ9kM2nP5sT8vX0bD3gH7jL==
 ```
@@ -77,22 +85,26 @@ dGhpc2lzYXRlc3RzZWNyZXRmb3JuZXh0YXV0aGNoYW5nZWlucHJvZHVjdGlvbg==
 ### 3️⃣ NEXTAUTH_URL
 
 **Name:**
+
 ```
 NEXTAUTH_URL
 ```
 
 **Value:**
+
 ```
 https://your-project-name.vercel.app
 ```
 
-**IMPORTANT:** 
+**IMPORTANT:**
+
 - After first deployment, update this to your EXACT Vercel URL
 - Must be HTTPS (not http://)
 - No trailing slash
 - Match exactly or authentication will fail
 
 **Example:**
+
 ```
 https://farmers-market-gogsias.vercel.app
 ```
@@ -104,16 +116,19 @@ https://farmers-market-gogsias.vercel.app
 ### 4️⃣ STRIPE_SECRET_KEY
 
 **Name:**
+
 ```
 STRIPE_SECRET_KEY
 ```
 
 **Value Format:**
+
 ```
 sk_test_51xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
 **Where to Get:**
+
 1. Go to: https://dashboard.stripe.com/test/apikeys
 2. Click "Reveal test key" for "Secret key"
 3. Copy the full key starting with `sk_test_`
@@ -121,6 +136,7 @@ sk_test_51xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 **For Production:** Use live key `sk_live_...` instead
 
 **Example:**
+
 ```
 sk_test_51Abc123DefGhiJklMnoPqrStuVwxYz0123456789AbCdEfGhIjKlMnOpQrStUvWxYz
 ```
@@ -132,16 +148,19 @@ sk_test_51Abc123DefGhiJklMnoPqrStuVwxYz0123456789AbCdEfGhIjKlMnOpQrStUvWxYz
 ### 5️⃣ STRIPE_PUBLISHABLE_KEY
 
 **Name:**
+
 ```
 STRIPE_PUBLISHABLE_KEY
 ```
 
 **Value Format:**
+
 ```
 pk_test_51xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
 **Where to Get:**
+
 1. Go to: https://dashboard.stripe.com/test/apikeys
 2. Copy "Publishable key" (already visible, no reveal needed)
 3. Copy the full key starting with `pk_test_`
@@ -149,6 +168,7 @@ pk_test_51xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 **For Production:** Use live key `pk_live_...` instead
 
 **Example:**
+
 ```
 pk_test_51Abc123DefGhiJklMnoPqrStuVwxYz0123456789AbCdEfGhIjKlMnOpQrStUvWxYz
 ```
@@ -160,11 +180,13 @@ pk_test_51Abc123DefGhiJklMnoPqrStuVwxYz0123456789AbCdEfGhIjKlMnOpQrStUvWxYz
 ### 6️⃣ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 
 **Name:**
+
 ```
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 ```
 
 **Value:**
+
 ```
 [SAME VALUE AS STRIPE_PUBLISHABLE_KEY ABOVE]
 ```
@@ -172,11 +194,13 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 **IMPORTANT:** This must be EXACTLY the same as Variable #5
 
 **Why Two Variables?**
+
 - `STRIPE_PUBLISHABLE_KEY` = Server-side use
 - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` = Browser/client-side use
 - Both need the same Stripe publishable key
 
 **Example:**
+
 ```
 pk_test_51Abc123DefGhiJklMnoPqrStuVwxYz0123456789AbCdEfGhIjKlMnOpQrStUvWxYz
 ```
@@ -190,11 +214,13 @@ pk_test_51Abc123DefGhiJklMnoPqrStuVwxYz0123456789AbCdEfGhIjKlMnOpQrStUvWxYz
 ### Email Service (Resend)
 
 **Name:**
+
 ```
 RESEND_API_KEY
 ```
 
 **Value:**
+
 ```
 re_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
@@ -206,6 +232,7 @@ re_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ### Image Storage (Cloudinary)
 
 **Names:**
+
 ```
 CLOUDINARY_CLOUD_NAME
 CLOUDINARY_API_KEY
@@ -215,6 +242,7 @@ CLOUDINARY_API_SECRET
 **Where to Get:** https://cloudinary.com/console/settings/security
 
 **Example:**
+
 ```
 CLOUDINARY_CLOUD_NAME=my-farm-images
 CLOUDINARY_API_KEY=123456789012345
@@ -226,11 +254,13 @@ CLOUDINARY_API_SECRET=abcdefghijklmnopqrstuvwxyz1234
 ### Error Tracking (Sentry)
 
 **Name:**
+
 ```
 SENTRY_DSN
 ```
 
 **Value:**
+
 ```
 https://xxxxx@o123456.ingest.sentry.io/123456
 ```
@@ -277,23 +307,29 @@ After adding all environment variables:
 ## 🔧 COMMON ISSUES & SOLUTIONS
 
 ### Issue: Build fails with "DATABASE_URL not found"
-**Solution:** 
+
+**Solution:**
+
 - Verify variable name is exactly `DATABASE_URL` (all caps)
 - Check it's enabled for Production, Preview, AND Development
 - Redeploy after adding
 
 ### Issue: Authentication doesn't work
+
 **Solution:**
+
 - Update NEXTAUTH_URL to match EXACT deployment URL
 - No trailing slash
 - Must be HTTPS
 - Redeploy after updating
 
 ### Issue: Stripe checkout doesn't load
+
 **Solution:**
+
 - Verify all 3 Stripe variables are added
 - Check both publishable key variables have SAME value
-- Verify keys start with sk_test_ and pk_test_
+- Verify keys start with sk*test* and pk*test*
 - Keys must be from same Stripe account
 
 ---
@@ -303,6 +339,7 @@ After adding all environment variables:
 **Your Vercel Dashboard:** https://vercel.com/gogsias-projects
 
 **Add Environment Variables:**
+
 1. Go to your project
 2. Settings tab
 3. Environment Variables section
@@ -311,6 +348,7 @@ After adding all environment variables:
 6. Save
 
 **After Adding All Variables:**
+
 - Click "Deploy" or "Redeploy"
 - Wait for build to complete
 - Test your live site

@@ -540,7 +540,6 @@ export class SavedSearchService {
               verificationStatus: true,
             },
           },
-          images: true,
         },
         orderBy,
         take: limit,

@@ -7,10 +7,10 @@
  * @since Run 4 - Phase 2
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { SearchAlertService } from '@/lib/services/saved-searches/search-alert.service';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { SearchAlertService } from "@/lib/services/saved-searches/search-alert.service";
 
 // ============================================
 // POST - Execute Alert
@@ -18,17 +18,14 @@ import { SearchAlertService } from '@/lib/services/saved-searches/search-alert.s
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     // Get user session
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const alertId = params.id;
@@ -38,8 +35,8 @@ export async function POST(
 
     if (!alert) {
       return NextResponse.json(
-        { error: 'Alert not found or access denied' },
-        { status: 404 }
+        { error: "Alert not found or access denied" },
+        { status: 404 },
       );
     }
 
@@ -48,32 +45,27 @@ export async function POST(
 
     return NextResponse.json(
       {
-        message: result.triggered ? 'Alert triggered successfully' : 'Alert evaluated - no trigger',
+        message: result.triggered
+          ? "Alert triggered successfully"
+          : "Alert evaluated - no trigger",
         result,
       },
-      { status: 200 }
+      { status: 200 },
     );
-
   } catch (error) {
-    console.error('[SearchAlert Execute] Error:', error);
+    console.error("[SearchAlert Execute] Error:", error);
 
     if (error instanceof Error) {
-      if (error.message.includes('not found')) {
-        return NextResponse.json(
-          { error: error.message },
-          { status: 404 }
-        );
+      if (error.message.includes("not found")) {
+        return NextResponse.json({ error: error.message }, { status: 404 });
       }
 
-      return NextResponse.json(
-        { error: error.message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
     return NextResponse.json(
-      { error: 'Failed to execute alert' },
-      { status: 500 }
+      { error: "Failed to execute alert" },
+      { status: 500 },
     );
   }
 }

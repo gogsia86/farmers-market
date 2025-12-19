@@ -6,12 +6,12 @@
  * @module /api/analytics/events/click
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { SearchEventService } from '@/lib/services/analytics/search-event.service';
-import { asyncHandler, validateRequest } from '@/lib/api/error-handler';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { SearchEventService } from "@/lib/services/analytics/search-event.service";
+import { asyncHandler, validateRequest } from "@/lib/api/error-handler";
+import { z } from "zod";
 
 // ============================================================================
 // Validation Schema
@@ -45,7 +45,7 @@ export const POST = asyncHandler(async (req: NextRequest) => {
   });
 
   return NextResponse.json(
-    { success: true, message: 'Click tracked successfully' },
-    { status: 201 }
+    { success: true, message: "Click tracked successfully" },
+    { status: 201 },
   );
 });
