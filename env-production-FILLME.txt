@@ -1,0 +1,213 @@
+# ============================================
+# FARMERS MARKET PLATFORM - PRODUCTION ENVIRONMENT VARIABLES
+# ============================================
+#
+# INSTRUCTIONS:
+# 1. Fill in all the values below (replace XXXX with actual values)
+# 2. Rename this file to: .env.production
+# 3. Upload to Vercel: Settings → Environment Variables → Import .env File
+#
+# OR copy each line and add individually in Vercel Dashboard
+# ============================================
+
+# ============================================
+# REQUIRED VARIABLES (6 TOTAL) - MUST FILL ALL
+# ============================================
+
+# 1. DATABASE CONNECTION
+# Get from: https://neon.tech (Free tier)
+# Click "Connection String" and copy the full URL
+DATABASE_URL=postgresql://USERNAME:PASSWORD@HOST:5432/DATABASE?sslmode=require
+
+# 2. AUTHENTICATION SECRET
+# Generate with: openssl rand -base64 32
+# Or use this test value: dGhpc2lzYXRlc3RzZWNyZXRmb3JuZXh0YXV0aGNoYW5nZWlucHJvZHVjdGlvbg==
+NEXTAUTH_SECRET=YOUR_32_CHAR_SECRET_HERE
+
+# 3. AUTHENTICATION URL
+# After first deploy, update this to your actual Vercel URL
+# Example: https://farmers-market-gogsias.vercel.app
+NEXTAUTH_URL=https://YOUR_PROJECT_NAME.vercel.app
+
+# 4. STRIPE SECRET KEY
+# Get from: https://dashboard.stripe.com/test/apikeys
+# Click "Reveal test key" and copy
+STRIPE_SECRET_KEY=sk_test_51XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+# 5. STRIPE PUBLISHABLE KEY
+# Get from: https://dashboard.stripe.com/test/apikeys
+# Copy "Publishable key"
+STRIPE_PUBLISHABLE_KEY=pk_test_51XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+# 6. STRIPE PUBLISHABLE KEY (PUBLIC)
+# IMPORTANT: Copy the SAME value from #5 above
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_51XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+# ============================================
+# OPTIONAL VARIABLES (Recommended but not required)
+# ============================================
+
+# Email Service (Resend) - Uncomment and fill if using
+# RESEND_API_KEY=re_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+# Image Storage (Cloudinary) - Uncomment and fill if using
+# CLOUDINARY_CLOUD_NAME=your-cloud-name
+# CLOUDINARY_API_KEY=123456789012345
+# CLOUDINARY_API_SECRET=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+# Error Tracking (Sentry) - Uncomment and fill if using
+# SENTRY_DSN=https://XXXXX@oXXXXXX.ingest.sentry.io/XXXXXXX
+
+# Node Environment
+NODE_ENV=production
+
+# ============================================
+# QUICK SETUP GUIDE
+# ============================================
+#
+# STEP 1: Get Database URL (5 minutes)
+# --------------------------------
+# 1. Go to: https://neon.tech
+# 2. Sign up with GitHub (free)
+# 3. Click "Create Project"
+# 4. Name it: "farmers-market-prod"
+# 5. Copy the connection string
+# 6. Paste into DATABASE_URL above
+#
+# Example result:
+# DATABASE_URL=postgresql://user123:pass456@ep-cool-farm-123456.us-east-2.aws.neon.tech/farmersdb?sslmode=require
+#
+# STEP 2: Generate Auth Secret (1 minute)
+# --------------------------------
+# 1. Open Git Bash or Terminal
+# 2. Run: openssl rand -base64 32
+# 3. Copy the output
+# 4. Paste into NEXTAUTH_SECRET above
+#
+# Example result:
+# NEXTAUTH_SECRET=7x9KpL3mN8qR2tV5wY1zA4cF6hJ9kM2nP5sT8vX0bD3gH7jL==
+#
+# STEP 3: Get Stripe Keys (3 minutes)
+# --------------------------------
+# 1. Go to: https://dashboard.stripe.com/test/apikeys
+# 2. Copy "Secret key" (click Reveal) → STRIPE_SECRET_KEY
+# 3. Copy "Publishable key" → STRIPE_PUBLISHABLE_KEY
+# 4. Copy same publishable key → NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+#
+# Example result:
+# STRIPE_SECRET_KEY=sk_test_51Abc123...
+# STRIPE_PUBLISHABLE_KEY=pk_test_51Abc123...
+# NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_51Abc123...
+#
+# STEP 4: Upload to Vercel (2 minutes)
+# --------------------------------
+# Method A: Upload File
+# 1. Rename this file to: .env.production
+# 2. Go to: https://vercel.com/gogsias-projects/farmers-market/settings/environment-variables
+# 3. Click "Import .env File"
+# 4. Select your .env.production file
+# 5. Ensure all variables are enabled for: Production + Preview + Development
+#
+# Method B: Manual Entry
+# 1. Go to: https://vercel.com/gogsias-projects/farmers-market/settings/environment-variables
+# 2. Click "Add New"
+# 3. Copy each variable name and value from this file
+# 4. Enable for: Production + Preview + Development
+# 5. Repeat for all 6 required variables
+#
+# STEP 5: Deploy (8 minutes)
+# --------------------------------
+# 1. After adding all variables, click "Deploy" or "Redeploy"
+# 2. Wait 6-8 minutes for build to complete
+# 3. Check deployment status in Deployments tab
+#
+# STEP 6: Update NEXTAUTH_URL (2 minutes)
+# --------------------------------
+# 1. After first successful deployment, copy your actual Vercel URL
+# 2. Go back to Environment Variables
+# 3. Edit NEXTAUTH_URL to match your actual URL exactly
+# 4. Redeploy
+#
+# STEP 7: Initialize Database (3 minutes)
+# --------------------------------
+# Run these commands on your local machine:
+# $env:DATABASE_URL="paste_your_database_url_here"
+# npx prisma db push
+# npm run db:seed:basic
+#
+# ============================================
+# CHECKLIST BEFORE DEPLOYING
+# ============================================
+#
+# ☐ DATABASE_URL filled in (includes ?sslmode=require)
+# ☐ NEXTAUTH_SECRET filled in (32+ characters)
+# ☐ NEXTAUTH_URL filled in (will update after first deploy)
+# ☐ STRIPE_SECRET_KEY filled in (starts with sk_test_)
+# ☐ STRIPE_PUBLISHABLE_KEY filled in (starts with pk_test_)
+# ☐ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY filled in (same as above)
+# ☐ Both Stripe publishable keys have SAME value
+# ☐ No extra spaces in any values
+# ☐ File renamed to .env.production (if uploading)
+# ☐ All variables enabled for Production + Preview + Development
+#
+# ============================================
+# EXPECTED DEPLOYMENT TIMELINE
+# ============================================
+#
+# Fill in environment variables:    5 minutes
+# Upload to Vercel:                  2 minutes
+# Build & deploy:                    6-8 minutes
+# Update NEXTAUTH_URL:               2 minutes
+# Initialize database:               3 minutes
+# Test & verify:                     5 minutes
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Total time to production:          ~25 minutes
+#
+# ============================================
+# TROUBLESHOOTING
+# ============================================
+#
+# Build fails with "DATABASE_URL not found":
+# → Verify variable name is exactly: DATABASE_URL
+# → Check it's enabled for Production + Preview + Development
+# → Redeploy after adding
+#
+# Authentication doesn't work:
+# → Update NEXTAUTH_URL to match EXACT deployment URL
+# → No trailing slash, must be HTTPS
+# → Redeploy after updating
+#
+# Stripe checkout doesn't load:
+# → Verify all 3 Stripe variables are set
+# → Both publishable keys must have SAME value
+# → Keys must be from same Stripe account
+#
+# ============================================
+# SUPPORT & DOCUMENTATION
+# ============================================
+#
+# Complete guides in your project:
+# - 🎯_VERCEL_PROJECT_READY.md (627 lines - complete guide)
+# - VERCEL_ENV_VARS_CHECKLIST.md (345 lines - detailed variable info)
+# - 🚀_DEPLOYMENT_EXECUTION_GUIDE.md (1,062 lines - full deployment)
+#
+# Your Vercel Project:
+# https://vercel.com/gogsias-projects/farmers-market
+#
+# Quick Links:
+# - Neon Database: https://neon.tech
+# - Stripe Dashboard: https://dashboard.stripe.com/test/apikeys
+# - Vercel Docs: https://vercel.com/docs
+#
+# ============================================
+# READY TO DEPLOY! 🚀
+# ============================================
+#
+# 1. Fill in all required values above
+# 2. Rename to: .env.production
+# 3. Upload to Vercel or add manually
+# 4. Deploy and wait 6-8 minutes
+# 5. Initialize database
+# 6. Test your live site!
+#
+# 🌾⚡✨ YOUR AGRICULTURAL MARKETPLACE AWAITS! ✨⚡🌾
