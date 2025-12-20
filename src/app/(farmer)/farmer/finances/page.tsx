@@ -36,7 +36,7 @@ export default async function FarmerFinancesPage() {
   });
 
   if (!farm) {
-    redirect("/farmer/onboarding");
+    redirect("/register-farm");
   }
 
   if (farm.status !== "ACTIVE") {

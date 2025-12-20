@@ -43,7 +43,7 @@ export default async function FarmerSettingsPage() {
   });
 
   if (!farm) {
-    redirect("/onboarding/farm");
+    redirect("/register-farm");
   }
 
   // Fetch user details

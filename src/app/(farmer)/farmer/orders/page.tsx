@@ -80,7 +80,7 @@ export default async function FarmerOrdersPage({ searchParams }: PageProps) {
                 </div>
                 <div className="mt-4">
                   <Link
-                    href="/farmer/setup"
+                    href="/register-farm"
                     className="text-sm font-medium text-yellow-800 hover:text-yellow-900"
                   >
                     Set up farm →

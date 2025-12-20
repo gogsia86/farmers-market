@@ -35,7 +35,7 @@ export default async function NewProductPage() {
 
   // Redirect if no farm
   if (!farm) {
-    redirect("/farmer/setup");
+    redirect("/register-farm");
   }
 
   // Check if farm is active

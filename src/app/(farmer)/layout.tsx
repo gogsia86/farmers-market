@@ -21,6 +21,9 @@ import {
   ChartBarIcon,
   CogIcon,
   ArrowLeftOnRectangleIcon,
+  GlobeAltIcon,
+  BuildingStorefrontIcon,
+  ShoppingBagIcon,
 } from "@heroicons/react/24/outline";
 
 export default async function FarmerLayout({
@@ -47,6 +50,40 @@ export default async function FarmerLayout({
 
             {/* Navigation Links */}
             <div className="hidden md:flex items-center gap-6">
+              {/* Public Pages */}
+              <Link
+                href="/"
+                className="text-sm text-gray-600 hover:text-agricultural-600 transition-colors"
+                data-testid="nav-link-home"
+              >
+                Home
+              </Link>
+              <Link
+                href="/marketplace"
+                className="text-sm text-gray-600 hover:text-agricultural-600 transition-colors"
+                data-testid="nav-link-marketplace"
+              >
+                Marketplace
+              </Link>
+              <Link
+                href="/farms"
+                className="text-sm text-gray-600 hover:text-agricultural-600 transition-colors"
+                data-testid="nav-link-farms"
+              >
+                Farms
+              </Link>
+              <Link
+                href="/products"
+                className="text-sm text-gray-600 hover:text-agricultural-600 transition-colors"
+                data-testid="nav-link-products"
+              >
+                Products
+              </Link>
+
+              {/* Divider */}
+              <div className="h-6 w-px bg-gray-300"></div>
+
+              {/* Farmer Dashboard Links */}
               <Link
                 href="/farmer/dashboard"
                 className="flex items-center gap-2 text-gray-700 hover:text-agricultural-600 transition-colors"
@@ -109,31 +146,46 @@ export default async function FarmerLayout({
 
       {/* Mobile Navigation */}
       <div className="md:hidden bg-white border-b border-gray-200">
-        <div className="flex items-center justify-around py-2">
+        <div className="flex items-center justify-around py-2 overflow-x-auto">
+          <Link
+            href="/"
+            className="flex flex-col items-center gap-1 px-2 py-2 text-gray-600 hover:text-agricultural-600 flex-shrink-0"
+          >
+            <GlobeAltIcon className="h-5 w-5" />
+            <span className="text-xs">Home</span>
+          </Link>
+          <Link
+            href="/marketplace"
+            className="flex flex-col items-center gap-1 px-2 py-2 text-gray-600 hover:text-agricultural-600 flex-shrink-0"
+          >
+            <BuildingStorefrontIcon className="h-5 w-5" />
+            <span className="text-xs">Market</span>
+          </Link>
+          <div className="h-8 w-px bg-gray-300 mx-1"></div>
           <Link
             href="/farmer/dashboard"
-            className="flex flex-col items-center gap-1 px-3 py-2 text-gray-700 hover:text-agricultural-600"
+            className="flex flex-col items-center gap-1 px-2 py-2 text-gray-700 hover:text-agricultural-600 flex-shrink-0"
           >
             <HomeIcon className="h-6 w-6" />
             <span className="text-xs">Dashboard</span>
           </Link>
           <Link
             href="/farmer/products"
-            className="flex flex-col items-center gap-1 px-3 py-2 text-gray-700 hover:text-agricultural-600"
+            className="flex flex-col items-center gap-1 px-2 py-2 text-gray-700 hover:text-agricultural-600 flex-shrink-0"
           >
             <CubeIcon className="h-6 w-6" />
             <span className="text-xs">Products</span>
           </Link>
           <Link
             href="/farmer/orders"
-            className="flex flex-col items-center gap-1 px-3 py-2 text-gray-700 hover:text-agricultural-600"
+            className="flex flex-col items-center gap-1 px-2 py-2 text-gray-700 hover:text-agricultural-600 flex-shrink-0"
           >
             <ShoppingCartIcon className="h-6 w-6" />
             <span className="text-xs">Orders</span>
           </Link>
           <Link
             href="/farmer/analytics"
-            className="flex flex-col items-center gap-1 px-3 py-2 text-gray-700 hover:text-agricultural-600"
+            className="flex flex-col items-center gap-1 px-2 py-2 text-gray-700 hover:text-agricultural-600 flex-shrink-0"
           >
             <ChartBarIcon className="h-6 w-6" />
             <span className="text-xs">Analytics</span>

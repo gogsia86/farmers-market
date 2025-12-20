@@ -62,7 +62,7 @@ export default async function FarmerAnalyticsPage() {
   });
 
   if (!farm) {
-    redirect("/onboarding/farm");
+    redirect("/register-farm");
   }
 
   // Calculate date ranges

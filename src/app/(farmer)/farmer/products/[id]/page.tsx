@@ -41,7 +41,7 @@ export default async function EditProductPage({ params }: PageProps) {
 
   // Redirect if no farm
   if (!farm) {
-    redirect("/farmer/setup");
+    redirect("/register-farm");
   }
 
   // Fetch product with ownership verification

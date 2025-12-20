@@ -50,6 +50,8 @@ interface LogMetadata {
   timestamp?: string;
   redirectTo?: string;
   reason?: string;
+  locale?: string;
+  originalPath?: string;
 }
 
 /**
@@ -118,6 +120,47 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
   // Skip static files, Next.js internals, and API routes
   if (isSystemRoute(pathname) || isApiRoute(pathname)) {
     return NextResponse.next();
+  }
+
+  // ========================================
+  // LANGUAGE ROUTES (i18n)
+  // ========================================
+
+  // Check if path starts with supported locale (e.g., /fr, /es, /de)
+  const localeMatch = pathname.match(/^\/([a-z]{2})(\/|$)/);
+  if (localeMatch && localeMatch[1]) {
+    const locale = localeMatch[1];
+    const supportedLocales = [
+      "en",
+      "es",
+      "fr",
+      "de",
+      "zh",
+      "ar",
+      "hi",
+      "pt",
+      "hr",
+      "sr",
+    ];
+
+    if (supportedLocales.includes(locale)) {
+      // Store locale preference in cookie for client-side use
+      const pathWithoutLocale = pathname.slice(3) || "/";
+      const targetUrl = new URL(pathWithoutLocale, request.url);
+
+      middlewareLog.info("Language route detected, redirecting", {
+        locale,
+        originalPath: pathname,
+        redirectTo: pathWithoutLocale,
+      });
+
+      const response = NextResponse.redirect(targetUrl);
+      response.cookies.set("NEXT_LOCALE", locale, {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 365, // 1 year
+      });
+      return response;
+    }
   }
 
   // ========================================

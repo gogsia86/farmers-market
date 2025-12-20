@@ -59,7 +59,7 @@ export default async function FarmerOrderDetailsPage({ params }: PageProps) {
   });
 
   if (!farm) {
-    redirect("/onboarding/farm");
+    redirect("/register-farm");
   }
 
   // Fetch order with all details
