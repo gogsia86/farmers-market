@@ -32,7 +32,7 @@ COPY prisma ./prisma/
 # Set environment variables to skip Husky and other dev-only scripts
 ENV HUSKY=0
 ENV CI=true
-RUN npm ci --only=production --legacy-peer-deps --ignore-scripts
+RUN npm ci --legacy-peer-deps --ignore-scripts
 
 # Run only necessary postinstall scripts
 RUN npm rebuild && npx prisma generate
@@ -54,8 +54,14 @@ RUN apk add --no-cache \
     make \
     g++
 
-# Copy dependencies from deps stage
-COPY --from=deps /app/node_modules ./node_modules
+# Copy package files and install ALL dependencies (including dev)
+COPY package.json package-lock.json* ./
+COPY prisma ./prisma/
+
+# Install ALL dependencies for build
+ENV HUSKY=0
+ENV CI=true
+RUN npm ci --legacy-peer-deps --ignore-scripts
 
 # Copy all application files
 COPY . .
@@ -70,8 +76,8 @@ ENV CI=true
 # Generate Prisma client again in builder context
 RUN npx prisma generate
 
-# Build the Next.js application
-RUN npm run build
+# Build the Next.js application with proper environment
+RUN NODE_OPTIONS='--max-old-space-size=16384' npx prisma generate && npx next build
 
 # ============================================================================
 # STAGE 3: RUNNER (PRODUCTION)
@@ -106,15 +112,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
 
-# Copy Docker scripts
-COPY --chown=nextjs:nodejs docker/scripts/docker-entrypoint.sh /usr/local/bin/
-COPY --chown=nextjs:nodejs docker/scripts/healthcheck.sh /usr/local/bin/
-COPY --chown=nextjs:nodejs docker/scripts/wait-for-db.sh /usr/local/bin/
 
-# Make scripts executable
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/healthcheck.sh
-RUN chmod +x /usr/local/bin/wait-for-db.sh
 
 # Switch to non-root user
 USER nextjs
@@ -123,8 +121,8 @@ USER nextjs
 EXPOSE 3000
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD /usr/local/bin/healthcheck.sh
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:3000/api/health || exit 1
 
 # Environment variables
 ENV NODE_ENV=production
@@ -135,5 +133,5 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # Use dumb-init to handle signals properly
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
-# Run entrypoint script
-CMD ["/usr/local/bin/docker-entrypoint.sh", "node", "server.js"]
+# Run Next.js standalone server
+CMD ["node", "server.js"]
