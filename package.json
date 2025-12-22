@@ -313,7 +313,8 @@
     "test:resilience": "npm run test:chaos && npm run test:real-device:network",
     "test:resilience:full": "npm run test:chaos:all && npm run test:real-device:all",
     "test:day19": "npm run test:real-device:all && npm run test:chaos:all",
-    "test:day19:quick": "npm run test:real-device:journeys && npm run test:chaos:network"
+    "test:day19:quick": "npm run test:real-device:journeys && npm run test:chaos:network",
+    "clean": "bash scripts/cleanup-repo.sh"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
