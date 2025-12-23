@@ -274,52 +274,85 @@ describe("🔧 Utility Functions - Divine Helper System", () => {
   });
 
   describe("⏰ sleep - Async Delay", () => {
-    it("should delay execution for specified time", async () => {
-      const startTime = Date.now();
-      await sleep(50);
-      const duration = Date.now() - startTime;
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
 
-      expect(duration).toBeGreaterThanOrEqual(45); // Allow 5ms tolerance
-      expect(duration).toBeLessThan(100);
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it("should delay execution for specified time", async () => {
+      const promise = sleep(50);
+
+      // Not resolved yet
+      let resolved = false;
+      promise.then(() => {
+        resolved = true;
+      });
+
+      await Promise.resolve();
+      expect(resolved).toBe(false);
+
+      jest.advanceTimersByTime(50);
+      await promise;
+
+      expect(resolved).toBe(true);
     });
 
     it("should work with zero milliseconds", async () => {
-      const startTime = Date.now();
-      await sleep(0);
-      const duration = Date.now() - startTime;
+      const promise = sleep(0);
 
-      expect(duration).toBeLessThan(20); // Increased tolerance for system timing variations
+      jest.advanceTimersByTime(0);
+      await promise;
+
+      expect(true).toBe(true);
     });
 
     it("should work in async workflows", async () => {
       const results: number[] = [];
 
       results.push(1);
-      await sleep(10);
+
+      const p1 = sleep(10);
+      jest.advanceTimersByTime(10);
+      await p1;
+
       results.push(2);
-      await sleep(10);
+
+      const p2 = sleep(10);
+      jest.advanceTimersByTime(10);
+      await p2;
+
       results.push(3);
 
       expect(results).toEqual([1, 2, 3]);
     });
 
     it("should handle multiple concurrent sleeps", async () => {
-      const startTime = Date.now();
-      await Promise.all([sleep(50), sleep(50), sleep(50)]);
-      const duration = Date.now() - startTime;
+      const p = Promise.all([sleep(50), sleep(50), sleep(50)]);
 
-      // All should complete in parallel, ~50ms total
-      expect(duration).toBeGreaterThanOrEqual(45);
-      expect(duration).toBeLessThan(100);
+      jest.advanceTimersByTime(50);
+      await p;
+
+      expect(true).toBe(true);
     });
 
     it("should work with very short delays", async () => {
-      const result = await sleep(1);
+      const promise = sleep(1);
+
+      jest.advanceTimersByTime(1);
+      const result = await promise;
+
       expect(result).toBeUndefined();
     });
 
     it("should be chainable", async () => {
-      const result = await sleep(1).then(() => "completed");
+      const promise = sleep(1).then(() => "completed");
+
+      jest.advanceTimersByTime(1);
+      const result = await promise;
+
       expect(result).toBe("completed");
     });
   });

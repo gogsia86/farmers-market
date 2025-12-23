@@ -1,0 +1,39 @@
+flowchart TD
+    START([User Action]) --> AUTH_CHECK{Authenticated?}
+
+    AUTH_CHECK -->|No| SIGNIN[Redirect to Sign In]
+    SIGNIN --> AUTH_PROVIDER{Auth Provider}
+
+    AUTH_PROVIDER -->|Credentials| CRED_LOGIN[Email/Password Login]
+    AUTH_PROVIDER -->|OAuth| OAUTH_LOGIN[OAuth Login Google/GitHub]
+
+    CRED_LOGIN --> VALIDATE[Validate Credentials]
+    OAUTH_LOGIN --> OAUTH_VALIDATE[OAuth Validation]
+
+    VALIDATE --> CREATE_SESSION[Create Session]
+    OAUTH_VALIDATE --> CREATE_SESSION
+
+    CREATE_SESSION --> STORE_SESSION[Store in Redis]
+    STORE_SESSION --> SET_COOKIE[Set Session Cookie]
+    SET_COOKIE --> AUTH_CHECK
+
+    AUTH_CHECK -->|Yes| ROLE_CHECK{Check Role}
+
+    ROLE_CHECK -->|Customer| CUSTOMER_ROUTE[Customer Routes]
+    ROLE_CHECK -->|Farmer| FARMER_CHECK{Owns Farm?}
+    ROLE_CHECK -->|Admin| ADMIN_ROUTE[Admin Routes]
+
+    FARMER_CHECK -->|Yes| FARMER_ROUTE[Farmer Dashboard]
+    FARMER_CHECK -->|No| FARM_SETUP[Farm Setup Required]
+
+    CUSTOMER_ROUTE --> ACCESS_GRANTED[Access Granted]
+    FARMER_ROUTE --> ACCESS_GRANTED
+    ADMIN_ROUTE --> ACCESS_GRANTED
+    FARM_SETUP --> ACCESS_GRANTED
+
+    ACCESS_GRANTED --> END([Proceed with Action])
+
+    style AUTH_CHECK fill:#ff9800,stroke:#f57c00,stroke-width:2px
+    style ROLE_CHECK fill:#2196f3,stroke:#1976d2,stroke-width:2px
+    style ACCESS_GRANTED fill:#4caf50,stroke:#388e3c,stroke-width:2px
+    style CREATE_SESSION fill:#9c27b0,stroke:#7b1fa2,stroke-width:2px

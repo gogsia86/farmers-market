@@ -1,0 +1,95 @@
+graph TB
+    subgraph "Client Layer"
+        WEB[Web Browser]
+        MOBILE[Mobile Browser]
+        PWA[Progressive Web App]
+    end
+
+    subgraph "CDN & Edge Layer"
+        VERCEL[Vercel Edge Network]
+        CDN[Static Asset CDN]
+    end
+
+    subgraph "Application Layer - Next.js 15"
+        subgraph "Frontend"
+            PAGES[Pages/Routes]
+            COMPONENTS[React Components]
+            HOOKS[Custom Hooks]
+            CONTEXT[Context Providers]
+        end
+
+        subgraph "Backend"
+        
+            API[API Routes]
+            ACTIONS[Server Actions]
+            MIDDLEWARE[Middleware]
+            SSR[Server Side Rendering]
+        end
+    end
+
+    subgraph "Business Logic Layer"
+        SERVICES[Service Layer]
+        VALIDATORS[Validation Layer]
+        UTILS[Utility Functions]
+        AI_AGENTS[AI Agent Framework]
+    end
+
+    subgraph "Data Layer"
+        PRISMA[Prisma ORM]
+        CACHE[Redis Cache]
+        SESSION[Session Store]
+    end
+
+    subgraph "External Services"
+        DB[(PostgreSQL Database)]
+        STRIPE[Stripe Payments]
+        AUTH[NextAuth v5]
+        EMAIL[Email Service]
+    end
+
+    subgraph "Monitoring & Observability"
+        SENTRY[Sentry Error Tracking]
+        UPTIME[UptimeRobot]
+        TELEMETRY[OpenTelemetry]
+        LOGS[Vercel Logs]
+    end
+
+    WEB --> VERCEL
+    MOBILE --> VERCEL
+    PWA --> VERCEL
+
+    VERCEL --> CDN
+    VERCEL --> PAGES
+    VERCEL --> API
+
+    PAGES --> COMPONENTS
+    PAGES --> SSR
+    COMPONENTS --> HOOKS
+    COMPONENTS --> CONTEXT
+
+    API --> SERVICES
+    ACTIONS --> SERVICES
+    MIDDLEWARE --> AUTH
+
+    SERVICES --> VALIDATORS
+    SERVICES --> AI_AGENTS
+    SERVICES --> PRISMA
+    SERVICES --> CACHE
+
+    PRISMA --> DB
+    CACHE --> SESSION
+
+    API --> STRIPE
+    AUTH --> DB
+    SERVICES --> EMAIL
+
+    VERCEL --> SENTRY
+    API --> SENTRY
+    UPTIME -.->|Monitors| VERCEL
+    TELEMETRY -.->|Traces| SERVICES
+
+    style VERCEL fill:#000,stroke:#fff,stroke-width:2px,color:#fff
+    style DB fill:#336791,stroke:#fff,stroke-width:2px,color:#fff
+    style CACHE fill:#DC382D,stroke:#fff,stroke-width:2px,color:#fff
+    style SENTRY fill:#362D59,stroke:#fff,stroke-width:2px,color:#fff
+    style AI_AGENTS fill:#0066ff,stroke:#fff,stroke-width:2px,color:#fff

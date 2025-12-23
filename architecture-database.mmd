@@ -1,0 +1,77 @@
+erDiagram
+    User ||--o{ Farm : owns
+    User ||--o{ Order : places
+    User ||--o{ Review : writes
+    User {
+        string id PK
+        string email UK
+        string name
+        string role
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    Farm ||--o{ Product : has
+    Farm ||--o{ Review : receives
+    Farm {
+        string id PK
+        string name
+        string slug UK
+        string description
+        json location
+        string ownerId FK
+        string status
+        datetime createdAt
+    }
+
+    Product ||--o{ OrderItem : "included in"
+    Product ||--o{ Review : receives
+    Product {
+        string id PK
+        string name
+        string slug
+        decimal price
+        int stock
+        string category
+        string farmId FK
+        boolean available
+        datetime createdAt
+    }
+
+    Order ||--o{ OrderItem : contains
+    Order {
+        string id PK
+        string orderNumber UK
+        string customerId FK
+        decimal total
+        string status
+        string paymentIntentId
+        datetime createdAt
+    }
+
+    OrderItem {
+        string id PK
+        string orderId FK
+        string productId FK
+        int quantity
+        decimal price
+        decimal subtotal
+    }
+
+    Review {
+        string id PK
+        string userId FK
+        string farmId FK
+        string productId FK
+        int rating
+        string comment
+        datetime createdAt
+    }
+
+    Category ||--o{ Product : categorizes
+    Category {
+        string id PK
+        string name UK
+        string slug UK
+        string description
+    }

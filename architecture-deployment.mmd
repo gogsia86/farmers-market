@@ -1,0 +1,62 @@
+graph TB
+    subgraph "Development"
+        DEV_CODE[Local Development]
+        GIT[Git Repository]
+    end
+
+    subgraph "CI/CD Pipeline"
+        GITHUB[GitHub Actions]
+        TESTS[Automated Tests]
+        BUILD[Build Process]
+        LINT[Linting & Type Check]
+    end
+
+    subgraph "Vercel Platform"
+        PREVIEW[Preview Deployments]
+        PRODUCTION[Production Deployment]
+        EDGE[Edge Functions]
+    end
+
+    subgraph "Data Tier"
+        PG[(PostgreSQL)]
+        REDIS_CACHE[(Redis Cache - Upstash)]
+    end
+
+    subgraph "External Integrations"
+        STRIPE_SVC[Stripe API]
+        EMAIL_SVC[Email Service]
+        MAPS_API[Maps API]
+    end
+
+    subgraph "Monitoring Stack"
+        SENTRY_MON[Sentry]
+        UPTIME_MON[UptimeRobot]
+        VERCEL_ANALYTICS[Vercel Analytics]
+    end
+
+    DEV_CODE --> GIT
+    GIT --> GITHUB
+    GITHUB --> TESTS
+    TESTS --> LINT
+    LINT --> BUILD
+
+    BUILD -->|Feature Branch| PREVIEW
+    BUILD -->|Main Branch| PRODUCTION
+
+    PRODUCTION --> EDGE
+    PREVIEW --> EDGE
+
+    EDGE --> PG
+    EDGE --> REDIS_CACHE
+    EDGE --> STRIPE_SVC
+    EDGE --> EMAIL_SVC
+    EDGE --> MAPS_API
+
+    PRODUCTION --> SENTRY_MON
+    PRODUCTION --> VERCEL_ANALYTICS
+    UPTIME_MON -.->|Monitors| PRODUCTION
+
+    style PRODUCTION fill:#000,stroke:#0f0,stroke-width:3px,color:#fff
+    style REDIS_CACHE fill:#DC382D,stroke:#fff,stroke-width:2px,color:#fff
+    style PG fill:#336791,stroke:#fff,stroke-width:2px,color:#fff
+    style SENTRY_MON fill:#362D59,stroke:#fff,stroke-width:2px,color:#fff

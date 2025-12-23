@@ -1,0 +1,54 @@
+sequenceDiagram
+    participant User
+    participant Browser
+    participant Vercel
+    participant NextJS
+    participant Services
+    participant Redis
+    participant Prisma
+    participant Database
+    participant Stripe
+    participant Sentry
+
+    User->>Browser: Navigate to Platform
+    Browser->>Vercel: HTTPS Request
+    Vercel->>NextJS: Route Request
+
+    alt Static Page
+        NextJS->>Browser: Return Cached HTML
+    else Dynamic Page
+        NextJS->>Services: Fetch Data
+        Services->>Redis: Check Cache
+
+        alt Cache Hit
+            Redis->>Services: Return Cached Data
+        else Cache Miss
+            Services->>Prisma: Query Database
+            Prisma->>Database: SQL Query
+            Database->>Prisma: Results
+            Prisma->>Services: Mapped Data
+            Services->>Redis: Store Cache
+        end
+
+        Services->>NextJS: Business Logic Result
+        NextJS->>Browser: Render & Return HTML
+    end
+
+    Browser->>User: Display Page
+
+    User->>Browser: Perform Action (e.g., Purchase)
+    Browser->>NextJS: API Request
+    NextJS->>Services: Process Action
+    Services->>Stripe: Create Payment
+    Stripe->>Services: Payment Result
+    Services->>Prisma: Update Database
+    Prisma->>Database: Transaction
+
+    alt Success
+        Services->>NextJS: Success Response
+        NextJS->>Browser: Confirmation
+    else Error
+        Services->>Sentry: Log Error
+        Services->>NextJS: Error Response
+        NextJS->>Browser: Error Message
+    end

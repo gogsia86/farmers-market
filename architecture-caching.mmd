@@ -1,0 +1,33 @@
+flowchart TB
+    REQUEST[Incoming Request] --> L1_CHECK{Check L1<br/>Memory Cache}
+
+    L1_CHECK -->|Hit| L1_RETURN[Return from Memory]
+    L1_CHECK -->|Miss| L2_CHECK{Check L2<br/>Redis Cache}
+
+    L2_CHECK -->|Hit| L2_RETURN[Return from Redis]
+    L2_CHECK -->|Miss| DB_QUERY[Query Database]
+
+    L2_RETURN --> L1_STORE[Store in L1 Cache]
+    L1_STORE --> RETURN_DATA[Return to Client]
+
+    DB_QUERY --> DB[(Database)]
+    DB --> TRANSFORM[Transform Data]
+    TRANSFORM --> L2_STORE[Store in L2 Redis]
+    L2_STORE --> L1_STORE
+
+    L1_RETURN --> RETURN_DATA
+
+    subgraph "Cache Policies"
+        TTL[TTL Configuration]
+        INVALIDATION[Invalidation Rules]
+        WARMING[Cache Warming]
+    end
+
+    TTL -.->|5min| L1_CHECK
+    TTL -.->|1hour| L2_CHECK
+    INVALIDATION -.->|On Update| L2_STORE
+    WARMING -.->|Preload| DB_QUERY
+
+    style L1_CHECK fill:#4caf50,stroke:#388e3c,stroke-width:2px
+    style L2_CHECK fill:#ff9800,stroke:#f57c00,stroke-width:2px
+    style DB_QUERY fill:#f44336,stroke:#d32f2f,stroke-width:2px
