@@ -18,6 +18,7 @@
  * - Agricultural route tracking for analytics
  *
  * @module Middleware
+ * @see https://nextjs.org/docs/app/building-your-application/routing/middleware
  */
 
 import { getToken } from "next-auth/jwt";
