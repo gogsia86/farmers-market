@@ -56,5 +56,6 @@ Dockerfile*
 
 # Development files
 scripts/**
+!scripts/vercel-build.sh
 *.md
 !README.md
