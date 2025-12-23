@@ -101,7 +101,7 @@ let agriculturalAwareness = 0;
 // MIDDLEWARE FUNCTION
 // ============================================================================
 
-export async function middleware(request: NextRequest): Promise<NextResponse> {
+export async function proxy(request: NextRequest): Promise<NextResponse> {
   const { pathname } = request.nextUrl;
   const baseUrl = request.url;
 
@@ -320,14 +320,14 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 // ============================================================================
 
 /**
- * Configure which routes this middleware runs on
+ * Configure which routes this proxy runs on
  *
  * This matcher excludes:
  * - API routes (handled by API route auth)
  * - Next.js static files (_next/static, _next/image)
  * - Common static assets (images, icons, manifest)
  *
- * All other routes will be processed by the middleware
+ * All other routes will be processed by the proxy
  */
 export const config = {
   matcher: [
