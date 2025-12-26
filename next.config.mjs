@@ -7,6 +7,10 @@ const withBundleAnalyzer = bundleAnalyzer({
 });
 
 /** @type {import('next').NextConfig} */
+
+// Import extracted webpack configuration
+import { configureWebpack } from "./webpack.config.mjs";
+
 const nextConfig = {
   // Docker compatibility
   output: "standalone",
@@ -51,144 +55,11 @@ const nextConfig = {
   },
 
   // ============================================
-  // WEBPACK OPTIMIZATION (64GB RAM + 12 THREADS)
+  // WEBPACK OPTIMIZATION
   // ============================================
-  webpack: (config, { dev, isServer }) => {
-    // Fix __name is not defined error
-    config.optimization = config.optimization || {};
-    config.optimization.minimize = !dev;
-
-    if (!dev) {
-      // Import TerserPlugin
-      const TerserPlugin = require("terser-webpack-plugin");
-
-      // Replace minimizer array with properly configured Terser
-      config.optimization.minimizer = [
-        new TerserPlugin({
-          terserOptions: {
-            compress: {
-              drop_console: process.env.NODE_ENV === "production",
-            },
-            mangle: {
-              keep_fnames: true, // Preserve function names
-              reserved: ["__name"], // Explicitly protect __name
-            },
-            keep_fnames: true,
-            keep_classnames: true,
-          },
-        }),
-      ];
-    }
-
-    // Enable parallel building based on available CPU cores
-    const os = require("os");
-    config.parallelism = Math.max(os.cpus().length - 2, 1);
-
-    // Performance settings
-    config.performance = {
-      maxAssetSize: 10000000, // 10MB
-      maxEntrypointSize: 10000000, // 10MB
-    };
-
-    // Enable memory caching
-    config.cache = {
-      type: "memory",
-      maxGenerations: process.env.NODE_ENV === "production" ? 50 : 20,
-    };
-
-    // Thread loader for parallel processing
-    if (!dev && !isServer) {
-      config.optimization = {
-        ...config.optimization,
-        moduleIds: "deterministic",
-        runtimeChunk: "single",
-        splitChunks: {
-          chunks: "all",
-          maxInitialRequests: 25,
-          minSize: 20000,
-          cacheGroups: {
-            default: false,
-            vendors: false,
-            // ============================================
-            // STRATEGIC CACHE GROUPS (7 GROUPS)
-            // Simplified from 13 groups for better maintainability
-            // ============================================
-
-            // 1. Framework Core - React, Next.js essentials (highest priority)
-            framework: {
-              name: "framework",
-              test: /[\\/]node_modules[\\/](react|react-dom|next|scheduler)[\\/]/,
-              chunks: "all",
-              priority: 40,
-              enforce: true,
-              reuseExistingChunk: true,
-            },
-
-            // 2. Route-Based Splits - Admin, Farmer, Monitoring dashboards
-            routes: {
-              name: "routes",
-              test: /[\\/]app[\\/]\((admin|farmer|monitoring)\)|[\\/]lib[\\/]monitoring/,
-              chunks: "all",
-              priority: 35,
-              enforce: true,
-              reuseExistingChunk: true,
-            },
-
-            // 3. Heavy Async Libraries - AI/ML, Charts, Animations
-            // Loaded on-demand to reduce initial bundle size
-            heavyAsync: {
-              name: "heavy-async",
-              test: /[\\/]node_modules[\\/](@tensorflow|ollama|recharts|chart\.js|d3|victory|framer-motion)[\\/]/,
-              chunks: "async",
-              priority: 30,
-              reuseExistingChunk: true,
-            },
-
-            // 4. Critical Services - Payment, Auth, Telemetry
-            services: {
-              name: "services",
-              test: /[\\/]node_modules[\\/](@stripe|@opentelemetry|@sentry|next-auth)[\\/]/,
-              chunks: "all",
-              priority: 25,
-              reuseExistingChunk: true,
-            },
-
-            // 5. UI Libraries - Component libraries and styling
-            ui: {
-              name: "ui",
-              test: /[\\/]node_modules[\\/](@radix-ui|@headlessui|clsx|class-variance-authority)[\\/]/,
-              chunks: "all",
-              priority: 22,
-              reuseExistingChunk: true,
-            },
-
-            // 6. Vendor - All other node_modules
-            vendor: {
-              name: "vendor",
-              test: /[\\/]node_modules[\\/]/,
-              chunks: "all",
-              priority: 20,
-              reuseExistingChunk: true,
-            },
-
-            // 7. Common - Shared code across multiple pages
-            common: {
-              name: "common",
-              minChunks: 2,
-              chunks: "all",
-              priority: 10,
-              enforce: true,
-              reuseExistingChunk: true,
-            },
-          },
-        },
-        // Minimize for production
-        minimize: true,
-      };
-    }
-
-    return config;
-  },
+  // Extracted to webpack.config.js for better maintainability
+  // See: webpack.config.js for full configuration details
+  webpack: configureWebpack,
 
   // ============================================
   // TYPESCRIPT CONFIGURATION
