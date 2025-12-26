@@ -103,60 +103,33 @@ const nextConfig = {
   // IMAGE OPTIMIZATION
   // ============================================
   images: {
+    // Remote image sources (consolidated patterns)
     remotePatterns: [
-      {
-        protocol: "http",
-        hostname: "localhost",
-      },
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com",
-      },
-      {
-        protocol: "https",
-        hostname: "via.placeholder.com",
-      },
-      // Cloudinary CDN
-      {
-        protocol: "https",
-        hostname: "res.cloudinary.com",
-      },
-      {
-        protocol: "https",
-        hostname: "*.cloudinary.com",
-      },
-      // Supabase Storage
-      {
-        protocol: "https",
-        hostname: "*.supabase.co",
-      },
-      {
-        protocol: "https",
-        hostname: "*.supabase.in",
-      },
-      // AWS S3
-      {
-        protocol: "https",
-        hostname: "*.amazonaws.com",
-      },
-      {
-        protocol: "https",
-        hostname: "s3.amazonaws.com",
-      },
-      // Vercel Blob Storage
-      {
-        protocol: "https",
-        hostname: "*.vercel-storage.com",
-      },
-      {
-        protocol: "https",
-        hostname: "*.public.blob.vercel-storage.com",
-      },
+      // Development
+      { protocol: "http", hostname: "localhost" },
+
+      // External image services
+      { protocol: "https", hostname: "images.unsplash.com" },
+      { protocol: "https", hostname: "via.placeholder.com" },
+
+      // CDN providers (wildcard patterns for flexibility)
+      { protocol: "https", hostname: "*.cloudinary.com" },
+      { protocol: "https", hostname: "*.supabase.co" },
+      { protocol: "https", hostname: "*.amazonaws.com" },
+      { protocol: "https", hostname: "*.vercel-storage.com" },
     ],
+
+    // Modern image formats (AVIF → WebP fallback)
     formats: ["image/avif", "image/webp"],
+
+    // Responsive breakpoints (optimized for common devices)
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    minimumCacheTTL: 5184000, // 60 days
+
+    // Cache for 60 days
+    minimumCacheTTL: 5184000,
+
+    // SVG handling with security
     dangerouslyAllowSVG: true,
     contentDispositionType: "attachment",
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
