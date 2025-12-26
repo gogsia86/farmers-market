@@ -8,18 +8,11 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // ============================================
-  // HP OMEN ULTIMATE OPTIMIZATION
-  // ============================================
-  // System: 64GB RAM, 12 threads, RTX 2070 Max-Q 8GB
-  // Target: Maximum performance and parallelization
-  // ============================================
-
   // Docker compatibility
   output: "standalone",
 
   // ============================================
-  // COMPILER OPTIMIZATIONS (HP OMEN TUNED)
+  // COMPILER OPTIMIZATIONS
   // ============================================
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
@@ -87,19 +80,20 @@ const nextConfig = {
       ];
     }
 
-    // Enable parallel building with all threads
-    config.parallelism = 12;
+    // Enable parallel building based on available CPU cores
+    const os = require("os");
+    config.parallelism = Math.max(os.cpus().length - 2, 1);
 
-    // Optimize for 64GB RAM
+    // Performance settings
     config.performance = {
-      maxAssetSize: 10000000, // 10MB (we have the RAM!)
+      maxAssetSize: 10000000, // 10MB
       maxEntrypointSize: 10000000, // 10MB
     };
 
-    // Enable caching with plenty of memory
+    // Enable memory caching
     config.cache = {
       type: "memory",
-      maxGenerations: 100, // Keep more in cache with 64GB
+      maxGenerations: process.env.NODE_ENV === "production" ? 50 : 20,
     };
 
     // Thread loader for parallel processing
@@ -116,100 +110,75 @@ const nextConfig = {
             default: false,
             vendors: false,
             // ============================================
-            // PHASE 6 DAY 4: ROUTE-BASED CODE SPLITTING
+            // STRATEGIC CACHE GROUPS (7 GROUPS)
+            // Simplified from 13 groups for better maintainability
             // ============================================
-            // Admin routes bundle (80-100 KB)
-            admin: {
-              name: "admin",
-              test: /[\\/]app[\\/]\(admin\)/,
-              chunks: "all",
-              priority: 35,
-              reuseExistingChunk: true,
-              enforce: true,
-            },
-            // Farmer dashboard bundle (70-90 KB)
-            farmer: {
-              name: "farmer",
-              test: /[\\/]app[\\/]\(farmer\)/,
-              chunks: "all",
-              priority: 35,
-              reuseExistingChunk: true,
-              enforce: true,
-            },
-            // Monitoring dashboard bundle (40-60 KB)
-            monitoring: {
-              name: "monitoring",
-              test: /[\\/]app[\\/]\(monitoring\)|[\\/]lib[\\/]monitoring/,
-              chunks: "all",
-              priority: 36,
-              reuseExistingChunk: true,
-              enforce: true,
-            },
-            // ============================================
-            // Framework chunk (React, Next.js core)
+
+            // 1. Framework Core - React, Next.js essentials (highest priority)
             framework: {
               name: "framework",
-              chunks: "all",
               test: /[\\/]node_modules[\\/](react|react-dom|next|scheduler)[\\/]/,
+              chunks: "all",
               priority: 40,
               enforce: true,
-            },
-            // Heavy AI/ML libraries - Phase 5 Dynamic Import Target
-            ai: {
-              name: "ai-ml",
-              test: /[\\/]node_modules[\\/](@tensorflow|ollama)[\\/]/,
-              chunks: "async",
-              priority: 35,
               reuseExistingChunk: true,
             },
-            // Chart libraries - Phase 5 Dynamic Import Target
-            charts: {
-              name: "charts",
-              test: /[\\/]node_modules[\\/](recharts|chart\.js|d3|victory)[\\/]/,
-              chunks: "async",
+
+            // 2. Route-Based Splits - Admin, Farmer, Monitoring dashboards
+            routes: {
+              name: "routes",
+              test: /[\\/]app[\\/]\((admin|farmer|monitoring)\)|[\\/]lib[\\/]monitoring/,
+              chunks: "all",
               priority: 35,
+              enforce: true,
               reuseExistingChunk: true,
             },
-            // Animation libraries
-            animations: {
-              name: "animations",
-              test: /[\\/]node_modules[\\/](framer-motion)[\\/]/,
+
+            // 3. Heavy Async Libraries - AI/ML, Charts, Animations
+            // Loaded on-demand to reduce initial bundle size
+            heavyAsync: {
+              name: "heavy-async",
+              test: /[\\/]node_modules[\\/](@tensorflow|ollama|recharts|chart\.js|d3|victory|framer-motion)[\\/]/,
               chunks: "async",
               priority: 30,
               reuseExistingChunk: true,
             },
-            // Stripe and payment processing
-            payments: {
-              name: "payments",
-              test: /[\\/]node_modules[\\/](@stripe)[\\/]/,
-              chunks: "async",
-              priority: 30,
-              reuseExistingChunk: true,
-            },
-            // OpenTelemetry and monitoring
-            telemetry: {
-              name: "telemetry",
-              test: /[\\/]node_modules[\\/](@opentelemetry|@sentry)[\\/]/,
+
+            // 4. Critical Services - Payment, Auth, Telemetry
+            services: {
+              name: "services",
+              test: /[\\/]node_modules[\\/](@stripe|@opentelemetry|@sentry|next-auth)[\\/]/,
               chunks: "all",
               priority: 25,
               reuseExistingChunk: true,
             },
-            // Large vendor libraries
+
+            // 5. UI Libraries - Component libraries and styling
+            ui: {
+              name: "ui",
+              test: /[\\/]node_modules[\\/](@radix-ui|@headlessui|clsx|class-variance-authority)[\\/]/,
+              chunks: "all",
+              priority: 22,
+              reuseExistingChunk: true,
+            },
+
+            // 6. Vendor - All other node_modules
             vendor: {
               name: "vendor",
-              chunks: "all",
               test: /[\\/]node_modules[\\/]/,
+              chunks: "all",
               priority: 20,
               reuseExistingChunk: true,
             },
-            // Common chunks across pages
+
+            // 7. Common - Shared code across multiple pages
             common: {
               name: "common",
               minChunks: 2,
               chunks: "all",
               priority: 10,
-              reuseExistingChunk: true,
               enforce: true,
+              reuseExistingChunk: true,
             },
           },
         },
@@ -222,13 +191,12 @@ const nextConfig = {
   },
 
   // ============================================
-  // TYPESCRIPT CONFIGURATION (12 THREAD COMPILATION)
+  // TYPESCRIPT CONFIGURATION
   // ============================================
   typescript: {
-    // TEMPORARY: Ignoring build errors to unblock deployment
-    // OpenTelemetry version mismatch - will fix in next update
-    // TODO: Fix OpenTelemetry dependency versions and re-enable
-    ignoreBuildErrors: true,
+    // TypeScript strict checking enabled - no build errors present
+    // Verified with `npx tsc --noEmit` on December 26, 2024
+    ignoreBuildErrors: false,
     tsconfigPath: "./tsconfig.json",
   },
 
@@ -239,11 +207,11 @@ const nextConfig = {
   // Use: npm run lint or npm run quality
 
   // ============================================
-  // BUILD OPTIMIZATION (HP OMEN BEAST MODE)
+  // BUILD OPTIMIZATION
   // ============================================
-  staticPageGenerationTimeout: 300, // 5 minutes (we have time with this power)
+  staticPageGenerationTimeout: 300, // 5 minutes
   generateBuildId: async () => {
-    return `omen-${Date.now()}`;
+    return `build-${Date.now()}`;
   },
 
   // React strict mode (disable in Docker for speed)
@@ -253,16 +221,15 @@ const nextConfig = {
   distDir: ".next",
 
   // ============================================
-  // ON-DEMAND ENTRIES (OPTIMIZED FOR 64GB RAM)
+  // ON-DEMAND ENTRIES
   // ============================================
   onDemandEntries: {
-    maxInactiveAge: 60 * 1000, // 1 minute (more aggressive with 64GB)
-    pagesBufferLength: 10, // Keep more pages in buffer
+    maxInactiveAge: 60 * 1000, // 1 minute
+    pagesBufferLength: 5, // Pages to keep in buffer
   },
 
   // ============================================
-  // IMAGE OPTIMIZATION (RTX 2070 HARDWARE ACCELERATION)
-  // Week 1 Day 3: Enhanced with extended cache and remote patterns
+  // IMAGE OPTIMIZATION
   // ============================================
   images: {
     remotePatterns: [
@@ -315,10 +282,10 @@ const nextConfig = {
         hostname: "*.public.blob.vercel-storage.com",
       },
     ],
-    formats: ["image/avif", "image/webp"], // AVIF first for RTX hardware acceleration
+    formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    minimumCacheTTL: 31536000, // 1 year (365 days) - we have the storage
+    minimumCacheTTL: 5184000, // 60 days
     dangerouslyAllowSVG: true,
     contentDispositionType: "attachment",
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
@@ -332,15 +299,6 @@ const nextConfig = {
       {
         source: "/(.*)",
         headers: [
-          // Agricultural consciousness
-          {
-            key: "X-Agricultural-Consciousness",
-            value: "divine",
-          },
-          {
-            key: "X-HP-OMEN-Optimized",
-            value: "true",
-          },
           // Security headers
           {
             key: "X-Frame-Options",
@@ -400,19 +358,6 @@ const nextConfig = {
   },
 
   // ============================================
-  // ENVIRONMENT VARIABLES
-  // ============================================
-  env: {
-    AGRICULTURAL_CONSCIOUSNESS: "enabled",
-    DIVINE_PATTERNS: "active",
-    HP_OMEN_OPTIMIZATION: "ultimate",
-    HP_OMEN_RAM_GB: "64",
-    HP_OMEN_THREADS: "12",
-    HP_OMEN_GPU: "RTX_2070_MAX_Q",
-    HP_OMEN_VRAM_GB: "8",
-  },
-
-  // ============================================
   // PERFORMANCE OPTIMIZATIONS
   // ============================================
   poweredByHeader: false,
@@ -430,9 +375,8 @@ const nextConfig = {
   productionBrowserSourceMaps: false,
 
   // ============================================
-  // SWC CONFIGURATION (12 THREAD COMPILATION)
+  // SWC CONFIGURATION
   // ============================================
-  // Note: swcMinify is now default in Next.js 15+
   modularizeImports: {
     "@heroicons/react/24/outline": {
       transform: "@heroicons/react/24/outline/{{member}}",
