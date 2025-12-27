@@ -152,10 +152,10 @@ describe("🛒 CartService - Divine Agricultural Commerce", () => {
 
       const result = await service.getCart("user_123");
 
-      expect(result).toHaveProperty("items");
-      expect(result).toHaveProperty("subtotal");
-      expect(result).toHaveProperty("total");
-      expect(result).toHaveProperty("itemCount");
+      expect(result.data).toHaveProperty("items");
+      expect(result.data).toHaveProperty("subtotal");
+      expect(result.data).toHaveProperty("total");
+      expect(result.data).toHaveProperty("itemCount");
       expect(mockDatabase.cartItem.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({ userId: "user_123" }),
@@ -168,9 +168,9 @@ describe("🛒 CartService - Divine Agricultural Commerce", () => {
 
       const result = await service.getCart("user_123");
 
-      expect(result.items).toHaveLength(0);
-      expect(result.subtotal).toBe(0);
-      expect(result.itemCount).toBe(0);
+      expect(result.data.items).toHaveLength(0);
+      expect(result.data.subtotal).toBe(0);
+      expect(result.data.itemCount).toBe(0);
     });
 
     it("should filter out expired reservations via query", async () => {
@@ -211,7 +211,7 @@ describe("🛒 CartService - Divine Agricultural Commerce", () => {
       ]);
 
       const result = await service.getCart("user_123");
-      expect(result.items).toHaveLength(1);
+      expect(result.data.items).toHaveLength(1);
     });
 
     it("should use primaryPhotoUrl when images array is empty", async () => {
@@ -227,7 +227,7 @@ describe("🛒 CartService - Divine Agricultural Commerce", () => {
       ]);
 
       const result = await service.getCart("user_123");
-      expect(result.items).toHaveLength(1);
+      expect(result.data.items).toHaveLength(1);
     });
 
     it("should correctly map all cart item fields", async () => {
@@ -241,7 +241,7 @@ describe("🛒 CartService - Divine Agricultural Commerce", () => {
 
       const result = await service.getCart("user_123");
 
-      expect(result.items[0]).toMatchObject({
+      expect(result.data.items[0]).toMatchObject({
         id: mockItem.id,
         productId: mockItem.productId,
         farmId: mockItem.farmId,
@@ -265,7 +265,7 @@ describe("🛒 CartService - Divine Agricultural Commerce", () => {
       ]);
 
       const result = await service.getCart("user_123");
-      expect(result.items[0].inStock).toBe(false);
+      expect(result.data.items[0].inStock).toBe(false);
     });
   });
 
@@ -695,14 +695,14 @@ describe("🛒 CartService - Divine Agricultural Commerce", () => {
       const result = await service.mergeGuestCart("user_123", guestItems);
 
       expect(result.success).toBe(true);
-      expect(result.merged).toBe(2);
+      expect(result.data.merged).toBe(2);
     });
 
     it("should return zero merged count for empty guest cart", async () => {
       const result = await service.mergeGuestCart("user_123", []);
 
       expect(result.success).toBe(true);
-      expect(result.merged).toBe(0);
+      expect(result.data.merged).toBe(0);
     });
 
     it("should skip items that fail to add", async () => {
@@ -719,7 +719,7 @@ describe("🛒 CartService - Divine Agricultural Commerce", () => {
       const result = await service.mergeGuestCart("user_123", guestItems);
 
       expect(result.success).toBe(true);
-      expect(result.merged).toBe(0);
+      expect(result.data.merged).toBe(0);
     });
 
     it("should handle errors during merge gracefully", async () => {
@@ -737,7 +737,7 @@ describe("🛒 CartService - Divine Agricultural Commerce", () => {
       const result = await service.mergeGuestCart("user_123", guestItems);
 
       // The method catches errors and returns merged: 0
-      expect(result.merged).toBe(0);
+      expect(result.data.merged).toBe(0);
     });
   });
 
@@ -762,7 +762,7 @@ describe("🛒 CartService - Divine Agricultural Commerce", () => {
 
       const result = await service.validateCart("user_123");
 
-      expect(result.valid).toBe(true);
+      expect(result.data.valid).toBe(true);
     });
 
     it("should detect out of stock items", async () => {
@@ -781,8 +781,8 @@ describe("🛒 CartService - Divine Agricultural Commerce", () => {
 
       const result = await service.validateCart("user_123");
 
-      expect(result.valid).toBe(false);
-      expect(result.issues.length).toBeGreaterThan(0);
+      expect(result.data.valid).toBe(false);
+      expect(result.data.issues.length).toBeGreaterThan(0);
     });
 
     it("should detect insufficient stock", async () => {
@@ -799,8 +799,8 @@ describe("🛒 CartService - Divine Agricultural Commerce", () => {
 
       const result = await service.validateCart("user_123");
 
-      expect(result.valid).toBe(false);
-      expect(result.issues[0].message).toContain("available");
+      expect(result.data.valid).toBe(false);
+      expect(result.data.issues[0].message).toContain("available");
     });
 
     it("should detect price changes", async () => {
@@ -820,8 +820,8 @@ describe("🛒 CartService - Divine Agricultural Commerce", () => {
 
       const result = await service.validateCart("user_123");
 
-      expect(result.valid).toBe(false);
-      expect(result.issues[0].message).toContain("changed");
+      expect(result.data.valid).toBe(false);
+      expect(result.data.issues[0].message).toContain("changed");
     });
 
     it("should detect inactive farms", async () => {
@@ -841,8 +841,10 @@ describe("🛒 CartService - Divine Agricultural Commerce", () => {
 
       const result = await service.validateCart("user_123");
 
-      expect(result.valid).toBe(false);
-      expect(result.issues[0].message).toContain("not currently accepting");
+      expect(result.data.valid).toBe(false);
+      expect(result.data.issues[0].message).toContain(
+        "not currently accepting",
+      );
     });
 
     it("should return valid for empty cart", async () => {
@@ -850,7 +852,7 @@ describe("🛒 CartService - Divine Agricultural Commerce", () => {
 
       const result = await service.validateCart("user_123");
 
-      expect(result.valid).toBe(true);
+      expect(result.data.valid).toBe(true);
     });
 
     it("should detect multiple issues", async () => {
@@ -876,8 +878,8 @@ describe("🛒 CartService - Divine Agricultural Commerce", () => {
 
       const result = await service.validateCart("user_123");
 
-      expect(result.valid).toBe(false);
-      expect(result.issues.length).toBeGreaterThanOrEqual(2);
+      expect(result.data.valid).toBe(false);
+      expect(result.data.issues.length).toBeGreaterThanOrEqual(2);
     });
   });
 
@@ -986,7 +988,7 @@ describe("🛒 CartService - Divine Agricultural Commerce", () => {
       const result = await service.getCart("user_123");
 
       // Subtotal = 2 * 10 = 20, which is under $50, so delivery fee should apply
-      expect(result.deliveryFee).toBeGreaterThan(0);
+      expect(result.data.deliveryFee).toBeGreaterThan(0);
     });
 
     it("should waive delivery fee for orders $50 and above", async () => {
@@ -1006,7 +1008,7 @@ describe("🛒 CartService - Divine Agricultural Commerce", () => {
       const result = await service.getCart("user_123");
 
       // Subtotal = 10 * 10 = 100, which is >= $50, so delivery fee should be waived
-      expect(result.deliveryFee).toBe(0);
+      expect(result.data.deliveryFee).toBe(0);
     });
 
     it("should apply zero fee for farm pickup", async () => {
@@ -1025,7 +1027,7 @@ describe("🛒 CartService - Divine Agricultural Commerce", () => {
 
       const result = await service.getCart("user_123");
 
-      expect(result.deliveryFee).toBe(0);
+      expect(result.data.deliveryFee).toBe(0);
     });
 
     it("should apply zero fee for market pickup", async () => {
@@ -1044,7 +1046,7 @@ describe("🛒 CartService - Divine Agricultural Commerce", () => {
 
       const result = await service.getCart("user_123");
 
-      expect(result.deliveryFee).toBe(0);
+      expect(result.data.deliveryFee).toBe(0);
     });
 
     it("should calculate fee for multiple farms with delivery", async () => {
@@ -1081,7 +1083,7 @@ describe("🛒 CartService - Divine Agricultural Commerce", () => {
       const result = await service.getCart("user_123");
 
       // Multiple farms should have some delivery fee structure
-      expect(result.farmCount).toBe(2);
+      expect(result.data.farmCount).toBe(2);
     });
   });
 
@@ -1124,7 +1126,9 @@ describe("🛒 CartService - Divine Agricultural Commerce", () => {
 
       const result = await service.getCart("user_123");
 
-      expect(result.items[0].name).toBe("Organic Tomatoes & Peppers <Fresh>");
+      expect(result.data.items[0].name).toBe(
+        "Organic Tomatoes & Peppers <Fresh>",
+      );
     });
 
     it("should handle concurrent add operations", async () => {
@@ -1176,8 +1180,8 @@ describe("🛒 CartService - Divine Agricultural Commerce", () => {
 
       const result = await service.getCart("user_123");
 
-      expect(result.items[0].organic).toBe(true);
-      expect(result.items[1].organic).toBe(false);
+      expect(result.data.items[0].organic).toBe(true);
+      expect(result.data.items[1].organic).toBe(false);
     });
 
     it("should track farm names for local sourcing", async () => {
@@ -1197,7 +1201,7 @@ describe("🛒 CartService - Divine Agricultural Commerce", () => {
 
       const result = await service.getCart("user_123");
 
-      expect(result.items[0].farmName).toBe("Local Valley Farm");
+      expect(result.data.items[0].farmName).toBe("Local Valley Farm");
     });
   });
 });

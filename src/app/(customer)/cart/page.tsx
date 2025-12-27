@@ -53,7 +53,15 @@ export default async function CartPage() {
   // If user is authenticated, fetch cart from database
   if (session?.user?.id) {
     try {
-      cartSummary = await cartService.getCart(session.user.id);
+      const response = await cartService.getCart(session.user.id);
+
+      if (response.success) {
+        cartSummary = response.data;
+      } else {
+        console.error("Error fetching cart:", response.error);
+        error =
+          response.error?.message || "Failed to load cart. Please try again.";
+      }
     } catch (err) {
       console.error("Error fetching cart:", err);
       error = "Failed to load cart. Please try again.";

@@ -3,6 +3,9 @@
  * Agricultural consciousness error handling with quantum enlightenment
  */
 
+// Import and re-export BusinessLogicError
+export { BusinessLogicError } from "./errors/BusinessLogicError";
+
 /**
  * Base divine error class with resolution guidance
  */

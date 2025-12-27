@@ -15,6 +15,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { checkoutService } from "@/lib/services/checkout.service";
 import { z } from "zod";
+import type { Order, Farm, OrderItem, User, Address } from "@prisma/client";
+
+// ============================================================================
+// TYPES
+// ============================================================================
+
+// Order with relations from Prisma include
+type OrderWithRelations = Order & {
+  items: OrderItem[];
+  farm: Farm;
+  customer?: User;
+  deliveryAddress?: Address;
+};
 
 // ============================================================================
 // VALIDATION SCHEMA
@@ -103,19 +116,34 @@ export async function POST(request: NextRequest) {
       stripePaymentIntentId: data.stripePaymentIntentId,
     });
 
+    // Handle ServiceResponse pattern (discriminated union)
     if (!result.success) {
       return NextResponse.json(
         {
           success: false,
-          error: result.error || "Failed to create order",
+          error: result.error.message || "Failed to create order",
         },
         { status: 400 },
       );
     }
 
     // Handle multiple orders (one per farm) or single order
-    const orders = Array.isArray(result.order) ? result.order : [result.order];
-    const primaryOrder = orders[0];
+    // Type assertion since we know the service returns orders with relations
+    const ordersWithRelations = (
+      Array.isArray(result.data) ? result.data : [result.data]
+    ) as OrderWithRelations[];
+
+    const primaryOrder = ordersWithRelations[0];
+
+    if (!primaryOrder) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "No order data returned",
+        },
+        { status: 500 },
+      );
+    }
 
     // Return success response
     return NextResponse.json(
@@ -127,9 +155,9 @@ export async function POST(request: NextRequest) {
           status: primaryOrder.status,
           total: primaryOrder.total,
           itemCount: primaryOrder.items.length,
-          farmCount: orders.length,
+          farmCount: ordersWithRelations.length,
         },
-        orders: orders.map((order) => ({
+        orders: ordersWithRelations.map((order) => ({
           id: order.id,
           orderNumber: order.orderNumber,
           farmId: order.farmId,
@@ -138,8 +166,8 @@ export async function POST(request: NextRequest) {
           itemCount: order.items.length,
         })),
         message:
-          orders.length > 1
-            ? `${orders.length} orders created successfully`
+          ordersWithRelations.length > 1
+            ? `${ordersWithRelations.length} orders created successfully`
             : "Order created successfully",
       },
       { status: 201 },
@@ -180,11 +208,22 @@ export async function GET(_request: NextRequest) {
     const userId = session.user.id;
 
     // Get checkout status
-    const status = await checkoutService.getCheckoutStatus(userId);
+    const result = await checkoutService.getCheckoutStatus(userId);
+
+    // Handle ServiceResponse pattern (discriminated union)
+    if (!result.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: result.error.message || "Failed to get checkout status",
+        },
+        { status: 500 },
+      );
+    }
 
     return NextResponse.json({
       success: true,
-      status,
+      status: result.data,
     });
   } catch (error) {
     console.error("Error getting checkout status:", error);

@@ -50,10 +50,8 @@ import {
   AuthorizationError,
   NotFoundError,
   ConflictError,
-  BusinessLogicError,
 } from "@/lib/errors";
-import { logger } from "@/lib/logger";
-import type { Logger } from "pino";
+import { logger, type Logger } from "@/lib/logger";
 import {
   traceServiceOperation,
   addSpanEvent,
@@ -224,7 +222,8 @@ export abstract class BaseService<TEntity = unknown> {
     // Cache configuration
     this.cacheTTL = config.cacheTTL ?? 3600; // 1 hour default
     this.cachePrefix =
-      config.cachePrefix ?? this.serviceName.toLowerCase().replace("service", "");
+      config.cachePrefix ??
+      this.serviceName.toLowerCase().replace("service", "");
     this.enableCaching = config.enableCaching ?? true;
 
     // Initialize cache
@@ -238,8 +237,8 @@ export abstract class BaseService<TEntity = unknown> {
       config.enableAgriculturalConsciousness ?? false;
 
     this.logger.debug(
+      `${this.serviceName} initialized with divine consciousness`,
       { config },
-      `${this.serviceName} initialized with divine consciousness`
     );
   }
 
@@ -256,7 +255,7 @@ export abstract class BaseService<TEntity = unknown> {
    */
   protected success<T>(
     data: T,
-    meta?: ResponseMetadata
+    meta?: ResponseMetadata,
   ): ServiceSuccessResponse<T> {
     return createSuccessResponse(data, {
       timestamp: new Date().toISOString(),
@@ -275,9 +274,13 @@ export abstract class BaseService<TEntity = unknown> {
   protected error(
     code: string,
     message: string,
-    details?: Record<string, unknown>
+    details?: Record<string, unknown>,
   ): ServiceErrorResponse {
-    this.logger.error({ code, message, details }, "Service operation failed");
+    this.logger.error("Service operation failed", undefined, {
+      code,
+      message,
+      details,
+    });
 
     const error: ServiceError = {
       code,
@@ -298,12 +301,12 @@ export abstract class BaseService<TEntity = unknown> {
    */
   protected notFound(
     resource: string,
-    identifier?: string
+    identifier?: string,
   ): ServiceErrorResponse {
     return this.error(
       ErrorCodes.RESOURCE_NOT_FOUND,
       `${resource} not found${identifier ? `: ${identifier}` : ""}`,
-      { resource, identifier }
+      { resource, identifier },
     );
   }
 
@@ -312,7 +315,7 @@ export abstract class BaseService<TEntity = unknown> {
    */
   protected validationError(
     message: string,
-    errors?: Array<{ field: string; message: string }>
+    errors?: Array<{ field: string; message: string }>,
   ): ServiceErrorResponse {
     return this.error(ErrorCodes.VALIDATION_ERROR, message, {
       validationErrors: errors,
@@ -327,7 +330,7 @@ export abstract class BaseService<TEntity = unknown> {
     page: number,
     limit: number,
     total: number,
-    meta?: ResponseMetadata
+    meta?: ResponseMetadata,
   ): ServiceSuccessResponse<{ items: T[]; pagination: PaginationMetadata }> {
     const pagination = calculatePagination(page, limit, total);
 
@@ -351,19 +354,19 @@ export abstract class BaseService<TEntity = unknown> {
    */
   protected async validate<T>(
     schema: z.ZodSchema<T>,
-    data: unknown
+    data: unknown,
   ): Promise<T> {
     try {
       const result = await schema.safeParseAsync(data);
 
       if (!result.success) {
-        const errors = result.error.errors.map((err) => ({
+        const errors = result.error.issues.map((err: any) => ({
           field: err.path.join("."),
           message: err.message,
           value: (data as Record<string, unknown>)?.[err.path[0]],
         }));
 
-        this.logger.warn({ errors }, "Validation failed");
+        this.logger.warn("Validation failed", { errors });
 
         throw new ValidationError("Validation failed", {
           errors,
@@ -376,7 +379,7 @@ export abstract class BaseService<TEntity = unknown> {
         throw error;
       }
 
-      this.logger.error({ error }, "Validation error");
+      this.logger.error("Validation error", error);
       throw new ValidationError("Validation error", { originalError: error });
     }
   }
@@ -386,7 +389,7 @@ export abstract class BaseService<TEntity = unknown> {
    */
   protected async validateAll<T extends Record<string, unknown>>(
     schemas: Record<keyof T, z.ZodSchema>,
-    data: Record<keyof T, unknown>
+    data: Record<keyof T, unknown>,
   ): Promise<T> {
     const validated: Record<string, unknown> = {};
 
@@ -408,7 +411,7 @@ export abstract class BaseService<TEntity = unknown> {
    * @returns Result of the callback
    */
   protected async withTransaction<T>(
-    callback: (tx: Prisma.TransactionClient) => Promise<T>
+    callback: (tx: Prisma.TransactionClient) => Promise<T>,
   ): Promise<T> {
     this.logger.debug("Starting database transaction");
 
@@ -419,7 +422,7 @@ export abstract class BaseService<TEntity = unknown> {
 
       return result;
     } catch (error) {
-      this.logger.error({ error }, "Transaction failed");
+      this.logger.error("Transaction failed", error);
       throw error;
     }
   }
@@ -439,7 +442,7 @@ export abstract class BaseService<TEntity = unknown> {
   protected async getCached<T>(
     key: string,
     fallback: () => Promise<T>,
-    ttl?: number
+    ttl?: number,
   ): Promise<T> {
     if (!this.enableCaching) {
       return await fallback();
@@ -451,12 +454,11 @@ export abstract class BaseService<TEntity = unknown> {
     const cached = await this.cache.get<T>(cacheKey);
 
     if (cached !== null) {
-      this.logger.debug({ cacheKey }, "Cache hit");
+      this.logger.debug("Cache hit", { cacheKey });
       return cached;
     }
 
-    // Cache miss - compute value
-    this.logger.debug({ cacheKey }, "Cache miss - computing value");
+    this.logger.debug("Cache miss, executing fallback", { cacheKey });
 
     const value = await fallback();
 
@@ -472,14 +474,14 @@ export abstract class BaseService<TEntity = unknown> {
   protected async setCached<T>(
     key: string,
     value: T,
-    ttl?: number
+    ttl?: number,
   ): Promise<void> {
     if (!this.enableCaching) return;
 
     const cacheKey = this.buildCacheKey(key);
     await this.cache.set(cacheKey, value, ttl ?? this.cacheTTL);
 
-    this.logger.debug({ cacheKey }, "Value cached");
+    this.logger.debug("Value cached", { cacheKey });
   }
 
   /**
@@ -491,7 +493,7 @@ export abstract class BaseService<TEntity = unknown> {
     const cacheKey = this.buildCacheKey(key);
     await this.cache.delete(cacheKey);
 
-    this.logger.debug({ cacheKey }, "Cache entry deleted");
+    this.logger.debug("Cache entry deleted", { cacheKey });
   }
 
   /**
@@ -505,7 +507,7 @@ export abstract class BaseService<TEntity = unknown> {
     const cachePattern = this.buildCacheKey(pattern);
     await this.cache.invalidate(cachePattern);
 
-    this.logger.debug({ cachePattern }, "Cache invalidated");
+    this.logger.debug("Cache invalidated", { cachePattern });
   }
 
   /**
@@ -534,19 +536,19 @@ export abstract class BaseService<TEntity = unknown> {
 
     // Prisma errors
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      this.logger.error({ error, code: error.code }, "Prisma error");
+      this.logger.error("Prisma error occurred", error, { code: error.code });
 
       switch (error.code) {
         case "P2002": // Unique constraint violation
           throw new ConflictError(
             `Resource already exists: ${error.meta?.target}`,
-            { prismaCode: error.code, meta: error.meta }
+            { prismaCode: error.code, meta: error.meta },
           );
 
         case "P2025": // Record not found
           throw new NotFoundError(
             "Resource",
-            error.meta?.cause as string | undefined
+            error.meta?.cause as string | undefined,
           );
 
         default:
@@ -554,13 +556,13 @@ export abstract class BaseService<TEntity = unknown> {
             `Database error during ${operation}`,
             ErrorCodes.DATABASE_ERROR,
             500,
-            { prismaCode: error.code, meta: error.meta }
+            { prismaCode: error.code, meta: error.meta },
           );
       }
     }
 
     // Log unexpected error
-    this.logger.error({ error, operation }, "Unexpected service error");
+    this.logger.error("Unexpected service error", error, { operation });
 
     // Generic service error
     throw new DivineError(
@@ -574,7 +576,7 @@ export abstract class BaseService<TEntity = unknown> {
         "Check the service logs for details",
         "Verify input data is correct",
         "Contact support if issue persists",
-      ]
+      ],
     );
   }
 
@@ -583,24 +585,20 @@ export abstract class BaseService<TEntity = unknown> {
    */
   protected async safeExecute<T>(
     operation: string,
-    callback: () => Promise<ServiceResponse<T>>
+    callback: () => Promise<ServiceResponse<T>>,
   ): Promise<ServiceResponse<T>> {
     try {
       return await callback();
     } catch (error) {
-      this.logger.error({ error, operation }, "Service operation failed");
+      this.logger.error("Service operation failed", error, { operation });
 
       if (error instanceof DivineError) {
         return this.error(error.code, error.message, error.context);
       }
 
-      return this.error(
-        ErrorCodes.SERVICE_ERROR,
-        `Failed to ${operation}`,
-        {
-          error: error instanceof Error ? error.message : String(error),
-        }
-      );
+      return this.error(ErrorCodes.SERVICE_ERROR, `Failed to ${operation}`, {
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   }
 
@@ -617,7 +615,7 @@ export abstract class BaseService<TEntity = unknown> {
    */
   protected async traced<T>(
     operationName: string,
-    callback: () => Promise<T>
+    callback: () => Promise<T>,
   ): Promise<T> {
     if (!this.enableTracing) {
       return await callback();
@@ -626,16 +624,23 @@ export abstract class BaseService<TEntity = unknown> {
     return await traceServiceOperation(
       this.serviceName,
       operationName,
-      callback
+      {},
+      callback,
     );
   }
 
   /**
    * Add an event to the current span
    */
-  protected addTraceEvent(name: string, attributes?: Record<string, unknown>): void {
+  protected addTraceEvent(
+    name: string,
+    attributes?: Record<string, unknown>,
+  ): void {
     if (!this.enableTracing) return;
-    addSpanEvent(name, attributes);
+    addSpanEvent(
+      name,
+      attributes as Record<string, string | number | boolean> | undefined,
+    );
   }
 
   /**
@@ -643,7 +648,11 @@ export abstract class BaseService<TEntity = unknown> {
    */
   protected setTraceAttributes(attributes: Record<string, unknown>): void {
     if (!this.enableTracing) return;
-    setSpanAttributes(attributes);
+    if (attributes) {
+      setSpanAttributes(
+        attributes as Record<string, string | number | boolean>,
+      );
+    }
   }
 
   // ============================================================================
@@ -656,11 +665,11 @@ export abstract class BaseService<TEntity = unknown> {
    */
   protected async checkAuthorization(
     userId: string,
-    permission: string
+    permission: string,
   ): Promise<void> {
     // Default implementation - override in subclasses
     // For now, just log the check
-    this.logger.debug({ userId, permission }, "Authorization check");
+    this.logger.debug("Authorization check", { userId, permission });
 
     // In production, implement actual RBAC check:
     // const hasPermission = await rbac.check(userId, permission);
@@ -674,7 +683,7 @@ export abstract class BaseService<TEntity = unknown> {
    */
   protected async verifyOwnership(
     userId: string,
-    resourceOwnerId: string
+    resourceOwnerId: string,
   ): Promise<void> {
     if (userId !== resourceOwnerId) {
       throw new AuthorizationError("You don't own this resource");
@@ -721,7 +730,7 @@ export abstract class BaseService<TEntity = unknown> {
    * Measure operation duration
    */
   protected async measureDuration<T>(
-    callback: () => Promise<T>
+    callback: () => Promise<T>,
   ): Promise<{ result: T; duration: number }> {
     const start = Date.now();
     const result = await callback();

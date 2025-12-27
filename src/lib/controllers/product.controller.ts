@@ -19,7 +19,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { BaseController } from "./base.controller";
-import { ProductService } from "@/lib/services/product.service";
+import { productService } from "@/lib/services/product.service";
 import type { ProductFilters } from "@/types/product";
 import { ProductCategory } from "@/types/product";
 import { z } from "zod";
@@ -296,14 +296,25 @@ export class ProductController extends BaseController {
       };
 
       // Call service layer
-      const result = await ProductService.listProducts(productFilters, {
+      const result = await productService.listProducts(productFilters, {
         page: page || 1,
         limit: limit || 20,
       });
 
-      return this.success(result, {
-        message: "Products retrieved successfully",
-      });
+      // Check for service errors
+      if (!result.success) {
+        return this.internalError(
+          result.error?.message || "Failed to list products",
+        );
+      }
+
+      return this.successWithPagination(
+        result.data.items,
+        result.data.pagination,
+        {
+          message: "Products retrieved successfully",
+        },
+      );
     });
   }
 
@@ -325,12 +336,21 @@ export class ProductController extends BaseController {
       const validated = CreateProductSchema.parse(body);
 
       // Call service layer
-      const product = await ProductService.createProduct(
-        validated as any, // Type-safe after Zod validation
+      const result = await productService.createProduct(
         userId,
+        validated as any, // Type-safe after Zod validation
       );
 
-      return this.created(product, { message: "Product created successfully" });
+      // Check for service errors
+      if (!result.success) {
+        return this.internalError(
+          result.error?.message || "Failed to create product",
+        );
+      }
+
+      return this.created(result.data, {
+        message: "Product created successfully",
+      });
     });
   }
 
@@ -354,13 +374,20 @@ export class ProductController extends BaseController {
         request.nextUrl.searchParams.get("includeFarm") !== "false";
 
       // Call service layer
-      const product = await ProductService.getProductById(id, includeFarm);
+      const result = await productService.getProductById(id, includeFarm);
 
-      if (!product) {
+      // Check for service errors
+      if (!result.success) {
+        return this.internalError(
+          result.error?.message || "Failed to get product",
+        );
+      }
+
+      if (!result.data) {
         return this.notFound("Product not found");
       }
 
-      return this.success(product, {
+      return this.success(result.data, {
         message: "Product retrieved successfully",
       });
     });
@@ -382,16 +409,23 @@ export class ProductController extends BaseController {
       const { farmSlug, productSlug } = params;
 
       // Call service layer
-      const product = await ProductService.getProductBySlug(
+      const result = await productService.getProductBySlug(
         farmSlug,
         productSlug,
       );
 
-      if (!product) {
+      // Check for service errors
+      if (!result.success) {
+        return this.internalError(
+          result.error?.message || "Failed to get product",
+        );
+      }
+
+      if (!result.data) {
         return this.notFound("Product not found");
       }
 
-      return this.success(product, {
+      return this.success(result.data, {
         message: "Product retrieved successfully",
       });
     });
@@ -420,13 +454,22 @@ export class ProductController extends BaseController {
       const validated = UpdateProductSchema.parse(body);
 
       // Call service layer
-      const product = await ProductService.updateProduct(
+      const result = await productService.updateProduct(
         id,
-        validated as any, // Type-safe after Zod validation
+        validated as any,
         userId,
       );
 
-      return this.success(product, { message: "Product updated successfully" });
+      // Check for service errors
+      if (!result.success) {
+        return this.internalError(
+          result.error?.message || "Failed to update product",
+        );
+      }
+
+      return this.success(result.data, {
+        message: "Product updated successfully",
+      });
     });
   }
 
@@ -449,7 +492,14 @@ export class ProductController extends BaseController {
       const { id } = params;
 
       // Call service layer
-      await ProductService.deleteProduct(id, userId);
+      const result = await productService.deleteProduct(id, userId);
+
+      // Check for service errors
+      if (!result.success) {
+        return this.internalError(
+          result.error?.message || "Failed to delete product",
+        );
+      }
 
       return this.success(null, { message: "Product deleted successfully" });
     });
@@ -478,13 +528,18 @@ export class ProductController extends BaseController {
       const query = validated.query || "";
 
       // Call service layer
-      const products = await ProductService.searchProducts(
+      const result = await productService.searchProducts(
         query,
         validated.limit || 20,
       );
 
+      // Check for service errors
+      if (!result.success) {
+        return this.internalError(result.error?.message || "Search failed");
+      }
+
       return this.success(
-        { products, total: products.length, query },
+        { products: result.data, total: result.data.length, query },
         { message: "Search completed successfully" },
       );
     });
@@ -513,13 +568,20 @@ export class ProductController extends BaseController {
       const validated = UpdateInventorySchema.parse(body);
 
       // Call service layer
-      const product = await ProductService.updateInventory(
+      const result = await productService.updateInventory(
         id,
         validated,
         userId,
       );
 
-      return this.success(product, {
+      // Check for service errors
+      if (!result.success) {
+        return this.internalError(
+          result.error?.message || "Failed to update inventory",
+        );
+      }
+
+      return this.success(result.data, {
         message: "Inventory updated successfully",
       });
     });
@@ -541,9 +603,16 @@ export class ProductController extends BaseController {
       const { id } = params;
 
       // Call service layer
-      const stats = await ProductService.getProductStats(id);
+      const result = await productService.getProductStats(id);
 
-      return this.success(stats, {
+      // Check for service errors
+      if (!result.success) {
+        return this.internalError(
+          result.error?.message || "Failed to get product stats",
+        );
+      }
+
+      return this.success(result.data, {
         message: "Product statistics retrieved successfully",
       });
     });
@@ -567,15 +636,54 @@ export class ProductController extends BaseController {
       const validated = BatchUpdateSchema.parse(body);
 
       // Call service layer
-      const result = await ProductService.batchUpdateProducts(
-        validated.updates.map((update) => ({
-          id: update.id,
-          data: update.data as any, // Type-safe after Zod validation
-        })),
+      const result = await productService.batchUpdateProducts(
+        validated.updates.map((update) => {
+          // Transform update data to match service expectations
+          const transformedData: any = { ...update.data };
+
+          // Cast category to Prisma enum if present
+          if (transformedData.category) {
+            transformedData.category = transformedData.category as any;
+          }
+
+          // Transform images from objects to URL strings
+          if (transformedData.images) {
+            transformedData.images = transformedData.images.map(
+              (img: any) => img.url,
+            );
+          }
+
+          // Transform date strings to Date objects
+          if (transformedData.harvestDate) {
+            transformedData.harvestDate = new Date(transformedData.harvestDate);
+          }
+          if (transformedData.availableFrom) {
+            transformedData.availableFrom = new Date(
+              transformedData.availableFrom,
+            );
+          }
+          if (transformedData.availableTo) {
+            transformedData.availableTo = new Date(transformedData.availableTo);
+          }
+
+          return {
+            id: update.id,
+            data: transformedData,
+          };
+        }),
         userId,
       );
 
-      return this.success(result, { message: "Batch update completed" });
+      // Check for service errors
+      if (!result.success) {
+        return this.internalError(
+          result.error?.message || "Batch update failed",
+        );
+      }
+
+      return this.success(result.data, {
+        message: "Batch update completed",
+      });
     });
   }
 
@@ -601,10 +709,17 @@ export class ProductController extends BaseController {
       );
 
       // Call service layer
-      const products = await ProductService.getRelatedProducts(id, limit);
+      const result = await productService.getRelatedProducts(id, limit);
+
+      // Check for service errors
+      if (!result.success) {
+        return this.internalError(
+          result.error?.message || "Failed to get related products",
+        );
+      }
 
       return this.success(
-        { products, total: products.length },
+        { products: result.data, total: result.data.length },
         { message: "Related products retrieved successfully" },
       );
     });
@@ -626,7 +741,14 @@ export class ProductController extends BaseController {
       const { id } = params;
 
       // Call service layer
-      await ProductService.incrementViewCount(id);
+      const result = await productService.incrementViewCount(id);
+
+      // Check for service errors
+      if (!result.success) {
+        return this.internalError(
+          result.error?.message || "Failed to increment view count",
+        );
+      }
 
       return this.success(null, {
         message: "View count incremented successfully",
@@ -650,16 +772,23 @@ export class ProductController extends BaseController {
       const { farmSlug, productSlug } = params;
 
       // Call service layer
-      const detail = await ProductService.getProductDetailBySlug(
+      const result = await productService.getProductDetailBySlug(
         farmSlug,
         productSlug,
       );
 
-      if (!detail) {
+      // Check for service errors
+      if (!result.success) {
+        return this.internalError(
+          result.error?.message || "Failed to get product detail",
+        );
+      }
+
+      if (!result.data) {
         return this.notFound("Product not found");
       }
 
-      return this.success(detail, {
+      return this.success(result.data, {
         message: "Product detail retrieved successfully",
       });
     });
@@ -691,14 +820,25 @@ export class ProductController extends BaseController {
       );
 
       // Call service layer
-      const result = await ProductService.listProducts(
+      const result = await productService.listProducts(
         { farmId },
         { page, limit },
       );
 
-      return this.success(result, {
-        message: "Farm products retrieved successfully",
-      });
+      // Check for service errors
+      if (!result.success) {
+        return this.internalError(
+          result.error?.message || "Failed to get farm products",
+        );
+      }
+
+      return this.successWithPagination(
+        result.data.items,
+        result.data.pagination,
+        {
+          message: "Farm products retrieved successfully",
+        },
+      );
     });
   }
 }

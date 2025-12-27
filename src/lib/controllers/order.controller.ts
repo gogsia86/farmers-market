@@ -154,15 +154,20 @@ export class OrderController extends BaseController {
       // Call service layer
       const order = await this.orderService.createOrder(createRequest);
 
+      // Check for service errors
+      if (!order.success) {
+        return this.internalError(order.error.message);
+      }
+
       this.log("Order created successfully", {
-        orderId: order.id,
-        orderNumber: order.orderNumber,
-        total: order.total,
+        orderId: order.data.id,
+        orderNumber: order.data.orderNumber,
+        total: order.data.total,
       });
 
-      return this.created(order, {
+      return this.created(order.data, {
         message: "Order created successfully",
-        orderNumber: order.orderNumber,
+        orderNumber: order.data.orderNumber,
         agricultural: {
           consciousness: "DIVINE",
           operation: "ORDER_MANIFESTATION",
@@ -241,17 +246,22 @@ export class OrderController extends BaseController {
       // Call service layer
       const result = await this.orderService.getOrders(getRequest);
 
+      // Check for service errors
+      if (!result.success) {
+        return this.internalError(result.error.message);
+      }
+
       return this.successWithPagination(
-        result.orders,
+        result.data.orders,
         {
-          page: result.pagination.page,
-          limit: result.pagination.limit,
-          total: result.pagination.total,
-          totalPages: result.pagination.totalPages,
+          page: result.data.pagination.page,
+          limit: result.data.pagination.limit,
+          total: result.data.pagination.total,
+          totalPages: result.data.pagination.totalPages,
         },
         {
           message: "Orders retrieved successfully",
-          count: result.orders.length,
+          count: result.data.orders.length,
         },
       );
     });
@@ -285,16 +295,24 @@ export class OrderController extends BaseController {
       this.log("Fetching order by ID", { orderId, userId: session.user.id });
 
       // Call service layer
-      const order = await this.orderService.getOrderById(orderId);
+      const order = await this.orderService.getOrderById(
+        orderId,
+        session.user.id,
+      );
 
-      if (!order) {
+      // Check for service errors
+      if (!order.success) {
+        return this.internalError(order.error.message);
+      }
+
+      if (!order.data) {
         return this.notFound("Order", orderId);
       }
 
       // Authorization: Users can only view their own orders (unless admin/farm owner)
       if (
         session.user.role === "CUSTOMER" &&
-        order.customerId !== session.user.id
+        order.data.customerId !== session.user.id
       ) {
         return this.forbidden(
           "You do not have permission to view this order",
@@ -302,9 +320,9 @@ export class OrderController extends BaseController {
         );
       }
 
-      return this.success(order, {
+      return this.success(order.data, {
         message: "Order retrieved successfully",
-        orderNumber: order.orderNumber,
+        orderNumber: order.data.orderNumber,
       });
     });
   }
@@ -363,13 +381,18 @@ export class OrderController extends BaseController {
       // Call service layer
       const result = await this.orderService.getOrders(getRequest);
 
+      // Check for service errors
+      if (!result.success) {
+        return this.internalError(result.error.message);
+      }
+
       return this.successWithPagination(
-        result.orders,
+        result.data.orders,
         {
-          page: result.pagination.page,
-          limit: result.pagination.limit,
-          total: result.pagination.total,
-          totalPages: result.pagination.totalPages,
+          page: result.data.pagination.page,
+          limit: result.data.pagination.limit,
+          total: result.data.pagination.total,
+          totalPages: result.data.pagination.totalPages,
         },
         {
           message: "Customer orders retrieved successfully",
@@ -430,13 +453,18 @@ export class OrderController extends BaseController {
       // Call service layer
       const result = await this.orderService.getOrders(getRequest);
 
+      // Check for service errors
+      if (!result.success) {
+        return this.internalError(result.error.message);
+      }
+
       return this.successWithPagination(
-        result.orders,
+        result.data.orders,
         {
-          page: result.pagination.page,
-          limit: result.pagination.limit,
-          total: result.pagination.total,
-          totalPages: result.pagination.totalPages,
+          page: result.data.pagination.page,
+          limit: result.data.pagination.limit,
+          total: result.data.pagination.total,
+          totalPages: result.data.pagination.totalPages,
         },
         {
           message: "Farm orders retrieved successfully",
@@ -520,16 +548,22 @@ export class OrderController extends BaseController {
       const updatedOrder = await this.orderService.updateOrder(
         orderId,
         updateRequest,
+        session.user.id,
       );
+
+      // Check for service errors
+      if (!updatedOrder.success) {
+        return this.internalError(updatedOrder.error.message);
+      }
 
       this.log("Order updated successfully", {
         orderId,
-        newStatus: updatedOrder.status,
+        newStatus: updatedOrder.data.status,
       });
 
-      return this.success(updatedOrder, {
+      return this.success(updatedOrder.data, {
         message: "Order updated successfully",
-        orderNumber: updatedOrder.orderNumber,
+        orderNumber: updatedOrder.data.orderNumber,
         agricultural: {
           consciousness: "QUANTUM",
           operation: "ORDER_TRANSFORMATION",
@@ -614,13 +648,19 @@ export class OrderController extends BaseController {
       const cancelledOrder = await this.orderService.cancelOrder(
         orderId,
         cancelRequest,
+        session.user.id,
       );
+
+      // Check for service errors
+      if (!cancelledOrder.success) {
+        return this.internalError(cancelledOrder.error.message);
+      }
 
       this.log("Order cancelled successfully", { orderId });
 
-      return this.success(cancelledOrder, {
+      return this.success(cancelledOrder.data, {
         message: "Order cancelled successfully",
-        orderNumber: cancelledOrder.orderNumber,
+        orderNumber: cancelledOrder.data.orderNumber,
         agricultural: {
           consciousness: "ACTIVE",
           operation: "ORDER_CANCELLATION",
@@ -692,7 +732,12 @@ export class OrderController extends BaseController {
       const statistics =
         await this.orderService.getOrderStatistics(statsRequest);
 
-      return this.success(statistics, {
+      // Check for service errors
+      if (!statistics.success) {
+        return this.internalError(statistics.error.message);
+      }
+
+      return this.success(statistics.data, {
         message: "Order statistics retrieved successfully",
         agricultural: {
           consciousness: "QUANTUM",

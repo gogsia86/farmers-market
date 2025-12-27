@@ -142,10 +142,10 @@ describe("POST /api/checkout/create-payment-intent", () => {
 
       mockCheckoutService.createPaymentIntent.mockResolvedValueOnce({
         success: true,
-        paymentIntent: {
+        data: {
           id: "pi_test_123",
           clientSecret: "pi_test_123_secret_456",
-          amount: 4999,
+          amount: 49.99,
           currency: "usd",
           status: "requires_payment_method",
         },
@@ -224,10 +224,10 @@ describe("POST /api/checkout/create-payment-intent", () => {
     it("should accept valid amount", async () => {
       mockCheckoutService.createPaymentIntent.mockResolvedValueOnce({
         success: true,
-        paymentIntent: {
+        data: {
           id: "pi_test_123",
-          clientSecret: "secret",
-          amount: 4999,
+          clientSecret: "pi_test_123_secret_456",
+          amount: 49.99,
           currency: "usd",
           status: "requires_payment_method",
         },
@@ -247,10 +247,10 @@ describe("POST /api/checkout/create-payment-intent", () => {
     it("should accept optional metadata", async () => {
       mockCheckoutService.createPaymentIntent.mockResolvedValueOnce({
         success: true,
-        paymentIntent: {
+        data: {
           id: "pi_test_123",
-          clientSecret: "secret",
-          amount: 4999,
+          clientSecret: "pi_test_123_secret_456",
+          amount: 49.99,
           currency: "usd",
           status: "requires_payment_method",
         },
@@ -288,14 +288,14 @@ describe("POST /api/checkout/create-payment-intent", () => {
       const mockPaymentIntent = {
         id: "pi_test_123",
         clientSecret: "pi_test_123_secret_456",
-        amount: 4999,
+        amount: 49.99,
         currency: "usd",
         status: "requires_payment_method",
       };
 
       mockCheckoutService.createPaymentIntent.mockResolvedValueOnce({
         success: true,
-        paymentIntent: mockPaymentIntent,
+        data: mockPaymentIntent,
       });
 
       const request = createMockRequest({
@@ -321,10 +321,10 @@ describe("POST /api/checkout/create-payment-intent", () => {
     it("should include agricultural metadata in service call", async () => {
       mockCheckoutService.createPaymentIntent.mockResolvedValueOnce({
         success: true,
-        paymentIntent: {
+        data: {
           id: "pi_test_123",
-          clientSecret: "secret",
-          amount: 4999,
+          clientSecret: "pi_test_123_secret_456",
+          amount: 49.99,
           currency: "usd",
           status: "requires_payment_method",
         },
@@ -373,14 +373,17 @@ describe("POST /api/checkout/create-payment-intent", () => {
 
       expect(response.status).toBe(500);
       expect(data.success).toBe(false);
-      expect(data.error).toContain("Invalid currency");
+      expect(data.error).toContain("Failed to create payment intent");
     });
 
     it("should handle missing payment intent in response", async () => {
       mockCheckoutService.createPaymentIntent.mockResolvedValueOnce({
-        success: true,
-        paymentIntent: undefined,
-      } as any);
+        success: false,
+        error: {
+          code: "PAYMENT_INTENT_FAILED",
+          message: "Failed to create payment intent",
+        },
+      });
 
       const request = createMockRequest({
         amount: 49.99,
@@ -436,12 +439,12 @@ describe("POST /api/checkout/create-payment-intent", () => {
   describe("Agricultural Metadata", () => {
     beforeEach(() => {
       mockAuth.mockResolvedValue(createMockSession());
-      mockCheckoutService.createPaymentIntent.mockResolvedValue({
+      mockCheckoutService.createPaymentIntent.mockResolvedValueOnce({
         success: true,
-        paymentIntent: {
+        data: {
           id: "pi_test_123",
-          clientSecret: "secret",
-          amount: 4999,
+          clientSecret: "pi_test_123_secret_456",
+          amount: 49.99,
           currency: "usd",
           status: "requires_payment_method",
         },
@@ -533,16 +536,16 @@ describe("POST /api/checkout/create-payment-intent", () => {
 
     it("should return correct success response structure", async () => {
       const mockPaymentIntent = {
-        id: "pi_test_123",
-        clientSecret: "pi_test_123_secret_456",
-        amount: 4999,
+        id: "pi_test_789",
+        clientSecret: "pi_test_789_secret_abc",
+        amount: 125.0,
         currency: "usd",
         status: "requires_payment_method",
       };
 
       mockCheckoutService.createPaymentIntent.mockResolvedValueOnce({
         success: true,
-        paymentIntent: mockPaymentIntent,
+        data: mockPaymentIntent,
       });
 
       const request = createMockRequest({

@@ -18,7 +18,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { productController } from "../product.controller";
-import { ProductService } from "@/lib/services/product.service";
+import { productService } from "@/lib/services/product.service";
 import { auth } from "@/lib/auth";
 import { ProductCategory } from "@/types/product";
 
@@ -26,9 +26,9 @@ import { ProductCategory } from "@/types/product";
 // MOCK SETUP
 // ============================================
 
-// Mock the ProductService with static methods
+// Mock the productService singleton instance
 jest.mock("@/lib/services/product.service", () => ({
-  ProductService: {
+  productService: {
     listProducts: jest.fn(),
     createProduct: jest.fn(),
     getProductById: jest.fn(),
@@ -156,11 +156,19 @@ describe("ProductController - HTTP Request Handlers", () => {
       const page = 1;
       const totalPages = 1;
 
-      (ProductService.listProducts as jest.Mock).mockResolvedValue({
-        products,
-        total,
-        page,
-        totalPages,
+      (productService.listProducts as jest.Mock).mockResolvedValue({
+        success: true,
+        data: {
+          items: products,
+          pagination: {
+            page,
+            limit: 20,
+            total,
+            totalPages,
+            hasNext: false,
+            hasPrev: false,
+          },
+        },
       });
 
       const request = createMockRequest("GET", "/api/products");
@@ -170,12 +178,12 @@ describe("ProductController - HTTP Request Handlers", () => {
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(data.data.products).toHaveLength(1);
-      expect(data.data.products[0].name).toBe("Organic Heirloom Tomatoes");
-      expect(data.data.total).toBe(1);
-      expect(data.data.page).toBe(1);
-      expect(data.data.totalPages).toBe(1);
-      expect(ProductService.listProducts).toHaveBeenCalledWith(
+      expect(data.data).toHaveLength(1);
+      expect(data.data[0].name).toBe("Organic Heirloom Tomatoes");
+      expect(data.meta?.pagination?.total).toBe(1);
+      expect(data.meta?.pagination?.page).toBe(1);
+      expect(data.meta?.pagination?.totalPages).toBe(1);
+      expect(productService.listProducts).toHaveBeenCalledWith(
         {},
         expect.objectContaining({
           page: 1,
@@ -190,11 +198,19 @@ describe("ProductController - HTTP Request Handlers", () => {
       const page = 2;
       const totalPages = 3;
 
-      (ProductService.listProducts as jest.Mock).mockResolvedValue({
-        products,
-        total,
-        page,
-        totalPages,
+      (productService.listProducts as jest.Mock).mockResolvedValue({
+        success: true,
+        data: {
+          items: products,
+          pagination: {
+            page,
+            limit: 20,
+            total,
+            totalPages,
+            hasNext: true,
+            hasPrev: true,
+          },
+        },
       });
 
       const request = createMockRequest("GET", "/api/products", undefined, {
@@ -211,7 +227,8 @@ describe("ProductController - HTTP Request Handlers", () => {
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(ProductService.listProducts).toHaveBeenCalledWith(
+      expect(data.meta?.pagination?.page).toBe(2);
+      expect(productService.listProducts).toHaveBeenCalledWith(
         expect.objectContaining({
           farmId: mockFarmId,
           category: "VEGETABLES",
@@ -225,7 +242,7 @@ describe("ProductController - HTTP Request Handlers", () => {
     });
 
     it("should handle service errors gracefully", async () => {
-      (ProductService.listProducts as jest.Mock).mockRejectedValue(
+      (productService.listProducts as jest.Mock).mockRejectedValue(
         new Error("Database connection failed"),
       );
 
@@ -263,7 +280,10 @@ describe("ProductController - HTTP Request Handlers", () => {
     it("should create product when authenticated", async () => {
       (auth as jest.Mock).mockResolvedValue(mockSession);
       const product = { ...mockQuantumProduct, id: "product_new_carrots" };
-      (ProductService.createProduct as jest.Mock).mockResolvedValue(product);
+      (productService.createProduct as jest.Mock).mockResolvedValue({
+        success: true,
+        data: product,
+      });
 
       const request = createMockRequest(
         "POST",
@@ -277,12 +297,12 @@ describe("ProductController - HTTP Request Handlers", () => {
       expect(response.status).toBe(201);
       expect(data.success).toBe(true);
       expect(data.data.id).toBe("product_new_carrots");
-      expect(ProductService.createProduct).toHaveBeenCalledWith(
+      expect(productService.createProduct).toHaveBeenCalledWith(
+        mockUserId,
         expect.objectContaining({
           name: "Organic Carrots",
           farmId: mockFarmId,
         }),
-        mockUserId,
       );
     });
 
@@ -374,9 +394,10 @@ describe("ProductController - HTTP Request Handlers", () => {
 
   describe("getProductById - GET /api/products/:id", () => {
     it("should return product by ID", async () => {
-      (ProductService.getProductById as jest.Mock).mockResolvedValue(
-        mockQuantumProduct,
-      );
+      (productService.getProductById as jest.Mock).mockResolvedValue({
+        success: true,
+        data: mockQuantumProduct,
+      });
 
       const request = createMockRequest("GET", "/api/products/123");
 
@@ -389,14 +410,17 @@ describe("ProductController - HTTP Request Handlers", () => {
       expect(data.success).toBe(true);
       expect(data.data.id).toBe(mockProductId);
       expect(data.data.name).toBe("Organic Heirloom Tomatoes");
-      expect(ProductService.getProductById).toHaveBeenCalledWith(
+      expect(productService.getProductById).toHaveBeenCalledWith(
         mockProductId,
         true,
       );
     });
 
     it("should return 404 when product not found", async () => {
-      (ProductService.getProductById as jest.Mock).mockResolvedValue(null);
+      (productService.getProductById as jest.Mock).mockResolvedValue({
+        success: true,
+        data: null,
+      });
 
       const request = createMockRequest("GET", "/api/products/nonexistent");
 
@@ -417,9 +441,10 @@ describe("ProductController - HTTP Request Handlers", () => {
 
   describe("getProductBySlug - GET /api/products/slug/:slug", () => {
     it("should return product by slug", async () => {
-      (ProductService.getProductBySlug as jest.Mock).mockResolvedValue(
-        mockQuantumProduct,
-      );
+      (productService.getProductBySlug as jest.Mock).mockResolvedValue({
+        success: true,
+        data: mockQuantumProduct,
+      });
 
       const request = createMockRequest(
         "GET",
@@ -435,14 +460,17 @@ describe("ProductController - HTTP Request Handlers", () => {
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
       expect(data.data.slug).toBe("organic-heirloom-tomatoes");
-      expect(ProductService.getProductBySlug).toHaveBeenCalledWith(
+      expect(productService.getProductBySlug).toHaveBeenCalledWith(
         "divine-acres-seattle",
         "organic-heirloom-tomatoes",
       );
     });
 
     it("should return 404 when slug not found", async () => {
-      (ProductService.getProductBySlug as jest.Mock).mockResolvedValue(null);
+      (productService.getProductBySlug as jest.Mock).mockResolvedValue({
+        success: true,
+        data: null,
+      });
 
       const request = createMockRequest(
         "GET",
@@ -474,9 +502,10 @@ describe("ProductController - HTTP Request Handlers", () => {
     it("should update product when authenticated", async () => {
       (auth as jest.Mock).mockResolvedValue(mockSession);
       const updatedProduct = { ...mockQuantumProduct, ...updateData };
-      (ProductService.updateProduct as jest.Mock).mockResolvedValue(
-        updatedProduct,
-      );
+      (productService.updateProduct as jest.Mock).mockResolvedValue({
+        success: true,
+        data: updatedProduct,
+      });
 
       const request = createMockRequest(
         "PUT",
@@ -492,7 +521,7 @@ describe("ProductController - HTTP Request Handlers", () => {
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
       expect(data.data.name).toBe("Updated Organic Tomatoes");
-      expect(ProductService.updateProduct).toHaveBeenCalledWith(
+      expect(productService.updateProduct).toHaveBeenCalledWith(
         mockProductId,
         expect.objectContaining(updateData),
         mockUserId,
@@ -550,7 +579,10 @@ describe("ProductController - HTTP Request Handlers", () => {
   describe("deleteProduct - DELETE /api/products/:id", () => {
     it("should delete product when authenticated", async () => {
       (auth as jest.Mock).mockResolvedValue(mockSession);
-      (ProductService.deleteProduct as jest.Mock).mockResolvedValue(undefined);
+      (productService.deleteProduct as jest.Mock).mockResolvedValue({
+        success: true,
+        data: undefined,
+      });
 
       const request = createMockRequest(
         "DELETE",
@@ -564,7 +596,7 @@ describe("ProductController - HTTP Request Handlers", () => {
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(ProductService.deleteProduct).toHaveBeenCalledWith(
+      expect(productService.deleteProduct).toHaveBeenCalledWith(
         mockProductId,
         mockUserId,
       );
@@ -597,9 +629,10 @@ describe("ProductController - HTTP Request Handlers", () => {
     it("should search products by query", async () => {
       const searchResults = [mockQuantumProduct];
 
-      (ProductService.searchProducts as jest.Mock).mockResolvedValue(
-        searchResults,
-      );
+      (productService.searchProducts as jest.Mock).mockResolvedValue({
+        success: true,
+        data: searchResults,
+      });
 
       const request = createMockRequest(
         "GET",
@@ -618,7 +651,7 @@ describe("ProductController - HTTP Request Handlers", () => {
       expect(data.success).toBe(true);
       expect(data.data.products).toBeDefined();
       expect(data.data.products).toHaveLength(1);
-      expect(ProductService.searchProducts).toHaveBeenCalledWith(
+      expect(productService.searchProducts).toHaveBeenCalledWith(
         "tomatoes",
         20,
       );
@@ -637,9 +670,10 @@ describe("ProductController - HTTP Request Handlers", () => {
     it("should support limit parameter", async () => {
       const searchResults = [mockQuantumProduct];
 
-      (ProductService.searchProducts as jest.Mock).mockResolvedValue(
-        searchResults,
-      );
+      (productService.searchProducts as jest.Mock).mockResolvedValue({
+        success: true,
+        data: searchResults,
+      });
 
       const request = createMockRequest(
         "GET",
@@ -655,7 +689,7 @@ describe("ProductController - HTTP Request Handlers", () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(ProductService.searchProducts).toHaveBeenCalledWith("organic", 10);
+      expect(productService.searchProducts).toHaveBeenCalledWith("organic", 10);
     });
   });
 
@@ -679,9 +713,10 @@ describe("ProductController - HTTP Request Handlers", () => {
           ...inventoryUpdate,
         },
       };
-      (ProductService.updateInventory as jest.Mock).mockResolvedValue(
-        updatedProduct,
-      );
+      (productService.updateInventory as jest.Mock).mockResolvedValue({
+        success: true,
+        data: updatedProduct,
+      });
 
       const request = createMockRequest(
         "PATCH",
@@ -697,7 +732,7 @@ describe("ProductController - HTTP Request Handlers", () => {
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
       expect(data.data.inventory.quantity).toBe(75);
-      expect(ProductService.updateInventory).toHaveBeenCalledWith(
+      expect(productService.updateInventory).toHaveBeenCalledWith(
         mockProductId,
         inventoryUpdate,
         mockUserId,
@@ -759,7 +794,10 @@ describe("ProductController - HTTP Request Handlers", () => {
         lowStockAlert: false,
       };
 
-      (ProductService.getProductStats as jest.Mock).mockResolvedValue(stats);
+      (productService.getProductStats as jest.Mock).mockResolvedValue({
+        success: true,
+        data: stats,
+      });
 
       const request = createMockRequest(
         "GET",
@@ -775,7 +813,7 @@ describe("ProductController - HTTP Request Handlers", () => {
       expect(data.success).toBe(true);
       expect(data.data.viewCount).toBe(42);
       expect(data.data.orderCount).toBe(15);
-      expect(ProductService.getProductStats).toHaveBeenCalledWith(
+      expect(productService.getProductStats).toHaveBeenCalledWith(
         mockProductId,
       );
     });
@@ -807,9 +845,10 @@ describe("ProductController - HTTP Request Handlers", () => {
 
     it("should batch update products when authenticated", async () => {
       (auth as jest.Mock).mockResolvedValue(mockSession);
-      (ProductService.batchUpdateProducts as jest.Mock).mockResolvedValue(
-        undefined,
-      );
+      (productService.batchUpdateProducts as jest.Mock).mockResolvedValue({
+        success: true,
+        data: undefined,
+      });
 
       const request = createMockRequest(
         "POST",
@@ -822,7 +861,7 @@ describe("ProductController - HTTP Request Handlers", () => {
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(ProductService.batchUpdateProducts).toHaveBeenCalledWith(
+      expect(productService.batchUpdateProducts).toHaveBeenCalledWith(
         expect.arrayContaining([
           expect.objectContaining({
             id: mockProductId,
@@ -886,9 +925,10 @@ describe("ProductController - HTTP Request Handlers", () => {
         { ...mockQuantumProduct, id: "product_related_002" },
       ];
 
-      (ProductService.getRelatedProducts as jest.Mock).mockResolvedValue(
-        relatedProducts,
-      );
+      (productService.getRelatedProducts as jest.Mock).mockResolvedValue({
+        success: true,
+        data: relatedProducts,
+      });
 
       const request = createMockRequest(
         "GET",
@@ -906,14 +946,17 @@ describe("ProductController - HTTP Request Handlers", () => {
       expect(Array.isArray(data.data.products)).toBe(true);
       expect(data.data.products).toHaveLength(2);
       expect(data.data.total).toBe(2);
-      expect(ProductService.getRelatedProducts).toHaveBeenCalledWith(
+      expect(productService.getRelatedProducts).toHaveBeenCalledWith(
         mockProductId,
         6,
       );
     });
 
     it("should support limit parameter", async () => {
-      (ProductService.getRelatedProducts as jest.Mock).mockResolvedValue([]);
+      (productService.getRelatedProducts as jest.Mock).mockResolvedValue({
+        success: true,
+        data: [],
+      });
 
       const request = createMockRequest(
         "GET",
@@ -928,7 +971,7 @@ describe("ProductController - HTTP Request Handlers", () => {
         id: mockProductId,
       });
 
-      expect(ProductService.getRelatedProducts).toHaveBeenCalledWith(
+      expect(productService.getRelatedProducts).toHaveBeenCalledWith(
         mockProductId,
         10,
       );
@@ -946,9 +989,10 @@ describe("ProductController - HTTP Request Handlers", () => {
         viewCount: 43,
       };
 
-      (ProductService.incrementViewCount as jest.Mock).mockResolvedValue(
-        updatedProduct,
-      );
+      (productService.incrementViewCount as jest.Mock).mockResolvedValue({
+        success: true,
+        data: updatedProduct,
+      });
 
       const request = createMockRequest(
         "POST",
@@ -962,7 +1006,7 @@ describe("ProductController - HTTP Request Handlers", () => {
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(ProductService.incrementViewCount).toHaveBeenCalledWith(
+      expect(productService.incrementViewCount).toHaveBeenCalledWith(
         mockProductId,
       );
     });
@@ -974,9 +1018,10 @@ describe("ProductController - HTTP Request Handlers", () => {
 
   describe("getProductDetailBySlug - GET /api/products/detail/:farmSlug/:productSlug", () => {
     it("should return detailed product by farm and product slug", async () => {
-      (ProductService.getProductDetailBySlug as jest.Mock).mockResolvedValue(
-        mockQuantumProduct,
-      );
+      (productService.getProductDetailBySlug as jest.Mock).mockResolvedValue({
+        success: true,
+        data: mockQuantumProduct,
+      });
 
       const request = createMockRequest(
         "GET",
@@ -992,16 +1037,17 @@ describe("ProductController - HTTP Request Handlers", () => {
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
       expect(data.data.slug).toBe("organic-heirloom-tomatoes");
-      expect(ProductService.getProductDetailBySlug).toHaveBeenCalledWith(
+      expect(productService.getProductDetailBySlug).toHaveBeenCalledWith(
         "divine-acres-seattle",
         "organic-heirloom-tomatoes",
       );
     });
 
     it("should return 404 when product not found", async () => {
-      (ProductService.getProductDetailBySlug as jest.Mock).mockResolvedValue(
-        null,
-      );
+      (productService.getProductDetailBySlug as jest.Mock).mockResolvedValue({
+        success: true,
+        data: null,
+      });
 
       const request = createMockRequest(
         "GET",
@@ -1027,11 +1073,19 @@ describe("ProductController - HTTP Request Handlers", () => {
   describe("getProductsByFarmId - GET /api/products/farm/:farmId", () => {
     it("should return products for specific farm", async () => {
       const products = [mockQuantumProduct];
-      (ProductService.listProducts as jest.Mock).mockResolvedValue({
-        products,
-        total: 1,
-        page: 1,
-        totalPages: 1,
+      (productService.listProducts as jest.Mock).mockResolvedValue({
+        success: true,
+        data: {
+          items: products,
+          pagination: {
+            page: 1,
+            limit: 20,
+            total: 1,
+            totalPages: 1,
+            hasNext: false,
+            hasPrev: false,
+          },
+        },
       });
 
       const request = createMockRequest(
@@ -1046,9 +1100,9 @@ describe("ProductController - HTTP Request Handlers", () => {
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(data.data.products).toHaveLength(1);
-      expect(data.data.products[0].farmId).toBe(mockFarmId);
-      expect(ProductService.listProducts).toHaveBeenCalledWith(
+      expect(data.data).toHaveLength(1);
+      expect(data.data[0].farmId).toBe(mockFarmId);
+      expect(productService.listProducts).toHaveBeenCalledWith(
         { farmId: mockFarmId },
         expect.objectContaining({
           page: expect.any(Number),
@@ -1058,11 +1112,19 @@ describe("ProductController - HTTP Request Handlers", () => {
     });
 
     it("should return empty array when farm has no products", async () => {
-      (ProductService.listProducts as jest.Mock).mockResolvedValue({
-        products: [],
-        total: 0,
-        page: 1,
-        totalPages: 0,
+      (productService.listProducts as jest.Mock).mockResolvedValue({
+        success: true,
+        data: {
+          items: [],
+          pagination: {
+            page: 1,
+            limit: 20,
+            total: 0,
+            totalPages: 0,
+            hasNext: false,
+            hasPrev: false,
+          },
+        },
       });
 
       const request = createMockRequest(
@@ -1077,7 +1139,7 @@ describe("ProductController - HTTP Request Handlers", () => {
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(data.data.products).toHaveLength(0);
+      expect(data.data).toHaveLength(0);
     });
   });
 
@@ -1102,7 +1164,7 @@ describe("ProductController - HTTP Request Handlers", () => {
     });
 
     it("should handle service layer throwing unexpected errors", async () => {
-      (ProductService.listProducts as jest.Mock).mockRejectedValue(
+      (productService.listProducts as jest.Mock).mockRejectedValue(
         new Error("Unexpected database error"),
       );
 
@@ -1142,11 +1204,19 @@ describe("ProductController - HTTP Request Handlers", () => {
         },
       ];
 
-      (ProductService.listProducts as jest.Mock).mockResolvedValue({
-        products: seasonalProducts,
-        total: 1,
-        page: 1,
-        totalPages: 1,
+      (productService.listProducts as jest.Mock).mockResolvedValue({
+        success: true,
+        data: {
+          items: seasonalProducts,
+          pagination: {
+            page: 1,
+            limit: 20,
+            total: 1,
+            totalPages: 1,
+            hasNext: false,
+            hasPrev: false,
+          },
+        },
       });
 
       const request = createMockRequest("GET", "/api/products", undefined, {
@@ -1157,15 +1227,23 @@ describe("ProductController - HTTP Request Handlers", () => {
       const data = await response.json();
 
       expect(data.success).toBe(true);
-      expect(data.data.products[0].category).toBe("VEGETABLES");
+      expect(data.data[0].category).toBe("VEGETABLES");
     });
 
     it("should handle organic certification filtering", async () => {
-      (ProductService.listProducts as jest.Mock).mockResolvedValue({
-        products: [mockQuantumProduct],
-        total: 1,
-        page: 1,
-        totalPages: 1,
+      (productService.listProducts as jest.Mock).mockResolvedValue({
+        success: true,
+        data: {
+          items: [mockQuantumProduct],
+          pagination: {
+            page: 1,
+            limit: 20,
+            total: 1,
+            totalPages: 1,
+            hasNext: false,
+            hasPrev: false,
+          },
+        },
       });
 
       const request = createMockRequest("GET", "/api/products", undefined, {
@@ -1174,7 +1252,7 @@ describe("ProductController - HTTP Request Handlers", () => {
 
       await productController.listProducts(request);
 
-      expect(ProductService.listProducts).toHaveBeenCalledWith(
+      expect(productService.listProducts).toHaveBeenCalledWith(
         expect.objectContaining({
           isOrganic: true,
         }),

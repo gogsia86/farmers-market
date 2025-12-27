@@ -164,7 +164,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // ✅ CREATE PAYMENT INTENT VIA SERVICE
-    const paymentIntent = await paymentService.createPaymentIntent({
+    const paymentIntentResult = await paymentService.createPaymentIntent({
       orderId,
       amount: orderTotal,
       currency,
@@ -176,6 +176,23 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         ...metadata,
       },
     });
+
+    // ✅ CHECK IF PAYMENT INTENT CREATION FAILED
+    if (!paymentIntentResult.success) {
+      return NextResponse.json<ApiResponse>(
+        {
+          success: false,
+          error: {
+            code: paymentIntentResult.error.code,
+            message: paymentIntentResult.error.message,
+            details: paymentIntentResult.error.details,
+          },
+        },
+        { status: 500 },
+      );
+    }
+
+    const paymentIntent = paymentIntentResult.data;
 
     // ✅ RETURN SUCCESSFUL RESPONSE
     return NextResponse.json<ApiResponse>(
@@ -280,7 +297,25 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     // ✅ GET PAYMENT DETAILS
-    const paymentDetails = await paymentService.getPaymentDetails(orderId);
+    const paymentDetailsResult =
+      await paymentService.getPaymentDetails(orderId);
+
+    // ✅ CHECK IF PAYMENT DETAILS RETRIEVAL FAILED
+    if (!paymentDetailsResult.success) {
+      return NextResponse.json<ApiResponse>(
+        {
+          success: false,
+          error: {
+            code: paymentDetailsResult.error.code,
+            message: paymentDetailsResult.error.message,
+            details: paymentDetailsResult.error.details,
+          },
+        },
+        { status: 404 },
+      );
+    }
+
+    const paymentDetails = paymentDetailsResult.data;
 
     // ✅ AUTHORIZATION CHECK
     if (paymentDetails.order.customerId !== session.user.id) {

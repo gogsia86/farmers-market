@@ -48,9 +48,10 @@ export type QuantumOrder = Prisma.OrderGetPayload<{
       select: {
         id: true;
         name: true;
-        slug: true;
         email: true;
         phone: true;
+        slug: true;
+        ownerId: true;
       };
     };
     deliveryAddress: true;
@@ -748,6 +749,7 @@ export class QuantumOrderRepository extends BaseRepository<
           address: true,
           city: true,
           state: true,
+          ownerId: true,
         },
       },
       deliveryAddress: true,

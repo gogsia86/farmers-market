@@ -59,7 +59,6 @@ export {
   type UpdateFarmRequest,
   type FarmServiceResult,
   type ListFarmsOptions,
-  type ListFarmsResult,
 } from "./farm.service";
 
 // ============================================================================

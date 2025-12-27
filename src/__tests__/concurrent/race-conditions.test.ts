@@ -73,7 +73,7 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
 
       // Setup mock - product has only 50 units
       let availableQuantity = 50;
-      let reservedQuantity = 0;
+      const reservedQuantity = 0;
 
       mockDatabase.product.findUnique.mockImplementation(async () => ({
         id: productId,

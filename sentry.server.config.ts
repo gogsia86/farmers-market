@@ -1,54 +1,19 @@
-// 🧠 DIVINE PATTERN: Sentry Server-Side Initialization
-// 📚 Reference: 05_TESTING_SECURITY_DIVINITY.instructions.md
-// 🌾 Domain: Server-Side Error Tracking
-// ⚡ Performance: Agricultural Consciousness in Error Monitoring
+// This file configures the initialization of Sentry on the server.
+// The config you add here will be used whenever the server handles a request.
+// https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
-  dsn: process.env.SENTRY_DSN,
+  dsn: "https://cb6973c12326b4188ab6988c527abbf9@o4510579639123968.ingest.de.sentry.io/4510579666845776",
 
-  // Adjust this value in production
-  tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
+  // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
+  tracesSampleRate: 1,
 
-  // Environment
-  environment: process.env.NODE_ENV || "development",
+  // Enable logs to be sent to Sentry
+  enableLogs: true,
 
-  // Set agricultural context
-  beforeSend(event) {
-    // Add agricultural platform tags
-    event.tags = {
-      ...event.tags,
-      platform: "farmers-market",
-      "agricultural-consciousness": "active",
-      runtime: "server",
-    };
-
-    // Filter sensitive data
-    if (event.request) {
-      delete event.request.cookies;
-      delete event.request.headers?.["authorization"];
-    }
-
-    return event;
-  },
-
-  // Ignore certain errors
-  ignoreErrors: [
-    // Browser extensions
-    "top.GLOBALS",
-    // Random plugins/extensions
-    "originalCreateNotification",
-    "canvas.contentDocument",
-    "MyApp_RemoveAllHighlights",
-    // React hydration warnings (non-critical)
-    "Hydration failed",
-    "Text content does not match",
-  ],
-
-  // Server integrations
-  integrations: [Sentry.httpIntegration(), Sentry.prismaIntegration()],
-
-  // Debug mode in development
-  debug: process.env.NODE_ENV === "development",
+  // Enable sending user PII (Personally Identifiable Information)
+  // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
+  sendDefaultPii: true,
 });

@@ -19,7 +19,7 @@ import {
   Shield,
   ChevronRight,
 } from "lucide-react";
-import { ProductService } from "@/lib/services/product.service";
+import { productService } from "@/lib/services/product.service";
 import { ProductImageGallery } from "@/components/products/ProductImageGallery";
 import { StockIndicator } from "@/components/products/StockIndicator";
 import { RelatedProducts } from "@/components/products/RelatedProducts";
@@ -170,7 +170,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   }
 
   // Increment view count (fire and forget)
-  ProductService.incrementViewCount(product.id).catch(() => {
+  productService.incrementViewCount(product.id).catch(() => {
     // Silently fail - view counting is non-critical
   });
 
@@ -180,10 +180,13 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     : 0;
 
   // Fetch related products
-  const relatedProducts = await ProductService.getRelatedProducts(
+  const relatedProductsResponse = await productService.getRelatedProducts(
     product.id,
     8,
   );
+  const relatedProducts = relatedProductsResponse.success
+    ? relatedProductsResponse.data
+    : [];
 
   // Prepare images array
   const images = [

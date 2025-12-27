@@ -218,9 +218,10 @@ describe("OrderController - HTTP Request Handlers", () => {
 
     it("should create order successfully with valid data", async () => {
       (auth as jest.Mock).mockResolvedValue(mockCustomerSession);
-      mockOrderService.createOrder = jest
-        .fn()
-        .mockResolvedValue(mockQuantumOrder);
+      mockOrderService.createOrder = jest.fn().mockResolvedValue({
+        success: true,
+        data: mockQuantumOrder,
+      });
 
       const request = createMockRequest(
         "POST",
@@ -289,9 +290,10 @@ describe("OrderController - HTTP Request Handlers", () => {
 
     it("should allow admin to create orders for any customer", async () => {
       (auth as jest.Mock).mockResolvedValue(mockAdminSession);
-      mockOrderService.createOrder = jest
-        .fn()
-        .mockResolvedValue(mockQuantumOrder);
+      mockOrderService.createOrder = jest.fn().mockResolvedValue({
+        success: true,
+        data: mockQuantumOrder,
+      });
 
       const request = createMockRequest(
         "POST",
@@ -349,9 +351,10 @@ describe("OrderController - HTTP Request Handlers", () => {
 
     it("should allow orders without deliveryAddressId for FARM_PICKUP", async () => {
       (auth as jest.Mock).mockResolvedValue(mockCustomerSession);
-      mockOrderService.createOrder = jest
-        .fn()
-        .mockResolvedValue(mockQuantumOrder);
+      mockOrderService.createOrder = jest.fn().mockResolvedValue({
+        success: true,
+        data: mockQuantumOrder,
+      });
 
       const pickupRequest = {
         ...validOrderRequest,
@@ -386,9 +389,10 @@ describe("OrderController - HTTP Request Handlers", () => {
 
     it("should return paginated list of orders", async () => {
       (auth as jest.Mock).mockResolvedValue(mockAdminSession);
-      mockOrderService.getOrders = jest
-        .fn()
-        .mockResolvedValue(mockOrdersResponse);
+      mockOrderService.getOrders = jest.fn().mockResolvedValue({
+        success: true,
+        data: mockOrdersResponse,
+      });
 
       const request = createMockRequest("GET", "/api/orders");
 
@@ -423,9 +427,10 @@ describe("OrderController - HTTP Request Handlers", () => {
 
     it("should filter to customer's own orders for CUSTOMER role", async () => {
       (auth as jest.Mock).mockResolvedValue(mockCustomerSession);
-      mockOrderService.getOrders = jest
-        .fn()
-        .mockResolvedValue(mockOrdersResponse);
+      mockOrderService.getOrders = jest.fn().mockResolvedValue({
+        success: true,
+        data: mockOrdersResponse,
+      });
 
       const request = createMockRequest("GET", "/api/orders");
 
@@ -440,9 +445,10 @@ describe("OrderController - HTTP Request Handlers", () => {
 
     it("should allow admin to view all orders", async () => {
       (auth as jest.Mock).mockResolvedValue(mockAdminSession);
-      mockOrderService.getOrders = jest
-        .fn()
-        .mockResolvedValue(mockOrdersResponse);
+      mockOrderService.getOrders = jest.fn().mockResolvedValue({
+        success: true,
+        data: mockOrdersResponse,
+      });
 
       const request = createMockRequest("GET", "/api/orders");
 
@@ -463,9 +469,10 @@ describe("OrderController - HTTP Request Handlers", () => {
 
     it("should handle query parameters for filtering", async () => {
       (auth as jest.Mock).mockResolvedValue(mockAdminSession);
-      mockOrderService.getOrders = jest
-        .fn()
-        .mockResolvedValue(mockOrdersResponse);
+      mockOrderService.getOrders = jest.fn().mockResolvedValue({
+        success: true,
+        data: mockOrdersResponse,
+      });
 
       const request = createMockRequest("GET", "/api/orders", undefined, {
         page: "2",
@@ -510,9 +517,10 @@ describe("OrderController - HTTP Request Handlers", () => {
   describe("getOrderById - GET /api/orders/[id]", () => {
     it("should return order by ID", async () => {
       (auth as jest.Mock).mockResolvedValue(mockCustomerSession);
-      mockOrderService.getOrderById = jest
-        .fn()
-        .mockResolvedValue(mockQuantumOrder);
+      mockOrderService.getOrderById = jest.fn().mockResolvedValue({
+        success: true,
+        data: mockQuantumOrder,
+      });
 
       const request = createMockRequest("GET", `/api/orders/${mockOrderId}`);
 
@@ -525,7 +533,10 @@ describe("OrderController - HTTP Request Handlers", () => {
       expect(data.success).toBe(true);
       expect(data.data.id).toBe(mockOrderId);
       expect(data.data.orderNumber).toBe("ORD-2024-001");
-      expect(mockOrderService.getOrderById).toHaveBeenCalledWith(mockOrderId);
+      expect(mockOrderService.getOrderById).toHaveBeenCalledWith(
+        mockOrderId,
+        mockCustomerId,
+      );
     });
 
     it("should require authentication", async () => {
@@ -544,7 +555,10 @@ describe("OrderController - HTTP Request Handlers", () => {
 
     it("should return 404 if order not found", async () => {
       (auth as jest.Mock).mockResolvedValue(mockCustomerSession);
-      mockOrderService.getOrderById = jest.fn().mockResolvedValue(null);
+      mockOrderService.getOrderById = jest.fn().mockResolvedValue({
+        success: true,
+        data: null,
+      });
 
       const request = createMockRequest("GET", `/api/orders/${mockOrderId}`);
 
@@ -566,9 +580,10 @@ describe("OrderController - HTTP Request Handlers", () => {
         customerId: "user_other_customer_999",
       };
 
-      mockOrderService.getOrderById = jest
-        .fn()
-        .mockResolvedValue(otherCustomerOrder);
+      mockOrderService.getOrderById = jest.fn().mockResolvedValue({
+        success: true,
+        data: otherCustomerOrder,
+      });
 
       const request = createMockRequest("GET", `/api/orders/${mockOrderId}`);
 
@@ -590,9 +605,10 @@ describe("OrderController - HTTP Request Handlers", () => {
         customerId: "user_other_customer_999",
       };
 
-      mockOrderService.getOrderById = jest
-        .fn()
-        .mockResolvedValue(otherCustomerOrder);
+      mockOrderService.getOrderById = jest.fn().mockResolvedValue({
+        success: true,
+        data: otherCustomerOrder,
+      });
 
       const request = createMockRequest("GET", `/api/orders/${mockOrderId}`);
 
@@ -623,9 +639,10 @@ describe("OrderController - HTTP Request Handlers", () => {
 
     it("should return customer's orders", async () => {
       (auth as jest.Mock).mockResolvedValue(mockCustomerSession);
-      mockOrderService.getOrders = jest
-        .fn()
-        .mockResolvedValue(mockOrdersResponse);
+      mockOrderService.getOrders = jest.fn().mockResolvedValue({
+        success: true,
+        data: mockOrdersResponse,
+      });
 
       const request = createMockRequest(
         "GET",
@@ -669,9 +686,10 @@ describe("OrderController - HTTP Request Handlers", () => {
 
     it("should allow admin to view any customer's orders", async () => {
       (auth as jest.Mock).mockResolvedValue(mockAdminSession);
-      mockOrderService.getOrders = jest
-        .fn()
-        .mockResolvedValue(mockOrdersResponse);
+      mockOrderService.getOrders = jest.fn().mockResolvedValue({
+        success: true,
+        data: mockOrdersResponse,
+      });
 
       const otherCustomerId = "user_other_customer_999";
 
@@ -707,9 +725,10 @@ describe("OrderController - HTTP Request Handlers", () => {
 
     it("should return farm's orders", async () => {
       (auth as jest.Mock).mockResolvedValue(mockFarmerSession);
-      mockOrderService.getOrders = jest
-        .fn()
-        .mockResolvedValue(mockOrdersResponse);
+      mockOrderService.getOrders = jest.fn().mockResolvedValue({
+        success: true,
+        data: mockOrdersResponse,
+      });
 
       const request = createMockRequest(
         "GET",
@@ -751,9 +770,10 @@ describe("OrderController - HTTP Request Handlers", () => {
 
     it("should handle query parameters", async () => {
       (auth as jest.Mock).mockResolvedValue(mockFarmerSession);
-      mockOrderService.getOrders = jest
-        .fn()
-        .mockResolvedValue(mockOrdersResponse);
+      mockOrderService.getOrders = jest.fn().mockResolvedValue({
+        success: true,
+        data: mockOrdersResponse,
+      });
 
       const request = createMockRequest(
         "GET",
@@ -797,7 +817,10 @@ describe("OrderController - HTTP Request Handlers", () => {
         status: "PREPARING",
       };
 
-      mockOrderService.updateOrder = jest.fn().mockResolvedValue(updatedOrder);
+      mockOrderService.updateOrder = jest.fn().mockResolvedValue({
+        success: true,
+        data: updatedOrder,
+      });
 
       const request = createMockRequest(
         "PATCH",
@@ -820,6 +843,7 @@ describe("OrderController - HTTP Request Handlers", () => {
           status: "PREPARING",
           specialInstructions: "Updated instructions",
         }),
+        mockFarmerId,
       );
     });
 
@@ -882,9 +906,10 @@ describe("OrderController - HTTP Request Handlers", () => {
         status: "CANCELLED",
       };
 
-      mockOrderService.cancelOrder = jest
-        .fn()
-        .mockResolvedValue(cancelledOrder);
+      mockOrderService.cancelOrder = jest.fn().mockResolvedValue({
+        success: true,
+        data: cancelledOrder,
+      });
 
       const request = createMockRequest(
         "POST",
@@ -907,6 +932,7 @@ describe("OrderController - HTTP Request Handlers", () => {
           reason: validCancelRequest.reason,
           cancelledBy: mockCustomerId,
         }),
+        mockCustomerId,
       );
     });
 
@@ -960,9 +986,10 @@ describe("OrderController - HTTP Request Handlers", () => {
         status: "CANCELLED",
       };
 
-      mockOrderService.cancelOrder = jest
-        .fn()
-        .mockResolvedValue(cancelledOrder);
+      mockOrderService.cancelOrder = jest.fn().mockResolvedValue({
+        success: true,
+        data: cancelledOrder,
+      });
 
       const cancelRequestByAdmin = {
         reason: "Admin cancellation",
@@ -1035,9 +1062,10 @@ describe("OrderController - HTTP Request Handlers", () => {
 
     it("should return order statistics", async () => {
       (auth as jest.Mock).mockResolvedValue(mockAdminSession);
-      mockOrderService.getOrderStatistics = jest
-        .fn()
-        .mockResolvedValue(mockStatistics);
+      mockOrderService.getOrderStatistics = jest.fn().mockResolvedValue({
+        success: true,
+        data: mockStatistics,
+      });
 
       const request = createMockRequest("GET", "/api/orders/statistics");
 
@@ -1066,9 +1094,10 @@ describe("OrderController - HTTP Request Handlers", () => {
 
     it("should filter statistics to customer's own orders", async () => {
       (auth as jest.Mock).mockResolvedValue(mockCustomerSession);
-      mockOrderService.getOrderStatistics = jest
-        .fn()
-        .mockResolvedValue(mockStatistics);
+      mockOrderService.getOrderStatistics = jest.fn().mockResolvedValue({
+        success: true,
+        data: mockStatistics,
+      });
 
       const request = createMockRequest("GET", "/api/orders/statistics");
 
@@ -1083,9 +1112,10 @@ describe("OrderController - HTTP Request Handlers", () => {
 
     it("should handle query parameters for filtering", async () => {
       (auth as jest.Mock).mockResolvedValue(mockAdminSession);
-      mockOrderService.getOrderStatistics = jest
-        .fn()
-        .mockResolvedValue(mockStatistics);
+      mockOrderService.getOrderStatistics = jest.fn().mockResolvedValue({
+        success: true,
+        data: mockStatistics,
+      });
 
       const request = createMockRequest(
         "GET",

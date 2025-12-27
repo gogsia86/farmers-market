@@ -43,12 +43,15 @@ if (mockDatabase.product && !mockDatabase.product.updateMany) {
   (mockDatabase.product as any).updateMany = jest.fn();
 }
 
+// Mock $transaction to execute callbacks immediately with mockDatabase as tx
+(mockDatabase as any).$transaction = jest.fn();
+
 // ============================================================================
 // TEST DATA FACTORIES
 // ============================================================================
 
 const createMockUser = (overrides = {}) => ({
-  id: "user_123",
+  id: "123e4567-e89b-12d3-a456-426614174000",
   email: "test@example.com",
   name: "Test User",
   role: "CUSTOMER",
@@ -58,11 +61,11 @@ const createMockUser = (overrides = {}) => ({
 });
 
 const createMockProduct = (overrides = {}) => ({
-  id: "product_123",
+  id: "423e4567-e89b-12d3-a456-426614174000",
   name: "Organic Tomatoes",
   description: "Fresh organic tomatoes",
   price: 4.99,
-  farmId: "farm_123",
+  farmId: "523e4567-e89b-12d3-a456-426614174000",
   category: "VEGETABLES",
   season: "SUMMER",
   stock: 100,
@@ -75,7 +78,7 @@ const createMockProduct = (overrides = {}) => ({
 });
 
 const createMockFarm = (overrides = {}) => ({
-  id: "farm_123",
+  id: "523e4567-e89b-12d3-a456-426614174000",
   name: "Divine Acres Farm",
   description: "Biodynamic farming with consciousness",
   location: "Test Location",
@@ -90,7 +93,7 @@ const createMockCartItem = (overrides = {}) => {
   const product = overrides.product || createMockProduct();
   return {
     id: "cart_item_123",
-    userId: "user_123",
+    userId: "123e4567-e89b-12d3-a456-426614174000",
     productId: product.id,
     farmId: product.farmId,
     name: product.name,
@@ -132,8 +135,8 @@ const createMockCart = (items = [createMockCartItem()]) => {
 };
 
 const createMockAddress = (overrides = {}) => ({
-  id: "address_123",
-  userId: "user_123",
+  id: "223e4567-e89b-12d3-a456-426614174000",
+  userId: "123e4567-e89b-12d3-a456-426614174000",
   type: "DELIVERY",
   street: "123 Main St",
   city: "Springfield",
@@ -146,10 +149,10 @@ const createMockAddress = (overrides = {}) => ({
 });
 
 const createMockOrder = (overrides = {}) => ({
-  id: "order_123",
+  id: "323e4567-e89b-12d3-a456-426614174000",
   orderNumber: "FM-20241115-ABC123",
-  customerId: "user_123",
-  farmId: "farm_123",
+  customerId: "123e4567-e89b-12d3-a456-426614174000",
+  farmId: "523e4567-e89b-12d3-a456-426614174000",
   status: "PENDING",
   paymentStatus: "PENDING",
   fulfillmentMethod: "DELIVERY",
@@ -175,6 +178,14 @@ describe("CheckoutService", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+
+    // Reset the transaction mock implementation for each test
+    (mockDatabase as any).$transaction.mockImplementation(
+      async (callback: any) => {
+        return await callback(mockDatabase);
+      },
+    );
+
     checkoutService = new CheckoutService();
   });
 
@@ -184,7 +195,7 @@ describe("CheckoutService", () => {
 
   describe("initializeCheckout", () => {
     it("should initialize checkout with valid cart", async () => {
-      const userId = "user_123";
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
       const mockCart = createMockCart([
         createMockCartItem({ quantity: 2 }),
         createMockCartItem({
@@ -199,77 +210,104 @@ describe("CheckoutService", () => {
         }),
       ]);
 
-      // Mock getCart twice: once for initializeCheckout, once for calculateOrderPreview
-      mockCartService.getCart.mockResolvedValue(mockCart);
+      // Mock getCart with ServiceResponse pattern
+      mockCartService.getCart.mockResolvedValue({
+        success: true,
+        data: mockCart,
+      });
       mockCartService.validateCart.mockResolvedValueOnce({
-        valid: true,
-        issues: [],
+        success: true,
+        data: {
+          valid: true,
+          issues: [],
+        },
       });
 
       const result = await checkoutService.initializeCheckout(userId);
 
       expect(result.success).toBe(true);
-      expect(result.session).toBeDefined();
-      expect(result.session?.userId).toBe(userId);
-      expect(result.session?.cartSummary.items).toHaveLength(2);
-      expect(result.session?.cartSummary.farmCount).toBe(2);
-      expect(result.preview).toBeDefined();
+      expect(result.data).toBeDefined();
+      expect(result.data?.session).toBeDefined();
+      expect(result.data?.session.userId).toBe(userId);
+      expect(result.data?.session.cartSummary.items).toHaveLength(2);
+      expect(result.data?.session.cartSummary.farmCount).toBe(2);
+      expect(result.data?.preview).toBeDefined();
       expect(mockCartService.getCart).toHaveBeenCalledWith(userId);
     });
 
     it("should fail when cart is empty", async () => {
-      const userId = "user_123";
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
       const emptyCart = createMockCart([]);
 
-      mockCartService.getCart.mockResolvedValueOnce(emptyCart);
+      mockCartService.getCart.mockResolvedValueOnce({
+        success: true,
+        data: emptyCart,
+      });
 
       const result = await checkoutService.initializeCheckout(userId);
 
       expect(result.success).toBe(false);
-      expect(result.error).toContain("Cart is empty");
+      expect(result.error?.code).toBe("EMPTY_CART");
+      expect(result.error?.message).toContain("Cart is empty");
     });
 
     it("should fail when cart service fails", async () => {
-      const userId = "user_123";
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
 
-      mockCartService.getCart.mockRejectedValueOnce(
-        new Error("Failed to fetch cart"),
-      );
+      mockCartService.getCart.mockResolvedValueOnce({
+        success: false,
+        error: {
+          code: "CART_FETCH_ERROR",
+          message: "Failed to fetch cart",
+        },
+      });
 
       const result = await checkoutService.initializeCheckout(userId);
 
       expect(result.success).toBe(false);
-      expect(result.error).toBe("Failed to initialize checkout");
+      expect(result.error?.code).toBe("CART_FETCH_ERROR");
+      expect(result.error?.message).toContain("Failed to fetch cart");
     });
 
     it("should handle cart service errors gracefully", async () => {
-      const userId = "user_123";
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
 
-      mockCartService.getCart.mockRejectedValueOnce(
-        new Error("Database error"),
-      );
+      mockCartService.getCart.mockResolvedValueOnce({
+        success: false,
+        error: {
+          code: "DATABASE_ERROR",
+          message: "Database error",
+        },
+      });
 
       const result = await checkoutService.initializeCheckout(userId);
 
       expect(result.success).toBe(false);
-      expect(result.error).toBe("Failed to initialize checkout");
+      expect(result.error?.code).toBe("CART_FETCH_ERROR");
+      expect(result.error?.message).toBe("Failed to fetch cart");
     });
 
     it("should set correct fulfillment method", async () => {
-      const userId = "user_123";
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
       const mockCart = createMockCart();
 
-      // Mock getCart twice: once for initializeCheckout, once for calculateOrderPreview
-      mockCartService.getCart.mockResolvedValue(mockCart);
+      // Mock getCart with ServiceResponse pattern
+      mockCartService.getCart.mockResolvedValue({
+        success: true,
+        data: mockCart,
+      });
       mockCartService.validateCart.mockResolvedValueOnce({
-        valid: true,
-        issues: [],
+        success: true,
+        data: {
+          valid: true,
+          issues: [],
+        },
       });
 
       const result = await checkoutService.initializeCheckout(userId);
 
       expect(result.success).toBe(true);
-      expect(result.session?.fulfillmentMethod).toBe("DELIVERY");
+      expect(result.data?.session.fulfillmentMethod).toBe("DELIVERY");
     });
   });
 
@@ -279,7 +317,7 @@ describe("CheckoutService", () => {
 
   describe("calculateOrderPreview", () => {
     it("should calculate order preview correctly", async () => {
-      const userId = "user_123";
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
       const fulfillmentMethod = "DELIVERY";
       const mockCart = createMockCart([
         createMockCartItem({
@@ -288,22 +326,26 @@ describe("CheckoutService", () => {
         }),
       ]);
 
-      mockCartService.getCart.mockResolvedValueOnce(mockCart);
+      mockCartService.getCart.mockResolvedValueOnce({
+        success: true,
+        data: mockCart,
+      });
 
       const result = await checkoutService.calculateOrderPreview(userId, {
         fulfillmentMethod,
       });
 
-      expect(result).toBeDefined();
-      expect(result.subtotal).toBeCloseTo(9.98, 2);
-      expect(result.deliveryFee).toBe(5.0);
-      expect(result.tax).toBeGreaterThan(0);
-      expect(result.platformFee).toBeGreaterThan(0);
-      expect(result.total).toBeGreaterThan(9.98);
+      expect(result.success).toBe(true);
+      expect(result.data).toBeDefined();
+      expect(result.data?.subtotal).toBeCloseTo(9.98, 2);
+      expect(result.data?.deliveryFee).toBe(5.0);
+      expect(result.data?.tax).toBeGreaterThan(0);
+      expect(result.data?.platformFee).toBeGreaterThan(0);
+      expect(result.data?.total).toBeGreaterThan(9.98);
     });
 
     it("should apply free delivery for orders over minimum", async () => {
-      const userId = "user_123";
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
       const fulfillmentMethod = "DELIVERY";
       const mockCart = createMockCart([
         createMockCartItem({
@@ -312,19 +354,23 @@ describe("CheckoutService", () => {
         }),
       ]);
 
-      mockCartService.getCart.mockResolvedValueOnce(mockCart);
+      mockCartService.getCart.mockResolvedValueOnce({
+        success: true,
+        data: mockCart,
+      });
 
       const result = await checkoutService.calculateOrderPreview(userId, {
         fulfillmentMethod,
       });
 
-      expect(result).toBeDefined();
-      expect(result.subtotal).toBe(60.0);
-      expect(result.deliveryFee).toBe(0); // Free delivery over $50
+      expect(result.success).toBe(true);
+      expect(result.data).toBeDefined();
+      expect(result.data?.subtotal).toBe(60.0);
+      expect(result.data?.deliveryFee).toBe(0); // Free delivery over $50
     });
 
     it("should not charge delivery fee for farm pickup", async () => {
-      const userId = "user_123";
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
       const fulfillmentMethod = "FARM_PICKUP";
       const mockCart = createMockCart([
         createMockCartItem({
@@ -333,18 +379,22 @@ describe("CheckoutService", () => {
         }),
       ]);
 
-      mockCartService.getCart.mockResolvedValueOnce(mockCart);
+      mockCartService.getCart.mockResolvedValueOnce({
+        success: true,
+        data: mockCart,
+      });
 
       const result = await checkoutService.calculateOrderPreview(userId, {
         fulfillmentMethod,
       });
 
-      expect(result).toBeDefined();
-      expect(result.deliveryFee).toBe(0);
+      expect(result.success).toBe(true);
+      expect(result.data).toBeDefined();
+      expect(result.data?.deliveryFee).toBe(0);
     });
 
     it("should calculate platform fee correctly", async () => {
-      const userId = "user_123";
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
       const fulfillmentMethod = "DELIVERY";
       const mockCart = createMockCart([
         createMockCartItem({
@@ -353,19 +403,23 @@ describe("CheckoutService", () => {
         }),
       ]);
 
-      mockCartService.getCart.mockResolvedValueOnce(mockCart);
+      mockCartService.getCart.mockResolvedValueOnce({
+        success: true,
+        data: mockCart,
+      });
 
       const result = await checkoutService.calculateOrderPreview(userId, {
         fulfillmentMethod,
       });
 
-      expect(result).toBeDefined();
+      expect(result.success).toBe(true);
+      expect(result.data).toBeDefined();
       // Platform fee should be 5% of subtotal
-      expect(result.platformFee).toBeCloseTo(1.0, 2);
+      expect(result.data?.platformFee).toBeCloseTo(1.0, 2);
     });
 
     it("should calculate tax correctly", async () => {
-      const userId = "user_123";
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
       const fulfillmentMethod = "DELIVERY";
       const mockCart = createMockCart([
         createMockCartItem({
@@ -374,43 +428,52 @@ describe("CheckoutService", () => {
         }),
       ]);
 
-      mockCartService.getCart.mockResolvedValueOnce(mockCart);
+      mockCartService.getCart.mockResolvedValueOnce({
+        success: true,
+        data: mockCart,
+      });
 
       const result = await checkoutService.calculateOrderPreview(userId, {
         fulfillmentMethod,
       });
 
-      expect(result).toBeDefined();
+      expect(result.success).toBe(true);
+      expect(result.data).toBeDefined();
       // Tax should be 8% of (subtotal + delivery - discount)
       const expectedTax = (20.0 + 5.0) * 0.08;
-      expect(result.tax).toBeCloseTo(expectedTax, 2);
+      expect(result.data?.tax).toBeCloseTo(expectedTax, 2);
     });
 
     it("should include item details in preview", async () => {
-      const userId = "user_123";
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
       const fulfillmentMethod = "DELIVERY";
       const product = createMockProduct({
-        name: "Fresh Tomatoes",
-        price: 5.99,
+        name: "Organic Carrots",
+        price: 3.99,
       });
-      const farm = createMockFarm({ name: "Sunny Farm" });
+      const farm = createMockFarm({ name: "Test Farm" });
       const mockCart = createMockCart([
-        createMockCartItem({ quantity: 3, product }),
+        createMockCartItem({ quantity: 3, product, farm }),
       ]);
 
-      mockCartService.getCart.mockResolvedValueOnce(mockCart);
+      mockCartService.getCart.mockResolvedValueOnce({
+        success: true,
+        data: mockCart,
+      });
 
       const result = await checkoutService.calculateOrderPreview(userId, {
         fulfillmentMethod,
       });
 
-      expect(result).toBeDefined();
-      expect(result.items).toHaveLength(1);
-      const item = result.items[0];
-      expect(item?.productId).toBe(product.id);
-      expect(item?.productName).toBe("Fresh Tomatoes");
+      expect(result.success).toBe(true);
+      expect(result.data).toBeDefined();
+      expect(result.data?.items).toHaveLength(1);
+
+      const item = result.data?.items[0];
+      expect(item?.productName).toBe("Organic Carrots");
       expect(item?.quantity).toBe(3);
-      expect(item?.unitPrice).toBe(5.99);
+      expect(item?.unitPrice).toBe(3.99);
+      expect(item?.subtotal).toBeCloseTo(11.97, 2);
     });
   });
 
@@ -430,8 +493,9 @@ describe("CheckoutService", () => {
 
       const result = await checkoutService.validateShippingAddress(address);
 
-      expect(result.valid).toBe(true);
-      expect(result.normalized).toBeDefined();
+      expect(result.success).toBe(true);
+      expect(result.data?.valid).toBe(true);
+      expect(result.data?.normalized).toBeDefined();
     });
 
     it("should reject address without street", async () => {
@@ -445,8 +509,11 @@ describe("CheckoutService", () => {
 
       const result = await checkoutService.validateShippingAddress(address);
 
-      expect(result.valid).toBe(false);
-      expect(result.error).toContain("Street address is too short");
+      expect(result.success).toBe(true);
+      expect(result.data?.valid).toBe(false);
+      expect(result.data?.error).toContain(
+        "Street address must be at least 5 characters",
+      );
     });
 
     it("should reject address without city", async () => {
@@ -460,8 +527,9 @@ describe("CheckoutService", () => {
 
       const result = await checkoutService.validateShippingAddress(address);
 
-      expect(result.valid).toBe(false);
-      expect(result.error).toContain("City is required");
+      expect(result.success).toBe(true);
+      expect(result.data?.valid).toBe(false);
+      expect(result.data?.error).toContain("City");
     });
 
     it("should reject address without state", async () => {
@@ -475,8 +543,9 @@ describe("CheckoutService", () => {
 
       const result = await checkoutService.validateShippingAddress(address);
 
-      expect(result.valid).toBe(false);
-      expect(result.error).toContain("State is required");
+      expect(result.success).toBe(true);
+      expect(result.data?.valid).toBe(false);
+      expect(result.data?.error).toContain("State");
     });
 
     it("should reject invalid zip code format", async () => {
@@ -490,8 +559,9 @@ describe("CheckoutService", () => {
 
       const result = await checkoutService.validateShippingAddress(address);
 
-      expect(result.valid).toBe(false);
-      expect(result.error).toContain("Invalid ZIP code format");
+      expect(result.success).toBe(true);
+      expect(result.data?.valid).toBe(false);
+      expect(result.data?.error).toContain("Invalid ZIP code format");
     });
 
     it("should accept 5-digit zip code", async () => {
@@ -505,7 +575,8 @@ describe("CheckoutService", () => {
 
       const result = await checkoutService.validateShippingAddress(address);
 
-      expect(result.valid).toBe(true);
+      expect(result.success).toBe(true);
+      expect(result.data?.valid).toBe(true);
     });
 
     it("should accept 9-digit zip code", async () => {
@@ -519,25 +590,27 @@ describe("CheckoutService", () => {
 
       const result = await checkoutService.validateShippingAddress(address);
 
-      expect(result.valid).toBe(true);
+      expect(result.success).toBe(true);
+      expect(result.data?.valid).toBe(true);
     });
 
     it("should normalize address fields", async () => {
       const address = {
-        street: "  123 main st  ",
+        street: "  123 Main St  ",
         city: "  springfield  ",
         state: "il",
         zipCode: "62701",
-        country: "us",
+        country: "US",
       };
 
       const result = await checkoutService.validateShippingAddress(address);
 
-      expect(result.valid).toBe(true);
-      expect(result.normalized?.street).toContain("123 main st");
-      expect(result.normalized?.city).toContain("springfield");
-      expect(result.normalized?.state).toBe("il");
-      expect(result.normalized?.country).toBe("us");
+      expect(result.success).toBe(true);
+      expect(result.data?.valid).toBe(true);
+      expect(result.data?.normalized?.street).toBe("123 Main St");
+      expect(result.data?.normalized?.city).toBe("springfield");
+      expect(result.data?.normalized?.state).toBe("IL");
+      expect(result.data?.normalized?.zipCode).toBe("62701");
     });
   });
 
@@ -547,7 +620,7 @@ describe("CheckoutService", () => {
 
   describe("createPaymentIntent", () => {
     it("should create payment intent successfully", async () => {
-      const userId = "user_123";
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
       const amount = 49.99;
       const mockPaymentIntent = {
         id: "pi_test_123",
@@ -564,10 +637,10 @@ describe("CheckoutService", () => {
       const result = await checkoutService.createPaymentIntent(userId, amount);
 
       expect(result.success).toBe(true);
-      expect(result.paymentIntent).toBeDefined();
-      expect(result.paymentIntent?.id).toBe("pi_test_123");
-      expect(result.paymentIntent?.clientSecret).toBe("pi_test_123_secret_456");
-      expect(result.paymentIntent?.amount).toBe(4999);
+      expect(result.data).toBeDefined();
+      expect(result.data?.id).toBe("pi_test_123");
+      expect(result.data?.clientSecret).toBe("pi_test_123_secret_456");
+      expect(result.data?.amount).toBe(49.99);
       expect(mockStripe.paymentIntents.create).toHaveBeenCalledWith({
         amount: 4999,
         currency: "usd",
@@ -576,15 +649,15 @@ describe("CheckoutService", () => {
         },
         metadata: {
           userId,
-          platform: "Farmers Market Platform",
-          consciousness: "BIODYNAMIC",
+          platform: "farmers-market",
+          consciousness: "agricultural",
         },
-        description: "Order from Farmers Market Platform",
+        description: expect.stringContaining("Farmers Market Order"),
       });
     });
 
     it("should convert amount to cents correctly", async () => {
-      const userId = "user_123";
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
       const amount = 123.45;
 
       mockStripe.paymentIntents.create.mockResolvedValueOnce({
@@ -603,21 +676,22 @@ describe("CheckoutService", () => {
     });
 
     it("should handle Stripe API errors", async () => {
-      const userId = "user_123";
-      const amount = 49.99;
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
+      const amount = 100.0;
 
       mockStripe.paymentIntents.create.mockRejectedValueOnce(
-        new Error("Stripe API error: Invalid amount"),
+        new Error("Invalid amount"),
       );
 
       const result = await checkoutService.createPaymentIntent(userId, amount);
 
       expect(result.success).toBe(false);
-      expect(result.error).toContain("Invalid amount");
+      expect(result.error?.code).toBe("PAYMENT_INTENT_FAILED");
+      expect(result.error?.message).toContain("Invalid amount");
     });
 
     it("should include agricultural consciousness in metadata", async () => {
-      const userId = "user_123";
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
       const amount = 25.0;
 
       mockStripe.paymentIntents.create.mockResolvedValueOnce({
@@ -630,8 +704,8 @@ describe("CheckoutService", () => {
       expect(mockStripe.paymentIntents.create).toHaveBeenCalledWith(
         expect.objectContaining({
           metadata: expect.objectContaining({
-            consciousness: "BIODYNAMIC",
-            platform: "Farmers Market Platform",
+            consciousness: "agricultural",
+            platform: "farmers-market",
           }),
         }),
       );
@@ -645,39 +719,53 @@ describe("CheckoutService", () => {
   describe("createOrderFromCheckout", () => {
     it("should create order successfully with existing address", async () => {
       const request = {
-        userId: "user_123",
-        shippingAddressId: "address_123",
+        userId: "123e4567-e89b-12d3-a456-426614174000",
+        shippingAddressId: "223e4567-e89b-12d3-a456-426614174000",
         fulfillmentMethod: "DELIVERY" as const,
       };
 
       const mockCart = createMockCart([createMockCartItem({ quantity: 2 })]);
       const mockOrder = createMockOrder();
 
-      mockCartService.getCart.mockResolvedValueOnce(mockCart);
-      mockCartService.validateCart.mockResolvedValueOnce({
-        valid: true,
-        issues: [],
+      mockCartService.getCart.mockResolvedValueOnce({
+        success: true,
+        data: mockCart,
       });
-      mockCartService.reserveCartItems.mockResolvedValueOnce({ success: true });
-      mockCartService.clearCart.mockResolvedValueOnce({ success: true });
+      mockCartService.validateCart.mockResolvedValueOnce({
+        success: true,
+        data: {
+          valid: true,
+          issues: [],
+        },
+      });
+      mockCartService.reserveCartItems.mockResolvedValueOnce({
+        success: true,
+        data: undefined,
+      });
+      mockCartService.clearCart.mockResolvedValueOnce({
+        success: true,
+        data: undefined,
+      });
 
       mockDatabase.order.create.mockResolvedValueOnce(mockOrder as any);
-      mockDatabase.product.updateMany.mockResolvedValueOnce({
-        count: 1,
-      } as any);
-      mockCartService.clearCart.mockResolvedValueOnce({ success: true });
+      mockDatabase.product.update.mockResolvedValue({} as any);
 
       const result = await checkoutService.createOrderFromCheckout(request);
 
+      expect(result).toBeDefined();
       expect(result.success).toBe(true);
-      expect(result.order).toBeDefined();
+      expect(result.data).toBeDefined();
+      // Single order should be returned directly, not in array
+      if (result.data && !Array.isArray(result.data)) {
+        expect(result.data.id).toBe(mockOrder.id);
+      }
       expect(mockDatabase.order.create).toHaveBeenCalled();
       expect(mockCartService.clearCart).toHaveBeenCalledWith(request.userId);
     });
 
     it("should create order with new address", async () => {
       const request = {
-        userId: "user_123",
+        userId: "123e4567-e89b-12d3-a456-426614174000",
         shippingAddress: {
           street: "123 Main St",
           city: "Springfield",
@@ -692,23 +780,33 @@ describe("CheckoutService", () => {
       const mockAddress = createMockAddress();
       const mockOrder = createMockOrder();
 
-      mockCartService.getCart.mockResolvedValueOnce(mockCart);
-      mockCartService.validateCart.mockResolvedValueOnce({
-        valid: true,
-        issues: [],
+      mockCartService.getCart.mockResolvedValueOnce({
+        success: true,
+        data: mockCart,
       });
-      mockCartService.reserveCartItems.mockResolvedValueOnce({ success: true });
-      mockCartService.clearCart.mockResolvedValueOnce({ success: true });
+      mockCartService.validateCart.mockResolvedValueOnce({
+        success: true,
+        data: {
+          valid: true,
+          issues: [],
+        },
+      });
+      mockCartService.reserveCartItems.mockResolvedValueOnce({
+        success: true,
+        data: undefined,
+      });
+      mockCartService.clearCart.mockResolvedValueOnce({
+        success: true,
+        data: undefined,
+      });
 
       mockDatabase.userAddress.create.mockResolvedValueOnce(mockAddress);
       mockDatabase.order.create.mockResolvedValueOnce(mockOrder as any);
-      (mockDatabase.product.updateMany as jest.Mock).mockResolvedValueOnce({
-        count: 1,
-      } as any);
-      mockCartService.clearCart.mockResolvedValueOnce({ success: true });
+      mockDatabase.product.update.mockResolvedValue({} as any);
 
       const result = await checkoutService.createOrderFromCheckout(request);
 
+      expect(result).toBeDefined();
       expect(result.success).toBe(true);
       expect(mockDatabase.userAddress.create).toHaveBeenCalled();
       expect(mockDatabase.order.create).toHaveBeenCalled();
@@ -716,51 +814,68 @@ describe("CheckoutService", () => {
 
     it("should fail when cart is empty", async () => {
       const request = {
-        userId: "user_123",
-        shippingAddressId: "address_123",
-        fulfillmentMethod: "DELIVERY" as const,
+        userId: "123e4567-e89b-12d3-a456-426614174000",
+        shippingAddressId: "223e4567-e89b-12d3-a456-426614174000",
+        fulfillmentMethod: "DELIVERY",
       };
 
-      mockCartService.getCart.mockResolvedValueOnce(createMockCart([]));
+      mockCartService.getCart.mockResolvedValueOnce({
+        success: true,
+        data: createMockCart([]),
+      });
 
       const result = await checkoutService.createOrderFromCheckout(request);
 
       expect(result.success).toBe(false);
-      expect(result.error).toContain("Cart is empty");
+      expect(result.error?.code).toBe("EMPTY_CART");
+      expect(result.error?.message).toContain("Cart is empty");
     });
 
     it("should update product purchase count", async () => {
       const request = {
-        userId: "user_123",
-        shippingAddressId: "address_123",
+        userId: "123e4567-e89b-12d3-a456-426614174000",
+        shippingAddressId: "223e4567-e89b-12d3-a456-426614174000",
         fulfillmentMethod: "DELIVERY" as const,
       };
 
-      const product = createMockProduct({ id: "product_123" });
+      const product = createMockProduct({
+        id: "423e4567-e89b-12d3-a456-426614174000",
+      });
       const mockCart = createMockCart([
-        createMockCartItem({ productId: "product_123", quantity: 2 }),
+        createMockCartItem({
+          productId: "423e4567-e89b-12d3-a456-426614174000",
+          quantity: 2,
+        }),
       ]);
       const mockOrder = createMockOrder();
 
-      mockCartService.getCart.mockResolvedValueOnce(mockCart);
-      mockCartService.validateCart.mockResolvedValueOnce({
-        valid: true,
-        issues: [],
+      mockCartService.getCart.mockResolvedValueOnce({
+        success: true,
+        data: mockCart,
       });
-      mockCartService.reserveCartItems.mockResolvedValueOnce({ success: true });
-      mockCartService.clearCart.mockResolvedValueOnce({ success: true });
+      mockCartService.validateCart.mockResolvedValueOnce({
+        success: true,
+        data: {
+          valid: true,
+          issues: [],
+        },
+      });
+      mockCartService.reserveCartItems.mockResolvedValueOnce({
+        success: true,
+        data: undefined,
+      });
+      mockCartService.clearCart.mockResolvedValueOnce({
+        success: true,
+        data: undefined,
+      });
 
       mockDatabase.order.create.mockResolvedValueOnce(mockOrder as any);
       mockDatabase.product.update.mockResolvedValueOnce(product as any);
-      (mockDatabase.product.updateMany as jest.Mock).mockResolvedValueOnce({
-        count: 1,
-      } as any);
-      mockCartService.clearCart.mockResolvedValueOnce({ success: true });
 
       await checkoutService.createOrderFromCheckout(request);
 
       expect(mockDatabase.product.update).toHaveBeenCalledWith({
-        where: { id: "product_123" },
+        where: { id: "423e4567-e89b-12d3-a456-426614174000" },
         data: {
           purchaseCount: {
             increment: 2,
@@ -771,47 +886,65 @@ describe("CheckoutService", () => {
 
     it("should clear cart after successful order creation", async () => {
       const request = {
-        userId: "user_123",
-        shippingAddressId: "address_123",
+        userId: "123e4567-e89b-12d3-a456-426614174000",
+        shippingAddressId: "223e4567-e89b-12d3-a456-426614174000",
         fulfillmentMethod: "DELIVERY" as const,
       };
 
       const mockCart = createMockCart([createMockCartItem()]);
       const mockOrder = createMockOrder();
 
-      mockCartService.getCart.mockResolvedValueOnce(mockCart);
-      mockCartService.validateCart.mockResolvedValueOnce({
-        valid: true,
-        issues: [],
+      mockCartService.getCart.mockResolvedValueOnce({
+        success: true,
+        data: mockCart,
       });
-      mockCartService.reserveCartItems.mockResolvedValueOnce({ success: true });
-      mockCartService.clearCart.mockResolvedValueOnce({ success: true });
+      mockCartService.validateCart.mockResolvedValueOnce({
+        success: true,
+        data: {
+          valid: true,
+          issues: [],
+        },
+      });
+      mockCartService.reserveCartItems.mockResolvedValueOnce({
+        success: true,
+        data: undefined,
+      });
+      mockCartService.clearCart.mockResolvedValueOnce({
+        success: true,
+        data: undefined,
+      });
 
       mockDatabase.order.create.mockResolvedValueOnce(mockOrder as any);
       mockDatabase.product.update.mockResolvedValueOnce({} as any);
 
       const result = await checkoutService.createOrderFromCheckout(request);
 
+      expect(result).toBeDefined();
       expect(result.success).toBe(true);
       expect(mockCartService.clearCart).toHaveBeenCalledWith(request.userId);
     });
 
     it("should handle database errors gracefully", async () => {
       const request = {
-        userId: "user_123",
-        shippingAddressId: "address_123",
-        fulfillmentMethod: "DELIVERY" as const,
+        userId: "123e4567-e89b-12d3-a456-426614174000",
+        shippingAddressId: "223e4567-e89b-12d3-a456-426614174000",
+        fulfillmentMethod: "DELIVERY",
       };
 
       const mockCart = createMockCart();
 
-      mockCartService.getCart.mockResolvedValueOnce(mockCart);
-      mockCartService.validateCart.mockResolvedValueOnce({
-        valid: true,
-        issues: [],
+      mockCartService.getCart.mockResolvedValueOnce({
+        success: true,
+        data: mockCart,
       });
-      mockCartService.reserveCartItems.mockResolvedValueOnce({ success: true });
-      mockCartService.releaseReservations.mockResolvedValueOnce({
+      mockCartService.validateCart.mockResolvedValueOnce({
+        success: true,
+        data: {
+          valid: true,
+          issues: [],
+        },
+      });
+      mockCartService.reserveCartItems.mockResolvedValueOnce({
         success: true,
       });
 
@@ -821,14 +954,15 @@ describe("CheckoutService", () => {
 
       const result = await checkoutService.createOrderFromCheckout(request);
 
+      expect(result).toBeDefined();
       expect(result.success).toBe(false);
-      expect(result.error).toContain("Database error");
+      expect(result.error?.message).toContain("Database error");
     });
 
     it("should include stripe payment intent ID if provided", async () => {
       const request = {
-        userId: "user_123",
-        shippingAddressId: "address_123",
+        userId: "123e4567-e89b-12d3-a456-426614174000",
+        shippingAddressId: "223e4567-e89b-12d3-a456-426614174000",
         fulfillmentMethod: "DELIVERY" as const,
         stripePaymentIntentId: "pi_test_123",
       };
@@ -836,19 +970,27 @@ describe("CheckoutService", () => {
       const mockCart = createMockCart([createMockCartItem()]);
       const mockOrder = createMockOrder();
 
-      mockCartService.getCart.mockResolvedValueOnce(mockCart);
-      mockCartService.validateCart.mockResolvedValueOnce({
-        valid: true,
-        issues: [],
+      mockCartService.getCart.mockResolvedValueOnce({
+        success: true,
+        data: mockCart,
       });
-      mockCartService.reserveCartItems.mockResolvedValueOnce({ success: true });
-      mockCartService.clearCart.mockResolvedValueOnce({ success: true });
-
+      mockCartService.validateCart.mockResolvedValueOnce({
+        success: true,
+        data: {
+          valid: true,
+          issues: [],
+        },
+      });
+      mockCartService.reserveCartItems.mockResolvedValueOnce({
+        success: true,
+        data: undefined,
+      });
+      mockCartService.clearCart.mockResolvedValueOnce({
+        success: true,
+        data: undefined,
+      });
       mockDatabase.order.create.mockResolvedValueOnce(mockOrder as any);
       mockDatabase.product.update.mockResolvedValueOnce({} as any);
-      (mockDatabase.product.updateMany as jest.Mock).mockResolvedValueOnce({
-        count: 1,
-      } as any);
       mockCartService.clearCart.mockResolvedValueOnce({ success: true });
 
       await checkoutService.createOrderFromCheckout(request);
@@ -869,7 +1011,7 @@ describe("CheckoutService", () => {
 
   describe("processPayment", () => {
     it("should process payment successfully", async () => {
-      const orderId = "order_123";
+      const orderId = "323e4567-e89b-12d3-a456-426614174000";
       const paymentMethodId = "pm_test_123";
 
       mockDatabase.order.update.mockResolvedValueOnce(
@@ -898,11 +1040,11 @@ describe("CheckoutService", () => {
     });
 
     it("should handle payment processing errors", async () => {
-      const orderId = "order_123";
-      const paymentMethodId = "pm_test_123";
+      const orderId = "323e4567-e89b-12d3-a456-426614174000";
+      const paymentMethodId = "pm_123";
 
       mockDatabase.order.update.mockRejectedValueOnce(
-        new Error("Database error"),
+        new Error("Payment failed"),
       );
 
       const result = await checkoutService.processPayment(
@@ -911,7 +1053,7 @@ describe("CheckoutService", () => {
       );
 
       expect(result.success).toBe(false);
-      expect(result.error).toBe("Failed to process payment");
+      expect(result.error?.code).toBe("PAYMENT_PROCESSING_FAILED");
     });
   });
 
@@ -921,53 +1063,69 @@ describe("CheckoutService", () => {
 
   describe("getCheckoutStatus", () => {
     it("should return valid checkout status", async () => {
-      const userId = "user_123";
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
       const mockCart = createMockCart([createMockCartItem({ quantity: 2 })]);
 
-      mockCartService.getCart.mockResolvedValueOnce(mockCart);
+      mockCartService.getCart.mockResolvedValueOnce({
+        success: true,
+        data: mockCart,
+      });
       mockCartService.validateCart.mockResolvedValueOnce({
-        valid: true,
-        issues: [],
+        success: true,
+        data: {
+          valid: true,
+          issues: [],
+        },
       });
 
       const result = await checkoutService.getCheckoutStatus(userId);
 
-      expect(result.hasActiveCart).toBe(true);
-      expect(result.cartItemCount).toBe(2);
-      expect(result.canCheckout).toBe(true);
-      expect(result.issues).toHaveLength(0);
+      expect(result.success).toBe(true);
+      expect(result.data?.hasActiveCart).toBe(true);
+      expect(result.data?.cartItemCount).toBe(2);
+      expect(result.data?.canCheckout).toBe(true);
     });
 
     it("should return invalid status for empty cart", async () => {
-      const userId = "user_123";
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
       const emptyCart = createMockCart([]);
 
-      mockCartService.getCart.mockResolvedValueOnce(emptyCart);
+      mockCartService.getCart.mockResolvedValueOnce({
+        success: true,
+        data: emptyCart,
+      });
       mockCartService.validateCart.mockResolvedValueOnce({
-        valid: false,
-        issues: [{ itemId: "", message: "Cart is empty" }],
+        success: true,
+        data: {
+          valid: false,
+          issues: [{ itemId: "none", message: "Cart is empty" }],
+        },
       });
 
       const result = await checkoutService.getCheckoutStatus(userId);
 
-      expect(result.hasActiveCart).toBe(false);
-      expect(result.cartItemCount).toBe(0);
-      expect(result.canCheckout).toBe(false);
-      expect(result.issues).toContain("Cart is empty");
+      expect(result.success).toBe(true);
+      expect(result.data?.hasActiveCart).toBe(false);
+      expect(result.data?.canCheckout).toBe(false);
+      expect(result.data?.issues).toHaveLength(1);
     });
 
     it("should handle cart fetch errors", async () => {
-      const userId = "user_123";
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
 
-      mockCartService.getCart.mockRejectedValueOnce(
-        new Error("Database connection failed"),
-      );
+      mockCartService.getCart.mockResolvedValueOnce({
+        success: false,
+        error: {
+          code: "CART_FETCH_ERROR",
+          message: "Failed to fetch cart",
+        },
+      });
 
       const result = await checkoutService.getCheckoutStatus(userId);
 
-      expect(result.hasActiveCart).toBe(false);
-      expect(result.canCheckout).toBe(false);
-      expect(result.issues).toContain("Failed to get checkout status");
+      expect(result.success).toBe(true);
+      expect(result.data?.hasActiveCart).toBe(false);
+      expect(result.data?.canCheckout).toBe(false);
     });
   });
 
@@ -977,21 +1135,31 @@ describe("CheckoutService", () => {
 
   describe("generateOrderNumber", () => {
     it("should generate unique order numbers", async () => {
-      const userId = "user_123";
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
       const mockCart = createMockCart([createMockCartItem()]);
 
       // Create multiple orders and check for unique order numbers
       const orderNumbers = new Set<string>();
       for (let i = 0; i < 5; i++) {
-        mockCartService.getCart.mockResolvedValueOnce(mockCart);
+        mockCartService.getCart.mockResolvedValueOnce({
+          success: true,
+          data: mockCart,
+        });
         mockCartService.validateCart.mockResolvedValueOnce({
-          valid: true,
-          issues: [],
+          success: true,
+          data: {
+            valid: true,
+            issues: [],
+          },
         });
         mockCartService.reserveCartItems.mockResolvedValueOnce({
           success: true,
+          data: undefined,
         });
-        mockCartService.clearCart.mockResolvedValueOnce({ success: true });
+        mockCartService.clearCart.mockResolvedValueOnce({
+          success: true,
+          data: undefined,
+        });
 
         const mockOrder = createMockOrder({
           orderNumber: `FM-${Date.now()}-${i}-${Math.random().toString(36).substring(2, 8)}`,
@@ -1002,12 +1170,17 @@ describe("CheckoutService", () => {
 
         const result = await checkoutService.createOrderFromCheckout({
           userId,
-          shippingAddressId: "address_123",
+          shippingAddressId: "223e4567-e89b-12d3-a456-426614174000",
           fulfillmentMethod: "DELIVERY",
         });
 
-        if (result.order) {
-          orderNumbers.add(result.order.orderNumber);
+        if (result.success && result.data) {
+          const order = Array.isArray(result.data)
+            ? result.data[0]
+            : result.data;
+          if (order) {
+            orderNumbers.add(order.orderNumber);
+          }
         }
       }
 

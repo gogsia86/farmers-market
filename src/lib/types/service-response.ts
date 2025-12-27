@@ -97,6 +97,9 @@ export interface ServiceError {
 
   /** Related error codes or documentation links */
   references?: string[];
+
+  /** ISO 8601 timestamp of when the error occurred */
+  timestamp?: string;
 }
 
 /**
@@ -243,6 +246,7 @@ export const ErrorCodes = {
   AUTHORIZATION_FAILED: "AUTHORIZATION_FAILED",
   INSUFFICIENT_PERMISSIONS: "INSUFFICIENT_PERMISSIONS",
   FORBIDDEN_ACTION: "FORBIDDEN_ACTION",
+  FORBIDDEN: "FORBIDDEN",
 
   // Not Found Errors (404)
   NOT_FOUND: "NOT_FOUND",
@@ -273,7 +277,7 @@ export const ErrorCodes = {
   AGRICULTURAL_CONSTRAINT: "AGRICULTURAL_CONSTRAINT",
 } as const;
 
-export type ErrorCode = typeof ErrorCodes[keyof typeof ErrorCodes];
+export type ErrorCode = (typeof ErrorCodes)[keyof typeof ErrorCodes];
 
 // ============================================================================
 // TYPE GUARDS
@@ -283,7 +287,7 @@ export type ErrorCode = typeof ErrorCodes[keyof typeof ErrorCodes];
  * Type guard to check if response is successful
  */
 export function isSuccess<T>(
-  response: ServiceResponse<T>
+  response: ServiceResponse<T>,
 ): response is ServiceSuccessResponse<T> {
   return response.success === true;
 }
@@ -292,7 +296,7 @@ export function isSuccess<T>(
  * Type guard to check if response is an error
  */
 export function isError<T>(
-  response: ServiceResponse<T>
+  response: ServiceResponse<T>,
 ): response is ServiceErrorResponse {
   return response.success === false;
 }
@@ -301,7 +305,7 @@ export function isError<T>(
  * Type guard to check if error is a validation error
  */
 export function isValidationError(
-  error: ServiceError
+  error: ServiceError,
 ): error is ValidationError {
   return error.code === "VALIDATION_ERROR";
 }
@@ -346,7 +350,7 @@ export type MakeResponse<T> = ServiceResponse<T>;
  */
 export function createSuccessResponse<T>(
   data: T,
-  meta?: ResponseMetadata
+  meta?: ResponseMetadata,
 ): ServiceSuccessResponse<T> {
   return {
     success: true,
@@ -360,7 +364,7 @@ export function createSuccessResponse<T>(
  */
 export function createErrorResponse(
   error: ServiceError,
-  meta?: ResponseMetadata
+  meta?: ResponseMetadata,
 ): ServiceErrorResponse {
   return {
     success: false,
@@ -375,7 +379,7 @@ export function createErrorResponse(
 export function createPaginatedResponse<T>(
   items: T[],
   pagination: PaginationMetadata,
-  meta?: ResponseMetadata
+  meta?: ResponseMetadata,
 ): ServiceSuccessResponse<PaginatedData<T>> {
   return {
     success: true,
@@ -397,7 +401,7 @@ export function createPaginatedResponse<T>(
 export function calculatePagination(
   page: number,
   limit: number,
-  total: number
+  total: number,
 ): PaginationMetadata {
   const totalPages = Math.ceil(total / limit);
   const startIndex = (page - 1) * limit;
@@ -420,7 +424,7 @@ export function calculatePagination(
  */
 export function validatePagination(
   page: number,
-  limit: number
+  limit: number,
 ): { valid: boolean; error?: string } {
   if (page < 1) {
     return { valid: false, error: "Page must be >= 1" };

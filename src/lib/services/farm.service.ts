@@ -25,7 +25,7 @@
  * @reference .github/instructions/15_KILO_CODE_DIVINE_INTEGRATION.instructions.md
  */
 
-import { Prisma, FarmStatus } from "@prisma/client";
+import { Prisma, FarmStatus, Farm } from "@prisma/client";
 import { BaseService } from "@/lib/services/base.service";
 import type {
   ServiceResponse,
@@ -164,8 +164,7 @@ export interface SearchFarmsOptions {
  * }
  * ```
  */
-export class FarmService extends BaseService {
-  private cache = AgriculturalCache;
+export class FarmService extends BaseService<Farm> {
   private readonly MAX_SLUG_ATTEMPTS = 10;
 
   constructor(private repository = farmRepository) {
@@ -250,7 +249,7 @@ export class FarmService extends BaseService {
               return createErrorResponse({
                 code: ErrorCodes.VALIDATION_ERROR,
                 message: validationError.message,
-                timestamp: new Date(),
+                timestamp: new Date().toISOString(),
               });
             }
             throw validationError;
@@ -263,7 +262,7 @@ export class FarmService extends BaseService {
             return createErrorResponse({
               code: ErrorCodes.RESOURCE_EXISTS,
               message: "User already has a farm",
-              timestamp: new Date(),
+              timestamp: new Date().toISOString(),
               details: {
                 existingFarmId: existingCheck.farm?.id,
               },
@@ -339,7 +338,7 @@ export class FarmService extends BaseService {
           addSpanEvent("farm_created", { farmId: farm.id });
 
           // Invalidate cache
-          await this.cache.invalidateFarm(farm.id);
+          await AgriculturalCache.invalidateFarm(farm.id);
           addSpanEvent("cache_invalidated");
 
           const result: FarmServiceResult = {
@@ -349,11 +348,10 @@ export class FarmService extends BaseService {
 
           return createSuccessResponse(result, {
             message: "Farm created successfully",
-            timestamp: new Date(),
+            timestamp: new Date().toISOString(),
             agricultural: {
-              season: this.getCurrentSeason(),
               consciousness: "DIVINE",
-              entityType: "farm",
+              season: this.getCurrentSeason(),
             },
           });
         } catch (error) {
@@ -370,7 +368,7 @@ export class FarmService extends BaseService {
             return createErrorResponse({
               code: ErrorCodes.VALIDATION_ERROR,
               message: error.message,
-              timestamp: new Date(),
+              timestamp: new Date().toISOString(),
             });
           }
 
@@ -378,15 +376,15 @@ export class FarmService extends BaseService {
             return createErrorResponse({
               code: ErrorCodes.RESOURCE_EXISTS,
               message: error.message,
-              timestamp: new Date(),
-              details: error.details,
+              timestamp: new Date().toISOString(),
+              details: (error as any).details,
             });
           }
 
           return createErrorResponse({
             code: ErrorCodes.INTERNAL_SERVER_ERROR,
             message: "Failed to create farm",
-            timestamp: new Date(),
+            timestamp: new Date().toISOString(),
             details: {
               originalError:
                 error instanceof Error ? error.message : "Unknown error",
@@ -520,6 +518,17 @@ export class FarmService extends BaseService {
     return `${slugPart(name)}-${slugPart(city)}`;
   }
 
+  /**
+   * Get current agricultural season based on month
+   */
+  private getCurrentSeason(): "SPRING" | "SUMMER" | "FALL" | "WINTER" {
+    const month = new Date().getMonth() + 1; // 1-12
+    if (month >= 3 && month <= 5) return "SPRING";
+    if (month >= 6 && month <= 8) return "SUMMER";
+    if (month >= 9 && month <= 11) return "FALL";
+    return "WINTER";
+  }
+
   // ==========================================================================
   // FARM RETRIEVAL
   // ==========================================================================
@@ -547,7 +556,7 @@ export class FarmService extends BaseService {
       if (cached) {
         return createSuccessResponse(cached, {
           message: "Farm retrieved from cache",
-          timestamp: new Date(),
+          timestamp: new Date().toISOString(),
         });
       }
 
@@ -557,7 +566,7 @@ export class FarmService extends BaseService {
       if (!farm) {
         return createSuccessResponse(null, {
           message: "Farm not found",
-          timestamp: new Date(),
+          timestamp: new Date().toISOString(),
         });
       }
 
@@ -566,14 +575,14 @@ export class FarmService extends BaseService {
 
       return createSuccessResponse(farm, {
         message: "Farm retrieved successfully",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
       });
     } catch (error) {
       this.logger.error("Failed to get farm by ID", { farmId, error });
       return createErrorResponse({
         code: ErrorCodes.INTERNAL_SERVER_ERROR,
         message: "Failed to retrieve farm",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
         details: { farmId },
       });
     }
@@ -603,7 +612,7 @@ export class FarmService extends BaseService {
       if (cached) {
         return createSuccessResponse(cached, {
           message: "Farm retrieved from cache",
-          timestamp: new Date(),
+          timestamp: new Date().toISOString(),
         });
       }
 
@@ -613,7 +622,7 @@ export class FarmService extends BaseService {
       if (!farm) {
         return createSuccessResponse(null, {
           message: "Farm not found",
-          timestamp: new Date(),
+          timestamp: new Date().toISOString(),
         });
       }
 
@@ -625,14 +634,14 @@ export class FarmService extends BaseService {
 
       return createSuccessResponse(farm, {
         message: "Farm retrieved successfully",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
       });
     } catch (error) {
       this.logger.error("Failed to get farm by slug", { slug, error });
       return createErrorResponse({
         code: ErrorCodes.INTERNAL_SERVER_ERROR,
         message: "Failed to retrieve farm",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
         details: { slug },
       });
     }
@@ -679,14 +688,14 @@ export class FarmService extends BaseService {
       const farms = await this.repository.findByOwnerId(userId);
       return createSuccessResponse(farms, {
         message: "Farms retrieved successfully",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
       });
     } catch (error) {
       this.logger.error("Failed to get farms by owner", { userId, error });
       return createErrorResponse({
         code: ErrorCodes.INTERNAL_SERVER_ERROR,
         message: "Failed to retrieve farms",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
         details: { userId },
       });
     }
@@ -714,11 +723,10 @@ export class FarmService extends BaseService {
       const farms = await this.repository.findActiveWithProducts();
       return createSuccessResponse(farms, {
         message: "Active farms retrieved successfully",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
         agricultural: {
-          season: this.getCurrentSeason(),
           consciousness: "DIVINE",
-          entityType: "farm",
+          season: this.getCurrentSeason(),
         },
       });
     } catch (error) {
@@ -726,7 +734,7 @@ export class FarmService extends BaseService {
       return createErrorResponse({
         code: ErrorCodes.INTERNAL_SERVER_ERROR,
         message: "Failed to retrieve active farms",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
       });
     }
   }
@@ -769,7 +777,7 @@ export class FarmService extends BaseService {
         return createErrorResponse({
           code: ErrorCodes.NOT_FOUND,
           message: "Farm not found",
-          timestamp: new Date(),
+          timestamp: new Date().toISOString(),
           details: { farmId },
         });
       }
@@ -779,7 +787,7 @@ export class FarmService extends BaseService {
         return createErrorResponse({
           code: ErrorCodes.FORBIDDEN_ACTION,
           message: "Unauthorized: You don't own this farm",
-          timestamp: new Date(),
+          timestamp: new Date().toISOString(),
           details: { farmId, userId },
         });
       }
@@ -835,7 +843,7 @@ export class FarmService extends BaseService {
 
       return createSuccessResponse(updatedFarm, {
         message: "Farm updated successfully",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
       });
     } catch (error) {
       this.logger.error("Farm update failed", { farmId, userId, error });
@@ -844,7 +852,7 @@ export class FarmService extends BaseService {
         return createErrorResponse({
           code: ErrorCodes.NOT_FOUND,
           message: error.message,
-          timestamp: new Date(),
+          timestamp: new Date().toISOString(),
           details: { farmId },
         });
       }
@@ -853,7 +861,7 @@ export class FarmService extends BaseService {
         return createErrorResponse({
           code: ErrorCodes.FORBIDDEN_ACTION,
           message: error.message,
-          timestamp: new Date(),
+          timestamp: new Date().toISOString(),
           details: { farmId, userId },
         });
       }
@@ -861,7 +869,7 @@ export class FarmService extends BaseService {
       return createErrorResponse({
         code: ErrorCodes.INTERNAL_SERVER_ERROR,
         message: "Failed to update farm",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
         details: {
           originalError:
             error instanceof Error ? error.message : "Unknown error",
@@ -891,14 +899,14 @@ export class FarmService extends BaseService {
 
       return createSuccessResponse(farm, {
         message: "Farm status updated successfully",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
       });
     } catch (error) {
       this.logger.error("Farm status update failed", { farmId, status, error });
       return createErrorResponse({
         code: ErrorCodes.INTERNAL_SERVER_ERROR,
         message: "Failed to update farm status",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
         details: { farmId, status },
       });
     }
@@ -929,7 +937,7 @@ export class FarmService extends BaseService {
         return createErrorResponse({
           code: ErrorCodes.NOT_FOUND,
           message: "Farm not found",
-          timestamp: new Date(),
+          timestamp: new Date().toISOString(),
           details: { farmId },
         });
       }
@@ -939,7 +947,7 @@ export class FarmService extends BaseService {
         return createErrorResponse({
           code: ErrorCodes.FORBIDDEN_ACTION,
           message: "Unauthorized: You don't own this farm",
-          timestamp: new Date(),
+          timestamp: new Date().toISOString(),
           details: { farmId, userId },
         });
       }
@@ -954,7 +962,7 @@ export class FarmService extends BaseService {
 
       return createSuccessResponse(undefined, {
         message: "Farm deleted successfully",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
       });
     } catch (error) {
       this.logger.error("Farm deletion failed", { farmId, userId, error });
@@ -963,7 +971,7 @@ export class FarmService extends BaseService {
         return createErrorResponse({
           code: ErrorCodes.NOT_FOUND,
           message: error.message,
-          timestamp: new Date(),
+          timestamp: new Date().toISOString(),
           details: { farmId },
         });
       }
@@ -972,7 +980,7 @@ export class FarmService extends BaseService {
         return createErrorResponse({
           code: ErrorCodes.FORBIDDEN_ACTION,
           message: error.message,
-          timestamp: new Date(),
+          timestamp: new Date().toISOString(),
           details: { farmId, userId },
         });
       }
@@ -980,7 +988,7 @@ export class FarmService extends BaseService {
       return createErrorResponse({
         code: ErrorCodes.INTERNAL_SERVER_ERROR,
         message: "Failed to delete farm",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
         details: {
           originalError:
             error instanceof Error ? error.message : "Unknown error",
@@ -1057,41 +1065,33 @@ export class FarmService extends BaseService {
       // Get total count
       const total = await this.repository.count(where);
 
+      const totalPages = Math.ceil(total / limit);
+
       return createPaginatedResponse(
         farms,
         {
           page,
           limit,
           total,
-          totalPages: Math.ceil(total / limit),
+          totalPages,
+          hasNext: page < totalPages,
+          hasPrevious: page > 1,
         },
         {
           message: "Farms retrieved successfully",
-          timestamp: new Date(),
+          timestamp: new Date().toISOString(),
           agricultural: {
-            season: this.getCurrentSeason(),
             consciousness: "DIVINE",
-            entityType: "farm",
           },
         },
       );
     } catch (error) {
       this.logger.error("Failed to list farms", { options, error });
-      return {
-        success: false,
-        error: {
-          code: ErrorCodes.INTERNAL_SERVER_ERROR,
-          message: "Failed to retrieve farms",
-          timestamp: new Date(),
-        },
-        data: [],
-        pagination: {
-          page: options.page || 1,
-          limit: options.limit || 20,
-          total: 0,
-          totalPages: 0,
-        },
-      };
+      return createErrorResponse({
+        code: ErrorCodes.INTERNAL_SERVER_ERROR,
+        message: "Failed to retrieve farms",
+        timestamp: new Date().toISOString(),
+      });
     }
   }
 
@@ -1125,14 +1125,14 @@ export class FarmService extends BaseService {
 
       return createSuccessResponse(farms, {
         message: "Search completed successfully",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
       });
     } catch (error) {
       this.logger.error("Farm search failed", { options, error });
       return createErrorResponse({
         code: ErrorCodes.INTERNAL_SERVER_ERROR,
         message: "Failed to search farms",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
         details: { query: options.query },
       });
     }
@@ -1157,14 +1157,14 @@ export class FarmService extends BaseService {
       const farms = await this.repository.findByCity(city);
       return createSuccessResponse(farms, {
         message: "Farms retrieved successfully",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
       });
     } catch (error) {
       this.logger.error("Failed to get farms by city", { city, error });
       return createErrorResponse({
         code: ErrorCodes.INTERNAL_SERVER_ERROR,
         message: "Failed to retrieve farms",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
         details: { city },
       });
     }
@@ -1191,14 +1191,14 @@ export class FarmService extends BaseService {
       const farms = await this.repository.findByState(state);
       return createSuccessResponse(farms, {
         message: "Farms retrieved successfully",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
       });
     } catch (error) {
       this.logger.error("Failed to get farms by state", { state, error });
       return createErrorResponse({
         code: ErrorCodes.INTERNAL_SERVER_ERROR,
         message: "Failed to retrieve farms",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
         details: { state },
       });
     }
@@ -1234,11 +1234,9 @@ export class FarmService extends BaseService {
 
       return createSuccessResponse(farms, {
         message: "Nearby farms retrieved successfully",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
         agricultural: {
-          season: this.getCurrentSeason(),
           consciousness: "DIVINE",
-          entityType: "farm",
         },
       });
     } catch (error) {
@@ -1251,7 +1249,7 @@ export class FarmService extends BaseService {
       return createErrorResponse({
         code: ErrorCodes.INTERNAL_SERVER_ERROR,
         message: "Failed to find nearby farms",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
         details: { latitude, longitude, radiusKm },
       });
     }
@@ -1260,20 +1258,6 @@ export class FarmService extends BaseService {
   // ==========================================================================
   // AGRICULTURAL CONSCIOUSNESS HELPERS
   // ==========================================================================
-
-  /**
-   * Get current season based on date
-   *
-   * @returns Current season
-   */
-  private getCurrentSeason(): string {
-    const month = new Date().getMonth();
-
-    if (month >= 2 && month <= 4) return "SPRING";
-    if (month >= 5 && month <= 7) return "SUMMER";
-    if (month >= 8 && month <= 10) return "FALL";
-    return "WINTER";
-  }
 }
 
 // ============================================================================

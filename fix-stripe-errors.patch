@@ -1,0 +1,32 @@
+--- a/src/lib/services/payment.service.ts
++++ b/src/lib/services/payment.service.ts
+@@ -161,6 +161,29 @@ export class PaymentService extends BaseService<Order> {
+     });
+   }
+ 
++  // ==========================================================================
++  // HELPER METHODS
++  // ==========================================================================
++
++  /**
++   * 🔒 Safely check if an error is a Stripe error
++   * Handles cases where Stripe.errors might be undefined (e.g., in tests)
++   */
++  private isStripeError(error: any): error is Stripe.errors.StripeError {
++    return (
++      error &&
++      typeof error === "object" &&
++      ("type" in error || "rawType" in error) &&
++      "code" in error
++    );
++  }
++
++  private isStripeSignatureError(error: any): boolean {
++    return (
++      this.isStripeError(error) && error.type === "StripeSignatureVerificationError"
++    );
++  }
++
+   // ==========================================================================
+   // PAYMENT INTENT OPERATIONS
+   // ==========================================================================

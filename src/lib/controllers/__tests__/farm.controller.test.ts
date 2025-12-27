@@ -139,10 +139,18 @@ describe("FarmController - HTTP Request Handlers", () => {
       // Arrange
       const farms = [mockQuantumFarm];
       (farmService.listFarms as jest.Mock).mockResolvedValue({
-        farms,
-        total: 1,
-        page: 1,
-        totalPages: 1,
+        success: true,
+        data: {
+          items: farms,
+          pagination: {
+            page: 1,
+            limit: 20,
+            total: 1,
+            totalPages: 1,
+            hasNext: false,
+            hasPrevious: false,
+          },
+        },
       });
 
       const request = createMockRequest("GET", "/api/farms");
@@ -169,10 +177,18 @@ describe("FarmController - HTTP Request Handlers", () => {
     it("should handle query parameters for filtering", async () => {
       // Arrange
       (farmService.listFarms as jest.Mock).mockResolvedValue({
-        farms: [],
-        total: 0,
-        page: 1,
-        totalPages: 0,
+        success: true,
+        data: {
+          items: [],
+          pagination: {
+            page: 1,
+            limit: 20,
+            total: 0,
+            totalPages: 0,
+            hasNext: false,
+            hasPrevious: false,
+          },
+        },
       });
 
       const request = createMockRequest("GET", "/api/farms", undefined, {
@@ -237,8 +253,11 @@ describe("FarmController - HTTP Request Handlers", () => {
       // Arrange
       (auth as jest.Mock).mockResolvedValue(mockSession);
       (farmService.createFarm as jest.Mock).mockResolvedValue({
-        farm: mockQuantumFarm,
-        slug: "new-divine-farm-portland",
+        success: true,
+        data: {
+          farm: mockQuantumFarm,
+          slug: "new-divine-farm-portland",
+        },
       });
 
       const request = createMockRequest("POST", "/api/farms", validFarmData);
@@ -343,7 +362,10 @@ describe("FarmController - HTTP Request Handlers", () => {
   describe("handleGetFarm - GET /api/farms/:id", () => {
     it("should return farm by ID", async () => {
       // Arrange
-      (farmService.getFarmById as jest.Mock).mockResolvedValue(mockQuantumFarm);
+      (farmService.getFarmById as jest.Mock).mockResolvedValue({
+        success: true,
+        data: mockQuantumFarm,
+      });
 
       const request = createMockRequest("GET", `/api/farms/${mockFarmId}`);
 
@@ -360,7 +382,14 @@ describe("FarmController - HTTP Request Handlers", () => {
 
     it("should return 404 when farm not found", async () => {
       // Arrange
-      (farmService.getFarmById as jest.Mock).mockResolvedValue(null);
+      (farmService.getFarmById as jest.Mock).mockResolvedValue({
+        success: true,
+        data: null,
+      });
+      (farmService.getFarmBySlug as jest.Mock).mockResolvedValue({
+        success: true,
+        data: null,
+      });
 
       const request = createMockRequest("GET", "/api/farms/nonexistent");
 
@@ -384,10 +413,14 @@ describe("FarmController - HTTP Request Handlers", () => {
   describe("handleGetFarmBySlug - GET /api/farms/slug/:slug", () => {
     it("should return farm by slug", async () => {
       // Arrange
-      (farmService.getFarmById as jest.Mock).mockResolvedValue(null);
-      (farmService.getFarmBySlug as jest.Mock).mockResolvedValue(
-        mockQuantumFarm,
-      );
+      (farmService.getFarmById as jest.Mock).mockResolvedValue({
+        success: true,
+        data: null,
+      });
+      (farmService.getFarmBySlug as jest.Mock).mockResolvedValue({
+        success: true,
+        data: mockQuantumFarm,
+      });
 
       const request = createMockRequest(
         "GET",
@@ -408,8 +441,14 @@ describe("FarmController - HTTP Request Handlers", () => {
 
     it("should return 404 when slug not found", async () => {
       // Arrange
-      (farmService.getFarmById as jest.Mock).mockResolvedValue(null);
-      (farmService.getFarmBySlug as jest.Mock).mockResolvedValue(null);
+      (farmService.getFarmById as jest.Mock).mockResolvedValue({
+        success: true,
+        data: null,
+      });
+      (farmService.getFarmBySlug as jest.Mock).mockResolvedValue({
+        success: true,
+        data: null,
+      });
 
       const request = createMockRequest("GET", "/api/farms/slug/nonexistent");
 
@@ -439,7 +478,10 @@ describe("FarmController - HTTP Request Handlers", () => {
       // Arrange
       const updatedFarm = { ...mockQuantumFarm, ...updateData };
       (auth as jest.Mock).mockResolvedValue(mockSession);
-      (farmService.updateFarm as jest.Mock).mockResolvedValue(updatedFarm);
+      (farmService.updateFarm as jest.Mock).mockResolvedValue({
+        success: true,
+        data: updatedFarm,
+      });
 
       const request = createMockRequest(
         "PUT",
@@ -563,9 +605,10 @@ describe("FarmController - HTTP Request Handlers", () => {
   describe("handleSearchFarms - GET /api/farms/search", () => {
     it("should search farms by query", async () => {
       // Arrange
-      (farmService.searchFarms as jest.Mock).mockResolvedValue([
-        mockQuantumFarm,
-      ]);
+      (farmService.searchFarms as jest.Mock).mockResolvedValue({
+        success: true,
+        data: [mockQuantumFarm],
+      });
 
       const request = createMockRequest("GET", "/api/farms/search", undefined, {
         query: "divine",
@@ -600,7 +643,10 @@ describe("FarmController - HTTP Request Handlers", () => {
 
     it("should support limit parameter", async () => {
       // Arrange
-      (farmService.searchFarms as jest.Mock).mockResolvedValue([]);
+      (farmService.searchFarms as jest.Mock).mockResolvedValue({
+        success: true,
+        data: [],
+      });
 
       const request = createMockRequest("GET", "/api/farms/search", undefined, {
         query: "farm",
@@ -626,7 +672,10 @@ describe("FarmController - HTTP Request Handlers", () => {
     it("should find farms near coordinates", async () => {
       // Arrange
       const nearbyFarms = [{ ...mockQuantumFarm, distance: 5.2 }];
-      (farmService.findNearbyFarms as jest.Mock).mockResolvedValue(nearbyFarms);
+      (farmService.findNearbyFarms as jest.Mock).mockResolvedValue({
+        success: true,
+        data: nearbyFarms,
+      });
 
       const request = createMockRequest("GET", "/api/farms/nearby", undefined, {
         lat: "47.6062",
@@ -669,7 +718,10 @@ describe("FarmController - HTTP Request Handlers", () => {
 
     it("should use default radius when not provided", async () => {
       // Arrange
-      (farmService.findNearbyFarms as jest.Mock).mockResolvedValue([]);
+      (farmService.findNearbyFarms as jest.Mock).mockResolvedValue({
+        success: true,
+        data: [],
+      });
 
       const request = createMockRequest("GET", "/api/farms/nearby", undefined, {
         latitude: "47.6062",
@@ -696,9 +748,10 @@ describe("FarmController - HTTP Request Handlers", () => {
     it("should return authenticated user's farms", async () => {
       // Arrange
       (auth as jest.Mock).mockResolvedValue(mockSession);
-      (farmService.getFarmsByOwnerId as jest.Mock).mockResolvedValue([
-        mockQuantumFarm,
-      ]);
+      (farmService.getFarmsByOwnerId as jest.Mock).mockResolvedValue({
+        success: true,
+        data: [mockQuantumFarm],
+      });
 
       const request = createMockRequest("GET", "/api/farms/my");
 
@@ -786,9 +839,10 @@ describe("FarmController - HTTP Request Handlers", () => {
   describe("handleByCity - GET /api/farms/city/:city", () => {
     it("should return farms in specified city", async () => {
       // Arrange
-      (farmService.getFarmsByCity as jest.Mock).mockResolvedValue([
-        mockQuantumFarm,
-      ]);
+      (farmService.getFarmsByCity as jest.Mock).mockResolvedValue({
+        success: true,
+        data: [mockQuantumFarm],
+      });
 
       const request = createMockRequest("GET", "/api/farms/city/Seattle");
 
@@ -813,9 +867,10 @@ describe("FarmController - HTTP Request Handlers", () => {
   describe("handleByState - GET /api/farms/state/:state", () => {
     it("should return farms in specified state", async () => {
       // Arrange
-      (farmService.getFarmsByState as jest.Mock).mockResolvedValue([
-        mockQuantumFarm,
-      ]);
+      (farmService.getFarmsByState as jest.Mock).mockResolvedValue({
+        success: true,
+        data: [mockQuantumFarm],
+      });
 
       const request = createMockRequest("GET", "/api/farms/state/WA");
 

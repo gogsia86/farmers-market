@@ -85,7 +85,7 @@ function analyzeWebpackConfig() {
   const lines = content.split("\n");
 
   // Count cache groups (excluding default and vendors)
-  const cacheGroupMatches = content.match(/  [a-zA-Z]+: \{/g) || [];
+  const cacheGroupMatches = content.match(/ {2}[a-zA-Z]+: \{/g) || [];
   const cacheGroups = cacheGroupMatches.filter(
     (match) => !match.includes("default") && !match.includes("vendors"),
   );

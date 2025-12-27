@@ -209,10 +209,10 @@ export class ProductService extends BaseService<Product> {
     productData: CreateProductInput,
   ): Promise<ServiceResponse<ProductServiceResult>> {
     return this.safeExecute("createProduct", async () => {
-      this.logger.info(
-        { userId, productName: productData.name },
-        "Creating product with agricultural consciousness",
-      );
+      this.logger.info("Creating product with agricultural consciousness", {
+        userId,
+        productName: productData.name,
+      });
 
       // 1. Input validation
       if (!userId || typeof userId !== "string") {
@@ -236,9 +236,7 @@ export class ProductService extends BaseService<Product> {
       });
 
       if (!farm) {
-        return this.notFound("Farm not found", {
-          farmId: productData.farmId,
-        });
+        return this.notFound("Farm", productData.farmId);
       }
 
       if (farm.ownerId !== userId) {
@@ -262,7 +260,7 @@ export class ProductService extends BaseService<Product> {
       if (!validation.isValid) {
         return this.validationError(
           `Validation failed: ${validation.errors.map((e) => e.message).join(", ")}`,
-          { validationErrors: validation.errors },
+          validation.errors,
         );
       }
 
@@ -300,8 +298,8 @@ export class ProductService extends BaseService<Product> {
       await this.invalidateCache(`*`); // Invalidate all product caches (list, search)
 
       this.logger.info(
-        { productId: product.id, slug },
         "Product created successfully with divine consciousness",
+        { productId: product.id, slug },
       );
 
       const returnData = {
@@ -328,7 +326,7 @@ export class ProductService extends BaseService<Product> {
     includeFarm: boolean = true,
   ): Promise<ServiceResponse<Product | null>> {
     return this.safeExecute("getProductById", async () => {
-      this.logger.debug({ productId, includeFarm }, "Fetching product by ID");
+      this.logger.debug("Fetching product by ID", { productId, includeFarm });
 
       // Fetch from cache with fallback to repository
       const product = await this.getCached(
@@ -364,7 +362,7 @@ export class ProductService extends BaseService<Product> {
     productSlug: string,
   ): Promise<ServiceResponse<Product | null>> {
     return this.safeExecute("getProductBySlug", async () => {
-      this.logger.debug({ farmSlug, productSlug }, "Fetching product by slug");
+      this.logger.debug("Fetching product by slug", { farmSlug, productSlug });
 
       // Fetch from cache with fallback to database
       const product = await this.getCached(
@@ -414,10 +412,10 @@ export class ProductService extends BaseService<Product> {
     productSlug: string,
   ): Promise<ServiceResponse<Product | null>> {
     return this.safeExecute("getProductDetailBySlug", async () => {
-      this.logger.debug(
-        { farmSlug, productSlug },
-        "Fetching detailed product by slug",
-      );
+      this.logger.debug("Fetching detailed product by slug", {
+        farmSlug,
+        productSlug,
+      });
 
       // Fetch from cache with fallback to database with reviews
       const product = await this.getCached(
@@ -492,7 +490,7 @@ export class ProductService extends BaseService<Product> {
       const { page = 1, limit = 20 } = options || {};
       const skip = (page - 1) * limit;
 
-      this.logger.debug({ filters, page, limit }, "Listing products");
+      this.logger.debug("Listing products", { filters, page, limit });
 
       // Generate cache key from filters and pagination
       const cacheKey = `list:${JSON.stringify({ filters, page, limit })}`;
@@ -543,7 +541,7 @@ export class ProductService extends BaseService<Product> {
     limit: number = 20,
   ): Promise<ServiceResponse<Product[]>> {
     return this.safeExecute("searchProducts", async () => {
-      this.logger.debug({ query, limit }, "Searching products");
+      this.logger.debug("Searching products", { query, limit });
 
       // Fetch from cache with fallback to repository search
       const products = await this.getCached(
@@ -572,7 +570,7 @@ export class ProductService extends BaseService<Product> {
     limit: number = 6,
   ): Promise<ServiceResponse<Product[]>> {
     return this.safeExecute("getRelatedProducts", async () => {
-      this.logger.debug({ productId, limit }, "Fetching related products");
+      this.logger.debug("Fetching related products", { productId, limit });
 
       // Get product to determine category and farm
       const product = await this.repository.findById(productId);
@@ -621,16 +619,17 @@ export class ProductService extends BaseService<Product> {
     userId: string,
   ): Promise<ServiceResponse<Product>> {
     return this.safeExecute("updateProduct", async () => {
-      this.logger.info(
-        { productId, userId, updates: Object.keys(updates) },
-        "Updating product",
-      );
+      this.logger.info("Updating product", {
+        productId,
+        userId,
+        updates: Object.keys(updates),
+      });
 
       // 1. Get existing product
       const existing = await this.repository.findById(productId);
 
       if (!existing) {
-        return this.notFound("Product not found", { productId });
+        return this.notFound("Product", productId);
       }
 
       // 2. Check ownership
@@ -698,7 +697,7 @@ export class ProductService extends BaseService<Product> {
           ? inventoryUpdates
           : undefined,
         primaryPhotoUrl,
-        updatedAt: new Date(),
+        updatedAt: new Date().toISOString(),
       } as Prisma.ProductUpdateInput);
 
       // 7. Invalidate related caches
@@ -708,7 +707,7 @@ export class ProductService extends BaseService<Product> {
       await this.invalidateCache(`list:*`); // All list queries
       await this.invalidateCache(`search:*`); // All search results
 
-      this.logger.info({ productId, slug }, "Product updated successfully");
+      this.logger.info("Product updated successfully", { productId, slug });
 
       return this.success(product as unknown as Product);
     });
@@ -728,16 +727,17 @@ export class ProductService extends BaseService<Product> {
     userId: string,
   ): Promise<ServiceResponse<Product>> {
     return this.safeExecute("updateInventory", async () => {
-      this.logger.info(
-        { productId, userId, inventoryUpdate },
-        "Updating product inventory",
-      );
+      this.logger.info("Updating product inventory", {
+        productId,
+        userId,
+        inventoryUpdate,
+      });
 
       // 1. Get product
       const product = await this.repository.findById(productId);
 
       if (!product) {
-        return this.notFound("Product not found", { productId });
+        return this.notFound("Product", productId);
       }
 
       // 2. Check ownership
@@ -777,10 +777,10 @@ export class ProductService extends BaseService<Product> {
       await this.invalidateCache(`${productId}*`); // Product by ID
       await this.invalidateCache(`list:*`); // List queries (inventory changed)
 
-      this.logger.info(
-        { productId, availableQuantity },
-        "Inventory updated successfully",
-      );
+      this.logger.info("Inventory updated successfully", {
+        productId,
+        availableQuantity,
+      });
 
       return this.success(updated as unknown as Product);
     });
@@ -802,13 +802,13 @@ export class ProductService extends BaseService<Product> {
     userId: string,
   ): Promise<ServiceResponse<void>> {
     return this.safeExecute("deleteProduct", async () => {
-      this.logger.info({ productId, userId }, "Deleting product");
+      this.logger.info("Deleting product", { productId, userId });
 
       // 1. Get product
       const product = await this.repository.findById(productId);
 
       if (!product) {
-        return this.notFound("Product not found", { productId });
+        return this.notFound("Product", productId);
       }
 
       // 2. Check ownership
@@ -828,7 +828,7 @@ export class ProductService extends BaseService<Product> {
       // 3. Soft delete - update status to ARCHIVED
       await this.repository.update(productId, {
         status: "ARCHIVED" as any,
-        updatedAt: new Date(),
+        updatedAt: new Date().toISOString(),
       } as Prisma.ProductUpdateInput);
 
       // 4. Invalidate related caches
@@ -837,7 +837,7 @@ export class ProductService extends BaseService<Product> {
       await this.invalidateCache(`detail:*`); // Detail pages
       await this.invalidateCache(`list:*`); // List queries
 
-      this.logger.info({ productId }, "Product deleted successfully");
+      this.logger.info("Product deleted successfully", { productId });
 
       return this.success(undefined as void);
     });
@@ -859,10 +859,10 @@ export class ProductService extends BaseService<Product> {
     userId: string,
   ): Promise<ServiceResponse<BatchProductResult>> {
     return this.safeExecute("batchUpdateProducts", async () => {
-      this.logger.info(
-        { userId, updateCount: updates.length },
-        "Batch updating products",
-      );
+      this.logger.info("Batch updating products", {
+        userId,
+        updateCount: updates.length,
+      });
 
       const result: BatchProductResult = {
         successful: [],
@@ -902,13 +902,10 @@ export class ProductService extends BaseService<Product> {
         }
       }
 
-      this.logger.info(
-        {
-          successCount: result.successCount,
-          failureCount: result.failureCount,
-        },
-        "Batch update completed",
-      );
+      this.logger.info("Batch update completed", {
+        successCount: result.successCount,
+        failureCount: result.failureCount,
+      });
 
       return this.success(result);
     });
@@ -928,13 +925,13 @@ export class ProductService extends BaseService<Product> {
     productId: string,
   ): Promise<ServiceResponse<ProductStats>> {
     return this.safeExecute("getProductStats", async () => {
-      this.logger.debug({ productId }, "Fetching product stats");
+      this.logger.debug("Fetching product stats", { productId });
 
       // Get product with counts
       const product = await this.repository.findById(productId);
 
       if (!product) {
-        return this.notFound("Product not found", { productId });
+        return this.notFound("Product", productId);
       }
 
       const stats: ProductStats = {
@@ -1238,3 +1235,19 @@ export class ProductService extends BaseService<Product> {
     return Math.max(0, totalQuantity - reserved);
   }
 }
+
+// ============================================================================
+// SINGLETON INSTANCE EXPORT
+// ============================================================================
+
+/**
+ * Singleton instance of ProductService for use in controllers and API routes
+ *
+ * @example
+ * ```typescript
+ * import { productService } from "@/lib/services/product.service";
+ *
+ * const response = await productService.listProducts(filters, pagination);
+ * ```
+ */
+export const productService = new ProductService();

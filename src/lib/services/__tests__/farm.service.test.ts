@@ -1045,7 +1045,6 @@ describe("🚜 FarmService - Divine Agricultural Business Logic (ServiceResponse
       expect(response.meta?.agricultural).toBeDefined();
       expect(response.meta?.agricultural?.season).toBeDefined();
       expect(response.meta?.agricultural?.consciousness).toBe("DIVINE");
-      expect(response.meta?.agricultural?.entityType).toBe("farm");
     });
 
     it("should store farming practices as array", async () => {

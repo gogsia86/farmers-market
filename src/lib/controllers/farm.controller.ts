@@ -190,14 +190,19 @@ export class FarmController extends BaseController {
       // Get farms from service
       const result = await farmService.listFarms(options);
 
+      // Check for service errors
+      if (!result.success) {
+        return this.internalError(result.error.message);
+      }
+
       // Return paginated response
       return this.successWithPagination(
-        result.farms,
+        result.data.items,
         {
-          page: result.page,
+          page: result.data.pagination.page,
           limit: options.limit || 20,
-          total: result.total,
-          totalPages: result.totalPages,
+          total: result.data.pagination.total,
+          totalPages: result.data.pagination.totalPages,
         },
         {
           agricultural: {
@@ -240,15 +245,20 @@ export class FarmController extends BaseController {
           farmData as CreateFarmRequest,
         );
 
+        // Check for service errors
+        if (!result.success) {
+          return this.internalError(result.error.message);
+        }
+
         this.log("createFarm:success", {
-          farmId: result.farm.id,
-          slug: result.slug,
+          farmId: result.data.farm.id,
+          slug: result.data.slug,
           ownerId: session.user.id,
         });
 
         // Return created response
-        return this.created(result.farm, {
-          slug: result.slug,
+        return this.created(result.data.farm, {
+          slug: result.data.slug,
           agricultural: {
             consciousness: "DIVINE",
             operation: "FARM_MANIFESTATION",
@@ -284,16 +294,27 @@ export class FarmController extends BaseController {
       // Try to get farm by ID or slug
       let farm = await farmService.getFarmById(id);
 
-      if (!farm) {
-        // Try by slug if not found by ID
+      // Check for service errors on ID lookup
+      if (!farm.success) {
+        return this.internalError(farm.error.message);
+      }
+
+      // If not found by ID, try by slug
+      if (!farm.data) {
         farm = await farmService.getFarmBySlug(id);
+
+        // Check for service errors on slug lookup
+        if (!farm.success) {
+          return this.internalError(farm.error.message);
+        }
+
+        // If still not found, return 404
+        if (!farm.data) {
+          return this.notFound("Farm", id);
+        }
       }
 
-      if (!farm) {
-        return this.notFound("Farm", id);
-      }
-
-      return this.success(farm, {
+      return this.success(farm.data, {
         agricultural: {
           consciousness: "QUANTUM",
           operation: "FARM_RETRIEVAL",
@@ -337,12 +358,17 @@ export class FarmController extends BaseController {
         updateData as UpdateFarmRequest,
       );
 
+      // Check for service errors
+      if (!farm.success) {
+        return this.internalError(farm.error.message);
+      }
+
       this.log("updateFarm:success", {
         farmId: id,
         ownerId: session.user.id,
       });
 
-      return this.success(farm, {
+      return this.success(farm.data, {
         agricultural: {
           consciousness: "BIODYNAMIC",
           operation: "FARM_TRANSFORMATION",
@@ -408,8 +434,13 @@ export class FarmController extends BaseController {
         limit: queryParams.limit,
       });
 
-      return this.success(farms, {
-        count: farms.length,
+      // Check for service errors
+      if (!farms.success) {
+        return this.internalError(farms.error.message);
+      }
+
+      return this.success(farms.data, {
+        count: farms.data.length,
         searchQuery: queryParams.query,
         agricultural: {
           consciousness: "ACTIVE",
@@ -444,8 +475,13 @@ export class FarmController extends BaseController {
         queryParams.radius,
       );
 
-      return this.success(farms, {
-        count: farms.length,
+      // Check for service errors
+      if (!farms.success) {
+        return this.internalError(farms.error.message);
+      }
+
+      return this.success(farms.data, {
+        count: farms.data.length,
         searchRadius: queryParams.radius,
         searchLocation: {
           latitude: queryParams.latitude,
@@ -477,8 +513,13 @@ export class FarmController extends BaseController {
       // Get farms for current user
       const farms = await farmService.getFarmsByOwnerId(session.user.id);
 
-      return this.success(farms, {
-        count: farms.length,
+      // Check for service errors
+      if (!farms.success) {
+        return this.internalError(farms.error.message);
+      }
+
+      return this.success(farms.data, {
+        count: farms.data.length,
         ownerId: session.user.id,
         agricultural: {
           consciousness: "BIODYNAMIC",
@@ -533,14 +574,19 @@ export class FarmController extends BaseController {
     return this.handleRequest(request, async () => {
       const { city } = params;
 
+      // Get farms by city
       const farms = await farmService.getFarmsByCity(city);
 
-      return this.success(farms, {
-        count: farms.length,
-        city,
+      // Check for service errors
+      if (!farms.success) {
+        return this.internalError(farms.error.message);
+      }
+
+      return this.success(farms.data, {
+        total: farms.data.length,
         agricultural: {
           consciousness: "ACTIVE",
-          operation: "CITY_FARM_RETRIEVAL",
+          operation: "FARMS_BY_CITY",
         },
       });
     });
@@ -569,8 +615,13 @@ export class FarmController extends BaseController {
 
       const farms = await farmService.getFarmsByState(state);
 
-      return this.success(farms, {
-        count: farms.length,
+      // Check for service errors
+      if (!farms.success) {
+        return this.internalError(farms.error.message);
+      }
+
+      return this.success(farms.data, {
+        count: farms.data.length,
         state,
         agricultural: {
           consciousness: "ACTIVE",

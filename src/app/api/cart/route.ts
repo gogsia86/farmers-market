@@ -2,6 +2,9 @@
  * 🛒 CART API ROUTES
  * GET: Fetch user's cart with full details
  * POST: Add item to cart
+ * DELETE: Clear entire cart
+ *
+ * Updated to handle ServiceResponse pattern from CartService
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -31,13 +34,24 @@ export async function GET() {
       );
     }
 
-    // Fetch cart
-    const cart = await cartService.getCart(session.user.id);
+    // Fetch cart (returns ServiceResponse)
+    const response = await cartService.getCart(session.user.id);
+
+    if (!response.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: response.error,
+        },
+        { status: 500 },
+      );
+    }
 
     return NextResponse.json({
       success: true,
-      data: cart,
+      data: response.data,
       meta: {
+        ...response.meta,
         timestamp: new Date().toISOString(),
       },
     });
@@ -105,20 +119,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Add to cart
-    const result = await cartService.addToCart(
+    // Add to cart (returns ServiceResponse)
+    const response = await cartService.addToCart(
       session.user.id,
       validation.data,
     );
 
-    if (!result.success) {
+    if (!response.success) {
       return NextResponse.json(
         {
           success: false,
-          error: {
-            code: "ADD_TO_CART_ERROR",
-            message: result.error || "Failed to add item to cart",
-          },
+          error: response.error,
         },
         { status: 400 },
       );
@@ -127,8 +138,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        data: result.cartItem,
-        message: "Item added to cart successfully",
+        data: response.data,
+        message: response.meta?.message || "Item added to cart successfully",
       },
       { status: 201 },
     );
@@ -170,17 +181,14 @@ export async function DELETE() {
       );
     }
 
-    // Clear cart
-    const result = await cartService.clearCart(session.user.id);
+    // Clear cart (returns ServiceResponse)
+    const response = await cartService.clearCart(session.user.id);
 
-    if (!result.success) {
+    if (!response.success) {
       return NextResponse.json(
         {
           success: false,
-          error: {
-            code: "CART_CLEAR_ERROR",
-            message: result.error || "Failed to clear cart",
-          },
+          error: response.error,
         },
         { status: 500 },
       );
@@ -188,7 +196,7 @@ export async function DELETE() {
 
     return NextResponse.json({
       success: true,
-      message: "Cart cleared successfully",
+      message: response.meta?.message || "Cart cleared successfully",
     });
   } catch (error) {
     console.error("Error clearing cart:", error);

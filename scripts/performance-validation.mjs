@@ -268,7 +268,7 @@ function analyzeWebpackConfig() {
     const configContent = fs.readFileSync(webpackConfigPath, "utf-8");
 
     // Count cache groups
-    const cacheGroupMatches = configContent.match(/^  [a-zA-Z]+: {$/gm);
+    const cacheGroupMatches = configContent.match(/^ {2}[a-zA-Z]+: {$/gm);
     const cacheGroupCount = cacheGroupMatches ? cacheGroupMatches.length : 0;
 
     // Check for optimization features
