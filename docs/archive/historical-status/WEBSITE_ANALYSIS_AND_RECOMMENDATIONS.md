@@ -1035,7 +1035,7 @@ export function BusinessIntelligence({ farmId }: Props) {
 **B. Platform-Wide Analytics Dashboard**
 
 ```typescript
-// app/(admin)/admin/analytics/page.tsx
+// app/(admin)/analytics/page.tsx
 export default async function AnalyticsPage() {
   const metrics = await getComprehensiveMetrics();
 

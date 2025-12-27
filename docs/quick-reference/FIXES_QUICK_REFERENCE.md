@@ -40,7 +40,7 @@ npm run type-check | grep "Found.*errors"
 find src -type f -name "*.ts" -exec sed -i 's/stripeConnectAccountId/stripeAccountId/g' {} +
 
 # OPTION 2: Manual fix locations
-# src/app/(farmer)/farmer/payouts/page.tsx
+# src/app/(farmer)/payouts/page.tsx
 # src/app/api/farmer/finances/route.ts
 # src/app/api/farmer/payouts/route.ts
 

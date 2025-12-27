@@ -736,7 +736,7 @@ npx tsc --noEmit 2>&1 | grep "error TS" | wc -l
 npx tsc --noEmit 2>&1 | grep "does not exist on type"
 
 # Check specific file
-npx tsc --noEmit src/app/(admin)/admin/financial/page.tsx
+npx tsc --noEmit src/app/(admin)/financial/page.tsx
 
 # Generate fresh Prisma types
 npx prisma generate

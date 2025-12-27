@@ -149,7 +149,7 @@
    - Download invoice
 
 2. **Farmer order detail page** (45 min)
-   - File: `/src/app/(farmer)/farmer/orders/[id]/page.tsx` (enhance)
+   - File: `/src/app/(farmer)/orders/[id]/page.tsx` (enhance)
    - Customer information
    - Order items with pricing
    - Status update buttons

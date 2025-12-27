@@ -254,7 +254,7 @@ Monitoring Dashboard Tests:
 
 1. ✅ `playwright.config.ts` - Added setup project and dependencies
 2. ✅ `tests/e2e/auth.setup.ts` - Enhanced verification logic
-3. ✅ `src/app/(monitoring)/monitoring/page.tsx` - Already implemented
+3. ✅ `src/app/(monitoring)/page.tsx` - Already implemented
 
 ---
 

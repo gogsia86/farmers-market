@@ -208,7 +208,7 @@ Root Level Files Count:
 
 ```
 DUPLICATE ROUTES:
-1. /src/app/(farmer)/farmer/dashboard/page.tsx  ✅ CORRECT (Route Group)
+1. /src/app/(farmer)/dashboard/page.tsx  ✅ CORRECT (Route Group)
 2. /src/app/farmer-dashboard/page.tsx           ❌ REDUNDANT
 ```
 
@@ -229,7 +229,7 @@ DUPLICATE ROUTES:
 
 ```
 ROUTES:
-1. /src/app/(admin)/admin/page.tsx           ✅ Protected Route Group
+1. /src/app/(admin)/page.tsx           ✅ Protected Route Group
 2. /src/app/admin-login/page.tsx             ⚠️ Separate login route
 ```
 
@@ -240,7 +240,7 @@ ROUTES:
 ```
 DUPLICATE ROUTES:
 1. /src/app/(customer)/account/orders/page.tsx   ✅ Customer orders
-2. /src/app/(farmer)/farmer/orders/page.tsx      ✅ Farmer orders
+2. /src/app/(farmer)/orders/page.tsx      ✅ Farmer orders
 3. /src/app/orders/page.tsx                      ❌ AMBIGUOUS
 ```
 
@@ -251,7 +251,7 @@ DUPLICATE ROUTES:
 ```
 DUPLICATE ROUTES:
 1. /src/app/(customer)/marketplace/products/page.tsx  ✅ Marketplace view
-2. /src/app/(farmer)/farmer/products/page.tsx         ✅ Farmer management
+2. /src/app/(farmer)/products/page.tsx         ✅ Farmer management
 3. /src/app/products/page.tsx                         ❌ AMBIGUOUS
 ```
 
@@ -275,7 +275,7 @@ DEMO ROUTES (Consider removing for production):
 ```
 DIAGNOSTIC ROUTES:
 - /src/app/diagnostic/page.tsx
-- /src/app/(monitoring)/monitoring/page.tsx
+- /src/app/(monitoring)/page.tsx
 ```
 
 **Recommendation**: Ensure these are admin-only or removed in production build
@@ -450,7 +450,7 @@ mv PERPLEXITY*.md *OPENAI*.md docs/ai/
 1. **Remove Redundant Farmer Dashboard**
 
 ```bash
-# Keep: src/app/(farmer)/farmer/dashboard/page.tsx
+# Keep: src/app/(farmer)/dashboard/page.tsx
 # Remove: src/app/farmer-dashboard/
 rm -rf src/app/farmer-dashboard/
 ```

@@ -109,7 +109,7 @@ Continue Phase 6 by fixing TypeScript errors and unblocking the build to measure
 - `src/lib/monitoring/notifiers/` - Type mismatches
 - `src/lib/monitoring/storage/database.storage.ts` - Prisma schema issues
 - `src/lib/monitoring/alerts/alert-rules-engine.ts` - Property access errors
-- `src/app/(admin)/admin/financial/page.tsx` - Order schema mismatches
+- `src/app/(admin)/financial/page.tsx` - Order schema mismatches
 - `src/components/monitoring/dashboard/PerformanceMetricsWidget.tsx` - Optional type issues
 
 **Note**: These are pre-existing errors NOT related to lazy loading work.

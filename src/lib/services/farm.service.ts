@@ -5,25 +5,39 @@
  * Separates business concerns from database operations and API routes.
  *
  * Divine Patterns Applied:
- * - Service layer separation (from divine core principles)
+ * - BaseService extension for standardized patterns
+ * - ServiceResponse types for consistent API responses
  * - Repository pattern usage (no direct database access)
  * - Type-safe operations with agricultural consciousness
  * - Enlightening error messages
  * - Quantum entity manifestation
  * - Comprehensive error handling
- * - Canonical database usage
+ * - Service-level caching
+ * - OpenTelemetry tracing integration
  *
  * Architecture:
- * Controller → Service → Repository → Database
+ * Controller → Service (extends BaseService) → Repository → Database
  *
  * Functional Requirements: FR-011 (Farm Profile Creation)
  *
  * @reference .github/instructions/11_KILO_SCALE_ARCHITECTURE.instructions.md
  * @reference .github/instructions/02_AGRICULTURAL_QUANTUM_MASTERY.instructions.md
+ * @reference .github/instructions/15_KILO_CODE_DIVINE_INTEGRATION.instructions.md
  */
 
 import { Prisma, FarmStatus } from "@prisma/client";
-import { database } from "@/lib/database";
+import { BaseService } from "@/lib/services/base.service";
+import type {
+  ServiceResponse,
+  PaginatedResponse,
+} from "@/lib/types/service-response";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+  createPaginatedResponse,
+  ErrorCodes,
+} from "@/lib/types/service-response";
+import type { ServiceError } from "@/lib/types/service-response";
 import {
   farmRepository,
   type QuantumFarm,
@@ -41,24 +55,6 @@ import {
   addSpanEvent,
   setSpanAttributes,
 } from "@/lib/tracing/service-tracer";
-
-// ============================================================================
-// ERROR CLASSES
-// ============================================================================
-
-/**
- * Custom error class for farm service operations
- */
-export class FarmServiceError extends Error {
-  constructor(
-    message: string,
-    public code: string,
-    public cause?: unknown,
-  ) {
-    super(message);
-    this.name = "FarmServiceError";
-  }
-}
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -139,16 +135,6 @@ export interface ListFarmsOptions {
 }
 
 /**
- * Farm listing result with pagination
- */
-export interface ListFarmsResult {
-  farms: QuantumFarm[];
-  total: number;
-  page: number;
-  totalPages: number;
-}
-
-/**
  * Farm search options
  */
 export interface SearchFarmsOptions {
@@ -162,18 +148,36 @@ export interface SearchFarmsOptions {
 
 /**
  * Farm Service with agricultural consciousness
- * Handles all farm-related business logic
+ * Extends BaseService for standardized patterns
+ *
+ * Returns ServiceResponse for all public methods
  *
  * @example
  * ```typescript
  * const service = new FarmService();
- * const result = await service.createFarm(userId, farmData);
+ * const response = await service.createFarm(userId, farmData);
+ *
+ * if (response.success) {
+ *   console.log(response.data.slug);
+ * } else {
+ *   console.error(response.error.message);
+ * }
  * ```
  */
-export class FarmService {
+export class FarmService extends BaseService {
   private cache = AgriculturalCache;
+  private readonly MAX_SLUG_ATTEMPTS = 10;
 
-  constructor(private repository = farmRepository) {}
+  constructor(private repository = farmRepository) {
+    super({
+      serviceName: "FarmService",
+      cacheTTL: 3600,
+      cachePrefix: "farm",
+      enableCaching: true,
+      enableTracing: true,
+      enableAgriculturalConsciousness: true,
+    });
+  }
 
   // ==========================================================================
   // FARM CREATION
@@ -187,9 +191,9 @@ export class FarmService {
    * verification and Stripe onboarding.
    *
    * Divine Patterns Applied:
+   * - ServiceResponse for type-safe return
    * - Slug collision detection with retry logic
    * - Agricultural consciousness in naming
-   * - Type-safe operations
    * - Enlightening error messages
    *
    * Functional Requirement: FR-011 (Farm Profile Creation)
@@ -197,13 +201,11 @@ export class FarmService {
    * @param userId - User ID of the farm owner (must have FARMER role)
    * @param farmData - Farm creation data including name, location, and practices
    * @param options - Repository transaction options for coordinated operations
-   * @returns Created farm with complete profile and generated slug
-   * @throws {ValidationError} If farm data fails validation (name too short, invalid email, etc.)
-   * @throws {ConflictError} If user already has a farm or slug generation fails
+   * @returns ServiceResponse with created farm and generated slug
    *
    * @example
    * ```typescript
-   * const result = await farmService.createFarm(session.user.id, {
+   * const response = await farmService.createFarm(session.user.id, {
    *   name: "Divine Acres Biodynamic Farm",
    *   city: "Seattle",
    *   state: "WA",
@@ -217,15 +219,17 @@ export class FarmService {
    *   deliveryRadius: 50
    * });
    *
-   * console.log(result.slug); // "divine-acres-biodynamic-farm-seattle"
-   * console.log(result.farm.status); // "PENDING"
+   * if (response.success) {
+   *   console.log(response.data.slug); // "divine-acres-biodynamic-farm-seattle"
+   *   console.log(response.data.farm.status); // "PENDING"
+   * }
    * ```
    */
   async createFarm(
     userId: string,
     farmData: CreateFarmRequest,
     options?: RepositoryOptions,
-  ): Promise<FarmServiceResult> {
+  ): Promise<ServiceResponse<FarmServiceResult>> {
     return await traceServiceOperation(
       "FarmService",
       "createFarm",
@@ -237,92 +241,158 @@ export class FarmService {
         "entity.type": "farm",
       },
       async (_span) => {
-        // Validate inputs
-        this.validateCreateFarmRequest(userId, farmData);
-        addSpanEvent("validation_completed");
+        try {
+          // Validate inputs
+          try {
+            this.validateCreateFarmRequest(userId, farmData);
+          } catch (validationError) {
+            if (validationError instanceof ValidationError) {
+              return createErrorResponse({
+                code: ErrorCodes.VALIDATION_ERROR,
+                message: validationError.message,
+                timestamp: new Date(),
+              });
+            }
+            throw validationError;
+          }
+          addSpanEvent("validation_completed");
 
-        // Check if user already has a farm
-        const existingCheck = await this.checkExistingFarm(userId);
-        if (existingCheck.exists) {
-          throw new ConflictError("User already has a farm", {
-            existingFarmId: existingCheck.farm?.id,
+          // Check if user already has a farm
+          const existingCheck = await this.checkExistingFarm(userId);
+          if (existingCheck.exists) {
+            return createErrorResponse({
+              code: ErrorCodes.RESOURCE_EXISTS,
+              message: "User already has a farm",
+              timestamp: new Date(),
+              details: {
+                existingFarmId: existingCheck.farm?.id,
+              },
+            });
+          }
+          addSpanEvent("existing_check_completed", { exists: false });
+
+          // Generate unique slug with collision detection
+          const slug = await this.generateUniqueSlug(
+            farmData.name,
+            farmData.city,
+          );
+          setSpanAttributes({ "farm.slug": slug });
+          addSpanEvent("slug_generated", { slug });
+
+          // Prepare farm data for creation
+          const createData: Prisma.FarmCreateInput = {
+            // Identity
+            name: farmData.name,
+            slug,
+            owner: { connect: { id: userId } },
+
+            // Business
+            ...(farmData.description && { description: farmData.description }),
+            ...(farmData.story && { story: farmData.story }),
+            ...(farmData.businessName && {
+              businessName: farmData.businessName,
+            }),
+            ...(farmData.yearEstablished && {
+              yearEstablished: farmData.yearEstablished,
+            }),
+            ...(farmData.farmSize && { farmSize: farmData.farmSize }),
+
+            // Location (required fields per schema)
+            address: farmData.address,
+            city: farmData.city,
+            state: farmData.state,
+            zipCode: farmData.zipCode,
+            country: "US",
+            latitude: farmData.latitude,
+            longitude: farmData.longitude,
+
+            // Contact
+            email: farmData.email || "",
+            phone: farmData.phone || "",
+            ...(farmData.website !== undefined && {
+              website: farmData.website || null,
+            }),
+
+            // Practices (using Prisma Json field)
+            ...(farmData.farmingPractices && {
+              farmingPractices: farmData.farmingPractices,
+            }),
+            ...(farmData.productCategories && {
+              productCategories: farmData.productCategories,
+            }),
+
+            // Delivery
+            ...(farmData.deliveryRadius !== undefined && {
+              deliveryRadius: farmData.deliveryRadius,
+            }),
+
+            // Status - PENDING until verified and Stripe onboarded
+            status: "PENDING",
+            verificationStatus: "PENDING",
+            stripeOnboarded: false,
+            payoutsEnabled: false,
+          };
+
+          // Create farm through repository
+          const farm = await this.repository.manifestFarm(createData, options);
+          setSpanAttributes({ "farm.id": farm.id });
+          addSpanEvent("farm_created", { farmId: farm.id });
+
+          // Invalidate cache
+          await this.cache.invalidateFarm(farm.id);
+          addSpanEvent("cache_invalidated");
+
+          const result: FarmServiceResult = {
+            farm,
+            slug,
+          };
+
+          return createSuccessResponse(result, {
+            message: "Farm created successfully",
+            timestamp: new Date(),
+            agricultural: {
+              season: this.getCurrentSeason(),
+              consciousness: "DIVINE",
+              entityType: "farm",
+            },
+          });
+        } catch (error) {
+          this.logger.error("Farm creation failed", {
+            userId,
+            farmName: farmData.name,
+            errorMessage:
+              error instanceof Error ? error.message : String(error),
+            errorType:
+              error instanceof Error ? error.constructor.name : typeof error,
+          });
+
+          if (error instanceof ValidationError) {
+            return createErrorResponse({
+              code: ErrorCodes.VALIDATION_ERROR,
+              message: error.message,
+              timestamp: new Date(),
+            });
+          }
+
+          if (error instanceof ConflictError) {
+            return createErrorResponse({
+              code: ErrorCodes.RESOURCE_EXISTS,
+              message: error.message,
+              timestamp: new Date(),
+              details: error.details,
+            });
+          }
+
+          return createErrorResponse({
+            code: ErrorCodes.INTERNAL_SERVER_ERROR,
+            message: "Failed to create farm",
+            timestamp: new Date(),
+            details: {
+              originalError:
+                error instanceof Error ? error.message : "Unknown error",
+            },
           });
         }
-        addSpanEvent("existing_check_completed", { exists: false });
-
-        // Generate unique slug with collision detection
-        const slug = await this.generateUniqueSlug(
-          farmData.name,
-          farmData.city,
-        );
-        setSpanAttributes({ "farm.slug": slug });
-        addSpanEvent("slug_generated", { slug });
-
-        // Prepare farm data for creation
-        const createData: Prisma.FarmCreateInput = {
-          // Identity
-          name: farmData.name,
-          slug,
-          owner: { connect: { id: userId } },
-
-          // Business
-          ...(farmData.description && { description: farmData.description }),
-          ...(farmData.story && { story: farmData.story }),
-          ...(farmData.businessName && { businessName: farmData.businessName }),
-          ...(farmData.yearEstablished && {
-            yearEstablished: farmData.yearEstablished,
-          }),
-          ...(farmData.farmSize && { farmSize: farmData.farmSize }),
-
-          // Location (required fields per schema)
-          address: farmData.address,
-          city: farmData.city,
-          state: farmData.state,
-          zipCode: farmData.zipCode,
-          country: "US",
-          latitude: farmData.latitude,
-          longitude: farmData.longitude,
-
-          // Contact
-          email: farmData.email || "",
-          phone: farmData.phone || "",
-          ...(farmData.website !== undefined && {
-            website: farmData.website || null,
-          }),
-
-          // Practices (using Prisma Json field)
-          ...(farmData.farmingPractices && {
-            farmingPractices: farmData.farmingPractices,
-          }),
-          ...(farmData.productCategories && {
-            productCategories: farmData.productCategories,
-          }),
-
-          // Delivery
-          ...(farmData.deliveryRadius !== undefined && {
-            deliveryRadius: farmData.deliveryRadius,
-          }),
-
-          // Status - PENDING until verified and Stripe onboarded
-          status: "PENDING",
-          verificationStatus: "PENDING",
-          stripeOnboarded: false,
-          payoutsEnabled: false,
-        };
-
-        // Create farm through repository
-        const farm = await this.repository.manifestFarm(createData, options);
-        setSpanAttributes({ "farm.id": farm.id });
-        addSpanEvent("farm_created", { farmId: farm.id });
-
-        // Invalidate cache
-        await this.cache.invalidateFarm(farm.id);
-        addSpanEvent("cache_invalidated");
-
-        return {
-          farm,
-          slug,
-        };
       },
     );
   }
@@ -401,8 +471,6 @@ export class FarmService {
   // UNIQUE SLUG GENERATION
   // ==========================================================================
 
-  private readonly MAX_SLUG_ATTEMPTS = 10;
-
   /**
    * Generate unique farm slug with collision detection
    *
@@ -460,66 +528,114 @@ export class FarmService {
    * Get farm by ID with caching
    *
    * @param farmId - Farm ID
-   * @returns Quantum farm or null if not found
+   * @returns ServiceResponse with quantum farm or null if not found
    *
    * @example
    * ```typescript
-   * const farm = await service.getFarmById("farm-id");
+   * const response = await service.getFarmById("farm-id");
+   * if (response.success && response.data) {
+   *   console.log(response.data.name);
+   * }
    * ```
    */
-  async getFarmById(farmId: string): Promise<QuantumFarm | null> {
-    // Try cache first
-    const cached = await AgriculturalCache.getFarm(farmId);
-    if (cached) {
-      return cached;
+  async getFarmById(
+    farmId: string,
+  ): Promise<ServiceResponse<QuantumFarm | null>> {
+    try {
+      // Try cache first
+      const cached = await AgriculturalCache.getFarm(farmId);
+      if (cached) {
+        return createSuccessResponse(cached, {
+          message: "Farm retrieved from cache",
+          timestamp: new Date(),
+        });
+      }
+
+      // Fetch from repository
+      const farm = await this.repository.findById(farmId);
+
+      if (!farm) {
+        return createSuccessResponse(null, {
+          message: "Farm not found",
+          timestamp: new Date(),
+        });
+      }
+
+      // Cache the result
+      await AgriculturalCache.cacheFarm(farmId, farm);
+
+      return createSuccessResponse(farm, {
+        message: "Farm retrieved successfully",
+        timestamp: new Date(),
+      });
+    } catch (error) {
+      this.logger.error("Failed to get farm by ID", { farmId, error });
+      return createErrorResponse({
+        code: ErrorCodes.INTERNAL_SERVER_ERROR,
+        message: "Failed to retrieve farm",
+        timestamp: new Date(),
+        details: { farmId },
+      });
     }
-
-    // Fetch from repository
-    const farm = await this.repository.findById(farmId);
-
-    if (!farm) {
-      return null;
-    }
-
-    // Cache the result
-    await AgriculturalCache.cacheFarm(farmId, farm);
-
-    return farm;
   }
 
   /**
    * Get farm by slug with caching
    *
    * @param slug - Farm slug
-   * @returns Quantum farm or null if not found
+   * @returns ServiceResponse with quantum farm or null if not found
    *
    * @example
    * ```typescript
-   * const farm = await service.getFarmBySlug("divine-acres-seattle");
+   * const response = await service.getFarmBySlug("divine-acres-seattle");
+   * if (response.success && response.data) {
+   *   console.log(response.data.name);
+   * }
    * ```
    */
-  async getFarmBySlug(slug: string): Promise<QuantumFarm | null> {
-    // Try cache first (using slug as key)
-    const cacheKey = `farm:slug:${slug}`;
-    const cached = await AgriculturalCache.getFarm(cacheKey);
-    if (cached) {
-      return cached;
+  async getFarmBySlug(
+    slug: string,
+  ): Promise<ServiceResponse<QuantumFarm | null>> {
+    try {
+      // Try cache first (using slug as key)
+      const cacheKey = `farm:slug:${slug}`;
+      const cached = await AgriculturalCache.getFarm(cacheKey);
+      if (cached) {
+        return createSuccessResponse(cached, {
+          message: "Farm retrieved from cache",
+          timestamp: new Date(),
+        });
+      }
+
+      // Fetch from repository
+      const farm = await this.repository.findBySlug(slug);
+
+      if (!farm) {
+        return createSuccessResponse(null, {
+          message: "Farm not found",
+          timestamp: new Date(),
+        });
+      }
+
+      // Cache by both ID and slug
+      await Promise.all([
+        AgriculturalCache.cacheFarm(farm.id, farm),
+        AgriculturalCache.cacheFarm(cacheKey, farm),
+      ]);
+
+      return createSuccessResponse(farm, {
+        message: "Farm retrieved successfully",
+        timestamp: new Date(),
+      });
+    } catch (error) {
+      this.logger.error("Failed to get farm by slug", { slug, error });
+      return createErrorResponse({
+        code: ErrorCodes.INTERNAL_SERVER_ERROR,
+        message: "Failed to retrieve farm",
+        timestamp: new Date(),
+        details: { slug },
+      });
     }
-
-    // Fetch from repository
-    const farm = await this.repository.findBySlug(slug);
-
-    if (!farm) {
-      return null;
-    }
-
-    // Cache by both ID and slug
-    await Promise.all([
-      AgriculturalCache.cacheFarm(farm.id, farm),
-      AgriculturalCache.cacheFarm(cacheKey, farm),
-    ]);
-
-    return farm;
   }
 
   /**
@@ -554,10 +670,26 @@ export class FarmService {
    * Get farms by owner ID
    *
    * @param userId - User ID
-   * @returns Array of farms owned by user
+   * @returns ServiceResponse with array of farms owned by user
    */
-  async getFarmsByOwnerId(userId: string): Promise<QuantumFarm[]> {
-    return await this.repository.findByOwnerId(userId);
+  async getFarmsByOwnerId(
+    userId: string,
+  ): Promise<ServiceResponse<QuantumFarm[]>> {
+    try {
+      const farms = await this.repository.findByOwnerId(userId);
+      return createSuccessResponse(farms, {
+        message: "Farms retrieved successfully",
+        timestamp: new Date(),
+      });
+    } catch (error) {
+      this.logger.error("Failed to get farms by owner", { userId, error });
+      return createErrorResponse({
+        code: ErrorCodes.INTERNAL_SERVER_ERROR,
+        message: "Failed to retrieve farms",
+        timestamp: new Date(),
+        details: { userId },
+      });
+    }
   }
 
   /**
@@ -566,16 +698,37 @@ export class FarmService {
    * Returns only farms with status="ACTIVE" that have at least one active
    * product. Used for marketplace listings and featured farms.
    *
-   * @returns Array of active farms with their products
+   * @returns ServiceResponse with array of active farms with their products
    *
    * @example
    * ```typescript
-   * const activeFarms = await farmService.getActiveFarmsWithProducts();
-   * // Display on marketplace homepage
+   * const response = await farmService.getActiveFarmsWithProducts();
+   * if (response.success) {
+   *   // Display on marketplace homepage
+   *   response.data.forEach(farm => console.log(farm.name));
+   * }
    * ```
    */
-  async getActiveFarmsWithProducts(): Promise<QuantumFarm[]> {
-    return await this.repository.findActiveWithProducts();
+  async getActiveFarmsWithProducts(): Promise<ServiceResponse<QuantumFarm[]>> {
+    try {
+      const farms = await this.repository.findActiveWithProducts();
+      return createSuccessResponse(farms, {
+        message: "Active farms retrieved successfully",
+        timestamp: new Date(),
+        agricultural: {
+          season: this.getCurrentSeason(),
+          consciousness: "DIVINE",
+          entityType: "farm",
+        },
+      });
+    } catch (error) {
+      this.logger.error("Failed to get active farms with products", { error });
+      return createErrorResponse({
+        code: ErrorCodes.INTERNAL_SERVER_ERROR,
+        message: "Failed to retrieve active farms",
+        timestamp: new Date(),
+      });
+    }
   }
 
   // ==========================================================================
@@ -589,15 +742,17 @@ export class FarmService {
    * @param userId - User ID (must be owner)
    * @param updateData - Farm update data
    * @param options - Repository options
-   * @returns Updated quantum farm
-   * @throws NotFoundError if farm not found
-   * @throws AuthorizationError if user doesn't own the farm
+   * @returns ServiceResponse with updated quantum farm
    *
    * @example
    * ```typescript
-   * const farm = await service.updateFarm("farm-id", session.user.id, {
+   * const response = await service.updateFarm("farm-id", session.user.id, {
    *   description: "Updated description"
    * });
+   *
+   * if (response.success) {
+   *   console.log(response.data.description);
+   * }
    * ```
    */
   async updateFarm(
@@ -605,68 +760,114 @@ export class FarmService {
     userId: string,
     updateData: UpdateFarmRequest,
     options?: RepositoryOptions,
-  ): Promise<QuantumFarm> {
-    // Verify farm exists
-    const existingFarm = await this.repository.findById(farmId);
+  ): Promise<ServiceResponse<QuantumFarm>> {
+    try {
+      // Verify farm exists
+      const existingFarm = await this.repository.findById(farmId);
 
-    if (!existingFarm) {
-      throw new NotFoundError("Farm", farmId);
-    }
+      if (!existingFarm) {
+        return createErrorResponse({
+          code: ErrorCodes.NOT_FOUND,
+          message: "Farm not found",
+          timestamp: new Date(),
+          details: { farmId },
+        });
+      }
 
-    // Verify ownership
-    if (existingFarm.ownerId !== userId) {
-      throw new AuthorizationError(
-        "Unauthorized: You don't own this farm",
-        "FARMER",
+      // Verify ownership
+      if (existingFarm.ownerId !== userId) {
+        return createErrorResponse({
+          code: ErrorCodes.FORBIDDEN_ACTION,
+          message: "Unauthorized: You don't own this farm",
+          timestamp: new Date(),
+          details: { farmId, userId },
+        });
+      }
+
+      // Prepare update data
+      const prismaUpdateData: Prisma.FarmUpdateInput = {
+        // Only update provided fields
+        ...(updateData.name && { name: updateData.name }),
+        ...(updateData.description && { description: updateData.description }),
+        ...(updateData.story && { story: updateData.story }),
+        ...(updateData.businessName && {
+          businessName: updateData.businessName,
+        }),
+        ...(updateData.yearEstablished && {
+          yearEstablished: updateData.yearEstablished,
+        }),
+        ...(updateData.farmSize && { farmSize: updateData.farmSize }),
+        ...(updateData.address && { address: updateData.address }),
+        ...(updateData.city && { city: updateData.city }),
+        ...(updateData.state && { state: updateData.state }),
+        ...(updateData.zipCode && { zipCode: updateData.zipCode }),
+        ...(updateData.latitude !== undefined && {
+          latitude: updateData.latitude,
+        }),
+        ...(updateData.longitude !== undefined && {
+          longitude: updateData.longitude,
+        }),
+        ...(updateData.email && { email: updateData.email }),
+        ...(updateData.phone && { phone: updateData.phone }),
+        ...(updateData.website !== undefined && {
+          website: updateData.website,
+        }),
+        ...(updateData.farmingPractices && {
+          farmingPractices: updateData.farmingPractices,
+        }),
+        ...(updateData.productCategories && {
+          productCategories: updateData.productCategories,
+        }),
+        ...(updateData.deliveryRadius !== undefined && {
+          deliveryRadius: updateData.deliveryRadius,
+        }),
+      };
+
+      // Update through repository
+      const updatedFarm = await this.repository.update(
+        farmId,
+        prismaUpdateData,
+        options,
       );
+
+      // Invalidate cache
+      await AgriculturalCache.invalidateFarm(farmId);
+
+      return createSuccessResponse(updatedFarm, {
+        message: "Farm updated successfully",
+        timestamp: new Date(),
+      });
+    } catch (error) {
+      this.logger.error("Farm update failed", { farmId, userId, error });
+
+      if (error instanceof NotFoundError) {
+        return createErrorResponse({
+          code: ErrorCodes.NOT_FOUND,
+          message: error.message,
+          timestamp: new Date(),
+          details: { farmId },
+        });
+      }
+
+      if (error instanceof AuthorizationError) {
+        return createErrorResponse({
+          code: ErrorCodes.FORBIDDEN_ACTION,
+          message: error.message,
+          timestamp: new Date(),
+          details: { farmId, userId },
+        });
+      }
+
+      return createErrorResponse({
+        code: ErrorCodes.INTERNAL_SERVER_ERROR,
+        message: "Failed to update farm",
+        timestamp: new Date(),
+        details: {
+          originalError:
+            error instanceof Error ? error.message : "Unknown error",
+        },
+      });
     }
-
-    // Prepare update data
-    const prismaUpdateData: Prisma.FarmUpdateInput = {
-      // Only update provided fields
-      ...(updateData.name && { name: updateData.name }),
-      ...(updateData.description && { description: updateData.description }),
-      ...(updateData.story && { story: updateData.story }),
-      ...(updateData.businessName && { businessName: updateData.businessName }),
-      ...(updateData.yearEstablished && {
-        yearEstablished: updateData.yearEstablished,
-      }),
-      ...(updateData.farmSize && { farmSize: updateData.farmSize }),
-      ...(updateData.address && { address: updateData.address }),
-      ...(updateData.city && { city: updateData.city }),
-      ...(updateData.state && { state: updateData.state }),
-      ...(updateData.zipCode && { zipCode: updateData.zipCode }),
-      ...(updateData.latitude !== undefined && {
-        latitude: updateData.latitude,
-      }),
-      ...(updateData.longitude !== undefined && {
-        longitude: updateData.longitude,
-      }),
-      ...(updateData.email && { email: updateData.email }),
-      ...(updateData.phone && { phone: updateData.phone }),
-      ...(updateData.website !== undefined && { website: updateData.website }),
-      ...(updateData.farmingPractices && {
-        farmingPractices: updateData.farmingPractices,
-      }),
-      ...(updateData.productCategories && {
-        productCategories: updateData.productCategories,
-      }),
-      ...(updateData.deliveryRadius !== undefined && {
-        deliveryRadius: updateData.deliveryRadius,
-      }),
-    };
-
-    // Update through repository
-    const updatedFarm = await this.repository.update(
-      farmId,
-      prismaUpdateData,
-      options,
-    );
-
-    // Invalidate cache
-    await AgriculturalCache.invalidateFarm(farmId);
-
-    return updatedFarm;
   }
 
   /**
@@ -675,19 +876,32 @@ export class FarmService {
    * @param farmId - Farm ID
    * @param status - New status
    * @param options - Repository options
-   * @returns Updated farm
+   * @returns ServiceResponse with updated farm
    */
   async updateFarmStatus(
     farmId: string,
     status: string,
     options?: RepositoryOptions,
-  ): Promise<QuantumFarm> {
-    const farm = await this.repository.updateStatus(farmId, status, options);
+  ): Promise<ServiceResponse<QuantumFarm>> {
+    try {
+      const farm = await this.repository.updateStatus(farmId, status, options);
 
-    // Invalidate cache
-    await AgriculturalCache.invalidateFarm(farmId);
+      // Invalidate cache
+      await AgriculturalCache.invalidateFarm(farmId);
 
-    return farm;
+      return createSuccessResponse(farm, {
+        message: "Farm status updated successfully",
+        timestamp: new Date(),
+      });
+    } catch (error) {
+      this.logger.error("Farm status update failed", { farmId, status, error });
+      return createErrorResponse({
+        code: ErrorCodes.INTERNAL_SERVER_ERROR,
+        message: "Failed to update farm status",
+        timestamp: new Date(),
+        details: { farmId, status },
+      });
+    }
   }
 
   // ==========================================================================
@@ -701,32 +915,78 @@ export class FarmService {
    *
    * @param farmId - Farm ID
    * @param userId - User ID (must be owner)
-   * @throws NotFoundError if farm not found
-   * @throws AuthorizationError if user doesn't own the farm
+   * @returns ServiceResponse indicating success or failure
    */
-  async deleteFarm(farmId: string, userId: string): Promise<void> {
-    // Verify farm exists
-    const existingFarm = await this.repository.findById(farmId);
+  async deleteFarm(
+    farmId: string,
+    userId: string,
+  ): Promise<ServiceResponse<void>> {
+    try {
+      // Verify farm exists
+      const existingFarm = await this.repository.findById(farmId);
 
-    if (!existingFarm) {
-      throw new NotFoundError("Farm", farmId);
+      if (!existingFarm) {
+        return createErrorResponse({
+          code: ErrorCodes.NOT_FOUND,
+          message: "Farm not found",
+          timestamp: new Date(),
+          details: { farmId },
+        });
+      }
+
+      // Verify ownership
+      if (existingFarm.ownerId !== userId) {
+        return createErrorResponse({
+          code: ErrorCodes.FORBIDDEN_ACTION,
+          message: "Unauthorized: You don't own this farm",
+          timestamp: new Date(),
+          details: { farmId, userId },
+        });
+      }
+
+      // Soft delete (set status to INACTIVE)
+      await this.repository.update(farmId, {
+        status: "INACTIVE",
+      });
+
+      // Invalidate cache
+      await AgriculturalCache.invalidateFarm(farmId);
+
+      return createSuccessResponse(undefined, {
+        message: "Farm deleted successfully",
+        timestamp: new Date(),
+      });
+    } catch (error) {
+      this.logger.error("Farm deletion failed", { farmId, userId, error });
+
+      if (error instanceof NotFoundError) {
+        return createErrorResponse({
+          code: ErrorCodes.NOT_FOUND,
+          message: error.message,
+          timestamp: new Date(),
+          details: { farmId },
+        });
+      }
+
+      if (error instanceof AuthorizationError) {
+        return createErrorResponse({
+          code: ErrorCodes.FORBIDDEN_ACTION,
+          message: error.message,
+          timestamp: new Date(),
+          details: { farmId, userId },
+        });
+      }
+
+      return createErrorResponse({
+        code: ErrorCodes.INTERNAL_SERVER_ERROR,
+        message: "Failed to delete farm",
+        timestamp: new Date(),
+        details: {
+          originalError:
+            error instanceof Error ? error.message : "Unknown error",
+        },
+      });
     }
-
-    // Verify ownership
-    if (existingFarm.ownerId !== userId) {
-      throw new AuthorizationError(
-        "Unauthorized: You don't own this farm",
-        "FARMER",
-      );
-    }
-
-    // Soft delete (set status to INACTIVE)
-    await this.repository.update(farmId, {
-      status: "INACTIVE",
-    });
-
-    // Invalidate cache
-    await AgriculturalCache.invalidateFarm(farmId);
   }
 
   // ==========================================================================
@@ -737,116 +997,211 @@ export class FarmService {
    * List farms with pagination and filtering
    *
    * @param options - Pagination and filter options
-   * @returns Paginated list of quantum farms
+   * @returns PaginatedResponse with quantum farms
    *
    * @example
    * ```typescript
-   * const result = await service.listFarms({
+   * const response = await service.listFarms({
    *   page: 1,
    *   limit: 20,
    *   city: "Seattle",
    *   status: "ACTIVE"
    * });
+   *
+   * if (response.success) {
+   *   console.log(`Total: ${response.pagination.total}`);
+   *   response.data.forEach(farm => console.log(farm.name));
+   * }
    * ```
    */
-  async listFarms(options: ListFarmsOptions = {}): Promise<ListFarmsResult> {
-    const {
-      page = 1,
-      limit = 20,
-      status,
-      city,
-      state,
-      sortBy = "createdAt",
-      sortOrder = "desc",
-    } = options;
+  async listFarms(
+    options: ListFarmsOptions = {},
+  ): Promise<PaginatedResponse<QuantumFarm>> {
+    try {
+      const {
+        page = 1,
+        limit = 20,
+        status,
+        city,
+        state,
+        sortBy = "createdAt",
+        sortOrder = "desc",
+      } = options;
 
-    const skip = (page - 1) * limit;
+      const skip = (page - 1) * limit;
 
-    // Build where clause
-    const where: Prisma.FarmWhereInput = {
-      status: { not: "INACTIVE" }, // Only non-deleted farms
-    };
+      // Build where clause
+      const where: Prisma.FarmWhereInput = {
+        status: { not: "INACTIVE" }, // Only non-deleted farms
+      };
 
-    if (status) {
-      where.status = status as FarmStatus; // Override with specific status if provided
+      if (status) {
+        where.status = status as FarmStatus; // Override with specific status if provided
+      }
+
+      if (city) {
+        where.city = { contains: city, mode: "insensitive" };
+      }
+
+      if (state) {
+        where.state = state;
+      }
+
+      // Get farms through repository
+      const farms = await this.repository.findMany(where, {
+        skip,
+        take: limit,
+        orderBy: { [sortBy]: sortOrder },
+      });
+
+      // Get total count
+      const total = await this.repository.count(where);
+
+      return createPaginatedResponse(
+        farms,
+        {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+        {
+          message: "Farms retrieved successfully",
+          timestamp: new Date(),
+          agricultural: {
+            season: this.getCurrentSeason(),
+            consciousness: "DIVINE",
+            entityType: "farm",
+          },
+        },
+      );
+    } catch (error) {
+      this.logger.error("Failed to list farms", { options, error });
+      return {
+        success: false,
+        error: {
+          code: ErrorCodes.INTERNAL_SERVER_ERROR,
+          message: "Failed to retrieve farms",
+          timestamp: new Date(),
+        },
+        data: [],
+        pagination: {
+          page: options.page || 1,
+          limit: options.limit || 20,
+          total: 0,
+          totalPages: 0,
+        },
+      };
     }
-
-    if (city) {
-      where.city = { contains: city, mode: "insensitive" };
-    }
-
-    if (state) {
-      where.state = state;
-    }
-
-    // Get farms through repository
-    const farms = await this.repository.findMany(where, {
-      skip,
-      take: limit,
-      orderBy: { [sortBy]: sortOrder },
-    });
-
-    // Get total count
-    const total = await this.repository.count(where);
-
-    return {
-      farms,
-      total,
-      page,
-      totalPages: Math.ceil(total / limit),
-    };
   }
 
   /**
    * Search farms by name, description, or location
    *
    * @param options - Search query and limit
-   * @returns Matching quantum farms
+   * @returns ServiceResponse with matching quantum farms
    *
    * @example
    * ```typescript
-   * const farms = await service.searchFarms({
+   * const response = await service.searchFarms({
    *   query: "organic",
    *   limit: 10
    * });
+   *
+   * if (response.success) {
+   *   response.data.forEach(farm => console.log(farm.name));
+   * }
    * ```
    */
-  async searchFarms(options: SearchFarmsOptions): Promise<QuantumFarm[]> {
-    const { query, limit = 10 } = options;
+  async searchFarms(
+    options: SearchFarmsOptions,
+  ): Promise<ServiceResponse<QuantumFarm[]>> {
+    try {
+      const { query, limit = 10 } = options;
 
-    return await this.repository.searchFarms(query, {
-      take: limit,
-    });
+      const farms = await this.repository.searchFarms(query, {
+        take: limit,
+      });
+
+      return createSuccessResponse(farms, {
+        message: "Search completed successfully",
+        timestamp: new Date(),
+      });
+    } catch (error) {
+      this.logger.error("Farm search failed", { options, error });
+      return createErrorResponse({
+        code: ErrorCodes.INTERNAL_SERVER_ERROR,
+        message: "Failed to search farms",
+        timestamp: new Date(),
+        details: { query: options.query },
+      });
+    }
   }
 
   /**
    * Get all farms in a specific city.
    *
    * @param city - City name
-   * @returns Array of farms in the city
+   * @returns ServiceResponse with array of farms in the city
    *
    * @example
    * ```typescript
-   * const seattleFarms = await farmService.getFarmsByCity("Seattle");
+   * const response = await farmService.getFarmsByCity("Seattle");
+   * if (response.success) {
+   *   response.data.forEach(farm => console.log(farm.name));
+   * }
    * ```
    */
-  async getFarmsByCity(city: string): Promise<QuantumFarm[]> {
-    return await this.repository.findByCity(city);
+  async getFarmsByCity(city: string): Promise<ServiceResponse<QuantumFarm[]>> {
+    try {
+      const farms = await this.repository.findByCity(city);
+      return createSuccessResponse(farms, {
+        message: "Farms retrieved successfully",
+        timestamp: new Date(),
+      });
+    } catch (error) {
+      this.logger.error("Failed to get farms by city", { city, error });
+      return createErrorResponse({
+        code: ErrorCodes.INTERNAL_SERVER_ERROR,
+        message: "Failed to retrieve farms",
+        timestamp: new Date(),
+        details: { city },
+      });
+    }
   }
 
   /**
    * Get all farms in a specific state.
    *
    * @param state - State code (e.g., "WA", "CA")
-   * @returns Array of farms in the state
+   * @returns ServiceResponse with array of farms in the state
    *
    * @example
    * ```typescript
-   * const waFarms = await farmService.getFarmsByState("WA");
+   * const response = await farmService.getFarmsByState("WA");
+   * if (response.success) {
+   *   response.data.forEach(farm => console.log(farm.name));
+   * }
    * ```
    */
-  async getFarmsByState(state: string): Promise<QuantumFarm[]> {
-    return await this.repository.findByState(state);
+  async getFarmsByState(
+    state: string,
+  ): Promise<ServiceResponse<QuantumFarm[]>> {
+    try {
+      const farms = await this.repository.findByState(state);
+      return createSuccessResponse(farms, {
+        message: "Farms retrieved successfully",
+        timestamp: new Date(),
+      });
+    } catch (error) {
+      this.logger.error("Failed to get farms by state", { state, error });
+      return createErrorResponse({
+        code: ErrorCodes.INTERNAL_SERVER_ERROR,
+        message: "Failed to retrieve farms",
+        timestamp: new Date(),
+        details: { state },
+      });
+    }
   }
 
   /**
@@ -855,23 +1210,69 @@ export class FarmService {
    * @param latitude - Latitude
    * @param longitude - Longitude
    * @param radiusKm - Search radius in kilometers
-   * @returns Array of farms within radius, sorted by distance
+   * @returns ServiceResponse with array of farms within radius, sorted by distance
    *
    * @example
    * ```typescript
-   * const nearbyFarms = await service.findNearbyFarms(47.6062, -122.3321, 50);
+   * const response = await service.findNearbyFarms(47.6062, -122.3321, 50);
+   * if (response.success) {
+   *   response.data.forEach(farm => console.log(farm.name));
+   * }
    * ```
    */
   async findNearbyFarms(
     latitude: number,
     longitude: number,
     radiusKm: number = 50,
-  ): Promise<QuantumFarm[]> {
-    return await this.repository.findNearLocation(
-      latitude,
-      longitude,
-      radiusKm,
-    );
+  ): Promise<ServiceResponse<QuantumFarm[]>> {
+    try {
+      const farms = await this.repository.findNearLocation(
+        latitude,
+        longitude,
+        radiusKm,
+      );
+
+      return createSuccessResponse(farms, {
+        message: "Nearby farms retrieved successfully",
+        timestamp: new Date(),
+        agricultural: {
+          season: this.getCurrentSeason(),
+          consciousness: "DIVINE",
+          entityType: "farm",
+        },
+      });
+    } catch (error) {
+      this.logger.error("Failed to find nearby farms", {
+        latitude,
+        longitude,
+        radiusKm,
+        error,
+      });
+      return createErrorResponse({
+        code: ErrorCodes.INTERNAL_SERVER_ERROR,
+        message: "Failed to find nearby farms",
+        timestamp: new Date(),
+        details: { latitude, longitude, radiusKm },
+      });
+    }
+  }
+
+  // ==========================================================================
+  // AGRICULTURAL CONSCIOUSNESS HELPERS
+  // ==========================================================================
+
+  /**
+   * Get current season based on date
+   *
+   * @returns Current season
+   */
+  private getCurrentSeason(): string {
+    const month = new Date().getMonth();
+
+    if (month >= 2 && month <= 4) return "SPRING";
+    if (month >= 5 && month <= 7) return "SUMMER";
+    if (month >= 8 && month <= 10) return "FALL";
+    return "WINTER";
   }
 }
 
@@ -880,13 +1281,7 @@ export class FarmService {
 // ============================================================================
 
 /**
- * Export singleton instance for application-wide use
- * Following divine pattern of single point of business logic access
+ * Singleton instance of FarmService
+ * Use this for all farm operations
  */
 export const farmService = new FarmService();
-
-/**
- * Divine farm service consciousness achieved ✨🚜
- * Repository pattern integrated at service layer
- * Ready to scale from 1 to 1 billion farms with biodynamic energy
- */

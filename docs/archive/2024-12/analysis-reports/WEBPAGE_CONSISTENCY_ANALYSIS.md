@@ -161,7 +161,7 @@ async function getProducts() {
 
 ### 3. Admin Dashboard ✅ **REAL-TIME METRICS**
 
-**File**: `src/app/(admin)/admin/page.tsx`  
+**File**: `src/app/(admin)/page.tsx`  
 **Status**: ✅ Complete with quantum metrics
 
 **Features**:
@@ -211,7 +211,7 @@ const [
 
 ### 4. Farmer Dashboard ✅ **COMPLETE PORTAL**
 
-**File**: `src/app/(farmer)/farmer/dashboard/page.tsx`  
+**File**: `src/app/(farmer)/dashboard/page.tsx`  
 **Status**: ✅ Comprehensive farmer management
 
 **Features**:

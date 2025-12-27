@@ -225,7 +225,7 @@ typescript: {
 **Implementation:**
 
 ```typescript
-// src/app/(monitoring)/monitoring/page.tsx
+// src/app/(monitoring)/page.tsx
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 
@@ -507,7 +507,7 @@ if (violations.length > 0) {
 
 ```typescript
 // Example: Farmer Dashboard
-// src/app/(farmer)/farmer/dashboard/page.tsx
+// src/app/(farmer)/dashboard/page.tsx
 
 // ❌ CURRENT: All client-side
 'use client';

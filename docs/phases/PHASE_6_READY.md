@@ -381,7 +381,7 @@ git commit --no-verify -m "perf: lazy load [module name] (saves XX KB)"
    - These are test/utility scripts, not production code
 
 2. **Admin Financial Page Schema Issues**
-   - Location: `src/app/(admin)/admin/financial/page.tsx`
+   - Location: `src/app/(admin)/financial/page.tsx`
    - Impact: One admin page has TypeScript errors
    - Workaround: Page not used in Phase 6 work
    - Will fix after Prisma schema stabilizes

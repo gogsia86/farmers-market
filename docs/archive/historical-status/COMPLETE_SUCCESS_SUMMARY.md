@@ -32,7 +32,7 @@
 
 **Status:** RESOLVED
 
-- Fixed in: `src/app/(farmer)/farmer/orders/page.tsx`
+- Fixed in: `src/app/(farmer)/orders/page.tsx`
 - Changed: `href="/farmer/setup"` → `href="/register-farm"`
 - Line: 82
 
@@ -80,14 +80,14 @@
 
 #### Redirect Fixes (8 files):
 
-1. ✅ `src/app/(farmer)/farmer/analytics/page.tsx`
-2. ✅ `src/app/(farmer)/farmer/finances/page.tsx`
-3. ✅ `src/app/(farmer)/farmer/orders/[id]/page.tsx`
-4. ✅ `src/app/(farmer)/farmer/orders/page.tsx`
-5. ✅ `src/app/(farmer)/farmer/payouts/page.tsx`
-6. ✅ `src/app/(farmer)/farmer/products/[id]/page.tsx`
-7. ✅ `src/app/(farmer)/farmer/products/new/page.tsx`
-8. ✅ `src/app/(farmer)/farmer/settings/page.tsx`
+1. ✅ `src/app/(farmer)/analytics/page.tsx`
+2. ✅ `src/app/(farmer)/finances/page.tsx`
+3. ✅ `src/app/(farmer)/orders/[id]/page.tsx`
+4. ✅ `src/app/(farmer)/orders/page.tsx`
+5. ✅ `src/app/(farmer)/payouts/page.tsx`
+6. ✅ `src/app/(farmer)/products/[id]/page.tsx`
+7. ✅ `src/app/(farmer)/products/new/page.tsx`
+8. ✅ `src/app/(farmer)/settings/page.tsx`
 
 #### Navigation & Middleware (2 files):
 

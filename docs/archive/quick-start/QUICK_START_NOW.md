@@ -309,9 +309,9 @@ src/app/(customer)/checkout/loading.tsx
 src/app/(customer)/orders/loading.tsx
 src/app/(customer)/orders/[id]/loading.tsx
 src/app/(customer)/profile/loading.tsx
-src/app/(farmer)/farmer/products/loading.tsx
-src/app/(farmer)/farmer/orders/loading.tsx
-src/app/(admin)/admin/farms/loading.tsx
+src/app/(farmer)/products/loading.tsx
+src/app/(farmer)/orders/loading.tsx
+src/app/(admin)/farms/loading.tsx
 ```
 
 **Template** (adapt for each page):

@@ -282,7 +282,7 @@ Canonical Locations:
 
 **Needs Review:**
 
-- ⚠️ `app/(admin)/admin/farms/FarmsTable.tsx` - Check if DB queries can move to parent
+- ⚠️ `app/(admin)/farms/FarmsTable.tsx` - Check if DB queries can move to parent
 
 **Recommendation:**
 
@@ -303,9 +303,9 @@ Canonical Locations:
 ```
 1. app/(customer)/dashboard/profile/page.tsx        918 lines
 2. app/(customer)/dashboard/addresses/page.tsx      784 lines
-3. app/(farmer)/farmer/settings/page.tsx            683 lines
-4. app/(farmer)/farmer/orders/[id]/page.tsx         657 lines
-5. app/(admin)/admin/settings/page.tsx              578 lines
+3. app/(farmer)/settings/page.tsx            683 lines
+4. app/(farmer)/orders/[id]/page.tsx         657 lines
+5. app/(admin)/settings/page.tsx              578 lines
 ```
 
 **Distribution:**

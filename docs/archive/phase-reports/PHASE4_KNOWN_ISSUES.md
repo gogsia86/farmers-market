@@ -17,7 +17,7 @@
 - `src/components/farmer/FinancialOverview.tsx` (4 errors)
 - `src/components/farmer/PayoutManagement.tsx` (10 errors)
 - `src/components/farmer/OrderFulfillmentTools.tsx` (13 errors)
-- `src/app/(farmer)/farmer/payouts/page.tsx` (2 errors)
+- `src/app/(farmer)/payouts/page.tsx` (2 errors)
 - `src/app/api/farmer/finances/route.ts` (15 errors)
 - `src/app/api/farmer/payouts/route.ts` (6 errors)
 

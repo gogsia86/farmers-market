@@ -187,7 +187,7 @@ After manual review, most flagged files are **FALSE POSITIVES**:
 
 ⚠️ **NEEDS REVIEW:**
 
-- `app/(admin)/admin/farms/FarmsTable.tsx` - Check if database queries can be moved to parent
+- `app/(admin)/farms/FarmsTable.tsx` - Check if database queries can be moved to parent
 - Other flagged files - Manual review recommended
 
 **Action Required:**

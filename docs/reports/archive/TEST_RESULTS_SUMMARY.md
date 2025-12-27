@@ -237,7 +237,7 @@ npx playwright test --workers=6
 
 Files with "use client" but using server-only features:
 
-- `app/(admin)/admin/farms/FarmsTable.tsx`
+- `app/(admin)/farms/FarmsTable.tsx`
 - `app/(auth)/admin-login/page.tsx`
 - `app/error.tsx`
 - `components/checkout/StripePaymentElement.tsx`
@@ -252,7 +252,7 @@ Files with "use client" but using server-only features:
 
 - `app/(customer)/dashboard/profile/page.tsx` (918 lines)
 - `app/(customer)/dashboard/addresses/page.tsx` (784 lines)
-- `app/(farmer)/farmer/settings/page.tsx` (683 lines)
+- `app/(farmer)/settings/page.tsx` (683 lines)
 
 **Action Required:** Break into smaller components
 

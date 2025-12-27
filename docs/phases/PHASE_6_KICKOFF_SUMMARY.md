@@ -50,8 +50,8 @@ git mv src/app/(monitoring)/dashboard src/app/(monitoring)/monitoring
 
 **Files Fixed**:
 
-- ✅ `src/app/(farmer)/farmer/dashboard/page.tsx`
-- ✅ `src/app/(farmer)/farmer/orders/[id]/page.tsx`
+- ✅ `src/app/(farmer)/dashboard/page.tsx`
+- ✅ `src/app/(farmer)/orders/[id]/page.tsx`
 - ✅ `src/app/(farmer)/layout.tsx`
 
 **Solution**: Replaced `PackageIcon` → `CubeIcon` (correct icon name in v2)
@@ -91,7 +91,7 @@ git mv src/app/(monitoring)/dashboard src/app/(monitoring)/monitoring
    - Plan: Will fix in Phase 6 Week 2
 
 2. **Admin Financial Page Schema Issues**
-   - Location: `src/app/(admin)/admin/financial/page.tsx`
+   - Location: `src/app/(admin)/financial/page.tsx`
    - Impact: Admin financial reporting page has TypeScript errors
    - Workaround: Page not critical for Phase 6 core work
    - Plan: Will fix after Prisma schema stabilizes

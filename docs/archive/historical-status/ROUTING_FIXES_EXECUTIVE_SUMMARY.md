@@ -174,14 +174,14 @@ Client can use locale for translations
 
 ### Critical Changes (8 files)
 
-1. `src/app/(farmer)/farmer/analytics/page.tsx` - Redirect fix
-2. `src/app/(farmer)/farmer/finances/page.tsx` - Redirect fix
-3. `src/app/(farmer)/farmer/orders/[id]/page.tsx` - Redirect fix
-4. `src/app/(farmer)/farmer/orders/page.tsx` - Link fix
-5. `src/app/(farmer)/farmer/payouts/page.tsx` - Redirect fix
-6. `src/app/(farmer)/farmer/products/[id]/page.tsx` - Redirect fix
-7. `src/app/(farmer)/farmer/products/new/page.tsx` - Redirect fix
-8. `src/app/(farmer)/farmer/settings/page.tsx` - Redirect fix
+1. `src/app/(farmer)/analytics/page.tsx` - Redirect fix
+2. `src/app/(farmer)/finances/page.tsx` - Redirect fix
+3. `src/app/(farmer)/orders/[id]/page.tsx` - Redirect fix
+4. `src/app/(farmer)/orders/page.tsx` - Link fix
+5. `src/app/(farmer)/payouts/page.tsx` - Redirect fix
+6. `src/app/(farmer)/products/[id]/page.tsx` - Redirect fix
+7. `src/app/(farmer)/products/new/page.tsx` - Redirect fix
+8. `src/app/(farmer)/settings/page.tsx` - Redirect fix
 
 ### UX Improvements (2 files)
 

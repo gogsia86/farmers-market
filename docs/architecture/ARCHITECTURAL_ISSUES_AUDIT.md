@@ -425,11 +425,11 @@ Multiple route groups have pages with identical names, creating confusion and po
 #### **Orders Page** - 5 Different Implementations
 
 ```
-src/app/(admin)/admin/orders/page.tsx         ← Admin view (all orders)
+src/app/(admin)/orders/page.tsx         ← Admin view (all orders)
 src/app/(customer)/account/orders/page.tsx    ← Customer orders (nested)
 src/app/(customer)/dashboard/orders/page.tsx  ← Customer orders (nested under dashboard)
 src/app/(customer)/orders/page.tsx            ← Customer orders (root level)
-src/app/(farmer)/farmer/orders/page.tsx       ← Farmer orders
+src/app/(farmer)/orders/page.tsx       ← Farmer orders
 ```
 
 **Issues**:
@@ -442,8 +442,8 @@ src/app/(farmer)/farmer/orders/page.tsx       ← Farmer orders
 #### **Settings Page** - 2 Implementations
 
 ```
-src/app/(admin)/admin/settings/page.tsx       ← Admin settings
-src/app/(farmer)/farmer/settings/page.tsx     ← Farmer settings
+src/app/(admin)/settings/page.tsx       ← Admin settings
+src/app/(farmer)/settings/page.tsx     ← Farmer settings
 ```
 
 **Questions**:
@@ -455,7 +455,7 @@ src/app/(farmer)/farmer/settings/page.tsx     ← Farmer settings
 
 ```
 src/app/(customer)/dashboard/page.tsx         ← Customer dashboard
-src/app/(farmer)/farmer/dashboard/page.tsx    ← Farmer dashboard
+src/app/(farmer)/dashboard/page.tsx    ← Farmer dashboard
 ```
 
 ### Impact Analysis

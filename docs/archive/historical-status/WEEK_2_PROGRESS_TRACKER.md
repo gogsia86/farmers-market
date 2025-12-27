@@ -221,7 +221,7 @@ Farmer Journey:   [░░░░░░░░░░░░░░░░░░░░]
   - [ ] Bulk actions
   - [ ] Search & sort
   - **Status**: ⚪ Not Started
-  - **Files**: `/src/app/(farmer)/farmer/orders/page.tsx`
+  - **Files**: `/src/app/(farmer)/orders/page.tsx`
 - [ ] **Task 5.2**: Order Processing Workflow (2 hours)
   - [ ] Order detail view
   - [ ] Status updates
@@ -238,7 +238,7 @@ Farmer Journey:   [░░░░░░░░░░░░░░░░░░░░]
   - [ ] Date range selector
   - [ ] Chart exports
   - **Status**: ⚪ Not Started
-  - **Files**: `/src/app/(farmer)/farmer/analytics/page.tsx`
+  - **Files**: `/src/app/(farmer)/analytics/page.tsx`
 - [ ] **Task 5.4**: Business Insights (2 hours)
   - [ ] Key metrics cards
   - [ ] Top products table

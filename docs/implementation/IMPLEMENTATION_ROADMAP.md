@@ -149,7 +149,7 @@ Critical paths:
 - OrderTrendsChart.tsx
 - TopFarmsChart.tsx
 
-📁 UPDATE: src/app/(admin)/admin/analytics/page.tsx
+📁 UPDATE: src/app/(admin)/analytics/page.tsx
 ```
 
 #### Day 3: Real-time Notifications UI ⏱️ 6 hours

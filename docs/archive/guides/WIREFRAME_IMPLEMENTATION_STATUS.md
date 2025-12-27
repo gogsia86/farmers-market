@@ -461,7 +461,7 @@ model Product {
 
 ### 4.1 Admin Overview (`/admin`) ✅ **COMPLETE** (100%)
 
-**File**: `src/app/(admin)/admin/page.tsx`
+**File**: `src/app/(admin)/page.tsx`
 
 **Implemented Features**:
 
@@ -498,7 +498,7 @@ export async function requireAdmin() {
 
 ### 4.2 Farm Verification (`/admin/farms`) ✅ **COMPLETE** (95%)
 
-**File**: `src/app/(admin)/admin/farms/page.tsx`
+**File**: `src/app/(admin)/farms/page.tsx`
 
 **Implemented Features**:
 
@@ -557,7 +557,7 @@ model Farm {
 
 ### 4.3 User Management (`/admin/users`) ✅ **COMPLETE** (90%)
 
-**File**: `src/app/(admin)/admin/users/page.tsx`
+**File**: `src/app/(admin)/users/page.tsx`
 
 **Implemented Features**:
 
@@ -593,7 +593,7 @@ enum UserStatus {
 
 ### 4.4 Order Management (`/admin/orders`) ✅ **EXISTS** (85%)
 
-**File**: `src/app/(admin)/admin/orders/page.tsx`
+**File**: `src/app/(admin)/orders/page.tsx`
 
 **Implemented Features**:
 

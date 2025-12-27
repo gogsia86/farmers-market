@@ -25,35 +25,35 @@ All critical routing issues have been successfully identified and fixed across t
 
 **Files Updated:**
 
-1. ✅ `src/app/(farmer)/farmer/analytics/page.tsx`
+1. ✅ `src/app/(farmer)/analytics/page.tsx`
    - Changed: `redirect("/onboarding/farm")` → `redirect("/register-farm")`
    - Line: 64
 
-2. ✅ `src/app/(farmer)/farmer/finances/page.tsx`
+2. ✅ `src/app/(farmer)/finances/page.tsx`
    - Changed: `redirect("/farmer/onboarding")` → `redirect("/register-farm")`
    - Line: 38
 
-3. ✅ `src/app/(farmer)/farmer/orders/[id]/page.tsx`
+3. ✅ `src/app/(farmer)/orders/[id]/page.tsx`
    - Changed: `redirect("/onboarding/farm")` → `redirect("/register-farm")`
    - Line: 61
 
-4. ✅ `src/app/(farmer)/farmer/orders/page.tsx`
+4. ✅ `src/app/(farmer)/orders/page.tsx`
    - Changed: `href="/farmer/setup"` → `href="/register-farm"`
    - Line: 82
 
-5. ✅ `src/app/(farmer)/farmer/payouts/page.tsx`
+5. ✅ `src/app/(farmer)/payouts/page.tsx`
    - Changed: `redirect("/farmer/onboarding")` → `redirect("/register-farm")`
    - Line: 39
 
-6. ✅ `src/app/(farmer)/farmer/products/[id]/page.tsx`
+6. ✅ `src/app/(farmer)/products/[id]/page.tsx`
    - Changed: `redirect("/farmer/setup")` → `redirect("/register-farm")`
    - Line: 43
 
-7. ✅ `src/app/(farmer)/farmer/products/new/page.tsx`
+7. ✅ `src/app/(farmer)/products/new/page.tsx`
    - Changed: `redirect("/farmer/setup")` → `redirect("/register-farm")`
    - Line: 37
 
-8. ✅ `src/app/(farmer)/farmer/settings/page.tsx`
+8. ✅ `src/app/(farmer)/settings/page.tsx`
    - Changed: `redirect("/onboarding/farm")` → `redirect("/register-farm")`
    - Line: 45
 
@@ -360,14 +360,14 @@ Expected Result: No 404 errors, all routes handled correctly
 
 ### Files Modified
 
-1. `src/app/(farmer)/farmer/analytics/page.tsx`
-2. `src/app/(farmer)/farmer/finances/page.tsx`
-3. `src/app/(farmer)/farmer/orders/[id]/page.tsx`
-4. `src/app/(farmer)/farmer/orders/page.tsx`
-5. `src/app/(farmer)/farmer/payouts/page.tsx`
-6. `src/app/(farmer)/farmer/products/[id]/page.tsx`
-7. `src/app/(farmer)/farmer/products/new/page.tsx`
-8. `src/app/(farmer)/farmer/settings/page.tsx`
+1. `src/app/(farmer)/analytics/page.tsx`
+2. `src/app/(farmer)/finances/page.tsx`
+3. `src/app/(farmer)/orders/[id]/page.tsx`
+4. `src/app/(farmer)/orders/page.tsx`
+5. `src/app/(farmer)/payouts/page.tsx`
+6. `src/app/(farmer)/products/[id]/page.tsx`
+7. `src/app/(farmer)/products/new/page.tsx`
+8. `src/app/(farmer)/settings/page.tsx`
 9. `src/app/(farmer)/layout.tsx`
 10. `src/middleware.ts`
 

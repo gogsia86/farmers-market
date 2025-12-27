@@ -316,7 +316,7 @@ npx tsc --noEmit 2>&1 | grep "error TS" | wc -l
 npx prisma generate
 
 # Type check specific file
-npx tsc --noEmit src/app/(admin)/admin/financial/page.tsx
+npx tsc --noEmit src/app/(admin)/financial/page.tsx
 
 # Production build
 npm run build

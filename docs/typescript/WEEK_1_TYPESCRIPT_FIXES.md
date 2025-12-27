@@ -68,7 +68,7 @@ const cart = useCart();
 
 ---
 
-### File 3: `src/app/(farmer)/farmer/payouts/page.tsx`
+### File 3: `src/app/(farmer)/payouts/page.tsx`
 
 **Errors:**
 
@@ -276,7 +276,7 @@ npx prettier --write "src/**/*.{ts,tsx}"
 - [ ] `src/app/api/farmer/payouts/route.ts`
 - [ ] `src/app/api/marketplace/farms/[slug]/route.ts`
 - [ ] `src/app/api/marketplace/products/route.ts`
-- [ ] `src/app/(farmer)/farmer/payouts/page.tsx`
+- [ ] `src/app/(farmer)/payouts/page.tsx`
 
 ### Step 3: Fix Simple Issues
 
@@ -375,7 +375,7 @@ npm run test
 
 - [ ] `src/app/(customer)/marketplace/farms/[slug]/page.tsx`
 - [ ] `src/app/(customer)/marketplace/products/page.tsx`
-- [ ] `src/app/(farmer)/farmer/payouts/page.tsx`
+- [ ] `src/app/(farmer)/payouts/page.tsx`
 - [ ] `src/app/api/farmer/finances/route.ts`
 - [ ] `src/app/api/farmer/payouts/route.ts`
 - [ ] `src/app/api/farming/advice/route.ts`

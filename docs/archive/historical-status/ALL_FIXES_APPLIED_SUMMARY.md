@@ -153,7 +153,7 @@ import { MapPin, Search } from "lucide-react";
 
 ---
 
-#### `src/app/(farmer)/farmer/dashboard/loading.tsx`
+#### `src/app/(farmer)/dashboard/loading.tsx`
 
 **Issue**: Unused variable `month` in map iteration
 **Line**: 79
@@ -397,7 +397,7 @@ npm run build
 
 - ✅ `src/app/page.tsx` - Homepage fixes
 - ✅ `src/app/(public)/farms/loading.tsx` - Loading state fixes
-- ✅ `src/app/(farmer)/farmer/dashboard/loading.tsx` - Dashboard loading fixes
+- ✅ `src/app/(farmer)/dashboard/loading.tsx` - Dashboard loading fixes
 
 ### Component Files
 

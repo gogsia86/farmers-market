@@ -338,7 +338,7 @@ ls -la "Farmers Market Platform web and app/tests/e2e/farmer/"
 #### Admin Dashboard
 
 ```typescript
-// src/app/(admin)/admin/page.tsx
+// src/app/(admin)/page.tsx
 <div data-testid="admin-dashboard">
   <h1 data-testid="dashboard-title">Admin Dashboard</h1>
 </div>

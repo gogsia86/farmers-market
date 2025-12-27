@@ -262,7 +262,7 @@ src/app/api/
 Page Routes:
 src/app/dashboard/              # Generic dashboard
 src/app/farmer-dashboard/       # Farmer-specific dashboard
-src/app/(farmer)/farmer/dashboard/  # Route group dashboard
+src/app/(farmer)/dashboard/  # Route group dashboard
 
 API Routes:
 src/app/api/analytics/dashboard/

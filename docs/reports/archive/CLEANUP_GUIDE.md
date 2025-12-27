@@ -114,7 +114,7 @@ npm run cleanup:db
 
 ```
 actions.ts
-├── app/(admin)/admin/farms/actions.ts
+├── app/(admin)/farms/actions.ts
 └── types/actions.ts
 [Action Required: Rename one to be more specific]
 
@@ -141,7 +141,7 @@ geocoding.service.ts
 
 **Files to Fix:**
 
-- `app/(admin)/admin/farms/FarmsTable.tsx`
+- `app/(admin)/farms/FarmsTable.tsx`
 - `app/(auth)/admin-login/page.tsx`
 - `app/error.tsx`
 - `components/checkout/StripePaymentElement.tsx`
@@ -173,8 +173,8 @@ Loading.tsx vs loading.tsx
 
 - `app/(customer)/dashboard/profile/page.tsx` (918 lines)
 - `app/(customer)/dashboard/addresses/page.tsx` (784 lines)
-- `app/(farmer)/farmer/settings/page.tsx` (683 lines)
-- `app/(farmer)/farmer/orders/[id]/page.tsx` (657 lines)
+- `app/(farmer)/settings/page.tsx` (683 lines)
+- `app/(farmer)/orders/[id]/page.tsx` (657 lines)
 
 **Recommendation:** Break into smaller components/modules
 
@@ -224,7 +224,7 @@ Loading.tsx vs loading.tsx
   - [ ] Split into logical modules
 
 - [ ] **Rename Ambiguous Files**
-  - [ ] `app/(admin)/admin/farms/actions.ts` → `farm-actions.ts`
+  - [ ] `app/(admin)/farms/actions.ts` → `farm-actions.ts`
   - [ ] Document naming conventions
 
 ### Phase 3: Optimization (Week 3)

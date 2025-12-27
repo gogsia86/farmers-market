@@ -20,7 +20,7 @@
 
 **Files Affected:**
 
-- `src/app/(farmer)/farmer/dashboard/page.tsx` (Line 77-81)
+- `src/app/(farmer)/dashboard/page.tsx` (Line 77-81)
 
 ---
 
@@ -33,7 +33,7 @@
 
 **Files Affected:**
 
-- `src/app/(farmer)/farmer/orders/page.tsx` (Line 82-85)
+- `src/app/(farmer)/orders/page.tsx` (Line 82-85)
 
 **Current Code:**
 
@@ -67,9 +67,9 @@
 
 **Files Affected:**
 
-1. `src/app/(farmer)/farmer/analytics/page.tsx` (Line 64-66)
-2. `src/app/(farmer)/farmer/orders/[id]/page.tsx` (Line 61-63)
-3. `src/app/(farmer)/farmer/settings/page.tsx` (Line 45-47)
+1. `src/app/(farmer)/analytics/page.tsx` (Line 64-66)
+2. `src/app/(farmer)/orders/[id]/page.tsx` (Line 61-63)
+3. `src/app/(farmer)/settings/page.tsx` (Line 45-47)
 
 **Current Code Pattern:**
 
@@ -97,8 +97,8 @@ if (!farm) {
 
 **Files Affected:**
 
-1. `src/app/(farmer)/farmer/finances/page.tsx` (Line 38-40) - uses `/farmer/onboarding`
-2. `src/app/(farmer)/farmer/payouts/page.tsx` (Line 39-41) - uses `/farmer/onboarding`
+1. `src/app/(farmer)/finances/page.tsx` (Line 38-40) - uses `/farmer/onboarding`
+2. `src/app/(farmer)/payouts/page.tsx` (Line 39-41) - uses `/farmer/onboarding`
 
 **Fix Required:**
 Standardize all to use `/register-farm`:
@@ -118,8 +118,8 @@ if (!farm) {
 
 **Files Affected:**
 
-1. `src/app/(farmer)/farmer/products/[id]/page.tsx` (Line 43-45)
-2. `src/app/(farmer)/farmer/products/new/page.tsx` (Line 37-39)
+1. `src/app/(farmer)/products/[id]/page.tsx` (Line 43-45)
+2. `src/app/(farmer)/products/new/page.tsx` (Line 37-39)
 
 **Current Code:**
 
@@ -193,14 +193,14 @@ redirect("/register-farm");
 
 **Files to Update:**
 
-1. ✅ `src/app/(farmer)/farmer/analytics/page.tsx`
-2. ✅ `src/app/(farmer)/farmer/finances/page.tsx`
-3. ✅ `src/app/(farmer)/farmer/orders/[id]/page.tsx`
-4. ✅ `src/app/(farmer)/farmer/orders/page.tsx`
-5. ✅ `src/app/(farmer)/farmer/payouts/page.tsx`
-6. ✅ `src/app/(farmer)/farmer/products/[id]/page.tsx`
-7. ✅ `src/app/(farmer)/farmer/products/new/page.tsx`
-8. ✅ `src/app/(farmer)/farmer/settings/page.tsx`
+1. ✅ `src/app/(farmer)/analytics/page.tsx`
+2. ✅ `src/app/(farmer)/finances/page.tsx`
+3. ✅ `src/app/(farmer)/orders/[id]/page.tsx`
+4. ✅ `src/app/(farmer)/orders/page.tsx`
+5. ✅ `src/app/(farmer)/payouts/page.tsx`
+6. ✅ `src/app/(farmer)/products/[id]/page.tsx`
+7. ✅ `src/app/(farmer)/products/new/page.tsx`
+8. ✅ `src/app/(farmer)/settings/page.tsx`
 
 ---
 
@@ -321,7 +321,7 @@ Create: `docs/FUTURE_I18N_ROUTING.md`
 
 ### Fix #4: Add Helpful Error Messages
 
-**Update:** `src/app/(farmer)/farmer/orders/page.tsx` (and similar pages)
+**Update:** `src/app/(farmer)/orders/page.tsx` (and similar pages)
 
 Instead of just showing "No Farm Found", provide actionable guidance:
 
@@ -503,14 +503,14 @@ Before deploying fixes:
 
 ### Files Requiring Updates
 
-1. `src/app/(farmer)/farmer/analytics/page.tsx`
-2. `src/app/(farmer)/farmer/finances/page.tsx`
-3. `src/app/(farmer)/farmer/orders/[id]/page.tsx`
-4. `src/app/(farmer)/farmer/orders/page.tsx`
-5. `src/app/(farmer)/farmer/payouts/page.tsx`
-6. `src/app/(farmer)/farmer/products/[id]/page.tsx`
-7. `src/app/(farmer)/farmer/products/new/page.tsx`
-8. `src/app/(farmer)/farmer/settings/page.tsx`
+1. `src/app/(farmer)/analytics/page.tsx`
+2. `src/app/(farmer)/finances/page.tsx`
+3. `src/app/(farmer)/orders/[id]/page.tsx`
+4. `src/app/(farmer)/orders/page.tsx`
+5. `src/app/(farmer)/payouts/page.tsx`
+6. `src/app/(farmer)/products/[id]/page.tsx`
+7. `src/app/(farmer)/products/new/page.tsx`
+8. `src/app/(farmer)/settings/page.tsx`
 9. `src/app/(farmer)/layout.tsx`
 10. `src/middleware.ts` (optional, for language routes)
 

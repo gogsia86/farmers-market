@@ -89,8 +89,8 @@ mv src/app/marketplace src/app/(public)/marketplace
 ```
 src/app/(public)/products/page.tsx          → Public product browsing
 src/app/(customer)/marketplace/products/page.tsx → Customer marketplace
-src/app/(farmer)/farmer/products/page.tsx   → Farmer product management
-src/app/(admin)/admin/products/page.tsx     → Admin product oversight
+src/app/(farmer)/products/page.tsx   → Farmer product management
+src/app/(admin)/products/page.tsx     → Admin product oversight
 src/app/products/categories/                → Root level categories (orphaned?)
 ```
 

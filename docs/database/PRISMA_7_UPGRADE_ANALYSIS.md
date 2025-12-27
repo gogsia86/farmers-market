@@ -536,7 +536,7 @@ Log Searches:
    - Multi-table updates
    - Inventory reservation logic
 
-3. **Farm Management** (`src/app/(admin)/admin/farms/`)
+3. **Farm Management** (`src/app/(admin)/farms/`)
    - Farm status updates
    - Approval workflows
    - Owner verification

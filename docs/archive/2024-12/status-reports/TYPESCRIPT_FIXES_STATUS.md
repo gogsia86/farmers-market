@@ -106,8 +106,8 @@ Get-ChildItem -Recurse -Include *.ts,*.tsx | Select-String "\.farmStats" -List
 
 ## 📊 Files Modified This Session
 
-1. `src/app/(admin)/admin/actions/page.tsx` - AdminAction type fixes
-2. `src/app/(admin)/admin/users/[id]/page.tsx` - Farm relationship fixes
+1. `src/app/(admin)/actions/page.tsx` - AdminAction type fixes
+2. `src/app/(admin)/users/[id]/page.tsx` - Farm relationship fixes
 3. `src/app/(farmer)/dashboard/page.tsx` - Stats field fixes
 4. `src/app/api/orders/route.ts` - Order items field fixes
 5. `src/app/api/products/[id]/route.ts` - Decimal conversions

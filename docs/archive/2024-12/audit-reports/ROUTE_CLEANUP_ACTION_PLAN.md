@@ -35,7 +35,7 @@
 
 ```
 DUPLICATE ROUTES:
-├─ ✅ src/app/(farmer)/farmer/dashboard/page.tsx  [CORRECT - Route Group]
+├─ ✅ src/app/(farmer)/dashboard/page.tsx  [CORRECT - Route Group]
 │  └─ URL: /farmer/dashboard
 │  └─ Protected by: (farmer) layout.tsx
 │  └─ Features: Full dashboard with analytics, orders, products
@@ -173,7 +173,7 @@ ORDER ROUTES:
 ├─ ✅ src/app/(customer)/account/orders/page.tsx  [Customer Order History]
 │  └─ URL: /account/orders
 │
-├─ ✅ src/app/(farmer)/farmer/orders/page.tsx     [Farmer Order Management]
+├─ ✅ src/app/(farmer)/orders/page.tsx     [Farmer Order Management]
 │  └─ URL: /farmer/orders
 │  └─ Includes: /farmer/orders/[id]/page.tsx
 │
@@ -249,7 +249,7 @@ PRODUCT ROUTES:
 │  └─ URL: /marketplace/products
 │  └─ Purpose: Customer product discovery
 │
-├─ ✅ src/app/(farmer)/farmer/products/page.tsx         [Manage Products]
+├─ ✅ src/app/(farmer)/products/page.tsx         [Manage Products]
 │  └─ URL: /farmer/products
 │  └─ Purpose: Farmer product management
 │  └─ Includes: /farmer/products/[id], /farmer/products/new
@@ -323,7 +323,7 @@ ADMIN ROUTES:
 │  └─ URL: /admin-login
 │  └─ Purpose: Admin authentication entry point
 │
-└─ ✅ src/app/(admin)/admin/page.tsx   [PROTECTED DASHBOARD]
+└─ ✅ src/app/(admin)/page.tsx   [PROTECTED DASHBOARD]
    └─ URL: /admin
    └─ Protected by: (admin) layout.tsx
 ```
@@ -351,7 +351,7 @@ ADMIN ROUTES:
 // src/app/login/page.tsx should redirect admins to /admin-login
 
 // ✅ Check 4: Admin dashboard redirects to login if not authenticated
-// src/app/(admin)/admin/page.tsx or layout should redirect
+// src/app/(admin)/page.tsx or layout should redirect
 ```
 
 **Action Items**:
@@ -488,7 +488,7 @@ echo "# ENABLE_DEMOS=false" >> .env.example
 ```
 DIAGNOSTIC ROUTES:
 ├─ src/app/diagnostic/page.tsx           → /diagnostic
-└─ src/app/(monitoring)/monitoring/page.tsx  → /monitoring
+└─ src/app/(monitoring)/page.tsx  → /monitoring
 ```
 
 **Security Risk**: 🟡 MEDIUM

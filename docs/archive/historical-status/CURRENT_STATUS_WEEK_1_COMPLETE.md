@@ -133,7 +133,7 @@ Health:          ✅ ALL SERVICES HEALTHY
 
 - ✅ `src/components/ui/Skeleton.tsx` - Enhanced skeleton component
 - ✅ `src/app/(customer)/marketplace/loading.tsx` - Marketplace skeleton
-- ✅ `src/app/(farmer)/farmer/dashboard/loading.tsx` - Dashboard skeleton
+- ✅ `src/app/(farmer)/dashboard/loading.tsx` - Dashboard skeleton
 - ✅ `src/app/(customer)/marketplace/farms/loading.tsx` - Farms skeleton
 - ✅ `src/app/(customer)/marketplace/products/loading.tsx` - Products skeleton
 - ✅ `src/app/(admin)/loading.tsx` - Admin loading enhanced

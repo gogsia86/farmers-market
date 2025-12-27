@@ -33,28 +33,28 @@ language route handling implemented.
 
 ### Critical Redirect Fixes (8 files)
 
-1. `src/app/(farmer)/farmer/analytics/page.tsx`
+1. `src/app/(farmer)/analytics/page.tsx`
    - Line 64: Changed `redirect("/onboarding/farm")` → `redirect("/register-farm")`
 
-2. `src/app/(farmer)/farmer/finances/page.tsx`
+2. `src/app/(farmer)/finances/page.tsx`
    - Line 38: Changed `redirect("/farmer/onboarding")` → `redirect("/register-farm")`
 
-3. `src/app/(farmer)/farmer/orders/[id]/page.tsx`
+3. `src/app/(farmer)/orders/[id]/page.tsx`
    - Line 61: Changed `redirect("/onboarding/farm")` → `redirect("/register-farm")`
 
-4. `src/app/(farmer)/farmer/orders/page.tsx`
+4. `src/app/(farmer)/orders/page.tsx`
    - Line 82: Changed `href="/farmer/setup"` → `href="/register-farm"`
 
-5. `src/app/(farmer)/farmer/payouts/page.tsx`
+5. `src/app/(farmer)/payouts/page.tsx`
    - Line 39: Changed `redirect("/farmer/onboarding")` → `redirect("/register-farm")`
 
-6. `src/app/(farmer)/farmer/products/[id]/page.tsx`
+6. `src/app/(farmer)/products/[id]/page.tsx`
    - Line 43: Changed `redirect("/farmer/setup")` → `redirect("/register-farm")`
 
-7. `src/app/(farmer)/farmer/products/new/page.tsx`
+7. `src/app/(farmer)/products/new/page.tsx`
    - Line 37: Changed `redirect("/farmer/setup")` → `redirect("/register-farm")`
 
-8. `src/app/(farmer)/farmer/settings/page.tsx`
+8. `src/app/(farmer)/settings/page.tsx`
    - Line 45: Changed `redirect("/onboarding/farm")` → `redirect("/register-farm")`
 
 ### UX Improvements (2 files)
@@ -150,14 +150,14 @@ No migration required - All changes are backward compatible
 
 ```bash
 # Stage all modified files
-git add src/app/(farmer)/farmer/analytics/page.tsx
-git add src/app/(farmer)/farmer/finances/page.tsx
-git add src/app/(farmer)/farmer/orders/[id]/page.tsx
-git add src/app/(farmer)/farmer/orders/page.tsx
-git add src/app/(farmer)/farmer/payouts/page.tsx
-git add src/app/(farmer)/farmer/products/[id]/page.tsx
-git add src/app/(farmer)/farmer/products/new/page.tsx
-git add src/app/(farmer)/farmer/settings/page.tsx
+git add src/app/(farmer)/analytics/page.tsx
+git add src/app/(farmer)/finances/page.tsx
+git add src/app/(farmer)/orders/[id]/page.tsx
+git add src/app/(farmer)/orders/page.tsx
+git add src/app/(farmer)/payouts/page.tsx
+git add src/app/(farmer)/products/[id]/page.tsx
+git add src/app/(farmer)/products/new/page.tsx
+git add src/app/(farmer)/settings/page.tsx
 git add src/app/(farmer)/layout.tsx
 git add src/middleware.ts
 

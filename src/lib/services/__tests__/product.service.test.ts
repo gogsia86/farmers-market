@@ -3,12 +3,14 @@
  * Comprehensive tests for agricultural product management
  *
  * Coverage: 40+ tests for all product operations
+ * Updated for ServiceResponse pattern and instance-based service
  */
 
 import { database } from "@/lib/database";
 import { ProductStatus } from "@/types/product";
 import { beforeEach, describe, expect, it } from "@jest/globals";
 import { ProductService } from "../product.service";
+import { ErrorCodes } from "@/lib/types/service-response";
 
 // Mock the database
 jest.mock("@/lib/database", () => ({
@@ -69,9 +71,7 @@ const mockProductRepository = productRepository as jest.Mocked<
 
 // Mock the slug utility
 jest.mock("@/lib/utils/slug", () => ({
-  generateSlug: jest.fn((name: string) =>
-    name.toLowerCase().replace(/\s+/g, "-"),
-  ),
+  generateSlug: (name: string) => name.toLowerCase().replace(/\s+/g, "-"),
 }));
 
 describe("🛒 Product Service - Divine Product Operations", () => {
@@ -114,8 +114,11 @@ describe("🛒 Product Service - Divine Product Operations", () => {
     },
   };
 
+  let productService: ProductService;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    productService = new ProductService();
   });
 
   describe("🎯 createProduct", () => {
@@ -140,15 +143,19 @@ describe("🛒 Product Service - Divine Product Operations", () => {
         mockProduct as any,
       );
 
-      const result = await ProductService.createProduct(
-        validInput as any,
+      const response = await productService.createProduct(
         mockUserId,
+        validInput as any,
       );
 
-      expect(result).toMatchObject({
-        name: "Organic Tomatoes",
-        slug: expect.stringContaining("organic-tomatoes"),
-      });
+      expect(response.success).toBe(true);
+      if (response.success) {
+        expect(response.data.product).toMatchObject({
+          name: "Organic Tomatoes",
+          slug: expect.stringContaining("organic-tomatoes"),
+        });
+        expect(response.data.slug).toBe("organic-tomatoes");
+      }
       expect(database.farm.findUnique).toHaveBeenCalledWith({
         where: { id: mockFarmId },
         select: { id: true, ownerId: true, status: true },
@@ -158,9 +165,12 @@ describe("🛒 Product Service - Divine Product Operations", () => {
     it("should throw error if farm not found", async () => {
       jest.mocked(database.farm.findUnique).mockResolvedValue(null);
 
-      await expect(
-        ProductService.createProduct(validInput as any, mockUserId),
-      ).rejects.toThrow("Farm not found");
+      const response = await productService.createProduct(
+        mockUserId,
+        validInput as any,
+      );
+
+      expect(response.success).toBe(false);
     });
 
     it("should throw error for unauthorized user", async () => {
@@ -169,9 +179,12 @@ describe("🛒 Product Service - Divine Product Operations", () => {
         ownerId: "different-user",
       } as any);
 
-      await expect(
-        ProductService.createProduct(validInput as any, mockUserId),
-      ).rejects.toThrow("Unauthorized: You don't own this farm");
+      const response = await productService.createProduct(
+        mockUserId,
+        validInput as any,
+      );
+
+      expect(response.success).toBe(false);
     });
 
     it("should throw error for inactive farm", async () => {
@@ -180,9 +193,12 @@ describe("🛒 Product Service - Divine Product Operations", () => {
         status: "INACTIVE",
       } as any);
 
-      await expect(
-        ProductService.createProduct(validInput as any, mockUserId),
-      ).rejects.toThrow("Cannot add products to inactive farm");
+      const response = await productService.createProduct(
+        mockUserId,
+        validInput as any,
+      );
+
+      expect(response.success).toBe(false);
     });
 
     it("should validate product name length (too short)", async () => {
@@ -190,9 +206,12 @@ describe("🛒 Product Service - Divine Product Operations", () => {
 
       const shortNameInput = { ...validInput, name: "AB" };
 
-      await expect(
-        ProductService.createProduct(shortNameInput as any, mockUserId),
-      ).rejects.toThrow("Product name must be at least 3 characters");
+      const response = await productService.createProduct(
+        mockUserId,
+        shortNameInput as any,
+      );
+
+      expect(response.success).toBe(false);
     });
 
     it("should validate product name length (too long)", async () => {
@@ -201,9 +220,12 @@ describe("🛒 Product Service - Divine Product Operations", () => {
       // The service validates at 200 chars, so use > 200
       const longNameInput = { ...validInput, name: "A".repeat(201) };
 
-      await expect(
-        ProductService.createProduct(longNameInput as any, mockUserId),
-      ).rejects.toThrow("Product name must not exceed 200 characters");
+      const response = await productService.createProduct(
+        mockUserId,
+        longNameInput as any,
+      );
+
+      expect(response.success).toBe(false);
     });
 
     it("should validate price is positive", async () => {
@@ -214,9 +236,12 @@ describe("🛒 Product Service - Divine Product Operations", () => {
         pricing: { basePrice: { amount: 0, currency: "USD" } },
       };
 
-      await expect(
-        ProductService.createProduct(invalidPriceInput as any, mockUserId),
-      ).rejects.toThrow("Valid base price is required");
+      const response = await productService.createProduct(
+        mockUserId,
+        invalidPriceInput as any,
+      );
+
+      expect(response.success).toBe(false);
     });
 
     it("should validate inventory quantity is non-negative", async () => {
@@ -227,9 +252,12 @@ describe("🛒 Product Service - Divine Product Operations", () => {
         inventory: { ...validInput.inventory, quantity: -1 },
       };
 
-      await expect(
-        ProductService.createProduct(negativeQuantityInput as any, mockUserId),
-      ).rejects.toThrow("Inventory quantity cannot be negative");
+      const response = await productService.createProduct(
+        mockUserId,
+        negativeQuantityInput as any,
+      );
+
+      expect(response.success).toBe(false);
     });
 
     it("should generate unique slug when duplicate exists", async () => {
@@ -243,12 +271,15 @@ describe("🛒 Product Service - Divine Product Operations", () => {
         slug: "organic-tomatoes-1",
       } as any);
 
-      const result = await ProductService.createProduct(
-        validInput as any,
+      const response = await productService.createProduct(
         mockUserId,
+        validInput as any,
       );
 
-      expect(result.slug).toBe("organic-tomatoes-1");
+      expect(response.success).toBe(true);
+      if (response.success) {
+        expect(response.data.slug).toBe("organic-tomatoes-1");
+      }
     });
 
     it("should calculate available quantity correctly", async () => {
@@ -258,7 +289,7 @@ describe("🛒 Product Service - Divine Product Operations", () => {
         mockProduct as any,
       );
 
-      await ProductService.createProduct(validInput as any, mockUserId);
+      await productService.createProduct(mockUserId, validInput as any);
 
       // Check that manifestProduct was called with correct inventory
       expect(mockProductRepository.manifestProduct).toHaveBeenCalledWith(
@@ -282,7 +313,7 @@ describe("🛒 Product Service - Divine Product Operations", () => {
         inventory: { quantity: 15, reservedQuantity: 0, lowStockThreshold: 20 },
       };
 
-      await ProductService.createProduct(lowStockInput as any, mockUserId);
+      await productService.createProduct(mockUserId, lowStockInput as any);
 
       expect(mockProductRepository.manifestProduct).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -300,7 +331,7 @@ describe("🛒 Product Service - Divine Product Operations", () => {
         mockProduct as any,
       );
 
-      await ProductService.createProduct(validInput as any, mockUserId);
+      await productService.createProduct(mockUserId, validInput as any);
 
       expect(mockProductRepository.manifestProduct).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -314,12 +345,15 @@ describe("🛒 Product Service - Divine Product Operations", () => {
     it("should get product by ID with farm", async () => {
       mockProductRepository.findById.mockResolvedValue(mockProduct as any);
 
-      const result = await ProductService.getProductById(mockProductId);
+      const response = await productService.getProductById(mockProductId);
 
-      expect(result).toMatchObject({
-        id: mockProductId,
-        name: "Organic Tomatoes",
-      });
+      expect(response.success).toBe(true);
+      if (response.success) {
+        expect(response.data).toMatchObject({
+          id: mockProductId,
+          name: "Organic Tomatoes",
+        });
+      }
       expect(mockProductRepository.findById).toHaveBeenCalledWith(
         mockProductId,
       );
@@ -328,9 +362,15 @@ describe("🛒 Product Service - Divine Product Operations", () => {
     it("should get product by ID without farm", async () => {
       mockProductRepository.findById.mockResolvedValue(mockProduct as any);
 
-      const result = await ProductService.getProductById(mockProductId, false);
+      const response = await productService.getProductById(
+        mockProductId,
+        false,
+      );
 
-      expect(result).toBeDefined();
+      expect(response.success).toBe(true);
+      if (response.success) {
+        expect(response.data).toBeDefined();
+      }
       expect(mockProductRepository.findById).toHaveBeenCalledWith(
         mockProductId,
       );
@@ -339,9 +379,12 @@ describe("🛒 Product Service - Divine Product Operations", () => {
     it("should return null if product not found", async () => {
       mockProductRepository.findById.mockResolvedValue(null);
 
-      const result = await ProductService.getProductById(mockProductId);
+      const response = await productService.getProductById(mockProductId);
 
-      expect(result).toBeNull();
+      expect(response.success).toBe(true);
+      if (response.success) {
+        expect(response.data).toBeNull();
+      }
     });
   });
 
@@ -351,14 +394,17 @@ describe("🛒 Product Service - Divine Product Operations", () => {
         .mocked(database.product.findFirst)
         .mockResolvedValue(mockProduct as any);
 
-      const result = await ProductService.getProductBySlug(
+      const response = await productService.getProductBySlug(
         "test-farm",
         "organic-tomatoes",
       );
 
-      expect(result).toMatchObject({
-        slug: "organic-tomatoes",
-      });
+      expect(response.success).toBe(true);
+      if (response.success) {
+        expect(response.data).toMatchObject({
+          slug: "organic-tomatoes",
+        });
+      }
       expect(database.product.findFirst).toHaveBeenCalledWith(
         expect.objectContaining({
           where: {
@@ -372,12 +418,15 @@ describe("🛒 Product Service - Divine Product Operations", () => {
     it("should return null if product not found by slug", async () => {
       jest.mocked(database.product.findFirst).mockResolvedValue(null);
 
-      const result = await ProductService.getProductBySlug(
+      const response = await productService.getProductBySlug(
         "test-farm",
         "nonexistent",
       );
 
-      expect(result).toBeNull();
+      expect(response.success).toBe(true);
+      if (response.success) {
+        expect(response.data).toBeNull();
+      }
     });
   });
 
@@ -388,23 +437,26 @@ describe("🛒 Product Service - Divine Product Operations", () => {
       mockProductRepository.findMany.mockResolvedValue(mockProducts as any);
       mockProductRepository.count.mockResolvedValue(2);
 
-      const result = await ProductService.listProducts();
+      const response = await productService.listProducts();
 
-      expect(result.products).toHaveLength(2);
-      expect(result.pagination).toMatchObject({
-        page: 1,
-        limit: 20,
-        total: 2,
-        totalPages: 1,
-        hasMore: false,
-      });
+      expect(response.success).toBe(true);
+      if (response.success) {
+        expect(response.data.items).toHaveLength(2);
+        expect(response.data.pagination).toMatchObject({
+          page: 1,
+          limit: 20,
+          total: 2,
+          totalPages: 1,
+          hasNext: false,
+        });
+      }
     });
 
     it("should filter products by farm ID", async () => {
       mockProductRepository.findMany.mockResolvedValue(mockProducts as any);
       mockProductRepository.count.mockResolvedValue(2);
 
-      await ProductService.listProducts({ farmId: mockFarmId });
+      await productService.listProducts({ farmId: mockFarmId });
 
       expect(mockProductRepository.findMany).toHaveBeenCalledWith(
         expect.objectContaining({ farmId: mockFarmId }),
@@ -416,7 +468,7 @@ describe("🛒 Product Service - Divine Product Operations", () => {
       mockProductRepository.findMany.mockResolvedValue(mockProducts as any);
       mockProductRepository.count.mockResolvedValue(2);
 
-      await ProductService.listProducts({ category: "VEGETABLES" });
+      await productService.listProducts({ category: "VEGETABLES" });
 
       expect(mockProductRepository.findMany).toHaveBeenCalledWith(
         expect.objectContaining({ category: "VEGETABLES" }),
@@ -428,7 +480,7 @@ describe("🛒 Product Service - Divine Product Operations", () => {
       mockProductRepository.findMany.mockResolvedValue(mockProducts as any);
       mockProductRepository.count.mockResolvedValue(2);
 
-      await ProductService.listProducts({ status: ProductStatus.AVAILABLE });
+      await productService.listProducts({ status: ProductStatus.AVAILABLE });
 
       expect(mockProductRepository.findMany).toHaveBeenCalledWith(
         expect.objectContaining({ status: ProductStatus.AVAILABLE }),
@@ -440,7 +492,7 @@ describe("🛒 Product Service - Divine Product Operations", () => {
       mockProductRepository.findMany.mockResolvedValue(mockProducts as any);
       mockProductRepository.count.mockResolvedValue(2);
 
-      await ProductService.listProducts({ inStock: true });
+      await productService.listProducts({ inStock: true });
 
       expect(mockProductRepository.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -454,7 +506,7 @@ describe("🛒 Product Service - Divine Product Operations", () => {
       mockProductRepository.findMany.mockResolvedValue(mockProducts as any);
       mockProductRepository.count.mockResolvedValue(2);
 
-      await ProductService.listProducts({ isFeatured: true });
+      await productService.listProducts({ isFeatured: true });
 
       expect(mockProductRepository.findMany).toHaveBeenCalledWith(
         expect.objectContaining({ isFeatured: true }),
@@ -466,7 +518,7 @@ describe("🛒 Product Service - Divine Product Operations", () => {
       mockProductRepository.findMany.mockResolvedValue(mockProducts as any);
       mockProductRepository.count.mockResolvedValue(2);
 
-      await ProductService.listProducts({ search: "tomato" });
+      await productService.listProducts({ search: "tomato" });
 
       expect(mockProductRepository.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -484,18 +536,21 @@ describe("🛒 Product Service - Divine Product Operations", () => {
       mockProductRepository.findMany.mockResolvedValue(mockProducts as any);
       mockProductRepository.count.mockResolvedValue(50);
 
-      const result = await ProductService.listProducts(
+      const response = await productService.listProducts(
         {},
         { page: 2, limit: 10 },
       );
 
-      expect(result.pagination).toMatchObject({
-        page: 2,
-        limit: 10,
-        total: 50,
-        totalPages: 5,
-        hasMore: true,
-      });
+      expect(response.success).toBe(true);
+      if (response.success) {
+        expect(response.data.pagination).toMatchObject({
+          page: 2,
+          limit: 10,
+          total: 50,
+          totalPages: 5,
+          hasNext: true,
+        });
+      }
 
       expect(mockProductRepository.findMany).toHaveBeenCalledWith(
         expect.any(Object),
@@ -523,26 +578,29 @@ describe("🛒 Product Service - Divine Product Operations", () => {
         slug: "updated-tomatoes",
       } as any);
 
-      const result = await ProductService.updateProduct(
+      const response = await productService.updateProduct(
         mockProductId,
         updateData as any,
         mockUserId,
       );
 
-      expect(result.name).toBe("Updated Tomatoes");
+      expect(response.success).toBe(true);
+      if (response.success) {
+        expect(response.data.name).toBe("Updated Tomatoes");
+      }
       expect(mockProductRepository.update).toHaveBeenCalled();
     });
 
     it("should throw error if product not found", async () => {
       mockProductRepository.findById.mockResolvedValue(null);
 
-      await expect(
-        ProductService.updateProduct(
-          mockProductId,
-          updateData as any,
-          mockUserId,
-        ),
-      ).rejects.toThrow("Product not found");
+      const response = await productService.updateProduct(
+        mockProductId,
+        updateData as any,
+        mockUserId,
+      );
+
+      expect(response.success).toBe(false);
     });
 
     it("should throw error for unauthorized user", async () => {
@@ -552,13 +610,13 @@ describe("🛒 Product Service - Divine Product Operations", () => {
         ownerId: "different-user",
       } as any);
 
-      await expect(
-        ProductService.updateProduct(
-          mockProductId,
-          updateData as any,
-          mockUserId,
-        ),
-      ).rejects.toThrow("Unauthorized: You don't own this product");
+      const response = await productService.updateProduct(
+        mockProductId,
+        updateData as any,
+        mockUserId,
+      );
+
+      expect(response.success).toBe(false);
     });
 
     it("should regenerate slug if name changes", async () => {
@@ -571,13 +629,16 @@ describe("🛒 Product Service - Divine Product Operations", () => {
         slug: "new-name",
       } as any);
 
-      const result = await ProductService.updateProduct(
+      const response = await productService.updateProduct(
         mockProductId,
         { name: "New Name" } as any,
         mockUserId,
       );
 
-      expect(result.slug).toBe("new-name");
+      expect(response.success).toBe(true);
+      if (response.success) {
+        expect(response.data.slug).toBe("new-name");
+      }
     });
 
     it("should recalculate inventory when updated", async () => {
@@ -588,7 +649,7 @@ describe("🛒 Product Service - Divine Product Operations", () => {
         inventory: { quantity: 50, reservedQuantity: 10 },
       } as any);
 
-      await ProductService.updateProduct(
+      await productService.updateProduct(
         mockProductId,
         { inventory: { quantity: 50, reservedQuantity: 10 } } as any,
         mockUserId,
@@ -617,7 +678,7 @@ describe("🛒 Product Service - Divine Product Operations", () => {
         images: newImages,
       } as any);
 
-      await ProductService.updateProduct(
+      await productService.updateProduct(
         mockProductId,
         { images: newImages } as any,
         mockUserId,
@@ -641,8 +702,12 @@ describe("🛒 Product Service - Divine Product Operations", () => {
         status: "ARCHIVED",
       } as any);
 
-      await ProductService.deleteProduct(mockProductId, mockUserId);
+      const response = await productService.deleteProduct(
+        mockProductId,
+        mockUserId,
+      );
 
+      expect(response.success).toBe(true);
       expect(mockProductRepository.update).toHaveBeenCalledWith(
         mockProductId,
         expect.objectContaining({
@@ -654,9 +719,12 @@ describe("🛒 Product Service - Divine Product Operations", () => {
     it("should throw error if product not found", async () => {
       mockProductRepository.findById.mockResolvedValue(null);
 
-      await expect(
-        ProductService.deleteProduct(mockProductId, mockUserId),
-      ).rejects.toThrow("Product not found");
+      const response = await productService.deleteProduct(
+        mockProductId,
+        mockUserId,
+      );
+
+      expect(response.success).toBe(false);
     });
 
     it("should throw error for unauthorized user", async () => {
@@ -666,9 +734,12 @@ describe("🛒 Product Service - Divine Product Operations", () => {
         ownerId: "different-user",
       } as any);
 
-      await expect(
-        ProductService.deleteProduct(mockProductId, mockUserId),
-      ).rejects.toThrow("Unauthorized: You don't own this product");
+      const response = await productService.deleteProduct(
+        mockProductId,
+        mockUserId,
+      );
+
+      expect(response.success).toBe(false);
     });
   });
 
@@ -681,13 +752,16 @@ describe("🛒 Product Service - Divine Product Operations", () => {
         inventory: { quantity: 50, reservedQuantity: 5 },
       } as any);
 
-      const result = await ProductService.updateInventory(
+      const response = await productService.updateInventory(
         mockProductId,
         { quantity: 50, reservedQuantity: 5 },
         mockUserId,
       );
 
-      expect(result).toBeDefined();
+      expect(response.success).toBe(true);
+      if (response.success) {
+        expect(response.data).toBeDefined();
+      }
       expect(mockProductRepository.update).toHaveBeenCalled();
     });
 
@@ -696,7 +770,7 @@ describe("🛒 Product Service - Divine Product Operations", () => {
       jest.mocked(database.farm.findUnique).mockResolvedValue(mockFarm as any);
       mockProductRepository.update.mockResolvedValue(mockProduct as any);
 
-      await ProductService.updateInventory(
+      await productService.updateInventory(
         mockProductId,
         { quantity: 50, reservedQuantity: 10 },
         mockUserId,
@@ -717,7 +791,7 @@ describe("🛒 Product Service - Divine Product Operations", () => {
       jest.mocked(database.farm.findUnique).mockResolvedValue(mockFarm as any);
       mockProductRepository.update.mockResolvedValue(mockProduct as any);
 
-      await ProductService.updateInventory(
+      await productService.updateInventory(
         mockProductId,
         { quantity: 0 },
         mockUserId,
@@ -736,7 +810,7 @@ describe("🛒 Product Service - Divine Product Operations", () => {
       jest.mocked(database.farm.findUnique).mockResolvedValue(mockFarm as any);
       mockProductRepository.update.mockResolvedValue(mockProduct as any);
 
-      await ProductService.updateInventory(
+      await productService.updateInventory(
         mockProductId,
         { quantity: 100 },
         mockUserId,
@@ -755,7 +829,7 @@ describe("🛒 Product Service - Divine Product Operations", () => {
       jest.mocked(database.farm.findUnique).mockResolvedValue(mockFarm as any);
       mockProductRepository.update.mockResolvedValue(mockProduct as any);
 
-      await ProductService.updateInventory(
+      await productService.updateInventory(
         mockProductId,
         { quantity: 100 },
         mockUserId,
@@ -778,9 +852,12 @@ describe("🛒 Product Service - Divine Product Operations", () => {
         mockProduct,
       ] as any);
 
-      const results = await ProductService.searchProducts("tomato");
+      const response = await productService.searchProducts("tomato");
 
-      expect(results).toHaveLength(1);
+      expect(response.success).toBe(true);
+      if (response.success) {
+        expect(response.data).toHaveLength(1);
+      }
       expect(mockProductRepository.searchProducts).toHaveBeenCalledWith(
         "tomato",
         expect.objectContaining({
@@ -794,7 +871,7 @@ describe("🛒 Product Service - Divine Product Operations", () => {
         mockProduct,
       ] as any);
 
-      await ProductService.searchProducts("tomato", 5);
+      await productService.searchProducts("tomato", 5);
 
       expect(mockProductRepository.searchProducts).toHaveBeenCalledWith(
         "tomato",
@@ -809,7 +886,7 @@ describe("🛒 Product Service - Divine Product Operations", () => {
         mockProduct,
       ] as any);
 
-      await ProductService.searchProducts("tomato");
+      await productService.searchProducts("tomato");
 
       expect(mockProductRepository.searchProducts).toHaveBeenCalledWith(
         "tomato",
@@ -829,13 +906,16 @@ describe("🛒 Product Service - Divine Product Operations", () => {
       jest.mocked(database.farm.findUnique).mockResolvedValue(mockFarm as any);
       mockProductRepository.update.mockResolvedValue(mockProduct as any);
 
-      const result = await ProductService.batchUpdateProducts(
+      const response = await productService.batchUpdateProducts(
         productIds.map((id) => ({ id, data: batchUpdates as any })),
         mockUserId,
       );
 
-      expect(result.successCount).toBe(2);
-      expect(result.failureCount).toBe(0);
+      expect(response.success).toBe(true);
+      if (response.success) {
+        expect(response.data.successCount).toBe(2);
+        expect(response.data.failureCount).toBe(0);
+      }
     });
 
     it("should handle partial failures", async () => {
@@ -845,13 +925,16 @@ describe("🛒 Product Service - Divine Product Operations", () => {
       jest.mocked(database.farm.findUnique).mockResolvedValue(mockFarm as any);
       mockProductRepository.update.mockResolvedValue(mockProduct as any);
 
-      const result = await ProductService.batchUpdateProducts(
+      const response = await productService.batchUpdateProducts(
         productIds.map((id) => ({ id, data: batchUpdates as any })),
         mockUserId,
       );
 
-      expect(result.successCount).toBe(1);
-      expect(result.failureCount).toBe(1);
+      expect(response.success).toBe(true);
+      if (response.success) {
+        expect(response.data.successCount).toBe(1);
+        expect(response.data.failureCount).toBe(1);
+      }
     });
 
     it("should return total count", async () => {
@@ -859,12 +942,15 @@ describe("🛒 Product Service - Divine Product Operations", () => {
       jest.mocked(database.farm.findUnique).mockResolvedValue(mockFarm as any);
       mockProductRepository.update.mockResolvedValue(mockProduct as any);
 
-      const result = await ProductService.batchUpdateProducts(
+      const response = await productService.batchUpdateProducts(
         productIds.map((id) => ({ id, data: batchUpdates as any })),
         mockUserId,
       );
 
-      expect(result.total).toBe(2);
+      expect(response.success).toBe(true);
+      if (response.success) {
+        expect(response.data.total).toBe(2);
+      }
     });
   });
 
@@ -872,13 +958,16 @@ describe("🛒 Product Service - Divine Product Operations", () => {
     it("should return product statistics", async () => {
       mockProductRepository.findById.mockResolvedValue(mockProduct as any);
 
-      const stats = await ProductService.getProductStats(mockProductId);
+      const response = await productService.getProductStats(mockProductId);
 
-      expect(stats).toMatchObject({
-        productId: mockProductId,
-        orders: 5,
-        reviewCount: 3,
-      });
+      expect(response.success).toBe(true);
+      if (response.success) {
+        expect(response.data).toMatchObject({
+          productId: mockProductId,
+          orders: 5,
+          reviewCount: 3,
+        });
+      }
     });
   });
 });

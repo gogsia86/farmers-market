@@ -86,7 +86,7 @@ Day 4 focused on implementing comprehensive loading states and skeleton screens 
 
 ### 3. Farmer Dashboard Loading State ✅
 
-**Location**: `src/app/(farmer)/farmer/dashboard/loading.tsx`
+**Location**: `src/app/(farmer)/dashboard/loading.tsx`
 
 **Features**:
 
@@ -286,7 +286,7 @@ Day 4 focused on implementing comprehensive loading states and skeleton screens 
 ✅ /(customer)/marketplace               (Marketplace loading)
 ✅ /(customer)/marketplace/farms         (Farms grid loading)
 ✅ /(customer)/marketplace/products      (Products grid loading)
-✅ /(farmer)/farmer/dashboard            (Farmer dashboard loading)
+✅ /(farmer)/dashboard            (Farmer dashboard loading)
 ✅ /(admin)/*                            (Admin section loading)
 ```
 
@@ -487,7 +487,7 @@ Overall Week 1 Progress: 80% → 85%
 ```
 ✅ src/components/ui/Skeleton.tsx                        (Enhanced)
 ✅ src/app/(customer)/marketplace/loading.tsx            (Created)
-✅ src/app/(farmer)/farmer/dashboard/loading.tsx         (Created)
+✅ src/app/(farmer)/dashboard/loading.tsx         (Created)
 ✅ src/app/(customer)/marketplace/farms/loading.tsx      (Created)
 ✅ src/app/(customer)/marketplace/products/loading.tsx   (Created)
 ✅ src/app/(admin)/loading.tsx                           (Enhanced)

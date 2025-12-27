@@ -395,7 +395,7 @@ find src/app -type d -name "*dashboard*"
 # Result:
 # src/app/dashboard/
 # src/app/farmer-dashboard/
-# src/app/(farmer)/farmer/dashboard/
+# src/app/(farmer)/dashboard/
 # src/app/api/analytics/dashboard/
 # src/app/api/farmers/dashboard/
 # src/app/api/monitoring/dashboard/

@@ -291,9 +291,9 @@ PHASE_6_DAY_1_COMPLETE.md (this file)
 ### Source Code Changes
 
 ```
-src/app/(monitoring)/monitoring/page.tsx (renamed from dashboard/)
-src/app/(farmer)/farmer/dashboard/page.tsx (icon fix)
-src/app/(farmer)/farmer/orders/[id]/page.tsx (icon fix)
+src/app/(monitoring)/page.tsx (renamed from dashboard/)
+src/app/(farmer)/dashboard/page.tsx (icon fix)
+src/app/(farmer)/orders/[id]/page.tsx (icon fix)
 src/app/(farmer)/layout.tsx (icon fix)
 ```
 
@@ -318,7 +318,7 @@ src/app/(farmer)/layout.tsx (icon fix)
 
 ### 2. Admin Financial Page Schema Issues
 
-**Location**: `src/app/(admin)/admin/financial/page.tsx`  
+**Location**: `src/app/(admin)/financial/page.tsx`  
 **Impact**: TypeScript errors in one admin page  
 **Workaround**: Page not needed for Phase 6 optimization work  
 **Plan**: Fix after Prisma schema stabilizes

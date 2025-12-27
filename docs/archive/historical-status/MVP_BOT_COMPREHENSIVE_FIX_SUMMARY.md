@@ -591,7 +591,7 @@ catch (error) {
 ### Forms
 
 - `src/app/(public)/register-farm/page.tsx` - Farm registration
-- `src/app/(farmer)/farmer/products/new/page.tsx` - Product creation
+- `src/app/(farmer)/products/new/page.tsx` - Product creation
 - `src/components/features/farmer/ProductForm.tsx` - Product form component
 
 ### Data Display

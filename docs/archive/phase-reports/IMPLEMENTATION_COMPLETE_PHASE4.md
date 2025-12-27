@@ -50,13 +50,13 @@ Phase 4 focused on polishing the Farmer Dashboard with comprehensive financial m
 
 #### 4. Pages & Routes
 
-- **Finances Page** (`src/app/(farmer)/farmer/finances/page.tsx`)
+- **Finances Page** (`src/app/(farmer)/finances/page.tsx`)
   - Integrated FinancialOverview component
   - Farm verification status checks
   - Server-side authentication
   - Responsive layout
 
-- **Payouts Page** (`src/app/(farmer)/farmer/payouts/page.tsx`)
+- **Payouts Page** (`src/app/(farmer)/payouts/page.tsx`)
   - Integrated PayoutManagement component
   - Stripe Connect setup flow
   - Bank account connection wizard
@@ -108,7 +108,7 @@ src/components/farmer/
 ### New Pages (2 files)
 
 ```
-src/app/(farmer)/farmer/
+src/app/(farmer)/
 ├── finances/
 │   └── page.tsx                    65 lines ✅
 └── payouts/

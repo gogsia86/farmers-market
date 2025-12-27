@@ -1,32 +1,51 @@
 /**
- * 🌾 PRODUCT SERVICE LAYER - REPOSITORY PATTERN
+ * 🛒 PRODUCT SERVICE - DIVINE BUSINESS LOGIC LAYER
  *
- * Divine business logic for agricultural product management
- * Quantum operations for farm product consciousness
- *
- * Architecture:
- * - All database operations go through productRepository
- * - Business logic and validation in service layer
- * - Authorization checks before operations
- * - Cache integration maintained
- * - Type-safe operations with comprehensive error handling
+ * Business logic layer for product entity operations using repository pattern.
+ * Separates business concerns from database operations and API routes.
  *
  * Divine Patterns Applied:
- * - Repository pattern (database abstraction)
- * - Service layer orchestration
- * - Agricultural consciousness (seasonal, organic awareness)
- * - Validation and authorization separation
+ * - BaseService extension for standardized patterns
+ * - ServiceResponse types for consistent API responses
+ * - Repository pattern usage (no direct database access)
+ * - Type-safe operations with agricultural consciousness
  * - Enlightening error messages
+ * - Quantum entity manifestation
+ * - Comprehensive error handling
+ * - Service-level caching
+ * - OpenTelemetry tracing integration
+ * - Seasonal and biodynamic awareness
+ *
+ * Architecture:
+ * Controller → Service (extends BaseService) → Repository → Database
+ *
+ * Functional Requirements: FR-014 (Product Management)
  *
  * @reference .github/instructions/11_KILO_SCALE_ARCHITECTURE.instructions.md
  * @reference .github/instructions/02_AGRICULTURAL_QUANTUM_MASTERY.instructions.md
  * @reference .github/instructions/10_AGRICULTURAL_FEATURE_PATTERNS.instructions.md
+ * @reference .github/instructions/15_KILO_CODE_DIVINE_INTEGRATION.instructions.md
  */
 
-import { productRepository } from "@/lib/repositories/product.repository";
+import { Prisma } from "@prisma/client";
+import { BaseService } from "@/lib/services/base.service";
+import type {
+  ServiceResponse,
+  PaginatedResponse,
+} from "@/lib/types/service-response";
+import { ErrorCodes } from "@/lib/types/service-response";
+import {
+  productRepository,
+  type QuantumProductRepository,
+} from "@/lib/repositories/product.repository";
 import { database } from "@/lib/database";
 import { generateSlug } from "@/lib/utils/slug";
-import type { Prisma } from "@prisma/client";
+import {
+  ValidationError,
+  NotFoundError,
+  ConflictError,
+  AuthorizationError,
+} from "@/lib/errors";
 import type {
   BatchProductResult,
   CreateProductInput,
@@ -49,6 +68,8 @@ interface ProductInventory {
   lowStockThreshold: number;
   availableQuantity?: number;
   isLowStock?: boolean;
+  inStock?: boolean;
+  lastRestocked?: Date;
 }
 
 interface ProductPricing {
@@ -68,121 +89,267 @@ interface ProductImage {
   alt?: string;
 }
 
-// ============================================
-// PRODUCT SERVICE CLASS (REFACTORED)
-// ============================================
+// ============================================================================
+// REQUEST/RESPONSE TYPES
+// ============================================================================
 
-export class ProductService {
+/**
+ * Product creation result with metadata
+ */
+export interface ProductServiceResult {
+  product: Product;
+  slug: string;
+}
+
+/**
+ * Product listing options
+ */
+export interface ListProductsOptions {
+  page?: number;
+  limit?: number;
+  farmId?: string;
+  category?: string;
+  status?: string;
+  inStock?: boolean;
+  isFeatured?: boolean;
+  search?: string;
+  sortBy?: "name" | "price" | "newest" | "popular";
+  sortOrder?: "asc" | "desc";
+}
+
+/**
+ * Inventory update request
+ */
+export interface UpdateInventoryRequest {
+  quantity?: number;
+  reservedQuantity?: number;
+  lowStockThreshold?: number;
+}
+
+/**
+ * Batch update request item
+ */
+export interface BatchUpdateItem {
+  id: string;
+  data: UpdateProductInput;
+}
+
+// ============================================================================
+// PRODUCT SERVICE CLASS
+// ============================================================================
+
+/**
+ * Product Service with agricultural consciousness
+ * Extends BaseService for standardized patterns
+ *
+ * Returns ServiceResponse for all public methods
+ *
+ * @example
+ * ```typescript
+ * const service = new ProductService();
+ * const response = await service.createProduct(userId, productData);
+ *
+ * if (response.success) {
+ *   console.log(response.data.slug);
+ * } else {
+ *   console.error(response.error.message);
+ * }
+ * ```
+ */
+export class ProductService extends BaseService<Product> {
+  private readonly MAX_SLUG_ATTEMPTS = 10;
+
+  constructor(private repository = productRepository) {
+    super({
+      serviceName: "ProductService",
+      cacheTTL: 3600,
+      cachePrefix: "product",
+      enableCaching: true,
+      enableTracing: true,
+      enableAgriculturalConsciousness: true,
+    });
+  }
+
+  // ==========================================================================
+  // PRODUCT CREATION
+  // ==========================================================================
+
   /**
    * Create a new product for a farm
-   * Validates farm ownership and generates unique slug
    *
-   * @param productData - Product creation data
+   * Validates farm ownership, generates unique slug, and manifests the product
+   * into the database with agricultural consciousness. Calculates inventory
+   * metrics and sets appropriate status.
+   *
+   * Divine Patterns Applied:
+   * - ServiceResponse for type-safe return
+   * - Slug collision detection with retry logic
+   * - Agricultural consciousness in validation
+   * - Enlightening error messages
+   *
+   * Functional Requirement: FR-014 (Product Management)
+   *
    * @param userId - User ID for authorization
-   * @returns Created product with farm details
+   * @param productData - Product creation data
+   * @returns ServiceResponse with created product or error
    *
-   * @throws Error if validation fails, farm not found, or unauthorized
+   * @example
+   * ```typescript
+   * const response = await service.createProduct("user-123", {
+   *   name: "Organic Tomatoes",
+   *   farmId: "farm-456",
+   *   category: "VEGETABLES",
+   *   pricing: { basePrice: { amount: 5.99, currency: "USD" } },
+   *   inventory: { quantity: 100, reservedQuantity: 0, lowStockThreshold: 10 }
+   * });
+   * ```
    */
-  static async createProduct(
-    productData: CreateProductInput,
+  async createProduct(
     userId: string,
-  ): Promise<Product & { id: string }> {
-    // Input validation
-    if (!userId || typeof userId !== "string") {
-      throw new Error("Valid user ID is required");
-    }
-
-    if (!productData?.name || productData.name.trim().length < 3) {
-      throw new Error("Product name must be at least 3 characters");
-    }
-
-    if (!productData?.farmId) {
-      throw new Error("Farm ID is required");
-    }
-
-    // 1. Verify farm ownership (using database directly)
-    const farm = await database.farm.findUnique({
-      where: { id: productData.farmId },
-      select: { id: true, ownerId: true, status: true },
-    });
-
-    if (!farm) {
-      throw new Error("Farm not found");
-    }
-
-    if (farm.ownerId !== userId) {
-      throw new Error("Unauthorized: You don't own this farm");
-    }
-
-    if (farm.status !== "ACTIVE") {
-      throw new Error("Cannot add products to inactive farm");
-    }
-
-    // 2. Validate product data
-    const validation = await ProductService.validateProduct(productData);
-    if (!validation.isValid) {
-      throw new Error(
-        `Validation failed: ${validation.errors.map((e) => e.message).join(", ")}`,
+    productData: CreateProductInput,
+  ): Promise<ServiceResponse<ProductServiceResult>> {
+    return this.safeExecute("createProduct", async () => {
+      this.logger.info(
+        { userId, productName: productData.name },
+        "Creating product with agricultural consciousness",
       );
-    }
 
-    // 3. Generate unique slug
-    const baseSlug = generateSlug(productData.name);
-    const slug = await ProductService.generateUniqueSlug(
-      baseSlug,
-      productData.farmId,
-    );
+      // 1. Input validation
+      if (!userId || typeof userId !== "string") {
+        return this.validationError("Valid user ID is required");
+      }
 
-    // 4. Calculate derived values
-    const inventory = productData.inventory as unknown as ProductInventory;
-    const availableQuantity = inventory.quantity - inventory.reservedQuantity;
-    const isLowStock = availableQuantity <= inventory.lowStockThreshold;
-    const images = productData.images as unknown as ProductImage[];
-    const primaryPhotoUrl = images.find((img) => img.isPrimary)?.url;
+      if (!productData?.name || productData.name.trim().length < 3) {
+        return this.validationError(
+          "Product name must be at least 3 characters",
+        );
+      }
 
-    // 5. Create product using repository
-    const product = await productRepository.manifestProduct({
-      ...(productData as any),
-      slug,
-      inventory: {
-        ...inventory,
-        availableQuantity,
-        isLowStock,
-      },
-      primaryPhotoUrl,
-      farm: {
-        connect: { id: productData.farmId },
-      },
-    } as Prisma.ProductCreateInput);
+      if (!productData?.farmId) {
+        return this.validationError("Farm ID is required");
+      }
 
-    return product as unknown as Product;
+      // 2. Verify farm ownership
+      const farm = await this.database.farm.findUnique({
+        where: { id: productData.farmId },
+        select: { id: true, ownerId: true, status: true },
+      });
+
+      if (!farm) {
+        return this.notFound("Farm not found", {
+          farmId: productData.farmId,
+        });
+      }
+
+      if (farm.ownerId !== userId) {
+        return this.error(
+          ErrorCodes.FORBIDDEN_ACTION,
+          "Unauthorized: You don't own this farm",
+          { userId, farmOwnerId: farm.ownerId },
+        );
+      }
+
+      if (farm.status !== "ACTIVE") {
+        return this.error(
+          ErrorCodes.BUSINESS_LOGIC_ERROR,
+          "Cannot add products to inactive farm",
+          { farmStatus: farm.status },
+        );
+      }
+
+      // 3. Validate product data
+      const validation = await this.validateProductData(productData);
+      if (!validation.isValid) {
+        return this.validationError(
+          `Validation failed: ${validation.errors.map((e) => e.message).join(", ")}`,
+          { validationErrors: validation.errors },
+        );
+      }
+
+      // 4. Generate unique slug
+      const baseSlug = generateSlug(productData.name);
+      const slug = await this.generateUniqueSlug(baseSlug, productData.farmId);
+
+      // 5. Calculate derived values
+      const inventory = productData.inventory as unknown as ProductInventory;
+      const availableQuantity = this.calculateAvailableQuantityValue(
+        inventory.quantity,
+        inventory.reservedQuantity,
+      );
+      const isLowStock = availableQuantity <= inventory.lowStockThreshold;
+      const images = productData.images as unknown as ProductImage[];
+      const primaryPhotoUrl = images?.find((img) => img.isPrimary)?.url;
+
+      // 6. Create product using repository
+      const product = await this.repository.manifestProduct({
+        ...(productData as any),
+        slug,
+        inventory: {
+          ...inventory,
+          availableQuantity,
+          isLowStock,
+          inStock: availableQuantity > 0,
+        },
+        primaryPhotoUrl,
+        farm: {
+          connect: { id: productData.farmId },
+        },
+      } as Prisma.ProductCreateInput);
+
+      // 7. Invalidate related caches
+      await this.invalidateCache(`*`); // Invalidate all product caches (list, search)
+
+      this.logger.info(
+        { productId: product.id, slug },
+        "Product created successfully with divine consciousness",
+      );
+
+      const returnData = {
+        product: product as unknown as Product,
+        slug,
+      };
+      return this.success(returnData);
+    });
   }
+
+  // ==========================================================================
+  // PRODUCT RETRIEVAL
+  // ==========================================================================
 
   /**
    * Get product by ID with optional relations
    *
    * @param productId - Product ID
    * @param includeFarm - Whether to include farm details
-   * @returns Product or null if not found
+   * @returns ServiceResponse with product or null
    */
-  static async getProductById(
+  async getProductById(
     productId: string,
     includeFarm: boolean = true,
-  ): Promise<Product | null> {
-    // Use repository to find product
-    const product = await productRepository.findById(productId);
+  ): Promise<ServiceResponse<Product | null>> {
+    return this.safeExecute("getProductById", async () => {
+      this.logger.debug({ productId, includeFarm }, "Fetching product by ID");
 
-    if (!product) {
-      return null;
-    }
+      // Fetch from cache with fallback to repository
+      const product = await this.getCached(
+        `${productId}:farm=${includeFarm}`,
+        async () => await this.repository.findById(productId),
+        300, // 5 minutes
+      );
 
-    // If not including farm, remove it
-    if (!includeFarm && product.farm) {
-      const { farm, ...productWithoutFarm } = product;
-      return productWithoutFarm as unknown as Product;
-    }
+      if (!product) {
+        return this.success(null);
+      }
 
-    return product as unknown as Product;
+      // Remove farm if not requested
+      let result: Product = product as unknown as Product;
+      if (!includeFarm && product.farm) {
+        const { farm, ...productWithoutFarm } = product;
+        result = productWithoutFarm as unknown as Product;
+      }
+
+      return this.success(result);
+    });
   }
 
   /**
@@ -190,81 +357,255 @@ export class ProductService {
    *
    * @param farmSlug - Farm slug
    * @param productSlug - Product slug
-   * @returns Product or null if not found
+   * @returns ServiceResponse with product or null
    */
-  static async getProductBySlug(
+  async getProductBySlug(
     farmSlug: string,
     productSlug: string,
-  ): Promise<Product | null> {
-    // Use database directly to search with farm slug filter
-    const products = await database.product.findFirst({
-      where: {
-        slug: productSlug,
-        farm: {
-          slug: farmSlug,
-        },
-      },
-      include: {
-        farm: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-            logoUrl: true,
-            verificationStatus: true,
-          },
-        },
-      },
-    });
+  ): Promise<ServiceResponse<Product | null>> {
+    return this.safeExecute("getProductBySlug", async () => {
+      this.logger.debug({ farmSlug, productSlug }, "Fetching product by slug");
 
-    return products as unknown as Product | null;
+      // Fetch from cache with fallback to database
+      const product = await this.getCached(
+        `slug:${farmSlug}:${productSlug}`,
+        async () =>
+          await this.database.product.findFirst({
+            where: {
+              slug: productSlug,
+              farm: {
+                slug: farmSlug,
+              },
+            },
+            include: {
+              farm: {
+                select: {
+                  id: true,
+                  name: true,
+                  slug: true,
+                  logoUrl: true,
+                  verificationStatus: true,
+                },
+              },
+            },
+          }),
+        600, // 10 minutes (slug-based lookups are more stable)
+      );
+
+      if (!product) {
+        return this.success(null);
+      }
+
+      const result = product as unknown as Product;
+
+      return this.success(result);
+    });
   }
+
+  /**
+   * Get product detail by slug with reviews
+   *
+   * @param farmSlug - Farm slug
+   * @param productSlug - Product slug
+   * @returns ServiceResponse with product detail or null
+   */
+  async getProductDetailBySlug(
+    farmSlug: string,
+    productSlug: string,
+  ): Promise<ServiceResponse<Product | null>> {
+    return this.safeExecute("getProductDetailBySlug", async () => {
+      this.logger.debug(
+        { farmSlug, productSlug },
+        "Fetching detailed product by slug",
+      );
+
+      // Fetch from cache with fallback to database with reviews
+      const product = await this.getCached(
+        `detail:${farmSlug}:${productSlug}`,
+        async () =>
+          await this.database.product.findFirst({
+            where: {
+              slug: productSlug,
+              farm: {
+                slug: farmSlug,
+              },
+              status: "ACTIVE",
+            },
+            include: {
+              farm: {
+                select: {
+                  id: true,
+                  name: true,
+                  slug: true,
+                  logoUrl: true,
+                  verificationStatus: true,
+                  location: true,
+                  description: true,
+                },
+              },
+              reviews: {
+                take: 5,
+                orderBy: {
+                  createdAt: "desc",
+                },
+                include: {
+                  customer: {
+                    select: {
+                      id: true,
+                      name: true,
+                      avatar: true,
+                    },
+                  },
+                },
+              },
+            },
+          }),
+        600, // 10 minutes (detail pages with reviews are relatively stable)
+      );
+
+      if (!product) {
+        return this.notFound("Product not found");
+      }
+
+      const result = product as unknown as Product;
+
+      return this.success(result);
+    });
+  }
+
+  // ==========================================================================
+  // PRODUCT LISTING
+  // ==========================================================================
 
   /**
    * List products with filters and pagination
    *
    * @param filters - Product filters
    * @param options - Pagination options
-   * @returns Paginated products
+   * @returns ServiceResponse with paginated products
    */
-  static async listProducts(
+  async listProducts(
     filters: ProductFilters = {},
     options?: PaginationOptions,
-  ): Promise<PaginatedProducts> {
-    const { page = 1, limit = 20 } = options || {};
-    const skip = (page - 1) * limit;
+  ): Promise<PaginatedResponse<Product>> {
+    return this.safeExecute("listProducts", async () => {
+      const { page = 1, limit = 20 } = options || {};
+      const skip = (page - 1) * limit;
 
-    // Build where clause
-    const where = this.buildWhereClause(filters);
+      this.logger.debug({ filters, page, limit }, "Listing products");
 
-    // Build orderBy clause
-    const orderBy = this.buildOrderByClause(filters);
+      // Generate cache key from filters and pagination
+      const cacheKey = `list:${JSON.stringify({ filters, page, limit })}`;
 
-    // Execute queries using repository
-    const [products, total] = await Promise.all([
-      productRepository.findMany(where, {
-        skip,
-        take: limit,
-        orderBy,
-      }),
-      productRepository.count(where),
-    ]);
+      // Fetch from cache with fallback to database query
+      const result = await this.getCached(
+        cacheKey,
+        async () => {
+          // Build where clause
+          const where = this.buildWhereClause(filters);
 
-    // Calculate pagination metadata
-    const totalPages = Math.ceil(total / limit);
-    const hasMore = page < totalPages;
+          // Build orderBy clause
+          const orderBy = this.buildOrderByClause(filters);
 
-    return {
-      products: products as unknown as Product[],
-      pagination: {
+          // Execute queries
+          const [products, total] = await Promise.all([
+            this.repository.findMany(where, {
+              skip,
+              take: limit,
+              orderBy,
+            }),
+            this.repository.count(where),
+          ]);
+
+          return { products, total };
+        },
+        60, // 1 minute (list data changes frequently)
+      );
+
+      return this.paginated(
+        result.products as unknown as Product[],
         page,
         limit,
-        total,
-        totalPages,
-        hasMore,
-      },
-    };
+        result.total,
+      );
+    });
   }
+
+  /**
+   * Search products by text
+   *
+   * @param searchTerm - Search query
+   * @param limit - Maximum results
+   * @returns ServiceResponse with matching products
+   */
+  async searchProducts(
+    query: string,
+    limit: number = 20,
+  ): Promise<ServiceResponse<Product[]>> {
+    return this.safeExecute("searchProducts", async () => {
+      this.logger.debug({ query, limit }, "Searching products");
+
+      // Fetch from cache with fallback to repository search
+      const products = await this.getCached(
+        `search:${query}:limit=${limit}`,
+        async () =>
+          await this.repository.searchProducts(query, {
+            take: limit,
+            orderBy: { createdAt: "desc" },
+          }),
+        120, // 2 minutes (search results change moderately)
+      );
+
+      return this.success(products as unknown as Product[]);
+    });
+  }
+
+  /**
+   * Get related products (same category or farm)
+   *
+   * @param productId - Product ID
+   * @param limit - Maximum results
+   * @returns ServiceResponse with related products
+   */
+  async getRelatedProducts(
+    productId: string,
+    limit: number = 6,
+  ): Promise<ServiceResponse<Product[]>> {
+    return this.safeExecute("getRelatedProducts", async () => {
+      this.logger.debug({ productId, limit }, "Fetching related products");
+
+      // Get product to determine category and farm
+      const product = await this.repository.findById(productId);
+
+      if (!product) {
+        return this.success([]);
+      }
+
+      // Find related products
+      const relatedProducts = await this.repository.findMany(
+        {
+          id: { not: productId },
+          status: "ACTIVE" as any,
+          inStock: true,
+          OR: [{ category: product.category }, { farmId: product.farmId }],
+        },
+        {
+          take: limit,
+          orderBy: [
+            { featured: "desc" as any },
+            { averageRating: "desc" as any },
+            { viewsCount: "desc" as any },
+          ],
+        },
+      );
+
+      return this.success(relatedProducts as unknown as Product[]);
+    });
+  }
+
+  // ==========================================================================
+  // PRODUCT UPDATE
+  // ==========================================================================
 
   /**
    * Update product
@@ -272,120 +613,105 @@ export class ProductService {
    * @param productId - Product ID
    * @param updates - Product updates
    * @param userId - User ID for authorization
-   * @returns Updated product
-   *
-   * @throws Error if product not found or unauthorized
+   * @returns ServiceResponse with updated product
    */
-  static async updateProduct(
+  async updateProduct(
     productId: string,
     updates: UpdateProductInput,
     userId: string,
-  ): Promise<Product> {
-    // 1. Get existing product with farm details
-    const existing = await productRepository.findById(productId);
-
-    if (!existing) {
-      throw new Error("Product not found");
-    }
-
-    // 2. Check ownership - get farm details if needed
-    const farmDetails = await database.farm.findUnique({
-      where: { id: existing.farmId },
-      select: { ownerId: true },
-    });
-
-    if (!farmDetails || farmDetails.ownerId !== userId) {
-      throw new Error("Unauthorized: You don't own this product");
-    }
-
-    // 3. Handle slug update if name changed
-    let slug = existing.slug;
-    if (updates.name && updates.name !== existing.name) {
-      const baseSlug = generateSlug(updates.name);
-      slug = await ProductService.generateUniqueSlug(
-        baseSlug,
-        existing.farmId,
-        productId,
+  ): Promise<ServiceResponse<Product>> {
+    return this.safeExecute("updateProduct", async () => {
+      this.logger.info(
+        { productId, userId, updates: Object.keys(updates) },
+        "Updating product",
       );
-    }
 
-    // 4. Handle inventory updates if provided
-    let inventoryUpdates: any = {};
-    if (updates.inventory) {
-      const existingInventory =
-        existing.inventory as unknown as ProductInventory;
-      const updatedInventory = updates.inventory as Partial<ProductInventory>;
-      const availableQuantity =
-        (updatedInventory.quantity ?? existingInventory.quantity) -
-        (updatedInventory.reservedQuantity ??
-          existingInventory.reservedQuantity);
+      // 1. Get existing product
+      const existing = await this.repository.findById(productId);
 
-      const lowStockThreshold =
-        updatedInventory.lowStockThreshold ??
-        existingInventory.lowStockThreshold ??
-        10;
+      if (!existing) {
+        return this.notFound("Product not found", { productId });
+      }
 
-      inventoryUpdates = {
-        ...existingInventory,
-        ...updatedInventory,
-        availableQuantity,
-        isLowStock: availableQuantity <= lowStockThreshold,
-        inStock: availableQuantity > 0,
-      };
-    }
+      // 2. Check ownership
+      const farmDetails = await this.database.farm.findUnique({
+        where: { id: existing.farmId },
+        select: { ownerId: true },
+      });
 
-    // 5. Handle primary photo update
-    let primaryPhotoUrl = existing.primaryPhotoUrl;
-    if (updates.images) {
-      const images = updates.images as unknown as ProductImage[];
-      primaryPhotoUrl = images.find((img) => img.isPrimary)?.url ?? null;
-    }
+      if (!farmDetails || farmDetails.ownerId !== userId) {
+        return this.error(
+          ErrorCodes.FORBIDDEN_ACTION,
+          "Unauthorized: You don't own this product",
+          { userId, farmOwnerId: farmDetails?.ownerId },
+        );
+      }
 
-    // 6. Update product using repository
-    const product = await productRepository.update(productId, {
-      ...(updates as any),
-      slug,
-      inventory: Object.keys(inventoryUpdates).length
-        ? inventoryUpdates
-        : undefined,
-      primaryPhotoUrl,
-      updatedAt: new Date(),
-    } as Prisma.ProductUpdateInput);
+      // 3. Handle slug update if name changed
+      let slug = existing.slug;
+      if (updates.name && updates.name !== existing.name) {
+        const baseSlug = generateSlug(updates.name);
+        slug = await this.generateUniqueSlug(
+          baseSlug,
+          existing.farmId,
+          productId,
+        );
+      }
 
-    return product as unknown as Product;
-  }
+      // 4. Handle inventory updates if provided
+      let inventoryUpdates: any = {};
+      if (updates.inventory) {
+        const existingInventory =
+          existing.inventory as unknown as ProductInventory;
+        const updatedInventory = updates.inventory as Partial<ProductInventory>;
+        const availableQuantity =
+          (updatedInventory.quantity ?? existingInventory.quantity) -
+          (updatedInventory.reservedQuantity ??
+            existingInventory.reservedQuantity);
 
-  /**
-   * Delete product (soft delete)
-   *
-   * @param productId - Product ID
-   * @param userId - User ID for authorization
-   *
-   * @throws Error if product not found or unauthorized
-   */
-  static async deleteProduct(productId: string, userId: string): Promise<void> {
-    // 1. Get product with farm details
-    const product = await productRepository.findById(productId);
+        const lowStockThreshold =
+          updatedInventory.lowStockThreshold ??
+          existingInventory.lowStockThreshold ??
+          10;
 
-    if (!product) {
-      throw new Error("Product not found");
-    }
+        inventoryUpdates = {
+          ...existingInventory,
+          ...updatedInventory,
+          availableQuantity,
+          isLowStock: availableQuantity <= lowStockThreshold,
+          inStock: availableQuantity > 0,
+        };
+      }
 
-    // 2. Check ownership - get farm details if needed
-    const farmDetails = await database.farm.findUnique({
-      where: { id: product.farmId },
-      select: { ownerId: true },
+      // 5. Handle primary photo update
+      let primaryPhotoUrl = existing.primaryPhotoUrl;
+      if (updates.images) {
+        const images = updates.images as unknown as ProductImage[];
+        primaryPhotoUrl = images.find((img) => img.isPrimary)?.url ?? null;
+      }
+
+      // 6. Update product using repository
+      const product = await this.repository.update(productId, {
+        ...(updates as any),
+        slug,
+        inventory: Object.keys(inventoryUpdates).length
+          ? inventoryUpdates
+          : undefined,
+        primaryPhotoUrl,
+        updatedAt: new Date(),
+      } as Prisma.ProductUpdateInput);
+
+      // 7. Invalidate related caches
+      await this.invalidateCache(`${productId}*`); // Product by ID and variations
+      await this.invalidateCache(`slug:*`); // All slug-based lookups
+      await this.invalidateCache(`detail:*`); // All detail pages
+      await this.invalidateCache(`list:*`); // All list queries
+      await this.invalidateCache(`search:*`); // All search results
+
+      this.logger.info({ productId, slug }, "Product updated successfully");
+
+      return this.success(product as unknown as Product);
     });
-
-    if (!farmDetails || farmDetails.ownerId !== userId) {
-      throw new Error("Unauthorized: You don't own this product");
-    }
-
-    // 3. Soft delete - update status to ARCHIVED
-    await productRepository.update(productId, {
-      status: "ARCHIVED" as any,
-      updatedAt: new Date(),
-    } as Prisma.ProductUpdateInput);
   }
 
   /**
@@ -394,154 +720,269 @@ export class ProductService {
    * @param productId - Product ID
    * @param inventoryUpdate - Inventory updates
    * @param userId - User ID for authorization
-   * @returns Updated product
-   *
-   * @throws Error if product not found or unauthorized
+   * @returns ServiceResponse with updated product
    */
-  static async updateInventory(
+  async updateInventory(
     productId: string,
-    inventoryUpdate: {
-      quantity?: number;
-      reservedQuantity?: number;
-      lowStockThreshold?: number;
-    },
+    inventoryUpdate: UpdateInventoryRequest,
     userId: string,
-  ): Promise<Product> {
-    // 1. Get product with farm details
-    const product = await productRepository.findById(productId);
+  ): Promise<ServiceResponse<Product>> {
+    return this.safeExecute("updateInventory", async () => {
+      this.logger.info(
+        { productId, userId, inventoryUpdate },
+        "Updating product inventory",
+      );
 
-    if (!product) {
-      throw new Error("Product not found");
-    }
+      // 1. Get product
+      const product = await this.repository.findById(productId);
 
-    // 2. Check ownership - get farm details if needed
-    const farmDetails = await database.farm.findUnique({
-      where: { id: product.farmId },
-      select: { id: true, ownerId: true },
+      if (!product) {
+        return this.notFound("Product not found", { productId });
+      }
+
+      // 2. Check ownership
+      const farmDetails = await this.database.farm.findUnique({
+        where: { id: product.farmId },
+        select: { id: true, ownerId: true },
+      });
+
+      if (!farmDetails || farmDetails.ownerId !== userId) {
+        return this.error(
+          ErrorCodes.FORBIDDEN_ACTION,
+          "Unauthorized: You don't own this product",
+          { userId, farmOwnerId: farmDetails?.ownerId },
+        );
+      }
+
+      // 3. Calculate new inventory values
+      const existingInventory = product.inventory as any;
+      const inventory = { ...existingInventory, ...inventoryUpdate };
+      const availableQuantity = inventory.quantity - inventory.reservedQuantity;
+      const isLowStock = availableQuantity <= inventory.lowStockThreshold;
+
+      // 4. Update using repository
+      const updated = await this.repository.update(productId, {
+        inventory: {
+          ...inventory,
+          availableQuantity,
+          isLowStock,
+          inStock: availableQuantity > 0,
+          lastRestocked: new Date(),
+        },
+        status:
+          availableQuantity > 0 ? ("ACTIVE" as any) : ("OUT_OF_STOCK" as any),
+      } as Prisma.ProductUpdateInput);
+
+      // 5. Invalidate related caches
+      await this.invalidateCache(`${productId}*`); // Product by ID
+      await this.invalidateCache(`list:*`); // List queries (inventory changed)
+
+      this.logger.info(
+        { productId, availableQuantity },
+        "Inventory updated successfully",
+      );
+
+      return this.success(updated as unknown as Product);
     });
-
-    if (!farmDetails || farmDetails.ownerId !== userId) {
-      throw new Error("Unauthorized: You don't own this product");
-    }
-
-    // 3. Calculate new inventory values
-    const existingInventory = product.inventory as any;
-    const inventory = { ...existingInventory, ...inventoryUpdate };
-    const availableQuantity = inventory.quantity - inventory.reservedQuantity;
-    const isLowStock = availableQuantity <= inventory.lowStockThreshold;
-
-    // 4. Update using repository
-    const updated = await productRepository.update(productId, {
-      inventory: {
-        ...inventory,
-        availableQuantity,
-        isLowStock,
-        inStock: availableQuantity > 0,
-        lastRestocked: new Date(),
-      },
-      status:
-        availableQuantity > 0 ? ("ACTIVE" as any) : ("OUT_OF_STOCK" as any),
-    } as Prisma.ProductUpdateInput);
-
-    return updated as unknown as Product;
   }
 
+  // ==========================================================================
+  // PRODUCT DELETION
+  // ==========================================================================
+
   /**
-   * Get product statistics
+   * Delete product (soft delete)
    *
    * @param productId - Product ID
-   * @returns Product statistics
+   * @param userId - User ID for authorization
+   * @returns ServiceResponse with success confirmation
    */
-  static async getProductStats(productId: string): Promise<ProductStats> {
-    // Use repository to get product with counts
-    const product = await productRepository.findById(productId);
+  async deleteProduct(
+    productId: string,
+    userId: string,
+  ): Promise<ServiceResponse<void>> {
+    return this.safeExecute("deleteProduct", async () => {
+      this.logger.info({ productId, userId }, "Deleting product");
 
-    if (!product) {
-      throw new Error("Product not found");
-    }
+      // 1. Get product
+      const product = await this.repository.findById(productId);
 
-    return {
-      productId: product.id,
-      views: (product as any).viewsCount || 0,
-      orders: product._count.orderItems || 0,
-      revenue: 0, // Would need to calculate from orders
-      reviewCount: product._count.reviews || 0,
-      inWishlistCount: 0, // Would need to query wishlist
-    };
-  }
+      if (!product) {
+        return this.notFound("Product not found", { productId });
+      }
 
-  /**
-   * Search products by text
-   *
-   * @param searchTerm - Search query
-   * @param limit - Maximum results
-   * @returns Array of matching products
-   */
-  static async searchProducts(
-    searchTerm: string,
-    limit: number = 20,
-  ): Promise<Product[]> {
-    // Use repository search method
-    const products = await productRepository.searchProducts(searchTerm, {
-      take: limit,
-      orderBy: { createdAt: "desc" },
+      // 2. Check ownership
+      const farmDetails = await this.database.farm.findUnique({
+        where: { id: product.farmId },
+        select: { ownerId: true },
+      });
+
+      if (!farmDetails || farmDetails.ownerId !== userId) {
+        return this.error(
+          ErrorCodes.FORBIDDEN_ACTION,
+          "Unauthorized: You don't own this product",
+          { userId, farmOwnerId: farmDetails?.ownerId },
+        );
+      }
+
+      // 3. Soft delete - update status to ARCHIVED
+      await this.repository.update(productId, {
+        status: "ARCHIVED" as any,
+        updatedAt: new Date(),
+      } as Prisma.ProductUpdateInput);
+
+      // 4. Invalidate related caches
+      await this.invalidateCache(`${productId}*`); // Product by ID
+      await this.invalidateCache(`slug:*`); // Slug lookups
+      await this.invalidateCache(`detail:*`); // Detail pages
+      await this.invalidateCache(`list:*`); // List queries
+
+      this.logger.info({ productId }, "Product deleted successfully");
+
+      return this.success(undefined as void);
     });
-
-    return products as unknown as Product[];
   }
+
+  // ==========================================================================
+  // BATCH OPERATIONS
+  // ==========================================================================
 
   /**
    * Batch update multiple products
    *
    * @param updates - Array of product updates
    * @param userId - User ID for authorization
-   * @returns Batch result with success/failure counts
+   * @returns ServiceResponse with batch result
    */
-  static async batchUpdateProducts(
-    updates: Array<{ id: string; data: UpdateProductInput }>,
+  async batchUpdateProducts(
+    updates: BatchUpdateItem[],
     userId: string,
-  ): Promise<BatchProductResult> {
-    const result: BatchProductResult = {
-      successful: [],
-      failed: [],
-      total: updates.length,
-      successCount: 0,
-      failureCount: 0,
-    };
+  ): Promise<ServiceResponse<BatchProductResult>> {
+    return this.safeExecute("batchUpdateProducts", async () => {
+      this.logger.info(
+        { userId, updateCount: updates.length },
+        "Batch updating products",
+      );
 
-    for (const update of updates) {
-      try {
-        const product = await this.updateProduct(
-          update.id,
-          update.data,
-          userId,
-        );
-        result.successful.push({ productId: product.id, product } as any);
-        result.successCount++;
-      } catch (error) {
-        result.failed.push({
-          productId: update.id,
-          error: error instanceof Error ? error.message : "Unknown error",
-        });
-        result.failureCount++;
+      const result: BatchProductResult = {
+        successful: [],
+        failed: [],
+        total: updates.length,
+        successCount: 0,
+        failureCount: 0,
+      };
+
+      for (const update of updates) {
+        try {
+          const response = await this.updateProduct(
+            update.id,
+            update.data,
+            userId,
+          );
+
+          if (response.success) {
+            result.successful.push({
+              productId: response.data.id,
+              product: response.data,
+            } as any);
+            result.successCount++;
+          } else {
+            result.failed.push({
+              productId: update.id,
+              error: response.error.message,
+            });
+            result.failureCount++;
+          }
+        } catch (error) {
+          result.failed.push({
+            productId: update.id,
+            error: error instanceof Error ? error.message : "Unknown error",
+          });
+          result.failureCount++;
+        }
       }
-    }
 
-    return result;
+      this.logger.info(
+        {
+          successCount: result.successCount,
+          failureCount: result.failureCount,
+        },
+        "Batch update completed",
+      );
+
+      return this.success(result);
+    });
   }
 
-  // ============================================
+  // ==========================================================================
+  // STATISTICS & METRICS
+  // ==========================================================================
+
+  /**
+   * Get product statistics
+   *
+   * @param productId - Product ID
+   * @returns ServiceResponse with product stats
+   */
+  async getProductStats(
+    productId: string,
+  ): Promise<ServiceResponse<ProductStats>> {
+    return this.safeExecute("getProductStats", async () => {
+      this.logger.debug({ productId }, "Fetching product stats");
+
+      // Get product with counts
+      const product = await this.repository.findById(productId);
+
+      if (!product) {
+        return this.notFound("Product not found", { productId });
+      }
+
+      const stats: ProductStats = {
+        productId: product.id,
+        views: (product as any).viewsCount || 0,
+        orders: product._count.orderItems || 0,
+        revenue: 0, // Would need to calculate from orders
+        reviewCount: product._count.reviews || 0,
+        inWishlistCount: 0, // Would need to query wishlist
+      };
+
+      return this.success(stats);
+    });
+  }
+
+  /**
+   * Increment product view count
+   *
+   * @param productId - Product ID
+   * @returns ServiceResponse with success confirmation
+   */
+  async incrementViewCount(productId: string): Promise<ServiceResponse<void>> {
+    return this.safeExecute("incrementViewCount", async () => {
+      await this.database.product.update({
+        where: { id: productId },
+        data: {
+          viewsCount: {
+            increment: 1,
+          },
+        },
+      });
+
+      // Invalidate product caches (view count changed)
+      await this.invalidateCache(`${productId}*`);
+      await this.invalidateCache(`detail:*`); // Detail pages show view count
+
+      return this.success(undefined as void);
+    });
+  }
+
+  // ==========================================================================
   // PRIVATE HELPER METHODS
-  // ============================================
+  // ==========================================================================
 
   /**
    * Build Prisma where clause from filters
-   *
-   * @private
-   * @param filters - Product filters
-   * @returns Prisma where clause
    */
-  private static buildWhereClause(filters: ProductFilters): any {
+  private buildWhereClause(filters: ProductFilters): any {
     const where: any = {};
 
     // Farm filtering
@@ -623,12 +1064,8 @@ export class ProductService {
 
   /**
    * Build Prisma orderBy clause from filters
-   *
-   * @private
-   * @param filters - Product filters
-   * @returns Prisma orderBy clause
    */
-  private static buildOrderByClause(filters: ProductFilters): any {
+  private buildOrderByClause(filters: ProductFilters): any {
     const orderBy: any = {};
 
     if (filters.sortBy) {
@@ -646,7 +1083,6 @@ export class ProductService {
           orderBy.createdAt = "desc";
           break;
         case "popular":
-          // Would need to join with order stats
           orderBy.createdAt = "desc";
           break;
         default:
@@ -661,24 +1097,18 @@ export class ProductService {
 
   /**
    * Generate unique slug for product
-   *
-   * @private
-   * @param baseSlug - Base slug from product name
-   * @param farmId - Farm ID
-   * @param excludeId - Product ID to exclude (for updates)
-   * @returns Unique slug
    */
-  private static async generateUniqueSlug(
+  private async generateUniqueSlug(
     baseSlug: string,
     farmId: string,
     excludeId?: string,
   ): Promise<string> {
     let slug = baseSlug;
     let counter = 1;
+    let attempts = 0;
 
-    while (true) {
-      // Check if slug exists using database singleton
-      const existing = await database.product.findFirst({
+    while (attempts < this.MAX_SLUG_ATTEMPTS) {
+      const existing = await this.database.product.findFirst({
         where: {
           slug,
           farmId,
@@ -692,17 +1122,17 @@ export class ProductService {
 
       slug = `${baseSlug}-${counter}`;
       counter++;
+      attempts++;
     }
+
+    // Fallback: add timestamp
+    return `${baseSlug}-${Date.now()}`;
   }
 
   /**
    * Validate product data
-   *
-   * @private
-   * @param productData - Product data to validate
-   * @returns Validation result
    */
-  private static async validateProduct(
+  private async validateProductData(
     productData: CreateProductInput,
   ): Promise<ProductValidation> {
     const errors: Array<{ field: string; message: string }> = [];
@@ -797,149 +1227,14 @@ export class ProductService {
   }
 
   /**
-   * Increment product view count
-   *
-   * @param productId - Product ID
-   */
-  static async incrementViewCount(productId: string): Promise<void> {
-    // Use database singleton to update view count
-    await database.product.update({
-      where: { id: productId },
-      data: {
-        viewsCount: {
-          increment: 1,
-        },
-      },
-    });
-  }
-
-  /**
-   * Get related products (same category or farm)
-   *
-   * @param productId - Product ID
-   * @param limit - Maximum results
-   * @returns Array of related products
-   */
-  static async getRelatedProducts(
-    productId: string,
-    limit: number = 6,
-  ): Promise<Product[]> {
-    // Get product to determine category and farm
-    const product = await productRepository.findById(productId);
-
-    if (!product) {
-      return [];
-    }
-
-    // Find related products using repository
-    const relatedProducts = await productRepository.findMany(
-      {
-        id: { not: productId },
-        status: "ACTIVE" as any,
-        inStock: true,
-        OR: [{ category: product.category }, { farmId: product.farmId }],
-      },
-      {
-        take: limit,
-        orderBy: [
-          { featured: "desc" as any },
-          { averageRating: "desc" as any },
-          { viewsCount: "desc" as any },
-        ],
-      },
-    );
-
-    return relatedProducts as unknown as Product[];
-  }
-
-  /**
-   * Get product detail by slug with reviews
-   *
-   * @param farmSlug - Farm slug
-   * @param productSlug - Product slug
-   * @returns Product detail with reviews
-   */
-  static async getProductDetailBySlug(
-    farmSlug: string,
-    productSlug: string,
-  ): Promise<Product | null> {
-    // Use repository database access for complex query
-    const product = await database.product.findFirst({
-      where: {
-        slug: productSlug,
-        farm: {
-          slug: farmSlug,
-        },
-        status: "ACTIVE" as any,
-      },
-      include: {
-        farm: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-            logoUrl: true,
-            verificationStatus: true,
-            location: true,
-            description: true,
-          },
-        },
-        reviews: {
-          take: 5,
-          orderBy: {
-            createdAt: "desc",
-          },
-          include: {
-            customer: {
-              select: {
-                id: true,
-                name: true,
-                avatar: true,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    return product as unknown as Product | null;
-  }
-
-  /**
    * Calculate available quantity from inventory
-   *
-   * @param inventory - Inventory data
-   * @returns Available quantity
    */
-  static calculateAvailableQuantity(inventory: {
-    quantity: number;
-    reservedQuantity: number;
-  }): number {
-    const totalQuantity = inventory.quantity || 0;
-    const reservedQuantity = inventory.reservedQuantity || 0;
-    return Math.max(0, totalQuantity - reservedQuantity);
+  private calculateAvailableQuantityValue(
+    quantity: number,
+    reservedQuantity: number,
+  ): number {
+    const totalQuantity = quantity || 0;
+    const reserved = reservedQuantity || 0;
+    return Math.max(0, totalQuantity - reserved);
   }
 }
-
-/**
- * 🎉 PRODUCT SERVICE REFACTORED - REPOSITORY PATTERN COMPLETE
- *
- * Achievements:
- * ✅ All database calls now use productRepository
- * ✅ Business logic preserved in service layer
- * ✅ Authorization checks maintained
- * ✅ Validation logic separated
- * ✅ Type-safe operations throughout
- * ✅ Agricultural consciousness maintained
- * ✅ Enlightening error messages
- * ✅ Ready for comprehensive service testing
- *
- * Next Steps:
- * - Create comprehensive service tests (40+ tests)
- * - Mock productRepository in tests
- * - Test all business logic independently
- * - Verify authorization and validation
- * - Ensure 90%+ test coverage
- *
- * Divine Product Service - Repository Pattern Achieved! 🌾⚡✨
- */

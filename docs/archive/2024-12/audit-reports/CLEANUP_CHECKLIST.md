@@ -176,7 +176,7 @@ curl http://localhost:3001/demos
 
 ### Task 3.1: Remove Farmer Dashboard Duplicate (30 minutes)
 
-- [ ] Verify `src/app/(farmer)/farmer/dashboard/page.tsx` exists and works
+- [ ] Verify `src/app/(farmer)/dashboard/page.tsx` exists and works
 - [ ] Search for links to `/farmer-dashboard`: `grep -r "farmer-dashboard" src/`
 - [ ] Update any found links to `/farmer/dashboard`
 - [ ] Remove duplicate: `rm -rf src/app/farmer-dashboard/`

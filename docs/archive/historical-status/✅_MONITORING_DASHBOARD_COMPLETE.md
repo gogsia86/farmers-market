@@ -16,7 +16,7 @@ The **Performance Monitoring Dashboard** has been successfully implemented with 
 
 ### 1. **Dashboard Implementation** ✅
 
-- **Location**: `src/app/(monitoring)/monitoring/page.tsx`
+- **Location**: `src/app/(monitoring)/page.tsx`
 - **Features**:
   - Real-time system health monitoring
   - Workflow execution tracking (last 10 executions)
@@ -347,7 +347,7 @@ The monitoring dashboard is fully implemented, thoroughly tested, and ready for 
 
 ### Implementation Files
 
-- Dashboard Page: `src/app/(monitoring)/monitoring/page.tsx`
+- Dashboard Page: `src/app/(monitoring)/page.tsx`
 - Dashboard Layout: `src/components/monitoring/dashboard/DashboardLayout.tsx`
 - System Health Widget: `src/components/monitoring/dashboard/SystemHealthWidget.tsx`
 - Workflow Widget: `src/components/monitoring/dashboard/WorkflowExecutionWidget.tsx`

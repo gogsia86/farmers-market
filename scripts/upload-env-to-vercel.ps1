@@ -385,7 +385,7 @@ function Show-Menu {
             }
             "5" {
                 Write-Warning-Custom "This will delete ALL environment variables!"
-                $confirm = Read-Host "Are you sure? Type 'DELETE' to confirm"
+                $confirm = Read-Host "Are you sure? Type DELETE to confirm"
                 if ($confirm -eq "DELETE") {
                     Write-Info "Deleting all environment variables..."
                     vercel env rm --yes

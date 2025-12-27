@@ -29,7 +29,7 @@ The **Performance Monitoring Dashboard** has been successfully implemented and c
 
 #### 1. **Main Dashboard Page** (`/monitoring`)
 
-- **Location**: `src/app/(monitoring)/monitoring/page.tsx`
+- **Location**: `src/app/(monitoring)/page.tsx`
 - **Features**:
   - Server-side rendering with data fetching
   - Real-time system health monitoring

@@ -699,8 +699,8 @@ src/app/api/marketplace/
 
 **Pages** (2 files):
 
-- `src/app/(farmer)/farmer/finances/page.tsx` (65 lines)
-- `src/app/(farmer)/farmer/payouts/page.tsx` (113 lines)
+- `src/app/(farmer)/finances/page.tsx` (65 lines)
+- `src/app/(farmer)/payouts/page.tsx` (113 lines)
 
 **API Routes** (2 files):
 

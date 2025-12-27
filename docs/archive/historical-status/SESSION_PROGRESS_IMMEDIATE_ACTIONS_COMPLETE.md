@@ -321,10 +321,10 @@ src/components/ui/Skeleton.tsx
 src/app/(customer)/marketplace/loading.tsx
   - MarketplaceSkeleton with product grid
 
-src/app/(farmer)/farmer/dashboard/loading.tsx
+src/app/(farmer)/dashboard/loading.tsx
   - FarmerDashboardSkeleton with stats + charts
 
-src/app/(admin)/admin/dashboard/loading.tsx
+src/app/(admin)/dashboard/loading.tsx
   - AdminDashboardSkeleton with user management
 
 src/app/farms/loading.tsx

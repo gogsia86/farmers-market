@@ -35,9 +35,9 @@ A comprehensive TypeScript error analysis reveals **~150 errors** blocking the p
 
 **Files Affected**:
 
-- `src/app/(admin)/admin/financial/page.tsx`
-- `src/app/(farmer)/farmer/dashboard/page.tsx`
-- `src/app/(farmer)/farmer/orders/[id]/page.tsx`
+- `src/app/(admin)/financial/page.tsx`
+- `src/app/(farmer)/dashboard/page.tsx`
+- `src/app/(farmer)/orders/[id]/page.tsx`
 
 **Missing/Wrong Fields**:
 
@@ -82,8 +82,8 @@ const totalAmount = order.items.reduce(
 
 **Files Affected**:
 
-- `src/app/(admin)/admin/products/page.tsx`
-- `src/app/(farmer)/farmer/dashboard/page.tsx`
+- `src/app/(admin)/products/page.tsx`
+- `src/app/(farmer)/dashboard/page.tsx`
 
 **Missing/Wrong Fields**:
 
@@ -118,8 +118,8 @@ const stockQuantity = product.inventory?.quantity ?? 0;
 
 **Files Affected**:
 
-- `src/app/(farmer)/farmer/dashboard/page.tsx`
-- `src/app/(farmer)/farmer/settings/page.tsx`
+- `src/app/(farmer)/dashboard/page.tsx`
+- `src/app/(farmer)/settings/page.tsx`
 
 **Missing/Wrong Fields**:
 
@@ -154,8 +154,8 @@ const contactPhone = farm.phone; // Use 'phone' field
 
 **Files Affected**:
 
-- `src/app/(farmer)/farmer/orders/[id]/page.tsx`
-- `src/app/(farmer)/farmer/settings/page.tsx`
+- `src/app/(farmer)/orders/[id]/page.tsx`
+- `src/app/(farmer)/settings/page.tsx`
 
 **Missing/Wrong Fields**:
 
@@ -178,7 +178,7 @@ user.avatar; // Use 'avatar' field from schema
 
 **Files Affected**:
 
-- `src/app/(admin)/admin/financial/page.tsx`
+- `src/app/(admin)/financial/page.tsx`
 
 **Missing/Wrong Fields**:
 
@@ -330,7 +330,7 @@ const failedWorkflows = results.filter((r) => r.status === "failed").length;
 
 #### Subcategory 2E: Monitoring Dashboard Route Issues
 
-**File**: `src/app/(monitoring)/monitoring/page.tsx`
+**File**: `src/app/(monitoring)/page.tsx`
 
 **Issues**:
 
@@ -411,8 +411,8 @@ type NotificationChannel = "EMAIL" | "SLACK" | "DISCORD" | "SMS" | "ALL";
 
 **Files**:
 
-- `src/app/(admin)/admin/financial/page.tsx` - "DELIVERED"
-- `src/app/(farmer)/farmer/dashboard/page.tsx` - "READY_FOR_PICKUP"
+- `src/app/(admin)/financial/page.tsx` - "DELIVERED"
+- `src/app/(farmer)/dashboard/page.tsx` - "READY_FOR_PICKUP"
 
 **Action Items**:
 
@@ -429,7 +429,7 @@ type NotificationChannel = "EMAIL" | "SLACK" | "DISCORD" | "SMS" | "ALL";
 
 #### Issue 3B: PaymentStatus Enum Mismatch
 
-**File**: `src/app/(admin)/admin/financial/page.tsx`
+**File**: `src/app/(admin)/financial/page.tsx`
 
 **Action Items**:
 
@@ -440,7 +440,7 @@ type NotificationChannel = "EMAIL" | "SLACK" | "DISCORD" | "SMS" | "ALL";
 
 #### Issue 3C: FarmStatus Enum Mismatch
 
-**File**: `src/app/(farmer)/farmer/settings/page.tsx`
+**File**: `src/app/(farmer)/settings/page.tsx`
 
 **Action Items**:
 
@@ -451,7 +451,7 @@ type NotificationChannel = "EMAIL" | "SLACK" | "DISCORD" | "SMS" | "ALL";
 
 #### Issue 3D: ProductCategory Enum Usage
 
-**File**: `src/app/(admin)/admin/products/page.tsx`
+**File**: `src/app/(admin)/products/page.tsx`
 
 **Issue**:
 
@@ -496,7 +496,7 @@ product.category; // Already a string enum value
 
 #### Image Type Issues
 
-**File**: `src/app/(admin)/admin/products/page.tsx`
+**File**: `src/app/(admin)/products/page.tsx`
 
 **Action Items**:
 

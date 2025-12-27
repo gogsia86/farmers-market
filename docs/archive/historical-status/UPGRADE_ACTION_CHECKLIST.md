@@ -71,8 +71,8 @@
 
 - `src/components/ui/Skeleton.tsx` (update)
 - `src/app/(customer)/marketplace/loading.tsx`
-- `src/app/(farmer)/farmer/dashboard/loading.tsx`
-- `src/app/(admin)/admin/dashboard/loading.tsx`
+- `src/app/(farmer)/dashboard/loading.tsx`
+- `src/app/(admin)/dashboard/loading.tsx`
 
 **Expected Impact**: Better perceived performance
 
@@ -403,7 +403,7 @@
 
 **Files to Create**:
 
-- `src/app/(admin)/admin/analytics/page.tsx`
+- `src/app/(admin)/analytics/page.tsx`
 - `components/admin/RevenueChart.tsx`
 - `components/admin/UserGrowthChart.tsx`
 - `components/admin/OrderVolumeChart.tsx`

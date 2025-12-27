@@ -205,11 +205,11 @@ src/lib/prisma.ts              → Legacy re-export (backward compatibility) ✅
 
 ### Farmer Routes ✅
 
-- `src/app/(farmer)/farmer/products/page.tsx` - Farmer product management
+- `src/app/(farmer)/products/page.tsx` - Farmer product management
 
 ### Admin Routes ✅
 
-- `src/app/(admin)/admin/products/page.tsx` - Admin product oversight
+- `src/app/(admin)/products/page.tsx` - Admin product oversight
 
 ### Root Level Conflicts ⚠️
 

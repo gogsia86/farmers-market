@@ -75,7 +75,7 @@ npm run type-check
 **Schema Property Corrections:**
 
 1. ✅ **stripeConnectAccountId → stripeAccountId**
-   - Fixed in: `src/app/(farmer)/farmer/payouts/page.tsx`
+   - Fixed in: `src/app/(farmer)/payouts/page.tsx`
    - Fixed in: `src/app/api/farmer/payouts/route.ts`
 
 2. ✅ **completedAt → paidDate**

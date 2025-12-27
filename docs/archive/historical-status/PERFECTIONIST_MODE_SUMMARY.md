@@ -65,7 +65,7 @@
 #### 1.2 Loading States ✅
 
 - ✅ Fixed `src/app/(public)/farms/loading.tsx` - removed unused imports
-- ✅ Fixed `src/app/(farmer)/farmer/dashboard/loading.tsx` - unused variable
+- ✅ Fixed `src/app/(farmer)/dashboard/loading.tsx` - unused variable
 - **Result**: 3 errors fixed
 
 #### 1.3 Agricultural Components ✅

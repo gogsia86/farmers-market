@@ -148,7 +148,7 @@ src/app/api/
 Page Routes:
 ├── /dashboard/                      # Generic
 ├── /farmer-dashboard/               # Farmer-specific
-└── /(farmer)/farmer/dashboard/      # Route group
+└── /(farmer)/dashboard/      # Route group
 
 API Routes:
 ├── /api/analytics/dashboard/

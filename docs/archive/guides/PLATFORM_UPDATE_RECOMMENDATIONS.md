@@ -220,8 +220,8 @@ src/lib/websocket/
 **Files to Update:**
 
 ```
-src/app/(admin)/admin/page.tsx
-src/app/(farmer)/farmer/analytics/page.tsx
+src/app/(admin)/page.tsx
+src/app/(farmer)/analytics/page.tsx
 src/components/analytics/
 ```
 

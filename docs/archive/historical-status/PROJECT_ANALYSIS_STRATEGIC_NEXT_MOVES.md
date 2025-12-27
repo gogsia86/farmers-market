@@ -388,12 +388,12 @@ export default function MarketplaceLoading() {
   return <MarketplaceSkeleton />;
 }
 
-// 2. src/app/(farmer)/farmer/dashboard/loading.tsx
+// 2. src/app/(farmer)/dashboard/loading.tsx
 export default function FarmerDashboardLoading() {
   return <DashboardSkeleton />;
 }
 
-// 3. src/app/(admin)/admin/dashboard/loading.tsx
+// 3. src/app/(admin)/dashboard/loading.tsx
 export default function AdminDashboardLoading() {
   return <AdminSkeleton />;
 }

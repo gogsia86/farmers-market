@@ -133,12 +133,12 @@ import { promises as fs } from 'fs';
 import path from 'path';
 
 const replacements = [
-  { from: '/(admin)/admin/', to: '/(admin)/' },
-  { from: '/(farmer)/farmer/', to: '/(farmer)/' },
-  { from: '/(monitoring)/monitoring/', to: '/(monitoring)/' },
-  { from: '/admin/admin/', to: '/admin/' },
-  { from: '/farmer/farmer/', to: '/farmer/' },
-  { from: '/monitoring/monitoring/', to: '/monitoring/' },
+  { from: '/(admin)/', to: '/(admin)/' },
+  { from: '/(farmer)/', to: '/(farmer)/' },
+  { from: '/(monitoring)/', to: '/(monitoring)/' },
+  { from: '/admin/', to: '/admin/' },
+  { from: '/farmer/', to: '/farmer/' },
+  { from: '/monitoring/', to: '/monitoring/' },
 ];
 
 async function updateFile(filePath: string) {

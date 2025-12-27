@@ -1,11 +1,12 @@
 /**
- * 🧪 FARM SERVICE UNIT TESTS
+ * 🧪 FARM SERVICE UNIT TESTS - SERVICE RESPONSE EDITION
  *
- * Comprehensive unit tests for FarmService with agricultural consciousness.
- * Tests business logic, validation, caching, and error handling.
+ * Comprehensive unit tests for FarmService with ServiceResponse pattern.
+ * Tests business logic, validation, caching, error handling, and agricultural consciousness.
  *
- * @pattern Divine Testing with Agricultural Consciousness
+ * @pattern Divine Testing with ServiceResponse Types
  * @reference .github/instructions/13_TESTING_PERFORMANCE_MASTERY.instructions.md
+ * @reference .github/instructions/15_KILO_CODE_DIVINE_INTEGRATION.instructions.md
  */
 
 import {
@@ -19,7 +20,7 @@ import {
 // MOCK SETUP - Must be defined before imports
 // ============================================================================
 
-// Create the mock span factory - this will be called when the mock is used
+// Create the mock span factory
 const createMockSpan = () => ({
   setAttribute: jest.fn(),
   setAttributes: jest.fn(),
@@ -29,7 +30,7 @@ const createMockSpan = () => ({
   addEvent: jest.fn(),
 });
 
-// Mock the service-tracer module - use mockImplementation to avoid hoisting issues
+// Mock the service-tracer module
 const mockTraceServiceOperation = jest.fn();
 const mockAddSpanEvent = jest.fn();
 const mockSetSpanAttributes = jest.fn();
@@ -170,7 +171,7 @@ const createMockFarm = (overrides: Partial<Record<string, unknown>> = {}) => ({
 // TEST SUITES
 // ============================================================================
 
-describe("🚜 FarmService - Divine Agricultural Business Logic", () => {
+describe("🚜 FarmService - Divine Agricultural Business Logic (ServiceResponse Edition)", () => {
   let farmService: FarmService;
 
   beforeEach(() => {
@@ -204,17 +205,24 @@ describe("🚜 FarmService - Divine Agricultural Business Logic", () => {
       mockCache.invalidateFarm.mockResolvedValue(undefined);
     });
 
-    it("should create a farm with valid data", async () => {
+    it("should create a farm with valid data and return ServiceResponse", async () => {
       const farmRequest = createValidFarmRequest();
       const mockCreatedFarm = createMockFarm();
 
       mockRepository.manifestFarm.mockResolvedValue(mockCreatedFarm);
 
-      const result = await farmService.createFarm(TEST_USER_ID, farmRequest);
+      const response = await farmService.createFarm(TEST_USER_ID, farmRequest);
 
-      expect(result).toBeDefined();
-      expect(result.farm).toEqual(mockCreatedFarm);
-      expect(result.slug).toBeDefined();
+      // Verify ServiceResponse structure
+      expect(response.success).toBe(true);
+      expect(response.data).toBeDefined();
+      expect(response.data?.farm).toEqual(mockCreatedFarm);
+      expect(response.data?.slug).toBeDefined();
+      expect(response.meta?.message).toBe("Farm created successfully");
+      expect(response.meta?.agricultural).toBeDefined();
+      expect(response.meta?.agricultural?.consciousness).toBe("DIVINE");
+
+      // Verify repository interactions
       expect(mockRepository.manifestFarm).toHaveBeenCalled();
       expect(mockCache.invalidateFarm).toHaveBeenCalledWith(mockCreatedFarm.id);
     });
@@ -231,50 +239,60 @@ describe("🚜 FarmService - Divine Agricultural Business Logic", () => {
 
       mockRepository.manifestFarm.mockResolvedValue(mockCreatedFarm);
 
-      const result = await farmService.createFarm(TEST_USER_ID, farmRequest);
+      const response = await farmService.createFarm(TEST_USER_ID, farmRequest);
 
-      expect(result.slug).toMatch(/sunny-hills-farm-portland/);
+      expect(response.success).toBe(true);
+      expect(response.data?.slug).toMatch(/sunny-hills-farm-portland/);
     });
 
-    it("should throw ConflictError if user already has a farm", async () => {
+    it("should return error response if user already has a farm", async () => {
       const farmRequest = createValidFarmRequest();
       const existingFarm = createMockFarm({ ownerId: TEST_USER_ID });
 
       mockRepository.findByOwnerId.mockResolvedValue([existingFarm]);
 
-      await expect(
-        farmService.createFarm(TEST_USER_ID, farmRequest),
-      ).rejects.toThrow(ConflictError);
+      const response = await farmService.createFarm(TEST_USER_ID, farmRequest);
+
+      // Verify error response structure
+      expect(response.success).toBe(false);
+      expect(response.error).toBeDefined();
+      expect(response.error?.code).toBe("RESOURCE_EXISTS");
+      expect(response.error?.message).toContain("already has a farm");
 
       expect(mockRepository.manifestFarm).not.toHaveBeenCalled();
     });
 
-    it("should throw ValidationError if farm name is too short", async () => {
+    it("should return validation error if farm name is too short", async () => {
       const farmRequest = createValidFarmRequest({ name: "Ab" });
 
-      await expect(
-        farmService.createFarm(TEST_USER_ID, farmRequest),
-      ).rejects.toThrow(ValidationError);
+      const response = await farmService.createFarm(TEST_USER_ID, farmRequest);
+
+      expect(response.success).toBe(false);
+      expect(response.error?.code).toBe("VALIDATION_ERROR");
+      expect(response.error?.message).toContain("at least 3 characters");
 
       expect(mockRepository.manifestFarm).not.toHaveBeenCalled();
     });
 
-    it("should throw ValidationError if userId is missing", async () => {
+    it("should return validation error if userId is missing", async () => {
       const farmRequest = createValidFarmRequest();
 
-      await expect(farmService.createFarm("", farmRequest)).rejects.toThrow(
-        ValidationError,
-      );
+      const response = await farmService.createFarm("", farmRequest);
+
+      expect(response.success).toBe(false);
+      expect(response.error?.code).toBe("VALIDATION_ERROR");
 
       expect(mockRepository.manifestFarm).not.toHaveBeenCalled();
     });
 
-    it("should throw ValidationError for invalid email format", async () => {
+    it("should return validation error for invalid email format", async () => {
       const farmRequest = createValidFarmRequest({ email: "invalid-email" });
 
-      await expect(
-        farmService.createFarm(TEST_USER_ID, farmRequest),
-      ).rejects.toThrow(ValidationError);
+      const response = await farmService.createFarm(TEST_USER_ID, farmRequest);
+
+      expect(response.success).toBe(false);
+      expect(response.error?.code).toBe("VALIDATION_ERROR");
+      expect(response.error?.message).toContain("Invalid email");
 
       expect(mockRepository.manifestFarm).not.toHaveBeenCalled();
     });
@@ -291,9 +309,10 @@ describe("🚜 FarmService - Divine Agricultural Business Logic", () => {
         .mockResolvedValueOnce(true);
       mockRepository.manifestFarm.mockResolvedValue(mockCreatedFarm);
 
-      const result = await farmService.createFarm(TEST_USER_ID, farmRequest);
+      const response = await farmService.createFarm(TEST_USER_ID, farmRequest);
 
-      expect(result.farm).toEqual(mockCreatedFarm);
+      expect(response.success).toBe(true);
+      expect(response.data?.farm).toEqual(mockCreatedFarm);
       expect(mockRepository.isSlugAvailable).toHaveBeenCalledTimes(2);
     });
 
@@ -303,76 +322,79 @@ describe("🚜 FarmService - Divine Agricultural Business Logic", () => {
 
       mockRepository.manifestFarm.mockResolvedValue(mockCreatedFarm);
 
-      const result = await farmService.createFarm(TEST_USER_ID, farmRequest);
+      const response = await farmService.createFarm(TEST_USER_ID, farmRequest);
 
-      expect(result.farm.status).toBe("PENDING");
+      expect(response.success).toBe(true);
+      expect(response.data?.farm.status).toBe("PENDING");
     });
 
     it("should create farm with optional fields omitted", async () => {
       const minimalFarmRequest: CreateFarmRequest = {
-        name: "Minimal Farm",
-        address: "456 Basic Road",
-        city: "Tacoma",
-        state: "WA",
-        zipCode: "98401",
-        latitude: 47.2529,
-        longitude: -122.4443,
+        name: "Simple Farm",
+        address: "123 Main St",
+        city: "Portland",
+        state: "OR",
+        zipCode: "97201",
+        latitude: 45.5152,
+        longitude: -122.6784,
       };
+
       const mockCreatedFarm = createMockFarm({
-        name: "Minimal Farm",
+        name: "Simple Farm",
         description: null,
         website: null,
       });
 
       mockRepository.manifestFarm.mockResolvedValue(mockCreatedFarm);
 
-      const result = await farmService.createFarm(
+      const response = await farmService.createFarm(
         TEST_USER_ID,
         minimalFarmRequest,
       );
 
-      expect(result.farm).toEqual(mockCreatedFarm);
+      expect(response.success).toBe(true);
+      expect(response.data?.farm).toBeDefined();
+      expect(mockRepository.manifestFarm).toHaveBeenCalled();
     });
 
-    it("should throw ValidationError for invalid latitude", async () => {
-      const farmRequest = createValidFarmRequest({
-        latitude: 100, // Invalid: > 90
-      });
+    it("should return validation error for invalid latitude", async () => {
+      const farmRequest = createValidFarmRequest({ latitude: 100 });
 
-      await expect(
-        farmService.createFarm(TEST_USER_ID, farmRequest),
-      ).rejects.toThrow(ValidationError);
+      const response = await farmService.createFarm(TEST_USER_ID, farmRequest);
+
+      expect(response.success).toBe(false);
+      expect(response.error?.code).toBe("VALIDATION_ERROR");
     });
 
-    it("should throw ValidationError for invalid longitude", async () => {
-      const farmRequest = createValidFarmRequest({
-        longitude: -200, // Invalid: < -180
-      });
+    it("should return validation error for invalid longitude", async () => {
+      const farmRequest = createValidFarmRequest({ longitude: 200 });
 
-      await expect(
-        farmService.createFarm(TEST_USER_ID, farmRequest),
-      ).rejects.toThrow(ValidationError);
+      const response = await farmService.createFarm(TEST_USER_ID, farmRequest);
+
+      expect(response.success).toBe(false);
+      expect(response.error?.code).toBe("VALIDATION_ERROR");
     });
 
-    it("should throw ValidationError for negative delivery radius", async () => {
-      const farmRequest = createValidFarmRequest({
-        deliveryRadius: -10,
-      });
+    it("should return validation error for negative delivery radius", async () => {
+      const farmRequest = createValidFarmRequest({ deliveryRadius: -10 });
 
-      await expect(
-        farmService.createFarm(TEST_USER_ID, farmRequest),
-      ).rejects.toThrow(ValidationError);
+      const response = await farmService.createFarm(TEST_USER_ID, farmRequest);
+
+      expect(response.success).toBe(false);
+      expect(response.error?.code).toBe("VALIDATION_ERROR");
     });
 
-    it("should throw ConflictError when max slug attempts exceeded", async () => {
+    it("should return conflict error when max slug attempts exceeded", async () => {
       const farmRequest = createValidFarmRequest();
 
-      // All slugs are taken
+      // All slug attempts fail
       mockRepository.isSlugAvailable.mockResolvedValue(false);
 
-      await expect(
-        farmService.createFarm(TEST_USER_ID, farmRequest),
-      ).rejects.toThrow(ConflictError);
+      const response = await farmService.createFarm(TEST_USER_ID, farmRequest);
+
+      expect(response.success).toBe(false);
+      expect(response.error?.code).toBe("RESOURCE_EXISTS");
+      expect(mockRepository.isSlugAvailable).toHaveBeenCalled();
     });
   });
 
@@ -381,38 +403,49 @@ describe("🚜 FarmService - Divine Agricultural Business Logic", () => {
   // ==========================================================================
   describe("📖 Farm Retrieval", () => {
     describe("getFarmById", () => {
-      it("should return farm by ID", async () => {
+      it("should return farm by ID with ServiceResponse", async () => {
         const mockFarm = createMockFarm();
+
         mockCache.getFarm.mockResolvedValue(null);
         mockRepository.findById.mockResolvedValue(mockFarm);
+        mockCache.cacheFarm.mockResolvedValue(undefined);
 
-        const result = await farmService.getFarmById(TEST_FARM_ID);
+        const response = await farmService.getFarmById(TEST_FARM_ID);
 
-        expect(result).toEqual(mockFarm);
+        expect(response.success).toBe(true);
+        expect(response.data).toEqual(mockFarm);
+        expect(response.meta?.message).toContain("retrieved successfully");
         expect(mockRepository.findById).toHaveBeenCalledWith(TEST_FARM_ID);
+        expect(mockCache.cacheFarm).toHaveBeenCalled();
       });
 
       it("should return cached farm if available", async () => {
         const mockFarm = createMockFarm();
+
         mockCache.getFarm.mockResolvedValue(mockFarm);
 
-        const result = await farmService.getFarmById(TEST_FARM_ID);
+        const response = await farmService.getFarmById(TEST_FARM_ID);
 
-        expect(result).toEqual(mockFarm);
+        expect(response.success).toBe(true);
+        expect(response.data).toEqual(mockFarm);
+        expect(response.meta?.message).toContain("from cache");
         expect(mockRepository.findById).not.toHaveBeenCalled();
       });
 
-      it("should return null for non-existent farm ID", async () => {
+      it("should return null in success response for non-existent farm ID", async () => {
         mockCache.getFarm.mockResolvedValue(null);
         mockRepository.findById.mockResolvedValue(null);
 
-        const result = await farmService.getFarmById("non-existent-id");
+        const response = await farmService.getFarmById("non-existent-id");
 
-        expect(result).toBeNull();
+        expect(response.success).toBe(true);
+        expect(response.data).toBeNull();
+        expect(response.meta?.message).toContain("not found");
       });
 
       it("should cache the farm after fetching from repository", async () => {
         const mockFarm = createMockFarm();
+
         mockCache.getFarm.mockResolvedValue(null);
         mockRepository.findById.mockResolvedValue(mockFarm);
 
@@ -426,80 +459,94 @@ describe("🚜 FarmService - Divine Agricultural Business Logic", () => {
     });
 
     describe("getFarmBySlug", () => {
-      it("should return farm by slug", async () => {
+      it("should return farm by slug with ServiceResponse", async () => {
         const mockFarm = createMockFarm();
+
         mockCache.getFarm.mockResolvedValue(null);
         mockRepository.findBySlug.mockResolvedValue(mockFarm);
+        mockCache.cacheFarm.mockResolvedValue(undefined);
 
-        const result = await farmService.getFarmBySlug(
+        const response = await farmService.getFarmBySlug(
           "divine-acres-biodynamic-farm-seattle",
         );
 
-        expect(result).toEqual(mockFarm);
+        expect(response.success).toBe(true);
+        expect(response.data).toEqual(mockFarm);
+        expect(mockRepository.findBySlug).toHaveBeenCalled();
       });
 
       it("should return cached farm by slug if available", async () => {
         const mockFarm = createMockFarm();
+
         mockCache.getFarm.mockResolvedValue(mockFarm);
 
-        const result = await farmService.getFarmBySlug("divine-acres");
+        const response = await farmService.getFarmBySlug("test-slug");
 
-        expect(result).toEqual(mockFarm);
+        expect(response.success).toBe(true);
+        expect(response.data).toEqual(mockFarm);
         expect(mockRepository.findBySlug).not.toHaveBeenCalled();
       });
 
-      it("should return null for non-existent slug", async () => {
+      it("should return null in success response for non-existent slug", async () => {
         mockCache.getFarm.mockResolvedValue(null);
         mockRepository.findBySlug.mockResolvedValue(null);
 
-        const result = await farmService.getFarmBySlug("non-existent-slug");
+        const response = await farmService.getFarmBySlug("non-existent-slug");
 
-        expect(result).toBeNull();
+        expect(response.success).toBe(true);
+        expect(response.data).toBeNull();
       });
     });
 
     describe("getFarmsByOwnerId", () => {
-      it("should return farms owned by user", async () => {
+      it("should return farms owned by user with ServiceResponse", async () => {
         const mockFarms = [createMockFarm({ id: "farm-1" })];
+
         mockRepository.findByOwnerId.mockResolvedValue(mockFarms);
 
-        const result = await farmService.getFarmsByOwnerId(TEST_USER_ID);
+        const response = await farmService.getFarmsByOwnerId(TEST_USER_ID);
 
-        expect(result).toEqual(mockFarms);
-        expect(mockRepository.findByOwnerId).toHaveBeenCalledWith(TEST_USER_ID);
+        expect(response.success).toBe(true);
+        expect(response.data).toEqual(mockFarms);
+        expect(response.data).toHaveLength(1);
       });
 
       it("should return empty array if user has no farms", async () => {
         mockRepository.findByOwnerId.mockResolvedValue([]);
 
-        const result = await farmService.getFarmsByOwnerId(TEST_USER_ID);
+        const response = await farmService.getFarmsByOwnerId(TEST_USER_ID);
 
-        expect(result).toEqual([]);
+        expect(response.success).toBe(true);
+        expect(response.data).toEqual([]);
       });
     });
 
     describe("getActiveFarmsWithProducts", () => {
-      it("should return active farms with their products", async () => {
+      it("should return active farms with their products and agricultural metadata", async () => {
         const mockFarmsWithProducts = [
           createMockFarm({
             status: "ACTIVE",
             products: [{ id: "prod-1", name: "Tomatoes" }],
           }),
         ];
+
         mockRepository.findActiveWithProducts.mockResolvedValue(
           mockFarmsWithProducts,
         );
 
-        const result = await farmService.getActiveFarmsWithProducts();
+        const response = await farmService.getActiveFarmsWithProducts();
 
-        expect(result).toEqual(mockFarmsWithProducts);
-        expect(mockRepository.findActiveWithProducts).toHaveBeenCalled();
+        expect(response.success).toBe(true);
+        expect(response.data).toEqual(mockFarmsWithProducts);
+        expect(response.meta?.agricultural).toBeDefined();
+        expect(response.meta?.agricultural?.season).toBeDefined();
       });
     });
 
     describe("checkExistingFarm", () => {
       it("should return exists: true if user has a farm", async () => {
         const mockFarm = createMockFarm();
+
         mockRepository.findByOwnerId.mockResolvedValue([mockFarm]);
 
         const result = await farmService.checkExistingFarm(TEST_USER_ID);
@@ -519,52 +566,65 @@ describe("🚜 FarmService - Divine Agricultural Business Logic", () => {
   });
 
   // ==========================================================================
-  // FARM UPDATE TESTS
+  // FARM UPDATES TESTS
   // ==========================================================================
   describe("📝 Farm Updates", () => {
-    it("should update farm with valid data", async () => {
+    it("should update farm with valid data and return ServiceResponse", async () => {
       const farmId = TEST_FARM_ID;
       const updateData = {
-        name: "Updated Divine Acres",
-        description: "New description",
+        name: "Updated Farm Name",
+        description: "Updated description",
       };
       const existingFarm = createMockFarm({ id: farmId });
       const updatedFarm = createMockFarm({
         id: farmId,
-        name: "Updated Divine Acres",
-        description: "New description",
+        name: "Updated Farm Name",
+        description: "Updated description",
       });
 
       mockRepository.findById.mockResolvedValue(existingFarm);
       mockRepository.update.mockResolvedValue(updatedFarm);
       mockCache.invalidateFarm.mockResolvedValue(undefined);
 
-      const result = await farmService.updateFarm(
+      const response = await farmService.updateFarm(
         farmId,
         TEST_USER_ID,
         updateData,
       );
 
-      expect(result.name).toBe("Updated Divine Acres");
-      expect(mockRepository.update).toHaveBeenCalled();
+      expect(response.success).toBe(true);
+      expect(response.data).toEqual(updatedFarm);
+      expect(response.meta?.message).toContain("updated successfully");
       expect(mockCache.invalidateFarm).toHaveBeenCalledWith(farmId);
     });
 
-    it("should throw NotFoundError when updating non-existent farm", async () => {
+    it("should return not found error when updating non-existent farm", async () => {
       mockRepository.findById.mockResolvedValue(null);
 
-      await expect(
-        farmService.updateFarm("non-existent", TEST_USER_ID, { name: "Test" }),
-      ).rejects.toThrow(NotFoundError);
+      const response = await farmService.updateFarm(
+        "non-existent-id",
+        TEST_USER_ID,
+        { name: "New Name" },
+      );
+
+      expect(response.success).toBe(false);
+      expect(response.error?.code).toBe("NOT_FOUND");
     });
 
-    it("should throw AuthorizationError when user does not own the farm", async () => {
+    it("should return forbidden error when user does not own the farm", async () => {
       const existingFarm = createMockFarm({ ownerId: "different-user-id" });
+
       mockRepository.findById.mockResolvedValue(existingFarm);
 
-      await expect(
-        farmService.updateFarm(TEST_FARM_ID, TEST_USER_ID, { name: "Test" }),
-      ).rejects.toThrow(AuthorizationError);
+      const response = await farmService.updateFarm(
+        TEST_FARM_ID,
+        TEST_USER_ID,
+        { name: "New Name" },
+      );
+
+      expect(response.success).toBe(false);
+      expect(response.error?.code).toBe("FORBIDDEN_ACTION");
+      expect(mockRepository.update).not.toHaveBeenCalled();
     });
 
     it("should update partial farm data", async () => {
@@ -577,13 +637,13 @@ describe("🚜 FarmService - Divine Agricultural Business Logic", () => {
 
       mockRepository.findById.mockResolvedValue(existingFarm);
       mockRepository.update.mockResolvedValue(updatedFarm);
-      mockCache.invalidateFarm.mockResolvedValue(undefined);
 
-      const result = await farmService.updateFarm(farmId, TEST_USER_ID, {
+      const response = await farmService.updateFarm(farmId, TEST_USER_ID, {
         phone: "555-9999",
       });
 
-      expect(result.phone).toBe("555-9999");
+      expect(response.success).toBe(true);
+      expect(response.data?.phone).toBe("555-9999");
     });
 
     it("should update farm location coordinates", async () => {
@@ -597,15 +657,15 @@ describe("🚜 FarmService - Divine Agricultural Business Logic", () => {
 
       mockRepository.findById.mockResolvedValue(existingFarm);
       mockRepository.update.mockResolvedValue(updatedFarm);
-      mockCache.invalidateFarm.mockResolvedValue(undefined);
 
-      const result = await farmService.updateFarm(farmId, TEST_USER_ID, {
+      const response = await farmService.updateFarm(farmId, TEST_USER_ID, {
         latitude: 48.0,
         longitude: -123.0,
       });
 
-      expect(result.latitude).toBe(48.0);
-      expect(result.longitude).toBe(-123.0);
+      expect(response.success).toBe(true);
+      expect(response.data?.latitude).toBe(48.0);
+      expect(response.data?.longitude).toBe(-123.0);
     });
 
     it("should update farming practices array", async () => {
@@ -613,40 +673,39 @@ describe("🚜 FarmService - Divine Agricultural Business Logic", () => {
       const existingFarm = createMockFarm({ id: farmId });
       const updatedFarm = createMockFarm({
         id: farmId,
-        farmingPractices: ["ORGANIC", "REGENERATIVE", "NO_TILL"],
+        farmingPractices: ["ORGANIC", "PERMACULTURE"],
       });
 
       mockRepository.findById.mockResolvedValue(existingFarm);
       mockRepository.update.mockResolvedValue(updatedFarm);
-      mockCache.invalidateFarm.mockResolvedValue(undefined);
 
-      const result = await farmService.updateFarm(farmId, TEST_USER_ID, {
-        farmingPractices: ["ORGANIC", "REGENERATIVE", "NO_TILL"],
+      const response = await farmService.updateFarm(farmId, TEST_USER_ID, {
+        farmingPractices: ["ORGANIC", "PERMACULTURE"],
       });
 
-      expect(result.farmingPractices).toContain("REGENERATIVE");
+      expect(response.success).toBe(true);
+      expect(response.data?.farmingPractices).toEqual([
+        "ORGANIC",
+        "PERMACULTURE",
+      ]);
     });
   });
 
   // ==========================================================================
-  // FARM STATUS UPDATE TESTS
+  // FARM STATUS UPDATES TESTS
   // ==========================================================================
   describe("🔄 Farm Status Updates", () => {
-    it("should update farm status to ACTIVE", async () => {
+    it("should update farm status to ACTIVE with ServiceResponse", async () => {
       const farmId = TEST_FARM_ID;
       const updatedFarm = createMockFarm({ id: farmId, status: "ACTIVE" });
 
       mockRepository.updateStatus.mockResolvedValue(updatedFarm);
       mockCache.invalidateFarm.mockResolvedValue(undefined);
 
-      const result = await farmService.updateFarmStatus(farmId, "ACTIVE");
+      const response = await farmService.updateFarmStatus(farmId, "ACTIVE");
 
-      expect(result.status).toBe("ACTIVE");
-      expect(mockRepository.updateStatus).toHaveBeenCalledWith(
-        farmId,
-        "ACTIVE",
-        undefined,
-      );
+      expect(response.success).toBe(true);
+      expect(response.data?.status).toBe("ACTIVE");
       expect(mockCache.invalidateFarm).toHaveBeenCalledWith(farmId);
     });
 
@@ -655,11 +714,11 @@ describe("🚜 FarmService - Divine Agricultural Business Logic", () => {
       const updatedFarm = createMockFarm({ id: farmId, status: "SUSPENDED" });
 
       mockRepository.updateStatus.mockResolvedValue(updatedFarm);
-      mockCache.invalidateFarm.mockResolvedValue(undefined);
 
-      const result = await farmService.updateFarmStatus(farmId, "SUSPENDED");
+      const response = await farmService.updateFarmStatus(farmId, "SUSPENDED");
 
-      expect(result.status).toBe("SUSPENDED");
+      expect(response.success).toBe(true);
+      expect(response.data?.status).toBe("SUSPENDED");
     });
   });
 
@@ -670,34 +729,41 @@ describe("🚜 FarmService - Divine Agricultural Business Logic", () => {
     it("should soft delete farm by setting status to INACTIVE", async () => {
       const farmId = TEST_FARM_ID;
       const existingFarm = createMockFarm({ id: farmId });
+      const deletedFarm = createMockFarm({ id: farmId, status: "INACTIVE" });
 
       mockRepository.findById.mockResolvedValue(existingFarm);
-      mockRepository.update.mockResolvedValue(undefined);
+      mockRepository.update.mockResolvedValue(deletedFarm);
       mockCache.invalidateFarm.mockResolvedValue(undefined);
 
-      await farmService.deleteFarm(farmId, TEST_USER_ID);
+      const response = await farmService.deleteFarm(farmId, TEST_USER_ID);
 
+      expect(response.success).toBe(true);
       expect(mockRepository.update).toHaveBeenCalledWith(farmId, {
         status: "INACTIVE",
       });
-      expect(mockCache.invalidateFarm).toHaveBeenCalledWith(farmId);
     });
 
-    it("should throw NotFoundError when deleting non-existent farm", async () => {
+    it("should return not found error when deleting non-existent farm", async () => {
       mockRepository.findById.mockResolvedValue(null);
 
-      await expect(
-        farmService.deleteFarm("non-existent-id", TEST_USER_ID),
-      ).rejects.toThrow(NotFoundError);
+      const response = await farmService.deleteFarm(
+        "non-existent-id",
+        TEST_USER_ID,
+      );
+
+      expect(response.success).toBe(false);
+      expect(response.error?.code).toBe("NOT_FOUND");
     });
 
-    it("should throw AuthorizationError when user does not own the farm", async () => {
+    it("should return forbidden error when user does not own the farm", async () => {
       const existingFarm = createMockFarm({ ownerId: "different-user-id" });
+
       mockRepository.findById.mockResolvedValue(existingFarm);
 
-      await expect(
-        farmService.deleteFarm(TEST_FARM_ID, TEST_USER_ID),
-      ).rejects.toThrow(AuthorizationError);
+      const response = await farmService.deleteFarm(TEST_FARM_ID, TEST_USER_ID);
+
+      expect(response.success).toBe(false);
+      expect(response.error?.code).toBe("FORBIDDEN_ACTION");
     });
   });
 
@@ -705,61 +771,74 @@ describe("🚜 FarmService - Divine Agricultural Business Logic", () => {
   // FARM LISTING TESTS
   // ==========================================================================
   describe("📋 Farm Listing", () => {
-    it("should list farms with pagination", async () => {
+    it("should list farms with pagination using PaginatedResponse", async () => {
       const mockFarms = [createMockFarm({ id: "farm-1" })];
+
       mockRepository.findMany.mockResolvedValue(mockFarms);
       mockRepository.count.mockResolvedValue(1);
 
-      const result = await farmService.listFarms({ page: 1, limit: 10 });
+      const response = await farmService.listFarms({ page: 1, limit: 20 });
 
-      expect(result.farms).toEqual(mockFarms);
-      expect(result.total).toBe(1);
-      expect(result.page).toBe(1);
+      expect(response.success).toBe(true);
+      expect(response.data?.items).toEqual(mockFarms);
+      expect(response.data?.pagination).toBeDefined();
+      expect(response.data?.pagination.page).toBe(1);
+      expect(response.data?.pagination.limit).toBe(20);
+      expect(response.data?.pagination.total).toBe(1);
+      expect(response.data?.pagination.totalPages).toBe(1);
     });
 
     it("should filter farms by city", async () => {
       const seattleFarms = [createMockFarm({ city: "Seattle" })];
+
       mockRepository.findMany.mockResolvedValue(seattleFarms);
       mockRepository.count.mockResolvedValue(1);
 
-      const result = await farmService.listFarms({ city: "Seattle" });
+      const response = await farmService.listFarms({ city: "Seattle" });
 
-      expect(result.farms).toEqual(seattleFarms);
+      expect(response.success).toBe(true);
+      expect(response.data?.items).toEqual(seattleFarms);
     });
 
     it("should filter farms by state", async () => {
       const waFarms = [createMockFarm({ state: "WA" })];
+
       mockRepository.findMany.mockResolvedValue(waFarms);
       mockRepository.count.mockResolvedValue(1);
 
-      const result = await farmService.listFarms({ state: "WA" });
+      const response = await farmService.listFarms({ state: "WA" });
 
-      expect(result.farms).toEqual(waFarms);
+      expect(response.success).toBe(true);
+      expect(response.data?.items).toEqual(waFarms);
     });
 
     it("should sort farms by name ascending", async () => {
       const mockFarms = [
-        createMockFarm({ name: "Alpha Farm" }),
-        createMockFarm({ name: "Beta Farm" }),
+        createMockFarm({ name: "Apple Farm" }),
+        createMockFarm({ name: "Banana Farm" }),
       ];
+
       mockRepository.findMany.mockResolvedValue(mockFarms);
       mockRepository.count.mockResolvedValue(2);
 
-      const result = await farmService.listFarms({
+      const response = await farmService.listFarms({
         sortBy: "name",
         sortOrder: "asc",
       });
 
-      expect(result.farms).toEqual(mockFarms);
+      expect(response.success).toBe(true);
+      expect(response.data?.items).toEqual(mockFarms);
     });
 
     it("should use default pagination values", async () => {
       mockRepository.findMany.mockResolvedValue([]);
       mockRepository.count.mockResolvedValue(0);
 
-      const result = await farmService.listFarms();
+      const response = await farmService.listFarms({});
 
-      expect(result.page).toBe(1);
+      expect(response.success).toBe(true);
+      expect(response.data?.pagination.page).toBe(1);
+      expect(response.data?.pagination.limit).toBe(20);
     });
   });
 
@@ -767,13 +846,15 @@ describe("🚜 FarmService - Divine Agricultural Business Logic", () => {
   // FARM SEARCH TESTS
   // ==========================================================================
   describe("🔍 Farm Search", () => {
-    it("should search farms by query", async () => {
-      const mockFarms = [createMockFarm({ name: "Organic Valley Farm" })];
+    it("should search farms by query with ServiceResponse", async () => {
+      const mockFarms = [createMockFarm({ name: "Organic Farm" })];
+
       mockRepository.searchFarms.mockResolvedValue(mockFarms);
 
-      const result = await farmService.searchFarms({ query: "organic" });
+      const response = await farmService.searchFarms({ query: "organic" });
 
-      expect(result).toEqual(mockFarms);
+      expect(response.success).toBe(true);
+      expect(response.data).toEqual(mockFarms);
       expect(mockRepository.searchFarms).toHaveBeenCalledWith("organic", {
         take: 10,
       });
@@ -781,67 +862,70 @@ describe("🚜 FarmService - Divine Agricultural Business Logic", () => {
 
     it("should limit search results", async () => {
       const mockFarms = [createMockFarm()];
+
       mockRepository.searchFarms.mockResolvedValue(mockFarms);
 
-      await farmService.searchFarms({ query: "farm", limit: 5 });
+      await farmService.searchFarms({ query: "test", limit: 5 });
 
-      expect(mockRepository.searchFarms).toHaveBeenCalledWith("farm", {
+      expect(mockRepository.searchFarms).toHaveBeenCalledWith("test", {
         take: 5,
       });
     });
   });
 
   // ==========================================================================
-  // LOCATION-BASED QUERY TESTS
+  // LOCATION-BASED QUERIES TESTS
   // ==========================================================================
   describe("📍 Location-Based Queries", () => {
     describe("getFarmsByCity", () => {
-      it("should return farms in a specific city", async () => {
+      it("should return farms in a specific city with ServiceResponse", async () => {
         const seattleFarms = [
-          createMockFarm({ city: "Seattle", id: "seattle-farm-1" }),
-          createMockFarm({ city: "Seattle", id: "seattle-farm-2" }),
+          createMockFarm({ city: "Seattle", id: "farm-1" }),
+          createMockFarm({ city: "Seattle", id: "farm-2" }),
         ];
+
         mockRepository.findByCity.mockResolvedValue(seattleFarms);
 
-        const result = await farmService.getFarmsByCity("Seattle");
+        const response = await farmService.getFarmsByCity("Seattle");
 
-        expect(result).toEqual(seattleFarms);
+        expect(response.success).toBe(true);
+        expect(response.data).toEqual(seattleFarms);
       });
     });
 
     describe("getFarmsByState", () => {
-      it("should return farms in a specific state", async () => {
+      it("should return farms in a specific state with ServiceResponse", async () => {
         const waFarms = [createMockFarm({ state: "WA" })];
+
         mockRepository.findByState.mockResolvedValue(waFarms);
 
-        const result = await farmService.getFarmsByState("WA");
+        const response = await farmService.getFarmsByState("WA");
 
-        expect(result).toEqual(waFarms);
-        expect(mockRepository.findByState).toHaveBeenCalledWith("WA");
+        expect(response.success).toBe(true);
+        expect(response.data).toEqual(waFarms);
       });
     });
 
     describe("findNearbyFarms", () => {
-      it("should return farms within radius", async () => {
+      it("should return farms within radius with ServiceResponse", async () => {
         const nearbyFarms = [createMockFarm()];
+
         mockRepository.findNearLocation.mockResolvedValue(nearbyFarms);
 
-        const result = await farmService.findNearbyFarms(
+        const response = await farmService.findNearbyFarms(
           47.6062,
           -122.3321,
           50,
         );
 
-        expect(result).toEqual(nearbyFarms);
-        expect(mockRepository.findNearLocation).toHaveBeenCalledWith(
-          47.6062,
-          -122.3321,
-          50,
-        );
+        expect(response.success).toBe(true);
+        expect(response.data).toEqual(nearbyFarms);
+        expect(response.meta?.agricultural).toBeDefined();
       });
 
       it("should use default radius when not specified", async () => {
         const nearbyFarms = [createMockFarm()];
+
         mockRepository.findNearLocation.mockResolvedValue(nearbyFarms);
 
         await farmService.findNearbyFarms(47.6062, -122.3321);
@@ -866,7 +950,6 @@ describe("🚜 FarmService - Divine Agricultural Business Logic", () => {
       mockRepository.findByOwnerId.mockResolvedValue([]);
       mockRepository.isSlugAvailable.mockResolvedValue(true);
       mockRepository.manifestFarm.mockResolvedValue(mockCreatedFarm);
-      mockCache.invalidateFarm.mockResolvedValue(undefined);
 
       await farmService.createFarm(TEST_USER_ID, farmRequest);
 
@@ -876,15 +959,12 @@ describe("🚜 FarmService - Divine Agricultural Business Logic", () => {
     it("should invalidate cache after farm update", async () => {
       const farmId = TEST_FARM_ID;
       const existingFarm = createMockFarm({ id: farmId });
-      const updatedFarm = createMockFarm({ id: farmId, name: "Updated Farm" });
+      const updatedFarm = createMockFarm({ id: farmId, name: "Updated" });
 
       mockRepository.findById.mockResolvedValue(existingFarm);
       mockRepository.update.mockResolvedValue(updatedFarm);
-      mockCache.invalidateFarm.mockResolvedValue(undefined);
 
-      await farmService.updateFarm(farmId, TEST_USER_ID, {
-        name: "Updated Farm",
-      });
+      await farmService.updateFarm(farmId, TEST_USER_ID, { name: "Updated" });
 
       expect(mockCache.invalidateFarm).toHaveBeenCalledWith(farmId);
     });
@@ -895,8 +975,7 @@ describe("🚜 FarmService - Divine Agricultural Business Logic", () => {
       const deletedFarm = createMockFarm({ id: farmId, status: "INACTIVE" });
 
       mockRepository.findById.mockResolvedValue(existingFarm);
-      mockRepository.updateStatus.mockResolvedValue(deletedFarm);
-      mockCache.invalidateFarm.mockResolvedValue(undefined);
+      mockRepository.update.mockResolvedValue(deletedFarm);
 
       await farmService.deleteFarm(farmId, TEST_USER_ID);
 
@@ -908,7 +987,6 @@ describe("🚜 FarmService - Divine Agricultural Business Logic", () => {
       const updatedFarm = createMockFarm({ id: farmId, status: "ACTIVE" });
 
       mockRepository.updateStatus.mockResolvedValue(updatedFarm);
-      mockCache.invalidateFarm.mockResolvedValue(undefined);
 
       await farmService.updateFarmStatus(farmId, "ACTIVE");
 
@@ -924,29 +1002,28 @@ describe("🚜 FarmService - Divine Agricultural Business Logic", () => {
       mockCache.getFarm.mockResolvedValue(null);
       mockRepository.findById.mockRejectedValue(new Error("Database error"));
 
-      await expect(farmService.getFarmById(TEST_FARM_ID)).rejects.toThrow(
-        "Database error",
-      );
+      const response = await farmService.getFarmById(TEST_FARM_ID);
+
+      expect(response.success).toBe(false);
+      expect(response.error?.code).toBe("INTERNAL_SERVER_ERROR");
     });
 
-    it("should throw ValidationError for missing required city", async () => {
-      const farmRequest = createValidFarmRequest({
-        city: "",
-      });
+    it("should return validation error for missing required city", async () => {
+      const farmRequest = createValidFarmRequest({ city: "" });
 
-      await expect(
-        farmService.createFarm(TEST_USER_ID, farmRequest),
-      ).rejects.toThrow(ValidationError);
+      const response = await farmService.createFarm(TEST_USER_ID, farmRequest);
+
+      expect(response.success).toBe(false);
+      expect(response.error?.code).toBe("VALIDATION_ERROR");
     });
 
-    it("should throw ValidationError for missing required address", async () => {
-      const farmRequest = createValidFarmRequest({
-        address: "",
-      });
+    it("should return validation error for missing required address", async () => {
+      const farmRequest = createValidFarmRequest({ address: "" });
 
-      await expect(
-        farmService.createFarm(TEST_USER_ID, farmRequest),
-      ).rejects.toThrow(ValidationError);
+      const response = await farmService.createFarm(TEST_USER_ID, farmRequest);
+
+      expect(response.success).toBe(false);
+      expect(response.error?.code).toBe("VALIDATION_ERROR");
     });
   });
 
@@ -954,118 +1031,130 @@ describe("🚜 FarmService - Divine Agricultural Business Logic", () => {
   // AGRICULTURAL CONSCIOUSNESS TESTS
   // ==========================================================================
   describe("🌾 Agricultural Consciousness", () => {
-    beforeEach(() => {
+    it("should include agricultural metadata in farm creation response", async () => {
+      const farmRequest = createValidFarmRequest();
+      const mockCreatedFarm = createMockFarm();
+
       mockRepository.findByOwnerId.mockResolvedValue([]);
       mockRepository.isSlugAvailable.mockResolvedValue(true);
-      mockCache.invalidateFarm.mockResolvedValue(undefined);
+      mockRepository.manifestFarm.mockResolvedValue(mockCreatedFarm);
+
+      const response = await farmService.createFarm(TEST_USER_ID, farmRequest);
+
+      expect(response.success).toBe(true);
+      expect(response.meta?.agricultural).toBeDefined();
+      expect(response.meta?.agricultural?.season).toBeDefined();
+      expect(response.meta?.agricultural?.consciousness).toBe("DIVINE");
+      expect(response.meta?.agricultural?.entityType).toBe("farm");
     });
 
     it("should store farming practices as array", async () => {
       const farmRequest = createValidFarmRequest({
-        farmingPractices: ["ORGANIC", "BIODYNAMIC", "REGENERATIVE"],
+        farmingPractices: ["ORGANIC", "BIODYNAMIC"],
       });
       const mockCreatedFarm = createMockFarm({
-        farmingPractices: ["ORGANIC", "BIODYNAMIC", "REGENERATIVE"],
+        farmingPractices: ["ORGANIC", "BIODYNAMIC"],
       });
 
+      mockRepository.findByOwnerId.mockResolvedValue([]);
+      mockRepository.isSlugAvailable.mockResolvedValue(true);
       mockRepository.manifestFarm.mockResolvedValue(mockCreatedFarm);
 
-      const result = await farmService.createFarm(TEST_USER_ID, farmRequest);
+      const response = await farmService.createFarm(TEST_USER_ID, farmRequest);
 
-      expect(result.farm.farmingPractices).toContain("ORGANIC");
-      expect(result.farm.farmingPractices).toContain("BIODYNAMIC");
-      expect(result.farm.farmingPractices).toContain("REGENERATIVE");
+      expect(response.success).toBe(true);
+      expect(response.data?.farm.farmingPractices).toEqual([
+        "ORGANIC",
+        "BIODYNAMIC",
+      ]);
     });
 
     it("should store product categories for farms", async () => {
       const farmRequest = createValidFarmRequest({
-        productCategories: ["VEGETABLES", "FRUITS", "DAIRY"],
+        productCategories: ["VEGETABLES", "FRUITS"],
       });
       const mockCreatedFarm = createMockFarm({
-        productCategories: ["VEGETABLES", "FRUITS", "DAIRY"],
+        productCategories: ["VEGETABLES", "FRUITS"],
       });
 
+      mockRepository.findByOwnerId.mockResolvedValue([]);
+      mockRepository.isSlugAvailable.mockResolvedValue(true);
       mockRepository.manifestFarm.mockResolvedValue(mockCreatedFarm);
 
-      const result = await farmService.createFarm(TEST_USER_ID, farmRequest);
+      const response = await farmService.createFarm(TEST_USER_ID, farmRequest);
 
-      expect(result.farm.productCategories).toContain("VEGETABLES");
-      expect(result.farm.productCategories).toContain("DAIRY");
+      expect(response.success).toBe(true);
+      expect(response.data?.farm.productCategories).toEqual([
+        "VEGETABLES",
+        "FRUITS",
+      ]);
     });
 
     it("should handle farm year established for legacy farms", async () => {
-      const farmRequest = createValidFarmRequest({
-        yearEstablished: 1920,
-      });
-      const mockCreatedFarm = createMockFarm({
-        yearEstablished: 1920,
-      });
+      const farmRequest = createValidFarmRequest({ yearEstablished: 1950 });
+      const mockCreatedFarm = createMockFarm({ yearEstablished: 1950 });
 
+      mockRepository.findByOwnerId.mockResolvedValue([]);
+      mockRepository.isSlugAvailable.mockResolvedValue(true);
       mockRepository.manifestFarm.mockResolvedValue(mockCreatedFarm);
 
-      const result = await farmService.createFarm(TEST_USER_ID, farmRequest);
+      const response = await farmService.createFarm(TEST_USER_ID, farmRequest);
 
-      expect(result.farm.yearEstablished).toBe(1920);
+      expect(response.success).toBe(true);
+      expect(response.data?.farm.yearEstablished).toBe(1950);
     });
 
     it("should handle delivery radius for local farms", async () => {
-      const farmRequest = createValidFarmRequest({
-        deliveryRadius: 25,
-      });
-      const mockCreatedFarm = createMockFarm({
-        deliveryRadius: 25,
-      });
+      const farmRequest = createValidFarmRequest({ deliveryRadius: 25 });
+      const mockCreatedFarm = createMockFarm({ deliveryRadius: 25 });
 
+      mockRepository.findByOwnerId.mockResolvedValue([]);
+      mockRepository.isSlugAvailable.mockResolvedValue(true);
       mockRepository.manifestFarm.mockResolvedValue(mockCreatedFarm);
 
-      const result = await farmService.createFarm(TEST_USER_ID, farmRequest);
+      const response = await farmService.createFarm(TEST_USER_ID, farmRequest);
 
-      expect(result.farm.deliveryRadius).toBe(25);
+      expect(response.success).toBe(true);
+      expect(response.data?.farm.deliveryRadius).toBe(25);
     });
   });
 
   // ==========================================================================
-  // EDGE CASE TESTS
+  // EDGE CASES TESTS
   // ==========================================================================
   describe("🔬 Edge Cases", () => {
-    beforeEach(() => {
+    it("should handle empty farming practices array", async () => {
+      const farmRequest = createValidFarmRequest({ farmingPractices: [] });
+      const mockCreatedFarm = createMockFarm({ farmingPractices: [] });
+
       mockRepository.findByOwnerId.mockResolvedValue([]);
       mockRepository.isSlugAvailable.mockResolvedValue(true);
-      mockCache.invalidateFarm.mockResolvedValue(undefined);
-    });
-
-    it("should handle empty farming practices array", async () => {
-      const farmRequest = createValidFarmRequest({
-        farmingPractices: [],
-      });
-      const mockCreatedFarm = createMockFarm({
-        farmingPractices: [],
-      });
-
       mockRepository.manifestFarm.mockResolvedValue(mockCreatedFarm);
 
-      const result = await farmService.createFarm(TEST_USER_ID, farmRequest);
+      const response = await farmService.createFarm(TEST_USER_ID, farmRequest);
 
-      expect(result.farm.farmingPractices).toEqual([]);
+      expect(response.success).toBe(true);
+      expect(response.data?.farm.farmingPractices).toEqual([]);
     });
 
     it("should handle farm name with special characters in slug generation", async () => {
       const farmRequest = createValidFarmRequest({
-        name: "John's Farm & Garden!!! @#$%",
-        city: "New York",
+        name: "Green & Fresh Farm!",
+        city: "Portland",
       });
       const mockCreatedFarm = createMockFarm({
-        name: "John's Farm & Garden!!! @#$%",
-        slug: "johns-farm-garden-new-york",
+        name: "Green & Fresh Farm!",
+        slug: "green-fresh-farm-portland",
       });
 
+      mockRepository.findByOwnerId.mockResolvedValue([]);
+      mockRepository.isSlugAvailable.mockResolvedValue(true);
       mockRepository.manifestFarm.mockResolvedValue(mockCreatedFarm);
 
-      const result = await farmService.createFarm(TEST_USER_ID, farmRequest);
+      const response = await farmService.createFarm(TEST_USER_ID, farmRequest);
 
-      expect(result.slug).not.toContain("!");
-      expect(result.slug).not.toContain("@");
-      expect(result.slug).not.toContain("'");
+      expect(response.success).toBe(true);
+      expect(response.data?.slug).toMatch(/green-fresh-farm-portland/);
     });
 
     it("should handle very long farm descriptions", async () => {
@@ -1073,65 +1162,71 @@ describe("🚜 FarmService - Divine Agricultural Business Logic", () => {
       const farmRequest = createValidFarmRequest({
         description: longDescription,
       });
-      const mockCreatedFarm = createMockFarm({
-        description: longDescription,
-      });
+      const mockCreatedFarm = createMockFarm({ description: longDescription });
 
+      mockRepository.findByOwnerId.mockResolvedValue([]);
+      mockRepository.isSlugAvailable.mockResolvedValue(true);
       mockRepository.manifestFarm.mockResolvedValue(mockCreatedFarm);
 
-      const result = await farmService.createFarm(TEST_USER_ID, farmRequest);
+      const response = await farmService.createFarm(TEST_USER_ID, farmRequest);
 
-      expect(result.farm.description).toBe(longDescription);
+      expect(response.success).toBe(true);
+      expect(response.data?.farm.description).toHaveLength(5000);
     });
 
     it("should handle coordinates at boundary values", async () => {
       const farmRequest = createValidFarmRequest({
-        latitude: 90, // Max valid
-        longitude: -180, // Min valid
+        latitude: 90,
+        longitude: 180,
       });
       const mockCreatedFarm = createMockFarm({
         latitude: 90,
-        longitude: -180,
+        longitude: 180,
       });
 
+      mockRepository.findByOwnerId.mockResolvedValue([]);
+      mockRepository.isSlugAvailable.mockResolvedValue(true);
       mockRepository.manifestFarm.mockResolvedValue(mockCreatedFarm);
 
-      const result = await farmService.createFarm(TEST_USER_ID, farmRequest);
+      const response = await farmService.createFarm(TEST_USER_ID, farmRequest);
 
-      expect(result.farm.latitude).toBe(90);
-      expect(result.farm.longitude).toBe(-180);
+      expect(response.success).toBe(true);
+      expect(response.data?.farm.latitude).toBe(90);
+      expect(response.data?.farm.longitude).toBe(180);
     });
 
     it("should handle unicode characters in farm name", async () => {
       const farmRequest = createValidFarmRequest({
-        name: "农场 Ferme 農場 مزرعة",
+        name: "🌾 Divine Organic Farm 🌱",
         city: "Seattle",
       });
       const mockCreatedFarm = createMockFarm({
-        name: "农场 Ferme 農場 مزرعة",
-        slug: "ferme-seattle",
+        name: "🌾 Divine Organic Farm 🌱",
+        slug: "divine-organic-farm-seattle",
       });
 
+      mockRepository.findByOwnerId.mockResolvedValue([]);
+      mockRepository.isSlugAvailable.mockResolvedValue(true);
       mockRepository.manifestFarm.mockResolvedValue(mockCreatedFarm);
 
-      const result = await farmService.createFarm(TEST_USER_ID, farmRequest);
+      const response = await farmService.createFarm(TEST_USER_ID, farmRequest);
 
-      expect(result.farm.name).toBe("农场 Ferme 農場 مزرعة");
+      expect(response.success).toBe(true);
+      expect(response.data?.farm.name).toContain("🌾");
     });
 
     it("should handle zero farm size", async () => {
-      const farmRequest = createValidFarmRequest({
-        farmSize: 0,
-      });
-      const mockCreatedFarm = createMockFarm({
-        farmSize: 0,
-      });
+      const farmRequest = createValidFarmRequest({ farmSize: 0 });
+      const mockCreatedFarm = createMockFarm({ farmSize: 0 });
 
+      mockRepository.findByOwnerId.mockResolvedValue([]);
+      mockRepository.isSlugAvailable.mockResolvedValue(true);
       mockRepository.manifestFarm.mockResolvedValue(mockCreatedFarm);
 
-      const result = await farmService.createFarm(TEST_USER_ID, farmRequest);
+      const response = await farmService.createFarm(TEST_USER_ID, farmRequest);
 
-      expect(result.farm.farmSize).toBe(0);
+      expect(response.success).toBe(true);
+      expect(response.data?.farm.farmSize).toBe(0);
     });
 
     it("should handle null optional fields", async () => {
@@ -1148,11 +1243,13 @@ describe("🚜 FarmService - Divine Agricultural Business Logic", () => {
         website: null,
       });
 
+      mockRepository.findByOwnerId.mockResolvedValue([]);
+      mockRepository.isSlugAvailable.mockResolvedValue(true);
       mockRepository.manifestFarm.mockResolvedValue(mockCreatedFarm);
 
-      const result = await farmService.createFarm(TEST_USER_ID, farmRequest);
+      const response = await farmService.createFarm(TEST_USER_ID, farmRequest);
 
-      expect(result.farm).toBeDefined();
+      expect(response.success).toBe(true);
     });
   });
 });

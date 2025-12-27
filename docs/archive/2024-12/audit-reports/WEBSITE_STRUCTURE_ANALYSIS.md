@@ -261,7 +261,7 @@ Tasks:
 **Files to Create**:
 
 ```typescript
-src/app/(farmer)/farmer/
+src/app/(farmer)/
 ├── finances/
 │   └── page.tsx
 ├── payouts/
@@ -574,8 +574,8 @@ toast.info("New order received");
 
 ```
 /(customer)/dashboard/*  ← Standard
-/(farmer)/farmer/*       ← Standard
-/(admin)/admin/*         ← Standard
+/(farmer)/*       ← Standard
+/(admin)/*         ← Standard
 ```
 
 ### 2. Component Library Enhancement

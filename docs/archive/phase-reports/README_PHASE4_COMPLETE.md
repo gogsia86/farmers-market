@@ -41,7 +41,7 @@ src/components/farmer/
 #### Pages (2 files)
 
 ```
-src/app/(farmer)/farmer/
+src/app/(farmer)/
 ├── finances/page.tsx               65 lines ✅
 └── payouts/page.tsx               113 lines ✅
 ```

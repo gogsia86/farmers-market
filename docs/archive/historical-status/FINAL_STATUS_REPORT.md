@@ -401,8 +401,8 @@ Farmers Market Platform web and app/
 
 - ⬜ Enhance `src/components/ui/Skeleton.tsx`
 - ⬜ Create `src/app/(customer)/marketplace/loading.tsx`
-- ⬜ Create `src/app/(farmer)/farmer/dashboard/loading.tsx`
-- ⬜ Create `src/app/(admin)/admin/dashboard/loading.tsx`
+- ⬜ Create `src/app/(farmer)/dashboard/loading.tsx`
+- ⬜ Create `src/app/(admin)/dashboard/loading.tsx`
 - ⬜ Create `src/app/farms/loading.tsx`
 - ⬜ Create `src/app/products/loading.tsx`
 - **Expected Impact**: Better perceived performance

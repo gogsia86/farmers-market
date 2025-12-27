@@ -45,7 +45,7 @@ const [stats] = useState<DashboardStats>({
 
 #### Route B: `/farmer/dashboard` (CORRECT)
 
-- **File**: `src/app/(farmer)/farmer/dashboard/page.tsx`
+- **File**: `src/app/(farmer)/dashboard/page.tsx`
 - **Type**: Server-side component with real data
 - **Features**: Database queries, authentication, real metrics
 - **Status**: ✅ **CORRECT - KEEP THIS ONE**
@@ -63,7 +63,7 @@ const farm = await database.farm.findFirst({
 **RECOMMENDATION**:
 
 - ❌ DELETE: `src/app/farmer-dashboard/` entire directory
-- ✅ KEEP: `src/app/(farmer)/farmer/dashboard/`
+- ✅ KEEP: `src/app/(farmer)/dashboard/`
 - 🔄 UPDATE: All links pointing to `/farmer-dashboard` → `/farmer/dashboard`
 
 ---
@@ -88,7 +88,7 @@ const farm = await database.farm.findFirst({
 
 ```
 1. /farmer-dashboard       -> src/app/farmer-dashboard/page.tsx    ❌ DELETE
-2. /farmer/dashboard       -> src/app/(farmer)/farmer/dashboard/   ✅ KEEP
+2. /farmer/dashboard       -> src/app/(farmer)/dashboard/   ✅ KEEP
 ```
 
 **PROBLEM**: Two different dashboards for farmers cause confusion!
@@ -105,9 +105,9 @@ ROUTE                      FILE                                    STATUS
 /orders                    src/app/orders/page.tsx                 ✅ ROUTER (redirects by role)
 /dashboard/orders          src/app/dashboard/orders/page.tsx       ✅ CONSUMER orders
 /account/orders            src/app/(customer)/account/orders/      ✅ CONSUMER orders (duplicate?)
-/farmer/orders             src/app/(farmer)/farmer/orders/         ✅ FARMER orders
+/farmer/orders             src/app/(farmer)/orders/         ✅ FARMER orders
 /farmer-dashboard/orders   src/app/farmer-dashboard/orders/        ❌ DELETE (outdated)
-/admin/orders              src/app/(admin)/admin/orders/           ✅ ADMIN orders
+/admin/orders              src/app/(admin)/orders/           ✅ ADMIN orders
 ```
 
 **ANALYSIS**:
@@ -132,9 +132,9 @@ ROUTE                               FILE                                    STAT
 ──────────────────────────────────────────────────────────────────────────────────
 /products                           src/app/products/page.tsx               ✅ PUBLIC listing
 /marketplace/products               src/app/(customer)/marketplace/products ⚠️ Similar to above?
-/farmer/products                    src/app/(farmer)/farmer/products/       ✅ FARMER management
+/farmer/products                    src/app/(farmer)/products/       ✅ FARMER management
 /farmer-dashboard/products/bulk-upload  src/app/farmer-dashboard/products/  ❌ DELETE
-/admin/products                     src/app/(admin)/admin/products/         ✅ ADMIN management
+/admin/products                     src/app/(admin)/products/         ✅ ADMIN management
 ```
 
 **RECOMMENDATION**:

@@ -135,7 +135,7 @@ vi.setSystemTime(new Date("2025-01-01"));
 
 - ✅ `src/app/layout.tsx`
 - ✅ `src/app/(admin)/layout.tsx`
-- ✅ `src/app/(admin)/admin/farms/page.tsx`
+- ✅ `src/app/(admin)/farms/page.tsx`
 - ✅ `src/app/blog/page.tsx`
 - ✅ `src/app/(customer)/account/orders/page.tsx`
 

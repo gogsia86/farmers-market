@@ -41,7 +41,7 @@
 
 ### 2A: Admin Financial Page (45 min)
 
-File: `src/app/(admin)/admin/financial/page.tsx`
+File: `src/app/(admin)/financial/page.tsx`
 
 - [ ] Add Order includes (items, customer, payments)
 - [ ] Replace `order.totalAmount` with calculation
@@ -54,7 +54,7 @@ File: `src/app/(admin)/admin/financial/page.tsx`
 - [ ] Fix PaymentStatus enum ("COMPLETED" → "SUCCEEDED")
 - [ ] Remove unused `ArrowTrendingDownIcon`
 - [ ] Remove unused `session` variable
-- [ ] Verify file compiles: `npx tsc --noEmit src/app/(admin)/admin/financial/page.tsx`
+- [ ] Verify file compiles: `npx tsc --noEmit src/app/(admin)/financial/page.tsx`
 
 **Status**: ⬜ Not Started | ⬜ In Progress | ⬜ Complete
 
@@ -62,7 +62,7 @@ File: `src/app/(admin)/admin/financial/page.tsx`
 
 ### 2B: Farmer Dashboard (30 min)
 
-File: `src/app/(farmer)/farmer/dashboard/page.tsx`
+File: `src/app/(farmer)/dashboard/page.tsx`
 
 - [ ] Add Farm includes (products)
 - [ ] Fix `farm.products` access (add include)
@@ -79,7 +79,7 @@ File: `src/app/(farmer)/farmer/dashboard/page.tsx`
 
 ### 2C: Farmer Orders Detail Page (30 min)
 
-File: `src/app/(farmer)/farmer/orders/[id]/page.tsx`
+File: `src/app/(farmer)/orders/[id]/page.tsx`
 
 - [ ] Add Order includes (items, customer, reviews)
 - [ ] Replace `order.items` access (add include)
@@ -97,7 +97,7 @@ File: `src/app/(farmer)/farmer/orders/[id]/page.tsx`
 
 ### 2D: Admin Products Page (20 min)
 
-File: `src/app/(admin)/admin/products/page.tsx`
+File: `src/app/(admin)/products/page.tsx`
 
 - [ ] Add Product includes (farm, inventory)
 - [ ] Remove invalid `category` include (it's an enum)
@@ -113,7 +113,7 @@ File: `src/app/(admin)/admin/products/page.tsx`
 
 ### 2E: Farmer Settings Page (15 min)
 
-File: `src/app/(farmer)/farmer/settings/page.tsx`
+File: `src/app/(farmer)/settings/page.tsx`
 
 - [ ] Replace `user.image` with `user.avatar`
 - [ ] Update User select statement
@@ -128,7 +128,7 @@ File: `src/app/(farmer)/farmer/settings/page.tsx`
 
 ### 2F: Admin Users Page (10 min)
 
-File: `src/app/(admin)/admin/users/page.tsx`
+File: `src/app/(admin)/users/page.tsx`
 
 - [ ] Remove unused `session` variable
 - [ ] Verify file compiles
@@ -139,7 +139,7 @@ File: `src/app/(admin)/admin/users/page.tsx`
 
 ### 2G: Farmer Analytics Page (10 min)
 
-File: `src/app/(farmer)/farmer/analytics/page.tsx`
+File: `src/app/(farmer)/analytics/page.tsx`
 
 - [ ] Remove unused `startOfYear` variable
 - [ ] Add null check for line 428
@@ -151,7 +151,7 @@ File: `src/app/(farmer)/farmer/analytics/page.tsx`
 
 ### 2H: Monitoring Dashboard Page (15 min)
 
-File: `src/app/(monitoring)/monitoring/page.tsx`
+File: `src/app/(monitoring)/page.tsx`
 
 - [ ] Fix WorkflowExecution select (remove invalid `workflowId`)
 - [ ] Fix SystemHealthCheck select (remove invalid `healthy`)

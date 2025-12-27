@@ -131,17 +131,17 @@ Admin Pages             Farmer Pages
 
 ```
 Priority 1 (CRITICAL):
-├── src/app/(admin)/admin/financial/page.tsx (15 errors)
-├── src/app/(farmer)/farmer/orders/[id]/page.tsx (15 errors)
+├── src/app/(admin)/financial/page.tsx (15 errors)
+├── src/app/(farmer)/orders/[id]/page.tsx (15 errors)
 └── src/lib/monitoring/storage/database.storage.ts (12 errors)
 
 Priority 2 (HIGH):
-├── src/app/(admin)/admin/products/page.tsx (7 errors)
-├── src/app/(farmer)/farmer/dashboard/page.tsx (8 errors)
+├── src/app/(admin)/products/page.tsx (7 errors)
+├── src/app/(farmer)/dashboard/page.tsx (8 errors)
 └── src/lib/monitoring/alerts/alert-rules-engine.ts (7 errors)
 
 Priority 3 (MEDIUM):
-├── src/app/(farmer)/farmer/settings/page.tsx (5 errors)
+├── src/app/(farmer)/settings/page.tsx (5 errors)
 ├── src/lib/monitoring/notifiers/index.ts (6 errors)
 └── Various monitoring files (20 errors)
 ```

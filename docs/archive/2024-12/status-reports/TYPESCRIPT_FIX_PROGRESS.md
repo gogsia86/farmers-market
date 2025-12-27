@@ -19,12 +19,12 @@
 
 ### Files Modified
 
-1. `src/app/(admin)/admin/actions/page.tsx`
-2. `src/app/(admin)/admin/farms/[id]/page.tsx`
-3. `src/app/(admin)/admin/analytics/page.tsx`
-4. `src/app/(admin)/admin/inventory/page.tsx`
+1. `src/app/(admin)/actions/page.tsx`
+2. `src/app/(admin)/farms/[id]/page.tsx`
+3. `src/app/(admin)/analytics/page.tsx`
+4. `src/app/(admin)/inventory/page.tsx`
 5. `src/app/api/inventory/[id]/route.ts`
-6. `src/app/(admin)/admin/users/[id]/page.tsx`
+6. `src/app/(admin)/users/[id]/page.tsx`
 7. `src/app/api/products/[id]/route.ts`
 8. `src/app/api/orders/route.ts`
 9. `src/lib/services/order.service.ts`

@@ -97,20 +97,20 @@ src/components/features/addresses/
 #### Pages to Create
 
 - [ ] `/farmer/finances` - Financial overview
-  - [ ] Create `src/app/(farmer)/farmer/finances/page.tsx`
+  - [ ] Create `src/app/(farmer)/finances/page.tsx`
   - [ ] Display Stripe Connect balance
   - [ ] Show pending payouts
   - [ ] Platform fee breakdown
   - [ ] Monthly revenue chart
 
 - [ ] `/farmer/payouts` - Payout management
-  - [ ] Create `src/app/(farmer)/farmer/payouts/page.tsx`
+  - [ ] Create `src/app/(farmer)/payouts/page.tsx`
   - [ ] Payout history table
   - [ ] Banking information display
   - [ ] Payout schedule calendar
 
 - [ ] `/farmer/tax-documents` - Tax reporting
-  - [ ] Create `src/app/(farmer)/farmer/tax-documents/page.tsx`
+  - [ ] Create `src/app/(farmer)/tax-documents/page.tsx`
   - [ ] Generate 1099 forms
   - [ ] Download transaction history
   - [ ] Export for accounting software

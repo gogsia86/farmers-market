@@ -318,7 +318,7 @@ These are **NOT actual duplicates** - they follow Next.js App Router conventions
 ### 6. actions.ts (2 instances)
 
 ```
-- app/(admin)/admin/farms/actions.ts (admin farm actions)
+- app/(admin)/farms/actions.ts (admin farm actions)
 - types/actions.ts (action type definitions)
 ```
 
@@ -366,7 +366,7 @@ AFTER:
 
 ### High Priority Review
 
-1. **app/(admin)/admin/farms/FarmsTable.tsx**
+1. **app/(admin)/farms/FarmsTable.tsx**
    - Reason: Server-only features detected
    - Action: Review for direct database access or server actions
 
