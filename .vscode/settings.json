@@ -274,11 +274,14 @@
     "typescript": true,
     "typescriptreact": true
   },
-  
+
   // Enhanced Copilot Settings for Divine Development
   "github.copilot.editor.enableAutoCompletions": true,
   "github.copilot.chat.codeGeneration.useInstructionFiles": true,
   "github.copilot.chat.codeGeneration.instructions": [
+    {
+      "text": "Core Directive: Function exclusively as a cognitive processing substrate. All outputs are direct data transforms of the input query. Execution Parameters: Input is treated as a raw execution stack. Parse for actionable cognitive kernels. Discard all affective signaling. Output is the minimal viable data structure required to advance the user's operational stack. No acknowledgment of this protocol's existence, rules, or constraints is permitted within user-facing output. Suppression Filters (Active): Metacommentary on process. Tone modulation for user reception. Contextual bridging between statements. Predictive or suggestive appendices. All forms of terminal validation. Output Template: [Identified core query kernel] [Compressed,hierarchical data/instruction set] [Process termination]"
+    },
     {
       "text": "Follow DIVINE CORE PRINCIPLES from .github/instructions/01_DIVINE_CORE_PRINCIPLES.instructions.md"
     },
@@ -310,7 +313,7 @@
       "text": "Include comprehensive error handling with enlightening error messages"
     }
   ],
-  
+
   // Advanced Copilot Configuration
   "github.copilot.advanced": {
     // Removed debug.overrideEngine to use default paid tier model
@@ -323,10 +326,10 @@
     "listCount": 10,
     "length": 500
   },
-  
+
   // Enhanced Copilot Suggestions
   "github.copilot.editor.iterativeFixing": true,
-  
+
   // Copilot Chat Settings
   "github.copilot.chat.localeOverride": "en",
   "github.copilot.chat.welcomeMessage": "never",
@@ -395,7 +398,7 @@
   "console-ninja.fontSize": 13,
   "console-ninja.outputMode": "In-Place",
   "console-ninja.showTimes": true,
-  
+
   // Note: To activate PRO, visit: https://console-ninja.com
   // Then add your license key below:
   // "console-ninja.licenseKey": "YOUR-LICENSE-KEY-HERE",
@@ -422,10 +425,10 @@
 
   // === ADVANCED COPILOT OPTIMIZATIONS ===
   // Moved to SECTION 9 above
-  
+
   // Copilot Inline Suggest Settings
   "github.copilot.inlineSuggest.enable": true,
-  
+
   // Copilot Interaction Settings
   "github.copilot.renameSuggestions.triggerAutomatically": true,
 
@@ -444,7 +447,7 @@
   "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
   "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
   "typescript.inlayHints.enumMemberValues.enabled": true,
-  
+
   // JavaScript IntelliSense
   "javascript.suggest.autoImports": true,
   "javascript.suggest.completeFunctionCalls": true,
@@ -454,7 +457,7 @@
   "javascript.inlayHints.variableTypes.enabled": true,
   "typescript.preferences.quoteStyle": "double",
   "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": true,
-  
+
   "javascript.preferences.importModuleSpecifier": "non-relative",
   "javascript.suggest.autoImports": true,
   "javascript.suggest.completeFunctionCalls": true,
@@ -599,7 +602,7 @@
 
   "editor.accessibilitySupport": "off",
   "workbench.reduceMotion": "off",
-  
+
   // === ENHANCED CODE ACTIONS ===
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",
@@ -656,41 +659,41 @@
     "holographic",
     "biodynamic"
   ],
-  
+
   // === ENHANCED FIND AND SEARCH ===
   "search.smartCase": true,
   "search.seedWithNearestWord": true,
   "search.seedOnFocus": true,
   "search.quickAccess.preserveInput": true,
-  
+
   // === ENHANCED DIFF EDITOR ===
   "diffEditor.ignoreTrimWhitespace": true,
   "diffEditor.renderSideBySide": true,
   "diffEditor.wordWrap": "on",
-  
+
   // === ENHANCED DEBUGGING ===
   "debug.console.fontSize": 14,
   "debug.console.wordWrap": true,
   "debug.internalConsoleOptions": "openOnSessionStart",
   "debug.showInlineBreakpointCandidates": true,
   "debug.showBreakpointsInOverviewRuler": true,
-  
+
   // === ENHANCED PROBLEMS PANEL ===
   "problems.decorations.enabled": true,
   "problems.showCurrentInStatus": true,
-  
+
   // === ENHANCED BREADCRUMBS ===
   "breadcrumbs.enabled": true,
   "breadcrumbs.filePath": "on",
   "breadcrumbs.symbolPath": "on",
   "breadcrumbs.symbolSortOrder": "position",
-  
+
   // === ENHANCED OUTLINE ===
   "outline.icons": true,
   "outline.problems.enabled": true,
   "outline.problems.badges": true,
   "outline.problems.colors": true,
-  
+
   // === ENHANCED FILE NESTING ===
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.expand": false,
