@@ -563,9 +563,9 @@ export const checkoutSchema = z.object({
  * Order Query Schema (test-compatible version)
  */
 export const orderQuerySchema = z.object({
-  page: z.number().int().positive().default(1).optional(),
-  limit: z.number().int().positive().max(100).default(20).optional(),
-  offset: z.number().int().nonnegative().default(0).optional(),
+  page: z.number().int().positive().default(1),
+  limit: z.number().int().positive().max(100).default(20),
+  offset: z.number().int().nonnegative().default(0),
   status: orderStatusSchema.optional(),
   paymentStatus: PaymentStatusSchema.optional(),
   userId: z
@@ -579,10 +579,7 @@ export const orderQuerySchema = z.object({
   startDate: z.coerce.date().optional(),
   endDate: z.coerce.date().optional(),
   search: z.string().max(100).optional(),
-  sortBy: z
-    .enum(["createdAt", "totalAmount", "status"])
-    .default("createdAt")
-    .optional(),
+  sortBy: z.enum(["createdAt", "totalAmount", "status"]).default("createdAt"),
   sortOrder: z.enum(["asc", "desc"]).default("desc").optional(),
 });
 

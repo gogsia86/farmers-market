@@ -6,7 +6,7 @@ import { z } from "zod";
 
 export const addToCartSchema = z.object({
   productId: z.string().cuid(),
-  quantity: z.number().int().positive().default(1),
+  quantity: z.number().int().positive().finite().safe().max(999999).default(1),
 });
 
 export const updateCartItemSchema = z.object({
