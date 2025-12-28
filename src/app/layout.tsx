@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
 // Force dynamic rendering for all pages to avoid prerendering issues
@@ -111,6 +112,7 @@ export default function RootLayout({
       <head />
       <body className={`${inter.className} font-sans antialiased`}>
         {children}
+        <SpeedInsights />
       </body>
     </html>
   );
