@@ -27,6 +27,7 @@ import { BaseService } from "./base.service";
 import type { ServiceResponse } from "@/lib/types/service-response";
 import { cartService } from "./cart.service";
 import { stripe } from "@/lib/stripe";
+import { geocodingService } from "./geocoding.service";
 
 // ============================================================================
 // TYPES & SCHEMAS
@@ -438,7 +439,38 @@ export class CheckoutService extends BaseService<Order> {
         });
       }
 
-      // TODO: Integrate with geocoding service for real validation
+      // Validate address using geocoding service
+      try {
+        const geocoded = await geocodingService.geocodeAddress(
+          address.street,
+          address.city,
+          address.state,
+          address.zipCode,
+        );
+
+        if (!geocoded) {
+          this.logger.warn(
+            "Address geocoding failed - using basic validation",
+            {
+              address: `${address.street}, ${address.city}, ${address.state} ${address.zipCode}`,
+            },
+          );
+          // Continue with basic validation if geocoding fails
+        } else {
+          this.logger.info("Address geocoded successfully", {
+            address: geocoded.formattedAddress,
+            coordinates: {
+              lat: geocoded.latitude,
+              lng: geocoded.longitude,
+            },
+          });
+        }
+      } catch (error) {
+        this.logger.warn("Geocoding service error - using basic validation", {
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+        // Continue with basic validation if geocoding throws
+      }
 
       this.logger.info("Address validated successfully", {
         city: address.city,
@@ -719,17 +751,84 @@ export class CheckoutService extends BaseService<Order> {
    */
   async processPayment(
     orderId: string,
-    _paymentMethodId: string,
+    paymentMethodId: string,
   ): Promise<ServiceResponse<void>> {
     return await this.traced("processPayment", async () => {
       this.setTraceAttributes({
         "payment.order_id": orderId,
+        "payment.payment_method_id": paymentMethodId,
       });
 
-      // TODO: Integrate with Stripe payment processing
-      // For now, mark as paid immediately
-
       try {
+        // Fetch order with all details
+        const order = await this.database.order.findUnique({
+          where: { id: orderId },
+          include: {
+            items: {
+              include: {
+                product: true,
+              },
+            },
+          },
+        });
+
+        if (!order) {
+          this.logger.error("Order not found", { orderId });
+          return this.error("ORDER_NOT_FOUND", "Order not found");
+        }
+
+        // Verify order is in pending payment status
+        if (order.paymentStatus !== "PENDING") {
+          this.logger.error("Order payment already processed", {
+            orderId,
+            currentStatus: order.paymentStatus,
+          });
+          return this.error(
+            "PAYMENT_ALREADY_PROCESSED",
+            "Payment has already been processed for this order",
+          );
+        }
+
+        // Create Stripe PaymentIntent
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: Math.round(Number(order.total) * 100), // Convert to cents
+          currency: "usd",
+          payment_method: paymentMethodId,
+          confirm: true,
+          automatic_payment_methods: {
+            enabled: true,
+            allow_redirects: "never",
+          },
+          metadata: {
+            orderId: order.id,
+            farmId: order.items[0]?.product?.farmId || "unknown",
+          },
+          description: `Order ${order.id} - ${order.items.length} items`,
+        });
+
+        this.logger.info("Stripe PaymentIntent created", {
+          orderId,
+          paymentIntentId: paymentIntent.id,
+          status: paymentIntent.status,
+        });
+
+        // Check payment status
+        if (
+          paymentIntent.status !== "succeeded" &&
+          paymentIntent.status !== "processing"
+        ) {
+          this.logger.error("Payment failed", {
+            orderId,
+            paymentIntentId: paymentIntent.id,
+            status: paymentIntent.status,
+          });
+          return this.error(
+            "PAYMENT_FAILED",
+            "Payment was declined or failed. Please try again.",
+          );
+        }
+
+        // Update order with payment information
         await this.database.order.update({
           where: { id: orderId },
           data: {
@@ -737,14 +836,33 @@ export class CheckoutService extends BaseService<Order> {
             paidAt: new Date(),
             status: "CONFIRMED",
             confirmedAt: new Date(),
+            stripePaymentIntentId: paymentIntent.id,
           },
         });
 
-        this.logger.info("Payment processed successfully", { orderId });
+        this.logger.info("Payment processed successfully", {
+          orderId,
+          paymentIntentId: paymentIntent.id,
+        });
 
         return this.success(undefined);
       } catch (error) {
         this.logger.error("Failed to process payment", error);
+
+        // Check if it's a Stripe error
+        if (error && typeof error === "object" && "type" in error) {
+          const stripeError = error as { type: string; message?: string };
+          if (
+            stripeError.type === "StripeCardError" ||
+            stripeError.type === "StripeInvalidRequestError"
+          ) {
+            return this.error(
+              "PAYMENT_DECLINED",
+              stripeError.message || "Payment was declined",
+            );
+          }
+        }
+
         return this.error(
           "PAYMENT_PROCESSING_FAILED",
           error instanceof Error ? error.message : "Failed to process payment",

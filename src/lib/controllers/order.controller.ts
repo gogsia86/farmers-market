@@ -24,6 +24,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { BaseController } from "./base.controller";
 import { OrderService, orderService } from "@/lib/services/order.service";
+import { database } from "@/lib/database";
 import {
   CreateOrderSchema,
   UpdateOrderSchema,
@@ -423,11 +424,22 @@ export class OrderController extends BaseController {
     request: NextRequest,
     params: { farmId: string },
   ): Promise<NextResponse> {
-    return this.handleAuthenticatedRequest(request, async (_session) => {
+    return this.handleAuthenticatedRequest(request, async (session) => {
       const farmId = params.farmId;
 
-      // TODO: Add farm ownership verification
-      // For now, allow all authenticated users (will be restricted in production)
+      // Verify farm ownership
+      const farm = await database.farm.findUnique({
+        where: { id: farmId },
+        select: { ownerId: true },
+      });
+
+      if (!farm) {
+        return this.notFound("Farm not found");
+      }
+
+      if (farm.ownerId !== session.user.id) {
+        return this.forbidden("Not authorized to view orders for this farm");
+      }
 
       // Parse query parameters
       const searchParams = Object.fromEntries(request.nextUrl.searchParams);
