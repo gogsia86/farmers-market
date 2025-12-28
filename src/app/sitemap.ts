@@ -122,7 +122,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const categories = await database.$queryRaw<
         Array<{ slug: string; updatedAt: Date }>
       >`
-        SELECT DISTINCT category as slug, MAX(updated_at) as "updatedAt"
+        SELECT DISTINCT category as slug, MAX("updatedAt") as "updatedAt"
         FROM products
         WHERE category IS NOT NULL
         GROUP BY category

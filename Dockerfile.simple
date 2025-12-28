@@ -1,0 +1,116 @@
+# ╔════════════════════════════════════════════════════════════════════╗
+# ║ 🌾 FARMERS MARKET PLATFORM - SIMPLIFIED DOCKERFILE                ║
+# ║ Divine Agricultural E-Commerce System                              ║
+# ║ Optimized build without Python dependency issues                  ║
+# ╚════════════════════════════════════════════════════════════════════╝
+
+# ============================================================================
+# STAGE 1: DEPENDENCIES
+# ============================================================================
+FROM node:20-alpine AS deps
+
+WORKDIR /app
+
+# Install only essential system dependencies
+# Remove python3, make, g++ to avoid installation issues
+RUN apk add --no-cache \
+    openssl \
+    libc6-compat
+
+# Copy package files
+COPY package.json package-lock.json* ./
+COPY prisma ./prisma/
+
+# Install dependencies with flags to skip native builds
+ENV HUSKY=0
+ENV CI=true
+ENV SKIP_POSTINSTALL=1
+
+# Use npm install instead of ci for better compatibility
+RUN npm install --legacy-peer-deps --omit=dev --ignore-scripts || \
+    npm install --legacy-peer-deps --omit=dev --force
+
+# Generate Prisma client
+RUN npx prisma generate || echo "Prisma generation will happen in builder stage"
+
+# ============================================================================
+# STAGE 2: BUILDER
+# ============================================================================
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Install minimal build dependencies
+RUN apk add --no-cache \
+    openssl \
+    libc6-compat
+
+# Copy dependencies from deps stage
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/package.json ./package.json
+
+# Copy application source
+COPY . .
+
+# Set build environment
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV SKIP_ENV_VALIDATION=true
+ENV HUSKY=0
+ENV CI=true
+
+# Generate Prisma client and build Next.js
+RUN npx prisma generate && \
+    NODE_OPTIONS='--max-old-space-size=4096' npm run build
+
+# ============================================================================
+# STAGE 3: RUNNER (PRODUCTION)
+# ============================================================================
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+
+# Install runtime dependencies only
+RUN apk add --no-cache \
+    openssl \
+    curl \
+    ca-certificates \
+    dumb-init
+
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+# Set correct permissions
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Copy only necessary files
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Copy Prisma files
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+
+# Create necessary directories
+RUN mkdir -p /app/logs /app/uploads && \
+    chown -R nextjs:nodejs /app
+
+USER nextjs
+
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:3000/api/health || exit 1
+
+# Use dumb-init for proper signal handling
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+
+# Start the application
+CMD ["node", "server.js"]

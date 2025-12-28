@@ -15,6 +15,13 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { auth } from "@/lib/auth/config";
+import type { NextMiddleware } from "next/server";
+
+/**
+ * Middleware Runtime Configuration
+ * Use Node.js runtime to avoid Turbopack NFT file generation issues
+ */
+export const runtime = "nodejs";
 
 /**
  * Middleware function with NextAuth v5 integration
@@ -61,7 +68,7 @@ export default auth((request: NextRequest) => {
 
   // Continue to next middleware or route handler
   return NextResponse.next();
-}) as any;
+}) as NextMiddleware;
 
 /**
  * Middleware configuration

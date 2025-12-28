@@ -27,6 +27,9 @@ const eslintConfig = [
       "**/.husky/**",
       "**/cleanup-backup-*/**",
       "**/docs/archive/**",
+      "**/src/app.backup.phase5/**",
+      "**/*.backup/**",
+      "**/.backup/**",
     ],
   },
 
