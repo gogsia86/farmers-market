@@ -9,7 +9,7 @@
 
 import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
-import { Resource } from "@opentelemetry/resources";
+import { resourceFromAttributes } from "@opentelemetry/resources";
 import { NodeSDK } from "@opentelemetry/sdk-node";
 import {
   ATTR_SERVICE_NAME,
@@ -46,8 +46,8 @@ function createTraceExporter(): OTLPTraceExporter {
  * Configure resource with agricultural metadata
  * This identifies our service in the tracing backend
  */
-function createResource(): Resource {
-  return new Resource({
+function createResource() {
+  return resourceFromAttributes({
     [ATTR_SERVICE_NAME]:
       process.env.OTEL_SERVICE_NAME || "farmers-market-divine",
     [ATTR_SERVICE_VERSION]: process.env.npm_package_version || "1.0.0",

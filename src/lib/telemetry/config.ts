@@ -5,11 +5,13 @@
 
 import { NodeSDK } from "@opentelemetry/sdk-node";
 import {
-  SEMRESATTRS_SERVICE_NAME,
-  SEMRESATTRS_SERVICE_VERSION,
+  ATTR_SERVICE_NAME,
+  ATTR_SERVICE_VERSION,
   SEMRESATTRS_DEPLOYMENT_ENVIRONMENT,
   SEMRESATTRS_SERVICE_INSTANCE_ID,
 } from "@opentelemetry/semantic-conventions";
+import { resourceFromAttributes } from "@opentelemetry/resources";
+import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-base";
 import { AzureMonitorTraceExporter } from "@azure/monitor-opentelemetry-exporter";
 import { HttpInstrumentation } from "@opentelemetry/instrumentation-http";
 import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
@@ -45,13 +47,9 @@ export function initializeTelemetry(): NodeSDK | null {
     });
 
     // Create resource with service metadata
-    // Note: Using 'any' to avoid OpenTelemetry version conflicts between packages
-    const { Resource } = require("@opentelemetry/resources");
-    const { BatchSpanProcessor } = require("@opentelemetry/sdk-trace-base");
-
-    const resource = new Resource({
-      [SEMRESATTRS_SERVICE_NAME]: "farmers-market-platform",
-      [SEMRESATTRS_SERVICE_VERSION]: process.env.APP_VERSION || "1.0.0",
+    const resource = resourceFromAttributes({
+      [ATTR_SERVICE_NAME]: "farmers-market-platform",
+      [ATTR_SERVICE_VERSION]: process.env.APP_VERSION || "1.0.0",
       [SEMRESATTRS_DEPLOYMENT_ENVIRONMENT]:
         process.env.NODE_ENV || "production",
       [SEMRESATTRS_SERVICE_INSTANCE_ID]: process.env.HOSTNAME || "unknown",
@@ -63,7 +61,14 @@ export function initializeTelemetry(): NodeSDK | null {
       spanProcessor: new BatchSpanProcessor(traceExporter),
       instrumentations: [
         new HttpInstrumentation({
-          ignoreIncomingPaths: ["/api/health", "/api/ready", "/_next"],
+          ignoreIncomingRequestHook: (req) => {
+            const url = req.url || "";
+            return (
+              url.includes("/api/health") ||
+              url.includes("/api/ready") ||
+              url.includes("/_next")
+            );
+          },
         }),
         getNodeAutoInstrumentations({
           "@opentelemetry/instrumentation-fs": {

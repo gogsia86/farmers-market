@@ -10,10 +10,10 @@
 
 import { NodeSDK } from "@opentelemetry/sdk-node";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
-import { Resource } from "@opentelemetry/resources";
+import { resourceFromAttributes } from "@opentelemetry/resources";
 import {
-  SEMRESATTRS_SERVICE_NAME,
-  SEMRESATTRS_SERVICE_VERSION,
+  ATTR_SERVICE_NAME,
+  ATTR_SERVICE_VERSION,
   SEMRESATTRS_DEPLOYMENT_ENVIRONMENT,
 } from "@opentelemetry/semantic-conventions";
 import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-base";
@@ -68,11 +68,10 @@ export function getTelemetryConfig(): TelemetryConfig {
 /**
  * Create resource with service information
  */
-export function createResource(config: TelemetryConfig): Resource {
-  // @ts-ignore - Type conflicts between @opentelemetry versions (via @sentry/nextjs)
-  return new Resource({
-    [SEMRESATTRS_SERVICE_NAME]: config.serviceName,
-    [SEMRESATTRS_SERVICE_VERSION]: config.serviceVersion,
+export function createResource(config: TelemetryConfig) {
+  return resourceFromAttributes({
+    [ATTR_SERVICE_NAME]: config.serviceName,
+    [ATTR_SERVICE_VERSION]: config.serviceVersion,
     [SEMRESATTRS_DEPLOYMENT_ENVIRONMENT]: config.environment,
     "service.namespace": "agricultural-platform",
     "service.instance.id": process.env.HOSTNAME || `instance-${Date.now()}`,
@@ -127,7 +126,6 @@ export function initializeTelemetry(): NodeSDK {
     });
 
     // Create span processor with batching
-    // @ts-ignore - Type conflicts between @opentelemetry versions (via @sentry/nextjs)
     const spanProcessor = new BatchSpanProcessor(traceExporter, {
       maxQueueSize: 2048,
       maxExportBatchSize: 512,
@@ -138,7 +136,6 @@ export function initializeTelemetry(): NodeSDK {
     // Initialize SDK with auto-instrumentations
     sdkInstance = new NodeSDK({
       resource: createResource(config),
-      // @ts-ignore - Type conflicts between @opentelemetry versions (via @sentry/nextjs)
       spanProcessor,
       instrumentations: [
         getNodeAutoInstrumentations({
