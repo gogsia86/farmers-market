@@ -36,6 +36,13 @@ dist/
 *.tsbuildinfo
 next-env.d.ts
 
+# Development artifacts
+.phase3/
+--version/
+mvp-validation-reports/
+mvp-validation-screenshots/
+performance-reports/
+
 # ═══════════════════════════════════════════════════════════
 # 🌍 Environment Variables (SECURITY CRITICAL)
 # ═══════════════════════════════════════════════════════════
