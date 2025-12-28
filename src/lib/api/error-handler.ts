@@ -17,6 +17,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import { ZodError } from "zod";
+import { telemetryService } from "@/lib/telemetry/azure-insights";
 
 // ============================================================================
 // ERROR CLASSES
@@ -365,7 +366,7 @@ function validateRequest<T>(
 // ============================================================================
 
 /**
- * Log error for monitoring (can be integrated with Sentry, etc.)
+ * Log error for monitoring with Azure Application Insights integration
  */
 function logError(error: unknown, context?: Record<string, any>): void {
   if (isDevelopment) {
@@ -376,11 +377,17 @@ function logError(error: unknown, context?: Record<string, any>): void {
     });
   }
 
-  // TODO: Integrate with error monitoring service (Sentry, Rollbar, etc.)
-  // Example:
-  // if (process.env.SENTRY_DSN) {
-  //   Sentry.captureException(error, { extra: context });
-  // }
+  // Send to Azure Application Insights in production
+  if (process.env.NODE_ENV === "production" && telemetryService.enabled) {
+    const errorObj = error instanceof Error ? error : new Error(String(error));
+
+    telemetryService.trackException(errorObj, {
+      ...context,
+      errorCode: error instanceof AppError ? error.code : "UNKNOWN_ERROR",
+      statusCode: error instanceof AppError ? error.statusCode : 500,
+      errorType: error instanceof Error ? error.constructor.name : typeof error,
+    });
+  }
 }
 
 // ============================================================================

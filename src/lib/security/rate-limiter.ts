@@ -18,6 +18,7 @@
 
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
+import { telemetryService } from "@/lib/telemetry/azure-insights";
 
 // ============================================================================
 // REDIS CONFIGURATION
@@ -533,8 +534,17 @@ export async function logRateLimitEvent(event: {
     });
   }
 
-  // TODO: Send to Azure Application Insights in production
-  // await telemetry.trackEvent("RateLimitCheck", event);
+  // Send to Azure Application Insights in production
+  if (process.env.NODE_ENV === "production" && telemetryService.enabled) {
+    telemetryService.trackRateLimitEvent({
+      identifier: event.identifier,
+      status: event.success ? "allowed" : "blocked",
+      limit: 0, // Will be populated from actual limiter config
+      remaining: event.remaining,
+      window: "unknown", // Will be populated from actual limiter config
+      endpoint: event.endpoint,
+    });
+  }
 }
 
 // ============================================================================

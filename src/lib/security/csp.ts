@@ -14,6 +14,8 @@
  * @reference https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
  */
 
+import { telemetryService } from "@/lib/telemetry/azure-insights";
+
 // ============================================================================
 // CSP DIRECTIVE BUILDERS
 // ============================================================================
@@ -280,12 +282,22 @@ export async function handleCSPViolation(
     sample: violation["script-sample"],
   });
 
-  // TODO: Send to monitoring service (Azure Application Insights)
-  // await telemetry.trackEvent("CSPViolation", {
-  //   directive: violation["violated-directive"],
-  //   blockedUri: violation["blocked-uri"],
-  //   sourceFile: violation["source-file"],
-  // });
+  // Send to Azure Application Insights in production
+  if (process.env.NODE_ENV === "production" && telemetryService.enabled) {
+    telemetryService.trackCSPViolation({
+      documentUri: violation["document-uri"] || "",
+      violatedDirective: violation["violated-directive"] || "",
+      effectiveDirective:
+        violation["effective-directive"] ||
+        violation["violated-directive"] ||
+        "",
+      originalPolicy: violation["original-policy"] || "",
+      blockedUri: violation["blocked-uri"],
+      sourceFile: violation["source-file"],
+      lineNumber: violation["line-number"],
+      columnNumber: violation["column-number"],
+    });
+  }
 }
 
 // ============================================================================

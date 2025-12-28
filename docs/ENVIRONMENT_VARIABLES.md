@@ -363,6 +363,38 @@ OTEL_EXPORTER_OTLP_ENDPOINT="https://api.honeycomb.io"
 
 ---
 
+### 📊 Azure Application Insights (Production Telemetry)
+
+#### `AZURE_APPINSIGHTS_CONNECTION_STRING`
+
+**Description**: Azure Application Insights connection string for production telemetry  
+**Required**: ❌ No (Highly recommended for production)  
+**Type**: String (Connection String)  
+**Example**:
+```bash
+AZURE_APPINSIGHTS_CONNECTION_STRING="InstrumentationKey=12345678-1234-1234-1234-123456789abc;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
+```
+
+**Features Enabled**:
+- Error and exception tracking
+- Performance monitoring and tracing
+- Rate limit event tracking
+- CSP violation reporting
+- Custom event tracking
+- Agricultural operation telemetry
+
+**Setup**:
+1. Create Application Insights resource in Azure Portal
+2. Copy connection string from Azure Portal
+3. Add to production environment variables
+4. Telemetry automatically enabled in production mode
+
+**Development Mode**:
+- Telemetry is automatically disabled in development
+- Set `LOG_TELEMETRY=true` to see telemetry events in console during development
+
+---
+
 ### 🗄️ Redis Cache (Optional)
 
 #### `REDIS_URL`
