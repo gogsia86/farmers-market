@@ -114,7 +114,7 @@ function FarmsTableSkeleton() {
  */
 export const FarmsTableDynamic = dynamic<FarmsTableProps>(
   () =>
-    import("../../app/(admin)/farms/FarmsTable").then((mod) => ({
+    import("../../app/admin/farms/FarmsTable").then((mod) => ({
       default: mod.FarmsTable,
     })),
   {
@@ -133,7 +133,7 @@ export type { FarmWithRelations, FarmsTableProps };
  * Start loading table when user hovers over admin link
  */
 export function preloadFarmsTable() {
-  const tableModule = import("../../app/(admin)/farms/FarmsTable");
+  const tableModule = import("../../app/admin/farms/FarmsTable");
   return tableModule;
 }
 
