@@ -1,21 +1,24 @@
 /**
  * 🔐 AUTHENTICATION UTILITIES
- * NextAuth v4 wrapper functions
+ * NextAuth v5 (Auth.js) wrapper functions
  *
  * This file re-exports all authentication utilities from the config
  * for easy importing throughout the application.
  *
  * CANONICAL IMPORT: import { auth, requireAuth } from "@/lib/auth"
+ *
+ * Updated: January 2025
+ * Version: NextAuth v5.0.0-beta.30 (Auth.js)
  */
 
 // Re-export everything from config directly (avoiding circular imports)
 export {
   auth,
-  authOptions,
+  signIn,
+  signOut,
   handlers,
-  GET,
-  POST,
-  getServerSession,
+  authOptions, // Compatibility export
+  getServerSession, // Compatibility alias for auth()
   getCurrentUser,
   requireAuth,
   requireRole,

@@ -1,41 +1,59 @@
 /**
- * 🔐 NEXTAUTH V4 CONFIGURATION
+ * 🔐 NEXTAUTH V5 (AUTH.JS) CONFIGURATION
  * Divine authentication with agricultural consciousness
  *
  * CANONICAL AUTH IMPLEMENTATION
  * This is the single source of truth for authentication configuration.
  *
  * Updated: January 2025
- * Version: NextAuth v4.24.x
+ * Version: NextAuth v5.0.0-beta.30 (Auth.js)
  *
- * IMPORTANT: Uses lazy loading for database to prevent client-side import errors
+ * MIGRATION NOTES:
+ * - Migrated from NextAuth v4 to v5
+ * - Uses new auth() export pattern
+ * - Simplified configuration structure
+ * - Improved type safety
  */
 
-import NextAuth, { type NextAuthOptions } from "next-auth";
+import NextAuth, { type DefaultSession, type NextAuthResult } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import CredentialsProvider from "next-auth/providers/credentials";
+import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 import type { UserRole, UserStatus } from "@prisma/client";
-import type { Adapter } from "next-auth/adapters";
+import { database } from "@/lib/database";
 
 /**
- * Lazy load database to prevent client-side import errors
- * This function is only called on the server during authentication
+ * Extend NextAuth types to include our custom fields
  */
-async function getDatabase() {
-  const { database } = await import("@/lib/database");
-  return database;
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      role: UserRole;
+      status: UserStatus;
+    } & DefaultSession["user"];
+  }
+
+  interface User {
+    role: UserRole;
+    status: UserStatus;
+  }
+}
+
+declare module "@auth/core/jwt" {
+  interface JWT {
+    id: string;
+    role: UserRole;
+    status: UserStatus;
+  }
 }
 
 /**
- * NextAuth v4 Options Configuration
+ * NextAuth v5 Configuration
  */
-export const authOptions: NextAuthOptions = {
-  // Prisma adapter for database sessions (lazy loaded)
-  adapter: (async () => {
-    const db = await getDatabase();
-    return PrismaAdapter(db) as Adapter;
-  })() as any,
+const nextAuthResult = NextAuth({
+  // Prisma adapter for database sessions
+  adapter: PrismaAdapter(database) as any,
 
   // JWT strategy for stateless sessions
   session: {
@@ -47,12 +65,11 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/login",
     error: "/login",
-    signOut: "/",
   },
 
   // Authentication providers
   providers: [
-    CredentialsProvider({
+    Credentials({
       name: "credentials",
       credentials: {
         email: {
@@ -73,12 +90,9 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-          // Lazy load database for authentication
-          const db = await getDatabase();
-
           // Find user by email
-          const user = await db.user.findUnique({
-            where: { email: credentials.email },
+          const user = await database.user.findUnique({
+            where: { email: credentials.email as string },
             select: {
               id: true,
               email: true,
@@ -98,7 +112,7 @@ export const authOptions: NextAuthOptions = {
 
           // Verify password
           const isValidPassword = await compare(
-            credentials.password,
+            credentials.password as string,
             user.password,
           );
 
@@ -154,8 +168,8 @@ export const authOptions: NextAuthOptions = {
       // Initial sign in
       if (user) {
         token.id = user.id;
-        token.role = (user as any).role as UserRole;
-        token.status = (user as any).status as UserStatus;
+        token.role = user.role;
+        token.status = user.status;
       }
 
       // Update session
@@ -173,9 +187,9 @@ export const authOptions: NextAuthOptions = {
      */
     async session({ session, token }) {
       if (token && session.user) {
-        session.user.id = token.id as string;
-        (session.user as any).role = token.role as UserRole;
-        (session.user as any).status = token.status as UserStatus;
+        session.user.id = token.id;
+        session.user.role = token.role;
+        session.user.status = token.status;
         session.user.name =
           (token.name as string) || (token.email as string) || "User";
         session.user.email = token.email as string;
@@ -183,14 +197,35 @@ export const authOptions: NextAuthOptions = {
 
       return session;
     },
+
+    /**
+     * Authorized Callback - Controls access to pages
+     * Return true to allow access, false to redirect to sign in
+     */
+    authorized({ auth, request: { nextUrl } }) {
+      const isLoggedIn = !!auth?.user;
+      const isOnDashboard =
+        nextUrl.pathname.startsWith("/admin") ||
+        nextUrl.pathname.startsWith("/farmer");
+
+      if (isOnDashboard) {
+        if (isLoggedIn) return true;
+        return false; // Redirect unauthenticated users to login page
+      } else if (isLoggedIn) {
+        return true;
+      }
+
+      return true;
+    },
   },
 
   // Events for logging
   events: {
     async signIn({ user }) {
-      console.log(`✅ User signed in: ${user.email} (${(user as any).role})`);
+      console.log(`✅ User signed in: ${user.email} (${user.role})`);
     },
-    async signOut({ token }) {
+    async signOut(message) {
+      const token = "token" in message ? message.token : null;
       console.log(`👋 User signed out: ${token?.email}`);
     },
     async createUser({ user }) {
@@ -203,36 +238,18 @@ export const authOptions: NextAuthOptions = {
 
   // Secret for JWT encryption
   secret: process.env.NEXTAUTH_SECRET,
-};
+
+  // Trust host in production
+  trustHost: true,
+});
 
 /**
- * NextAuth handler for App Router
- * Export GET and POST handlers
+ * Export auth functions with explicit types to avoid inference issues
  */
-const handler = NextAuth(authOptions);
-
-export const handlers = {
-  GET: handler,
-  POST: handler,
-};
-
-// Export individual handlers for route.ts
-export { handler as GET, handler as POST };
-
-// Default export for convenience
-export default handler;
-
-/**
- * Server-side auth helper
- * Import getServerSession from next-auth for server components
- */
-import { getServerSession as nextAuthGetServerSession } from "next-auth";
-
-export async function auth() {
-  return nextAuthGetServerSession(authOptions);
-}
-
-export const getServerSession = auth;
+export const handlers = nextAuthResult.handlers;
+export const auth: any = nextAuthResult.auth;
+export const signIn = nextAuthResult.signIn;
+export const signOut = nextAuthResult.signOut;
 
 /**
  * Helper function to get current user
@@ -268,9 +285,9 @@ export async function requireRole(
   }
 
   const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
-  if (!roles.includes((session.user as any).role as UserRole)) {
+  if (!roles.includes(session.user.role)) {
     throw new Error(
-      `Unauthorized: Required role ${roles.join(" or ")}, but user has ${(session.user as any).role}`,
+      `Unauthorized: Required role ${roles.join(" or ")}, but user has ${session.user.role}`,
     );
   }
 
@@ -322,9 +339,27 @@ export async function isFarmer(): Promise<boolean> {
   return hasRole(["FARMER", "ADMIN", "SUPER_ADMIN", "MODERATOR"]);
 }
 
+/**
+ * V4 Compatibility Exports
+ * These provide backward compatibility with v4 code
+ */
+export const authOptions: any = {
+  adapter: PrismaAdapter(database),
+  session: { strategy: "jwt" as const, maxAge: 30 * 24 * 60 * 60 },
+  pages: { signIn: "/login", error: "/login" },
+  providers: [],
+  callbacks: {},
+  events: {},
+  debug: process.env.NODE_ENV === "development",
+  secret: process.env.NEXTAUTH_SECRET,
+};
+
+// Alias for compatibility
+export const authConfig: any = authOptions;
+
+// Compatibility export for getServerSession (v4 pattern)
+export const getServerSession: typeof auth = auth;
+
 // NOTE: Do NOT re-export signIn/signOut here as it causes circular dependencies
 // Use @/lib/auth/client for client-side auth utilities
 // Use @/lib/auth/server for server-side auth utilities
-
-// Alias for compatibility with code expecting authConfig
-export const authConfig = authOptions;

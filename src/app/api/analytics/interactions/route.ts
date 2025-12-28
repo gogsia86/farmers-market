@@ -8,8 +8,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { auth as getServerSession } from "@/lib/auth/config";
 import { UserInteractionService } from "@/lib/services/analytics/user-interaction.service";
 import { asyncHandler, validateRequest } from "@/lib/api/error-handler";
 import { z } from "zod";
@@ -96,7 +95,7 @@ const interactionsQuerySchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession();
     const body = await req.json();
 
     // Determine which type of interaction to track based on the payload
@@ -236,7 +235,7 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession();
     const { searchParams } = new URL(req.url);
 
     const query = Object.fromEntries(searchParams.entries());

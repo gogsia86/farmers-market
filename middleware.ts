@@ -3,21 +3,26 @@
  *
  * Handles:
  * - Route redirects for restructured paths
- * - Authentication checks
+ * - Authentication checks (NextAuth v5)
  * - Role-based access control
  *
  * @see https://nextjs.org/docs/app/building-your-application/routing/middleware
+ *
+ * Updated: January 2025
+ * NextAuth v5 (Auth.js) Migration
  */
 
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { auth } from "@/lib/auth/config";
 
 /**
- * Middleware function
+ * Middleware function with NextAuth v5 integration
  *
  * Phase 1: Handle redirects for restructured routes
+ * Phase 2: Authentication (handled by NextAuth v5 authorized callback)
  */
-export function middleware(request: NextRequest) {
+export default auth((request: NextRequest) => {
   const { pathname } = request.nextUrl;
 
   // ============================================================================
@@ -56,7 +61,7 @@ export function middleware(request: NextRequest) {
 
   // Continue to next middleware or route handler
   return NextResponse.next();
-}
+}) as any;
 
 /**
  * Middleware configuration

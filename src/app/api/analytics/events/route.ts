@@ -7,8 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { auth as getServerSession } from "@/lib/auth/config";
 import { SearchEventService } from "@/lib/services/analytics/search-event.service";
 import { asyncHandler, validateRequest } from "@/lib/api/error-handler";
 import { z } from "zod";
@@ -67,7 +66,7 @@ const searchEventsQuerySchema = z.object({
 // ============================================================================
 
 export const POST = asyncHandler(async (req: NextRequest) => {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession();
   const body = await req.json();
   const data = validateRequest(trackSearchSchema, body);
 
@@ -97,7 +96,7 @@ export const POST = asyncHandler(async (req: NextRequest) => {
 // ============================================================================
 
 export const GET = asyncHandler(async (req: NextRequest) => {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession();
   const { searchParams } = new URL(req.url);
 
   const query = Object.fromEntries(searchParams.entries());

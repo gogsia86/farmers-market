@@ -8,8 +8,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { auth as getServerSession } from "@/lib/auth/config";
 import { SavedSearchService } from "@/lib/services/saved-searches/saved-search.service";
 import { z } from "zod";
 
@@ -32,7 +31,7 @@ export async function POST(
 ) {
   try {
     // Get user session
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession();
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
