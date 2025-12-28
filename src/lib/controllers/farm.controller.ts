@@ -84,22 +84,8 @@ const UpdateFarmSchema = CreateFarmSchema.partial();
  * Farm listing query parameters schema
  */
 const ListFarmsQuerySchema = z.object({
-  page: z
-    .string()
-    .optional()
-    .transform((val) => {
-      if (!val) return 1;
-      const parsed = parseInt(val);
-      return isNaN(parsed) || parsed < 1 ? 1 : parsed;
-    }),
-  limit: z
-    .string()
-    .optional()
-    .transform((val) => {
-      if (!val) return 20;
-      const parsed = parseInt(val);
-      return isNaN(parsed) || parsed < 1 ? 20 : Math.min(parsed, 100);
-    }),
+  page: z.coerce.number().int().min(1).optional(),
+  limit: z.coerce.number().int().min(1).max(100).optional(),
   status: z.enum(["ACTIVE", "PENDING", "SUSPENDED", "INACTIVE"]).optional(),
   city: z.string().optional(),
   state: z.string().optional(),
@@ -112,22 +98,16 @@ const ListFarmsQuerySchema = z.object({
  */
 const SearchFarmsQuerySchema = z.object({
   query: z.string().min(1, "Search query is required"),
-  limit: z
-    .string()
-    .optional()
-    .transform((val) => (val ? parseInt(val) : 10)),
+  limit: z.coerce.number().int().positive().optional(),
 });
 
 /**
  * Nearby farms query parameters schema
  */
 const NearbyFarmsQuerySchema = z.object({
-  latitude: z.string().transform((val) => parseFloat(val)),
-  longitude: z.string().transform((val) => parseFloat(val)),
-  radius: z
-    .string()
-    .optional()
-    .transform((val) => (val ? parseFloat(val) : 50)),
+  latitude: z.coerce.number(),
+  longitude: z.coerce.number(),
+  radius: z.coerce.number().positive().optional(),
 });
 
 // ============================================================================
@@ -178,8 +158,8 @@ export class FarmController extends BaseController {
       const queryParams = this.validateQuery(request, ListFarmsQuerySchema);
 
       const options: ListFarmsOptions = {
-        page: queryParams.page,
-        limit: queryParams.limit,
+        page: queryParams.page ?? 1,
+        limit: queryParams.limit ?? 20,
         status: queryParams.status,
         city: queryParams.city,
         state: queryParams.state,
@@ -431,7 +411,7 @@ export class FarmController extends BaseController {
       // Search farms through service
       const farms = await farmService.searchFarms({
         query: queryParams.query,
-        limit: queryParams.limit,
+        limit: queryParams.limit ?? 10,
       });
 
       // Check for service errors
@@ -472,7 +452,7 @@ export class FarmController extends BaseController {
       const farms = await farmService.findNearbyFarms(
         queryParams.latitude,
         queryParams.longitude,
-        queryParams.radius,
+        queryParams.radius ?? 50,
       );
 
       // Check for service errors

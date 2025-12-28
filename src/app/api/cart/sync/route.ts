@@ -34,7 +34,7 @@ const MergeStrategySchema = z.object({
 });
 
 const SyncCartRequestSchema = z.object({
-  localItems: z.array(CartItemInputSchema).default([]),
+  localItems: z.array(CartItemInputSchema).optional(),
   strategy: MergeStrategySchema.optional(),
 });
 
@@ -54,7 +54,7 @@ export const POST = createPostHandler<SyncCartRequest>(
       );
     }
 
-    const { localItems, strategy } = body!;
+    const { localItems = [], strategy } = body!;
 
     // Default merge strategy
     const mergeStrategy: MergeStrategy = {
@@ -101,7 +101,7 @@ export const POST = createPostHandler<SyncCartRequest>(
       return createErrorResponse("CART_SYNC_ERROR", "Failed to sync cart", 500);
     }
   },
-  SyncCartRequestSchema,
+  SyncCartRequestSchema as any,
   {
     requireAuth: true,
     agriculturalMetadata: true,

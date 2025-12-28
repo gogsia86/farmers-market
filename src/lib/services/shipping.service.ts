@@ -34,7 +34,7 @@ const ShippingDestinationSchema = z.object({
   city: z.string().min(2, "City name too short"),
   state: z.string().length(2, "State must be 2-letter code"),
   zipCode: z.string().regex(/^\d{5}(-\d{4})?$/, "Invalid ZIP code format"),
-  country: z.string().length(2, "Country must be 2-letter code").default("US"),
+  country: z.string().length(2, "Country must be 2-letter code").optional(),
 });
 
 const CalculateRatesSchema = z.object({
@@ -178,7 +178,11 @@ export class ShippingService extends BaseService<Order> {
           // ✅ Step 1: Validate input
           const validated = await this.validate(CalculateRatesSchema, request);
 
-          const { orderId, destination, weight } = validated;
+          const { orderId, weight } = validated;
+          const destination = {
+            ...validated.destination,
+            country: validated.destination.country ?? "US",
+          };
 
           // ✅ Step 2: Add span attributes
           span.setAttributes({

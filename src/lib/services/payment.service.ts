@@ -39,8 +39,8 @@ const CreatePaymentIntentSchema = z.object({
     .string()
     .min(3, "Currency code too short")
     .max(3, "Currency code too long")
-    .default("usd"),
-  metadata: z.record(z.string(), z.string()).default({}),
+    .optional(),
+  metadata: z.record(z.string(), z.string()).optional(),
 });
 
 const RefundSchema = z.object({
@@ -211,7 +211,12 @@ export class PaymentService extends BaseService<Order> {
             request,
           );
 
-          const { orderId, amount, currency, metadata } = validated;
+          const {
+            orderId,
+            amount,
+            currency = "usd",
+            metadata = {},
+          } = validated;
 
           // ✅ Step 2: Add span attributes
           span.setAttributes({
