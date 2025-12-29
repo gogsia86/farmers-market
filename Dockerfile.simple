@@ -7,7 +7,7 @@
 # ============================================================================
 # STAGE 1: DEPENDENCIES
 # ============================================================================
-FROM node:20-alpine AS deps
+FROM node:25-alpine AS deps
 
 WORKDIR /app
 
@@ -36,7 +36,7 @@ RUN npx prisma generate || echo "Prisma generation will happen in builder stage"
 # ============================================================================
 # STAGE 2: BUILDER
 # ============================================================================
-FROM node:20-alpine AS builder
+FROM node:25-alpine AS builder
 
 WORKDIR /app
 
@@ -66,7 +66,7 @@ RUN npx prisma generate && \
 # ============================================================================
 # STAGE 3: RUNNER (PRODUCTION)
 # ============================================================================
-FROM node:20-alpine AS runner
+FROM node:25-alpine AS runner
 
 WORKDIR /app
 
