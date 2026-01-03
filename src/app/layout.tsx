@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Farmers Market Platform",
-  description: "Connect local farmers with customers",
+  description: "Connect local farmers with customers - Fresh, local, sustainable",
 };
 
 export default function RootLayout({
@@ -13,7 +13,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="min-h-screen bg-white antialiased">
+        {children}
+      </body>
     </html>
   );
 }
