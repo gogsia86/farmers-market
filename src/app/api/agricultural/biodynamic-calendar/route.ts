@@ -10,8 +10,11 @@
  * - POST: Create/update calendar entries
  */
 
+import { createLogger } from "@/lib/logger";
 import { BiodynamicCalendarService } from "@/lib/services/biodynamic-calendar.service";
 import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("biodynamic-calendar-api");
 
 /**
  * GET /api/agricultural/biodynamic-calendar
@@ -36,10 +39,13 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    logger.debug("Biodynamic calendar GET request", { farmId, type });
+
     switch (type) {
       case "today": {
         const guidance =
           await BiodynamicCalendarService.getTodaysGuidance(farmId);
+        logger.info("Retrieved today's biodynamic guidance", { farmId });
         return NextResponse.json({ data: guidance });
       }
 
@@ -63,6 +69,12 @@ export async function GET(request: NextRequest) {
           endDate,
         );
 
+        logger.info("Retrieved biodynamic calendar range", {
+          farmId,
+          startDate: startDateParam,
+          endDate: endDateParam,
+          count: calendars.length,
+        });
         return NextResponse.json({ data: calendars });
       }
 
@@ -70,6 +82,11 @@ export async function GET(request: NextRequest) {
         const days = parseInt(searchParams.get("days") || "30");
         const optimalDates =
           await BiodynamicCalendarService.getOptimalPlantingDates(farmId, days);
+        logger.info("Retrieved optimal planting dates", {
+          farmId,
+          days,
+          count: optimalDates.length,
+        });
         return NextResponse.json({ data: optimalDates });
       }
 
@@ -77,6 +94,11 @@ export async function GET(request: NextRequest) {
         const days = parseInt(searchParams.get("days") || "30");
         const optimalDates =
           await BiodynamicCalendarService.getOptimalHarvestDates(farmId, days);
+        logger.info("Retrieved optimal harvest dates", {
+          farmId,
+          days,
+          count: optimalDates.length,
+        });
         return NextResponse.json({ data: optimalDates });
       }
 
@@ -87,7 +109,9 @@ export async function GET(request: NextRequest) {
         );
     }
   } catch (error) {
-    console.error("Biodynamic calendar GET error:", error);
+    logger.error("Biodynamic calendar GET error", error as Error, {
+      url: request.url,
+    });
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : "Internal server error",
@@ -119,18 +143,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    logger.info("Creating/updating biodynamic calendar entry", {
+      farmId,
+      date,
+      userId,
+    });
+
     const calendar = await BiodynamicCalendarService.createOrUpdateCalendar(
       farmId,
       new Date(date),
       userId,
     );
 
+    logger.info("Biodynamic calendar entry updated successfully", {
+      farmId,
+      date,
+      calendarId: calendar.id,
+    });
+
     return NextResponse.json(
       { data: calendar, message: "Biodynamic calendar updated successfully" },
       { status: 200 },
     );
   } catch (error) {
-    console.error("Biodynamic calendar POST error:", error);
+    logger.error("Biodynamic calendar POST error", error as Error, {
+      url: request.url,
+    });
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : "Internal server error",

@@ -1,24 +1,24 @@
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { database } from "@/lib/database";
+import { createLogger } from "@/lib/utils/logger";
+import {
+  Award,
+  Calendar,
+  Globe,
+  Mail,
+  MapPin,
+  Package,
+  Phone,
+  Star,
+  Truck
+} from "lucide-react";
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { database } from "@/lib/database";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  MapPin,
-  Phone,
-  Mail,
-  Globe,
-  Star,
-  Package,
-  Calendar,
-  Award,
-  Truck,
-  Heart,
-} from "lucide-react";
+import { notFound } from "next/navigation";
+
+const farmPageLogger = createLogger("CustomerMarketplaceFarmPage");
 
 // Type definitions
 interface PageProps {
@@ -165,7 +165,10 @@ async function getFarmBySlug(slug: string) {
         },
       })
       .catch((error) => {
-        console.error("[FARM_VIEW_COUNT_ERROR]", error);
+        farmPageLogger.warn("Failed to increment farm view count", {
+          farmId: farm.id,
+          error: error instanceof Error ? error.message : String(error),
+        });
       });
 
     // Format response data
@@ -283,7 +286,9 @@ async function getFarmBySlug(slug: string) {
       updatedAt: farm.updatedAt.toISOString(),
     };
   } catch (error) {
-    console.error("[FARM_FETCH_ERROR]", error);
+    farmPageLogger.error("Failed to fetch farm by slug", error instanceof Error ? error : new Error(String(error)), {
+      slug,
+    });
     throw error; // Re-throw to handle in component
   }
 }
@@ -314,7 +319,9 @@ export async function generateMetadata({
       },
     };
   } catch (error) {
-    console.error("[METADATA_ERROR]", error);
+    farmPageLogger.error("Failed to generate farm metadata", error instanceof Error ? error : new Error(String(error)), {
+      slug,
+    });
     return {
       title: "Farm Profile | Farmers Market Platform",
       description: "View farm profile and products",
@@ -330,7 +337,9 @@ export default async function FarmProfilePage({ params }: PageProps) {
   try {
     farm = await getFarmBySlug(slug);
   } catch (error) {
-    console.error("[PAGE_RENDER_ERROR]", error);
+    farmPageLogger.error("Farm page render error", error instanceof Error ? error : new Error(String(error)), {
+      slug,
+    });
     notFound();
   }
 
@@ -527,11 +536,10 @@ export default async function FarmProfilePage({ params }: PageProps) {
                             {[...Array(5)].map((_, i) => (
                               <Star
                                 key={i}
-                                className={`h-4 w-4 ${
-                                  i < review.rating
+                                className={`h-4 w-4 ${i < review.rating
                                     ? "fill-yellow-400 text-yellow-400"
                                     : "text-gray-300"
-                                }`}
+                                  }`}
                               />
                             ))}
                           </div>

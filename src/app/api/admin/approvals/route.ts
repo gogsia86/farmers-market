@@ -1,7 +1,11 @@
 import { requireFarmerAuth } from "@/lib/auth/farmer-auth";
 import { database } from "@/lib/database";
 import { sendEmailLazy } from "@/lib/email/email.service";
+import { createLogger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
+
+// Initialize structured logger
+const logger = createLogger("admin-approvals-api");
 
 /**
  * 🎯 ADMIN APPROVAL API
@@ -69,7 +73,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Get approvals error:", error);
+    logger.error("Failed to fetch approvals", error as Error, {
+      operation: "GET /api/admin/approvals",
+    });
     return NextResponse.json(
       { error: "Failed to fetch approvals" },
       { status: 500 },
@@ -148,6 +154,14 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    logger.info("Farm approval action processed", {
+      farmId,
+      farmName: farm.name,
+      action,
+      newStatus,
+      adminId: authResult.userId,
+    });
+
     // Send notification email
     const ownerName =
       `${farm.owner.firstName || ""} ${farm.owner.lastName || ""}`.trim() ||
@@ -209,13 +223,12 @@ export async function POST(request: NextRequest) {
 
               <p>After reviewing your application, we're unable to approve it at this time.</p>
 
-              ${
-                reason
-                  ? `<div style="background: #fef3c7; padding: 15px; border-left: 4px solid #f59e0b; margin: 20px 0;">
+              ${reason
+            ? `<div style="background: #fef3c7; padding: 15px; border-left: 4px solid #f59e0b; margin: 20px 0;">
                 <strong>Reason:</strong><br>${reason}
               </div>`
-                  : ""
-              }
+            : ""
+          }
 
               <p>You're welcome to submit a new application after addressing any concerns.</p>
 
@@ -241,7 +254,9 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Approval action error:", error);
+    logger.error("Failed to process approval action", error as Error, {
+      operation: "POST /api/admin/approvals",
+    });
     return NextResponse.json(
       { error: "Failed to process approval" },
       { status: 500 },

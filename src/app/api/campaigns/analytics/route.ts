@@ -10,9 +10,12 @@
  * ╚══════════════════════════════════════════════════════════════════╝
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import { createLogger } from "@/lib/logger";
 import { campaignAnalyticsService } from "@/lib/services/campaigns/campaign-analytics.service";
 import type { CampaignType } from "@/lib/services/campaigns/campaign-automation.service";
+import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("campaign-analytics-api");
 
 // ═══════════════════════════════════════════════════════════════════
 // 📊 GET - Campaign Analytics
@@ -28,12 +31,24 @@ export async function GET(request: NextRequest) {
     const endDate = searchParams.get("endDate");
     const compareWith = searchParams.get("compareWith");
 
+    logger.debug("Campaign analytics request", {
+      action,
+      campaignType,
+      campaignId,
+      startDate,
+      endDate,
+    });
+
     // Get specific campaign performance
     if (action === "performance" && campaignId) {
       const performance =
         campaignAnalyticsService.getCampaignPerformance(campaignId);
 
       if (!performance) {
+        logger.warn("Campaign not found for performance request", {
+          campaignId,
+        });
+
         return NextResponse.json(
           {
             success: false,
@@ -46,6 +61,8 @@ export async function GET(request: NextRequest) {
           { status: 404 },
         );
       }
+
+      logger.info("Campaign performance retrieved", { campaignId });
 
       return NextResponse.json({
         success: true,
@@ -66,6 +83,11 @@ export async function GET(request: NextRequest) {
       );
 
       if (!comparison) {
+        logger.warn("Campaigns not found for comparison", {
+          campaignId,
+          compareWith,
+        });
+
         return NextResponse.json(
           {
             success: false,
@@ -78,6 +100,11 @@ export async function GET(request: NextRequest) {
           { status: 404 },
         );
       }
+
+      logger.info("Campaign comparison completed", {
+        campaignId,
+        compareWith,
+      });
 
       return NextResponse.json({
         success: true,
@@ -97,7 +124,17 @@ export async function GET(request: NextRequest) {
         : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
       const end = endDate ? new Date(endDate) : new Date();
 
+      logger.info("Generating campaign report", {
+        startDate: start.toISOString(),
+        endDate: end.toISOString(),
+      });
+
       const report = await campaignAnalyticsService.generateReport(start, end);
+
+      logger.info("Campaign report generated successfully", {
+        startDate: start.toISOString(),
+        endDate: end.toISOString(),
+      });
 
       return NextResponse.json({
         success: true,
@@ -114,6 +151,11 @@ export async function GET(request: NextRequest) {
     if (campaignType) {
       const campaigns =
         campaignAnalyticsService.getCampaignsByType(campaignType);
+
+      logger.info("Campaigns retrieved by type", {
+        campaignType,
+        count: campaigns.length,
+      });
 
       return NextResponse.json({
         success: true,
@@ -137,6 +179,12 @@ export async function GET(request: NextRequest) {
         end,
       );
 
+      logger.info("Campaigns retrieved for date range", {
+        startDate,
+        endDate,
+        count: campaigns.length,
+      });
+
       return NextResponse.json({
         success: true,
         data: {
@@ -157,6 +205,10 @@ export async function GET(request: NextRequest) {
     const stats = campaignAnalyticsService.getSummaryStats();
     const allCampaigns = campaignAnalyticsService.getAllCampaigns();
 
+    logger.info("Campaign analytics summary retrieved", {
+      totalCampaigns: allCampaigns.length,
+    });
+
     return NextResponse.json({
       success: true,
       data: {
@@ -169,7 +221,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("❌ Error fetching campaign analytics:", error);
+    logger.error("Error fetching campaign analytics", error as Error, {
+      endpoint: "GET /api/campaigns/analytics",
+    });
 
     return NextResponse.json(
       {

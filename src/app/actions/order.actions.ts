@@ -11,23 +11,29 @@
  * - Authentication & authorization
  * - Comprehensive error handling
  * - Cache revalidation
+ * - Email notifications for status changes
  */
 
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { getCurrentUser, requireFarmer } from "@/lib/auth";
 import { database } from "@/lib/database";
-import { requireFarmer, getCurrentUser } from "@/lib/auth";
-import { z } from "zod";
+import { createLogger } from "@/lib/logger";
+import { emailService } from "@/lib/services";
 import {
-  ActionResult,
   ActionError,
   ActionErrorCode,
-  createSuccessResult,
+  ActionResult,
   createErrorResult,
+  createSuccessResult,
 } from "@/types/actions";
 import type { Order, OrderStatus } from "@prisma/client";
 import { Prisma } from "@prisma/client";
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+
+// Initialize logger for order actions
+const logger = createLogger("order-actions");
 
 // ============================================================================
 // VALIDATION SCHEMAS
@@ -298,15 +304,38 @@ export async function updateOrderStatusAction(
     revalidatePath(`/farmer/orders/${orderId}`);
     revalidatePath(`/orders/${orderId}`);
 
-    // TODO: Send notification to customer about status change
-    // This would integrate with notification service
+    // 10. Send email notification to customer about status change
+    if (order.customer) {
+      try {
+        await emailService.sendOrderStatusUpdate({
+          order,
+          user: {
+            id: order.customer.id,
+            email: order.customer.email,
+            name: order.customer.name,
+          },
+          oldStatus: currentStatus,
+          newStatus,
+        });
+      } catch (emailError) {
+        // Log but don't fail the order update if email fails
+        logger.warn("Failed to send order status email", {
+          orderId,
+          newStatus,
+          error: emailError instanceof Error ? emailError.message : String(emailError),
+        });
+      }
+    }
 
-    // 10. Return success with updated order
+    // 11. Return success with updated order
     return createSuccessResult(order, {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Update order status error:", error);
+    logger.error("Update order status failed", error as Error, {
+      orderId,
+      newStatus,
+    });
 
     // Handle known Prisma errors
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -402,14 +431,53 @@ export async function addOrderNoteAction(
     revalidatePath(`/farmer/orders/${orderId}`);
     revalidatePath(`/orders/${orderId}`);
 
-    // TODO: If visible to customer, send notification
+    // 7. Send email notification if visible to customer
+    if (isVisibleToCustomer) {
+      try {
+        const order = await database.order.findUnique({
+          where: { id: orderId },
+          include: {
+            customer: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+          },
+        });
 
-    // 7. Return success
+        if (order?.customer) {
+          // Use the order status update email for customer-facing notes
+          await emailService.sendOrderStatusUpdate({
+            order,
+            user: {
+              id: order.customer.id,
+              email: order.customer.email,
+              name: order.customer.name,
+            },
+            oldStatus: order.status,
+            newStatus: order.status,
+          });
+        }
+      } catch (emailError) {
+        logger.warn("Failed to send note notification email", {
+          orderId,
+          note,
+          error: emailError instanceof Error ? emailError.message : String(emailError),
+        });
+      }
+    }
+
+    // 8. Return success
     return createSuccessResult(undefined, {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Add order note error:", error);
+    logger.error("Add order note failed", error as Error, {
+      orderId,
+      note,
+    });
 
     // Handle known Prisma errors
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -555,14 +623,49 @@ export async function updateFulfillmentAction(
     revalidatePath(`/farmer/orders/${orderId}`);
     revalidatePath(`/orders/${orderId}`);
 
-    // TODO: Send notification to customer with tracking info
+    // 8. Send notification to customer with tracking info
+    try {
+      const order = await database.order.findUnique({
+        where: { id: orderId },
+        include: {
+          customer: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
 
-    // 8. Return success
+      if (order?.customer && validation.data.trackingNumber) {
+        await emailService.sendOrderShipped(
+          order,
+          {
+            id: order.customer.id,
+            email: order.customer.email,
+            name: order.customer.name,
+          },
+          validation.data.trackingNumber,
+          validation.data.estimatedDate || undefined,
+        );
+      }
+    } catch (emailError) {
+      logger.warn("Failed to send shipment notification email", {
+        orderId,
+        error: emailError instanceof Error ? emailError.message : String(emailError),
+      });
+    }
+
+    // 9. Return success
     return createSuccessResult(undefined, {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Update fulfillment error:", error);
+    logger.error("Update fulfillment failed", error as Error, {
+      orderId,
+      fulfillmentData: data,
+    });
 
     // Handle known Prisma errors
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -708,15 +811,52 @@ export async function cancelOrderAction(
     revalidatePath(`/farmer/orders/${orderId}`);
     revalidatePath(`/orders/${orderId}`);
 
-    // TODO: Process refund if refundAmount provided
-    // TODO: Send cancellation notification to customer
+    // 10. Send cancellation notification to customer
+    if (validation.data.notifyCustomer) {
+      try {
+        const orderWithCustomer = await database.order.findUnique({
+          where: { id: orderId },
+          include: {
+            customer: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+          },
+        });
 
-    // 10. Return success with cancelled order
+        if (orderWithCustomer?.customer) {
+          await emailService.sendOrderCancelled(
+            orderWithCustomer,
+            {
+              id: orderWithCustomer.customer.id,
+              email: orderWithCustomer.customer.email,
+              name: orderWithCustomer.customer.name,
+            },
+            validation.data.reason,
+          );
+        }
+      } catch (emailError) {
+        logger.warn("Failed to send cancellation notification email", {
+          orderId,
+          error: emailError instanceof Error ? emailError.message : String(emailError),
+        });
+      }
+    }
+
+    // TODO: Process refund if refundAmount provided
+
+    // 11. Return success with cancelled order
     return createSuccessResult(order, {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Cancel order error:", error);
+    logger.error("Cancel order failed", error as Error, {
+      orderId,
+      reason: data.reason,
+    });
 
     // Handle known Prisma errors
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -821,7 +961,9 @@ export async function getOrderDetailsAction(
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Get order details error:", error);
+    logger.error("Get order details failed", error as Error, {
+      orderId,
+    });
 
     // Generic error fallback
     return createErrorResult(

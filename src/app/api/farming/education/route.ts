@@ -8,11 +8,14 @@
  * - Returns structured guides with citations
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import { auth } from "@/lib/auth";
+import { createLogger } from "@/lib/logger";
 import { getEducationalContent } from "@/lib/services/perplexity-farming.service";
 import type { EducationalContentRequest } from "@/types/farming-advice.types";
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+
+const logger = createLogger("farming-education-api");
 
 // ============================================================================
 // VALIDATION SCHEMA
@@ -53,6 +56,11 @@ export async function POST(request: NextRequest) {
     const validation = EducationalContentSchema.safeParse(body);
 
     if (!validation.success) {
+      logger.warn("Educational content validation failed", {
+        userId: session.user.id,
+        errors: validation.error.flatten(),
+      });
+
       return NextResponse.json(
         {
           success: false,
@@ -68,6 +76,13 @@ export async function POST(request: NextRequest) {
 
     const validatedData = validation.data;
 
+    logger.debug("Fetching educational content", {
+      userId: session.user.id,
+      topic: validatedData.topic,
+      level: validatedData.level,
+      format: validatedData.format,
+    });
+
     // 3. Build Request
     const contentRequest: EducationalContentRequest = {
       topic: validatedData.topic,
@@ -82,12 +97,24 @@ export async function POST(request: NextRequest) {
 
     // 5. Return Response
     if (result.success) {
+      logger.info("Educational content fetched successfully", {
+        userId: session.user.id,
+        topic: validatedData.topic,
+        level: contentRequest.level,
+        format: contentRequest.format,
+      });
       return NextResponse.json(result, { status: 200 });
     } else {
+      logger.warn("Educational content fetch returned unsuccessful", {
+        userId: session.user.id,
+        topic: validatedData.topic,
+      });
       return NextResponse.json(result, { status: 500 });
     }
   } catch (error) {
-    console.error("❌ Educational Content API Error:", error);
+    logger.error("Educational Content API error", error as Error, {
+      endpoint: "POST /api/farming/education",
+    });
 
     return NextResponse.json(
       {

@@ -32,14 +32,17 @@
 
 "use client";
 
-import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { StatCard } from "@/components/dashboard/StatCard";
+import { EmptyState } from "@/components/dashboard/EmptyState";
 import { OrderCard } from "@/components/dashboard/OrderCard";
 import { QuickActionCard } from "@/components/dashboard/QuickActionCard";
-import { EmptyState } from "@/components/dashboard/EmptyState";
+import { StatCard } from "@/components/dashboard/StatCard";
+import { createLogger } from "@/lib/utils/logger";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+const dashboardLogger = createLogger("CustomerDashboard");
 
 interface DashboardStats {
   activeOrders: number;
@@ -94,7 +97,7 @@ export default function CustomerDashboard() {
         setFavoriteFarms(data.favoriteFarms || []);
       }
     } catch (error) {
-      console.error("Failed to fetch dashboard data:", error);
+      dashboardLogger.error("Failed to fetch dashboard data", error instanceof Error ? error : new Error(String(error)));
     } finally {
       setLoading(false);
     }

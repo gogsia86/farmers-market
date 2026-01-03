@@ -1,8 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { createLogger } from "@/lib/utils/logger";
 import { Heart, Share2 } from "lucide-react";
+import { useEffect, useState } from "react";
+
+const farmActionsLogger = createLogger("FarmProfileActions");
 
 interface FarmProfileActionsProps {
   farmId: string;
@@ -31,7 +34,9 @@ export function FarmProfileActions({
           }
         }
       } catch (error) {
-        console.error("Failed to load favorite status:", error);
+        farmActionsLogger.error("Failed to load favorite status", error instanceof Error ? error : new Error(String(error)), {
+          farmId,
+        });
       } finally {
         setLoading(false);
       }
@@ -70,7 +75,10 @@ export function FarmProfileActions({
         }
       }
     } catch (error) {
-      console.error("Failed to toggle favorite:", error);
+      farmActionsLogger.error("Failed to toggle favorite", error instanceof Error ? error : new Error(String(error)), {
+        farmId,
+        action: isFavorited ? "unfavorite" : "favorite",
+      });
 
       // Rollback on error
       setIsFavorited(previousState);
@@ -96,7 +104,11 @@ export function FarmProfileActions({
         alert("Link copied to clipboard!");
       }
     } catch (error) {
-      console.error("Failed to share:", error);
+      farmActionsLogger.warn("Failed to share farm", {
+        farmId,
+        farmName,
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   };
 

@@ -18,23 +18,24 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
-import Image from "next/image";
+import { cn } from "@/lib/utils";
+import { cartLogger } from "@/lib/utils/logger";
 import {
-  CreditCard,
-  MapPin,
-  Calendar,
-  Clock,
-  ShieldCheck,
   AlertCircle,
+  Apple,
+  Calendar,
   CheckCircle,
+  Clock,
+  CreditCard,
+  DollarSign,
   Edit2,
   Loader2,
-  Apple,
+  MapPin,
+  ShieldCheck,
   Smartphone,
-  DollarSign,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 
 // ============================================
 // 🎯 DIVINE TYPE DEFINITIONS
@@ -136,8 +137,8 @@ export function QuickCheckout({
   const [selectedPayment, setSelectedPayment] =
     useState<SavedPaymentMethod | null>(
       savedPaymentMethods.find((p) => p.isDefault) ||
-        savedPaymentMethods[0] ||
-        null,
+      savedPaymentMethods[0] ||
+      null,
     );
   const [selectedDeliverySlot, setSelectedDeliverySlot] =
     useState<DeliverySlot | null>(null);
@@ -203,7 +204,10 @@ export function QuickCheckout({
       const orderId = `ORDER-${Date.now()}`;
       onCheckoutComplete?.(orderId);
     } catch (err) {
-      console.error("Express checkout error:", err);
+      cartLogger.error("Express checkout error", err instanceof Error ? err : new Error(String(err)), {
+        method,
+        itemCount: items.length,
+      });
       setError("Express checkout failed. Please try again.");
     } finally {
       setIsProcessing(false);
@@ -242,7 +246,12 @@ export function QuickCheckout({
       const data = await response.json();
       onCheckoutComplete?.(data.orderId);
     } catch (err) {
-      console.error("Checkout error:", err);
+      cartLogger.error("Quick checkout order placement failed", err instanceof Error ? err : new Error(String(err)), {
+        addressId: selectedAddress?.id,
+        paymentMethodId: selectedPayment?.id,
+        deliverySlotId: selectedDeliverySlot?.id,
+        itemCount: items.length,
+      });
       setError("Failed to place order. Please try again.");
     } finally {
       setIsProcessing(false);
@@ -734,10 +743,9 @@ function PaymentMethodOption({
 // ============================================
 
 export type {
-  CartItem,
-  SavedAddress,
-  SavedPaymentMethod,
-  DeliverySlot,
+  CartItem, DeliverySlot,
   OrderSummary,
-  QuickCheckoutProps,
+  QuickCheckoutProps, SavedAddress,
+  SavedPaymentMethod
 };
+

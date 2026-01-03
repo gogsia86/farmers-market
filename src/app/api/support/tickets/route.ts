@@ -10,9 +10,12 @@
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
 import { sendSupportTicketConfirmationLazy } from "@/lib/email/email.service";
-import { NextRequest, NextResponse } from "next/server";
+import { createLogger } from "@/lib/logger";
 import { Prisma } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+
+const logger = createLogger("support-tickets-api");
 
 /**
  * Validation schema for creating support tickets
@@ -119,7 +122,11 @@ export async function POST(request: NextRequest) {
       });
     } catch (emailError) {
       // Log email error but don't fail ticket creation
-      console.error("Failed to send support ticket confirmation:", emailError);
+      logger.warn("Failed to send support ticket confirmation", {
+        operation: "sendConfirmationEmail",
+        ticketId: ticket.id,
+        error: emailError instanceof Error ? emailError.message : "Unknown error",
+      });
     }
 
     return NextResponse.json(
@@ -151,7 +158,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.error("Support ticket creation error:", error);
+    logger.error("Support ticket creation error", error, {
+      operation: "createSupportTicket",
+    });
     return NextResponse.json(
       {
         success: false,
@@ -272,7 +281,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Get support tickets error:", error);
+    logger.error("Get support tickets error", error, {
+      operation: "getSupportTickets",
+    });
     return NextResponse.json(
       {
         success: false,

@@ -12,9 +12,12 @@
  * @divine-pattern API_QUANTUM_CONSCIOUSNESS
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { database } from "@/lib/database";
-import { trace, SpanStatusCode } from "@opentelemetry/api";
+import { createLogger } from "@/lib/logger";
+import { SpanStatusCode, trace } from "@opentelemetry/api";
+import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("monitoring-metrics-api");
 
 // ============================================================================
 // Types
@@ -310,7 +313,7 @@ export async function GET(
         const previousPeriodStart = new Date(startDate);
         previousPeriodStart.setTime(
           previousPeriodStart.getTime() -
-            (endDate.getTime() - startDate.getTime()),
+          (endDate.getTime() - startDate.getTime()),
         );
 
         const previousExecutions = await database.workflowExecution.findMany({
@@ -325,17 +328,17 @@ export async function GET(
         const previousSuccessRate =
           previousExecutions.length > 0
             ? (previousExecutions.filter((e: any) => e.status === "success")
-                .length /
-                previousExecutions.length) *
-              100
+              .length /
+              previousExecutions.length) *
+            100
             : 0;
 
         const previousAvgDuration =
           previousExecutions.length > 0
             ? previousExecutions.reduce(
-                (sum: any, e: any) => sum + (e.durationMs || 0),
-                0,
-              ) / previousExecutions.length
+              (sum: any, e: any) => sum + (e.durationMs || 0),
+              0,
+            ) / previousExecutions.length
             : 0;
 
         const trends: MetricsTrends = {
@@ -432,7 +435,11 @@ export async function GET(
 
         span.recordException(error as Error);
 
-        console.error("Error fetching monitoring metrics:", error);
+        logger.error("Error fetching monitoring metrics", error, {
+          operation: "getMonitoringMetrics",
+          period,
+          requestId,
+        });
 
         return NextResponse.json<MetricsResponse>(
           {

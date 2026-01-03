@@ -1,6 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
+
+// Initialize structured logger
+const logger = createLogger("reviews-item-api");
 
 /**
  * PUT /api/reviews/[id]
@@ -88,6 +92,12 @@ export async function PUT(
       },
     });
 
+    logger.info("Review updated successfully", {
+      reviewId: id,
+      userId: session.user.id,
+      rating: updatedReview.rating,
+    });
+
     return NextResponse.json({
       success: true,
       message: "Review updated successfully",
@@ -101,7 +111,9 @@ export async function PUT(
       },
     });
   } catch (error) {
-    console.error("Review update error:", error);
+    logger.error("Failed to update review", error as Error, {
+      operation: "PUT /api/reviews/[id]",
+    });
     return NextResponse.json(
       {
         success: false,
@@ -160,12 +172,19 @@ export async function DELETE(
       where: { id },
     });
 
+    logger.info("Review deleted successfully", {
+      reviewId: id,
+      userId: session.user.id,
+    });
+
     return NextResponse.json({
       success: true,
       message: "Review deleted successfully",
     });
   } catch (error) {
-    console.error("Review deletion error:", error);
+    logger.error("Failed to delete review", error as Error, {
+      operation: "DELETE /api/reviews/[id]",
+    });
     return NextResponse.json(
       {
         success: false,

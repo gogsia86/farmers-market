@@ -4,9 +4,12 @@
  * HP OMEN Optimized - DeepSeek-R1:7b
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import { AgriculturalAnalysisAgent, createOllamaClient } from "@/lib/ai/ollama";
 import { auth } from "@/lib/auth";
-import { createOllamaClient, AgriculturalAnalysisAgent } from "@/lib/ai/ollama";
+import { createLogger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("ollama-analyze-api");
 
 // ============================================================================
 // POST /api/ai/ollama/analyze - Analyze agricultural data/questions
@@ -46,12 +49,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    logger.info("Starting agricultural analysis", {
+      userId: session.user.id,
+      analysisType,
+      queryLength: query.length,
+    });
+
     // Create Ollama client
     const client = createOllamaClient("deepseek-r1:7b");
 
     // Health check
     const isHealthy = await client.healthCheck();
     if (!isHealthy) {
+      logger.warn("Ollama service unavailable for analysis", {
+        userId: session.user.id,
+        analysisType,
+      });
       return NextResponse.json(
         {
           success: false,
@@ -122,6 +135,12 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    logger.info("Agricultural analysis completed successfully", {
+      userId: session.user.id,
+      analysisType,
+      resultType: result.type,
+    });
+
     return NextResponse.json({
       success: true,
       data: result,
@@ -133,7 +152,10 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Ollama analysis error:", error);
+    logger.error("Ollama analysis error", error as Error, {
+      endpoint: "/api/ai/ollama/analyze",
+      method: "POST",
+    });
 
     return NextResponse.json(
       {
@@ -174,6 +196,11 @@ export async function GET(_request: NextRequest) {
 
     const client = createOllamaClient("deepseek-r1:7b");
     const isHealthy = await client.healthCheck();
+
+    logger.debug("Analysis capabilities requested", {
+      userId: session.user.id,
+      ollamaStatus: isHealthy ? "online" : "offline",
+    });
 
     return NextResponse.json({
       success: true,
@@ -233,7 +260,10 @@ export async function GET(_request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Analysis capabilities error:", error);
+    logger.error("Analysis capabilities error", error as Error, {
+      endpoint: "/api/ai/ollama/analyze",
+      method: "GET",
+    });
 
     return NextResponse.json(
       {

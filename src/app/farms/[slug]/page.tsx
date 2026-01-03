@@ -18,6 +18,8 @@
  * ✅ DIRECT DATABASE ACCESS - Server Component pattern
  */
 
+import { database } from "@/lib/database";
+import { createLogger } from "@/lib/utils/logger";
 import {
   ArrowLeft,
   Award,
@@ -36,7 +38,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { database } from "@/lib/database";
+
+const farmDetailLogger = createLogger("FarmDetailPage");
 
 interface PageProps {
   readonly params: Promise<{
@@ -146,7 +149,10 @@ async function getFarmBySlug(slug: string) {
         },
       })
       .catch((error) => {
-        console.error("[FARM_VIEW_COUNT_ERROR]", error);
+        farmDetailLogger.warn("Failed to increment farm view count", {
+          farmId: farm.id,
+          error: error instanceof Error ? error.message : String(error),
+        });
         // Don't fail the request if view count update fails
       });
 
@@ -247,7 +253,9 @@ async function getFarmBySlug(slug: string) {
       updatedAt: farm.updatedAt.toISOString(),
     };
   } catch (error) {
-    console.error("[FARM_FETCH_ERROR]", error);
+    farmDetailLogger.error("Failed to fetch farm by slug", error instanceof Error ? error : new Error(String(error)), {
+      slug,
+    });
     return null;
   }
 }

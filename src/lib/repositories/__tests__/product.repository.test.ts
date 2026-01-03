@@ -80,7 +80,7 @@ describe("🌾 QuantumProductRepository - Divine Product Database Operations", (
       city: "Celestial Valley",
       state: "organic",
       isActive: true,
-      status: "APPROVED",
+      status: "ACTIVE",
     };
 
     // Mock product data with biodynamic awareness

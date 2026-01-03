@@ -1,7 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
 import bcrypt from "bcryptjs";
+import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("user-password-api");
 
 /**
  * PUT /api/users/password
@@ -102,7 +105,9 @@ export async function PUT(request: NextRequest) {
       message: "Password changed successfully",
     });
   } catch (error) {
-    console.error("Password change error:", error);
+    logger.error("Password change failed", error, {
+      operation: "changePassword",
+    });
     return NextResponse.json(
       {
         success: false,

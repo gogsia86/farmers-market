@@ -1,6 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("user-addresses-default-api");
 
 /**
  * PUT /api/users/addresses/[id]/default
@@ -99,7 +102,9 @@ export async function PUT(
       },
     });
   } catch (error) {
-    console.error("Set default address error:", error);
+    logger.error("Failed to set default address", error, {
+      operation: "setDefaultAddress",
+    });
     return NextResponse.json(
       {
         success: false,

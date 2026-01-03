@@ -14,8 +14,11 @@
  * @reference .github/instructions/04_NEXTJS_DIVINE_IMPLEMENTATION.instructions.md
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("featured-farms-api");
 
 /**
  * GET /api/farms/featured
@@ -52,6 +55,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     // Parse query parameters
     const { searchParams } = new URL(request.url);
     const limit = Math.min(parseInt(searchParams.get("limit") || "6"), 20);
+
+    logger.debug("Fetching featured farms", { limit });
 
     // Fetch featured farms with optimized query
     const farms = await database.farm.findMany({
@@ -117,6 +122,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       createdAt: farm.createdAt.toISOString(),
     }));
 
+    logger.info("Featured farms fetched successfully", {
+      count: formattedFarms.length,
+      limit,
+    });
+
     return NextResponse.json({
       success: true,
       data: {
@@ -132,7 +142,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     });
   } catch (error) {
-    console.error("Featured farms fetch error:", error);
+    logger.error("Featured farms fetch error", error as Error, {
+      endpoint: "GET /api/farms/featured",
+    });
     return NextResponse.json(
       {
         success: false,

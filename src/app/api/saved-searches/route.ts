@@ -8,11 +8,14 @@
  * @since Run 4
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { auth as getServerSession } from "@/lib/auth/config";
+import { createLogger } from "@/lib/logger";
 import { SavedSearchService } from "@/lib/services/saved-searches/saved-search.service";
-import { z } from "zod";
 import { NotificationFrequency, Season } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+
+const logger = createLogger("saved-searches-api");
 
 // ============================================
 // VALIDATION SCHEMAS
@@ -81,9 +84,9 @@ export async function GET(req: NextRequest) {
     // Parse tags if provided
     const tags = validatedParams.tags
       ? validatedParams.tags
-          .split(",")
-          .map((t) => t.trim())
-          .filter(Boolean)
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean)
       : undefined;
 
     // Fetch saved searches
@@ -99,7 +102,9 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
-    console.error("[SavedSearches GET] Error:", error);
+    logger.error("Failed to fetch saved searches", error, {
+      operation: "listSavedSearches",
+    });
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -146,7 +151,9 @@ export async function POST(req: NextRequest) {
       { status: 201 },
     );
   } catch (error) {
-    console.error("[SavedSearches POST] Error:", error);
+    logger.error("Failed to create saved search", error, {
+      operation: "createSavedSearch",
+    });
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(

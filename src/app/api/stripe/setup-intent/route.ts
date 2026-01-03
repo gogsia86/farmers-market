@@ -12,12 +12,15 @@
  * @route GET /api/stripe/setup-intent - Retrieve setup intent status
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { stripe } from "@/lib/stripe";
 import { database } from "@/lib/database";
-import { z } from "zod";
+import { createLogger } from "@/lib/logger";
+import { stripe } from "@/lib/stripe";
+import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { z } from "zod";
+
+const logger = createLogger("stripe-setup-intent-api");
 
 // ============================================================================
 // VALIDATION SCHEMAS
@@ -172,7 +175,9 @@ export async function POST(request: NextRequest) {
       { status: 201 },
     );
   } catch (error) {
-    console.error("Error creating setup intent:", error);
+    logger.error("Failed to create setup intent", error, {
+      operation: "createSetupIntent",
+    });
 
     // Handle Stripe-specific errors
     if (error instanceof Stripe.errors.StripeError) {
@@ -259,11 +264,11 @@ export async function GET(request: NextRequest) {
           type: paymentMethod.type,
           card: paymentMethod.card
             ? {
-                brand: paymentMethod.card.brand,
-                last4: paymentMethod.card.last4,
-                expMonth: paymentMethod.card.exp_month,
-                expYear: paymentMethod.card.exp_year,
-              }
+              brand: paymentMethod.card.brand,
+              last4: paymentMethod.card.last4,
+              expMonth: paymentMethod.card.exp_month,
+              expYear: paymentMethod.card.exp_year,
+            }
             : null,
         };
       } catch {
@@ -284,16 +289,18 @@ export async function GET(request: NextRequest) {
           paymentMethod: paymentMethodDetails,
           lastError: setupIntent.last_setup_error
             ? {
-                code: setupIntent.last_setup_error.code,
-                message: setupIntent.last_setup_error.message,
-              }
+              code: setupIntent.last_setup_error.code,
+              message: setupIntent.last_setup_error.message,
+            }
             : null,
         },
       },
       { status: 200 },
     );
   } catch (error) {
-    console.error("Error retrieving setup intent:", error);
+    logger.error("Failed to retrieve setup intent", error, {
+      operation: "retrieveSetupIntent",
+    });
 
     if (error instanceof Stripe.errors.StripeError) {
       return NextResponse.json(
@@ -412,7 +419,9 @@ export async function PATCH(request: NextRequest) {
       { status: 200 },
     );
   } catch (error) {
-    console.error("Error confirming setup intent:", error);
+    logger.error("Failed to confirm setup intent", error, {
+      operation: "confirmSetupIntent",
+    });
 
     if (error instanceof Stripe.errors.StripeError) {
       return NextResponse.json(

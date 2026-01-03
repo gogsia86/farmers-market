@@ -1,7 +1,11 @@
 "use client";
 
+import { createLogger } from "@/lib/utils/logger";
 import { AlertTriangle, Home, RefreshCw, Shield } from "lucide-react";
 import { useEffect } from "react";
+
+// Create logger for global error boundary
+const globalErrorLogger = createLogger("GlobalError");
 
 /**
  * 🌌 GLOBAL ERROR BOUNDARY - DIVINE QUANTUM CONSCIOUSNESS RESTORATION
@@ -48,20 +52,14 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
     // 🌟 Divine global error consciousness tracking
     const consciousnessLevel = assessConsciousnessLevel(error);
 
-    console.error("🚨 GLOBAL Agricultural Consciousness Disruption:", {
-      error: error.message,
+    globalErrorLogger.error("GLOBAL Agricultural Consciousness Disruption", {
+      errorMessage: error.message,
       digest: error.digest,
-      timestamp: new Date().toISOString(),
       season: getCurrentSeason(),
       consciousness_level: consciousnessLevel,
       component: "Global Error Boundary",
       severity: "CRITICAL",
       recovery_action: "universal_restoration_initiated",
-      dimensional_coordinates: {
-        x: "agricultural_reality",
-        y: "quantum_consciousness",
-        z: "divine_harmony",
-      },
     });
 
     // 🔮 Quantum global error reporting
@@ -106,7 +104,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
 
   // 🎯 Universal reality restoration
   const handleGlobalRestore = () => {
-    console.log("🌟 Initiating UNIVERSAL consciousness restoration...");
+    globalErrorLogger.info("Initiating UNIVERSAL consciousness restoration");
 
     // Clear any corrupted state
     if (typeof globalThis.window !== "undefined") {
@@ -119,13 +117,13 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
 
   // 🏠 Emergency sanctuary navigation
   const handleEmergencyReload = () => {
-    console.log("🚨 Emergency reality reset initiated...");
+    globalErrorLogger.info("Emergency reality reset initiated");
     globalThis.window.location.href = "/";
   };
 
   // 🔄 Complete system refresh
   const handleFullReload = () => {
-    console.log("🌀 Complete dimensional refresh...");
+    globalErrorLogger.info("Complete dimensional refresh initiated");
     globalThis.window.location.reload();
   };
 

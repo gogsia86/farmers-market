@@ -9,8 +9,12 @@
 
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+
+// Initialize structured logger
+const logger = createLogger("notifications-preferences-api");
 
 /**
  * Validation schema for notification preferences update
@@ -67,6 +71,10 @@ export async function GET(_request: NextRequest) {
           pushPromotions: false,
         },
       });
+
+      logger.info("Created default notification preferences", {
+        userId: session.user.id,
+      });
     }
 
     return NextResponse.json({
@@ -74,7 +82,9 @@ export async function GET(_request: NextRequest) {
       data: preferences,
     });
   } catch (error) {
-    console.error("Get notification preferences error:", error);
+    logger.error("Failed to fetch notification preferences", error as Error, {
+      operation: "GET /api/notifications/preferences",
+    });
     return NextResponse.json(
       {
         success: false,
@@ -138,13 +148,20 @@ export async function PUT(request: NextRequest) {
       },
     });
 
+    logger.info("Updated notification preferences", {
+      userId: session.user.id,
+      updatedFields: Object.keys(updateData),
+    });
+
     return NextResponse.json({
       success: true,
       data: preferences,
       message: "Notification preferences updated successfully",
     });
   } catch (error) {
-    console.error("Update notification preferences error:", error);
+    logger.error("Failed to update notification preferences", error as Error, {
+      operation: "PUT /api/notifications/preferences",
+    });
     return NextResponse.json(
       {
         success: false,
@@ -209,13 +226,20 @@ export async function PATCH(request: NextRequest) {
       data: validation.data,
     });
 
+    logger.info("Patched notification preferences", {
+      userId: session.user.id,
+      patchedFields: Object.keys(validation.data),
+    });
+
     return NextResponse.json({
       success: true,
       data: preferences,
       message: "Notification preferences updated successfully",
     });
   } catch (error) {
-    console.error("Patch notification preferences error:", error);
+    logger.error("Failed to patch notification preferences", error as Error, {
+      operation: "PATCH /api/notifications/preferences",
+    });
     return NextResponse.json(
       {
         success: false,

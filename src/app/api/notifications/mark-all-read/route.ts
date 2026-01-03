@@ -5,7 +5,11 @@
 
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
+
+// Initialize structured logger
+const logger = createLogger("notifications-mark-all-read-api");
 
 export async function POST(_request: NextRequest) {
   try {
@@ -26,13 +30,20 @@ export async function POST(_request: NextRequest) {
       },
     });
 
+    logger.info("Marked all notifications as read", {
+      userId: session.user.id,
+      count: result.count,
+    });
+
     return NextResponse.json({
       success: true,
       count: result.count,
       message: `Marked ${result.count} notifications as read`,
     });
   } catch (error) {
-    console.error("Mark all read error:", error);
+    logger.error("Failed to mark all notifications as read", error as Error, {
+      operation: "POST /api/notifications/mark-all-read",
+    });
     return NextResponse.json(
       { error: "Failed to mark notifications as read" },
       { status: 500 },

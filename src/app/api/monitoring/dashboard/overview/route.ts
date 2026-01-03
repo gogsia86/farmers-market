@@ -11,8 +11,11 @@
  * - Performance metrics
  */
 
-import { NextResponse } from "next/server";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
+import { NextResponse } from "next/server";
+
+const logger = createLogger("dashboard-overview-api");
 
 // ============================================================================
 // TYPES
@@ -236,22 +239,22 @@ export async function GET(): Promise<NextResponse<DashboardOverview>> {
     const avgDuration =
       recentExecutions.length > 0
         ? recentExecutions.reduce((sum, e) => sum + (e.durationMs || 0), 0) /
-          recentExecutions.length
+        recentExecutions.length
         : 0;
 
     const avgResponseTime =
       recentHealthChecks.length > 0
         ? recentHealthChecks.reduce(
-            (sum, h) => sum + (h.responseTimeMs || 0),
-            0,
-          ) / recentHealthChecks.length
+          (sum, h) => sum + (h.responseTimeMs || 0),
+          0,
+        ) / recentHealthChecks.length
         : 0;
 
     const performanceSuccessRate =
       recentExecutions.length > 0
         ? (recentExecutions.filter((e) => e.status === "SUCCESS").length /
-            recentExecutions.length) *
-          100
+          recentExecutions.length) *
+        100
         : 100;
 
     // Determine system health from status field
@@ -265,11 +268,11 @@ export async function GET(): Promise<NextResponse<DashboardOverview>> {
     const healthDetails = latestHealthCheck
       ? parseHealthDetails(latestHealthCheck.details)
       : {
-          database: false,
-          api: false,
-          cache: false,
-          externalServices: false,
-        };
+        database: false,
+        api: false,
+        cache: false,
+        externalServices: false,
+      };
 
     // Build response
     const response: DashboardOverview = {
@@ -308,7 +311,9 @@ export async function GET(): Promise<NextResponse<DashboardOverview>> {
       },
     });
   } catch (error) {
-    console.error("❌ Dashboard overview API error:", error);
+    logger.error("Dashboard overview API error", error, {
+      operation: "getDashboardOverview",
+    });
 
     const response: DashboardOverview = {
       success: false,

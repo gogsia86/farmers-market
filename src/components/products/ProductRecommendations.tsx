@@ -18,23 +18,26 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { createLogger } from "@/lib/utils/logger";
 import {
+  Calendar,
   ChevronLeft,
   ChevronRight,
-  ShoppingCart,
-  Star,
-  MapPin,
   Leaf,
-  TrendingUp,
+  MapPin,
+  ShoppingCart,
   Sparkles,
-  Calendar,
+  Star,
   ThumbsUp,
+  TrendingUp,
   Zap,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
+const recommendationsLogger = createLogger("ProductRecommendations");
 
 // ============================================
 // 🎯 DIVINE TYPE DEFINITIONS
@@ -116,44 +119,44 @@ interface RecommendationConfig {
 // ============================================
 
 const RECOMMENDATION_CONFIGS: Record<RecommendationType, RecommendationConfig> =
-  {
-    SIMILAR: {
-      icon: Sparkles,
-      title: "Similar Products You May Like",
-      description: "Based on this product's characteristics",
-      color: "purple",
-    },
-    COMPLEMENTARY: {
-      icon: ThumbsUp,
-      title: "Perfect Pairings",
-      description: "Products that go great together",
-      color: "blue",
-    },
-    SEASONAL: {
-      icon: Calendar,
-      title: "Fresh This Season",
-      description: "Peak harvest and availability",
-      color: "green",
-    },
-    POPULAR: {
-      icon: TrendingUp,
-      title: "Customer Favorites",
-      description: "Most loved by our community",
-      color: "orange",
-    },
-    PERSONALIZED: {
-      icon: Zap,
-      title: "Picked Just For You",
-      description: "Based on your preferences and history",
-      color: "pink",
-    },
-    FREQUENTLY_BOUGHT_TOGETHER: {
-      icon: ShoppingCart,
-      title: "Frequently Bought Together",
-      description: "Customers also purchased these items",
-      color: "indigo",
-    },
-  };
+{
+  SIMILAR: {
+    icon: Sparkles,
+    title: "Similar Products You May Like",
+    description: "Based on this product's characteristics",
+    color: "purple",
+  },
+  COMPLEMENTARY: {
+    icon: ThumbsUp,
+    title: "Perfect Pairings",
+    description: "Products that go great together",
+    color: "blue",
+  },
+  SEASONAL: {
+    icon: Calendar,
+    title: "Fresh This Season",
+    description: "Peak harvest and availability",
+    color: "green",
+  },
+  POPULAR: {
+    icon: TrendingUp,
+    title: "Customer Favorites",
+    description: "Most loved by our community",
+    color: "orange",
+  },
+  PERSONALIZED: {
+    icon: Zap,
+    title: "Picked Just For You",
+    description: "Based on your preferences and history",
+    color: "pink",
+  },
+  FREQUENTLY_BOUGHT_TOGETHER: {
+    icon: ShoppingCart,
+    title: "Frequently Bought Together",
+    description: "Customers also purchased these items",
+    color: "indigo",
+  },
+};
 
 // ============================================
 // 🎨 MAIN COMPONENT
@@ -204,7 +207,12 @@ export function ProductRecommendations({
         const data = await response.json();
         setProducts(data.products || []);
       } catch (err) {
-        console.error("Error fetching recommendations:", err);
+        recommendationsLogger.error("Error fetching recommendations", err instanceof Error ? err : new Error(String(err)), {
+          contextProductId,
+          userId,
+          category,
+          recommendationType,
+        });
         setError("Unable to load recommendations");
         // Fallback to mock data for demo
         setProducts(generateMockRecommendations(maxProducts));
@@ -610,8 +618,7 @@ function generateMockRecommendations(count: number): RecommendedProduct[] {
 // ============================================
 
 export type {
-  RecommendedProduct,
-  ProductRecommendationsProps,
-  RecommendationType,
-  Farm,
+  Farm, ProductRecommendationsProps,
+  RecommendationType, RecommendedProduct
 };
+

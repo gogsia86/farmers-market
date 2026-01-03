@@ -17,15 +17,15 @@
  * @reference .github/instructions/10_AGRICULTURAL_FEATURE_PATTERNS.instructions.md
  */
 
-import { NextRequest } from "next/server";
-import { orderController } from "../order.controller";
-import { OrderService } from "@/lib/services/order.service";
 import { auth } from "@/lib/auth";
+import { database } from "@/lib/database";
 import type {
-  OrderWithDetails,
   GetOrdersResponse,
   OrderStatistics,
+  OrderWithDetails,
 } from "@/lib/services/order.service";
+import { NextRequest } from "next/server";
+import { orderController } from "../order.controller";
 
 // ============================================
 // MOCK SETUP
@@ -48,6 +48,15 @@ jest.mock("@/lib/services/order.service", () => {
 // Mock NextAuth
 jest.mock("@/lib/auth", () => ({
   auth: jest.fn(),
+}));
+
+// Mock database
+jest.mock("@/lib/database", () => ({
+  database: {
+    farm: {
+      findUnique: jest.fn(),
+    },
+  },
 }));
 
 // ============================================
@@ -725,6 +734,10 @@ describe("OrderController - HTTP Request Handlers", () => {
 
     it("should return farm's orders", async () => {
       (auth as jest.Mock).mockResolvedValue(mockFarmerSession);
+      (database.farm.findUnique as jest.Mock).mockResolvedValue({
+        id: mockFarmId,
+        ownerId: mockFarmerId,
+      });
       mockOrderService.getOrders = jest.fn().mockResolvedValue({
         success: true,
         data: mockOrdersResponse,
@@ -770,6 +783,10 @@ describe("OrderController - HTTP Request Handlers", () => {
 
     it("should handle query parameters", async () => {
       (auth as jest.Mock).mockResolvedValue(mockFarmerSession);
+      (database.farm.findUnique as jest.Mock).mockResolvedValue({
+        id: mockFarmId,
+        ownerId: mockFarmerId,
+      });
       mockOrderService.getOrders = jest.fn().mockResolvedValue({
         success: true,
         data: mockOrdersResponse,

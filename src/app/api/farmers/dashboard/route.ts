@@ -1,6 +1,9 @@
 import { auth } from "@/lib/auth/config";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("farmers-dashboard-api");
 
 /**
  * 📊 FARMER DASHBOARD API
@@ -19,6 +22,8 @@ export async function GET(_request: NextRequest) {
 
     const userId = session.user.id;
 
+    logger.debug("Fetching farmer dashboard", { userId });
+
     // Get user's farm
     const farm = await database.farm.findFirst({
       where: { ownerId: userId },
@@ -32,6 +37,7 @@ export async function GET(_request: NextRequest) {
     });
 
     if (!farm) {
+      logger.warn("Farm not found for user", { userId });
       return NextResponse.json({ error: "Farm not found" }, { status: 404 });
     }
 
@@ -228,6 +234,15 @@ export async function GET(_request: NextRequest) {
       (p) => p.quantityAvailable !== null && Number(p.quantityAvailable) < 5,
     );
 
+    logger.info("Farmer dashboard data fetched successfully", {
+      userId,
+      farmId: farm.id,
+      pendingOrders,
+      activeProducts: farm.products.length,
+      totalCustomers: uniqueCustomers.length,
+      lowStockCount: lowStockProducts.length,
+    });
+
     // Format response
     return NextResponse.json({
       success: true,
@@ -270,17 +285,17 @@ export async function GET(_request: NextRequest) {
         alerts: [
           ...(lowStockProducts.length > 0
             ? [
-                {
-                  type: "LOW_STOCK",
-                  severity: "warning",
-                  message: `${lowStockProducts.length} products are running low on inventory`,
-                  products: lowStockProducts.map((p) => ({
-                    id: p.id,
-                    name: p.name,
-                    stock: p.quantityAvailable,
-                  })),
-                },
-              ]
+              {
+                type: "LOW_STOCK",
+                severity: "warning",
+                message: `${lowStockProducts.length} products are running low on inventory`,
+                products: lowStockProducts.map((p) => ({
+                  id: p.id,
+                  name: p.name,
+                  stock: p.quantityAvailable,
+                })),
+              },
+            ]
             : []),
           {
             type: "PAYMENT_SCHEDULED",
@@ -293,7 +308,9 @@ export async function GET(_request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Dashboard API error:", error);
+    logger.error("Dashboard API error", error as Error, {
+      endpoint: "GET /api/farmers/dashboard",
+    });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },

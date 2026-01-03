@@ -1,6 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
 import { Prisma } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
+
+// Create logger for marketplace products API
+const logger = createLogger("marketplace-products-api");
 
 /**
  * 🔍 MARKETPLACE PRODUCTS API - Phase 3
@@ -254,7 +258,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("[MARKETPLACE_PRODUCTS_API_ERROR]", error);
+    logger.error("Failed to fetch marketplace products", error, {
+      operation: "GET /api/marketplace/products",
+    });
     return NextResponse.json(
       {
         success: false,
@@ -303,7 +309,9 @@ export async function POST(_request: NextRequest) {
       })),
     });
   } catch (error) {
-    console.error("[CATEGORIES_FETCH_ERROR]", error);
+    logger.error("Failed to fetch product categories", error, {
+      operation: "POST /api/marketplace/products",
+    });
     return NextResponse.json(
       {
         success: false,

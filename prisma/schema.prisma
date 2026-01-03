@@ -64,6 +64,14 @@ model User {
   savedSearchFolders SavedSearchFolder[]
   userPreference     UserPreference?
 
+  // Sprint 4: Email Enhancements
+  emailPreferences EmailPreferences?
+  emailLogs        EmailLog[]
+
+  // Sprint 5: Settings & Configuration
+  userSettings              UserSettings?
+  notificationPreferencesV2 NotificationPreferencesV2?
+
   @@index([email])
   @@index([role, status])
   @@index([createdAt])
@@ -222,6 +230,9 @@ model Farm {
   favorites              Favorite[]
   soilAnalyses           SoilAnalysis[]
   weatherData            WeatherData[]
+
+  // Sprint 5: Settings & Configuration
+  farmSettings FarmSettings?
 
   @@index([ownerId])
   @@index([slug])
@@ -743,6 +754,28 @@ model Payment {
   @@index([stripePaymentIntentId])
   @@index([paypalOrderId])
   @@map("payments")
+}
+
+model WebhookEvent {
+  id            String    @id @default(cuid())
+  eventId       String?   @unique @db.VarChar(255)
+  provider      String    @db.VarChar(50) // "STRIPE", "PAYPAL"
+  eventType     String    @db.VarChar(100)
+  payload       Json
+  processed     Boolean   @default(false)
+  processedAt   DateTime?
+  attempts      Int       @default(0)
+  lastAttemptAt DateTime  @default(now())
+  error         String?   @db.Text
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([eventId])
+  @@index([provider])
+  @@index([processed])
+  @@index([attempts])
+  @@index([createdAt])
+  @@map("webhook_events")
 }
 
 model Payout {
@@ -2769,4 +2802,302 @@ enum MLTrainingStatus {
   COMPLETED
   FAILED
   CANCELLED
+}
+
+// ============================================
+// SPRINT 4: EMAIL ENHANCEMENTS
+// ============================================
+
+model EmailPreferences {
+  id String @id @default(cuid())
+
+  // User relationship
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Transactional preferences (cannot be disabled)
+  orderConfirmation     Boolean @default(true)
+  orderStatusUpdates    Boolean @default(true)
+  shippingNotifications Boolean @default(true)
+  deliveryReminders     Boolean @default(true)
+
+  // Marketing preferences
+  farmUpdates            Boolean @default(true)
+  newProducts            Boolean @default(true)
+  promotions             Boolean @default(true)
+  seasonalNews           Boolean @default(true)
+  newsletter             Boolean @default(true)
+  productRecommendations Boolean @default(true)
+
+  // System preferences (cannot be disabled)
+  securityAlerts  Boolean @default(true)
+  accountUpdates  Boolean @default(true)
+  priceAlerts     Boolean @default(true)
+  inventoryAlerts Boolean @default(true)
+
+  // Engagement preferences
+  surveyRequests Boolean @default(true)
+
+  // Unsubscribe functionality
+  unsubscribedAll     Boolean   @default(false)
+  unsubscribedAt      DateTime?
+  unsubscribeToken    String?   @unique @db.VarChar(64)
+  unsubscribeReason   String?   @db.VarChar(500)
+  unsubscribeFeedback String?   @db.Text
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([unsubscribeToken])
+  @@map("email_preferences")
+}
+
+model EmailLog {
+  id String @id @default(cuid())
+
+  // Recipient information
+  userId    String? @db.VarChar(255)
+  user      User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  recipient String  @db.VarChar(255)
+
+  // Email details
+  emailType EmailType @default(OTHER)
+  subject   String    @db.VarChar(500)
+
+  // Delivery status
+  status      EmailStatus @default(PENDING)
+  sentAt      DateTime?
+  deliveredAt DateTime?
+  failedAt    DateTime?
+
+  // Error tracking
+  errorMessage  String?   @db.Text
+  attemptCount  Int       @default(0)
+  lastAttemptAt DateTime?
+
+  // Engagement tracking
+  openedAt       DateTime?
+  clickedAt      DateTime?
+  unsubscribedAt DateTime?
+
+  // Job tracking
+  jobId     String? @unique @db.VarChar(255)
+  queueName String? @db.VarChar(100)
+
+  // Metadata
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([recipient])
+  @@index([emailType])
+  @@index([status])
+  @@index([sentAt])
+  @@index([jobId])
+  @@index([createdAt])
+  @@map("email_logs")
+}
+
+enum EmailType {
+  ORDER_CONFIRMATION
+  ORDER_STATUS_UPDATE
+  ORDER_SHIPPED
+  ORDER_DELIVERED
+  ORDER_CANCELLED
+  PASSWORD_RESET
+  VERIFICATION
+  WELCOME
+  FARM_APPROVED
+  FARM_REJECTED
+  FARM_UPDATE
+  NEW_PRODUCT
+  PROMOTION
+  SEASONAL_NEWS
+  SHIPPING_NOTIFICATION
+  DELIVERY_REMINDER
+  ACCOUNT_UPDATE
+  SECURITY_ALERT
+  PRICE_ALERT
+  INVENTORY_ALERT
+  SURVEY_REQUEST
+  NEWSLETTER
+  PRODUCT_RECOMMENDATION
+  OTHER
+}
+
+enum EmailStatus {
+  PENDING
+  QUEUED
+  SENDING
+  SENT
+  DELIVERED
+  FAILED
+  BOUNCED
+  DROPPED
+  DEFERRED
+}
+
+// ============================================
+// SPRINT 5: SETTINGS & CONFIGURATION SYSTEM
+// ============================================
+
+// User Settings - Personal preferences and display options
+model UserSettings {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Notification Preferences (JSON - complex structure)
+  notificationPreferences Json? // NotificationPreferences type
+
+  // Display Preferences
+  theme        String @default("light") @db.VarChar(20) // "light" | "dark" | "system"
+  language     String @default("en") @db.VarChar(10)
+  timezone     String @default("UTC") @db.VarChar(100)
+  distanceUnit String @default("miles") @db.VarChar(20) // "miles" | "kilometers"
+  currency     String @default("USD") @db.VarChar(10)
+
+  // Privacy Settings
+  profileVisibility String  @default("public") @db.VarChar(20) // "public" | "friends" | "private"
+  showEmail         Boolean @default(false)
+  showPhone         Boolean @default(false)
+  allowMessaging    Boolean @default(true)
+  dataSharing       Boolean @default(false)
+
+  // Communication Preferences
+  contactMethod          String @default("email") @db.VarChar(20) // "email" | "sms" | "both"
+  communicationFrequency String @default("normal") @db.VarChar(20) // "minimal" | "normal" | "all"
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("user_settings")
+}
+
+// Notification Preferences V2 - Multi-channel notification control
+model NotificationPreferencesV2 {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Email Channel
+  emailEnabled         Boolean @default(true)
+  emailFrequency       String  @default("immediate") @db.VarChar(20) // "immediate" | "daily" | "weekly" | "never"
+  emailQuietHoursStart String? @db.VarChar(5) // "22:00"
+  emailQuietHoursEnd   String? @db.VarChar(5) // "08:00"
+
+  // SMS Channel
+  smsEnabled         Boolean @default(false)
+  smsFrequency       String  @default("immediate") @db.VarChar(20)
+  smsQuietHoursStart String? @db.VarChar(5)
+  smsQuietHoursEnd   String? @db.VarChar(5)
+
+  // Push Notifications
+  pushEnabled         Boolean @default(true)
+  pushFrequency       String  @default("immediate") @db.VarChar(20)
+  pushQuietHoursStart String? @db.VarChar(5)
+  pushQuietHoursEnd   String? @db.VarChar(5)
+
+  // In-App Notifications
+  inAppEnabled Boolean @default(true)
+  inAppSound   Boolean @default(true)
+  inAppBadge   Boolean @default(true)
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("notification_preferences_v2")
+}
+
+// Farm Settings - Business configuration and policies
+model FarmSettings {
+  id     String @id @default(cuid())
+  farmId String @unique
+  farm   Farm   @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  // Business Hours
+  businessHours BusinessHours[]
+
+  // Delivery Configuration
+  deliveryAreas Json? // DeliveryArea[] type
+  deliveryFee   Float?
+  minOrderValue Float?
+
+  // Payment Configuration
+  acceptedPaymentMethods String[] // ["CARD", "CASH", "CHECK"]
+  requireDepositOnOrders Boolean  @default(false)
+  depositPercentage      Float?
+
+  // Policies
+  returnPolicy       String? @db.Text
+  cancellationPolicy String? @db.Text
+  termsAndConditions String? @db.Text
+
+  // Features
+  enablePreOrders     Boolean @default(false)
+  enableSubscriptions Boolean @default(false)
+  enableGiftCards     Boolean @default(false)
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([farmId])
+  @@map("farm_settings")
+}
+
+// Business Hours - Farm operating hours with timezone support
+model BusinessHours {
+  id             String       @id @default(cuid())
+  farmSettingsId String
+  farmSettings   FarmSettings @relation(fields: [farmSettingsId], references: [id], onDelete: Cascade)
+
+  dayOfWeek Int     @db.SmallInt // 0-6 (Sunday-Saturday)
+  openTime  String  @db.VarChar(5) // "09:00"
+  closeTime String  @db.VarChar(5) // "17:00"
+  timezone  String  @default("UTC") @db.VarChar(100)
+  isClosed  Boolean @default(false)
+
+  // Seasonal overrides
+  effectiveFrom DateTime?
+  effectiveTo   DateTime?
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([farmSettingsId, dayOfWeek])
+  @@index([farmSettingsId])
+  @@index([dayOfWeek])
+  @@map("business_hours")
+}
+
+// System Settings - Platform-wide configuration
+model SystemSettings {
+  id  String @id @default(cuid())
+  key String @unique @db.VarChar(255)
+
+  value    Json
+  type     String @db.VarChar(20) // "string" | "number" | "boolean" | "json"
+  category String @db.VarChar(50) // "platform" | "feature" | "security" | "integration"
+
+  description String? @db.Text
+  isPublic    Boolean @default(false) // Can be read by frontend
+  isEditable  Boolean @default(true) // Can be changed via UI
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+  @@index([isPublic])
+  @@index([key])
+  @@map("system_settings")
 }

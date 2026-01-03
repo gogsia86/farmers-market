@@ -14,8 +14,12 @@
 
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+
+// Initialize structured logger
+const logger = createLogger("notifications-api");
 
 // Force dynamic rendering for real-time notifications
 export const dynamic = "force-dynamic";
@@ -120,7 +124,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Notification fetch error:", error);
+    logger.error("Failed to fetch notifications", error as Error, {
+      operation: "GET /api/notifications",
+    });
     return NextResponse.json(
       {
         success: false,
@@ -219,6 +225,13 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    logger.info("Notification created successfully", {
+      notificationId: notification.id,
+      targetUserId: data.userId,
+      type: data.type,
+      createdBy: session.user.id,
+    });
+
     // TODO: Send real-time notification via WebSocket
     // await notificationService.broadcast(data.userId, notification);
 
@@ -240,7 +253,9 @@ export async function POST(request: NextRequest) {
       { status: 201 },
     );
   } catch (error) {
-    console.error("Notification creation error:", error);
+    logger.error("Failed to create notification", error as Error, {
+      operation: "POST /api/notifications",
+    });
     return NextResponse.json(
       {
         success: false,

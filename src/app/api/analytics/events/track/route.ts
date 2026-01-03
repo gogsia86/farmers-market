@@ -6,11 +6,14 @@
  * ╚════════════════════════════════════════════════════════════╝
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { analyticsService } from "@/lib/services/analytics.service";
+import { createLogger } from "@/lib/logger";
 import type { TrackSearchEventRequest } from "@/lib/services/analytics.service";
-import { z } from "zod";
+import { analyticsService } from "@/lib/services/analytics.service";
 import { Season } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+
+const logger = createLogger("analytics-events-track-api");
 
 // ============================================
 // VALIDATION SCHEMA
@@ -72,6 +75,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Validate request
     const validation = TrackSearchEventSchema.safeParse(body);
     if (!validation.success) {
+      logger.warn("Invalid search event data", {
+        errors: validation.error.issues,
+      });
+
       return NextResponse.json(
         {
           success: false,
@@ -101,8 +108,22 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       eventData.referrer = request.headers.get("referer") || undefined;
     }
 
+    logger.debug("Tracking search event", {
+      sessionId: eventData.sessionId,
+      query: eventData.query,
+      resultsCount: eventData.resultsCount,
+    });
+
     // Track event
     const searchEvent = await analyticsService.trackSearchEvent(eventData);
+
+    logger.info("Search event tracked successfully", {
+      eventId: searchEvent.id,
+      sessionId: searchEvent.sessionId,
+      query: searchEvent.query,
+      resultsCount: searchEvent.resultsCount,
+      responseTime: searchEvent.responseTime,
+    });
 
     return NextResponse.json(
       {
@@ -126,7 +147,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       { status: 201 },
     );
   } catch (error) {
-    console.error("Search event tracking failed:", error);
+    logger.error("Search event tracking failed", error as Error, {
+      endpoint: "POST /api/analytics/events/track",
+    });
 
     return NextResponse.json(
       {

@@ -9,8 +9,11 @@
  * @agricultural-consciousness MAXIMUM
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import { createLogger } from "@/lib/logger";
 import { recommendationEngine } from "@/lib/services/recommendation-engine.service";
+import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("frequently-bought-together-api");
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 🎯 GET - GET FREQUENTLY BOUGHT TOGETHER RECOMMENDATIONS
@@ -93,7 +96,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     );
   } catch (error) {
-    console.error("[FrequentlyBoughtTogetherAPI] Error:", error);
+    logger.error("Failed to get frequently bought together recommendations", error, {
+      operation: "getFrequentlyBoughtTogether",
+    });
 
     return NextResponse.json(
       {

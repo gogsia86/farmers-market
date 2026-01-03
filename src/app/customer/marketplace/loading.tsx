@@ -1,4 +1,4 @@
-import { ProductCardSkeleton } from "@/components/ui/Skeleton";
+import { ProductCardSkeleton } from "@/components/ui/skeleton";
 
 /**
  * 🛒 MARKETPLACE LOADING STATE

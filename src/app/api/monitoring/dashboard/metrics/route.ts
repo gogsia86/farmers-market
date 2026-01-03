@@ -12,8 +12,11 @@
  * - metric: string (responseTime | duration | throughput | successRate)
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("dashboard-metrics-api");
 
 // ============================================================================
 // TYPES
@@ -199,9 +202,9 @@ function calculateBucketMetrics(buckets: any[]) {
     const avgDuration =
       executions.length > 0
         ? executions.reduce(
-            (sum: number, e: any) => sum + (e.durationMs || 0),
-            0,
-          ) / executions.length
+          (sum: number, e: any) => sum + (e.durationMs || 0),
+          0,
+        ) / executions.length
         : null;
 
     // Calculate success rate
@@ -284,13 +287,13 @@ export async function GET(
     const avgDuration =
       executions.length > 0
         ? executions.reduce((sum, e) => sum + (e.durationMs || 0), 0) /
-          executions.length
+        executions.length
         : 0;
 
     const avgResponseTime =
       healthChecks.length > 0
         ? healthChecks.reduce((sum, h) => sum + (h.responseTimeMs || 0), 0) /
-          healthChecks.length
+        healthChecks.length
         : 0;
 
     const successfulExecutions = executions.filter(
@@ -330,7 +333,9 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error("❌ Dashboard metrics API error:", error);
+    logger.error("Dashboard metrics API error", error, {
+      operation: "getDashboardMetrics",
+    });
 
     const response: MetricsResponse = {
       success: false,

@@ -6,7 +6,11 @@
  * Domain: Agricultural cache management with seasonal awareness
  */
 
+import { createLogger } from "@/lib/utils/logger";
 import Redis from "ioredis";
+
+// Create dedicated logger for Redis operations
+const redisLogger = createLogger("Redis");
 
 export interface RedisCacheConfig {
   host: string;
@@ -76,24 +80,28 @@ class RedisQuantumClient {
       });
 
       this.client.on("error", (error) => {
-        console.error("Redis client error", error);
+        redisLogger.error("Redis client error", {
+          errorMessage: error instanceof Error ? error.message : String(error),
+        });
       });
 
       this.client.on("connect", () => {
-        console.info("Redis client connected", {
+        redisLogger.info("Redis client connected", {
           host: this.config.host,
           port: this.config.port,
         });
       });
 
       this.client.on("close", () => {
-        console.warn("Redis client disconnected");
+        redisLogger.warn("Redis client disconnected");
       });
 
       // ioredis connects automatically on instantiation, but ensure readiness
       await this.client.connect();
     } catch (error) {
-      console.error("Failed to connect to Redis", error);
+      redisLogger.error("Failed to connect to Redis", {
+        errorMessage: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     }
   }
@@ -150,14 +158,17 @@ export class RedisCacheService {
       const value = await client.get(fullKey);
 
       if (!value) {
-        console.debug("Cache miss", { key });
+        redisLogger.debug("Cache miss", { key });
         return null;
       }
 
-      console.debug("Cache hit", { key });
+      redisLogger.debug("Cache hit", { key });
       return JSON.parse(value) as T;
     } catch (error) {
-      console.error("Redis get error", error, { key });
+      redisLogger.error("Redis get error", {
+        key,
+        errorMessage: error instanceof Error ? error.message : String(error),
+      });
       return null;
     }
   }
@@ -179,10 +190,13 @@ export class RedisCacheService {
 
       await client.setex(fullKey, ttl, serialized);
 
-      console.debug("Cache set", { key, ttl });
+      redisLogger.debug("Cache set", { key, ttl });
       return true;
     } catch (error) {
-      console.error("Redis set error", error, { key });
+      redisLogger.error("Redis set error", {
+        key,
+        errorMessage: error instanceof Error ? error.message : String(error),
+      });
       return false;
     }
   }
@@ -197,10 +211,13 @@ export class RedisCacheService {
 
       await client.del(fullKey);
 
-      console.debug("Cache delete", { key });
+      redisLogger.debug("Cache delete", { key });
       return true;
     } catch (error) {
-      console.error("Redis delete error", error, { key });
+      redisLogger.error("Redis delete error", {
+        key,
+        errorMessage: error instanceof Error ? error.message : String(error),
+      });
       return false;
     }
   }
@@ -221,10 +238,13 @@ export class RedisCacheService {
 
       await client.del(keys);
 
-      console.debug("Cache pattern delete", { pattern, count: keys.length });
+      redisLogger.debug("Cache pattern delete", { pattern, count: keys.length });
       return keys.length;
     } catch (error) {
-      console.error("Redis pattern delete error", error, { pattern });
+      redisLogger.error("Redis pattern delete error", {
+        pattern,
+        errorMessage: error instanceof Error ? error.message : String(error),
+      });
       return 0;
     }
   }
@@ -263,7 +283,10 @@ export class RedisCacheService {
       const exists = await client.exists(fullKey);
       return exists === 1;
     } catch (error) {
-      console.error("Redis exists error", error, { key });
+      redisLogger.error("Redis exists error", {
+        key,
+        errorMessage: error instanceof Error ? error.message : String(error),
+      });
       return false;
     }
   }
@@ -278,7 +301,10 @@ export class RedisCacheService {
 
       return await client.ttl(fullKey);
     } catch (error) {
-      console.error("Redis TTL error", error, { key });
+      redisLogger.error("Redis TTL error", {
+        key,
+        errorMessage: error instanceof Error ? error.message : String(error),
+      });
       return -1;
     }
   }
@@ -293,7 +319,10 @@ export class RedisCacheService {
 
       return await client.incrby(fullKey, amount);
     } catch (error) {
-      console.error("Redis increment error", error, { key });
+      redisLogger.error("Redis increment error", {
+        key,
+        errorMessage: error instanceof Error ? error.message : String(error),
+      });
       return 0;
     }
   }
@@ -306,10 +335,12 @@ export class RedisCacheService {
       const client = await this.redisClient.getClient();
       await client.flushdb();
 
-      console.warn("Cache flushed");
+      redisLogger.warn("Cache flushed");
       return true;
     } catch (error) {
-      console.error("Redis flush error", error);
+      redisLogger.error("Redis flush error", {
+        errorMessage: error instanceof Error ? error.message : String(error),
+      });
       return false;
     }
   }
@@ -355,7 +386,9 @@ export async function checkRedisHealth(): Promise<boolean> {
     const result = await redis.get<{ timestamp: number }>("health:check");
     return result !== null;
   } catch (error) {
-    console.error("Redis health check failed", error as Error);
+    redisLogger.error("Redis health check failed", {
+      errorMessage: error instanceof Error ? error.message : String(error),
+    });
     return false;
   }
 }

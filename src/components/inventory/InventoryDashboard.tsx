@@ -9,12 +9,15 @@
 
 "use client";
 
+import { createLogger } from "@/lib/utils/logger";
 import {
   InventoryItem,
   InventoryMetrics,
   InventoryStatus,
 } from "@/types/inventory.types";
 import { useEffect, useState } from "react";
+
+const inventoryLogger = createLogger("InventoryDashboard");
 
 export interface InventoryDashboardProps {
   farmId: string;
@@ -60,7 +63,9 @@ export function InventoryDashboard({ farmId }: InventoryDashboardProps) {
         setMetrics(metricsData.data);
       }
     } catch (error) {
-      console.error("Failed to load inventory:", error);
+      inventoryLogger.error("Failed to load inventory", error instanceof Error ? error : new Error(String(error)), {
+        farmId,
+      });
     } finally {
       setLoading(false);
     }
@@ -134,11 +139,10 @@ export function InventoryDashboard({ farmId }: InventoryDashboardProps) {
 
         <button
           onClick={() => setFilter({ ...filter, lowStock: !filter.lowStock })}
-          className={`rounded-md px-4 py-2 transition-colors ${
-            filter.lowStock
+          className={`rounded-md px-4 py-2 transition-colors ${filter.lowStock
               ? "bg-orange-500 text-white"
               : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-          }`}
+            }`}
         >
           {filter.lowStock ? "✓ " : ""}Low Stock Only
         </button>

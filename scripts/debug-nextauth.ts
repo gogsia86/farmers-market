@@ -39,11 +39,11 @@ if (fs.existsSync(envTestPath)) {
   }
 }
 
-import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { Pool } from "pg";
+import { PrismaClient } from "@prisma/client";
 import * as bcrypt from "bcryptjs";
 import chalk from "chalk";
+import { Pool } from "pg";
 
 // Test database URL
 const TEST_DATABASE_URL =
@@ -150,20 +150,31 @@ async function checkDatabaseConnection() {
 async function verifyTestUsers() {
   console.log(chalk.bold.blue("\n👥 STEP 3: Test Users Verification\n"));
 
+  // Get test password from environment (required for security)
+  const TEST_USER_PASSWORD = process.env.TEST_USER_PASSWORD;
+
+  if (!TEST_USER_PASSWORD) {
+    console.error(chalk.red("\n❌ ERROR: TEST_USER_PASSWORD environment variable is required"));
+    console.log(chalk.yellow("\nUsage:"));
+    console.log(chalk.cyan("  TEST_USER_PASSWORD=YourPassword123! npx tsx scripts/debug-nextauth.ts"));
+    console.log(chalk.yellow("\nThis ensures test passwords are not hardcoded in the repository.\n"));
+    process.exit(1);
+  }
+
   const testUsers = [
     {
       email: "admin@farmersmarket.app",
-      password: "DivineAdmin123!",
+      password: TEST_USER_PASSWORD,
       expectedRole: "ADMIN",
     },
     {
       email: "farmer@farmersmarket.app",
-      password: "DivineFarmer123!",
+      password: TEST_USER_PASSWORD,
       expectedRole: "FARMER",
     },
     {
       email: "customer@farmersmarket.app",
-      password: "DivineCustomer123!",
+      password: TEST_USER_PASSWORD,
       expectedRole: "CONSUMER",
     },
   ];
@@ -260,7 +271,7 @@ async function verifyTestUsers() {
 async function testPasswordHashing() {
   console.log(chalk.bold.blue("\n🔐 STEP 4: Password Hashing Test\n"));
 
-  const testPassword = "DivineTest123!";
+  const testPassword = process.env.TEST_USER_PASSWORD || "DivineTest123!";
 
   try {
     // Hash password with 12 rounds (same as seed script)
@@ -311,7 +322,7 @@ async function simulateAuthFlow() {
 
   const testCredentials = {
     email: "farmer@farmersmarket.app",
-    password: "DivineFarmer123!",
+    password: process.env.TEST_USER_PASSWORD || "DivineFarmer123!",
   };
 
   try {

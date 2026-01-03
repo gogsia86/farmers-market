@@ -9,8 +9,8 @@
  */
 
 import { createOrchestratorFromEnv } from "../agents/workflow-agent-orchestrator";
-import { createSelfHealer } from "./self-healer";
 import type { WorkflowResult } from "../types";
+import { createSelfHealer } from "./self-healer";
 
 // ============================================================================
 // TYPES
@@ -78,10 +78,10 @@ export interface ProposedAction {
 
 export interface AutoApproveCondition {
   type:
-    | "CONFIDENCE_THRESHOLD"
-    | "SEVERITY_LEVEL"
-    | "ERROR_PATTERN"
-    | "TIME_OF_DAY";
+  | "CONFIDENCE_THRESHOLD"
+  | "SEVERITY_LEVEL"
+  | "ERROR_PATTERN"
+  | "TIME_OF_DAY";
   value: string | number;
   operator: "GT" | "LT" | "EQ" | "CONTAINS" | "MATCHES";
 }
@@ -141,13 +141,13 @@ export interface RemediationEvent {
   id: string;
   timestamp: Date;
   type:
-    | "PLAN_CREATED"
-    | "APPROVAL_REQUESTED"
-    | "APPROVED"
-    | "REJECTED"
-    | "EXECUTED"
-    | "ROLLED_BACK"
-    | "FAILED";
+  | "PLAN_CREATED"
+  | "APPROVAL_REQUESTED"
+  | "APPROVED"
+  | "REJECTED"
+  | "EXECUTED"
+  | "ROLLED_BACK"
+  | "FAILED";
   planId: string;
   details: Record<string, unknown>;
 }
@@ -168,11 +168,11 @@ export class AutoRemediationSystem {
     tripped: boolean;
     tripTime: Date | null;
   } = {
-    failures: 0,
-    lastFailure: null,
-    tripped: false,
-    tripTime: null,
-  };
+      failures: 0,
+      lastFailure: null,
+      tripped: false,
+      tripTime: null,
+    };
 
   constructor(config: Partial<AutoRemediationConfig> = {}) {
     this.config = {
@@ -1263,7 +1263,7 @@ export class AutoRemediationSystem {
     if (!this.circuitBreakerState.tripTime) return null;
     return new Date(
       this.circuitBreakerState.tripTime.getTime() +
-        this.config.circuitBreaker.cooldownMinutes * 60 * 1000,
+      this.config.circuitBreaker.cooldownMinutes * 60 * 1000,
     );
   }
 
@@ -1367,7 +1367,7 @@ export class AutoRemediationSystem {
       averageConfidence:
         plans.length > 0
           ? plans.reduce((sum, p) => sum + p.aiAnalysis.confidence, 0) /
-            plans.length
+          plans.length
           : 0,
     };
   }

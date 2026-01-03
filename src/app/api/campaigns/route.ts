@@ -11,11 +11,14 @@
  * ╚══════════════════════════════════════════════════════════════════╝
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { campaignAutomationService } from "@/lib/services/campaigns/campaign-automation.service";
+import { createLogger } from "@/lib/logger";
 import { campaignAnalyticsService } from "@/lib/services/campaigns/campaign-analytics.service";
-import { campaignSchedulerService } from "@/lib/services/campaigns/campaign-scheduler.service";
 import type { CampaignType } from "@/lib/services/campaigns/campaign-automation.service";
+import { campaignAutomationService } from "@/lib/services/campaigns/campaign-automation.service";
+import { campaignSchedulerService } from "@/lib/services/campaigns/campaign-scheduler.service";
+import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("campaigns-api");
 
 // ═══════════════════════════════════════════════════════════════════
 // 📊 GET - List Campaigns & Analytics
@@ -27,10 +30,14 @@ export async function GET(request: NextRequest) {
     const action = searchParams.get("action");
     const campaignType = searchParams.get("type") as CampaignType | null;
 
+    logger.debug("Fetching campaigns", { action, campaignType });
+
     // Get summary statistics
     if (action === "stats") {
       const stats = campaignAnalyticsService.getSummaryStats();
       const schedulerStats = campaignSchedulerService.getStats();
+
+      logger.info("Campaign stats retrieved successfully");
 
       return NextResponse.json({
         success: true,
@@ -47,6 +54,10 @@ export async function GET(request: NextRequest) {
     // Get scheduled campaigns
     if (action === "scheduled") {
       const schedules = campaignSchedulerService.getSchedules(true);
+
+      logger.info("Scheduled campaigns retrieved", {
+        count: schedules.length,
+      });
 
       return NextResponse.json({
         success: true,
@@ -65,6 +76,11 @@ export async function GET(request: NextRequest) {
       const campaigns =
         campaignAnalyticsService.getCampaignsByType(campaignType);
 
+      logger.info("Campaigns by type retrieved", {
+        campaignType,
+        count: campaigns.length,
+      });
+
       return NextResponse.json({
         success: true,
         data: {
@@ -82,6 +98,10 @@ export async function GET(request: NextRequest) {
     const allCampaigns = campaignAnalyticsService.getAllCampaigns();
     const stats = campaignAnalyticsService.getSummaryStats();
 
+    logger.info("All campaigns retrieved", {
+      count: allCampaigns.length,
+    });
+
     return NextResponse.json({
       success: true,
       data: {
@@ -94,7 +114,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("❌ Error fetching campaigns:", error);
+    logger.error("Error fetching campaigns", error as Error, {
+      endpoint: "GET /api/campaigns",
+    });
 
     return NextResponse.json(
       {
@@ -122,6 +144,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { action, campaignType, threshold, inactiveDays, hoursThreshold } =
       body;
+
+    logger.debug("Campaign action requested", { action, campaignType });
 
     // Execute specific campaign type
     if (action === "execute") {
@@ -159,6 +183,7 @@ export async function POST(request: NextRequest) {
           break;
 
         default:
+          logger.warn("Invalid campaign type requested", { campaignType });
           return NextResponse.json(
             {
               success: false,
@@ -179,6 +204,12 @@ export async function POST(request: NextRequest) {
           campaignType,
           execution.metrics,
         );
+
+        logger.info("Campaign executed successfully", {
+          campaignId: execution.id,
+          campaignType,
+          metrics: execution.metrics,
+        });
       }
 
       return NextResponse.json({
@@ -198,6 +229,12 @@ export async function POST(request: NextRequest) {
       const { scheduleType, startDate, recurrence, metadata } = body;
 
       if (!campaignType || !scheduleType || !startDate) {
+        logger.warn("Missing required fields for campaign scheduling", {
+          campaignType,
+          scheduleType,
+          startDate,
+        });
+
         return NextResponse.json(
           {
             success: false,
@@ -219,6 +256,13 @@ export async function POST(request: NextRequest) {
         metadata,
       });
 
+      logger.info("Campaign scheduled successfully", {
+        scheduleId,
+        campaignType,
+        scheduleType,
+        startDate,
+      });
+
       return NextResponse.json({
         success: true,
         data: {
@@ -235,6 +279,8 @@ export async function POST(request: NextRequest) {
     if (action === "start-scheduler") {
       campaignSchedulerService.start();
 
+      logger.info("Campaign scheduler started");
+
       return NextResponse.json({
         success: true,
         data: {
@@ -250,6 +296,8 @@ export async function POST(request: NextRequest) {
     if (action === "stop-scheduler") {
       campaignSchedulerService.stop();
 
+      logger.info("Campaign scheduler stopped");
+
       return NextResponse.json({
         success: true,
         data: {
@@ -260,6 +308,8 @@ export async function POST(request: NextRequest) {
         },
       });
     }
+
+    logger.warn("Invalid campaign action requested", { action });
 
     return NextResponse.json(
       {
@@ -274,7 +324,9 @@ export async function POST(request: NextRequest) {
       { status: 400 },
     );
   } catch (error) {
-    console.error("❌ Error executing campaign:", error);
+    logger.error("Error executing campaign", error as Error, {
+      endpoint: "POST /api/campaigns",
+    });
 
     return NextResponse.json(
       {

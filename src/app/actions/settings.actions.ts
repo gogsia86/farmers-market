@@ -14,19 +14,23 @@
 
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { getCurrentUser, requireFarmer } from "@/lib/auth";
 import { database } from "@/lib/database";
-import { requireFarmer, getCurrentUser } from "@/lib/auth";
-import { z } from "zod";
+import { createLogger } from "@/lib/logger";
 import {
-  ActionResult,
   ActionError,
   ActionErrorCode,
-  createSuccessResult,
+  ActionResult,
   createErrorResult,
+  createSuccessResult,
 } from "@/types/actions";
 import type { Farm } from "@prisma/client";
 import { Prisma } from "@prisma/client";
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+
+// Initialize logger for settings actions
+const logger = createLogger("settings-actions");
 
 // ============================================================================
 // VALIDATION SCHEMAS
@@ -344,7 +348,10 @@ export async function updateFarmProfileAction(
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Update farm profile error:", error);
+    logger.error("Update farm profile failed", error as Error, {
+      farmId,
+      profileData: data,
+    });
 
     // Handle known Prisma errors
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -447,7 +454,10 @@ export async function updateNotificationSettingsAction(
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Update notification settings error:", error);
+    logger.error("Update notification settings failed", error as Error, {
+      farmId,
+      notificationSettings: settings,
+    });
 
     // Handle known Prisma errors
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -544,7 +554,10 @@ export async function updatePaymentSettingsAction(
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Update payment settings error:", error);
+    logger.error("Update payment settings failed", error as Error, {
+      farmId,
+      paymentSettings: data,
+    });
 
     // Handle known Prisma errors
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -640,7 +653,10 @@ export async function updateBusinessHoursAction(
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Update business hours error:", error);
+    logger.error("Update business hours failed", error as Error, {
+      farmId,
+      businessHours: hours,
+    });
 
     // Handle known Prisma errors
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -708,7 +724,9 @@ export async function getFarmSettingsAction(
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Get farm settings error:", error);
+    logger.error("Get farm settings failed", error as Error, {
+      farmId,
+    });
 
     // Generic error fallback
     return createErrorResult(

@@ -12,8 +12,12 @@
 
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
 import { useSession } from "@/lib/auth";
+import { createLogger } from "@/lib/utils/logger";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+// Create logger for realtime notifications
+const notificationLogger = createLogger("RealtimeNotifications");
 
 // ============================================
 // TYPES
@@ -103,7 +107,7 @@ export function useRealtimeNotifications(
       });
 
       eventSource.onopen = () => {
-        console.log("✅ Notifications SSE connected");
+        notificationLogger.info("Notifications SSE connected");
         setIsConnected(true);
         setIsConnecting(false);
         setError(null);
@@ -116,7 +120,7 @@ export function useRealtimeNotifications(
           const data = JSON.parse(event.data);
 
           if (data.type === "connected") {
-            console.log("🔔 Notification stream initialized:", data);
+            notificationLogger.debug("Notification stream initialized", data);
             return;
           }
 
@@ -146,12 +150,12 @@ export function useRealtimeNotifications(
           // Call callback
           onNotification?.(notification);
         } catch (err) {
-          console.error("Error parsing notification:", err);
+          notificationLogger.error("Error parsing notification", err instanceof Error ? err : new Error(String(err)));
         }
       };
 
       eventSource.onerror = (err) => {
-        console.error("❌ Notifications SSE error:", err);
+        notificationLogger.error("Notifications SSE error", { error: err });
         setIsConnected(false);
         setIsConnecting(false);
 
@@ -166,15 +170,16 @@ export function useRealtimeNotifications(
         // Attempt reconnection
         if (reconnectAttemptRef.current < maxReconnectAttempts) {
           reconnectAttemptRef.current++;
-          console.log(
-            `🔄 Reconnecting... (attempt ${reconnectAttemptRef.current}/${maxReconnectAttempts})`,
-          );
+          notificationLogger.info("Reconnecting SSE", {
+            attempt: reconnectAttemptRef.current,
+            maxAttempts: maxReconnectAttempts,
+          });
 
           reconnectTimeoutRef.current = setTimeout(() => {
             connect();
           }, reconnectDelay * reconnectAttemptRef.current);
         } else {
-          console.error("❌ Max reconnection attempts reached");
+          notificationLogger.error("Max reconnection attempts reached");
           const maxError = new Error(
             "Failed to connect after maximum attempts",
           );
@@ -185,7 +190,7 @@ export function useRealtimeNotifications(
 
       eventSourceRef.current = eventSource;
     } catch (err) {
-      console.error("❌ Failed to create SSE connection:", err);
+      notificationLogger.error("Failed to create SSE connection", err instanceof Error ? err : new Error(String(err)));
       setIsConnecting(false);
       const error = err instanceof Error ? err : new Error("Failed to connect");
       setError(error);
@@ -205,7 +210,7 @@ export function useRealtimeNotifications(
   // Disconnect from SSE
   const disconnect = useCallback(() => {
     if (eventSourceRef.current) {
-      console.log("🔌 Disconnecting notifications SSE");
+      notificationLogger.info("Disconnecting notifications SSE");
       eventSourceRef.current.close();
       eventSourceRef.current = null;
       setIsConnected(false);
@@ -243,7 +248,7 @@ export function useRealtimeNotifications(
         method: "PUT",
       });
     } catch (err) {
-      console.error("Failed to mark notification as read:", err);
+      notificationLogger.error("Failed to mark notification as read", err instanceof Error ? err : new Error(String(err)));
     }
   }, []);
 
@@ -257,7 +262,7 @@ export function useRealtimeNotifications(
         method: "PUT",
       });
     } catch (err) {
-      console.error("Failed to mark all notifications as read:", err);
+      notificationLogger.error("Failed to mark all notifications as read", err instanceof Error ? err : new Error(String(err)));
     }
   }, []);
 
@@ -271,7 +276,7 @@ export function useRealtimeNotifications(
         method: "DELETE",
       });
     } catch (err) {
-      console.error("Failed to delete notification:", err);
+      notificationLogger.error("Failed to delete notification", err instanceof Error ? err : new Error(String(err)));
     }
   }, []);
 
@@ -286,7 +291,7 @@ export function useRealtimeNotifications(
     if (typeof window !== "undefined" && "Notification" in window) {
       if (Notification.permission === "default") {
         Notification.requestPermission().then((permission) => {
-          console.log("📬 Notification permission:", permission);
+          notificationLogger.info("Notification permission response", { permission });
         });
       }
     }
@@ -303,7 +308,7 @@ export function useRealtimeNotifications(
           }
         })
         .catch((err) => {
-          console.error("Failed to load notifications:", err);
+          notificationLogger.error("Failed to load notifications", err instanceof Error ? err : new Error(String(err)));
         });
     }
   }, [status, session]);

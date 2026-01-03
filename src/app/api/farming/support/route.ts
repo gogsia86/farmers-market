@@ -8,12 +8,15 @@
  * - Returns answers with citations and suggested actions
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import { auth } from "@/lib/auth";
+import { createLogger } from "@/lib/logger";
 import { handleSupportRequest } from "@/lib/services/perplexity-farming.service";
 import type { SupportRequest } from "@/types/farming-advice.types";
 import { getCurrentSeason } from "@/types/farming-advice.types";
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+
+const logger = createLogger("farming-support-api");
 
 // ============================================================================
 // VALIDATION SCHEMA
@@ -60,6 +63,11 @@ export async function POST(request: NextRequest) {
     const validation = SupportRequestSchema.safeParse(body);
 
     if (!validation.success) {
+      logger.warn("Support request validation failed", {
+        userId: session.user.id,
+        errors: validation.error.flatten(),
+      });
+
       return NextResponse.json(
         {
           success: false,
@@ -74,6 +82,12 @@ export async function POST(request: NextRequest) {
     }
 
     const validatedData = validation.data;
+
+    logger.debug("Processing support request", {
+      userId: session.user.id,
+      conversationId: validatedData.conversationId,
+      messageLength: validatedData.message.length,
+    });
 
     // 3. Build Support Request
     const supportRequest: SupportRequest = {
@@ -93,12 +107,24 @@ export async function POST(request: NextRequest) {
 
     // 5. Return Response
     if (result.success) {
+      logger.info("Support request handled successfully", {
+        userId: session.user.id,
+        conversationId: validatedData.conversationId,
+      });
+
       return NextResponse.json(result, { status: 200 });
     } else {
+      logger.warn("Support request handling returned unsuccessful", {
+        userId: session.user.id,
+        conversationId: validatedData.conversationId,
+      });
+
       return NextResponse.json(result, { status: 500 });
     }
   } catch (error) {
-    console.error("❌ Support API Error:", error);
+    logger.error("Support API error", error as Error, {
+      endpoint: "POST /api/farming/support",
+    });
 
     return NextResponse.json(
       {

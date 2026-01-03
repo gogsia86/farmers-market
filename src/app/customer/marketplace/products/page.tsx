@@ -1,17 +1,17 @@
-import { Metadata } from "next";
-import Link from "next/link";
-import { Badge } from "@/components/ui/Badge";
+import { MarketplaceSearch } from "@/components/marketplace/MarketplaceSearch";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
-import { MapPin, Star, ShoppingCart, Leaf, Heart } from "lucide-react";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { database } from "@/lib/database";
+import { farmLogger } from "@/lib/utils/logger";
 import {
   generateMetadata as generateMeta,
   generateOrganizationJsonLd,
 } from "@/lib/utils/metadata";
-import { MarketplaceSearch } from "@/components/marketplace/MarketplaceSearch";
-import { EmptyState } from "@/components/ui/EmptyState";
-import { ShoppingCart as ShoppingCartIcon } from "lucide-react";
-import { database } from "@/lib/database";
+import { Heart, Leaf, MapPin, ShoppingCart, ShoppingCart as ShoppingCartIcon, Star } from "lucide-react";
+import { Metadata } from "next";
+import Link from "next/link";
 
 /**
  * 🛒 MARKETPLACE PRODUCTS PAGE - Server Component
@@ -106,7 +106,9 @@ async function getProducts() {
       };
     });
   } catch (error) {
-    console.error("[MARKETPLACE_PRODUCTS_FETCH_ERROR]", error);
+    farmLogger.error("Failed to fetch marketplace products", error instanceof Error ? error : new Error(String(error)), {
+      path: "/customer/marketplace/products",
+    });
     return [];
   }
 }

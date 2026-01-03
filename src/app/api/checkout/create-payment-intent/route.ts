@@ -10,10 +10,14 @@
  * - Request validation with Zod
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { createLogger } from "@/lib/logger";
 import { checkoutService } from "@/lib/services/checkout.service";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+
+// Initialize logger for payment intent API
+const logger = createLogger("api-payment-intent");
 
 // ============================================================================
 // VALIDATION SCHEMA
@@ -37,9 +41,13 @@ const CreatePaymentIntentSchema = z.object({
 // ============================================================================
 
 export async function POST(request: NextRequest) {
+  let session;
+  let body;
+  let amount;
+
   try {
     // ⚡ AUTHENTICATION CHECK
-    const session = await auth();
+    session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json(
         {
@@ -51,7 +59,7 @@ export async function POST(request: NextRequest) {
     }
 
     // ⚡ PARSE AND VALIDATE REQUEST BODY
-    const body = await request.json();
+    body = await request.json();
     const validation = CreatePaymentIntentSchema.safeParse(body);
 
     if (!validation.success) {
@@ -65,7 +73,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { amount, metadata } = validation.data;
+    amount = validation.data.amount;
+    const { metadata } = validation.data;
 
     // ⚡ PREPARE METADATA WITH DEFAULTS AND TYPE CONVERSIONS
     const processedMetadata = {
@@ -111,7 +120,10 @@ export async function POST(request: NextRequest) {
       { status: 200 },
     );
   } catch (error) {
-    console.error("⚠️ Payment intent creation error:", error);
+    logger.error("Payment intent creation failed", error as Error, {
+      userId: session?.user?.id,
+      amount,
+    });
 
     return NextResponse.json(
       {
@@ -131,9 +143,12 @@ export async function POST(request: NextRequest) {
 // ============================================================================
 
 export async function GET(request: NextRequest) {
+  let session;
+  let paymentIntentId;
+
   try {
     // ⚡ AUTHENTICATION CHECK
-    const session = await auth();
+    session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json(
         {
@@ -146,7 +161,7 @@ export async function GET(request: NextRequest) {
 
     // ⚡ GET PAYMENT INTENT ID FROM QUERY
     const { searchParams } = new URL(request.url);
-    const paymentIntentId = searchParams.get("paymentIntentId");
+    paymentIntentId = searchParams.get("paymentIntentId");
 
     if (!paymentIntentId) {
       return NextResponse.json(
@@ -171,7 +186,10 @@ export async function GET(request: NextRequest) {
       { status: 200 },
     );
   } catch (error) {
-    console.error("⚠️ Payment intent retrieval error:", error);
+    logger.error("Payment intent retrieval failed", error as Error, {
+      userId: session?.user?.id,
+      paymentIntentId,
+    });
 
     return NextResponse.json(
       {

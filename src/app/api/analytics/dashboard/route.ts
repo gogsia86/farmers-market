@@ -5,7 +5,10 @@
 
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("dashboard-analytics-api");
 
 export async function GET(request: NextRequest) {
   try {
@@ -16,6 +19,11 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const farmId = searchParams.get("farmId");
+
+    logger.debug("Dashboard analytics request", {
+      userId: session.user.id,
+      farmId: farmId || "all",
+    });
 
     // Get user's farms
     const userFarms = await database.farm.findMany({
@@ -136,7 +144,7 @@ export async function GET(request: NextRequest) {
         const product = products.find((p) => p.id === productId);
         const avgRating = product?.reviews.length
           ? product.reviews.reduce((sum, r) => sum + r.rating, 0) /
-            product.reviews.length
+          product.reviews.length
           : 0;
 
         return {
@@ -191,9 +199,18 @@ export async function GET(request: NextRequest) {
       },
     };
 
+    logger.info("Dashboard analytics fetched successfully", {
+      userId: session.user.id,
+      farmCount: farmIds.length,
+      totalOrders,
+      totalProducts,
+    });
+
     return NextResponse.json(response);
   } catch (error) {
-    console.error("Dashboard analytics error:", error);
+    logger.error("Dashboard analytics error", error as Error, {
+      endpoint: "GET /api/analytics/dashboard",
+    });
     return NextResponse.json(
       { error: "Failed to fetch dashboard analytics" },
       { status: 500 },

@@ -9,11 +9,12 @@
 
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Mail, CheckCircle, AlertCircle } from "lucide-react";
+import { authLogger } from "@/lib/utils/logger";
+import { AlertCircle, ArrowLeft, CheckCircle, Mail } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -43,7 +44,9 @@ export default function ForgotPasswordPage() {
       setIsSubmitted(true);
     } catch (err) {
       setError("Failed to send reset email. Please try again.");
-      console.error("Password reset error:", err);
+      authLogger.error("Password reset request failed", err instanceof Error ? err : new Error(String(err)), {
+        email: email.replace(/(.{2}).*(@.*)/, "$1***$2"), // Mask email for privacy
+      });
     } finally {
       setIsSubmitting(false);
     }

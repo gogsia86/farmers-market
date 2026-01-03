@@ -14,11 +14,12 @@
 
 "use client";
 
+import type { CartItemData } from "@/lib/services/cart.service";
+import { cartLogger } from "@/lib/utils/logger";
+import { AlertCircle, Leaf, Minus, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Minus, Plus, Trash2, Leaf, AlertCircle } from "lucide-react";
 import { useState } from "react";
-import type { CartItemData } from "@/lib/services/cart.service";
 
 interface CartItemCardProps {
   item: CartItemData;
@@ -49,7 +50,12 @@ export function CartItemCard({
     try {
       await onUpdateQuantity(item.id, newQuantity);
     } catch (error) {
-      console.error("Error updating quantity:", error);
+      cartLogger.error("Error updating cart item quantity", error instanceof Error ? error : new Error(String(error)), {
+        itemId: item.id,
+        productId: item.productId,
+        currentQuantity: item.quantity,
+        newQuantity,
+      });
     } finally {
       setIsUpdating(false);
     }
@@ -62,7 +68,10 @@ export function CartItemCard({
     try {
       await onRemove(item.id);
     } catch (error) {
-      console.error("Error removing item:", error);
+      cartLogger.error("Error removing cart item", error instanceof Error ? error : new Error(String(error)), {
+        itemId: item.id,
+        productId: item.productId,
+      });
       setIsRemoving(false);
     }
   };

@@ -1,6 +1,10 @@
 import { requireFarmerAuth } from "@/lib/auth/farmer-auth";
+import { createLogger } from "@/lib/logger";
 import { notificationService } from "@/lib/notifications/notification-service";
 import { NextRequest } from "next/server";
+
+// Initialize structured logger
+const logger = createLogger("notifications-stream-api");
 
 /**
  * 🔔 NOTIFICATIONS SSE ENDPOINT
@@ -16,6 +20,8 @@ export async function GET(request: NextRequest) {
   }
 
   const userId = authResult.userId!;
+
+  logger.info("SSE stream connection initiated", { userId });
 
   // Create SSE stream
   const encoder = new TextEncoder();
@@ -38,7 +44,10 @@ export async function GET(request: NextRequest) {
           try {
             controller.enqueue(encoder.encode(data));
           } catch (error) {
-            console.error("SSE send error:", error);
+            logger.error("SSE send error", error as Error, {
+              userId,
+              operation: "notification-broadcast",
+            });
             unsubscribe();
           }
         },
@@ -49,6 +58,9 @@ export async function GET(request: NextRequest) {
         try {
           controller.enqueue(encoder.encode(": keep-alive\n\n"));
         } catch (error) {
+          logger.warn("SSE keep-alive failed, closing connection", {
+            userId,
+          });
           clearInterval(keepAlive);
           unsubscribe();
         }
@@ -56,6 +68,7 @@ export async function GET(request: NextRequest) {
 
       // Cleanup on close
       request.signal.addEventListener("abort", () => {
+        logger.info("SSE stream connection closed", { userId });
         clearInterval(keepAlive);
         unsubscribe();
         controller.close();

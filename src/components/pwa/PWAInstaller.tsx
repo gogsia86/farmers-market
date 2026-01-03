@@ -5,8 +5,11 @@
 
 "use client";
 
+import { createLogger } from "@/lib/utils/logger";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
+
+const pwaLogger = createLogger("PWAInstaller");
 
 /**
  * PWA Install Prompt Component
@@ -24,7 +27,7 @@ export function PWAInstaller() {
       navigator.serviceWorker
         .register("/sw.js")
         .then((registration) => {
-          console.log("[PWA] Service Worker registered:", registration);
+          pwaLogger.info("Service Worker registered", { scope: registration.scope });
 
           // Check for updates
           registration.addEventListener("updatefound", () => {
@@ -36,7 +39,7 @@ export function PWAInstaller() {
                   navigator.serviceWorker.controller
                 ) {
                   setUpdateAvailable(true);
-                  console.log("[PWA] New version available");
+                  pwaLogger.info("New version available");
                 }
               });
             }
@@ -48,14 +51,14 @@ export function PWAInstaller() {
           }, 60000); // Check every minute
         })
         .catch((error) => {
-          console.error("[PWA] Service Worker registration failed:", error);
+          pwaLogger.error("Service Worker registration failed", error instanceof Error ? error : new Error(String(error)));
         });
     }
 
     // Check if already installed
     if (window.matchMedia("(display-mode: standalone)").matches) {
       setIsInstalled(true);
-      console.log("[PWA] App is running in standalone mode");
+      pwaLogger.info("App is running in standalone mode");
     }
 
     // Listen for beforeinstallprompt event
@@ -80,7 +83,7 @@ export function PWAInstaller() {
     window.addEventListener("appinstalled", () => {
       setIsInstalled(true);
       setShowInstallBanner(false);
-      console.log("[PWA] App installed successfully");
+      pwaLogger.info("App installed successfully");
     });
 
     return () => {
@@ -97,7 +100,7 @@ export function PWAInstaller() {
     installPrompt.prompt();
     const { outcome } = await installPrompt.userChoice;
 
-    console.log("[PWA] User choice:", outcome);
+    pwaLogger.info("User install choice", { outcome });
 
     if (outcome === "accepted") {
       setShowInstallBanner(false);

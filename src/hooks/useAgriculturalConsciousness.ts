@@ -1,4 +1,5 @@
 import { agriculturalConsciousness } from "@/lib/ai/AgriculturalConsciousness";
+import { agriculturalLogger } from "@/lib/utils/logger";
 import type { NavigationPattern, Season } from "@/types/agricultural";
 import { useEffect, useState } from "react";
 
@@ -33,7 +34,10 @@ export function useAgriculturalConsciousness() {
         setPatterns(pattern);
       }
     } catch (error: unknown) {
-      console.error("Error initializing agricultural consciousness:", error);
+      agriculturalLogger.error(
+        "Error initializing agricultural consciousness",
+        error instanceof Error ? error : new Error(String(error)),
+      );
     }
 
     return () => {

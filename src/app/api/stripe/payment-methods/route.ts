@@ -15,12 +15,15 @@
  * @route PUT /api/stripe/payment-methods - Set default payment method
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { stripe } from "@/lib/stripe";
 import { database } from "@/lib/database";
-import { z } from "zod";
+import { createLogger } from "@/lib/logger";
+import { stripe } from "@/lib/stripe";
+import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { z } from "zod";
+
+const logger = createLogger("stripe-payment-methods-api");
 
 // ============================================================================
 // VALIDATION SCHEMAS
@@ -147,12 +150,12 @@ export async function GET(_request: NextRequest) {
       type: pm.type,
       card: pm.card
         ? {
-            brand: pm.card.brand,
-            last4: pm.card.last4,
-            expMonth: pm.card.exp_month,
-            expYear: pm.card.exp_year,
-            funding: pm.card.funding,
-          }
+          brand: pm.card.brand,
+          last4: pm.card.last4,
+          expMonth: pm.card.exp_month,
+          expYear: pm.card.exp_year,
+          funding: pm.card.funding,
+        }
         : null,
       isDefault: pm.id === defaultPaymentMethodId,
       createdAt: new Date(pm.created * 1000).toISOString(),
@@ -167,7 +170,9 @@ export async function GET(_request: NextRequest) {
       { status: 200 },
     );
   } catch (error) {
-    console.error("Error listing payment methods:", error);
+    logger.error("Failed to list payment methods", error, {
+      operation: "listPaymentMethods",
+    });
 
     return NextResponse.json(
       {
@@ -239,11 +244,11 @@ export async function POST(request: NextRequest) {
           type: paymentMethod.type,
           card: paymentMethod.card
             ? {
-                brand: paymentMethod.card.brand,
-                last4: paymentMethod.card.last4,
-                expMonth: paymentMethod.card.exp_month,
-                expYear: paymentMethod.card.exp_year,
-              }
+              brand: paymentMethod.card.brand,
+              last4: paymentMethod.card.last4,
+              expMonth: paymentMethod.card.exp_month,
+              expYear: paymentMethod.card.exp_year,
+            }
             : null,
           isDefault: setAsDefault,
         },
@@ -251,7 +256,9 @@ export async function POST(request: NextRequest) {
       { status: 201 },
     );
   } catch (error) {
-    console.error("Error attaching payment method:", error);
+    logger.error("Failed to attach payment method", error, {
+      operation: "attachPaymentMethod",
+    });
 
     // Handle Stripe-specific errors
     if (error instanceof Stripe.errors.StripeError) {
@@ -338,7 +345,9 @@ export async function DELETE(request: NextRequest) {
       { status: 200 },
     );
   } catch (error) {
-    console.error("Error detaching payment method:", error);
+    logger.error("Failed to detach payment method", error, {
+      operation: "detachPaymentMethod",
+    });
 
     if (error instanceof Stripe.errors.StripeError) {
       return NextResponse.json(
@@ -428,7 +437,9 @@ export async function PUT(request: NextRequest) {
       { status: 200 },
     );
   } catch (error) {
-    console.error("Error setting default payment method:", error);
+    logger.error("Failed to set default payment method", error, {
+      operation: "setDefaultPaymentMethod",
+    });
 
     if (error instanceof Stripe.errors.StripeError) {
       return NextResponse.json(

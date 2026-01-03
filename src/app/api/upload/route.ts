@@ -1,6 +1,9 @@
 import { auth } from "@/lib/auth";
 import { uploadImage, validateImageFile } from "@/lib/cloudinary";
+import { createLogger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("upload-api");
 
 /**
  * 📎 IMAGE UPLOAD API - CLOUDINARY
@@ -77,7 +80,9 @@ export async function POST(request: NextRequest) {
       type,
     });
   } catch (error) {
-    console.error("Upload API error:", error);
+    logger.error("Upload failed", error, {
+      operation: "uploadImage",
+    });
     return NextResponse.json(
       {
         success: false,

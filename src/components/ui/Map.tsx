@@ -1,21 +1,23 @@
 "use client";
 
-import React, { useEffect, useRef, useState, ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { createLogger } from "@/lib/utils/logger";
 import {
-  MapPin,
-  Navigation,
   Locate,
+  Navigation,
   ZoomIn,
-  ZoomOut,
-  Layers,
+  ZoomOut
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🌾 AGRICULTURAL MAP COMPONENT
 // Divine map component for farm location visualization with geographical consciousness
 // Embodies spatial awareness and biodynamic location patterns
 // ═══════════════════════════════════════════════════════════════════════════════
+
+// Create logger for Map component
+const mapLogger = createLogger("Map");
 
 export interface MapLocation {
   id: string;
@@ -121,9 +123,9 @@ export function StaticMap({
   const [currentZoom, setCurrentZoom] = useState(zoom);
   const [mapCenter, setMapCenter] = useState(
     center ||
-      (locations.length > 0
-        ? { lat: locations[0].lat, lng: locations[0].lng }
-        : { lat: 0, lng: 0 }),
+    (locations.length > 0
+      ? { lat: locations[0].lat, lng: locations[0].lng }
+      : { lat: 0, lng: 0 }),
   );
   const [userLocation, setUserLocation] = useState<{
     lat: number;
@@ -141,7 +143,10 @@ export function StaticMap({
           });
         },
         (error) => {
-          console.warn("Geolocation error:", error);
+          mapLogger.warn("Geolocation error occurred", {
+            errorCode: error.code,
+            errorMessage: error.message,
+          });
         },
       );
     }

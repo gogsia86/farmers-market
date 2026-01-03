@@ -15,19 +15,23 @@
 
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { getCurrentUser, requireFarmer } from "@/lib/auth";
 import { database } from "@/lib/database";
-import { requireFarmer, getCurrentUser } from "@/lib/auth";
-import { z } from "zod";
+import { createLogger } from "@/lib/logger";
 import {
-  ActionResult,
   ActionError,
   ActionErrorCode,
-  createSuccessResult,
+  ActionResult,
   createErrorResult,
+  createSuccessResult,
 } from "@/types/actions";
 import type { Product, ProductStatus } from "@prisma/client";
 import { Prisma } from "@prisma/client";
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+
+// Initialize logger for product actions
+const logger = createLogger("product-actions");
 
 // ============================================================================
 // VALIDATION SCHEMAS
@@ -313,7 +317,10 @@ export async function createProductAction(
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Create product error:", error);
+    logger.error("Create product failed", error as Error, {
+      farmId,
+      productData: data,
+    });
 
     // Handle known Prisma errors
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -479,7 +486,10 @@ export async function updateProductAction(
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Update product error:", error);
+    logger.error("Update product failed", error as Error, {
+      productId,
+      updates: data,
+    });
 
     // Handle known Prisma errors
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -591,7 +601,9 @@ export async function deleteProductAction(
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Delete product error:", error);
+    logger.error("Delete product failed", error as Error, {
+      productId,
+    });
 
     // Handle known Prisma errors
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -705,7 +717,9 @@ export async function toggleProductStatusAction(
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Toggle product status error:", error);
+    logger.error("Toggle product status failed", error as Error, {
+      productId,
+    });
 
     // Handle known Prisma errors
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -834,7 +848,9 @@ export async function bulkUpdateStockAction(
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Bulk update stock error:", error);
+    logger.error("Bulk update stock failed", error as Error, {
+      stockUpdates: updates,
+    });
 
     // Handle ActionError instances
     if (error instanceof ActionError) {

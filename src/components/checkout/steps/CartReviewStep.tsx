@@ -13,18 +13,19 @@
  * - Agricultural consciousness UI
  */
 
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import { cartLogger } from "@/lib/utils/logger";
+import { useCheckoutStore } from "@/stores/checkoutStore";
 import {
-  Trash2,
-  Plus,
-  Minus,
   AlertCircle,
   Leaf,
+  Minus,
+  Plus,
   ShoppingBag,
+  Trash2,
 } from "lucide-react";
-import { useCheckoutStore } from "@/stores/checkoutStore";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 // ============================================================================
 // TYPES
@@ -98,7 +99,7 @@ export function CartReviewStep() {
           });
         }
       } catch (error) {
-        console.error("Failed to fetch cart:", error);
+        cartLogger.error("Failed to fetch cart", error instanceof Error ? error : new Error(String(error)));
       } finally {
         setIsLoading(false);
       }
@@ -137,7 +138,10 @@ export function CartReviewStep() {
         await refreshCartTotals();
       }
     } catch (error) {
-      console.error("Failed to update quantity:", error);
+      cartLogger.error("Failed to update quantity", error instanceof Error ? error : new Error(String(error)), {
+        cartItemId,
+        newQuantity,
+      });
     } finally {
       setIsUpdating(false);
     }
@@ -164,7 +168,9 @@ export function CartReviewStep() {
         await refreshCartTotals();
       }
     } catch (error) {
-      console.error("Failed to remove item:", error);
+      cartLogger.error("Failed to remove item", error instanceof Error ? error : new Error(String(error)), {
+        cartItemId,
+      });
     } finally {
       setIsUpdating(false);
     }
@@ -191,7 +197,7 @@ export function CartReviewStep() {
         });
       }
     } catch (error) {
-      console.error("Failed to refresh cart totals:", error);
+      cartLogger.error("Failed to refresh cart totals", error instanceof Error ? error : new Error(String(error)));
     }
   };
 

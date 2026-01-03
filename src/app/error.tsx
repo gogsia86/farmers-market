@@ -1,7 +1,11 @@
 "use client";
 
+import { createLogger } from "@/lib/utils/logger";
 import { AlertTriangle, Home, RefreshCw } from "lucide-react";
 import { useEffect } from "react";
+
+// Create logger for error boundary
+const errorLogger = createLogger("ErrorBoundary");
 
 /**
  * 🚨 ERROR BOUNDARY COMPONENT - DIVINE CONSCIOUSNESS RESTORATION
@@ -37,10 +41,8 @@ function getCurrentSeason(): string {
 export default function ErrorPage({ error, reset }: ErrorProps) {
   useEffect(() => {
     // 🌟 Divine error consciousness tracking
-    console.error("🚨 Agricultural Consciousness Disruption:", {
-      error: error.message,
+    errorLogger.error("Agricultural Consciousness Disruption", error, {
       digest: error.digest,
-      timestamp: new Date().toISOString(),
       season: getCurrentSeason(),
       consciousness_level: "disrupted",
       component: "Error Boundary",
@@ -71,7 +73,7 @@ export default function ErrorPage({ error, reset }: ErrorProps) {
 
   // 🎯 Reality restoration handler
   const handleRestore = () => {
-    console.log("🌟 Initiating consciousness restoration...");
+    errorLogger.info("Initiating consciousness restoration");
     reset();
   };
 

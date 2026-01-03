@@ -11,10 +11,13 @@
  * @endpoint GET /api/search/personalized
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { smartSearchRankingService } from "@/lib/services/search/smart-search-ranking.service";
+import { createLogger } from "@/lib/logger";
 import type { RankingAlgorithm } from "@/lib/services/search/smart-search-ranking.service";
+import { smartSearchRankingService } from "@/lib/services/search/smart-search-ranking.service";
+import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("personalized-search-api");
 
 // ============================================================================
 // API RESPONSE TYPES
@@ -94,10 +97,10 @@ export async function GET(request: NextRequest) {
     const location =
       lat && lng
         ? {
-            lat: parseFloat(lat),
-            lng: parseFloat(lng),
-            radius: radius ? parseFloat(radius) : undefined,
-          }
+          lat: parseFloat(lat),
+          lng: parseFloat(lng),
+          radius: radius ? parseFloat(radius) : undefined,
+        }
         : undefined;
 
     // Validate query
@@ -217,7 +220,9 @@ export async function GET(request: NextRequest) {
       },
     );
   } catch (error) {
-    console.error("❌ Personalized search failed:", error);
+    logger.error("Personalized search failed", error, {
+      operation: "personalizedSearch",
+    });
 
     return NextResponse.json(
       {
@@ -275,7 +280,9 @@ export async function POST(request: NextRequest) {
       { status: 200 },
     );
   } catch (error) {
-    console.error("❌ Failed to track search click:", error);
+    logger.error("Failed to track search click", error, {
+      operation: "trackSearchClick",
+    });
 
     return NextResponse.json(
       {

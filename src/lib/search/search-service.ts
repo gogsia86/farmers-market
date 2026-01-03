@@ -131,7 +131,7 @@ export class SearchService {
           { description: { contains: query, mode: "insensitive" } },
           { city: { contains: query, mode: "insensitive" } },
         ],
-        status: "APPROVED",
+        status: "ACTIVE",
       };
 
       // Apply filters

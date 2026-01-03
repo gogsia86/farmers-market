@@ -9,14 +9,17 @@
  * @reference .github/instructions/11_KILO_SCALE_ARCHITECTURE.instructions.md
  */
 
-import { z } from "zod";
 import {
+  createErrorResponse,
   createPostHandler,
   createSuccessResponse,
-  createErrorResponse,
 } from "@/lib/api/handler-factory";
-import { cartSyncService } from "@/lib/services/cart-sync.service";
+import { createLogger } from "@/lib/logger";
 import type { MergeStrategy } from "@/lib/services/cart-sync.service";
+import { cartSyncService } from "@/lib/services/cart-sync.service";
+import { z } from "zod";
+
+const logger = createLogger("cart-sync-api");
 
 // ============================================
 // VALIDATION SCHEMAS
@@ -63,6 +66,12 @@ export const POST = createPostHandler<SyncCartRequest>(
     };
 
     try {
+      logger.info("Starting cart sync", {
+        userId: user.id,
+        localItemCount: localItems.length,
+        strategy: mergeStrategy,
+      });
+
       // Perform cart sync/merge
       const mergeResult = await cartSyncService.mergeLocalCart(
         user.id,
@@ -73,6 +82,14 @@ export const POST = createPostHandler<SyncCartRequest>(
       // Get updated cart with totals
       const updatedCart = await cartSyncService.getCart(user.id);
       const clientCart = cartSyncService.toClientFormat(updatedCart);
+
+      logger.info("Cart sync completed successfully", {
+        userId: user.id,
+        addedFromLocal: mergeResult.addedFromLocal,
+        updatedFromServer: mergeResult.updatedFromServer,
+        conflicts: mergeResult.conflicts,
+        totalItems: mergeResult.mergedItems.length,
+      });
 
       return createSuccessResponse(
         {
@@ -90,7 +107,10 @@ export const POST = createPostHandler<SyncCartRequest>(
         },
       );
     } catch (error) {
-      console.error("[Cart Sync Error]", error);
+      logger.error("Cart sync failed", error as Error, {
+        userId: user.id,
+        localItemCount: localItems.length,
+      });
 
       if (error instanceof Error) {
         return createErrorResponse("CART_SYNC_ERROR", error.message, 500, {

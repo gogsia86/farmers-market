@@ -4,10 +4,14 @@
  * DELETE: Remove cart item
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { createLogger } from "@/lib/logger";
 import { cartService } from "@/lib/services/cart.service";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+
+// Initialize structured logger
+const logger = createLogger("cart-item-api");
 
 // ============================================================================
 // PUT /api/cart/[itemId] - Update cart item quantity
@@ -96,7 +100,9 @@ export async function PUT(
       message: "Cart item updated successfully",
     });
   } catch (error) {
-    console.error("Error updating cart item:", error);
+    logger.error("Failed to update cart item", error as Error, {
+      operation: "PUT /api/cart/[itemId]",
+    });
     return NextResponse.json(
       {
         success: false,
@@ -172,7 +178,9 @@ export async function DELETE(
       message: "Cart item removed successfully",
     });
   } catch (error) {
-    console.error("Error removing cart item:", error);
+    logger.error("Failed to remove cart item", error as Error, {
+      operation: "DELETE /api/cart/[itemId]",
+    });
     return NextResponse.json(
       {
         success: false,

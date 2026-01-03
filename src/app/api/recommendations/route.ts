@@ -9,10 +9,13 @@
  * @agricultural-consciousness MAXIMUM
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import { createLogger } from "@/lib/logger";
+import type { RecommendationRequest } from "@/lib/services/recommendation-engine.service";
 import { recommendationEngine } from "@/lib/services/recommendation-engine.service";
 import { recommendationEvents } from "@/lib/services/recommendation-events.service";
-import type { RecommendationRequest } from "@/lib/services/recommendation-engine.service";
+import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("recommendations-api");
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 🎯 GET - GET PERSONALIZED RECOMMENDATIONS
@@ -86,9 +89,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       location:
         latitude && longitude
           ? {
-              latitude: parseFloat(latitude),
-              longitude: parseFloat(longitude),
-            }
+            latitude: parseFloat(latitude),
+            longitude: parseFloat(longitude),
+          }
           : undefined,
       context: {
         pageType: contextType as any,
@@ -120,7 +123,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     );
   } catch (error) {
-    console.error("[RecommendationsAPI] Error:", error);
+    logger.error("Failed to generate recommendations", error, {
+      operation: "getRecommendations",
+    });
 
     return NextResponse.json(
       {
@@ -240,7 +245,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       { status: 200 },
     );
   } catch (error) {
-    console.error("[RecommendationsAPI] Error:", error);
+    logger.error("Failed to track user action", error, {
+      operation: "trackUserAction",
+    });
 
     return NextResponse.json(
       {

@@ -4,9 +4,12 @@
  * HP OMEN Optimized - DeepSeek-R1:7b
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
 import { createOllamaClient, type OllamaMessage } from "@/lib/ai/ollama";
+import { auth } from "@/lib/auth";
+import { createLogger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("ollama-api");
 
 // ============================================================================
 // POST /api/ai/ollama - Chat with local Ollama
@@ -114,9 +117,9 @@ Always consider the holistic farm ecosystem and long-term sustainability.`,
     const tokensPerSecond =
       response.eval_count && response.eval_duration
         ? (
-            response.eval_count /
-            (response.eval_duration / 1_000_000_000)
-          ).toFixed(2)
+          response.eval_count /
+          (response.eval_duration / 1_000_000_000)
+        ).toFixed(2)
         : "N/A";
 
     return NextResponse.json({
@@ -140,7 +143,9 @@ Always consider the holistic farm ecosystem and long-term sustainability.`,
       },
     });
   } catch (error) {
-    console.error("Ollama API error:", error);
+    logger.error("Ollama API error", error as Error, {
+      endpoint: "POST /api/ai/ollama",
+    });
 
     return NextResponse.json(
       {
@@ -223,7 +228,9 @@ export async function GET(_request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Ollama status check error:", error);
+    logger.error("Ollama status check error", error as Error, {
+      endpoint: "GET /api/ai/ollama",
+    });
 
     return NextResponse.json(
       {

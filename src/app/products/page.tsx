@@ -1,14 +1,15 @@
-import { Metadata } from "next";
-import Link from "next/link";
-import { Badge } from "@/components/ui/Badge";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
-import { MapPin, Star, ShoppingCart, Leaf, ArrowRight } from "lucide-react";
+import { database } from "@/lib/database";
+import { farmLogger } from "@/lib/utils/logger";
 import {
   generateMetadata as generateMeta,
   generateOrganizationJsonLd,
 } from "@/lib/utils/metadata";
-import { database } from "@/lib/database";
+import { ArrowRight, Leaf, MapPin, ShoppingCart, Star } from "lucide-react";
+import { Metadata } from "next";
+import Link from "next/link";
 
 /**
  * 🍎 PRODUCTS CATALOG PAGE - Server Component
@@ -105,7 +106,9 @@ async function getProducts() {
       };
     });
   } catch (error) {
-    console.error("[PRODUCTS_FETCH_ERROR]", error);
+    farmLogger.error("Failed to fetch products catalog", error instanceof Error ? error : new Error(String(error)), {
+      path: "/products",
+    });
     return [];
   }
 }

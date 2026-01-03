@@ -5,7 +5,11 @@
 
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
+
+// Initialize structured logger
+const logger = createLogger("notification-item-api");
 
 export async function PATCH(
   _request: NextRequest,
@@ -42,9 +46,17 @@ export async function PATCH(
       },
     });
 
+    logger.info("Notification marked as read", {
+      notificationId: params.id,
+      userId: session.user.id,
+    });
+
     return NextResponse.json(updated);
   } catch (error) {
-    console.error("Mark read error:", error);
+    logger.error("Failed to mark notification as read", error as Error, {
+      notificationId: params.id,
+      operation: "PATCH /api/notifications/[id]",
+    });
     return NextResponse.json(
       { error: "Failed to mark notification as read" },
       { status: 500 },
@@ -89,9 +101,17 @@ export async function GET(
       where: { id: params.id },
     });
 
+    logger.info("Notification deleted", {
+      notificationId: params.id,
+      userId: session.user.id,
+    });
+
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Delete notification error:", error);
+    logger.error("Failed to delete notification", error as Error, {
+      notificationId: params.id,
+      operation: "GET /api/notifications/[id]",
+    });
     return NextResponse.json(
       { error: "Failed to delete notification" },
       { status: 500 },

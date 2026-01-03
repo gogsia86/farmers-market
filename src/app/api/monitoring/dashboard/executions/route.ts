@@ -15,8 +15,11 @@
  * - endDate: ISO date string
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("dashboard-executions-api");
 
 // ============================================================================
 // TYPES
@@ -189,7 +192,9 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error("❌ Dashboard executions API error:", error);
+    logger.error("Dashboard executions API error", error, {
+      operation: "getDashboardExecutions",
+    });
 
     const response: ExecutionResponse = {
       success: false,

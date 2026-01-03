@@ -7,15 +7,18 @@
  * alerts, and performance metrics in real-time.
  */
 
-import { Suspense } from "react";
-import { Metadata } from "next";
-import { database } from "@/lib/database";
+import { AlertsWidget } from "@/components/monitoring/dashboard/AlertsWidget";
 import { DashboardLayout } from "@/components/monitoring/dashboard/DashboardLayout";
+import { DashboardSkeleton } from "@/components/monitoring/dashboard/DashboardSkeleton";
+import { PerformanceMetricsWidget } from "@/components/monitoring/dashboard/PerformanceMetricsWidget";
 import { SystemHealthWidget } from "@/components/monitoring/dashboard/SystemHealthWidget";
 import { WorkflowExecutionWidget } from "@/components/monitoring/dashboard/WorkflowExecutionWidget";
-import { AlertsWidget } from "@/components/monitoring/dashboard/AlertsWidget";
-import { PerformanceMetricsWidget } from "@/components/monitoring/dashboard/PerformanceMetricsWidget";
-import { DashboardSkeleton } from "@/components/monitoring/dashboard/DashboardSkeleton";
+import { database } from "@/lib/database";
+import { createLogger } from "@/lib/utils/logger";
+import { Metadata } from "next";
+import { Suspense } from "react";
+
+const monitoringLogger = createLogger("AdminMonitoring");
 
 // ============================================================================
 // METADATA
@@ -155,7 +158,7 @@ async function getDashboardData() {
     const avgResponseTime =
       recentExecutions.length > 0
         ? recentExecutions.reduce((sum, e) => sum + (e.durationMs || 0), 0) /
-          recentExecutions.length
+        recentExecutions.length
         : 0;
 
     // System health status
@@ -187,7 +190,7 @@ async function getDashboardData() {
       lastUpdated: now.toISOString(),
     };
   } catch (error) {
-    console.error("Error fetching dashboard data:", error);
+    monitoringLogger.error("Error fetching dashboard data", error instanceof Error ? error : new Error(String(error)));
     return null;
   }
 }
@@ -253,9 +256,8 @@ export default async function MonitoringDashboardPage() {
               </p>
             </div>
             <div
-              className={`rounded-full p-3 ${
-                data.overview.systemHealthy ? "bg-green-100" : "bg-red-100"
-              }`}
+              className={`rounded-full p-3 ${data.overview.systemHealthy ? "bg-green-100" : "bg-red-100"
+                }`}
             >
               <span className="text-2xl">
                 {data.overview.systemHealthy ? "🟢" : "🔴"}
@@ -306,19 +308,17 @@ export default async function MonitoringDashboardPage() {
             <div>
               <p className="text-sm font-medium text-gray-600">Active Alerts</p>
               <p
-                className={`mt-2 text-3xl font-bold ${
-                  data.overview.alertCount > 0
+                className={`mt-2 text-3xl font-bold ${data.overview.alertCount > 0
                     ? "text-orange-600"
                     : "text-green-600"
-                }`}
+                  }`}
               >
                 {data.overview.alertCount}
               </p>
             </div>
             <div
-              className={`rounded-full p-3 ${
-                data.overview.alertCount > 0 ? "bg-orange-100" : "bg-green-100"
-              }`}
+              className={`rounded-full p-3 ${data.overview.alertCount > 0 ? "bg-orange-100" : "bg-green-100"
+                }`}
             >
               <span className="text-2xl">
                 {data.overview.alertCount > 0 ? "⚠️" : "✅"}

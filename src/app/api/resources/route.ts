@@ -1,6 +1,9 @@
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("resources-api");
 
 /**
  * 📚 RESOURCES API
@@ -182,7 +185,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Resources API error:", error);
+    logger.error("Resources API error", error, {
+      operation: "getResources",
+    });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },
@@ -251,7 +256,9 @@ export async function POST(request: NextRequest) {
       message: "Resource download tracked successfully",
     });
   } catch (error) {
-    console.error("Resource download error:", error);
+    logger.error("Resource download error", error, {
+      operation: "trackResourceDownload",
+    });
     return NextResponse.json(
       {
         success: false,

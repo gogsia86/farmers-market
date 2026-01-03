@@ -11,7 +11,10 @@
  * - Loading states and error handling
  */
 
+import { createLogger } from "@/lib/utils/logger";
 import { useEffect, useState } from "react";
+
+const homeLogger = createLogger("PlatformStats");
 
 interface PlatformStat {
   total: number;
@@ -57,7 +60,7 @@ export function PlatformStats() {
           throw new Error("API returned unsuccessful response");
         }
       } catch (err) {
-        console.error("Error fetching platform stats:", err);
+        homeLogger.error("Error fetching platform stats", err instanceof Error ? err : new Error(String(err)));
         setError(err instanceof Error ? err.message : "Failed to load stats");
 
         // Fallback to default stats on error

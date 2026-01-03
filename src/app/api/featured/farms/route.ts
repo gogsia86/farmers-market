@@ -10,7 +10,10 @@
  */
 
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("featured-farms-api");
 
 export const dynamic = "force-dynamic";
 export const revalidate = 300; // Cache for 5 minutes
@@ -221,7 +224,9 @@ export async function GET(request: NextRequest) {
       },
     );
   } catch (error) {
-    console.error("[FEATURED_FARMS_API_ERROR]", error);
+    logger.error("Failed to fetch featured farms", error, {
+      operation: "getFeaturedFarms",
+    });
     return NextResponse.json(
       {
         success: false,

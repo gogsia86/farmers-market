@@ -12,9 +12,12 @@
  * - Product, farm, and category suggestions
  */
 
-import { Search, TrendingUp, MapPin, Tag, X } from "lucide-react";
+import { createLogger } from "@/lib/utils/logger";
+import { MapPin, Search, Tag, TrendingUp, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+const searchLogger = createLogger("SearchAutocomplete");
 
 interface SearchSuggestion {
   type: "product" | "farm" | "category";
@@ -86,7 +89,7 @@ export function SearchAutocomplete({
           throw new Error(data.error || "Failed to load suggestions");
         }
       } catch (err) {
-        console.error("Error fetching suggestions:", err);
+        searchLogger.error("Error fetching suggestions", err instanceof Error ? err : new Error(String(err)));
         setError(
           err instanceof Error ? err.message : "Failed to load suggestions",
         );
@@ -338,9 +341,8 @@ export function SearchAutocomplete({
                   <button
                     onClick={() => handleSuggestionClick(suggestion)}
                     onMouseEnter={() => setSelectedIndex(index)}
-                    className={`w-full text-left p-4 hover:bg-agricultural-50 transition-colors flex items-center gap-4 ${
-                      selectedIndex === index ? "bg-agricultural-50" : ""
-                    }`}
+                    className={`w-full text-left p-4 hover:bg-agricultural-50 transition-colors flex items-center gap-4 ${selectedIndex === index ? "bg-agricultural-50" : ""
+                      }`}
                     role="option"
                     aria-selected={selectedIndex === index}
                   >

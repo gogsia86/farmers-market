@@ -1,5 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("farms-slug-api");
 
 /**
  * 🌾 FARM DETAIL API ENDPOINT
@@ -33,12 +36,14 @@ export async function GET(
     const { slug } = resolvedParams;
 
     // Debug logging
-    console.log("🔍 [Farms API] Request URL:", request.url);
-    console.log("🔍 [Farms API] Slug value:", slug);
+    logger.debug("Farm detail request", {
+      url: request.url,
+      slug,
+    });
 
     // Validate slug parameter
     if (!slug || typeof slug !== "string") {
-      console.error("❌ [Farms API] Invalid slug:", {
+      logger.warn("Invalid slug parameter", {
         slug,
         type: typeof slug,
       });
@@ -55,9 +60,8 @@ export async function GET(
     }
 
     // Handle special endpoint: /api/farms/featured
-    console.log("🔍 [Farms API] Checking slug:", slug);
     if (slug.toLowerCase() === "featured") {
-      console.log("✨ [Farms API] Featured endpoint detected!");
+      logger.debug("Featured endpoint detected via slug route");
       const { searchParams } = new URL(request.url);
       const limit = Math.min(parseInt(searchParams.get("limit") || "6"), 20);
 
@@ -123,6 +127,11 @@ export async function GET(
         activeProductCount: farm._count.products,
         createdAt: farm.createdAt.toISOString(),
       }));
+
+      logger.info("Featured farms fetched successfully", {
+        count: formattedFarms.length,
+        limit,
+      });
 
       return NextResponse.json({
         success: true,
@@ -216,6 +225,7 @@ export async function GET(
 
     // Check if farm exists
     if (!farm) {
+      logger.debug("Farm not found", { slug });
       return NextResponse.json(
         {
           success: false,
@@ -231,6 +241,11 @@ export async function GET(
     // Check if farm is accessible (active and verified for public viewing)
     // Note: Remove this check if you want to allow viewing of all farms
     if (farm.status !== "ACTIVE" || farm.verificationStatus !== "VERIFIED") {
+      logger.debug("Farm not available for viewing", {
+        slug,
+        status: farm.status,
+        verificationStatus: farm.verificationStatus,
+      });
       return NextResponse.json(
         {
           success: false,
@@ -254,7 +269,10 @@ export async function GET(
         },
       })
       .catch((error) => {
-        console.error("[FARM_VIEW_COUNT_ERROR]", error);
+        logger.error("Failed to update farm view count", error as Error, {
+          farmId: farm.id,
+          slug,
+        });
         // Don't fail the request if view count update fails
       });
 
@@ -355,6 +373,13 @@ export async function GET(
       updatedAt: farm.updatedAt.toISOString(),
     };
 
+    logger.info("Farm details fetched successfully", {
+      farmId: farm.id,
+      slug,
+      productCount: farm.products.length,
+      reviewCount: farm.reviews.length,
+    });
+
     return NextResponse.json(
       {
         success: true,
@@ -367,7 +392,9 @@ export async function GET(
       { status: 200 },
     );
   } catch (error) {
-    console.error("[FARM_DETAIL_API_ERROR]", error);
+    logger.error("Farm detail API error", error as Error, {
+      endpoint: "GET /api/farms/[slug]",
+    });
 
     return NextResponse.json(
       {

@@ -1,6 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
+
+// Initialize structured logger
+const logger = createLogger("reviews-api");
 
 /**
  * GET /api/reviews
@@ -156,7 +160,9 @@ export async function GET(request: NextRequest) {
       pending: pendingReviews.length > 0 ? pendingReviews : undefined,
     });
   } catch (error) {
-    console.error("Reviews GET error:", error);
+    logger.error("Failed to fetch reviews", error as Error, {
+      operation: "GET /api/reviews",
+    });
     return NextResponse.json(
       {
         success: false,
@@ -275,6 +281,15 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    logger.info("Review created successfully", {
+      reviewId: review.id,
+      userId: session.user.id,
+      rating,
+      farmId,
+      productId,
+      orderId,
+    });
+
     return NextResponse.json({
       success: true,
       message: "Review submitted successfully",
@@ -288,7 +303,9 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Review creation error:", error);
+    logger.error("Failed to create review", error as Error, {
+      operation: "POST /api/reviews",
+    });
     return NextResponse.json(
       {
         success: false,

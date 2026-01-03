@@ -15,15 +15,18 @@
 
 "use client";
 
+import { useToast } from "@/hooks/use-toast";
+import { createLogger } from "@/lib/utils/logger";
 import React, {
   createContext,
-  useContext,
-  useReducer,
-  useEffect,
   useCallback,
+  useContext,
+  useEffect,
+  useReducer,
   type ReactNode,
 } from "react";
-import { useToast } from "@/hooks/use-toast";
+
+const cartContextLogger = createLogger("CartContext");
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -51,9 +54,9 @@ type CartAction =
   | { type: "ADD_ITEM"; payload: CartItem }
   | { type: "REMOVE_ITEM"; payload: { productId: string } }
   | {
-      type: "UPDATE_QUANTITY";
-      payload: { productId: string; quantity: number };
-    }
+    type: "UPDATE_QUANTITY";
+    payload: { productId: string; quantity: number };
+  }
   | { type: "CLEAR_CART" }
   | { type: "LOAD_CART"; payload: CartItem[] };
 
@@ -192,7 +195,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         dispatch({ type: "LOAD_CART", payload: items });
       }
     } catch (error) {
-      console.error("Failed to load cart from localStorage:", error);
+      cartContextLogger.error("Failed to load cart from localStorage", error instanceof Error ? error : new Error(String(error)));
       localStorage.removeItem(CART_STORAGE_KEY);
     }
   }, []);
@@ -202,7 +205,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     try {
       localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(state.items));
     } catch (error) {
-      console.error("Failed to save cart to localStorage:", error);
+      cartContextLogger.error("Failed to save cart to localStorage", error instanceof Error ? error : new Error(String(error)));
     }
   }, [state.items]);
 

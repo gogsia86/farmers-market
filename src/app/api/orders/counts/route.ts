@@ -1,6 +1,10 @@
-import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
+import { NextResponse } from "next/server";
+
+// Initialize structured logger
+const logger = createLogger("orders-counts-api");
 
 /**
  * GET /api/orders/counts
@@ -55,7 +59,9 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error("Failed to fetch order counts:", error);
+    logger.error("Failed to fetch order counts", error as Error, {
+      operation: "GET /api/orders/counts",
+    });
     return NextResponse.json(
       {
         success: false,

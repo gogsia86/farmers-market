@@ -8,12 +8,15 @@
  * - Returns advice with citations and metadata
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import { auth } from "@/lib/auth";
+import { createLogger } from "@/lib/logger";
 import { getFarmingAdvice } from "@/lib/services/perplexity-farming.service";
 import type { FarmingAdviceRequest } from "@/types/farming-advice.types";
 import { getCurrentSeason } from "@/types/farming-advice.types";
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+
+const logger = createLogger("farming-advice-api");
 
 // ============================================================================
 // VALIDATION SCHEMA
@@ -72,6 +75,11 @@ export async function POST(request: NextRequest) {
     const validation = FarmingAdviceSchema.safeParse(body);
 
     if (!validation.success) {
+      logger.warn("Farming advice validation failed", {
+        userId: session.user.id,
+        errors: validation.error.flatten(),
+      });
+
       return NextResponse.json(
         {
           success: false,
@@ -86,6 +94,12 @@ export async function POST(request: NextRequest) {
     }
 
     const validatedData = validation.data;
+
+    logger.debug("Processing farming advice request", {
+      userId: session.user.id,
+      category: validatedData.category,
+      depth: validatedData.depth,
+    });
 
     // 3. Build Request
     const adviceRequest: FarmingAdviceRequest = {
@@ -104,12 +118,22 @@ export async function POST(request: NextRequest) {
 
     // 5. Return Response
     if (result.success) {
+      logger.info("Farming advice provided successfully", {
+        userId: session.user.id,
+        category: validatedData.category,
+      });
       return NextResponse.json(result, { status: 200 });
     } else {
+      logger.warn("Farming advice service returned failure", {
+        userId: session.user.id,
+        category: validatedData.category,
+      });
       return NextResponse.json(result, { status: 500 });
     }
   } catch (error) {
-    console.error("❌ Farming Advice API Error:", error);
+    logger.error("Farming Advice API error", error as Error, {
+      endpoint: "POST /api/farming/advice",
+    });
 
     return NextResponse.json(
       {

@@ -1,4 +1,4 @@
-import { FarmCardSkeleton } from "@/components/ui/Skeleton";
+import { FarmCardSkeleton } from "@/components/ui/skeleton";
 
 /**
  * 🏡 FARMS PAGE LOADING STATE

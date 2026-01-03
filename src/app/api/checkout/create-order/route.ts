@@ -11,11 +11,15 @@
  * - Agricultural consciousness
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { createLogger } from "@/lib/logger";
 import { checkoutService } from "@/lib/services/checkout.service";
+import type { Address, Farm, Order, OrderItem, User } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import type { Order, Farm, OrderItem, User, Address } from "@prisma/client";
+
+// Initialize logger for checkout create order API
+const logger = createLogger("api-checkout-order");
 
 // ============================================================================
 // TYPES
@@ -173,7 +177,9 @@ export async function POST(request: NextRequest) {
       { status: 201 },
     );
   } catch (error) {
-    console.error("Error creating order from checkout:", error);
+    logger.error("Order creation from checkout failed", error as Error, {
+      operation: "POST /api/checkout/create-order",
+    });
 
     return NextResponse.json(
       {
@@ -226,7 +232,9 @@ export async function GET(_request: NextRequest) {
       status: result.data,
     });
   } catch (error) {
-    console.error("Error getting checkout status:", error);
+    logger.error("Get checkout status failed", error as Error, {
+      operation: "GET /api/checkout/create-order",
+    });
 
     return NextResponse.json(
       {

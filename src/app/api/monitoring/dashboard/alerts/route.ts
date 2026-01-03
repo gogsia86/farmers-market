@@ -13,8 +13,11 @@
  * - hours: number (look back hours, default: 24)
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("dashboard-alerts-api");
 
 // ============================================================================
 // TYPES
@@ -207,7 +210,9 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error("❌ Dashboard alerts API error:", error);
+    logger.error("Dashboard alerts API error", error, {
+      operation: "getDashboardAlerts",
+    });
 
     const response: AlertResponse = {
       success: false,

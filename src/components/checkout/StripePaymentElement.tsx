@@ -15,15 +15,16 @@
  * - Loading states and skeleton UI
  */
 
-import { useEffect, useState } from "react";
+import { paymentLogger } from "@/lib/utils/logger";
 import {
   Elements,
   PaymentElement,
-  useStripe,
   useElements,
+  useStripe,
 } from "@stripe/react-stripe-js";
 import { loadStripe, StripeElementsOptions } from "@stripe/stripe-js";
-import { Loader2, Lock, AlertCircle } from "lucide-react";
+import { AlertCircle, Loader2, Lock } from "lucide-react";
+import { useEffect, useState } from "react";
 
 // ============================================================================
 // CONFIGURATION
@@ -105,7 +106,7 @@ function PaymentForm({
       } else if (paymentIntent) {
         // Payment requires additional action (3D Secure, etc.)
         // Stripe will handle this automatically with redirect: "if_required"
-        console.log("Payment intent status:", paymentIntent.status);
+        paymentLogger.debug("Payment intent requires additional action", { status: paymentIntent.status });
       }
     } catch (err) {
       const message =

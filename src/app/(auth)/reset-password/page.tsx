@@ -9,19 +9,20 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { authLogger } from "@/lib/utils/logger";
 import {
+  AlertCircle,
   ArrowLeft,
-  Lock,
+  CheckCircle,
   Eye,
   EyeOff,
-  CheckCircle,
-  AlertCircle,
+  Lock,
 } from "lucide-react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -122,7 +123,9 @@ export default function ResetPasswordPage() {
           ? err.message
           : "Failed to reset password. Please try again or request a new reset link.",
       );
-      console.error("Password reset error:", err);
+      authLogger.error("Password reset error", err instanceof Error ? err : new Error(String(err)), {
+        hasToken: !!token,
+      });
     } finally {
       setIsSubmitting(false);
     }

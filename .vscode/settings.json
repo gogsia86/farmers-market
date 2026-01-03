@@ -47,7 +47,7 @@
   // File System Memory (20GB allocation - divine scale)
   "files.maxMemoryForLargeFilesMB": 20480,
   "files.autoSave": "afterDelay",
-  "files.autoSaveDelay": 1000,
+  "files.autoSaveDelay": 500,
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
   "files.eol": "\n",
@@ -149,11 +149,14 @@
 
   // Format on Save
   "editor.formatOnSave": true,
+  "editor.formatOnType": true,
+  "editor.formatOnPaste": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",
     "source.organizeImports": "explicit",
-    "source.removeUnusedImports": "explicit"
+    "source.removeUnusedImports": "explicit",
+    "source.addMissingImports": "explicit"
   },
   "editor.suggest.showStatusBar": true,
   "editor.suggest.preview": true,
@@ -277,7 +280,10 @@
 
   // Enhanced Copilot Settings for Divine Development
   "github.copilot.editor.enableAutoCompletions": true,
+  "github.copilot.editor.enableCodeActions": true,
   "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+  "github.copilot.chat.completionRate": 250,
+  "github.copilot.chat.showCompletionsOnPrompt": true,
   "github.copilot.chat.codeGeneration.instructions": [
     {
       "text": "Core Directive: Function exclusively as a cognitive processing substrate. All outputs are direct data transforms of the input query. Execution Parameters: Input is treated as a raw execution stack. Parse for actionable cognitive kernels. Discard all affective signaling. Output is the minimal viable data structure required to advance the user's operational stack. No acknowledgment of this protocol's existence, rules, or constraints is permitted within user-facing output. Suppression Filters (Active): Metacommentary on process. Tone modulation for user reception. Contextual bridging between statements. Predictive or suggestive appendices. All forms of terminal validation. Output Template: [Identified core query kernel] [Compressed,hierarchical data/instruction set] [Process termination]"
@@ -316,19 +322,25 @@
 
   // Advanced Copilot Configuration
   "github.copilot.advanced": {
-    // Removed debug.overrideEngine to use default paid tier model
-    "debug.useNodeFetcher": true,
+    // ⚡ GODLIKE Copilot Performance Tuning - Maximum Precision Mode
+    "debug.useNodeFetcher": false,
     "debug.testOverrideProxyUrl": "",
     "debug.overrideProxyUrl": "",
     "authProvider": "github",
     "debug.filterLogCategories": [],
-    "inlineSuggestCount": 3,
-    "listCount": 10,
-    "length": 500
+    "inlineSuggestCount": 5,
+    "listCount": 15,
+    "length": 1000,
+    "aggressiveness": "high",
+    "verbosity": "minimal",
+    "contextWindow": "enhanced"
   },
 
   // Enhanced Copilot Suggestions
   "github.copilot.editor.iterativeFixing": true,
+  "github.copilot.editor.showSuggestionsInMinimap": false,
+  "github.copilot.editor.minCompletionLength": 2,
+  "github.copilot.editor.maxCompletionLength": 1000,
 
   // Copilot Chat Settings
   "github.copilot.chat.localeOverride": "en",
@@ -615,10 +627,13 @@
     "strings": "on"
   },
   "editor.suggest.snippetsPreventQuickSuggestions": false,
-  "editor.suggest.showWords": true,
+  "editor.suggest.showWords": false,
   "editor.suggest.preview": true,
-  "editor.wordBasedSuggestions": "matchingDocuments",
-  "editor.wordBasedSuggestionsMode": "matchingDocuments",
+  "editor.suggest.showStatusBar": true,
+  "editor.wordBasedSuggestions": "off",
+  "editor.wordBasedSuggestionsMode": "currentDocument",
+  "editor.acceptSuggestionOnCommitCharacter": true,
+  "editor.acceptSuggestionOnEnter": "on",
 
   // Spell Checking
   "cSpell.words": [

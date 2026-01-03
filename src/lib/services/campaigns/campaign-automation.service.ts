@@ -483,7 +483,7 @@ export class CampaignAutomationService {
     // Get active farms with seasonal products
     const farms = await database.farm.findMany({
       where: {
-        status: "APPROVED",
+        status: "ACTIVE",
         products: {
           some: {
             availableSeasons: {

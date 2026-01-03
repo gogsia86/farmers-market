@@ -1,6 +1,14 @@
 /**
  * ⚡ LAZY REDIS CLIENT
  * Dynamic import wrapper for Redis to reduce server bundle size
+ */
+
+import { createLogger } from "@/lib/utils/logger";
+
+// Create dedicated logger for Redis lazy client
+const redisLazyLogger = createLogger("RedisLazy");
+
+/**
  *
  * WHY THIS EXISTS:
  * - ioredis library is ~100KB and was bundled in every route using rate limiting
@@ -174,10 +182,9 @@ async function getRedisClient(): Promise<IRedisClient> {
     cachedRedisClient = redisClient;
     return cachedRedisClient;
   } catch (error) {
-    console.warn(
-      "Failed to load Redis client, falling back to in-memory:",
-      error,
-    );
+    redisLazyLogger.warn("Failed to load Redis client, falling back to in-memory", {
+      errorMessage: error instanceof Error ? error.message : String(error),
+    });
 
     // Fallback to in-memory on error
     if (!inMemoryClient) {
@@ -258,7 +265,9 @@ export async function withRedisOrFallback<T>(
     const client = await getRedisClient();
     return await redisOperation(client);
   } catch (error) {
-    console.warn("Redis operation failed, using fallback:", error);
+    redisLazyLogger.warn("Redis operation failed, using fallback", {
+      errorMessage: error instanceof Error ? error.message : String(error),
+    });
     return fallback();
   }
 }

@@ -1,6 +1,9 @@
 "use client";
 
+import { createLogger } from "@/lib/utils/logger";
 import { useState } from "react";
+
+const uiLogger = createLogger("CodeBlock");
 
 interface CodeBlockProps {
   code: string;
@@ -16,7 +19,7 @@ export function CodeBlock({ code, language = "typescript" }: CodeBlockProps) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error("Failed to copy:", err);
+      uiLogger.error("Failed to copy to clipboard", err instanceof Error ? err : new Error(String(err)));
     }
   };
 

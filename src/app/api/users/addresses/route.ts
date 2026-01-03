@@ -1,6 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("user-addresses-api");
 
 /**
  * GET /api/users/addresses
@@ -43,7 +46,9 @@ export async function GET() {
       total: addresses.length,
     });
   } catch (error) {
-    console.error("Addresses fetch error:", error);
+    logger.error("Failed to fetch addresses", error, {
+      operation: "getAddresses",
+    });
     return NextResponse.json(
       {
         success: false,
@@ -168,7 +173,9 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Address creation error:", error);
+    logger.error("Failed to create address", error, {
+      operation: "createAddress",
+    });
     return NextResponse.json(
       {
         success: false,

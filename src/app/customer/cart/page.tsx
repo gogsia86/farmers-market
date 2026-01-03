@@ -13,11 +13,12 @@
  * - Agricultural consciousness patterns
  */
 
-import { Metadata } from "next";
+import { CartPageClient } from "@/components/cart/CartPageClient";
 import { auth } from "@/lib/auth";
 import { cartService } from "@/lib/services/cart.service";
+import { cartLogger } from "@/lib/utils/logger";
 import { generateMetadata } from "@/lib/utils/metadata";
-import { CartPageClient } from "@/components/cart/CartPageClient";
+import { Metadata } from "next";
 
 // ============================================================================
 // METADATA
@@ -58,12 +59,18 @@ export default async function CartPage() {
       if (response.success) {
         cartSummary = response.data;
       } else {
-        console.error("Error fetching cart:", response.error);
+        cartLogger.error("Failed to fetch cart from service", {
+          userId: session.user.id,
+          error: response.error?.message,
+          errorCode: response.error?.code,
+        });
         error =
           response.error?.message || "Failed to load cart. Please try again.";
       }
     } catch (err) {
-      console.error("Error fetching cart:", err);
+      cartLogger.error("Exception while fetching cart", err instanceof Error ? err : new Error(String(err)), {
+        userId: session.user.id,
+      });
       error = "Failed to load cart. Please try again.";
     }
   }

@@ -13,10 +13,10 @@
  * - Edge cases and error handling
  */
 
-import { CheckoutService } from "../checkout.service";
 import { database } from "@/lib/database";
-import { cartService } from "../cart.service";
 import { stripe } from "@/lib/stripe";
+import { cartService } from "../cart.service";
+import { CheckoutService } from "../checkout.service";
 
 // ============================================================================
 // MOCKS
@@ -1014,6 +1014,33 @@ describe("CheckoutService", () => {
       const orderId = "323e4567-e89b-12d3-a456-426614174000";
       const paymentMethodId = "pm_test_123";
 
+      // Mock order fetch
+      mockDatabase.order.findUnique.mockResolvedValueOnce(
+        createMockOrder({
+          id: orderId,
+          paymentStatus: "PENDING",
+          status: "PENDING",
+          items: [
+            {
+              id: "item_123",
+              productId: "product_123",
+              product: createMockProduct({ farmId: "farm_123" }),
+              quantity: 2,
+              price: 10.0,
+            },
+          ],
+        }) as any,
+      );
+
+      // Mock Stripe PaymentIntent creation
+      (mockStripe.paymentIntents.create as jest.Mock).mockResolvedValueOnce({
+        id: "pi_test_123",
+        status: "succeeded",
+        amount: 2000,
+        currency: "usd",
+      });
+
+      // Mock order update
       mockDatabase.order.update.mockResolvedValueOnce(
         createMockOrder({
           id: orderId,
@@ -1035,6 +1062,7 @@ describe("CheckoutService", () => {
           paidAt: expect.any(Date),
           status: "CONFIRMED",
           confirmedAt: expect.any(Date),
+          stripePaymentIntentId: "pi_test_123",
         },
       });
     });
@@ -1043,9 +1071,22 @@ describe("CheckoutService", () => {
       const orderId = "323e4567-e89b-12d3-a456-426614174000";
       const paymentMethodId = "pm_123";
 
-      mockDatabase.order.update.mockRejectedValueOnce(
-        new Error("Payment failed"),
+      // Mock order fetch to succeed but payment processing to fail
+      mockDatabase.order.findUnique.mockResolvedValueOnce(
+        createMockOrder({
+          id: orderId,
+          paymentStatus: "PENDING",
+        }) as any,
       );
+
+      // Mock Stripe to throw an error
+      (global as any).stripe = {
+        paymentIntents: {
+          create: jest.fn().mockRejectedValueOnce(
+            new Error("Payment failed"),
+          ),
+        },
+      };
 
       const result = await checkoutService.processPayment(
         orderId,

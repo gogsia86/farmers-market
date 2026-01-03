@@ -7,13 +7,12 @@
  * ╚════════════════════════════════════════════════════════════╝
  */
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type {
-  TrackSearchEventRequest,
-  TrackInteractionRequest,
-  SearchAnalyticsQuery,
-} from "@/lib/services/analytics.service";
+import { createLogger } from "@/lib/utils/logger";
 import { InteractionType, PeriodType, Season } from "@prisma/client";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+// Create logger for analytics hooks
+const analyticsLogger = createLogger("Analytics");
 
 // ============================================
 // TYPE DEFINITIONS
@@ -299,10 +298,10 @@ export function useTrackSearchEvent() {
     onSuccess: (data) => {
       // Invalidate analytics queries to refresh data
       queryClient.invalidateQueries({ queryKey: ["analytics"] });
-      console.log("Search event tracked:", data.data?.id);
+      analyticsLogger.debug("Search event tracked", { eventId: data.data?.id });
     },
     onError: (error: Error) => {
-      console.error("Failed to track search event:", error.message);
+      analyticsLogger.error("Failed to track search event", { errorMessage: error.message });
     },
   });
 
@@ -341,10 +340,10 @@ export function useTrackInteraction() {
     mutationFn: trackInteractionAPI,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["analytics"] });
-      console.log("Interaction tracked:", data.data?.type);
+      analyticsLogger.debug("Interaction tracked", { interactionType: data.data?.type });
     },
     onError: (error: Error) => {
-      console.error("Failed to track interaction:", error.message);
+      analyticsLogger.error("Failed to track interaction", { errorMessage: error.message });
     },
   });
 
@@ -387,7 +386,7 @@ export function useAggregateAnalytics() {
       queryClient.invalidateQueries({ queryKey: ["analytics"] });
     },
     onError: (error: Error) => {
-      console.error("Failed to aggregate analytics:", error.message);
+      analyticsLogger.error("Failed to aggregate analytics", { errorMessage: error.message });
     },
   });
 
@@ -572,7 +571,7 @@ export function useSearchTracking(sessionId: string) {
       currentSearchEventId = response.data?.id;
       return response;
     } catch (error) {
-      console.error("Search tracking failed:", error);
+      analyticsLogger.error("Search tracking failed", error instanceof Error ? error : new Error(String(error)));
     }
   };
 

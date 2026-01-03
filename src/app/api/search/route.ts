@@ -11,7 +11,11 @@
  */
 
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
+
+// Initialize structured logger
+const logger = createLogger("search-api");
 
 export async function GET(request: NextRequest) {
   try {
@@ -70,6 +74,13 @@ export async function GET(request: NextRequest) {
       unit: product.unit,
     }));
 
+    logger.info("Search completed", {
+      query,
+      category,
+      limit,
+      resultCount: results.length,
+    });
+
     return NextResponse.json({
       success: true,
       query,
@@ -77,7 +88,9 @@ export async function GET(request: NextRequest) {
       results,
     });
   } catch (error) {
-    console.error("Search API error:", error);
+    logger.error("Search failed", error as Error, {
+      operation: "GET /api/search",
+    });
     return NextResponse.json(
       { error: "Failed to search products" },
       { status: 500 },

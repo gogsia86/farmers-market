@@ -1,6 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
+
+// Initialize structured logger
+const logger = createLogger("farmer-finances-api");
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -359,6 +363,14 @@ export async function GET(request: NextRequest) {
       });
     }
 
+    logger.info("Financial data fetched successfully", {
+      farmId,
+      userId: session.user.id,
+      period,
+      orderCount: currentOrders.length,
+      currentRevenue,
+    });
+
     return NextResponse.json({
       success: true,
       stats,
@@ -366,7 +378,9 @@ export async function GET(request: NextRequest) {
       revenueData,
     });
   } catch (error) {
-    console.error("Error fetching financial data:", error);
+    logger.error("Failed to fetch financial data", error as Error, {
+      operation: "GET /api/farmer/finances",
+    });
     return NextResponse.json(
       {
         success: false,

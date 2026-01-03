@@ -15,9 +15,12 @@
  * - Health check endpoint
  */
 
+import { createLogger } from "@/lib/logger";
+import { paymentService } from "@/lib/services/payment.service";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
-import { paymentService } from "@/lib/services/payment.service";
+
+const logger = createLogger("stripe-webhook-api");
 
 /**
  * ⚠️ IMPORTANT: Disable body parsing for webhook signature verification
@@ -40,8 +43,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const signature = request.headers.get("stripe-signature");
 
     if (!signature) {
-      console.error("Missing Stripe signature header", {
-        headers: Object.fromEntries(request.headers),
+      logger.error("Missing Stripe signature header", undefined, {
+        operation: "verifySignature",
       });
 
       return NextResponse.json(
@@ -57,8 +60,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     });
 
     if (!verificationResponse.success) {
-      console.error("Webhook signature verification failed", {
-        error: verificationResponse.error,
+      logger.error("Webhook signature verification failed", verificationResponse.error, {
+        operation: "verifySignature",
       });
 
       return NextResponse.json(
@@ -74,7 +77,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const event = verificationResponse.data;
 
     // ✅ STEP 3: LOG WEBHOOK EVENT
-    console.log("Received Stripe webhook", {
+    logger.info("Received Stripe webhook", {
+      operation: "receiveWebhook",
       eventId: event.id,
       eventType: event.type,
       created: new Date(event.created * 1000).toISOString(),
@@ -166,7 +170,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           break;
 
         default:
-          console.log(`Unhandled event type: ${event.type}`, {
+          logger.debug(`Unhandled event type: ${event.type}`, {
+            operation: "handleEvent",
             eventId: event.id,
           });
           handlerResult = { handled: false };
@@ -190,7 +195,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
       if (handlerResult.error) {
         responsePayload.warning = handlerResult.error;
-        console.warn("Handler completed with warning", {
+        logger.warn("Handler completed with warning", {
+          operation: "handleEvent",
           eventId: event.id,
           eventType: event.type,
           error: handlerResult.error,
@@ -199,13 +205,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
       return NextResponse.json(responsePayload, { status: 200 });
     } catch (handlerError) {
-      console.error(`Error handling ${event.type}:`, {
+      logger.error(`Error handling ${event.type}`, handlerError, {
+        operation: "handleEvent",
         eventId: event.id,
-        error:
-          handlerError instanceof Error
-            ? handlerError.message
-            : "Unknown error",
-        stack: handlerError instanceof Error ? handlerError.stack : undefined,
       });
 
       // Still return 200 to acknowledge receipt
@@ -222,9 +224,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
   } catch (error) {
-    console.error("Webhook processing error:", {
-      error: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined,
+    logger.error("Webhook processing error", error, {
+      operation: "processWebhook",
     });
 
     return NextResponse.json(
@@ -248,8 +249,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 async function handlePaymentIntentSucceeded(
   paymentIntent: Stripe.PaymentIntent,
 ): Promise<{ handled: boolean; error?: string }> {
-  console.log("Processing payment_intent.succeeded", {
-    id: paymentIntent.id,
+  logger.info("Processing payment_intent.succeeded", {
+    operation: "handlePaymentIntentSucceeded",
+    paymentIntentId: paymentIntent.id,
     amount: paymentIntent.amount / 100,
     currency: paymentIntent.currency,
     orderId: paymentIntent.metadata.orderId,
@@ -258,9 +260,9 @@ async function handlePaymentIntentSucceeded(
   const response = await paymentService.handlePaymentSuccess(paymentIntent);
 
   if (!response.success) {
-    console.error("Failed to handle payment success", {
+    logger.error("Failed to handle payment success", response.error, {
+      operation: "handlePaymentIntentSucceeded",
       paymentIntentId: paymentIntent.id,
-      error: response.error,
     });
 
     return {
@@ -269,7 +271,8 @@ async function handlePaymentIntentSucceeded(
     };
   }
 
-  console.log("Payment success handled", {
+  logger.info("Payment success handled", {
+    operation: "handlePaymentIntentSucceeded",
     paymentIntentId: paymentIntent.id,
     orderId: response.data.id,
     orderStatus: response.data.status,
@@ -286,8 +289,9 @@ async function handlePaymentIntentSucceeded(
 async function handlePaymentIntentFailed(
   paymentIntent: Stripe.PaymentIntent,
 ): Promise<{ handled: boolean; error?: string }> {
-  console.log("Processing payment_intent.payment_failed", {
-    id: paymentIntent.id,
+  logger.info("Processing payment_intent.payment_failed", {
+    operation: "handlePaymentIntentFailed",
+    paymentIntentId: paymentIntent.id,
     orderId: paymentIntent.metadata.orderId,
     lastError: paymentIntent.last_payment_error?.message,
   });
@@ -295,9 +299,9 @@ async function handlePaymentIntentFailed(
   const response = await paymentService.handlePaymentFailure(paymentIntent);
 
   if (!response.success) {
-    console.error("Failed to handle payment failure", {
+    logger.error("Failed to handle payment failure", response.error, {
+      operation: "handlePaymentIntentFailed",
       paymentIntentId: paymentIntent.id,
-      error: response.error,
     });
 
     return {
@@ -306,7 +310,8 @@ async function handlePaymentIntentFailed(
     };
   }
 
-  console.log("Payment failure handled", {
+  logger.info("Payment failure handled", {
+    operation: "handlePaymentIntentFailed",
     paymentIntentId: paymentIntent.id,
     orderId: response.data.id,
     paymentStatus: response.data.paymentStatus,
@@ -322,8 +327,9 @@ async function handlePaymentIntentFailed(
 async function handlePaymentIntentCanceled(
   paymentIntent: Stripe.PaymentIntent,
 ): Promise<{ handled: boolean; error?: string }> {
-  console.log("Processing payment_intent.canceled", {
-    id: paymentIntent.id,
+  logger.info("Processing payment_intent.canceled", {
+    operation: "handlePaymentIntentCanceled",
+    paymentIntentId: paymentIntent.id,
     orderId: paymentIntent.metadata.orderId,
     cancellationReason: paymentIntent.cancellation_reason,
   });
@@ -332,9 +338,9 @@ async function handlePaymentIntentCanceled(
   const response = await paymentService.handlePaymentFailure(paymentIntent);
 
   if (!response.success) {
-    console.error("Failed to handle payment cancellation", {
+    logger.error("Failed to handle payment cancellation", response.error, {
+      operation: "handlePaymentIntentCanceled",
       paymentIntentId: paymentIntent.id,
-      error: response.error,
     });
 
     return {
@@ -343,7 +349,8 @@ async function handlePaymentIntentCanceled(
     };
   }
 
-  console.log("Payment cancellation handled", {
+  logger.info("Payment cancellation handled", {
+    operation: "handlePaymentIntentCanceled",
     paymentIntentId: paymentIntent.id,
     orderId: response.data.id,
   });
@@ -358,8 +365,9 @@ async function handlePaymentIntentCanceled(
 async function handlePaymentIntentProcessing(
   paymentIntent: Stripe.PaymentIntent,
 ): Promise<{ handled: boolean; error?: string }> {
-  console.log("Payment intent processing", {
-    id: paymentIntent.id,
+  logger.info("Payment intent processing", {
+    operation: "handlePaymentIntentProcessing",
+    paymentIntentId: paymentIntent.id,
     orderId: paymentIntent.metadata.orderId,
     status: paymentIntent.status,
   });
@@ -378,8 +386,9 @@ async function handlePaymentIntentProcessing(
 async function handlePaymentIntentRequiresAction(
   paymentIntent: Stripe.PaymentIntent,
 ): Promise<{ handled: boolean; error?: string }> {
-  console.log("Payment intent requires action", {
-    id: paymentIntent.id,
+  logger.info("Payment intent requires action", {
+    operation: "handlePaymentIntentRequiresAction",
+    paymentIntentId: paymentIntent.id,
     orderId: paymentIntent.metadata.orderId,
     nextAction: paymentIntent.next_action?.type,
   });
@@ -401,8 +410,9 @@ async function handlePaymentIntentRequiresAction(
 async function handleChargeSucceeded(
   charge: Stripe.Charge,
 ): Promise<{ handled: boolean; error?: string }> {
-  console.log("Charge succeeded", {
-    id: charge.id,
+  logger.info("Charge succeeded", {
+    operation: "handleChargeSucceeded",
+    chargeId: charge.id,
     amount: charge.amount / 100,
     currency: charge.currency,
     paymentIntentId: charge.payment_intent,
@@ -420,8 +430,9 @@ async function handleChargeSucceeded(
 async function handleChargeFailed(
   charge: Stripe.Charge,
 ): Promise<{ handled: boolean; error?: string }> {
-  console.error("Charge failed", {
-    id: charge.id,
+  logger.error("Charge failed", undefined, {
+    operation: "handleChargeFailed",
+    chargeId: charge.id,
     paymentIntentId: charge.payment_intent,
     failureCode: charge.failure_code,
     failureMessage: charge.failure_message,
@@ -438,8 +449,9 @@ async function handleChargeFailed(
 async function handleChargeRefunded(
   charge: Stripe.Charge,
 ): Promise<{ handled: boolean; error?: string }> {
-  console.log("Processing charge.refunded", {
-    id: charge.id,
+  logger.info("Processing charge.refunded", {
+    operation: "handleChargeRefunded",
+    chargeId: charge.id,
     amountRefunded: charge.amount_refunded / 100,
     refunded: charge.refunded,
     paymentIntentId: charge.payment_intent,
@@ -448,9 +460,9 @@ async function handleChargeRefunded(
   const response = await paymentService.handleRefund(charge);
 
   if (!response.success) {
-    console.error("Failed to handle charge refund", {
+    logger.error("Failed to handle charge refund", response.error, {
+      operation: "handleChargeRefunded",
       chargeId: charge.id,
-      error: response.error,
     });
 
     return {
@@ -459,7 +471,8 @@ async function handleChargeRefunded(
     };
   }
 
-  console.log("Charge refund handled", {
+  logger.info("Charge refund handled", {
+    operation: "handleChargeRefunded",
     chargeId: charge.id,
     orderId: response.data.id,
     paymentStatus: response.data.paymentStatus,
@@ -479,8 +492,9 @@ async function handleChargeRefunded(
 async function handleRefundCreated(
   refund: Stripe.Refund,
 ): Promise<{ handled: boolean; error?: string }> {
-  console.log("Refund created", {
-    id: refund.id,
+  logger.info("Refund created", {
+    operation: "handleRefundCreated",
+    refundId: refund.id,
     amount: refund.amount / 100,
     status: refund.status,
     reason: refund.reason,
@@ -499,8 +513,9 @@ async function handleRefundCreated(
 async function handleRefundUpdated(
   refund: Stripe.Refund,
 ): Promise<{ handled: boolean; error?: string }> {
-  console.log("Refund updated", {
-    id: refund.id,
+  logger.info("Refund updated", {
+    operation: "handleRefundUpdated",
+    refundId: refund.id,
     status: refund.status,
     paymentIntentId: refund.payment_intent,
   });
@@ -520,8 +535,9 @@ async function handleRefundUpdated(
 async function handlePaymentMethodAttached(
   paymentMethod: Stripe.PaymentMethod,
 ): Promise<{ handled: boolean; error?: string }> {
-  console.log("Payment method attached", {
-    id: paymentMethod.id,
+  logger.info("Payment method attached", {
+    operation: "handlePaymentMethodAttached",
+    paymentMethodId: paymentMethod.id,
     type: paymentMethod.type,
     customerId: paymentMethod.customer,
   });
@@ -537,8 +553,9 @@ async function handlePaymentMethodAttached(
 async function handleCustomerCreated(
   customer: Stripe.Customer,
 ): Promise<{ handled: boolean; error?: string }> {
-  console.log("Stripe customer created", {
-    id: customer.id,
+  logger.info("Stripe customer created", {
+    operation: "handleCustomerCreated",
+    customerId: customer.id,
     email: customer.email,
   });
 

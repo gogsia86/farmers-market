@@ -16,8 +16,11 @@
 
 "use client";
 
+import { createLogger } from "@/lib/utils/logger";
+import { Loader2, MapPin, Navigation } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { MapPin, Navigation, Loader2 } from "lucide-react";
+
+const farmMapLogger = createLogger("FarmLocationMap");
 
 interface FarmLocationMapProps {
   farmName: string;
@@ -93,9 +96,8 @@ export function FarmLocationMap({
             <p style="margin: 0; font-size: 14px; color: #4A5568;">
               ${address}
             </p>
-            ${
-              showDirections
-                ? `
+            ${showDirections
+            ? `
               <a
                 href="https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}"
                 target="_blank"
@@ -105,8 +107,8 @@ export function FarmLocationMap({
                 Get Directions →
               </a>
             `
-                : ""
-            }
+            : ""
+          }
           </div>
         `,
       });
@@ -135,7 +137,11 @@ export function FarmLocationMap({
       setMap(mapInstance);
       setLoading(false);
     } catch (err) {
-      console.error("Error initializing map:", err);
+      farmMapLogger.error("Error initializing map", err instanceof Error ? err : new Error(String(err)), {
+        farmName,
+        latitude,
+        longitude,
+      });
       setError("Failed to load map");
       setLoading(false);
     }

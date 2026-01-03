@@ -1,5 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("marketplace-farm-api");
 
 /**
  * 🌾 FARM PROFILE API - Phase 3
@@ -135,7 +138,10 @@ export async function GET(_request: NextRequest, { params }: Props) {
       data: farmData,
     });
   } catch (error) {
-    console.error("[FARM_PROFILE_API_ERROR]", error);
+    logger.error("Failed to fetch farm profile", error, {
+      operation: "getFarmProfile",
+      slug: params.slug,
+    });
     return NextResponse.json(
       {
         success: false,

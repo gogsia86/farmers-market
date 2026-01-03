@@ -4,8 +4,12 @@
  * Multi-layer: L1 (Memory) + L2 (Redis)
  */
 
+import { createLogger } from "@/lib/utils/logger";
 import { MemoryCache } from "./memory";
 import { redisClient } from "./redis-client";
+
+// Create dedicated logger for cache operations
+const cacheLogger = createLogger("BiodynamicCache");
 
 export interface CacheOptions {
   ttl?: number; // Time to live in seconds
@@ -41,20 +45,20 @@ export class BiodynamicCacheManager {
     // L1: Check memory cache (fastest)
     const memoryValue = this.memoryCache.get<T>(key);
     if (memoryValue !== null) {
-      console.log(`✅ L1 Cache HIT: ${key}`);
+      cacheLogger.debug(`L1 Cache HIT`, { key });
       return memoryValue;
     }
 
     // L2: Check Redis cache
     const redisValue = await redisClient.get<T>(key);
     if (redisValue !== null) {
-      console.log(`✅ L2 Cache HIT (Redis): ${key}`);
+      cacheLogger.debug(`L2 Cache HIT (Redis)`, { key });
       // Populate L1 cache
       this.memoryCache.set(key, redisValue, 300); // Max 5 min in memory
       return redisValue;
     }
 
-    console.log(`❌ Cache MISS: ${key}`);
+    cacheLogger.debug(`Cache MISS`, { key });
     return null;
   }
 
@@ -75,14 +79,14 @@ export class BiodynamicCacheManager {
     const redisSuccess = await redisClient.set(key, value, ttl);
 
     if (redisSuccess) {
-      console.log(`✅ Cached in L1+L2: ${key} (TTL: ${ttl}s)`);
+      cacheLogger.debug(`Cached in L1+L2`, { key, ttl });
 
       // Store tag associations in Redis
       if (options.tags && options.tags.length > 0) {
         await this.associateTags(key, options.tags, ttl);
       }
     } else {
-      console.log(`⚠️ Cached in L1 only: ${key} (Redis unavailable)`);
+      cacheLogger.warn(`Cached in L1 only (Redis unavailable)`, { key });
     }
   }
 
@@ -101,7 +105,7 @@ export class BiodynamicCacheManager {
     }
 
     // Compute value
-    console.log(`🔄 Computing: ${key}`);
+    cacheLogger.debug(`Computing value`, { key });
     const value = await compute();
 
     // Store in cache
@@ -116,7 +120,7 @@ export class BiodynamicCacheManager {
   async invalidate(key: string): Promise<void> {
     this.memoryCache.invalidate(key);
     await redisClient.delete(key);
-    console.log(`🗑️ Invalidated: ${key}`);
+    cacheLogger.debug(`Invalidated`, { key });
   }
 
   /**
@@ -125,7 +129,7 @@ export class BiodynamicCacheManager {
   async invalidatePattern(pattern: string): Promise<void> {
     this.memoryCache.invalidatePattern(pattern);
     const deletedCount = await redisClient.deletePattern(pattern);
-    console.log(`🗑️ Invalidated pattern: ${pattern} (${deletedCount} keys)`);
+    cacheLogger.debug(`Invalidated pattern`, { pattern, deletedCount });
   }
 
   /**
@@ -138,7 +142,7 @@ export class BiodynamicCacheManager {
     const keysJson = await redisClient.get<string[]>(tagKey);
 
     if (keysJson && Array.isArray(keysJson)) {
-      console.log(`🗑️ Invalidating tag: ${tag} (${keysJson.length} keys)`);
+      cacheLogger.debug(`Invalidating tag`, { tag, keyCount: keysJson.length });
 
       // Delete all associated keys
       for (const key of keysJson) {
@@ -148,7 +152,7 @@ export class BiodynamicCacheManager {
       // Delete the tag key itself
       await redisClient.delete(tagKey);
     } else {
-      console.log(`⚠️ Tag not found: ${tag}`);
+      cacheLogger.debug(`Tag not found`, { tag });
     }
   }
 
@@ -159,7 +163,7 @@ export class BiodynamicCacheManager {
     this.memoryCache.clear();
     // Note: We don't clear ALL of Redis, just invalidate patterns
     await this.invalidatePattern("biodynamic:*");
-    console.log("🗑️ Cache cleared");
+    cacheLogger.info("Cache cleared");
   }
 
   /**

@@ -6,10 +6,13 @@
  * PUT: Updates payout schedule with validation
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+
+const logger = createLogger("farmer-payout-schedule-api");
 
 // ✅ VALIDATION SCHEMA - Divine Input Validation
 const PayoutScheduleSchema = z.object({
@@ -68,6 +71,11 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    logger.debug("Fetching payout schedule", {
+      userId: session.user.id,
+      farmId: validation.data.farmId,
+    });
+
     // Verify farm ownership
     const farm = await database.farm.findUnique({
       where: { id: validation.data.farmId },
@@ -92,6 +100,12 @@ export async function GET(request: NextRequest) {
     }
 
     if (farm.ownerId !== session.user.id) {
+      logger.warn("Unauthorized payout schedule access attempt", {
+        userId: session.user.id,
+        farmId: validation.data.farmId,
+        farmOwnerId: farm.ownerId,
+      });
+
       return NextResponse.json(
         {
           success: false,
@@ -104,13 +118,21 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    logger.info("Payout schedule fetched successfully", {
+      userId: session.user.id,
+      farmId: farm.id,
+      hasSchedule: !!farm.payoutSchedule,
+    });
+
     // Return payout schedule
     return NextResponse.json({
       success: true,
       schedule: farm.payoutSchedule || null,
     });
   } catch (error) {
-    console.error("Error fetching payout schedule:", error);
+    logger.error("Error fetching payout schedule", error as Error, {
+      endpoint: "GET /api/farmer/payout-schedule",
+    });
     return NextResponse.json(
       {
         success: false,
@@ -165,6 +187,12 @@ export async function PUT(request: NextRequest) {
 
     const { farmId, schedule } = validation.data;
 
+    logger.debug("Updating payout schedule", {
+      userId: session.user.id,
+      farmId,
+      frequency: schedule.frequency,
+    });
+
     // Verify farm ownership
     const farm = await database.farm.findUnique({
       where: { id: farmId },
@@ -188,6 +216,12 @@ export async function PUT(request: NextRequest) {
     }
 
     if (farm.ownerId !== session.user.id) {
+      logger.warn("Unauthorized payout schedule update attempt", {
+        userId: session.user.id,
+        farmId,
+        farmOwnerId: farm.ownerId,
+      });
+
       return NextResponse.json(
         {
           success: false,
@@ -240,6 +274,13 @@ export async function PUT(request: NextRequest) {
       },
     });
 
+    logger.info("Payout schedule updated successfully", {
+      userId: session.user.id,
+      farmId: updatedFarm.id,
+      frequency: schedule.frequency,
+      minimumAmount: schedule.minimumAmount,
+    });
+
     return NextResponse.json({
       success: true,
       data: {
@@ -249,7 +290,9 @@ export async function PUT(request: NextRequest) {
       message: "Payout schedule updated successfully",
     });
   } catch (error) {
-    console.error("Error updating payout schedule:", error);
+    logger.error("Error updating payout schedule", error as Error, {
+      endpoint: "PUT /api/farmer/payout-schedule",
+    });
     return NextResponse.json(
       {
         success: false,

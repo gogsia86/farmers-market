@@ -1,18 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import {
-  DollarSign,
-  TrendingUp,
-  TrendingDown,
-  Calendar,
-  CreditCard,
-  ArrowUpRight,
-  ArrowDownRight,
-  Download,
-} from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -20,6 +9,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { farmLogger } from "@/lib/utils/logger";
+import {
+  ArrowDownRight,
+  ArrowUpRight,
+  Calendar,
+  CreditCard,
+  DollarSign,
+  Download,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface FinancialStats {
   currentBalance: number;
@@ -79,7 +80,10 @@ export function FinancialOverview({
       setTransactions(data.transactions);
       setRevenueData(data.revenueData);
     } catch (error) {
-      console.error("Error fetching financial data:", error);
+      farmLogger.error("Error fetching financial data", error instanceof Error ? error : new Error(String(error)), {
+        farmId,
+        period,
+      });
     } finally {
       setLoading(false);
     }
@@ -143,7 +147,10 @@ export function FinancialOverview({
       a.click();
       a.remove();
     } catch (error) {
-      console.error("Error downloading statement:", error);
+      farmLogger.error("Error downloading statement", error instanceof Error ? error : new Error(String(error)), {
+        farmId,
+        period,
+      });
     }
   };
 
@@ -264,9 +271,8 @@ export function FinancialOverview({
               {formatCurrency(stats.totalRevenue)}
             </div>
             <p
-              className={`text-xs mt-1 flex items-center ${
-                stats.revenueChange >= 0 ? "text-green-600" : "text-red-600"
-              }`}
+              className={`text-xs mt-1 flex items-center ${stats.revenueChange >= 0 ? "text-green-600" : "text-red-600"
+                }`}
             >
               {stats.revenueChange >= 0 ? "+" : ""}
               {stats.revenueChange.toFixed(1)}% from last period
@@ -374,11 +380,10 @@ export function FinancialOverview({
                   <div className="text-right flex items-center gap-3">
                     <div>
                       <p
-                        className={`font-semibold ${
-                          transaction.type === "SALE"
+                        className={`font-semibold ${transaction.type === "SALE"
                             ? "text-green-600"
                             : "text-gray-900"
-                        }`}
+                          }`}
                       >
                         {transaction.type === "SALE" ? "+" : "-"}
                         {formatCurrency(transaction.amount)}

@@ -10,7 +10,10 @@
  */
 
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("search-suggest-api");
 
 export const dynamic = "force-dynamic";
 export const revalidate = 60; // Cache suggestions for 1 minute
@@ -220,7 +223,9 @@ export async function GET(request: NextRequest) {
       },
     );
   } catch (error) {
-    console.error("[SEARCH_SUGGEST_API_ERROR]", error);
+    logger.error("Failed to fetch search suggestions", error, {
+      operation: "getSearchSuggestions",
+    });
     return NextResponse.json(
       {
         success: false,

@@ -11,9 +11,12 @@
  * - Responsive grid layout
  */
 
-import { MapPin, Star, Leaf } from "lucide-react";
+import { createLogger } from "@/lib/utils/logger";
+import { Leaf, MapPin, Star } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+
+const homeLogger = createLogger("FeaturedFarms");
 
 interface Farm {
   id: string;
@@ -66,7 +69,7 @@ export function FeaturedFarms() {
           throw new Error("API returned unsuccessful response");
         }
       } catch (err) {
-        console.error("Error fetching featured farms:", err);
+        homeLogger.error("Error fetching featured farms", err instanceof Error ? err : new Error(String(err)));
         setError(err instanceof Error ? err.message : "Failed to load farms");
       } finally {
         setLoading(false);

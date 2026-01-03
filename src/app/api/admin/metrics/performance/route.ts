@@ -6,8 +6,12 @@
  */
 
 import { auth } from "@/lib/auth/config";
+import { createLogger } from "@/lib/logger";
 import { exportMetrics } from "@/lib/monitoring/performance";
 import { NextResponse } from "next/server";
+
+// Initialize structured logger
+const logger = createLogger("admin-metrics-performance-api");
 
 export async function GET() {
   try {
@@ -29,12 +33,19 @@ export async function GET() {
     // Export performance metrics
     const metrics = exportMetrics();
 
+    logger.info("Performance metrics exported successfully", {
+      userId: session.user.id,
+      role: userRole,
+    });
+
     return NextResponse.json({
       success: true,
       data: metrics,
     });
   } catch (error) {
-    console.error("Performance metrics error:", error);
+    logger.error("Failed to export performance metrics", error as Error, {
+      operation: "GET /api/admin/metrics/performance",
+    });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },

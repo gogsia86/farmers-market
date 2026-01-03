@@ -10,7 +10,10 @@
  */
 
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("platform-stats-api");
 
 export const dynamic = "force-dynamic";
 export const revalidate = 600; // Cache for 10 minutes
@@ -171,7 +174,9 @@ export async function GET(_request: NextRequest) {
       },
     );
   } catch (error) {
-    console.error("[PLATFORM_STATS_API_ERROR]", error);
+    logger.error("Failed to fetch platform statistics", error, {
+      operation: "getPlatformStats",
+    });
     return NextResponse.json(
       {
         success: false,

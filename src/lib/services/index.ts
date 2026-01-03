@@ -33,14 +33,20 @@ export {
 
 export {
   emailService,
-  EmailService,
-  type EmailOptions,
-  type WelcomeEmailData,
-  type FarmApprovalEmailData,
-  type FarmRejectionEmailData,
-  type SupportTicketEmailData,
-  type OrderConfirmationEmailData,
-} from "../email/email.service";
+  type EmailServiceType,
+  type EmailAttachment,
+  type EmailTemplate,
+  type EmailPriority,
+  type EmailStatus,
+  type EmailSendResult,
+  type EmailUser,
+  type OrderConfirmationData,
+  type PasswordResetData,
+  type EmailVerificationData,
+  type OrderStatusData,
+  type FarmNotificationData,
+  type EmailServiceConfig,
+} from "./email.service";
 
 // ============================================================================
 // PRODUCT SERVICE

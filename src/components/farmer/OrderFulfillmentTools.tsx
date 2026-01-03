@@ -1,22 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import {
-  CheckCircle,
-  Clock,
-  Truck,
-  Package,
-  Printer,
-  Download,
-  Mail,
-  ChevronDown,
-  AlertCircle,
-  Search,
-} from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/Badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -25,12 +18,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { orderLogger } from "@/lib/utils/logger";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  AlertCircle,
+  CheckCircle,
+  ChevronDown,
+  Clock,
+  Download,
+  Mail,
+  Package,
+  Printer,
+  Search,
+  Truck,
+} from "lucide-react";
+import { useState } from "react";
 
 interface OrderItem {
   id: string;
@@ -48,13 +49,13 @@ interface Order {
   customerEmail: string;
   customerPhone?: string;
   status:
-    | "PENDING"
-    | "CONFIRMED"
-    | "PREPARING"
-    | "READY"
-    | "FULFILLED"
-    | "COMPLETED"
-    | "CANCELLED";
+  | "PENDING"
+  | "CONFIRMED"
+  | "PREPARING"
+  | "READY"
+  | "FULFILLED"
+  | "COMPLETED"
+  | "CANCELLED";
   items: OrderItem[];
   total: number;
   pickupDate?: string;
@@ -163,7 +164,12 @@ export function OrderFulfillmentTools({
       onOrdersUpdate();
       alert(`Successfully updated ${selectedOrders.size} order(s)`);
     } catch (error) {
-      console.error("Error updating orders:", error);
+      orderLogger.error("Failed to batch update order status", {
+        errorMessage: error instanceof Error ? error.message : "Unknown error",
+        farmId,
+        orderCount: selectedOrders.size,
+        targetStatus: newStatus,
+      });
       alert("Failed to update orders. Please try again.");
     } finally {
       setIsProcessing(false);
@@ -198,7 +204,11 @@ export function OrderFulfillmentTools({
       a.click();
       a.remove();
     } catch (error) {
-      console.error("Error printing packing slips:", error);
+      orderLogger.error("Failed to generate packing slips", {
+        errorMessage: error instanceof Error ? error.message : "Unknown error",
+        farmId,
+        orderCount: selectedOrders.size,
+      });
       alert("Failed to generate packing slips. Please try again.");
     } finally {
       setIsProcessing(false);
@@ -230,7 +240,11 @@ export function OrderFulfillmentTools({
 
       alert(`Notifications sent to ${selectedOrders.size} customer(s)`);
     } catch (error) {
-      console.error("Error sending notifications:", error);
+      orderLogger.error("Failed to send customer notifications", {
+        errorMessage: error instanceof Error ? error.message : "Unknown error",
+        farmId,
+        orderCount: selectedOrders.size,
+      });
       alert("Failed to send notifications. Please try again.");
     } finally {
       setIsProcessing(false);
@@ -265,7 +279,11 @@ export function OrderFulfillmentTools({
       a.click();
       a.remove();
     } catch (error) {
-      console.error("Error exporting orders:", error);
+      orderLogger.error("Failed to export orders", {
+        errorMessage: error instanceof Error ? error.message : "Unknown error",
+        farmId,
+        orderCount: selectedOrders.size,
+      });
       alert("Failed to export orders. Please try again.");
     } finally {
       setIsProcessing(false);
@@ -540,9 +558,8 @@ export function OrderFulfillmentTools({
               {filteredOrders.map((order) => (
                 <div
                   key={order.id}
-                  className={`p-4 hover:bg-gray-50 transition-colors ${
-                    selectedOrders.has(order.id) ? "bg-blue-50" : ""
-                  }`}
+                  className={`p-4 hover:bg-gray-50 transition-colors ${selectedOrders.has(order.id) ? "bg-blue-50" : ""
+                    }`}
                 >
                   <div className="flex items-start gap-4">
                     <Checkbox

@@ -16,20 +16,23 @@
 
 "use client";
 
-import React, { useState, useCallback, useEffect } from "react";
-import {
-  Upload,
-  X,
-  Loader2,
-  Image as ImageIcon,
-  AlertCircle,
-} from "lucide-react";
-import { useDropzone } from "react-dropzone";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { createLogger } from "@/lib/utils/logger";
+import {
+  AlertCircle,
+  Image as ImageIcon,
+  Loader2,
+  Upload,
+  X,
+} from "lucide-react";
+import Image from "next/image";
+import React, { useCallback, useEffect, useState } from "react";
+import { useDropzone } from "react-dropzone";
+
+const imageUploadLogger = createLogger("ImageUpload");
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -211,7 +214,10 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
           setUploadingFiles([]);
         }, 1000);
       } catch (error) {
-        console.error("Upload error:", error);
+        imageUploadLogger.error("Upload error", error instanceof Error ? error : new Error(String(error)), {
+          folder,
+          filesCount: acceptedFiles.length,
+        });
         toast({
           title: "Upload Failed",
           description: "Some images failed to upload. Please try again.",
@@ -277,7 +283,10 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         setUploadingFiles((prev) => prev.filter((_, i) => i !== index));
       }, 1000);
     } catch (error) {
-      console.error("Retry upload error:", error);
+      imageUploadLogger.error("Retry upload error", error instanceof Error ? error : new Error(String(error)), {
+        folder,
+        fileName: fileToRetry.file.name,
+      });
     }
   };
 

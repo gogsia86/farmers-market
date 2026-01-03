@@ -9,11 +9,12 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, XCircle, Mail, Loader2, AlertCircle } from "lucide-react";
+import { authLogger } from "@/lib/utils/logger";
+import { AlertCircle, CheckCircle, Loader2, Mail, XCircle } from "lucide-react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function VerifyEmailPage() {
   const router = useRouter();
@@ -63,7 +64,9 @@ export default function VerifyEmailPage() {
             ? err.message
             : "Failed to verify email. The link may have expired.",
         );
-        console.error("Email verification error:", err);
+        authLogger.error("Email verification error", err instanceof Error ? err : new Error(String(err)), {
+          hasToken: !!token,
+        });
       } finally {
         setIsVerifying(false);
       }
@@ -93,7 +96,7 @@ export default function VerifyEmailPage() {
       setResendSuccess(true);
     } catch (err) {
       setError("Failed to resend verification email. Please try again later.");
-      console.error("Resend verification error:", err);
+      authLogger.error("Resend verification email failed", err instanceof Error ? err : new Error(String(err)));
     } finally {
       setResendLoading(false);
     }

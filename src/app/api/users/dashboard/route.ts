@@ -1,6 +1,9 @@
-import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
+import { NextResponse } from "next/server";
+
+const logger = createLogger("user-dashboard-api");
 
 /**
  * GET /api/users/dashboard
@@ -110,11 +113,11 @@ export async function GET() {
 
     const formattedFarms = Array.isArray(favoriteFarms)
       ? favoriteFarms.map((fav: any) => ({
-          id: fav.farm.id,
-          name: fav.farm.name,
-          slug: fav.farm.slug,
-          imageUrl: fav.farm.bannerUrl || null,
-        }))
+        id: fav.farm.id,
+        name: fav.farm.name,
+        slug: fav.farm.slug,
+        imageUrl: fav.farm.bannerUrl || null,
+      }))
       : [];
 
     return NextResponse.json({
@@ -124,7 +127,9 @@ export async function GET() {
       favoriteFarms: formattedFarms,
     });
   } catch (error) {
-    console.error("Dashboard fetch error:", error);
+    logger.error("Failed to fetch dashboard data", error, {
+      operation: "getDashboard",
+    });
     return NextResponse.json(
       {
         success: false,

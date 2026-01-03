@@ -6,11 +6,14 @@
  * ╚════════════════════════════════════════════════════════════╝
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { analyticsService } from "@/lib/services/analytics.service";
+import { createLogger } from "@/lib/logger";
 import type { SearchAnalyticsQuery } from "@/lib/services/analytics.service";
-import { z } from "zod";
+import { analyticsService } from "@/lib/services/analytics.service";
 import { PeriodType } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+
+const logger = createLogger("analytics-aggregate-api");
 
 // ============================================
 // VALIDATION SCHEMA
@@ -63,9 +66,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     const queryData = validation.data as SearchAnalyticsQuery;
 
+    logger.info("Starting analytics aggregation", {
+      period: queryData.period,
+      periodKey: queryData.periodKey,
+    });
+
     // Perform aggregation
     const analytics =
       await analyticsService.aggregateSearchAnalytics(queryData);
+
+    logger.info("Analytics aggregation completed", {
+      analyticsId: analytics.id,
+      period: analytics.periodType,
+      totalSearches: analytics.totalSearches,
+    });
 
     return NextResponse.json(
       {
@@ -106,7 +120,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       { status: 200 },
     );
   } catch (error) {
-    console.error("Analytics aggregation failed:", error);
+    logger.error("Analytics aggregation failed", error as Error, {
+      endpoint: "POST /api/analytics/aggregate",
+    });
 
     // Check for specific error types
     if (error instanceof Error && error.message.includes("No events found")) {
@@ -195,6 +211,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       );
     }
 
+    logger.debug("Fetching aggregated analytics", {
+      period: periodParam,
+      periodStart: periodStartParam,
+    });
+
     // Fetch from database
     const { database } = await import("@/lib/database");
 
@@ -207,6 +228,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     });
 
     if (!analytics) {
+      logger.debug("No analytics found for specified parameters", {
+        period: periodParam,
+        periodStart: periodStartParam,
+      });
+
       return NextResponse.json(
         {
           success: false,
@@ -218,6 +244,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         { status: 404 },
       );
     }
+
+    logger.info("Retrieved aggregated analytics", {
+      analyticsId: analytics.id,
+      period: analytics.periodType,
+    });
 
     return NextResponse.json(
       {
@@ -257,7 +288,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       { status: 200 },
     );
   } catch (error) {
-    console.error("Failed to retrieve analytics:", error);
+    logger.error("Failed to retrieve analytics", error as Error, {
+      endpoint: "GET /api/analytics/aggregate",
+    });
 
     return NextResponse.json(
       {

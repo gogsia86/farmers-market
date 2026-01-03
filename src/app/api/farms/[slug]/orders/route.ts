@@ -3,9 +3,12 @@
 // Phase 3: Controller Integration Complete
 // ============================================================================
 
-import { NextRequest, NextResponse } from "next/server";
 import { orderController } from "@/lib/controllers/order.controller";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("farm-orders-api");
 
 /**
  * 🌾 GET FARM ORDERS - Divine Farm Order Retrieval
@@ -109,7 +112,10 @@ export async function GET(
     // Call controller with farmId
     return orderController.getFarmOrders(request, { farmId: farm.id });
   } catch (error) {
-    console.error("[FARM_ORDERS_SLUG_RESOLUTION_ERROR]", error);
+    logger.error("Farm orders slug resolution failed", error, {
+      slug: params.slug,
+      operation: "getFarmOrders",
+    });
     return NextResponse.json(
       {
         success: false,

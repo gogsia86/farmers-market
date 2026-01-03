@@ -9,9 +9,12 @@
  * @agricultural-consciousness MAXIMUM
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import { createLogger } from "@/lib/logger";
 import { recommendationEvents } from "@/lib/services/recommendation-events.service";
 import { recommendationWebSocket } from "@/lib/services/recommendation-websocket.service";
+import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("recommendations-stats-api");
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 🎯 GET - GET RECOMMENDATION SYSTEM STATISTICS
@@ -104,7 +107,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     );
   } catch (error) {
-    console.error("[RecommendationStatsAPI] Error:", error);
+    logger.error("Failed to retrieve recommendation statistics", error, {
+      operation: "getStats",
+    });
 
     return NextResponse.json(
       {
@@ -184,7 +189,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       { status: 200 },
     );
   } catch (error) {
-    console.error("[RecommendationStatsAPI] Error resetting stats:", error);
+    logger.error("Failed to reset recommendation statistics", error, {
+      operation: "resetStats",
+    });
 
     return NextResponse.json(
       {
@@ -249,7 +256,9 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
       { status: 200 },
     );
   } catch (error) {
-    console.error("[RecommendationStatsAPI] Error clearing queue:", error);
+    logger.error("Failed to clear recommendation event queue", error, {
+      operation: "clearQueue",
+    });
 
     return NextResponse.json(
       {

@@ -15,15 +15,16 @@
 
 "use client";
 
-import { useState, useCallback } from "react";
+import type {
+  CartItemData,
+  CartSummary as CartSummaryData,
+} from "@/lib/services/cart.service";
+import { cartLogger } from "@/lib/utils/logger";
+import { AlertCircle, ShoppingBag } from "lucide-react";
 import Link from "next/link";
-import { ShoppingBag, AlertCircle } from "lucide-react";
+import { useCallback, useState } from "react";
 import { CartItemCard } from "./CartItemCard";
 import { CartSummary } from "./CartSummary";
-import type {
-  CartSummary as CartSummaryData,
-  CartItemData,
-} from "@/lib/services/cart.service";
 
 interface CartPageClientProps {
   initialCartSummary: CartSummaryData | null;
@@ -55,7 +56,9 @@ export function CartPageClient({
         setError(data.error?.message || "Failed to refresh cart");
       }
     } catch (err) {
-      console.error("Error refreshing cart:", err);
+      cartLogger.error("Error refreshing cart", err instanceof Error ? err : new Error(String(err)), {
+        userId,
+      });
       setError("Failed to refresh cart. Please reload the page.");
     }
   }, [userId]);
@@ -116,7 +119,11 @@ export function CartPageClient({
         // Revert on error
         setCartSummary(previousSummary);
         setError("Failed to update quantity. Please try again.");
-        console.error("Error updating quantity:", err);
+        cartLogger.error("Error updating cart item quantity", err instanceof Error ? err : new Error(String(err)), {
+          userId,
+          itemId,
+          quantity,
+        });
       }
     },
     [userId, cartSummary, refreshCart],
@@ -178,7 +185,10 @@ export function CartPageClient({
         // Revert on error
         setCartSummary(previousSummary);
         setError("Failed to remove item. Please try again.");
-        console.error("Error removing item:", err);
+        cartLogger.error("Error removing cart item", err instanceof Error ? err : new Error(String(err)), {
+          userId,
+          itemId,
+        });
       }
     },
     [userId, cartSummary, refreshCart],

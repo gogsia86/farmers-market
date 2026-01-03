@@ -17,13 +17,15 @@
  * - Divine error handling patterns
  */
 
+import { randomUUID } from "crypto";
+
 import { database } from "@/lib/database";
+import { SpanStatusCode, trace } from "@opentelemetry/api";
 import type { Order, OrderStatus } from "@prisma/client";
 import { z } from "zod";
-import { trace, SpanStatusCode } from "@opentelemetry/api";
 
-import { BaseService } from "./base.service";
 import type { ServiceResponse } from "@/lib/types/service-response";
+import { BaseService } from "./base.service";
 
 // ============================================================================
 // ZOD VALIDATION SCHEMAS
@@ -400,9 +402,9 @@ export class ShippingService extends BaseService<Order> {
 
           // ✅ Step 4: Generate tracking number and label ID
           // In production, integrate with shipping provider API (FedEx, UPS, USPS)
-          const timestamp = Date.now();
-          const trackingNumber = `${this.getCarrierPrefix(service)}${timestamp}`;
-          const labelId = `LBL-${orderId.slice(0, 8)}-${timestamp}`;
+          const uniqueId = randomUUID();
+          const trackingNumber = `${this.getCarrierPrefix(service)}-${uniqueId.slice(0, 13).toUpperCase()}`;
+          const labelId = `LBL-${orderId.slice(0, 8)}-${uniqueId.slice(0, 13)}`;
 
           // ✅ Step 5: Update order with shipping information
           await database.order.update({

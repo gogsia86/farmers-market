@@ -9,11 +9,14 @@
  * @since Run 4
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { auth as getServerSession } from "@/lib/auth/config";
+import { createLogger } from "@/lib/logger";
 import { SavedSearchService } from "@/lib/services/saved-searches/saved-search.service";
-import { z } from "zod";
 import { NotificationFrequency, Season } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+
+const logger = createLogger("saved-search-api");
 
 // ============================================
 // VALIDATION SCHEMAS
@@ -68,7 +71,9 @@ export async function GET(
 
     return NextResponse.json(savedSearch, { status: 200 });
   } catch (error) {
-    console.error("[SavedSearch GET] Error:", error);
+    logger.error("Failed to fetch saved search", error, {
+      operation: "getSavedSearch",
+    });
 
     if (error instanceof Error && error.message.includes("not found")) {
       return NextResponse.json({ error: error.message }, { status: 404 });
@@ -118,7 +123,9 @@ export async function PUT(
       { status: 200 },
     );
   } catch (error) {
-    console.error("[SavedSearch PUT] Error:", error);
+    logger.error("Failed to update saved search", error, {
+      operation: "updateSavedSearch",
+    });
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -168,7 +175,9 @@ export async function DELETE(
       { status: 200 },
     );
   } catch (error) {
-    console.error("[SavedSearch DELETE] Error:", error);
+    logger.error("Failed to delete saved search", error, {
+      operation: "deleteSavedSearch",
+    });
 
     if (error instanceof Error && error.message.includes("not found")) {
       return NextResponse.json({ error: error.message }, { status: 404 });

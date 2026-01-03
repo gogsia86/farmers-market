@@ -23,9 +23,9 @@
 import { config } from "dotenv";
 config();
 
-import { database } from "../src/lib/database";
-import { hash } from "bcryptjs";
 import { Prisma } from "@prisma/client";
+import { hash } from "bcryptjs";
+import { database } from "../src/lib/database";
 
 // ============================================================================
 // TYPES
@@ -66,36 +66,47 @@ function logSection(title: string) {
 // SEED DATA
 // ============================================================================
 
+// Get test password from environment (required for security)
+const TEST_USER_PASSWORD = process.env.TEST_USER_PASSWORD;
+
+if (!TEST_USER_PASSWORD) {
+  console.error("\n❌ ERROR: TEST_USER_PASSWORD environment variable is required");
+  console.log("\nUsage:");
+  console.log("  TEST_USER_PASSWORD=YourPassword123! npx tsx scripts/seed-test-data.ts");
+  console.log("\nThis ensures test passwords are not hardcoded in the repository.\n");
+  process.exit(1);
+}
+
 const TEST_USERS = [
   {
     email: "farmer1@example.com",
     name: "John Farmer",
     role: "FARMER" as const,
-    password: "password123",
+    password: TEST_USER_PASSWORD,
   },
   {
     email: "farmer2@example.com",
     name: "Sarah Green",
     role: "FARMER" as const,
-    password: "password123",
+    password: TEST_USER_PASSWORD,
   },
   {
     email: "farmer3@example.com",
     name: "Mike Organic",
     role: "FARMER" as const,
-    password: "password123",
+    password: TEST_USER_PASSWORD,
   },
   {
     email: "customer@example.com",
     name: "Jane Customer",
     role: "CONSUMER" as const,
-    password: "password123",
+    password: TEST_USER_PASSWORD,
   },
   {
     email: "admin@example.com",
     name: "Admin User",
     role: "ADMIN" as const,
-    password: "password123",
+    password: TEST_USER_PASSWORD,
   },
 ];
 

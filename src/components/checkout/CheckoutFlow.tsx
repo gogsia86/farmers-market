@@ -15,24 +15,25 @@
  * - Responsive mobile design
  */
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import {
-  CheckCircle,
-  ShoppingCart,
-  MapPin,
-  CreditCard,
-  FileText,
-  ArrowLeft,
-  ArrowRight,
-  Leaf,
-} from "lucide-react";
-import { useCheckoutStore, useCheckoutProgress } from "@/stores/checkoutStore";
-import { CartReviewStep } from "@/components/checkout/steps/CartReviewStep";
 import { AddressStep } from "@/components/checkout/steps/AddressStep";
+import { CartReviewStep } from "@/components/checkout/steps/CartReviewStep";
+import { ConfirmationStep } from "@/components/checkout/steps/ConfirmationStep";
 import { PaymentStep } from "@/components/checkout/steps/PaymentStep";
 import { ReviewStep } from "@/components/checkout/steps/ReviewStep";
-import { ConfirmationStep } from "@/components/checkout/steps/ConfirmationStep";
+import { cartLogger } from "@/lib/utils/logger";
+import { useCheckoutProgress, useCheckoutStore } from "@/stores/checkoutStore";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle,
+  CreditCard,
+  FileText,
+  Leaf,
+  MapPin,
+  ShoppingCart,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 // ============================================================================
 // TYPES
@@ -105,7 +106,7 @@ export function CheckoutFlow() {
         // For now, just set loading to false
         await new Promise((resolve) => setTimeout(resolve, 500));
       } catch (error) {
-        console.error("Failed to initialize checkout:", error);
+        cartLogger.error("Failed to initialize checkout", error instanceof Error ? error : new Error(String(error)));
       } finally {
         setIsLoading(false);
       }
@@ -287,14 +288,13 @@ function StepProgress({ steps, currentStep, progress }: StepProgressProps) {
                 <div
                   className={`
                     w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300
-                    ${
-                      isCompleted
-                        ? "bg-green-500 text-white"
-                        : isCurrent
-                          ? "bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-lg scale-110"
-                          : isPast
-                            ? "bg-gray-300 text-gray-600"
-                            : "bg-gray-200 text-gray-400"
+                    ${isCompleted
+                      ? "bg-green-500 text-white"
+                      : isCurrent
+                        ? "bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-lg scale-110"
+                        : isPast
+                          ? "bg-gray-300 text-gray-600"
+                          : "bg-gray-200 text-gray-400"
                     }
                   `}
                 >

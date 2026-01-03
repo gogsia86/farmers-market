@@ -13,19 +13,20 @@
  * - Agricultural consciousness UI
  */
 
-import { useEffect } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { cartLogger } from "@/lib/utils/logger";
+import { useCheckoutStore } from "@/stores/checkoutStore";
 import {
-  CheckCircle,
-  Package,
-  Mail,
-  Calendar,
   ArrowRight,
+  Calendar,
+  CheckCircle,
   Download,
   Leaf,
+  Mail,
+  Package,
 } from "lucide-react";
-import { useCheckoutStore } from "@/stores/checkoutStore";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 // ============================================================================
 // CONFIRMATION STEP COMPONENT
@@ -50,7 +51,7 @@ export function ConfirmationStep() {
       try {
         await fetch("/api/cart", { method: "DELETE" });
       } catch (error) {
-        console.error("Failed to clear cart:", error);
+        cartLogger.error("Failed to clear cart", error instanceof Error ? error : new Error(String(error)), { orderId });
       }
     };
 

@@ -11,11 +11,14 @@
 
 "use client";
 
-import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { EmptyState } from "@/components/dashboard/EmptyState";
+import { createLogger } from "@/lib/utils/logger";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+const reviewsLogger = createLogger("CustomerReviews");
 
 interface Review {
   id: string;
@@ -89,7 +92,7 @@ export default function ReviewsPage() {
         setPendingReviews(data.pending || []);
       }
     } catch (error) {
-      console.error("Failed to fetch reviews:", error);
+      reviewsLogger.error("Failed to fetch reviews", error instanceof Error ? error : new Error(String(error)));
     } finally {
       setLoading(false);
     }
@@ -130,11 +133,11 @@ export default function ReviewsPage() {
           prev.map((r) =>
             r.id === reviewId
               ? {
-                  ...r,
-                  rating: editRating,
-                  comment: editComment,
-                  updatedAt: new Date().toISOString(),
-                }
+                ...r,
+                rating: editRating,
+                comment: editComment,
+                updatedAt: new Date().toISOString(),
+              }
               : r,
           ),
         );
@@ -146,7 +149,9 @@ export default function ReviewsPage() {
         });
       }
     } catch (error) {
-      console.error("Review update error:", error);
+      reviewsLogger.error("Review update error", error instanceof Error ? error : new Error(String(error)), {
+        reviewId,
+      });
       setMessage({
         type: "error",
         text: "An error occurred. Please try again.",
@@ -179,7 +184,9 @@ export default function ReviewsPage() {
         });
       }
     } catch (error) {
-      console.error("Review delete error:", error);
+      reviewsLogger.error("Review delete error", error instanceof Error ? error : new Error(String(error)), {
+        reviewId,
+      });
       setMessage({
         type: "error",
         text: "An error occurred. Please try again.",
@@ -209,9 +216,8 @@ export default function ReviewsPage() {
             key={star}
             type="button"
             onClick={() => interactive && onSelect?.(star)}
-            className={`text-2xl transition-all ${
-              interactive ? "cursor-pointer hover:scale-110" : "cursor-default"
-            } ${star <= rating ? "text-yellow-500" : "text-gray-300"}`}
+            className={`text-2xl transition-all ${interactive ? "cursor-pointer hover:scale-110" : "cursor-default"
+              } ${star <= rating ? "text-yellow-500" : "text-gray-300"}`}
             disabled={!interactive}
           >
             ⭐
@@ -243,11 +249,10 @@ export default function ReviewsPage() {
         {/* Message Alert */}
         {message && (
           <div
-            className={`mb-6 p-4 rounded-lg ${
-              message.type === "success"
+            className={`mb-6 p-4 rounded-lg ${message.type === "success"
                 ? "bg-green-50 text-green-800 border-2 border-green-200"
                 : "bg-red-50 text-red-800 border-2 border-red-200"
-            }`}
+              }`}
           >
             <div className="flex items-center gap-2">
               <span className="text-xl">
@@ -276,9 +281,9 @@ export default function ReviewsPage() {
             <div className="text-3xl font-bold text-blue-600">
               {reviews.length > 0
                 ? (
-                    reviews.reduce((acc, r) => acc + r.rating, 0) /
-                    reviews.length
-                  ).toFixed(1)
+                  reviews.reduce((acc, r) => acc + r.rating, 0) /
+                  reviews.length
+                ).toFixed(1)
                 : "0.0"}
             </div>
             <div className="text-sm text-gray-600">Average Rating</div>
@@ -291,21 +296,19 @@ export default function ReviewsPage() {
             <nav className="flex">
               <button
                 onClick={() => setActiveTab("pending")}
-                className={`flex-1 px-6 py-4 text-center font-medium transition-colors ${
-                  activeTab === "pending"
+                className={`flex-1 px-6 py-4 text-center font-medium transition-colors ${activeTab === "pending"
                     ? "text-green-600 border-b-2 border-green-600 bg-green-50"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                }`}
+                  }`}
               >
                 ✍️ Pending ({pendingReviews.length})
               </button>
               <button
                 onClick={() => setActiveTab("submitted")}
-                className={`flex-1 px-6 py-4 text-center font-medium transition-colors ${
-                  activeTab === "submitted"
+                className={`flex-1 px-6 py-4 text-center font-medium transition-colors ${activeTab === "submitted"
                     ? "text-green-600 border-b-2 border-green-600 bg-green-50"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                }`}
+                  }`}
               >
                 ✅ Submitted ({reviews.length})
               </button>

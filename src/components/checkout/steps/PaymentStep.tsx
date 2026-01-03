@@ -14,10 +14,11 @@
  * - E2E test ID attributes for automated testing
  */
 
-import { useState, useEffect } from "react";
-import { Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
-import { useCheckoutStore } from "@/stores/checkoutStore";
 import { StripePaymentElement } from "@/components/checkout/StripePaymentElement";
+import { paymentLogger } from "@/lib/utils/logger";
+import { useCheckoutStore } from "@/stores/checkoutStore";
+import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 // ============================================================================
 // TYPES
@@ -87,7 +88,10 @@ export function PaymentStep() {
         setClientSecret(data.paymentIntent.clientSecret);
         _setPaymentIntentId(data.paymentIntent.id);
       } catch (err) {
-        console.error("Error creating payment intent:", err);
+        paymentLogger.error("Error creating payment intent", err instanceof Error ? err : new Error(String(err)), {
+          orderTotal: orderPreview?.total,
+          itemCount: orderPreview?.itemCount,
+        });
         setError("Unable to initialize payment. Please try again.");
       } finally {
         setIsLoading(false);

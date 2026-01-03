@@ -6,8 +6,12 @@
  * @reference .github/instructions/07_DATABASE_QUANTUM_MASTERY.instructions.md
  */
 
-import { NextResponse } from "next/server";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
+import { NextResponse } from "next/server";
+
+// Initialize structured logger
+const logger = createLogger("health-database-api");
 
 /**
  * GET /api/health/database
@@ -21,6 +25,11 @@ export async function GET() {
     await database.$queryRaw`SELECT 1`;
 
     const responseTime = Date.now() - startTime;
+
+    logger.info("Database health check passed", {
+      responseTime: `${responseTime}ms`,
+      status: "healthy",
+    });
 
     return NextResponse.json(
       {
@@ -37,7 +46,11 @@ export async function GET() {
   } catch (error) {
     const responseTime = Date.now() - startTime;
 
-    console.error("Database health check failed:", error);
+    logger.error("Database health check failed", error as Error, {
+      responseTime: `${responseTime}ms`,
+      status: "unhealthy",
+      operation: "GET /api/health/database",
+    });
 
     return NextResponse.json(
       {

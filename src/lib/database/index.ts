@@ -4,8 +4,9 @@
  * @reference .github/instructions/07_DATABASE_QUANTUM_MASTERY.instructions.md
  */
 
-import { PrismaClient } from "@prisma/client";
+import { dbLogger } from "@/lib/utils/logger";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "@prisma/client";
 import { Pool } from "pg";
 
 declare global {
@@ -24,7 +25,7 @@ const createPrismaClient = (): PrismaClient => {
   const connectionString = process.env.DATABASE_URL;
 
   if (!connectionString) {
-    console.warn("⚠️  DATABASE_URL not set, using fallback configuration");
+    dbLogger.warn("DATABASE_URL not set, using fallback configuration");
   }
 
   const pool = new Pool({
@@ -57,31 +58,25 @@ const connectWithRetry = async (client: PrismaClient): Promise<void> => {
   while (connectionAttempts < MAX_RETRIES) {
     try {
       await client.$connect();
-      console.log("✅ Database connection established successfully");
+      dbLogger.info("Database connection established successfully");
       globalThis.databaseConnected = true;
       return;
     } catch (error) {
       connectionAttempts++;
-      console.warn(
-        `⚠️  Database connection attempt ${connectionAttempts}/${MAX_RETRIES} failed:`,
-        error instanceof Error ? error.message : error,
-      );
+      dbLogger.warn(`Database connection attempt ${connectionAttempts}/${MAX_RETRIES} failed`, {
+        errorMessage: error instanceof Error ? error.message : String(error),
+        attempt: connectionAttempts,
+        maxRetries: MAX_RETRIES,
+      });
 
       if (connectionAttempts < MAX_RETRIES) {
-        console.log(`🔄 Retrying in ${RETRY_DELAY / 1000} seconds...`);
+        dbLogger.info(`Retrying database connection in ${RETRY_DELAY / 1000} seconds...`);
         await sleep(RETRY_DELAY);
       } else {
-        console.error(
-          "❌ Database connection failed after",
-          MAX_RETRIES,
-          "attempts",
-        );
-        console.error(
-          "⚠️  Server will start but database operations will fail",
-        );
-        console.error(
-          "💡 Tip: Make sure PostgreSQL is running and DATABASE_URL is correct",
-        );
+        dbLogger.error("Database connection failed after maximum attempts", {
+          maxRetries: MAX_RETRIES,
+          tip: "Make sure PostgreSQL is running and DATABASE_URL is correct",
+        });
         globalThis.databaseConnected = false;
         // Don't exit - allow server to start for development
         if (process.env.NODE_ENV === "production") {
@@ -98,7 +93,9 @@ const initializeDatabase = (): PrismaClient => {
 
   // Attempt connection asynchronously (non-blocking)
   connectWithRetry(client).catch((error) => {
-    console.error("🚨 Fatal database connection error:", error);
+    dbLogger.error("Fatal database connection error", {
+      errorMessage: error instanceof Error ? error.message : String(error),
+    });
   });
 
   return client;

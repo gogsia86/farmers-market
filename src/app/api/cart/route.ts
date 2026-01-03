@@ -7,10 +7,14 @@
  * Updated to handle ServiceResponse pattern from CartService
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { createLogger } from "@/lib/logger";
 import { cartService } from "@/lib/services/cart.service";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+
+// Initialize structured logger
+const logger = createLogger("cart-api");
 
 // ============================================================================
 // GET /api/cart - Fetch user's cart
@@ -56,7 +60,9 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error("Error fetching cart:", error);
+    logger.error("Failed to fetch cart", error as Error, {
+      operation: "GET /api/cart",
+    });
     return NextResponse.json(
       {
         success: false,
@@ -144,7 +150,9 @@ export async function POST(request: NextRequest) {
       { status: 201 },
     );
   } catch (error) {
-    console.error("Error adding to cart:", error);
+    logger.error("Failed to add item to cart", error as Error, {
+      operation: "POST /api/cart",
+    });
     return NextResponse.json(
       {
         success: false,
@@ -199,7 +207,9 @@ export async function DELETE() {
       message: response.meta?.message || "Cart cleared successfully",
     });
   } catch (error) {
-    console.error("Error clearing cart:", error);
+    logger.error("Failed to clear cart", error as Error, {
+      operation: "DELETE /api/cart",
+    });
     return NextResponse.json(
       {
         success: false,

@@ -10,18 +10,21 @@
  * optimize performance, audit security, and validate agricultural consciousness.
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import {
+  hasRequiredScopes,
+  withApiAuth,
+  type ApiKeyScope,
+  type AuthResult,
+} from "@/lib/auth/api-auth";
+import { createLogger } from "@/lib/logger";
 import {
   createOrchestratorFromEnv,
   createWorkflowAgentOrchestrator,
 } from "@/lib/monitoring/agents/workflow-agent-orchestrator";
-import {
-  withApiAuth,
-  hasRequiredScopes,
-  type AuthResult,
-  type ApiKeyScope,
-} from "@/lib/auth/api-auth";
 import { createOrchestratorBridge } from "@/lib/monitoring/integration/orchestrator-bridge";
+import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("agents-orchestrate-api");
 
 // ============================================================================
 // Types
@@ -29,11 +32,11 @@ import { createOrchestratorBridge } from "@/lib/monitoring/integration/orchestra
 
 interface OrchestrateRequest {
   action:
-    | "analyze_failure"
-    | "optimize_performance"
-    | "audit_security"
-    | "validate_agricultural"
-    | "process_and_heal";
+  | "analyze_failure"
+  | "optimize_performance"
+  | "audit_security"
+  | "validate_agricultural"
+  | "process_and_heal";
   workflowResult?: WorkflowResultInput;
   historicalResults?: WorkflowResultInput[];
   config?: {
@@ -145,11 +148,11 @@ async function handlePost(
     // Create orchestrator
     const orchestrator = body.config
       ? createWorkflowAgentOrchestrator({
-          apiKey: process.env.OPENAI_API_KEY,
-          enabled: true,
-          collaborationMode: body.config.collaborationMode,
-          consensusThreshold: body.config.consensusThreshold,
-        })
+        apiKey: process.env.OPENAI_API_KEY,
+        enabled: true,
+        collaborationMode: body.config.collaborationMode,
+        consensusThreshold: body.config.consensusThreshold,
+      })
       : createOrchestratorFromEnv();
 
     // Check if orchestrator is enabled
@@ -263,7 +266,9 @@ async function handlePost(
       },
     });
   } catch (error) {
-    console.error("[Orchestrator API] Error:", error);
+    logger.error("Orchestrator API error", error as Error, {
+      endpoint: "POST /api/agents/orchestrate",
+    });
 
     return NextResponse.json(
       {
@@ -325,26 +330,26 @@ async function handleProcessAndHeal(
         remediated: outcome.remediated,
         plan: outcome.plan
           ? {
-              id: outcome.plan.id,
-              severity: outcome.plan.severity,
-              approvalStatus: outcome.plan.approvalStatus,
-              aiConfidence: outcome.plan.aiAnalysis.confidence,
-              rootCause: outcome.plan.aiAnalysis.rootCause,
-              proposedActions: outcome.plan.proposedActions.map((a) => ({
-                type: a.type,
-                description: a.description,
-                riskLevel: a.riskLevel,
-              })),
-            }
+            id: outcome.plan.id,
+            severity: outcome.plan.severity,
+            approvalStatus: outcome.plan.approvalStatus,
+            aiConfidence: outcome.plan.aiAnalysis.confidence,
+            rootCause: outcome.plan.aiAnalysis.rootCause,
+            proposedActions: outcome.plan.proposedActions.map((a) => ({
+              type: a.type,
+              description: a.description,
+              riskLevel: a.riskLevel,
+            })),
+          }
           : null,
         executionResult: outcome.executionResult
           ? {
-              success: outcome.executionResult.success,
-              finalState: outcome.executionResult.finalState,
-              duration: outcome.executionResult.duration,
-              actionsExecuted: outcome.executionResult.actionsExecuted.length,
-              errors: outcome.executionResult.errors,
-            }
+            success: outcome.executionResult.success,
+            finalState: outcome.executionResult.finalState,
+            duration: outcome.executionResult.duration,
+            actionsExecuted: outcome.executionResult.actionsExecuted.length,
+            errors: outcome.executionResult.errors,
+          }
           : null,
         metadata: {
           duration,
@@ -354,7 +359,10 @@ async function handleProcessAndHeal(
       },
     });
   } catch (error) {
-    console.error("[Orchestrator API] Process and Heal Error:", error);
+    logger.error("Orchestrator API Process and Heal error", error as Error, {
+      endpoint: "POST /api/agents/orchestrate",
+      action: "process_and_heal",
+    });
 
     return NextResponse.json(
       {

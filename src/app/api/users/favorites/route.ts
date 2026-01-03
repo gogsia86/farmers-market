@@ -1,6 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
+
+// Initialize structured logger
+const logger = createLogger("users-favorites-api");
 
 /**
  * GET /api/users/favorites
@@ -94,7 +98,9 @@ export async function GET() {
       total: favorites.length,
     });
   } catch (error) {
-    console.error("Favorites fetch error:", error);
+    logger.error("Failed to fetch favorites", error as Error, {
+      operation: "GET /api/users/favorites",
+    });
     return NextResponse.json(
       {
         success: false,
@@ -170,6 +176,13 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    logger.info("Favorite added", {
+      userId: session.user.id,
+      type,
+      favoriteId: favorite.id,
+      ...(type === "farm" ? { farmId } : { productId }),
+    });
+
     return NextResponse.json({
       success: true,
       message: "Added to favorites",
@@ -179,7 +192,9 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Add favorite error:", error);
+    logger.error("Failed to add favorite", error as Error, {
+      operation: "POST /api/users/favorites",
+    });
     return NextResponse.json(
       {
         success: false,
@@ -233,12 +248,20 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
+    logger.info("Favorite removed", {
+      userId: session.user.id,
+      type,
+      ...(type === "farm" ? { farmId } : { productId }),
+    });
+
     return NextResponse.json({
       success: true,
       message: "Removed from favorites",
     });
   } catch (error) {
-    console.error("Remove favorite error:", error);
+    logger.error("Failed to remove favorite", error as Error, {
+      operation: "DELETE /api/users/favorites",
+    });
     return NextResponse.json(
       {
         success: false,

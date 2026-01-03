@@ -1,8 +1,11 @@
 import { database } from "@/lib/database";
 import { sendFarmerWelcomeLazy } from "@/lib/email/email.service";
+import { createLogger } from "@/lib/logger";
 import { geocodingService } from "@/lib/services";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+
+const logger = createLogger("farmers-register-api");
 
 /**
  * 🌾 FARMER REGISTRATION API
@@ -64,12 +67,21 @@ export async function POST(request: NextRequest) {
     // Validate input
     const validatedData = farmerRegistrationSchema.parse(body);
 
+    logger.info("Processing farmer registration", {
+      email: validatedData.email,
+      farmName: validatedData.farmName,
+      farmType: validatedData.farmType,
+    });
+
     // Check if email already exists
     const existingFarmer = await database.user.findUnique({
       where: { email: validatedData.email },
     });
 
     if (existingFarmer) {
+      logger.warn("Registration attempted with existing email", {
+        email: validatedData.email,
+      });
       return NextResponse.json(
         { error: "Email already registered" },
         { status: 400 },
@@ -102,6 +114,12 @@ export async function POST(request: NextRequest) {
 
     // Handle geocoding failure
     if (!geocodeResult) {
+      logger.warn("Geocoding failed for farmer registration", {
+        email: validatedData.email,
+        address: validatedData.address,
+        city: validatedData.city,
+        state: validatedData.state,
+      });
       return NextResponse.json(
         {
           success: false,
@@ -144,8 +162,19 @@ export async function POST(request: NextRequest) {
       });
     } catch (emailError) {
       // Log email error but don't fail registration
-      console.error("Failed to send welcome email:", emailError);
+      logger.error("Failed to send welcome email", emailError as Error, {
+        userId: user.id,
+        farmId: farm.id,
+        email: user.email,
+      });
     }
+
+    logger.info("Farmer registration completed successfully", {
+      userId: user.id,
+      farmId: farm.id,
+      farmName: farm.name,
+      status: farm.status,
+    });
 
     return NextResponse.json(
       {
@@ -162,6 +191,9 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
+      logger.warn("Farmer registration validation failed", {
+        issues: error.issues,
+      });
       return NextResponse.json(
         {
           error: "Validation failed",
@@ -171,7 +203,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.error("Farmer registration error:", error);
+    logger.error("Farmer registration error", error as Error, {
+      endpoint: "POST /api/farmers/register",
+    });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },
@@ -191,6 +225,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    logger.debug("Fetching farmer by email", { email });
+
     const user = await database.user.findUnique({
       where: { email },
       include: {
@@ -205,8 +241,14 @@ export async function GET(request: NextRequest) {
     });
 
     if (!user) {
+      logger.debug("Farmer not found", { email });
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
+
+    logger.info("Farmer fetched successfully", {
+      userId: user.id,
+      farmCount: user.farms.length,
+    });
 
     return NextResponse.json({
       success: true,
@@ -221,7 +263,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Get farmer error:", error);
+    logger.error("Get farmer error", error as Error, {
+      endpoint: "GET /api/farmers/register",
+    });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },

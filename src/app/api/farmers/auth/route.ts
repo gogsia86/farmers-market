@@ -1,5 +1,8 @@
 import { auth } from "@/lib/auth/config";
+import { createLogger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("farmers-auth-api");
 
 /**
  * 🔐 FARMER AUTH MIDDLEWARE
@@ -12,6 +15,7 @@ export async function GET(_request: NextRequest) {
     const session = await auth();
 
     if (!session || !session.user) {
+      logger.debug("Auth check failed - no session");
       return NextResponse.json(
         {
           authenticated: false,
@@ -28,6 +32,10 @@ export async function GET(_request: NextRequest) {
       session.user.role === "SUPER_ADMIN";
 
     if (!isFarmer) {
+      logger.warn("Auth check failed - user not authorized as farmer", {
+        userId: session.user.id,
+        role: session.user.role,
+      });
       return NextResponse.json(
         {
           authenticated: true,
@@ -37,6 +45,11 @@ export async function GET(_request: NextRequest) {
         { status: 403 },
       );
     }
+
+    logger.debug("Auth check successful", {
+      userId: session.user.id,
+      role: session.user.role,
+    });
 
     return NextResponse.json({
       authenticated: true,
@@ -49,7 +62,9 @@ export async function GET(_request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Auth check error:", error);
+    logger.error("Auth check error", error as Error, {
+      endpoint: "GET /api/farmers/auth",
+    });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },

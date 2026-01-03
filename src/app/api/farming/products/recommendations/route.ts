@@ -8,12 +8,15 @@
  * - Returns recommendations with citations and seasonal insights
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import { auth } from "@/lib/auth";
+import { createLogger } from "@/lib/logger";
 import { getProductRecommendations } from "@/lib/services/perplexity-farming.service";
 import type { ProductRecommendationRequest } from "@/types/farming-advice.types";
 import { getCurrentSeason } from "@/types/farming-advice.types";
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+
+const logger = createLogger("farming-products-recommendations-api");
 
 // ============================================================================
 // VALIDATION SCHEMA
@@ -60,6 +63,11 @@ export async function POST(request: NextRequest) {
     const validation = ProductRecommendationSchema.safeParse(body);
 
     if (!validation.success) {
+      logger.warn("Product recommendations validation failed", {
+        userId: session.user.id,
+        errors: validation.error.flatten(),
+      });
+
       return NextResponse.json(
         {
           success: false,
@@ -74,6 +82,13 @@ export async function POST(request: NextRequest) {
     }
 
     const validatedData = validation.data;
+
+    logger.debug("Processing product recommendations request", {
+      userId: session.user.id,
+      season: validatedData.season,
+      location: validatedData.location,
+      farmType: validatedData.farmType,
+    });
 
     // 3. Build Request
     const recommendationRequest: ProductRecommendationRequest = {
@@ -90,12 +105,23 @@ export async function POST(request: NextRequest) {
 
     // 5. Return Response
     if (result.success) {
+      logger.info("Product recommendations fetched successfully", {
+        userId: session.user.id,
+        season: recommendationRequest.season,
+        location: validatedData.location,
+      });
       return NextResponse.json(result, { status: 200 });
     } else {
+      logger.warn("Product recommendations service returned failure", {
+        userId: session.user.id,
+        season: recommendationRequest.season,
+      });
       return NextResponse.json(result, { status: 500 });
     }
   } catch (error) {
-    console.error("❌ Product Recommendations API Error:", error);
+    logger.error("Product Recommendations API error", error as Error, {
+      endpoint: "POST /api/farming/products/recommendations",
+    });
 
     return NextResponse.json(
       {
@@ -137,14 +163,28 @@ export async function GET(_request: NextRequest) {
     // Get current season recommendations
     const currentSeason = getCurrentSeason();
 
+    logger.debug("Fetching current season product recommendations", {
+      userId: session.user.id,
+      season: currentSeason,
+    });
+
     const result = await getProductRecommendations({
       season: currentSeason,
       includeReasoning: true,
     });
 
+    if (result.success) {
+      logger.info("Current season recommendations fetched successfully", {
+        userId: session.user.id,
+        season: currentSeason,
+      });
+    }
+
     return NextResponse.json(result);
   } catch (error) {
-    console.error("❌ Product Recommendations GET Error:", error);
+    logger.error("Product Recommendations GET error", error as Error, {
+      endpoint: "GET /api/farming/products/recommendations",
+    });
 
     return NextResponse.json(
       {

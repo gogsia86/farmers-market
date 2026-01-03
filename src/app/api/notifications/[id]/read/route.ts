@@ -12,7 +12,11 @@
 
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
+
+// Initialize structured logger
+const logger = createLogger("notification-read-api");
 
 /**
  * PATCH /api/notifications/[id]/read
@@ -97,6 +101,11 @@ export async function PATCH(
       },
     });
 
+    logger.info("Notification marked as read", {
+      notificationId,
+      userId: session.user.id,
+    });
+
     return NextResponse.json({
       success: true,
       notification: updatedNotification,
@@ -107,7 +116,9 @@ export async function PATCH(
       },
     });
   } catch (error) {
-    console.error("Mark notification as read error:", error);
+    logger.error("Failed to mark notification as read", error as Error, {
+      operation: "PATCH /api/notifications/[id]/read",
+    });
     return NextResponse.json(
       {
         success: false,

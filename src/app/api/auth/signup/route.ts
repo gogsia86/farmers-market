@@ -11,9 +11,13 @@
  */
 
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
 import { hash } from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+
+// Initialize logger for signup API
+const logger = createLogger("api-auth-signup");
 
 // ============================================================================
 // VALIDATION SCHEMA
@@ -34,7 +38,7 @@ export async function POST(request: NextRequest) {
   try {
     // Parse and validate request body
     const body = await request.json();
-    console.log("📝 Signup request received:", {
+    logger.info("Signup request received", {
       email: body.email,
       userType: body.userType,
     });
@@ -42,7 +46,10 @@ export async function POST(request: NextRequest) {
     const validation = signupSchema.safeParse(body);
 
     if (!validation.success) {
-      console.error("❌ Validation failed:", validation.error.issues);
+      logger.warn("Signup validation failed", {
+        email: body.email,
+        errors: validation.error.issues,
+      });
       return NextResponse.json(
         { error: "Invalid input data", details: validation.error.issues },
         { status: 400 },
@@ -52,13 +59,13 @@ export async function POST(request: NextRequest) {
     const { name, email, password, userType } = validation.data;
 
     // Check if user already exists
-    console.log("🔍 Checking if user exists:", email);
+    logger.debug("Checking if user exists", { email });
     const existingUser = await database.user.findUnique({
       where: { email },
     });
 
     if (existingUser) {
-      console.log("⚠️ User already exists:", email);
+      logger.warn("User already exists", { email });
       return NextResponse.json(
         { error: "An account with this email already exists" },
         { status: 409 },
@@ -66,7 +73,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Hash password
-    console.log("🔒 Hashing password...");
+    logger.debug("Hashing password", { email });
     const hashedPassword = await hash(password, 12);
 
     // Split name into firstName and lastName
@@ -75,7 +82,7 @@ export async function POST(request: NextRequest) {
     const lastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
 
     // Create user
-    console.log("💾 Creating user in database...");
+    logger.info("Creating user in database", { email, userType });
     const user = await database.user.create({
       data: {
         name: name,
@@ -98,7 +105,11 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    console.log("✅ User created successfully:", user.id);
+    logger.info("User created successfully", {
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+    });
 
     return NextResponse.json(
       {
@@ -109,10 +120,8 @@ export async function POST(request: NextRequest) {
       { status: 201 },
     );
   } catch (error) {
-    console.error("❌ Signup error details:", {
-      message: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined,
-      error,
+    logger.error("Signup failed", error as Error, {
+      operation: "POST /api/auth/signup",
     });
 
     return NextResponse.json(

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
-import { Card, CardContent, CardHeader } from "@/components/ui/Card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   BarChart3,

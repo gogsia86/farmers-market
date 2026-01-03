@@ -11,9 +11,12 @@
  * ╚══════════════════════════════════════════════════════════════════╝
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { triggerEngineService } from "@/lib/services/campaigns/trigger-engine.service";
+import { createLogger } from "@/lib/logger";
 import { campaignAutomationService } from "@/lib/services/campaigns/campaign-automation.service";
+import { triggerEngineService } from "@/lib/services/campaigns/trigger-engine.service";
+import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("campaigns-monitoring-api");
 
 // ═══════════════════════════════════════════════════════════════════
 // 📊 GET - Monitoring Status
@@ -25,9 +28,16 @@ export async function GET(request: NextRequest) {
     const action = searchParams.get("action");
     const userId = searchParams.get("userId");
 
+    logger.debug("Campaign monitoring status requested", { action, userId });
+
     // Get trigger rules
     if (action === "rules") {
       const rules = triggerEngineService.getTriggerRules();
+
+      logger.info("Trigger rules fetched", {
+        total: rules.length,
+        active: rules.filter((r) => r.active).length,
+      });
 
       return NextResponse.json({
         success: true,
@@ -46,6 +56,8 @@ export async function GET(request: NextRequest) {
     if (action === "stats") {
       const stats = triggerEngineService.getTriggerStats();
 
+      logger.info("Trigger stats fetched");
+
       return NextResponse.json({
         success: true,
         data: {
@@ -60,6 +72,11 @@ export async function GET(request: NextRequest) {
     // Get user execution history
     if (action === "user-history" && userId) {
       const history = triggerEngineService.getUserExecutionHistory(userId);
+
+      logger.info("User execution history fetched", {
+        userId,
+        historyCount: history.length,
+      });
 
       return NextResponse.json({
         success: true,
@@ -79,6 +96,11 @@ export async function GET(request: NextRequest) {
       const threshold = parseFloat(searchParams.get("threshold") || "0.7");
       const churnRiskUsers =
         await campaignAutomationService.identifyChurnRiskUsers(threshold);
+
+      logger.info("Churn risk users identified", {
+        count: churnRiskUsers.length,
+        threshold,
+      });
 
       return NextResponse.json({
         success: true,
@@ -101,6 +123,11 @@ export async function GET(request: NextRequest) {
       const abandonedCarts =
         await campaignAutomationService.identifyAbandonedCarts(hoursThreshold);
 
+      logger.info("Abandoned carts identified", {
+        count: abandonedCarts.length,
+        hoursThreshold,
+      });
+
       return NextResponse.json({
         success: true,
         data: {
@@ -120,6 +147,11 @@ export async function GET(request: NextRequest) {
       const inactiveUsers =
         await campaignAutomationService.identifyInactiveUsers(inactiveDays);
 
+      logger.info("Inactive users identified", {
+        count: inactiveUsers.length,
+        inactiveDays,
+      });
+
       return NextResponse.json({
         success: true,
         data: {
@@ -137,6 +169,10 @@ export async function GET(request: NextRequest) {
     const stats = triggerEngineService.getTriggerStats();
     const rules = triggerEngineService.getTriggerRules(true);
 
+    logger.info("Monitoring overview fetched", {
+      activeRules: rules.length,
+    });
+
     return NextResponse.json({
       success: true,
       data: {
@@ -152,7 +188,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("❌ Error fetching monitoring status:", error);
+    logger.error("Error fetching monitoring status", error as Error, {
+      endpoint: "GET /api/campaigns/monitoring",
+    });
 
     return NextResponse.json(
       {
@@ -180,9 +218,13 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { action, ruleId, updates } = body;
 
+    logger.debug("Monitoring task requested", { action, ruleId });
+
     // Run all monitoring tasks
     if (action === "run-all") {
       await triggerEngineService.runAllMonitoring();
+
+      logger.info("All monitoring tasks executed successfully");
 
       return NextResponse.json({
         success: true,
@@ -199,6 +241,8 @@ export async function POST(request: NextRequest) {
     if (action === "monitor-churn") {
       await triggerEngineService.monitorChurnRisk();
 
+      logger.info("Churn risk monitoring completed");
+
       return NextResponse.json({
         success: true,
         data: {
@@ -213,6 +257,8 @@ export async function POST(request: NextRequest) {
     // Monitor abandoned carts
     if (action === "monitor-carts") {
       await triggerEngineService.monitorAbandonedCarts();
+
+      logger.info("Abandoned cart monitoring completed");
 
       return NextResponse.json({
         success: true,
@@ -229,6 +275,8 @@ export async function POST(request: NextRequest) {
     if (action === "monitor-inactive") {
       await triggerEngineService.monitorInactiveUsers();
 
+      logger.info("Inactive user monitoring completed");
+
       return NextResponse.json({
         success: true,
         data: {
@@ -243,6 +291,8 @@ export async function POST(request: NextRequest) {
     // Monitor seasonal changes
     if (action === "monitor-seasonal") {
       await triggerEngineService.monitorSeasonalChanges();
+
+      logger.info("Seasonal monitoring completed");
 
       return NextResponse.json({
         success: true,
@@ -260,6 +310,8 @@ export async function POST(request: NextRequest) {
       const success = triggerEngineService.updateTriggerRule(ruleId, updates);
 
       if (!success) {
+        logger.warn("Trigger rule not found", { ruleId });
+
         return NextResponse.json(
           {
             success: false,
@@ -272,6 +324,8 @@ export async function POST(request: NextRequest) {
           { status: 404 },
         );
       }
+
+      logger.info("Trigger rule updated successfully", { ruleId });
 
       return NextResponse.json({
         success: true,
@@ -289,6 +343,8 @@ export async function POST(request: NextRequest) {
     if (action === "clear-history") {
       triggerEngineService.clearExecutionHistory();
 
+      logger.info("Execution history cleared");
+
       return NextResponse.json({
         success: true,
         data: {
@@ -299,6 +355,8 @@ export async function POST(request: NextRequest) {
         },
       });
     }
+
+    logger.warn("Invalid monitoring action requested", { action });
 
     return NextResponse.json(
       {
@@ -313,7 +371,9 @@ export async function POST(request: NextRequest) {
       { status: 400 },
     );
   } catch (error) {
-    console.error("❌ Error executing monitoring task:", error);
+    logger.error("Error executing monitoring task", error as Error, {
+      endpoint: "POST /api/campaigns/monitoring",
+    });
 
     return NextResponse.json(
       {

@@ -7,9 +7,12 @@
  * @since Run 4 - Phase 2
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { auth as getServerSession } from "@/lib/auth/config";
+import { createLogger } from "@/lib/logger";
 import { SearchAlertService } from "@/lib/services/saved-searches/search-alert.service";
+import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("search-alert-execute-api");
 
 // ============================================
 // POST - Execute Alert
@@ -52,7 +55,9 @@ export async function POST(
       { status: 200 },
     );
   } catch (error) {
-    console.error("[SearchAlert Execute] Error:", error);
+    logger.error("Failed to execute search alert", error, {
+      operation: "executeSearchAlert",
+    });
 
     if (error instanceof Error) {
       if (error.message.includes("not found")) {

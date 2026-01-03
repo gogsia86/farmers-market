@@ -14,9 +14,13 @@
  * @reference .github/instructions/04_NEXTJS_DIVINE_IMPLEMENTATION.instructions.md
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
+
+// Initialize structured logger
+const logger = createLogger("farmer-dashboard-api");
 
 /**
  * GET /api/farmer/dashboard
@@ -81,6 +85,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     });
 
     if (farms.length === 0) {
+      logger.info("Farmer has no farms", {
+        userId: session.user.id,
+      });
+
       return NextResponse.json({
         success: true,
         data: {
@@ -186,6 +194,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       take: 5,
     });
 
+    logger.info("Farmer dashboard data fetched successfully", {
+      userId: session.user.id,
+      farmCount: farms.length,
+      totalOrders,
+      activeProducts,
+    });
+
     return NextResponse.json({
       success: true,
       data: {
@@ -231,7 +246,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     });
   } catch (error) {
-    console.error("Farmer dashboard error:", error);
+    logger.error("Failed to fetch farmer dashboard data", error as Error, {
+      operation: "GET /api/farmer/dashboard",
+    });
     return NextResponse.json(
       {
         success: false,

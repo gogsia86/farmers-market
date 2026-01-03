@@ -18,18 +18,22 @@
  * @reference .github/instructions/04_NEXTJS_DIVINE_IMPLEMENTATION.instructions.md
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import {
-  DivineError,
-  ValidationError,
   AuthenticationError,
   AuthorizationError,
-  NotFoundError,
   ConflictError,
+  DivineError,
   handleError,
+  NotFoundError,
+  ValidationError,
 } from "@/lib/errors";
-import { ZodSchema, ZodError } from "zod";
+import { createLogger } from "@/lib/utils/logger";
+import { NextRequest, NextResponse } from "next/server";
+import { ZodError, ZodSchema } from "zod";
+
+// Create dedicated logger for controllers
+const controllerLogger = createLogger("Controller");
 
 // ============================================================================
 // API RESPONSE TYPES
@@ -424,7 +428,11 @@ export class BaseController {
     error?: Error,
   ): NextResponse<ErrorResponse> {
     // Log the error for monitoring
-    console.error(`[${this.controllerName}] Internal error:`, error);
+    controllerLogger.error(`[${this.controllerName}] Internal error`, {
+      errorMessage: error?.message,
+      errorStack: error?.stack,
+      controllerName: this.controllerName,
+    });
 
     return this.error(
       new DivineError(message, "INTERNAL_ERROR", 500, {
@@ -461,7 +469,10 @@ export class BaseController {
     try {
       return await handler();
     } catch (error) {
-      console.error(`[${this.controllerName}] Request error:`, error);
+      controllerLogger.error(`[${this.controllerName}] Request error`, {
+        errorMessage: error instanceof Error ? error.message : String(error),
+        controllerName: this.controllerName,
+      });
       return this.error(error as Error);
     }
   }
@@ -496,9 +507,12 @@ export class BaseController {
 
       return await handler(session as AuthSession);
     } catch (error) {
-      console.error(
-        `[${this.controllerName}] Authenticated request error:`,
-        error,
+      controllerLogger.error(
+        `[${this.controllerName}] Authenticated request error`,
+        {
+          errorMessage: error instanceof Error ? error.message : String(error),
+          controllerName: this.controllerName,
+        },
       );
       return this.error(error as Error);
     }
@@ -550,9 +564,12 @@ export class BaseController {
 
       return await handler(session as AuthSession);
     } catch (error) {
-      console.error(
-        `[${this.controllerName}] Authorized request error:`,
-        error,
+      controllerLogger.error(
+        `[${this.controllerName}] Authorized request error`,
+        {
+          errorMessage: error instanceof Error ? error.message : String(error),
+          controllerName: this.controllerName,
+        },
       );
       return this.error(error as Error);
     }
@@ -697,7 +714,10 @@ export class BaseController {
    * @param data - Additional data to log
    */
   protected log(operation: string, data?: Record<string, any>): void {
-    console.log(`[${this.controllerName}] ${operation}`, data || "");
+    controllerLogger.info(`[${this.controllerName}] ${operation}`, {
+      ...data,
+      controllerName: this.controllerName,
+    });
   }
 }
 

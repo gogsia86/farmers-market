@@ -1,6 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("farmer-payouts-api");
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -48,6 +51,13 @@ export async function GET(request: NextRequest) {
         { status: 400 },
       );
     }
+
+    logger.debug("Fetching payouts", {
+      userId: session.user.id,
+      farmId,
+      limit,
+      offset,
+    });
 
     // Verify farm ownership
     const farm = await database.farm.findFirst({
@@ -98,6 +108,13 @@ export async function GET(request: NextRequest) {
       accountLast4: "1234", // TODO: Get from Stripe Connect account
     }));
 
+    logger.info("Payouts fetched successfully", {
+      userId: session.user.id,
+      farmId,
+      count: formattedPayouts.length,
+      total,
+    });
+
     return NextResponse.json({
       success: true,
       payouts: formattedPayouts,
@@ -106,7 +123,9 @@ export async function GET(request: NextRequest) {
       offset,
     });
   } catch (error) {
-    console.error("Error fetching payouts:", error);
+    logger.error("Error fetching payouts", error as Error, {
+      endpoint: "GET /api/farmer/payouts",
+    });
     return NextResponse.json(
       {
         success: false,
@@ -146,6 +165,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    logger.info("Payout request initiated", {
+      userId: session.user.id,
+      farmId,
+    });
+
     // Verify farm ownership
     const farm = await database.farm.findFirst({
       where: {
@@ -163,6 +187,10 @@ export async function POST(request: NextRequest) {
 
     // Check if Stripe Connect is set up
     if (!farm.stripeAccountId) {
+      logger.warn("Payout requested without Stripe Connect setup", {
+        userId: session.user.id,
+        farmId,
+      });
       return NextResponse.json(
         {
           success: false,
@@ -220,6 +248,12 @@ export async function POST(request: NextRequest) {
     // Check minimum payout amount
     const minimumPayoutAmount = 10; // $10 minimum
     if (availableBalance < minimumPayoutAmount) {
+      logger.warn("Payout requested with insufficient balance", {
+        userId: session.user.id,
+        farmId,
+        availableBalance,
+        minimumRequired: minimumPayoutAmount,
+      });
       return NextResponse.json(
         {
           success: false,
@@ -240,6 +274,11 @@ export async function POST(request: NextRequest) {
     });
 
     if (pendingPayout) {
+      logger.warn("Payout requested with existing pending payout", {
+        userId: session.user.id,
+        farmId,
+        pendingPayoutId: pendingPayout.id,
+      });
       return NextResponse.json(
         {
           success: false,
@@ -273,6 +312,14 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    logger.info("Payout created successfully", {
+      userId: session.user.id,
+      farmId,
+      payoutId: payout.id,
+      amount: availableBalance,
+      orderCount: completedOrders.length,
+    });
+
     // TODO: Create Stripe payout
     // const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
     // const stripePayout = await stripe.payouts.create({
@@ -298,7 +345,9 @@ export async function POST(request: NextRequest) {
       message: "Payout requested successfully",
     });
   } catch (error) {
-    console.error("Error requesting payout:", error);
+    logger.error("Error requesting payout", error as Error, {
+      endpoint: "POST /api/farmer/payouts",
+    });
     return NextResponse.json(
       {
         success: false,

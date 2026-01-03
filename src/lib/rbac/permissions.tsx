@@ -1,5 +1,8 @@
-import React from "react";
+import { createLogger } from "@/lib/utils/logger";
 import { UserRole } from "@prisma/client";
+import React from "react";
+
+const rbacLogger = createLogger("RBAC");
 
 /**
  * Divine Role-Based Access Control (RBAC) System
@@ -165,7 +168,7 @@ export function canVerifyFarms(role: UserRole): boolean {
  * Divine agricultural consciousness permission checker
  */
 export class DivinePermissionChecker {
-  constructor(private role: UserRole) {}
+  constructor(private role: UserRole) { }
 
   can(permission: Permission): boolean {
     return hasPermission(this.role, permission);
@@ -273,13 +276,12 @@ export function logPermissionCheck(
   granted: boolean,
   context?: string,
 ) {
-  console.log("🌾 Divine Permission Check:", {
+  rbacLogger.info("Divine Permission Check", {
     userId,
     role,
     permission,
     granted,
     context,
-    timestamp: new Date().toISOString(),
     consciousness: "agricultural_rbac",
   });
 

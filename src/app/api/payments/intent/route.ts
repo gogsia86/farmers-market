@@ -5,11 +5,14 @@
  * @route POST /api/payments/intent
  */
 
+import { getServerSession } from "@/lib/auth";
+import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
+import { paymentService } from "@/lib/services/payment.service";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { getServerSession } from "@/lib/auth";
-import { paymentService } from "@/lib/services/payment.service";
-import { database } from "@/lib/database";
+
+const logger = createLogger("payment-intent-api");
 
 // ✅ DIVINE VALIDATION SCHEMA
 const CreatePaymentIntentSchema = z.object({
@@ -218,7 +221,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     );
   } catch (error) {
     // ✅ ERROR HANDLING
-    console.error("Payment intent creation error:", error);
+    logger.error("Payment intent creation failed", error, {
+      operation: "createPaymentIntent",
+    });
 
     // Handle payment service errors
     if (error && typeof error === "object" && "code" in error) {
@@ -344,17 +349,19 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         },
         paymentIntent: paymentDetails.paymentIntent
           ? {
-              id: paymentDetails.paymentIntent.id,
-              amount: paymentDetails.paymentIntent.amount / 100,
-              currency: paymentDetails.paymentIntent.currency,
-              status: paymentDetails.paymentIntent.status,
-              clientSecret: paymentDetails.paymentIntent.client_secret,
-            }
+            id: paymentDetails.paymentIntent.id,
+            amount: paymentDetails.paymentIntent.amount / 100,
+            currency: paymentDetails.paymentIntent.currency,
+            status: paymentDetails.paymentIntent.status,
+            clientSecret: paymentDetails.paymentIntent.client_secret,
+          }
           : null,
       },
     });
   } catch (error) {
-    console.error("Get payment intent error:", error);
+    logger.error("Failed to get payment intent", error, {
+      operation: "getPaymentIntent",
+    });
 
     return NextResponse.json<ApiResponse>(
       {

@@ -1,9 +1,12 @@
+import { FarmsTableDynamic } from "@/components/admin/FarmsTableDynamic";
 import { requireAdmin } from "@/lib/auth";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/utils/logger";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import type { Farm, User } from "@prisma/client";
 import { FarmFilters } from "./FarmFilters";
-import { FarmsTableDynamic } from "@/components/admin/FarmsTableDynamic";
+
+const adminFarmsLogger = createLogger("AdminFarms");
 
 // Force dynamic rendering for database access
 export const dynamic = "force-dynamic";
@@ -255,18 +258,16 @@ export default async function AdminFarmsPage({
                     <a
                       href={
                         hasPrevPage
-                          ? `?page=${page - 1}&limit=${limit}${
-                              statusFilter.status
-                                ? `&status=${statusFilter.status}`
-                                : ""
-                            }`
+                          ? `?page=${page - 1}&limit=${limit}${statusFilter.status
+                            ? `&status=${statusFilter.status}`
+                            : ""
+                          }`
                           : undefined
                       }
-                      className={`px-3 py-1 text-sm border border-agricultural-300 rounded-md ${
-                        hasPrevPage
+                      className={`px-3 py-1 text-sm border border-agricultural-300 rounded-md ${hasPrevPage
                           ? "text-agricultural-700 bg-white hover:bg-agricultural-50"
                           : "text-agricultural-400 bg-agricultural-100 cursor-not-allowed pointer-events-none"
-                      }`}
+                        }`}
                       aria-disabled={hasPrevPage ? "false" : "true"}
                       onClick={(e) => !hasPrevPage && e.preventDefault()}
                     >
@@ -275,18 +276,16 @@ export default async function AdminFarmsPage({
                     <a
                       href={
                         hasNextPage
-                          ? `?page=${page + 1}&limit=${limit}${
-                              statusFilter.status
-                                ? `&status=${statusFilter.status}`
-                                : ""
-                            }`
+                          ? `?page=${page + 1}&limit=${limit}${statusFilter.status
+                            ? `&status=${statusFilter.status}`
+                            : ""
+                          }`
                           : undefined
                       }
-                      className={`px-3 py-1 text-sm border border-agricultural-300 rounded-md ${
-                        hasNextPage
+                      className={`px-3 py-1 text-sm border border-agricultural-300 rounded-md ${hasNextPage
                           ? "text-agricultural-700 bg-white hover:bg-agricultural-50"
                           : "text-agricultural-400 bg-agricultural-100 cursor-not-allowed pointer-events-none"
-                      }`}
+                        }`}
                       aria-disabled={hasNextPage ? "false" : "true"}
                       onClick={(e) => !hasNextPage && e.preventDefault()}
                     >
@@ -305,7 +304,7 @@ export default async function AdminFarmsPage({
     );
   } catch (error) {
     // Divine error manifestation
-    console.error("Farm consciousness manifestation failed:", error);
+    adminFarmsLogger.error("Farm consciousness manifestation failed", error instanceof Error ? error : new Error(String(error)));
     return (
       <div className="min-h-screen bg-agricultural-50 flex items-center justify-center">
         <div className="bg-white p-8 rounded-lg shadow-lg border border-red-200">

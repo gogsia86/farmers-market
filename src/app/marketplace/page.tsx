@@ -1,22 +1,23 @@
-import { Metadata } from "next";
-import Link from "next/link";
-import { Badge } from "@/components/ui/Badge";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
-import {
-  MapPin,
-  Star,
-  ShoppingCart,
-  Leaf,
-  Heart,
-  Store,
-  Package,
-} from "lucide-react";
+import { database } from "@/lib/database";
+import { farmLogger } from "@/lib/utils/logger";
 import {
   generateMetadata as generateMeta,
   generateOrganizationJsonLd,
 } from "@/lib/utils/metadata";
-import { database } from "@/lib/database";
+import {
+  Heart,
+  Leaf,
+  MapPin,
+  Package,
+  ShoppingCart,
+  Star,
+  Store,
+} from "lucide-react";
+import { Metadata } from "next";
+import Link from "next/link";
 
 /**
  * 🛒 MARKETPLACE LANDING PAGE - Server Component
@@ -112,7 +113,9 @@ async function getProducts(): Promise<any[]> {
       };
     });
   } catch (error) {
-    console.error("[MARKETPLACE_FETCH_ERROR]", error);
+    farmLogger.error("Failed to fetch marketplace products", error instanceof Error ? error : new Error(String(error)), {
+      path: "/marketplace",
+    });
     return [];
   }
 }
@@ -336,7 +339,7 @@ export default async function MarketplacePage() {
 
                           {/* Rating */}
                           {product.averageRating &&
-                          product.averageRating > 0 ? (
+                            product.averageRating > 0 ? (
                             <div className="flex items-center gap-2 text-sm mb-4">
                               <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
                               <span className="font-semibold text-gray-900">

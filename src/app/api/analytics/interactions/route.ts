@@ -7,12 +7,14 @@
  * @module /api/analytics/interactions
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { auth as getServerSession } from "@/lib/auth/config";
+import { createLogger } from "@/lib/logger";
 import { UserInteractionService } from "@/lib/services/analytics/user-interaction.service";
-import { asyncHandler, validateRequest } from "@/lib/api/error-handler";
-import { z } from "zod";
 import { InteractionType } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+
+const logger = createLogger("analytics-interactions-api");
 
 // ============================================================================
 // Validation Schemas
@@ -110,6 +112,10 @@ export async function POST(req: NextRequest) {
             viewData.sessionId,
             viewData.metadata,
           );
+          logger.debug("View interaction tracked", {
+            productId: viewData.productId,
+            userId: session?.user?.id,
+          });
           return NextResponse.json(viewResult, { status: 201 });
         }
 
@@ -122,6 +128,11 @@ export async function POST(req: NextRequest) {
             clickData.source,
             clickData.metadata,
           );
+          logger.debug("Click interaction tracked", {
+            productId: clickData.productId,
+            userId: session?.user?.id,
+            source: clickData.source,
+          });
           return NextResponse.json(clickResult, { status: 201 });
         }
 
@@ -135,6 +146,11 @@ export async function POST(req: NextRequest) {
             cartData.sessionId,
             cartData.metadata,
           );
+          logger.info("Add to cart interaction tracked", {
+            productId: cartData.productId,
+            userId: session?.user?.id,
+            quantity: cartData.quantity,
+          });
           return NextResponse.json(cartResult, { status: 201 });
         }
 
@@ -149,6 +165,12 @@ export async function POST(req: NextRequest) {
             purchaseData.sessionId,
             purchaseData.metadata,
           );
+          logger.info("Purchase interaction tracked", {
+            orderId: purchaseData.orderId,
+            productId: purchaseData.productId,
+            userId: session?.user?.id,
+            quantity: purchaseData.quantity,
+          });
           return NextResponse.json(purchaseResult, { status: 201 });
         }
 
@@ -165,6 +187,10 @@ export async function POST(req: NextRequest) {
             session.user.id,
             favoriteData.sessionId,
           );
+          logger.debug("Favorite interaction tracked", {
+            productId: favoriteData.productId,
+            userId: session.user.id,
+          });
           return NextResponse.json(favoriteResult, { status: 201 });
         }
 
@@ -183,6 +209,11 @@ export async function POST(req: NextRequest) {
             reviewData.sessionId,
             reviewData.metadata,
           );
+          logger.info("Review interaction tracked", {
+            productId: reviewData.productId,
+            userId: session.user.id,
+            rating: reviewData.rating,
+          });
           return NextResponse.json(reviewResult, { status: 201 });
         }
 
@@ -194,6 +225,11 @@ export async function POST(req: NextRequest) {
             session?.user?.id,
             shareData.sessionId,
           );
+          logger.debug("Share interaction tracked", {
+            productId: shareData.productId,
+            userId: session?.user?.id,
+            platform: shareData.platform,
+          });
           return NextResponse.json(shareResult, { status: 201 });
         }
 
@@ -219,9 +255,18 @@ export async function POST(req: NextRequest) {
       value: data.value,
     });
 
+    logger.debug("Generic interaction tracked", {
+      type: data.type,
+      entityType: data.entityType,
+      entityId: data.entityId,
+      userId: session?.user?.id,
+    });
+
     return NextResponse.json(result, { status: 201 });
   } catch (error) {
-    console.error("Error tracking interaction:", error);
+    logger.error("Error tracking interaction", error as Error, {
+      endpoint: "POST /api/analytics/interactions",
+    });
     return NextResponse.json(
       { error: "Failed to track interaction" },
       { status: 500 },
@@ -266,6 +311,13 @@ export async function GET(req: NextRequest) {
       filters.userId = session?.user?.id;
     }
 
+    logger.debug("Fetching interactions", {
+      filters,
+      limit,
+      offset,
+      requestedBy: session?.user?.id,
+    });
+
     const result = await UserInteractionService.getInteractions(
       filters,
       limit,
@@ -274,7 +326,9 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error("Error fetching interactions:", error);
+    logger.error("Error fetching interactions", error as Error, {
+      endpoint: "GET /api/analytics/interactions",
+    });
     return NextResponse.json(
       { error: "Failed to fetch interactions" },
       { status: 500 },

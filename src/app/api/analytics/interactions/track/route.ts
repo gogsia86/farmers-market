@@ -6,11 +6,14 @@
  * ╚════════════════════════════════════════════════════════════╝
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { analyticsService } from "@/lib/services/analytics.service";
+import { createLogger } from "@/lib/logger";
 import type { TrackInteractionRequest } from "@/lib/services/analytics.service";
-import { z } from "zod";
+import { analyticsService } from "@/lib/services/analytics.service";
 import { InteractionType } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+
+const logger = createLogger("analytics-interactions-track-api");
 
 // ============================================
 // VALIDATION SCHEMA
@@ -51,6 +54,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Validate request
     const validation = TrackInteractionSchema.safeParse(body);
     if (!validation.success) {
+      logger.warn("Invalid interaction data", {
+        errors: validation.error.issues,
+      });
+
       return NextResponse.json(
         {
           success: false,
@@ -72,9 +79,24 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         request.headers.get("user-agent") || undefined;
     }
 
+    logger.debug("Tracking interaction", {
+      sessionId: interactionData.sessionId,
+      type: interactionData.type,
+      entityType: interactionData.entityType,
+      entityId: interactionData.entityId,
+    });
+
     // Track interaction
     const interaction =
       await analyticsService.trackInteraction(interactionData);
+
+    logger.info("Interaction tracked successfully", {
+      interactionId: interaction.id,
+      type: interaction.type,
+      entityType: interaction.entityType,
+      entityId: interaction.entityId,
+      sessionId: interaction.sessionId,
+    });
 
     return NextResponse.json(
       {
@@ -94,7 +116,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       { status: 201 },
     );
   } catch (error) {
-    console.error("Interaction tracking failed:", error);
+    logger.error("Interaction tracking failed", error as Error, {
+      endpoint: "POST /api/analytics/interactions/track",
+    });
 
     return NextResponse.json(
       {

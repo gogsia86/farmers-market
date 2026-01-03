@@ -1,36 +1,50 @@
 /**
- * ⚙️ FARMER SETTINGS PAGE
- * Divine implementation of farm settings and configuration
- * Features: Farm profile, notifications, account settings, preferences
+ * 🚜 FARMER SETTINGS PAGE
+ * Divine implementation of comprehensive farm settings and configuration
+ * Sprint 5: Complete settings management with business hours, delivery, payments
  */
 
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
+import { settingsService } from "@/lib/services/settings.service";
+import { FarmSettingsClient } from "@/components/features/settings";
+import { NotificationSettings } from "@/components/settings/NotificationSettings";
+import { DisplaySettings } from "@/components/settings/DisplaySettings";
+import { PrivacySettings } from "@/components/settings/PrivacySettings";
 import {
   BuildingStorefrontIcon,
   BellIcon,
   UserCircleIcon,
-  CreditCardIcon,
-  ShieldCheckIcon,
-  GlobeAltIcon,
+  Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
 
 export const metadata: Metadata = {
-  title: "Settings",
+  title: "Settings | Farmers Market Platform",
   description: "Manage your farm settings and preferences",
 };
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
+/**
+ * Farmer Settings Page - Server Component
+ * Handles authentication, data fetching, and renders settings UI
+ */
 export default async function FarmerSettingsPage() {
+  // ============================================
+  // AUTHENTICATION & AUTHORIZATION
+  // ============================================
   const session = await auth();
 
   if (!session?.user?.id) {
     redirect("/login");
   }
+
+  // ============================================
+  // DATA FETCHING
+  // ============================================
 
   // Fetch farm details
   const farm = await database.farm.findFirst({
@@ -38,6 +52,7 @@ export default async function FarmerSettingsPage() {
     include: {
       certifications: {
         orderBy: { createdAt: "desc" },
+        take: 5,
       },
     },
   });
@@ -60,620 +75,366 @@ export default async function FarmerSettingsPage() {
     },
   });
 
+  // Fetch user settings (with fallback)
+  const userSettings = await settingsService.getUserSettings(session.user.id);
+  if (!userSettings) {
+    throw new Error("Failed to load user settings");
+  }
+
+  // Fetch farm settings (with fallback)
+  const farmSettings = await settingsService.getFarmSettings(farm.id);
+  if (!farmSettings) {
+    throw new Error("Failed to load farm settings");
+  }
+
   // Parse farm location
   const location =
     typeof farm.location === "string"
       ? JSON.parse(farm.location)
       : farm.location;
 
+  // ============================================
+  // RENDER
+  // ============================================
   return (
-    <div className="min-h-screen bg-gray-50 py-8" data-testid="settings-page">
+    <div
+      className="min-h-screen bg-gray-50 py-8"
+      data-testid="farmer-settings-page"
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
           <p className="mt-2 text-sm text-gray-600">
-            Manage your farm profile and account preferences
+            Manage your farm profile, business hours, delivery zones, and
+            account preferences
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
           {/* Settings Navigation */}
           <div className="lg:col-span-1">
             <nav
-              className="space-y-1 bg-white rounded-lg shadow-sm p-4"
+              className="space-y-1 bg-white rounded-lg shadow-sm p-4 sticky top-4"
               data-testid="settings-nav"
             >
               <a
-                href="#farm-profile"
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-900 rounded-md bg-green-50 hover:bg-green-100"
+                href="#farm-settings"
+                className="flex items-center px-3 py-2 text-sm font-medium text-gray-900 rounded-md bg-green-50 hover:bg-green-100 transition-colors"
               >
                 <BuildingStorefrontIcon className="mr-3 h-5 w-5 text-green-600" />
-                Farm Profile
+                Farm Settings
               </a>
               <a
-                href="#account"
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50"
+                href="#account-settings"
+                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
               >
                 <UserCircleIcon className="mr-3 h-5 w-5 text-gray-400" />
-                Account
+                Account Settings
               </a>
               <a
                 href="#notifications"
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50"
+                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
               >
                 <BellIcon className="mr-3 h-5 w-5 text-gray-400" />
                 Notifications
               </a>
               <a
-                href="#payments"
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50"
-              >
-                <CreditCardIcon className="mr-3 h-5 w-5 text-gray-400" />
-                Payments
-              </a>
-              <a
-                href="#security"
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50"
-              >
-                <ShieldCheckIcon className="mr-3 h-5 w-5 text-gray-400" />
-                Security
-              </a>
-              <a
                 href="#preferences"
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50"
+                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
               >
-                <GlobeAltIcon className="mr-3 h-5 w-5 text-gray-400" />
+                <Cog6ToothIcon className="mr-3 h-5 w-5 text-gray-400" />
                 Preferences
               </a>
             </nav>
+
+            {/* Farm Info Card */}
+            <div className="mt-4 bg-white rounded-lg shadow-sm p-4">
+              <div className="text-center">
+                <div className="mx-auto h-16 w-16 rounded-full bg-green-100 flex items-center justify-center">
+                  <BuildingStorefrontIcon className="h-8 w-8 text-green-600" />
+                </div>
+                <h3 className="mt-3 text-sm font-medium text-gray-900">
+                  {farm.name}
+                </h3>
+                <p className="text-xs text-gray-500 mt-1">
+                  {location?.address || "No location"}
+                </p>
+                <div className="mt-3">
+                  <span
+                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                      farm.status === "ACTIVE"
+                        ? "bg-green-100 text-green-800"
+                        : farm.status === "PENDING" ||
+                            farm.status === "SUSPENDED"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-gray-100 text-gray-800"
+                    }`}
+                  >
+                    {farm.status.replace(/_/g, " ")}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Settings Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Farm Profile Section */}
-            <div
-              id="farm-profile"
-              className="bg-white rounded-lg shadow-sm p-6"
-              data-testid="farm-profile-section"
+          <div className="lg:col-span-3 space-y-8">
+            {/* Farm Settings Section */}
+            <section
+              id="farm-settings"
+              className="scroll-mt-8"
+              data-testid="farm-settings-section"
             >
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  Farm Profile
-                </h2>
-                <button
-                  className="text-sm font-medium text-green-600 hover:text-green-700"
-                  data-testid="edit-farm-button"
-                >
-                  Edit
-                </button>
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <div className="mb-6">
+                  <h2 className="text-2xl font-semibold text-gray-900">
+                    Farm Settings
+                  </h2>
+                  <p className="mt-1 text-sm text-gray-500">
+                    Configure your farm's business hours, delivery zones,
+                    payment methods, and policies
+                  </p>
+                </div>
+
+                <FarmSettingsClient
+                  settings={farmSettings}
+                  farmId={farm.id}
+                  farmLocation={location}
+                  onSaveSuccess={() => {
+                    // Refresh handled by client component
+                  }}
+                />
               </div>
+            </section>
 
-              <div className="space-y-6">
-                {/* Farm Name */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Farm Name
-                  </label>
-                  <p className="text-sm text-gray-900" data-testid="farm-name">
-                    forecasting {farm.name}
-                  </p>
-                </div>
-
-                {/* Description */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Description
-                  </label>
-                  <p
-                    className="text-sm text-gray-900"
-                    data-testid="farm-description"
-                  >
-                    {farm.description || "No description provided"}
-                  </p>
-                </div>
-
-                {/* Location */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Location
-                  </label>
-                  <p
-                    className="text-sm text-gray-900"
-                    data-testid="farm-location"
-                  >
-                    {location?.address || "No address provided"}
-                  </p>
-                </div>
-
-                {/* Farm Size */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Farm Size
-                    </label>
-                    <p className="text-sm text-gray-900">
-                      {farm.farmSize
-                        ? `${farm.farmSize} acres`
-                        : "Not specified"}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Status
-                    </label>
-                    <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        farm.status === "ACTIVE"
-                          ? "bg-green-100 text-green-800"
-                          : farm.status === "PENDING"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-gray-100 text-gray-800"
-                      }`}
-                      data-testid="farm-status"
-                    >
-                      {farm.status.replace("_", " ")}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Contact Information */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Contact Email
-                    </label>
-                    <p className="text-sm text-gray-900">
-                      {farm.email || user?.email || "Not provided"}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Contact Phone
-                    </label>
-                    <p className="text-sm text-gray-900">
-                      {farm.phone || user?.phone || "Not provided"}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Certifications */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Certifications
-                  </label>
-                  {farm.certifications.length > 0 ? (
-                    <div className="space-y-2">
-                      {farm.certifications.slice(0, 3).map((cert) => (
-                        <div
-                          key={cert.id}
-                          className="flex items-center justify-between p-3 bg-gray-50 rounded-md"
-                        >
-                          <div>
-                            <p className="text-sm font-medium text-gray-900">
-                              {cert.type.replace("_", " ")}
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              {cert.certifierName}
-                            </p>
-                          </div>
-                          <span
-                            className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                              cert.status === "VERIFIED"
-                                ? "bg-green-100 text-green-700"
-                                : cert.status === "PENDING"
-                                  ? "bg-yellow-100 text-yellow-700"
-                                  : "bg-gray-100 text-gray-700"
-                            }`}
-                          >
-                            {cert.status}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-gray-500">
-                      No certifications added
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Account Section */}
-            <div
-              id="account"
-              className="bg-white rounded-lg shadow-sm p-6"
-              data-testid="account-section"
+            {/* Account Settings Section */}
+            <section
+              id="account-settings"
+              className="scroll-mt-8"
+              data-testid="account-settings-section"
             >
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  Account Information
-                </h2>
-                <button
-                  className="text-sm font-medium text-green-600 hover:text-green-700"
-                  data-testid="edit-account-button"
-                >
-                  Edit
-                </button>
-              </div>
-
-              <div className="space-y-6">
-                <div className="flex items-center space-x-4">
-                  {user?.avatar ? (
-                    <img
-                      src={user.avatar}
-                      alt={user?.name || "User"}
-                      className="h-16 w-16 rounded-full"
-                    />
-                  ) : (
-                    <div className="h-16 w-16 rounded-full bg-gray-200 flex items-center justify-center">
-                      <UserCircleIcon className="h-10 w-10 text-gray-400" />
-                    </div>
-                  )}
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-900">
-                      {user?.name || "Not set"}
-                    </h3>
-                    <p className="text-sm text-gray-500">{user?.email}</p>
-                  </div>
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <div className="mb-6">
+                  <h2 className="text-2xl font-semibold text-gray-900">
+                    Account Settings
+                  </h2>
+                  <p className="mt-1 text-sm text-gray-500">
+                    Manage your personal account information
+                  </p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Email
-                    </label>
-                    <p className="text-sm text-gray-900">{user?.email}</p>
-                    {user?.emailVerified && (
-                      <span className="inline-flex items-center text-xs text-green-600 mt-1">
-                        <ShieldCheckIcon className="h-3 w-3 mr-1" />
-                        Verified
-                      </span>
+                <div className="space-y-6">
+                  {/* Profile Info */}
+                  <div className="flex items-start gap-4 pb-6 border-b border-gray-200">
+                    {user?.avatar ? (
+                      <img
+                        src={user.avatar}
+                        alt={user?.name || "User"}
+                        className="h-20 w-20 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="h-20 w-20 rounded-full bg-gray-200 flex items-center justify-center">
+                        <UserCircleIcon className="h-12 w-12 text-gray-400" />
+                      </div>
                     )}
+                    <div className="flex-1">
+                      <h3 className="text-lg font-medium text-gray-900">
+                        {user?.name || "Not set"}
+                      </h3>
+                      <p className="text-sm text-gray-500">{user?.email}</p>
+                      {user?.emailVerified && (
+                        <span className="inline-flex items-center text-xs text-green-600 mt-2">
+                          <svg
+                            className="h-4 w-4 mr-1"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          Email Verified
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Phone
-                    </label>
-                    <p className="text-sm text-gray-900">
-                      {user?.phone || "Not provided"}
-                    </p>
+
+                  {/* Contact Information */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Email Address
+                      </label>
+                      <p className="text-sm text-gray-900">{user?.email}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Phone Number
+                      </label>
+                      <p className="text-sm text-gray-900">
+                        {user?.phone || "Not provided"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Account Actions */}
+                  <div className="pt-4 border-t border-gray-200">
+                    <div className="flex flex-wrap gap-3">
+                      <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+                        Edit Profile
+                      </button>
+                      <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+                        Change Password
+                      </button>
+                      <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+                        Two-Factor Auth
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </section>
 
             {/* Notifications Section */}
-            <div
+            <section
               id="notifications"
-              className="bg-white rounded-lg shadow-sm p-6"
+              className="scroll-mt-8"
               data-testid="notifications-section"
             >
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">
-                Notification Preferences
-              </h2>
-
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">
-                      New Order Notifications
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Get notified when you receive new orders
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    className="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-green-600 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-                    role="switch"
-                    aria-checked="true"
-                    data-testid="new-orders-toggle"
-                  >
-                    <span className="translate-x-5 inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
-                  </button>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">
-                      Order Status Updates
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Notifications for order status changes
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    className="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-green-600 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-                    role="switch"
-                    aria-checked="true"
-                    data-testid="status-updates-toggle"
-                  >
-                    <span className="translate-x-5 inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
-                  </button>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">
-                      Low Stock Alerts
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Alert when products are running low
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    className="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-green-600 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-                    role="switch"
-                    aria-checked="true"
-                    data-testid="low-stock-toggle"
-                  >
-                    <span className="translate-x-5 inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
-                  </button>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">
-                      Marketing Emails
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Updates about new features and tips
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    className="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-                    role="switch"
-                    aria-checked="false"
-                    data-testid="marketing-toggle"
-                  >
-                    <span className="translate-x-0 inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Payment Settings */}
-            <div
-              id="payments"
-              className="bg-white rounded-lg shadow-sm p-6"
-              data-testid="payments-section"
-            >
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  Payment Settings
-                </h2>
-                <button
-                  className="text-sm font-medium text-green-600 hover:text-green-700"
-                  data-testid="manage-payments-button"
-                >
-                  Manage
-                </button>
-              </div>
-
-              <div className="space-y-4">
-                <div className="rounded-lg border border-gray-200 p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <CreditCardIcon className="h-8 w-8 text-gray-400 mr-3" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          Bank Account
-                        </p>
-                        <p className="text-xs text-gray-500">••••••••1234</p>
-                      </div>
-                    </div>
-                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                      Connected
-                    </span>
-                  </div>
-                </div>
-
-                <div className="rounded-lg border border-dashed border-gray-300 p-4 text-center">
-                  <CreditCardIcon className="mx-auto h-8 w-8 text-gray-400" />
-                  <p className="mt-2 text-sm text-gray-500">
-                    No secondary payment method
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <div className="mb-6">
+                  <h2 className="text-2xl font-semibold text-gray-900">
+                    Notification Preferences
+                  </h2>
+                  <p className="mt-1 text-sm text-gray-500">
+                    Control how and when you receive notifications
                   </p>
-                  <button className="mt-2 text-sm font-medium text-green-600 hover:text-green-700">
-                    Add payment method
-                  </button>
                 </div>
+
+                <NotificationSettings
+                  preferences={userSettings.notifications}
+                  onChange={(newSettings) => {
+                    // Handle notification settings update
+                    fetch(`/api/settings/user/${session.user.id}`, {
+                      method: "PATCH",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ notifications: newSettings }),
+                    });
+                  }}
+                />
               </div>
-            </div>
-
-            {/* Security Section */}
-            <div
-              id="security"
-              className="bg-white rounded-lg shadow-sm p-6"
-              data-testid="security-section"
-            >
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">
-                Security
-              </h2>
-
-              <div className="space-y-4">
-                <button
-                  className="w-full flex items-center justify-between p-4 rounded-lg border border-gray-200 hover:bg-gray-50"
-                  data-testid="change-password-button"
-                >
-                  <div className="text-left">
-                    <p className="text-sm font-medium text-gray-900">
-                      Change Password
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Update your password regularly for security
-                    </p>
-                  </div>
-                  <svg
-                    className="h-5 w-5 text-gray-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </button>
-
-                <button
-                  className="w-full flex items-center justify-between p-4 rounded-lg border border-gray-200 hover:bg-gray-50"
-                  data-testid="two-factor-button"
-                >
-                  <div className="text-left">
-                    <p className="text-sm font-medium text-gray-900">
-                      Two-Factor Authentication
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Add an extra layer of security
-                    </p>
-                  </div>
-                  <svg
-                    className="h-5 w-5 text-gray-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
+            </section>
 
             {/* Preferences Section */}
-            <div
+            <section
               id="preferences"
-              className="bg-white rounded-lg shadow-sm p-6"
+              className="scroll-mt-8"
               data-testid="preferences-section"
             >
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">
-                Preferences
-              </h2>
-
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Language
-                  </label>
-                  <select
-                    className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500"
-                    data-testid="language-select"
-                  >
-                    <option value="en">English</option>
-                    <option value="es">Español</option>
-                    <option value="fr">Français</option>
-                  </select>
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <div className="mb-6">
+                  <h2 className="text-2xl font-semibold text-gray-900">
+                    Display & Privacy Preferences
+                  </h2>
+                  <p className="mt-1 text-sm text-gray-500">
+                    Customize your display settings and privacy options
+                  </p>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Timezone
-                  </label>
-                  <select
-                    className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500"
-                    data-testid="timezone-select"
-                  >
-                    <option value="America/New_York">Eastern Time (ET)</option>
-                    <option value="America/Chicago">Central Time (CT)</option>
-                    <option value="America/Denver">Mountain Time (MT)</option>
-                    <option value="America/Los_Angeles">
-                      Pacific Time (PT)
-                    </option>
-                  </select>
-                </div>
+                <div className="space-y-8">
+                  <DisplaySettings
+                    preferences={userSettings.display}
+                    onChange={(newSettings) => {
+                      // Handle display settings update
+                      fetch(`/api/settings/user/${session.user.id}`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ display: newSettings }),
+                      });
+                    }}
+                  />
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Date Format
-                  </label>
-                  <select
-                    className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500"
-                    data-testid="date-format-select"
-                  >
-                    <option value="MM/DD/YYYY">MM/DD/YYYY</option>
-                    <option value="DD/MM/YYYY">DD/MM/YYYY</option>
-                    <option value="YYYY-MM-DD">YYYY-MM-DD</option>
-                  </select>
+                  <div className="border-t border-gray-200 pt-6">
+                    <PrivacySettings
+                      preferences={userSettings.privacy}
+                      onChange={(newSettings) => {
+                        // Handle privacy settings update
+                        fetch(`/api/settings/user/${session.user.id}`, {
+                          method: "PATCH",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ privacy: newSettings }),
+                        });
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            </section>
 
             {/* Danger Zone */}
-            <div
-              className="bg-red-50 rounded-lg border border-red-200 p-6"
-              data-testid="danger-zone"
-            >
-              <h2 className="text-lg font-semibold text-red-900 mb-4">
-                Danger Zone
-              </h2>
-              <div className="space-y-3">
-                <button
-                  className="w-full flex items-center justify-between p-4 rounded-lg border border-red-300 bg-white hover:bg-red-50"
-                  data-testid="deactivate-farm-button"
-                >
-                  <div className="text-left">
-                    <p className="text-sm font-medium text-red-900">
-                      Deactivate Farm
-                    </p>
-                    <p className="text-xs text-red-600">
-                      Temporarily disable your farm from the marketplace
-                    </p>
-                  </div>
-                  <svg
-                    className="h-5 w-5 text-red-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </button>
+            <section className="scroll-mt-8" data-testid="danger-zone">
+              <div className="bg-red-50 rounded-lg border border-red-200 p-6">
+                <h2 className="text-lg font-semibold text-red-900 mb-4">
+                  Danger Zone
+                </h2>
+                <p className="text-sm text-red-700 mb-4">
+                  These actions are permanent and cannot be undone. Please
+                  proceed with caution.
+                </p>
+                <div className="space-y-3">
+                  <button className="w-full flex items-center justify-between p-4 rounded-lg border border-red-300 bg-white hover:bg-red-50 transition-colors">
+                    <div className="text-left">
+                      <p className="text-sm font-medium text-red-900">
+                        Deactivate Farm
+                      </p>
+                      <p className="text-xs text-red-600">
+                        Temporarily disable your farm from the marketplace
+                      </p>
+                    </div>
+                    <svg
+                      className="h-5 w-5 text-red-600"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </button>
 
-                <button
-                  className="w-full flex items-center justify-between p-4 rounded-lg border border-red-300 bg-white hover:bg-red-50"
-                  data-testid="delete-account-button"
-                >
-                  <div className="text-left">
-                    <p className="text-sm font-medium text-red-900">
-                      Delete Account
-                    </p>
-                    <p className="text-xs text-red-600">
-                      Permanently delete your account and all data
-                    </p>
-                  </div>
-                  <svg
-                    className="h-5 w-5 text-red-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </button>
+                  <button className="w-full flex items-center justify-between p-4 rounded-lg border border-red-300 bg-white hover:bg-red-50 transition-colors">
+                    <div className="text-left">
+                      <p className="text-sm font-medium text-red-900">
+                        Delete Account
+                      </p>
+                      <p className="text-xs text-red-600">
+                        Permanently delete your account and all farm data
+                      </p>
+                    </div>
+                    <svg
+                      className="h-5 w-5 text-red-600"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </button>
+                </div>
               </div>
-            </div>
+            </section>
           </div>
         </div>
       </div>

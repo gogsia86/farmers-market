@@ -1,21 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import {
-  DollarSign,
-  Calendar,
-  CreditCard,
-  CheckCircle,
-  Clock,
-  XCircle,
-  ExternalLink,
-  AlertCircle,
-  Plus,
-  Trash2,
-} from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/Badge";
 import {
   Dialog,
   DialogContent,
@@ -33,6 +20,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { paymentLogger } from "@/lib/utils/logger";
+import {
+  AlertCircle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  CreditCard,
+  DollarSign,
+  ExternalLink,
+  Plus,
+  Trash2,
+  XCircle,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface PayoutAccount {
   id: string;
@@ -111,7 +112,7 @@ export function PayoutManagement({
       setSchedule(scheduleData.schedule || null);
       setAvailableBalance(balanceData.stats?.currentBalance || 0);
     } catch (error) {
-      console.error("Error fetching payout data:", error);
+      paymentLogger.error("Failed to fetch payout data", error instanceof Error ? error : new Error(String(error)), { farmId });
     } finally {
       setLoading(false);
     }
@@ -179,7 +180,7 @@ export function PayoutManagement({
       alert("Payout requested successfully!");
       fetchPayoutData();
     } catch (error) {
-      console.error("Error requesting payout:", error);
+      paymentLogger.error("Failed to request instant payout", error instanceof Error ? error : new Error(String(error)), { farmId, availableBalance });
       alert("Failed to request payout. Please try again.");
     }
   };
@@ -198,7 +199,7 @@ export function PayoutManagement({
       setIsScheduleDialogOpen(false);
       alert("Payout schedule updated successfully!");
     } catch (error) {
-      console.error("Error updating schedule:", error);
+      paymentLogger.error("Failed to update payout schedule", error instanceof Error ? error : new Error(String(error)), { farmId, newSchedule });
       alert("Failed to update schedule. Please try again.");
     }
   };
@@ -216,7 +217,7 @@ export function PayoutManagement({
       const data = await response.json();
       window.location.href = data.url;
     } catch (error) {
-      console.error("Error connecting Stripe:", error);
+      paymentLogger.error("Failed to connect Stripe account", error instanceof Error ? error : new Error(String(error)), { farmId });
       alert("Failed to connect Stripe. Please try again.");
     }
   };
@@ -236,7 +237,7 @@ export function PayoutManagement({
 
       fetchPayoutData();
     } catch (error) {
-      console.error("Error setting default account:", error);
+      paymentLogger.error("Failed to set default payout account", error instanceof Error ? error : new Error(String(error)), { farmId, accountId });
       alert("Failed to set default account. Please try again.");
     }
   };
@@ -257,7 +258,7 @@ export function PayoutManagement({
 
       fetchPayoutData();
     } catch (error) {
-      console.error("Error removing account:", error);
+      paymentLogger.error("Failed to remove payout account", error instanceof Error ? error : new Error(String(error)), { farmId, accountId });
       alert("Failed to remove account. Please try again.");
     }
   };
@@ -465,11 +466,10 @@ export function PayoutManagement({
                 {accounts.map((account) => (
                   <div
                     key={account.id}
-                    className={`p-3 rounded-lg border ${
-                      account.isDefault
-                        ? "border-green-300 bg-green-50"
-                        : "border-gray-200"
-                    }`}
+                    className={`p-3 rounded-lg border ${account.isDefault
+                      ? "border-green-300 bg-green-50"
+                      : "border-gray-200"
+                      }`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">

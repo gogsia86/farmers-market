@@ -18,14 +18,15 @@
  * - Consistent agricultural color scheme
  */
 
-import { Metadata } from "next";
-import Link from "next/link";
-import { Badge } from "@/components/ui/Badge";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { MapPin, Star, Award, Store, ArrowRight, Leaf } from "lucide-react";
 import { database } from "@/lib/database";
+import { farmLogger } from "@/lib/utils/logger";
+import { ArrowRight, Award, Leaf, MapPin, Star, Store } from "lucide-react";
+import { Metadata } from "next";
+import Link from "next/link";
 
 // ============================================================================
 // METADATA - SEO OPTIMIZATION
@@ -148,7 +149,9 @@ async function getFarms(): Promise<any[]> {
       };
     });
   } catch (error) {
-    console.error("[FARMS_FETCH_ERROR]", error);
+    farmLogger.error("Failed to fetch public farms", error instanceof Error ? error : new Error(String(error)), {
+      path: "/farms",
+    });
     return [];
   }
 }

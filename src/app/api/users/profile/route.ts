@@ -1,9 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
-import { writeFile } from "fs/promises";
-import path from "path";
+import { createLogger } from "@/lib/logger";
 import { existsSync, mkdirSync } from "fs";
+import { writeFile } from "fs/promises";
+import { NextRequest, NextResponse } from "next/server";
+import path from "path";
+
+// Initialize structured logger
+const logger = createLogger("users-profile-api");
 
 /**
  * GET /api/users/profile
@@ -72,7 +76,9 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error("Profile fetch error:", error);
+    logger.error("Failed to fetch profile", error as Error, {
+      operation: "GET /api/users/profile",
+    });
     return NextResponse.json(
       {
         success: false,
@@ -128,7 +134,10 @@ export async function PUT(request: NextRequest) {
         try {
           updateData.dietaryPreferences = JSON.parse(dietaryPreferences);
         } catch (e) {
-          console.error("Failed to parse dietaryPreferences:", e);
+          logger.warn("Failed to parse dietaryPreferences", {
+            userId: session.user.id,
+            error: e instanceof Error ? e.message : "Parse error",
+          });
         }
       }
 
@@ -138,7 +147,10 @@ export async function PUT(request: NextRequest) {
             notificationPreferences,
           );
         } catch (e) {
-          console.error("Failed to parse notificationPreferences:", e);
+          logger.warn("Failed to parse notificationPreferences", {
+            userId: session.user.id,
+            error: e instanceof Error ? e.message : "Parse error",
+          });
         }
       }
 
@@ -187,8 +199,15 @@ export async function PUT(request: NextRequest) {
           // Set avatar URL
           avatarUrl = `/uploads/avatars/${filename}`;
           updateData.avatar = avatarUrl;
+
+          logger.info("Avatar uploaded successfully", {
+            userId: session.user.id,
+            filename,
+          });
         } catch (uploadError) {
-          console.error("Avatar upload error:", uploadError);
+          logger.error("Avatar upload failed", uploadError as Error, {
+            userId: session.user.id,
+          });
           return NextResponse.json(
             { success: false, error: "Failed to upload avatar" },
             { status: 500 },
@@ -234,6 +253,11 @@ export async function PUT(request: NextRequest) {
       },
     });
 
+    logger.info("Profile updated successfully", {
+      userId: session.user.id,
+      updatedFields: Object.keys(updateData),
+    });
+
     return NextResponse.json({
       success: true,
       message: "Profile updated successfully",
@@ -250,7 +274,9 @@ export async function PUT(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Profile update error:", error);
+    logger.error("Failed to update profile", error as Error, {
+      operation: "PUT /api/users/profile",
+    });
     return NextResponse.json(
       {
         success: false,

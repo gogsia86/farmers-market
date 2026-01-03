@@ -9,11 +9,14 @@
  * @since Run 4 - Phase 2
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { auth as getServerSession } from "@/lib/auth/config";
+import { createLogger } from "@/lib/logger";
 import { SearchAlertService } from "@/lib/services/saved-searches/search-alert.service";
-import { z } from "zod";
 import { SearchAlertType } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+
+const logger = createLogger("search-alert-api");
 
 // ============================================
 // VALIDATION SCHEMAS
@@ -63,7 +66,9 @@ export async function GET(
 
     return NextResponse.json(alert, { status: 200 });
   } catch (error) {
-    console.error("[SearchAlert GET] Error:", error);
+    logger.error("Failed to fetch search alert", error, {
+      operation: "getSearchAlert",
+    });
 
     if (error instanceof Error && error.message.includes("not found")) {
       return NextResponse.json({ error: error.message }, { status: 404 });
@@ -113,7 +118,9 @@ export async function PUT(
       { status: 200 },
     );
   } catch (error) {
-    console.error("[SearchAlert PUT] Error:", error);
+    logger.error("Failed to update search alert", error, {
+      operation: "updateSearchAlert",
+    });
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -163,7 +170,9 @@ export async function DELETE(
       { status: 200 },
     );
   } catch (error) {
-    console.error("[SearchAlert DELETE] Error:", error);
+    logger.error("Failed to delete search alert", error, {
+      operation: "deleteSearchAlert",
+    });
 
     if (error instanceof Error && error.message.includes("not found")) {
       return NextResponse.json({ error: error.message }, { status: 404 });

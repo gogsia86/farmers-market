@@ -11,11 +11,15 @@
  */
 
 import {
+  createErrorResponse,
   createGetHandler,
   createSuccessResponse,
-  createErrorResponse,
 } from "@/lib/api/handler-factory";
+import { createLogger } from "@/lib/logger";
 import { cartSyncService } from "@/lib/services/cart-sync.service";
+
+// Initialize structured logger
+const logger = createLogger("cart-validate-api");
 
 // ============================================
 // GET /api/cart/validate - Validate cart items
@@ -32,6 +36,8 @@ export const GET = createGetHandler(
     }
 
     try {
+      logger.info("Starting cart validation", { userId: user.id });
+
       // Validate cart items
       const validationResult = await cartSyncService.validateCart(user.id);
 
@@ -63,6 +69,14 @@ export const GET = createGetHandler(
         ),
       };
 
+      logger.info("Cart validation completed", {
+        userId: user.id,
+        isValid,
+        issueCount: validationResult.issues.length,
+        hasAdjustments,
+        hasRemovals,
+      });
+
       return createSuccessResponse(
         {
           valid: isValid,
@@ -83,7 +97,9 @@ export const GET = createGetHandler(
         },
       );
     } catch (error) {
-      console.error("[Cart Validation Error]", error);
+      logger.error("Cart validation failed", error as Error, {
+        userId: user.id,
+      });
 
       if (error instanceof Error) {
         return createErrorResponse(

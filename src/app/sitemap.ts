@@ -4,7 +4,11 @@
  */
 
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/utils/logger";
 import { MetadataRoute } from "next";
+
+// Create logger for sitemap generation
+const sitemapLogger = createLogger("Sitemap");
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl =
@@ -135,7 +139,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.7,
       }));
     } catch (error) {
-      console.error("Error fetching categories for sitemap:", error);
+      sitemapLogger.warn("Error fetching categories for sitemap", {
+        errorMessage: error instanceof Error ? error.message : "Unknown error",
+      });
       // Continue without category pages if there's an error
     }
 
@@ -147,15 +153,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...categoryPages,
     ];
 
-    console.log(`✅ Sitemap generated with ${allPages.length} URLs`);
-    console.log(`   - Static pages: ${staticPages.length}`);
-    console.log(`   - Farm pages: ${farmPages.length}`);
-    console.log(`   - Product pages: ${productPages.length}`);
-    console.log(`   - Category pages: ${categoryPages.length}`);
+    sitemapLogger.info("Sitemap generated successfully", {
+      totalUrls: allPages.length,
+      staticPages: staticPages.length,
+      farmPages: farmPages.length,
+      productPages: productPages.length,
+      categoryPages: categoryPages.length,
+    });
 
     return allPages;
   } catch (error) {
-    console.error("❌ Error generating sitemap:", error);
+    sitemapLogger.error("Error generating sitemap", error instanceof Error ? error : new Error(String(error)));
 
     // Fallback to static pages only if database fails
     return [

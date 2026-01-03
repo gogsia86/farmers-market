@@ -12,11 +12,14 @@
 
 "use client";
 
+import { cn } from "@/lib/utils";
+import { createLogger } from "@/lib/utils/logger";
 import { Bell } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { NotificationDropdown } from "./NotificationDropdown";
-import { useSession } from "next-auth/react";
-import { cn } from "@/lib/utils";
+
+const notificationLogger = createLogger("NotificationBell");
 
 export interface Notification {
   id: string;
@@ -90,7 +93,7 @@ export function NotificationBell({ className }: NotificationBellProps) {
         setUnreadCount(data.unreadCount || 0);
       }
     } catch (error) {
-      console.error("Failed to fetch notifications:", error);
+      notificationLogger.error("Failed to fetch notifications", error instanceof Error ? error : new Error(String(error)));
     } finally {
       setIsLoading(false);
     }
@@ -126,7 +129,9 @@ export function NotificationBell({ className }: NotificationBellProps) {
         setUnreadCount((prev) => Math.max(0, prev - 1));
       }
     } catch (error) {
-      console.error("Failed to mark notification as read:", error);
+      notificationLogger.error("Failed to mark notification as read", error instanceof Error ? error : new Error(String(error)), {
+        notificationId,
+      });
     }
   }
 
@@ -147,7 +152,7 @@ export function NotificationBell({ className }: NotificationBellProps) {
         setUnreadCount(0);
       }
     } catch (error) {
-      console.error("Failed to mark all as read:", error);
+      notificationLogger.error("Failed to mark all as read", error instanceof Error ? error : new Error(String(error)));
     }
   }
 
@@ -165,7 +170,9 @@ export function NotificationBell({ className }: NotificationBellProps) {
         setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
       }
     } catch (error) {
-      console.error("Failed to delete notification:", error);
+      notificationLogger.error("Failed to delete notification", error instanceof Error ? error : new Error(String(error)), {
+        notificationId,
+      });
     }
   }
 

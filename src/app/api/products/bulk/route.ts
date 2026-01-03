@@ -11,8 +11,11 @@
 
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+
+const logger = createLogger("products-bulk-api");
 
 export const dynamic = "force-dynamic";
 
@@ -229,7 +232,9 @@ export async function POST(request: NextRequest) {
       { status: result.success ? 201 : 207 }, // 207 = Multi-Status
     );
   } catch (error) {
-    console.error("[BULK_UPLOAD_API_ERROR]", error);
+    logger.error("Bulk product upload failed", error, {
+      operation: "bulkUploadProducts",
+    });
     return NextResponse.json(
       {
         success: false,

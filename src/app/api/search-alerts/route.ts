@@ -8,11 +8,14 @@
  * @since Run 4 - Phase 2
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { auth as getServerSession } from "@/lib/auth/config";
+import { createLogger } from "@/lib/logger";
 import { SearchAlertService } from "@/lib/services/saved-searches/search-alert.service";
-import { z } from "zod";
 import { SearchAlertType } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+
+const logger = createLogger("search-alerts-api");
 
 // ============================================
 // VALIDATION SCHEMAS
@@ -84,7 +87,9 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
-    console.error("[SearchAlerts GET] Error:", error);
+    logger.error("Failed to fetch search alerts", error, {
+      operation: "listSearchAlerts",
+    });
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -131,7 +136,9 @@ export async function POST(req: NextRequest) {
       { status: 201 },
     );
   } catch (error) {
-    console.error("[SearchAlerts POST] Error:", error);
+    logger.error("Failed to create search alert", error, {
+      operation: "createSearchAlert",
+    });
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(

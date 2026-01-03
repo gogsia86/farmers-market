@@ -1,6 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("user-addresses-api");
 
 /**
  * PUT /api/users/addresses/[id]
@@ -149,7 +152,9 @@ export async function PUT(
       },
     });
   } catch (error) {
-    console.error("Address update error:", error);
+    logger.error("Address update failed", error, {
+      operation: "updateAddress",
+    });
     return NextResponse.json(
       {
         success: false,
@@ -247,7 +252,9 @@ export async function DELETE(
       message: "Address deleted successfully",
     });
   } catch (error) {
-    console.error("Address deletion error:", error);
+    logger.error("Address deletion failed", error, {
+      operation: "deleteAddress",
+    });
     return NextResponse.json(
       {
         success: false,

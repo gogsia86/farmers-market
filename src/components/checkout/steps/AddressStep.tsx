@@ -14,9 +14,10 @@
  * - E2E test ID attributes for automated testing
  */
 
-import { useState, useEffect } from "react";
-import { MapPin, Plus, Check, Truck, Store } from "lucide-react";
+import { cartLogger } from "@/lib/utils/logger";
 import { useCheckoutStore } from "@/stores/checkoutStore";
+import { Check, MapPin, Plus, Store, Truck } from "lucide-react";
+import { useEffect, useState } from "react";
 
 // ============================================================================
 // TYPES
@@ -112,7 +113,7 @@ export function AddressStep() {
           });
         }
       } catch (error) {
-        console.error("Failed to fetch addresses:", error);
+        cartLogger.error("Failed to fetch addresses", error instanceof Error ? error : new Error(String(error)));
       } finally {
         setIsLoading(false);
       }
@@ -173,11 +174,10 @@ export function AddressStep() {
           <button
             onClick={() => setFulfillmentMethod("DELIVERY")}
             data-testid="fulfillment-delivery"
-            className={`p-4 border-2 rounded-lg transition-all ${
-              fulfillmentMethod === "DELIVERY"
+            className={`p-4 border-2 rounded-lg transition-all ${fulfillmentMethod === "DELIVERY"
                 ? "border-amber-500 bg-amber-50"
                 : "border-gray-300 hover:border-gray-400"
-            }`}
+              }`}
           >
             <div className="flex flex-col items-center gap-2">
               <Truck className="h-8 w-8 text-amber-600" />
@@ -191,11 +191,10 @@ export function AddressStep() {
           <button
             onClick={() => setFulfillmentMethod("FARM_PICKUP")}
             data-testid="fulfillment-pickup"
-            className={`p-4 border-2 rounded-lg transition-all ${
-              fulfillmentMethod === "FARM_PICKUP"
+            className={`p-4 border-2 rounded-lg transition-all ${fulfillmentMethod === "FARM_PICKUP"
                 ? "border-amber-500 bg-amber-50"
                 : "border-gray-300 hover:border-gray-400"
-            }`}
+              }`}
           >
             <div className="flex flex-col items-center gap-2">
               <Store className="h-8 w-8 text-amber-600" />
@@ -222,11 +221,10 @@ export function AddressStep() {
                     key={address.id}
                     onClick={() => handleSelectAddress(address)}
                     data-testid={`saved-address-${address.id}`}
-                    className={`w-full p-4 border-2 rounded-lg text-left transition-all ${
-                      selectedAddressId === address.id
+                    className={`w-full p-4 border-2 rounded-lg text-left transition-all ${selectedAddressId === address.id
                         ? "border-amber-500 bg-amber-50"
                         : "border-gray-300 hover:border-gray-400"
-                    }`}
+                      }`}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-start gap-3">
@@ -436,19 +434,19 @@ export function AddressStep() {
       {/* Pickup Instructions */}
       {(fulfillmentMethod === "FARM_PICKUP" ||
         fulfillmentMethod === "MARKET_PICKUP") && (
-        <div
-          className="bg-blue-50 border border-blue-200 rounded-lg p-4"
-          data-testid="pickup-info"
-        >
-          <h4 className="font-semibold text-blue-900 mb-2">
-            Pickup Information
-          </h4>
-          <p className="text-sm text-blue-800">
-            You'll be able to schedule your pickup time for each farm in the
-            next step. Pickup locations will be shown during the review process.
-          </p>
-        </div>
-      )}
+          <div
+            className="bg-blue-50 border border-blue-200 rounded-lg p-4"
+            data-testid="pickup-info"
+          >
+            <h4 className="font-semibold text-blue-900 mb-2">
+              Pickup Information
+            </h4>
+            <p className="text-sm text-blue-800">
+              You'll be able to schedule your pickup time for each farm in the
+              next step. Pickup locations will be shown during the review process.
+            </p>
+          </div>
+        )}
     </div>
   );
 }

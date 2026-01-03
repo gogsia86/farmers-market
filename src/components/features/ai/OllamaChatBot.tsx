@@ -6,8 +6,11 @@
 
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { Loader2, Send, Bot, User, AlertCircle } from "lucide-react";
+import { createLogger } from "@/lib/utils/logger";
+import { AlertCircle, Bot, Loader2, Send, User } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+
+const aiLogger = createLogger("OllamaChatBot");
 
 // ============================================================================
 // TYPES
@@ -75,7 +78,7 @@ export function OllamaChatBot({
         setIsOllamaAvailable(false);
       }
     } catch (error) {
-      console.error("Failed to check Ollama status:", error);
+      aiLogger.error("Failed to check Ollama status", error instanceof Error ? error : new Error(String(error)));
       setIsOllamaAvailable(false);
     }
   };
@@ -142,7 +145,9 @@ export function OllamaChatBot({
         setMessages((prev) => [...prev, errorMessage]);
       }
     } catch (error) {
-      console.error("Failed to send message:", error);
+      aiLogger.error("Failed to send message to Ollama", error instanceof Error ? error : new Error(String(error)), {
+        threadId,
+      });
       const errorMessage: Message = {
         id: crypto.randomUUID(),
         role: "assistant",
@@ -187,9 +192,8 @@ export function OllamaChatBot({
             <Bot className="w-8 h-8 text-green-600 dark:text-green-400" />
             {isOllamaAvailable !== null && (
               <div
-                className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-white dark:border-gray-900 ${
-                  isOllamaAvailable ? "bg-green-500" : "bg-red-500"
-                }`}
+                className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-white dark:border-gray-900 ${isOllamaAvailable ? "bg-green-500" : "bg-red-500"
+                  }`}
               />
             )}
           </div>
@@ -275,17 +279,15 @@ export function OllamaChatBot({
                 className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`flex space-x-3 max-w-3xl ${
-                    message.role === "user"
+                  className={`flex space-x-3 max-w-3xl ${message.role === "user"
                       ? "flex-row-reverse space-x-reverse"
                       : "flex-row"
-                  }`}
+                    }`}
                 >
                   {/* Avatar */}
                   <div
-                    className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-                      message.role === "user" ? "bg-blue-500" : "bg-green-500"
-                    }`}
+                    className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${message.role === "user" ? "bg-blue-500" : "bg-green-500"
+                      }`}
                   >
                     {message.role === "user" ? (
                       <User className="w-5 h-5 text-white" />
@@ -297,11 +299,10 @@ export function OllamaChatBot({
                   {/* Message Content */}
                   <div className="flex-1">
                     <div
-                      className={`rounded-lg p-3 ${
-                        message.role === "user"
+                      className={`rounded-lg p-3 ${message.role === "user"
                           ? "bg-blue-500 text-white"
                           : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-                      }`}
+                        }`}
                     >
                       <p className="text-sm whitespace-pre-wrap">
                         {message.content}

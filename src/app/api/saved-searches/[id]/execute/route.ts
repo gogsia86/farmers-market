@@ -7,10 +7,13 @@
  * @since Run 4
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { auth as getServerSession } from "@/lib/auth/config";
+import { createLogger } from "@/lib/logger";
 import { SavedSearchService } from "@/lib/services/saved-searches/saved-search.service";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+
+const logger = createLogger("saved-search-execute-api");
 
 // ============================================
 // VALIDATION SCHEMAS
@@ -67,7 +70,9 @@ export async function POST(
 
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
-    console.error("[SavedSearch Execute] Error:", error);
+    logger.error("Failed to execute saved search", error, {
+      operation: "executeSavedSearch",
+    });
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(

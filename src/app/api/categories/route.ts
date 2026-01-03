@@ -10,8 +10,11 @@
  * @reference .github/instructions/10_AGRICULTURAL_FEATURE_PATTERNS.instructions.md
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
+
+const logger = createLogger("categories-api");
 
 /**
  * GET /api/categories
@@ -49,6 +52,11 @@ export async function GET(request: NextRequest) {
     const includeCount = searchParams.get("includeCount") !== "false"; // Default true
     const activeOnly = searchParams.get("activeOnly") !== "false"; // Default true
 
+    logger.debug("Fetching categories", {
+      includeCount,
+      activeOnly,
+    });
+
     // Build where clause
     const where: any = {};
 
@@ -62,8 +70,8 @@ export async function GET(request: NextRequest) {
       where,
       _count: includeCount
         ? {
-            id: true,
-          }
+          id: true,
+        }
         : undefined,
       orderBy: {
         category: "asc",
@@ -81,6 +89,12 @@ export async function GET(request: NextRequest) {
       }))
       .filter((cat) => !includeCount || (cat.count && cat.count > 0)); // Only show categories with products if counting
 
+    logger.info("Categories fetched successfully", {
+      total: formattedCategories.length,
+      includeCount,
+      activeOnly,
+    });
+
     return NextResponse.json({
       success: true,
       data: formattedCategories,
@@ -94,7 +108,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Categories API error:", error);
+    logger.error("Categories API error", error as Error, {
+      endpoint: "GET /api/categories",
+    });
     return NextResponse.json(
       {
         success: false,
