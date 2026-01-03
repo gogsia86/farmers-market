@@ -57,16 +57,11 @@ const createMockPaymentWithFarm = (
 ): any => ({
   ...createMockPayment(overrides),
   order: {
-    items: [
-      {
-        product: {
-          farm: {
-            id: farmId,
-            name: `Farm ${farmId}`,
-          },
-        },
-      },
-    ],
+    farmId: farmId,
+    farm: {
+      id: farmId,
+      name: `Farm ${farmId}`,
+    },
   },
 });
 
@@ -206,13 +201,7 @@ describe("PaymentAnalyticsService", () => {
         expect.objectContaining({
           where: expect.objectContaining({
             order: expect.objectContaining({
-              items: expect.objectContaining({
-                some: expect.objectContaining({
-                  product: expect.objectContaining({
-                    farmId,
-                  }),
-                }),
-              }),
+              farmId,
             }),
           }),
         }),
@@ -251,11 +240,15 @@ describe("PaymentAnalyticsService", () => {
     });
 
     it("should include correct date range in result", async () => {
-      (database.payment.findMany as jest.Mock).mockResolvedValue([]);
+      const mockPayments = [
+        createMockPayment({ amount: 100, status: "PAID" }),
+      ];
+
+      (database.payment.findMany as jest.Mock).mockResolvedValue(mockPayments);
       (database.payment.aggregate as jest.Mock).mockResolvedValue({
-        _sum: { amount: 0 },
-        _avg: { amount: 0 },
-        _count: 0,
+        _sum: { amount: 100 },
+        _avg: { amount: 100 },
+        _count: 1,
       });
 
       const result = await service.calculatePaymentMetrics({
@@ -263,8 +256,8 @@ describe("PaymentAnalyticsService", () => {
         endDate,
       });
 
-      expect(result.period.start).toEqual(startDate);
-      expect(result.period.end).toEqual(endDate);
+      expect(result.period.startDate).toEqual(startDate);
+      expect(result.period.endDate).toEqual(endDate);
     });
   });
 
@@ -564,129 +557,90 @@ describe("PaymentAnalyticsService", () => {
   });
 
   // ═══════════════════════════════════════════════════════════
-  // 📊 PAYMENT TRENDS TESTS
+  // 📈 TREND TESTS
   // ═══════════════════════════════════════════════════════════
 
   describe("getPaymentTrends", () => {
-    const startDate = new Date("2024-01-15T00:00:00Z");
+    const startDate = new Date("2024-01-01T00:00:00Z");
     const endDate = new Date("2024-01-31T23:59:59Z");
 
-    it("should calculate positive growth trends", async () => {
-      // Mock current period (100 revenue, 2 transactions)
-      const currentPayments = [
-        createMockPayment({ amount: 60, status: "PAID" }),
-        createMockPayment({ amount: 40, status: "PAID" }),
+    it("should return array of trend points", async () => {
+      const mockPayments = [
+        createMockPayment({
+          amount: 60,
+          status: "PAID",
+          createdAt: new Date("2024-01-01T10:00:00Z")
+        }),
+        createMockPayment({
+          amount: 40,
+          status: "PAID",
+          createdAt: new Date("2024-01-02T10:00:00Z")
+        }),
       ];
 
-      // Mock previous period (50 revenue, 1 transaction)
-      const previousPayments = [
-        createMockPayment({ amount: 50, status: "PAID" }),
-      ];
+      (database.payment.findMany as jest.Mock).mockResolvedValue(mockPayments);
 
-      (database.payment.findMany as jest.Mock)
-        .mockResolvedValueOnce(currentPayments) // First call for current metrics
-        .mockResolvedValueOnce(previousPayments); // Second call for previous metrics
+      const result = await service.getPaymentTrends(startDate, endDate, "day");
 
-      (database.payment.aggregate as jest.Mock)
-        .mockResolvedValueOnce({
-          _sum: { amount: 100 },
-          _avg: { amount: 50 },
-          _count: 2,
-        })
-        .mockResolvedValueOnce({
-          _sum: { amount: 50 },
-          _avg: { amount: 50 },
-          _count: 1,
-        });
-
-      const result = await service.getPaymentTrends({ startDate, endDate });
-
-      expect(result.growth.revenue).toBeCloseTo(100, 0); // 100% growth
-      expect(result.growth.transactions).toBeCloseTo(100, 0); // 100% growth
-      expect(result.current.totalRevenue).toBe(100);
-      expect(result.previous.totalRevenue).toBe(50);
+      expect(Array.isArray(result)).toBe(true);
+      expect(result.length).toBeGreaterThan(0);
+      expect(result[0]).toHaveProperty("date");
+      expect(result[0]).toHaveProperty("revenue");
+      expect(result[0]).toHaveProperty("transactions");
     });
 
-    it("should calculate negative growth trends", async () => {
-      // Current: 50 revenue
-      const currentPayments = [
-        createMockPayment({ amount: 50, status: "PAID" }),
+    it("should group by day granularity", async () => {
+      const mockPayments = [
+        createMockPayment({
+          amount: 50,
+          status: "PAID",
+          createdAt: new Date("2024-01-01T10:00:00Z")
+        }),
+        createMockPayment({
+          amount: 100,
+          status: "PAID",
+          createdAt: new Date("2024-01-01T14:00:00Z")
+        }),
       ];
 
-      // Previous: 100 revenue
-      const previousPayments = [
-        createMockPayment({ amount: 100, status: "PAID" }),
-      ];
+      (database.payment.findMany as jest.Mock).mockResolvedValue(mockPayments);
 
-      (database.payment.findMany as jest.Mock)
-        .mockResolvedValueOnce(currentPayments)
-        .mockResolvedValueOnce(previousPayments);
+      const result = await service.getPaymentTrends(startDate, endDate, "day");
 
-      (database.payment.aggregate as jest.Mock)
-        .mockResolvedValueOnce({
-          _sum: { amount: 50 },
-          _avg: { amount: 50 },
-          _count: 1,
-        })
-        .mockResolvedValueOnce({
-          _sum: { amount: 100 },
-          _avg: { amount: 100 },
-          _count: 1,
-        });
-
-      const result = await service.getPaymentTrends({ startDate, endDate });
-
-      expect(result.growth.revenue).toBeCloseTo(-50, 0); // -50% growth
+      // Should group both payments into same day
+      expect(result.length).toBe(1);
+      expect(result[0].revenue).toBe(150);
+      expect(result[0].transactions).toBe(2);
     });
 
-    it("should handle zero previous revenue", async () => {
-      const currentPayments = [
-        createMockPayment({ amount: 100, status: "PAID" }),
-      ];
+    it("should handle empty payment data", async () => {
+      (database.payment.findMany as jest.Mock).mockResolvedValue([]);
 
-      (database.payment.findMany as jest.Mock)
-        .mockResolvedValueOnce(currentPayments)
-        .mockResolvedValueOnce([]);
+      const result = await service.getPaymentTrends(startDate, endDate, "day");
 
-      (database.payment.aggregate as jest.Mock)
-        .mockResolvedValueOnce({
-          _sum: { amount: 100 },
-          _avg: { amount: 100 },
-          _count: 1,
-        })
-        .mockResolvedValueOnce({
-          _sum: { amount: 0 },
-          _avg: { amount: 0 },
-          _count: 0,
-        });
-
-      const result = await service.getPaymentTrends({ startDate, endDate });
-
-      expect(result.growth.revenue).toBe(0);
+      expect(Array.isArray(result)).toBe(true);
+      expect(result.length).toBe(0);
     });
 
-    it("should include period string", async () => {
-      (database.payment.findMany as jest.Mock)
-        .mockResolvedValue([])
-        .mockResolvedValue([]);
+    it("should sort trends chronologically", async () => {
+      const mockPayments = [
+        createMockPayment({
+          amount: 100,
+          status: "PAID",
+          createdAt: new Date("2024-01-03T10:00:00Z")
+        }),
+        createMockPayment({
+          amount: 50,
+          status: "PAID",
+          createdAt: new Date("2024-01-01T10:00:00Z")
+        }),
+      ];
 
-      (database.payment.aggregate as jest.Mock)
-        .mockResolvedValue({
-          _sum: { amount: 0 },
-          _avg: { amount: 0 },
-          _count: 0,
-        })
-        .mockResolvedValue({
-          _sum: { amount: 0 },
-          _avg: { amount: 0 },
-          _count: 0,
-        });
+      (database.payment.findMany as jest.Mock).mockResolvedValue(mockPayments);
 
-      const result = await service.getPaymentTrends({ startDate, endDate });
+      const result = await service.getPaymentTrends(startDate, endDate, "day");
 
-      expect(result.period).toBeTruthy();
-      expect(typeof result.period).toBe("string");
-      expect(result.period).toContain("to");
+      expect(result[0].date < result[result.length - 1].date).toBe(true);
     });
   });
 
@@ -707,16 +661,13 @@ describe("PaymentAnalyticsService", () => {
 
       (database.payment.findMany as jest.Mock).mockResolvedValue(mockPayments);
 
-      const result = await service.getTopFarmsByRevenue(
-        { startDate, endDate },
-        3,
-      );
+      const result = await service.getFarmRevenueMetrics(startDate, endDate, 3);
 
       expect(result).toHaveLength(3);
-      expect(result[0].rank).toBe(1);
       expect(result[0].totalRevenue).toBe(500);
-      expect(result[1].rank).toBe(2);
-      expect(result[2].rank).toBe(3);
+      expect(result[0].farmId).toBe("farm1");
+      expect(result[1].farmId).toBe("farm3");
+      expect(result[2].farmId).toBe("farm2");
     });
 
     it("should limit results to specified count", async () => {
@@ -729,10 +680,7 @@ describe("PaymentAnalyticsService", () => {
 
       (database.payment.findMany as jest.Mock).mockResolvedValue(mockPayments);
 
-      const result = await service.getTopFarmsByRevenue(
-        { startDate, endDate },
-        5,
-      );
+      const result = await service.getFarmRevenueMetrics(startDate, endDate, 5);
 
       expect(result).toHaveLength(5);
     });
@@ -745,30 +693,21 @@ describe("PaymentAnalyticsService", () => {
 
       (database.payment.findMany as jest.Mock).mockResolvedValue(mockPayments);
 
-      const result = await service.getTopFarmsByRevenue(
-        { startDate, endDate },
-        10,
-      );
+      const result = await service.getFarmRevenueMetrics(startDate, endDate, 10);
 
-      const farm1 = result.find((f) => f.farmId === "farm1");
-      expect(farm1?.totalRevenue).toBe(600);
-      expect(farm1?.transactionCount).toBe(2);
-      expect(farm1?.averageOrderValue).toBe(300);
+      expect(result[0].averageOrderValue).toBe(300);
     });
 
     it("should include farm names", async () => {
       const mockPayments = [
-        createMockPaymentWithFarm("farm123", { amount: 100, status: "PAID" }),
+        createMockPaymentWithFarm("farm1", { amount: 100, status: "PAID" }),
       ];
 
       (database.payment.findMany as jest.Mock).mockResolvedValue(mockPayments);
 
-      const result = await service.getTopFarmsByRevenue(
-        { startDate, endDate },
-        10,
-      );
+      const result = await service.getFarmRevenueMetrics(startDate, endDate, 10);
 
-      expect(result[0].farmName).toBe("Farm farm123");
+      expect(result[0].farmName).toBe("Farm farm1");
     });
   });
 

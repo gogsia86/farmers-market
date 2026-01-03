@@ -407,24 +407,32 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
           }) as any,
       );
 
-      // Mock farm lookup for ownership check
-      mockDatabase.farm.findUnique.mockResolvedValue({
-        id: "farm-123",
-        ownerId: userId,
-      } as any);
-
-      // Mock product update - return updated product with same ID
-      mockRepository.update.mockImplementation(
-        async ({ where }: any) =>
-          ({
-            id: where.id,
-            isActive: true,
-            farm: {
-              id: "farm-123",
-              name: "Test Farm",
-              slug: "test-farm",
+      // Mock $transaction to execute callback with mock tx
+      (mockDatabase.$transaction as jest.Mock).mockImplementation(
+        async (callback: any) => {
+          const mockTx = {
+            product: {
+              findUnique: jest.fn().mockImplementation(async ({ where }: any) => ({
+                id: where.id,
+                farmId: "farm-123",
+                name: `Product ${where.id}`,
+                farm: {
+                  ownerId: userId,
+                },
+              })),
+              update: jest.fn().mockImplementation(async ({ where }: any) => ({
+                id: where.id,
+                isActive: true,
+                farm: {
+                  id: "farm-123",
+                  name: "Test Farm",
+                  slug: "test-farm",
+                },
+              })),
             },
-          }) as any,
+          };
+          return await callback(mockTx);
+        },
       );
 
       // Perform 50 concurrent batch updates
@@ -459,44 +467,67 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
   describe("⚡ Deadlock Prevention", () => {
     it("should avoid deadlocks in cross-service operations", async () => {
       // Test that concurrent operations on related entities don't deadlock
-      const productId = "product-deadlock-test";
       const userId = "user-123";
 
-      mockRepository.findById.mockResolvedValue({
-        id: productId,
-        farmId: "farm-123",
-        farm: { ownerId: userId },
-      } as any);
+      // Mock product.findUnique for verifyProductAccess (with farm.teamMembers)
+      (mockDatabase.product.findUnique as jest.Mock).mockImplementation(
+        async ({ where }: any) => ({
+          id: where.id,
+          farmId: "farm-123",
+          name: `Product ${where.id}`,
+          slug: `product-${where.id}`,
+          description: "Test product",
+          price: 10,
+          unit: "lb",
+          category: "VEGETABLES",
+          availableQuantity: 100,
+          isActive: true,
+          farm: {
+            id: "farm-123",
+            ownerId: userId,
+            name: "Test Farm",
+            slug: "test-farm",
+            teamMembers: [], // Required by verifyProductAccess
+          },
+        })
+      );
 
-      mockDatabase.farm.findUnique.mockResolvedValue({
-        id: "farm-123",
-        ownerId: userId,
-      } as any);
+      // Mock findFirst for slug check (returns null = no conflict)
+      (mockDatabase.product.findFirst as jest.Mock).mockResolvedValue(null);
 
-      mockRepository.update.mockImplementation(
-        async () =>
+      // Mock product.update with delay to simulate real DB operations
+      (mockDatabase.product.update as jest.Mock).mockImplementation(
+        async ({ where }: any) =>
           new Promise((resolve) =>
             setTimeout(
               () =>
                 resolve({
-                  id: productId,
+                  id: where.id,
                   isActive: true,
+                  name: `Product ${where.id}`,
+                  slug: `product-${where.id}`,
+                  farmId: "farm-123",
+                  farm: {
+                    id: "farm-123",
+                    name: "Test Farm",
+                    slug: "test-farm",
+                  },
                 } as any),
-              100,
+              50,
             ),
           ),
       );
 
       const operations = [
-        productService.updateProduct("product-1", userId, {
+        productService.updateProduct("product-1", {
           isActive: true,
-        } as any),
-        productService.updateProduct("product-2", userId, {
+        } as any, userId),
+        productService.updateProduct("product-2", {
           isActive: false,
-        } as any),
-        productService.updateProduct("product-3", userId, {
+        } as any, userId),
+        productService.updateProduct("product-3", {
           isFeatured: true,
-        } as any),
+        } as any, userId),
       ];
 
       const results = await Promise.allSettled(operations);
