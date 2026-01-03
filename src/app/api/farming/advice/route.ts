@@ -1,187 +1,86 @@
 /**
- * FARMING ADVICE API ROUTE
- * Smart Agricultural Advice with Perplexity Integration
+ * 🔄 BACKWARD COMPATIBILITY ALIAS
  *
- * POST /api/farming/advice
- * - Provides real-time agricultural research for farmers
- * - Requires authentication
- * - Returns advice with citations and metadata
+ * This route is deprecated and redirects to /api/farmers/resources/advice
+ *
+ * @deprecated Use /api/farmers/resources/advice instead
+ * @see /api/farmers/resources/advice for the consolidated implementation
+ *
+ * Migration Timeline:
+ * - Deprecated: December 2025
+ * - Sunset Date: June 1, 2026
+ *
+ * This alias will be maintained until the sunset date to ensure
+ * backward compatibility with existing integrations.
  */
 
-import { auth } from "@/lib/auth";
-import { createLogger } from "@/lib/logger";
-import { getFarmingAdvice } from "@/lib/services/perplexity-farming.service";
-import type { FarmingAdviceRequest } from "@/types/farming-advice.types";
-import { getCurrentSeason } from "@/types/farming-advice.types";
-import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
+import { createDeprecationHandlers } from "@/lib/api/deprecation-alias";
 
-const logger = createLogger("farming-advice-api");
+/**
+ * Deprecation configuration for farming advice endpoint
+ */
+const deprecationConfig = {
+  oldEndpoint: "/api/farming/advice",
+  newEndpoint: "/api/farmers/resources/advice",
+  deprecationDate: "2025-12-01",
+  sunsetDate: "2026-06-01",
+  migrationGuide: "/docs/migrations/api-consolidation-guide.md",
+};
 
-// ============================================================================
-// VALIDATION SCHEMA
-// ============================================================================
+/**
+ * Create handlers for all HTTP methods using the reusable helper
+ */
+const handlers = createDeprecationHandlers(deprecationConfig);
 
-const FarmingAdviceSchema = z.object({
-  question: z
-    .string()
-    .min(10, "Question must be at least 10 characters")
-    .max(500),
-  category: z
-    .enum([
-      "CROP_MANAGEMENT",
-      "PEST_CONTROL",
-      "SOIL_HEALTH",
-      "IRRIGATION",
-      "HARVESTING",
-      "ORGANIC_PRACTICES",
-      "MARKET_TRENDS",
-      "SEASONAL_PLANNING",
-      "EQUIPMENT",
-      "SUSTAINABILITY",
-    ])
-    .optional(),
-  farmLocation: z.string().optional(),
-  currentSeason: z.enum(["SPRING", "SUMMER", "FALL", "WINTER"]).optional(),
-  depth: z.enum(["quick", "comprehensive", "expert"]).optional(),
-  includeRelatedQuestions: z.boolean().optional(),
-  recencyFilter: z.enum(["day", "week", "month", "year"]).optional(),
-});
+/**
+ * GET /api/farming/advice
+ * @deprecated Redirects to /api/farmers/resources/advice
+ */
+export const GET = handlers.GET;
 
-// ============================================================================
-// POST HANDLER
-// ============================================================================
+/**
+ * POST /api/farming/advice
+ * @deprecated Redirects to /api/farmers/resources/advice
+ */
+export const POST = handlers.POST;
 
-export async function POST(request: NextRequest) {
-  try {
-    // 1. Authentication Check
-    const session = await auth();
+/**
+ * PUT /api/farming/advice
+ * @deprecated Redirects to /api/farmers/resources/advice
+ */
+export const PUT = handlers.PUT;
 
-    if (!session?.user) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: "AUTHENTICATION_REQUIRED",
-            message: "You must be logged in to get farming advice",
-          },
-        },
-        { status: 401 },
-      );
-    }
+/**
+ * PATCH /api/farming/advice
+ * @deprecated Redirects to /api/farmers/resources/advice
+ */
+export const PATCH = handlers.PATCH;
 
-    // 2. Parse and Validate Request Body
-    const body = await request.json();
-    const validation = FarmingAdviceSchema.safeParse(body);
+/**
+ * DELETE /api/farming/advice
+ * @deprecated Redirects to /api/farmers/resources/advice
+ */
+export const DELETE = handlers.DELETE;
 
-    if (!validation.success) {
-      logger.warn("Farming advice validation failed", {
-        userId: session.user.id,
-        errors: validation.error.flatten(),
-      });
-
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: "VALIDATION_ERROR",
-            message: "Invalid request data",
-            details: validation.error.flatten(),
-          },
-        },
-        { status: 400 },
-      );
-    }
-
-    const validatedData = validation.data;
-
-    logger.debug("Processing farming advice request", {
-      userId: session.user.id,
-      category: validatedData.category,
-      depth: validatedData.depth,
-    });
-
-    // 3. Build Request
-    const adviceRequest: FarmingAdviceRequest = {
-      question: validatedData.question,
-      category: validatedData.category,
-      farmLocation: validatedData.farmLocation,
-      currentSeason: validatedData.currentSeason || getCurrentSeason(),
-      depth: validatedData.depth || "comprehensive",
-      includeRelatedQuestions: validatedData.includeRelatedQuestions ?? true,
-      recencyFilter: validatedData.recencyFilter || "month",
-      userId: session.user.id,
-    };
-
-    // 4. Get Farming Advice
-    const result = await getFarmingAdvice(adviceRequest);
-
-    // 5. Return Response
-    if (result.success) {
-      logger.info("Farming advice provided successfully", {
-        userId: session.user.id,
-        category: validatedData.category,
-      });
-      return NextResponse.json(result, { status: 200 });
-    } else {
-      logger.warn("Farming advice service returned failure", {
-        userId: session.user.id,
-        category: validatedData.category,
-      });
-      return NextResponse.json(result, { status: 500 });
-    }
-  } catch (error) {
-    logger.error("Farming Advice API error", error as Error, {
-      endpoint: "POST /api/farming/advice",
-    });
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: {
-          code: "INTERNAL_SERVER_ERROR",
-          message:
-            error instanceof Error
-              ? error.message
-              : "Failed to get farming advice",
-        },
-      },
-      { status: 500 },
-    );
-  }
-}
-
-// ============================================================================
-// GET HANDLER (Optional - for testing)
-// ============================================================================
-
-export async function GET(_request: NextRequest) {
-  const session = await auth();
-
-  if (!session?.user) {
-    return NextResponse.json(
-      {
-        success: false,
-        error: {
-          code: "AUTHENTICATION_REQUIRED",
-          message: "Authentication required",
-        },
-      },
-      { status: 401 },
-    );
-  }
-
-  return NextResponse.json({
-    success: true,
-    message: "Farming Advice API is operational",
-    endpoints: {
-      POST: "/api/farming/advice",
-      description: "Get smart farming advice with AI-powered research",
-    },
-    example: {
-      question: "How do I prepare my soil for spring planting?",
-      category: "SOIL_HEALTH",
-      depth: "comprehensive",
-    },
-  });
-}
+/**
+ * 🔔 DEPRECATION NOTICE
+ *
+ * This endpoint has been consolidated into /api/farmers/resources/advice
+ *
+ * Please update your integrations to use the new endpoint:
+ * - Old: /api/farming/advice
+ * - New: /api/farmers/resources/advice
+ *
+ * This alias provides automatic redirection and will be maintained
+ * until June 1, 2026. After that date, this endpoint will return
+ * 410 Gone.
+ *
+ * Benefits of migrating:
+ * - Consistent API structure under /api/farmers/
+ * - Better resource organization
+ * - Enhanced farming advice features
+ * - Improved documentation
+ * - Long-term support
+ *
+ * See migration guide: /docs/migrations/api-consolidation-guide.md
+ */

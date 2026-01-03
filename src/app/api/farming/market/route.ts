@@ -1,172 +1,86 @@
 /**
- * MARKET INTELLIGENCE API ROUTE
- * Current Trends in Organic Farming and Local Markets
+ * 🔄 BACKWARD COMPATIBILITY ALIAS
  *
- * POST /api/farming/market
- * - Provides market intelligence and trend analysis
- * - Requires authentication
- * - Returns trends, insights, and opportunities with citations
+ * This route is deprecated and redirects to /api/farmers/resources/market
+ *
+ * @deprecated Use /api/farmers/resources/market instead
+ * @see /api/farmers/resources/market for the consolidated implementation
+ *
+ * Migration Timeline:
+ * - Deprecated: December 2025
+ * - Sunset Date: June 1, 2026
+ *
+ * This alias will be maintained until the sunset date to ensure
+ * backward compatibility with existing integrations.
  */
 
-import { auth } from "@/lib/auth";
-import { createLogger } from "@/lib/logger";
-import { getMarketIntelligence } from "@/lib/services/perplexity-farming.service";
-import type { MarketIntelligenceRequest } from "@/types/farming-advice.types";
-import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
+import { createDeprecationHandlers } from "@/lib/api/deprecation-alias";
 
-const logger = createLogger("farming-market-api");
+/**
+ * Deprecation configuration for farming market endpoint
+ */
+const deprecationConfig = {
+  oldEndpoint: "/api/farming/market",
+  newEndpoint: "/api/farmers/resources/market",
+  deprecationDate: "2025-12-01",
+  sunsetDate: "2026-06-01",
+  migrationGuide: "/docs/migrations/api-consolidation-guide.md",
+};
 
-// ============================================================================
-// VALIDATION SCHEMA
-// ============================================================================
+/**
+ * Create handlers for all HTTP methods using the reusable helper
+ */
+const handlers = createDeprecationHandlers(deprecationConfig);
 
-const MarketIntelligenceSchema = z.object({
-  region: z.string().optional(),
-  topics: z.array(z.string()).optional(),
-  timeframe: z.enum(["day", "week", "month", "year"]).optional(),
-  includeCompetitiveAnalysis: z.boolean().optional(),
-  includePriceTrends: z.boolean().optional(),
-});
+/**
+ * GET /api/farming/market
+ * @deprecated Redirects to /api/farmers/resources/market
+ */
+export const GET = handlers.GET;
 
-// ============================================================================
-// POST HANDLER
-// ============================================================================
+/**
+ * POST /api/farming/market
+ * @deprecated Redirects to /api/farmers/resources/market
+ */
+export const POST = handlers.POST;
 
-export async function POST(request: NextRequest) {
-  try {
-    // 1. Authentication Check
-    const session = await auth();
+/**
+ * PUT /api/farming/market
+ * @deprecated Redirects to /api/farmers/resources/market
+ */
+export const PUT = handlers.PUT;
 
-    if (!session?.user) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: "AUTHENTICATION_REQUIRED",
-            message: "You must be logged in to access market intelligence",
-          },
-        },
-        { status: 401 },
-      );
-    }
+/**
+ * PATCH /api/farming/market
+ * @deprecated Redirects to /api/farmers/resources/market
+ */
+export const PATCH = handlers.PATCH;
 
-    // 2. Parse and Validate Request Body
-    const body = await request.json();
-    const validation = MarketIntelligenceSchema.safeParse(body);
+/**
+ * DELETE /api/farming/market
+ * @deprecated Redirects to /api/farmers/resources/market
+ */
+export const DELETE = handlers.DELETE;
 
-    if (!validation.success) {
-      logger.warn("Market intelligence request validation failed", {
-        userId: session.user.id,
-        errors: validation.error.flatten(),
-      });
-
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: "VALIDATION_ERROR",
-            message: "Invalid request data",
-            details: validation.error.flatten(),
-          },
-        },
-        { status: 400 },
-      );
-    }
-
-    const validatedData = validation.data;
-
-    logger.debug("Processing market intelligence request", {
-      userId: session.user.id,
-      region: validatedData.region,
-      timeframe: validatedData.timeframe,
-    });
-
-    // 3. Build Request
-    const intelligenceRequest: MarketIntelligenceRequest = {
-      region: validatedData.region,
-      topics: validatedData.topics,
-      timeframe: validatedData.timeframe || "month",
-      includeCompetitiveAnalysis:
-        validatedData.includeCompetitiveAnalysis ?? true,
-      includePriceTrends: validatedData.includePriceTrends ?? true,
-    };
-
-    // 4. Get Market Intelligence
-    const result = await getMarketIntelligence(intelligenceRequest);
-
-    // 5. Return Response
-    if (result.success) {
-      logger.info("Market intelligence retrieved successfully", {
-        userId: session.user.id,
-        region: validatedData.region,
-        timeframe: validatedData.timeframe,
-      });
-
-      return NextResponse.json(result, { status: 200 });
-    } else {
-      logger.warn("Market intelligence retrieval returned unsuccessful", {
-        userId: session.user.id,
-        region: validatedData.region,
-      });
-
-      return NextResponse.json(result, { status: 500 });
-    }
-  } catch (error) {
-    logger.error("Market Intelligence API error", error as Error, {
-      endpoint: "POST /api/farming/market",
-    });
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: {
-          code: "INTERNAL_SERVER_ERROR",
-          message:
-            error instanceof Error
-              ? error.message
-              : "Failed to get market intelligence",
-        },
-      },
-      { status: 500 },
-    );
-  }
-}
-
-// ============================================================================
-// GET HANDLER (Optional - for testing)
-// ============================================================================
-
-export async function GET(_request: NextRequest) {
-  const session = await auth();
-
-  if (!session?.user) {
-    return NextResponse.json(
-      {
-        success: false,
-        error: {
-          code: "AUTHENTICATION_REQUIRED",
-          message: "Authentication required",
-        },
-      },
-      { status: 401 },
-    );
-  }
-
-  return NextResponse.json({
-    success: true,
-    message: "Market Intelligence API is operational",
-    endpoints: {
-      POST: "/api/farming/market",
-      description:
-        "Get market intelligence, trends, and opportunities for organic farming",
-    },
-    example: {
-      region: "Pacific Northwest",
-      topics: ["organic vegetables", "local markets", "direct sales"],
-      timeframe: "month",
-      includeCompetitiveAnalysis: true,
-      includePriceTrends: true,
-    },
-  });
-}
+/**
+ * 🔔 DEPRECATION NOTICE
+ *
+ * This endpoint has been consolidated into /api/farmers/resources/market
+ *
+ * Please update your integrations to use the new endpoint:
+ * - Old: /api/farming/market
+ * - New: /api/farmers/resources/market
+ *
+ * This alias provides automatic redirection and will be maintained
+ * until June 1, 2026. After that date, this endpoint will return
+ * 410 Gone.
+ *
+ * Benefits of migrating:
+ * - Consistent API structure under /api/farmers/
+ * - Better resource organization
+ * - Enhanced market insights features
+ * - Improved documentation
+ * - Long-term support
+ *
+ * See migration guide: /docs/migrations/api-consolidation-guide.md
+ */

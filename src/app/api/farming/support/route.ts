@@ -1,190 +1,86 @@
 /**
- * AI-POWERED SUPPORT API ROUTE
- * Intelligent Farming Support with Perplexity Integration
+ * 🔄 BACKWARD COMPATIBILITY ALIAS
  *
- * POST /api/farming/support
- * - Provides AI-powered support for farmer questions
- * - Maintains conversation history
- * - Returns answers with citations and suggested actions
+ * This route is deprecated and redirects to /api/farmers/resources/support
+ *
+ * @deprecated Use /api/farmers/resources/support instead
+ * @see /api/farmers/resources/support for the consolidated implementation
+ *
+ * Migration Timeline:
+ * - Deprecated: December 2025
+ * - Sunset Date: June 1, 2026
+ *
+ * This alias will be maintained until the sunset date to ensure
+ * backward compatibility with existing integrations.
  */
 
-import { auth } from "@/lib/auth";
-import { createLogger } from "@/lib/logger";
-import { handleSupportRequest } from "@/lib/services/perplexity-farming.service";
-import type { SupportRequest } from "@/types/farming-advice.types";
-import { getCurrentSeason } from "@/types/farming-advice.types";
-import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
+import { createDeprecationHandlers } from "@/lib/api/deprecation-alias";
 
-const logger = createLogger("farming-support-api");
+/**
+ * Deprecation configuration for farming support endpoint
+ */
+const deprecationConfig = {
+  oldEndpoint: "/api/farming/support",
+  newEndpoint: "/api/farmers/resources/support",
+  deprecationDate: "2025-12-01",
+  sunsetDate: "2026-06-01",
+  migrationGuide: "/docs/migrations/api-consolidation-guide.md",
+};
 
-// ============================================================================
-// VALIDATION SCHEMA
-// ============================================================================
+/**
+ * Create handlers for all HTTP methods using the reusable helper
+ */
+const handlers = createDeprecationHandlers(deprecationConfig);
 
-const SupportRequestSchema = z.object({
-  conversationId: z.string().optional(),
-  message: z.string().min(5, "Message must be at least 5 characters").max(1000),
-  context: z
-    .object({
-      farmId: z.string().optional(),
-      currentSeason: z.enum(["SPRING", "SUMMER", "FALL", "WINTER"]).optional(),
-      location: z.string().optional(),
-      farmType: z.string().optional(),
-    })
-    .optional(),
-  includeHistory: z.boolean().optional(),
-});
+/**
+ * GET /api/farming/support
+ * @deprecated Redirects to /api/farmers/resources/support
+ */
+export const GET = handlers.GET;
 
-// ============================================================================
-// POST HANDLER
-// ============================================================================
+/**
+ * POST /api/farming/support
+ * @deprecated Redirects to /api/farmers/resources/support
+ */
+export const POST = handlers.POST;
 
-export async function POST(request: NextRequest) {
-  try {
-    // 1. Authentication Check
-    const session = await auth();
+/**
+ * PUT /api/farming/support
+ * @deprecated Redirects to /api/farmers/resources/support
+ */
+export const PUT = handlers.PUT;
 
-    if (!session?.user) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: "AUTHENTICATION_REQUIRED",
-            message: "You must be logged in to get support",
-          },
-        },
-        { status: 401 },
-      );
-    }
+/**
+ * PATCH /api/farming/support
+ * @deprecated Redirects to /api/farmers/resources/support
+ */
+export const PATCH = handlers.PATCH;
 
-    // 2. Parse and Validate Request Body
-    const body = await request.json();
-    const validation = SupportRequestSchema.safeParse(body);
+/**
+ * DELETE /api/farming/support
+ * @deprecated Redirects to /api/farmers/resources/support
+ */
+export const DELETE = handlers.DELETE;
 
-    if (!validation.success) {
-      logger.warn("Support request validation failed", {
-        userId: session.user.id,
-        errors: validation.error.flatten(),
-      });
-
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: "VALIDATION_ERROR",
-            message: "Invalid request data",
-            details: validation.error.flatten(),
-          },
-        },
-        { status: 400 },
-      );
-    }
-
-    const validatedData = validation.data;
-
-    logger.debug("Processing support request", {
-      userId: session.user.id,
-      conversationId: validatedData.conversationId,
-      messageLength: validatedData.message.length,
-    });
-
-    // 3. Build Support Request
-    const supportRequest: SupportRequest = {
-      conversationId: validatedData.conversationId,
-      userId: session.user.id,
-      message: validatedData.message,
-      context: {
-        ...validatedData.context,
-        currentSeason:
-          validatedData.context?.currentSeason || getCurrentSeason(),
-      },
-      includeHistory: validatedData.includeHistory ?? true,
-    };
-
-    // 4. Handle Support Request
-    const result = await handleSupportRequest(supportRequest);
-
-    // 5. Return Response
-    if (result.success) {
-      logger.info("Support request handled successfully", {
-        userId: session.user.id,
-        conversationId: validatedData.conversationId,
-      });
-
-      return NextResponse.json(result, { status: 200 });
-    } else {
-      logger.warn("Support request handling returned unsuccessful", {
-        userId: session.user.id,
-        conversationId: validatedData.conversationId,
-      });
-
-      return NextResponse.json(result, { status: 500 });
-    }
-  } catch (error) {
-    logger.error("Support API error", error as Error, {
-      endpoint: "POST /api/farming/support",
-    });
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: {
-          code: "INTERNAL_SERVER_ERROR",
-          message:
-            error instanceof Error
-              ? error.message
-              : "Failed to process support request",
-        },
-      },
-      { status: 500 },
-    );
-  }
-}
-
-// ============================================================================
-// GET HANDLER (API Info)
-// ============================================================================
-
-export async function GET(_request: NextRequest) {
-  const session = await auth();
-
-  if (!session?.user) {
-    return NextResponse.json(
-      {
-        success: false,
-        error: {
-          code: "AUTHENTICATION_REQUIRED",
-          message: "Authentication required",
-        },
-      },
-      { status: 401 },
-    );
-  }
-
-  return NextResponse.json({
-    success: true,
-    message: "AI-Powered Support API is operational",
-    endpoints: {
-      POST: "/api/farming/support",
-      description:
-        "Get AI-powered support with conversation history and suggested actions",
-    },
-    features: [
-      "Real-time agricultural expertise",
-      "Conversation history tracking",
-      "Suggested actions and next steps",
-      "Context-aware responses",
-      "Citation-backed answers",
-      "Automatic escalation detection",
-    ],
-    example: {
-      message: "My tomato plants have yellow leaves. What should I do?",
-      context: {
-        currentSeason: "SUMMER",
-        location: "California",
-        farmType: "Organic vegetable farm",
-      },
-    },
-  });
-}
+/**
+ * 🔔 DEPRECATION NOTICE
+ *
+ * This endpoint has been consolidated into /api/farmers/resources/support
+ *
+ * Please update your integrations to use the new endpoint:
+ * - Old: /api/farming/support
+ * - New: /api/farmers/resources/support
+ *
+ * This alias provides automatic redirection and will be maintained
+ * until June 1, 2026. After that date, this endpoint will return
+ * 410 Gone.
+ *
+ * Benefits of migrating:
+ * - Consistent API structure under /api/farmers/
+ * - Better resource organization
+ * - Enhanced support features
+ * - Improved documentation
+ * - Long-term support
+ *
+ * See migration guide: /docs/migrations/api-consolidation-guide.md
+ */
