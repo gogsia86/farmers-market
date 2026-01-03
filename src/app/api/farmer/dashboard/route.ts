@@ -1,288 +1,76 @@
 /**
- * 🚜 FARMER DASHBOARD API ROUTE
+ * 🔄 BACKWARD COMPATIBILITY ALIAS
  *
- * Protected endpoint for farmer dashboard data
- * Returns farm statistics, recent orders, and product performance
+ * This route is deprecated and redirects to /api/farmers/dashboard
  *
- * Divine Patterns Applied:
- * - Authentication required (401 if not authenticated)
- * - Role-based access (farmers only)
- * - Optimized data aggregation
- * - Agricultural consciousness
+ * @deprecated Use /api/farmers/dashboard instead
+ * @see /api/farmers/dashboard for the consolidated implementation
  *
- * @reference .github/instructions/11_KILO_SCALE_ARCHITECTURE.instructions.md
- * @reference .github/instructions/04_NEXTJS_DIVINE_IMPLEMENTATION.instructions.md
+ * Migration Timeline:
+ * - Deprecated: December 2025
+ * - Sunset Date: June 1, 2026
+ *
+ * This alias will be maintained until the sunset date to ensure
+ * backward compatibility with existing integrations.
  */
 
-import { auth } from "@/lib/auth";
-import { database } from "@/lib/database";
-import { createLogger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
-
-// Initialize structured logger
-const logger = createLogger("farmer-dashboard-api");
 
 /**
  * GET /api/farmer/dashboard
  *
- * Returns farmer dashboard data including:
- * - Farm statistics
- * - Recent orders
- * - Product performance
- * - Revenue metrics
- *
- * @auth Required
- * @role FARMER
- *
- * Response:
- * {
- *   "success": true,
- *   "data": {
- *     "stats": { ... },
- *     "recentOrders": [ ... ],
- *     "topProducts": [ ... ]
- *   }
- * }
+ * @deprecated
+ * Redirects to /api/farmers/dashboard
  */
 export async function GET(request: NextRequest): Promise<NextResponse> {
-  try {
-    // Check authentication
-    const session = await auth();
+  // Add deprecation warning header
+  const headers = new Headers();
+  headers.set("X-API-Deprecated", "true");
+  headers.set("X-API-Deprecation-Date", "2025-12-01");
+  headers.set("X-API-Sunset-Date", "2026-06-01");
+  headers.set("X-API-Migration-Guide", "/docs/migrations/api-consolidation-guide.md");
+  headers.set("X-API-New-Endpoint", "/api/farmers/dashboard");
+  headers.set(
+    "Deprecation",
+    'version="1.0.0", date="Sun, 01 Dec 2025 00:00:00 GMT"'
+  );
+  headers.set("Sunset", 'date="Mon, 01 Jun 2026 00:00:00 GMT"');
 
-    if (!session?.user) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Authentication required",
-          message: "Please sign in to access the farmer dashboard",
-        },
-        { status: 401 },
-      );
-    }
+  // Get the base URL
+  const url = new URL(request.url);
+  const newUrl = new URL("/api/farmers/dashboard", url.origin);
 
-    // Check if user is a farmer
-    if (session.user.role !== "FARMER") {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Unauthorized",
-          message: "Only farmers can access this dashboard",
-        },
-        { status: 403 },
-      );
-    }
+  // Preserve query parameters
+  url.searchParams.forEach((value, key) => {
+    newUrl.searchParams.set(key, value);
+  });
 
-    // Get farmer's farms
-    const farms = await database.farm.findMany({
-      where: {
-        ownerId: session.user.id,
-      },
-      select: {
-        id: true,
-        name: true,
-        status: true,
-      },
-    });
-
-    if (farms.length === 0) {
-      logger.info("Farmer has no farms", {
-        userId: session.user.id,
-      });
-
-      return NextResponse.json({
-        success: true,
-        data: {
-          stats: {
-            totalRevenue: 0,
-            totalOrders: 0,
-            activeProducts: 0,
-            pendingOrders: 0,
-          },
-          recentOrders: [],
-          topProducts: [],
-          farms: [],
-        },
-        meta: {
-          agricultural: {
-            consciousness: "DIVINE",
-            operation: "DASHBOARD_MANIFESTATION",
-            season: getCurrentSeason(),
-          },
-        },
-      });
-    }
-
-    const farmIds = farms.map((f) => f.id);
-
-    // Get dashboard statistics
-    const [totalRevenue, totalOrders, activeProducts, recentOrders] =
-      await Promise.all([
-        // Total revenue
-        database.order.aggregate({
-          where: {
-            farmId: { in: farmIds },
-            status: "COMPLETED",
-          },
-          _sum: {
-            total: true,
-          },
-        }),
-
-        // Total completed orders
-        database.order.count({
-          where: {
-            farmId: { in: farmIds },
-            status: "COMPLETED",
-          },
-        }),
-
-        // Active products count
-        database.product.count({
-          where: {
-            farmId: { in: farmIds },
-            status: "ACTIVE",
-          },
-        }),
-
-        // Recent orders (last 10)
-        database.order.findMany({
-          where: {
-            farmId: { in: farmIds },
-          },
-          select: {
-            id: true,
-            orderNumber: true,
-            status: true,
-            total: true,
-            createdAt: true,
-            customer: {
-              select: {
-                name: true,
-                email: true,
-              },
-            },
-          },
-          orderBy: {
-            createdAt: "desc",
-          },
-          take: 10,
-        }),
-      ]);
-
-    // Get top products by order count
-    const topProducts = await database.product.findMany({
-      where: {
-        farmId: { in: farmIds },
-        status: "ACTIVE",
-      },
-      select: {
-        id: true,
-        name: true,
-        price: true,
-        quantityAvailable: true,
-        _count: {
-          select: {
-            orderItems: true,
-          },
-        },
-      },
-      orderBy: {
-        orderItems: {
-          _count: "desc",
-        },
-      },
-      take: 5,
-    });
-
-    logger.info("Farmer dashboard data fetched successfully", {
-      userId: session.user.id,
-      farmCount: farms.length,
-      totalOrders,
-      activeProducts,
-    });
-
-    return NextResponse.json({
-      success: true,
-      data: {
-        stats: {
-          totalRevenue: totalRevenue._sum.total || 0,
-          totalOrders,
-          activeProducts,
-          pendingOrders: await database.order.count({
-            where: {
-              farmId: { in: farmIds },
-              status: "PENDING",
-            },
-          }),
-        },
-        recentOrders: recentOrders.map((order) => ({
-          id: order.id,
-          orderNumber: order.orderNumber,
-          status: order.status,
-          totalAmount: order.total,
-          customerName: order.customer.name,
-          customerEmail: order.customer.email,
-          createdAt: order.createdAt.toISOString(),
-        })),
-        topProducts: topProducts.map((product) => ({
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          stockQuantity: product.quantityAvailable,
-          orderCount: product._count.orderItems,
-        })),
-        farms: farms.map((farm) => ({
-          id: farm.id,
-          name: farm.name,
-          status: farm.status,
-        })),
-      },
-      meta: {
-        agricultural: {
-          consciousness: "DIVINE",
-          operation: "DASHBOARD_MANIFESTATION",
-          season: getCurrentSeason(),
-        },
-      },
-    });
-  } catch (error) {
-    logger.error("Failed to fetch farmer dashboard data", error as Error, {
-      operation: "GET /api/farmer/dashboard",
-    });
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Failed to fetch dashboard data",
-        details:
-          process.env.NODE_ENV === "development"
-            ? error instanceof Error
-              ? error.message
-              : "Unknown error"
-            : undefined,
-      },
-      { status: 500 },
-    );
-  }
+  // Perform 308 Permanent Redirect (preserves HTTP method)
+  return NextResponse.redirect(newUrl, {
+    status: 308,
+    headers,
+  });
 }
 
 /**
- * Helper function to get current season based on date
- */
-function getCurrentSeason(): string {
-  const month = new Date().getMonth() + 1; // 1-12
-
-  if (month >= 3 && month <= 5) return "SPRING";
-  if (month >= 6 && month <= 8) return "SUMMER";
-  if (month >= 9 && month <= 11) return "FALL";
-  return "WINTER";
-}
-
-/**
- * 🌟 Divine farmer dashboard route established ✨
- * - Authentication protected (401 if not signed in)
- * - Role-based access control (farmers only)
- * - Comprehensive farm statistics
- * - Recent orders and top products
- * - Agricultural consciousness maintained
- * Ready for quantum farmer operations! 🚜
+ * 🔔 DEPRECATION NOTICE
+ *
+ * This endpoint has been consolidated into /api/farmers/dashboard
+ *
+ * Please update your integrations to use the new endpoint:
+ * - Old: GET /api/farmer/dashboard
+ * - New: GET /api/farmers/dashboard
+ *
+ * This alias provides automatic redirection and will be maintained
+ * until June 1, 2026. After that date, this endpoint will return
+ * 410 Gone.
+ *
+ * Benefits of migrating:
+ * - Enhanced dashboard features
+ * - Better performance with optimized queries
+ * - Multi-farm support
+ * - More comprehensive analytics
+ * - Improved error handling
+ *
+ * See migration guide: docs/migrations/api-consolidation-guide.md
  */
