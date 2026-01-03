@@ -366,9 +366,13 @@ export class SettingsService {
       deliveryAreas: settings.deliveryAreas as any[],
       acceptedPaymentMethods: settings.acceptedPaymentMethods as any[],
       requireDepositOnOrders: settings.requireDepositOnOrders,
-      enablePreOrders: settings.enablePreOrders,
-      enableSubscriptions: settings.enableSubscriptions,
-      enableGiftCards: settings.enableGiftCards,
+      depositPercentage: settings.depositPercentage
+        ? typeof settings.depositPercentage === "object" &&
+          settings.depositPercentage !== null &&
+          "toNumber" in settings.depositPercentage
+          ? (settings.depositPercentage as any).toNumber()
+          : (settings.depositPercentage as number)
+        : undefined,
       businessHours:
         settings.businessHours?.map((bh) => ({
           dayOfWeek: bh.dayOfWeek,
@@ -379,22 +383,25 @@ export class SettingsService {
         })) || [],
       minOrderValue:
         typeof settings.minOrderValue === "object" &&
-        settings.minOrderValue !== null &&
-        "toNumber" in settings.minOrderValue
-          ? settings.minOrderValue.toNumber()
-          : settings.minOrderValue,
+          settings.minOrderValue !== null &&
+          "toNumber" in settings.minOrderValue
+          ? (settings.minOrderValue as any).toNumber()
+          : (settings.minOrderValue as number | undefined),
       deliveryFee:
         typeof settings.deliveryFee === "object" &&
-        settings.deliveryFee !== null &&
-        "toNumber" in settings.deliveryFee
-          ? settings.deliveryFee.toNumber()
-          : settings.deliveryFee,
-      freeDeliveryThreshold:
-        typeof settings.freeDeliveryThreshold === "object" &&
-        settings.freeDeliveryThreshold !== null &&
-        "toNumber" in settings.freeDeliveryThreshold
-          ? settings.freeDeliveryThreshold.toNumber()
-          : settings.freeDeliveryThreshold,
+          settings.deliveryFee !== null &&
+          "toNumber" in settings.deliveryFee
+          ? (settings.deliveryFee as any).toNumber()
+          : (settings.deliveryFee as number | undefined),
+      features: {
+        enablePreOrders: settings.enablePreOrders,
+        enableSubscriptions: settings.enableSubscriptions,
+        enableGiftCards: settings.enableGiftCards,
+      },
+      policies: {
+        cancellationPolicy: settings.cancellationPolicy || "",
+        returnPolicy: settings.returnPolicy || "",
+      },
     };
 
     // Cache for future requests
@@ -490,10 +497,16 @@ export class SettingsService {
       deliveryAreas: [],
       acceptedPaymentMethods: ["CARD"],
       requireDepositOnOrders: false,
-      enablePreOrders: false,
-      enableSubscriptions: false,
-      enableGiftCards: false,
       businessHours: defaultBusinessHours,
+      features: {
+        enablePreOrders: false,
+        enableSubscriptions: false,
+        enableGiftCards: false,
+      },
+      policies: {
+        cancellationPolicy: "",
+        returnPolicy: "",
+      },
     };
   }
 
@@ -524,18 +537,24 @@ export class SettingsService {
       updateData.acceptedPaymentMethods = updates.acceptedPaymentMethods;
     if (updates.requireDepositOnOrders !== undefined)
       updateData.requireDepositOnOrders = updates.requireDepositOnOrders;
-    if (updates.enablePreOrders !== undefined)
-      updateData.enablePreOrders = updates.enablePreOrders;
-    if (updates.enableSubscriptions !== undefined)
-      updateData.enableSubscriptions = updates.enableSubscriptions;
-    if (updates.enableGiftCards !== undefined)
-      updateData.enableGiftCards = updates.enableGiftCards;
+    if (updates.depositPercentage !== undefined)
+      updateData.depositPercentage = updates.depositPercentage;
+    if (updates.features?.enablePreOrders !== undefined)
+      updateData.enablePreOrders = updates.features.enablePreOrders;
+    if (updates.features?.enableSubscriptions !== undefined)
+      updateData.enableSubscriptions = updates.features.enableSubscriptions;
+    if (updates.features?.enableGiftCards !== undefined)
+      updateData.enableGiftCards = updates.features.enableGiftCards;
     if (updates.minOrderValue !== undefined)
       updateData.minOrderValue = updates.minOrderValue;
     if (updates.deliveryFee !== undefined)
       updateData.deliveryFee = updates.deliveryFee;
-    if (updates.freeDeliveryThreshold !== undefined)
-      updateData.freeDeliveryThreshold = updates.freeDeliveryThreshold;
+    if (updates.policies?.cancellationPolicy !== undefined)
+      updateData.cancellationPolicy = updates.policies.cancellationPolicy;
+    if (updates.policies?.returnPolicy !== undefined)
+      updateData.returnPolicy = updates.policies.returnPolicy;
+    if (updates.policies?.termsAndConditions !== undefined)
+      updateData.termsAndConditions = updates.policies.termsAndConditions;
 
     // Update database
     await database.farmSettings.update({
@@ -709,6 +728,8 @@ export class SettingsService {
       create: {
         key: request.key,
         value: request.value,
+        type: typeof request.value === "object" ? "json" : typeof request.value,
+        category: "platform", // Default category
         description: request.description,
         isPublic: request.isPublic || false,
       },
@@ -721,8 +742,11 @@ export class SettingsService {
     return {
       key: setting.key,
       value: setting.value as any,
+      type: setting.type as "string" | "number" | "boolean" | "json",
+      category: setting.category as "platform" | "feature" | "security" | "integration",
       description: setting.description || undefined,
       isPublic: setting.isPublic,
+      isEditable: setting.isEditable,
     };
   }
 

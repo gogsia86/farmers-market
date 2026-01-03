@@ -165,10 +165,11 @@ export async function GET(
         "request.id": requestId,
       });
 
+      // Parse query parameters outside try block for error logging
+      const searchParams = request.nextUrl.searchParams;
+      const period = searchParams.get("period") || "24h";
+
       try {
-        // Parse query parameters
-        const searchParams = request.nextUrl.searchParams;
-        const period = searchParams.get("period") || "24h";
 
         const { startDate, endDate } = parsePeriod(period);
 
@@ -313,7 +314,7 @@ export async function GET(
         const previousPeriodStart = new Date(startDate);
         previousPeriodStart.setTime(
           previousPeriodStart.getTime() -
-            (endDate.getTime() - startDate.getTime()),
+          (endDate.getTime() - startDate.getTime()),
         );
 
         const previousExecutions = await database.workflowExecution.findMany({
@@ -328,17 +329,17 @@ export async function GET(
         const previousSuccessRate =
           previousExecutions.length > 0
             ? (previousExecutions.filter((e: any) => e.status === "success")
-                .length /
-                previousExecutions.length) *
-              100
+              .length /
+              previousExecutions.length) *
+            100
             : 0;
 
         const previousAvgDuration =
           previousExecutions.length > 0
             ? previousExecutions.reduce(
-                (sum: any, e: any) => sum + (e.durationMs || 0),
-                0,
-              ) / previousExecutions.length
+              (sum: any, e: any) => sum + (e.durationMs || 0),
+              0,
+            ) / previousExecutions.length
             : 0;
 
         const trends: MetricsTrends = {

@@ -54,7 +54,7 @@ export function ConfirmationStep() {
         cartLogger.error(
           "Failed to clear cart",
           error instanceof Error ? error : new Error(String(error)),
-          { orderId },
+          { orderId: orderId ?? undefined },
         );
       }
     };
