@@ -269,19 +269,25 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         id: true,
         orderNumber: true,
         status: true,
-        totalPrice: true,
+        total: true,
         createdAt: true,
-        customer: {
-          select: {
-            id: true,
-            email: true,
-            name: true,
-            firstName: true,
-            lastName: true,
-          },
-        },
+        customerId: true,
       },
     });
+
+    // Get customer details for recent orders
+    const customerIds = [...new Set(recentOrdersDetails.map(o => o.customerId))];
+    const customers = await database.user.findMany({
+      where: { id: { in: customerIds } },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        firstName: true,
+        lastName: true,
+      },
+    });
+    const customerMap = new Map(customers.map(c => [c.id, c]));
 
     // Format usersByRole
     const roleDistribution = usersByRole.reduce(
@@ -368,9 +374,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             id: order.id,
             orderNumber: order.orderNumber,
             status: order.status,
-            totalPrice: parseFloat(order.totalPrice.toString()),
+            totalPrice: parseFloat(order.total.toString()),
             createdAt: order.createdAt,
-            customer: order.customer,
+            customer: customerMap.get(order.customerId) || null,
           })),
         },
         payments: {
@@ -385,12 +391,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         },
         recentActivity: recentActivity.map((action) => ({
           id: action.id,
-          actionType: action.actionType,
+          actionType: action.type,
           targetType: action.targetType,
           targetId: action.targetId,
           createdAt: action.createdAt,
           admin: action.admin,
-          details: action.details,
+          details: action.metadata,
         })),
         period: {
           days,

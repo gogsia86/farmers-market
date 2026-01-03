@@ -17,7 +17,7 @@ import { z } from "zod";
 const GetReviewsSchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(100).default(20),
-  status: z.enum(["PENDING", "APPROVED", "REJECTED"]).default("PENDING"),
+  status: z.enum(["PENDING", "APPROVED", "FLAGGED", "REMOVED"]).default("PENDING"),
   farmId: z.string().cuid().optional(),
   productId: z.string().cuid().optional(),
   sortBy: z.enum(["createdAt", "rating"]).default("createdAt"),
@@ -26,7 +26,7 @@ const GetReviewsSchema = z.object({
 
 const ModerateReviewSchema = z.object({
   reviewId: z.string().cuid(),
-  action: z.enum(["APPROVE", "REJECT"]),
+  action: z.enum(["APPROVE", "FLAG"]),
   reason: z.string().optional(),
 });
 
@@ -167,7 +167,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     ]);
 
     // Get statistics
-    const [totalReviews, pendingCount, approvedCount, rejectedCount] =
+    const [totalReviews, pendingCount, approvedCount, flaggedCount] =
       await Promise.all([
         database.review.count(),
         database.review.count({ where: { status: "PENDING" } }),
@@ -189,7 +189,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           totalReviews,
           pendingCount,
           approvedCount,
-          flaggedCount: rejectedCount,
+          flaggedCount,
         },
       },
     });
@@ -314,7 +314,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
         status: newStatus,
         moderatedBy: session.user.id,
         moderatedAt: new Date(),
-        moderationReason: reason,
+        ...(newStatus === "FLAGGED" && reason ? { flaggedReason: reason, flaggedAt: new Date() } : {}),
       },
     });
 

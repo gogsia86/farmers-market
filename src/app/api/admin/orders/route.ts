@@ -1,7 +1,7 @@
 /**
  * Admin Orders Management API
  * GET: List all orders with filters
- * PATCH: Update order status and process refunds
+ * PATCH: Update order status
  */
 
 import { auth } from "@/lib/auth";
@@ -16,7 +16,7 @@ import { z } from "zod";
 // ============================================================================
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  apiVersion: "2024-11-20.acacia",
+  apiVersion: "2025-12-15.clover" as any,
 });
 
 // ============================================================================
@@ -30,20 +30,17 @@ const GetOrdersSchema = z.object({
     .enum([
       "PENDING",
       "CONFIRMED",
-      "PROCESSING",
+      "PREPARING",
       "READY",
-      "SHIPPED",
-      "DELIVERED",
+      "FULFILLED",
+      "COMPLETED",
       "CANCELLED",
-      "REFUNDED",
-      "PARTIALLY_REFUNDED",
-      "PAYMENT_FAILED",
     ])
     .optional(),
   search: z.string().optional(),
   farmId: z.string().cuid().optional(),
   customerId: z.string().cuid().optional(),
-  sortBy: z.enum(["createdAt", "totalPrice", "status"]).default("createdAt"),
+  sortBy: z.enum(["createdAt", "total", "status"]).default("createdAt"),
   sortOrder: z.enum(["asc", "desc"]).default("desc"),
 });
 
@@ -53,14 +50,11 @@ const UpdateOrderSchema = z.object({
     .enum([
       "PENDING",
       "CONFIRMED",
-      "PROCESSING",
+      "PREPARING",
       "READY",
-      "SHIPPED",
-      "DELIVERED",
+      "FULFILLED",
+      "COMPLETED",
       "CANCELLED",
-      "REFUNDED",
-      "PARTIALLY_REFUNDED",
-      "PAYMENT_FAILED",
     ])
     .optional(),
   refund: z
@@ -86,17 +80,19 @@ async function isAdmin(userId: string): Promise<boolean> {
 
 async function logAdminAction(
   adminId: string,
-  actionType: string,
+  type: string,
   targetId: string,
-  details?: Record<string, any>
+  description: string,
+  metadata?: Record<string, any>
 ): Promise<void> {
   await database.adminAction.create({
     data: {
       adminId,
-      actionType: actionType as any,
+      type: type as any,
       targetType: "ORDER",
       targetId,
-      details: details ? JSON.parse(JSON.stringify(details)) : null,
+      description,
+      metadata: metadata ? JSON.parse(JSON.stringify(metadata)) : null,
     },
   });
 }
@@ -172,20 +168,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const where: any = {};
     if (status) where.status = status;
     if (customerId) where.customerId = customerId;
+    if (farmId) where.farmId = farmId;
     if (search) {
       where.OR = [
         { orderNumber: { contains: search, mode: "insensitive" } },
         { customer: { email: { contains: search, mode: "insensitive" } } },
       ];
-    }
-    if (farmId) {
-      where.orderItems = {
-        some: {
-          product: {
-            farmId,
-          },
-        },
-      };
     }
 
     // Fetch orders and total count
@@ -202,7 +190,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
               name: true,
             },
           },
-          orderItems: {
+          items: {
             include: {
               product: {
                 select: {
@@ -219,13 +207,19 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
               },
             },
           },
-          payment: {
+          Payment: {
             select: {
               id: true,
               status: true,
               amount: true,
-              refundAmount: true,
               stripePaymentIntentId: true,
+              paidAt: true,
+            },
+          },
+          farm: {
+            select: {
+              id: true,
+              name: true,
             },
           },
         },
@@ -241,13 +235,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       totalOrders,
       pendingCount,
       confirmedCount,
-      deliveredCount,
+      completedCount,
       cancelledCount,
     ] = await Promise.all([
       database.order.count(),
       database.order.count({ where: { status: "PENDING" } }),
       database.order.count({ where: { status: "CONFIRMED" } }),
-      database.order.count({ where: { status: "DELIVERED" } }),
+      database.order.count({ where: { status: "COMPLETED" } }),
       database.order.count({ where: { status: "CANCELLED" } }),
     ]);
 
@@ -256,22 +250,23 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       data: {
         orders: orders.map((order) => ({
           ...order,
-          totalPrice: parseFloat(order.totalPrice.toString()),
+          total: parseFloat(order.total.toString()),
           subtotal: parseFloat(order.subtotal.toString()),
           tax: parseFloat(order.tax.toString()),
           deliveryFee: parseFloat(order.deliveryFee.toString()),
-          payment: order.payment
+          platformFee: parseFloat(order.platformFee.toString()),
+          discount: parseFloat(order.discount.toString()),
+          farmerAmount: parseFloat(order.farmerAmount.toString()),
+          Payment: order.Payment
             ? {
-              ...order.payment,
-              amount: parseFloat(order.payment.amount.toString()),
-              refundAmount: order.payment.refundAmount
-                ? parseFloat(order.payment.refundAmount.toString())
-                : null,
+              ...order.Payment,
+              amount: parseFloat(order.Payment.amount.toString()),
             }
             : null,
-          orderItems: order.orderItems.map((item) => ({
+          items: order.items.map((item) => ({
             ...item,
-            price: parseFloat(item.price.toString()),
+            unitPrice: parseFloat(item.unitPrice.toString()),
+            quantity: parseFloat(item.quantity.toString()),
             subtotal: parseFloat(item.subtotal.toString()),
           })),
         })),
@@ -285,7 +280,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           totalOrders,
           pendingCount,
           confirmedCount,
-          deliveredCount,
+          completedCount,
           cancelledCount,
         },
       },
@@ -371,7 +366,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
             name: true,
           },
         },
-        payment: true,
+        Payment: true,
       },
     });
 
@@ -390,7 +385,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
 
     // Handle refund if requested
     if (refund) {
-      if (!order.payment || !order.payment.stripePaymentIntentId) {
+      if (!order.Payment || !order.Payment.stripePaymentIntentId) {
         return NextResponse.json(
           {
             success: false,
@@ -410,7 +405,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
 
         // Process refund through Stripe
         const stripeRefund = await stripe.refunds.create({
-          payment_intent: order.payment.stripePaymentIntentId,
+          payment_intent: order.Payment.stripePaymentIntentId,
           amount: refundAmount,
           reason: "requested_by_customer",
           metadata: {
@@ -421,31 +416,60 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
           },
         });
 
-        // Update payment record
-        await database.payment.update({
-          where: { id: order.payment.id },
+        // Create refund record
+        await database.refund.create({
           data: {
-            status: refund.fullRefund ? "REFUNDED" : "PARTIALLY_REFUNDED",
-            refundedAt: new Date(),
-            refundAmount: stripeRefund.amount / 100,
+            orderId: order.id,
+            amount: stripeRefund.amount / 100,
+            reason: refund.reason,
+            stripeRefundId: stripeRefund.id,
+            status: "COMPLETED",
+            processedAt: new Date(),
           },
         });
 
-        // Update order status
+        // Update payment status
+        const totalRefunded = await database.refund.aggregate({
+          where: { orderId: order.id },
+          _sum: { amount: true },
+        });
+
+        const refundedAmount = totalRefunded._sum.amount
+          ? (typeof totalRefunded._sum.amount === 'number'
+            ? totalRefunded._sum.amount
+            : totalRefunded._sum.amount.toNumber())
+          : 0;
+        const orderTotal = order.total.toNumber();
+        const isFullRefund = refundedAmount >= orderTotal;
+
+        await database.payment.update({
+          where: { id: order.Payment.id },
+          data: {
+            status: isFullRefund ? "REFUNDED" : "PARTIALLY_REFUNDED",
+          },
+        });
+
+        // Update order payment status
         await database.order.update({
           where: { id: orderId },
           data: {
-            status: refund.fullRefund ? "REFUNDED" : "PARTIALLY_REFUNDED",
+            paymentStatus: isFullRefund ? "REFUNDED" : "PARTIALLY_REFUNDED",
           },
         });
 
         // Log admin action
-        await logAdminAction(session.user.id, "ORDER_REFUNDED", orderId, {
-          refundAmount: stripeRefund.amount / 100,
-          fullRefund: refund.fullRefund,
-          reason: refund.reason,
-          stripeRefundId: stripeRefund.id,
-        });
+        await logAdminAction(
+          session.user.id,
+          "ORDER_REFUNDED",
+          orderId,
+          `Refund processed: $${(stripeRefund.amount / 100).toFixed(2)}`,
+          {
+            refundAmount: stripeRefund.amount / 100,
+            fullRefund: refund.fullRefund,
+            reason: refund.reason,
+            stripeRefundId: stripeRefund.id,
+          }
+        );
 
         // Send notification to customer
         if (order.customer) {
@@ -490,10 +514,16 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
       });
 
       // Log admin action
-      await logAdminAction(session.user.id, "ORDER_STATUS_CHANGED", orderId, {
-        previousStatus: order.status,
-        newStatus: status,
-      });
+      await logAdminAction(
+        session.user.id,
+        "SETTING_CHANGED",
+        orderId,
+        `Order status changed from ${order.status} to ${status}`,
+        {
+          previousStatus: order.status,
+          newStatus: status,
+        }
+      );
 
       // Send notification to customer
       if (order.customer) {
@@ -503,7 +533,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
           status,
           {
             orderNumber: order.orderNumber,
-            total: order.totalPrice.toNumber(),
+            total: order.total.toNumber(),
           }
         );
       }
@@ -522,7 +552,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
             name: true,
           },
         },
-        orderItems: {
+        items: {
           include: {
             product: {
               select: {
@@ -533,7 +563,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
             },
           },
         },
-        payment: true,
+        Payment: true,
       },
     });
 
@@ -543,19 +573,25 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
         order: updatedOrder
           ? {
             ...updatedOrder,
-            totalPrice: parseFloat(updatedOrder.totalPrice.toString()),
+            total: parseFloat(updatedOrder.total.toString()),
             subtotal: parseFloat(updatedOrder.subtotal.toString()),
             tax: parseFloat(updatedOrder.tax.toString()),
             deliveryFee: parseFloat(updatedOrder.deliveryFee.toString()),
-            payment: updatedOrder.payment
+            platformFee: parseFloat(updatedOrder.platformFee.toString()),
+            discount: parseFloat(updatedOrder.discount.toString()),
+            farmerAmount: parseFloat(updatedOrder.farmerAmount.toString()),
+            Payment: updatedOrder.Payment
               ? {
-                ...updatedOrder.payment,
-                amount: parseFloat(updatedOrder.payment.amount.toString()),
-                refundAmount: updatedOrder.payment.refundAmount
-                  ? parseFloat(updatedOrder.payment.refundAmount.toString())
-                  : null,
+                ...updatedOrder.Payment,
+                amount: parseFloat(updatedOrder.Payment.amount.toString()),
               }
               : null,
+            items: updatedOrder.items.map((item) => ({
+              ...item,
+              unitPrice: parseFloat(item.unitPrice.toString()),
+              quantity: parseFloat(item.quantity.toString()),
+              subtotal: parseFloat(item.subtotal.toString()),
+            })),
           }
           : null,
       },
