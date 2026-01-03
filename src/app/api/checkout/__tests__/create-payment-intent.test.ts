@@ -25,6 +25,7 @@ jest.mock("@/lib/auth", () => ({
 jest.mock("@/lib/services/checkout.service", () => ({
   checkoutService: {
     createPaymentIntent: jest.fn(),
+    retrievePaymentIntent: jest.fn(),
   },
 }));
 
@@ -40,9 +41,9 @@ jest.mock("next-auth/providers/credentials", () => ({
 }));
 
 // Now safe to import the route and other dependencies
-import { POST, GET } from "../create-payment-intent/route";
 import { auth } from "@/lib/auth";
 import { checkoutService } from "@/lib/services/checkout.service";
+import { GET, POST } from "../create-payment-intent/route";
 
 const mockAuth = auth as jest.MockedFunction<typeof auth>;
 const mockCheckoutService = checkoutService as jest.Mocked<
@@ -629,6 +630,16 @@ describe("GET /api/checkout/create-payment-intent", () => {
 
     it("should accept valid session", async () => {
       mockAuth.mockResolvedValueOnce(createMockSession());
+      mockCheckoutService.retrievePaymentIntent.mockResolvedValueOnce({
+        success: true,
+        data: {
+          id: "pi_test_123",
+          clientSecret: "pi_test_123_secret_abc",
+          amount: 100.0,
+          currency: "usd",
+          status: "requires_payment_method",
+        },
+      });
 
       const request = createMockGetRequest({
         paymentIntentId: "pi_test_123",
@@ -649,6 +660,16 @@ describe("GET /api/checkout/create-payment-intent", () => {
   describe("Parameter Validation", () => {
     beforeEach(() => {
       mockAuth.mockResolvedValue(createMockSession());
+      mockCheckoutService.retrievePaymentIntent.mockResolvedValue({
+        success: true,
+        data: {
+          id: "pi_test_123",
+          clientSecret: "pi_test_123_secret_abc",
+          amount: 100.0,
+          currency: "usd",
+          status: "requires_payment_method",
+        },
+      });
     });
 
     it("should require paymentIntentId parameter", async () => {
@@ -683,6 +704,16 @@ describe("GET /api/checkout/create-payment-intent", () => {
   describe("Response Format", () => {
     beforeEach(() => {
       mockAuth.mockResolvedValue(createMockSession());
+      mockCheckoutService.retrievePaymentIntent.mockResolvedValue({
+        success: true,
+        data: {
+          id: "pi_test_123",
+          clientSecret: "pi_test_123_secret_abc",
+          amount: 100.0,
+          currency: "usd",
+          status: "requires_payment_method",
+        },
+      });
     });
 
     it("should return payment intent status", async () => {
