@@ -254,3 +254,6 @@ lint-report.txt
 
 # Cleanup archives
 .archive/
+ 
+# Old implementation archive 
+.archive-old-implementation/ 
