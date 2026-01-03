@@ -44,7 +44,11 @@ export async function updateFarmStatus(
 
     return { success: true };
   } catch (error) {
-    adminFarmLogger.error("Farm status transformation failed", error instanceof Error ? error : new Error(String(error)), { farmId, status });
+    adminFarmLogger.error(
+      "Farm status transformation failed",
+      error instanceof Error ? error : new Error(String(error)),
+      { farmId, status },
+    );
     return {
       success: false,
       error: "Failed to update farm status - quantum coherence disrupted",
@@ -80,7 +84,11 @@ export async function searchFarms(query: string) {
 
     return { success: true, farms };
   } catch (error) {
-    adminFarmLogger.error("Farm search failed", error instanceof Error ? error : new Error(String(error)), { query });
+    adminFarmLogger.error(
+      "Farm search failed",
+      error instanceof Error ? error : new Error(String(error)),
+      { query },
+    );
     return { success: false, farms: [], error: "Search failed" };
   }
 }
@@ -107,7 +115,11 @@ export async function filterFarmsByStatus(status: FarmStatus | "ALL") {
 
     return { success: true, farms };
   } catch (error) {
-    adminFarmLogger.error("Farm filter failed", error instanceof Error ? error : new Error(String(error)), { status });
+    adminFarmLogger.error(
+      "Farm filter failed",
+      error instanceof Error ? error : new Error(String(error)),
+      { status },
+    );
     return { success: false, farms: [], error: "Filter failed" };
   }
 }

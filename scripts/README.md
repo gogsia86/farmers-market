@@ -99,6 +99,7 @@ scripts\git\git-amend-commit.ps1                 # PowerShell
 **Purpose:** Local development, debugging, and quick workflows
 
 **Key Scripts:**
+
 - `START_NOW.bat` - Windows one-command startup
 - `START-SERVER.bat` - Standard dev server start
 - `start-server-fixed.sh` - Dev server with optimizations
@@ -114,6 +115,7 @@ scripts\git\git-amend-commit.ps1                 # PowerShell
 **Purpose:** Run tests, validation, and quality assurance
 
 **Key Scripts:**
+
 - `run-all-tests.sh` / `RUN-ALL-TESTS.bat` - Comprehensive test suite
 - `run-mvp-validation.sh` / `RUN-MVP-VALIDATION.bat` - MVP feature validation
 - `test-signup-fix.js` - Test signup functionality
@@ -127,6 +129,7 @@ scripts\git\git-amend-commit.ps1                 # PowerShell
 **Purpose:** Deploy to production, staging, and cloud platforms
 
 **Key Scripts:**
+
 - `deploy-to-vercel.sh` / `.bat` - Vercel deployment
 - `setup-production.sh` / `.ps1` - Production environment setup
 - `start-production.sh` / `.ps1` / `.bat` - Start production server
@@ -143,6 +146,7 @@ scripts\git\git-amend-commit.ps1                 # PowerShell
 **Purpose:** Git workflow automation and helpers
 
 **Key Scripts:**
+
 - `git-commit-push.sh` / `.ps1` - Commit and push in one command
 - `git-amend-commit.sh` / `.ps1` - Amend last commit
 
@@ -155,6 +159,7 @@ scripts\git\git-amend-commit.ps1                 # PowerShell
 **Purpose:** Repository maintenance and code cleanup
 
 **Scripts:**
+
 - `consolidate-docs.sh` - Consolidate documentation
 - `phase3-scripts-cleanup.sh` - Scripts organization
 - `quick-cleanup.sh` - Quick cleanup utility
@@ -166,6 +171,7 @@ scripts\git\git-amend-commit.ps1                 # PowerShell
 **Purpose:** Ongoing maintenance tasks
 
 **Scripts:**
+
 - `cleanup-markdown-files.sh` - Markdown file maintenance
 
 ---
@@ -175,6 +181,7 @@ scripts\git\git-amend-commit.ps1                 # PowerShell
 **Purpose:** Legacy scripts preserved for reference
 
 **Scripts:**
+
 - `cleanup-outdated-docs.ps1` - Archived doc cleanup
 - `cleanup-root.ps1` / `.sh` - Root directory cleanup (archived)
 
@@ -185,6 +192,7 @@ scripts\git\git-amend-commit.ps1                 # PowerShell
 ### Root-Level Scripts (To Be Organized)
 
 #### Database & Seeding
+
 - `backup-database.sh` - Database backup utility
 - `clean-database.ts` - Database cleanup
 - `seed-for-bot.ts` - Seed data for bot testing
@@ -195,6 +203,7 @@ scripts\git\git-amend-commit.ps1                 # PowerShell
 - `setup-test-database.ps1` / `.sh` - Test database setup
 
 #### Environment & Configuration
+
 - `set-database-url.js` - Configure database URL
 - `setup-env.js` / `.ps1` / `.sh` - Environment setup
 - `setup-infrastructure.sh` - Infrastructure setup
@@ -203,6 +212,7 @@ scripts\git\git-amend-commit.ps1                 # PowerShell
 - `validate-production-config.ts` - Production config validation
 
 #### Testing & Validation
+
 - `add-visual-test-scripts.js` - Add visual testing scripts
 - `analyze-logger-tests.sh` - Logger test analysis
 - `check-farm-schema.ts` - Farm schema validation
@@ -220,6 +230,7 @@ scripts\git\git-amend-commit.ps1                 # PowerShell
 - `validate-platform.ts` - Platform validation
 
 #### Code Fixing & Migration
+
 - `cleanup-duplicate-tests.sh` - Remove duplicate tests
 - `cleanup-duplicates.sh` - General duplicate removal
 - `cleanup-docs.sh` - Documentation cleanup
@@ -242,6 +253,7 @@ scripts\git\git-amend-commit.ps1                 # PowerShell
 - `quick-fix.ts` - Quick fix utility
 
 #### Monitoring & Diagnostics
+
 - `debug-nextauth.ts` - NextAuth debugging
 - `detect-errors.ts` - Error detection
 - `diagnose-api-issue.ts` - API diagnostics
@@ -250,10 +262,12 @@ scripts\git\git-amend-commit.ps1                 # PowerShell
 - `workflow-monitor.ts` - Workflow monitoring
 
 #### Server & Application
+
 - `start-full-stack.ts` - Start full stack application
 - `start-server-and-bot.ts` - Start server with monitoring bot
 
 #### Build & Performance
+
 - `measure-phase2-performance.mjs` - Phase 2 performance metrics
 - `organize-workspace.sh` - Workspace organization
 - `remove-backups.sh` - Remove backup files
@@ -262,12 +276,14 @@ scripts\git\git-amend-commit.ps1                 # PowerShell
 - `vercel-build.sh` - Vercel build script
 
 #### Documentation & Utilities
+
 - `convert-to-pdf.js` / `convert-to-pdf-modern.js` - Export docs to PDF
 - `generate-api-docs.ts` - Generate API documentation
 - `pdf-styles.css` - PDF export styles
 - `PRODUCTION_DEPLOYMENT_CHECKLIST.md` - Deployment checklist
 
 #### Deployment (Root Level - To Move)
+
 - `deploy-docker.sh` - Docker deployment
 
 ---
@@ -447,12 +463,14 @@ npm run export:pdf                       # Export docs to PDF
 ### Script Naming Conventions
 
 ✅ **DO:**
+
 - Use kebab-case: `test-api-fixes.ts`
 - Be descriptive: `setup-test-database.sh`
 - Include platform extension: `.sh` (Linux/Mac), `.bat` (Windows), `.ps1` (PowerShell)
 - Group related scripts: `fix-*.ts`, `test-*.ts`
 
 ❌ **DON'T:**
+
 - Use vague names: `script1.js`, `temp.sh`
 - Mix naming styles
 - Create duplicates without clear purpose
@@ -511,6 +529,7 @@ When creating scripts for multiple platforms:
    - `script-name.ps1` (Windows PowerShell)
 
 2. **Or use Node.js for cross-platform:**
+
    ```javascript
    #!/usr/bin/env node
    // Works on all platforms
@@ -527,6 +546,7 @@ When creating scripts for multiple platforms:
 **Issue:** `Permission denied` when running `.sh` script
 
 **Solution:**
+
 ```bash
 # Make script executable
 chmod +x scripts/category/script-name.sh
@@ -540,6 +560,7 @@ chmod +x scripts/category/script-name.sh
 **Issue:** `'script' is not recognized` on Windows
 
 **Solution:**
+
 ```cmd
 # Use full path or navigate to directory
 cd scripts\category
@@ -554,6 +575,7 @@ scripts\category\script-name.bat
 **Issue:** Script fails with `node: command not found`
 
 **Solution:**
+
 1. Install Node.js from https://nodejs.org
 2. Verify installation: `node --version`
 3. Restart terminal/command prompt
@@ -563,6 +585,7 @@ scripts\category\script-name.bat
 **Issue:** Scripts fail with database connection errors
 
 **Solution:**
+
 1. Check database is running: `docker-compose ps`
 2. Verify `DATABASE_URL` in `.env.local`
 3. Test connection: `npx prisma db pull`
@@ -573,6 +596,7 @@ scripts\category\script-name.bat
 **Issue:** `Cannot find module '@/lib/...'`
 
 **Solution:**
+
 ```bash
 # Clean and reinstall
 rm -rf node_modules package-lock.json
@@ -593,21 +617,25 @@ npm run build
 
 When adding a new script, document it in the appropriate subdirectory README:
 
-```markdown
+````markdown
 ### `script-name.sh`
 
 Brief description of what the script does.
 
 **Usage:**
+
 ```bash
 ./scripts/category/script-name.sh [options]
 ```
+````
 
 **Options:**
+
 - `--option1` - Description
 - `--option2` - Description
 
 **Examples:**
+
 ```bash
 # Example 1
 ./scripts/category/script-name.sh --option1
@@ -617,9 +645,11 @@ Brief description of what the script does.
 ```
 
 **Prerequisites:**
+
 - Requirement 1
 - Requirement 2
-```
+
+````
 
 ---
 
@@ -742,9 +772,10 @@ scripts\category\script-name.bat
 # Node.js (cross-platform)
 node scripts/script-name.js
 tsx scripts/script-name.ts
-```
+````
 
 **Common Script Types:**
+
 - `.sh` - Bash shell script (Linux/Mac)
 - `.bat` - Windows batch file
 - `.ps1` - PowerShell script
@@ -779,16 +810,16 @@ tsx scripts/script-name.ts
 
 ### Most Used Scripts
 
-| Task | Command |
-|------|---------|
-| Start dev server | `scripts\development\START_NOW.bat` (Win) or `./scripts/development/start-server-fixed.sh` (Unix) |
-| Run all tests | `./scripts/testing/run-all-tests.sh` |
-| MVP validation | `./scripts/testing/run-mvp-validation.sh` |
-| Deploy to Vercel | `./scripts/deployment/deploy-to-vercel.sh` |
-| Fix errors | `./scripts/development/fix-remaining-errors.sh` |
-| Git commit + push | `./scripts/git/git-commit-push.sh "message"` |
-| Database setup | `npm run db:setup` |
-| Generate API docs | `npm run generate:api-docs` |
+| Task              | Command                                                                                           |
+| ----------------- | ------------------------------------------------------------------------------------------------- |
+| Start dev server  | `scripts\development\START_NOW.bat` (Win) or `./scripts/development/start-server-fixed.sh` (Unix) |
+| Run all tests     | `./scripts/testing/run-all-tests.sh`                                                              |
+| MVP validation    | `./scripts/testing/run-mvp-validation.sh`                                                         |
+| Deploy to Vercel  | `./scripts/deployment/deploy-to-vercel.sh`                                                        |
+| Fix errors        | `./scripts/development/fix-remaining-errors.sh`                                                   |
+| Git commit + push | `./scripts/git/git-commit-push.sh "message"`                                                      |
+| Database setup    | `npm run db:setup`                                                                                |
+| Generate API docs | `npm run generate:api-docs`                                                                       |
 
 ### Emergency Commands
 
@@ -814,6 +845,7 @@ npm run kill-server
 ## 🌾 Divine Agricultural Consciousness
 
 **Script Philosophy:**
+
 - **Automate** repetitive tasks
 - **Document** all automations
 - **Organize** for discoverability

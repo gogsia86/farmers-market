@@ -69,7 +69,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           error: "Authentication required",
           message: "Please sign in to access the farmer dashboard",
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -85,7 +85,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           error: "Unauthorized",
           message: "Only farmers can access this dashboard",
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -455,8 +455,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     // Calculate weekly revenue
     const weekRevenue = weekOrders.reduce((total, order) => {
       const orderTotal = order.items.reduce(
-        (sum, item) => sum + Number(item.product.price) * Number(item.quantity ?? 0),
-        0
+        (sum, item) =>
+          sum + Number(item.product.price) * Number(item.quantity ?? 0),
+        0,
       );
       return total + orderTotal;
     }, 0);
@@ -510,13 +511,15 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({
       success: true,
       data: {
-        farm: primaryFarm ? {
-          id: primaryFarm.id,
-          name: primaryFarm.name,
-          status: primaryFarm.status,
-          description: primaryFarm.description,
-          location: primaryFarm.location,
-        } : null,
+        farm: primaryFarm
+          ? {
+              id: primaryFarm.id,
+              name: primaryFarm.name,
+              status: primaryFarm.status,
+              description: primaryFarm.description,
+              location: primaryFarm.location,
+            }
+          : null,
         farms: farms.map((farm) => ({
           id: farm.id,
           name: farm.name,
@@ -550,7 +553,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           totalAmount: order.items.reduce(
             (sum, item) =>
               sum + Number(item.product.price) * Number(item.quantity),
-            0
+            0,
           ),
           status: order.status,
           scheduledDate: order.scheduledDate,
@@ -593,7 +596,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
               : "Unknown error"
             : undefined,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

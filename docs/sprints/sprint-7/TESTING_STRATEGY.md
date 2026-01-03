@@ -1,4 +1,5 @@
 # 🧪 Sprint 7 Testing Strategy
+
 ## Order Tracking & Production Deployment - Comprehensive Testing Plan
 
 **Sprint**: 7 - Order Tracking & Management
@@ -11,9 +12,11 @@
 ## 📋 Testing Overview
 
 ### Mission Statement
-*"Ensure divine quality and quantum reliability through comprehensive testing of order tracking, notifications, and production infrastructure."*
+
+_"Ensure divine quality and quantum reliability through comprehensive testing of order tracking, notifications, and production infrastructure."_
 
 ### Success Criteria
+
 - ✅ 95%+ code coverage across all new features
 - ✅ 100% test pass rate before deployment
 - ✅ Zero critical bugs in production
@@ -41,6 +44,7 @@
 ```
 
 ### Distribution
+
 - **Unit Tests**: 75% (150 tests) - Fast, isolated, extensive coverage
 - **Integration Tests**: 20% (40 tests) - API routes, service integration
 - **E2E Tests**: 5% (10 tests) - Critical user journeys
@@ -50,6 +54,7 @@
 ## 🧩 Unit Testing Strategy
 
 ### Coverage Targets
+
 - **Services**: 95%+ coverage
 - **Utilities**: 100% coverage
 - **State Machines**: 100% coverage
@@ -60,98 +65,98 @@
 **File**: `src/lib/services/__tests__/order-status.service.test.ts`
 
 ```typescript
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-import { OrderStatusService } from '../order-status.service';
-import { database } from '@/lib/database';
+import { describe, it, expect, beforeEach, jest } from "@jest/globals";
+import { OrderStatusService } from "../order-status.service";
+import { database } from "@/lib/database";
 
-describe('OrderStatusService', () => {
+describe("OrderStatusService", () => {
   let service: OrderStatusService;
-  
+
   beforeEach(() => {
     service = new OrderStatusService();
     jest.clearAllMocks();
   });
 
-  describe('updateOrderStatus', () => {
-    it('should successfully update order status from PENDING to CONFIRMED', async () => {
+  describe("updateOrderStatus", () => {
+    it("should successfully update order status from PENDING to CONFIRMED", async () => {
       // Arrange
-      const mockOrder = createMockOrder({ status: 'PENDING' });
-      const userId = 'user-123';
-      
-      jest.spyOn(database.order, 'findUnique').mockResolvedValue(mockOrder);
-      jest.spyOn(database.order, 'update').mockResolvedValue({
+      const mockOrder = createMockOrder({ status: "PENDING" });
+      const userId = "user-123";
+
+      jest.spyOn(database.order, "findUnique").mockResolvedValue(mockOrder);
+      jest.spyOn(database.order, "update").mockResolvedValue({
         ...mockOrder,
-        status: 'CONFIRMED'
+        status: "CONFIRMED",
       });
-      
+
       // Act
       const result = await service.updateOrderStatus(
         mockOrder.id,
-        'CONFIRMED',
-        userId
+        "CONFIRMED",
+        userId,
       );
-      
+
       // Assert
-      expect(result.status).toBe('CONFIRMED');
+      expect(result.status).toBe("CONFIRMED");
       expect(result.confirmedAt).toBeDefined();
     });
 
-    it('should throw error for invalid status transition', async () => {
+    it("should throw error for invalid status transition", async () => {
       // Arrange
-      const mockOrder = createMockOrder({ status: 'COMPLETED' });
-      jest.spyOn(database.order, 'findUnique').mockResolvedValue(mockOrder);
-      
+      const mockOrder = createMockOrder({ status: "COMPLETED" });
+      jest.spyOn(database.order, "findUnique").mockResolvedValue(mockOrder);
+
       // Act & Assert
       await expect(
-        service.updateOrderStatus(mockOrder.id, 'PENDING', 'user-123')
-      ).rejects.toThrow('Invalid status transition');
+        service.updateOrderStatus(mockOrder.id, "PENDING", "user-123"),
+      ).rejects.toThrow("Invalid status transition");
     });
 
-    it('should validate user authorization before status update', async () => {
+    it("should validate user authorization before status update", async () => {
       // Test implementation
     });
 
-    it('should record status change in history table', async () => {
+    it("should record status change in history table", async () => {
       // Test implementation
     });
 
-    it('should trigger notification service on status change', async () => {
+    it("should trigger notification service on status change", async () => {
       // Test implementation
     });
 
-    it('should handle concurrent status updates gracefully', async () => {
-      // Test implementation
-    });
-  });
-
-  describe('getOrdersByStatus', () => {
-    it('should return all orders with specified status', async () => {
-      // Test implementation
-    });
-
-    it('should support multiple status filters', async () => {
-      // Test implementation
-    });
-
-    it('should include related data (customer, items)', async () => {
-      // Test implementation
-    });
-
-    it('should sort by creation date descending', async () => {
+    it("should handle concurrent status updates gracefully", async () => {
       // Test implementation
     });
   });
 
-  describe('bulkUpdateStatus', () => {
-    it('should update multiple orders successfully', async () => {
+  describe("getOrdersByStatus", () => {
+    it("should return all orders with specified status", async () => {
       // Test implementation
     });
 
-    it('should continue on individual failures and report errors', async () => {
+    it("should support multiple status filters", async () => {
       // Test implementation
     });
 
-    it('should require admin authorization', async () => {
+    it("should include related data (customer, items)", async () => {
+      // Test implementation
+    });
+
+    it("should sort by creation date descending", async () => {
+      // Test implementation
+    });
+  });
+
+  describe("bulkUpdateStatus", () => {
+    it("should update multiple orders successfully", async () => {
+      // Test implementation
+    });
+
+    it("should continue on individual failures and report errors", async () => {
+      // Test implementation
+    });
+
+    it("should require admin authorization", async () => {
       // Test implementation
     });
   });
@@ -169,57 +174,57 @@ describe('OrderStatusService', () => {
 **File**: `src/lib/services/__tests__/order-notification.service.test.ts`
 
 ```typescript
-describe('OrderNotificationService', () => {
-  describe('sendStatusUpdateNotifications', () => {
-    it('should send email notification for order confirmation', async () => {
+describe("OrderNotificationService", () => {
+  describe("sendStatusUpdateNotifications", () => {
+    it("should send email notification for order confirmation", async () => {
       // Test implementation
     });
 
-    it('should send SMS notification for ready-for-pickup', async () => {
+    it("should send SMS notification for ready-for-pickup", async () => {
       // Test implementation
     });
 
-    it('should send in-app notification immediately', async () => {
+    it("should send in-app notification immediately", async () => {
       // Test implementation
     });
 
-    it('should respect user notification preferences', async () => {
+    it("should respect user notification preferences", async () => {
       // Test implementation
     });
 
-    it('should handle delivery failures gracefully', async () => {
+    it("should handle delivery failures gracefully", async () => {
       // Test implementation
     });
 
-    it('should retry failed notifications with exponential backoff', async () => {
+    it("should retry failed notifications with exponential backoff", async () => {
       // Test implementation
     });
 
-    it('should not send notifications if user opted out', async () => {
-      // Test implementation
-    });
-  });
-
-  describe('getUnreadNotifications', () => {
-    it('should return only unread notifications', async () => {
-      // Test implementation
-    });
-
-    it('should order by creation date descending', async () => {
-      // Test implementation
-    });
-
-    it('should include order details', async () => {
+    it("should not send notifications if user opted out", async () => {
       // Test implementation
     });
   });
 
-  describe('markAsRead', () => {
-    it('should update readAt timestamp', async () => {
+  describe("getUnreadNotifications", () => {
+    it("should return only unread notifications", async () => {
       // Test implementation
     });
 
-    it('should handle non-existent notification gracefully', async () => {
+    it("should order by creation date descending", async () => {
+      // Test implementation
+    });
+
+    it("should include order details", async () => {
+      // Test implementation
+    });
+  });
+
+  describe("markAsRead", () => {
+    it("should update readAt timestamp", async () => {
+      // Test implementation
+    });
+
+    it("should handle non-existent notification gracefully", async () => {
       // Test implementation
     });
   });
@@ -237,53 +242,53 @@ describe('OrderNotificationService', () => {
 **File**: `src/lib/services/__tests__/order-events.service.test.ts`
 
 ```typescript
-describe('OrderEventService', () => {
-  describe('emitStatusChange', () => {
-    it('should emit event to all listeners', async () => {
+describe("OrderEventService", () => {
+  describe("emitStatusChange", () => {
+    it("should emit event to all listeners", async () => {
       // Test implementation
     });
 
-    it('should emit to order-specific listeners', async () => {
+    it("should emit to order-specific listeners", async () => {
       // Test implementation
     });
 
-    it('should emit to farm-specific listeners', async () => {
+    it("should emit to farm-specific listeners", async () => {
       // Test implementation
     });
 
-    it('should emit to customer-specific listeners', async () => {
+    it("should emit to customer-specific listeners", async () => {
       // Test implementation
     });
 
-    it('should include complete event payload', async () => {
-      // Test implementation
-    });
-  });
-
-  describe('subscribeToOrder', () => {
-    it('should receive order-specific events', async () => {
-      // Test implementation
-    });
-
-    it('should support unsubscribe functionality', async () => {
-      // Test implementation
-    });
-
-    it('should handle multiple subscribers', async () => {
+    it("should include complete event payload", async () => {
       // Test implementation
     });
   });
 
-  describe('subscribeToFarmOrders', () => {
-    it('should receive all farm order events', async () => {
+  describe("subscribeToOrder", () => {
+    it("should receive order-specific events", async () => {
       // Test implementation
     });
 
-    it('should receive new order events', async () => {
+    it("should support unsubscribe functionality", async () => {
       // Test implementation
     });
 
-    it('should support unsubscribe functionality', async () => {
+    it("should handle multiple subscribers", async () => {
+      // Test implementation
+    });
+  });
+
+  describe("subscribeToFarmOrders", () => {
+    it("should receive all farm order events", async () => {
+      // Test implementation
+    });
+
+    it("should receive new order events", async () => {
+      // Test implementation
+    });
+
+    it("should support unsubscribe functionality", async () => {
       // Test implementation
     });
   });
@@ -301,36 +306,36 @@ describe('OrderEventService', () => {
 **File**: `src/lib/state-machines/__tests__/order-status.machine.test.ts`
 
 ```typescript
-describe('OrderStatusStateMachine', () => {
-  it('should allow PENDING → CONFIRMED transition', () => {
+describe("OrderStatusStateMachine", () => {
+  it("should allow PENDING → CONFIRMED transition", () => {
     // Test implementation
   });
 
-  it('should allow CONFIRMED → PREPARING transition', () => {
+  it("should allow CONFIRMED → PREPARING transition", () => {
     // Test implementation
   });
 
-  it('should allow PREPARING → READY_FOR_PICKUP transition', () => {
+  it("should allow PREPARING → READY_FOR_PICKUP transition", () => {
     // Test implementation
   });
 
-  it('should allow READY_FOR_PICKUP → COMPLETED transition', () => {
+  it("should allow READY_FOR_PICKUP → COMPLETED transition", () => {
     // Test implementation
   });
 
-  it('should allow cancellation from most states', () => {
+  it("should allow cancellation from most states", () => {
     // Test implementation
   });
 
-  it('should reject COMPLETED → PREPARING transition', () => {
+  it("should reject COMPLETED → PREPARING transition", () => {
     // Test implementation
   });
 
-  it('should reject invalid transitions', () => {
+  it("should reject invalid transitions", () => {
     // Test implementation
   });
 
-  it('should validate all defined transitions', () => {
+  it("should validate all defined transitions", () => {
     // Test implementation
   });
 });
@@ -347,35 +352,35 @@ describe('OrderStatusStateMachine', () => {
 **File**: `src/lib/validators/__tests__/order-tracking.validator.test.ts`
 
 ```typescript
-describe('OrderTrackingValidator', () => {
-  describe('validateStatusUpdate', () => {
-    it('should validate correct status values', () => {
+describe("OrderTrackingValidator", () => {
+  describe("validateStatusUpdate", () => {
+    it("should validate correct status values", () => {
       // Test implementation
     });
 
-    it('should reject invalid status values', () => {
+    it("should reject invalid status values", () => {
       // Test implementation
     });
 
-    it('should validate reason field when provided', () => {
+    it("should validate reason field when provided", () => {
       // Test implementation
     });
 
-    it('should reject empty reason for cancellation', () => {
+    it("should reject empty reason for cancellation", () => {
       // Test implementation
     });
   });
 
-  describe('validateFulfillmentDetails', () => {
-    it('should validate pickup location', () => {
+  describe("validateFulfillmentDetails", () => {
+    it("should validate pickup location", () => {
       // Test implementation
     });
 
-    it('should validate delivery address', () => {
+    it("should validate delivery address", () => {
       // Test implementation
     });
 
-    it('should reject invalid fulfillment type', () => {
+    it("should reject invalid fulfillment type", () => {
       // Test implementation
     });
   });
@@ -391,6 +396,7 @@ describe('OrderTrackingValidator', () => {
 ## 🔗 Integration Testing Strategy
 
 ### Coverage Targets
+
 - All API routes: 100%
 - Database transactions: 100%
 - Service interactions: 95%+
@@ -400,72 +406,72 @@ describe('OrderTrackingValidator', () => {
 **File**: `src/app/api/orders/[orderId]/status/__tests__/route.test.ts`
 
 ```typescript
-import { describe, it, expect } from '@jest/globals';
-import { PUT, GET } from '../route';
-import { createMockRequest } from '@/test/utils';
+import { describe, it, expect } from "@jest/globals";
+import { PUT, GET } from "../route";
+import { createMockRequest } from "@/test/utils";
 
-describe('PUT /api/orders/[orderId]/status', () => {
-  it('should update order status with valid authentication', async () => {
+describe("PUT /api/orders/[orderId]/status", () => {
+  it("should update order status with valid authentication", async () => {
     // Arrange
     const request = createMockRequest({
-      method: 'PUT',
-      body: { status: 'CONFIRMED' },
-      session: { user: { id: 'farmer-123', role: 'FARMER' } }
+      method: "PUT",
+      body: { status: "CONFIRMED" },
+      session: { user: { id: "farmer-123", role: "FARMER" } },
     });
 
     // Act
-    const response = await PUT(request, { params: { orderId: 'order-123' } });
+    const response = await PUT(request, { params: { orderId: "order-123" } });
     const data = await response.json();
 
     // Assert
     expect(response.status).toBe(200);
     expect(data.success).toBe(true);
-    expect(data.data.status).toBe('CONFIRMED');
+    expect(data.data.status).toBe("CONFIRMED");
   });
 
-  it('should return 401 for unauthenticated requests', async () => {
+  it("should return 401 for unauthenticated requests", async () => {
     // Test implementation
   });
 
-  it('should return 400 for invalid status value', async () => {
+  it("should return 400 for invalid status value", async () => {
     // Test implementation
   });
 
-  it('should return 403 for unauthorized role', async () => {
+  it("should return 403 for unauthorized role", async () => {
     // Test implementation
   });
 
-  it('should return 404 for non-existent order', async () => {
+  it("should return 404 for non-existent order", async () => {
     // Test implementation
   });
 
-  it('should validate ownership for farmer role', async () => {
+  it("should validate ownership for farmer role", async () => {
     // Test implementation
   });
 
-  it('should create status history entry', async () => {
+  it("should create status history entry", async () => {
     // Test implementation
   });
 
-  it('should trigger notifications', async () => {
+  it("should trigger notifications", async () => {
     // Test implementation
   });
 });
 
-describe('GET /api/orders/[orderId]/status', () => {
-  it('should return status history for authorized user', async () => {
+describe("GET /api/orders/[orderId]/status", () => {
+  it("should return status history for authorized user", async () => {
     // Test implementation
   });
 
-  it('should return 401 for unauthenticated requests', async () => {
+  it("should return 401 for unauthenticated requests", async () => {
     // Test implementation
   });
 
-  it('should return 403 if user not authorized to view order', async () => {
+  it("should return 403 if user not authorized to view order", async () => {
     // Test implementation
   });
 
-  it('should order history by timestamp ascending', async () => {
+  it("should order history by timestamp ascending", async () => {
     // Test implementation
   });
 });
@@ -482,24 +488,24 @@ describe('GET /api/orders/[orderId]/status', () => {
 **File**: `src/lib/database/__tests__/order-transactions.test.ts`
 
 ```typescript
-describe('Order Database Transactions', () => {
-  it('should rollback on status update failure', async () => {
+describe("Order Database Transactions", () => {
+  it("should rollback on status update failure", async () => {
     // Test implementation
   });
 
-  it('should maintain referential integrity', async () => {
+  it("should maintain referential integrity", async () => {
     // Test implementation
   });
 
-  it('should handle concurrent updates correctly', async () => {
+  it("should handle concurrent updates correctly", async () => {
     // Test implementation
   });
 
-  it('should create history entry in same transaction', async () => {
+  it("should create history entry in same transaction", async () => {
     // Test implementation
   });
 
-  it('should respect foreign key constraints', async () => {
+  it("should respect foreign key constraints", async () => {
     // Test implementation
   });
 });
@@ -516,28 +522,28 @@ describe('Order Database Transactions', () => {
 **File**: `src/lib/realtime/__tests__/order-events.integration.test.ts`
 
 ```typescript
-describe('Real-time Event Integration', () => {
-  it('should deliver event to subscribed clients within 100ms', async () => {
+describe("Real-time Event Integration", () => {
+  it("should deliver event to subscribed clients within 100ms", async () => {
     // Test implementation
   });
 
-  it('should handle multiple simultaneous subscribers', async () => {
+  it("should handle multiple simultaneous subscribers", async () => {
     // Test implementation
   });
 
-  it('should filter events by farm correctly', async () => {
+  it("should filter events by farm correctly", async () => {
     // Test implementation
   });
 
-  it('should filter events by customer correctly', async () => {
+  it("should filter events by customer correctly", async () => {
     // Test implementation
   });
 
-  it('should handle client disconnections gracefully', async () => {
+  it("should handle client disconnections gracefully", async () => {
     // Test implementation
   });
 
-  it('should support reconnection without losing events', async () => {
+  it("should support reconnection without losing events", async () => {
     // Test implementation
   });
 });
@@ -552,6 +558,7 @@ describe('Real-time Event Integration', () => {
 ## 🎭 End-to-End Testing Strategy
 
 ### Testing Tools
+
 - **Framework**: Playwright
 - **Environment**: Staging
 - **Data**: Seeded test data
@@ -562,49 +569,56 @@ describe('Real-time Event Integration', () => {
 **File**: `e2e/customer-order-tracking.spec.ts`
 
 ```typescript
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test.describe('Customer Order Tracking', () => {
-  test('should display order status updates in real-time', async ({ page, context }) => {
+test.describe("Customer Order Tracking", () => {
+  test("should display order status updates in real-time", async ({
+    page,
+    context,
+  }) => {
     // 1. Customer logs in
-    await page.goto('/login');
-    await page.fill('[name="email"]', 'customer@test.com');
-    await page.fill('[name="password"]', 'password123');
+    await page.goto("/login");
+    await page.fill('[name="email"]', "customer@test.com");
+    await page.fill('[name="password"]', "password123");
     await page.click('button[type="submit"]');
 
     // 2. Navigate to order tracking page
-    await page.goto('/orders/test-order-123/track');
+    await page.goto("/orders/test-order-123/track");
 
     // 3. Verify initial status
-    await expect(page.locator('[data-testid="order-status"]')).toContainText('PENDING');
+    await expect(page.locator('[data-testid="order-status"]')).toContainText(
+      "PENDING",
+    );
 
     // 4. Open second tab as farmer
     const farmerPage = await context.newPage();
-    await farmerPage.goto('/farmer/login');
-    await farmerPage.fill('[name="email"]', 'farmer@test.com');
-    await farmerPage.fill('[name="password"]', 'password123');
+    await farmerPage.goto("/farmer/login");
+    await farmerPage.fill('[name="email"]', "farmer@test.com");
+    await farmerPage.fill('[name="password"]', "password123");
     await farmerPage.click('button[type="submit"]');
 
     // 5. Farmer updates order status
-    await farmerPage.goto('/farmer/orders');
+    await farmerPage.goto("/farmer/orders");
     await farmerPage.click('[data-testid="order-test-order-123"]');
     await farmerPage.click('[data-testid="confirm-order-btn"]');
 
     // 6. Verify customer page updates automatically
     await expect(page.locator('[data-testid="order-status"]')).toContainText(
-      'CONFIRMED',
-      { timeout: 5000 }
+      "CONFIRMED",
+      { timeout: 5000 },
     );
 
     // 7. Verify notification received
-    await expect(page.locator('[data-testid="notification-badge"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="notification-badge"]'),
+    ).toBeVisible();
   });
 
-  test('should display complete order timeline', async ({ page }) => {
+  test("should display complete order timeline", async ({ page }) => {
     // Test implementation
   });
 
-  test('should allow order cancellation within 24 hours', async ({ page }) => {
+  test("should allow order cancellation within 24 hours", async ({ page }) => {
     // Test implementation
   });
 });
@@ -621,8 +635,10 @@ test.describe('Customer Order Tracking', () => {
 **File**: `e2e/farmer-order-management.spec.ts`
 
 ```typescript
-test.describe('Farmer Order Management', () => {
-  test('should process order from confirmation to completion', async ({ page }) => {
+test.describe("Farmer Order Management", () => {
+  test("should process order from confirmation to completion", async ({
+    page,
+  }) => {
     // 1. Login as farmer
     // 2. View order queue
     // 3. Confirm new order
@@ -632,11 +648,11 @@ test.describe('Farmer Order Management', () => {
     // 7. Verify all statuses recorded
   });
 
-  test('should handle bulk order status updates', async ({ page }) => {
+  test("should handle bulk order status updates", async ({ page }) => {
     // Test implementation
   });
 
-  test('should filter orders by status', async ({ page }) => {
+  test("should filter orders by status", async ({ page }) => {
     // Test implementation
   });
 });
@@ -653,16 +669,18 @@ test.describe('Farmer Order Management', () => {
 **File**: `e2e/notification-delivery.spec.ts`
 
 ```typescript
-test.describe('Notification Delivery', () => {
-  test('should send email notification on order confirmation', async ({ page }) => {
+test.describe("Notification Delivery", () => {
+  test("should send email notification on order confirmation", async ({
+    page,
+  }) => {
     // Test implementation with email testing service
   });
 
-  test('should display in-app notification immediately', async ({ page }) => {
+  test("should display in-app notification immediately", async ({ page }) => {
     // Test implementation
   });
 
-  test('should respect user notification preferences', async ({ page }) => {
+  test("should respect user notification preferences", async ({ page }) => {
     // Test implementation
   });
 });
@@ -677,6 +695,7 @@ test.describe('Notification Delivery', () => {
 ## ⚡ Performance Testing Strategy
 
 ### Tools
+
 - **Load Testing**: k6
 - **Monitoring**: Grafana + Prometheus
 - **Profiling**: Node.js built-in profiler
@@ -686,39 +705,39 @@ test.describe('Notification Delivery', () => {
 **File**: `performance/order-status-api.k6.js`
 
 ```javascript
-import http from 'k6/http';
-import { check, sleep } from 'k6';
+import http from "k6/http";
+import { check, sleep } from "k6";
 
 export const options = {
   stages: [
-    { duration: '2m', target: 100 },  // Ramp up to 100 users
-    { duration: '5m', target: 100 },  // Stay at 100 users
-    { duration: '2m', target: 200 },  // Ramp up to 200 users
-    { duration: '5m', target: 200 },  // Stay at 200 users
-    { duration: '2m', target: 0 },    // Ramp down
+    { duration: "2m", target: 100 }, // Ramp up to 100 users
+    { duration: "5m", target: 100 }, // Stay at 100 users
+    { duration: "2m", target: 200 }, // Ramp up to 200 users
+    { duration: "5m", target: 200 }, // Stay at 200 users
+    { duration: "2m", target: 0 }, // Ramp down
   ],
   thresholds: {
-    http_req_duration: ['p(95)<200'],  // 95% under 200ms
-    http_req_failed: ['rate<0.01'],    // Error rate under 1%
+    http_req_duration: ["p(95)<200"], // 95% under 200ms
+    http_req_failed: ["rate<0.01"], // Error rate under 1%
   },
 };
 
 export default function () {
-  const orderId = 'test-order-123';
+  const orderId = "test-order-123";
   const response = http.put(
     `${__ENV.API_URL}/api/orders/${orderId}/status`,
-    JSON.stringify({ status: 'CONFIRMED' }),
+    JSON.stringify({ status: "CONFIRMED" }),
     {
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${__ENV.AUTH_TOKEN}`,
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${__ENV.AUTH_TOKEN}`,
       },
-    }
+    },
   );
 
   check(response, {
-    'status is 200': (r) => r.status === 200,
-    'response time < 200ms': (r) => r.timings.duration < 200,
+    "status is 200": (r) => r.status === 200,
+    "response time < 200ms": (r) => r.timings.duration < 200,
   });
 
   sleep(1);
@@ -726,6 +745,7 @@ export default function () {
 ```
 
 **Targets**:
+
 - 95th percentile < 200ms
 - Error rate < 1%
 - Support 200 concurrent users
@@ -743,14 +763,14 @@ export default function () {
 export const options = {
   scenarios: {
     websocket_connections: {
-      executor: 'constant-vus',
+      executor: "constant-vus",
       vus: 1000,
-      duration: '5m',
+      duration: "5m",
     },
   },
   thresholds: {
-    ws_connecting: ['p(95)<100'],      // Connection time < 100ms
-    ws_msgs_received: ['rate>10'],     // At least 10 msgs/sec
+    ws_connecting: ["p(95)<100"], // Connection time < 100ms
+    ws_msgs_received: ["rate>10"], // At least 10 msgs/sec
   },
 };
 
@@ -758,6 +778,7 @@ export const options = {
 ```
 
 **Targets**:
+
 - Support 1000 concurrent connections
 - Event delivery < 50ms
 - Zero dropped events
@@ -772,24 +793,24 @@ export const options = {
 ### 1. Authorization Tests
 
 ```typescript
-describe('Order Status Authorization', () => {
-  it('should prevent customer from updating other customer orders', async () => {
+describe("Order Status Authorization", () => {
+  it("should prevent customer from updating other customer orders", async () => {
     // Test implementation
   });
 
-  it('should prevent farmer from updating other farm orders', async () => {
+  it("should prevent farmer from updating other farm orders", async () => {
     // Test implementation
   });
 
-  it('should allow admin to update any order', async () => {
+  it("should allow admin to update any order", async () => {
     // Test implementation
   });
 
-  it('should reject requests with expired tokens', async () => {
+  it("should reject requests with expired tokens", async () => {
     // Test implementation
   });
 
-  it('should prevent CSRF attacks', async () => {
+  it("should prevent CSRF attacks", async () => {
     // Test implementation
   });
 });
@@ -804,20 +825,20 @@ describe('Order Status Authorization', () => {
 ### 2. Input Validation Tests
 
 ```typescript
-describe('Input Validation Security', () => {
-  it('should sanitize SQL injection attempts', async () => {
+describe("Input Validation Security", () => {
+  it("should sanitize SQL injection attempts", async () => {
     // Test implementation
   });
 
-  it('should reject XSS payloads', async () => {
+  it("should reject XSS payloads", async () => {
     // Test implementation
   });
 
-  it('should validate order ID format', async () => {
+  it("should validate order ID format", async () => {
     // Test implementation
   });
 
-  it('should reject malformed JSON', async () => {
+  it("should reject malformed JSON", async () => {
     // Test implementation
   });
 });
@@ -832,6 +853,7 @@ describe('Input Validation Security', () => {
 ## ♿ Accessibility Testing Strategy
 
 ### Tools
+
 - **Automated**: axe-core, Lighthouse
 - **Manual**: Screen reader testing (NVDA, VoiceOver)
 - **Standard**: WCAG 2.1 AA compliance
@@ -839,28 +861,28 @@ describe('Input Validation Security', () => {
 ### Test Checklist
 
 ```typescript
-describe('Order Tracking Accessibility', () => {
-  it('should have no axe violations', async () => {
+describe("Order Tracking Accessibility", () => {
+  it("should have no axe violations", async () => {
     // Test implementation with @axe-core/playwright
   });
 
-  it('should have proper ARIA labels on status updates', async () => {
+  it("should have proper ARIA labels on status updates", async () => {
     // Test implementation
   });
 
-  it('should support keyboard navigation', async () => {
+  it("should support keyboard navigation", async () => {
     // Test implementation
   });
 
-  it('should have sufficient color contrast', async () => {
+  it("should have sufficient color contrast", async () => {
     // Test implementation
   });
 
-  it('should announce status changes to screen readers', async () => {
+  it("should announce status changes to screen readers", async () => {
     // Test implementation
   });
 
-  it('should have descriptive alt text for status icons', async () => {
+  it("should have descriptive alt text for status icons", async () => {
     // Test implementation
   });
 });
@@ -875,11 +897,13 @@ describe('Order Tracking Accessibility', () => {
 ## 📊 Test Execution Plan
 
 ### Week 1: Core Testing
+
 **Days 1-3**: Unit tests for services and state machines
 **Days 4-5**: Integration tests for API routes
 **Days 6-7**: E2E tests for critical journeys
 
 ### Week 2: Quality Assurance
+
 **Days 8-9**: Performance testing and optimization
 **Days 10-11**: Security and accessibility testing
 **Days 12-13**: Bug fixes and regression testing
@@ -890,11 +914,13 @@ describe('Order Tracking Accessibility', () => {
 ## 🎯 Test Coverage Metrics
 
 ### Current Sprint 6 Baseline
+
 - Unit test coverage: 95.2%
 - Integration test coverage: 90%
 - E2E test coverage: 85%
 
 ### Sprint 7 Targets
+
 - Unit test coverage: 95%+
 - Integration test coverage: 95%+
 - E2E test coverage: 90%+
@@ -909,27 +935,32 @@ describe('Order Tracking Accessibility', () => {
 ### Severity Levels
 
 **Critical (P0)**: Blocks release
+
 - Production deployment failure
 - Data loss or corruption
 - Security vulnerability
 - Payment processing failure
 
 **High (P1)**: Must fix before release
+
 - Core feature broken
 - Status transition failure
 - Notification delivery failure
 
 **Medium (P2)**: Should fix before release
+
 - UI inconsistency
 - Performance degradation
 - Minor UX issue
 
 **Low (P3)**: Can defer to next sprint
+
 - Visual polish
 - Non-critical edge cases
 - Nice-to-have features
 
 ### Resolution Process
+
 1. Triage and assign severity
 2. Create bug ticket with reproduction steps
 3. Assign to developer
@@ -942,6 +973,7 @@ describe('Order Tracking Accessibility', () => {
 ## 🛠️ Testing Tools & Setup
 
 ### Required Tools
+
 ```bash
 # Install testing dependencies
 npm install --save-dev \
@@ -961,6 +993,7 @@ npm run prisma:migrate:test
 ```
 
 ### Environment Configuration
+
 ```env
 # .env.test
 DATABASE_URL="postgresql://test:test@localhost:5432/farmersmarket_test"
@@ -1035,6 +1068,7 @@ Feature is considered **DONE** when:
 ## 📚 Test Documentation
 
 ### Test Case Template
+
 ```markdown
 ## Test Case: [TC-XXX]
 
@@ -1043,23 +1077,28 @@ Feature is considered **DONE** when:
 **Type**: Integration
 
 ### Preconditions
+
 - User is authenticated as farmer
 - Order exists in PENDING status
 
 ### Steps
+
 1. Send PUT request to /api/orders/{id}/status
 2. Include { status: "CONFIRMED" } in body
 
 ### Expected Result
+
 - Response status: 200
 - Order status updated in database
 - Status history entry created
 - Notification sent to customer
 
 ### Actual Result
+
 [To be filled during test execution]
 
 ### Status
+
 ✅ PASSED | ❌ FAILED | ⏸️ BLOCKED
 ```
 
@@ -1068,6 +1107,7 @@ Feature is considered **DONE** when:
 ## 🎉 Sprint 7 Testing Success Criteria
 
 ### Technical Excellence
+
 - ✅ 200+ tests written
 - ✅ 95%+ code coverage achieved
 - ✅ 100% test pass rate
@@ -1075,6 +1115,7 @@ Feature is considered **DONE** when:
 - ✅ Performance targets met
 
 ### Quality Gates Passed
+
 - ✅ Unit tests: GREEN
 - ✅ Integration tests: GREEN
 - ✅ E2E tests: GREEN
@@ -1083,6 +1124,7 @@ Feature is considered **DONE** when:
 - ✅ Accessibility audit: GREEN
 
 ### Production Readiness
+
 - ✅ Staging environment validated
 - ✅ Load testing completed
 - ✅ Monitoring configured

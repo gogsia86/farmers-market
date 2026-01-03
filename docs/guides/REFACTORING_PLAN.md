@@ -11,6 +11,7 @@
 ## 📊 Current State Assessment
 
 ### ✅ Strengths
+
 - **Production Ready**: 250/250 tests passing (100% pass rate)
 - **Modern Stack**: Next.js 16, TypeScript, Prisma 7, NextAuth 5
 - **Zero TypeScript Errors**: `npx tsc --noEmit` passes cleanly
@@ -19,6 +20,7 @@
 - **Deployment Ready**: Docker + Vercel configurations complete
 
 ### ⚠️ Areas for Improvement
+
 - Configuration complexity (500+ line next.config.mjs)
 - Hardware-specific optimizations hardcoded
 - Unconventional naming ("Divine Agricultural Consciousness")
@@ -31,11 +33,13 @@
 ## 🎯 Refactoring Phases
 
 ### **Phase 1: Fix Critical Issues** (Week 1-2) ✅
+
 **Priority:** CRITICAL  
 **Timeline:** December 26, 2024 - Completed December 26, 2024  
 **Status:** ✅ COMPLETE
 
 #### Objectives
+
 1. ✅ Remove `ignoreBuildErrors` workaround
 2. ✅ Fix security vulnerabilities
 3. ✅ Document OpenTelemetry version strategy
@@ -47,31 +51,39 @@
 #### Tasks
 
 ##### 1.1 Remove TypeScript Build Error Bypass ✅
+
 **File:** `next.config.mjs`
 **Current:**
+
 ```javascript
 typescript: {
   ignoreBuildErrors: true,  // ❌ BAD PRACTICE
   tsconfigPath: "./tsconfig.json",
 }
 ```
+
 **Target:**
+
 ```javascript
 typescript: {
   ignoreBuildErrors: false,  // ✅ Proper error handling
   tsconfigPath: "./tsconfig.json",
 }
 ```
+
 **Status:** ✅ VERIFIED - No actual TypeScript errors found
 **Action:** Safe to remove workaround
 
 ##### 1.2 Fix Security Vulnerabilities 🔄
+
 **Affected Packages:**
+
 - `markdown-pdf@11.0.0` (critical vulnerabilities)
   - Depends on: `phantomjs-prebuilt`, `form-data`, `tough-cookie`, `tmp`
   - **Risk Level:** LOW (development dependency only)
-  
+
 **Decision Matrix:**
+
 ```
 Q: Is markdown-pdf used in production code?
 A: NO - Only for documentation generation
@@ -84,32 +96,38 @@ A: YES - Alternative: pandoc, mdpdf, or remove if unused
 ```
 
 **Action Items:**
+
 - [ ] Audit usage: `grep -r "markdown-pdf" .`
 - [ ] If unused: Remove from package.json
 - [ ] If needed: Replace with `@marp-team/marp-cli` or `mdpdf`
 - [ ] Re-run: `npm audit` to verify fix
 
 ##### 1.3 Document OpenTelemetry Strategy 🔄
+
 **Issue:** TODO comment about version mismatches
 **Action:** Create `docs/OPENTELEMETRY_STRATEGY.md`
 
 **Current Versions:**
+
 - `@opentelemetry/api@1.9.0` ✅
 - `@opentelemetry/sdk-node@*` (multiple versions in tree)
 - All dependencies using `@opentelemetry/api@1.9.0` (good!)
 
 **Strategy:**
+
 - [x] Verify version alignment - DONE (1.9.0 consistently used)
 - [ ] Document why current versions are chosen
 - [ ] Set up Dependabot for OpenTelemetry updates
 - [ ] Remove TODO from next.config.mjs
 
 ##### 1.4 Create Technical Debt Tracker 🔄
+
 **File:** `TECHNICAL_DEBT.md` (create new)
 **Purpose:** Centralized tracking of known issues
 **Action:** See template below
 
 ##### 1.5 Establish Refactoring Guidelines 🔄
+
 **File:** `.refactoring-rules` (create new)
 **Purpose:** Prevent new technical debt
 **Action:** See template below
@@ -117,11 +135,13 @@ A: YES - Alternative: pandoc, mdpdf, or remove if unused
 ---
 
 ### **Phase 2: Simplify Configuration** (Week 3-4) ✅
+
 **Priority:** HIGH  
 **Timeline:** December 26, 2024 - Completed December 26, 2024  
 **Status:** ✅ COMPLETE (14 days ahead of schedule)
 
 #### Objectives
+
 1. ✅ Simplify configuration complexity (reduced by 73%)
 2. ✅ Remove hardware-specific optimizations (100% portable)
 3. ✅ Make configurations environment-agnostic (dynamic detection)
@@ -133,7 +153,9 @@ A: YES - Alternative: pandoc, mdpdf, or remove if unused
 #### Tasks Completed
 
 ##### 2.1 Hardware-Specific Configuration Removed ✅
+
 **Completed:** December 26, 2024
+
 - ✅ Removed all HP OMEN-specific comments and headers
 - ✅ Implemented dynamic CPU detection (`os.cpus().length`)
 - ✅ Made cache configuration environment-aware
@@ -143,7 +165,9 @@ A: YES - Alternative: pandoc, mdpdf, or remove if unused
 **Result:** 100% portable configuration, works on any developer machine
 
 ##### 2.2 Webpack Cache Groups Optimized ✅
+
 **Completed:** December 26, 2024
+
 - ✅ Reduced cache groups from 13 to 7 (46% reduction)
 - ✅ Established clear priority hierarchy (40 → 10)
 - ✅ Consolidated route-based groups into single 'routes' group
@@ -151,6 +175,7 @@ A: YES - Alternative: pandoc, mdpdf, or remove if unused
 - ✅ Grouped critical services (Stripe, Auth, OpenTelemetry)
 
 **Final Cache Groups:**
+
 1. `framework` (Priority 40) - React, Next.js essentials
 2. `routes` (Priority 35) - Admin, Farmer, Monitoring (consolidated)
 3. `heavyAsync` (Priority 30) - AI/ML, Charts, Animations (on-demand)
@@ -162,7 +187,9 @@ A: YES - Alternative: pandoc, mdpdf, or remove if unused
 **Result:** Simpler mental model, better cache reuse, 60 optimized chunks
 
 ##### 2.3 Webpack Configuration Extracted ✅
+
 **Completed:** December 26, 2024
+
 - ✅ Created `webpack.config.mjs` (277 lines, 7.15 KB)
 - ✅ Exported all webpack optimization functions
 - ✅ Added comprehensive JSDoc comments
@@ -170,26 +197,29 @@ A: YES - Alternative: pandoc, mdpdf, or remove if unused
 - ✅ Integrated with Next.js via `configureWebpack()`
 
 **New File:** `webpack.config.mjs`
+
 ```javascript
 // Exports:
-- cacheGroups
-- getTerserConfig()
-- getOptimizationConfig()
-- getPerformanceConfig()
-- getCacheConfig()
-- getOptimalParallelism()
-- configureWebpack() // Main function
-- getCacheGroup()
-- getCacheGroupNames()
-- getCacheGroupsByPriority()
+-cacheGroups -
+  getTerserConfig() -
+  getOptimizationConfig() -
+  getPerformanceConfig() -
+  getCacheConfig() -
+  getOptimalParallelism() -
+  configureWebpack() - // Main function
+  getCacheGroup() -
+  getCacheGroupNames() -
+  getCacheGroupsByPriority();
 ```
 
 **Result:** Better separation of concerns, improved maintainability
 
 ##### 2.4 Image Configuration Simplified ✅
+
 **Completed:** December 26, 2024
+
 - ✅ Consolidated remote patterns from 12 to 7 (42% reduction)
-- ✅ Used wildcard patterns (*.cloudinary.com, *.amazonaws.com)
+- ✅ Used wildcard patterns (_.cloudinary.com, _.amazonaws.com)
 - ✅ Removed redundant CDN configurations
 - ✅ Added clear categorization comments
 - ✅ Optimized cache TTL (365 days → 60 days)
@@ -197,7 +227,9 @@ A: YES - Alternative: pandoc, mdpdf, or remove if unused
 **Result:** Cleaner configuration, maintained security, improved flexibility
 
 ##### 2.5 Comprehensive Documentation Created ✅
+
 **Completed:** December 26, 2024
+
 - ✅ `docs/configuration-guide.md` (1,050+ lines)
 - ✅ `docs/webpack-optimization-guide.md` (836+ lines)
 - ✅ Total: 1,886+ lines of comprehensive documentation
@@ -207,7 +239,9 @@ A: YES - Alternative: pandoc, mdpdf, or remove if unused
 **Result:** Onboarding time reduced 70% (2-3 days → 2-3 hours)
 
 ##### 2.6 Performance Testing & Validation ✅
+
 **Completed:** December 26, 2024
+
 - ✅ Created `scripts/measure-phase2-performance.mjs`
 - ✅ Validated build time: ~45 seconds (optimal)
 - ✅ Validated bundle size: 2.64 MB (60 optimized chunks)
@@ -220,11 +254,13 @@ A: YES - Alternative: pandoc, mdpdf, or remove if unused
 ---
 
 ### **Phase 3: Standardize Naming** (Month 2) 🟢
+
 **Priority:** MEDIUM  
 **Timeline:** January 25 - February 25, 2025  
 **Status:** 📋 PLANNED
 
 #### Objectives
+
 1. Replace "Divine Agricultural Consciousness" metaphors
 2. Standardize function and variable names
 3. Update repository and service names
@@ -234,6 +270,7 @@ A: YES - Alternative: pandoc, mdpdf, or remove if unused
 #### Strategy: Gradual Deprecation
 
 **Approach:**
+
 ```typescript
 // Step 1: Create new standard names
 export const cache = quantumCache; // Alias
@@ -245,46 +282,45 @@ export const createProduct = manifestProduct; // Alias
 
 #### Naming Convention Mapping
 
-| Current (Metaphorical) | Target (Standard) | Priority |
-|------------------------|-------------------|----------|
-| `manifestProduct()` | `createProduct()` | HIGH |
-| `quantumCache` | `cache` | HIGH |
-| `QuantumProductRepository` | `ProductRepository` | HIGH |
-| `divinePatterns` | `patterns` | MEDIUM |
-| `agriculturalConsciousness` | `context` | MEDIUM |
-| `HP_OMEN_OPTIMIZATION` | `PERFORMANCE_MODE` | HIGH |
+| Current (Metaphorical)      | Target (Standard)   | Priority |
+| --------------------------- | ------------------- | -------- |
+| `manifestProduct()`         | `createProduct()`   | HIGH     |
+| `quantumCache`              | `cache`             | HIGH     |
+| `QuantumProductRepository`  | `ProductRepository` | HIGH     |
+| `divinePatterns`            | `patterns`          | MEDIUM   |
+| `agriculturalConsciousness` | `context`           | MEDIUM   |
+| `HP_OMEN_OPTIMIZATION`      | `PERFORMANCE_MODE`  | HIGH     |
 
 #### Files to Update (Priority Order)
 
 **High Priority (Core):**
+
 1. `src/lib/repositories/*.repository.ts` - 10 files
 2. `src/lib/services/*.service.ts` - 15 files
 3. `src/lib/cache/*.ts` - 5 files
 4. `next.config.mjs` - 1 file
 5. `.cursorrules` - 1 file
 
-**Medium Priority (Supporting):**
-6. `src/lib/utils/*.ts` - 8 files
-7. Test files - 50+ files
-8. Component files - 200+ files
+**Medium Priority (Supporting):** 6. `src/lib/utils/*.ts` - 8 files 7. Test files - 50+ files 8. Component files - 200+ files
 
-**Low Priority (Docs):**
-9. Documentation files - 15 files
-10. Comments throughout codebase
+**Low Priority (Docs):** 9. Documentation files - 15 files 10. Comments throughout codebase
 
 #### Implementation Plan
 
 **Week 1: Aliases**
+
 - Create standard aliases for all metaphorical names
 - No breaking changes
 - Add deprecation warnings
 
 **Week 2-3: Internal Updates**
+
 - Update repository layer
 - Update service layer
 - Update tests
 
 **Week 4: Documentation**
+
 - Update all documentation
 - Update README examples
 - Update contribution guidelines
@@ -292,11 +328,13 @@ export const createProduct = manifestProduct; // Alias
 ---
 
 ### **Phase 4: Reduce Complexity** (Month 3) 🟢
+
 **Priority:** MEDIUM  
 **Timeline:** February 26 - March 26, 2025  
 **Status:** 📋 PLANNED
 
 #### Objectives
+
 1. Audit 32 `src/lib` subdirectories
 2. Consolidate redundant modules
 3. Simplify abstraction layers
@@ -306,6 +344,7 @@ export const createProduct = manifestProduct; // Alias
 #### Current Structure Analysis
 
 **src/lib/** (32 subdirectories):
+
 ```
 ├── ai/                    # AI/ML features
 ├── api/                   # API utilities
@@ -343,9 +382,9 @@ export const createProduct = manifestProduct; // Alias
 #### Consolidation Plan
 
 **Merge Candidates:**
+
 1. **Payment Modules** (3 → 1)
    - `payment/` + `payments/` + `stripe/` → `payment/`
-   
 2. **Monitoring Stack** (3 → 1)
    - `monitoring/` + `telemetry/` + `tracing/` → `monitoring/`
 
@@ -362,6 +401,7 @@ export const createProduct = manifestProduct; // Alias
    - Merge `performance/` into `utils/`
 
 **Target Structure (20 modules):**
+
 ```
 src/lib/
 ├── auth/                  # Authentication
@@ -391,6 +431,7 @@ src/lib/
 ---
 
 ### **Phase 5: Mobile App TODOs** (Month 3-4) 🟢
+
 **Priority:** MEDIUM  
 **Timeline:** March 1-31, 2025  
 **Status:** 📋 PLANNED
@@ -430,6 +471,7 @@ src/lib/
 ---
 
 ### **Phase 6: Documentation Consolidation** (Ongoing) 🟢
+
 **Priority:** LOW  
 **Timeline:** Continuous  
 **Status:** 📋 PLANNED
@@ -437,19 +479,17 @@ src/lib/
 #### Current Documentation (15+ files)
 
 **Keep (Essential):**
+
 1. `README.md` - Main project overview
 2. `QUICK_START.md` - Getting started guide
 3. `CONTRIBUTING.md` - Contribution guidelines
 4. `CHANGELOG.md` - Version history
 5. `LICENSE` - Legal
 
-**Consolidate/Archive:**
-6. Architecture docs → Single `ARCHITECTURE.md`
-7. Deployment docs → Single `DEPLOYMENT.md`
-8. Runbooks → `docs/runbooks/`
-9. Build reports → Archive to `docs/archive/`
+**Consolidate/Archive:** 6. Architecture docs → Single `ARCHITECTURE.md` 7. Deployment docs → Single `DEPLOYMENT.md` 8. Runbooks → `docs/runbooks/` 9. Build reports → Archive to `docs/archive/`
 
 **New Structure:**
+
 ```
 ├── README.md
 ├── QUICK_START.md
@@ -472,6 +512,7 @@ src/lib/
 ## 📊 Success Metrics
 
 ### Phase 1 (Critical Fixes)
+
 - [ ] `ignoreBuildErrors: false` enabled
 - [ ] Zero TypeScript errors with strict checking
 - [ ] Security vulnerabilities reduced to 0-2
@@ -479,6 +520,7 @@ src/lib/
 - [ ] Refactoring guidelines established
 
 ### Phase 2 (Configuration) ✅
+
 - [x] Configuration complexity reduced by 73%
 - [x] Hardware-specific references removed (100%)
 - [x] Webpack cache groups optimized (13 → 7)
@@ -491,6 +533,7 @@ src/lib/
 - [ ] All tests still passing
 
 ### Phase 3 (Naming)
+
 - [ ] All "Divine/Quantum" names have standard aliases
 - [ ] 50% of internal usage updated to standard names
 - [ ] Documentation updated
@@ -498,6 +541,7 @@ src/lib/
 - [ ] Deprecation warnings in place
 
 ### Phase 4 (Complexity)
+
 - [ ] src/lib reduced from 32 to 20 modules
 - [ ] Duplicate modules merged
 - [ ] Controllers merged into services
@@ -505,6 +549,7 @@ src/lib/
 - [ ] Tests updated and passing
 
 ### Phase 5 (Mobile)
+
 - [ ] All 6 mobile TODOs completed
 - [ ] Guest mode working
 - [ ] Favorites API implemented
@@ -512,6 +557,7 @@ src/lib/
 - [ ] Account deletion secure
 
 ### Phase 6 (Documentation)
+
 - [ ] Documentation files reduced from 15 to 9 core files
 - [ ] Architecture diagrams consolidated
 - [ ] Deployment docs unified
@@ -522,6 +568,7 @@ src/lib/
 ## 🚨 Risk Management
 
 ### High Risk Items
+
 1. **Breaking Changes Risk**
    - Mitigation: Use aliases, gradual deprecation
    - Rollback: Git branches for each phase
@@ -535,6 +582,7 @@ src/lib/
    - Target: Maintain 85%+ coverage
 
 ### Medium Risk Items
+
 4. **Configuration Breaking Risk**
    - Mitigation: Test in dev before production
    - Rollback: Version control all configs
@@ -544,6 +592,7 @@ src/lib/
    - Support: Update CONTRIBUTING.md with new patterns
 
 ### Low Risk Items
+
 6. **Documentation Sync Risk**
    - Mitigation: Update docs alongside code
    - Verification: Documentation review checklist
@@ -552,14 +601,14 @@ src/lib/
 
 ## 📅 Timeline Summary
 
-| Phase | Duration | Start Date | End Date | Status |
-|-------|----------|------------|----------|--------|
-| Phase 1: Critical Fixes | 2 weeks | Dec 26, 2024 | Jan 9, 2025 | 🚀 ACTIVE |
-| Phase 2: Configuration | 2 weeks | Jan 10, 2025 | Jan 24, 2025 | 📋 PLANNED |
-| Phase 3: Naming | 4 weeks | Jan 25, 2025 | Feb 25, 2025 | 📋 PLANNED |
-| Phase 4: Complexity | 4 weeks | Feb 26, 2025 | Mar 26, 2025 | 📋 PLANNED |
-| Phase 5: Mobile TODOs | 4 weeks | Mar 1, 2025 | Mar 31, 2025 | 📋 PLANNED |
-| Phase 6: Documentation | Ongoing | Dec 26, 2024 | Ongoing | 📋 PLANNED |
+| Phase                   | Duration | Start Date   | End Date     | Status     |
+| ----------------------- | -------- | ------------ | ------------ | ---------- |
+| Phase 1: Critical Fixes | 2 weeks  | Dec 26, 2024 | Jan 9, 2025  | 🚀 ACTIVE  |
+| Phase 2: Configuration  | 2 weeks  | Jan 10, 2025 | Jan 24, 2025 | 📋 PLANNED |
+| Phase 3: Naming         | 4 weeks  | Jan 25, 2025 | Feb 25, 2025 | 📋 PLANNED |
+| Phase 4: Complexity     | 4 weeks  | Feb 26, 2025 | Mar 26, 2025 | 📋 PLANNED |
+| Phase 5: Mobile TODOs   | 4 weeks  | Mar 1, 2025  | Mar 31, 2025 | 📋 PLANNED |
+| Phase 6: Documentation  | Ongoing  | Dec 26, 2024 | Ongoing      | 📋 PLANNED |
 
 **Total Timeline:** 3 months (12 weeks)  
 **Expected Outcome:** 75% → 90% codebase quality
@@ -569,8 +618,10 @@ src/lib/
 ## 🎯 Decision Log
 
 ### Decision 1: Don't Rebuild from Scratch ✅
+
 **Date:** December 26, 2024  
 **Reasoning:**
+
 - Working production system (250 passing tests)
 - Modern tech stack (Next.js 16, TypeScript, Prisma 7)
 - 3-6 months of work already invested
@@ -578,6 +629,7 @@ src/lib/
 - Refactoring is lower risk than rebuild
 
 **Alternatives Considered:**
+
 - Full rewrite (rejected - too risky)
 - Feature freeze (rejected - business impact)
 - Do nothing (rejected - technical debt grows)
@@ -585,8 +637,10 @@ src/lib/
 **Chosen:** Systematic incremental refactoring
 
 ### Decision 2: Remove ignoreBuildErrors ✅
+
 **Date:** December 26, 2024  
 **Reasoning:**
+
 - `npx tsc --noEmit` shows zero errors
 - Workaround is unnecessary
 - Hiding errors is bad practice
@@ -595,8 +649,10 @@ src/lib/
 **Action:** Remove in Phase 1
 
 ### Decision 3: Keep markdown-pdf for Now ⏳
+
 **Date:** December 26, 2024  
 **Reasoning:**
+
 - Development dependency only (not in production)
 - Low actual risk
 - Need to audit usage first
@@ -605,8 +661,10 @@ src/lib/
 **Action:** Audit in Phase 1, decide removal
 
 ### Decision 4: Gradual Naming Migration ✅
+
 **Date:** December 26, 2024  
 **Reasoning:**
+
 - Avoid breaking changes
 - Allow gradual transition
 - Team can adapt slowly
@@ -619,16 +677,19 @@ src/lib/
 ## 📞 Communication Plan
 
 ### Team Updates
+
 - **Weekly:** Refactoring progress report
 - **After Each Phase:** Demo of improvements
 - **Before Breaking Changes:** 2-week notice
 
 ### Documentation Updates
+
 - Update README.md after each phase
 - Maintain CHANGELOG.md with refactoring notes
 - Keep this document updated with progress
 
 ### Stakeholder Communication
+
 - **Business:** Monthly progress report
 - **Technical:** Weekly standup updates
 - **DevOps:** Infrastructure change notifications
@@ -638,6 +699,7 @@ src/lib/
 ## 🛠️ Tools & Automation
 
 ### Recommended Tools
+
 1. **ESLint Rules** - Enforce new naming conventions
 2. **Husky Pre-commit** - Run TypeScript check before commit
 3. **Dependabot** - Automated dependency updates
@@ -645,6 +707,7 @@ src/lib/
 5. **SonarQube** - Code quality tracking
 
 ### Scripts to Create
+
 ```json
 {
   "scripts": {
@@ -662,12 +725,14 @@ src/lib/
 ## 📚 References
 
 ### Internal Documentation
+
 - `BUILD_COMPLETE.md` - Current build status
 - `REPOSITORY_CLEANUP_SUMMARY.md` - Recent cleanup work
 - `ARCHITECTURE_DIAGRAM.md` - System architecture
 - `.cursorrules` - AI coding assistant rules
 
 ### External Resources
+
 - [Next.js 16 Documentation](https://nextjs.org/docs)
 - [Prisma Best Practices](https://www.prisma.io/docs/guides)
 - [TypeScript Strict Mode](https://www.typescriptlang.org/tsconfig#strict)
@@ -678,6 +743,7 @@ src/lib/
 ## ✅ Quick Checklist
 
 ### Phase 1 (This Week)
+
 - [ ] Remove `ignoreBuildErrors` from next.config.mjs
 - [ ] Create TECHNICAL_DEBT.md
 - [ ] Create .refactoring-rules
@@ -687,6 +753,7 @@ src/lib/
 - [ ] Create refactoring branch protection rules
 
 ### Phase 2 (Next 2 Weeks)
+
 - [ ] Extract webpack config to separate files
 - [ ] Remove HP OMEN hardcoding
 - [ ] Simplify next.config.mjs
@@ -694,6 +761,7 @@ src/lib/
 - [ ] Reduce webpack cache groups
 
 ### Phase 3 (Month 2)
+
 - [ ] Create naming convention mapping
 - [ ] Add standard name aliases
 - [ ] Update repository layer

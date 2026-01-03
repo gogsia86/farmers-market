@@ -313,7 +313,7 @@ export async function GET(
         const previousPeriodStart = new Date(startDate);
         previousPeriodStart.setTime(
           previousPeriodStart.getTime() -
-          (endDate.getTime() - startDate.getTime()),
+            (endDate.getTime() - startDate.getTime()),
         );
 
         const previousExecutions = await database.workflowExecution.findMany({
@@ -328,17 +328,17 @@ export async function GET(
         const previousSuccessRate =
           previousExecutions.length > 0
             ? (previousExecutions.filter((e: any) => e.status === "success")
-              .length /
-              previousExecutions.length) *
-            100
+                .length /
+                previousExecutions.length) *
+              100
             : 0;
 
         const previousAvgDuration =
           previousExecutions.length > 0
             ? previousExecutions.reduce(
-              (sum: any, e: any) => sum + (e.durationMs || 0),
-              0,
-            ) / previousExecutions.length
+                (sum: any, e: any) => sum + (e.durationMs || 0),
+                0,
+              ) / previousExecutions.length
             : 0;
 
         const trends: MetricsTrends = {

@@ -36,12 +36,18 @@ const CONFIG = {
   testData: {
     farmer: {
       email: `farmer.${Date.now()}@farmersmarket.test`,
-      password: process.env.TEST_USER_PASSWORD || (() => {
-        console.error("\n❌ ERROR: TEST_USER_PASSWORD environment variable is required");
-        console.log("\nUsage:");
-        console.log("  TEST_USER_PASSWORD=YourPassword123! npx tsx scripts/mvp-validation-bot.ts");
-        process.exit(1);
-      })(),
+      password:
+        process.env.TEST_USER_PASSWORD ||
+        (() => {
+          console.error(
+            "\n❌ ERROR: TEST_USER_PASSWORD environment variable is required",
+          );
+          console.log("\nUsage:");
+          console.log(
+            "  TEST_USER_PASSWORD=YourPassword123! npx tsx scripts/mvp-validation-bot.ts",
+          );
+          process.exit(1);
+        })(),
       name: "Test Farmer",
       farmName: `Test Farm ${Date.now()}`,
       farmDescription: "A test farm for MVP validation",
@@ -49,20 +55,28 @@ const CONFIG = {
     },
     customer: {
       email: `customer.${Date.now()}@farmersmarket.test`,
-      password: process.env.TEST_USER_PASSWORD || (() => {
-        console.error("\n❌ ERROR: TEST_USER_PASSWORD environment variable is required");
-        process.exit(1);
-      })(),
+      password:
+        process.env.TEST_USER_PASSWORD ||
+        (() => {
+          console.error(
+            "\n❌ ERROR: TEST_USER_PASSWORD environment variable is required",
+          );
+          process.exit(1);
+        })(),
       name: "Test Customer",
       address: "456 Customer St, City, CA 95001",
       phone: "555-0123",
     },
     admin: {
       email: process.env.ADMIN_EMAIL || "admin@farmersmarket.app",
-      password: process.env.TEST_USER_PASSWORD || (() => {
-        console.error("\n❌ ERROR: TEST_USER_PASSWORD environment variable is required");
-        process.exit(1);
-      })(),
+      password:
+        process.env.TEST_USER_PASSWORD ||
+        (() => {
+          console.error(
+            "\n❌ ERROR: TEST_USER_PASSWORD environment variable is required",
+          );
+          process.exit(1);
+        })(),
     },
     product: {
       name: "Fresh Organic Tomatoes",
@@ -257,7 +271,7 @@ class MVPValidationBot {
 
   private async waitForNavigation(): Promise<void> {
     if (!this.page) return;
-    await this.page.waitForLoadState("networkidle").catch(() => { });
+    await this.page.waitForLoadState("networkidle").catch(() => {});
     await delay(1000);
   }
 
@@ -522,13 +536,13 @@ class MVPValidationBot {
       // Try to fill, but don't fail if already filled
       await this.page
         .fill('input[id*="ownerName"]', CONFIG.testData.farmer.name)
-        .catch(() => { });
+        .catch(() => {});
       await this.page
         .fill('input[type="email"]', CONFIG.testData.farmer.email)
-        .catch(() => { });
+        .catch(() => {});
       await this.page
         .fill('input[type="tel"]', "(503) 555-1234")
-        .catch(() => { });
+        .catch(() => {});
       await delay(500);
 
       // Click Next to go to step 4
@@ -539,7 +553,7 @@ class MVPValidationBot {
       log("  Step 4: Filling business info...", "cyan");
       await this.fillFormField('input[id*="businessLicense"]', "BL-12345");
       await this.fillFormField('input[id*="taxId"]', "12-3456789");
-      await this.page.check('input[type="checkbox"]').catch(() => { });
+      await this.page.check('input[type="checkbox"]').catch(() => {});
       await delay(500);
 
       // Click Next to review
@@ -832,7 +846,7 @@ class MVPValidationBot {
       // Try to edit product
       await this.page
         .click('button:has-text("Edit"), a:has-text("Edit")')
-        .catch(() => { });
+        .catch(() => {});
       await delay(2000);
 
       const screenshot = await takeScreenshot(
@@ -1209,10 +1223,10 @@ class MVPValidationBot {
       // Fill shipping/billing info
       await this.page
         .fill('input[name="address"]', CONFIG.testData.customer.address)
-        .catch(() => { });
+        .catch(() => {});
       await this.page
         .fill('input[name="phone"]', CONFIG.testData.customer.phone)
-        .catch(() => { });
+        .catch(() => {});
 
       await delay(1000);
 
@@ -2046,4 +2060,3 @@ if (require.main === module) {
 }
 
 export { MVPCheck, MVPReport, MVPValidationBot };
-

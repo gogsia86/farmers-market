@@ -98,9 +98,13 @@ export default function LoginPage() {
       }
     } catch (err) {
       setError("An unexpected error occurred. Please try again.");
-      authLogger.error("Login error", err instanceof Error ? err : new Error(String(err)), {
-        email: data.email,
-      });
+      authLogger.error(
+        "Login error",
+        err instanceof Error ? err : new Error(String(err)),
+        {
+          email: data.email,
+        },
+      );
     } finally {
       setIsLoading(false);
     }
@@ -154,8 +158,9 @@ export default function LoginPage() {
                 id="email"
                 data-testid="email-input"
                 autoComplete="email"
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-agricultural-500 focus:border-agricultural-500 outline-none transition-colors ${errors.email ? "border-red-500" : "border-gray-300"
-                  }`}
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-agricultural-500 focus:border-agricultural-500 outline-none transition-colors ${
+                  errors.email ? "border-red-500" : "border-gray-300"
+                }`}
                 placeholder="you@example.com"
               />
               {errors.email && (
@@ -179,8 +184,9 @@ export default function LoginPage() {
                 id="password"
                 data-testid="password-input"
                 autoComplete="current-password"
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-agricultural-500 focus:border-agricultural-500 outline-none transition-colors ${errors.password ? "border-red-500" : "border-gray-300"
-                  }`}
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-agricultural-500 focus:border-agricultural-500 outline-none transition-colors ${
+                  errors.password ? "border-red-500" : "border-gray-300"
+                }`}
                 placeholder="••••••••"
               />
               {errors.password && (

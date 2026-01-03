@@ -10,6 +10,7 @@
 ## 📋 Pre-Merge Checklist
 
 ### Code Quality & Testing
+
 - [x] All TypeScript errors resolved
 - [x] Import casing issues fixed (Card.tsx → card.tsx)
 - [x] Arithmetic operations with Decimal types fixed
@@ -20,6 +21,7 @@
 - [ ] Code coverage maintained or improved (target: >80%)
 
 ### API Consolidation Validation
+
 - [x] Farmer endpoints consolidated under `/api/farmers/`
 - [x] Farming resources consolidated under `/api/farmers/resources/`
 - [x] Payment wallet consolidated under `/api/payments/wallet`
@@ -31,6 +33,7 @@
 - [ ] Deprecation headers verified in responses
 
 ### Documentation
+
 - [x] Migration guide created (`docs/migrations/api-consolidation-guide.md`)
 - [x] Migration announcement drafted (`docs/migrations/api-consolidation-announcement.md`)
 - [x] Phase 4 analysis document completed (`PHASE_4_API_CONSOLIDATION_ANALYSIS.md`)
@@ -41,6 +44,7 @@
 - [ ] Changelog entry created
 
 ### Infrastructure & Monitoring
+
 - [ ] Endpoint usage telemetry configured
 - [ ] Monitoring dashboard created for tracking migration velocity
 - [ ] Alerts configured for error rate spikes
@@ -52,24 +56,31 @@
 ## 🧪 Testing Requirements
 
 ### Unit Tests
+
 ```bash
 npm run test:unit
 ```
+
 **Expected:** All unit tests pass, no regressions
 
 ### Integration Tests
+
 ```bash
 npm run test:integration
 ```
+
 **Expected:** All API routes respond correctly, aliases redirect properly
 
 ### E2E Tests
+
 ```bash
 npm run test:e2e
 ```
+
 **Expected:** User workflows function end-to-end with new endpoints
 
 ### Manual Testing Checklist
+
 - [ ] Farmer dashboard loads correctly (`GET /api/farmers/dashboard`)
 - [ ] Old farmer dashboard redirects (`POST /api/farmer/dashboard`)
 - [ ] Farming resources accessible under new paths
@@ -87,7 +98,9 @@ npm run test:e2e
 ## 🚀 Deployment Strategy
 
 ### Phase 1: Staging Deployment (Week 1)
+
 1. **Deploy to Staging**
+
    ```bash
    git checkout phase-4-api-consolidation
    # Verify clean state
@@ -109,7 +122,9 @@ npm run test:e2e
    - [ ] Verify database query performance unchanged
 
 ### Phase 2: Production Soft Launch (Week 2)
+
 1. **Merge to Main**
+
    ```bash
    git checkout main
    git merge --no-ff phase-4-api-consolidation -m "feat: API endpoint consolidation (Phase 4)
@@ -128,6 +143,7 @@ npm run test:e2e
    ```
 
 2. **Deploy to Production**
+
    ```bash
    ./scripts/deploy-production.sh
    ```
@@ -140,6 +156,7 @@ npm run test:e2e
    - [ ] Review logs for unexpected errors
 
 ### Phase 3: Communication Rollout (Week 2-3)
+
 1. **Internal Communication**
    - [ ] Notify engineering team via Slack
    - [ ] Update internal API documentation
@@ -162,6 +179,7 @@ npm run test:e2e
 ## 📊 Success Metrics
 
 ### Immediate Success (Week 1)
+
 - [ ] Zero critical errors post-deployment
 - [ ] API error rate < 0.1%
 - [ ] P95 latency unchanged or improved
@@ -169,12 +187,14 @@ npm run test:e2e
 - [ ] Deprecation headers present in 100% of alias responses
 
 ### Short-term Success (Month 1)
+
 - [ ] < 5 support tickets related to migration
 - [ ] At least 20% of traffic migrated to new endpoints
 - [ ] Zero production incidents related to consolidation
 - [ ] Positive developer feedback on migration process
 
 ### Long-term Success (By June 1, 2026)
+
 - [ ] 100% of traffic on new endpoints
 - [ ] Zero requests to deprecated aliases
 - [ ] Improved API consistency scores
@@ -186,6 +206,7 @@ npm run test:e2e
 ## 🔧 Rollback Plan
 
 ### Immediate Rollback (< 1 Hour)
+
 If critical issues discovered within first hour:
 
 ```bash
@@ -198,6 +219,7 @@ git push origin main
 ```
 
 ### Selective Rollback (< 24 Hours)
+
 If specific endpoints problematic:
 
 1. Disable problematic redirects via feature flag
@@ -206,6 +228,7 @@ If specific endpoints problematic:
 4. Redeploy after testing
 
 ### Emergency Contacts
+
 - **On-Call Engineer:** [phone number]
 - **Platform Lead:** [phone number]
 - **DevOps Lead:** [phone number]
@@ -215,6 +238,7 @@ If specific endpoints problematic:
 ## 🚨 Risk Assessment
 
 ### High Risk Areas
+
 1. **Payment Wallet Consolidation**
    - **Risk:** Financial transaction failures
    - **Mitigation:** Extra testing, real-time monitoring, immediate rollback capability
@@ -228,6 +252,7 @@ If specific endpoints problematic:
    - **Mitigation:** Load testing, performance monitoring
 
 ### Medium Risk Areas
+
 1. **Farming Resources Migration**
    - **Risk:** Broken links in documentation/apps
    - **Mitigation:** Alias redirects, comprehensive testing
@@ -237,6 +262,7 @@ If specific endpoints problematic:
    - **Mitigation:** Early communication, extended sunset period
 
 ### Low Risk Areas
+
 1. **Agricultural Consciousness Endpoint**
    - **Risk:** Low-traffic endpoint, minimal impact
    - **Mitigation:** Standard testing procedures
@@ -246,29 +272,34 @@ If specific endpoints problematic:
 ## 📝 Post-Merge Tasks
 
 ### Week 1
+
 - [ ] Monitor production metrics daily
 - [ ] Respond to support tickets within 4 hours
 - [ ] Daily sync with team on issues
 - [ ] Update monitoring dashboards
 
 ### Week 2-4
+
 - [ ] Send reminder email about deprecation to users still on old endpoints
 - [ ] Analyze migration velocity
 - [ ] Adjust timeline if needed
 - [ ] Publish case study / blog post
 
 ### Month 2-5
+
 - [ ] Monthly check on migration progress
 - [ ] Reach out to slow-adopters with assistance
 - [ ] Send final warning 30 days before sunset (May 1, 2026)
 - [ ] Prepare sunset implementation
 
 ### June 1, 2026 (Sunset)
+
 - [ ] Switch aliases from 308 redirect to 410 Gone
 - [ ] Monitor for any remaining old endpoint usage
 - [ ] Provide emergency support for late migrators
 
 ### July 2026 (Cleanup)
+
 - [ ] Archive deprecated alias files
 - [ ] Remove deprecation code
 - [ ] Update documentation
@@ -279,22 +310,27 @@ If specific endpoints problematic:
 ## 📞 Stakeholder Communication
 
 ### Engineering Team
+
 - **Method:** Slack #engineering channel
 - **Message:** "Phase 4 API consolidation merged to main. New endpoints live, old endpoints aliased with 6-month sunset."
 
 ### Product Team
+
 - **Method:** Email + Slack #product
 - **Message:** "API consolidation complete. User-facing impact minimal. Migration guide available for partners."
 
 ### Support Team
+
 - **Method:** Support team meeting + documentation
 - **Message:** "New API structure live. Support guide available. Expect migration questions over next 6 months."
 
 ### API Consumers
+
 - **Method:** Email blast + developer portal
 - **Message:** Use `api-consolidation-announcement.md` content
 
 ### Executive Team
+
 - **Method:** Weekly status email
 - **Message:** "Phase 4 complete: API consolidated, 6-month migration window, zero downtime."
 
@@ -303,13 +339,15 @@ If specific endpoints problematic:
 ## ✅ Final Approval
 
 ### Sign-off Required From:
-- [ ] **Tech Lead:** _____________________ Date: _____
-- [ ] **Platform Engineer:** _____________________ Date: _____
-- [ ] **QA Lead:** _____________________ Date: _____
-- [ ] **Product Owner:** _____________________ Date: _____
-- [ ] **DevOps Lead:** _____________________ Date: _____
+
+- [ ] **Tech Lead:** **********\_********** Date: **\_**
+- [ ] **Platform Engineer:** **********\_********** Date: **\_**
+- [ ] **QA Lead:** **********\_********** Date: **\_**
+- [ ] **Product Owner:** **********\_********** Date: **\_**
+- [ ] **DevOps Lead:** **********\_********** Date: **\_**
 
 ### Pre-Merge Verification
+
 - [ ] All tests passing on CI/CD
 - [ ] Staging deployment successful
 - [ ] Manual testing completed
@@ -365,6 +403,7 @@ git push origin v2.0.0-phase4
 ## 📈 Monitoring Queries
 
 ### Track Redirect Usage
+
 ```sql
 -- Count requests to old vs new endpoints (Application Insights / Log Analytics)
 SELECT
@@ -384,6 +423,7 @@ ORDER BY request_count DESC;
 ```
 
 ### Monitor Error Rates
+
 ```sql
 -- Check for increased error rates on consolidated endpoints
 SELECT
@@ -399,6 +439,7 @@ ORDER BY error_count DESC;
 ```
 
 ### Track Deprecation Header Usage
+
 ```sql
 -- Identify consumers still using deprecated endpoints
 SELECT

@@ -6,12 +6,12 @@
 
 ## 📊 At-a-Glance Status
 
-| Phase | Status | Timeline | Risk | Impact |
-|-------|--------|----------|------|--------|
-| **Phase 1: Quick Wins** | 🟢 Ready | Week 1 (3-4 days) | Low | High |
-| **Phase 2: Route Groups** | 🟡 Planning | Week 2 (5-7 days) | Medium | High |
-| **Phase 3: API Restructure** | 🔴 Design | Week 3-4 (10-14 days) | Medium-High | Very High |
-| **Phase 4: Polish** | ⚪ Future | Week 5 (5-7 days) | Low | Medium |
+| Phase                        | Status      | Timeline              | Risk        | Impact    |
+| ---------------------------- | ----------- | --------------------- | ----------- | --------- |
+| **Phase 1: Quick Wins**      | 🟢 Ready    | Week 1 (3-4 days)     | Low         | High      |
+| **Phase 2: Route Groups**    | 🟡 Planning | Week 2 (5-7 days)     | Medium      | High      |
+| **Phase 3: API Restructure** | 🔴 Design   | Week 3-4 (10-14 days) | Medium-High | Very High |
+| **Phase 4: Polish**          | ⚪ Future   | Week 5 (5-7 days)     | Low         | Medium    |
 
 ---
 
@@ -127,22 +127,23 @@ rmdir monitoring
 ```
 
 **Update Script:**
+
 ```typescript
 // scripts/fix-route-imports.ts
-import { promises as fs } from 'fs';
-import path from 'path';
+import { promises as fs } from "fs";
+import path from "path";
 
 const replacements = [
-  { from: '/(admin)/', to: '/(admin)/' },
-  { from: '/(farmer)/', to: '/(farmer)/' },
-  { from: '/(monitoring)/', to: '/(monitoring)/' },
-  { from: '/admin/', to: '/admin/' },
-  { from: '/farmer/', to: '/farmer/' },
-  { from: '/monitoring/', to: '/monitoring/' },
+  { from: "/(admin)/", to: "/(admin)/" },
+  { from: "/(farmer)/", to: "/(farmer)/" },
+  { from: "/(monitoring)/", to: "/(monitoring)/" },
+  { from: "/admin/", to: "/admin/" },
+  { from: "/farmer/", to: "/farmer/" },
+  { from: "/monitoring/", to: "/monitoring/" },
 ];
 
 async function updateFile(filePath: string) {
-  let content = await fs.readFile(filePath, 'utf-8');
+  let content = await fs.readFile(filePath, "utf-8");
   let changed = false;
 
   for (const { from, to } of replacements) {
@@ -170,9 +171,9 @@ export async function middleware(request: NextRequest) {
 
   // Redirect old routes to new structure
   const redirects: Record<string, string> = {
-    '/admin/admin': '/admin',
-    '/farmer/farmer': '/farmer',
-    '/monitoring/monitoring': '/monitoring',
+    "/admin/admin": "/admin",
+    "/farmer/farmer": "/farmer",
+    "/monitoring/monitoring": "/monitoring",
   };
 
   for (const [oldPath, newPath] of Object.entries(redirects)) {
@@ -188,6 +189,7 @@ export async function middleware(request: NextRequest) {
 ```
 
 **Testing Checklist:**
+
 - [ ] All tests pass: `npm run test:all`
 - [ ] E2E tests pass: `npm run test:e2e`
 - [ ] Manual navigation works
@@ -259,6 +261,7 @@ git mv src/app/\(admin\) src/app/\(admin-portal\)
 ### Step 6: Update All References
 
 **Find & Replace in all files:**
+
 ```
 /(customer)/    →  /(dashboard)/ or /(shop)/
 /(public)/      →  /(marketing)/ or /(marketplace)/
@@ -267,11 +270,12 @@ git mv src/app/\(admin\) src/app/\(admin-portal\)
 ```
 
 **Update middleware routes:**
+
 ```typescript
 // src/middleware.ts
 const protectedRoutes = {
-  '/admin': ['ADMIN', 'SUPER_ADMIN'],      // Old
-  '/admin-portal': ['ADMIN', 'SUPER_ADMIN'], // New
+  "/admin": ["ADMIN", "SUPER_ADMIN"], // Old
+  "/admin-portal": ["ADMIN", "SUPER_ADMIN"], // New
   // ... update all routes
 };
 ```
@@ -326,7 +330,7 @@ export async function GET(request: NextRequest) {
           message: error instanceof Error ? error.message : "Unknown error",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -341,13 +345,16 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   // Add deprecation header
   const response = NextResponse.redirect(
-    new URL("/api/v1/public/farms", request.url)
+    new URL("/api/v1/public/farms", request.url),
   );
-  
+
   response.headers.set("X-API-Deprecated", "true");
-  response.headers.set("X-API-Deprecation-Info", "Use /api/v1/public/farms instead. This endpoint will be removed on 2025-03-01.");
+  response.headers.set(
+    "X-API-Deprecation-Info",
+    "Use /api/v1/public/farms instead. This endpoint will be removed on 2025-03-01.",
+  );
   response.headers.set("Sunset", "2025-03-01");
-  
+
   return response;
 }
 ```
@@ -576,14 +583,14 @@ Follow order: Phase 2 → Phase 3 → Phase 4
 
 ## 📊 Success Metrics - Quick View
 
-| Metric | Before | After | How to Measure |
-|--------|--------|-------|----------------|
-| **Build Time** | 90s | <70s | `time npm run build` |
-| **Bundle Size** | 2.8MB | <2.5MB | `npm run build:analyze` |
-| **Route Files** | 111 | ~80 | `find src/app/api -name route.ts \| wc -l` |
-| **Route Groups** | 5 | 8 | Count directories in `src/app` |
-| **Docs at Root** | 15+ | 4 | `ls *.md \| wc -l` |
-| **Time to Find Code** | 5-10min | <3min | Team survey |
+| Metric                | Before  | After  | How to Measure                             |
+| --------------------- | ------- | ------ | ------------------------------------------ |
+| **Build Time**        | 90s     | <70s   | `time npm run build`                       |
+| **Bundle Size**       | 2.8MB   | <2.5MB | `npm run build:analyze`                    |
+| **Route Files**       | 111     | ~80    | `find src/app/api -name route.ts \| wc -l` |
+| **Route Groups**      | 5       | 8      | Count directories in `src/app`             |
+| **Docs at Root**      | 15+     | 4      | `ls *.md \| wc -l`                         |
+| **Time to Find Code** | 5-10min | <3min  | Team survey                                |
 
 ---
 

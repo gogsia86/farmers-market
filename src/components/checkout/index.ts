@@ -13,7 +13,11 @@
 
 // Main Checkout Container
 export { CheckoutWizard } from "./CheckoutWizard";
-export type { CheckoutStep, CheckoutStepProps, CheckoutData } from "./CheckoutWizard";
+export type {
+  CheckoutStep,
+  CheckoutStepProps,
+  CheckoutData,
+} from "./CheckoutWizard";
 
 // Checkout Step Components
 export { ReviewCartStep } from "./steps/ReviewCartStep";

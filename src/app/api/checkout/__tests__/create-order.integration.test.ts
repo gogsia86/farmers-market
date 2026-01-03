@@ -180,12 +180,10 @@ describe("POST /api/checkout/create-order", () => {
 
     it("should accept authenticated requests", async () => {
       (auth as jest.Mock).mockResolvedValue(mockSession);
-      (checkoutService.createOrderFromCheckout as jest.Mock).mockResolvedValue(
-        {
-          success: true,
-          data: mockOrder,
-        },
-      );
+      (checkoutService.createOrderFromCheckout as jest.Mock).mockResolvedValue({
+        success: true,
+        data: mockOrder,
+      });
 
       const request = createMockRequest({
         fulfillmentMethod: "DELIVERY",
@@ -237,12 +235,10 @@ describe("POST /api/checkout/create-order", () => {
 
     it("should accept PICKUP without shipping address", async () => {
       (auth as jest.Mock).mockResolvedValue(mockSession);
-      (checkoutService.createOrderFromCheckout as jest.Mock).mockResolvedValue(
-        {
-          success: true,
-          data: { ...mockOrder, fulfillmentMethod: "PICKUP" },
-        },
-      );
+      (checkoutService.createOrderFromCheckout as jest.Mock).mockResolvedValue({
+        success: true,
+        data: { ...mockOrder, fulfillmentMethod: "PICKUP" },
+      });
 
       const request = createMockRequest({
         fulfillmentMethod: "PICKUP",
@@ -270,12 +266,10 @@ describe("POST /api/checkout/create-order", () => {
 
     it("should accept shippingAddressId", async () => {
       (auth as jest.Mock).mockResolvedValue(mockSession);
-      (checkoutService.createOrderFromCheckout as jest.Mock).mockResolvedValue(
-        {
-          success: true,
-          data: mockOrder,
-        },
-      );
+      (checkoutService.createOrderFromCheckout as jest.Mock).mockResolvedValue({
+        success: true,
+        data: mockOrder,
+      });
 
       const request = createMockRequest({
         fulfillmentMethod: "DELIVERY",
@@ -314,12 +308,10 @@ describe("POST /api/checkout/create-order", () => {
 
     it("should allow optional fields", async () => {
       (auth as jest.Mock).mockResolvedValue(mockSession);
-      (checkoutService.createOrderFromCheckout as jest.Mock).mockResolvedValue(
-        {
-          success: true,
-          data: mockOrder,
-        },
-      );
+      (checkoutService.createOrderFromCheckout as jest.Mock).mockResolvedValue({
+        success: true,
+        data: mockOrder,
+      });
 
       const request = createMockRequest({
         fulfillmentMethod: "DELIVERY",
@@ -356,12 +348,10 @@ describe("POST /api/checkout/create-order", () => {
     });
 
     it("should create single order successfully", async () => {
-      (checkoutService.createOrderFromCheckout as jest.Mock).mockResolvedValue(
-        {
-          success: true,
-          data: mockOrder,
-        },
-      );
+      (checkoutService.createOrderFromCheckout as jest.Mock).mockResolvedValue({
+        success: true,
+        data: mockOrder,
+      });
 
       const request = createMockRequest({
         fulfillmentMethod: "DELIVERY",
@@ -385,12 +375,10 @@ describe("POST /api/checkout/create-order", () => {
     });
 
     it("should handle multiple orders (one per farm)", async () => {
-      (checkoutService.createOrderFromCheckout as jest.Mock).mockResolvedValue(
-        {
-          success: true,
-          data: mockMultipleOrders,
-        },
-      );
+      (checkoutService.createOrderFromCheckout as jest.Mock).mockResolvedValue({
+        success: true,
+        data: mockMultipleOrders,
+      });
 
       const request = createMockRequest({
         fulfillmentMethod: "DELIVERY",
@@ -416,12 +404,10 @@ describe("POST /api/checkout/create-order", () => {
     });
 
     it("should call checkoutService with correct parameters", async () => {
-      (checkoutService.createOrderFromCheckout as jest.Mock).mockResolvedValue(
-        {
-          success: true,
-          data: mockOrder,
-        },
-      );
+      (checkoutService.createOrderFromCheckout as jest.Mock).mockResolvedValue({
+        success: true,
+        data: mockOrder,
+      });
 
       const request = createMockRequest({
         fulfillmentMethod: "DELIVERY",
@@ -445,15 +431,13 @@ describe("POST /api/checkout/create-order", () => {
     });
 
     it("should handle service errors", async () => {
-      (checkoutService.createOrderFromCheckout as jest.Mock).mockResolvedValue(
-        {
-          success: false,
-          error: {
-            code: "CART_EMPTY",
-            message: "Cart is empty",
-          },
+      (checkoutService.createOrderFromCheckout as jest.Mock).mockResolvedValue({
+        success: false,
+        error: {
+          code: "CART_EMPTY",
+          message: "Cart is empty",
         },
-      );
+      });
 
       const request = createMockRequest({
         fulfillmentMethod: "DELIVERY",
@@ -469,12 +453,10 @@ describe("POST /api/checkout/create-order", () => {
     });
 
     it("should handle missing order data", async () => {
-      (checkoutService.createOrderFromCheckout as jest.Mock).mockResolvedValue(
-        {
-          success: true,
-          data: null,
-        },
-      );
+      (checkoutService.createOrderFromCheckout as jest.Mock).mockResolvedValue({
+        success: true,
+        data: null,
+      });
 
       const request = createMockRequest({
         fulfillmentMethod: "DELIVERY",
@@ -518,12 +500,10 @@ describe("POST /api/checkout/create-order", () => {
   describe("Fulfillment Methods", () => {
     beforeEach(() => {
       (auth as jest.Mock).mockResolvedValue(mockSession);
-      (checkoutService.createOrderFromCheckout as jest.Mock).mockResolvedValue(
-        {
-          success: true,
-          data: mockOrder,
-        },
-      );
+      (checkoutService.createOrderFromCheckout as jest.Mock).mockResolvedValue({
+        success: true,
+        data: mockOrder,
+      });
     });
 
     it("should handle DELIVERY fulfillment", async () => {

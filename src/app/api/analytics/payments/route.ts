@@ -61,7 +61,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -77,7 +77,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -101,7 +101,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -119,7 +119,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -133,7 +133,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -161,15 +161,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     // Optional analytics options
     const includeByMethod = searchParams.get("includeByMethod") !== "false";
-    const includeTimeSeries =
-      searchParams.get("includeTimeSeries") !== "false";
+    const includeTimeSeries = searchParams.get("includeTimeSeries") !== "false";
     const includeTrends = searchParams.get("includeTrends") !== "false";
     const includeTopFarms = searchParams.get("includeTopFarms") !== "false";
     const timeSeriesInterval =
       (searchParams.get("timeSeriesInterval") as any) || "day";
     const topFarmsLimit = parseInt(
       searchParams.get("topFarmsLimit") || "10",
-      10
+      10,
     );
 
     logger.debug("Fetching payment analytics", {
@@ -185,15 +184,17 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     // 📊 ANALYTICS GENERATION
     // ═══════════════════════════════════════════════════════════
 
-    const analytics =
-      await paymentAnalyticsService.getComprehensiveAnalytics(query, {
+    const analytics = await paymentAnalyticsService.getComprehensiveAnalytics(
+      query,
+      {
         includeByMethod,
         includeTimeSeries,
         includeTrends,
         includeTopFarms,
         timeSeriesInterval,
         topFarmsLimit,
-      });
+      },
+    );
 
     // ═══════════════════════════════════════════════════════════
     // 📈 PERFORMANCE METRICS
@@ -229,7 +230,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           "Cache-Control": "private, max-age=60, must-revalidate",
           "X-Processing-Time": `${processingTime}ms`,
         },
-      }
+      },
     );
   } catch (error) {
     const processingTime = Date.now() - startTime;
@@ -257,7 +258,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         headers: {
           "X-Processing-Time": `${processingTime}ms`,
         },
-      }
+      },
     );
   }
 }

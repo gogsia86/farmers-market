@@ -95,6 +95,7 @@ NEXTAUTH_SECRET="[64-character-secret]"
 ```
 
 **NEXTAUTH_URL**:
+
 - Development: `http://localhost:3001`
 - Staging: `https://staging.farmersmarket.com`
 - Production: `https://farmersmarket.com`
@@ -102,6 +103,7 @@ NEXTAUTH_SECRET="[64-character-secret]"
 - Validation: Must be valid URL
 
 **NEXTAUTH_SECRET**:
+
 - Generate: `openssl rand -base64 32`
 - Length: Minimum 32 characters
 - Required: ✅ Yes
@@ -122,12 +124,14 @@ PAYPAL_WEBHOOK_ID="your-webhook-id"
 ```
 
 **Stripe Variables**:
+
 - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`: Client-side, safe to expose
 - `STRIPE_SECRET_KEY`: Server-side only, never expose
 - `STRIPE_WEBHOOK_SECRET`: From Stripe webhook setup
 - Test vs Live: Use `pk_test_*` and `sk_test_*` for development
 
 **PayPal Variables**:
+
 - `PAYPAL_CLIENT_ID`: OAuth 2.0 client ID
 - `PAYPAL_CLIENT_SECRET`: OAuth 2.0 client secret
 - `PAYPAL_WEBHOOK_ID`: Webhook event ID
@@ -142,12 +146,14 @@ NEXT_PUBLIC_APP_URL="http://localhost:3001"
 ```
 
 **NODE_ENV**:
+
 - `development`: Local development
 - `production`: Production deployment
 - `test`: Test environment
 - Auto-set by deployment platform usually
 
 **NEXT_PUBLIC_APP_URL**:
+
 - Base URL for application
 - Used for redirects, emails, etc.
 - Must match NEXTAUTH_URL domain
@@ -173,6 +179,7 @@ SENTRY_AUTH_TOKEN="your-sentry-auth-token"
 ```
 
 **When to Enable**:
+
 - OpenTelemetry: Development (optional), Production (recommended)
 - Azure Insights: Production only
 - Sentry: Staging + Production
@@ -190,6 +197,7 @@ REDIS_CLUSTER_ENDPOINTS="redis1:6379,redis2:6379,redis3:6379"
 ```
 
 **Redis Usage**:
+
 - Session storage
 - API response caching
 - Rate limiting
@@ -254,13 +262,13 @@ const nextConfig = {
   swcMinify: true,
 
   // Build settings
-  output: 'standalone',
+  output: "standalone",
   poweredByHeader: false,
 
   // Image optimization
   images: {
-    domains: ['res.cloudinary.com', 'your-cdn.com'],
-    formats: ['image/avif', 'image/webp'],
+    domains: ["res.cloudinary.com", "your-cdn.com"],
+    formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60,
   },
 
@@ -268,30 +276,30 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/:path*',
+        source: "/:path*",
         headers: [
           {
-            key: 'X-DNS-Prefetch-Control',
-            value: 'on'
+            key: "X-DNS-Prefetch-Control",
+            value: "on",
           },
           {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=63072000; includeSubDomains; preload'
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
           },
           {
-            key: 'X-Frame-Options',
-            value: 'SAMEORIGIN'
+            key: "X-Frame-Options",
+            value: "SAMEORIGIN",
           },
           {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff'
+            key: "X-Content-Type-Options",
+            value: "nosniff",
           },
           {
-            key: 'Referrer-Policy',
-            value: 'origin-when-cross-origin'
-          }
-        ]
-      }
+            key: "Referrer-Policy",
+            value: "origin-when-cross-origin",
+          },
+        ],
+      },
     ];
   },
 
@@ -299,8 +307,8 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/home',
-        destination: '/',
+        source: "/home",
+        destination: "/",
         permanent: true,
       },
     ];
@@ -330,6 +338,7 @@ export default nextConfig;
 ```
 
 **Key Sections**:
+
 - **reactStrictMode**: Enables React strict mode for better error detection
 - **images**: Image optimization configuration
 - **headers**: Security headers for all routes
@@ -381,22 +390,13 @@ export default nextConfig;
       }
     ]
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    ".next",
-    "dist",
-    "build"
-  ]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules", ".next", "dist", "build"]
 }
 ```
 
 **Critical Settings**:
+
 - **strict: true**: Enables all strict type checking
 - **paths**: Path aliases for cleaner imports
 - **incremental**: Faster rebuilds
@@ -444,6 +444,7 @@ enum UserRole {
 ```
 
 **Key Features**:
+
 - Full-text search preview features
 - Multi-platform binary targets for Docker
 - Proper indexing for performance
@@ -452,23 +453,23 @@ enum UserRole {
 ### Jest Configuration (`jest.config.js`)
 
 ```javascript
-const nextJest = require('next/jest');
+const nextJest = require("next/jest");
 
 const createJestConfig = nextJest({
-  dir: './',
+  dir: "./",
 });
 
 const customJestConfig = {
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-  testEnvironment: 'jest-environment-jsdom',
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
+  testEnvironment: "jest-environment-jsdom",
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
+    "^@/(.*)$": "<rootDir>/src/$1",
   },
   collectCoverageFrom: [
-    'src/**/*.{js,jsx,ts,tsx}',
-    '!src/**/*.d.ts',
-    '!src/**/*.stories.{js,jsx,ts,tsx}',
-    '!src/**/__tests__/**',
+    "src/**/*.{js,jsx,ts,tsx}",
+    "!src/**/*.d.ts",
+    "!src/**/*.stories.{js,jsx,ts,tsx}",
+    "!src/**/__tests__/**",
   ],
   coverageThresholds: {
     global: {
@@ -478,16 +479,14 @@ const customJestConfig = {
       statements: 80,
     },
   },
-  testMatch: [
-    '**/__tests__/**/*.[jt]s?(x)',
-    '**/?(*.)+(spec|test).[jt]s?(x)',
-  ],
+  testMatch: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
 };
 
 module.exports = createJestConfig(customJestConfig);
 ```
 
 **Coverage Requirements**:
+
 - Minimum 80% coverage across all metrics
 - Excludes test files and stories
 
@@ -533,11 +532,13 @@ EMAIL_SERVER_PORT="1025"  # MailHog or similar
 **Setup Steps**:
 
 1. Install dependencies:
+
 ```bash
 npm install
 ```
 
 2. Setup database:
+
 ```bash
 docker-compose up -d postgres
 npm run prisma:migrate
@@ -545,11 +546,13 @@ npm run prisma:seed
 ```
 
 3. Start development server:
+
 ```bash
 npm run dev
 ```
 
 **Development URLs**:
+
 - Application: http://localhost:3001
 - Prisma Studio: http://localhost:5555 (run `npm run prisma:studio`)
 - MailHog (email): http://localhost:8025 (if using)
@@ -594,6 +597,7 @@ CLOUDINARY_CLOUD_NAME="staging-cloud"
 ```
 
 **Staging Characteristics**:
+
 - Production-like environment
 - Test payment credentials
 - Full monitoring enabled
@@ -658,6 +662,7 @@ ENABLE_COMPRESSION="true"
 ```
 
 **Production Requirements**:
+
 - ✅ All secrets stored in secret manager (Azure Key Vault, AWS Secrets Manager)
 - ✅ Database with replicas for read scaling
 - ✅ Redis cluster for high availability
@@ -727,6 +732,7 @@ npm test -- --watch
 4. Copy webhook signing secret
 
 **Environment Variables**:
+
 ```bash
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_51..."
 STRIPE_SECRET_KEY="sk_test_51..."
@@ -734,6 +740,7 @@ STRIPE_WEBHOOK_SECRET="whsec_..."
 ```
 
 **Testing**:
+
 ```bash
 # Install Stripe CLI
 stripe listen --forward-to localhost:3001/api/webhooks/stripe
@@ -756,6 +763,7 @@ stripe trigger payment_intent.succeeded
    - Events: `CHECKOUT.ORDER.APPROVED`, `PAYMENT.CAPTURE.COMPLETED`
 
 **Environment Variables**:
+
 ```bash
 PAYPAL_CLIENT_ID="your-client-id"
 PAYPAL_CLIENT_SECRET="your-client-secret"
@@ -764,6 +772,7 @@ PAYPAL_WEBHOOK_ID="your-webhook-id"
 ```
 
 **Testing**:
+
 - Use sandbox accounts from https://developer.paypal.com/developer/accounts/
 - Test cards: https://developer.paypal.com/tools/sandbox/card-testing/
 
@@ -779,6 +788,7 @@ PAYPAL_WEBHOOK_ID="your-webhook-id"
 4. Configure DNS records for domain authentication
 
 **Environment Variables**:
+
 ```bash
 EMAIL_SERVER_HOST="smtp.sendgrid.net"
 EMAIL_SERVER_PORT="587"
@@ -788,6 +798,7 @@ EMAIL_FROM="noreply@farmersmarket.com"
 ```
 
 **Testing**:
+
 ```bash
 # Send test email via API
 curl -X POST https://localhost:3001/api/email/test
@@ -804,6 +815,7 @@ curl -X POST https://localhost:3001/api/email/test
 3. Configure upload presets (optional)
 
 **Environment Variables**:
+
 ```bash
 CLOUDINARY_CLOUD_NAME="your-cloud-name"
 CLOUDINARY_API_KEY="123456789012345"
@@ -811,8 +823,9 @@ CLOUDINARY_API_SECRET="your-api-secret"
 ```
 
 **Usage Example**:
+
 ```typescript
-import { v2 as cloudinary } from 'cloudinary';
+import { v2 as cloudinary } from "cloudinary";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -831,6 +844,7 @@ const result = await cloudinary.uploader.upload(file);
 **Setup Steps**:
 
 1. Development: Run via Docker:
+
 ```bash
 docker run -d -p 6379:6379 redis:alpine
 ```
@@ -838,6 +852,7 @@ docker run -d -p 6379:6379 redis:alpine
 2. Production: Use managed service (Azure Redis, AWS ElastiCache)
 
 **Environment Variables**:
+
 ```bash
 # Single instance
 REDIS_URL="redis://localhost:6379"
@@ -853,16 +868,17 @@ REDIS_CLUSTER_ENDPOINTS="node1:6379,node2:6379,node3:6379"
 ```
 
 **Usage Example**:
+
 ```typescript
-import { createClient } from 'redis';
+import { createClient } from "redis";
 
 const client = createClient({
   url: process.env.REDIS_URL,
 });
 
 await client.connect();
-await client.set('key', 'value', { EX: 3600 });
-const value = await client.get('key');
+await client.set("key", "value", { EX: 3600 });
+const value = await client.get("key");
 ```
 
 ---
@@ -876,6 +892,7 @@ const value = await client.get('key');
 3. Configure in environment
 
 **Environment Variables**:
+
 ```bash
 AZURE_APPINSIGHTS_CONNECTION_STRING="InstrumentationKey=...;IngestionEndpoint=...;LiveEndpoint=..."
 NEXT_PUBLIC_OTEL_ENABLED="true"
@@ -883,6 +900,7 @@ OTEL_SERVICE_NAME="farmers-market-platform"
 ```
 
 **Features Tracked**:
+
 - Request/response times
 - Error rates
 - Custom events
@@ -896,16 +914,19 @@ OTEL_SERVICE_NAME="farmers-market-platform"
 ### Secret Generation
 
 **NEXTAUTH_SECRET**:
+
 ```bash
 openssl rand -base64 32
 ```
 
 **JWT Secrets**:
+
 ```bash
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
 **Strong Passwords**:
+
 ```bash
 openssl rand -base64 24
 ```
@@ -915,11 +936,13 @@ openssl rand -base64 24
 ### Secret Management
 
 **Development**:
+
 - Store in `.env` (git-ignored)
 - Use `.env.example` as template
 - Never commit real secrets
 
 **Production**:
+
 - Azure Key Vault (recommended for Azure deployments)
 - AWS Secrets Manager (for AWS deployments)
 - HashiCorp Vault (platform-agnostic)
@@ -934,7 +957,7 @@ import { DefaultAzureCredential } from "@azure/identity";
 const credential = new DefaultAzureCredential();
 const client = new SecretClient(
   "https://your-vault.vault.azure.net",
-  credential
+  credential,
 );
 
 const secret = await client.getSecret("database-url");
@@ -946,6 +969,7 @@ process.env.DATABASE_URL = secret.value;
 ### Security Best Practices
 
 **✅ DO**:
+
 - ✅ Use environment variables for all secrets
 - ✅ Rotate secrets regularly (every 90 days)
 - ✅ Use different secrets per environment
@@ -955,6 +979,7 @@ process.env.DATABASE_URL = secret.value;
 - ✅ Use strong, randomly generated secrets
 
 **❌ DON'T**:
+
 - ❌ Commit `.env` files to git
 - ❌ Share secrets via email or Slack
 - ❌ Use the same secret across environments
@@ -971,7 +996,7 @@ process.env.DATABASE_URL = secret.value;
 
 ```typescript
 // src/lib/env.ts
-import { z } from 'zod';
+import { z } from "zod";
 
 const envSchema = z.object({
   // Database
@@ -982,12 +1007,12 @@ const envSchema = z.object({
   NEXTAUTH_SECRET: z.string().min(32),
 
   // Payments
-  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().startsWith('pk_'),
-  STRIPE_SECRET_KEY: z.string().startsWith('sk_'),
-  STRIPE_WEBHOOK_SECRET: z.string().startsWith('whsec_'),
+  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().startsWith("pk_"),
+  STRIPE_SECRET_KEY: z.string().startsWith("sk_"),
+  STRIPE_WEBHOOK_SECRET: z.string().startsWith("whsec_"),
 
   // Application
-  NODE_ENV: z.enum(['development', 'production', 'test']),
+  NODE_ENV: z.enum(["development", "production", "test"]),
   NEXT_PUBLIC_APP_URL: z.string().url(),
 });
 
@@ -1017,6 +1042,7 @@ npm run validate:config
 ### Issue: Environment Variables Not Loading
 
 **Symptoms**:
+
 - Variables undefined at runtime
 - `process.env.VAR_NAME` returns undefined
 
@@ -1025,12 +1051,14 @@ npm run validate:config
 1. **Check file name**: Must be exactly `.env` (not `.env.txt` or `.env.local`)
 
 2. **Restart dev server**: Changes require restart
+
 ```bash
 # Stop server (Ctrl+C) then:
 npm run dev
 ```
 
 3. **Check Next.js prefix**: Client-side variables need `NEXT_PUBLIC_` prefix
+
 ```bash
 # ❌ Won't work on client
 API_KEY="key"
@@ -1040,6 +1068,7 @@ NEXT_PUBLIC_API_KEY="key"
 ```
 
 4. **Verify `.env` location**: Must be in project root
+
 ```bash
 project-root/
 ├── .env          # ✅ Correct location
@@ -1053,12 +1082,14 @@ project-root/
 ### Issue: Database Connection Fails
 
 **Symptoms**:
+
 - `P1001: Can't reach database server`
 - Connection timeout errors
 
 **Solutions**:
 
 1. **Verify DATABASE_URL format**:
+
 ```bash
 # Correct format
 DATABASE_URL="postgresql://user:password@host:port/database"
@@ -1068,6 +1099,7 @@ DATABASE_URL="postgresql://user:pass@host:5432/db?sslmode=require"
 ```
 
 2. **Check database is running**:
+
 ```bash
 # For local Docker
 docker ps
@@ -1077,11 +1109,13 @@ docker-compose up -d postgres
 ```
 
 3. **Test connection manually**:
+
 ```bash
 psql "postgresql://user:password@localhost:5432/farmers_market"
 ```
 
 4. **Check network/firewall**:
+
 - Ensure port 5432 is not blocked
 - Verify host is reachable
 
@@ -1090,38 +1124,43 @@ psql "postgresql://user:password@localhost:5432/farmers_market"
 ### Issue: Stripe Webhooks Not Working
 
 **Symptoms**:
+
 - Webhook events not received
 - Signature verification fails
 
 **Solutions**:
 
 1. **Use Stripe CLI for local testing**:
+
 ```bash
 stripe listen --forward-to localhost:3001/api/webhooks/stripe
 ```
 
 2. **Verify webhook secret**:
+
 ```bash
 # Get from Stripe CLI output or dashboard
 STRIPE_WEBHOOK_SECRET="whsec_..."
 ```
 
 3. **Check endpoint URL**:
+
 - Development: Use Stripe CLI
 - Production: Must be publicly accessible HTTPS URL
 
 4. **Verify signature validation** in webhook handler:
+
 ```typescript
-import { headers } from 'next/headers';
-import Stripe from 'stripe';
+import { headers } from "next/headers";
+import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-const sig = headers().get('stripe-signature');
+const sig = headers().get("stripe-signature");
 const event = stripe.webhooks.constructEvent(
   body,
   sig!,
-  process.env.STRIPE_WEBHOOK_SECRET!
+  process.env.STRIPE_WEBHOOK_SECRET!,
 );
 ```
 
@@ -1130,6 +1169,7 @@ const event = stripe.webhooks.constructEvent(
 ### Issue: NextAuth Errors
 
 **Symptoms**:
+
 - "Missing NEXTAUTH_SECRET" error
 - Redirect loops
 - Session not persisting
@@ -1137,12 +1177,14 @@ const event = stripe.webhooks.constructEvent(
 **Solutions**:
 
 1. **Generate proper secret**:
+
 ```bash
 openssl rand -base64 32
 # Copy output to NEXTAUTH_SECRET
 ```
 
 2. **Verify NEXTAUTH_URL**:
+
 ```bash
 # Must match your application URL exactly
 NEXTAUTH_URL="http://localhost:3001"  # Development
@@ -1150,10 +1192,12 @@ NEXTAUTH_URL="https://farmersmarket.com"  # Production
 ```
 
 3. **Check callback URLs**:
+
 - OAuth providers must have correct callback URLs
 - Format: `https://your-domain.com/api/auth/callback/[provider]`
 
 4. **Clear browser cookies** and restart:
+
 ```bash
 # Clear site data in browser, then:
 npm run dev
@@ -1164,6 +1208,7 @@ npm run dev
 ### Issue: Build Fails in Production
 
 **Symptoms**:
+
 - Build succeeds locally but fails in CI/CD
 - Type errors in production build
 - Missing environment variables
@@ -1171,6 +1216,7 @@ npm run dev
 **Solutions**:
 
 1. **Check all environment variables are set**:
+
 ```bash
 # In CI/CD, ensure all secrets are configured
 # GitHub Actions: Settings > Secrets
@@ -1178,12 +1224,14 @@ npm run dev
 ```
 
 2. **Verify TypeScript strict mode**:
+
 ```bash
 # Run type check locally
 npx tsc --noEmit
 ```
 
 3. **Check Node.js version**:
+
 ```bash
 # Ensure same version locally and in CI
 node --version
@@ -1198,6 +1246,7 @@ node --version
 ```
 
 4. **Clear build cache**:
+
 ```bash
 rm -rf .next
 npm run build
@@ -1234,6 +1283,7 @@ npm run build
 ### Development Workflow
 
 1. **Local Development**:
+
 ```bash
 # 1. Copy template
 cp .env.example .env
@@ -1249,12 +1299,14 @@ npm run dev
 ```
 
 2. **Making Changes**:
+
 - Update `.env.example` when adding new variables
 - Document in this guide
 - Update validation schema
 - Test in all environments
 
 3. **Testing Configuration**:
+
 ```bash
 # Verify environment
 npm run verify:env
@@ -1303,6 +1355,7 @@ npm run start
 4. Create GitHub issue with `[config]` tag
 
 **For emergencies**:
+
 - On-call engineer: See runbook
 - Production issues: Incident response channel
 

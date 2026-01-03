@@ -129,11 +129,13 @@ interface Notification {
   metadata: Record<string, any>;
 }
 
-interface SendNotificationRequest
-  extends z.infer<typeof SendNotificationSchema> {}
+interface SendNotificationRequest extends z.infer<
+  typeof SendNotificationSchema
+> {}
 
-interface NotificationPreferences
-  extends z.infer<typeof NotificationPreferencesSchema> {}
+interface NotificationPreferences extends z.infer<
+  typeof NotificationPreferencesSchema
+> {}
 
 interface EmailTemplate extends z.infer<typeof EmailTemplateSchema> {}
 
@@ -177,14 +179,20 @@ class NotificationError extends Error {
 }
 
 class EmailDeliveryError extends Error {
-  constructor(message: string, public readonly recipientEmail: string) {
+  constructor(
+    message: string,
+    public readonly recipientEmail: string,
+  ) {
     super(`Failed to deliver email to ${recipientEmail}: ${message}`);
     this.name = "EmailDeliveryError";
   }
 }
 
 class SMSDeliveryError extends Error {
-  constructor(message: string, public readonly recipientPhone: string) {
+  constructor(
+    message: string,
+    public readonly recipientPhone: string,
+  ) {
     super(`Failed to deliver SMS to ${recipientPhone}: ${message}`);
     this.name = "SMSDeliveryError";
   }

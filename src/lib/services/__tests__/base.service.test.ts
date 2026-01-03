@@ -4,7 +4,10 @@
 
 import { BaseService } from "../base.service";
 import type { ServiceResponse } from "@/lib/types/service-response";
-import { expectSuccess, expectError } from "@/lib/test-utils/service-test-factory";
+import {
+  expectSuccess,
+  expectError,
+} from "@/lib/test-utils/service-test-factory";
 
 // Test service implementation
 class TestService extends BaseService<{ id: string; name: string }> {
@@ -148,10 +151,12 @@ describe("BaseService", () => {
     });
 
     it("should measure operation duration", async () => {
-      const { result, duration } = await service["measureDuration"](async () => {
-        await service["sleep"](10);
-        return "completed";
-      });
+      const { result, duration } = await service["measureDuration"](
+        async () => {
+          await service["sleep"](10);
+          return "completed";
+        },
+      );
 
       expect(result).toBe("completed");
       expect(duration).toBeGreaterThanOrEqual(10);

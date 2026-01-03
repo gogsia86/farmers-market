@@ -25,11 +25,13 @@
 ## 🎯 Overview
 
 The Digital Wallets integration provides seamless support for:
+
 - **Apple Pay** - iOS and macOS Safari
 - **Google Pay** - Chrome and Android
 - **Payment Request API** - Universal fallback
 
 ### Features:
+
 - ✅ Automatic device detection
 - ✅ Browser compatibility checking
 - ✅ Secure payment processing
@@ -75,7 +77,7 @@ export default function CheckoutPage() {
           console.log("Payment successful!", paymentIntentId);
         }}
       />
-      
+
       <GooglePayButton
         orderId="order_123"
         amount={99.99}
@@ -96,12 +98,14 @@ export default function CheckoutPage() {
 ### Stripe Dashboard Setup
 
 #### 1. Enable Apple Pay
+
 1. Go to Stripe Dashboard → Settings → Payment Methods
 2. Enable Apple Pay
 3. Add your domain under "Apple Pay Domains"
 4. Verify domain ownership
 
 #### 2. Enable Google Pay
+
 1. Go to Stripe Dashboard → Settings → Payment Methods
 2. Enable Google Pay
 3. Configure merchant information
@@ -110,12 +114,14 @@ export default function CheckoutPage() {
 ### Apple Developer Setup
 
 #### 1. Create Merchant ID
+
 1. Go to Apple Developer → Certificates, Identifiers & Profiles
 2. Create new Merchant ID (e.g., `merchant.com.farmersmarket`)
 3. Enable Apple Pay capability
 4. Create merchant identity certificate
 
 #### 2. Register Domains
+
 1. Add production domain
 2. Add development domain (if needed)
 3. Download domain verification file
@@ -124,12 +130,14 @@ export default function CheckoutPage() {
 ### Google Pay Setup
 
 #### 1. Business Registration
+
 1. Go to Google Pay Business Console
 2. Register your business
 3. Provide business details
 4. Get merchant ID (BCR2DN...)
 
 #### 2. Configure Integration
+
 1. Set up Google Pay in Stripe
 2. Link merchant account
 3. Test with test cards
@@ -146,7 +154,8 @@ import { digitalWalletService } from "@/lib/services/digital-wallet.service";
 
 // Check device capabilities
 const userAgent = request.headers.get("user-agent");
-const capabilities = await digitalWalletService.getWalletCapabilities(userAgent);
+const capabilities =
+  await digitalWalletService.getWalletCapabilities(userAgent);
 
 console.log(capabilities);
 // {
@@ -167,8 +176,8 @@ const applePayIntent = await digitalWalletService.createApplePayIntent({
   currency: "usd",
   metadata: {
     season: "SPRING",
-    customField: "value"
-  }
+    customField: "value",
+  },
 });
 
 // Create Google Pay intent
@@ -176,13 +185,13 @@ const googlePayIntent = await digitalWalletService.createGooglePayIntent({
   orderId: "order_123",
   walletType: "GOOGLE_PAY",
   amount: 99.99,
-  currency: "usd"
+  currency: "usd",
 });
 
 // Process payment
 const result = await digitalWalletService.processWalletPayment(
   applePayIntent.id,
-  "APPLE_PAY"
+  "APPLE_PAY",
 );
 
 if (result.success) {
@@ -196,7 +205,8 @@ if (result.success) {
 
 ```typescript
 // Detect device capabilities
-const deviceInfo = await digitalWalletService.detectDeviceCapabilities(userAgent);
+const deviceInfo =
+  await digitalWalletService.detectDeviceCapabilities(userAgent);
 
 console.log(deviceInfo);
 // {
@@ -210,7 +220,7 @@ console.log(deviceInfo);
 // Check specific wallet availability
 const hasApplePay = await digitalWalletService.isWalletAvailable(
   "APPLE_PAY",
-  userAgent
+  userAgent,
 );
 ```
 
@@ -233,17 +243,15 @@ if (!validation.valid) {
 ### Apple Pay Button
 
 #### Basic Usage
+
 ```tsx
 import { ApplePayButton } from "@/components/checkout/payment/ApplePayButton";
 
-<ApplePayButton
-  orderId="order_123"
-  amount={99.99}
-  currency="usd"
-/>
+<ApplePayButton orderId="order_123" amount={99.99} currency="usd" />;
 ```
 
 #### With Callbacks
+
 ```tsx
 <ApplePayButton
   orderId="order_123"
@@ -266,31 +274,30 @@ import { ApplePayButton } from "@/components/checkout/payment/ApplePayButton";
 ```
 
 #### Props
-| Prop | Type | Required | Default | Description |
-|------|------|----------|---------|-------------|
-| `orderId` | string | ✅ Yes | - | Order ID to process payment |
-| `amount` | number | ✅ Yes | - | Payment amount |
-| `currency` | "usd" \| "eur" \| "gbp" \| "cad" | ❌ No | "usd" | Currency code |
-| `label` | string | ❌ No | "Buy with" | Button label text |
-| `onSuccess` | (intentId: string) => void | ❌ No | - | Success callback |
-| `onError` | (error: Error) => void | ❌ No | - | Error callback |
-| `disabled` | boolean | ❌ No | false | Disable button |
-| `className` | string | ❌ No | "" | Additional CSS classes |
+
+| Prop        | Type                             | Required | Default    | Description                 |
+| ----------- | -------------------------------- | -------- | ---------- | --------------------------- |
+| `orderId`   | string                           | ✅ Yes   | -          | Order ID to process payment |
+| `amount`    | number                           | ✅ Yes   | -          | Payment amount              |
+| `currency`  | "usd" \| "eur" \| "gbp" \| "cad" | ❌ No    | "usd"      | Currency code               |
+| `label`     | string                           | ❌ No    | "Buy with" | Button label text           |
+| `onSuccess` | (intentId: string) => void       | ❌ No    | -          | Success callback            |
+| `onError`   | (error: Error) => void           | ❌ No    | -          | Error callback              |
+| `disabled`  | boolean                          | ❌ No    | false      | Disable button              |
+| `className` | string                           | ❌ No    | ""         | Additional CSS classes      |
 
 ### Google Pay Button
 
 #### Basic Usage
+
 ```tsx
 import { GooglePayButton } from "@/components/checkout/payment/GooglePayButton";
 
-<GooglePayButton
-  orderId="order_123"
-  amount={99.99}
-  currency="usd"
-/>
+<GooglePayButton orderId="order_123" amount={99.99} currency="usd" />;
 ```
 
 #### With Callbacks
+
 ```tsx
 <GooglePayButton
   orderId="order_123"
@@ -313,16 +320,17 @@ import { GooglePayButton } from "@/components/checkout/payment/GooglePayButton";
 ```
 
 #### Props
-| Prop | Type | Required | Default | Description |
-|------|------|----------|---------|-------------|
-| `orderId` | string | ✅ Yes | - | Order ID to process payment |
-| `amount` | number | ✅ Yes | - | Payment amount |
-| `currency` | "usd" \| "eur" \| "gbp" \| "cad" | ❌ No | "usd" | Currency code |
-| `label` | string | ❌ No | "Buy with Google Pay" | Button label text |
-| `onSuccess` | (intentId: string) => void | ❌ No | - | Success callback |
-| `onError` | (error: Error) => void | ❌ No | - | Error callback |
-| `disabled` | boolean | ❌ No | false | Disable button |
-| `className` | string | ❌ No | "" | Additional CSS classes |
+
+| Prop        | Type                             | Required | Default               | Description                 |
+| ----------- | -------------------------------- | -------- | --------------------- | --------------------------- |
+| `orderId`   | string                           | ✅ Yes   | -                     | Order ID to process payment |
+| `amount`    | number                           | ✅ Yes   | -                     | Payment amount              |
+| `currency`  | "usd" \| "eur" \| "gbp" \| "cad" | ❌ No    | "usd"                 | Currency code               |
+| `label`     | string                           | ❌ No    | "Buy with Google Pay" | Button label text           |
+| `onSuccess` | (intentId: string) => void       | ❌ No    | -                     | Success callback            |
+| `onError`   | (error: Error) => void           | ❌ No    | -                     | Error callback              |
+| `disabled`  | boolean                          | ❌ No    | false                 | Disable button              |
+| `className` | string                           | ❌ No    | ""                    | Additional CSS classes      |
 
 ### Complete Checkout Integration
 
@@ -440,8 +448,8 @@ const response = await fetch("/api/payment/wallet", {
     amount: 99.99,
     currency: "usd",
     metadata: {
-      customField: "value"
-    }
+      customField: "value",
+    },
   }),
 });
 
@@ -465,7 +473,8 @@ export async function POST(request: NextRequest) {
   const userAgent = request.headers.get("user-agent") || "";
 
   // Check capabilities
-  const capabilities = await digitalWalletService.getWalletCapabilities(userAgent);
+  const capabilities =
+    await digitalWalletService.getWalletCapabilities(userAgent);
 
   // Create appropriate payment intent
   let paymentIntent;
@@ -501,8 +510,9 @@ import { digitalWalletService } from "@/lib/services/digital-wallet.service";
 describe("Digital Wallet Service", () => {
   it("should detect iOS Safari", async () => {
     const userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0...";
-    const deviceInfo = await digitalWalletService.detectDeviceCapabilities(userAgent);
-    
+    const deviceInfo =
+      await digitalWalletService.detectDeviceCapabilities(userAgent);
+
     expect(deviceInfo.isIOS).toBe(true);
     expect(deviceInfo.supportedWallets).toContain("APPLE_PAY");
   });
@@ -560,9 +570,9 @@ describe("ApplePayButton", () => {
     );
 
     await user.click(screen.getByRole("button"));
-    
+
     // Mock payment flow...
-    
+
     await waitFor(() => {
       expect(onSuccess).toHaveBeenCalledWith(expect.any(String));
     });
@@ -609,7 +619,9 @@ describe("Wallet Payment Flow", () => {
 ### Apple Pay Issues
 
 #### Issue: "Apple Pay not available"
+
 **Solution**:
+
 1. Check browser is Safari
 2. Verify device supports Apple Pay
 3. Ensure HTTPS connection
@@ -617,14 +629,18 @@ describe("Wallet Payment Flow", () => {
 5. Verify domain is registered in Apple Developer
 
 #### Issue: "Merchant validation failed"
+
 **Solution**:
+
 1. Verify merchant certificate is valid
 2. Check domain is verified
 3. Ensure APPLE_PAY_MERCHANT_ID is correct
 4. Check Stripe Apple Pay domain settings
 
 #### Issue: "Payment authorization failed"
+
 **Solution**:
+
 1. Check payment intent is valid
 2. Verify Stripe configuration
 3. Test with test cards
@@ -633,21 +649,27 @@ describe("Wallet Payment Flow", () => {
 ### Google Pay Issues
 
 #### Issue: "Google Pay not available"
+
 **Solution**:
+
 1. Check browser is Chrome
 2. Verify Google Pay script loaded
 3. Test `window.google.payments.api` exists
 4. Check merchant ID configuration
 
 #### Issue: "Tokenization failed"
+
 **Solution**:
+
 1. Verify Stripe publishable key
 2. Check gateway configuration
 3. Ensure merchant ID is correct
 4. Test with test cards
 
 #### Issue: "Payment sheet not showing"
+
 **Solution**:
+
 1. Check `isReadyToPay` returns true
 2. Verify payment request configuration
 3. Check allowed payment methods
@@ -656,14 +678,18 @@ describe("Wallet Payment Flow", () => {
 ### General Issues
 
 #### Issue: "No wallets detected"
+
 **Solution**:
+
 1. Check user agent parsing
 2. Verify browser compatibility
 3. Test device detection logic
 4. Check backend API responses
 
 #### Issue: "Configuration validation failed"
+
 **Solution**:
+
 1. Check all environment variables set
 2. Verify `.env.local` file exists
 3. Restart development server
@@ -676,21 +702,23 @@ describe("Wallet Payment Flow", () => {
 ### Security
 
 1. **Never Store Card Data**
+
    ```typescript
    // ✅ GOOD - Use tokenization
    const paymentIntent = await digitalWalletService.createApplePayIntent(...);
-   
+
    // ❌ BAD - Never store card numbers
    const cardNumber = "4242424242424242"; // DON'T DO THIS
    ```
 
 2. **Validate on Server**
+
    ```typescript
    // ✅ GOOD - Server-side validation
    export async function POST(request: NextRequest) {
      const session = await auth();
      if (!session) return unauthorized();
-     
+
      const validation = CreateWalletPaymentRequestSchema.safeParse(body);
      if (!validation.success) return badRequest();
    }
@@ -699,7 +727,10 @@ describe("Wallet Payment Flow", () => {
 3. **Use HTTPS**
    ```typescript
    // ✅ GOOD - Check for HTTPS
-   if (process.env.NODE_ENV === "production" && !request.url.startsWith("https")) {
+   if (
+     process.env.NODE_ENV === "production" &&
+     !request.url.startsWith("https")
+   ) {
      throw new Error("HTTPS required for wallet payments");
    }
    ```
@@ -707,20 +738,22 @@ describe("Wallet Payment Flow", () => {
 ### Performance
 
 1. **Lazy Load Components**
+
    ```tsx
    import dynamic from "next/dynamic";
-   
+
    const ApplePayButton = dynamic(
      () => import("@/components/checkout/payment/ApplePayButton"),
-     { ssr: false }
+     { ssr: false },
    );
    ```
 
 2. **Cache Device Detection**
+
    ```typescript
    // Cache capabilities for session
    const [capabilities, setCapabilities] = useState(null);
-   
+
    useEffect(() => {
      if (!capabilities) {
        fetchCapabilities().then(setCapabilities);
@@ -740,15 +773,19 @@ describe("Wallet Payment Flow", () => {
 ### User Experience
 
 1. **Show Loading States**
+
    ```tsx
-   {isLoading ? (
-     <Button disabled>Checking Apple Pay...</Button>
-   ) : (
-     <ApplePayButton {...props} />
-   )}
+   {
+     isLoading ? (
+       <Button disabled>Checking Apple Pay...</Button>
+     ) : (
+       <ApplePayButton {...props} />
+     );
+   }
    ```
 
 2. **Handle Errors Gracefully**
+
    ```tsx
    const handleError = (error: Error) => {
      if (error.message.includes("CANCELED")) {
@@ -805,7 +842,7 @@ export default function CheckoutPage({ order }: CheckoutPageProps) {
       try {
         const response = await fetch("/api/payment/wallet");
         const data = await response.json();
-        
+
         if (data.success) {
           setWalletCapabilities(data.data.capabilities);
         }
@@ -825,19 +862,19 @@ export default function CheckoutPage({ order }: CheckoutPageProps) {
       description: "Your order has been confirmed.",
       variant: "default",
     });
-    
+
     router.push(`/orders/${order.id}/confirmation`);
   };
 
   const handlePaymentError = (error: Error) => {
     console.error("Payment error:", error);
-    
+
     toast({
       title: "Payment Failed",
       description: error.message,
       variant: "destructive",
     });
-    
+
     setIsProcessing(false);
   };
 
@@ -861,12 +898,15 @@ export default function CheckoutPage({ order }: CheckoutPageProps) {
         {isLoading ? (
           <div className="text-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto" />
-            <p className="mt-2 text-muted-foreground">Loading payment options...</p>
+            <p className="mt-2 text-muted-foreground">
+              Loading payment options...
+            </p>
           </div>
         ) : (
           <div className="space-y-4">
             {/* Express Checkout */}
-            {(walletCapabilities?.applePay || walletCapabilities?.googlePay) && (
+            {(walletCapabilities?.applePay ||
+              walletCapabilities?.googlePay) && (
               <>
                 <div className="text-center text-sm text-muted-foreground">
                   Express Checkout
@@ -952,7 +992,7 @@ export function useWalletCapabilities() {
     async function fetchCapabilities() {
       try {
         const response = await fetch("/api/payment/wallet");
-        
+
         if (!response.ok) {
           throw new Error("Failed to fetch wallet capabilities");
         }
@@ -1006,7 +1046,7 @@ import { revalidatePath } from "next/cache";
 export async function createWalletPayment(formData: FormData) {
   try {
     const session = await auth();
-    
+
     if (!session?.user) {
       return {
         success: false,
@@ -1018,19 +1058,20 @@ export async function createWalletPayment(formData: FormData) {
     const walletType = formData.get("walletType") as "APPLE_PAY" | "GOOGLE_PAY";
     const amount = parseFloat(formData.get("amount") as string);
 
-    const paymentIntent = walletType === "APPLE_PAY"
-      ? await digitalWalletService.createApplePayIntent({
-          orderId,
-          walletType,
-          amount,
-          currency: "usd",
-        })
-      : await digitalWalletService.createGooglePayIntent({
-          orderId,
-          walletType,
-          amount,
-          currency: "usd",
-        });
+    const paymentIntent =
+      walletType === "APPLE_PAY"
+        ? await digitalWalletService.createApplePayIntent({
+            orderId,
+            walletType,
+            amount,
+            currency: "usd",
+          })
+        : await digitalWalletService.createGooglePayIntent({
+            orderId,
+            walletType,
+            amount,
+            currency: "usd",
+          });
 
     revalidatePath(`/orders/${orderId}`);
 
@@ -1116,12 +1157,14 @@ A: Yes! The components automatically detect available wallets and show appropria
 ## 🎓 Resources
 
 ### Documentation
+
 - [Stripe Apple Pay Docs](https://stripe.com/docs/apple-pay)
 - [Stripe Google Pay Docs](https://stripe.com/docs/google-pay)
 - [Apple Pay JS API](https://developer.apple.com/documentation/apple_pay_on_the_web)
 - [Google Pay Web API](https://developers.google.com/pay/api/web)
 
 ### Tools
+
 - [Stripe Dashboard](https://dashboard.stripe.com)
 - [Apple Developer Portal](https://developer.apple.com)
 - [Google Pay Console](https://pay.google.com/business/console)
@@ -1130,6 +1173,6 @@ A: Yes! The components automatically detect available wallets and show appropria
 
 **Version**: 3.0.0  
 **Last Updated**: December 2024  
-**Status**: PRODUCTION READY 🚀  
+**Status**: PRODUCTION READY 🚀
 
 _"Code with agricultural consciousness, architect with divine precision, deliver with quantum efficiency."_ 🌾⚡

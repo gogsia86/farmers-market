@@ -137,8 +137,8 @@ export function QuickCheckout({
   const [selectedPayment, setSelectedPayment] =
     useState<SavedPaymentMethod | null>(
       savedPaymentMethods.find((p) => p.isDefault) ||
-      savedPaymentMethods[0] ||
-      null,
+        savedPaymentMethods[0] ||
+        null,
     );
   const [selectedDeliverySlot, setSelectedDeliverySlot] =
     useState<DeliverySlot | null>(null);
@@ -204,10 +204,14 @@ export function QuickCheckout({
       const orderId = `ORDER-${Date.now()}`;
       onCheckoutComplete?.(orderId);
     } catch (err) {
-      cartLogger.error("Express checkout error", err instanceof Error ? err : new Error(String(err)), {
-        method,
-        itemCount: items.length,
-      });
+      cartLogger.error(
+        "Express checkout error",
+        err instanceof Error ? err : new Error(String(err)),
+        {
+          method,
+          itemCount: items.length,
+        },
+      );
       setError("Express checkout failed. Please try again.");
     } finally {
       setIsProcessing(false);
@@ -246,12 +250,16 @@ export function QuickCheckout({
       const data = await response.json();
       onCheckoutComplete?.(data.orderId);
     } catch (err) {
-      cartLogger.error("Quick checkout order placement failed", err instanceof Error ? err : new Error(String(err)), {
-        addressId: selectedAddress?.id,
-        paymentMethodId: selectedPayment?.id,
-        deliverySlotId: selectedDeliverySlot?.id,
-        itemCount: items.length,
-      });
+      cartLogger.error(
+        "Quick checkout order placement failed",
+        err instanceof Error ? err : new Error(String(err)),
+        {
+          addressId: selectedAddress?.id,
+          paymentMethodId: selectedPayment?.id,
+          deliverySlotId: selectedDeliverySlot?.id,
+          itemCount: items.length,
+        },
+      );
       setError("Failed to place order. Please try again.");
     } finally {
       setIsProcessing(false);
@@ -743,9 +751,10 @@ function PaymentMethodOption({
 // ============================================
 
 export type {
-  CartItem, DeliverySlot,
+  CartItem,
+  DeliverySlot,
   OrderSummary,
-  QuickCheckoutProps, SavedAddress,
-  SavedPaymentMethod
+  QuickCheckoutProps,
+  SavedAddress,
+  SavedPaymentMethod,
 };
-

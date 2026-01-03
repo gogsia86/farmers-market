@@ -27,7 +27,9 @@ export function PWAInstaller() {
       navigator.serviceWorker
         .register("/sw.js")
         .then((registration) => {
-          pwaLogger.info("Service Worker registered", { scope: registration.scope });
+          pwaLogger.info("Service Worker registered", {
+            scope: registration.scope,
+          });
 
           // Check for updates
           registration.addEventListener("updatefound", () => {
@@ -51,7 +53,10 @@ export function PWAInstaller() {
           }, 60000); // Check every minute
         })
         .catch((error) => {
-          pwaLogger.error("Service Worker registration failed", error instanceof Error ? error : new Error(String(error)));
+          pwaLogger.error(
+            "Service Worker registration failed",
+            error instanceof Error ? error : new Error(String(error)),
+          );
         });
     }
 

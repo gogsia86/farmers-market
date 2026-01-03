@@ -63,14 +63,19 @@ const connectWithRetry = async (client: PrismaClient): Promise<void> => {
       return;
     } catch (error) {
       connectionAttempts++;
-      dbLogger.warn(`Database connection attempt ${connectionAttempts}/${MAX_RETRIES} failed`, {
-        errorMessage: error instanceof Error ? error.message : String(error),
-        attempt: connectionAttempts,
-        maxRetries: MAX_RETRIES,
-      });
+      dbLogger.warn(
+        `Database connection attempt ${connectionAttempts}/${MAX_RETRIES} failed`,
+        {
+          errorMessage: error instanceof Error ? error.message : String(error),
+          attempt: connectionAttempts,
+          maxRetries: MAX_RETRIES,
+        },
+      );
 
       if (connectionAttempts < MAX_RETRIES) {
-        dbLogger.info(`Retrying database connection in ${RETRY_DELAY / 1000} seconds...`);
+        dbLogger.info(
+          `Retrying database connection in ${RETRY_DELAY / 1000} seconds...`,
+        );
         await sleep(RETRY_DELAY);
       } else {
         dbLogger.error("Database connection failed after maximum attempts", {

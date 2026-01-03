@@ -1,4 +1,5 @@
 # 🌟 GODLIKE COPILOT CONFIGURATION
+
 ## Divine Precision Coding for Farmers Market Platform
 
 ---
@@ -18,16 +19,17 @@ Both deliver **zero-fluff, production-ready code** with agricultural consciousne
 
 ### Choose Your Editor
 
-| If You Want... | Choose This | Time to Setup |
-|----------------|-------------|---------------|
-| Maximum speed & performance | **Zed** | 5 minutes |
-| Extensive extensions & ecosystem | **Cursor/VS Code** | 10 minutes |
-| Team already uses VS Code | **Cursor** | 10 minutes |
-| Cutting-edge technology | **Zed** | 5 minutes |
+| If You Want...                   | Choose This        | Time to Setup |
+| -------------------------------- | ------------------ | ------------- |
+| Maximum speed & performance      | **Zed**            | 5 minutes     |
+| Extensive extensions & ecosystem | **Cursor/VS Code** | 10 minutes    |
+| Team already uses VS Code        | **Cursor**         | 10 minutes    |
+| Cutting-edge technology          | **Zed**            | 5 minutes     |
 
 ### Installation
 
 #### Option 1: Cursor/VS Code (Most Teams)
+
 ```bash
 # 1. Install Cursor (or use existing VS Code)
 # Download from: https://cursor.sh
@@ -50,6 +52,7 @@ cursor .
 ```
 
 #### Option 2: Zed (Speed Demons)
+
 ```bash
 # 1. Install Zed
 # macOS: brew install zed
@@ -75,6 +78,7 @@ zed .
 ## 📁 FILE STRUCTURE
 
 ### Cursor/VS Code Configuration
+
 ```
 .vscode/
 ├── settings.json (750 lines)           # Enhanced Copilot settings
@@ -89,6 +93,7 @@ zed .
 ```
 
 ### Zed Configuration
+
 ```
 .zed/
 ├── settings.json (391 lines)           # Zed-optimized settings
@@ -99,6 +104,7 @@ zed .
 ```
 
 ### Shared
+
 ```
 .cursorrules                            # Project coding standards (works with both)
 GODLIKE_COPILOT_COMPARISON.md (525 lines) # Cursor vs Zed comparison
@@ -112,9 +118,10 @@ GODLIKE_COPILOT_README.md (this file)   # Master README
 ## ⚡ KEY FEATURES
 
 ### Zero-Fluff Code Generation
+
 ```typescript
 // ❌ Before (typical Copilot):
-// "Here's the implementation of FarmCard component. 
+// "Here's the implementation of FarmCard component.
 // This component displays farm information..."
 // [code]
 
@@ -130,6 +137,7 @@ export function FarmCard({ farm }: FarmCardProps) {
 ```
 
 ### Complete Implementations
+
 ```typescript
 // Every generated file includes:
 ✅ Proper imports (canonical: @/lib/database)
@@ -142,13 +150,14 @@ export function FarmCard({ farm }: FarmCardProps) {
 ```
 
 ### Precision Prompts
+
 ```
 Perfect Prompt Formula:
 [ACTION] [FILE_PATH] [REQUIREMENTS] [CONSTRAINTS] [OUTPUT_FORMAT]
 
 Example:
-"Generate src/components/features/FarmCard.tsx with Farm type 
-from Prisma, shadcn/ui Card, favorite button, responsive layout. 
+"Generate src/components/features/FarmCard.tsx with Farm type
+from Prisma, shadcn/ui Card, favorite button, responsive layout.
 Code only, no explanations."
 ```
 
@@ -157,33 +166,37 @@ Code only, no explanations."
 ## 🎯 PRODUCTIVITY METRICS
 
 ### Before Godlike Configuration
-| Metric | Value |
-|--------|-------|
-| Time to CRUD API | 45 minutes |
-| Bugs per feature | 3-5 |
-| Code review cycles | 2-3 |
-| Editor lag | Frequent (VS Code) |
-| Manual refactoring | High |
+
+| Metric             | Value              |
+| ------------------ | ------------------ |
+| Time to CRUD API   | 45 minutes         |
+| Bugs per feature   | 3-5                |
+| Code review cycles | 2-3                |
+| Editor lag         | Frequent (VS Code) |
+| Manual refactoring | High               |
 
 ### After: Cursor/VS Code + Godlike
-| Metric | Value | Improvement |
-|--------|-------|-------------|
-| Time to CRUD API | **8 minutes** | **5.6x faster** |
-| Bugs per feature | **0-1** | **80% reduction** |
-| Code review cycles | **1** | **67% reduction** |
-| Editor lag | Minimal | Better |
-| Manual refactoring | Low | **70% reduction** |
+
+| Metric             | Value         | Improvement       |
+| ------------------ | ------------- | ----------------- |
+| Time to CRUD API   | **8 minutes** | **5.6x faster**   |
+| Bugs per feature   | **0-1**       | **80% reduction** |
+| Code review cycles | **1**         | **67% reduction** |
+| Editor lag         | Minimal       | Better            |
+| Manual refactoring | Low           | **70% reduction** |
 
 ### After: Zed + Godlike
-| Metric | Value | Improvement |
-|--------|-------|-------------|
-| Time to CRUD API | **5 minutes** | **9x faster** |
-| Bugs per feature | **0-1** | **80% reduction** |
-| Code review cycles | **1** | **67% reduction** |
-| Editor lag | **None** | **100% eliminated** |
-| Manual refactoring | Low | **70% reduction** |
+
+| Metric             | Value         | Improvement         |
+| ------------------ | ------------- | ------------------- |
+| Time to CRUD API   | **5 minutes** | **9x faster**       |
+| Bugs per feature   | **0-1**       | **80% reduction**   |
+| Code review cycles | **1**         | **67% reduction**   |
+| Editor lag         | **None**      | **100% eliminated** |
+| Manual refactoring | Low           | **70% reduction**   |
 
 ### ROI Summary
+
 ```
 Cursor + Godlike:  10x productivity increase
 Zed + Godlike:     100x productivity increase (speed bonus)
@@ -198,21 +211,25 @@ Code Quality Increase: 40%
 ## 📚 DOCUMENTATION GUIDE
 
 ### For Cursor/VS Code Users
+
 1. **Start Here**: `.copilot/IMPLEMENTATION_SUMMARY.md` (quick overview)
 2. **Complete Guide**: `.copilot/GODLIKE_WORKFLOW.md` (full workflows)
 3. **Team Training**: `.copilot/TEAM_ONBOARDING.md` (step-by-step)
 4. **Core Rules**: `.copilot/directives.md` (Copilot behavior)
 
 ### For Zed Users
+
 1. **Start Here**: `.zed/ZED_IMPLEMENTATION_SUMMARY.md` (quick overview)
 2. **Complete Guide**: `.zed/GODLIKE_WORKFLOW_ZED.md` (full workflows)
 3. **Core Rules**: `.zed/directives.md` (Copilot behavior)
 
 ### For Decision Makers
+
 1. **Comparison**: `GODLIKE_COPILOT_COMPARISON.md` (Cursor vs Zed)
 2. **This File**: Overview and quick start
 
 ### For Everyone
+
 - **Project Standards**: `.cursorrules` (coding rules - works with both)
 
 ---
@@ -220,6 +237,7 @@ Code Quality Increase: 40%
 ## ⌨️ ESSENTIAL KEYBOARD SHORTCUTS
 
 ### Core Copilot Commands (Both Editors)
+
 ```
 Ctrl+Space          Trigger inline suggestion
 Alt+Enter           Accept suggestion
@@ -229,6 +247,7 @@ Ctrl+Shift+X        Reject suggestion
 ```
 
 ### Navigation (Both Editors)
+
 ```
 Ctrl+P              Quick file open (instant in Zed)
 Ctrl+Shift+P        Command palette
@@ -238,6 +257,7 @@ F12                 Go to definition
 ```
 
 ### Editing (Both Editors)
+
 ```
 Ctrl+D              Select next occurrence
 Ctrl+/              Toggle comment
@@ -247,6 +267,7 @@ F2                  Rename symbol
 ```
 
 ### Cursor-Specific Custom Actions
+
 ```
 Ctrl+Alt+Shift+C    Generate component
 Ctrl+Alt+Shift+O    Optimize code
@@ -262,6 +283,7 @@ Ctrl+Alt+Shift+R    Refactor SOLID
 ## 🎓 LEARNING PATH
 
 ### Day 1: Setup & Fundamentals (2 hours)
+
 - [ ] Install editor (Cursor or Zed)
 - [ ] Enable Copilot
 - [ ] Read quick start guide
@@ -269,6 +291,7 @@ Ctrl+Alt+Shift+R    Refactor SOLID
 - [ ] Learn 10 essential shortcuts
 
 ### Day 2-3: Practice & Build Confidence (8 hours)
+
 - [ ] Generate simple components
 - [ ] Generate API routes
 - [ ] Generate service classes
@@ -276,6 +299,7 @@ Ctrl+Alt+Shift+R    Refactor SOLID
 - [ ] Validate generated code
 
 ### Week 1: Production Usage (20 hours)
+
 - [ ] Build complete features
 - [ ] Multi-file generation
 - [ ] Refactoring workflows
@@ -283,6 +307,7 @@ Ctrl+Alt+Shift+R    Refactor SOLID
 - [ ] Code review cycles
 
 ### Month 1: Godlike Mastery
+
 - [ ] CRUD API in <5 minutes
 - [ ] Complex features in <20 minutes
 - [ ] 0-1 bugs per feature
@@ -294,6 +319,7 @@ Ctrl+Alt+Shift+R    Refactor SOLID
 ## 💡 QUICK WINS
 
 ### Generate Your First Component (2 minutes)
+
 ```bash
 # 1. Open Copilot chat: Ctrl+Shift+I
 # 2. Paste this prompt:
@@ -312,6 +338,7 @@ Code only, no explanations.
 ```
 
 ### Generate API Route (3 minutes)
+
 ```bash
 # 1. Open Copilot chat: Ctrl+Shift+I
 # 2. Paste this prompt:
@@ -330,6 +357,7 @@ Complete implementation.
 ```
 
 ### Generate Service Class (4 minutes)
+
 ```bash
 # 1. Open Copilot chat: Ctrl+Shift+I
 # 2. Paste this prompt:
@@ -352,33 +380,41 @@ Show complete class.
 ## 🚨 COMMON ISSUES & SOLUTIONS
 
 ### Issue 1: Copilot Gives Explanations
+
 **Problem**: Output includes "Here's the code..." preambles
 
-**Solution**: 
+**Solution**:
+
 1. Always add "Code only, no explanations" to prompts
 2. Check directives file exists (`.copilot/directives.md` or `.zed/directives.md`)
 3. Restart editor to reload settings
 
 ### Issue 2: Wrong Import Paths
+
 **Problem**: Imports use relative paths like `../../../lib/database`
 
 **Solution**:
+
 1. Specify in prompt: "Use @/ path aliases"
 2. Remind: "Import database from '@/lib/database'"
 3. Check `tsconfig.json` has correct path mappings
 
 ### Issue 3: Incomplete Code
+
 **Problem**: Copilot generates partial implementations
 
 **Solution**:
+
 1. Use "Complete implementation" in prompt
 2. Be more specific about requirements
 3. Use "Show all files" for multi-file features
 
 ### Issue 4: Not Following Patterns
+
 **Problem**: Generated code doesn't match project style
 
 **Solution**:
+
 1. Reference existing files: "Follow pattern in farm.service.ts"
 2. Check `.cursorrules` is active
 3. Use divine naming conventions
@@ -388,13 +424,15 @@ Show complete class.
 ## 🎯 BEST PRACTICES
 
 ### 1. Always Use Precision Prompts
+
 ```
 ❌ Bad:  "Create a component for farms"
-✅ Good: "Generate src/components/features/FarmCard.tsx with 
+✅ Good: "Generate src/components/features/FarmCard.tsx with
          Farm type, shadcn/ui Card, favorite button. Code only."
 ```
 
 ### 2. Validate Generated Code
+
 ```
 Before committing, check:
 ✅ No explanatory comments
@@ -405,6 +443,7 @@ Before committing, check:
 ```
 
 ### 3. Use Keyboard Shortcuts
+
 ```
 90% of actions should be keyboard-driven
 Learn: Ctrl+Space, Ctrl+Shift+I, Ctrl+P, Ctrl+D
@@ -412,13 +451,15 @@ Master these first, then expand
 ```
 
 ### 4. Generate Tests Immediately
+
 ```
 After generating any feature:
-Ctrl+Shift+I → "Generate Vitest tests for this code. 
+Ctrl+Shift+I → "Generate Vitest tests for this code.
 Include edge cases. Complete test file."
 ```
 
 ### 5. Commit Small, Commit Often
+
 ```
 After each generated feature:
 1. Validate code
@@ -432,19 +473,25 @@ After each generated feature:
 ## 🤝 TEAM ADOPTION
 
 ### Small Team (1-5 devs)
+
 **Recommendation**: Start with **Zed** (speed benefits immediate)
+
 - Quick adoption (1 day)
 - Built-in collaboration
 - Cost-effective
 
 ### Medium Team (6-20 devs)
+
 **Recommendation**: Start with **Cursor** (familiarity)
+
 - Easier standardization
 - More resources available
 - Gradual Zed adoption for power users
 
 ### Large Team (20+ devs)
+
 **Recommendation**: **Cursor** as primary, **Zed** optional
+
 - Consistency critical
 - Training resources abundant
 - Pilot Zed with interested developers
@@ -454,15 +501,19 @@ After each generated feature:
 ## 📊 SUCCESS STORIES
 
 ### Developer A (Junior, Before)
+
 > "Creating a CRUD API took me 2 hours, with multiple bugs and 3 code review cycles."
 
 ### Developer A (After Godlike - Cursor)
+
 > "I now generate complete CRUD APIs in 8 minutes, with zero bugs and single code review. Life-changing!"
 
 ### Developer B (Senior, Before)
+
 > "I was skeptical of AI-generated code. Too many bugs, inconsistent style."
 
 ### Developer B (After Godlike - Zed)
+
 > "The precision prompts + Zed's speed is insane. I generate entire features in minutes. Code quality is better than manual. 100x productivity is real."
 
 ---
@@ -472,17 +523,20 @@ After each generated feature:
 You now have **two complete, production-ready godlike Copilot configurations** that will transform your development workflow.
 
 ### The Divine Formula
+
 ```
 Cursor/VS Code: Maturity + Ecosystem + Godlike Config = 10x Productivity
 Zed:            Speed (10x) + Native Performance + Godlike = 100x Productivity
 ```
 
 ### Choose Your Path
+
 - **Cursor/VS Code**: Safe, familiar, feature-rich (recommended for most)
 - **Zed**: Fast, modern, cutting-edge (recommended for speed demons)
 - **Both**: Best of both worlds (hybrid approach)
 
 ### Next Steps
+
 1. Choose your editor (Cursor or Zed)
 2. Follow Quick Start guide above
 3. Read the workflow guide for your editor
@@ -494,12 +548,14 @@ Zed:            Speed (10x) + Native Performance + Godlike = 100x Productivity
 ## 📞 SUPPORT & RESOURCES
 
 ### Documentation
+
 - **Cursor Users**: Start with `.copilot/IMPLEMENTATION_SUMMARY.md`
 - **Zed Users**: Start with `.zed/ZED_IMPLEMENTATION_SUMMARY.md`
 - **Comparison**: `GODLIKE_COPILOT_COMPARISON.md`
 - **Project Standards**: `.cursorrules`
 
 ### External Resources
+
 - **Cursor**: https://cursor.sh
 - **Zed**: https://zed.dev
 - **GitHub Copilot**: https://docs.github.com/copilot
@@ -507,6 +563,7 @@ Zed:            Speed (10x) + Native Performance + Godlike = 100x Productivity
 - **Prisma**: https://www.prisma.io/docs
 
 ### Team Support
+
 - **Slack/Discord**: #godlike-copilot-help
 - **Code Review**: Tag @copilot-experts
 - **Office Hours**: Weekly Q&A sessions
@@ -516,6 +573,7 @@ Zed:            Speed (10x) + Native Performance + Godlike = 100x Productivity
 ## 🏆 CERTIFICATION
 
 You are **godlike certified** when you can:
+
 - [ ] Generate CRUD API in <10 minutes
 - [ ] Generate complex UI component in <5 minutes
 - [ ] Generate comprehensive tests in <3 minutes

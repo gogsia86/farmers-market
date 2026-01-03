@@ -1,4 +1,5 @@
 # 🧹 Repository Cleanup & Professional Restructuring Plan
+
 **Farmers Market Platform - Complete Repository Audit & Cleanup Strategy**
 **Created**: January 2025
 **Status**: Action Plan - Ready for Implementation
@@ -8,6 +9,7 @@
 ## 📋 Executive Summary
 
 ### Current State Analysis
+
 - **Total Documentation Files**: 200+ status/summary/progress files
 - **Root-Level .md Files**: 50+ scattered documentation files
 - **Archive Folders**: Multiple nested archive structures
@@ -17,6 +19,7 @@
 - **API Routes**: 45+ API route folders (some potentially redundant)
 
 ### Goals
+
 1. ✅ Professional, enterprise-grade structure
 2. ✅ Clear separation of concerns
 3. ✅ Easy navigation for new developers
@@ -29,26 +32,31 @@
 ## 🎯 Cleanup Strategy Overview
 
 ### Phase 1: Root Directory Cleanup (HIGH PRIORITY)
+
 **Impact**: Immediate visual improvement, easier navigation
 **Effort**: 2-3 hours
 **Risk**: Low (moving to archive)
 
 ### Phase 2: Documentation Consolidation (HIGH PRIORITY)
+
 **Impact**: Massive reduction in confusion, single source of truth
 **Effort**: 4-6 hours
 **Risk**: Medium (need to preserve important content)
 
 ### Phase 3: Scripts Organization (MEDIUM PRIORITY)
+
 **Impact**: Easier maintenance, clearer dev workflow
 **Effort**: 2-3 hours
 **Risk**: Low (archive old scripts)
 
 ### Phase 4: Source Code Optimization (MEDIUM PRIORITY)
+
 **Impact**: Better code organization
 **Effort**: 3-4 hours
 **Risk**: Medium (requires testing)
 
 ### Phase 5: Test Structure Refinement (LOW PRIORITY)
+
 **Impact**: Better test organization
 **Effort**: 1-2 hours
 **Risk**: Low
@@ -156,6 +164,7 @@ Farmers Market Platform web and app/
 ### 📚 Current Problem: Documentation Chaos
 
 **Issues Identified:**
+
 - 57+ STATUS files
 - 205+ SUMMARY files
 - 58+ PROGRESS files
@@ -246,6 +255,7 @@ docs/
 ### 🗑️ Files to Archive/Delete
 
 **DELETE (Redundant/Outdated):**
+
 ```bash
 # These are duplicates or superseded:
 docs/archive/PROJECT_STATUS_OLD.md
@@ -256,6 +266,7 @@ docs/archive/2024-12/status-reports/* (consolidate into 2024-retrospective)
 ```
 
 **ARCHIVE (Historical Value):**
+
 ```bash
 # Move to docs/archive/2024-retrospective/:
 All SPRINT_* files
@@ -288,7 +299,7 @@ All PROGRESS_* files
    - Single source: Current project status
 
 5. **docs/project-management/technical-debt.md**
-   - Consolidate: TECHNICAL_DEBT_*.md files
+   - Consolidate: TECHNICAL*DEBT*\*.md files
    - Single source: Known technical debt
 
 6. **docs/reference/troubleshooting.md**
@@ -300,6 +311,7 @@ All PROGRESS_* files
 ## PHASE 3: Scripts Organization
 
 ### 📂 Current State
+
 - 80+ scripts in `/scripts/` folder
 - Some in archives, some active
 - No clear organization by purpose
@@ -375,7 +387,8 @@ scripts/quick-fix.ts (vague name)
 ### ✅ Scripts to Keep (Organized)
 
 **Active Development Scripts:**
-- setup-env.* (setup/)
+
+- setup-env.\* (setup/)
 - start-full-stack.ts (development/)
 - cleanup-and-restart.sh (development/)
 - seed-test-data.ts (database/)
@@ -428,6 +441,7 @@ scripts/quick-fix.ts (vague name)
 ```
 
 **Action Items:**
+
 1. Audit each API route folder for purpose
 2. Identify overlapping functionality
 3. Consolidate where appropriate
@@ -438,6 +452,7 @@ scripts/quick-fix.ts (vague name)
 **Current State**: Good organization overall
 
 **Minor Improvements:**
+
 ```
 src/components/
 ├── ui/                    # ✅ Good - Base components
@@ -455,6 +470,7 @@ src/components/
 ```
 
 **Recommendation:**
+
 - Move root-level components into appropriate feature folders
 - Review `divine/` folder - consolidate into standard structure
 - Move `best-practices/` to `docs/examples/`
@@ -464,6 +480,7 @@ src/components/
 **Current State**: Good structure
 
 **Minor Improvements:**
+
 ```
 tests/
 ├── e2e/              # ✅ Good
@@ -521,6 +538,7 @@ tests/
 ### Week 1: Quick Wins (Phase 1)
 
 **Day 1-2: Root Directory Cleanup**
+
 ```bash
 # Step 1: Create archive structure
 mkdir -p docs/archive/2024-2025-retrospective/{sprints,sessions,migrations}
@@ -539,6 +557,7 @@ git commit -m "docs: archive historical documentation to cleanup root"
 ```
 
 **Day 3: Create Master Documentation**
+
 ```bash
 # Create new consolidated docs
 docs/getting-started/README.md (combine all quick starts)
@@ -549,17 +568,20 @@ docs/project-management/current-sprint.md (replace all STATUS files)
 ### Week 2: Deep Cleanup (Phases 2-3)
 
 **Day 1-2: Documentation Consolidation**
+
 - Consolidate all testing docs
 - Consolidate all deployment docs
 - Create single source of truth documents
 - Archive redundant files
 
 **Day 3-4: Scripts Organization**
+
 - Reorganize scripts into categories
 - Archive old/unused scripts
 - Update documentation
 
 **Day 5: Validation**
+
 - Verify all links work
 - Test key scripts still function
 - Update CI/CD if needed
@@ -567,16 +589,19 @@ docs/project-management/current-sprint.md (replace all STATUS files)
 ### Week 3: Optimization (Phases 4-5)
 
 **Day 1-2: Source Code Review**
+
 - Audit API routes
 - Consolidate overlapping APIs
 - Move misplaced components
 
 **Day 3: Testing**
+
 - Update all imports
 - Run full test suite
 - Fix any broken tests
 
 **Day 4-5: Documentation Update**
+
 - Update all documentation with new structure
 - Create migration guide for team
 - Final review and cleanup
@@ -719,18 +744,21 @@ scripts/: 40 active files (organized)
 ## 📊 Expected Benefits
 
 ### Immediate Benefits (Week 1)
+
 - ✅ Clean, professional root directory
 - ✅ Clear entry point for new developers
 - ✅ Reduced cognitive load
 - ✅ Easier to find documentation
 
 ### Medium-Term Benefits (Month 1)
+
 - ✅ Single source of truth for all topics
 - ✅ Faster onboarding for new team members
 - ✅ Easier maintenance
 - ✅ Better organization = better productivity
 
 ### Long-Term Benefits (Quarter 1)
+
 - ✅ Professional, enterprise-grade structure
 - ✅ Scalable documentation approach
 - ✅ Reduced technical debt
@@ -742,26 +770,34 @@ scripts/: 40 active files (organized)
 ## ⚠️ Risks & Mitigation
 
 ### Risk 1: Broken Links
+
 **Mitigation**:
+
 - Use relative links where possible
 - Run link checker before merge
 - Update all references systematically
 
 ### Risk 2: Lost Information
+
 **Mitigation**:
+
 - Archive, don't delete
 - Create comprehensive archive index
 - Keep git history intact
 
 ### Risk 3: Team Disruption
+
 **Mitigation**:
+
 - Clear communication plan
 - Migration guide for team
 - Grace period for adjustment
 - Update onboarding docs
 
 ### Risk 4: CI/CD Breakage
+
 **Mitigation**:
+
 - Test on branch first
 - Update CI/CD configs
 - Verify all scripts work
@@ -772,6 +808,7 @@ scripts/: 40 active files (organized)
 ## 🚀 Quick Start: Implementing This Plan
 
 ### Option 1: Full Cleanup (Recommended)
+
 ```bash
 # Create cleanup branch
 git checkout -b repo-cleanup-2025
@@ -786,6 +823,7 @@ git push origin repo-cleanup-2025
 ```
 
 ### Option 2: Incremental Cleanup
+
 ```bash
 # Create separate branches for each phase
 git checkout -b cleanup-phase-1-root
@@ -798,6 +836,7 @@ git checkout -b cleanup-phase-2-docs
 ```
 
 ### Option 3: Minimal Cleanup (Quick Win)
+
 ```bash
 # Just do Phase 1 (root cleanup)
 # Takes 2-3 hours
@@ -811,27 +850,30 @@ git checkout -b cleanup-phase-2-docs
 ### Files to Archive (Move to `docs/archive/2024-2025-retrospective/`)
 
 **Root Level** (50+ files):
-- All SPRINT_*.md files
-- All SESSION_*.md files
-- All TEST_*.md files
-- All STATUS*.md files
-- All *SUMMARY*.md files
-- All *PROGRESS*.md files
-- All *COMPLETE*.md files
-- TECHNICAL_DEBT_*.md files
-- ANALYTICS_*.md files
-- CODE_REVIEW_*.md files
+
+- All SPRINT\_\*.md files
+- All SESSION\_\*.md files
+- All TEST\_\*.md files
+- All STATUS\*.md files
+- All _SUMMARY_.md files
+- All _PROGRESS_.md files
+- All _COMPLETE_.md files
+- TECHNICAL*DEBT*\*.md files
+- ANALYTICS\_\*.md files
+- CODE*REVIEW*\*.md files
 
 **Docs Level** (100+ files):
-- docs/archive/2024/* (consolidate)
-- docs/archive/2024-12/* (consolidate)
-- docs/archive/old-guides/* (most files)
-- docs/archive/duplicates/* (all)
-- docs/archive/historical-status/* (consolidate)
+
+- docs/archive/2024/\* (consolidate)
+- docs/archive/2024-12/\* (consolidate)
+- docs/archive/old-guides/\* (most files)
+- docs/archive/duplicates/\* (all)
+- docs/archive/historical-status/\* (consolidate)
 
 ### Files to Consolidate (Create New Master Docs)
 
 **Create**:
+
 - docs/getting-started/README.md
 - docs/development/testing-guide.md
 - docs/deployment/production-checklist.md
@@ -841,6 +883,7 @@ git checkout -b cleanup-phase-2-docs
 - scripts/README.md
 
 **From** (combine multiple files):
+
 - All quick start guides → getting-started/README.md
 - All testing docs → development/testing-guide.md
 - All deployment docs → deployment/production-checklist.md
@@ -851,12 +894,14 @@ git checkout -b cleanup-phase-2-docs
 ## 🎯 Success Metrics
 
 ### Quantitative Goals
+
 - **Root Directory**: Reduce from 100+ files to ~20 files (80% reduction)
 - **Documentation**: Reduce from 500+ files to ~100 organized files
 - **Scripts**: Organize 80+ scripts into 7 categories
 - **Archive Size**: Consolidate 3 archive levels to 1 structured archive
 
 ### Qualitative Goals
+
 - ✅ Professional appearance for GitHub visitors
 - ✅ Easy navigation for new developers
 - ✅ Clear documentation hierarchy
@@ -864,6 +909,7 @@ git checkout -b cleanup-phase-2-docs
 - ✅ Improved developer experience
 
 ### Validation Criteria
+
 - [ ] New developer can find documentation in < 2 minutes
 - [ ] All links work (0 broken links)
 - [ ] All tests pass
@@ -877,11 +923,13 @@ git checkout -b cleanup-phase-2-docs
 ## 📞 Support & Questions
 
 ### During Cleanup
+
 - Document all decisions in commit messages
 - Create issues for questions/concerns
 - Update this plan as you discover new patterns
 
 ### After Cleanup
+
 - Monitor for broken links or missing docs
 - Collect feedback from team
 - Iterate on structure as needed
@@ -892,11 +940,13 @@ git checkout -b cleanup-phase-2-docs
 ## 🎓 Learning Resources
 
 ### Industry Best Practices
+
 - [GitHub Repository Structure](https://github.com/github/docs/tree/main/content)
 - [Monorepo Structure Guide](https://nx.dev/getting-started/intro)
 - [Documentation Best Practices](https://www.writethedocs.org/guide/)
 
 ### Examples of Well-Organized Repos
+
 - [Next.js Repository](https://github.com/vercel/next.js)
 - [Prisma Repository](https://github.com/prisma/prisma)
 - [React Repository](https://github.com/facebook/react)
@@ -906,18 +956,21 @@ git checkout -b cleanup-phase-2-docs
 ## 📈 Next Steps
 
 ### Immediate (This Week)
+
 1. **Review this plan** with team
 2. **Create backup** of repository
 3. **Create cleanup branch**
 4. **Start Phase 1** (root cleanup)
 
 ### Short-Term (This Month)
+
 1. **Complete Phases 1-3** (cleanup + docs)
 2. **Create PR** for review
 3. **Test thoroughly**
 4. **Merge to main**
 
 ### Medium-Term (This Quarter)
+
 1. **Complete Phases 4-5** (optimization)
 2. **Monitor usage** and iterate
 3. **Update onboarding** based on feedback
@@ -928,6 +981,7 @@ git checkout -b cleanup-phase-2-docs
 ## 🌟 Final Notes
 
 ### Remember
+
 - **Archive, don't delete** - Preserve history
 - **Test thoroughly** - Verify nothing breaks
 - **Communicate clearly** - Keep team informed
@@ -935,9 +989,11 @@ git checkout -b cleanup-phase-2-docs
 - **Document decisions** - Future self will thank you
 
 ### Philosophy
+
 > "A clean repository is a productive repository. Organization is not about perfection—it's about making information discoverable and maintainable."
 
 ### The Divine Agricultural Way
+
 Even as we maintain "divine" patterns and "quantum" architecture philosophies in our code, our repository structure should be grounded in industry standards and practical organization. The best code in the world is useless if developers can't find or understand it.
 
 ---

@@ -84,9 +84,9 @@ export async function GET(req: NextRequest) {
     // Parse tags if provided
     const tags = validatedParams.tags
       ? validatedParams.tags
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean)
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean)
       : undefined;
 
     // Fetch saved searches

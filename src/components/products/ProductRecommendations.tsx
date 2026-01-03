@@ -119,44 +119,44 @@ interface RecommendationConfig {
 // ============================================
 
 const RECOMMENDATION_CONFIGS: Record<RecommendationType, RecommendationConfig> =
-{
-  SIMILAR: {
-    icon: Sparkles,
-    title: "Similar Products You May Like",
-    description: "Based on this product's characteristics",
-    color: "purple",
-  },
-  COMPLEMENTARY: {
-    icon: ThumbsUp,
-    title: "Perfect Pairings",
-    description: "Products that go great together",
-    color: "blue",
-  },
-  SEASONAL: {
-    icon: Calendar,
-    title: "Fresh This Season",
-    description: "Peak harvest and availability",
-    color: "green",
-  },
-  POPULAR: {
-    icon: TrendingUp,
-    title: "Customer Favorites",
-    description: "Most loved by our community",
-    color: "orange",
-  },
-  PERSONALIZED: {
-    icon: Zap,
-    title: "Picked Just For You",
-    description: "Based on your preferences and history",
-    color: "pink",
-  },
-  FREQUENTLY_BOUGHT_TOGETHER: {
-    icon: ShoppingCart,
-    title: "Frequently Bought Together",
-    description: "Customers also purchased these items",
-    color: "indigo",
-  },
-};
+  {
+    SIMILAR: {
+      icon: Sparkles,
+      title: "Similar Products You May Like",
+      description: "Based on this product's characteristics",
+      color: "purple",
+    },
+    COMPLEMENTARY: {
+      icon: ThumbsUp,
+      title: "Perfect Pairings",
+      description: "Products that go great together",
+      color: "blue",
+    },
+    SEASONAL: {
+      icon: Calendar,
+      title: "Fresh This Season",
+      description: "Peak harvest and availability",
+      color: "green",
+    },
+    POPULAR: {
+      icon: TrendingUp,
+      title: "Customer Favorites",
+      description: "Most loved by our community",
+      color: "orange",
+    },
+    PERSONALIZED: {
+      icon: Zap,
+      title: "Picked Just For You",
+      description: "Based on your preferences and history",
+      color: "pink",
+    },
+    FREQUENTLY_BOUGHT_TOGETHER: {
+      icon: ShoppingCart,
+      title: "Frequently Bought Together",
+      description: "Customers also purchased these items",
+      color: "indigo",
+    },
+  };
 
 // ============================================
 // 🎨 MAIN COMPONENT
@@ -207,12 +207,16 @@ export function ProductRecommendations({
         const data = await response.json();
         setProducts(data.products || []);
       } catch (err) {
-        recommendationsLogger.error("Error fetching recommendations", err instanceof Error ? err : new Error(String(err)), {
-          contextProductId,
-          userId,
-          category,
-          recommendationType,
-        });
+        recommendationsLogger.error(
+          "Error fetching recommendations",
+          err instanceof Error ? err : new Error(String(err)),
+          {
+            contextProductId,
+            userId,
+            category,
+            recommendationType,
+          },
+        );
         setError("Unable to load recommendations");
         // Fallback to mock data for demo
         setProducts(generateMockRecommendations(maxProducts));
@@ -618,7 +622,8 @@ function generateMockRecommendations(count: number): RecommendedProduct[] {
 // ============================================
 
 export type {
-  Farm, ProductRecommendationsProps,
-  RecommendationType, RecommendedProduct
+  Farm,
+  ProductRecommendationsProps,
+  RecommendationType,
+  RecommendedProduct,
 };
-

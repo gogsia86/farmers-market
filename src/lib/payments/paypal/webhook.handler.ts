@@ -161,7 +161,9 @@ export class PayPalWebhookHandler {
           };
         }
       } else {
-        console.warn("⚠️ PAYPAL_WEBHOOK_ID not configured, skipping verification");
+        console.warn(
+          "⚠️ PAYPAL_WEBHOOK_ID not configured, skipping verification",
+        );
       }
 
       // Check if event already processed
@@ -336,7 +338,9 @@ export class PayPalWebhookHandler {
     const order = await database.order.findFirst({
       where: {
         OR: [
-          { paymentIntentId: capture.supplementary_data?.related_ids?.order_id },
+          {
+            paymentIntentId: capture.supplementary_data?.related_ids?.order_id,
+          },
           { orderNumber: orderId },
           { id: orderId },
         ],

@@ -117,9 +117,9 @@ Always consider the holistic farm ecosystem and long-term sustainability.`,
     const tokensPerSecond =
       response.eval_count && response.eval_duration
         ? (
-          response.eval_count /
-          (response.eval_duration / 1_000_000_000)
-        ).toFixed(2)
+            response.eval_count /
+            (response.eval_duration / 1_000_000_000)
+          ).toFixed(2)
         : "N/A";
 
     return NextResponse.json({

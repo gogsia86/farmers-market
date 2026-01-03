@@ -1,4 +1,5 @@
 # 🚀 TEAM ONBOARDING: GODLIKE COPILOT WORKFLOW
+
 ## Divine Precision Coding for Farmers Market Platform
 
 ---
@@ -8,6 +9,7 @@
 ### Day 1: Setup & Configuration ✅
 
 #### Environment Setup
+
 - [ ] **Install Cursor IDE** (or VS Code with GitHub Copilot extension)
 - [ ] **Verify GitHub Copilot subscription** is active
   - Go to GitHub.com → Settings → Copilot
@@ -30,6 +32,7 @@
   - `.vscode/typescript.code-snippets`
 
 #### Copilot Activation
+
 - [ ] **Open Cursor/VS Code**
 - [ ] **Sign in to GitHub Copilot**
   - `Ctrl+Shift+P` → "Copilot: Sign In"
@@ -41,6 +44,7 @@
   - `Ctrl+Shift+P` → "Developer: Reload Window"
 
 #### Learning Resources
+
 - [ ] **Read `.copilot/directives.md`** (15 min)
 - [ ] **Read `.copilot/GODLIKE_WORKFLOW.md`** (30 min)
 - [ ] **Review `.cursorrules`** (10 min)
@@ -51,6 +55,7 @@
 ### Day 2: Fundamentals & Practice 🎯
 
 #### Master the Shortcuts
+
 - [ ] **Print out keyboard shortcuts reference**
   - See Appendix A in `GODLIKE_WORKFLOW.md`
 - [ ] **Practice core shortcuts** (15 min drill):
@@ -61,6 +66,7 @@
   - `Ctrl+Shift+X` - Reject suggestion (5x)
 
 #### Test Basic Workflows
+
 - [ ] **Generate a simple component**
   - Open Copilot Chat (`Ctrl+Shift+I`)
   - Prompt: "Generate src/components/test/HelloWorld.tsx with TypeScript. Code only."
@@ -74,6 +80,7 @@
   - Let Copilot fill in the details
 
 #### First Real Task
+
 - [ ] **Choose a starter task** (assigned by team lead)
   - Example: "Add a new badge variant to OrderStatus component"
 - [ ] **Complete using godlike workflow**
@@ -90,6 +97,7 @@
 ### Day 3: Advanced Techniques 🔥
 
 #### Complex Generation
+
 - [ ] **Multi-file feature generation**
   - Prompt: "Generate customer wishlist feature: page, component, API route, service, types. All files."
   - Practice: Verify all imports are correct and files integrate properly
@@ -103,6 +111,7 @@
   - Verify: Comprehensive tests, mocks, edge cases
 
 #### Master Custom Actions
+
 - [ ] **Practice all custom shortcuts** (with selection):
   - `Ctrl+Alt+Shift+C` - Generate component
   - `Ctrl+Alt+Shift+O` - Optimize code
@@ -113,6 +122,7 @@
   - `Ctrl+Alt+Shift+R` - Refactor SOLID
 
 #### Agricultural Consciousness
+
 - [ ] **Generate a divine component**
   - Use quantum/biodynamic naming
   - Prompt: "Generate QuantumFarmAnalytics component with BiodynamicMetrics. Divine implementation."
@@ -126,12 +136,14 @@
 ### Week 1: Production Workflows 🏗️
 
 #### Daily Development Routine
+
 - [ ] **Morning**: Review sprint tasks, plan Copilot generations
 - [ ] **During work**: Use precision prompts for all coding tasks
 - [ ] **Before commit**: Validate all generated code against checklist
 - [ ] **End of day**: Review quality, update directives if needed
 
 #### Complete Feature Workflows
+
 - [ ] **Feature 1: New API endpoint**
   - [ ] Generate Zod validation schema
   - [ ] Generate API route with error handling
@@ -152,6 +164,7 @@
   - [ ] Submit for review
 
 #### Code Review Training
+
 - [ ] **Review others' Copilot-generated code**
   - Check: No explanatory comments
   - Check: Proper imports (`@/`)
@@ -168,6 +181,7 @@
 ### Week 2: Mastery & Optimization 🌟
 
 #### Performance Optimization
+
 - [ ] **Master parallel operations**
   - Use `Promise.all` for independent queries
   - Practice: Optimize a page with multiple data fetches
@@ -179,6 +193,7 @@
   - Use custom action: `Ctrl+Alt+Shift+O`
 
 #### Error Handling Mastery
+
 - [ ] **Create custom error classes**
   - Practice: Generate domain-specific errors (FarmValidationError, OrderProcessingError)
 - [ ] **Implement error boundaries**
@@ -187,6 +202,7 @@
   - Practice: Add structured logging to services
 
 #### Testing Excellence
+
 - [ ] **Achieve 80%+ test coverage** on features you create
 - [ ] **Practice TDD** with Copilot
   - Write test first
@@ -199,12 +215,14 @@
 ### Ongoing: Continuous Improvement 📈
 
 #### Weekly Goals
+
 - [ ] **Week 1**: 50% of code Copilot-generated, validated manually
 - [ ] **Week 2**: 80% of code Copilot-generated, spot-check validation
 - [ ] **Week 3**: 95% of code Copilot-generated, trust with quick review
 - [ ] **Week 4**: Full godlike mode - generate entire features in minutes
 
 #### Metrics to Track
+
 - [ ] **Time to complete CRUD API**: Target <5 minutes
 - [ ] **Bugs per feature**: Target 0-1
 - [ ] **Code review cycles**: Target 1
@@ -212,6 +230,7 @@
 - [ ] **Manual refactoring**: Target minimal
 
 #### Team Contributions
+
 - [ ] **Share prompt templates** that work well
 - [ ] **Update `.copilot/directives.md`** with new patterns
 - [ ] **Document edge cases** and solutions
@@ -225,6 +244,7 @@
 You are **certified godlike** when you can:
 
 ### Core Competencies
+
 - [ ] Generate a complete CRUD API in <10 minutes
 - [ ] Generate a complex UI component in <5 minutes
 - [ ] Generate comprehensive tests for any code in <3 minutes
@@ -232,6 +252,7 @@ You are **certified godlike** when you can:
 - [ ] Debug and fix issues using Copilot assistance
 
 ### Quality Standards
+
 - [ ] All generated code follows project patterns (100%)
 - [ ] All imports use correct path aliases (100%)
 - [ ] All API routes have error handling (100%)
@@ -239,6 +260,7 @@ You are **certified godlike** when you can:
 - [ ] All code passes lint/type check first try (>90%)
 
 ### Speed Benchmarks
+
 - [ ] **React Component**: <3 minutes
 - [ ] **API Route**: <5 minutes
 - [ ] **Service Class**: <7 minutes
@@ -246,6 +268,7 @@ You are **certified godlike** when you can:
 - [ ] **Test Suite**: <5 minutes
 
 ### Advanced Skills
+
 - [ ] Can generate multi-file features with one prompt
 - [ ] Can refactor code with performance optimizations
 - [ ] Can debug complex issues using Copilot
@@ -257,6 +280,7 @@ You are **certified godlike** when you can:
 ## 🚨 COMMON MISTAKES TO AVOID
 
 ### ❌ Don't Do This
+
 1. **Vague Prompts**
    - ❌ "Create a component"
    - ✅ "Generate src/components/features/OrderCard.tsx with Order type, shadcn/ui Card, status badge. Code only."
@@ -286,36 +310,42 @@ You are **certified godlike** when you can:
 ## 📊 PROGRESS TRACKING
 
 ### Week 1 Self-Assessment
-Rate yourself (1-5):
-- [ ] Copilot setup and configuration: __/5
-- [ ] Basic keyboard shortcuts: __/5
-- [ ] Precision prompting: __/5
-- [ ] Code validation skills: __/5
-- [ ] Speed (vs manual coding): __/5
 
-**Average Score**: __/5
+Rate yourself (1-5):
+
+- [ ] Copilot setup and configuration: \_\_/5
+- [ ] Basic keyboard shortcuts: \_\_/5
+- [ ] Precision prompting: \_\_/5
+- [ ] Code validation skills: \_\_/5
+- [ ] Speed (vs manual coding): \_\_/5
+
+**Average Score**: \_\_/5
 **Goal**: >3/5 by end of Week 1
 
 ### Week 2 Self-Assessment
-Rate yourself (1-5):
-- [ ] Advanced generation (multi-file): __/5
-- [ ] Custom actions mastery: __/5
-- [ ] Agricultural consciousness: __/5
-- [ ] Refactoring & optimization: __/5
-- [ ] Test generation: __/5
 
-**Average Score**: __/5
+Rate yourself (1-5):
+
+- [ ] Advanced generation (multi-file): \_\_/5
+- [ ] Custom actions mastery: \_\_/5
+- [ ] Agricultural consciousness: \_\_/5
+- [ ] Refactoring & optimization: \_\_/5
+- [ ] Test generation: \_\_/5
+
+**Average Score**: \_\_/5
 **Goal**: >4/5 by end of Week 2
 
 ### Month 1 Self-Assessment
-Rate yourself (1-5):
-- [ ] Speed (CRUD API in <5 min): __/5
-- [ ] Quality (first-time pass rate): __/5
-- [ ] Pattern adherence: __/5
-- [ ] Team contribution: __/5
-- [ ] Teaching ability: __/5
 
-**Average Score**: __/5
+Rate yourself (1-5):
+
+- [ ] Speed (CRUD API in <5 min): \_\_/5
+- [ ] Quality (first-time pass rate): \_\_/5
+- [ ] Pattern adherence: \_\_/5
+- [ ] Team contribution: \_\_/5
+- [ ] Teaching ability: \_\_/5
+
+**Average Score**: \_\_/5
 **Goal**: >4.5/5 for godlike certification
 
 ---
@@ -323,8 +353,10 @@ Rate yourself (1-5):
 ## 🎯 YOUR FIRST ASSIGNMENTS
 
 ### Assignment 1: Simple Component
+
 **Task**: Generate a `LoadingSpinner` component
 **Prompt Template**:
+
 ```
 Generate src/components/ui/LoadingSpinner.tsx:
 - TypeScript interface for size prop (sm, md, lg)
@@ -333,15 +365,19 @@ Generate src/components/ui/LoadingSpinner.tsx:
 - Export as named export
 Code only.
 ```
+
 **Validation**:
+
 - [ ] No explanations
 - [ ] Proper TypeScript
 - [ ] Tailwind classes
 - [ ] Accessibility attributes
 
 ### Assignment 2: API Route
+
 **Task**: Generate API route to fetch user profile
 **Prompt Template**:
+
 ```
 Create src/app/api/user/profile/route.ts:
 - GET handler
@@ -352,15 +388,19 @@ Create src/app/api/user/profile/route.ts:
 - Error handling
 Complete implementation.
 ```
+
 **Validation**:
+
 - [ ] Auth check present
 - [ ] Database import correct
 - [ ] Error handling comprehensive
 - [ ] Response format correct
 
 ### Assignment 3: Service Method
+
 **Task**: Add `getFarmsByLocation` method to FarmService
 **Prompt Template**:
+
 ```
 Add method to src/lib/services/farm.service.ts:
 - getFarmsByLocation(lat: number, lng: number, radius: number)
@@ -370,7 +410,9 @@ Add method to src/lib/services/farm.service.ts:
 - Error handling
 Show complete method.
 ```
+
 **Validation**:
+
 - [ ] Method signature correct
 - [ ] Database query optimized
 - [ ] Error handling present
@@ -381,6 +423,7 @@ Show complete method.
 ## 🎓 LEARNING RESOURCES
 
 ### Documentation
+
 1. **Project-Specific**
    - `.cursorrules` - Master coding rules
    - `.copilot/directives.md` - Copilot behavior rules
@@ -398,6 +441,7 @@ Show complete method.
    - Best Practices: https://github.blog/copilot
 
 ### Team Support
+
 - **Slack/Discord**: #godlike-copilot-help
 - **Code Review**: Request from senior devs
 - **Pair Programming**: Schedule with mentor
@@ -408,11 +452,15 @@ Show complete method.
 ## 🌟 SUCCESS STORIES
 
 ### Before Godlike Workflow
+
 > "Creating a CRUD API took me 2 hours, with multiple bugs and 3 code review cycles."
+>
 > - Junior Developer
 
 ### After Godlike Workflow
+
 > "I now generate complete CRUD APIs in 5 minutes, with zero bugs and single code review cycle. Game changer!"
+>
 > - Same Developer, 3 weeks later
 
 ---
@@ -437,6 +485,7 @@ Before you're considered **fully onboarded**:
 You are now a **Godlike Copilot Developer** for the Farmers Market Platform!
 
 ### Your Superpowers
+
 ✨ Generate production code in seconds
 ✨ Maintain agricultural consciousness in every line
 ✨ Follow divine architectural patterns automatically
@@ -444,6 +493,7 @@ You are now a **Godlike Copilot Developer** for the Farmers Market Platform!
 ✨ Write bug-free code consistently
 
 ### Next Steps
+
 1. **Maintain mastery**: Use godlike workflow daily
 2. **Share knowledge**: Help onboard new team members
 3. **Improve system**: Contribute prompt templates and patterns

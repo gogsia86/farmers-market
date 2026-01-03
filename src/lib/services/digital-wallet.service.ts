@@ -727,7 +727,9 @@ export class DigitalWalletService extends BaseService {
               })) ||
               order.items.map((item) => ({
                 label: `${item.product.name} (${item.quantity}x)`,
-                amount: Math.round(Number(item.unitPrice) * Number(item.quantity) * 100),
+                amount: Math.round(
+                  Number(item.unitPrice) * Number(item.quantity) * 100,
+                ),
               })),
             requestPayerName: validated.requestPayerName,
             requestPayerEmail: validated.requestPayerEmail,
@@ -952,37 +954,59 @@ export const getDigitalWalletService = (): DigitalWalletService => {
  */
 export const digitalWalletService = {
   get detectDeviceCapabilities() {
-    return getDigitalWalletService().detectDeviceCapabilities.bind(getDigitalWalletService());
+    return getDigitalWalletService().detectDeviceCapabilities.bind(
+      getDigitalWalletService(),
+    );
   },
   get getWalletCapabilities() {
-    return getDigitalWalletService().getWalletCapabilities.bind(getDigitalWalletService());
+    return getDigitalWalletService().getWalletCapabilities.bind(
+      getDigitalWalletService(),
+    );
   },
   get isWalletAvailable() {
-    return getDigitalWalletService().isWalletAvailable.bind(getDigitalWalletService());
+    return getDigitalWalletService().isWalletAvailable.bind(
+      getDigitalWalletService(),
+    );
   },
   get validateWalletConfiguration() {
-    return getDigitalWalletService().validateWalletConfiguration.bind(getDigitalWalletService());
+    return getDigitalWalletService().validateWalletConfiguration.bind(
+      getDigitalWalletService(),
+    );
   },
   get createApplePayIntent() {
-    return getDigitalWalletService().createApplePayIntent.bind(getDigitalWalletService());
+    return getDigitalWalletService().createApplePayIntent.bind(
+      getDigitalWalletService(),
+    );
   },
   get createGooglePayIntent() {
-    return getDigitalWalletService().createGooglePayIntent.bind(getDigitalWalletService());
+    return getDigitalWalletService().createGooglePayIntent.bind(
+      getDigitalWalletService(),
+    );
   },
   get processWalletPayment() {
-    return getDigitalWalletService().processWalletPayment.bind(getDigitalWalletService());
+    return getDigitalWalletService().processWalletPayment.bind(
+      getDigitalWalletService(),
+    );
   },
   get createPaymentRequest() {
-    return getDigitalWalletService().createPaymentRequest.bind(getDigitalWalletService());
+    return getDigitalWalletService().createPaymentRequest.bind(
+      getDigitalWalletService(),
+    );
   },
   get validateApplePayMerchant() {
-    return getDigitalWalletService().validateApplePayMerchant.bind(getDigitalWalletService());
+    return getDigitalWalletService().validateApplePayMerchant.bind(
+      getDigitalWalletService(),
+    );
   },
   get getGooglePayConfig() {
-    return getDigitalWalletService().getGooglePayConfig.bind(getDigitalWalletService());
+    return getDigitalWalletService().getGooglePayConfig.bind(
+      getDigitalWalletService(),
+    );
   },
   get getAvailableWallets() {
-    return getDigitalWalletService().getAvailableWallets.bind(getDigitalWalletService());
+    return getDigitalWalletService().getAvailableWallets.bind(
+      getDigitalWalletService(),
+    );
   },
 };
 
@@ -990,14 +1014,22 @@ export const digitalWalletService = {
  * Export types for external use
  */
 export type {
-  DeviceInfo, PaymentRequestConfig, PaymentRequestDisplayItem,
-  ShippingOption, WalletCapabilities, WalletPaymentIntent, WalletPaymentResult, WalletType
+  DeviceInfo,
+  PaymentRequestConfig,
+  PaymentRequestDisplayItem,
+  ShippingOption,
+  WalletCapabilities,
+  WalletPaymentIntent,
+  WalletPaymentResult,
+  WalletType,
 };
 
 /**
  * Export custom errors
  */
-  export {
-    ApplePayConfigurationError, DigitalWalletError, GooglePayConfigurationError, WalletNotSupportedError
-  };
-
+export {
+  ApplePayConfigurationError,
+  DigitalWalletError,
+  GooglePayConfigurationError,
+  WalletNotSupportedError,
+};

@@ -237,8 +237,9 @@ function StatCard({ title, value, description, icon, trend }: MetricCardProps) {
         )}
         {trend && (
           <div
-            className={`flex items-center gap-1 mt-2 text-xs ${trend.value > 0 ? "text-green-600" : "text-red-600"
-              }`}
+            className={`flex items-center gap-1 mt-2 text-xs ${
+              trend.value > 0 ? "text-green-600" : "text-red-600"
+            }`}
           >
             {trend.value > 0 ? (
               <TrendingUp className="h-3 w-3" />
@@ -301,11 +302,11 @@ export default async function AdminAnalyticsPage() {
     100,
     Math.round(
       (platformStats.activeFarms / Math.max(platformStats.totalFarms, 1)) * 30 +
-      (platformStats.activeProducts /
-        Math.max(platformStats.totalProducts, 1)) *
-      30 +
-      (platformStats.activeUsers / Math.max(platformStats.totalUsers, 1)) *
-      40,
+        (platformStats.activeProducts /
+          Math.max(platformStats.totalProducts, 1)) *
+          30 +
+        (platformStats.activeUsers / Math.max(platformStats.totalUsers, 1)) *
+          40,
     ),
   );
 

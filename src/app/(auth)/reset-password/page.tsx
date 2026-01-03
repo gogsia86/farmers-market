@@ -123,9 +123,13 @@ export default function ResetPasswordPage() {
           ? err.message
           : "Failed to reset password. Please try again or request a new reset link.",
       );
-      authLogger.error("Password reset error", err instanceof Error ? err : new Error(String(err)), {
-        hasToken: !!token,
-      });
+      authLogger.error(
+        "Password reset error",
+        err instanceof Error ? err : new Error(String(err)),
+        {
+          hasToken: !!token,
+        },
+      );
     } finally {
       setIsSubmitting(false);
     }

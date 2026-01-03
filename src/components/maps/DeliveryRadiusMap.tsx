@@ -166,7 +166,10 @@ export function DeliveryRadiusMap({
       setMap(mapInstance);
       setLoading(false);
     } catch (err) {
-      deliveryMapLogger.error("Error initializing map", err instanceof Error ? err : new Error(String(err)));
+      deliveryMapLogger.error(
+        "Error initializing map",
+        err instanceof Error ? err : new Error(String(err)),
+      );
       setError("Failed to load map");
       setLoading(false);
     }
@@ -236,9 +239,13 @@ export function DeliveryRadiusMap({
         map.panTo({ lat, lng });
       }
     } catch (error) {
-      deliveryMapLogger.error("Error geocoding address", error instanceof Error ? error : new Error(String(error)), {
-        searchAddress,
-      });
+      deliveryMapLogger.error(
+        "Error geocoding address",
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          searchAddress,
+        },
+      );
       alert("Error checking address. Please try again.");
     }
   };
@@ -300,10 +307,11 @@ export function DeliveryRadiusMap({
           {/* Search Result */}
           {searchResult && (
             <div
-              className={`mt-4 p-4 rounded-lg border-2 ${searchResult.inRange
+              className={`mt-4 p-4 rounded-lg border-2 ${
+                searchResult.inRange
                   ? "bg-green-50 border-green-200"
                   : "bg-red-50 border-red-200"
-                }`}
+              }`}
             >
               <div className="flex items-center gap-2 mb-2">
                 {searchResult.inRange ? (
@@ -418,9 +426,9 @@ function calculateDistance(
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(toRad(lat1)) *
-    Math.cos(toRad(lat2)) *
-    Math.sin(dLon / 2) *
-    Math.sin(dLon / 2);
+      Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 }

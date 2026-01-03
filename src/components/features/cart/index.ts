@@ -21,11 +21,7 @@ export {
   DetailedCartSummary,
   CheckoutSummary,
 } from "./CartSummary";
-export {
-  EmptyCart,
-  CompactEmptyCart,
-  CheckoutEmptyState,
-} from "./EmptyCart";
+export { EmptyCart, CompactEmptyCart, CheckoutEmptyState } from "./EmptyCart";
 
 // ============================================================================
 // Type Exports

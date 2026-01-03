@@ -199,11 +199,11 @@ global.TransformStream = class TransformStream {
 };
 
 global.ReadableStream = class ReadableStream {
-  constructor() { }
+  constructor() {}
 };
 
 global.WritableStream = class WritableStream {
-  constructor() { }
+  constructor() {}
 };
 
 // ============================================
@@ -801,7 +801,7 @@ jest.mock(
     checkRedisHealth: jest.fn(async () => true),
     RedisCacheService: jest.fn().mockImplementation(() => mockRedisCache),
   }),
-  { virtual: true }
+  { virtual: true },
 );
 
 global.mockRedisCache = mockRedisCache;

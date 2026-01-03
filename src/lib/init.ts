@@ -12,7 +12,11 @@
  * - Agricultural consciousness activation
  */
 
-import { checkOptionalServices, validateEnv, type Env } from "./config/env.validation";
+import {
+  checkOptionalServices,
+  validateEnv,
+  type Env,
+} from "./config/env.validation";
 
 /**
  * Initialize application
@@ -34,7 +38,10 @@ export function initializeApp(): Env {
 
   // ✅ Step 3: Log startup info
   console.log("📊 Environment:", env.NODE_ENV);
-  console.log("🗄️  Database:", env.DATABASE_URL?.split("@")[1]?.split("?")[0] || "configured");
+  console.log(
+    "🗄️  Database:",
+    env.DATABASE_URL?.split("@")[1]?.split("?")[0] || "configured",
+  );
   console.log("🔐 Auth:", env.NEXTAUTH_URL);
 
   console.log("\n✨ Application initialized successfully!\n");

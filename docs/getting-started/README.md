@@ -49,6 +49,7 @@ The Farmers Market Platform is an enterprise-grade Next.js 15 application that c
 ```
 
 **Key Stats**:
+
 - **2,700+** passing tests (98.2% success rate)
 - **82%+** code coverage
 - **Zero** TypeScript errors in production code
@@ -61,12 +62,12 @@ The Farmers Market Platform is an enterprise-grade Next.js 15 application that c
 
 ### Required Software
 
-| Tool | Version | Purpose |
-|------|---------|---------|
-| **Node.js** | 18.17+ or 20+ | Runtime environment |
-| **pnpm** | 8.0+ | Package manager (faster than npm) |
-| **PostgreSQL** | 14+ | Database |
-| **Git** | 2.30+ | Version control |
+| Tool           | Version       | Purpose                           |
+| -------------- | ------------- | --------------------------------- |
+| **Node.js**    | 18.17+ or 20+ | Runtime environment               |
+| **pnpm**       | 8.0+          | Package manager (faster than npm) |
+| **PostgreSQL** | 14+           | Database                          |
+| **Git**        | 2.30+         | Version control                   |
 
 ### Optional Tools
 
@@ -78,11 +79,13 @@ The Farmers Market Platform is an enterprise-grade Next.js 15 application that c
 ### System Requirements
 
 **Minimum**:
+
 - RAM: 8GB
 - Storage: 20GB free space
 - CPU: 4 cores
 
 **Recommended (HP OMEN optimized)**:
+
 - RAM: 64GB (enables aggressive caching)
 - Storage: 100GB+ SSD
 - CPU: 12 threads (Intel i7/i9 or AMD Ryzen 7/9)
@@ -113,6 +116,7 @@ pnpm dev
 ```
 
 **Access the platform**:
+
 - 🌐 **App**: http://localhost:3000
 - 📊 **Database Studio**: Run `pnpm db:studio` → http://localhost:5555
 
@@ -229,6 +233,7 @@ Open http://localhost:3000 and you should see:
 ✅ Seed data is visible (farms, products)
 
 **Test Accounts** (if you ran `pnpm db:seed`):
+
 - Admin: `admin@farmersmarket.com` / `admin123`
 - Farmer: `farmer@farmersmarket.com` / `farmer123`
 - Customer: `customer@farmersmarket.com` / `customer123`
@@ -261,6 +266,7 @@ src/
 ```
 
 **Key Files to Review**:
+
 - `src/lib/database/index.ts` - Canonical database import
 - `src/lib/auth/index.ts` - Authentication utilities
 - `src/types/index.ts` - Shared TypeScript types
@@ -287,6 +293,7 @@ pnpm test:coverage
 ```
 
 **Expected Results**:
+
 - ✅ 2,700+ tests passing
 - ✅ 98%+ success rate
 - ✅ 82%+ code coverage
@@ -434,18 +441,21 @@ touch src/components/features/your-feature/YourComponent.test.tsx
 ### For Frontend Developers
 
 **Week 1: Fundamentals**
+
 1. Study Next.js 15 App Router patterns in `src/app/`
 2. Review existing components in `src/components/`
 3. Understand Server vs Client Components
 4. Complete: Build a simple product listing page
 
 **Week 2: Advanced Topics**
+
 1. Server Actions in `src/app/actions/`
 2. Form handling with `react-hook-form` + Zod
 3. State management with Zustand
 4. Complete: Build a shopping cart feature
 
 **Week 3: Production Ready**
+
 1. Testing with React Testing Library
 2. Accessibility best practices
 3. Performance optimization
@@ -454,18 +464,21 @@ touch src/components/features/your-feature/YourComponent.test.tsx
 ### For Backend Developers
 
 **Week 1: Architecture**
+
 1. Review service layer patterns in `src/lib/services/`
 2. Study Prisma schema in `prisma/schema.prisma`
 3. Understand ServiceResponse<T> pattern
 4. Complete: Add a new API endpoint
 
 **Week 2: Advanced Features**
+
 1. Authentication with NextAuth v5
 2. Authorization and RBAC patterns
 3. Database optimization techniques
 4. Complete: Implement a complex business rule
 
 **Week 3: Quality & Testing**
+
 1. Service layer testing patterns
 2. Integration test strategies
 3. API contract testing
@@ -484,6 +497,7 @@ Follow both paths above, focusing on integration between layers.
 **Symptoms**: `Error: Can't reach database server at localhost:5432`
 
 **Solutions**:
+
 ```bash
 # 1. Check if PostgreSQL is running
 psql --version
@@ -506,6 +520,7 @@ docker-compose up -d db
 **Symptoms**: `Error: listen EADDRINUSE: address already in use :::3000`
 
 **Solutions**:
+
 ```bash
 # Kill process on port 3000
 pnpm kill-server
@@ -526,6 +541,7 @@ PORT=3001 pnpm dev
 **Symptoms**: `Cannot find module '@prisma/client'`
 
 **Solution**:
+
 ```bash
 # Regenerate Prisma client
 pnpm prisma generate
@@ -540,6 +556,7 @@ pnpm prisma generate
 **Symptoms**: `Cannot find module '@/lib/database'`
 
 **Solutions**:
+
 ```bash
 # 1. Verify path aliases in tsconfig.json
 # Should have: "@/*": ["./src/*"]

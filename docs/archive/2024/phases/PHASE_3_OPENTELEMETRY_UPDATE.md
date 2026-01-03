@@ -1,4 +1,5 @@
 # 🚀 Phase 3: OpenTelemetry Package Updates
+
 **Farmers Market Platform - Dependency Updates**  
 **Date**: January 2025  
 **Status**: IN PROGRESS  
@@ -17,23 +18,24 @@ Phase 3 focuses on updating all OpenTelemetry packages from severely outdated ve
 
 ### Version Summary
 
-| Package | Current | Target | Change |
-|---------|---------|--------|--------|
-| `@opentelemetry/auto-instrumentations-node` | 0.52.0 | 0.55.1+ | Major |
-| `@opentelemetry/exporter-trace-otlp-grpc` | 0.52.0 | 0.55.1+ | Major |
-| `@opentelemetry/exporter-trace-otlp-http` | 0.52.0 | 0.55.1+ | Major |
-| `@opentelemetry/instrumentation-http` | 0.52.0 | 0.55.1+ | Major |
-| `@opentelemetry/sdk-node` | 0.52.0 | 0.55.1+ | Major |
-| `@opentelemetry/api` | 1.9.0 | 1.9.0 | ✓ Current |
-| `@opentelemetry/resources` | 1.25.0 | 1.29.0+ | Minor |
-| `@opentelemetry/sdk-trace-base` | 1.25.0 | 1.29.0+ | Minor |
-| `@opentelemetry/semantic-conventions` | 1.25.0 | 1.29.0+ | Minor |
+| Package                                     | Current | Target  | Change    |
+| ------------------------------------------- | ------- | ------- | --------- |
+| `@opentelemetry/auto-instrumentations-node` | 0.52.0  | 0.55.1+ | Major     |
+| `@opentelemetry/exporter-trace-otlp-grpc`   | 0.52.0  | 0.55.1+ | Major     |
+| `@opentelemetry/exporter-trace-otlp-http`   | 0.52.0  | 0.55.1+ | Major     |
+| `@opentelemetry/instrumentation-http`       | 0.52.0  | 0.55.1+ | Major     |
+| `@opentelemetry/sdk-node`                   | 0.52.0  | 0.55.1+ | Major     |
+| `@opentelemetry/api`                        | 1.9.0   | 1.9.0   | ✓ Current |
+| `@opentelemetry/resources`                  | 1.25.0  | 1.29.0+ | Minor     |
+| `@opentelemetry/sdk-trace-base`             | 1.25.0  | 1.29.0+ | Minor     |
+| `@opentelemetry/semantic-conventions`       | 1.25.0  | 1.29.0+ | Minor     |
 
 ---
 
 ## 🎯 Goals & Success Criteria
 
 ### Primary Goals
+
 1. ✅ Update all OpenTelemetry packages to latest stable versions
 2. ✅ Migrate to new semantic convention constants (breaking changes)
 3. ✅ Ensure Azure Application Insights integration continues working
@@ -41,6 +43,7 @@ Phase 3 focuses on updating all OpenTelemetry packages from severely outdated ve
 5. ✅ Zero regression in existing instrumentation
 
 ### Success Criteria
+
 - [ ] All OTel packages updated to latest versions
 - [ ] `npm run build` succeeds without errors
 - [ ] `npm run type-check` passes
@@ -58,6 +61,7 @@ Phase 3 focuses on updating all OpenTelemetry packages from severely outdated ve
 **Issue**: The semantic convention constants have moved from individual exports to the new format.
 
 **Old (0.52.x)**:
+
 ```typescript
 import {
   SEMRESATTRS_SERVICE_NAME,
@@ -67,6 +71,7 @@ import {
 ```
 
 **New (1.27.0+)**:
+
 ```typescript
 import {
   ATTR_SERVICE_NAME,
@@ -76,6 +81,7 @@ import {
 ```
 
 **Files Affected**:
+
 - ✅ `src/lib/monitoring/telemetry.ts` (uses old constants)
 - ✅ `src/lib/tracing/instrumentation.ts` (already uses new constants!)
 
@@ -88,6 +94,7 @@ import {
 **Impact**: Low - Our configuration is already compatible
 
 **Files Affected**:
+
 - `src/lib/monitoring/telemetry.ts` (lines 147-171)
 - `src/lib/tracing/instrumentation.ts` (lines 68-108)
 
@@ -107,6 +114,7 @@ return new Resource({ ... });
 ## 📦 Update Commands
 
 ### Step 1: Update Core SDK Packages
+
 ```bash
 npm install \
   @opentelemetry/sdk-node@latest \
@@ -115,6 +123,7 @@ npm install \
 ```
 
 ### Step 2: Update Exporters
+
 ```bash
 npm install \
   @opentelemetry/exporter-trace-otlp-http@latest \
@@ -122,6 +131,7 @@ npm install \
 ```
 
 ### Step 3: Update Instrumentations
+
 ```bash
 npm install \
   @opentelemetry/auto-instrumentations-node@latest \
@@ -129,16 +139,19 @@ npm install \
 ```
 
 ### Step 4: Update Semantic Conventions
+
 ```bash
 npm install @opentelemetry/semantic-conventions@latest
 ```
 
 ### Step 5: Update API (if needed)
+
 ```bash
 npm install @opentelemetry/api@latest
 ```
 
 ### All-in-One Command
+
 ```bash
 npm install \
   @opentelemetry/api@latest \
@@ -218,7 +231,8 @@ npm install \
 
 **Action**: Verify Azure Application Insights connection string handling still works.
 
-**Test**: 
+**Test**:
+
 ```bash
 export APPLICATIONINSIGHTS_CONNECTION_STRING="your-connection-string"
 npm run dev
@@ -230,6 +244,7 @@ npm run dev
 ## 🧪 Testing Strategy
 
 ### 1. Pre-Update Baseline
+
 ```bash
 # Take snapshot of current behavior
 npm run test:telemetry
@@ -244,18 +259,21 @@ curl http://localhost:3000/api/health
 ### 2. Post-Update Verification
 
 #### Type Check
+
 ```bash
 npm run type-check
 # Expected: Pass with 0 errors
 ```
 
 #### Build Check
+
 ```bash
 npm run build
 # Expected: Successful build
 ```
 
 #### Unit Tests
+
 ```bash
 npm test src/lib/monitoring
 npm test src/lib/tracing
@@ -263,12 +281,14 @@ npm test src/lib/tracing
 ```
 
 #### Integration Tests
+
 ```bash
 npm run test:integration
 # Expected: All tests pass
 ```
 
 #### Manual Trace Verification
+
 ```bash
 # Start dev server with tracing enabled
 export ENABLE_TRACING=true
@@ -299,22 +319,27 @@ npm run perf:compare
 ### 4. Azure Application Insights Integration Test
 
 **Prerequisites**:
+
 - Azure subscription with Application Insights resource
 - Connection string configured
 
 **Steps**:
+
 1. Configure environment variables:
+
    ```bash
    export APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=xxx;..."
    export ENABLE_TRACING=true
    ```
 
 2. Start application:
+
    ```bash
    npm run start
    ```
 
 3. Generate traffic:
+
    ```bash
    npm run test:load:smoke
    ```
@@ -326,6 +351,7 @@ npm run perf:compare
    - Check "Performance" for request metrics
 
 **Expected Results**:
+
 - Traces appear within 2-3 minutes
 - Request duration < 500ms for most endpoints
 - No error traces (unless expected)
@@ -336,6 +362,7 @@ npm run perf:compare
 ## 🚨 Rollback Plan
 
 ### Quick Rollback
+
 ```bash
 # Revert package.json and package-lock.json
 git checkout HEAD~1 package.json package-lock.json
@@ -374,18 +401,21 @@ npm run start
 ## 📊 Expected Improvements
 
 ### Performance
+
 - **Trace Collection**: 20-30% faster due to improved batching
 - **Memory Usage**: 10-15% lower due to better resource management
 - **CPU Overhead**: 5-10% reduction in tracing overhead
 - **Export Efficiency**: Better compression and batching
 
 ### Features
+
 - **New Instrumentations**: Access to latest auto-instrumentations
 - **Better Filtering**: Improved request filtering capabilities
 - **Enhanced Metadata**: Richer trace attributes and context
 - **Improved Error Handling**: Better exception tracking
 
 ### Compatibility
+
 - **Azure Integration**: Full compatibility with latest Application Insights
 - **OTLP Protocol**: Support for latest OTLP specification
 - **Semantic Conventions**: Aligned with OpenTelemetry 1.27+ standards
@@ -396,17 +426,21 @@ npm run start
 ## 🔐 Security Considerations
 
 ### Vulnerabilities Addressed
+
 Run before and after:
+
 ```bash
 npm audit --omit=dev
 ```
 
 ### Expected Fixes
+
 - CVEs in older OpenTelemetry packages
 - Dependency vulnerabilities in transitive dependencies
 - Protocol security improvements in OTLP exporters
 
 ### Security Checklist
+
 - [ ] No new high/critical vulnerabilities introduced
 - [ ] Connection strings and API keys remain secure
 - [ ] No sensitive data in trace attributes
@@ -418,6 +452,7 @@ npm audit --omit=dev
 ## 📝 Migration Checklist
 
 ### Pre-Migration
+
 - [x] Review breaking changes documentation
 - [x] Create Phase 3 plan document
 - [x] Identify all files using OpenTelemetry
@@ -427,6 +462,7 @@ npm audit --omit=dev
 - [ ] Create migration branch
 
 ### Migration Steps
+
 - [ ] Update all OpenTelemetry packages
 - [ ] Migrate semantic convention constants
 - [ ] Review and update auto-instrumentation configs
@@ -437,6 +473,7 @@ npm audit --omit=dev
 - [ ] Run full test suite
 
 ### Post-Migration
+
 - [ ] Verify builds successfully
 - [ ] Test trace collection locally
 - [ ] Test Azure Application Insights integration
@@ -448,6 +485,7 @@ npm audit --omit=dev
 - [ ] Commit changes with detailed message
 
 ### Deployment
+
 - [ ] Deploy to staging environment
 - [ ] Verify traces in staging
 - [ ] Monitor for 24 hours
@@ -463,34 +501,37 @@ npm audit --omit=dev
 
 ### Estimated Duration: 2-3 hours
 
-| Task | Duration | Priority |
-|------|----------|----------|
-| Package Updates | 10 min | HIGH |
-| Code Migration | 30 min | HIGH |
-| Type Safety Review | 15 min | MEDIUM |
-| Local Testing | 30 min | HIGH |
-| Azure Integration Test | 20 min | HIGH |
-| Performance Testing | 15 min | MEDIUM |
-| Documentation | 20 min | MEDIUM |
-| Staging Deployment | 10 min | HIGH |
-| Monitoring & Verification | 30 min | HIGH |
+| Task                      | Duration | Priority |
+| ------------------------- | -------- | -------- |
+| Package Updates           | 10 min   | HIGH     |
+| Code Migration            | 30 min   | HIGH     |
+| Type Safety Review        | 15 min   | MEDIUM   |
+| Local Testing             | 30 min   | HIGH     |
+| Azure Integration Test    | 20 min   | HIGH     |
+| Performance Testing       | 15 min   | MEDIUM   |
+| Documentation             | 20 min   | MEDIUM   |
+| Staging Deployment        | 10 min   | HIGH     |
+| Monitoring & Verification | 30 min   | HIGH     |
 
 ---
 
 ## 📚 Reference Documentation
 
 ### OpenTelemetry
+
 - [OpenTelemetry JS Documentation](https://opentelemetry.io/docs/languages/js/)
 - [Migration Guide](https://opentelemetry.io/docs/languages/js/migration/)
 - [Semantic Conventions v1.27.0](https://opentelemetry.io/docs/specs/semconv/)
 - [Auto-Instrumentations](https://github.com/open-telemetry/opentelemetry-js-contrib/tree/main/metapackages/auto-instrumentations-node)
 
 ### Azure Application Insights
+
 - [Azure Monitor OpenTelemetry](https://learn.microsoft.com/en-us/azure/azure-monitor/app/opentelemetry-overview)
 - [Connection Strings](https://learn.microsoft.com/en-us/azure/azure-monitor/app/sdk-connection-string)
 - [Distributed Tracing](https://learn.microsoft.com/en-us/azure/azure-monitor/app/distributed-trace-data)
 
 ### Internal Documentation
+
 - `.github/instructions/03_PERFORMANCE_REALITY_BENDING.instructions.md`
 - `.github/instructions/06_AUTOMATION_INFRASTRUCTURE.instructions.md`
 - `DEPENDENCY_UPDATE_PLAN.md`
@@ -502,29 +543,36 @@ npm audit --omit=dev
 ### Common Issues
 
 #### Issue 1: Type Conflicts with Sentry
+
 **Symptom**: TypeScript errors about incompatible OpenTelemetry types
 **Solution**: Keep `@ts-ignore` comments, Sentry uses different OTel versions
 **Tracking**: Document in code comments
 
 #### Issue 2: Traces Not Appearing in Azure
+
 **Symptom**: No traces in Application Insights after update
-**Solution**: 
+**Solution**:
+
 1. Check connection string is correct
 2. Verify `ENABLE_TRACING=true`
 3. Check network connectivity to Azure
 4. Review exporter configuration
 
 #### Issue 3: Performance Degradation
+
 **Symptom**: Slower request times after update
 **Solution**:
+
 1. Adjust batch size in span processor
 2. Increase export interval
 3. Review instrumentation filters
 4. Consider sampling rate adjustment
 
 #### Issue 4: Build Failures
+
 **Symptom**: TypeScript compilation errors
 **Solution**:
+
 1. Clear node_modules and reinstall
 2. Clear Next.js cache: `npm run clean:all`
 3. Verify all peer dependencies are compatible
@@ -535,14 +583,16 @@ npm audit --omit=dev
 ## ✅ Success Metrics
 
 ### Quantitative
+
 - ✅ 0 build errors
-- ✅ 0 TypeScript errors  
+- ✅ 0 TypeScript errors
 - ✅ 100% test pass rate
 - ✅ < 5ms additional overhead per request
 - ✅ Traces appearing in Azure within 2 minutes
 - ✅ 0 high/critical security vulnerabilities
 
 ### Qualitative
+
 - ✅ Traces are more detailed and useful
 - ✅ Azure dashboards show richer data
 - ✅ Error tracking is improved
@@ -554,12 +604,14 @@ npm audit --omit=dev
 ## 📅 Phase 3 Execution Log
 
 ### Pre-Execution
+
 - **Date**: TBD
 - **Branch**: `feature/dependency-updates-jan-2025`
 - **Current State**: Phase 2 (NextAuth v5) completed
 - **Team**: Ready to proceed
 
 ### Execution
+
 - **Started**: TBD
 - **Completed**: TBD
 - **Duration**: TBD
@@ -567,6 +619,7 @@ npm audit --omit=dev
 - **Resolutions**: TBD
 
 ### Post-Execution
+
 - **Verification**: TBD
 - **Performance Impact**: TBD
 - **Azure Integration**: TBD

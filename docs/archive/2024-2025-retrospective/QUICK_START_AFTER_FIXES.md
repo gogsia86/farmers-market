@@ -1,4 +1,5 @@
 # 🚀 Quick Start Guide - Post-Critical Fixes
+
 **Farmers Market Platform - Developer Quick Start**
 **Version**: 1.0.0
 **Status**: ✅ All Critical Fixes Applied
@@ -43,6 +44,7 @@ NEXTAUTH_URL="http://localhost:3000"
 ```
 
 **Generate NextAuth secret**:
+
 ```bash
 openssl rand -base64 32
 ```
@@ -52,18 +54,21 @@ openssl rand -base64 32
 ## 🧪 Running Tests
 
 ### All Tests
+
 ```bash
 npm test
 # Expected: 2,954 passing, 51 skipped
 ```
 
 ### Specific Test Suite
+
 ```bash
 npm test -- shipping.service.test.ts
 npm test -- order.controller.test.ts
 ```
 
 ### With Coverage
+
 ```bash
 npm run test:coverage
 # Backend: 98.4%+
@@ -71,6 +76,7 @@ npm run test:coverage
 ```
 
 ### Watch Mode (Development)
+
 ```bash
 npm test -- --watch
 ```
@@ -80,6 +86,7 @@ npm test -- --watch
 ## 🗄️ Database Setup
 
 ### First Time Setup
+
 ```bash
 # 1. Start PostgreSQL (if not running)
 # Docker: docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=password postgres
@@ -97,12 +104,14 @@ npx tsx scripts/seed-test-data.ts
 ```
 
 ### Reset Database
+
 ```bash
 npx prisma migrate reset
 # This will drop, recreate, migrate, and seed
 ```
 
 ### View Data (Prisma Studio)
+
 ```bash
 npx prisma studio
 # Opens at http://localhost:5555
@@ -112,17 +121,17 @@ npx prisma studio
 
 ## 🛠️ Development Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server (port 3000) |
-| `npm run build` | Build for production |
-| `npm start` | Run production build |
-| `npm test` | Run all tests |
-| `npm run test:coverage` | Run tests with coverage |
-| `npm run lint` | Run ESLint |
-| `npm run type-check` | TypeScript type checking |
-| `npx prisma studio` | Database GUI |
-| `npx prisma migrate dev` | Create/apply migrations |
+| Command                  | Description                          |
+| ------------------------ | ------------------------------------ |
+| `npm run dev`            | Start development server (port 3000) |
+| `npm run build`          | Build for production                 |
+| `npm start`              | Run production build                 |
+| `npm test`               | Run all tests                        |
+| `npm run test:coverage`  | Run tests with coverage              |
+| `npm run lint`           | Run ESLint                           |
+| `npm run type-check`     | TypeScript type checking             |
+| `npx prisma studio`      | Database GUI                         |
+| `npx prisma migrate dev` | Create/apply migrations              |
 
 ---
 
@@ -171,6 +180,7 @@ src/
 ## 🎯 Common Tasks
 
 ### Add a New Feature
+
 ```bash
 # 1. Create service
 src/lib/services/my-feature.service.ts
@@ -189,6 +199,7 @@ npm test -- my-feature
 ```
 
 ### Add Database Table
+
 ```bash
 # 1. Edit schema
 nano prisma/schema.prisma
@@ -205,6 +216,7 @@ const data = await database.myTable.findMany();
 ```
 
 ### Debug Authentication
+
 ```bash
 # 1. Run debug script
 export TEST_USER_PASSWORD="TestPassword123!"
@@ -219,7 +231,9 @@ npx tsx scripts/debug-nextauth.ts
 ## 🐛 Common Issues & Solutions
 
 ### Issue: "PrismaClient is unable to run in the browser"
+
 **Solution**: Make sure you're using `"use server"` or server components
+
 ```typescript
 // ✅ Server Component (default)
 export default async function Page() {
@@ -227,17 +241,19 @@ export default async function Page() {
 }
 
 // ✅ Server Action
-"use server";
+("use server");
 export async function getFarms() {
   return await database.farm.findMany();
 }
 
 // ❌ Client Component
-"use client"; // Can't use database here!
+("use client"); // Can't use database here!
 ```
 
 ### Issue: "NEXTAUTH_SECRET not configured"
+
 **Solution**: Add to `.env.local`
+
 ```bash
 openssl rand -base64 32
 # Copy output to .env.local:
@@ -245,14 +261,18 @@ NEXTAUTH_SECRET="<paste here>"
 ```
 
 ### Issue: "TEST_USER_PASSWORD required"
+
 **Solution**: Export before running scripts
+
 ```bash
 export TEST_USER_PASSWORD="TestPassword123!"
 npx tsx scripts/seed-test-data.ts
 ```
 
 ### Issue: Tests failing
+
 **Solution**: Check test output, common causes:
+
 ```bash
 # Database not running
 docker start postgres
@@ -272,13 +292,16 @@ npm install
 ## 📚 Key Documentation
 
 ### Must-Read
+
 1. `CONTINUATION_ACTION_PLAN.md` - Overall action plan
 2. `SECURITY_CREDENTIALS_GUIDE.md` - Credential management
 3. `SESSION_CONTINUATION_SUCCESS.md` - Recent fixes
 4. `TESTING_QUICK_REFERENCE.md` - Testing guide
 
 ### Divine Instructions
+
 Located in `.github/instructions/`:
+
 - `01_DIVINE_CORE_PRINCIPLES.instructions.md` - Architecture
 - `04_NEXTJS_DIVINE_IMPLEMENTATION.instructions.md` - Next.js patterns
 - `07_DATABASE_QUANTUM_MASTERY.instructions.md` - Database patterns
@@ -305,6 +328,7 @@ Before starting development, verify:
 Your environment is set up! Here's what you should know:
 
 ### Architecture
+
 - **Next.js 15** with App Router
 - **TypeScript** strict mode
 - **Prisma** for database
@@ -312,6 +336,7 @@ Your environment is set up! Here's what you should know:
 - **Tailwind CSS** for styling
 
 ### Patterns to Follow
+
 - Use **server components** by default
 - Service layer for business logic
 - ServiceResponse<T> for all operations
@@ -319,6 +344,7 @@ Your environment is set up! Here's what you should know:
 - Divine naming conventions (see .cursorrules)
 
 ### Development Workflow
+
 1. Create feature branch
 2. Write tests first (TDD)
 3. Implement feature

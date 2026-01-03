@@ -1,4 +1,5 @@
 # 🚀 QUICK START DEPLOYMENT GUIDE
+
 ## Farmers Market Platform - Production Deployment in 15 Minutes
 
 **Last Updated:** December 28, 2024  
@@ -145,7 +146,7 @@ docker images | grep farmersmarket
 Create `docker-compose.prod.yml`:
 
 ```yaml
-version: '3.8'
+version: "3.8"
 
 services:
   app:
@@ -232,42 +233,42 @@ spec:
         app: farmersmarket
     spec:
       containers:
-      - name: app
-        image: farmersmarket:latest
-        ports:
-        - containerPort: 3000
-        env:
-        - name: NODE_ENV
-          value: "production"
-        - name: DATABASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: farmersmarket-secrets
-              key: database-url
-        - name: AUTH_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: farmersmarket-secrets
-              key: auth-secret
-        resources:
-          requests:
-            memory: "512Mi"
-            cpu: "500m"
-          limits:
-            memory: "2Gi"
-            cpu: "2000m"
-        livenessProbe:
-          httpGet:
-            path: /api/health
-            port: 3000
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /api/ready
-            port: 3000
-          initialDelaySeconds: 10
-          periodSeconds: 5
+        - name: app
+          image: farmersmarket:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: farmersmarket-secrets
+                  key: database-url
+            - name: AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: farmersmarket-secrets
+                  key: auth-secret
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "2000m"
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /api/ready
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 5
 ---
 apiVersion: v1
 kind: Service
@@ -277,8 +278,8 @@ spec:
   selector:
     app: farmersmarket
   ports:
-  - port: 80
-    targetPort: 3000
+    - port: 80
+      targetPort: 3000
   type: LoadBalancer
 ```
 
@@ -335,10 +336,12 @@ npm run prisma:studio
 ### 3. Configure Domain & SSL
 
 #### For Vercel:
+
 - Add domain in Vercel dashboard
 - SSL is automatic
 
 #### For Docker/K8s:
+
 - Configure reverse proxy (Nginx/Traefik)
 - Setup Let's Encrypt SSL certificates
 
@@ -364,6 +367,7 @@ curl https://yourdomain.com/api/sentry-example-api
 After deployment, verify all systems:
 
 ### Critical Endpoints ✅
+
 ```bash
 # Health check (should return 200)
 curl https://yourdomain.com/api/health
@@ -379,6 +383,7 @@ curl https://yourdomain.com/api/farms
 ```
 
 ### User Flows ✅
+
 - [ ] Visit homepage - loads correctly
 - [ ] User registration - works
 - [ ] User login - successful
@@ -390,6 +395,7 @@ curl https://yourdomain.com/api/farms
 - [ ] Admin panel - accessible (for admins)
 
 ### Performance ✅
+
 - [ ] Page load time < 2 seconds
 - [ ] API response time < 200ms
 - [ ] Images load optimized
@@ -397,6 +403,7 @@ curl https://yourdomain.com/api/farms
 - [ ] No broken links
 
 ### Security ✅
+
 - [ ] HTTPS enabled
 - [ ] Authentication working
 - [ ] Authorization enforced
@@ -475,6 +482,7 @@ npx prisma studio
 If issues occur, rollback immediately:
 
 ### Vercel Rollback
+
 ```bash
 # List deployments
 vercel ls
@@ -487,6 +495,7 @@ curl https://yourdomain.com/api/health
 ```
 
 ### Docker Rollback
+
 ```bash
 # Tag previous version
 docker tag farmersmarket:latest farmersmarket:previous
@@ -497,6 +506,7 @@ docker-compose -f docker-compose.prod.yml up -d
 ```
 
 ### Kubernetes Rollback
+
 ```bash
 # View rollout history
 kubectl rollout history deployment/farmersmarket-app
@@ -525,12 +535,12 @@ After deployment, access monitoring:
 
 Monitor these metrics:
 
-| Metric | Target | Status |
-|--------|--------|--------|
-| Uptime | > 99.9% | Monitor |
-| Error Rate | < 0.1% | Monitor |
-| Response Time | < 200ms | Monitor |
-| Page Load (LCP) | < 2s | Monitor |
+| Metric           | Target  | Status  |
+| ---------------- | ------- | ------- |
+| Uptime           | > 99.9% | Monitor |
+| Error Rate       | < 0.1%  | Monitor |
+| Response Time    | < 200ms | Monitor |
+| Page Load (LCP)  | < 2s    | Monitor |
 | API Success Rate | > 99.9% | Monitor |
 
 ---
@@ -569,11 +579,13 @@ After successful deployment:
 ## 🆘 EMERGENCY CONTACTS
 
 ### Critical Issues
+
 - **On-Call Engineer:** [Configure PagerDuty]
 - **Database Admin:** [Configure contact]
 - **DevOps Lead:** [Configure contact]
 
 ### Service Status Pages
+
 - **Platform Status:** https://status.yourdomain.com (setup required)
 - **Vercel Status:** https://www.vercel-status.com
 - **Database Status:** [Provider status page]
@@ -585,6 +597,7 @@ After successful deployment:
 **Congratulations! 🎉** Your Farmers Market Platform is now live!
 
 ### What You've Achieved:
+
 - ✅ Production-grade Next.js 16 application deployed
 - ✅ PostgreSQL database configured and migrated
 - ✅ Redis caching enabled (if configured)
@@ -594,6 +607,7 @@ After successful deployment:
 - ✅ Divine agricultural consciousness embedded throughout
 
 ### URLs to Test:
+
 - **Homepage:** https://yourdomain.com
 - **Marketplace:** https://yourdomain.com/marketplace
 - **Farms:** https://yourdomain.com/farms

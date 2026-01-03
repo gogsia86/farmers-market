@@ -88,16 +88,13 @@ function MyComponent() {
   ]);
 
   return (
-    <BusinessHoursEditor
-      value={hours}
-      onChange={setHours}
-      disabled={false}
-    />
+    <BusinessHoursEditor value={hours} onChange={setHours} disabled={false} />
   );
 }
 ```
 
 **Features**:
+
 - ✅ Multiple time slots per day
 - ✅ Copy hours to other days
 - ✅ Closed day management
@@ -122,7 +119,7 @@ function MyComponent() {
       name: "Downtown",
       postalCodes: ["12345", "12346"],
       radius: 10,
-      deliveryFee: 5.00,
+      deliveryFee: 5.0,
     },
   ]);
 
@@ -132,7 +129,7 @@ function MyComponent() {
       onChange={setZones}
       farmLocation={{
         lat: 40.7128,
-        lng: -74.0060,
+        lng: -74.006,
         address: "123 Farm Road, City, State 12345",
       }}
     />
@@ -141,6 +138,7 @@ function MyComponent() {
 ```
 
 **Features**:
+
 - ✅ Radius-based delivery
 - ✅ Postal code zones
 - ✅ Per-zone fees
@@ -177,6 +175,7 @@ function MyComponent() {
 ```
 
 **Available Payment Methods**:
+
 - `CARD` - Credit/Debit Card
 - `CASH` - Cash on delivery
 - `CHECK` - Check payment
@@ -211,6 +210,7 @@ function MyPage({ settings, farmId, farmLocation }: Props) {
 ```
 
 **Features**:
+
 - ✅ Tab-based navigation
 - ✅ Business hours, delivery, payment, policies, features
 - ✅ Change detection
@@ -239,10 +239,7 @@ function MyComponent({ preferences }: Props) {
   };
 
   return (
-    <NotificationSettings
-      preferences={preferences}
-      onChange={handleChange}
-    />
+    <NotificationSettings preferences={preferences} onChange={handleChange} />
   );
 }
 ```
@@ -438,7 +435,7 @@ import { settingsService } from "@/lib/services/settings.service";
 export default async function SettingsPage() {
   const session = await auth();
   const settings = await settingsService.getUserSettings(session.user.id);
-  
+
   if (!settings) {
     throw new Error("Failed to load settings");
   }
@@ -541,7 +538,7 @@ const settings = await settingsService.getUserSettings(userId);
 
 // Update settings
 await settingsService.updateUserSettings(userId, {
-  notifications: { email: { enabled: false } }
+  notifications: { email: { enabled: false } },
 });
 
 // Get farm settings
@@ -549,7 +546,7 @@ const farmSettings = await settingsService.getFarmSettings(farmId);
 
 // Update farm settings
 await settingsService.updateFarmSettings(farmId, {
-  deliveryFee: 10.00
+  deliveryFee: 10.0,
 });
 ```
 
@@ -562,8 +559,13 @@ import { z } from "zod";
 
 const BusinessHoursSchema = z.object({
   dayOfWeek: z.enum([
-    "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY",
-    "FRIDAY", "SATURDAY", "SUNDAY"
+    "MONDAY",
+    "TUESDAY",
+    "WEDNESDAY",
+    "THURSDAY",
+    "FRIDAY",
+    "SATURDAY",
+    "SUNDAY",
   ]),
   openTime: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/),
   closeTime: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/),
@@ -584,6 +586,7 @@ if (!result.success) {
 ### Issue: TypeScript Error - "Cannot find module '@/components/features/settings'"
 
 **Solution**: Ensure the index file exists:
+
 ```typescript
 // src/components/features/settings/index.ts
 export { BusinessHoursEditor } from "./BusinessHoursEditor";
@@ -597,6 +600,7 @@ export { FarmSettingsClient } from "./FarmSettingsClient";
 ### Issue: "settings is possibly null"
 
 **Solution**: Add null check:
+
 ```typescript
 const settings = await settingsService.getUserSettings(userId);
 if (!settings) {
@@ -610,6 +614,7 @@ if (!settings) {
 ### Issue: Cache not invalidating after update
 
 **Solution**: Ensure cache key invalidation:
+
 ```typescript
 import { redis } from "@/lib/redis";
 
@@ -623,6 +628,7 @@ await redis.del(`settings:farm:${farmId}`);
 ### Issue: Component not updating after API call
 
 **Solution**: Use proper state management:
+
 ```typescript
 const [settings, setSettings] = useState(initialSettings);
 
@@ -638,14 +644,15 @@ const handleUpdate = async (updates) => {
 ### Issue: Business hours validation failing
 
 **Solution**: Ensure proper time format:
+
 ```typescript
 // ✅ Correct format
-openTime: "09:00"  // HH:MM (24-hour)
-closeTime: "17:00"
+openTime: "09:00"; // HH:MM (24-hour)
+closeTime: "17:00";
 
 // ❌ Wrong format
-openTime: "9:00"   // Missing leading zero
-closeTime: "5 PM"  // 12-hour format
+openTime: "9:00"; // Missing leading zero
+closeTime: "5 PM"; // 12-hour format
 ```
 
 ---
@@ -697,6 +704,7 @@ interface DeliveryArea {
 ## ✅ BEST PRACTICES
 
 ### 1. Always Use Canonical Database Import
+
 ```typescript
 // ✅ Correct
 import { database } from "@/lib/database";
@@ -707,6 +715,7 @@ const db = new PrismaClient();
 ```
 
 ### 2. Handle Loading States
+
 ```typescript
 const [isSaving, setIsSaving] = useState(false);
 
@@ -718,6 +727,7 @@ return (
 ```
 
 ### 3. Show User Feedback
+
 ```typescript
 const [error, setError] = useState<string | null>(null);
 const [success, setSuccess] = useState(false);
@@ -727,6 +737,7 @@ const [success, setSuccess] = useState(false);
 ```
 
 ### 4. Validate Before Saving
+
 ```typescript
 const handleSave = async () => {
   // Client-side validation
@@ -741,6 +752,7 @@ const handleSave = async () => {
 ```
 
 ### 5. Use Optimistic Updates
+
 ```typescript
 // Update UI immediately
 setLocalState(newValue);
@@ -769,4 +781,4 @@ try {
 **Last Updated**: 2024  
 **Status**: Production Ready ✅
 
-*"Settings management made divine."* 🌾⚡
+_"Settings management made divine."_ 🌾⚡

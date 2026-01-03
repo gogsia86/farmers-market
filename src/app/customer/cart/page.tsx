@@ -68,9 +68,13 @@ export default async function CartPage() {
           response.error?.message || "Failed to load cart. Please try again.";
       }
     } catch (err) {
-      cartLogger.error("Exception while fetching cart", err instanceof Error ? err : new Error(String(err)), {
-        userId: session.user.id,
-      });
+      cartLogger.error(
+        "Exception while fetching cart",
+        err instanceof Error ? err : new Error(String(err)),
+        {
+          userId: session.user.id,
+        },
+      );
       error = "Failed to load cart. Please try again.";
     }
   }

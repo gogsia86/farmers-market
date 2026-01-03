@@ -62,6 +62,7 @@ Sprint 5 focuses on building a robust settings and configuration management syst
 ### Success Criteria
 
 **Functionality** ✅
+
 - [ ] All settings CRUD operations work correctly
 - [ ] Settings inheritance (system → farm → user) functions properly
 - [ ] Business hours support multiple time zones
@@ -69,18 +70,21 @@ Sprint 5 focuses on building a robust settings and configuration management syst
 - [ ] Payment method storage is PCI-compliant
 
 **Quality** ✅
+
 - [ ] 0 TypeScript errors maintained
 - [ ] 100% type safety for all settings
 - [ ] Comprehensive input validation
 - [ ] Settings changes are auditable
 
 **Performance** ✅
+
 - [ ] Settings queries cached (Redis/memory)
 - [ ] Settings load in <100ms
 - [ ] Batch updates supported
 - [ ] Optimistic UI updates
 
 **Documentation** ✅
+
 - [ ] Settings schema documented
 - [ ] API endpoints documented
 - [ ] Settings UI patterns documented
@@ -93,6 +97,7 @@ Sprint 5 focuses on building a robust settings and configuration management syst
 ### What We Have (From Sprint 4)
 
 **Email Preferences System** ✅
+
 ```typescript
 // src/lib/services/email-preferences.service.ts
 interface EmailPreferences {
@@ -105,12 +110,14 @@ interface EmailPreferences {
 ```
 
 **Strengths**:
+
 - ✅ Email-specific preferences working
 - ✅ Token-based unsubscribe functional
 - ✅ Integration with email service
 - ✅ Type-safe implementation
 
 **Limitations**:
+
 - ❌ Only covers email notifications
 - ❌ No SMS/push notification settings
 - ❌ No display/UI preferences
@@ -122,6 +129,7 @@ interface EmailPreferences {
 **Comprehensive Settings System** 🎯
 
 1. **Multi-Level Settings Architecture**
+
 ```typescript
 // System Settings (platform-wide)
 interface SystemSettings {
@@ -152,6 +160,7 @@ interface UserSettings {
 ```
 
 2. **Settings Inheritance**
+
 ```typescript
 // User settings override farm settings override system settings
 const effectiveSettings = {
@@ -162,17 +171,19 @@ const effectiveSettings = {
 ```
 
 3. **Business Hours with Timezone Support**
+
 ```typescript
 interface BusinessHours {
   dayOfWeek: number; // 0-6 (Sunday-Saturday)
-  openTime: string;  // "09:00"
+  openTime: string; // "09:00"
   closeTime: string; // "17:00"
-  timezone: string;  // "America/New_York"
+  timezone: string; // "America/New_York"
   isClosed: boolean;
 }
 ```
 
 4. **Granular Notification Preferences**
+
 ```typescript
 interface NotificationPreferences {
   email: EmailChannelSettings;
@@ -183,7 +194,7 @@ interface NotificationPreferences {
 
 interface EmailChannelSettings {
   enabled: boolean;
-  frequency: 'immediate' | 'daily' | 'weekly';
+  frequency: "immediate" | "daily" | "weekly";
   quietHours: { start: string; end: string };
   types: EmailTypePreferences; // Existing email prefs
 }
@@ -232,6 +243,7 @@ interface EmailChannelSettings {
 ### Data Flow
 
 1. **Read Settings**:
+
    ```
    UI → API → Service → Cache (hit) → Return
                       ↓
@@ -239,6 +251,7 @@ interface EmailChannelSettings {
    ```
 
 2. **Update Settings**:
+
    ```
    UI → API → Service → Validate → Database → Invalidate Cache → Return
    ```
@@ -407,7 +420,7 @@ model SystemSettings {
   value     Json
   type      String   // "string" | "number" | "boolean" | "json"
   category  String   // "platform" | "feature" | "security" | "integration"
-  
+
   description String?
   isPublic    Boolean  @default(false) // Can be read by frontend
   isEditable  Boolean  @default(true)  // Can be changed via UI
@@ -448,10 +461,10 @@ npx prisma migrate deploy
 // ============================================
 export interface NotificationChannelSettings {
   enabled: boolean;
-  frequency: 'immediate' | 'daily' | 'weekly' | 'never';
+  frequency: "immediate" | "daily" | "weekly" | "never";
   quietHours?: {
     start: string; // "22:00"
-    end: string;   // "08:00"
+    end: string; // "08:00"
   };
 }
 
@@ -466,15 +479,15 @@ export interface NotificationPreferences {
 }
 
 export interface DisplayPreferences {
-  theme: 'light' | 'dark' | 'system';
+  theme: "light" | "dark" | "system";
   language: string;
   timezone: string;
-  distanceUnit: 'miles' | 'kilometers';
+  distanceUnit: "miles" | "kilometers";
   currency: string;
 }
 
 export interface PrivacySettings {
-  profileVisibility: 'public' | 'friends' | 'private';
+  profileVisibility: "public" | "friends" | "private";
   showEmail: boolean;
   showPhone: boolean;
   allowMessaging: boolean;
@@ -485,8 +498,8 @@ export interface UserSettingsData {
   notifications: NotificationPreferences;
   display: DisplayPreferences;
   privacy: PrivacySettings;
-  contactMethod: 'email' | 'sms' | 'both';
-  communicationFrequency: 'minimal' | 'normal' | 'all';
+  contactMethod: "email" | "sms" | "both";
+  communicationFrequency: "minimal" | "normal" | "all";
 }
 
 // ============================================
@@ -494,7 +507,7 @@ export interface UserSettingsData {
 // ============================================
 export interface BusinessHoursData {
   dayOfWeek: number; // 0-6
-  openTime: string;  // "09:00"
+  openTime: string; // "09:00"
   closeTime: string; // "17:00"
   timezone: string;
   isClosed: boolean;
@@ -537,8 +550,8 @@ export interface FarmSettingsData {
 export interface SystemSettingData {
   key: string;
   value: any;
-  type: 'string' | 'number' | 'boolean' | 'json';
-  category: 'platform' | 'feature' | 'security' | 'integration';
+  type: "string" | "number" | "boolean" | "json";
+  category: "platform" | "feature" | "security" | "integration";
   description?: string;
   isPublic: boolean;
   isEditable: boolean;
@@ -551,8 +564,8 @@ export interface UpdateUserSettingsRequest {
   notifications?: Partial<NotificationPreferences>;
   display?: Partial<DisplayPreferences>;
   privacy?: Partial<PrivacySettings>;
-  contactMethod?: 'email' | 'sms' | 'both';
-  communicationFrequency?: 'minimal' | 'normal' | 'all';
+  contactMethod?: "email" | "sms" | "both";
+  communicationFrequency?: "minimal" | "normal" | "all";
 }
 
 export interface UpdateFarmSettingsRequest {
@@ -564,7 +577,7 @@ export interface UpdateFarmSettingsRequest {
   requireDepositOnOrders?: boolean;
   depositPercentage?: number;
   policies?: Partial<FarmPolicies>;
-  features?: Partial<FarmSettingsData['features']>;
+  features?: Partial<FarmSettingsData["features"]>;
 }
 
 export interface SettingsValidationResult {
@@ -599,7 +612,7 @@ export class SettingsService {
   // ============================================
   // USER SETTINGS
   // ============================================
-  
+
   async getUserSettings(userId: string): Promise<UserSettingsData | null> {
     // Check cache first
     const cacheKey = `settings:user:${userId}`;
@@ -696,12 +709,14 @@ export class SettingsService {
 
   async updateUserSettings(
     userId: string,
-    updates: UpdateUserSettingsRequest
+    updates: UpdateUserSettingsRequest,
   ): Promise<UserSettingsData> {
     // Validate updates
     const validation = this.validateUserSettings(updates);
     if (!validation.isValid) {
-      throw new Error(`Invalid settings: ${validation.errors.map(e => e.message).join(', ')}`);
+      throw new Error(
+        `Invalid settings: ${validation.errors.map((e) => e.message).join(", ")}`,
+      );
     }
 
     // Build update data
@@ -744,7 +759,9 @@ export class SettingsService {
     return this.getUserSettings(userId) as Promise<UserSettingsData>;
   }
 
-  validateUserSettings(updates: UpdateUserSettingsRequest): SettingsValidationResult {
+  validateUserSettings(
+    updates: UpdateUserSettingsRequest,
+  ): SettingsValidationResult {
     const errors: Array<{ field: string; message: string }> = [];
     const warnings: Array<{ field: string; message: string }> = [];
 
@@ -774,7 +791,7 @@ export class SettingsService {
     // Warning: Disabling all notifications
     if (updates.notifications) {
       const allDisabled = Object.values(updates.notifications).every(
-        (channel) => channel.enabled === false
+        (channel) => channel.enabled === false,
       );
       if (allDisabled) {
         warnings.push({
@@ -866,14 +883,16 @@ export class SettingsService {
     });
 
     const todayHours = settings.businessHours.find(
-      (bh) => bh.dayOfWeek === dayOfWeek
+      (bh) => bh.dayOfWeek === dayOfWeek,
     );
 
     if (!todayHours || todayHours.isClosed) {
       return false;
     }
 
-    return currentTime >= todayHours.openTime && currentTime <= todayHours.closeTime;
+    return (
+      currentTime >= todayHours.openTime && currentTime <= todayHours.closeTime
+    );
   }
 
   // ============================================
@@ -909,10 +928,13 @@ export class SettingsService {
       },
     });
 
-    return settings.reduce((acc, setting) => {
-      acc[setting.key] = setting.value;
-      return acc;
-    }, {} as Record<string, any>);
+    return settings.reduce(
+      (acc, setting) => {
+        acc[setting.key] = setting.value;
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
   }
 }
 
@@ -940,7 +962,7 @@ export async function GET(request: NextRequest) {
     if (!session?.user) {
       return NextResponse.json(
         { success: false, error: "Authentication required" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -948,7 +970,9 @@ export async function GET(request: NextRequest) {
 
     // Create default if not exists
     if (!settings) {
-      settings = await settingsService.createDefaultUserSettings(session.user.id);
+      settings = await settingsService.createDefaultUserSettings(
+        session.user.id,
+      );
     }
 
     return NextResponse.json({
@@ -962,7 +986,7 @@ export async function GET(request: NextRequest) {
         success: false,
         error: "Failed to fetch settings",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -973,7 +997,7 @@ export async function PATCH(request: NextRequest) {
     if (!session?.user) {
       return NextResponse.json(
         { success: false, error: "Authentication required" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -981,7 +1005,7 @@ export async function PATCH(request: NextRequest) {
 
     const settings = await settingsService.updateUserSettings(
       session.user.id,
-      updates
+      updates,
     );
 
     return NextResponse.json({
@@ -993,9 +1017,10 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Failed to update settings",
+        error:
+          error instanceof Error ? error.message : "Failed to update settings",
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 }
@@ -1012,7 +1037,7 @@ import { database } from "@/lib/database";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { farmId: string } }
+  { params }: { params: { farmId: string } },
 ) {
   try {
     const settings = await settingsService.getFarmSettings(params.farmId);
@@ -1020,7 +1045,7 @@ export async function GET(
     if (!settings) {
       return NextResponse.json(
         { success: false, error: "Farm settings not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -1035,21 +1060,21 @@ export async function GET(
         success: false,
         error: "Failed to fetch farm settings",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { farmId: string } }
+  { params }: { params: { farmId: string } },
 ) {
   try {
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json(
         { success: false, error: "Authentication required" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -1062,7 +1087,7 @@ export async function PATCH(
     if (!farm || farm.ownerId !== session.user.id) {
       return NextResponse.json(
         { success: false, error: "Unauthorized" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -1082,7 +1107,7 @@ export async function PATCH(
         success: false,
         error: "Failed to update farm settings",
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 }
@@ -1111,7 +1136,7 @@ export async function GET(request: NextRequest) {
         success: false,
         error: "Failed to fetch system settings",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -1257,7 +1282,7 @@ export function NotificationSettings() {
       {/* Email Notifications */}
       <div className="space-y-4">
         <h3 className="text-lg font-medium">Email Notifications</h3>
-        
+
         <div className="flex items-center justify-between">
           <Label htmlFor="email-enabled">Enable email notifications</Label>
           <Switch
@@ -1276,7 +1301,7 @@ export function NotificationSettings() {
       {/* SMS Notifications */}
       <div className="space-y-4">
         <h3 className="text-lg font-medium">SMS Notifications</h3>
-        
+
         <div className="flex items-center justify-between">
           <Label htmlFor="sms-enabled">Enable SMS notifications</Label>
           <Switch
@@ -1293,7 +1318,7 @@ export function NotificationSettings() {
       {/* Push Notifications */}
       <div className="space-y-4">
         <h3 className="text-lg font-medium">Push Notifications</h3>
-        
+
         <div className="flex items-center justify-between">
           <Label htmlFor="push-enabled">Enable push notifications</Label>
           <Switch
@@ -1313,12 +1338,12 @@ export function NotificationSettings() {
 function buildUpdateObject(path: string[], value: any): any {
   const result: any = {};
   let current = result;
-  
+
   for (let i = 0; i < path.length - 1; i++) {
     current[path[i]] = {};
     current = current[path[i]];
   }
-  
+
   current[path[path.length - 1]] = value;
   return result;
 }
@@ -1515,6 +1540,7 @@ FEATURE_PUSH_NOTIFICATIONS=true
 **Likelihood**: MEDIUM
 
 **Mitigation**:
+
 - Create migration script for existing email preferences
 - Test migration with subset of users first
 - Provide rollback mechanism
@@ -1526,6 +1552,7 @@ FEATURE_PUSH_NOTIFICATIONS=true
 **Likelihood**: LOW
 
 **Mitigation**:
+
 - Use consistent cache key patterns
 - Implement cache versioning
 - Add manual cache flush endpoint
@@ -1537,6 +1564,7 @@ FEATURE_PUSH_NOTIFICATIONS=true
 **Likelihood**: MEDIUM
 
 **Mitigation**:
+
 - Use established timezone libraries (date-fns-tz)
 - Validate timezone strings
 - Test with multiple timezones
@@ -1549,18 +1577,21 @@ FEATURE_PUSH_NOTIFICATIONS=true
 ### Week 1: Foundation (Days 1-5)
 
 **Day 1-2**: Database Schema & Migration
+
 - Create Prisma schema updates
 - Write migration script
 - Test migration locally
 - Document schema changes
 
 **Day 3-4**: Service Layer
+
 - Implement SettingsService
 - Add validation logic
 - Write unit tests
 - Add caching layer
 
 **Day 5**: API Endpoints
+
 - Create user settings API
 - Create farm settings API
 - Create system settings API
@@ -1569,23 +1600,27 @@ FEATURE_PUSH_NOTIFICATIONS=true
 ### Week 2: UI & Polish (Days 6-10)
 
 **Day 6-7**: UI Components
+
 - Build settings page layout
 - Create notification settings UI
 - Create display settings UI
 - Create privacy settings UI
 
 **Day 8**: Business Hours UI
+
 - Build business hours editor
 - Add timezone selector
 - Test with multiple timezones
 
 **Day 9**: Integration & Testing
+
 - Integration tests
 - End-to-end testing
 - Performance testing
 - Bug fixes
 
 **Day 10**: Documentation & Deployment
+
 - Complete documentation
 - Deployment preparation
 - Sprint review
@@ -1729,6 +1764,7 @@ Sprint 5 builds comprehensive settings infrastructure that will serve as the fou
 4. **User Experience** - Intuitive settings UI
 
 **Expected Outcomes**:
+
 - ✅ Complete settings system operational
 - ✅ 8 technical debt items resolved
 - ✅ ~2,000 lines of production-ready code
@@ -1741,7 +1777,7 @@ Let's build enterprise-grade settings management! 🌾⚡
 
 **Sprint Status**: 🚀 READY TO START  
 **Next Review**: Day 5 (Mid-Sprint Check-in)  
-**Sprint Demo**: Day 10  
+**Sprint Demo**: Day 10
 
 **Previous Sprint**: [Sprint 4 Complete](../../SPRINT_4_COMPLETE.md)  
 **Technical Debt Status**: [40 items remaining](../../docs/current/TECHNICAL_DEBT.md)

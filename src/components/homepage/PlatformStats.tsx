@@ -60,7 +60,10 @@ export function PlatformStats() {
           throw new Error("API returned unsuccessful response");
         }
       } catch (err) {
-        homeLogger.error("Error fetching platform stats", err instanceof Error ? err : new Error(String(err)));
+        homeLogger.error(
+          "Error fetching platform stats",
+          err instanceof Error ? err : new Error(String(err)),
+        );
         setError(err instanceof Error ? err.message : "Failed to load stats");
 
         // Fallback to default stats on error

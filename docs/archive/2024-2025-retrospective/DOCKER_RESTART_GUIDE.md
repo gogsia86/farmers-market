@@ -1,9 +1,10 @@
 # 🐳 Docker Restart Guide - After Repository Cleanup
+
 ## Farmers Market Platform - Fresh Start Instructions
 
 **Last Updated**: January 2025  
 **Purpose**: Clean restart of Docker environment after repository cleanup  
-**Estimated Time**: 10-15 minutes  
+**Estimated Time**: 10-15 minutes
 
 ---
 
@@ -86,6 +87,7 @@ code .env
 ### Required Environment Variables
 
 **Minimum Required:**
+
 ```env
 # Database
 DATABASE_URL=postgresql://farmers_user:changeme123@postgres:5432/farmers_market?schema=public
@@ -105,6 +107,7 @@ EMAIL_FROM=noreply@farmersmarket.local
 ```
 
 **Generate Secrets:**
+
 ```bash
 # Generate NEXTAUTH_SECRET
 openssl rand -base64 32
@@ -500,8 +503,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "8"        # Use 8 of 12 cores
-          memory: 8G       # Use 8GB of 64GB
+          cpus: "8" # Use 8 of 12 cores
+          memory: 8G # Use 8GB of 64GB
         reservations:
           cpus: "4"
           memory: 4G
@@ -596,8 +599,8 @@ After successful Docker restart:
 
 **Status**: ✅ READY FOR USE  
 **Environment**: Development & Production  
-**Maintenance**: Keep updated with docker-compose changes  
+**Maintenance**: Keep updated with docker-compose changes
 
 ---
 
-*"Clean restart, clean slate, clean code - the Docker way!"* 🐳✨🚀
+_"Clean restart, clean slate, clean code - the Docker way!"_ 🐳✨🚀

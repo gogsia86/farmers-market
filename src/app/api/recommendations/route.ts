@@ -89,9 +89,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       location:
         latitude && longitude
           ? {
-            latitude: parseFloat(latitude),
-            longitude: parseFloat(longitude),
-          }
+              latitude: parseFloat(latitude),
+              longitude: parseFloat(longitude),
+            }
           : undefined,
       context: {
         pageType: contextType as any,

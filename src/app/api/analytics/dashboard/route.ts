@@ -144,7 +144,7 @@ export async function GET(request: NextRequest) {
         const product = products.find((p) => p.id === productId);
         const avgRating = product?.reviews.length
           ? product.reviews.reduce((sum, r) => sum + r.rating, 0) /
-          product.reviews.length
+            product.reviews.length
           : 0;
 
         return {

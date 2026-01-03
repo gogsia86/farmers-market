@@ -223,8 +223,8 @@ psql -U farmers_market -h prod-db -d farmers_market_prod
 \d orders
 
 -- Verify ServiceResponse-compatible columns
-SELECT column_name, data_type 
-FROM information_schema.columns 
+SELECT column_name, data_type
+FROM information_schema.columns
 WHERE table_name = 'orders';
 
 -- Verify indexes
@@ -415,22 +415,22 @@ tail -f logs/application.log | grep -i error
 ```bash
 # Check recent orders
 psql -U farmers_market -h prod-db -d farmers_market_prod -c \
-  "SELECT id, order_number, status, created_at 
-   FROM orders 
-   ORDER BY created_at DESC 
+  "SELECT id, order_number, status, created_at
+   FROM orders
+   ORDER BY created_at DESC
    LIMIT 10;"
 
 # Verify payment intents
 psql -U farmers_market -h prod-db -d farmers_market_prod -c \
-  "SELECT id, stripe_payment_intent_id, payment_status 
-   FROM orders 
+  "SELECT id, stripe_payment_intent_id, payment_status
+   FROM orders
    WHERE created_at > NOW() - INTERVAL '1 hour';"
 
 # Check for orphaned records
 psql -U farmers_market -h prod-db -d farmers_market_prod -c \
-  "SELECT COUNT(*) as orphaned_cart_items 
-   FROM cart_items ci 
-   LEFT JOIN users u ON ci.user_id = u.id 
+  "SELECT COUNT(*) as orphaned_cart_items
+   FROM cart_items ci
+   LEFT JOIN users u ON ci.user_id = u.id
    WHERE u.id IS NULL;"
 ```
 
@@ -647,6 +647,7 @@ SQL
 ### When to Rollback
 
 Rollback immediately if:
+
 - ❌ Error rate > 5%
 - ❌ Response time p95 > 3s
 - ❌ Critical feature broken
@@ -714,40 +715,43 @@ EOF
 
 ### Technical Metrics (24 hours post-deployment)
 
-| Metric | Target | Actual | Status |
-|--------|--------|--------|--------|
-| Error Rate | < 0.5% | ___ | ⬜ |
-| Response Time (p95) | < 1s | ___ | ⬜ |
-| API Success Rate | > 99.5% | ___ | ⬜ |
-| Database Latency | < 50ms | ___ | ⬜ |
-| Memory Usage | < 80% | ___ | ⬜ |
-| CPU Usage | < 70% | ___ | ⬜ |
+| Metric              | Target  | Actual | Status |
+| ------------------- | ------- | ------ | ------ |
+| Error Rate          | < 0.5%  | \_\_\_ | ⬜     |
+| Response Time (p95) | < 1s    | \_\_\_ | ⬜     |
+| API Success Rate    | > 99.5% | \_\_\_ | ⬜     |
+| Database Latency    | < 50ms  | \_\_\_ | ⬜     |
+| Memory Usage        | < 80%   | \_\_\_ | ⬜     |
+| CPU Usage           | < 70%   | \_\_\_ | ⬜     |
 
 ### Business Metrics (1 week post-deployment)
 
-| Metric | Target | Actual | Status |
-|--------|--------|--------|--------|
-| Checkout Conversion | > 80% | ___ | ⬜ |
-| Cart Abandonment | < 20% | ___ | ⬜ |
-| Payment Success | > 98% | ___ | ⬜ |
-| Order Creation Time | < 2min | ___ | ⬜ |
-| Customer Support Tickets | No increase | ___ | ⬜ |
+| Metric                   | Target      | Actual | Status |
+| ------------------------ | ----------- | ------ | ------ |
+| Checkout Conversion      | > 80%       | \_\_\_ | ⬜     |
+| Cart Abandonment         | < 20%       | \_\_\_ | ⬜     |
+| Payment Success          | > 98%       | \_\_\_ | ⬜     |
+| Order Creation Time      | < 2min      | \_\_\_ | ⬜     |
+| Customer Support Tickets | No increase | \_\_\_ | ⬜     |
 
 ---
 
 ## 📞 Emergency Contacts
 
 ### On-Call Engineers
+
 - **Primary:** John Doe - +1-555-0101
 - **Secondary:** Jane Smith - +1-555-0102
 - **Escalation:** Engineering Manager - +1-555-0103
 
 ### External Services
+
 - **Stripe Support:** support@stripe.com / +1-888-926-2289
 - **Azure Support:** Portal > Support Tickets
 - **Database Admin:** dba@farmersmarket.com
 
 ### Communication Channels
+
 - **Slack:** #production-deploys
 - **Incident:** #incident-response
 - **Status Page:** status.farmersmarket.com
@@ -758,34 +762,41 @@ EOF
 
 ```markdown
 ## Deployment: Checkout Service Migration
+
 **Date:** YYYY-MM-DD
 **Time:** HH:MM UTC
 **Version:** vX.X.X
 **Engineer:** Name
 
 ### Pre-Deployment
+
 - [ ] Backup created: [timestamp]
 - [ ] Tests passed: ✓
 - [ ] Team notified: ✓
 
 ### Deployment Steps
+
 - [ ] Database migrated: [time]
 - [ ] Application deployed: [time]
 - [ ] Health checks passed: [time]
 - [ ] Traffic enabled: [time]
 
 ### Issues Encountered
+
 - None / [List issues]
 
 ### Metrics (1 hour post-deploy)
+
 - Error rate: X%
 - Response time: Xms
 - Success rate: X%
 
 ### Status
+
 ✅ SUCCESS / ⚠️ PARTIAL / ❌ ROLLBACK
 
 ### Notes
+
 [Additional notes]
 ```
 
@@ -797,13 +808,16 @@ Document lessons learned after deployment:
 
 ```markdown
 ### What Went Well
-- 
+
+-
 
 ### What Could Be Improved
-- 
+
+-
 
 ### Action Items
-- 
+
+-
 ```
 
 ---

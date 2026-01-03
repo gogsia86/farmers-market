@@ -11,7 +11,14 @@
 
 import { database } from "@/lib/database";
 import { PaymentAnalyticsService } from "@/lib/services/analytics/payment-analytics.service";
-import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from "@jest/globals";
 import type { Payment, PaymentMethod, PaymentStatus } from "@prisma/client";
 
 // ═══════════════════════════════════════════════════════════
@@ -46,7 +53,7 @@ const createMockPayment = (overrides: Partial<Payment> = {}): Payment => ({
 // Mock order with farm data
 const createMockPaymentWithFarm = (
   farmId: string,
-  overrides: Partial<Payment> = {}
+  overrides: Partial<Payment> = {},
 ): any => ({
   ...createMockPayment(overrides),
   order: {
@@ -180,9 +187,7 @@ describe("PaymentAnalyticsService", () => {
 
     it("should filter by farm ID", async () => {
       const farmId = "farm123";
-      const mockPayments = [
-        createMockPayment({ amount: 100, status: "PAID" }),
-      ];
+      const mockPayments = [createMockPayment({ amount: 100, status: "PAID" })];
 
       (database.payment.findMany as jest.Mock).mockResolvedValue(mockPayments);
       (database.payment.aggregate as jest.Mock).mockResolvedValue({
@@ -210,13 +215,17 @@ describe("PaymentAnalyticsService", () => {
               }),
             }),
           }),
-        })
+        }),
       );
     });
 
     it("should filter by payment method", async () => {
       const mockPayments = [
-        createMockPayment({ amount: 100, status: "PAID", paymentMethod: "CARD" }),
+        createMockPayment({
+          amount: 100,
+          status: "PAID",
+          paymentMethod: "CARD",
+        }),
       ];
 
       (database.payment.findMany as jest.Mock).mockResolvedValue(mockPayments);
@@ -237,7 +246,7 @@ describe("PaymentAnalyticsService", () => {
           where: expect.objectContaining({
             paymentMethod: "CARD",
           }),
-        })
+        }),
       );
     });
 
@@ -269,10 +278,26 @@ describe("PaymentAnalyticsService", () => {
 
     it("should group revenue by payment method", async () => {
       const mockPayments = [
-        createMockPayment({ amount: 100, status: "PAID", paymentMethod: "CARD" }),
-        createMockPayment({ amount: 200, status: "PAID", paymentMethod: "CARD" }),
-        createMockPayment({ amount: 150, status: "PAID", paymentMethod: "BANK_TRANSFER" }),
-        createMockPayment({ amount: 50, status: "PAID", paymentMethod: "CASH" }),
+        createMockPayment({
+          amount: 100,
+          status: "PAID",
+          paymentMethod: "CARD",
+        }),
+        createMockPayment({
+          amount: 200,
+          status: "PAID",
+          paymentMethod: "CARD",
+        }),
+        createMockPayment({
+          amount: 150,
+          status: "PAID",
+          paymentMethod: "BANK_TRANSFER",
+        }),
+        createMockPayment({
+          amount: 50,
+          status: "PAID",
+          paymentMethod: "CASH",
+        }),
       ];
 
       (database.payment.findMany as jest.Mock).mockResolvedValue(mockPayments);
@@ -298,9 +323,21 @@ describe("PaymentAnalyticsService", () => {
 
     it("should sort methods by total amount descending", async () => {
       const mockPayments = [
-        createMockPayment({ amount: 50, status: "PAID", paymentMethod: "CASH" }),
-        createMockPayment({ amount: 300, status: "PAID", paymentMethod: "CARD" }),
-        createMockPayment({ amount: 150, status: "PAID", paymentMethod: "BANK_TRANSFER" }),
+        createMockPayment({
+          amount: 50,
+          status: "PAID",
+          paymentMethod: "CASH",
+        }),
+        createMockPayment({
+          amount: 300,
+          status: "PAID",
+          paymentMethod: "CARD",
+        }),
+        createMockPayment({
+          amount: 150,
+          status: "PAID",
+          paymentMethod: "BANK_TRANSFER",
+        }),
       ];
 
       (database.payment.findMany as jest.Mock).mockResolvedValue(mockPayments);
@@ -317,13 +354,25 @@ describe("PaymentAnalyticsService", () => {
 
     it("should only include successful payments", async () => {
       const mockPayments = [
-        createMockPayment({ amount: 100, status: "PAID", paymentMethod: "CARD" }),
-        createMockPayment({ amount: 200, status: "FAILED", paymentMethod: "CARD" }),
-        createMockPayment({ amount: 150, status: "PENDING", paymentMethod: "CARD" }),
+        createMockPayment({
+          amount: 100,
+          status: "PAID",
+          paymentMethod: "CARD",
+        }),
+        createMockPayment({
+          amount: 200,
+          status: "FAILED",
+          paymentMethod: "CARD",
+        }),
+        createMockPayment({
+          amount: 150,
+          status: "PENDING",
+          paymentMethod: "CARD",
+        }),
       ];
 
       (database.payment.findMany as jest.Mock).mockResolvedValue(
-        mockPayments.filter((p) => p.status === "PAID")
+        mockPayments.filter((p) => p.status === "PAID"),
       );
 
       const result = await service.getRevenueByPaymentMethod({
@@ -349,8 +398,16 @@ describe("PaymentAnalyticsService", () => {
 
     it("should calculate correct percentages", async () => {
       const mockPayments = [
-        createMockPayment({ amount: 400, status: "PAID", paymentMethod: "CARD" }),
-        createMockPayment({ amount: 100, status: "PAID", paymentMethod: "CASH" }),
+        createMockPayment({
+          amount: 400,
+          status: "PAID",
+          paymentMethod: "CARD",
+        }),
+        createMockPayment({
+          amount: 100,
+          status: "PAID",
+          paymentMethod: "CASH",
+        }),
       ];
 
       (database.payment.findMany as jest.Mock).mockResolvedValue(mockPayments);
@@ -399,7 +456,7 @@ describe("PaymentAnalyticsService", () => {
 
       const result = await service.getTimeSeriesData(
         { startDate, endDate },
-        "day"
+        "day",
       );
 
       expect(result.length).toBeGreaterThanOrEqual(2);
@@ -427,12 +484,10 @@ describe("PaymentAnalyticsService", () => {
 
       const result = await service.getTimeSeriesData(
         { startDate, endDate },
-        "day"
+        "day",
       );
 
-      const day1 = result.find((d) =>
-        d.timestamp.getDate() === 1
-      );
+      const day1 = result.find((d) => d.timestamp.getDate() === 1);
 
       expect(day1?.transactionCount).toBe(2);
       expect(day1?.revenue).toBe(100); // Only successful
@@ -462,12 +517,12 @@ describe("PaymentAnalyticsService", () => {
 
       const result = await service.getTimeSeriesData(
         { startDate, endDate },
-        "day"
+        "day",
       );
 
       for (let i = 1; i < result.length; i++) {
         expect(result[i].timestamp.getTime()).toBeGreaterThanOrEqual(
-          result[i - 1].timestamp.getTime()
+          result[i - 1].timestamp.getTime(),
         );
       }
     });
@@ -490,7 +545,7 @@ describe("PaymentAnalyticsService", () => {
 
       const result = await service.getTimeSeriesData(
         { startDate, endDate },
-        "hour"
+        "hour",
       );
 
       expect(result.length).toBeGreaterThanOrEqual(2);
@@ -501,7 +556,7 @@ describe("PaymentAnalyticsService", () => {
 
       const result = await service.getTimeSeriesData(
         { startDate, endDate },
-        "day"
+        "day",
       );
 
       expect(result).toHaveLength(0);
@@ -654,7 +709,7 @@ describe("PaymentAnalyticsService", () => {
 
       const result = await service.getTopFarmsByRevenue(
         { startDate, endDate },
-        3
+        3,
       );
 
       expect(result).toHaveLength(3);
@@ -669,14 +724,14 @@ describe("PaymentAnalyticsService", () => {
         createMockPaymentWithFarm(`farm${i}`, {
           amount: 100,
           status: "PAID",
-        })
+        }),
       );
 
       (database.payment.findMany as jest.Mock).mockResolvedValue(mockPayments);
 
       const result = await service.getTopFarmsByRevenue(
         { startDate, endDate },
-        5
+        5,
       );
 
       expect(result).toHaveLength(5);
@@ -692,7 +747,7 @@ describe("PaymentAnalyticsService", () => {
 
       const result = await service.getTopFarmsByRevenue(
         { startDate, endDate },
-        10
+        10,
       );
 
       const farm1 = result.find((f) => f.farmId === "farm1");
@@ -710,7 +765,7 @@ describe("PaymentAnalyticsService", () => {
 
       const result = await service.getTopFarmsByRevenue(
         { startDate, endDate },
-        10
+        10,
       );
 
       expect(result[0].farmName).toBe("Farm farm123");
@@ -775,7 +830,7 @@ describe("PaymentAnalyticsService", () => {
           includeTimeSeries: true,
           includeTrends: true,
           includeTopFarms: true,
-        }
+        },
       );
 
       expect(result.data?.byMethod).toBeDefined();
@@ -792,7 +847,7 @@ describe("PaymentAnalyticsService", () => {
           includeTimeSeries: false,
           includeTrends: false,
           includeTopFarms: false,
-        }
+        },
       );
 
       expect(result.data?.byMethod).toBeUndefined();
@@ -809,13 +864,13 @@ describe("PaymentAnalyticsService", () => {
 
       expect(result.agricultural?.season).toBeDefined();
       expect(["SPRING", "SUMMER", "FALL", "WINTER"]).toContain(
-        result.agricultural?.season
+        result.agricultural?.season,
       );
     });
 
     it("should handle errors gracefully", async () => {
       (database.payment.findMany as jest.Mock).mockRejectedValue(
-        new Error("Database error")
+        new Error("Database error"),
       );
 
       const result = await service.getComprehensiveAnalytics({
@@ -838,7 +893,7 @@ describe("PaymentAnalyticsService", () => {
       const startTime = Date.now();
 
       (database.payment.findMany as jest.Mock).mockImplementation(
-        () => new Promise((resolve) => setTimeout(() => resolve([]), 50))
+        () => new Promise((resolve) => setTimeout(() => resolve([]), 50)),
       );
       (database.payment.aggregate as jest.Mock).mockImplementation(
         () =>
@@ -850,9 +905,9 @@ describe("PaymentAnalyticsService", () => {
                   _avg: { amount: 0 },
                   _count: 0,
                 }),
-              50
-            )
-          )
+              50,
+            ),
+          ),
       );
 
       await service.calculatePaymentMetrics({

@@ -93,7 +93,10 @@ export function NotificationBell({ className }: NotificationBellProps) {
         setUnreadCount(data.unreadCount || 0);
       }
     } catch (error) {
-      notificationLogger.error("Failed to fetch notifications", error instanceof Error ? error : new Error(String(error)));
+      notificationLogger.error(
+        "Failed to fetch notifications",
+        error instanceof Error ? error : new Error(String(error)),
+      );
     } finally {
       setIsLoading(false);
     }
@@ -129,9 +132,13 @@ export function NotificationBell({ className }: NotificationBellProps) {
         setUnreadCount((prev) => Math.max(0, prev - 1));
       }
     } catch (error) {
-      notificationLogger.error("Failed to mark notification as read", error instanceof Error ? error : new Error(String(error)), {
-        notificationId,
-      });
+      notificationLogger.error(
+        "Failed to mark notification as read",
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          notificationId,
+        },
+      );
     }
   }
 
@@ -152,7 +159,10 @@ export function NotificationBell({ className }: NotificationBellProps) {
         setUnreadCount(0);
       }
     } catch (error) {
-      notificationLogger.error("Failed to mark all as read", error instanceof Error ? error : new Error(String(error)));
+      notificationLogger.error(
+        "Failed to mark all as read",
+        error instanceof Error ? error : new Error(String(error)),
+      );
     }
   }
 
@@ -170,9 +180,13 @@ export function NotificationBell({ className }: NotificationBellProps) {
         setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
       }
     } catch (error) {
-      notificationLogger.error("Failed to delete notification", error instanceof Error ? error : new Error(String(error)), {
-        notificationId,
-      });
+      notificationLogger.error(
+        "Failed to delete notification",
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          notificationId,
+        },
+      );
     }
   }
 

@@ -125,7 +125,8 @@ export async function POST(request: NextRequest) {
       logger.warn("Failed to send support ticket confirmation", {
         operation: "sendConfirmationEmail",
         ticketId: ticket.id,
-        error: emailError instanceof Error ? emailError.message : "Unknown error",
+        error:
+          emailError instanceof Error ? emailError.message : "Unknown error",
       });
     }
 

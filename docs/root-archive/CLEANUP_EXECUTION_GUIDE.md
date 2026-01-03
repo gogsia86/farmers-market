@@ -1,9 +1,10 @@
 # 🚀 Quick Start: Repository Cleanup & Docker Restart
+
 ## Farmers Market Platform - 5-Minute Execution Guide
 
 **Last Updated**: January 2025  
 **Estimated Time**: 5-10 minutes  
-**Risk Level**: Low (with git backup)  
+**Risk Level**: Low (with git backup)
 
 ---
 
@@ -18,6 +19,7 @@ chmod +x scripts/*.sh
 ```
 
 **That's it!** The script will:
+
 1. ✅ Create git safety branch
 2. ✅ Organize 100+ docs into folders
 3. ✅ Remove backup files
@@ -51,7 +53,8 @@ chmod +x scripts/*.sh
 ./scripts/cleanup-docs.sh
 ```
 
-**Result**: 
+**Result**:
+
 - Root directory: 6 essential MD files only
 - docs/ directory: Organized by purpose
 - docs/archive/: Historical reports preserved
@@ -63,9 +66,10 @@ chmod +x scripts/*.sh
 ./scripts/remove-backups.sh
 ```
 
-**Result**: 
-- All *.backup* files removed
-- All *.old files removed
+**Result**:
+
+- All _.backup_ files removed
+- All \*.old files removed
 - Backup directories removed
 - Clean source tree
 
@@ -113,6 +117,7 @@ git commit -m "Repository cleanup and consolidation
 ## 🔍 WHAT GETS CLEANED
 
 ### Documentation (Root → docs/)
+
 ```
 BEFORE: 100+ MD files in root
 AFTER:  6 MD files in root + organized docs/ folder
@@ -151,6 +156,7 @@ docs/
 ```
 
 ### Backup Files (Removed)
+
 ```
 ❌ .env.backup.2025-12-18T02-22-41
 ❌ prisma/schema.prisma.backup_before_run4
@@ -162,6 +168,7 @@ docs/
 ```
 
 ### Build Artifacts (Cleaned)
+
 ```
 🧹 .next/                       # Build cache (374MB)
 🧹 .jest-cache/                 # Test cache (2.1MB)
@@ -172,6 +179,7 @@ docs/
 ```
 
 ### Docker (Reset)
+
 ```
 🐳 Stop all containers
 🐳 Remove volumes
@@ -185,6 +193,7 @@ docs/
 ## ✅ VERIFICATION
 
 ### After Cleanup
+
 ```bash
 # Check root is clean (should be ~6 files)
 ls -la *.md
@@ -199,6 +208,7 @@ find . -name "*.backup*" -o -name "*.old"
 ```
 
 ### After Docker Restart
+
 ```bash
 # All services healthy
 docker-compose ps
@@ -221,6 +231,7 @@ docker-compose exec redis redis-cli ping
 ## 🔄 ROLLBACK (If Needed)
 
 ### Option 1: Git Rollback
+
 ```bash
 # Switch to backup branch
 git checkout backup-before-cleanup
@@ -230,6 +241,7 @@ git checkout HEAD -- docs/
 ```
 
 ### Option 2: Docker Rollback
+
 ```bash
 # Stop current containers
 docker-compose down -v
@@ -243,6 +255,7 @@ docker-compose up --build -d
 ## 📊 EXPECTED RESULTS
 
 ### File Count
+
 ```
 BEFORE:
 - Root MD files:        100+
@@ -258,6 +271,7 @@ AFTER:
 ```
 
 ### Disk Space
+
 ```
 BEFORE:
 - Build artifacts:      2.6GB
@@ -271,6 +285,7 @@ AFTER:
 ```
 
 ### Developer Experience
+
 ```
 BEFORE:
 ❌ 100+ files to navigate
@@ -291,11 +306,13 @@ AFTER:
 ## 🆘 TROUBLESHOOTING
 
 ### "Permission denied" on scripts
+
 ```bash
 chmod +x scripts/*.sh
 ```
 
 ### "Port already in use"
+
 ```bash
 # Kill process on port 3000
 lsof -i :3000 | grep LISTEN | awk '{print $2}' | xargs kill -9
@@ -304,6 +321,7 @@ lsof -i :3000 | grep LISTEN | awk '{print $2}' | xargs kill -9
 ```
 
 ### "Docker build failed"
+
 ```bash
 # Clean Docker cache
 docker builder prune -a -f
@@ -313,6 +331,7 @@ docker-compose build --no-cache
 ```
 
 ### "Database migration failed"
+
 ```bash
 # Reset database (development only!)
 docker-compose down -v
@@ -326,6 +345,7 @@ docker-compose exec app npx prisma migrate reset
 ## 📚 POST-CLEANUP NAVIGATION
 
 ### Finding Documentation
+
 ```bash
 # Main navigation
 cat docs/INDEX.md
@@ -341,6 +361,7 @@ open docs/api/index.html
 ```
 
 ### Using New Structure
+
 ```
 Need deployment guide?
 → docs/deployment/
@@ -359,13 +380,13 @@ Need historical context?
 
 ## ⏱️ TIME ESTIMATES
 
-| Task | Manual | Automated |
-|------|--------|-----------|
-| Documentation cleanup | 15 min | 2 min |
-| Backup removal | 10 min | 1 min |
-| Docker restart | 5 min | 3 min |
-| Verification | 5 min | 1 min |
-| **TOTAL** | **35 min** | **7 min** |
+| Task                  | Manual     | Automated |
+| --------------------- | ---------- | --------- |
+| Documentation cleanup | 15 min     | 2 min     |
+| Backup removal        | 10 min     | 1 min     |
+| Docker restart        | 5 min      | 3 min     |
+| Verification          | 5 min      | 1 min     |
+| **TOTAL**             | **35 min** | **7 min** |
 
 ---
 
@@ -404,21 +425,24 @@ curl http://localhost:3000/api/health
 After successful cleanup:
 
 1. **Explore New Structure**
+
    ```bash
    # View documentation index
    cat docs/INDEX.md
-   
+
    # Check current status
    cat STATUS.md
    ```
 
 2. **Deploy to Staging**
+
    ```bash
    # See deployment guide
    cat docs/deployment/STAGING_DEPLOYMENT_QUICKSTART.md
    ```
 
 3. **Run Tests**
+
    ```bash
    npm run test:unit
    npm run test:integration
@@ -437,7 +461,7 @@ You'll know cleanup was successful when:
 
 - ✅ Only 6 MD files in root directory
 - ✅ docs/INDEX.md exists and navigable
-- ✅ No *.backup* files found
+- ✅ No _.backup_ files found
 - ✅ Docker services all "Up (healthy)"
 - ✅ http://localhost:3000/api/health returns 200
 - ✅ Build completes without errors
@@ -448,12 +472,14 @@ You'll know cleanup was successful when:
 ## 📞 SUPPORT
 
 ### Need Help?
+
 - **Documentation**: Check `docs/INDEX.md`
 - **API Issues**: See `docs/api/GETTING_STARTED.md`
 - **Docker Issues**: See `DOCKER_RESTART_GUIDE.md`
 - **Technical Debt**: See `docs/current/TECHNICAL_DEBT.md`
 
 ### Scripts Not Working?
+
 1. Ensure you're in project root
 2. Make scripts executable: `chmod +x scripts/*.sh`
 3. Check git is clean: `git status`
@@ -464,8 +490,8 @@ You'll know cleanup was successful when:
 **Status**: ✅ READY TO EXECUTE  
 **Risk**: Low (with git backup)  
 **Impact**: High (better DX)  
-**Time**: 5-10 minutes  
+**Time**: 5-10 minutes
 
 ---
 
-*"From chaos to order in 5 minutes - the divine cleanup way!"* 🌾✨🧹
+_"From chaos to order in 5 minutes - the divine cleanup way!"_ 🌾✨🧹

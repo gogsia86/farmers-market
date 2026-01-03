@@ -262,7 +262,9 @@ describe("💳 PaymentService - Divine Stripe Integration with ServiceResponse",
       expect(result.data).toBeUndefined();
       expect(result.error).toBeDefined();
       expect(result.error?.code).toBe("PAYMENT_INTENT_CREATION_FAILED");
-      expect(result.error?.message).toContain("Failed to create payment intent");
+      expect(result.error?.message).toContain(
+        "Failed to create payment intent",
+      );
     });
 
     it("should return error if amount is zero or negative", async () => {
@@ -305,7 +307,9 @@ describe("💳 PaymentService - Divine Stripe Integration with ServiceResponse",
       // Assert
       expect(result.success).toBe(false);
       expect(result.error?.code).toBe("PAYMENT_INTENT_CREATION_FAILED");
-      expect(result.error?.message).toContain("Failed to create payment intent");
+      expect(result.error?.message).toContain(
+        "Failed to create payment intent",
+      );
     });
 
     it("should include custom metadata", async () => {
@@ -703,7 +707,9 @@ describe("💳 PaymentService - Divine Stripe Integration with ServiceResponse",
       mockPaymentIntentsRetrieve.mockResolvedValue(mockPaymentIntent);
 
       // Act
-      const result = await paymentService.getPaymentDetails("550e8400-e29b-41d4-a716-446655440001");
+      const result = await paymentService.getPaymentDetails(
+        "550e8400-e29b-41d4-a716-446655440001",
+      );
 
       // Assert
       expect(result.success).toBe(true);
@@ -724,7 +730,9 @@ describe("💳 PaymentService - Divine Stripe Integration with ServiceResponse",
         .mockResolvedValue(mockOrder as unknown as Order);
 
       // Act
-      const result = await paymentService.getPaymentDetails("550e8400-e29b-41d4-a716-446655440001");
+      const result = await paymentService.getPaymentDetails(
+        "550e8400-e29b-41d4-a716-446655440001",
+      );
 
       // Assert
       expect(result.success).toBe(true);
@@ -831,7 +839,9 @@ describe("💳 PaymentService - Divine Stripe Integration with ServiceResponse",
       // Assert
       expect(result.success).toBe(false);
       expect(result.error?.code).toBe("PAYMENT_INTENT_CREATION_FAILED");
-      expect(result.error?.message).toContain("Failed to create payment intent");
+      expect(result.error?.message).toContain(
+        "Failed to create payment intent",
+      );
     });
 
     it("should round amounts correctly to avoid floating point issues", async () => {

@@ -88,7 +88,9 @@ test.describe("Complete Checkout Flow", () => {
     await addItemsToCart(page);
   });
 
-  test("should complete entire checkout flow successfully", async ({ page }) => {
+  test("should complete entire checkout flow successfully", async ({
+    page,
+  }) => {
     // Navigate to checkout
     await navigateToCheckout(page);
 
@@ -129,7 +131,9 @@ test.describe("Complete Checkout Flow", () => {
     await cardNumberFrame
       .locator('input[name="cardnumber"]')
       .fill(TEST_CARD.number);
-    await cardNumberFrame.locator('input[name="exp-date"]').fill(TEST_CARD.expiry);
+    await cardNumberFrame
+      .locator('input[name="exp-date"]')
+      .fill(TEST_CARD.expiry);
     await cardNumberFrame.locator('input[name="cvc"]').fill(TEST_CARD.cvc);
     await cardNumberFrame.locator('input[name="postal"]').fill(TEST_CARD.zip);
 
@@ -160,9 +164,7 @@ test.describe("Complete Checkout Flow", () => {
     await expect(page.locator("h1")).toContainText("Order Confirmed");
     await expect(page.locator('[data-testid="order-number"]')).toBeVisible();
     await expect(page.locator('[data-testid="order-total"]')).toBeVisible();
-    await expect(
-      page.locator('text=Thank you for your order'),
-    ).toBeVisible();
+    await expect(page.locator("text=Thank you for your order")).toBeVisible();
   });
 
   test("should allow navigation back through completed steps", async ({
@@ -220,9 +222,9 @@ test.describe("Complete Checkout Flow", () => {
     await page.click('button:has-text("Back")');
 
     // Verify data is preserved
-    await expect(page.locator('textarea[name="deliveryInstructions"]')).toHaveValue(
-      instructions,
-    );
+    await expect(
+      page.locator('textarea[name="deliveryInstructions"]'),
+    ).toHaveValue(instructions);
   });
 });
 
@@ -252,9 +254,7 @@ test.describe("Checkout Validation", () => {
     await page.click('button:has-text("Continue")');
 
     // Should show error
-    await expect(page.locator('[role="alert"]')).toContainText(
-      "cart is empty",
-    );
+    await expect(page.locator('[role="alert"]')).toContainText("cart is empty");
   });
 
   test("should validate address fields", async ({ page }) => {
@@ -266,10 +266,10 @@ test.describe("Checkout Validation", () => {
     await page.click('button:has-text("Save Address")');
 
     // Should show validation errors
-    await expect(page.locator('text=Street is required')).toBeVisible();
-    await expect(page.locator('text=City is required')).toBeVisible();
-    await expect(page.locator('text=State is required')).toBeVisible();
-    await expect(page.locator('text=Zip code is required')).toBeVisible();
+    await expect(page.locator("text=Street is required")).toBeVisible();
+    await expect(page.locator("text=City is required")).toBeVisible();
+    await expect(page.locator("text=State is required")).toBeVisible();
+    await expect(page.locator("text=Zip code is required")).toBeVisible();
   });
 
   test("should require payment method", async ({ page }) => {
@@ -310,7 +310,9 @@ test.describe("Checkout Validation", () => {
     await cardNumberFrame
       .locator('input[name="cardnumber"]')
       .fill(TEST_CARD.number);
-    await cardNumberFrame.locator('input[name="exp-date"]').fill(TEST_CARD.expiry);
+    await cardNumberFrame
+      .locator('input[name="exp-date"]')
+      .fill(TEST_CARD.expiry);
     await cardNumberFrame.locator('input[name="cvc"]').fill(TEST_CARD.cvc);
     await page.click('button:has-text("Continue")');
 
@@ -367,7 +369,9 @@ test.describe("Checkout Error Handling", () => {
     await cardNumberFrame
       .locator('input[name="cardnumber"]')
       .fill(TEST_CARD.number);
-    await cardNumberFrame.locator('input[name="exp-date"]').fill(TEST_CARD.expiry);
+    await cardNumberFrame
+      .locator('input[name="exp-date"]')
+      .fill(TEST_CARD.expiry);
     await cardNumberFrame.locator('input[name="cvc"]').fill(TEST_CARD.cvc);
     await page.click('button:has-text("Continue")');
 
@@ -410,9 +414,7 @@ test.describe("Checkout Error Handling", () => {
     await page.click('button:has-text("Continue")');
 
     // Should show stock error
-    await expect(page.locator('[role="alert"]')).toContainText(
-      "out of stock",
-    );
+    await expect(page.locator('[role="alert"]')).toContainText("out of stock");
   });
 });
 
@@ -529,7 +531,9 @@ test.describe("Checkout Performance", () => {
 
     const startTime = Date.now();
     await page.click('button:has-text("Continue")');
-    await page.waitForSelector('[data-testid="checkout-step"]:has-text("Delivery")');
+    await page.waitForSelector(
+      '[data-testid="checkout-step"]:has-text("Delivery")',
+    );
     const transitionTime = Date.now() - startTime;
 
     // Should transition in less than 500ms
@@ -565,7 +569,10 @@ test.describe("Checkout Edge Cases", () => {
     await expect(page.locator('[data-testid="saved-address"]')).toBeVisible();
   });
 
-  test("should handle concurrent cart modifications", async ({ page, context }) => {
+  test("should handle concurrent cart modifications", async ({
+    page,
+    context,
+  }) => {
     await loginUser(page);
     await addItemsToCart(page);
     await navigateToCheckout(page);
@@ -575,7 +582,9 @@ test.describe("Checkout Edge Cases", () => {
     await newPage.goto("/cart");
 
     // Remove item in new tab
-    await newPage.click('[data-testid="cart-item"]:first-child button[aria-label*="Remove"]');
+    await newPage.click(
+      '[data-testid="cart-item"]:first-child button[aria-label*="Remove"]',
+    );
 
     // Try to continue checkout in original tab
     await page.click('button:has-text("Continue")');

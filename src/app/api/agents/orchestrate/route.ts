@@ -32,11 +32,11 @@ const logger = createLogger("agents-orchestrate-api");
 
 interface OrchestrateRequest {
   action:
-  | "analyze_failure"
-  | "optimize_performance"
-  | "audit_security"
-  | "validate_agricultural"
-  | "process_and_heal";
+    | "analyze_failure"
+    | "optimize_performance"
+    | "audit_security"
+    | "validate_agricultural"
+    | "process_and_heal";
   workflowResult?: WorkflowResultInput;
   historicalResults?: WorkflowResultInput[];
   config?: {
@@ -148,11 +148,11 @@ async function handlePost(
     // Create orchestrator
     const orchestrator = body.config
       ? createWorkflowAgentOrchestrator({
-        apiKey: process.env.OPENAI_API_KEY,
-        enabled: true,
-        collaborationMode: body.config.collaborationMode,
-        consensusThreshold: body.config.consensusThreshold,
-      })
+          apiKey: process.env.OPENAI_API_KEY,
+          enabled: true,
+          collaborationMode: body.config.collaborationMode,
+          consensusThreshold: body.config.consensusThreshold,
+        })
       : createOrchestratorFromEnv();
 
     // Check if orchestrator is enabled
@@ -330,26 +330,26 @@ async function handleProcessAndHeal(
         remediated: outcome.remediated,
         plan: outcome.plan
           ? {
-            id: outcome.plan.id,
-            severity: outcome.plan.severity,
-            approvalStatus: outcome.plan.approvalStatus,
-            aiConfidence: outcome.plan.aiAnalysis.confidence,
-            rootCause: outcome.plan.aiAnalysis.rootCause,
-            proposedActions: outcome.plan.proposedActions.map((a) => ({
-              type: a.type,
-              description: a.description,
-              riskLevel: a.riskLevel,
-            })),
-          }
+              id: outcome.plan.id,
+              severity: outcome.plan.severity,
+              approvalStatus: outcome.plan.approvalStatus,
+              aiConfidence: outcome.plan.aiAnalysis.confidence,
+              rootCause: outcome.plan.aiAnalysis.rootCause,
+              proposedActions: outcome.plan.proposedActions.map((a) => ({
+                type: a.type,
+                description: a.description,
+                riskLevel: a.riskLevel,
+              })),
+            }
           : null,
         executionResult: outcome.executionResult
           ? {
-            success: outcome.executionResult.success,
-            finalState: outcome.executionResult.finalState,
-            duration: outcome.executionResult.duration,
-            actionsExecuted: outcome.executionResult.actionsExecuted.length,
-            errors: outcome.executionResult.errors,
-          }
+              success: outcome.executionResult.success,
+              finalState: outcome.executionResult.finalState,
+              duration: outcome.executionResult.duration,
+              actionsExecuted: outcome.executionResult.actionsExecuted.length,
+              errors: outcome.executionResult.errors,
+            }
           : null,
         metadata: {
           duration,

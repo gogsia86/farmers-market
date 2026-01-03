@@ -28,11 +28,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   headers.set("X-API-Deprecated", "true");
   headers.set("X-API-Deprecation-Date", "2025-12-01");
   headers.set("X-API-Sunset-Date", "2026-06-01");
-  headers.set("X-API-Migration-Guide", "/docs/migrations/api-consolidation-guide.md");
+  headers.set(
+    "X-API-Migration-Guide",
+    "/docs/migrations/api-consolidation-guide.md",
+  );
   headers.set("X-API-New-Endpoint", "/api/farmers/dashboard");
   headers.set(
     "Deprecation",
-    'version="1.0.0", date="Sun, 01 Dec 2025 00:00:00 GMT"'
+    'version="1.0.0", date="Sun, 01 Dec 2025 00:00:00 GMT"',
   );
   headers.set("Sunset", 'date="Mon, 01 Jun 2026 00:00:00 GMT"');
 

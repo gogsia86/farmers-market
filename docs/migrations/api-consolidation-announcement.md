@@ -19,6 +19,7 @@ We're consolidating our API endpoints to improve consistency, maintainability, a
 ### 🌾 Farmer Endpoints Consolidation
 
 **Old Endpoints** (Deprecated):
+
 ```
 POST   /api/farmer/dashboard
 GET    /api/farmer/finances
@@ -27,6 +28,7 @@ GET    /api/farmer/payout-schedule
 ```
 
 **New Endpoints** (Active):
+
 ```
 GET    /api/farmers/dashboard
 GET    /api/farmers/finances
@@ -37,6 +39,7 @@ GET    /api/farmers/payout-schedule
 ### 🌱 Farming Resources Consolidation
 
 **Old Endpoints** (Deprecated):
+
 ```
 GET    /api/farming/advice
 GET    /api/farming/education
@@ -45,6 +48,7 @@ GET    /api/farming/support
 ```
 
 **New Endpoints** (Active):
+
 ```
 GET    /api/farmers/resources/advice
 GET    /api/farmers/resources/education
@@ -55,11 +59,13 @@ GET    /api/farmers/resources/support
 ### 💰 Payment Wallet Consolidation
 
 **Old Endpoint** (Deprecated):
+
 ```
 GET/POST  /api/payment/wallet
 ```
 
 **New Endpoint** (Active):
+
 ```
 GET/POST  /api/payments/wallet
 ```
@@ -67,11 +73,13 @@ GET/POST  /api/payments/wallet
 ### 🌍 Agricultural Consciousness Consolidation
 
 **Old Endpoint** (Deprecated):
+
 ```
 GET    /api/agricultural-consciousness
 ```
 
 **New Endpoint** (Active):
+
 ```
 GET    /api/agricultural/consciousness
 ```
@@ -80,13 +88,13 @@ GET    /api/agricultural/consciousness
 
 ## Timeline
 
-| Date | Milestone |
-|------|-----------|
+| Date              | Milestone                                                                                                          |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------ |
 | **December 2025** | Deprecation period begins. Old endpoints return deprecation headers but continue to work via redirects (HTTP 308). |
-| **January 2026** | Migration guide published. Support team available to assist with integration updates. |
-| **May 1, 2026** | Final migration warning sent (30 days before sunset). |
-| **June 1, 2026** | Old endpoints return HTTP 410 Gone. All traffic must use new endpoints. |
-| **July 2026** | Deprecated alias files archived. |
+| **January 2026**  | Migration guide published. Support team available to assist with integration updates.                              |
+| **May 1, 2026**   | Final migration warning sent (30 days before sunset).                                                              |
+| **June 1, 2026**  | Old endpoints return HTTP 410 Gone. All traffic must use new endpoints.                                            |
+| **July 2026**     | Deprecated alias files archived.                                                                                   |
 
 ---
 
@@ -112,16 +120,16 @@ Replace old URLs with new consolidated URLs:
 
 ```typescript
 // ❌ OLD (Deprecated)
-const response = await fetch('/api/farmer/dashboard', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ farmId })
+const response = await fetch("/api/farmer/dashboard", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ farmId }),
 });
 
 // ✅ NEW (Recommended)
-const response = await fetch('/api/farmers/dashboard', {
-  method: 'GET', // Note: Changed from POST to GET
-  headers: { 'Content-Type': 'application/json' }
+const response = await fetch("/api/farmers/dashboard", {
+  method: "GET", // Note: Changed from POST to GET
+  headers: { "Content-Type": "application/json" },
 });
 ```
 
@@ -139,10 +147,10 @@ response = requests.get('https://api.farmersmarket.com/api/farmers/resources/adv
 
 Some endpoints have standardized HTTP methods:
 
-| Endpoint | Old Method | New Method |
-|----------|-----------|------------|
-| `/api/farmers/dashboard` | POST | GET |
-| All other endpoints | (No change) | (No change) |
+| Endpoint                 | Old Method  | New Method  |
+| ------------------------ | ----------- | ----------- |
+| `/api/farmers/dashboard` | POST        | GET         |
+| All other endpoints      | (No change) | (No change) |
 
 ### Step 4: Test Your Integration
 
@@ -154,6 +162,7 @@ Some endpoints have standardized HTTP methods:
 ### Step 5: Monitor & Validate
 
 After migration, verify:
+
 - [ ] All API calls use new endpoints
 - [ ] No deprecation headers in responses
 - [ ] All functionality works as expected
@@ -166,11 +175,13 @@ After migration, verify:
 ### Automatic Redirects (Until June 1, 2026)
 
 Old endpoints automatically redirect to new endpoints with:
+
 - **HTTP 308** (Permanent Redirect)
 - Preserves request method and body
 - Includes deprecation headers
 
 **Response Headers:**
+
 ```http
 X-API-Deprecated: true
 Deprecation: true
@@ -182,6 +193,7 @@ Location: /api/farmers/dashboard
 ### Breaking Changes (After June 1, 2026)
 
 Old endpoints will return:
+
 ```json
 {
   "success": false,
@@ -198,12 +210,14 @@ Old endpoints will return:
 ## Impact Assessment
 
 ### Low Impact Changes
+
 - ✅ Request/response formats unchanged
 - ✅ Authentication unchanged
 - ✅ Query parameters unchanged
 - ✅ Rate limits unchanged
 
 ### What You Need to Update
+
 - 🔄 Endpoint URLs in your code
 - 🔄 API client configuration
 - 🔄 Documentation references
@@ -214,18 +228,22 @@ Old endpoints will return:
 ## Support & Resources
 
 ### Documentation
+
 - **Full Migration Guide:** [/docs/migrations/api-consolidation-guide.md](./api-consolidation-guide.md)
 - **API Reference:** [https://docs.farmersmarket.com/api](https://docs.farmersmarket.com/api)
 - **Quick Reference:** [.github/instructions/16_KILO_QUICK_REFERENCE.instructions.md](../../.github/instructions/16_KILO_QUICK_REFERENCE.instructions.md)
 
 ### Getting Help
+
 - **Email:** api-support@farmersmarket.com
 - **Slack:** #api-migration-support
 - **Office Hours:** Every Tuesday 2-4 PM EST
 - **Priority Support:** Available for high-volume integrations
 
 ### Code Examples
+
 We've prepared migration examples for popular languages:
+
 - JavaScript/TypeScript
 - Python
 - Ruby
@@ -240,27 +258,35 @@ Request examples: api-support@farmersmarket.com
 ## FAQ
 
 ### Q: Do I need to update immediately?
+
 **A:** No. Old endpoints will continue to work via redirects until June 1, 2026. However, we recommend updating as soon as possible.
 
 ### Q: Will my existing API keys work?
+
 **A:** Yes. Authentication is unchanged. Your existing API keys and tokens will work with both old and new endpoints.
 
 ### Q: Are there any breaking changes to request/response formats?
+
 **A:** No. Request and response formats remain identical. Only the URL paths are changing.
 
 ### Q: What if I miss the June 1, 2026 deadline?
+
 **A:** After June 1, old endpoints will return HTTP 410 Gone, causing your integration to fail. Please migrate before this date.
 
 ### Q: Can I test the new endpoints now?
+
 **A:** Yes! New endpoints are already live and fully functional. You can test them in parallel with your existing integration.
 
 ### Q: How do I know if I'm using old endpoints?
+
 **A:** Check response headers for `X-API-Deprecated: true` or `Deprecation: true`. These indicate you're using a deprecated endpoint.
 
 ### Q: Will there be more API changes?
+
 **A:** This is a one-time consolidation. We're committed to API stability after this migration.
 
 ### Q: What happens to rate limits?
+
 **A:** Rate limits are unchanged and apply to your account, not individual endpoints.
 
 ---
@@ -268,12 +294,14 @@ Request examples: api-support@farmersmarket.com
 ## Recommended Actions
 
 ### For Low-Volume Integrations (< 1,000 requests/day)
+
 1. Review migration guide
 2. Update endpoint URLs
 3. Test in development
 4. Deploy before June 1, 2026
 
 ### For Medium-Volume Integrations (1,000 - 100,000 requests/day)
+
 1. Schedule migration sprint
 2. Update and test in staging
 3. Monitor redirect usage
@@ -281,6 +309,7 @@ Request examples: api-support@farmersmarket.com
 5. Complete before May 1, 2026
 
 ### For High-Volume Integrations (> 100,000 requests/day)
+
 1. Contact api-support@farmersmarket.com for assisted migration
 2. Schedule migration planning call
 3. Request custom monitoring dashboard
@@ -294,6 +323,7 @@ Request examples: api-support@farmersmarket.com
 ### Redirect Behavior
 
 **Old endpoint request:**
+
 ```http
 POST /api/farmer/dashboard HTTP/1.1
 Host: api.farmersmarket.com
@@ -303,6 +333,7 @@ Content-Type: application/json
 ```
 
 **Redirect response (until June 1, 2026):**
+
 ```http
 HTTP/1.1 308 Permanent Redirect
 Location: /api/farmers/dashboard
@@ -341,4 +372,4 @@ For questions or assistance with migration:
 
 **Thank you for your cooperation in making our API more consistent and reliable!**
 
-*The Farmers Market Platform Team* 🌾
+_The Farmers Market Platform Team_ 🌾

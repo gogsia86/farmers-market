@@ -327,12 +327,14 @@ jest.mock("@/lib/services/farm.service", () => ({
 ## ✅ Testing Checklist
 
 ### Before Writing Tests
+
 - [ ] Understand the code being tested
 - [ ] Identify all code paths (happy path + error cases)
 - [ ] Determine required mocks
 - [ ] Prepare mock data that matches Prisma schema
 
 ### While Writing Tests
+
 - [ ] Follow AAA pattern (Arrange, Act, Assert)
 - [ ] Test one thing per test case
 - [ ] Use descriptive test names
@@ -340,6 +342,7 @@ jest.mock("@/lib/services/farm.service", () => ({
 - [ ] Include both success and failure scenarios
 
 ### After Writing Tests
+
 - [ ] Run tests and verify they pass
 - [ ] Check test coverage report
 - [ ] Review for edge cases
@@ -351,6 +354,7 @@ jest.mock("@/lib/services/farm.service", () => ({
 ## 🎯 Test Naming Conventions
 
 ### Service Tests
+
 ```typescript
 describe("FarmService", () => {
   describe("createFarm", () => {
@@ -362,6 +366,7 @@ describe("FarmService", () => {
 ```
 
 ### Controller Tests
+
 ```typescript
 describe("FarmController", () => {
   describe("POST /api/farms", () => {
@@ -373,6 +378,7 @@ describe("FarmController", () => {
 ```
 
 ### Divine Naming (Optional)
+
 ```typescript
 describe("🌾 Farm Service - Divine Farm Management", () => {
   describe("🌱 createFarm - Manifest Farm Reality", () => {
@@ -386,6 +392,7 @@ describe("🌾 Farm Service - Divine Farm Management", () => {
 ## 🚨 Common Pitfalls
 
 ### ❌ DON'T: Mock the same module twice
+
 ```typescript
 // This will cause conflicts
 jest.mock("@/lib/database");
@@ -393,6 +400,7 @@ jest.mock("@/lib/database"); // Duplicate!
 ```
 
 ### ❌ DON'T: Forget to clear mocks
+
 ```typescript
 describe("Tests", () => {
   // Missing beforeEach!
@@ -407,6 +415,7 @@ describe("Tests", () => {
 ```
 
 ### ✅ DO: Clear mocks between tests
+
 ```typescript
 describe("Tests", () => {
   beforeEach(() => {
@@ -416,24 +425,28 @@ describe("Tests", () => {
 ```
 
 ### ❌ DON'T: Use actual database in unit tests
+
 ```typescript
 // Unit tests should NOT hit the database
 const result = await prisma.farm.create({ data });
 ```
 
 ### ✅ DO: Mock database operations
+
 ```typescript
 (database.farm.create as jest.Mock).mockResolvedValue(mockFarm);
 const result = await service.createFarm(data);
 ```
 
 ### ❌ DON'T: Test implementation details
+
 ```typescript
 // Don't test internal private methods
 expect(service.privateMethod).toHaveBeenCalled();
 ```
 
 ### ✅ DO: Test public API and behavior
+
 ```typescript
 // Test the public interface
 const result = await service.createFarm(data);
@@ -445,6 +458,7 @@ expect(result.success).toBe(true);
 ## 📊 Coverage Guidelines
 
 ### Minimum Coverage Targets
+
 - **Backend Services:** 95%+
 - **Controllers:** 90%+
 - **API Routes:** 90%+
@@ -452,6 +466,7 @@ expect(result.success).toBe(true);
 - **Utility Functions:** 95%+
 
 ### What to Test
+
 - ✅ All public methods/functions
 - ✅ Error handling paths
 - ✅ Validation logic
@@ -459,6 +474,7 @@ expect(result.success).toBe(true);
 - ✅ Edge cases
 
 ### What Not to Test
+
 - ❌ Third-party library internals
 - ❌ Trivial getters/setters
 - ❌ Configuration files
@@ -469,6 +485,7 @@ expect(result.success).toBe(true);
 ## 🔍 Debugging Tests
 
 ### Running Single Test
+
 ```bash
 # Run specific test file
 npm test -- path/to/test.test.ts
@@ -478,6 +495,7 @@ npm test -- -t "should create farm"
 ```
 
 ### Debugging with Console Logs
+
 ```typescript
 it("should work", async () => {
   console.log("Request:", request);
@@ -488,6 +506,7 @@ it("should work", async () => {
 ```
 
 ### Using VSCode Debugger
+
 ```json
 // .vscode/launch.json
 {
@@ -629,4 +648,4 @@ describe("FarmService", () => {
 **Status:** ✅ Complete
 **Last Updated:** December 30, 2024
 
-*"Test with precision, validate with confidence, deliver with certainty."* 🧪✨
+_"Test with precision, validate with confidence, deliver with certainty."_ 🧪✨

@@ -24,7 +24,7 @@ import type {
   UpdateFarmSettingsRequest,
   UpdateSystemSettingRequest,
   UpdateUserSettingsRequest,
-  UserSettingsData
+  UserSettingsData,
 } from "@/types/settings";
 import {
   buildSettingsCacheKey,
@@ -35,7 +35,7 @@ import {
   isValidProfileVisibility,
   isValidTheme,
   isValidTimeString,
-  isValidTimezone
+  isValidTimezone,
 } from "@/types/settings";
 
 const CACHE_TTL = 3600; // 1 hour for user/farm settings
@@ -167,12 +167,14 @@ export class SettingsService {
    */
   async updateUserSettings(
     userId: string,
-    updates: UpdateUserSettingsRequest
+    updates: UpdateUserSettingsRequest,
   ): Promise<UserSettingsData> {
     // Validate updates
     const validation = this.validateUserSettings(updates);
     if (!validation.isValid) {
-      throw new Error(`Invalid settings: ${validation.errors.map(e => e.message).join(", ")}`);
+      throw new Error(
+        `Invalid settings: ${validation.errors.map((e) => e.message).join(", ")}`,
+      );
     }
 
     // Check if settings exist
@@ -190,17 +192,23 @@ export class SettingsService {
 
     if (updates.display) {
       if (updates.display.theme) updateData.theme = updates.display.theme;
-      if (updates.display.language) updateData.language = updates.display.language;
-      if (updates.display.timezone) updateData.timezone = updates.display.timezone;
-      if (updates.display.distanceUnit) updateData.distanceUnit = updates.display.distanceUnit;
-      if (updates.display.currency) updateData.currency = updates.display.currency;
+      if (updates.display.language)
+        updateData.language = updates.display.language;
+      if (updates.display.timezone)
+        updateData.timezone = updates.display.timezone;
+      if (updates.display.distanceUnit)
+        updateData.distanceUnit = updates.display.distanceUnit;
+      if (updates.display.currency)
+        updateData.currency = updates.display.currency;
     }
 
     if (updates.privacy) {
       if (updates.privacy.profileVisibility !== undefined)
         updateData.profileVisibility = updates.privacy.profileVisibility;
-      if (updates.privacy.showEmail !== undefined) updateData.showEmail = updates.privacy.showEmail;
-      if (updates.privacy.showPhone !== undefined) updateData.showPhone = updates.privacy.showPhone;
+      if (updates.privacy.showEmail !== undefined)
+        updateData.showEmail = updates.privacy.showEmail;
+      if (updates.privacy.showPhone !== undefined)
+        updateData.showPhone = updates.privacy.showPhone;
       if (updates.privacy.allowMessaging !== undefined)
         updateData.allowMessaging = updates.privacy.allowMessaging;
       if (updates.privacy.dataSharing !== undefined)
@@ -237,7 +245,9 @@ export class SettingsService {
    * @param updates - Settings to validate
    * @returns Validation result
    */
-  validateUserSettings(updates: UpdateUserSettingsRequest): SettingsValidationResult {
+  validateUserSettings(
+    updates: UpdateUserSettingsRequest,
+  ): SettingsValidationResult {
     const errors: Array<{ field: string; message: string }> = [];
     const warnings: Array<{ field: string; message: string }> = [];
 
@@ -245,11 +255,20 @@ export class SettingsService {
       if (updates.display.theme && !isValidTheme(updates.display.theme)) {
         errors.push({ field: "display.theme", message: "Invalid theme" });
       }
-      if (updates.display.timezone && !isValidTimezone(updates.display.timezone)) {
+      if (
+        updates.display.timezone &&
+        !isValidTimezone(updates.display.timezone)
+      ) {
         errors.push({ field: "display.timezone", message: "Invalid timezone" });
       }
-      if (updates.display.distanceUnit && !isValidDistanceUnit(updates.display.distanceUnit)) {
-        errors.push({ field: "display.distanceUnit", message: "Invalid distance unit" });
+      if (
+        updates.display.distanceUnit &&
+        !isValidDistanceUnit(updates.display.distanceUnit)
+      ) {
+        errors.push({
+          field: "display.distanceUnit",
+          message: "Invalid distance unit",
+        });
       }
     }
 
@@ -258,23 +277,34 @@ export class SettingsService {
         updates.privacy.profileVisibility &&
         !isValidProfileVisibility(updates.privacy.profileVisibility)
       ) {
-        errors.push({ field: "privacy.profileVisibility", message: "Invalid profile visibility" });
+        errors.push({
+          field: "privacy.profileVisibility",
+          message: "Invalid profile visibility",
+        });
       }
     }
 
     if (updates.contactMethod && !isValidContactMethod(updates.contactMethod)) {
-      errors.push({ field: "contactMethod", message: "Invalid contact method" });
+      errors.push({
+        field: "contactMethod",
+        message: "Invalid contact method",
+      });
     }
 
     if (
       updates.communicationFrequency &&
       !isValidCommunicationFrequency(updates.communicationFrequency)
     ) {
-      errors.push({ field: "communicationFrequency", message: "Invalid communication frequency" });
+      errors.push({
+        field: "communicationFrequency",
+        message: "Invalid communication frequency",
+      });
     }
 
     if (updates.notifications) {
-      const allDisabled = Object.values(updates.notifications).every((n) => !n.enabled);
+      const allDisabled = Object.values(updates.notifications).every(
+        (n) => !n.enabled,
+      );
       if (allDisabled) {
         warnings.push({
           field: "notifications",
@@ -339,22 +369,32 @@ export class SettingsService {
       enablePreOrders: settings.enablePreOrders,
       enableSubscriptions: settings.enableSubscriptions,
       enableGiftCards: settings.enableGiftCards,
-      businessHours: settings.businessHours?.map((bh) => ({
-        dayOfWeek: bh.dayOfWeek,
-        openTime: bh.openTime,
-        closeTime: bh.closeTime,
-        timezone: bh.timezone,
-        isClosed: bh.isClosed,
-      })) || [],
-      minOrderValue: typeof settings.minOrderValue === 'object' && settings.minOrderValue !== null && 'toNumber' in settings.minOrderValue
-        ? settings.minOrderValue.toNumber()
-        : settings.minOrderValue,
-      deliveryFee: typeof settings.deliveryFee === 'object' && settings.deliveryFee !== null && 'toNumber' in settings.deliveryFee
-        ? settings.deliveryFee.toNumber()
-        : settings.deliveryFee,
-      freeDeliveryThreshold: typeof settings.freeDeliveryThreshold === 'object' && settings.freeDeliveryThreshold !== null && 'toNumber' in settings.freeDeliveryThreshold
-        ? settings.freeDeliveryThreshold.toNumber()
-        : settings.freeDeliveryThreshold,
+      businessHours:
+        settings.businessHours?.map((bh) => ({
+          dayOfWeek: bh.dayOfWeek,
+          openTime: bh.openTime,
+          closeTime: bh.closeTime,
+          timezone: bh.timezone,
+          isClosed: bh.isClosed,
+        })) || [],
+      minOrderValue:
+        typeof settings.minOrderValue === "object" &&
+        settings.minOrderValue !== null &&
+        "toNumber" in settings.minOrderValue
+          ? settings.minOrderValue.toNumber()
+          : settings.minOrderValue,
+      deliveryFee:
+        typeof settings.deliveryFee === "object" &&
+        settings.deliveryFee !== null &&
+        "toNumber" in settings.deliveryFee
+          ? settings.deliveryFee.toNumber()
+          : settings.deliveryFee,
+      freeDeliveryThreshold:
+        typeof settings.freeDeliveryThreshold === "object" &&
+        settings.freeDeliveryThreshold !== null &&
+        "toNumber" in settings.freeDeliveryThreshold
+          ? settings.freeDeliveryThreshold.toNumber()
+          : settings.freeDeliveryThreshold,
     };
 
     // Cache for future requests
@@ -465,7 +505,7 @@ export class SettingsService {
    */
   async updateFarmSettings(
     farmId: string,
-    updates: UpdateFarmSettingsRequest
+    updates: UpdateFarmSettingsRequest,
   ): Promise<FarmSettingsData> {
     // Check if settings exist
     const existing = await database.farmSettings.findUnique({
@@ -484,12 +524,16 @@ export class SettingsService {
       updateData.acceptedPaymentMethods = updates.acceptedPaymentMethods;
     if (updates.requireDepositOnOrders !== undefined)
       updateData.requireDepositOnOrders = updates.requireDepositOnOrders;
-    if (updates.enablePreOrders !== undefined) updateData.enablePreOrders = updates.enablePreOrders;
+    if (updates.enablePreOrders !== undefined)
+      updateData.enablePreOrders = updates.enablePreOrders;
     if (updates.enableSubscriptions !== undefined)
       updateData.enableSubscriptions = updates.enableSubscriptions;
-    if (updates.enableGiftCards !== undefined) updateData.enableGiftCards = updates.enableGiftCards;
-    if (updates.minOrderValue !== undefined) updateData.minOrderValue = updates.minOrderValue;
-    if (updates.deliveryFee !== undefined) updateData.deliveryFee = updates.deliveryFee;
+    if (updates.enableGiftCards !== undefined)
+      updateData.enableGiftCards = updates.enableGiftCards;
+    if (updates.minOrderValue !== undefined)
+      updateData.minOrderValue = updates.minOrderValue;
+    if (updates.deliveryFee !== undefined)
+      updateData.deliveryFee = updates.deliveryFee;
     if (updates.freeDeliveryThreshold !== undefined)
       updateData.freeDeliveryThreshold = updates.freeDeliveryThreshold;
 
@@ -601,13 +645,17 @@ export class SettingsService {
       .toString()
       .padStart(2, "0")}`;
 
-    const todayHours = settings.businessHours.find((bh) => bh.dayOfWeek === currentDay);
+    const todayHours = settings.businessHours.find(
+      (bh) => bh.dayOfWeek === currentDay,
+    );
 
     if (!todayHours || todayHours.isClosed) {
       return false;
     }
 
-    return currentTime >= todayHours.openTime && currentTime <= todayHours.closeTime;
+    return (
+      currentTime >= todayHours.openTime && currentTime <= todayHours.closeTime
+    );
   }
 
   // ============================================
@@ -648,7 +696,9 @@ export class SettingsService {
    * @param request - Setting update request
    * @returns Updated setting data
    */
-  async setSystemSetting(request: UpdateSystemSettingRequest): Promise<SystemSettingData> {
+  async setSystemSetting(
+    request: UpdateSystemSettingRequest,
+  ): Promise<SystemSettingData> {
     const setting = await database.systemSettings.upsert({
       where: { key: request.key },
       update: {

@@ -349,12 +349,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         },
         paymentIntent: paymentDetails.paymentIntent
           ? {
-            id: paymentDetails.paymentIntent.id,
-            amount: paymentDetails.paymentIntent.amount / 100,
-            currency: paymentDetails.paymentIntent.currency,
-            status: paymentDetails.paymentIntent.status,
-            clientSecret: paymentDetails.paymentIntent.client_secret,
-          }
+              id: paymentDetails.paymentIntent.id,
+              amount: paymentDetails.paymentIntent.amount / 100,
+              currency: paymentDetails.paymentIntent.currency,
+              status: paymentDetails.paymentIntent.status,
+              clientSecret: paymentDetails.paymentIntent.client_secret,
+            }
           : null,
       },
     });

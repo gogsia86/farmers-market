@@ -396,9 +396,16 @@ function logError(error: unknown, context?: Record<string, any>): void {
 
 export {
   // Error classes
-  AppError, asyncHandler, AuthenticationError,
-  AuthorizationError, ConflictError,
+  AppError,
+  asyncHandler,
+  AuthenticationError,
+  AuthorizationError,
+  ConflictError,
   // Functions
-  handleError, InternalServerError, logError, NotFoundError, validateRequest, ValidationError
+  handleError,
+  InternalServerError,
+  logError,
+  NotFoundError,
+  validateRequest,
+  ValidationError,
 };
-

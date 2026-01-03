@@ -9,7 +9,14 @@ import {
   generateMetadata as generateMeta,
   generateOrganizationJsonLd,
 } from "@/lib/utils/metadata";
-import { Heart, Leaf, MapPin, ShoppingCart, ShoppingCart as ShoppingCartIcon, Star } from "lucide-react";
+import {
+  Heart,
+  Leaf,
+  MapPin,
+  ShoppingCart,
+  ShoppingCart as ShoppingCartIcon,
+  Star,
+} from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
 
@@ -106,9 +113,13 @@ async function getProducts() {
       };
     });
   } catch (error) {
-    farmLogger.error("Failed to fetch marketplace products", error instanceof Error ? error : new Error(String(error)), {
-      path: "/customer/marketplace/products",
-    });
+    farmLogger.error(
+      "Failed to fetch marketplace products",
+      error instanceof Error ? error : new Error(String(error)),
+      {
+        path: "/customer/marketplace/products",
+      },
+    );
     return [];
   }
 }

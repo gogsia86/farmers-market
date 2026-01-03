@@ -127,9 +127,9 @@ export class EmailService {
         auth:
           smtpUser && smtpPassword
             ? {
-              user: smtpUser,
-              pass: smtpPassword,
-            }
+                user: smtpUser,
+                pass: smtpPassword,
+              }
             : undefined,
       });
 
@@ -565,7 +565,14 @@ export const emailService = new EmailService();
 // ============================================================================
 
 export {
-  createDeferredEmailSender, getEmailServiceStatusLazy, isEmailServiceConfiguredLazy, sendBatchEmailsLazy, sendEmailLazy,
-  sendFarmerWelcomeLazy, sendOrderConfirmationLazy, sendOrderNotificationLazy, sendSeasonalNewsletterLazy, sendSupportTicketConfirmationLazy
+  createDeferredEmailSender,
+  getEmailServiceStatusLazy,
+  isEmailServiceConfiguredLazy,
+  sendBatchEmailsLazy,
+  sendEmailLazy,
+  sendFarmerWelcomeLazy,
+  sendOrderConfirmationLazy,
+  sendOrderNotificationLazy,
+  sendSeasonalNewsletterLazy,
+  sendSupportTicketConfirmationLazy,
 } from "./email-service-lazy";
-

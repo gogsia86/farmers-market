@@ -112,10 +112,10 @@ pnpm test --testNamePattern="Farm"
 
 ```typescript
 // src/__tests__/example.test.ts
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect } from "@jest/globals";
 
-describe('Example Test', () => {
-  it('should demonstrate basic testing', () => {
+describe("Example Test", () => {
+  it("should demonstrate basic testing", () => {
     const result = 2 + 2;
     expect(result).toBe(4);
   });
@@ -149,12 +149,12 @@ src/
 
 ```typescript
 // src/lib/services/__tests__/farm.service.test.ts
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-import { FarmService } from '../farm.service';
-import { database } from '@/lib/database';
+import { describe, it, expect, beforeEach, jest } from "@jest/globals";
+import { FarmService } from "../farm.service";
+import { database } from "@/lib/database";
 
 // Mock database
-jest.mock('@/lib/database', () => ({
+jest.mock("@/lib/database", () => ({
   database: {
     farm: {
       create: jest.fn(),
@@ -166,7 +166,7 @@ jest.mock('@/lib/database', () => ({
   },
 }));
 
-describe('FarmService', () => {
+describe("FarmService", () => {
   let farmService: FarmService;
 
   beforeEach(() => {
@@ -174,15 +174,15 @@ describe('FarmService', () => {
     jest.clearAllMocks();
   });
 
-  describe('createFarm', () => {
-    it('should create a farm with valid data', async () => {
+  describe("createFarm", () => {
+    it("should create a farm with valid data", async () => {
       const farmData = {
-        name: 'Test Farm',
-        description: 'A test farm',
-        ownerId: 'user-123',
+        name: "Test Farm",
+        description: "A test farm",
+        ownerId: "user-123",
       };
 
-      const mockFarm = { id: 'farm-123', ...farmData };
+      const mockFarm = { id: "farm-123", ...farmData };
       (database.farm.create as jest.Mock).mockResolvedValue({
         success: true,
         data: mockFarm,
@@ -197,25 +197,25 @@ describe('FarmService', () => {
       });
     });
 
-    it('should throw ValidationError for invalid name', async () => {
+    it("should throw ValidationError for invalid name", async () => {
       const farmData = {
-        name: 'AB', // Too short
-        description: 'A test farm',
-        ownerId: 'user-123',
+        name: "AB", // Too short
+        description: "A test farm",
+        ownerId: "user-123",
       };
 
       await expect(farmService.createFarm(farmData)).rejects.toThrow(
-        'Farm name must be at least 3 characters'
+        "Farm name must be at least 3 characters",
       );
     });
   });
 
-  describe('getFarmById', () => {
-    it('should return farm when found', async () => {
+  describe("getFarmById", () => {
+    it("should return farm when found", async () => {
       const mockFarm = {
-        id: 'farm-123',
-        name: 'Test Farm',
-        ownerId: 'user-123',
+        id: "farm-123",
+        name: "Test Farm",
+        ownerId: "user-123",
       };
 
       (database.farm.findUnique as jest.Mock).mockResolvedValue({
@@ -223,19 +223,19 @@ describe('FarmService', () => {
         data: mockFarm,
       });
 
-      const result = await farmService.getFarmById('farm-123');
+      const result = await farmService.getFarmById("farm-123");
 
       expect(result.success).toBe(true);
       expect(result.data).toEqual(mockFarm);
     });
 
-    it('should return null when farm not found', async () => {
+    it("should return null when farm not found", async () => {
       (database.farm.findUnique as jest.Mock).mockResolvedValue({
         success: true,
         data: null,
       });
 
-      const result = await farmService.getFarmById('nonexistent');
+      const result = await farmService.getFarmById("nonexistent");
 
       expect(result.success).toBe(true);
       expect(result.data).toBeNull();
@@ -248,16 +248,16 @@ describe('FarmService', () => {
 
 ```typescript
 // src/lib/utils/__tests__/validation.test.ts
-import { describe, it, expect } from '@jest/globals';
-import { validateEmail, validatePhone } from '../validation';
+import { describe, it, expect } from "@jest/globals";
+import { validateEmail, validatePhone } from "../validation";
 
-describe('Validation Utils', () => {
-  describe('validateEmail', () => {
-    it('should accept valid email addresses', () => {
+describe("Validation Utils", () => {
+  describe("validateEmail", () => {
+    it("should accept valid email addresses", () => {
       const validEmails = [
-        'user@example.com',
-        'test.user@domain.co.uk',
-        'farmer+market@agricultural.org',
+        "user@example.com",
+        "test.user@domain.co.uk",
+        "farmer+market@agricultural.org",
       ];
 
       validEmails.forEach((email) => {
@@ -265,12 +265,12 @@ describe('Validation Utils', () => {
       });
     });
 
-    it('should reject invalid email addresses', () => {
+    it("should reject invalid email addresses", () => {
       const invalidEmails = [
-        'notanemail',
-        '@example.com',
-        'user@',
-        'user @example.com',
+        "notanemail",
+        "@example.com",
+        "user@",
+        "user @example.com",
       ];
 
       invalidEmails.forEach((email) => {
@@ -279,13 +279,9 @@ describe('Validation Utils', () => {
     });
   });
 
-  describe('validatePhone', () => {
-    it('should accept valid US phone numbers', () => {
-      const validPhones = [
-        '555-123-4567',
-        '(555) 123-4567',
-        '5551234567',
-      ];
+  describe("validatePhone", () => {
+    it("should accept valid US phone numbers", () => {
+      const validPhones = ["555-123-4567", "(555) 123-4567", "5551234567"];
 
       validPhones.forEach((phone) => {
         expect(validatePhone(phone)).toBe(true);
@@ -307,7 +303,7 @@ Test how multiple components/services work together, including database operatio
 
 ```typescript
 // src/__tests__/setup/test-database.ts
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 export const testDatabase = new PrismaClient({
   datasources: {
@@ -330,34 +326,34 @@ export async function cleanDatabase() {
 
 ```typescript
 // src/app/api/farms/__tests__/route.integration.test.ts
-import { describe, it, expect, beforeEach } from '@jest/globals';
-import { POST, GET } from '../route';
-import { cleanDatabase, testDatabase } from '@/tests/setup/test-database';
-import { createMockSession } from '@/tests/helpers/auth';
+import { describe, it, expect, beforeEach } from "@jest/globals";
+import { POST, GET } from "../route";
+import { cleanDatabase, testDatabase } from "@/tests/setup/test-database";
+import { createMockSession } from "@/tests/helpers/auth";
 
-describe('Farms API Integration', () => {
+describe("Farms API Integration", () => {
   beforeEach(async () => {
     await cleanDatabase();
   });
 
-  describe('POST /api/farms', () => {
-    it('should create farm and persist to database', async () => {
-      const session = createMockSession({ role: 'FARMER' });
+  describe("POST /api/farms", () => {
+    it("should create farm and persist to database", async () => {
+      const session = createMockSession({ role: "FARMER" });
       const farmData = {
-        name: 'Integration Test Farm',
-        description: 'Testing farm creation',
+        name: "Integration Test Farm",
+        description: "Testing farm creation",
         location: {
-          address: '123 Farm Road',
-          city: 'Farmville',
-          state: 'FA',
-          zipCode: '12345',
+          address: "123 Farm Road",
+          city: "Farmville",
+          state: "FA",
+          zipCode: "12345",
         },
       };
 
       // Create mock request
-      const request = new Request('http://localhost:3000/api/farms', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const request = new Request("http://localhost:3000/api/farms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(farmData),
       });
 
@@ -379,11 +375,11 @@ describe('Farms API Integration', () => {
       expect(dbFarm!.name).toBe(farmData.name);
     });
 
-    it('should require authentication', async () => {
-      const request = new Request('http://localhost:3000/api/farms', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: 'Test' }),
+    it("should require authentication", async () => {
+      const request = new Request("http://localhost:3000/api/farms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: "Test" }),
       });
 
       const response = await POST(request);
@@ -391,17 +387,17 @@ describe('Farms API Integration', () => {
     });
   });
 
-  describe('GET /api/farms', () => {
-    it('should return all farms from database', async () => {
+  describe("GET /api/farms", () => {
+    it("should return all farms from database", async () => {
       // Seed database
       await testDatabase.farm.createMany({
         data: [
-          { name: 'Farm 1', ownerId: 'user-1', slug: 'farm-1' },
-          { name: 'Farm 2', ownerId: 'user-2', slug: 'farm-2' },
+          { name: "Farm 1", ownerId: "user-1", slug: "farm-1" },
+          { name: "Farm 2", ownerId: "user-2", slug: "farm-2" },
         ],
       });
 
-      const request = new Request('http://localhost:3000/api/farms');
+      const request = new Request("http://localhost:3000/api/farms");
       const response = await GET(request);
       const data = await response.json();
 
@@ -425,27 +421,27 @@ Test complete user journeys from browser interaction to final result.
 
 ```typescript
 // playwright.config.ts
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
-  testDir: './src/tests/e2e',
+  testDir: "./src/tests/e2e",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: 'html',
+  reporter: "html",
   use: {
-    baseURL: 'http://localhost:3000',
-    trace: 'on-first-retry',
+    baseURL: "http://localhost:3000",
+    trace: "on-first-retry",
   },
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
-    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+    { name: "firefox", use: { ...devices["Desktop Firefox"] } },
+    { name: "webkit", use: { ...devices["Desktop Safari"] } },
   ],
   webServer: {
-    command: 'pnpm dev',
-    url: 'http://localhost:3000',
+    command: "pnpm dev",
+    url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
   },
 });
@@ -455,51 +451,54 @@ export default defineConfig({
 
 ```typescript
 // src/tests/e2e/farm-creation.spec.ts
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test.describe('Farm Creation Flow', () => {
+test.describe("Farm Creation Flow", () => {
   test.beforeEach(async ({ page }) => {
     // Login as farmer
-    await page.goto('/auth/signin');
-    await page.fill('input[name="email"]', 'farmer@test.com');
-    await page.fill('input[name="password"]', 'password123');
+    await page.goto("/auth/signin");
+    await page.fill('input[name="email"]', "farmer@test.com");
+    await page.fill('input[name="password"]', "password123");
     await page.click('button[type="submit"]');
-    await expect(page).toHaveURL('/farmer/dashboard');
+    await expect(page).toHaveURL("/farmer/dashboard");
   });
 
-  test('should create a new farm successfully', async ({ page }) => {
+  test("should create a new farm successfully", async ({ page }) => {
     // Navigate to create farm page
-    await page.goto('/farmer/farms/new');
+    await page.goto("/farmer/farms/new");
 
     // Fill farm details
-    await page.fill('input[name="name"]', 'E2E Test Farm');
-    await page.fill('textarea[name="description"]', 'Farm created via E2E test');
-    await page.fill('input[name="address"]', '123 Farm Road');
-    await page.fill('input[name="city"]', 'Farmville');
-    await page.selectOption('select[name="state"]', 'CA');
-    await page.fill('input[name="zipCode"]', '90210');
+    await page.fill('input[name="name"]', "E2E Test Farm");
+    await page.fill(
+      'textarea[name="description"]',
+      "Farm created via E2E test",
+    );
+    await page.fill('input[name="address"]', "123 Farm Road");
+    await page.fill('input[name="city"]', "Farmville");
+    await page.selectOption('select[name="state"]', "CA");
+    await page.fill('input[name="zipCode"]', "90210");
 
     // Submit form
     await page.click('button[type="submit"]');
 
     // Verify redirect and success message
     await expect(page).toHaveURL(/\/farmer\/farms\/[a-z0-9-]+/);
-    await expect(page.locator('text=Farm created successfully')).toBeVisible();
+    await expect(page.locator("text=Farm created successfully")).toBeVisible();
 
     // Verify farm appears in dashboard
-    await page.goto('/farmer/dashboard');
-    await expect(page.locator('text=E2E Test Farm')).toBeVisible();
+    await page.goto("/farmer/dashboard");
+    await expect(page.locator("text=E2E Test Farm")).toBeVisible();
   });
 
-  test('should show validation errors for invalid input', async ({ page }) => {
-    await page.goto('/farmer/farms/new');
+  test("should show validation errors for invalid input", async ({ page }) => {
+    await page.goto("/farmer/farms/new");
 
     // Submit without filling required fields
     await page.click('button[type="submit"]');
 
     // Verify validation errors
-    await expect(page.locator('text=Farm name is required')).toBeVisible();
-    await expect(page.locator('text=Description is required')).toBeVisible();
+    await expect(page.locator("text=Farm name is required")).toBeVisible();
+    await expect(page.locator("text=Description is required")).toBeVisible();
   });
 });
 ```
@@ -573,16 +572,16 @@ Test API endpoints for correct behavior, authentication, and data handling.
 
 ```typescript
 // src/app/api/products/__tests__/route.test.ts
-import { describe, it, expect, jest } from '@jest/globals';
-import { GET, POST } from '../route';
-import { auth } from '@/lib/auth';
+import { describe, it, expect, jest } from "@jest/globals";
+import { GET, POST } from "../route";
+import { auth } from "@/lib/auth";
 
-jest.mock('@/lib/auth');
+jest.mock("@/lib/auth");
 
-describe('Products API', () => {
-  describe('GET /api/products', () => {
-    it('should return list of products', async () => {
-      const request = new Request('http://localhost:3000/api/products');
+describe("Products API", () => {
+  describe("GET /api/products", () => {
+    it("should return list of products", async () => {
+      const request = new Request("http://localhost:3000/api/products");
       const response = await GET(request);
       const data = await response.json();
 
@@ -591,45 +590,45 @@ describe('Products API', () => {
       expect(Array.isArray(data.data)).toBe(true);
     });
 
-    it('should filter by farm ID', async () => {
+    it("should filter by farm ID", async () => {
       const request = new Request(
-        'http://localhost:3000/api/products?farmId=farm-123'
+        "http://localhost:3000/api/products?farmId=farm-123",
       );
       const response = await GET(request);
       const data = await response.json();
 
-      expect(data.data.every((p: any) => p.farmId === 'farm-123')).toBe(true);
+      expect(data.data.every((p: any) => p.farmId === "farm-123")).toBe(true);
     });
   });
 
-  describe('POST /api/products', () => {
-    it('should require authentication', async () => {
+  describe("POST /api/products", () => {
+    it("should require authentication", async () => {
       (auth as jest.Mock).mockResolvedValue(null);
 
-      const request = new Request('http://localhost:3000/api/products', {
-        method: 'POST',
-        body: JSON.stringify({ name: 'Test Product' }),
+      const request = new Request("http://localhost:3000/api/products", {
+        method: "POST",
+        body: JSON.stringify({ name: "Test Product" }),
       });
 
       const response = await POST(request);
       expect(response.status).toBe(401);
     });
 
-    it('should create product with valid data', async () => {
+    it("should create product with valid data", async () => {
       (auth as jest.Mock).mockResolvedValue({
-        user: { id: 'user-123', role: 'FARMER' },
+        user: { id: "user-123", role: "FARMER" },
       });
 
       const productData = {
-        name: 'Fresh Tomatoes',
+        name: "Fresh Tomatoes",
         price: 4.99,
-        unit: 'lb',
-        farmId: 'farm-123',
+        unit: "lb",
+        farmId: "farm-123",
       };
 
-      const request = new Request('http://localhost:3000/api/products', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const request = new Request("http://localhost:3000/api/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(productData),
       });
 
@@ -638,7 +637,7 @@ describe('Products API', () => {
 
       expect(response.status).toBe(201);
       expect(data.success).toBe(true);
-      expect(data.data.name).toBe('Fresh Tomatoes');
+      expect(data.data.name).toBe("Fresh Tomatoes");
     });
   });
 });
@@ -656,30 +655,30 @@ Ensure the platform meets performance requirements under load.
 
 ```javascript
 // tests/performance/farm-list.load.js
-import http from 'k6/http';
-import { check, sleep } from 'k6';
+import http from "k6/http";
+import { check, sleep } from "k6";
 
 export const options = {
   stages: [
-    { duration: '30s', target: 50 },  // Ramp up to 50 users
-    { duration: '1m', target: 50 },   // Stay at 50 users
-    { duration: '30s', target: 100 }, // Ramp up to 100 users
-    { duration: '1m', target: 100 },  // Stay at 100 users
-    { duration: '30s', target: 0 },   // Ramp down
+    { duration: "30s", target: 50 }, // Ramp up to 50 users
+    { duration: "1m", target: 50 }, // Stay at 50 users
+    { duration: "30s", target: 100 }, // Ramp up to 100 users
+    { duration: "1m", target: 100 }, // Stay at 100 users
+    { duration: "30s", target: 0 }, // Ramp down
   ],
   thresholds: {
-    http_req_duration: ['p(95)<500'], // 95% of requests under 500ms
-    http_req_failed: ['rate<0.01'],   // Less than 1% failures
+    http_req_duration: ["p(95)<500"], // 95% of requests under 500ms
+    http_req_failed: ["rate<0.01"], // Less than 1% failures
   },
 };
 
 export default function () {
-  const response = http.get('http://localhost:3000/api/farms');
+  const response = http.get("http://localhost:3000/api/farms");
 
   check(response, {
-    'status is 200': (r) => r.status === 200,
-    'response time < 500ms': (r) => r.timings.duration < 500,
-    'has farms data': (r) => JSON.parse(r.body).data.length > 0,
+    "status is 200": (r) => r.status === 200,
+    "response time < 500ms": (r) => r.timings.duration < 500,
+    "has farms data": (r) => JSON.parse(r.body).data.length > 0,
   });
 
   sleep(1);
@@ -693,11 +692,11 @@ export default function () {
 ### Pattern 1: Arrange-Act-Assert (AAA)
 
 ```typescript
-it('should calculate order total correctly', () => {
+it("should calculate order total correctly", () => {
   // Arrange
   const orderItems = [
-    { productId: '1', quantity: 2, price: 10 },
-    { productId: '2', quantity: 1, price: 15 },
+    { productId: "1", quantity: 2, price: 10 },
+    { productId: "2", quantity: 1, price: 15 },
   ];
 
   // Act
@@ -714,20 +713,20 @@ it('should calculate order total correctly', () => {
 // tests/helpers/factories.ts
 export function createMockFarm(overrides = {}) {
   return {
-    id: 'farm-' + Math.random(),
-    name: 'Test Farm',
-    slug: 'test-farm',
-    description: 'A test farm',
-    status: 'ACTIVE',
-    ownerId: 'user-123',
+    id: "farm-" + Math.random(),
+    name: "Test Farm",
+    slug: "test-farm",
+    description: "A test farm",
+    status: "ACTIVE",
+    ownerId: "user-123",
     createdAt: new Date(),
     ...overrides,
   };
 }
 
 // Usage
-const activeFarm = createMockFarm({ status: 'ACTIVE' });
-const pendingFarm = createMockFarm({ status: 'PENDING' });
+const activeFarm = createMockFarm({ status: "ACTIVE" });
+const pendingFarm = createMockFarm({ status: "PENDING" });
 ```
 
 ### Pattern 3: Custom Matchers
@@ -738,7 +737,7 @@ expect.extend({
   toBeValidFarm(received) {
     const pass =
       received &&
-      typeof received.name === 'string' &&
+      typeof received.name === "string" &&
       received.name.length >= 3;
 
     return {
@@ -760,32 +759,48 @@ expect(farm).toBeValidFarm();
 
 ```typescript
 // ✅ GOOD - Each test is independent
-describe('FarmService', () => {
+describe("FarmService", () => {
   beforeEach(() => {
     // Fresh setup for each test
     jest.clearAllMocks();
   });
 
-  it('test 1', () => { /* ... */ });
-  it('test 2', () => { /* ... */ });
+  it("test 1", () => {
+    /* ... */
+  });
+  it("test 2", () => {
+    /* ... */
+  });
 });
 
 // ❌ BAD - Tests depend on each other
 let farm;
-it('should create farm', () => { farm = createFarm(); });
-it('should update farm', () => { updateFarm(farm); }); // Fails if first test fails
+it("should create farm", () => {
+  farm = createFarm();
+});
+it("should update farm", () => {
+  updateFarm(farm);
+}); // Fails if first test fails
 ```
 
 ### 2. Descriptive Test Names
 
 ```typescript
 // ✅ GOOD - Clear what is being tested
-it('should return 404 when farm does not exist', () => { /* ... */ });
-it('should throw ValidationError when name is less than 3 characters', () => { /* ... */ });
+it("should return 404 when farm does not exist", () => {
+  /* ... */
+});
+it("should throw ValidationError when name is less than 3 characters", () => {
+  /* ... */
+});
 
 // ❌ BAD - Unclear intent
-it('should work', () => { /* ... */ });
-it('test farm creation', () => { /* ... */ });
+it("should work", () => {
+  /* ... */
+});
+it("test farm creation", () => {
+  /* ... */
+});
 ```
 
 ### 3. Test Behavior, Not Implementation
@@ -851,7 +866,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
       - run: pnpm install
       - run: pnpm lint
       - run: pnpm type-check
@@ -869,7 +884,7 @@ jobs:
 
 ```typescript
 // Increase timeout for slow tests
-it('should handle slow operation', async () => {
+it("should handle slow operation", async () => {
   const result = await slowOperation();
   expect(result).toBeDefined();
 }, 10000); // 10 second timeout
@@ -879,9 +894,12 @@ it('should handle slow operation', async () => {
 
 ```typescript
 // Use waitFor for async updates
-await waitFor(() => {
-  expect(screen.getByText('Updated')).toBeVisible();
-}, { timeout: 3000 });
+await waitFor(
+  () => {
+    expect(screen.getByText("Updated")).toBeVisible();
+  },
+  { timeout: 3000 },
+);
 ```
 
 ---

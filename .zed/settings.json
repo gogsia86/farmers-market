@@ -93,9 +93,7 @@
       "settings": {
         "codeActionsOnSave": {
           "mode": "all",
-          "rules": [
-            "source.fixAll.eslint"
-          ]
+          "rules": ["source.fixAll.eslint"]
         },
         "format": true,
         "validate": true
@@ -105,14 +103,8 @@
       "settings": {
         "experimental": {
           "classRegex": [
-            [
-              "cva(([^)]*))",
-              "[\"'`]([^\"'`]*).*?[\"'`]"
-            ],
-            [
-              "cn(([^)]*))",
-              "(?:'|\"|`)([^']*)(?:'|\"|`)"
-            ]
+            ["cva(([^)]*))", "[\"'`]([^\"'`]*).*?[\"'`]"],
+            ["cn(([^)]*))", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
           ]
         },
         "includeLanguages": {
@@ -148,9 +140,7 @@
     "shell": {
       "with_arguments": {
         "program": "pwsh.exe",
-        "args": [
-          "-NoLogo"
-        ]
+        "args": ["-NoLogo"]
       }
     },
     "env": {

@@ -1,4 +1,5 @@
 # 🚀 Dependency Update Plan - Farmers Market Platform
+
 **Generated**: January 2025
 **Status**: READY FOR EXECUTION
 **Priority**: HIGH - Security & Performance Updates
@@ -10,6 +11,7 @@
 This document outlines the systematic update of deprecated and outdated dependencies in the Farmers Market Platform. Updates are categorized by risk level and include rollback strategies.
 
 ### Update Statistics
+
 - **Total Packages to Update**: 35
 - **Critical Updates**: 8
 - **Major Version Changes**: 3
@@ -21,6 +23,7 @@ This document outlines the systematic update of deprecated and outdated dependen
 ## 🎯 Critical Updates (DO FIRST)
 
 ### 1. Next.js Ecosystem (CRITICAL)
+
 **Risk Level**: LOW (Minor version)
 **Estimated Time**: 15 minutes
 
@@ -32,11 +35,13 @@ npm install eslint-config-next@16.1.1
 ```
 
 **Changes**:
+
 - `next`: 16.0.10 → 16.1.1
 - `@next/bundle-analyzer`: 16.0.3 → 16.1.1
 - `eslint-config-next`: 16.0.3 → 16.1.1
 
 **Testing Required**:
+
 - [ ] Dev server starts successfully
 - [ ] Build completes without errors
 - [ ] All pages render correctly
@@ -45,6 +50,7 @@ npm install eslint-config-next@16.1.1
 ---
 
 ### 2. NextAuth v5 Migration (CRITICAL - DEPRECATED)
+
 **Risk Level**: HIGH (Major version + breaking changes)
 **Estimated Time**: 4-6 hours
 
@@ -61,6 +67,7 @@ npm install next-auth@beta
 **Migration Steps**:
 
 1. **Update Auth Configuration** (`src/lib/auth/auth.config.ts`):
+
 ```typescript
 // OLD (v4):
 import NextAuth from "next-auth";
@@ -74,6 +81,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
 ```
 
 2. **Update API Route** (`src/app/api/auth/[...nextauth]/route.ts`):
+
 ```typescript
 // NEW (v5):
 import { handlers } from "@/lib/auth/auth.config";
@@ -81,6 +89,7 @@ export const { GET, POST } = handlers;
 ```
 
 3. **Update Middleware** (`middleware.ts`):
+
 ```typescript
 // OLD:
 export { default } from "next-auth/middleware";
@@ -93,6 +102,7 @@ export default auth((req) => {
 ```
 
 4. **Update Session Usage**:
+
 ```typescript
 // OLD:
 import { getServerSession } from "next-auth";
@@ -104,6 +114,7 @@ const session = await auth();
 ```
 
 **Files to Update**:
+
 - [ ] `src/lib/auth/auth.config.ts`
 - [ ] `src/lib/auth/auth-options.ts` (rename to `auth.config.ts`)
 - [ ] `src/app/api/auth/[...nextauth]/route.ts`
@@ -113,12 +124,14 @@ const session = await auth();
 - [ ] Test files
 
 **Resources**:
+
 - [NextAuth v5 Migration Guide](https://authjs.dev/guides/upgrade-to-v5)
 - [Auth.js Documentation](https://authjs.dev)
 
 ---
 
 ### 3. Zod Version Fix (CRITICAL - INCORRECT VERSION)
+
 **Risk Level**: HIGH
 **Estimated Time**: 30 minutes
 
@@ -130,6 +143,7 @@ npm install zod@^3.23.8
 ```
 
 **Testing Required**:
+
 - [ ] All validation schemas compile
 - [ ] API validation works
 - [ ] Form validation works
@@ -140,6 +154,7 @@ npm install zod@^3.23.8
 ## 🔥 High Priority Updates
 
 ### 4. OpenTelemetry Packages (Security & Performance)
+
 **Risk Level**: MEDIUM (Large version jump)
 **Estimated Time**: 1-2 hours
 
@@ -160,16 +175,19 @@ npm install \
 ```
 
 **Breaking Changes**:
+
 - API changes in instrumentation configuration
 - New semantic conventions
 - Updated resource detection
 
 **Files to Review**:
+
 - [ ] `instrumentation.ts`
 - [ ] `src/lib/telemetry/*`
 - [ ] Sentry configuration files
 
 **Testing Required**:
+
 - [ ] Traces are collected correctly
 - [ ] Azure Application Insights receives data
 - [ ] Sentry integration works
@@ -178,6 +196,7 @@ npm install \
 ---
 
 ### 5. TypeScript & Type Definitions
+
 **Risk Level**: LOW
 **Estimated Time**: 15 minutes
 
@@ -191,6 +210,7 @@ npm install --save-dev \
 ```
 
 **Changes**:
+
 - `typescript`: 5.9.3 → 5.7.3
 - `@types/node`: 24.10.1 → 25.0.3
 - `@types/react`: Update to match React 19
@@ -198,6 +218,7 @@ npm install --save-dev \
 - `@types/pg`: 8.15.6 → 8.16.0
 
 **Testing Required**:
+
 - [ ] `npm run type-check` passes
 - [ ] No new TypeScript errors
 - [ ] IDE autocomplete works
@@ -207,6 +228,7 @@ npm install --save-dev \
 ## ⚡ Medium Priority Updates
 
 ### 6. Vercel AI SDK (Breaking Changes)
+
 **Risk Level**: HIGH (Major version)
 **Estimated Time**: 2-3 hours
 **Status**: DEFER until stable
@@ -217,6 +239,7 @@ npm install --save-dev \
 **Decision**: SKIP for now - v6 has breaking changes and is still in early release.
 
 **Action**: Update to latest v5:
+
 ```bash
 npm install ai@5.0.116
 ```
@@ -224,6 +247,7 @@ npm install ai@5.0.116
 ---
 
 ### 7. Testing Library Updates
+
 **Risk Level**: LOW
 **Estimated Time**: 30 minutes
 
@@ -239,6 +263,7 @@ npm install --save-dev \
 ```
 
 **Testing Required**:
+
 - [ ] All tests pass
 - [ ] Test coverage maintained
 - [ ] No flaky tests introduced
@@ -246,6 +271,7 @@ npm install --save-dev \
 ---
 
 ### 8. Build & Development Tools
+
 **Risk Level**: LOW
 **Estimated Time**: 20 minutes
 
@@ -258,6 +284,7 @@ npm install --save-dev \
 ```
 
 **Changes**:
+
 - `tsx`: 4.20.6 → 4.21.0
 - `autoprefixer`: 10.4.22 → 10.4.23
 - `testcontainers`: 11.9.0 → 11.11.0
@@ -266,6 +293,7 @@ npm install --save-dev \
 ---
 
 ### 9. UI & Utility Libraries
+
 **Risk Level**: LOW
 **Estimated Time**: 15 minutes
 
@@ -280,6 +308,7 @@ npm install \
 ```
 
 **Changes**:
+
 - `lucide-react`: 0.561.0 → 0.562.0
 - `next-intl`: 4.5.5 → 4.6.1
 - `react-hook-form`: 7.68.0 → 7.69.0
@@ -290,6 +319,7 @@ npm install \
 ---
 
 ### 10. ESLint & Code Quality
+
 **Risk Level**: LOW
 **Estimated Time**: 10 minutes
 
@@ -302,6 +332,7 @@ npm install --save-dev \
 ```
 
 **Changes**:
+
 - `@eslint/eslintrc`: 3.3.1 → 3.3.3
 - `@typescript-eslint/eslint-plugin`: 8.50.0 → 8.50.1
 - `@typescript-eslint/parser`: 8.50.0 → 8.50.1
@@ -312,6 +343,7 @@ npm install --save-dev \
 ## ⏳ DEFER (Requires Major Migration)
 
 ### 11. Tailwind CSS v4 (MAJOR VERSION)
+
 **Risk Level**: VERY HIGH
 **Estimated Time**: 8-16 hours
 **Status**: DEFER - Wait for stable release & migration guide
@@ -320,6 +352,7 @@ npm install --save-dev \
 **Latest**: `tailwindcss@4.1.18`
 
 **Why Defer**:
+
 - v4 is a complete rewrite
 - Breaking changes to configuration
 - PostCSS plugin changes
@@ -327,11 +360,13 @@ npm install --save-dev \
 - Requires extensive testing
 
 **Action**: Update to latest v3:
+
 ```bash
 npm install --save-dev tailwindcss@^3.4.19
 ```
 
 **Future Migration Steps** (when ready):
+
 1. Read [Tailwind CSS v4 Migration Guide](https://tailwindcss.com/docs/upgrade-guide)
 2. Update `tailwind.config.ts` to new format
 3. Update `postcss.config.mjs`
@@ -342,6 +377,7 @@ npm install --save-dev tailwindcss@^3.4.19
 ---
 
 ### 12. Commander.js (MAJOR VERSION)
+
 **Risk Level**: MEDIUM
 **Estimated Time**: 1-2 hours
 **Status**: DEFER - Not critical
@@ -352,6 +388,7 @@ npm install --save-dev tailwindcss@^3.4.19
 **Decision**: Keep at v12 for now, update only if needed.
 
 **Files Using Commander**:
+
 - CLI scripts in `scripts/` directory
 
 ---
@@ -381,6 +418,7 @@ npm install --save-dev tailwindcss@^3.4.19
 ## 🔧 Step-by-Step Execution Plan
 
 ### Phase 1: Critical Fixes (Week 1)
+
 **Time Required**: 1 day
 
 1. ✅ Update Next.js ecosystem
@@ -390,6 +428,7 @@ npm install --save-dev tailwindcss@^3.4.19
 5. ✅ Deploy to staging
 
 ### Phase 2: NextAuth v5 Migration (Week 1-2)
+
 **Time Required**: 2-3 days
 
 1. ✅ Create backup branch
@@ -402,17 +441,19 @@ npm install --save-dev tailwindcss@^3.4.19
 8. ✅ Monitor for issues
 
 ### Phase 3: OpenTelemetry Update (Week 2) ✅ COMPLETE
+
 **Time Required**: 2 hours (faster than estimated!)
 
 1. ✅ Update all OpenTelemetry packages (0.52.x → 0.208.x)
 2. ✅ Migrate Resource API (new `resourceFromAttributes`)
-3. ✅ Update semantic conventions (SEMRESATTRS_* → ATTR_*)
+3. ✅ Update semantic conventions (SEMRESATTRS*\* → ATTR*\*)
 4. ✅ Fix HttpInstrumentation configuration
 5. ✅ Remove 3 @ts-ignore comments (improved type safety)
 6. ✅ Zero vulnerabilities after update
 7. 🟡 Deploy to staging (deferred - build errors unrelated)
 
 ### Phase 4: Minor Updates (Week 2)
+
 **Time Required**: 0.5 day
 
 1. ✅ Update testing libraries
@@ -423,6 +464,7 @@ npm install --save-dev tailwindcss@^3.4.19
 6. ✅ Deploy to staging
 
 ### Phase 5: Verification & Production (Week 3)
+
 **Time Required**: 1 day
 
 1. ✅ Full regression testing
@@ -436,6 +478,7 @@ npm install --save-dev tailwindcss@^3.4.19
 ## 🧪 Testing Strategy
 
 ### Pre-Update Checklist
+
 - [ ] Create feature branch: `feature/dependency-updates`
 - [ ] Document current versions
 - [ ] Run baseline tests
@@ -443,6 +486,7 @@ npm install --save-dev tailwindcss@^3.4.19
 - [ ] Note current bundle size
 
 ### Post-Update Testing
+
 - [ ] `npm run type-check` - TypeScript compilation
 - [ ] `npm run lint` - ESLint passes
 - [ ] `npm test` - Unit tests pass
@@ -454,6 +498,7 @@ npm install --save-dev tailwindcss@^3.4.19
 - [ ] Security scan
 
 ### Critical User Flows to Test
+
 1. ✅ User registration & login
 2. ✅ Farm creation & management
 3. ✅ Product listing & search
@@ -470,6 +515,7 @@ npm install --save-dev tailwindcss@^3.4.19
 ### If Updates Fail
 
 **Immediate Rollback**:
+
 ```bash
 # Revert to previous package-lock.json
 git checkout HEAD~1 package-lock.json package.json
@@ -477,6 +523,7 @@ npm ci
 ```
 
 **Per-Phase Rollback**:
+
 ```bash
 # Create rollback branches before each phase
 git checkout -b rollback/phase-1-backup
@@ -485,6 +532,7 @@ git checkout -b rollback/phase-3-backup
 ```
 
 **Database Rollback**:
+
 ```bash
 # If Prisma schema changes
 npm run db:migrate -- --rollback
@@ -495,17 +543,20 @@ npm run db:migrate -- --rollback
 ## 📊 Expected Improvements
 
 ### Performance
+
 - ✅ Build time: -15% (faster compiler)
 - ✅ Bundle size: -5% (better tree-shaking)
 - ✅ Type checking: -20% (TypeScript 5.7)
 - ✅ Test execution: -10% (Jest updates)
 
 ### Security
+
 - ✅ 5 CVEs resolved
 - ✅ Updated cryptographic libraries
 - ✅ Improved auth security (v5)
 
 ### Developer Experience
+
 - ✅ Better type inference
 - ✅ Improved error messages
 - ✅ Faster hot reload
@@ -516,6 +567,7 @@ npm run db:migrate -- --rollback
 ## 🔐 Security Considerations
 
 ### Before Production Deployment
+
 - [ ] Run `npm audit`
 - [ ] Check for new vulnerabilities
 - [ ] Review security headers
@@ -529,6 +581,7 @@ npm run db:migrate -- --rollback
 ## 📚 Reference Commands
 
 ### Quick Update Commands
+
 ```bash
 # Update all minor/patch versions safely
 npm update
@@ -547,6 +600,7 @@ npm ls --depth=0
 ```
 
 ### Build & Test Commands
+
 ```bash
 # Full quality check
 npm run quality
@@ -566,18 +620,21 @@ npm run type-check
 ## 🎯 Success Criteria
 
 ### Phase 1 Complete ✅
+
 - ✅ All critical updates applied (Next.js, Zod, TypeScript)
 - ✅ Zero build errors
 - ✅ All tests passing
 - ✅ Staging deployment successful
 
 ### Phase 2 Complete ✅
+
 - ✅ NextAuth v5 fully migrated
 - ✅ All auth flows working
 - ✅ No regression in functionality
 - ✅ Performance maintained or improved
 
 ### Phase 3 Complete ✅
+
 - ✅ OpenTelemetry updated (0.52.x → 0.208.x / 2.2.0)
 - ✅ Resource API migrated to `resourceFromAttributes()`
 - ✅ Type safety improved (removed 3 @ts-ignore comments)
@@ -586,6 +643,7 @@ npm run type-check
 - 🟡 Azure integration verification deferred to staging
 
 ### Phase 4 Complete ✅
+
 - ✅ Tailwind CSS updated (3.4.18 → 3.4.19)
 - ✅ Verified 4 intentionally pinned packages (ai, commander, next-auth, zod)
 - ✅ Zero security vulnerabilities maintained
@@ -593,6 +651,7 @@ npm run type-check
 - ✅ Only 1 package update needed (excellent dependency hygiene)
 
 ### Final Success
+
 - ✅ Phases 1-4 complete (80%)
 - ✅ Zero known vulnerabilities
 - 🟡 Production deployment pending
@@ -604,12 +663,14 @@ npm run type-check
 ## 📞 Support & Resources
 
 ### Documentation
+
 - [Next.js 16 Documentation](https://nextjs.org/docs)
 - [Auth.js v5 Guide](https://authjs.dev)
 - [OpenTelemetry JS Docs](https://opentelemetry.io/docs/languages/js/)
 - [Prisma Documentation](https://www.prisma.io/docs)
 
 ### Community
+
 - Next.js Discord
 - Prisma Discord
 - Auth.js GitHub Discussions
@@ -618,20 +679,21 @@ npm run type-check
 
 ## 📅 Timeline Summary
 
-| Phase | Duration | Status |
-|-------|----------|--------|
-| Phase 1: Critical Fixes | 1 day | ✅ COMPLETE |
-| Phase 2: NextAuth v5 | 2-3 days | ✅ COMPLETE |
-| Phase 3: OpenTelemetry | 2 hours | ✅ COMPLETE |
-| Phase 4: Minor Updates | 0.5 day | ✅ COMPLETE |
-| Phase 5: Verification | 1 day | 🟡 PLANNED |
-| **Total** | **5-6 days** | **🟢 80% COMPLETE** |
+| Phase                   | Duration     | Status              |
+| ----------------------- | ------------ | ------------------- |
+| Phase 1: Critical Fixes | 1 day        | ✅ COMPLETE         |
+| Phase 2: NextAuth v5    | 2-3 days     | ✅ COMPLETE         |
+| Phase 3: OpenTelemetry  | 2 hours      | ✅ COMPLETE         |
+| Phase 4: Minor Updates  | 0.5 day      | ✅ COMPLETE         |
+| Phase 5: Verification   | 1 day        | 🟡 PLANNED          |
+| **Total**               | **5-6 days** | **🟢 80% COMPLETE** |
 
 ---
 
 ## ✅ Action Items
 
 ### Completed ✅
+
 1. [x] Review this plan with team
 2. [x] Create backup branch
 3. [x] Phase 1: Critical fixes (Next.js, Zod, TypeScript)
@@ -639,6 +701,7 @@ npm run type-check
 5. [x] Phase 3: OpenTelemetry updates (all packages updated)
 
 ### Current Status (Phase 4 Complete)
+
 1. [x] All OpenTelemetry packages updated (0.52.x → 0.208.x)
 2. [x] Resource API migrated successfully
 3. [x] Type safety improved (3 @ts-ignore removed)
@@ -647,6 +710,7 @@ npm run type-check
 6. [x] Documentation complete
 
 ### Next Steps (Phase 5)
+
 1. [ ] Resolve route structure issues (build errors)
 2. [ ] Deploy to staging environment
 3. [ ] Full regression testing

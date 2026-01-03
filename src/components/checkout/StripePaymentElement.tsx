@@ -106,7 +106,9 @@ function PaymentForm({
       } else if (paymentIntent) {
         // Payment requires additional action (3D Secure, etc.)
         // Stripe will handle this automatically with redirect: "if_required"
-        paymentLogger.debug("Payment intent requires additional action", { status: paymentIntent.status });
+        paymentLogger.debug("Payment intent requires additional action", {
+          status: paymentIntent.status,
+        });
       }
     } catch (err) {
       const message =

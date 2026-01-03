@@ -273,11 +273,15 @@ export function CheckoutWizard({
         router.push(`/orders/${result.data.orderId}/confirmation`);
       }
     } catch (err) {
-      orderLogger.error("Order creation error", err instanceof Error ? err : new Error(String(err)), {
-        userId,
-        fulfillmentMethod: checkoutData.fulfillmentMethod,
-        paymentMethod: checkoutData.paymentMethod,
-      });
+      orderLogger.error(
+        "Order creation error",
+        err instanceof Error ? err : new Error(String(err)),
+        {
+          userId,
+          fulfillmentMethod: checkoutData.fulfillmentMethod,
+          paymentMethod: checkoutData.paymentMethod,
+        },
+      );
       setError(
         err instanceof Error
           ? err.message
@@ -343,7 +347,7 @@ export function CheckoutWizard({
                     className={cn(
                       "relative flex flex-col items-center gap-2 w-full group",
                       isAccessible &&
-                      "cursor-pointer hover:opacity-80 transition-opacity",
+                        "cursor-pointer hover:opacity-80 transition-opacity",
                     )}
                     aria-label={`${step.label}: ${step.description}`}
                     aria-current={isActive ? "step" : undefined}
@@ -353,12 +357,12 @@ export function CheckoutWizard({
                       className={cn(
                         "w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all",
                         isActive &&
-                        "bg-green-600 border-green-600 text-white scale-110",
+                          "bg-green-600 border-green-600 text-white scale-110",
                         isComplete &&
-                        "bg-green-600 border-green-600 text-white",
+                          "bg-green-600 border-green-600 text-white",
                         !isActive &&
-                        !isComplete &&
-                        "bg-white border-gray-300 text-gray-500",
+                          !isComplete &&
+                          "bg-white border-gray-300 text-gray-500",
                       )}
                     >
                       <StepIcon className="w-5 h-5" />
@@ -463,7 +467,7 @@ export function CheckoutWizard({
               "text-white bg-green-600 hover:bg-green-700",
               "focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2",
               (!steps[currentStep]?.isValid || isLoading) &&
-              "opacity-50 cursor-not-allowed",
+                "opacity-50 cursor-not-allowed",
             )}
             aria-label={
               currentStep === steps.length - 1

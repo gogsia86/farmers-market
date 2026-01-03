@@ -154,10 +154,22 @@ async function verifyTestUsers() {
   const TEST_USER_PASSWORD = process.env.TEST_USER_PASSWORD;
 
   if (!TEST_USER_PASSWORD) {
-    console.error(chalk.red("\n❌ ERROR: TEST_USER_PASSWORD environment variable is required"));
+    console.error(
+      chalk.red(
+        "\n❌ ERROR: TEST_USER_PASSWORD environment variable is required",
+      ),
+    );
     console.log(chalk.yellow("\nUsage:"));
-    console.log(chalk.cyan("  TEST_USER_PASSWORD=YourPassword123! npx tsx scripts/debug-nextauth.ts"));
-    console.log(chalk.yellow("\nThis ensures test passwords are not hardcoded in the repository.\n"));
+    console.log(
+      chalk.cyan(
+        "  TEST_USER_PASSWORD=YourPassword123! npx tsx scripts/debug-nextauth.ts",
+      ),
+    );
+    console.log(
+      chalk.yellow(
+        "\nThis ensures test passwords are not hardcoded in the repository.\n",
+      ),
+    );
     process.exit(1);
   }
 

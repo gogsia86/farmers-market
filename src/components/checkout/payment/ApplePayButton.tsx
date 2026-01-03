@@ -78,15 +78,19 @@ export function ApplePayButton({
         }
 
         // Check for Apple Pay API availability
-        if (!('ApplePaySession' in window)) {
-          paymentLogger.debug("Apple Pay not available - ApplePaySession not found");
+        if (!("ApplePaySession" in window)) {
+          paymentLogger.debug(
+            "Apple Pay not available - ApplePaySession not found",
+          );
           setIsApplePayAvailable(false);
           setIsLoading(false);
           return;
         }
 
         // Check if Apple Pay can make payments
-        const canMakePayments = (window as any).ApplePaySession.canMakePayments();
+        const canMakePayments = (
+          window as any
+        ).ApplePaySession.canMakePayments();
         if (!canMakePayments) {
           paymentLogger.debug("Apple Pay not available - Cannot make payments");
           setIsApplePayAvailable(false);
@@ -114,10 +118,15 @@ export function ApplePayButton({
             data.data.availableWallets.includes("APPLE_PAY");
 
           setIsApplePayAvailable(hasApplePay);
-          paymentLogger.debug("Apple Pay availability check completed", { available: hasApplePay });
+          paymentLogger.debug("Apple Pay availability check completed", {
+            available: hasApplePay,
+          });
         }
       } catch (error) {
-        paymentLogger.error("Apple Pay availability check failed", error instanceof Error ? error : new Error(String(error)));
+        paymentLogger.error(
+          "Apple Pay availability check failed",
+          error instanceof Error ? error : new Error(String(error)),
+        );
         setIsApplePayAvailable(false);
       } finally {
         setIsLoading(false);
@@ -130,7 +139,7 @@ export function ApplePayButton({
   // ==================== PAYMENT PROCESSING ====================
 
   const handleApplePayClick = async () => {
-    if (!('ApplePaySession' in window) || isProcessing || disabled) {
+    if (!("ApplePaySession" in window) || isProcessing || disabled) {
       return;
     }
 
@@ -138,7 +147,11 @@ export function ApplePayButton({
 
     try {
       // Step 1: Create payment intent
-      paymentLogger.info("Creating Apple Pay payment intent", { orderId, amount, currency });
+      paymentLogger.info("Creating Apple Pay payment intent", {
+        orderId,
+        amount,
+        currency,
+      });
 
       const intentResponse = await fetch("/api/payment/wallet", {
         method: "POST",
@@ -186,7 +199,9 @@ export function ApplePayButton({
       // Handle merchant validation
       session.onvalidatemerchant = async (event: any) => {
         try {
-          paymentLogger.debug("Validating Apple Pay merchant", { validationURL: event.validationURL });
+          paymentLogger.debug("Validating Apple Pay merchant", {
+            validationURL: event.validationURL,
+          });
 
           const validationResponse = await fetch(
             "/api/payment/wallet/apple-pay/validate",
@@ -216,7 +231,11 @@ export function ApplePayButton({
             );
           }
         } catch (error) {
-          paymentLogger.error("Apple Pay merchant validation error", error instanceof Error ? error : new Error(String(error)), { orderId });
+          paymentLogger.error(
+            "Apple Pay merchant validation error",
+            error instanceof Error ? error : new Error(String(error)),
+            { orderId },
+          );
           session.abort();
           throw error;
         }
@@ -225,7 +244,9 @@ export function ApplePayButton({
       // Handle payment authorization
       session.onpaymentauthorized = async (event: any) => {
         try {
-          paymentLogger.info("Processing Apple Pay payment authorization", { orderId });
+          paymentLogger.info("Processing Apple Pay payment authorization", {
+            orderId,
+          });
 
           // Process payment with Stripe
           const processResponse = await fetch(
@@ -273,7 +294,11 @@ export function ApplePayButton({
             );
           }
         } catch (error) {
-          paymentLogger.error("Apple Pay payment authorization error", error instanceof Error ? error : new Error(String(error)), { orderId });
+          paymentLogger.error(
+            "Apple Pay payment authorization error",
+            error instanceof Error ? error : new Error(String(error)),
+            { orderId },
+          );
           session.completePayment(ApplePaySessionClass.STATUS_FAILURE);
           throw error;
         }
@@ -293,7 +318,11 @@ export function ApplePayButton({
       // Begin Apple Pay session
       session.begin();
     } catch (error) {
-      paymentLogger.error("Apple Pay payment error", error instanceof Error ? error : new Error(String(error)), { orderId, amount, currency });
+      paymentLogger.error(
+        "Apple Pay payment error",
+        error instanceof Error ? error : new Error(String(error)),
+        { orderId, amount, currency },
+      );
 
       toast({
         title: "Payment Failed",

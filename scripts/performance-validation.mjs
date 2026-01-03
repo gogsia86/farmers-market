@@ -47,7 +47,7 @@ const CONFIG = {
   resultsFile: path.join(
     projectRoot,
     "performance-reports",
-    `results-${Date.now()}.json`
+    `results-${Date.now()}.json`,
   ),
 };
 
@@ -57,13 +57,13 @@ const CONFIG = {
 const log = {
   header: (msg) =>
     console.log(
-      `\n${colors.bright}${colors.cyan}╔════════════════════════════════════════════════════════════╗${colors.reset}`
+      `\n${colors.bright}${colors.cyan}╔════════════════════════════════════════════════════════════╗${colors.reset}`,
     ) +
     console.log(
-      `${colors.bright}${colors.cyan}║${colors.reset} ${msg.padEnd(58)} ${colors.bright}${colors.cyan}║${colors.reset}`
+      `${colors.bright}${colors.cyan}║${colors.reset} ${msg.padEnd(58)} ${colors.bright}${colors.cyan}║${colors.reset}`,
     ) +
     console.log(
-      `${colors.bright}${colors.cyan}╚════════════════════════════════════════════════════════════╝${colors.reset}\n`
+      `${colors.bright}${colors.cyan}╚════════════════════════════════════════════════════════════╝${colors.reset}\n`,
     ),
   section: (msg) =>
     console.log(`\n${colors.bright}${colors.blue}▶ ${msg}${colors.reset}\n`),
@@ -73,7 +73,7 @@ const log = {
   error: (msg) => console.log(`${colors.red}✗${colors.reset} ${msg}`),
   metric: (label, value, unit = "") =>
     console.log(
-      `  ${colors.dim}${label.padEnd(30)}${colors.reset} ${colors.bright}${value}${unit}${colors.reset}`
+      `  ${colors.dim}${label.padEnd(30)}${colors.reset} ${colors.bright}${value}${unit}${colors.reset}`,
     ),
   improvement: (label, before, after, unit = "") => {
     const diff = before - after;
@@ -81,7 +81,7 @@ const log = {
     const symbol = diff > 0 ? "↓" : "↑";
     const color = diff > 0 ? colors.green : colors.red;
     console.log(
-      `  ${colors.dim}${label.padEnd(30)}${colors.reset} ${before}${unit} → ${after}${unit} ${color}(${symbol} ${Math.abs(percentage)}%)${colors.reset}`
+      `  ${colors.dim}${label.padEnd(30)}${colors.reset} ${before}${unit} → ${after}${unit} ${color}(${symbol} ${Math.abs(percentage)}%)${colors.reset}`,
     );
   },
 };
@@ -218,14 +218,12 @@ function analyzeBundleSizes() {
       common: chunks.filter((c) => c.name.includes("common")),
     };
 
-    console.log(
-      `\n  ${colors.bright}Cache Group Distribution:${colors.reset}`
-    );
+    console.log(`\n  ${colors.bright}Cache Group Distribution:${colors.reset}`);
     Object.entries(cacheGroups).forEach(([name, group]) => {
       const groupSize = group.reduce((sum, c) => sum + c.size, 0);
       const groupSizeKB = (groupSize / 1024).toFixed(2);
       console.log(
-        `    ${name.padEnd(15)}: ${group.length} chunks, ${groupSizeKB} KB`
+        `    ${name.padEnd(15)}: ${group.length} chunks, ${groupSizeKB} KB`,
       );
     });
 
@@ -242,7 +240,7 @@ function analyzeBundleSizes() {
             count: group.length,
             size: group.reduce((sum, c) => sum + c.size, 0),
           },
-        ])
+        ]),
       ),
     };
   } catch (error) {
@@ -283,7 +281,7 @@ function analyzeWebpackConfig() {
     log.metric("Cache groups defined", cacheGroupCount);
     log.metric(
       "Optimization features",
-      Object.values(features).filter(Boolean).length
+      Object.values(features).filter(Boolean).length,
     );
 
     return {
@@ -327,7 +325,7 @@ function analyzeNextConfig() {
 
     // Count remote patterns
     const remotePatternsMatch = configContent.match(
-      /remotePatterns:\s*\[([\s\S]*?)\]/
+      /remotePatterns:\s*\[([\s\S]*?)\]/,
     );
     const remotePatternCount = remotePatternsMatch
       ? (remotePatternsMatch[1].match(/\{/g) || []).length
@@ -335,13 +333,10 @@ function analyzeNextConfig() {
 
     log.metric(
       "Active optimizations",
-      Object.values(optimizations).filter(Boolean).length
+      Object.values(optimizations).filter(Boolean).length,
     );
     log.metric("Image remote patterns", remotePatternCount);
-    log.metric(
-      "Lines of code",
-      configContent.split("\n").length
-    );
+    log.metric("Lines of code", configContent.split("\n").length);
 
     return {
       optimizations,
@@ -417,7 +412,7 @@ function saveResults(results) {
     fs.writeFileSync(
       CONFIG.resultsFile,
       JSON.stringify(results, null, 2),
-      "utf-8"
+      "utf-8",
     );
     log.success(`Results saved: ${CONFIG.resultsFile}`);
 
@@ -426,7 +421,7 @@ function saveResults(results) {
       fs.writeFileSync(
         CONFIG.baselineFile,
         JSON.stringify(results, null, 2),
-        "utf-8"
+        "utf-8",
       );
       log.success(`Baseline created: ${CONFIG.baselineFile}`);
     }
@@ -471,7 +466,7 @@ function compareWithBaseline(current, baseline) {
       "Build time",
       comparison.buildTime.before,
       comparison.buildTime.after,
-      "s"
+      "s",
     );
   }
 
@@ -485,7 +480,7 @@ function compareWithBaseline(current, baseline) {
     log.improvement(
       "Chunk count",
       comparison.chunkCount.before,
-      comparison.chunkCount.after
+      comparison.chunkCount.after,
     );
   }
 
@@ -494,7 +489,7 @@ function compareWithBaseline(current, baseline) {
       "Config complexity",
       comparison.configComplexity.before,
       comparison.configComplexity.after,
-      " lines"
+      " lines",
     );
   }
 
@@ -510,11 +505,11 @@ function generateSummary(results, comparison) {
   console.log(`${colors.bright}Build Performance:${colors.reset}`);
   log.metric(
     "Build time",
-    `${results.buildPerformance?.duration?.toFixed(2) || "N/A"} seconds`
+    `${results.buildPerformance?.duration?.toFixed(2) || "N/A"} seconds`,
   );
   log.metric(
     "Build status",
-    results.buildPerformance?.success ? "✓ Success" : "✗ Failed"
+    results.buildPerformance?.success ? "✓ Success" : "✗ Failed",
   );
 
   if (results.bundleAnalysis) {
@@ -522,7 +517,7 @@ function generateSummary(results, comparison) {
     log.metric("Total chunks", results.bundleAnalysis.totalChunks);
     log.metric(
       "Total size",
-      `${results.bundleAnalysis.totalSizeMB} MB (${results.bundleAnalysis.totalSizeKB} KB)`
+      `${results.bundleAnalysis.totalSizeMB} MB (${results.bundleAnalysis.totalSizeKB} KB)`,
     );
   }
 
@@ -537,7 +532,7 @@ function generateSummary(results, comparison) {
     console.log(`\n${colors.bright}Next.js Configuration:${colors.reset}`);
     log.metric(
       "Active optimizations",
-      Object.values(results.nextConfig.optimizations).filter(Boolean).length
+      Object.values(results.nextConfig.optimizations).filter(Boolean).length,
     );
     log.metric("Image remote patterns", results.nextConfig.remotePatternCount);
     log.metric("TypeScript strict mode", "Enabled ✓");
@@ -549,17 +544,18 @@ function generateSummary(results, comparison) {
     log.metric("Total memory", `${results.hardware.totalMemoryGB} GB`);
     log.metric(
       "Parallelism optimized",
-      results.hardware.parallelismOptimized ? "Yes ✓" : "No ✗"
+      results.hardware.parallelismOptimized ? "Yes ✓" : "No ✗",
     );
   }
 
   if (comparison) {
-    console.log(`\n${colors.bright}${colors.green}Improvements from Phase 2:${colors.reset}`);
+    console.log(
+      `\n${colors.bright}${colors.green}Improvements from Phase 2:${colors.reset}`,
+    );
 
     const improvements = [];
     if (comparison.buildTime.before > 0) {
-      const diff =
-        comparison.buildTime.before - comparison.buildTime.after;
+      const diff = comparison.buildTime.before - comparison.buildTime.after;
       const pct = ((diff / comparison.buildTime.before) * 100).toFixed(2);
       if (diff > 0) {
         improvements.push(`Build time: ${pct}% faster`);
@@ -567,8 +563,7 @@ function generateSummary(results, comparison) {
     }
 
     if (comparison.bundleSize.before > 0) {
-      const diff =
-        comparison.bundleSize.before - comparison.bundleSize.after;
+      const diff = comparison.bundleSize.before - comparison.bundleSize.after;
       const pct = ((diff / comparison.bundleSize.before) * 100).toFixed(2);
       if (diff > 0) {
         improvements.push(`Bundle size: ${pct}% smaller`);
@@ -579,7 +574,7 @@ function generateSummary(results, comparison) {
       const diff =
         comparison.configComplexity.before - comparison.configComplexity.after;
       const pct = ((diff / comparison.configComplexity.before) * 100).toFixed(
-        2
+        2,
       );
       if (diff > 0) {
         improvements.push(`Config complexity: ${pct}% reduced`);
@@ -594,7 +589,7 @@ function generateSummary(results, comparison) {
   }
 
   console.log(
-    `\n${colors.bright}${colors.cyan}Report saved to:${colors.reset} ${CONFIG.resultsFile}\n`
+    `\n${colors.bright}${colors.cyan}Report saved to:${colors.reset} ${CONFIG.resultsFile}\n`,
   );
 }
 

@@ -163,7 +163,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     return allPages;
   } catch (error) {
-    sitemapLogger.error("Error generating sitemap", error instanceof Error ? error : new Error(String(error)));
+    sitemapLogger.error(
+      "Error generating sitemap",
+      error instanceof Error ? error : new Error(String(error)),
+    );
 
     // Fallback to static pages only if database fails
     return [

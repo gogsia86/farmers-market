@@ -239,7 +239,7 @@ export function getCacheGroup(groupName) {
  */
 export function getCacheGroupNames() {
   return Object.keys(cacheGroups).filter(
-    (key) => key !== "default" && key !== "vendors"
+    (key) => key !== "default" && key !== "vendors",
   );
 }
 

@@ -109,10 +109,14 @@ export default function SignupPage() {
       router.push("/login?registered=true");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create account");
-      authLogger.error("Signup error", err instanceof Error ? err : new Error(String(err)), {
-        email: data.email,
-        userType: data.userType,
-      });
+      authLogger.error(
+        "Signup error",
+        err instanceof Error ? err : new Error(String(err)),
+        {
+          email: data.email,
+          userType: data.userType,
+        },
+      );
     } finally {
       setIsLoading(false);
     }
@@ -193,8 +197,9 @@ export default function SignupPage() {
                 type="text"
                 id="name"
                 autoComplete="name"
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-agricultural-500 focus:border-agricultural-500 outline-none transition-colors ${errors.name ? "border-red-500" : "border-gray-300"
-                  }`}
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-agricultural-500 focus:border-agricultural-500 outline-none transition-colors ${
+                  errors.name ? "border-red-500" : "border-gray-300"
+                }`}
                 placeholder="John Doe"
               />
               {errors.name && (
@@ -217,8 +222,9 @@ export default function SignupPage() {
                 type="email"
                 id="email"
                 autoComplete="email"
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-agricultural-500 focus:border-agricultural-500 outline-none transition-colors ${errors.email ? "border-red-500" : "border-gray-300"
-                  }`}
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-agricultural-500 focus:border-agricultural-500 outline-none transition-colors ${
+                  errors.email ? "border-red-500" : "border-gray-300"
+                }`}
                 placeholder="you@example.com"
               />
               {errors.email && (
@@ -241,8 +247,9 @@ export default function SignupPage() {
                 type="password"
                 id="password"
                 autoComplete="new-password"
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-agricultural-500 focus:border-agricultural-500 outline-none transition-colors ${errors.password ? "border-red-500" : "border-gray-300"
-                  }`}
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-agricultural-500 focus:border-agricultural-500 outline-none transition-colors ${
+                  errors.password ? "border-red-500" : "border-gray-300"
+                }`}
                 placeholder="••••••••"
               />
               {errors.password && (
@@ -284,8 +291,9 @@ export default function SignupPage() {
                 type="password"
                 id="confirmPassword"
                 autoComplete="new-password"
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-agricultural-500 focus:border-agricultural-500 outline-none transition-colors ${errors.confirmPassword ? "border-red-500" : "border-gray-300"
-                  }`}
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-agricultural-500 focus:border-agricultural-500 outline-none transition-colors ${
+                  errors.confirmPassword ? "border-red-500" : "border-gray-300"
+                }`}
                 placeholder="••••••••"
               />
               {errors.confirmPassword && (
@@ -302,10 +310,11 @@ export default function SignupPage() {
               </label>
               <div className="grid grid-cols-2 gap-3">
                 <label
-                  className={`relative flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all ${watch("userType") === "CONSUMER"
+                  className={`relative flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                    watch("userType") === "CONSUMER"
                       ? "border-agricultural-600 bg-agricultural-50"
                       : "border-gray-300 hover:border-gray-400"
-                    }`}
+                  }`}
                 >
                   <input
                     {...register("userType")}
@@ -323,10 +332,11 @@ export default function SignupPage() {
                 </label>
 
                 <label
-                  className={`relative flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all ${watch("userType") === "FARMER"
+                  className={`relative flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                    watch("userType") === "FARMER"
                       ? "border-agricultural-600 bg-agricultural-50"
                       : "border-gray-300 hover:border-gray-400"
-                    }`}
+                  }`}
                 >
                   <input
                     {...register("userType")}

@@ -97,7 +97,10 @@ export default function CustomerDashboard() {
         setFavoriteFarms(data.favoriteFarms || []);
       }
     } catch (error) {
-      dashboardLogger.error("Failed to fetch dashboard data", error instanceof Error ? error : new Error(String(error)));
+      dashboardLogger.error(
+        "Failed to fetch dashboard data",
+        error instanceof Error ? error : new Error(String(error)),
+      );
     } finally {
       setLoading(false);
     }

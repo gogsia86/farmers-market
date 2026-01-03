@@ -239,10 +239,14 @@ export function ProductForm({ farmId, initialData, mode }: ProductFormProps) {
       router.push("/farmer/products");
       router.refresh();
     } catch (error) {
-      farmLogger.error("Failed to save product", error instanceof Error ? error : new Error(String(error)), {
-        mode,
-        productId: initialData?.id,
-      });
+      farmLogger.error(
+        "Failed to save product",
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          mode,
+          productId: initialData?.id,
+        },
+      );
       alert(
         error instanceof Error
           ? error.message
@@ -277,8 +281,9 @@ export function ProductForm({ farmId, initialData, mode }: ProductFormProps) {
               type="text"
               id="name"
               {...register("name")}
-              className={`mt-1 block w-full rounded-md border ${errors.name ? "border-red-300" : "border-gray-300"
-                } px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500`}
+              className={`mt-1 block w-full rounded-md border ${
+                errors.name ? "border-red-300" : "border-gray-300"
+              } px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500`}
               placeholder="e.g., Organic Tomatoes"
               data-testid="product-name-input"
             />
@@ -299,8 +304,9 @@ export function ProductForm({ farmId, initialData, mode }: ProductFormProps) {
               id="description"
               {...register("description")}
               rows={4}
-              className={`mt-1 block w-full rounded-md border ${errors.description ? "border-red-300" : "border-gray-300"
-                } px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500`}
+              className={`mt-1 block w-full rounded-md border ${
+                errors.description ? "border-red-300" : "border-gray-300"
+              } px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500`}
               placeholder="Describe your product, including variety, taste, and growing practices..."
               data-testid="product-description-input"
             />
@@ -377,8 +383,9 @@ export function ProductForm({ farmId, initialData, mode }: ProductFormProps) {
                 id="basePrice"
                 step="0.01"
                 {...register("basePrice", { valueAsNumber: true })}
-                className={`mt-1 block w-full rounded-md border ${errors.basePrice ? "border-red-300" : "border-gray-300"
-                  } px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500`}
+                className={`mt-1 block w-full rounded-md border ${
+                  errors.basePrice ? "border-red-300" : "border-gray-300"
+                } px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500`}
                 placeholder="0.00"
                 data-testid="product-price-input"
               />
@@ -438,8 +445,9 @@ export function ProductForm({ farmId, initialData, mode }: ProductFormProps) {
                 type="number"
                 id="quantity"
                 {...register("quantity", { valueAsNumber: true })}
-                className={`mt-1 block w-full rounded-md border ${errors.quantity ? "border-red-300" : "border-gray-300"
-                  } px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500`}
+                className={`mt-1 block w-full rounded-md border ${
+                  errors.quantity ? "border-red-300" : "border-gray-300"
+                } px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500`}
                 placeholder="0"
                 data-testid="product-quantity-input"
               />

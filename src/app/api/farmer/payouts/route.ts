@@ -71,7 +71,7 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
  */
 function redirectToConsolidatedEndpoint(
   request: NextRequest,
-  method: string
+  method: string,
 ): NextResponse {
   // Add deprecation warning headers
   const headers = new Headers();
@@ -80,12 +80,12 @@ function redirectToConsolidatedEndpoint(
   headers.set("X-API-Sunset-Date", "2026-06-01");
   headers.set(
     "X-API-Migration-Guide",
-    "/docs/migrations/api-consolidation-guide.md"
+    "/docs/migrations/api-consolidation-guide.md",
   );
   headers.set("X-API-New-Endpoint", "/api/farmers/payouts");
   headers.set(
     "Deprecation",
-    'version="1.0.0", date="Sun, 01 Dec 2025 00:00:00 GMT"'
+    'version="1.0.0", date="Sun, 01 Dec 2025 00:00:00 GMT"',
   );
   headers.set("Sunset", 'date="Mon, 01 Jun 2026 00:00:00 GMT"');
 

@@ -961,7 +961,11 @@ export const paypalService = {
   get getOrderDetails() {
     return getPayPalService().getOrderDetails.bind(getPayPalService());
   },
-  verifyWebhookSignature(webhookId: string, headers: Record<string, string>, body: string) {
+  verifyWebhookSignature(
+    webhookId: string,
+    headers: Record<string, string>,
+    body: string,
+  ) {
     return getPayPalService().verifyWebhookSignature(webhookId, headers, body);
   },
 };

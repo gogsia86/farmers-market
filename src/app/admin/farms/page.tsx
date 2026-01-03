@@ -258,16 +258,18 @@ export default async function AdminFarmsPage({
                     <a
                       href={
                         hasPrevPage
-                          ? `?page=${page - 1}&limit=${limit}${statusFilter.status
-                            ? `&status=${statusFilter.status}`
-                            : ""
-                          }`
+                          ? `?page=${page - 1}&limit=${limit}${
+                              statusFilter.status
+                                ? `&status=${statusFilter.status}`
+                                : ""
+                            }`
                           : undefined
                       }
-                      className={`px-3 py-1 text-sm border border-agricultural-300 rounded-md ${hasPrevPage
+                      className={`px-3 py-1 text-sm border border-agricultural-300 rounded-md ${
+                        hasPrevPage
                           ? "text-agricultural-700 bg-white hover:bg-agricultural-50"
                           : "text-agricultural-400 bg-agricultural-100 cursor-not-allowed pointer-events-none"
-                        }`}
+                      }`}
                       aria-disabled={hasPrevPage ? "false" : "true"}
                       onClick={(e) => !hasPrevPage && e.preventDefault()}
                     >
@@ -276,16 +278,18 @@ export default async function AdminFarmsPage({
                     <a
                       href={
                         hasNextPage
-                          ? `?page=${page + 1}&limit=${limit}${statusFilter.status
-                            ? `&status=${statusFilter.status}`
-                            : ""
-                          }`
+                          ? `?page=${page + 1}&limit=${limit}${
+                              statusFilter.status
+                                ? `&status=${statusFilter.status}`
+                                : ""
+                            }`
                           : undefined
                       }
-                      className={`px-3 py-1 text-sm border border-agricultural-300 rounded-md ${hasNextPage
+                      className={`px-3 py-1 text-sm border border-agricultural-300 rounded-md ${
+                        hasNextPage
                           ? "text-agricultural-700 bg-white hover:bg-agricultural-50"
                           : "text-agricultural-400 bg-agricultural-100 cursor-not-allowed pointer-events-none"
-                        }`}
+                      }`}
                       aria-disabled={hasNextPage ? "false" : "true"}
                       onClick={(e) => !hasNextPage && e.preventDefault()}
                     >
@@ -304,7 +308,10 @@ export default async function AdminFarmsPage({
     );
   } catch (error) {
     // Divine error manifestation
-    adminFarmsLogger.error("Farm consciousness manifestation failed", error instanceof Error ? error : new Error(String(error)));
+    adminFarmsLogger.error(
+      "Farm consciousness manifestation failed",
+      error instanceof Error ? error : new Error(String(error)),
+    );
     return (
       <div className="min-h-screen bg-agricultural-50 flex items-center justify-center">
         <div className="bg-white p-8 rounded-lg shadow-lg border border-red-200">

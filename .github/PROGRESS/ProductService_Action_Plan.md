@@ -10,6 +10,7 @@
 ## 🎯 Objective
 
 Complete the ProductService migration by implementing:
+
 1. ✅ Proper caching with fallback functions
 2. ✅ Concurrent test suite updates
 3. ✅ Production-ready validation
@@ -47,7 +48,7 @@ protected async getCached<T>(
   try {
     // Try to get from cache
     const cached = await this.cache?.get<T>(key);
-    
+
     if (cached !== null && cached !== undefined) {
       this.logger.debug({ key }, "Cache hit");
       return cached;
@@ -78,6 +79,7 @@ protected async getCached<T>(
 **Methods to Update**:
 
 ##### getProductById
+
 ```typescript
 async getProductById(
   productId: string,
@@ -85,7 +87,7 @@ async getProductById(
 ): Promise<ServiceResponse<Product | null>> {
   return this.safeExecute("getProductById", async () => {
     const cacheKey = `${this.cachePrefix}${productId}:farm=${includeFarm}`;
-    
+
     const product = await this.getCached(
       cacheKey,
       async () => await this.repository.findById(productId),
@@ -109,6 +111,7 @@ async getProductById(
 ```
 
 ##### getProductBySlug
+
 ```typescript
 async getProductBySlug(
   farmSlug: string,
@@ -116,7 +119,7 @@ async getProductBySlug(
 ): Promise<ServiceResponse<Product | null>> {
   return this.safeExecute("getProductBySlug", async () => {
     const cacheKey = `${this.cachePrefix}slug:${farmSlug}:${productSlug}`;
-    
+
     const product = await this.getCached(
       cacheKey,
       async () => await this.database.product.findFirst({
@@ -145,16 +148,17 @@ async getProductBySlug(
 ```
 
 ##### listProducts (cache by query params)
+
 ```typescript
 async listProducts(
   options: ListProductsOptions = {},
 ): Promise<PaginatedResponse<Product>> {
   return this.safeExecute("listProducts", async () => {
     const { page = 1, limit = 20, ...filters } = options;
-    
+
     // Generate cache key from all filters
     const cacheKey = `${this.cachePrefix}list:${JSON.stringify({ page, limit, ...filters })}`;
-    
+
     const result = await this.getCached(
       cacheKey,
       async () => {
@@ -202,7 +206,7 @@ constructor(
     enableTracing: true,
     enableAgriculturalConsciousness: true,
   });
-  
+
   this.database = database;
   this.repository = productRepository;
   this.logger = logger;
@@ -220,7 +224,7 @@ constructor(
 async createProduct(request: CreateProductRequest): Promise<ServiceResponse<Product>> {
   return this.safeExecute("createProduct", async () => {
     // ... existing creation logic ...
-    
+
     const product = await this.repository.create({ data });
 
     // Invalidate relevant caches
@@ -237,7 +241,7 @@ async updateProduct(
 ): Promise<ServiceResponse<Product>> {
   return this.safeExecute("updateProduct", async () => {
     // ... existing update logic ...
-    
+
     const product = await this.repository.update({ where: { id: productId }, data });
 
     // Invalidate caches
@@ -260,7 +264,7 @@ private async invalidateProductCaches(productId: string, farmId: string): Promis
       this.cache.delete(`${this.cachePrefix}list:*`), // All list queries
       this.cache.delete(`farm:${farmId}:products:*`), // Farm's products
     ]);
-    
+
     this.logger.debug({ productId, farmId }, "Product caches invalidated");
   } catch (error) {
     this.logger.warn({ error, productId }, "Cache invalidation failed");
@@ -292,20 +296,22 @@ private async invalidateProductCaches(productId: string, farmId: string): Promis
 **File**: `src/__tests__/concurrent/race-conditions.test.ts`
 
 **Pattern Before (Static)**:
+
 ```typescript
 describe.skip("⚡ Race Condition: Multiple Purchases of Same Product", () => {
   it("should handle concurrent product purchases correctly", async () => {
     // Using static method
     const results = await Promise.all(
       Array.from({ length: 10 }, () =>
-        ProductService.updateInventory(productId, userId, { quantity: 5 })
-      )
+        ProductService.updateInventory(productId, userId, { quantity: 5 }),
+      ),
     );
   });
 });
 ```
 
 **Pattern After (Instance-Based)**:
+
 ```typescript
 describe("⚡ Race Condition: Multiple Purchases of Same Product", () => {
   let productService: ProductService;
@@ -319,10 +325,7 @@ describe("⚡ Race Condition: Multiple Purchases of Same Product", () => {
       debug: jest.fn(),
     } as any;
 
-    productService = new ProductService(
-      mockDatabase as any,
-      mockLogger
-    );
+    productService = new ProductService(mockDatabase as any, mockLogger);
   });
 
   it("should handle concurrent product purchases correctly", async () => {
@@ -352,12 +355,12 @@ describe("⚡ Race Condition: Multiple Purchases of Same Product", () => {
         productService.updateInventory(productId, userId, {
           quantity: 45, // Trying to reserve 5 units
           reservedQuantity: 5,
-        })
-      )
+        }),
+      ),
     );
 
     // Verify responses
-    const successfulPurchases = responses.filter(r => r.success);
+    const successfulPurchases = responses.filter((r) => r.success);
     expect(successfulPurchases.length).toBeLessThanOrEqual(10);
 
     // Verify no negative inventory
@@ -372,6 +375,7 @@ describe("⚡ Race Condition: Multiple Purchases of Same Product", () => {
 #### 2.2 Tests to Update (37 total)
 
 **Test Categories**:
+
 1. **Multiple Purchases of Same Product** (3 tests)
    - Concurrent product purchases
    - Prevent negative inventory
@@ -397,6 +401,7 @@ describe("⚡ Race Condition: Multiple Purchases of Same Product", () => {
 #### 2.3 Mock Setup Pattern
 
 **Standard Mock Configuration**:
+
 ```typescript
 describe("🔄 Concurrent Operations: ProductService", () => {
   let productService: ProductService;
@@ -419,17 +424,19 @@ describe("🔄 Concurrent Operations: ProductService", () => {
 
     // Create mock tracer
     mockTracer = {
-      startActiveSpan: jest.fn((name, fn) => fn({ 
-        setStatus: jest.fn(), 
-        end: jest.fn() 
-      })),
+      startActiveSpan: jest.fn((name, fn) =>
+        fn({
+          setStatus: jest.fn(),
+          end: jest.fn(),
+        }),
+      ),
     } as any;
 
     // Initialize service
     productService = new ProductService(
       mockDatabase as any,
       mockLogger,
-      mockTracer
+      mockTracer,
     );
   });
 
@@ -473,6 +480,7 @@ npm run test:coverage -- --testPathPatterns="product"
 ```
 
 **Expected Results**:
+
 - ✅ All 46 ProductService unit tests pass
 - ✅ All 37 concurrent tests pass
 - ✅ Coverage remains at 100%
@@ -490,6 +498,7 @@ npm test -- --detectLeaks --testPathPatterns="product"
 ```
 
 **Targets**:
+
 - ✅ Product fetch < 50ms (with cache)
 - ✅ Product fetch < 200ms (without cache)
 - ✅ List products < 100ms (with cache)
@@ -499,6 +508,7 @@ npm test -- --detectLeaks --testPathPatterns="product"
 #### 3.3 Integration Testing
 
 **Test Scenarios**:
+
 1. Create product → Fetch by ID (cache hit)
 2. Update product → Cache invalidated → Fresh fetch
 3. List products → Cache hit on second request
@@ -550,35 +560,40 @@ npm test -- --detectLeaks --testPathPatterns="product"
 ## 📊 Progress Tracking
 
 ### Current Status
+
 - **Caching**: 0% (not started)
 - **Concurrent Tests**: 0% (37 skipped)
 - **Overall Completion**: 83% (10/12 checklist items)
 
 ### Time Tracking
-| Task | Estimated | Actual | Status |
-|------|-----------|--------|--------|
-| Caching Implementation | 1h | - | ⏳ TODO |
-| Concurrent Test Updates | 2h | - | ⏳ TODO |
-| Production Validation | 0.5h | - | ⏳ TODO |
-| **TOTAL** | **3.5h** | - | ⏳ IN PROGRESS |
+
+| Task                    | Estimated | Actual | Status         |
+| ----------------------- | --------- | ------ | -------------- |
+| Caching Implementation  | 1h        | -      | ⏳ TODO        |
+| Concurrent Test Updates | 2h        | -      | ⏳ TODO        |
+| Production Validation   | 0.5h      | -      | ⏳ TODO        |
+| **TOTAL**               | **3.5h**  | -      | ⏳ IN PROGRESS |
 
 ---
 
 ## 🚀 Execution Plan
 
 ### Phase 1: Caching (1 hour)
+
 1. Add `getCached()` to BaseService (15 min)
 2. Update ProductService methods (30 min)
 3. Add cache invalidation (10 min)
 4. Test and validate (5 min)
 
 ### Phase 2: Concurrent Tests (2 hours)
+
 1. Update test structure (30 min)
 2. Fix mock setup (30 min)
 3. Update all 37 tests (45 min)
 4. Validate and debug (15 min)
 
 ### Phase 3: Validation (30 minutes)
+
 1. Run full test suite (10 min)
 2. Performance testing (10 min)
 3. Documentation update (10 min)
@@ -591,12 +606,14 @@ npm test -- --detectLeaks --testPathPatterns="product"
 ## 🎓 Learning Outcomes
 
 ### What We'll Learn
+
 1. **Caching Patterns**: Proper fallback implementation
 2. **Concurrent Testing**: Race condition validation
 3. **Production Readiness**: Full validation cycle
 4. **Performance Optimization**: Cache effectiveness
 
 ### Artifacts Produced
+
 1. ✅ Reusable `getCached()` pattern for all services
 2. ✅ Concurrent testing template for future services
 3. ✅ Production validation checklist
@@ -607,6 +624,7 @@ npm test -- --detectLeaks --testPathPatterns="product"
 ## 📝 Notes
 
 ### Important Considerations
+
 - Cache keys must be unique and descriptive
 - TTL values should match data volatility
 - Cache failures should never break functionality
@@ -614,12 +632,14 @@ npm test -- --detectLeaks --testPathPatterns="product"
 - Race conditions should be properly simulated
 
 ### Potential Issues
+
 1. **Cache Lock Contention**: Multiple requests for same key
 2. **Cache Stampede**: Mass cache invalidation
 3. **Test Flakiness**: Timing issues in concurrent tests
 4. **Mock Complexity**: Concurrent scenarios need careful setup
 
 ### Mitigation Strategies
+
 1. Use cache with lock support (Redis locks)
 2. Implement staggered cache expiry
 3. Add retry logic to flaky tests

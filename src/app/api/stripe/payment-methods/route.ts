@@ -150,12 +150,12 @@ export async function GET(_request: NextRequest) {
       type: pm.type,
       card: pm.card
         ? {
-          brand: pm.card.brand,
-          last4: pm.card.last4,
-          expMonth: pm.card.exp_month,
-          expYear: pm.card.exp_year,
-          funding: pm.card.funding,
-        }
+            brand: pm.card.brand,
+            last4: pm.card.last4,
+            expMonth: pm.card.exp_month,
+            expYear: pm.card.exp_year,
+            funding: pm.card.funding,
+          }
         : null,
       isDefault: pm.id === defaultPaymentMethodId,
       createdAt: new Date(pm.created * 1000).toISOString(),
@@ -244,11 +244,11 @@ export async function POST(request: NextRequest) {
           type: paymentMethod.type,
           card: paymentMethod.card
             ? {
-              brand: paymentMethod.card.brand,
-              last4: paymentMethod.card.last4,
-              expMonth: paymentMethod.card.exp_month,
-              expYear: paymentMethod.card.exp_year,
-            }
+                brand: paymentMethod.card.brand,
+                last4: paymentMethod.card.last4,
+                expMonth: paymentMethod.card.exp_month,
+                expYear: paymentMethod.card.exp_year,
+              }
             : null,
           isDefault: setAsDefault,
         },

@@ -112,7 +112,11 @@ export function PayoutManagement({
       setSchedule(scheduleData.schedule || null);
       setAvailableBalance(balanceData.stats?.currentBalance || 0);
     } catch (error) {
-      paymentLogger.error("Failed to fetch payout data", error instanceof Error ? error : new Error(String(error)), { farmId });
+      paymentLogger.error(
+        "Failed to fetch payout data",
+        error instanceof Error ? error : new Error(String(error)),
+        { farmId },
+      );
     } finally {
       setLoading(false);
     }
@@ -180,7 +184,11 @@ export function PayoutManagement({
       alert("Payout requested successfully!");
       fetchPayoutData();
     } catch (error) {
-      paymentLogger.error("Failed to request instant payout", error instanceof Error ? error : new Error(String(error)), { farmId, availableBalance });
+      paymentLogger.error(
+        "Failed to request instant payout",
+        error instanceof Error ? error : new Error(String(error)),
+        { farmId, availableBalance },
+      );
       alert("Failed to request payout. Please try again.");
     }
   };
@@ -199,7 +207,11 @@ export function PayoutManagement({
       setIsScheduleDialogOpen(false);
       alert("Payout schedule updated successfully!");
     } catch (error) {
-      paymentLogger.error("Failed to update payout schedule", error instanceof Error ? error : new Error(String(error)), { farmId, newSchedule });
+      paymentLogger.error(
+        "Failed to update payout schedule",
+        error instanceof Error ? error : new Error(String(error)),
+        { farmId, newSchedule },
+      );
       alert("Failed to update schedule. Please try again.");
     }
   };
@@ -217,7 +229,11 @@ export function PayoutManagement({
       const data = await response.json();
       window.location.href = data.url;
     } catch (error) {
-      paymentLogger.error("Failed to connect Stripe account", error instanceof Error ? error : new Error(String(error)), { farmId });
+      paymentLogger.error(
+        "Failed to connect Stripe account",
+        error instanceof Error ? error : new Error(String(error)),
+        { farmId },
+      );
       alert("Failed to connect Stripe. Please try again.");
     }
   };
@@ -237,7 +253,11 @@ export function PayoutManagement({
 
       fetchPayoutData();
     } catch (error) {
-      paymentLogger.error("Failed to set default payout account", error instanceof Error ? error : new Error(String(error)), { farmId, accountId });
+      paymentLogger.error(
+        "Failed to set default payout account",
+        error instanceof Error ? error : new Error(String(error)),
+        { farmId, accountId },
+      );
       alert("Failed to set default account. Please try again.");
     }
   };
@@ -258,7 +278,11 @@ export function PayoutManagement({
 
       fetchPayoutData();
     } catch (error) {
-      paymentLogger.error("Failed to remove payout account", error instanceof Error ? error : new Error(String(error)), { farmId, accountId });
+      paymentLogger.error(
+        "Failed to remove payout account",
+        error instanceof Error ? error : new Error(String(error)),
+        { farmId, accountId },
+      );
       alert("Failed to remove account. Please try again.");
     }
   };
@@ -466,10 +490,11 @@ export function PayoutManagement({
                 {accounts.map((account) => (
                   <div
                     key={account.id}
-                    className={`p-3 rounded-lg border ${account.isDefault
-                      ? "border-green-300 bg-green-50"
-                      : "border-gray-200"
-                      }`}
+                    className={`p-3 rounded-lg border ${
+                      account.isDefault
+                        ? "border-green-300 bg-green-50"
+                        : "border-gray-200"
+                    }`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">

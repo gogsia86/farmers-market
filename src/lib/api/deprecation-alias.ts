@@ -83,7 +83,7 @@ export interface DeprecationAliasConfig {
  */
 export function createDeprecationRedirect(
   request: NextRequest,
-  config: DeprecationAliasConfig
+  config: DeprecationAliasConfig,
 ): NextResponse {
   const {
     newEndpoint,
@@ -106,12 +106,15 @@ export function createDeprecationRedirect(
   // Standard deprecation headers (RFC 8594)
   headers.set(
     "Deprecation",
-    `version="1.0.0", date="${formatToHttpDate(new Date(deprecationDate))}"`
+    `version="1.0.0", date="${formatToHttpDate(new Date(deprecationDate))}"`,
   );
   headers.set("Sunset", `date="${formatToHttpDate(new Date(sunsetDate))}"`);
 
   // Link header for migration guide
-  headers.set("Link", `<${migrationGuide}>; rel="deprecation"; type="text/markdown"`);
+  headers.set(
+    "Link",
+    `<${migrationGuide}>; rel="deprecation"; type="text/markdown"`,
+  );
 
   // Add custom headers
   Object.entries(customHeaders).forEach(([key, value]) => {
@@ -205,7 +208,7 @@ function formatToHttpDate(date: Date): string {
  * @returns Markdown-formatted deprecation notice
  */
 export function generateDeprecationNotice(
-  config: DeprecationAliasConfig
+  config: DeprecationAliasConfig,
 ): string {
   const { oldEndpoint, newEndpoint, sunsetDate, migrationGuide } = config;
 
@@ -272,7 +275,7 @@ export interface SunsetResponseConfig {
  * ```
  */
 export function createSunsetResponse(
-  config: SunsetResponseConfig
+  config: SunsetResponseConfig,
 ): NextResponse {
   const {
     oldEndpoint,
@@ -286,7 +289,10 @@ export function createSunsetResponse(
   headers.set("X-API-Sunset", "true");
   headers.set("X-API-Sunset-Date", sunsetDate);
   headers.set("X-API-New-Endpoint", newEndpoint);
-  headers.set("Link", `<${migrationGuide}>; rel="deprecation"; type="text/markdown"`);
+  headers.set(
+    "Link",
+    `<${migrationGuide}>; rel="deprecation"; type="text/markdown"`,
+  );
 
   return NextResponse.json(
     {
@@ -308,7 +314,7 @@ export function createSunsetResponse(
     {
       status: 410, // 410 Gone
       headers,
-    }
+    },
   );
 }
 

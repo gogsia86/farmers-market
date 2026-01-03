@@ -75,13 +75,13 @@ export async function GET(request: NextRequest) {
             message: "You must be logged in to view email preferences",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     // Get user preferences
     const preferences = await emailPreferencesService.getPreferences(
-      session.user.id
+      session.user.id,
     );
 
     // Get email type categories for UI
@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
           },
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     logger.error("Error fetching email preferences", error, {
@@ -119,7 +119,7 @@ export async function GET(request: NextRequest) {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -159,7 +159,7 @@ export async function PATCH(request: NextRequest) {
             message: "You must be logged in to update email preferences",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -181,7 +181,7 @@ export async function PATCH(request: NextRequest) {
             })),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -194,7 +194,7 @@ export async function PATCH(request: NextRequest) {
     // Update preferences
     const preferences = await emailPreferencesService.updatePreferences(
       session.user.id,
-      updates
+      updates,
     );
 
     return NextResponse.json(
@@ -215,7 +215,7 @@ export async function PATCH(request: NextRequest) {
           },
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     logger.error("Error updating email preferences", error, {
@@ -234,7 +234,7 @@ export async function PATCH(request: NextRequest) {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -267,13 +267,13 @@ export async function POST(request: NextRequest) {
             message: "You must be logged in to resubscribe",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     // Resubscribe user
     const preferences = await emailPreferencesService.resubscribe(
-      session.user.id
+      session.user.id,
     );
 
     return NextResponse.json(
@@ -289,7 +289,7 @@ export async function POST(request: NextRequest) {
           },
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     logger.error("Error resubscribing user", error, {
@@ -308,7 +308,7 @@ export async function POST(request: NextRequest) {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

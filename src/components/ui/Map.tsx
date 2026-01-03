@@ -2,12 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { createLogger } from "@/lib/utils/logger";
-import {
-  Locate,
-  Navigation,
-  ZoomIn,
-  ZoomOut
-} from "lucide-react";
+import { Locate, Navigation, ZoomIn, ZoomOut } from "lucide-react";
 import { useEffect, useState } from "react";
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -123,9 +118,9 @@ export function StaticMap({
   const [currentZoom, setCurrentZoom] = useState(zoom);
   const [mapCenter, setMapCenter] = useState(
     center ||
-    (locations.length > 0
-      ? { lat: locations[0].lat, lng: locations[0].lng }
-      : { lat: 0, lng: 0 }),
+      (locations.length > 0
+        ? { lat: locations[0].lat, lng: locations[0].lng }
+        : { lat: 0, lng: 0 }),
   );
   const [userLocation, setUserLocation] = useState<{
     lat: number;

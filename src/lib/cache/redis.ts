@@ -238,7 +238,10 @@ export class RedisCacheService {
 
       await client.del(keys);
 
-      redisLogger.debug("Cache pattern delete", { pattern, count: keys.length });
+      redisLogger.debug("Cache pattern delete", {
+        pattern,
+        count: keys.length,
+      });
       return keys.length;
     } catch (error) {
       redisLogger.error("Redis pattern delete error", {

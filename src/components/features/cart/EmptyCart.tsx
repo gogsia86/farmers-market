@@ -124,12 +124,18 @@ export function EmptyCart({
 
           {/* Shopping Bag Icon */}
           <div className="relative flex items-center justify-center h-32 w-32">
-            <ShoppingBagIcon className="h-20 w-20 text-green-600" aria-hidden="true" />
+            <ShoppingBagIcon
+              className="h-20 w-20 text-green-600"
+              aria-hidden="true"
+            />
           </div>
 
           {/* Sparkle Accent */}
           <div className="absolute -top-2 -right-2">
-            <SparklesIcon className="h-8 w-8 text-green-400" aria-hidden="true" />
+            <SparklesIcon
+              className="h-8 w-8 text-green-400"
+              aria-hidden="true"
+            />
           </div>
         </div>
       </div>
@@ -286,8 +292,14 @@ export function CompactEmptyCart({ onClose }: { onClose?: () => void }) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center py-8 px-4" data-testid="compact-empty-cart">
-      <ShoppingBagIcon className="h-12 w-12 text-gray-400 mb-3" aria-hidden="true" />
+    <div
+      className="flex flex-col items-center justify-center py-8 px-4"
+      data-testid="compact-empty-cart"
+    >
+      <ShoppingBagIcon
+        className="h-12 w-12 text-gray-400 mb-3"
+        aria-hidden="true"
+      />
       <p className="text-sm text-gray-600 mb-4">Your cart is empty</p>
       <button
         type="button"
@@ -318,7 +330,10 @@ export function CheckoutEmptyState() {
   const router = useRouter();
 
   return (
-    <div className="flex flex-col items-center justify-center py-16 px-4" data-testid="checkout-empty-state">
+    <div
+      className="flex flex-col items-center justify-center py-16 px-4"
+      data-testid="checkout-empty-state"
+    >
       <div className="rounded-full bg-yellow-100 p-6 mb-6">
         <svg
           className="h-16 w-16 text-yellow-600"

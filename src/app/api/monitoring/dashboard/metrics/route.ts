@@ -202,9 +202,9 @@ function calculateBucketMetrics(buckets: any[]) {
     const avgDuration =
       executions.length > 0
         ? executions.reduce(
-          (sum: number, e: any) => sum + (e.durationMs || 0),
-          0,
-        ) / executions.length
+            (sum: number, e: any) => sum + (e.durationMs || 0),
+            0,
+          ) / executions.length
         : null;
 
     // Calculate success rate
@@ -287,13 +287,13 @@ export async function GET(
     const avgDuration =
       executions.length > 0
         ? executions.reduce((sum, e) => sum + (e.durationMs || 0), 0) /
-        executions.length
+          executions.length
         : 0;
 
     const avgResponseTime =
       healthChecks.length > 0
         ? healthChecks.reduce((sum, h) => sum + (h.responseTimeMs || 0), 0) /
-        healthChecks.length
+          healthChecks.length
         : 0;
 
     const successfulExecutions = executions.filter(

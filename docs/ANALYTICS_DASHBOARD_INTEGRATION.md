@@ -108,6 +108,7 @@ src/
 **Access**: FARMER, FARM_MANAGER roles
 
 #### Features
+
 - Farm-specific revenue tracking
 - Top products by sales
 - Customer lifetime value
@@ -127,6 +128,7 @@ import { redirect } from "next/navigation";
 ```
 
 #### Key Metrics Displayed
+
 - Total Revenue (with growth %)
 - Total Orders (with growth %)
 - Average Order Value
@@ -142,6 +144,7 @@ import { redirect } from "next/navigation";
 **Access**: ADMIN role only
 
 #### Features
+
 - Platform-wide revenue tracking
 - Multi-farm performance comparison
 - User engagement metrics
@@ -152,16 +155,20 @@ import { redirect } from "next/navigation";
 #### Platform Health Score
 
 The system calculates a health score (0-100) based on:
+
 - **30%** - Active farms ratio
 - **30%** - Active products ratio
 - **40%** - Active users ratio
 
 ```typescript
-const healthScore = Math.min(100, Math.round(
-  (activeFarms / totalFarms) * 30 +
-  (activeProducts / totalProducts) * 30 +
-  (activeUsers / totalUsers) * 40
-));
+const healthScore = Math.min(
+  100,
+  Math.round(
+    (activeFarms / totalFarms) * 30 +
+      (activeProducts / totalProducts) * 30 +
+      (activeUsers / totalUsers) * 40,
+  ),
+);
 ```
 
 ---
@@ -208,20 +215,20 @@ const healthScore = Math.min(100, Math.round(
 
 #### Query Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `startDate` | ISO 8601 Date | ✅ Yes | - | Start of date range |
-| `endDate` | ISO 8601 Date | ✅ Yes | - | End of date range |
-| `farmId` | string | ❌ No | - | Filter by farm |
-| `userId` | string | ❌ No | - | Filter by user |
-| `paymentMethod` | string | ❌ No | - | Filter by payment method |
-| `status` | string | ❌ No | - | Filter by status |
-| `includeByMethod` | boolean | ❌ No | true | Include payment method breakdown |
-| `includeTimeSeries` | boolean | ❌ No | true | Include time series data |
-| `includeTrends` | boolean | ❌ No | true | Include trend analysis |
-| `includeTopFarms` | boolean | ❌ No | true | Include top farms ranking |
-| `timeSeriesInterval` | string | ❌ No | day | hour\|day\|week\|month |
-| `topFarmsLimit` | number | ❌ No | 10 | Number of top farms |
+| Parameter            | Type          | Required | Default | Description                      |
+| -------------------- | ------------- | -------- | ------- | -------------------------------- |
+| `startDate`          | ISO 8601 Date | ✅ Yes   | -       | Start of date range              |
+| `endDate`            | ISO 8601 Date | ✅ Yes   | -       | End of date range                |
+| `farmId`             | string        | ❌ No    | -       | Filter by farm                   |
+| `userId`             | string        | ❌ No    | -       | Filter by user                   |
+| `paymentMethod`      | string        | ❌ No    | -       | Filter by payment method         |
+| `status`             | string        | ❌ No    | -       | Filter by status                 |
+| `includeByMethod`    | boolean       | ❌ No    | true    | Include payment method breakdown |
+| `includeTimeSeries`  | boolean       | ❌ No    | true    | Include time series data         |
+| `includeTrends`      | boolean       | ❌ No    | true    | Include trend analysis           |
+| `includeTopFarms`    | boolean       | ❌ No    | true    | Include top farms ranking        |
+| `timeSeriesInterval` | string        | ❌ No    | day     | hour\|day\|week\|month           |
+| `topFarmsLimit`      | number        | ❌ No    | 10      | Number of top farms              |
 
 #### Example Request
 
@@ -230,9 +237,9 @@ const response = await fetch(
   `/api/analytics/payments?startDate=2024-01-01&endDate=2024-12-31&includeTimeSeries=true`,
   {
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
-  }
+  },
 );
 
 const data = await response.json();
@@ -288,22 +295,22 @@ interface PaymentAnalyticsResponse {
 
 #### Query Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `startDate` | ISO 8601 Date | ✅ Yes | - | Start of date range |
-| `endDate` | ISO 8601 Date | ✅ Yes | - | End of date range |
-| `farmId` | string | ❌ No | - | Filter by farm |
-| `customerId` | string | ❌ No | - | Filter by customer |
-| `status` | string | ❌ No | - | Filter by order status |
-| `productId` | string | ❌ No | - | Filter by product |
-| `includeTopCustomers` | boolean | ❌ No | true | Include top customers |
-| `includeTopProducts` | boolean | ❌ No | true | Include top products |
-| `includeTrends` | boolean | ❌ No | true | Include trend analysis |
-| `includeFulfillment` | boolean | ❌ No | true | Include fulfillment metrics |
-| `includeTimeSeries` | boolean | ❌ No | true | Include time series data |
-| `topCustomersLimit` | number | ❌ No | 10 | Number of top customers |
-| `topProductsLimit` | number | ❌ No | 10 | Number of top products |
-| `timeSeriesInterval` | string | ❌ No | day | hour\|day\|week\|month |
+| Parameter             | Type          | Required | Default | Description                 |
+| --------------------- | ------------- | -------- | ------- | --------------------------- |
+| `startDate`           | ISO 8601 Date | ✅ Yes   | -       | Start of date range         |
+| `endDate`             | ISO 8601 Date | ✅ Yes   | -       | End of date range           |
+| `farmId`              | string        | ❌ No    | -       | Filter by farm              |
+| `customerId`          | string        | ❌ No    | -       | Filter by customer          |
+| `status`              | string        | ❌ No    | -       | Filter by order status      |
+| `productId`           | string        | ❌ No    | -       | Filter by product           |
+| `includeTopCustomers` | boolean       | ❌ No    | true    | Include top customers       |
+| `includeTopProducts`  | boolean       | ❌ No    | true    | Include top products        |
+| `includeTrends`       | boolean       | ❌ No    | true    | Include trend analysis      |
+| `includeFulfillment`  | boolean       | ❌ No    | true    | Include fulfillment metrics |
+| `includeTimeSeries`   | boolean       | ❌ No    | true    | Include time series data    |
+| `topCustomersLimit`   | number        | ❌ No    | 10      | Number of top customers     |
+| `topProductsLimit`    | number        | ❌ No    | 10      | Number of top products      |
+| `timeSeriesInterval`  | string        | ❌ No    | day     | hour\|day\|week\|month      |
 
 #### Example Request
 
@@ -312,9 +319,9 @@ const response = await fetch(
   `/api/analytics/orders?startDate=2024-01-01&endDate=2024-12-31&includeTopCustomers=true`,
   {
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
-  }
+  },
 );
 
 const data = await response.json();
@@ -383,41 +390,49 @@ const accessMatrix = {
   ADMIN: {
     payment: "platform-wide",
     order: "platform-wide",
-    farm: "all-farms"
+    farm: "all-farms",
   },
   FARMER: {
     payment: "own-farm-only",
     order: "own-farm-only",
-    farm: "own-farm-only"
+    farm: "own-farm-only",
   },
   FARM_MANAGER: {
     payment: "managed-farms",
     order: "managed-farms",
-    farm: "managed-farms"
+    farm: "managed-farms",
   },
   CUSTOMER: {
     payment: "none",
     order: "own-orders-only",
-    farm: "none"
-  }
+    farm: "none",
+  },
 };
 ```
 
 ### Authentication Flow
 
 1. **Session Validation**
+
    ```typescript
    const session = await auth();
    if (!session?.user) {
-     return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+     return NextResponse.json(
+       { error: "Authentication required" },
+       { status: 401 },
+     );
    }
    ```
 
 2. **Role Verification**
+
    ```typescript
    const allowedRoles = ["ADMIN", "FARMER", "FARM_MANAGER"];
    if (!allowedRoles.includes(session.user.role || "")) {
-     return NextResponse.json({ error: "Insufficient permissions" }, { status: 403 });
+     return NextResponse.json(
+       { error: "Insufficient permissions" },
+       { status: 403 },
+     );
    }
    ```
 
@@ -446,14 +461,16 @@ headers: {
 ### Database Query Optimization
 
 1. **Parallel Queries**
+
    ```typescript
    const [paymentData, orderData] = await Promise.all([
      fetchPaymentAnalytics(query),
-     fetchOrderAnalytics(query)
+     fetchOrderAnalytics(query),
    ]);
    ```
 
 2. **Selective Field Loading**
+
    ```typescript
    select: {
      id: true,
@@ -470,11 +487,11 @@ headers: {
 
 ### Performance Targets
 
-| Metric | Target | Actual |
-|--------|--------|--------|
-| API Response Time | < 500ms | ~200ms |
-| Dashboard Load | < 2s | ~1.5s |
-| Data Freshness | < 60s | Real-time |
+| Metric            | Target  | Actual    |
+| ----------------- | ------- | --------- |
+| API Response Time | < 500ms | ~200ms    |
+| Dashboard Load    | < 2s    | ~1.5s     |
+| Data Freshness    | < 60s   | Real-time |
 
 ---
 
@@ -484,13 +501,13 @@ headers: {
 
 ```typescript
 // Test payment analytics service
-describe('PaymentAnalyticsService', () => {
-  it('should calculate total revenue correctly', async () => {
+describe("PaymentAnalyticsService", () => {
+  it("should calculate total revenue correctly", async () => {
     const result = await paymentAnalyticsService.getComprehensiveAnalytics({
-      startDate: new Date('2024-01-01'),
-      endDate: new Date('2024-12-31')
+      startDate: new Date("2024-01-01"),
+      endDate: new Date("2024-12-31"),
     });
-    
+
     expect(result.summary.totalRevenue).toBeGreaterThan(0);
   });
 });
@@ -500,12 +517,15 @@ describe('PaymentAnalyticsService', () => {
 
 ```typescript
 // Test analytics API endpoint
-describe('GET /api/analytics/payments', () => {
-  it('should return analytics for authenticated admin', async () => {
-    const response = await fetch('/api/analytics/payments?startDate=2024-01-01&endDate=2024-12-31', {
-      headers: { 'Cookie': adminSessionCookie }
-    });
-    
+describe("GET /api/analytics/payments", () => {
+  it("should return analytics for authenticated admin", async () => {
+    const response = await fetch(
+      "/api/analytics/payments?startDate=2024-01-01&endDate=2024-12-31",
+      {
+        headers: { Cookie: adminSessionCookie },
+      },
+    );
+
     expect(response.status).toBe(200);
     const data = await response.json();
     expect(data.success).toBe(true);
@@ -517,13 +537,13 @@ describe('GET /api/analytics/payments', () => {
 
 ```typescript
 // Test dashboard interaction
-test('farmer can view analytics dashboard', async ({ page }) => {
-  await page.goto('/farmer/analytics');
-  await expect(page.locator('h1')).toContainText('Analytics');
-  
+test("farmer can view analytics dashboard", async ({ page }) => {
+  await page.goto("/farmer/analytics");
+  await expect(page.locator("h1")).toContainText("Analytics");
+
   // Select time period
-  await page.click('text=Last 30 Days');
-  
+  await page.click("text=Last 30 Days");
+
   // Verify metrics load
   await expect(page.locator('[data-testid="total-revenue"]')).toBeVisible();
 });
@@ -540,6 +560,7 @@ test('farmer can view analytics dashboard', async ({ page }) => {
 **Problem**: Dashboard shows "No data available"
 
 **Solutions**:
+
 - Verify farm has orders in selected date range
 - Check database connection
 - Confirm user has correct permissions
@@ -547,7 +568,7 @@ test('farmer can view analytics dashboard', async ({ page }) => {
 
 ```typescript
 // Debug: Check API response
-const response = await fetch('/api/analytics/payments?...');
+const response = await fetch("/api/analytics/payments?...");
 console.log(await response.json());
 ```
 
@@ -556,6 +577,7 @@ console.log(await response.json());
 **Problem**: Dashboard takes too long to load
 
 **Solutions**:
+
 - Reduce date range
 - Disable unnecessary analytics options
 - Check database query performance
@@ -566,8 +588,8 @@ console.log(await response.json());
 const params = new URLSearchParams({
   startDate: startDate.toISOString(),
   endDate: endDate.toISOString(),
-  includeTimeSeries: 'false', // Disable if not needed
-  timeSeriesInterval: 'day' // Use larger intervals
+  includeTimeSeries: "false", // Disable if not needed
+  timeSeriesInterval: "day", // Use larger intervals
 });
 ```
 
@@ -576,6 +598,7 @@ const params = new URLSearchParams({
 **Problem**: "Authentication required" error
 
 **Solutions**:
+
 - Clear browser cookies and re-login
 - Verify session is active
 - Check NextAuth configuration
@@ -590,17 +613,19 @@ const params = new URLSearchParams({
 If upgrading from an older analytics system:
 
 1. **Database Migration**
+
    ```bash
    npm run prisma:migrate
    ```
 
 2. **Update Imports**
+
    ```typescript
    // Old
-   import { AnalyticsDashboard } from '@/components/AnalyticsDashboard';
-   
+   import { AnalyticsDashboard } from "@/components/AnalyticsDashboard";
+
    // New
-   import { AdvancedAnalyticsDashboard } from '@/components/AdvancedAnalyticsDashboard';
+   import { AdvancedAnalyticsDashboard } from "@/components/AdvancedAnalyticsDashboard";
    ```
 
 3. **Update Routes**
@@ -659,13 +684,14 @@ const insights = {
   Spring: "Peak planting season - monitor inventory",
   Summer: "High harvest period - expect increased sales",
   Fall: "Transition season - focus on preserved goods",
-  Winter: "Lower activity - plan for next season"
+  Winter: "Lower activity - plan for next season",
 };
 ```
 
 ### Biodynamic Patterns
 
 Analytics respect agricultural cycles:
+
 - Lunar phase awareness (future feature)
 - Seasonal product recommendations
 - Weather impact analysis (future feature)
@@ -744,6 +770,7 @@ For issues or questions:
 ## 📝 Changelog
 
 ### Version 1.0.0 (December 26, 2024)
+
 - ✨ Initial release
 - 📊 Payment analytics API
 - 📈 Order analytics API
@@ -758,4 +785,4 @@ For issues or questions:
 
 **🌾⚡ Built with Agricultural Consciousness and Divine Precision**
 
-*"Analytics that grow with your farm, insights that nurture your business"*
+_"Analytics that grow with your farm, insights that nurture your business"_

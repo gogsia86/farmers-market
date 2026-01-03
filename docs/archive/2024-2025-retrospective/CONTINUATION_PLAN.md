@@ -12,6 +12,7 @@
 ### ✅ What's Been Accomplished
 
 **Sprint 1: Security Fixes (Complete)**
+
 - Farm ownership verification in order endpoints
 - Real Stripe PaymentIntent integration
 - Enhanced geocoding service with validation
@@ -19,6 +20,7 @@
 - **Result**: All critical security issues resolved
 
 **Sprint 2: Production Readiness (Complete)**
+
 - Azure Application Insights integration
 - OpenTelemetry tracing service
 - Error tracking and monitoring
@@ -26,6 +28,7 @@
 - **Result**: 100% production observability
 
 **Sprint 3: Email Notifications (Complete)**
+
 - Comprehensive email service (1,400 lines)
 - 10+ professional email templates (HTML + plain text)
 - Order lifecycle email integration
@@ -100,6 +103,7 @@ Priority Breakdown:
 ### Prerequisites
 
 **Technical Setup**:
+
 - [ ] Install Redis (via Docker or locally)
 - [ ] Update docker-compose.yml with Redis service
 - [ ] Install Bull dependencies: `npm install bull ioredis @types/bull`
@@ -107,6 +111,7 @@ Priority Breakdown:
 - [ ] Backup production database
 
 **Environment Variables Needed**:
+
 ```bash
 # Redis Configuration
 REDIS_HOST="localhost"
@@ -122,6 +127,7 @@ REDIS_TLS="false"
 ```
 
 **Access Required**:
+
 - [ ] Azure Portal (for Redis Cache setup)
 - [ ] Production database access
 - [ ] Staging environment access
@@ -140,6 +146,7 @@ REDIS_TLS="false"
 ### Key Deliverables
 
 **Code Files** (9 new files):
+
 - `prisma/migrations/xxx_add_email_enhancements/migration.sql`
 - `src/lib/queue/email.queue.ts` (~300 lines)
 - `src/lib/workers/email.worker.ts` (~200 lines)
@@ -151,12 +158,14 @@ REDIS_TLS="false"
 - `src/app/(admin)/analytics/email/page.tsx` (~400 lines)
 
 **Documentation Files** (4 new files):
+
 - `docs/guides/EMAIL_PREFERENCES_GUIDE.md`
 - `docs/guides/EMAIL_QUEUE_SETUP.md`
 - `docs/admin/EMAIL_ANALYTICS_GUIDE.md`
 - `docs/sprints/SPRINT_4_EMAIL_ENHANCEMENTS_COMPLETE.md`
 
 **Updated Files**:
+
 - `src/lib/services/email.service.ts` (add queue integration)
 - `src/lib/services/index.ts` (export new services)
 - `docs/ENVIRONMENT_VARIABLES.md` (add Redis config)
@@ -172,6 +181,7 @@ REDIS_TLS="false"
 **Focus**: User preferences and settings storage optimization
 
 **Objectives**:
+
 - Create notification preferences table (beyond just email)
 - Implement payment methods storage configuration
 - Add business hours configuration for farms
@@ -183,6 +193,7 @@ REDIS_TLS="false"
 **Focus**: Mobile app feature completion and dependency updates
 
 **Objectives**:
+
 - Update Expo SDK to v52
 - Update React Native to 0.76+
 - Implement camera/photo library features
@@ -195,6 +206,7 @@ REDIS_TLS="false"
 **Focus**: Remove deprecated code, optimize, and polish
 
 **Objectives**:
+
 - Remove deprecated type aliases
 - Final documentation updates
 - Code cleanup and optimization
@@ -211,6 +223,7 @@ REDIS_TLS="false"
 ### For Sprint 4 Implementation
 
 **Step 1: Environment Setup** (15 minutes)
+
 ```bash
 # Navigate to project
 cd "Farmers Market Platform web and app"
@@ -228,6 +241,7 @@ npm install -D @types/bull
 ```
 
 **Step 2: Database Schema** (30 minutes)
+
 ```bash
 # Open prisma/schema.prisma
 # Add User token fields (see Sprint 4 kickoff doc)
@@ -242,6 +256,7 @@ npx prisma studio
 ```
 
 **Step 3: Implement Queue** (2 hours)
+
 ```bash
 # Create queue files
 mkdir -p src/lib/queue src/lib/workers
@@ -253,6 +268,7 @@ touch src/lib/workers/email.worker.ts
 ```
 
 **Step 4: Add Preferences** (2 hours)
+
 ```bash
 # Create service
 touch src/lib/services/email-preferences.service.ts
@@ -268,6 +284,7 @@ touch src/components/settings/EmailPreferences.tsx
 ```
 
 **Step 5: Add Analytics** (2 hours)
+
 ```bash
 # Create analytics service
 touch src/lib/services/email-analytics.service.ts
@@ -282,6 +299,7 @@ touch src/app/(admin)/analytics/email/page.tsx
 ```
 
 **Step 6: Testing & Documentation** (2 hours)
+
 ```bash
 # Run type check
 npm run type-check
@@ -305,18 +323,21 @@ touch docs/sprints/SPRINT_4_EMAIL_ENHANCEMENTS_COMPLETE.md
 ### Documentation
 
 **Sprint Reports**:
+
 - [Sprint 1: Security Fixes](docs/sprints/SPRINT_1_SECURITY_FIXES_COMPLETE.md)
 - [Sprint 2: Production Readiness](docs/sprints/SPRINT_2_PRODUCTION_READINESS_COMPLETE.md)
 - [Sprint 3: Email Notifications](docs/sprints/SPRINT_3_EMAIL_NOTIFICATIONS_COMPLETE.md)
 - [Sprint 4: Kickoff Document](docs/sprints/SPRINT_4_EMAIL_ENHANCEMENTS_KICKOFF.md) ⭐ NEW
 
 **Technical References**:
+
 - [Technical Debt Status](docs/TECHNICAL_DEBT_STATUS.md)
 - [Technical Debt Tracker](docs/current/TECHNICAL_DEBT.md)
 - [Environment Variables Guide](docs/ENVIRONMENT_VARIABLES.md)
 - [Email Service Implementation](src/lib/services/email.service.ts)
 
 **Architecture Guides**:
+
 - [Divine Core Principles](.github/instructions/01_DIVINE_CORE_PRINCIPLES.instructions.md)
 - [Next.js Implementation](.github/instructions/04_NEXTJS_DIVINE_IMPLEMENTATION.instructions.md)
 - [Database Quantum Mastery](.github/instructions/07_DATABASE_QUANTUM_MASTERY.instructions.md)
@@ -403,6 +424,7 @@ None currently - all architectural decisions for Sprint 4 have been made.
 ### What to Track
 
 **Technical Health**:
+
 - TypeScript errors (target: 0)
 - Test coverage (target: >80%)
 - Build time (target: <2 minutes)
@@ -410,6 +432,7 @@ None currently - all architectural decisions for Sprint 4 have been made.
 - Email delivery rate (target: >99%)
 
 **Business Metrics**:
+
 - Total emails sent per day
 - Email open rate (target: >20%)
 - Email click rate (target: >5%)
@@ -417,6 +440,7 @@ None currently - all architectural decisions for Sprint 4 have been made.
 - Failed email rate (target: <1%)
 
 **Infrastructure**:
+
 - Redis memory usage
 - Redis connection count
 - Worker CPU usage
@@ -437,6 +461,7 @@ None currently - all architectural decisions for Sprint 4 have been made.
 ### Code Review Standards
 
 **Required Checks**:
+
 - [ ] TypeScript compiles with 0 errors
 - [ ] All tests passing
 - [ ] ESLint passes
@@ -446,6 +471,7 @@ None currently - all architectural decisions for Sprint 4 have been made.
 - [ ] Performance acceptable
 
 **Review Checklist**:
+
 - [ ] Architecture follows layered pattern
 - [ ] Uses canonical database import
 - [ ] Type safety (no 'any' types)
@@ -456,12 +482,14 @@ None currently - all architectural decisions for Sprint 4 have been made.
 ### Git Workflow
 
 **Branch Naming**:
+
 - `sprint-4/database-schema` - Database changes
 - `sprint-4/email-queue` - Queue implementation
 - `sprint-4/preferences` - Preferences system
 - `sprint-4/analytics` - Analytics dashboard
 
 **Commit Messages**:
+
 ```
 feat(email): Add email queue with Bull and Redis
 
@@ -474,22 +502,28 @@ Closes #123
 ```
 
 **PR Template**:
+
 ```markdown
 ## Sprint 4: [Feature Name]
 
 ### What Changed
+
 - [List changes]
 
 ### Why
+
 - [Rationale]
 
 ### Testing
+
 - [How tested]
 
 ### Documentation
+
 - [Docs updated]
 
 ### Checklist
+
 - [ ] TypeScript errors: 0
 - [ ] Tests passing
 - [ ] Documentation complete
@@ -545,6 +579,7 @@ npm run build                 # Test production build
 ### Sprint 4 Complete When:
 
 **Functionality**:
+
 - [ ] Database migrations run successfully in production
 - [ ] Email queue processing jobs reliably
 - [ ] Users can manage email preferences via UI
@@ -553,14 +588,16 @@ npm run build                 # Test production build
 - [ ] All existing functionality still works
 
 **Quality**:
+
 - [ ] 0 TypeScript errors
 - [ ] All tests passing
-- [ ] >80% test coverage for new code
+- [ ] > 80% test coverage for new code
 - [ ] No ESLint errors or warnings
 - [ ] Code reviewed and approved
 - [ ] Performance benchmarks met
 
 **Documentation**:
+
 - [ ] Sprint completion report written
 - [ ] Technical documentation complete
 - [ ] User guides created
@@ -568,6 +605,7 @@ npm run build                 # Test production build
 - [ ] Environment setup documented
 
 **Deployment**:
+
 - [ ] Deployed to staging successfully
 - [ ] Smoke tests passing on staging
 - [ ] Production deployment plan ready
@@ -613,19 +651,19 @@ Week 7-8 Progress:
 ```
 Technical Debt Reduction Journey:
 ────────────────────────────────────────────
-60 │ ●                                    
-55 │   ╲                                  
-50 │     ●                                
-45 │       ╲                              
-40 │         ● ← Sprint 3 Complete        
-35 │           ↓ Sprint 4 (Current)       
-30 │             ○ Sprint 5 Target        
-25 │                                      
-20 │                 ○ Sprint 6 Target    
-15 │                                      
-10 │                     ○ Sprint 7 Goal  
- 5 │                                      
- 0 │                                      
+60 │ ●
+55 │   ╲
+50 │     ●
+45 │       ╲
+40 │         ● ← Sprint 3 Complete
+35 │           ↓ Sprint 4 (Current)
+30 │             ○ Sprint 5 Target
+25 │
+20 │                 ○ Sprint 6 Target
+15 │
+10 │                     ○ Sprint 7 Goal
+ 5 │
+ 0 │
    └────────────────────────────────────
      S1  S2  S3  S4  S5  S6  S7
 
@@ -643,6 +681,7 @@ You're ready to continue the technical debt management journey!
 **Documentation**: All Sprint 4 details in `docs/sprints/SPRINT_4_EMAIL_ENHANCEMENTS_KICKOFF.md`
 
 **Remember the divine principles**:
+
 1. 🎯 Type safety: 0 errors always
 2. 🧪 Test everything thoroughly
 3. 📚 Document comprehensively

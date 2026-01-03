@@ -56,9 +56,13 @@ export function CartPageClient({
         setError(data.error?.message || "Failed to refresh cart");
       }
     } catch (err) {
-      cartLogger.error("Error refreshing cart", err instanceof Error ? err : new Error(String(err)), {
-        userId,
-      });
+      cartLogger.error(
+        "Error refreshing cart",
+        err instanceof Error ? err : new Error(String(err)),
+        {
+          userId,
+        },
+      );
       setError("Failed to refresh cart. Please reload the page.");
     }
   }, [userId]);
@@ -119,11 +123,15 @@ export function CartPageClient({
         // Revert on error
         setCartSummary(previousSummary);
         setError("Failed to update quantity. Please try again.");
-        cartLogger.error("Error updating cart item quantity", err instanceof Error ? err : new Error(String(err)), {
-          userId,
-          itemId,
-          quantity,
-        });
+        cartLogger.error(
+          "Error updating cart item quantity",
+          err instanceof Error ? err : new Error(String(err)),
+          {
+            userId,
+            itemId,
+            quantity,
+          },
+        );
       }
     },
     [userId, cartSummary, refreshCart],
@@ -185,10 +193,14 @@ export function CartPageClient({
         // Revert on error
         setCartSummary(previousSummary);
         setError("Failed to remove item. Please try again.");
-        cartLogger.error("Error removing cart item", err instanceof Error ? err : new Error(String(err)), {
-          userId,
-          itemId,
-        });
+        cartLogger.error(
+          "Error removing cart item",
+          err instanceof Error ? err : new Error(String(err)),
+          {
+            userId,
+            itemId,
+          },
+        );
       }
     },
     [userId, cartSummary, refreshCart],

@@ -113,9 +113,13 @@ async function getProducts(): Promise<any[]> {
       };
     });
   } catch (error) {
-    farmLogger.error("Failed to fetch marketplace products", error instanceof Error ? error : new Error(String(error)), {
-      path: "/marketplace",
-    });
+    farmLogger.error(
+      "Failed to fetch marketplace products",
+      error instanceof Error ? error : new Error(String(error)),
+      {
+        path: "/marketplace",
+      },
+    );
     return [];
   }
 }
@@ -339,7 +343,7 @@ export default async function MarketplacePage() {
 
                           {/* Rating */}
                           {product.averageRating &&
-                            product.averageRating > 0 ? (
+                          product.averageRating > 0 ? (
                             <div className="flex items-center gap-2 text-sm mb-4">
                               <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
                               <span className="font-semibold text-gray-900">

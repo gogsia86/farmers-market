@@ -127,7 +127,10 @@ export default function ProfilePage() {
         setAvatarPreview(data.profile.avatar);
       }
     } catch (error) {
-      profileLogger.error("Failed to fetch profile", error instanceof Error ? error : new Error(String(error)));
+      profileLogger.error(
+        "Failed to fetch profile",
+        error instanceof Error ? error : new Error(String(error)),
+      );
     } finally {
       setLoading(false);
     }
@@ -202,7 +205,10 @@ export default function ProfilePage() {
         });
       }
     } catch (error) {
-      profileLogger.error("Profile update error", error instanceof Error ? error : new Error(String(error)));
+      profileLogger.error(
+        "Profile update error",
+        error instanceof Error ? error : new Error(String(error)),
+      );
       setMessage({
         type: "error",
         text: "An error occurred. Please try again.",
@@ -259,7 +265,10 @@ export default function ProfilePage() {
         });
       }
     } catch (error) {
-      profileLogger.error("Password change error", error instanceof Error ? error : new Error(String(error)));
+      profileLogger.error(
+        "Password change error",
+        error instanceof Error ? error : new Error(String(error)),
+      );
       setMessage({
         type: "error",
         text: "An error occurred. Please try again.",
@@ -297,7 +306,10 @@ export default function ProfilePage() {
         });
       }
     } catch (error) {
-      profileLogger.error("Notification update error", error instanceof Error ? error : new Error(String(error)));
+      profileLogger.error(
+        "Notification update error",
+        error instanceof Error ? error : new Error(String(error)),
+      );
       setMessage({
         type: "error",
         text: "An error occurred. Please try again.",
@@ -346,10 +358,11 @@ export default function ProfilePage() {
         {/* Message Alert */}
         {message && (
           <div
-            className={`mb-6 p-4 rounded-lg ${message.type === "success"
+            className={`mb-6 p-4 rounded-lg ${
+              message.type === "success"
                 ? "bg-green-50 text-green-800 border-2 border-green-200"
                 : "bg-red-50 text-red-800 border-2 border-red-200"
-              }`}
+            }`}
           >
             <div className="flex items-center gap-2">
               <span className="text-xl">
@@ -366,28 +379,31 @@ export default function ProfilePage() {
             <nav className="flex">
               <button
                 onClick={() => setActiveTab("profile")}
-                className={`flex-1 px-6 py-4 text-center font-medium transition-colors ${activeTab === "profile"
+                className={`flex-1 px-6 py-4 text-center font-medium transition-colors ${
+                  activeTab === "profile"
                     ? "text-green-600 border-b-2 border-green-600 bg-green-50"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                  }`}
+                }`}
               >
                 👤 Profile
               </button>
               <button
                 onClick={() => setActiveTab("password")}
-                className={`flex-1 px-6 py-4 text-center font-medium transition-colors ${activeTab === "password"
+                className={`flex-1 px-6 py-4 text-center font-medium transition-colors ${
+                  activeTab === "password"
                     ? "text-green-600 border-b-2 border-green-600 bg-green-50"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                  }`}
+                }`}
               >
                 🔒 Password
               </button>
               <button
                 onClick={() => setActiveTab("notifications")}
-                className={`flex-1 px-6 py-4 text-center font-medium transition-colors ${activeTab === "notifications"
+                className={`flex-1 px-6 py-4 text-center font-medium transition-colors ${
+                  activeTab === "notifications"
                     ? "text-green-600 border-b-2 border-green-600 bg-green-50"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                  }`}
+                }`}
               >
                 🔔 Notifications
               </button>
@@ -533,10 +549,11 @@ export default function ProfilePage() {
                     key={pref}
                     type="button"
                     onClick={() => toggleDietaryPreference(pref)}
-                    className={`px-4 py-2 rounded-lg border-2 font-medium transition-all ${profile.dietaryPreferences.includes(pref)
+                    className={`px-4 py-2 rounded-lg border-2 font-medium transition-all ${
+                      profile.dietaryPreferences.includes(pref)
                         ? "bg-green-100 border-green-500 text-green-700"
                         : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
-                      }`}
+                    }`}
                   >
                     {profile.dietaryPreferences.includes(pref) && "✓ "}
                     {pref}

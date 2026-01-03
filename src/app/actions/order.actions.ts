@@ -322,7 +322,10 @@ export async function updateOrderStatusAction(
         logger.warn("Failed to send order status email", {
           orderId,
           newStatus,
-          error: emailError instanceof Error ? emailError.message : String(emailError),
+          error:
+            emailError instanceof Error
+              ? emailError.message
+              : String(emailError),
         });
       }
     }
@@ -464,7 +467,10 @@ export async function addOrderNoteAction(
         logger.warn("Failed to send note notification email", {
           orderId,
           note,
-          error: emailError instanceof Error ? emailError.message : String(emailError),
+          error:
+            emailError instanceof Error
+              ? emailError.message
+              : String(emailError),
         });
       }
     }
@@ -653,7 +659,8 @@ export async function updateFulfillmentAction(
     } catch (emailError) {
       logger.warn("Failed to send shipment notification email", {
         orderId,
-        error: emailError instanceof Error ? emailError.message : String(emailError),
+        error:
+          emailError instanceof Error ? emailError.message : String(emailError),
       });
     }
 
@@ -841,7 +848,10 @@ export async function cancelOrderAction(
       } catch (emailError) {
         logger.warn("Failed to send cancellation notification email", {
           orderId,
-          error: emailError instanceof Error ? emailError.message : String(emailError),
+          error:
+            emailError instanceof Error
+              ? emailError.message
+              : String(emailError),
         });
       }
     }

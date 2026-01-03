@@ -438,7 +438,10 @@ export function useRecentSearches(maxItems: number = 10) {
       const stored = localStorage.getItem(STORAGE_KEY);
       return stored ? JSON.parse(stored) : [];
     } catch (error) {
-      searchLogger.error("Failed to load recent searches", error instanceof Error ? error : new Error(String(error)));
+      searchLogger.error(
+        "Failed to load recent searches",
+        error instanceof Error ? error : new Error(String(error)),
+      );
       return [];
     }
   });
@@ -450,7 +453,10 @@ export function useRecentSearches(maxItems: number = 10) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(recentSearches));
     } catch (error) {
-      searchLogger.error("Failed to save recent searches", error instanceof Error ? error : new Error(String(error)));
+      searchLogger.error(
+        "Failed to save recent searches",
+        error instanceof Error ? error : new Error(String(error)),
+      );
     }
   }, [recentSearches]);
 

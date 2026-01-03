@@ -99,7 +99,10 @@ export function CartReviewStep() {
           });
         }
       } catch (error) {
-        cartLogger.error("Failed to fetch cart", error instanceof Error ? error : new Error(String(error)));
+        cartLogger.error(
+          "Failed to fetch cart",
+          error instanceof Error ? error : new Error(String(error)),
+        );
       } finally {
         setIsLoading(false);
       }
@@ -138,10 +141,14 @@ export function CartReviewStep() {
         await refreshCartTotals();
       }
     } catch (error) {
-      cartLogger.error("Failed to update quantity", error instanceof Error ? error : new Error(String(error)), {
-        cartItemId,
-        newQuantity,
-      });
+      cartLogger.error(
+        "Failed to update quantity",
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          cartItemId,
+          newQuantity,
+        },
+      );
     } finally {
       setIsUpdating(false);
     }
@@ -168,9 +175,13 @@ export function CartReviewStep() {
         await refreshCartTotals();
       }
     } catch (error) {
-      cartLogger.error("Failed to remove item", error instanceof Error ? error : new Error(String(error)), {
-        cartItemId,
-      });
+      cartLogger.error(
+        "Failed to remove item",
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          cartItemId,
+        },
+      );
     } finally {
       setIsUpdating(false);
     }
@@ -197,7 +208,10 @@ export function CartReviewStep() {
         });
       }
     } catch (error) {
-      cartLogger.error("Failed to refresh cart totals", error instanceof Error ? error : new Error(String(error)));
+      cartLogger.error(
+        "Failed to refresh cart totals",
+        error instanceof Error ? error : new Error(String(error)),
+      );
     }
   };
 

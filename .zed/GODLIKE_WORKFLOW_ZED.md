@@ -1,4 +1,5 @@
 # 🌟 GODLIKE ZED WORKFLOW GUIDE
+
 ## Divine Precision Coding for Farmers Market Platform
 
 ---
@@ -90,14 +91,14 @@ Check that these files exist in your project:
 
 ### Step 5: Learn Essential Shortcuts
 
-| Shortcut | Action |
-|----------|--------|
-| `Ctrl+Space` | Trigger Copilot inline suggestion |
-| `Alt+Enter` | Accept suggestion |
-| `Alt+[` / `Alt+]` | Navigate suggestions |
-| `Ctrl+Shift+I` | Open Copilot Assistant |
-| `Ctrl+Shift+X` | Reject suggestion |
-| `Ctrl+P` | Quick file open (lightning fast) |
+| Shortcut          | Action                            |
+| ----------------- | --------------------------------- |
+| `Ctrl+Space`      | Trigger Copilot inline suggestion |
+| `Alt+Enter`       | Accept suggestion                 |
+| `Alt+[` / `Alt+]` | Navigate suggestions              |
+| `Ctrl+Shift+I`    | Open Copilot Assistant            |
+| `Ctrl+Shift+X`    | Reject suggestion                 |
+| `Ctrl+P`          | Quick file open (lightning fast)  |
 
 ---
 
@@ -118,18 +119,21 @@ Check that these files exist in your project:
 ```
 
 #### 1. Parse Intent
+
 **What are you actually trying to build?**
 
 ❌ Bad: "I need a component"
 ✅ Good: "Farm profile card with image, stats, and favorite action"
 
 #### 2. Craft Precision Prompt
+
 **Use the godlike prompt templates**
 
 ❌ Bad: "Create a farm card component"
 ✅ Good: "Generate src/components/features/FarmProfileCard.tsx with Farm type from Prisma, shadcn/ui Card, favorite button, responsive layout. Code only."
 
 #### 3. Execute Generation (Zed's Speed Advantage)
+
 **Use the right tool for the job**
 
 - **Inline Completion** (`Ctrl+Space`): Small snippets - **instant in Zed**
@@ -137,6 +141,7 @@ Check that these files exist in your project:
 - **Multi-cursor** (`Ctrl+D`): Batch edits - **smooth in Zed**
 
 #### 4. Validate & Commit
+
 **Check the generated code**
 
 - [ ] No explanatory comments
@@ -161,6 +166,7 @@ Check that these files exist in your project:
 #### ✅ Perfect Prompts for Zed
 
 **1. Component Generation**
+
 ```
 Generate src/components/features/OrderTrackingCard.tsx. Requirements:
 - Accept Order type from Prisma
@@ -172,6 +178,7 @@ Code only, no explanations.
 ```
 
 **2. API Route Generation**
+
 ```
 Create src/app/api/farms/[id]/products/route.ts. Requirements:
 - GET: Fetch products for farm with pagination
@@ -183,6 +190,7 @@ Complete implementation.
 ```
 
 **3. Service Layer Generation**
+
 ```
 Implement src/lib/services/order.service.ts. Requirements:
 - OrderService class with CRUD methods
@@ -195,6 +203,7 @@ Show complete class.
 ```
 
 **4. Feature Implementation (Multi-File)**
+
 ```
 Implement customer order history feature:
 1. src/app/(customer)/orders/page.tsx - Server component with data fetch
@@ -219,16 +228,16 @@ Complete implementation, all files.
 
 ### Prompt Modifiers (Power Words)
 
-| Modifier | Effect |
-|----------|--------|
-| **"Code only"** | Suppresses explanations |
-| **"Complete implementation"** | Forces full file generation |
-| **"Show all files"** | Generates multiple files |
-| **"Follow existing pattern in X"** | Matches specific code style |
-| **"Optimize for performance"** | Adds memoization, caching |
-| **"Include tests"** | Generates test file |
-| **"Agricultural consciousness"** | Uses divine/biodynamic naming |
-| **"Instant in Zed"** | Reminds Copilot of Zed's speed |
+| Modifier                           | Effect                         |
+| ---------------------------------- | ------------------------------ |
+| **"Code only"**                    | Suppresses explanations        |
+| **"Complete implementation"**      | Forces full file generation    |
+| **"Show all files"**               | Generates multiple files       |
+| **"Follow existing pattern in X"** | Matches specific code style    |
+| **"Optimize for performance"**     | Adds memoization, caching      |
+| **"Include tests"**                | Generates test file            |
+| **"Agricultural consciousness"**   | Uses divine/biodynamic naming  |
+| **"Instant in Zed"**               | Reminds Copilot of Zed's speed |
 
 ---
 
@@ -236,54 +245,54 @@ Complete implementation, all files.
 
 ### Core Zed + Copilot Actions
 
-| Shortcut | Action | Speed in Zed |
-|----------|--------|--------------|
-| `Ctrl+Space` | Trigger inline suggestion | **<50ms** |
-| `Alt+Enter` | Accept suggestion | Instant |
-| `Alt+[` | Previous suggestion | Instant |
-| `Alt+]` | Next suggestion | Instant |
-| `Ctrl+Shift+I` | Open Assistant panel | **<100ms** |
-| `Ctrl+Shift+X` | Reject suggestion | Instant |
-| `Ctrl+I` | Show hover info | Instant |
+| Shortcut       | Action                    | Speed in Zed |
+| -------------- | ------------------------- | ------------ |
+| `Ctrl+Space`   | Trigger inline suggestion | **<50ms**    |
+| `Alt+Enter`    | Accept suggestion         | Instant      |
+| `Alt+[`        | Previous suggestion       | Instant      |
+| `Alt+]`        | Next suggestion           | Instant      |
+| `Ctrl+Shift+I` | Open Assistant panel      | **<100ms**   |
+| `Ctrl+Shift+X` | Reject suggestion         | Instant      |
+| `Ctrl+I`       | Show hover info           | Instant      |
 
 ### Zed's Lightning-Fast Navigation
 
-| Shortcut | Action | Why It's Fast |
-|----------|--------|---------------|
-| `Ctrl+P` | Quick file open | **Instant search** (Rust-based) |
-| `Ctrl+Shift+P` | Command palette | Native performance |
-| `Ctrl+T` | Go to symbol | Project-wide instant |
-| `Ctrl+Shift+O` | File outline | Real-time updates |
-| `Ctrl+Shift+F` | Search in files | Parallel search |
-| `F12` | Go to definition | LSP instant response |
+| Shortcut       | Action           | Why It's Fast                   |
+| -------------- | ---------------- | ------------------------------- |
+| `Ctrl+P`       | Quick file open  | **Instant search** (Rust-based) |
+| `Ctrl+Shift+P` | Command palette  | Native performance              |
+| `Ctrl+T`       | Go to symbol     | Project-wide instant            |
+| `Ctrl+Shift+O` | File outline     | Real-time updates               |
+| `Ctrl+Shift+F` | Search in files  | Parallel search                 |
+| `F12`          | Go to definition | LSP instant response            |
 
 ### Editor Manipulation (Zed-Optimized)
 
-| Shortcut | Action |
-|----------|--------|
-| `Ctrl+D` | Select next occurrence |
-| `Ctrl+Shift+L` | Select all matches |
-| `Alt+Up/Down` | Move line up/down |
-| `Shift+Alt+Up/Down` | Copy line up/down |
-| `Ctrl+/` | Toggle comment |
-| `Ctrl+Shift+K` | Delete line |
+| Shortcut            | Action                 |
+| ------------------- | ---------------------- |
+| `Ctrl+D`            | Select next occurrence |
+| `Ctrl+Shift+L`      | Select all matches     |
+| `Alt+Up/Down`       | Move line up/down      |
+| `Shift+Alt+Up/Down` | Copy line up/down      |
+| `Ctrl+/`            | Toggle comment         |
+| `Ctrl+Shift+K`      | Delete line            |
 
 ### Multi-Cursor Mastery (Zed's Strength)
 
-| Shortcut | Action |
-|----------|--------|
-| `Ctrl+Alt+Up` | Add cursor above |
-| `Ctrl+Alt+Down` | Add cursor below |
-| `Ctrl+D` (multiple) | Add next match |
-| `Ctrl+Shift+L` | Select all matches |
+| Shortcut            | Action             |
+| ------------------- | ------------------ |
+| `Ctrl+Alt+Up`       | Add cursor above   |
+| `Ctrl+Alt+Down`     | Add cursor below   |
+| `Ctrl+D` (multiple) | Add next match     |
+| `Ctrl+Shift+L`      | Select all matches |
 
 ### Pane Management (Zed's Collaborative Edge)
 
-| Shortcut | Action |
-|----------|--------|
-| `Ctrl+\` | Split right |
-| `Ctrl+K Ctrl+\` | Split down |
-| `Ctrl+W` | Close pane |
+| Shortcut            | Action         |
+| ------------------- | -------------- |
+| `Ctrl+\`            | Split right    |
+| `Ctrl+K Ctrl+\`     | Split down     |
+| `Ctrl+W`            | Close pane     |
 | `Ctrl+K Left/Right` | Navigate panes |
 
 ---
@@ -295,21 +304,23 @@ Complete implementation, all files.
 **When to Use**: Small snippets, function bodies, single statements
 
 **How**:
+
 1. Start typing function signature
 2. Press `Ctrl+Space`
 3. Zed + Copilot generates **instantly** (<50ms)
 4. Press `Alt+Enter` to accept
 
 **Example**:
+
 ```typescript
 // Type this:
 async function getFarmById(
-
-// Copilot suggests (instantly in Zed):
-id: string): Promise<Farm | null> {
+  // Copilot suggests (instantly in Zed):
+  id: string,
+): Promise<Farm | null> {
   return await database.farm.findUnique({
     where: { id },
-    include: { products: true, owner: true }
+    include: { products: true, owner: true },
   });
 }
 ```
@@ -319,12 +330,14 @@ id: string): Promise<Farm | null> {
 **When to Use**: Complete files, complex features, multi-file generation
 
 **How**:
+
 1. Press `Ctrl+Shift+I` (opens **instantly** in Zed)
 2. Type precision prompt
 3. Press `Ctrl+Enter` to generate
 4. Zed renders response with **no lag**
 
 **Example Prompt**:
+
 ```
 Generate complete FarmService class at src/lib/services/farm.service.ts with:
 - CRUD methods (create, findById, findAll, update, delete)
@@ -340,12 +353,14 @@ Code only.
 **When to Use**: When you want context-aware generation
 
 **How**:
+
 1. Write a descriptive comment
 2. Press Enter
 3. Copilot completes the code
 4. Zed's LSP validates **in real-time**
 
 **Example**:
+
 ```typescript
 // Generate a farm profile card component with image, name, location, and favorite button
 // [Copilot generates entire component below - instantly in Zed]
@@ -356,6 +371,7 @@ Code only.
 **When to Use**: Refactoring, optimization, adding error handling
 
 **How**:
+
 1. Select code block
 2. Press `Ctrl+Shift+I`
 3. Type: "Refactor this for performance. Code only."
@@ -378,6 +394,7 @@ Code only.
    - Prompt: "List files needed for customer order tracking feature with Next.js 15"
 
 2. **Generate page component** (1 minute)
+
    ```
    Generate src/app/(customer)/orders/page.tsx:
    - Server component
@@ -389,6 +406,7 @@ Code only.
    ```
 
 3. **Generate table component** (1 minute)
+
    ```
    Generate src/components/features/OrderHistoryTable.tsx:
    - Accept Order[] from Prisma
@@ -401,6 +419,7 @@ Code only.
    ```
 
 4. **Generate API route** (2 minutes)
+
    ```
    Create src/app/api/customer/orders/route.ts:
    - GET handler
@@ -413,6 +432,7 @@ Code only.
    ```
 
 5. **Generate types** (30 seconds)
+
    ```
    Create src/types/order.ts with:
    - OrderHistoryItem interface
@@ -458,9 +478,10 @@ Code only.
 **Steps**:
 
 1. **Single prompt for all files**:
+
    ```
    Generate complete Farm management feature:
-   
+
    Files to create:
    1. src/app/(farmer)/farms/page.tsx - Farm list page
    2. src/app/(farmer)/farms/[id]/page.tsx - Farm detail page
@@ -469,14 +490,14 @@ Code only.
    5. src/lib/services/farm.service.ts - Farm service class
    6. src/components/features/FarmCard.tsx - Card component
    7. src/types/farm.ts - Farm types
-   
+
    Requirements:
    - Authentication required
    - Validation with Zod
    - Error handling
    - Pagination
    - shadcn/ui components
-   
+
    Output all files with proper imports.
    ```
 
@@ -573,6 +594,7 @@ Zed's multi-cursor is butter-smooth:
 **Problem**: No suggestions appearing
 
 **Solution**:
+
 1. Check Copilot status: `Ctrl+Shift+P` → "Copilot: Status"
 2. Sign in again: `Ctrl+Shift+P` → "Copilot: Sign In"
 3. Restart Zed: `Ctrl+Q` then reopen
@@ -583,6 +605,7 @@ Zed's multi-cursor is butter-smooth:
 **Problem**: Suggestions take >1 second
 
 **Solution**:
+
 1. Check internet connection
 2. Verify Copilot subscription active
 3. Close other heavy applications
@@ -593,6 +616,7 @@ Zed's multi-cursor is butter-smooth:
 **Problem**: Imports use relative paths or wrong aliases
 
 **Solution**:
+
 1. Specify in prompt: "Use @/ path aliases"
 2. Check `tsconfig.json` has correct path mappings
 3. Use Zed's quick fix: `Ctrl+.` on import error
@@ -602,6 +626,7 @@ Zed's multi-cursor is butter-smooth:
 **Problem**: `.zed/settings.json` changes not applied
 
 **Solution**:
+
 1. Restart Zed: `Ctrl+Q` then reopen
 2. Check JSON syntax (Zed will show errors)
 3. Ensure file is in `.zed/` directory (project root)
@@ -714,18 +739,21 @@ Zed's Speed + Copilot's Intelligence = Godlike
 ## 🎓 DAILY WORKFLOW CHECKLIST
 
 ### Morning Routine (5 minutes)
+
 - [ ] Open Zed (starts in <1 second)
 - [ ] Pull latest code (`Ctrl+Shift+P` → Git pull)
 - [ ] Review sprint tasks
 - [ ] Test Copilot (`Ctrl+Shift+I` → "Hello")
 
 ### During Development
+
 - [ ] Use precision prompts (not vague)
 - [ ] Generate tests immediately after features
 - [ ] Validate with Zed's instant LSP feedback
 - [ ] Commit in small chunks (Zed's git is fast)
 
 ### End of Day (5 minutes)
+
 - [ ] Review all generated code
 - [ ] Run full test suite (fast in Zed's terminal)
 - [ ] Push changes (seamless in Zed)
@@ -736,24 +764,27 @@ Zed's Speed + Copilot's Intelligence = Godlike
 ## 📊 ZED PERFORMANCE METRICS
 
 ### Before Zed (VS Code)
-| Metric | Time |
-|--------|------|
-| Editor Startup | 3-5 seconds |
-| File Search | 1-2 seconds |
-| LSP Response | 200-500ms |
-| Copilot Latency | 500ms-1s |
-| Memory Usage | 800MB-1.5GB |
+
+| Metric          | Time        |
+| --------------- | ----------- |
+| Editor Startup  | 3-5 seconds |
+| File Search     | 1-2 seconds |
+| LSP Response    | 200-500ms   |
+| Copilot Latency | 500ms-1s    |
+| Memory Usage    | 800MB-1.5GB |
 
 ### After Zed
-| Metric | Time |
-|--------|------|
-| Editor Startup | **<1 second** |
-| File Search | **<50ms** |
-| LSP Response | **<50ms** |
-| Copilot Latency | **<100ms** |
-| Memory Usage | **~200MB** |
+
+| Metric          | Time          |
+| --------------- | ------------- |
+| Editor Startup  | **<1 second** |
+| File Search     | **<50ms**     |
+| LSP Response    | **<50ms**     |
+| Copilot Latency | **<100ms**    |
+| Memory Usage    | **~200MB**    |
 
 ### Productivity Impact
+
 ```
 Time Saved per Day: 2-3 hours
 Frustration Reduction: 90%
@@ -786,11 +817,13 @@ You are **godlike certified in Zed** when you can:
 **Zed + Godlike Copilot Configuration = Ultimate Development Experience**
 
 ### The Divine Formula
+
 ```
 Zed's Speed (10x) + Copilot's Intelligence + Godlike Config = 100x Productivity
 ```
 
 ### Key Advantages
+
 ✅ Lightning-fast performance (Rust-based)
 ✅ Instant LSP feedback (no waiting)
 ✅ Smooth multi-cursor (butter-smooth)
@@ -800,6 +833,7 @@ Zed's Speed (10x) + Copilot's Intelligence + Godlike Config = 100x Productivity
 ✅ Agricultural consciousness (divine patterns)
 
 ### Start Using Now
+
 1. Open Zed (instant)
 2. Press `Ctrl+Shift+I`
 3. Type: "Generate HelloWorld component. Code only."

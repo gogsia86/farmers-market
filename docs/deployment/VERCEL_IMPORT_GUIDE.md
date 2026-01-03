@@ -60,6 +60,7 @@
 ```
 
 **Steps**:
+
 1. **Find** "gogsia86/farmers-market" in the list
 2. **Click** "Import" button next to it
 3. **Wait** for repository to load (~5 seconds)
@@ -86,6 +87,7 @@ You'll see the "Configure Project" screen:
 ### 3.1 Basic Settings (Auto-Detected)
 
 **Verify these are correct**:
+
 - ✅ Framework: **Next.js** (should be auto-detected)
 - ✅ Root Directory: **`./`** (leave as default)
 - ✅ Build Command: **`npm run vercel-build`** (from vercel.json)
@@ -107,6 +109,7 @@ You'll see the "Configure Project" screen:
 **CRITICAL - Add these 4 variables first**:
 
 #### Variable 1: DATABASE_URL
+
 ```
 Name: DATABASE_URL
 Value: [See Database Setup section below]
@@ -114,6 +117,7 @@ Environment: Production, Preview, Development (select all 3)
 ```
 
 #### Variable 2: NEXTAUTH_SECRET
+
 ```
 Name: NEXTAUTH_SECRET
 Value: [Generate with: openssl rand -base64 32]
@@ -121,11 +125,13 @@ Environment: Production, Preview, Development (select all 3)
 ```
 
 Example value (generate your own!):
+
 ```
 Xj8vK2mP9qR4sL7nT6wY3zB5cF1dH8eG0iJ2kM4oN6pQ
 ```
 
 #### Variable 3: NEXTAUTH_URL
+
 ```
 Name: NEXTAUTH_URL
 Value: https://farmers-market.vercel.app (will update after deploy)
@@ -133,6 +139,7 @@ Environment: Production
 ```
 
 For Preview:
+
 ```
 Name: NEXTAUTH_URL
 Value: https://farmers-market-git-main.vercel.app
@@ -140,6 +147,7 @@ Environment: Preview
 ```
 
 #### Variable 4: NODE_ENV
+
 ```
 Name: NODE_ENV
 Value: production
@@ -149,6 +157,7 @@ Environment: Production, Preview, Development (select all 3)
 ### 4.3 Add Payment Variables (If Using Stripe)
 
 #### Stripe Publishable Key (Public)
+
 ```
 Name: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 Value: pk_test_... (or pk_live_... for production)
@@ -156,6 +165,7 @@ Environment: Production, Preview, Development
 ```
 
 #### Stripe Secret Key (Private)
+
 ```
 Name: STRIPE_SECRET_KEY
 Value: sk_test_... (or sk_live_... for production)
@@ -163,6 +173,7 @@ Environment: Production, Preview, Development
 ```
 
 #### Stripe Webhook Secret
+
 ```
 Name: STRIPE_WEBHOOK_SECRET
 Value: whsec_... (get from Stripe Dashboard → Webhooks)
@@ -172,6 +183,7 @@ Environment: Production, Preview, Development
 ### 4.4 Optional but Recommended Variables
 
 #### Cloudinary (Image Upload)
+
 ```
 CLOUDINARY_CLOUD_NAME=your-cloud-name
 CLOUDINARY_API_KEY=your-api-key
@@ -179,12 +191,14 @@ CLOUDINARY_API_SECRET=your-api-secret
 ```
 
 #### Sentry (Error Tracking)
+
 ```
 SENTRY_DSN=https://...@sentry.io/...
 NEXT_PUBLIC_SENTRY_DSN=https://...@sentry.io/...
 ```
 
 #### Email (Optional)
+
 ```
 EMAIL_SERVER=smtp://user:pass@smtp.provider.com:587
 EMAIL_FROM=noreply@yourdomain.com
@@ -226,6 +240,7 @@ EMAIL_FROM=noreply@yourdomain.com
 8. **Modify**: Add `?pgbouncer=true&connection_limit=1` to end
 
 **Example**:
+
 ```
 postgresql://postgres.abc123:password@aws-0-us-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1
 ```
@@ -246,6 +261,7 @@ postgresql://postgres.abc123:password@aws-0-us-east-1.pooler.supabase.com:6543/p
 5. **Modify**: Add `?pgbouncer=true&connection_limit=1` to end
 
 **Example**:
+
 ```
 postgresql://user:pass@ep-cool-name-123456.us-east-2.aws.neon.tech/farmers_market?sslmode=require&pgbouncer=true&connection_limit=1
 ```
@@ -271,6 +287,7 @@ postgresql://user:pass@ep-cool-name-123456.us-east-2.aws.neon.tech/farmers_marke
 ### 5.1 Review Configuration
 
 **Double-check**:
+
 - ✅ Framework detected: Next.js
 - ✅ Build command: `npm run vercel-build`
 - ✅ Environment variables: At least 4 critical ones added
@@ -289,6 +306,7 @@ postgresql://user:pass@ep-cool-name-123456.us-east-2.aws.neon.tech/farmers_marke
 ### 5.3 Watch Build Progress
 
 You'll see:
+
 ```
 ⏳ Queuing Build...
 📦 Installing dependencies... (2-3 minutes)
@@ -307,6 +325,7 @@ You'll see:
 ### 6.1 Get Deployment URL
 
 After successful deployment, you'll see:
+
 ```
 🎉 Congratulations!
 Your project is live at:
@@ -316,11 +335,13 @@ https://farmers-market.vercel.app
 ### 6.2 Quick Health Check
 
 **Open in browser**:
+
 ```
 https://farmers-market.vercel.app/api/health
 ```
 
 **Expected Response**:
+
 ```json
 {
   "status": "healthy",
@@ -371,6 +392,7 @@ npx prisma migrate status
 ```
 
 **Expected Output**:
+
 ```
 ✅ Prisma schema loaded from prisma/schema.prisma
 ✅ Datasource "db": PostgreSQL database
@@ -397,6 +419,7 @@ npm run db:seed
 **Visit**: https://farmers-market.vercel.app
 
 **Test**:
+
 1. ✅ **Homepage** loads correctly
 2. ✅ **Navigation** works
 3. ✅ **/api/health** returns 200 OK
@@ -430,11 +453,13 @@ npm run db:seed
 ### 9.1 Get Final Deployment URL
 
 Your production URL is likely:
+
 ```
 https://farmers-market.vercel.app
 ```
 
 Or with custom domain (if configured):
+
 ```
 https://yourdomain.com
 ```
@@ -452,11 +477,13 @@ https://yourdomain.com
 **Option A**: Push any change to GitHub (triggers auto-deploy)
 
 **Option B**: Manual redeploy
+
 ```bash
 vercel --prod
 ```
 
 **Option C**: Vercel Dashboard
+
 1. **Deployments** tab
 2. **Latest deployment** → **... menu**
 3. **Redeploy**
@@ -468,11 +495,13 @@ vercel --prod
 ### Already Enabled! ✅
 
 Vercel automatically configured:
+
 - ✅ **Push to `master`** → Production deployment
 - ✅ **Push to other branches** → Preview deployment
 - ✅ **Pull Requests** → Preview deployment with comment
 
 **Test it**:
+
 ```bash
 # Make a small change
 echo "# Test" >> README.md
@@ -512,12 +541,14 @@ Your deployment is successful when:
 4. **Configure DNS**:
 
    **Option A**: Vercel Nameservers (Easiest)
+
    ```
    ns1.vercel-dns.com
    ns2.vercel-dns.com
    ```
 
    **Option B**: A/CNAME Records
+
    ```
    Type: A
    Name: @
@@ -539,12 +570,14 @@ Your deployment is successful when:
 ### Issue: Build Fails
 
 **Check**:
+
 1. **Build logs** in Vercel Dashboard
 2. **TypeScript errors**: Run `npm run type-check` locally
 3. **Missing dependencies**: Check package.json
 4. **Environment variables**: Verify all required vars set
 
 **Fix**:
+
 ```bash
 # Test build locally
 npm run build
@@ -559,6 +592,7 @@ npm run build
 **Symptoms**: 500 errors, health check fails
 
 **Solutions**:
+
 1. **Verify DATABASE_URL** includes `?pgbouncer=true&connection_limit=1`
 2. **Check database is online** (login to database provider)
 3. **Verify IP whitelist** (some providers require 0.0.0.0/0 for Vercel)
@@ -569,6 +603,7 @@ npm run build
 ### Issue: Authentication Not Working
 
 **Solutions**:
+
 1. **Check NEXTAUTH_SECRET** is set (32+ characters)
 2. **Verify NEXTAUTH_URL** matches deployment URL
 3. **Clear browser cookies** and try again
@@ -579,6 +614,7 @@ npm run build
 ### Issue: Environment Variables Missing
 
 **Solutions**:
+
 1. **Vercel Dashboard** → Settings → Environment Variables
 2. **Verify scope**: Production, Preview, Development all selected
 3. **Redeploy** after adding variables
@@ -593,6 +629,7 @@ npm run build
 **Access**: Vercel Dashboard → Your Project → Analytics
 
 **Metrics**:
+
 - Page views
 - Top pages
 - Traffic sources
@@ -601,6 +638,7 @@ npm run build
 ### Set Up External Monitoring (Recommended)
 
 **UptimeRobot** (Free):
+
 1. **Go to**: https://uptimerobot.com
 2. **Add Monitor**:
    - Type: HTTP(s)
@@ -668,6 +706,7 @@ You've successfully deployed the Farmers Market Platform to Vercel! 🚀🌾
 **Your site is live at**: https://farmers-market.vercel.app
 
 **What you've achieved**:
+
 - ✅ Production-grade Next.js application deployed
 - ✅ Database configured and connected
 - ✅ Authentication working

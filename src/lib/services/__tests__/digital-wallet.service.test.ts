@@ -19,7 +19,14 @@
  */
 
 import { database } from "@/lib/database";
-import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from "@jest/globals";
 import Stripe from "stripe";
 import { DigitalWalletService } from "../digital-wallet.service";
 
@@ -198,11 +205,11 @@ describe("DigitalWalletService - Device Detection", () => {
 
     const isApplePayAvailable = await service.isWalletAvailable(
       "APPLE_PAY",
-      iosSafariUA
+      iosSafariUA,
     );
     const isGooglePayAvailable = await service.isWalletAvailable(
       "GOOGLE_PAY",
-      iosSafariUA
+      iosSafariUA,
     );
 
     expect(isApplePayAvailable).toBe(true);
@@ -308,7 +315,7 @@ describe("DigitalWalletService - Apple Pay", () => {
         walletType: "APPLE_PAY",
         amount: 99.99,
         currency: "usd",
-      })
+      }),
     ).rejects.toThrow(/Order.*not found/);
   });
 
@@ -319,7 +326,7 @@ describe("DigitalWalletService - Apple Pay", () => {
         walletType: "APPLE_PAY",
         amount: -10,
         currency: "usd",
-      } as any)
+      } as any),
     ).rejects.toThrow();
   });
 
@@ -347,7 +354,7 @@ describe("DigitalWalletService - Apple Pay", () => {
           customField: "customValue",
           season: "SPRING",
         }),
-      })
+      }),
     );
   });
 
@@ -362,7 +369,7 @@ describe("DigitalWalletService - Apple Pay", () => {
 
     const result = await service.validateApplePayMerchant(
       "https://apple-pay-gateway.apple.com/validate",
-      "merchant.com.test"
+      "merchant.com.test",
     );
 
     expect(result).toBeDefined();
@@ -373,14 +380,16 @@ describe("DigitalWalletService - Apple Pay", () => {
   });
 
   it("should handle Apple Pay merchant validation failure", async () => {
-    const mockCreate = jest.fn().mockRejectedValue(new Error("Domain not verified"));
+    const mockCreate = jest
+      .fn()
+      .mockRejectedValue(new Error("Domain not verified"));
     mockStripe.applePayDomains.create = mockCreate;
 
     await expect(
       service.validateApplePayMerchant(
         "https://apple-pay-gateway.apple.com/validate",
-        "merchant.com.test"
-      )
+        "merchant.com.test",
+      ),
     ).rejects.toThrow(/Apple Pay configuration error/);
   });
 });
@@ -446,7 +455,7 @@ describe("DigitalWalletService - Google Pay", () => {
         walletType: "GOOGLE_PAY",
         amount: 99.99,
         currency: "usd",
-      })
+      }),
     ).rejects.toThrow(/Order.*not found/);
   });
 
@@ -503,7 +512,7 @@ describe("DigitalWalletService - Google Pay", () => {
         walletType: "GOOGLE_PAY",
         amount: 0,
         currency: "usd",
-      } as any)
+      } as any),
     ).rejects.toThrow();
   });
 });
@@ -551,7 +560,7 @@ describe("DigitalWalletService - Payment Request API", () => {
         requestPayerName: true,
         requestPayerEmail: true,
         requestShipping: false,
-      })
+      }),
     );
   });
 
@@ -622,7 +631,7 @@ describe("DigitalWalletService - Payment Request API", () => {
           label: "Total",
           amount: 99.99,
         },
-      })
+      }),
     ).rejects.toThrow(/Order.*not found/);
   });
 
@@ -635,7 +644,7 @@ describe("DigitalWalletService - Payment Request API", () => {
           label: "",
           amount: -10,
         },
-      } as any)
+      } as any),
     ).rejects.toThrow();
   });
 });
@@ -671,7 +680,7 @@ describe("DigitalWalletService - Payment Processing", () => {
 
     const result = await service.processWalletPayment(
       "pi_mock_123",
-      "APPLE_PAY"
+      "APPLE_PAY",
     );
 
     expect(result.success).toBe(true);
@@ -687,7 +696,7 @@ describe("DigitalWalletService - Payment Processing", () => {
           paidAt: expect.any(Date),
           status: "PROCESSING",
         }),
-      })
+      }),
     );
   });
 
@@ -699,7 +708,7 @@ describe("DigitalWalletService - Payment Processing", () => {
 
     const result = await service.processWalletPayment(
       "pi_mock_123",
-      "GOOGLE_PAY"
+      "GOOGLE_PAY",
     );
 
     expect(result.success).toBe(false);
@@ -715,7 +724,7 @@ describe("DigitalWalletService - Payment Processing", () => {
 
     const result = await service.processWalletPayment(
       "pi_mock_123",
-      "APPLE_PAY"
+      "APPLE_PAY",
     );
 
     expect(result.success).toBe(false);
@@ -729,7 +738,7 @@ describe("DigitalWalletService - Payment Processing", () => {
 
     const result = await service.processWalletPayment(
       "pi_mock_123",
-      "GOOGLE_PAY"
+      "GOOGLE_PAY",
     );
 
     expect(result.success).toBe(false);
@@ -760,7 +769,7 @@ describe("DigitalWalletService - Configuration Validation", () => {
         orderId: "order_123",
         walletType: "APPLE_PAY",
         amount: 99.99,
-      })
+      }),
     ).rejects.toThrow(/Stripe secret key/);
   });
 
@@ -797,7 +806,7 @@ describe("DigitalWalletService - Configuration Validation", () => {
     expect(validation.missingConfig).toContain("GOOGLE_PAY_MERCHANT_ID");
     expect(validation.missingConfig).toContain("APPLE_PAY_MERCHANT_ID");
     expect(validation.missingConfig).toContain(
-      "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY"
+      "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
     );
   });
 });
@@ -832,7 +841,7 @@ describe("DigitalWalletService - Agricultural Consciousness", () => {
         metadata: expect.objectContaining({
           agriculturalConsciousness: "ACTIVE",
         }),
-      })
+      }),
     );
   });
 
@@ -853,7 +862,7 @@ describe("DigitalWalletService - Agricultural Consciousness", () => {
     expect(mockStripe.paymentIntents.create).toHaveBeenCalledWith(
       expect.objectContaining({
         description: expect.stringContaining("Divine Agricultural Farm"),
-      })
+      }),
     );
   });
 
@@ -876,7 +885,7 @@ describe("DigitalWalletService - Agricultural Consciousness", () => {
         metadata: expect.objectContaining({
           walletType: "APPLE_PAY",
         }),
-      })
+      }),
     );
   });
 });
@@ -915,13 +924,13 @@ describe("DigitalWalletService - Error Handling", () => {
         walletType: "APPLE_PAY",
         amount: -100,
         currency: "usd",
-      } as any)
+      } as any),
     ).rejects.toThrow();
   });
 
   it("should handle database errors", async () => {
     (database.order.findUnique as jest.Mock).mockRejectedValue(
-      new Error("Database connection failed")
+      new Error("Database connection failed"),
     );
 
     await expect(
@@ -930,7 +939,7 @@ describe("DigitalWalletService - Error Handling", () => {
         walletType: "GOOGLE_PAY",
         amount: 99.99,
         currency: "usd",
-      })
+      }),
     ).rejects.toThrow();
   });
 
@@ -949,7 +958,7 @@ describe("DigitalWalletService - Error Handling", () => {
         walletType: "APPLE_PAY",
         amount: 99.99,
         currency: "usd",
-      })
+      }),
     ).rejects.toThrow(/Stripe rate limit exceeded/);
   });
 });

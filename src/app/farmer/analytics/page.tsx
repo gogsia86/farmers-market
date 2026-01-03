@@ -22,7 +22,13 @@ import { AdvancedAnalyticsDashboard } from "@/components/AdvancedAnalyticsDashbo
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
 import {
@@ -32,7 +38,7 @@ import {
   Download,
   Info,
   Sprout,
-  TrendingUp
+  TrendingUp,
 } from "lucide-react";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
@@ -43,7 +49,8 @@ import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Farm Analytics | Farmers Market Platform",
-  description: "Comprehensive analytics dashboard for your farm - track sales, customers, and performance metrics",
+  description:
+    "Comprehensive analytics dashboard for your farm - track sales, customers, and performance metrics",
 };
 
 export const dynamic = "force-dynamic";
@@ -64,10 +71,13 @@ function getCurrentSeason(): string {
 
 function getSeasonalInsight(season: string): string {
   const insights: Record<string, string> = {
-    Spring: "Peak planting season - monitor inventory for seedlings and early crops",
-    Summer: "High harvest period - expect increased sales volume and customer activity",
+    Spring:
+      "Peak planting season - monitor inventory for seedlings and early crops",
+    Summer:
+      "High harvest period - expect increased sales volume and customer activity",
     Fall: "Transition season - focus on preserved goods and storage crops",
-    Winter: "Lower activity period - plan for next season and analyze annual trends",
+    Winter:
+      "Lower activity period - plan for next season and analyze annual trends",
   };
 
   return insights[season] || "Monitor your farm metrics closely";
@@ -89,7 +99,8 @@ export default async function FarmerAnalyticsPage() {
   }
 
   // Check if user is a farmer or farm manager
-  const isFarmer = session.user.role === "FARMER" || session.user.role === "FARM_MANAGER";
+  const isFarmer =
+    session.user.role === "FARMER" || session.user.role === "FARM_MANAGER";
 
   if (!isFarmer) {
     return (
@@ -136,8 +147,12 @@ export default async function FarmerAnalyticsPage() {
       <div className="container mx-auto py-8 space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Farm Analytics</h1>
-            <p className="text-muted-foreground mt-1">Track your farm's performance</p>
+            <h1 className="text-3xl font-bold tracking-tight">
+              Farm Analytics
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              Track your farm's performance
+            </p>
           </div>
         </div>
 
@@ -166,8 +181,12 @@ export default async function FarmerAnalyticsPage() {
       <div className="container mx-auto py-8 space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">{farm.name} - Analytics</h1>
-            <p className="text-muted-foreground mt-1">Farm Status: {farm.status}</p>
+            <h1 className="text-3xl font-bold tracking-tight">
+              {farm.name} - Analytics
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              Farm Status: {farm.status}
+            </p>
           </div>
         </div>
 
@@ -175,12 +194,11 @@ export default async function FarmerAnalyticsPage() {
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Farm Approval Pending</AlertTitle>
           <AlertDescription>
-            Your farm profile is currently under review. Analytics will be available once your farm is approved.
+            Your farm profile is currently under review. Analytics will be
+            available once your farm is approved.
             <div className="mt-4">
               <Button variant="outline" asChild>
-                <a href="/farmer/dashboard">
-                  Back to Dashboard
-                </a>
+                <a href="/farmer/dashboard">Back to Dashboard</a>
               </Button>
             </div>
           </AlertDescription>
@@ -196,7 +214,8 @@ export default async function FarmerAnalyticsPage() {
   const currentSeason = getCurrentSeason();
   const seasonalInsight = getSeasonalInsight(currentSeason);
   const farmAge = Math.floor(
-    (new Date().getTime() - new Date(farm.createdAt).getTime()) / (1000 * 60 * 60 * 24)
+    (new Date().getTime() - new Date(farm.createdAt).getTime()) /
+      (1000 * 60 * 60 * 24),
   );
 
   // ═══════════════════════════════════════════════════════════
@@ -210,7 +229,10 @@ export default async function FarmerAnalyticsPage() {
         <div className="space-y-1">
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-bold tracking-tight">{farm.name}</h1>
-            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+            <Badge
+              variant="outline"
+              className="bg-green-50 text-green-700 border-green-200"
+            >
               <Sprout className="mr-1 h-3 w-3" />
               {farm.status}
             </Badge>
@@ -255,7 +277,9 @@ export default async function FarmerAnalyticsPage() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Products</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Active Products
+            </CardTitle>
             <Sprout className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -299,17 +323,14 @@ export default async function FarmerAnalyticsPage() {
           <TrendingUp className="h-4 w-4" />
           <AlertTitle>Getting Started</AlertTitle>
           <AlertDescription>
-            You haven't received any orders yet. Make sure your products are listed and promoted to start seeing analytics data.
+            You haven't received any orders yet. Make sure your products are
+            listed and promoted to start seeing analytics data.
             <div className="mt-4 flex gap-2">
               <Button size="sm" asChild>
-                <a href="/farmer/products/new">
-                  Add Products
-                </a>
+                <a href="/farmer/products/new">Add Products</a>
               </Button>
               <Button size="sm" variant="outline" asChild>
-                <a href="/marketplace">
-                  View Marketplace
-                </a>
+                <a href="/marketplace">View Marketplace</a>
               </Button>
             </div>
           </AlertDescription>
@@ -320,7 +341,9 @@ export default async function FarmerAnalyticsPage() {
       <div className="space-y-6">
         <div className="flex items-center gap-2 border-b pb-4">
           <BarChart3 className="h-5 w-5 text-primary" />
-          <h2 className="text-2xl font-bold tracking-tight">Performance Analytics</h2>
+          <h2 className="text-2xl font-bold tracking-tight">
+            Performance Analytics
+          </h2>
         </div>
 
         <AdvancedAnalyticsDashboard />

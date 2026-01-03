@@ -44,9 +44,13 @@ export default function ForgotPasswordPage() {
       setIsSubmitted(true);
     } catch (err) {
       setError("Failed to send reset email. Please try again.");
-      authLogger.error("Password reset request failed", err instanceof Error ? err : new Error(String(err)), {
-        email: email.replace(/(.{2}).*(@.*)/, "$1***$2"), // Mask email for privacy
-      });
+      authLogger.error(
+        "Password reset request failed",
+        err instanceof Error ? err : new Error(String(err)),
+        {
+          email: email.replace(/(.{2}).*(@.*)/, "$1***$2"), // Mask email for privacy
+        },
+      );
     } finally {
       setIsSubmitting(false);
     }

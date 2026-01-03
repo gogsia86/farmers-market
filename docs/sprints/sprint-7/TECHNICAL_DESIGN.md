@@ -1,4 +1,5 @@
 # 🏗️ Sprint 7 Technical Design Document
+
 ## Order Tracking & Management System Architecture
 
 **Version**: 1.0  
@@ -29,9 +30,11 @@
 ## 📊 Executive Summary
 
 ### Purpose
+
 Design and implement a comprehensive order tracking and management system that enables real-time status updates, multi-channel notifications, and efficient farmer workflows.
 
 ### Key Components
+
 - **Order Status Management**: State machine-based status transitions
 - **Real-time Updates**: Server-Sent Events (SSE) for live order tracking
 - **Notification System**: Multi-channel (email, SMS, push, in-app) notifications
@@ -39,6 +42,7 @@ Design and implement a comprehensive order tracking and management system that e
 - **Admin Console**: Platform-wide order oversight and intervention tools
 
 ### Success Criteria
+
 - ✅ Real-time order status updates (<500ms latency)
 - ✅ 95%+ notification delivery rate
 - ✅ Support 1000+ concurrent orders
@@ -140,15 +144,15 @@ enum OrderStatus {
   // Pre-fulfillment
   PENDING           // Order created, awaiting farm confirmation
   CONFIRMED         // Farm confirmed, preparing to start
-  
+
   // Fulfillment in progress
   PREPARING         // Farm actively preparing order
   READY_FOR_PICKUP  // Ready for customer pickup
   OUT_FOR_DELIVERY  // In transit to customer (delivery orders)
-  
+
   // Completed states
   COMPLETED         // Order successfully fulfilled
-  
+
   // Error states
   CANCELLED         // Order cancelled by customer or farm
   REFUNDED          // Payment refunded to customer
@@ -172,57 +176,57 @@ const STATUS_TRANSITIONS: StatusTransition[] = [
     to: "CONFIRMED",
     allowedRoles: ["FARMER", "ADMIN"],
     validators: [validateFarmOwnership, validateOrderNotExpired],
-    notifications: ["ORDER_CONFIRMED"]
+    notifications: ["ORDER_CONFIRMED"],
   },
   {
     from: "CONFIRMED",
     to: "PREPARING",
     allowedRoles: ["FARMER", "ADMIN"],
     validators: [validateFarmOwnership],
-    notifications: ["ORDER_PREPARING"]
+    notifications: ["ORDER_PREPARING"],
   },
   {
     from: "PREPARING",
     to: "READY_FOR_PICKUP",
     allowedRoles: ["FARMER", "ADMIN"],
     validators: [validateFarmOwnership, validateAllItemsReady],
-    notifications: ["ORDER_READY"]
+    notifications: ["ORDER_READY"],
   },
   {
     from: "READY_FOR_PICKUP",
     to: "COMPLETED",
     allowedRoles: ["FARMER", "CUSTOMER", "ADMIN"],
     validators: [validateAuthorization],
-    notifications: ["ORDER_COMPLETED"]
+    notifications: ["ORDER_COMPLETED"],
   },
   {
     from: "PENDING",
     to: "CANCELLED",
     allowedRoles: ["CUSTOMER", "FARMER", "ADMIN"],
     validators: [validateCancellationWindow],
-    notifications: ["ORDER_CANCELLED"]
+    notifications: ["ORDER_CANCELLED"],
   },
   {
     from: "CONFIRMED",
     to: "CANCELLED",
     allowedRoles: ["CUSTOMER", "FARMER", "ADMIN"],
     validators: [validateCancellationWindow],
-    notifications: ["ORDER_CANCELLED"]
+    notifications: ["ORDER_CANCELLED"],
   },
   {
     from: "PREPARING",
     to: "CANCELLED",
     allowedRoles: ["FARMER", "ADMIN"],
     validators: [validateFarmOwnership, validateCancellationReason],
-    notifications: ["ORDER_CANCELLED"]
+    notifications: ["ORDER_CANCELLED"],
   },
   {
     from: "CANCELLED",
     to: "REFUNDED",
     allowedRoles: ["ADMIN"],
     validators: [validatePaymentExists],
-    notifications: ["ORDER_REFUNDED"]
-  }
+    notifications: ["ORDER_REFUNDED"],
+  },
 ];
 ```
 
@@ -235,43 +239,43 @@ model Order {
   orderNumber       String            @unique
   status            OrderStatus       @default(PENDING)
   fulfillmentType   FulfillmentType   @default(PICKUP)
-  
+
   // Core order data
   customerId        String
   farmId            String
   totalAmount       Decimal           @db.Decimal(10, 2)
   paymentIntentId   String?
-  
+
   // Status timestamps
   confirmedAt       DateTime?
   preparingAt       DateTime?
   readyAt           DateTime?
   completedAt       DateTime?
   cancelledAt       DateTime?
-  
+
   // Estimated times
   estimatedReadyAt  DateTime?
   estimatedPickupAt DateTime?
-  
+
   // Fulfillment details
   pickupLocation    String?
   pickupInstructions String?
   deliveryAddress   Json?
   deliveryNotes     String?
-  
+
   // Metadata
   metadata          Json?
-  
+
   // Relations
   customer          User              @relation("CustomerOrders", fields: [customerId], references: [id])
   farm              Farm              @relation(fields: [farmId], references: [id])
   items             OrderItem[]
   statusHistory     OrderStatusHistory[]
   notifications     OrderNotification[]
-  
+
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
-  
+
   // Indexes for performance
   @@index([customerId])
   @@index([farmId])
@@ -286,20 +290,20 @@ model OrderStatusHistory {
   id          String      @id @default(cuid())
   orderId     String
   order       Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  
+
   fromStatus  OrderStatus?
   toStatus    OrderStatus
-  
+
   changedBy   String      // User ID who made the change
   changedByRole String    // Role at time of change (for audit)
   reason      String?     // Optional reason for status change
   metadata    Json?       // Additional context (e.g., cancellation details)
-  
+
   ipAddress   String?     // For audit trail
   userAgent   String?     // For audit trail
-  
+
   createdAt   DateTime    @default(now())
-  
+
   @@index([orderId])
   @@index([createdAt])
   @@index([changedBy])
@@ -310,30 +314,30 @@ model OrderNotification {
   id          String              @id @default(cuid())
   orderId     String
   order       Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  
+
   userId      String
   user        User                @relation(fields: [userId], references: [id])
-  
+
   type        NotificationType
   channel     NotificationChannel
-  
+
   title       String
   message     String              @db.Text
   metadata    Json?
-  
+
   // Delivery tracking
   sentAt      DateTime?
   deliveredAt DateTime?
   readAt      DateTime?
   failedAt    DateTime?
   failureReason String?
-  
+
   // Retry tracking
   retryCount  Int                 @default(0)
   maxRetries  Int                 @default(3)
-  
+
   createdAt   DateTime            @default(now())
-  
+
   @@index([orderId])
   @@index([userId])
   @@index([sentAt])
@@ -398,12 +402,12 @@ export interface StatusUpdateResult {
 
 export class OrderStatusService {
   private readonly tracer = trace.getTracer("order-status-service");
-  
+
   /**
    * Update order status with full validation and history tracking
    */
   async updateStatus(
-    request: StatusUpdateRequest
+    request: StatusUpdateRequest,
   ): Promise<StatusUpdateResult> {
     return await this.tracer.startActiveSpan(
       "updateOrderStatus",
@@ -412,13 +416,13 @@ export class OrderStatusService {
           "order.id": request.orderId,
           "order.new_status": request.newStatus,
           "user.id": request.userId,
-          "user.role": request.userRole
+          "user.role": request.userRole,
         });
 
         try {
           // 1. Fetch current order with all relations
           const order = await this.getOrderWithRelations(request.orderId);
-          
+
           if (!order) {
             throw new OrderNotFoundError(request.orderId);
           }
@@ -429,7 +433,7 @@ export class OrderStatusService {
             order.status,
             request.newStatus,
             request.userId,
-            request.userRole
+            request.userRole,
           );
 
           // 3. Execute status update in transaction
@@ -440,13 +444,13 @@ export class OrderStatusService {
               data: {
                 status: request.newStatus,
                 ...this.getStatusTimestamps(request.newStatus),
-                updatedAt: new Date()
+                updatedAt: new Date(),
               },
               include: {
                 farm: true,
                 customer: true,
-                items: { include: { product: true } }
-              }
+                items: { include: { product: true } },
+              },
             });
 
             // Create status history entry
@@ -460,38 +464,41 @@ export class OrderStatusService {
                 reason: request.reason,
                 metadata: request.metadata,
                 ipAddress: request.ipAddress,
-                userAgent: request.userAgent
-              }
+                userAgent: request.userAgent,
+              },
             });
 
             return { order: updatedOrder, statusHistory: historyEntry };
           });
 
           // 4. Emit events and send notifications (async, non-blocking)
-          this.emitStatusChangeEvent(result.order, order.status, request.newStatus);
+          this.emitStatusChangeEvent(
+            result.order,
+            order.status,
+            request.newStatus,
+          );
           const notifications = await this.scheduleNotifications(
             result.order,
-            request.newStatus
+            request.newStatus,
           );
 
           span.setStatus({ code: SpanStatusCode.OK });
-          
+
           return {
             ...result,
-            notifications
+            notifications,
           };
-
         } catch (error) {
           span.setStatus({
             code: SpanStatusCode.ERROR,
-            message: error.message
+            message: error.message,
           });
           span.recordException(error);
           throw error;
         } finally {
           span.end();
         }
-      }
+      },
     );
   }
 
@@ -503,11 +510,11 @@ export class OrderStatusService {
     fromStatus: OrderStatus,
     toStatus: OrderStatus,
     userId: string,
-    userRole: string
+    userRole: string,
   ): Promise<void> {
     // Find valid transition
     const transition = STATUS_TRANSITIONS.find(
-      t => t.from === fromStatus && t.to === toStatus
+      (t) => t.from === fromStatus && t.to === toStatus,
     );
 
     if (!transition) {
@@ -523,9 +530,7 @@ export class OrderStatusService {
     for (const validator of transition.validators) {
       const isValid = await validator(order, userId, userRole);
       if (!isValid) {
-        throw new StatusValidationError(
-          `Validation failed: ${validator.name}`
-        );
+        throw new StatusValidationError(`Validation failed: ${validator.name}`);
       }
     }
   }
@@ -541,7 +546,9 @@ export class OrderStatusService {
       case "CONFIRMED":
         timestamps.confirmedAt = now;
         // Estimate ready time (2 hours from confirmation)
-        timestamps.estimatedReadyAt = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+        timestamps.estimatedReadyAt = new Date(
+          now.getTime() + 2 * 60 * 60 * 1000,
+        );
         break;
       case "PREPARING":
         timestamps.preparingAt = now;
@@ -569,8 +576,8 @@ export class OrderStatusService {
       include: {
         farm: true,
         customer: true,
-        items: { include: { product: true } }
-      }
+        items: { include: { product: true } },
+      },
     });
   }
 
@@ -580,7 +587,7 @@ export class OrderStatusService {
   private emitStatusChangeEvent(
     order: Order,
     fromStatus: OrderStatus,
-    toStatus: OrderStatus
+    toStatus: OrderStatus,
   ): void {
     const eventService = OrderEventService.getInstance();
     eventService.emitStatusChange(order, fromStatus, toStatus);
@@ -591,12 +598,12 @@ export class OrderStatusService {
    */
   private async scheduleNotifications(
     order: Order,
-    newStatus: OrderStatus
+    newStatus: OrderStatus,
   ): Promise<OrderNotification[]> {
     const notificationService = new OrderNotificationService();
     return await notificationService.sendStatusUpdateNotifications(
       order,
-      newStatus
+      newStatus,
     );
   }
 
@@ -606,7 +613,7 @@ export class OrderStatusService {
   async getStatusHistory(orderId: string): Promise<OrderStatusHistory[]> {
     return await database.orderStatusHistory.findMany({
       where: { orderId },
-      orderBy: { createdAt: "asc" }
+      orderBy: { createdAt: "asc" },
     });
   }
 
@@ -621,35 +628,40 @@ export class OrderStatusService {
       offset?: number;
       sortBy?: "createdAt" | "totalAmount";
       sortOrder?: "asc" | "desc";
-    }
+    },
   ): Promise<{ orders: Order[]; total: number }> {
     const statusArray = Array.isArray(statuses) ? statuses : [statuses];
-    const { limit = 50, offset = 0, sortBy = "createdAt", sortOrder = "desc" } = options || {};
+    const {
+      limit = 50,
+      offset = 0,
+      sortBy = "createdAt",
+      sortOrder = "desc",
+    } = options || {};
 
     const [orders, total] = await Promise.all([
       database.order.findMany({
         where: {
           farmId,
-          status: { in: statusArray }
+          status: { in: statusArray },
         },
         include: {
           customer: {
-            select: { id: true, name: true, email: true, image: true }
+            select: { id: true, name: true, email: true, image: true },
           },
           items: {
-            include: { product: true }
-          }
+            include: { product: true },
+          },
         },
         orderBy: { [sortBy]: sortOrder },
         take: limit,
-        skip: offset
+        skip: offset,
       }),
       database.order.count({
         where: {
           farmId,
-          status: { in: statusArray }
-        }
-      })
+          status: { in: statusArray },
+        },
+      }),
     ]);
 
     return { orders, total };
@@ -663,7 +675,7 @@ export class OrderStatusService {
     newStatus: OrderStatus,
     userId: string,
     userRole: string,
-    reason?: string
+    reason?: string,
   ): Promise<BulkUpdateResult> {
     if (userRole !== "ADMIN") {
       throw new UnauthorizedError("Bulk updates require admin role");
@@ -671,14 +683,14 @@ export class OrderStatusService {
 
     const results: BulkUpdateResult = {
       successful: [],
-      failed: []
+      failed: [],
     };
 
     // Process updates in parallel with concurrency limit
     const concurrency = 5;
     for (let i = 0; i < orderIds.length; i += concurrency) {
       const batch = orderIds.slice(i, i + concurrency);
-      
+
       await Promise.allSettled(
         batch.map(async (orderId) => {
           try {
@@ -687,19 +699,19 @@ export class OrderStatusService {
               newStatus,
               userId,
               userRole,
-              reason
+              reason,
             });
             results.successful.push({
               orderId,
-              order: result.order
+              order: result.order,
             });
           } catch (error) {
             results.failed.push({
               orderId,
-              error: error.message
+              error: error.message,
             });
           }
-        })
+        }),
       );
     }
 
@@ -744,7 +756,12 @@ export class StatusValidationError extends Error {
 
 import { database } from "@/lib/database";
 import { Resend } from "resend";
-import type { Order, OrderStatus, NotificationType, NotificationChannel } from "@prisma/client";
+import type {
+  Order,
+  OrderStatus,
+  NotificationType,
+  NotificationChannel,
+} from "@prisma/client";
 
 interface NotificationTemplate {
   title: string;
@@ -756,7 +773,7 @@ interface NotificationTemplate {
 
 export class OrderNotificationService {
   private resend: Resend;
-  
+
   constructor() {
     this.resend = new Resend(process.env.RESEND_API_KEY);
   }
@@ -766,7 +783,7 @@ export class OrderNotificationService {
    */
   async sendStatusUpdateNotifications(
     order: Order,
-    newStatus: OrderStatus
+    newStatus: OrderStatus,
   ): Promise<OrderNotification[]> {
     const config = this.getNotificationConfig(newStatus);
     if (!config) return [];
@@ -784,9 +801,9 @@ export class OrderNotificationService {
           channel,
           title: template.title,
           message: template.message,
-          template
+          template,
         });
-        
+
         notifications.push(notification);
       }
     }
@@ -814,8 +831,8 @@ export class OrderNotificationService {
         type: params.type,
         channel: params.channel,
         title: params.title,
-        message: params.message
-      }
+        message: params.message,
+      },
     });
 
     // Send through channel (async, don't wait)
@@ -825,8 +842,8 @@ export class OrderNotificationService {
           where: { id: notification.id },
           data: {
             sentAt: new Date(),
-            deliveredAt: new Date()
-          }
+            deliveredAt: new Date(),
+          },
         });
       })
       .catch((error) => {
@@ -835,8 +852,8 @@ export class OrderNotificationService {
           data: {
             failedAt: new Date(),
             failureReason: error.message,
-            retryCount: { increment: 1 }
-          }
+            retryCount: { increment: 1 },
+          },
         });
       });
 
@@ -848,10 +865,10 @@ export class OrderNotificationService {
    */
   private async deliverNotification(
     notification: OrderNotification,
-    template: NotificationTemplate
+    template: NotificationTemplate,
   ): Promise<void> {
     const user = await database.user.findUnique({
-      where: { id: notification.userId }
+      where: { id: notification.userId },
     });
 
     if (!user) return;
@@ -866,7 +883,11 @@ export class OrderNotificationService {
         }
         break;
       case "PUSH":
-        await this.sendPushNotification(user.id, notification.title, notification.message);
+        await this.sendPushNotification(
+          user.id,
+          notification.title,
+          notification.message,
+        );
         break;
       case "IN_APP":
         // In-app notifications are handled via database + SSE
@@ -879,7 +900,7 @@ export class OrderNotificationService {
    */
   private generateTemplate(
     order: Order,
-    status: OrderStatus
+    status: OrderStatus,
   ): NotificationTemplate {
     const templates: Record<OrderStatus, NotificationTemplate> = {
       CONFIRMED: {
@@ -887,36 +908,36 @@ export class OrderNotificationService {
         message: `Your order #${order.orderNumber} has been confirmed by ${order.farm.name} and will be prepared soon.`,
         emailSubject: `Order #${order.orderNumber} Confirmed`,
         emailHtml: this.generateEmailHtml(order, "confirmed"),
-        smsMessage: `Order #${order.orderNumber} confirmed! Ready at ${order.estimatedReadyAt || 'soon'}.`
+        smsMessage: `Order #${order.orderNumber} confirmed! Ready at ${order.estimatedReadyAt || "soon"}.`,
       },
       PREPARING: {
         title: "Order Being Prepared 👨‍🌾",
         message: `Your order #${order.orderNumber} is now being prepared by ${order.farm.name}.`,
         emailSubject: `Order #${order.orderNumber} - Being Prepared`,
         emailHtml: this.generateEmailHtml(order, "preparing"),
-        smsMessage: `Your order #${order.orderNumber} is being prepared!`
+        smsMessage: `Your order #${order.orderNumber} is being prepared!`,
       },
       READY_FOR_PICKUP: {
         title: "Order Ready for Pickup! ✅",
-        message: `Your order #${order.orderNumber} is ready! Pickup at ${order.pickupLocation}. ${order.pickupInstructions || ''}`,
+        message: `Your order #${order.orderNumber} is ready! Pickup at ${order.pickupLocation}. ${order.pickupInstructions || ""}`,
         emailSubject: `Order #${order.orderNumber} - Ready for Pickup!`,
         emailHtml: this.generateEmailHtml(order, "ready"),
-        smsMessage: `Order #${order.orderNumber} ready at ${order.pickupLocation}!`
+        smsMessage: `Order #${order.orderNumber} ready at ${order.pickupLocation}!`,
       },
       COMPLETED: {
         title: "Order Completed 🌟",
         message: `Thank you for your order! We hope you enjoyed your fresh farm products from ${order.farm.name}.`,
         emailSubject: `Order #${order.orderNumber} - Completed`,
         emailHtml: this.generateEmailHtml(order, "completed"),
-        smsMessage: `Thanks for your order! Please leave a review.`
+        smsMessage: `Thanks for your order! Please leave a review.`,
       },
       CANCELLED: {
         title: "Order Cancelled",
         message: `Your order #${order.orderNumber} has been cancelled. A refund will be processed within 3-5 business days.`,
         emailSubject: `Order #${order.orderNumber} - Cancelled`,
         emailHtml: this.generateEmailHtml(order, "cancelled"),
-        smsMessage: `Order #${order.orderNumber} cancelled. Refund processing.`
-      }
+        smsMessage: `Order #${order.orderNumber} cancelled. Refund processing.`,
+      },
     };
 
     return templates[status] || templates.CONFIRMED;
@@ -966,12 +987,15 @@ export class OrderNotificationService {
     `;
   }
 
-  private async sendEmail(to: string, template: NotificationTemplate): Promise<void> {
+  private async sendEmail(
+    to: string,
+    template: NotificationTemplate,
+  ): Promise<void> {
     await this.resend.emails.send({
       from: "orders@farmersmarket.com",
       to,
       subject: template.emailSubject,
-      html: template.emailHtml
+      html: template.emailHtml,
     });
   }
 
@@ -983,7 +1007,7 @@ export class OrderNotificationService {
   private async sendPushNotification(
     userId: string,
     title: string,
-    message: string
+    message: string,
   ): Promise<void> {
     // TODO: Implement with Firebase Cloud Messaging
     console.log(`Push to ${userId}: ${title} - ${message}`);
@@ -994,9 +1018,12 @@ export class OrderNotificationService {
     const configs = {
       CONFIRMED: { type: "ORDER_CONFIRMED", channels: ["EMAIL", "IN_APP"] },
       PREPARING: { type: "ORDER_PREPARING", channels: ["IN_APP"] },
-      READY_FOR_PICKUP: { type: "ORDER_READY", channels: ["EMAIL", "SMS", "PUSH", "IN_APP"] },
+      READY_FOR_PICKUP: {
+        type: "ORDER_READY",
+        channels: ["EMAIL", "SMS", "PUSH", "IN_APP"],
+      },
       COMPLETED: { type: "ORDER_COMPLETED", channels: ["EMAIL", "IN_APP"] },
-      CANCELLED: { type: "ORDER_CANCELLED", channels: ["EMAIL", "IN_APP"] }
+      CANCELLED: { type: "ORDER_CANCELLED", channels: ["EMAIL", "IN_APP"] },
     };
 
     return configs[status];
@@ -1024,24 +1051,24 @@ export class OrderNotificationService {
 
 ```typescript
 // Order Status Management
-PUT    /api/orders/[orderId]/status        // Update order status
-GET    /api/orders/[orderId]/status        // Get status history
-POST   /api/orders/[orderId]/cancel        // Cancel order
-POST   /api/orders/bulk/status             // Bulk status update (admin)
+PUT / api / orders / [orderId] / status; // Update order status
+GET / api / orders / [orderId] / status; // Get status history
+POST / api / orders / [orderId] / cancel; // Cancel order
+POST / api / orders / bulk / status; // Bulk status update (admin)
 
 // Order Tracking
-GET    /api/orders/[orderId]/track         // Get order tracking details
-GET    /api/orders/[orderId]/timeline      // Get order timeline
+GET / api / orders / [orderId] / track; // Get order tracking details
+GET / api / orders / [orderId] / timeline; // Get order timeline
 
 // Notifications
-GET    /api/notifications                  // Get user notifications
-PUT    /api/notifications/[id]/read        // Mark notification as read
-PUT    /api/notifications/read-all         // Mark all as read
-GET    /api/notifications/preferences      // Get notification preferences
-PUT    /api/notifications/preferences      // Update preferences
+GET / api / notifications; // Get user notifications
+PUT / api / notifications / [id] / read; // Mark notification as read
+PUT / api / notifications / read - all; // Mark all as read
+GET / api / notifications / preferences; // Get notification preferences
+PUT / api / notifications / preferences; // Update preferences
 
 // Real-time
-GET    /api/orders/events                  // SSE event stream
+GET / api / orders / events; // SSE event stream
 ```
 
 ### API Request/Response Formats
@@ -1129,7 +1156,7 @@ export async function GET(request: NextRequest) {
     start(controller) {
       // Send initial connection event
       controller.enqueue(
-        encoder.encode(`data: ${JSON.stringify({ type: "connected" })}\n\n`)
+        encoder.encode(`data: ${JSON.stringify({ type: "connected" })}\n\n`),
       );
 
       // Subscribe to events
@@ -1154,16 +1181,16 @@ export async function GET(request: NextRequest) {
         unsubscribe();
         controller.close();
       });
-    }
+    },
   });
 
   return new Response(stream, {
     headers: {
       "Content-Type": "text/event-stream",
       "Cache-Control": "no-cache, no-transform",
-      "Connection": "keep-alive",
-      "X-Accel-Buffering": "no" // Disable nginx buffering
-    }
+      Connection: "keep-alive",
+      "X-Accel-Buffering": "no", // Disable nginx buffering
+    },
   });
 }
 ```
@@ -1182,7 +1209,10 @@ interface OrderEvent {
   timestamp: string;
 }
 
-export function useOrderEvents(params: { farmId?: string; customerId?: string }) {
+export function useOrderEvents(params: {
+  farmId?: string;
+  customerId?: string;
+}) {
   const [events, setEvents] = useState<OrderEvent[]>([]);
   const [isConnected, setIsConnected] = useState(false);
 
@@ -1200,7 +1230,7 @@ export function useOrderEvents(params: { farmId?: string; customerId?: string })
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.type !== "connected") {
-        setEvents(prev => [data, ...prev].slice(0, 100)); // Keep last 100 events
+        setEvents((prev) => [data, ...prev].slice(0, 100)); // Keep last 100 events
       }
     };
 
@@ -1310,26 +1340,26 @@ const AUTHORIZATION_MATRIX = {
     PREPARING_TO_READY: ["FARMER", "ADMIN"],
     READY_TO_COMPLETED: ["FARMER", "CUSTOMER", "ADMIN"],
     ANY_TO_CANCELLED: ["CUSTOMER", "FARMER", "ADMIN"],
-    CANCELLED_TO_REFUNDED: ["ADMIN"]
+    CANCELLED_TO_REFUNDED: ["ADMIN"],
   },
   cancelOrder: ["CUSTOMER", "FARMER", "ADMIN"],
   refundOrder: ["ADMIN"],
-  bulkUpdate: ["ADMIN"]
+  bulkUpdate: ["ADMIN"],
 };
 
 // Authorization middleware
 async function authorizeOrderAccess(
   orderId: string,
   userId: string,
-  action: string
+  action: string,
 ): Promise<boolean> {
   const order = await database.order.findUnique({
     where: { id: orderId },
-    include: { farm: true }
+    include: { farm: true },
   });
 
   const user = await database.user.findUnique({
-    where: { id: userId }
+    where: { id: userId },
   });
 
   if (!order || !user) return false;
@@ -1396,7 +1426,7 @@ export class OrderCacheService {
 
     // Fetch from database
     const order = await database.order.findUnique({
-      where: { id: orderId }
+      where: { id: orderId },
     });
 
     if (order) {
@@ -1433,10 +1463,10 @@ const DATABASE_CONFIG = {
         min: 2,
         max: 10,
         acquireTimeoutMillis: 30000,
-        idleTimeoutMillis: 30000
-      }
-    }
-  }
+        idleTimeoutMillis: 30000,
+      },
+    },
+  },
 };
 
 // Use read replicas for heavy read operations
@@ -1463,29 +1493,29 @@ import { trace, SpanStatusCode } from "@opentelemetry/api";
 
 async function updateOrderStatus(orderId: string, newStatus: OrderStatus) {
   const tracer = trace.getTracer("order-service");
-  
+
   return await tracer.startActiveSpan("updateOrderStatus", async (span) => {
     span.setAttributes({
       "order.id": orderId,
       "order.new_status": newStatus,
-      "service.name": "order-status-service"
+      "service.name": "order-status-service",
     });
 
     try {
       // Business logic
       const result = await performUpdate();
-      
+
       span.setStatus({ code: SpanStatusCode.OK });
       span.setAttributes({
         "order.updated": true,
-        "order.previous_status": result.previousStatus
+        "order.previous_status": result.previousStatus,
       });
-      
+
       return result;
     } catch (error) {
       span.setStatus({
         code: SpanStatusCode.ERROR,
-        message: error.message
+        message: error.message,
       });
       span.recordException(error);
       throw error;
@@ -1505,17 +1535,17 @@ const metrics = {
   "order.status.update.duration": histogram(),
   "order.notification.send.duration": histogram(),
   "order.api.response.time": histogram(),
-  
+
   // Business metrics
   "order.status.changes": counter(),
   "order.notifications.sent": counter(),
   "order.notifications.failed": counter(),
   "order.cancellations": counter(),
-  
+
   // System metrics
   "sse.connections.active": gauge(),
   "database.connections.active": gauge(),
-  "cache.hit.rate": gauge()
+  "cache.hit.rate": gauge(),
 };
 ```
 
@@ -1526,15 +1556,15 @@ alerts:
   - name: High Order Update Latency
     condition: order.status.update.duration.p95 > 500ms
     severity: warning
-    
+
   - name: Notification Delivery Failure
     condition: order.notifications.failed / order.notifications.sent > 0.05
     severity: critical
-    
+
   - name: Database Connection Pool Exhaustion
     condition: database.connections.active >= 9
     severity: warning
-    
+
   - name: SSE Connection Drop Rate
     condition: sse.connections.dropped / sse.connections.total > 0.1
     severity: warning
@@ -1553,14 +1583,14 @@ describe("OrderStatusService", () => {
     it("should update order status with valid transition", async () => {
       const service = new OrderStatusService();
       const order = createMockOrder({ status: "PENDING" });
-      
+
       const result = await service.updateStatus({
         orderId: order.id,
         newStatus: "CONFIRMED",
         userId: "farmer-123",
-        userRole: "FARMER"
+        userRole: "FARMER",
       });
-      
+
       expect(result.order.status).toBe("CONFIRMED");
       expect(result.order.confirmedAt).toBeDefined();
       expect(result.statusHistory).toBeDefined();
@@ -1569,28 +1599,28 @@ describe("OrderStatusService", () => {
     it("should throw error for invalid transition", async () => {
       const service = new OrderStatusService();
       const order = createMockOrder({ status: "COMPLETED" });
-      
+
       await expect(
         service.updateStatus({
           orderId: order.id,
           newStatus: "PENDING",
           userId: "farmer-123",
-          userRole: "FARMER"
-        })
+          userRole: "FARMER",
+        }),
       ).rejects.toThrow(InvalidStatusTransitionError);
     });
 
     it("should enforce role-based authorization", async () => {
       const service = new OrderStatusService();
       const order = createMockOrder({ status: "PENDING" });
-      
+
       await expect(
         service.updateStatus({
           orderId: order.id,
           newStatus: "CONFIRMED",
           userId: "customer-123",
-          userRole: "CUSTOMER"
-        })
+          userRole: "CUSTOMER",
+        }),
       ).rejects.toThrow(UnauthorizedStatusChangeError);
     });
   });
@@ -1605,27 +1635,27 @@ describe("Order Status Update Integration", () => {
   it("should complete full status update flow", async () => {
     // Create test order
     const order = await createTestOrder();
-    
+
     // Farmer confirms order
     const response1 = await fetch(`/api/orders/${order.id}/status`, {
       method: "PUT",
       headers: { Authorization: `Bearer ${farmerToken}` },
-      body: JSON.stringify({ status: "CONFIRMED" })
+      body: JSON.stringify({ status: "CONFIRMED" }),
     });
-    
+
     expect(response1.status).toBe(200);
     const data1 = await response1.json();
     expect(data1.data.order.status).toBe("CONFIRMED");
-    
+
     // Verify notification was sent
     const notifications = await database.orderNotification.findMany({
-      where: { orderId: order.id, type: "ORDER_CONFIRMED" }
+      where: { orderId: order.id, type: "ORDER_CONFIRMED" },
     });
     expect(notifications.length).toBeGreaterThan(0);
-    
+
     // Verify status history was created
     const history = await database.orderStatusHistory.findMany({
-      where: { orderId: order.id }
+      where: { orderId: order.id },
     });
     expect(history).toHaveLength(1);
     expect(history[0].toStatus).toBe("CONFIRMED");
@@ -1637,7 +1667,9 @@ describe("Order Status Update Integration", () => {
 
 ```typescript
 // Example: Complete order lifecycle E2E test
-test("complete order lifecycle from placement to completion", async ({ page }) => {
+test("complete order lifecycle from placement to completion", async ({
+  page,
+}) => {
   // Customer places order
   await page.goto("/farms/test-farm");
   await page.click('[data-testid="add-to-cart"]');
@@ -1645,33 +1677,49 @@ test("complete order lifecycle from placement to completion", async ({ page }) =
   await page.click('[data-testid="checkout"]');
   await fillPaymentDetails(page);
   await page.click('[data-testid="place-order"]');
-  
+
   // Wait for order confirmation
   await expect(page.locator('[data-testid="order-number"]')).toBeVisible();
-  const orderNumber = await page.locator('[data-testid="order-number"]').textContent();
-  
+  const orderNumber = await page
+    .locator('[data-testid="order-number"]')
+    .textContent();
+
   // Farmer confirms order
   await loginAsFarmer(page);
   await page.goto("/farmer/orders");
   await page.click(`[data-order="${orderNumber}"] [data-action="confirm"]`);
-  await expect(page.locator(`[data-order="${orderNumber}"] [data-status="CONFIRMED"]`)).toBeVisible();
-  
+  await expect(
+    page.locator(`[data-order="${orderNumber}"] [data-status="CONFIRMED"]`),
+  ).toBeVisible();
+
   // Farmer marks as preparing
   await page.click(`[data-order="${orderNumber}"] [data-action="prepare"]`);
-  await expect(page.locator(`[data-order="${orderNumber}"] [data-status="PREPARING"]`)).toBeVisible();
-  
+  await expect(
+    page.locator(`[data-order="${orderNumber}"] [data-status="PREPARING"]`),
+  ).toBeVisible();
+
   // Farmer marks as ready
   await page.click(`[data-order="${orderNumber}"] [data-action="ready"]`);
-  await expect(page.locator(`[data-order="${orderNumber}"] [data-status="READY_FOR_PICKUP"]`)).toBeVisible();
-  
+  await expect(
+    page.locator(
+      `[data-order="${orderNumber}"] [data-status="READY_FOR_PICKUP"]`,
+    ),
+  ).toBeVisible();
+
   // Customer views order
   await loginAsCustomer(page);
   await page.goto("/orders");
-  await expect(page.locator(`[data-order="${orderNumber}"] [data-status="READY_FOR_PICKUP"]`)).toBeVisible();
-  
+  await expect(
+    page.locator(
+      `[data-order="${orderNumber}"] [data-status="READY_FOR_PICKUP"]`,
+    ),
+  ).toBeVisible();
+
   // Verify notification
   await page.click('[data-testid="notifications"]');
-  await expect(page.locator(`text="Order #${orderNumber} is ready"`)).toBeVisible();
+  await expect(
+    page.locator(`text="Order #${orderNumber} is ready"`),
+  ).toBeVisible();
 });
 ```
 
@@ -1699,7 +1747,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-  
+
   database:
     image: postgres:16
     replicas: 1
@@ -1708,16 +1756,16 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
     backup:
-      schedule: "0 2 * * *"  # Daily at 2 AM
+      schedule: "0 2 * * *" # Daily at 2 AM
       retention: 30 days
-  
+
   redis:
     image: redis:7
     replicas: 1
     resources:
       limits: { cpu: 1, memory: 2Gi }
     persistence: enabled
-  
+
   monitoring:
     - azure-app-insights
     - opentelemetry-collector
@@ -1738,29 +1786,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Run Tests
         run: |
           npm ci
           npm run test:all
           npm run test:e2e
-      
+
       - name: Build
         run: |
           npm run build
-      
+
       - name: Run Migrations
         run: |
           npx prisma migrate deploy
-      
+
       - name: Deploy to Production
         run: |
           vercel deploy --prod
-      
+
       - name: Health Check
         run: |
           curl -f https://farmersmarket.com/api/health || exit 1
-      
+
       - name: Smoke Tests
         run: |
           npm run test:smoke
@@ -1771,6 +1819,7 @@ jobs:
 ## 📈 Success Metrics
 
 ### Technical Metrics
+
 - ✅ API response time: <200ms (P95)
 - ✅ Database query time: <50ms (P95)
 - ✅ SSE event delivery: <500ms
@@ -1780,6 +1829,7 @@ jobs:
 - ✅ System uptime: 99.9%
 
 ### Business Metrics
+
 - ✅ Order fulfillment time: -30% reduction
 - ✅ Customer satisfaction: >4.5/5
 - ✅ Farmer efficiency: +25% improvement

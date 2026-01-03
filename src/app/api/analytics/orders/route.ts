@@ -63,7 +63,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -79,7 +79,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -103,7 +103,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -121,7 +121,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -135,7 +135,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -169,15 +169,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const includeTrends = searchParams.get("includeTrends") !== "false";
     const includeFulfillment =
       searchParams.get("includeFulfillment") !== "false";
-    const includeTimeSeries =
-      searchParams.get("includeTimeSeries") !== "false";
+    const includeTimeSeries = searchParams.get("includeTimeSeries") !== "false";
     const topCustomersLimit = parseInt(
       searchParams.get("topCustomersLimit") || "10",
-      10
+      10,
     );
     const topProductsLimit = parseInt(
       searchParams.get("topProductsLimit") || "10",
-      10
+      10,
     );
     const timeSeriesInterval =
       (searchParams.get("timeSeriesInterval") as any) || "day";
@@ -207,7 +206,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         topCustomersLimit,
         topProductsLimit,
         timeSeriesInterval,
-      }
+      },
     );
 
     // ═══════════════════════════════════════════════════════════
@@ -246,7 +245,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           "Cache-Control": "private, max-age=60, must-revalidate",
           "X-Processing-Time": `${processingTime}ms`,
         },
-      }
+      },
     );
   } catch (error) {
     const processingTime = Date.now() - startTime;
@@ -274,7 +273,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         headers: {
           "X-Processing-Time": `${processingTime}ms`,
         },
-      }
+      },
     );
   }
 }

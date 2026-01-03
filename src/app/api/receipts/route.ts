@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -145,7 +145,7 @@ export async function POST(request: NextRequest) {
           },
         },
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     logger.error("Receipt generation failed", error, {
@@ -164,7 +164,7 @@ export async function POST(request: NextRequest) {
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -179,7 +179,7 @@ export async function POST(request: NextRequest) {
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -194,7 +194,7 @@ export async function POST(request: NextRequest) {
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -210,7 +210,7 @@ export async function POST(request: NextRequest) {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -240,7 +240,7 @@ export async function GET(request: NextRequest) {
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -262,7 +262,7 @@ export async function GET(request: NextRequest) {
               timestamp: new Date().toISOString(),
             },
           },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
@@ -313,7 +313,7 @@ export async function GET(request: NextRequest) {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

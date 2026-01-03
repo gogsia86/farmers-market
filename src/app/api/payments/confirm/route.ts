@@ -195,13 +195,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // ✅ STEP 5: CONFIRM PAYMENT WITH 3D SECURE
-    const confirmResult = await stripe3DSecureService.confirmWithAuthentication({
-      paymentIntentId,
-      paymentMethodId,
-      orderId,
-      returnUrl,
-      savePaymentMethod,
-    });
+    const confirmResult = await stripe3DSecureService.confirmWithAuthentication(
+      {
+        paymentIntentId,
+        paymentMethodId,
+        orderId,
+        returnUrl,
+        savePaymentMethod,
+      },
+    );
 
     if (!confirmResult.success) {
       logger.warn("Payment confirmation failed", {
@@ -216,7 +218,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           success: false,
           error: {
             code: confirmResult.error?.code || "PAYMENT_CONFIRMATION_FAILED",
-            message: confirmResult.error?.message || "Payment confirmation failed",
+            message:
+              confirmResult.error?.message || "Payment confirmation failed",
             details: confirmResult.error?.details,
           },
         },
@@ -312,8 +315,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           status: "PROCESSING",
           paymentIntentId: paymentIntent.id,
           orderId,
-          message:
-            "Payment is being processed. This may take a few moments.",
+          message: "Payment is being processed. This may take a few moments.",
         },
       });
     }
@@ -493,8 +495,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           {
             success: false,
             error: {
-              code: completionResult.error?.code || "AUTHENTICATION_COMPLETION_FAILED",
-              message: completionResult.error?.message || "Authentication completion failed",
+              code:
+                completionResult.error?.code ||
+                "AUTHENTICATION_COMPLETION_FAILED",
+              message:
+                completionResult.error?.message ||
+                "Authentication completion failed",
               details: completionResult.error?.details,
             },
           },

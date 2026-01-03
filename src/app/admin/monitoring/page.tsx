@@ -158,7 +158,7 @@ async function getDashboardData() {
     const avgResponseTime =
       recentExecutions.length > 0
         ? recentExecutions.reduce((sum, e) => sum + (e.durationMs || 0), 0) /
-        recentExecutions.length
+          recentExecutions.length
         : 0;
 
     // System health status
@@ -190,7 +190,10 @@ async function getDashboardData() {
       lastUpdated: now.toISOString(),
     };
   } catch (error) {
-    monitoringLogger.error("Error fetching dashboard data", error instanceof Error ? error : new Error(String(error)));
+    monitoringLogger.error(
+      "Error fetching dashboard data",
+      error instanceof Error ? error : new Error(String(error)),
+    );
     return null;
   }
 }
@@ -256,8 +259,9 @@ export default async function MonitoringDashboardPage() {
               </p>
             </div>
             <div
-              className={`rounded-full p-3 ${data.overview.systemHealthy ? "bg-green-100" : "bg-red-100"
-                }`}
+              className={`rounded-full p-3 ${
+                data.overview.systemHealthy ? "bg-green-100" : "bg-red-100"
+              }`}
             >
               <span className="text-2xl">
                 {data.overview.systemHealthy ? "🟢" : "🔴"}
@@ -308,17 +312,19 @@ export default async function MonitoringDashboardPage() {
             <div>
               <p className="text-sm font-medium text-gray-600">Active Alerts</p>
               <p
-                className={`mt-2 text-3xl font-bold ${data.overview.alertCount > 0
+                className={`mt-2 text-3xl font-bold ${
+                  data.overview.alertCount > 0
                     ? "text-orange-600"
                     : "text-green-600"
-                  }`}
+                }`}
               >
                 {data.overview.alertCount}
               </p>
             </div>
             <div
-              className={`rounded-full p-3 ${data.overview.alertCount > 0 ? "bg-orange-100" : "bg-green-100"
-                }`}
+              className={`rounded-full p-3 ${
+                data.overview.alertCount > 0 ? "bg-orange-100" : "bg-green-100"
+              }`}
             >
               <span className="text-2xl">
                 {data.overview.alertCount > 0 ? "⚠️" : "✅"}

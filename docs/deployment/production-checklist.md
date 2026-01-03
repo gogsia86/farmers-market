@@ -44,24 +44,28 @@ Current Status: 100% Production Ready ✅
 ### Code Quality
 
 - [ ] **All tests passing** (2,700+ tests, 98%+ success rate)
+
   ```bash
   pnpm test
   # Expected: All tests passing
   ```
 
 - [ ] **Zero TypeScript errors**
+
   ```bash
   pnpm type-check
   # Expected: No errors
   ```
 
 - [ ] **Linting passes**
+
   ```bash
   pnpm lint
   # Expected: No errors or warnings
   ```
 
 - [ ] **Code coverage meets target** (82%+ overall)
+
   ```bash
   pnpm test:coverage
   # Expected: ≥80% coverage
@@ -76,23 +80,27 @@ Current Status: 100% Production Ready ✅
 ### Environment Configuration
 
 - [ ] **Production environment file created**
+
   ```bash
   cp .env.production.template .env.production
   # Edit with actual production values
   ```
 
 - [ ] **Database URL configured**
+
   ```env
   DATABASE_URL="postgresql://user:password@prod-db.example.com:5432/farmers_market"
   ```
 
 - [ ] **NextAuth configuration set**
+
   ```env
   NEXTAUTH_URL="https://farmersmarket.com"
   NEXTAUTH_SECRET="<64-character-production-secret>"
   ```
 
 - [ ] **Payment provider keys configured** (Stripe)
+
   ```env
   STRIPE_SECRET_KEY="sk_live_..."
   STRIPE_PUBLISHABLE_KEY="pk_live_..."
@@ -100,6 +108,7 @@ Current Status: 100% Production Ready ✅
   ```
 
 - [ ] **Email service configured**
+
   ```env
   SMTP_HOST="smtp.example.com"
   SMTP_PORT="587"
@@ -108,6 +117,7 @@ Current Status: 100% Production Ready ✅
   ```
 
 - [ ] **Redis cache URL configured**
+
   ```env
   REDIS_URL="redis://prod-cache.example.com:6379"
   ```
@@ -122,6 +132,7 @@ Current Status: 100% Production Ready ✅
 
 - [ ] **Production database created** (PostgreSQL 14+)
 - [ ] **Database migrations applied**
+
   ```bash
   pnpm prisma migrate deploy
   ```
@@ -132,6 +143,7 @@ Current Status: 100% Production Ready ✅
   - Backup restoration tested
 
 - [ ] **Database connection pooling configured**
+
   ```env
   DATABASE_URL="postgresql://...?connection_limit=20&pool_timeout=20"
   ```
@@ -149,14 +161,15 @@ Current Status: 100% Production Ready ✅
   - HTTPS enforced (HTTP redirects to HTTPS)
 
 - [ ] **Security headers configured**
+
   ```typescript
   // next.config.js
   headers: [
-    { key: 'X-Frame-Options', value: 'DENY' },
-    { key: 'X-Content-Type-Options', value: 'nosniff' },
-    { key: 'X-XSS-Protection', value: '1; mode=block' },
-    { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-  ]
+    { key: "X-Frame-Options", value: "DENY" },
+    { key: "X-Content-Type-Options", value: "nosniff" },
+    { key: "X-XSS-Protection", value: "1; mode=block" },
+    { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  ];
   ```
 
 - [ ] **Authentication system tested**
@@ -172,6 +185,7 @@ Current Status: 100% Production Ready ✅
 
 - [ ] **Input validation enabled** (Zod schemas)
 - [ ] **Rate limiting configured**
+
   ```typescript
   // 100 requests per 15 minutes per IP
   ratelimit: { requests: 100, window: '15m' }
@@ -214,11 +228,13 @@ Current Status: 100% Production Ready ✅
   - Schedule during low-traffic period
 
 - [ ] **Create database backup**
+
   ```bash
   ./scripts/database-backup.sh
   ```
 
 - [ ] **Tag release in Git**
+
   ```bash
   git tag -a v1.0.0 -m "Production release v1.0.0"
   git push origin v1.0.0
@@ -234,16 +250,19 @@ Current Status: 100% Production Ready ✅
 #### Option 1: Vercel Deployment
 
 - [ ] **Install Vercel CLI**
+
   ```bash
   npm i -g vercel
   ```
 
 - [ ] **Login to Vercel**
+
   ```bash
   vercel login
   ```
 
 - [ ] **Deploy to production**
+
   ```bash
   vercel --prod
   ```
@@ -256,22 +275,26 @@ Current Status: 100% Production Ready ✅
 #### Option 2: Docker + Kubernetes
 
 - [ ] **Build Docker image**
+
   ```bash
   docker build -t farmers-market:v1.0.0 .
   ```
 
 - [ ] **Push to container registry**
+
   ```bash
   docker tag farmers-market:v1.0.0 registry.example.com/farmers-market:v1.0.0
   docker push registry.example.com/farmers-market:v1.0.0
   ```
 
 - [ ] **Create Kubernetes secrets**
+
   ```bash
   ./scripts/create-k8s-secrets.sh
   ```
 
 - [ ] **Apply Kubernetes manifests**
+
   ```bash
   kubectl apply -f k8s/production-deployment.yaml
   ```
@@ -295,11 +318,13 @@ Current Status: 100% Production Ready ✅
 ### Database Migration
 
 - [ ] **Run migrations in production**
+
   ```bash
   pnpm prisma migrate deploy
   ```
 
 - [ ] **Verify migration success**
+
   ```bash
   pnpm prisma migrate status
   ```
@@ -321,12 +346,14 @@ Current Status: 100% Production Ready ✅
   - SSL certificate valid
 
 - [ ] **Health check endpoint responds**
+
   ```bash
   curl https://farmersmarket.com/api/health
   # Expected: {"status": "ok", "timestamp": "..."}
   ```
 
 - [ ] **Database connectivity verified**
+
   ```bash
   curl https://farmersmarket.com/api/health/db
   # Expected: {"status": "ok", "database": "connected"}
@@ -348,6 +375,7 @@ Current Status: 100% Production Ready ✅
 ### Smoke Tests
 
 - [ ] **Run automated smoke tests**
+
   ```bash
   pnpm test:e2e:production
   ```
@@ -378,9 +406,11 @@ Current Status: 100% Production Ready ✅
 ### Performance
 
 - [ ] **Run Lighthouse audit**
+
   ```bash
   lighthouse https://farmersmarket.com --view
   ```
+
   - Performance: ≥90
   - Accessibility: ≥90
   - Best Practices: ≥90
@@ -399,8 +429,10 @@ Current Status: 100% Production Ready ✅
 ### Documentation
 
 - [ ] **Update deployment log**
+
   ```markdown
   ## Deployment v1.0.0 - 2025-01-15
+
   - Deployed by: John Doe
   - Git commit: abc123
   - Migration: 20250115_initial
@@ -426,12 +458,14 @@ Current Status: 100% Production Ready ✅
   - Sensitive Data: ✅ Encrypted at rest/transit
 
 - [ ] **Dependency vulnerabilities checked**
+
   ```bash
   pnpm audit
   # Fix any high/critical vulnerabilities
   ```
 
 - [ ] **Security headers tested**
+
   ```bash
   curl -I https://farmersmarket.com | grep -i security
   ```
@@ -565,6 +599,7 @@ Current Status: 100% Production Ready ✅
 ### When to Rollback
 
 Rollback immediately if:
+
 - Critical functionality broken
 - Data corruption detected
 - Security vulnerability exposed
@@ -613,21 +648,21 @@ pnpm prisma migrate resolve --rolled-back <migration-name>
 
 ### On-Call Team
 
-| Role | Name | Contact |
-|------|------|---------|
-| **Tech Lead** | [Name] | +1-XXX-XXX-XXXX |
+| Role                | Name   | Contact         |
+| ------------------- | ------ | --------------- |
+| **Tech Lead**       | [Name] | +1-XXX-XXX-XXXX |
 | **DevOps Engineer** | [Name] | +1-XXX-XXX-XXXX |
-| **Database Admin** | [Name] | +1-XXX-XXX-XXXX |
-| **Security Lead** | [Name] | +1-XXX-XXX-XXXX |
+| **Database Admin**  | [Name] | +1-XXX-XXX-XXXX |
+| **Security Lead**   | [Name] | +1-XXX-XXX-XXXX |
 
 ### Service Providers
 
-| Service | Contact | Support Level |
-|---------|---------|---------------|
+| Service    | Contact            | Support Level    |
+| ---------- | ------------------ | ---------------- |
 | **Vercel** | support@vercel.com | 24/7 Pro Support |
-| **Azure** | Azure Portal | 24/7 Enterprise |
-| **Stripe** | stripe.com/support | Business hours |
-| **Sentry** | support@sentry.io | Email support |
+| **Azure**  | Azure Portal       | 24/7 Enterprise  |
+| **Stripe** | stripe.com/support | Business hours   |
+| **Sentry** | support@sentry.io  | Email support    |
 
 ### Escalation Path
 

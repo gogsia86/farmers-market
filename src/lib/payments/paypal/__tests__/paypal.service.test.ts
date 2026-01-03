@@ -626,7 +626,9 @@ describe("PayPalService", () => {
       });
 
       // Then fail on order creation
-      (global.fetch as jest.Mock).mockRejectedValueOnce(new Error("Network error"));
+      (global.fetch as jest.Mock).mockRejectedValueOnce(
+        new Error("Network error"),
+      );
 
       const result = await paypalService.createOrder({
         orderId: "order_123",

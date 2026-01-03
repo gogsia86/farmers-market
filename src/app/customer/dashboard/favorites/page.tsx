@@ -79,7 +79,10 @@ export default function FavoritesPage() {
         setFavoriteProducts(data.products || []);
       }
     } catch (error) {
-      favoritesLogger.error("Failed to fetch favorites", error instanceof Error ? error : new Error(String(error)));
+      favoritesLogger.error(
+        "Failed to fetch favorites",
+        error instanceof Error ? error : new Error(String(error)),
+      );
     } finally {
       setLoading(false);
     }
@@ -98,9 +101,13 @@ export default function FavoritesPage() {
         setFavoriteFarms((prev) => prev.filter((f) => f.id !== farmId));
       }
     } catch (error) {
-      favoritesLogger.error("Failed to remove farm favorite", error instanceof Error ? error : new Error(String(error)), {
-        farmId,
-      });
+      favoritesLogger.error(
+        "Failed to remove farm favorite",
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          farmId,
+        },
+      );
     } finally {
       setRemovingId(null);
     }
@@ -119,9 +126,13 @@ export default function FavoritesPage() {
         setFavoriteProducts((prev) => prev.filter((p) => p.id !== productId));
       }
     } catch (error) {
-      favoritesLogger.error("Failed to remove product favorite", error instanceof Error ? error : new Error(String(error)), {
-        productId,
-      });
+      favoritesLogger.error(
+        "Failed to remove product favorite",
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          productId,
+        },
+      );
     } finally {
       setRemovingId(null);
     }
@@ -182,19 +193,21 @@ export default function FavoritesPage() {
             <nav className="flex">
               <button
                 onClick={() => setActiveTab("farms")}
-                className={`flex-1 px-6 py-4 text-center font-medium transition-colors ${activeTab === "farms"
+                className={`flex-1 px-6 py-4 text-center font-medium transition-colors ${
+                  activeTab === "farms"
                     ? "text-green-600 border-b-2 border-green-600 bg-green-50"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                  }`}
+                }`}
               >
                 🏪 Farms ({favoriteFarms.length})
               </button>
               <button
                 onClick={() => setActiveTab("products")}
-                className={`flex-1 px-6 py-4 text-center font-medium transition-colors ${activeTab === "products"
+                className={`flex-1 px-6 py-4 text-center font-medium transition-colors ${
+                  activeTab === "products"
                     ? "text-green-600 border-b-2 border-green-600 bg-green-50"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                  }`}
+                }`}
               >
                 🌽 Products ({favoriteProducts.length})
               </button>

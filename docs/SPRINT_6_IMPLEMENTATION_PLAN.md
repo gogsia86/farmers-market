@@ -13,6 +13,7 @@
 This document provides a detailed, actionable implementation plan for Sprint 6, breaking down the Order Management System into granular tasks with clear acceptance criteria, dependencies, and success metrics.
 
 ### Sprint Overview
+
 - **Goal**: Build complete order flow from cart to fulfillment
 - **Complexity**: High
 - **Team Size**: 3-4 developers
@@ -24,6 +25,7 @@ This document provides a detailed, actionable implementation plan for Sprint 6, 
 ## 🎯 SPRINT OBJECTIVES
 
 ### Primary Goals
+
 1. ✅ Shopping cart with real-time sync
 2. ✅ Multi-step checkout flow
 3. ✅ Payment processing integration
@@ -32,6 +34,7 @@ This document provides a detailed, actionable implementation plan for Sprint 6, 
 6. ✅ Invoice generation system
 
 ### Success Metrics
+
 - **Functional**: 100% feature completion
 - **Quality**: 90%+ test coverage
 - **Performance**: <2s checkout time
@@ -43,6 +46,7 @@ This document provides a detailed, actionable implementation plan for Sprint 6, 
 ## 📊 CURRENT STATE ANALYSIS
 
 ### Existing Infrastructure ✅
+
 ```yaml
 database_models:
   - Cart (exists but needs enhancement)
@@ -69,6 +73,7 @@ infrastructure:
 ```
 
 ### What Needs to Be Built 🔨
+
 ```yaml
 frontend_components: 15+ new components
 api_endpoints: 20+ new endpoints
@@ -88,11 +93,13 @@ tests: 150+ new tests
 ## PHASE 1: SHOPPING CART (Week 1)
 
 ### Task 1.1: Cart State Management
+
 **Priority**: Critical  
 **Effort**: 8 hours  
 **Developer**: Frontend Lead
 
 **Deliverables:**
+
 ```typescript
 // lib/stores/cart.store.ts
 - Zustand store with persist middleware
@@ -104,6 +111,7 @@ tests: 150+ new tests
 ```
 
 **Acceptance Criteria:**
+
 - [ ] Cart state persists across page refreshes
 - [ ] Cart syncs between tabs
 - [ ] Cart merges on user login (guest → authenticated)
@@ -116,26 +124,29 @@ tests: 150+ new tests
 ---
 
 ### Task 1.2: Cart Service Layer
+
 **Priority**: Critical  
 **Effort**: 6 hours  
 **Developer**: Backend Lead
 
 **Deliverables:**
+
 ```typescript
 // lib/services/cart.service.ts
 class CartService {
-  createCart(userId?: string): Promise<Cart>
-  getCart(userId: string): Promise<Cart>
-  addItem(cartId: string, item: AddCartItemDto): Promise<CartItem>
-  updateItem(itemId: string, quantity: number): Promise<CartItem>
-  removeItem(itemId: string): Promise<void>
-  clearCart(cartId: string): Promise<void>
-  calculateTotals(cartId: string): Promise<CartTotals>
-  syncGuestCart(sessionId: string, userId: string): Promise<Cart>
+  createCart(userId?: string): Promise<Cart>;
+  getCart(userId: string): Promise<Cart>;
+  addItem(cartId: string, item: AddCartItemDto): Promise<CartItem>;
+  updateItem(itemId: string, quantity: number): Promise<CartItem>;
+  removeItem(itemId: string): Promise<void>;
+  clearCart(cartId: string): Promise<void>;
+  calculateTotals(cartId: string): Promise<CartTotals>;
+  syncGuestCart(sessionId: string, userId: string): Promise<Cart>;
 }
 ```
 
 **Acceptance Criteria:**
+
 - [ ] All CRUD operations implemented
 - [ ] Cart expiration handling (24 hours)
 - [ ] Product availability validation
@@ -149,27 +160,30 @@ class CartService {
 ---
 
 ### Task 1.3: Cart API Endpoints
+
 **Priority**: Critical  
 **Effort**: 8 hours  
 **Developer**: Full-Stack Developer
 
 **Deliverables:**
+
 ```typescript
 // app/api/cart/route.ts
-GET    /api/cart                    // Get user's cart
-POST   /api/cart                    // Create cart
-DELETE /api/cart                    // Clear cart
+GET / api / cart; // Get user's cart
+POST / api / cart; // Create cart
+DELETE / api / cart; // Clear cart
 
 // app/api/cart/items/route.ts
-POST   /api/cart/items              // Add item
-PATCH  /api/cart/items/[id]/route.ts // Update quantity
-DELETE /api/cart/items/[id]/route.ts // Remove item
+POST / api / cart / items; // Add item
+PATCH / api / cart / items / [id] / route.ts; // Update quantity
+DELETE / api / cart / items / [id] / route.ts; // Remove item
 
 // app/api/cart/sync/route.ts
-POST   /api/cart/sync               // Sync guest cart on login
+POST / api / cart / sync; // Sync guest cart on login
 ```
 
 **Acceptance Criteria:**
+
 - [ ] RESTful design patterns
 - [ ] Authentication middleware
 - [ ] Input validation (Zod schemas)
@@ -183,23 +197,26 @@ POST   /api/cart/sync               // Sync guest cart on login
 ---
 
 ### Task 1.4: Cart UI Components
+
 **Priority**: Critical  
 **Effort**: 12 hours  
 **Developer**: Frontend Developer
 
 **Deliverables:**
+
 ```typescript
 // components/features/cart/
-- CartButton.tsx              // Floating cart icon with badge
-- CartDrawer.tsx              // Side panel cart view
-- CartItem.tsx                // Individual cart item card
-- CartSummary.tsx             // Pricing breakdown
-- EmptyCart.tsx               // Empty state with CTA
-- CartItemQuantity.tsx        // Quantity stepper
-- CartItemActions.tsx         // Remove, save for later
+-CartButton.tsx - // Floating cart icon with badge
+  CartDrawer.tsx - // Side panel cart view
+  CartItem.tsx - // Individual cart item card
+  CartSummary.tsx - // Pricing breakdown
+  EmptyCart.tsx - // Empty state with CTA
+  CartItemQuantity.tsx - // Quantity stepper
+  CartItemActions.tsx; // Remove, save for later
 ```
 
 **Acceptance Criteria:**
+
 - [ ] Mobile responsive design
 - [ ] Optimistic UI updates
 - [ ] Loading states for all actions
@@ -213,11 +230,13 @@ POST   /api/cart/sync               // Sync guest cart on login
 ---
 
 ### Task 1.5: Cart Integration
+
 **Priority**: High  
 **Effort**: 4 hours  
 **Developer**: Frontend Lead
 
 **Deliverables:**
+
 ```typescript
 // app/products/[id]/page.tsx
 - Add to cart button integration
@@ -231,6 +250,7 @@ POST   /api/cart/sync               // Sync guest cart on login
 ```
 
 **Acceptance Criteria:**
+
 - [ ] Add to cart from product pages
 - [ ] Cart accessible from all pages
 - [ ] Real-time cart updates
@@ -245,24 +265,27 @@ POST   /api/cart/sync               // Sync guest cart on login
 ## PHASE 2: CHECKOUT FLOW (Week 2)
 
 ### Task 2.1: Checkout Service Layer
+
 **Priority**: Critical  
 **Effort**: 10 hours  
 **Developer**: Backend Lead
 
 **Deliverables:**
+
 ```typescript
 // lib/services/checkout.service.ts
 class CheckoutService {
-  validateCheckout(cartId: string): Promise<CheckoutValidation>
-  calculateDeliveryFee(address: Address, farmId: string): Promise<number>
-  getAvailableTimeSlots(farmId: string, date: Date): Promise<TimeSlot[]>
-  createOrder(checkoutData: CreateOrderDto): Promise<Order>
-  processPayment(orderId: string, paymentData: PaymentDto): Promise<Payment>
-  sendOrderConfirmation(orderId: string): Promise<void>
+  validateCheckout(cartId: string): Promise<CheckoutValidation>;
+  calculateDeliveryFee(address: Address, farmId: string): Promise<number>;
+  getAvailableTimeSlots(farmId: string, date: Date): Promise<TimeSlot[]>;
+  createOrder(checkoutData: CreateOrderDto): Promise<Order>;
+  processPayment(orderId: string, paymentData: PaymentDto): Promise<Payment>;
+  sendOrderConfirmation(orderId: string): Promise<void>;
 }
 ```
 
 **Acceptance Criteria:**
+
 - [ ] Cart validation (availability, pricing)
 - [ ] Delivery fee calculation from zones
 - [ ] Time slot availability from business hours
@@ -276,11 +299,13 @@ class CheckoutService {
 ---
 
 ### Task 2.2: Payment Integration (Stripe)
+
 **Priority**: Critical  
 **Effort**: 12 hours  
 **Developer**: Backend Lead
 
 **Deliverables:**
+
 ```typescript
 // lib/services/payment.service.ts
 class PaymentService {
@@ -297,6 +322,7 @@ class PaymentService {
 ```
 
 **Acceptance Criteria:**
+
 - [ ] Stripe Elements integration
 - [ ] Payment intent creation
 - [ ] 3D Secure support
@@ -310,27 +336,29 @@ class PaymentService {
 ---
 
 ### Task 2.3: Checkout Wizard Component
+
 **Priority**: Critical  
 **Effort**: 16 hours  
 **Developer**: Frontend Developer
 
 **Deliverables:**
+
 ```typescript
 // components/features/checkout/
-- CheckoutWizard.tsx           // Multi-step orchestrator
-- CheckoutStep.tsx             // Individual step wrapper
-- CheckoutProgress.tsx         // Step indicator
-- CheckoutNavigation.tsx       // Next/back buttons
-
-// Steps:
-- ReviewCartStep.tsx           // Step 1: Cart review
-- DeliveryStep.tsx             // Step 2: Delivery method & address
-- PaymentStep.tsx              // Step 3: Payment method
-- ReviewOrderStep.tsx          // Step 4: Final review
-- ConfirmationStep.tsx         // Step 5: Success page
+-CheckoutWizard.tsx - // Multi-step orchestrator
+  CheckoutStep.tsx - // Individual step wrapper
+  CheckoutProgress.tsx - // Step indicator
+  CheckoutNavigation.tsx - // Next/back buttons
+  // Steps:
+  ReviewCartStep.tsx - // Step 1: Cart review
+  DeliveryStep.tsx - // Step 2: Delivery method & address
+  PaymentStep.tsx - // Step 3: Payment method
+  ReviewOrderStep.tsx - // Step 4: Final review
+  ConfirmationStep.tsx; // Step 5: Success page
 ```
 
 **Acceptance Criteria:**
+
 - [ ] 5-step wizard flow
 - [ ] Step validation before proceeding
 - [ ] Back navigation preserves data
@@ -344,22 +372,25 @@ class PaymentService {
 ---
 
 ### Task 2.4: Delivery Selection Components
+
 **Priority**: High  
 **Effort**: 10 hours  
 **Developer**: Frontend Developer
 
 **Deliverables:**
+
 ```typescript
 // components/features/checkout/
-- DeliveryMethodSelector.tsx   // Pickup vs Delivery
-- AddressForm.tsx              // Address input with validation
-- AddressAutocomplete.tsx      // Google Places autocomplete
-- DeliveryZoneDisplay.tsx      // Zone info and fee
-- DeliveryDatePicker.tsx       // Calendar with available dates
-- TimeSlotSelector.tsx         // Available time slots
+-DeliveryMethodSelector.tsx - // Pickup vs Delivery
+  AddressForm.tsx - // Address input with validation
+  AddressAutocomplete.tsx - // Google Places autocomplete
+  DeliveryZoneDisplay.tsx - // Zone info and fee
+  DeliveryDatePicker.tsx - // Calendar with available dates
+  TimeSlotSelector.tsx; // Available time slots
 ```
 
 **Acceptance Criteria:**
+
 - [ ] Pickup/delivery toggle
 - [ ] Address validation (Zod)
 - [ ] Google Places integration
@@ -373,22 +404,25 @@ class PaymentService {
 ---
 
 ### Task 2.5: Payment Components
+
 **Priority**: Critical  
 **Effort**: 12 hours  
 **Developer**: Frontend Developer
 
 **Deliverables:**
+
 ```typescript
 // components/features/checkout/
-- PaymentMethodSelector.tsx    // Payment method cards
-- StripeCardElement.tsx        // Stripe Elements wrapper
-- PaymentForm.tsx              // Payment information form
-- DepositInfoCard.tsx          // Deposit requirements display
-- PaymentSummary.tsx           // Payment breakdown
-- SecurePaymentBadge.tsx       // Security indicators
+-PaymentMethodSelector.tsx - // Payment method cards
+  StripeCardElement.tsx - // Stripe Elements wrapper
+  PaymentForm.tsx - // Payment information form
+  DepositInfoCard.tsx - // Deposit requirements display
+  PaymentSummary.tsx - // Payment breakdown
+  SecurePaymentBadge.tsx; // Security indicators
 ```
 
 **Acceptance Criteria:**
+
 - [ ] Stripe Elements integration
 - [ ] Card validation
 - [ ] Payment method selection
@@ -402,23 +436,26 @@ class PaymentService {
 ---
 
 ### Task 2.6: Order Review & Confirmation
+
 **Priority**: High  
 **Effort**: 8 hours  
 **Developer**: Frontend Developer
 
 **Deliverables:**
+
 ```typescript
 // components/features/checkout/
-- OrderReviewCard.tsx          // Complete order summary
-- OrderItemsList.tsx           // Items in order
-- OrderTotalsBreakdown.tsx     // Pricing details
-- DeliveryInfoCard.tsx         // Delivery details
-- PaymentInfoCard.tsx          // Payment summary
-- OrderConfirmation.tsx        // Success page
-- OrderNumberDisplay.tsx       // Order number badge
+-OrderReviewCard.tsx - // Complete order summary
+  OrderItemsList.tsx - // Items in order
+  OrderTotalsBreakdown.tsx - // Pricing details
+  DeliveryInfoCard.tsx - // Delivery details
+  PaymentInfoCard.tsx - // Payment summary
+  OrderConfirmation.tsx - // Success page
+  OrderNumberDisplay.tsx; // Order number badge
 ```
 
 **Acceptance Criteria:**
+
 - [ ] Complete order summary
 - [ ] Edit links to previous steps
 - [ ] Terms & conditions checkbox
@@ -432,22 +469,25 @@ class PaymentService {
 ---
 
 ### Task 2.7: Checkout API Endpoints
+
 **Priority**: Critical  
 **Effort**: 10 hours  
 **Developer**: Full-Stack Developer
 
 **Deliverables:**
+
 ```typescript
 // app/api/checkout/
-POST   /api/checkout/validate       // Validate cart before checkout
-POST   /api/checkout/delivery       // Calculate delivery fee
-GET    /api/checkout/timeslots      // Get available slots
-POST   /api/checkout/order          // Create order
-POST   /api/checkout/payment        // Process payment
-GET    /api/checkout/confirm/[id]   // Get order confirmation
+POST / api / checkout / validate; // Validate cart before checkout
+POST / api / checkout / delivery; // Calculate delivery fee
+GET / api / checkout / timeslots; // Get available slots
+POST / api / checkout / order; // Create order
+POST / api / checkout / payment; // Process payment
+GET / api / checkout / confirm / [id]; // Get order confirmation
 ```
 
 **Acceptance Criteria:**
+
 - [ ] Cart validation endpoint
 - [ ] Delivery fee calculation
 - [ ] Time slot availability
@@ -463,25 +503,28 @@ GET    /api/checkout/confirm/[id]   // Get order confirmation
 ## PHASE 3: ORDER MANAGEMENT (Week 3)
 
 ### Task 3.1: Order Service Layer
+
 **Priority**: Critical  
 **Effort**: 10 hours  
 **Developer**: Backend Lead
 
 **Deliverables:**
+
 ```typescript
 // lib/services/order.service.ts
 class OrderService {
-  getOrders(userId: string, filters: OrderFilters): Promise<Order[]>
-  getOrderById(orderId: string): Promise<Order>
-  updateOrderStatus(orderId: string, status: OrderStatus): Promise<Order>
-  cancelOrder(orderId: string, reason: string): Promise<Order>
-  reorderFromOrder(orderId: string): Promise<Cart>
-  getOrderStats(farmId: string, period: DateRange): Promise<OrderStats>
-  exportOrders(farmId: string, filters: OrderFilters): Promise<Buffer>
+  getOrders(userId: string, filters: OrderFilters): Promise<Order[]>;
+  getOrderById(orderId: string): Promise<Order>;
+  updateOrderStatus(orderId: string, status: OrderStatus): Promise<Order>;
+  cancelOrder(orderId: string, reason: string): Promise<Order>;
+  reorderFromOrder(orderId: string): Promise<Cart>;
+  getOrderStats(farmId: string, period: DateRange): Promise<OrderStats>;
+  exportOrders(farmId: string, filters: OrderFilters): Promise<Buffer>;
 }
 ```
 
 **Acceptance Criteria:**
+
 - [ ] CRUD operations for orders
 - [ ] Status workflow validation
 - [ ] Authorization checks
@@ -495,27 +538,29 @@ class OrderService {
 ---
 
 ### Task 3.2: Customer Order Views
+
 **Priority**: High  
 **Effort**: 12 hours  
 **Developer**: Frontend Developer
 
 **Deliverables:**
+
 ```typescript
 // app/(customer)/orders/
-- page.tsx                     // Order history list
-- [id]/page.tsx                // Order details page
-
-// components/features/orders/
-- OrderCard.tsx                // Order summary card
-- OrderList.tsx                // Paginated order list
-- OrderFilters.tsx             // Status, date filters
-- OrderDetails.tsx             // Full order information
-- OrderStatusBadge.tsx         // Status indicator
-- OrderTimeline.tsx            // Status history timeline
-- OrderActions.tsx             // Cancel, reorder, review
+-page.tsx - // Order history list
+  [id] / page.tsx - // Order details page
+  // components/features/orders/
+  OrderCard.tsx - // Order summary card
+  OrderList.tsx - // Paginated order list
+  OrderFilters.tsx - // Status, date filters
+  OrderDetails.tsx - // Full order information
+  OrderStatusBadge.tsx - // Status indicator
+  OrderTimeline.tsx - // Status history timeline
+  OrderActions.tsx; // Cancel, reorder, review
 ```
 
 **Acceptance Criteria:**
+
 - [ ] Order history with pagination
 - [ ] Filter by status, date range
 - [ ] Order details page
@@ -530,11 +575,13 @@ class OrderService {
 ---
 
 ### Task 3.3: Order Tracking System
+
 **Priority**: High  
 **Effort**: 8 hours  
 **Developer**: Full-Stack Developer
 
 **Deliverables:**
+
 ```typescript
 // components/features/orders/
 - OrderTracking.tsx            // Tracking interface
@@ -549,6 +596,7 @@ class OrderService {
 ```
 
 **Acceptance Criteria:**
+
 - [ ] Visual order status timeline
 - [ ] Real-time status updates
 - [ ] Estimated delivery time
@@ -561,29 +609,31 @@ class OrderService {
 ---
 
 ### Task 3.4: Farmer Order Dashboard
+
 **Priority**: Critical  
 **Effort**: 16 hours  
 **Developer**: Full-Stack Developer
 
 **Deliverables:**
+
 ```typescript
 // app/(farmer)/orders/
-- page.tsx                     // Main dashboard
-- [id]/page.tsx                // Order management page
-
-// components/features/orders/farmer/
-- FarmerOrderDashboard.tsx     // Dashboard layout
-- OrdersTable.tsx              // Data table with sorting
-- OrderFilters.tsx             // Advanced filters
-- OrderStatusUpdater.tsx       // Status change interface
-- OrderDetailsPanel.tsx        // Side panel details
-- FarmerOrderActions.tsx       // Accept, reject, complete
-- OrderNotes.tsx               // Private farmer notes
-- OrderStats.tsx               // Revenue, count metrics
-- QuickActions.tsx             // Batch operations
+-page.tsx - // Main dashboard
+  [id] / page.tsx - // Order management page
+  // components/features/orders/farmer/
+  FarmerOrderDashboard.tsx - // Dashboard layout
+  OrdersTable.tsx - // Data table with sorting
+  OrderFilters.tsx - // Advanced filters
+  OrderStatusUpdater.tsx - // Status change interface
+  OrderDetailsPanel.tsx - // Side panel details
+  FarmerOrderActions.tsx - // Accept, reject, complete
+  OrderNotes.tsx - // Private farmer notes
+  OrderStats.tsx - // Revenue, count metrics
+  QuickActions.tsx; // Batch operations
 ```
 
 **Acceptance Criteria:**
+
 - [ ] Order list with advanced filters
 - [ ] Sortable data table
 - [ ] Quick status updates
@@ -598,11 +648,13 @@ class OrderService {
 ---
 
 ### Task 3.5: Order Management API
+
 **Priority**: Critical  
 **Effort**: 10 hours  
 **Developer**: Backend Developer
 
 **Deliverables:**
+
 ```typescript
 // Customer endpoints
 GET    /api/orders                  // Get user's orders
@@ -620,6 +672,7 @@ POST   /api/farmer/orders/export    // Export orders
 ```
 
 **Acceptance Criteria:**
+
 - [ ] Role-based access control
 - [ ] Authorization validation
 - [ ] Query optimization
@@ -633,11 +686,13 @@ POST   /api/farmer/orders/export    // Export orders
 ---
 
 ### Task 3.6: Order Notifications
+
 **Priority**: High  
 **Effort**: 6 hours  
 **Developer**: Backend Developer
 
 **Deliverables:**
+
 ```typescript
 // lib/services/notification.service.ts
 - Email templates for order statuses
@@ -655,6 +710,7 @@ POST   /api/farmer/orders/export    // Export orders
 ```
 
 **Acceptance Criteria:**
+
 - [ ] Email templates for all statuses
 - [ ] User notification preferences respected
 - [ ] Real-time in-app notifications
@@ -670,23 +726,29 @@ POST   /api/farmer/orders/export    // Export orders
 ## PHASE 4: INVOICE & POLISH (Week 4)
 
 ### Task 4.1: Invoice Service Layer
+
 **Priority**: High  
 **Effort**: 8 hours  
 **Developer**: Backend Lead
 
 **Deliverables:**
+
 ```typescript
 // lib/services/invoice.service.ts
 class InvoiceService {
-  generateInvoice(orderId: string): Promise<Invoice>
-  getInvoice(invoiceId: string): Promise<Invoice>
-  generateInvoicePDF(invoiceId: string): Promise<Buffer>
-  sendInvoiceEmail(invoiceId: string): Promise<void>
-  updateInvoiceStatus(invoiceId: string, status: InvoiceStatus): Promise<Invoice>
+  generateInvoice(orderId: string): Promise<Invoice>;
+  getInvoice(invoiceId: string): Promise<Invoice>;
+  generateInvoicePDF(invoiceId: string): Promise<Buffer>;
+  sendInvoiceEmail(invoiceId: string): Promise<void>;
+  updateInvoiceStatus(
+    invoiceId: string,
+    status: InvoiceStatus,
+  ): Promise<Invoice>;
 }
 ```
 
 **Acceptance Criteria:**
+
 - [ ] Automatic invoice generation
 - [ ] PDF generation with farm branding
 - [ ] Invoice number generation
@@ -699,11 +761,13 @@ class InvoiceService {
 ---
 
 ### Task 4.2: Invoice PDF Generation
+
 **Priority**: High  
 **Effort**: 10 hours  
 **Developer**: Full-Stack Developer
 
 **Deliverables:**
+
 ```typescript
 // lib/pdf/invoice-generator.ts
 - PDF template with farm branding
@@ -716,6 +780,7 @@ class InvoiceService {
 ```
 
 **Acceptance Criteria:**
+
 - [ ] Professional invoice design
 - [ ] Farm logo and branding
 - [ ] All order details included
@@ -729,21 +794,24 @@ class InvoiceService {
 ---
 
 ### Task 4.3: Invoice UI Components
+
 **Priority**: Medium  
 **Effort**: 6 hours  
 **Developer**: Frontend Developer
 
 **Deliverables:**
+
 ```typescript
 // components/features/invoices/
-- InvoiceCard.tsx              // Invoice summary
-- InvoicePreview.tsx           // Web preview
-- InvoiceDownload.tsx          // Download button
-- InvoiceEmail.tsx             // Email invoice button
-- InvoiceList.tsx              // User invoice history
+-InvoiceCard.tsx - // Invoice summary
+  InvoicePreview.tsx - // Web preview
+  InvoiceDownload.tsx - // Download button
+  InvoiceEmail.tsx - // Email invoice button
+  InvoiceList.tsx; // User invoice history
 ```
 
 **Acceptance Criteria:**
+
 - [ ] Invoice preview in browser
 - [ ] Download PDF button
 - [ ] Email invoice button
@@ -756,19 +824,22 @@ class InvoiceService {
 ---
 
 ### Task 4.4: Invoice API Endpoints
+
 **Priority**: Medium  
 **Effort**: 4 hours  
 **Developer**: Backend Developer
 
 **Deliverables:**
+
 ```typescript
-GET    /api/invoices/[id]           // Get invoice
-GET    /api/invoices/[id]/pdf       // Download PDF
-POST   /api/invoices/[id]/send      // Email invoice
-GET    /api/invoices/[id]/preview   // Web preview
+GET / api / invoices / [id]; // Get invoice
+GET / api / invoices / [id] / pdf; // Download PDF
+POST / api / invoices / [id] / send; // Email invoice
+GET / api / invoices / [id] / preview; // Web preview
 ```
 
 **Acceptance Criteria:**
+
 - [ ] Authorization validation
 - [ ] PDF streaming
 - [ ] Email sending
@@ -780,11 +851,13 @@ GET    /api/invoices/[id]/preview   // Web preview
 ---
 
 ### Task 4.5: Comprehensive Testing
+
 **Priority**: Critical  
 **Effort**: 16 hours  
 **Developer**: QA Engineer + All Developers
 
 **Deliverables:**
+
 ```yaml
 unit_tests:
   - Cart store: 15 tests
@@ -812,6 +885,7 @@ total_target: 150+ tests, 90%+ coverage
 ```
 
 **Acceptance Criteria:**
+
 - [ ] All unit tests passing
 - [ ] All integration tests passing
 - [ ] E2E tests covering critical paths
@@ -825,11 +899,13 @@ total_target: 150+ tests, 90%+ coverage
 ---
 
 ### Task 4.6: Documentation
+
 **Priority**: High  
 **Effort**: 8 hours  
 **Developer**: Technical Writer + Lead Developer
 
 **Deliverables:**
+
 ```markdown
 1. SPRINT_6_COMPLETION.md
    - Complete feature list
@@ -857,6 +933,7 @@ total_target: 150+ tests, 90%+ coverage
 ```
 
 **Acceptance Criteria:**
+
 - [ ] Comprehensive API documentation
 - [ ] Component usage examples
 - [ ] Testing guide
@@ -869,11 +946,13 @@ total_target: 150+ tests, 90%+ coverage
 ---
 
 ### Task 4.7: Performance Optimization
+
 **Priority**: High  
 **Effort**: 6 hours  
 **Developer**: Lead Developer
 
 **Deliverables:**
+
 ```yaml
 optimizations:
   - Cart state: Debounced updates
@@ -886,6 +965,7 @@ optimizations:
 ```
 
 **Acceptance Criteria:**
+
 - [ ] <2s checkout completion
 - [ ] <500ms cart operations
 - [ ] <1s order list load
@@ -898,11 +978,13 @@ optimizations:
 ---
 
 ### Task 4.8: Final Polish & Bug Fixes
+
 **Priority**: Medium  
 **Effort**: 8 hours  
 **Developer**: All Team Members
 
 **Deliverables:**
+
 ```yaml
 polish:
   - UI consistency review
@@ -915,6 +997,7 @@ polish:
 ```
 
 **Acceptance Criteria:**
+
 - [ ] All known bugs fixed
 - [ ] Consistent UI/UX
 - [ ] Mobile responsive verified
@@ -930,6 +1013,7 @@ polish:
 ## 📊 TASK SUMMARY
 
 ### Total Effort Estimation
+
 ```yaml
 Phase 1 (Cart):       38 hours
 Phase 2 (Checkout):   78 hours
@@ -946,18 +1030,20 @@ Buffer: 50% (244-404 hours)
 ```
 
 ### Task Distribution
+
 ```yaml
-Backend:      90 hours (38%)
-Frontend:     108 hours (46%)
-Full-Stack:   28 hours (12%)
-QA/Polish:    10 hours (4%)
+Backend: 90 hours (38%)
+Frontend: 108 hours (46%)
+Full-Stack: 28 hours (12%)
+QA/Polish: 10 hours (4%)
 ```
 
 ### Priority Distribution
+
 ```yaml
-Critical:     14 tasks (58%)
-High:         8 tasks (33%)
-Medium:       2 tasks (9%)
+Critical: 14 tasks (58%)
+High: 8 tasks (33%)
+Medium: 2 tasks (9%)
 ```
 
 ---
@@ -965,21 +1051,25 @@ Medium:       2 tasks (9%)
 ## 🎯 DAILY STANDUPS & CHECKPOINTS
 
 ### Week 1 Checkpoints
+
 - **Day 2**: Cart state management complete
 - **Day 3**: Cart API complete
 - **Day 5**: Cart UI complete and integrated
 
 ### Week 2 Checkpoints
+
 - **Day 7**: Checkout service complete
 - **Day 9**: Payment integration complete
 - **Day 10**: Checkout flow complete
 
 ### Week 3 Checkpoints
+
 - **Day 12**: Customer order views complete
 - **Day 14**: Farmer dashboard complete
 - **Day 15**: Order management complete
 
 ### Week 4 Checkpoints
+
 - **Day 17**: Invoice system complete
 - **Day 19**: Testing complete
 - **Day 20**: Documentation and polish complete
@@ -989,6 +1079,7 @@ Medium:       2 tasks (9%)
 ## 🚨 RISK MANAGEMENT
 
 ### High Risks
+
 ```yaml
 payment_integration:
   risk: Stripe integration complexity
@@ -1007,15 +1098,16 @@ pdf_generation:
 ```
 
 ### Medium Risks
+
 ```yaml
 test_coverage:
   risk: Not meeting 90% target
   mitigation: TDD approach, pair programming
-  
+
 performance:
   risk: Slow checkout on mobile
   mitigation: Early performance testing
-  
+
 scope_creep:
   risk: Feature requests during sprint
   mitigation: Strict backlog management
@@ -1026,6 +1118,7 @@ scope_creep:
 ## 🎊 SPRINT SUCCESS CRITERIA
 
 ### Must Have (P0)
+
 - [x] Shopping cart functionality
 - [x] Multi-step checkout
 - [x] Payment processing
@@ -1034,6 +1127,7 @@ scope_creep:
 - [x] Invoice generation
 
 ### Should Have (P1)
+
 - [ ] Real-time order updates
 - [ ] Advanced order filters
 - [ ] Order export
@@ -1041,6 +1135,7 @@ scope_creep:
 - [ ] Order analytics
 
 ### Nice to Have (P2)
+
 - [ ] Order tracking map
 - [ ] QR code payments
 - [ ] Gift card support
@@ -1052,6 +1147,7 @@ scope_creep:
 ## 📈 METRICS & MONITORING
 
 ### Development Metrics
+
 ```yaml
 velocity:
   - Story points completed per day
@@ -1071,6 +1167,7 @@ performance:
 ```
 
 ### Production Metrics (Post-Launch)
+
 ```yaml
 business:
   - Order conversion rate
@@ -1096,6 +1193,7 @@ user_experience:
 ## 🚀 DEPLOYMENT CHECKLIST
 
 ### Pre-Deployment
+
 - [ ] All tests passing (150+ tests)
 - [ ] Code review approved
 - [ ] Security audit complete
@@ -1108,6 +1206,7 @@ user_experience:
 - [ ] Monitoring configured
 
 ### Deployment
+
 - [ ] Run database migrations
 - [ ] Deploy backend changes
 - [ ] Deploy frontend changes
@@ -1118,6 +1217,7 @@ user_experience:
 - [ ] Check real-time updates
 
 ### Post-Deployment
+
 - [ ] Smoke tests passing
 - [ ] Monitor metrics dashboard
 - [ ] User acceptance testing
@@ -1130,6 +1230,7 @@ user_experience:
 ## 📞 TEAM CONTACTS & RESOURCES
 
 ### Sprint Team
+
 ```yaml
 sprint_master: TBD
 tech_lead: TBD
@@ -1144,6 +1245,7 @@ developers:
 ```
 
 ### Resources
+
 - **Design Files**: [Figma link]
 - **API Spec**: `/docs/API_REFERENCE.md`
 - **Slack**: `#sprint-6-orders`
@@ -1158,6 +1260,7 @@ developers:
 **Status**: 🚀 **READY TO BEGIN IMPLEMENTATION**
 
 **Next Actions**:
+
 1. ✅ Sprint planning meeting completed
 2. ✅ Tasks assigned to team members
 3. ✅ Environment setup verified

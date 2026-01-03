@@ -29,7 +29,7 @@ import {
   Package,
   Plus,
   Trash2,
-  Truck
+  Truck,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { CheckoutStepProps } from "../CheckoutWizard";
@@ -128,7 +128,10 @@ export function DeliveryDetailsStep({
           }
         }
       } catch (error) {
-        cartLogger.error("Error loading addresses", error instanceof Error ? error : new Error(String(error)));
+        cartLogger.error(
+          "Error loading addresses",
+          error instanceof Error ? error : new Error(String(error)),
+        );
       } finally {
         setIsLoadingAddresses(false);
       }
@@ -216,7 +219,10 @@ export function DeliveryDetailsStep({
         });
       }
     } catch (error) {
-      cartLogger.error("Error saving address", error instanceof Error ? error : new Error(String(error)));
+      cartLogger.error(
+        "Error saving address",
+        error instanceof Error ? error : new Error(String(error)),
+      );
     } finally {
       setIsSavingAddress(false);
     }
@@ -239,7 +245,11 @@ export function DeliveryDetailsStep({
         }
       }
     } catch (error) {
-      cartLogger.error("Error deleting address", error instanceof Error ? error : new Error(String(error)), { addressId });
+      cartLogger.error(
+        "Error deleting address",
+        error instanceof Error ? error : new Error(String(error)),
+        { addressId },
+      );
     }
   };
 

@@ -196,7 +196,10 @@ export default function MarketplacePage() {
         }
       }
     } catch (error) {
-      marketsLogger.error("Failed to fetch marketplace data", error instanceof Error ? error : new Error(String(error)));
+      marketsLogger.error(
+        "Failed to fetch marketplace data",
+        error instanceof Error ? error : new Error(String(error)),
+      );
       // Fallback to mock data on error
       setFarms(MOCK_FARMS);
       setProducts(MOCK_PRODUCTS);
@@ -309,19 +312,21 @@ export default function MarketplacePage() {
             <div className="flex gap-2">
               <button
                 onClick={() => setFilters({ ...filters, contentType: "all" })}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${filters.contentType === "all"
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  filters.contentType === "all"
                     ? "bg-agricultural-600 text-white"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
+                }`}
               >
                 All ({filteredFarms.length + filteredProducts.length})
               </button>
               <button
                 onClick={() => setFilters({ ...filters, contentType: "farms" })}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${filters.contentType === "farms"
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  filters.contentType === "farms"
                     ? "bg-agricultural-600 text-white"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
+                }`}
               >
                 <Store className="inline h-4 w-4 mr-1" />
                 Farms ({filteredFarms.length})
@@ -330,10 +335,11 @@ export default function MarketplacePage() {
                 onClick={() =>
                   setFilters({ ...filters, contentType: "products" })
                 }
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${filters.contentType === "products"
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  filters.contentType === "products"
                     ? "bg-agricultural-600 text-white"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
+                }`}
               >
                 <Leaf className="inline h-4 w-4 mr-1" />
                 Products ({filteredProducts.length})
@@ -351,10 +357,10 @@ export default function MarketplacePage() {
                 <span className="hidden sm:inline">Filters</span>
                 {(filters.categories.length > 0 ||
                   filters.certifications.length > 0) && (
-                    <span className="bg-agricultural-600 text-white text-xs rounded-full px-2 py-0.5">
-                      {filters.categories.length + filters.certifications.length}
-                    </span>
-                  )}
+                  <span className="bg-agricultural-600 text-white text-xs rounded-full px-2 py-0.5">
+                    {filters.categories.length + filters.certifications.length}
+                  </span>
+                )}
               </button>
 
               {/* Sort Dropdown */}
@@ -378,19 +384,21 @@ export default function MarketplacePage() {
               <div className="flex gap-1 border rounded-lg p-1">
                 <button
                   onClick={() => setFilters({ ...filters, viewMode: "list" })}
-                  className={`p-2 rounded ${filters.viewMode === "list"
+                  className={`p-2 rounded ${
+                    filters.viewMode === "list"
                       ? "bg-agricultural-600 text-white"
                       : "text-gray-600 hover:bg-gray-100"
-                    }`}
+                  }`}
                 >
                   <List className="h-4 w-4" />
                 </button>
                 <button
                   onClick={() => setFilters({ ...filters, viewMode: "map" })}
-                  className={`p-2 rounded ${filters.viewMode === "map"
+                  className={`p-2 rounded ${
+                    filters.viewMode === "map"
                       ? "bg-agricultural-600 text-white"
                       : "text-gray-600 hover:bg-gray-100"
-                    }`}
+                  }`}
                 >
                   <MapIcon className="h-4 w-4" />
                 </button>

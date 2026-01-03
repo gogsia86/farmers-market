@@ -52,7 +52,10 @@ export async function checkFarmerAuth(): Promise<FarmerAuthResult> {
       role: session.user.role,
     };
   } catch (error) {
-    authLogger.error("Farmer auth check error", error instanceof Error ? error : new Error(String(error)));
+    authLogger.error(
+      "Farmer auth check error",
+      error instanceof Error ? error : new Error(String(error)),
+    );
     return {
       authenticated: false,
       authorized: false,
@@ -99,7 +102,10 @@ export async function requireFarmerAuth(
       role: session.user.role,
     };
   } catch (error) {
-    authLogger.error("Farmer auth error", error instanceof Error ? error : new Error(String(error)));
+    authLogger.error(
+      "Farmer auth error",
+      error instanceof Error ? error : new Error(String(error)),
+    );
     return {
       authenticated: false,
       authorized: false,
@@ -122,7 +128,10 @@ export async function getUserFarmId(userId: string): Promise<string | null> {
 
     return farm?.id || null;
   } catch (error) {
-    authLogger.error("Get user farm error", error instanceof Error ? error : new Error(String(error)));
+    authLogger.error(
+      "Get user farm error",
+      error instanceof Error ? error : new Error(String(error)),
+    );
     return null;
   }
 }
@@ -146,7 +155,10 @@ export async function checkFarmOwnership(
 
     return !!farm;
   } catch (error) {
-    authLogger.error("Check farm ownership error", error instanceof Error ? error : new Error(String(error)));
+    authLogger.error(
+      "Check farm ownership error",
+      error instanceof Error ? error : new Error(String(error)),
+    );
     return false;
   }
 }

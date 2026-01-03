@@ -60,9 +60,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     });
 
     if (!verificationResponse.success) {
-      logger.error("Webhook signature verification failed", verificationResponse.error, {
-        operation: "verifySignature",
-      });
+      logger.error(
+        "Webhook signature verification failed",
+        verificationResponse.error,
+        {
+          operation: "verifySignature",
+        },
+      );
 
       return NextResponse.json(
         {
@@ -539,7 +543,10 @@ async function handlePaymentMethodAttached(
     operation: "handlePaymentMethodAttached",
     paymentMethodId: paymentMethod.id,
     type: paymentMethod.type,
-    customerId: typeof paymentMethod.customer === 'string' ? paymentMethod.customer : paymentMethod.customer?.id ?? undefined,
+    customerId:
+      typeof paymentMethod.customer === "string"
+        ? paymentMethod.customer
+        : (paymentMethod.customer?.id ?? undefined),
   });
 
   // Optional: Store payment method details for future use

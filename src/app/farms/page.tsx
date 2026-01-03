@@ -149,9 +149,13 @@ async function getFarms(): Promise<any[]> {
       };
     });
   } catch (error) {
-    farmLogger.error("Failed to fetch public farms", error instanceof Error ? error : new Error(String(error)), {
-      path: "/farms",
-    });
+    farmLogger.error(
+      "Failed to fetch public farms",
+      error instanceof Error ? error : new Error(String(error)),
+      {
+        path: "/farms",
+      },
+    );
     return [];
   }
 }

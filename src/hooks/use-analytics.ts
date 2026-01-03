@@ -301,7 +301,9 @@ export function useTrackSearchEvent() {
       analyticsLogger.debug("Search event tracked", { eventId: data.data?.id });
     },
     onError: (error: Error) => {
-      analyticsLogger.error("Failed to track search event", { errorMessage: error.message });
+      analyticsLogger.error("Failed to track search event", {
+        errorMessage: error.message,
+      });
     },
   });
 
@@ -340,10 +342,14 @@ export function useTrackInteraction() {
     mutationFn: trackInteractionAPI,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["analytics"] });
-      analyticsLogger.debug("Interaction tracked", { interactionType: data.data?.type });
+      analyticsLogger.debug("Interaction tracked", {
+        interactionType: data.data?.type,
+      });
     },
     onError: (error: Error) => {
-      analyticsLogger.error("Failed to track interaction", { errorMessage: error.message });
+      analyticsLogger.error("Failed to track interaction", {
+        errorMessage: error.message,
+      });
     },
   });
 
@@ -386,7 +392,9 @@ export function useAggregateAnalytics() {
       queryClient.invalidateQueries({ queryKey: ["analytics"] });
     },
     onError: (error: Error) => {
-      analyticsLogger.error("Failed to aggregate analytics", { errorMessage: error.message });
+      analyticsLogger.error("Failed to aggregate analytics", {
+        errorMessage: error.message,
+      });
     },
   });
 
@@ -571,7 +579,10 @@ export function useSearchTracking(sessionId: string) {
       currentSearchEventId = response.data?.id;
       return response;
     } catch (error) {
-      analyticsLogger.error("Search tracking failed", error instanceof Error ? error : new Error(String(error)));
+      analyticsLogger.error(
+        "Search tracking failed",
+        error instanceof Error ? error : new Error(String(error)),
+      );
     }
   };
 

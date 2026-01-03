@@ -245,8 +245,9 @@ export function BusinessHoursEditor({
                     disabled={disabled}
                   >
                     <svg
-                      className={`h-5 w-5 transition-transform ${isExpanded ? "rotate-90" : ""
-                        }`}
+                      className={`h-5 w-5 transition-transform ${
+                        isExpanded ? "rotate-90" : ""
+                      }`}
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"

@@ -27,11 +27,11 @@ This guide provides step-by-step instructions for consolidating duplicate API ro
 
 ### Routes Being Consolidated
 
-| Old Routes | New Consolidated Route | Priority |
-|------------|------------------------|----------|
-| `/api/farmer/`, `/api/farmers/`, `/api/farming/` | `/api/farmers/` | HIGH |
-| `/api/payment/`, `/api/payments/` | `/api/payments/` | MEDIUM |
-| `/api/agricultural/`, `/api/agricultural-consciousness/` | `/api/agricultural/` | LOW |
+| Old Routes                                               | New Consolidated Route | Priority |
+| -------------------------------------------------------- | ---------------------- | -------- |
+| `/api/farmer/`, `/api/farmers/`, `/api/farming/`         | `/api/farmers/`        | HIGH     |
+| `/api/payment/`, `/api/payments/`                        | `/api/payments/`       | MEDIUM   |
+| `/api/agricultural/`, `/api/agricultural-consciousness/` | `/api/agricultural/`   | LOW      |
 
 ---
 
@@ -98,7 +98,7 @@ This guide provides step-by-step instructions for consolidating duplicate API ro
  * This route is maintained for backward compatibility only.
  * Will be removed after 2025-06-01
  */
-export { GET } from '../../farmers/dashboard/route';
+export { GET } from "../../farmers/dashboard/route";
 ```
 
 #### Step 2: Move Finances
@@ -113,7 +113,7 @@ export { GET } from '../../farmers/dashboard/route';
  * @deprecated Use /api/farmers/finances instead
  * This route is maintained for backward compatibility only.
  */
-export { GET } from '../../farmers/finances/route';
+export { GET } from "../../farmers/finances/route";
 ```
 
 #### Step 3: Restructure Payouts
@@ -121,6 +121,7 @@ export { GET } from '../../farmers/finances/route';
 **Action:** Move payout routes under `/api/farmers/payouts/`
 
 **New Structure:**
+
 - `/api/farmers/payouts/route.ts` (from `/api/farmer/payouts/route.ts`)
 - `/api/farmers/payouts/schedule/route.ts` (from `/api/farmer/payout-schedule/route.ts`)
 
@@ -131,13 +132,13 @@ export { GET } from '../../farmers/finances/route';
 /**
  * @deprecated Use /api/farmers/payouts instead
  */
-export { GET, POST } from '../../farmers/payouts/route';
+export { GET, POST } from "../../farmers/payouts/route";
 
 // /api/farmer/payout-schedule/route.ts (OLD LOCATION - alias)
 /**
  * @deprecated Use /api/farmers/payouts/schedule instead
  */
-export { GET, PUT } from '../../farmers/payouts/schedule/route';
+export { GET, PUT } from "../../farmers/payouts/schedule/route";
 ```
 
 #### Step 4: Move Farming Resources
@@ -145,6 +146,7 @@ export { GET, PUT } from '../../farmers/payouts/schedule/route';
 **Action:** Move all `/api/farming/*` routes to `/api/farmers/resources/*`
 
 **New Structure:**
+
 ```
 /api/farmers/resources/
 ├── advice/route.ts      # From /api/farming/advice
@@ -161,7 +163,7 @@ export { GET, PUT } from '../../farmers/payouts/schedule/route';
 /**
  * @deprecated Use /api/farmers/resources/advice instead
  */
-export { GET } from '../../farmers/resources/advice/route';
+export { GET } from "../../farmers/resources/advice/route";
 
 // Repeat for all farming/* routes
 ```
@@ -171,16 +173,16 @@ export { GET } from '../../farmers/resources/advice/route';
 **Add to all alias routes:**
 
 ```typescript
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   const response = await originalGET(request);
 
   // Add deprecation headers
-  response.headers.set('X-API-Deprecated', 'true');
-  response.headers.set('X-API-Deprecated-Since', '2025-01-01');
-  response.headers.set('X-API-New-Location', '/api/farmers/dashboard');
-  response.headers.set('Sunset', 'Sun, 01 Jun 2025 00:00:00 GMT');
+  response.headers.set("X-API-Deprecated", "true");
+  response.headers.set("X-API-Deprecated-Since", "2025-01-01");
+  response.headers.set("X-API-New-Location", "/api/farmers/dashboard");
+  response.headers.set("Sunset", "Sun, 01 Jun 2025 00:00:00 GMT");
 
   return response;
 }
@@ -232,7 +234,7 @@ export async function GET(request: Request) {
  * @deprecated Use /api/payments/wallet instead
  * This route is maintained for backward compatibility only.
  */
-export { GET, POST } from '../../payments/wallet/route';
+export { GET, POST } from "../../payments/wallet/route";
 ```
 
 ---
@@ -270,7 +272,7 @@ export { GET, POST } from '../../payments/wallet/route';
 /**
  * @deprecated Use /api/agricultural/consciousness instead
  */
-export { GET, POST } from '../agricultural/consciousness/route';
+export { GET, POST } from "../agricultural/consciousness/route";
 ```
 
 ---
@@ -329,10 +331,10 @@ TO:   src/components/features/ExploreButton.tsx
 
 ```typescript
 // OLD
-import { AdvancedAnalyticsDashboard } from '@/components/AdvancedAnalyticsDashboard';
+import { AdvancedAnalyticsDashboard } from "@/components/AdvancedAnalyticsDashboard";
 
 // NEW
-import { AdvancedAnalyticsDashboard } from '@/components/dashboard/AdvancedAnalyticsDashboard';
+import { AdvancedAnalyticsDashboard } from "@/components/dashboard/AdvancedAnalyticsDashboard";
 ```
 
 **Find and Replace Pattern:**
@@ -403,6 +405,7 @@ find src/ -type f -name "*.tsx" -o -name "*.ts" | xargs sed -i 's|@/components/A
 ## 🔄 Migration Timeline
 
 ### Week 1: Farmer Routes
+
 - **Day 1-2:** Implement Phase 4A
   - Create new structure
   - Move routes
@@ -410,15 +413,18 @@ find src/ -type f -name "*.tsx" -o -name "*.ts" | xargs sed -i 's|@/components/A
   - Test thoroughly
 
 ### Week 2: Payment & Agricultural Routes
+
 - **Day 3:** Implement Phase 4B (Payment routes)
 - **Day 4:** Implement Phase 4C (Agricultural routes)
 - **Day 5:** Testing and validation
 
 ### Week 3: Component Organization
+
 - **Day 6:** Implement Phase 4D (Move components)
 - **Day 7:** Update imports, final testing
 
 ### Week 4: Documentation & Polish
+
 - **Day 8-9:** Update all documentation
 - **Day 10:** Final validation and sign-off
 
@@ -429,6 +435,7 @@ find src/ -type f -name "*.tsx" -o -name "*.ts" | xargs sed -i 's|@/components/A
 ### Issue: Import errors after moving components
 
 **Solution:**
+
 ```bash
 # Find all files importing the moved component
 grep -r "from '@/components/OldComponent'" src/
@@ -440,6 +447,7 @@ grep -r "from '@/components/OldComponent'" src/
 ### Issue: API route returns 404
 
 **Solution:**
+
 1. Check route file exists at new location
 2. Verify file is named `route.ts` (not `Route.ts`)
 3. Check exports are correct
@@ -448,6 +456,7 @@ grep -r "from '@/components/OldComponent'" src/
 ### Issue: Tests failing after migration
 
 **Solution:**
+
 1. Update test imports to new paths
 2. Update mock API URLs to new routes
 3. Run `npm run test:watch` to see failures in real-time
@@ -455,6 +464,7 @@ grep -r "from '@/components/OldComponent'" src/
 ### Issue: Backward compatibility alias not working
 
 **Solution:**
+
 1. Verify export syntax: `export { GET } from '../../new/location'`
 2. Check relative path is correct (count `../` carefully)
 3. Ensure both old and new route files exist
@@ -504,6 +514,7 @@ grep -r "from '@/components/OldComponent'" src/
 ## 📊 Migration Status Tracking
 
 ### Phase 4A: Farmer Routes
+
 - [ ] Dashboard consolidated
 - [ ] Finances moved
 - [ ] Payouts restructured
@@ -513,16 +524,19 @@ grep -r "from '@/components/OldComponent'" src/
 - [ ] Documentation updated
 
 ### Phase 4B: Payment Routes
+
 - [ ] Wallet moved
 - [ ] Backward compatibility added
 - [ ] Tests updated
 
 ### Phase 4C: Agricultural Routes
+
 - [ ] Consciousness moved
 - [ ] Backward compatibility added
 - [ ] Tests updated
 
 ### Phase 4D: Component Organization
+
 - [ ] Dashboard components moved
 - [ ] Agricultural components moved
 - [ ] Divine components moved
@@ -564,6 +578,7 @@ grep -r "from '@/components/OldComponent'" src/
 ### If Issues Occur
 
 **Immediate Rollback:**
+
 ```bash
 # Return to pre-migration state
 git reset --hard origin/main
@@ -576,6 +591,7 @@ npm run deploy
 ```
 
 **Partial Rollback:**
+
 ```bash
 # Revert specific phase
 git revert <phase-commit-hash>
@@ -616,32 +632,37 @@ git push origin main
 ### Phase Completion Sign-Off
 
 **Phase 4A - Farmer Routes:**
-- [ ] Implemented by: _______________
-- [ ] Tested by: _______________
-- [ ] Reviewed by: _______________
-- [ ] Date: _______________
+
+- [ ] Implemented by: ******\_\_\_******
+- [ ] Tested by: ******\_\_\_******
+- [ ] Reviewed by: ******\_\_\_******
+- [ ] Date: ******\_\_\_******
 
 **Phase 4B - Payment Routes:**
-- [ ] Implemented by: _______________
-- [ ] Tested by: _______________
-- [ ] Date: _______________
+
+- [ ] Implemented by: ******\_\_\_******
+- [ ] Tested by: ******\_\_\_******
+- [ ] Date: ******\_\_\_******
 
 **Phase 4C - Agricultural Routes:**
-- [ ] Implemented by: _______________
-- [ ] Tested by: _______________
-- [ ] Date: _______________
+
+- [ ] Implemented by: ******\_\_\_******
+- [ ] Tested by: ******\_\_\_******
+- [ ] Date: ******\_\_\_******
 
 **Phase 4D - Component Organization:**
-- [ ] Implemented by: _______________
-- [ ] Tested by: _______________
-- [ ] Date: _______________
+
+- [ ] Implemented by: ******\_\_\_******
+- [ ] Tested by: ******\_\_\_******
+- [ ] Date: ******\_\_\_******
 
 **Final Approval:**
+
 - [ ] All phases complete
 - [ ] All tests passing
 - [ ] Documentation updated
-- [ ] Approved by: _______________
-- [ ] Date: _______________
+- [ ] Approved by: ******\_\_\_******
+- [ ] Date: ******\_\_\_******
 
 ---
 

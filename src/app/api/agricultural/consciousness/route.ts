@@ -59,7 +59,10 @@ export async function GET(_request: NextRequest) {
       traced: process.env.ENABLE_TRACING !== "false",
     });
   } catch (error) {
-    logger.error("Failed to measure agricultural consciousness", error as Error);
+    logger.error(
+      "Failed to measure agricultural consciousness",
+      error as Error,
+    );
 
     return NextResponse.json(
       {

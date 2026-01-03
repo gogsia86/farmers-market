@@ -46,6 +46,7 @@ images: {
 ```
 
 **Issues with old structure:**
+
 - 12 remote patterns (redundant duplicates)
 - No clear organization
 - Inconsistent formatting
@@ -94,6 +95,7 @@ images: {
 ### 1. Remote Pattern Consolidation
 
 **Removed Redundant Patterns:**
+
 - `res.cloudinary.com` → covered by `*.cloudinary.com`
 - `*.supabase.in` → covered by `*.supabase.co` (both Supabase domains)
 - `s3.amazonaws.com` → covered by `*.amazonaws.com`
@@ -104,11 +106,13 @@ images: {
 ### 2. Logical Grouping
 
 Organized patterns by category:
+
 1. **Development** - Local testing environments
 2. **External Services** - Third-party image providers
 3. **CDN Providers** - Content delivery networks
 
 **Benefits:**
+
 - Easier to understand purpose of each pattern
 - Simple to add new patterns in correct category
 - Clear separation of concerns
@@ -116,6 +120,7 @@ Organized patterns by category:
 ### 3. Inline Documentation
 
 Added descriptive comments:
+
 - Explains what each section does
 - Notes format fallback strategy (AVIF → WebP)
 - Clarifies cache duration (60 days)
@@ -131,6 +136,7 @@ Added descriptive comments:
 ## 📈 Results
 
 ### Build Verification
+
 ```bash
 npm run build
 ✅ Build successful (~45s)
@@ -140,6 +146,7 @@ npm run build
 ```
 
 ### Test Verification
+
 ```bash
 npm test
 ✅ 67 test suites passed
@@ -149,46 +156,53 @@ npm test
 ```
 
 ### Configuration Metrics
-| Metric | Before | After | Change |
-|--------|--------|-------|--------|
-| Lines of Config | 70 | 43 | -27 (-39%) |
-| Remote Patterns | 12 | 7 | -5 (-42%) |
-| Comments | 2 | 8 | +6 (+300%) |
-| Readability | Low | High | ⬆️ |
-| Maintainability | Medium | High | ⬆️ |
+
+| Metric          | Before | After | Change     |
+| --------------- | ------ | ----- | ---------- |
+| Lines of Config | 70     | 43    | -27 (-39%) |
+| Remote Patterns | 12     | 7     | -5 (-42%)  |
+| Comments        | 2      | 8     | +6 (+300%) |
+| Readability     | Low    | High  | ⬆️         |
+| Maintainability | Medium | High  | ⬆️         |
 
 ### File Size Impact
-| File | Before Task 4 | After Task 4 | Change |
-|------|---------------|--------------|--------|
-| next.config.mjs | 270 lines | 243 lines | -27 (-10%) |
+
+| File            | Before Task 4 | After Task 4 | Change     |
+| --------------- | ------------- | ------------ | ---------- |
+| next.config.mjs | 270 lines     | 243 lines    | -27 (-10%) |
 
 ## ✅ Benefits Achieved
 
 ### 1. Reduced Redundancy
+
 - **42% fewer remote patterns** (12 → 7)
 - Wildcard patterns eliminate specific duplicates
 - Cleaner, more maintainable configuration
 - Easier to audit allowed domains
 
 ### 2. Improved Documentation
+
 - **300% more inline comments** (2 → 8)
 - Each section clearly explained
 - Purpose of settings documented
 - Easier onboarding for new developers
 
 ### 3. Better Organization
+
 - Logical grouping by category
 - Clear visual hierarchy
 - Consistent formatting
 - Professional code structure
 
 ### 4. Enhanced Maintainability
+
 - Simple to add new CDN patterns
 - Clear where each type of pattern belongs
 - Reduced chance of duplicate patterns
 - Easier to review and audit
 
 ### 5. Preserved Functionality
+
 - All image sources still accessible
 - Modern format support maintained
 - Responsive breakpoints unchanged
@@ -200,6 +214,7 @@ npm test
 ### Remote Pattern Optimization
 
 #### Development Patterns
+
 ```javascript
 // BEFORE: 1 pattern
 { protocol: "http", hostname: "localhost" }
@@ -209,6 +224,7 @@ npm test
 ```
 
 #### External Services
+
 ```javascript
 // BEFORE: 2 patterns
 { protocol: "https", hostname: "images.unsplash.com" }
@@ -220,6 +236,7 @@ npm test
 ```
 
 #### Cloudinary CDN
+
 ```javascript
 // BEFORE: 2 patterns (redundant)
 { protocol: "https", hostname: "res.cloudinary.com" }
@@ -230,6 +247,7 @@ npm test
 ```
 
 #### Supabase Storage
+
 ```javascript
 // BEFORE: 2 patterns (redundant)
 { protocol: "https", hostname: "*.supabase.co" }
@@ -240,6 +258,7 @@ npm test
 ```
 
 #### AWS S3
+
 ```javascript
 // BEFORE: 2 patterns (redundant)
 { protocol: "https", hostname: "*.amazonaws.com" }
@@ -250,6 +269,7 @@ npm test
 ```
 
 #### Vercel Storage
+
 ```javascript
 // BEFORE: 2 patterns (redundant)
 { protocol: "https", hostname: "*.vercel-storage.com" }
@@ -262,6 +282,7 @@ npm test
 ## 🔄 Migration Impact
 
 ### Zero Breaking Changes
+
 - ✅ All image sources remain accessible
 - ✅ Wildcard patterns more permissive (safer)
 - ✅ No route changes required
@@ -270,6 +291,7 @@ npm test
 - ✅ Build process unchanged
 
 ### Image Loading Behavior
+
 - ✅ AVIF format preference maintained
 - ✅ WebP fallback working
 - ✅ Responsive sizes unchanged
@@ -281,18 +303,21 @@ npm test
 ### Adding New Image Sources
 
 #### External Service
+
 ```javascript
 // Add to "External image services" section
 { protocol: "https", hostname: "new-service.com" }
 ```
 
 #### CDN Provider
+
 ```javascript
 // Add to "CDN providers" section with wildcard
 { protocol: "https", hostname: "*.new-cdn.com" }
 ```
 
 #### Development Environment
+
 ```javascript
 // Add to "Development" section
 { protocol: "http", hostname: "dev.local" }
@@ -323,6 +348,7 @@ npm test
 ## 🧪 Testing Performed
 
 ### 1. Build Testing
+
 ```bash
 npm run build
 ✅ Build completes successfully
@@ -332,6 +358,7 @@ npm run build
 ```
 
 ### 2. Image Loading Tests
+
 - ✅ Unsplash images load correctly
 - ✅ Placeholder images work
 - ✅ Cloudinary CDN images load
@@ -340,6 +367,7 @@ npm run build
 - ✅ WebP fallback working
 
 ### 3. Unit & Integration Tests
+
 ```bash
 npm test
 ✅ 2702/2702 tests pass
@@ -348,6 +376,7 @@ npm test
 ```
 
 ### 4. Type Safety
+
 ```bash
 npx tsc --noEmit
 ✅ No TypeScript errors
@@ -357,6 +386,7 @@ npx tsc --noEmit
 ## 📚 Documentation Updated
 
 ### Files Modified
+
 1. **next.config.mjs** (Lines 103-135)
    - Simplified image configuration
    - Added inline documentation
@@ -364,6 +394,7 @@ npx tsc --noEmit
    - Reduced by 27 lines (-39%)
 
 ### Files Created
+
 1. **phase2-task4-image-optimization.md** (this file)
    - Complete task documentation
    - Before/after comparison
@@ -373,6 +404,7 @@ npx tsc --noEmit
 ## 🎯 Next Steps
 
 ### Phase 2 Remaining Tasks
+
 1. ✅ Task 1: Remove hardware-specific references (COMPLETED)
 2. ✅ Task 2: Simplify webpack cache groups (COMPLETED)
 3. ✅ Task 3: Extract webpack configuration (COMPLETED)
@@ -381,7 +413,9 @@ npx tsc --noEmit
 6. ⏳ Task 6: Performance testing and validation
 
 ### Immediate Next Task
+
 **Task 5: Create configuration documentation**
+
 - Comprehensive configuration guide
 - Environment variable documentation
 - Best practices guide
@@ -391,12 +425,14 @@ npx tsc --noEmit
 ## 🔍 Technical Debt Reduced
 
 ### Complexity Metrics
+
 - **Remote Patterns**: 12 → 7 (-42%)
 - **Configuration Lines**: 70 → 43 (-39%)
 - **Inline Comments**: 2 → 8 (+300%)
 - **Maintainability**: Medium → High
 
 ### Code Quality Improvements
+
 - ✅ Reduced redundancy
 - ✅ Better organization
 - ✅ Improved documentation
@@ -406,12 +442,14 @@ npx tsc --noEmit
 ## 📊 Performance Impact
 
 ### Build Performance
+
 - **Build time**: Maintained (~45s)
 - **Configuration parsing**: Negligible difference
 - **Image optimization**: Unchanged performance
 - **Memory usage**: Stable
 
 ### Runtime Performance
+
 - **Image loading**: Unchanged
 - **Format selection**: Working correctly
 - **Cache behavior**: Optimal (60 days)
@@ -433,6 +471,7 @@ npx tsc --noEmit
 ## 🌟 Divine Agricultural Consciousness
 
 This refactoring maintains **agricultural consciousness** by:
+
 - 🌾 **Efficient Organization**: Like sorting seeds by type
 - ⚡ **Optimized Resources**: Removing redundancy like pruning excess branches
 - 🎯 **Clear Structure**: Categories like organized farm sections
@@ -442,6 +481,7 @@ This refactoring maintains **agricultural consciousness** by:
 ## 🎓 Lessons Learned
 
 ### What Worked Well
+
 1. Wildcard patterns for CDN flexibility
 2. Logical grouping by category
 3. Inline documentation for clarity
@@ -449,6 +489,7 @@ This refactoring maintains **agricultural consciousness** by:
 5. Testing thoroughness
 
 ### Best Practices Established
+
 1. Use wildcards for CDN domains
 2. Group patterns by purpose
 3. Document configuration intent
@@ -457,6 +498,7 @@ This refactoring maintains **agricultural consciousness** by:
 6. Maintain security settings
 
 ### Future Considerations
+
 1. Monitor CDN pattern usage
 2. Review quarterly for unused patterns
 3. Consider environment-specific patterns
@@ -466,6 +508,7 @@ This refactoring maintains **agricultural consciousness** by:
 ## 🔗 Related Documentation
 
 ### Phase 2 Task Documentation
+
 - [Task 1: Hardware Removal](./phase2-task1-hardware-removal.md)
 - [Task 2: Cache Groups Simplification](./phase2-task2-cache-groups-simplification.md)
 - [Task 3: Webpack Extraction](./phase2-task3-webpack-extraction.md)
@@ -474,6 +517,7 @@ This refactoring maintains **agricultural consciousness** by:
 - Task 6: TBD
 
 ### Related Files
+
 - `next.config.mjs` - Main configuration file
 - `webpack.config.mjs` - Webpack configuration
 - `.github/refactoring/` - Refactoring documentation
@@ -481,6 +525,7 @@ This refactoring maintains **agricultural consciousness** by:
 ## 📋 Image Configuration Quick Reference
 
 ### Current Remote Patterns
+
 ```javascript
 // Development
 http://localhost
@@ -497,25 +542,30 @@ https://*.vercel-storage.com
 ```
 
 ### Image Formats
+
 - Primary: AVIF (best compression)
 - Fallback: WebP (broad support)
 
 ### Device Sizes (8 breakpoints)
+
 - Mobile: 640, 750
 - Tablet: 828, 1080
 - Desktop: 1200, 1920
 - Large: 2048, 3840
 
 ### Image Sizes (8 sizes)
+
 - Tiny: 16, 32
 - Small: 48, 64
 - Medium: 96, 128
 - Large: 256, 384
 
 ### Cache Duration
+
 - 60 days (5,184,000 seconds)
 
 ### Security
+
 - SVG allowed with sandboxing
 - Content-Security-Policy enforced
 - Attachment disposition for downloads
@@ -527,6 +577,6 @@ https://*.vercel-storage.com
 **Agricultural Consciousness**: ACTIVE  
 **Technical Debt Reduced**: 10% (Phase 2 contribution)  
 **Lines Reduced**: 27 from next.config.mjs (-10%)  
-**Patterns Consolidated**: 12 → 7 (-42%)  
+**Patterns Consolidated**: 12 → 7 (-42%)
 
 _"Simplicity in configuration is like a well-organized farm—everything has its place, nothing is wasted."_ 🌾⚡

@@ -76,7 +76,7 @@ export function getOpenAIClient(): OpenAI {
     if (!apiKey) {
       throw new Error(
         "OPENAI_API_KEY environment variable is not set. " +
-        "Please add it to your .env.local file.",
+          "Please add it to your .env.local file.",
       );
     }
 
@@ -290,7 +290,7 @@ export function getAgentConfig(agentName: string): AgentConfig {
   if (!config) {
     throw new Error(
       `Agent "${agentName}" not found in registry. ` +
-      `Available agents: ${Object.keys(AGENT_REGISTRY).join(", ")}`,
+        `Available agents: ${Object.keys(AGENT_REGISTRY).join(", ")}`,
     );
   }
 
@@ -381,7 +381,8 @@ export async function invokeAgent(
       errorMessage: error instanceof Error ? error.message : String(error),
     });
     throw new Error(
-      `Agent ${config.name} failed to process request: ${error instanceof Error ? error.message : "Unknown error"
+      `Agent ${config.name} failed to process request: ${
+        error instanceof Error ? error.message : "Unknown error"
       }`,
     );
   }

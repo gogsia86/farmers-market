@@ -150,7 +150,10 @@ export function useRealtimeNotifications(
           // Call callback
           onNotification?.(notification);
         } catch (err) {
-          notificationLogger.error("Error parsing notification", err instanceof Error ? err : new Error(String(err)));
+          notificationLogger.error(
+            "Error parsing notification",
+            err instanceof Error ? err : new Error(String(err)),
+          );
         }
       };
 
@@ -190,7 +193,10 @@ export function useRealtimeNotifications(
 
       eventSourceRef.current = eventSource;
     } catch (err) {
-      notificationLogger.error("Failed to create SSE connection", err instanceof Error ? err : new Error(String(err)));
+      notificationLogger.error(
+        "Failed to create SSE connection",
+        err instanceof Error ? err : new Error(String(err)),
+      );
       setIsConnecting(false);
       const error = err instanceof Error ? err : new Error("Failed to connect");
       setError(error);
@@ -248,7 +254,10 @@ export function useRealtimeNotifications(
         method: "PUT",
       });
     } catch (err) {
-      notificationLogger.error("Failed to mark notification as read", err instanceof Error ? err : new Error(String(err)));
+      notificationLogger.error(
+        "Failed to mark notification as read",
+        err instanceof Error ? err : new Error(String(err)),
+      );
     }
   }, []);
 
@@ -262,7 +271,10 @@ export function useRealtimeNotifications(
         method: "PUT",
       });
     } catch (err) {
-      notificationLogger.error("Failed to mark all notifications as read", err instanceof Error ? err : new Error(String(err)));
+      notificationLogger.error(
+        "Failed to mark all notifications as read",
+        err instanceof Error ? err : new Error(String(err)),
+      );
     }
   }, []);
 
@@ -276,7 +288,10 @@ export function useRealtimeNotifications(
         method: "DELETE",
       });
     } catch (err) {
-      notificationLogger.error("Failed to delete notification", err instanceof Error ? err : new Error(String(err)));
+      notificationLogger.error(
+        "Failed to delete notification",
+        err instanceof Error ? err : new Error(String(err)),
+      );
     }
   }, []);
 
@@ -291,7 +306,9 @@ export function useRealtimeNotifications(
     if (typeof window !== "undefined" && "Notification" in window) {
       if (Notification.permission === "default") {
         Notification.requestPermission().then((permission) => {
-          notificationLogger.info("Notification permission response", { permission });
+          notificationLogger.info("Notification permission response", {
+            permission,
+          });
         });
       }
     }
@@ -308,7 +325,10 @@ export function useRealtimeNotifications(
           }
         })
         .catch((err) => {
-          notificationLogger.error("Failed to load notifications", err instanceof Error ? err : new Error(String(err)));
+          notificationLogger.error(
+            "Failed to load notifications",
+            err instanceof Error ? err : new Error(String(err)),
+          );
         });
     }
   }, [status, session]);

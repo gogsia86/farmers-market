@@ -300,10 +300,14 @@ export function AdvancedAnalyticsDashboard() {
         const orderData = await orderResponse.json();
         setOrderAnalytics(orderData);
       } catch (err) {
-        analyticsLogger.error("Failed to fetch analytics data", err instanceof Error ? err : new Error(String(err)), {
-          period: selectedPeriod.label,
-          days: selectedPeriod.days,
-        });
+        analyticsLogger.error(
+          "Failed to fetch analytics data",
+          err instanceof Error ? err : new Error(String(err)),
+          {
+            period: selectedPeriod.label,
+            days: selectedPeriod.days,
+          },
+        );
         setError(
           err instanceof Error ? err.message : "Failed to load analytics",
         );
@@ -376,10 +380,11 @@ export function AdvancedAnalyticsDashboard() {
           <button
             key={period.days}
             onClick={() => setSelectedPeriod(period)}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${selectedPeriod.days === period.days
-              ? "bg-primary text-primary-foreground"
-              : "bg-secondary hover:bg-secondary/80"
-              }`}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              selectedPeriod.days === period.days
+                ? "bg-primary text-primary-foreground"
+                : "bg-secondary hover:bg-secondary/80"
+            }`}
           >
             <Calendar className="h-4 w-4 inline mr-2" />
             {period.label}
@@ -741,7 +746,7 @@ export function AdvancedAnalyticsDashboard() {
         {/* ═══════════════════════════════════════════════════════════ */}
         <TabsContent value="products" className="space-y-4">
           {orderAnalytics?.products?.topProducts &&
-            orderAnalytics.products.topProducts.length > 0 ? (
+          orderAnalytics.products.topProducts.length > 0 ? (
             <Card>
               <CardHeader>
                 <CardTitle>Top Selling Products</CardTitle>

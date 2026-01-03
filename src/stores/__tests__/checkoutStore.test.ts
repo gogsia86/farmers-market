@@ -240,7 +240,10 @@ describe("CheckoutStore - Address Management", () => {
 
   it("should set saved addresses", () => {
     const { result } = renderHook(() => useCheckoutStore());
-    const addresses = [mockShippingAddress, { ...mockShippingAddress, id: "addr-2" }];
+    const addresses = [
+      mockShippingAddress,
+      { ...mockShippingAddress, id: "addr-2" },
+    ];
 
     act(() => {
       result.current.setSavedAddresses(addresses);
@@ -412,7 +415,9 @@ describe("CheckoutStore - Validation", () => {
       });
 
       expect(canProceed!).toBe(false);
-      expect(result.current.errors.some((e) => e.code === "ADDRESS_REQUIRED")).toBe(true);
+      expect(
+        result.current.errors.some((e) => e.code === "ADDRESS_REQUIRED"),
+      ).toBe(true);
     });
 
     it("should NOT validate when address is incomplete", () => {
@@ -431,7 +436,9 @@ describe("CheckoutStore - Validation", () => {
       });
 
       expect(canProceed!).toBe(false);
-      expect(result.current.errors.some((e) => e.code === "ADDRESS_INCOMPLETE")).toBe(true);
+      expect(
+        result.current.errors.some((e) => e.code === "ADDRESS_INCOMPLETE"),
+      ).toBe(true);
     });
 
     it("should validate all required address fields", () => {
@@ -713,7 +720,9 @@ describe.skip("useCheckoutValidation Hook", () => {
 
   it("should return validation status for current step", () => {
     const { result: storeResult } = renderHook(() => useCheckoutStore());
-    const { result: validationResult } = renderHook(() => useCheckoutValidation());
+    const { result: validationResult } = renderHook(() =>
+      useCheckoutValidation(),
+    );
 
     act(() => {
       storeResult.current.setOrderPreview(mockOrderPreview);
@@ -726,7 +735,9 @@ describe.skip("useCheckoutValidation Hook", () => {
 
   it("should return errors for current step only", () => {
     const { result: storeResult } = renderHook(() => useCheckoutStore());
-    const { result: validationResult } = renderHook(() => useCheckoutValidation());
+    const { result: validationResult } = renderHook(() =>
+      useCheckoutValidation(),
+    );
 
     act(() => {
       storeResult.current.addError({

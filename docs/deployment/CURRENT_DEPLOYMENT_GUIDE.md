@@ -1,4 +1,5 @@
 # 🚀 CURRENT DEPLOYMENT GUIDE
+
 ## Farmers Market Platform - Working Setup & Best Practices
 
 **Last Updated:** December 28, 2024  
@@ -28,6 +29,7 @@
 ## 🎯 QUICK START (5 MINUTES)
 
 ### Prerequisites
+
 - Docker Desktop running
 - Node.js 20+ installed
 - Git repository cloned
@@ -68,6 +70,7 @@ docker ps
 ```
 
 Expected output:
+
 ```
 CONTAINER ID   IMAGE                           STATUS                    PORTS
 xxxxxxxxxx     postgis/postgis:16-3.4-alpine   Up (healthy)             0.0.0.0:5432->5432
@@ -118,6 +121,7 @@ npm run db:seed
 ```
 
 This creates:
+
 - 1 Admin user (gogsia@gmail.com / Admin123!)
 - 3 Farmer users (farmer1-3@example.com / Farmer123!)
 - 1 Consumer user (consumer@example.com / Consumer123!)
@@ -136,6 +140,7 @@ npm run dev -- -p 3001
 ```
 
 Wait for:
+
 ```
 ✓ Ready in 4.3s
 ✓ Database connection established successfully
@@ -146,6 +151,7 @@ Wait for:
 ## 🌐 ACCESS YOUR APPLICATION
 
 ### Main URLs
+
 - **Homepage:** http://localhost:3001
 - **API Health:** http://localhost:3001/api/health
 - **Admin Login:** http://localhost:3001/admin-login
@@ -155,18 +161,21 @@ Wait for:
 ### Test Credentials
 
 **Admin Access:**
+
 ```
 Email: gogsia@gmail.com
 Password: Admin123!
 ```
 
 **Farmer Access:**
+
 ```
 Email: farmer1@example.com
 Password: Farmer123!
 ```
 
 **Customer Access:**
+
 ```
 Email: consumer@example.com
 Password: Consumer123!
@@ -254,6 +263,7 @@ docker exec -it farmers-market-redis redis-cli -a FarmersMarket2024SecureRedis! 
 ### View Application Logs
 
 The Next.js dev server shows logs in real-time. Look for:
+
 - ✅ Database queries (Prisma logs)
 - ✅ API route responses
 - ✅ Compilation status
@@ -266,6 +276,7 @@ The Next.js dev server shows logs in real-time. Look for:
 ### Problem: Docker services won't start
 
 **Solution:**
+
 ```bash
 # Check Docker Desktop is running
 docker info
@@ -282,6 +293,7 @@ docker-compose -f docker-compose.simple.yml up -d postgres redis
 **Symptoms:** "Can't reach database server"
 
 **Solution:**
+
 ```bash
 # 1. Check container is running
 docker ps | grep postgres
@@ -300,6 +312,7 @@ docker restart farmers-market-db
 **Symptoms:** "Port 3001 is already in use"
 
 **Solution:**
+
 ```bash
 # Find process using port
 netstat -ano | findstr :3001
@@ -316,6 +329,7 @@ npm run dev -- -p 3002
 **Symptoms:** "Prisma client version mismatch"
 
 **Solution:**
+
 ```bash
 # Regenerate Prisma client
 npx prisma generate
@@ -330,6 +344,7 @@ npm run dev
 ### Problem: Module not found errors
 
 **Solution:**
+
 ```bash
 # Clear everything and reinstall
 rm -rf node_modules .next package-lock.json
@@ -361,6 +376,7 @@ vercel --prod
 ```
 
 **Configure:** Add environment variables in Vercel dashboard
+
 - Database URL (managed PostgreSQL)
 - Redis URL (Upstash or similar)
 - All API keys
@@ -372,6 +388,7 @@ vercel --prod
 **Issue:** Current Dockerfile has Python build errors on Windows
 
 **Solutions:**
+
 1. Use `Dockerfile.simple` (Python-free build)
 2. Build on Linux/Mac if available
 3. Use the infrastructure-only approach (current setup)
@@ -381,6 +398,7 @@ vercel --prod
 **Why:** Best of both worlds - Docker infrastructure, local/deployed app
 
 **Setup:**
+
 ```bash
 # 1. On VPS, run infrastructure
 docker-compose -f docker-compose.simple.yml up -d
@@ -426,6 +444,7 @@ npm run build && npm start
 ```
 
 **Build Metrics to Expect:**
+
 - Build time: ~24-30 seconds
 - Static pages: 82+
 - Bundle size: Optimized for 100/100 Lighthouse
@@ -460,6 +479,7 @@ npm run build && npm start
 ## 📚 USEFUL COMMANDS REFERENCE
 
 ### Docker Operations
+
 ```bash
 # Start infrastructure
 docker-compose -f docker-compose.simple.yml up -d postgres redis
@@ -476,6 +496,7 @@ docker system prune -a --volumes -f
 ```
 
 ### Database Operations
+
 ```bash
 # Push schema
 npm run db:push
@@ -494,6 +515,7 @@ npx prisma generate
 ```
 
 ### Application Operations
+
 ```bash
 # Development mode
 npm run dev
@@ -543,18 +565,21 @@ npm test
 ## 🆘 NEED HELP?
 
 ### Quick Checks
+
 1. Is Docker Desktop running? → `docker ps`
 2. Are containers healthy? → `docker ps` (look for "healthy")
 3. Is port 3001 free? → `netstat -ano | findstr :3001`
 4. Is `.env.local` configured? → Check DATABASE_URL
 
 ### Documentation
+
 - **Project Docs:** `docs/deployment/`
 - **API Reference:** Coming soon
 - **Divine Guidelines:** `.github/instructions/`
 - **Quick Reference:** `16_KILO_QUICK_REFERENCE.instructions.md`
 
 ### Common Issues
+
 - Database connection → Restart Docker containers
 - Port conflicts → Use different port with `npm run dev -- -p 3002`
 - Build errors → Clear cache: `rm -rf .next node_modules && npm install`

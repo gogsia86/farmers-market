@@ -124,11 +124,15 @@ export function CartItem({
     } catch (error) {
       // Revert on error
       setLocalQuantity(item.quantity);
-      cartLogger.error("Failed to update quantity", error instanceof Error ? error : new Error(String(error)), {
-        itemId: item.id,
-        productId: item.productId,
-        newQuantity,
-      });
+      cartLogger.error(
+        "Failed to update quantity",
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          itemId: item.id,
+          productId: item.productId,
+          newQuantity,
+        },
+      );
     } finally {
       setIsUpdating(false);
     }
@@ -147,10 +151,14 @@ export function CartItem({
       }
     } catch (error) {
       setIsUpdating(false);
-      cartLogger.error("Failed to remove item", error instanceof Error ? error : new Error(String(error)), {
-        itemId: item.id,
-        productId: item.productId,
-      });
+      cartLogger.error(
+        "Failed to remove item",
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          itemId: item.id,
+          productId: item.productId,
+        },
+      );
     }
   };
 
@@ -162,9 +170,13 @@ export function CartItem({
       try {
         await updateNotes(item.id, notes);
       } catch (error) {
-        cartLogger.error("Failed to update notes", error instanceof Error ? error : new Error(String(error)), {
-          itemId: item.id,
-        });
+        cartLogger.error(
+          "Failed to update notes",
+          error instanceof Error ? error : new Error(String(error)),
+          {
+            itemId: item.id,
+          },
+        );
       }
     }
   };

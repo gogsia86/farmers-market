@@ -106,9 +106,13 @@ async function getProducts() {
       };
     });
   } catch (error) {
-    farmLogger.error("Failed to fetch products catalog", error instanceof Error ? error : new Error(String(error)), {
-      path: "/products",
-    });
+    farmLogger.error(
+      "Failed to fetch products catalog",
+      error instanceof Error ? error : new Error(String(error)),
+      {
+        path: "/products",
+      },
+    );
     return [];
   }
 }

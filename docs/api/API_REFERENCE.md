@@ -6,6 +6,7 @@
 Divine Agricultural Platform - Comprehensive REST API
 
 This API provides endpoints for:
+
 - 🚜 Farm Management (CRUD, search, verification)
 - 🌾 Product Catalog (inventory, categories, search)
 - 📦 Order Processing (cart, checkout, fulfillment)
@@ -15,6 +16,7 @@ This API provides endpoints for:
 - 🔔 Notifications (real-time updates, alerts)
 
 All endpoints return standardized ServiceResponse<T> format with:
+
 - success: boolean
 - data?: T
 - error?: ServiceError
@@ -62,13 +64,13 @@ List all farms with pagination and filtering
 
 **Parameters**:
 
-| Name | In | Type | Required | Description |
-|------|-----|------|----------|-------------|
-| `page` | query | integer | No | Page number (starts at 1) |
-| `limit` | query | integer | No | Items per page |
-| `status` | query | string | No | Filter by farm status |
-| `city` | query | string | No | Filter by city |
-| `state` | query | string | No | Filter by state |
+| Name     | In    | Type    | Required | Description               |
+| -------- | ----- | ------- | -------- | ------------------------- |
+| `page`   | query | integer | No       | Page number (starts at 1) |
+| `limit`  | query | integer | No       | Items per page            |
+| `status` | query | string  | No       | Filter by farm status     |
+| `city`   | query | string  | No       | Filter by city            |
+| `state`  | query | string  | No       | Filter by state           |
 
 **Responses**:
 
@@ -96,9 +98,9 @@ Get farm by ID
 
 **Parameters**:
 
-| Name | In | Type | Required | Description |
-|------|-----|------|----------|-------------|
-| `id` | path | string | Yes | Farm ID |
+| Name | In   | Type   | Required | Description |
+| ---- | ---- | ------ | -------- | ----------- |
+| `id` | path | string | Yes      | Farm ID     |
 
 **Responses**:
 
@@ -115,9 +117,9 @@ Update farm (requires ownership)
 
 **Parameters**:
 
-| Name | In | Type | Required | Description |
-|------|-----|------|----------|-------------|
-| `id` | path | string | Yes | Farm ID |
+| Name | In   | Type   | Required | Description |
+| ---- | ---- | ------ | -------- | ----------- |
+| `id` | path | string | Yes      | Farm ID     |
 
 **Responses**:
 
@@ -135,9 +137,9 @@ Delete farm (soft delete, requires ownership)
 
 **Parameters**:
 
-| Name | In | Type | Required | Description |
-|------|-----|------|----------|-------------|
-| `id` | path | string | Yes | Farm ID |
+| Name | In   | Type   | Required | Description |
+| ---- | ---- | ------ | -------- | ----------- |
+| `id` | path | string | Yes      | Farm ID     |
 
 **Responses**:
 
@@ -151,10 +153,10 @@ Search farms by query
 
 **Parameters**:
 
-| Name | In | Type | Required | Description |
-|------|-----|------|----------|-------------|
-| `query` | query | string | Yes | Search query |
-| `limit` | query | integer | No | Maximum results |
+| Name    | In    | Type    | Required | Description     |
+| ------- | ----- | ------- | -------- | --------------- |
+| `query` | query | string  | Yes      | Search query    |
+| `limit` | query | integer | No       | Maximum results |
 
 **Responses**:
 
@@ -170,12 +172,12 @@ List all products with pagination and filtering
 
 **Parameters**:
 
-| Name | In | Type | Required | Description |
-|------|-----|------|----------|-------------|
-| `page` | query | integer | No | - |
-| `limit` | query | integer | No | - |
-| `category` | query | string | No | - |
-| `farmId` | query | string | No | - |
+| Name       | In    | Type    | Required | Description |
+| ---------- | ----- | ------- | -------- | ----------- |
+| `page`     | query | integer | No       | -           |
+| `limit`    | query | integer | No       | -           |
+| `category` | query | string  | No       | -           |
+| `farmId`   | query | string  | No       | -           |
 
 **Responses**:
 
@@ -201,9 +203,9 @@ Search products by keyword
 
 **Parameters**:
 
-| Name | In | Type | Required | Description |
-|------|-----|------|----------|-------------|
-| `q` | query | string | Yes | Search query |
+| Name | In    | Type   | Required | Description  |
+| ---- | ----- | ------ | -------- | ------------ |
+| `q`  | query | string | Yes      | Search query |
 
 **Responses**:
 
@@ -245,9 +247,9 @@ Get order details
 
 **Parameters**:
 
-| Name | In | Type | Required | Description |
-|------|-----|------|----------|-------------|
-| `id` | path | string | Yes | - |
+| Name | In   | Type   | Required | Description |
+| ---- | ---- | ------ | -------- | ----------- |
+| `id` | path | string | Yes      | -           |
 
 **Responses**:
 
@@ -266,4 +268,3 @@ Get marketplace products and featured farms
 - **200**: Marketplace data
 
 ---
-

@@ -6,7 +6,14 @@
 // Following divine agricultural patterns with type safety
 
 import type { UserSettingsData } from "@/types/settings";
-import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from "@jest/globals";
 import { NextRequest } from "next/server";
 import { GET, PATCH } from "../user/route";
 
@@ -30,8 +37,14 @@ import { settingsService } from "@/lib/services/settings.service";
 describe("User Settings API", () => {
   const mockUserId = "user_123";
   const mockAuth = auth as jest.MockedFunction<typeof auth>;
-  const mockGetUserSettings = settingsService.getUserSettings as jest.MockedFunction<typeof settingsService.getUserSettings>;
-  const mockUpdateUserSettings = settingsService.updateUserSettings as jest.MockedFunction<typeof settingsService.updateUserSettings>;
+  const mockGetUserSettings =
+    settingsService.getUserSettings as jest.MockedFunction<
+      typeof settingsService.getUserSettings
+    >;
+  const mockUpdateUserSettings =
+    settingsService.updateUserSettings as jest.MockedFunction<
+      typeof settingsService.updateUserSettings
+    >;
   const mockSession = {
     user: {
       id: mockUserId,
@@ -142,7 +155,7 @@ describe("User Settings API", () => {
     it("should return 500 if service throws error", async () => {
       (mockAuth as any).mockResolvedValue(mockSession as any);
       mockGetUserSettings.mockRejectedValue(
-        new Error("Database connection failed")
+        new Error("Database connection failed"),
       );
 
       const request = new NextRequest("http://localhost/api/settings/user");
@@ -211,10 +224,7 @@ describe("User Settings API", () => {
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
       expect(data.data.display.theme).toBe("dark");
-      expect(mockUpdateUserSettings).toHaveBeenCalledWith(
-        mockUserId,
-        updates
-      );
+      expect(mockUpdateUserSettings).toHaveBeenCalledWith(mockUserId, updates);
     });
 
     it("should return 400 for invalid data", async () => {
@@ -244,7 +254,7 @@ describe("User Settings API", () => {
     it("should handle service validation errors", async () => {
       (mockAuth as any).mockResolvedValue(mockSession as any);
       mockUpdateUserSettings.mockRejectedValue(
-        new Error("Validation failed: Invalid theme value")
+        new Error("Validation failed: Invalid theme value"),
       );
 
       const request = new NextRequest("http://localhost/api/settings/user", {
@@ -372,9 +382,7 @@ describe("User Settings API", () => {
 
     it("should return 500 for unexpected errors", async () => {
       (mockAuth as any).mockResolvedValue(mockSession as any);
-      mockUpdateUserSettings.mockRejectedValue(
-        new Error("Unexpected error")
-      );
+      mockUpdateUserSettings.mockRejectedValue(new Error("Unexpected error"));
 
       const request = new NextRequest("http://localhost/api/settings/user", {
         method: "PATCH",
@@ -450,10 +458,7 @@ describe("User Settings API", () => {
 
     it("should include request ID in error responses", async () => {
       (mockAuth as any).mockResolvedValue(mockSession as any);
-      mockGetUserSettings.mockRejectedValue(
-        new Error("Service error")
-      );
-
+      mockGetUserSettings.mockRejectedValue(new Error("Service error"));
 
       const request = new NextRequest("http://localhost/api/settings/user", {
         headers: {
@@ -475,7 +480,7 @@ describe("User Settings API", () => {
     it("should not expose internal error details to client", async () => {
       (mockAuth as any).mockResolvedValue(mockSession as any);
       mockGetUserSettings.mockRejectedValue(
-        new Error("Database connection failed")
+        new Error("Database connection failed"),
       );
 
       const request = new NextRequest("http://localhost/api/settings/user");

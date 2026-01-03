@@ -123,7 +123,10 @@ export function ReviewCartStep({
           });
         }
       } catch (error) {
-        cartLogger.error("Error loading cart items", error instanceof Error ? error : new Error(String(error)));
+        cartLogger.error(
+          "Error loading cart items",
+          error instanceof Error ? error : new Error(String(error)),
+        );
       }
     };
 
@@ -159,10 +162,14 @@ export function ReviewCartStep({
         cartStore.updateQuantity(itemId, newQuantity);
       }
     } catch (error) {
-      cartLogger.error("Error updating quantity", error instanceof Error ? error : new Error(String(error)), {
-        itemId,
-        newQuantity,
-      });
+      cartLogger.error(
+        "Error updating quantity",
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          itemId,
+          newQuantity,
+        },
+      );
     } finally {
       setIsUpdating(false);
     }
@@ -187,9 +194,13 @@ export function ReviewCartStep({
         cartStore.removeItem(itemId);
       }
     } catch (error) {
-      cartLogger.error("Error removing item", error instanceof Error ? error : new Error(String(error)), {
-        itemId,
-      });
+      cartLogger.error(
+        "Error removing item",
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          itemId,
+        },
+      );
     } finally {
       setIsUpdating(false);
     }

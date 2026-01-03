@@ -253,9 +253,13 @@ async function getFarmBySlug(slug: string) {
       updatedAt: farm.updatedAt.toISOString(),
     };
   } catch (error) {
-    farmDetailLogger.error("Failed to fetch farm by slug", error instanceof Error ? error : new Error(String(error)), {
-      slug,
-    });
+    farmDetailLogger.error(
+      "Failed to fetch farm by slug",
+      error instanceof Error ? error : new Error(String(error)),
+      {
+        slug,
+      },
+    );
     return null;
   }
 }

@@ -30,8 +30,10 @@ const args = process.argv.slice(2).reduce((acc, arg) => {
 
 // Configuration
 const config = {
-  inputFile: args.input || path.join(__dirname, "../FULL_ARCHITECTURE_DIAGRAM.md"),
-  outputFile: args.output || path.join(__dirname, "../FULL_ARCHITECTURE_DIAGRAM.pdf"),
+  inputFile:
+    args.input || path.join(__dirname, "../FULL_ARCHITECTURE_DIAGRAM.md"),
+  outputFile:
+    args.output || path.join(__dirname, "../FULL_ARCHITECTURE_DIAGRAM.pdf"),
   title: args.title || "Farmers Market Platform - Architecture Diagram",
 };
 
@@ -357,47 +359,50 @@ function markdownToHtml(markdown) {
   let html = markdown;
 
   // Headers
-  html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-  html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-  html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+  html = html.replace(/^### (.*$)/gim, "<h3>$1</h3>");
+  html = html.replace(/^## (.*$)/gim, "<h2>$1</h2>");
+  html = html.replace(/^# (.*$)/gim, "<h1>$1</h1>");
 
   // Bold and italic
-  html = html.replace(/\*\*\*(.*?)\*\*\*/gim, '<strong><em>$1</em></strong>');
-  html = html.replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>');
-  html = html.replace(/\*(.*?)\*/gim, '<em>$1</em>');
+  html = html.replace(/\*\*\*(.*?)\*\*\*/gim, "<strong><em>$1</em></strong>");
+  html = html.replace(/\*\*(.*?)\*\*/gim, "<strong>$1</strong>");
+  html = html.replace(/\*(.*?)\*/gim, "<em>$1</em>");
 
   // Code blocks
   html = html.replace(/```(\w+)?\n([\s\S]*?)```/gim, (match, lang, code) => {
-    const language = lang || 'text';
+    const language = lang || "text";
     return `<pre><code class="language-${language}">${code.trim()}</code></pre>`;
   });
 
   // Inline code
-  html = html.replace(/`([^`]+)`/gim, '<code>$1</code>');
+  html = html.replace(/`([^`]+)`/gim, "<code>$1</code>");
 
   // Links
   html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2">$1</a>');
 
   // Blockquotes
-  html = html.replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>');
+  html = html.replace(/^> (.*$)/gim, "<blockquote>$1</blockquote>");
 
   // Horizontal rules
-  html = html.replace(/^-{3,}$/gim, '<hr>');
+  html = html.replace(/^-{3,}$/gim, "<hr>");
 
   // Lists
-  html = html.replace(/^\* (.*$)/gim, '<li>$1</li>');
-  html = html.replace(/^\d+\. (.*$)/gim, '<li>$1</li>');
+  html = html.replace(/^\* (.*$)/gim, "<li>$1</li>");
+  html = html.replace(/^\d+\. (.*$)/gim, "<li>$1</li>");
 
   // Wrap consecutive <li> in <ul>
-  html = html.replace(/(<li>.*<\/li>\n?)+/gim, '<ul>$&</ul>');
+  html = html.replace(/(<li>.*<\/li>\n?)+/gim, "<ul>$&</ul>");
 
   // Paragraphs (lines that aren't HTML tags)
-  html = html.split('\n\n').map(para => {
-    if (!para.trim().startsWith('<')) {
-      return `<p>${para}</p>`;
-    }
-    return para;
-  }).join('\n');
+  html = html
+    .split("\n\n")
+    .map((para) => {
+      if (!para.trim().startsWith("<")) {
+        return `<p>${para}</p>`;
+      }
+      return para;
+    })
+    .join("\n");
 
   return html;
 }
@@ -426,10 +431,10 @@ async function convertToPdf() {
     ${htmlBody}
   </div>
   <div class="pdf-footer">
-    Generated on ${new Date().toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    Generated on ${new Date().toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     })} | Farmers Market Platform
   </div>
 </body>
@@ -467,9 +472,13 @@ async function convertToPdf() {
   const stats = fs.statSync(config.outputFile);
   const fileSizeInMB = (stats.size / (1024 * 1024)).toFixed(2);
 
-  console.log("═══════════════════════════════════════════════════════════════");
+  console.log(
+    "═══════════════════════════════════════════════════════════════",
+  );
   console.log("✅ PDF CREATED SUCCESSFULLY!");
-  console.log("═══════════════════════════════════════════════════════════════");
+  console.log(
+    "═══════════════════════════════════════════════════════════════",
+  );
   console.log(`📁 Location: ${config.outputFile}`);
   console.log(`📊 File Size: ${fileSizeInMB} MB`);
   console.log("");
@@ -481,14 +490,20 @@ async function convertToPdf() {
   console.log("   • Better formatting and layout");
   console.log("");
   console.log("🎉 Done! You can now open the PDF file.");
-  console.log("═══════════════════════════════════════════════════════════════");
+  console.log(
+    "═══════════════════════════════════════════════════════════════",
+  );
 }
 
 // Run the conversion
 convertToPdf().catch((error) => {
-  console.error("═══════════════════════════════════════════════════════════════");
+  console.error(
+    "═══════════════════════════════════════════════════════════════",
+  );
   console.error("❌ CONVERSION FAILED!");
-  console.error("═══════════════════════════════════════════════════════════════");
+  console.error(
+    "═══════════════════════════════════════════════════════════════",
+  );
   console.error(`Error: ${error.message}`);
   console.error("");
   console.error("💡 Troubleshooting tips:");

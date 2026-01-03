@@ -3,7 +3,7 @@
 **Date:** January 2025  
 **Project:** Farmers Market Platform  
 **Version:** 1.0.0  
-**Status:** ✅ READY FOR PRODUCTION  
+**Status:** ✅ READY FOR PRODUCTION
 
 ---
 
@@ -13,7 +13,7 @@ This document provides the **complete production deployment guide** for the Farm
 
 **Deployment Window:** 2-4 hours  
 **Risk Level:** Low (comprehensive testing completed)  
-**Rollback Time:** < 5 minutes  
+**Rollback Time:** < 5 minutes
 
 ---
 
@@ -34,6 +34,7 @@ This document provides the **complete production deployment guide** for the Farm
 ```
 
 ### Build Performance
+
 - **Build Time:** 22.0 seconds ⚡
 - **Static Pages:** 82 pages generated
 - **Bundle Size:** Optimized
@@ -44,6 +45,7 @@ This document provides the **complete production deployment guide** for the Farm
 ## 🗓️ Deployment Timeline
 
 ### Phase 1: Pre-Deployment (Day -1)
+
 **Duration:** 2-4 hours
 
 ```
@@ -57,6 +59,7 @@ This document provides the **complete production deployment guide** for the Farm
 ```
 
 ### Phase 2: Deployment (Day 0)
+
 **Duration:** 1-2 hours
 
 ```
@@ -71,6 +74,7 @@ This document provides the **complete production deployment guide** for the Farm
 ```
 
 ### Phase 3: Post-Deployment (Day 0-1)
+
 **Duration:** 24 hours monitoring
 
 ```
@@ -399,6 +403,7 @@ npm run test:load:smoke -- --target=https://farmersmarket.app
 ### 4. Monitoring Verification
 
 **Sentry:**
+
 ```
 ✓ Visit: https://sentry.io/organizations/medicis-gang/projects/farmers-market-prod/
 ✓ Verify events coming in
@@ -407,6 +412,7 @@ npm run test:load:smoke -- --target=https://farmersmarket.app
 ```
 
 **Azure Application Insights:**
+
 ```
 ✓ Visit: https://portal.azure.com
 ✓ Check Application Insights dashboard
@@ -416,6 +422,7 @@ npm run test:load:smoke -- --target=https://farmersmarket.app
 ```
 
 **Vercel Analytics:**
+
 ```
 ✓ Visit: https://vercel.com/dashboard/analytics
 ✓ Verify real user monitoring active
@@ -470,10 +477,12 @@ Target Metrics:
 ### Issue: Build Fails
 
 **Symptoms:**
+
 - Vercel build logs show errors
 - Deployment stuck at "Building"
 
 **Diagnosis:**
+
 ```bash
 # Check build logs
 vercel logs <deployment-url>
@@ -485,6 +494,7 @@ vercel logs <deployment-url>
 ```
 
 **Solution:**
+
 1. Verify all production env vars set in Vercel
 2. Run `npm run build` locally to reproduce
 3. Check Node.js version matches (22.x)
@@ -493,11 +503,13 @@ vercel logs <deployment-url>
 ### Issue: Database Connection Fails
 
 **Symptoms:**
+
 - API returns 500 errors
 - Health check shows database disconnected
 - Sentry reports Prisma errors
 
 **Diagnosis:**
+
 ```bash
 # Test database connection
 npx prisma db pull
@@ -507,6 +519,7 @@ echo $DATABASE_URL
 ```
 
 **Solution:**
+
 1. Verify DATABASE_URL format: `postgresql://user:pass@host:5432/db`
 2. Check database server is accessible (firewall/VPC rules)
 3. Verify credentials are correct
@@ -516,11 +529,13 @@ echo $DATABASE_URL
 ### Issue: Stripe Payments Fail
 
 **Symptoms:**
+
 - Checkout fails at payment
 - Webhook events not received
 - Orders stuck in "pending"
 
 **Diagnosis:**
+
 ```bash
 # Check Stripe webhook logs
 # Visit: https://dashboard.stripe.com/webhooks
@@ -531,7 +546,8 @@ curl -X POST https://farmersmarket.app/api/webhooks/stripe \
 ```
 
 **Solution:**
-1. Verify using LIVE keys (pk_live_***, sk_live_***)
+
+1. Verify using LIVE keys (pk*live***_, sk*live*_**)
 2. Check webhook endpoint configured in Stripe Dashboard
 3. Verify STRIPE_WEBHOOK_SECRET matches Stripe
 4. Test with Stripe CLI: `stripe listen --forward-to localhost:3000/api/webhooks/stripe`
@@ -540,11 +556,13 @@ curl -X POST https://farmersmarket.app/api/webhooks/stripe \
 ### Issue: Images Not Loading
 
 **Symptoms:**
+
 - Product images broken
 - Cloudinary errors in console
 - 403 or 404 on image URLs
 
 **Diagnosis:**
+
 ```bash
 # Check Cloudinary dashboard
 # Visit: https://cloudinary.com/console
@@ -554,6 +572,7 @@ curl -I https://res.cloudinary.com/farmersmarket-prod/image/upload/v1/products/t
 ```
 
 **Solution:**
+
 1. Verify CLOUDINARY_CLOUD_NAME matches production
 2. Check API keys are production keys
 3. Verify upload preset configured
@@ -563,11 +582,13 @@ curl -I https://res.cloudinary.com/farmersmarket-prod/image/upload/v1/products/t
 ### Issue: High Error Rate
 
 **Symptoms:**
+
 - Sentry shows spike in errors
 - Users reporting issues
 - Multiple failed requests
 
 **Diagnosis:**
+
 ```bash
 # Check Sentry dashboard
 # Identify error patterns
@@ -580,6 +601,7 @@ vercel logs --follow
 ```
 
 **Solution:**
+
 1. Identify root cause from error messages
 2. Check for database connection pool exhaustion
 3. Review rate limiting (may be too aggressive)
@@ -593,6 +615,7 @@ vercel logs --follow
 ### When to Rollback
 
 **Immediate rollback if:**
+
 - Error rate > 5%
 - Critical functionality broken
 - Data corruption detected
@@ -910,7 +933,7 @@ Day 7 - Week 1 retrospective
 
 **Status:** 🟢 GO FOR PRODUCTION  
 **Confidence Level:** 100%  
-**Deployment Window:** Ready when you are  
+**Deployment Window:** Ready when you are
 
 ---
 

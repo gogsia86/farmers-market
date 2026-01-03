@@ -88,7 +88,9 @@ export interface AgriculturalMetadata {
 /**
  * Service response with agricultural consciousness
  */
-export interface AgriculturalServiceResponse<T = any> extends ServiceResponse<T> {
+export interface AgriculturalServiceResponse<
+  T = any,
+> extends ServiceResponse<T> {
   agricultural?: AgriculturalMetadata;
 }
 
@@ -101,7 +103,7 @@ export interface AgriculturalServiceResponse<T = any> extends ServiceResponse<T>
  */
 export function createSuccessResponse<T>(
   data: T,
-  meta?: ServiceMeta
+  meta?: ServiceMeta,
 ): ServiceResponse<T> {
   return {
     success: true,
@@ -116,7 +118,7 @@ export function createSuccessResponse<T>(
 export function createErrorResponse(
   code: string,
   message: string,
-  details?: Record<string, any>
+  details?: Record<string, any>,
 ): ServiceResponse {
   return {
     success: false,
@@ -134,7 +136,7 @@ export function createErrorResponse(
  */
 export function createPaginatedResponse<T>(
   data: T[],
-  pagination: PaginationMeta
+  pagination: PaginationMeta,
 ): PaginatedResponse<T> {
   return {
     success: true,
@@ -149,7 +151,7 @@ export function createPaginatedResponse<T>(
 export function createAgriculturalResponse<T>(
   data: T,
   agricultural: AgriculturalMetadata,
-  meta?: ServiceMeta
+  meta?: ServiceMeta,
 ): AgriculturalServiceResponse<T> {
   return {
     success: true,

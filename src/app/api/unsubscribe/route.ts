@@ -24,7 +24,10 @@ const logger = createLogger("unsubscribe-api");
 const UnsubscribeSchema = z.object({
   token: z.string().min(1, "Unsubscribe token is required"),
   reason: z.string().optional(),
-  feedback: z.string().max(1000, "Feedback must be less than 1000 characters").optional(),
+  feedback: z
+    .string()
+    .max(1000, "Feedback must be less than 1000 characters")
+    .optional(),
 });
 
 /**
@@ -56,7 +59,7 @@ export async function GET(request: NextRequest) {
             message: "Unsubscribe token is required",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -72,7 +75,7 @@ export async function GET(request: NextRequest) {
             details: validation.error.errors,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -93,7 +96,7 @@ export async function GET(request: NextRequest) {
           },
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     logger.error("Error processing unsubscribe request", error, {
@@ -114,7 +117,7 @@ export async function GET(request: NextRequest) {
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -130,7 +133,7 @@ export async function GET(request: NextRequest) {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -177,7 +180,7 @@ export async function POST(request: NextRequest) {
             })),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -198,7 +201,7 @@ export async function POST(request: NextRequest) {
           },
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     logger.error("Error processing unsubscribe request", error, {
@@ -219,7 +222,7 @@ export async function POST(request: NextRequest) {
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -235,7 +238,7 @@ export async function POST(request: NextRequest) {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

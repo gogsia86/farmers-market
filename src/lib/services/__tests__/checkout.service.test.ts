@@ -1082,9 +1082,7 @@ describe("CheckoutService", () => {
       // Mock Stripe to throw an error
       (global as any).stripe = {
         paymentIntents: {
-          create: jest.fn().mockRejectedValueOnce(
-            new Error("Payment failed"),
-          ),
+          create: jest.fn().mockRejectedValueOnce(new Error("Payment failed")),
         },
       };
 

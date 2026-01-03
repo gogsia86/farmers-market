@@ -130,8 +130,7 @@ interface Receipt {
   metadata: Record<string, any>;
 }
 
-interface GenerateReceiptRequest
-  extends z.infer<typeof GenerateReceiptSchema> {
+interface GenerateReceiptRequest extends z.infer<typeof GenerateReceiptSchema> {
   options?: z.infer<typeof ReceiptOptionsSchema>;
 }
 
@@ -258,7 +257,10 @@ export class ReceiptService extends BaseService {
         // Generate QR code if requested
         let qrCode: string | undefined;
         if (includeQRCode) {
-          qrCode = await this.generateQRCode(orderId, receiptData.order.orderNumber);
+          qrCode = await this.generateQRCode(
+            orderId,
+            receiptData.order.orderNumber,
+          );
         }
 
         // Generate PDF if requested
@@ -642,29 +644,32 @@ export class ReceiptService extends BaseService {
               <span class="status-badge status-paid">${data.order.paymentStatus}</span>
             </div>
           </div>
-          ${formattedPaidDate
-        ? `
+          ${
+            formattedPaidDate
+              ? `
           <div class="info-item">
             <div class="info-label">Payment Date</div>
             <div class="info-value">${formattedPaidDate}</div>
           </div>
           `
-        : ""
-      }
-          ${opts.showPaymentMethod && data.order.paymentMethod
-        ? `
+              : ""
+          }
+          ${
+            opts.showPaymentMethod && data.order.paymentMethod
+              ? `
           <div class="info-item">
             <div class="info-label">Payment Method</div>
             <div class="info-value">${this.formatPaymentMethod(data.order.paymentMethod)}</div>
           </div>
           `
-        : ""
-      }
+              : ""
+          }
         </div>
       </div>
 
-      ${recipientType === "CUSTOMER" || recipientType === "ADMIN"
-        ? `
+      ${
+        recipientType === "CUSTOMER" || recipientType === "ADMIN"
+          ? `
       <!-- Customer Information -->
       <div class="section">
         <div class="section-title">Customer Information</div>
@@ -677,23 +682,25 @@ export class ReceiptService extends BaseService {
             <div class="info-label">Email</div>
             <div class="info-value">${data.customer.email}</div>
           </div>
-          ${data.customer.phone
-          ? `
+          ${
+            data.customer.phone
+              ? `
           <div class="info-item">
             <div class="info-label">Phone</div>
             <div class="info-value">${data.customer.phone}</div>
           </div>
           `
-          : ""
-        }
+              : ""
+          }
         </div>
       </div>
       `
-        : ""
+          : ""
       }
 
-      ${opts.showFarmInfo
-        ? `
+      ${
+        opts.showFarmInfo
+          ? `
       <!-- Farm Information -->
       <div class="section">
         <div class="section-title">Farm Information</div>
@@ -702,41 +709,45 @@ export class ReceiptService extends BaseService {
             <div class="info-label">Farm Name</div>
             <div class="info-value">${data.farm.name}</div>
           </div>
-          ${data.farm.email
-          ? `
+          ${
+            data.farm.email
+              ? `
           <div class="info-item">
             <div class="info-label">Farm Email</div>
             <div class="info-value">${data.farm.email}</div>
           </div>
           `
-          : ""
-        }
-          ${data.farm.phone
-          ? `
+              : ""
+          }
+          ${
+            data.farm.phone
+              ? `
           <div class="info-item">
             <div class="info-label">Farm Phone</div>
             <div class="info-value">${data.farm.phone}</div>
           </div>
           `
-          : ""
-        }
+              : ""
+          }
         </div>
-        ${data.farm.address
-          ? `
+        ${
+          data.farm.address
+            ? `
         <div class="address-box">
           <div class="info-label">Farm Address</div>
           <div class="info-value">${data.farm.address}</div>
         </div>
         `
-          : ""
+            : ""
         }
       </div>
       `
-        : ""
+          : ""
       }
 
-      ${opts.showShippingAddress && data.shippingAddress
-        ? `
+      ${
+        opts.showShippingAddress && data.shippingAddress
+          ? `
       <!-- Shipping Address -->
       <div class="section">
         <div class="section-title">Shipping Address</div>
@@ -748,14 +759,15 @@ export class ReceiptService extends BaseService {
         </div>
       </div>
       `
-        : ""
+          : ""
       }
 
       <!-- Order Items -->
       <div class="section">
         <div class="section-title">Order Items</div>
-        ${opts.showDetailedItems
-        ? `
+        ${
+          opts.showDetailedItems
+            ? `
         <table class="items-table">
           <thead>
             <tr>
@@ -767,8 +779,8 @@ export class ReceiptService extends BaseService {
           </thead>
           <tbody>
             ${data.items
-          .map(
-            (item) => `
+              .map(
+                (item) => `
             <tr>
               <td>
                 <div class="item-name">${item.productName}</div>
@@ -779,13 +791,13 @@ export class ReceiptService extends BaseService {
               <td style="text-align: right; font-weight: 600;">$${item.totalPrice.toFixed(2)}</td>
             </tr>
             `,
-          )
-          .join("")}
+              )
+              .join("")}
           </tbody>
         </table>
         `
-        : ""
-      }
+            : ""
+        }
 
         <!-- Totals -->
         <div class="totals">
@@ -793,33 +805,36 @@ export class ReceiptService extends BaseService {
             <span>Subtotal:</span>
             <span>$${data.order.subtotal.toFixed(2)}</span>
           </div>
-          ${data.order.shippingAmount > 0
-        ? `
+          ${
+            data.order.shippingAmount > 0
+              ? `
           <div class="total-row">
             <span>Shipping:</span>
             <span>$${data.order.shippingAmount.toFixed(2)}</span>
           </div>
           `
-        : ""
-      }
-          ${data.order.discountAmount > 0
-        ? `
+              : ""
+          }
+          ${
+            data.order.discountAmount > 0
+              ? `
           <div class="total-row" style="color: ${opts.branding?.primaryColor || "#10b981"};">
             <span>Discount:</span>
             <span>-$${data.order.discountAmount.toFixed(2)}</span>
           </div>
           `
-        : ""
-      }
-          ${opts.showTaxBreakdown && data.order.taxAmount > 0
-        ? `
+              : ""
+          }
+          ${
+            opts.showTaxBreakdown && data.order.taxAmount > 0
+              ? `
           <div class="total-row">
             <span>Tax:</span>
             <span>$${data.order.taxAmount.toFixed(2)}</span>
           </div>
           `
-        : ""
-      }
+              : ""
+          }
           <div class="total-row grand-total">
             <span>Total Paid:</span>
             <span>$${data.order.totalAmount.toFixed(2)} ${data.order.currency.toUpperCase()}</span>
@@ -827,8 +842,9 @@ export class ReceiptService extends BaseService {
         </div>
       </div>
 
-      ${opts.customMessage
-        ? `
+      ${
+        opts.customMessage
+          ? `
       <!-- Custom Message -->
       <div class="section">
         <div class="address-box">
@@ -836,7 +852,7 @@ export class ReceiptService extends BaseService {
         </div>
       </div>
       `
-        : ""
+          : ""
       }
     </div>
 
@@ -1060,13 +1076,14 @@ export const receiptService = new ReceiptService();
  */
 export type {
   GenerateReceiptRequest,
-  GenerateReceiptResult, Receipt, ReceiptData, ReceiptFormat, RecipientType
+  GenerateReceiptResult,
+  Receipt,
+  ReceiptData,
+  ReceiptFormat,
+  RecipientType,
 };
 
 /**
  * Export custom errors
  */
-  export {
-    OrderNotPaidError, ReceiptGenerationError, ReceiptTemplateError
-  };
-
+export { OrderNotPaidError, ReceiptGenerationError, ReceiptTemplateError };

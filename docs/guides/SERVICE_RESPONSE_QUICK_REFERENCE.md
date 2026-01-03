@@ -52,10 +52,10 @@ async createOrder(request: CreateOrderRequest): Promise<ServiceResponse<Order>> 
   return await this.traced("createOrder", async () => {
     // Validate
     const validated = await this.validate(CreateOrderSchema, request);
-    
+
     // Business logic
     const order = await database.order.create({ data: validated });
-    
+
     // Success response
     return this.success(order);
   });
@@ -67,26 +67,26 @@ async createOrder(request: CreateOrderRequest): Promise<ServiceResponse<Order>> 
 ```typescript
 export async function POST(request: NextRequest) {
   const result = await checkoutService.createOrder(data);
-  
+
   // ✅ CORRECT - Check success first (discriminated union)
   if (!result.success) {
     // TypeScript knows result.error exists here
     return NextResponse.json(
       {
         success: false,
-        error: result.error.message
+        error: result.error.message,
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
-  
+
   // TypeScript knows result.data exists here
   return NextResponse.json(
     {
       success: true,
-      order: result.data
+      order: result.data,
     },
-    { status: 201 }
+    { status: 201 },
   );
 }
 ```
@@ -101,14 +101,14 @@ async function createOrder(orderData: CreateOrderData) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(orderData),
   });
-  
+
   const result = await response.json();
-  
+
   if (!result.success) {
     // Handle error
     throw new Error(result.error || "Failed to create order");
   }
-  
+
   // Use data
   return result.order;
 }
@@ -120,24 +120,24 @@ async function createOrder(orderData: CreateOrderData) {
 export function useCheckout() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const createOrder = async (orderData: CreateOrderData) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await fetch("/api/checkout/create-order", {
         method: "POST",
         body: JSON.stringify(orderData),
       });
-      
+
       const result = await response.json();
-      
+
       if (!result.success) {
         setError(result.error || "Failed to create order");
         return null;
       }
-      
+
       return result.order;
     } catch (err) {
       setError(err.message);
@@ -146,7 +146,7 @@ export function useCheckout() {
       setLoading(false);
     }
   };
-  
+
   return { createOrder, loading, error };
 }
 ```
@@ -180,22 +180,24 @@ async function createOrder(data: CreateOrderData): Promise<Order | null> {
 
 ```typescript
 // ✅ NEW - ServiceResponse with type safety
-async function createOrder(data: CreateOrderData): Promise<ServiceResponse<Order>> {
+async function createOrder(
+  data: CreateOrderData,
+): Promise<ServiceResponse<Order>> {
   return await this.traced("createOrder", async () => {
     try {
       // Validate
       const validated = await this.validate(CreateOrderSchema, data);
-      
+
       // Business logic
       const order = await database.order.create({ data: validated });
-      
+
       // Success with data
       return this.success(order);
     } catch (error) {
       // Error with details
       return this.error(
         "ORDER_CREATION_FAILED",
-        error instanceof Error ? error.message : "Failed to create order"
+        error instanceof Error ? error.message : "Failed to create order",
       );
     }
   });
@@ -212,19 +214,19 @@ async function createOrder(data: CreateOrderData): Promise<ServiceResponse<Order
 const result = await service.createOrder(data);
 
 // Before checking success
-result.data;    // ❌ TypeScript error: might not exist
-result.error;   // ❌ TypeScript error: might not exist
+result.data; // ❌ TypeScript error: might not exist
+result.error; // ❌ TypeScript error: might not exist
 
 // After checking success
 if (!result.success) {
-  result.error;   // ✅ TypeScript knows this exists
-  result.data;    // ❌ TypeScript error: doesn't exist in error response
+  result.error; // ✅ TypeScript knows this exists
+  result.data; // ❌ TypeScript error: doesn't exist in error response
   return;
 }
 
 // In success path
-result.data;    // ✅ TypeScript knows this exists
-result.error;   // ❌ TypeScript error: doesn't exist in success response
+result.data; // ✅ TypeScript knows this exists
+result.error; // ❌ TypeScript error: doesn't exist in success response
 ```
 
 ---
@@ -245,11 +247,11 @@ async getData(): Promise<ServiceResponse<Data>> {
 ```typescript
 async getById(id: string): Promise<ServiceResponse<Data>> {
   const data = await database.data.findUnique({ where: { id } });
-  
+
   if (!data) {
     return this.error("NOT_FOUND", `Data with ID ${id} not found`);
   }
-  
+
   return this.success(data);
 }
 ```
@@ -260,7 +262,7 @@ async getById(id: string): Promise<ServiceResponse<Data>> {
 async create(request: CreateRequest): Promise<ServiceResponse<Data>> {
   // Automatic validation error handling
   const validated = await this.validate(CreateSchema, request);
-  
+
   const data = await database.data.create({ data: validated });
   return this.success(data);
 }
@@ -271,19 +273,19 @@ async create(request: CreateRequest): Promise<ServiceResponse<Data>> {
 ```typescript
 async processOrder(orderId: string): Promise<ServiceResponse<Order>> {
   const order = await database.order.findUnique({ where: { id: orderId } });
-  
+
   if (!order) {
     return this.error("NOT_FOUND", "Order not found");
   }
-  
+
   if (order.status === "CANCELLED") {
     return this.error("INVALID_STATE", "Cannot process cancelled order");
   }
-  
+
   if (order.paymentStatus !== "PAID") {
     return this.error("PAYMENT_REQUIRED", "Order must be paid before processing");
   }
-  
+
   // Process order...
   return this.success(updatedOrder);
 }
@@ -295,7 +297,7 @@ async processOrder(orderId: string): Promise<ServiceResponse<Order>> {
 async getPaginatedData(page: number, limit: number): Promise<ServiceResponse<PaginatedData<Item>>> {
   const items = await database.item.findMany({ skip: (page - 1) * limit, take: limit });
   const total = await database.item.count();
-  
+
   return this.success(
     {
       items,
@@ -419,11 +421,13 @@ async createData(): Promise<ServiceResponse<Data>> {
 ## 🎓 Additional Resources
 
 ### Internal Documentation
+
 - [Full Migration Guide](./CHECKOUT_SERVICE_MIGRATION_COMPLETE.md)
 - [Service Response Types](./src/lib/types/service-response.ts)
 - [BaseService Documentation](./src/lib/services/base.service.ts)
 
 ### Code Examples
+
 - [CheckoutService](./src/lib/services/checkout.service.ts)
 - [PaymentService](./src/lib/services/payment.service.ts)
 - [API Routes](./src/app/api/checkout/)
@@ -481,10 +485,10 @@ async myMethod(input: Input): Promise<ServiceResponse<Output>> {
   return await this.traced("myMethod", async () => {
     // 1. Validate
     const validated = await this.validate(Schema, input);
-    
+
     // 2. Business logic
     const result = await doSomething(validated);
-    
+
     // 3. Return success
     return this.success(result);
   });
@@ -497,4 +501,4 @@ async myMethod(input: Input): Promise<ServiceResponse<Output>> {
 **Questions?** Contact the engineering team  
 **Updates:** Check this document for latest patterns
 
-*Last Updated: November 15, 2024*
+_Last Updated: November 15, 2024_

@@ -1,4 +1,5 @@
 # 🌟 GODLIKE COPILOT WORKFLOW GUIDE
+
 ## Divine Precision Coding for Farmers Market Platform
 
 ---
@@ -54,13 +55,13 @@ Check that these files exist in your project:
 
 ### Step 3: Learn the Essential Shortcuts
 
-| Shortcut | Action |
-|----------|--------|
-| `Ctrl+Space` | Trigger Copilot inline suggestion |
-| `Alt+Enter` | Accept suggestion |
-| `Alt+[` / `Alt+]` | Navigate suggestions |
-| `Ctrl+Shift+I` | Open Copilot chat |
-| `Ctrl+Shift+X` | Reject suggestion |
+| Shortcut          | Action                            |
+| ----------------- | --------------------------------- |
+| `Ctrl+Space`      | Trigger Copilot inline suggestion |
+| `Alt+Enter`       | Accept suggestion                 |
+| `Alt+[` / `Alt+]` | Navigate suggestions              |
+| `Ctrl+Shift+I`    | Open Copilot chat                 |
+| `Ctrl+Shift+X`    | Reject suggestion                 |
 
 ---
 
@@ -76,18 +77,21 @@ graph LR
 ```
 
 #### 1. Parse Intent
+
 **What are you actually trying to build?**
 
 ❌ Bad: "I need a component"
 ✅ Good: "Farm profile card with image, stats, and favorite action"
 
 #### 2. Craft Precision Prompt
+
 **Use the godlike prompt templates below**
 
 ❌ Bad: "Create a farm card component"
 ✅ Good: "Generate src/components/features/FarmProfileCard.tsx with Farm type from Prisma, shadcn/ui Card, favorite button, responsive layout. Code only."
 
 #### 3. Execute Generation
+
 **Use the right tool for the job**
 
 - **Inline Completion** (`Ctrl+Space`): Small code snippets, function bodies
@@ -95,6 +99,7 @@ graph LR
 - **Custom Actions** (`Ctrl+Alt+Shift+C`): Predefined workflows
 
 #### 4. Validate & Commit
+
 **Check the generated code**
 
 - [ ] No explanatory comments
@@ -118,6 +123,7 @@ graph LR
 #### ✅ Perfect Prompts
 
 **1. Component Generation**
+
 ```
 Generate src/components/features/OrderTrackingCard.tsx. Requirements:
 - Accept Order type from Prisma
@@ -129,6 +135,7 @@ Code only, no explanations.
 ```
 
 **2. API Route Generation**
+
 ```
 Create src/app/api/farms/[id]/products/route.ts. Requirements:
 - GET: Fetch products for farm with pagination
@@ -140,6 +147,7 @@ Complete implementation.
 ```
 
 **3. Service Layer Generation**
+
 ```
 Implement src/lib/services/order.service.ts. Requirements:
 - OrderService class with CRUD methods
@@ -152,6 +160,7 @@ Show complete class.
 ```
 
 **4. Feature Implementation**
+
 ```
 Implement customer order history feature:
 1. src/app/(customer)/orders/page.tsx - Server component with data fetch
@@ -178,15 +187,15 @@ Complete implementation, all files.
 
 Add these to enforce specific behaviors:
 
-| Modifier | Effect |
-|----------|--------|
-| **"Code only"** | Suppresses explanations |
-| **"Complete implementation"** | Forces full file generation |
-| **"Show all files"** | Generates multiple files |
-| **"Follow existing pattern in X"** | Matches specific code style |
-| **"Optimize for performance"** | Adds memoization, caching |
-| **"Include tests"** | Generates test file |
-| **"Agricultural consciousness"** | Uses divine/biodynamic naming |
+| Modifier                           | Effect                        |
+| ---------------------------------- | ----------------------------- |
+| **"Code only"**                    | Suppresses explanations       |
+| **"Complete implementation"**      | Forces full file generation   |
+| **"Show all files"**               | Generates multiple files      |
+| **"Follow existing pattern in X"** | Matches specific code style   |
+| **"Optimize for performance"**     | Adds memoization, caching     |
+| **"Include tests"**                | Generates test file           |
+| **"Agricultural consciousness"**   | Uses divine/biodynamic naming |
 
 ### The Precision Prompt Template
 
@@ -214,38 +223,38 @@ Output format: Code only, no explanations.
 
 ### Copilot Actions
 
-| Shortcut | Action | Use Case |
-|----------|--------|----------|
-| `Ctrl+Space` | Trigger inline suggestion | Auto-complete function/component |
-| `Alt+Enter` | Accept suggestion | Commit Copilot's inline code |
-| `Alt+[` | Previous suggestion | Cycle through alternatives |
-| `Alt+]` | Next suggestion | Find better option |
-| `Ctrl+Shift+I` | Open Copilot chat | Complex generation tasks |
-| `Ctrl+Shift+X` | Reject suggestion | Dismiss unwanted code |
-| `Ctrl+Alt+G` | Terminal command suggestion | Get shell commands |
+| Shortcut       | Action                      | Use Case                         |
+| -------------- | --------------------------- | -------------------------------- |
+| `Ctrl+Space`   | Trigger inline suggestion   | Auto-complete function/component |
+| `Alt+Enter`    | Accept suggestion           | Commit Copilot's inline code     |
+| `Alt+[`        | Previous suggestion         | Cycle through alternatives       |
+| `Alt+]`        | Next suggestion             | Find better option               |
+| `Ctrl+Shift+I` | Open Copilot chat           | Complex generation tasks         |
+| `Ctrl+Shift+X` | Reject suggestion           | Dismiss unwanted code            |
+| `Ctrl+Alt+G`   | Terminal command suggestion | Get shell commands               |
 
 ### Divine Custom Actions (with selection)
 
-| Shortcut | Action | What It Does |
-|----------|--------|--------------|
+| Shortcut           | Action             | What It Does                                  |
+| ------------------ | ------------------ | --------------------------------------------- |
 | `Ctrl+Alt+Shift+C` | Generate component | Creates React component from selection/prompt |
-| `Ctrl+Alt+Shift+O` | Optimize code | Refactors for performance |
-| `Ctrl+Alt+Shift+E` | Add error handling | Wraps code in try-catch with proper errors |
-| `Ctrl+Alt+Shift+T` | Generate tests | Creates Vitest test suite |
-| `Ctrl+Alt+Shift+H` | Extract hook | Converts logic to custom React hook |
-| `Ctrl+Alt+Shift+D` | Debug code | Identifies and fixes issues |
-| `Ctrl+Alt+Shift+R` | Refactor SOLID | Applies SOLID principles |
+| `Ctrl+Alt+Shift+O` | Optimize code      | Refactors for performance                     |
+| `Ctrl+Alt+Shift+E` | Add error handling | Wraps code in try-catch with proper errors    |
+| `Ctrl+Alt+Shift+T` | Generate tests     | Creates Vitest test suite                     |
+| `Ctrl+Alt+Shift+H` | Extract hook       | Converts logic to custom React hook           |
+| `Ctrl+Alt+Shift+D` | Debug code         | Identifies and fixes issues                   |
+| `Ctrl+Alt+Shift+R` | Refactor SOLID     | Applies SOLID principles                      |
 
 ### Workflow Shortcuts
 
-| Shortcut | Action |
-|----------|--------|
-| `Ctrl+P` | Quick file open |
+| Shortcut       | Action          |
+| -------------- | --------------- |
+| `Ctrl+P`       | Quick file open |
 | `Ctrl+Shift+P` | Command palette |
 | `Ctrl+Shift+F` | Search in files |
-| `Ctrl+.` | Quick fix |
-| `F2` | Rename symbol |
-| `Ctrl+/` | Toggle comment |
+| `Ctrl+.`       | Quick fix       |
+| `F2`           | Rename symbol   |
+| `Ctrl+/`       | Toggle comment  |
 
 ---
 
@@ -256,6 +265,7 @@ Output format: Code only, no explanations.
 **Trigger**: Type `drc` and press `Tab`
 
 **Prompt for Copilot**:
+
 ```
 Generate complete React component src/components/features/[Name].tsx with:
 - TypeScript interface for props
@@ -270,6 +280,7 @@ Code only.
 **Trigger**: Type `dapi` and press `Tab`
 
 **Prompt for Copilot**:
+
 ```
 Create API route src/app/api/[resource]/route.ts with:
 - GET and POST handlers
@@ -285,6 +296,7 @@ Complete implementation.
 **Trigger**: Type `dservice` and press `Tab`
 
 **Prompt for Copilot**:
+
 ```
 Implement service class src/lib/services/[resource].service.ts with:
 - CRUD methods (create, findById, findAll, update, delete)
@@ -300,6 +312,7 @@ Show complete class.
 **Trigger**: Type `daction` and press `Tab`
 
 **Prompt for Copilot**:
+
 ```
 Create server action src/app/actions/[resource].actions.ts with:
 - "use server" directive
@@ -316,6 +329,7 @@ Complete implementation.
 **Trigger**: Type `dhook` and press `Tab`
 
 **Prompt for Copilot**:
+
 ```
 Create custom hook src/hooks/use[Name].ts with:
 - TypeScript interfaces for options and return
@@ -338,11 +352,13 @@ Complete hook implementation.
 **Steps**:
 
 1. **Plan the architecture**
+
    ```
    Copilot Chat: "List files needed for customer order tracking feature with Next.js 15 app router, including page, components, API routes, types."
    ```
 
 2. **Generate page component**
+
    ```
    Generate src/app/(customer)/orders/page.tsx:
    - Server component
@@ -354,6 +370,7 @@ Complete hook implementation.
    ```
 
 3. **Generate feature component**
+
    ```
    Generate src/components/features/OrderHistoryTable.tsx:
    - Accept Order[] from Prisma
@@ -366,6 +383,7 @@ Complete hook implementation.
    ```
 
 4. **Generate API route**
+
    ```
    Create src/app/api/customer/orders/route.ts:
    - GET handler
@@ -378,6 +396,7 @@ Complete hook implementation.
    ```
 
 5. **Generate types**
+
    ```
    Create src/types/order.ts with:
    - OrderHistoryItem interface
@@ -470,6 +489,7 @@ Complete hook implementation.
 **Problem**: Copilot outputs "Here's the code..." or adds summaries
 
 **Solution**:
+
 - Add "Code only, no explanations" to every prompt
 - Check `.copilot/directives.md` is in project root
 - Restart Cursor/VS Code to reload settings
@@ -479,6 +499,7 @@ Complete hook implementation.
 **Problem**: Copilot generates partial implementations
 
 **Solution**:
+
 - Use "Complete implementation" or "Show all files"
 - Be more specific about requirements
 - Break into smaller, focused prompts
@@ -488,6 +509,7 @@ Complete hook implementation.
 **Problem**: Imports use relative paths or wrong aliases
 
 **Solution**:
+
 - Specify in prompt: "Use @/ path aliases"
 - Check `tsconfig.json` has correct path mappings
 - Remind: "Import database from '@/lib/database'"
@@ -497,6 +519,7 @@ Complete hook implementation.
 **Problem**: Generated code doesn't match existing style
 
 **Solution**:
+
 - Reference existing files: "Follow pattern in src/lib/services/farm.service.ts"
 - Check `.cursorrules` is active
 - Use divine naming conventions
@@ -506,6 +529,7 @@ Complete hook implementation.
 **Problem**: Suggestions take >3 seconds
 
 **Solution**:
+
 - Check internet connection
 - Verify Copilot subscription is active
 - Restart Copilot: `Ctrl+Shift+P` → "Copilot: Restart"
@@ -595,7 +619,7 @@ After generation, add JSDoc for public APIs:
 
 ```typescript
 // Select function, then:
-"Add JSDoc comments for this function including params, returns, and examples."
+"Add JSDoc comments for this function including params, returns, and examples.";
 ```
 
 ### Tip 9: Generate Related Tests Immediately
@@ -620,6 +644,7 @@ Right after generating code:
 ### Multi-File Feature Generation
 
 **Prompt Structure**:
+
 ```
 Generate complete [FEATURE_NAME] feature:
 
@@ -641,6 +666,7 @@ Output all files with proper imports and exports.
 ### Conditional Generation
 
 **Prompt**:
+
 ```
 Generate [COMPONENT] with conditional behavior:
 - If user is admin: show edit/delete buttons
@@ -653,6 +679,7 @@ Use TypeScript discriminated unions for role types.
 ### Pattern Replication
 
 **Prompt**:
+
 ```
 Replicate the pattern from [EXISTING_FILE] to create [NEW_FILE].
 Maintain:
@@ -665,6 +692,7 @@ Adapt for [NEW_CONTEXT].
 ### Refactoring with Constraints
 
 **Prompt**:
+
 ```
 Refactor [FILE] to:
 - Reduce complexity (max 10 lines per function)
@@ -681,12 +709,14 @@ Show refactored code with extracted utilities.
 Track your godlike workflow effectiveness:
 
 ### Before Godlike Workflow
+
 - ⏱️ Time to create CRUD API: **45 minutes**
 - 🐛 Bugs per feature: **3-5**
 - 📝 Code review cycles: **2-3**
 - 🔄 Manual refactoring: **High**
 
 ### After Godlike Workflow
+
 - ⏱️ Time to create CRUD API: **5 minutes**
 - 🐛 Bugs per feature: **0-1**
 - 📝 Code review cycles: **1**
@@ -697,18 +727,21 @@ Track your godlike workflow effectiveness:
 ## 🎯 DAILY WORKFLOW CHECKLIST
 
 ### Morning Routine
+
 - [ ] Pull latest code
 - [ ] Review `.copilot/directives.md` for updates
 - [ ] Test Copilot connection (`Ctrl+Shift+I` → "Hello")
 - [ ] Review sprint tasks and plan generations
 
 ### During Development
+
 - [ ] Use precision prompts (not vague requests)
 - [ ] Generate tests immediately after features
 - [ ] Validate generated code against checklist
 - [ ] Commit in small, logical chunks
 
 ### End of Day
+
 - [ ] Review all Copilot-generated code
 - [ ] Ensure no explanatory comments remain
 - [ ] Run full test suite
@@ -727,6 +760,7 @@ You are now equipped to use Copilot as a **precision engineering tool** rather t
 5. **Maintain Consciousness**: Use agricultural patterns where appropriate
 
 **The Divine Formula**:
+
 ```
 Precision Prompt + Godlike Configuration = Production-Ready Code
 ```

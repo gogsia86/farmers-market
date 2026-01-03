@@ -214,10 +214,14 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
           setUploadingFiles([]);
         }, 1000);
       } catch (error) {
-        imageUploadLogger.error("Upload error", error instanceof Error ? error : new Error(String(error)), {
-          folder,
-          filesCount: acceptedFiles.length,
-        });
+        imageUploadLogger.error(
+          "Upload error",
+          error instanceof Error ? error : new Error(String(error)),
+          {
+            folder,
+            filesCount: acceptedFiles.length,
+          },
+        );
         toast({
           title: "Upload Failed",
           description: "Some images failed to upload. Please try again.",
@@ -283,10 +287,14 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         setUploadingFiles((prev) => prev.filter((_, i) => i !== index));
       }, 1000);
     } catch (error) {
-      imageUploadLogger.error("Retry upload error", error instanceof Error ? error : new Error(String(error)), {
-        folder,
-        fileName: fileToRetry.file.name,
-      });
+      imageUploadLogger.error(
+        "Retry upload error",
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          folder,
+          fileName: fileToRetry.file.name,
+        },
+      );
     }
   };
 

@@ -97,10 +97,10 @@ export async function GET(request: NextRequest) {
     const location =
       lat && lng
         ? {
-          lat: parseFloat(lat),
-          lng: parseFloat(lng),
-          radius: radius ? parseFloat(radius) : undefined,
-        }
+            lat: parseFloat(lat),
+            lng: parseFloat(lng),
+            radius: radius ? parseFloat(radius) : undefined,
+          }
         : undefined;
 
     // Validate query

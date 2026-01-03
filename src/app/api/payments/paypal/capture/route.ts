@@ -203,11 +203,15 @@ export async function POST(request: NextRequest) {
       await paypalService.getOrderDetails(paypalOrderId);
 
     if (!orderDetailsResult.success) {
-      logger.error("Failed to get PayPal order details", orderDetailsResult.error, {
-        operation: "getOrderDetails",
-        paypalOrderId,
-        orderId,
-      });
+      logger.error(
+        "Failed to get PayPal order details",
+        orderDetailsResult.error,
+        {
+          operation: "getOrderDetails",
+          paypalOrderId,
+          orderId,
+        },
+      );
 
       return NextResponse.json(
         {

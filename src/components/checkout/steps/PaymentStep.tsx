@@ -88,10 +88,14 @@ export function PaymentStep() {
         setClientSecret(data.paymentIntent.clientSecret);
         _setPaymentIntentId(data.paymentIntent.id);
       } catch (err) {
-        paymentLogger.error("Error creating payment intent", err instanceof Error ? err : new Error(String(err)), {
-          orderTotal: orderPreview?.total,
-          itemCount: orderPreview?.itemCount,
-        });
+        paymentLogger.error(
+          "Error creating payment intent",
+          err instanceof Error ? err : new Error(String(err)),
+          {
+            orderTotal: orderPreview?.total,
+            itemCount: orderPreview?.itemCount,
+          },
+        );
         setError("Unable to initialize payment. Please try again.");
       } finally {
         setIsLoading(false);

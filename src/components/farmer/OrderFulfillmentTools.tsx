@@ -49,13 +49,13 @@ interface Order {
   customerEmail: string;
   customerPhone?: string;
   status:
-  | "PENDING"
-  | "CONFIRMED"
-  | "PREPARING"
-  | "READY"
-  | "FULFILLED"
-  | "COMPLETED"
-  | "CANCELLED";
+    | "PENDING"
+    | "CONFIRMED"
+    | "PREPARING"
+    | "READY"
+    | "FULFILLED"
+    | "COMPLETED"
+    | "CANCELLED";
   items: OrderItem[];
   total: number;
   pickupDate?: string;
@@ -558,8 +558,9 @@ export function OrderFulfillmentTools({
               {filteredOrders.map((order) => (
                 <div
                   key={order.id}
-                  className={`p-4 hover:bg-gray-50 transition-colors ${selectedOrders.has(order.id) ? "bg-blue-50" : ""
-                    }`}
+                  className={`p-4 hover:bg-gray-50 transition-colors ${
+                    selectedOrders.has(order.id) ? "bg-blue-50" : ""
+                  }`}
                 >
                   <div className="flex items-start gap-4">
                     <Checkbox

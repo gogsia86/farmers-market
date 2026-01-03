@@ -182,9 +182,12 @@ async function getRedisClient(): Promise<IRedisClient> {
     cachedRedisClient = redisClient;
     return cachedRedisClient;
   } catch (error) {
-    redisLazyLogger.warn("Failed to load Redis client, falling back to in-memory", {
-      errorMessage: error instanceof Error ? error.message : String(error),
-    });
+    redisLazyLogger.warn(
+      "Failed to load Redis client, falling back to in-memory",
+      {
+        errorMessage: error instanceof Error ? error.message : String(error),
+      },
+    );
 
     // Fallback to in-memory on error
     if (!inMemoryClient) {

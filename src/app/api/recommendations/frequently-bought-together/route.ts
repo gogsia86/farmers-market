@@ -96,9 +96,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     );
   } catch (error) {
-    logger.error("Failed to get frequently bought together recommendations", error, {
-      operation: "getFrequentlyBoughtTogether",
-    });
+    logger.error(
+      "Failed to get frequently bought together recommendations",
+      error,
+      {
+        operation: "getFrequentlyBoughtTogether",
+      },
+    );
 
     return NextResponse.json(
       {

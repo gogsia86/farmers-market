@@ -147,7 +147,10 @@ export default function AddressesPage() {
         setAddresses(data.addresses || []);
       }
     } catch (error) {
-      addressLogger.error("Failed to fetch addresses", error instanceof Error ? error : new Error(String(error)));
+      addressLogger.error(
+        "Failed to fetch addresses",
+        error instanceof Error ? error : new Error(String(error)),
+      );
     } finally {
       setLoading(false);
     }
@@ -219,10 +222,14 @@ export default function AddressesPage() {
         });
       }
     } catch (error) {
-      addressLogger.error("Address save error", error instanceof Error ? error : new Error(String(error)), {
-        editingId,
-        formData: { type: formData.type, city: formData.city },
-      });
+      addressLogger.error(
+        "Address save error",
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          editingId,
+          formData: { type: formData.type, city: formData.city },
+        },
+      );
       setMessage({
         type: "error",
         text: "An error occurred. Please try again.",
@@ -256,9 +263,13 @@ export default function AddressesPage() {
         });
       }
     } catch (error) {
-      addressLogger.error("Set default address error", error instanceof Error ? error : new Error(String(error)), {
-        addressId,
-      });
+      addressLogger.error(
+        "Set default address error",
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          addressId,
+        },
+      );
       setMessage({
         type: "error",
         text: "An error occurred. Please try again.",
@@ -291,9 +302,13 @@ export default function AddressesPage() {
         });
       }
     } catch (error) {
-      addressLogger.error("Delete address error", error instanceof Error ? error : new Error(String(error)), {
-        addressId,
-      });
+      addressLogger.error(
+        "Delete address error",
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          addressId,
+        },
+      );
       setMessage({
         type: "error",
         text: "An error occurred. Please try again.",
@@ -369,10 +384,11 @@ export default function AddressesPage() {
         {/* Message Alert */}
         {message && (
           <div
-            className={`mb-6 p-4 rounded-lg ${message.type === "success"
+            className={`mb-6 p-4 rounded-lg ${
+              message.type === "success"
                 ? "bg-green-50 text-green-800 border-2 border-green-200"
                 : "bg-red-50 text-red-800 border-2 border-red-200"
-              }`}
+            }`}
           >
             <div className="flex items-center gap-2">
               <span className="text-xl">
@@ -514,10 +530,11 @@ export default function AddressesPage() {
                       key={type}
                       type="button"
                       onClick={() => setFormData({ ...formData, type })}
-                      className={`px-4 py-3 rounded-lg border-2 font-medium transition-all ${formData.type === type
+                      className={`px-4 py-3 rounded-lg border-2 font-medium transition-all ${
+                        formData.type === type
                           ? "bg-green-100 border-green-500 text-green-700"
                           : "bg-white border-gray-300 text-gray-700 hover:border-gray-400"
-                        }`}
+                      }`}
                     >
                       {getAddressTypeIcon(type)} {type}
                     </button>

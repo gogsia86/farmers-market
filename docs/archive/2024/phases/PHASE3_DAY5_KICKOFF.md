@@ -1,4 +1,5 @@
 # 🚀 Phase 3 Day 5 - KICKOFF
+
 ## Cart & Checkout Services Migration
 
 **Date:** January 2025  
@@ -13,9 +14,11 @@
 ## 📋 Today's Mission
 
 ### Primary Objective
+
 **Migrate CartService and CheckoutService to BaseService pattern**
 
 ### Why This Matters
+
 - **Revenue Critical:** Cart & Checkout are the heart of e-commerce
 - **User Experience:** Most frequent user interactions
 - **Foundation:** Required by multiple other services
@@ -26,6 +29,7 @@
 ## 🎯 Today's Goals
 
 ### Must Complete (P0)
+
 - [ ] CartService fully migrated to BaseService
 - [ ] CheckoutService fully migrated to BaseService
 - [ ] All tests passing (100% of cart/checkout tests)
@@ -34,12 +38,14 @@
 - [ ] Documentation updated
 
 ### Should Complete (P1)
+
 - [ ] Cart caching strategy optimized
 - [ ] Checkout flow traced end-to-end
 - [ ] Error scenarios comprehensively handled
 - [ ] Integration tests updated
 
 ### Nice to Have (P2)
+
 - [ ] Performance improvements identified
 - [ ] Cart sync optimization opportunities noted
 - [ ] Checkout flow diagram updated
@@ -51,9 +57,11 @@
 ### Morning Session: CartService (4 hours)
 
 #### 9:00 AM - 9:30 AM: Analysis & Planning (30 min)
+
 **Task:** Understand current CartService implementation
 
 **Actions:**
+
 - [ ] Read `src/lib/services/cart.service.ts` (or current location)
 - [ ] Map all public methods and their dependencies
 - [ ] Review existing tests in `tests/services/cart.service.test.ts`
@@ -66,9 +74,11 @@
 ---
 
 #### 9:30 AM - 10:00 AM: CartService Setup (30 min)
+
 **Task:** Create new CartService structure
 
 **Actions:**
+
 - [ ] Create backup of current CartService
 - [ ] Set up new file extending BaseService
 - [ ] Import required dependencies (CartRepository, ProductService, etc.)
@@ -77,6 +87,7 @@
 - [ ] Set up caching strategy
 
 **Code Structure:**
+
 ```typescript
 import { BaseService } from "@/lib/services/base/base.service";
 import { ServiceResponse } from "@/lib/services/base/service-response";
@@ -86,11 +97,11 @@ import { ProductService } from "@/lib/services/product.service";
 export class CartService extends BaseService {
   constructor(
     private readonly cartRepository: CartRepository,
-    private readonly productService: ProductService
+    private readonly productService: ProductService,
   ) {
     super("CartService");
   }
-  
+
   // Methods will be migrated here
 }
 ```
@@ -100,6 +111,7 @@ export class CartService extends BaseService {
 ---
 
 #### 10:00 AM - 11:30 AM: Core Cart Methods Migration (90 min)
+
 **Task:** Migrate primary cart operations
 
 **Methods to Migrate (in order):**
@@ -146,6 +158,7 @@ export class CartService extends BaseService {
    - [ ] Update cache
 
 **Pattern for Each Method:**
+
 ```typescript
 async addItem(
   userId: string,
@@ -169,10 +182,10 @@ async addItem(
     // Business logic
     try {
       const cart = await this.cartRepository.addItem(userId, productId, quantity);
-      
+
       // Invalidate cache
       await this.invalidateCache(`cart:${userId}`);
-      
+
       return this.success(cart, "Item added to cart successfully", {
         metadata: { itemsCount: cart.items.length }
       });
@@ -188,9 +201,11 @@ async addItem(
 ---
 
 #### 11:30 AM - 12:00 PM: CartService Testing (30 min)
+
 **Task:** Update and run cart tests
 
 **Actions:**
+
 - [ ] Update test imports to use ServiceResponse
 - [ ] Update assertions to check response structure
 - [ ] Add tests for new error scenarios
@@ -201,12 +216,13 @@ async addItem(
 - [ ] Verify 100% test coverage
 
 **Test Pattern:**
+
 ```typescript
 describe("CartService", () => {
   describe("addItem", () => {
     it("should add item to cart successfully", async () => {
       const result = await cartService.addItem(userId, productId, 2);
-      
+
       expect(result.success).toBe(true);
       expect(result.data).toBeDefined();
       expect(result.data.items).toHaveLength(1);
@@ -215,7 +231,7 @@ describe("CartService", () => {
 
     it("should return validation error for invalid quantity", async () => {
       const result = await cartService.addItem(userId, productId, 0);
-      
+
       expect(result.success).toBe(false);
       expect(result.error).toBeDefined();
       expect(result.error.code).toBe("VALIDATION_ERROR");
@@ -235,9 +251,11 @@ describe("CartService", () => {
 ### Afternoon Session: CheckoutService (4 hours)
 
 #### 1:00 PM - 1:30 PM: CheckoutService Analysis (30 min)
+
 **Task:** Understand current CheckoutService implementation
 
 **Actions:**
+
 - [ ] Read `src/lib/services/checkout.service.ts`
 - [ ] Map checkout workflow steps
 - [ ] Identify dependencies (Cart, Payment, Shipping, Order)
@@ -247,6 +265,7 @@ describe("CartService", () => {
 - [ ] Create migration checklist
 
 **Key Dependencies:**
+
 - CartService (verify cart contents)
 - PaymentService (process payment)
 - ShippingService (calculate shipping)
@@ -259,9 +278,11 @@ describe("CartService", () => {
 ---
 
 #### 1:30 PM - 2:00 PM: CheckoutService Setup (30 min)
+
 **Task:** Create new CheckoutService structure
 
 **Actions:**
+
 - [ ] Create backup of current CheckoutService
 - [ ] Set up new file extending BaseService
 - [ ] Import all required dependencies
@@ -270,6 +291,7 @@ describe("CartService", () => {
 - [ ] Set up transaction handling
 
 **Code Structure:**
+
 ```typescript
 import { BaseService } from "@/lib/services/base/base.service";
 import { ServiceResponse } from "@/lib/services/base/service-response";
@@ -285,11 +307,11 @@ export class CheckoutService extends BaseService {
     private readonly cartService: CartService,
     private readonly paymentService: PaymentService,
     private readonly shippingService: ShippingService,
-    private readonly orderService: OrderService
+    private readonly orderService: OrderService,
   ) {
     super("CheckoutService");
   }
-  
+
   // Checkout methods will be migrated here
 }
 ```
@@ -299,6 +321,7 @@ export class CheckoutService extends BaseService {
 ---
 
 #### 2:00 PM - 3:30 PM: Checkout Methods Migration (90 min)
+
 **Task:** Migrate checkout workflow methods
 
 **Methods to Migrate (in order):**
@@ -339,6 +362,7 @@ export class CheckoutService extends BaseService {
    - [ ] Add tracing
 
 **Critical: Transaction Pattern**
+
 ```typescript
 async processCheckout(
   sessionId: string,
@@ -415,9 +439,11 @@ async processCheckout(
 ---
 
 #### 3:30 PM - 4:00 PM: CheckoutService Testing (30 min)
+
 **Task:** Update and run checkout tests
 
 **Actions:**
+
 - [ ] Update test imports
 - [ ] Update assertions for ServiceResponse
 - [ ] Add transaction rollback tests
@@ -432,9 +458,11 @@ async processCheckout(
 ---
 
 #### 4:00 PM - 4:30 PM: Integration Testing (30 min)
+
 **Task:** Test cart → checkout → order flow
 
 **Actions:**
+
 - [ ] Run end-to-end checkout flow test
 - [ ] Test with real-world scenarios
 - [ ] Verify cart clears after checkout
@@ -444,6 +472,7 @@ async processCheckout(
 - [ ] Test rollback scenarios
 
 **Test Scenarios:**
+
 1. Happy path: Add to cart → checkout → order created
 2. Payment failure: Cart retained, inventory released
 3. Inventory shortage: Checkout fails, cart retained
@@ -455,9 +484,11 @@ async processCheckout(
 ---
 
 #### 4:30 PM - 5:00 PM: Documentation & Wrap-up (30 min)
+
 **Task:** Complete Day 5 documentation
 
 **Actions:**
+
 - [ ] Update CartService JSDoc comments
 - [ ] Update CheckoutService JSDoc comments
 - [ ] Document breaking changes (if any)
@@ -469,6 +500,7 @@ async processCheckout(
 - [ ] Git commit with clear message
 
 **Documentation Updates:**
+
 - Service README files
 - API documentation
 - Migration notes
@@ -481,6 +513,7 @@ async processCheckout(
 ## 📋 Pre-Flight Checklist
 
 ### Before Starting
+
 - [ ] Week 1 lessons reviewed
 - [ ] Migration template accessible
 - [ ] Development environment ready
@@ -491,6 +524,7 @@ async processCheckout(
 - [ ] Coffee/tea prepared ☕
 
 ### Tools & Resources
+
 - [ ] VS Code open with project
 - [ ] Terminal ready for test runs
 - [ ] Browser ready for manual testing
@@ -506,6 +540,7 @@ async processCheckout(
 ## 🎯 Success Criteria
 
 ### CartService Migration Success ✅
+
 - [ ] All methods return ServiceResponse
 - [ ] OpenTelemetry tracing on all methods
 - [ ] Caching implemented for cart retrieval
@@ -517,6 +552,7 @@ async processCheckout(
 - [ ] Documentation complete
 
 ### CheckoutService Migration Success ✅
+
 - [ ] All methods return ServiceResponse
 - [ ] Transaction handling implemented
 - [ ] OpenTelemetry tracing on all methods
@@ -530,6 +566,7 @@ async processCheckout(
 - [ ] Documentation complete
 
 ### Day 5 Overall Success ✅
+
 - [ ] Both services fully migrated
 - [ ] Full test suite passing (2,750+ tests)
 - [ ] Zero TypeScript errors
@@ -544,13 +581,14 @@ async processCheckout(
 ## 📊 Metrics to Track
 
 ### Code Metrics
+
 ```yaml
 CartService:
   Lines Before: [TBD after analysis]
   Lines After: [TBD after migration]
   Reduction: [TBD]
   Methods: ~8-10 methods
-  
+
 CheckoutService:
   Lines Before: [TBD after analysis]
   Lines After: [TBD after migration]
@@ -563,6 +601,7 @@ Combined:
 ```
 
 ### Quality Metrics
+
 ```yaml
 Tests:
   Before: [TBD]
@@ -586,27 +625,33 @@ Performance:
 ### Known Risks - Day 5
 
 #### Risk 1: Checkout Complexity 🟡 MEDIUM
+
 **Description:** Checkout involves multiple services and transactions
 **Impact:** HIGH (revenue critical)
 **Mitigation:**
+
 - Transaction pattern from OrderService proven
 - Extra time allocated (90 min vs 60 min)
 - Comprehensive rollback testing
 - Manual testing before completion
 
 #### Risk 2: Cart Sync Behavior 🟢 LOW
+
 **Description:** Cart sync between sessions may have edge cases
 **Impact:** MEDIUM
 **Mitigation:**
+
 - Existing tests should catch issues
 - Guest cart handling well documented
 - Cart expiry logic preserved
 - Manual testing scenarios prepared
 
 #### Risk 3: Payment Integration 🟢 LOW
+
 **Description:** Payment service will be migrated tomorrow (Day 6)
 **Impact:** LOW (mocking available)
 **Mitigation:**
+
 - Use mocked payment service for testing
 - Document payment integration points
 - Full integration test on Day 6
@@ -617,43 +662,45 @@ Performance:
 ## 💡 Key Patterns to Use
 
 ### Cart Caching Pattern
+
 ```typescript
 async getCart(userId: string): Promise<ServiceResponse<Cart>> {
   return this.withTracing("getCart", async (span) => {
     const cacheKey = `cart:${userId}`;
-    
+
     // Try cache first
     const cached = await this.getFromCache(cacheKey);
     if (cached) {
       span.setAttribute("cache.hit", true);
       return this.success(cached, "Cart retrieved from cache");
     }
-    
+
     // Fetch from database
     const cart = await this.cartRepository.findByUserId(userId);
-    
+
     // Cache for 1 hour
     await this.setCache(cacheKey, cart, 3600);
-    
+
     return this.success(cart, "Cart retrieved successfully");
   });
 }
 ```
 
 ### Checkout Transaction Pattern
+
 ```typescript
 async processCheckout(...): Promise<ServiceResponse<Order>> {
   return this.withTracing("processCheckout", async (span) => {
     return this.withTransaction(async (tx) => {
       // All operations here are atomic
       // Rollback automatic on error
-      
+
       const step1 = await this.doStep1(tx);
       if (!step1.success) return step1;
-      
+
       const step2 = await this.doStep2(tx);
       if (!step2.success) return step2;
-      
+
       return this.success(result);
     });
   });
@@ -661,6 +708,7 @@ async processCheckout(...): Promise<ServiceResponse<Order>> {
 ```
 
 ### Validation Pattern
+
 ```typescript
 private async validateAddItem(
   userId: string,
@@ -674,13 +722,13 @@ private async validateAddItem(
       { field: "productId", message: "Product ID is required" }
     ]);
   }
-  
+
   if (quantity < 1 || quantity > 100) {
     return this.validationError("Invalid quantity", [
       { field: "quantity", message: "Quantity must be between 1 and 100" }
     ]);
   }
-  
+
   // Check product exists and is available
   const product = await this.productService.getById(productId);
   if (!product.success || !product.data) {
@@ -689,7 +737,7 @@ private async validateAddItem(
       "Product does not exist"
     );
   }
-  
+
   return this.success(undefined, "Validation passed");
 }
 ```
@@ -699,21 +747,27 @@ private async validateAddItem(
 ## 📞 Communication
 
 ### Morning Standup (9:00 AM)
+
 **Share:**
+
 - Starting CartService migration
 - Expected completion: 12:00 PM
 - CheckoutService in afternoon
 - No blockers anticipated
 
 ### Mid-Day Update (1:00 PM)
+
 **Share in Slack #phase3-migration:**
+
 - CartService migration status
 - Test results
 - Any issues encountered
 - CheckoutService preview
 
 ### End of Day Update (5:00 PM)
+
 **Share:**
+
 - Day 5 completion status
 - Both services migrated (✅ or 🟡)
 - Metrics snapshot
@@ -724,6 +778,7 @@ private async validateAddItem(
 ## 🎉 Day 5 Targets
 
 ### Aggressive Target 🚀
+
 - Both services migrated by 4:00 PM
 - All tests passing
 - Documentation complete by 4:30 PM
@@ -731,12 +786,14 @@ private async validateAddItem(
 - Ahead of schedule for Day 6
 
 ### Realistic Target ✅
+
 - Both services migrated by 4:30 PM
 - All tests passing by 5:00 PM
 - Basic documentation complete
 - Ready for Day 6
 
 ### Minimum Viable ⚠️
+
 - CartService fully complete
 - CheckoutService 80% complete
 - Critical tests passing
@@ -754,11 +811,12 @@ private async validateAddItem(
 **Focus Mode:** 🎯 ACTIVATED
 
 ### Remember:
+
 ✅ Quality over speed (but we can have both!)  
 ✅ Test as you go, not at the end  
 ✅ Document while context is fresh  
 ✅ Ask for help early if blocked  
-✅ Celebrate small wins  
+✅ Celebrate small wins
 
 ---
 
@@ -769,6 +827,7 @@ _"Code with agricultural consciousness, architect with divine precision, deliver
 ---
 
 **Next Steps:**
+
 1. Start CartService analysis
 2. Follow the schedule
 3. Update progress in real-time

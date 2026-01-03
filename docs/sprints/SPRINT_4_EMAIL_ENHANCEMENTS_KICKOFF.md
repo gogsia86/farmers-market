@@ -4,19 +4,21 @@
 **Start Date**: January 2025  
 **Status**: 🚀 READY TO START  
 **Engineer**: TBD  
-**Priority**: HIGH  
+**Priority**: HIGH
 
 ---
 
 ## 📋 Executive Summary
 
 Sprint 4 builds upon the comprehensive email notification service implemented in Sprint 3. This sprint focuses on enhancing the email system to production-grade standards with:
+
 - Database schema updates for token-based authentication flows
 - Background job queue for reliable email delivery
 - User email preferences and unsubscribe functionality
 - Email analytics and monitoring dashboard
 
 **Goals**:
+
 1. ✅ Complete production-ready email infrastructure
 2. ✅ Enable reliable background email processing
 3. ✅ Give users control over email preferences
@@ -65,23 +67,27 @@ Sprint 4 builds upon the comprehensive email notification service implemented in
 ### What We Have (From Sprint 3)
 
 ✅ **Email Service** (`src/lib/services/email.service.ts` - 1,400 lines)
+
 - Comprehensive email sending functionality
 - 10+ professional email templates
 - Graceful degradation in development
 - Azure telemetry integration
 
 ✅ **Order Email Integration**
+
 - Order confirmation emails
 - Status update notifications
 - Shipping notifications with tracking
 - Cancellation notifications
 
 ✅ **Authentication Emails**
+
 - Password reset endpoint (`/api/auth/forgot-password`)
 - Email verification endpoint (`/api/auth/send-verification`)
 - Welcome emails for new users
 
 ✅ **Type Safety**
+
 - 0 TypeScript errors
 - Comprehensive interfaces
 - Full Zod validation
@@ -89,21 +95,25 @@ Sprint 4 builds upon the comprehensive email notification service implemented in
 ### What We Need (Sprint 4)
 
 ❌ **Database Support**
+
 - No token fields in User model yet
 - No EmailPreferences table
 - No email tracking table
 
 ❌ **Background Processing**
+
 - Emails sent synchronously
 - No retry mechanism
 - No queue for failed emails
 
 ❌ **User Control**
+
 - No preference management
 - No unsubscribe functionality
 - All emails mandatory
 
 ❌ **Analytics**
+
 - No delivery tracking
 - No engagement metrics
 - No monitoring dashboard
@@ -170,21 +180,21 @@ model User {
   name                    String?
   emailVerified           DateTime?
   image                   String?
-  
+
   // NEW: Token fields for authentication flows
   resetToken              String?   @unique
   resetTokenExpiry        DateTime?
   verificationToken       String?   @unique
   verificationTokenExpiry DateTime?
-  
+
   // NEW: Relationship to email preferences
   emailPreferences        EmailPreferences?
-  
+
   // Existing fields...
   role                    UserRole  @default(CUSTOMER)
   createdAt               DateTime  @default(now())
   updatedAt               DateTime  @updatedAt
-  
+
   // Existing relations...
   accounts                Account[]
   sessions                Session[]
@@ -199,30 +209,30 @@ model EmailPreferences {
   id                     String   @id @default(cuid())
   userId                 String   @unique
   user                   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   // Notification preferences
   orderConfirmation      Boolean  @default(true)
   orderStatusUpdates     Boolean  @default(true)
   orderShipped           Boolean  @default(true)
   orderDelivered         Boolean  @default(true)
-  
+
   // Marketing preferences
   farmUpdates            Boolean  @default(true)
   newProducts            Boolean  @default(true)
   promotions             Boolean  @default(true)
   newsletter             Boolean  @default(false)
-  
+
   // System preferences
   securityAlerts         Boolean  @default(true) // Always true, can't disable
   accountUpdates         Boolean  @default(true)
-  
+
   // Unsubscribe functionality
   unsubscribedAt         DateTime?
   unsubscribeToken       String?  @unique
-  
+
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
-  
+
   @@index([userId])
   @@index([unsubscribeToken])
 }
@@ -230,43 +240,43 @@ model EmailPreferences {
 // NEW: Email delivery tracking
 model EmailLog {
   id                     String      @id @default(cuid())
-  
+
   // Recipient information
   userId                 String?
   recipientEmail         String
   recipientName          String?
-  
+
   // Email details
   emailType              EmailType
   subject                String
   templateName           String?
-  
+
   // Delivery status
   status                 EmailStatus @default(PENDING)
   sentAt                 DateTime?
   deliveredAt            DateTime?
   failedAt               DateTime?
-  
+
   // Error tracking
   errorMessage           String?
   retryCount             Int         @default(0)
   lastRetryAt            DateTime?
-  
+
   // Engagement tracking
   openedAt               DateTime?
   clickedAt              DateTime?
   unsubscribedAt         DateTime?
-  
+
   // Job tracking
   jobId                  String?     @unique
   queueName              String?
-  
+
   // Metadata
   metadata               Json?
-  
+
   createdAt              DateTime    @default(now())
   updatedAt              DateTime    @updatedAt
-  
+
   @@index([userId])
   @@index([recipientEmail])
   @@index([emailType])
@@ -317,6 +327,7 @@ enum EmailStatus {
 ### P4.2: Email Queue Implementation ✅ PRIORITY 2
 
 **Files to Create/Update**:
+
 - `src/lib/queue/email.queue.ts` (NEW - 300 lines)
 - `src/lib/workers/email.worker.ts` (NEW - 200 lines)
 - `src/lib/services/email.service.ts` (UPDATE - add queue integration)
@@ -333,8 +344,8 @@ npm install -D @types/bull
 ```typescript
 // src/lib/queue/email.queue.ts
 
-import Queue from 'bull';
-import { EmailOptions, EmailPriority } from '@/lib/services/email.service';
+import Queue from "bull";
+import { EmailOptions, EmailPriority } from "@/lib/services/email.service";
 
 interface EmailJobData {
   emailOptions: EmailOptions;
@@ -344,30 +355,30 @@ interface EmailJobData {
 }
 
 // Create email queue
-export const emailQueue = new Queue<EmailJobData>('email-notifications', {
+export const emailQueue = new Queue<EmailJobData>("email-notifications", {
   redis: {
-    host: process.env.REDIS_HOST || 'localhost',
-    port: parseInt(process.env.REDIS_PORT || '6379'),
+    host: process.env.REDIS_HOST || "localhost",
+    port: parseInt(process.env.REDIS_PORT || "6379"),
     password: process.env.REDIS_PASSWORD,
-    tls: process.env.REDIS_TLS === 'true' ? {} : undefined,
+    tls: process.env.REDIS_TLS === "true" ? {} : undefined,
   },
   defaultJobOptions: {
     attempts: 3,
     backoff: {
-      type: 'exponential',
+      type: "exponential",
       delay: 2000, // Start with 2 seconds
     },
     removeOnComplete: 100, // Keep last 100 completed jobs
-    removeOnFail: 200,     // Keep last 200 failed jobs
+    removeOnFail: 200, // Keep last 200 failed jobs
   },
 });
 
 // Job priority mapping
 const PRIORITY_MAP: Record<EmailPriority, number> = {
-  critical: 1,  // Highest priority
+  critical: 1, // Highest priority
   high: 3,
   normal: 5,
-  low: 7,       // Lowest priority
+  low: 7, // Lowest priority
 };
 
 /**
@@ -377,19 +388,19 @@ export async function enqueueEmail(
   emailOptions: EmailOptions,
   userId?: string,
   emailType?: EmailType,
-  metadata?: Record<string, any>
+  metadata?: Record<string, any>,
 ): Promise<string> {
   const job = await emailQueue.add(
     {
       emailOptions,
       userId,
-      emailType: emailType || 'GENERIC',
+      emailType: emailType || "GENERIC",
       metadata,
     },
     {
-      priority: PRIORITY_MAP[emailOptions.priority || 'normal'],
+      priority: PRIORITY_MAP[emailOptions.priority || "normal"],
       jobId: `email-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    }
+    },
   );
 
   // Log to database
@@ -399,9 +410,9 @@ export async function enqueueEmail(
         userId,
         recipientEmail: emailOptions.to,
         recipientName: emailOptions.recipientName,
-        emailType: emailType || 'GENERIC',
+        emailType: emailType || "GENERIC",
         subject: emailOptions.subject,
-        status: 'QUEUED',
+        status: "QUEUED",
         jobId: job.id.toString(),
         queueName: emailQueue.name,
         metadata: metadata || {},
@@ -439,7 +450,7 @@ export async function getQueueStats() {
  */
 export async function retryFailedJob(jobId: string) {
   const job = await emailQueue.getJob(jobId);
-  if (job && await job.isFailed()) {
+  if (job && (await job.isFailed())) {
     await job.retry();
     return true;
   }
@@ -450,8 +461,8 @@ export async function retryFailedJob(jobId: string) {
  * Clean old jobs
  */
 export async function cleanOldJobs() {
-  await emailQueue.clean(7 * 24 * 60 * 60 * 1000, 'completed'); // 7 days
-  await emailQueue.clean(30 * 24 * 60 * 60 * 1000, 'failed');   // 30 days
+  await emailQueue.clean(7 * 24 * 60 * 60 * 1000, "completed"); // 7 days
+  await emailQueue.clean(30 * 24 * 60 * 60 * 1000, "failed"); // 30 days
 }
 ```
 
@@ -460,20 +471,20 @@ export async function cleanOldJobs() {
 ```typescript
 // src/lib/workers/email.worker.ts
 
-import { emailQueue } from '@/lib/queue/email.queue';
-import { emailService } from '@/lib/services/email.service';
-import { database } from '@/lib/database';
-import { trace } from '@opentelemetry/api';
+import { emailQueue } from "@/lib/queue/email.queue";
+import { emailService } from "@/lib/services/email.service";
+import { database } from "@/lib/database";
+import { trace } from "@opentelemetry/api";
 
 // Process email jobs
 emailQueue.process(async (job) => {
-  const tracer = trace.getTracer('email-worker');
-  
-  return await tracer.startActiveSpan('processEmailJob', async (span) => {
+  const tracer = trace.getTracer("email-worker");
+
+  return await tracer.startActiveSpan("processEmailJob", async (span) => {
     span.setAttributes({
-      'job.id': job.id.toString(),
-      'email.type': job.data.emailType,
-      'email.recipient': job.data.emailOptions.to,
+      "job.id": job.id.toString(),
+      "email.type": job.data.emailType,
+      "email.recipient": job.data.emailOptions.to,
     });
 
     try {
@@ -481,7 +492,7 @@ emailQueue.process(async (job) => {
       if (job.data.userId) {
         await database.emailLog.updateMany({
           where: { jobId: job.id.toString() },
-          data: { status: 'SENDING' },
+          data: { status: "SENDING" },
         });
       }
 
@@ -493,7 +504,7 @@ emailQueue.process(async (job) => {
         await database.emailLog.updateMany({
           where: { jobId: job.id.toString() },
           data: {
-            status: result.success ? 'SENT' : 'FAILED',
+            status: result.success ? "SENT" : "FAILED",
             sentAt: result.success ? new Date() : undefined,
             failedAt: result.success ? undefined : new Date(),
             errorMessage: result.error?.message,
@@ -509,9 +520,10 @@ emailQueue.process(async (job) => {
         await database.emailLog.updateMany({
           where: { jobId: job.id.toString() },
           data: {
-            status: 'FAILED',
+            status: "FAILED",
             failedAt: new Date(),
-            errorMessage: error instanceof Error ? error.message : 'Unknown error',
+            errorMessage:
+              error instanceof Error ? error.message : "Unknown error",
             retryCount: job.attemptsMade,
             lastRetryAt: new Date(),
           },
@@ -520,7 +532,7 @@ emailQueue.process(async (job) => {
 
       span.setStatus({
         code: SpanStatusCode.ERROR,
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? error.message : "Unknown error",
       });
       throw error;
     } finally {
@@ -530,21 +542,21 @@ emailQueue.process(async (job) => {
 });
 
 // Event listeners for monitoring
-emailQueue.on('completed', (job, result) => {
+emailQueue.on("completed", (job, result) => {
   console.log(`✅ Email job ${job.id} completed:`, result);
 });
 
-emailQueue.on('failed', (job, error) => {
+emailQueue.on("failed", (job, error) => {
   console.error(`❌ Email job ${job.id} failed:`, error);
 });
 
-emailQueue.on('stalled', (job) => {
+emailQueue.on("stalled", (job) => {
   console.warn(`⚠️ Email job ${job.id} stalled`);
 });
 
 // Graceful shutdown
-process.on('SIGTERM', async () => {
-  console.log('Shutting down email worker...');
+process.on("SIGTERM", async () => {
+  console.log("Shutting down email worker...");
   await emailQueue.close();
   process.exit(0);
 });
@@ -573,6 +585,7 @@ REDIS_TLS="false"
 ### P4.3: Email Preferences System ✅ PRIORITY 3
 
 **Files to Create**:
+
 - `src/lib/services/email-preferences.service.ts` (NEW - 250 lines)
 - `src/app/api/preferences/email/route.ts` (NEW - 150 lines)
 - `src/app/api/unsubscribe/route.ts` (NEW - 100 lines)
@@ -583,9 +596,9 @@ REDIS_TLS="false"
 ```typescript
 // src/lib/services/email-preferences.service.ts
 
-import { database } from '@/lib/database';
-import { EmailPreferences, Prisma } from '@prisma/client';
-import crypto from 'crypto';
+import { database } from "@/lib/database";
+import { EmailPreferences, Prisma } from "@prisma/client";
+import crypto from "crypto";
 
 export class EmailPreferencesService {
   /**
@@ -613,7 +626,9 @@ export class EmailPreferencesService {
    */
   async updatePreferences(
     userId: string,
-    updates: Partial<Omit<EmailPreferences, 'id' | 'userId' | 'createdAt' | 'updatedAt'>>
+    updates: Partial<
+      Omit<EmailPreferences, "id" | "userId" | "createdAt" | "updatedAt">
+    >,
   ): Promise<EmailPreferences> {
     const preferences = await this.getUserPreferences(userId);
 
@@ -632,21 +647,21 @@ export class EmailPreferencesService {
     // Check if user unsubscribed from all emails
     if (preferences.unsubscribedAt) {
       // Always allow security alerts
-      return emailType === 'SECURITY_ALERT';
+      return emailType === "SECURITY_ALERT";
     }
 
     // Map email type to preference field
     const fieldMap: Record<string, keyof EmailPreferences> = {
-      'ORDER_CONFIRMATION': 'orderConfirmation',
-      'ORDER_STATUS_UPDATE': 'orderStatusUpdates',
-      'ORDER_SHIPPED': 'orderShipped',
-      'ORDER_DELIVERED': 'orderDelivered',
-      'FARM_UPDATE': 'farmUpdates',
-      'NEW_PRODUCT': 'newProducts',
-      'PROMOTION': 'promotions',
-      'NEWSLETTER': 'newsletter',
-      'SECURITY_ALERT': 'securityAlerts',
-      'ACCOUNT_UPDATE': 'accountUpdates',
+      ORDER_CONFIRMATION: "orderConfirmation",
+      ORDER_STATUS_UPDATE: "orderStatusUpdates",
+      ORDER_SHIPPED: "orderShipped",
+      ORDER_DELIVERED: "orderDelivered",
+      FARM_UPDATE: "farmUpdates",
+      NEW_PRODUCT: "newProducts",
+      PROMOTION: "promotions",
+      NEWSLETTER: "newsletter",
+      SECURITY_ALERT: "securityAlerts",
+      ACCOUNT_UPDATE: "accountUpdates",
     };
 
     const field = fieldMap[emailType];
@@ -714,7 +729,7 @@ export class EmailPreferencesService {
    * Generate secure unsubscribe token
    */
   private generateUnsubscribeToken(): string {
-    return crypto.randomBytes(32).toString('hex');
+    return crypto.randomBytes(32).toString("hex");
   }
 }
 
@@ -726,23 +741,25 @@ export const emailPreferencesService = new EmailPreferencesService();
 ```typescript
 // src/app/api/preferences/email/route.ts
 
-import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
-import { emailPreferencesService } from '@/lib/services/email-preferences.service';
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { emailPreferencesService } from "@/lib/services/email-preferences.service";
 
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const preferences = await emailPreferencesService.getUserPreferences(session.user.id);
+    const preferences = await emailPreferencesService.getUserPreferences(
+      session.user.id,
+    );
     return NextResponse.json({ success: true, data: preferences });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to fetch preferences' },
-      { status: 500 }
+      { error: "Failed to fetch preferences" },
+      { status: 500 },
     );
   }
 }
@@ -751,20 +768,20 @@ export async function PATCH(request: NextRequest) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const updates = await request.json();
     const preferences = await emailPreferencesService.updatePreferences(
       session.user.id,
-      updates
+      updates,
     );
 
     return NextResponse.json({ success: true, data: preferences });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to update preferences' },
-      { status: 500 }
+      { error: "Failed to update preferences" },
+      { status: 500 },
     );
   }
 }
@@ -913,6 +930,7 @@ function PreferenceItem({ label, description, checked, onChange, disabled }) {
 ### P4.4: Email Analytics Dashboard ✅ PRIORITY 4
 
 **Files to Create**:
+
 - `src/app/api/analytics/email/route.ts` (NEW - 200 lines)
 - `src/app/(admin)/analytics/email/page.tsx` (NEW - 400 lines)
 - `src/lib/services/email-analytics.service.ts` (NEW - 300 lines)
@@ -922,8 +940,8 @@ function PreferenceItem({ label, description, checked, onChange, disabled }) {
 ```typescript
 // src/lib/services/email-analytics.service.ts
 
-import { database } from '@/lib/database';
-import { EmailStatus, EmailType } from '@prisma/client';
+import { database } from "@/lib/database";
+import { EmailStatus, EmailType } from "@prisma/client";
 
 export class EmailAnalyticsService {
   /**
@@ -945,9 +963,9 @@ export class EmailAnalyticsService {
 
     const stats = {
       total: logs.length,
-      sent: logs.filter((l) => l.status === 'SENT').length,
-      failed: logs.filter((l) => l.status === 'FAILED').length,
-      pending: logs.filter((l) => l.status === 'PENDING').length,
+      sent: logs.filter((l) => l.status === "SENT").length,
+      failed: logs.filter((l) => l.status === "FAILED").length,
+      pending: logs.filter((l) => l.status === "PENDING").length,
       deliveryRate: 0,
     };
 
@@ -966,7 +984,7 @@ export class EmailAnalyticsService {
           gte: startDate,
           lte: endDate,
         },
-        status: 'SENT',
+        status: "SENT",
       },
       select: {
         openedAt: true,
@@ -993,7 +1011,7 @@ export class EmailAnalyticsService {
    */
   async getEmailTypeBreakdown(startDate: Date, endDate: Date) {
     const result = await database.emailLog.groupBy({
-      by: ['emailType'],
+      by: ["emailType"],
       where: {
         createdAt: {
           gte: startDate,
@@ -1017,10 +1035,10 @@ export class EmailAnalyticsService {
   async getFailedEmails(limit: number = 50) {
     return await database.emailLog.findMany({
       where: {
-        status: 'FAILED',
+        status: "FAILED",
       },
       orderBy: {
-        failedAt: 'desc',
+        failedAt: "desc",
       },
       take: limit,
       select: {
@@ -1047,11 +1065,13 @@ export const emailAnalyticsService = new EmailAnalyticsService();
 ### Unit Tests
 
 **Test Files to Create**:
+
 - `__tests__/lib/services/email-preferences.service.test.ts`
 - `__tests__/lib/queue/email.queue.test.ts`
 - `__tests__/lib/services/email-analytics.service.test.ts`
 
 **Test Coverage Requirements**:
+
 - [ ] Database schema migrations
 - [ ] Email queue enqueue/dequeue
 - [ ] Worker job processing
@@ -1062,6 +1082,7 @@ export const emailAnalyticsService = new EmailAnalyticsService();
 ### Integration Tests
 
 **Test Scenarios**:
+
 1. **End-to-End Email Flow**
    - Trigger email → Queue → Worker → Delivery → Log
    - Verify database updates at each stage
@@ -1136,6 +1157,7 @@ export const emailAnalyticsService = new EmailAnalyticsService();
 ### Local Development
 
 **Required Services**:
+
 1. **PostgreSQL** (existing) - for database
 2. **Redis** (NEW) - for email queue
 
@@ -1183,6 +1205,7 @@ EMAIL_FROM="noreply@farmersmarket.com"
 ### Production Setup
 
 **Azure Redis Cache**:
+
 1. Create Azure Redis Cache instance
 2. Get connection string
 3. Update environment variables
@@ -1230,6 +1253,7 @@ REDIS_TLS="true"
 **Risk**: New infrastructure dependency (Redis)  
 **Impact**: HIGH  
 **Mitigation**:
+
 - Use managed Azure Redis Cache for production
 - Implement graceful fallback (sync email if Redis unavailable)
 - Add comprehensive health checks
@@ -1240,6 +1264,7 @@ REDIS_TLS="true"
 **Risk**: Schema changes on existing data  
 **Impact**: MEDIUM  
 **Mitigation**:
+
 - Test migration thoroughly on staging
 - Create rollback migration
 - Backup production database before migration
@@ -1250,6 +1275,7 @@ REDIS_TLS="true"
 **Risk**: New async complexity with jobs/workers  
 **Impact**: MEDIUM  
 **Mitigation**:
+
 - Comprehensive logging and telemetry
 - Bull UI for queue monitoring
 - Clear error messages and alerts
@@ -1260,6 +1286,7 @@ REDIS_TLS="true"
 **Risk**: Users accidentally disable critical emails  
 **Impact**: LOW  
 **Mitigation**:
+
 - Clear UI labels and descriptions
 - Some emails always enabled (security)
 - Confirmation before bulk disable
@@ -1272,18 +1299,21 @@ REDIS_TLS="true"
 ### Week 1: Foundation (Days 1-5)
 
 **Day 1-2**: Database Schema
+
 - [ ] Update Prisma schema
 - [ ] Generate and test migration
 - [ ] Create seed data
 - [ ] Verify relationships
 
 **Day 3-4**: Email Queue
+
 - [ ] Install Bull and Redis
 - [ ] Implement queue service
 - [ ] Create worker process
 - [ ] Test job processing
 
 **Day 5**: Integration
+
 - [ ] Update email service to use queue
 - [ ] Add preference checking
 - [ ] Update order actions
@@ -1292,24 +1322,28 @@ REDIS_TLS="true"
 ### Week 2: Features & Polish (Days 6-10)
 
 **Day 6-7**: Email Preferences
+
 - [ ] Implement preferences service
 - [ ] Create API endpoints
 - [ ] Build UI components
 - [ ] Test unsubscribe flow
 
 **Day 8**: Analytics
+
 - [ ] Implement analytics service
 - [ ] Create API endpoints
 - [ ] Build dashboard UI
 - [ ] Test metrics calculations
 
 **Day 9**: Testing & Documentation
+
 - [ ] Write unit tests
 - [ ] Write integration tests
 - [ ] Complete all documentation
 - [ ] Update environment guides
 
 **Day 10**: Review & Deploy
+
 - [ ] Code review
 - [ ] Final testing
 - [ ] Deploy to staging
@@ -1322,18 +1356,21 @@ REDIS_TLS="true"
 Before starting Sprint 4:
 
 ### Technical Prerequisites
+
 - [ ] Redis installed locally or Docker Compose updated
 - [ ] Database backup created
 - [ ] Staging environment ready for testing
 - [ ] All Sprint 3 code merged to main
 
 ### Knowledge Prerequisites
+
 - [ ] Read Bull.js documentation
 - [ ] Review Prisma migration best practices
 - [ ] Understand email deliverability metrics
 - [ ] Review Redis basics
 
 ### Access Prerequisites
+
 - [ ] Access to Azure Portal (for Redis Cache)
 - [ ] Access to production database (for migration)
 - [ ] Access to staging environment
@@ -1346,6 +1383,7 @@ Before starting Sprint 4:
 Sprint 4 is complete when:
 
 ### Core Functionality
+
 - [ ] Database migrations run successfully
 - [ ] Email queue processing jobs
 - [ ] Users can manage email preferences
@@ -1353,13 +1391,15 @@ Sprint 4 is complete when:
 - [ ] Analytics dashboard showing data
 
 ### Quality Standards
+
 - [ ] 0 TypeScript errors
 - [ ] All tests passing
-- [ ] >80% test coverage for new code
+- [ ] > 80% test coverage for new code
 - [ ] No ESLint errors
 - [ ] Code reviewed and approved
 
 ### Documentation
+
 - [ ] Sprint completion report written
 - [ ] Technical documentation complete
 - [ ] User guides created
@@ -1367,6 +1407,7 @@ Sprint 4 is complete when:
 - [ ] TECHNICAL_DEBT.md updated
 
 ### Production Ready
+
 - [ ] Deployed to staging
 - [ ] Smoke tests passing
 - [ ] Performance metrics acceptable
@@ -1378,15 +1419,18 @@ Sprint 4 is complete when:
 ## 📖 Related Documentation
 
 ### Sprint 3 Deliverables
+
 - [Sprint 3 Completion Report](./SPRINT_3_EMAIL_NOTIFICATIONS_COMPLETE.md)
 - [Sprint 3 Continuation Summary](../../SPRINT_3_CONTINUATION_SUMMARY.md)
 
 ### Technical References
+
 - [Email Service Implementation](../../src/lib/services/email.service.ts)
 - [Database Schema](../../prisma/schema.prisma)
 - [Environment Variables Guide](../ENVIRONMENT_VARIABLES.md)
 
 ### External Documentation
+
 - [Bull.js Documentation](https://github.com/OptimalBits/bull)
 - [Prisma Migrations](https://www.prisma.io/docs/concepts/components/prisma-migrate)
 - [Azure Redis Cache](https://docs.microsoft.com/en-us/azure/azure-cache-for-redis/)
@@ -1398,6 +1442,7 @@ Sprint 4 is complete when:
 ### Daily Standups
 
 **Questions**:
+
 1. What did I complete yesterday?
 2. What am I working on today?
 3. Any blockers?
@@ -1405,6 +1450,7 @@ Sprint 4 is complete when:
 ### Mid-Sprint Check-in (Day 5)
 
 **Review**:
+
 - Progress on Week 1 deliverables
 - Any timeline adjustments needed
 - Risk assessment
@@ -1413,6 +1459,7 @@ Sprint 4 is complete when:
 ### Sprint Review (Day 10)
 
 **Demonstrate**:
+
 - Email queue in action
 - Preference management UI
 - Analytics dashboard
@@ -1506,11 +1553,13 @@ npm run queue:clean
 ## ✅ Final Notes
 
 Sprint 4 builds directly on Sprint 3's foundation. The email service is already excellent - we're adding production-grade enhancements:
+
 - **Reliability**: Queue with retry logic
 - **Control**: User preferences
 - **Visibility**: Analytics dashboard
 
 Focus on:
+
 1. ✅ Type safety (maintain 0 errors)
 2. ✅ Comprehensive testing
 3. ✅ Clear documentation
@@ -1523,6 +1572,6 @@ Focus on:
 **Document Version**: 1.0  
 **Created**: January 2025  
 **Status**: READY FOR SPRINT START  
-**Next Review**: End of Week 1  
+**Next Review**: End of Week 1
 
 🚀 **Ready to build production-grade email infrastructure!**

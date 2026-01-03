@@ -1,4 +1,5 @@
 # 🌾 Farmers Market Platform - Complete Project Structure
+
 **Divine Agricultural E-Commerce Platform**
 **Version**: 1.0.0 | **Engine**: Next.js 15 + TypeScript + Prisma 7
 **Last Updated**: January 2025
@@ -6,6 +7,7 @@
 ---
 
 ## 📋 Table of Contents
+
 1. [Project Overview](#project-overview)
 2. [Root Structure](#root-structure)
 3. [Source Code Structure](#source-code-structure)
@@ -24,6 +26,7 @@
 **Mission**: Divine agricultural platform connecting farmers directly with customers using quantum-level architecture patterns and biodynamic consciousness.
 
 **Tech Stack**:
+
 - **Framework**: Next.js 15 (App Router, React Server Components)
 - **Language**: TypeScript (Strict Mode)
 - **Database**: PostgreSQL + Prisma 7
@@ -479,39 +482,39 @@ src/
 
 ### Root Configuration Files
 
-| File | Purpose |
-|------|---------|
-| `tsconfig.json` | TypeScript compiler configuration (strict mode, path aliases) |
-| `next.config.mjs` | Next.js configuration (image optimization, env vars, webpack) |
-| `tailwind.config.ts` | Tailwind CSS configuration (theme, plugins, purge) |
-| `eslint.config.mjs` | ESLint linting rules |
-| `jest.config.js` | Jest unit test configuration |
-| `jest.setup.js` | Jest global setup and mocks |
-| `playwright.config.ts` | Playwright E2E test configuration |
-| `postcss.config.mjs` | PostCSS configuration (Tailwind processing) |
-| `prisma.config.ts` | Prisma client configuration |
-| `vercel.json` | Vercel deployment settings |
-| `webpack.config.mjs` | Custom webpack configuration |
-| `.lintstagedrc.js` | Lint-staged pre-commit hooks |
-| `.npmrc` | NPM configuration |
-| `middleware.ts` | Next.js middleware (auth, security, i18n) |
-| `instrumentation.ts` | OpenTelemetry instrumentation setup |
+| File                   | Purpose                                                       |
+| ---------------------- | ------------------------------------------------------------- |
+| `tsconfig.json`        | TypeScript compiler configuration (strict mode, path aliases) |
+| `next.config.mjs`      | Next.js configuration (image optimization, env vars, webpack) |
+| `tailwind.config.ts`   | Tailwind CSS configuration (theme, plugins, purge)            |
+| `eslint.config.mjs`    | ESLint linting rules                                          |
+| `jest.config.js`       | Jest unit test configuration                                  |
+| `jest.setup.js`        | Jest global setup and mocks                                   |
+| `playwright.config.ts` | Playwright E2E test configuration                             |
+| `postcss.config.mjs`   | PostCSS configuration (Tailwind processing)                   |
+| `prisma.config.ts`     | Prisma client configuration                                   |
+| `vercel.json`          | Vercel deployment settings                                    |
+| `webpack.config.mjs`   | Custom webpack configuration                                  |
+| `.lintstagedrc.js`     | Lint-staged pre-commit hooks                                  |
+| `.npmrc`               | NPM configuration                                             |
+| `middleware.ts`        | Next.js middleware (auth, security, i18n)                     |
+| `instrumentation.ts`   | OpenTelemetry instrumentation setup                           |
 
 ### Monitoring & Error Tracking
 
-| File | Purpose |
-|------|---------|
-| `sentry.client.config.ts` | Sentry client-side error tracking |
-| `sentry.server.config.ts` | Sentry server-side error tracking |
-| `sentry.edge.config.ts` | Sentry edge runtime error tracking |
+| File                      | Purpose                            |
+| ------------------------- | ---------------------------------- |
+| `sentry.client.config.ts` | Sentry client-side error tracking  |
+| `sentry.server.config.ts` | Sentry server-side error tracking  |
+| `sentry.edge.config.ts`   | Sentry edge runtime error tracking |
 
 ### Docker Configuration
 
-| File | Purpose |
-|------|---------|
-| `docker-compose.yml` | Production Docker orchestration |
+| File                     | Purpose                          |
+| ------------------------ | -------------------------------- |
+| `docker-compose.yml`     | Production Docker orchestration  |
 | `docker-compose.dev.yml` | Development Docker orchestration |
-| `.dockerignore` | Docker build exclusions |
+| `.dockerignore`          | Docker build exclusions          |
 
 ### Environment Files (Examples in `config/env-examples/`)
 
@@ -772,32 +775,38 @@ scripts/
 ## 🎯 Key Technologies & Dependencies
 
 ### Core Framework
+
 - **Next.js 15** - React framework with App Router
 - **React 18** - UI library with Server Components
 - **TypeScript 5** - Type-safe JavaScript
 
 ### Database & ORM
+
 - **PostgreSQL** - Relational database
 - **Prisma 7** - Next-generation ORM
 - **Prisma Accelerate** - Connection pooling and caching
 
 ### Authentication & Authorization
+
 - **NextAuth v5** - Authentication framework
 - **JWT** - JSON Web Tokens
 - **bcrypt** - Password hashing
 
 ### Styling & UI
+
 - **Tailwind CSS** - Utility-first CSS
 - **shadcn/ui** - Component library
 - **Radix UI** - Headless UI components
 - **Lucide React** - Icon library
 
 ### State Management
+
 - **Zustand** - Lightweight state management
 - **React Query (TanStack Query)** - Server state management
 - **React Context** - Built-in state management
 
 ### Testing
+
 - **Jest** - Unit testing framework
 - **Vitest** - Fast unit test runner
 - **Playwright** - E2E testing
@@ -805,28 +814,34 @@ scripts/
 - **MSW (Mock Service Worker)** - API mocking
 
 ### Monitoring & Observability
+
 - **Sentry** - Error tracking
 - **OpenTelemetry** - Distributed tracing
 - **Azure Application Insights** - Application monitoring
 - **Winston** - Logging framework
 
 ### Payment Processing
+
 - **Stripe** - Payment gateway
 - **Stripe Webhooks** - Payment event handling
 
 ### File Storage
+
 - **Cloudinary** - Image/video hosting and optimization
 
 ### Search
+
 - **Algolia** - Search-as-a-service (optional)
 - **Elasticsearch** - Full-text search (optional)
 
 ### AI & Automation
+
 - **Microsoft Agent Framework** - Multi-agent orchestration
 - **OpenAI SDK** - AI integration
 - **LangChain** - LLM orchestration
 
 ### DevOps & Infrastructure
+
 - **Docker** - Containerization
 - **Docker Compose** - Multi-container orchestration
 - **GitHub Actions** - CI/CD
@@ -834,12 +849,14 @@ scripts/
 - **NGINX** - Reverse proxy
 
 ### Code Quality
+
 - **ESLint** - JavaScript/TypeScript linting
 - **Prettier** - Code formatting
 - **Husky** - Git hooks
 - **lint-staged** - Pre-commit linting
 
 ### Performance
+
 - **GPU.js** - GPU acceleration (CUDA)
 - **Redis** - Caching layer
 - **Service Workers** - PWA functionality
@@ -881,6 +898,7 @@ scripts/
 ```
 
 ### Node Version
+
 - **Required**: Node.js >= 20.19.0
 - **NPM**: >= 10.0.0
 
@@ -889,26 +907,31 @@ scripts/
 ## 🏗️ Architecture Layers
 
 ### 1. Presentation Layer
+
 - **Location**: `src/app/`, `src/components/`
 - **Responsibility**: UI, user interaction, routing
 - **Technologies**: Next.js App Router, React Server Components
 
 ### 2. Controller Layer
+
 - **Location**: `src/lib/controllers/`
 - **Responsibility**: Handle HTTP requests, validate input, orchestrate services
 - **Pattern**: MVC Controller pattern
 
 ### 3. Service Layer
+
 - **Location**: `src/lib/services/`
 - **Responsibility**: Business logic, transaction management
 - **Pattern**: Service pattern, Domain-Driven Design
 
 ### 4. Repository Layer
+
 - **Location**: `src/lib/repositories/`
 - **Responsibility**: Data access abstraction
 - **Pattern**: Repository pattern
 
 ### 5. Database Layer
+
 - **Location**: `src/lib/database/`, `prisma/`
 - **Responsibility**: Data persistence
 - **Technologies**: Prisma ORM, PostgreSQL
@@ -933,17 +956,20 @@ scripts/
 ## 🚀 Deployment Options
 
 ### 1. Vercel (Recommended)
+
 - Zero-config deployment
 - Automatic HTTPS
 - Global CDN
 - Preview deployments
 
 ### 2. Docker
+
 - Full-stack containerization
 - PostgreSQL + Next.js + NGINX
 - Docker Compose orchestration
 
 ### 3. Self-Hosted
+
 - VPS/Cloud server
 - PM2 process manager
 - NGINX reverse proxy
@@ -953,16 +979,19 @@ scripts/
 ## 🎨 Design System
 
 ### Color Palette
+
 - **Primary**: Agricultural green
 - **Secondary**: Earth tones
 - **Accent**: Fresh produce colors
 - **Semantic**: Success, warning, error, info
 
 ### Typography
+
 - **Font Family**: Inter (primary), system fonts (fallback)
 - **Scale**: Tailwind default scale
 
 ### Components
+
 - Base UI components in `src/components/ui/`
 - Feature components in `src/components/features/`
 - Agricultural-aware components in `src/components/agricultural/`
@@ -972,16 +1001,19 @@ scripts/
 ## 📊 Performance Targets
 
 ### Core Web Vitals
+
 - **LCP (Largest Contentful Paint)**: < 2.5s
 - **FID (First Input Delay)**: < 100ms
 - **CLS (Cumulative Layout Shift)**: < 0.1
 
 ### Custom Metrics
+
 - **Time to Interactive**: < 3s
 - **API Response Time**: < 200ms (p95)
 - **Database Query Time**: < 50ms (p95)
 
 ### Optimization Strategies
+
 - Image optimization (Next.js Image)
 - Code splitting (dynamic imports)
 - Server-side rendering
@@ -1012,11 +1044,13 @@ scripts/
 ## 🔄 State Management Strategy
 
 ### Client State
+
 - **Local Component State**: useState, useReducer
 - **Global UI State**: Zustand stores
 - **Form State**: React Hook Form
 
 ### Server State
+
 - **Data Fetching**: React Query (TanStack Query)
 - **Caching**: React Query cache + Redis
 - **Optimistic Updates**: React Query mutations
@@ -1026,6 +1060,7 @@ scripts/
 ## 🎯 Development Workflow
 
 ### 1. Local Development
+
 ```bash
 npm run dev          # Start dev server (Turbo mode)
 npm run dev:omen     # HP OMEN optimized mode
@@ -1034,6 +1069,7 @@ npm run test:e2e     # Run E2E tests
 ```
 
 ### 2. Code Quality
+
 ```bash
 npm run lint         # ESLint
 npm run format       # Prettier
@@ -1041,6 +1077,7 @@ npm run type-check   # TypeScript check
 ```
 
 ### 3. Database
+
 ```bash
 npm run db:migrate   # Run migrations
 npm run db:seed      # Seed database
@@ -1048,6 +1085,7 @@ npm run db:studio    # Prisma Studio
 ```
 
 ### 4. Build & Deploy
+
 ```bash
 npm run build        # Production build
 npm run start        # Production server
@@ -1082,12 +1120,14 @@ The `.github/instructions/` directory contains comprehensive coding guidelines f
 ## 🎓 Learning Resources
 
 ### Internal Documentation
+
 - `docs/getting-started/` - Getting started guides
 - `docs/guides/` - How-to guides
 - `docs/api/` - API documentation
 - `docs/architecture/` - Architecture documentation
 
 ### External Resources
+
 - [Next.js Documentation](https://nextjs.org/docs)
 - [Prisma Documentation](https://www.prisma.io/docs)
 - [TypeScript Handbook](https://www.typescriptlang.org/docs)
@@ -1100,6 +1140,7 @@ The `.github/instructions/` directory contains comprehensive coding guidelines f
 See `CONTRIBUTING.md` for contribution guidelines.
 
 ### Pull Request Process
+
 1. Create feature branch
 2. Follow divine coding patterns
 3. Add tests (>80% coverage)
@@ -1126,6 +1167,7 @@ See `LICENSE` file for license information.
 **Type Safety**: 100% (TypeScript strict mode)
 
 ### Recent Achievements
+
 - ✅ Comprehensive test suite (E2E, integration, unit)
 - ✅ Full TypeScript strict mode compliance
 - ✅ Prisma 7 migration complete
@@ -1136,6 +1178,7 @@ See `LICENSE` file for license information.
 - ✅ PWA functionality
 
 ### Upcoming Features
+
 - 🔄 Mobile app (React Native)
 - 🔄 Real-time notifications
 - 🔄 Advanced search (Algolia)

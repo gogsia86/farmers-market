@@ -33,12 +33,14 @@ The Farmers Market Platform is **95% production-ready** with excellent test cove
 ## 🔴 CRITICAL: Build Blockers (Must Fix Now)
 
 ### Issue #1: Syntax Error in Analytics Page
+
 **File**: `src/app/farmer/analytics/page.tsx` (Line 84)
 **Error**: Unexpected character '═' in source code
 **Priority**: P0 - BLOCKING
 **Impact**: Build fails completely
 
 **Problem**:
+
 ```typescript
   // ═══════════════════════════════════════════════════════════
   // 🔐 AUTHENTICATION & AUTHORIZATION
@@ -47,13 +49,15 @@ The Farmers Market Platform is **95% production-ready** with excellent test cove
 ```
 
 **Solution**: Remove the stray decorative line
+
 ```typescript
-  // ═══════════════════════════════════════════════════════════
-  // 🔐 AUTHENTICATION & AUTHORIZATION
-  // ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+// 🔐 AUTHENTICATION & AUTHORIZATION
+// ═══════════════════════════════════════════════════════════
 ```
 
 **Fix Command**:
+
 ```bash
 # Edit the file and remove line 84
 sed -i '84d' src/app/farmer/analytics/page.tsx
@@ -62,7 +66,9 @@ sed -i '84d' src/app/farmer/analytics/page.tsx
 ---
 
 ### Issue #2: Missing Alert Component
+
 **Files**:
+
 - `src/app/admin/analytics/page.tsx` (Line 34)
 - Required: `src/components/ui/alert.tsx`
 
@@ -73,6 +79,7 @@ sed -i '84d' src/app/farmer/analytics/page.tsx
 **Solution**: Create the Alert component (shadcn/ui standard)
 
 **Create File**: `src/components/ui/alert.tsx`
+
 ```typescript
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -137,7 +144,9 @@ export { Alert, AlertTitle, AlertDescription }
 ---
 
 ### Issue #3: Badge Component Naming Mismatch
+
 **Files**:
+
 - `src/app/admin/analytics/page.tsx` (Line 35)
 - `src/components/AdvancedAnalyticsDashboard.tsx` (Line 31)
 - Existing: `src/components/ui/Badge.tsx` (uppercase)
@@ -150,12 +159,14 @@ export { Alert, AlertTitle, AlertDescription }
 **Solution**: Rename the file to match import convention
 
 **Fix Commands**:
+
 ```bash
 # Rename Badge.tsx to badge.tsx
 mv src/components/ui/Badge.tsx src/components/ui/badge.tsx
 ```
 
 **OR** update all imports to use uppercase (less recommended):
+
 ```typescript
 // Change from:
 import { Badge } from "@/components/ui/badge";
@@ -272,6 +283,7 @@ echo "✨ Production fixes complete!"
 ## 📋 Pre-Deployment Checklist
 
 ### Phase 1: Critical Fixes (30 minutes)
+
 - [ ] **Fix syntax error** in `src/app/farmer/analytics/page.tsx`
 - [ ] **Create Alert component** at `src/components/ui/alert.tsx`
 - [ ] **Rename Badge component** from `Badge.tsx` to `badge.tsx`
@@ -280,6 +292,7 @@ echo "✨ Production fixes complete!"
 - [ ] **Type check**: `npm run type-check` (0 errors)
 
 ### Phase 2: Environment Configuration (1 hour)
+
 - [ ] **Copy `.env.example`** to `.env.production`
 - [ ] **Configure Database**:
   - [ ] Set `DATABASE_URL` to production PostgreSQL
@@ -309,6 +322,7 @@ echo "✨ Production fixes complete!"
   - [ ] Verify error tracking
 
 ### Phase 3: Security Hardening (2 hours)
+
 - [ ] **Review CORS settings** in `next.config.mjs`
 - [ ] **Enable rate limiting** (already configured with Upstash)
 - [ ] **Review CSP headers** in `vercel.json`
@@ -324,6 +338,7 @@ echo "✨ Production fixes complete!"
 - [ ] **Verify email verification** works
 
 ### Phase 4: Performance Optimization (1 hour)
+
 - [ ] **Enable production optimizations**:
   - [ ] Turbopack build (already configured)
   - [ ] Image optimization (Next.js built-in)
@@ -339,6 +354,7 @@ echo "✨ Production fixes complete!"
   - [ ] Database queries optimized
 
 ### Phase 5: Testing & Validation (2 hours)
+
 - [ ] **Run full test suite**: `npm run test:all`
 - [ ] **Run E2E tests**: `npm run test:e2e`
 - [ ] **Manual testing**:
@@ -361,6 +377,7 @@ echo "✨ Production fixes complete!"
   - [ ] Responsive layouts
 
 ### Phase 6: Deployment (30 minutes)
+
 - [ ] **Choose deployment platform**:
   - ✅ Vercel (recommended - already configured)
   - [ ] AWS (requires additional setup)
@@ -376,6 +393,7 @@ echo "✨ Production fixes complete!"
   - [ ] Emails sending
 
 ### Phase 7: Post-Deployment (1 hour)
+
 - [ ] **Monitor error rates** (Sentry dashboard)
 - [ ] **Check performance** (Vercel Analytics)
 - [ ] **Review logs** (Vercel Logs)
@@ -397,6 +415,7 @@ echo "✨ Production fixes complete!"
 ### Option 1: Vercel (Recommended) ⭐
 
 **Pros**:
+
 - Zero-config deployment
 - Automatic HTTPS
 - Global CDN
@@ -405,6 +424,7 @@ echo "✨ Production fixes complete!"
 - Built-in analytics
 
 **Steps**:
+
 ```bash
 # 1. Install Vercel CLI
 npm i -g vercel
@@ -423,6 +443,7 @@ vercel --prod
 ```
 
 **Environment Variables** (set in Vercel dashboard):
+
 ```bash
 # Database
 DATABASE_URL=postgresql://user:pass@host:5432/db
@@ -462,6 +483,7 @@ AZURE_APP_INSIGHTS_KEY=xxx
 **For**: AWS, GCP, Azure, DigitalOcean
 
 **Steps**:
+
 ```bash
 # 1. Build Docker image
 npm run docker:build
@@ -478,6 +500,7 @@ docker push your-registry/farmers-market:latest
 ```
 
 **Docker Compose** (already configured):
+
 - `docker-compose.yml` - Production
 - `docker-compose.dev.yml` - Development
 
@@ -558,26 +581,32 @@ NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=AIza...
 ## 📊 Monitoring & Observability
 
 ### Error Tracking (Sentry)
+
 - **Setup**: Already configured in `sentry.*.config.ts`
 - **Dashboard**: https://sentry.io/organizations/your-org/
 - **Alerts**: Configure for error rate > 1%
 
 ### Performance (Azure Application Insights)
+
 - **Setup**: Configured via `AZURE_APP_INSIGHTS_CONNECTION_STRING`
 - **Metrics**: Response times, dependency calls, exceptions
 - **Custom Events**: Agricultural consciousness tracking
 
 ### Logs
+
 - **Vercel**: Automatic log aggregation
 - **Docker**: Use `docker logs` or centralized logging (ELK, Datadog)
 
 ### Uptime Monitoring
+
 Recommended tools:
+
 - **Pingdom**: https://pingdom.com
 - **UptimeRobot**: https://uptimerobot.com
 - **Better Uptime**: https://betteruptime.com
 
 **Endpoints to monitor**:
+
 - `https://your-domain.com` (Homepage)
 - `https://your-domain.com/api/health` (Health check)
 - `https://your-domain.com/api/auth/session` (Auth)
@@ -589,6 +618,7 @@ Recommended tools:
 If issues occur after deployment:
 
 ### Immediate Rollback (Vercel)
+
 ```bash
 # List deployments
 vercel ls
@@ -598,6 +628,7 @@ vercel rollback <deployment-url>
 ```
 
 ### Docker Rollback
+
 ```bash
 # Revert to previous image
 docker pull your-registry/farmers-market:v1.0.0
@@ -605,6 +636,7 @@ docker-compose up -d
 ```
 
 ### Database Rollback
+
 ```bash
 # Migrate down one version
 npm run db:migrate -- down
@@ -618,18 +650,21 @@ psql $DATABASE_URL < backup.sql
 ## 📈 Post-Launch Monitoring (First 24 Hours)
 
 ### Hour 1: Critical Monitoring
+
 - [ ] Check error rates (target: < 0.1%)
 - [ ] Verify all services running
 - [ ] Test payment processing
 - [ ] Monitor response times
 
 ### Hour 4: Traffic Analysis
+
 - [ ] Review user registrations
 - [ ] Check conversion rates
 - [ ] Monitor database performance
 - [ ] Review cache hit rates
 
 ### Hour 24: Full Assessment
+
 - [ ] Generate analytics report
 - [ ] Review customer feedback
 - [ ] Analyze performance metrics
@@ -640,6 +675,7 @@ psql $DATABASE_URL < backup.sql
 ## 🎯 Success Metrics
 
 ### Technical KPIs
+
 - ✅ **Uptime**: > 99.9%
 - ✅ **Response Time**: < 500ms (API), < 2s (pages)
 - ✅ **Error Rate**: < 0.1%
@@ -647,6 +683,7 @@ psql $DATABASE_URL < backup.sql
 - ✅ **Build Time**: < 5 minutes
 
 ### Business KPIs
+
 - **User Registrations**: Track daily signups
 - **Order Completion**: > 90% checkout completion
 - **Payment Success**: > 95% success rate
@@ -657,11 +694,13 @@ psql $DATABASE_URL < backup.sql
 ## 📞 Emergency Contacts
 
 ### On-Call Rotation
+
 - **Primary**: [Your Name] - [Contact]
 - **Secondary**: [Backup] - [Contact]
 - **Database Admin**: [DBA] - [Contact]
 
 ### Vendor Support
+
 - **Vercel**: https://vercel.com/support
 - **Stripe**: https://support.stripe.com
 - **Sentry**: https://sentry.io/support
@@ -715,12 +754,14 @@ ESTIMATED TOTAL TIME: 7 hours
 ## 📚 Additional Resources
 
 ### Documentation
+
 - [README.md](README.md) - Project overview
 - [PLATFORM_STATUS.md](PLATFORM_STATUS.md) - Current status
 - [QUICK_START.md](QUICK_START.md) - Development setup
 - [docs/deployment/](docs/deployment/) - Deployment guides
 
 ### External Guides
+
 - [Next.js Deployment](https://nextjs.org/docs/deployment)
 - [Vercel Documentation](https://vercel.com/docs)
 - [Prisma Best Practices](https://www.prisma.io/docs/guides/performance-and-optimization)
@@ -806,11 +847,13 @@ Save as: `scripts/pre-launch-check.sh`
 Once all checkboxes are complete and the pre-launch verification passes, you are **PRODUCTION READY**.
 
 **Deploy Command**:
+
 ```bash
 vercel --prod
 ```
 
 **Post-Deployment**:
+
 ```bash
 # Monitor for first hour
 vercel logs --follow
@@ -823,4 +866,4 @@ vercel inspect https://your-domain.com
 
 **Good luck with your launch! 🌾✨**
 
-*For questions or issues, refer to the documentation or contact the development team.*
+_For questions or issues, refer to the documentation or contact the development team._

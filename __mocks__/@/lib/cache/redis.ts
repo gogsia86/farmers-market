@@ -55,7 +55,7 @@ export class RedisCacheService {
   async getOrSet<T>(
     key: string,
     factory: () => Promise<T>,
-    options?: any
+    options?: any,
   ): Promise<T> {
     return mockRedisCache.getOrSet(key, factory, options);
   }

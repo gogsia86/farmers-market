@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
             message: "You must be logged in to view email analytics",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -86,7 +86,7 @@ export async function GET(request: NextRequest) {
             message: "Only administrators can view email analytics",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -115,7 +115,7 @@ export async function GET(request: NextRequest) {
             })),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -150,7 +150,7 @@ export async function GET(request: NextRequest) {
           },
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     logger.error("Error fetching email analytics", error as Error, {
@@ -169,7 +169,7 @@ export async function GET(request: NextRequest) {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -208,7 +208,7 @@ export async function POST(request: NextRequest) {
             message: "You must be logged in to view email analytics",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -222,7 +222,7 @@ export async function POST(request: NextRequest) {
             message: "Only administrators can view email analytics",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -249,7 +249,7 @@ export async function POST(request: NextRequest) {
             })),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -264,7 +264,7 @@ export async function POST(request: NextRequest) {
     // Get performance comparison
     const comparison = await emailAnalyticsService.getPerformanceComparison(
       currentStart,
-      currentEnd
+      currentEnd,
     );
 
     logger.info("Email performance comparison fetched successfully", {
@@ -282,7 +282,7 @@ export async function POST(request: NextRequest) {
           },
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     logger.error("Error fetching performance comparison", error as Error, {
@@ -301,7 +301,7 @@ export async function POST(request: NextRequest) {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

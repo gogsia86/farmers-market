@@ -76,7 +76,10 @@ export default function SearchBar() {
           setResults(data.results);
         }
       } catch (error) {
-        searchLogger.error("Search error", error instanceof Error ? error : new Error(String(error)));
+        searchLogger.error(
+          "Search error",
+          error instanceof Error ? error : new Error(String(error)),
+        );
       } finally {
         setIsLoading(false);
       }
@@ -178,9 +181,10 @@ export default function SearchBar() {
                     key={result.id}
                     value={result}
                     className={({ active }) =>
-                      `relative cursor-pointer select-none py-2 px-4 ${active
-                        ? "bg-agricultural-50 text-agricultural-900"
-                        : "text-gray-900"
+                      `relative cursor-pointer select-none py-2 px-4 ${
+                        active
+                          ? "bg-agricultural-50 text-agricultural-900"
+                          : "text-gray-900"
                       }`
                     }
                     onClick={() => handleSelectResult(result)}

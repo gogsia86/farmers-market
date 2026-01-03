@@ -77,9 +77,13 @@ export default function OrdersPage() {
         setOrders(data.orders || []);
       }
     } catch (error) {
-      ordersLogger.error("Failed to fetch orders", error instanceof Error ? error : new Error(String(error)), {
-        statusFilter,
-      });
+      ordersLogger.error(
+        "Failed to fetch orders",
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          statusFilter,
+        },
+      );
     } finally {
       setLoading(false);
     }
@@ -94,7 +98,10 @@ export default function OrdersPage() {
         setCounts(data.counts);
       }
     } catch (error) {
-      ordersLogger.error("Failed to fetch order counts", error instanceof Error ? error : new Error(String(error)));
+      ordersLogger.error(
+        "Failed to fetch order counts",
+        error instanceof Error ? error : new Error(String(error)),
+      );
     }
   };
 
@@ -221,16 +228,18 @@ function TabButton({
   return (
     <button
       onClick={onClick}
-      className={`flex-1 px-6 py-4 font-medium text-base sm:text-lg transition-all duration-200 ${active
+      className={`flex-1 px-6 py-4 font-medium text-base sm:text-lg transition-all duration-200 ${
+        active
           ? "bg-green-50 text-green-700 border-b-4 border-green-600"
           : "text-gray-600 hover:bg-gray-50"
-        }`}
+      }`}
     >
       <span>{label}</span>
       {count !== undefined && count > 0 && (
         <span
-          className={`ml-2 px-2 py-1 rounded-full text-xs sm:text-sm font-semibold ${active ? "bg-green-200 text-green-800" : "bg-gray-200 text-gray-700"
-            }`}
+          className={`ml-2 px-2 py-1 rounded-full text-xs sm:text-sm font-semibold ${
+            active ? "bg-green-200 text-green-800" : "bg-gray-200 text-gray-700"
+          }`}
         >
           {count}
         </span>

@@ -10,9 +10,7 @@
  */
 
 import { database } from "@/lib/database";
-import type {
-  PaymentStatus
-} from "@prisma/client";
+import type { PaymentStatus } from "@prisma/client";
 
 // ═══════════════════════════════════════════════════════════
 // 🎯 TYPE DEFINITIONS - Analytical Consciousness
@@ -105,7 +103,7 @@ export interface PaymentAnalyticsResponse {
 export class PaymentAnalyticsService {
   private static instance: PaymentAnalyticsService;
 
-  private constructor() { }
+  private constructor() {}
 
   /**
    * 🔮 Singleton Pattern - Maintain Unified Consciousness
@@ -126,7 +124,7 @@ export class PaymentAnalyticsService {
    * Aggregates transaction data for specified period
    */
   async calculatePaymentMetrics(
-    query: PaymentAnalyticsQuery
+    query: PaymentAnalyticsQuery,
   ): Promise<PaymentMetrics> {
     const whereClause: any = {
       createdAt: {
@@ -187,13 +185,13 @@ export class PaymentAnalyticsService {
 
     const totalTransactions = payments.length;
     const successfulTransactions = payments.filter(
-      (p) => p.status === "PAID"
+      (p) => p.status === "PAID",
     ).length;
     const failedTransactions = payments.filter(
-      (p) => p.status === "FAILED"
+      (p) => p.status === "FAILED",
     ).length;
     const pendingTransactions = payments.filter(
-      (p) => p.status === "PENDING" || p.status === "PROCESSING"
+      (p) => p.status === "PENDING" || p.status === "PROCESSING",
     ).length;
 
     const totalRevenue = Number(aggregates._sum.amount || 0);
@@ -232,7 +230,7 @@ export class PaymentAnalyticsService {
    * Breaks down transactions by payment type with agricultural insights
    */
   async getRevenueByPaymentMethod(
-    query: PaymentAnalyticsQuery
+    query: PaymentAnalyticsQuery,
   ): Promise<RevenueByMethod[]> {
     const whereClause: any = {
       createdAt: {
@@ -263,10 +261,7 @@ export class PaymentAnalyticsService {
     });
 
     // Group by payment method
-    const methodMap = new Map<
-      string,
-      { count: number; totalAmount: number }
-    >();
+    const methodMap = new Map<string, { count: number; totalAmount: number }>();
 
     let grandTotal = 0;
 
@@ -308,7 +303,7 @@ export class PaymentAnalyticsService {
    */
   async getTimeSeriesData(
     query: PaymentAnalyticsQuery,
-    interval: "hour" | "day" | "week" | "month" = "day"
+    interval: "hour" | "day" | "week" | "month" = "day",
   ): Promise<TimeSeriesDataPoint[]> {
     const whereClause: any = {
       createdAt: {
@@ -382,7 +377,7 @@ export class PaymentAnalyticsService {
     }
 
     return results.sort(
-      (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
+      (a, b) => a.timestamp.getTime() - b.timestamp.getTime(),
     );
   }
 
@@ -394,11 +389,8 @@ export class PaymentAnalyticsService {
    * 📈 Calculate Payment Trends
    * Compares current period with previous period
    */
-  async getPaymentTrends(
-    query: PaymentAnalyticsQuery
-  ): Promise<PaymentTrend> {
-    const periodDuration =
-      query.endDate.getTime() - query.startDate.getTime();
+  async getPaymentTrends(query: PaymentAnalyticsQuery): Promise<PaymentTrend> {
+    const periodDuration = query.endDate.getTime() - query.startDate.getTime();
 
     // Calculate metrics for current period
     const currentMetrics = await this.calculatePaymentMetrics(query);
@@ -415,16 +407,16 @@ export class PaymentAnalyticsService {
     const revenueGrowth =
       previousMetrics.totalRevenue > 0
         ? ((currentMetrics.totalRevenue - previousMetrics.totalRevenue) /
-          previousMetrics.totalRevenue) *
-        100
+            previousMetrics.totalRevenue) *
+          100
         : 0;
 
     const transactionGrowth =
       previousMetrics.totalTransactions > 0
         ? ((currentMetrics.totalTransactions -
-          previousMetrics.totalTransactions) /
-          previousMetrics.totalTransactions) *
-        100
+            previousMetrics.totalTransactions) /
+            previousMetrics.totalTransactions) *
+          100
         : 0;
 
     const successRateGrowth =
@@ -452,7 +444,7 @@ export class PaymentAnalyticsService {
    */
   async getTopFarmsByRevenue(
     query: PaymentAnalyticsQuery,
-    limit: number = 10
+    limit: number = 10,
   ): Promise<FarmPaymentPerformance[]> {
     const whereClause: any = {
       createdAt: {
@@ -563,7 +555,7 @@ export class PaymentAnalyticsService {
    */
   private getIntervalKey(
     date: Date,
-    interval: "hour" | "day" | "week" | "month"
+    interval: "hour" | "day" | "week" | "month",
   ): string {
     const d = new Date(date);
     switch (interval) {
@@ -571,9 +563,10 @@ export class PaymentAnalyticsService {
         return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}-${d.getHours()}`;
       case "day":
         return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-      case "week":
+      case "week": {
         const week = Math.floor(d.getDate() / 7);
         return `${d.getFullYear()}-${d.getMonth()}-W${week}`;
+      }
       case "month":
         return `${d.getFullYear()}-${d.getMonth()}`;
       default:
@@ -586,7 +579,7 @@ export class PaymentAnalyticsService {
    */
   private getIntervalStart(
     date: Date,
-    interval: "hour" | "day" | "week" | "month"
+    interval: "hour" | "day" | "week" | "month",
   ): Date {
     const d = new Date(date);
     switch (interval) {
@@ -636,7 +629,7 @@ export class PaymentAnalyticsService {
       includeTopFarms?: boolean;
       timeSeriesInterval?: "hour" | "day" | "week" | "month";
       topFarmsLimit?: number;
-    } = {}
+    } = {},
   ): Promise<PaymentAnalyticsResponse> {
     try {
       const {
@@ -658,7 +651,9 @@ export class PaymentAnalyticsService {
           ? this.getTimeSeriesData(query, timeSeriesInterval)
           : null,
         includeTrends ? this.getPaymentTrends(query) : null,
-        includeTopFarms ? this.getTopFarmsByRevenue(query, topFarmsLimit) : null,
+        includeTopFarms
+          ? this.getTopFarmsByRevenue(query, topFarmsLimit)
+          : null,
       ]);
 
       return {

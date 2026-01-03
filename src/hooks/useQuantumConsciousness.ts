@@ -44,9 +44,12 @@ export function useQuantumConsciousness(
     metrics.current.renders++;
 
     if (!isInitialized) {
-      quantumLogger.debug(`Quantum Consciousness Initialized: ${componentName}`, {
-        consciousness: "divine",
-      });
+      quantumLogger.debug(
+        `Quantum Consciousness Initialized: ${componentName}`,
+        {
+          consciousness: "divine",
+        },
+      );
       setIsInitialized(true);
     }
   });
@@ -110,12 +113,12 @@ export function useQuantumConsciousness(
     averageMeasurementTime:
       metrics.current.measurements.length > 0
         ? metrics.current.measurements.reduce((sum, m) => sum + m.duration, 0) /
-        metrics.current.measurements.length
+          metrics.current.measurements.length
         : 0,
     successRate:
       metrics.current.measurements.length > 0
         ? metrics.current.measurements.filter((m) => m.success).length /
-        metrics.current.measurements.length
+          metrics.current.measurements.length
         : 1,
   });
 

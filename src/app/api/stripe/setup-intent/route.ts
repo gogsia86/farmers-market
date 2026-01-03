@@ -264,11 +264,11 @@ export async function GET(request: NextRequest) {
           type: paymentMethod.type,
           card: paymentMethod.card
             ? {
-              brand: paymentMethod.card.brand,
-              last4: paymentMethod.card.last4,
-              expMonth: paymentMethod.card.exp_month,
-              expYear: paymentMethod.card.exp_year,
-            }
+                brand: paymentMethod.card.brand,
+                last4: paymentMethod.card.last4,
+                expMonth: paymentMethod.card.exp_month,
+                expYear: paymentMethod.card.exp_year,
+              }
             : null,
         };
       } catch {
@@ -289,9 +289,9 @@ export async function GET(request: NextRequest) {
           paymentMethod: paymentMethodDetails,
           lastError: setupIntent.last_setup_error
             ? {
-              code: setupIntent.last_setup_error.code,
-              message: setupIntent.last_setup_error.message,
-            }
+                code: setupIntent.last_setup_error.code,
+                message: setupIntent.last_setup_error.message,
+              }
             : null,
         },
       },

@@ -11,7 +11,7 @@ import {
   Package,
   Phone,
   Star,
-  Truck
+  Truck,
 } from "lucide-react";
 import { Metadata } from "next";
 import Image from "next/image";
@@ -286,9 +286,13 @@ async function getFarmBySlug(slug: string) {
       updatedAt: farm.updatedAt.toISOString(),
     };
   } catch (error) {
-    farmPageLogger.error("Failed to fetch farm by slug", error instanceof Error ? error : new Error(String(error)), {
-      slug,
-    });
+    farmPageLogger.error(
+      "Failed to fetch farm by slug",
+      error instanceof Error ? error : new Error(String(error)),
+      {
+        slug,
+      },
+    );
     throw error; // Re-throw to handle in component
   }
 }
@@ -319,9 +323,13 @@ export async function generateMetadata({
       },
     };
   } catch (error) {
-    farmPageLogger.error("Failed to generate farm metadata", error instanceof Error ? error : new Error(String(error)), {
-      slug,
-    });
+    farmPageLogger.error(
+      "Failed to generate farm metadata",
+      error instanceof Error ? error : new Error(String(error)),
+      {
+        slug,
+      },
+    );
     return {
       title: "Farm Profile | Farmers Market Platform",
       description: "View farm profile and products",
@@ -337,9 +345,13 @@ export default async function FarmProfilePage({ params }: PageProps) {
   try {
     farm = await getFarmBySlug(slug);
   } catch (error) {
-    farmPageLogger.error("Farm page render error", error instanceof Error ? error : new Error(String(error)), {
-      slug,
-    });
+    farmPageLogger.error(
+      "Farm page render error",
+      error instanceof Error ? error : new Error(String(error)),
+      {
+        slug,
+      },
+    );
     notFound();
   }
 
@@ -536,10 +548,11 @@ export default async function FarmProfilePage({ params }: PageProps) {
                             {[...Array(5)].map((_, i) => (
                               <Star
                                 key={i}
-                                className={`h-4 w-4 ${i < review.rating
+                                className={`h-4 w-4 ${
+                                  i < review.rating
                                     ? "fill-yellow-400 text-yellow-400"
                                     : "text-gray-300"
-                                  }`}
+                                }`}
                               />
                             ))}
                           </div>

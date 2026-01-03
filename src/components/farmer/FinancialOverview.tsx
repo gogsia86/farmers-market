@@ -80,10 +80,14 @@ export function FinancialOverview({
       setTransactions(data.transactions);
       setRevenueData(data.revenueData);
     } catch (error) {
-      farmLogger.error("Error fetching financial data", error instanceof Error ? error : new Error(String(error)), {
-        farmId,
-        period,
-      });
+      farmLogger.error(
+        "Error fetching financial data",
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          farmId,
+          period,
+        },
+      );
     } finally {
       setLoading(false);
     }
@@ -147,10 +151,14 @@ export function FinancialOverview({
       a.click();
       a.remove();
     } catch (error) {
-      farmLogger.error("Error downloading statement", error instanceof Error ? error : new Error(String(error)), {
-        farmId,
-        period,
-      });
+      farmLogger.error(
+        "Error downloading statement",
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          farmId,
+          period,
+        },
+      );
     }
   };
 
@@ -271,8 +279,9 @@ export function FinancialOverview({
               {formatCurrency(stats.totalRevenue)}
             </div>
             <p
-              className={`text-xs mt-1 flex items-center ${stats.revenueChange >= 0 ? "text-green-600" : "text-red-600"
-                }`}
+              className={`text-xs mt-1 flex items-center ${
+                stats.revenueChange >= 0 ? "text-green-600" : "text-red-600"
+              }`}
             >
               {stats.revenueChange >= 0 ? "+" : ""}
               {stats.revenueChange.toFixed(1)}% from last period
@@ -380,10 +389,11 @@ export function FinancialOverview({
                   <div className="text-right flex items-center gap-3">
                     <div>
                       <p
-                        className={`font-semibold ${transaction.type === "SALE"
+                        className={`font-semibold ${
+                          transaction.type === "SALE"
                             ? "text-green-600"
                             : "text-gray-900"
-                          }`}
+                        }`}
                       >
                         {transaction.type === "SALE" ? "+" : "-"}
                         {formatCurrency(transaction.amount)}

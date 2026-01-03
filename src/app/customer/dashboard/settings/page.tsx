@@ -26,7 +26,11 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 // Import settings components
-import { DisplaySettings, NotificationSettings, PrivacySettings } from "./_components";
+import {
+  DisplaySettings,
+  NotificationSettings,
+  PrivacySettings,
+} from "./_components";
 
 // Create logger for settings page
 const settingsLogger = createLogger("CustomerSettings");
@@ -79,7 +83,10 @@ export default function SettingsPage() {
 
       setSettings(data.data);
     } catch (err) {
-      settingsLogger.error("Failed to fetch user settings", err instanceof Error ? err : new Error(String(err)));
+      settingsLogger.error(
+        "Failed to fetch user settings",
+        err instanceof Error ? err : new Error(String(err)),
+      );
       setError(err instanceof Error ? err.message : "Failed to load settings");
     } finally {
       setLoading(false);
@@ -118,7 +125,10 @@ export default function SettingsPage() {
       // Clear success message after 3 seconds
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
-      settingsLogger.error("Failed to save user settings", err instanceof Error ? err : new Error(String(err)));
+      settingsLogger.error(
+        "Failed to save user settings",
+        err instanceof Error ? err : new Error(String(err)),
+      );
       setError(err instanceof Error ? err.message : "Failed to save settings");
     } finally {
       setSaving(false);

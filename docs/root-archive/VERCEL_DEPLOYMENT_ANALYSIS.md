@@ -91,6 +91,7 @@ Farmers Market Platform/
 ```
 
 **Key Features**:
+
 - ✅ Custom build command with fallback logic
 - ✅ Clean URLs enabled (no `.html` extensions)
 - ✅ No trailing slashes (SEO optimized)
@@ -100,19 +101,20 @@ Farmers Market Platform/
 - ✅ Cron jobs for cleanup tasks
 
 **Function Configurations**:
+
 ```json
 {
   "functions": {
     "src/app/api/**/*.ts": {
-      "maxDuration": 10,        // 10 seconds for standard APIs
-      "memory": 1024            // 1GB memory
+      "maxDuration": 10, // 10 seconds for standard APIs
+      "memory": 1024 // 1GB memory
     },
     "src/app/api/ai/**/*.ts": {
-      "maxDuration": 30,        // 30 seconds for AI operations
+      "maxDuration": 30, // 30 seconds for AI operations
       "memory": 1024
     },
     "src/app/api/checkout/**/*.ts": {
-      "maxDuration": 15,        // 15 seconds for payment processing
+      "maxDuration": 15, // 15 seconds for payment processing
       "memory": 1024
     }
   }
@@ -132,13 +134,13 @@ Farmers Market Platform/
 {
   // Docker & Vercel compatibility
   output: "standalone",
-  
+
   // Compiler optimizations
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
     reactRemoveProperties: true
   },
-  
+
   // Experimental features
   experimental: {
     optimizePackageImports: [
@@ -152,7 +154,7 @@ Farmers Market Platform/
     optimizeCss: true,
     memoryBasedWorkersCount: true
   },
-  
+
   // TypeScript strict mode
   typescript: {
     ignoreBuildErrors: false  // Strict type checking
@@ -161,6 +163,7 @@ Farmers Market Platform/
 ```
 
 **Image Optimization**:
+
 ```javascript
 {
   images: {
@@ -177,6 +180,7 @@ Farmers Market Platform/
 ```
 
 **Security Headers**:
+
 - ✅ X-Frame-Options: DENY
 - ✅ X-Content-Type-Options: nosniff
 - ✅ X-XSS-Protection enabled
@@ -192,6 +196,7 @@ Farmers Market Platform/
 **Status**: ✅ Battle-Tested
 
 **Features**:
+
 1. ✅ Environment validation
 2. ✅ DATABASE_URL fallback for build-time
 3. ✅ Prisma client generation
@@ -200,6 +205,7 @@ Farmers Market Platform/
 6. ✅ Detailed logging and diagnostics
 
 **Build Flow**:
+
 ```bash
 1. Check environment (Node, NPM versions)
 2. Validate DATABASE_URL or set placeholder
@@ -210,11 +216,13 @@ Farmers Market Platform/
 ```
 
 **Error Handling**:
+
 - Graceful fallback if DATABASE_URL missing
 - Clear error messages with troubleshooting steps
 - Exit codes for CI/CD integration
 
 **Usage in `package.json`**:
+
 ```json
 {
   "scripts": {
@@ -243,12 +251,14 @@ datasource db {
 ```
 
 **Key Features**:
+
 - ✅ PostgreSQL as primary database
 - ✅ Foreign key relations enabled
 - ✅ Linux binary target for Vercel
 - ✅ Connection pooling support
 
 **Models** (33 total):
+
 - User, Farm, Product, Order, OrderItem
 - Cart, CartItem, Payment, Shipping
 - Address, Review, Notification
@@ -263,6 +273,7 @@ datasource db {
 **Status**: ✅ Strict Mode Enabled
 
 **Key Settings**:
+
 ```json
 {
   "compilerOptions": {
@@ -277,7 +288,7 @@ datasource db {
     "paths": {
       "@/*": ["./src/*"],
       "@/components/*": ["./src/components/*"],
-      "@/lib/*": ["./src/lib/*"],
+      "@/lib/*": ["./src/lib/*"]
       // ... more path mappings
     }
   }
@@ -285,6 +296,7 @@ datasource db {
 ```
 
 **Path Aliases**:
+
 - All imports use `@/` prefix for clean, absolute imports
 - Configured in both `tsconfig.json` and `next.config.mjs`
 
@@ -311,6 +323,7 @@ datasource db {
 **Current**: Optimized with code splitting
 
 **Bundle Analysis** (estimated):
+
 - First Load JS: ~250KB (gzipped)
 - Shared chunks: ~150KB
 - Page-specific: 50-100KB per route
@@ -392,13 +405,14 @@ UPSTASH_REDIS_REST_TOKEN="..."
 ### Recommended Providers
 
 #### 1. **Vercel Postgres** (Easiest) ⭐
+
 ```yaml
 Pros:
   - Automatic integration with Vercel
   - DATABASE_URL auto-configured
   - Built-in connection pooling
   - No setup required
-  
+
 Cons:
   - Paid service (after free tier)
   - Less flexible than external providers
@@ -407,13 +421,14 @@ Setup: 1 click in Vercel Dashboard
 ```
 
 #### 2. **Supabase** (Popular)
+
 ```yaml
 Pros:
   - Free tier available
   - Built-in auth & storage
   - Good dashboard
   - Connection pooling included
-  
+
 Cons:
   - External service (separate account)
   - Need to configure connection string
@@ -422,13 +437,14 @@ Setup Time: 5 minutes
 ```
 
 #### 3. **Neon** (Serverless)
+
 ```yaml
 Pros:
   - Serverless architecture
   - Auto-scaling
   - Generous free tier
   - Fast cold starts
-  
+
 Cons:
   - Newer platform
   - Need to configure connection string
@@ -437,13 +453,14 @@ Setup Time: 5 minutes
 ```
 
 #### 4. **Railway** (Developer-Friendly)
+
 ```yaml
 Pros:
   - Simple setup
   - Good free tier
   - Nice dashboard
   - Multi-service support
-  
+
 Cons:
   - External service
   - Need to configure connection string
@@ -462,6 +479,7 @@ postgresql://USER:PASSWORD@HOST:5432/DATABASE?pgbouncer=true&connection_limit=1
 ```
 
 **Why?**
+
 - Vercel functions are stateless and create new connections
 - Without pooling, you'll exhaust database connections quickly
 - `pgbouncer=true` enables connection pooling
@@ -474,6 +492,7 @@ postgresql://USER:PASSWORD@HOST:5432/DATABASE?pgbouncer=true&connection_limit=1
 ### Method 1: GitHub Integration (Recommended) ⭐
 
 **Advantages**:
+
 - ✅ Automatic deployments on push
 - ✅ Preview deployments for PRs
 - ✅ Easy rollbacks
@@ -504,6 +523,7 @@ git push -u origin main
 ```
 
 **Branch Strategy**:
+
 ```
 main → Production (auto-deploy)
 develop → Staging (preview)
@@ -515,6 +535,7 @@ feature/* → Preview deployments
 ### Method 2: Vercel CLI
 
 **Advantages**:
+
 - ✅ Manual control
 - ✅ Quick testing
 - ✅ No GitHub required
@@ -549,6 +570,7 @@ vercel
 ```
 
 **Useful Commands**:
+
 ```bash
 # Pull environment variables locally
 vercel env pull .env.local
@@ -577,31 +599,32 @@ vercel open
 
 ```yaml
 1. Quality Gate:
-   - Type checking
-   - Linting
-   - Format checking
-   - Security audit
+  - Type checking
+  - Linting
+  - Format checking
+  - Security audit
 
 2. Unit Tests:
-   - Run test suite
-   - Generate coverage report
+  - Run test suite
+  - Generate coverage report
 
 3. Integration Tests:
-   - Database tests
-   - API tests
+  - Database tests
+  - API tests
 
 4. Build & Deploy:
-   - Build application
-   - Deploy to Vercel
-   - Run smoke tests
+  - Build application
+  - Deploy to Vercel
+  - Run smoke tests
 
 5. Post-Deployment:
-   - Health checks
-   - Performance monitoring
-   - Notify team
+  - Health checks
+  - Performance monitoring
+  - Notify team
 ```
 
 **Trigger Conditions**:
+
 - Push to `main` branch → Production
 - Pull request → Preview deployment
 - Manual workflow dispatch → Flexible
@@ -634,6 +657,7 @@ curl https://your-app.vercel.app/api/health
 **Automated Approach** (Recommended):
 
 Add to `vercel-build.sh`:
+
 ```bash
 # After Prisma generation
 echo "Running database migrations..."
@@ -677,22 +701,26 @@ ALTER TABLE products DROP COLUMN old_field;
 ### Workflow: `production-deployment.yml`
 
 **Quality Gates** (Must Pass):
+
 - ✅ Type checking (`npm run type-check`)
 - ✅ Linting (`npm run lint`)
 - ✅ Formatting (`npm run format:check`)
 - ✅ Security audit (`npm audit`)
 
 **Testing** (Parallel):
+
 - ✅ Unit tests (80%+ coverage required)
 - ✅ Integration tests (database operations)
 - ✅ E2E tests (critical user journeys)
 
 **Deployment**:
+
 - ✅ Build with `vercel-build.sh`
 - ✅ Deploy to Vercel
 - ✅ Smoke tests on deployed URL
 
 **Post-Deployment**:
+
 - ✅ Health check verification
 - ✅ Performance monitoring
 - ✅ Slack notification
@@ -731,7 +759,7 @@ Development:
   compiler: {
     removeConsole: true,           // Remove console.log in production
   },
-  
+
   experimental: {
     optimizePackageImports: [      // Tree-shake dependencies
       "@radix-ui/react-dialog",
@@ -740,7 +768,7 @@ Development:
     ],
     optimizeCss: true,             // Optimize CSS
   },
-  
+
   images: {
     formats: ["image/avif", "image/webp"],  // Modern formats
     minimumCacheTTL: 5184000,               // 60-day cache
@@ -751,37 +779,41 @@ Development:
 ### Runtime Optimizations
 
 **Server Components** (Default):
+
 - Most components render on server
 - Reduced JavaScript bundle
 - Better SEO
 
 **Client Components** (As Needed):
-```tsx
-'use client'  // Only for interactive components
 
-import { useState } from 'react'
+```tsx
+"use client"; // Only for interactive components
+
+import { useState } from "react";
 
 export function InteractiveComponent() {
-  const [state, setState] = useState()
+  const [state, setState] = useState();
   // Client-side logic
 }
 ```
 
 **API Route Optimization**:
+
 ```typescript
 // Use edge runtime for simple routes
-export const runtime = 'edge'
+export const runtime = "edge";
 
 // Use Node.js runtime for complex operations
-export const runtime = 'nodejs'
+export const runtime = "nodejs";
 
 // Set custom timeout
-export const maxDuration = 10
+export const maxDuration = 10;
 ```
 
 ### Expected Performance
 
 **Targets**:
+
 - First Contentful Paint (FCP): < 1.5s
 - Largest Contentful Paint (LCP): < 2.5s
 - Time to Interactive (TTI): < 3.5s
@@ -789,6 +821,7 @@ export const maxDuration = 10
 - First Input Delay (FID): < 100ms
 
 **Lighthouse Score Targets**:
+
 - Performance: > 90
 - Accessibility: > 95
 - Best Practices: > 95
@@ -801,6 +834,7 @@ export const maxDuration = 10
 ### 1. Vercel Analytics
 
 **Built-in Features**:
+
 - Real User Monitoring (RUM)
 - Core Web Vitals tracking
 - Page view analytics
@@ -816,6 +850,7 @@ export const maxDuration = 10
 **Configuration**: `sentry.*.config.ts`
 
 **Features**:
+
 - Error tracking & grouping
 - Release tracking
 - Performance monitoring
@@ -823,6 +858,7 @@ export const maxDuration = 10
 - Source map support
 
 **Setup**:
+
 ```bash
 # Already configured in:
 # - sentry.client.config.ts
@@ -841,12 +877,14 @@ NEXT_PUBLIC_SENTRY_DSN="https://...@sentry.io/..."
 **Configuration**: `instrumentation.ts`
 
 **Features**:
+
 - Distributed tracing
 - Dependency tracking
 - Custom metrics
 - Log aggregation
 
 **Setup**:
+
 ```bash
 # Add to environment variables:
 AZURE_MONITOR_CONNECTION_STRING="InstrumentationKey=...;..."
@@ -860,6 +898,7 @@ ENABLE_TRACING="true"
 **Endpoint**: `/api/health`
 
 **Response**:
+
 ```json
 {
   "status": "healthy",
@@ -873,6 +912,7 @@ ENABLE_TRACING="true"
 ```
 
 **Monitoring Setup**:
+
 - Use UptimeRobot or similar
 - Check every 5 minutes
 - Alert if status != 200
@@ -900,6 +940,7 @@ ENABLE_TRACING="true"
 ### Authentication
 
 **NextAuth v5** configured with:
+
 - ✅ Session encryption
 - ✅ CSRF protection
 - ✅ Secure cookie settings
@@ -908,6 +949,7 @@ ENABLE_TRACING="true"
 ### Environment Variables
 
 **Best Practices**:
+
 - ✅ Never commit `.env` files to Git
 - ✅ Use Vercel Environment Variables UI
 - ✅ Rotate secrets regularly
@@ -916,14 +958,15 @@ ENABLE_TRACING="true"
 ### API Rate Limiting
 
 **Recommended Setup**:
+
 ```typescript
 // Use Upstash Redis for rate limiting
-import { Ratelimit } from "@upstash/ratelimit"
+import { Ratelimit } from "@upstash/ratelimit";
 
 export const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
   limiter: Ratelimit.slidingWindow(10, "10 s"),
-})
+});
 ```
 
 ---
@@ -989,6 +1032,7 @@ curl https://your-app.vercel.app/api/ready
 ### Issue: Build Fails
 
 **Symptoms**:
+
 - Vercel deployment fails
 - Error in build logs
 
@@ -1018,6 +1062,7 @@ npm run build
 ### Issue: Database Connection Fails
 
 **Symptoms**:
+
 - 500 errors
 - "Can't reach database server" error
 - Health check fails
@@ -1050,6 +1095,7 @@ npm run dev
 ### Issue: Environment Variables Missing
 
 **Symptoms**:
+
 - Application works locally but not on Vercel
 - "Environment variable X is not defined" errors
 
@@ -1079,6 +1125,7 @@ cat .env.local
 ### Issue: Stripe Payments Not Working
 
 **Symptoms**:
+
 - Checkout fails
 - Webhook errors
 
@@ -1107,6 +1154,7 @@ stripe listen --forward-to localhost:3001/api/webhooks/stripe
 ### Issue: Images Not Loading
 
 **Symptoms**:
+
 - Broken images
 - 403 errors on images
 
@@ -1322,11 +1370,13 @@ npm run db:seed:basic  # Optional
 Your deployment is successful when:
 
 ✅ **Availability**
+
 - Homepage loads in < 2 seconds
 - All pages accessible
 - No 404/500 errors
 
 ✅ **Functionality**
+
 - User can sign up and login
 - Products display correctly
 - Cart functionality works
@@ -1334,18 +1384,21 @@ Your deployment is successful when:
 - Admin panel accessible (for admins)
 
 ✅ **Performance**
+
 - Lighthouse score > 85
 - Core Web Vitals in green
 - API responses < 500ms
 - Database queries optimized
 
 ✅ **Monitoring**
+
 - Health checks passing
 - Vercel Analytics tracking
 - Errors reported to Sentry
 - No critical alerts
 
 ✅ **Security**
+
 - HTTPS enabled (automatic)
 - Security headers present
 - Authentication working
@@ -1375,6 +1428,7 @@ The Farmers Market Platform is **production-ready for Vercel deployment**. All c
 ### Support
 
 If you encounter any issues, refer to:
+
 - This document (troubleshooting section)
 - `DEPLOYMENT_RUNBOOK.md`
 - `DEPLOYMENT_CHECKLIST.md`

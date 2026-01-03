@@ -76,7 +76,8 @@ export function GooglePayButton({
   const [isGooglePayAvailable, setIsGooglePayAvailable] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [googlePayClient, setGooglePayClient] = useState<GooglePayClient | null>(null);
+  const [googlePayClient, setGooglePayClient] =
+    useState<GooglePayClient | null>(null);
   const buttonContainerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const { toast } = useToast();
@@ -96,7 +97,8 @@ export function GooglePayButton({
     parameters: {
       gateway: "stripe",
       "stripe:version": "2024-11-20.acacia",
-      "stripe:publishableKey": process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "",
+      "stripe:publishableKey":
+        process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "",
     },
   };
 
@@ -127,7 +129,8 @@ export function GooglePayButton({
         script.src = "https://pay.google.com/gp/p/js/pay.js";
         script.async = true;
         script.onload = () => resolve();
-        script.onerror = () => reject(new Error("Failed to load Google Pay script"));
+        script.onerror = () =>
+          reject(new Error("Failed to load Google Pay script"));
         document.body.appendChild(script);
       });
     };
@@ -137,7 +140,10 @@ export function GooglePayButton({
         paymentLogger.debug("Google Pay script loaded successfully");
       })
       .catch((error) => {
-        paymentLogger.error("Failed to load Google Pay script", error instanceof Error ? error : new Error(String(error)));
+        paymentLogger.error(
+          "Failed to load Google Pay script",
+          error instanceof Error ? error : new Error(String(error)),
+        );
       });
   }, []);
 
@@ -167,8 +173,11 @@ export function GooglePayButton({
         }
 
         // Create Google Pay client
-        const paymentsClient = new (window as any).google.payments.api.PaymentsClient({
-          environment: process.env.NODE_ENV === "production" ? "PRODUCTION" : "TEST",
+        const paymentsClient = new (
+          window as any
+        ).google.payments.api.PaymentsClient({
+          environment:
+            process.env.NODE_ENV === "production" ? "PRODUCTION" : "TEST",
         });
 
         setGooglePayClient(paymentsClient);
@@ -202,13 +211,18 @@ export function GooglePayButton({
               data.data.availableWallets.includes("GOOGLE_PAY");
 
             setIsGooglePayAvailable(hasGooglePay);
-            paymentLogger.debug("Google Pay availability check completed", { available: hasGooglePay });
+            paymentLogger.debug("Google Pay availability check completed", {
+              available: hasGooglePay,
+            });
           }
         } else {
           setIsGooglePayAvailable(false);
         }
       } catch (error) {
-        paymentLogger.error("Google Pay availability check failed", error instanceof Error ? error : new Error(String(error)));
+        paymentLogger.error(
+          "Google Pay availability check failed",
+          error instanceof Error ? error : new Error(String(error)),
+        );
         setIsGooglePayAvailable(false);
       } finally {
         setIsLoading(false);
@@ -229,7 +243,11 @@ export function GooglePayButton({
 
     try {
       // Step 1: Create payment intent
-      paymentLogger.info("Creating Google Pay payment intent", { orderId, amount, currency });
+      paymentLogger.info("Creating Google Pay payment intent", {
+        orderId,
+        amount,
+        currency,
+      });
 
       const intentResponse = await fetch("/api/payment/wallet", {
         method: "POST",
@@ -252,7 +270,7 @@ export function GooglePayButton({
 
       if (!intentData.success) {
         throw new Error(
-          intentData.error?.message || "Failed to create payment intent"
+          intentData.error?.message || "Failed to create payment intent",
         );
       }
 
@@ -276,9 +294,8 @@ export function GooglePayButton({
 
       // Step 3: Load payment data (opens Google Pay sheet)
       paymentLogger.debug("Loading Google Pay payment sheet", { orderId });
-      const paymentData = await googlePayClient.loadPaymentData(
-        paymentDataRequest
-      );
+      const paymentData =
+        await googlePayClient.loadPaymentData(paymentDataRequest);
 
       // Step 4: Process payment with backend
       paymentLogger.info("Processing Google Pay payment", { orderId });
@@ -294,7 +311,7 @@ export function GooglePayButton({
             paymentIntentId: paymentIntent.id,
             paymentData: paymentData,
           }),
-        }
+        },
       );
 
       if (!processResponse.ok) {
@@ -319,16 +336,21 @@ export function GooglePayButton({
         router.push(`/orders/${orderId}/confirmation`);
       } else {
         throw new Error(
-          processData.error?.message || "Payment processing failed"
+          processData.error?.message || "Payment processing failed",
         );
       }
     } catch (error) {
-      paymentLogger.error("Google Pay payment error", error instanceof Error ? error : new Error(String(error)), { orderId, amount, currency });
+      paymentLogger.error(
+        "Google Pay payment error",
+        error instanceof Error ? error : new Error(String(error)),
+        { orderId, amount, currency },
+      );
 
       // Check if user cancelled
       if (
         error instanceof Error &&
-        (error.message.includes("CANCELED") || error.message.includes("cancelled"))
+        (error.message.includes("CANCELED") ||
+          error.message.includes("cancelled"))
       ) {
         toast({
           title: "Payment Cancelled",

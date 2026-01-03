@@ -1,4 +1,5 @@
 # 🔒 Security Credentials Guide
+
 **Farmers Market Platform - Secure Credential Management**
 **Version**: 1.0.0
 **Last Updated**: Current Session
@@ -14,6 +15,7 @@ This guide documents the secure handling of credentials and sensitive data in th
 ## 🚨 Critical Security Rules
 
 ### ✅ DO
+
 - Store all credentials in environment variables
 - Use `.env.local` for local development (gitignored)
 - Use platform-specific environment variable management for production (Vercel, AWS, etc.)
@@ -22,6 +24,7 @@ This guide documents the secure handling of credentials and sensitive data in th
 - Keep test credentials separate from production
 
 ### ❌ DON'T
+
 - **NEVER** hardcode credentials in source code
 - **NEVER** commit `.env` files to git
 - **NEVER** share credentials in chat, email, or documentation
@@ -143,6 +146,7 @@ npx tsx scripts/seed-test-data.ts
 ### 3. Production Deployment
 
 #### Vercel
+
 ```bash
 # Set via Vercel dashboard:
 # Settings → Environment Variables
@@ -155,12 +159,14 @@ vercel env add STRIPE_SECRET_KEY
 ```
 
 #### Docker
+
 ```bash
 # Use docker-compose.yml with env_file
 docker-compose --env-file .env.production up -d
 ```
 
 #### AWS/Other Cloud
+
 ```bash
 # Use platform-specific secrets manager:
 # - AWS Secrets Manager
@@ -174,14 +180,14 @@ docker-compose --env-file .env.production up -d
 
 ### Files Previously Containing Hardcoded Credentials (NOW FIXED ✅)
 
-| File | Issue | Status | Fix Applied |
-|------|-------|--------|-------------|
-| `scripts/fix-nextauth.ts` | Hardcoded test passwords | ✅ FIXED | Now uses `TEST_USER_PASSWORD` env var |
-| `scripts/debug-nextauth.ts` | Hardcoded test passwords | ✅ FIXED | Now uses `TEST_USER_PASSWORD` env var |
-| `scripts/seed-test-data.ts` | Hardcoded passwords | ✅ FIXED | Now uses `TEST_USER_PASSWORD` env var |
-| `scripts/mvp-validation-bot.ts` | Hardcoded test credentials | ✅ FIXED | Now uses `TEST_USER_PASSWORD` env var |
-| `jest.setup.js` | Test environment secrets | ✅ ACCEPTABLE | Test-only fallbacks, clearly documented |
-| `__mocks__/stripe.ts` | Mock secrets | ✅ ACCEPTABLE | Mock data only, not real credentials |
+| File                            | Issue                      | Status        | Fix Applied                             |
+| ------------------------------- | -------------------------- | ------------- | --------------------------------------- |
+| `scripts/fix-nextauth.ts`       | Hardcoded test passwords   | ✅ FIXED      | Now uses `TEST_USER_PASSWORD` env var   |
+| `scripts/debug-nextauth.ts`     | Hardcoded test passwords   | ✅ FIXED      | Now uses `TEST_USER_PASSWORD` env var   |
+| `scripts/seed-test-data.ts`     | Hardcoded passwords        | ✅ FIXED      | Now uses `TEST_USER_PASSWORD` env var   |
+| `scripts/mvp-validation-bot.ts` | Hardcoded test credentials | ✅ FIXED      | Now uses `TEST_USER_PASSWORD` env var   |
+| `jest.setup.js`                 | Test environment secrets   | ✅ ACCEPTABLE | Test-only fallbacks, clearly documented |
+| `__mocks__/stripe.ts`           | Mock secrets               | ✅ ACCEPTABLE | Mock data only, not real credentials    |
 
 ### Security Score: A+ 🎉
 
@@ -194,6 +200,7 @@ The application now validates all required environment variables at startup usin
 **Location**: `src/lib/config/env.validation.ts`
 
 **Features**:
+
 - ✅ Validates required variables exist
 - ✅ Validates format (URLs, minimum lengths, etc.)
 - ✅ Provides helpful error messages
@@ -207,6 +214,7 @@ The application now validates all required environment variables at startup usin
 ## 🧪 Testing with Credentials
 
 ### Unit Tests (Jest)
+
 ```javascript
 // jest.setup.js handles all test environment variables
 // No action needed - tests will use fallback values automatically
@@ -214,6 +222,7 @@ npm test
 ```
 
 ### Integration Tests
+
 ```bash
 # Set up test database and credentials
 cp .env.example .env.test
@@ -222,6 +231,7 @@ npm run test:integration
 ```
 
 ### E2E Tests (Playwright)
+
 ```bash
 # Export test user password
 export TEST_USER_PASSWORD="TestPassword123!"
@@ -233,6 +243,7 @@ npm run test:e2e
 ## 🔄 Credential Rotation Guide
 
 ### When to Rotate
+
 - **Immediately**: If credentials are exposed/leaked
 - **Regularly**: Every 90 days for production
 - **After**: Team member departure
@@ -271,6 +282,7 @@ curl https://your-app.com/api/health
 ### Immediate Actions (Within 1 Hour)
 
 1. **Revoke Compromised Credentials**
+
    ```bash
    # Stripe: Dashboard → Developers → API Keys → Revoke
    # PayPal: Dashboard → My Apps & Credentials → Revoke
@@ -278,12 +290,14 @@ curl https://your-app.com/api/health
    ```
 
 2. **Generate New Credentials**
+
    ```bash
    openssl rand -base64 32 > new_nextauth_secret.txt
    # Generate new API keys from provider dashboards
    ```
 
 3. **Update All Environments**
+
    ```bash
    # Production
    vercel env add NEXTAUTH_SECRET production
@@ -331,6 +345,7 @@ curl https://your-app.com/api/health
 ## 📚 Best Practices
 
 ### 1. Password Requirements
+
 ```
 Minimum length: 12 characters
 Must contain:
@@ -343,6 +358,7 @@ Example: MySecure123!Pass
 ```
 
 ### 2. Secret Generation
+
 ```bash
 # NextAuth Secret (32+ chars)
 openssl rand -base64 32
@@ -355,12 +371,14 @@ openssl rand -base64 24 | tr '+/' '-_'
 ```
 
 ### 3. Storage
+
 - **Local Development**: `.env.local` (gitignored)
 - **Team Sharing**: Use a password manager (1Password, LastPass, Bitwarden)
 - **Production**: Platform secrets manager (Vercel Env Vars, AWS Secrets Manager)
 - **Backup**: Encrypted offline backup (GPG encrypted file)
 
 ### 4. Access Control
+
 ```
 ┌─────────────────┬──────────┬──────────┬────────────┐
 │ Environment     │ Devs     │ DevOps   │ Automated  │
@@ -385,6 +403,7 @@ openssl rand -base64 24 | tr '+/' '-_'
 ## ✅ Checklist: Secure Credential Management
 
 ### Development
+
 - [ ] `.env.local` created with all required variables
 - [ ] `.env.local` added to `.gitignore` (already done)
 - [ ] NextAuth secret generated (min 32 chars)
@@ -392,12 +411,14 @@ openssl rand -base64 24 | tr '+/' '-_'
 - [ ] Environment validation passes on `npm run dev`
 
 ### Testing
+
 - [ ] `.env.test` created for test scripts
 - [ ] `TEST_USER_PASSWORD` set for seed/debug scripts
 - [ ] All tests pass with environment-based credentials
 - [ ] No hardcoded credentials in test files
 
 ### Production
+
 - [ ] All production credentials generated
 - [ ] Credentials stored in platform secrets manager
 - [ ] Different credentials from dev/staging
@@ -405,6 +426,7 @@ openssl rand -base64 24 | tr '+/' '-_'
 - [ ] Backup of credentials stored securely (encrypted)
 
 ### Security
+
 - [ ] No credentials committed to git (verify with `git log -S "password"`)
 - [ ] Credential rotation schedule established (90 days)
 - [ ] Incident response plan documented

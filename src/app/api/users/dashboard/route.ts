@@ -113,11 +113,11 @@ export async function GET() {
 
     const formattedFarms = Array.isArray(favoriteFarms)
       ? favoriteFarms.map((fav: any) => ({
-        id: fav.farm.id,
-        name: fav.farm.name,
-        slug: fav.farm.slug,
-        imageUrl: fav.farm.bannerUrl || null,
-      }))
+          id: fav.farm.id,
+          name: fav.farm.name,
+          slug: fav.farm.slug,
+          imageUrl: fav.farm.bannerUrl || null,
+        }))
       : [];
 
     return NextResponse.json({

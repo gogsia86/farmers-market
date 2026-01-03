@@ -51,7 +51,11 @@ export function ConfirmationStep() {
       try {
         await fetch("/api/cart", { method: "DELETE" });
       } catch (error) {
-        cartLogger.error("Failed to clear cart", error instanceof Error ? error : new Error(String(error)), { orderId });
+        cartLogger.error(
+          "Failed to clear cart",
+          error instanceof Error ? error : new Error(String(error)),
+          { orderId },
+        );
       }
     };
 

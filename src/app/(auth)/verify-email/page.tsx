@@ -64,9 +64,13 @@ export default function VerifyEmailPage() {
             ? err.message
             : "Failed to verify email. The link may have expired.",
         );
-        authLogger.error("Email verification error", err instanceof Error ? err : new Error(String(err)), {
-          hasToken: !!token,
-        });
+        authLogger.error(
+          "Email verification error",
+          err instanceof Error ? err : new Error(String(err)),
+          {
+            hasToken: !!token,
+          },
+        );
       } finally {
         setIsVerifying(false);
       }
@@ -96,7 +100,10 @@ export default function VerifyEmailPage() {
       setResendSuccess(true);
     } catch (err) {
       setError("Failed to resend verification email. Please try again later.");
-      authLogger.error("Resend verification email failed", err instanceof Error ? err : new Error(String(err)));
+      authLogger.error(
+        "Resend verification email failed",
+        err instanceof Error ? err : new Error(String(err)),
+      );
     } finally {
       setResendLoading(false);
     }

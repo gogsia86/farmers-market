@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
 
       logger.info("Password reset email sent successfully", {
         userId: user.id,
-        email
+        email,
       });
     } catch (emailError) {
       logger.error("Failed to send password reset email", emailError as Error, {

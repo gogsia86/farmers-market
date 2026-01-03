@@ -32,13 +32,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/health",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "health"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
             },
             "description": "Health check endpoint - verifies system and database connectivity"
           }
@@ -55,13 +50,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/ready",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "ready"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "ready"]
             },
             "description": "Readiness check endpoint for Kubernetes/Docker"
           }
@@ -83,13 +73,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/farms",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "farms"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "farms"]
             },
             "description": "List all farms with pagination and filtering"
           }
@@ -110,13 +95,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/farms",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "farms"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "farms"]
             },
             "description": "Create a new farm (requires FARMER role)",
             "body": {
@@ -137,14 +117,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/farms/{id}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "farms",
-                "{id}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "farms", "{id}"]
             },
             "description": "Get farm by ID"
           }
@@ -165,14 +139,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/farms/{id}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "farms",
-                "{id}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "farms", "{id}"]
             },
             "description": "Update farm (requires ownership)"
           }
@@ -193,14 +161,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/farms/{id}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "farms",
-                "{id}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "farms", "{id}"]
             },
             "description": "Delete farm (soft delete, requires ownership)"
           }
@@ -217,14 +179,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/farms/search",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "farms",
-                "search"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "farms", "search"]
             },
             "description": "Search farms by query"
           }
@@ -246,13 +202,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/products",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "products"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products"]
             },
             "description": "List all products with pagination and filtering"
           }
@@ -273,13 +224,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/products",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "products"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products"]
             },
             "description": "Create a new product (requires FARMER role and farm ownership)"
           }
@@ -296,14 +242,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/products/search",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "products",
-                "search"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products", "search"]
             },
             "description": "Search products by keyword"
           }
@@ -329,13 +269,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/orders",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "orders"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "orders"]
             },
             "description": "List orders for authenticated user"
           }
@@ -356,13 +291,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/orders",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "orders"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "orders"]
             },
             "description": "Create a new order"
           }
@@ -383,14 +313,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/orders/{id}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "orders",
-                "{id}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "orders", "{id}"]
             },
             "description": "Get order details"
           }
@@ -412,13 +336,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/marketplace",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "marketplace"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "marketplace"]
             },
             "description": "Get marketplace products and featured farms"
           }

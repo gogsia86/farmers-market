@@ -177,15 +177,15 @@ export function MetricCard({
     calculatedTrend === "up"
       ? "text-green-600"
       : calculatedTrend === "down"
-      ? "text-red-600"
-      : "text-gray-500";
+        ? "text-red-600"
+        : "text-gray-500";
 
   const TrendIcon =
     calculatedTrend === "up"
       ? ArrowUpIcon
       : calculatedTrend === "down"
-      ? ArrowDownIcon
-      : MinusIcon;
+        ? ArrowDownIcon
+        : MinusIcon;
 
   const IconComponent = customIcon ? null : ICON_MAP[icon];
 
@@ -210,7 +210,7 @@ export function MetricCard({
         className={cn(
           "relative overflow-hidden rounded-lg border shadow-sm p-6",
           styles.container,
-          className
+          className,
         )}
       >
         <div className="animate-pulse">
@@ -235,7 +235,7 @@ export function MetricCard({
         "relative overflow-hidden rounded-lg border shadow-sm transition-all duration-200",
         styles.container,
         onClick && "cursor-pointer hover:shadow-md hover:scale-[1.02]",
-        className
+        className,
       )}
       onClick={onClick}
       role={onClick ? "button" : undefined}
@@ -254,10 +254,7 @@ export function MetricCard({
           <div className="flex-1 min-w-0">
             {/* Title */}
             <p
-              className={cn(
-                "text-sm font-medium truncate",
-                styles.titleColor
-              )}
+              className={cn("text-sm font-medium truncate", styles.titleColor)}
             >
               {title}
             </p>
@@ -266,19 +263,15 @@ export function MetricCard({
             <p
               className={cn(
                 "mt-2 text-3xl font-bold tracking-tight",
-                styles.valueColor
+                styles.valueColor,
               )}
             >
-              {typeof value === "number"
-                ? value.toLocaleString()
-                : value}
+              {typeof value === "number" ? value.toLocaleString() : value}
             </p>
 
             {/* Subtitle */}
             {subtitle && (
-              <p className="mt-1 text-xs text-gray-500 truncate">
-                {subtitle}
-              </p>
+              <p className="mt-1 text-xs text-gray-500 truncate">{subtitle}</p>
             )}
 
             {/* Trend Indicator */}
@@ -287,7 +280,7 @@ export function MetricCard({
                 <div
                   className={cn(
                     "flex items-center gap-1 text-sm font-medium",
-                    trendColor
+                    trendColor,
                   )}
                 >
                   <TrendIcon className="h-4 w-4" />
@@ -307,9 +300,7 @@ export function MetricCard({
                 {customIcon}
               </div>
             ) : IconComponent ? (
-              <IconComponent
-                className={cn("h-6 w-6", styles.iconColor)}
-              />
+              <IconComponent className={cn("h-6 w-6", styles.iconColor)} />
             ) : null}
           </div>
         </div>

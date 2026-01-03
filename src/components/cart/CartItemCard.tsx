@@ -50,12 +50,16 @@ export function CartItemCard({
     try {
       await onUpdateQuantity(item.id, newQuantity);
     } catch (error) {
-      cartLogger.error("Error updating cart item quantity", error instanceof Error ? error : new Error(String(error)), {
-        itemId: item.id,
-        productId: item.productId,
-        currentQuantity: item.quantity,
-        newQuantity,
-      });
+      cartLogger.error(
+        "Error updating cart item quantity",
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          itemId: item.id,
+          productId: item.productId,
+          currentQuantity: item.quantity,
+          newQuantity,
+        },
+      );
     } finally {
       setIsUpdating(false);
     }
@@ -68,10 +72,14 @@ export function CartItemCard({
     try {
       await onRemove(item.id);
     } catch (error) {
-      cartLogger.error("Error removing cart item", error instanceof Error ? error : new Error(String(error)), {
-        itemId: item.id,
-        productId: item.productId,
-      });
+      cartLogger.error(
+        "Error removing cart item",
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          itemId: item.id,
+          productId: item.productId,
+        },
+      );
       setIsRemoving(false);
     }
   };

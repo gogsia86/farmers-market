@@ -1,11 +1,12 @@
 # 🚀 Sprint 6 - Phase 2 Kickoff: Checkout Flow
+
 ## Divine Agricultural Commerce Implementation
 
 **Phase**: 2 of 6  
 **Status**: 🔄 **IN PROGRESS**  
 **Start Date**: January 2025  
 **Target Duration**: 5 days  
-**Expected Completion**: Day 7 (Accelerated: Day 3)  
+**Expected Completion**: Day 7 (Accelerated: Day 3)
 
 ---
 
@@ -29,6 +30,7 @@
 Phase 2 focuses on building a complete, secure, and user-friendly checkout flow that converts shopping carts into confirmed orders. This phase bridges the gap between cart management (Phase 1) and payment processing (Phase 3).
 
 ### Key Deliverables
+
 - ✅ Multi-step checkout wizard (4 steps)
 - ✅ Address management system
 - ✅ Delivery zone validation
@@ -39,6 +41,7 @@ Phase 2 focuses on building a complete, secure, and user-friendly checkout flow 
 - ✅ Accessibility (WCAG 2.1 AA)
 
 ### Success Metrics
+
 - Checkout completion rate: >80%
 - Average checkout time: <3 minutes
 - Form validation accuracy: 100%
@@ -50,6 +53,7 @@ Phase 2 focuses on building a complete, secure, and user-friendly checkout flow 
 ## 🎯 Phase Objectives
 
 ### Primary Goals
+
 1. **Seamless User Experience**: Guide users through checkout with clear steps and feedback
 2. **Address Management**: Allow users to save, edit, and select delivery addresses
 3. **Order Creation**: Convert cart to order with inventory validation
@@ -57,6 +61,7 @@ Phase 2 focuses on building a complete, secure, and user-friendly checkout flow 
 5. **Agricultural Consciousness**: Maintain biodynamic patterns throughout
 
 ### Technical Goals
+
 - TypeScript strict mode compliance (100%)
 - Test coverage >85%
 - API response time <200ms
@@ -151,11 +156,12 @@ Phase 2 focuses on building a complete, secure, and user-friendly checkout flow 
 ### New Models Required
 
 #### Address Model
+
 ```prisma
 model Address {
   id             String   @id @default(cuid())
   userId         String
-  
+
   // Address fields
   label          String?  // e.g., "Home", "Work", "Farm"
   fullName       String
@@ -165,32 +171,33 @@ model Address {
   state          String
   zipCode        String
   country        String   @default("US")
-  
+
   // Geographic data
   latitude       Float?
   longitude      Float?
   deliveryZoneId String?
-  
+
   // Metadata
   isDefault      Boolean  @default(false)
   instructions   String?  // Delivery instructions
   phone          String?
-  
+
   // Timestamps
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
-  
+
   // Relations
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   deliveryZone   DeliveryZone? @relation(fields: [deliveryZoneId], references: [id])
   orders         Order[]
-  
+
   @@index([userId])
   @@index([deliveryZoneId])
 }
 ```
 
 #### Order Model
+
 ```prisma
 enum OrderStatus {
   PENDING
@@ -222,51 +229,51 @@ enum PaymentStatus {
 model Order {
   id                String            @id @default(cuid())
   orderNumber       String            @unique // Human-readable: ORD-2025-001234
-  
+
   // User & Farm
   customerId        String
   farmId            String
-  
+
   // Order details
   status            OrderStatus       @default(PENDING)
   fulfillmentMethod FulfillmentMethod @default(PICKUP)
-  
+
   // Pricing
   subtotal          Decimal           @db.Decimal(10, 2)
   tax               Decimal           @db.Decimal(10, 2)
   deliveryFee       Decimal           @db.Decimal(10, 2) @default(0)
   discount          Decimal           @db.Decimal(10, 2) @default(0)
   total             Decimal           @db.Decimal(10, 2)
-  
+
   // Payment
   paymentStatus     PaymentStatus     @default(PENDING)
   paymentMethod     String?           // "stripe", "cash", "card_on_delivery"
   paymentIntentId   String?           @unique // Stripe payment intent ID
-  
+
   // Delivery/Pickup
   addressId         String?
   pickupTime        DateTime?
   deliveryTime      DateTime?
   estimatedDelivery DateTime?
-  
+
   // Notes
   customerNotes     String?           @db.Text
   farmerNotes       String?           @db.Text
   internalNotes     String?           @db.Text
-  
+
   // Timestamps
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
   confirmedAt       DateTime?
   completedAt       DateTime?
   cancelledAt       DateTime?
-  
+
   // Relations
   customer          User              @relation("CustomerOrders", fields: [customerId], references: [id])
   farm              Farm              @relation(fields: [farmId], references: [id])
   items             OrderItem[]
   address           Address?          @relation(fields: [addressId], references: [id])
-  
+
   @@index([customerId])
   @@index([farmId])
   @@index([status])
@@ -276,15 +283,16 @@ model Order {
 ```
 
 #### OrderItem Model
+
 ```prisma
 model OrderItem {
   id           String   @id @default(cuid())
   orderId      String
-  
+
   // Product reference
   productId    String
   farmId       String
-  
+
   // Snapshot data (at time of order)
   productName  String
   productSlug  String
@@ -292,24 +300,24 @@ model OrderItem {
   unit         String
   pricePerUnit Decimal  @db.Decimal(10, 2)
   total        Decimal  @db.Decimal(10, 2)
-  
+
   // Product details snapshot
   organic      Boolean  @default(false)
   seasonal     Boolean  @default(false)
   imageUrl     String?
-  
+
   // Notes
   notes        String?
-  
+
   // Timestamps
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  
+
   // Relations
   order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product      Product  @relation(fields: [productId], references: [id])
   farm         Farm     @relation(fields: [farmId], references: [id])
-  
+
   @@index([orderId])
   @@index([productId])
   @@index([farmId])
@@ -317,36 +325,38 @@ model OrderItem {
 ```
 
 #### DeliveryZone Model
+
 ```prisma
 model DeliveryZone {
   id          String    @id @default(cuid())
   farmId      String
-  
+
   // Zone details
   name        String    // e.g., "Downtown", "Suburbs", "County"
   zipCodes    String[]  // Array of supported zip codes
   radius      Float?    // Delivery radius in miles (if using geo)
   fee         Decimal   @db.Decimal(10, 2)
   freeAbove   Decimal?  @db.Decimal(10, 2) // Free delivery above this amount
-  
+
   // Availability
   isActive    Boolean   @default(true)
   daysOfWeek  Int[]     // [0=Sunday, 1=Monday, ..., 6=Saturday]
-  
+
   // Timestamps
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  
+
   // Relations
   farm        Farm      @relation(fields: [farmId], references: [id], onDelete: Cascade)
   addresses   Address[]
-  
+
   @@index([farmId])
   @@index([zipCodes])
 }
 ```
 
 ### Schema Migration Command
+
 ```bash
 npx prisma migrate dev --name add_checkout_models
 ```
@@ -361,6 +371,7 @@ npx prisma migrate dev --name add_checkout_models
 **Type**: Client Component
 
 **Features**:
+
 - Multi-step wizard with progress indicator
 - Step validation before proceeding
 - Back/Next navigation
@@ -370,6 +381,7 @@ npx prisma migrate dev --name add_checkout_models
 - ARIA live regions for announcements
 
 **Props**:
+
 ```typescript
 interface CheckoutWizardProps {
   cartId: string;
@@ -381,6 +393,7 @@ interface CheckoutWizardProps {
 ```
 
 **State**:
+
 ```typescript
 interface CheckoutState {
   currentStep: number; // 0-3
@@ -400,9 +413,11 @@ interface CheckoutState {
 ### 2. Step Components
 
 #### A. ReviewCartStep
+
 **File**: `src/components/checkout/steps/ReviewCartStep.tsx`
 
 **Features**:
+
 - Cart items grouped by farm
 - Editable quantities (inline)
 - Remove items option
@@ -411,11 +426,12 @@ interface CheckoutState {
 - Stock validation warnings
 
 **Divine Pattern**:
+
 ```typescript
-export function ReviewCartStep({ 
-  cartSummary, 
-  onNext, 
-  onUpdateCart 
+export function ReviewCartStep({
+  cartSummary,
+  onNext,
+  onUpdateCart,
 }: ReviewCartStepProps) {
   // Display cart items with agricultural consciousness
   // Show seasonal badges, organic indicators
@@ -426,9 +442,11 @@ export function ReviewCartStep({
 ---
 
 #### B. DeliveryDetailsStep
+
 **File**: `src/components/checkout/steps/DeliveryDetailsStep.tsx`
 
 **Features**:
+
 - Address selector (saved addresses)
 - Add new address form
 - Delivery vs. Pickup toggle
@@ -438,6 +456,7 @@ export function ReviewCartStep({
 - Special instructions field
 
 **Components**:
+
 - `AddressSelector` - Radio group of saved addresses
 - `AddressForm` - New address creation
 - `DeliveryMethodToggle` - Pickup/Delivery switch
@@ -446,9 +465,11 @@ export function ReviewCartStep({
 ---
 
 #### C. PaymentMethodStep
+
 **File**: `src/components/checkout/steps/PaymentMethodStep.tsx`
 
 **Features**:
+
 - Payment method selection
 - Credit card option (Stripe)
 - Cash on delivery/pickup
@@ -461,9 +482,11 @@ export function ReviewCartStep({
 ---
 
 #### D. ConfirmOrderStep
+
 **File**: `src/components/checkout/steps/ConfirmOrderStep.tsx`
 
 **Features**:
+
 - Complete order review
 - Editable sections (click to go back)
 - Terms and conditions checkbox
@@ -477,9 +500,11 @@ export function ReviewCartStep({
 ### 3. Address Management Components
 
 #### AddressSelector
+
 **File**: `src/components/checkout/AddressSelector.tsx`
 
 **Features**:
+
 - Radio button group of addresses
 - Default address pre-selected
 - Edit/Delete actions
@@ -490,9 +515,11 @@ export function ReviewCartStep({
 ---
 
 #### AddressForm
+
 **File**: `src/components/checkout/AddressForm.tsx`
 
 **Features**:
+
 - Full name, phone fields
 - Address line 1, 2
 - City, State, Zip
@@ -504,6 +531,7 @@ export function ReviewCartStep({
 - Save address action
 
 **Validation**:
+
 ```typescript
 const AddressSchema = z.object({
   fullName: z.string().min(2).max(100),
@@ -522,10 +550,12 @@ const AddressSchema = z.object({
 ## 🔌 API Endpoints
 
 ### 1. Checkout Validation
+
 **Endpoint**: `POST /api/checkout/validate`
 **Auth**: Required
 
 **Request**:
+
 ```typescript
 {
   cartId: string;
@@ -535,6 +565,7 @@ const AddressSchema = z.object({
 ```
 
 **Response**:
+
 ```typescript
 {
   success: boolean;
@@ -552,10 +583,12 @@ const AddressSchema = z.object({
 ---
 
 ### 2. Create Order
+
 **Endpoint**: `POST /api/checkout/create-order`
 **Auth**: Required
 
 **Request**:
+
 ```typescript
 {
   cartId: string;
@@ -568,6 +601,7 @@ const AddressSchema = z.object({
 ```
 
 **Response**:
+
 ```typescript
 {
   success: boolean;
@@ -586,10 +620,12 @@ const AddressSchema = z.object({
 ### 3. Address Management
 
 #### Get Addresses
+
 **Endpoint**: `GET /api/addresses`
 **Auth**: Required
 
 **Response**:
+
 ```typescript
 {
   success: boolean;
@@ -600,12 +636,14 @@ const AddressSchema = z.object({
 ---
 
 #### Create Address
+
 **Endpoint**: `POST /api/addresses`
 **Auth**: Required
 
 **Request**: `CreateAddressRequest` (AddressSchema)
 
 **Response**:
+
 ```typescript
 {
   success: boolean;
@@ -616,22 +654,26 @@ const AddressSchema = z.object({
 ---
 
 #### Update Address
+
 **Endpoint**: `PUT /api/addresses/[id]`
 **Auth**: Required
 
 ---
 
 #### Delete Address
+
 **Endpoint**: `DELETE /api/addresses/[id]`
 **Auth**: Required
 
 ---
 
 ### 4. Delivery Zone Validation
+
 **Endpoint**: `POST /api/delivery-zones/validate`
 **Auth**: Required
 
 **Request**:
+
 ```typescript
 {
   farmId: string;
@@ -640,6 +682,7 @@ const AddressSchema = z.object({
 ```
 
 **Response**:
+
 ```typescript
 {
   success: boolean;
@@ -661,6 +704,7 @@ const AddressSchema = z.object({
 ### Checkout Flow Logic
 
 #### Step 1: Review Cart
+
 1. Fetch cart summary from store
 2. Validate all items are still in stock
 3. Check for price changes since items added
@@ -669,6 +713,7 @@ const AddressSchema = z.object({
 6. Recalculate totals in real-time
 
 #### Step 2: Delivery Details
+
 1. Fetch user's saved addresses
 2. If none, show address form
 3. Select fulfillment method (pickup/delivery)
@@ -679,6 +724,7 @@ const AddressSchema = z.object({
 5. Save selected address to checkout state
 
 #### Step 3: Payment Method
+
 1. Display available payment methods
 2. If credit card, show Stripe form (Phase 3)
 3. If cash, confirm acceptance
@@ -686,6 +732,7 @@ const AddressSchema = z.object({
 5. Save payment method to checkout state
 
 #### Step 4: Confirm Order
+
 1. Display complete order summary
 2. Show all selections (editable)
 3. Display terms and conditions
@@ -694,6 +741,7 @@ const AddressSchema = z.object({
 6. Place Order button enabled when valid
 
 #### Order Creation
+
 1. **Validation**:
    - Re-validate cart (stock, prices)
    - Validate delivery address
@@ -718,25 +766,26 @@ const AddressSchema = z.object({
 ### Inventory Management
 
 #### Stock Reservation
+
 ```typescript
 async function reserveInventory(orderItems: OrderItem[]): Promise<void> {
   await database.$transaction(async (tx) => {
     for (const item of orderItems) {
       const product = await tx.product.findUnique({
-        where: { id: item.productId }
+        where: { id: item.productId },
       });
-      
+
       if (!product || product.quantityAvailable < item.quantity) {
         throw new InsufficientStockError(item.productName);
       }
-      
+
       await tx.product.update({
         where: { id: item.productId },
         data: {
           quantityAvailable: {
-            decrement: item.quantity
-          }
-        }
+            decrement: item.quantity,
+          },
+        },
       });
     }
   });
@@ -750,33 +799,33 @@ async function reserveInventory(orderItems: OrderItem[]): Promise<void> {
 ```typescript
 async function validateDeliveryZone(
   farmId: string,
-  zipCode: string
+  zipCode: string,
 ): Promise<DeliveryZoneValidation> {
   const zone = await database.deliveryZone.findFirst({
     where: {
       farmId,
       isActive: true,
       zipCodes: {
-        has: zipCode
-      }
-    }
+        has: zipCode,
+      },
+    },
   });
-  
+
   if (!zone) {
     return {
       available: false,
       deliveryFee: 0,
-      message: "Delivery not available to this area"
+      message: "Delivery not available to this area",
     };
   }
-  
+
   return {
     available: true,
     zoneId: zone.id,
     zoneName: zone.name,
     deliveryFee: Number(zone.fee),
     freeDeliveryThreshold: zone.freeAbove ? Number(zone.freeAbove) : undefined,
-    estimatedDays: 2 // Calculate based on farm's schedule
+    estimatedDays: 2, // Calculate based on farm's schedule
   };
 }
 ```
@@ -788,6 +837,7 @@ async function validateDeliveryZone(
 ### Unit Tests (Target: 50+)
 
 #### Component Tests
+
 - ✅ CheckoutWizard step navigation
 - ✅ ReviewCartStep rendering and interactions
 - ✅ DeliveryDetailsStep form validation
@@ -797,12 +847,14 @@ async function validateDeliveryZone(
 - ✅ AddressForm validation and submission
 
 #### Service Tests
+
 - ✅ checkout.service - order creation logic
 - ✅ address.service - CRUD operations
 - ✅ order.service - order management
 - ✅ delivery-zone.service - zone validation
 
 #### Store Tests
+
 - ✅ checkoutStore - state management
 - ✅ addressStore - address management
 - ✅ orderStore - order state
@@ -812,6 +864,7 @@ async function validateDeliveryZone(
 ### Integration Tests (Target: 20+)
 
 #### API Tests
+
 - ✅ POST /api/checkout/validate
 - ✅ POST /api/checkout/create-order
 - ✅ GET /api/addresses
@@ -821,6 +874,7 @@ async function validateDeliveryZone(
 - ✅ POST /api/delivery-zones/validate
 
 #### Flow Tests
+
 - ✅ Complete checkout flow (happy path)
 - ✅ Checkout with new address
 - ✅ Checkout with saved address
@@ -833,6 +887,7 @@ async function validateDeliveryZone(
 ### E2E Tests (Target: 10+)
 
 #### User Journeys
+
 - ✅ First-time buyer checkout (no saved data)
 - ✅ Returning customer checkout (saved address)
 - ✅ Pickup order placement
@@ -849,6 +904,7 @@ async function validateDeliveryZone(
 ## 📅 Implementation Plan
 
 ### Day 1: Foundation & Schema
+
 - ✅ Review Phase 2 requirements
 - ✅ Design database schema
 - ✅ Create Prisma models
@@ -861,6 +917,7 @@ async function validateDeliveryZone(
 ---
 
 ### Day 2: Checkout Wizard & Step 1
+
 - 🔄 Build CheckoutWizard container
 - 🔄 Implement step navigation
 - 🔄 Create ReviewCartStep component
@@ -873,6 +930,7 @@ async function validateDeliveryZone(
 ---
 
 ### Day 3: Address Management
+
 - 🔄 Build AddressSelector component
 - 🔄 Build AddressForm component
 - 🔄 Implement address.service
@@ -886,6 +944,7 @@ async function validateDeliveryZone(
 ---
 
 ### Day 4: Order Creation
+
 - 🔄 Implement order.service
 - 🔄 Create order API endpoints
 - 🔄 Build ConfirmOrderStep
@@ -898,6 +957,7 @@ async function validateDeliveryZone(
 ---
 
 ### Day 5: Testing & Polish
+
 - 🔄 Complete all unit tests (50+)
 - 🔄 Complete integration tests (20+)
 - 🔄 Run E2E tests (10+)
@@ -914,6 +974,7 @@ async function validateDeliveryZone(
 ## ✅ Success Criteria
 
 ### Functional Requirements
+
 - ✅ Users can complete checkout in 4 steps
 - ✅ Users can save and manage delivery addresses
 - ✅ System validates delivery zones
@@ -923,6 +984,7 @@ async function validateDeliveryZone(
 - ✅ Cart is cleared after successful order
 
 ### Technical Requirements
+
 - ✅ TypeScript strict mode (100% compliance)
 - ✅ Test coverage >85%
 - ✅ API response time <200ms
@@ -931,6 +993,7 @@ async function validateDeliveryZone(
 - ✅ WCAG 2.1 AA accessible
 
 ### User Experience
+
 - ✅ Clear progress indicator
 - ✅ Helpful error messages
 - ✅ Inline validation feedback
@@ -943,18 +1006,21 @@ async function validateDeliveryZone(
 ## 🔒 Security Considerations
 
 ### Authentication & Authorization
+
 - ✅ All checkout endpoints require authentication
 - ✅ Users can only access their own addresses
 - ✅ Users can only create orders for their own carts
 - ✅ Order creation validates ownership
 
 ### Data Validation
+
 - ✅ All inputs validated with Zod schemas
 - ✅ Address data sanitized
 - ✅ Price tampering prevention (server-side recalculation)
 - ✅ Stock validation before order creation
 
 ### Payment Security
+
 - ✅ No sensitive payment data stored (Phase 3)
 - ✅ PCI compliance preparation
 - ✅ HTTPS required for all transactions
@@ -964,6 +1030,7 @@ async function validateDeliveryZone(
 ## 📊 Metrics & Monitoring
 
 ### Performance Metrics
+
 - Checkout start rate
 - Checkout completion rate
 - Average checkout time
@@ -972,6 +1039,7 @@ async function validateDeliveryZone(
 - Error rates by endpoint
 
 ### Business Metrics
+
 - Orders per day
 - Average order value
 - Delivery vs. pickup ratio
@@ -979,6 +1047,7 @@ async function validateDeliveryZone(
 - Returning customer rate
 
 ### Agricultural Metrics
+
 - Organic product order rate
 - Seasonal product popularity
 - Farm-specific order patterns
@@ -989,6 +1058,7 @@ async function validateDeliveryZone(
 ## 🌾 Agricultural Consciousness
 
 ### Biodynamic Patterns
+
 - Display seasonal availability during checkout
 - Show carbon footprint estimates
 - Highlight local delivery benefits
@@ -996,6 +1066,7 @@ async function validateDeliveryZone(
 - Sustainable packaging options
 
 ### Divine Code Patterns
+
 - Holographic component architecture
 - Quantum naming conventions
 - Enlightening error messages
@@ -1008,6 +1079,7 @@ async function validateDeliveryZone(
 After Phase 2 completion, we'll proceed to:
 
 ### Phase 3: Payment Integration
+
 - Stripe integration (test mode)
 - Payment method management
 - Payment processing flow
@@ -1021,18 +1093,21 @@ After Phase 2 completion, we'll proceed to:
 ## 📝 Documentation Requirements
 
 ### Code Documentation
+
 - ✅ JSDoc comments on all components
 - ✅ Type definitions exported
 - ✅ Service method documentation
 - ✅ API endpoint documentation
 
 ### User Documentation
+
 - ✅ Checkout process guide
 - ✅ Address management guide
 - ✅ Delivery zone information
 - ✅ Order tracking guide
 
 ### Technical Documentation
+
 - ✅ Database schema documentation
 - ✅ API reference (OpenAPI)
 - ✅ Integration guide
@@ -1043,6 +1118,7 @@ After Phase 2 completion, we'll proceed to:
 ## 🎯 Next Actions
 
 ### Immediate (Today)
+
 1. ✅ Review this kickoff document
 2. 🔄 Create database models
 3. 🔄 Run migrations
@@ -1050,6 +1126,7 @@ After Phase 2 completion, we'll proceed to:
 5. 🔄 Create TypeScript types
 
 ### Tomorrow
+
 1. 🔄 Build CheckoutWizard
 2. 🔄 Implement ReviewCartStep
 3. 🔄 Write initial tests
@@ -1061,7 +1138,7 @@ After Phase 2 completion, we'll proceed to:
 **Engineering Lead**: Approve schema and architecture  
 **Product Manager**: Approve user flow and requirements  
 **QA Lead**: Review testing strategy  
-**DevOps**: Prepare monitoring and alerts  
+**DevOps**: Prepare monitoring and alerts
 
 **Status**: ✅ **READY TO BEGIN IMPLEMENTATION**
 

@@ -168,7 +168,7 @@ export function canVerifyFarms(role: UserRole): boolean {
  * Divine agricultural consciousness permission checker
  */
 export class DivinePermissionChecker {
-  constructor(private role: UserRole) { }
+  constructor(private role: UserRole) {}
 
   can(permission: Permission): boolean {
     return hasPermission(this.role, permission);

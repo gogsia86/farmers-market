@@ -85,11 +85,13 @@ export async function GET(request: NextRequest) {
         error: {
           code: "WALLET_CAPABILITIES_ERROR",
           message:
-            error instanceof Error ? error.message : "Failed to check wallet capabilities",
+            error instanceof Error
+              ? error.message
+              : "Failed to check wallet capabilities",
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -119,7 +121,7 @@ export async function POST(request: NextRequest) {
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -138,7 +140,7 @@ export async function POST(request: NextRequest) {
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -150,7 +152,7 @@ export async function POST(request: NextRequest) {
     // Check if wallet is available on device
     const isAvailable = await digitalWalletService.isWalletAvailable(
       walletType,
-      userAgent
+      userAgent,
     );
 
     if (!isAvailable) {
@@ -163,7 +165,7 @@ export async function POST(request: NextRequest) {
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -224,7 +226,7 @@ export async function POST(request: NextRequest) {
               timestamp: new Date().toISOString(),
             },
           },
-          { status: 400 }
+          { status: 400 },
         );
     }
 
@@ -245,7 +247,7 @@ export async function POST(request: NextRequest) {
           },
         },
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     logger.error("Wallet payment intent creation failed", error, {
@@ -264,7 +266,7 @@ export async function POST(request: NextRequest) {
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -280,7 +282,7 @@ export async function POST(request: NextRequest) {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

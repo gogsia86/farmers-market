@@ -2,7 +2,7 @@
 
 **Duration**: 2 weeks (Week 7-8)  
 **Status**: 🟢 READY TO START  
-**Estimated Effort**: 12 hours  
+**Estimated Effort**: 12 hours
 
 ---
 
@@ -41,11 +41,13 @@
   - Add EmailType and EmailStatus enums
 
 - [ ] **Generate migration**
+
   ```bash
   npx prisma migrate dev --name add-email-enhancements
   ```
 
 - [ ] **Test in Prisma Studio**
+
   ```bash
   npx prisma studio
   ```
@@ -61,24 +63,27 @@
 ### Day 3-4: Email Queue (4 hours)
 
 - [ ] **Start Redis**
+
   ```bash
   # Add to docker-compose.yml:
   redis:
     image: redis:7-alpine
     ports: ["6379:6379"]
     volumes: [redis-data:/data]
-  
+
   docker-compose up -d redis
   redis-cli ping  # Should return PONG
   ```
 
 - [ ] **Install dependencies**
+
   ```bash
   npm install bull ioredis
   npm install -D @types/bull
   ```
 
 - [ ] **Add environment variables** (`.env.local`)
+
   ```bash
   REDIS_HOST="localhost"
   REDIS_PORT="6379"
@@ -87,26 +92,31 @@
   ```
 
 - [ ] **Create queue service**
+
   ```bash
   mkdir -p src/lib/queue src/lib/workers
   touch src/lib/queue/email.queue.ts
   ```
+
   - Copy implementation from kickoff doc P4.2
   - ~300 lines
 
 - [ ] **Create worker process**
+
   ```bash
   touch src/lib/workers/email.worker.ts
   ```
+
   - Copy implementation from kickoff doc P4.2
   - ~200 lines
 
 - [ ] **Update email service**
   - Open `src/lib/services/email.service.ts`
   - Add queue integration:
+
     ```typescript
     import { enqueueEmail } from '@/lib/queue/email.queue';
-    
+
     async sendEmail(options: EmailOptions) {
       if (process.env.NODE_ENV === 'production') {
         // Queue in production
@@ -119,14 +129,15 @@
     ```
 
 - [ ] **Test queue**
+
   ```bash
   # Terminal 1: Start worker
   npm run worker:email
-  
+
   # Terminal 2: Trigger test email
   npm run dev
   # Create test order to trigger email
-  
+
   # Check database EmailLog table
   npx prisma studio
   ```
@@ -142,34 +153,41 @@
 ### Day 5-6: Email Preferences (3 hours)
 
 - [ ] **Create preferences service**
+
   ```bash
   touch src/lib/services/email-preferences.service.ts
   ```
+
   - Copy implementation from kickoff doc P4.3
   - ~250 lines
 
 - [ ] **Create API endpoints**
+
   ```bash
   mkdir -p src/app/api/preferences/email
   touch src/app/api/preferences/email/route.ts
   touch src/app/api/unsubscribe/route.ts
   ```
+
   - Copy implementations from kickoff doc P4.3
   - ~150 lines + ~100 lines
 
 - [ ] **Create UI component**
+
   ```bash
   mkdir -p src/components/settings
   touch src/components/settings/EmailPreferences.tsx
   ```
+
   - Copy implementation from kickoff doc P4.3
   - ~300 lines
 
 - [ ] **Add to settings page**
+
   ```bash
   # Add to src/app/(customer)/settings/page.tsx
   import { EmailPreferences } from '@/components/settings/EmailPreferences';
-  
+
   // In component:
   <EmailPreferences />
   ```
@@ -195,24 +213,30 @@
 ### Day 7-8: Email Analytics (3 hours)
 
 - [ ] **Create analytics service**
+
   ```bash
   touch src/lib/services/email-analytics.service.ts
   ```
+
   - Copy implementation from kickoff doc P4.4
   - ~300 lines
 
 - [ ] **Create API endpoint**
+
   ```bash
   mkdir -p src/app/api/analytics/email
   touch src/app/api/analytics/email/route.ts
   ```
+
   - ~200 lines
 
 - [ ] **Create dashboard page**
+
   ```bash
   mkdir -p src/app/(admin)/analytics/email
   touch src/app/(admin)/analytics/email/page.tsx
   ```
+
   - ~400 lines
   - Show delivery stats, engagement metrics, email type breakdown
 
@@ -237,6 +261,7 @@
 ### Day 9: Testing & Documentation (2 hours)
 
 - [ ] **Write tests**
+
   ```bash
   mkdir -p __tests__/lib/services
   touch __tests__/lib/services/email-preferences.service.test.ts
@@ -245,6 +270,7 @@
   ```
 
 - [ ] **Run all tests**
+
   ```bash
   npm run type-check  # Should be 0 errors
   npm test            # All tests should pass
@@ -253,6 +279,7 @@
   ```
 
 - [ ] **Create documentation**
+
   ```bash
   mkdir -p docs/guides docs/admin
   touch docs/guides/EMAIL_QUEUE_SETUP.md
@@ -276,6 +303,7 @@
 ### Day 10: Review & Deploy (1 hour)
 
 - [ ] **Final verification**
+
   ```bash
   npm run type-check     # ✅ 0 errors
   npm test               # ✅ All passing
@@ -284,15 +312,18 @@
   ```
 
 - [ ] **Create sprint completion report**
+
   ```bash
   touch docs/sprints/SPRINT_4_EMAIL_ENHANCEMENTS_COMPLETE.md
   ```
+
   - Document all deliverables
   - Include metrics and achievements
   - List testing results
   - Add deployment instructions
 
 - [ ] **Deploy to staging**
+
   ```bash
   # Set up Azure Redis Cache
   # Update staging environment variables
@@ -316,6 +347,7 @@
 Sprint 4 is complete when:
 
 ### Functionality ✅
+
 - [x] Database migrations run successfully
 - [x] Email queue processing jobs
 - [x] Users can manage preferences
@@ -323,12 +355,14 @@ Sprint 4 is complete when:
 - [x] Analytics dashboard live
 
 ### Quality ✅
+
 - [x] 0 TypeScript errors
 - [x] All tests passing
-- [x] >80% test coverage
+- [x] > 80% test coverage
 - [x] No ESLint errors
 
 ### Documentation ✅
+
 - [x] Sprint completion report
 - [x] User guides
 - [x] Technical documentation
@@ -369,6 +403,7 @@ npm run validate:all          # Full check
 ## 📊 Files to Create/Update
 
 ### New Files (13)
+
 ```
 prisma/migrations/xxx_add_email_enhancements/migration.sql
 src/lib/queue/email.queue.ts
@@ -386,6 +421,7 @@ docs/admin/EMAIL_ANALYTICS_GUIDE.md
 ```
 
 ### Updated Files (5)
+
 ```
 src/lib/services/email.service.ts
 src/lib/services/index.ts
@@ -399,7 +435,7 @@ README.md
 ## ⚠️ Common Gotchas
 
 1. **Redis not running**: Always start Redis before testing
-2. **Environment variables**: Add REDIS_* vars to `.env.local`
+2. **Environment variables**: Add REDIS\_\* vars to `.env.local`
 3. **Migration order**: Database first, then code
 4. **Queue vs Direct**: Production uses queue, dev uses direct send
 5. **Type safety**: Maintain 0 TypeScript errors always

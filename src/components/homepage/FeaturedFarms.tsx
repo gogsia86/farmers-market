@@ -69,7 +69,10 @@ export function FeaturedFarms() {
           throw new Error("API returned unsuccessful response");
         }
       } catch (err) {
-        homeLogger.error("Error fetching featured farms", err instanceof Error ? err : new Error(String(err)));
+        homeLogger.error(
+          "Error fetching featured farms",
+          err instanceof Error ? err : new Error(String(err)),
+        );
         setError(err instanceof Error ? err.message : "Failed to load farms");
       } finally {
         setLoading(false);

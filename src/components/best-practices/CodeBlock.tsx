@@ -19,7 +19,10 @@ export function CodeBlock({ code, language = "typescript" }: CodeBlockProps) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      uiLogger.error("Failed to copy to clipboard", err instanceof Error ? err : new Error(String(err)));
+      uiLogger.error(
+        "Failed to copy to clipboard",
+        err instanceof Error ? err : new Error(String(err)),
+      );
     }
   };
 

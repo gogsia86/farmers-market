@@ -309,10 +309,11 @@ export function DeliveryZonesManager({
         {value.map((zone, index) => (
           <div
             key={index}
-            className={`border rounded-lg p-4 ${editingIndex === index
-              ? "border-green-500 bg-green-50"
-              : "border-gray-200 bg-white"
-              }`}
+            className={`border rounded-lg p-4 ${
+              editingIndex === index
+                ? "border-green-500 bg-green-50"
+                : "border-gray-200 bg-white"
+            }`}
             data-testid={`zone-${index}`}
           >
             {editingIndex === index ? (

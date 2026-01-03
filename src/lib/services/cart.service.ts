@@ -129,7 +129,10 @@ export class CartService extends BaseService<CartItemData> {
 
       if (cached) {
         this.setTraceAttributes({ "cache.hit": true });
-        this.logger.debug("Cart retrieved from cache", {  userId, cached: true  });
+        this.logger.debug("Cart retrieved from cache", {
+          userId,
+          cached: true,
+        });
 
         return this.success(cached, {
           cached: true,
@@ -226,14 +229,19 @@ export class CartService extends BaseService<CartItemData> {
           "cart.total": total,
         });
 
-        this.logger.info("Cart retrieved successfully", {  userId, itemCount, farmCount, total  });
+        this.logger.info("Cart retrieved successfully", {
+          userId,
+          itemCount,
+          farmCount,
+          total,
+        });
 
         return this.success(cartSummary, {
           cached: false,
           message: "Cart retrieved successfully",
         });
       } catch (error) {
-        this.logger.error("Failed to retrieve cart", error, { userId  });
+        this.logger.error("Failed to retrieve cart", error, { userId });
         return this.error("CART_RETRIEVAL_ERROR", "Failed to retrieve cart", {
           error: error instanceof Error ? error.message : "Unknown error",
         });
@@ -407,13 +415,21 @@ export class CartService extends BaseService<CartItemData> {
 
         this.setTraceAttributes({ "cart.itemAdded": true });
 
-        this.logger.info("Item added to cart successfully", {  userId, productId, quantity, itemId: cartItem.id  });
+        this.logger.info("Item added to cart successfully", {
+          userId,
+          productId,
+          quantity,
+          itemId: cartItem.id,
+        });
 
         return this.success(cartItemData, {
           message: "Item added to cart successfully",
         });
       } catch (error) {
-        this.logger.error("Failed to add item to cart", error, { userId, productId  });
+        this.logger.error("Failed to add item to cart", error, {
+          userId,
+          productId,
+        });
         return this.error("CART_ADD_ERROR", "Failed to add item to cart", {
           error: error instanceof Error ? error.message : "Unknown error",
         });
@@ -547,13 +563,20 @@ export class CartService extends BaseService<CartItemData> {
           fulfillmentMethod: updatedItem.fulfillmentMethod,
         };
 
-        this.logger.info("Cart item updated successfully", {  userId, cartItemId, quantity  });
+        this.logger.info("Cart item updated successfully", {
+          userId,
+          cartItemId,
+          quantity,
+        });
 
         return this.success(cartItemData, {
           message: "Cart item updated successfully",
         });
       } catch (error) {
-        this.logger.error("Failed to update cart item", error, { userId, cartItemId  });
+        this.logger.error("Failed to update cart item", error, {
+          userId,
+          cartItemId,
+        });
         return this.error("CART_UPDATE_ERROR", "Failed to update cart item", {
           error: error instanceof Error ? error.message : "Unknown error",
         });
@@ -601,13 +624,19 @@ export class CartService extends BaseService<CartItemData> {
         // Invalidate cart cache
         await this.invalidateUserCache(userId);
 
-        this.logger.info("Cart item removed successfully", {  userId, cartItemId  });
+        this.logger.info("Cart item removed successfully", {
+          userId,
+          cartItemId,
+        });
 
         return this.success(undefined, {
           message: "Cart item removed successfully",
         });
       } catch (error) {
-        this.logger.error("Failed to remove cart item", error, { userId, cartItemId  });
+        this.logger.error("Failed to remove cart item", error, {
+          userId,
+          cartItemId,
+        });
         return this.error("CART_REMOVE_ERROR", "Failed to remove cart item", {
           error: error instanceof Error ? error.message : "Unknown error",
         });
@@ -638,13 +667,16 @@ export class CartService extends BaseService<CartItemData> {
 
         this.setTraceAttributes({ "cart.itemsCleared": result.count });
 
-        this.logger.info("Cart cleared successfully", {  userId, itemsCleared: result.count  });
+        this.logger.info("Cart cleared successfully", {
+          userId,
+          itemsCleared: result.count,
+        });
 
         return this.success(undefined, {
           message: "Cart cleared successfully",
         });
       } catch (error) {
-        this.logger.error("Failed to clear cart", error, { userId  });
+        this.logger.error("Failed to clear cart", error, { userId });
         return this.error("CART_CLEAR_ERROR", "Failed to clear cart", {
           error: error instanceof Error ? error.message : "Unknown error",
         });
@@ -687,20 +719,28 @@ export class CartService extends BaseService<CartItemData> {
           if (result.success) {
             mergedCount++;
           } else {
-            this.logger.warn("Failed to merge guest cart item", {  userId, productId: item.productId, error: result.error  });
+            this.logger.warn("Failed to merge guest cart item", {
+              userId,
+              productId: item.productId,
+              error: result.error,
+            });
           }
         }
 
         this.setTraceAttributes({ "cart.mergedCount": mergedCount });
 
-        this.logger.info("Guest cart merged successfully", {  userId, mergedCount, totalItems: guestCartItems.length  });
+        this.logger.info("Guest cart merged successfully", {
+          userId,
+          mergedCount,
+          totalItems: guestCartItems.length,
+        });
 
         return this.success(
           { merged: mergedCount },
           { message: `Successfully merged ${mergedCount} items` },
         );
       } catch (error) {
-        this.logger.error("Failed to merge guest cart", error, { userId  });
+        this.logger.error("Failed to merge guest cart", error, { userId });
         return this.error("CART_MERGE_ERROR", "Failed to merge guest cart", {
           error: error instanceof Error ? error.message : "Unknown error",
         });
@@ -779,14 +819,18 @@ export class CartService extends BaseService<CartItemData> {
           "cart.issueCount": issues.length,
         });
 
-        this.logger.info("Cart validation completed", {  userId, valid, issueCount: issues.length  });
+        this.logger.info("Cart validation completed", {
+          userId,
+          valid,
+          issueCount: issues.length,
+        });
 
         return this.success(
           { valid, issues },
           { message: valid ? "Cart is valid" : "Cart has validation issues" },
         );
       } catch (error) {
-        this.logger.error("Failed to validate cart", error, { userId  });
+        this.logger.error("Failed to validate cart", error, { userId });
         return this.error("CART_VALIDATION_ERROR", "Failed to validate cart", {
           error: error instanceof Error ? error.message : "Unknown error",
         });
@@ -828,13 +872,17 @@ export class CartService extends BaseService<CartItemData> {
 
         this.setTraceAttributes({ "cart.itemsReserved": result.count });
 
-        this.logger.info("Cart items reserved successfully", {  userId, itemsReserved: result.count, reservedUntil  });
+        this.logger.info("Cart items reserved successfully", {
+          userId,
+          itemsReserved: result.count,
+          reservedUntil,
+        });
 
         return this.success(undefined, {
           message: `Reserved ${result.count} items for ${reservationMinutes} minutes`,
         });
       } catch (error) {
-        this.logger.error("Failed to reserve cart items", error, { userId  });
+        this.logger.error("Failed to reserve cart items", error, { userId });
         return this.error(
           "CART_RESERVATION_ERROR",
           "Failed to reserve cart items",
@@ -868,13 +916,16 @@ export class CartService extends BaseService<CartItemData> {
 
         this.setTraceAttributes({ "cart.itemsReleased": result.count });
 
-        this.logger.info("Cart reservations released successfully", {  userId, itemsReleased: result.count  });
+        this.logger.info("Cart reservations released successfully", {
+          userId,
+          itemsReleased: result.count,
+        });
 
         return this.success(undefined, {
           message: "Reservations released successfully",
         });
       } catch (error) {
-        this.logger.error("Failed to release reservations", error, { userId  });
+        this.logger.error("Failed to release reservations", error, { userId });
         return this.error(
           "CART_RELEASE_ERROR",
           "Failed to release reservations",
@@ -901,7 +952,7 @@ export class CartService extends BaseService<CartItemData> {
   private async invalidateUserCache(userId: string): Promise<void> {
     const cacheKey = this.getCacheKey(`user:${userId}`);
     await this.cache.delete(cacheKey);
-    this.logger.debug("Cart cache invalidated", {  userId  });
+    this.logger.debug("Cart cache invalidated", { userId });
   }
 
   /**

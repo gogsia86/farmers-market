@@ -277,10 +277,10 @@
   {
     "context": "Workspace",
     "bindings": {
-      "ctrl-alt-b": ["task::Spawn", {"task_name": "build"}],
-      "ctrl-alt-s": ["task::Spawn", {"task_name": "dev"}],
-      "ctrl-alt-l": ["task::Spawn", {"task_name": "lint"}],
-      "ctrl-alt-f": ["task::Spawn", {"task_name": "format"}]
+      "ctrl-alt-b": ["task::Spawn", { "task_name": "build" }],
+      "ctrl-alt-s": ["task::Spawn", { "task_name": "dev" }],
+      "ctrl-alt-l": ["task::Spawn", { "task_name": "lint" }],
+      "ctrl-alt-f": ["task::Spawn", { "task_name": "format" }]
     }
   },
 

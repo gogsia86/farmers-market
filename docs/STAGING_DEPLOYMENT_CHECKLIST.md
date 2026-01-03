@@ -3,7 +3,7 @@
 **Target Environment**: Staging  
 **Date**: January 2025  
 **Version**: 1.0.0  
-**Status**: Ready for Deployment  
+**Status**: Ready for Deployment
 
 ---
 
@@ -42,6 +42,7 @@
 #### Required Environment Variables
 
 **Core Application**:
+
 - [ ] `NODE_ENV=staging`
 - [ ] `NEXT_PUBLIC_APP_URL` (staging URL)
 - [ ] `DATABASE_URL` (staging PostgreSQL connection string)
@@ -49,38 +50,45 @@
 - [ ] `NEXTAUTH_SECRET` (unique secret for staging)
 
 **Authentication**:
+
 - [ ] `GOOGLE_CLIENT_ID` (OAuth)
 - [ ] `GOOGLE_CLIENT_SECRET` (OAuth)
 - [ ] `FACEBOOK_CLIENT_ID` (OAuth - if applicable)
 - [ ] `FACEBOOK_CLIENT_SECRET` (OAuth - if applicable)
 
 **Payment Processing**:
+
 - [ ] `STRIPE_SECRET_KEY` (test mode key)
 - [ ] `STRIPE_PUBLISHABLE_KEY` (test mode key)
 - [ ] `STRIPE_WEBHOOK_SECRET` (staging webhook secret)
 - [ ] `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
 
 **Email Service**:
+
 - [ ] `SENDGRID_API_KEY` (or other email provider)
 - [ ] `EMAIL_FROM` (sender email)
 - [ ] `EMAIL_REPLY_TO`
 
 **Storage**:
+
 - [ ] `AWS_ACCESS_KEY_ID` (S3 for images)
 - [ ] `AWS_SECRET_ACCESS_KEY`
 - [ ] `AWS_REGION`
 - [ ] `AWS_S3_BUCKET_NAME`
 
 **Monitoring & Logging**:
+
 - [ ] `AZURE_APPLICATION_INSIGHTS_CONNECTION_STRING`
 - [ ] `SENTRY_DSN` (error tracking - if applicable)
 - [ ] `LOG_LEVEL=debug` (verbose logging for staging)
 
 **Caching & Performance**:
+
 - [ ] `REDIS_URL` (staging Redis instance)
 - [ ] `REDIS_PASSWORD`
 
 **API Keys**:
+
 - [ ] `GOOGLE_MAPS_API_KEY` (for location services)
 - [ ] Any third-party API keys
 
@@ -315,6 +323,7 @@ cp .env.staging .env.staging.backup
 ### 2. Code Deployment
 
 **Option A: Vercel**
+
 ```bash
 # Install Vercel CLI
 npm i -g vercel
@@ -326,6 +335,7 @@ vercel --prod --env staging
 ```
 
 **Option B: Azure App Service**
+
 ```bash
 # Login to Azure
 az login
@@ -338,6 +348,7 @@ az webapp deployment source config-zip \
 ```
 
 **Option C: Docker + Kubernetes**
+
 ```bash
 # Build Docker image
 docker build -t farmers-market:staging .
@@ -408,6 +419,7 @@ npm run test:staging
 ### If Deployment Fails
 
 **Immediate Actions**:
+
 1. **Stop deployment** process
 2. **Assess issue** (logs, errors, monitoring)
 3. **Decide**: Fix forward or rollback
@@ -415,12 +427,14 @@ npm run test:staging
 **Rollback Steps**:
 
 **Vercel**:
+
 ```bash
 # Rollback to previous deployment
 vercel rollback
 ```
 
 **Azure**:
+
 ```bash
 # Swap staging slot back
 az webapp deployment slot swap \
@@ -431,6 +445,7 @@ az webapp deployment slot swap \
 ```
 
 **Database Rollback** (if needed):
+
 ```bash
 # Restore from backup
 psql $DATABASE_URL < staging_backup_TIMESTAMP.sql
@@ -440,6 +455,7 @@ npx prisma migrate resolve --rolled-back MIGRATION_NAME
 ```
 
 **Post-Rollback**:
+
 - [ ] Verify application stability
 - [ ] Notify team of rollback
 - [ ] Document failure reason
@@ -453,17 +469,19 @@ npx prisma migrate resolve --rolled-back MIGRATION_NAME
 
 **DevOps Team**: devops@farmersmarket.com  
 **Backend Team**: backend@farmersmarket.com  
-**On-Call Engineer**: [Slack channel or phone]  
+**On-Call Engineer**: [Slack channel or phone]
 
 ### Issue Escalation
 
 **Severity Levels**:
+
 - **P0 (Critical)**: Site down, payments failing, data loss
 - **P1 (High)**: Major feature broken, performance degraded
 - **P2 (Medium)**: Minor feature issue, cosmetic bugs
 - **P3 (Low)**: Enhancement requests, minor issues
 
 **Escalation Path**:
+
 1. Check monitoring dashboards
 2. Review logs and errors
 3. Attempt quick fix (if safe)
@@ -521,27 +539,32 @@ npx prisma migrate resolve --rolled-back MIGRATION_NAME
 ## 📝 Deployment Notes
 
 ### Deployment Date/Time
-**Date**: _______________  
-**Time**: _______________  
-**Deployed By**: _______________  
+
+**Date**: ******\_\_\_******  
+**Time**: ******\_\_\_******  
+**Deployed By**: ******\_\_\_******
 
 ### Deployment Summary
-- **Version**: _______________
-- **Git Commit**: _______________
-- **Build Number**: _______________
-- **Duration**: _______________
+
+- **Version**: ******\_\_\_******
+- **Git Commit**: ******\_\_\_******
+- **Build Number**: ******\_\_\_******
+- **Duration**: ******\_\_\_******
 
 ### Issues Encountered
+
 _Document any issues during deployment:_
 
 ---
 
 ### Resolution
+
 _Document how issues were resolved:_
 
 ---
 
 ### Lessons Learned
+
 _Document improvements for next deployment:_
 
 ---
@@ -572,6 +595,6 @@ Deployment is considered successful when:
 
 **🌾 Divine Agricultural Platform - Staging Deployment Ready ⚡**
 
-**Approved By**: _______________  
-**Date**: _______________  
+**Approved By**: ******\_\_\_******  
+**Date**: ******\_\_\_******  
 **Next Review**: After staging verification complete

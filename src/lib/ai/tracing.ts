@@ -252,8 +252,8 @@ export class AITracer {
   calculateMetrics(agentName?: string): PerformanceMetrics {
     const traces = agentName
       ? Array.from(this.traces.values()).filter(
-        (t) => t.agentName === agentName,
-      )
+          (t) => t.agentName === agentName,
+        )
       : Array.from(this.traces.values());
 
     if (traces.length === 0) {

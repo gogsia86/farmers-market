@@ -133,9 +133,13 @@ export function CustomerSettingsClient({
         throw new Error(data.error?.message || "Failed to load settings");
       }
     } catch (err) {
-      settingsLogger.error("Error fetching settings", err instanceof Error ? err : new Error(String(err)), {
-        userId,
-      });
+      settingsLogger.error(
+        "Error fetching settings",
+        err instanceof Error ? err : new Error(String(err)),
+        {
+          userId,
+        },
+      );
       setError(err instanceof Error ? err.message : "Failed to load settings");
     } finally {
       setIsLoading(false);
@@ -245,9 +249,13 @@ export function CustomerSettingsClient({
         throw new Error(data.error?.message || "Failed to save settings");
       }
     } catch (err) {
-      settingsLogger.error("Error saving settings", err instanceof Error ? err : new Error(String(err)), {
-        userId,
-      });
+      settingsLogger.error(
+        "Error saving settings",
+        err instanceof Error ? err : new Error(String(err)),
+        {
+          userId,
+        },
+      );
       setError(err instanceof Error ? err.message : "Failed to save settings");
     } finally {
       setIsSaving(false);
@@ -342,15 +350,17 @@ export function CustomerSettingsClient({
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab.id)}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${isActive
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
+                    isActive
                       ? "bg-green-50 text-green-900"
                       : "text-gray-700 hover:bg-gray-50"
-                    }`}
+                  }`}
                   data-testid={`tab-${tab.id}`}
                 >
                   <Icon
-                    className={`h-5 w-5 ${isActive ? "text-green-600" : "text-gray-400"
-                      }`}
+                    className={`h-5 w-5 ${
+                      isActive ? "text-green-600" : "text-gray-400"
+                    }`}
                   />
                   <span>{tab.label}</span>
                   {hasChanges && (

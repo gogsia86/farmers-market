@@ -1,4 +1,5 @@
 # 🚀 DEVELOPER QUICK REFERENCE CARD
+
 ## Farmers Market Platform - Backend Controllers
 
 **Last Updated**: December 2024  
@@ -28,6 +29,7 @@ npm test -- --no-coverage
 ## 🎯 CORE PATTERN: ServiceResponse<T>
 
 ### The Golden Rule
+
 **ALL service methods MUST return ServiceResponse<T>**
 
 ```typescript
@@ -52,15 +54,15 @@ async createFarm(request: NextRequest): Promise<NextResponse> {
   return this.handleAuthenticatedRequest(request, async (session) => {
     // 1. Validate input
     const validated = CreateFarmSchema.parse(body);
-    
+
     // 2. Call service
     const result = await farmService.createFarm(userId, validated);
-    
+
     // 3. Check success
     if (!result.success) {
       return this.internalError(result.error.message);
     }
-    
+
     // 4. Access data
     return this.created(result.data, { message: "Success" });
   });
@@ -79,7 +81,7 @@ async createFarm(request: NextRequest): Promise<NextResponse> {
 // ✅ CORRECT - Wrap in ServiceResponse
 mockFarmService.createFarm = jest.fn().mockResolvedValue({
   success: true,
-  data: mockFarm
+  data: mockFarm,
 });
 
 // ❌ WRONG - Raw data
@@ -185,20 +187,20 @@ async getItemById(
   return this.handleAuthenticatedRequest(request, async (session) => {
     // Validate
     const validated = IdParamSchema.parse(params);
-    
+
     // Call service
     const result = await itemService.getById(validated.id);
-    
+
     // Check success
     if (!result.success) {
       return this.internalError(result.error.message);
     }
-    
+
     // Check not found
     if (!result.data) {
       return this.notFound("Item", validated.id);
     }
-    
+
     // Return success
     return this.success(result.data);
   });
@@ -210,10 +212,10 @@ it("should return item by ID", async () => {
     success: true,
     data: mockItem
   });
-  
+
   const response = await controller.getItemById(request, { id: "123" });
   const data = await response.json();
-  
+
   expect(response.status).toBe(200);
   expect(data.success).toBe(true);
   expect(data.data.id).toBe("123");
@@ -229,7 +231,7 @@ async getById(id: string): Promise<ServiceResponse<Item | null>> {
     const item = await database.item.findUnique({
       where: { id }
     });
-    
+
     return {
       success: true,
       data: item
@@ -252,6 +254,7 @@ async getById(id: string): Promise<ServiceResponse<Item | null>> {
 ## ✅ TESTING CHECKLIST
 
 ### Before Committing
+
 ```bash
 # 1. Type check
 npm run type-check
@@ -271,36 +274,37 @@ npm run format
 ```
 
 ### Writing Tests
+
 ```typescript
 describe("YourController", () => {
   let mockService: any;
   let testController: YourController;
-  
+
   beforeEach(() => {
     jest.clearAllMocks();
     (auth as jest.Mock).mockResolvedValue(null);
-    
+
     // Create mock service
     mockService = {
-      methodName: jest.fn()
+      methodName: jest.fn(),
     };
-    
+
     // Create controller with mock
     testController = new YourController(mockService);
   });
-  
+
   it("should do something", async () => {
     // Setup
     (auth as jest.Mock).mockResolvedValue(mockSession);
     mockService.methodName = jest.fn().mockResolvedValue({
       success: true,
-      data: mockData  // ALWAYS wrap in ServiceResponse!
+      data: mockData, // ALWAYS wrap in ServiceResponse!
     });
-    
+
     // Execute
     const response = await testController.methodName(request);
     const data = await response.json();
-    
+
     // Assert
     expect(response.status).toBe(200);
     expect(data.success).toBe(true);
@@ -314,6 +318,7 @@ describe("YourController", () => {
 ## 🔒 AUTHENTICATION & AUTHORIZATION
 
 ### Require Authentication
+
 ```typescript
 // All protected routes use this pattern
 return this.handleAuthenticatedRequest(request, async (session) => {
@@ -324,6 +329,7 @@ return this.handleAuthenticatedRequest(request, async (session) => {
 ```
 
 ### Check Authorization
+
 ```typescript
 // Role-based
 if (session.user.role !== "ADMIN") {
@@ -374,12 +380,14 @@ return this.successWithPagination(items, paginationMeta);
 ## 🚫 COMMON MISTAKES TO AVOID
 
 ### ❌ DON'T: Access service data directly
+
 ```typescript
 const farm = await farmService.createFarm(data);
 return this.created(farm); // WRONG!
 ```
 
 ### ✅ DO: Check success and access data
+
 ```typescript
 const result = await farmService.createFarm(data);
 if (!result.success) {
@@ -389,25 +397,29 @@ return this.created(result.data); // CORRECT!
 ```
 
 ### ❌ DON'T: Return raw data from mocks
+
 ```typescript
 mockService.getFarm = jest.fn().mockResolvedValue(mockFarm); // WRONG!
 ```
 
 ### ✅ DO: Wrap mock data in ServiceResponse
+
 ```typescript
 mockService.getFarm = jest.fn().mockResolvedValue({
   success: true,
-  data: mockFarm
+  data: mockFarm,
 }); // CORRECT!
 ```
 
 ### ❌ DON'T: Create new Prisma instances
+
 ```typescript
 import { PrismaClient } from "@prisma/client";
 const db = new PrismaClient(); // WRONG!
 ```
 
 ### ✅ DO: Use the canonical database import
+
 ```typescript
 import { database } from "@/lib/database"; // CORRECT!
 ```
@@ -443,6 +455,7 @@ import type { ServiceResponse } from "@/lib/types";
 ## 🐛 DEBUGGING TIPS
 
 ### Tests Failing?
+
 ```bash
 # 1. Check if mock returns ServiceResponse
 mockService.method = jest.fn().mockResolvedValue({
@@ -462,6 +475,7 @@ npm test -- --testPathPatterns="your-file"
 ```
 
 ### TypeScript Errors?
+
 ```bash
 # 1. Run type check
 npm run type-check
@@ -478,18 +492,21 @@ import type { Type } from "...";  # Use 'type' imports
 ## 🎯 QUICK WINS
 
 ### Need to add a new endpoint?
+
 1. Add controller method (check .success, access .data)
 2. Add test (wrap mock in ServiceResponse)
 3. Add API route (call controller method)
 4. Run tests ✅
 
 ### Need to fix a failing test?
+
 1. Check if mock returns ServiceResponse
 2. Check parameter count matches call signature
 3. Check response structure expectations
 4. Run test again ✅
 
 ### Need to add validation?
+
 1. Create Zod schema in validations/
 2. Parse in controller: `Schema.parse(data)`
 3. Test with invalid data
@@ -500,12 +517,14 @@ import type { Type } from "...";  # Use 'type' imports
 ## 📞 NEED HELP?
 
 ### Documentation References
+
 - `FINAL_CONTROLLER_STATUS_REPORT.md` - Comprehensive status
 - `CONTROLLER_VICTORY_SUMMARY.md` - Quick victory reference
 - `NEXT_STEPS_ACTION_PLAN.md` - Future roadmap
 - `.github/instructions/` - Divine instruction guides
 
 ### Quick Commands
+
 ```bash
 # Full test suite
 npm test
@@ -531,6 +550,7 @@ npm run format
 ## ✨ DIVINE PATTERNS
 
 ### Agricultural Consciousness
+
 ```typescript
 // Include agricultural metadata in responses
 return this.success(farm, {
@@ -538,18 +558,22 @@ return this.success(farm, {
   agricultural: {
     consciousness: "BIODYNAMIC",
     season: this.getCurrentSeason(),
-    operation: "FARM_MANIFESTATION"
-  }
+    operation: "FARM_MANIFESTATION",
+  },
 });
 ```
 
 ### Enlightening Errors
+
 ```typescript
 // Provide helpful error messages
-if (!validated.deliveryAddressId && validated.fulfillmentMethod === "DELIVERY") {
+if (
+  !validated.deliveryAddressId &&
+  validated.fulfillmentMethod === "DELIVERY"
+) {
   return this.badRequest(
     "Delivery address is required for delivery orders. " +
-    "Please provide a deliveryAddressId or choose FARM_PICKUP."
+      "Please provide a deliveryAddressId or choose FARM_PICKUP.",
   );
 }
 ```
@@ -559,6 +583,7 @@ if (!validated.deliveryAddressId && validated.fulfillmentMethod === "DELIVERY") 
 ## 🎉 FINAL CHECKLIST
 
 Before pushing code:
+
 - [ ] TypeScript errors: 0
 - [ ] All tests passing
 - [ ] ServiceResponse<T> pattern used
@@ -572,7 +597,8 @@ Before pushing code:
 
 ---
 
-**Remember**: 
+**Remember**:
+
 - Check `.success` before accessing `.data`
 - Wrap test mocks in `ServiceResponse`
 - Use `database` singleton, not new `PrismaClient()`

@@ -12,7 +12,14 @@ import type {
   UpdateUserSettingsRequest,
   UserSettingsData,
 } from "@/types/settings";
-import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from "@jest/globals";
 
 // Create mock Redis cache BEFORE any imports
 const mockRedisCache = {
@@ -116,7 +123,12 @@ describe("SettingsService", () => {
       notificationPreferences: {
         email: { enabled: true, frequency: "daily" },
         sms: { enabled: false, frequency: "never" },
-        push: { enabled: true, frequency: "immediate", sound: true, badge: true },
+        push: {
+          enabled: true,
+          frequency: "immediate",
+          sound: true,
+          badge: true,
+        },
         inApp: { enabled: true, frequency: "immediate" },
       },
     };
@@ -177,7 +189,7 @@ describe("SettingsService", () => {
           data: expect.objectContaining({
             userId: mockUserId,
           }),
-        })
+        }),
       );
       expect(result).toBeDefined();
     });
@@ -214,10 +226,16 @@ describe("SettingsService", () => {
 
       mockDatabase.userSettings.findUnique.mockResolvedValue(existingSettings);
       mockRedis.delete.mockResolvedValue(true);
-      mockDatabase.userSettings.findUnique.mockResolvedValue({ id: "settings_123", userId: mockUserId });
+      mockDatabase.userSettings.findUnique.mockResolvedValue({
+        id: "settings_123",
+        userId: mockUserId,
+      });
       mockDatabase.userSettings.update.mockResolvedValue(updatedSettings);
 
-      const result = await settingsService.updateUserSettings(mockUserId, mockUpdates);
+      const result = await settingsService.updateUserSettings(
+        mockUserId,
+        mockUpdates,
+      );
 
       expect(mockDatabase.userSettings.update).toHaveBeenCalled();
       expect(mockRedis.delete).toHaveBeenCalled();
@@ -231,10 +249,12 @@ describe("SettingsService", () => {
         },
       };
 
-      mockDatabase.userSettings.findUnique.mockResolvedValue({ id: "settings_123" });
+      mockDatabase.userSettings.findUnique.mockResolvedValue({
+        id: "settings_123",
+      });
 
       await expect(
-        settingsService.updateUserSettings(mockUserId, invalidUpdates)
+        settingsService.updateUserSettings(mockUserId, invalidUpdates),
       ).rejects.toThrow();
     });
 
@@ -245,7 +265,10 @@ describe("SettingsService", () => {
         userId: mockUserId,
       });
 
-      const result = await settingsService.updateUserSettings(mockUserId, mockUpdates);
+      const result = await settingsService.updateUserSettings(
+        mockUserId,
+        mockUpdates,
+      );
 
       expect(mockDatabase.userSettings.create).toHaveBeenCalled();
       expect(result).toBeDefined();
@@ -314,7 +337,7 @@ describe("SettingsService", () => {
 
       expect(result.warnings.length).toBeGreaterThan(0);
       expect(
-        result.warnings.some((w) => w.message.includes("notification"))
+        result.warnings.some((w) => w.message.includes("notification")),
       ).toBe(true);
     });
   });
@@ -434,7 +457,10 @@ describe("SettingsService", () => {
         ...existingSettings,
         deliveryFee: 7.5,
       });
-      const result = await settingsService.updateFarmSettings(mockFarmId, mockUpdates);
+      const result = await settingsService.updateFarmSettings(
+        mockFarmId,
+        mockUpdates,
+      );
 
       expect(mockDatabase.farmSettings.update).toHaveBeenCalled();
       expect(mockRedis.delete).toHaveBeenCalled();
@@ -515,7 +541,7 @@ describe("SettingsService", () => {
       expect(result.warnings.length).toBeGreaterThan(0);
       // Check for warning message about time
       expect(
-        result.warnings.some((w) => w.message.toLowerCase().includes("time"))
+        result.warnings.some((w) => w.message.toLowerCase().includes("time")),
       ).toBe(true);
     });
 
@@ -533,7 +559,9 @@ describe("SettingsService", () => {
       const result = settingsService.validateBusinessHours(invalidHours);
 
       expect(result.isValid).toBe(false);
-      expect(result.errors.some((e) => e.field?.includes("dayOfWeek"))).toBe(true);
+      expect(result.errors.some((e) => e.field?.includes("dayOfWeek"))).toBe(
+        true,
+      );
     });
   });
 

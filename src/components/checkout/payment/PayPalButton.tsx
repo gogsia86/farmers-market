@@ -174,7 +174,11 @@ export function PayPalButton({
         })
         .render("#paypal-button-container");
     } catch (error) {
-      paymentLogger.error("Error rendering PayPal buttons", error instanceof Error ? error : new Error(String(error)), { orderId });
+      paymentLogger.error(
+        "Error rendering PayPal buttons",
+        error instanceof Error ? error : new Error(String(error)),
+        { orderId },
+      );
       setError("Failed to render PayPal buttons");
     }
   }, [sdkLoaded, disabled, orderId]);
@@ -204,14 +208,22 @@ export function PayPalButton({
       const result = await response.json();
 
       if (!result.success) {
-        throw new Error(result.error?.message || "Failed to create PayPal order");
+        throw new Error(
+          result.error?.message || "Failed to create PayPal order",
+        );
       }
 
       // Return PayPal order ID for SDK
       return result.data.paypalOrderId;
     } catch (error) {
-      paymentLogger.error("Error creating PayPal order", error instanceof Error ? error : new Error(String(error)), { orderId });
-      setError(error instanceof Error ? error.message : "Failed to create order");
+      paymentLogger.error(
+        "Error creating PayPal order",
+        error instanceof Error ? error : new Error(String(error)),
+        { orderId },
+      );
+      setError(
+        error instanceof Error ? error.message : "Failed to create order",
+      );
       setIsProcessing(false);
       throw error;
     }
@@ -258,7 +270,11 @@ export function PayPalButton({
       // Redirect to success page
       router.push(`/checkout/success?orderId=${orderId}`);
     } catch (error) {
-      paymentLogger.error("Error capturing PayPal payment", error instanceof Error ? error : new Error(String(error)), { orderId, paypalOrderId: data.orderID });
+      paymentLogger.error(
+        "Error capturing PayPal payment",
+        error instanceof Error ? error : new Error(String(error)),
+        { orderId, paypalOrderId: data.orderID },
+      );
       const errorMessage =
         error instanceof Error ? error.message : "Payment capture failed";
 
@@ -281,7 +297,11 @@ export function PayPalButton({
    * Handle PayPal error
    */
   const handleError = (error: any): void => {
-    paymentLogger.error("PayPal error", error instanceof Error ? error : new Error(String(error)), { orderId });
+    paymentLogger.error(
+      "PayPal error",
+      error instanceof Error ? error : new Error(String(error)),
+      { orderId },
+    );
     const errorMessage = "An error occurred with PayPal. Please try again.";
 
     setError(errorMessage);
@@ -359,7 +379,9 @@ export function PayPalButton({
       {/* PayPal Button Container */}
       <div
         id="paypal-button-container"
-        className={isProcessing || disabled ? "pointer-events-none opacity-50" : ""}
+        className={
+          isProcessing || disabled ? "pointer-events-none opacity-50" : ""
+        }
       />
 
       {/* Processing Overlay */}
@@ -401,7 +423,11 @@ export function PayPalButton({
 /**
  * PayPal button skeleton loader
  */
-export function PayPalButtonSkeleton({ className = "" }: { className?: string }) {
+export function PayPalButtonSkeleton({
+  className = "",
+}: {
+  className?: string;
+}) {
   return (
     <div className={`animate-pulse ${className}`}>
       <div className="h-[45px] w-full rounded-lg bg-gray-200" />

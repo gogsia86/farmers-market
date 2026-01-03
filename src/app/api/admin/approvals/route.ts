@@ -223,12 +223,13 @@ export async function POST(request: NextRequest) {
 
               <p>After reviewing your application, we're unable to approve it at this time.</p>
 
-              ${reason
-            ? `<div style="background: #fef3c7; padding: 15px; border-left: 4px solid #f59e0b; margin: 20px 0;">
+              ${
+                reason
+                  ? `<div style="background: #fef3c7; padding: 15px; border-left: 4px solid #f59e0b; margin: 20px 0;">
                 <strong>Reason:</strong><br>${reason}
               </div>`
-            : ""
-          }
+                  : ""
+              }
 
               <p>You're welcome to submit a new application after addressing any concerns.</p>
 

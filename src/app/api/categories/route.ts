@@ -70,8 +70,8 @@ export async function GET(request: NextRequest) {
       where,
       _count: includeCount
         ? {
-          id: true,
-        }
+            id: true,
+          }
         : undefined,
       orderBy: {
         category: "asc",

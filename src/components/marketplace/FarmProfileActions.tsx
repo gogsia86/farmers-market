@@ -34,9 +34,13 @@ export function FarmProfileActions({
           }
         }
       } catch (error) {
-        farmActionsLogger.error("Failed to load favorite status", error instanceof Error ? error : new Error(String(error)), {
-          farmId,
-        });
+        farmActionsLogger.error(
+          "Failed to load favorite status",
+          error instanceof Error ? error : new Error(String(error)),
+          {
+            farmId,
+          },
+        );
       } finally {
         setLoading(false);
       }
@@ -75,10 +79,14 @@ export function FarmProfileActions({
         }
       }
     } catch (error) {
-      farmActionsLogger.error("Failed to toggle favorite", error instanceof Error ? error : new Error(String(error)), {
-        farmId,
-        action: isFavorited ? "unfavorite" : "favorite",
-      });
+      farmActionsLogger.error(
+        "Failed to toggle favorite",
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          farmId,
+          action: isFavorited ? "unfavorite" : "favorite",
+        },
+      );
 
       // Rollback on error
       setIsFavorited(previousState);

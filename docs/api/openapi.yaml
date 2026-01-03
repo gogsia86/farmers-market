@@ -1,785 +1,664 @@
 {
   "openapi": "3.0.0",
-  "info": {
-    "title": "Farmers Market Platform API",
-    "version": "1.0.0",
-    "description": "Divine Agricultural Platform - Comprehensive REST API\n\nThis API provides endpoints for:\n- 🚜 Farm Management (CRUD, search, verification)\n- 🌾 Product Catalog (inventory, categories, search)\n- 📦 Order Processing (cart, checkout, fulfillment)\n- 👤 User Management (authentication, profiles, roles)\n- 🌍 Marketplace (discovery, featured items, recommendations)\n- 📊 Analytics (farmer dashboard, sales reports)\n- 🔔 Notifications (real-time updates, alerts)\n\nAll endpoints return standardized ServiceResponse<T> format with:\n- success: boolean\n- data?: T\n- error?: ServiceError\n- meta?: ResponseMetadata (including agricultural consciousness)",
-    "contact": {
-      "name": "API Support",
-      "email": "support@farmersmarket.com",
-      "url": "https://farmersmarket.com/support"
-    },
-    "license": {
-      "name": "MIT",
-      "url": "https://opensource.org/licenses/MIT"
-    }
-  },
-  "servers": [
+  "info":
     {
-      "url": "http://localhost:3001",
-      "description": "Production server"
-    },
-    {
-      "url": "http://localhost:3001",
-      "description": "Development server"
-    }
-  ],
-  "tags": [
-    {
-      "name": "Health",
-      "description": "Health operations"
-    },
-    {
-      "name": "FarmController",
-      "description": "FarmController operations"
-    },
-    {
-      "name": "ProductController",
-      "description": "ProductController operations"
-    },
-    {
-      "name": "OrderController",
-      "description": "OrderController operations"
-    },
-    {
-      "name": "Marketplace",
-      "description": "Marketplace operations"
-    }
-  ],
-  "paths": {
-    "/api/health": {
-      "get": {
-        "tags": [
-          "Health"
-        ],
-        "summary": "GET",
-        "description": "Health check endpoint - verifies system and database connectivity",
-        "operationId": "get__api_health",
-        "responses": {
-          "200": {
-            "description": "System is healthy",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "healthy"
-                    },
-                    "database": {
-                      "type": "string",
-                      "example": "connected"
-                    },
-                    "timestamp": {
-                      "type": "string",
-                      "format": "date-time"
-                    },
-                    "version": {
-                      "type": "string",
-                      "example": "1.0.0"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/ready": {
-      "get": {
-        "tags": [
-          "Health"
-        ],
-        "summary": "GET",
-        "description": "Readiness check endpoint for Kubernetes/Docker",
-        "operationId": "get__api_ready",
-        "responses": {
-          "200": {
-            "description": "Service is ready",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ready": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "timestamp": {
-                      "type": "string",
-                      "format": "date-time"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/farms": {
-      "get": {
-        "tags": [
-          "FarmController"
-        ],
-        "summary": "handleListFarms",
-        "description": "List all farms with pagination and filtering",
-        "operationId": "get__api_farms",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "example": 1
-            },
-            "description": "Page number (starts at 1)"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "example": 20
-            },
-            "description": "Items per page"
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": [
-                "ACTIVE",
-                "PENDING",
-                "SUSPENDED",
-                "INACTIVE"
-              ]
-            },
-            "description": "Filter by farm status"
-          },
-          {
-            "name": "city",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Filter by city"
-          },
-          {
-            "name": "state",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Filter by state"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Paginated list of farms",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "description": "Farm object"
-                      }
-                    },
-                    "pagination": {
-                      "type": "object",
-                      "properties": {
-                        "page": {
-                          "type": "integer"
-                        },
-                        "limit": {
-                          "type": "integer"
-                        },
-                        "total": {
-                          "type": "integer"
-                        },
-                        "totalPages": {
-                          "type": "integer"
-                        }
-                      }
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "agricultural": {
-                          "type": "object",
-                          "properties": {
-                            "season": {
-                              "type": "string",
-                              "enum": [
-                                "SPRING",
-                                "SUMMER",
-                                "FALL",
-                                "WINTER"
-                              ]
-                            },
-                            "consciousness": {
-                              "type": "string",
-                              "example": "DIVINE"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "FarmController"
-        ],
-        "summary": "handleCreateFarm",
-        "description": "Create a new farm (requires FARMER role)",
-        "operationId": "post__api_farms",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "name",
-                  "address",
-                  "city",
-                  "state",
-                  "zipCode",
-                  "latitude",
-                  "longitude"
-                ],
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "example": "Sunny Valley Farm"
-                  },
-                  "address": {
-                    "type": "string",
-                    "example": "123 Farm Road"
-                  },
-                  "city": {
-                    "type": "string",
-                    "example": "Portland"
-                  },
-                  "state": {
-                    "type": "string",
-                    "example": "OR"
-                  },
-                  "zipCode": {
-                    "type": "string",
-                    "example": "97201"
-                  },
-                  "latitude": {
-                    "type": "number",
-                    "example": 45.5152
-                  },
-                  "longitude": {
-                    "type": "number",
-                    "example": -122.6784
-                  },
-                  "description": {
-                    "type": "string"
-                  },
-                  "story": {
-                    "type": "string"
-                  },
-                  "businessName": {
-                    "type": "string"
-                  },
-                  "yearEstablished": {
-                    "type": "integer"
-                  },
-                  "farmSize": {
-                    "type": "number"
-                  },
-                  "email": {
-                    "type": "string",
-                    "format": "email"
-                  },
-                  "phone": {
-                    "type": "string"
-                  },
-                  "website": {
-                    "type": "string",
-                    "format": "uri"
-                  },
-                  "farmingPractices": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": [
-                      "ORGANIC",
-                      "BIODYNAMIC"
-                    ]
-                  },
-                  "productCategories": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": [
-                      "VEGETABLES",
-                      "FRUITS"
-                    ]
-                  },
-                  "deliveryRadius": {
-                    "type": "integer",
-                    "example": 50
-                  }
-                }
-              }
-            }
-          }
+      "title": "Farmers Market Platform API",
+      "version": "1.0.0",
+      "description": "Divine Agricultural Platform - Comprehensive REST API\n\nThis API provides endpoints for:\n- 🚜 Farm Management (CRUD, search, verification)\n- 🌾 Product Catalog (inventory, categories, search)\n- 📦 Order Processing (cart, checkout, fulfillment)\n- 👤 User Management (authentication, profiles, roles)\n- 🌍 Marketplace (discovery, featured items, recommendations)\n- 📊 Analytics (farmer dashboard, sales reports)\n- 🔔 Notifications (real-time updates, alerts)\n\nAll endpoints return standardized ServiceResponse<T> format with:\n- success: boolean\n- data?: T\n- error?: ServiceError\n- meta?: ResponseMetadata (including agricultural consciousness)",
+      "contact":
+        {
+          "name": "API Support",
+          "email": "support@farmersmarket.com",
+          "url": "https://farmersmarket.com/support",
         },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Farm created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "farm": {
-                          "type": "object",
-                          "description": "Created farm object"
+      "license":
+        { "name": "MIT", "url": "https://opensource.org/licenses/MIT" },
+    },
+  "servers":
+    [
+      { "url": "http://localhost:3001", "description": "Production server" },
+      { "url": "http://localhost:3001", "description": "Development server" },
+    ],
+  "tags":
+    [
+      { "name": "Health", "description": "Health operations" },
+      { "name": "FarmController", "description": "FarmController operations" },
+      {
+        "name": "ProductController",
+        "description": "ProductController operations",
+      },
+      {
+        "name": "OrderController",
+        "description": "OrderController operations",
+      },
+      { "name": "Marketplace", "description": "Marketplace operations" },
+    ],
+  "paths":
+    {
+      "/api/health":
+        {
+          "get":
+            {
+              "tags": ["Health"],
+              "summary": "GET",
+              "description": "Health check endpoint - verifies system and database connectivity",
+              "operationId": "get__api_health",
+              "responses":
+                {
+                  "200":
+                    {
+                      "description": "System is healthy",
+                      "content":
+                        {
+                          "application/json":
+                            {
+                              "schema":
+                                {
+                                  "type": "object",
+                                  "properties":
+                                    {
+                                      "status":
+                                        {
+                                          "type": "string",
+                                          "example": "healthy",
+                                        },
+                                      "database":
+                                        {
+                                          "type": "string",
+                                          "example": "connected",
+                                        },
+                                      "timestamp":
+                                        {
+                                          "type": "string",
+                                          "format": "date-time",
+                                        },
+                                      "version":
+                                        {
+                                          "type": "string",
+                                          "example": "1.0.0",
+                                        },
+                                    },
+                                },
+                            },
                         },
-                        "slug": {
-                          "type": "string",
-                          "example": "sunny-valley-farm-portland"
-                        }
-                      }
                     },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Farm created successfully"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Authentication required"
-          },
-          "403": {
-            "description": "User already has a farm"
-          }
-        }
-      }
-    },
-    "/api/farms/{id}": {
-      "get": {
-        "tags": [
-          "FarmController"
-        ],
-        "summary": "handleGetFarm",
-        "description": "Get farm by ID",
-        "operationId": "get__api_farms_id",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
+                },
             },
-            "description": "Farm ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Farm details"
-          },
-          "404": {
-            "description": "Farm not found"
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "FarmController"
-        ],
-        "summary": "handleUpdateFarm",
-        "description": "Update farm (requires ownership)",
-        "operationId": "put__api_farms_id",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
+        },
+      "/api/ready":
+        {
+          "get":
+            {
+              "tags": ["Health"],
+              "summary": "GET",
+              "description": "Readiness check endpoint for Kubernetes/Docker",
+              "operationId": "get__api_ready",
+              "responses":
+                {
+                  "200":
+                    {
+                      "description": "Service is ready",
+                      "content":
+                        {
+                          "application/json":
+                            {
+                              "schema":
+                                {
+                                  "type": "object",
+                                  "properties":
+                                    {
+                                      "ready":
+                                        { "type": "boolean", "example": true },
+                                      "timestamp":
+                                        {
+                                          "type": "string",
+                                          "format": "date-time",
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
             },
-            "description": "Farm ID"
-          }
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Farm updated successfully"
-          },
-          "401": {
-            "description": "Authentication required"
-          },
-          "403": {
-            "description": "Not the farm owner"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "FarmController"
-        ],
-        "summary": "handleDeleteFarm",
-        "description": "Delete farm (soft delete, requires ownership)",
-        "operationId": "delete__api_farms_id",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Farm ID"
-          }
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Farm deleted successfully"
-          }
-        }
-      }
-    },
-    "/api/farms/search": {
-      "get": {
-        "tags": [
-          "FarmController"
-        ],
-        "summary": "handleSearchFarms",
-        "description": "Search farms by query",
-        "operationId": "get__api_farms_search",
-        "parameters": [
-          {
-            "name": "query",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Search query"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "example": 20
-            },
-            "description": "Maximum results"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Search results"
-          }
-        }
-      }
-    },
-    "/api/products": {
-      "get": {
-        "tags": [
-          "ProductController"
-        ],
-        "summary": "handleListProducts",
-        "description": "List all products with pagination and filtering",
-        "operationId": "get__api_products",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "example": 1
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "example": 20
-            }
-          },
-          {
-            "name": "category",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "farmId",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Paginated list of products"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "ProductController"
-        ],
-        "summary": "handleCreateProduct",
-        "description": "Create a new product (requires FARMER role and farm ownership)",
-        "operationId": "post__api_products",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Product created successfully"
-          }
-        }
-      }
-    },
-    "/api/products/search": {
-      "get": {
-        "tags": [
-          "ProductController"
-        ],
-        "summary": "handleSearchProducts",
-        "description": "Search products by keyword",
-        "operationId": "get__api_products_search",
-        "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Search query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Search results"
-          }
-        }
-      }
-    },
-    "/api/orders": {
-      "get": {
-        "tags": [
-          "OrderController"
-        ],
-        "summary": "handleListOrders",
-        "description": "List orders for authenticated user",
-        "operationId": "get__api_orders",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "List of user orders"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "OrderController"
-        ],
-        "summary": "handleCreateOrder",
-        "description": "Create a new order",
-        "operationId": "post__api_orders",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Order created successfully"
-          }
-        }
-      }
-    },
-    "/api/orders/{id}": {
-      "get": {
-        "tags": [
-          "OrderController"
-        ],
-        "summary": "handleGetOrder",
-        "description": "Get order details",
-        "operationId": "get__api_orders_id",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Order details"
-          }
-        }
-      }
-    },
-    "/api/marketplace": {
-      "get": {
-        "tags": [
-          "Marketplace"
-        ],
-        "summary": "GET",
-        "description": "Get marketplace products and featured farms",
-        "operationId": "get__api_marketplace",
-        "responses": {
-          "200": {
-            "description": "Marketplace data"
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT",
-        "description": "JWT token from NextAuth"
-      }
-    },
-    "schemas": {
-      "ServiceResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean"
-          },
-          "data": {
-            "type": "object"
-          },
-          "error": {
-            "type": "object",
-            "properties": {
-              "code": {
-                "type": "string"
-              },
-              "message": {
-                "type": "string"
-              },
-              "details": {
-                "type": "object"
-              }
-            }
-          },
-          "meta": {
-            "type": "object",
-            "properties": {
-              "message": {
-                "type": "string"
-              },
-              "timestamp": {
-                "type": "string",
-                "format": "date-time"
-              },
-              "agricultural": {
-                "type": "object",
-                "properties": {
-                  "season": {
-                    "type": "string",
-                    "enum": [
-                      "SPRING",
-                      "SUMMER",
-                      "FALL",
-                      "WINTER"
-                    ]
+        },
+      "/api/farms":
+        {
+          "get":
+            {
+              "tags": ["FarmController"],
+              "summary": "handleListFarms",
+              "description": "List all farms with pagination and filtering",
+              "operationId": "get__api_farms",
+              "parameters":
+                [
+                  {
+                    "name": "page",
+                    "in": "query",
+                    "required": false,
+                    "schema": { "type": "integer", "example": 1 },
+                    "description": "Page number (starts at 1)",
                   },
-                  "consciousness": {
-                    "type": "string",
-                    "example": "DIVINE"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+                  {
+                    "name": "limit",
+                    "in": "query",
+                    "required": false,
+                    "schema": { "type": "integer", "example": 20 },
+                    "description": "Items per page",
+                  },
+                  {
+                    "name": "status",
+                    "in": "query",
+                    "required": false,
+                    "schema":
+                      {
+                        "type": "string",
+                        "enum": ["ACTIVE", "PENDING", "SUSPENDED", "INACTIVE"],
+                      },
+                    "description": "Filter by farm status",
+                  },
+                  {
+                    "name": "city",
+                    "in": "query",
+                    "required": false,
+                    "schema": { "type": "string" },
+                    "description": "Filter by city",
+                  },
+                  {
+                    "name": "state",
+                    "in": "query",
+                    "required": false,
+                    "schema": { "type": "string" },
+                    "description": "Filter by state",
+                  },
+                ],
+              "responses":
+                {
+                  "200":
+                    {
+                      "description": "Paginated list of farms",
+                      "content":
+                        {
+                          "application/json":
+                            {
+                              "schema":
+                                {
+                                  "type": "object",
+                                  "properties":
+                                    {
+                                      "success":
+                                        { "type": "boolean", "example": true },
+                                      "data":
+                                        {
+                                          "type": "array",
+                                          "items":
+                                            {
+                                              "type": "object",
+                                              "description": "Farm object",
+                                            },
+                                        },
+                                      "pagination":
+                                        {
+                                          "type": "object",
+                                          "properties":
+                                            {
+                                              "page": { "type": "integer" },
+                                              "limit": { "type": "integer" },
+                                              "total": { "type": "integer" },
+                                              "totalPages":
+                                                { "type": "integer" },
+                                            },
+                                        },
+                                      "meta":
+                                        {
+                                          "type": "object",
+                                          "properties":
+                                            {
+                                              "agricultural":
+                                                {
+                                                  "type": "object",
+                                                  "properties":
+                                                    {
+                                                      "season":
+                                                        {
+                                                          "type": "string",
+                                                          "enum":
+                                                            [
+                                                              "SPRING",
+                                                              "SUMMER",
+                                                              "FALL",
+                                                              "WINTER",
+                                                            ],
+                                                        },
+                                                      "consciousness":
+                                                        {
+                                                          "type": "string",
+                                                          "example": "DIVINE",
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+          "post":
+            {
+              "tags": ["FarmController"],
+              "summary": "handleCreateFarm",
+              "description": "Create a new farm (requires FARMER role)",
+              "operationId": "post__api_farms",
+              "requestBody":
+                {
+                  "required": true,
+                  "content":
+                    {
+                      "application/json":
+                        {
+                          "schema":
+                            {
+                              "type": "object",
+                              "required":
+                                [
+                                  "name",
+                                  "address",
+                                  "city",
+                                  "state",
+                                  "zipCode",
+                                  "latitude",
+                                  "longitude",
+                                ],
+                              "properties":
+                                {
+                                  "name":
+                                    {
+                                      "type": "string",
+                                      "example": "Sunny Valley Farm",
+                                    },
+                                  "address":
+                                    {
+                                      "type": "string",
+                                      "example": "123 Farm Road",
+                                    },
+                                  "city":
+                                    { "type": "string", "example": "Portland" },
+                                  "state":
+                                    { "type": "string", "example": "OR" },
+                                  "zipCode":
+                                    { "type": "string", "example": "97201" },
+                                  "latitude":
+                                    { "type": "number", "example": 45.5152 },
+                                  "longitude":
+                                    { "type": "number", "example": -122.6784 },
+                                  "description": { "type": "string" },
+                                  "story": { "type": "string" },
+                                  "businessName": { "type": "string" },
+                                  "yearEstablished": { "type": "integer" },
+                                  "farmSize": { "type": "number" },
+                                  "email":
+                                    { "type": "string", "format": "email" },
+                                  "phone": { "type": "string" },
+                                  "website":
+                                    { "type": "string", "format": "uri" },
+                                  "farmingPractices":
+                                    {
+                                      "type": "array",
+                                      "items": { "type": "string" },
+                                      "example": ["ORGANIC", "BIODYNAMIC"],
+                                    },
+                                  "productCategories":
+                                    {
+                                      "type": "array",
+                                      "items": { "type": "string" },
+                                      "example": ["VEGETABLES", "FRUITS"],
+                                    },
+                                  "deliveryRadius":
+                                    { "type": "integer", "example": 50 },
+                                },
+                            },
+                        },
+                    },
+                },
+              "security": [{ "bearerAuth": [] }],
+              "responses":
+                {
+                  "201":
+                    {
+                      "description": "Farm created successfully",
+                      "content":
+                        {
+                          "application/json":
+                            {
+                              "schema":
+                                {
+                                  "type": "object",
+                                  "properties":
+                                    {
+                                      "success":
+                                        { "type": "boolean", "example": true },
+                                      "data":
+                                        {
+                                          "type": "object",
+                                          "properties":
+                                            {
+                                              "farm":
+                                                {
+                                                  "type": "object",
+                                                  "description": "Created farm object",
+                                                },
+                                              "slug":
+                                                {
+                                                  "type": "string",
+                                                  "example": "sunny-valley-farm-portland",
+                                                },
+                                            },
+                                        },
+                                      "meta":
+                                        {
+                                          "type": "object",
+                                          "properties":
+                                            {
+                                              "message":
+                                                {
+                                                  "type": "string",
+                                                  "example": "Farm created successfully",
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                  "401": { "description": "Authentication required" },
+                  "403": { "description": "User already has a farm" },
+                },
+            },
+        },
+      "/api/farms/{id}":
+        {
+          "get":
+            {
+              "tags": ["FarmController"],
+              "summary": "handleGetFarm",
+              "description": "Get farm by ID",
+              "operationId": "get__api_farms_id",
+              "parameters":
+                [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": { "type": "string" },
+                    "description": "Farm ID",
+                  },
+                ],
+              "responses":
+                {
+                  "200": { "description": "Farm details" },
+                  "404": { "description": "Farm not found" },
+                },
+            },
+          "put":
+            {
+              "tags": ["FarmController"],
+              "summary": "handleUpdateFarm",
+              "description": "Update farm (requires ownership)",
+              "operationId": "put__api_farms_id",
+              "parameters":
+                [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": { "type": "string" },
+                    "description": "Farm ID",
+                  },
+                ],
+              "security": [{ "bearerAuth": [] }],
+              "responses":
+                {
+                  "200": { "description": "Farm updated successfully" },
+                  "401": { "description": "Authentication required" },
+                  "403": { "description": "Not the farm owner" },
+                },
+            },
+          "delete":
+            {
+              "tags": ["FarmController"],
+              "summary": "handleDeleteFarm",
+              "description": "Delete farm (soft delete, requires ownership)",
+              "operationId": "delete__api_farms_id",
+              "parameters":
+                [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": { "type": "string" },
+                    "description": "Farm ID",
+                  },
+                ],
+              "security": [{ "bearerAuth": [] }],
+              "responses":
+                { "200": { "description": "Farm deleted successfully" } },
+            },
+        },
+      "/api/farms/search":
+        {
+          "get":
+            {
+              "tags": ["FarmController"],
+              "summary": "handleSearchFarms",
+              "description": "Search farms by query",
+              "operationId": "get__api_farms_search",
+              "parameters":
+                [
+                  {
+                    "name": "query",
+                    "in": "query",
+                    "required": true,
+                    "schema": { "type": "string" },
+                    "description": "Search query",
+                  },
+                  {
+                    "name": "limit",
+                    "in": "query",
+                    "required": false,
+                    "schema": { "type": "integer", "example": 20 },
+                    "description": "Maximum results",
+                  },
+                ],
+              "responses": { "200": { "description": "Search results" } },
+            },
+        },
+      "/api/products":
+        {
+          "get":
+            {
+              "tags": ["ProductController"],
+              "summary": "handleListProducts",
+              "description": "List all products with pagination and filtering",
+              "operationId": "get__api_products",
+              "parameters":
+                [
+                  {
+                    "name": "page",
+                    "in": "query",
+                    "required": false,
+                    "schema": { "type": "integer", "example": 1 },
+                  },
+                  {
+                    "name": "limit",
+                    "in": "query",
+                    "required": false,
+                    "schema": { "type": "integer", "example": 20 },
+                  },
+                  {
+                    "name": "category",
+                    "in": "query",
+                    "required": false,
+                    "schema": { "type": "string" },
+                  },
+                  {
+                    "name": "farmId",
+                    "in": "query",
+                    "required": false,
+                    "schema": { "type": "string" },
+                  },
+                ],
+              "responses":
+                { "200": { "description": "Paginated list of products" } },
+            },
+          "post":
+            {
+              "tags": ["ProductController"],
+              "summary": "handleCreateProduct",
+              "description": "Create a new product (requires FARMER role and farm ownership)",
+              "operationId": "post__api_products",
+              "security": [{ "bearerAuth": [] }],
+              "responses":
+                { "201": { "description": "Product created successfully" } },
+            },
+        },
+      "/api/products/search":
+        {
+          "get":
+            {
+              "tags": ["ProductController"],
+              "summary": "handleSearchProducts",
+              "description": "Search products by keyword",
+              "operationId": "get__api_products_search",
+              "parameters":
+                [
+                  {
+                    "name": "q",
+                    "in": "query",
+                    "required": true,
+                    "schema": { "type": "string" },
+                    "description": "Search query",
+                  },
+                ],
+              "responses": { "200": { "description": "Search results" } },
+            },
+        },
+      "/api/orders":
+        {
+          "get":
+            {
+              "tags": ["OrderController"],
+              "summary": "handleListOrders",
+              "description": "List orders for authenticated user",
+              "operationId": "get__api_orders",
+              "security": [{ "bearerAuth": [] }],
+              "responses": { "200": { "description": "List of user orders" } },
+            },
+          "post":
+            {
+              "tags": ["OrderController"],
+              "summary": "handleCreateOrder",
+              "description": "Create a new order",
+              "operationId": "post__api_orders",
+              "security": [{ "bearerAuth": [] }],
+              "responses":
+                { "201": { "description": "Order created successfully" } },
+            },
+        },
+      "/api/orders/{id}":
+        {
+          "get":
+            {
+              "tags": ["OrderController"],
+              "summary": "handleGetOrder",
+              "description": "Get order details",
+              "operationId": "get__api_orders_id",
+              "parameters":
+                [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": { "type": "string" },
+                  },
+                ],
+              "security": [{ "bearerAuth": [] }],
+              "responses": { "200": { "description": "Order details" } },
+            },
+        },
+      "/api/marketplace":
+        {
+          "get":
+            {
+              "tags": ["Marketplace"],
+              "summary": "GET",
+              "description": "Get marketplace products and featured farms",
+              "operationId": "get__api_marketplace",
+              "responses": { "200": { "description": "Marketplace data" } },
+            },
+        },
+    },
+  "components":
+    {
+      "securitySchemes":
+        {
+          "bearerAuth":
+            {
+              "type": "http",
+              "scheme": "bearer",
+              "bearerFormat": "JWT",
+              "description": "JWT token from NextAuth",
+            },
+        },
+      "schemas":
+        {
+          "ServiceResponse":
+            {
+              "type": "object",
+              "properties":
+                {
+                  "success": { "type": "boolean" },
+                  "data": { "type": "object" },
+                  "error":
+                    {
+                      "type": "object",
+                      "properties":
+                        {
+                          "code": { "type": "string" },
+                          "message": { "type": "string" },
+                          "details": { "type": "object" },
+                        },
+                    },
+                  "meta":
+                    {
+                      "type": "object",
+                      "properties":
+                        {
+                          "message": { "type": "string" },
+                          "timestamp":
+                            { "type": "string", "format": "date-time" },
+                          "agricultural":
+                            {
+                              "type": "object",
+                              "properties":
+                                {
+                                  "season":
+                                    {
+                                      "type": "string",
+                                      "enum":
+                                        ["SPRING", "SUMMER", "FALL", "WINTER"],
+                                    },
+                                  "consciousness":
+                                    { "type": "string", "example": "DIVINE" },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    },
 }

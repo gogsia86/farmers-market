@@ -127,9 +127,13 @@ async function getFarms() {
       };
     });
   } catch (error) {
-    farmLogger.error("Failed to fetch marketplace farms", error instanceof Error ? error : new Error(String(error)), {
-      path: "/customer/marketplace/farms",
-    });
+    farmLogger.error(
+      "Failed to fetch marketplace farms",
+      error instanceof Error ? error : new Error(String(error)),
+      {
+        path: "/customer/marketplace/farms",
+      },
+    );
     return [];
   }
 }

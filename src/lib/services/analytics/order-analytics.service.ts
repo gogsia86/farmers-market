@@ -10,9 +10,7 @@
  */
 
 import { database } from "@/lib/database";
-import type {
-  OrderStatus
-} from "@prisma/client";
+import type { OrderStatus } from "@prisma/client";
 
 // ═══════════════════════════════════════════════════════════
 // 🎯 TYPE DEFINITIONS - Analytical Consciousness
@@ -134,7 +132,7 @@ export interface OrderAnalyticsResponse {
 export class OrderAnalyticsService {
   private static instance: OrderAnalyticsService;
 
-  private constructor() { }
+  private constructor() {}
 
   /**
    * 🔮 Singleton Pattern - Maintain Unified Consciousness
@@ -155,7 +153,7 @@ export class OrderAnalyticsService {
    * Aggregates order data for specified period with agricultural consciousness
    */
   async calculateOrderMetrics(
-    query: OrderAnalyticsQuery
+    query: OrderAnalyticsQuery,
   ): Promise<OrderMetrics> {
     const whereClause: any = {
       createdAt: {
@@ -212,16 +210,16 @@ export class OrderAnalyticsService {
 
     const totalOrders = orders.length;
     const completedOrders = orders.filter(
-      (o) => o.status === "COMPLETED" || o.status === "FULFILLED"
+      (o) => o.status === "COMPLETED" || o.status === "FULFILLED",
     ).length;
     const cancelledOrders = orders.filter(
-      (o) => o.status === "CANCELLED"
+      (o) => o.status === "CANCELLED",
     ).length;
     const pendingOrders = orders.filter(
       (o) =>
         o.status === "PENDING" ||
         o.status === "PREPARING" ||
-        o.status === "CONFIRMED"
+        o.status === "CONFIRMED",
     ).length;
 
     const totalRevenue = Number(aggregates._sum.total || 0);
@@ -230,7 +228,7 @@ export class OrderAnalyticsService {
     // Calculate average items per order
     const totalItems = orders.reduce(
       (sum, order) => sum + order.items.length,
-      0
+      0,
     );
     const averageItemsPerOrder = totalOrders > 0 ? totalItems / totalOrders : 0;
 
@@ -266,7 +264,7 @@ export class OrderAnalyticsService {
    */
   async getTopCustomers(
     query: OrderAnalyticsQuery,
-    limit: number = 10
+    limit: number = 10,
   ): Promise<CustomerInsights[]> {
     const whereClause: any = {
       createdAt: {
@@ -367,7 +365,7 @@ export class OrderAnalyticsService {
       const totalOrders = data.orders.length;
       const totalSpent = data.orders.reduce((sum, o) => sum + o.amount, 0);
       const sortedOrders = data.orders.sort(
-        (a, b) => a.date.getTime() - b.date.getTime()
+        (a, b) => a.date.getTime() - b.date.getTime(),
       );
 
       // Get favorite products (top 3)
@@ -387,7 +385,8 @@ export class OrderAnalyticsService {
         totalOrders,
         totalSpent,
         averageOrderValue: totalOrders > 0 ? totalSpent / totalOrders : 0,
-        lastOrderDate: sortedOrders[sortedOrders.length - 1]?.date || new Date(),
+        lastOrderDate:
+          sortedOrders[sortedOrders.length - 1]?.date || new Date(),
         firstOrderDate: sortedOrders[0]?.date || new Date(),
         lifetimeValue: totalSpent,
         orderFrequency: periodMonths > 0 ? totalOrders / periodMonths : 0,
@@ -411,7 +410,7 @@ export class OrderAnalyticsService {
    */
   async getTopProducts(
     query: OrderAnalyticsQuery,
-    limit: number = 10
+    limit: number = 10,
   ): Promise<ProductPerformance[]> {
     const whereClause: any = {
       order: {
@@ -510,9 +509,7 @@ export class OrderAnalyticsService {
         totalQuantitySold: data.totalQuantity,
         totalRevenue: data.totalRevenue,
         averagePrice:
-          data.totalQuantity > 0
-            ? data.totalRevenue / data.totalQuantity
-            : 0,
+          data.totalQuantity > 0 ? data.totalRevenue / data.totalQuantity : 0,
         rank: 0, // Will be set after sorting
       });
     }
@@ -535,8 +532,7 @@ export class OrderAnalyticsService {
    * Compares current period with previous period
    */
   async getOrderTrends(query: OrderAnalyticsQuery): Promise<OrderTrend> {
-    const periodDuration =
-      query.endDate.getTime() - query.startDate.getTime();
+    const periodDuration = query.endDate.getTime() - query.startDate.getTime();
 
     // Calculate metrics for current period
     const currentMetrics = await this.calculateOrderMetrics(query);
@@ -553,23 +549,23 @@ export class OrderAnalyticsService {
     const ordersGrowth =
       previousMetrics.totalOrders > 0
         ? ((currentMetrics.totalOrders - previousMetrics.totalOrders) /
-          previousMetrics.totalOrders) *
-        100
+            previousMetrics.totalOrders) *
+          100
         : 0;
 
     const revenueGrowth =
       previousMetrics.totalRevenue > 0
         ? ((currentMetrics.totalRevenue - previousMetrics.totalRevenue) /
-          previousMetrics.totalRevenue) *
-        100
+            previousMetrics.totalRevenue) *
+          100
         : 0;
 
     const aovGrowth =
       previousMetrics.averageOrderValue > 0
         ? ((currentMetrics.averageOrderValue -
-          previousMetrics.averageOrderValue) /
-          previousMetrics.averageOrderValue) *
-        100
+            previousMetrics.averageOrderValue) /
+            previousMetrics.averageOrderValue) *
+          100
         : 0;
 
     const completionRateGrowth =
@@ -597,7 +593,7 @@ export class OrderAnalyticsService {
    * Tracks order processing and delivery performance
    */
   async getFulfillmentMetrics(
-    query: OrderAnalyticsQuery
+    query: OrderAnalyticsQuery,
   ): Promise<FulfillmentMetrics> {
     const whereClause: any = {
       createdAt: {
@@ -692,7 +688,7 @@ export class OrderAnalyticsService {
    */
   async getTimeSeriesData(
     query: OrderAnalyticsQuery,
-    interval: "hour" | "day" | "week" | "month" = "day"
+    interval: "hour" | "day" | "week" | "month" = "day",
   ): Promise<TimeSeriesOrderData[]> {
     const whereClause: any = {
       createdAt: {
@@ -773,7 +769,7 @@ export class OrderAnalyticsService {
     }
 
     return results.sort(
-      (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
+      (a, b) => a.timestamp.getTime() - b.timestamp.getTime(),
     );
   }
 
@@ -786,7 +782,7 @@ export class OrderAnalyticsService {
    */
   private getIntervalKey(
     date: Date,
-    interval: "hour" | "day" | "week" | "month"
+    interval: "hour" | "day" | "week" | "month",
   ): string {
     const d = new Date(date);
     switch (interval) {
@@ -794,9 +790,10 @@ export class OrderAnalyticsService {
         return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}-${d.getHours()}`;
       case "day":
         return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-      case "week":
+      case "week": {
         const week = Math.floor(d.getDate() / 7);
         return `${d.getFullYear()}-${d.getMonth()}-W${week}`;
+      }
       case "month":
         return `${d.getFullYear()}-${d.getMonth()}`;
       default:
@@ -809,7 +806,7 @@ export class OrderAnalyticsService {
    */
   private getIntervalStart(
     date: Date,
-    interval: "hour" | "day" | "week" | "month"
+    interval: "hour" | "day" | "week" | "month",
   ): Date {
     const d = new Date(date);
     switch (interval) {
@@ -861,7 +858,7 @@ export class OrderAnalyticsService {
       topCustomersLimit?: number;
       topProductsLimit?: number;
       timeSeriesInterval?: "hour" | "day" | "week" | "month";
-    } = {}
+    } = {},
   ): Promise<OrderAnalyticsResponse> {
     try {
       const {
