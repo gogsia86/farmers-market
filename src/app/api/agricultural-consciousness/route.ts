@@ -1,72 +1,86 @@
 /**
- * AGRICULTURAL CONSCIOUSNESS API - LAZY TRACED
- * Demonstrates comprehensive tracing with AI operations
+ * 🔄 BACKWARD COMPATIBILITY ALIAS
  *
- * OPTIMIZATION: Uses lazy-loaded tracing to reduce server bundle size
- * - Tracing only loaded when enabled (saves ~50KB in bundle)
- * - Maintains full agricultural consciousness when tracing is active
+ * This route is deprecated and redirects to /api/agricultural/consciousness
+ *
+ * @deprecated Use /api/agricultural/consciousness instead
+ * @see /api/agricultural/consciousness for the consolidated implementation
+ *
+ * Migration Timeline:
+ * - Deprecated: December 2025
+ * - Sunset Date: June 1, 2026
+ *
+ * This alias will be maintained until the sunset date to ensure
+ * backward compatibility with existing integrations.
  */
 
-import { createLogger } from "@/lib/logger";
-import {
-  traceIfEnabled,
-  type TraceAttributes,
-} from "@/lib/tracing/lazy-tracer";
-import { NextRequest, NextResponse } from "next/server";
+import { createDeprecationHandlers } from "@/lib/api/deprecation-alias";
 
-const logger = createLogger("agricultural-consciousness-api");
+/**
+ * Deprecation configuration for agricultural consciousness endpoint
+ */
+const deprecationConfig = {
+  oldEndpoint: "/api/agricultural-consciousness",
+  newEndpoint: "/api/agricultural/consciousness",
+  deprecationDate: "2025-12-01",
+  sunsetDate: "2026-06-01",
+  migrationGuide: "/docs/migrations/api-consolidation-guide.md",
+};
 
-async function measureAgriculturalConsciousness() {
-  const metrics = {
-    soilHealth: Math.random() * 100,
-    seasonalAlignment: Math.random() * 100,
-    biodynamicCompliance: Math.random() * 100,
-  };
+/**
+ * Create handlers for all HTTP methods using the reusable helper
+ */
+const handlers = createDeprecationHandlers(deprecationConfig);
 
-  // Use lazy tracing - only loads OpenTelemetry if enabled
-  await traceIfEnabled(
-    "AGRICULTURAL_CONSCIOUSNESS_MEASUREMENT",
-    {
-      "agricultural.soil_health": metrics.soilHealth,
-      "agricultural.seasonal_alignment": metrics.seasonalAlignment,
-      "agricultural.biodynamic_compliance": metrics.biodynamicCompliance,
-      "agricultural.operation": "measure_consciousness",
-    } as TraceAttributes,
-    async () => {
-      // Measurement logic (already computed above for simplicity)
-      return metrics;
-    },
-  );
+/**
+ * GET /api/agricultural-consciousness
+ * @deprecated Redirects to /api/agricultural/consciousness
+ */
+export const GET = handlers.GET;
 
-  return metrics;
-}
+/**
+ * POST /api/agricultural-consciousness
+ * @deprecated Redirects to /api/agricultural/consciousness
+ */
+export const POST = handlers.POST;
 
-export async function GET(_request: NextRequest) {
-  try {
-    const consciousness = await measureAgriculturalConsciousness();
+/**
+ * PUT /api/agricultural-consciousness
+ * @deprecated Redirects to /api/agricultural/consciousness
+ */
+export const PUT = handlers.PUT;
 
-    // Log consciousness measurement
-    logger.info("Agricultural consciousness measured", {
-      soilHealth: consciousness.soilHealth,
-      seasonalAlignment: consciousness.seasonalAlignment,
-      biodynamicCompliance: consciousness.biodynamicCompliance,
-    });
+/**
+ * PATCH /api/agricultural-consciousness
+ * @deprecated Redirects to /api/agricultural/consciousness
+ */
+export const PATCH = handlers.PATCH;
 
-    return NextResponse.json({
-      success: true,
-      consciousness,
-      timestamp: new Date().toISOString(),
-      traced: process.env.ENABLE_TRACING !== "false",
-    });
-  } catch (error) {
-    logger.error("Failed to measure agricultural consciousness", error as Error);
+/**
+ * DELETE /api/agricultural-consciousness
+ * @deprecated Redirects to /api/agricultural/consciousness
+ */
+export const DELETE = handlers.DELETE;
 
-    return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 },
-    );
-  }
-}
+/**
+ * 🔔 DEPRECATION NOTICE
+ *
+ * This endpoint has been consolidated into /api/agricultural/consciousness
+ *
+ * Please update your integrations to use the new endpoint:
+ * - Old: /api/agricultural-consciousness
+ * - New: /api/agricultural/consciousness
+ *
+ * This alias provides automatic redirection and will be maintained
+ * until June 1, 2026. After that date, this endpoint will return
+ * 410 Gone.
+ *
+ * Benefits of migrating:
+ * - Consistent API structure under /api/agricultural/
+ * - Better resource organization
+ * - Enhanced agricultural consciousness features
+ * - Improved documentation
+ * - Long-term support
+ *
+ * See migration guide: /docs/migrations/api-consolidation-guide.md
+ */
