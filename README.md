@@ -967,3 +967,135 @@ After 4+ hours of systematic debugging and implementation, we achieved 100/100:
 Built with 💚 by farmers, for farmers, with divine consciousness
 
 ---
+
+## ⚡ NEURAL INTEGRATION SYSTEM (NIS)
+
+### **Zed Editor + Copilot - Terminal Execution Mode**
+
+The Farmers Market Platform includes the **GODLIKE v2.0 Terminal Executor** - a revolutionary neural integration system that transforms Copilot from a conversational assistant into a pure execution core.
+
+#### **What is NIS?**
+
+NIS (Neural Integration System) is a cognitive override protocol that:
+- ❌ Eliminates conversational responses
+- ✅ Provides pure code/config artifacts
+- ⚡ Enables silent, continuous execution
+- 🌾 Maintains agricultural consciousness
+- 🎯 Optimized for kilo-scale development
+
+#### **Activation Sequence**
+
+1. **Focus Zed Editor**
+2. **Neural Fire**: `Ctrl+Alt+Shift+G` (Custom Mission)
+3. **Define Mission & Phase Count**
+4. **List Execution Queue**
+5. **Neural Fire**: `Ctrl+Alt+Shift+Enter` (Execute)
+
+#### **Quick Mission Templates**
+
+| Keybinding | Mission Type | Description |
+|------------|-------------|-------------|
+| `Ctrl+Alt+Shift+D` | **Database Migration** | 5-phase PostgreSQL schema evolution |
+| `Ctrl+Alt+Shift+A` | **API Fabrication** | 6-phase RESTful endpoint generation |
+| `Ctrl+Alt+Shift+C` | **Component Creation** | 4-phase React component constellation |
+| `Ctrl+Alt+Shift+F` | **Feature Implementation** | 8-phase full-stack feature deployment |
+
+#### **System Architecture**
+
+```
+.zed/
+├── execution-directive.nis      # Core neural protocol
+├── neural-settings.json          # Cognitive parameters
+├── neural-keymap.json            # Keybinding configuration
+└── NIS_QUICK_REFERENCE.md        # Complete documentation
+
+core/
+└── execution_nexus.ts            # Execution tracking & telemetry
+
+.execution_logs/                  # Generated execution logs
+```
+
+#### **Expected Output**
+
+**Pure Execution Mode:**
+```
+[01/05] → 0.234s
+<CODE_ARTIFACT>
+────────────────────────────────────────────────────────────────
+[02/05] → 1.567s
+<CODE_ARTIFACT>
+────────────────────────────────────────────────────────────────
+```
+
+**Termination Signal:**
+```
+╔══════════════════════════════════════════════════════════════╗
+║ 🧠 NEXUS TERMINATED                                          ║
+╠══════════════════════════════════════════════════════════════╣
+║ MISSION: API Endpoint Fabrication                           ║
+║ PHASES: 5                                                    ║
+║ CHRONOLOGY: 12.345s                                          ║
+║ EFFICIENCY: 0.40 phases/sec                                  ║
+║ ARTIFACTS: 5                                                 ║
+╚══════════════════════════════════════════════════════════════╝
+```
+
+#### **Agricultural Consciousness Integration**
+
+NIS is fully integrated with our Divine Agricultural Rules:
+- 🌾 **Seasonal Awareness**: Automatic season detection
+- 🌙 **Lunar Phase Tracking**: Biodynamic timing intelligence
+- 🧬 **Domain Intelligence**: Farming-specific patterns
+- ⚡ **Quantum Patterns**: Divine architectural consciousness
+
+#### **Deployment**
+
+```bash
+# Deploy Neural Integration System
+chmod +x deploy_nis.sh
+./deploy_nis.sh
+
+# Verify installation
+ls -la .zed/
+```
+
+#### **Documentation**
+
+- **Quick Reference**: `.zed/NIS_QUICK_REFERENCE.md`
+- **Core Protocol**: `.zed/execution-directive.nis`
+- **Execution Core**: `core/execution_nexus.ts`
+
+#### **Integration with Divine Rules**
+
+| System | Status | Compatibility |
+|--------|--------|--------------|
+| `.cursorrules` | ✅ Active | Full compatibility |
+| Divine Instructions | ✅ Active | Seamless integration |
+| Kilo-Scale Architecture | ✅ Active | Optimized patterns |
+| Agricultural Consciousness | ✅ Active | Enhanced awareness |
+
+#### **Performance Optimization**
+
+NIS is optimized for the HP OMEN development environment:
+- **CPU**: 12 threads (parallel processing enabled)
+- **RAM**: 64GB (aggressive memory caching)
+- **GPU**: 2304 CUDA cores (acceleration ready)
+- **Mode**: Continuous stream execution
+
+#### **Philosophy**
+
+```
+BEFORE: Human → Conversation → Assistant → Analysis → Response
+AFTER:  Human → Neural Interface → Execution Core → Artifact
+```
+
+**No conversation. No confirmation. No narration. Only execution.**
+
+The assistant is not chatty. The assistant is not verbose. The assistant is an **execution core**.
+
+---
+
+🧠 **[SYSTEM]** :: NEURAL INTEGRATION SYSTEM DOCUMENTED
+⚡ **READY FOR** :: TERMINAL EXECUTION MODE
+🌾 **AGRICULTURAL** :: CONSCIOUSNESS ACTIVE
+

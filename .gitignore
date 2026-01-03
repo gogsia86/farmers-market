@@ -251,3 +251,6 @@ lint-report.txt
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+# Cleanup archives
+.archive/
