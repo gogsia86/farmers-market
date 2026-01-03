@@ -72,6 +72,11 @@ model User {
   userSettings              UserSettings?
   notificationPreferencesV2 NotificationPreferencesV2?
 
+  // Sprint 6: SMS & Push Notifications
+  smsLogs               SMSLog[]
+  pushNotificationLogs  PushNotificationLog[]
+  deviceTokens          DeviceToken[]
+
   @@index([email])
   @@index([role, status])
   @@index([createdAt])
@@ -3100,4 +3105,81 @@ model SystemSettings {
   @@index([isPublic])
   @@index([key])
   @@map("system_settings")
+}
+
+// SMS Logging - Track SMS delivery
+model SMSLog {
+  id String @id @default(cuid())
+
+  userId      String
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phoneNumber String @db.VarChar(20)
+
+  message      String @db.Text
+  status       String @db.VarChar(20) // "QUEUED" | "SENT" | "FAILED" | "DELIVERED"
+  messageId    String? @db.VarChar(255) // Twilio SID
+  errorMessage String? @db.Text
+
+  metadata Json @default("{}")
+
+  sentAt     DateTime?
+  failedAt   DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([phoneNumber])
+  @@map("sms_logs")
+}
+
+// Push Notification Logging - Track push notification delivery
+model PushNotificationLog {
+  id String @id @default(cuid())
+
+  userId         String
+  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notificationId String? // Link to Notification model
+
+  title String @db.VarChar(255)
+  body  String @db.Text
+  data  Json   @default("{}")
+
+  status        String @db.VarChar(20) // "QUEUED" | "SENT" | "FAILED"
+  successCount  Int    @default(0)
+  failureCount  Int    @default(0)
+  errorMessage  String? @db.Text
+
+  sentAt    DateTime?
+  failedAt  DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([notificationId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("push_notification_logs")
+}
+
+// Device Tokens - Store FCM/APNS tokens for push notifications
+model DeviceToken {
+  id String @id @default(cuid())
+
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token    String @unique @db.VarChar(255) // FCM/APNS token
+  platform String @db.VarChar(20) // "ios" | "android" | "web"
+
+  isActive   Boolean   @default(true)
+  lastUsedAt DateTime  @default(now())
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([platform])
+  @@index([isActive])
+  @@index([token])
+  @@map("device_tokens")
 }

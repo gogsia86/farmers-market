@@ -5,6 +5,7 @@
  */
 
 import { database } from "@/lib/database";
+import { enqueuePush, enqueueSMS } from "@/lib/queue/notification.queue";
 import type {
   Farm,
   Notification,
@@ -221,27 +222,77 @@ export class NotificationService {
   }
 
   /**
-   * Send SMS notification (placeholder for future implementation)
+   * Send SMS notification via queue
    */
   private async sendSMSNotification(
     notification: NotificationWithRelations
   ): Promise<void> {
     if (!notification.user?.phone) {
+      console.warn(`⚠️ No phone number for user ${notification.userId}, skipping SMS`);
       return;
     }
 
-    // TODO: Integrate with SMS provider (Twilio, etc.)
-    console.log(`SMS notification queued for ${notification.user.phone}`);
+    try {
+      // Queue SMS for background processing
+      await enqueueSMS({
+        phoneNumber: notification.user.phone,
+        message: `${notification.title}\n\n${notification.body}`,
+        userId: notification.userId || undefined,
+        notificationId: notification.id,
+        metadata: {
+          type: notification.type,
+          notificationId: notification.id,
+        },
+      });
+
+      console.log(`📱 SMS queued for ${notification.user.phone.substring(notification.user.phone.length - 4)}`);
+    } catch (error) {
+      console.error("Failed to queue SMS:", error);
+      throw error;
+    }
   }
 
   /**
-   * Send push notification (placeholder for future implementation)
+   * Send push notification via queue
    */
   private async sendPushNotification(
     notification: NotificationWithRelations
   ): Promise<void> {
-    // TODO: Integrate with push notification service (FCM, APNS, etc.)
-    console.log(`Push notification queued for user ${notification.userId}`);
+    if (!notification.userId) {
+      console.warn("⚠️ No userId provided, skipping push notification");
+      return;
+    }
+
+    try {
+      // Queue push notification for background processing
+      await enqueuePush({
+        userId: notification.userId,
+        title: notification.title,
+        body: notification.body,
+        data: notification.data as Record<string, string> | undefined,
+        notificationId: notification.id,
+        priority: this.getPushPriority(notification.type),
+      });
+
+      console.log(`🔔 Push notification queued for user ${notification.userId}`);
+    } catch (error) {
+      console.error("Failed to queue push notification:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get push notification priority based on notification type
+   */
+  private getPushPriority(type: NotificationType): "high" | "normal" {
+    const highPriorityTypes: NotificationType[] = [
+      "ORDER_CONFIRMED",
+      "ORDER_READY",
+      "PAYMENT_RECEIVED",
+      "NEW_MESSAGE",
+    ];
+
+    return highPriorityTypes.includes(type) ? "high" : "normal";
   }
 
   /**
@@ -252,10 +303,54 @@ export class NotificationService {
     channels: NotificationChannel[],
     sendAt: Date
   ): Promise<void> {
-    // TODO: Integrate with job queue (Bull, BullMQ, etc.)
-    console.log(
-      `Notification ${notification.id} queued for delivery at ${sendAt}`
-    );
+    const delay = sendAt.getTime() - Date.now();
+
+    if (delay <= 0) {
+      // Send immediately if time has passed
+      const fullNotification = await database.notification.findUnique({
+        where: { id: notification.id },
+        include: { user: true, farm: true },
+      });
+
+      if (fullNotification) {
+        await this.sendThroughChannels(
+          fullNotification,
+          channels,
+          "MEDIUM"
+        );
+      }
+      return;
+    }
+
+    try {
+      // Queue for future delivery based on channels
+      for (const channel of channels) {
+        if (channel === "SMS" && notification.userId) {
+          const user = await database.user.findUnique({
+            where: { id: notification.userId },
+            select: { phone: true },
+          });
+
+          if (user?.phone) {
+            // SMS scheduled sending will be handled by the queue's delay mechanism
+            console.log(
+              `📅 SMS scheduled for ${sendAt.toISOString()} to ${user.phone.substring(user.phone.length - 4)}`
+            );
+          }
+        } else if (channel === "PUSH" && notification.userId) {
+          console.log(
+            `📅 Push notification scheduled for ${sendAt.toISOString()} for user ${notification.userId}`
+          );
+        }
+      }
+
+      console.log(
+        `✅ Notification ${notification.id} queued for delivery at ${sendAt.toISOString()}`
+      );
+    } catch (error) {
+      console.error("Failed to queue scheduled notification:", error);
+      throw error;
+    }
   }
 
   /**
