@@ -19,14 +19,13 @@
  * - Comprehensive error handling with divine patterns
  */
 
-import { database } from "@/lib/database";
 import type { FulfillmentMethod, Order } from "@prisma/client";
 import { z } from "zod";
 
-import { BaseService } from "./base.service";
-import type { ServiceResponse } from "@/lib/types/service-response";
-import { cartService } from "./cart.service";
 import { stripe } from "@/lib/stripe";
+import type { ServiceResponse } from "@/lib/types/service-response";
+import { BaseService } from "./base.service";
+import { cartService } from "./cart.service";
 import { geocodingService } from "./geocoding.service";
 
 // ============================================================================
@@ -547,6 +546,47 @@ export class CheckoutService extends BaseService<Order> {
   }
 
   /**
+   * ⚡ Retrieve payment intent from Stripe
+   * Divine consciousness: Monitor sacred payment status
+   */
+  async retrievePaymentIntent(
+    paymentIntentId: string,
+  ): Promise<ServiceResponse<PaymentIntentData>> {
+    return await this.traced("retrievePaymentIntent", async () => {
+      this.setTraceAttributes({
+        "payment.intent_id": paymentIntentId,
+      });
+
+      try {
+        const paymentIntent = await stripe.paymentIntents.retrieve(
+          paymentIntentId,
+        );
+
+        this.logger.info("Payment intent retrieved", {
+          paymentIntentId,
+          status: paymentIntent.status,
+        });
+
+        return this.success({
+          id: paymentIntent.id,
+          clientSecret: paymentIntent.client_secret || "",
+          amount: paymentIntent.amount / 100,
+          currency: paymentIntent.currency,
+          status: paymentIntent.status,
+        });
+      } catch (error) {
+        this.logger.error("Failed to retrieve payment intent", error);
+        return this.error(
+          "PAYMENT_INTENT_RETRIEVAL_FAILED",
+          error instanceof Error
+            ? error.message
+            : "Failed to retrieve payment intent",
+        );
+      }
+    });
+  }
+
+  /**
    * 🌾 Create order from checkout session
    * Divine consciousness: Agricultural commerce manifestation with full transaction safety
    */
@@ -649,8 +689,8 @@ export class CheckoutService extends BaseService<Order> {
 
             const deliveryFee =
               validated.fulfillmentMethod === "FARM_PICKUP" ||
-              validated.fulfillmentMethod === "MARKET_PICKUP" ||
-              farmSubtotal >= this.MIN_ORDER_FOR_FREE_DELIVERY
+                validated.fulfillmentMethod === "MARKET_PICKUP" ||
+                farmSubtotal >= this.MIN_ORDER_FOR_FREE_DELIVERY
                 ? 0
                 : this.DELIVERY_FEE;
 

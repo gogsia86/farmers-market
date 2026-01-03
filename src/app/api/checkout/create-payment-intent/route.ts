@@ -173,14 +173,30 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // TODO: Implement payment intent retrieval from Stripe
-    // For now, return a placeholder response
+    // ⚡ RETRIEVE PAYMENT INTENT FROM CHECKOUT SERVICE
+    const result = await checkoutService.retrievePaymentIntent(paymentIntentId);
+
+    // Handle ServiceResponse pattern (discriminated union)
+    if (!result.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: result.error.message || "Failed to retrieve payment intent",
+        },
+        { status: 500 },
+      );
+    }
+
+    // ⚡ SUCCESS RESPONSE
     return NextResponse.json(
       {
         success: true,
         paymentIntent: {
-          id: paymentIntentId,
-          status: "requires_payment_method",
+          id: result.data.id,
+          status: result.data.status,
+          amount: result.data.amount,
+          currency: result.data.currency,
+          clientSecret: result.data.clientSecret,
         },
       },
       { status: 200 },
