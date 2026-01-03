@@ -1,11 +1,12 @@
 /**
  * Stripe Webhook Handler
- * Processes payment events from Stripe
+ * Processes payment events from Stripe with deduplication and idempotency
  * Events: payment_intent.succeeded, payment_intent.payment_failed, charge.refunded
  */
 
 import { database } from "@/lib/database";
 import { notificationService } from "@/lib/services/notification.service";
+import { webhookEventService } from "@/lib/services/webhook-event.service";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
@@ -50,41 +51,94 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    console.log(`Processing Stripe webhook event: ${event.type}`);
+    console.log(`Processing Stripe webhook event: ${event.type} (${event.id})`);
 
-    // Handle different event types
-    switch (event.type) {
-      case "payment_intent.succeeded":
-        await handlePaymentIntentSucceeded(event.data.object as Stripe.PaymentIntent);
-        break;
+    // Record event for idempotency and deduplication
+    const recordResult = await webhookEventService.recordEvent({
+      provider: "STRIPE",
+      eventId: event.id,
+      eventType: event.type,
+      payload: event as any,
+    });
 
-      case "payment_intent.payment_failed":
-        await handlePaymentIntentFailed(event.data.object as Stripe.PaymentIntent);
-        break;
-
-      case "charge.refunded":
-        await handleChargeRefunded(event.data.object as Stripe.Charge);
-        break;
-
-      case "payment_intent.created":
-        await handlePaymentIntentCreated(event.data.object as Stripe.PaymentIntent);
-        break;
-
-      case "charge.succeeded":
-        // Usually handled by payment_intent.succeeded, but log for tracking
-        console.log(`Charge succeeded: ${event.data.object.id}`);
-        break;
-
-      default:
-        console.log(`Unhandled event type: ${event.type}`);
+    // If event was already processed, return success immediately
+    if (recordResult.alreadyProcessed) {
+      console.log(`Event ${event.id} already processed, skipping`);
+      return NextResponse.json({
+        received: true,
+        alreadyProcessed: true,
+      });
     }
 
-    return NextResponse.json({ received: true });
+    // If recording failed, return error
+    if (!recordResult.success) {
+      console.error(`Failed to record event ${event.id}: ${recordResult.error}`);
+      return NextResponse.json(
+        {
+          error: "Failed to record webhook event",
+          message: recordResult.error,
+        },
+        { status: 500 }
+      );
+    }
+
+    try {
+      // Handle different event types
+      switch (event.type) {
+        case "payment_intent.succeeded":
+          await handlePaymentIntentSucceeded(event.data.object as Stripe.PaymentIntent);
+          break;
+
+        case "payment_intent.payment_failed":
+          await handlePaymentIntentFailed(event.data.object as Stripe.PaymentIntent);
+          break;
+
+        case "charge.refunded":
+          await handleChargeRefunded(event.data.object as Stripe.Charge);
+          break;
+
+        case "payment_intent.created":
+          await handlePaymentIntentCreated(event.data.object as Stripe.PaymentIntent);
+          break;
+
+        case "charge.succeeded":
+          // Usually handled by payment_intent.succeeded, but log for tracking
+          console.log(`Charge succeeded: ${event.data.object.id}`);
+          break;
+
+        default:
+          console.log(`Unhandled event type: ${event.type}`);
+      }
+
+      // Mark event as successfully processed
+      await webhookEventService.markAsProcessed(event.id);
+
+      return NextResponse.json({ received: true });
+    } catch (processingError) {
+      // Mark event as failed for retry
+      const errorMessage =
+        processingError instanceof Error
+          ? processingError.message
+          : "Unknown processing error";
+
+      await webhookEventService.markAsFailed(event.id, errorMessage);
+
+      console.error(`Webhook event ${event.id} processing failed:`, processingError);
+
+      // Return 500 to trigger Stripe retry
+      return NextResponse.json(
+        {
+          error: "Webhook processing failed",
+          message: errorMessage,
+        },
+        { status: 500 }
+      );
+    }
   } catch (error) {
-    console.error("Webhook processing error:", error);
+    console.error("Webhook handler error:", error);
     return NextResponse.json(
       {
-        error: "Webhook processing failed",
+        error: "Webhook handler failed",
         message: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 }
