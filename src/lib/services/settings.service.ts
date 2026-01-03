@@ -780,6 +780,193 @@ export class SettingsService {
 
     return result;
   }
+
+  /**
+   * Get business hours status for a farm
+   * Calculates if farm is currently open based on business hours
+   * @param farmId - Farm ID
+   * @returns Business hours status with open/closed state and next transitions
+   */
+  async getBusinessHoursStatus(farmId: string): Promise<{
+    isOpen: boolean;
+    nextOpenTime: string | null;
+    nextCloseTime: string | null;
+    timezone: string;
+    currentTime: string;
+    todayHours: {
+      dayOfWeek: number;
+      openTime: string;
+      closeTime: string;
+      isClosed: boolean;
+    } | null;
+  }> {
+    // Fetch farm settings with business hours
+    const settings = await database.farmSettings.findUnique({
+      where: { farmId },
+      include: { businessHours: true },
+    });
+
+    if (!settings || !settings.businessHours || settings.businessHours.length === 0) {
+      // No business hours configured - assume open 24/7
+      return {
+        isOpen: true,
+        nextOpenTime: null,
+        nextCloseTime: null,
+        timezone: "UTC",
+        currentTime: new Date().toISOString(),
+        todayHours: null,
+      };
+    }
+
+    // Get current time in farm's timezone
+    const timezone = settings.businessHours[0]?.timezone || "UTC";
+    const now = new Date();
+    const currentDayOfWeek = now.getUTCDay(); // 0 = Sunday, 6 = Saturday
+
+    // Find today's business hours
+    const todayHours = settings.businessHours.find(
+      (bh) => bh.dayOfWeek === currentDayOfWeek,
+    );
+
+    if (!todayHours) {
+      // No hours configured for today - assume closed
+      return {
+        isOpen: false,
+        nextOpenTime: this.findNextOpenTime(settings.businessHours, now),
+        nextCloseTime: null,
+        timezone,
+        currentTime: now.toISOString(),
+        todayHours: null,
+      };
+    }
+
+    // Check if farm is closed today
+    if (todayHours.isClosed) {
+      return {
+        isOpen: false,
+        nextOpenTime: this.findNextOpenTime(settings.businessHours, now),
+        nextCloseTime: null,
+        timezone,
+        currentTime: now.toISOString(),
+        todayHours: {
+          dayOfWeek: todayHours.dayOfWeek,
+          openTime: todayHours.openTime,
+          closeTime: todayHours.closeTime,
+          isClosed: todayHours.isClosed,
+        },
+      };
+    }
+
+    // Parse open and close times
+    const currentTime = this.getCurrentTimeString(now);
+    const isOpen =
+      currentTime >= todayHours.openTime && currentTime < todayHours.closeTime;
+
+    // Calculate next transitions
+    let nextOpenTime: string | null = null;
+    let nextCloseTime: string | null = null;
+
+    if (isOpen) {
+      // Currently open - next transition is close time today
+      nextCloseTime = this.formatNextTransitionTime(
+        now,
+        todayHours.closeTime,
+        timezone,
+      );
+    } else {
+      // Currently closed - find next open time
+      if (currentTime < todayHours.openTime) {
+        // Haven't opened today yet
+        nextOpenTime = this.formatNextTransitionTime(
+          now,
+          todayHours.openTime,
+          timezone,
+        );
+      } else {
+        // Closed for today - find next open day
+        nextOpenTime = this.findNextOpenTime(settings.businessHours, now);
+      }
+    }
+
+    return {
+      isOpen,
+      nextOpenTime,
+      nextCloseTime,
+      timezone,
+      currentTime: now.toISOString(),
+      todayHours: {
+        dayOfWeek: todayHours.dayOfWeek,
+        openTime: todayHours.openTime,
+        closeTime: todayHours.closeTime,
+        isClosed: todayHours.isClosed,
+      },
+    };
+  }
+
+  /**
+   * Get current time as HH:mm string
+   * @param date - Date object
+   * @returns Time string in HH:mm format
+   */
+  private getCurrentTimeString(date: Date): string {
+    const hours = date.getUTCHours().toString().padStart(2, "0");
+    const minutes = date.getUTCMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
+  }
+
+  /**
+   * Format next transition time as ISO string
+   * @param now - Current date
+   * @param timeString - Time in HH:mm format
+   * @param timezone - Timezone
+   * @returns ISO string for next transition
+   */
+  private formatNextTransitionTime(
+    now: Date,
+    timeString: string,
+    timezone: string,
+  ): string {
+    const [hours, minutes] = timeString.split(":").map(Number);
+    const nextTime = new Date(now);
+    nextTime.setUTCHours(hours!, minutes!, 0, 0);
+    return nextTime.toISOString();
+  }
+
+  /**
+   * Find next open time across business hours
+   * @param businessHours - Array of business hours
+   * @param now - Current date
+   * @returns ISO string for next open time or null
+   */
+  private findNextOpenTime(
+    businessHours: Array<{
+      dayOfWeek: number;
+      openTime: string;
+      closeTime: string;
+      isClosed: boolean;
+    }>,
+    now: Date,
+  ): string | null {
+    const currentDayOfWeek = now.getUTCDay();
+
+    // Check next 7 days
+    for (let i = 1; i <= 7; i++) {
+      const checkDayOfWeek = (currentDayOfWeek + i) % 7;
+      const dayHours = businessHours.find(
+        (bh) => bh.dayOfWeek === checkDayOfWeek && !bh.isClosed,
+      );
+
+      if (dayHours) {
+        const [hours, minutes] = dayHours.openTime.split(":").map(Number);
+        const nextOpenDate = new Date(now);
+        nextOpenDate.setUTCDate(now.getUTCDate() + i);
+        nextOpenDate.setUTCHours(hours!, minutes!, 0, 0);
+        return nextOpenDate.toISOString();
+      }
+    }
+
+    return null; // No open days in next week
+  }
 }
 
 // Export singleton instance for convenience

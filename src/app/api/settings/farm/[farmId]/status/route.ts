@@ -7,6 +7,7 @@
 
 import { database } from "@/lib/database";
 import { createLogger } from "@/lib/logger";
+import { settingsService } from "@/lib/services/settings.service";
 import { NextRequest, NextResponse } from "next/server";
 
 const logger = createLogger("farm-status-api");
@@ -52,8 +53,7 @@ export async function GET(
     }
 
     // Get business hours status
-    // TODO: Implement getBusinessHoursStatus method in SettingsService
-    // const status = await settingsService.getBusinessHoursStatus(farmId);
+    const status = await settingsService.getBusinessHoursStatus(farmId);
 
     return NextResponse.json(
       {
@@ -61,11 +61,12 @@ export async function GET(
         data: {
           farmId,
           farmName: farm.name,
-          isOpen: true, // TODO: Calculate from business hours
-          nextOpenTime: null,
-          nextCloseTime: null,
-          timezone: "UTC",
-          currentTime: new Date().toISOString(),
+          isOpen: status.isOpen,
+          nextOpenTime: status.nextOpenTime,
+          nextCloseTime: status.nextCloseTime,
+          timezone: status.timezone,
+          currentTime: status.currentTime,
+          todayHours: status.todayHours,
         },
         meta: {
           requestId: request.headers.get("x-request-id") || undefined,
