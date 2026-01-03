@@ -90,6 +90,22 @@ export interface ProductSearchOptions {
 }
 
 /**
+ * 🌱 BATCH UPDATE PRODUCT REQUEST
+ */
+export interface BatchUpdateProductRequest {
+  productId: string;
+  updates: UpdateProductRequest;
+}
+
+/**
+ * 🌱 BATCH INVENTORY UPDATE REQUEST
+ */
+export interface BatchInventoryUpdate {
+  productId: string;
+  quantityChange: number;
+}
+
+/**
  * 🌱 VALIDATION ERROR
  */
 export class ProductValidationError extends Error {
@@ -692,6 +708,153 @@ export class QuantumProductCatalogService {
     }
 
     return uniqueSlug;
+  }
+
+  /**
+   * 📦 BATCH UPDATE PRODUCTS
+   * Updates multiple products in a single transaction for concurrency testing
+   */
+  async batchUpdateProducts(
+    updates: BatchUpdateProductRequest[],
+    userId: string
+  ): Promise<Product[]> {
+    // Use transaction for atomic updates
+    return await database.$transaction(async (tx) => {
+      const updatedProducts: Product[] = [];
+
+      for (const { productId, updates: productUpdates } of updates) {
+        // Verify product exists and user has permission
+        const product = await tx.product.findUnique({
+          where: { id: productId },
+          include: {
+            farm: {
+              select: { ownerId: true },
+            },
+          },
+        });
+
+        if (!product) {
+          throw new ProductValidationError(
+            "Product not found",
+            "productId",
+            productId
+          );
+        }
+
+        if (product.farm.ownerId !== userId) {
+          throw new ProductValidationError(
+            "Unauthorized: You do not own this product",
+            "userId",
+            userId
+          );
+        }
+
+        // Update slug if name changed
+        let slug: string | undefined;
+        if (productUpdates.name) {
+          slug = await this.generateUniqueSlug(
+            productUpdates.name,
+            product.farmId,
+            productId
+          );
+        }
+
+        const updated = await tx.product.update({
+          where: { id: productId },
+          data: {
+            ...productUpdates,
+            slug,
+            tags: productUpdates.tags
+              ? (productUpdates.tags as Prisma.InputJsonValue)
+              : undefined,
+            updatedAt: new Date(),
+          },
+          include: {
+            farm: true,
+          },
+        });
+
+        updatedProducts.push(updated);
+      }
+
+      return updatedProducts;
+    });
+  }
+
+  /**
+   * 📦 BATCH UPDATE INVENTORY
+   * Updates inventory for multiple products atomically
+   */
+  async batchUpdateInventory(
+    updates: BatchInventoryUpdate[],
+    userId: string
+  ): Promise<Product[]> {
+    return await database.$transaction(async (tx) => {
+      const updatedProducts: Product[] = [];
+
+      for (const { productId, quantityChange } of updates) {
+        // Verify product exists and user has permission
+        const product = await tx.product.findUnique({
+          where: { id: productId },
+          include: {
+            farm: {
+              select: { ownerId: true },
+            },
+          },
+        });
+
+        if (!product) {
+          throw new ProductValidationError(
+            "Product not found",
+            "productId",
+            productId
+          );
+        }
+
+        if (product.farm.ownerId !== userId) {
+          throw new ProductValidationError(
+            "Unauthorized: You do not own this product",
+            "userId",
+            userId
+          );
+        }
+
+        const currentQuantity = product.quantityAvailable ? parseFloat(product.quantityAvailable.toString()) : 0;
+        const newQuantity = currentQuantity + quantityChange;
+
+        if (newQuantity < 0) {
+          throw new ProductValidationError(
+            "Insufficient inventory",
+            "quantityAvailable",
+            newQuantity
+          );
+        }
+
+        // Determine new status based on quantity
+        let status = product.status;
+        if (newQuantity === 0 && product.status === "ACTIVE") {
+          status = "OUT_OF_STOCK";
+        } else if (newQuantity > 0 && product.status === "OUT_OF_STOCK") {
+          status = "ACTIVE";
+        }
+
+        const updated = await tx.product.update({
+          where: { id: productId },
+          data: {
+            quantityAvailable: newQuantity,
+            status,
+            updatedAt: new Date(),
+          },
+          include: {
+            farm: true,
+          },
+        });
+
+        updatedProducts.push(updated);
+      }
+
+      return updatedProducts;
+    });
   }
 }
 

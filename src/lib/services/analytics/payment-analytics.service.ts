@@ -48,6 +48,70 @@ export interface FarmRevenueMetrics {
 }
 
 /**
+ * Revenue by payment method
+ */
+export interface RevenueByPaymentMethod {
+  method: string;
+  count: number;
+  totalAmount: number;
+  averageAmount: number;
+  percentage: number;
+}
+
+/**
+ * Time series data point
+ */
+export interface TimeSeriesDataPoint {
+  timestamp: Date;
+  revenue: number;
+  transactionCount: number;
+  successRate: number;
+}
+
+/**
+ * Top farm by revenue
+ */
+export interface TopFarmByRevenue {
+  rank: number;
+  farmId: string;
+  farmName: string;
+  totalRevenue: number;
+  transactionCount: number;
+  averageOrderValue: number;
+}
+
+/**
+ * Comprehensive analytics response
+ */
+export interface ComprehensiveAnalyticsResponse {
+  success: boolean;
+  data?: {
+    metrics: PaymentMetrics;
+    byMethod?: RevenueByPaymentMethod[];
+    timeSeries?: TimeSeriesDataPoint[];
+    trends?: any;
+    topFarms?: TopFarmByRevenue[];
+  };
+  error?: {
+    code: string;
+    message: string;
+  };
+  agricultural?: {
+    consciousness: string;
+    season: string;
+  };
+}
+
+/**
+ * Date range filter
+ */
+export interface DateRangeFilter {
+  startDate: Date;
+  endDate: Date;
+  farmId?: string;
+}
+
+/**
  * Payment trend data point
  */
 export interface PaymentTrendPoint {
@@ -143,11 +207,11 @@ export class PaymentAnalyticsService {
 
     // Calculate status counts
     const successfulTransactions = payments.filter(
-      (p) => p.status === "PAID" || p.status === "COMPLETED"
+      (p) => p.status === "PAID"
     ).length;
 
     const failedTransactions = payments.filter(
-      (p) => p.status === "FAILED" || p.status === "CANCELLED"
+      (p) => p.status === "FAILED"
     ).length;
 
     const pendingTransactions = payments.filter(
@@ -196,18 +260,16 @@ export class PaymentAnalyticsService {
     endDate: Date,
     farmId?: string
   ): Promise<PaymentMethodMetrics[]> {
-    const where: Prisma.PaymentWhereInput = {
+    const whereBase: Prisma.PaymentWhereInput = {
       createdAt: {
         gte: startDate,
         lte: endDate,
       },
     };
 
-    if (farmId) {
-      where.order = {
-        farmId: farmId,
-      };
-    }
+    const where = farmId
+      ? { ...whereBase, order: { farmId } }
+      : whereBase;
 
     // Group by payment method
     const results = await database.payment.groupBy({
@@ -234,7 +296,7 @@ export class PaymentAnalyticsService {
           database.payment.count({
             where: {
               ...methodWhere,
-              status: { in: ["PAID", "COMPLETED"] },
+              status: "PAID",
             },
           }),
         ]);
@@ -256,7 +318,7 @@ export class PaymentAnalyticsService {
       })
     );
 
-    return methodMetrics;
+    return methodMetrics as PaymentMethodMetrics[];
   }
 
   /**
@@ -273,7 +335,7 @@ export class PaymentAnalyticsService {
           gte: startDate,
           lte: endDate,
         },
-        status: { in: ["PAID", "COMPLETED"] },
+        status: "PAID",
       },
       include: {
         order: {
@@ -383,9 +445,9 @@ export class PaymentAnalyticsService {
       data.transactions += 1;
       data.revenue += parseFloat(payment.amount.toString());
 
-      if (payment.status === "PAID" || payment.status === "COMPLETED") {
+      if (payment.status === "PAID") {
         data.successfulTransactions += 1;
-      } else if (payment.status === "FAILED" || payment.status === "CANCELLED") {
+      } else if (payment.status === "FAILED") {
         data.failedTransactions += 1;
       }
     });
@@ -409,7 +471,7 @@ export class PaymentAnalyticsService {
     endDate?: Date
   ): Promise<number> {
     const where: Prisma.PaymentWhereInput = {
-      status: { in: ["PAID", "COMPLETED"] },
+      status: "PAID",
     };
 
     if (startDate || endDate) {
@@ -448,7 +510,7 @@ export class PaymentAnalyticsService {
       database.payment.count({
         where: {
           ...where,
-          status: { in: ["PAID", "COMPLETED"] },
+          status: "PAID",
         },
       }),
     ]);
@@ -488,6 +550,360 @@ export class PaymentAnalyticsService {
     d.setUTCDate(d.getUTCDate() + 4 - dayNum);
     const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
     return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+  }
+
+  /**
+   * Get revenue by payment method (TEST EXPECTED METHOD)
+   */
+  async getRevenueByPaymentMethod(
+    filter: DateRangeFilter
+  ): Promise<RevenueByPaymentMethod[]> {
+    const { startDate, endDate, farmId } = filter;
+
+    const where: Prisma.PaymentWhereInput = {
+      createdAt: {
+        gte: startDate,
+        lte: endDate,
+      },
+      status: "PAID",
+    };
+
+    if (farmId) {
+      where.order = {
+        farmId: farmId,
+      };
+    }
+
+    const payments = await database.payment.findMany({
+      where,
+      select: {
+        amount: true,
+        paymentMethod: true,
+      },
+    });
+
+    // Group by payment method
+    const methodMap = new Map<string, { count: number; totalAmount: number }>();
+
+    payments.forEach((payment) => {
+      const method = payment.paymentMethod;
+      const amount = parseFloat(payment.amount.toString());
+
+      if (methodMap.has(method)) {
+        const existing = methodMap.get(method)!;
+        existing.count += 1;
+        existing.totalAmount += amount;
+      } else {
+        methodMap.set(method, { count: 1, totalAmount: amount });
+      }
+    });
+
+    // Calculate totals for percentage
+    const grandTotal = Array.from(methodMap.values()).reduce(
+      (sum, item) => sum + item.totalAmount,
+      0
+    );
+
+    // Convert to array with percentages
+    const results: RevenueByPaymentMethod[] = Array.from(methodMap.entries())
+      .map(([method, data]) => ({
+        method,
+        count: data.count,
+        totalAmount: data.totalAmount,
+        averageAmount: data.totalAmount / data.count,
+        percentage: grandTotal > 0 ? (data.totalAmount / grandTotal) * 100 : 0,
+      }))
+      .sort((a, b) => b.totalAmount - a.totalAmount);
+
+    return results;
+  }
+
+  /**
+   * Get time series data (TEST EXPECTED METHOD)
+   */
+  async getTimeSeriesData(
+    filter: DateRangeFilter,
+    interval: "hour" | "day" | "week" | "month"
+  ): Promise<TimeSeriesDataPoint[]> {
+    const { startDate, endDate, farmId } = filter;
+
+    const where: Prisma.PaymentWhereInput = {
+      createdAt: {
+        gte: startDate,
+        lte: endDate,
+      },
+    };
+
+    if (farmId) {
+      where.order = {
+        farmId: farmId,
+      };
+    }
+
+    const payments = await database.payment.findMany({
+      where,
+      select: {
+        amount: true,
+        status: true,
+        createdAt: true,
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+
+    if (payments.length === 0) {
+      return [];
+    }
+
+    // Group by time interval
+    const timeMap = new Map<string, {
+      revenue: number;
+      transactionCount: number;
+      successCount: number;
+    }>();
+
+    payments.forEach((payment) => {
+      const timeKey = this.formatDateByInterval(payment.createdAt, interval);
+
+      if (!timeMap.has(timeKey)) {
+        timeMap.set(timeKey, {
+          revenue: 0,
+          transactionCount: 0,
+          successCount: 0,
+        });
+      }
+
+      const data = timeMap.get(timeKey)!;
+      data.transactionCount += 1;
+
+      if (payment.status === "PAID") {
+        data.revenue += parseFloat(payment.amount.toString());
+        data.successCount += 1;
+      }
+    });
+
+    // Convert to array with Date objects
+    const results: TimeSeriesDataPoint[] = Array.from(timeMap.entries())
+      .map(([timeKey, data]) => ({
+        timestamp: this.parseTimeKey(timeKey, interval),
+        revenue: data.revenue,
+        transactionCount: data.transactionCount,
+        successRate:
+          data.transactionCount > 0
+            ? (data.successCount / data.transactionCount) * 100
+            : 0,
+      }))
+      .sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+
+    return results;
+  }
+
+  /**
+   * Get top farms by revenue (TEST EXPECTED METHOD)
+   */
+  async getTopFarmsByRevenue(
+    filter: DateRangeFilter,
+    limit: number = 10
+  ): Promise<TopFarmByRevenue[]> {
+    const { startDate, endDate } = filter;
+
+    const payments = await database.payment.findMany({
+      where: {
+        createdAt: {
+          gte: startDate,
+          lte: endDate,
+        },
+        status: "PAID",
+      },
+      include: {
+        order: {
+          include: {
+            farm: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    // Group by farm
+    const farmMap = new Map<string, {
+      farmName: string;
+      totalRevenue: number;
+      transactionCount: number;
+    }>();
+
+    payments.forEach((payment) => {
+      if (!payment.order || !payment.order.farm) return;
+
+      const farmId = payment.order.farm.id;
+      const farmName = payment.order.farm.name;
+      const amount = parseFloat(payment.amount.toString());
+
+      if (farmMap.has(farmId)) {
+        const existing = farmMap.get(farmId)!;
+        existing.totalRevenue += amount;
+        existing.transactionCount += 1;
+      } else {
+        farmMap.set(farmId, {
+          farmName,
+          totalRevenue: amount,
+          transactionCount: 1,
+        });
+      }
+    });
+
+    // Convert to array and rank
+    const results: TopFarmByRevenue[] = Array.from(farmMap.entries())
+      .map(([farmId, data]) => ({
+        rank: 0, // Will be set below
+        farmId,
+        farmName: data.farmName,
+        totalRevenue: data.totalRevenue,
+        transactionCount: data.transactionCount,
+        averageOrderValue: data.totalRevenue / data.transactionCount,
+      }))
+      .sort((a, b) => b.totalRevenue - a.totalRevenue)
+      .slice(0, limit)
+      .map((farm, index) => ({
+        ...farm,
+        rank: index + 1,
+      }));
+
+    return results;
+  }
+
+  /**
+   * Get comprehensive analytics (TEST EXPECTED METHOD)
+   */
+  async getComprehensiveAnalytics(
+    filter: DateRangeFilter,
+    options?: {
+      includeByMethod?: boolean;
+      includeTimeSeries?: boolean;
+      includeTrends?: boolean;
+      includeTopFarms?: boolean;
+    }
+  ): Promise<ComprehensiveAnalyticsResponse> {
+    try {
+      const { startDate, endDate, farmId } = filter;
+
+      // Get base metrics
+      const metrics = await this.calculatePaymentMetrics({
+        startDate,
+        endDate,
+        farmId,
+      });
+
+      const data: ComprehensiveAnalyticsResponse["data"] = {
+        metrics,
+      };
+
+      // Include optional analytics
+      if (options?.includeByMethod) {
+        data.byMethod = await this.getRevenueByPaymentMethod(filter);
+      }
+
+      if (options?.includeTimeSeries) {
+        data.timeSeries = await this.getTimeSeriesData(filter, "day");
+      }
+
+      if (options?.includeTrends) {
+        data.trends = await this.getPaymentTrends(startDate, endDate, "day");
+      }
+
+      if (options?.includeTopFarms) {
+        data.topFarms = await this.getTopFarmsByRevenue(filter, 10);
+      }
+
+      return {
+        success: true,
+        data,
+        agricultural: {
+          consciousness: "DIVINE",
+          season: this.getCurrentSeason(),
+        },
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: {
+          code: "ANALYTICS_ERROR",
+          message: error instanceof Error ? error.message : "Unknown error",
+        },
+        agricultural: {
+          consciousness: "DIVINE",
+          season: this.getCurrentSeason(),
+        },
+      };
+    }
+  }
+
+  /**
+   * Format date by interval
+   */
+  private formatDateByInterval(
+    date: Date,
+    interval: "hour" | "day" | "week" | "month"
+  ): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hour = String(date.getHours()).padStart(2, "0");
+
+    if (interval === "hour") {
+      return `${year}-${month}-${day}T${hour}`;
+    } else if (interval === "day") {
+      return `${year}-${month}-${day}`;
+    } else if (interval === "week") {
+      const weekNumber = this.getWeekNumber(date);
+      return `${year}-W${String(weekNumber).padStart(2, "0")}`;
+    } else {
+      return `${year}-${month}`;
+    }
+  }
+
+  /**
+   * Parse time key back to Date
+   */
+  private parseTimeKey(timeKey: string, interval: "hour" | "day" | "week" | "month"): Date {
+    if (interval === "hour") {
+      // Format: 2024-01-15T10
+      const parts = timeKey.split("T");
+      const datePart = parts[0] || "2024-01-01";
+      const hourPart = parts[1] || "00";
+      return new Date(`${datePart}T${hourPart}:00:00Z`);
+    } else if (interval === "day") {
+      // Format: 2024-01-15
+      return new Date(`${timeKey}T00:00:00Z`);
+    } else if (interval === "week") {
+      // Format: 2024-W03
+      const parts = timeKey.split("-W");
+      const yearStr = parts[0] || "2024";
+      const weekStr = parts[1] || "1";
+      const year = parseInt(yearStr);
+      const week = parseInt(weekStr);
+      const date = new Date(year, 0, 1 + (week - 1) * 7);
+      return date;
+    } else {
+      // Format: 2024-01
+      return new Date(`${timeKey}-01T00:00:00Z`);
+    }
+  }
+
+  /**
+   * Get current season
+   */
+  private getCurrentSeason(): string {
+    const month = new Date().getMonth();
+    if (month >= 2 && month <= 4) return "SPRING";
+    if (month >= 5 && month <= 7) return "SUMMER";
+    if (month >= 8 && month <= 10) return "FALL";
+    return "WINTER";
   }
 }
 
