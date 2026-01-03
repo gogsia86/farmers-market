@@ -7,10 +7,10 @@
  * @module lib/queue/email.queue
  */
 
-import Queue, { Job, JobOptions } from "bull";
-import { EmailOptions, EmailPriority } from "@/lib/services/email.service";
-import { EmailType, EmailStatus } from "@prisma/client";
 import { database } from "@/lib/database";
+import { EmailOptions, EmailPriority } from "@/lib/services/email.service";
+import { EmailStatus, EmailType } from "@prisma/client";
+import Queue, { Job, JobOptions } from "bull";
 
 // ============================================
 // TYPES & INTERFACES
@@ -57,9 +57,10 @@ const redisConfig = {
  * Lower numbers = higher priority
  */
 const PRIORITY_MAP: Record<EmailPriority, number> = {
-  HIGH: 1, // Highest priority (security alerts, password resets, order confirmations)
-  NORMAL: 5, // Normal priority (status updates)
-  LOW: 7, // Low priority (marketing emails)
+  [EmailPriority.HIGH]: 1, // Highest priority (security alerts, password resets, order confirmations)
+  [EmailPriority.NORMAL]: 5, // Normal priority (status updates)
+  [EmailPriority.LOW]: 7, // Low priority (marketing emails)
+  [EmailPriority.URGENT]: 0, // Urgent priority
 };
 
 /**
@@ -123,7 +124,7 @@ export async function enqueueEmail(
     const jobId = `email-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
     // Determine priority
-    const priority = PRIORITY_MAP[emailOptions.priority || "NORMAL"];
+    const priority = PRIORITY_MAP[emailOptions.priority || EmailPriority.NORMAL];
 
     // Add job to queue
     const job = await emailQueue.add(

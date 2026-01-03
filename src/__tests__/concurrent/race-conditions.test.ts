@@ -10,8 +10,8 @@
  */
 
 import { database } from "@/lib/database";
-import { ProductService } from "@/lib/services/product.service";
 import { productRepository } from "@/lib/repositories/product.repository";
+import { QuantumProductCatalogService } from "@/lib/services/product.service";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import type { Logger } from "pino";
 
@@ -48,7 +48,7 @@ const mockRepository = productRepository as jest.Mocked<
 >;
 
 describe("🔄 Concurrent Operations: Inventory Management", () => {
-  let productService: ProductService;
+  let productService: QuantumProductCatalogService;
   let mockLogger: Logger;
 
   beforeEach(() => {
@@ -62,7 +62,7 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
       child: jest.fn().mockReturnThis(),
     } as any;
 
-    productService = new ProductService(mockRepository);
+    productService = new QuantumProductCatalogService();
   });
 
   describe("⚡ Race Condition: Multiple Purchases of Same Product", () => {

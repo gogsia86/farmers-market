@@ -6,7 +6,7 @@ import { BaseService } from "@/lib/services/base.service";
 import type { ServiceResponse } from "@/lib/types/service-response";
 
 export interface ServiceTestConfig<TEntity = any> {
-  ServiceClass: new (...args: any[]) => BaseService<TEntity>;
+  ServiceClass: new (...args: any[]) => BaseService;
   serviceName: string;
   testCache?: boolean;
   testErrorHandling?: boolean;
