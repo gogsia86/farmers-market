@@ -421,8 +421,8 @@ export async function GET(
             data: metricsData,
             meta: {
               timestamp: new Date().toISOString(),
-              period,
-              requestId,
+              period: period,
+              requestId: requestId,
             },
           },
           { status: 200 },
@@ -437,8 +437,8 @@ export async function GET(
 
         logger.error("Error fetching monitoring metrics", error, {
           operation: "getMonitoringMetrics",
-          period,
-          requestId,
+          period: period,
+          requestId: requestId,
         });
 
         return NextResponse.json<MetricsResponse>(

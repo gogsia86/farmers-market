@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     const action = searchParams.get("action");
     const userId = searchParams.get("userId");
 
-    logger.debug("Campaign monitoring status requested", { action, userId });
+    logger.debug("Campaign monitoring status requested", { action, userId: userId ?? undefined });
 
     // Get trigger rules
     if (action === "rules") {

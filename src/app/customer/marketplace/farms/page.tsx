@@ -1,7 +1,7 @@
 import { MarketplaceSearch } from "@/components/marketplace/MarketplaceSearch";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/Card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { database } from "@/lib/database";
 import { farmLogger } from "@/lib/utils/logger";

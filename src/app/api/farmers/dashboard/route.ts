@@ -455,7 +455,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     // Calculate weekly revenue
     const weekRevenue = weekOrders.reduce((total, order) => {
       const orderTotal = order.items.reduce(
-        (sum, item) => sum + Number(item.product.price) * item.quantity,
+        (sum, item) => sum + Number(item.product.price) * Number(item.quantity ?? 0),
         0
       );
       return total + orderTotal;
@@ -510,13 +510,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({
       success: true,
       data: {
-        farm: {
+        farm: primaryFarm ? {
           id: primaryFarm.id,
           name: primaryFarm.name,
           status: primaryFarm.status,
           description: primaryFarm.description,
           location: primaryFarm.location,
-        },
+        } : null,
         farms: farms.map((farm) => ({
           id: farm.id,
           name: farm.name,

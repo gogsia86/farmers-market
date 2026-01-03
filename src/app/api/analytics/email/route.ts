@@ -136,7 +136,6 @@ export async function GET(request: NextRequest) {
 
     logger.info("Email analytics fetched successfully", {
       userId: session.user.id,
-      totalEmails: summary.totalEmails,
     });
 
     return NextResponse.json(

@@ -539,7 +539,7 @@ async function handlePaymentMethodAttached(
     operation: "handlePaymentMethodAttached",
     paymentMethodId: paymentMethod.id,
     type: paymentMethod.type,
-    customerId: paymentMethod.customer,
+    customerId: typeof paymentMethod.customer === 'string' ? paymentMethod.customer : paymentMethod.customer?.id ?? undefined,
   });
 
   // Optional: Store payment method details for future use
