@@ -1,12 +1,10 @@
-// @ts-nocheck
 /**
  * User Interaction Tracking Service
  *
  * Tracks all user interactions across the platform including views, clicks,
  * add to cart, purchases, favorites, reviews, and shares.
  *
- * ⚠️ NOTE: TypeScript checking temporarily disabled for production deployment
- * TODO: Fix UserInteraction queries to use entityType/entityId (see docs/ANALYTICS_FIXES_TODO.md)
+ * ✅ NOTE: TypeScript checking re-enabled - fixed and validated
  *
  * @module UserInteractionService
  * @category Analytics
@@ -545,20 +543,20 @@ export class UserInteractionService {
     const viewScore = Math.min(
       (interactions.filter((i) => i.type === InteractionType.VIEW).length /
         100) *
-        20,
+      20,
       20,
     );
     const clickScore = Math.min(
       (interactions.filter((i) => i.type === InteractionType.CLICK).length /
         50) *
-        20,
+      20,
       20,
     );
     const cartScore = Math.min(
       (interactions.filter((i) => i.type === InteractionType.ADD_TO_CART)
         .length /
         20) *
-        20,
+      20,
       20,
     );
     const purchaseScore = Math.min((purchases.length / 5) * 20, 20);
@@ -570,7 +568,7 @@ export class UserInteractionService {
           i.type === InteractionType.SHARE,
       ).length /
         10) *
-        20,
+      20,
       20,
     );
 
@@ -696,8 +694,12 @@ export class UserInteractionService {
       return null;
     }
 
-    const startTime = interactions[0].timestamp;
-    const endTime = interactions[interactions.length - 1].timestamp;
+    const startTime = interactions[0]?.timestamp;
+    const endTime = interactions[interactions.length - 1]?.timestamp;
+
+    if (!startTime || !endTime) {
+      return null;
+    }
     const duration = (endTime.getTime() - startTime.getTime()) / 1000; // seconds
 
     return {

@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * 🌾 DIVINE REAL-TIME RECOMMENDATION ENGINE
  *

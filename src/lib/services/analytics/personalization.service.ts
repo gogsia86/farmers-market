@@ -17,9 +17,7 @@ import { database } from "@/lib/database";
 import type {
   PersonalizationScore,
   Season,
-  UserPreference,
-  Product,
-  Farm,
+  UserPreference
 } from "@prisma/client";
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -77,7 +75,7 @@ interface LearningData {
 export class PersonalizationService {
   private static instance: PersonalizationService;
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): PersonalizationService {
     if (!PersonalizationService.instance) {
@@ -226,10 +224,13 @@ export class PersonalizationService {
         score += 20;
       }
 
-      // Local preference match
-      if (preferences.preferLocal && product.farm.isLocal) {
-        score += 15;
-      }
+      // Local preference match (calculated based on farm location if available)
+      // Note: isLocal field doesn't exist - could be calculated from coordinates in future
+      // For now, skip this scoring factor
+      // if (preferences.preferLocal && product.farm) {
+      //   // TODO: Calculate distance from user location to farm
+      //   score += 15;
+      // }
 
       // Dietary restrictions match (if applicable)
       if (preferences.dietaryRestrictions) {
@@ -574,10 +575,10 @@ export class PersonalizationService {
     const pricePreferences =
       prices.length > 0
         ? {
-            min: Math.min(...prices),
-            max: Math.max(...prices),
-            average: prices.reduce((a, b) => a + b, 0) / prices.length,
-          }
+          min: Math.min(...prices),
+          max: Math.max(...prices),
+          average: prices.reduce((a, b) => a + b, 0) / prices.length,
+        }
         : { min: 0, max: 0, average: 0 };
 
     // Calculate time preferences
@@ -861,9 +862,9 @@ export class PersonalizationService {
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(this.toRad(lat1)) *
-        Math.cos(this.toRad(lat2)) *
-        Math.sin(dLng / 2) *
-        Math.sin(dLng / 2);
+      Math.cos(this.toRad(lat2)) *
+      Math.sin(dLng / 2) *
+      Math.sin(dLng / 2);
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
