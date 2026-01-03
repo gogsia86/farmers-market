@@ -14,7 +14,7 @@ import { z } from "zod";
  * Update order validation schema
  */
 const UpdateOrderSchema = z.object({
-  status: z.enum(["PENDING", "CONFIRMED", "PREPARING", "READY_FOR_PICKUP", "IN_TRANSIT", "DELIVERED", "COMPLETED", "CANCELLED"]).optional(),
+  status: z.enum(["PENDING", "CONFIRMED", "PREPARING", "READY", "FULFILLED", "COMPLETED", "CANCELLED"]).optional(),
   trackingNumber: z.string().optional(),
   deliveryNotes: z.string().optional(),
 });
