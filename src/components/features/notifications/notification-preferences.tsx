@@ -1,7 +1,7 @@
 /**
- * Notification Preferences Component
- * Allows users to configure their notification preferences across all channels
- * Supports Email, SMS, Push, and In-App notification preferences
+ * 🔔 Notification Preferences Component - Divine User Preferences System
+ * Allows users to configure notification preferences across all channels
+ * Following: 04_NEXTJS_DIVINE_IMPLEMENTATION & 11_KILO_SCALE_ARCHITECTURE
  */
 
 "use client";
@@ -13,36 +13,33 @@ import { useEffect, useState } from "react";
 // Types
 // ============================================================================
 
-type NotificationChannel = "EMAIL" | "SMS" | "PUSH" | "IN_APP";
-
-type NotificationCategory =
-  | "ORDERS"
-  | "PAYMENTS"
-  | "FARM_UPDATES"
-  | "PRODUCT_ALERTS"
-  | "MESSAGES"
-  | "MARKETING"
-  | "SYSTEM";
-
-interface ChannelPreference {
-  channel: NotificationChannel;
-  enabled: boolean;
+interface NotificationPreferences {
+  id: string;
+  userId: string;
+  emailOrders: boolean;
+  emailReviews: boolean;
+  emailPromotions: boolean;
+  emailNewsletter: boolean;
+  inAppOrders: boolean;
+  inAppReviews: boolean;
+  inAppMessages: boolean;
+  pushOrders: boolean;
+  pushReviews: boolean;
+  pushPromotions: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
-interface CategoryPreferences {
-  category: NotificationCategory;
-  label: string;
-  description: string;
-  channels: ChannelPreference[];
-}
-
-interface NotificationPreferencesData {
-  categories: CategoryPreferences[];
-  globalMute: boolean;
+interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: {
+    code: string;
+    message: string;
+  };
 }
 
 interface NotificationPreferencesProps {
-  userId: string;
   className?: string;
   onSave?: () => void;
 }
@@ -52,117 +49,29 @@ interface NotificationPreferencesProps {
 // ============================================================================
 
 export function NotificationPreferences({
-  userId,
   className = "",
   onSave,
 }: NotificationPreferencesProps) {
-  const [preferences, setPreferences] = useState<NotificationPreferencesData | null>(null);
+  const [preferences, setPreferences] = useState<NotificationPreferences | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  // Default preferences structure
-  const defaultPreferences: NotificationPreferencesData = {
-    globalMute: false,
-    categories: [
-      {
-        category: "ORDERS",
-        label: "Orders & Fulfillment",
-        description: "Order confirmations, status updates, and delivery notifications",
-        channels: [
-          { channel: "EMAIL", enabled: true },
-          { channel: "SMS", enabled: true },
-          { channel: "PUSH", enabled: true },
-          { channel: "IN_APP", enabled: true },
-        ],
-      },
-      {
-        category: "PAYMENTS",
-        label: "Payments & Billing",
-        description: "Payment receipts, refunds, and billing updates",
-        channels: [
-          { channel: "EMAIL", enabled: true },
-          { channel: "SMS", enabled: true },
-          { channel: "PUSH", enabled: true },
-          { channel: "IN_APP", enabled: true },
-        ],
-      },
-      {
-        category: "FARM_UPDATES",
-        label: "Farm Updates",
-        description: "New farms, farm approvals, and farm status changes",
-        channels: [
-          { channel: "EMAIL", enabled: true },
-          { channel: "SMS", enabled: false },
-          { channel: "PUSH", enabled: true },
-          { channel: "IN_APP", enabled: true },
-        ],
-      },
-      {
-        category: "PRODUCT_ALERTS",
-        label: "Product Alerts",
-        description: "Low stock alerts, new products, and price changes",
-        channels: [
-          { channel: "EMAIL", enabled: true },
-          { channel: "SMS", enabled: false },
-          { channel: "PUSH", enabled: true },
-          { channel: "IN_APP", enabled: true },
-        ],
-      },
-      {
-        category: "MESSAGES",
-        label: "Messages & Reviews",
-        description: "New messages, reviews, and community interactions",
-        channels: [
-          { channel: "EMAIL", enabled: true },
-          { channel: "SMS", enabled: false },
-          { channel: "PUSH", enabled: true },
-          { channel: "IN_APP", enabled: true },
-        ],
-      },
-      {
-        category: "MARKETING",
-        label: "Marketing & Promotions",
-        description: "Newsletters, special offers, and seasonal updates",
-        channels: [
-          { channel: "EMAIL", enabled: true },
-          { channel: "SMS", enabled: false },
-          { channel: "PUSH", enabled: false },
-          { channel: "IN_APP", enabled: true },
-        ],
-      },
-      {
-        category: "SYSTEM",
-        label: "System Notifications",
-        description: "Account security, maintenance, and important updates",
-        channels: [
-          { channel: "EMAIL", enabled: true },
-          { channel: "SMS", enabled: false },
-          { channel: "PUSH", enabled: true },
-          { channel: "IN_APP", enabled: true },
-        ],
-      },
-    ],
-  };
-
   // Fetch current preferences
   const fetchPreferences = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/notifications/preferences?userId=${userId}`);
-      const data = await response.json();
+      const response = await fetch("/api/notifications/preferences");
+      const data: ApiResponse<NotificationPreferences> = await response.json();
 
       if (data.success && data.data) {
         setPreferences(data.data);
       } else {
-        // Use default preferences if none exist
-        setPreferences(defaultPreferences);
+        setError(data.error?.message || "Failed to load preferences");
       }
-      setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load preferences");
-      setPreferences(defaultPreferences);
     } finally {
       setLoading(false);
     }
@@ -170,61 +79,16 @@ export function NotificationPreferences({
 
   useEffect(() => {
     fetchPreferences();
-  }, [userId]);
+  }, []);
 
-  // Toggle channel for a category
-  const toggleChannel = (categoryIndex: number, channelIndex: number) => {
-    if (!preferences) return;
-
-    const newPreferences = { ...preferences };
-    const category = newPreferences.categories[categoryIndex];
-    if (!category) return;
-
-    const channel = category.channels[channelIndex];
-    if (!channel) return;
-
-    channel.enabled = !channel.enabled;
-
-    setPreferences(newPreferences);
-    setSuccessMessage(null);
-  };
-
-  // Toggle global mute
-  const toggleGlobalMute = () => {
+  // Update preference
+  const updatePreference = (key: keyof NotificationPreferences, value: boolean) => {
     if (!preferences) return;
 
     setPreferences({
       ...preferences,
-      globalMute: !preferences.globalMute,
+      [key]: value,
     });
-    setSuccessMessage(null);
-  };
-
-  // Enable all channels for a category
-  const enableAllChannels = (categoryIndex: number) => {
-    if (!preferences) return;
-
-    const newPreferences = { ...preferences };
-    const category = newPreferences.categories[categoryIndex];
-    if (!category) return;
-
-    category.channels = category.channels.map((ch) => ({ ...ch, enabled: true }));
-
-    setPreferences(newPreferences);
-    setSuccessMessage(null);
-  };
-
-  // Disable all channels for a category
-  const disableAllChannels = (categoryIndex: number) => {
-    if (!preferences) return;
-
-    const newPreferences = { ...preferences };
-    const category = newPreferences.categories[categoryIndex];
-    if (!category) return;
-
-    category.channels = category.channels.map((ch) => ({ ...ch, enabled: false }));
-
-    setPreferences(newPreferences);
     setSuccessMessage(null);
   };
 
@@ -237,22 +101,30 @@ export function NotificationPreferences({
       setError(null);
 
       const response = await fetch("/api/notifications/preferences", {
-        method: "POST",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId,
-          preferences,
+          emailOrders: preferences.emailOrders,
+          emailReviews: preferences.emailReviews,
+          emailPromotions: preferences.emailPromotions,
+          emailNewsletter: preferences.emailNewsletter,
+          inAppOrders: preferences.inAppOrders,
+          inAppReviews: preferences.inAppReviews,
+          inAppMessages: preferences.inAppMessages,
+          pushOrders: preferences.pushOrders,
+          pushReviews: preferences.pushReviews,
+          pushPromotions: preferences.pushPromotions,
         }),
       });
 
-      const data = await response.json();
+      const data: ApiResponse<NotificationPreferences> = await response.json();
 
       if (data.success) {
-        setSuccessMessage("Preferences saved successfully!");
+        setSuccessMessage("✅ Preferences saved successfully!");
         setTimeout(() => setSuccessMessage(null), 3000);
         onSave?.();
       } else {
-        setError(data.error || "Failed to save preferences");
+        setError(data.error?.message || "Failed to save preferences");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save preferences");
@@ -261,15 +133,44 @@ export function NotificationPreferences({
     }
   };
 
-  // Get channel icon
-  const getChannelIcon = (channel: NotificationChannel): string => {
-    const icons: Record<NotificationChannel, string> = {
-      EMAIL: "📧",
-      SMS: "📱",
-      PUSH: "🔔",
-      IN_APP: "💬",
-    };
-    return icons[channel];
+  // Enable all notifications
+  const enableAll = () => {
+    if (!preferences) return;
+
+    setPreferences({
+      ...preferences,
+      emailOrders: true,
+      emailReviews: true,
+      emailPromotions: true,
+      emailNewsletter: true,
+      inAppOrders: true,
+      inAppReviews: true,
+      inAppMessages: true,
+      pushOrders: true,
+      pushReviews: true,
+      pushPromotions: true,
+    });
+    setSuccessMessage(null);
+  };
+
+  // Disable optional notifications (keep essential ones)
+  const disableOptional = () => {
+    if (!preferences) return;
+
+    setPreferences({
+      ...preferences,
+      emailOrders: true, // Keep essential
+      emailReviews: false,
+      emailPromotions: false,
+      emailNewsletter: false,
+      inAppOrders: true, // Keep essential
+      inAppReviews: false,
+      inAppMessages: true, // Keep essential
+      pushOrders: true, // Keep essential
+      pushReviews: false,
+      pushPromotions: false,
+    });
+    setSuccessMessage(null);
   };
 
   if (loading) {
@@ -302,7 +203,7 @@ export function NotificationPreferences({
         {/* Success Message */}
         {successMessage && (
           <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-            <p className="text-green-700 font-medium">✅ {successMessage}</p>
+            <p className="text-green-700 font-medium">{successMessage}</p>
           </div>
         )}
 
@@ -313,85 +214,197 @@ export function NotificationPreferences({
           </div>
         )}
 
-        {/* Global Mute */}
-        <div className="p-4 border-2 border-red-200 rounded-lg bg-red-50">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-semibold text-gray-900">🔕 Mute All Notifications</p>
-              <p className="text-sm text-gray-600 mt-1">
-                Temporarily disable all notifications (except critical system alerts)
-              </p>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
+        {/* Quick Actions */}
+        <div className="flex gap-2">
+          <button
+            onClick={enableAll}
+            className="px-4 py-2 text-sm bg-green-50 text-green-700 border border-green-200 rounded-lg hover:bg-green-100 transition"
+          >
+            ✅ Enable All
+          </button>
+          <button
+            onClick={disableOptional}
+            className="px-4 py-2 text-sm bg-gray-50 text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-100 transition"
+          >
+            📌 Essential Only
+          </button>
+        </div>
+
+        {/* Email Notifications */}
+        <div className="space-y-3">
+          <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            📧 Email Notifications
+          </h3>
+
+          <div className="space-y-2 pl-4">
+            <label className="flex items-center justify-between p-3 rounded-lg border-2 border-gray-200 hover:border-blue-300 cursor-pointer transition">
+              <div>
+                <p className="font-medium text-gray-900">Order Updates</p>
+                <p className="text-sm text-gray-600">
+                  Confirmations, shipping, and delivery notifications
+                </p>
+              </div>
               <input
                 type="checkbox"
-                checked={preferences.globalMute}
-                onChange={toggleGlobalMute}
-                className="sr-only peer"
+                checked={preferences.emailOrders}
+                onChange={(e) => updatePreference("emailOrders", e.target.checked)}
+                className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+            </label>
+
+            <label className="flex items-center justify-between p-3 rounded-lg border-2 border-gray-200 hover:border-blue-300 cursor-pointer transition">
+              <div>
+                <p className="font-medium text-gray-900">Reviews & Ratings</p>
+                <p className="text-sm text-gray-600">
+                  New reviews on your products or farms
+                </p>
+              </div>
+              <input
+                type="checkbox"
+                checked={preferences.emailReviews}
+                onChange={(e) => updatePreference("emailReviews", e.target.checked)}
+                className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+              />
+            </label>
+
+            <label className="flex items-center justify-between p-3 rounded-lg border-2 border-gray-200 hover:border-blue-300 cursor-pointer transition">
+              <div>
+                <p className="font-medium text-gray-900">Promotions & Offers</p>
+                <p className="text-sm text-gray-600">
+                  Special deals, discounts, and seasonal offers
+                </p>
+              </div>
+              <input
+                type="checkbox"
+                checked={preferences.emailPromotions}
+                onChange={(e) => updatePreference("emailPromotions", e.target.checked)}
+                className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+              />
+            </label>
+
+            <label className="flex items-center justify-between p-3 rounded-lg border-2 border-gray-200 hover:border-blue-300 cursor-pointer transition">
+              <div>
+                <p className="font-medium text-gray-900">Newsletter</p>
+                <p className="text-sm text-gray-600">
+                  Weekly digest, farming tips, and community updates
+                </p>
+              </div>
+              <input
+                type="checkbox"
+                checked={preferences.emailNewsletter}
+                onChange={(e) => updatePreference("emailNewsletter", e.target.checked)}
+                className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+              />
             </label>
           </div>
         </div>
 
-        {/* Category Preferences */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900">Notification Categories</h3>
+        {/* In-App Notifications */}
+        <div className="space-y-3">
+          <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            💬 In-App Notifications
+          </h3>
 
-          {preferences.categories.map((category, categoryIndex) => (
-            <div
-              key={category.category}
-              className="p-4 border border-gray-200 rounded-lg bg-white"
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex-1">
-                  <h4 className="font-semibold text-gray-900">{category.label}</h4>
-                  <p className="text-sm text-gray-600 mt-1">{category.description}</p>
-                </div>
-                <div className="flex gap-2 ml-4">
-                  <button
-                    onClick={() => enableAllChannels(categoryIndex)}
-                    className="text-xs text-blue-600 hover:text-blue-800"
-                  >
-                    Enable All
-                  </button>
-                  <span className="text-xs text-gray-400">|</span>
-                  <button
-                    onClick={() => disableAllChannels(categoryIndex)}
-                    className="text-xs text-gray-600 hover:text-gray-800"
-                  >
-                    Disable All
-                  </button>
-                </div>
+          <div className="space-y-2 pl-4">
+            <label className="flex items-center justify-between p-3 rounded-lg border-2 border-gray-200 hover:border-blue-300 cursor-pointer transition">
+              <div>
+                <p className="font-medium text-gray-900">Order Updates</p>
+                <p className="text-sm text-gray-600">
+                  Real-time order status updates in the app
+                </p>
               </div>
+              <input
+                type="checkbox"
+                checked={preferences.inAppOrders}
+                onChange={(e) => updatePreference("inAppOrders", e.target.checked)}
+                className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+              />
+            </label>
 
-              {/* Channel Toggles */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {category.channels.map((channel, channelIndex) => (
-                  <label
-                    key={channel.channel}
-                    className={`flex items-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition ${channel.enabled
-                      ? "border-green-500 bg-green-50"
-                      : "border-gray-200 bg-gray-50 hover:border-gray-300"
-                      }`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={channel.enabled}
-                      onChange={() => toggleChannel(categoryIndex, channelIndex)}
-                      className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500"
-                    />
-                    <div className="flex items-center gap-1">
-                      <span>{getChannelIcon(channel.channel)}</span>
-                      <span className="text-sm font-medium text-gray-700">
-                        {channel.channel}
-                      </span>
-                    </div>
-                  </label>
-                ))}
+            <label className="flex items-center justify-between p-3 rounded-lg border-2 border-gray-200 hover:border-blue-300 cursor-pointer transition">
+              <div>
+                <p className="font-medium text-gray-900">Reviews & Ratings</p>
+                <p className="text-sm text-gray-600">
+                  New reviews and ratings notifications
+                </p>
               </div>
-            </div>
-          ))}
+              <input
+                type="checkbox"
+                checked={preferences.inAppReviews}
+                onChange={(e) => updatePreference("inAppReviews", e.target.checked)}
+                className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+              />
+            </label>
+
+            <label className="flex items-center justify-between p-3 rounded-lg border-2 border-gray-200 hover:border-blue-300 cursor-pointer transition">
+              <div>
+                <p className="font-medium text-gray-900">Messages</p>
+                <p className="text-sm text-gray-600">
+                  Direct messages from farmers and customers
+                </p>
+              </div>
+              <input
+                type="checkbox"
+                checked={preferences.inAppMessages}
+                onChange={(e) => updatePreference("inAppMessages", e.target.checked)}
+                className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+              />
+            </label>
+          </div>
+        </div>
+
+        {/* Push Notifications */}
+        <div className="space-y-3">
+          <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            🔔 Push Notifications
+          </h3>
+
+          <div className="space-y-2 pl-4">
+            <label className="flex items-center justify-between p-3 rounded-lg border-2 border-gray-200 hover:border-blue-300 cursor-pointer transition">
+              <div>
+                <p className="font-medium text-gray-900">Order Updates</p>
+                <p className="text-sm text-gray-600">
+                  Mobile push notifications for order status
+                </p>
+              </div>
+              <input
+                type="checkbox"
+                checked={preferences.pushOrders}
+                onChange={(e) => updatePreference("pushOrders", e.target.checked)}
+                className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+              />
+            </label>
+
+            <label className="flex items-center justify-between p-3 rounded-lg border-2 border-gray-200 hover:border-blue-300 cursor-pointer transition">
+              <div>
+                <p className="font-medium text-gray-900">Reviews & Ratings</p>
+                <p className="text-sm text-gray-600">
+                  Push alerts for new reviews
+                </p>
+              </div>
+              <input
+                type="checkbox"
+                checked={preferences.pushReviews}
+                onChange={(e) => updatePreference("pushReviews", e.target.checked)}
+                className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+              />
+            </label>
+
+            <label className="flex items-center justify-between p-3 rounded-lg border-2 border-gray-200 hover:border-blue-300 cursor-pointer transition">
+              <div>
+                <p className="font-medium text-gray-900">Promotions & Offers</p>
+                <p className="text-sm text-gray-600">
+                  Push alerts for special deals and offers
+                </p>
+              </div>
+              <input
+                type="checkbox"
+                checked={preferences.pushPromotions}
+                onChange={(e) => updatePreference("pushPromotions", e.target.checked)}
+                className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+              />
+            </label>
+          </div>
         </div>
 
         {/* Save Button */}
@@ -416,10 +429,16 @@ export function NotificationPreferences({
         <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
           <p className="text-sm text-blue-800">
             <strong>💡 Tip:</strong> You'll always receive critical notifications (like
-            payment failures and security alerts) via email, regardless of your
-            preferences.
+            payment confirmations and security alerts) regardless of your preferences.
           </p>
         </div>
+
+        {/* Last Updated */}
+        {preferences.updatedAt && (
+          <p className="text-xs text-gray-500 text-center">
+            Last updated: {new Date(preferences.updatedAt).toLocaleString()}
+          </p>
+        )}
       </CardContent>
     </Card>
   );

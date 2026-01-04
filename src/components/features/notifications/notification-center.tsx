@@ -1,7 +1,7 @@
 /**
- * Notification Center Component
- * Real-time notification display for users with filtering and actions
- * Shows in-app notifications with read/unread status
+ * 🔔 Notification Center Component - Divine User Notification System
+ * Real-time notification display with proper API integration
+ * Following: 04_NEXTJS_DIVINE_IMPLEMENTATION & 11_KILO_SCALE_ARCHITECTURE
  */
 
 "use client";
@@ -14,55 +14,92 @@ import { useEffect, useState } from "react";
 // ============================================================================
 
 type NotificationType =
+  | "ORDER_PLACED"
   | "ORDER_CONFIRMED"
   | "ORDER_READY"
+  | "ORDER_FULFILLED"
   | "ORDER_CANCELLED"
   | "PAYMENT_RECEIVED"
-  | "PAYMENT_FAILED"
-  | "FARM_APPROVED"
-  | "FARM_REJECTED"
-  | "PRODUCT_LOW_STOCK"
-  | "NEW_REVIEW"
+  | "PAYOUT_PROCESSED"
   | "NEW_MESSAGE"
-  | "SYSTEM_ALERT";
+  | "REVIEW_RECEIVED"
+  | "QUALITY_ISSUE"
+  | "LOW_STOCK"
+  | "SYSTEM_ANNOUNCEMENT";
 
 interface Notification {
   id: string;
   type: NotificationType;
   title: string;
   body: string;
-  read: boolean;
+  isRead: boolean;
+  readAt: string | null;
   createdAt: string;
   data?: Record<string, any>;
 }
 
 interface NotificationCenterProps {
-  userId: string;
   className?: string;
+  autoRefresh?: boolean;
+  refreshInterval?: number;
+}
+
+interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: {
+    code: string;
+    message: string;
+  };
+}
+
+interface NotificationsData {
+  notifications: Notification[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+  unreadCount: number;
 }
 
 // ============================================================================
 // Component
 // ============================================================================
 
-export function NotificationCenter({ userId, className = "" }: NotificationCenterProps) {
+export function NotificationCenter({
+  className = "",
+  autoRefresh = true,
+  refreshInterval = 30000,
+}: NotificationCenterProps) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "unread">("all");
   const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   // Fetch notifications
-  const fetchNotifications = async () => {
+  const fetchNotifications = async (options?: { unreadOnly?: boolean; page?: number }) => {
     try {
-      setLoading(true);
-      const response = await fetch(`/api/notifications?userId=${userId}`);
-      const data = await response.json();
+      const params = new URLSearchParams({
+        page: String(options?.page || page),
+        limit: "20",
+        ...(options?.unreadOnly && { unreadOnly: "true" }),
+      });
 
-      if (data.success) {
-        setNotifications(data.data.notifications || []);
+      const response = await fetch(`/api/notifications?${params}`);
+      const data: ApiResponse<NotificationsData> = await response.json();
+
+      if (data.success && data.data) {
+        setNotifications(data.data.notifications);
+        setUnreadCount(data.data.unreadCount);
+        setTotalPages(data.data.pagination.totalPages);
         setError(null);
       } else {
-        setError(data.error || "Failed to load notifications");
+        setError(data.error?.message || "Failed to load notifications");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error");
@@ -72,26 +109,40 @@ export function NotificationCenter({ userId, className = "" }: NotificationCente
   };
 
   useEffect(() => {
-    fetchNotifications();
+    fetchNotifications({ unreadOnly: filter === "unread" });
 
-    // Poll for new notifications every 30 seconds
-    const interval = setInterval(fetchNotifications, 30000);
+    if (!autoRefresh) return;
+
+    // Poll for new notifications
+    const interval = setInterval(() => {
+      fetchNotifications({ unreadOnly: filter === "unread" });
+    }, refreshInterval);
+
     return () => clearInterval(interval);
-  }, [userId]);
+  }, [filter, page, autoRefresh, refreshInterval]);
 
   // Mark notification as read
   const markAsRead = async (notificationId: string) => {
     try {
-      const response = await fetch(`/api/notifications/${notificationId}/read`, {
-        method: "POST",
+      const response = await fetch(`/api/notifications/${notificationId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ isRead: true }),
       });
 
-      if (response.ok) {
+      const data: ApiResponse<{ id: string; isRead: boolean }> = await response.json();
+
+      if (data.success) {
         setNotifications((prev) =>
           prev.map((notif) =>
-            notif.id === notificationId ? { ...notif, read: true } : notif
+            notif.id === notificationId
+              ? { ...notif, isRead: true, readAt: new Date().toISOString() }
+              : notif
           )
         );
+        setUnreadCount((prev) => Math.max(0, prev - 1));
       }
     } catch (err) {
       console.error("Failed to mark notification as read:", err);
@@ -101,65 +152,97 @@ export function NotificationCenter({ userId, className = "" }: NotificationCente
   // Mark all as read
   const markAllAsRead = async () => {
     try {
-      const unreadIds = notifications.filter((n) => !n.read).map((n) => n.id);
+      const unreadIds = notifications.filter((n) => !n.isRead).map((n) => n.id);
 
+      if (unreadIds.length === 0) return;
+
+      // Mark all through individual PATCH requests
       await Promise.all(
         unreadIds.map((id) =>
-          fetch(`/api/notifications/${id}/read`, { method: "POST" })
+          fetch(`/api/notifications/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ isRead: true }),
+          })
         )
       );
 
       setNotifications((prev) =>
-        prev.map((notif) => ({ ...notif, read: true }))
+        prev.map((notif) => ({
+          ...notif,
+          isRead: true,
+          readAt: notif.readAt || new Date().toISOString(),
+        }))
       );
+      setUnreadCount(0);
     } catch (err) {
       console.error("Failed to mark all as read:", err);
+    }
+  };
+
+  // Clear read notifications
+  const clearReadNotifications = async () => {
+    try {
+      const response = await fetch("/api/notifications", {
+        method: "DELETE",
+      });
+
+      const data: ApiResponse<{ cleared: number }> = await response.json();
+
+      if (data.success) {
+        setNotifications((prev) => prev.filter((n) => !n.isRead));
+        // Refresh to get accurate counts
+        await fetchNotifications({ unreadOnly: filter === "unread" });
+      }
+    } catch (err) {
+      console.error("Failed to clear notifications:", err);
     }
   };
 
   // Get notification icon
   const getNotificationIcon = (type: NotificationType): string => {
     const icons: Record<NotificationType, string> = {
+      ORDER_PLACED: "🛒",
       ORDER_CONFIRMED: "✅",
       ORDER_READY: "📦",
+      ORDER_FULFILLED: "🚚",
       ORDER_CANCELLED: "❌",
       PAYMENT_RECEIVED: "💰",
-      PAYMENT_FAILED: "⚠️",
-      FARM_APPROVED: "🎉",
-      FARM_REJECTED: "😞",
-      PRODUCT_LOW_STOCK: "📉",
-      NEW_REVIEW: "⭐",
+      PAYOUT_PROCESSED: "💸",
       NEW_MESSAGE: "💬",
-      SYSTEM_ALERT: "🔔",
+      REVIEW_RECEIVED: "⭐",
+      QUALITY_ISSUE: "⚠️",
+      LOW_STOCK: "📉",
+      SYSTEM_ANNOUNCEMENT: "📢",
     };
-    return icons[type] || "📢";
+    return icons[type] || "🔔";
   };
 
   // Get notification color
   const getNotificationColor = (type: NotificationType): string => {
-    const colors: Record<NotificationType, string> = {
+    const colorMap: Record<NotificationType, string> = {
+      ORDER_PLACED: "blue",
       ORDER_CONFIRMED: "green",
       ORDER_READY: "blue",
+      ORDER_FULFILLED: "green",
       ORDER_CANCELLED: "red",
       PAYMENT_RECEIVED: "green",
-      PAYMENT_FAILED: "red",
-      FARM_APPROVED: "green",
-      FARM_REJECTED: "red",
-      PRODUCT_LOW_STOCK: "yellow",
-      NEW_REVIEW: "purple",
+      PAYOUT_PROCESSED: "green",
       NEW_MESSAGE: "blue",
-      SYSTEM_ALERT: "gray",
+      REVIEW_RECEIVED: "purple",
+      QUALITY_ISSUE: "yellow",
+      LOW_STOCK: "orange",
+      SYSTEM_ANNOUNCEMENT: "gray",
     };
-    return colors[type] || "gray";
+    return colorMap[type] || "gray";
   };
 
   // Filter notifications
   const filteredNotifications = notifications.filter((notif) =>
-    filter === "all" ? true : !notif.read
+    filter === "all" ? true : !notif.isRead
   );
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
-
+  // Loading state
   if (loading && notifications.length === 0) {
     return (
       <Card className={className}>
@@ -175,6 +258,7 @@ export function NotificationCenter({ userId, className = "" }: NotificationCente
     );
   }
 
+  // Error state
   if (error) {
     return (
       <Card className={className}>
@@ -183,10 +267,10 @@ export function NotificationCenter({ userId, className = "" }: NotificationCente
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
-            <p className="text-red-600">{error}</p>
+            <p className="text-red-600 mb-4">{error}</p>
             <button
-              onClick={fetchNotifications}
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              onClick={() => fetchNotifications()}
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
             >
               Retry
             </button>
@@ -215,14 +299,25 @@ export function NotificationCenter({ userId, className = "" }: NotificationCente
             {unreadCount > 0 && (
               <button
                 onClick={markAllAsRead}
-                className="text-sm text-blue-600 hover:text-blue-800"
+                className="text-sm text-blue-600 hover:text-blue-800 transition"
+                title="Mark all as read"
               >
                 Mark all read
               </button>
             )}
+            {notifications.some((n) => n.isRead) && (
+              <button
+                onClick={clearReadNotifications}
+                className="text-sm text-gray-600 hover:text-gray-800 transition"
+                title="Clear read notifications"
+              >
+                Clear read
+              </button>
+            )}
             <button
-              onClick={fetchNotifications}
-              className="text-sm text-gray-600 hover:text-gray-800"
+              onClick={() => fetchNotifications()}
+              className="text-sm text-gray-600 hover:text-gray-800 transition"
+              title="Refresh"
             >
               🔄
             </button>
@@ -234,7 +329,10 @@ export function NotificationCenter({ userId, className = "" }: NotificationCente
         {/* Filter Tabs */}
         <div className="flex gap-2 mb-4 border-b border-gray-200">
           <button
-            onClick={() => setFilter("all")}
+            onClick={() => {
+              setFilter("all");
+              setPage(1);
+            }}
             className={`px-4 py-2 text-sm font-medium transition ${filter === "all"
                 ? "border-b-2 border-blue-600 text-blue-600"
                 : "text-gray-600 hover:text-gray-900"
@@ -243,7 +341,10 @@ export function NotificationCenter({ userId, className = "" }: NotificationCente
             All ({notifications.length})
           </button>
           <button
-            onClick={() => setFilter("unread")}
+            onClick={() => {
+              setFilter("unread");
+              setPage(1);
+            }}
             className={`px-4 py-2 text-sm font-medium transition ${filter === "unread"
                 ? "border-b-2 border-blue-600 text-blue-600"
                 : "text-gray-600 hover:text-gray-900"
@@ -271,8 +372,8 @@ export function NotificationCenter({ userId, className = "" }: NotificationCente
               return (
                 <div
                   key={notification.id}
-                  onClick={() => !notification.read && markAsRead(notification.id)}
-                  className={`p-4 rounded-lg border-l-4 transition cursor-pointer ${notification.read
+                  onClick={() => !notification.isRead && markAsRead(notification.id)}
+                  className={`p-4 rounded-lg border-l-4 transition cursor-pointer ${notification.isRead
                       ? "bg-gray-50 border-gray-300"
                       : `bg-${color}-50 border-${color}-500 hover:bg-${color}-100`
                     }`}
@@ -282,17 +383,17 @@ export function NotificationCenter({ userId, className = "" }: NotificationCente
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
                         <p
-                          className={`font-semibold ${notification.read ? "text-gray-700" : "text-gray-900"
+                          className={`font-semibold ${notification.isRead ? "text-gray-700" : "text-gray-900"
                             }`}
                         >
                           {notification.title}
                         </p>
-                        {!notification.read && (
+                        {!notification.isRead && (
                           <span className="flex-shrink-0 w-2 h-2 bg-blue-600 rounded-full mt-1.5"></span>
                         )}
                       </div>
                       <p
-                        className={`text-sm mt-1 ${notification.read ? "text-gray-600" : "text-gray-700"
+                        className={`text-sm mt-1 ${notification.isRead ? "text-gray-600" : "text-gray-700"
                           }`}
                       >
                         {notification.body}
@@ -306,6 +407,7 @@ export function NotificationCenter({ userId, className = "" }: NotificationCente
                         <a
                           href={notification.data.actionUrl}
                           className={`inline-block mt-3 text-sm font-medium text-${color}-700 hover:text-${color}-900`}
+                          onClick={(e) => e.stopPropagation()}
                         >
                           View Details →
                         </a>
@@ -315,6 +417,29 @@ export function NotificationCenter({ userId, className = "" }: NotificationCente
                 </div>
               );
             })}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
+            <button
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              ← Previous
+            </button>
+            <span className="text-sm text-gray-600">
+              Page {page} of {totalPages}
+            </span>
+            <button
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+              className="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Next →
+            </button>
           </div>
         )}
       </CardContent>
