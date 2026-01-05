@@ -20,6 +20,8 @@
 
 import type { ToastNotification } from "@/lib/notifications/types";
 import { AnimatePresence } from "framer-motion";
+import React from "react";
+import type { CSSProperties } from "react";
 import {
   defaultToastVariants,
   getAccessibleToastVariants,
@@ -79,8 +81,8 @@ type ToastPosition =
 function getPositionStyles(
   position: ToastPosition,
   offset: string
-): React.CSSProperties {
-  const styles: React.CSSProperties = {
+): CSSProperties {
+  const styles: CSSProperties = {
     position: "fixed",
     display: "flex",
     flexDirection: "column",

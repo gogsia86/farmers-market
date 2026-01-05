@@ -82,6 +82,102 @@ global.fetch = jest.fn(() =>
   }),
 );
 
+// ============================================
+// BROWSER API MOCKS - DOM COMPATIBILITY
+// ============================================
+
+// Mock window.matchMedia for accessibility hooks (useReducedMotion)
+// Need to mock on both window and global for different test scenarios
+const matchMediaMock = jest.fn().mockImplementation(query => {
+  const listeners = [];
+  return {
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(cb => {
+      if (cb) listeners.push(cb);
+    }), // Deprecated - Safari < 14
+    removeListener: jest.fn(cb => {
+      const index = listeners.indexOf(cb);
+      if (index > -1) listeners.splice(index, 1);
+    }), // Deprecated - Safari < 14
+    addEventListener: jest.fn((event, cb) => {
+      if (event === 'change' && cb) listeners.push(cb);
+    }),
+    removeEventListener: jest.fn((event, cb) => {
+      if (event === 'change') {
+        const index = listeners.indexOf(cb);
+        if (index > -1) listeners.splice(index, 1);
+      }
+    }),
+    dispatchEvent: jest.fn(event => {
+      listeners.forEach(cb => cb(event));
+      return true;
+    }),
+  };
+});
+
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: matchMediaMock,
+});
+
+Object.defineProperty(global, 'matchMedia', {
+  writable: true,
+  value: matchMediaMock,
+});
+
+// Mock IntersectionObserver for lazy loading components
+global.IntersectionObserver = class IntersectionObserver {
+  constructor() { }
+  disconnect() { }
+  observe() { }
+  takeRecords() {
+    return [];
+  }
+  unobserve() { }
+};
+
+// Mock ResizeObserver for responsive components
+global.ResizeObserver = class ResizeObserver {
+  constructor() { }
+  disconnect() { }
+  observe() { }
+  unobserve() { }
+};
+
+// Mock localStorage for persistence tests
+const localStorageMock = (() => {
+  let store = {};
+  return {
+    getItem: (key) => store[key] || null,
+    setItem: (key, value) => {
+      store[key] = value.toString();
+    },
+    removeItem: (key) => {
+      delete store[key];
+    },
+    clear: () => {
+      store = {};
+    },
+    get length() {
+      return Object.keys(store).length;
+    },
+    key: (index) => {
+      const keys = Object.keys(store);
+      return keys[index] || null;
+    },
+  };
+})();
+
+Object.defineProperty(window, 'localStorage', {
+  value: localStorageMock,
+});
+
+Object.defineProperty(window, 'sessionStorage', {
+  value: localStorageMock,
+});
+
 // Mock NextResponse for Next.js API route testing
 jest.mock("next/server", () => ({
   NextResponse: {
@@ -199,11 +295,11 @@ global.TransformStream = class TransformStream {
 };
 
 global.ReadableStream = class ReadableStream {
-  constructor() {}
+  constructor() { }
 };
 
 global.WritableStream = class WritableStream {
-  constructor() {}
+  constructor() { }
 };
 
 // ============================================
@@ -805,6 +901,47 @@ jest.mock(
 );
 
 global.mockRedisCache = mockRedisCache;
+
+// ============================================
+// RESTORE MOCKS AFTER JEST CLEARS THEM
+// ============================================
+// Jest config has resetMocks: true which clears mock implementations
+// We need to restore our browser API mocks in beforeEach
+
+beforeEach(() => {
+  // Restore matchMedia mock implementation
+  // This is needed because resetMocks: true in jest.config.js clears it
+  if (jest.isMockFunction(window.matchMedia)) {
+    window.matchMedia.mockImplementation((query) => {
+      const listeners = [];
+      return {
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: jest.fn(cb => {
+          if (cb) listeners.push(cb);
+        }),
+        removeListener: jest.fn(cb => {
+          const index = listeners.indexOf(cb);
+          if (index > -1) listeners.splice(index, 1);
+        }),
+        addEventListener: jest.fn((event, cb) => {
+          if (event === 'change' && cb) listeners.push(cb);
+        }),
+        removeEventListener: jest.fn((event, cb) => {
+          if (event === 'change') {
+            const index = listeners.indexOf(cb);
+            if (index > -1) listeners.splice(index, 1);
+          }
+        }),
+        dispatchEvent: jest.fn(event => {
+          listeners.forEach(cb => cb(event));
+          return true;
+        }),
+      };
+    });
+  }
+});
 
 // ============================================
 // AGRICULTURAL CONSCIOUSNESS
