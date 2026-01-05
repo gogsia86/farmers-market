@@ -171,11 +171,11 @@ interface DotsSpinnerProps {
   speed?: number;
 }
 
-const DotsSpinner: React.FC<DotsSpinnerProps> = ({
+function DotsSpinner({
   size = "md",
   color = "currentColor",
   speed = 1,
-}) => {
+}: DotsSpinnerProps) {
   const sizeMap = {
     xs: { dot: 2, gap: 1 },
     sm: { dot: 3, gap: 1.5 },
@@ -215,11 +215,11 @@ interface BarsSpinnerProps {
   speed?: number;
 }
 
-const BarsSpinner: React.FC<BarsSpinnerProps> = ({
+function BarsSpinner({
   size = "md",
   color = "currentColor",
   speed = 1,
-}) => {
+}: BarsSpinnerProps) {
   const sizeMap = {
     xs: { height: 12, width: 2, gap: 1.5 },
     sm: { height: 16, width: 3, gap: 2 },
@@ -259,11 +259,11 @@ interface CircleSpinnerProps {
   speed?: number;
 }
 
-const CircleSpinner: React.FC<CircleSpinnerProps> = ({
+function CircleSpinner({
   size = "md",
   color = "currentColor",
   speed = 1,
-}) => {
+}: CircleSpinnerProps) {
   const sizeMap = {
     xs: 16,
     sm: 20,
@@ -315,11 +315,11 @@ interface PulseSpinnerProps {
   speed?: number;
 }
 
-const PulseSpinner: React.FC<PulseSpinnerProps> = ({
+function PulseSpinner({
   size = "md",
   color = "currentColor",
   speed = 1,
-}) => {
+}: PulseSpinnerProps) {
   const sizeMap = {
     xs: 12,
     sm: 16,
@@ -365,11 +365,11 @@ interface AgriculturalSpinnerProps {
   season?: SeasonalLoadingTheme;
 }
 
-const AgriculturalSpinner: React.FC<AgriculturalSpinnerProps> = ({
+function AgriculturalSpinner({
   size = "md",
   speed = 1,
   season,
-}) => {
+}: AgriculturalSpinnerProps) {
   const currentSeason = season || getCurrentSeason();
   const colors = getSeasonalColors(currentSeason);
 

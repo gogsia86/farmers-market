@@ -379,13 +379,13 @@ interface FilePreviewProps {
   onRetry: () => void;
 }
 
-const FilePreview: React.FC<FilePreviewProps> = ({
+function FilePreview({
   file,
   showPreview,
   showProgress,
   onRemove,
   onRetry,
-}) => {
+}: FilePreviewProps) {
   const statusIcons = {
     pending: <File className="h-4 w-4 text-gray-400" />,
     uploading: <Loader2 className="h-4 w-4 text-blue-500 animate-spin" />,

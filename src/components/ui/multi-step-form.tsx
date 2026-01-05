@@ -77,13 +77,13 @@ interface MultiStepFormProviderProps {
   consciousness?: "DIVINE" | "AGRICULTURAL" | "STANDARD";
 }
 
-export const MultiStepFormProvider: React.FC<MultiStepFormProviderProps> = ({
+export function MultiStepFormProvider({
   children,
   steps,
   initialStep = 0,
   onStepChange,
   consciousness = "STANDARD",
-}) => {
+}: MultiStepFormProviderProps) {
   const [currentStep, setCurrentStep] = React.useState(initialStep);
   const [completedSteps, setCompletedSteps] = React.useState<Set<number>>(
     new Set()
@@ -180,7 +180,7 @@ export const MultiStepFormProvider: React.FC<MultiStepFormProviderProps> = ({
       {children}
     </MultiStepFormContext.Provider>
   );
-};
+}
 
 // ============================================================================
 // STEP INDICATOR VARIANTS
@@ -223,7 +223,7 @@ interface StepIndicatorProps extends VariantProps<typeof stepIndicatorVariants> 
   className?: string;
 }
 
-const StepIndicator: React.FC<StepIndicatorProps> = ({
+function StepIndicator({
   step,
   stepNumber,
   isCurrent,
@@ -232,7 +232,7 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({
   onClick,
   size,
   className,
-}) => {
+}: StepIndicatorProps) {
   const status = hasError
     ? "error"
     : isCompleted
@@ -281,7 +281,7 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({
       </div>
     </div>
   );
-};
+}
 
 // ============================================================================
 // STEPS PROGRESS COMPONENT
@@ -295,13 +295,13 @@ interface StepsProgressProps {
   className?: string;
 }
 
-export const StepsProgress: React.FC<StepsProgressProps> = ({
+export function StepsProgress({
   variant = "default",
   orientation = "horizontal",
   allowStepClick = false,
   showConnector = true,
   className,
-}) => {
+}: StepsProgressProps) {
   const {
     steps,
     currentStep,
@@ -404,7 +404,7 @@ export const StepsProgress: React.FC<StepsProgressProps> = ({
       ))}
     </div>
   );
-};
+}
 
 // ============================================================================
 // STEP CONTENT COMPONENT

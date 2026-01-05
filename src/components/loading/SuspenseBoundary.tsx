@@ -136,11 +136,11 @@ interface SuspenseTrackerProps {
   onEnd?: () => void;
 }
 
-const SuspenseTracker: React.FC<SuspenseTrackerProps> = ({
+function SuspenseTracker({
   children,
   onStart,
   onEnd,
-}) => {
+}: SuspenseTrackerProps) {
   React.useEffect(() => {
     onStart?.();
     return () => {
