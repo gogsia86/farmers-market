@@ -1,138 +1,404 @@
 /**
- * 🌾 PRODUCT API ROUTES
- *
- * Divine agricultural product management endpoints
- * Wired through ProductController for unified request handling
+ * 🌾 PRODUCTS API ROUTE
+ * RESTful API for product catalog with agricultural consciousness
  *
  * Endpoints:
- * - GET /api/products - List products with filters
- * - POST /api/products - Create new product
- *
- * Performance Enhancements (Week 1, Day 5):
- * - GET requests cached for 5 minutes (300s TTL) with seasonal awareness
- * - Shorter cache during harvest season (June-October): 2.5 minutes
- * - Stale-while-revalidate: 1 minute
- * - Automatic compression (Brotli preferred, Gzip fallback)
- * - Cache invalidation on POST/PUT/DELETE
- * - Target response time: 50ms
- *
- * @phase Phase 4: API Route Integration
- * @reference PHASE4_QUICK_START.md
- * @reference .github/instructions/03_PERFORMANCE_REALITY_BENDING.instructions.md
- * @reference .github/instructions/02_AGRICULTURAL_QUANTUM_MASTERY.instructions.md
+ * - GET /api/products - List all products with advanced filtering
+ * - POST /api/products - Create new product (authenticated farmer)
  */
 
-import { NextRequest } from "next/server";
-import { productController } from "@/lib/controllers/product.controller";
-import { withApiCache, invalidateCacheByTag } from "@/lib/middleware/api-cache";
-import { withCompression } from "@/lib/middleware/compression";
+import { auth } from "@/lib/auth";
+import { database } from "@/lib/database";
+import type { Product, ProductCategory, ProductStatus } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
-/**
- * GET /api/products
- *
- * List products with biodynamic filtering and pagination
- *
- * Query Parameters:
- * - page?: number (default: 1)
- * - limit?: number (default: 20, max: 100)
- * - farmId?: string - Filter by farm
- * - category?: string - Filter by category
- * - organic?: boolean - Filter organic products
- * - seasonal?: boolean - Filter seasonal products
- * - inStock?: boolean - Filter by stock availability
- * - searchTerm?: string - Search in name/description
- * - minPrice?: number - Minimum price filter
- * - maxPrice?: number - Maximum price filter
- * - sortBy?: string - Sort field (name, price, createdAt)
- * - sortOrder?: 'asc' | 'desc'
- *
- * @example
- * GET /api/products?organic=true&category=VEGETABLES&page=1&limit=20
- *
- * @returns {Object} Response with products array and pagination meta
- *
- * Performance:
- * - ⚡ Cached: 5 min (2.5 min during harvest season)
- * - 🗜️ Compressed: Brotli/Gzip automatic
- * - 🎯 Target: <50ms response time
- */
-export const GET = withCompression(
-  withApiCache(async (request: NextRequest) => {
-    // Response will be automatically cached with seasonal awareness
-    // Cache TTL: 300s normally, 150s during harvest (June-October)
-    return productController.listProducts(request);
-  }),
-);
+// ============================================================================
+// TYPES & VALIDATION
+// ============================================================================
 
-/**
- * POST /api/products
- *
- * Create a new product with agricultural consciousness
- *
- * Requires authentication - only farm owners can create products
- *
- * Request Body:
- * {
- *   name: string (required, 3-200 chars)
- *   farmId: string (required)
- *   category: ProductCategory (required)
- *   unit: string (required)
- *   pricing: {
- *     basePrice: { amount: number, currency: string }
- *     salePrice?: { amount: number, currency: string }
- *   }
- *   inventory: {
- *     quantity: number
- *     lowStockThreshold?: number
- *   }
- *   description?: string
- *   shortDescription?: string
- *   images?: Array<{ url: string, alt?: string }>
- *   isOrganic?: boolean
- *   isSeasonal?: boolean
- *   tags?: string[]
- *   nutritionalInfo?: object
- * }
- *
- * @example
- * POST /api/products
- * Authorization: Bearer <token>
- * {
- *   "name": "Organic Tomatoes",
- *   "farmId": "farm_123",
- *   "category": "VEGETABLES",
- *   "unit": "lb",
- *   "pricing": {
- *     "basePrice": { "amount": 4.99, "currency": "USD" }
- *   },
- *   "inventory": {
- *     "quantity": 100,
- *     "lowStockThreshold": 10
- *   }
- * }
- *
- * @returns {Object} Response with created product data
- */
-export async function POST(request: NextRequest) {
-  const response = await productController.createProduct(request);
+const ProductQuerySchema = z.object({
+  page: z.string().optional().default("1"),
+  limit: z.string().optional().default("20"),
+  search: z.string().optional(),
+  category: z.enum([
+    "VEGETABLES",
+    "FRUITS",
+    "GRAINS",
+    "DAIRY",
+    "MEAT",
+    "EGGS",
+    "HONEY",
+    "PRESERVES",
+    "BAKED_GOODS",
+    "HERBS",
+    "OTHER",
+  ]).optional(),
+  farmId: z.string().optional(),
+  organic: z.string().optional(),
+  inStock: z.string().optional(),
+  minPrice: z.string().optional(),
+  maxPrice: z.string().optional(),
+  sortBy: z.enum(["createdAt", "price", "name", "popularity"]).optional().default("createdAt"),
+  sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
+});
 
-  // Invalidate product caches on successful creation
-  if (response.status === 201) {
-    await invalidateCacheByTag("products");
-    await invalidateCacheByTag("public");
-    await invalidateCacheByTag("marketplace");
-  }
+const CreateProductSchema = z.object({
+  name: z.string().min(2).max(200),
+  description: z.string().min(10).max(2000),
+  category: z.enum([
+    "VEGETABLES",
+    "FRUITS",
+    "GRAINS",
+    "DAIRY",
+    "MEAT",
+    "EGGS",
+    "HONEY",
+    "PRESERVES",
+    "BAKED_GOODS",
+    "HERBS",
+    "OTHER",
+  ]),
+  farmId: z.string(),
+  price: z.number().positive(),
+  unit: z.string(),
+  quantityAvailable: z.number().nonnegative(),
+  images: z.array(z.string().url()).optional(),
+  organic: z.boolean().optional(),
+  harvestDate: z.string().optional(),
+  storageInstructions: z.string().optional(),
+  tags: z.array(z.string()).optional(),
+});
 
-  return response;
+interface ProductListResponse {
+  success: boolean;
+  data: {
+    products: Product[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+    };
+  };
 }
 
-/**
- * Divine product routes optimized ✨🌾
- * Performance enhancements applied:
- * - ⚡ Redis caching with seasonal awareness
- * - 🗜️ Response compression (Brotli/Gzip)
- * - 🎯 Target: 50ms response time
- * - 📊 Cache hit ratio: 70%+ expected
- * - 🌱 Agricultural consciousness: Active
- * Ready for quantum agricultural commerce at scale
- */
+interface ProductCreateResponse {
+  success: boolean;
+  data?: Product;
+  error?: {
+    code: string;
+    message: string;
+    details?: Record<string, unknown>;
+  };
+}
+
+// ============================================================================
+// GET /api/products - LIST PRODUCTS
+// ============================================================================
+
+export async function GET(
+  request: NextRequest
+): Promise<NextResponse<ProductListResponse>> {
+  try {
+    const { searchParams } = new URL(request.url);
+
+    // Validate query parameters
+    const queryValidation = ProductQuerySchema.safeParse({
+      page: searchParams.get("page") || "1",
+      limit: searchParams.get("limit") || "20",
+      search: searchParams.get("search") || undefined,
+      category: searchParams.get("category") || undefined,
+      farmId: searchParams.get("farmId") || undefined,
+      organic: searchParams.get("organic") || undefined,
+      inStock: searchParams.get("inStock") || undefined,
+      minPrice: searchParams.get("minPrice") || undefined,
+      maxPrice: searchParams.get("maxPrice") || undefined,
+      sortBy: searchParams.get("sortBy") || "createdAt",
+      sortOrder: searchParams.get("sortOrder") || "desc",
+    });
+
+    if (!queryValidation.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          data: {
+            products: [],
+            pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
+          },
+        },
+        { status: 400 }
+      );
+    }
+
+    const {
+      page,
+      limit,
+      search,
+      category,
+      farmId,
+      organic,
+      inStock,
+      minPrice,
+      maxPrice,
+      sortBy,
+      sortOrder,
+    } = queryValidation.data;
+
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    const skip = (pageNum - 1) * limitNum;
+
+    // Build where clause
+    const where: any = {
+      status: "ACTIVE" as ProductStatus,
+    };
+
+    // Search filter
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
+      ];
+    }
+
+    // Category filter
+    if (category) {
+      where.category = category as ProductCategory;
+    }
+
+    // Farm filter
+    if (farmId) {
+      where.farmId = farmId;
+    }
+
+    // Organic filter
+    if (organic === "true") {
+      where.organic = true;
+    }
+
+    // In stock filter
+    if (inStock === "true") {
+      where.quantityAvailable = { gt: 0 };
+    }
+
+    // Price range filter
+    if (minPrice || maxPrice) {
+      where.price = {};
+      if (minPrice) {
+        where.price.gte = parseFloat(minPrice);
+      }
+      if (maxPrice) {
+        where.price.lte = parseFloat(maxPrice);
+      }
+    }
+
+    // Build order by clause
+    let orderBy: any = { [sortBy]: sortOrder };
+    if (sortBy === "popularity") {
+      orderBy = { purchaseCount: sortOrder };
+    }
+
+    // Execute queries in parallel
+    const [products, total] = await Promise.all([
+      database.product.findMany({
+        where,
+        skip,
+        take: limitNum,
+        orderBy,
+        include: {
+          farm: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+              location: true,
+              certifications: true,
+            },
+          },
+        },
+      }),
+      database.product.count({ where }),
+    ]);
+
+    const totalPages = Math.ceil(total / limitNum);
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        products: products as unknown as Product[],
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total,
+          totalPages,
+        },
+      },
+    });
+  } catch (error) {
+    console.error("GET /api/products error:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        data: {
+          products: [],
+          pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
+        },
+      },
+      { status: 500 }
+    );
+  }
+}
+
+// ============================================================================
+// POST /api/products - CREATE PRODUCT
+// ============================================================================
+
+export async function POST(
+  request: NextRequest
+): Promise<NextResponse<ProductCreateResponse>> {
+  try {
+    // Check authentication
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: "UNAUTHORIZED",
+            message: "Authentication required",
+          },
+        },
+        { status: 401 }
+      );
+    }
+
+    const user = session.user as any;
+
+    // Check if user is a farmer or admin
+    if (user.role !== "FARMER" && user.role !== "ADMIN") {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: "FORBIDDEN",
+            message: "Only farmers can create products",
+          },
+        },
+        { status: 403 }
+      );
+    }
+
+    // Parse and validate request body
+    const body = await request.json();
+    const validation = CreateProductSchema.safeParse(body);
+
+    if (!validation.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: "VALIDATION_ERROR",
+            message: "Invalid product data",
+            details: validation.error.flatten(),
+          },
+        },
+        { status: 400 }
+      );
+    }
+
+    const productData = validation.data;
+
+    // Verify farm ownership
+    const farm = await database.farm.findUnique({
+      where: { id: productData.farmId },
+      select: { id: true, ownerId: true },
+    });
+
+    if (!farm) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: "FARM_NOT_FOUND",
+            message: "Farm not found",
+          },
+        },
+        { status: 404 }
+      );
+    }
+
+    if (farm.ownerId !== user.id && user.role !== "ADMIN") {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: "FORBIDDEN",
+            message: "You do not have permission to add products to this farm",
+          },
+        },
+        { status: 403 }
+      );
+    }
+
+    // Generate slug from product name
+    const slug = productData.name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+
+    // Create product
+    const product = await database.product.create({
+      data: {
+        name: productData.name,
+        slug,
+        description: productData.description,
+        category: productData.category as ProductCategory,
+        farmId: productData.farmId,
+        price: productData.price,
+        unit: productData.unit,
+        quantityAvailable: productData.quantityAvailable,
+        images: productData.images || [],
+        organic: productData.organic || false,
+        harvestDate: productData.harvestDate ? new Date(productData.harvestDate) : null,
+        storageInstructions: productData.storageInstructions || null,
+        tags: productData.tags || [],
+        status: "ACTIVE" as ProductStatus,
+        viewsCount: 0,
+        cartAddsCount: 0,
+        purchaseCount: 0,
+        wishlistCount: 0,
+        reviewCount: 0,
+      },
+      include: {
+        farm: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(
+      {
+        success: true,
+        data: product as unknown as Product,
+      },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error("POST /api/products error:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: "INTERNAL_ERROR",
+          message: "Failed to create product",
+        },
+      },
+      { status: 500 }
+    );
+  }
+}

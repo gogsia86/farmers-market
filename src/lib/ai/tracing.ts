@@ -10,6 +10,11 @@
  * - Agricultural consciousness levels
  */
 
+import { createLogger } from "@/lib/utils/logger";
+
+// Create dedicated logger for AI tracing
+const tracingLogger = createLogger("AITracing");
+
 // ============================================
 // TYPES & INTERFACES
 // ============================================
@@ -80,7 +85,7 @@ export class AITracer {
 
     this.traces.set(traceId, trace);
 
-    console.log(`🔍 [Trace] Started trace ${traceId} for ${agentName}`);
+    tracingLogger.debug(`Trace started`, { traceId, agentName });
 
     return traceId;
   }
@@ -123,7 +128,7 @@ export class AITracer {
 
     this.activeSpans.set(spanId, span);
 
-    console.log(`  📊 [Span] Started: ${spanName} (${spanId})`);
+    tracingLogger.debug(`Span started`, { spanId, spanName });
 
     return spanId;
   }
@@ -138,7 +143,7 @@ export class AITracer {
   ): void {
     const span = this.activeSpans.get(spanId);
     if (!span) {
-      console.warn(`Span ${spanId} not found`);
+      tracingLogger.warn(`Span not found`, { spanId });
       return;
     }
 
@@ -148,7 +153,7 @@ export class AITracer {
       attributes,
     });
 
-    console.log(`    📌 [Event] ${eventName}`);
+    tracingLogger.debug(`Event added`, { spanId, eventName });
   }
 
   /**
@@ -185,9 +190,12 @@ export class AITracer {
 
     this.activeSpans.delete(spanId);
 
-    console.log(
-      `  ✅ [Span] Completed: ${span.name} (${span.duration}ms) - ${status}`,
-    );
+    tracingLogger.debug(`Span completed`, {
+      spanId,
+      spanName: span.name,
+      duration: span.duration,
+      status,
+    });
   }
 
   /**
@@ -203,15 +211,13 @@ export class AITracer {
     trace.endTime = Date.now();
     Object.assign(trace.metadata, metadata);
 
-    console.log(`🎯 [Trace] Completed: ${trace.traceId}`);
-    console.log(`   Duration: ${trace.endTime - trace.startTime}ms`);
-    console.log(`   Spans: ${this.countSpans(trace.spans)}`);
-    if (metadata.totalTokens) {
-      console.log(`   Tokens: ${metadata.totalTokens}`);
-    }
-    if (metadata.totalCost) {
-      console.log(`   Cost: $${metadata.totalCost.toFixed(4)}`);
-    }
+    tracingLogger.debug(`Trace completed`, {
+      traceId: trace.traceId,
+      duration: trace.endTime - trace.startTime,
+      spanCount: this.countSpans(trace.spans),
+      totalTokens: metadata.totalTokens,
+      totalCost: metadata.totalCost,
+    });
   }
 
   /**

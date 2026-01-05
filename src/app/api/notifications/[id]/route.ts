@@ -1,100 +1,141 @@
 /**
- * MARK NOTIFICATION AS READ
- * Divine notification consciousness tracking
+ * Individual Notification API
+ * PATCH: Mark notification as read
+ * DELETE: Delete notification
  */
 
 import { auth } from "@/lib/auth";
-import { database } from "@/lib/database";
+import { notificationService } from "@/lib/services/notification.service";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+
+// ============================================================================
+// Validation Schemas
+// ============================================================================
+
+const UpdateNotificationSchema = z.object({
+  isRead: z.boolean(),
+});
+
+// ============================================================================
+// PATCH /api/notifications/[id] - Mark as read
+// ============================================================================
 
 export async function PATCH(
-  _request: NextRequest,
-  { params }: { params: { id: string } },
-) {
+  request: NextRequest,
+  { params }: { params: { id: string } }
+): Promise<NextResponse> {
   try {
     const session = await auth();
+
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    // Verify notification belongs to user
-    const notification = await database.notification.findUnique({
-      where: { id: params.id },
-    });
-
-    if (!notification) {
       return NextResponse.json(
-        { error: "Notification not found" },
-        { status: 404 },
+        {
+          success: false,
+          error: {
+            code: "UNAUTHORIZED",
+            message: "Authentication required",
+          },
+        },
+        { status: 401 }
       );
     }
 
-    if (notification.userId !== session.user.id) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const body = await request.json();
+    const validation = UpdateNotificationSchema.safeParse(body);
+
+    if (!validation.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: "VALIDATION_ERROR",
+            message: "Invalid request body",
+            details: validation.error.flatten(),
+          },
+        },
+        { status: 400 }
+      );
     }
 
-    // Mark as read
-    const updated = await database.notification.update({
-      where: { id: params.id },
+    const { isRead } = validation.data;
+
+    if (isRead) {
+      await notificationService.markAsRead(params.id, session.user.id);
+    }
+
+    return NextResponse.json({
+      success: true,
       data: {
-        isRead: true,
-        readAt: new Date(),
+        id: params.id,
+        isRead,
       },
     });
-
-    return NextResponse.json(updated);
   } catch (error) {
-    console.error("Mark read error:", error);
+    console.error("Failed to update notification:", error);
     return NextResponse.json(
-      { error: "Failed to mark notification as read" },
-      { status: 500 },
+      {
+        success: false,
+        error: {
+          code: "UPDATE_NOTIFICATION_ERROR",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Failed to update notification",
+        },
+      },
+      { status: 500 }
     );
   }
 }
 
-/**
- * DELETE notification
- */
-/**
- * GET single notification
- */
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: { id: string } },
-) {
+// ============================================================================
+// DELETE /api/notifications/[id] - Delete notification
+// ============================================================================
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+): Promise<NextResponse> {
   try {
     const session = await auth();
+
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    // Verify notification belongs to user
-    const notification = await database.notification.findUnique({
-      where: { id: params.id },
-    });
-
-    if (!notification) {
       return NextResponse.json(
-        { error: "Notification not found" },
-        { status: 404 },
+        {
+          success: false,
+          error: {
+            code: "UNAUTHORIZED",
+            message: "Authentication required",
+          },
+        },
+        { status: 401 }
       );
     }
 
-    if (notification.userId !== session.user.id) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
+    await notificationService.deleteNotification(params.id, session.user.id);
 
-    // Delete notification
-    await database.notification.delete({
-      where: { id: params.id },
+    return NextResponse.json({
+      success: true,
+      data: {
+        id: params.id,
+        deleted: true,
+      },
     });
-
-    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Delete notification error:", error);
+    console.error("Failed to delete notification:", error);
     return NextResponse.json(
-      { error: "Failed to delete notification" },
-      { status: 500 },
+      {
+        success: false,
+        error: {
+          code: "DELETE_NOTIFICATION_ERROR",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Failed to delete notification",
+        },
+      },
+      { status: 500 }
     );
   }
 }

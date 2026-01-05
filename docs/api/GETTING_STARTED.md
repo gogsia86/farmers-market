@@ -1,9 +1,10 @@
 # 🚀 API Documentation - Getting Started Guide
+
 ## Farmers Market Platform API
 
 **Version**: 1.0.0  
 **Last Updated**: January 2025  
-**Status**: ✅ PRODUCTION READY  
+**Status**: ✅ PRODUCTION READY
 
 ---
 
@@ -42,7 +43,7 @@ The Farmers Market Platform API is a comprehensive RESTful API that powers our d
 ✅ **ServiceResponse<T> Pattern** - Consistent response structure  
 ✅ **Type Safety** - Full TypeScript support  
 ✅ **Agricultural Consciousness** - Biodynamic awareness in every endpoint  
-✅ **Comprehensive Documentation** - OpenAPI 3.0, Postman, Markdown  
+✅ **Comprehensive Documentation** - OpenAPI 3.0, Postman, Markdown
 
 ---
 
@@ -70,6 +71,7 @@ curl https://localhost:3001/api/health
 ```
 
 Response:
+
 ```json
 {
   "status": "healthy",
@@ -90,6 +92,7 @@ The API uses **NextAuth.js** with JWT tokens for authentication.
 ### Getting a Token
 
 **1. Sign Up** (if you don't have an account):
+
 ```bash
 POST /api/auth/signup
 Content-Type: application/json
@@ -103,6 +106,7 @@ Content-Type: application/json
 ```
 
 **2. Sign In**:
+
 ```bash
 POST /api/auth/signin
 Content-Type: application/json
@@ -114,6 +118,7 @@ Content-Type: application/json
 ```
 
 Response:
+
 ```json
 {
   "success": true,
@@ -242,6 +247,7 @@ We provide multiple formats of API documentation to suit your needs:
 **Location**: `docs/api/index.html`
 
 **How to Use**:
+
 ```bash
 # Option 1: Open directly in browser
 open docs/api/index.html
@@ -252,6 +258,7 @@ npx serve docs/api
 ```
 
 **Features**:
+
 - ✅ Interactive API explorer
 - ✅ Try out requests directly
 - ✅ See request/response examples
@@ -260,16 +267,19 @@ npx serve docs/api
 ### 2. **OpenAPI 3.0 Specification**
 
 **Locations**:
+
 - `docs/api/openapi.json` (JSON format)
 - `docs/api/openapi.yaml` (YAML format)
 
 **Use Cases**:
+
 - Generate type-safe API clients
 - Import into API tools (Insomnia, Paw)
 - Auto-generate SDK code
 - Contract testing
 
 **Example - Generate TypeScript Client**:
+
 ```bash
 npx openapi-typescript docs/api/openapi.json --output src/types/api.ts
 ```
@@ -279,12 +289,14 @@ npx openapi-typescript docs/api/openapi.json --output src/types/api.ts
 **Location**: `docs/api/postman-collection.json`
 
 **How to Import**:
+
 1. Open Postman
 2. Click **Import** button
 3. Select `docs/api/postman-collection.json`
 4. Set environment variables (see below)
 
 **Environment Variables**:
+
 ```json
 {
   "baseUrl": "https://localhost:3001/api",
@@ -297,6 +309,7 @@ npx openapi-typescript docs/api/openapi.json --output src/types/api.ts
 **Location**: `docs/api/API_REFERENCE.md`
 
 **Use Cases**:
+
 - Quick reference
 - Offline documentation
 - Copy-paste examples
@@ -435,18 +448,19 @@ npx serve docs/api
 
 ```typescript
 // lib/api/client.ts
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
 
 export async function apiFetch<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<ServiceResponse<T>> {
-  const token = localStorage.getItem('authToken');
-  
+  const token = localStorage.getItem("authToken");
+
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...(token && { Authorization: `Bearer ${token}` }),
       ...options.headers,
     },
@@ -457,7 +471,7 @@ export async function apiFetch<T>(
 }
 
 // Usage
-const result = await apiFetch<Farm>('/farms/farm_123');
+const result = await apiFetch<Farm>("/farms/farm_123");
 if (result.success) {
   console.log(result.data); // Type-safe!
 }
@@ -476,11 +490,11 @@ export function useFarms(filters?: FarmFilters) {
     queryFn: async () => {
       const params = new URLSearchParams(filters as any);
       const result = await apiFetch<Farm[]>(`/farms?${params}`);
-      
+
       if (!result.success) {
         throw new Error(result.error.message);
       }
-      
+
       return result.data;
     },
   });
@@ -488,9 +502,9 @@ export function useFarms(filters?: FarmFilters) {
 
 // Usage in component
 function FarmsPage() {
-  const { data: farms, isLoading, error } = useFarms({ 
+  const { data: farms, isLoading, error } = useFarms({
     verified: true,
-    state: 'CA' 
+    state: 'CA'
   });
 
   if (isLoading) return <Spinner />;
@@ -519,9 +533,10 @@ npx openapi-typescript docs/api/openapi.json --output src/types/api.ts
 ```
 
 ```typescript
-import type { paths } from '@/types/api';
+import type { paths } from "@/types/api";
 
-type GetFarmsResponse = paths['/api/farms']['get']['responses']['200']['content']['application/json'];
+type GetFarmsResponse =
+  paths["/api/farms"]["get"]["responses"]["200"]["content"]["application/json"];
 // Fully type-safe API calls!
 ```
 
@@ -531,46 +546,46 @@ type GetFarmsResponse = paths['/api/farms']['get']['responses']['200']['content'
 
 ### Standard Error Codes
 
-| Code | Status | Description |
-|------|--------|-------------|
-| `AUTHENTICATION_REQUIRED` | 401 | No auth token provided |
-| `INVALID_TOKEN` | 401 | Token is invalid or expired |
-| `FORBIDDEN` | 403 | User lacks permission |
-| `NOT_FOUND` | 404 | Resource not found |
-| `VALIDATION_ERROR` | 400 | Invalid input data |
-| `FARM_NOT_FOUND` | 404 | Farm doesn't exist |
-| `PRODUCT_NOT_FOUND` | 404 | Product doesn't exist |
-| `ORDER_NOT_FOUND` | 404 | Order doesn't exist |
-| `INSUFFICIENT_INVENTORY` | 400 | Not enough stock |
-| `DUPLICATE_FARM` | 409 | Farm already exists |
-| `INTERNAL_ERROR` | 500 | Server error |
+| Code                      | Status | Description                 |
+| ------------------------- | ------ | --------------------------- |
+| `AUTHENTICATION_REQUIRED` | 401    | No auth token provided      |
+| `INVALID_TOKEN`           | 401    | Token is invalid or expired |
+| `FORBIDDEN`               | 403    | User lacks permission       |
+| `NOT_FOUND`               | 404    | Resource not found          |
+| `VALIDATION_ERROR`        | 400    | Invalid input data          |
+| `FARM_NOT_FOUND`          | 404    | Farm doesn't exist          |
+| `PRODUCT_NOT_FOUND`       | 404    | Product doesn't exist       |
+| `ORDER_NOT_FOUND`         | 404    | Order doesn't exist         |
+| `INSUFFICIENT_INVENTORY`  | 400    | Not enough stock            |
+| `DUPLICATE_FARM`          | 409    | Farm already exists         |
+| `INTERNAL_ERROR`          | 500    | Server error                |
 
 ### Error Handling Pattern
 
 ```typescript
 async function createFarm(farmData: CreateFarmRequest) {
-  const result = await apiFetch<Farm>('/farms', {
-    method: 'POST',
+  const result = await apiFetch<Farm>("/farms", {
+    method: "POST",
     body: JSON.stringify(farmData),
   });
 
   if (!result.success) {
     switch (result.error.code) {
-      case 'AUTHENTICATION_REQUIRED':
+      case "AUTHENTICATION_REQUIRED":
         // Redirect to login
-        router.push('/login');
+        router.push("/login");
         break;
-      
-      case 'VALIDATION_ERROR':
+
+      case "VALIDATION_ERROR":
         // Show validation errors
         setErrors(result.error.details);
         break;
-      
-      case 'DUPLICATE_FARM':
+
+      case "DUPLICATE_FARM":
         // Farm already exists
-        toast.error('A farm with this name already exists');
+        toast.error("A farm with this name already exists");
         break;
-      
+
       default:
         // Generic error
         toast.error(result.error.message);
@@ -579,7 +594,7 @@ async function createFarm(farmData: CreateFarmRequest) {
   }
 
   // Success!
-  toast.success('Farm created successfully');
+  toast.success("Farm created successfully");
   router.push(`/farms/${result.data.slug}`);
 }
 ```
@@ -590,12 +605,12 @@ async function createFarm(farmData: CreateFarmRequest) {
 
 ### Current Limits
 
-| Endpoint Type | Limit | Window |
-|---------------|-------|--------|
-| Public (read) | 100 requests | 15 minutes |
-| Authenticated | 1000 requests | 15 minutes |
-| Write operations | 50 requests | 15 minutes |
-| Search | 30 requests | 1 minute |
+| Endpoint Type    | Limit         | Window     |
+| ---------------- | ------------- | ---------- |
+| Public (read)    | 100 requests  | 15 minutes |
+| Authenticated    | 1000 requests | 15 minutes |
+| Write operations | 50 requests   | 15 minutes |
+| Search           | 30 requests   | 1 minute   |
 
 ### Rate Limit Headers
 
@@ -613,22 +628,22 @@ X-RateLimit-Reset: 1642262400
 async function apiCallWithRetry<T>(
   endpoint: string,
   options?: RequestInit,
-  retries = 3
+  retries = 3,
 ): Promise<ServiceResponse<T>> {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
-  
+
   if (response.status === 429) {
-    const resetTime = response.headers.get('X-RateLimit-Reset');
-    const waitTime = resetTime 
+    const resetTime = response.headers.get("X-RateLimit-Reset");
+    const waitTime = resetTime
       ? parseInt(resetTime) * 1000 - Date.now()
       : 60000; // Default 1 minute
-    
+
     if (retries > 0) {
-      await new Promise(resolve => setTimeout(resolve, waitTime));
+      await new Promise((resolve) => setTimeout(resolve, waitTime));
       return apiCallWithRetry(endpoint, options, retries - 1);
     }
   }
-  
+
   return response.json();
 }
 ```
@@ -640,14 +655,17 @@ async function apiCallWithRetry<T>(
 ### Getting Help
 
 **Documentation Issues**:
+
 - Check `docs/api/API_REFERENCE.md` for detailed endpoint info
 - Review `docs/api/API_DOCUMENTATION.md` for architecture details
 
 **API Issues**:
+
 - Check `TROUBLESHOOTING.md` for common problems
 - Review error codes in response
 
 **Contact Support**:
+
 - Email: api-support@farmersmarket.com
 - GitHub Issues: [Submit an issue](https://github.com/farmersmarket/platform/issues)
 - Discord: [Join our server](https://discord.gg/farmersmarket)
@@ -696,8 +714,8 @@ Now that you understand the API, here's what to do next:
 **Version**: 1.0.0  
 **Last Updated**: January 2025  
 **Status**: ✅ PRODUCTION READY  
-**Documentation Owner**: DevOps Team  
+**Documentation Owner**: DevOps Team
 
 ---
 
-*"Build with confidence, code with consciousness, deploy with divinity!"* 🌾⚡🚀
+_"Build with confidence, code with consciousness, deploy with divinity!"_ 🌾⚡🚀

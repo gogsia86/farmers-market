@@ -8,8 +8,12 @@
  * @module ai/agent-config
  */
 
+import { createLogger } from "@/lib/utils/logger";
 import { OpenAI } from "openai";
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
+
+// Create dedicated logger for AI agent operations
+const agentLogger = createLogger("AIAgent");
 
 // ============================================================================
 // Types & Interfaces
@@ -372,7 +376,10 @@ export async function invokeAgent(
       },
     };
   } catch (error) {
-    console.error(`[Agent ${config.name}] Invocation error:`, error);
+    agentLogger.error(`Agent invocation error`, {
+      agentName: config.name,
+      errorMessage: error instanceof Error ? error.message : String(error),
+    });
     throw new Error(
       `Agent ${config.name} failed to process request: ${
         error instanceof Error ? error.message : "Unknown error"
@@ -427,13 +434,17 @@ export async function orchestrateAgents(
 
         // If confidence is high enough, we can stop early
         if (response.confidence >= 0.8) {
-          console.log(
-            `[Orchestrator] High confidence response from ${agentName}, completing task.`,
-          );
+          agentLogger.info(`High confidence response, completing task`, {
+            agentName,
+            confidence: response.confidence,
+          });
           return responses;
         }
       } catch (error) {
-        console.error(`[Orchestrator] Error with agent ${agentName}:`, error);
+        agentLogger.error(`Orchestrator error with agent`, {
+          agentName,
+          errorMessage: error instanceof Error ? error.message : String(error),
+        });
         // Continue with other agents
       }
     }

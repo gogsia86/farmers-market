@@ -14,10 +14,11 @@
  * @module ErrorHandler
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { Prisma } from "@prisma/client";
-import { ZodError } from "zod";
 import { telemetryService } from "@/lib/telemetry/azure-insights";
+import { apiLogger } from "@/lib/utils/logger";
+import { Prisma } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
+import { ZodError } from "zod";
 
 // ============================================================================
 // ERROR CLASSES
@@ -212,19 +213,18 @@ function handleError(
   error: unknown,
   path?: string,
 ): NextResponse<ErrorResponse> {
-  // Log error (with stack trace in development)
+  // Log error with structured logger
   if (isDevelopment) {
-    console.error("❌ [API Error]", {
-      error,
+    apiLogger.error("API Error", {
+      errorMessage: error instanceof Error ? error.message : "Unknown error",
+      errorStack: error instanceof Error ? error.stack : undefined,
       path,
-      timestamp: new Date().toISOString(),
     });
   } else {
     // Production logging (minimal, no sensitive data)
-    console.error("[API Error]", {
-      message: error instanceof Error ? error.message : "Unknown error",
+    apiLogger.error("API Error", {
+      errorMessage: error instanceof Error ? error.message : "Unknown error",
       path,
-      timestamp: new Date().toISOString(),
     });
   }
 
@@ -370,10 +370,10 @@ function validateRequest<T>(
  */
 function logError(error: unknown, context?: Record<string, any>): void {
   if (isDevelopment) {
-    console.error("🔴 [Error Log]", {
-      error,
-      context,
-      timestamp: new Date().toISOString(),
+    apiLogger.error("Error logged", {
+      errorMessage: error instanceof Error ? error.message : String(error),
+      errorType: error instanceof Error ? error.constructor.name : typeof error,
+      ...context,
     });
   }
 
@@ -397,15 +397,15 @@ function logError(error: unknown, context?: Record<string, any>): void {
 export {
   // Error classes
   AppError,
-  ValidationError,
+  asyncHandler,
   AuthenticationError,
   AuthorizationError,
-  NotFoundError,
   ConflictError,
-  InternalServerError,
   // Functions
   handleError,
-  asyncHandler,
-  validateRequest,
+  InternalServerError,
   logError,
+  NotFoundError,
+  validateRequest,
+  ValidationError,
 };

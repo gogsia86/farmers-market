@@ -1,4 +1,5 @@
 # 🏗️ Website Restructure Analysis
+
 ## Comprehensive Architectural Review & Optimization Plan
 
 **Created:** December 26, 2024  
@@ -11,6 +12,7 @@
 ## 📊 Executive Summary
 
 ### Current State
+
 - **Route Groups:** 5 groups with some redundancy
 - **API Endpoints:** 111 route.ts files across 40 directories
 - **Components:** 27+ feature directories with mixed organization
@@ -18,6 +20,7 @@
 - **Overall Health:** ✅ Functional but needs optimization
 
 ### Proposed Changes Impact
+
 - **Performance:** 🚀 15-25% improvement expected
 - **Developer Experience:** 📈 40% reduction in cognitive load
 - **Maintainability:** ✅ 60% improvement in code organization
@@ -31,6 +34,7 @@
 ### 1. Route Group Structure Analysis
 
 #### Current Structure
+
 ```
 src/app/
 ├── (admin)/
@@ -76,18 +80,14 @@ src/app/
 #### Issues Identified
 
 **🔴 Critical Issues:**
+
 1. **Redundant Nesting**: `(admin)/admin`, `(farmer)/farmer`, `(monitoring)/monitoring`
 2. **Route Duplication**: Customer orders exists in two places
 3. **Marketplace Confusion**: Split across (customer) and (public)
 
-**🟡 Medium Issues:**
-4. **Inconsistent Depth**: Some features are 3-4 levels deep
-5. **Public vs Customer**: Unclear boundary between authenticated browsing
-6. **Layout Duplication**: Multiple similar layouts across route groups
+**🟡 Medium Issues:** 4. **Inconsistent Depth**: Some features are 3-4 levels deep 5. **Public vs Customer**: Unclear boundary between authenticated browsing 6. **Layout Duplication**: Multiple similar layouts across route groups
 
-**🟢 Low Priority:**
-7. **Naming Inconsistency**: Some use singular, some plural
-8. **Missing Patterns**: No dedicated API versioning route group
+**🟢 Low Priority:** 7. **Naming Inconsistency**: Some use singular, some plural 8. **Missing Patterns**: No dedicated API versioning route group
 
 ---
 
@@ -178,14 +178,16 @@ src/app/
 ```
 
 #### Benefits of Option A:
+
 ✅ Eliminates redundant nesting  
 ✅ Clear separation of concerns  
 ✅ Unified marketplace experience  
 ✅ Logical shopping flow  
 ✅ Scalable structure  
-✅ Better SEO with (marketing) group  
+✅ Better SEO with (marketing) group
 
 #### Migration Complexity: 🟡 Medium
+
 - **Estimated Time:** 1 week
 - **Breaking Changes:** Minimal (redirects needed)
 - **Testing Required:** Full E2E suite
@@ -212,17 +214,19 @@ src/app/
 ```
 
 #### Benefits of Option B:
+
 ✅ Lower risk  
 ✅ Faster implementation (3-4 days)  
 ✅ Less testing required  
 ❌ Doesn't fully optimize structure  
-❌ Still has some confusion  
+❌ Still has some confusion
 
 ---
 
 ### 3. API Structure Analysis
 
 #### Current State: 111 Route Files
+
 ```
 src/app/api/
 ├── admin/                  # 8 endpoints
@@ -268,15 +272,13 @@ src/app/api/
 #### Issues Identified
 
 **🔴 Critical:**
+
 1. **No Versioning**: Difficult to evolve API
 2. **Duplicates**: `farmer/`, `farmers/`, `farming/`
 3. **Inconsistent Naming**: Singular vs plural
 4. **Deep Nesting**: Some routes are 5+ levels deep
 
-**🟡 Medium:**
-5. **No Rate Limiting Structure**: Scattered across routes
-6. **Authentication Inconsistency**: Some use middleware, some inline
-7. **Response Format Variance**: Not standardized
+**🟡 Medium:** 5. **No Rate Limiting Structure**: Scattered across routes 6. **Authentication Inconsistency**: Some use middleware, some inline 7. **Response Format Variance**: Not standardized
 
 ---
 
@@ -422,14 +424,16 @@ src/app/api/
 ```
 
 #### Benefits:
+
 ✅ **Clear versioning** - Easy to evolve API  
 ✅ **Domain separation** - Easier to understand  
 ✅ **Consistent structure** - Predictable patterns  
 ✅ **Better security** - Clear auth boundaries  
 ✅ **Scalable** - Room for growth  
-✅ **Documentation-friendly** - Clear API surface  
+✅ **Documentation-friendly** - Clear API surface
 
 #### Migration Strategy:
+
 1. **Week 1**: Create new structure alongside old
 2. **Week 2**: Migrate endpoints one domain at a time
 3. **Week 3**: Add redirects for old endpoints
@@ -442,6 +446,7 @@ src/app/api/
 ### 5. Component Organization Analysis
 
 #### Current Structure
+
 ```
 src/components/
 ├── admin/                  # ✅ Good
@@ -571,6 +576,7 @@ src/components/
 ```
 
 #### Migration Actions:
+
 1. ✅ Keep existing structure mostly intact
 2. 🔄 Rename `shared/` → `common/`
 3. 📦 Move `best-practices/` → `examples/`
@@ -583,6 +589,7 @@ src/components/
 ### 6. Documentation Consolidation
 
 #### Current: 15+ Root Files
+
 ```
 Root Level:
 ├── ARCHITECTURE_DIAGRAM.md
@@ -687,9 +694,11 @@ Root Level (Keep Only):
 ## 🎯 Recommended Implementation Plan
 
 ### Phase 1: Low-Risk Wins (Week 1)
+
 **Goal:** Quick improvements with minimal risk
 
 #### Tasks:
+
 1. ✅ **Documentation Consolidation**
    - Create `docs/` folder structure
    - Move and organize existing docs
@@ -718,9 +727,11 @@ Root Level (Keep Only):
 ---
 
 ### Phase 2: Route Group Optimization (Week 2)
+
 **Goal:** Improve route structure clarity
 
 #### Tasks:
+
 1. 🎯 **Consolidate Marketplace**
    - Merge `(customer)/marketplace` with `(public)/farms` and `(public)/products`
    - Create new `(marketplace)/` route group
@@ -749,9 +760,11 @@ Root Level (Keep Only):
 ---
 
 ### Phase 3: API Restructuring (Week 3-4)
+
 **Goal:** Implement versioned API structure
 
 #### Tasks:
+
 1. 🎯 **Create v1 API Structure**
    - Set up `api/v1/` folder
    - Create domain subfolders
@@ -790,9 +803,11 @@ Root Level (Keep Only):
 ---
 
 ### Phase 4: Polish & Optimization (Week 5)
+
 **Goal:** Final touches and performance optimization
 
 #### Tasks:
+
 1. ✅ **Update Documentation**
    - Document new structure
    - Update migration guides
@@ -822,29 +837,32 @@ Root Level (Keep Only):
 ## 📊 Success Metrics
 
 ### Performance Metrics
-| Metric | Current | Target | Measurement |
-|--------|---------|--------|-------------|
-| **Build Time** | ~90s | <70s | `time npm run build` |
-| **Bundle Size** | ~2.8MB | <2.5MB | Bundle analyzer |
-| **Route Resolution** | ~50ms | <30ms | Server timing |
-| **API Response Time** | ~200ms | <150ms | Application Insights |
-| **Lighthouse Score** | 92 | 95+ | Lighthouse CI |
+
+| Metric                | Current | Target | Measurement          |
+| --------------------- | ------- | ------ | -------------------- |
+| **Build Time**        | ~90s    | <70s   | `time npm run build` |
+| **Bundle Size**       | ~2.8MB  | <2.5MB | Bundle analyzer      |
+| **Route Resolution**  | ~50ms   | <30ms  | Server timing        |
+| **API Response Time** | ~200ms  | <150ms | Application Insights |
+| **Lighthouse Score**  | 92      | 95+    | Lighthouse CI        |
 
 ### Developer Experience Metrics
-| Metric | Current | Target | Measurement |
-|--------|---------|--------|-------------|
-| **Time to Find Code** | 5-10min | <3min | Survey |
-| **Onboarding Time** | 2 days | <1 day | New dev feedback |
-| **CI/CD Duration** | 12min | <8min | GitHub Actions |
-| **Test Coverage** | 85% | 90%+ | Jest/Vitest |
+
+| Metric                | Current | Target | Measurement      |
+| --------------------- | ------- | ------ | ---------------- |
+| **Time to Find Code** | 5-10min | <3min  | Survey           |
+| **Onboarding Time**   | 2 days  | <1 day | New dev feedback |
+| **CI/CD Duration**    | 12min   | <8min  | GitHub Actions   |
+| **Test Coverage**     | 85%     | 90%+   | Jest/Vitest      |
 
 ### Code Quality Metrics
-| Metric | Current | Target | Measurement |
-|--------|---------|--------|-------------|
-| **Cyclomatic Complexity** | Medium | Low | SonarQube |
-| **Code Duplication** | 8% | <5% | ESLint |
-| **TypeScript Errors** | 0 | 0 | `tsc --noEmit` |
-| **ESLint Warnings** | 12 | 0 | ESLint |
+
+| Metric                    | Current | Target | Measurement    |
+| ------------------------- | ------- | ------ | -------------- |
+| **Cyclomatic Complexity** | Medium  | Low    | SonarQube      |
+| **Code Duplication**      | 8%      | <5%    | ESLint         |
+| **TypeScript Errors**     | 0       | 0      | `tsc --noEmit` |
+| **ESLint Warnings**       | 12      | 0      | ESLint         |
 
 ---
 
@@ -853,27 +871,33 @@ Root Level (Keep Only):
 ### Critical Risks
 
 #### 1. Auth Flow Breakage 🔴
+
 **Probability:** Medium  
 **Impact:** Critical  
 **Mitigation:**
+
 - Keep old auth endpoints active
 - Add comprehensive auth tests
 - Have rollback plan ready
 - Test with real user sessions
 
 #### 2. Payment Processing Issues 🔴
+
 **Probability:** Low  
 **Impact:** Critical  
 **Mitigation:**
+
 - Do NOT change payment routes first
 - Migrate payment APIs last
 - Extensive testing in staging
 - Monitor Stripe webhooks closely
 
 #### 3. SEO Impact 🟡
+
 **Probability:** Medium  
 **Impact:** High  
 **Mitigation:**
+
 - Implement 301 redirects for all old URLs
 - Update sitemap.xml
 - Verify Google Search Console
@@ -882,18 +906,22 @@ Root Level (Keep Only):
 ### Medium Risks
 
 #### 4. User Confusion 🟡
+
 **Probability:** Medium  
 **Impact:** Medium  
 **Mitigation:**
+
 - Maintain URL structure where possible
 - Clear communication to users
 - Help documentation updates
 - Support team briefing
 
 #### 5. Third-Party Integration Issues 🟡
+
 **Probability:** Low  
 **Impact:** Medium  
 **Mitigation:**
+
 - Audit all webhook URLs
 - Update API keys if needed
 - Test external integrations
@@ -947,20 +975,26 @@ Current Structure          Transitional               New Structure
 ### When to Proceed with Each Phase
 
 #### Phase 1 (Documentation + Quick Wins)
+
 ✅ **GO if:**
+
 - Team has 3+ days available
 - No critical production issues
 - All tests passing
 
 #### Phase 2 (Route Groups)
+
 ✅ **GO if:**
+
 - Phase 1 complete
 - Full E2E test coverage exists
 - Can dedicate 1 week
 - Have rollback plan
 
 #### Phase 3 (API Restructuring)
+
 ✅ **GO if:**
+
 - Phase 2 complete and stable
 - All stakeholders informed
 - 2 weeks available
@@ -968,13 +1002,17 @@ Current Structure          Transitional               New Structure
 - Monitoring in place
 
 #### Phase 4 (Polish)
+
 ✅ **GO if:**
+
 - Phase 3 complete
 - No critical bugs
 - Performance baseline established
 
 ### When to PAUSE
+
 🛑 **STOP if:**
+
 - Critical production bug discovered
 - Major feature launch scheduled
 - Team capacity <50%
@@ -987,6 +1025,7 @@ Current Structure          Transitional               New Structure
 ### Before Starting
 
 #### Technical Readiness
+
 - [ ] All tests passing (unit, integration, E2E)
 - [ ] No pending PRs that touch routing
 - [ ] Database migrations up to date
@@ -995,6 +1034,7 @@ Current Structure          Transitional               New Structure
 - [ ] Backup strategy verified
 
 #### Team Readiness
+
 - [ ] All team members briefed
 - [ ] Migration plan reviewed
 - [ ] Rollback procedure documented
@@ -1002,6 +1042,7 @@ Current Structure          Transitional               New Structure
 - [ ] Stakeholders informed
 
 #### Documentation
+
 - [ ] Current architecture documented
 - [ ] New architecture designed
 - [ ] Migration guide written
@@ -1013,50 +1054,58 @@ Current Structure          Transitional               New Structure
 ## 🎊 Expected Outcomes
 
 ### After Phase 1 (Week 1)
+
 ✅ Cleaner project structure  
 ✅ Better documentation  
 ✅ Removed redundant nesting  
-✅ Improved developer onboarding  
+✅ Improved developer onboarding
 
 ### After Phase 2 (Week 2)
+
 ✅ Clearer route organization  
 ✅ Better SEO structure  
 ✅ Unified marketplace experience  
-✅ Logical feature grouping  
+✅ Logical feature grouping
 
 ### After Phase 3 (Week 3-4)
+
 ✅ Versioned API structure  
 ✅ Better API organization  
 ✅ Easier to maintain  
 ✅ Room for growth  
-✅ Consistent patterns  
+✅ Consistent patterns
 
 ### After Phase 4 (Week 5)
+
 ✅ Optimized performance  
 ✅ Complete documentation  
 ✅ Better developer experience  
-✅ Production-ready structure  
+✅ Production-ready structure
 
 ---
 
 ## 💬 Communication Plan
 
 ### Week 1 (Phase 1)
+
 **Stakeholders:** Development team  
 **Message:** "Starting restructuring - documentation & quick wins"  
 **Channels:** Slack, standup
 
 ### Week 2 (Phase 2)
+
 **Stakeholders:** Full team + QA  
 **Message:** "Route group changes - testing needed"  
 **Channels:** Slack, email, documentation
 
 ### Week 3-4 (Phase 3)
+
 **Stakeholders:** Full team + partners (if API consumers)  
 **Message:** "API restructuring - version 1 rollout"  
 **Channels:** All channels + partner emails
 
 ### Week 5 (Phase 4)
+
 **Stakeholders:** Everyone  
 **Message:** "Restructuring complete - documentation updated"  
 **Channels:** All channels + blog post
@@ -1066,6 +1115,7 @@ Current Structure          Transitional               New Structure
 ## 🚀 Next Steps
 
 ### Immediate (This Week)
+
 1. [ ] Review this analysis with team
 2. [ ] Get stakeholder approval
 3. [ ] Schedule Phase 1 kickoff
@@ -1073,6 +1123,7 @@ Current Structure          Transitional               New Structure
 5. [ ] Set up monitoring for changes
 
 ### Short Term (Next 2 Weeks)
+
 1. [ ] Execute Phase 1
 2. [ ] Measure initial improvements
 3. [ ] Plan Phase 2 in detail
@@ -1080,6 +1131,7 @@ Current Structure          Transitional               New Structure
 5. [ ] Communicate progress
 
 ### Long Term (Month 2+)
+
 1. [ ] Complete all phases
 2. [ ] Measure final improvements
 3. [ ] Document lessons learned
@@ -1091,18 +1143,23 @@ Current Structure          Transitional               New Structure
 ## 📞 Questions & Answers
 
 ### Q: Will this break existing functionality?
+
 **A:** No, if we follow the incremental migration strategy with redirects and backward compatibility.
 
 ### Q: How long will users see redirects?
+
 **A:** 2-4 weeks during migration, then we can remove them.
 
 ### Q: What about mobile app?
+
 **A:** Mobile app uses API endpoints - we'll maintain backward compatibility and update the app client.
 
 ### Q: Can we do this incrementally?
+
 **A:** Yes! That's exactly the recommended approach. Each phase is independent.
 
 ### Q: What's the minimum viable restructure?
+
 **A:** Phase 1 only - gives 40% of the benefit with 20% of the risk.
 
 ---
@@ -1110,12 +1167,14 @@ Current Structure          Transitional               New Structure
 ## 📚 References
 
 ### Internal Documentation
+
 - `.github/instructions/` - Divine coding patterns
 - `.cursorrules` - Development rules
 - `ARCHITECTURE_DIAGRAM.md` - Current architecture
 - `REFACTORING_PLAN.md` - Refactoring guidelines
 
 ### External Resources
+
 - [Next.js 15 Route Groups](https://nextjs.org/docs/app/building-your-application/routing/route-groups)
 - [Next.js API Routes Best Practices](https://nextjs.org/docs/pages/building-your-application/routing/api-routes)
 - [Incremental Migration Strategies](https://increment.com/software-architecture/migrations/)

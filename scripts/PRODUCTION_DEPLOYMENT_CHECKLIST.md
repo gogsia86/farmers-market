@@ -156,6 +156,7 @@ This checklist guides you through the complete production deployment process for
   ```
 
 - [ ] **2.9 Verify All Variables Set**
+
   ```bash
   vercel env ls
   ```
@@ -398,6 +399,7 @@ This checklist guides you through the complete production deployment process for
   ```
 
 - [ ] **8.4 Check Vercel Logs**
+
   ```bash
   vercel logs --prod --follow
   ```
@@ -575,6 +577,7 @@ This checklist guides you through the complete production deployment process for
   - Password reset works
 
 - [ ] **13.4 Test API Rate Limiting**
+
   ```bash
   # Make 100 rapid requests
   for i in {1..100}; do

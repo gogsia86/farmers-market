@@ -96,7 +96,7 @@ describe("ServiceResponse Types", () => {
 
       it("should narrow type correctly", () => {
         const response: ServiceResponse<string> = createSuccessResponse("test");
-        
+
         if (isSuccess(response)) {
           // TypeScript should know response.data is string
           const data: string = response.data;
@@ -236,7 +236,9 @@ describe("ServiceResponse Types", () => {
     });
 
     it("should have authentication error codes", () => {
-      expect(ErrorCodes.AUTHENTICATION_REQUIRED).toBe("AUTHENTICATION_REQUIRED");
+      expect(ErrorCodes.AUTHENTICATION_REQUIRED).toBe(
+        "AUTHENTICATION_REQUIRED",
+      );
       expect(ErrorCodes.TOKEN_EXPIRED).toBe("TOKEN_EXPIRED");
     });
 

@@ -1,8 +1,12 @@
 "use client";
 
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState, useEffect, useCallback, useMemo } from "react";
 import { productKeys } from "@/lib/react-query/query-keys";
+import { createLogger } from "@/lib/utils/logger";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCallback, useEffect, useMemo, useState } from "react";
+
+// Create logger for search suggestions
+const searchLogger = createLogger("SearchSuggestions");
 
 /**
  * 🌾 DIVINE AGRICULTURAL SEARCH SUGGESTIONS HOOK
@@ -434,7 +438,10 @@ export function useRecentSearches(maxItems: number = 10) {
       const stored = localStorage.getItem(STORAGE_KEY);
       return stored ? JSON.parse(stored) : [];
     } catch (error) {
-      console.error("Failed to load recent searches:", error);
+      searchLogger.error(
+        "Failed to load recent searches",
+        error instanceof Error ? error : new Error(String(error)),
+      );
       return [];
     }
   });
@@ -446,7 +453,10 @@ export function useRecentSearches(maxItems: number = 10) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(recentSearches));
     } catch (error) {
-      console.error("Failed to save recent searches:", error);
+      searchLogger.error(
+        "Failed to save recent searches",
+        error instanceof Error ? error : new Error(String(error)),
+      );
     }
   }, [recentSearches]);
 

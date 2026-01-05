@@ -2,7 +2,7 @@
 
 **Status:** One critical blocker preventing production build  
 **Time to Fix:** 5-10 minutes  
-**Priority:** P0 Critical  
+**Priority:** P0 Critical
 
 ---
 
@@ -22,6 +22,7 @@ Cause: Next.js 16 Turbopack + Edge Runtime middleware incompatibility
 ## ✅ SOLUTION 1: Use Webpack Build (RECOMMENDED)
 
 ### Why This Works
+
 - Next.js 16 uses **webpack by default** (not Turbopack)
 - Webpack fully supports edge runtime middleware
 - Your current build command should already work
@@ -35,6 +36,7 @@ grep "build" package.json
 ```
 
 **Expected output:**
+
 ```json
 "build": "cross-env NODE_OPTIONS='--max-old-space-size=16384' prisma generate && next build"
 ```
@@ -67,7 +69,7 @@ If webpack build still fails, change middleware to Node.js runtime:
 ```typescript
 // middleware.ts - Add this line at the top after imports:
 
-export const runtime = 'nodejs'; // Changed from 'edge'
+export const runtime = "nodejs"; // Changed from 'edge'
 
 export default auth((request: NextRequest) => {
   // ... existing code ...
@@ -234,6 +236,7 @@ export const config = {
 ```
 
 **This will:**
+
 - ✅ Allow build to complete
 - ⚠️ Disable route redirects temporarily
 - ⚠️ Disable auth middleware temporarily
@@ -263,11 +266,13 @@ If all solutions fail:
 ## 💡 WHY THIS HAPPENED
 
 **Root Cause:**
+
 - Next.js 16 Turbopack has limited edge runtime support
 - NFT (Node File Trace) files not generated for edge middleware
 - NextAuth v5 `auth()` wrapper uses edge runtime by default
 
 **Long-term Fix:**
+
 - Wait for Next.js 16.2+ with full Turbopack edge support
 - Or migrate middleware to Node.js runtime (Solution 2)
 
@@ -276,6 +281,7 @@ If all solutions fail:
 ## ✅ SUCCESS CRITERIA
 
 **Build is fixed when:**
+
 - [x] `npm run build` completes without errors
 - [x] `.next` folder contains all generated files
 - [x] `npm run start` launches production server
@@ -288,12 +294,12 @@ If all solutions fail:
 
 ## 🎯 TIME ESTIMATES
 
-| Solution | Time | Success Rate |
-|----------|------|--------------|
-| Solution 1 (Webpack) | 2 min | 90% |
-| Solution 2 (Runtime) | 5 min | 95% |
-| Solution 3 (Upgrade) | 10 min | 70% |
-| Nuclear Option | 2 min | 100% (temp) |
+| Solution             | Time   | Success Rate |
+| -------------------- | ------ | ------------ |
+| Solution 1 (Webpack) | 2 min  | 90%          |
+| Solution 2 (Runtime) | 5 min  | 95%          |
+| Solution 3 (Upgrade) | 10 min | 70%          |
+| Nuclear Option       | 2 min  | 100% (temp)  |
 
 **Recommended:** Try Solution 1, then Solution 2 if needed.
 
@@ -301,6 +307,6 @@ If all solutions fail:
 
 **Last Updated:** January 2025  
 **Status:** Active Fix Guide  
-**Priority:** P0 - Critical  
+**Priority:** P0 - Critical
 
 _"Fix the build, harvest the success."_ 🌾⚡

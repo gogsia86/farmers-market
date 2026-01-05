@@ -1,168 +1,358 @@
 /**
- * 🚜 FARMS API ROUTE - USING DIVINE CONTROLLER PATTERN
+ * 🏪 FARMS API ROUTE
+ * RESTful API for farm management with agricultural consciousness
  *
- * Handles farm listing and creation endpoints using the controller layer.
- * Demonstrates clean separation: Route → Controller → Service → Repository → Database
- *
- * Divine Patterns Applied:
- * - Controller pattern (HTTP concerns separated from business logic)
- * - Unified API response format
- * - Agricultural consciousness
- * - Rate limiting
- * - Lazy tracing integration
- * - Redis caching with stale-while-revalidate (NEW - Day 5)
- * - Response compression (Brotli/Gzip) (NEW - Day 5)
- * - 50ms target response time (NEW - Day 5)
- *
- * Performance Enhancements (Week 1, Day 5):
- * - GET requests cached for 10 minutes (600s TTL)
- * - Stale-while-revalidate: 2 minutes
- * - Automatic compression (Brotli preferred, Gzip fallback)
- * - Cache invalidation on POST/PUT/DELETE
- *
- * @reference .github/instructions/11_KILO_SCALE_ARCHITECTURE.instructions.md
- * @reference .github/instructions/04_NEXTJS_DIVINE_IMPLEMENTATION.instructions.md
- * @reference .github/instructions/03_PERFORMANCE_REALITY_BENDING.instructions.md
+ * Endpoints:
+ * - GET /api/farms - List all farms with filtering
+ * - POST /api/farms - Create new farm (authenticated)
  */
 
+import { auth } from "@/lib/auth";
+import { database } from "@/lib/database";
+import type { Farm, FarmStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-import { farmController } from "@/lib/controllers";
-import {
-  rateLimiters,
-  createRateLimitResponse,
-} from "@/lib/middleware/rate-limiter";
-import { withApiCache, invalidateCacheByTag } from "@/lib/middleware/api-cache";
-import { withCompression } from "@/lib/middleware/compression";
+import { z } from "zod";
 
-/**
- * GET /api/farms
- *
- * List farms with pagination and filtering
- *
- * Query Parameters:
- * - page: number (default: 1)
- * - limit: number (default: 20)
- * - status: "ACTIVE" | "PENDING" | "SUSPENDED" | "INACTIVE"
- * - city: string
- * - state: string
- * - sortBy: "name" | "createdAt" | "rating"
- * - sortOrder: "asc" | "desc"
- *
- * @example
- * GET /api/farms?page=1&limit=20&city=Seattle&status=ACTIVE
- *
- * Response:
- * {
- *   "success": true,
- *   "data": [...farms],
- *   "meta": {
- *     "pagination": {
- *       "page": 1,
- *       "limit": 20,
- *       "total": 100,
- *       "totalPages": 5,
- *       "hasNext": true,
- *       "hasPrev": false
- *     }
- *   }
- * }
- */
-export const GET = withCompression(
-  withApiCache(async (request: NextRequest): Promise<NextResponse> => {
-    // Apply rate limiting (public endpoint)
-    const rateLimit = await rateLimiters.public.check(request);
-    if (!rateLimit.success) {
-      return createRateLimitResponse(rateLimit);
-    }
+// ============================================================================
+// TYPES & VALIDATION
+// ============================================================================
 
-    // Delegate to controller
-    // Response will be automatically cached (10 min TTL) and compressed
-    return farmController.listFarms(request);
-  }),
-);
+const CreateFarmSchema = z.object({
+  name: z.string().min(3).max(255),
+  slug: z.string().min(3).max(255).optional(),
+  description: z.string().min(10).optional(),
+  story: z.string().optional(),
+  email: z.string().email(),
+  phone: z.string(),
+  website: z.string().url().optional(),
+  address: z.string(),
+  city: z.string(),
+  state: z.string(),
+  zipCode: z.string(),
+  country: z.string().default("US"),
+  latitude: z.number().min(-90).max(90),
+  longitude: z.number().min(-180).max(180),
+  businessName: z.string().optional(),
+  taxId: z.string().optional(),
+  businessType: z.string().optional(),
+  yearEstablished: z.number().int().min(1800).max(new Date().getFullYear()).optional(),
+  farmSize: z.number().positive().optional(),
+  certificationsArray: z.array(z.string()).optional(),
+  deliveryRadius: z.number().int().positive().default(25),
+});
 
-/**
- * POST /api/farms
- *
- * Create new farm (requires FARMER or ADMIN role)
- *
- * Request Body:
- * {
- *   "name": string (required, min 3 chars),
- *   "city": string (required),
- *   "state": string (required, 2-letter code),
- *   "description": string (optional),
- *   "story": string (optional),
- *   "businessName": string (optional),
- *   "yearEstablished": number (optional),
- *   "farmSize": number (optional),
- *   "address": string (optional),
- *   "zipCode": string (optional),
- *   "latitude": number (optional),
- *   "longitude": number (optional),
- *   "email": string (optional, must be valid email),
- *   "phone": string (optional),
- *   "website": string (optional, must be valid URL),
- *   "farmingPractices": string[] (optional),
- *   "productCategories": string[] (optional),
- *   "deliveryRadius": number (optional)
- * }
- *
- * @example
- * POST /api/farms
- * Body: {
- *   "name": "Divine Acres",
- *   "city": "Seattle",
- *   "state": "WA",
- *   "description": "Organic biodynamic farm",
- *   "farmingPractices": ["ORGANIC", "BIODYNAMIC"],
- *   "deliveryRadius": 50
- * }
- *
- * Response (201):
- * {
- *   "success": true,
- *   "data": {
- *     "id": "farm-id",
- *     "name": "Divine Acres",
- *     "slug": "divine-acres-seattle",
- *     ...
- *   },
- *   "meta": {
- *     "slug": "divine-acres-seattle",
- *     "agricultural": {
- *       "consciousness": "DIVINE",
- *       "operation": "FARM_MANIFESTATION"
- *     }
- *   }
- * }
- */
-export async function POST(request: NextRequest): Promise<NextResponse> {
-  // Apply rate limiting (authenticated endpoint, stricter limits)
-  const rateLimit = await rateLimiters.api.check(request);
-  if (!rateLimit.success) {
-    return createRateLimitResponse(rateLimit);
-  }
+const FarmQuerySchema = z.object({
+  page: z.string().optional().default("1"),
+  limit: z.string().optional().default("20"),
+  search: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  status: z.enum(["PENDING", "ACTIVE", "SUSPENDED", "INACTIVE"]).optional(),
+  organic: z.string().optional(),
+});
 
-  // Delegate to controller (authentication check happens in controller)
-  const response = await farmController.createFarm(request);
-
-  // Invalidate farms cache on successful creation
-  if (response.status === 201) {
-    await invalidateCacheByTag("farms");
-    await invalidateCacheByTag("public");
-  }
-
-  return response;
+interface FarmListResponse {
+  success: boolean;
+  data: {
+    farms: Farm[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+    };
+  };
 }
 
-/**
- * Divine farm routes established ✨🚜
- * Clean architecture with controller separation
- * Performance optimizations applied:
- * - ⚡ Redis caching (10min TTL, 2min stale)
- * - 🗜️ Response compression (Brotli/Gzip)
- * - 🎯 Target: 50ms response time
- * - 📊 Cache hit ratio: 70%+ expected
- * Ready for quantum agricultural operations at scale
- */
+interface FarmCreateResponse {
+  success: boolean;
+  data?: Farm;
+  error?: {
+    code: string;
+    message: string;
+    details?: Record<string, unknown>;
+  };
+}
+
+// ============================================================================
+// GET /api/farms - LIST FARMS
+// ============================================================================
+
+export async function GET(request: NextRequest): Promise<NextResponse<FarmListResponse>> {
+  try {
+    const { searchParams } = new URL(request.url);
+
+    // Validate query parameters
+    const queryValidation = FarmQuerySchema.safeParse({
+      page: searchParams.get("page") || "1",
+      limit: searchParams.get("limit") || "20",
+      search: searchParams.get("search") || undefined,
+      city: searchParams.get("city") || undefined,
+      state: searchParams.get("state") || undefined,
+      status: searchParams.get("status") || undefined,
+      organic: searchParams.get("organic") || undefined,
+    });
+
+    if (!queryValidation.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          data: {
+            farms: [],
+            pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
+          },
+        },
+        { status: 400 }
+      );
+    }
+
+    const { page, limit, search, city, state, status, organic } = queryValidation.data;
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    const skip = (pageNum - 1) * limitNum;
+
+    // Build where clause
+    const where: any = {};
+
+    // Default to only active farms for public listing
+    if (!status) {
+      where.status = "ACTIVE" as FarmStatus;
+    } else {
+      where.status = status as FarmStatus;
+    }
+
+    // Search filter
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
+        { city: { contains: search, mode: "insensitive" } },
+      ];
+    }
+
+    // Location filters
+    if (city) {
+      where.city = { contains: city, mode: "insensitive" };
+    }
+
+    if (state) {
+      where.state = state;
+    }
+
+    // Organic filter - check certificationsArray
+    if (organic === "true") {
+      where.certificationsArray = {
+        hasSome: ["USDA_ORGANIC", "ORGANIC", "Organic Certified"],
+      };
+    }
+
+    // Execute queries in parallel
+    const [farms, total] = await Promise.all([
+      database.farm.findMany({
+        where,
+        skip,
+        take: limitNum,
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          description: true,
+          story: true,
+          status: true,
+          email: true,
+          phone: true,
+          website: true,
+          address: true,
+          city: true,
+          state: true,
+          zipCode: true,
+          country: true,
+          latitude: true,
+          longitude: true,
+          images: true,
+          logoUrl: true,
+          bannerUrl: true,
+          certificationsArray: true,
+          farmingPractices: true,
+          deliveryRadius: true,
+          averageRating: true,
+          reviewCount: true,
+          createdAt: true,
+          updatedAt: true,
+          _count: {
+            select: {
+              products: true,
+              reviews: true,
+              orders: true,
+            },
+          },
+        },
+      }),
+      database.farm.count({ where }),
+    ]);
+
+    const totalPages = Math.ceil(total / limitNum);
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        farms: farms as unknown as Farm[],
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total,
+          totalPages,
+        },
+      },
+    });
+  } catch (error) {
+    console.error("GET /api/farms error:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        data: {
+          farms: [],
+          pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
+        },
+      },
+      { status: 500 }
+    );
+  }
+}
+
+// ============================================================================
+// POST /api/farms - CREATE FARM
+// ============================================================================
+
+export async function POST(
+  request: NextRequest
+): Promise<NextResponse<FarmCreateResponse>> {
+  try {
+    // Check authentication
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: "UNAUTHORIZED",
+            message: "Authentication required",
+          },
+        },
+        { status: 401 }
+      );
+    }
+
+    // Check if user is a farmer
+    const user = session.user as any;
+    if (user.role !== "FARMER" && user.role !== "ADMIN") {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: "FORBIDDEN",
+            message: "Only farmers can create farms",
+          },
+        },
+        { status: 403 }
+      );
+    }
+
+    // Parse and validate request body
+    const body = await request.json();
+    const validation = CreateFarmSchema.safeParse(body);
+
+    if (!validation.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: "VALIDATION_ERROR",
+            message: "Invalid farm data",
+            details: validation.error.flatten(),
+          },
+        },
+        { status: 400 }
+      );
+    }
+
+    const farmData = validation.data;
+
+    // Generate slug if not provided
+    const slug =
+      farmData.slug ||
+      farmData.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "");
+
+    // Check if slug is unique
+    const existingFarm = await database.farm.findFirst({
+      where: { slug },
+    });
+
+    if (existingFarm) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: "DUPLICATE_SLUG",
+            message: "A farm with this name already exists",
+          },
+        },
+        { status: 409 }
+      );
+    }
+
+    // Create farm
+    const farm = await database.farm.create({
+      data: {
+        name: farmData.name,
+        slug,
+        description: farmData.description,
+        story: farmData.story,
+        email: farmData.email,
+        phone: farmData.phone,
+        website: farmData.website,
+        address: farmData.address,
+        city: farmData.city,
+        state: farmData.state,
+        zipCode: farmData.zipCode,
+        country: farmData.country,
+        latitude: farmData.latitude,
+        longitude: farmData.longitude,
+        businessName: farmData.businessName,
+        taxId: farmData.taxId,
+        businessType: farmData.businessType,
+        yearEstablished: farmData.yearEstablished,
+        farmSize: farmData.farmSize,
+        certificationsArray: farmData.certificationsArray || [],
+        deliveryRadius: farmData.deliveryRadius,
+        status: "PENDING" as FarmStatus,
+        ownerId: user.id,
+        images: [],
+      },
+    });
+
+    return NextResponse.json(
+      {
+        success: true,
+        data: farm,
+      },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error("POST /api/farms error:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: "INTERNAL_ERROR",
+          message: "Failed to create farm",
+        },
+      },
+      { status: 500 }
+    );
+  }
+}

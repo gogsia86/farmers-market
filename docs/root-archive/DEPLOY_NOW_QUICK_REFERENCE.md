@@ -95,6 +95,7 @@ NEXT_PUBLIC_SENTRY_DSN="https://...@sentry.io/..."
 ## 🗄️ Database Quick Setup
 
 ### Option 1: Vercel Postgres (Easiest)
+
 ```bash
 1. Vercel Dashboard → Storage → Create Database → Postgres
 2. DATABASE_URL automatically added ✅
@@ -102,6 +103,7 @@ NEXT_PUBLIC_SENTRY_DSN="https://...@sentry.io/..."
 ```
 
 ### Option 2: Supabase (Free Tier)
+
 ```bash
 1. https://supabase.com → New Project
 2. Settings → Database → Copy Connection String (Pooling Mode)
@@ -110,6 +112,7 @@ NEXT_PUBLIC_SENTRY_DSN="https://...@sentry.io/..."
 ```
 
 ### Option 3: Neon (Serverless)
+
 ```bash
 1. https://neon.tech → New Project
 2. Copy connection string
@@ -149,6 +152,7 @@ npm run db:seed:basic
 ## 🚨 Common Issues & Fixes
 
 ### Build Fails
+
 ```bash
 # Check locally first
 npm run build
@@ -161,6 +165,7 @@ npm run lint
 ```
 
 ### Database Connection Fails
+
 ```bash
 # Verify DATABASE_URL format includes:
 ?pgbouncer=true&connection_limit=1
@@ -171,6 +176,7 @@ npm run dev
 ```
 
 ### Environment Variables Missing
+
 ```bash
 # Check Vercel Dashboard
 Settings → Environment Variables
@@ -199,12 +205,14 @@ vercel --prod
 ## 📞 Quick Help
 
 **Vercel Docs**: https://vercel.com/docs
-**Project Docs**: 
+**Project Docs**:
+
 - VERCEL_DEPLOYMENT_ANALYSIS.md (full guide)
 - DEPLOYMENT_RUNBOOK.md (detailed procedures)
 - DEPLOYMENT_CHECKLIST.md (step-by-step)
 
 **Support**:
+
 - Vercel Discord: https://vercel.com/discord
 - Vercel Help: https://vercel.com/help
 
@@ -256,6 +264,7 @@ vercel rollback [deployment-url]
 **Future Deploys**: 3-5 minutes (automatic)
 
 **Deploy Now**:
+
 ```bash
 vercel --prod
 ```

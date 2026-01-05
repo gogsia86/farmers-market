@@ -7,9 +7,10 @@
  * particularly for the orchestrator and monitoring endpoints.
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { authLogger } from "@/lib/utils/logger";
 import crypto from "crypto";
+import { NextRequest, NextResponse } from "next/server";
 
 // ============================================================================
 // TYPES
@@ -756,7 +757,7 @@ export function initializeApiKeys(): void {
           windowMs: 60 * 60 * 1000,
         },
       });
-      console.log("✅ Default admin API key initialized");
+      authLogger.info("Default admin API key initialized");
     }
   }
 
@@ -783,7 +784,7 @@ export function initializeApiKeys(): void {
           windowMs: 60 * 60 * 1000,
         },
       });
-      console.log("✅ Orchestrator API key initialized");
+      authLogger.info("Orchestrator API key initialized");
     }
   }
 }

@@ -15,12 +15,13 @@
  * - Improved type safety
  */
 
-import NextAuth, { type DefaultSession, type NextAuthResult } from "next-auth";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import Credentials from "next-auth/providers/credentials";
-import { compare } from "bcryptjs";
-import type { UserRole, UserStatus } from "@prisma/client";
 import { database } from "@/lib/database";
+import { authLogger } from "@/lib/utils/logger";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import type { UserRole, UserStatus } from "@prisma/client";
+import { compare } from "bcryptjs";
+import NextAuth, { type DefaultSession } from "next-auth";
+import Credentials from "next-auth/providers/credentials";
 
 /**
  * Extend NextAuth types to include our custom fields
@@ -85,7 +86,7 @@ const nextAuthResult = NextAuth({
       async authorize(credentials) {
         // Validate credentials exist
         if (!credentials?.email || !credentials?.password) {
-          console.error("Missing credentials");
+          authLogger.warn("Missing credentials in login attempt");
           return null;
         }
 
@@ -106,7 +107,9 @@ const nextAuthResult = NextAuth({
 
           // User not found or no password set
           if (!user || !user.password) {
-            console.error("User not found or no password set");
+            authLogger.warn("User not found or no password set", {
+              email: credentials.email as string,
+            });
             return null;
           }
 
@@ -117,13 +120,18 @@ const nextAuthResult = NextAuth({
           );
 
           if (!isValidPassword) {
-            console.error("Invalid password");
+            authLogger.warn("Invalid password attempt", {
+              email: credentials.email as string,
+            });
             return null;
           }
 
           // Check if user is active
           if (user.status !== "ACTIVE") {
-            console.error("User account is not active:", user.status);
+            authLogger.warn("User account is not active", {
+              email: user.email,
+              status: user.status,
+            });
             return null;
           }
 
@@ -136,7 +144,10 @@ const nextAuthResult = NextAuth({
             "CONSUMER",
           ];
           if (!allowedRoles.includes(user.role)) {
-            console.error("User does not have required role:", user.role);
+            authLogger.warn("User does not have required role", {
+              email: user.email,
+              role: user.role,
+            });
             return null;
           }
 
@@ -151,7 +162,10 @@ const nextAuthResult = NextAuth({
             status: user.status,
           };
         } catch (error) {
-          console.error("Authorization error:", error);
+          authLogger.error(
+            "Authorization error",
+            error instanceof Error ? error : new Error(String(error)),
+          );
           return null;
         }
       },
@@ -222,14 +236,21 @@ const nextAuthResult = NextAuth({
   // Events for logging
   events: {
     async signIn({ user }) {
-      console.log(`✅ User signed in: ${user.email} (${user.role})`);
+      authLogger.info("User signed in", {
+        email: user.email,
+        role: user.role,
+      });
     },
     async signOut(message) {
       const token = "token" in message ? message.token : null;
-      console.log(`👋 User signed out: ${token?.email}`);
+      authLogger.info("User signed out", {
+        email: token?.email,
+      });
     },
     async createUser({ user }) {
-      console.log(`👤 New user created: ${user.email}`);
+      authLogger.info("New user created", {
+        email: user.email,
+      });
     },
   },
 

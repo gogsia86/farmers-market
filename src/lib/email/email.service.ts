@@ -17,7 +17,11 @@
  */
 
 import { createTransporter } from "@/lib/lazy/email.lazy";
+import { createLogger } from "@/lib/utils/logger";
 import type { Transporter } from "nodemailer";
+
+// Create dedicated logger for email service
+const emailLogger = createLogger("EmailService");
 
 // ============================================================================
 // TYPES
@@ -111,7 +115,7 @@ export class EmailService {
       const smtpSecure = process.env.SMTP_SECURE === "true";
 
       if (!smtpHost || !smtpPort) {
-        console.warn("⚠️  SMTP not configured - emails will be logged only");
+        emailLogger.warn("SMTP not configured - emails will be logged only");
         this.isConfigured = false;
         return;
       }
@@ -130,9 +134,12 @@ export class EmailService {
       });
 
       this.isConfigured = true;
-      console.log("✅ Email service initialized");
+      emailLogger.info("Email service initialized");
     } catch (error) {
-      console.error("❌ Failed to initialize email service:", error);
+      emailLogger.error(
+        "Failed to initialize email service",
+        error instanceof Error ? error : new Error(String(error)),
+      );
       this.isConfigured = false;
     }
   }
@@ -156,10 +163,9 @@ export class EmailService {
     try {
       // If not configured, log and return success (dev mode)
       if (!this.isConfigured || !this.transporter) {
-        console.log("📧 [EMAIL DEV MODE]", {
+        emailLogger.debug("Email dev mode - not sending", {
           to: options.to,
           subject: options.subject,
-          html: `${options.html?.substring(0, 100)}...`,
         });
         return true;
       }
@@ -177,10 +183,13 @@ export class EmailService {
         attachments: options.attachments,
       });
 
-      console.log("✅ Email sent:", info.messageId);
+      emailLogger.info("Email sent", { messageId: info.messageId });
       return true;
     } catch (error) {
-      console.error("❌ Failed to send email:", error);
+      emailLogger.error(
+        "Failed to send email",
+        error instanceof Error ? error : new Error(String(error)),
+      );
       return false;
     }
   }
@@ -556,14 +565,14 @@ export const emailService = new EmailService();
 // ============================================================================
 
 export {
+  createDeferredEmailSender,
+  getEmailServiceStatusLazy,
+  isEmailServiceConfiguredLazy,
+  sendBatchEmailsLazy,
   sendEmailLazy,
   sendFarmerWelcomeLazy,
-  sendSupportTicketConfirmationLazy,
-  sendOrderNotificationLazy,
   sendOrderConfirmationLazy,
-  sendBatchEmailsLazy,
+  sendOrderNotificationLazy,
   sendSeasonalNewsletterLazy,
-  isEmailServiceConfiguredLazy,
-  getEmailServiceStatusLazy,
-  createDeferredEmailSender,
+  sendSupportTicketConfirmationLazy,
 } from "./email-service-lazy";

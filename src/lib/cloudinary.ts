@@ -12,9 +12,13 @@
  */
 
 import {
-  uploadBufferToCloudinary,
   deleteFromCloudinary,
+  uploadBufferToCloudinary,
 } from "@/lib/lazy/cloudinary.lazy";
+import { createLogger } from "@/lib/utils/logger";
+
+// Create dedicated logger for cloudinary operations
+const cloudinaryLogger = createLogger("Cloudinary");
 
 // ============================================================================
 // CLOUDINARY CONFIGURATION
@@ -94,7 +98,10 @@ export async function uploadImage(
     // Return secure URL
     return result.secure_url;
   } catch (error) {
-    console.error("Cloudinary upload error:", error);
+    cloudinaryLogger.error(
+      "Cloudinary upload error",
+      error instanceof Error ? error : new Error(String(error)),
+    );
     throw new Error(
       `Failed to upload image: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
@@ -174,7 +181,10 @@ export async function uploadImageWithDetails(
       bytes: result.bytes,
     };
   } catch (error) {
-    console.error("Cloudinary upload error:", error);
+    cloudinaryLogger.error(
+      "Cloudinary upload error",
+      error instanceof Error ? error : new Error(String(error)),
+    );
     throw new Error(
       `Failed to upload image: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
@@ -192,7 +202,10 @@ export async function deleteImage(publicId: string): Promise<boolean> {
     const result = await deleteFromCloudinary(publicId);
     return result.result === "ok";
   } catch (error) {
-    console.error("Cloudinary delete error:", error);
+    cloudinaryLogger.error(
+      "Cloudinary delete error",
+      error instanceof Error ? error : new Error(String(error)),
+    );
     return false;
   }
 }
@@ -215,7 +228,10 @@ export async function deleteMultipleImages(
     }
     return successCount;
   } catch (error) {
-    console.error("Cloudinary batch delete error:", error);
+    cloudinaryLogger.error(
+      "Cloudinary batch delete error",
+      error instanceof Error ? error : new Error(String(error)),
+    );
     return 0;
   }
 }

@@ -15,11 +15,11 @@
  * @reference .github/instructions/11_KILO_SCALE_ARCHITECTURE.instructions.md
  */
 
+import { auth } from "@/lib/auth";
+import { apiLogger } from "@/lib/utils/logger";
+import type { Session } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { z, ZodSchema } from "zod";
-import { auth } from "@/lib/auth";
-// database import removed - not used in this file
-import type { Session } from "next-auth";
 
 // ============================================
 // TYPE DEFINITIONS
@@ -435,7 +435,11 @@ export function createApiHandler<
         agricultural: options.agriculturalMetadata,
       });
     } catch (error) {
-      console.error(`[API Error] ${requestId}:`, error);
+      apiLogger.error(`API Error`, {
+        requestId,
+        errorMessage: error instanceof Error ? error.message : String(error),
+        errorStack: error instanceof Error ? error.stack : undefined,
+      });
 
       // Handle known error types
       if (error instanceof z.ZodError) {

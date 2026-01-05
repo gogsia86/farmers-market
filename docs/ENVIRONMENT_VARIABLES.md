@@ -93,21 +93,25 @@ npm run validate:platform
 **Required**: ✅ Yes  
 **Type**: String (URL format)  
 **Example**:
+
 ```bash
 DATABASE_URL="postgresql://user:password@localhost:5432/farmers_market"
 ```
 
 **Format**:
+
 ```
 postgresql://[USER]:[PASSWORD]@[HOST]:[PORT]/[DATABASE]?[PARAMETERS]
 ```
 
 **Common Parameters**:
+
 - `sslmode=require` - Force SSL connection (production)
 - `schema=public` - Specify schema (default: public)
 - `connection_limit=10` - Connection pool size
 
 **Examples**:
+
 ```bash
 # Local development
 DATABASE_URL="postgresql://postgres:password@localhost:5432/farmers_market"
@@ -135,11 +139,13 @@ DATABASE_URL="postgresql://[user]:[password]@[endpoint].neon.tech/[dbname]?sslmo
 **Required**: ✅ Yes  
 **Type**: String (URL)  
 **Example**:
+
 ```bash
 NEXTAUTH_URL="http://localhost:3001"
 ```
 
 **Environment-Specific**:
+
 ```bash
 # Development
 NEXTAUTH_URL="http://localhost:3001"
@@ -152,6 +158,7 @@ NEXTAUTH_URL="https://farmersmarket.com"
 ```
 
 **Notes**:
+
 - Must match the actual domain
 - Include protocol (http:// or https://)
 - No trailing slash
@@ -165,11 +172,13 @@ NEXTAUTH_URL="https://farmersmarket.com"
 **Required**: ✅ Yes  
 **Type**: String (32+ characters)  
 **Example**:
+
 ```bash
 NEXTAUTH_SECRET="your-super-secret-key-minimum-32-characters-long"
 ```
 
 **Generating**:
+
 ```bash
 # Method 1: OpenSSL (recommended)
 openssl rand -base64 32
@@ -182,6 +191,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 ```
 
 **Security Requirements**:
+
 - ✅ Minimum 32 characters
 - ✅ Random and unpredictable
 - ✅ Different for each environment
@@ -196,18 +206,21 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 
 **Description**: Stripe public/publishable key (client-side)  
 **Required**: ✅ Yes  
-**Type**: String (pk_test_* or pk_live_*)  
+**Type**: String (pk*test*_ or pk*live*_)  
 **Example**:
+
 ```bash
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_51AbCdEf..."
 ```
 
 **Getting Your Key**:
+
 1. Log in to [Stripe Dashboard](https://dashboard.stripe.com/)
 2. Go to **Developers** → **API keys**
 3. Copy **Publishable key**
 
 **Test vs Live**:
+
 ```bash
 # Test mode (for development)
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_51AbCdEf..."
@@ -222,13 +235,15 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_live_51AbCdEf..."
 
 **Description**: Stripe secret key (server-side only)  
 **Required**: ✅ Yes  
-**Type**: String (sk_test_* or sk_live_*)  
+**Type**: String (sk*test*_ or sk*live*_)  
 **Example**:
+
 ```bash
 STRIPE_SECRET_KEY="sk_test_51AbCdEf..."
 ```
 
 **Security**:
+
 - ⚠️ **NEVER** expose to client-side
 - ⚠️ **NEVER** commit to git
 - ⚠️ Use test keys in development
@@ -240,8 +255,9 @@ STRIPE_SECRET_KEY="sk_test_51AbCdEf..."
 
 **Description**: Stripe webhook signing secret  
 **Required**: ✅ Yes (for webhook verification)  
-**Type**: String (whsec_*)  
+**Type**: String (whsec\_\*)  
 **Example**:
+
 ```bash
 STRIPE_WEBHOOK_SECRET="whsec_1234567890abcdef..."
 ```
@@ -249,6 +265,7 @@ STRIPE_WEBHOOK_SECRET="whsec_1234567890abcdef..."
 **Setting Up Webhooks**:
 
 **Development** (using Stripe CLI):
+
 ```bash
 # Install Stripe CLI
 # https://stripe.com/docs/stripe-cli
@@ -264,6 +281,7 @@ stripe listen --forward-to localhost:3001/api/webhooks/stripe
 ```
 
 **Production**:
+
 1. Go to [Stripe Dashboard](https://dashboard.stripe.com/)
 2. Navigate to **Developers** → **Webhooks**
 3. Click **Add endpoint**
@@ -272,6 +290,7 @@ stripe listen --forward-to localhost:3001/api/webhooks/stripe
 6. Copy the **Signing secret**
 
 **Required Events**:
+
 - `checkout.session.completed`
 - `payment_intent.succeeded`
 - `payment_intent.payment_failed`
@@ -289,16 +308,19 @@ stripe listen --forward-to localhost:3001/api/webhooks/stripe
 **Required**: ✅ Yes  
 **Type**: Enum ("development" | "production" | "test")  
 **Example**:
+
 ```bash
 NODE_ENV="development"
 ```
 
 **Values**:
+
 - `development` - Local development with hot reload
 - `production` - Optimized production build
 - `test` - Testing environment
 
 **Auto-set by**:
+
 - `npm run dev` → `development`
 - `npm run build` → `production`
 - `npm test` → `test`
@@ -311,6 +333,7 @@ NODE_ENV="development"
 **Required**: ✅ Yes  
 **Type**: String (URL)  
 **Example**:
+
 ```bash
 NEXT_PUBLIC_APP_URL="http://localhost:3001"
 ```
@@ -330,6 +353,7 @@ NEXT_PUBLIC_APP_URL="http://localhost:3001"
 **Type**: Boolean ("true" | "false")  
 **Default**: "false"  
 **Example**:
+
 ```bash
 NEXT_PUBLIC_OTEL_ENABLED="true"
 ```
@@ -342,11 +366,13 @@ NEXT_PUBLIC_OTEL_ENABLED="true"
 **Required**: ❌ No (required if OTEL enabled)  
 **Type**: String (URL)  
 **Example**:
+
 ```bash
 OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4318"
 ```
 
 **Common Endpoints**:
+
 ```bash
 # Local collector
 OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4318"
@@ -371,11 +397,13 @@ OTEL_EXPORTER_OTLP_ENDPOINT="https://api.honeycomb.io"
 **Required**: ❌ No (Highly recommended for production)  
 **Type**: String (Connection String)  
 **Example**:
+
 ```bash
 AZURE_APPINSIGHTS_CONNECTION_STRING="InstrumentationKey=12345678-1234-1234-1234-123456789abc;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
 ```
 
 **Features Enabled**:
+
 - Error and exception tracking
 - Performance monitoring and tracing
 - Rate limit event tracking
@@ -384,12 +412,14 @@ AZURE_APPINSIGHTS_CONNECTION_STRING="InstrumentationKey=12345678-1234-1234-1234-
 - Agricultural operation telemetry
 
 **Setup**:
+
 1. Create Application Insights resource in Azure Portal
 2. Copy connection string from Azure Portal
 3. Add to production environment variables
 4. Telemetry automatically enabled in production mode
 
 **Development Mode**:
+
 - Telemetry is automatically disabled in development
 - Set `LOG_TELEMETRY=true` to see telemetry events in console during development
 
@@ -403,11 +433,13 @@ AZURE_APPINSIGHTS_CONNECTION_STRING="InstrumentationKey=12345678-1234-1234-1234-
 **Required**: ❌ No  
 **Type**: String (URL)  
 **Example**:
+
 ```bash
 REDIS_URL="redis://localhost:6379"
 ```
 
 **Formats**:
+
 ```bash
 # Local Redis
 REDIS_URL="redis://localhost:6379"
@@ -432,6 +464,7 @@ REDIS_URL="redis://default:password@example.upstash.io:6379"
 **Required**: ❌ No  
 **Type**: String  
 **Example**:
+
 ```bash
 EMAIL_SERVER_HOST="smtp.gmail.com"
 ```
@@ -445,11 +478,13 @@ EMAIL_SERVER_HOST="smtp.gmail.com"
 **Type**: Number  
 **Default**: 587  
 **Example**:
+
 ```bash
 EMAIL_SERVER_PORT="587"
 ```
 
 **Common Ports**:
+
 - `25` - Standard SMTP (often blocked)
 - `465` - SMTP over SSL
 - `587` - SMTP with STARTTLS (recommended)
@@ -463,6 +498,7 @@ EMAIL_SERVER_PORT="587"
 **Required**: ❌ No  
 **Type**: String  
 **Example**:
+
 ```bash
 EMAIL_SERVER_USER="user@example.com"
 ```
@@ -475,11 +511,13 @@ EMAIL_SERVER_USER="user@example.com"
 **Required**: ❌ No  
 **Type**: String  
 **Example**:
+
 ```bash
 EMAIL_SERVER_PASSWORD="your-app-specific-password"
 ```
 
 **Gmail Setup**:
+
 1. Enable 2-factor authentication
 2. Generate App Password: https://myaccount.google.com/apppasswords
 3. Use app password as EMAIL_SERVER_PASSWORD
@@ -492,6 +530,7 @@ EMAIL_SERVER_PASSWORD="your-app-specific-password"
 **Required**: ❌ No  
 **Type**: String (email format)  
 **Example**:
+
 ```bash
 EMAIL_FROM="noreply@farmersmarket.com"
 ```
@@ -509,6 +548,7 @@ CLOUDINARY_API_SECRET="your-api-secret"
 ```
 
 **Getting Credentials**:
+
 1. Sign up at [Cloudinary](https://cloudinary.com/)
 2. Go to Dashboard
 3. Copy credentials
@@ -535,11 +575,13 @@ AWS_S3_BUCKET="farmers-market-images"
 **Type**: Enum ("debug" | "info" | "warn" | "error")  
 **Default**: "info"  
 **Example**:
+
 ```bash
 LOG_LEVEL="debug"
 ```
 
 **Levels**:
+
 - `debug` - All logs (verbose)
 - `info` - Informational messages
 - `warn` - Warnings only
@@ -554,6 +596,7 @@ LOG_LEVEL="debug"
 **Type**: Boolean ("true" | "false")  
 **Default**: "false"  
 **Example**:
+
 ```bash
 SKIP_ENV_VALIDATION="true"
 ```
@@ -569,6 +612,7 @@ SKIP_ENV_VALIDATION="true"
 **Type**: Boolean ("true" | "false")  
 **Default**: "false"  
 **Example**:
+
 ```bash
 DOCKER_BUILD="true"
 ```
@@ -694,11 +738,13 @@ LOG_LEVEL="error"
 ### 🔐 Secret Storage Options
 
 **Development**:
+
 - `.env` file (gitignored)
 - 1Password / LastPass / Bitwarden
 - Local password manager
 
 **Production**:
+
 - Vercel Environment Variables
 - AWS Secrets Manager
 - Azure Key Vault
@@ -760,6 +806,7 @@ node -e "console.log(require('crypto').randomUUID())"
 **Symptoms**: `process.env.VARIABLE_NAME` returns `undefined`
 
 **Solutions**:
+
 1. Verify `.env` file exists in project root
 2. Check variable name (case-sensitive)
 3. Restart development server
@@ -798,6 +845,7 @@ NEXT_PUBLIC_API_KEY="abc123"
 ### Issue: Database connection fails
 
 **Solutions**:
+
 1. Verify DATABASE_URL format
 2. Check database is running
 3. Verify credentials
@@ -817,6 +865,7 @@ npx prisma db pull
 ### Issue: Stripe webhooks not working
 
 **Development**:
+
 ```bash
 # Use Stripe CLI
 stripe listen --forward-to localhost:3001/api/webhooks/stripe
@@ -826,6 +875,7 @@ stripe listen --forward-to localhost:3001/api/webhooks/stripe
 ```
 
 **Production**:
+
 1. Verify webhook endpoint is publicly accessible
 2. Check STRIPE_WEBHOOK_SECRET matches dashboard
 3. Review Stripe logs: https://dashboard.stripe.com/logs
@@ -837,12 +887,14 @@ stripe listen --forward-to localhost:3001/api/webhooks/stripe
 **Common Errors**:
 
 **"No secret provided"**
+
 ```bash
 # Add to .env
 NEXTAUTH_SECRET="$(openssl rand -base64 32)"
 ```
 
 **"Invalid URL"**
+
 ```bash
 # Ensure NEXTAUTH_URL includes protocol
 NEXTAUTH_URL="http://localhost:3001"  # ✅
@@ -877,16 +929,16 @@ import { z } from "zod";
 const envSchema = z.object({
   // Database
   DATABASE_URL: z.string().url(),
-  
+
   // Auth
   NEXTAUTH_URL: z.string().url(),
   NEXTAUTH_SECRET: z.string().min(32),
-  
+
   // Stripe
   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().startsWith("pk_"),
   STRIPE_SECRET_KEY: z.string().startsWith("sk_"),
   STRIPE_WEBHOOK_SECRET: z.string().startsWith("whsec_"),
-  
+
   // App
   NEXT_PUBLIC_APP_URL: z.string().url(),
   NODE_ENV: z.enum(["development", "production", "test"]),
@@ -964,6 +1016,6 @@ LOG_LEVEL="debug"
 
 **Status**: ✅ COMPLETE  
 **Quality Score**: 10/10  
-**Agricultural Consciousness**: ACTIVE  
+**Agricultural Consciousness**: ACTIVE
 
 _"Environment variables are the seeds of configuration—plant them securely, nurture them wisely."_ 🌾⚡

@@ -4,7 +4,11 @@
  * Reference: 01_DIVINE_CORE_PRINCIPLES.instructions.md
  */
 
+import { createLogger } from "@/lib/utils/logger";
 import { useEffect, useRef, useState } from "react";
+
+// Create dedicated logger for quantum consciousness
+const quantumLogger = createLogger("QuantumConsciousness");
 
 interface ConsciousnessOptions {
   trackPerformance?: boolean;
@@ -40,7 +44,12 @@ export function useQuantumConsciousness(
     metrics.current.renders++;
 
     if (!isInitialized) {
-      console.log(`🧠 Quantum Consciousness Initialized: ${componentName}`);
+      quantumLogger.debug(
+        `Quantum Consciousness Initialized: ${componentName}`,
+        {
+          consciousness: "divine",
+        },
+      );
       setIsInitialized(true);
     }
   });
@@ -60,9 +69,12 @@ export function useQuantumConsciousness(
         });
 
         if (options.trackPerformance && duration > 100) {
-          console.warn(
-            `⚠️ Slow operation in ${componentName}: ${operation} took ${duration.toFixed(2)}ms`,
-          );
+          quantumLogger.warn(`Slow operation detected`, {
+            componentName,
+            operation,
+            duration: parseFloat(duration.toFixed(2)),
+            threshold: 100,
+          });
         }
       },
       failure: (error: any) => {
@@ -75,10 +87,11 @@ export function useQuantumConsciousness(
         metrics.current.errors++;
 
         if (options.trackErrors) {
-          console.error(
-            `❌ Operation failed in ${componentName}: ${operation}`,
-            error,
-          );
+          quantumLogger.error(`Operation failed`, {
+            componentName,
+            operation,
+            error: error instanceof Error ? error.message : String(error),
+          });
         }
       },
     };
@@ -88,7 +101,10 @@ export function useQuantumConsciousness(
     metrics.current.interactions++;
 
     if (options.trackInteractions) {
-      console.log(`🎯 Interaction in ${componentName}: ${interactionName}`);
+      quantumLogger.debug(`Interaction tracked`, {
+        componentName,
+        interactionName,
+      });
     }
   };
 

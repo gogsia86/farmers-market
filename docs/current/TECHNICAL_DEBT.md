@@ -16,9 +16,11 @@ This document tracks all known technical debt, workarounds, and improvement oppo
 ## 🔴 CRITICAL Priority (Blocking Production Quality)
 
 ### CRIT-001: TypeScript Build Errors Artificially Ignored ✅ READY TO FIX
+
 **Category:** Configuration  
 **File:** `next.config.mjs`  
 **Issue:**
+
 ```javascript
 typescript: {
   ignoreBuildErrors: true,  // ❌ Hides potential type errors
@@ -26,21 +28,25 @@ typescript: {
 ```
 
 **Impact:**
+
 - Potential runtime type errors not caught at build time
 - False sense of type safety
 - Bad practice in production code
 
 **Root Cause:**
+
 - Originally added to bypass OpenTelemetry version mismatch errors
 - Errors have since been resolved
 
 **Evidence:**
+
 ```bash
 $ npx tsc --noEmit
 # Returns: No errors (verified December 26, 2024)
 ```
 
 **Solution:**
+
 1. Set `ignoreBuildErrors: false`
 2. Verify build still passes
 3. Add pre-commit hook to prevent re-enabling
@@ -53,11 +59,13 @@ $ npx tsc --noEmit
 ---
 
 ### CRIT-002: Security Vulnerabilities in Dependencies
+
 **Category:** Security  
 **Severity:** 6 vulnerabilities (1 low, 2 moderate, 1 high, 2 critical)  
 **Affected Package:** `markdown-pdf@11.0.0`
 
 **Details:**
+
 ```
 ├── form-data <2.5.4 (CRITICAL)
 ├── tough-cookie <4.1.3 (MODERATE)
@@ -67,16 +75,19 @@ $ npx tsc --noEmit
 ```
 
 **Impact:**
+
 - Development dependency only (NOT in production bundle)
 - Used for PDF generation from markdown
 - Actual risk: LOW (dev-only tool)
 
 **Investigation Needed:**
+
 - [ ] Check usage: `grep -r "markdown-pdf" . --exclude-dir=node_modules`
 - [ ] Verify if actively used in scripts
 - [ ] Check if needed for documentation pipeline
 
 **Solution Options:**
+
 1. **Remove if unused** (preferred)
    - Check `scripts/` directory
    - Remove from `package.json`
@@ -102,10 +113,12 @@ $ npx tsc --noEmit
 ## 🟠 HIGH Priority (Impacts Maintainability)
 
 ### HIGH-001: Hardware-Specific Optimizations Hardcoded
+
 **Category:** Configuration  
 **Files:** `next.config.mjs`, `package.json`, `.cursorrules`, `tsconfig.json`
 
 **Issue:**
+
 ```javascript
 // next.config.mjs - Lines 15-21
 // ============================================
@@ -116,18 +129,21 @@ $ npx tsc --noEmit
 ```
 
 **Problems:**
+
 1. Not portable to other development machines
 2. CI/CD environments won't have same specs
 3. New developers will be confused
 4. Performance expectations misaligned
 
 **Examples:**
+
 - `HP_OMEN_RAM_GB: "64"` in env vars
 - `parallelism: 12` hardcoded
 - "HP OMEN Optimization: ENABLED" in logs
 - Comments throughout assuming specific hardware
 
 **Solution:**
+
 1. Detect system capabilities at runtime
 2. Use environment variables for tuning
 3. Remove hardware-specific branding
@@ -140,27 +156,30 @@ $ npx tsc --noEmit
 ---
 
 ### HIGH-002: Unconventional Naming Convention
+
 **Category:** Code Quality  
 **Scope:** Widespread (200+ occurrences)
 
 **Issue:**
 "Divine Agricultural Consciousness" metaphorical naming throughout codebase:
 
-| Current Name | Standard Name | Occurrences |
-|--------------|---------------|-------------|
-| `manifestProduct()` | `createProduct()` | ~15 |
-| `quantumCache` | `cache` | ~30 |
-| `QuantumProductRepository` | `ProductRepository` | ~10 |
-| `divinePatterns` | `patterns` | ~50 |
-| `agriculturalConsciousness` | `context` | ~80 |
+| Current Name                | Standard Name       | Occurrences |
+| --------------------------- | ------------------- | ----------- |
+| `manifestProduct()`         | `createProduct()`   | ~15         |
+| `quantumCache`              | `cache`             | ~30         |
+| `QuantumProductRepository`  | `ProductRepository` | ~10         |
+| `divinePatterns`            | `patterns`          | ~50         |
+| `agriculturalConsciousness` | `context`           | ~80         |
 
 **Impact:**
+
 - Confusing for new developers
 - Harder to search/understand code
 - Unprofessional in enterprise context
 - Difficult to explain in documentation
 
 **Solution (Gradual Migration):**
+
 ```typescript
 // Phase 1: Add aliases (backward compatible)
 export const cache = quantumCache;
@@ -178,17 +197,20 @@ export const createProduct = manifestProduct;
 ---
 
 ### HIGH-003: next.config.mjs Too Complex
+
 **Category:** Configuration  
 **File:** `next.config.mjs`  
 **Current Size:** 500+ lines
 
 **Issues:**
+
 - Single file doing too much
 - Hard to understand optimization logic
 - Difficult to maintain
 - Environment-specific logic mixed in
 
 **Complexity Breakdown:**
+
 - Webpack config: 200 lines
 - 15 cache groups (too many)
 - Image optimization: 50 lines
@@ -197,6 +219,7 @@ export const createProduct = manifestProduct;
 
 **Solution:**
 Extract to separate modules:
+
 ```
 config/
 ├── webpack/
@@ -219,19 +242,23 @@ config/
 ---
 
 ### HIGH-004: Duplicate Payment Modules
+
 **Category:** Code Organization  
 **Affected Directories:**
+
 - `src/lib/payment/`
 - `src/lib/payments/`
 - `src/lib/stripe/`
 
 **Issue:**
 Three separate directories handling payment logic:
+
 - Unclear which is canonical
 - Potential code duplication
 - Confusing for developers
 
 **Investigation Needed:**
+
 ```bash
 # Check what's in each
 ls -la src/lib/payment/
@@ -245,6 +272,7 @@ grep -r "from '@/lib/stripe" src/
 ```
 
 **Solution:**
+
 1. Audit all three directories
 2. Identify overlaps and unique features
 3. Consolidate to single `src/lib/payment/` directory
@@ -258,20 +286,24 @@ grep -r "from '@/lib/stripe" src/
 ---
 
 ### HIGH-005: Monitoring Modules Fragmented
+
 **Category:** Code Organization  
 **Affected Directories:**
+
 - `src/lib/monitoring/`
 - `src/lib/telemetry/`
 - `src/lib/tracing/`
 
 **Issue:**
 Observability stack split across three directories:
+
 - Similar functionality
 - Overlapping concerns
 - Hard to maintain consistency
 
 **Solution:**
 Merge into unified `src/lib/monitoring/`:
+
 ```
 src/lib/monitoring/
 ├── index.ts
@@ -291,11 +323,13 @@ src/lib/monitoring/
 ---
 
 ### HIGH-006: Controllers Are Thin Wrappers
+
 **Category:** Architecture  
 **Affected Directory:** `src/lib/controllers/`
 
 **Issue:**
 Controller layer adds little value:
+
 ```typescript
 // Typical controller
 export class ProductController {
@@ -306,6 +340,7 @@ export class ProductController {
 ```
 
 **Analysis:**
+
 - Controllers just call services
 - No transformation logic
 - No request/response handling (that's in API routes)
@@ -313,6 +348,7 @@ export class ProductController {
 
 **Solution:**
 Merge controllers into services or API routes:
+
 ```typescript
 // Before: API Route → Controller → Service
 // After: API Route → Service
@@ -327,6 +363,7 @@ Merge controllers into services or API routes:
 ## 🟡 MEDIUM Priority (Should Fix Soon)
 
 ### MED-001: Prisma Query Complexity Workaround
+
 **Category:** Database  
 **File:** `src/app/(customer)/marketplace/farms/[slug]/page.tsx`
 
@@ -334,6 +371,7 @@ Merge controllers into services or API routes:
 Complex nested Prisma query was causing panic errors. Fixed by splitting into 5 sequential queries.
 
 **Current Solution (Workaround):**
+
 ```typescript
 // Split complex query into 5 parts
 const farm = await db.farm.findUnique(...);
@@ -343,10 +381,12 @@ const reviews = await db.review.findMany(...);
 ```
 
 **Root Cause:**
+
 - Prisma 7.x query compiler bug with deeply nested includes
 - Reported to Prisma team
 
 **Proper Solution:**
+
 - Monitor Prisma 7.3.0+ releases
 - Re-test complex query when fixed
 - Revert to single query if stable
@@ -358,10 +398,12 @@ const reviews = await db.review.findMany(...);
 ---
 
 ### MED-002: Source Map Warnings
+
 **Category:** Build  
 **Severity:** 10+ warnings during build
 
 **Issue:**
+
 ```
 Invalid source map warnings (x10)
 - Next.js 16/Turbopack issue
@@ -370,15 +412,18 @@ Invalid source map warnings (x10)
 ```
 
 **Impact:**
+
 - Clutters build output
 - Hard to spot real issues
 - No functional impact
 
 **Root Cause:**
+
 - Next.js 16 + Turbopack incompatibility with some libraries
 - Upstream issue, not our code
 
 **Solution:**
+
 - Monitor Next.js updates
 - Consider disabling source maps in dev if bothersome
 - Or suppress warnings in build config
@@ -390,6 +435,7 @@ Invalid source map warnings (x10)
 ---
 
 ### MED-003: Test Database Port Different from Dev
+
 **Category:** Testing  
 **Issue:**
 
@@ -399,11 +445,13 @@ Test:        postgresql://localhost:5433/farmers_market_test
 ```
 
 **Problems:**
+
 - Schema drift risk between dev and test
 - Migrations might behave differently
 - Port management complexity
 
 **Solution:**
+
 1. Use same port, different database names
 2. Or document why ports differ
 3. Add schema comparison tests
@@ -415,16 +463,19 @@ Test:        postgresql://localhost:5433/farmers_market_test
 ---
 
 ### MED-004: GPU Acceleration Module Unused
+
 **Category:** Dead Code  
 **Directory:** `src/lib/gpu/`
 
 **Investigation Needed:**
+
 ```bash
 grep -r "from '@/lib/gpu" src/
 # If no results → unused module
 ```
 
 **Solution:**
+
 - Audit usage
 - Remove if unused
 - Document if keeping for future use
@@ -436,6 +487,7 @@ grep -r "from '@/lib/gpu" src/
 ---
 
 ### MED-005: React Query Config Could Be Simplified
+
 **Category:** Configuration  
 **Directory:** `src/lib/react-query/`
 
@@ -443,6 +495,7 @@ grep -r "from '@/lib/gpu" src/
 Dedicated directory for React Query config seems overengineered for a config file.
 
 **Current:**
+
 ```
 src/lib/react-query/
 ├── index.ts
@@ -450,6 +503,7 @@ src/lib/react-query/
 ```
 
 **Proposed:**
+
 ```
 src/lib/react-query.ts  # Single file
 ```
@@ -461,16 +515,19 @@ src/lib/react-query.ts  # Single file
 ---
 
 ### MED-006: Lazy Loading Utilities Unclear
+
 **Category:** Code Organization  
 **Directory:** `src/lib/lazy/`
 
 **Investigation Needed:**
+
 - What is this for?
 - Dynamic imports?
 - Code splitting helpers?
 - Is it used?
 
 **Solution:**
+
 1. Audit usage and purpose
 2. Rename for clarity
 3. Or merge into `src/lib/utils/`
@@ -482,17 +539,21 @@ src/lib/react-query.ts  # Single file
 ---
 
 ### MED-007: Email and Notifications Overlap
+
 **Category:** Code Organization  
 **Directories:**
+
 - `src/lib/email/`
 - `src/lib/notifications/`
 
 **Investigation Needed:**
+
 - Do they overlap?
 - Email might be one channel of notifications
 - Could be unified
 
 **Proposed Structure:**
+
 ```
 src/lib/notifications/
 ├── channels/
@@ -509,19 +570,23 @@ src/lib/notifications/
 ---
 
 ### MED-008: Multiple Architecture Documentation Formats
+
 **Category:** Documentation  
 **Files:**
+
 - `ARCHITECTURE_DIAGRAM.md` (markdown)
 - `FULL_ARCHITECTURE_DIAGRAM.md` (markdown)
 - `FULL_ARCHITECTURE_DIAGRAM.pdf` (PDF)
 - `architecture-*.mmd` (Mermaid diagrams x6)
 
 **Issue:**
+
 - Redundant formats
 - Sync nightmare
 - Updates missed
 
 **Solution:**
+
 1. Keep Mermaid source files (.mmd)
 2. Keep one comprehensive markdown (ARCHITECTURE.md)
 3. Auto-generate PDF from markdown
@@ -534,10 +599,12 @@ src/lib/notifications/
 ---
 
 ### MED-009: TODO Comments in Mobile App
+
 **Category:** Incomplete Features  
 **Count:** 6 TODOs identified
 
 **List:**
+
 1. Guest mode browsing (`LoginScreen.tsx:165`)
 2. Promo code validation (`CheckoutScreen.tsx:648`)
 3. Favorite products API (`ProductDetailScreen.tsx:601`)
@@ -557,6 +624,7 @@ Create tickets for each TODO and implement in Phase 5.
 ## 🟢 LOW Priority (Nice to Have)
 
 ### LOW-001: Performance Module Could Be Part of Utils
+
 **Category:** Code Organization  
 **Directory:** `src/lib/performance/`
 
@@ -570,11 +638,13 @@ Merge into `src/lib/utils/performance.ts`
 ---
 
 ### LOW-002: Config Directory Placement
+
 **Category:** Project Structure  
 **Issue:** `src/lib/config/` vs root-level `config/`
 
 **Standard Practice:**
 Configuration files typically live at project root:
+
 ```
 config/
 ├── database.ts
@@ -583,6 +653,7 @@ config/
 ```
 
 **Solution:**
+
 - Move to root-level `config/`
 - Update imports
 - Better separation of concerns
@@ -594,10 +665,12 @@ config/
 ---
 
 ### LOW-003: Documentation File Count
+
 **Category:** Documentation  
 **Current:** 15+ top-level documentation files
 
 **Target:** 9 core files
+
 - README.md
 - QUICK_START.md
 - CONTRIBUTING.md
@@ -618,6 +691,7 @@ Archive others to `docs/archive/`
 ---
 
 ### LOW-004: Cloudinary Config File Placement
+
 **Category:** Code Organization  
 **File:** `src/lib/cloudinary.ts`
 
@@ -631,15 +705,18 @@ Move to `src/lib/upload/providers/cloudinary.ts` for better organization.
 ---
 
 ### LOW-005: Prisma Client Wrapper
+
 **Category:** Code Quality  
 **Files:** `src/lib/prisma.ts` and `src/lib/database.ts`
 
 **Issue:**
 Two similar files for database connection:
+
 - `prisma.ts` - Direct PrismaClient export
 - `database.ts` - Canonical wrapper (preferred)
 
 **Solution:**
+
 1. Audit usage of both
 2. Standardize on `database.ts`
 3. Remove or deprecate `prisma.ts`
@@ -651,6 +728,7 @@ Two similar files for database connection:
 ---
 
 ### LOW-006: Webpack Cache Groups Optimization
+
 **Category:** Performance  
 **File:** `next.config.mjs`
 
@@ -658,12 +736,14 @@ Two similar files for database connection:
 15 webpack cache groups defined - likely over-optimized.
 
 **Analysis Needed:**
+
 - Measure actual bundle splitting benefit
 - Some groups might be too granular
 - Maintenance overhead vs. performance gain
 
 **Proposed Reduction:**
 15 groups → 7 essential groups
+
 - framework
 - vendor
 - admin/farmer/monitoring (route-based)
@@ -679,6 +759,7 @@ Two similar files for database connection:
 ## 📈 Technical Debt Metrics
 
 ### By Category
+
 - **Configuration:** 5 items
 - **Code Organization:** 9 items
 - **Security:** 1 item
@@ -688,12 +769,14 @@ Two similar files for database connection:
 - **Code Quality:** 2 items
 
 ### By Priority
+
 - **CRITICAL:** 2 items (both ready to fix)
 - **HIGH:** 6 items (Phase 2-4)
 - **MEDIUM:** 9 items (Phase 3-5)
 - **LOW:** 6 items (Phase 4-6)
 
 ### Estimated Total Effort
+
 - **Critical:** 3-5 hours
 - **High:** 84 hours
 - **Medium:** 45 hours
@@ -705,16 +788,19 @@ Two similar files for database connection:
 ## 🔄 Review Cadence
 
 **Weekly Reviews (during refactoring):**
+
 - Update status of in-progress items
 - Add newly discovered debt
 - Close completed items
 
 **Monthly Reviews:**
+
 - Assess overall debt trend
 - Reprioritize based on business needs
 - Celebrate reductions
 
 **Quarterly Reviews:**
+
 - Major retrospective
 - Update tracking methodology
 - Plan next quarter's focus
@@ -724,11 +810,13 @@ Two similar files for database connection:
 ## 📊 Success Criteria
 
 ### Phase 1 Success
+
 - [ ] CRIT-001 resolved (ignoreBuildErrors removed)
 - [ ] CRIT-002 resolved (security vulnerabilities < 3)
 - [ ] All critical items documented
 
 ### Overall Success (3 months)
+
 - [ ] Zero critical items
 - [ ] High priority items reduced by 80%
 - [ ] Medium priority items reduced by 50%
@@ -740,6 +828,7 @@ Two similar files for database connection:
 ## 🎯 Prevention Strategy
 
 ### Pre-commit Hooks
+
 ```bash
 # Check for new TODO comments
 # Check TypeScript errors
@@ -748,6 +837,7 @@ Two similar files for database connection:
 ```
 
 ### Code Review Checklist
+
 - [ ] No new metaphorical naming
 - [ ] No hardware-specific code
 - [ ] TypeScript errors not ignored
@@ -755,6 +845,7 @@ Two similar files for database connection:
 - [ ] Tests updated
 
 ### Documentation Standards
+
 - Document all workarounds with ticket references
 - Explain "why" for non-obvious code
 - Keep technical debt log updated

@@ -1,14 +1,12 @@
 "use client";
 
-import {
-  QueryClient,
-  QueryClientProvider,
-  type QueryCache,
-  type MutationCache,
-} from "@tanstack/react-query";
+import { createLogger } from "@/lib/utils/logger";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState, type ReactNode } from "react";
 import { toast } from "sonner";
+
+const reactQueryLogger = createLogger("ReactQuery");
 
 /**
  * 🌾 DIVINE AGRICULTURAL REACT QUERY PROVIDER
@@ -68,7 +66,10 @@ const SEASONAL_CACHE_MULTIPLIERS = {
  * Divine error handler with agricultural consciousness
  */
 function handleQueryError(error: unknown): void {
-  console.error("🌾 Query Consciousness Disruption:", error);
+  reactQueryLogger.error(
+    "Query Consciousness Disruption",
+    error instanceof Error ? error : new Error(String(error)),
+  );
 
   // User-friendly agricultural error messages
   if (error instanceof Error) {
@@ -94,7 +95,10 @@ function handleQueryError(error: unknown): void {
  * Divine mutation error handler
  */
 function handleMutationError(error: unknown): void {
-  console.error("🌾 Mutation Consciousness Disruption:", error);
+  reactQueryLogger.error(
+    "Mutation Consciousness Disruption",
+    error instanceof Error ? error : new Error(String(error)),
+  );
 
   if (error instanceof Error) {
     if (error.message.includes("Network")) {

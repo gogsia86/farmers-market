@@ -1,52 +1,60 @@
 # 🚀 Getting Started with Farmers Market Platform
 
-> **Quick Start Guide**
->
-> Everything you need to get up and running with the Farmers Market Platform in under 30 minutes.
+**Welcome to the Divine Agricultural Intelligence Platform!** This guide will help you set up your development environment and start contributing to the world's most advanced agricultural e-commerce platform.
 
 ---
 
 ## 📋 Table of Contents
 
-- [Overview](#overview)
-- [Prerequisites](#prerequisites)
-- [Quick Start](#quick-start)
-- [Development Setup](#development-setup)
-- [First Steps](#first-steps)
-- [Common Tasks](#common-tasks)
-- [Learning Paths](#learning-paths)
-- [Troubleshooting](#troubleshooting)
-- [Next Steps](#next-steps)
-- [Support](#support)
+- [Overview](#-overview)
+- [Prerequisites](#-prerequisites)
+- [Quick Start (5 Minutes)](#-quick-start-5-minutes)
+- [Detailed Setup](#-detailed-setup)
+- [First Steps](#-first-steps)
+- [Development Workflow](#-development-workflow)
+- [Common Tasks](#-common-tasks)
+- [Learning Paths](#-learning-paths)
+- [Troubleshooting](#-troubleshooting)
+- [Next Steps](#-next-steps)
 
 ---
 
 ## 🎯 Overview
 
-The Farmers Market Platform is a **divine agricultural marketplace** built with:
+The Farmers Market Platform is an enterprise-grade Next.js 15 application that connects farmers directly with consumers. Built with divine consciousness and agricultural awareness, it demonstrates world-class patterns in:
 
-- **Next.js 15** (App Router) - Full-stack React framework
-- **TypeScript** (Strict Mode) - Type-safe development
-- **Prisma** - Database ORM with PostgreSQL
-- **NextAuth v5** - Authentication & authorization
-- **Tailwind CSS** - Utility-first styling
-- **Microsoft Agent Framework** - AI-powered automation
+- **Full-Stack TypeScript**: 100% type-safe from database to UI
+- **Next.js 15 App Router**: Server Components, Server Actions, and streaming
+- **Prisma ORM**: Type-safe database access with PostgreSQL
+- **NextAuth v5**: Enterprise authentication and authorization
+- **Comprehensive Testing**: 2,700+ tests with 82%+ coverage
+- **AI Integration**: Microsoft Agent Framework for intelligent features
 
 ### Architecture Highlights
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                 Next.js 15 App Router               │
-├─────────────────────────────────────────────────────┤
-│  Client Components  │  Server Components  │  API   │
-├─────────────────────────────────────────────────────┤
-│              Service Layer (Business Logic)         │
-├─────────────────────────────────────────────────────┤
-│           Prisma ORM (Database Access Layer)        │
-├─────────────────────────────────────────────────────┤
-│              PostgreSQL Database                    │
-└─────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────┐
+│                     Frontend (React)                     │
+│   Next.js 15 App Router + Server Components + RSC       │
+├─────────────────────────────────────────────────────────┤
+│                  Service Layer (Business Logic)          │
+│   Farm • Product • Order • Cart • Payment Services      │
+├─────────────────────────────────────────────────────────┤
+│                   Data Layer (Prisma)                    │
+│   PostgreSQL with connection pooling & migrations       │
+├─────────────────────────────────────────────────────────┤
+│              Infrastructure (Production)                 │
+│   Vercel/Azure • Docker • Kubernetes • Redis Cache      │
+└─────────────────────────────────────────────────────────┘
 ```
+
+**Key Stats**:
+
+- **2,700+** passing tests (98.2% success rate)
+- **82%+** code coverage
+- **Zero** TypeScript errors in production code
+- **100%** ServiceResponse pattern compliance
+- **<100ms** average API response time
 
 ---
 
@@ -54,168 +62,181 @@ The Farmers Market Platform is a **divine agricultural marketplace** built with:
 
 ### Required Software
 
-| Software       | Version       | Purpose                     |
-| -------------- | ------------- | --------------------------- |
-| **Node.js**    | 18.17+ or 20+ | JavaScript runtime          |
-| **pnpm**       | 8.0+          | Package manager (preferred) |
-| **PostgreSQL** | 14+           | Database                    |
-| **Git**        | 2.0+          | Version control             |
-| **VS Code**    | Latest        | IDE (recommended)           |
+| Tool           | Version       | Purpose                           |
+| -------------- | ------------- | --------------------------------- |
+| **Node.js**    | 18.17+ or 20+ | Runtime environment               |
+| **pnpm**       | 8.0+          | Package manager (faster than npm) |
+| **PostgreSQL** | 14+           | Database                          |
+| **Git**        | 2.30+         | Version control                   |
 
 ### Optional Tools
 
-- **Docker** - For containerized development
-- **Azure CLI** - For cloud deployments
-- **Postman** - For API testing
+- **VS Code** - Recommended IDE with extensions configured
+- **Docker Desktop** - For containerized development
+- **Prisma Studio** - Visual database browser
+- **Postman/Insomnia** - API testing
 
 ### System Requirements
 
-```yaml
-Minimum:
-  RAM: 8GB
-  Storage: 20GB free space
-  CPU: 4 cores
+**Minimum**:
 
-Recommended (HP OMEN):
-  RAM: 64GB
-  Storage: 100GB+ SSD
-  CPU: 12 threads
-  GPU: RTX 2070 Max-Q (for AI features)
-```
+- RAM: 8GB
+- Storage: 20GB free space
+- CPU: 4 cores
+
+**Recommended (HP OMEN optimized)**:
+
+- RAM: 64GB (enables aggressive caching)
+- Storage: 100GB+ SSD
+- CPU: 12 threads (Intel i7/i9 or AMD Ryzen 7/9)
+- GPU: RTX 2070 Max-Q or better (for AI features)
 
 ---
 
-## ⚡ Quick Start
+## ⚡ Quick Start (5 Minutes)
 
-### 1. Clone the Repository
+Get the platform running in 5 minutes or less:
 
 ```bash
-# Clone the repo
+# 1. Clone the repository
 git clone https://github.com/your-org/farmers-market-platform.git
 cd farmers-market-platform
 
-# Checkout main branch
-git checkout main
-```
-
-### 2. Install Dependencies
-
-```bash
-# Using pnpm (recommended)
+# 2. Install dependencies (pnpm is REQUIRED)
 pnpm install
 
-# Or using npm
-npm install
-
-# Or using yarn
-yarn install
-```
-
-### 3. Environment Setup
-
-```bash
-# Copy environment template
+# 3. Copy environment template
 cp .env.example .env.local
 
-# Edit with your values
-code .env.local
-```
+# 4. Set up database (requires PostgreSQL running)
+pnpm db:setup
 
-**Required Environment Variables:**
-
-```env
-# Database
-DATABASE_URL="postgresql://user:password@localhost:5432/farmers_market"
-
-# NextAuth
-NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="your-secret-key-here"
-
-# Optional: AI Features
-AZURE_OPENAI_API_KEY="your-key"
-AZURE_OPENAI_ENDPOINT="your-endpoint"
-```
-
-### 4. Database Setup
-
-```bash
-# Generate Prisma Client
-pnpm prisma generate
-
-# Run migrations
-pnpm prisma migrate dev
-
-# Seed database (optional)
-pnpm prisma db seed
-```
-
-### 5. Start Development Server
-
-```bash
-# Start the dev server
+# 5. Start development server
 pnpm dev
-
-# Server will be available at:
-# http://localhost:3000
 ```
 
-### 6. Verify Installation
+**Access the platform**:
 
-Open your browser and navigate to:
+- 🌐 **App**: http://localhost:3000
+- 📊 **Database Studio**: Run `pnpm db:studio` → http://localhost:5555
 
-- **Homepage**: http://localhost:3000
-- **API Health**: http://localhost:3000/api/health
-- **Prisma Studio**: Run `pnpm prisma studio`
+That's it! The platform is now running with seed data including test users, farms, and products.
 
 ---
 
-## 🛠️ Development Setup
+## 🛠️ Detailed Setup
 
-### VS Code Configuration
-
-1. **Install Recommended Extensions**:
-
-   ```bash
-   # Extensions will be suggested automatically
-   # Or manually install from .vscode/extensions.json
-   ```
-
-   Key extensions:
-   - ESLint
-   - Prettier
-   - Prisma
-   - Tailwind CSS IntelliSense
-   - GitHub Copilot (optional)
-
-2. **Apply Workspace Settings**:
-   ```bash
-   # Settings are in .vscode/settings.json
-   # They'll apply automatically when you open the workspace
-   ```
-
-### Git Configuration
+### Step 1: Clone the Repository
 
 ```bash
-# Set your identity
-git config user.name "Your Name"
-git config user.email "your.email@example.com"
+# Using HTTPS
+git clone https://github.com/your-org/farmers-market-platform.git
 
-# Set up commit signing (optional but recommended)
-git config commit.gpgsign true
+# Using SSH (recommended)
+git clone git@github.com:your-org/farmers-market-platform.git
+
+cd farmers-market-platform
 ```
 
-### Database GUI Options
+### Step 2: Install Dependencies
+
+**Important**: This project uses `pnpm` for package management. Do NOT use `npm` or `yarn`.
 
 ```bash
-# Option 1: Prisma Studio (built-in)
-pnpm prisma studio
+# Install pnpm globally if you haven't already
+npm install -g pnpm
 
-# Option 2: pgAdmin (external)
-# Download from https://www.pgadmin.org/
+# Install project dependencies
+pnpm install
 
-# Option 3: DBeaver (external)
-# Download from https://dbeaver.io/
+# Verify installation
+pnpm --version  # Should show 8.0+
 ```
+
+### Step 3: Environment Configuration
+
+Create your local environment file:
+
+```bash
+cp .env.example .env.local
+```
+
+**Configure required variables** in `.env.local`:
+
+```bash
+# Database (PostgreSQL)
+DATABASE_URL="postgresql://postgres:password@localhost:5432/farmers_market?schema=public"
+
+# NextAuth
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="your-32-character-secret-here"  # Generate with: openssl rand -base64 32
+
+# Optional: Payment Integration
+STRIPE_SECRET_KEY="sk_test_your_key_here"
+STRIPE_PUBLISHABLE_KEY="pk_test_your_key_here"
+STRIPE_WEBHOOK_SECRET="whsec_your_webhook_secret"
+
+# Optional: AI Features
+OPENAI_API_KEY="sk-your-openai-key"
+AZURE_OPENAI_API_KEY="your-azure-key"
+```
+
+**Security Note**: NEVER commit `.env.local` to version control. It's already in `.gitignore`.
+
+### Step 4: Database Setup
+
+Ensure PostgreSQL is running, then:
+
+```bash
+# Generate Prisma client
+pnpm prisma generate
+
+# Run database migrations
+pnpm db:migrate
+
+# Seed with test data (optional but recommended)
+pnpm db:seed
+```
+
+**Using Docker** (alternative):
+
+```bash
+# Start PostgreSQL in Docker
+docker-compose up -d db
+
+# Then proceed with migrations
+pnpm db:setup
+```
+
+### Step 5: Start Development Server
+
+```bash
+# Standard development mode
+pnpm dev
+
+# HP OMEN optimized mode (uses all 12 threads)
+pnpm dev:omen
+
+# Safe mode (if you encounter issues)
+pnpm dev:safe
+```
+
+The server will start at **http://localhost:3000** with hot-reload enabled.
+
+### Step 6: Verify Installation
+
+Open http://localhost:3000 and you should see:
+
+✅ Homepage loads without errors
+✅ You can navigate to `/auth/signin`
+✅ Database connection is working
+✅ Seed data is visible (farms, products)
+
+**Test Accounts** (if you ran `pnpm db:seed`):
+
+- Admin: `admin@farmersmarket.com` / `admin123`
+- Farmer: `farmer@farmersmarket.com` / `farmer123`
+- Customer: `customer@farmersmarket.com` / `customer123`
 
 ---
 
@@ -223,94 +244,140 @@ pnpm prisma studio
 
 ### Step 1: Explore the Codebase
 
-```bash
-# View project structure
-tree -L 2 -I 'node_modules|.next'
-
-# Or use the directory listing
-ls -la src/
-```
-
-**Key Directories to Know:**
+Familiarize yourself with the project structure:
 
 ```
 src/
-├── app/              # Next.js pages & API routes
-├── components/       # React components
-├── lib/             # Core business logic
-│   ├── services/    # Business logic layer
-│   ├── database/    # Database singleton
-│   └── auth/        # Authentication
-├── types/           # TypeScript types
-└── hooks/           # React hooks
+├── app/                    # Next.js App Router (pages & API routes)
+│   ├── (admin)/           # Admin dashboard routes
+│   ├── (customer)/        # Customer-facing routes
+│   ├── (farmer)/          # Farmer dashboard routes
+│   └── api/               # API endpoints
+├── components/            # React components
+│   ├── ui/               # Base UI components (buttons, cards)
+│   └── features/         # Feature-specific components
+├── lib/                   # Core business logic
+│   ├── services/         # Service layer (Farm, Product, Order)
+│   ├── database/         # Database singleton
+│   ├── auth/             # Authentication utilities
+│   └── utils/            # Helper functions
+├── types/                 # TypeScript type definitions
+└── hooks/                 # React hooks
 ```
 
+**Key Files to Review**:
+
+- `src/lib/database/index.ts` - Canonical database import
+- `src/lib/auth/index.ts` - Authentication utilities
+- `src/types/index.ts` - Shared TypeScript types
+- `.cursorrules` - Divine coding standards
+
 ### Step 2: Run the Tests
+
+Verify everything is working:
 
 ```bash
 # Run all tests
 pnpm test
 
-# Run tests in watch mode
+# Run specific test suites
+pnpm test:unit              # Unit tests only
+pnpm test:integration       # Integration tests
+pnpm test:e2e              # End-to-end tests
+
+# Watch mode (re-runs on file changes)
 pnpm test:watch
 
-# Run tests with coverage
+# Generate coverage report
 pnpm test:coverage
 ```
 
+**Expected Results**:
+
+- ✅ 2,700+ tests passing
+- ✅ 98%+ success rate
+- ✅ 82%+ code coverage
+
 ### Step 3: Check Code Quality
 
+Run linting and type checking:
+
 ```bash
-# Lint the codebase
+# Check TypeScript types
+pnpm type-check
+
+# Run ESLint
 pnpm lint
 
-# Format code
-pnpm format
+# Auto-fix linting issues
+pnpm lint:fix
 
-# Type check
-pnpm type-check
+# Format code with Prettier
+pnpm format
 ```
+
+**Expected**: Zero errors, zero warnings.
 
 ### Step 4: Explore Documentation
 
-**Start with these key docs:**
+Read the essential guides:
 
-1. **Architecture Overview**: `docs/architecture/README.md`
-2. **API Documentation**: `docs/api/README.md`
-3. **Testing Guide**: `docs/testing/README.md`
-4. **Deployment Guide**: `docs/deployment/README.md`
-
-**Browse the full documentation:**
-
-```bash
-# Open main documentation hub
-code docs/README.md
-
-# Use the documentation map
-code docs/DOCUMENTATION_MAP.md
-
-# Search documentation
-code docs/SEARCH_GUIDE.md
-```
+- **[Development Guide](../development/README.md)** - Development workflow and patterns
+- **[Testing Guide](../development/testing-guide.md)** - Comprehensive testing documentation
+- **[Deployment Guide](../deployment/README.md)** - Deployment procedures
+- **[API Documentation](../api/README.md)** - API reference
 
 ### Step 5: Make Your First Change
 
+Try a simple component modification:
+
+1. Open `src/app/page.tsx`
+2. Modify the homepage hero text
+3. Save and see hot-reload in action
+4. Run `pnpm test` to ensure nothing broke
+5. Commit with a clear message: `git commit -m "Update homepage hero text"`
+
+---
+
+## 🔄 Development Workflow
+
+### Standard Workflow
+
 ```bash
-# Create a new branch
-git checkout -b feat/your-feature-name
+# 1. Create feature branch
+git checkout -b feature/your-feature-name
 
-# Make changes
-# ... edit files ...
+# 2. Make changes with hot-reload
+pnpm dev
 
-# Run quality checks
-pnpm lint && pnpm test
+# 3. Run tests continuously
+pnpm test:watch
 
-# Commit changes
+# 4. Check code quality
+pnpm lint && pnpm type-check
+
+# 5. Commit changes
 git add .
-git commit -m "feat: add your feature description"
+git commit -m "feat: add your feature"
 
-# Push to remote
-git push origin feat/your-feature-name
+# 6. Push and create PR
+git push origin feature/your-feature-name
+```
+
+### Daily Commands
+
+```bash
+# Start your day
+pnpm dev                    # Start dev server
+pnpm db:studio             # Open database browser
+
+# During development
+pnpm test:watch            # Continuous testing
+pnpm type-check            # Type safety verification
+
+# Before committing
+pnpm lint:fix              # Fix linting issues
+pnpm test                  # Full test suite
 ```
 
 ---
@@ -321,75 +388,50 @@ git push origin feat/your-feature-name
 
 ```bash
 # View database in browser
-pnpm prisma studio
+pnpm db:studio
 
 # Create new migration
-pnpm prisma migrate dev --name describe-your-changes
+pnpm prisma migrate dev --name your_migration_name
 
-# Reset database (CAUTION: deletes all data)
-pnpm prisma migrate reset
+# Reset database (WARNING: deletes all data)
+pnpm db:reset
 
-# Generate Prisma Client after schema changes
+# Re-seed database
+pnpm db:seed
+
+# Generate Prisma client (after schema changes)
 pnpm prisma generate
-
-# Seed database
-pnpm prisma db seed
 ```
 
-### Development Commands
+### Adding a New Feature
 
 ```bash
-# Start dev server
-pnpm dev
+# 1. Create service layer
+touch src/lib/services/your-feature.service.ts
 
-# Build for production
-pnpm build
+# 2. Create API route
+mkdir -p src/app/api/your-feature
+touch src/app/api/your-feature/route.ts
 
-# Start production server
-pnpm start
+# 3. Create UI components
+mkdir -p src/components/features/your-feature
+touch src/components/features/your-feature/YourComponent.tsx
 
-# Run linter
-pnpm lint
-
-# Run linter with auto-fix
-pnpm lint:fix
-
-# Format code
-pnpm format
-
-# Type check
-pnpm type-check
-```
-
-### Testing Commands
-
-```bash
-# Run all tests
-pnpm test
-
-# Run specific test file
-pnpm test path/to/test.spec.ts
-
-# Run tests in watch mode
-pnpm test:watch
-
-# Run tests with coverage
-pnpm test:coverage
-
-# Run E2E tests
-pnpm test:e2e
+# 4. Add tests
+mkdir -p src/__tests__/services
+touch src/__tests__/services/your-feature.service.test.ts
 ```
 
 ### Component Development
 
 ```bash
-# Generate new component (if generator is set up)
-pnpm generate:component ComponentName
+# Generate component with tests (if using generator)
+pnpm generate:component YourComponent
 
-# Or manually create:
-# 1. Create component file in src/components/
-# 2. Create test file in src/components/__tests__/
-# 3. Create storybook file (if using Storybook)
+# Manual creation
+mkdir -p src/components/features/your-feature
+touch src/components/features/your-feature/YourComponent.tsx
+touch src/components/features/your-feature/YourComponent.test.tsx
 ```
 
 ---
@@ -398,223 +440,142 @@ pnpm generate:component ComponentName
 
 ### For Frontend Developers
 
-**Week 1: Foundation**
+**Week 1: Fundamentals**
 
-1. ✅ Complete Quick Start
-2. 📖 Read `docs/architecture/README.md`
-3. 🧩 Study component patterns in `src/components/`
-4. 🎨 Review Tailwind CSS setup
-5. 🔨 Build your first component
+1. Study Next.js 15 App Router patterns in `src/app/`
+2. Review existing components in `src/components/`
+3. Understand Server vs Client Components
+4. Complete: Build a simple product listing page
 
-**Week 2: Advanced Patterns**
+**Week 2: Advanced Topics**
 
-1. 🔄 Learn Server vs Client Components
-2. 🚀 Understand Server Actions
-3. 🎣 Explore custom hooks
-4. ✅ Write component tests
-5. 🔨 Build a feature module
+1. Server Actions in `src/app/actions/`
+2. Form handling with `react-hook-form` + Zod
+3. State management with Zustand
+4. Complete: Build a shopping cart feature
 
-**Week 3: Integration**
+**Week 3: Production Ready**
 
-1. 🔐 Learn authentication patterns
-2. 📡 Work with API routes
-3. 🗄️ Understand Prisma operations
-4. 🧪 Write integration tests
-5. 🔨 Build end-to-end feature
+1. Testing with React Testing Library
+2. Accessibility best practices
+3. Performance optimization
+4. Complete: Optimize an existing feature
 
 ### For Backend Developers
 
-**Week 1: Foundation**
+**Week 1: Architecture**
 
-1. ✅ Complete Quick Start
-2. 📖 Read `docs/database/README.md`
-3. 🗄️ Study Prisma schema
-4. 🔧 Explore service layer
-5. 🔨 Create a simple service
+1. Review service layer patterns in `src/lib/services/`
+2. Study Prisma schema in `prisma/schema.prisma`
+3. Understand ServiceResponse<T> pattern
+4. Complete: Add a new API endpoint
 
-**Week 2: Advanced Patterns**
+**Week 2: Advanced Features**
 
-1. 🔐 Learn authentication/authorization
-2. ✅ Understand validation patterns
-3. 🚀 Master transaction handling
-4. 📊 Study query optimization
-5. 🔨 Build a complex service
+1. Authentication with NextAuth v5
+2. Authorization and RBAC patterns
+3. Database optimization techniques
+4. Complete: Implement a complex business rule
 
-**Week 3: Integration**
+**Week 3: Quality & Testing**
 
-1. 📡 Create API endpoints
-2. 🧪 Write service tests
-3. 🔄 Implement caching strategies
-4. 📈 Add performance monitoring
-5. 🔨 Build complete API feature
+1. Service layer testing patterns
+2. Integration test strategies
+3. API contract testing
+4. Complete: Achieve 90%+ test coverage on your feature
 
 ### For Full-Stack Developers
 
-**Week 1: Foundation**
-
-1. ✅ Complete Quick Start
-2. 📖 Read architecture docs
-3. 🔄 Understand data flow
-4. 🧩 Study both layers
-5. 🔨 Build simple CRUD feature
-
-**Week 2: Advanced Patterns**
-
-1. 🔄 Master Server Components + Actions
-2. 🗄️ Advanced Prisma patterns
-3. 🔐 Complete auth flow
-4. ✅ Comprehensive testing
-5. 🔨 Build complex feature
-
-**Week 3: Excellence**
-
-1. 🚀 Performance optimization
-2. 🔒 Security hardening
-3. 📊 Monitoring & logging
-4. 🌐 Deployment pipeline
-5. 🔨 Ship production-ready feature
-
-### For DevOps Engineers
-
-**Week 1: Foundation**
-
-1. ✅ Complete Quick Start
-2. 📖 Read `docs/deployment/README.md`
-3. 🐳 Study Docker setup
-4. ☁️ Review Azure configuration
-5. 🔨 Deploy to development
-
-**Week 2: CI/CD**
-
-1. 🔄 Understand GitHub Actions
-2. 🧪 Review test automation
-3. 📦 Study build pipeline
-4. 🚀 Master deployment process
-5. 🔨 Set up staging environment
-
-**Week 3: Production**
-
-1. 📊 Implement monitoring
-2. 🔍 Set up logging
-3. 🔒 Security hardening
-4. 📈 Performance tuning
-5. 🔨 Production deployment
+Follow both paths above, focusing on integration between layers.
 
 ---
 
 ## 🔧 Troubleshooting
 
-### Common Issues
+### Issue: Database Connection Failed
 
-#### 1. Database Connection Failed
-
-**Error**: `Can't reach database server`
+**Symptoms**: `Error: Can't reach database server at localhost:5432`
 
 **Solutions**:
 
 ```bash
-# Check PostgreSQL is running
+# 1. Check if PostgreSQL is running
+psql --version
 pg_isready
 
-# Restart PostgreSQL
-# macOS:
-brew services restart postgresql
+# 2. Start PostgreSQL (macOS)
+brew services start postgresql@14
 
-# Linux:
-sudo systemctl restart postgresql
+# 3. Start PostgreSQL (Linux)
+sudo systemctl start postgresql
 
-# Windows:
-# Use Services app to restart PostgreSQL
+# 4. Using Docker
+docker-compose up -d db
 
-# Verify DATABASE_URL in .env.local
-echo $DATABASE_URL
+# 5. Verify DATABASE_URL in .env.local
 ```
 
-#### 2. Prisma Client Not Generated
+### Issue: Port 3000 Already in Use
 
-**Error**: `Cannot find module '@prisma/client'`
-
-**Solution**:
-
-```bash
-# Generate Prisma Client
-pnpm prisma generate
-
-# If still failing, clean and reinstall
-rm -rf node_modules .next
-pnpm install
-pnpm prisma generate
-```
-
-#### 3. Port Already in Use
-
-**Error**: `Port 3000 is already in use`
+**Symptoms**: `Error: listen EADDRINUSE: address already in use :::3000`
 
 **Solutions**:
 
 ```bash
-# Option 1: Kill process on port 3000
-# macOS/Linux:
+# Kill process on port 3000
+pnpm kill-server
+
+# Or manually (macOS/Linux)
 lsof -ti:3000 | xargs kill -9
 
-# Windows:
+# Or manually (Windows)
 netstat -ano | findstr :3000
 taskkill /PID <PID> /F
 
-# Option 2: Use different port
+# Use different port
 PORT=3001 pnpm dev
 ```
 
-#### 4. Environment Variables Not Loaded
+### Issue: Prisma Client Not Generated
 
-**Error**: `process.env.VARIABLE_NAME is undefined`
+**Symptoms**: `Cannot find module '@prisma/client'`
 
 **Solution**:
 
 ```bash
-# Ensure .env.local exists
-ls -la .env.local
+# Regenerate Prisma client
+pnpm prisma generate
 
-# Restart dev server after .env changes
-# Ctrl+C and run pnpm dev again
-
-# Verify variables are loaded
-pnpm dev | grep "Environment"
+# Clear cache and regenerate
+rm -rf node_modules/.prisma
+pnpm prisma generate
 ```
 
-#### 5. Module Not Found Errors
+### Issue: Module Not Found Errors
 
-**Error**: `Cannot find module '@/components/...'`
+**Symptoms**: `Cannot find module '@/lib/database'`
 
 **Solutions**:
 
 ```bash
-# Check tsconfig.json paths are correct
-cat tsconfig.json | grep paths
+# 1. Verify path aliases in tsconfig.json
+# Should have: "@/*": ["./src/*"]
 
-# Clean Next.js cache
+# 2. Clear Next.js cache
 rm -rf .next
+pnpm dev
 
-# Reinstall dependencies
+# 3. Reinstall dependencies
 rm -rf node_modules
 pnpm install
 ```
 
 ### Getting Help
 
-**Before Asking for Help:**
-
-1. ✅ Check this troubleshooting section
-2. 📖 Read relevant documentation
-3. 🔍 Search closed issues on GitHub
-4. 🧪 Try reproducing in clean environment
-
-**Where to Get Help:**
-
-- 💬 **Team Chat**: Internal Slack/Discord channel
-- 🐛 **Bug Reports**: GitHub Issues
-- 📧 **Email**: dev-team@example.com
-- 📖 **Documentation**: `docs/troubleshooting/README.md`
+- **Documentation**: Check [docs/](../) for comprehensive guides
+- **GitHub Issues**: Search existing issues or create new one
+- **Team Chat**: Ask in #farmers-market-platform channel
+- **Stack Overflow**: Tag questions with `farmers-market-platform`
 
 ---
 
@@ -622,208 +583,43 @@ pnpm install
 
 ### Immediate Actions
 
-1. **Complete Setup Checklist**:
-
-   ```
-   ✅ Prerequisites installed
-   ✅ Repository cloned
-   ✅ Dependencies installed
-   ✅ Environment configured
-   ✅ Database initialized
-   ✅ Dev server running
-   ✅ Tests passing
-   ```
-
-2. **Choose Your Learning Path**:
-   - Frontend Developer → UI components
-   - Backend Developer → Services & APIs
-   - Full-Stack Developer → Complete features
-   - DevOps Engineer → Deployment pipeline
-
-3. **Join the Team**:
-   - Introduce yourself in team chat
-   - Attend daily standup
-   - Review current sprint board
-   - Pick your first task
+1. ✅ Complete setup verification
+2. ✅ Read the [Development Guide](../development/README.md)
+3. ✅ Review the [Testing Guide](../development/testing-guide.md)
+4. ✅ Explore the codebase structure
+5. ✅ Make your first contribution
 
 ### Recommended Reading
 
-**Essential Documentation** (Read First):
-
-1. 📖 [Architecture Overview](../architecture/README.md)
-2. 🗄️ [Database Guide](../database/README.md)
-3. 🔐 [Authentication Guide](../guides/authentication.md)
-4. 🧪 [Testing Guide](../testing/README.md)
-
-**Advanced Topics** (Read Later):
-
-1. 🚀 [Performance Optimization](../optimization/README.md)
-2. 🤖 [AI Integration Guide](../ai/README.md)
-3. 🌐 [Deployment Guide](../deployment/README.md)
-4. 📊 [Monitoring & Logging](../monitoring/README.md)
+- **Architecture**: [docs/architecture/](../architecture/) - System design and patterns
+- **API Guide**: [docs/api/](../api/) - API reference and examples
+- **Testing**: [docs/development/testing-guide.md](../development/testing-guide.md) - Testing strategies
+- **Deployment**: [docs/deployment/](../deployment/) - Production deployment
+- **Divine Instructions**: `.github/instructions/` - Advanced patterns
 
 ### Community Resources
 
-- **GitHub Discussions**: Ask questions, share ideas
-- **Wiki**: Additional guides and tutorials
-- **Blog**: Team announcements and articles
-- **Contributing Guide**: `CONTRIBUTING.md`
+- **GitHub**: https://github.com/your-org/farmers-market-platform
+- **Documentation**: https://docs.farmersmarket.com
+- **Discord**: https://discord.gg/farmers-market
+- **Twitter**: @FarmersMarketPlatform
 
 ---
 
-## 📞 Support
+## 🌟 Welcome to the Team!
 
-### Quick Links
+You're now ready to contribute to the Farmers Market Platform! Remember:
 
-| Resource              | Location                         | Purpose                    |
-| --------------------- | -------------------------------- | -------------------------- |
-| **Documentation Hub** | `docs/README.md`                 | Central navigation         |
-| **API Reference**     | `docs/api/README.md`             | API documentation          |
-| **Troubleshooting**   | `docs/troubleshooting/README.md` | Common issues              |
-| **FAQ**               | `docs/FAQ.md`                    | Frequently asked questions |
+- **Code with agricultural consciousness** 🌾
+- **Architect with divine precision** ⚡
+- **Test comprehensively** ✅
+- **Document thoroughly** 📚
+- **Ask questions** 💬
 
-### Development Resources
-
-```bash
-# View all available commands
-pnpm run
-
-# Open documentation in browser
-# (if documentation server is set up)
-pnpm docs:serve
-
-# Generate API documentation
-pnpm docs:generate
-```
-
-### Team Contacts
-
-- **Tech Lead**: Review architecture decisions
-- **DevOps Lead**: Deployment and infrastructure
-- **QA Lead**: Testing strategies
-- **Product Owner**: Feature requirements
+**Happy coding!** 🚀
 
 ---
 
-## 🌟 Best Practices
-
-### Development Workflow
-
-1. **Always create a feature branch**
-
-   ```bash
-   git checkout -b feat/your-feature-name
-   ```
-
-2. **Write tests first (TDD)**
-
-   ```typescript
-   // Write failing test
-   it("should do something", () => {
-     expect(result).toBe(expected);
-   });
-
-   // Implement feature
-   // Make test pass
-   ```
-
-3. **Run quality checks before committing**
-
-   ```bash
-   pnpm lint && pnpm test && pnpm type-check
-   ```
-
-4. **Write meaningful commit messages**
-
-   ```bash
-   # Good
-   git commit -m "feat: add farm profile validation"
-
-   # Bad
-   git commit -m "fix stuff"
-   ```
-
-5. **Keep PRs small and focused**
-   - One feature per PR
-   - Under 400 lines of changes
-   - Clear description and screenshots
-
-### Code Quality Standards
-
-```typescript
-// ✅ GOOD: Type-safe, clear intent
-export async function getFarmById(farmId: string): Promise<Farm | null> {
-  return await database.farm.findUnique({
-    where: { id: farmId },
-    include: { products: true },
-  });
-}
-
-// ❌ BAD: No types, unclear intent
-export async function getData(id) {
-  return await db.farm.findUnique({ where: { id } });
-}
-```
-
----
-
-## 📊 Progress Tracking
-
-Use this checklist to track your onboarding progress:
-
-### Week 1: Setup & Basics
-
-- [ ] Complete quick start setup
-- [ ] Run dev server successfully
-- [ ] Explore codebase structure
-- [ ] Read architecture documentation
-- [ ] Run tests successfully
-- [ ] Make first commit
-- [ ] Deploy to local environment
-
-### Week 2: Development
-
-- [ ] Build first component/feature
-- [ ] Write tests for your code
-- [ ] Create first pull request
-- [ ] Review teammate's PR
-- [ ] Attend team meetings
-- [ ] Complete first task from sprint
-
-### Week 3: Integration
-
-- [ ] Ship feature to staging
-- [ ] Participate in code review
-- [ ] Fix production bug
-- [ ] Improve existing feature
-- [ ] Add documentation
-- [ ] Mentor new team member
-
----
-
-## 🎉 Welcome to the Team!
-
-You're now ready to start building divine agricultural features! 🌾
-
-**Remember**:
-
-- 💡 Ask questions early and often
-- 🤝 Collaborate with teammates
-- 📖 Document as you learn
-- 🧪 Test everything
-- 🚀 Ship with confidence
-
-**Happy coding!** ⚡
-
----
-
-**Last Updated**: December 2024  
-**Maintained By**: Development Team  
-**Status**: ✅ Active & Complete
-
-**Quick Navigation**:
-
-- [← Back to Documentation Hub](../README.md)
-- [→ Architecture Guide](../architecture/README.md)
-- [→ API Documentation](../api/README.md)
-- [→ Testing Guide](../testing/README.md)
+**Last Updated**: January 2025
+**Version**: 3.0 - Divine Agricultural Edition
+**Maintainers**: Development Team

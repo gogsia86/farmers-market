@@ -17,17 +17,20 @@
 ## 📊 Current & Active Documentation
 
 ### 👨‍💻 For Developers
+
 - [Developer Quick Reference](current/DEVELOPER_QUICK_REFERENCE.md)
 - [Frontend Integration Guide](current/FRONTEND_INTEGRATION_GUIDE.md)
 - [Integration Test Scenarios](current/INTEGRATION_TEST_SCENARIOS.md)
 - [Technical Debt](current/TECHNICAL_DEBT.md)
 
 ### 🏗️ Architecture
+
 - [Architecture Diagram](current/ARCHITECTURE_DIAGRAM.md)
 - [Full Architecture Diagram](current/FULL_ARCHITECTURE_DIAGRAM.md)
 - [Executive Summary](current/EXECUTIVE_SUMMARY.md)
 
 ### 🚀 Deployment
+
 - [Deployment Readiness Checklist](current/DEPLOYMENT_READINESS_CHECKLIST.md)
 - [Deployment Runbook](current/DEPLOYMENT_RUNBOOK.md)
 - [Launch Day Runbook](current/LAUNCH_DAY_RUNBOOK.md)
@@ -79,26 +82,29 @@ All historical reports preserved for reference:
 ## 🔧 Quick Commands
 
 ### Development
+
 \`\`\`bash
-npm run dev              # Start development server
-npm run build            # Build for production
-npm run test             # Run tests
+npm run dev # Start development server
+npm run build # Build for production
+npm run test # Run tests
 \`\`\`
 
 ### Docker
+
 \`\`\`bash
-npm run docker:up-dev    # Start development environment
-npm run docker:logs      # View logs
-npm run docker:down      # Stop containers
+npm run docker:up-dev # Start development environment
+npm run docker:logs # View logs
+npm run docker:down # Stop containers
 \`\`\`
 
 ### Database
+
 \`\`\`bash
-npm run db:migrate       # Run migrations
-npm run db:seed          # Seed database
-npm run db:studio        # Open Prisma Studio
+npm run db:migrate # Run migrations
+npm run db:seed # Seed database
+npm run db:studio # Open Prisma Studio
 \`\`\`
 
 ---
 
-*Navigate documentation with agricultural consciousness* 🌾📚✨
+_Navigate documentation with agricultural consciousness_ 🌾📚✨

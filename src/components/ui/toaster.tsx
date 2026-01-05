@@ -1,43 +1,37 @@
 /**
- * 🔔 TOASTER COMPONENT - TOAST NOTIFICATION CONTAINER
- *
- * Container component that renders all active toast notifications
- *
- * @module Toaster
+ * 🔔 TOASTER COMPONENT
+ * Toast notification renderer with animation
  */
 
 "use client";
 
-import {
-  Toast,
-  ToastClose,
-  ToastDescription,
-  ToastProvider,
-  ToastTitle,
-  ToastViewport,
-} from "@/components/ui/toast";
 import { useToast } from "@/hooks/use-toast";
+import { Toast, ToastViewport } from "./toast";
+
+// ============================================================================
+// TOASTER COMPONENT
+// ============================================================================
 
 export function Toaster() {
-  const { toasts } = useToast();
+  const { toasts, dismiss } = useToast();
 
   return (
-    <ToastProvider>
-      {toasts.map(function ({ id, title, description, action, ...props }) {
-        return (
-          <Toast key={id} {...props}>
-            <div className="grid gap-1">
-              {title && <ToastTitle>{title}</ToastTitle>}
-              {description && (
-                <ToastDescription>{description}</ToastDescription>
-              )}
-            </div>
-            {action}
-            <ToastClose />
-          </Toast>
-        );
-      })}
-      <ToastViewport />
-    </ToastProvider>
+    <ToastViewport position="top-right">
+      {toasts.map((toast) => (
+        <div
+          key={toast.id}
+          className="animate-in slide-in-from-top-full fade-in duration-300"
+        >
+          <Toast
+            id={toast.id}
+            title={toast.title}
+            description={toast.description}
+            action={toast.action}
+            variant={toast.variant}
+            onDismiss={() => dismiss(toast.id)}
+          />
+        </div>
+      ))}
+    </ToastViewport>
   );
 }

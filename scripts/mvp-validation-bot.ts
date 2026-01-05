@@ -17,9 +17,9 @@
  * ✅ Customer support email set up
  */
 
-import { chromium, Browser, Page, BrowserContext } from "playwright";
 import * as fs from "fs";
 import * as path from "path";
+import { Browser, BrowserContext, chromium, Page } from "playwright";
 
 // ============================================================================
 // CONFIGURATION
@@ -32,11 +32,22 @@ const CONFIG = {
   screenshotsDir: "./mvp-validation-screenshots",
   reportsDir: "./mvp-validation-reports",
 
-  // Test credentials
+  // Test credentials - password from environment variable
   testData: {
     farmer: {
       email: `farmer.${Date.now()}@farmersmarket.test`,
-      password: "FarmerTest123!@#",
+      password:
+        process.env.TEST_USER_PASSWORD ||
+        (() => {
+          console.error(
+            "\n❌ ERROR: TEST_USER_PASSWORD environment variable is required",
+          );
+          console.log("\nUsage:");
+          console.log(
+            "  TEST_USER_PASSWORD=YourPassword123! npx tsx scripts/mvp-validation-bot.ts",
+          );
+          process.exit(1);
+        })(),
       name: "Test Farmer",
       farmName: `Test Farm ${Date.now()}`,
       farmDescription: "A test farm for MVP validation",
@@ -44,14 +55,28 @@ const CONFIG = {
     },
     customer: {
       email: `customer.${Date.now()}@farmersmarket.test`,
-      password: "CustomerTest123!@#",
+      password:
+        process.env.TEST_USER_PASSWORD ||
+        (() => {
+          console.error(
+            "\n❌ ERROR: TEST_USER_PASSWORD environment variable is required",
+          );
+          process.exit(1);
+        })(),
       name: "Test Customer",
       address: "456 Customer St, City, CA 95001",
       phone: "555-0123",
     },
     admin: {
       email: process.env.ADMIN_EMAIL || "admin@farmersmarket.app",
-      password: process.env.ADMIN_PASSWORD || "DivineAdmin123!",
+      password:
+        process.env.TEST_USER_PASSWORD ||
+        (() => {
+          console.error(
+            "\n❌ ERROR: TEST_USER_PASSWORD environment variable is required",
+          );
+          process.exit(1);
+        })(),
     },
     product: {
       name: "Fresh Organic Tomatoes",
@@ -2034,4 +2059,4 @@ if (require.main === module) {
   main();
 }
 
-export { MVPValidationBot, MVPReport, MVPCheck };
+export { MVPCheck, MVPReport, MVPValidationBot };

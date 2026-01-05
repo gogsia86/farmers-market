@@ -1,640 +1,401 @@
-/**
- * FARMERS MARKET HOME PAGE - DIVINE SERVER COMPONENT IMPLEMENTATION
- *
- * WEEK 1 DAY 3 - Performance Optimization
- *
- * Server Component Benefits:
- * - Zero client-side JavaScript for initial render
- * - Direct database access (no API calls)
- * - Automatic code splitting
- * - SEO optimized
- * - Faster Time to First Byte (TTFB)
- *
- * Features:
- * - Featured farms (real data from homepage.service.ts)
- * - Trending products (real data)
- * - Platform stats (real-time)
- * - Seasonal products
- * - Hero section with search
- * - How it works section
- * - Testimonials
- * - CTA sections
- */
-
-import { Header } from "@/components/layout/Header";
-import { SearchAutocomplete } from "@/components/homepage/SearchAutocomplete";
-import { PlatformStats } from "@/components/homepage/PlatformStats";
-import { FeaturedFarms } from "@/components/homepage/FeaturedFarms";
-import {
-  getTrendingProducts,
-  getSeasonalProducts,
-} from "@/lib/services/homepage.service";
-import {
-  ArrowRight,
-  Award,
-  Clock,
-  Leaf,
-  MapPin,
-  Search,
-  Shield,
-  ShoppingBag,
-  Star,
-} from "lucide-react";
+import { farmService } from "@/lib/services/farm.service";
+import { productService } from "@/lib/services/product.service";
+import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
-import { Suspense } from "react";
 
-// Revalidate every 5 minutes for fresh data
-export const revalidate = 300;
-
-// ============================================================================
-// Main Page Component (Server Component)
-// ============================================================================
+export const metadata: Metadata = {
+  title: "Farmers Market Platform | Fresh Local Produce",
+  description: "Connect with local farmers and get fresh, organic produce delivered to your door",
+};
 
 export default async function HomePage() {
-  // Parallel data fetching for optimal performance
-  const [trendingProducts, seasonalProducts] = await Promise.all([
-    getTrendingProducts({ limit: 8 }),
-    getSeasonalProducts({ limit: 4 }),
+  // Fetch featured data
+  const [featuredProducts, { farms: featuredFarms }] = await Promise.all([
+    productService.getFeaturedProducts(8),
+    farmService.getAllFarms({ status: "ACTIVE", limit: 6 }),
   ]);
 
   return (
-    <>
-      <Header />
-      <main className="min-h-screen bg-white">
-        {/* Hero Section */}
-        <section className="relative bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 py-20 overflow-hidden">
-          {/* Background Pattern */}
-          <div className="absolute inset-0 opacity-10">
-            <div
-              className="absolute inset-0"
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23059669' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-              }}
-            ></div>
-          </div>
-
-          <div className="container mx-auto px-4 relative z-10">
-            <div className="max-w-4xl mx-auto text-center">
-              <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full mb-6 shadow-sm">
-                <Leaf className="h-4 w-4 text-green-600" />
-                <span className="text-sm font-medium text-green-900">
-                  Farm Fresh, Locally Grown
-                </span>
-              </div>
-
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight">
-                Fresh From Farm
-                <span className="block text-green-600">To Your Table</span>
-              </h1>
-
-              <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-                Connect directly with local farmers. Get the freshest produce,
-                support sustainable agriculture, and build a healthier
-                community.
-              </p>
-
-              {/* Search Bar - Client Component */}
-              <div className="max-w-2xl mx-auto mb-8">
-                <Suspense fallback={<SearchBarSkeleton />}>
-                  <SearchAutocomplete />
-                </Suspense>
-              </div>
-
-              <div className="flex flex-wrap justify-center gap-4">
-                <Link
-                  href="/products"
-                  className="inline-flex items-center gap-2 bg-green-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                >
-                  <ShoppingBag className="h-5 w-5" />
-                  Shop Products
-                  <ArrowRight className="h-5 w-5" />
-                </Link>
-                <Link
-                  href="/farms"
-                  className="inline-flex items-center gap-2 bg-white text-green-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-50 transition-all shadow-lg hover:shadow-xl border-2 border-green-600 transform hover:-translate-y-0.5"
-                >
-                  <MapPin className="h-5 w-5" />
-                  Explore Farms
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Platform Stats - Real-time Data */}
-        <section className="py-12 bg-white border-b">
-          <div className="container mx-auto px-4">
-            <Suspense fallback={<StatsSkeleton />}>
-              <PlatformStats />
-            </Suspense>
-          </div>
-        </section>
-
-        {/* Featured Farms - Real Data */}
-        <section className="py-20 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                Featured Farms
-              </h2>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                Meet our verified local farmers committed to sustainable
-                agriculture and quality produce
-              </p>
-            </div>
-
-            <Suspense fallback={<FarmsSkeleton />}>
-              <FeaturedFarms />
-            </Suspense>
-
-            <div className="text-center mt-12">
-              <Link
-                href="/farms"
-                className="inline-flex items-center gap-2 text-green-600 font-semibold hover:text-green-700 transition-colors group"
-              >
-                View All Farms
-                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* Trending Products */}
-        <section className="py-20 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                Trending Products
-              </h2>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                Fresh, seasonal produce loved by our community
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {trendingProducts.map((product) => (
-                <Link
-                  key={product.id}
-                  href={`/products/${product.slug}`}
-                  className="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all border border-gray-100 overflow-hidden transform hover:-translate-y-1"
-                >
-                  <div className="relative h-48 bg-gray-100">
-                    {product.primaryPhotoUrl || product.images?.[0] ? (
-                      <Image
-                        src={
-                          product.primaryPhotoUrl ||
-                          product.images?.[0] ||
-                          "/placeholder-product.jpg"
-                        }
-                        alt={product.name}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                      />
-                    ) : (
-                      <div className="flex items-center justify-center h-full">
-                        <Leaf className="h-16 w-16 text-gray-300" />
-                      </div>
-                    )}
-                    {product.organic && (
-                      <div className="absolute top-2 right-2 bg-green-600 text-white px-2 py-1 rounded-full text-xs font-semibold">
-                        Organic
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-green-600 transition-colors">
-                      {product.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-2 flex items-center gap-1">
-                      <MapPin className="h-3 w-3" />
-                      {product.farm.name}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-lg font-bold text-green-600">
-                        ${product.price.toFixed(2)}
-                        <span className="text-sm text-gray-500 font-normal">
-                          /{product.unit}
-                        </span>
-                      </span>
-                      {product.averageRating && (
-                        <div className="flex items-center gap-1">
-                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                          <span className="text-sm font-medium">
-                            {product.averageRating.toFixed(1)}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-
-            <div className="text-center mt-12">
-              <Link
-                href="/products"
-                className="inline-flex items-center gap-2 bg-green-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-700 transition-all shadow-lg hover:shadow-xl"
-              >
-                <ShoppingBag className="h-5 w-5" />
-                Browse All Products
-                <ArrowRight className="h-5 w-5" />
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* Seasonal Products */}
-        {seasonalProducts.length > 0 && (
-          <section className="py-20 bg-gradient-to-br from-amber-50 to-orange-50">
-            <div className="container mx-auto px-4">
-              <div className="text-center mb-12">
-                <div className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full mb-4 shadow-sm">
-                  <Clock className="h-4 w-4 text-amber-600" />
-                  <span className="text-sm font-medium text-amber-900">
-                    Limited Season
-                  </span>
-                </div>
-                <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                  In Season Now
-                </h2>
-                <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                  Fresh harvests available for a limited time
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {seasonalProducts.map((product) => (
-                  <Link
-                    key={product.id}
-                    href={`/products/${product.slug}`}
-                    className="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all border-2 border-amber-200 overflow-hidden transform hover:-translate-y-1"
-                  >
-                    <div className="relative h-48 bg-gray-100">
-                      {product.primaryPhotoUrl || product.images?.[0] ? (
-                        <Image
-                          src={
-                            product.primaryPhotoUrl ||
-                            product.images?.[0] ||
-                            "/placeholder-product.jpg"
-                          }
-                          alt={product.name}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                        />
-                      ) : (
-                        <div className="flex items-center justify-center h-full">
-                          <Leaf className="h-16 w-16 text-gray-300" />
-                        </div>
-                      )}
-                      <div className="absolute top-2 right-2 bg-amber-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
-                        Seasonal
-                      </div>
-                    </div>
-                    <div className="p-4">
-                      <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-amber-600 transition-colors">
-                        {product.name}
-                      </h3>
-                      <p className="text-sm text-gray-600 mb-2 flex items-center gap-1">
-                        <MapPin className="h-3 w-3" />
-                        {product.farm.name}
-                      </p>
-                      <div className="flex items-center justify-between">
-                        <span className="text-lg font-bold text-amber-600">
-                          ${product.price.toFixed(2)}
-                          <span className="text-sm text-gray-500 font-normal">
-                            /{product.unit}
-                          </span>
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Categories Grid */}
-        <section className="py-20 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                Shop by Category
-              </h2>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                Discover fresh produce organized by your favorite categories
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              {categories.map((category) => (
-                <Link
-                  key={category.name}
-                  href={`/products?category=${category.name.toLowerCase()}`}
-                  className="group bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 text-center hover:shadow-xl transition-all border border-gray-100 transform hover:-translate-y-1"
-                  style={{ backgroundColor: `${category.color}10` }}
-                >
-                  <div
-                    className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-3 group-hover:scale-110 transition-transform"
-                    style={{ backgroundColor: `${category.color}20` }}
-                  >
-                    <category.icon
-                      className="h-8 w-8"
-                      style={{ color: category.color }}
-                    />
-                  </div>
-                  <h3 className="font-semibold text-gray-900 group-hover:text-green-600 transition-colors">
-                    {category.name}
-                  </h3>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* How It Works */}
-        <section className="py-20 bg-gradient-to-br from-green-50 to-emerald-50">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                How It Works
-              </h2>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                From farm to table in three simple steps
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-              {steps.map((step, index) => (
-                <div key={step.step} className="relative">
-                  <div className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow">
-                    <div className="flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6 mx-auto">
-                      <step.icon className="h-8 w-8 text-green-600" />
-                    </div>
-                    <div className="absolute top-4 right-4 text-6xl font-bold text-green-100">
-                      {step.step}
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-3 text-center">
-                      {step.title}
-                    </h3>
-                    <p className="text-gray-600 text-center">
-                      {step.description}
-                    </p>
-                  </div>
-                  {index < steps.length - 1 && (
-                    <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
-                      <ArrowRight className="h-8 w-8 text-green-300" />
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Why Choose Us */}
-        <section className="py-20 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                Why Choose Our Platform
-              </h2>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                Supporting local farmers and sustainable agriculture
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {benefits.map((benefit) => (
-                <div
-                  key={benefit.title}
-                  className="text-center group hover:transform hover:-translate-y-2 transition-all"
-                >
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4 group-hover:bg-green-600 transition-colors">
-                    <benefit.icon className="h-8 w-8 text-green-600 group-hover:text-white transition-colors" />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    {benefit.title}
-                  </h3>
-                  <p className="text-gray-600">{benefit.description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Testimonials */}
-        <section className="py-20 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                What Our Community Says
-              </h2>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                Real stories from farmers and customers
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              {testimonials.map((testimonial) => (
-                <div
-                  key={testimonial.name}
-                  className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow"
-                >
-                  <div className="flex items-center gap-1 mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className="h-5 w-5 fill-yellow-400 text-yellow-400"
-                      />
-                    ))}
-                  </div>
-                  <p className="text-gray-700 mb-6 italic">
-                    "{testimonial.content}"
-                  </p>
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                      <span className="text-green-600 font-bold text-lg">
-                        {testimonial.name.charAt(0)}
-                      </span>
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-900">
-                        {testimonial.name}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        {testimonial.role}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Final CTA */}
-        <section className="py-20 bg-gradient-to-r from-green-600 to-emerald-600">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Ready to Support Local Farmers?
-            </h2>
-            <p className="text-xl text-green-100 mb-8 max-w-2xl mx-auto">
-              Join thousands of community members enjoying fresh, sustainable
-              produce delivered to their door
+    <main className="min-h-screen bg-gradient-to-b from-green-50 to-white">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-green-600 to-green-800 text-white">
+        <div className="container mx-auto px-4 py-16 md:py-24">
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+              🌾 Fresh from Farm to Table
+            </h1>
+            <p className="text-xl md:text-2xl mb-8 text-green-50">
+              Support local farmers. Get fresh, organic produce delivered to your door.
+              Sustainable farming for a better tomorrow.
             </p>
-            <div className="flex flex-wrap justify-center gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/products"
-                className="inline-flex items-center gap-2 bg-white text-green-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center px-8 py-4 bg-white text-green-700 font-semibold rounded-lg hover:bg-green-50 transition-colors text-lg"
               >
-                <ShoppingBag className="h-5 w-5" />
-                Start Shopping
-                <ArrowRight className="h-5 w-5" />
+                <svg
+                  className="w-6 h-6 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                  />
+                </svg>
+                Shop Products
               </Link>
               <Link
                 href="/farms"
-                className="inline-flex items-center gap-2 bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white/10 transition-all"
+                className="inline-flex items-center justify-center px-8 py-4 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors text-lg border-2 border-white"
               >
-                <MapPin className="h-5 w-5" />
+                <svg
+                  className="w-6 h-6 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                  />
+                </svg>
                 Explore Farms
               </Link>
             </div>
           </div>
-        </section>
-      </main>
-    </>
-  );
-}
-
-// ============================================================================
-// Static Data
-// ============================================================================
-
-const categories = [
-  { name: "Vegetables", icon: Leaf, color: "#059669" },
-  { name: "Fruits", icon: Award, color: "#DC2626" },
-  { name: "Dairy", icon: ShoppingBag, color: "#2563EB" },
-  { name: "Meat", icon: Shield, color: "#DC2626" },
-  { name: "Eggs", icon: Award, color: "#F59E0B" },
-  { name: "Honey", icon: Star, color: "#F59E0B" },
-];
-
-const steps = [
-  {
-    step: 1,
-    title: "Browse & Select",
-    description:
-      "Explore our marketplace of fresh, local products from verified farms",
-    icon: Search,
-  },
-  {
-    step: 2,
-    title: "Order Direct",
-    description:
-      "Place your order directly with local farmers - no middlemen involved",
-    icon: ShoppingBag,
-  },
-  {
-    step: 3,
-    title: "Pickup or Delivery",
-    description:
-      "Choose convenient pickup at the farm or schedule home delivery",
-    icon: Clock,
-  },
-];
-
-const benefits = [
-  {
-    icon: Leaf,
-    title: "Fresh & Local",
-    description: "Products harvested at peak freshness from nearby farms",
-  },
-  {
-    icon: Shield,
-    title: "Verified Farms",
-    description: "All farms are verified for quality and sustainable practices",
-  },
-  {
-    icon: Award,
-    title: "Support Local",
-    description: "Your purchase directly supports local farming families",
-  },
-  {
-    icon: Star,
-    title: "Quality Assured",
-    description: "Highest quality standards with satisfaction guarantee",
-  },
-];
-
-const testimonials = [
-  {
-    name: "Sarah Johnson",
-    role: "Regular Customer",
-    content:
-      "The freshness is unbeatable! I love knowing exactly where my food comes from and supporting local farmers.",
-    rating: 5,
-  },
-  {
-    name: "Mike Chen",
-    role: "Local Farmer",
-    content:
-      "This platform has transformed my business. Direct connection with customers means better prices for everyone.",
-    rating: 5,
-  },
-  {
-    name: "Emily Rodriguez",
-    role: "Health Enthusiast",
-    content:
-      "Finally, a reliable source for organic produce. The quality and taste difference is remarkable!",
-    rating: 5,
-  },
-];
-
-// ============================================================================
-// Loading Skeletons
-// ============================================================================
-
-function SearchBarSkeleton() {
-  return (
-    <div className="relative">
-      <div className="h-14 bg-white rounded-lg shadow-lg border-2 border-gray-200 animate-pulse"></div>
-    </div>
-  );
-}
-
-function StatsSkeleton() {
-  return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-      {[...Array(4)].map((_, i) => (
-        <div key={i} className="text-center">
-          <div className="h-12 w-32 bg-gray-200 rounded mx-auto mb-2 animate-pulse"></div>
-          <div className="h-4 w-24 bg-gray-200 rounded mx-auto animate-pulse"></div>
         </div>
-      ))}
-    </div>
-  );
-}
+      </div>
 
-function FarmsSkeleton() {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {[...Array(6)].map((_, i) => (
-        <div
-          key={i}
-          className="bg-white rounded-xl shadow-sm border overflow-hidden"
-        >
-          <div className="h-48 bg-gray-200 animate-pulse"></div>
-          <div className="p-6 space-y-3">
-            <div className="h-6 bg-gray-200 rounded w-3/4 animate-pulse"></div>
-            <div className="h-4 bg-gray-200 rounded w-full animate-pulse"></div>
-            <div className="h-4 bg-gray-200 rounded w-5/6 animate-pulse"></div>
+      {/* Features Section */}
+      <div className="container mx-auto px-4 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+              <svg
+                className="w-8 h-8 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              100% Fresh & Organic
+            </h3>
+            <p className="text-gray-600">
+              Directly from local farms to your table. No middlemen, just fresh produce.
+            </p>
+          </div>
+
+          <div className="text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+              <svg
+                className="w-8 h-8 text-blue-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              Fast Delivery
+            </h3>
+            <p className="text-gray-600">
+              Order today, enjoy tomorrow. Quick delivery from farms in your area.
+            </p>
+          </div>
+
+          <div className="text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
+              <svg
+                className="w-8 h-8 text-purple-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              Support Local Farmers
+            </h3>
+            <p className="text-gray-600">
+              Your purchase directly supports local farming communities and sustainability.
+            </p>
           </div>
         </div>
-      ))}
-    </div>
+      </div>
+
+      {/* Featured Products */}
+      {featuredProducts.length > 0 && (
+        <div className="container mx-auto px-4 py-16">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900">
+                🌟 Featured Products
+              </h2>
+              <p className="text-gray-600 mt-2">
+                Fresh picks from our local farmers
+              </p>
+            </div>
+            <Link
+              href="/products"
+              className="text-green-600 hover:text-green-700 font-semibold flex items-center"
+            >
+              View All
+              <svg
+                className="w-5 h-5 ml-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {featuredProducts.map((product) => (
+              <Link
+                key={product.id}
+                href={`/products/${product.slug}`}
+                className="group"
+              >
+                <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
+                  <div className="aspect-square bg-gray-200 relative overflow-hidden">
+                    {product.images && product.images.length > 0 ? (
+                      <img
+                        src={product.images[0]}
+                        alt={product.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-green-100 to-green-200">
+                        <svg
+                          className="w-20 h-20 text-green-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                          />
+                        </svg>
+                      </div>
+                    )}
+                    {product.organic && (
+                      <div className="absolute top-2 right-2 bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                        🌿 Organic
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-semibold text-gray-900 group-hover:text-green-600 transition-colors">
+                      {product.name}
+                    </h3>
+                    <p className="text-sm text-gray-600 mt-1">
+                      {product.farm?.name}
+                    </p>
+                    <div className="mt-3 flex items-center justify-between">
+                      <span className="text-2xl font-bold text-green-600">
+                        ${Number(product.price).toFixed(2)}
+                      </span>
+                      <span className="text-sm text-gray-500">
+                        per {product.unit}
+                      </span>
+                    </div>
+                    {product.quantityAvailable && Number(product.quantityAvailable) > 0 ? (
+                      <div className="mt-3">
+                        <span className="text-xs text-gray-600">
+                          {Number(product.quantityAvailable)} available
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="mt-3">
+                        <span className="text-xs text-red-600 font-semibold">
+                          Out of Stock
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Featured Farms */}
+      {featuredFarms.length > 0 && (
+        <div className="bg-green-50 py-16">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900">
+                  🚜 Our Local Farms
+                </h2>
+                <p className="text-gray-600 mt-2">
+                  Meet the farmers growing your food
+                </p>
+              </div>
+              <Link
+                href="/farms"
+                className="text-green-600 hover:text-green-700 font-semibold flex items-center"
+              >
+                View All Farms
+                <svg
+                  className="w-5 h-5 ml-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {featuredFarms.map((farm) => (
+                <Link
+                  key={farm.id}
+                  href={`/farms/${farm.slug}`}
+                  className="block group"
+                >
+                  <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
+                    <div className="h-48 bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
+                      <svg
+                        className="w-24 h-24 text-white opacity-50"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                        />
+                      </svg>
+                    </div>
+                    <div className="p-6">
+                      <h3 className="text-xl font-semibold text-gray-900 group-hover:text-green-600 transition-colors">
+                        {farm.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 mt-2 line-clamp-3">
+                        {farm.description}
+                      </p>
+                      <div className="mt-4 flex items-center justify-between">
+                        <div className="flex items-center text-sm text-gray-500">
+                          <svg
+                            className="w-4 h-4 mr-1"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                          </svg>
+                          {farm.city}, {farm.state}
+                        </div>
+                        {farm.averageRating && Number(farm.averageRating) > 0 && (
+                          <div className="flex items-center text-sm text-yellow-600">
+                            <svg
+                              className="w-4 h-4 mr-1"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                            {Number(farm.averageRating).toFixed(1)}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CTA Section */}
+      <div className="container mx-auto px-4 py-16">
+        <div className="bg-gradient-to-r from-green-600 to-green-800 rounded-2xl shadow-2xl p-8 md:p-12 text-center text-white">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            Are you a farmer?
+          </h2>
+          <p className="text-xl mb-8 text-green-50 max-w-2xl mx-auto">
+            Join our platform and connect with customers who value fresh, local produce.
+            Start selling your harvest today!
+          </p>
+          <Link
+            href="/login"
+            className="inline-flex items-center px-8 py-4 bg-white text-green-700 font-semibold rounded-lg hover:bg-green-50 transition-colors text-lg"
+          >
+            <svg
+              className="w-6 h-6 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            Get Started as a Farmer
+          </Link>
+        </div>
+      </div>
+    </main>
   );
 }

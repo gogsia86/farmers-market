@@ -1,926 +1,588 @@
-/**
- * 🛒 CHECKOUT SERVICE - Divine Agricultural Commerce Flow
- * Comprehensive checkout orchestration with order creation, payment processing,
- * and agricultural consciousness
- *
- * Features:
- * - Multi-step checkout orchestration with BaseService pattern
- * - ServiceResponse standardization for all operations
- * - OpenTelemetry tracing for observability
- * - Cart-to-order conversion with transaction safety
- * - Payment method validation and Stripe integration
- * - Address validation and geocoding
- * - Order preview calculation with agricultural awareness
- * - Stock reservation and validation
- * - Farm availability checking
- * - Payment intent creation (Stripe)
- * - Order confirmation and notifications
- * - Agricultural consciousness patterns
- * - Comprehensive error handling with divine patterns
- */
+// 💳 QUANTUM CHECKOUT SERVICE - Divine Order Creation & Payment Orchestration
+// Manages checkout process with agricultural consciousness and quantum precision
 
 import { database } from "@/lib/database";
-import type { FulfillmentMethod, Order } from "@prisma/client";
-import { z } from "zod";
-
-import { BaseService } from "./base.service";
-import type { ServiceResponse } from "@/lib/types/service-response";
+import type { Order, UserAddress } from "@prisma/client";
+import { Decimal } from "decimal.js";
+import type { CartItemWithProduct } from "./cart.service";
 import { cartService } from "./cart.service";
-import { stripe } from "@/lib/stripe";
-import { geocodingService } from "./geocoding.service";
 
 // ============================================================================
-// TYPES & SCHEMAS
+// TYPES & INTERFACES
 // ============================================================================
 
-export interface CheckoutSessionData {
+export interface CheckoutSessionRequest {
   userId: string;
-  cartSummary: {
-    items: Array<{
-      id: string;
-      productId: string;
-      farmId: string;
-      quantity: number;
-      price: number;
-    }>;
-    subtotal: number;
-    itemCount: number;
-    farmCount: number;
-  };
-  shippingAddress?: {
-    id?: string;
-    street: string;
-    street2?: string;
-    city: string;
-    state: string;
-    zipCode: string;
-    country: string;
-  };
-  fulfillmentMethod: FulfillmentMethod;
-  deliveryInstructions?: string;
+  deliveryAddressId?: string;
+  fulfillmentMethod: "DELIVERY" | "PICKUP";
+  scheduledDate?: Date;
+  scheduledTimeSlot?: string;
   specialInstructions?: string;
+  promoCode?: string;
 }
 
-export interface OrderPreview {
+export interface CheckoutSession {
+  id: string;
+  userId: string;
+  items: CartItemWithProduct[];
+  farmOrders: FarmCheckoutOrder[];
+  deliveryAddress?: UserAddress;
+  fulfillmentMethod: "DELIVERY" | "PICKUP";
+  scheduledDate?: Date;
+  scheduledTimeSlot?: string;
+  specialInstructions?: string;
+  totals: CheckoutTotals;
+  expiresAt: Date;
+  createdAt: Date;
+}
+
+export interface FarmCheckoutOrder {
+  farmId: string;
+  farmName: string;
+  items: CartItemWithProduct[];
   subtotal: number;
-  deliveryFee: number;
   tax: number;
+  deliveryFee: number;
+  platformFee: number;
+  total: number;
+  farmerAmount: number;
+}
+
+export interface CheckoutTotals {
+  subtotal: number;
+  tax: number;
+  deliveryFee: number;
   platformFee: number;
   discount: number;
   total: number;
-  farmerAmount: number;
-  itemCount: number;
-  farmCount: number;
-  items: Array<{
-    productId: string;
-    productName: string;
-    farmName: string;
-    quantity: number;
-    unitPrice: number;
-    subtotal: number;
-  }>;
-  agriculturalMetadata?: {
-    seasonalDiscount?: number;
-    localFarmBonus?: number;
-    biodynamicCertification?: boolean;
-  };
 }
 
-export interface CreateOrderFromCheckoutRequest {
+export interface CreateOrdersRequest {
+  sessionId: string;
+  paymentIntentId: string;
   userId: string;
-  shippingAddressId?: string;
-  shippingAddress?: {
-    street: string;
-    street2?: string;
-    city: string;
-    state: string;
-    zipCode: string;
-    country: string;
-  };
-  fulfillmentMethod: FulfillmentMethod;
-  deliveryInstructions?: string;
-  specialInstructions?: string;
-  paymentMethodId?: string;
-  stripePaymentIntentId?: string;
 }
 
-export interface PaymentIntentData {
-  id: string;
-  clientSecret: string;
-  amount: number;
-  currency: string;
-  status: string;
+export interface CreateOrdersResult {
+  orders: Order[];
+  totalAmount: number;
+  orderCount: number;
 }
 
-export interface CheckoutStatus {
-  hasActiveCart: boolean;
-  cartItemCount: number;
-  canCheckout: boolean;
-  issues: string[];
+export interface ValidateCheckoutRequest {
+  userId: string;
+  deliveryAddressId?: string;
+  fulfillmentMethod: "DELIVERY" | "PICKUP";
 }
 
-export interface ValidatedAddress {
-  valid: boolean;
-  normalized?: {
-    street: string;
-    city: string;
-    state: string;
-    zipCode: string;
-    country: string;
-  };
-  error?: string;
+export interface ValidateCheckoutResult {
+  isValid: boolean;
+  errors: CheckoutValidationError[];
+  warnings: string[];
+}
+
+export interface CheckoutValidationError {
+  code: string;
+  message: string;
+  field?: string;
 }
 
 // ============================================================================
-// VALIDATION SCHEMAS
+// CHECKOUT SERVICE - QUANTUM ORDER ORCHESTRATOR
 // ============================================================================
 
-const ShippingAddressSchema = z.object({
-  street: z.string().min(5, "Street address must be at least 5 characters"),
-  street2: z.string().optional(),
-  city: z.string().min(2, "City must be at least 2 characters"),
-  state: z.string().min(2, "State must be at least 2 characters"),
-  zipCode: z.string().regex(/^\d{5}(-\d{4})?$/, "Invalid ZIP code format"),
-  country: z.string().default("US"),
-});
+export class QuantumCheckoutService {
+  private readonly TAX_RATE = 0.08; // 8% - TODO: Make location-based
+  private readonly PLATFORM_FEE_RATE = 0.15; // 15% platform fee
+  private readonly DELIVERY_FEE_BASE = 5.99;
+  private readonly FREE_DELIVERY_THRESHOLD = 50;
+  private readonly SESSION_EXPIRATION_MINUTES = 30;
 
-const CreateOrderSchema = z.object({
-  userId: z.string().uuid("Invalid user ID format"),
-  shippingAddressId: z.string().uuid().optional(),
-  shippingAddress: ShippingAddressSchema.optional(),
-  fulfillmentMethod: z.enum(["DELIVERY", "FARM_PICKUP", "MARKET_PICKUP"]),
-  deliveryInstructions: z.string().max(500).optional(),
-  specialInstructions: z.string().max(1000).optional(),
-  paymentMethodId: z.string().optional(),
-  stripePaymentIntentId: z.string().optional(),
-});
+  // In-memory session storage (TODO: Use Redis for production)
+  private sessions = new Map<string, CheckoutSession>();
 
-const OrderPreviewOptionsSchema = z.object({
-  fulfillmentMethod: z
-    .enum(["DELIVERY", "FARM_PICKUP", "MARKET_PICKUP"])
-    .optional(),
-  shippingZipCode: z.string().optional(),
-  couponCode: z.string().optional(),
-});
-
-// ============================================================================
-// CHECKOUT SERVICE CLASS
-// ============================================================================
-
-export class CheckoutService extends BaseService<Order> {
-  // ============================================================================
-  // PRIVATE CONSTANTS
-  // ============================================================================
-
-  private readonly TAX_RATE = 0.08; // 8% - should be location-based
-  private readonly PLATFORM_FEE_RATE = 0.05; // 5% platform fee
-  private readonly MIN_ORDER_FOR_FREE_DELIVERY = 50;
-  private readonly DELIVERY_FEE = 5;
-
-  // ============================================================================
-  // CONSTRUCTOR
-  // ============================================================================
-
-  constructor() {
-    super({
-      serviceName: "CheckoutService",
-      cacheTTL: 300, // 5 minutes for checkout status
-      cachePrefix: "checkout",
-      enableCaching: true,
-      enableTracing: true,
-      enableAgriculturalConsciousness: true,
-    });
-  }
-
-  // ============================================================================
-  // PUBLIC METHODS
-  // ============================================================================
+  // ==========================================================================
+  // CHECKOUT SESSION MANAGEMENT
+  // ==========================================================================
 
   /**
-   * 🔮 Initialize checkout session with cart validation
-   * Divine consciousness: Validates cart readiness for agricultural commerce
+   * 🎯 Create checkout session from cart
    */
-  async initializeCheckout(userId: string): Promise<
-    ServiceResponse<{
-      session: CheckoutSessionData;
-      preview: OrderPreview;
-    }>
-  > {
-    return await this.traced("initializeCheckout", async () => {
-      this.setTraceAttributes({
-        "checkout.user_id": userId,
-        "checkout.operation": "initialize",
+  async createCheckoutSession(
+    request: CheckoutSessionRequest
+  ): Promise<CheckoutSession> {
+    const {
+      userId,
+      deliveryAddressId,
+      fulfillmentMethod,
+      scheduledDate,
+      scheduledTimeSlot,
+      specialInstructions,
+    } = request;
+
+    // Validate cart
+    const validation = await cartService.validateCart(userId);
+    if (!validation.isValid) {
+      throw new Error(
+        `Cart validation failed: ${validation.errors.map((e) => e.message).join(", ")}`
+      );
+    }
+
+    // Get cart items
+    const cartSummary = await cartService.getCartSummary(userId);
+    if (cartSummary.items.length === 0) {
+      throw new Error("Cart is empty");
+    }
+
+    // Get delivery address if needed
+    let deliveryAddress: UserAddress | undefined;
+    if (fulfillmentMethod === "DELIVERY") {
+      if (!deliveryAddressId) {
+        throw new Error("Delivery address is required for delivery orders");
+      }
+
+      const address = await database.userAddress.findUnique({
+        where: { id: deliveryAddressId },
       });
 
-      // Get user's cart
-      const cartResponse = await cartService.getCart(userId);
-      if (!cartResponse.success) {
-        return this.error("CART_FETCH_ERROR", "Failed to fetch cart");
+      if (!address) {
+        throw new Error("Delivery address not found");
       }
 
-      const cart = cartResponse.data;
-
-      if (!cart.items || cart.items.length === 0) {
-        return this.error("EMPTY_CART", "Cart is empty");
+      if (address.userId !== userId) {
+        throw new Error("Delivery address does not belong to user");
       }
 
-      // Validate cart items
-      const validationResponse = await cartService.validateCart(userId);
-      if (!validationResponse.success) {
-        return this.error("CART_VALIDATION_ERROR", "Failed to validate cart");
+      deliveryAddress = address;
+    }
+
+    // Group items by farm and calculate totals
+    const farmOrders = this.calculateFarmOrders(
+      cartSummary.farmGroups,
+      fulfillmentMethod
+    );
+
+    // Calculate total amounts
+    const totals = this.calculateTotals(farmOrders);
+
+    // Create session
+    const sessionId = `checkout_${Date.now()}_${userId}`;
+    const expiresAt = new Date();
+    expiresAt.setMinutes(expiresAt.getMinutes() + this.SESSION_EXPIRATION_MINUTES);
+
+    const session: CheckoutSession = {
+      id: sessionId,
+      userId,
+      items: cartSummary.items,
+      farmOrders,
+      deliveryAddress,
+      fulfillmentMethod,
+      scheduledDate,
+      scheduledTimeSlot,
+      specialInstructions,
+      totals,
+      expiresAt,
+      createdAt: new Date(),
+    };
+
+    // Store session
+    this.sessions.set(sessionId, session);
+
+    return session;
+  }
+
+  /**
+   * 📦 Get checkout session
+   */
+  async getCheckoutSession(sessionId: string): Promise<CheckoutSession | null> {
+    const session = this.sessions.get(sessionId);
+
+    if (!session) {
+      return null;
+    }
+
+    // Check expiration
+    if (new Date() > session.expiresAt) {
+      this.sessions.delete(sessionId);
+      return null;
+    }
+
+    return session;
+  }
+
+  /**
+   * 🔄 Update checkout session
+   */
+  async updateCheckoutSession(
+    sessionId: string,
+    updates: Partial<CheckoutSessionRequest>
+  ): Promise<CheckoutSession> {
+    const session = await this.getCheckoutSession(sessionId);
+
+    if (!session) {
+      throw new Error("Checkout session not found or expired");
+    }
+
+    // Apply updates
+    if (updates.deliveryAddressId !== undefined) {
+      const address = await database.userAddress.findUnique({
+        where: { id: updates.deliveryAddressId },
+      });
+
+      if (!address || address.userId !== session.userId) {
+        throw new Error("Invalid delivery address");
       }
 
-      const validationData = validationResponse.data;
-      if (!validationData.valid) {
-        return this.error(
-          "CART_INVALID",
-          `Cart validation failed: ${validationData.issues.map((i) => i.message).join(", ")}`,
-        );
-      }
+      session.deliveryAddress = address;
+    }
 
-      // Build session data
-      const session: CheckoutSessionData = {
-        userId,
-        cartSummary: {
-          items: cart.items.map((item) => ({
-            id: item.id,
+    if (updates.fulfillmentMethod) {
+      session.fulfillmentMethod = updates.fulfillmentMethod;
+    }
+
+    if (updates.scheduledDate) {
+      session.scheduledDate = updates.scheduledDate;
+    }
+
+    if (updates.scheduledTimeSlot) {
+      session.scheduledTimeSlot = updates.scheduledTimeSlot;
+    }
+
+    if (updates.specialInstructions !== undefined) {
+      session.specialInstructions = updates.specialInstructions;
+    }
+
+    // Recalculate totals if fulfillment method changed
+    if (updates.fulfillmentMethod) {
+      const cartSummary = await cartService.getCartSummary(session.userId);
+      session.farmOrders = this.calculateFarmOrders(
+        cartSummary.farmGroups,
+        session.fulfillmentMethod
+      );
+      session.totals = this.calculateTotals(session.farmOrders);
+    }
+
+    // Store updated session
+    this.sessions.set(sessionId, session);
+
+    return session;
+  }
+
+  /**
+   * 🗑️ Delete checkout session
+   */
+  async deleteCheckoutSession(sessionId: string): Promise<void> {
+    this.sessions.delete(sessionId);
+  }
+
+  // ==========================================================================
+  // ORDER CREATION
+  // ==========================================================================
+
+  /**
+   * 📝 Create orders from checkout session
+   */
+  async createOrdersFromSession(
+    request: CreateOrdersRequest
+  ): Promise<CreateOrdersResult> {
+    const { sessionId, paymentIntentId, userId } = request;
+
+    // Get session
+    const session = await this.getCheckoutSession(sessionId);
+    if (!session) {
+      throw new Error("Checkout session not found or expired");
+    }
+
+    if (session.userId !== userId) {
+      throw new Error("Session does not belong to user");
+    }
+
+    // Validate cart one more time
+    const validation = await cartService.validateCart(userId);
+    if (!validation.isValid) {
+      throw new Error("Cart validation failed. Please review your cart.");
+    }
+
+    // Create orders for each farm
+    const orders: Order[] = [];
+
+    for (const farmOrder of session.farmOrders) {
+      try {
+        const order = await this.createSingleOrder({
+          userId,
+          farmOrder,
+          session,
+          paymentIntentId,
+        });
+
+        orders.push(order);
+      } catch (error) {
+        console.error(`Failed to create order for farm ${farmOrder.farmId}:`, error);
+        // TODO: Implement rollback mechanism
+        throw new Error(`Failed to create order for ${farmOrder.farmName}`);
+      }
+    }
+
+    // Clear cart after successful order creation
+    await cartService.clearCart(userId);
+
+    // Delete session
+    await this.deleteCheckoutSession(sessionId);
+
+    return {
+      orders,
+      totalAmount: session.totals.total,
+      orderCount: orders.length,
+    };
+  }
+
+  /**
+   * 📝 Create single order for a farm
+   */
+  private async createSingleOrder(params: {
+    userId: string;
+    farmOrder: FarmCheckoutOrder;
+    session: CheckoutSession;
+    paymentIntentId: string;
+  }): Promise<Order> {
+    const { userId, farmOrder, session, paymentIntentId } = params;
+
+    // Generate unique order number
+    const orderNumber = await this.generateOrderNumber();
+
+    // Create order using order service with correct format
+    const order = await database.order.create({
+      data: {
+        orderNumber,
+        customerId: userId,
+        farmId: farmOrder.farmId,
+        status: "PENDING",
+        paymentStatus: "PENDING",
+        subtotal: new Decimal(farmOrder.subtotal),
+        tax: new Decimal(farmOrder.tax),
+        deliveryFee: new Decimal(farmOrder.deliveryFee),
+        platformFee: new Decimal(farmOrder.platformFee),
+        discount: new Decimal(0),
+        total: new Decimal(farmOrder.total),
+        farmerAmount: new Decimal(farmOrder.farmerAmount),
+        fulfillmentMethod: session.fulfillmentMethod as any,
+        deliveryAddressId: session.deliveryAddress?.id,
+        scheduledDate: session.scheduledDate,
+        scheduledTimeSlot: session.scheduledTimeSlot,
+        specialInstructions: session.specialInstructions,
+        stripePaymentIntentId: paymentIntentId,
+        items: {
+          create: farmOrder.items.map((item) => ({
             productId: item.productId,
-            farmId: item.farmId,
+            productName: item.product.name,
             quantity: item.quantity,
-            price: item.price,
+            unit: item.unit,
+            unitPrice: item.priceAtAdd,
+            subtotal: new Decimal(item.quantity.toNumber() * item.priceAtAdd.toNumber()),
+            productSnapshot: {
+              name: item.product.name,
+              description: item.product.description,
+              images: item.product.images,
+              organic: item.product.organic,
+              unit: item.product.unit,
+              price: item.product.price.toNumber(),
+            },
           })),
-          subtotal: cart.subtotal,
-          itemCount: cart.itemCount,
-          farmCount: cart.farmCount,
         },
-        fulfillmentMethod: "DELIVERY",
-      };
-
-      // Calculate preview
-      const previewResponse = await this.calculateOrderPreview(userId, {
-        fulfillmentMethod: "DELIVERY",
-      });
-
-      if (!previewResponse.success) {
-        return this.error(
-          "PREVIEW_CALCULATION_ERROR",
-          "Failed to calculate order preview",
-        );
-      }
-
-      this.logger.info("Checkout initialized successfully", {
-        userId,
-        itemCount: cart.itemCount,
-        total: previewResponse.data.total,
-      });
-
-      return this.success({
-        session,
-        preview: previewResponse.data,
-      });
+      },
+      include: {
+        items: true,
+        customer: true,
+        farm: true,
+      },
     });
+
+    return order;
   }
 
+  // ==========================================================================
+  // CALCULATIONS
+  // ==========================================================================
+
   /**
-   * 🧮 Calculate order preview with totals and fees
-   * Divine consciousness: Agricultural commerce calculation with seasonal awareness
+   * 💰 Calculate orders for each farm
    */
-  async calculateOrderPreview(
-    userId: string,
-    options: {
-      fulfillmentMethod?: FulfillmentMethod;
-      shippingZipCode?: string;
-      couponCode?: string;
-    } = {},
-  ): Promise<ServiceResponse<OrderPreview>> {
-    return await this.traced("calculateOrderPreview", async () => {
-      // Validate options
-      const validation = OrderPreviewOptionsSchema.safeParse(options);
-      if (!validation.success) {
-        return this.validationError(
-          validation.error.issues.map((e) => e.message).join(", "),
-        );
-      }
+  private calculateFarmOrders(
+    farmGroups: Array<{
+      farmId: string;
+      farmName: string;
+      items: CartItemWithProduct[];
+      subtotal: number;
+    }>,
+    fulfillmentMethod: "DELIVERY" | "PICKUP"
+  ): FarmCheckoutOrder[] {
+    return farmGroups.map((group) => {
+      const subtotal = group.subtotal;
 
-      this.setTraceAttributes({
-        "preview.user_id": userId,
-        "preview.fulfillment_method": options.fulfillmentMethod || "DELIVERY",
-      });
+      // Calculate delivery fee (per farm)
+      const deliveryFee =
+        fulfillmentMethod === "DELIVERY"
+          ? subtotal >= this.FREE_DELIVERY_THRESHOLD
+            ? 0
+            : this.DELIVERY_FEE_BASE
+          : 0;
 
-      // Get cart
-      const cartResponse = await cartService.getCart(userId);
-      if (!cartResponse.success) {
-        return this.error("CART_FETCH_ERROR", "Failed to fetch cart");
-      }
+      // Calculate tax
+      const tax = subtotal * this.TAX_RATE;
 
-      const cart = cartResponse.data;
-      const subtotal = cart.subtotal;
-      const itemCount = cart.itemCount;
-      const farmCount = cart.farmCount;
+      // Calculate total before platform fee
+      const totalBeforeFee = subtotal + tax + deliveryFee;
 
-      // Calculate delivery fee
-      let deliveryFee = 0;
-      if (
-        options.fulfillmentMethod === "DELIVERY" &&
-        subtotal < this.MIN_ORDER_FOR_FREE_DELIVERY
-      ) {
-        // Calculate per-farm delivery fee
-        const farmTotals = new Map<string, number>();
-        for (const item of cart.items) {
-          const current = farmTotals.get(item.farmId) || 0;
-          farmTotals.set(item.farmId, current + item.price * item.quantity);
-        }
-
-        deliveryFee = Array.from(farmTotals.values())
-          .filter((total) => total < this.MIN_ORDER_FOR_FREE_DELIVERY)
-          .reduce((sum) => sum + this.DELIVERY_FEE, 0);
-      }
-
-      // Calculate fees
+      // Calculate platform fee
       const platformFee = subtotal * this.PLATFORM_FEE_RATE;
 
-      // Calculate tax (on subtotal + delivery)
-      const taxableAmount = subtotal + deliveryFee;
-      const tax = taxableAmount * this.TAX_RATE;
+      // Calculate total
+      const total = totalBeforeFee;
 
-      // Apply discounts (TODO: implement coupon logic)
-      const discount = 0;
-
-      // Calculate totals
-      const total = subtotal + deliveryFee + tax - discount;
+      // Calculate farmer amount (subtotal - platform fee)
       const farmerAmount = subtotal - platformFee;
 
-      // Build items array
-      const items = cart.items.map((item) => ({
-        productId: item.productId,
-        productName: item.name,
-        farmName: item.farmName || "Unknown Farm",
-        quantity: item.quantity,
-        unitPrice: item.price,
-        subtotal: item.price * item.quantity,
-      }));
-
-      // Add agricultural metadata
-      const agriculturalMetadata = this.getAgriculturalMetadata();
-
-      const preview: OrderPreview = {
-        subtotal,
-        deliveryFee,
-        tax,
-        platformFee,
-        discount,
-        total,
-        farmerAmount,
-        itemCount,
-        farmCount,
-        items,
-        agriculturalMetadata: {
-          seasonalDiscount: 0,
-          localFarmBonus: farmCount * 0.5, // Bonus for supporting local farms
-          biodynamicCertification: false,
-        },
+      return {
+        farmId: group.farmId,
+        farmName: group.farmName,
+        items: group.items,
+        subtotal: Math.round(subtotal * 100) / 100,
+        tax: Math.round(tax * 100) / 100,
+        deliveryFee: Math.round(deliveryFee * 100) / 100,
+        platformFee: Math.round(platformFee * 100) / 100,
+        total: Math.round(total * 100) / 100,
+        farmerAmount: Math.round(farmerAmount * 100) / 100,
       };
-
-      return this.success(preview);
     });
   }
 
   /**
-   * 📮 Validate shipping address
-   * Divine consciousness: Ensures accurate delivery to agricultural destinations
+   * 💰 Calculate total amounts across all farm orders
    */
-  async validateShippingAddress(address: {
-    street: string;
-    street2?: string;
-    city: string;
-    state: string;
-    zipCode: string;
-    country: string;
-  }): Promise<ServiceResponse<ValidatedAddress>> {
-    return await this.traced("validateShippingAddress", async () => {
-      // Validate schema
-      const validation = ShippingAddressSchema.safeParse(address);
-      if (!validation.success) {
-        return this.success({
-          valid: false,
-          error:
-            validation.error.issues[0]?.message || "Invalid address format",
-        });
-      }
+  private calculateTotals(farmOrders: FarmCheckoutOrder[]): CheckoutTotals {
+    const subtotal = farmOrders.reduce((sum, order) => sum + order.subtotal, 0);
+    const tax = farmOrders.reduce((sum, order) => sum + order.tax, 0);
+    const deliveryFee = farmOrders.reduce((sum, order) => sum + order.deliveryFee, 0);
+    const platformFee = farmOrders.reduce((sum, order) => sum + order.platformFee, 0);
+    const total = farmOrders.reduce((sum, order) => sum + order.total, 0);
 
-      // Basic validation checks
-      if (address.street.length < 5) {
-        return this.success({
-          valid: false,
-          error: "Street address is too short",
-        });
-      }
-
-      if (address.city.length < 2) {
-        return this.success({
-          valid: false,
-          error: "City name is too short",
-        });
-      }
-
-      if (address.state.length !== 2) {
-        return this.success({
-          valid: false,
-          error: "State must be 2-letter code",
-        });
-      }
-
-      // Validate ZIP code format
-      const zipRegex = /^\d{5}(-\d{4})?$/;
-      if (!zipRegex.test(address.zipCode)) {
-        return this.success({
-          valid: false,
-          error: "Invalid ZIP code format",
-        });
-      }
-
-      // Validate address using geocoding service
-      try {
-        const geocoded = await geocodingService.geocodeAddress(
-          address.street,
-          address.city,
-          address.state,
-          address.zipCode,
-        );
-
-        if (!geocoded) {
-          this.logger.warn(
-            "Address geocoding failed - using basic validation",
-            {
-              address: `${address.street}, ${address.city}, ${address.state} ${address.zipCode}`,
-            },
-          );
-          // Continue with basic validation if geocoding fails
-        } else {
-          this.logger.info("Address geocoded successfully", {
-            address: geocoded.formattedAddress,
-            coordinates: {
-              lat: geocoded.latitude,
-              lng: geocoded.longitude,
-            },
-          });
-        }
-      } catch (error) {
-        this.logger.warn("Geocoding service error - using basic validation", {
-          error: error instanceof Error ? error.message : "Unknown error",
-        });
-        // Continue with basic validation if geocoding throws
-      }
-
-      this.logger.info("Address validated successfully", {
-        city: address.city,
-        state: address.state,
-      });
-
-      return this.success({
-        valid: true,
-        normalized: {
-          street: address.street.trim(),
-          city: address.city.trim(),
-          state: address.state.toUpperCase(),
-          zipCode: address.zipCode.trim(),
-          country: address.country || "US",
-        },
-      });
-    });
+    return {
+      subtotal: Math.round(subtotal * 100) / 100,
+      tax: Math.round(tax * 100) / 100,
+      deliveryFee: Math.round(deliveryFee * 100) / 100,
+      platformFee: Math.round(platformFee * 100) / 100,
+      discount: 0, // TODO: Implement promo codes
+      total: Math.round(total * 100) / 100,
+    };
   }
 
-  /**
-   * 💳 Create Stripe payment intent
-   * Divine consciousness: Sacred payment preparation for agricultural commerce
-   */
-  async createPaymentIntent(
-    userId: string,
-    amount: number,
-    metadata?: Record<string, string>,
-  ): Promise<ServiceResponse<PaymentIntentData>> {
-    return await this.traced("createPaymentIntent", async () => {
-      this.setTraceAttributes({
-        "payment.user_id": userId,
-        "payment.amount": amount,
-      });
-
-      try {
-        const paymentIntent = await stripe.paymentIntents.create({
-          amount: Math.round(amount * 100), // Convert to cents
-          currency: "usd",
-          automatic_payment_methods: {
-            enabled: true,
-          },
-          metadata: {
-            userId,
-            platform: metadata?.platform || "farmers-market",
-            consciousness: metadata?.consciousness || "agricultural",
-            ...(metadata || {}),
-          },
-          description: `Farmers Market Order - ${new Date().toISOString()}`,
-        });
-
-        this.logger.info("Payment intent created", {
-          userId,
-          paymentIntentId: paymentIntent.id,
-          amount,
-        });
-
-        return this.success({
-          id: paymentIntent.id,
-          clientSecret: paymentIntent.client_secret || "",
-          amount: paymentIntent.amount / 100,
-          currency: paymentIntent.currency,
-          status: paymentIntent.status,
-        });
-      } catch (error) {
-        this.logger.error("Failed to create payment intent", error);
-        return this.error(
-          "PAYMENT_INTENT_FAILED",
-          error instanceof Error
-            ? error.message
-            : "Failed to create payment intent",
-        );
-      }
-    });
-  }
+  // ==========================================================================
+  // VALIDATION
+  // ==========================================================================
 
   /**
-   * 🌾 Create order from checkout session
-   * Divine consciousness: Agricultural commerce manifestation with full transaction safety
+   * ✅ Validate checkout requirements
    */
-  async createOrderFromCheckout(
-    request: CreateOrderFromCheckoutRequest,
-  ): Promise<ServiceResponse<Order | Order[]>> {
-    return await this.traced("createOrderFromCheckout", async () => {
-      // Validate request
-      const validation = CreateOrderSchema.safeParse(request);
-      if (!validation.success) {
-        return this.validationError(
-          validation.error.issues.map((e) => e.message).join(", "),
-        );
-      }
+  async validateCheckout(
+    request: ValidateCheckoutRequest
+  ): Promise<ValidateCheckoutResult> {
+    const { userId, deliveryAddressId, fulfillmentMethod } = request;
+    const errors: CheckoutValidationError[] = [];
+    const warnings: string[] = [];
 
-      const validated = validation.data;
-
-      this.setTraceAttributes({
-        "order.user_id": validated.userId,
-        "order.fulfillment_method": validated.fulfillmentMethod,
-      });
-
-      // Get cart items
-      const cartResponse = await cartService.getCart(validated.userId);
-      if (!cartResponse.success) {
-        return this.error("CART_FETCH_ERROR", "Failed to fetch cart");
-      }
-
-      const cart = cartResponse.data;
-
-      if (!cart.items || cart.items.length === 0) {
-        return this.error("EMPTY_CART", "Cart is empty");
-      }
-
-      // Validate cart one more time
-      const validationResponse = await cartService.validateCart(
-        validated.userId,
+    // Validate cart
+    const cartValidation = await cartService.validateCart(userId);
+    if (!cartValidation.isValid) {
+      errors.push(
+        ...cartValidation.errors.map((e) => ({
+          code: e.type,
+          message: e.message,
+          field: "cart",
+        }))
       );
-      if (!validationResponse.success) {
-        return this.error("CART_VALIDATION_ERROR", "Failed to validate cart");
-      }
+    }
 
-      const validationData = validationResponse.data;
-      if (!validationData.valid) {
-        const firstIssue = validationData.issues[0];
-        return this.error(
-          "CART_INVALID",
-          `Cart validation failed: ${firstIssue?.message || "Unknown validation error"}`,
-        );
-      }
-
-      // Reserve cart items
-      const reserveResponse = await cartService.reserveCartItems(
-        validated.userId,
-        15,
-      );
-      if (!reserveResponse.success) {
-        return this.error("RESERVATION_FAILED", "Failed to reserve cart items");
-      }
-
-      // Execute order creation in transaction
-      try {
-        return await this.withTransaction(async (tx) => {
-          // Handle address
-          let addressId = validated.shippingAddressId;
-          if (!addressId && validated.shippingAddress) {
-            // Create new address
-            const newAddress = await tx.userAddress.create({
-              data: {
-                userId: validated.userId,
-                type: "HOME",
-                street: validated.shippingAddress.street,
-                street2: validated.shippingAddress.street2,
-                city: validated.shippingAddress.city,
-                state: validated.shippingAddress.state,
-                zipCode: validated.shippingAddress.zipCode,
-                country: validated.shippingAddress.country,
-              },
-            });
-            addressId = newAddress.id;
-          }
-
-          // Group cart items by farm (orders are per-farm)
-          const itemsByFarm = new Map<string, typeof cart.items>();
-          for (const item of cart.items) {
-            const farmItems = itemsByFarm.get(item.farmId) || [];
-            farmItems.push(item);
-            itemsByFarm.set(item.farmId, farmItems);
-          }
-
-          const createdOrders: Order[] = [];
-
-          // Create order for each farm
-          for (const [farmId, items] of itemsByFarm) {
-            // Calculate totals for this farm
-            const farmSubtotal = items.reduce(
-              (sum, item) => sum + item.price * item.quantity,
-              0,
-            );
-
-            const deliveryFee =
-              validated.fulfillmentMethod === "FARM_PICKUP" ||
-              validated.fulfillmentMethod === "MARKET_PICKUP" ||
-              farmSubtotal >= this.MIN_ORDER_FOR_FREE_DELIVERY
-                ? 0
-                : this.DELIVERY_FEE;
-
-            const platformFee = farmSubtotal * this.PLATFORM_FEE_RATE;
-            const tax = (farmSubtotal + deliveryFee) * this.TAX_RATE;
-            const total = farmSubtotal + deliveryFee + tax;
-            const farmerAmount = farmSubtotal - platformFee;
-
-            // Generate order number
-            const orderNumber = this.generateOrderNumber();
-
-            // Create order
-            const order = await tx.order.create({
-              data: {
-                orderNumber,
-                customerId: validated.userId,
-                farmId,
-                status: "PENDING",
-                paymentStatus: "PENDING",
-                fulfillmentMethod: validated.fulfillmentMethod,
-                subtotal: farmSubtotal,
-                deliveryFee,
-                platformFee,
-                tax,
-                discount: 0,
-                total,
-                farmerAmount,
-                deliveryAddressId: addressId,
-                specialInstructions: validated.specialInstructions,
-                stripePaymentIntentId: validated.stripePaymentIntentId,
-                items: {
-                  create: items.map((item) => ({
-                    productId: item.productId,
-                    productName: item.name,
-                    quantity: item.quantity,
-                    unit: item.unit,
-                    unitPrice: item.price,
-                    subtotal: item.price * item.quantity,
-                  })),
-                },
-              },
-              include: {
-                items: true,
-                farm: true,
-                customer: true,
-                deliveryAddress: true,
-              },
-            });
-
-            createdOrders.push(order);
-
-            // Update product quantities
-            for (const item of items) {
-              await tx.product.update({
-                where: { id: item.productId },
-                data: {
-                  purchaseCount: {
-                    increment: item.quantity,
-                  },
-                },
-              });
-            }
-          }
-
-          // Clear cart after successful order creation
-          const clearResponse = await cartService.clearCart(validated.userId);
-          if (!clearResponse.success) {
-            this.logger.warn("Failed to clear cart after order creation", {
-              userId: validated.userId,
-            });
-          }
-
-          this.logger.info("Orders created successfully", {
-            userId: validated.userId,
-            orderCount: createdOrders.length,
-            orderIds: createdOrders.map((o) => o.id),
-          });
-
-          // If multiple orders, return array; otherwise single order
-          const result: Order | Order[] =
-            createdOrders.length === 1 ? createdOrders[0]! : createdOrders;
-
-          return this.success(result);
-        });
-      } catch (error) {
-        this.logger.error("Failed to create order from checkout", error);
-        return this.error(
-          "ORDER_CREATION_FAILED",
-          error instanceof Error ? error.message : "Failed to create order",
-        );
-      }
-    });
-  }
-
-  /**
-   * 💰 Process payment and confirm order
-   * Divine consciousness: Sacred payment processing with transaction integrity
-   */
-  async processPayment(
-    orderId: string,
-    paymentMethodId: string,
-  ): Promise<ServiceResponse<void>> {
-    return await this.traced("processPayment", async () => {
-      this.setTraceAttributes({
-        "payment.order_id": orderId,
-        "payment.payment_method_id": paymentMethodId,
+    // Check cart is not empty
+    const cartCount = await cartService.getCartCount(userId);
+    if (cartCount === 0) {
+      errors.push({
+        code: "EMPTY_CART",
+        message: "Cart is empty",
+        field: "cart",
       });
+    }
 
-      try {
-        // Fetch order with all details
-        const order = await this.database.order.findUnique({
-          where: { id: orderId },
-          include: {
-            items: {
-              include: {
-                product: true,
-              },
-            },
-          },
+    // Validate delivery address if delivery
+    if (fulfillmentMethod === "DELIVERY") {
+      if (!deliveryAddressId) {
+        errors.push({
+          code: "MISSING_DELIVERY_ADDRESS",
+          message: "Delivery address is required",
+          field: "deliveryAddressId",
+        });
+      } else {
+        const address = await database.userAddress.findUnique({
+          where: { id: deliveryAddressId },
         });
 
-        if (!order) {
-          this.logger.error("Order not found", { orderId });
-          return this.error("ORDER_NOT_FOUND", "Order not found");
-        }
-
-        // Verify order is in pending payment status
-        if (order.paymentStatus !== "PENDING") {
-          this.logger.error("Order payment already processed", {
-            orderId,
-            currentStatus: order.paymentStatus,
+        if (!address) {
+          errors.push({
+            code: "INVALID_DELIVERY_ADDRESS",
+            message: "Delivery address not found",
+            field: "deliveryAddressId",
           });
-          return this.error(
-            "PAYMENT_ALREADY_PROCESSED",
-            "Payment has already been processed for this order",
-          );
-        }
-
-        // Create Stripe PaymentIntent
-        const paymentIntent = await stripe.paymentIntents.create({
-          amount: Math.round(Number(order.total) * 100), // Convert to cents
-          currency: "usd",
-          payment_method: paymentMethodId,
-          confirm: true,
-          automatic_payment_methods: {
-            enabled: true,
-            allow_redirects: "never",
-          },
-          metadata: {
-            orderId: order.id,
-            farmId: order.items[0]?.product?.farmId || "unknown",
-          },
-          description: `Order ${order.id} - ${order.items.length} items`,
-        });
-
-        this.logger.info("Stripe PaymentIntent created", {
-          orderId,
-          paymentIntentId: paymentIntent.id,
-          status: paymentIntent.status,
-        });
-
-        // Check payment status
-        if (
-          paymentIntent.status !== "succeeded" &&
-          paymentIntent.status !== "processing"
-        ) {
-          this.logger.error("Payment failed", {
-            orderId,
-            paymentIntentId: paymentIntent.id,
-            status: paymentIntent.status,
+        } else if (address.userId !== userId) {
+          errors.push({
+            code: "UNAUTHORIZED_DELIVERY_ADDRESS",
+            message: "Delivery address does not belong to user",
+            field: "deliveryAddressId",
           });
-          return this.error(
-            "PAYMENT_FAILED",
-            "Payment was declined or failed. Please try again.",
-          );
         }
-
-        // Update order with payment information
-        await this.database.order.update({
-          where: { id: orderId },
-          data: {
-            paymentStatus: "PAID",
-            paidAt: new Date(),
-            status: "CONFIRMED",
-            confirmedAt: new Date(),
-            stripePaymentIntentId: paymentIntent.id,
-          },
-        });
-
-        this.logger.info("Payment processed successfully", {
-          orderId,
-          paymentIntentId: paymentIntent.id,
-        });
-
-        return this.success(undefined);
-      } catch (error) {
-        this.logger.error("Failed to process payment", error);
-
-        // Check if it's a Stripe error
-        if (error && typeof error === "object" && "type" in error) {
-          const stripeError = error as { type: string; message?: string };
-          if (
-            stripeError.type === "StripeCardError" ||
-            stripeError.type === "StripeInvalidRequestError"
-          ) {
-            return this.error(
-              "PAYMENT_DECLINED",
-              stripeError.message || "Payment was declined",
-            );
-          }
-        }
-
-        return this.error(
-          "PAYMENT_PROCESSING_FAILED",
-          error instanceof Error ? error.message : "Failed to process payment",
-        );
       }
-    });
+    }
+
+    // Add warnings from cart validation
+    if (cartValidation.warnings.length > 0) {
+      warnings.push(...cartValidation.warnings.map((w) => w.message));
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors,
+      warnings,
+    };
+  }
+
+  // ==========================================================================
+  // UTILITIES
+  // ==========================================================================
+
+  /**
+   * 🔢 Generate unique order number
+   */
+  private async generateOrderNumber(): Promise<string> {
+    const timestamp = Date.now();
+    const random = Math.floor(Math.random() * 1000)
+      .toString()
+      .padStart(3, "0");
+    return `ORD-${timestamp}-${random}`;
   }
 
   /**
-   * 📊 Get checkout status
-   * Divine consciousness: Check readiness for agricultural commerce
+   * 🧹 Cleanup expired sessions (call periodically)
    */
-  async getCheckoutStatus(
-    userId: string,
-  ): Promise<ServiceResponse<CheckoutStatus>> {
-    return await this.traced("getCheckoutStatus", async () => {
-      const cartResponse = await cartService.getCart(userId);
-      const validationResponse = await cartService.validateCart(userId);
-
-      if (!cartResponse.success) {
-        return this.success({
-          hasActiveCart: false,
-          cartItemCount: 0,
-          canCheckout: false,
-          issues: ["Failed to fetch cart"],
-        });
-      }
-
-      const cart = cartResponse.data;
-      const validation = validationResponse.success
-        ? validationResponse.data
-        : null;
-
-      return this.success({
-        hasActiveCart: cart.items.length > 0,
-        cartItemCount: cart.itemCount,
-        canCheckout: validation?.valid || false,
-        issues: validation?.issues.map((i) => i.message) || [],
-      });
-    });
-  }
-
-  // ============================================================================
-  // PRIVATE HELPERS
-  // ============================================================================
-
-  /**
-   * Generate unique order number
-   * Format: FM-YYYYMMDD-RANDOM
-   */
-  private generateOrderNumber(): string {
+  async cleanupExpiredSessions(): Promise<number> {
     const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const day = String(now.getDate()).padStart(2, "0");
-    const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+    let count = 0;
 
-    return `FM-${year}${month}${day}-${random}`;
+    for (const [sessionId, session] of this.sessions.entries()) {
+      if (now > session.expiresAt) {
+        this.sessions.delete(sessionId);
+        count++;
+      }
+    }
+
+    return count;
   }
 }
 
@@ -928,4 +590,4 @@ export class CheckoutService extends BaseService<Order> {
 // SINGLETON EXPORT
 // ============================================================================
 
-export const checkoutService = new CheckoutService();
+export const checkoutService = new QuantumCheckoutService();

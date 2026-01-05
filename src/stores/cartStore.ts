@@ -22,6 +22,10 @@ interface CartStore {
   clearCart: () => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
+  getSubtotal: () => number;
+  getTax: () => number;
+  getDeliveryFee: () => number;
+  getTotal: () => number;
 }
 
 export const useCartStore = create<CartStore>()(
@@ -78,6 +82,33 @@ export const useCartStore = create<CartStore>()(
           (total, item) => total + item.price * item.quantity,
           0,
         );
+      },
+
+      getSubtotal: () => {
+        return get().items.reduce(
+          (total, item) => total + item.price * item.quantity,
+          0,
+        );
+      },
+
+      getTax: () => {
+        const subtotal = get().getSubtotal();
+        const TAX_RATE = 0.08; // 8% tax rate
+        return subtotal * TAX_RATE;
+      },
+
+      getDeliveryFee: () => {
+        const subtotal = get().getSubtotal();
+        const DELIVERY_FEE_BASE = 5.0;
+        const FREE_DELIVERY_THRESHOLD = 50.0;
+        return subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE_BASE;
+      },
+
+      getTotal: () => {
+        const subtotal = get().getSubtotal();
+        const tax = get().getTax();
+        const deliveryFee = get().getDeliveryFee();
+        return subtotal + tax + deliveryFee;
       },
     }),
     {

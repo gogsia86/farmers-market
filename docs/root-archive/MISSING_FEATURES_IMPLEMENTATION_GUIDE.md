@@ -1,4 +1,5 @@
 # 🔧 MISSING FEATURES IMPLEMENTATION GUIDE
+
 ## Farmers Market Platform - Step-by-Step Implementation
 
 **Version**: 1.0  
@@ -27,6 +28,7 @@
 **Impact**: Significantly improves user experience
 
 #### Current State
+
 - Polling-based updates (inefficient)
 - Manual page refresh required
 - No live notifications
@@ -34,15 +36,17 @@
 #### Implementation Steps
 
 ##### Step 1: Install Dependencies
+
 ```bash
 npm install ws @types/ws socket.io socket.io-client
 ```
 
 ##### Step 2: Create WebSocket Service
+
 ```typescript
 // src/lib/websocket/order-updates.service.ts
-import { Server as SocketIOServer } from 'socket.io';
-import { Server as HTTPServer } from 'http';
+import { Server as SocketIOServer } from "socket.io";
+import { Server as HTTPServer } from "http";
 
 export class OrderUpdateWebSocketService {
   private io: SocketIOServer | null = null;
@@ -51,43 +55,39 @@ export class OrderUpdateWebSocketService {
     this.io = new SocketIOServer(httpServer, {
       cors: {
         origin: process.env.NEXTAUTH_URL,
-        credentials: true
-      }
+        credentials: true,
+      },
     });
 
-    this.io.on('connection', (socket) => {
-      console.log('Client connected:', socket.id);
+    this.io.on("connection", (socket) => {
+      console.log("Client connected:", socket.id);
 
       // Subscribe to order updates
-      socket.on('subscribe:order', (orderId: string) => {
+      socket.on("subscribe:order", (orderId: string) => {
         socket.join(`order:${orderId}`);
       });
 
-      socket.on('disconnect', () => {
-        console.log('Client disconnected:', socket.id);
+      socket.on("disconnect", () => {
+        console.log("Client disconnected:", socket.id);
       });
     });
   }
 
-  async notifyOrderStatusChange(
-    orderId: string,
-    status: string,
-    data: any
-  ) {
+  async notifyOrderStatusChange(orderId: string, status: string, data: any) {
     if (!this.io) return;
 
-    this.io.to(`order:${orderId}`).emit('order:status:changed', {
+    this.io.to(`order:${orderId}`).emit("order:status:changed", {
       orderId,
       status,
       data,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
   async notifyCustomer(userId: string, notification: any) {
     if (!this.io) return;
 
-    this.io.to(`user:${userId}`).emit('notification', notification);
+    this.io.to(`user:${userId}`).emit("notification", notification);
   }
 }
 
@@ -95,31 +95,32 @@ export const orderWebSocket = new OrderUpdateWebSocketService();
 ```
 
 ##### Step 3: Create Client Hook
+
 ```typescript
 // src/hooks/useOrderWebSocket.ts
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
+import { useEffect, useState } from "react";
+import { io, Socket } from "socket.io-client";
 
 export function useOrderWebSocket(orderId: string) {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [orderStatus, setOrderStatus] = useState<string | null>(null);
 
   useEffect(() => {
-    const newSocket = io(process.env.NEXT_PUBLIC_WS_URL || '', {
-      transports: ['websocket']
+    const newSocket = io(process.env.NEXT_PUBLIC_WS_URL || "", {
+      transports: ["websocket"],
     });
 
     setSocket(newSocket);
 
-    newSocket.on('connect', () => {
-      console.log('Connected to WebSocket');
-      newSocket.emit('subscribe:order', orderId);
+    newSocket.on("connect", () => {
+      console.log("Connected to WebSocket");
+      newSocket.emit("subscribe:order", orderId);
     });
 
-    newSocket.on('order:status:changed', (data) => {
-      console.log('Order status changed:', data);
+    newSocket.on("order:status:changed", (data) => {
+      console.log("Order status changed:", data);
       setOrderStatus(data.status);
     });
 
@@ -133,15 +134,16 @@ export function useOrderWebSocket(orderId: string) {
 ```
 
 ##### Step 4: Integrate in Order Service
+
 ```typescript
 // src/lib/services/order.service.ts
-import { orderWebSocket } from '@/lib/websocket/order-updates.service';
+import { orderWebSocket } from "@/lib/websocket/order-updates.service";
 
 export class OrderService {
   async updateOrderStatus(orderId: string, status: OrderStatus) {
     const order = await database.order.update({
       where: { id: orderId },
-      data: { status }
+      data: { status },
     });
 
     // Notify via WebSocket
@@ -153,6 +155,7 @@ export class OrderService {
 ```
 
 ##### Step 5: Use in Component
+
 ```typescript
 // src/app/customer/orders/[orderId]/page.tsx
 'use client';
@@ -184,6 +187,7 @@ export default function OrderDetailsPage({ params }: { params: { orderId: string
 **Impact**: Better product discovery
 
 #### Current State
+
 - Basic category filtering only
 - No price range filter
 - No distance-based search
@@ -192,53 +196,59 @@ export default function OrderDetailsPage({ params }: { params: { orderId: string
 #### Implementation Steps
 
 ##### Step 1: Create Enhanced Filter Schema
+
 ```typescript
 // src/lib/validations/search.validation.ts
-import { z } from 'zod';
+import { z } from "zod";
 
 export const AdvancedSearchSchema = z.object({
   query: z.string().optional(),
-  category: z.enum(['VEGETABLES', 'FRUITS', 'DAIRY', 'MEAT']).optional(),
-  priceRange: z.object({
-    min: z.number().min(0).optional(),
-    max: z.number().min(0).optional()
-  }).optional(),
-  location: z.object({
-    lat: z.number(),
-    lng: z.number(),
-    radius: z.number().min(1).max(100) // miles
-  }).optional(),
-  certifications: z.array(
-    z.enum(['ORGANIC', 'BIODYNAMIC', 'NON_GMO', 'FAIR_TRADE'])
-  ).optional(),
-  dietary: z.array(
-    z.enum(['VEGAN', 'GLUTEN_FREE', 'NUT_FREE', 'DAIRY_FREE'])
-  ).optional(),
-  availability: z.enum(['ALL', 'IN_STOCK_ONLY']).default('ALL'),
-  sortBy: z.enum(['PRICE_ASC', 'PRICE_DESC', 'DISTANCE', 'RATING']).optional()
+  category: z.enum(["VEGETABLES", "FRUITS", "DAIRY", "MEAT"]).optional(),
+  priceRange: z
+    .object({
+      min: z.number().min(0).optional(),
+      max: z.number().min(0).optional(),
+    })
+    .optional(),
+  location: z
+    .object({
+      lat: z.number(),
+      lng: z.number(),
+      radius: z.number().min(1).max(100), // miles
+    })
+    .optional(),
+  certifications: z
+    .array(z.enum(["ORGANIC", "BIODYNAMIC", "NON_GMO", "FAIR_TRADE"]))
+    .optional(),
+  dietary: z
+    .array(z.enum(["VEGAN", "GLUTEN_FREE", "NUT_FREE", "DAIRY_FREE"]))
+    .optional(),
+  availability: z.enum(["ALL", "IN_STOCK_ONLY"]).default("ALL"),
+  sortBy: z.enum(["PRICE_ASC", "PRICE_DESC", "DISTANCE", "RATING"]).optional(),
 });
 
 export type AdvancedSearchFilters = z.infer<typeof AdvancedSearchSchema>;
 ```
 
 ##### Step 2: Enhanced Search Service
+
 ```typescript
 // src/lib/services/search.service.ts
-import { database } from '@/lib/database';
-import { Prisma } from '@prisma/client';
-import { calculateDistance } from '@/lib/utils/distance';
+import { database } from "@/lib/database";
+import { Prisma } from "@prisma/client";
+import { calculateDistance } from "@/lib/utils/distance";
 
 export class SearchService {
   async advancedSearch(filters: AdvancedSearchFilters) {
     const where: Prisma.ProductWhereInput = {
-      status: 'ACTIVE'
+      status: "ACTIVE",
     };
 
     // Text search
     if (filters.query) {
       where.OR = [
-        { name: { contains: filters.query, mode: 'insensitive' } },
-        { description: { contains: filters.query, mode: 'insensitive' } }
+        { name: { contains: filters.query, mode: "insensitive" } },
+        { description: { contains: filters.query, mode: "insensitive" } },
       ];
     }
 
@@ -251,12 +261,12 @@ export class SearchService {
     if (filters.priceRange) {
       where.price = {
         gte: filters.priceRange.min,
-        lte: filters.priceRange.max
+        lte: filters.priceRange.max,
       };
     }
 
     // Stock availability
-    if (filters.availability === 'IN_STOCK_ONLY') {
+    if (filters.availability === "IN_STOCK_ONLY") {
       where.availableQuantity = { gt: 0 };
     }
 
@@ -266,16 +276,16 @@ export class SearchService {
         certifications: {
           some: {
             type: { in: filters.certifications },
-            status: 'APPROVED'
-          }
-        }
+            status: "APPROVED",
+          },
+        },
       };
     }
 
     // Dietary filters
     if (filters.dietary?.length) {
       where.dietaryInfo = {
-        hasSome: filters.dietary
+        hasSome: filters.dietary,
       };
     }
 
@@ -288,43 +298,43 @@ export class SearchService {
             name: true,
             latitude: true,
             longitude: true,
-            certifications: true
-          }
-        }
-      }
+            certifications: true,
+          },
+        },
+      },
     });
 
     // Location-based filtering (post-query)
     if (filters.location) {
-      products = products.filter(product => {
+      products = products.filter((product) => {
         const distance = calculateDistance(
           filters.location!.lat,
           filters.location!.lng,
           Number(product.farm.latitude),
-          Number(product.farm.longitude)
+          Number(product.farm.longitude),
         );
         return distance <= filters.location!.radius;
       });
     }
 
     // Sorting
-    if (filters.sortBy === 'PRICE_ASC') {
+    if (filters.sortBy === "PRICE_ASC") {
       products.sort((a, b) => Number(a.price) - Number(b.price));
-    } else if (filters.sortBy === 'PRICE_DESC') {
+    } else if (filters.sortBy === "PRICE_DESC") {
       products.sort((a, b) => Number(b.price) - Number(a.price));
-    } else if (filters.sortBy === 'DISTANCE' && filters.location) {
+    } else if (filters.sortBy === "DISTANCE" && filters.location) {
       products.sort((a, b) => {
         const distA = calculateDistance(
           filters.location!.lat,
           filters.location!.lng,
           Number(a.farm.latitude),
-          Number(a.farm.longitude)
+          Number(a.farm.longitude),
         );
         const distB = calculateDistance(
           filters.location!.lat,
           filters.location!.lng,
           Number(b.farm.latitude),
-          Number(b.farm.longitude)
+          Number(b.farm.longitude),
         );
         return distA - distB;
       });
@@ -336,6 +346,7 @@ export class SearchService {
 ```
 
 ##### Step 3: Filter UI Component
+
 ```typescript
 // src/components/search/AdvancedFilters.tsx
 'use client';
@@ -437,11 +448,13 @@ export function AdvancedFilters({ onApply }: { onApply: (filters: any) => void }
 #### Implementation Steps
 
 ##### Step 1: Install Twilio
+
 ```bash
 npm install twilio
 ```
 
 ##### Step 2: Add Environment Variables
+
 ```bash
 # .env.local
 TWILIO_ACCOUNT_SID=your_account_sid
@@ -450,9 +463,10 @@ TWILIO_PHONE_NUMBER=+1234567890
 ```
 
 ##### Step 3: Create SMS Service
+
 ```typescript
 // src/lib/notifications/sms.service.ts
-import twilio from 'twilio';
+import twilio from "twilio";
 
 export class SMSNotificationService {
   private client: twilio.Twilio;
@@ -460,27 +474,35 @@ export class SMSNotificationService {
   constructor() {
     this.client = twilio(
       process.env.TWILIO_ACCOUNT_SID!,
-      process.env.TWILIO_AUTH_TOKEN!
+      process.env.TWILIO_AUTH_TOKEN!,
     );
   }
 
-  async sendOrderConfirmation(phone: string, orderId: string, orderNumber: string) {
+  async sendOrderConfirmation(
+    phone: string,
+    orderId: string,
+    orderNumber: string,
+  ) {
     const message = `🌾 Your order ${orderNumber} is confirmed! Track it at: ${process.env.NEXTAUTH_URL}/customer/orders/${orderId}`;
 
     await this.client.messages.create({
       to: phone,
       from: process.env.TWILIO_PHONE_NUMBER!,
-      body: message
+      body: message,
     });
   }
 
-  async sendOrderStatusUpdate(phone: string, orderNumber: string, status: string) {
+  async sendOrderStatusUpdate(
+    phone: string,
+    orderNumber: string,
+    status: string,
+  ) {
     const messages: Record<string, string> = {
-      CONFIRMED: '✅ Your order is confirmed and being prepared',
-      PROCESSING: '📦 Your order is being packed',
-      READY_FOR_PICKUP: '🎉 Your order is ready for pickup!',
-      OUT_FOR_DELIVERY: '🚚 Your order is out for delivery',
-      DELIVERED: '✨ Your order has been delivered!'
+      CONFIRMED: "✅ Your order is confirmed and being prepared",
+      PROCESSING: "📦 Your order is being packed",
+      READY_FOR_PICKUP: "🎉 Your order is ready for pickup!",
+      OUT_FOR_DELIVERY: "🚚 Your order is out for delivery",
+      DELIVERED: "✨ Your order has been delivered!",
     };
 
     const message = `Order ${orderNumber}: ${messages[status] || status}`;
@@ -488,7 +510,7 @@ export class SMSNotificationService {
     await this.client.messages.create({
       to: phone,
       from: process.env.TWILIO_PHONE_NUMBER!,
-      body: message
+      body: message,
     });
   }
 
@@ -498,19 +520,24 @@ export class SMSNotificationService {
     await this.client.messages.create({
       to: phone,
       from: process.env.TWILIO_PHONE_NUMBER!,
-      body: message
+      body: message,
     });
   }
 
-  async sendFarmApproval(phone: string, farmName: string, status: 'APPROVED' | 'REJECTED') {
-    const message = status === 'APPROVED'
-      ? `🎉 Congratulations! Your farm "${farmName}" has been approved. Start listing products now!`
-      : `❌ Your farm "${farmName}" application needs revision. Check your email for details.`;
+  async sendFarmApproval(
+    phone: string,
+    farmName: string,
+    status: "APPROVED" | "REJECTED",
+  ) {
+    const message =
+      status === "APPROVED"
+        ? `🎉 Congratulations! Your farm "${farmName}" has been approved. Start listing products now!`
+        : `❌ Your farm "${farmName}" application needs revision. Check your email for details.`;
 
     await this.client.messages.create({
       to: phone,
       from: process.env.TWILIO_PHONE_NUMBER!,
-      body: message
+      body: message,
     });
   }
 }
@@ -519,9 +546,10 @@ export const smsService = new SMSNotificationService();
 ```
 
 ##### Step 4: Integrate in Order Service
+
 ```typescript
 // src/lib/services/order.service.ts
-import { smsService } from '@/lib/notifications/sms.service';
+import { smsService } from "@/lib/notifications/sms.service";
 
 export class OrderService {
   async createOrder(orderData: CreateOrderRequest) {
@@ -532,11 +560,14 @@ export class OrderService {
     await emailService.sendOrderConfirmation(order);
 
     // Send SMS if customer opted in
-    if (order.customer.phoneVerified && order.customer.notificationPreferences.sms) {
+    if (
+      order.customer.phoneVerified &&
+      order.customer.notificationPreferences.sms
+    ) {
       await smsService.sendOrderConfirmation(
         order.customer.phone,
         order.id,
-        order.orderNumber
+        order.orderNumber,
       );
     }
 
@@ -546,6 +577,7 @@ export class OrderService {
 ```
 
 ##### Step 5: Add User Preference
+
 ```typescript
 // src/components/customer/NotificationSettings.tsx
 'use client';
@@ -582,6 +614,7 @@ export function NotificationSettings() {
 #### Implementation Steps
 
 ##### Step 1: Create Optimization Service
+
 ```typescript
 // src/lib/services/cart-optimization.service.ts
 interface DeliveryOptimization {
@@ -608,21 +641,21 @@ export class CartOptimizationService {
         savings,
         suggestion: `Combine orders from ${nearbyFarms.length} nearby farms`,
         canCombine: true,
-        farmGroups: nearbyFarms
+        farmGroups: nearbyFarms,
       };
     }
 
     return {
       savings: 0,
-      suggestion: '',
+      suggestion: "",
       canCombine: false,
-      farmGroups: []
+      farmGroups: [],
     };
   }
 
   private groupByFarm(items: CartItem[]): Map<string, CartItem[]> {
     const groups = new Map<string, CartItem[]>();
-    items.forEach(item => {
+    items.forEach((item) => {
       const farmItems = groups.get(item.farmId) || [];
       farmItems.push(item);
       groups.set(item.farmId, farmItems);
@@ -634,7 +667,7 @@ export class CartOptimizationService {
     const farmIds = Array.from(farmGroups.keys());
     return await database.farm.findMany({
       where: { id: { in: farmIds } },
-      select: { id: true, name: true, latitude: true, longitude: true }
+      select: { id: true, name: true, latitude: true, longitude: true },
     });
   }
 
@@ -648,6 +681,7 @@ export class CartOptimizationService {
 ```
 
 ##### Step 2: Create Optimization Component
+
 ```typescript
 // src/components/cart/CartOptimizationSuggestion.tsx
 'use client';
@@ -704,6 +738,7 @@ export function CartOptimizationSuggestion({ cartItems }: { cartItems: any[] }) 
 ```
 
 ##### Step 3: Add to Cart Page
+
 ```typescript
 // src/app/customer/cart/page.tsx
 import { CartOptimizationSuggestion } from '@/components/cart/CartOptimizationSuggestion';
@@ -714,7 +749,7 @@ export default async function CartPage() {
   return (
     <div>
       <h1>Shopping Cart</h1>
-      
+
       {/* Optimization suggestion */}
       <CartOptimizationSuggestion cartItems={cartItems} />
 
@@ -738,16 +773,17 @@ export default async function CartPage() {
 #### Implementation Steps
 
 ##### Step 1: Create Chatbot Service
+
 ```typescript
 // src/lib/ai/support-chatbot.service.ts
-import OpenAI from 'openai';
+import OpenAI from "openai";
 
 export class SupportChatbotService {
   private openai: OpenAI;
 
   constructor() {
     this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
+      apiKey: process.env.OPENAI_API_KEY,
     });
   }
 
@@ -757,7 +793,7 @@ export class SupportChatbotService {
       userId?: string;
       recentOrders?: any[];
       userRole?: string;
-    }
+    },
   ): Promise<string> {
     const systemPrompt = `You are a helpful customer support assistant for a farmers market platform.
 You help customers with:
@@ -768,36 +804,43 @@ You help customers with:
 - Farming practices questions
 
 Context:
-- User Role: ${context.userRole || 'Guest'}
+- User Role: ${context.userRole || "Guest"}
 - Recent Orders: ${context.recentOrders?.length || 0}
 
 Be friendly, concise, and agricultural-conscious. If you don't know something, suggest contacting human support.`;
 
     const response = await this.openai.chat.completions.create({
-      model: 'gpt-4',
+      model: "gpt-4",
       messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: query }
+        { role: "system", content: systemPrompt },
+        { role: "user", content: query },
       ],
       temperature: 0.7,
-      max_tokens: 500
+      max_tokens: 500,
     });
 
-    return response.choices[0].message.content || 'I apologize, but I need more information to help you.';
+    return (
+      response.choices[0].message.content ||
+      "I apologize, but I need more information to help you."
+    );
   }
 
   async suggestActions(query: string): Promise<string[]> {
     // Return suggested quick actions based on query
     const actions: string[] = [];
 
-    if (query.toLowerCase().includes('order')) {
-      actions.push('View Order History', 'Track Current Order', 'Contact Farmer');
+    if (query.toLowerCase().includes("order")) {
+      actions.push(
+        "View Order History",
+        "Track Current Order",
+        "Contact Farmer",
+      );
     }
-    if (query.toLowerCase().includes('farm')) {
-      actions.push('Browse Farms', 'Search Products', 'View Farm Details');
+    if (query.toLowerCase().includes("farm")) {
+      actions.push("Browse Farms", "Search Products", "View Farm Details");
     }
-    if (query.toLowerCase().includes('account')) {
-      actions.push('Edit Profile', 'Manage Addresses', 'Notification Settings');
+    if (query.toLowerCase().includes("account")) {
+      actions.push("Edit Profile", "Manage Addresses", "Notification Settings");
     }
 
     return actions;
@@ -808,6 +851,7 @@ export const chatbotService = new SupportChatbotService();
 ```
 
 ##### Step 2: Create Chat UI Component
+
 ```typescript
 // src/components/support/ChatbotWidget.tsx
 'use client';
@@ -912,11 +956,12 @@ export function ChatbotWidget() {
 ```
 
 ##### Step 3: Create API Route
+
 ```typescript
 // src/app/api/support/chatbot/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
-import { chatbotService } from '@/lib/ai/support-chatbot.service';
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { chatbotService } from "@/lib/ai/support-chatbot.service";
 
 export async function POST(request: NextRequest) {
   try {
@@ -925,7 +970,7 @@ export async function POST(request: NextRequest) {
 
     const context = {
       userId: session?.user?.id,
-      userRole: session?.user?.role
+      userRole: session?.user?.role,
     };
 
     const response = await chatbotService.handleCustomerQuery(query, context);
@@ -933,13 +978,13 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       response,
-      suggestedActions: actions
+      suggestedActions: actions,
     });
   } catch (error) {
-    console.error('Chatbot error:', error);
+    console.error("Chatbot error:", error);
     return NextResponse.json(
-      { error: 'Failed to process query' },
-      { status: 500 }
+      { error: "Failed to process query" },
+      { status: 500 },
     );
   }
 }
@@ -956,16 +1001,18 @@ export async function POST(request: NextRequest) {
 #### Implementation Steps
 
 ##### Step 1: Install PDF Library
+
 ```bash
 npm install pdfkit @types/pdfkit
 ```
 
 ##### Step 2: Create Invoice Service
+
 ```typescript
 // src/lib/services/invoice.service.ts
-import PDFDocument from 'pdfkit';
-import { Order } from '@prisma/client';
-import fs from 'fs';
+import PDFDocument from "pdfkit";
+import { Order } from "@prisma/client";
+import fs from "fs";
 
 export class InvoiceService {
   async generateInvoice(order: any): Promise<Buffer> {
@@ -973,46 +1020,59 @@ export class InvoiceService {
       const doc = new PDFDocument({ margin: 50 });
       const chunks: Buffer[] = [];
 
-      doc.on('data', (chunk) => chunks.push(chunk));
-      doc.on('end', () => resolve(Buffer.concat(chunks)));
+      doc.on("data", (chunk) => chunks.push(chunk));
+      doc.on("end", () => resolve(Buffer.concat(chunks)));
 
       // Header
-      doc
-        .fontSize(20)
-        .text('INVOICE', 50, 50, { align: 'center' })
-        .moveDown();
+      doc.fontSize(20).text("INVOICE", 50, 50, { align: "center" }).moveDown();
 
       // Farm Info
       doc
         .fontSize(12)
         .text(`${order.farm.name}`, 50, 100)
         .text(`${order.farm.address}`, 50, 115)
-        .text(`${order.farm.city}, ${order.farm.state} ${order.farm.zipCode}`, 50, 130);
+        .text(
+          `${order.farm.city}, ${order.farm.state} ${order.farm.zipCode}`,
+          50,
+          130,
+        );
 
       // Invoice Details
       doc
         .fontSize(10)
         .text(`Invoice #: ${order.orderNumber}`, 400, 100)
-        .text(`Date: ${new Date(order.createdAt).toLocaleDateString()}`, 400, 115)
-        .text(`Due Date: ${new Date(order.createdAt).toLocaleDateString()}`, 400, 130);
+        .text(
+          `Date: ${new Date(order.createdAt).toLocaleDateString()}`,
+          400,
+          115,
+        )
+        .text(
+          `Due Date: ${new Date(order.createdAt).toLocaleDateString()}`,
+          400,
+          130,
+        );
 
       // Customer Info
       doc
         .fontSize(12)
-        .text('Bill To:', 50, 180)
+        .text("Bill To:", 50, 180)
         .fontSize(10)
         .text(`${order.customer.firstName} ${order.customer.lastName}`, 50, 200)
         .text(`${order.shippingAddress.street}`, 50, 215)
-        .text(`${order.shippingAddress.city}, ${order.shippingAddress.state}`, 50, 230);
+        .text(
+          `${order.shippingAddress.city}, ${order.shippingAddress.state}`,
+          50,
+          230,
+        );
 
       // Table Header
       const tableTop = 280;
       doc
         .fontSize(10)
-        .text('Description', 50, tableTop, { width: 250 })
-        .text('Qty', 300, tableTop, { width: 50 })
-        .text('Price', 350, tableTop, { width: 75 })
-        .text('Total', 425, tableTop, { width: 75 });
+        .text("Description", 50, tableTop, { width: 250 })
+        .text("Qty", 300, tableTop, { width: 50 })
+        .text("Price", 350, tableTop, { width: 75 })
+        .text("Total", 425, tableTop, { width: 75 });
 
       // Draw line
       doc
@@ -1028,7 +1088,12 @@ export class InvoiceService {
           .text(item.product.name, 50, position, { width: 250 })
           .text(item.quantity, 300, position, { width: 50 })
           .text(`$${item.pricePerUnit}`, 350, position, { width: 75 })
-          .text(`$${(item.quantity * item.pricePerUnit).toFixed(2)}`, 425, position, { width: 75 });
+          .text(
+            `$${(item.quantity * item.pricePerUnit).toFixed(2)}`,
+            425,
+            position,
+            { width: 75 },
+          );
         position += 25;
       });
 
@@ -1036,29 +1101,27 @@ export class InvoiceService {
       position += 20;
       doc
         .fontSize(10)
-        .text('Subtotal:', 350, position)
+        .text("Subtotal:", 350, position)
         .text(`$${order.subtotal}`, 425, position);
 
       position += 20;
       doc
-        .text('Delivery Fee:', 350, position)
+        .text("Delivery Fee:", 350, position)
         .text(`$${order.deliveryFee}`, 425, position);
 
       position += 20;
-      doc
-        .text('Tax:', 350, position)
-        .text(`$${order.tax}`, 425, position);
+      doc.text("Tax:", 350, position).text(`$${order.tax}`, 425, position);
 
       position += 20;
       doc
         .fontSize(12)
-        .text('Total:', 350, position)
+        .text("Total:", 350, position)
         .text(`$${order.total}`, 425, position);
 
       // Footer
       doc
         .fontSize(8)
-        .text('Thank you for your business!', 50, 700, { align: 'center' });
+        .text("Thank you for your business!", 50, 700, { align: "center" });
 
       doc.end();
     });
@@ -1071,11 +1134,11 @@ export class InvoiceService {
         farm: true,
         customer: true,
         items: { include: { product: true } },
-        shippingAddress: true
-      }
+        shippingAddress: true,
+      },
     });
 
-    if (!order) throw new Error('Order not found');
+    if (!order) throw new Error("Order not found");
 
     const pdfBuffer = await this.generateInvoice(order);
     const filename = `invoice-${order.orderNumber}.pdf`;
@@ -1093,6 +1156,7 @@ export const invoiceService = new InvoiceService();
 ```
 
 ##### Step 3: Add Download Button
+
 ```typescript
 // src/app/farmer/orders/[orderId]/page.tsx
 export default async function FarmerOrderDetailsPage({ params }: any) {
@@ -1131,31 +1195,42 @@ export default async function FarmerOrderDetailsPage({ params }: any) {
 
 ```typescript
 // src/lib/services/route-optimization.service.ts
-import { google } from 'googleapis';
+import { google } from "googleapis";
 
 export class RouteOptimizationService {
   async optimizeDeliveryRoute(orders: Order[]): Promise<OptimizedRoute> {
-    const addresses = orders.map(order => ({
+    const addresses = orders.map((order) => ({
       orderId: order.id,
-      address: `${order.shippingAddress.street}, ${order.shippingAddress.city}, ${order.shippingAddress.state}`
+      address: `${order.shippingAddress.street}, ${order.shippingAddress.city}, ${order.shippingAddress.state}`,
     }));
 
     // Use Google Maps Directions API
     const response = await fetch(
-      `https://maps.googleapis.com/maps/api/directions/json?origin=${encodeURIComponent(addresses[0].address)}&destination=${encodeURIComponent(addresses[0].address)}&waypoints=optimize:true|${addresses.slice(1).map(a => encodeURIComponent(a.address)).join('|')}&key=${process.env.GOOGLE_MAPS_API_KEY}`
+      `https://maps.googleapis.com/maps/api/directions/json?origin=${encodeURIComponent(addresses[0].address)}&destination=${encodeURIComponent(addresses[0].address)}&waypoints=optimize:true|${addresses
+        .slice(1)
+        .map((a) => encodeURIComponent(a.address))
+        .join("|")}&key=${process.env.GOOGLE_MAPS_API_KEY}`,
     );
 
     const data = await response.json();
 
     // Parse optimized route
     const optimizedOrder = data.routes[0].waypoint_order;
-    const optimizedAddresses = optimizedOrder.map((i: number) => addresses[i + 1]);
+    const optimizedAddresses = optimizedOrder.map(
+      (i: number) => addresses[i + 1],
+    );
 
     return {
-      totalDistance: data.routes[0].legs.reduce((sum: number, leg: any) => sum + leg.distance.value, 0),
-      totalDuration: data.routes[0].legs.reduce((sum: number, leg: any) => sum + leg.duration.value, 0),
+      totalDistance: data.routes[0].legs.reduce(
+        (sum: number, leg: any) => sum + leg.distance.value,
+        0,
+      ),
+      totalDuration: data.routes[0].legs.reduce(
+        (sum: number, leg: any) => sum + leg.duration.value,
+        0,
+      ),
       stops: [addresses[0], ...optimizedAddresses],
-      polyline: data.routes[0].overview_polyline.points
+      polyline: data.routes[0].overview_polyline.points,
     };
   }
 }
@@ -1177,7 +1252,7 @@ export class SubscriptionService {
   async createSubscription(data: {
     farmId: string;
     customerId: string;
-    frequency: 'WEEKLY' | 'BIWEEKLY' | 'MONTHLY';
+    frequency: "WEEKLY" | "BIWEEKLY" | "MONTHLY";
     products: string[];
     startDate: Date;
   }) {
@@ -1202,7 +1277,7 @@ model LoyaltyPoints {
   tier      String   @default("BRONZE") // BRONZE, SILVER, GOLD
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   user User @relation(fields: [userId], references: [id])
 }
 ```
@@ -1232,17 +1307,20 @@ model FarmEvent {
 ## 📅 IMPLEMENTATION TIMELINE
 
 ### Sprint 1 (Week 1-2): Critical Features
+
 - [ ] Day 1-3: Real-time WebSocket implementation
 - [ ] Day 4-5: SMS notifications (Twilio)
 - [ ] Day 6-8: Advanced search filters
 - [ ] Day 9-10: Cart optimization UI
 
 ### Sprint 2 (Week 3-4): Enhancement Features
+
 - [ ] Day 11-15: AI chatbot implementation
 - [ ] Day 16-18: Invoice generation
 - [ ] Day 19-21: Route optimization
 
 ### Sprint 3 (Month 2): Nice-to-Have Features
+
 - [ ] Subscription boxes
 - [ ] Loyalty program
 - [ ] Farm events
@@ -1255,23 +1333,23 @@ model FarmEvent {
 
 ```typescript
 // Example test structure
-describe('Feature: Real-time Order Updates', () => {
-  describe('WebSocket Connection', () => {
-    it('should establish connection', async () => {
+describe("Feature: Real-time Order Updates", () => {
+  describe("WebSocket Connection", () => {
+    it("should establish connection", async () => {
       // Test
     });
 
-    it('should subscribe to order updates', async () => {
+    it("should subscribe to order updates", async () => {
       // Test
     });
 
-    it('should receive status change notifications', async () => {
+    it("should receive status change notifications", async () => {
       // Test
     });
   });
 
-  describe('Client Hook', () => {
-    it('should update UI when status changes', async () => {
+  describe("Client Hook", () => {
+    it("should update UI when status changes", async () => {
       // Test
     });
   });
@@ -1279,12 +1357,14 @@ describe('Feature: Real-time Order Updates', () => {
 ```
 
 ### Integration Tests
+
 - API endpoints
 - Database operations
 - External service calls (Twilio, OpenAI)
 - WebSocket connections
 
 ### E2E Tests
+
 - Complete user flows
 - Real-time updates visualization
 - SMS delivery (in test mode)
@@ -1328,17 +1408,19 @@ AI Chatbot:
 ## 🚀 DEPLOYMENT STRATEGY
 
 ### Feature Flags
+
 ```typescript
 // src/lib/config/features.ts
 export const FEATURE_FLAGS = {
-  WEBSOCKET_ENABLED: process.env.FEATURE_WEBSOCKET === 'true',
-  SMS_NOTIFICATIONS: process.env.FEATURE_SMS === 'true',
-  ADVANCED_SEARCH: process.env.FEATURE_ADVANCED_SEARCH === 'true',
-  AI_CHATBOT: process.env.FEATURE_AI_CHATBOT === 'true'
+  WEBSOCKET_ENABLED: process.env.FEATURE_WEBSOCKET === "true",
+  SMS_NOTIFICATIONS: process.env.FEATURE_SMS === "true",
+  ADVANCED_SEARCH: process.env.FEATURE_ADVANCED_SEARCH === "true",
+  AI_CHATBOT: process.env.FEATURE_AI_CHATBOT === "true",
 };
 ```
 
 ### Gradual Rollout
+
 1. Deploy to staging
 2. Test with internal users
 3. Roll out to 10% of users
@@ -1353,6 +1435,7 @@ export const FEATURE_FLAGS = {
 This guide provides complete, copy-paste-ready implementations for all missing features. Follow the priority order (HIGH → MEDIUM → LOW) and the suggested timeline for best results.
 
 **Next Steps**:
+
 1. Create GitHub issues for each high-priority feature
 2. Assign to development team
 3. Follow implementation guide exactly

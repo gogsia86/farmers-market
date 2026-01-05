@@ -53,13 +53,10 @@ function fixDateAssignments(content) {
   const metadataDatePattern =
     /(processedAt|completedAt|verifiedAt|approvedAt|rejectedAt|cancelledAt):\s*new Date\(\)/g;
 
-  fixedContent = fixedContent.replace(
-    metadataDatePattern,
-    (match, field) => {
-      fixCount++;
-      return `${field}: new Date().toISOString()`;
-    },
-  );
+  fixedContent = fixedContent.replace(metadataDatePattern, (match, field) => {
+    fixCount++;
+    return `${field}: new Date().toISOString()`;
+  });
 
   // Pattern 4: Generic date assignments in objects
   // someDate: new Date()
@@ -123,7 +120,10 @@ function fixDateAssignmentsAdvanced(content) {
           !line.includes("update({") &&
           !line.includes("upsert({")
         ) {
-          lines[i] = line.replace(/:\s*new Date\(\)/, ": new Date().toISOString()");
+          lines[i] = line.replace(
+            /:\s*new Date\(\)/,
+            ": new Date().toISOString()",
+          );
           fixCount++;
         }
       }

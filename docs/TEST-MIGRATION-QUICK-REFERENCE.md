@@ -1,4 +1,5 @@
 # 🧪 Test Migration Quick Reference Guide
+
 ## ServiceResponse Pattern Testing
 
 **Version:** 1.0.0  
@@ -22,6 +23,7 @@
 ## Basic Test Setup
 
 ### Before (Static Methods)
+
 ```typescript
 describe("MyService", () => {
   beforeEach(() => {
@@ -36,6 +38,7 @@ describe("MyService", () => {
 ```
 
 ### After (Instance Methods with ServiceResponse)
+
 ```typescript
 import type { ServiceResponse } from "@/lib/types/service-response";
 
@@ -50,7 +53,7 @@ describe("MyService with ServiceResponse", () => {
   it("should do something with ServiceResponse", async () => {
     const result = await myService.doSomething({
       param1: "value1",
-      param2: "value2"
+      param2: "value2",
     });
 
     // Always check ServiceResponse structure first
@@ -60,7 +63,7 @@ describe("MyService with ServiceResponse", () => {
 
     // Then check actual data
     expect(result.data).toMatchObject({
-      expectedField: "expectedValue"
+      expectedField: "expectedValue",
     });
   });
 });
@@ -71,6 +74,7 @@ describe("MyService with ServiceResponse", () => {
 ## Success Response Testing
 
 ### Pattern 1: Simple Success
+
 ```typescript
 it("should return success response", async () => {
   const result = await service.operation({ param: "value" });
@@ -82,6 +86,7 @@ it("should return success response", async () => {
 ```
 
 ### Pattern 2: Success with Data Validation
+
 ```typescript
 it("should return valid data structure", async () => {
   const result = await service.operation({ param: "value" });
@@ -90,12 +95,13 @@ it("should return valid data structure", async () => {
   expect(result.data).toMatchObject({
     id: expect.any(String),
     name: expect.any(String),
-    createdAt: expect.any(Date)
+    createdAt: expect.any(Date),
   });
 });
 ```
 
 ### Pattern 3: Success with Array Data
+
 ```typescript
 it("should return array of items", async () => {
   const result = await service.getAll();
@@ -108,6 +114,7 @@ it("should return array of items", async () => {
 ```
 
 ### Pattern 4: Success with Void Return
+
 ```typescript
 it("should complete operation successfully", async () => {
   const result = await service.deleteItem({ id: "123" });
@@ -123,12 +130,11 @@ it("should complete operation successfully", async () => {
 ## Error Response Testing
 
 ### Pattern 1: Expected Error
+
 ```typescript
 // ❌ OLD (Exception-based)
 it("should throw error if not found", async () => {
-  await expect(
-    MyService.findById("invalid")
-  ).rejects.toThrow("Not found");
+  await expect(MyService.findById("invalid")).rejects.toThrow("Not found");
 });
 
 // ✅ NEW (ServiceResponse)
@@ -144,11 +150,12 @@ it("should return error if not found", async () => {
 ```
 
 ### Pattern 2: Validation Error
+
 ```typescript
 it("should return validation error for invalid input", async () => {
   const result = await service.create({
     name: "", // Invalid - empty name
-    amount: -10 // Invalid - negative amount
+    amount: -10, // Invalid - negative amount
   });
 
   expect(result.success).toBe(false);
@@ -158,6 +165,7 @@ it("should return validation error for invalid input", async () => {
 ```
 
 ### Pattern 3: Database Error
+
 ```typescript
 it("should handle database errors gracefully", async () => {
   jest
@@ -173,6 +181,7 @@ it("should handle database errors gracefully", async () => {
 ```
 
 ### Pattern 4: Configuration Error
+
 ```typescript
 it("should return error if configuration missing", async () => {
   delete process.env.API_KEY;
@@ -191,11 +200,12 @@ it("should return error if configuration missing", async () => {
 ## Common Patterns
 
 ### Testing Optional Parameters
+
 ```typescript
 describe("Optional Parameters", () => {
   it("should work with minimal parameters", async () => {
     const result = await service.create({
-      requiredField: "value"
+      requiredField: "value",
       // Optional fields omitted
     });
 
@@ -206,7 +216,7 @@ describe("Optional Parameters", () => {
     const result = await service.create({
       requiredField: "value",
       optionalField1: "optional1",
-      optionalField2: "optional2"
+      optionalField2: "optional2",
     });
 
     expect(result.success).toBe(true);
@@ -216,12 +226,13 @@ describe("Optional Parameters", () => {
 ```
 
 ### Testing Multiple Scenarios
+
 ```typescript
 describe("Different Scenarios", () => {
   const scenarios = [
     { input: { status: "PENDING" }, expected: true },
     { input: { status: "CONFIRMED" }, expected: true },
-    { input: { status: "INVALID" }, expected: false }
+    { input: { status: "INVALID" }, expected: false },
   ];
 
   scenarios.forEach(({ input, expected }) => {
@@ -229,7 +240,7 @@ describe("Different Scenarios", () => {
       const result = await service.updateStatus(input);
 
       expect(result.success).toBe(expected);
-      
+
       if (expected) {
         expect(result.data).toBeDefined();
       } else {
@@ -241,18 +252,19 @@ describe("Different Scenarios", () => {
 ```
 
 ### Testing Database Calls
+
 ```typescript
 it("should call database with correct parameters", async () => {
   await service.create({
     name: "Test Item",
-    price: 99.99
+    price: 99.99,
   });
 
   expect(database.model.create).toHaveBeenCalledWith({
     data: expect.objectContaining({
       name: "Test Item",
-      price: 99.99
-    })
+      price: 99.99,
+    }),
   });
 });
 ```
@@ -262,13 +274,14 @@ it("should call database with correct parameters", async () => {
 ## Payment Service Examples
 
 ### Create Payment Intent
+
 ```typescript
 it("should create payment intent successfully", async () => {
   const mockPaymentIntent = createMockPaymentIntent({
     id: "pi_123",
     amount: 9999,
     currency: "usd",
-    status: "requires_payment_method"
+    status: "requires_payment_method",
   });
 
   jest
@@ -281,7 +294,7 @@ it("should create payment intent successfully", async () => {
 
   const result = await paymentService.createPaymentIntent({
     orderId: "order-123",
-    amount: 99.99
+    amount: 99.99,
   });
 
   expect(result.success).toBe(true);
@@ -289,18 +302,19 @@ it("should create payment intent successfully", async () => {
     id: "pi_123",
     amount: 99.99,
     currency: "usd",
-    status: "requires_payment_method"
+    status: "requires_payment_method",
   });
 });
 ```
 
 ### Handle Payment Success
+
 ```typescript
 it("should update order to PAID status", async () => {
   const mockPaymentIntent = {
     id: "pi_123",
     amount: 9999,
-    metadata: { orderId: "order-123" }
+    metadata: { orderId: "order-123" },
   };
 
   jest
@@ -308,9 +322,14 @@ it("should update order to PAID status", async () => {
     .mockResolvedValue(mockOrder as unknown as Order);
   jest
     .mocked(database.order.update)
-    .mockResolvedValue({ ...mockOrder, paymentStatus: "PAID" } as unknown as Order);
+    .mockResolvedValue({
+      ...mockOrder,
+      paymentStatus: "PAID",
+    } as unknown as Order);
 
-  const result = await paymentService.handlePaymentSuccess(mockPaymentIntent as any);
+  const result = await paymentService.handlePaymentSuccess(
+    mockPaymentIntent as any,
+  );
 
   expect(result.success).toBe(true);
   expect(database.order.update).toHaveBeenCalledWith({
@@ -318,13 +337,14 @@ it("should update order to PAID status", async () => {
     data: expect.objectContaining({
       paymentStatus: "PAID",
       paidAt: expect.any(Date),
-      status: "CONFIRMED"
-    })
+      status: "CONFIRMED",
+    }),
   });
 });
 ```
 
 ### Webhook Verification
+
 ```typescript
 it("should verify valid webhook signature", async () => {
   const mockEvent = createMockEvent();
@@ -335,7 +355,7 @@ it("should verify valid webhook signature", async () => {
 
   const result = await paymentService.verifyWebhookSignature({
     payload,
-    signature
+    signature,
   });
 
   expect(result.success).toBe(true);
@@ -348,6 +368,7 @@ it("should verify valid webhook signature", async () => {
 ## Shipping Service Examples
 
 ### Calculate Shipping Rates
+
 ```typescript
 it("should return shipping rates with ServiceResponse", async () => {
   const result = await shippingService.calculateShippingRates({
@@ -357,8 +378,8 @@ it("should return shipping rates with ServiceResponse", async () => {
       city: "Portland",
       state: "OR",
       zipCode: "97201",
-      country: "US"
-    }
+      country: "US",
+    },
   });
 
   expect(result.success).toBe(true);
@@ -367,20 +388,21 @@ it("should return shipping rates with ServiceResponse", async () => {
     expect.arrayContaining([
       expect.objectContaining({ service: "STANDARD" }),
       expect.objectContaining({ service: "EXPRESS" }),
-      expect.objectContaining({ service: "OVERNIGHT" })
-    ])
+      expect.objectContaining({ service: "OVERNIGHT" }),
+    ]),
   );
 });
 ```
 
 ### Create Shipping Label
+
 ```typescript
 it("should create shipping label successfully", async () => {
   jest.mocked(database.order.update).mockResolvedValue({
     id: "order-123",
     status: "PREPARING",
     trackingNumber: "TRACK123",
-    shippingService: "STANDARD"
+    shippingService: "STANDARD",
   } as unknown as Order);
 
   const result = await shippingService.createShippingLabel({
@@ -391,26 +413,27 @@ it("should create shipping label successfully", async () => {
       city: "Portland",
       state: "OR",
       zipCode: "97201",
-      country: "US"
-    }
+      country: "US",
+    },
   });
 
   expect(result.success).toBe(true);
   expect(result.data).toMatchObject({
     labelId: expect.any(String),
     trackingNumber: expect.any(String),
-    carrier: expect.any(String)
+    carrier: expect.any(String),
   });
 });
 ```
 
 ### Get Tracking Info
+
 ```typescript
 it("should return tracking info for valid tracking number", async () => {
   const mockOrder = {
     id: "order-123",
     status: "PREPARING",
-    trackingNumber: "TRACK123"
+    trackingNumber: "TRACK123",
   };
 
   jest
@@ -418,7 +441,7 @@ it("should return tracking info for valid tracking number", async () => {
     .mockResolvedValue(mockOrder as unknown as Order);
 
   const result = await shippingService.getTrackingInfo({
-    trackingNumber: "TRACK123"
+    trackingNumber: "TRACK123",
   });
 
   expect(result.success).toBe(true);
@@ -427,7 +450,7 @@ it("should return tracking info for valid tracking number", async () => {
     trackingNumber: "TRACK123",
     status: "PREPARING",
     currentLocation: expect.any(String),
-    events: expect.any(Array)
+    events: expect.any(Array),
   });
 });
 ```
@@ -437,6 +460,7 @@ it("should return tracking info for valid tracking number", async () => {
 ## Mocking Patterns
 
 ### Mock Database Operations
+
 ```typescript
 beforeEach(() => {
   // Success scenario
@@ -459,6 +483,7 @@ it("should handle database errors", async () => {
 ```
 
 ### Mock External API Calls
+
 ```typescript
 // Stripe mock example
 beforeEach(() => {
@@ -466,18 +491,16 @@ beforeEach(() => {
     id: "pi_123",
     amount: 9999,
     currency: "usd",
-    status: "requires_payment_method"
+    status: "requires_payment_method",
   });
 });
 
 it("should handle Stripe API errors", async () => {
-  mockPaymentIntentsCreate.mockRejectedValue(
-    new Error("Stripe API error")
-  );
+  mockPaymentIntentsCreate.mockRejectedValue(new Error("Stripe API error"));
 
   const result = await paymentService.createPaymentIntent({
     orderId: "order-123",
-    amount: 99.99
+    amount: 99.99,
   });
 
   expect(result.success).toBe(false);
@@ -486,6 +509,7 @@ it("should handle Stripe API errors", async () => {
 ```
 
 ### Mock Environment Variables
+
 ```typescript
 const originalEnv = process.env;
 
@@ -493,7 +517,7 @@ beforeEach(() => {
   process.env = {
     ...originalEnv,
     API_KEY: "test_key_123",
-    WEBHOOK_SECRET: "test_secret_456"
+    WEBHOOK_SECRET: "test_secret_456",
   };
 });
 
@@ -517,11 +541,15 @@ it("should handle missing configuration", async () => {
 ## Type Safety Tips
 
 ### Import Types Correctly
+
 ```typescript
 // ✅ Import types
 import type { ServiceResponse } from "@/lib/types/service-response";
 import type { User, Order } from "@prisma/client";
-import type { PaymentIntent, RefundResult } from "@/lib/services/payment.service";
+import type {
+  PaymentIntent,
+  RefundResult,
+} from "@/lib/services/payment.service";
 
 // ✅ Use type assertions for mocks
 jest
@@ -530,12 +558,13 @@ jest
 ```
 
 ### Handle Optional Data
+
 ```typescript
 it("should handle optional data safely", async () => {
   const result = await service.findById("123");
 
   expect(result.success).toBe(true);
-  
+
   // Use optional chaining
   expect(result.data?.id).toBe("123");
   expect(result.data?.optionalField).toBeUndefined();
@@ -551,6 +580,7 @@ it("should handle optional data safely", async () => {
 ## Common Mistakes to Avoid
 
 ### ❌ Don't Skip ServiceResponse Validation
+
 ```typescript
 // ❌ BAD - Directly accessing data without checking success
 it("bad test", async () => {
@@ -561,30 +591,33 @@ it("bad test", async () => {
 // ✅ GOOD - Always check success first
 it("good test", async () => {
   const result = await service.operation({ param: "value" });
-  
+
   expect(result.success).toBe(true);
   expect(result.data?.id).toBe("123");
 });
 ```
 
 ### ❌ Don't Use Old Exception Testing
+
 ```typescript
 // ❌ BAD - Services no longer throw
 it("bad test", async () => {
-  await expect(service.operation({ param: "invalid" }))
-    .rejects.toThrow("Validation failed");
+  await expect(service.operation({ param: "invalid" })).rejects.toThrow(
+    "Validation failed",
+  );
 });
 
 // ✅ GOOD - Check error in response
 it("good test", async () => {
   const result = await service.operation({ param: "invalid" });
-  
+
   expect(result.success).toBe(false);
   expect(result.error?.code).toBe("VALIDATION_ERROR");
 });
 ```
 
 ### ❌ Don't Forget to Test Error Cases
+
 ```typescript
 // ✅ GOOD - Test both success and error paths
 describe("Complete Testing", () => {

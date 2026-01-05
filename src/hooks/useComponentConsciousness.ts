@@ -5,7 +5,11 @@
  * ⚡ Performance: Quantum Performance Measurement
  */
 
+import { createLogger } from "@/lib/utils/logger";
 import { useCallback, useEffect, useRef } from "react";
+
+// Create dedicated logger for component consciousness
+const consciousnessLogger = createLogger("ComponentConsciousness");
 
 export interface ComponentContext {
   componentName: string;
@@ -163,11 +167,11 @@ export function useComponentConsciousness(
 
     // Log slow renders (development only)
     if (process.env.NODE_ENV === "development" && renderTime > 16) {
-      console.warn(
-        `🐌 Slow render detected in ${componentName}:`,
-        `${renderTime.toFixed(2)}ms`,
+      consciousnessLogger.warn(`Slow render detected in ${componentName}`, {
+        renderTime: parseFloat(renderTime.toFixed(2)),
+        threshold: 16,
         context,
-      );
+      });
     }
   });
 
@@ -248,7 +252,10 @@ export function useComponentConsciousness(
       metricsRef.current.eventCount += 1;
 
       if (process.env.NODE_ENV === "development") {
-        console.debug(`📊 ${componentName}.${eventName}`, metadata);
+        consciousnessLogger.debug(`${componentName}.${eventName}`, {
+          ...metadata,
+          eventType: "track",
+        });
       }
 
       // Track in analytics (if available)
@@ -291,7 +298,10 @@ export function useComponentConsciousness(
         errorMessage = String(error);
       }
 
-      console.error(`❌ ${componentName}.${errorName}:`, error);
+      consciousnessLogger.error(`${componentName}.${errorName}`, {
+        errorMessage,
+        errorType: error instanceof Error ? error.name : typeof error,
+      });
 
       // Track error in monitoring (if available)
       if (globalThis.__DIVINE_PERFORMANCE__) {
@@ -355,9 +365,15 @@ export function initializeDivinePerformanceTracking() {
   globalThis.__DIVINE_ANALYTICS__ = {
     track: (event: DivineAnalyticsEvent) => {
       // Integration point for analytics services
-      console.debug("📊 Analytics event:", event);
+      consciousnessLogger.debug("Analytics event tracked", {
+        component: event.component,
+        event: event.event,
+        metadata: event.metadata,
+      });
     },
   };
 
-  console.log("✨ Divine Performance Tracking initialized");
+  consciousnessLogger.info("Divine Performance Tracking initialized", {
+    consciousness: "divine",
+  });
 }

@@ -9,8 +9,8 @@
  */
 
 import { createOrchestratorFromEnv } from "../agents/workflow-agent-orchestrator";
-import { createSelfHealer } from "./self-healer";
 import type { WorkflowResult } from "../types";
+import { createSelfHealer } from "./self-healer";
 
 // ============================================================================
 // TYPES

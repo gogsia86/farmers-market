@@ -15,6 +15,7 @@ This guide provides copy-paste patterns for common testing scenarios in the Farm
 ## 📦 ServiceResponse Pattern
 
 ### Basic Structure
+
 ```typescript
 interface ServiceResponse<T = unknown> {
   success: boolean;
@@ -33,6 +34,7 @@ interface ServiceResponse<T = unknown> {
 ```
 
 ### Success Response
+
 ```typescript
 return {
   success: true,
@@ -44,6 +46,7 @@ return {
 ```
 
 ### Error Response
+
 ```typescript
 return {
   success: false,
@@ -62,6 +65,7 @@ return {
 ## 🔄 Transaction Mock Pattern
 
 ### Setup (Module Level)
+
 ```typescript
 import { database } from "@/lib/database";
 
@@ -74,23 +78,25 @@ const mockDatabase = database as jest.Mocked<typeof database>;
 ```
 
 ### Reset (beforeEach)
+
 ```typescript
 beforeEach(() => {
   jest.clearAllMocks();
-  
+
   // CRITICAL: Reset implementation in beforeEach
   (mockDatabase as any).$transaction.mockImplementation(
     async (callback: any) => {
       return await callback(mockDatabase);
     },
   );
-  
+
   // Create service instance AFTER mock setup
   service = new YourService();
 });
 ```
 
 ### Why This Pattern?
+
 1. **Module-level mock** defines the jest mock function
 2. **beforeEach reset** ensures implementation runs for each test
 3. **Async/await** properly handles promises
@@ -101,6 +107,7 @@ beforeEach(() => {
 ## 🏗️ Service Mock Patterns
 
 ### Basic Service Mock
+
 ```typescript
 // Mock the entire service module
 jest.mock("../other.service");
@@ -115,15 +122,16 @@ mockOtherService.someMethod.mockResolvedValueOnce({
 ```
 
 ### Cart Service Mock (Common Pattern)
+
 ```typescript
 mockCartService.getCart.mockResolvedValueOnce({
   success: true,
   data: {
     items: [mockCartItem],
-    subtotal: 10.00,
-    tax: 0.80,
-    deliveryFee: 5.00,
-    total: 15.80,
+    subtotal: 10.0,
+    tax: 0.8,
+    deliveryFee: 5.0,
+    total: 15.8,
     itemCount: 1,
     farmCount: 1,
   },
@@ -148,6 +156,7 @@ mockCartService.clearCart.mockResolvedValueOnce({
 ## 🧪 Test Structure Template
 
 ### Complete Test File Template
+
 ```typescript
 /**
  * 🧪 SERVICE NAME - UNIT TESTS
@@ -189,28 +198,30 @@ describe("ServiceClass", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Reset transaction mock implementation
     (mockDatabase as any).$transaction.mockImplementation(
       async (callback: any) => {
         return await callback(mockDatabase);
       },
     );
-    
+
     service = new ServiceClass();
   });
 
   describe("methodName", () => {
     it("should perform operation successfully", async () => {
       // Arrange
-      const input = { /* test data */ };
+      const input = {
+        /* test data */
+      };
       const expected = createMockEntity();
-      
+
       mockDatabase.entity.create.mockResolvedValueOnce(expected as any);
-      
+
       // Act
       const result = await service.methodName(input);
-      
+
       // Assert
       expect(result.success).toBe(true);
       expect(result.data).toEqual(expected);
@@ -224,10 +235,10 @@ describe("ServiceClass", () => {
       mockDatabase.entity.create.mockRejectedValueOnce(
         new Error("Database error"),
       );
-      
+
       // Act
       const result = await service.methodName({});
-      
+
       // Assert
       expect(result.success).toBe(false);
       expect(result.error?.code).toBe("OPERATION_FAILED");
@@ -242,6 +253,7 @@ describe("ServiceClass", () => {
 ## 🎭 Mock Data Factories
 
 ### UUID Generation
+
 ```typescript
 // Use valid UUIDs for all IDs (required by Zod validation)
 const mockUserId = "123e4567-e89b-12d3-a456-426614174000";
@@ -250,6 +262,7 @@ const mockFarmId = "523e4567-e89b-12d3-a456-426614174000";
 ```
 
 ### Factory Pattern
+
 ```typescript
 const createMockProduct = (overrides = {}) => ({
   id: "423e4567-e89b-12d3-a456-426614174000",
@@ -274,7 +287,9 @@ const createMockProduct = (overrides = {}) => ({
 ## ⚠️ Common Pitfalls & Solutions
 
 ### Pitfall 1: Undefined Result from Transaction
+
 **Problem:**
+
 ```typescript
 const result = await service.methodUsingTransaction(data);
 // result is undefined
@@ -282,6 +297,7 @@ const result = await service.methodUsingTransaction(data);
 
 **Solution:**
 Ensure transaction mock is reset in `beforeEach`:
+
 ```typescript
 beforeEach(() => {
   (mockDatabase as any).$transaction.mockImplementation(
@@ -293,12 +309,15 @@ beforeEach(() => {
 ```
 
 ### Pitfall 2: Wrong Response Structure
+
 **Problem:**
+
 ```typescript
 mockService.getCart.mockResolvedValueOnce(mockCart); // ❌ Wrong
 ```
 
 **Solution:**
+
 ```typescript
 mockService.getCart.mockResolvedValueOnce({
   success: true,
@@ -307,22 +326,27 @@ mockService.getCart.mockResolvedValueOnce({
 ```
 
 ### Pitfall 3: Accessing Wrong Property
+
 **Problem:**
+
 ```typescript
 expect(result.order).toBeDefined(); // ❌ Wrong property
 ```
 
 **Solution:**
+
 ```typescript
 expect(result.data).toBeDefined(); // ✅ Always use result.data
 ```
 
 ### Pitfall 4: Missing Mock Reset
+
 **Problem:**
+
 ```typescript
 describe("test suite", () => {
   let service;
-  
+
   beforeEach(() => {
     // ❌ Missing jest.clearAllMocks()
     service = new Service();
@@ -331,6 +355,7 @@ describe("test suite", () => {
 ```
 
 **Solution:**
+
 ```typescript
 beforeEach(() => {
   jest.clearAllMocks(); // ✅ Always reset mocks
@@ -343,6 +368,7 @@ beforeEach(() => {
 ## 📊 Assertion Patterns
 
 ### Success Response Assertions
+
 ```typescript
 expect(result).toBeDefined();
 expect(result.success).toBe(true);
@@ -351,6 +377,7 @@ expect(result.error).toBeUndefined();
 ```
 
 ### Error Response Assertions
+
 ```typescript
 expect(result).toBeDefined();
 expect(result.success).toBe(false);
@@ -361,6 +388,7 @@ expect(result.data).toBeUndefined();
 ```
 
 ### Mock Call Verification
+
 ```typescript
 expect(mockDatabase.entity.create).toHaveBeenCalledTimes(1);
 expect(mockDatabase.entity.create).toHaveBeenCalledWith(
@@ -373,6 +401,7 @@ expect(mockDatabase.entity.create).toHaveBeenCalledWith(
 ```
 
 ### Array/Object Matching
+
 ```typescript
 expect(result.data).toMatchObject({
   id: expect.any(String),
@@ -390,6 +419,7 @@ expect(result.data).toMatchObject({
 ## 🛡️ Error Handling in Services
 
 ### Pattern in Service Implementation
+
 ```typescript
 async createEntity(data: CreateEntityRequest): Promise<ServiceResponse<Entity>> {
   return await this.traced("createEntity", async () => {
@@ -419,10 +449,11 @@ async createEntity(data: CreateEntityRequest): Promise<ServiceResponse<Entity>> 
 ```
 
 ### Testing Error Handling
+
 ```typescript
 it("should handle database errors gracefully", async () => {
   mockDatabase.entity.create.mockRejectedValueOnce(
-    new Error("Database constraint violation")
+    new Error("Database constraint violation"),
   );
 
   const result = await service.createEntity(validData);
@@ -438,16 +469,17 @@ it("should handle database errors gracefully", async () => {
 ## 🎯 Test Organization
 
 ### Describe Block Hierarchy
+
 ```typescript
 describe("ServiceName", () => {
   // Setup and factories
-  
+
   describe("methodName", () => {
     it("should handle success case", async () => {});
     it("should handle error case", async () => {});
     it("should validate input", async () => {});
   });
-  
+
   describe("anotherMethod", () => {
     it("should ...", async () => {});
   });
@@ -455,6 +487,7 @@ describe("ServiceName", () => {
 ```
 
 ### Test Naming Convention
+
 ```typescript
 // ✅ Good - Descriptive, action-oriented
 it("should create order successfully with existing address", async () => {});
@@ -472,12 +505,14 @@ it("calls database.order.create", async () => {});
 ## 📚 Reference Documentation
 
 ### Related Files
+
 - `.github/instructions/11_KILO_SCALE_ARCHITECTURE.instructions.md`
 - `.github/instructions/12_ERROR_HANDLING_VALIDATION.instructions.md`
 - `.github/instructions/13_TESTING_PERFORMANCE_MASTERY.instructions.md`
 - `CHECKOUT_TEST_COMPLETION_REPORT.md`
 
 ### Example Test Files
+
 - `src/lib/services/__tests__/checkout.service.test.ts` - Full transaction testing
 - `src/lib/services/__tests__/cart.service.test.ts` - Service mock patterns
 - `src/lib/services/__tests__/farm.service.test.ts` - CRUD operations

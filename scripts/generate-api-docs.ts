@@ -20,9 +20,9 @@
  * @reference .github/instructions/11_KILO_SCALE_ARCHITECTURE.instructions.md
  */
 
-import fs from 'fs';
-import path from 'path';
-import { execSync } from 'child_process';
+import fs from "fs";
+import path from "path";
+import { execSync } from "child_process";
 
 // ============================================================================
 // TYPES
@@ -43,7 +43,7 @@ interface ApiEndpoint {
 
 interface Parameter {
   name: string;
-  in: 'query' | 'path' | 'header';
+  in: "query" | "path" | "header";
   required: boolean;
   schema: Schema;
   description?: string;
@@ -86,16 +86,16 @@ interface Schema {
 // ============================================================================
 
 const PROJECT_ROOT = process.cwd();
-const API_DIR = path.join(PROJECT_ROOT, 'src', 'app', 'api');
-const CONTROLLERS_DIR = path.join(PROJECT_ROOT, 'src', 'lib', 'controllers');
-const OUTPUT_DIR = path.join(PROJECT_ROOT, 'docs', 'api');
+const API_DIR = path.join(PROJECT_ROOT, "src", "app", "api");
+const CONTROLLERS_DIR = path.join(PROJECT_ROOT, "src", "lib", "controllers");
+const OUTPUT_DIR = path.join(PROJECT_ROOT, "docs", "api");
 const PACKAGE_JSON = JSON.parse(
-  fs.readFileSync(path.join(PROJECT_ROOT, 'package.json'), 'utf-8')
+  fs.readFileSync(path.join(PROJECT_ROOT, "package.json"), "utf-8"),
 );
 
 const API_INFO = {
-  title: 'Farmers Market Platform API',
-  version: PACKAGE_JSON.version || '1.0.0',
+  title: "Farmers Market Platform API",
+  version: PACKAGE_JSON.version || "1.0.0",
   description: `
 Divine Agricultural Platform - Comprehensive REST API
 
@@ -115,13 +115,13 @@ All endpoints return standardized ServiceResponse<T> format with:
 - meta?: ResponseMetadata (including agricultural consciousness)
   `.trim(),
   contact: {
-    name: 'API Support',
-    email: 'support@farmersmarket.com',
-    url: 'https://farmersmarket.com/support',
+    name: "API Support",
+    email: "support@farmersmarket.com",
+    url: "https://farmersmarket.com/support",
   },
   license: {
-    name: 'MIT',
-    url: 'https://opensource.org/licenses/MIT',
+    name: "MIT",
+    url: "https://opensource.org/licenses/MIT",
   },
 };
 
@@ -132,25 +132,26 @@ All endpoints return standardized ServiceResponse<T> format with:
 const KNOWN_ENDPOINTS: ApiEndpoint[] = [
   // HEALTH & MONITORING
   {
-    path: '/api/health',
-    method: 'GET',
-    controller: 'Health',
-    handler: 'GET',
-    description: 'Health check endpoint - verifies system and database connectivity',
+    path: "/api/health",
+    method: "GET",
+    controller: "Health",
+    handler: "GET",
+    description:
+      "Health check endpoint - verifies system and database connectivity",
     authenticated: false,
     responses: [
       {
         status: 200,
-        description: 'System is healthy',
+        description: "System is healthy",
         content: {
-          'application/json': {
+          "application/json": {
             schema: {
-              type: 'object',
+              type: "object",
               properties: {
-                status: { type: 'string', example: 'healthy' },
-                database: { type: 'string', example: 'connected' },
-                timestamp: { type: 'string', format: 'date-time' },
-                version: { type: 'string', example: '1.0.0' },
+                status: { type: "string", example: "healthy" },
+                database: { type: "string", example: "connected" },
+                timestamp: { type: "string", format: "date-time" },
+                version: { type: "string", example: "1.0.0" },
               },
             },
           },
@@ -159,23 +160,23 @@ const KNOWN_ENDPOINTS: ApiEndpoint[] = [
     ],
   },
   {
-    path: '/api/ready',
-    method: 'GET',
-    controller: 'Health',
-    handler: 'GET',
-    description: 'Readiness check endpoint for Kubernetes/Docker',
+    path: "/api/ready",
+    method: "GET",
+    controller: "Health",
+    handler: "GET",
+    description: "Readiness check endpoint for Kubernetes/Docker",
     authenticated: false,
     responses: [
       {
         status: 200,
-        description: 'Service is ready',
+        description: "Service is ready",
         content: {
-          'application/json': {
+          "application/json": {
             schema: {
-              type: 'object',
+              type: "object",
               properties: {
-                ready: { type: 'boolean', example: true },
-                timestamp: { type: 'string', format: 'date-time' },
+                ready: { type: "boolean", example: true },
+                timestamp: { type: "string", format: "date-time" },
               },
             },
           },
@@ -186,83 +187,86 @@ const KNOWN_ENDPOINTS: ApiEndpoint[] = [
 
   // FARM ENDPOINTS
   {
-    path: '/api/farms',
-    method: 'GET',
-    controller: 'FarmController',
-    handler: 'handleListFarms',
-    description: 'List all farms with pagination and filtering',
+    path: "/api/farms",
+    method: "GET",
+    controller: "FarmController",
+    handler: "handleListFarms",
+    description: "List all farms with pagination and filtering",
     authenticated: false,
     parameters: [
       {
-        name: 'page',
-        in: 'query',
+        name: "page",
+        in: "query",
         required: false,
-        schema: { type: 'integer', example: 1 },
-        description: 'Page number (starts at 1)',
+        schema: { type: "integer", example: 1 },
+        description: "Page number (starts at 1)",
       },
       {
-        name: 'limit',
-        in: 'query',
+        name: "limit",
+        in: "query",
         required: false,
-        schema: { type: 'integer', example: 20 },
-        description: 'Items per page',
+        schema: { type: "integer", example: 20 },
+        description: "Items per page",
       },
       {
-        name: 'status',
-        in: 'query',
+        name: "status",
+        in: "query",
         required: false,
         schema: {
-          type: 'string',
-          enum: ['ACTIVE', 'PENDING', 'SUSPENDED', 'INACTIVE'],
+          type: "string",
+          enum: ["ACTIVE", "PENDING", "SUSPENDED", "INACTIVE"],
         },
-        description: 'Filter by farm status',
+        description: "Filter by farm status",
       },
       {
-        name: 'city',
-        in: 'query',
+        name: "city",
+        in: "query",
         required: false,
-        schema: { type: 'string' },
-        description: 'Filter by city',
+        schema: { type: "string" },
+        description: "Filter by city",
       },
       {
-        name: 'state',
-        in: 'query',
+        name: "state",
+        in: "query",
         required: false,
-        schema: { type: 'string' },
-        description: 'Filter by state',
+        schema: { type: "string" },
+        description: "Filter by state",
       },
     ],
     responses: [
       {
         status: 200,
-        description: 'Paginated list of farms',
+        description: "Paginated list of farms",
         content: {
-          'application/json': {
+          "application/json": {
             schema: {
-              type: 'object',
+              type: "object",
               properties: {
-                success: { type: 'boolean', example: true },
+                success: { type: "boolean", example: true },
                 data: {
-                  type: 'array',
-                  items: { type: 'object', description: 'Farm object' },
+                  type: "array",
+                  items: { type: "object", description: "Farm object" },
                 },
                 pagination: {
-                  type: 'object',
+                  type: "object",
                   properties: {
-                    page: { type: 'integer' },
-                    limit: { type: 'integer' },
-                    total: { type: 'integer' },
-                    totalPages: { type: 'integer' },
+                    page: { type: "integer" },
+                    limit: { type: "integer" },
+                    total: { type: "integer" },
+                    totalPages: { type: "integer" },
                   },
                 },
                 meta: {
-                  type: 'object',
+                  type: "object",
                   properties: {
                     agricultural: {
-                      type: 'object',
+                      type: "object",
                       properties: {
-                        season: { type: 'string', enum: ['SPRING', 'SUMMER', 'FALL', 'WINTER'] },
-                        consciousness: { type: 'string', example: 'DIVINE' },
+                        season: {
+                          type: "string",
+                          enum: ["SPRING", "SUMMER", "FALL", "WINTER"],
+                        },
+                        consciousness: { type: "string", example: "DIVINE" },
                       },
                     },
                   },
@@ -275,47 +279,55 @@ const KNOWN_ENDPOINTS: ApiEndpoint[] = [
     ],
   },
   {
-    path: '/api/farms',
-    method: 'POST',
-    controller: 'FarmController',
-    handler: 'handleCreateFarm',
-    description: 'Create a new farm (requires FARMER role)',
+    path: "/api/farms",
+    method: "POST",
+    controller: "FarmController",
+    handler: "handleCreateFarm",
+    description: "Create a new farm (requires FARMER role)",
     authenticated: true,
-    roles: ['FARMER'],
+    roles: ["FARMER"],
     requestBody: {
       required: true,
       content: {
-        'application/json': {
+        "application/json": {
           schema: {
-            type: 'object',
-            required: ['name', 'address', 'city', 'state', 'zipCode', 'latitude', 'longitude'],
+            type: "object",
+            required: [
+              "name",
+              "address",
+              "city",
+              "state",
+              "zipCode",
+              "latitude",
+              "longitude",
+            ],
             properties: {
-              name: { type: 'string', example: 'Sunny Valley Farm' },
-              address: { type: 'string', example: '123 Farm Road' },
-              city: { type: 'string', example: 'Portland' },
-              state: { type: 'string', example: 'OR' },
-              zipCode: { type: 'string', example: '97201' },
-              latitude: { type: 'number', example: 45.5152 },
-              longitude: { type: 'number', example: -122.6784 },
-              description: { type: 'string' },
-              story: { type: 'string' },
-              businessName: { type: 'string' },
-              yearEstablished: { type: 'integer' },
-              farmSize: { type: 'number' },
-              email: { type: 'string', format: 'email' },
-              phone: { type: 'string' },
-              website: { type: 'string', format: 'uri' },
+              name: { type: "string", example: "Sunny Valley Farm" },
+              address: { type: "string", example: "123 Farm Road" },
+              city: { type: "string", example: "Portland" },
+              state: { type: "string", example: "OR" },
+              zipCode: { type: "string", example: "97201" },
+              latitude: { type: "number", example: 45.5152 },
+              longitude: { type: "number", example: -122.6784 },
+              description: { type: "string" },
+              story: { type: "string" },
+              businessName: { type: "string" },
+              yearEstablished: { type: "integer" },
+              farmSize: { type: "number" },
+              email: { type: "string", format: "email" },
+              phone: { type: "string" },
+              website: { type: "string", format: "uri" },
               farmingPractices: {
-                type: 'array',
-                items: { type: 'string' },
-                example: ['ORGANIC', 'BIODYNAMIC'],
+                type: "array",
+                items: { type: "string" },
+                example: ["ORGANIC", "BIODYNAMIC"],
               },
               productCategories: {
-                type: 'array',
-                items: { type: 'string' },
-                example: ['VEGETABLES', 'FRUITS'],
+                type: "array",
+                items: { type: "string" },
+                example: ["VEGETABLES", "FRUITS"],
               },
-              deliveryRadius: { type: 'integer', example: 50 },
+              deliveryRadius: { type: "integer", example: 50 },
             },
           },
         },
@@ -324,24 +336,33 @@ const KNOWN_ENDPOINTS: ApiEndpoint[] = [
     responses: [
       {
         status: 201,
-        description: 'Farm created successfully',
+        description: "Farm created successfully",
         content: {
-          'application/json': {
+          "application/json": {
             schema: {
-              type: 'object',
+              type: "object",
               properties: {
-                success: { type: 'boolean', example: true },
+                success: { type: "boolean", example: true },
                 data: {
-                  type: 'object',
+                  type: "object",
                   properties: {
-                    farm: { type: 'object', description: 'Created farm object' },
-                    slug: { type: 'string', example: 'sunny-valley-farm-portland' },
+                    farm: {
+                      type: "object",
+                      description: "Created farm object",
+                    },
+                    slug: {
+                      type: "string",
+                      example: "sunny-valley-farm-portland",
+                    },
                   },
                 },
                 meta: {
-                  type: 'object',
+                  type: "object",
                   properties: {
-                    message: { type: 'string', example: 'Farm created successfully' },
+                    message: {
+                      type: "string",
+                      example: "Farm created successfully",
+                    },
                   },
                 },
               },
@@ -351,270 +372,271 @@ const KNOWN_ENDPOINTS: ApiEndpoint[] = [
       },
       {
         status: 401,
-        description: 'Authentication required',
+        description: "Authentication required",
       },
       {
         status: 403,
-        description: 'User already has a farm',
+        description: "User already has a farm",
       },
     ],
   },
   {
-    path: '/api/farms/{id}',
-    method: 'GET',
-    controller: 'FarmController',
-    handler: 'handleGetFarm',
-    description: 'Get farm by ID',
+    path: "/api/farms/{id}",
+    method: "GET",
+    controller: "FarmController",
+    handler: "handleGetFarm",
+    description: "Get farm by ID",
     authenticated: false,
     parameters: [
       {
-        name: 'id',
-        in: 'path',
+        name: "id",
+        in: "path",
         required: true,
-        schema: { type: 'string' },
-        description: 'Farm ID',
+        schema: { type: "string" },
+        description: "Farm ID",
       },
     ],
     responses: [
       {
         status: 200,
-        description: 'Farm details',
+        description: "Farm details",
       },
       {
         status: 404,
-        description: 'Farm not found',
+        description: "Farm not found",
       },
     ],
   },
   {
-    path: '/api/farms/{id}',
-    method: 'PUT',
-    controller: 'FarmController',
-    handler: 'handleUpdateFarm',
-    description: 'Update farm (requires ownership)',
+    path: "/api/farms/{id}",
+    method: "PUT",
+    controller: "FarmController",
+    handler: "handleUpdateFarm",
+    description: "Update farm (requires ownership)",
     authenticated: true,
     parameters: [
       {
-        name: 'id',
-        in: 'path',
+        name: "id",
+        in: "path",
         required: true,
-        schema: { type: 'string' },
-        description: 'Farm ID',
+        schema: { type: "string" },
+        description: "Farm ID",
       },
     ],
     responses: [
       {
         status: 200,
-        description: 'Farm updated successfully',
+        description: "Farm updated successfully",
       },
       {
         status: 401,
-        description: 'Authentication required',
+        description: "Authentication required",
       },
       {
         status: 403,
-        description: 'Not the farm owner',
+        description: "Not the farm owner",
       },
     ],
   },
   {
-    path: '/api/farms/{id}',
-    method: 'DELETE',
-    controller: 'FarmController',
-    handler: 'handleDeleteFarm',
-    description: 'Delete farm (soft delete, requires ownership)',
+    path: "/api/farms/{id}",
+    method: "DELETE",
+    controller: "FarmController",
+    handler: "handleDeleteFarm",
+    description: "Delete farm (soft delete, requires ownership)",
     authenticated: true,
     parameters: [
       {
-        name: 'id',
-        in: 'path',
+        name: "id",
+        in: "path",
         required: true,
-        schema: { type: 'string' },
-        description: 'Farm ID',
+        schema: { type: "string" },
+        description: "Farm ID",
       },
     ],
     responses: [
       {
         status: 200,
-        description: 'Farm deleted successfully',
+        description: "Farm deleted successfully",
       },
     ],
   },
   {
-    path: '/api/farms/search',
-    method: 'GET',
-    controller: 'FarmController',
-    handler: 'handleSearchFarms',
-    description: 'Search farms by query',
+    path: "/api/farms/search",
+    method: "GET",
+    controller: "FarmController",
+    handler: "handleSearchFarms",
+    description: "Search farms by query",
     authenticated: false,
     parameters: [
       {
-        name: 'query',
-        in: 'query',
+        name: "query",
+        in: "query",
         required: true,
-        schema: { type: 'string' },
-        description: 'Search query',
+        schema: { type: "string" },
+        description: "Search query",
       },
       {
-        name: 'limit',
-        in: 'query',
+        name: "limit",
+        in: "query",
         required: false,
-        schema: { type: 'integer', example: 20 },
-        description: 'Maximum results',
+        schema: { type: "integer", example: 20 },
+        description: "Maximum results",
       },
     ],
     responses: [
       {
         status: 200,
-        description: 'Search results',
+        description: "Search results",
       },
     ],
   },
 
   // PRODUCT ENDPOINTS
   {
-    path: '/api/products',
-    method: 'GET',
-    controller: 'ProductController',
-    handler: 'handleListProducts',
-    description: 'List all products with pagination and filtering',
+    path: "/api/products",
+    method: "GET",
+    controller: "ProductController",
+    handler: "handleListProducts",
+    description: "List all products with pagination and filtering",
     authenticated: false,
     parameters: [
       {
-        name: 'page',
-        in: 'query',
+        name: "page",
+        in: "query",
         required: false,
-        schema: { type: 'integer', example: 1 },
+        schema: { type: "integer", example: 1 },
       },
       {
-        name: 'limit',
-        in: 'query',
+        name: "limit",
+        in: "query",
         required: false,
-        schema: { type: 'integer', example: 20 },
+        schema: { type: "integer", example: 20 },
       },
       {
-        name: 'category',
-        in: 'query',
+        name: "category",
+        in: "query",
         required: false,
-        schema: { type: 'string' },
+        schema: { type: "string" },
       },
       {
-        name: 'farmId',
-        in: 'query',
+        name: "farmId",
+        in: "query",
         required: false,
-        schema: { type: 'string' },
+        schema: { type: "string" },
       },
     ],
     responses: [
       {
         status: 200,
-        description: 'Paginated list of products',
+        description: "Paginated list of products",
       },
     ],
   },
   {
-    path: '/api/products',
-    method: 'POST',
-    controller: 'ProductController',
-    handler: 'handleCreateProduct',
-    description: 'Create a new product (requires FARMER role and farm ownership)',
+    path: "/api/products",
+    method: "POST",
+    controller: "ProductController",
+    handler: "handleCreateProduct",
+    description:
+      "Create a new product (requires FARMER role and farm ownership)",
     authenticated: true,
-    roles: ['FARMER'],
+    roles: ["FARMER"],
     responses: [
       {
         status: 201,
-        description: 'Product created successfully',
+        description: "Product created successfully",
       },
     ],
   },
   {
-    path: '/api/products/search',
-    method: 'GET',
-    controller: 'ProductController',
-    handler: 'handleSearchProducts',
-    description: 'Search products by keyword',
+    path: "/api/products/search",
+    method: "GET",
+    controller: "ProductController",
+    handler: "handleSearchProducts",
+    description: "Search products by keyword",
     authenticated: false,
     parameters: [
       {
-        name: 'q',
-        in: 'query',
+        name: "q",
+        in: "query",
         required: true,
-        schema: { type: 'string' },
-        description: 'Search query',
+        schema: { type: "string" },
+        description: "Search query",
       },
     ],
     responses: [
       {
         status: 200,
-        description: 'Search results',
+        description: "Search results",
       },
     ],
   },
 
   // ORDER ENDPOINTS
   {
-    path: '/api/orders',
-    method: 'GET',
-    controller: 'OrderController',
-    handler: 'handleListOrders',
-    description: 'List orders for authenticated user',
+    path: "/api/orders",
+    method: "GET",
+    controller: "OrderController",
+    handler: "handleListOrders",
+    description: "List orders for authenticated user",
     authenticated: true,
     responses: [
       {
         status: 200,
-        description: 'List of user orders',
+        description: "List of user orders",
       },
     ],
   },
   {
-    path: '/api/orders',
-    method: 'POST',
-    controller: 'OrderController',
-    handler: 'handleCreateOrder',
-    description: 'Create a new order',
+    path: "/api/orders",
+    method: "POST",
+    controller: "OrderController",
+    handler: "handleCreateOrder",
+    description: "Create a new order",
     authenticated: true,
     responses: [
       {
         status: 201,
-        description: 'Order created successfully',
+        description: "Order created successfully",
       },
     ],
   },
   {
-    path: '/api/orders/{id}',
-    method: 'GET',
-    controller: 'OrderController',
-    handler: 'handleGetOrder',
-    description: 'Get order details',
+    path: "/api/orders/{id}",
+    method: "GET",
+    controller: "OrderController",
+    handler: "handleGetOrder",
+    description: "Get order details",
     authenticated: true,
     parameters: [
       {
-        name: 'id',
-        in: 'path',
+        name: "id",
+        in: "path",
         required: true,
-        schema: { type: 'string' },
+        schema: { type: "string" },
       },
     ],
     responses: [
       {
         status: 200,
-        description: 'Order details',
+        description: "Order details",
       },
     ],
   },
 
   // MARKETPLACE
   {
-    path: '/api/marketplace',
-    method: 'GET',
-    controller: 'Marketplace',
-    handler: 'GET',
-    description: 'Get marketplace products and featured farms',
+    path: "/api/marketplace",
+    method: "GET",
+    controller: "Marketplace",
+    handler: "GET",
+    description: "Get marketplace products and featured farms",
     authenticated: false,
     responses: [
       {
         status: 200,
-        description: 'Marketplace data',
+        description: "Marketplace data",
       },
     ],
   },
@@ -625,7 +647,7 @@ const KNOWN_ENDPOINTS: ApiEndpoint[] = [
 // ============================================================================
 
 function generateOpenAPISpec(): any {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
 
   const paths: Record<string, any> = {};
   const tags = new Set<string>();
@@ -641,7 +663,7 @@ function generateOpenAPISpec(): any {
       tags: [endpoint.controller],
       summary: endpoint.handler,
       description: endpoint.description,
-      operationId: `${endpoint.method.toLowerCase()}_${endpoint.path.replace(/\//g, '_').replace(/[{}]/g, '')}`,
+      operationId: `${endpoint.method.toLowerCase()}_${endpoint.path.replace(/\//g, "_").replace(/[{}]/g, "")}`,
     };
 
     // Parameters
@@ -672,16 +694,16 @@ function generateOpenAPISpec(): any {
   }
 
   return {
-    openapi: '3.0.0',
+    openapi: "3.0.0",
     info: API_INFO,
     servers: [
       {
         url: baseUrl,
-        description: 'Production server',
+        description: "Production server",
       },
       {
-        url: 'http://localhost:3001',
-        description: 'Development server',
+        url: "http://localhost:3001",
+        description: "Development server",
       },
     ],
     tags: Array.from(tags).map((tag) => ({
@@ -692,36 +714,39 @@ function generateOpenAPISpec(): any {
     components: {
       securitySchemes: {
         bearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
-          description: 'JWT token from NextAuth',
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+          description: "JWT token from NextAuth",
         },
       },
       schemas: {
         ServiceResponse: {
-          type: 'object',
+          type: "object",
           properties: {
-            success: { type: 'boolean' },
-            data: { type: 'object' },
+            success: { type: "boolean" },
+            data: { type: "object" },
             error: {
-              type: 'object',
+              type: "object",
               properties: {
-                code: { type: 'string' },
-                message: { type: 'string' },
-                details: { type: 'object' },
+                code: { type: "string" },
+                message: { type: "string" },
+                details: { type: "object" },
               },
             },
             meta: {
-              type: 'object',
+              type: "object",
               properties: {
-                message: { type: 'string' },
-                timestamp: { type: 'string', format: 'date-time' },
+                message: { type: "string" },
+                timestamp: { type: "string", format: "date-time" },
                 agricultural: {
-                  type: 'object',
+                  type: "object",
                   properties: {
-                    season: { type: 'string', enum: ['SPRING', 'SUMMER', 'FALL', 'WINTER'] },
-                    consciousness: { type: 'string', example: 'DIVINE' },
+                    season: {
+                      type: "string",
+                      enum: ["SPRING", "SUMMER", "FALL", "WINTER"],
+                    },
+                    consciousness: { type: "string", example: "DIVINE" },
                   },
                 },
               },
@@ -738,7 +763,7 @@ function generateOpenAPISpec(): any {
 // ============================================================================
 
 function generatePostmanCollection(): any {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
 
   const folders: Record<string, any[]> = {};
 
@@ -753,14 +778,14 @@ function generatePostmanCollection(): any {
         method: endpoint.method,
         header: [
           {
-            key: 'Content-Type',
-            value: 'application/json',
+            key: "Content-Type",
+            value: "application/json",
           },
         ],
         url: {
           raw: `{{baseUrl}}${endpoint.path}`,
-          host: ['{{baseUrl}}'],
-          path: endpoint.path.split('/').filter(Boolean),
+          host: ["{{baseUrl}}"],
+          path: endpoint.path.split("/").filter(Boolean),
         },
         description: endpoint.description,
       },
@@ -768,14 +793,14 @@ function generatePostmanCollection(): any {
 
     if (endpoint.authenticated) {
       request.request.header.push({
-        key: 'Authorization',
-        value: 'Bearer {{token}}',
+        key: "Authorization",
+        value: "Bearer {{token}}",
       });
     }
 
     if (endpoint.requestBody) {
       request.request.body = {
-        mode: 'raw',
+        mode: "raw",
         raw: JSON.stringify({}, null, 2),
       };
     }
@@ -785,21 +810,21 @@ function generatePostmanCollection(): any {
 
   return {
     info: {
-      name: 'Farmers Market Platform API',
+      name: "Farmers Market Platform API",
       description: API_INFO.description,
       schema:
-        'https://schema.getpostman.com/json/collection/v2.1.0/collection.json',
+        "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     },
     variable: [
       {
-        key: 'baseUrl',
+        key: "baseUrl",
         value: baseUrl,
-        type: 'string',
+        type: "string",
       },
       {
-        key: 'token',
-        value: '',
-        type: 'string',
+        key: "token",
+        value: "",
+        type: "string",
       },
     ],
     item: Object.entries(folders).map(([name, items]) => ({
@@ -839,7 +864,7 @@ ${API_INFO.description}
     md += `- [${controller}](#${controller.toLowerCase()})\n`;
   }
 
-  md += '\n---\n\n';
+  md += "\n---\n\n";
 
   for (const [controller, endpoints] of controllers.entries()) {
     md += `## ${controller}\n\n`;
@@ -851,9 +876,9 @@ ${API_INFO.description}
       if (endpoint.authenticated) {
         md += `**Authentication**: Required`;
         if (endpoint.roles) {
-          md += ` (${endpoint.roles.join(', ')})`;
+          md += ` (${endpoint.roles.join(", ")})`;
         }
-        md += '\n\n';
+        md += "\n\n";
       }
 
       if (endpoint.parameters && endpoint.parameters.length > 0) {
@@ -861,16 +886,16 @@ ${API_INFO.description}
         md += `| Name | In | Type | Required | Description |\n`;
         md += `|------|-----|------|----------|-------------|\n`;
         for (const param of endpoint.parameters) {
-          md += `| \`${param.name}\` | ${param.in} | ${param.schema.type} | ${param.required ? 'Yes' : 'No'} | ${param.description || '-'} |\n`;
+          md += `| \`${param.name}\` | ${param.in} | ${param.schema.type} | ${param.required ? "Yes" : "No"} | ${param.description || "-"} |\n`;
         }
-        md += '\n';
+        md += "\n";
       }
 
       md += `**Responses**:\n\n`;
       for (const response of endpoint.responses) {
         md += `- **${response.status}**: ${response.description}\n`;
       }
-      md += '\n---\n\n';
+      md += "\n---\n\n";
     }
   }
 
@@ -882,7 +907,7 @@ ${API_INFO.description}
 // ============================================================================
 
 async function main() {
-  console.log('📚 Generating API Documentation...\n');
+  console.log("📚 Generating API Documentation...\n");
 
   // Create output directory
   if (!fs.existsSync(OUTPUT_DIR)) {
@@ -890,35 +915,37 @@ async function main() {
   }
 
   // Generate OpenAPI spec
-  console.log('✨ Generating OpenAPI 3.0 specification...');
+  console.log("✨ Generating OpenAPI 3.0 specification...");
   const openapi = generateOpenAPISpec();
   fs.writeFileSync(
-    path.join(OUTPUT_DIR, 'openapi.json'),
-    JSON.stringify(openapi, null, 2)
+    path.join(OUTPUT_DIR, "openapi.json"),
+    JSON.stringify(openapi, null, 2),
   );
   fs.writeFileSync(
-    path.join(OUTPUT_DIR, 'openapi.yaml'),
-    JSON.stringify(openapi, null, 2) // Can be converted to YAML with js-yaml
+    path.join(OUTPUT_DIR, "openapi.yaml"),
+    JSON.stringify(openapi, null, 2), // Can be converted to YAML with js-yaml
   );
-  console.log('✅ OpenAPI spec generated: docs/api/openapi.json\n');
+  console.log("✅ OpenAPI spec generated: docs/api/openapi.json\n");
 
   // Generate Postman collection
-  console.log('✨ Generating Postman collection...');
+  console.log("✨ Generating Postman collection...");
   const postman = generatePostmanCollection();
   fs.writeFileSync(
-    path.join(OUTPUT_DIR, 'postman-collection.json'),
-    JSON.stringify(postman, null, 2)
+    path.join(OUTPUT_DIR, "postman-collection.json"),
+    JSON.stringify(postman, null, 2),
   );
-  console.log('✅ Postman collection generated: docs/api/postman-collection.json\n');
+  console.log(
+    "✅ Postman collection generated: docs/api/postman-collection.json\n",
+  );
 
   // Generate Markdown docs
-  console.log('✨ Generating Markdown documentation...');
+  console.log("✨ Generating Markdown documentation...");
   const markdown = generateMarkdownDocs();
-  fs.writeFileSync(path.join(OUTPUT_DIR, 'API_REFERENCE.md'), markdown);
-  console.log('✅ Markdown docs generated: docs/api/API_REFERENCE.md\n');
+  fs.writeFileSync(path.join(OUTPUT_DIR, "API_REFERENCE.md"), markdown);
+  console.log("✅ Markdown docs generated: docs/api/API_REFERENCE.md\n");
 
   // Create index.html for Swagger UI
-  console.log('✨ Creating Swagger UI...');
+  console.log("✨ Creating Swagger UI...");
   const swaggerHTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -946,26 +973,26 @@ async function main() {
 </body>
 </html>`;
 
-  fs.writeFileSync(path.join(OUTPUT_DIR, 'index.html'), swaggerHTML);
-  console.log('✅ Swagger UI created: docs/api/index.html\n');
+  fs.writeFileSync(path.join(OUTPUT_DIR, "index.html"), swaggerHTML);
+  console.log("✅ Swagger UI created: docs/api/index.html\n");
 
   // Summary
-  console.log('🎉 API Documentation Generated Successfully!\n');
-  console.log('📁 Output Directory: docs/api/\n');
-  console.log('Generated Files:');
-  console.log('  - openapi.json (OpenAPI 3.0 specification)');
-  console.log('  - openapi.yaml (YAML format)');
-  console.log('  - postman-collection.json (Postman collection)');
-  console.log('  - API_REFERENCE.md (Markdown documentation)');
-  console.log('  - index.html (Swagger UI)\n');
-  console.log('🌐 View API Docs:');
-  console.log('  - Open docs/api/index.html in your browser');
-  console.log('  - Or run: npx serve docs/api\n');
-  console.log('🚀 Ready for frontend integration!\n');
+  console.log("🎉 API Documentation Generated Successfully!\n");
+  console.log("📁 Output Directory: docs/api/\n");
+  console.log("Generated Files:");
+  console.log("  - openapi.json (OpenAPI 3.0 specification)");
+  console.log("  - openapi.yaml (YAML format)");
+  console.log("  - postman-collection.json (Postman collection)");
+  console.log("  - API_REFERENCE.md (Markdown documentation)");
+  console.log("  - index.html (Swagger UI)\n");
+  console.log("🌐 View API Docs:");
+  console.log("  - Open docs/api/index.html in your browser");
+  console.log("  - Or run: npx serve docs/api\n");
+  console.log("🚀 Ready for frontend integration!\n");
 }
 
 // Run
 main().catch((error) => {
-  console.error('❌ Error generating API documentation:', error);
+  console.error("❌ Error generating API documentation:", error);
   process.exit(1);
 });

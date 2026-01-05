@@ -777,6 +777,36 @@ global.createTestOrder = (overrides = {}) => ({
 });
 
 // ============================================
+// REDIS CACHE QUANTUM MOCK
+// ============================================
+
+const mockRedisCache = {
+  get: jest.fn(),
+  set: jest.fn(),
+  delete: jest.fn(),
+  deletePattern: jest.fn(),
+  exists: jest.fn(),
+  ttl: jest.fn(),
+  getOrSet: jest.fn(),
+  increment: jest.fn(),
+  flushAll: jest.fn(),
+  disconnect: jest.fn(),
+};
+
+// Mock Redis cache module globally - use relative path like other mocks
+jest.mock(
+  "./src/lib/cache/redis",
+  () => ({
+    getRedisCache: jest.fn(() => mockRedisCache),
+    checkRedisHealth: jest.fn(async () => true),
+    RedisCacheService: jest.fn().mockImplementation(() => mockRedisCache),
+  }),
+  { virtual: true },
+);
+
+global.mockRedisCache = mockRedisCache;
+
+// ============================================
 // AGRICULTURAL CONSCIOUSNESS
 // ============================================
 console.log("🌾 Divine Test Environment Initialized");

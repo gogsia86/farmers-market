@@ -13,14 +13,14 @@
  * Or: tsx scripts/fix-nextauth.ts
  */
 
-import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { Pool } from "pg";
+import { PrismaClient } from "@prisma/client";
 import * as bcrypt from "bcryptjs";
+import chalk from "chalk";
+import { execSync } from "child_process";
 import * as fs from "fs";
 import * as path from "path";
-import { execSync } from "child_process";
-import chalk from "chalk";
+import { Pool } from "pg";
 
 const TEST_DATABASE_URL =
   process.env.DATABASE_URL ||
@@ -253,25 +253,48 @@ async function fixDatabaseAndUsers() {
       },
     });
 
-    // Create test users with correct passwords
+    // Get test password from environment (required for security)
+    const TEST_USER_PASSWORD = process.env.TEST_USER_PASSWORD;
+
+    if (!TEST_USER_PASSWORD) {
+      console.error(
+        chalk.red(
+          "\n❌ ERROR: TEST_USER_PASSWORD environment variable is required",
+        ),
+      );
+      console.log(chalk.yellow("\nUsage:"));
+      console.log(
+        chalk.cyan(
+          "  TEST_USER_PASSWORD=YourPassword123! npx tsx scripts/fix-nextauth.ts",
+        ),
+      );
+      console.log(
+        chalk.yellow(
+          "\nThis ensures test passwords are not hardcoded in the repository.\n",
+        ),
+      );
+      process.exit(1);
+    }
+
+    // Create test users with password from environment
     const testUsers = [
       {
         email: "admin@farmersmarket.app",
-        password: "DivineAdmin123!",
+        password: TEST_USER_PASSWORD,
         firstName: "Admin",
         lastName: "Test",
         role: "ADMIN" as const,
       },
       {
         email: "farmer@farmersmarket.app",
-        password: "DivineFarmer123!",
+        password: TEST_USER_PASSWORD,
         firstName: "John",
         lastName: "Farmer",
         role: "FARMER" as const,
       },
       {
         email: "customer@farmersmarket.app",
-        password: "DivineCustomer123!",
+        password: TEST_USER_PASSWORD,
         firstName: "Jane",
         lastName: "Customer",
         role: "CONSUMER" as const,
