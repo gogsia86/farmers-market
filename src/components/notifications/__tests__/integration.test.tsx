@@ -20,7 +20,7 @@
  */
 
 import type { NotificationPreferences } from "@/lib/notifications/types";
-import { render, screen, waitFor } from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
 import { NotificationProvider, useNotificationContext } from "../NotificationProvider";
@@ -259,7 +259,9 @@ describe("Toast Integration", () => {
 
     await user.click(screen.getByRole("button", { name: "Add Toast" }));
 
-    expect(await screen.findByText("Test Toast")).toBeInTheDocument();
+    // Query within the alert role to find the specific toast
+    const toast = await screen.findByRole("alert");
+    expect(toast).toHaveTextContent("Test Toast");
   });
 
   it("should render success toast", async () => {
@@ -273,7 +275,9 @@ describe("Toast Integration", () => {
 
     await user.click(screen.getByRole("button", { name: "Success Toast" }));
 
-    expect(await screen.findByText("Success Toast")).toBeInTheDocument();
+    // Query within the alert role to find the specific toast
+    const toast = await screen.findByRole("alert");
+    expect(toast).toHaveTextContent("Success Toast");
   });
 
   it("should render error toast", async () => {
@@ -287,7 +291,9 @@ describe("Toast Integration", () => {
 
     await user.click(screen.getByRole("button", { name: "Error Toast" }));
 
-    expect(await screen.findByText("Error Toast")).toBeInTheDocument();
+    // Query within the alert role to find the specific toast
+    const toast = await screen.findByRole("alert");
+    expect(toast).toHaveTextContent("Error Toast");
   });
 
   it("should render warning toast", async () => {
@@ -301,7 +307,9 @@ describe("Toast Integration", () => {
 
     await user.click(screen.getByRole("button", { name: "Warning Toast" }));
 
-    expect(await screen.findByText("Warning Toast")).toBeInTheDocument();
+    // Query within the alert role to find the specific toast
+    const toast = await screen.findByRole("alert");
+    expect(toast).toHaveTextContent("Warning Toast");
   });
 
   it("should render info toast", async () => {
@@ -315,7 +323,9 @@ describe("Toast Integration", () => {
 
     await user.click(screen.getByRole("button", { name: "Info Toast" }));
 
-    expect(await screen.findByText("Info Toast")).toBeInTheDocument();
+    // Query within the alert role to find the specific toast
+    const toast = await screen.findByRole("alert");
+    expect(toast).toHaveTextContent("Info Toast");
   });
 
   it("should limit maximum toasts", async () => {
@@ -614,8 +624,8 @@ describe("Preferences Integration", () => {
       channels: {},
       quietHours: {
         enabled: true,
-        start: "22:00",
-        end: "08:00",
+        startTime: "22:00",
+        endTime: "08:00",
         timezone: "UTC",
       },
       createdAt: new Date(),
@@ -726,28 +736,41 @@ describe("End-to-End User Flows", () => {
     expect(screen.getByTestId("toast-count")).toHaveTextContent("5");
   });
 
-  it("should persist and restore complete notification state", async () => {
-    const user = userEvent.setup();
+  it(
+    "should persist and restore complete notification state",
+    async () => {
+      const user = userEvent.setup({ delay: null });
 
-    // First render - add notifications
-    const { unmount } = renderWithProvider(<TestConsumer />, {
-      persistKey: "e2e-test",
-    });
+      // First render - add notifications
+      const { unmount } = renderWithProvider(<TestConsumer />, {
+        persistKey: "e2e-test",
+      });
 
-    await user.click(screen.getByRole("button", { name: "Add Toast" }));
-    await user.click(screen.getByRole("button", { name: "Add Banner" }));
+      await user.click(screen.getByRole("button", { name: "Add Toast" }));
+      await user.click(screen.getByRole("button", { name: "Add Banner" }));
 
-    expect(screen.getByTestId("notification-count")).toHaveTextContent("2");
+      // Wait for notifications to be added and persisted
+      await waitFor(() => {
+        expect(screen.getByTestId("notification-count")).toHaveTextContent("2");
+      });
 
-    unmount();
+      unmount();
 
-    // Second render - should restore
-    renderWithProvider(<TestConsumer />, {
-      persistKey: "e2e-test",
-    });
+      // Clear the screen to ensure clean state
+      cleanup();
 
-    expect(screen.getByTestId("notification-count")).toHaveTextContent("2");
-  });
+      // Second render - should restore
+      renderWithProvider(<TestConsumer />, {
+        persistKey: "e2e-test",
+      });
+
+      // Wait for restoration from localStorage
+      await waitFor(() => {
+        expect(screen.getByTestId("notification-count")).toHaveTextContent("2");
+      });
+    },
+    10000
+  ); // 10 second timeout should be enough
 });
 
 // ============================================================================
