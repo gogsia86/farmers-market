@@ -86,9 +86,7 @@ module.exports = {
           jsx: "react",
           esModuleInterop: true,
           allowSyntheticDefaultImports: true,
-          isolatedModules: true, // Moved from deprecated globals
         },
-        isolatedModules: true, // Faster compilation
         diagnostics: {
           ignoreCodes: [151001], // Ignore module resolution diagnostics
         },
