@@ -1,0 +1,852 @@
+# 🚫 NO OLD CODE POLICY - ZERO TOLERANCE
+# Farmers Market Platform - Modern Code Standards & Enforcement
+# Version: 4.0 - ABSOLUTE MODERNIZATION
+# Last Updated: January 2026
+
+## 🎯 CORE PRINCIPLE: ZERO TOLERANCE FOR OLD CODE
+
+**ABSOLUTE RULES**:
+- ❌ NO deprecated code
+- ❌ NO backward compatibility layers
+- ❌ NO legacy patterns
+- ❌ NO old APIs
+- ❌ NO dead code
+- ❌ NO polyfills (unless absolutely necessary for modern browsers)
+- ❌ NO "TODO: remove in future" comments
+- ❌ NO "DEPRECATED" markers - just delete it
+- ❌ NO "legacy" directories or files
+- ❌ NO "old" prefixes or suffixes
+- ❌ NO commented-out code blocks
+
+**PHILOSOPHY**: If it's old, remove it. If it's deprecated, delete it. If it's for backward compatibility, eliminate it.
+
+---
+
+## 📋 MANDATORY MODERN STANDARDS
+
+### JavaScript/TypeScript (2024+)
+
+#### ✅ USE (Modern)
+```typescript
+// ES2024+ Features
+import { something } from './module'              // ES modules only
+export const value = 1                            // Named exports
+export default function Component() {}            // Default exports
+const [state, setState] = useState()              // Hooks
+async/await                                       // Modern async
+?.                                                // Optional chaining
+??                                                // Nullish coalescing
+structuredClone()                                 // Deep cloning
+Object.hasOwn()                                   // Property checking
+Array.prototype.at()                              // Array access
+Array.prototype.toSorted()                        // Immutable sorting
+Array.prototype.toReversed()                      // Immutable reversing
+Array.prototype.with()                            // Immutable updates
+Array.prototype.findLast()                        // Array searching
+Array.prototype.findLastIndex()                   // Array searching
+Promise.allSettled()                              // Promise handling
+Promise.any()                                     // Promise racing
+String.prototype.replaceAll()                     // String manipulation
+crypto.randomUUID()                               // UUID generation
+AbortController / AbortSignal                     // Cancellation
+fetch API                                         // HTTP requests
+Headers / Request / Response                      // Web APIs
+```
+
+#### ❌ NEVER USE (Deprecated/Old)
+```typescript
+// FORBIDDEN - Delete on sight
+require()                                         // ❌ Use import
+module.exports                                    // ❌ Use export
+var                                               // ❌ Use const/let
+React.FC                                          // ❌ Use function
+React.FunctionComponent                           // ❌ Use function
+React.Component (class components)                // ❌ Use function components
+componentDidMount                                 // ❌ Use useEffect
+componentWillMount                                // ❌ Use useEffect
+componentWillReceiveProps                         // ❌ Use useEffect
+UNSAFE_* lifecycle methods                        // ❌ Delete immediately
+this.setState                                     // ❌ Use useState
+PropTypes                                         // ❌ Use TypeScript
+defaultProps                                      // ❌ Use default parameters
+createReactClass                                  // ❌ Use function
+React.createClass                                 // ❌ Use function
+_.debounce (lodash)                               // ❌ Use native/custom
+moment.js                                         // ❌ Use date-fns/dayjs
+new Date().getYear()                              // ❌ Use getFullYear()
+Object.prototype.hasOwnProperty                   // ❌ Use Object.hasOwn()
+Array.prototype.forEach (for side effects)        // ❌ Use for...of
+```
+
+### React Patterns (2024+)
+
+#### ✅ MODERN REACT
+```typescript
+// Server Components (Next.js 14+)
+export default async function Page() {
+  const data = await fetchData()
+  return <div>{data}</div>
+}
+
+// Client Components (when needed)
+'use client'
+import { useState } from 'react'
+
+export function Counter() {
+  const [count, setCount] = useState(0)
+  return <button onClick={() => setCount(count + 1)}>{count}</button>
+}
+
+// Modern Function Components
+export function Component({ title }: { title: string }) {
+  return <h1>{title}</h1>
+}
+
+// Modern Hooks
+import { useState, useEffect, useCallback, useMemo } from 'react'
+
+// Server Actions (Next.js 14+)
+'use server'
+export async function createItem(formData: FormData) {
+  const data = await database.item.create({ ... })
+  revalidatePath('/items')
+  return { success: true, data }
+}
+```
+
+#### ❌ OLD REACT PATTERNS
+```typescript
+// FORBIDDEN - Delete immediately
+
+// ❌ Class Components
+class Component extends React.Component {
+  render() { return <div/> }
+}
+
+// ❌ React.FC / React.FunctionComponent
+const Component: React.FC<Props> = (props) => { }
+
+// ❌ defaultProps
+Component.defaultProps = { title: 'Default' }
+
+// ❌ PropTypes
+Component.propTypes = { title: PropTypes.string }
+
+// ❌ Legacy Context API
+const ThemeContext = React.createContext()
+
+// ❌ Render Props Pattern (unless absolutely necessary)
+<DataProvider render={(data) => <div>{data}</div>} />
+
+// ❌ HOCs (Higher Order Components) - prefer hooks
+withAuth(Component)
+```
+
+### Next.js Patterns (Next.js 15+)
+
+#### ✅ MODERN NEXT.JS (App Router Only)
+```typescript
+// App Router (ONLY acceptable pattern)
+app/
+  layout.tsx                  // Root layout
+  page.tsx                    // Pages
+  loading.tsx                 // Loading states
+  error.tsx                   // Error boundaries
+  not-found.tsx              // 404 pages
+  api/
+    route.ts                  // API routes
+  [dynamic]/
+    page.tsx                  // Dynamic routes
+
+// Server Components (default)
+export default async function Page() {
+  const data = await fetch(...)
+  return <div>{data}</div>
+}
+
+// Client Components (explicit)
+'use client'
+export function InteractiveComponent() {}
+
+// Server Actions
+'use server'
+export async function submitForm(data: FormData) {}
+
+// Metadata API
+export const metadata = {
+  title: 'Page Title',
+  description: 'Description'
+}
+
+// Dynamic Metadata
+export async function generateMetadata({ params }) {
+  return { title: await getTitle(params.id) }
+}
+```
+
+#### ❌ OLD NEXT.JS PATTERNS
+```typescript
+// FORBIDDEN - Delete all Pages Router code
+
+// ❌ Pages Router (completely forbidden)
+pages/
+  _app.tsx                    // ❌ Delete
+  _document.tsx               // ❌ Delete
+  index.tsx                   // ❌ Migrate to app/page.tsx
+  api/                        // ❌ Migrate to app/api/route.ts
+  [id].tsx                    // ❌ Migrate to app/[id]/page.tsx
+
+// ❌ getServerSideProps
+export async function getServerSideProps(context) {} // ❌ Use Server Components
+
+// ❌ getStaticProps
+export async function getStaticProps(context) {} // ❌ Use Server Components
+
+// ❌ getInitialProps
+Component.getInitialProps = async (context) => {} // ❌ Use Server Components
+
+// ❌ next/head
+import Head from 'next/head' // ❌ Use Metadata API
+
+// ❌ next/script (old pattern)
+<Script strategy="beforeInteractive" /> // ❌ Use modern async/defer
+```
+
+### TypeScript Patterns (TypeScript 5.5+)
+
+#### ✅ MODERN TYPESCRIPT
+```typescript
+// Type-only imports
+import type { User } from './types'
+
+// Satisfies operator
+const config = { ... } satisfies Config
+
+// Const type parameters
+function makeArray<const T>(items: T[]) { }
+
+// Using keyword (disposables)
+using file = openFile('data.txt')
+
+// Template literal types
+type Route = `/api/${string}`
+
+// Branded types
+type UserId = string & { readonly brand: unique symbol }
+
+// Strict null checks (always enabled)
+const value: string | null = getValue()
+if (value !== null) { /* use value */ }
+
+// Unknown over any
+function process(data: unknown) {
+  if (typeof data === 'string') { /* use data as string */ }
+}
+
+// Const assertions
+const routes = ['home', 'about'] as const
+
+// Satisfies for complex types
+const theme = {
+  colors: { primary: '#000' }
+} satisfies Theme
+```
+
+#### ❌ OLD TYPESCRIPT PATTERNS
+```typescript
+// FORBIDDEN
+
+// ❌ Any type (except in rare cases with proper comment)
+function process(data: any) {} // ❌ Use unknown
+
+// ❌ Non-null assertion (except when absolutely necessary)
+const value = getValue()! // ❌ Use proper null checking
+
+// ❌ Type assertions as (prefer type guards)
+const user = data as User // ❌ Use type guard function
+
+// ❌ Namespace (use ES modules)
+namespace Utils { } // ❌ Use export
+
+// ❌ Module declaration (avoid if possible)
+declare module 'old-lib' { } // ❌ Use proper types
+
+// ❌ Triple-slash directives
+/// <reference path="..." /> // ❌ Use import
+
+// ❌ Old enum syntax (use const enum or union types)
+enum Status { } // ❌ Use const enum or union
+```
+
+### Database Patterns (Prisma 7+)
+
+#### ✅ MODERN DATABASE
+```typescript
+// Direct Prisma Client (no adapters in production)
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient({
+  log: ['error'],
+  datasources: {
+    db: { url: process.env.DATABASE_URL }
+  }
+})
+
+// Canonical import
+import { database } from '@/lib/database'
+
+// Type-safe queries
+const user = await database.user.findUnique({
+  where: { id },
+  select: { id: true, name: true }
+})
+
+// Modern Prisma 7 features
+await database.user.findMany({
+  relationLoadStrategy: 'join' // Prisma 7
+})
+```
+
+#### ❌ OLD DATABASE PATTERNS
+```typescript
+// FORBIDDEN
+
+// ❌ Adapters in serverless (causes issues)
+import { PrismaPg } from '@prisma/adapter-pg'
+const pool = new Pool({ ... })
+const adapter = new PrismaPg(pool)
+const prisma = new PrismaClient({ adapter })
+
+// ❌ Manual connection pooling
+const pool = new Pool({ ... })
+
+// ❌ Legacy imports
+import { prisma } from '@/lib/prisma' // ❌ Use @/lib/database
+
+// ❌ Raw queries (unless necessary)
+await prisma.$queryRaw`SELECT * FROM users` // ❌ Use type-safe methods
+
+// ❌ Prisma 5 patterns
+await prisma.user.findMany() // Missing Prisma 7 optimizations
+```
+
+### Styling Patterns (Tailwind CSS 4.0+)
+
+#### ✅ MODERN STYLING
+```typescript
+// Tailwind CSS classes (no CSS-in-JS)
+<div className="flex items-center gap-4 px-4 py-2" />
+
+// CSS modules (if needed)
+import styles from './Component.module.css'
+
+// CSS variables (modern)
+style={{ '--custom-var': value } as React.CSSProperties}
+
+// Tailwind arbitrary values
+<div className="w-[calc(100%-2rem)]" />
+
+// Tailwind container queries (v4+)
+<div className="@container">
+  <div className="@lg:grid-cols-2" />
+</div>
+```
+
+#### ❌ OLD STYLING PATTERNS
+```typescript
+// FORBIDDEN
+
+// ❌ Styled Components
+const Button = styled.button`` // ❌ Use Tailwind
+
+// ❌ Emotion
+import { css } from '@emotion/react' // ❌ Use Tailwind
+
+// ❌ Inline styles (except for dynamic values)
+<div style={{ color: 'red' }} /> // ❌ Use Tailwind
+
+// ❌ Legacy CSS
+.class { float: left; } // ❌ Use Flexbox/Grid
+
+// ❌ CSS preprocessors
+.scss, .sass, .less files // ❌ Use Tailwind or CSS modules
+```
+
+### Testing Patterns (Jest 29+, Vitest 2.0+)
+
+#### ✅ MODERN TESTING
+```typescript
+// Modern Jest/Vitest
+import { describe, it, expect } from 'vitest'
+
+describe('Component', () => {
+  it('renders correctly', () => {
+    expect(component).toBeTruthy()
+  })
+})
+
+// React Testing Library (modern patterns)
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+
+it('handles user interaction', async () => {
+  const user = userEvent.setup()
+  render(<Component />)
+  await user.click(screen.getByRole('button'))
+  await waitFor(() => {
+    expect(screen.getByText('Success')).toBeInTheDocument()
+  })
+})
+
+// Modern async testing
+it('fetches data', async () => {
+  const data = await fetchData()
+  expect(data).toBeDefined()
+})
+```
+
+#### ❌ OLD TESTING PATTERNS
+```typescript
+// FORBIDDEN
+
+// ❌ Enzyme
+import { shallow, mount } from 'enzyme' // ❌ Use Testing Library
+
+// ❌ Old async patterns
+it('test', (done) => {
+  async().then(() => done()) // ❌ Use async/await
+})
+
+// ❌ Legacy matchers
+expect(value).toBeTruthy() // Sometimes OK, but prefer specific matchers
+
+// ❌ Legacy setup
+beforeEach(function() { }) // ❌ Use arrow functions
+```
+
+---
+
+## 🔍 DETECTION & REMOVAL RULES
+
+### Automatic Detection Patterns
+
+**File-level Indicators**:
+```bash
+# Files that should NOT exist
+**/legacy/**/*
+**/old/**/*
+**/deprecated/**/*
+**/*.old.*
+**/*.deprecated.*
+**/*.backup.*
+**/*.bak
+**/*-old.*
+**/*-legacy.*
+**/*-deprecated.*
+
+# Patterns to search for deletion
+git grep -l "DEPRECATED"
+git grep -l "TODO.*remove"
+git grep -l "FIXME.*legacy"
+git grep -l "backward.compatibility"
+git grep -l "backwards.compatibility"
+```
+
+**Code-level Indicators**:
+```typescript
+// Search for these and DELETE
+require(                          // ❌ Old CommonJS
+module.exports                    // ❌ Old CommonJS
+var                               // ❌ Old variable declaration
+React.FC                          // ❌ Old React type
+React.Component                   // ❌ Old React pattern
+componentDidMount                 // ❌ Old lifecycle
+PropTypes                         // ❌ Old type checking
+defaultProps                      // ❌ Old default props
+getServerSideProps                // ❌ Old Next.js
+getStaticProps                    // ❌ Old Next.js
+getInitialProps                   // ❌ Old Next.js
+pages/                            // ❌ Old Next.js router
+styled-components                 // ❌ Old styling
+@emotion                          // ❌ Old styling
+enzyme                            // ❌ Old testing
+```
+
+### Removal Process
+
+**Step 1: Identify**
+```bash
+# Find all deprecated patterns
+git grep -n "DEPRECATED" | tee deprecated-files.txt
+git grep -n "TODO.*remove" | tee todo-remove.txt
+git grep -n "require(" src/ | tee requires.txt
+```
+
+**Step 2: Analyze**
+```bash
+# Check if code is actually used
+git grep -l "import.*OldComponent"
+git log --all -- path/to/file.ts # Check last modified
+```
+
+**Step 3: Remove**
+```bash
+# If unused, delete immediately
+git rm path/to/old-file.ts
+git commit -m "Remove deprecated [filename]"
+
+# If used, migrate first then delete
+# 1. Create new version
+# 2. Update all references
+# 3. Delete old version
+```
+
+---
+
+## 📦 PACKAGE.JSON MODERNIZATION
+
+### ✅ Modern Dependencies Only
+
+```json
+{
+  "dependencies": {
+    "next": "^15.0.0",                    // ✅ Latest Next.js
+    "react": "^19.0.0",                   // ✅ Latest React
+    "react-dom": "^19.0.0",               // ✅ Latest React DOM
+    "@prisma/client": "^7.0.0",           // ✅ Latest Prisma
+    "typescript": "^5.5.0",               // ✅ Latest TypeScript
+    "tailwindcss": "^4.0.0",              // ✅ Latest Tailwind
+    "date-fns": "^3.0.0",                 // ✅ Modern date library
+    "zod": "^3.23.0",                     // ✅ Modern validation
+    "stripe": "^16.0.0"                   // ✅ Latest Stripe
+  }
+}
+```
+
+### ❌ Forbidden Dependencies
+
+```json
+{
+  "dependencies": {
+    "moment": "*",                        // ❌ Deprecated, use date-fns
+    "lodash": "*",                        // ❌ Most not needed, use native
+    "underscore": "*",                    // ❌ Ancient, use native
+    "jquery": "*",                        // ❌ Ancient, not needed
+    "styled-components": "*",             // ❌ Use Tailwind
+    "@emotion/react": "*",                // ❌ Use Tailwind
+    "enzyme": "*",                        // ❌ Use Testing Library
+    "prop-types": "*",                    // ❌ Use TypeScript
+    "classnames": "*",                    // ❌ Use clsx or native
+    "react-router-dom": "*",              // ❌ Use Next.js router
+    "express": "*",                       // ❌ Use Next.js API routes
+    "body-parser": "*",                   // ❌ Use Next.js built-in
+    "cors": "*",                          // ❌ Use Next.js config
+    "dotenv": "*",                        // ❌ Use Next.js env
+    "nodemon": "*",                       // ❌ Use next dev
+    "babel-*": "*",                       // ❌ Next.js handles this
+    "webpack": "*"                        // ❌ Next.js handles this
+  }
+}
+```
+
+---
+
+## 🚫 FORBIDDEN PATTERNS CHECKLIST
+
+Run this checklist before every commit:
+
+### Code Quality Checks
+- [ ] No `require()` statements (except in config files)
+- [ ] No `module.exports` (except in config files)
+- [ ] No `var` declarations
+- [ ] No class components
+- [ ] No `React.FC` or `React.FunctionComponent`
+- [ ] No `defaultProps`
+- [ ] No `PropTypes`
+- [ ] No lifecycle methods (`componentDidMount`, etc.)
+- [ ] No `getServerSideProps` / `getStaticProps`
+- [ ] No Pages Router code (`pages/` directory)
+- [ ] No old Next.js patterns
+- [ ] No styled-components or Emotion
+- [ ] No moment.js
+- [ ] No unnecessary lodash
+- [ ] No `any` type (without justification)
+- [ ] No commented-out code blocks
+- [ ] No TODO markers about removing code
+- [ ] No DEPRECATED comments
+- [ ] No files with "legacy", "old", "deprecated" in name
+- [ ] No backward compatibility code
+
+### File Structure Checks
+- [ ] No `pages/` directory (use `app/`)
+- [ ] No `legacy/` directories
+- [ ] No `old/` directories
+- [ ] No `deprecated/` directories
+- [ ] No `.old`, `.bak`, `.backup` files
+- [ ] No `-old`, `-legacy` suffixed files
+
+### Import Checks
+- [ ] All imports use ES modules (`import`, not `require`)
+- [ ] All imports use canonical paths (`@/lib/database`, not `@/lib/prisma`)
+- [ ] Type imports use `import type` when possible
+- [ ] No wildcard imports unless necessary
+
+---
+
+## 🔄 MIGRATION STRATEGIES
+
+### React Class to Function Component
+
+**Before (DELETE THIS)**:
+```typescript
+class UserProfile extends React.Component<Props, State> {
+  state = { loading: false }
+
+  componentDidMount() {
+    this.fetchData()
+  }
+
+  fetchData = async () => {
+    this.setState({ loading: true })
+    const data = await api.fetchUser()
+    this.setState({ user: data, loading: false })
+  }
+
+  render() {
+    return <div>{this.state.user?.name}</div>
+  }
+}
+```
+
+**After (MODERN)**:
+```typescript
+export function UserProfile({ userId }: { userId: string }) {
+  const [loading, setLoading] = useState(false)
+  const [user, setUser] = useState<User | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true)
+      const data = await api.fetchUser(userId)
+      setUser(data)
+      setLoading(false)
+    }
+    fetchData()
+  }, [userId])
+
+  return <div>{user?.name}</div>
+}
+```
+
+### Next.js Pages to App Router
+
+**Before (DELETE THIS)**:
+```typescript
+// pages/products/[id].tsx
+export async function getServerSideProps(context) {
+  const product = await db.product.findUnique({
+    where: { id: context.params.id }
+  })
+  return { props: { product } }
+}
+
+export default function ProductPage({ product }) {
+  return <div>{product.name}</div>
+}
+```
+
+**After (MODERN)**:
+```typescript
+// app/products/[id]/page.tsx
+export default async function ProductPage({
+  params
+}: {
+  params: { id: string }
+}) {
+  const product = await database.product.findUnique({
+    where: { id: params.id }
+  })
+
+  return <div>{product.name}</div>
+}
+```
+
+---
+
+## 🎯 ENFORCEMENT MECHANISMS
+
+### Pre-commit Hook
+
+```bash
+#!/bin/bash
+# .husky/pre-commit
+
+echo "🔍 Checking for old/deprecated code..."
+
+# Check for forbidden patterns
+FORBIDDEN_PATTERNS=(
+  "require("
+  "module.exports"
+  "var "
+  "React.FC"
+  "React.Component"
+  "componentDidMount"
+  "getServerSideProps"
+  "getStaticProps"
+  "PropTypes"
+  "defaultProps"
+  "DEPRECATED"
+  "TODO.*remove"
+  "backward.compatibility"
+)
+
+for pattern in "${FORBIDDEN_PATTERNS[@]}"; do
+  if git diff --cached --name-only | xargs grep -l "$pattern" 2>/dev/null; then
+    echo "❌ FORBIDDEN: Found '$pattern' in staged files"
+    echo "   Remove this old/deprecated code before committing"
+    exit 1
+  fi
+done
+
+echo "✅ No old/deprecated code detected"
+```
+
+### ESLint Rules
+
+```json
+{
+  "rules": {
+    "no-var": "error",
+    "prefer-const": "error",
+    "prefer-arrow-callback": "error",
+    "prefer-template": "error",
+    "prefer-destructuring": "error",
+    "no-restricted-imports": ["error", {
+      "patterns": [{
+        "group": ["styled-components", "@emotion/*", "moment", "lodash"],
+        "message": "Use modern alternatives (Tailwind, date-fns, native)"
+      }]
+    }],
+    "no-restricted-syntax": ["error", {
+      "selector": "CallExpression[callee.name='require']",
+      "message": "Use ES6 import instead of require()"
+    }],
+    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-non-null-assertion": "warn",
+    "react/no-deprecated": "error",
+    "react/no-unsafe": "error"
+  }
+}
+```
+
+### GitHub Actions
+
+```yaml
+name: No Old Code Check
+on: [push, pull_request]
+jobs:
+  check-old-code:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for forbidden patterns
+        run: |
+          if grep -r "require(" src/; then
+            echo "❌ Found require() in src/"
+            exit 1
+          fi
+          if grep -r "React.FC" src/; then
+            echo "❌ Found React.FC"
+            exit 1
+          fi
+          # Add more checks...
+```
+
+---
+
+## 📚 LEARNING RESOURCES
+
+### Modern JavaScript/TypeScript
+- https://tc39.es/ecma262/ (ECMAScript spec)
+- https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-5.html
+
+### Modern React
+- https://react.dev/ (Official React docs - modern patterns only)
+- https://react.dev/learn/removing-effect-dependencies
+
+### Modern Next.js
+- https://nextjs.org/docs (App Router section only)
+- https://nextjs.org/docs/app/building-your-application/routing
+
+### Modern Testing
+- https://testing-library.com/docs/react-testing-library/intro/
+- https://vitest.dev/guide/
+
+---
+
+## ✅ SUCCESS CRITERIA
+
+Your code is modern if:
+- ✅ Zero ESLint warnings about deprecated features
+- ✅ Zero TypeScript errors
+- ✅ All tests pass
+- ✅ No `require()` in source code
+- ✅ No class components
+- ✅ No `React.FC`
+- ✅ No `getServerSideProps` / `getStaticProps`
+- ✅ Only App Router code (no Pages Router)
+- ✅ All dependencies are latest stable versions
+- ✅ No files with "legacy", "old", "deprecated" in names
+- ✅ No TODO comments about removing code
+- ✅ Pre-commit hooks pass
+- ✅ CI/CD passes all modern code checks
+
+---
+
+## 🚨 ZERO TOLERANCE POLICY
+
+**If you see it, delete it**:
+1. See deprecated code → Delete immediately
+2. See TODO to remove → Remove now, not later
+3. See backward compatibility → Eliminate
+4. See old pattern → Modernize immediately
+5. See commented code → Delete
+6. See legacy file → Migrate and delete
+
+**No excuses**:
+- "It still works" → Not good enough, modernize it
+- "It's used in production" → Migrate, then delete
+- "We might need it later" → You won't, delete it
+- "It's for backward compatibility" → Remove it
+- "I'll fix it later" → Fix it now
+
+---
+
+## 🎓 PHILOSOPHY
+
+> "The best code is no code. The second best is modern code. Old code is technical debt."
+
+**Core Beliefs**:
+1. **Modern code is maintainable code**
+2. **Deprecated code is broken code**
+3. **Backward compatibility is forward impediment**
+4. **Delete > Refactor > Keep**
+5. **If it's old, it's wrong**
+
+**Benefits**:
+- ✅ Easier onboarding (no legacy patterns to learn)
+- ✅ Faster development (modern tools are faster)
+- ✅ Better performance (modern APIs are optimized)
+- ✅ Smaller bundle sizes (no old dependencies)
+- ✅ Fewer bugs (modern patterns are safer)
+- ✅ Better TypeScript support (modern features)
+- ✅ Future-proof codebase
+
+---
+
+**VERSION**: 4.0 - ABSOLUTE MODERNIZATION
+**STATUS**: ✅ ENFORCED - ZERO TOLERANCE
+**LAST REVIEW**: January 2026
+**NEXT REVIEW**: Every sprint
+
+*"In the pursuit of agricultural divinity, we eliminate the old harvest to make way for the new growth."* 🌱
