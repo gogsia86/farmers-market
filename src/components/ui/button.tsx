@@ -17,10 +17,10 @@ const buttonVariants = cva(
         destructive:
           "bg-red-500 text-white hover:bg-red-600 shadow-sm",
         outline:
-          "border border-gray-300 bg-background hover:bg-gray-50 hover:border-gray-400",
+          "border border-gray-300 bg-background text-gray-700 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-900",
         secondary:
           "bg-gray-100 text-gray-900 hover:bg-gray-200 shadow-sm",
-        ghost: "hover:bg-gray-100 hover:text-gray-900",
+        ghost: "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
         link: "text-primary underline-offset-4 hover:underline",
         agricultural:
           "bg-green-600 text-white hover:bg-green-700 shadow-sm hover:shadow-md",

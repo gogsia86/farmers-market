@@ -109,6 +109,12 @@ const config: Config = {
         "slide-in": "slideIn 0.5s ease-out",
         "slide-up": "slideUp 0.5s ease-out",
         "bounce-slow": "bounce 3s infinite",
+        // Loading animations
+        "shimmer": "shimmer 2s infinite",
+        "shimmer-sweep": "shimmerSweep 2s infinite",
+        "wave": "wave 1.5s infinite",
+        "wave-sweep": "waveSweep 1.5s infinite",
+        "progress-indeterminate": "progressIndeterminate 1.5s ease-in-out infinite",
       },
       keyframes: {
         fadeIn: {
@@ -122,6 +128,30 @@ const config: Config = {
         slideUp: {
           "0%": { transform: "translateY(100%)", opacity: "0" },
           "100%": { transform: "translateY(0)", opacity: "1" },
+        },
+        // Loading keyframes
+        shimmer: {
+          "0%": { opacity: "0.5" },
+          "50%": { opacity: "1" },
+          "100%": { opacity: "0.5" },
+        },
+        shimmerSweep: {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" },
+        },
+        wave: {
+          "0%": { opacity: "0.6" },
+          "50%": { opacity: "1" },
+          "100%": { opacity: "0.6" },
+        },
+        waveSweep: {
+          "0%": { transform: "translateX(-100%)" },
+          "50%": { transform: "translateX(100%)" },
+          "100%": { transform: "translateX(100%)" },
+        },
+        progressIndeterminate: {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" },
         },
       },
       boxShadow: {

@@ -12,12 +12,23 @@ import Stripe from "stripe";
 import { z } from "zod";
 
 // ============================================================================
-// Initialize Stripe
+// Lazy Stripe Initialization
 // ============================================================================
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  apiVersion: "2025-12-15.clover" as any,
-});
+let stripeInstance: Stripe | null = null;
+
+function getStripe(): Stripe {
+  if (!stripeInstance) {
+    const apiKey = process.env.STRIPE_SECRET_KEY;
+    if (!apiKey) {
+      throw new Error("STRIPE_SECRET_KEY environment variable is not set");
+    }
+    stripeInstance = new Stripe(apiKey, {
+      apiVersion: "2025-12-15.clover" as any,
+    });
+  }
+  return stripeInstance;
+}
 
 // ============================================================================
 // Validation Schemas
@@ -404,6 +415,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
           : Math.round((refund.amount || 0) * 100); // Convert to cents
 
         // Process refund through Stripe
+        const stripe = getStripe();
         const stripeRefund = await stripe.refunds.create({
           payment_intent: order.Payment.stripePaymentIntentId,
           amount: refundAmount,

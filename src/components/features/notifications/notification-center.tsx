@@ -2,11 +2,32 @@
  * 🔔 Notification Center Component - Divine User Notification System
  * Real-time notification display with proper API integration
  * Following: 04_NEXTJS_DIVINE_IMPLEMENTATION & 11_KILO_SCALE_ARCHITECTURE
+ *
+ * @version 2.0.0 - Framer Motion Integration
+ * Features:
+ * - List animations with stagger effects
+ * - Filter/sort transitions
+ * - Mark as read animations
+ * - Empty state animations
+ * - Loading state animations
+ * - Accessibility with reduced motion support
  */
 
 "use client";
 
+import {
+  emptyStateVariants,
+  filterTransitionVariants,
+  getAccessibleListVariants,
+  listContainerVariants,
+  listItemVariants,
+  markAsReadVariants,
+  skeletonVariants,
+  staggerTransition,
+} from "@/components/notifications/animations/list-animations";
+import { useReducedMotion } from "@/components/notifications/hooks/useReducedMotion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 // ============================================================================
@@ -80,6 +101,10 @@ export function NotificationCenter({
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [markingAsRead, setMarkingAsRead] = useState<string | null>(null);
+
+  // Animation support
+  const prefersReducedMotion = useReducedMotion();
 
   // Fetch notifications
   const fetchNotifications = async (options?: { unreadOnly?: boolean; page?: number }) => {
@@ -124,6 +149,8 @@ export function NotificationCenter({
   // Mark notification as read
   const markAsRead = async (notificationId: string) => {
     try {
+      setMarkingAsRead(notificationId);
+
       const response = await fetch(`/api/notifications/${notificationId}`, {
         method: "PATCH",
         headers: {
@@ -135,17 +162,24 @@ export function NotificationCenter({
       const data: ApiResponse<{ id: string; isRead: boolean }> = await response.json();
 
       if (data.success) {
-        setNotifications((prev) =>
-          prev.map((notif) =>
-            notif.id === notificationId
-              ? { ...notif, isRead: true, readAt: new Date().toISOString() }
-              : notif
-          )
-        );
-        setUnreadCount((prev) => Math.max(0, prev - 1));
+        // Delay state update to allow animation to complete
+        setTimeout(() => {
+          setNotifications((prev) =>
+            prev.map((notif) =>
+              notif.id === notificationId
+                ? { ...notif, isRead: true, readAt: new Date().toISOString() }
+                : notif
+            )
+          );
+          setUnreadCount((prev) => Math.max(0, prev - 1));
+          setMarkingAsRead(null);
+        }, prefersReducedMotion ? 0 : 300);
+      } else {
+        setMarkingAsRead(null);
       }
     } catch (err) {
       console.error("Failed to mark notification as read:", err);
+      setMarkingAsRead(null);
     }
   };
 
@@ -242,6 +276,15 @@ export function NotificationCenter({
     filter === "all" ? true : !notif.isRead
   );
 
+  // Animation variants
+  const containerVariants = prefersReducedMotion
+    ? getAccessibleListVariants(true)
+    : listContainerVariants;
+
+  const itemVariants = prefersReducedMotion
+    ? getAccessibleListVariants(true)
+    : listItemVariants;
+
   // Loading state
   if (loading && notifications.length === 0) {
     return (
@@ -250,9 +293,14 @@ export function NotificationCenter({
           <CardTitle>🔔 Notifications</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-center py-8">
+          <motion.div
+            className="flex items-center justify-center py-8"
+            variants={skeletonVariants}
+            initial="initial"
+            animate="pulse"
+          >
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          </div>
+          </motion.div>
         </CardContent>
       </Card>
     );
@@ -327,15 +375,21 @@ export function NotificationCenter({
 
       <CardContent>
         {/* Filter Tabs */}
-        <div className="flex gap-2 mb-4 border-b border-gray-200">
+        <motion.div
+          className="flex gap-2 mb-4 border-b border-gray-200"
+          variants={filterTransitionVariants}
+          initial="initial"
+          animate="filtered"
+          key={filter}
+        >
           <button
             onClick={() => {
               setFilter("all");
               setPage(1);
             }}
             className={`px-4 py-2 text-sm font-medium transition ${filter === "all"
-                ? "border-b-2 border-blue-600 text-blue-600"
-                : "text-gray-600 hover:text-gray-900"
+              ? "border-b-2 border-blue-600 text-blue-600"
+              : "text-gray-600 hover:text-gray-900"
               }`}
           >
             All ({notifications.length})
@@ -346,78 +400,105 @@ export function NotificationCenter({
               setPage(1);
             }}
             className={`px-4 py-2 text-sm font-medium transition ${filter === "unread"
-                ? "border-b-2 border-blue-600 text-blue-600"
-                : "text-gray-600 hover:text-gray-900"
+              ? "border-b-2 border-blue-600 text-blue-600"
+              : "text-gray-600 hover:text-gray-900"
               }`}
           >
             Unread ({unreadCount})
           </button>
-        </div>
+        </motion.div>
 
         {/* Notifications List */}
         {filteredNotifications.length === 0 ? (
-          <div className="text-center py-8">
+          <motion.div
+            className="text-center py-8"
+            variants={emptyStateVariants}
+            initial="initial"
+            animate="animate"
+          >
             <p className="text-gray-500">
               {filter === "unread"
                 ? "No unread notifications"
                 : "No notifications yet"}
             </p>
-          </div>
+          </motion.div>
         ) : (
-          <div className="space-y-3 max-h-96 overflow-y-auto">
-            {filteredNotifications.map((notification) => {
-              const icon = getNotificationIcon(notification.type);
-              const color = getNotificationColor(notification.type);
+          <motion.div
+            className="space-y-3 max-h-96 overflow-y-auto"
+            variants={containerVariants}
+            initial="initial"
+            animate="animate"
+          >
+            <AnimatePresence mode="popLayout">
+              {filteredNotifications.map((notification, index) => {
+                const icon = getNotificationIcon(notification.type);
+                const color = getNotificationColor(notification.type);
+                const isBeingMarked = markingAsRead === notification.id;
 
-              return (
-                <div
-                  key={notification.id}
-                  onClick={() => !notification.isRead && markAsRead(notification.id)}
-                  className={`p-4 rounded-lg border-l-4 transition cursor-pointer ${notification.isRead
+                return (
+                  <motion.div
+                    key={notification.id}
+                    variants={isBeingMarked ? markAsReadVariants : itemVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    layout
+                    transition={{
+                      ...staggerTransition,
+                      delay: prefersReducedMotion ? 0 : index * 0.05,
+                    }}
+                    onClick={() => !notification.isRead && !isBeingMarked && markAsRead(notification.id)}
+                    className={`p-4 rounded-lg border-l-4 transition cursor-pointer ${notification.isRead
                       ? "bg-gray-50 border-gray-300"
                       : `bg-${color}-50 border-${color}-500 hover:bg-${color}-100`
-                    }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <span className="text-2xl flex-shrink-0">{icon}</span>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2">
+                      } ${isBeingMarked ? "opacity-50" : ""}`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <span className="text-2xl flex-shrink-0">{icon}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2">
+                          <p
+                            className={`font-semibold ${notification.isRead ? "text-gray-700" : "text-gray-900"
+                              }`}
+                          >
+                            {notification.title}
+                          </p>
+                          {!notification.isRead && (
+                            <motion.span
+                              className="flex-shrink-0 w-2 h-2 bg-blue-600 rounded-full mt-1.5"
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              exit={{ scale: 0 }}
+                            />
+                          )}
+                        </div>
                         <p
-                          className={`font-semibold ${notification.isRead ? "text-gray-700" : "text-gray-900"
+                          className={`text-sm mt-1 ${notification.isRead ? "text-gray-600" : "text-gray-700"
                             }`}
                         >
-                          {notification.title}
+                          {notification.body}
                         </p>
-                        {!notification.isRead && (
-                          <span className="flex-shrink-0 w-2 h-2 bg-blue-600 rounded-full mt-1.5"></span>
+                        <p className="text-xs text-gray-500 mt-2">
+                          {new Date(notification.createdAt).toLocaleString()}
+                        </p>
+
+                        {/* Action Button (if applicable) */}
+                        {notification.data?.actionUrl && (
+                          <a
+                            href={notification.data.actionUrl}
+                            className={`inline-block mt-3 text-sm font-medium text-${color}-700 hover:text-${color}-900`}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            View Details →
+                          </a>
                         )}
                       </div>
-                      <p
-                        className={`text-sm mt-1 ${notification.isRead ? "text-gray-600" : "text-gray-700"
-                          }`}
-                      >
-                        {notification.body}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-2">
-                        {new Date(notification.createdAt).toLocaleString()}
-                      </p>
-
-                      {/* Action Button (if applicable) */}
-                      {notification.data?.actionUrl && (
-                        <a
-                          href={notification.data.actionUrl}
-                          className={`inline-block mt-3 text-sm font-medium text-${color}-700 hover:text-${color}-900`}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          View Details →
-                        </a>
-                      )}
                     </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </motion.div>
         )}
 
         {/* Pagination */}

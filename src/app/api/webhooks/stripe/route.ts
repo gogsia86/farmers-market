@@ -12,14 +12,31 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
 // ============================================================================
-// Initialize Stripe
+// Lazy Stripe Initialization
 // ============================================================================
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  apiVersion: "2025-12-15.clover",
-});
+let stripeInstance: Stripe | null = null;
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || "";
+function getStripe(): Stripe {
+  if (!stripeInstance) {
+    const apiKey = process.env.STRIPE_SECRET_KEY;
+    if (!apiKey) {
+      throw new Error("STRIPE_SECRET_KEY environment variable is not set");
+    }
+    stripeInstance = new Stripe(apiKey, {
+      apiVersion: "2025-12-15.clover",
+    });
+  }
+  return stripeInstance;
+}
+
+function getWebhookSecret(): string {
+  const secret = process.env.STRIPE_WEBHOOK_SECRET;
+  if (!secret) {
+    throw new Error("STRIPE_WEBHOOK_SECRET environment variable is not set");
+  }
+  return secret;
+}
 
 // ============================================================================
 // POST /api/webhooks/stripe
@@ -42,6 +59,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Verify webhook signature
     let event: Stripe.Event;
     try {
+      const stripe = getStripe();
+      const webhookSecret = getWebhookSecret();
       event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
     } catch (err) {
       console.error("Webhook signature verification failed:", err);
@@ -428,9 +447,6 @@ async function handlePaymentIntentCreated(
 // Configuration
 // ============================================================================
 
-// Disable body parsing, need raw body for webhook signature verification
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+// Note: Body parsing is automatically disabled for webhook routes in Next.js App Router
+// The raw request body is accessed via request.text() which is the correct approach
+// for Stripe webhook signature verification.

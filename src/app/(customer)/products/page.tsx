@@ -16,8 +16,11 @@
  * Route: /products
  */
 
+import { CompactAddToCartButton } from "@/components/features/products/add-to-cart-button";
+import { auth } from "@/lib/auth";
 import { productService } from "@/lib/services/product.service";
 import type { ProductCategory } from "@prisma/client";
+import type { Metadata } from "next";
 import Link from "next/link";
 
 /**
@@ -59,6 +62,7 @@ const PRODUCT_CATEGORIES: { value: ProductCategory; label: string; icon: string 
  * 🌾 PRODUCTS BROWSE PAGE
  */
 export default async function ProductsPage({ searchParams }: PageProps) {
+  const session = await auth();
   const page = parseInt(searchParams.page || "1", 10);
   const limit = 24;
 
@@ -270,26 +274,39 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                 <span className="font-medium">{total}</span> products
               </p>
 
-              {/* Sort Dropdown */}
+              {/* Sort Links */}
               <div className="flex items-center gap-2">
-                <label htmlFor="sort" className="text-sm text-gray-700">
-                  Sort by:
-                </label>
-                <select
-                  id="sort"
-                  value={`${searchParams.sort || "createdAt"}-${searchParams.order || "desc"}`}
-                  onChange={(e) => {
-                    const [sort, order] = e.target.value.split("-");
-                    window.location.href = buildFilterUrl({ sort, order, page: "1" });
-                  }}
-                  className="rounded-md border-gray-300 text-sm shadow-sm focus:border-green-500 focus:ring-green-500"
-                >
-                  <option value="createdAt-desc">Newest First</option>
-                  <option value="price-asc">Price: Low to High</option>
-                  <option value="price-desc">Price: High to Low</option>
-                  <option value="name-asc">Name: A to Z</option>
-                  <option value="popularity-desc">Most Popular</option>
-                </select>
+                <span className="text-sm text-gray-700">Sort by:</span>
+                <div className="flex gap-2">
+                  <Link
+                    href={buildFilterUrl({ sort: "createdAt", order: "desc", page: "1" })}
+                    className={`rounded-md px-3 py-1 text-sm ${(!searchParams.sort || searchParams.sort === "createdAt") &&
+                      (!searchParams.order || searchParams.order === "desc")
+                      ? "bg-green-600 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      }`}
+                  >
+                    Newest
+                  </Link>
+                  <Link
+                    href={buildFilterUrl({ sort: "price", order: "asc", page: "1" })}
+                    className={`rounded-md px-3 py-1 text-sm ${searchParams.sort === "price" && searchParams.order === "asc"
+                      ? "bg-green-600 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      }`}
+                  >
+                    Price ↑
+                  </Link>
+                  <Link
+                    href={buildFilterUrl({ sort: "price", order: "desc", page: "1" })}
+                    className={`rounded-md px-3 py-1 text-sm ${searchParams.sort === "price" && searchParams.order === "desc"
+                      ? "bg-green-600 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      }`}
+                  >
+                    Price ↓
+                  </Link>
+                </div>
               </div>
             </div>
 
@@ -385,7 +402,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                           {product.description}
                         </p>
 
-                        {/* Price */}
+                        {/* Price and Add to Cart */}
                         <div className="mt-3 flex items-baseline justify-between">
                           <div>
                             <span className="text-2xl font-bold text-gray-900">
@@ -395,6 +412,14 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                               / {product.unit}
                             </span>
                           </div>
+
+                          <CompactAddToCartButton
+                            productId={product.id}
+                            productName={product.name}
+                            price={Number(product.price)}
+                            availableStock={product.quantityAvailable ? Number(product.quantityAvailable) : 0}
+                            userId={session?.user?.id}
+                          />
                         </div>
 
                         {/* Stock Status */}
@@ -525,7 +550,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
 /**
  * 📄 METADATA
  */
-export const metadata = {
+export const metadata: Metadata = {
   title: "Browse Products | Farmers Market",
   description:
     "Discover fresh, locally-grown products from farms in your area",

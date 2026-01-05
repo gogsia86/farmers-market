@@ -7,9 +7,10 @@
 import { CreateFarmForm } from "@/components/features/farms/create-farm-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { auth } from "@/lib/auth";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Create Farm | Farmers Market Platform",
   description: "Register your farm on the platform",
 };

@@ -17,6 +17,7 @@
  * Route: /products/[slug]
  */
 
+import { AddToCartButton } from "@/components/features/products/add-to-cart-button";
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
 import { productService } from "@/lib/services/product.service";
@@ -289,29 +290,16 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
             {/* Add to Cart Button */}
             <div className="mt-8">
-              {inStock ? (
-                <button
-                  disabled={!session}
-                  className="w-full rounded-lg bg-green-600 px-6 py-3 text-lg font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
-                >
-                  {session ? "🛒 Add to Cart" : "Sign in to Purchase"}
-                </button>
-              ) : (
-                <button
-                  disabled
-                  className="w-full rounded-lg bg-gray-300 px-6 py-3 text-lg font-semibold text-gray-500 cursor-not-allowed"
-                >
-                  Out of Stock
-                </button>
-              )}
-              {!session && (
-                <p className="mt-2 text-center text-sm text-gray-600">
-                  <Link href="/auth/signin" className="text-green-600 hover:text-green-700">
-                    Sign in
-                  </Link>{" "}
-                  to add items to your cart
-                </p>
-              )}
+              <AddToCartButton
+                productId={product.id}
+                productName={product.name}
+                price={Number(product.price)}
+                unit={product.unit}
+                availableStock={quantity}
+                userId={session?.user?.id}
+                showQuantitySelector={true}
+                size="lg"
+              />
             </div>
 
             {/* Farm Information */}

@@ -98,6 +98,16 @@ export const cacheGroups = {
 };
 
 /**
+ * Externals Configuration
+ * Exclude packages that shouldn't be bundled (server-only, native modules)
+ */
+export const externalsConfig = {
+  // Exclude Bull queue from build (Redis dependency, server-only)
+  'bull': 'commonjs bull',
+  'ioredis': 'commonjs ioredis',
+};
+
+/**
  * Get optimized Terser configuration
  * Preserves function names and handles __name correctly
  *
@@ -206,6 +216,14 @@ export function configureWebpack(config, { dev, isServer }) {
         ...config.optimization,
         ...getOptimizationConfig(),
       };
+    }
+  }
+
+  // Server-side externals (exclude Bull queue from build)
+  if (isServer) {
+    config.externals = config.externals || [];
+    if (Array.isArray(config.externals)) {
+      config.externals.push(externalsConfig);
     }
   }
 

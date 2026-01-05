@@ -248,7 +248,6 @@ export class NotificationService {
       console.log(`📱 SMS queued for ${notification.user.phone.substring(notification.user.phone.length - 4)}`);
     } catch (error) {
       console.error("Failed to queue SMS:", error);
-      throw error;
     }
   }
 
@@ -266,10 +265,10 @@ export class NotificationService {
     try {
       // Queue push notification for background processing
       await enqueuePush({
-        userId: notification.userId,
+        userId: notification.userId || "",
         title: notification.title,
         body: notification.body,
-        data: notification.data as Record<string, string> | undefined,
+        data: notification.data as Record<string, any> | undefined,
         notificationId: notification.id,
         priority: this.getPushPriority(notification.type),
       });
@@ -277,7 +276,6 @@ export class NotificationService {
       console.log(`🔔 Push notification queued for user ${notification.userId}`);
     } catch (error) {
       console.error("Failed to queue push notification:", error);
-      throw error;
     }
   }
 

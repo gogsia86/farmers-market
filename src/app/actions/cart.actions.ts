@@ -27,6 +27,56 @@ export interface ActionResponse<T = any> {
 }
 
 // ============================================================================
+// SERIALIZATION HELPERS
+// ============================================================================
+
+/**
+ * Convert Decimal objects to numbers for client components
+ * Next.js cannot pass Prisma Decimal objects to client components
+ */
+function serializeDecimal(value: any): any {
+  if (value && typeof value === 'object' && 'toNumber' in value) {
+    return value.toNumber();
+  }
+  return value;
+}
+
+function serializeCartSummary(summary: CartSummary): CartSummary {
+  return {
+    ...summary,
+    items: summary.items.map((item) => ({
+      ...item,
+      quantity: serializeDecimal(item.quantity),
+      priceAtAdd: serializeDecimal(item.priceAtAdd),
+      product: {
+        ...item.product,
+        price: serializeDecimal(item.product.price),
+        compareAtPrice: item.product.compareAtPrice ? serializeDecimal(item.product.compareAtPrice) : null,
+        quantityAvailable: item.product.quantityAvailable ? serializeDecimal(item.product.quantityAvailable) : null,
+        lowStockThreshold: item.product.lowStockThreshold ? serializeDecimal(item.product.lowStockThreshold) : null,
+        averageRating: item.product.averageRating ? serializeDecimal(item.product.averageRating) : null,
+      },
+    })),
+    farmGroups: summary.farmGroups.map((group) => ({
+      ...group,
+      items: group.items.map((item) => ({
+        ...item,
+        quantity: serializeDecimal(item.quantity),
+        priceAtAdd: serializeDecimal(item.priceAtAdd),
+        product: {
+          ...item.product,
+          price: serializeDecimal(item.product.price),
+          compareAtPrice: item.product.compareAtPrice ? serializeDecimal(item.product.compareAtPrice) : null,
+          quantityAvailable: item.product.quantityAvailable ? serializeDecimal(item.product.quantityAvailable) : null,
+          lowStockThreshold: item.product.lowStockThreshold ? serializeDecimal(item.product.lowStockThreshold) : null,
+          averageRating: item.product.averageRating ? serializeDecimal(item.product.averageRating) : null,
+        },
+      })),
+    })),
+  } as CartSummary;
+}
+
+// ============================================================================
 // CART ACTIONS
 // ============================================================================
 
@@ -192,7 +242,7 @@ export async function getCartSummaryAction(
 
     return {
       success: true,
-      data: summary,
+      data: serializeCartSummary(summary),
     };
   } catch (error) {
     console.error("Get cart summary error:", error);

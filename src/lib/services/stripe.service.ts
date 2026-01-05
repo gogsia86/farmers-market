@@ -4,17 +4,28 @@
 import Stripe from "stripe";
 
 // ============================================================================
-// STRIPE CONFIGURATION
+// LAZY STRIPE INITIALIZATION
 // ============================================================================
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error("STRIPE_SECRET_KEY environment variable is not set");
-}
+let stripeInstance: Stripe | null = null;
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2025-12-15.clover",
-  typescript: true,
-});
+/**
+ * Get Stripe instance with lazy initialization
+ * Prevents build-time failures when API key is not available
+ */
+function getStripe(): Stripe {
+  if (!stripeInstance) {
+    const apiKey = process.env.STRIPE_SECRET_KEY;
+    if (!apiKey) {
+      throw new Error("STRIPE_SECRET_KEY environment variable is not set");
+    }
+    stripeInstance = new Stripe(apiKey, {
+      apiVersion: "2025-12-15.clover",
+      typescript: true,
+    });
+  }
+  return stripeInstance;
+}
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -80,10 +91,11 @@ export interface WebhookEventResult {
 // ============================================================================
 
 export class QuantumStripeService {
-  private readonly stripe: Stripe;
-
-  constructor() {
-    this.stripe = stripe;
+  /**
+   * Get Stripe instance (lazy initialization)
+   */
+  private getStripeInstance(): Stripe {
+    return getStripe();
   }
 
   // ==========================================================================
@@ -114,7 +126,7 @@ export class QuantumStripeService {
     const amountInCents = Math.round(amount * 100);
 
     // Create payment intent
-    const paymentIntent = await this.stripe.paymentIntents.create({
+    const paymentIntent = await this.getStripeInstance().paymentIntents.create({
       amount: amountInCents,
       currency,
       description,
@@ -154,7 +166,7 @@ export class QuantumStripeService {
       confirmParams.payment_method = paymentMethodId;
     }
 
-    const paymentIntent = await this.stripe.paymentIntents.confirm(
+    const paymentIntent = await this.getStripeInstance().paymentIntents.confirm(
       paymentIntentId,
       confirmParams
     );
@@ -166,7 +178,7 @@ export class QuantumStripeService {
    * 📊 Get payment intent status
    */
   async getPaymentStatus(paymentIntentId: string): Promise<PaymentStatus> {
-    const paymentIntent = await this.stripe.paymentIntents.retrieve(
+    const paymentIntent = await this.getStripeInstance().paymentIntents.retrieve(
       paymentIntentId
     );
 
@@ -198,7 +210,7 @@ export class QuantumStripeService {
       updateParams.description = updates.description;
     }
 
-    const paymentIntent = await this.stripe.paymentIntents.update(
+    const paymentIntent = await this.getStripeInstance().paymentIntents.update(
       paymentIntentId,
       updateParams
     );
@@ -210,7 +222,7 @@ export class QuantumStripeService {
    * ❌ Cancel payment intent
    */
   async cancelPaymentIntent(paymentIntentId: string): Promise<PaymentStatus> {
-    const paymentIntent = await this.stripe.paymentIntents.cancel(
+    const paymentIntent = await this.getStripeInstance().paymentIntents.cancel(
       paymentIntentId
     );
 
@@ -230,7 +242,7 @@ export class QuantumStripeService {
     const { paymentIntentId, amount, reason, metadata = {} } = request;
 
     // Get payment intent to get charge ID
-    const paymentIntent = await this.stripe.paymentIntents.retrieve(
+    const paymentIntent = await this.getStripeInstance().paymentIntents.retrieve(
       paymentIntentId
     );
 
@@ -260,7 +272,7 @@ export class QuantumStripeService {
       refundParams.reason = reason;
     }
 
-    const refund = await this.stripe.refunds.create(refundParams);
+    const refund = await this.getStripeInstance().refunds.create(refundParams);
 
     return {
       refundId: refund.id,
@@ -274,7 +286,7 @@ export class QuantumStripeService {
    * 📊 Get refund status
    */
   async getRefundStatus(refundId: string): Promise<RefundPaymentResult> {
-    const refund = await this.stripe.refunds.retrieve(refundId);
+    const refund = await this.getStripeInstance().refunds.retrieve(refundId);
 
     return {
       refundId: refund.id,
@@ -296,7 +308,7 @@ export class QuantumStripeService {
     name?: string;
     metadata?: Record<string, string>;
   }): Promise<string> {
-    const customer = await this.stripe.customers.create({
+    const customer = await this.getStripeInstance().customers.create({
       email: params.email,
       name: params.name,
       metadata: params.metadata,
@@ -314,7 +326,7 @@ export class QuantumStripeService {
     userId?: string;
   }): Promise<string> {
     // Search for existing customer
-    const customers = await this.stripe.customers.list({
+    const customers = await this.getStripeInstance().customers.list({
       email: params.email,
       limit: 1,
     });
@@ -337,7 +349,7 @@ export class QuantumStripeService {
    * 💳 Get customer payment methods
    */
   async getCustomerPaymentMethods(customerId: string): Promise<Stripe.PaymentMethod[]> {
-    const paymentMethods = await this.stripe.paymentMethods.list({
+    const paymentMethods = await this.getStripeInstance().paymentMethods.list({
       customer: customerId,
       type: "card",
     });
@@ -358,7 +370,7 @@ export class QuantumStripeService {
     webhookSecret: string
   ): Stripe.Event {
     try {
-      return this.stripe.webhooks.constructEvent(
+      return this.getStripeInstance().webhooks.constructEvent(
         payload,
         signature,
         webhookSecret

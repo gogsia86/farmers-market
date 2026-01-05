@@ -11,7 +11,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 /**
- * Create order validation schema
+ * Create order validation schema (legacy format - single farm)
  */
 const CreateOrderSchema = z.object({
   farmId: z.string().min(1, "Farm ID is required"),
@@ -33,6 +33,49 @@ const CreateOrderSchema = z.object({
   }),
   deliveryInstructions: z.string().optional(),
   paymentMethod: z.string().min(1, "Payment method is required"),
+});
+
+/**
+ * Checkout order validation schema (supports multiple farms)
+ */
+const CheckoutOrderSchema = z.object({
+  userId: z.string().cuid(),
+  shippingAddress: z.object({
+    fullName: z.string().min(1, "Full name is required"),
+    phone: z.string().min(1, "Phone is required"),
+    street: z.string().min(1, "Street is required"),
+    street2: z.string().optional(),
+    city: z.string().min(1, "City is required"),
+    state: z.string().min(1, "State is required"),
+    zipCode: z.string().min(5, "ZIP code is required"),
+    country: z.string().min(2, "Country is required"),
+  }),
+  deliveryInfo: z.object({
+    preferredDate: z.string(),
+    preferredTime: z.string(),
+    deliveryInstructions: z.string().optional(),
+  }),
+  paymentMethod: z.object({
+    method: z.enum(["card", "wallet"]),
+    saveCard: z.boolean().optional(),
+  }),
+  cartItems: z
+    .array(
+      z.object({
+        productId: z.string().cuid(),
+        farmId: z.string().cuid(),
+        quantity: z.number().positive(),
+        priceAtPurchase: z.number().positive(),
+      })
+    )
+    .min(1, "Cart must have at least one item"),
+  totals: z.object({
+    subtotal: z.number(),
+    deliveryFee: z.number(),
+    platformFee: z.number(),
+    tax: z.number(),
+    total: z.number(),
+  }),
 });
 
 /**
@@ -133,7 +176,7 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/orders
- * Create a new order
+ * Create a new order (supports both checkout wizard and legacy format)
  */
 export async function POST(request: NextRequest) {
   try {
@@ -168,50 +211,111 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
-    // Validate request
-    const validation = CreateOrderSchema.safeParse(body);
-    if (!validation.success) {
+    // Try checkout format first (from checkout wizard)
+    const checkoutValidation = CheckoutOrderSchema.safeParse(body);
+    if (checkoutValidation.success) {
+      const orderData = checkoutValidation.data;
+
+      // Verify user ID matches session
+      if (orderData.userId !== session.user.id) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: {
+              code: "AUTHORIZATION_ERROR",
+              message: "User ID mismatch",
+            },
+          },
+          { status: 403 }
+        );
+      }
+
+      // Create orders from checkout (supports multiple farms)
+      const orders = await orderService.createOrderFromCheckout(orderData);
+
+      if (!orders || orders.length === 0) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: {
+              code: "ORDER_CREATION_FAILED",
+              message: "Failed to create orders",
+            },
+          },
+          { status: 500 }
+        );
+      }
+
       return NextResponse.json(
         {
-          success: false,
-          error: {
-            code: "VALIDATION_ERROR",
-            message: "Invalid order data",
-            details: validation.error.format(),
+          success: true,
+          data: {
+            orderId: orders[0]?.id,
+            orderNumber: orders[0]?.orderNumber,
+            orders: orders.map((o) => ({
+              id: o.id,
+              orderNumber: o.orderNumber,
+              farmId: o.farmId,
+              total: o.total,
+            })),
+          },
+          meta: {
+            timestamp: new Date().toISOString(),
+            message: `${orders.length} order${orders.length > 1 ? "s" : ""} created successfully`,
           },
         },
-        { status: 400 }
+        { status: 201 }
       );
     }
 
-    const orderData = validation.data;
+    // Fall back to legacy format (single farm)
+    const legacyValidation = CreateOrderSchema.safeParse(body);
+    if (legacyValidation.success) {
+      const orderData = legacyValidation.data;
 
-    // Create order
-    const order = await orderService.createOrder({
-      customerId: session.user.id,
-      farmId: orderData.farmId,
-      items: orderData.items,
-      deliveryAddress: {
-        street: orderData.deliveryAddress.street,
-        city: orderData.deliveryAddress.city,
-        state: orderData.deliveryAddress.state,
-        zipCode: orderData.deliveryAddress.zipCode,
-        country: orderData.deliveryAddress.country || "US",
-      },
-      deliveryInstructions: orderData.deliveryInstructions,
-      paymentMethod: orderData.paymentMethod,
-    });
+      // Create order (legacy format)
+      const order = await orderService.createOrder({
+        customerId: session.user.id,
+        farmId: orderData.farmId,
+        items: orderData.items,
+        deliveryAddress: {
+          street: orderData.deliveryAddress.street,
+          city: orderData.deliveryAddress.city,
+          state: orderData.deliveryAddress.state,
+          zipCode: orderData.deliveryAddress.zipCode,
+          country: orderData.deliveryAddress.country || "US",
+        },
+        deliveryInstructions: orderData.deliveryInstructions,
+        paymentMethod: orderData.paymentMethod,
+      });
 
+      return NextResponse.json(
+        {
+          success: true,
+          data: order,
+          meta: {
+            timestamp: new Date().toISOString(),
+            message: "Order created successfully",
+          },
+        },
+        { status: 201 }
+      );
+    }
+
+    // Both validations failed
     return NextResponse.json(
       {
-        success: true,
-        data: order,
-        meta: {
-          timestamp: new Date().toISOString(),
-          message: "Order created successfully",
+        success: false,
+        error: {
+          code: "VALIDATION_ERROR",
+          message: "Invalid order data format",
+          details: {
+            checkout: checkoutValidation.error.format(),
+            legacy: legacyValidation.error.format(),
+          },
         },
       },
-      { status: 201 }
+      { status: 400 }
     );
   } catch (error) {
     console.error("POST /api/orders error:", error);

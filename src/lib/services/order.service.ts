@@ -41,6 +41,45 @@ export interface CreateOrderRequest {
 }
 
 /**
+ * Checkout order request type (supports multiple farms)
+ */
+export interface CheckoutOrderRequest {
+  userId: string;
+  shippingAddress: {
+    fullName: string;
+    phone: string;
+    street: string;
+    street2?: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+  };
+  deliveryInfo: {
+    preferredDate: string;
+    preferredTime: string;
+    deliveryInstructions?: string;
+  };
+  paymentMethod: {
+    method: "card" | "wallet";
+    saveCard?: boolean;
+  };
+  cartItems: Array<{
+    productId: string;
+    farmId: string;
+    quantity: number;
+    priceAtPurchase: number;
+  }>;
+  totals: {
+    subtotal: number;
+    deliveryFee: number;
+    platformFee: number;
+    tax: number;
+    total: number;
+  };
+}
+
+/**
  * Update order request type
  */
 export interface UpdateOrderRequest {
@@ -604,6 +643,261 @@ class OrderService extends BaseService {
   }
 
   /**
+   * 🛒 CREATE ORDER FROM CHECKOUT
+   * Creates orders from checkout wizard (supports multiple farms)
+   */
+  async createOrderFromCheckout(
+    request: CheckoutOrderRequest
+  ): Promise<OrderWithRelations[]> {
+    return this.withQuantumTransaction(async (tx) => {
+      // Validate cart items
+      if (!request.cartItems || request.cartItems.length === 0) {
+        throw new ValidationError("Cart is empty", "cartItems");
+      }
+
+      // Validate all products are still available
+      await this.validateCheckoutItems(request.cartItems);
+
+      // Group items by farm
+      const ordersByFarm = this.groupCartItemsByFarm(request.cartItems);
+
+      // Generate base order number
+      const baseOrderNumber = this.generateCheckoutOrderNumber();
+
+      const createdOrders: OrderWithRelations[] = [];
+      let orderIndex = 0;
+
+      // Create order for each farm
+      for (const [farmId, items] of Object.entries(ordersByFarm)) {
+        orderIndex++;
+
+        // Calculate farm-specific totals
+        const farmTotals = this.calculateCheckoutFarmTotals(
+          items,
+          request.totals
+        );
+
+        // Create order
+        const order = await tx.order.create({
+          data: {
+            orderNumber:
+              ordersByFarm.size > 1
+                ? `${baseOrderNumber}-${orderIndex}`
+                : baseOrderNumber,
+            customerId: request.userId,
+            farmId,
+            status: "PENDING",
+            paymentStatus: "PENDING",
+            subtotal: farmTotals.subtotal,
+            deliveryFee: farmTotals.deliveryFee,
+            platformFee: farmTotals.platformFee,
+            tax: farmTotals.tax,
+            total: farmTotals.total,
+            farmerAmount: farmTotals.farmerAmount,
+            fulfillmentMethod: "DELIVERY",
+            shippingAddress: request.shippingAddress as any,
+            specialInstructions: request.deliveryInfo.deliveryInstructions,
+            scheduledDate: new Date(request.deliveryInfo.preferredDate),
+            scheduledTimeSlot: request.deliveryInfo.preferredTime,
+          },
+          include: {
+            customer: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
+            farm: {
+              select: {
+                id: true,
+                name: true,
+                phone: true,
+                email: true,
+              },
+            },
+            items: {
+              include: {
+                product: {
+                  select: {
+                    id: true,
+                    name: true,
+                    images: true,
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        // Create order items
+        await this.createCheckoutOrderItems(tx, order.id, items);
+
+        // Update product inventory
+        for (const item of items) {
+          await tx.product.update({
+            where: { id: item.productId },
+            data: {
+              quantityAvailable: {
+                decrement: item.quantity,
+              },
+              purchaseCount: {
+                increment: 1,
+              },
+            },
+          });
+        }
+
+        // Update farm metrics
+        await tx.farm.update({
+          where: { id: farmId },
+          data: {
+            totalOrdersCount: {
+              increment: 1,
+            },
+            totalRevenueUSD: {
+              increment: Number(farmTotals.total),
+            },
+          },
+        });
+
+        createdOrders.push(order);
+      }
+
+      // Clear user's cart
+      await tx.cartItem.deleteMany({
+        where: { userId: request.userId },
+      });
+
+      this.log("info", "Orders created from checkout", {
+        userId: request.userId,
+        orderCount: createdOrders.length,
+        total: request.totals.total,
+      });
+
+      return createdOrders;
+    });
+  }
+
+  /**
+   * Validate checkout items availability
+   * @private
+   */
+  private async validateCheckoutItems(
+    items: CheckoutOrderRequest["cartItems"]
+  ) {
+    for (const item of items) {
+      const product = await database.product.findUnique({
+        where: { id: item.productId },
+        select: { id: true, status: true, quantityAvailable: true },
+      });
+
+      if (!product || product.status !== "ACTIVE") {
+        throw new ValidationError(
+          `Product ${item.productId} is no longer available`,
+          "cartItems"
+        );
+      }
+
+      if (
+        product.quantityAvailable !== null &&
+        Number(product.quantityAvailable) < item.quantity
+      ) {
+        throw new ValidationError(
+          `Insufficient stock for product ${item.productId}`,
+          "cartItems"
+        );
+      }
+    }
+  }
+
+  /**
+   * Group cart items by farm
+   * @private
+   */
+  private groupCartItemsByFarm(items: CheckoutOrderRequest["cartItems"]) {
+    const groups = new Map<string, CheckoutOrderRequest["cartItems"]>();
+
+    for (const item of items) {
+      if (!groups.has(item.farmId)) {
+        groups.set(item.farmId, []);
+      }
+      groups.get(item.farmId)!.push(item);
+    }
+
+    return groups;
+  }
+
+  /**
+   * Calculate farm-specific totals from checkout
+   * @private
+   */
+  private calculateCheckoutFarmTotals(
+    items: CheckoutOrderRequest["cartItems"],
+    totalTotals: CheckoutOrderRequest["totals"]
+  ) {
+    const subtotal = items.reduce(
+      (sum, item) => sum + item.priceAtPurchase * item.quantity,
+      0
+    );
+
+    // Proportional fees if multiple farms
+    const proportion = subtotal / totalTotals.subtotal;
+    const deliveryFee = totalTotals.deliveryFee * proportion;
+    const platformFee = subtotal * 0.15; // 15% platform fee
+    const tax = (subtotal + deliveryFee) * 0.08; // 8% tax
+    const total = subtotal + deliveryFee + platformFee + tax;
+    const farmerAmount = subtotal - platformFee;
+
+    return {
+      subtotal,
+      deliveryFee,
+      platformFee,
+      tax,
+      total,
+      farmerAmount,
+    };
+  }
+
+  /**
+   * Create order items from checkout
+   * @private
+   */
+  private async createCheckoutOrderItems(
+    tx: Prisma.TransactionClient,
+    orderId: string,
+    items: CheckoutOrderRequest["cartItems"]
+  ) {
+    // Fetch product details
+    const productIds = items.map((item) => item.productId);
+    const products = await tx.product.findMany({
+      where: { id: { in: productIds } },
+      select: { id: true, name: true, unit: true },
+    });
+
+    const productMap = new Map(products.map((p) => [p.id, p]));
+
+    const orderItems = items.map((item) => {
+      const product = productMap.get(item.productId);
+      return {
+        orderId,
+        productId: item.productId,
+        productName: product?.name || "Unknown Product",
+        quantity: item.quantity,
+        unit: product?.unit || "unit",
+        unitPrice: item.priceAtPurchase,
+        subtotal: item.priceAtPurchase * item.quantity,
+        productSnapshot: product as any,
+      };
+    });
+
+    await tx.orderItem.createMany({
+      data: orderItems,
+    });
+  }
+
+  /**
    * Get logger instance (for testing)
    * Wraps the log method for test compatibility
    */
@@ -613,6 +907,16 @@ class OrderService extends BaseService {
       warn: (message: string, meta?: any) => this.log("warn", message, meta),
       error: (message: string, meta?: any) => this.log("error", message, meta),
     };
+  }
+
+  /**
+   * Generate order number for checkout
+   * @private
+   */
+  private generateCheckoutOrderNumber(): string {
+    const timestamp = Date.now().toString(36).toUpperCase();
+    const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+    return `FM${timestamp}${random}`;
   }
 
   /**
