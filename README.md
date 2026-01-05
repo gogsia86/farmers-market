@@ -23,9 +23,12 @@
 
 This repository has been professionally organized for enterprise standards:
 
-- **Documentation**: See [PROJECT_STRUCTURE_COMPLETE.md](PROJECT_STRUCTURE_COMPLETE.md) for complete structure
-- **Quick Start**: See [QUICK_START.md](QUICK_START.md) to get started immediately
+- **Quick Start**: See [docs/developer-quickstart.md](docs/developer-quickstart.md) to get started in 5 minutes
+- **Onboarding**: See [docs/onboarding-checklist.md](docs/onboarding-checklist.md) for new developer onboarding
+- **Dependencies**: See [docs/dependencies.md](docs/dependencies.md) for complete dependency documentation
+- **Architecture**: See [docs/feature-directory-migration-plan.md](docs/feature-directory-migration-plan.md) for architecture patterns
 - **Contributing**: See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines
+- **Complete Structure**: See [PROJECT_STRUCTURE_COMPLETE.md](PROJECT_STRUCTURE_COMPLETE.md) for full repository structure
 - **Historical Docs**: See [docs/archive/2024-2025-retrospective/](docs/archive/2024-2025-retrospective/) for past work
 
 ### 🎯 What Makes This Platform Special?
@@ -1098,4 +1101,3 @@ The assistant is not chatty. The assistant is not verbose. The assistant is an *
 🧠 **[SYSTEM]** :: NEURAL INTEGRATION SYSTEM DOCUMENTED
 ⚡ **READY FOR** :: TERMINAL EXECUTION MODE
 🌾 **AGRICULTURAL** :: CONSCIOUSNESS ACTIVE
-
