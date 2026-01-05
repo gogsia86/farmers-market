@@ -1,0 +1,235 @@
+name: Prevent Backup Files
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - main
+      - master
+      - develop
+      - phase-*
+
+jobs:
+  check-backup-files:
+    name: Check for Backup Files
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for backup and temporary files
+        id: check-files
+        run: |
+          echo "🔍 Scanning for backup and temporary files..."
+
+          # Define patterns to search for
+          PATTERNS=(
+            "*.backup"
+            "*.bak"
+            "*.old"
+            "*.orig"
+            "*.tmp"
+            "*.temp"
+            "*~"
+            "*.swp"
+            "*.swo"
+            ".DS_Store"
+            "Thumbs.db"
+            "desktop.ini"
+          )
+
+          FOUND_FILES=()
+
+          # Search for each pattern
+          for pattern in "${PATTERNS[@]}"; do
+            while IFS= read -r file; do
+              # Exclude node_modules and other common directories
+              if [[ ! "$file" =~ node_modules ]] && \
+                 [[ ! "$file" =~ .next ]] && \
+                 [[ ! "$file" =~ .git ]] && \
+                 [[ ! "$file" =~ dist ]] && \
+                 [[ ! "$file" =~ build ]]; then
+                FOUND_FILES+=("$file")
+              fi
+            done < <(find . -type f -name "$pattern" 2>/dev/null || true)
+          done
+
+          # Check if any files were found
+          if [ ${#FOUND_FILES[@]} -eq 0 ]; then
+            echo "✅ No backup or temporary files found!"
+            echo "status=success" >> $GITHUB_OUTPUT
+            exit 0
+          else
+            echo "❌ Found ${#FOUND_FILES[@]} backup/temporary file(s):"
+            echo ""
+            for file in "${FOUND_FILES[@]}"; do
+              echo "  - $file"
+            done
+            echo ""
+            echo "status=failure" >> $GITHUB_OUTPUT
+            echo "count=${#FOUND_FILES[@]}" >> $GITHUB_OUTPUT
+
+            # Save found files for comment
+            printf '%s\n' "${FOUND_FILES[@]}" > /tmp/found_files.txt
+            exit 1
+          fi
+
+      - name: Comment on PR (if backup files found)
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+
+            let foundFiles = [];
+            try {
+              const content = fs.readFileSync('/tmp/found_files.txt', 'utf8');
+              foundFiles = content.trim().split('\n').filter(f => f.length > 0);
+            } catch (error) {
+              foundFiles = ['Unable to read file list'];
+            }
+
+            const fileList = foundFiles.map(f => `- \`${f}\``).join('\n');
+
+            const body = `## ⚠️ Backup Files Detected
+
+            This PR contains backup or temporary files that should not be committed to the repository.
+
+            ### Files Found (${foundFiles.length}):
+            ${fileList}
+
+            ### Action Required:
+            Please remove these files and update your PR:
+
+            \`\`\`bash
+            # Remove specific files
+            git rm ${foundFiles.join(' ')}
+
+            # Or use git clean (be careful!)
+            git clean -fd
+
+            # Commit the changes
+            git commit -m "chore: remove backup files"
+            git push
+            \`\`\`
+
+            ### Prevention:
+            Add these patterns to your \`.gitignore\`:
+            \`\`\`
+            # Backup files
+            *.backup
+            *.bak
+            *.old
+            *.orig
+            *.tmp
+            *.temp
+            *~
+            *.swp
+            *.swo
+
+            # OS files
+            .DS_Store
+            Thumbs.db
+            desktop.ini
+            \`\`\`
+
+            ---
+            🤖 This check is automated. If you believe this is a false positive, please contact the development team.`;
+
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+      - name: Fail workflow if backup files found
+        if: steps.check-files.outputs.status == 'failure'
+        run: |
+          echo "❌ Workflow failed: Backup files detected"
+          echo ""
+          echo "Please remove the backup files listed above and push the changes."
+          echo "This ensures our repository stays clean and professional."
+          exit 1
+
+  check-gitignore:
+    name: Verify .gitignore Rules
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check .gitignore for backup patterns
+        run: |
+          echo "🔍 Checking .gitignore for backup file patterns..."
+
+          REQUIRED_PATTERNS=(
+            "*.backup"
+            "*.bak"
+            "*.old"
+            "*.tmp"
+            "*~"
+            "*.swp"
+          )
+
+          MISSING_PATTERNS=()
+
+          if [ ! -f .gitignore ]; then
+            echo "❌ No .gitignore file found!"
+            exit 1
+          fi
+
+          for pattern in "${REQUIRED_PATTERNS[@]}"; do
+            if ! grep -q "^$pattern" .gitignore 2>/dev/null; then
+              MISSING_PATTERNS+=("$pattern")
+            fi
+          done
+
+          if [ ${#MISSING_PATTERNS[@]} -eq 0 ]; then
+            echo "✅ All recommended backup patterns are in .gitignore"
+          else
+            echo "⚠️  Warning: Missing ${#MISSING_PATTERNS[@]} recommended pattern(s) in .gitignore:"
+            for pattern in "${MISSING_PATTERNS[@]}"; do
+              echo "  - $pattern"
+            done
+            echo ""
+            echo "Consider adding these patterns to prevent backup files from being committed."
+            # Don't fail the workflow, just warn
+            exit 0
+          fi
+
+  summary:
+    name: Summary
+    runs-on: ubuntu-latest
+    needs: [check-backup-files, check-gitignore]
+    if: always()
+
+    steps:
+      - name: Generate summary
+        run: |
+          echo "## 🧹 Backup File Check Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ needs.check-backup-files.result }}" == "success" ]; then
+            echo "✅ **No backup files detected**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "The repository is clean and professional. Great work! 🎉" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Backup files detected**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Please remove backup files before merging. See the PR comment for details." >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Why This Matters" >> $GITHUB_STEP_SUMMARY
+          echo "- 🎯 Keeps repository clean and professional" >> $GITHUB_STEP_SUMMARY
+          echo "- 📦 Reduces repository size" >> $GITHUB_STEP_SUMMARY
+          echo "- 🔒 Prevents accidental exposure of old/sensitive data" >> $GITHUB_STEP_SUMMARY
+          echo "- 🚀 Improves code review clarity" >> $GITHUB_STEP_SUMMARY
+          echo "- ✨ Maintains divine agricultural consciousness" >> $GITHUB_STEP_SUMMARY
