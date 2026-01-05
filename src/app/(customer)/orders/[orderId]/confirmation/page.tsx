@@ -4,6 +4,7 @@
  * Following: 04_NEXTJS_DIVINE_IMPLEMENTATION & 10_AGRICULTURAL_FEATURE_PATTERNS
  */
 
+import { OrderConfirmationTracking } from "@/components/orders/OrderConfirmationTracking";
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
 import { formatCurrency } from "@/lib/utils/currency";
@@ -83,6 +84,21 @@ export default async function OrderConfirmationPage({ params }: PageProps) {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-green-50 to-white py-12">
+      {/* Analytics Tracking */}
+      <OrderConfirmationTracking
+        orderId={order.id}
+        orderNumber={order.orderNumber}
+        totalValue={Number(order.total)}
+        tax={Number(order.tax || 0)}
+        shipping={Number(order.deliveryFee || 0)}
+        items={order.items.map(item => ({
+          productId: item.productId,
+          productName: item.productName,
+          price: Number(item.unitPrice),
+          quantity: Number(item.quantity),
+        }))}
+      />
+
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         {/* Success Header */}
         <div className="mb-8 text-center">

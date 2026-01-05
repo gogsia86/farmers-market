@@ -103,7 +103,7 @@ export default async function FarmDetailsPage({ params }: PageProps) {
   // Calculate statistics
   const activeProducts = farm.products.filter((p) => p.status === "ACTIVE").length;
   const totalRevenue = farm.orders
-    .filter((o) => ["DELIVERED", "COMPLETED"].includes(o.status))
+    .filter((o) => ["COMPLETED", "COMPLETED"].includes(o.status))
     .reduce((sum, order) => sum + Number(order.total), 0);
 
   const inventoryValue = farm.products.reduce((sum, product) => {
@@ -151,7 +151,7 @@ export default async function FarmDetailsPage({ params }: PageProps) {
   };
 
   // Parse operating hours if exists
-  const operatingHours = farm.operatingHours as any;
+  const operatingHours = null as any;
 
   return (
     <main className="min-h-screen bg-gray-50 py-8">
@@ -181,7 +181,7 @@ export default async function FarmDetailsPage({ params }: PageProps) {
                 </span>
                 <span className="flex items-center">
                   <Eye className="mr-1.5 h-4 w-4" />
-                  {farm.viewsCount || 0} views
+                  {farm.reviewCount || 0} views
                 </span>
               </div>
             </div>
@@ -236,9 +236,9 @@ export default async function FarmDetailsPage({ params }: PageProps) {
                   Your farm verification was rejected. Please review the feedback and update
                   your farm information. Contact support if you need assistance.
                 </p>
-                {farm.verificationNotes && (
+                {farm.rejectionReason && (
                   <p className="mt-2 text-sm text-red-800 font-medium">
-                    Reason: {farm.verificationNotes}
+                    Reason: {farm.rejectionReason}
                   </p>
                 )}
               </div>
@@ -351,25 +351,11 @@ export default async function FarmDetailsPage({ params }: PageProps) {
                     <p className="text-sm font-medium text-gray-500">
                       Farming Practices
                     </p>
-                    <p className="mt-1 text-sm text-gray-900">{farm.farmingPractices}</p>
-                  </div>
-                )}
-
-                {farm.certifications && Array.isArray(farm.certifications) && farm.certifications.length > 0 && (
-                  <div>
-                    <p className="text-sm font-medium text-gray-500 mb-2">
-                      Certifications
+                    <p className="mt-1 text-sm text-gray-900">
+                      {typeof farm.farmingPractices === 'string'
+                        ? farm.farmingPractices
+                        : JSON.stringify(farm.farmingPractices)}
                     </p>
-                    <div className="flex flex-wrap gap-2">
-                      {(farm.certifications as string[]).map((cert, index) => (
-                        <span
-                          key={index}
-                          className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800"
-                        >
-                          {cert}
-                        </span>
-                      ))}
-                    </div>
                   </div>
                 )}
               </div>
@@ -431,7 +417,7 @@ export default async function FarmDetailsPage({ params }: PageProps) {
                             "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
                             order.status === "PENDING" && "bg-yellow-100 text-yellow-800",
                             order.status === "CONFIRMED" && "bg-blue-100 text-blue-800",
-                            order.status === "DELIVERED" && "bg-green-100 text-green-800"
+                            order.status === "COMPLETED" && "bg-green-100 text-green-800"
                           )}
                         >
                           {order.status}
@@ -502,16 +488,16 @@ export default async function FarmDetailsPage({ params }: PageProps) {
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-600">Profile Views</span>
                     <span className="font-semibold text-gray-900">
-                      {farm.viewsCount || 0}
+                      {farm.reviewCount || 0}
                     </span>
                   </div>
                 </div>
-                {farm.rating && (
+                {farm.averageRating && (
                   <div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-gray-600">Average Rating</span>
                       <span className="font-semibold text-gray-900">
-                        ⭐ {Number(farm.rating).toFixed(1)}
+                        ⭐ {Number(farm.averageRating).toFixed(1)}
                       </span>
                     </div>
                   </div>

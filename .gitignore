@@ -257,3 +257,6 @@ lint-report.txt
  
 # Old implementation archive 
 .archive-old-implementation/ 
+
+# Project documentation and progress tracking
+.project-docs/

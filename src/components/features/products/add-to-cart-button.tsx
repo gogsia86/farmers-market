@@ -6,6 +6,7 @@
 import { addToCartAction } from "@/app/actions/cart.actions";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import { Minus, Plus, ShoppingCart } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -49,6 +50,7 @@ export function AddToCartButton({
 }: AddToCartButtonProps) {
   const router = useRouter();
   const { toast } = useToast();
+  const { trackAddToCart } = useAnalytics();
 
   const [quantity, setQuantity] = useState(minQuantity);
   const [isLoading, setIsLoading] = useState(false);
@@ -117,6 +119,14 @@ export function AddToCartButton({
       });
 
       if (response.success) {
+        // Track analytics event
+        trackAddToCart({
+          id: productId,
+          name: productName,
+          price: price,
+          quantity: quantity,
+        });
+
         toast({
           title: "Added to cart",
           description: `${quantity} ${unit}(s) of ${productName} added to your cart`,
@@ -316,6 +326,7 @@ export function CompactAddToCartButton({
 }: CompactAddToCartButtonProps) {
   const router = useRouter();
   const { toast } = useToast();
+  const { trackAddToCart } = useAnalytics();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleQuickAdd = async (e: React.MouseEvent) => {
@@ -346,6 +357,14 @@ export function CompactAddToCartButton({
       });
 
       if (response.success) {
+        // Track analytics event
+        trackAddToCart({
+          id: productId,
+          name: productName,
+          price: price,
+          quantity: 1,
+        });
+
         toast({
           title: "Added to cart",
           description: `${productName} added to your cart`,

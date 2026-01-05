@@ -1,5 +1,9 @@
 import { auth } from "@/lib/auth";
+import { database } from "@/lib/database";
 import { farmService } from "@/lib/services/farm.service";
+import { formatCurrency } from "@/lib/utils/currency";
+import { startOfMonth } from "date-fns";
+import { DollarSign, Package, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -21,6 +25,46 @@ export default async function FarmerDashboardPage() {
     page: 1,
     limit: 10,
   });
+
+  // Get farmer's statistics
+  const farmIds = farms.map(f => f.id);
+
+  // Calculate monthly revenue and orders
+  const orders = farmIds.length > 0 ? await database.order.findMany({
+    where: {
+      farmId: {
+        in: farmIds,
+      },
+      createdAt: {
+        gte: startOfMonth(new Date()),
+      },
+    },
+    select: {
+      total: true,
+      status: true,
+      createdAt: true,
+    },
+  }) : [];
+
+  const monthlyRevenue = orders.reduce((sum, order) => sum + Number(order.total), 0);
+  const totalOrders = orders.length;
+  const activeOrders = orders.filter(o =>
+    ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED'].includes(o.status)
+  ).length;
+
+  // Get today's orders
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const todayOrders = orders.filter(o => new Date(o.createdAt) >= today).length;
+
+  // Get total products count
+  const totalProducts = farmIds.length > 0 ? await database.product.count({
+    where: {
+      farmId: {
+        in: farmIds,
+      },
+    },
+  }) : 0;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -61,13 +105,69 @@ export default async function FarmerDashboardPage() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {/* Stats Grid - Enhanced with Real Data */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {/* Monthly Revenue Card */}
           <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Monthly Revenue</p>
+                <p className="text-2xl font-bold text-gray-900 mt-2">
+                  {formatCurrency(monthlyRevenue)}
+                </p>
+                <p className="text-xs text-gray-500 mt-1">This Month</p>
+              </div>
               <div className="flex-shrink-0 bg-green-100 rounded-lg p-3">
+                <DollarSign className="w-8 h-8 text-green-600" />
+              </div>
+            </div>
+          </div>
+
+          {/* Total Orders Card */}
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total Orders</p>
+                <p className="text-2xl font-bold text-gray-900 mt-2">{totalOrders}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {activeOrders} active • {todayOrders} today
+                </p>
+              </div>
+              <div className="flex-shrink-0 bg-blue-100 rounded-lg p-3">
+                <ShoppingBag className="w-8 h-8 text-blue-600" />
+              </div>
+            </div>
+          </div>
+
+          {/* Products Card */}
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Products</p>
+                <p className="text-2xl font-bold text-gray-900 mt-2">{totalProducts}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Across {farms.length} farm{farms.length !== 1 ? 's' : ''}
+                </p>
+              </div>
+              <div className="flex-shrink-0 bg-purple-100 rounded-lg p-3">
+                <Package className="w-8 h-8 text-purple-600" />
+              </div>
+            </div>
+          </div>
+
+          {/* Farms Card */}
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total Farms</p>
+                <p className="text-2xl font-bold text-gray-900 mt-2">{farms.length}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {farms.filter(f => f.status === 'ACTIVE').length} active
+                </p>
+              </div>
+              <div className="flex-shrink-0 bg-amber-100 rounded-lg p-3">
                 <svg
-                  className="w-8 h-8 text-green-600"
+                  className="w-8 h-8 text-amber-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -79,58 +179,6 @@ export default async function FarmerDashboardPage() {
                     d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
                   />
                 </svg>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Farms</p>
-                <p className="text-2xl font-bold text-gray-900">{farms.length}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0 bg-blue-100 rounded-lg p-3">
-                <svg
-                  className="w-8 h-8 text-blue-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                  />
-                </svg>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Products</p>
-                <p className="text-2xl font-bold text-gray-900">0</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0 bg-purple-100 rounded-lg p-3">
-                <svg
-                  className="w-8 h-8 text-purple-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                  />
-                </svg>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Orders</p>
-                <p className="text-2xl font-bold text-gray-900">0</p>
               </div>
             </div>
           </div>

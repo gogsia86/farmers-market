@@ -4,7 +4,10 @@
  * Following: 04_NEXTJS_DIVINE_IMPLEMENTATION & Divine Patterns
  */
 
+import { OrdersChart } from "@/components/charts/OrdersChart";
+import { RevenueChart } from "@/components/charts/RevenueChart";
 import { auth } from "@/lib/auth";
+import { database } from "@/lib/database";
 import { platformAnalyticsService } from "@/lib/services/analytics/platform-analytics.service";
 import { formatCurrency } from "@/lib/utils/currency";
 import {
@@ -59,6 +62,36 @@ export default async function AnalyticsPage() {
   const weeklyRevenueTrend = previousRevenue > 0
     ? ((recentRevenue - previousRevenue) / previousRevenue) * 100
     : 100;
+
+  // Fetch chart data (last 30 days)
+  const chartRevenueData = await database.$queryRaw<Array<{ date: Date; revenue: number; orders: number }>>`
+    SELECT
+      DATE("createdAt") as date,
+      SUM("total")::DECIMAL as revenue,
+      COUNT(*)::INTEGER as orders
+    FROM "Order"
+    WHERE "createdAt" >= NOW() - INTERVAL '30 days'
+    GROUP BY DATE("createdAt")
+    ORDER BY date ASC
+  `;
+
+  // Format data for RevenueChart
+  const formattedRevenueData = chartRevenueData.map(item => ({
+    date: item.date.toISOString(),
+    revenue: Number(item.revenue),
+    orders: item.orders,
+  }));
+
+  // Get order status distribution
+  const ordersData = await database.order.groupBy({
+    by: ['status'],
+    _count: { status: true },
+  });
+
+  const formattedOrdersData = ordersData.map(item => ({
+    status: item.status,
+    count: item._count.status,
+  }));
 
   return (
     <main className="min-h-screen bg-gray-50 py-8">
@@ -481,10 +514,34 @@ export default async function AnalyticsPage() {
           </div>
         </div>
 
-        {/* Revenue Trend Visualization (Simple) */}
+        {/* Advanced Charts Section */}
+        <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Revenue Chart */}
+          <div className="rounded-lg bg-white p-6 shadow">
+            <RevenueChart
+              data={formattedRevenueData}
+              variant="area"
+              showOrders={true}
+              title="Revenue & Orders (Last 30 Days)"
+              height={350}
+            />
+          </div>
+
+          {/* Orders Chart */}
+          <div className="rounded-lg bg-white p-6 shadow">
+            <OrdersChart
+              data={formattedOrdersData}
+              variant="bar"
+              title="Orders by Status"
+              height={350}
+            />
+          </div>
+        </div>
+
+        {/* Revenue Trend Visualization (Legacy - Kept for comparison) */}
         <div className="mt-6 rounded-lg bg-white p-6 shadow">
           <h2 className="mb-4 text-lg font-semibold text-gray-900">
-            Revenue Trend (Last 30 Days)
+            Daily Revenue Bars (Last 10 Days)
           </h2>
           <div className="space-y-2">
             {revenueTimeSeries.slice(-10).map((data, index) => {

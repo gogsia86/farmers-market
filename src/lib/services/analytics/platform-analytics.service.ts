@@ -169,7 +169,7 @@ class PlatformAnalyticsService {
 
     // Users by role
     const customers = await database.user.count({
-      where: { role: "CUSTOMER" },
+      where: { role: "CONSUMER" },
     });
 
     const farmers = await database.user.count({
@@ -241,7 +241,7 @@ class PlatformAnalyticsService {
         name: true,
         orders: {
           where: {
-            status: { in: ["DELIVERED", "COMPLETED"] },
+            status: { in: ["COMPLETED", "COMPLETED"] },
           },
           select: {
             total: true,
@@ -368,19 +368,19 @@ class PlatformAnalyticsService {
 
     const pendingOrders = await database.order.count({
       where: {
-        status: { in: ["PENDING", "CONFIRMED", "PROCESSING"] },
+        status: { in: ["PENDING", "CONFIRMED", "PREPARING"] },
       },
     });
 
     const completedOrders = await database.order.count({
       where: {
-        status: { in: ["DELIVERED", "COMPLETED"] },
+        status: { in: ["COMPLETED", "COMPLETED"] },
       },
     });
 
     const cancelledOrders = await database.order.count({
       where: {
-        status: { in: ["CANCELLED", "REFUNDED"] },
+        status: { in: ["CANCELLED", "CANCELLED"] },
       },
     });
 
@@ -409,11 +409,11 @@ class PlatformAnalyticsService {
         total: true,
       },
       where: {
-        status: { in: ["DELIVERED", "COMPLETED"] },
+        status: { in: ["COMPLETED", "COMPLETED"] },
       },
     });
 
-    const averageOrderValue = Number(orderAggregate._avg.total || 0);
+    const averageOrderValue = Number(orderAggregate._avg.total ?? 0);
 
     // Calculate growth rate
     const growthRate =
@@ -448,11 +448,11 @@ class PlatformAnalyticsService {
         total: true,
       },
       where: {
-        status: { in: ["DELIVERED", "COMPLETED"] },
+        status: { in: ["COMPLETED", "COMPLETED"] },
       },
     });
 
-    const total = Number(totalRevenue._sum.total || 0);
+    const total = Number(totalRevenue._sum.total ?? 0);
 
     // Revenue this month
     const thisMonthRevenue = await database.order.aggregate({
@@ -460,14 +460,14 @@ class PlatformAnalyticsService {
         total: true,
       },
       where: {
-        status: { in: ["DELIVERED", "COMPLETED"] },
+        status: { in: ["COMPLETED", "COMPLETED"] },
         createdAt: {
           gte: startOfMonth,
         },
       },
     });
 
-    const thisMonth = Number(thisMonthRevenue._sum.total || 0);
+    const thisMonth = Number(thisMonthRevenue._sum.total ?? 0);
 
     // Revenue last month
     const lastMonthRevenue = await database.order.aggregate({
@@ -475,7 +475,7 @@ class PlatformAnalyticsService {
         total: true,
       },
       where: {
-        status: { in: ["DELIVERED", "COMPLETED"] },
+        status: { in: ["COMPLETED", "COMPLETED"] },
         createdAt: {
           gte: startOfLastMonth,
           lt: startOfMonth,
@@ -483,7 +483,7 @@ class PlatformAnalyticsService {
       },
     });
 
-    const lastMonth = Number(lastMonthRevenue._sum.total || 0);
+    const lastMonth = Number(lastMonthRevenue._sum.total ?? 0);
 
     // Platform fees
     const platformFeesSum = await database.order.aggregate({
@@ -491,16 +491,16 @@ class PlatformAnalyticsService {
         platformFee: true,
       },
       where: {
-        status: { in: ["DELIVERED", "COMPLETED"] },
+        status: { in: ["COMPLETED", "COMPLETED"] },
       },
     });
 
-    const platformFees = Number(platformFeesSum._sum.platformFee || 0);
+    const platformFees = Number(platformFeesSum._sum.platformFee ?? 0);
 
     // Average per order
     const orderCount = await database.order.count({
       where: {
-        status: { in: ["DELIVERED", "COMPLETED"] },
+        status: { in: ["COMPLETED", "COMPLETED"] },
       },
     });
 
@@ -560,7 +560,7 @@ class PlatformAnalyticsService {
   ): Promise<TimeSeriesData[]> {
     const orders = await database.order.findMany({
       where: {
-        status: { in: ["DELIVERED", "COMPLETED"] },
+        status: { in: ["COMPLETED", "COMPLETED"] },
         createdAt: {
           gte: startDate,
           lte: endDate,
@@ -579,6 +579,7 @@ class PlatformAnalyticsService {
 
     orders.forEach((order) => {
       const dateKey = order.createdAt.toISOString().split("T")[0];
+      if (!dateKey) return;
       const current = dataMap.get(dateKey) || 0;
       dataMap.set(dateKey, current + Number(order.total));
     });
@@ -618,6 +619,7 @@ class PlatformAnalyticsService {
 
     orders.forEach((order) => {
       const dateKey = order.createdAt.toISOString().split("T")[0];
+      if (!dateKey) return;
       const current = dataMap.get(dateKey) || 0;
       dataMap.set(dateKey, current + 1);
     });
@@ -657,6 +659,7 @@ class PlatformAnalyticsService {
 
     users.forEach((user) => {
       const dateKey = user.createdAt.toISOString().split("T")[0];
+      if (!dateKey) return;
       const current = dataMap.get(dateKey) || 0;
       dataMap.set(dateKey, current + 1);
     });

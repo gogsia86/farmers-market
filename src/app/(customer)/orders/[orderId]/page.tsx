@@ -4,6 +4,7 @@
  * Following: 04_NEXTJS_DIVINE_IMPLEMENTATION & 10_AGRICULTURAL_FEATURE_PATTERNS
  */
 
+import { InvoiceDownloadButton } from "@/components/orders/InvoiceDownloadButton";
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
 import { cn } from "@/lib/utils";
@@ -13,7 +14,6 @@ import {
   Check,
   CheckCircle2,
   Clock,
-  Download,
   Mail,
   MapPin,
   MessageCircle,
@@ -44,9 +44,10 @@ interface PageProps {
 const ORDER_STATUS_STEPS = [
   { key: "PENDING", label: "Order Placed", icon: Package },
   { key: "CONFIRMED", label: "Confirmed", icon: CheckCircle2 },
-  { key: "PROCESSING", label: "Processing", icon: Clock },
-  { key: "SHIPPED", label: "Shipped", icon: Truck },
-  { key: "DELIVERED", label: "Delivered", icon: Check },
+  { key: "PREPARING", label: "Preparing", icon: Clock },
+  { key: "READY", label: "Ready", icon: CheckCircle2 },
+  { key: "FULFILLED", label: "Fulfilled", icon: Truck },
+  { key: "COMPLETED", label: "Completed", icon: Check },
 ];
 
 export default async function OrderDetailsPage({ params }: PageProps) {
@@ -111,7 +112,7 @@ export default async function OrderDetailsPage({ params }: PageProps) {
     (step) => step.key === order.status
   );
   const isCancelled = order.status === "CANCELLED";
-  const isRefunded = order.status === "REFUNDED";
+  const isCompleted = order.status === "COMPLETED";
 
   // Determine estimated delivery
   const estimatedDelivery = order.scheduledDate
@@ -147,13 +148,12 @@ export default async function OrderDetailsPage({ params }: PageProps) {
               </p>
             </div>
             <div className="flex gap-3">
-              <button
-                type="button"
-                className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-              >
-                <Download className="mr-2 h-4 w-4" />
-                Download Invoice
-              </button>
+              <InvoiceDownloadButton
+                orderId={order.id}
+                orderNumber={order.orderNumber}
+                variant="outline"
+                size="sm"
+              />
               <Link
                 href={`/messages?farmId=${order.farm.id}`}
                 className="inline-flex items-center rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
@@ -165,45 +165,18 @@ export default async function OrderDetailsPage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* Status Alert for Cancelled/Refunded */}
-        {(isCancelled || isRefunded) && (
-          <div
-            className={cn(
-              "mb-6 rounded-lg p-4",
-              isCancelled && "bg-red-50 border border-red-200",
-              isRefunded && "bg-blue-50 border border-blue-200"
-            )}
-          >
+        {/* Status Alert for Cancelled */}
+        {isCancelled && (
+          <div className="mb-6 rounded-lg p-4 bg-red-50 border border-red-200">
             <div className="flex items-start">
-              <XCircle
-                className={cn(
-                  "h-5 w-5 mt-0.5 mr-3",
-                  isCancelled && "text-red-600",
-                  isRefunded && "text-blue-600"
-                )}
-              />
+              <XCircle className="h-5 w-5 mt-0.5 mr-3 text-red-600" />
               <div>
-                <h3
-                  className={cn(
-                    "text-sm font-medium",
-                    isCancelled && "text-red-900",
-                    isRefunded && "text-blue-900"
-                  )}
-                >
-                  {isCancelled && "Order Cancelled"}
-                  {isRefunded && "Order Refunded"}
+                <h3 className="text-sm font-medium text-red-900">
+                  Order Cancelled
                 </h3>
-                <p
-                  className={cn(
-                    "mt-1 text-sm",
-                    isCancelled && "text-red-700",
-                    isRefunded && "text-blue-700"
-                  )}
+                <p className="mt-1 text-sm text-red-700"
                 >
-                  {isCancelled &&
-                    "This order has been cancelled. If you were charged, a refund will be processed within 5-7 business days."}
-                  {isRefunded &&
-                    "This order has been refunded. The amount will be credited to your original payment method within 5-7 business days."}
+                  This order has been cancelled. If you have any questions, please contact the farm.
                 </p>
               </div>
             </div>
@@ -214,7 +187,7 @@ export default async function OrderDetailsPage({ params }: PageProps) {
           {/* Main Content - Left Column */}
           <div className="lg:col-span-2 space-y-6">
             {/* Order Status Timeline */}
-            {!isCancelled && !isRefunded && (
+            {!isCancelled && (
               <div className="rounded-lg bg-white p-6 shadow">
                 <h2 className="mb-6 text-lg font-semibold text-gray-900">
                   Order Status
@@ -232,7 +205,7 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                   {/* Steps */}
                   <div className="space-y-8">
                     {ORDER_STATUS_STEPS.map((step, index) => {
-                      const isCompleted = index <= currentStatusIndex;
+                      const isStepCompleted = index < currentStatusIndex;
                       const isCurrent = index === currentStatusIndex;
                       const Icon = step.icon;
 
@@ -257,7 +230,7 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                             <p
                               className={cn(
                                 "text-sm font-medium",
-                                isCompleted ? "text-gray-900" : "text-gray-500"
+                                isStepCompleted ? "text-gray-900" : "text-gray-500"
                               )}
                             >
                               {step.label}
@@ -275,7 +248,7 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                 </div>
 
                 {/* Estimated Delivery */}
-                {order.status !== "DELIVERED" && (
+                {order.status !== "COMPLETED" && (
                   <div className="mt-6 rounded-lg bg-green-50 p-4">
                     <div className="flex items-start">
                       <Calendar className="mr-3 mt-0.5 h-5 w-5 flex-shrink-0 text-green-600" />
@@ -359,15 +332,6 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                 Delivery Information
               </h2>
               <div className="space-y-4">
-                <div>
-                  <p className="text-sm font-medium text-gray-900">
-                    Delivery Method
-                  </p>
-                  <p className="mt-1 text-sm text-gray-600 capitalize">
-                    {order.deliveryMethod.replace("_", " ")}
-                  </p>
-                </div>
-
                 <div>
                   <p className="text-sm font-medium text-gray-900">
                     Delivery Address

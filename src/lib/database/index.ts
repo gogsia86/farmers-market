@@ -13,8 +13,12 @@ declare global {
 
 // Prisma Client configuration for serverless
 const createPrismaClient = (): PrismaClient => {
+  const isDevelopment = process.env.NODE_ENV === "development";
+
+  // Prisma v7 uses DATABASE_URL from environment automatically
+  // No need for datasources config - it's handled by the schema
   const client = new PrismaClient({
-    log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
+    log: isDevelopment ? ["error", "warn"] : ["error"],
   });
 
   return client;

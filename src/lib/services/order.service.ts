@@ -6,6 +6,7 @@
 
 import { database } from "@/lib/database";
 import { BaseService, NotFoundError, ValidationError } from "@/lib/services/base.service";
+import { emailService } from "@/lib/services/email.service";
 import type { Order, OrderItem, OrderStatus, Prisma } from "@prisma/client";
 
 /**
@@ -223,6 +224,40 @@ class OrderService extends BaseService {
         totalUSD,
       });
 
+      // Send order confirmation email
+      if (order.customer?.email) {
+        try {
+          await emailService.sendOrderConfirmationEmail(
+            order.customer.email,
+            {
+              orderId: order.id,
+              orderNumber: order.orderNumber,
+              customerName: order.customer.name || "Valued Customer",
+              farmName: order.farm?.name || "Farm",
+              items: order.items.map(item => ({
+                name: item.productName,
+                quantity: item.quantity,
+                unit: item.unit,
+                price: item.unitPrice,
+                subtotal: item.subtotal
+              })),
+              subtotal: order.subtotal,
+              tax: order.tax,
+              deliveryFee: order.deliveryFee,
+              total: order.total,
+              orderUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/orders/${order.id}`
+            }
+          );
+          this.log("info", "Order confirmation email sent", { orderId: order.id });
+        } catch (emailError) {
+          // Don't block order creation if email fails
+          this.log("error", "Failed to send order confirmation email", {
+            orderId: order.id,
+            error: emailError instanceof Error ? emailError.message : "Unknown error"
+          });
+        }
+      }
+
       return order;
     });
   }
@@ -329,7 +364,17 @@ class OrderService extends BaseService {
       // Verify order exists and user has permission
       const order = await tx.order.findUnique({
         where: { id: orderId },
-        include: { farm: true },
+        include: {
+          farm: true,
+          customer: {
+            select: {
+              id: true,
+              email: true,
+              firstName: true,
+              lastName: true,
+            }
+          }
+        },
       });
 
       if (!order) {
@@ -359,6 +404,40 @@ class OrderService extends BaseService {
         status,
         userId,
       });
+
+      // Send status update email for important status changes
+      if (order?.customer?.email && ["FULFILLED", "COMPLETED", "CANCELLED"].includes(status)) {
+        try {
+          const statusMessages = {
+            FULFILLED: "Your order has been shipped and is on its way! 🚚",
+            COMPLETED: "Your order has been delivered! We hope you enjoy your fresh products. 🌾",
+            CANCELLED: "Your order has been cancelled. If you have questions, please contact support."
+          };
+
+          await emailService.sendEmail({
+            to: order.customer.email,
+            subject: `Order Update - ${order.orderNumber}`,
+            template: status === "FULFILLED" ? "order_shipped" : status === "COMPLETED" ? "order_delivered" : "order_confirmation",
+            data: {
+              orderId: order.id,
+              orderNumber: order.orderNumber,
+              customerName: `${order.customer.firstName || ''} ${order.customer.lastName || ''}`.trim() || "Valued Customer",
+              status,
+              statusMessage: statusMessages[status as keyof typeof statusMessages],
+              orderUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/orders/${order.id}`,
+              trackingNumber: updatedOrder.trackingNumber
+            }
+          });
+          this.log("info", "Order status update email sent", { orderId, status });
+        } catch (emailError) {
+          // Don't block status update if email fails
+          this.log("error", "Failed to send status update email", {
+            orderId,
+            status,
+            error: emailError instanceof Error ? emailError.message : "Unknown error"
+          });
+        }
+      }
 
       return updatedOrder;
     });
@@ -775,6 +854,46 @@ class OrderService extends BaseService {
         orderCount: createdOrders.length,
         total: request.totals.total,
       });
+
+      // Send order confirmation emails for all created orders
+      for (const order of createdOrders) {
+        if (order.customer?.email && order.items) {
+          try {
+            await emailService.sendOrderConfirmationEmail(
+              order.customer.email,
+              {
+                orderId: order.id,
+                orderNumber: order.orderNumber,
+                customerName: `${order.customer.firstName || ''} ${order.customer.lastName || ''}`.trim() || "Valued Customer",
+                farmName: order.farm?.name || "Farm",
+                items: order.items.map(item => ({
+                  name: item.productName,
+                  quantity: item.quantity,
+                  unit: item.unit,
+                  price: item.unitPrice,
+                  subtotal: item.subtotal
+                })),
+                subtotal: order.subtotal,
+                tax: order.tax,
+                deliveryFee: order.deliveryFee,
+                total: order.total,
+                orderUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/orders/${order.id}`
+              }
+            );
+            this.log("info", "Checkout order confirmation email sent", {
+              orderId: order.id,
+              orderNumber: order.orderNumber
+            });
+          } catch (emailError) {
+            // Don't block checkout if email fails
+            this.log("error", "Failed to send checkout confirmation email", {
+              orderId: order.id,
+              orderNumber: order.orderNumber,
+              error: emailError instanceof Error ? emailError.message : "Unknown error"
+            });
+          }
+        }
+      }
 
       return createdOrders;
     });

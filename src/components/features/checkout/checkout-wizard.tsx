@@ -5,9 +5,10 @@
 // Follows divine wizard pattern with agricultural consciousness
 
 import { Card, CardBody } from "@/components/ui/card";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import type { CartItem, Farm, Product, UserAddress } from "@prisma/client";
 import { CheckCircle2, Circle } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CartSummary } from "./cart-summary";
 import { DeliveryStep } from "./delivery-step";
 import { PaymentStep } from "./payment-step";
@@ -74,12 +75,30 @@ export function CheckoutWizard({ cart, savedAddresses, userId }: WizardProps) {
     delivery: null,
     payment: null,
   });
+  const { trackBeginCheckout } = useAnalytics();
 
   // Calculate cart total
   const cartTotal = cart.reduce((sum, item) => {
     const itemTotal = Number(item.priceAtAdd) * Number(item.quantity);
     return sum + itemTotal;
   }, 0);
+
+  // ==========================================================================
+  // ANALYTICS TRACKING
+  // ==========================================================================
+
+  // Track checkout initiation on mount
+  useEffect(() => {
+    trackBeginCheckout({
+      items: cart.map(item => ({
+        id: item.product.id,
+        name: item.product.name,
+        price: Number(item.priceAtAdd),
+        quantity: Number(item.quantity),
+      })),
+      totalValue: cartTotal,
+    });
+  }, []); // Only track once on mount
 
   // ==========================================================================
   // STEP CONFIGURATION

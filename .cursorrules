@@ -897,6 +897,131 @@ Build a divine agricultural platform that:
 
 _"Code with agricultural consciousness, architect with divine precision, deliver with quantum efficiency."_ 🌾⚡
 
+## 📁 PROJECT DOCUMENTATION ORGANIZATION
+
+### Documentation Structure Rules
+
+**Active Documentation**: Keep in `docs/` directory with clear categorization
+**Progress Tracking**: Auto-organized in `.project-docs/` (git-ignored)
+**Root Directory**: Only essential config and main documentation files
+
+### `.project-docs/` Organization (Git-Ignored)
+
+```
+.project-docs/                     # Local reference only, not committed
+├── progress/                      # Progress reports and status updates
+├── sessions/                      # Development session summaries
+├── summaries/                     # Feature completion reports
+├── quick-refs/                    # Quick start guides and references
+└── archives/                      # Historical analysis and troubleshooting
+```
+
+### `docs/` Structure (Version Controlled)
+
+```
+docs/
+├── getting-started/               # Installation, quick start, onboarding
+├── architecture/                  # System architecture, ADRs, patterns
+├── development/                   # Coding standards, testing, debugging
+├── api/                          # API documentation and references
+├── database/                     # Schema, migrations, queries
+├── ui-ux/                        # Design system, components, animations
+├── deployment/                   # Docker, Vercel, monitoring
+├── configuration/                # Environment variables, feature flags
+├── testing/                      # Unit, integration, E2E testing
+├── features/                     # Feature-specific documentation
+├── quantum-docs/                 # Divine agricultural consciousness
+├── archives/                     # Historical implementations, sprints
+└── checklists/                   # Deployment, code review checklists
+```
+
+### Rules for Creating New Documentation
+
+1. **Feature Documentation** → `docs/features/{feature-name}.md`
+   - Include architecture, API, and usage examples
+   - Keep timeless and version-agnostic
+
+2. **Progress Reports** → `.project-docs/progress/`
+   - Session progress, status updates
+   - Automatically archived, not committed
+
+3. **Session Summaries** → `.project-docs/sessions/`
+   - Daily/weekly development summaries
+   - Historical reference only
+
+4. **Completion Reports** → `.project-docs/summaries/`
+   - Feature completions, milestone achievements
+   - Celebration records
+
+5. **Quick References** → `.project-docs/quick-refs/`
+   - Temporary quick start guides
+   - Gets superseded by proper docs
+
+6. **Active Guides** → `docs/getting-started/` or `docs/guides/`
+   - Permanent, maintained documentation
+   - Version controlled and updated
+
+### Root Directory File Rules
+
+**✅ ALLOWED in Root:**
+- Essential docs: `README.md`, `CONTRIBUTING.md`, `CHANGELOG.md`, `LICENSE`
+- Configuration files: `package.json`, `tsconfig.json`, `*.config.*`
+- Entry points: `middleware.ts`, `instrumentation.ts`
+- Utility scripts: `*.sh`, `*.bat`, `*.ps1`
+
+**❌ PROHIBITED in Root:**
+- Progress reports (use `.project-docs/progress/`)
+- Session summaries (use `.project-docs/sessions/`)
+- Quick start guides (use `.project-docs/quick-refs/` or `docs/getting-started/`)
+- Status updates (use `.project-docs/progress/`)
+- Historical analysis (use `.project-docs/archives/`)
+- Week/day/sprint specific docs (use `.project-docs/sessions/`)
+
+### Automated Cleanup
+
+Run `./cleanup-root.sh` to automatically organize files:
+- Moves 80+ progress/summary files to `.project-docs/`
+- Removes temporary files (logs, PIDs)
+- Updates `.gitignore`
+- Creates index files
+
+### Documentation Best Practices
+
+1. **Keep Root Clean**: Maximum ~30 files in root directory
+2. **Use Indexes**: Every docs subfolder should have `README.md`
+3. **Timeless Content**: Active docs should not reference specific dates/sprints
+4. **Clear Naming**: Descriptive filenames, no abbreviations
+5. **Single Source**: Avoid duplicating content across folders
+6. **Archive Old**: Move superseded docs to `docs/archives/`
+
+### When Creating Progress/Summary Docs
+
+```markdown
+# ❌ DON'T: Create in root
+/WEEK_3_PROGRESS.md
+/SESSION_SUMMARY_TODAY.md
+/QUICK_START_FEATURE_X.md
+
+# ✅ DO: Create in .project-docs
+/.project-docs/progress/WEEK_3_PROGRESS.md
+/.project-docs/sessions/SESSION_SUMMARY_2024_11_15.md
+/.project-docs/quick-refs/QUICK_START_FEATURE_X.md
+
+# ✅ OR: Create permanent docs
+/docs/features/feature-x.md
+/docs/getting-started/quick-start.md
+```
+
+### Documentation Workflow
+
+1. **Development**: Create session notes in `.project-docs/sessions/`
+2. **Completion**: Create summary in `.project-docs/summaries/`
+3. **Permanent Docs**: Update relevant files in `docs/`
+4. **Cleanup**: Run cleanup script to organize periodically
+5. **Commit**: Only commit `docs/` changes, not `.project-docs/`
+
+---
+
 **Version**: 3.0 - AI Agent Expert Edition
 **Status**: FULLY OPERATIONAL - MAXIMUM DIVINE AGRICULTURAL POWER
 **Optimization Level**: ULTIMATE KILO-SCALE PERFECTION
