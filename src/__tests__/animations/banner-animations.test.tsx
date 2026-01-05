@@ -8,10 +8,11 @@
  * - Sticky behavior and auto-hide
  * - Accessibility (reduced motion, ARIA)
  * - Performance (GPU transforms)
+import React from "react";
  */
 
 import { Banner } from "@/components/notifications/Banner";
-import { AnimationProvider } from "@/lib/animations/context/AnimationContext";
+import { AnimationProvider } from "@/components/notifications/context/AnimationContext";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
@@ -26,6 +27,7 @@ jest.mock("framer-motion", () => ({
 // Mock reduced motion hook
 jest.mock("@/components/notifications/hooks/useReducedMotion", () => ({
   useReducedMotion: jest.fn(() => false),
+  useShouldAnimate: jest.fn(() => true),
 }));
 
 describe("Banner Animation System", () => {

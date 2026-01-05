@@ -8,9 +8,10 @@
  * - Accessibility (reduced motion, ARIA)
  * - Performance (GPU transforms)
  */
+import React from "react";
 
 import { Toast } from "@/components/notifications/Toast";
-import { AnimationProvider } from "@/lib/animations/context/AnimationContext";
+import { AnimationProvider } from "@/components/notifications/context/AnimationContext";
 import type { Toast as ToastType } from "@/types/notifications";
 import { render, screen, waitFor } from "@testing-library/react";
 
@@ -25,6 +26,7 @@ jest.mock("framer-motion", () => ({
 // Mock reduced motion hook
 jest.mock("@/components/notifications/hooks/useReducedMotion", () => ({
   useReducedMotion: jest.fn(() => false),
+  useShouldAnimate: jest.fn(() => true),
 }));
 
 const createMockToast = (overrides?: Partial<ToastType>): ToastType => ({

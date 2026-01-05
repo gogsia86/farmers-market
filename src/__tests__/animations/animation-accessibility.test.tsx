@@ -8,13 +8,14 @@
  * - Keyboard navigation
  * - Focus management
  * - ARIA attributes
+import React from "react";
  * - Color contrast in animated states
  */
 
 import { Banner } from "@/components/notifications/Banner";
 // import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { Toast } from "@/components/notifications/Toast";
-import { AnimationProvider } from "@/lib/animations/context/AnimationContext";
+import { AnimationProvider } from "@/components/notifications/context/AnimationContext";
 import type { Toast as ToastType } from "@/types/notifications";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -35,6 +36,7 @@ jest.mock("framer-motion", () => ({
 // Mock reduced motion hook
 jest.mock("@/components/notifications/hooks/useReducedMotion", () => ({
   useReducedMotion: jest.fn(() => false),
+  useShouldAnimate: jest.fn(() => true),
 }));
 
 const createMockToast = (overrides?: Partial<ToastType>): ToastType => ({
