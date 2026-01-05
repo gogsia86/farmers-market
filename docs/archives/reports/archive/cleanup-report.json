@@ -1,0 +1,781 @@
+{
+  "duplicateNames": {
+    "actions.ts": [
+      "app\\(admin)\\admin\\farms\\actions.ts",
+      "types\\actions.ts"
+    ],
+    "page.tsx": [
+      "app\\(admin)\\admin\\farms\\page.tsx",
+      "app\\(admin)\\admin\\financial\\page.tsx",
+      "app\\(admin)\\admin\\orders\\page.tsx",
+      "app\\(admin)\\admin\\page.tsx",
+      "app\\(admin)\\admin\\products\\page.tsx",
+      "app\\(admin)\\admin\\settings\\page.tsx",
+      "app\\(admin)\\admin\\users\\page.tsx",
+      "app\\(auth)\\admin-login\\page.tsx",
+      "app\\(auth)\\login\\page.tsx",
+      "app\\(auth)\\signup\\page.tsx",
+      "app\\(customer)\\account\\notifications\\page.tsx",
+      "app\\(customer)\\account\\orders\\page.tsx",
+      "app\\(customer)\\account\\page.tsx",
+      "app\\(customer)\\cart\\page.tsx",
+      "app\\(customer)\\checkout\\page.tsx",
+      "app\\(customer)\\dashboard\\addresses\\page.tsx",
+      "app\\(customer)\\dashboard\\favorites\\page.tsx",
+      "app\\(customer)\\dashboard\\orders\\page.tsx",
+      "app\\(customer)\\dashboard\\page.tsx",
+      "app\\(customer)\\dashboard\\profile\\page.tsx",
+      "app\\(customer)\\dashboard\\reviews\\page.tsx",
+      "app\\(customer)\\marketplace\\farms\\page.tsx",
+      "app\\(customer)\\marketplace\\farms\\[slug]\\page.tsx",
+      "app\\(customer)\\marketplace\\products\\page.tsx",
+      "app\\(customer)\\marketplace\\products\\[slug]\\page.tsx",
+      "app\\(customer)\\orders\\page.tsx",
+      "app\\(farmer)\\farmer\\analytics\\page.tsx",
+      "app\\(farmer)\\farmer\\dashboard\\page.tsx",
+      "app\\(farmer)\\farmer\\finances\\page.tsx",
+      "app\\(farmer)\\farmer\\orders\\page.tsx",
+      "app\\(farmer)\\farmer\\orders\\[id]\\page.tsx",
+      "app\\(farmer)\\farmer\\payouts\\page.tsx",
+      "app\\(farmer)\\farmer\\products\\new\\page.tsx",
+      "app\\(farmer)\\farmer\\products\\page.tsx",
+      "app\\(farmer)\\farmer\\products\\[id]\\page.tsx",
+      "app\\(farmer)\\farmer\\settings\\page.tsx",
+      "app\\(monitoring)\\monitoring\\page.tsx",
+      "app\\(public)\\about\\page.tsx",
+      "app\\(public)\\blog\\page.tsx",
+      "app\\(public)\\careers\\page.tsx",
+      "app\\(public)\\categories\\page.tsx",
+      "app\\(public)\\contact\\page.tsx",
+      "app\\(public)\\cookies\\page.tsx",
+      "app\\(public)\\faq\\page.tsx",
+      "app\\(public)\\farms\\page.tsx",
+      "app\\(public)\\farms\\[slug]\\page.tsx",
+      "app\\(public)\\help\\page.tsx",
+      "app\\(public)\\how-it-works\\page.tsx",
+      "app\\(public)\\markets\\page.tsx",
+      "app\\(public)\\offline\\page.tsx",
+      "app\\(public)\\privacy\\page.tsx",
+      "app\\(public)\\products\\page.tsx",
+      "app\\(public)\\register-farm\\page.tsx",
+      "app\\(public)\\resources\\best-practices\\page.tsx",
+      "app\\(public)\\resources\\page.tsx",
+      "app\\(public)\\search\\page.tsx",
+      "app\\(public)\\support\\page.tsx",
+      "app\\(public)\\terms\\page.tsx",
+      "app\\demos\\analytics\\page.tsx",
+      "app\\demos\\chat\\page.tsx",
+      "app\\demos\\demo-test\\page.tsx",
+      "app\\demos\\inventory\\page.tsx",
+      "app\\demos\\page.tsx",
+      "app\\diagnostic\\page.tsx",
+      "app\\page.tsx",
+      "app\\products\\categories\\[category]\\page.tsx"
+    ],
+    "layout.tsx": [
+      "app\\(admin)\\layout.tsx",
+      "app\\(auth)\\layout.tsx",
+      "app\\(customer)\\layout.tsx",
+      "app\\(farmer)\\layout.tsx",
+      "app\\(monitoring)\\layout.tsx",
+      "app\\(public)\\layout.tsx",
+      "app\\demos\\layout.tsx",
+      "app\\layout.tsx"
+    ],
+    "loading.tsx": [
+      "app\\(admin)\\loading.tsx",
+      "app\\(public)\\markets\\loading.tsx",
+      "app\\loading.tsx"
+    ],
+    "index.ts": [
+      "app\\actions\\index.ts",
+      "components\\i18n\\index.ts",
+      "components\\maps\\index.ts",
+      "components\\notifications\\index.ts",
+      "components\\products\\index.ts",
+      "features\\order-management\\index.ts",
+      "features\\order-management\\types\\index.ts",
+      "lib\\auth\\index.ts",
+      "lib\\cache\\index.ts",
+      "lib\\controllers\\index.ts",
+      "lib\\database\\index.ts",
+      "lib\\email\\index.ts",
+      "lib\\geocoding\\index.ts",
+      "lib\\logger\\index.ts",
+      "lib\\monitoring\\notifiers\\index.ts",
+      "lib\\rbac\\index.ts",
+      "lib\\repositories\\index.ts"
+    ],
+    "route.ts": [
+      "app\\api\\admin\\approvals\\route.ts",
+      "app\\api\\admin\\metrics\\performance\\route.ts",
+      "app\\api\\agricultural\\biodynamic-calendar\\route.ts",
+      "app\\api\\agricultural-consciousness\\route.ts",
+      "app\\api\\ai\\ollama\\analyze\\route.ts",
+      "app\\api\\ai\\ollama\\route.ts",
+      "app\\api\\analytics\\dashboard\\route.ts",
+      "app\\api\\auth\\signup\\route.ts",
+      "app\\api\\auth\\[...nextauth]\\route.ts",
+      "app\\api\\cart\\route.ts",
+      "app\\api\\cart\\[itemId]\\route.ts",
+      "app\\api\\checkout\\create-order\\route.ts",
+      "app\\api\\checkout\\create-payment-intent\\route.ts",
+      "app\\api\\customers\\[customerId]\\orders\\route.ts",
+      "app\\api\\farmer\\finances\\route.ts",
+      "app\\api\\farmer\\payout-schedule\\route.ts",
+      "app\\api\\farmer\\payouts\\route.ts",
+      "app\\api\\farmers\\auth\\route.ts",
+      "app\\api\\farmers\\dashboard\\route.ts",
+      "app\\api\\farmers\\register\\route.ts",
+      "app\\api\\farming\\advice\\route.ts",
+      "app\\api\\farming\\education\\route.ts",
+      "app\\api\\farming\\market\\route.ts",
+      "app\\api\\farming\\products\\recommendations\\route.ts",
+      "app\\api\\farming\\support\\route.ts",
+      "app\\api\\farms\\route.ts",
+      "app\\api\\farms\\[slug]\\orders\\route.ts",
+      "app\\api\\farms\\[slug]\\route.ts",
+      "app\\api\\featured\\farms\\route.ts",
+      "app\\api\\health\\ready\\route.ts",
+      "app\\api\\health\\route.ts",
+      "app\\api\\marketplace\\farms\\[slug]\\route.ts",
+      "app\\api\\marketplace\\products\\route.ts",
+      "app\\api\\monitoring\\dashboard\\alerts\\route.ts",
+      "app\\api\\monitoring\\dashboard\\executions\\route.ts",
+      "app\\api\\monitoring\\dashboard\\metrics\\route.ts",
+      "app\\api\\monitoring\\dashboard\\overview\\route.ts",
+      "app\\api\\monitoring\\metrics\\route.ts",
+      "app\\api\\notifications\\mark-all-read\\route.ts",
+      "app\\api\\notifications\\preferences\\route.ts",
+      "app\\api\\notifications\\route.ts",
+      "app\\api\\notifications\\stream\\route.ts",
+      "app\\api\\notifications\\[id]\\read\\route.ts",
+      "app\\api\\notifications\\[id]\\route.ts",
+      "app\\api\\orders\\counts\\route.ts",
+      "app\\api\\orders\\route.ts",
+      "app\\api\\orders\\statistics\\route.ts",
+      "app\\api\\orders\\[orderId]\\cancel\\route.ts",
+      "app\\api\\orders\\[orderId]\\route.ts",
+      "app\\api\\payments\\intent\\route.ts",
+      "app\\api\\platform\\stats\\route.ts",
+      "app\\api\\products\\batch\\route.ts",
+      "app\\api\\products\\bulk\\route.ts",
+      "app\\api\\products\\detail\\[farmSlug]\\[productSlug]\\route.ts",
+      "app\\api\\products\\farm\\[farmId]\\route.ts",
+      "app\\api\\products\\route.ts",
+      "app\\api\\products\\search\\route.ts",
+      "app\\api\\products\\slug\\[farmSlug]\\[productSlug]\\route.ts",
+      "app\\api\\products\\[id]\\inventory\\route.ts",
+      "app\\api\\products\\[id]\\related\\route.ts",
+      "app\\api\\products\\[id]\\route.ts",
+      "app\\api\\products\\[id]\\stats\\route.ts",
+      "app\\api\\products\\[id]\\view\\route.ts",
+      "app\\api\\ready\\route.ts",
+      "app\\api\\resources\\route.ts",
+      "app\\api\\reviews\\route.ts",
+      "app\\api\\reviews\\[id]\\route.ts",
+      "app\\api\\search\\route.ts",
+      "app\\api\\search\\suggest\\route.ts",
+      "app\\api\\support\\tickets\\route.ts",
+      "app\\api\\upload\\route.ts",
+      "app\\api\\users\\addresses\\route.ts",
+      "app\\api\\users\\addresses\\[id]\\default\\route.ts",
+      "app\\api\\users\\addresses\\[id]\\route.ts",
+      "app\\api\\users\\dashboard\\route.ts",
+      "app\\api\\users\\favorites\\route.ts",
+      "app\\api\\users\\password\\route.ts",
+      "app\\api\\users\\profile\\route.ts",
+      "app\\api\\webhooks\\stripe\\route.ts"
+    ],
+    "route.test.ts": [
+      "app\\api\\farms\\__tests__\\route.test.ts",
+      "app\\api\\health\\__tests__\\route.test.ts",
+      "app\\api\\products\\__tests__\\route.test.ts"
+    ],
+    "CodeBlock.tsx": [
+      "components\\best-practices\\CodeBlock.tsx",
+      "components\\CodeBlock.tsx"
+    ],
+    "EmptyState.tsx": [
+      "components\\dashboard\\EmptyState.tsx",
+      "components\\ui\\EmptyState.tsx"
+    ],
+    "OrderCard.tsx": [
+      "components\\dashboard\\OrderCard.tsx",
+      "features\\order-management\\components\\OrderCard.tsx"
+    ],
+    "ErrorBoundary.tsx": [
+      "components\\ErrorBoundary.tsx",
+      "components\\layout\\ErrorBoundary.tsx"
+    ],
+    "QuantumFarmCard.tsx": [
+      "components\\QuantumFarmCard.tsx",
+      "features\\farm-profile\\components\\QuantumFarmCard.tsx"
+    ],
+    "farm.types.ts": [
+      "features\\farm-management\\types\\farm.types.ts",
+      "types\\api\\farm.types.ts",
+      "types\\farm.types.ts"
+    ],
+    "order.service.ts": [
+      "features\\order-management\\services\\order.service.ts",
+      "lib\\services\\order.service.ts"
+    ],
+    "prisma.ts": ["generated\\prisma.ts", "lib\\prisma.ts"],
+    "config.ts": [
+      "i18n\\config.ts",
+      "lib\\auth\\config.ts",
+      "lib\\telemetry\\config.ts"
+    ],
+    "utils.ts": ["i18n\\utils.ts", "lib\\utils.ts"],
+    "tracing.ts": ["lib\\ai\\tracing.ts", "lib\\telemetry\\tracing.ts"],
+    "types.ts": [
+      "lib\\cache\\types.ts",
+      "lib\\logger\\types.ts",
+      "lib\\monitoring\\types.ts"
+    ],
+    "geocoding.service.ts": [
+      "lib\\geocoding\\geocoding.service.ts",
+      "lib\\services\\geocoding.service.ts"
+    ],
+    "agricultural-gpu.ts": [
+      "lib\\gpu\\agricultural-gpu.ts",
+      "lib\\gpu\\__mocks__\\agricultural-gpu.ts"
+    ],
+    "tensorflow-gpu.ts": [
+      "lib\\gpu\\tensorflow-gpu.ts",
+      "lib\\gpu\\__mocks__\\tensorflow-gpu.ts"
+    ],
+    "logger.ts": ["lib\\logging\\logger.ts", "lib\\monitoring\\logger.ts"],
+    "order.service.test.ts": [
+      "lib\\services\\__tests__\\order.service.test.ts",
+      "__tests__\\services\\order.service.test.ts"
+    ],
+    "test-utils.tsx": ["lib\\test-utils.tsx", "test-utils\\test-utils.tsx"],
+    "crop.ts": ["lib\\validations\\crop.ts", "types\\crop.ts"],
+    "product.ts": ["lib\\validations\\product.ts", "types\\product.ts"]
+  },
+  "caseInsensitiveDuplicates": {
+    "loading.tsx": [
+      "app\\(admin)\\loading.tsx",
+      "app\\(public)\\markets\\loading.tsx",
+      "app\\loading.tsx",
+      "components\\ui\\Loading.tsx"
+    ]
+  },
+  "oldPatterns": [
+    {
+      "file": "components\\ErrorBoundary.tsx",
+      "pattern": "class.*extends.*Component",
+      "reason": "Consider using function components"
+    }
+  ],
+  "potentialUnused": [],
+  "missingExports": [
+    "components\\__tests__\\ErrorBoundary.test.tsx",
+    "components\\__tests__\\SeasonalProductCatalog.test.tsx"
+  ],
+  "largeFiles": [
+    {
+      "file": "app\\(admin)\\admin\\settings\\page.tsx",
+      "lines": 578
+    },
+    {
+      "file": "app\\(customer)\\account\\page.tsx",
+      "lines": 517
+    },
+    {
+      "file": "app\\(customer)\\dashboard\\addresses\\page.tsx",
+      "lines": 784
+    },
+    {
+      "file": "app\\(customer)\\dashboard\\profile\\page.tsx",
+      "lines": 918
+    },
+    {
+      "file": "app\\(customer)\\dashboard\\reviews\\page.tsx",
+      "lines": 565
+    },
+    {
+      "file": "app\\(farmer)\\farmer\\analytics\\page.tsx",
+      "lines": 520
+    },
+    {
+      "file": "app\\(farmer)\\farmer\\orders\\page.tsx",
+      "lines": 522
+    },
+    {
+      "file": "app\\(farmer)\\farmer\\orders\\[id]\\page.tsx",
+      "lines": 657
+    },
+    {
+      "file": "app\\(farmer)\\farmer\\settings\\page.tsx",
+      "lines": 683
+    },
+    {
+      "file": "app\\(public)\\farms\\[slug]\\page.tsx",
+      "lines": 522
+    },
+    {
+      "file": "app\\(public)\\markets\\page.tsx",
+      "lines": 936
+    },
+    {
+      "file": "app\\(public)\\register-farm\\page.tsx",
+      "lines": 857
+    },
+    {
+      "file": "app\\actions\\order.actions.ts",
+      "lines": 833
+    },
+    {
+      "file": "app\\actions\\product.actions.ts",
+      "lines": 851
+    },
+    {
+      "file": "app\\actions\\settings.actions.ts",
+      "lines": 720
+    },
+    {
+      "file": "app\\api\\checkout\\__tests__\\create-payment-intent.test.ts",
+      "lines": 720
+    },
+    {
+      "file": "app\\api\\farms\\__tests__\\route.test.ts",
+      "lines": 560
+    },
+    {
+      "file": "app\\api\\__mocks__\\tracing-mocks.ts",
+      "lines": 596
+    },
+    {
+      "file": "app\\page.tsx",
+      "lines": 561
+    },
+    {
+      "file": "components\\auth\\RegisterForm.tsx",
+      "lines": 653
+    },
+    {
+      "file": "components\\farmer\\OrderFulfillmentTools.tsx",
+      "lines": 659
+    },
+    {
+      "file": "components\\farmer\\PayoutManagement.tsx",
+      "lines": 594
+    },
+    {
+      "file": "components\\features\\farmer\\ProductForm.tsx",
+      "lines": 726
+    },
+    {
+      "file": "components\\marketplace\\FarmProfileTabs.tsx",
+      "lines": 672
+    },
+    {
+      "file": "components\\onboarding\\OnboardingTour.tsx",
+      "lines": 553
+    },
+    {
+      "file": "features\\order-management\\services\\order.service.ts",
+      "lines": 1078
+    },
+    {
+      "file": "features\\order-management\\types\\index.ts",
+      "lines": 556
+    },
+    {
+      "file": "hooks\\__tests__\\useComponentConsciousness.test.ts",
+      "lines": 611
+    },
+    {
+      "file": "hooks\\__tests__\\useQuantumConsciousness.test.ts",
+      "lines": 654
+    },
+    {
+      "file": "lib\\ai\\ollama.ts",
+      "lines": 753
+    },
+    {
+      "file": "lib\\ai\\perplexity.ts",
+      "lines": 714
+    },
+    {
+      "file": "lib\\cache\\__tests__\\index.test.ts",
+      "lines": 514
+    },
+    {
+      "file": "lib\\controllers\\base.controller.ts",
+      "lines": 726
+    },
+    {
+      "file": "lib\\controllers\\farm.controller.ts",
+      "lines": 586
+    },
+    {
+      "file": "lib\\controllers\\order.controller.ts",
+      "lines": 750
+    },
+    {
+      "file": "lib\\controllers\\product.controller.ts",
+      "lines": 720
+    },
+    {
+      "file": "lib\\controllers\\__tests__\\farm.controller.test.ts",
+      "lines": 867
+    },
+    {
+      "file": "lib\\controllers\\__tests__\\order.controller.test.ts",
+      "lines": 1113
+    },
+    {
+      "file": "lib\\controllers\\__tests__\\product.controller.test.ts",
+      "lines": 1189
+    },
+    {
+      "file": "lib\\email\\email.service.ts",
+      "lines": 553
+    },
+    {
+      "file": "lib\\email\\__tests__\\email-service.test.ts",
+      "lines": 547
+    },
+    {
+      "file": "lib\\errors\\__tests__\\errors.test.ts",
+      "lines": 554
+    },
+    {
+      "file": "lib\\geocoding\\geocoding.service.ts",
+      "lines": 551
+    },
+    {
+      "file": "lib\\logger\\__tests__\\logger.test.ts",
+      "lines": 581
+    },
+    {
+      "file": "lib\\monitoring\\agents\\workflow-agent-orchestrator.ts",
+      "lines": 823
+    },
+    {
+      "file": "lib\\monitoring\\ai\\failure-analyzer.ts",
+      "lines": 784
+    },
+    {
+      "file": "lib\\monitoring\\alerts\\alert-rules-engine.ts",
+      "lines": 752
+    },
+    {
+      "file": "lib\\monitoring\\app-insights.ts",
+      "lines": 654
+    },
+    {
+      "file": "lib\\monitoring\\bot.ts",
+      "lines": 554
+    },
+    {
+      "file": "lib\\monitoring\\healing\\self-healer.ts",
+      "lines": 790
+    },
+    {
+      "file": "lib\\monitoring\\ml\\predictive-monitor.ts",
+      "lines": 662
+    },
+    {
+      "file": "lib\\monitoring\\notifiers\\discord.notifier.ts",
+      "lines": 613
+    },
+    {
+      "file": "lib\\monitoring\\notifiers\\index.ts",
+      "lines": 537
+    },
+    {
+      "file": "lib\\monitoring\\notifiers\\slack.notifier.ts",
+      "lines": 688
+    },
+    {
+      "file": "lib\\monitoring\\reporter.ts",
+      "lines": 771
+    },
+    {
+      "file": "lib\\monitoring\\retry\\enhanced-retry.ts",
+      "lines": 547
+    },
+    {
+      "file": "lib\\monitoring\\storage\\database.storage.ts",
+      "lines": 756
+    },
+    {
+      "file": "lib\\monitoring\\telemetry.ts",
+      "lines": 506
+    },
+    {
+      "file": "lib\\monitoring\\tracing\\workflow-tracer.ts",
+      "lines": 607
+    },
+    {
+      "file": "lib\\monitoring\\types.ts",
+      "lines": 723
+    },
+    {
+      "file": "lib\\monitoring\\website-checker.ts",
+      "lines": 1516
+    },
+    {
+      "file": "lib\\monitoring\\workflows\\predefined-workflows.ts",
+      "lines": 969
+    },
+    {
+      "file": "lib\\monitoring\\workflows\\workflow-executor.ts",
+      "lines": 648
+    },
+    {
+      "file": "lib\\notifications\\realtime-system.ts",
+      "lines": 591
+    },
+    {
+      "file": "lib\\performance\\gpu-processor.ts",
+      "lines": 745
+    },
+    {
+      "file": "lib\\performance\\__tests__\\gpu-processor.test.ts",
+      "lines": 584
+    },
+    {
+      "file": "lib\\repositories\\base.repository.ts",
+      "lines": 557
+    },
+    {
+      "file": "lib\\repositories\\farm.repository.ts",
+      "lines": 538
+    },
+    {
+      "file": "lib\\repositories\\order.repository.ts",
+      "lines": 769
+    },
+    {
+      "file": "lib\\repositories\\product.repository.ts",
+      "lines": 667
+    },
+    {
+      "file": "lib\\repositories\\user.repository.ts",
+      "lines": 958
+    },
+    {
+      "file": "lib\\repositories\\__tests__\\farm.repository.test.ts",
+      "lines": 1057
+    },
+    {
+      "file": "lib\\repositories\\__tests__\\order.repository.test.ts",
+      "lines": 1261
+    },
+    {
+      "file": "lib\\repositories\\__tests__\\product.repository.test.ts",
+      "lines": 1987
+    },
+    {
+      "file": "lib\\security\\audit-system.ts",
+      "lines": 560
+    },
+    {
+      "file": "lib\\services\\cart.service.ts",
+      "lines": 618
+    },
+    {
+      "file": "lib\\services\\checkout.service.ts",
+      "lines": 683
+    },
+    {
+      "file": "lib\\services\\farm.service.ts",
+      "lines": 872
+    },
+    {
+      "file": "lib\\services\\order.service.refactored.ts",
+      "lines": 1067
+    },
+    {
+      "file": "lib\\services\\order.service.ts",
+      "lines": 730
+    },
+    {
+      "file": "lib\\services\\payment.service.ts",
+      "lines": 508
+    },
+    {
+      "file": "lib\\services\\perplexity-farming.service.ts",
+      "lines": 995
+    },
+    {
+      "file": "lib\\services\\product.service.refactored.ts",
+      "lines": 903
+    },
+    {
+      "file": "lib\\services\\product.service.ts",
+      "lines": 955
+    },
+    {
+      "file": "lib\\services\\__tests__\\biodynamic-calendar.service.test.ts",
+      "lines": 564
+    },
+    {
+      "file": "lib\\services\\__tests__\\checkout.service.test.ts",
+      "lines": 1039
+    },
+    {
+      "file": "lib\\services\\__tests__\\farm.service.refactored.test.ts",
+      "lines": 844
+    },
+    {
+      "file": "lib\\services\\__tests__\\geocoding.service.test.ts",
+      "lines": 804
+    },
+    {
+      "file": "lib\\services\\__tests__\\order.service.refactored.test.ts",
+      "lines": 1301
+    },
+    {
+      "file": "lib\\services\\__tests__\\order.service.test.ts",
+      "lines": 876
+    },
+    {
+      "file": "lib\\services\\__tests__\\payment.service.test.ts",
+      "lines": 774
+    },
+    {
+      "file": "lib\\services\\__tests__\\product.service.refactored.test.ts",
+      "lines": 1057
+    },
+    {
+      "file": "lib\\services\\__tests__\\product.service.test.ts",
+      "lines": 864
+    },
+    {
+      "file": "lib\\services\\__tests__\\shipping.service.test.ts",
+      "lines": 536
+    },
+    {
+      "file": "lib\\stripe\\__tests__\\client.test.ts",
+      "lines": 588
+    },
+    {
+      "file": "lib\\tracing\\service-tracer.ts",
+      "lines": 507
+    },
+    {
+      "file": "lib\\upload\\__tests__\\file-upload-service.test.ts",
+      "lines": 804
+    },
+    {
+      "file": "lib\\utils\\metadata.ts",
+      "lines": 558
+    },
+    {
+      "file": "lib\\utils\\__tests__\\quantum.test.ts",
+      "lines": 503
+    },
+    {
+      "file": "lib\\utils\\__tests__\\slug.test.ts",
+      "lines": 603
+    },
+    {
+      "file": "lib\\validation\\__tests__\\agricultural-validation.test.ts",
+      "lines": 797
+    },
+    {
+      "file": "lib\\validations\\order.ts",
+      "lines": 648
+    },
+    {
+      "file": "lib\\validations\\__tests__\\crop.test.ts",
+      "lines": 976
+    },
+    {
+      "file": "lib\\validations\\__tests__\\order.test.ts",
+      "lines": 885
+    },
+    {
+      "file": "lib\\validations\\__tests__\\product.test.ts",
+      "lines": 821
+    },
+    {
+      "file": "lib\\__tests__\\request-size-limit.test.ts",
+      "lines": 654
+    },
+    {
+      "file": "lib\\__tests__\\utils.test.ts",
+      "lines": 642
+    },
+    {
+      "file": "repositories\\__tests__\\FarmRepository.test.ts",
+      "lines": 881
+    },
+    {
+      "file": "stores\\__tests__\\cartStore.test.ts",
+      "lines": 663
+    },
+    {
+      "file": "tests\\utils\\api-test-helpers.ts",
+      "lines": 796
+    },
+    {
+      "file": "types\\analytics.types.ts",
+      "lines": 675
+    },
+    {
+      "file": "types\\inventory.types.ts",
+      "lines": 664
+    },
+    {
+      "file": "__tests__\\integration\\order-workflow.integration.test.ts",
+      "lines": 511
+    },
+    {
+      "file": "__tests__\\validations\\order.validation.test.ts",
+      "lines": 832
+    }
+  ],
+  "emptyFiles": [],
+  "routeConflicts": [],
+  "improperClientComponents": [
+    {
+      "file": "app\\(admin)\\admin\\farms\\FarmsTable.tsx",
+      "reason": "Has \"use client\" but uses server-only features"
+    },
+    {
+      "file": "app\\(auth)\\admin-login\\page.tsx",
+      "reason": "Has \"use client\" but uses server-only features"
+    },
+    {
+      "file": "app\\error.tsx",
+      "reason": "Has \"use client\" but uses server-only features"
+    },
+    {
+      "file": "components\\checkout\\StripePaymentElement.tsx",
+      "reason": "Has \"use client\" but uses server-only features"
+    },
+    {
+      "file": "components\\ErrorBoundary.tsx",
+      "reason": "Has \"use client\" but uses server-only features"
+    },
+    {
+      "file": "components\\notifications\\NotificationBell.tsx",
+      "reason": "Has \"use client\" but uses server-only features"
+    },
+    {
+      "file": "components\\pwa\\PWAInstaller.tsx",
+      "reason": "Has \"use client\" but uses server-only features"
+    },
+    {
+      "file": "features\\order-management\\components\\OrderCard.tsx",
+      "reason": "Has \"use client\" but uses server-only features"
+    },
+    {
+      "file": "features\\order-management\\components\\OrderList.tsx",
+      "reason": "Has \"use client\" but uses server-only features"
+    },
+    {
+      "file": "features\\order-management\\hooks\\useOrders.ts",
+      "reason": "Has \"use client\" but uses server-only features"
+    }
+  ],
+  "missingUseClient": []
+}
