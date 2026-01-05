@@ -15,6 +15,10 @@ export const metadata: Metadata = {
   description: "Manage your account settings and preferences",
 };
 
+// Force dynamic rendering - don't pre-render at build time
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function SettingsPage() {
   // ==========================================================================
   // AUTHENTICATION CHECK

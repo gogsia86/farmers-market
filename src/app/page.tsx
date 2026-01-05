@@ -8,6 +8,10 @@ export const metadata: Metadata = {
   description: "Connect with local farmers and get fresh, organic produce delivered to your door",
 };
 
+// Force dynamic rendering - don't pre-render at build time
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function HomePage() {
   // Fetch featured data
   const [featuredProducts, { farms: featuredFarms }] = await Promise.all([

@@ -50,6 +50,10 @@ export const metadata: Metadata = {
   description: "Complete your order - Divine agricultural commerce",
 };
 
+// Force dynamic rendering - don't pre-render at build time
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 // ============================================================================
 // SERVER COMPONENT
 // ============================================================================

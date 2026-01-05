@@ -13,6 +13,10 @@ export const metadata: Metadata = {
   description: "Discover local farms and their fresh, organic produce",
 };
 
+// Force dynamic rendering - don't pre-render at build time
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function FarmsPage() {
   const { farms, total } = await farmService.getAllFarms({
     status: "ACTIVE",

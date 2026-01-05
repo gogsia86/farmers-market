@@ -27,6 +27,10 @@ export const metadata: Metadata = {
   description: "View your order history and track deliveries",
 };
 
+// Force dynamic rendering - don't pre-render at build time
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 interface PageProps {
   searchParams: {
     status?: string;
@@ -179,8 +183,8 @@ export default async function OrdersPage({ searchParams }: PageProps) {
           <Link
             href="/orders"
             className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${!statusFilter
-                ? "bg-green-600 text-white"
-                : "bg-white text-gray-700 hover:bg-gray-100"
+              ? "bg-green-600 text-white"
+              : "bg-white text-gray-700 hover:bg-gray-100"
               }`}
           >
             All Orders ({totalCount})
@@ -190,8 +194,8 @@ export default async function OrdersPage({ searchParams }: PageProps) {
               key={status}
               href={`/orders?status=${status}`}
               className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${statusFilter === status
-                  ? "bg-green-600 text-white"
-                  : "bg-white text-gray-700 hover:bg-gray-100"
+                ? "bg-green-600 text-white"
+                : "bg-white text-gray-700 hover:bg-gray-100"
                 }`}
             >
               {config.label}

@@ -17,6 +17,10 @@ export const metadata: Metadata = {
   description: "Your order has been confirmed",
 };
 
+// Force dynamic rendering - don't pre-render at build time
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 interface PageProps {
   params: {
     orderId: string;
