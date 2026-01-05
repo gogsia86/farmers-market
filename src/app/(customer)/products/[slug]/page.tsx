@@ -26,7 +26,6 @@ import { notFound } from "next/navigation";
 
 // Force dynamic rendering - don't pre-render at build time
 export const dynamic = "force-dynamic";
-export const revalidate = 0;
 
 /**
  * 🌱 PAGE PROPS

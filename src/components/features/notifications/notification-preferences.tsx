@@ -48,11 +48,11 @@ interface NotificationPreferencesProps {
 // Component
 // ============================================================================
 
-export function NotificationPreferences({
+export function NotificationPreferencesComponent({
   className = "",
   onSave,
 }: NotificationPreferencesProps) {
-  const [preferences, setPreferences] = useState<NotificationPreferences | null>(null);
+  const [userPreferences, setUserPreferences] = useState<NotificationPreferences | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -66,7 +66,7 @@ export function NotificationPreferences({
       const data: ApiResponse<NotificationPreferences> = await response.json();
 
       if (data.success && data.data) {
-        setPreferences(data.data);
+        setUserPreferences(data.data);
       } else {
         setError(data.error?.message || "Failed to load preferences");
       }
@@ -83,10 +83,10 @@ export function NotificationPreferences({
 
   // Update preference
   const updatePreference = (key: keyof NotificationPreferences, value: boolean) => {
-    if (!preferences) return;
+    if (!userPreferences) return;
 
-    setPreferences({
-      ...preferences,
+    setUserPreferences({
+      ...userPreferences,
       [key]: value,
     });
     setSuccessMessage(null);
@@ -94,7 +94,7 @@ export function NotificationPreferences({
 
   // Save preferences
   const savePreferences = async () => {
-    if (!preferences) return;
+    if (!userPreferences) return;
 
     try {
       setSaving(true);
@@ -104,16 +104,16 @@ export function NotificationPreferences({
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          emailOrders: preferences.emailOrders,
-          emailReviews: preferences.emailReviews,
-          emailPromotions: preferences.emailPromotions,
-          emailNewsletter: preferences.emailNewsletter,
-          inAppOrders: preferences.inAppOrders,
-          inAppReviews: preferences.inAppReviews,
-          inAppMessages: preferences.inAppMessages,
-          pushOrders: preferences.pushOrders,
-          pushReviews: preferences.pushReviews,
-          pushPromotions: preferences.pushPromotions,
+          emailOrders: userPreferences.emailOrders,
+          emailReviews: userPreferences.emailReviews,
+          emailPromotions: userPreferences.emailPromotions,
+          emailNewsletter: userPreferences.emailNewsletter,
+          inAppOrders: userPreferences.inAppOrders,
+          inAppReviews: userPreferences.inAppReviews,
+          inAppMessages: userPreferences.inAppMessages,
+          pushOrders: userPreferences.pushOrders,
+          pushReviews: userPreferences.pushReviews,
+          pushPromotions: userPreferences.pushPromotions,
         }),
       });
 
@@ -135,10 +135,10 @@ export function NotificationPreferences({
 
   // Enable all notifications
   const enableAll = () => {
-    if (!preferences) return;
+    if (!userPreferences) return;
 
-    setPreferences({
-      ...preferences,
+    setUserPreferences({
+      ...userPreferences,
       emailOrders: true,
       emailReviews: true,
       emailPromotions: true,
@@ -155,10 +155,10 @@ export function NotificationPreferences({
 
   // Disable optional notifications (keep essential ones)
   const disableOptional = () => {
-    if (!preferences) return;
+    if (!userPreferences) return;
 
-    setPreferences({
-      ...preferences,
+    setUserPreferences({
+      ...userPreferences,
       emailOrders: true, // Keep essential
       emailReviews: false,
       emailPromotions: false,
@@ -188,7 +188,7 @@ export function NotificationPreferences({
     );
   }
 
-  if (!preferences) return null;
+  if (!userPreferences) return null;
 
   return (
     <Card className={className}>
@@ -246,7 +246,7 @@ export function NotificationPreferences({
               </div>
               <input
                 type="checkbox"
-                checked={preferences.emailOrders}
+                checked={userPreferences.emailOrders}
                 onChange={(e) => updatePreference("emailOrders", e.target.checked)}
                 className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
@@ -261,7 +261,7 @@ export function NotificationPreferences({
               </div>
               <input
                 type="checkbox"
-                checked={preferences.emailReviews}
+                checked={userPreferences.emailReviews}
                 onChange={(e) => updatePreference("emailReviews", e.target.checked)}
                 className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
@@ -276,7 +276,7 @@ export function NotificationPreferences({
               </div>
               <input
                 type="checkbox"
-                checked={preferences.emailPromotions}
+                checked={userPreferences.emailPromotions}
                 onChange={(e) => updatePreference("emailPromotions", e.target.checked)}
                 className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
@@ -291,7 +291,7 @@ export function NotificationPreferences({
               </div>
               <input
                 type="checkbox"
-                checked={preferences.emailNewsletter}
+                checked={userPreferences.emailNewsletter}
                 onChange={(e) => updatePreference("emailNewsletter", e.target.checked)}
                 className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
@@ -315,7 +315,7 @@ export function NotificationPreferences({
               </div>
               <input
                 type="checkbox"
-                checked={preferences.inAppOrders}
+                checked={userPreferences.inAppOrders}
                 onChange={(e) => updatePreference("inAppOrders", e.target.checked)}
                 className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
@@ -330,7 +330,7 @@ export function NotificationPreferences({
               </div>
               <input
                 type="checkbox"
-                checked={preferences.inAppReviews}
+                checked={userPreferences.inAppReviews}
                 onChange={(e) => updatePreference("inAppReviews", e.target.checked)}
                 className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
@@ -345,7 +345,7 @@ export function NotificationPreferences({
               </div>
               <input
                 type="checkbox"
-                checked={preferences.inAppMessages}
+                checked={userPreferences.inAppMessages}
                 onChange={(e) => updatePreference("inAppMessages", e.target.checked)}
                 className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
@@ -369,7 +369,7 @@ export function NotificationPreferences({
               </div>
               <input
                 type="checkbox"
-                checked={preferences.pushOrders}
+                checked={userPreferences.pushOrders}
                 onChange={(e) => updatePreference("pushOrders", e.target.checked)}
                 className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
@@ -384,7 +384,7 @@ export function NotificationPreferences({
               </div>
               <input
                 type="checkbox"
-                checked={preferences.pushReviews}
+                checked={userPreferences.pushReviews}
                 onChange={(e) => updatePreference("pushReviews", e.target.checked)}
                 className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
@@ -399,7 +399,7 @@ export function NotificationPreferences({
               </div>
               <input
                 type="checkbox"
-                checked={preferences.pushPromotions}
+                checked={userPreferences.pushPromotions}
                 onChange={(e) => updatePreference("pushPromotions", e.target.checked)}
                 className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
@@ -429,17 +429,20 @@ export function NotificationPreferences({
         <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
           <p className="text-sm text-blue-800">
             <strong>💡 Tip:</strong> You'll always receive critical notifications (like
-            payment confirmations and security alerts) regardless of your preferences.
+            payment confirmations and security alerts) regardless of your userPreferences.
           </p>
         </div>
 
         {/* Last Updated */}
-        {preferences.updatedAt && (
+        {userPreferences.updatedAt && (
           <p className="text-xs text-gray-500 text-center">
-            Last updated: {new Date(preferences.updatedAt).toLocaleString()}
+            Last updated: {new Date(userPreferences.updatedAt).toLocaleString()}
           </p>
         )}
       </CardContent>
     </Card>
   );
 }
+
+// Default export for convenience
+export default NotificationPreferencesComponent;

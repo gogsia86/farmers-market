@@ -30,6 +30,7 @@ const eslintConfig = [
       "**/src/app.backup.phase5/**",
       "**/*.backup/**",
       "**/.backup/**",
+      "**/.archive-old-implementation/**",
     ],
   },
 

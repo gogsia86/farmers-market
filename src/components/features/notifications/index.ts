@@ -4,5 +4,5 @@
  */
 
 export { NotificationCenter } from "./notification-center";
-export { NotificationPreferences } from "./notification-preferences";
+export { NotificationPreferencesComponent as NotificationPreferences } from "./notification-preferences";
 

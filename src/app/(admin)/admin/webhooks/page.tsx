@@ -99,8 +99,7 @@ export default function WebhookMonitoringPage() {
 
     const interval = setInterval(fetchReport, 30000);
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoRefresh]);
+  }, [autoRefresh, fetchReport]);
 
   // Handle manual refresh
   const handleRefresh = () => {
