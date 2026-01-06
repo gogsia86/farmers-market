@@ -386,8 +386,8 @@ export function StepsProgress({
               className={cn(
                 "flex items-center justify-center",
                 orientation === "horizontal"
-                  ? "flex-1 h-0.5 mx-2 mt-5"
-                  : "w-0.5 h-8 ml-5"
+                  ? "flex-1 mx-2 mt-5 h-0.5"
+                  : "ml-5 w-0.5 h-8"
               )}
             >
               <div
