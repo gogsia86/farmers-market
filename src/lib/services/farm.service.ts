@@ -35,6 +35,7 @@ import type {
   Prisma,
   User
 } from "@prisma/client";
+import { nanoid } from "nanoid";
 
 // ============================================================================
 // LOGGER
@@ -170,7 +171,7 @@ export class BiodynamicFarmService {
    * Uses repository pattern with transaction support
    */
   async createFarm(farmData: CreateFarmRequest): Promise<QuantumFarm> {
-    const requestId = logger.generateRequestId();
+    const requestId = nanoid();
     logger.info("Creating farm", { requestId, farmName: farmData.name });
 
     try {
@@ -255,7 +256,7 @@ export class BiodynamicFarmService {
     farmId: string,
     includeRelations: boolean = false
   ): Promise<QuantumFarm | null> {
-    const requestId = logger.generateRequestId();
+    const requestId = nanoid();
     logger.debug("Getting farm by ID", { requestId, farmId, includeRelations });
 
     try {
@@ -296,7 +297,7 @@ export class BiodynamicFarmService {
    * Retrieves farm by URL-friendly slug with caching
    */
   async getFarmBySlug(slug: string): Promise<QuantumFarm | null> {
-    const requestId = logger.generateRequestId();
+    const requestId = nanoid();
     logger.debug("Getting farm by slug", { requestId, slug });
 
     try {
@@ -348,7 +349,7 @@ export class BiodynamicFarmService {
     city?: string;
     state?: string;
   }): Promise<FarmListResult> {
-    const requestId = logger.generateRequestId();
+    const requestId = nanoid();
     const page = options?.page || 1;
     const limit = options?.limit || 20;
     const skip = (page - 1) * limit;
@@ -441,7 +442,7 @@ export class BiodynamicFarmService {
     updates: UpdateFarmRequest,
     userId: string
   ): Promise<QuantumFarm> {
-    const requestId = logger.generateRequestId();
+    const requestId = nanoid();
     logger.info("Updating farm", { requestId, farmId, userId });
 
     try {
@@ -483,7 +484,7 @@ export class BiodynamicFarmService {
    * Soft delete farm (sets status to INACTIVE) with proper cleanup
    */
   async deleteFarm(farmId: string, userId: string): Promise<void> {
-    const requestId = logger.generateRequestId();
+    const requestId = nanoid();
     logger.info("Deleting farm", { requestId, farmId, userId });
 
     try {
@@ -519,7 +520,7 @@ export class BiodynamicFarmService {
    * Admin function to approve farm verification with transaction support
    */
   async approveFarm(farmId: string, adminId: string): Promise<QuantumFarm> {
-    const requestId = logger.generateRequestId();
+    const requestId = nanoid();
     logger.info("Approving farm", { requestId, farmId, adminId });
 
     try {
@@ -562,7 +563,7 @@ export class BiodynamicFarmService {
     adminId: string,
     reason: string
   ): Promise<QuantumFarm> {
-    const requestId = logger.generateRequestId();
+    const requestId = nanoid();
     logger.info("Rejecting farm", { requestId, farmId, adminId, reason });
 
     try {

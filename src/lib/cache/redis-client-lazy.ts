@@ -38,11 +38,11 @@ const redisLazyLogger = createLogger("RedisLazy");
 export interface IRedisClient {
   get<T>(key: string): Promise<T | null>;
   set(key: string, value: unknown, ttl?: number): Promise<boolean>;
-  delete(key: string): Promise<void>;
+  delete(key: string): Promise<number>;
   deletePattern(pattern: string): Promise<number>;
   exists(key: string): Promise<boolean>;
   disconnect(): Promise<void>;
-  getConnectionStatus(): boolean;
+  getConnectionStatus(): { connected: boolean; reconnectAttempts: number };
 }
 
 /**
@@ -91,8 +91,10 @@ class InMemoryRedisClient implements IRedisClient {
     return true;
   }
 
-  async delete(key: string): Promise<void> {
+  async delete(key: string): Promise<number> {
+    const existed = this.store.has(key);
     this.store.delete(key);
+    return existed ? 1 : 0;
   }
 
   async deletePattern(pattern: string): Promise<number> {
@@ -135,9 +137,9 @@ class InMemoryRedisClient implements IRedisClient {
     this.store.clear();
   }
 
-  getConnectionStatus(): boolean {
+  getConnectionStatus(): { connected: boolean; reconnectAttempts: number } {
     // In-memory client is always "connected"
-    return true;
+    return { connected: true, reconnectAttempts: 0 };
   }
 }
 
@@ -212,7 +214,7 @@ export const redisClientLazy: IRedisClient = {
     return client.set(key, value, ttl);
   },
 
-  async delete(key: string): Promise<void> {
+  async delete(key: string): Promise<number> {
     const client = await getRedisClient();
     return client.delete(key);
   },
@@ -232,12 +234,12 @@ export const redisClientLazy: IRedisClient = {
     return client.disconnect();
   },
 
-  getConnectionStatus(): boolean {
+  getConnectionStatus(): { connected: boolean; reconnectAttempts: number } {
     // Synchronous method - return best guess
     if (!isRedisEnabled()) {
-      return true; // In-memory is always "connected"
+      return { connected: true, reconnectAttempts: 0 }; // In-memory is always "connected"
     }
-    return cachedRedisClient?.getConnectionStatus() ?? false;
+    return cachedRedisClient?.getConnectionStatus() ?? { connected: false, reconnectAttempts: 0 };
   },
 };
 
@@ -306,7 +308,7 @@ export async function getSeasonalCache<T>(
 export function getRedisStatus(): {
   enabled: boolean;
   clientLoaded: boolean;
-  connectionStatus: boolean;
+  connectionStatus: { connected: boolean; reconnectAttempts: number };
 } {
   return {
     enabled: isRedisEnabled(),

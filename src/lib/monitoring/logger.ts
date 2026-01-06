@@ -477,7 +477,7 @@ export class DatabaseQueryLogger {
    */
   private extractOperation(query: string): string {
     const match = query.match(/^(SELECT|INSERT|UPDATE|DELETE|BEGIN|COMMIT)/i);
-    return match ? match[1].toUpperCase() : 'UNKNOWN';
+    return match?.[1]?.toUpperCase() ?? 'UNKNOWN';
   }
 
   /**

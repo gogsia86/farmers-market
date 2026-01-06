@@ -233,12 +233,6 @@ const nextConfig = {
       transform: "lucide-react/dist/esm/icons/{{kebabCase member}}",
     },
   },
-
-  // ============================================
-  // TURBOPACK CONFIGURATION (Next.js 16+)
-  // ============================================
-  // Empty config to silence webpack compatibility warning
-  turbopack: {},
 };
 
 export default withSentryConfig(withBundleAnalyzer(nextConfig), {

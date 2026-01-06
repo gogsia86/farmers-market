@@ -4,13 +4,13 @@
  * Agricultural-aware TTLs and seasonal invalidation
  */
 
-import { redisClient } from "./redis-client";
 import { logger } from "../monitoring/logger";
+import { redisClient } from "./redis-client";
 import type {
   CacheKey,
-  CacheValue,
   CacheOptions,
   CacheStats,
+  CacheValue,
   ICacheService,
 } from "./types";
 
@@ -71,7 +71,10 @@ export class CacheService implements ICacheService {
       return value;
     } catch (error) {
       this.stats.errors++;
-      this.logger.error("Cache get error", error as Error, { key });
+      this.logger.error("Cache get error", {
+        key,
+        error: error instanceof Error ? error.message : String(error)
+      });
       return null;
     }
   }
@@ -99,7 +102,10 @@ export class CacheService implements ICacheService {
       return success;
     } catch (error) {
       this.stats.errors++;
-      this.logger.error("Cache set error", error as Error, { key });
+      this.logger.error("Cache set error", {
+        key,
+        error: error instanceof Error ? error.message : String(error)
+      });
       return false;
     }
   }
@@ -118,7 +124,10 @@ export class CacheService implements ICacheService {
       return true;
     } catch (error) {
       this.stats.errors++;
-      this.logger.error("Cache delete failed", error as Error, { key });
+      this.logger.error("Cache delete failed", {
+        key,
+        error: error instanceof Error ? error.message : String(error)
+      });
       return false;
     }
   }
@@ -137,8 +146,9 @@ export class CacheService implements ICacheService {
       return deleted;
     } catch (error) {
       this.stats.errors++;
-      this.logger.error("Cache deletePattern failed", error as Error, {
+      this.logger.error("Cache deletePattern failed", {
         pattern,
+        error: error instanceof Error ? error.message : String(error)
       });
       return 0;
     }
@@ -155,7 +165,10 @@ export class CacheService implements ICacheService {
       return await redisClient.exists(fullKey);
     } catch (error) {
       this.stats.errors++;
-      this.logger.error("Cache exists check failed", error as Error, { key });
+      this.logger.error("Cache exists check failed", {
+        key,
+        error: error instanceof Error ? error.message : String(error)
+      });
       return false;
     }
   }
@@ -177,7 +190,10 @@ export class CacheService implements ICacheService {
       return true;
     } catch (error) {
       this.stats.errors++;
-      this.logger.error("Cache clear error", error as Error, { pattern });
+      this.logger.error("Cache clear error", {
+        pattern,
+        error: error instanceof Error ? error.message : String(error)
+      });
       return false;
     }
   }
@@ -191,7 +207,10 @@ export class CacheService implements ICacheService {
       await this.deletePattern(pattern);
       this.logger.info("Cache invalidated by tag", { tag });
     } catch (error) {
-      this.logger.error("Tag invalidation failed", error as Error, { tag });
+      this.logger.error("Tag invalidation failed", {
+        tag,
+        error: error instanceof Error ? error.message : String(error)
+      });
     }
   }
 
@@ -201,7 +220,7 @@ export class CacheService implements ICacheService {
   getStats(): CacheStats {
     return {
       ...this.stats,
-      redisConnected: redisClient.getConnectionStatus(),
+      redisConnected: redisClient.getConnectionStatus().connected,
     };
   }
 

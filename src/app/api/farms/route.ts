@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
   try {
     // Rate limiting check
     const ip = getClientIp(request);
-    const rateLimit = checkRateLimit(ip, API_RATE_LIMIT);
+    const rateLimit = await checkRateLimit(ip, API_RATE_LIMIT);
 
     if (!rateLimit.allowed) {
       logger.warn("Rate limit exceeded", {
@@ -125,7 +125,7 @@ export async function GET(request: NextRequest) {
 
     // Build cache key from query parameters
     const cacheKey = CacheKeys.farmsList(
-      parseInt(query.page),
+      Number(query.page),
       JSON.stringify(query)
     );
 
@@ -152,17 +152,14 @@ export async function GET(request: NextRequest) {
           pageSize: cached.pageSize,
           totalItems: cached.total,
         },
-        {
-          ...ctx,
-          meta: { cached: true },
-        }
+        ctx
       );
     }
 
     // Build filter options for service
     const filterOptions: any = {
-      page: parseInt(query.page),
-      limit: parseInt(query.limit),
+      page: parseInt(String(query.page)),
+      limit: parseInt(String(query.limit)),
       searchQuery: query.search,
       city: query.city,
       state: query.state,
@@ -224,7 +221,7 @@ export async function POST(request: NextRequest) {
   try {
     // Rate limiting check (more strict for POST operations)
     const ip = getClientIp(request);
-    const rateLimit = checkRateLimit(ip, {
+    const rateLimit = await checkRateLimit(ip, {
       maxRequests: 10, // 10 farm creations per minute
       windowMs: 60 * 1000,
     });

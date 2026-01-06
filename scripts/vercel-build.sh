@@ -100,7 +100,7 @@ echo "   - Memory limit: 8GB"
 echo "   - Telemetry: Disabled"
 echo ""
 
-if next build; then
+if TURBOPACK=0 next build; then
     echo ""
     echo "   ✅ Next.js build completed successfully"
     echo ""

@@ -274,7 +274,7 @@ export class BiodynamicCacheManager {
     memorySize: number;
   } {
     return {
-      redisConnected: redisClient.getConnectionStatus(),
+      redisConnected: redisClient.getConnectionStatus().connected,
       memorySize: this.memoryCache.size(),
     };
   }

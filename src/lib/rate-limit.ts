@@ -312,23 +312,23 @@ export function getClientIp(request: NextRequest): string {
   const forwardedFor = request.headers.get('x-forwarded-for');
   if (forwardedFor) {
     // Take the first IP if multiple are present
-    return forwardedFor.split(',')[0].trim();
+    return forwardedFor.split(',')[0]?.trim() ?? 'unknown';
   }
 
   // Check X-Real-IP header
   const realIp = request.headers.get('x-real-ip');
   if (realIp) {
-    return realIp.trim();
+    return realIp.trim() ?? 'unknown';
   }
 
   // Check Cloudflare header
   const cfIp = request.headers.get('cf-connecting-ip');
   if (cfIp) {
-    return cfIp.trim();
+    return cfIp.trim() ?? 'unknown';
   }
 
-  // Fallback to request.ip or unknown
-  return request.ip || 'unknown';
+  // Fallback to unknown if no IP headers found
+  return 'unknown';
 }
 
 /**

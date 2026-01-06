@@ -42,8 +42,6 @@ const createPrismaClient = (): PrismaClient => {
     max: isDevelopment ? 10 : 5, // Fewer connections in production
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 10000,
-    // Connection error handling
-    connectionTimeoutMillis: 10000,
   });
 
   // Log pool events
@@ -172,6 +170,13 @@ export async function getDatabaseStats(): Promise<{
     `;
 
     const result = stats[0];
+    if (!result) {
+      return {
+        connections: 0,
+        maxConnections: 0,
+        idleConnections: 0,
+      };
+    }
     return {
       connections: result.total_connections,
       maxConnections: result.max_connections,
