@@ -25,8 +25,8 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <head>
-        {/* Google Analytics */}
+      <body className="min-h-screen bg-white antialiased flex flex-col">
+        {/* Google Analytics - Scripts in body to avoid hydration issues */}
         {GA_TRACKING_ID && (
           <>
             <Script
@@ -51,8 +51,6 @@ export default async function RootLayout({
             />
           </>
         )}
-      </head>
-      <body className="min-h-screen bg-white antialiased flex flex-col">
         <SessionProvider session={session}>
           <Header />
           <main className="flex-1">{children}</main>
