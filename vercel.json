@@ -1,13 +1,18 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "name": "farmers-market-platform",
-  "buildCommand": "TURBOPACK=0 SENTRY_UPLOAD_DRY_RUN=true prisma generate && next build",
+  "buildCommand": "npm run build",
   "devCommand": "npm run dev",
-  "installCommand": "npm ci --legacy-peer-deps",
+  "installCommand": "npm install --legacy-peer-deps",
   "framework": "nextjs",
   "regions": [
     "iad1"
   ],
+  "build": {
+    "env": {
+      "NODE_VERSION": "20.x"
+    }
+  },
   "outputDirectory": ".next",
   "cleanUrls": true,
   "trailingSlash": false,

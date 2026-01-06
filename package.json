@@ -4,11 +4,11 @@
   "private": true,
   "description": "Divine Agricultural E-Commerce Platform - Prisma 7",
   "engines": {
-    "node": "24.x",
+    "node": "20.x",
     "npm": ">=10.0.0"
   },
   "scripts": {
-    "postinstall": "prisma generate || true",
+    "postinstall": "npx prisma generate || echo 'Prisma generate skipped'",
     "prepare": "node -e \"if (!process.env.CI && !process.env.DOCKER && !process.env.HUSKY) { try { require('husky').install() } catch (e) {} }\"",
     "seed": "tsx scripts/seed-test-data.ts",
     "dev": "cross-env NODE_OPTIONS='--max-old-space-size=16384' NODE_ENV=development next dev --turbo -p 3001",
@@ -17,10 +17,10 @@
     "dev:turbo": "cross-env NODE_OPTIONS='--max-old-space-size=16384' NODE_ENV=development next dev --turbo -p 3001",
     "dev:omen": "cross-env NODE_OPTIONS='--max-old-space-size=32768 --max-semi-space-size=512' NODE_ENV=development next dev --turbo -p 3001",
     "dev:logger": "cross-env NODE_OPTIONS='--max-old-space-size=16384' NODE_ENV=development LOG_LEVEL=debug next dev --turbo -p 3001",
-    "build": "cross-env NODE_OPTIONS='--max-old-space-size=16384' TURBOPACK=0 SENTRY_UPLOAD_DRY_RUN=true NEXT_DISABLE_SOURCEMAPS=true prisma generate && next build",
-    "build:docker": "prisma generate && cross-env SKIP_ENV_VALIDATION=true TURBOPACK=0 SENTRY_UPLOAD_DRY_RUN=true NEXT_DISABLE_SOURCEMAPS=true next build",
-    "build:optimized": "cross-env NODE_OPTIONS='--max-old-space-size=16384' TURBOPACK=0 SENTRY_UPLOAD_DRY_RUN=true NEXT_DISABLE_SOURCEMAPS=true prisma generate && next build",
-    "build:omen": "cross-env NODE_OPTIONS='--max-old-space-size=32768 --max-semi-space-size=512' TURBOPACK=0 SENTRY_UPLOAD_DRY_RUN=true NEXT_DISABLE_SOURCEMAPS=true prisma generate && next build",
+    "build": "cross-env NODE_OPTIONS='--max-old-space-size=16384' TURBOPACK=0 SENTRY_UPLOAD_DRY_RUN=true NEXT_DISABLE_SOURCEMAPS=true npx prisma generate && npx next build",
+    "build:docker": "npx prisma generate && cross-env SKIP_ENV_VALIDATION=true TURBOPACK=0 SENTRY_UPLOAD_DRY_RUN=true NEXT_DISABLE_SOURCEMAPS=true npx next build",
+    "build:optimized": "cross-env NODE_OPTIONS='--max-old-space-size=16384' TURBOPACK=0 SENTRY_UPLOAD_DRY_RUN=true NEXT_DISABLE_SOURCEMAPS=true npx prisma generate && npx next build",
+    "build:omen": "cross-env NODE_OPTIONS='--max-old-space-size=32768 --max-semi-space-size=512' TURBOPACK=0 SENTRY_UPLOAD_DRY_RUN=true NEXT_DISABLE_SOURCEMAPS=true npx prisma generate && npx next build",
     "build:analyze": "cross-env ANALYZE=true NODE_OPTIONS='--max-old-space-size=16384' next build --webpack",
     "bundle:measure": "node scripts/measure-bundle-performance.mjs",
     "bundle:check": "npm run build:analyze && npm run bundle:measure",
