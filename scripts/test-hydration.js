@@ -20,7 +20,13 @@ const http = require('http');
 // CONFIGURATION
 // ============================================================================
 
-const TEST_URL = process.argv[2] || 'http://localhost:3000';
+let TEST_URL = process.argv[2] || 'http://localhost:3000';
+
+// Auto-upgrade to HTTPS for production URLs
+if (TEST_URL.includes('vercel.app') && TEST_URL.startsWith('http://')) {
+  TEST_URL = TEST_URL.replace('http://', 'https://');
+  console.log(colorize(`🔒 Auto-upgraded to HTTPS: ${TEST_URL}`, 'cyan'));
+}
 const TESTS_TO_RUN = [
   { path: '/', name: 'Homepage' },
   { path: '/products', name: 'Products Page' },
@@ -87,7 +93,7 @@ function printInfo(text) {
 // HTTP UTILITIES
 // ============================================================================
 
-function fetchPage(url) {
+function fetchPage(url, maxRedirects = 5) {
   return new Promise((resolve, reject) => {
     const urlObj = new URL(url);
     const client = urlObj.protocol === 'https:' ? https : http;
@@ -104,6 +110,27 @@ function fetchPage(url) {
     };
 
     const req = client.request(options, (res) => {
+      // Handle redirects (301, 302, 307, 308)
+      if ([301, 302, 307, 308].includes(res.statusCode) && res.headers.location) {
+        if (maxRedirects === 0) {
+          reject(new Error('Too many redirects'));
+          return;
+        }
+
+        // Resolve redirect URL (handle relative and absolute URLs)
+        let redirectUrl = res.headers.location;
+        if (!redirectUrl.startsWith('http')) {
+          const baseUrl = `${urlObj.protocol}//${urlObj.hostname}${urlObj.port ? ':' + urlObj.port : ''}`;
+          redirectUrl = new URL(redirectUrl, baseUrl).href;
+        }
+
+        // Follow redirect
+        fetchPage(redirectUrl, maxRedirects - 1)
+          .then(resolve)
+          .catch(reject);
+        return;
+      }
+
       let data = '';
 
       res.on('data', (chunk) => {
