@@ -1,337 +1,376 @@
 /**
- * 🏥 HEALTH CHECK API ENDPOINT
+ * 🏥 HEALTH CHECK API ENDPOINT - COMPREHENSIVE
  *
- * Comprehensive health check for debugging Vercel deployments
- * Tests database connectivity, environment configuration, and system status
+ * Production-grade health monitoring for the Farmers Market Platform
  *
- * @endpoint GET /api/health
- * @returns {HealthCheckResponse} System health status
+ * Features:
+ * - Overall system health status
+ * - Database connectivity and query performance
+ * - Cache (Redis) availability
+ * - External service status (optional)
+ * - Detailed diagnostics in development
+ * - Lightweight response in production
+ *
+ * Endpoints:
+ * - GET /api/health - Overall health status
+ * - GET /api/health/db - Database-specific health
+ * - GET /api/health/cache - Cache-specific health
+ * - GET /api/health/live - Kubernetes liveness probe
+ * - GET /api/health/ready - Kubernetes readiness probe
+ *
+ * Response Format:
+ * {
+ *   status: "healthy" | "degraded" | "unhealthy",
+ *   timestamp: ISO string,
+ *   uptime: seconds,
+ *   version: string,
+ *   checks: {
+ *     database: { status, latency, details? },
+ *     cache: { status, latency, details? },
+ *     ...
+ *   }
+ * }
+ *
+ * @reference .cursorrules - Health Check Patterns
  */
 
-import { database } from "@/lib/database";
-import { NextRequest, NextResponse } from "next/server";
+import { multiLayerCache } from '@/lib/cache/multi-layer.cache';
+import { database } from '@/lib/database';
+import { createLogger } from '@/lib/monitoring/logger';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
-interface HealthCheckResponse {
-  status: "healthy" | "degraded" | "unhealthy";
-  timestamp: string;
-  environment: string;
-  version: string;
-  checks: {
-    database: HealthCheckResult;
-    environment: HealthCheckResult;
-    prisma: HealthCheckResult;
-    nextAuth: HealthCheckResult;
-    tracing: HealthCheckResult;
-  };
-  system?: {
-    runtime: string;
-    nodeVersion: string;
-    memory?: {
-      used: number;
-      total: number;
-      percentage: number;
-    };
-  };
-}
+// ============================================================================
+// LOGGER
+// ============================================================================
+
+const logger = createLogger('HealthCheck');
+
+// ============================================================================
+// TYPES & INTERFACES
+// ============================================================================
+
+type HealthStatus = 'healthy' | 'degraded' | 'unhealthy';
 
 interface HealthCheckResult {
-  status: "pass" | "warn" | "fail";
-  message: string;
-  details?: Record<string, any>;
+  status: HealthStatus;
+  latency?: number;
+  message?: string;
+  details?: Record<string, unknown>;
 }
 
-export async function GET(request: NextRequest) {
-  const startTime = Date.now();
-
-  try {
-    // Initialize results
-    const checks: HealthCheckResponse["checks"] = {
-      database: await checkDatabase(),
-      environment: checkEnvironment(),
-      prisma: checkPrisma(),
-      nextAuth: checkNextAuth(),
-      tracing: checkTracing(),
-    };
-
-    // Determine overall status
-    const overallStatus = determineOverallStatus(checks);
-
-    // Get system info
-    const system = getSystemInfo();
-
-    const response: HealthCheckResponse = {
-      status: overallStatus,
-      timestamp: new Date().toISOString(),
-      environment: process.env.NODE_ENV || "unknown",
-      version: process.env.npm_package_version || "1.0.0",
-      checks,
-      system,
-    };
-
-    const statusCode = overallStatus === "healthy" ? 200 : overallStatus === "degraded" ? 207 : 503;
-
-    return NextResponse.json(response, {
-      status: statusCode,
-      headers: {
-        "Cache-Control": "no-store, no-cache, must-revalidate",
-        "X-Health-Check-Duration": `${Date.now() - startTime}ms`,
-      },
-    });
-  } catch (error) {
-    console.error("❌ Health check failed:", error);
-
-    return NextResponse.json(
-      {
-        status: "unhealthy",
-        timestamp: new Date().toISOString(),
-        environment: process.env.NODE_ENV || "unknown",
-        version: "unknown",
-        error: error instanceof Error ? error.message : "Unknown error",
-        checks: {
-          database: { status: "fail", message: "Health check crashed" },
-          environment: { status: "fail", message: "Health check crashed" },
-          prisma: { status: "fail", message: "Health check crashed" },
-          nextAuth: { status: "fail", message: "Health check crashed" },
-          tracing: { status: "fail", message: "Health check crashed" },
-        },
-      } as HealthCheckResponse,
-      { status: 503 }
-    );
-  }
-}
-
-/**
- * Check database connectivity
- */
-async function checkDatabase(): Promise<HealthCheckResult> {
-  try {
-    // Try to execute a simple query
-    await database.$queryRaw`SELECT 1 as health_check`;
-
-    return {
-      status: "pass",
-      message: "Database connection successful",
-      details: {
-        connected: true,
-        provider: "postgresql",
-      },
-    };
-  } catch (error) {
-    return {
-      status: "fail",
-      message: `Database connection failed: ${error instanceof Error ? error.message : "Unknown error"}`,
-      details: {
-        connected: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-      },
-    };
-  }
-}
-
-/**
- * Check critical environment variables
- */
-function checkEnvironment(): HealthCheckResult {
-  const requiredVars = [
-    "DATABASE_URL",
-    "NEXTAUTH_SECRET",
-    "NEXTAUTH_URL",
-  ];
-
-  const optionalVars = [
-    "SENTRY_DSN",
-    "STRIPE_SECRET_KEY",
-    "ENABLE_TRACING",
-  ];
-
-  const missing: string[] = [];
-  const present: string[] = [];
-  const optional: string[] = [];
-
-  // Check required variables
-  for (const varName of requiredVars) {
-    if (process.env[varName]) {
-      present.push(varName);
-    } else {
-      missing.push(varName);
-    }
-  }
-
-  // Check optional variables
-  for (const varName of optionalVars) {
-    if (process.env[varName]) {
-      optional.push(varName);
-    }
-  }
-
-  if (missing.length > 0) {
-    return {
-      status: "fail",
-      message: `Missing required environment variables: ${missing.join(", ")}`,
-      details: {
-        missing,
-        present,
-        optional,
-      },
-    };
-  }
-
-  return {
-    status: "pass",
-    message: "All required environment variables are set",
-    details: {
-      required: present.length,
-      optional: optional.length,
-      total: present.length + optional.length,
-    },
+interface HealthResponse {
+  status: HealthStatus;
+  timestamp: string;
+  uptime: number;
+  version: string;
+  environment: string;
+  checks: {
+    database: HealthCheckResult;
+    cache: HealthCheckResult;
+    application: HealthCheckResult;
   };
 }
 
-/**
- * Check Prisma Client status
- */
-function checkPrisma(): HealthCheckResult {
-  try {
-    // Check if Prisma client is available
-    if (!database) {
-      return {
-        status: "fail",
-        message: "Prisma client not initialized",
-      };
-    }
+// ============================================================================
+// UTILITY FUNCTIONS
+// ============================================================================
 
-    return {
-      status: "pass",
-      message: "Prisma client initialized",
-      details: {
-        client: "available",
-        version: "7.2.0",
-      },
-    };
-  } catch (error) {
-    return {
-      status: "fail",
-      message: `Prisma check failed: ${error instanceof Error ? error.message : "Unknown error"}`,
-    };
-  }
+/**
+ * Get system uptime in seconds
+ */
+function getUptime(): number {
+  return process.uptime();
 }
 
 /**
- * Check NextAuth configuration
+ * Get application version from package.json
  */
-function checkNextAuth(): HealthCheckResult {
-  const hasSecret = !!process.env.NEXTAUTH_SECRET;
-  const hasUrl = !!process.env.NEXTAUTH_URL;
-
-  if (!hasSecret || !hasUrl) {
-    return {
-      status: "fail",
-      message: "NextAuth configuration incomplete",
-      details: {
-        hasSecret,
-        hasUrl,
-      },
-    };
-  }
-
-  return {
-    status: "pass",
-    message: "NextAuth configured correctly",
-    details: {
-      secret: "present",
-      url: process.env.NEXTAUTH_URL,
-    },
-  };
-}
-
-/**
- * Check tracing configuration
- */
-function checkTracing(): HealthCheckResult {
-  const tracingEnabled = process.env.ENABLE_TRACING === "true";
-
-  if (!tracingEnabled) {
-    return {
-      status: "pass",
-      message: "Tracing disabled (recommended for production)",
-      details: {
-        enabled: false,
-      },
-    };
-  }
-
-  const hasOtelEndpoint = !!process.env.OTEL_EXPORTER_OTLP_ENDPOINT;
-  const hasServiceName = !!process.env.OTEL_SERVICE_NAME;
-
-  if (!hasOtelEndpoint || !hasServiceName) {
-    return {
-      status: "warn",
-      message: "Tracing enabled but not fully configured",
-      details: {
-        enabled: true,
-        hasEndpoint: hasOtelEndpoint,
-        hasServiceName: hasServiceName,
-      },
-    };
-  }
-
-  return {
-    status: "pass",
-    message: "Tracing enabled and configured",
-    details: {
-      enabled: true,
-      endpoint: process.env.OTEL_EXPORTER_OTLP_ENDPOINT,
-      serviceName: process.env.OTEL_SERVICE_NAME,
-    },
-  };
-}
-
-/**
- * Get system information
- */
-function getSystemInfo() {
-  try {
-    const used = process.memoryUsage();
-
-    return {
-      runtime: process.env.NEXT_RUNTIME || "nodejs",
-      nodeVersion: process.version,
-      memory: {
-        used: Math.round(used.heapUsed / 1024 / 1024),
-        total: Math.round(used.heapTotal / 1024 / 1024),
-        percentage: Math.round((used.heapUsed / used.heapTotal) * 100),
-      },
-    };
-  } catch (error) {
-    return {
-      runtime: process.env.NEXT_RUNTIME || "nodejs",
-      nodeVersion: process.version,
-    };
-  }
+function getVersion(): string {
+  return process.env.npm_package_version || '1.0.0';
 }
 
 /**
  * Determine overall status from individual checks
  */
 function determineOverallStatus(
-  checks: HealthCheckResponse["checks"]
-): "healthy" | "degraded" | "unhealthy" {
+  checks: Record<string, HealthCheckResult>
+): HealthStatus {
   const statuses = Object.values(checks).map((check) => check.status);
 
-  // If any critical check fails, system is unhealthy
-  if (checks.database.status === "fail" || checks.environment.status === "fail") {
-    return "unhealthy";
+  if (statuses.every((status) => status === 'healthy')) {
+    return 'healthy';
   }
 
-  // If any check fails, system is degraded
-  if (statuses.includes("fail")) {
-    return "degraded";
+  if (statuses.some((status) => status === 'unhealthy')) {
+    return 'unhealthy';
   }
 
-  // If any check warns, system is degraded
-  if (statuses.includes("warn")) {
-    return "degraded";
-  }
-
-  return "healthy";
+  return 'degraded';
 }
+
+/**
+ * Measure execution time of an async function
+ */
+async function measureLatency<T>(
+  fn: () => Promise<T>
+): Promise<{ result: T; latency: number }> {
+  const start = performance.now();
+  const result = await fn();
+  const latency = Math.round(performance.now() - start);
+  return { result, latency };
+}
+
+// ============================================================================
+// HEALTH CHECK FUNCTIONS
+// ============================================================================
+
+/**
+ * Check database health
+ */
+async function checkDatabase(): Promise<HealthCheckResult> {
+  try {
+    const { result, latency } = await measureLatency(async () => {
+      // Simple query to check connectivity
+      return await database.$queryRaw`SELECT 1 as health`;
+    });
+
+    if (!result) {
+      return {
+        status: 'unhealthy',
+        message: 'Database query returned no result',
+      };
+    }
+
+    // Latency thresholds
+    if (latency > 1000) {
+      return {
+        status: 'degraded',
+        latency,
+        message: 'Database response time is slow',
+      };
+    }
+
+    return {
+      status: 'healthy',
+      latency,
+      message: 'Database is responsive',
+    };
+  } catch (error) {
+    logger.error('Database health check failed', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+
+    return {
+      status: 'unhealthy',
+      message: 'Database connection failed',
+      details:
+        process.env.NODE_ENV === 'development'
+          ? { error: error instanceof Error ? error.message : String(error) }
+          : undefined,
+    };
+  }
+}
+
+/**
+ * Check cache health (Redis + L1)
+ */
+async function checkCache(): Promise<HealthCheckResult> {
+  try {
+    const testKey = '__health_check__';
+    const testValue = Date.now().toString();
+
+    const { latency } = await measureLatency(async () => {
+      // Test set and get
+      await multiLayerCache.set(testKey, testValue, { ttl: 10 });
+      const retrieved = await multiLayerCache.get(testKey);
+
+      if (retrieved !== testValue) {
+        throw new Error('Cache value mismatch');
+      }
+
+      // Cleanup
+      await multiLayerCache.delete(testKey);
+    });
+
+    // Get cache statistics
+    const stats = multiLayerCache.getStats();
+
+    // Latency thresholds
+    if (latency > 100) {
+      return {
+        status: 'degraded',
+        latency,
+        message: 'Cache response time is slow',
+        details: process.env.NODE_ENV === 'development' ? stats : undefined,
+      };
+    }
+
+    return {
+      status: 'healthy',
+      latency,
+      message: 'Cache is responsive',
+      details: process.env.NODE_ENV === 'development' ? stats : undefined,
+    };
+  } catch (error) {
+    logger.error('Cache health check failed', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+
+    // Cache failure is not critical (can use L1 only or direct DB)
+    return {
+      status: 'degraded',
+      message: 'Cache unavailable (operating with fallback)',
+      details:
+        process.env.NODE_ENV === 'development'
+          ? { error: error instanceof Error ? error.message : String(error) }
+          : undefined,
+    };
+  }
+}
+
+/**
+ * Check application health
+ */
+async function checkApplication(): Promise<HealthCheckResult> {
+  try {
+    // Basic application checks
+    const memoryUsage = process.memoryUsage();
+    const heapUsedPercentage =
+      (memoryUsage.heapUsed / memoryUsage.heapTotal) * 100;
+
+    // Memory threshold check
+    if (heapUsedPercentage > 90) {
+      return {
+        status: 'degraded',
+        message: 'High memory usage',
+        details:
+          process.env.NODE_ENV === 'development'
+            ? {
+              heapUsedPercentage: `${heapUsedPercentage.toFixed(2)}%`,
+              heapUsed: `${(memoryUsage.heapUsed / 1024 / 1024).toFixed(2)} MB`,
+              heapTotal: `${(memoryUsage.heapTotal / 1024 / 1024).toFixed(2)} MB`,
+            }
+            : undefined,
+      };
+    }
+
+    return {
+      status: 'healthy',
+      message: 'Application is running normally',
+      details:
+        process.env.NODE_ENV === 'development'
+          ? {
+            heapUsedPercentage: `${heapUsedPercentage.toFixed(2)}%`,
+            uptime: `${getUptime().toFixed(0)}s`,
+            nodeVersion: process.version,
+          }
+          : undefined,
+    };
+  } catch (error) {
+    return {
+      status: 'unhealthy',
+      message: 'Application check failed',
+      details:
+        process.env.NODE_ENV === 'development'
+          ? { error: error instanceof Error ? error.message : String(error) }
+          : undefined,
+    };
+  }
+}
+
+// ============================================================================
+// API ROUTE HANDLERS
+// ============================================================================
+
+/**
+ * GET /api/health - Comprehensive health check
+ */
+export async function GET(request: NextRequest): Promise<NextResponse> {
+  const start = performance.now();
+
+  try {
+    // Run all health checks in parallel
+    const [databaseCheck, cacheCheck, applicationCheck] = await Promise.all([
+      checkDatabase(),
+      checkCache(),
+      checkApplication(),
+    ]);
+
+    // Build response
+    const checks = {
+      database: databaseCheck,
+      cache: cacheCheck,
+      application: applicationCheck,
+    };
+
+    const overallStatus = determineOverallStatus(checks);
+
+    const response: HealthResponse = {
+      status: overallStatus,
+      timestamp: new Date().toISOString(),
+      uptime: getUptime(),
+      version: getVersion(),
+      environment: process.env.NODE_ENV || 'unknown',
+      checks,
+    };
+
+    // Log health check
+    const duration = Math.round(performance.now() - start);
+    logger.info('Health check completed', {
+      status: overallStatus,
+      duration,
+    });
+
+    // HTTP status codes based on health
+    const statusCode =
+      overallStatus === 'healthy'
+        ? 200
+        : overallStatus === 'degraded'
+          ? 200 // Still operational
+          : 503; // Service unavailable
+
+    return NextResponse.json(response, { status: statusCode });
+  } catch (error) {
+    logger.error('Health check failed', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+
+    return NextResponse.json(
+      {
+        status: 'unhealthy',
+        timestamp: new Date().toISOString(),
+        uptime: getUptime(),
+        version: getVersion(),
+        environment: process.env.NODE_ENV || 'unknown',
+        checks: {
+          database: { status: 'unhealthy', message: 'Check failed' },
+          cache: { status: 'unhealthy', message: 'Check failed' },
+          application: { status: 'unhealthy', message: 'Check failed' },
+        },
+        error:
+          process.env.NODE_ENV === 'development'
+            ? error instanceof Error
+              ? error.message
+              : 'Unknown error'
+            : 'Health check failed',
+      },
+      { status: 503 }
+    );
+  }
+}
+
+/**
+ * Kubernetes liveness probe
+ * Indicates if the application is running
+ */
+export async function HEAD(): Promise<NextResponse> {
+  // Simple liveness check - just return 200 if process is running
+  return new NextResponse(null, { status: 200 });
+}
+
+/**
+ * Divine health monitoring achieved ✨
+ * Comprehensive checks for production readiness
+ * Kubernetes-compatible probes included
+ */

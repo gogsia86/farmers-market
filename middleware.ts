@@ -1,21 +1,23 @@
 /**
- * Next.js Middleware
+ * Next.js Middleware - Enhanced with Security
  *
  * Handles:
  * - Route redirects for restructured paths
  * - Authentication checks (NextAuth v5)
  * - Role-based access control
+ * - Security headers (CSP, HSTS, etc.)
+ * - CORS configuration
  *
  * @see https://nextjs.org/docs/app/building-your-application/routing/middleware
  *
  * Updated: January 2025
- * NextAuth v5 (Auth.js) Migration
+ * NextAuth v5 (Auth.js) Migration + Security Headers
  */
 
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 import { auth } from "@/lib/auth/config";
-import type { NextMiddleware } from "next/server";
+import { applyCORSHeaders, applySecurityHeaders, getProductionCORSConfig } from "@/lib/security/headers";
+import type { NextMiddleware, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 /**
  * Middleware Runtime Configuration
@@ -58,16 +60,34 @@ export default auth((request: NextRequest) => {
   }
 
   // ============================================================================
-  // FUTURE: Add authentication and RBAC here
+  // PHASE 2: SECURITY HEADERS & CORS
   // ============================================================================
-  // TODO: Phase 2+ will add authentication middleware
+
+  // Create response
+  const response = NextResponse.next();
+
+  // Apply security headers (CSP, HSTS, X-Frame-Options, etc.)
+  applySecurityHeaders(response, {
+    enableCSP: true,
+    enableHSTS: process.env.NODE_ENV === 'production',
+    environment: process.env.NODE_ENV as 'development' | 'staging' | 'production',
+  });
+
+  // Apply CORS headers for API routes
+  if (pathname.startsWith('/api')) {
+    applyCORSHeaders(response, request, getProductionCORSConfig());
+  }
+
+  // ============================================================================
+  // FUTURE: Add enhanced authentication and RBAC here
+  // ============================================================================
+  // Phase 3+ will add:
   // - Check session
   // - Verify user roles
   // - Protect routes based on role
   // See: src/lib/middleware/route-config.ts for configuration
 
-  // Continue to next middleware or route handler
-  return NextResponse.next();
+  return response;
 }) as NextMiddleware;
 
 /**
