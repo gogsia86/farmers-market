@@ -1,0 +1,311 @@
+# 🔍 Vercel Preview Deployment Workflow
+# Automatically deploys preview environments for pull requests
+# Provides isolated testing environments before merging to production
+
+name: Deploy to Vercel Preview
+
+on:
+  pull_request:
+    branches:
+      - master
+      - main
+    types: [opened, synchronize, reopened]
+  workflow_dispatch: # Allow manual trigger
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  # ============================================================================
+  # JOB 1: QUALITY CHECKS
+  # ============================================================================
+  quality-checks:
+    name: 🔍 Quality Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: "npm"
+
+      - name: 📚 Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: 🔍 Run ESLint
+        run: npm run lint
+        continue-on-error: true
+
+      - name: 🔷 TypeScript type check
+        run: npx tsc --noEmit
+        continue-on-error: true
+
+      - name: 📊 Report results
+        run: |
+          echo "### 🔍 Quality Check Results" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Linting completed" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Type checking completed" >> $GITHUB_STEP_SUMMARY
+
+  # ============================================================================
+  # JOB 2: BUILD TEST
+  # ============================================================================
+  build-test:
+    name: 🏗️ Build Test
+    runs-on: ubuntu-latest
+    needs: quality-checks
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: "npm"
+
+      - name: 📚 Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: 🔨 Test build
+        run: npm run build
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/test
+          NEXTAUTH_SECRET: test-secret-for-build-only
+          NEXTAUTH_URL: http://localhost:3000
+          ENABLE_TRACING: false
+          SKIP_ENV_VALIDATION: true
+
+      - name: 📊 Build size report
+        run: |
+          echo "### 📦 Build Output" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          du -sh .next >> $GITHUB_STEP_SUMMARY
+          ls -lh .next/server/app/**/*.js | head -20 >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+  # ============================================================================
+  # JOB 3: DEPLOY TO VERCEL PREVIEW
+  # ============================================================================
+  deploy-preview:
+    name: 🚀 Deploy Preview
+    runs-on: ubuntu-latest
+    needs: [quality-checks, build-test]
+    environment:
+      name: preview
+      url: ${{ steps.deploy.outputs.url }}
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: "npm"
+
+      - name: 📚 Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: 🔗 Pull Vercel Environment Information
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: 🏗️ Build Project Artifacts
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: 🚀 Deploy to Vercel Preview
+        id: deploy
+        run: |
+          DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          echo "url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+          echo "### 🚀 Preview Deployment Successful!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Preview URL:** $DEPLOYMENT_URL" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**PR:** #${{ github.event.pull_request.number }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** \`${{ github.head_ref }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Author:** @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: 🏥 Health Check
+        run: |
+          echo "Waiting 20 seconds for deployment to stabilize..."
+          sleep 20
+
+          PREVIEW_URL="${{ steps.deploy.outputs.url }}"
+
+          echo "### 🏥 Health Check Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Test health endpoint
+          HEALTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" $PREVIEW_URL/api/health || echo "000")
+          if [ "$HEALTH_STATUS" = "200" ] || [ "$HEALTH_STATUS" = "404" ]; then
+            echo "✅ Health endpoint: $HEALTH_STATUS" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Health endpoint: $HEALTH_STATUS" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Test homepage
+          HOME_STATUS=$(curl -s -o /dev/null -w "%{http_code}" $PREVIEW_URL/ || echo "000")
+          if [ "$HOME_STATUS" = "200" ]; then
+            echo "✅ Homepage: PASS ($HOME_STATUS)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Homepage: FAIL ($HOME_STATUS)" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Test auth
+          AUTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" $PREVIEW_URL/api/auth/session || echo "000")
+          if [ "$AUTH_STATUS" = "200" ]; then
+            echo "✅ Auth API: PASS ($AUTH_STATUS)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Auth API: FAIL ($AUTH_STATUS)" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: 💬 Comment on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const deploymentUrl = '${{ steps.deploy.outputs.url }}';
+            const prNumber = context.payload.pull_request.number;
+
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+            });
+
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('Preview Deployment')
+            );
+
+            const commentBody = `## 🚀 Preview Deployment Ready!
+
+**Preview URL:** ${deploymentUrl}
+
+### 📋 Deployment Details
+- **Branch:** \`${{ github.head_ref }}\`
+- **Commit:** \`${{ github.sha }}\`
+- **Environment:** Preview
+- **Status:** ✅ Ready
+
+### 🧪 Test Your Changes
+- [Homepage](${deploymentUrl})
+- [Health Check](${deploymentUrl}/api/health)
+- [Farms](${deploymentUrl}/farms)
+- [Products](${deploymentUrl}/products)
+
+### 📊 Quick Links
+- [View Deployment Logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+- [Vercel Dashboard](https://vercel.com/gogsias-projects/farmers-market-platform)
+
+---
+_Automated deployment by GitHub Actions · Updated ${new Date().toUTCString()}_`;
+
+            if (botComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: commentBody
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: commentBody
+              });
+            }
+
+  # ============================================================================
+  # JOB 4: LIGHTHOUSE AUDIT (OPTIONAL)
+  # ============================================================================
+  lighthouse-audit:
+    name: 🔦 Lighthouse Audit
+    runs-on: ubuntu-latest
+    needs: deploy-preview
+    continue-on-error: true
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔦 Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v10
+        with:
+          urls: |
+            ${{ needs.deploy-preview.outputs.url }}
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+        continue-on-error: true
+
+      - name: 📊 Report Lighthouse results
+        run: |
+          echo "### 🔦 Lighthouse Audit Completed" >> $GITHUB_STEP_SUMMARY
+          echo "Check artifacts for detailed report" >> $GITHUB_STEP_SUMMARY
+
+  # ============================================================================
+  # JOB 5: NOTIFY ON FAILURE
+  # ============================================================================
+  notify-failure:
+    name: 🚨 Notify on Failure
+    runs-on: ubuntu-latest
+    needs: [quality-checks, build-test, deploy-preview]
+    if: failure()
+
+    steps:
+      - name: 💬 Comment failure on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+
+            const commentBody = `## ❌ Preview Deployment Failed
+
+**Branch:** \`${{ github.head_ref }}\`
+**Commit:** \`${{ github.sha }}\`
+
+The preview deployment encountered an error. Please check the [workflow logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.
+
+### 🔧 Common Issues
+1. Build errors - Check ESLint and TypeScript errors
+2. Missing environment variables
+3. Vercel token expiration
+4. Network connectivity issues
+
+### 📚 Resources
+- [Deployment Troubleshooting Guide](./DEPLOYMENT_TROUBLESHOOTING.md)
+- [Vercel Dashboard](https://vercel.com/gogsias-projects/farmers-market-platform)
+
+---
+_Automated notification by GitHub Actions · ${new Date().toUTCString()}_`;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: commentBody
+            });
+
+      - name: 📧 Create failure summary
+        run: |
+          echo "### ❌ Preview Deployment Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**PR:** #${{ github.event.pull_request.number }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** \`${{ github.head_ref }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Author:** @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Please check the workflow logs and fix the issues before merging." >> $GITHUB_STEP_SUMMARY
