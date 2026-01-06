@@ -17,7 +17,7 @@
 
 import { useToast } from "@/hooks/use-toast";
 import { createLogger } from "@/lib/utils/logger";
-import React, {
+import {
   createContext,
   useCallback,
   useContext,
@@ -54,9 +54,9 @@ type CartAction =
   | { type: "ADD_ITEM"; payload: CartItem }
   | { type: "REMOVE_ITEM"; payload: { productId: string } }
   | {
-      type: "UPDATE_QUANTITY";
-      payload: { productId: string; quantity: number };
-    }
+    type: "UPDATE_QUANTITY";
+    payload: { productId: string; quantity: number };
+  }
   | { type: "CLEAR_CART" }
   | { type: "LOAD_CART"; payload: CartItem[] };
 
@@ -177,7 +177,7 @@ interface CartProviderProps {
   children: ReactNode;
 }
 
-export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
+export function CartProvider({ children }: CartProviderProps) {
   const { toast } = useToast();
 
   const [state, dispatch] = useReducer(cartReducer, {

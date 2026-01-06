@@ -13,7 +13,7 @@
  */
 
 import { database } from "@/lib/database";
-import { notificationService } from "@/lib/services/notification.service";
+import { emailService } from "@/lib/services/email.service";
 import { randomBytes } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -77,80 +77,15 @@ export async function POST(request: NextRequest) {
 
     // Send password reset email
     try {
-      await notificationService.sendEmail({
+      await emailService.sendEmail({
         to: user.email,
-        subject: "Password Reset Request - Farmers Market Platform",
-        html: `
-          <!DOCTYPE html>
-          <html>
-            <head>
-              <meta charset="utf-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>Password Reset Request</title>
-            </head>
-            <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-              <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-                <h1 style="margin: 0; font-size: 28px;">🔐 Password Reset Request</h1>
-              </div>
-
-              <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 10px 10px;">
-                <p style="font-size: 16px; margin-bottom: 20px;">Hello ${user.name || "there"},</p>
-
-                <p style="font-size: 16px; margin-bottom: 20px;">
-                  We received a request to reset your password for your Farmers Market Platform account.
-                </p>
-
-                <p style="font-size: 16px; margin-bottom: 30px;">
-                  Click the button below to reset your password. This link will expire in <strong>1 hour</strong>.
-                </p>
-
-                <div style="text-align: center; margin: 30px 0;">
-                  <a href="${resetUrl}"
-                     style="display: inline-block; background: #10b981; color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);">
-                    Reset Password
-                  </a>
-                </div>
-
-                <p style="font-size: 14px; color: #6b7280; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-                  If the button doesn't work, copy and paste this link into your browser:
-                </p>
-                <p style="font-size: 12px; color: #10b981; word-break: break-all; background: #f3f4f6; padding: 10px; border-radius: 5px;">
-                  ${resetUrl}
-                </p>
-
-                <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin-top: 30px; border-radius: 5px;">
-                  <p style="margin: 0; font-size: 14px; color: #92400e;">
-                    <strong>⚠️ Didn't request this?</strong><br>
-                    If you didn't request a password reset, please ignore this email or contact support if you have concerns. Your password will remain unchanged.
-                  </p>
-                </div>
-
-                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #6b7280; text-align: center;">
-                  <p style="margin: 5px 0;">🌾 Farmers Market Platform</p>
-                  <p style="margin: 5px 0;">Connecting local farmers with communities</p>
-                  <p style="margin: 5px 0;">&copy; ${new Date().getFullYear()} All rights reserved</p>
-                </div>
-              </div>
-            </body>
-          </html>
-        `,
-        text: `
-Password Reset Request
-
-Hello ${user.name || "there"},
-
-We received a request to reset your password for your Farmers Market Platform account.
-
-Click the link below to reset your password. This link will expire in 1 hour.
-
-${resetUrl}
-
-If you didn't request a password reset, please ignore this email. Your password will remain unchanged.
-
----
-Farmers Market Platform
-Connecting local farmers with communities
-        `,
+        subject: "Reset Your Password",
+        template: "password_reset",
+        data: {
+          userName: user.name || "there",
+          resetUrl: resetUrl,
+          expiryTime: "1 hour",
+        },
       });
 
       console.log(`Password reset email sent to: ${user.email}`);

@@ -415,10 +415,10 @@ interface StepContentProps {
   className?: string;
 }
 
-export const StepContent: React.FC<StepContentProps> = ({
+export function StepContent({
   children,
   className,
-}) => {
+}: StepContentProps) {
   const { currentStep, steps, errors } = useMultiStepForm();
   const currentStepDef = steps[currentStep] || steps[0];
   const error = errors.get(currentStep);
@@ -465,7 +465,7 @@ interface StepNavigationProps {
   className?: string;
 }
 
-export const StepNavigation: React.FC<StepNavigationProps> = ({
+export function StepNavigation({
   onSubmit,
   submitLabel = "Submit",
   nextLabel = "Next",
@@ -474,7 +474,7 @@ export const StepNavigation: React.FC<StepNavigationProps> = ({
   showPrevious = true,
   showNext = true,
   className,
-}) => {
+}: StepNavigationProps) {
   const { isFirstStep, isLastStep, canGoPrevious, nextStep, previousStep } =
     useMultiStepForm();
 
@@ -543,10 +543,10 @@ interface MultiStepFormContainerProps {
   className?: string;
 }
 
-export const MultiStepFormContainer: React.FC<MultiStepFormContainerProps> = ({
+export function MultiStepFormContainer({
   children,
   className,
-}) => {
+}: MultiStepFormContainerProps) {
   const { consciousness } = useMultiStepForm();
 
   const consciousnessStyles = {
@@ -582,9 +582,13 @@ interface AgriculturalMultiStepFormProps {
   className?: string;
 }
 
-export const AgriculturalMultiStepForm: React.FC<
-  AgriculturalMultiStepFormProps
-> = ({ steps, onComplete, children, initialStep = 0, className }) => {
+export function AgriculturalMultiStepForm({
+  steps,
+  onComplete,
+  children,
+  initialStep = 0,
+  className
+}: AgriculturalMultiStepFormProps) {
   return (
     <MultiStepFormProvider
       steps={steps}
