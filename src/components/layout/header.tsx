@@ -10,6 +10,7 @@
  * - User role-based navigation
  * - Mobile responsive menu
  * - Optimistic UI updates
+ * - No hydration mismatch - server session passed via SessionProvider
  */
 
 import { CartBadge } from "@/components/features/cart/cart-badge";
@@ -19,11 +20,12 @@ import { LayoutDashboard, LogOut, Menu, Package, Settings, Store, User, X } from
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
 
   // Real auth state from NextAuth
@@ -32,6 +34,11 @@ export function Header() {
   const user = session?.user;
   const userId = user?.id;
   const userRole = user?.role as UserRole | undefined;
+
+  // Prevent hydration mismatch by only rendering auth UI after mount
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Base navigation (available to all)
   const baseNavigation = [
@@ -97,16 +104,24 @@ export function Header() {
 
           {/* Actions */}
           <div className="flex items-center space-x-4">
-            {/* Cart Badge with Mini-Cart */}
-            <CartBadge
-              userId={userId}
-              showMiniCart={true}
-              variant="ghost"
-              size="sm"
-            />
+            {/* Cart Badge with Mini-Cart - only show when mounted to prevent hydration issues */}
+            {mounted && (
+              <CartBadge
+                userId={userId}
+                showMiniCart={true}
+                variant="ghost"
+                size="sm"
+              />
+            )}
 
-            {/* User Menu / Auth */}
-            {isAuthenticated && user ? (
+            {/* User Menu / Auth - prevent hydration mismatch */}
+            {!mounted ? (
+              // Loading skeleton during hydration
+              <div className="hidden md:flex md:items-center md:space-x-2">
+                <div className="h-8 w-16 bg-gray-200 rounded animate-pulse" />
+                <div className="h-8 w-20 bg-gray-200 rounded animate-pulse" />
+              </div>
+            ) : isAuthenticated && user ? (
               <div className="relative">
                 <Button
                   variant="ghost"
@@ -215,12 +230,13 @@ export function Header() {
               </div>
             )}
 
-            {/* Mobile menu button */}
+            {/* Mobile menu button - always show */}
             <Button
               variant="ghost"
               size="sm"
               className="md:hidden text-gray-700"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
             >
               {mobileMenuOpen ? (
                 <X className="h-6 w-6" />
@@ -231,8 +247,8 @@ export function Header() {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
-        {mobileMenuOpen && (
+        {/* Mobile Navigation - only render when mounted */}
+        {mounted && mobileMenuOpen && (
           <div className="border-t py-4 md:hidden">
             <div className="space-y-2">
               {baseNavigation.map((item) => (

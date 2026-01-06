@@ -63,6 +63,11 @@ function getGuestCart(): GuestCartItem[] {
   }
 }
 
+function getGuestCartCount(): number {
+  const items = getGuestCart();
+  return items.reduce((sum, item) => sum + item.quantity, 0);
+}
+
 function setGuestCart(items: GuestCartItem[]): void {
   if (typeof window === "undefined") return;
 
@@ -91,6 +96,9 @@ export function useCart(options: UseCartOptions = {}) {
   const { userId, autoSync = true, syncInterval = 30000 } = options;
   const { toast } = useToast();
 
+  // Prevent hydration mismatch by deferring localStorage access
+  const [mounted, setMounted] = useState(false);
+
   const [state, setState] = useState<CartState>({
     summary: null,
     count: 0,
@@ -99,11 +107,19 @@ export function useCart(options: UseCartOptions = {}) {
     error: null,
   });
 
+  // Set mounted state after hydration
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // ==========================================================================
   // CART LOADING
   // ==========================================================================
 
   const loadCart = useCallback(async () => {
+    // Don't access localStorage until mounted to prevent hydration mismatch
+    if (!mounted) return;
+
     if (!userId) {
       // Load guest cart from local storage
       const guestItems = getGuestCart();
@@ -143,7 +159,7 @@ export function useCart(options: UseCartOptions = {}) {
         error: error instanceof Error ? error.message : "Failed to load cart",
       }));
     }
-  }, [userId]);
+  }, [userId, mounted]);
 
   // ==========================================================================
   // CART OPERATIONS

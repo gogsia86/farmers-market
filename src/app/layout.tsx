@@ -2,6 +2,7 @@ import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { SessionProvider } from "@/components/providers/SessionProvider";
 import { Toaster } from "@/components/ui/toaster";
+import { auth } from "@/lib/auth";
 import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
@@ -14,11 +15,14 @@ export const metadata: Metadata = {
 
 const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || '';
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Fetch session on server to prevent hydration mismatch
+  const session = await auth();
+
   return (
     <html lang="en">
       <head>
@@ -49,7 +53,7 @@ export default function RootLayout({
         )}
       </head>
       <body className="min-h-screen bg-white antialiased flex flex-col">
-        <SessionProvider>
+        <SessionProvider session={session}>
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
