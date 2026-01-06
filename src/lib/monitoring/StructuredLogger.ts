@@ -3,6 +3,8 @@
  * Enterprise-grade logging with context and metadata
  */
 
+import { logger } from '@/lib/monitoring/logger';
+
 export interface LogContext {
   requestId?: string;
   userId?: string;
@@ -144,7 +146,7 @@ export class StructuredLogger {
     };
 
     // In production, you'd send this to your logging service
-    console.log(
+    logger.info(
       JSON.stringify(
         entry,
         null,

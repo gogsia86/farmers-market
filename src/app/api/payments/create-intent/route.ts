@@ -5,6 +5,8 @@ import { checkoutService } from "@/lib/services/checkout.service";
 import { stripeService } from "@/lib/services/stripe.service";
 import { NextRequest, NextResponse } from "next/server";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // TYPES
 // ============================================================================
@@ -140,7 +142,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       { status: 200 }
     );
   } catch (error) {
-    console.error("Create payment intent error:", error);
+    logger.error("Create payment intent error:", error);
 
     return NextResponse.json(
       {

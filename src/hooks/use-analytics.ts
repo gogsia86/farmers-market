@@ -11,6 +11,8 @@ import { createLogger } from "@/lib/utils/logger";
 import { InteractionType, PeriodType, Season } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // Create logger for analytics hooks
 const analyticsLogger = createLogger("Analytics");
 
@@ -419,7 +421,7 @@ export function useAggregateAnalytics() {
  * });
  *
  * if (analytics) {
- *   console.log("Total searches:", analytics.metrics.volume.totalSearches);
+ *   logger.info("Total searches:", analytics.metrics.volume.totalSearches);
  * }
  * ```
  */
@@ -450,8 +452,8 @@ export function useSearchAnalytics(query: AggregationRequest) {
  * const { data: profile, isLoading } = useUserSearchProfile(userId);
  *
  * if (profile) {
- *   console.log("Total searches:", profile.totalSearches);
- *   console.log("Top categories:", profile.topCategories);
+ *   logger.info("Total searches:", profile.totalSearches);
+ *   logger.info("Top categories:", profile.topCategories);
  * }
  * ```
  */
@@ -479,7 +481,7 @@ export function useUserSearchProfile(userId: string | undefined) {
  *
  * if (trends) {
  *   trends.forEach(trend => {
- *     console.log(`${trend.query}: ${trend.trendType} (${trend.growthRate}%)`);
+ *     logger.info(`${trend.query}: ${trend.trendType} (${trend.growthRate}%)`);
  *   });
  * }
  * ```

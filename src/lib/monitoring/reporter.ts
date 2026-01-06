@@ -8,6 +8,9 @@
 
 import { promises as fs } from "fs";
 import path from "path";
+
+import { logger } from '@/lib/monitoring/logger';
+
 import type {
   WorkflowResult,
   MonitoringReport,
@@ -40,20 +43,20 @@ export class DivineMonitoringReporter implements IReporter {
     results: WorkflowResult[],
     period: { start: Date; end: Date },
   ): Promise<MonitoringReport> {
-    console.log(
+    logger.info(
       "\n╔════════════════════════════════════════════════════════════╗",
     );
-    console.log(
+    logger.info(
       "║ 📊 GENERATING DIVINE MONITORING REPORT                     ║",
     );
-    console.log(
+    logger.info(
       "╠════════════════════════════════════════════════════════════╣",
     );
-    console.log(
+    logger.info(
       `║ 📅 PERIOD: ${this.formatDate(period.start)} - ${this.formatDate(period.end)}    ║`,
     );
-    console.log(`║ 🔢 WORKFLOWS: ${String(results.length).padEnd(43)} ║`);
-    console.log(
+    logger.info(`║ 🔢 WORKFLOWS: ${String(results.length).padEnd(43)} ║`);
+    logger.info(
       "╚════════════════════════════════════════════════════════════╝\n",
     );
 
@@ -146,12 +149,12 @@ export class DivineMonitoringReporter implements IReporter {
       const mdContent = this.generateMarkdownReport(report);
       await fs.writeFile(mdPath, mdContent, "utf-8");
 
-      console.log(`✅ Report saved: ${report.reportId}`);
-      console.log(`   📄 JSON: ${jsonPath}`);
-      console.log(`   🌐 HTML: ${htmlPath}`);
-      console.log(`   📝 MD: ${mdPath}\n`);
+      logger.info(`✅ Report saved: ${report.reportId}`);
+      logger.info(`   📄 JSON: ${jsonPath}`);
+      logger.info(`   🌐 HTML: ${htmlPath}`);
+      logger.info(`   📝 MD: ${mdPath}\n`);
     } catch (error) {
-      console.error("❌ Failed to save report:", error);
+      logger.error("❌ Failed to save report:", error);
       throw error;
     }
   }
@@ -161,7 +164,7 @@ export class DivineMonitoringReporter implements IReporter {
    */
   async sendNotifications(report: MonitoringReport): Promise<Notification[]> {
     if (!this.notificationConfig) {
-      console.log("⚠️  No notification configuration provided");
+      logger.info("⚠️  No notification configuration provided");
       return [];
     }
 
@@ -170,18 +173,18 @@ export class DivineMonitoringReporter implements IReporter {
     // Determine if we should send notification
     const shouldNotify = this.shouldSendNotification(report);
     if (!shouldNotify) {
-      console.log("ℹ️  No notification needed for this report");
+      logger.info("ℹ️  No notification needed for this report");
       return [];
     }
 
-    console.log("\n📤 Sending notifications...");
+    logger.info("\n📤 Sending notifications...");
 
     for (const channel of this.notificationConfig.channels) {
       try {
         const notification = await this.sendNotification(channel, report);
         notifications.push(notification);
       } catch (error) {
-        console.error(`❌ Failed to send ${channel} notification:`, error);
+        logger.error(`❌ Failed to send ${channel} notification:`, error);
         notifications.push({
           id: this.generateNotificationId(),
           timestamp: new Date(),
@@ -222,7 +225,7 @@ export class DivineMonitoringReporter implements IReporter {
 
       return reports;
     } catch (error) {
-      console.error("❌ Failed to get report history:", error);
+      logger.error("❌ Failed to get report history:", error);
       return [];
     }
   }
@@ -401,7 +404,7 @@ export class DivineMonitoringReporter implements IReporter {
     }
 
     notification.sent = true;
-    console.log(`   ✅ ${channel} notification sent`);
+    logger.info(`   ✅ ${channel} notification sent`);
     return notification;
   }
 
@@ -410,7 +413,7 @@ export class DivineMonitoringReporter implements IReporter {
   ): Promise<void> {
     // Email implementation would go here
     // For now, just log
-    console.log("   📧 Would send email notification:", {
+    logger.info("   📧 Would send email notification:", {
       to: this.notificationConfig?.email?.to,
       subject: notification.title,
     });
@@ -453,7 +456,7 @@ export class DivineMonitoringReporter implements IReporter {
     };
 
     // In production, would use fetch to send to Slack
-    console.log("   💬 Would send Slack message:", slackMessage);
+    logger.info("   💬 Would send Slack message:", slackMessage);
   }
 
   private async sendDiscordNotification(
@@ -481,7 +484,7 @@ export class DivineMonitoringReporter implements IReporter {
     };
 
     // In production, would use fetch to send to Discord
-    console.log("   🎮 Would send Discord message:", discordMessage);
+    logger.info("   🎮 Would send Discord message:", discordMessage);
   }
 
   private async sendWebhookNotification(
@@ -492,7 +495,7 @@ export class DivineMonitoringReporter implements IReporter {
     }
 
     // In production, would use fetch to send webhook
-    console.log(
+    logger.info(
       "   🔗 Would send webhook to:",
       this.notificationConfig.webhook.url,
     );
@@ -716,31 +719,31 @@ export class DivineMonitoringReporter implements IReporter {
   }
 
   private logReport(report: MonitoringReport): void {
-    console.log(
+    logger.info(
       "\n╔════════════════════════════════════════════════════════════╗",
     );
-    console.log(
+    logger.info(
       "║ 📊 REPORT SUMMARY                                          ║",
     );
-    console.log(
+    logger.info(
       "╠════════════════════════════════════════════════════════════╣",
     );
-    console.log(
+    logger.info(
       `║ ✅ PASSED: ${String(report.summary.passedWorkflows).padEnd(47)} ║`,
     );
-    console.log(
+    logger.info(
       `║ ❌ FAILED: ${String(report.summary.failedWorkflows).padEnd(47)} ║`,
     );
-    console.log(
+    logger.info(
       `║ ⚠️  WARNINGS: ${String(report.summary.warningWorkflows).padEnd(44)} ║`,
     );
-    console.log(
+    logger.info(
       `║ 📈 SUCCESS RATE: ${report.summary.successRate.toFixed(1)}%${" ".repeat(38 - report.summary.successRate.toFixed(1).length)} ║`,
     );
-    console.log(
+    logger.info(
       `║ ⏱️  AVG DURATION: ${(report.summary.averageDuration / 1000).toFixed(2)}s${" ".repeat(37 - (report.summary.averageDuration / 1000).toFixed(2).length)} ║`,
     );
-    console.log(
+    logger.info(
       "╚════════════════════════════════════════════════════════════╝\n",
     );
   }

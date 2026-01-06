@@ -18,6 +18,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { redisClientLazy } from "@/lib/cache/redis-client-lazy";
 
+import { logger } from '@/lib/monitoring/logger';
+
 /**
  * Rate limit configuration
  */
@@ -150,7 +152,7 @@ export class RateLimiter {
         reset: resetTime,
       };
     } catch (error) {
-      console.error("Redis rate limit error:", error);
+      logger.error("Redis rate limit error:", error);
       // Fallback to memory on Redis error
       return this.checkWithMemory(key, now, windowStart);
     }

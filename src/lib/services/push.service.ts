@@ -11,6 +11,9 @@
 import { database } from "@/lib/database";
 import { SpanStatusCode, trace } from "@opentelemetry/api";
 import * as admin from "firebase-admin";
+
+import { logger } from '@/lib/monitoring/logger';
+
 import type {
   MulticastMessage
 } from "firebase-admin/messaging";
@@ -232,7 +235,7 @@ export class PushNotificationService {
       const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
 
       if (!projectId || !privateKey || !clientEmail) {
-        console.warn(
+        logger.warn(
           "⚠️ Push notification service not configured. Set FIREBASE_PROJECT_ID, FIREBASE_PRIVATE_KEY, and FIREBASE_CLIENT_EMAIL"
         );
         this.isConfigured = false;
@@ -255,10 +258,10 @@ export class PushNotificationService {
       if (this.app) {
         this.messaging = admin.messaging(this.app);
         this.isConfigured = true;
-        console.log("✅ Push notification service initialized successfully");
+        logger.info("✅ Push notification service initialized successfully");
       }
     } catch (error) {
-      console.error("❌ Failed to initialize push notification service:", error);
+      logger.error("❌ Failed to initialize push notification service:", error);
       this.isConfigured = false;
     }
   }
@@ -297,7 +300,7 @@ export class PushNotificationService {
       try {
         // Check if service is configured
         if (!this.isConfigured || !this.messaging) {
-          console.log(
+          logger.info(
             `🔔 [PUSH NOT CONFIGURED] Would send to user ${options.userId}: ${options.title}`
           );
           span.setStatus({ code: SpanStatusCode.OK });
@@ -314,7 +317,7 @@ export class PushNotificationService {
         const tokens = await this.getUserDeviceTokens(options.userId);
 
         if (tokens.length === 0) {
-          console.warn(`⚠️ No device tokens found for user ${options.userId}`);
+          logger.warn(`⚠️ No device tokens found for user ${options.userId}`);
           return {
             success: false,
             error: "No device tokens registered for user",
@@ -378,7 +381,7 @@ export class PushNotificationService {
                   resp.error?.code === "messaging/registration-token-not-registered"
                 ) {
                   this.removeDeviceToken(token.token).catch((err) =>
-                    console.error("Failed to remove invalid token:", err)
+                    logger.error("Failed to remove invalid token:", err)
                   );
                 }
               }
@@ -401,7 +404,7 @@ export class PushNotificationService {
         const success = response.successCount > 0;
         span.setStatus({ code: success ? SpanStatusCode.OK : SpanStatusCode.ERROR });
 
-        console.log(
+        logger.info(
           `${success ? "✅" : "❌"} Push notification sent to user ${options.userId}: ${response.successCount}/${tokens.length} successful`
         );
 
@@ -424,7 +427,7 @@ export class PushNotificationService {
           message: errorMessage,
         });
 
-        console.error(
+        logger.error(
           `❌ Failed to send push notification to user ${options.userId}:`,
           error
         );
@@ -536,9 +539,9 @@ export class PushNotificationService {
         });
       }
 
-      console.log(`✅ Device token registered for user ${userId}`);
+      logger.info(`✅ Device token registered for user ${userId}`);
     } catch (error) {
-      console.error("Failed to register device token:", error);
+      logger.error("Failed to register device token:", error);
       throw error;
     }
   }
@@ -554,9 +557,9 @@ export class PushNotificationService {
         where: { token },
       });
 
-      console.log(`🗑️ Device token removed: ${token.substring(0, 20)}...`);
+      logger.info(`🗑️ Device token removed: ${token.substring(0, 20)}...`);
     } catch (error) {
-      console.error("Failed to remove device token:", error);
+      logger.error("Failed to remove device token:", error);
       // Don't throw - token might already be deleted
     }
   }
@@ -584,7 +587,7 @@ export class PushNotificationService {
 
       return tokens;
     } catch (error) {
-      console.error("Failed to get user device tokens:", error);
+      logger.error("Failed to get user device tokens:", error);
       return [];
     }
   }
@@ -620,7 +623,7 @@ export class PushNotificationService {
         },
       });
     } catch (error) {
-      console.error("Failed to log push notification to database:", error);
+      logger.error("Failed to log push notification to database:", error);
       // Don't throw - logging failure shouldn't break push sending
     }
   }
@@ -687,7 +690,7 @@ export class PushNotificationService {
     await this.ensureInitialized();
 
     if (!this.isConfigured || !this.messaging) {
-      console.log(`🔔 [PUSH NOT CONFIGURED] Would subscribe user ${userId} to topic ${topic}`);
+      logger.info(`🔔 [PUSH NOT CONFIGURED] Would subscribe user ${userId} to topic ${topic}`);
       return;
     }
 
@@ -695,7 +698,7 @@ export class PushNotificationService {
       const tokens = await this.getUserDeviceTokens(userId);
 
       if (tokens.length === 0) {
-        console.warn(`⚠️ No device tokens found for user ${userId}`);
+        logger.warn(`⚠️ No device tokens found for user ${userId}`);
         return;
       }
 
@@ -704,9 +707,9 @@ export class PushNotificationService {
         topic
       );
 
-      console.log(`✅ User ${userId} subscribed to topic: ${topic}`);
+      logger.info(`✅ User ${userId} subscribed to topic: ${topic}`);
     } catch (error) {
-      console.error(`Failed to subscribe user ${userId} to topic ${topic}:`, error);
+      logger.error(`Failed to subscribe user ${userId} to topic ${topic}:`, error);
       throw error;
     }
   }
@@ -721,7 +724,7 @@ export class PushNotificationService {
     await this.ensureInitialized();
 
     if (!this.isConfigured || !this.messaging) {
-      console.log(`🔔 [PUSH NOT CONFIGURED] Would unsubscribe user ${userId} from topic ${topic}`);
+      logger.info(`🔔 [PUSH NOT CONFIGURED] Would unsubscribe user ${userId} from topic ${topic}`);
       return;
     }
 
@@ -737,9 +740,9 @@ export class PushNotificationService {
         topic
       );
 
-      console.log(`✅ User ${userId} unsubscribed from topic: ${topic}`);
+      logger.info(`✅ User ${userId} unsubscribed from topic: ${topic}`);
     } catch (error) {
-      console.error(
+      logger.error(
         `Failed to unsubscribe user ${userId} from topic ${topic}:`,
         error
       );

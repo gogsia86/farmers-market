@@ -11,6 +11,8 @@ import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // Lazy Stripe Initialization
 // ============================================================================
@@ -49,7 +51,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const signature = headersList.get("stripe-signature");
 
     if (!signature) {
-      console.error("No Stripe signature found in headers");
+      logger.error("No Stripe signature found in headers");
       return NextResponse.json(
         { error: "No signature" },
         { status: 400 }
@@ -63,14 +65,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       const webhookSecret = getWebhookSecret();
       event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
     } catch (err) {
-      console.error("Webhook signature verification failed:", err);
+      logger.error("Webhook signature verification failed:", err);
       return NextResponse.json(
         { error: "Invalid signature" },
         { status: 400 }
       );
     }
 
-    console.log(`Processing Stripe webhook event: ${event.type} (${event.id})`);
+    logger.info(`Processing Stripe webhook event: ${event.type} (${event.id})`);
 
     // Record event for idempotency and deduplication
     const recordResult = await webhookEventService.recordEvent({
@@ -82,7 +84,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // If event was already processed, return success immediately
     if (recordResult.alreadyProcessed) {
-      console.log(`Event ${event.id} already processed, skipping`);
+      logger.info(`Event ${event.id} already processed, skipping`);
       return NextResponse.json({
         received: true,
         alreadyProcessed: true,
@@ -91,7 +93,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // If recording failed, return error
     if (!recordResult.success) {
-      console.error(`Failed to record event ${event.id}: ${recordResult.error}`);
+      logger.error(`Failed to record event ${event.id}: ${recordResult.error}`);
       return NextResponse.json(
         {
           error: "Failed to record webhook event",
@@ -122,11 +124,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
         case "charge.succeeded":
           // Usually handled by payment_intent.succeeded, but log for tracking
-          console.log(`Charge succeeded: ${event.data.object.id}`);
+          logger.info(`Charge succeeded: ${event.data.object.id}`);
           break;
 
         default:
-          console.log(`Unhandled event type: ${event.type}`);
+          logger.info(`Unhandled event type: ${event.type}`);
       }
 
       // Mark event as successfully processed
@@ -142,7 +144,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
       await webhookEventService.markAsFailed(event.id, errorMessage);
 
-      console.error(`Webhook event ${event.id} processing failed:`, processingError);
+      logger.error(`Webhook event ${event.id} processing failed:`, processingError);
 
       // Return 500 to trigger Stripe retry
       return NextResponse.json(
@@ -154,7 +156,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
   } catch (error) {
-    console.error("Webhook handler error:", error);
+    logger.error("Webhook handler error:", error);
     return NextResponse.json(
       {
         error: "Webhook handler failed",
@@ -175,13 +177,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 async function handlePaymentIntentSucceeded(
   paymentIntent: Stripe.PaymentIntent
 ): Promise<void> {
-  console.log(`Payment intent succeeded: ${paymentIntent.id}`);
+  logger.info(`Payment intent succeeded: ${paymentIntent.id}`);
 
   const metadata = paymentIntent.metadata;
   const orderId = metadata?.orderId;
 
   if (!orderId) {
-    console.error("No orderId in payment intent metadata");
+    logger.error("No orderId in payment intent metadata");
     return;
   }
 
@@ -261,9 +263,9 @@ async function handlePaymentIntentSucceeded(
       }
     }
 
-    console.log(`Successfully processed payment for order ${orderId}`);
+    logger.info(`Successfully processed payment for order ${orderId}`);
   } catch (error) {
-    console.error(`Failed to process successful payment for order ${orderId}:`, error);
+    logger.error(`Failed to process successful payment for order ${orderId}:`, error);
   }
 }
 
@@ -273,13 +275,13 @@ async function handlePaymentIntentSucceeded(
 async function handlePaymentIntentFailed(
   paymentIntent: Stripe.PaymentIntent
 ): Promise<void> {
-  console.log(`Payment intent failed: ${paymentIntent.id}`);
+  logger.info(`Payment intent failed: ${paymentIntent.id}`);
 
   const metadata = paymentIntent.metadata;
   const orderId = metadata?.orderId;
 
   if (!orderId) {
-    console.error("No orderId in payment intent metadata");
+    logger.error("No orderId in payment intent metadata");
     return;
   }
 
@@ -321,9 +323,9 @@ async function handlePaymentIntentFailed(
       });
     }
 
-    console.log(`Successfully processed failed payment for order ${orderId}`);
+    logger.info(`Successfully processed failed payment for order ${orderId}`);
   } catch (error) {
-    console.error(`Failed to process failed payment for order ${orderId}:`, error);
+    logger.error(`Failed to process failed payment for order ${orderId}:`, error);
   }
 }
 
@@ -331,7 +333,7 @@ async function handlePaymentIntentFailed(
  * Handle charge refunded
  */
 async function handleChargeRefunded(charge: Stripe.Charge): Promise<void> {
-  console.log(`Charge refunded: ${charge.id}`);
+  logger.info(`Charge refunded: ${charge.id}`);
 
   const paymentIntentId =
     typeof charge.payment_intent === "string"
@@ -339,7 +341,7 @@ async function handleChargeRefunded(charge: Stripe.Charge): Promise<void> {
       : charge.payment_intent?.id;
 
   if (!paymentIntentId) {
-    console.error("No payment intent ID found in charge");
+    logger.error("No payment intent ID found in charge");
     return;
   }
 
@@ -359,7 +361,7 @@ async function handleChargeRefunded(charge: Stripe.Charge): Promise<void> {
     });
 
     if (!payment) {
-      console.error(`Payment not found for payment intent ${paymentIntentId}`);
+      logger.error(`Payment not found for payment intent ${paymentIntentId}`);
       return;
     }
 
@@ -399,11 +401,11 @@ async function handleChargeRefunded(charge: Stripe.Charge): Promise<void> {
       });
     }
 
-    console.log(
+    logger.info(
       `Successfully processed refund for payment ${payment.id}, amount: $${refundAmount}`
     );
   } catch (error) {
-    console.error(`Failed to process refund for charge ${charge.id}:`, error);
+    logger.error(`Failed to process refund for charge ${charge.id}:`, error);
   }
 }
 
@@ -413,13 +415,13 @@ async function handleChargeRefunded(charge: Stripe.Charge): Promise<void> {
 async function handlePaymentIntentCreated(
   paymentIntent: Stripe.PaymentIntent
 ): Promise<void> {
-  console.log(`Payment intent created: ${paymentIntent.id}`);
+  logger.info(`Payment intent created: ${paymentIntent.id}`);
 
   const metadata = paymentIntent.metadata;
   const orderId = metadata?.orderId;
 
   if (!orderId) {
-    console.log("No orderId in payment intent metadata");
+    logger.info("No orderId in payment intent metadata");
     return;
   }
 
@@ -434,9 +436,9 @@ async function handlePaymentIntentCreated(
       },
     });
 
-    console.log(`Tracked payment intent creation for order ${orderId}`);
+    logger.info(`Tracked payment intent creation for order ${orderId}`);
   } catch (error) {
-    console.error(
+    logger.error(
       `Failed to track payment intent creation for order ${orderId}:`,
       error
     );

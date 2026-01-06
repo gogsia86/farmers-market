@@ -10,6 +10,8 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // TYPES
 // ============================================================================
@@ -80,7 +82,7 @@ function CheckoutSuccessContent() {
       setOrders(mockOrders);
       setIsLoading(false);
     } catch (err) {
-      console.error("Failed to fetch order details:", err);
+      logger.error("Failed to fetch order details:", err);
       setError("Failed to load order details");
       setIsLoading(false);
     }

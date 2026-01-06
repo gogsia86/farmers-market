@@ -11,6 +11,9 @@ import type { CartItem, Farm, Product } from "@prisma/client";
 import { AlertTriangle, Check, Edit2, Loader2, MapPin, Package, Truck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+
+import { logger } from '@/lib/monitoring/logger';
+
 import type { DeliveryInfo, PaymentInfo, ShippingAddress } from "./checkout-wizard";
 
 // ============================================================================
@@ -167,7 +170,7 @@ export function ReviewStep({
       // Step 4: Redirect to confirmation page
       router.push(`/orders/${orderResult.data.orderId}/confirmation`);
     } catch (err) {
-      console.error("Order submission error:", err);
+      logger.error("Order submission error:", err);
       setError(
         err instanceof Error
           ? err.message

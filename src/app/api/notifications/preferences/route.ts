@@ -9,6 +9,8 @@ import { notificationService } from "@/lib/services/notification.service";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // Validation Schemas
 // ============================================================================
@@ -55,7 +57,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       data: preferences,
     });
   } catch (error) {
-    console.error("Failed to fetch notification preferences:", error);
+    logger.error("Failed to fetch notification preferences:", error);
     return NextResponse.json(
       {
         success: false,
@@ -124,7 +126,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
       data: updatedPreferences,
     });
   } catch (error) {
-    console.error("Failed to update notification preferences:", error);
+    logger.error("Failed to update notification preferences:", error);
     return NextResponse.json(
       {
         success: false,

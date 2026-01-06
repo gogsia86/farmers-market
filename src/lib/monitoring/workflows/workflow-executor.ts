@@ -25,6 +25,8 @@ import type {
 import { DEFAULT_WORKFLOW_TIMEOUT, DEFAULT_RETRY_DELAY } from "../types";
 import { getWorkflowSteps as getPredefinedWorkflowSteps } from "./predefined-workflows";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // DIVINE WORKFLOW EXECUTOR
 // ============================================================================
@@ -48,20 +50,20 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
     const runId = this.generateRunId();
     const startTime = new Date();
 
-    console.log(
+    logger.info(
       "\n╔════════════════════════════════════════════════════════════╗",
     );
-    console.log(
+    logger.info(
       "║ ⚡ DIVINE WORKFLOW EXECUTION INITIATED                     ║",
     );
-    console.log(
+    logger.info(
       "╠════════════════════════════════════════════════════════════╣",
     );
-    console.log(`║ 🔮 WORKFLOW: ${workflow.name.padEnd(44)} ║`);
-    console.log(`║ 🆔 RUN ID: ${runId.padEnd(46)} ║`);
-    console.log(`║ 🌾 TYPE: ${workflow.type.padEnd(48)} ║`);
-    console.log(`║ ⚠️  PRIORITY: ${workflow.priority.padEnd(45)} ║`);
-    console.log(
+    logger.info(`║ 🔮 WORKFLOW: ${workflow.name.padEnd(44)} ║`);
+    logger.info(`║ 🆔 RUN ID: ${runId.padEnd(46)} ║`);
+    logger.info(`║ 🌾 TYPE: ${workflow.type.padEnd(48)} ║`);
+    logger.info(`║ ⚠️  PRIORITY: ${workflow.priority.padEnd(45)} ║`);
+    logger.info(
       "╚════════════════════════════════════════════════════════════╝\n",
     );
 
@@ -86,15 +88,15 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
       const stepResults: WorkflowStepResult[] = [];
 
       for (const step of steps) {
-        console.log(`   🔄 Executing step: ${step.name}...`);
+        logger.info(`   🔄 Executing step: ${step.name}...`);
         const stepResult = await this.executeStep(step, context);
         stepResults.push(stepResult);
 
         if (!stepResult.success && !step.skipOnFailure) {
-          console.log(`   ❌ Step failed: ${step.name}`);
+          logger.info(`   ❌ Step failed: ${step.name}`);
           break;
         }
-        console.log(`   ✅ Step passed: ${step.name}`);
+        logger.info(`   ✅ Step passed: ${step.name}`);
       }
 
       const endTime = new Date();
@@ -140,7 +142,7 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
 
       return result;
     } catch (error) {
-      console.error("❌ Workflow execution failed:", error);
+      logger.error("❌ Workflow execution failed:", error);
 
       const endTime = new Date();
       const duration = endTime.getTime() - startTime.getTime();
@@ -190,7 +192,7 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
   ): Promise<WorkflowResult> {
     const delay = DEFAULT_RETRY_DELAY * Math.pow(2, attempt - 1);
 
-    console.log(
+    logger.info(
       `🔄 Retrying workflow (attempt ${attempt}/${workflow.retries}) after ${delay}ms...`,
     );
 
@@ -202,11 +204,11 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
    * ✅ VALIDATION PATTERN - Validate workflow configuration
    */
   async validate(workflow: WorkflowConfig): Promise<boolean> {
-    console.log(`   🔍 Validating workflow: ${workflow.name}...`);
+    logger.info(`   🔍 Validating workflow: ${workflow.name}...`);
 
     // Check required fields
     if (!workflow.id || !workflow.name || !workflow.type) {
-      console.error("❌ Workflow missing required fields");
+      logger.error("❌ Workflow missing required fields");
       return false;
     }
 
@@ -214,7 +216,7 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
     if (workflow.dependencies && workflow.dependencies.length > 0) {
       for (const depId of workflow.dependencies) {
         if (!this.workflows.has(depId)) {
-          console.error(`❌ Dependency not found: ${depId}`);
+          logger.error(`❌ Dependency not found: ${depId}`);
           return false;
         }
       }
@@ -222,11 +224,11 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
 
     // Check timeout
     if (workflow.timeout && workflow.timeout < 1000) {
-      console.error("❌ Timeout too short (minimum 1000ms)");
+      logger.error("❌ Timeout too short (minimum 1000ms)");
       return false;
     }
 
-    console.log("   ✅ Workflow validation passed");
+    logger.info("   ✅ Workflow validation passed");
     return true;
   }
 
@@ -284,7 +286,7 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
       ],
     });
 
-    console.log(`   🔧 Browser mode: ${headless ? "headless" : "headed"}`);
+    logger.info(`   🔧 Browser mode: ${headless ? "headless" : "headed"}`);
 
     this.context = await this.browser.newContext({
       viewport: { width: 1920, height: 1080 },
@@ -305,7 +307,7 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
     // Add console listener
     page.on("console", (msg) => {
       if (msg.type() === "error") {
-        console.log(`   🔴 Browser console error: ${msg.text()}`);
+        logger.info(`   🔴 Browser console error: ${msg.text()}`);
       }
     });
 
@@ -357,7 +359,7 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
       }
 
       // Log the error for debugging
-      console.error(`   ⚠️  Step error: ${errorMessage}`);
+      logger.error(`   ⚠️  Step error: ${errorMessage}`);
 
       // Take screenshot on failure
       let screenshot: string | undefined;
@@ -369,7 +371,7 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
           });
           screenshot = screenshotBuffer.toString("base64");
         } catch (e) {
-          console.error("Failed to capture screenshot:", e);
+          logger.error("Failed to capture screenshot:", e);
         }
       }
 
@@ -390,7 +392,7 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
     const steps = getPredefinedWorkflowSteps(workflow.id);
 
     if (steps.length === 0) {
-      console.warn(`⚠️  No steps found for workflow: ${workflow.id}`);
+      logger.warn(`⚠️  No steps found for workflow: ${workflow.id}`);
     }
 
     return steps;
@@ -447,7 +449,7 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
           performanceMetrics.pageLoadTime,
         );
       } catch (e) {
-        console.warn("Failed to gather performance metrics:", e);
+        logger.warn("Failed to gather performance metrics:", e);
       }
     }
 
@@ -557,42 +559,42 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
             ? "⚠️"
             : "⏭️";
 
-    console.log(
+    logger.info(
       "\n╔════════════════════════════════════════════════════════════╗",
     );
-    console.log(
+    logger.info(
       `║ ${statusEmoji} WORKFLOW EXECUTION COMPLETE                           ║`,
     );
-    console.log(
+    logger.info(
       "╠════════════════════════════════════════════════════════════╣",
     );
-    console.log(`║ 📊 STATUS: ${result.status.padEnd(46)} ║`);
-    console.log(
+    logger.info(`║ 📊 STATUS: ${result.status.padEnd(46)} ║`);
+    logger.info(
       `║ ⏱️  DURATION: ${(result.duration / 1000).toFixed(2)}s${" ".repeat(44 - (result.duration / 1000).toFixed(2).length)} ║`,
     );
-    console.log(
+    logger.info(
       `║ ✅ PASSED: ${result.passedSteps}/${result.totalSteps}${" ".repeat(47 - String(result.passedSteps).length - String(result.totalSteps).length)} ║`,
     );
-    console.log(
+    logger.info(
       `║ ❌ FAILED: ${result.failedSteps}/${result.totalSteps}${" ".repeat(47 - String(result.failedSteps).length - String(result.totalSteps).length)} ║`,
     );
 
     if (result.metrics.performanceScore) {
-      console.log(
+      logger.info(
         `║ 🚀 PERFORMANCE: ${result.metrics.performanceScore}/100${" ".repeat(40 - String(result.metrics.performanceScore).length)} ║`,
       );
     }
 
     if (result.agricultureConsciousness) {
-      console.log(
+      logger.info(
         `║ 🌾 SEASONAL: ${result.agricultureConsciousness.seasonalRelevance.toFixed(0)}%${" ".repeat(44 - result.agricultureConsciousness.seasonalRelevance.toFixed(0).length)} ║`,
       );
-      console.log(
+      logger.info(
         `║ 🌿 BIODYNAMIC: ${result.agricultureConsciousness.biodynamicAlignment.toFixed(0)}%${" ".repeat(42 - result.agricultureConsciousness.biodynamicAlignment.toFixed(0).length)} ║`,
       );
     }
 
-    console.log(
+    logger.info(
       "╚════════════════════════════════════════════════════════════╝\n",
     );
   }

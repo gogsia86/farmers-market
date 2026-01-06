@@ -17,6 +17,8 @@ import type { FulfillmentMethod } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { logger } from '@/lib/monitoring/logger';
+
 /**
  * 🔍 GET - Retrieve User's Cart
  */
@@ -99,7 +101,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Cart retrieval error:", error);
+    logger.error("Cart retrieval error:", error);
     return NextResponse.json(
       {
         success: false,
@@ -333,7 +335,7 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Add to cart error:", error);
+    logger.error("Add to cart error:", error);
     return NextResponse.json(
       {
         success: false,
@@ -478,7 +480,7 @@ export async function PATCH(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Cart update error:", error);
+    logger.error("Cart update error:", error);
     return NextResponse.json(
       {
         success: false,
@@ -576,7 +578,7 @@ export async function DELETE(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Cart delete error:", error);
+    logger.error("Cart delete error:", error);
     return NextResponse.json(
       {
         success: false,

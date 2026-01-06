@@ -16,6 +16,8 @@ import type {
 import { SlackNotifier } from "./slack.notifier";
 import { DiscordNotifier } from "./discord.notifier";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // TYPES
 // ============================================================================
@@ -330,11 +332,11 @@ export class NotificationManager {
   async testAllChannels(): Promise<NotificationResult[]> {
     const results: NotificationResult[] = [];
 
-    console.log("🧪 Testing notification channels...\n");
+    logger.info("🧪 Testing notification channels...\n");
 
     // Test Slack
     if (this.slack.isEnabled()) {
-      console.log("📨 Testing Slack...");
+      logger.info("📨 Testing Slack...");
       const slackResult = await this.slack.testConnection();
       results.push({
         channel: "slack",
@@ -342,18 +344,18 @@ export class NotificationManager {
         error: slackResult.error,
         timestamp: slackResult.timestamp,
       });
-      console.log(
+      logger.info(
         slackResult.success
           ? "✅ Slack: Connected"
           : `❌ Slack: ${slackResult.error}`,
       );
     } else {
-      console.log("⏭️  Slack: Disabled (SLACK_WEBHOOK_URL not configured)");
+      logger.info("⏭️  Slack: Disabled (SLACK_WEBHOOK_URL not configured)");
     }
 
     // Test Discord
     if (this.discord.isEnabled()) {
-      console.log("📨 Testing Discord...");
+      logger.info("📨 Testing Discord...");
       const discordResult = await this.discord.testConnection();
       results.push({
         channel: "discord",
@@ -361,16 +363,16 @@ export class NotificationManager {
         error: discordResult.error,
         timestamp: discordResult.timestamp,
       });
-      console.log(
+      logger.info(
         discordResult.success
           ? "✅ Discord: Connected"
           : `❌ Discord: ${discordResult.error}`,
       );
     } else {
-      console.log("⏭️  Discord: Disabled (DISCORD_WEBHOOK_URL not configured)");
+      logger.info("⏭️  Discord: Disabled (DISCORD_WEBHOOK_URL not configured)");
     }
 
-    console.log("\n✨ Notification channel test complete!");
+    logger.info("\n✨ Notification channel test complete!");
 
     return results;
   }
@@ -453,12 +455,12 @@ export class NotificationManager {
     );
 
     if (recentNotifications.length >= this.throttleConfig.maxPerHour) {
-      console.warn("⚠️  Notification throttled: Max per hour limit reached");
+      logger.warn("⚠️  Notification throttled: Max per hour limit reached");
       return false;
     }
 
     if (dailyNotifications.length >= this.throttleConfig.maxPerDay) {
-      console.warn("⚠️  Notification throttled: Max per day limit reached");
+      logger.warn("⚠️  Notification throttled: Max per day limit reached");
       return false;
     }
 

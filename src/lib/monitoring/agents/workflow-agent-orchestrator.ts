@@ -9,6 +9,9 @@
 
 // @ts-ignore - OpenAI module may not be available in all environments
 import OpenAI from "openai";
+
+import { logger } from '@/lib/monitoring/logger';
+
 import type {
   WorkflowResult,
   MultiAgentAnalysis,
@@ -62,14 +65,14 @@ export class WorkflowAgentOrchestrator {
       const apiKey = config?.apiKey || process.env.OPENAI_API_KEY;
 
       if (!apiKey) {
-        console.warn(
+        logger.warn(
           "⚠️  OpenAI API key not configured. Agent orchestration disabled.",
         );
         this.enabled = false;
       } else {
         this.openai = new OpenAI({ apiKey });
         this.initializeAgents();
-        console.log(
+        logger.info(
           `✅ Multi-Agent Orchestrator initialized with ${this.agents.size} agents`,
         );
       }
@@ -263,7 +266,7 @@ Prioritize system stability and data integrity.`,
       return this.generateFallbackAnalysis(workflowResult);
     }
 
-    console.log("\n🤖 Initiating multi-agent workflow analysis...\n");
+    logger.info("\n🤖 Initiating multi-agent workflow analysis...\n");
 
     const agentRoles: AgentRole[] = [
       "FAILURE_ANALYST",
@@ -298,7 +301,7 @@ Prioritize system stability and data integrity.`,
         votingResults: consensus.votes,
       };
     } catch (error) {
-      console.error("❌ Multi-agent analysis error:", error);
+      logger.error("❌ Multi-agent analysis error:", error);
       return this.generateFallbackAnalysis(workflowResult);
     }
   }
@@ -344,7 +347,7 @@ Provide specific, implementable optimizations in JSON format:
 
       return parsed.optimizations || [];
     } catch (error) {
-      console.error("❌ Performance optimization error:", error);
+      logger.error("❌ Performance optimization error:", error);
       return [];
     }
   }
@@ -393,7 +396,7 @@ Provide security assessment in JSON:
       const response = await this.queryAgent(agent, prompt);
       return JSON.parse(response.content);
     } catch (error) {
-      console.error("❌ Security audit error:", error);
+      logger.error("❌ Security audit error:", error);
       return {
         securityScore: 50,
         vulnerabilities: [],
@@ -449,7 +452,7 @@ Provide validation in JSON:
       const response = await this.queryAgent(agent, prompt);
       return JSON.parse(response.content);
     } catch (error) {
-      console.error("❌ Agricultural validation error:", error);
+      logger.error("❌ Agricultural validation error:", error);
       return {
         valid: true,
         seasonalAlignment: 100,
@@ -576,7 +579,7 @@ Provide validation in JSON:
         },
       };
     } catch (error) {
-      console.error(`❌ Agent ${agent.name} query error:`, error);
+      logger.error(`❌ Agent ${agent.name} query error:`, error);
       throw error;
     }
   }
@@ -625,7 +628,7 @@ Format as concise, actionable recommendation.`;
         votes: this.calculateVotes(analyses),
       };
     } catch (error) {
-      console.error("❌ Consensus generation error:", error);
+      logger.error("❌ Consensus generation error:", error);
       return {
         finalRecommendation: analyses[0]?.analysis || "No analysis available",
         votes: {},

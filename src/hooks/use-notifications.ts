@@ -51,6 +51,8 @@ import {
 } from "@/lib/notifications/utils";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // Notification Context Hook
 // ============================================================================
@@ -78,7 +80,7 @@ export function useNotifications(options?: { persistKey?: string }) {
           }));
         }
       } catch (error) {
-        console.error("Failed to restore notifications from localStorage:", error);
+        logger.error("Failed to restore notifications from localStorage:", error);
       }
     }
     return [];
@@ -93,7 +95,7 @@ export function useNotifications(options?: { persistKey?: string }) {
       try {
         localStorage.setItem(persistKey, JSON.stringify(notifications));
       } catch (error) {
-        console.error("Failed to persist notifications to localStorage:", error);
+        logger.error("Failed to persist notifications to localStorage:", error);
       }
     }
   }, [notifications, persistKey]);
@@ -1214,7 +1216,7 @@ export function useNotificationPreferences(userId: string) {
           };
         }
       } catch (error) {
-        console.error("Failed to restore preferences from localStorage:", error);
+        logger.error("Failed to restore preferences from localStorage:", error);
       }
     }
 
@@ -1244,7 +1246,7 @@ export function useNotificationPreferences(userId: string) {
       try {
         localStorage.setItem(storageKey, JSON.stringify(preferences));
       } catch (error) {
-        console.error("Failed to persist preferences to localStorage:", error);
+        logger.error("Failed to persist preferences to localStorage:", error);
       }
     }
   }, [preferences, storageKey]);

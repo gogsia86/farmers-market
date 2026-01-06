@@ -8,6 +8,8 @@ import { database } from "@/lib/database";
 import { SpanStatusCode, trace } from "@opentelemetry/api";
 import { Prisma } from "@prisma/client";
 
+import { logger } from '@/lib/monitoring/logger';
+
 const tracer = trace.getTracer("webhook-event-service");
 
 // ============================================================================
@@ -84,7 +86,7 @@ export class WebhookEventService {
             "webhook.attempts": existingEvent.attempts,
           });
 
-          console.log(
+          logger.info(
             `[WebhookEvent] Event ${data.eventId} already recorded. Processed: ${existingEvent.processed}`
           );
 
@@ -107,7 +109,7 @@ export class WebhookEventService {
           },
         });
 
-        console.log(
+        logger.info(
           `[WebhookEvent] Recorded new event: ${data.eventId} (${data.provider}/${data.eventType})`
         );
 
@@ -124,7 +126,7 @@ export class WebhookEventService {
           message: errorMessage,
         });
 
-        console.error(`[WebhookEvent] Failed to record event ${data.eventId}:`, error);
+        logger.error(`[WebhookEvent] Failed to record event ${data.eventId}:`, error);
 
         return {
           success: false,
@@ -159,12 +161,12 @@ export class WebhookEventService {
           },
         });
 
-        console.log(`[WebhookEvent] Marked event ${eventId} as processed`);
+        logger.info(`[WebhookEvent] Marked event ${eventId} as processed`);
         span.setStatus({ code: SpanStatusCode.OK });
       } catch (error) {
         span.recordException(error as Error);
         span.setStatus({ code: SpanStatusCode.ERROR });
-        console.error(`[WebhookEvent] Failed to mark event ${eventId} as processed:`, error);
+        logger.error(`[WebhookEvent] Failed to mark event ${eventId} as processed:`, error);
         throw error;
       } finally {
         span.end();
@@ -193,12 +195,12 @@ export class WebhookEventService {
           },
         });
 
-        console.error(`[WebhookEvent] Event ${eventId} processing failed: ${error}`);
+        logger.error(`[WebhookEvent] Event ${eventId} processing failed: ${error}`);
         span.setStatus({ code: SpanStatusCode.OK });
       } catch (dbError) {
         span.recordException(dbError as Error);
         span.setStatus({ code: SpanStatusCode.ERROR });
-        console.error(`[WebhookEvent] Failed to record error for event ${eventId}:`, dbError);
+        logger.error(`[WebhookEvent] Failed to record error for event ${eventId}:`, dbError);
         throw dbError;
       } finally {
         span.end();
@@ -426,7 +428,7 @@ export class WebhookEventService {
           },
         });
 
-        console.log(
+        logger.info(
           `[WebhookEvent] Cleaned up ${result.count} events older than ${olderThanDays} days`
         );
 
@@ -452,7 +454,7 @@ export class WebhookEventService {
       where: { eventId },
     });
 
-    console.log(`[WebhookEvent] Deleted event ${eventId}`);
+    logger.info(`[WebhookEvent] Deleted event ${eventId}`);
   }
 
   /**
@@ -470,7 +472,7 @@ export class WebhookEventService {
       },
     });
 
-    console.log(`[WebhookEvent] Bulk marked ${result.count} events as processed`);
+    logger.info(`[WebhookEvent] Bulk marked ${result.count} events as processed`);
     return result.count;
   }
 

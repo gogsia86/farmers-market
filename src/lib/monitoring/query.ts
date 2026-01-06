@@ -5,6 +5,8 @@
 
 import { recordDatabaseQuery } from "./performance";
 
+import { logger } from '@/lib/monitoring/logger';
+
 /**
  * Measure the performance of a database query
  * Logs slow queries (>100ms) and records metrics
@@ -44,16 +46,16 @@ export async function measureQueryPerformance<T>(
 
     // Log based on duration
     if (duration >= errorThreshold) {
-      console.error(
+      logger.error(
         `❌ [CRITICAL SLOW QUERY] ${queryName}: ${duration.toFixed(2)}ms`,
         { tags, error: error?.message },
       );
     } else if (duration >= warnThreshold) {
-      console.warn(`⚠️  [SLOW QUERY] ${queryName}: ${duration.toFixed(2)}ms`, {
+      logger.warn(`⚠️  [SLOW QUERY] ${queryName}: ${duration.toFixed(2)}ms`, {
         tags,
       });
     } else if (process.env.NODE_ENV === "development") {
-      console.log(`✅ [QUERY] ${queryName}: ${duration.toFixed(2)}ms`);
+      logger.info(`✅ [QUERY] ${queryName}: ${duration.toFixed(2)}ms`);
     }
   }
 }
@@ -87,7 +89,7 @@ export async function measureParallelQueries<T extends unknown[]>(
   const totalDuration = performance.now() - startTime;
 
   if (process.env.NODE_ENV === "development") {
-    console.log(
+    logger.info(
       `⚡ [PARALLEL QUERIES] ${queries.length} queries in ${totalDuration.toFixed(2)}ms`,
       {
         individual: queries.map((q, i) => ({
@@ -180,7 +182,7 @@ export class QueryMonitor {
    */
   logSummary() {
     const summary = this.getSummary();
-    console.log(`📊 [QUERY MONITOR] ${summary.context}:`, {
+    logger.info(`📊 [QUERY MONITOR] ${summary.context}:`, {
       total: summary.totalQueries,
       duration: `${summary.totalDuration.toFixed(2)}ms`,
       avg: `${summary.averageDuration.toFixed(2)}ms`,

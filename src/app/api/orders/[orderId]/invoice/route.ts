@@ -9,6 +9,8 @@ import { database } from "@/lib/database";
 import { InvoicePDFService } from "@/lib/services/invoice/invoice-pdf.service";
 import { NextRequest, NextResponse } from "next/server";
 
+import { logger } from '@/lib/monitoring/logger';
+
 interface RouteContext {
   params: {
     orderId: string;
@@ -115,7 +117,7 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error("❌ Invoice generation error:", error);
+    logger.error("❌ Invoice generation error:", error);
 
     return NextResponse.json(
       {

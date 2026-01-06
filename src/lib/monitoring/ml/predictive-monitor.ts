@@ -9,6 +9,9 @@
 
 // @ts-ignore - TensorFlow module may not be available in all environments
 import * as tf from "@tensorflow/tfjs-node";
+
+import { logger } from '@/lib/monitoring/logger';
+
 import type {
   WorkflowResult,
   FailurePrediction,
@@ -60,19 +63,19 @@ export class PredictiveMonitor {
    */
   async initialize(): Promise<void> {
     if (!this.enabled) {
-      console.log("⚠️  Predictive monitoring is disabled");
+      logger.info("⚠️  Predictive monitoring is disabled");
       return;
     }
 
     try {
       // Try to load existing model
       this.model = await tf.loadLayersModel(`file://${this.modelPath}`);
-      console.log("✅ Loaded existing prediction model");
+      logger.info("✅ Loaded existing prediction model");
     } catch (error) {
       // Create new model if loading fails
-      console.log("📦 Creating new prediction model...");
+      logger.info("📦 Creating new prediction model...");
       this.model = this.createModel();
-      console.log("✅ Created new prediction model");
+      logger.info("✅ Created new prediction model");
     }
 
     this.isInitialized = true;
@@ -140,7 +143,7 @@ export class PredictiveMonitor {
         ),
       };
     } catch (error) {
-      console.error("❌ Prediction error:", error);
+      logger.error("❌ Prediction error:", error);
       return this.generateFallbackPrediction();
     }
   }
@@ -224,13 +227,13 @@ export class PredictiveMonitor {
    */
   async train(historicalResults: WorkflowResult[]): Promise<void> {
     if (!this.enabled || historicalResults.length < 50) {
-      console.log(
+      logger.info(
         "⚠️  Insufficient data for training (need at least 50 samples)",
       );
       return;
     }
 
-    console.log(
+    logger.info(
       `🎓 Training prediction model with ${historicalResults.length} samples...`,
     );
 
@@ -251,7 +254,7 @@ export class PredictiveMonitor {
         callbacks: {
           onEpochEnd: async (epoch: number, logs: any) => {
             if (logs && epoch % 10 === 0) {
-              console.log(
+              logger.info(
                 `   Epoch ${epoch}: loss=${logs.loss.toFixed(4)}, val_loss=${logs.val_loss?.toFixed(4) || "N/A"}`,
               );
             }
@@ -261,13 +264,13 @@ export class PredictiveMonitor {
 
       // Save the model
       await this.model.save(`file://${this.modelPath}`);
-      console.log("✅ Model training complete and saved");
+      logger.info("✅ Model training complete and saved");
 
       // Cleanup tensors
       xs.dispose();
       ys.dispose();
     } catch (error) {
-      console.error("❌ Model training error:", error);
+      logger.error("❌ Model training error:", error);
     }
   }
 

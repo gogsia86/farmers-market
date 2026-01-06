@@ -7,6 +7,8 @@ import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // Helper Functions
 // ============================================================================
@@ -406,7 +408,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     });
   } catch (error) {
-    console.error("Failed to fetch admin analytics:", error);
+    logger.error("Failed to fetch admin analytics:", error);
     return NextResponse.json(
       {
         success: false,

@@ -7,6 +7,8 @@ import { Decimal } from "decimal.js";
 import type { CartItemWithProduct } from "./cart.service";
 import { cartService } from "./cart.service";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // TYPES & INTERFACES
 // ============================================================================
@@ -317,7 +319,7 @@ export class QuantumCheckoutService {
 
         orders.push(order);
       } catch (error) {
-        console.error(`Failed to create order for farm ${farmOrder.farmId}:`, error);
+        logger.error(`Failed to create order for farm ${farmOrder.farmId}:`, error);
         // TODO: Implement rollback mechanism
         throw new Error(`Failed to create order for ${farmOrder.farmName}`);
       }

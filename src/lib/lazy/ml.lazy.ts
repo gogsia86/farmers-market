@@ -18,6 +18,8 @@ import type * as tf from "@tensorflow/tfjs";
 // TYPE DEFINITIONS
 // ============================================================================
 
+import { logger } from '@/lib/monitoring/logger';
+
 export interface PredictionResult {
   prediction: number | number[];
   confidence: number;
@@ -97,7 +99,7 @@ export async function loadTensorFlowGPU(): Promise<typeof tf> {
       })
       .catch(() => {
         // Fallback to regular TensorFlow if GPU not available
-        console.warn("GPU backend not available, falling back to CPU");
+        logger.warn("GPU backend not available, falling back to CPU");
         return import("@tensorflow/tfjs");
       });
   }
@@ -154,7 +156,7 @@ export async function predictCropYield(
  * @example
  * ```typescript
  * const result = await classifyCropDisease(imageBuffer);
- * console.log(result.class, result.confidence);
+ * logger.info(result.class, result.confidence);
  * ```
  */
 export async function classifyCropDisease(

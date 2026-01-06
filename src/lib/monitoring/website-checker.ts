@@ -21,6 +21,8 @@
 
 import { chromium, Browser, Page, BrowserContext } from "@playwright/test";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // TYPES & INTERFACES
 // ============================================================================
@@ -282,18 +284,18 @@ export class DivineWebsiteChecker {
       await this.initialize();
     }
 
-    console.log(
+    logger.info(
       "\n╔════════════════════════════════════════════════════════════╗",
     );
-    console.log(
+    logger.info(
       "║  🌟 DIVINE WEBSITE HEALTH CHECK - COMPREHENSIVE SCAN      ║",
     );
-    console.log(
+    logger.info(
       "╠════════════════════════════════════════════════════════════╣",
     );
-    console.log(`║  🌐 Base URL: ${this.config.baseUrl.padEnd(45)} ║`);
-    console.log(`║  📄 Pages: ${pagesToCheck.length.toString().padEnd(48)} ║`);
-    console.log(
+    logger.info(`║  🌐 Base URL: ${this.config.baseUrl.padEnd(45)} ║`);
+    logger.info(`║  📄 Pages: ${pagesToCheck.length.toString().padEnd(48)} ║`);
+    logger.info(
       "╚════════════════════════════════════════════════════════════╝\n",
     );
 
@@ -302,7 +304,7 @@ export class DivineWebsiteChecker {
     // Check each page
     for (const pagePath of pagesToCheck) {
       const url = `${this.config.baseUrl}${pagePath}`;
-      console.log(`\n🔍 Checking page: ${url}`);
+      logger.info(`\n🔍 Checking page: ${url}`);
 
       const result = await this.checkPage(url);
       pageResults.push(result);
@@ -313,7 +315,7 @@ export class DivineWebsiteChecker {
           : result.status === "FAIL"
             ? "❌"
             : "⚠️";
-      console.log(`${statusIcon} ${url} - ${result.status}`);
+      logger.info(`${statusIcon} ${url} - ${result.status}`);
     }
 
     // Check API endpoints
@@ -1321,52 +1323,52 @@ export class DivineWebsiteChecker {
    * Print summary to console
    */
   private printSummary(report: WebsiteHealthReport): void {
-    console.log(
+    logger.info(
       "\n╔════════════════════════════════════════════════════════════╗",
     );
-    console.log(
+    logger.info(
       "║               🌟 HEALTH CHECK SUMMARY                      ║",
     );
-    console.log(
+    logger.info(
       "╠════════════════════════════════════════════════════════════╣",
     );
-    console.log(
+    logger.info(
       `║  Overall Status: ${this.getStatusIcon(report.overallStatus)} ${report.overallStatus.padEnd(42)} ║`,
     );
-    console.log(
+    logger.info(
       `║  Total Pages: ${report.summary.totalPages.toString().padEnd(46)} ║`,
     );
-    console.log(
+    logger.info(
       `║  ✅ Passed: ${report.summary.passed.toString().padEnd(48)} ║`,
     );
-    console.log(
+    logger.info(
       `║  ❌ Failed: ${report.summary.failed.toString().padEnd(48)} ║`,
     );
-    console.log(
+    logger.info(
       `║  ⚠️  Warnings: ${report.summary.warnings.toString().padEnd(45)} ║`,
     );
-    console.log(
+    logger.info(
       `║  ⚡ Avg Performance: ${report.summary.avgPerformance}ms${" ".repeat(36 - report.summary.avgPerformance.toString().length)} ║`,
     );
-    console.log(
+    logger.info(
       `║  ♿ Avg Accessibility: ${report.summary.avgAccessibility}/100${" ".repeat(33 - report.summary.avgAccessibility.toString().length)} ║`,
     );
-    console.log(
+    logger.info(
       `║  🗄️  Database: ${this.getStatusIcon(report.database.status)} ${report.database.status.padEnd(40)} ║`,
     );
-    console.log(
+    logger.info(
       `║  Duration: ${Math.round(report.duration / 1000)}s${" ".repeat(47 - Math.round(report.duration / 1000).toString().length)} ║`,
     );
-    console.log(
+    logger.info(
       "╚════════════════════════════════════════════════════════════╝\n",
     );
 
     if (report.summary.criticalIssues.length > 0) {
-      console.log("⚠️  CRITICAL ISSUES:");
+      logger.info("⚠️  CRITICAL ISSUES:");
       report.summary.criticalIssues.forEach((issue) => {
-        console.log(`   - ${issue}`);
+        logger.info(`   - ${issue}`);
       });
-      console.log();
+      logger.info();
     }
   }
 

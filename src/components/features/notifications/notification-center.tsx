@@ -30,6 +30,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // Types
 // ============================================================================
@@ -178,7 +180,7 @@ export function NotificationCenter({
         setMarkingAsRead(null);
       }
     } catch (err) {
-      console.error("Failed to mark notification as read:", err);
+      logger.error("Failed to mark notification as read:", err);
       setMarkingAsRead(null);
     }
   };
@@ -210,7 +212,7 @@ export function NotificationCenter({
       );
       setUnreadCount(0);
     } catch (err) {
-      console.error("Failed to mark all as read:", err);
+      logger.error("Failed to mark all as read:", err);
     }
   };
 
@@ -229,7 +231,7 @@ export function NotificationCenter({
         await fetchNotifications({ unreadOnly: filter === "unread" });
       }
     } catch (err) {
-      console.error("Failed to clear notifications:", err);
+      logger.error("Failed to clear notifications:", err);
     }
   };
 

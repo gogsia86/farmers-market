@@ -1,5 +1,7 @@
 import { UserRole } from "@prisma/client";
 
+import { logger } from '@/lib/monitoring/logger';
+
 /**
  * Divine Role-Based Access Control (RBAC) System
  * Agricultural consciousness-driven permission management
@@ -211,7 +213,7 @@ export function logPermissionCheck(
   granted: boolean,
   context?: string,
 ) {
-  console.log("🌾 Divine Permission Check:", {
+  logger.info("🌾 Divine Permission Check:", {
     userId,
     role,
     permission,

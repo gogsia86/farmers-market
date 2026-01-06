@@ -6,6 +6,9 @@
  */
 
 import { loadTensorFlow } from "@/lib/lazy/ml.lazy";
+
+import { logger } from '@/lib/monitoring/logger';
+
 import type * as tf from "@tensorflow/tfjs";
 
 export interface AgriculturalGPUConfig {
@@ -33,13 +36,13 @@ export class AgriculturalGPUAccelerator {
 
       this.initialized = true;
 
-      console.log("🚀 Agricultural GPU Accelerator initialized", {
+      logger.info("🚀 Agricultural GPU Accelerator initialized", {
         backend: this.tf.getBackend(),
         numTensors: this.tf.memory().numTensors,
         numDataBuffers: this.tf.memory().numDataBuffers,
       });
     } catch (error) {
-      console.warn(
+      logger.warn(
         "⚠️ GPU acceleration unavailable, falling back to CPU",
         error,
       );

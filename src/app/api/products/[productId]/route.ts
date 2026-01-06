@@ -10,6 +10,8 @@ import type { Product, ProductCategory, ProductStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { logger } from '@/lib/monitoring/logger';
+
 /**
  * Update product validation schema
  */
@@ -119,7 +121,7 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error(`GET /api/products/[productId] error:`, error);
+    logger.error(`GET /api/products/[productId] error:`, error);
 
     return NextResponse.json(
       {
@@ -323,7 +325,7 @@ export async function PATCH(
       },
     });
   } catch (error) {
-    console.error(`PATCH /api/products/[productId] error:`, error);
+    logger.error(`PATCH /api/products/[productId] error:`, error);
 
     return NextResponse.json(
       {
@@ -448,7 +450,7 @@ export async function DELETE(
       },
     });
   } catch (error) {
-    console.error(`DELETE /api/products/[productId] error:`, error);
+    logger.error(`DELETE /api/products/[productId] error:`, error);
 
     return NextResponse.json(
       {

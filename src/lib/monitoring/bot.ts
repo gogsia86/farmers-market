@@ -22,6 +22,8 @@ import type {
 } from "./types";
 import { DEFAULT_WORKFLOW_TIMEOUT } from "./types";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // DIVINE MONITORING BOT
 // ============================================================================
@@ -102,29 +104,29 @@ export class DivineMonitoringBot {
    */
   async start(): Promise<void> {
     if (this.isRunning) {
-      console.log("⚠️  Bot is already running");
+      logger.info("⚠️  Bot is already running");
       return;
     }
 
-    console.log(
+    logger.info(
       "\n╔════════════════════════════════════════════════════════════╗",
     );
-    console.log(
+    logger.info(
       "║ 🤖 DIVINE WORKFLOW MONITORING BOT STARTING                ║",
     );
-    console.log(
+    logger.info(
       "╠════════════════════════════════════════════════════════════╣",
     );
-    console.log(`║ 🔮 NAME: ${this.config.name.padEnd(48)} ║`);
-    console.log(`║ 📌 VERSION: ${this.config.version.padEnd(45)} ║`);
-    console.log(`║ 🌐 BASE URL: ${this.config.baseUrl.padEnd(44)} ║`);
-    console.log(
+    logger.info(`║ 🔮 NAME: ${this.config.name.padEnd(48)} ║`);
+    logger.info(`║ 📌 VERSION: ${this.config.version.padEnd(45)} ║`);
+    logger.info(`║ 🌐 BASE URL: ${this.config.baseUrl.padEnd(44)} ║`);
+    logger.info(
       `║ 🔄 WORKFLOWS: ${String(this.config.workflows.length).padEnd(43)} ║`,
     );
-    console.log(
+    logger.info(
       `║ 🌾 AGRICULTURE: ${this.config.agricultureConsciousness.enabled ? "ENABLED" : "DISABLED"}${" ".repeat(39 - (this.config.agricultureConsciousness.enabled ? 7 : 8))} ║`,
     );
-    console.log(
+    logger.info(
       "╚════════════════════════════════════════════════════════════╝\n",
     );
 
@@ -135,7 +137,7 @@ export class DivineMonitoringBot {
       await this.startScheduler();
     }
 
-    console.log("✅ Bot started successfully!\n");
+    logger.info("✅ Bot started successfully!\n");
   }
 
   /**
@@ -143,25 +145,25 @@ export class DivineMonitoringBot {
    */
   async stop(): Promise<void> {
     if (!this.isRunning) {
-      console.log("⚠️  Bot is not running");
+      logger.info("⚠️  Bot is not running");
       return;
     }
 
-    console.log("\n🛑 Stopping Divine Workflow Monitoring Bot...");
+    logger.info("\n🛑 Stopping Divine Workflow Monitoring Bot...");
 
     // Stop all scheduled workflows
     this.stopScheduler();
 
     this.isRunning = false;
 
-    console.log("✅ Bot stopped successfully!\n");
+    logger.info("✅ Bot stopped successfully!\n");
   }
 
   /**
    * ✅ RUN ALL WORKFLOWS - Execute all enabled workflows
    */
   async runAllWorkflows(): Promise<MonitoringReport> {
-    console.log("\n🚀 Running all enabled workflows...\n");
+    logger.info("\n🚀 Running all enabled workflows...\n");
 
     const enabledWorkflows = getEnabledWorkflows();
     const startTime = new Date();
@@ -194,7 +196,7 @@ export class DivineMonitoringBot {
    * ✅ RUN CRITICAL WORKFLOWS - Execute only critical workflows
    */
   async runCriticalWorkflows(): Promise<MonitoringReport> {
-    console.log("\n🚨 Running critical workflows...\n");
+    logger.info("\n🚨 Running critical workflows...\n");
 
     const criticalWorkflows = getCriticalWorkflows();
     const startTime = new Date();
@@ -234,11 +236,11 @@ export class DivineMonitoringBot {
     }
 
     if (!workflow.enabled) {
-      console.log(`⚠️  Workflow is disabled: ${workflow.name}`);
+      logger.info(`⚠️  Workflow is disabled: ${workflow.name}`);
       throw new Error(`Workflow is disabled: ${workflowId}`);
     }
 
-    console.log(`\n🔄 Running workflow: ${workflow.name}...\n`);
+    logger.info(`\n🔄 Running workflow: ${workflow.name}...\n`);
 
     const context = this.createWorkflowContext(workflow);
     const result = await this.executeWorkflowWithRetry(workflow, context);
@@ -301,7 +303,7 @@ export class DivineMonitoringBot {
   // ============================================================================
 
   private async startScheduler(): Promise<void> {
-    console.log("📅 Starting workflow scheduler...\n");
+    logger.info("📅 Starting workflow scheduler...\n");
 
     const enabledWorkflows = this.config.workflows.filter(
       (w) => w.enabled && w.schedule,
@@ -312,17 +314,17 @@ export class DivineMonitoringBot {
 
       const intervalMs = workflow.schedule.interval * 60 * 1000; // Convert minutes to ms
 
-      console.log(
+      logger.info(
         `   ⏰ Scheduling ${workflow.name} every ${workflow.schedule.interval} minutes`,
       );
 
       // Schedule workflow execution
       const interval = setInterval(async () => {
         try {
-          console.log(`\n⏰ Scheduled execution: ${workflow.name}`);
+          logger.info(`\n⏰ Scheduled execution: ${workflow.name}`);
           await this.runWorkflow(workflow.id);
         } catch (error) {
-          console.error(
+          logger.error(
             `❌ Scheduled workflow failed: ${workflow.name}`,
             error,
           );
@@ -332,17 +334,17 @@ export class DivineMonitoringBot {
       this.scheduledIntervals.set(workflow.id, interval);
     }
 
-    console.log(
+    logger.info(
       `\n✅ Scheduler started with ${this.scheduledIntervals.size} scheduled workflow(s)\n`,
     );
   }
 
   private stopScheduler(): void {
-    console.log("⏹️  Stopping workflow scheduler...");
+    logger.info("⏹️  Stopping workflow scheduler...");
 
     this.scheduledIntervals.forEach((interval, workflowId) => {
       clearInterval(interval);
-      console.log(`   ✅ Stopped scheduling: ${workflowId}`);
+      logger.info(`   ✅ Stopped scheduling: ${workflowId}`);
     });
 
     this.scheduledIntervals.clear();
@@ -394,14 +396,14 @@ export class DivineMonitoringBot {
       workflow.retries > 0
     ) {
       for (let attempt = 1; attempt <= workflow.retries; attempt++) {
-        console.log(
+        logger.info(
           `\n🔄 Retrying workflow (attempt ${attempt}/${workflow.retries})...`,
         );
 
         result = await this.executor.retry(workflow, context, attempt);
 
         if (result.status === "PASSED") {
-          console.log(`✅ Workflow passed on retry ${attempt}`);
+          logger.info(`✅ Workflow passed on retry ${attempt}`);
           break;
         }
       }

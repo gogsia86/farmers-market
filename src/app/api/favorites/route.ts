@@ -15,6 +15,8 @@ import { database } from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { logger } from '@/lib/monitoring/logger';
+
 /**
  * 🔍 GET - Retrieve User's Favorites
  */
@@ -121,7 +123,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Favorites retrieval error:", error);
+    logger.error("Favorites retrieval error:", error);
     return NextResponse.json(
       {
         success: false,
@@ -327,7 +329,7 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Add favorite error:", error);
+    logger.error("Add favorite error:", error);
     return NextResponse.json(
       {
         success: false,
@@ -466,7 +468,7 @@ export async function DELETE(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Remove favorite error:", error);
+    logger.error("Remove favorite error:", error);
     return NextResponse.json(
       {
         success: false,

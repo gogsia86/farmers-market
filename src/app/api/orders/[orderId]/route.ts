@@ -10,6 +10,8 @@ import { orderService } from "@/lib/services/order.service";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { logger } from '@/lib/monitoring/logger';
+
 /**
  * Update order validation schema
  */
@@ -88,7 +90,7 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error(`GET /api/orders/[orderId] error:`, error);
+    logger.error(`GET /api/orders/[orderId] error:`, error);
 
     if (error instanceof NotFoundError) {
       return NextResponse.json(
@@ -192,7 +194,7 @@ export async function PATCH(
       },
     });
   } catch (error) {
-    console.error(`PATCH /api/orders/[orderId] error:`, error);
+    logger.error(`PATCH /api/orders/[orderId] error:`, error);
 
     if (error instanceof NotFoundError) {
       return NextResponse.json(
@@ -273,7 +275,7 @@ export async function DELETE(
       },
     });
   } catch (error) {
-    console.error(`DELETE /api/orders/[orderId] error:`, error);
+    logger.error(`DELETE /api/orders/[orderId] error:`, error);
 
     if (error instanceof NotFoundError) {
       return NextResponse.json(

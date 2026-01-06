@@ -9,6 +9,8 @@ import { webhookMonitor } from "@/lib/monitoring/webhook-monitor";
 import { webhookEventService } from "@/lib/services/webhook-event.service";
 import { NextRequest, NextResponse } from "next/server";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // GET /api/admin/webhooks/monitor
 // Get webhook health status and metrics
@@ -45,7 +47,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       });
     }
   } catch (error) {
-    console.error("Webhook monitoring error:", error);
+    logger.error("Webhook monitoring error:", error);
     return NextResponse.json(
       {
         success: false,
@@ -237,7 +239,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         );
     }
   } catch (error) {
-    console.error("Webhook maintenance action error:", error);
+    logger.error("Webhook maintenance action error:", error);
     return NextResponse.json(
       {
         success: false,

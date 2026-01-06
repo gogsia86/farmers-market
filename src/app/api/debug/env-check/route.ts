@@ -10,6 +10,8 @@
 
 import { NextResponse } from "next/server";
 
+import { logger } from '@/lib/monitoring/logger';
+
 export const dynamic = "force-dynamic";
 
 // List of environment variables to check
@@ -157,7 +159,7 @@ function generateRecommendations(
   // NextAuth
   if (!envStatus.NEXTAUTH_SECRET?.exists) {
     recommendations.push(
-      "🔐 Generate NEXTAUTH_SECRET: node -e \"console.log(require('crypto').randomBytes(32).toString('base64'))\""
+      "🔐 Generate NEXTAUTH_SECRET: node -e \"logger.info(require('crypto').randomBytes(32).toString('base64'))\""
     );
   }
 

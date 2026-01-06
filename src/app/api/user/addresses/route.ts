@@ -17,6 +17,8 @@ import type { AddressType } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { logger } from '@/lib/monitoring/logger';
+
 /**
  * 🔍 GET - List User's Addresses
  */
@@ -82,7 +84,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Address retrieval error:", error);
+    logger.error("Address retrieval error:", error);
     return NextResponse.json(
       {
         success: false,
@@ -189,7 +191,7 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Address creation error:", error);
+    logger.error("Address creation error:", error);
     return NextResponse.json(
       {
         success: false,
@@ -323,7 +325,7 @@ export async function PATCH(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Address update error:", error);
+    logger.error("Address update error:", error);
     return NextResponse.json(
       {
         success: false,
@@ -463,7 +465,7 @@ export async function DELETE(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Address deletion error:", error);
+    logger.error("Address deletion error:", error);
     return NextResponse.json(
       {
         success: false,

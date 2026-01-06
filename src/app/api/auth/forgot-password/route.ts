@@ -17,6 +17,8 @@ import { emailService } from "@/lib/services/email.service";
 import { randomBytes } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
+import { logger } from '@/lib/monitoring/logger';
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -51,7 +53,7 @@ export async function POST(request: NextRequest) {
     // Security: Always return success to prevent user enumeration
     // Even if user doesn't exist, return 200 to avoid leaking info
     if (!user) {
-      console.log(`Password reset requested for non-existent email: ${email}`);
+      logger.info(`Password reset requested for non-existent email: ${email}`);
       return NextResponse.json({
         success: true,
         message: "If an account exists with this email, you will receive password reset instructions.",
@@ -88,9 +90,9 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      console.log(`Password reset email sent to: ${user.email}`);
+      logger.info(`Password reset email sent to: ${user.email}`);
     } catch (emailError) {
-      console.error("Failed to send password reset email:", emailError);
+      logger.error("Failed to send password reset email:", emailError);
       // Still return success to user (they don't need to know email failed)
       // But log the error for admin monitoring
     }
@@ -100,7 +102,7 @@ export async function POST(request: NextRequest) {
       message: "If an account exists with this email, you will receive password reset instructions.",
     });
   } catch (error) {
-    console.error("Forgot password error:", error);
+    logger.error("Forgot password error:", error);
     return NextResponse.json(
       { error: "An unexpected error occurred. Please try again later." },
       { status: 500 }

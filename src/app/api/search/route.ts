@@ -9,6 +9,8 @@ import type { Farm, Product, ProductCategory, ProductStatus } from "@prisma/clie
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { logger } from '@/lib/monitoring/logger';
+
 /**
  * Search query validation schema
  */
@@ -407,7 +409,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<SearchResp
       },
     });
   } catch (error) {
-    console.error("GET /api/search error:", error);
+    logger.error("GET /api/search error:", error);
 
     return NextResponse.json(
       {

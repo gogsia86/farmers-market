@@ -9,6 +9,8 @@ import type { Product, ProductCategory, ProductStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { logger } from '@/lib/monitoring/logger';
+
 /**
  * Query parameters validation schema
  */
@@ -241,7 +243,7 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error(`GET /api/farms/[farmId]/products error:`, error);
+    logger.error(`GET /api/farms/[farmId]/products error:`, error);
 
     return NextResponse.json(
       {

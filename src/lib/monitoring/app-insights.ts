@@ -14,6 +14,9 @@
 // import type { TelemetryItem } from 'applicationinsights/out/Declarations/Contracts';
 
 // Placeholder types for when package is not installed
+
+import { logger } from '@/lib/monitoring/logger';
+
 type TelemetryClient = any;
 
 // ============================================================================
@@ -81,19 +84,19 @@ export function getAppInsightsConfig(): AppInsightsConfig {
  */
 export function initializeAppInsights(): TelemetryClient | null {
   if (appInsightsClient) {
-    console.log("[AppInsights] Already initialized");
+    logger.info("[AppInsights] Already initialized");
     return appInsightsClient;
   }
 
   const config = getAppInsightsConfig();
 
   if (!config.enabled) {
-    console.log("[AppInsights] Disabled via configuration");
+    logger.info("[AppInsights] Disabled via configuration");
     return null;
   }
 
   if (!config.connectionString && !config.instrumentationKey) {
-    console.warn(
+    logger.warn(
       "[AppInsights] No connection string or instrumentation key provided. " +
         "Set APPLICATIONINSIGHTS_CONNECTION_STRING or APPINSIGHTS_INSTRUMENTATION_KEY.",
     );
@@ -116,8 +119,8 @@ export function initializeAppInsights(): TelemetryClient | null {
     //
     // appInsightsClient = appInsights.defaultClient;
 
-    console.log("[AppInsights] Initialized successfully");
-    console.log("[AppInsights] Configuration:", {
+    logger.info("[AppInsights] Initialized successfully");
+    logger.info("[AppInsights] Configuration:", {
       hasConnectionString: !!config.connectionString,
       hasInstrumentationKey: !!config.instrumentationKey,
       samplingPercentage: config.samplingPercentage,
@@ -136,7 +139,7 @@ export function initializeAppInsights(): TelemetryClient | null {
       };
     }
   } catch (error) {
-    console.error("[AppInsights] Initialization failed:", error);
+    logger.error("[AppInsights] Initialization failed:", error);
     return null;
   }
 
@@ -164,7 +167,7 @@ export function trackMetric(metric: CustomMetric): void {
   const client = getAppInsightsClient();
 
   if (!client) {
-    console.debug(
+    logger.debug(
       "[AppInsights] Client not available, skipping metric:",
       metric.name,
     );
@@ -181,7 +184,7 @@ export function trackMetric(metric: CustomMetric): void {
       },
     });
   } catch (error) {
-    console.error("[AppInsights] Failed to track metric:", error);
+    logger.error("[AppInsights] Failed to track metric:", error);
   }
 }
 
@@ -203,7 +206,7 @@ export function trackEvent(event: CustomEvent): void {
   const client = getAppInsightsClient();
 
   if (!client) {
-    console.debug(
+    logger.debug(
       "[AppInsights] Client not available, skipping event:",
       event.name,
     );
@@ -217,7 +220,7 @@ export function trackEvent(event: CustomEvent): void {
       measurements: event.measurements,
     });
   } catch (error) {
-    console.error("[AppInsights] Failed to track event:", error);
+    logger.error("[AppInsights] Failed to track event:", error);
   }
 }
 
@@ -479,7 +482,7 @@ export function trackException(
   const client = getAppInsightsClient();
 
   if (!client) {
-    console.error(
+    logger.error(
       "[AppInsights] Client not available, logging exception:",
       error,
     );
@@ -492,7 +495,7 @@ export function trackException(
       properties: context,
     });
   } catch (trackError) {
-    console.error("[AppInsights] Failed to track exception:", trackError);
+    logger.error("[AppInsights] Failed to track exception:", trackError);
   }
 }
 
@@ -513,7 +516,7 @@ export function trackDependency(
   const client = getAppInsightsClient();
 
   if (!client) {
-    console.debug(
+    logger.debug(
       "[AppInsights] Client not available, skipping dependency:",
       name,
     );
@@ -529,7 +532,7 @@ export function trackDependency(
       dependencyTypeName: dependencyType || "HTTP",
     });
   } catch (error) {
-    console.error("[AppInsights] Failed to track dependency:", error);
+    logger.error("[AppInsights] Failed to track dependency:", error);
   }
 }
 
@@ -550,7 +553,7 @@ export function trackRequest(
   const client = getAppInsightsClient();
 
   if (!client) {
-    console.debug(
+    logger.debug(
       "[AppInsights] Client not available, skipping request:",
       name,
     );
@@ -566,7 +569,7 @@ export function trackRequest(
       success,
     });
   } catch (error) {
-    console.error("[AppInsights] Failed to track request:", error);
+    logger.error("[AppInsights] Failed to track request:", error);
   }
 }
 
@@ -588,12 +591,12 @@ export async function flushTelemetry(): Promise<void> {
     try {
       client.flush({
         callback: () => {
-          console.log("[AppInsights] Telemetry flushed");
+          logger.info("[AppInsights] Telemetry flushed");
           resolve();
         },
       });
     } catch (error) {
-      console.error("[AppInsights] Failed to flush telemetry:", error);
+      logger.error("[AppInsights] Failed to flush telemetry:", error);
       resolve();
     }
   });

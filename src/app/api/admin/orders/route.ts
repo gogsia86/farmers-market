@@ -11,6 +11,8 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { z } from "zod";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // Lazy Stripe Initialization
 // ============================================================================
@@ -297,7 +299,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     });
   } catch (error) {
-    console.error("Failed to fetch orders:", error);
+    logger.error("Failed to fetch orders:", error);
     return NextResponse.json(
       {
         success: false,
@@ -501,7 +503,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
           });
         }
       } catch (error) {
-        console.error("Refund processing failed:", error);
+        logger.error("Refund processing failed:", error);
         return NextResponse.json(
           {
             success: false,
@@ -609,7 +611,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
       },
     });
   } catch (error) {
-    console.error("Failed to update order:", error);
+    logger.error("Failed to update order:", error);
     return NextResponse.json(
       {
         success: false,

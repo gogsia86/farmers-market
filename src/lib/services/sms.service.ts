@@ -11,6 +11,8 @@ import { database } from "@/lib/database";
 import { SpanStatusCode, trace } from "@opentelemetry/api";
 import { Twilio } from "twilio";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================
 // TYPES & INTERFACES
 // ============================================
@@ -103,7 +105,7 @@ export class SMSService {
       this.phoneNumber = process.env.TWILIO_PHONE_NUMBER || null;
 
       if (!accountSid || !authToken || !this.phoneNumber) {
-        console.warn(
+        logger.warn(
           "⚠️ SMS service not configured. Set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and TWILIO_PHONE_NUMBER"
         );
         this.isConfigured = false;
@@ -117,9 +119,9 @@ export class SMSService {
       await this.client.api.accounts(accountSid).fetch();
 
       this.isConfigured = true;
-      console.log("✅ SMS service initialized successfully");
+      logger.info("✅ SMS service initialized successfully");
     } catch (error) {
-      console.error("❌ Failed to initialize SMS service:", error);
+      logger.error("❌ Failed to initialize SMS service:", error);
       this.isConfigured = false;
     }
   }
@@ -156,7 +158,7 @@ export class SMSService {
       try {
         // Check if service is configured
         if (!this.isConfigured || !this.client || !this.phoneNumber) {
-          console.log(
+          logger.info(
             `📱 [SMS NOT CONFIGURED] Would send to ${options.to}: ${options.message}`
           );
           span.setStatus({ code: SpanStatusCode.OK });
@@ -190,7 +192,7 @@ export class SMSService {
           "sms.status": message.status,
         });
 
-        console.log(
+        logger.info(
           `✅ SMS sent successfully to ${this.maskPhoneNumber(cleanPhone)}: ${message.sid}`
         );
 
@@ -220,7 +222,7 @@ export class SMSService {
           message: errorMessage,
         });
 
-        console.error(
+        logger.error(
           `❌ Failed to send SMS to ${this.maskPhoneNumber(options.to)}:`,
           error
         );
@@ -443,7 +445,7 @@ export class SMSService {
         },
       });
     } catch (error) {
-      console.error("Failed to log SMS to database:", error);
+      logger.error("Failed to log SMS to database:", error);
       // Don't throw - logging failure shouldn't break SMS sending
     }
   }
@@ -482,7 +484,7 @@ export class SMSService {
         lastSentAt,
       };
     } catch (error) {
-      console.error("Failed to get user SMS stats:", error);
+      logger.error("Failed to get user SMS stats:", error);
       return {
         total: 0,
         sent: 0,

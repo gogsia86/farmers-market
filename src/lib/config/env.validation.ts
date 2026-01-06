@@ -5,6 +5,8 @@
 
 import { z } from "zod";
 
+import { logger } from '@/lib/monitoring/logger';
+
 const envSchema = z.object({
   // Database
   DATABASE_URL: z.string().url().describe("PostgreSQL connection string"),
@@ -56,14 +58,14 @@ export type Env = z.infer<typeof envSchema>;
 export function validateEnv(): Env {
   try {
     const env = envSchema.parse(process.env);
-    console.log("✅ Environment variables validated successfully");
+    logger.info("✅ Environment variables validated successfully");
     return env;
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.error("❌ Invalid environment variables:");
+      logger.error("❌ Invalid environment variables:");
       const zodError = error as z.ZodError;
       zodError.issues.forEach((issue) => {
-        console.error(`  - ${issue.path.join(".")}: ${issue.message}`);
+        logger.error(`  - ${issue.path.join(".")}: ${issue.message}`);
       });
     }
     throw new Error("Environment validation failed");
@@ -93,9 +95,9 @@ export function checkOptionalServices(env: Env): void {
   }
 
   if (warnings.length > 0) {
-    console.log("\n📋 Optional Service Warnings:");
-    warnings.forEach((warning) => console.log(`  ${warning}`));
-    console.log("");
+    logger.info("\n📋 Optional Service Warnings:");
+    warnings.forEach((warning) => logger.info(`  ${warning}`));
+    logger.info("");
   }
 }
 

@@ -12,6 +12,8 @@ import { createOrchestratorFromEnv } from "../agents/workflow-agent-orchestrator
 import type { WorkflowResult } from "../types";
 import { createSelfHealer } from "./self-healer";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // TYPES
 // ============================================================================
@@ -216,7 +218,7 @@ export class AutoRemediationSystem {
       try {
         this.orchestrator = createOrchestratorFromEnv();
       } catch (error) {
-        console.warn("⚠️ AI Orchestrator initialization failed:", error);
+        logger.warn("⚠️ AI Orchestrator initialization failed:", error);
         this.orchestrator = null;
       }
     }
@@ -243,23 +245,23 @@ export class AutoRemediationSystem {
       );
     }
 
-    console.log(
+    logger.info(
       "\n╔════════════════════════════════════════════════════════════╗",
     );
-    console.log(
+    logger.info(
       "║ 🔧 AUTO-REMEDIATION SYSTEM - Processing Failure           ║",
     );
-    console.log(
+    logger.info(
       "╠════════════════════════════════════════════════════════════╣",
     );
-    console.log(
+    logger.info(
       `║ 📋 Workflow: ${workflowResult.name.substring(0, 44).padEnd(44)} ║`,
     );
-    console.log(
+    logger.info(
       `║ 🆔 ID: ${workflowResult.workflowId.substring(0, 50).padEnd(50)} ║`,
     );
-    console.log(`║ ❌ Status: ${workflowResult.status.padEnd(47)} ║`);
-    console.log(
+    logger.info(`║ ❌ Status: ${workflowResult.status.padEnd(47)} ║`);
+    logger.info(
       "╚════════════════════════════════════════════════════════════╝\n",
     );
 
@@ -269,10 +271,10 @@ export class AutoRemediationSystem {
     // Step 1: Get AI analysis
     let aiAnalysis: AIAnalysisResult;
     if (this.orchestrator && this.orchestrator.isEnabled()) {
-      console.log("🤖 Requesting AI analysis from agent orchestrator...\n");
+      logger.info("🤖 Requesting AI analysis from agent orchestrator...\n");
       aiAnalysis = await this.getAIAnalysis(workflowResult);
     } else {
-      console.log("📊 Using fallback analysis (AI not available)...\n");
+      logger.info("📊 Using fallback analysis (AI not available)...\n");
       aiAnalysis = this.getFallbackAnalysis(workflowResult);
     }
 
@@ -317,7 +319,7 @@ export class AutoRemediationSystem {
       });
 
       if (this.config.notifyOnAutoApprove) {
-        console.log("✅ Plan auto-approved based on confidence threshold\n");
+        logger.info("✅ Plan auto-approved based on confidence threshold\n");
       }
     } else {
       this.logEvent({
@@ -329,7 +331,7 @@ export class AutoRemediationSystem {
       });
 
       if (this.config.notifyOnManualRequired) {
-        console.log("⏳ Manual approval required for this remediation plan\n");
+        logger.info("⏳ Manual approval required for this remediation plan\n");
       }
     }
 
@@ -377,7 +379,7 @@ export class AutoRemediationSystem {
       throw new Error("Plan has already been executed");
     }
 
-    console.log("\n🚀 Executing remediation plan...\n");
+    logger.info("\n🚀 Executing remediation plan...\n");
 
     const startTime = new Date();
     const executedActions: ExecutedAction[] = [];
@@ -390,11 +392,11 @@ export class AutoRemediationSystem {
     )) {
       // Skip blocked actions
       if (this.config.blockedActions.includes(action.type)) {
-        console.log(`⏭️  Skipping blocked action: ${action.type}`);
+        logger.info(`⏭️  Skipping blocked action: ${action.type}`);
         continue;
       }
 
-      console.log(`   🔧 Executing: ${action.description}`);
+      logger.info(`   🔧 Executing: ${action.description}`);
       const actionStartTime = Date.now();
 
       try {
@@ -409,7 +411,7 @@ export class AutoRemediationSystem {
           output,
         });
 
-        console.log(`   ✅ Completed in ${actionDuration}ms\n`);
+        logger.info(`   ✅ Completed in ${actionDuration}ms\n`);
       } catch (error) {
         const actionDuration = Date.now() - actionStartTime;
         const errorMessage =
@@ -424,7 +426,7 @@ export class AutoRemediationSystem {
         });
 
         errors.push(`${action.type}: ${errorMessage}`);
-        console.log(`   ❌ Failed: ${errorMessage}\n`);
+        logger.info(`   ❌ Failed: ${errorMessage}\n`);
 
         // Determine if rollback is needed
         if (action.riskLevel === "HIGH" || action.riskLevel === "CRITICAL") {
@@ -437,7 +439,7 @@ export class AutoRemediationSystem {
     // Execute rollback if needed
     let rollbackExecuted = false;
     if (rollbackRequired && executedActions.some((a) => a.success)) {
-      console.log("⚠️ Rolling back executed actions...\n");
+      logger.info("⚠️ Rolling back executed actions...\n");
       rollbackExecuted = await this.executeRollback(plan, executedActions);
     }
 
@@ -523,7 +525,7 @@ export class AutoRemediationSystem {
       details: { approvedBy },
     });
 
-    console.log(`✅ Plan ${planId} approved by ${approvedBy}`);
+    logger.info(`✅ Plan ${planId} approved by ${approvedBy}`);
   }
 
   /**
@@ -553,7 +555,7 @@ export class AutoRemediationSystem {
       details: { rejectedBy, reason },
     });
 
-    console.log(
+    logger.info(
       `❌ Plan ${planId} rejected by ${rejectedBy}${reason ? `: ${reason}` : ""}`,
     );
   }
@@ -603,7 +605,7 @@ export class AutoRemediationSystem {
         analysisTime: Date.now() - startTime,
       };
     } catch (error) {
-      console.warn("⚠️ AI analysis failed, using fallback:", error);
+      logger.warn("⚠️ AI analysis failed, using fallback:", error);
       return this.getFallbackAnalysis(workflowResult);
     }
   }
@@ -1116,7 +1118,7 @@ export class AutoRemediationSystem {
   private async executeClearCache(_action: ProposedAction): Promise<string> {
     // Simulate cache clearing
     await this.sleep(500);
-    console.log("      🧹 Clearing application caches...");
+    logger.info("      🧹 Clearing application caches...");
     await this.sleep(1000);
     return "Cache cleared successfully";
   }
@@ -1130,14 +1132,14 @@ export class AutoRemediationSystem {
     const maxRetries = params?.maxRetries || 3;
     const initialDelay = params?.initialDelay || 1000;
 
-    console.log(
+    logger.info(
       `      🔄 Retrying with exponential backoff (max ${maxRetries} attempts)...`,
     );
 
     for (let i = 0; i < maxRetries; i++) {
       const delay = initialDelay * Math.pow(2, i);
       await this.sleep(delay);
-      console.log(`      📍 Attempt ${i + 1}/${maxRetries}...`);
+      logger.info(`      📍 Attempt ${i + 1}/${maxRetries}...`);
     }
 
     return `Completed ${maxRetries} retry attempts`;
@@ -1145,7 +1147,7 @@ export class AutoRemediationSystem {
 
   private async executeRefreshToken(_action: ProposedAction): Promise<string> {
     await this.sleep(500);
-    console.log("      🔑 Refreshing authentication tokens...");
+    logger.info("      🔑 Refreshing authentication tokens...");
     await this.sleep(1000);
     return "Tokens refreshed successfully";
   }
@@ -1155,7 +1157,7 @@ export class AutoRemediationSystem {
     const increase = params?.increasePercent || 50;
 
     await this.sleep(500);
-    console.log(`      ⏱️  Increasing timeout by ${increase}%...`);
+    logger.info(`      ⏱️  Increasing timeout by ${increase}%...`);
     await this.sleep(500);
     return `Timeout increased by ${increase}%`;
   }
@@ -1163,7 +1165,7 @@ export class AutoRemediationSystem {
   private async executeResetConnectionPool(
     _action: ProposedAction,
   ): Promise<string> {
-    console.log("      🔌 Resetting database connection pool...");
+    logger.info("      🔌 Resetting database connection pool...");
     await this.sleep(2000);
     return "Connection pool reset successfully";
   }
@@ -1171,7 +1173,7 @@ export class AutoRemediationSystem {
   private async executeRestartService(
     _action: ProposedAction,
   ): Promise<string> {
-    console.log("      🔄 Restarting service...");
+    logger.info("      🔄 Restarting service...");
     await this.sleep(5000);
     return "Service restarted successfully";
   }
@@ -1179,19 +1181,19 @@ export class AutoRemediationSystem {
   private async executeScaleResources(
     _action: ProposedAction,
   ): Promise<string> {
-    console.log("      📈 Scaling resources...");
+    logger.info("      📈 Scaling resources...");
     await this.sleep(3000);
     return "Resources scaled successfully";
   }
 
   private async executeNotifyAdmin(_action: ProposedAction): Promise<string> {
-    console.log("      📧 Notifying administrators...");
+    logger.info("      📧 Notifying administrators...");
     await this.sleep(500);
     return "Administrators notified";
   }
 
   private async executeCreateIssue(_action: ProposedAction): Promise<string> {
-    console.log("      📝 Creating issue ticket...");
+    logger.info("      📝 Creating issue ticket...");
     await this.sleep(1000);
     return "Issue created successfully";
   }
@@ -1199,7 +1201,7 @@ export class AutoRemediationSystem {
   private async executeQuarantineComponent(
     _action: ProposedAction,
   ): Promise<string> {
-    console.log("      🔒 Quarantining affected component...");
+    logger.info("      🔒 Quarantining affected component...");
     await this.sleep(2000);
     return "Component quarantined";
   }
@@ -1207,13 +1209,13 @@ export class AutoRemediationSystem {
   private async executeRollbackDeployment(
     _action: ProposedAction,
   ): Promise<string> {
-    console.log("      ⏪ Rolling back deployment...");
+    logger.info("      ⏪ Rolling back deployment...");
     await this.sleep(10000);
     return "Deployment rolled back";
   }
 
   private async executeOptimizeQuery(_action: ProposedAction): Promise<string> {
-    console.log("      ⚡ Optimizing database queries...");
+    logger.info("      ⚡ Optimizing database queries...");
     await this.sleep(2000);
     return "Queries optimized";
   }
@@ -1222,7 +1224,7 @@ export class AutoRemediationSystem {
     plan: RemediationPlan,
     executedActions: ExecutedAction[],
   ): Promise<boolean> {
-    console.log("\n⏪ Executing rollback for executed actions...\n");
+    logger.info("\n⏪ Executing rollback for executed actions...\n");
 
     const successfulActions = executedActions
       .filter((a) => a.success)
@@ -1233,7 +1235,7 @@ export class AutoRemediationSystem {
         (a) => a.id === action.actionId,
       );
       if (originalAction?.rollbackPlan) {
-        console.log(`   ↩️  Rolling back: ${originalAction.description}`);
+        logger.info(`   ↩️  Rolling back: ${originalAction.description}`);
         await this.sleep(1000);
       }
     }
@@ -1291,7 +1293,7 @@ export class AutoRemediationSystem {
     ) {
       this.circuitBreakerState.tripped = true;
       this.circuitBreakerState.tripTime = now;
-      console.log(
+      logger.info(
         `\n🔴 Circuit breaker TRIPPED! Remediation disabled for ${this.config.circuitBreaker.cooldownMinutes} minutes.\n`,
       );
     }
@@ -1304,7 +1306,7 @@ export class AutoRemediationSystem {
       tripped: false,
       tripTime: null,
     };
-    console.log("🟢 Circuit breaker reset. Remediation re-enabled.");
+    logger.info("🟢 Circuit breaker reset. Remediation re-enabled.");
   }
 
   // ============================================================================
@@ -1397,62 +1399,62 @@ export class AutoRemediationSystem {
   // ============================================================================
 
   private printPlanSummary(plan: RemediationPlan): void {
-    console.log(
+    logger.info(
       "\n╔════════════════════════════════════════════════════════════╗",
     );
-    console.log(
+    logger.info(
       "║ 📋 REMEDIATION PLAN SUMMARY                                ║",
     );
-    console.log(
+    logger.info(
       "╠════════════════════════════════════════════════════════════╣",
     );
-    console.log(`║ 🆔 Plan ID: ${plan.id.substring(0, 45).padEnd(45)} ║`);
-    console.log(`║ 📊 Severity: ${plan.severity.padEnd(44)} ║`);
-    console.log(
+    logger.info(`║ 🆔 Plan ID: ${plan.id.substring(0, 45).padEnd(45)} ║`);
+    logger.info(`║ 📊 Severity: ${plan.severity.padEnd(44)} ║`);
+    logger.info(
       `║ 🤖 AI Confidence: ${`${plan.aiAnalysis.confidence}%`.padEnd(39)} ║`,
     );
-    console.log(`║ ✅ Approval: ${plan.approvalStatus.padEnd(44)} ║`);
-    console.log(
+    logger.info(`║ ✅ Approval: ${plan.approvalStatus.padEnd(44)} ║`);
+    logger.info(
       "╠════════════════════════════════════════════════════════════╣",
     );
-    console.log(
+    logger.info(
       "║ 🔧 Proposed Actions:                                       ║",
     );
 
     for (const action of plan.proposedActions) {
       const line = `   ${action.priority}. [${action.riskLevel}] ${action.type}`;
-      console.log(`║ ${line.substring(0, 57).padEnd(57)} ║`);
+      logger.info(`║ ${line.substring(0, 57).padEnd(57)} ║`);
     }
 
-    console.log(
+    logger.info(
       "╠════════════════════════════════════════════════════════════╣",
     );
-    console.log(
+    logger.info(
       "║ 📊 Impact Assessment:                                      ║",
     );
-    console.log(
+    logger.info(
       `║    User Impact: ${plan.estimatedImpact.userImpact.padEnd(41)} ║`,
     );
-    console.log(
+    logger.info(
       `║    Data Risk: ${plan.estimatedImpact.dataRisk.padEnd(43)} ║`,
     );
-    console.log(
+    logger.info(
       `║    Reversibility: ${plan.estimatedImpact.reversibility.padEnd(38)} ║`,
     );
-    console.log(
+    logger.info(
       "╚════════════════════════════════════════════════════════════╝\n",
     );
 
     if (plan.aiAnalysis.rootCause) {
-      console.log(`🔍 Root Cause: ${plan.aiAnalysis.rootCause}\n`);
+      logger.info(`🔍 Root Cause: ${plan.aiAnalysis.rootCause}\n`);
     }
 
     if (plan.aiAnalysis.recommendations.length > 0) {
-      console.log("💡 AI Recommendations:");
+      logger.info("💡 AI Recommendations:");
       plan.aiAnalysis.recommendations.forEach((rec, i) => {
-        console.log(`   ${i + 1}. ${rec}`);
+        logger.info(`   ${i + 1}. ${rec}`);
       });
-      console.log("");
+      logger.info("");
     }
   }
 
@@ -1464,36 +1466,36 @@ export class AutoRemediationSystem {
           ? "⚠️"
           : "❌";
 
-    console.log(
+    logger.info(
       "\n╔════════════════════════════════════════════════════════════╗",
     );
-    console.log(
+    logger.info(
       "║ 🏁 EXECUTION RESULT                                        ║",
     );
-    console.log(
+    logger.info(
       "╠════════════════════════════════════════════════════════════╣",
     );
-    console.log(
+    logger.info(
       `║ ${statusIcon} Final State: ${result.finalState.padEnd(42)} ║`,
     );
-    console.log(`║ ⏱️  Duration: ${`${result.duration}ms`.padEnd(44)} ║`);
-    console.log(
+    logger.info(`║ ⏱️  Duration: ${`${result.duration}ms`.padEnd(44)} ║`);
+    logger.info(
       `║ 🔧 Actions Executed: ${String(result.actionsExecuted.length).padEnd(36)} ║`,
     );
-    console.log(
+    logger.info(
       `║ ✅ Successful: ${String(result.actionsExecuted.filter((a) => a.success).length).padEnd(42)} ║`,
     );
-    console.log(`║ ❌ Errors: ${String(result.errors.length).padEnd(46)} ║`);
-    console.log(
+    logger.info(`║ ❌ Errors: ${String(result.errors.length).padEnd(46)} ║`);
+    logger.info(
       "╚════════════════════════════════════════════════════════════╝\n",
     );
 
     if (result.errors.length > 0) {
-      console.log("❌ Errors encountered:");
+      logger.info("❌ Errors encountered:");
       result.errors.forEach((err, i) => {
-        console.log(`   ${i + 1}. ${err}`);
+        logger.info(`   ${i + 1}. ${err}`);
       });
-      console.log("");
+      logger.info("");
     }
   }
 

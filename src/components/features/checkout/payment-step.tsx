@@ -11,6 +11,9 @@ import { loadStripe, type Appearance } from "@stripe/stripe-js";
 import { AlertCircle, CreditCard, Lock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
+
+import { logger } from '@/lib/monitoring/logger';
+
 import type { PaymentInfo } from "./checkout-wizard";
 
 // ============================================================================
@@ -132,7 +135,7 @@ export function PaymentStep({
         setClientSecret(result.data.clientSecret);
         setPaymentIntentId(result.data.paymentIntentId);
       } catch (err) {
-        console.error("Payment intent creation error:", err);
+        logger.error("Payment intent creation error:", err);
         setError(
           err instanceof Error
             ? err.message
@@ -281,7 +284,7 @@ function PaymentStepForm({
         paymentIntentId: paymentIntentId || undefined,
       });
     } catch (err) {
-      console.error("Payment validation error:", err);
+      logger.error("Payment validation error:", err);
       setPaymentError(
         err instanceof Error
           ? err.message

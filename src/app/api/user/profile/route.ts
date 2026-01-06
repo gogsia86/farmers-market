@@ -15,6 +15,8 @@ import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { logger } from '@/lib/monitoring/logger';
+
 /**
  * 🔍 GET - Retrieve Current User Profile
  */
@@ -125,7 +127,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Profile retrieval error:", error);
+    logger.error("Profile retrieval error:", error);
     return NextResponse.json(
       {
         success: false,
@@ -326,7 +328,7 @@ export async function PATCH(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Profile update error:", error);
+    logger.error("Profile update error:", error);
     return NextResponse.json(
       {
         success: false,

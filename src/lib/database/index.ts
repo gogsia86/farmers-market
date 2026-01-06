@@ -47,12 +47,12 @@ const createPrismaClient = (): PrismaClient => {
   // Log pool events
   pool.on('connect', () => {
     if (isDevelopment) {
-      console.log('🔌 PostgreSQL connection established');
+      logger.info('🔌 PostgreSQL connection established');
     }
   });
 
   pool.on('error', (err) => {
-    console.error('🚨 PostgreSQL pool error:', err);
+    logger.error('🚨 PostgreSQL pool error:', err);
   });
 
   // Store pool globally in development
@@ -92,18 +92,18 @@ const createPrismaClient = (): PrismaClient => {
 
   // Error logging
   client.$on("error" as never, (e: any) => {
-    console.error("🚨 Prisma error:", e);
+    logger.error("🚨 Prisma error:", e);
   });
 
   // Warning logging
   client.$on("warn" as never, (e: any) => {
-    console.warn("⚠️ Prisma warning:", e);
+    logger.warn("⚠️ Prisma warning:", e);
   });
 
   // Info logging (development only)
   if (isDevelopment) {
     client.$on("info" as never, (e: any) => {
-      console.log("ℹ️ Prisma info:", e);
+      logger.info("ℹ️ Prisma info:", e);
     });
   }
 
@@ -183,7 +183,7 @@ export async function getDatabaseStats(): Promise<{
       idleConnections: result.idle_connections,
     };
   } catch (error) {
-    console.error("Failed to get database stats:", error);
+    logger.error("Failed to get database stats:", error);
     return {
       connections: 0,
       maxConnections: 0,

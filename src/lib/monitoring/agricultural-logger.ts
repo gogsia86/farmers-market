@@ -5,11 +5,14 @@
  */
 
 // Stub implementation for logger
+
+import { logger } from '@/lib/monitoring/logger';
+
 export const logger = {
-  info: (...args: any[]) => console.log("[INFO]", ...args),
-  error: (...args: any[]) => console.error("[ERROR]", ...args),
-  warn: (...args: any[]) => console.warn("[WARN]", ...args),
-  debug: (...args: any[]) => console.debug("[DEBUG]", ...args),
+  info: (...args: any[]) => logger.info("[INFO]", ...args),
+  error: (...args: any[]) => logger.error("[ERROR]", ...args),
+  warn: (...args: any[]) => logger.warn("[WARN]", ...args),
+  debug: (...args: any[]) => logger.debug("[DEBUG]", ...args),
 };
 
 export default logger;

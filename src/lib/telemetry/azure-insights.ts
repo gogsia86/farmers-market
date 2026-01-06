@@ -23,6 +23,9 @@
 
 import { trace, SpanStatusCode, context, Span } from "@opentelemetry/api";
 import {
+
+import { logger } from '@/lib/monitoring/logger';
+
   AzureMonitorOpenTelemetryOptions,
   useAzureMonitor,
 } from "@azure/monitor-opentelemetry";
@@ -157,7 +160,7 @@ export class AzureTelemetryService {
 
     if (!connectionString) {
       if (isProduction) {
-        console.warn(
+        logger.warn(
           "⚠️  Azure Application Insights: Connection string not configured. Telemetry disabled.",
         );
       }
@@ -165,7 +168,7 @@ export class AzureTelemetryService {
     }
 
     if (!isProduction) {
-      console.log(
+      logger.info(
         "ℹ️  Azure Application Insights: Disabled in development mode",
       );
       return;
@@ -188,9 +191,9 @@ export class AzureTelemetryService {
       this.isEnabled = true;
       this.isInitialized = true;
 
-      console.log("✅ Azure Application Insights initialized successfully");
+      logger.info("✅ Azure Application Insights initialized successfully");
     } catch (error) {
-      console.error(
+      logger.error(
         "❌ Failed to initialize Azure Application Insights:",
         error,
       );
@@ -560,7 +563,7 @@ export class AzureTelemetryService {
       process.env.NODE_ENV === "development" &&
       process.env.LOG_TELEMETRY === "true"
     ) {
-      console.log(
+      logger.info(
         `📊 [${type}] ${name}`,
         data ? JSON.stringify(data, null, 2) : "",
       );

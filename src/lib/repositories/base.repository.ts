@@ -18,6 +18,8 @@
 import type { PrismaClient } from "@prisma/client";
 import { database } from "@/lib/database";
 
+import { logger } from '@/lib/monitoring/logger';
+
 /**
  * Options for repository operations
  */
@@ -136,7 +138,7 @@ export abstract class BaseRepository<
    * ```typescript
    * const farm = await repository.findById("farm_123");
    * if (farm) {
-   *   console.log("Found:", farm.name);
+   *   logger.info("Found:", farm.name);
    * }
    * ```
    */
@@ -397,7 +399,7 @@ export abstract class BaseRepository<
    * @example
    * ```typescript
    * if (await repository.exists("farm_123")) {
-   *   console.log("Farm exists!");
+   *   logger.info("Farm exists!");
    * }
    * ```
    */
@@ -495,7 +497,7 @@ export abstract class BaseRepository<
 
     // Log for debugging (development only)
     if (process.env.NODE_ENV === "development") {
-      console.error(`\n🚨 [${this.repositoryName}] ${operation} error:`, error);
+      logger.error(`\n🚨 [${this.repositoryName}] ${operation} error:`, error);
     }
 
     return new Error(errorMessage);
@@ -516,7 +518,7 @@ export abstract class BaseRepository<
   ): void {
     if (process.env.NODE_ENV === "development") {
       const timestamp = new Date().toISOString();
-      console.log(
+      logger.info(
         `✅ [${timestamp}] [${this.repositoryName}] ${operation}`,
         Object.keys(meta).length > 0 ? meta : "",
       );

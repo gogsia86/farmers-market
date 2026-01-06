@@ -18,6 +18,9 @@ import { OTLPTraceExporter as OTLPHttpExporter } from "@opentelemetry/exporter-t
 import { OTLPTraceExporter as OTLPGrpcExporter } from "@opentelemetry/exporter-trace-otlp-grpc";
 // @ts-ignore - Azure module may not be available in all environments
 import { AzureMonitorTraceExporter } from "@azure/monitor-opentelemetry-exporter";
+
+import { logger } from '@/lib/monitoring/logger';
+
 import type {
   WorkflowConfig,
   WorkflowResult,
@@ -103,7 +106,7 @@ export class WorkflowTracer {
 
     this.initialized = true;
 
-    console.log(
+    logger.info(
       `✅ OpenTelemetry tracing initialized with ${this.config.exporter} exporter`,
     );
   }
@@ -118,7 +121,7 @@ export class WorkflowTracer {
 
       case "otlp-http":
         if (!this.config.endpoint) {
-          console.warn(
+          logger.warn(
             "⚠️  OTLP HTTP endpoint not configured, falling back to console",
           );
           return new ConsoleSpanExporter();
@@ -129,7 +132,7 @@ export class WorkflowTracer {
 
       case "otlp-grpc":
         if (!this.config.endpoint) {
-          console.warn(
+          logger.warn(
             "⚠️  OTLP gRPC endpoint not configured, falling back to console",
           );
           return new ConsoleSpanExporter();
@@ -140,7 +143,7 @@ export class WorkflowTracer {
 
       case "azure-monitor":
         if (!this.config.connectionString) {
-          console.warn(
+          logger.warn(
             "⚠️  Azure Monitor connection string not configured, falling back to console",
           );
           return new ConsoleSpanExporter();
@@ -457,7 +460,7 @@ export class WorkflowTracer {
   async gatherSpanMetrics(spanId: string): Promise<SpanMetrics | null> {
     // This would typically query the trace backend
     // For now, return null as it requires backend integration
-    console.log(`📊 Gathering metrics for span: ${spanId}`);
+    logger.info(`📊 Gathering metrics for span: ${spanId}`);
     return null;
   }
 
@@ -467,7 +470,7 @@ export class WorkflowTracer {
   async shutdown(): Promise<void> {
     if (this.provider) {
       await this.provider.shutdown();
-      console.log("✅ OpenTelemetry tracer shutdown complete");
+      logger.info("✅ OpenTelemetry tracer shutdown complete");
     }
   }
 

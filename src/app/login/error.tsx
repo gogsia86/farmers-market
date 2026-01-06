@@ -7,6 +7,8 @@
 
 import { useEffect } from "react";
 
+import { logger } from '@/lib/monitoring/logger';
+
 export default function LoginError({
   error,
   reset,
@@ -16,7 +18,7 @@ export default function LoginError({
 }) {
   useEffect(() => {
     // Log error to console for debugging
-    console.error("Login page error:", error);
+    logger.error("Login page error:", error);
   }, [error]);
 
   return (

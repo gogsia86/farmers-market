@@ -6,6 +6,8 @@
  * NOTE: TypeScript checks disabled - TensorFlow types not available in this environment
  */
 
+import { logger } from '@/lib/monitoring/logger';
+
 let tf: any;
 let GPU: any;
 
@@ -79,13 +81,13 @@ export class GPUImageProcessor {
       await tf.setBackend("tensorflow");
       await tf.ready();
 
-      console.log("🚀 GPU Image Processor initialized");
-      console.log("   Backend:", tf.getBackend());
-      console.log("   CUDA enabled:", await tf.env().getBool("WEBGL_VERSION"));
+      logger.info("🚀 GPU Image Processor initialized");
+      logger.info("   Backend:", tf.getBackend());
+      logger.info("   CUDA enabled:", await tf.env().getBool("WEBGL_VERSION"));
 
       this.initialized = true;
     } catch (error) {
-      console.error("❌ GPU initialization failed:", error);
+      logger.error("❌ GPU initialization failed:", error);
       throw new Error("Failed to initialize GPU image processor");
     }
   }
@@ -129,7 +131,7 @@ export class GPUImageProcessor {
         processingTime,
       };
     } catch (error) {
-      console.error("GPU resize failed:", error);
+      logger.error("GPU resize failed:", error);
       throw error;
     }
   }
@@ -159,16 +161,16 @@ export class GPUImageProcessor {
       );
 
       const totalTime = performance.now() - startTime;
-      console.log(
+      logger.info(
         `✅ Processed ${images.length} images in ${totalTime.toFixed(2)}ms`,
       );
-      console.log(
+      logger.info(
         `   Average: ${(totalTime / images.length).toFixed(2)}ms per image`,
       );
 
       return results;
     } catch (error) {
-      console.error("Batch processing failed:", error);
+      logger.error("Batch processing failed:", error);
       throw error;
     }
   }
@@ -231,7 +233,7 @@ export class GPUImageProcessor {
         processingTime,
       };
     } catch (error) {
-      console.error("GPU enhancement failed:", error);
+      logger.error("GPU enhancement failed:", error);
       throw error;
     }
   }
@@ -242,7 +244,7 @@ export class GPUImageProcessor {
   dispose(): void {
     tf.disposeVariables();
     this.initialized = false;
-    console.log("🧹 GPU resources cleaned up");
+    logger.info("🧹 GPU resources cleaned up");
   }
 }
 

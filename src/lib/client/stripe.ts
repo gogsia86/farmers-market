@@ -6,6 +6,8 @@
 
 import { loadStripe, Stripe } from "@stripe/stripe-js";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // STRIPE INSTANCE
 // ============================================================================
@@ -20,7 +22,7 @@ export function getStripe(): Promise<Stripe | null> {
     const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 
     if (!publishableKey) {
-      console.error("NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not set");
+      logger.error("NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not set");
       return Promise.resolve(null);
     }
 
@@ -75,7 +77,7 @@ export async function confirmPayment(
     });
 
     if (error) {
-      console.error("Payment confirmation error:", error);
+      logger.error("Payment confirmation error:", error);
       return {
         success: false,
         error: error.message || "Payment confirmation failed",
@@ -95,7 +97,7 @@ export async function confirmPayment(
       error: "No payment intent returned",
     };
   } catch (err) {
-    console.error("Payment confirmation exception:", err);
+    logger.error("Payment confirmation exception:", err);
     return {
       success: false,
       error: err instanceof Error ? err.message : "Unknown error occurred",
@@ -143,7 +145,7 @@ export async function retrievePaymentIntent(
       error: "No payment intent found",
     };
   } catch (err) {
-    console.error("Retrieve payment intent exception:", err);
+    logger.error("Retrieve payment intent exception:", err);
     return {
       success: false,
       error: err instanceof Error ? err.message : "Unknown error occurred",
@@ -191,7 +193,7 @@ export async function handlePaymentAction(
       error: "No payment intent returned",
     };
   } catch (err) {
-    console.error("Handle payment action exception:", err);
+    logger.error("Handle payment action exception:", err);
     return {
       success: false,
       error: err instanceof Error ? err.message : "Unknown error occurred",

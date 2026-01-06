@@ -4,6 +4,8 @@
  * Uses Server-Sent Events (SSE) for real-time updates
  */
 
+import { logger } from '@/lib/monitoring/logger';
+
 export interface Notification {
   id: string;
   userId: string;
@@ -66,7 +68,7 @@ export class NotificationService {
         try {
           callback(fullNotification);
         } catch (error) {
-          console.error("Notification callback error:", error);
+          logger.error("Notification callback error:", error);
         }
       });
     }

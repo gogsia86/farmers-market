@@ -16,6 +16,8 @@ import { AzureMonitorTraceExporter } from "@azure/monitor-opentelemetry-exporter
 import { HttpInstrumentation } from "@opentelemetry/instrumentation-http";
 import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
 
+import { logger } from '@/lib/monitoring/logger';
+
 let sdk: NodeSDK | null = null;
 
 /**
@@ -24,19 +26,19 @@ let sdk: NodeSDK | null = null;
 export function initializeTelemetry(): NodeSDK | null {
   // Only initialize in production
   if (process.env.NODE_ENV !== "production") {
-    console.log("🔭 Telemetry: Skipping in development mode");
+    logger.info("🔭 Telemetry: Skipping in development mode");
     return null;
   }
 
   // Skip if no connection string
   if (!process.env.APPLICATIONINSIGHTS_CONNECTION_STRING) {
-    console.warn("⚠️ Telemetry: APPLICATIONINSIGHTS_CONNECTION_STRING not set");
+    logger.warn("⚠️ Telemetry: APPLICATIONINSIGHTS_CONNECTION_STRING not set");
     return null;
   }
 
   // Skip if already initialized
   if (sdk) {
-    console.log("🔭 Telemetry: Already initialized");
+    logger.info("🔭 Telemetry: Already initialized");
     return sdk;
   }
 
@@ -82,16 +84,16 @@ export function initializeTelemetry(): NodeSDK | null {
     });
 
     sdk.start();
-    console.log("🔭 Telemetry: OpenTelemetry initialized successfully");
+    logger.info("🔭 Telemetry: OpenTelemetry initialized successfully");
 
     // Graceful shutdown
     process.on("SIGTERM", async () => {
-      console.log("🔭 Telemetry: Shutting down gracefully...");
+      logger.info("🔭 Telemetry: Shutting down gracefully...");
       try {
         await sdk?.shutdown();
-        console.log("🔭 Telemetry: Shutdown complete");
+        logger.info("🔭 Telemetry: Shutdown complete");
       } catch (error) {
-        console.error("🔭 Telemetry: Error during shutdown:", error);
+        logger.error("🔭 Telemetry: Error during shutdown:", error);
       } finally {
         process.exit(0);
       }
@@ -99,7 +101,7 @@ export function initializeTelemetry(): NodeSDK | null {
 
     return sdk;
   } catch (error) {
-    console.error("🔭 Telemetry: Initialization failed:", error);
+    logger.error("🔭 Telemetry: Initialization failed:", error);
     return null;
   }
 }
@@ -121,7 +123,7 @@ export async function shutdownTelemetry(): Promise<void> {
   if (sdk) {
     await sdk.shutdown();
     sdk = null;
-    console.log("🔭 Telemetry: Shutdown complete");
+    logger.info("🔭 Telemetry: Shutdown complete");
   }
 }
 

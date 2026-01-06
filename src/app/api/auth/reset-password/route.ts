@@ -16,6 +16,8 @@ import { database } from "@/lib/database";
 import { hash } from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 
+import { logger } from '@/lib/monitoring/logger';
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -115,14 +117,14 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    console.log(`Password successfully reset for user: ${user.email}`);
+    logger.info(`Password successfully reset for user: ${user.email}`);
 
     return NextResponse.json({
       success: true,
       message: "Password has been reset successfully. You can now login with your new password.",
     });
   } catch (error) {
-    console.error("Reset password error:", error);
+    logger.error("Reset password error:", error);
     return NextResponse.json(
       { error: "An unexpected error occurred. Please try again later." },
       { status: 500 }

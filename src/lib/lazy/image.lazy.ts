@@ -17,6 +17,8 @@ import type Sharp from "sharp";
 // TYPE DEFINITIONS
 // ============================================================================
 
+import { logger } from '@/lib/monitoring/logger';
+
 export interface ImageProcessingOptions {
   width?: number;
   height?: number;
@@ -192,7 +194,7 @@ export async function createThumbnail(
  * @example
  * ```typescript
  * const metadata = await getImageMetadata(imageBuffer);
- * console.log(metadata.width, metadata.height, metadata.format);
+ * logger.info(metadata.width, metadata.height, metadata.format);
  * ```
  */
 export async function getImageMetadata(input: Buffer | string): Promise<{

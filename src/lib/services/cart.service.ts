@@ -5,6 +5,8 @@ import { database } from "@/lib/database";
 import type { CartItem, Product } from "@prisma/client";
 import { Decimal } from "decimal.js";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // TYPES & INTERFACES
 // ============================================================================
@@ -583,7 +585,7 @@ export class QuantumCartService {
         });
       } catch (error) {
         // Log error but continue with other items
-        console.error(`Failed to merge cart item ${item.productId}:`, error);
+        logger.error(`Failed to merge cart item ${item.productId}:`, error);
       }
     }
   }

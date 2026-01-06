@@ -14,6 +14,8 @@ import type { Farm, FarmStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // TYPES & VALIDATION
 // ============================================================================
@@ -134,7 +136,7 @@ export async function GET(
       data: farm as unknown as Farm,
     });
   } catch (error) {
-    console.error("GET /api/farms/[farmId] error:", error);
+    logger.error("GET /api/farms/[farmId] error:", error);
     return NextResponse.json(
       {
         success: false,
@@ -267,7 +269,7 @@ export async function PATCH(
       data: updatedFarm,
     });
   } catch (error) {
-    console.error("PATCH /api/farms/[farmId] error:", error);
+    logger.error("PATCH /api/farms/[farmId] error:", error);
     return NextResponse.json(
       {
         success: false,
@@ -383,7 +385,7 @@ export async function DELETE(
       },
     });
   } catch (error) {
-    console.error("DELETE /api/farms/[farmId] error:", error);
+    logger.error("DELETE /api/farms/[farmId] error:", error);
     return NextResponse.json(
       {
         success: false,

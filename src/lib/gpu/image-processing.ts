@@ -9,6 +9,8 @@
  * NOTE: TypeScript checks disabled - TensorFlow types not available in this environment
  */
 
+import { logger } from '@/lib/monitoring/logger';
+
 let tf: any;
 let GPU: any;
 
@@ -62,11 +64,11 @@ function getGPU(): any {
 if (typeof window !== "undefined") {
   tf.setBackend("tensorflow")
     .then(() => {
-      console.log("✅ TensorFlow.js GPU backend initialized");
-      console.log("GPU Devices:", tf.env().getNumber("WEBGL_VERSION"));
+      logger.info("✅ TensorFlow.js GPU backend initialized");
+      logger.info("GPU Devices:", tf.env().getNumber("WEBGL_VERSION"));
     })
     .catch(() => {
-      console.warn("⚠️ GPU backend initialization failed, using CPU fallback");
+      logger.warn("⚠️ GPU backend initialization failed, using CPU fallback");
     });
 }
 
@@ -165,7 +167,7 @@ export class GPUImageProcessor {
     targetWidth: number,
     targetHeight: number,
   ): Promise<number[][][][]> {
-    console.log(`🚀 GPU Batch Processing ${images.length} images...`);
+    logger.info(`🚀 GPU Batch Processing ${images.length} images...`);
     const startTime = performance.now();
 
     const results = await Promise.all(
@@ -173,7 +175,7 @@ export class GPUImageProcessor {
     );
 
     const duration = performance.now() - startTime;
-    console.log(
+    logger.info(
       `✅ GPU Batch Complete: ${duration.toFixed(2)}ms (${(images.length / (duration / 1000)).toFixed(2)} images/sec)`,
     );
 
@@ -269,9 +271,9 @@ export class GPUImageClassifier {
   private model: tf.LayersModel | null = null;
 
   async loadModel(modelPath: string): Promise<void> {
-    console.log("📥 Loading TensorFlow model on GPU...");
+    logger.info("📥 Loading TensorFlow model on GPU...");
     this.model = await tf.loadLayersModel(modelPath);
-    console.log("✅ Model loaded on GPU");
+    logger.info("✅ Model loaded on GPU");
   }
 
   /**
@@ -301,7 +303,7 @@ export class GPUImageClassifier {
     const values = await predictions.array();
     const duration = performance.now() - startTime;
 
-    console.log(`🔮 GPU Inference: ${duration.toFixed(2)}ms`);
+    logger.info(`🔮 GPU Inference: ${duration.toFixed(2)}ms`);
 
     // Cleanup tensors
     tensor.dispose();
@@ -371,7 +373,7 @@ export class GPUPerformanceMonitor {
       timestamp: new Date(),
     });
 
-    console.log(
+    logger.info(
       `⚡ GPU ${operationName}: ${duration.toFixed(2)}ms, Memory: ${(memoryUsed / 1024 / 1024).toFixed(2)}MB`,
     );
 

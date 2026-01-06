@@ -18,6 +18,9 @@
  */
 
 import { database } from "../../database";
+
+import { logger } from '@/lib/monitoring/logger';
+
 import type {
   MonitoringReport as PrismaMonitoringReport,
   WorkflowExecution as PrismaWorkflowExecution,
@@ -91,9 +94,9 @@ class DatabaseStorageService {
         },
       });
 
-      console.log(`✅ Report ${report.reportId} saved to database`);
+      logger.info(`✅ Report ${report.reportId} saved to database`);
     } catch (error) {
-      console.error(`❌ Failed to save report ${report.reportId}:`, error);
+      logger.error(`❌ Failed to save report ${report.reportId}:`, error);
       throw error;
     }
   }
@@ -142,14 +145,14 @@ class DatabaseStorageService {
         },
       });
 
-      console.log(`✅ Execution ${result.runId} saved to database`);
+      logger.info(`✅ Execution ${result.runId} saved to database`);
 
       // Save associated metrics
       if (result.metrics && Object.keys(result.metrics).length > 0) {
         await this.saveWorkflowMetricsFromResult(result, execution.runId);
       }
     } catch (error) {
-      console.error(`❌ Failed to save execution ${result.runId}:`, error);
+      logger.error(`❌ Failed to save execution ${result.runId}:`, error);
       throw error;
     }
   }
@@ -244,9 +247,9 @@ class DatabaseStorageService {
         },
       });
 
-      console.log("✅ Health check saved to database");
+      logger.info("✅ Health check saved to database");
     } catch (error) {
-      console.error("❌ Failed to save health check:", error);
+      logger.error("❌ Failed to save health check:", error);
       throw error;
     }
   }
@@ -276,9 +279,9 @@ class DatabaseStorageService {
         },
       });
 
-      console.log("✅ Notification logged to database");
+      logger.info("✅ Notification logged to database");
     } catch (error) {
-      console.error("❌ Failed to log notification:", error);
+      logger.error("❌ Failed to log notification:", error);
       // Don't throw - notifications are not critical
     }
   }
@@ -436,7 +439,7 @@ class DatabaseStorageService {
       });
 
       if (!schedule) {
-        console.warn(`Schedule ${scheduleId} not found`);
+        logger.warn(`Schedule ${scheduleId} not found`);
         return;
       }
 
@@ -452,7 +455,7 @@ class DatabaseStorageService {
         },
       });
     } catch (error) {
-      console.error(`Failed to update schedule ${scheduleId}:`, error);
+      logger.error(`Failed to update schedule ${scheduleId}:`, error);
     }
   }
 
@@ -594,7 +597,7 @@ class DatabaseStorageService {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - daysToKeep);
 
-    console.log(
+    logger.info(
       `🧹 Cleaning up records older than ${cutoffDate.toISOString()}`,
     );
 
@@ -631,10 +634,10 @@ class DatabaseStorageService {
         deletedNotifications: deletedNotifications.count,
       };
 
-      console.log("✅ Cleanup complete:", result);
+      logger.info("✅ Cleanup complete:", result);
       return result;
     } catch (error) {
-      console.error("❌ Cleanup failed:", error);
+      logger.error("❌ Cleanup failed:", error);
       throw error;
     }
   }

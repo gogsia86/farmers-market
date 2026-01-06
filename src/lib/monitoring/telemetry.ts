@@ -20,6 +20,8 @@ import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-base";
 import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
 import { trace, SpanStatusCode, Span, Tracer } from "@opentelemetry/api";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // Types & Interfaces
 // ============================================================================
@@ -90,14 +92,14 @@ let isInitialized = false;
  */
 export function initializeTelemetry(): NodeSDK {
   if (sdkInstance) {
-    console.log("[Telemetry] SDK already initialized");
+    logger.info("[Telemetry] SDK already initialized");
     return sdkInstance;
   }
 
   const config = getTelemetryConfig();
 
   if (!config.enabled) {
-    console.log("[Telemetry] Telemetry disabled via configuration");
+    logger.info("[Telemetry] Telemetry disabled via configuration");
     // Return minimal SDK that doesn't export
     sdkInstance = new NodeSDK({
       resource: createResource(config),
@@ -105,7 +107,7 @@ export function initializeTelemetry(): NodeSDK {
     return sdkInstance;
   }
 
-  console.log("[Telemetry] Initializing with config:", {
+  logger.info("[Telemetry] Initializing with config:", {
     serviceName: config.serviceName,
     environment: config.environment,
     endpoint: config.otlpEndpoint,
@@ -170,22 +172,22 @@ export function initializeTelemetry(): NodeSDK {
     sdkInstance.start();
     isInitialized = true;
 
-    console.log("[Telemetry] SDK initialized and started successfully");
+    logger.info("[Telemetry] SDK initialized and started successfully");
 
     // Graceful shutdown handlers
     process.on("SIGTERM", async () => {
-      console.log("[Telemetry] Shutting down gracefully...");
+      logger.info("[Telemetry] Shutting down gracefully...");
       await shutdownTelemetry();
       process.exit(0);
     });
 
     process.on("SIGINT", async () => {
-      console.log("[Telemetry] Shutting down gracefully...");
+      logger.info("[Telemetry] Shutting down gracefully...");
       await shutdownTelemetry();
       process.exit(0);
     });
   } catch (error) {
-    console.error("[Telemetry] Failed to initialize SDK:", error);
+    logger.error("[Telemetry] Failed to initialize SDK:", error);
     throw error;
   }
 
@@ -197,17 +199,17 @@ export function initializeTelemetry(): NodeSDK {
  */
 export async function shutdownTelemetry(): Promise<void> {
   if (!sdkInstance || !isInitialized) {
-    console.log("[Telemetry] SDK not initialized, nothing to shutdown");
+    logger.info("[Telemetry] SDK not initialized, nothing to shutdown");
     return;
   }
 
   try {
-    console.log("[Telemetry] Flushing remaining spans...");
+    logger.info("[Telemetry] Flushing remaining spans...");
     await sdkInstance.shutdown();
     isInitialized = false;
-    console.log("[Telemetry] SDK shutdown completed");
+    logger.info("[Telemetry] SDK shutdown completed");
   } catch (error) {
-    console.error("[Telemetry] Error during shutdown:", error);
+    logger.error("[Telemetry] Error during shutdown:", error);
   }
 }
 

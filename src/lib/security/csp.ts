@@ -16,6 +16,8 @@
 
 import { telemetryService } from "@/lib/telemetry/azure-insights";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // CSP DIRECTIVE BUILDERS
 // ============================================================================
@@ -273,7 +275,7 @@ export async function handleCSPViolation(
 ): Promise<void> {
   const violation = report["csp-report"];
 
-  console.error("🚨 CSP VIOLATION DETECTED:", {
+  logger.error("🚨 CSP VIOLATION DETECTED:", {
     directive: violation["violated-directive"],
     blockedUri: violation["blocked-uri"],
     documentUri: violation["document-uri"],

@@ -12,6 +12,9 @@ import { emailService } from "@/lib/services/email.service";
 import { database } from "@/lib/database";
 import { EmailStatus } from "@prisma/client";
 import { trace, SpanStatusCode } from "@opentelemetry/api";
+
+import { logger } from '@/lib/monitoring/logger';
+
 import type { Job } from "bull";
 
 // ============================================
@@ -71,7 +74,7 @@ async function processEmailJob(job: Job<EmailJobData>) {
       await job.progress(20);
 
       // Send email via email service
-      console.log(
+      logger.info(
         `📧 Sending email to ${job.data.emailOptions.to} (Job: ${job.id})`,
       );
       const result = await emailService.sendEmail(job.data.emailOptions);
@@ -104,7 +107,7 @@ async function processEmailJob(job: Job<EmailJobData>) {
           "job.duration": duration,
         });
 
-        console.log(
+        logger.info(
           `✅ Email sent successfully to ${job.data.emailOptions.to} (${duration}ms)`,
         );
 
@@ -143,7 +146,7 @@ async function processEmailJob(job: Job<EmailJobData>) {
         "job.error": error instanceof Error ? error.message : "Unknown error",
       });
 
-      console.error(
+      logger.error(
         `❌ Email failed to ${job.data.emailOptions.to} (Job: ${job.id}, Attempt: ${
           job.attemptsMade + 1
         }):`,
@@ -165,7 +168,7 @@ async function processEmailJob(job: Job<EmailJobData>) {
  * Start email worker
  */
 export function startEmailWorker() {
-  console.log(`🚀 Starting email worker with concurrency: ${CONCURRENCY}`);
+  logger.info(`🚀 Starting email worker with concurrency: ${CONCURRENCY}`);
 
   // Process jobs from queue
   emailQueue.process(CONCURRENCY, async (job) => {
@@ -174,7 +177,7 @@ export function startEmailWorker() {
 
   // Event listeners
   emailQueue.on("completed", (job, result) => {
-    console.log(`✅ Job ${job.id} completed:`, {
+    logger.info(`✅ Job ${job.id} completed:`, {
       recipient: job.data.emailOptions.to,
       type: job.data.emailType,
       duration: result.duration,
@@ -183,7 +186,7 @@ export function startEmailWorker() {
   });
 
   emailQueue.on("failed", (job, error) => {
-    console.error(`❌ Job ${job?.id} failed:`, {
+    logger.error(`❌ Job ${job?.id} failed:`, {
       recipient: job?.data?.emailOptions?.to,
       type: job?.data?.emailType,
       attempt: job?.attemptsMade,
@@ -192,30 +195,30 @@ export function startEmailWorker() {
   });
 
   emailQueue.on("stalled", (job) => {
-    console.warn(`⚠️ Job ${job.id} stalled:`, {
+    logger.warn(`⚠️ Job ${job.id} stalled:`, {
       recipient: job.data.emailOptions.to,
       type: job.data.emailType,
     });
   });
 
   emailQueue.on("error", (error) => {
-    console.error("❌ Worker error:", error);
+    logger.error("❌ Worker error:", error);
   });
 
-  console.log("✅ Email worker started successfully");
+  logger.info("✅ Email worker started successfully");
 }
 
 /**
  * Stop email worker gracefully
  */
 export async function stopEmailWorker() {
-  console.log("Stopping email worker...");
+  logger.info("Stopping email worker...");
 
   try {
     await emailQueue.close();
-    console.log("✅ Email worker stopped successfully");
+    logger.info("✅ Email worker stopped successfully");
   } catch (error) {
-    console.error("Failed to stop email worker:", error);
+    logger.error("Failed to stop email worker:", error);
     throw error;
   }
 }
@@ -227,26 +230,26 @@ export async function stopEmailWorker() {
 if (process.env.NODE_ENV !== "test") {
   // Handle process termination
   process.on("SIGTERM", async () => {
-    console.log("Received SIGTERM, shutting down worker...");
+    logger.info("Received SIGTERM, shutting down worker...");
     await stopEmailWorker();
     process.exit(0);
   });
 
   process.on("SIGINT", async () => {
-    console.log("Received SIGINT, shutting down worker...");
+    logger.info("Received SIGINT, shutting down worker...");
     await stopEmailWorker();
     process.exit(0);
   });
 
   // Handle uncaught errors
   process.on("uncaughtException", async (error) => {
-    console.error("Uncaught exception:", error);
+    logger.error("Uncaught exception:", error);
     await stopEmailWorker();
     process.exit(1);
   });
 
   process.on("unhandledRejection", async (reason, promise) => {
-    console.error("Unhandled rejection at:", promise, "reason:", reason);
+    logger.error("Unhandled rejection at:", promise, "reason:", reason);
     await stopEmailWorker();
     process.exit(1);
   });
@@ -263,12 +266,12 @@ export default {
 
 // Auto-start worker if this file is run directly
 if (require.main === module) {
-  console.log("📧 Email Worker Process");
-  console.log("========================");
-  console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
-  console.log(`Concurrency: ${CONCURRENCY}`);
-  console.log(`Timeout: ${JOB_TIMEOUT}ms`);
-  console.log("========================\n");
+  logger.info("📧 Email Worker Process");
+  logger.info("========================");
+  logger.info(`Environment: ${process.env.NODE_ENV || "development"}`);
+  logger.info(`Concurrency: ${CONCURRENCY}`);
+  logger.info(`Timeout: ${JOB_TIMEOUT}ms`);
+  logger.info("========================\n");
 
   startEmailWorker();
 }

@@ -11,6 +11,8 @@ import emailWorker from "./email.worker";
 import pushWorker from "./push.worker";
 import smsWorker from "./sms.worker";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================
 // TYPES
 // ============================================
@@ -37,35 +39,35 @@ const workerStatus: WorkerStatus = {
  */
 export async function startAllWorkers(): Promise<void> {
   if (isRunning) {
-    console.warn("⚠️ Workers are already running");
+    logger.warn("⚠️ Workers are already running");
     return;
   }
 
-  console.log("🚀 Starting all background workers...\n");
+  logger.info("🚀 Starting all background workers...\n");
 
   try {
     // Start email worker
-    console.log("📧 Starting email worker...");
+    logger.info("📧 Starting email worker...");
     emailWorker.start();
     workerStatus.email = true;
-    console.log("✅ Email worker started\n");
+    logger.info("✅ Email worker started\n");
 
     // Start SMS worker
-    console.log("📱 Starting SMS worker...");
+    logger.info("📱 Starting SMS worker...");
     smsWorker.start();
     workerStatus.sms = true;
-    console.log("✅ SMS worker started\n");
+    logger.info("✅ SMS worker started\n");
 
     // Start push notification worker
-    console.log("🔔 Starting push notification worker...");
+    logger.info("🔔 Starting push notification worker...");
     pushWorker.start();
     workerStatus.push = true;
-    console.log("✅ Push notification worker started\n");
+    logger.info("✅ Push notification worker started\n");
 
     isRunning = true;
-    console.log("✅ All background workers started successfully!\n");
+    logger.info("✅ All background workers started successfully!\n");
   } catch (error) {
-    console.error("❌ Failed to start workers:", error);
+    logger.error("❌ Failed to start workers:", error);
     await stopAllWorkers();
     throw error;
   }
@@ -76,43 +78,43 @@ export async function startAllWorkers(): Promise<void> {
  */
 export async function stopAllWorkers(): Promise<void> {
   if (!isRunning) {
-    console.warn("⚠️ Workers are not running");
+    logger.warn("⚠️ Workers are not running");
     return;
   }
 
-  console.log("🛑 Stopping all background workers...\n");
+  logger.info("🛑 Stopping all background workers...\n");
 
   const stopPromises: Promise<void>[] = [];
 
   // Stop email worker
   if (workerStatus.email) {
-    console.log("📧 Stopping email worker...");
+    logger.info("📧 Stopping email worker...");
     stopPromises.push(
       emailWorker.stop().then(() => {
         workerStatus.email = false;
-        console.log("✅ Email worker stopped");
+        logger.info("✅ Email worker stopped");
       })
     );
   }
 
   // Stop SMS worker
   if (workerStatus.sms) {
-    console.log("📱 Stopping SMS worker...");
+    logger.info("📱 Stopping SMS worker...");
     stopPromises.push(
       smsWorker.stop().then(() => {
         workerStatus.sms = false;
-        console.log("✅ SMS worker stopped");
+        logger.info("✅ SMS worker stopped");
       })
     );
   }
 
   // Stop push notification worker
   if (workerStatus.push) {
-    console.log("🔔 Stopping push notification worker...");
+    logger.info("🔔 Stopping push notification worker...");
     stopPromises.push(
       pushWorker.stop().then(() => {
         workerStatus.push = false;
-        console.log("✅ Push notification worker stopped");
+        logger.info("✅ Push notification worker stopped");
       })
     );
   }
@@ -120,7 +122,7 @@ export async function stopAllWorkers(): Promise<void> {
   await Promise.all(stopPromises);
 
   isRunning = false;
-  console.log("\n✅ All background workers stopped successfully!\n");
+  logger.info("\n✅ All background workers stopped successfully!\n");
 }
 
 /**
@@ -156,26 +158,26 @@ export function areWorkersHealthy(): boolean {
 if (process.env.NODE_ENV !== "test") {
   // Handle process termination
   process.on("SIGTERM", async () => {
-    console.log("\n🛑 Received SIGTERM, shutting down workers gracefully...");
+    logger.info("\n🛑 Received SIGTERM, shutting down workers gracefully...");
     await stopAllWorkers();
     process.exit(0);
   });
 
   process.on("SIGINT", async () => {
-    console.log("\n🛑 Received SIGINT, shutting down workers gracefully...");
+    logger.info("\n🛑 Received SIGINT, shutting down workers gracefully...");
     await stopAllWorkers();
     process.exit(0);
   });
 
   // Handle uncaught errors
   process.on("uncaughtException", async (error) => {
-    console.error("❌ Uncaught exception:", error);
+    logger.error("❌ Uncaught exception:", error);
     await stopAllWorkers();
     process.exit(1);
   });
 
   process.on("unhandledRejection", async (reason, promise) => {
-    console.error("❌ Unhandled rejection at:", promise, "reason:", reason);
+    logger.error("❌ Unhandled rejection at:", promise, "reason:", reason);
     await stopAllWorkers();
     process.exit(1);
   });
@@ -198,16 +200,16 @@ export default {
 // ============================================
 
 if (require.main === module) {
-  console.log("╔════════════════════════════════════════════════╗");
-  console.log("║   🌾 Farmers Market Background Workers       ║");
-  console.log("╚════════════════════════════════════════════════╝");
-  console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
-  console.log(`Node Version: ${process.version}`);
-  console.log(`PID: ${process.pid}`);
-  console.log("════════════════════════════════════════════════\n");
+  logger.info("╔════════════════════════════════════════════════╗");
+  logger.info("║   🌾 Farmers Market Background Workers       ║");
+  logger.info("╚════════════════════════════════════════════════╝");
+  logger.info(`Environment: ${process.env.NODE_ENV || "development"}`);
+  logger.info(`Node Version: ${process.version}`);
+  logger.info(`PID: ${process.pid}`);
+  logger.info("════════════════════════════════════════════════\n");
 
   startAllWorkers().catch((error) => {
-    console.error("Failed to start workers:", error);
+    logger.error("Failed to start workers:", error);
     process.exit(1);
   });
 }

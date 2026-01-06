@@ -9,6 +9,9 @@
 
 import { createOrchestratorFromEnv } from "../agents/workflow-agent-orchestrator";
 import {
+
+import { logger } from '@/lib/monitoring/logger';
+
   createAutoRemediationSystem,
   type AutoRemediationSystem,
   type RemediationPlan,
@@ -131,7 +134,7 @@ export class OrchestratorBridge {
     try {
       this.orchestrator = createOrchestratorFromEnv();
     } catch (error) {
-      console.warn("⚠️ AI Orchestrator not available:", error);
+      logger.warn("⚠️ AI Orchestrator not available:", error);
       this.orchestrator = null;
     }
 
@@ -237,25 +240,25 @@ export class OrchestratorBridge {
       return results;
     }
 
-    console.log(
+    logger.info(
       "\n╔════════════════════════════════════════════════════════════╗",
     );
-    console.log(
+    logger.info(
       "║ 🌉 ORCHESTRATOR BRIDGE - Processing Monitoring Report      ║",
     );
-    console.log(
+    logger.info(
       "╠════════════════════════════════════════════════════════════╣",
     );
-    console.log(
+    logger.info(
       `║ 📊 Total Workflows: ${String(report.summary.totalWorkflows).padEnd(36)} ║`,
     );
-    console.log(
+    logger.info(
       `║ ❌ Failed: ${String(report.summary.failedWorkflows).padEnd(46)} ║`,
     );
-    console.log(
+    logger.info(
       `║ ✅ Passed: ${String(report.summary.passedWorkflows).padEnd(46)} ║`,
     );
-    console.log(
+    logger.info(
       "╚════════════════════════════════════════════════════════════╝\n",
     );
 
@@ -266,7 +269,7 @@ export class OrchestratorBridge {
     results.failuresFound = failedWorkflows.length;
 
     if (failedWorkflows.length === 0) {
-      console.log("✅ No failures to process\n");
+      logger.info("✅ No failures to process\n");
       return results;
     }
 
@@ -288,7 +291,7 @@ export class OrchestratorBridge {
           }
         }
       } catch (error) {
-        console.error(`❌ Error processing workflow ${workflow.name}:`, error);
+        logger.error(`❌ Error processing workflow ${workflow.name}:`, error);
         this.logEvent({
           id: this.generateEventId(),
           timestamp: new Date(),
@@ -303,25 +306,25 @@ export class OrchestratorBridge {
     }
 
     // Print summary
-    console.log(
+    logger.info(
       "\n╔════════════════════════════════════════════════════════════╗",
     );
-    console.log(
+    logger.info(
       "║ 📈 BRIDGE PROCESSING SUMMARY                               ║",
     );
-    console.log(
+    logger.info(
       "╠════════════════════════════════════════════════════════════╣",
     );
-    console.log(
+    logger.info(
       `║ 🔍 Failures Analyzed: ${String(results.failuresAnalyzed).padEnd(35)} ║`,
     );
-    console.log(
+    logger.info(
       `║ 🔧 Remediations Attempted: ${String(results.remediationsAttempted).padEnd(30)} ║`,
     );
-    console.log(
+    logger.info(
       `║ ✅ Remediations Successful: ${String(results.remediationsSuccessful).padEnd(29)} ║`,
     );
-    console.log(
+    logger.info(
       "╚════════════════════════════════════════════════════════════╝\n",
     );
 
@@ -350,7 +353,7 @@ export class OrchestratorBridge {
       details: {},
     });
 
-    console.log(`\n🔍 Analyzing failure: ${result.name}\n`);
+    logger.info(`\n🔍 Analyzing failure: ${result.name}\n`);
 
     try {
       // Use the remediation system to process the failure
@@ -446,7 +449,7 @@ export class OrchestratorBridge {
 
       return { analyzed: true, remediated: false, plan };
     } catch (error) {
-      console.error("❌ Analysis/Remediation error:", error);
+      logger.error("❌ Analysis/Remediation error:", error);
 
       this.logEvent({
         id: this.generateEventId(),
@@ -471,7 +474,7 @@ export class OrchestratorBridge {
     // Check failure count threshold
     const failureCount = this.failureCounters.get(result.workflowId) || 0;
     if (failureCount < this.config.minFailuresBeforeAnalysis) {
-      console.log(
+      logger.info(
         `⏳ Waiting for more failures before analysis (${failureCount}/${this.config.minFailuresBeforeAnalysis})`,
       );
       return false;
@@ -485,7 +488,7 @@ export class OrchestratorBridge {
         const remaining = Math.round(
           (this.config.cooldownBetweenAnalyses - timeSinceLastAnalysis) / 1000,
         );
-        console.log(
+        logger.info(
           `⏳ Cooldown active. ${remaining}s until next analysis allowed.`,
         );
         return false;
@@ -517,8 +520,8 @@ export class OrchestratorBridge {
               ? "🔧"
               : "⚠️";
 
-    console.log(`\n${icon} [NOTIFICATION] ${payload.title}`);
-    console.log(`   ${payload.message}\n`);
+    logger.info(`\n${icon} [NOTIFICATION] ${payload.title}`);
+    logger.info(`   ${payload.message}\n`);
 
     // Log notification event
     this.logEvent({
@@ -539,7 +542,7 @@ export class OrchestratorBridge {
       try {
         await this.sendWebhook(this.config.webhookUrl, payload);
       } catch (error) {
-        console.error("Failed to send webhook notification:", error);
+        logger.error("Failed to send webhook notification:", error);
       }
     }
 
@@ -548,7 +551,7 @@ export class OrchestratorBridge {
       try {
         await this.sendSlackNotification(payload);
       } catch (error) {
-        console.error("Failed to send Slack notification:", error);
+        logger.error("Failed to send Slack notification:", error);
       }
     }
   }
@@ -570,10 +573,10 @@ export class OrchestratorBridge {
       });
 
       if (!response.ok) {
-        console.warn(`Webhook returned status ${response.status}`);
+        logger.warn(`Webhook returned status ${response.status}`);
       }
     } catch (error) {
-      console.error("Webhook error:", error);
+      logger.error("Webhook error:", error);
     }
   }
 
@@ -631,7 +634,7 @@ export class OrchestratorBridge {
         body: JSON.stringify(slackPayload),
       });
     } catch (error) {
-      console.error("Slack notification error:", error);
+      logger.error("Slack notification error:", error);
     }
   }
 
@@ -674,7 +677,7 @@ export class OrchestratorBridge {
       try {
         handler(event);
       } catch (error) {
-        console.error("Event handler error:", error);
+        logger.error("Event handler error:", error);
       }
     }
   }
@@ -717,7 +720,7 @@ export class OrchestratorBridge {
    * Manually trigger analysis for a workflow result
    */
   async manualAnalysis(result: WorkflowResult): Promise<RemediationPlan> {
-    console.log(`\n🔍 Manual analysis requested for: ${result.name}\n`);
+    logger.info(`\n🔍 Manual analysis requested for: ${result.name}\n`);
     return await this.remediationSystem.processFailure(result);
   }
 
@@ -779,7 +782,7 @@ export class OrchestratorBridge {
    */
   enable(): void {
     this.config.enabled = true;
-    console.log("🌉 Orchestrator Bridge ENABLED");
+    logger.info("🌉 Orchestrator Bridge ENABLED");
   }
 
   /**
@@ -787,7 +790,7 @@ export class OrchestratorBridge {
    */
   disable(): void {
     this.config.enabled = false;
-    console.log("🌉 Orchestrator Bridge DISABLED");
+    logger.info("🌉 Orchestrator Bridge DISABLED");
   }
 
   // ============================================================================

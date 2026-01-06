@@ -28,6 +28,9 @@ import type { AgriculturalOperation } from "./agricultural-tracer";
 /**
  * Trace attributes type
  */
+
+import { logger } from '@/lib/monitoring/logger';
+
 export type TraceAttributes = Record<string, string | number | boolean>;
 
 /**
@@ -108,7 +111,7 @@ export async function traceIfEnabled<T>(
     );
   } catch (error) {
     // Fallback: If tracing fails to load, execute without tracing
-    console.warn(
+    logger.warn(
       "Failed to load tracing infrastructure, executing without tracing:",
       error,
     );
@@ -169,7 +172,7 @@ export async function traceWithTiming<T>(
       timestamp,
     };
   } catch (error) {
-    console.warn("Tracing failed, falling back to simple timing:", error);
+    logger.warn("Tracing failed, falling back to simple timing:", error);
     const result = await fn();
     const durationMs = performance.now() - startTime;
 
@@ -223,7 +226,7 @@ export async function conditionalSpan(
       end: () => span.end(),
     };
   } catch (error) {
-    console.warn("Failed to create span:", error);
+    logger.warn("Failed to create span:", error);
     return createNoOpSpan();
   }
 }

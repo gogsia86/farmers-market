@@ -10,6 +10,8 @@
 
 import { NotificationChannel } from "@prisma/client";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================
 // TYPES & INTERFACES
 // ============================================
@@ -49,7 +51,7 @@ export interface PushJobData {
  * Enqueue SMS for sending (stub - logs only)
  */
 export async function enqueueSMS(data: SMSJobData): Promise<string> {
-  console.log('[Queue Stub] SMS would be queued:', {
+  logger.info('[Queue Stub] SMS would be queued:', {
     phoneNumber: data.phoneNumber.substring(data.phoneNumber.length - 4),
     userId: data.userId,
   });
@@ -63,7 +65,7 @@ export async function scheduleSMS(
   data: SMSJobData,
   delay: number
 ): Promise<string> {
-  console.log('[Queue Stub] SMS would be scheduled:', {
+  logger.info('[Queue Stub] SMS would be scheduled:', {
     phoneNumber: data.phoneNumber.substring(data.phoneNumber.length - 4),
     userId: data.userId,
     delay: `${delay}ms`,
@@ -75,7 +77,7 @@ export async function scheduleSMS(
  * Enqueue push notification (stub - logs only)
  */
 export async function enqueuePush(data: PushJobData): Promise<string> {
-  console.log('[Queue Stub] Push notification would be queued:', {
+  logger.info('[Queue Stub] Push notification would be queued:', {
     userId: data.userId,
     title: data.title,
     priority: data.priority || 'normal',
@@ -90,7 +92,7 @@ export async function schedulePush(
   data: PushJobData,
   delay: number
 ): Promise<string> {
-  console.log('[Queue Stub] Push notification would be scheduled:', {
+  logger.info('[Queue Stub] Push notification would be scheduled:', {
     userId: data.userId,
     title: data.title,
     delay: `${delay}ms`,
@@ -143,7 +145,7 @@ export async function areQueuesHealthy(): Promise<{
  * Get failed jobs (stub - returns empty array)
  */
 export async function getFailedSMSJobs(limit: number = 10): Promise<any[]> {
-  console.log(`[Queue Stub] Would fetch ${limit} failed SMS jobs`);
+  logger.info(`[Queue Stub] Would fetch ${limit} failed SMS jobs`);
   return [];
 }
 
@@ -151,7 +153,7 @@ export async function getFailedSMSJobs(limit: number = 10): Promise<any[]> {
  * Get failed jobs (stub - returns empty array)
  */
 export async function getFailedPushJobs(limit: number = 10): Promise<any[]> {
-  console.log(`[Queue Stub] Would fetch ${limit} failed push jobs`);
+  logger.info(`[Queue Stub] Would fetch ${limit} failed push jobs`);
   return [];
 }
 
@@ -162,7 +164,7 @@ export async function cleanOldNotificationJobs(
   completedAge: number,
   failedAge: number
 ): Promise<void> {
-  console.log('[Queue Stub] Would clean old jobs:', {
+  logger.info('[Queue Stub] Would clean old jobs:', {
     completedAge: `${completedAge}ms`,
     failedAge: `${failedAge}ms`,
   });

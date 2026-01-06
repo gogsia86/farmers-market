@@ -10,6 +10,8 @@ import type { Review, ReviewStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { logger } from '@/lib/monitoring/logger';
+
 /**
  * Create review validation schema
  */
@@ -180,7 +182,7 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error(`GET /api/products/[productId]/reviews error:`, error);
+    logger.error(`GET /api/products/[productId]/reviews error:`, error);
 
     return NextResponse.json(
       {
@@ -400,7 +402,7 @@ export async function POST(
       { status: 201 }
     );
   } catch (error) {
-    console.error(`POST /api/products/[productId]/reviews error:`, error);
+    logger.error(`POST /api/products/[productId]/reviews error:`, error);
 
     return NextResponse.json(
       {

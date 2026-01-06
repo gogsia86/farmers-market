@@ -46,6 +46,8 @@ import {
 import { AgriculturalSelect, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
 import { Textarea } from "./textarea";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // EXAMPLE 1: BASIC FORM WITH VALIDATION
 // ============================================================================
@@ -71,7 +73,7 @@ export function BasicFormExample() {
   const [submitSuccess, setSubmitSuccess] = React.useState(false);
 
   const onSubmit = async (data: BasicFormData) => {
-    console.log("Form submitted:", data);
+    logger.info("Form submitted:", data);
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setSubmitSuccess(true);
     form.reset();
@@ -192,7 +194,7 @@ export function SelectCheckboxFormExample() {
   });
 
   const onSubmit = (data: UserPreferencesData) => {
-    console.log("Preferences:", data);
+    logger.info("Preferences:", data);
   };
 
   return (
@@ -346,7 +348,7 @@ export function RadioGroupFormExample() {
   });
 
   const onSubmit = (data: PaymentMethodData) => {
-    console.log("Payment selection:", data);
+    logger.info("Payment selection:", data);
   };
 
   return (
@@ -464,8 +466,8 @@ export function FileUploadFormExample() {
   });
 
   const onSubmit = async (data: ProductImageData) => {
-    console.log("Product submission:", data);
-    console.log("Files:", files);
+    logger.info("Product submission:", data);
+    logger.info("Files:", files);
   };
 
   return (
@@ -559,7 +561,7 @@ export function FormGridExample() {
   });
 
   const onSubmit = (data: FarmProfileData) => {
-    console.log("Farm profile:", data);
+    logger.info("Farm profile:", data);
   };
 
   return (
@@ -906,7 +908,7 @@ export function MultiStepFormExample() {
   ];
 
   const handleComplete = () => {
-    console.log("Multi-step form completed!");
+    logger.info("Multi-step form completed!");
     alert("Farm registration completed! 🎉");
   };
 

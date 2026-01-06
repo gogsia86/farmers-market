@@ -14,6 +14,8 @@ import type { AppError } from "@/lib/errors/types";
 import { toAppError } from "@/lib/errors/types";
 import { useCallback, useState } from "react";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // ERROR HANDLER HOOK
 // ============================================================================
@@ -47,7 +49,7 @@ export interface UseErrorHandlerReturn {
  * ```tsx
  * const { error, handleError, clearError } = useErrorHandler({
  *   logErrors: true,
- *   onError: (error) => console.error(error)
+ *   onError: (error) => logger.error(error)
  * });
  *
  * const submitForm = async () => {

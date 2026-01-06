@@ -15,6 +15,8 @@ import type {
 } from "@prisma/client";
 import { emailService } from "./email.service";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // Types & Interfaces
 // ============================================================================
@@ -169,7 +171,7 @@ export class NotificationService {
     notification: NotificationWithRelations
   ): Promise<void> {
     if (!notification.user?.email) {
-      console.warn(
+      logger.warn(
         `Cannot send email notification ${notification.id}: No user email`
       );
       return;
@@ -210,11 +212,11 @@ export class NotificationService {
         default:
           // For non-order notifications, we'll skip email for now
           // as they don't fit the current email templates
-          console.log(`Email notification skipped for type: ${notification.type}`);
+          logger.info(`Email notification skipped for type: ${notification.type}`);
           break;
       }
     } catch (error) {
-      console.error(
+      logger.error(
         `Failed to send email notification ${notification.id}:`,
         error
       );
@@ -228,7 +230,7 @@ export class NotificationService {
     notification: NotificationWithRelations
   ): Promise<void> {
     if (!notification.user?.phone) {
-      console.warn(`⚠️ No phone number for user ${notification.userId}, skipping SMS`);
+      logger.warn(`⚠️ No phone number for user ${notification.userId}, skipping SMS`);
       return;
     }
 
@@ -245,9 +247,9 @@ export class NotificationService {
         },
       });
 
-      console.log(`📱 SMS queued for ${notification.user.phone.substring(notification.user.phone.length - 4)}`);
+      logger.info(`📱 SMS queued for ${notification.user.phone.substring(notification.user.phone.length - 4)}`);
     } catch (error) {
-      console.error("Failed to queue SMS:", error);
+      logger.error("Failed to queue SMS:", error);
     }
   }
 
@@ -258,7 +260,7 @@ export class NotificationService {
     notification: NotificationWithRelations
   ): Promise<void> {
     if (!notification.userId) {
-      console.warn("⚠️ No userId provided, skipping push notification");
+      logger.warn("⚠️ No userId provided, skipping push notification");
       return;
     }
 
@@ -273,9 +275,9 @@ export class NotificationService {
         priority: this.getPushPriority(notification.type),
       });
 
-      console.log(`🔔 Push notification queued for user ${notification.userId}`);
+      logger.info(`🔔 Push notification queued for user ${notification.userId}`);
     } catch (error) {
-      console.error("Failed to queue push notification:", error);
+      logger.error("Failed to queue push notification:", error);
     }
   }
 
@@ -331,22 +333,22 @@ export class NotificationService {
 
           if (user?.phone) {
             // SMS scheduled sending will be handled by the queue's delay mechanism
-            console.log(
+            logger.info(
               `📅 SMS scheduled for ${sendAt.toISOString()} to ${user.phone.substring(user.phone.length - 4)}`
             );
           }
         } else if (channel === "PUSH" && notification.userId) {
-          console.log(
+          logger.info(
             `📅 Push notification scheduled for ${sendAt.toISOString()} for user ${notification.userId}`
           );
         }
       }
 
-      console.log(
+      logger.info(
         `✅ Notification ${notification.id} queued for delivery at ${sendAt.toISOString()}`
       );
     } catch (error) {
-      console.error("Failed to queue scheduled notification:", error);
+      logger.error("Failed to queue scheduled notification:", error);
       throw error;
     }
   }
@@ -596,7 +598,7 @@ export class NotificationService {
         });
         sent++;
       } catch (error) {
-        console.error(`Failed to send notification to user ${userId}:`, error);
+        logger.error(`Failed to send notification to user ${userId}:`, error);
         failed++;
       }
     }

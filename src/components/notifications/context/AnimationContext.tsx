@@ -21,6 +21,8 @@ import { getCurrentSeason } from "@/lib/notifications/utils";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useReducedMotion, useShouldAnimate } from "../hooks/useReducedMotion";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // Types
 // ============================================================================
@@ -178,7 +180,7 @@ export function AnimationProvider({
   // Log debug info
   useEffect(() => {
     if (debugMode) {
-      console.log("🎨 Animation Context Debug Info:", {
+      logger.info("🎨 Animation Context Debug Info:", {
         preset,
         season,
         prefersReducedMotion,

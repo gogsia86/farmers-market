@@ -3,6 +3,8 @@
 
 import Stripe from "stripe";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // LAZY STRIPE INITIALIZATION
 // ============================================================================
@@ -389,7 +391,7 @@ export class QuantumStripeService {
     const eventId = event.id;
     const eventType = event.type;
 
-    console.log(`Processing Stripe webhook: ${eventType} (${eventId})`);
+    logger.info(`Processing Stripe webhook: ${eventType} (${eventId})`);
 
     let handled = false;
     let data: any = undefined;
@@ -426,7 +428,7 @@ export class QuantumStripeService {
         break;
 
       default:
-        console.log(`Unhandled webhook event type: ${eventType}`);
+        logger.info(`Unhandled webhook event type: ${eventType}`);
         handled = false;
     }
 
@@ -450,10 +452,10 @@ export class QuantumStripeService {
   ): Promise<any> {
     const paymentIntent = event.data.object as Stripe.PaymentIntent;
 
-    console.log(`Payment succeeded: ${paymentIntent.id}`);
-    console.log(`Amount: ${paymentIntent.amount / 100} ${paymentIntent.currency}`);
-    console.log(`Customer: ${paymentIntent.customer}`);
-    console.log(`Metadata:`, paymentIntent.metadata);
+    logger.info(`Payment succeeded: ${paymentIntent.id}`);
+    logger.info(`Amount: ${paymentIntent.amount / 100} ${paymentIntent.currency}`);
+    logger.info(`Customer: ${paymentIntent.customer}`);
+    logger.info(`Metadata:`, paymentIntent.metadata);
 
     // Return data for external processing (e.g., order creation)
     return {
@@ -471,8 +473,8 @@ export class QuantumStripeService {
   private async handlePaymentIntentFailed(event: Stripe.Event): Promise<any> {
     const paymentIntent = event.data.object as Stripe.PaymentIntent;
 
-    console.error(`Payment failed: ${paymentIntent.id}`);
-    console.error(`Reason: ${paymentIntent.last_payment_error?.message}`);
+    logger.error(`Payment failed: ${paymentIntent.id}`);
+    logger.error(`Reason: ${paymentIntent.last_payment_error?.message}`);
 
     return {
       paymentIntentId: paymentIntent.id,
@@ -489,7 +491,7 @@ export class QuantumStripeService {
   ): Promise<any> {
     const paymentIntent = event.data.object as Stripe.PaymentIntent;
 
-    console.log(`Payment canceled: ${paymentIntent.id}`);
+    logger.info(`Payment canceled: ${paymentIntent.id}`);
 
     return {
       paymentIntentId: paymentIntent.id,
@@ -503,9 +505,9 @@ export class QuantumStripeService {
   private async handleChargeRefunded(event: Stripe.Event): Promise<any> {
     const charge = event.data.object as Stripe.Charge;
 
-    console.log(`Charge refunded: ${charge.id}`);
-    console.log(`Payment Intent: ${charge.payment_intent}`);
-    console.log(`Refund Amount: ${charge.amount_refunded / 100}`);
+    logger.info(`Charge refunded: ${charge.id}`);
+    logger.info(`Payment Intent: ${charge.payment_intent}`);
+    logger.info(`Refund Amount: ${charge.amount_refunded / 100}`);
 
     return {
       chargeId: charge.id,
@@ -520,8 +522,8 @@ export class QuantumStripeService {
   private async handleCustomerCreated(event: Stripe.Event): Promise<any> {
     const customer = event.data.object as Stripe.Customer;
 
-    console.log(`Customer created: ${customer.id}`);
-    console.log(`Email: ${customer.email}`);
+    logger.info(`Customer created: ${customer.id}`);
+    logger.info(`Email: ${customer.email}`);
 
     return {
       customerId: customer.id,
@@ -538,8 +540,8 @@ export class QuantumStripeService {
   ): Promise<any> {
     const paymentMethod = event.data.object as Stripe.PaymentMethod;
 
-    console.log(`Payment method attached: ${paymentMethod.id}`);
-    console.log(`Customer: ${paymentMethod.customer}`);
+    logger.info(`Payment method attached: ${paymentMethod.id}`);
+    logger.info(`Customer: ${paymentMethod.customer}`);
 
     return {
       paymentMethodId: paymentMethod.id,

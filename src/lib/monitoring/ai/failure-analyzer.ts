@@ -9,6 +9,9 @@
 
 // @ts-ignore - OpenAI module may not be available in all environments
 import OpenAI from "openai";
+
+import { logger } from '@/lib/monitoring/logger';
+
 import type {
   WorkflowResult,
   FailureAnalysis,
@@ -40,13 +43,13 @@ export class AIFailureAnalyzer {
       const apiKey = config?.apiKey || process.env.OPENAI_API_KEY;
 
       if (!apiKey) {
-        console.warn(
+        logger.warn(
           "⚠️  OpenAI API key not configured. AI failure analysis disabled.",
         );
         this.enabled = false;
       } else {
         this.openai = new OpenAI({ apiKey });
-        console.log("✅ AI Failure Analyzer initialized with", this.model);
+        logger.info("✅ AI Failure Analyzer initialized with", this.model);
       }
     }
   }
@@ -103,7 +106,7 @@ export class AIFailureAnalyzer {
         documentationLinks: analysis.documentationLinks || [],
       };
     } catch (error) {
-      console.error("❌ AI failure analysis error:", error);
+      logger.error("❌ AI failure analysis error:", error);
       return this.generateFallbackAnalysis(workflowResult);
     }
   }
@@ -163,7 +166,7 @@ export class AIFailureAnalyzer {
 
       return predictions;
     } catch (error) {
-      console.error("❌ AI risk prediction error:", error);
+      logger.error("❌ AI risk prediction error:", error);
       return [];
     }
   }
@@ -218,7 +221,7 @@ export class AIFailureAnalyzer {
         trend: analysis.trend || "STABLE",
       };
     } catch (error) {
-      console.error("❌ AI performance analysis error:", error);
+      logger.error("❌ AI performance analysis error:", error);
       return {
         summary: "Analysis unavailable",
         bottlenecks: [],
@@ -286,7 +289,7 @@ Keep it concise and actionable for executives.`;
         this.generateBasicSummary(report)
       );
     } catch (error) {
-      console.error("❌ AI executive summary error:", error);
+      logger.error("❌ AI executive summary error:", error);
       return this.generateBasicSummary(report);
     }
   }
@@ -333,7 +336,7 @@ Format as JSON array of strings.`;
       const response = JSON.parse(content);
       return response.steps || response.remediationSteps || [];
     } catch (error) {
-      console.error("❌ AI remediation suggestion error:", error);
+      logger.error("❌ AI remediation suggestion error:", error);
       return this.getFallbackRemediation(workflowType);
     }
   }

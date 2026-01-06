@@ -9,6 +9,8 @@ import { database } from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // VALIDATION SCHEMA
 // ============================================================================
@@ -184,7 +186,7 @@ export async function POST(
       },
     });
   } catch (error) {
-    console.error("Order payment update error:", error);
+    logger.error("Order payment update error:", error);
 
     return NextResponse.json(
       {
@@ -299,7 +301,7 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error("Order payment retrieval error:", error);
+    logger.error("Order payment retrieval error:", error);
 
     return NextResponse.json(
       {

@@ -5,6 +5,9 @@
  */
 
 // Stub implementation for performance monitor
+
+import { logger } from '@/lib/monitoring/logger';
+
 export class PerformanceMonitor {
   static start(label: string) {
     return { label, startTime: Date.now() };
@@ -12,7 +15,7 @@ export class PerformanceMonitor {
 
   static end(marker: { label: string; startTime: number }) {
     const duration = Date.now() - marker.startTime;
-    console.log(`[PERF] ${marker.label}: ${duration}ms`);
+    logger.info(`[PERF] ${marker.label}: ${duration}ms`);
   }
 }
 

@@ -15,6 +15,8 @@ import type { AppError } from "@/lib/errors/types";
 import { toAppError } from "@/lib/errors/types";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // RETRY HOOK
 // ============================================================================
@@ -53,8 +55,8 @@ export interface UseRetryReturn<T> {
  *   {
  *     maxAttempts: 3,
  *     initialDelay: 1000,
- *     onSuccess: () => console.log('Success!'),
- *     onFailure: (error) => console.error('Failed:', error)
+ *     onSuccess: () => logger.info('Success!'),
+ *     onFailure: (error) => logger.error('Failed:', error)
  *   }
  * );
  *
@@ -184,7 +186,7 @@ export interface UseFallbackReturn<T> {
  *   {
  *     fallback: [],
  *     cacheDuration: 5 * 60 * 1000, // 5 minutes
- *     onFallback: (error) => console.warn('Using cached data')
+ *     onFallback: (error) => logger.warn('Using cached data')
  *   }
  * );
  *
@@ -347,7 +349,7 @@ export interface UseCircuitBreakerReturn<T> {
  *   {
  *     failureThreshold: 5,
  *     timeout: 60000, // 1 minute
- *     onOpen: () => console.warn('Circuit opened!')
+ *     onOpen: () => logger.warn('Circuit opened!')
  *   }
  * );
  *
@@ -533,7 +535,7 @@ export interface UseGracefulDegradationReturn<T> {
  *     async () => await fetchFromLocal(),
  *     async () => defaultData
  *   ],
- *   onDegrade: (level) => console.warn(`Degraded to level ${level}`)
+ *   onDegrade: (level) => logger.warn(`Degraded to level ${level}`)
  * });
  *
  * useEffect(() => {

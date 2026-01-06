@@ -10,6 +10,8 @@ import { Download, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
+import { logger } from '@/lib/monitoring/logger';
+
 interface InvoiceDownloadButtonProps {
   orderId: string;
   orderNumber?: string;
@@ -82,7 +84,7 @@ export function InvoiceDownloadButton({
       });
 
     } catch (error) {
-      console.error('Invoice download failed:', error);
+      logger.error('Invoice download failed:', error);
 
       // Track error
       trackError({

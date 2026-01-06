@@ -24,6 +24,8 @@ import { productService } from "@/lib/services/product.service";
 import type { ProductCategory, ProductStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
+import { logger } from '@/lib/monitoring/logger';
+
 /**
  * 🌱 CREATE PRODUCT ACTION RESPONSE
  */
@@ -141,7 +143,7 @@ export async function createProduct(
       product,
     };
   } catch (error: any) {
-    console.error("Create product error:", error);
+    logger.error("Create product error:", error);
     return {
       success: false,
       error: error.message || "Failed to create product. Please try again.",
@@ -257,7 +259,7 @@ export async function updateProduct(
       product,
     };
   } catch (error: any) {
-    console.error("Update product error:", error);
+    logger.error("Update product error:", error);
     return {
       success: false,
       error: error.message || "Failed to update product. Please try again.",
@@ -307,7 +309,7 @@ export async function updateInventory(
       product,
     };
   } catch (error: any) {
-    console.error("Update inventory error:", error);
+    logger.error("Update inventory error:", error);
     return {
       success: false,
       error: error.message || "Failed to update inventory.",
@@ -344,7 +346,7 @@ export async function deleteProduct(
       success: true,
     };
   } catch (error: any) {
-    console.error("Delete product error:", error);
+    logger.error("Delete product error:", error);
     return {
       success: false,
       error: error.message || "Failed to delete product.",
@@ -403,7 +405,7 @@ export async function updateProductStatus(
       product,
     };
   } catch (error: any) {
-    console.error("Update product status error:", error);
+    logger.error("Update product status error:", error);
     return {
       success: false,
       error: error.message || "Failed to update product status.",
@@ -431,7 +433,7 @@ export async function incrementProductView(
 
     return { success: true };
   } catch (error) {
-    console.error("Increment product view error:", error);
+    logger.error("Increment product view error:", error);
     return { success: false };
   }
 }
@@ -449,7 +451,7 @@ export async function trackProductCartAdd(
     return { success: true };
     // eslint-disable-next-line no-unreachable
   } catch (error) {
-    console.error("Track cart add error:", error);
+    logger.error("Track cart add error:", error);
     return { success: false };
   }
 }
@@ -473,7 +475,7 @@ export async function toggleProductWishlist(
 
     return { success: true, inWishlist: true };
   } catch (error) {
-    console.error("Toggle wishlist error:", error);
+    logger.error("Toggle wishlist error:", error);
     return { success: false, inWishlist: false };
   }
 }

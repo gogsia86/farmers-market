@@ -7,6 +7,8 @@ import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // Helper Functions
 // ============================================================================
@@ -277,7 +279,7 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error("Failed to fetch user details:", error);
+    logger.error("Failed to fetch user details:", error);
     return NextResponse.json(
       {
         success: false,

@@ -11,6 +11,9 @@ import { database } from "@/lib/database";
 import { SMSJobData, smsQueue } from "@/lib/queue/notification.queue";
 import { smsService } from "@/lib/services/sms.service";
 import { SpanStatusCode, trace } from "@opentelemetry/api";
+
+import { logger } from '@/lib/monitoring/logger';
+
 import type { Job } from "bull";
 
 // ============================================
@@ -55,7 +58,7 @@ async function processSMSJob(job: Job<SMSJobData>) {
       await job.progress(10);
 
       // Send SMS via SMS service
-      console.log(
+      logger.info(
         `📱 Sending SMS to ${maskPhoneNumber(job.data.phoneNumber)} (Job: ${job.id})`
       );
 
@@ -96,7 +99,7 @@ async function processSMSJob(job: Job<SMSJobData>) {
           "job.duration": duration,
         });
 
-        console.log(
+        logger.info(
           `✅ SMS sent successfully to ${maskPhoneNumber(job.data.phoneNumber)} (${duration}ms)`
         );
 
@@ -115,7 +118,7 @@ async function processSMSJob(job: Job<SMSJobData>) {
       // Note: Notification model doesn't have failedAt field
       // Failed notifications are tracked in SMSLog table
       if (job.data.notificationId) {
-        console.error(`Notification ${job.data.notificationId} SMS delivery failed: ${errorMessage}`);
+        logger.error(`Notification ${job.data.notificationId} SMS delivery failed: ${errorMessage}`);
       }
 
       span.setStatus({
@@ -127,7 +130,7 @@ async function processSMSJob(job: Job<SMSJobData>) {
         "job.error": errorMessage,
       });
 
-      console.error(
+      logger.error(
         `❌ SMS failed to ${maskPhoneNumber(job.data.phoneNumber)} (Job: ${job.id}, Attempt: ${job.attemptsMade + 1
         }):`,
         error
@@ -160,7 +163,7 @@ function maskPhoneNumber(phone: string): string {
  * Start SMS worker
  */
 export function startSMSWorker() {
-  console.log(`🚀 Starting SMS worker with concurrency: ${CONCURRENCY}`);
+  logger.info(`🚀 Starting SMS worker with concurrency: ${CONCURRENCY}`);
 
   // Process jobs from queue
   smsQueue.process(CONCURRENCY, async (job) => {
@@ -169,7 +172,7 @@ export function startSMSWorker() {
 
   // Event listeners
   smsQueue.on("completed", (job, result) => {
-    console.log(`✅ SMS job ${job.id} completed:`, {
+    logger.info(`✅ SMS job ${job.id} completed:`, {
       recipient: maskPhoneNumber(job.data.phoneNumber),
       duration: result.duration,
       messageId: result.messageId,
@@ -177,7 +180,7 @@ export function startSMSWorker() {
   });
 
   smsQueue.on("failed", (job, error) => {
-    console.error(`❌ SMS job ${job?.id} failed:`, {
+    logger.error(`❌ SMS job ${job?.id} failed:`, {
       recipient: job?.data?.phoneNumber
         ? maskPhoneNumber(job.data.phoneNumber)
         : "unknown",
@@ -187,29 +190,29 @@ export function startSMSWorker() {
   });
 
   smsQueue.on("stalled", (job) => {
-    console.warn(`⚠️ SMS job ${job.id} stalled:`, {
+    logger.warn(`⚠️ SMS job ${job.id} stalled:`, {
       recipient: maskPhoneNumber(job.data.phoneNumber),
     });
   });
 
   smsQueue.on("error", (error) => {
-    console.error("❌ SMS worker error:", error);
+    logger.error("❌ SMS worker error:", error);
   });
 
-  console.log("✅ SMS worker started successfully");
+  logger.info("✅ SMS worker started successfully");
 }
 
 /**
  * Stop SMS worker gracefully
  */
 export async function stopSMSWorker() {
-  console.log("Stopping SMS worker...");
+  logger.info("Stopping SMS worker...");
 
   try {
     await smsQueue.close();
-    console.log("✅ SMS worker stopped successfully");
+    logger.info("✅ SMS worker stopped successfully");
   } catch (error) {
-    console.error("Failed to stop SMS worker:", error);
+    logger.error("Failed to stop SMS worker:", error);
     throw error;
   }
 }
@@ -221,26 +224,26 @@ export async function stopSMSWorker() {
 if (process.env.NODE_ENV !== "test") {
   // Handle process termination
   process.on("SIGTERM", async () => {
-    console.log("Received SIGTERM, shutting down SMS worker...");
+    logger.info("Received SIGTERM, shutting down SMS worker...");
     await stopSMSWorker();
     process.exit(0);
   });
 
   process.on("SIGINT", async () => {
-    console.log("Received SIGINT, shutting down SMS worker...");
+    logger.info("Received SIGINT, shutting down SMS worker...");
     await stopSMSWorker();
     process.exit(0);
   });
 
   // Handle uncaught errors
   process.on("uncaughtException", async (error) => {
-    console.error("Uncaught exception:", error);
+    logger.error("Uncaught exception:", error);
     await stopSMSWorker();
     process.exit(1);
   });
 
   process.on("unhandledRejection", async (reason, promise) => {
-    console.error("Unhandled rejection at:", promise, "reason:", reason);
+    logger.error("Unhandled rejection at:", promise, "reason:", reason);
     await stopSMSWorker();
     process.exit(1);
   });
@@ -257,12 +260,12 @@ export default {
 
 // Auto-start worker if this file is run directly
 if (require.main === module) {
-  console.log("📱 SMS Worker Process");
-  console.log("========================");
-  console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
-  console.log(`Concurrency: ${CONCURRENCY}`);
-  console.log(`Timeout: ${JOB_TIMEOUT}ms`);
-  console.log("========================\n");
+  logger.info("📱 SMS Worker Process");
+  logger.info("========================");
+  logger.info(`Environment: ${process.env.NODE_ENV || "development"}`);
+  logger.info(`Concurrency: ${CONCURRENCY}`);
+  logger.info(`Timeout: ${JOB_TIMEOUT}ms`);
+  logger.info("========================\n");
 
   startSMSWorker();
 }

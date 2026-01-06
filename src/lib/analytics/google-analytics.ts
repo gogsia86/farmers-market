@@ -9,6 +9,9 @@
  */
 
 // Type declarations for gtag
+
+import { logger } from '@/lib/monitoring/logger';
+
 declare global {
   interface Window {
     gtag: (
@@ -47,7 +50,7 @@ export const pageview = (url: string): void => {
       platform: 'farmers-market',
     });
   } catch (error) {
-    console.error('Analytics pageview error:', error);
+    logger.error('Analytics pageview error:', error);
   }
 };
 
@@ -133,7 +136,7 @@ export const event = ({
       ...additionalParams,
     });
   } catch (error) {
-    console.error('Analytics event error:', error);
+    logger.error('Analytics event error:', error);
   }
 };
 

@@ -37,6 +37,9 @@ import {
   InlineError
 } from "./error-display";
 import {
+
+import { logger } from '@/lib/monitoring/logger';
+
   ToastProvider,
   useAgriculturalToast,
   useErrorToast,
@@ -87,7 +90,7 @@ export function ErrorBoundaryExample() {
             </button>
           </div>
         )}
-        onError={(error) => console.log("Error boundary caught:", error)}
+        onError={(error) => logger.info("Error boundary caught:", error)}
         maxRecoveryAttempts={3}
         autoRecover={false}
       >
@@ -175,7 +178,7 @@ export function ErrorDisplayExample() {
           <ErrorAlert
             error={networkError}
             onDismiss={() => setShowAlert(false)}
-            onRetry={() => console.log("Retrying...")}
+            onRetry={() => logger.info("Retrying...")}
           />
         </div>
       )}
@@ -188,16 +191,16 @@ export function ErrorDisplayExample() {
             error={paymentError}
             showDetails={true}
             onDismiss={() => setShowCard(false)}
-            onRetry={() => console.log("Retrying payment...")}
+            onRetry={() => logger.info("Retrying payment...")}
             actions={[
               {
                 label: "Update Card",
-                action: () => console.log("Updating card..."),
+                action: () => logger.info("Updating card..."),
                 type: "primary",
               },
               {
                 label: "Use Different Method",
-                action: () => console.log("Selecting method..."),
+                action: () => logger.info("Selecting method..."),
                 type: "secondary",
               },
             ]}
@@ -224,7 +227,7 @@ export function ErrorDisplayExample() {
             })
           }
           season="WINTER"
-          onRetry={() => console.log("Checking season...")}
+          onRetry={() => logger.info("Checking season...")}
         />
       </div>
     </div>
@@ -279,7 +282,7 @@ export function ToastNotificationExample() {
             toast.info("Info", "New features available", {
               action: {
                 label: "Learn More",
-                onClick: () => console.log("Learn more clicked"),
+                onClick: () => logger.info("Learn more clicked"),
               },
             })
           }
@@ -296,7 +299,7 @@ export function ToastNotificationExample() {
                 statusCode: 503,
                 endpoint: "/api/data",
               }),
-              () => console.log("Retrying...")
+              () => logger.info("Retrying...")
             )
           }
           className="px-4 py-2 bg-red-700 text-white rounded hover:bg-red-800"
@@ -306,7 +309,7 @@ export function ToastNotificationExample() {
 
         <button
           onClick={() =>
-            undoToast.showUndo("Item deleted", () => console.log("Undo clicked"))
+            undoToast.showUndo("Item deleted", () => logger.info("Undo clicked"))
           }
           className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
         >
@@ -343,7 +346,7 @@ export function ToastNotificationExample() {
 export function ErrorHandlerExample() {
   const { error, hasError, handleError, clearError } = useErrorHandler({
     logErrors: true,
-    onError: (err) => console.log("Error handled:", err),
+    onError: (err) => logger.info("Error handled:", err),
   });
 
   const simulateError = () => {
@@ -408,7 +411,7 @@ export function ValidationErrorExample() {
     }
 
     if (!validation.hasAnyError) {
-      console.log("Form submitted:", formData);
+      logger.info("Form submitted:", formData);
     }
   };
 
@@ -478,8 +481,8 @@ export function RetryExample() {
       maxAttempts: 3,
       initialDelay: 1000,
       backoffMultiplier: 2,
-      onSuccess: () => console.log("Retry succeeded!"),
-      onFailure: (error) => console.log("All retries failed:", error),
+      onSuccess: () => logger.info("Retry succeeded!"),
+      onFailure: (error) => logger.info("All retries failed:", error),
     }
   );
 
@@ -535,7 +538,7 @@ export function FallbackExample() {
       fallback: ["Cached Data 1", "Cached Data 2"],
       cacheDuration: 5 * 60 * 1000,
       enableCache: true,
-      onFallback: (error) => console.log("Using fallback:", error),
+      onFallback: (error) => logger.info("Using fallback:", error),
     }
   );
 
@@ -594,8 +597,8 @@ export function CircuitBreakerExample() {
       failureThreshold: 3,
       successThreshold: 2,
       timeout: 10000,
-      onOpen: () => console.log("Circuit opened!"),
-      onClose: () => console.log("Circuit closed!"),
+      onOpen: () => logger.info("Circuit opened!"),
+      onClose: () => logger.info("Circuit closed!"),
     }
   );
 

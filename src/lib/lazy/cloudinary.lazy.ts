@@ -126,7 +126,7 @@ async function getCloudinary(): Promise<typeof cloudinaryV2> {
  *   }
  * );
  *
- * console.log(result.secure_url); // https://res.cloudinary.com/...
+ * logger.info(result.secure_url); // https://res.cloudinary.com/...
  * ```
  */
 export async function uploadToCloudinary(
@@ -197,7 +197,7 @@ export async function deleteFromCloudinary(
  * @example
  * ```typescript
  * const details = await getCloudinaryResource("products/product-123");
- * console.log(details.width, details.height, details.format);
+ * logger.info(details.width, details.height, details.format);
  * ```
  */
 export async function getCloudinaryResource(
@@ -283,7 +283,7 @@ export function queueCloudinaryUpload(
       : uploadBufferToCloudinary(file, options);
 
   uploadPromise.catch((error) => {
-    console.error("❌ Failed to upload to Cloudinary:", error);
+    logger.error("❌ Failed to upload to Cloudinary:", error);
     // TODO: Add to retry queue or dead letter queue
   });
 }
@@ -314,6 +314,8 @@ const result = await cloudinary.uploader.upload(filePath, {
 After (lazy loading):
 ```typescript
 import { uploadToCloudinary, configureCloudinary } from "@/lib/lazy/cloudinary.lazy";
+
+import { logger } from '@/lib/monitoring/logger';
 
 // Option 1: Auto-configure (uses environment variables)
 const result = await uploadToCloudinary(filePath, {

@@ -24,7 +24,7 @@
  *     position: "top",
  *     sticky: true
  *   }}
- *   onDismiss={() => console.log("Dismissed")}
+ *   onDismiss={() => logger.info("Dismissed")}
  * />
  *
  * <AgriculturalBanner
@@ -71,6 +71,8 @@ import {
 } from "./animations/banner-animations";
 import { useAnimationContext } from "./context/AnimationContext";
 import { useReducedMotion } from "./hooks/useReducedMotion";
+
+import { logger } from '@/lib/monitoring/logger';
 
 // ============================================================================
 // Banner Variants

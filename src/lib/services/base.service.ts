@@ -6,6 +6,9 @@
 
 import { database } from "@/lib/database";
 import { SpanStatusCode, trace } from "@opentelemetry/api";
+
+import { logger } from '@/lib/monitoring/logger';
+
 import type { Prisma } from "@prisma/client";
 
 /**
@@ -458,11 +461,11 @@ export abstract class BaseService {
     const logData = { timestamp, service: this.serviceName, level, message, ...meta };
 
     if (level === "error") {
-      console.error(JSON.stringify(logData));
+      logger.error(JSON.stringify(logData));
     } else if (level === "warn") {
-      console.warn(JSON.stringify(logData));
+      logger.warn(JSON.stringify(logData));
     } else {
-      console.log(JSON.stringify(logData));
+      logger.info(JSON.stringify(logData));
     }
   }
 }

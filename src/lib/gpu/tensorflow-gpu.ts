@@ -8,6 +8,9 @@
  */
 
 import { loadTensorFlow } from "@/lib/lazy/ml.lazy";
+
+import { logger } from '@/lib/monitoring/logger';
+
 import type * as tf from "@tensorflow/tfjs";
 
 /**
@@ -22,18 +25,18 @@ export async function initializeGPU(): Promise<boolean> {
     await tf.ready();
 
     const backend = tf.getBackend();
-    console.log(`✅ TensorFlow.js initialized with backend: ${backend}`);
+    logger.info(`✅ TensorFlow.js initialized with backend: ${backend}`);
 
     // Verify GPU is available
     if (backend === "webgl") {
-      console.log("🎮 GPU acceleration ACTIVE via WebGL");
+      logger.info("🎮 GPU acceleration ACTIVE via WebGL");
       return true;
     } else {
-      console.warn("⚠️ Falling back to CPU");
+      logger.warn("⚠️ Falling back to CPU");
       return false;
     }
   } catch (error) {
-    console.error("❌ GPU initialization failed:", error);
+    logger.error("❌ GPU initialization failed:", error);
     return false;
   }
 }
@@ -103,5 +106,5 @@ export async function getGPUMemoryInfo(): Promise<tf.MemoryInfo> {
 export async function cleanupGPU(): Promise<void> {
   const tf = await loadTensorFlow();
   tf.disposeVariables();
-  console.log("🧹 GPU resources cleaned");
+  logger.info("🧹 GPU resources cleaned");
 }

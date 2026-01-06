@@ -14,6 +14,8 @@ import type { FarmVerificationStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { logger } from '@/lib/monitoring/logger';
+
 /**
  * ✅ POST - Approve or Reject Farm Verification
  */
@@ -262,7 +264,7 @@ export async function POST(request: NextRequest) {
       });
     }
   } catch (error) {
-    console.error("Farm verification error:", error);
+    logger.error("Farm verification error:", error);
     return NextResponse.json(
       {
         success: false,

@@ -12,6 +12,9 @@ import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
 import { resourceFromAttributes } from "@opentelemetry/resources";
 import { NodeSDK } from "@opentelemetry/sdk-node";
 import {
+
+import { logger } from '@/lib/monitoring/logger';
+
   ATTR_SERVICE_NAME,
   ATTR_SERVICE_VERSION,
 } from "@opentelemetry/semantic-conventions";
@@ -117,7 +120,7 @@ function createInstrumentations() {
 export function initializeTracing(): void {
   // Prevent double initialization
   if (isInitialized) {
-    console.log("🌾 Tracing already initialized, skipping...");
+    logger.info("🌾 Tracing already initialized, skipping...");
     return;
   }
 
@@ -138,13 +141,13 @@ export function initializeTracing(): void {
     const endpoint =
       process.env.OTEL_EXPORTER_OTLP_ENDPOINT ||
       "http://localhost:4318/v1/traces";
-    console.log(
+    logger.info(
       "🌾 Divine Tracing initialized with agricultural consciousness",
     );
-    console.log(`📊 Traces sending to: ${endpoint}`);
-    console.log(`🔧 Environment: ${process.env.NODE_ENV || "development"}`);
+    logger.info(`📊 Traces sending to: ${endpoint}`);
+    logger.info(`🔧 Environment: ${process.env.NODE_ENV || "development"}`);
   } catch (error) {
-    console.error("❌ Failed to initialize tracing:", error);
+    logger.error("❌ Failed to initialize tracing:", error);
     throw error;
   }
 }
@@ -155,7 +158,7 @@ export function initializeTracing(): void {
  */
 export async function shutdownTracing(): Promise<void> {
   if (!sdk || !isInitialized) {
-    console.log("🌾 Tracing not initialized, nothing to shut down");
+    logger.info("🌾 Tracing not initialized, nothing to shut down");
     return;
   }
 
@@ -163,9 +166,9 @@ export async function shutdownTracing(): Promise<void> {
     await sdk.shutdown();
     isInitialized = false;
     sdk = null;
-    console.log("🌾 Divine Tracing gracefully shut down");
+    logger.info("🌾 Divine Tracing gracefully shut down");
   } catch (error) {
-    console.error("❌ Error shutting down tracing:", error);
+    logger.error("❌ Error shutting down tracing:", error);
     throw error;
   }
 }
@@ -180,7 +183,7 @@ export function isTracingActive(): boolean {
 // Handle process termination signals for graceful shutdown
 if (typeof process !== "undefined") {
   const handleShutdown = async (signal: string) => {
-    console.log(`\n📡 Received ${signal}, shutting down tracing...`);
+    logger.info(`\n📡 Received ${signal}, shutting down tracing...`);
     await shutdownTracing();
   };
 

@@ -10,6 +10,8 @@ import { notificationService } from "@/lib/services/notification.service";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // Validation Schemas
 // ============================================================================
@@ -194,7 +196,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     });
   } catch (error) {
-    console.error("Failed to fetch reviews:", error);
+    logger.error("Failed to fetch reviews:", error);
     return NextResponse.json(
       {
         success: false,
@@ -378,7 +380,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
       },
     });
   } catch (error) {
-    console.error("Failed to moderate review:", error);
+    logger.error("Failed to moderate review:", error);
     return NextResponse.json(
       {
         success: false,

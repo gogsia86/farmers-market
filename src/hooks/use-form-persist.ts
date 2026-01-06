@@ -8,6 +8,8 @@
 
 import * as React from "react";
 
+import { logger } from '@/lib/monitoring/logger';
+
 interface UseFormPersistOptions {
   key: string;
   storage?: Storage;
@@ -36,7 +38,7 @@ export function useFormPersist<T extends Record<string, any>>(
         return { ...defaultValues, ...parsed };
       }
     } catch (error) {
-      console.error("Failed to load persisted form data:", error);
+      logger.error("Failed to load persisted form data:", error);
     }
     return defaultValues;
   });
@@ -58,7 +60,7 @@ export function useFormPersist<T extends Record<string, any>>(
       try {
         storage.setItem(key, JSON.stringify(filteredData));
       } catch (error) {
-        console.error("Failed to persist form data:", error);
+        logger.error("Failed to persist form data:", error);
       }
     },
     [key, storage, exclude]
@@ -90,7 +92,7 @@ export function useFormPersist<T extends Record<string, any>>(
       storage.removeItem(key);
       setValues(defaultValues);
     } catch (error) {
-      console.error("Failed to clear persisted form data:", error);
+      logger.error("Failed to clear persisted form data:", error);
     }
   }, [key, storage, defaultValues]);
 
@@ -145,7 +147,7 @@ export function useFormAutoSave<T extends Record<string, any>>(
         }
         setLastSaved(new Date());
       } catch (error) {
-        console.error("Auto-save failed:", error);
+        logger.error("Auto-save failed:", error);
       } finally {
         setIsSaving(false);
       }

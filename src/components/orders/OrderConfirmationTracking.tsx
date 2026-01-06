@@ -7,6 +7,8 @@
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { useEffect } from "react";
 
+import { logger } from '@/lib/monitoring/logger';
+
 interface OrderItem {
   productId: string;
   productName: string;
@@ -73,7 +75,7 @@ export function OrderConfirmationTracking({
 
     // Log to console in development for debugging
     if (process.env.NODE_ENV === "development") {
-      console.log("📊 Purchase tracked:", {
+      logger.info("📊 Purchase tracked:", {
         orderId,
         orderNumber,
         totalValue,

@@ -7,6 +7,8 @@ import { database } from "@/lib/database";
 import { webhookEventService, type WebhookProvider } from "@/lib/services/webhook-event.service";
 import { SpanStatusCode, trace } from "@opentelemetry/api";
 
+import { logger } from '@/lib/monitoring/logger';
+
 const tracer = trace.getTracer("webhook-monitor");
 
 // ============================================================================
@@ -604,7 +606,7 @@ export class WebhookMonitor {
 
       return { actions, results };
     } catch (error) {
-      console.error("Auto-remediation failed:", error);
+      logger.error("Auto-remediation failed:", error);
       throw error;
     }
   }

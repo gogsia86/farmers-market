@@ -9,6 +9,8 @@ import type { OrderUpdatePayload } from '@/lib/realtime/socket-server';
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 
+import { logger } from '@/lib/monitoring/logger';
+
 interface UseOrderUpdatesOptions {
   orderId: string;
   userId?: string;
@@ -37,7 +39,7 @@ interface UseOrderUpdatesReturn {
  *   orderId: 'order_123',
  *   userId: 'user_456',
  *   onUpdate: (update) => {
- *     console.log('Order updated:', update);
+ *     logger.info('Order updated:', update);
  *   }
  * });
  * ```
@@ -77,7 +79,7 @@ export function useOrderUpdates({
 
     // Connection established
     socket.on('connect', () => {
-      console.log('🌾 Socket connected:', socket.id);
+      logger.info('🌾 Socket connected:', socket.id);
       setIsConnected(true);
       setError(null);
 
@@ -92,12 +94,12 @@ export function useOrderUpdates({
 
     // Room joined confirmation
     socket.on('room-joined', (data: { room: string; orderId?: string }) => {
-      console.log('📦 Joined room:', data.room);
+      logger.info('📦 Joined room:', data.room);
     });
 
     // Order update received
     socket.on('order-update', (update: OrderUpdatePayload) => {
-      console.log('📦 Order update received:', update);
+      logger.info('📦 Order update received:', update);
 
       setUpdates((prev) => [...prev, update]);
       setLastUpdate(update);
@@ -107,14 +109,14 @@ export function useOrderUpdates({
         try {
           onUpdate(update);
         } catch (err) {
-          console.error('Error in onUpdate callback:', err);
+          logger.error('Error in onUpdate callback:', err);
         }
       }
     });
 
     // Order status change
     socket.on('order-status-change', (data: OrderUpdatePayload) => {
-      console.log('📦 Order status changed:', data);
+      logger.info('📦 Order status changed:', data);
 
       const update: OrderUpdatePayload = {
         ...data,
@@ -128,14 +130,14 @@ export function useOrderUpdates({
         try {
           onUpdate(update);
         } catch (err) {
-          console.error('Error in onUpdate callback:', err);
+          logger.error('Error in onUpdate callback:', err);
         }
       }
     });
 
     // Notification received
     socket.on('notification', (notification: any) => {
-      console.log('🔔 Notification received:', notification);
+      logger.info('🔔 Notification received:', notification);
 
       // Convert notification to order update format
       if (notification.type?.includes('order')) {
@@ -154,7 +156,7 @@ export function useOrderUpdates({
 
     // Disconnection
     socket.on('disconnect', (reason: string) => {
-      console.log('🌾 Socket disconnected:', reason);
+      logger.info('🌾 Socket disconnected:', reason);
       setIsConnected(false);
 
       // Attempt to reconnect if disconnected unexpectedly
@@ -168,7 +170,7 @@ export function useOrderUpdates({
 
     // Connection error
     socket.on('connect_error', (err: Error) => {
-      console.error('⚠️ Socket connection error:', err);
+      logger.error('⚠️ Socket connection error:', err);
       setError(err);
       setIsConnected(false);
 
@@ -176,28 +178,28 @@ export function useOrderUpdates({
         try {
           onError(err);
         } catch (callbackErr) {
-          console.error('Error in onError callback:', callbackErr);
+          logger.error('Error in onError callback:', callbackErr);
         }
       }
     });
 
     // Generic error
     socket.on('error', (err: Error) => {
-      console.error('⚠️ Socket error:', err);
+      logger.error('⚠️ Socket error:', err);
       setError(err);
 
       if (onError) {
         try {
           onError(err);
         } catch (callbackErr) {
-          console.error('Error in onError callback:', callbackErr);
+          logger.error('Error in onError callback:', callbackErr);
         }
       }
     });
 
     // Cleanup on unmount
     return () => {
-      console.log('🌾 Cleaning up socket connection');
+      logger.info('🌾 Cleaning up socket connection');
 
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
@@ -216,7 +218,7 @@ export function useOrderUpdates({
   // Manual reconnect function
   const reconnect = () => {
     if (socketRef.current) {
-      console.log('🌾 Manually reconnecting socket...');
+      logger.info('🌾 Manually reconnecting socket...');
       socketRef.current.connect();
     }
   };
@@ -257,7 +259,7 @@ export function useNotifications(userId: string | undefined) {
     });
 
     socket.on('notification', (notification: any) => {
-      console.log('🔔 Notification received:', notification);
+      logger.info('🔔 Notification received:', notification);
       setNotifications((prev) => [notification, ...prev]);
       setUnreadCount((prev) => prev + 1);
     });
@@ -318,12 +320,12 @@ export function useFarmUpdates(farmId: string | undefined) {
     });
 
     socket.on('farm-update', (update: any) => {
-      console.log('🌾 Farm update received:', update);
+      logger.info('🌾 Farm update received:', update);
       setUpdates((prev) => [update, ...prev]);
     });
 
     socket.on('product-update', (update: any) => {
-      console.log('🌾 Product update received:', update);
+      logger.info('🌾 Product update received:', update);
       setUpdates((prev) => [update, ...prev]);
     });
 

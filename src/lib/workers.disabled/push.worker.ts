@@ -11,6 +11,9 @@ import { database } from "@/lib/database";
 import { PushJobData, pushQueue } from "@/lib/queue/notification.queue";
 import { pushNotificationService } from "@/lib/services/push.service";
 import { SpanStatusCode, trace } from "@opentelemetry/api";
+
+import { logger } from '@/lib/monitoring/logger';
+
 import type { Job } from "bull";
 
 // ============================================
@@ -56,7 +59,7 @@ async function processPushJob(job: Job<PushJobData>) {
       await job.progress(10);
 
       // Send push notification via push service
-      console.log(
+      logger.info(
         `🔔 Sending push notification to user ${job.data.userId} (Job: ${job.id})`
       );
 
@@ -98,7 +101,7 @@ async function processPushJob(job: Job<PushJobData>) {
           "job.duration": duration,
         });
 
-        console.log(
+        logger.info(
           `✅ Push notification sent successfully to user ${job.data.userId} (${duration}ms)`
         );
 
@@ -119,7 +122,7 @@ async function processPushJob(job: Job<PushJobData>) {
       // Note: Notification model doesn't have failedAt field
       // Failed notifications are tracked in PushNotificationLog table
       if (job.data.notificationId) {
-        console.error(`Notification ${job.data.notificationId} push delivery failed: ${errorMessage}`);
+        logger.error(`Notification ${job.data.notificationId} push delivery failed: ${errorMessage}`);
       }
 
       span.setStatus({
@@ -131,7 +134,7 @@ async function processPushJob(job: Job<PushJobData>) {
         "job.error": errorMessage,
       });
 
-      console.error(
+      logger.error(
         `❌ Push notification failed to user ${job.data.userId} (Job: ${job.id}, Attempt: ${job.attemptsMade + 1
         }):`,
         error
@@ -152,7 +155,7 @@ async function processPushJob(job: Job<PushJobData>) {
  * Start push notification worker
  */
 export function startPushWorker() {
-  console.log(`🚀 Starting push notification worker with concurrency: ${CONCURRENCY}`);
+  logger.info(`🚀 Starting push notification worker with concurrency: ${CONCURRENCY}`);
 
   // Process jobs from queue
   pushQueue.process(CONCURRENCY, async (job) => {
@@ -161,7 +164,7 @@ export function startPushWorker() {
 
   // Event listeners
   pushQueue.on("completed", (job, result) => {
-    console.log(`✅ Push job ${job.id} completed:`, {
+    logger.info(`✅ Push job ${job.id} completed:`, {
       userId: job.data.userId,
       title: job.data.title,
       duration: result.duration,
@@ -171,7 +174,7 @@ export function startPushWorker() {
   });
 
   pushQueue.on("failed", (job, error) => {
-    console.error(`❌ Push job ${job?.id} failed:`, {
+    logger.error(`❌ Push job ${job?.id} failed:`, {
       userId: job?.data?.userId || "unknown",
       title: job?.data?.title || "unknown",
       attempt: job?.attemptsMade,
@@ -180,30 +183,30 @@ export function startPushWorker() {
   });
 
   pushQueue.on("stalled", (job) => {
-    console.warn(`⚠️ Push job ${job.id} stalled:`, {
+    logger.warn(`⚠️ Push job ${job.id} stalled:`, {
       userId: job.data.userId,
       title: job.data.title,
     });
   });
 
   pushQueue.on("error", (error) => {
-    console.error("❌ Push worker error:", error);
+    logger.error("❌ Push worker error:", error);
   });
 
-  console.log("✅ Push notification worker started successfully");
+  logger.info("✅ Push notification worker started successfully");
 }
 
 /**
  * Stop push notification worker gracefully
  */
 export async function stopPushWorker() {
-  console.log("Stopping push notification worker...");
+  logger.info("Stopping push notification worker...");
 
   try {
     await pushQueue.close();
-    console.log("✅ Push notification worker stopped successfully");
+    logger.info("✅ Push notification worker stopped successfully");
   } catch (error) {
-    console.error("Failed to stop push notification worker:", error);
+    logger.error("Failed to stop push notification worker:", error);
     throw error;
   }
 }
@@ -215,26 +218,26 @@ export async function stopPushWorker() {
 if (process.env.NODE_ENV !== "test") {
   // Handle process termination
   process.on("SIGTERM", async () => {
-    console.log("Received SIGTERM, shutting down push notification worker...");
+    logger.info("Received SIGTERM, shutting down push notification worker...");
     await stopPushWorker();
     process.exit(0);
   });
 
   process.on("SIGINT", async () => {
-    console.log("Received SIGINT, shutting down push notification worker...");
+    logger.info("Received SIGINT, shutting down push notification worker...");
     await stopPushWorker();
     process.exit(0);
   });
 
   // Handle uncaught errors
   process.on("uncaughtException", async (error) => {
-    console.error("Uncaught exception:", error);
+    logger.error("Uncaught exception:", error);
     await stopPushWorker();
     process.exit(1);
   });
 
   process.on("unhandledRejection", async (reason, promise) => {
-    console.error("Unhandled rejection at:", promise, "reason:", reason);
+    logger.error("Unhandled rejection at:", promise, "reason:", reason);
     await stopPushWorker();
     process.exit(1);
   });
@@ -251,12 +254,12 @@ export default {
 
 // Auto-start worker if this file is run directly
 if (require.main === module) {
-  console.log("🔔 Push Notification Worker Process");
-  console.log("========================");
-  console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
-  console.log(`Concurrency: ${CONCURRENCY}`);
-  console.log(`Timeout: ${JOB_TIMEOUT}ms`);
-  console.log("========================\n");
+  logger.info("🔔 Push Notification Worker Process");
+  logger.info("========================");
+  logger.info(`Environment: ${process.env.NODE_ENV || "development"}`);
+  logger.info(`Concurrency: ${CONCURRENCY}`);
+  logger.info(`Timeout: ${JOB_TIMEOUT}ms`);
+  logger.info("========================\n");
 
   startPushWorker();
 }

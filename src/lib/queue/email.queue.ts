@@ -12,6 +12,8 @@ import { EmailOptions, EmailPriority } from "@/lib/services/email.service";
 import { EmailStatus, EmailType } from "@prisma/client";
 import Queue, { Job, JobOptions } from "bull";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================
 // TYPES & INTERFACES
 // ============================================
@@ -159,7 +161,7 @@ export async function enqueueEmail(
 
     return job.id.toString();
   } catch (error) {
-    console.error("Failed to enqueue email:", error);
+    logger.error("Failed to enqueue email:", error);
     throw error;
   }
 }
@@ -188,7 +190,7 @@ export async function getQueueStats(): Promise<QueueStats> {
       total: waiting + active + delayed,
     };
   } catch (error) {
-    console.error("Failed to get queue stats:", error);
+    logger.error("Failed to get queue stats:", error);
     throw error;
   }
 }
@@ -225,7 +227,7 @@ export async function retryFailedJob(jobId: string): Promise<boolean> {
 
     return false;
   } catch (error) {
-    console.error(`Failed to retry job ${jobId}:`, error);
+    logger.error(`Failed to retry job ${jobId}:`, error);
     throw error;
   }
 }
@@ -240,7 +242,7 @@ export async function getJob(jobId: string): Promise<Job<EmailJobData> | null> {
   try {
     return await emailQueue.getJob(jobId);
   } catch (error) {
-    console.error(`Failed to get job ${jobId}:`, error);
+    logger.error(`Failed to get job ${jobId}:`, error);
     return null;
   }
 }
@@ -260,7 +262,7 @@ export async function removeJob(jobId: string): Promise<boolean> {
     }
     return false;
   } catch (error) {
-    console.error(`Failed to remove job ${jobId}:`, error);
+    logger.error(`Failed to remove job ${jobId}:`, error);
     throw error;
   }
 }
@@ -279,9 +281,9 @@ export async function cleanOldJobs(
     await emailQueue.clean(completedAge, "completed");
     await emailQueue.clean(failedAge, "failed");
 
-    console.log("✅ Old jobs cleaned successfully");
+    logger.info("✅ Old jobs cleaned successfully");
   } catch (error) {
-    console.error("Failed to clean old jobs:", error);
+    logger.error("Failed to clean old jobs:", error);
     throw error;
   }
 }
@@ -292,9 +294,9 @@ export async function cleanOldJobs(
 export async function pauseQueue(): Promise<void> {
   try {
     await emailQueue.pause();
-    console.log("⏸️  Email queue paused");
+    logger.info("⏸️  Email queue paused");
   } catch (error) {
-    console.error("Failed to pause queue:", error);
+    logger.error("Failed to pause queue:", error);
     throw error;
   }
 }
@@ -305,9 +307,9 @@ export async function pauseQueue(): Promise<void> {
 export async function resumeQueue(): Promise<void> {
   try {
     await emailQueue.resume();
-    console.log("▶️  Email queue resumed");
+    logger.info("▶️  Email queue resumed");
   } catch (error) {
-    console.error("Failed to resume queue:", error);
+    logger.error("Failed to resume queue:", error);
     throw error;
   }
 }
@@ -328,7 +330,7 @@ export async function isQueueHealthy(): Promise<boolean> {
     // - Can get stats successfully
     return !isPaused && stats.active + stats.waiting < 1000;
   } catch (error) {
-    console.error("Queue health check failed:", error);
+    logger.error("Queue health check failed:", error);
     return false;
   }
 }
@@ -345,7 +347,7 @@ export async function getFailedJobs(
   try {
     return await emailQueue.getFailed(0, limit - 1);
   } catch (error) {
-    console.error("Failed to get failed jobs:", error);
+    logger.error("Failed to get failed jobs:", error);
     throw error;
   }
 }
@@ -362,7 +364,7 @@ export async function getWaitingJobs(
   try {
     return await emailQueue.getWaiting(0, limit - 1);
   } catch (error) {
-    console.error("Failed to get waiting jobs:", error);
+    logger.error("Failed to get waiting jobs:", error);
     throw error;
   }
 }
@@ -372,43 +374,43 @@ export async function getWaitingJobs(
 // ============================================
 
 emailQueue.on("error", (error) => {
-  console.error("❌ Email queue error:", error);
+  logger.error("❌ Email queue error:", error);
 });
 
 emailQueue.on("waiting", (jobId) => {
-  console.log(`⏳ Email job ${jobId} is waiting`);
+  logger.info(`⏳ Email job ${jobId} is waiting`);
 });
 
 emailQueue.on("active", (job) => {
-  console.log(`🔄 Email job ${job.id} started processing`);
+  logger.info(`🔄 Email job ${job.id} started processing`);
 });
 
 emailQueue.on("stalled", (job) => {
-  console.warn(`⚠️ Email job ${job.id} stalled`);
+  logger.warn(`⚠️ Email job ${job.id} stalled`);
 });
 
 emailQueue.on("progress", (job, progress) => {
-  console.log(`📊 Email job ${job.id} progress: ${progress}%`);
+  logger.info(`📊 Email job ${job.id} progress: ${progress}%`);
 });
 
 emailQueue.on("completed", (job, result) => {
-  console.log(`✅ Email job ${job.id} completed successfully`);
+  logger.info(`✅ Email job ${job.id} completed successfully`);
 });
 
 emailQueue.on("failed", (job, error) => {
-  console.error(`❌ Email job ${job?.id} failed:`, error.message);
+  logger.error(`❌ Email job ${job?.id} failed:`, error.message);
 });
 
 emailQueue.on("paused", () => {
-  console.log("⏸️  Email queue paused");
+  logger.info("⏸️  Email queue paused");
 });
 
 emailQueue.on("resumed", () => {
-  console.log("▶️  Email queue resumed");
+  logger.info("▶️  Email queue resumed");
 });
 
 emailQueue.on("cleaned", (jobs, type) => {
-  console.log(`🧹 Cleaned ${jobs.length} ${type} jobs from queue`);
+  logger.info(`🧹 Cleaned ${jobs.length} ${type} jobs from queue`);
 });
 
 // ============================================
@@ -421,9 +423,9 @@ emailQueue.on("cleaned", (jobs, type) => {
 export async function closeQueue(): Promise<void> {
   try {
     await emailQueue.close();
-    console.log("👋 Email queue closed gracefully");
+    logger.info("👋 Email queue closed gracefully");
   } catch (error) {
-    console.error("Failed to close queue:", error);
+    logger.error("Failed to close queue:", error);
     throw error;
   }
 }
@@ -431,13 +433,13 @@ export async function closeQueue(): Promise<void> {
 // Handle process termination
 if (process.env.NODE_ENV !== "test") {
   process.on("SIGTERM", async () => {
-    console.log("Received SIGTERM, shutting down email queue...");
+    logger.info("Received SIGTERM, shutting down email queue...");
     await closeQueue();
     process.exit(0);
   });
 
   process.on("SIGINT", async () => {
-    console.log("Received SIGINT, shutting down email queue...");
+    logger.info("Received SIGINT, shutting down email queue...");
     await closeQueue();
     process.exit(0);
   });

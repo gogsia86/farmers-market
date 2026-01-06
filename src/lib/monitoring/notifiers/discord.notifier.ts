@@ -8,6 +8,9 @@
  */
 
 import type {
+
+import { logger } from '@/lib/monitoring/logger';
+
   MonitoringReport,
   NotificationConfig,
   WorkflowResult,
@@ -70,7 +73,7 @@ export class DiscordNotifier {
     this.enabled = !!this.webhookUrl;
 
     if (!this.enabled) {
-      console.warn(
+      logger.warn(
         "⚠️  Discord notifications disabled: DISCORD_WEBHOOK_URL not configured",
       );
     }
@@ -524,7 +527,7 @@ export class DiscordNotifier {
         timestamp: new Date(),
       };
     } catch (error) {
-      console.error("Failed to send Discord notification:", error);
+      logger.error("Failed to send Discord notification:", error);
       return {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",

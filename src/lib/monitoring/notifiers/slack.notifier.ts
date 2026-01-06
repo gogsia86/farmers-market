@@ -8,6 +8,9 @@
  */
 
 import type {
+
+import { logger } from '@/lib/monitoring/logger';
+
   MonitoringReport,
   NotificationConfig,
   WorkflowResult,
@@ -78,7 +81,7 @@ export class SlackNotifier {
     this.enabled = !!this.webhookUrl;
 
     if (!this.enabled) {
-      console.warn(
+      logger.warn(
         "⚠️  Slack notifications disabled: SLACK_WEBHOOK_URL not configured",
       );
     }
@@ -599,7 +602,7 @@ export class SlackNotifier {
         timestamp: new Date(),
       };
     } catch (error) {
-      console.error("Failed to send Slack notification:", error);
+      logger.error("Failed to send Slack notification:", error);
       return {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",

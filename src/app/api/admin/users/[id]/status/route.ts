@@ -9,6 +9,8 @@ import { notificationService } from "@/lib/services/notification.service";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // Validation Schemas
 // ============================================================================
@@ -327,7 +329,7 @@ export async function PATCH(
       },
     });
   } catch (error) {
-    console.error("Failed to update user status:", error);
+    logger.error("Failed to update user status:", error);
     return NextResponse.json(
       {
         success: false,

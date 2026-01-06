@@ -11,6 +11,8 @@
 
 import { loadStripe, Stripe } from "@stripe/stripe-js";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
@@ -18,7 +20,7 @@ import { loadStripe, Stripe } from "@stripe/stripe-js";
 const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 
 if (!STRIPE_PUBLISHABLE_KEY) {
-  console.warn(
+  logger.warn(
     "⚠️ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY not found. Payment features will use test mode.",
   );
 }
@@ -101,7 +103,7 @@ export async function createPaymentMethod(
 
     return { success: true, paymentMethod };
   } catch (error) {
-    console.error("Error creating payment method:", error);
+    logger.error("Error creating payment method:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",
@@ -137,7 +139,7 @@ export async function confirmPayment(
 
     return { success: true, paymentIntent };
   } catch (error) {
-    console.error("Error confirming payment:", error);
+    logger.error("Error confirming payment:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",

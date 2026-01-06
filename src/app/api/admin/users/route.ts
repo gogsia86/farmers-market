@@ -10,6 +10,8 @@ import { database } from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // Validation Schemas
 // ============================================================================
@@ -206,7 +208,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     });
   } catch (error) {
-    console.error("Failed to fetch users:", error);
+    logger.error("Failed to fetch users:", error);
     return NextResponse.json(
       {
         success: false,
@@ -341,7 +343,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
       data: updatedUser,
     });
   } catch (error) {
-    console.error("Failed to update user:", error);
+    logger.error("Failed to update user:", error);
     return NextResponse.json(
       {
         success: false,
@@ -505,7 +507,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       },
     });
   } catch (error) {
-    console.error("Failed to perform bulk operation:", error);
+    logger.error("Failed to perform bulk operation:", error);
     return NextResponse.json(
       {
         success: false,

@@ -23,6 +23,8 @@ import type {
 } from "@/lib/services/cart.service";
 import { useCallback, useEffect, useState } from "react";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // TYPES
 // ============================================================================
@@ -74,7 +76,7 @@ function setGuestCart(items: GuestCartItem[]): void {
   try {
     localStorage.setItem(GUEST_CART_KEY, JSON.stringify(items));
   } catch (error) {
-    console.error("Failed to save guest cart:", error);
+    logger.error("Failed to save guest cart:", error);
   }
 }
 
@@ -84,7 +86,7 @@ function clearGuestCart(): void {
   try {
     localStorage.removeItem(GUEST_CART_KEY);
   } catch (error) {
-    console.error("Failed to clear guest cart:", error);
+    logger.error("Failed to clear guest cart:", error);
   }
 }
 

@@ -8,6 +8,8 @@ import { existsSync } from "fs";
 import { mkdir, writeFile } from "fs/promises";
 import { join } from "path";
 
+import { logger } from '@/lib/monitoring/logger';
+
 interface UploadResult {
   success: boolean;
   url?: string;
@@ -52,9 +54,9 @@ class FileUploadService {
           await mkdir(path, { recursive: true });
         }
       }
-      console.log("✅ Upload directories ready");
+      logger.info("✅ Upload directories ready");
     } catch (error) {
-      console.error("❌ Error creating upload directories:", error);
+      logger.error("❌ Error creating upload directories:", error);
     }
   }
 
@@ -140,7 +142,7 @@ class FileUploadService {
       // Return public URL
       const publicUrl = `${this.publicUrl}/${folder}/${filename}`;
 
-      console.log(`✅ File uploaded: ${publicUrl}`);
+      logger.info(`✅ File uploaded: ${publicUrl}`);
 
       return {
         success: true,
@@ -148,7 +150,7 @@ class FileUploadService {
         path: filePath,
       };
     } catch (error) {
-      console.error("❌ File upload error:", error);
+      logger.error("❌ File upload error:", error);
       return {
         success: false,
         error: "Failed to upload file",

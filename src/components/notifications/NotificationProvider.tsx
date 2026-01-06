@@ -37,6 +37,9 @@ import {
   shouldSendNotification,
 } from "@/lib/notifications/utils";
 import React, {
+
+import { logger } from '@/lib/monitoring/logger';
+
   createContext,
   useCallback,
   useContext,
@@ -206,7 +209,7 @@ export function NotificationProvider({
         setNotifications(restored);
       }
     } catch (error) {
-      console.error("Failed to restore notifications:", error);
+      logger.error("Failed to restore notifications:", error);
     }
   }, [persistKey]);
 
@@ -217,7 +220,7 @@ export function NotificationProvider({
     try {
       localStorage.setItem(persistKey, JSON.stringify(notifications));
     } catch (error) {
-      console.error("Failed to persist notifications:", error);
+      logger.error("Failed to persist notifications:", error);
     }
   }, [notifications, persistKey]);
 
@@ -252,7 +255,7 @@ export function NotificationProvider({
 
       // Check if should send based on preferences
       if (preferences && !shouldSendNotification(newNotification, preferences)) {
-        console.log("Notification blocked by preferences:", newNotification.id);
+        logger.info("Notification blocked by preferences:", newNotification.id);
         return newNotification;
       }
 
@@ -262,7 +265,7 @@ export function NotificationProvider({
         newNotification.priority !== "urgent" &&
         isQuietHours(preferences.quietHours)
       ) {
-        console.log("Notification queued (quiet hours):", newNotification.id);
+        logger.info("Notification queued (quiet hours):", newNotification.id);
         // Queue for later (implement queue logic as needed)
         return newNotification;
       }

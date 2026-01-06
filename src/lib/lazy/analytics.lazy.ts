@@ -15,6 +15,8 @@
 // TYPE DEFINITIONS
 // ============================================================================
 
+import { logger } from '@/lib/monitoring/logger';
+
 export interface AnalyticsEvent {
   name: string;
   properties?: Record<string, any>;
@@ -69,7 +71,7 @@ export async function trackEvent(
     const { track } = await loadAnalytics();
     track(name, properties);
   } catch (error) {
-    console.error("Failed to track analytics event:", error);
+    logger.error("Failed to track analytics event:", error);
   }
 }
 
@@ -93,7 +95,7 @@ export async function trackPageView(path?: string): Promise<void> {
     const currentPath = path || window.location.pathname;
     await trackEvent("page_view", { path: currentPath });
   } catch (error) {
-    console.error("Failed to track page view:", error);
+    logger.error("Failed to track page view:", error);
   }
 }
 

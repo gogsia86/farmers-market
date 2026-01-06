@@ -15,6 +15,9 @@
 
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+
+import { logger } from '@/lib/monitoring/logger';
+
 import type { Product } from "@prisma/client";
 
 // ============================================================================
@@ -425,7 +428,7 @@ export const useCartStore = create<CartState>()(
             });
           }
         } catch (error) {
-          console.error("Cart sync error:", error);
+          logger.error("Cart sync error:", error);
           // Don't show error to user for background syncs
         } finally {
           set({ isSyncing: false });
@@ -467,7 +470,7 @@ export const useCartStore = create<CartState>()(
             },
           });
         } catch (error) {
-          console.error("Cart merge error:", error);
+          logger.error("Cart merge error:", error);
           set({ error: "Failed to merge carts" });
         } finally {
           set({ isLoading: false });

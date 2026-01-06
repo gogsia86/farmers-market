@@ -122,7 +122,7 @@ export function queueEmail(
 ): void {
   // Fire and forget - don't await
   sendEmail(config, mailOptions).catch((error) => {
-    console.error("❌ Failed to send queued email:", error);
+    logger.error("❌ Failed to send queued email:", error);
     // TODO: Add to retry queue or dead letter queue
   });
 }
@@ -146,7 +146,7 @@ export async function verifyEmailConfig(config: EmailConfig): Promise<boolean> {
     await transporter.verify();
     return true;
   } catch (error) {
-    console.error("❌ Email configuration verification failed:", error);
+    logger.error("❌ Email configuration verification failed:", error);
     return false;
   }
 }
@@ -177,6 +177,8 @@ await transporter.sendMail({
 After (lazy loading):
 ```typescript
 import { createTransporter, sendEmail } from "@/lib/lazy/email.lazy";
+
+import { logger } from '@/lib/monitoring/logger';
 
 // Option 1: Create transporter
 const transporter = await createTransporter({

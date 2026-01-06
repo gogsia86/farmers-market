@@ -13,6 +13,8 @@ import type { Product, ProductCategory, ProductStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // TYPES & VALIDATION
 // ============================================================================
@@ -236,7 +238,7 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error("GET /api/products error:", error);
+    logger.error("GET /api/products error:", error);
     return NextResponse.json(
       {
         success: false,
@@ -389,7 +391,7 @@ export async function POST(
       { status: 201 }
     );
   } catch (error) {
-    console.error("POST /api/products error:", error);
+    logger.error("POST /api/products error:", error);
     return NextResponse.json(
       {
         success: false,

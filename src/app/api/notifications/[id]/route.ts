@@ -9,6 +9,8 @@ import { notificationService } from "@/lib/services/notification.service";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // Validation Schemas
 // ============================================================================
@@ -72,7 +74,7 @@ export async function PATCH(
       },
     });
   } catch (error) {
-    console.error("Failed to update notification:", error);
+    logger.error("Failed to update notification:", error);
     return NextResponse.json(
       {
         success: false,
@@ -123,7 +125,7 @@ export async function DELETE(
       },
     });
   } catch (error) {
-    console.error("Failed to delete notification:", error);
+    logger.error("Failed to delete notification:", error);
     return NextResponse.json(
       {
         success: false,

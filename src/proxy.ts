@@ -26,6 +26,9 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import type { UserRole } from "@/types/core-entities";
 import {
+
+import { logger } from '@/lib/monitoring/logger';
+
   isPublicRoute,
   isAuthRoute,
   isApiRoute,
@@ -62,31 +65,31 @@ interface LogMetadata {
 const middlewareLog = {
   debug: (message: string, metadata?: LogMetadata): void => {
     if (isDevelopment) {
-      console.debug(`🛡️  [Middleware] ${message}`, metadata || "");
+      logger.debug(`🛡️  [Middleware] ${message}`, metadata || "");
     }
   },
   info: (message: string, metadata?: LogMetadata): void => {
     if (isDevelopment) {
-      console.info(`🛡️  [Middleware] ${message}`, metadata || "");
+      logger.info(`🛡️  [Middleware] ${message}`, metadata || "");
     }
   },
   warn: (message: string, metadata?: LogMetadata): void => {
     if (isDevelopment) {
-      console.warn(`⚠️  [Middleware] ${message}`, metadata || "");
+      logger.warn(`⚠️  [Middleware] ${message}`, metadata || "");
     }
   },
   error: (message: string, metadata?: LogMetadata): void => {
     // Errors are logged in both environments but with less detail in production
     if (isDevelopment) {
-      console.error(`❌ [Middleware] ${message}`, metadata || "");
+      logger.error(`❌ [Middleware] ${message}`, metadata || "");
     } else {
       // In production, log minimal info without sensitive details
-      console.error(`[Middleware Error] ${message}`);
+      logger.error(`[Middleware Error] ${message}`);
     }
   },
   auth: (action: string, metadata: LogMetadata): void => {
     if (isDevelopment) {
-      console.log(`🔐 [Middleware Auth] ${action}`, metadata);
+      logger.info(`🔐 [Middleware Auth] ${action}`, metadata);
     }
   },
 };

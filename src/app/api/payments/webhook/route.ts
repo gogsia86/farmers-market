@@ -7,6 +7,8 @@ import { stripeService } from "@/lib/services/stripe.service";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
@@ -14,7 +16,7 @@ import Stripe from "stripe";
 const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 
 if (!WEBHOOK_SECRET) {
-  console.error("STRIPE_WEBHOOK_SECRET environment variable is not set");
+  logger.error("STRIPE_WEBHOOK_SECRET environment variable is not set");
 }
 
 // ============================================================================
@@ -28,7 +30,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const signature = request.headers.get("stripe-signature");
 
     if (!signature) {
-      console.error("Missing stripe-signature header");
+      logger.error("Missing stripe-signature header");
       return NextResponse.json(
         { error: "Missing signature" },
         { status: 400 }
@@ -36,7 +38,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     if (!WEBHOOK_SECRET) {
-      console.error("Webhook secret not configured");
+      logger.error("Webhook secret not configured");
       return NextResponse.json(
         { error: "Webhook not configured" },
         { status: 500 }
@@ -52,14 +54,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         WEBHOOK_SECRET
       );
     } catch (error) {
-      console.error("Webhook signature verification failed:", error);
+      logger.error("Webhook signature verification failed:", error);
       return NextResponse.json(
         { error: "Invalid signature" },
         { status: 400 }
       );
     }
 
-    console.log(`Received webhook event: ${event.type} (${event.id})`);
+    logger.info(`Received webhook event: ${event.type} (${event.id})`);
 
     // Handle event based on type
     let result;
@@ -82,7 +84,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         break;
 
       default:
-        console.log(`Unhandled event type: ${event.type}`);
+        logger.info(`Unhandled event type: ${event.type}`);
         result = { handled: false };
     }
 
@@ -97,7 +99,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       { status: 200 }
     );
   } catch (error) {
-    console.error("Webhook handler error:", error);
+    logger.error("Webhook handler error:", error);
 
     return NextResponse.json(
       {
@@ -124,8 +126,8 @@ async function handlePaymentIntentSucceeded(
   const paymentIntentId = paymentIntent.id;
   const metadata = paymentIntent.metadata;
 
-  console.log(`Processing payment success: ${paymentIntentId}`);
-  console.log("Metadata:", metadata);
+  logger.info(`Processing payment success: ${paymentIntentId}`);
+  logger.info("Metadata:", metadata);
 
   try {
     // Extract metadata
@@ -134,7 +136,7 @@ async function handlePaymentIntentSucceeded(
     const customerEmail = metadata.customerEmail;
 
     if (!checkoutSessionId || !userId) {
-      console.error("Missing required metadata in payment intent");
+      logger.error("Missing required metadata in payment intent");
       return {
         handled: false,
         error: "Missing required metadata",
@@ -147,7 +149,7 @@ async function handlePaymentIntentSucceeded(
     });
 
     if (existingOrders.length > 0) {
-      console.log(
+      logger.info(
         `Orders already created for payment intent ${paymentIntentId}`
       );
       return {
@@ -165,7 +167,7 @@ async function handlePaymentIntentSucceeded(
       userId,
     });
 
-    console.log(
+    logger.info(
       `Created ${result.orderCount} order(s) for payment ${paymentIntentId}`
     );
 
@@ -174,9 +176,9 @@ async function handlePaymentIntentSucceeded(
       try {
         // TODO: Send order confirmation email
         // await emailService.sendOrderConfirmationEmail(...)
-        console.log(`Order confirmation email queued for order ${order.orderNumber}`);
+        logger.info(`Order confirmation email queued for order ${order.orderNumber}`);
       } catch (emailError) {
-        console.error(
+        logger.error(
           `Failed to send confirmation email for order ${order.orderNumber}:`,
           emailError
         );
@@ -203,7 +205,7 @@ async function handlePaymentIntentSucceeded(
       orderNumbers: result.orders.map((o) => o.orderNumber),
     };
   } catch (error) {
-    console.error("Error processing payment success:", error);
+    logger.error("Error processing payment success:", error);
 
     // Log the error but return success to Stripe to prevent retries
     // The error should be investigated separately
@@ -224,8 +226,8 @@ async function handlePaymentIntentFailed(event: Stripe.Event): Promise<any> {
   const paymentIntentId = paymentIntent.id;
   const metadata = paymentIntent.metadata;
 
-  console.log(`Processing payment failure: ${paymentIntentId}`);
-  console.log(
+  logger.info(`Processing payment failure: ${paymentIntentId}`);
+  logger.info(
     "Failure reason:",
     paymentIntent.last_payment_error?.message || "Unknown"
   );
@@ -237,7 +239,7 @@ async function handlePaymentIntentFailed(event: Stripe.Event): Promise<any> {
     });
 
     if (orders.length === 0) {
-      console.log(`No orders found for payment intent ${paymentIntentId}`);
+      logger.info(`No orders found for payment intent ${paymentIntentId}`);
       return {
         handled: true,
         ordersUpdated: false,
@@ -263,9 +265,9 @@ async function handlePaymentIntentFailed(event: Stripe.Event): Promise<any> {
     if (customerEmail) {
       try {
         // TODO: Send payment failure notification email
-        console.log(`Payment failure notification queued for ${customerEmail}`);
+        logger.info(`Payment failure notification queued for ${customerEmail}`);
       } catch (emailError) {
-        console.error("Failed to send payment failure email:", emailError);
+        logger.error("Failed to send payment failure email:", emailError);
       }
     }
 
@@ -275,7 +277,7 @@ async function handlePaymentIntentFailed(event: Stripe.Event): Promise<any> {
       orderCount: orders.length,
     };
   } catch (error) {
-    console.error("Error processing payment failure:", error);
+    logger.error("Error processing payment failure:", error);
     return {
       handled: true,
       error: error instanceof Error ? error.message : "Unknown error",
@@ -290,7 +292,7 @@ async function handlePaymentIntentCanceled(event: Stripe.Event): Promise<any> {
   const paymentIntent = event.data.object as Stripe.PaymentIntent;
   const paymentIntentId = paymentIntent.id;
 
-  console.log(`Processing payment cancellation: ${paymentIntentId}`);
+  logger.info(`Processing payment cancellation: ${paymentIntentId}`);
 
   try {
     // Find orders associated with this payment intent
@@ -325,7 +327,7 @@ async function handlePaymentIntentCanceled(event: Stripe.Event): Promise<any> {
       orderCount: orders.length,
     };
   } catch (error) {
-    console.error("Error processing payment cancellation:", error);
+    logger.error("Error processing payment cancellation:", error);
     return {
       handled: true,
       error: error instanceof Error ? error.message : "Unknown error",
@@ -341,8 +343,8 @@ async function handleChargeRefunded(event: Stripe.Event): Promise<any> {
   const paymentIntentId = charge.payment_intent as string;
   const refundedAmount = charge.amount_refunded / 100;
 
-  console.log(`Processing refund for payment intent: ${paymentIntentId}`);
-  console.log(`Refunded amount: $${refundedAmount}`);
+  logger.info(`Processing refund for payment intent: ${paymentIntentId}`);
+  logger.info(`Refunded amount: $${refundedAmount}`);
 
   try {
     // Find orders associated with this payment intent
@@ -379,7 +381,7 @@ async function handleChargeRefunded(event: Stripe.Event): Promise<any> {
       refundedAmount,
     };
   } catch (error) {
-    console.error("Error processing refund:", error);
+    logger.error("Error processing refund:", error);
     return {
       handled: true,
       error: error instanceof Error ? error.message : "Unknown error",

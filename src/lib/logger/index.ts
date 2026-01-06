@@ -16,6 +16,8 @@
 
 import { trace } from "@opentelemetry/api";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // TYPES & INTERFACES
 // ============================================================================
@@ -260,13 +262,13 @@ export class Logger {
     switch (logEntry.level) {
       case LogLevel.ERROR:
       case LogLevel.FATAL:
-        console.error(JSON.stringify(safeEntry));
+        logger.error(JSON.stringify(safeEntry));
         break;
       case LogLevel.WARN:
-        console.warn(JSON.stringify(safeEntry));
+        logger.warn(JSON.stringify(safeEntry));
         break;
       default:
-        console.log(JSON.stringify(safeEntry));
+        logger.info(JSON.stringify(safeEntry));
     }
   }
 
@@ -279,18 +281,18 @@ export class Logger {
     const timestamp = new Date(logEntry.timestamp).toLocaleTimeString();
 
     // Header line
-    console.log(
+    logger.info(
       `${emoji} ${color}[${timestamp}] [${logEntry.service}] ${logEntry.message}\x1b[0m`,
     );
 
     // Context (if present and not empty)
     if (logEntry.context && Object.keys(logEntry.context).length > 0) {
-      console.log("  Context:", JSON.stringify(logEntry.context, null, 2));
+      logger.info("  Context:", JSON.stringify(logEntry.context, null, 2));
     }
 
     // Trace info (if present)
     if (logEntry.traceId) {
-      console.log(`  🔗 Trace: ${logEntry.traceId?.substring(0, 16)}...`);
+      logger.info(`  🔗 Trace: ${logEntry.traceId?.substring(0, 16)}...`);
     }
   }
 

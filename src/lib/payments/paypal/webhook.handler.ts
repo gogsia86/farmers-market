@@ -19,6 +19,9 @@
 
 import { database } from "@/lib/database";
 import { paypalService } from "@/lib/payments/paypal/paypal.service";
+
+import { logger } from '@/lib/monitoring/logger';
+
 import type { ServiceResponse } from "@/lib/types/service.types";
 
 // ============================================================================
@@ -133,7 +136,7 @@ export class PayPalWebhookHandler {
   ): Promise<ServiceResponse<WebhookProcessingResult>> {
     try {
       // Log incoming webhook
-      console.log(`📥 PayPal Webhook received:`, {
+      logger.info(`📥 PayPal Webhook received:`, {
         eventId: event.id,
         eventType: event.event_type,
         summary: event.summary,
@@ -150,7 +153,7 @@ export class PayPalWebhookHandler {
         );
 
         if (!isValid) {
-          console.error("❌ Webhook signature verification failed");
+          logger.error("❌ Webhook signature verification failed");
           return {
             success: false,
             error: {
@@ -161,7 +164,7 @@ export class PayPalWebhookHandler {
           };
         }
       } else {
-        console.warn(
+        logger.warn(
           "⚠️ PAYPAL_WEBHOOK_ID not configured, skipping verification",
         );
       }
@@ -172,7 +175,7 @@ export class PayPalWebhookHandler {
       });
 
       if (existingEvent && existingEvent.processed) {
-        console.log(`✅ Event ${event.id} already processed, skipping`);
+        logger.info(`✅ Event ${event.id} already processed, skipping`);
         return {
           success: true,
           data: {
@@ -190,7 +193,7 @@ export class PayPalWebhookHandler {
       const handler = this.eventHandlers.get(event.event_type);
 
       if (!handler) {
-        console.warn(`⚠️ No handler for event type: ${event.event_type}`);
+        logger.warn(`⚠️ No handler for event type: ${event.event_type}`);
 
         // Log unhandled event
         await this.logWebhookEvent(event, false, "No handler registered");
@@ -215,7 +218,7 @@ export class PayPalWebhookHandler {
         // Log successful processing
         await this.logWebhookEvent(event, true);
 
-        console.log(`✅ Event processed successfully:`, {
+        logger.info(`✅ Event processed successfully:`, {
           eventId: event.id,
           eventType: event.event_type,
           orderId: result.data?.orderId,
@@ -229,12 +232,12 @@ export class PayPalWebhookHandler {
           result.error?.message || "Processing failed",
         );
 
-        console.error(`❌ Event processing failed:`, result.error);
+        logger.error(`❌ Event processing failed:`, result.error);
       }
 
       return result;
     } catch (error) {
-      console.error("Error processing webhook:", error);
+      logger.error("Error processing webhook:", error);
 
       // Log error
       await this.logWebhookEvent(
@@ -348,7 +351,7 @@ export class PayPalWebhookHandler {
     });
 
     if (!order) {
-      console.warn(`⚠️ Order not found for capture ${capture.id}`);
+      logger.warn(`⚠️ Order not found for capture ${capture.id}`);
       return {
         success: true,
         data: {
@@ -617,7 +620,7 @@ export class PayPalWebhookHandler {
     const dispute = event.resource;
 
     // Log dispute for admin attention
-    console.warn(`⚠️ PayPal dispute created:`, {
+    logger.warn(`⚠️ PayPal dispute created:`, {
       disputeId: dispute.dispute_id,
       reason: dispute.reason,
       amount: dispute.dispute_amount,
@@ -674,7 +677,7 @@ export class PayPalWebhookHandler {
         },
       });
     } catch (error) {
-      console.error("Failed to log webhook event:", error);
+      logger.error("Failed to log webhook event:", error);
     }
   }
 
@@ -704,7 +707,7 @@ export class PayPalWebhookHandler {
           successCount++;
         }
       } catch (error) {
-        console.error(`Failed to retry webhook ${webhookEvent.id}:`, error);
+        logger.error(`Failed to retry webhook ${webhookEvent.id}:`, error);
       }
     }
 

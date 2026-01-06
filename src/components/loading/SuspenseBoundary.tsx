@@ -17,6 +17,8 @@ import type { SuspenseBoundaryConfig } from "@/lib/loading/types";
 import { CenteredLoadingSpinner, LoadingSpinner } from "./LoadingSpinner";
 import { CardSkeleton, Skeleton } from "./Skeleton";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // BASE SUSPENSE BOUNDARY
 // ============================================================================
@@ -68,7 +70,7 @@ export const SuspenseBoundary = React.forwardRef<
 
       if (maxLoadingTime) {
         maxTimeoutRef.current = setTimeout(() => {
-          console.warn(
+          logger.warn(
             `Suspense boundary exceeded max loading time of ${maxLoadingTime}ms`
           );
         }, maxLoadingTime);

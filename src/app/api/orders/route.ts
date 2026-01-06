@@ -10,6 +10,8 @@ import { orderService } from "@/lib/services/order.service";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { logger } from '@/lib/monitoring/logger';
+
 /**
  * Create order validation schema (legacy format - single farm)
  */
@@ -157,7 +159,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("GET /api/orders error:", error);
+    logger.error("GET /api/orders error:", error);
 
     return NextResponse.json(
       {
@@ -318,7 +320,7 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
   } catch (error) {
-    console.error("POST /api/orders error:", error);
+    logger.error("POST /api/orders error:", error);
 
     if (error instanceof ValidationError) {
       return NextResponse.json(

@@ -13,6 +13,9 @@
  */
 
 import {
+
+import { logger } from '@/lib/monitoring/logger';
+
   checkOptionalServices,
   validateEnv,
   type Env,
@@ -28,7 +31,7 @@ export function initializeApp(): Env {
     return process.env as Env;
   }
 
-  console.log("🌾 Initializing Farmers Market Platform...\n");
+  logger.info("🌾 Initializing Farmers Market Platform...\n");
 
   // ✅ Step 1: Validate required environment variables
   const env = validateEnv();
@@ -37,14 +40,14 @@ export function initializeApp(): Env {
   checkOptionalServices(env);
 
   // ✅ Step 3: Log startup info
-  console.log("📊 Environment:", env.NODE_ENV);
-  console.log(
+  logger.info("📊 Environment:", env.NODE_ENV);
+  logger.info(
     "🗄️  Database:",
     env.DATABASE_URL?.split("@")[1]?.split("?")[0] || "configured",
   );
-  console.log("🔐 Auth:", env.NEXTAUTH_URL);
+  logger.info("🔐 Auth:", env.NEXTAUTH_URL);
 
-  console.log("\n✨ Application initialized successfully!\n");
+  logger.info("\n✨ Application initialized successfully!\n");
 
   return env;
 }
@@ -64,9 +67,9 @@ export async function initializeDatabase(): Promise<void> {
     // Test connection
     await database.$queryRaw`SELECT 1`;
 
-    console.log("✅ Database connection verified");
+    logger.info("✅ Database connection verified");
   } catch (error) {
-    console.error("❌ Database connection failed:", error);
+    logger.error("❌ Database connection failed:", error);
     throw new Error("Failed to connect to database");
   }
 }
@@ -76,18 +79,18 @@ export async function initializeDatabase(): Promise<void> {
  * Cleanup resources on process termination
  */
 export async function shutdownApp(): Promise<void> {
-  console.log("\n🌙 Shutting down Farmers Market Platform gracefully...");
+  logger.info("\n🌙 Shutting down Farmers Market Platform gracefully...");
 
   try {
     // Close database connection
     const { database } = await import("./database");
     await database.$disconnect();
-    console.log("✅ Database disconnected");
+    logger.info("✅ Database disconnected");
   } catch (error) {
-    console.error("⚠️  Error during shutdown:", error);
+    logger.error("⚠️  Error during shutdown:", error);
   }
 
-  console.log("👋 Shutdown complete\n");
+  logger.info("👋 Shutdown complete\n");
 }
 
 // Register shutdown handlers

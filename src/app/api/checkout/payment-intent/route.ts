@@ -10,6 +10,8 @@ import { stripeService } from "@/lib/services/stripe.service";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // VALIDATION SCHEMA
 // ============================================================================
@@ -136,7 +138,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       },
     });
   } catch (error) {
-    console.error("Payment intent creation error:", error);
+    logger.error("Payment intent creation error:", error);
 
     return NextResponse.json(
       {
@@ -233,7 +235,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     });
   } catch (error) {
-    console.error("Payment intent retrieval error:", error);
+    logger.error("Payment intent retrieval error:", error);
 
     return NextResponse.json(
       {

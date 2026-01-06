@@ -13,6 +13,9 @@
 
 import { SpanStatusCode, trace } from "@opentelemetry/api";
 import {
+
+import { logger } from '@/lib/monitoring/logger';
+
   PERPLEXITY_PRO_CONFIG,
   type PerplexityProModel,
 } from "./perplexity-config";
@@ -133,7 +136,7 @@ export class PerplexityAI {
 
     // Don't throw during build time - allow graceful degradation
     if (!this.apiKey && process.env.NODE_ENV !== "production") {
-      console.warn(
+      logger.warn(
         "⚠️  PERPLEXITY_API_KEY not configured - Perplexity features will be disabled",
       );
     }

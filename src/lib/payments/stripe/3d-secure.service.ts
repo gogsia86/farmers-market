@@ -20,6 +20,8 @@ import { stripe } from "@/lib/stripe";
 import type { ServiceResponse } from "@/lib/types/service.types";
 import Stripe from "stripe";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // TYPES & INTERFACES
 // ============================================================================
@@ -151,7 +153,7 @@ export class Stripe3DSecureService {
         data: result,
       };
     } catch (error) {
-      console.error("Error checking 3D Secure status:", error);
+      logger.error("Error checking 3D Secure status:", error);
 
       return {
         success: false,
@@ -235,7 +237,7 @@ export class Stripe3DSecureService {
         data: result,
       };
     } catch (error) {
-      console.error("Error confirming payment with authentication:", error);
+      logger.error("Error confirming payment with authentication:", error);
 
       if (error instanceof Stripe.errors.StripeError) {
         return {
@@ -341,7 +343,7 @@ export class Stripe3DSecureService {
         },
       };
     } catch (error) {
-      console.error("Error handling authentication completion:", error);
+      logger.error("Error handling authentication completion:", error);
 
       return {
         success: false,
@@ -432,7 +434,7 @@ export class Stripe3DSecureService {
         data: verification,
       };
     } catch (error) {
-      console.error("Error getting verification details:", error);
+      logger.error("Error getting verification details:", error);
 
       return {
         success: false,
@@ -480,7 +482,7 @@ export class Stripe3DSecureService {
         },
       };
     } catch (error) {
-      console.error("Error retrying authentication:", error);
+      logger.error("Error retrying authentication:", error);
 
       return {
         success: false,
@@ -566,7 +568,7 @@ export class Stripe3DSecureService {
       // Stripe will automatically handle this during confirmation
       return paymentMethod.type === "card" && paymentMethod.card !== null;
     } catch (error) {
-      console.error("Error checking card 3DS support:", error);
+      logger.error("Error checking card 3DS support:", error);
       return false;
     }
   }

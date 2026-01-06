@@ -17,6 +17,8 @@ import type {
 } from "../types";
 import { database } from "@/lib/database";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // SELF-HEALING ORCHESTRATOR
 // ============================================================================
@@ -39,7 +41,7 @@ export class SelfHealingOrchestrator {
 
     if (this.enabled) {
       this.initializeStrategies();
-      console.log(
+      logger.info(
         `✅ Self-Healing Orchestrator initialized with ${this.strategies.size} strategies`,
       );
     }
@@ -62,7 +64,7 @@ export class SelfHealingOrchestrator {
       };
     }
 
-    console.log(
+    logger.info(
       `\n🔧 Attempting self-heal for workflow: ${workflowResult.name}`,
     );
 
@@ -99,7 +101,7 @@ export class SelfHealingOrchestrator {
       };
     }
 
-    console.log(`   📋 Selected strategy: ${strategy.name}`);
+    logger.info(`   📋 Selected strategy: ${strategy.name}`);
 
     // Check if strategy requires approval
     if (strategy.requiresApproval && !this.autoApprove) {
@@ -137,7 +139,7 @@ export class SelfHealingOrchestrator {
 
     // Execute healing strategy
     try {
-      console.log("   ⚡ Executing healing strategy...");
+      logger.info("   ⚡ Executing healing strategy...");
       const result = await strategy.execute(context);
 
       // Record attempt
@@ -152,11 +154,11 @@ export class SelfHealingOrchestrator {
 
       // Verify healing was successful
       if (result.healed) {
-        console.log("   ✅ Self-healing successful!");
+        logger.info("   ✅ Self-healing successful!");
         result.verificationPassed = await this.verifyHealing(context);
 
         if (!result.verificationPassed) {
-          console.log("   ⚠️  Healing verification failed - rolling back");
+          logger.info("   ⚠️  Healing verification failed - rolling back");
           await this.rollback(strategy, context);
           result.healed = false;
           result.reason = "Healing verification failed, rolled back changes";
@@ -166,7 +168,7 @@ export class SelfHealingOrchestrator {
       result.duration = Date.now() - startTime;
       return result;
     } catch (error) {
-      console.error("   ❌ Healing strategy failed:", error);
+      logger.error("   ❌ Healing strategy failed:", error);
 
       const result: HealingResult = {
         healed: false,
@@ -203,7 +205,7 @@ export class SelfHealingOrchestrator {
    */
   registerStrategy(errorCode: string, strategy: RemediationStrategy): void {
     this.strategies.set(errorCode, strategy);
-    console.log(`📝 Registered healing strategy: ${strategy.name}`);
+    logger.info(`📝 Registered healing strategy: ${strategy.name}`);
   }
 
   /**
@@ -671,7 +673,7 @@ export class SelfHealingOrchestrator {
 
       return true;
     } catch (error) {
-      console.error("Healing verification error:", error);
+      logger.error("Healing verification error:", error);
       return false;
     }
   }
@@ -680,14 +682,14 @@ export class SelfHealingOrchestrator {
     strategy: RemediationStrategy,
     _context: HealingContext,
   ): Promise<void> {
-    console.log(`   🔄 Rolling back: ${strategy.name}`);
+    logger.info(`   🔄 Rolling back: ${strategy.name}`);
 
     // Strategy-specific rollback logic
     if (strategy.id === "db-connection-reset") {
       try {
         await database.$connect();
       } catch (error) {
-        console.error("Rollback failed:", error);
+        logger.error("Rollback failed:", error);
       }
     }
 

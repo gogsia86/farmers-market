@@ -10,6 +10,9 @@ import type { Logger } from "@/lib/logger";
 import { createLogger } from "@/lib/logger";
 import { loadTensorFlow } from "@/lib/lazy/ml.lazy";
 import { loadSharp } from "@/lib/lazy/image.lazy";
+
+import { logger } from '@/lib/monitoring/logger';
+
 import type * as tf from "@tensorflow/tfjs";
 import type Sharp from "sharp";
 
@@ -27,7 +30,7 @@ export async function initializeGPUDependencies() {
       sharpInstance = await loadSharp();
     }
   } catch (error) {
-    console.warn("Failed to initialize GPU dependencies:", error);
+    logger.warn("Failed to initialize GPU dependencies:", error);
   }
 }
 
@@ -174,15 +177,15 @@ export async function initializeTensorFlowGPU(): Promise<void> {
 
     tfBackendInitialized = true;
 
-    console.log("🔥 TensorFlow.js GPU backend initialized");
-    console.log("   Backend:", tfInstance.getBackend());
-    console.log(
+    logger.info("🔥 TensorFlow.js GPU backend initialized");
+    logger.info("   Backend:", tfInstance.getBackend());
+    logger.info(
       "   WebGL Version:",
       tfInstance.env().get("WEBGL_VERSION") as number,
     );
-    console.log("   Memory:", tfInstance.memory());
+    logger.info("   Memory:", tfInstance.memory());
   } catch (error) {
-    console.warn(
+    logger.warn(
       "⚠️  TensorFlow GPU initialization failed, falling back to CPU",
     );
     if (tfInstance) {
@@ -232,9 +235,9 @@ export class GPUProcessor {
 
     const { batchSize = 10, quality = 85, watermark = false } = options;
 
-    console.log(`🖼️  Processing ${images.length} farm images on GPU`);
-    console.log(`   Batch size: ${batchSize}`);
-    console.log(`   Quality: ${quality}%`);
+    logger.info(`🖼️  Processing ${images.length} farm images on GPU`);
+    logger.info(`   Batch size: ${batchSize}`);
+    logger.info(`   Quality: ${quality}%`);
 
     const processedImages: Buffer[] = [];
     const originalSizes: number[] = [];
@@ -280,7 +283,7 @@ export class GPUProcessor {
 
         processedImages.push(...batchResults);
 
-        console.log(
+        logger.info(
           `   Batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(images.length / batchSize)} complete`,
         );
       }
@@ -290,11 +293,11 @@ export class GPUProcessor {
       const totalNewSize = newSizes.reduce((a, b) => a + b, 0);
       const compressionRatio = totalOriginalSize / totalNewSize;
 
-      console.log(`✅ Image processing complete: ${duration.toFixed(2)}ms`);
-      console.log(
+      logger.info(`✅ Image processing complete: ${duration.toFixed(2)}ms`);
+      logger.info(
         `   Compression: ${totalOriginalSize / 1024 / 1024}MB → ${totalNewSize / 1024 / 1024}MB`,
       );
-      console.log(`   Ratio: ${compressionRatio.toFixed(2)}x`);
+      logger.info(`   Ratio: ${compressionRatio.toFixed(2)}x`);
 
       this.recordMetric("image-processing", {
         duration,
@@ -331,10 +334,10 @@ export class GPUProcessor {
   ): Promise<number[]> {
     const startTime = performance.now();
 
-    console.log("🤖 Generating product recommendations on GPU");
-    console.log(`   User history: ${userHistory.length} items`);
-    console.log(`   Product pool: ${products.length} products`);
-    console.log(`   GPU Backend: ${this.tfBackend}`);
+    logger.info("🤖 Generating product recommendations on GPU");
+    logger.info(`   User history: ${userHistory.length} items`);
+    logger.info(`   Product pool: ${products.length} products`);
+    logger.info(`   GPU Backend: ${this.tfBackend}`);
 
     try {
       if (!tfInstance) {
@@ -368,8 +371,8 @@ export class GPUProcessor {
 
       const duration = performance.now() - startTime;
 
-      console.log(`✅ Recommendations generated: ${duration.toFixed(2)}ms`);
-      console.log(`   Top score: ${recommendations.scores[0]?.toFixed(3)}`);
+      logger.info(`✅ Recommendations generated: ${duration.toFixed(2)}ms`);
+      logger.info(`   Top score: ${recommendations.scores[0]?.toFixed(3)}`);
 
       this.recordMetric("recommendations", {
         duration,
@@ -399,10 +402,10 @@ export class GPUProcessor {
   ): Promise<AgriculturalAnalytics> {
     const startTime = performance.now();
 
-    console.log("🌾 Analyzing agricultural data on GPU");
-    console.log(`📊 Soil health samples: ${dataset.soilHealth.length}`);
-    console.log(`🌱 Yield records: ${dataset.yields.length}`);
-    console.log(`🌤️  Weather data points: ${dataset.weather.length}`);
+    logger.info("🌾 Analyzing agricultural data on GPU");
+    logger.info(`📊 Soil health samples: ${dataset.soilHealth.length}`);
+    logger.info(`🌱 Yield records: ${dataset.yields.length}`);
+    logger.info(`🌤️  Weather data points: ${dataset.weather.length}`);
 
     try {
       if (!tfInstance) {
@@ -438,10 +441,10 @@ export class GPUProcessor {
 
       const duration = performance.now() - startTime;
 
-      console.log(
+      logger.info(
         `✅ Agricultural analysis complete: ${duration.toFixed(2)}ms`,
       );
-      console.log(`⚡ GPU acceleration: ${this.tfBackend === "webgl"}`);
+      logger.info(`⚡ GPU acceleration: ${this.tfBackend === "webgl"}`);
 
       return {
         soilYieldCorrelation: results.correlation,
@@ -482,7 +485,7 @@ export class GPUProcessor {
       );
     }
 
-    console.log(
+    logger.info(
       `🧮 GPU Matrix Multiply: [${rowsA}x${colsA}] * [${rowsB}x${colsB}]`,
     );
 
@@ -707,31 +710,31 @@ export class GPUPerformanceMonitor {
   }
 
   printStatistics(): void {
-    console.log("\n📊 GPU Performance Statistics:\n");
+    logger.info("\n📊 GPU Performance Statistics:\n");
 
     for (const [operation, _measurements] of this.measurements) {
       const stats = this.getStatistics(operation);
       if (stats) {
-        console.log(`  ${operation}:`);
-        console.log(`    Count: ${stats.count}`);
-        console.log(`    Avg: ${stats.avg.toFixed(2)}ms`);
-        console.log(`    Min: ${stats.min.toFixed(2)}ms`);
-        console.log(`    Max: ${stats.max.toFixed(2)}ms`);
-        console.log(`    P50: ${stats.p50?.toFixed(2)}ms`);
-        console.log(`    P95: ${stats.p95?.toFixed(2)}ms`);
-        console.log(`    P99: ${stats.p99?.toFixed(2)}ms\n`);
+        logger.info(`  ${operation}:`);
+        logger.info(`    Count: ${stats.count}`);
+        logger.info(`    Avg: ${stats.avg.toFixed(2)}ms`);
+        logger.info(`    Min: ${stats.min.toFixed(2)}ms`);
+        logger.info(`    Max: ${stats.max.toFixed(2)}ms`);
+        logger.info(`    P50: ${stats.p50?.toFixed(2)}ms`);
+        logger.info(`    P95: ${stats.p95?.toFixed(2)}ms`);
+        logger.info(`    P99: ${stats.p99?.toFixed(2)}ms\n`);
       }
     }
 
     // TensorFlow.js memory info
     if (tfInstance) {
       const memory = tfInstance.memory();
-      console.log("  TensorFlow.js Memory:");
-      console.log(`    Num Tensors: ${memory.numTensors}`);
-      console.log(
+      logger.info("  TensorFlow.js Memory:");
+      logger.info(`    Num Tensors: ${memory.numTensors}`);
+      logger.info(
         `    Num Bytes: ${(memory.numBytes / 1024 / 1024).toFixed(2)} MB`,
       );
-      console.log(`    Num Data Buffers: ${memory.numDataBuffers}`);
+      logger.info(`    Num Data Buffers: ${memory.numDataBuffers}`);
     }
   }
 }

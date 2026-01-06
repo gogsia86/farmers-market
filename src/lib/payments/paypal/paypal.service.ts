@@ -17,6 +17,9 @@
  */
 
 import { database } from "@/lib/database";
+
+import { logger } from '@/lib/monitoring/logger';
+
 import type { ServiceResponse } from "@/lib/types/service.types";
 
 // ============================================================================
@@ -388,7 +391,7 @@ export class PayPalService {
 
       if (!response.ok) {
         const error = await response.json();
-        console.error("PayPal order creation failed:", error);
+        logger.error("PayPal order creation failed:", error);
 
         return {
           success: false,
@@ -441,7 +444,7 @@ export class PayPalService {
         data: result,
       };
     } catch (error) {
-      console.error("Error creating PayPal order:", error);
+      logger.error("Error creating PayPal order:", error);
 
       return {
         success: false,
@@ -513,7 +516,7 @@ export class PayPalService {
 
       if (!response.ok) {
         const error = await response.json();
-        console.error("PayPal capture failed:", error);
+        logger.error("PayPal capture failed:", error);
 
         return {
           success: false,
@@ -595,7 +598,7 @@ export class PayPalService {
         data: result,
       };
     } catch (error) {
-      console.error("Error capturing PayPal order:", error);
+      logger.error("Error capturing PayPal order:", error);
 
       return {
         success: false,
@@ -667,7 +670,7 @@ export class PayPalService {
         },
       };
     } catch (error) {
-      console.error("Error fetching PayPal order details:", error);
+      logger.error("Error fetching PayPal order details:", error);
 
       return {
         success: false,
@@ -758,7 +761,7 @@ export class PayPalService {
 
       if (!response.ok) {
         const error = await response.json();
-        console.error("PayPal refund failed:", error);
+        logger.error("PayPal refund failed:", error);
 
         return {
           success: false,
@@ -798,7 +801,7 @@ export class PayPalService {
         data: result,
       };
     } catch (error) {
-      console.error("Error processing PayPal refund:", error);
+      logger.error("Error processing PayPal refund:", error);
 
       return {
         success: false,
@@ -825,7 +828,7 @@ export class PayPalService {
     try {
       const token = await this.getAccessToken();
       if (!token) {
-        console.error(
+        logger.error(
           "Failed to get PayPal access token for webhook verification",
         );
         return false;
@@ -852,14 +855,14 @@ export class PayPalService {
       );
 
       if (!response.ok) {
-        console.error("Webhook verification request failed");
+        logger.error("Webhook verification request failed");
         return false;
       }
 
       const result = await response.json();
       return result.verification_status === "SUCCESS";
     } catch (error) {
-      console.error("Error verifying PayPal webhook:", error);
+      logger.error("Error verifying PayPal webhook:", error);
       return false;
     }
   }
@@ -909,7 +912,7 @@ export class PayPalService {
       });
 
       if (!response.ok) {
-        console.error("Failed to get PayPal access token");
+        logger.error("Failed to get PayPal access token");
         return null;
       }
 
@@ -921,7 +924,7 @@ export class PayPalService {
 
       return this.accessToken;
     } catch (error) {
-      console.error("Error getting PayPal access token:", error);
+      logger.error("Error getting PayPal access token:", error);
       return null;
     }
   }

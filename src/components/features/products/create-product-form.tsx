@@ -32,6 +32,8 @@ import type { ProductCategory } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { logger } from '@/lib/monitoring/logger';
+
 /**
  * 🌱 COMPONENT PROPS
  */
@@ -187,7 +189,7 @@ export function CreateProductForm({ farmId, farmName }: CreateProductFormProps) 
         }
       }
     } catch (err: any) {
-      console.error("Product creation error:", err);
+      logger.error("Product creation error:", err);
       setError(err.message || "An unexpected error occurred");
     } finally {
       setIsSubmitting(false);

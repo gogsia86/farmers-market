@@ -9,6 +9,8 @@ import { notificationService } from "@/lib/services/notification.service";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { logger } from '@/lib/monitoring/logger';
+
 // ============================================================================
 // Validation Schemas
 // ============================================================================
@@ -103,7 +105,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     });
   } catch (error) {
-    console.error("Failed to fetch notifications:", error);
+    logger.error("Failed to fetch notifications:", error);
     return NextResponse.json(
       {
         success: false,
@@ -150,7 +152,7 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
       },
     });
   } catch (error) {
-    console.error("Failed to clear notifications:", error);
+    logger.error("Failed to clear notifications:", error);
     return NextResponse.json(
       {
         success: false,
