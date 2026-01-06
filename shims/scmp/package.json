@@ -1,0 +1,15 @@
+{
+  "name": "scmp",
+  "version": "2.1.0",
+  "description": "Safe, constant-time comparison using Node.js crypto.timingSafeEqual()",
+  "main": "index.js",
+  "keywords": [
+    "constant-time",
+    "timing-safe",
+    "comparison",
+    "crypto",
+    "security"
+  ],
+  "author": "Farmers Market Platform",
+  "license": "MIT"
+}

@@ -462,8 +462,7 @@
     "gauge": "npm:noop2@^2.0.0",
     "are-we-there-yet": "npm:noop2@^2.0.0",
     "q": "npm:noop2@^2.0.0",
-    "whatwg-encoding": "npm:@exodus/bytes@^1.0.0",
-    "scmp": "npm:noop2@^2.0.0"
+    "whatwg-encoding": "npm:@exodus/bytes@^1.0.0"
   },
   "optionalDependencies": {
     "@tensorflow/tfjs": "^4.22.0",
