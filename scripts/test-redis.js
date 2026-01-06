@@ -12,7 +12,9 @@
  */
 
 const Redis = require('ioredis');
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env.local') });
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 const COLORS = {
   reset: '\x1b[0m',
