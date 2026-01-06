@@ -11,8 +11,8 @@ import { database } from "@/lib/database";
 import { platformAnalyticsService } from "@/lib/services/analytics/platform-analytics.service";
 import { formatCurrency } from "@/lib/utils/currency";
 import {
-  ArrowDownIcon,
-  ArrowUpIcon,
+  ArrowDown,
+  ArrowUp,
   BarChart3,
   DollarSign,
   Package,
@@ -123,14 +123,14 @@ export default async function AnalyticsPage() {
                   <dd className="mt-1 flex items-center text-sm">
                     {metrics.revenue.growthRate >= 0 ? (
                       <>
-                        <ArrowUpIcon className="mr-1 h-4 w-4 text-green-600" />
+                        <ArrowUp className="mr-1 h-4 w-4 text-green-600" />
                         <span className="text-green-600 font-medium">
                           {metrics.revenue.growthRate.toFixed(1)}%
                         </span>
                       </>
                     ) : (
                       <>
-                        <ArrowDownIcon className="mr-1 h-4 w-4 text-red-600" />
+                        <ArrowDown className="mr-1 h-4 w-4 text-red-600" />
                         <span className="text-red-600 font-medium">
                           {Math.abs(metrics.revenue.growthRate).toFixed(1)}%
                         </span>
@@ -160,14 +160,14 @@ export default async function AnalyticsPage() {
                   <dd className="mt-1 flex items-center text-sm">
                     {metrics.orders.growthRate >= 0 ? (
                       <>
-                        <ArrowUpIcon className="mr-1 h-4 w-4 text-green-600" />
+                        <ArrowUp className="mr-1 h-4 w-4 text-green-600" />
                         <span className="text-green-600 font-medium">
                           {metrics.orders.growthRate.toFixed(1)}%
                         </span>
                       </>
                     ) : (
                       <>
-                        <ArrowDownIcon className="mr-1 h-4 w-4 text-red-600" />
+                        <ArrowDown className="mr-1 h-4 w-4 text-red-600" />
                         <span className="text-red-600 font-medium">
                           {Math.abs(metrics.orders.growthRate).toFixed(1)}%
                         </span>
@@ -197,14 +197,14 @@ export default async function AnalyticsPage() {
                   <dd className="mt-1 flex items-center text-sm">
                     {metrics.users.growthRate >= 0 ? (
                       <>
-                        <ArrowUpIcon className="mr-1 h-4 w-4 text-green-600" />
+                        <ArrowUp className="mr-1 h-4 w-4 text-green-600" />
                         <span className="text-green-600 font-medium">
                           {metrics.users.growthRate.toFixed(1)}%
                         </span>
                       </>
                     ) : (
                       <>
-                        <ArrowDownIcon className="mr-1 h-4 w-4 text-red-600" />
+                        <ArrowDown className="mr-1 h-4 w-4 text-red-600" />
                         <span className="text-red-600 font-medium">
                           {Math.abs(metrics.users.growthRate).toFixed(1)}%
                         </span>
