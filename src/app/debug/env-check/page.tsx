@@ -123,7 +123,7 @@ export default function EnvCheckPage() {
   const getVarsByCategory = (category: string[]) => {
     return category.map(varName => ({
       name: varName,
-      status: data.variables[varName],
+      status: data.variables[varName] || { exists: false },
     }));
   };
 
@@ -351,10 +351,10 @@ function VariableCategory({ title, variables, critical }: VariableCategoryProps)
           <div
             key={variable.name}
             className={`flex items-center justify-between p-4 rounded-lg border-2 ${variable.status.exists
-                ? "bg-green-50 border-green-200"
-                : critical
-                  ? "bg-red-50 border-red-200"
-                  : "bg-gray-50 border-gray-200"
+              ? "bg-green-50 border-green-200"
+              : critical
+                ? "bg-red-50 border-red-200"
+                : "bg-gray-50 border-gray-200"
               }`}
           >
             <div className="flex items-center flex-1">
@@ -412,8 +412,8 @@ function VariableCategory({ title, variables, critical }: VariableCategoryProps)
               ) : (
                 <span
                   className={`px-3 py-1 text-xs font-semibold rounded-full ${critical
-                      ? "bg-red-200 text-red-800"
-                      : "bg-gray-200 text-gray-600"
+                    ? "bg-red-200 text-red-800"
+                    : "bg-gray-200 text-gray-600"
                     }`}
                 >
                   MISSING
