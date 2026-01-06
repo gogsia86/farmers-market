@@ -16,8 +16,8 @@
  * @reference .github/instructions/07_DATABASE_QUANTUM_MASTERY.instructions.md
  */
 
-import { BaseRepository, type RepositoryOptions } from "./base.repository";
 import type { Farm, Prisma } from "@prisma/client";
+import { BaseRepository, type RepositoryOptions } from "./base.repository";
 
 /**
  * Quantum Farm with all relations loaded
@@ -140,7 +140,7 @@ export class QuantumFarmRepository extends BaseRepository<
       const db = options.tx || this.db;
       const farm = await db.farm.findUnique({
         where: { slug },
-        ...this.getDefaultInclude(),
+        include: this.getDefaultInclude(),
       });
 
       if (farm) {
@@ -239,7 +239,7 @@ export class QuantumFarmRepository extends BaseRepository<
           latitude: { not: null },
           longitude: { not: null },
         },
-        ...this.getDefaultInclude(),
+        include: this.getDefaultInclude(),
       })) as QuantumFarm[];
 
       // Calculate distances and filter by radius
@@ -406,7 +406,7 @@ export class QuantumFarmRepository extends BaseRepository<
             },
           ],
         },
-        ...this.getDefaultInclude(),
+        include: this.getDefaultInclude(),
         ...this.filterOptions(options),
       })) as QuantumFarm[];
 
@@ -501,9 +501,9 @@ export class QuantumFarmRepository extends BaseRepository<
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(this.toRadians(lat1)) *
-        Math.cos(this.toRadians(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+      Math.cos(this.toRadians(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distance = R * c;
