@@ -4,7 +4,7 @@
   "private": true,
   "description": "Divine Agricultural E-Commerce Platform - Prisma 7",
   "engines": {
-    "node": "22.x",
+    "node": "24.x",
     "npm": ">=10.0.0"
   },
   "scripts": {
@@ -27,8 +27,8 @@
     "bundle:validate": "npm run bundle:check",
     "start": "cross-env NODE_OPTIONS='--max-old-space-size=8192' next start -p 3001",
     "start:omen": "cross-env NODE_OPTIONS='--max-old-space-size=16384' next start -p 3001",
-    "clean:cache": "rimraf .jest-cache coverage playwright-report",
-    "clean:all": "rimraf .jest-cache coverage playwright-report node_modules/.cache",
+    "clean:cache": "rm -rf .jest-cache coverage playwright-report",
+    "clean:all": "rm -rf .jest-cache coverage playwright-report node_modules/.cache",
     "godclean": "bash scripts/maintenance/godclean.sh",
     "godclean:preview": "bash scripts/maintenance/godclean.sh --dry-run",
     "quantum-surgeon": "ts-node scripts/maintenance/quantum-repository-surgeon.ts",
@@ -457,6 +457,13 @@
     "glob": "^10.3.10",
     "inflight": "npm:noop2@^2.0.0",
     "js-yaml": "^4.1.1",
-    "hono": "^4.10.6"
+    "hono": "^4.10.6",
+    "rimraf": "^6.0.1",
+    "npmlog": "npm:noop2@^2.0.0",
+    "gauge": "npm:noop2@^2.0.0",
+    "are-we-there-yet": "npm:noop2@^2.0.0",
+    "q": "npm:noop2@^2.0.0",
+    "whatwg-encoding": "npm:@exodus/bytes@^1.0.0",
+    "scmp": "npm:noop2@^2.0.0"
   }
 }
