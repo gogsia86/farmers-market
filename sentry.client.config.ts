@@ -19,7 +19,7 @@ Sentry.init({
   environment: process.env.NODE_ENV || "development",
 
   // Set agricultural context
-  beforeSend(event) {
+  beforeSend(event: any) {
     // Add agricultural platform tags
     event.tags = {
       ...event.tags,

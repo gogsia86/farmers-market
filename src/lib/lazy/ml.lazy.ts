@@ -434,7 +434,7 @@ export function preloadTensorFlow(): void {
  */
 export async function getTensorFlowVersion(): Promise<string> {
   const tf = await loadTensorFlow();
-  return tf.version.tfjs;
+  return tf.version.tfjs || tf.version['tfjs-core'] || 'unknown';
 }
 
 /**
