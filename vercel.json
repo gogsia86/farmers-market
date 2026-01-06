@@ -3,7 +3,7 @@
   "name": "farmers-market-platform",
   "buildCommand": "npm run vercel-build",
   "devCommand": "npm run dev",
-  "installCommand": "npm install",
+  "installCommand": "npm ci --legacy-peer-deps",
   "framework": "nextjs",
   "regions": [
     "iad1"
