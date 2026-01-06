@@ -216,8 +216,8 @@ const nextConfig = {
     },
   },
 
-  // Source maps (disabled for performance, we have good error tracking)
-  productionBrowserSourceMaps: false,
+  // Source maps (enabled for better error tracking and debugging)
+  productionBrowserSourceMaps: true,
 
   // ============================================
   // SWC CONFIGURATION
