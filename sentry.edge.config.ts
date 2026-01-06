@@ -17,9 +17,6 @@ Sentry.init({
   // Disable PII to prevent source map warnings
   sendDefaultPii: false,
 
-  // Disable source map features
-  enableTracing: false,
-
   // Minimal integrations
   integrations: [],
 

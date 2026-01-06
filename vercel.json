@@ -10,7 +10,12 @@
   ],
   "build": {
     "env": {
-      "NODE_VERSION": "20.x"
+      "NODE_VERSION": "20.x",
+      "NODE_OPTIONS": "--max-old-space-size=4096",
+      "TURBOPACK": "0",
+      "SENTRY_UPLOAD_DRY_RUN": "true",
+      "NEXT_DISABLE_SOURCEMAPS": "true",
+      "SKIP_ENV_VALIDATION": "true"
     }
   },
   "outputDirectory": ".next",

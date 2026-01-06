@@ -18,9 +18,6 @@ Sentry.init({
   // Environment
   environment: process.env.NODE_ENV || "development",
 
-  // Disable source map features
-  enableTracing: false,
-
   // Set agricultural context
   beforeSend(event: any) {
     // Add agricultural platform tags

@@ -4,7 +4,13 @@
  * @reference https://www.prisma.io/docs/orm/more/upgrade-guides/upgrading-to-prisma-7
  */
 
-import "dotenv/config";
+// Conditionally import dotenv only if available
+try {
+  require("dotenv/config");
+} catch (e) {
+  // dotenv not available, skip (environment variables already set)
+}
+
 import { defineConfig } from "prisma/config";
 
 // Helper to get DATABASE_URL with fallback for build-time
