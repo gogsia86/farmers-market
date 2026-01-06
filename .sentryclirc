@@ -1,0 +1,24 @@
+[auth]
+# Sentry authentication token (leave empty to disable uploads)
+token=
+
+[defaults]
+# Sentry organization and project
+org=medicis-gang
+project=farmers-market-prod
+
+# Disable source map uploads to prevent Vercel warnings
+[upload]
+enabled=false
+
+[log]
+# Disable verbose logging
+level=error
+
+[sourcemaps]
+# Disable automatic source map detection and upload
+enabled=false
+
+[releases]
+# Disable automatic release creation
+enabled=false

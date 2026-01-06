@@ -91,6 +91,11 @@ echo ""
 export NODE_ENV=production
 export NEXT_TELEMETRY_DISABLED=1
 
+# Disable source maps and Sentry uploads to prevent warnings
+export SENTRY_UPLOAD_DRY_RUN=true
+export NEXT_DISABLE_SOURCEMAPS=true
+export TURBOPACK=0
+
 # Increase Node memory for build
 export NODE_OPTIONS="--max-old-space-size=8192"
 
@@ -98,9 +103,11 @@ echo "   Build configuration:"
 echo "   - NODE_ENV: $NODE_ENV"
 echo "   - Memory limit: 8GB"
 echo "   - Telemetry: Disabled"
+echo "   - Source maps: Disabled"
+echo "   - Sentry uploads: Disabled"
 echo ""
 
-if TURBOPACK=0 next build; then
+if next build; then
     echo ""
     echo "   ✅ Next.js build completed successfully"
     echo ""

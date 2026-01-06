@@ -9,14 +9,17 @@ Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
 
   // Adjust this value in production
-  tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
+  tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 0,
 
-  // Session Replay
-  replaysSessionSampleRate: 0.1, // 10% of sessions
-  replaysOnErrorSampleRate: 1.0, // 100% of sessions with errors
+  // Session Replay - disabled to prevent source map warnings
+  replaysSessionSampleRate: 0,
+  replaysOnErrorSampleRate: 0,
 
   // Environment
   environment: process.env.NODE_ENV || "development",
+
+  // Disable source map features
+  enableTracing: false,
 
   // Set agricultural context
   beforeSend(event: any) {
@@ -55,15 +58,8 @@ Sentry.init({
     "Text content does not match",
   ],
 
-  // Browser integrations
-  integrations: [
-    Sentry.browserTracingIntegration(),
-    Sentry.replayIntegration({
-      maskAllText: true,
-      blockAllMedia: true,
-      maskAllInputs: true,
-    }),
-  ],
+  // Browser integrations - minimal to prevent source map warnings
+  integrations: [],
 
   // Trace propagation targets
   tracePropagationTargets: [
@@ -71,6 +67,6 @@ Sentry.init({
     /^https:\/\/[^/]*\.farmersmarket\.com/,
   ],
 
-  // Debug mode in development
-  debug: process.env.NODE_ENV === "development",
+  // Debug mode disabled to prevent source map warnings
+  debug: false,
 });

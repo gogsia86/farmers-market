@@ -216,8 +216,9 @@ const nextConfig = {
     },
   },
 
-  // Source maps (enabled for better error tracking and debugging)
-  productionBrowserSourceMaps: true,
+  // Source maps disabled to prevent Vercel warnings
+  // Sentry will handle source map uploads separately
+  productionBrowserSourceMaps: false,
 
   // ============================================
   // SWC CONFIGURATION
@@ -246,15 +247,16 @@ export default withSentryConfig(withBundleAnalyzer(nextConfig), {
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
 
-  // Disable source map uploads if auth token is not provided
-  disableServerWebpackPlugin: !process.env.SENTRY_AUTH_TOKEN,
-  disableClientWebpackPlugin: !process.env.SENTRY_AUTH_TOKEN,
+  // Completely disable source map uploads to prevent warnings
+  // Enable only when SENTRY_AUTH_TOKEN is properly configured
+  disableServerWebpackPlugin: true,
+  disableClientWebpackPlugin: true,
 
   // For all available options, see:
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
 
-  // Upload a larger set of source maps for prettier stack traces (increases build time)
-  widenClientFileUpload: true,
+  // Disable source map upload features
+  widenClientFileUpload: false,
 
   // Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
   // This can increase your server load as well as your hosting bill.
@@ -265,17 +267,9 @@ export default withSentryConfig(withBundleAnalyzer(nextConfig), {
   // Hide source maps from generated client bundles
   hideSourceMaps: true,
 
+  // Webpack-specific Sentry configuration
   webpack: {
-    // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
-    // See the following for more information:
-    // https://docs.sentry.io/product/crons/
-    // https://vercel.com/docs/cron-jobs
-    automaticVercelMonitors: true,
-
-    // Tree-shaking options for reducing bundle size
-    treeshake: {
-      // Automatically tree-shake Sentry logger statements to reduce bundle size
-      removeDebugLogging: true,
-    },
+    // Disable automatic instrumentation to reduce build warnings
+    automaticVercelMonitors: false,
   },
 });

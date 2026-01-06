@@ -6,15 +6,26 @@
 import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
-  dsn: "https://cb6973c12326b4188ab6988c527abbf9@o4510579639123968.ingest.de.sentry.io/4510579666845776",
+  dsn: process.env.SENTRY_DSN,
 
-  // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-  tracesSampleRate: 1,
+  // Disable tracing to prevent source map warnings
+  tracesSampleRate: 0,
 
-  // Enable logs to be sent to Sentry
-  enableLogs: true,
+  // Disable logs to prevent source map warnings
+  enableLogs: false,
 
-  // Enable sending user PII (Personally Identifiable Information)
-  // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
-  sendDefaultPii: true,
+  // Disable PII to prevent source map warnings
+  sendDefaultPii: false,
+
+  // Disable source map features
+  enableTracing: false,
+
+  // Minimal integrations
+  integrations: [],
+
+  // Debug mode disabled
+  debug: false,
+
+  // Environment
+  environment: process.env.NODE_ENV || "production",
 });
