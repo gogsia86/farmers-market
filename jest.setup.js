@@ -117,10 +117,13 @@ const matchMediaMock = jest.fn().mockImplementation(query => {
   };
 });
 
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: matchMediaMock,
-});
+// Support both node and jsdom environments
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: matchMediaMock,
+  });
+}
 
 Object.defineProperty(global, 'matchMedia', {
   writable: true,
@@ -128,6 +131,18 @@ Object.defineProperty(global, 'matchMedia', {
 });
 
 // Mock IntersectionObserver for lazy loading components
+if (typeof window !== 'undefined') {
+  window.IntersectionObserver = class IntersectionObserver {
+    constructor() { }
+    disconnect() { }
+    observe() { }
+    takeRecords() {
+      return [];
+    }
+    unobserve() { }
+  };
+}
+
 global.IntersectionObserver = class IntersectionObserver {
   constructor() { }
   disconnect() { }
@@ -139,6 +154,15 @@ global.IntersectionObserver = class IntersectionObserver {
 };
 
 // Mock ResizeObserver for responsive components
+if (typeof window !== 'undefined') {
+  window.ResizeObserver = class ResizeObserver {
+    constructor() { }
+    disconnect() { }
+    observe() { }
+    unobserve() { }
+  };
+}
+
 global.ResizeObserver = class ResizeObserver {
   constructor() { }
   disconnect() { }
@@ -170,12 +194,25 @@ const localStorageMock = (() => {
   };
 })();
 
-Object.defineProperty(window, 'localStorage', {
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'localStorage', {
+    value: localStorageMock,
+  });
+
+  Object.defineProperty(window, 'sessionStorage', {
+    value: localStorageMock,
+  });
+}
+
+// Also set on global for node environment
+Object.defineProperty(global, 'localStorage', {
   value: localStorageMock,
+  writable: true,
 });
 
-Object.defineProperty(window, 'sessionStorage', {
+Object.defineProperty(global, 'sessionStorage', {
   value: localStorageMock,
+  writable: true,
 });
 
 // Mock NextResponse for Next.js API route testing
@@ -911,7 +948,7 @@ global.mockRedisCache = mockRedisCache;
 beforeEach(() => {
   // Restore matchMedia mock implementation
   // This is needed because resetMocks: true in jest.config.js clears it
-  if (jest.isMockFunction(window.matchMedia)) {
+  if (typeof window !== 'undefined' && jest.isMockFunction(window.matchMedia)) {
     window.matchMedia.mockImplementation((query) => {
       const listeners = [];
       return {

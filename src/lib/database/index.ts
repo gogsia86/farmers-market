@@ -94,16 +94,53 @@ const createPrismaClient = (): PrismaClient => {
 
   // Error logging
   client.$on("error" as never, (e: any) => {
-    logger.error("🚨 Prisma error:", {
-      error: e instanceof Error ? e.message : String(e),
-    });
+    // Properly serialize Prisma errors
+    const errorDetails: Record<string, any> = {};
+
+    if (e instanceof Error) {
+      errorDetails.message = e.message;
+      errorDetails.name = e.name;
+      errorDetails.stack = e.stack;
+    } else if (typeof e === 'object' && e !== null) {
+      // Extract all properties from the error object
+      Object.keys(e).forEach(key => {
+        try {
+          errorDetails[key] = typeof e[key] === 'object'
+            ? JSON.stringify(e[key])
+            : e[key];
+        } catch {
+          errorDetails[key] = String(e[key]);
+        }
+      });
+    } else {
+      errorDetails.error = String(e);
+    }
+
+    logger.error("🚨 Prisma error:", errorDetails);
   });
 
   // Warning logging
   client.$on("warn" as never, (e: any) => {
-    logger.warn("⚠️ Prisma warning:", {
-      error: e instanceof Error ? e.message : String(e),
-    });
+    const warningDetails: Record<string, any> = {};
+
+    if (e instanceof Error) {
+      warningDetails.message = e.message;
+      warningDetails.name = e.name;
+    } else if (typeof e === 'object' && e !== null) {
+      Object.keys(e).forEach(key => {
+        try {
+          warningDetails[key] = typeof e[key] === 'object'
+            ? JSON.stringify(e[key])
+            : e[key];
+        } catch {
+          warningDetails[key] = String(e[key]);
+        }
+      });
+    } else {
+      warningDetails.warning = String(e);
+    }
+
+    logger.warn("⚠️ Prisma warning:", warningDetails);
   });
 
   // Info logging (development only)

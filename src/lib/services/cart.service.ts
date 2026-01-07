@@ -304,79 +304,134 @@ export class QuantumCartService {
    * 📦 Get cart items for user
    */
   async getCartItems(userId: string): Promise<CartItemWithProduct[]> {
-    const items = await database.cartItem.findMany({
-      where: { userId },
-      include: {
-        product: {
-          include: {
-            farm: {
-              select: {
-                id: true,
-                name: true,
-                slug: true,
+    try {
+      // Validate userId
+      if (!userId) {
+        logger.warn('getCartItems called with empty userId');
+        return [];
+      }
+
+      const items = await database.cartItem.findMany({
+        where: { userId },
+        include: {
+          product: {
+            include: {
+              farm: {
+                select: {
+                  id: true,
+                  name: true,
+                  slug: true,
+                },
               },
             },
           },
         },
-      },
-      orderBy: { createdAt: "desc" },
-    });
+        orderBy: { createdAt: "desc" },
+      });
 
-    return items as CartItemWithProduct[];
+      return items as CartItemWithProduct[];
+    } catch (error) {
+      logger.error('Get cart items error', {
+        error: error instanceof Error ? error.message : String(error),
+        userId,
+        stack: error instanceof Error ? error.stack : undefined,
+      });
+      // Return empty array instead of throwing to prevent UI crashes
+      return [];
+    }
   }
 
   /**
    * 📊 Get cart summary with calculations
    */
   async getCartSummary(userId: string): Promise<CartSummary> {
-    const items = await this.getCartItems(userId);
+    try {
+      // Validate userId
+      if (!userId) {
+        logger.warn('getCartSummary called with empty userId');
+        return this.getEmptyCartSummary();
+      }
 
-    if (items.length === 0) {
+      const items = await this.getCartItems(userId);
+
+      if (items.length === 0) {
+        return this.getEmptyCartSummary();
+      }
+
+      // Calculate subtotal with error handling
+      const subtotal = items.reduce((sum, item) => {
+        try {
+          const itemTotal = item.quantity.toNumber() * item.priceAtAdd.toNumber();
+          return sum + itemTotal;
+        } catch (error) {
+          logger.warn('Error calculating item total', {
+            itemId: item.id,
+            error: error instanceof Error ? error.message : String(error),
+          });
+          return sum;
+        }
+      }, 0);
+
+      // Calculate delivery fee
+      const deliveryFee =
+        subtotal >= this.FREE_DELIVERY_THRESHOLD ? 0 : this.DELIVERY_FEE_BASE;
+
+      // Calculate tax
+      const tax = subtotal * this.TAX_RATE;
+
+      // Calculate total
+      const total = subtotal + tax + deliveryFee;
+
+      // Calculate item count (total quantity of all items)
+      const itemCount = items.reduce((sum, item) => {
+        try {
+          return sum + item.quantity.toNumber();
+        } catch (error) {
+          logger.warn('Error calculating item quantity', {
+            itemId: item.id,
+            error: error instanceof Error ? error.message : String(error),
+          });
+          return sum;
+        }
+      }, 0);
+
+      // Group items by farm
+      const farmGroups = this.groupItemsByFarm(items);
+
       return {
-        items: [],
-        itemCount: 0,
-        uniqueProductCount: 0,
-        subtotal: 0,
-        tax: 0,
-        deliveryFee: 0,
-        total: 0,
-        farmGroups: [],
+        items,
+        itemCount: Math.round(itemCount),
+        uniqueProductCount: items.length,
+        subtotal: Math.round(subtotal * 100) / 100,
+        tax: Math.round(tax * 100) / 100,
+        deliveryFee: Math.round(deliveryFee * 100) / 100,
+        total: Math.round(total * 100) / 100,
+        farmGroups,
       };
+    } catch (error) {
+      logger.error('Get cart summary error', {
+        error: error instanceof Error ? error.message : String(error),
+        userId,
+        stack: error instanceof Error ? error.stack : undefined,
+      });
+      // Return empty cart summary instead of throwing
+      return this.getEmptyCartSummary();
     }
+  }
 
-    // Calculate subtotal
-    const subtotal = items.reduce((sum, item) => {
-      const itemTotal = item.quantity.toNumber() * item.priceAtAdd.toNumber();
-      return sum + itemTotal;
-    }, 0);
-
-    // Calculate delivery fee
-    const deliveryFee =
-      subtotal >= this.FREE_DELIVERY_THRESHOLD ? 0 : this.DELIVERY_FEE_BASE;
-
-    // Calculate tax
-    const tax = subtotal * this.TAX_RATE;
-
-    // Calculate total
-    const total = subtotal + tax + deliveryFee;
-
-    // Calculate item count (total quantity of all items)
-    const itemCount = items.reduce((sum, item) => {
-      return sum + item.quantity.toNumber();
-    }, 0);
-
-    // Group items by farm
-    const farmGroups = this.groupItemsByFarm(items);
-
+  /**
+   * 🔄 Get empty cart summary (helper method)
+   */
+  private getEmptyCartSummary(): CartSummary {
     return {
-      items,
-      itemCount: Math.round(itemCount),
-      uniqueProductCount: items.length,
-      subtotal: Math.round(subtotal * 100) / 100,
-      tax: Math.round(tax * 100) / 100,
-      deliveryFee: Math.round(deliveryFee * 100) / 100,
-      total: Math.round(total * 100) / 100,
-      farmGroups,
+      items: [],
+      itemCount: 0,
+      uniqueProductCount: 0,
+      subtotal: 0,
+      tax: 0,
+      deliveryFee: 0,
+      total: 0,
+      farmGroups: [],
     };
   }
 
@@ -425,16 +480,42 @@ export class QuantumCartService {
    * 🔢 Get cart item count
    */
   async getCartCount(userId: string): Promise<number> {
-    const items = await database.cartItem.findMany({
-      where: { userId },
-      select: { quantity: true },
-    });
+    try {
+      // Validate userId
+      if (!userId) {
+        logger.warn('getCartCount called with empty userId');
+        return 0;
+      }
 
-    const totalQuantity = items.reduce((sum, item) => {
-      return sum + item.quantity.toNumber();
-    }, 0);
+      const items = await database.cartItem.findMany({
+        where: { userId },
+        select: { quantity: true },
+      });
 
-    return Math.round(totalQuantity);
+      // Handle empty cart
+      if (!items || items.length === 0) {
+        return 0;
+      }
+
+      const totalQuantity = items.reduce((sum, item) => {
+        // Handle null/undefined quantity gracefully
+        if (!item.quantity) {
+          logger.warn('Cart item with null quantity found', { userId });
+          return sum;
+        }
+        return sum + item.quantity.toNumber();
+      }, 0);
+
+      return Math.round(totalQuantity);
+    } catch (error) {
+      logger.error('Get cart count error', {
+        error: error instanceof Error ? error.message : String(error),
+        userId,
+        stack: error instanceof Error ? error.stack : undefined,
+      });
+      // Return 0 instead of throwing to prevent UI crashes
+      return 0;
+    }
   }
 
   // ==========================================================================
@@ -586,8 +667,8 @@ export class QuantumCartService {
       } catch (error) {
         // Log error but continue with other items
         logger.error(`Failed to merge cart item ${item.productId}:`, {
-      error: error instanceof Error ? error.message : String(error),
-    });
+          error: error instanceof Error ? error.message : String(error),
+        });
       }
     }
   }

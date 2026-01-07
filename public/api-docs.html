@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmers Market Platform - API Documentation</title>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+            color: white;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .header p {
+            margin: 0.5rem 0 0 0;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            margin-top: 1rem;
+            margin-right: 0.5rem;
+        }
+
+        .quick-links {
+            background: #f8fafc;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .quick-links h2 {
+            margin: 0 0 1rem 0;
+            font-size: 1.25rem;
+            color: #1e293b;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .link-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #e2e8f0;
+            text-decoration: none;
+            color: #1e293b;
+            transition: all 0.2s;
+        }
+
+        .link-card:hover {
+            border-color: #16a34a;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .link-card h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+            color: #16a34a;
+        }
+
+        .link-card p {
+            margin: 0;
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        .swagger-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        #swagger-ui .topbar {
+            display: none;
+        }
+
+        .info-banner {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem 2rem;
+            margin: 1rem 0;
+        }
+
+        .info-banner h3 {
+            margin: 0 0 0.5rem 0;
+            color: #92400e;
+            font-size: 1rem;
+        }
+
+        .info-banner p {
+            margin: 0;
+            color: #78350f;
+            font-size: 0.875rem;
+        }
+
+        .footer {
+            background: #1e293b;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .footer a {
+            color: #16a34a;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Loading spinner */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 300px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #16a34a;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>🌾 Farmers Market Platform API</h1>
+        <p>Enterprise-grade RESTful API for agricultural marketplace</p>
+        <div>
+            <span class="badge">Version 1.0.0</span>
+            <span</div> class="badge">OpenAPI 3.0</span>
+            <span class="badge">RESTful</span>
+            <span class="badge">Production Ready</span>
+        </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="quick-links">
+        <h2>📚 Quick Links</h2>
+        <div class="links-grid">
+            <a href="#/Health" class="link-card">
+                <h3>🏥 Health Check</h3>
+                <p>System health and status endpoints</p>
+            </a>
+            <a href="#/Farms" class="link-card">
+                <h3>🏪 Farms API</h3>
+                <p>Farm management and discovery</p>
+            </a>
+            <a href="#/Products" class="link-card">
+                <h3>📦 Products API</h3>
+                <p>Product catalog and inventory</p>
+            </a>
+            <a href="#/Cart" class="link-card">
+                <h3>🛒 Cart API</h3>
+                <p>Shopping cart operations</p>
+            </a>
+            <a href="#/Orders" class="link-card">
+                <h3>📋 Orders API</h3>
+                <p>Order management and tracking</p>
+            </a>
+            <a href="#/Search" class="link-card">
+                <h3>🔍 Search API</h3>
+                <p>Global search functionality</p>
+            </a>
+            <a href="#/Admin" class="link-card">
+                <h3>⚙️ Admin API</h3>
+                <p>Administrative operations</p>
+            </a>
+            <a href="#/Analytics" class="link-card">
+                <h3>📊 Analytics API</h3>
+                <p>Platform analytics and metrics</p>
+            </a>
+        </div>
+    </div>
+
+    <!-- Info Banner -->
+    <div style="max-width: 1400px; margin: 0 auto;">
+        <div class="info-banner">
+            <h3>🔐 Authentication Required</h3>
+            <p>Most endpoints require authentication via NextAuth.js session cookies. Use the "Authorize" button below to authenticate.</p>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Swagger UI Container -->
+    <div class="swagger-container">
+        <div id="swagger-ui"></div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>
+            <strong>Farmers Market Platform API Documentation</strong><br>
+            Built with ❤️ for farmers and consumers<br>
+            <a href="https://github.com/your-repo" target="_blank">GitHub</a> |
+            <a href="/docs" target="_blank">Documentation</a> |
+            <a href="/support" target="_blank">Support</a>
+        </p>
+        <p style="margin-top: 1rem; font-size: 0.875rem; opacity: 0.7;">
+            © 2025 Farmers Market Platform. All rights reserved.
+        </p>
+    </div>
+
+    <!-- Swagger UI -->
+    <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-bundle.js"></script>
+    <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-standalone-preset.js"></script>
+    <script>
+        window.onload = function() {
+            // Hide loading spinner after a delay
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+            }, 1000);
+
+            // Determine the OpenAPI spec URL
+            const specUrl = window.location.hostname === 'localhost'
+                ? '/docs/api/swagger/openapi.yaml'
+                : '/docs/api/swagger/openapi.yaml';
+
+            // Initialize Swagger UI
+            const ui = SwaggerUIBundle({
+                url: specUrl,
+                dom_id: '#swagger-ui',
+                deepLinking: true,
+                presets: [
+                    SwaggerUIBundle.presets.apis,
+                    SwaggerUIStandalonePreset
+                ],
+                plugins: [
+                    SwaggerUIBundle.plugins.DownloadUrl
+                ],
+                layout: "BaseLayout",
+                defaultModelsExpandDepth: 1,
+                defaultModelExpandDepth: 3,
+                docExpansion: 'list',
+                filter: true,
+                showRequestHeaders: true,
+                showCommonExtensions: true,
+                tryItOutEnabled: true,
+                requestInterceptor: (request) => {
+                    // Add custom headers if needed
+                    request.headers['X-Requested-With'] = 'SwaggerUI';
+                    return request;
+                },
+                responseInterceptor: (response) => {
+                    // Log responses in development
+                    if (window.location.hostname === 'localhost') {
+                        console.log('API Response:', response);
+                    }
+                    return response;
+                },
+                onComplete: () => {
+                    console.log('Swagger UI loaded successfully');
+                },
+                onFailure: (error) => {
+                    console.error('Failed to load OpenAPI spec:', error);
+                    document.getElementById('swagger-ui').innerHTML = `
+                        <div style="padding: 2rem; text-align: center;">
+                            <h2 style="color: #dc2626;">Failed to Load API Documentation</h2>
+                            <p>Unable to load the OpenAPI specification file.</p>
+                            <p style="color: #64748b; font-size: 0.875rem;">
+                                Error: ${error.message || 'Unknown error'}
+                            </p>
+                            <button onclick="location.reload()" style="
+                                margin-top: 1rem;
+                                padding: 0.5rem 1.5rem;
+                                background: #16a34a;
+                                color: white;
+                                border: none;
+                                border-radius: 0.375rem;
+                                cursor: pointer;
+                                font-size: 1rem;
+                            ">
+                                Retry
+                            </button>
+                        </div>
+                    `;
+                }
+            });
+
+            window.ui = ui;
+
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                // Ctrl+K or Cmd+K to focus search
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    const searchInput = document.querySelector('.filter-container input');
+                    if (searchInput) {
+                        searchInput.focus();
+                    }
+                }
+            });
+
+            // Add custom styling after load
+            setTimeout(() => {
+                const style = document.createElement('style');
+                style.textContent = `
+                    .swagger-ui .info {
+                        margin: 2rem 0;
+                    }
+                    .swagger-ui .scheme-container {
+                        background: #f8fafc;
+                        padding: 1rem;
+                        border-radius: 0.5rem;
+                        margin: 1rem 0;
+                    }
+                    .swagger-ui .opblock-tag {
+                        border-bottom: 2px solid #16a34a;
+                        padding: 0.5rem 0;
+                    }
+                    .swagger-ui .opblock.opblock-get .opblock-summary-method {
+                        background: #16a34a;
+                    }
+                    .swagger-ui .opblock.opblock-post .opblock-summary-method {
+                        background: #2563eb;
+                    }
+                    .swagger-ui .opblock.opblock-put .opblock-summary-method {
+                        background: #f59e0b;
+                    }
+                    .swagger-ui .opblock.opblock-delete .opblock-summary-method {
+                        background: #dc2626;
+                    }
+                `;
+                document.head.appendChild(style);
+            }, 500);
+        };
+
+        // Add service worker for offline support (optional)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // Uncomment to enable offline support
+                // navigator.serviceWorker.register('/sw.js');
+            });
+        }
+    </script>
+</body>
+</html>

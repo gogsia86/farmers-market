@@ -154,16 +154,36 @@ export function useCart(options: UseCartOptions = {}) {
           error: null,
         });
       } else {
-        throw new Error(
-          summaryResponse.error?.message || countResponse.error?.message || "Failed to load cart"
-        );
+        // Log error but don't throw - fail gracefully
+        logger.error("Failed to load cart", {
+          summaryError: summaryResponse.error,
+          countError: countResponse.error,
+          userId,
+        });
+
+        // Set safe defaults instead of showing error
+        setState({
+          summary: null,
+          count: 0,
+          isLoading: false,
+          isValidating: false,
+          error: null, // Don't show error to user
+        });
       }
     } catch (error) {
-      setState((prev) => ({
-        ...prev,
+      // Log error but set safe defaults - don't show error to user
+      logger.error("Cart load exception", {
+        error: error instanceof Error ? error.message : String(error),
+        userId,
+      });
+
+      setState({
+        summary: null,
+        count: 0,
         isLoading: false,
-        error: error instanceof Error ? error.message : "Failed to load cart",
-      }));
+        isValidating: false,
+        error: null, // Don't show error to user, just show empty cart
+      });
     }
   }, [userId, mounted]);
 

@@ -2,7 +2,6 @@ import { LoginForm } from "@/components/features/auth/LoginForm";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
-import { logger } from '@/lib/monitoring/logger';
 
 export const metadata: Metadata = {
   title: "Login | Farmers Market Platform",
@@ -92,22 +91,11 @@ function LoginError() {
 }
 
 export default function LoginPage() {
-  try {
-    return (
-      <main className="min-h-screen bg-gradient-to-b from-green-50 to-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <Suspense fallback={<LoginFormSkeleton />}>
-          <LoginForm />
-        </Suspense>
-      </main>
-    );
-  } catch (error) {
-    logger.error("Login page error:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
-    return (
-      <main className="min-h-screen bg-gradient-to-b from-green-50 to-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <LoginError />
-      </main>
-    );
-  }
+  return (
+    <main className="min-h-screen bg-gradient-to-b from-green-50 to-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <Suspense fallback={<LoginFormSkeleton />}>
+        <LoginForm />
+      </Suspense>
+    </main>
+  );
 }

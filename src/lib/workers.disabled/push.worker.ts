@@ -136,8 +136,8 @@ async function processPushJob(job: Job<PushJobData>) {
 
       logger.error(`❌ Push notification failed to user ${job.data.userId} (Job: ${job.id}, Attempt: ${job.attemptsMade + 1
         }):`, {
-      error: error instanceof Error ? error.message : String(error)
-    });
+        error: error instanceof Error ? error.message : String(error)
+      });
 
       throw error;
     } finally {
@@ -221,13 +221,13 @@ export async function stopPushWorker() {
 if (process.env.NODE_ENV !== "test") {
   // Handle process termination
   process.on("SIGTERM", async () => {
-    logger.info("Received SIGTERM, { data: shutting down push notification worker..." });
+    logger.info("Received SIGTERM, shutting down push notification worker...");
     await stopPushWorker();
     process.exit(0);
   });
 
   process.on("SIGINT", async () => {
-    logger.info("Received SIGINT, { data: shutting down push notification worker..." });
+    logger.info("Received SIGINT, shutting down push notification worker...");
     await stopPushWorker();
     process.exit(0);
   });

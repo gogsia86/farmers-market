@@ -108,13 +108,18 @@ export abstract class BaseRepository<
     try {
       const db = options.tx || this.db;
       const defaultInclude = this.getDefaultInclude();
-      const entity = await (db as any)[this.model.name].create({
-        data,
-        ...(Object.keys(defaultInclude).length > 0
-          ? { include: defaultInclude }
-          : {}),
-        ...this.filterOptions(options),
-      });
+
+      // Build query options explicitly
+      const queryOptions: any = { data };
+
+      if (Object.keys(defaultInclude).length > 0) {
+        queryOptions.include = defaultInclude;
+      }
+
+      const filteredOptions = this.filterOptions(options);
+      Object.assign(queryOptions, filteredOptions);
+
+      const entity = await (db as any)[this.model.name].create(queryOptions);
 
       this.logOperation("create", {
         entityId: (entity as any).id,
@@ -149,13 +154,18 @@ export abstract class BaseRepository<
     try {
       const db = options.tx || this.db;
       const defaultInclude = this.getDefaultInclude();
-      const entity = await (db as any)[this.model.name].findUnique({
-        where: { id },
-        ...(Object.keys(defaultInclude).length > 0
-          ? { include: defaultInclude }
-          : {}),
-        ...this.filterOptions(options),
-      });
+
+      // Build query options explicitly
+      const queryOptions: any = { where: { id } };
+
+      if (Object.keys(defaultInclude).length > 0) {
+        queryOptions.include = defaultInclude;
+      }
+
+      const filteredOptions = this.filterOptions(options);
+      Object.assign(queryOptions, filteredOptions);
+
+      const entity = await (db as any)[this.model.name].findUnique(queryOptions);
 
       return entity as TEntity | null;
     } catch (error) {
@@ -213,13 +223,18 @@ export abstract class BaseRepository<
     try {
       const db = options.tx || this.db;
       const defaultInclude = this.getDefaultInclude();
-      const entities = await (db as any)[this.model.name].findMany({
-        where,
-        ...(Object.keys(defaultInclude).length > 0
-          ? { include: defaultInclude }
-          : {}),
-        ...this.filterOptions(options),
-      });
+
+      // Build query options explicitly
+      const queryOptions: any = { where };
+
+      if (Object.keys(defaultInclude).length > 0) {
+        queryOptions.include = defaultInclude;
+      }
+
+      const filteredOptions = this.filterOptions(options);
+      Object.assign(queryOptions, filteredOptions);
+
+      const entities = await (db as any)[this.model.name].findMany(queryOptions);
 
       this.logOperation("findMany", {
         count: entities.length,
@@ -255,14 +270,18 @@ export abstract class BaseRepository<
     try {
       const db = options.tx || this.db;
       const defaultInclude = this.getDefaultInclude();
-      const entity = await (db as any)[this.model.name].update({
-        where: { id },
-        data,
-        ...(Object.keys(defaultInclude).length > 0
-          ? { include: defaultInclude }
-          : {}),
-        ...this.filterOptions(options),
-      });
+
+      // Build query options explicitly
+      const queryOptions: any = { where: { id }, data };
+
+      if (Object.keys(defaultInclude).length > 0) {
+        queryOptions.include = defaultInclude;
+      }
+
+      const filteredOptions = this.filterOptions(options);
+      Object.assign(queryOptions, filteredOptions);
+
+      const entity = await (db as any)[this.model.name].update(queryOptions);
 
       this.logOperation("update", {
         entityId: id,
@@ -290,10 +309,8 @@ export abstract class BaseRepository<
   ): Promise<number> {
     try {
       const db = options.tx || this.db;
-      const result = await (db as any)[this.model.name].updateMany({
-        where,
-        data,
-      });
+      const queryOptions: any = { where, data };
+      const result = await (db as any)[this.model.name].updateMany(queryOptions);
 
       this.logOperation("updateMany", {
         count: result.count,
@@ -320,9 +337,8 @@ export abstract class BaseRepository<
   async delete(id: string, options: RepositoryOptions = {}): Promise<void> {
     try {
       const db = options.tx || this.db;
-      await (db as any)[this.model.name].delete({
-        where: { id },
-      });
+      const queryOptions: any = { where: { id } };
+      await (db as any)[this.model.name].delete(queryOptions);
 
       this.logOperation("delete", {
         entityId: id,
@@ -346,9 +362,8 @@ export abstract class BaseRepository<
   ): Promise<number> {
     try {
       const db = options.tx || this.db;
-      const result = await (db as any)[this.model.name].deleteMany({
-        where,
-      });
+      const queryOptions: any = { where };
+      const result = await (db as any)[this.model.name].deleteMany(queryOptions);
 
       this.logOperation("deleteMany", {
         count: result.count,
@@ -379,9 +394,8 @@ export abstract class BaseRepository<
   ): Promise<number> {
     try {
       const db = options.tx || this.db;
-      const count = await (db as any)[this.model.name].count({
-        where,
-      });
+      const queryOptions: any = { where };
+      const count = await (db as any)[this.model.name].count(queryOptions);
 
       return count;
     } catch (error) {

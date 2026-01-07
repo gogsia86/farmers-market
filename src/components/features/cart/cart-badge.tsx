@@ -45,6 +45,12 @@ export function CartBadge({
   const [miniCartOpen, setMiniCartOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [previousCount, setPreviousCount] = useState(0);
+  const [mounted, setMounted] = useState(false);
+
+  // Prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const {
     cart,
@@ -52,18 +58,18 @@ export function CartBadge({
     isLoading,
     removeFromCart,
     clearCart,
-  } = useCart({ userId });
+  } = useCart({ userId: mounted ? userId : undefined });
 
-  // Trigger animation when count changes
+  // Trigger animation when count changes (only when mounted)
   useEffect(() => {
-    if (count !== previousCount && count > 0) {
+    if (mounted && count !== previousCount && count > 0) {
       setIsAnimating(true);
       const timer = setTimeout(() => setIsAnimating(false), 300);
       setPreviousCount(count);
       return () => clearTimeout(timer);
     }
     return undefined;
-  }, [count, previousCount]);
+  }, [count, previousCount, mounted]);
 
   // Close mini-cart when clicking outside
   useEffect(() => {
@@ -85,6 +91,17 @@ export function CartBadge({
       setMiniCartOpen(!miniCartOpen);
     }
   };
+
+  // Don't render until mounted to prevent hydration issues
+  if (!mounted) {
+    return (
+      <div className="relative mini-cart-container">
+        <Button variant={variant} size={size} className={`relative ${className}`}>
+          <ShoppingCart className="h-5 w-5" />
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="relative mini-cart-container">

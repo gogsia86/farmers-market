@@ -7,11 +7,11 @@
  * @module lib/workers/email.worker
  */
 
-import { emailQueue, EmailJobData } from "@/lib/queue/email.queue";
-import { emailService } from "@/lib/services/email.service";
 import { database } from "@/lib/database";
+import { EmailJobData, emailQueue } from "@/lib/queue/email.queue";
+import { emailService } from "@/lib/services/email.service";
+import { SpanStatusCode, trace } from "@opentelemetry/api";
 import { EmailStatus } from "@prisma/client";
-import { trace, SpanStatusCode } from "@opentelemetry/api";
 
 import { logger } from '@/lib/monitoring/logger';
 
@@ -146,11 +146,10 @@ async function processEmailJob(job: Job<EmailJobData>) {
         "job.error": error instanceof Error ? error.message : "Unknown error",
       });
 
-      logger.error(`❌ Email failed to ${job.data.emailOptions.to} (Job: ${job.id}, Attempt: ${
-          job.attemptsMade + 1
+      logger.error(`❌ Email failed to ${job.data.emailOptions.to} (Job: ${job.id}, Attempt: ${job.attemptsMade + 1
         }):`, {
-      error: error instanceof Error ? error.message : String(error)
-    });
+        error: error instanceof Error ? error.message : String(error)
+      });
 
       throw error;
     } finally {
@@ -233,13 +232,13 @@ export async function stopEmailWorker() {
 if (process.env.NODE_ENV !== "test") {
   // Handle process termination
   process.on("SIGTERM", async () => {
-    logger.info("Received SIGTERM, { data: shutting down worker..." });
+    logger.info("Received SIGTERM, shutting down worker...");
     await stopEmailWorker();
     process.exit(0);
   });
 
   process.on("SIGINT", async () => {
-    logger.info("Received SIGINT, { data: shutting down worker..." });
+    logger.info("Received SIGINT, shutting down worker...");
     await stopEmailWorker();
     process.exit(0);
   });

@@ -132,8 +132,8 @@ async function processSMSJob(job: Job<SMSJobData>) {
 
       logger.error(`❌ SMS failed to ${maskPhoneNumber(job.data.phoneNumber)} (Job: ${job.id}, Attempt: ${job.attemptsMade + 1
         }):`, {
-      error: error instanceof Error ? error.message : String(error)
-    });
+        error: error instanceof Error ? error.message : String(error)
+      });
 
       throw error;
     } finally {
@@ -227,13 +227,13 @@ export async function stopSMSWorker() {
 if (process.env.NODE_ENV !== "test") {
   // Handle process termination
   process.on("SIGTERM", async () => {
-    logger.info("Received SIGTERM, { data: shutting down SMS worker..." });
+    logger.info("Received SIGTERM, shutting down SMS worker...");
     await stopSMSWorker();
     process.exit(0);
   });
 
   process.on("SIGINT", async () => {
-    logger.info("Received SIGINT, { data: shutting down SMS worker..." });
+    logger.info("Received SIGINT, shutting down SMS worker...");
     await stopSMSWorker();
     process.exit(0);
   });

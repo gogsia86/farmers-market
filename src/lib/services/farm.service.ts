@@ -450,7 +450,7 @@ export class BiodynamicFarmService {
       await this.verifyFarmOwnership(farmId, userId);
 
       // Generate new slug if name changed
-      let updateData: Prisma.FarmUpdateInput = { ...updates };
+      const updateData: Prisma.FarmUpdateInput = { ...updates };
 
       if (updates.name) {
         const slug = await this.generateUniqueSlug(updates.name, farmId);

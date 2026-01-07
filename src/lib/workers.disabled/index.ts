@@ -160,13 +160,13 @@ export function areWorkersHealthy(): boolean {
 if (process.env.NODE_ENV !== "test") {
   // Handle process termination
   process.on("SIGTERM", async () => {
-    logger.info("\n🛑 Received SIGTERM, { data: shutting down workers gracefully..." });
+    logger.info("\n🛑 Received SIGTERM, shutting down workers gracefully...");
     await stopAllWorkers();
     process.exit(0);
   });
 
   process.on("SIGINT", async () => {
-    logger.info("\n🛑 Received SIGINT, { data: shutting down workers gracefully..." });
+    logger.info("\n🛑 Received SIGINT, shutting down workers gracefully...");
     await stopAllWorkers();
     process.exit(0);
   });

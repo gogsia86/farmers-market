@@ -1,0 +1,1392 @@
+{
+  "info": {
+    "name": "Farmers Market Platform API",
+    "description": "Complete API collection for the Farmers Market Platform with authentication, farm management, products, orders, and payments.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3001/api",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "farm_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "product_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "order_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "cart_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health & Status",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "description": "Check API health status and database connectivity"
+          },
+          "response": []
+        },
+        {
+          "name": "API Version",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/version",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "version"
+              ]
+            },
+            "description": "Get API version information"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.data && response.data.id) {",
+                  "        pm.collectionVariables.set('user_id', response.data.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"farmer@example.com\",\n  \"password\": \"SecurePassword123!\",\n  \"name\": \"John Farmer\",\n  \"role\": \"FARMER\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Register a new user account"
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.data && response.data.token) {",
+                  "        pm.collectionVariables.set('auth_token', response.data.token);",
+                  "    }",
+                  "    if (response.data && response.data.user && response.data.user.id) {",
+                  "        pm.collectionVariables.set('user_id', response.data.user.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"farmer@example.com\",\n  \"password\": \"SecurePassword123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Login with email and password"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            },
+            "description": "Get current authenticated user information"
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.data && response.data.token) {",
+                  "        pm.collectionVariables.set('auth_token', response.data.token);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/refresh",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "refresh"
+              ]
+            },
+            "description": "Refresh authentication token"
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            },
+            "description": "Logout current user"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Farms",
+      "item": [
+        {
+          "name": "List All Farms",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/farms?page=1&limit=20&status=ACTIVE",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "farms"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "status",
+                  "value": "ACTIVE"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "state",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "certifications",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Get a paginated list of all farms"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Farm",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.data && response.data.id) {",
+                  "        pm.collectionVariables.set('farm_id', response.data.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Green Valley Organic Farm\",\n  \"description\": \"A family-owned organic farm specializing in seasonal vegetables and fruits. We practice sustainable farming methods and are committed to providing the freshest produce to our community.\",\n  \"location\": {\n    \"address\": \"123 Farm Road\",\n    \"city\": \"Farmville\",\n    \"state\": \"CA\",\n    \"zipCode\": \"12345\",\n    \"coordinates\": {\n      \"lat\": 40.7128,\n      \"lng\": -74.0060\n    }\n  },\n  \"certifications\": [\"ORGANIC\", \"NON_GMO\"],\n  \"farmSize\": 50,\n  \"establishedYear\": 2010,\n  \"contactEmail\": \"contact@greenvalley.com\",\n  \"contactPhone\": \"+1234567890\",\n  \"website\": \"https://greenvalley.com\",\n  \"farmingPractices\": [\"ORGANIC\", \"PERMACULTURE\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/farms",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "farms"
+              ]
+            },
+            "description": "Create a new farm (requires FARMER role)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Farm by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/farms/{{farm_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "farms",
+                "{{farm_id}}"
+              ]
+            },
+            "description": "Get detailed information about a specific farm"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Farm",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Updated description with more details about our farming practices and commitment to sustainability.\",\n  \"contactPhone\": \"+1234567891\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/farms/{{farm_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "farms",
+                "{{farm_id}}"
+              ]
+            },
+            "description": "Update farm information (requires ownership)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Farm",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/farms/{{farm_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "farms",
+                "{{farm_id}}"
+              ]
+            },
+            "description": "Delete a farm (requires ownership or admin role)"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Farms",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/farms/search?q=organic&state=CA&certifications=ORGANIC&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "farms",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "organic"
+                },
+                {
+                  "key": "state",
+                  "value": "CA"
+                },
+                {
+                  "key": "certifications",
+                  "value": "ORGANIC"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Search farms with filters"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "List All Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products?page=1&limit=20&inStock=true",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "inStock",
+                  "value": "true"
+                },
+                {
+                  "key": "category",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "farmId",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Get a paginated list of all products"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.data && response.data.id) {",
+                  "        pm.collectionVariables.set('product_id', response.data.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farmId\": \"{{farm_id}}\",\n  \"name\": \"Organic Heirloom Tomatoes\",\n  \"description\": \"Fresh, vine-ripened heirloom tomatoes grown without pesticides. Perfect for salads and cooking.\",\n  \"category\": \"VEGETABLES\",\n  \"price\": 4.99,\n  \"unit\": \"lb\",\n  \"inventory\": 100,\n  \"images\": [\n    \"https://example.com/images/tomatoes-1.jpg\",\n    \"https://example.com/images/tomatoes-2.jpg\"\n  ],\n  \"isOrganic\": true,\n  \"harvestDate\": \"2025-01-15\",\n  \"availableUntil\": \"2025-02-15\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/products",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products"
+              ]
+            },
+            "description": "Create a new product (requires farm ownership)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Product by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/{{product_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "{{product_id}}"
+              ]
+            },
+            "description": "Get detailed information about a specific product"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Product",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 5.49,\n  \"inventory\": 75,\n  \"description\": \"Fresh, vine-ripened heirloom tomatoes grown without pesticides. Currently in peak season!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/products/{{product_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "{{product_id}}"
+              ]
+            },
+            "description": "Update product information (requires ownership)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Product",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/{{product_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "{{product_id}}"
+              ]
+            },
+            "description": "Delete a product (requires ownership)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Products by Farm",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/farms/{{farm_id}}/products?page=1&limit=20",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "farms",
+                "{{farm_id}}",
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Get all products for a specific farm"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Shopping Cart",
+      "item": [
+        {
+          "name": "Get Cart",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/cart",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cart"
+              ]
+            },
+            "description": "Get current user's shopping cart"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Item to Cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": \"{{product_id}}\",\n  \"quantity\": 2\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/cart/items",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cart",
+                "items"
+              ]
+            },
+            "description": "Add a product to the shopping cart"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Cart Item",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/cart/items/{{product_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cart",
+                "items",
+                "{{product_id}}"
+              ]
+            },
+            "description": "Update quantity of a cart item"
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Item from Cart",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/cart/items/{{product_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cart",
+                "items",
+                "{{product_id}}"
+              ]
+            },
+            "description": "Remove a product from the cart"
+          },
+          "response": []
+        },
+        {
+          "name": "Clear Cart",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/cart",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cart"
+              ]
+            },
+            "description": "Clear all items from the cart"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "List My Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/orders?page=1&limit=10&status=PENDING",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "status",
+                  "value": "PENDING",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Get current user's orders"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Order from Cart",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.data && response.data.id) {",
+                  "        pm.collectionVariables.set('order_id', response.data.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"shippingAddress\": {\n    \"street\": \"456 Customer Lane\",\n    \"city\": \"Springfield\",\n    \"state\": \"CA\",\n    \"zipCode\": \"54321\",\n    \"country\": \"USA\"\n  },\n  \"billingAddress\": {\n    \"street\": \"456 Customer Lane\",\n    \"city\": \"Springfield\",\n    \"state\": \"CA\",\n    \"zipCode\": \"54321\",\n    \"country\": \"USA\"\n  },\n  \"paymentMethod\": \"STRIPE\",\n  \"notes\": \"Please deliver before 5 PM\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "description": "Create an order from current cart items"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Order by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/orders/{{order_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "orders",
+                "{{order_id}}"
+              ]
+            },
+            "description": "Get detailed information about a specific order"
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Changed my mind\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/orders/{{order_id}}/cancel",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "orders",
+                "{{order_id}}",
+                "cancel"
+              ]
+            },
+            "description": "Cancel an order (only if status allows)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Order Status (Farmer)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"PREPARING\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/orders/{{order_id}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "orders",
+                "{{order_id}}",
+                "status"
+              ]
+            },
+            "description": "Update order status (requires farm ownership)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Create Payment Intent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"{{order_id}}\",\n  \"amount\": 2500,\n  \"currency\": \"usd\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/payments/intent",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "payments",
+                "intent"
+              ]
+            },
+            "description": "Create a Stripe payment intent for an order"
+          },
+          "response": []
+        },
+        {
+          "name": "Confirm Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"{{order_id}}\",\n  \"paymentIntentId\": \"pi_test_123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/payments/confirm",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "payments",
+                "confirm"
+              ]
+            },
+            "description": "Confirm a payment was successful"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Payment Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/payments/{{order_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "payments",
+                "{{order_id}}"
+              ]
+            },
+            "description": "Get payment status for an order"
+          },
+          "response": []
+        },
+        {
+          "name": "Refund Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"{{order_id}}\",\n  \"amount\": 2500,\n  \"reason\": \"Customer requested refund\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/payments/refund",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "payments",
+                "refund"
+              ]
+            },
+            "description": "Issue a refund for an order (admin or farm owner)"
+          },
+          "response": []
+        },
+        {
+          "name": "Stripe Webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "stripe-signature",
+                "value": "test_signature"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"payment_intent.succeeded\",\n  \"data\": {\n    \"object\": {\n      \"id\": \"pi_test_123\",\n      \"status\": \"succeeded\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/webhooks/stripe",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "webhooks",
+                "stripe"
+              ]
+            },
+            "description": "Handle Stripe webhook events"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "Create Product Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": \"{{product_id}}\",\n  \"rating\": 5,\n  \"title\": \"Excellent quality!\",\n  \"comment\": \"These tomatoes are the best I've ever had. Fresh, flavorful, and perfect ripeness.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/reviews",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reviews"
+              ]
+            },
+            "description": "Create a review for a product"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Product Reviews",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/{{product_id}}/reviews?page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "{{product_id}}",
+                "reviews"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Get all reviews for a product"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Review",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4,\n  \"comment\": \"Updated: Still great, but delivery was a bit delayed.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/reviews/:reviewId",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reviews",
+                ":reviewId"
+              ]
+            },
+            "description": "Update a review (requires ownership)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Review",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/reviews/:reviewId",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reviews",
+                ":reviewId"
+              ]
+            },
+            "description": "Delete a review (requires ownership or admin)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Favorites",
+      "item": [
+        {
+          "name": "Get My Favorites",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/favorites",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "favorites"
+              ]
+            },
+            "description": "Get current user's favorite farms and products"
+          },
+          "response": []
+        },
+        {
+          "name": "Add to Favorites",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"PRODUCT\",\n  \"itemId\": \"{{product_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/favorites",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "favorites"
+              ]
+            },
+            "description": "Add a farm or product to favorites"
+          },
+          "response": []
+        },
+        {
+          "name": "Remove from Favorites",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/favorites/:favoriteId",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "favorites",
+                ":favoriteId"
+              ]
+            },
+            "description": "Remove an item from favorites"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Search",
+      "item": [
+        {
+          "name": "Global Search",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/search?q=organic&type=ALL&limit=20",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "organic"
+                },
+                {
+                  "key": "type",
+                  "value": "ALL",
+                  "description": "ALL, FARMS, PRODUCTS"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Search across farms and products"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/users?page=1&limit=50&role=FARMER",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                },
+                {
+                  "key": "role",
+                  "value": "FARMER",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Get all users (admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Approve Farm",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/farms/{{farm_id}}/approve",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "farms",
+                "{{farm_id}}",
+                "approve"
+              ]
+            },
+            "description": "Approve a pending farm (admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Suspend User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Terms of service violation\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/users/:userId/suspend",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "users",
+                ":userId",
+                "suspend"
+              ]
+            },
+            "description": "Suspend a user account (admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Platform Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "stats"
+              ]
+            },
+            "description": "Get platform-wide statistics (admin only)"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
