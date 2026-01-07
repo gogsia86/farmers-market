@@ -24,35 +24,35 @@
 import { multiLayerCache } from '@/lib/cache/multi-layer.cache';
 import { farmRepository } from '@/lib/repositories/farm.repository';
 import { farmService } from '@/lib/services/farm.service';
+import { beforeEach, describe, expect, it } from '@jest/globals';
 import type { Farm, FarmStatus, Prisma } from '@prisma/client';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // ============================================================================
 // MOCKS
 // ============================================================================
 
 // Mock the repository
-vi.mock('@/lib/repositories/farm.repository', () => ({
+jest.mock('@/lib/repositories/farm.repository', () => ({
   farmRepository: {
-    create: vi.fn(),
-    findById: vi.fn(),
-    findBySlug: vi.fn(),
-    findByOwner: vi.fn(),
-    findMany: vi.fn(),
-    update: vi.fn(),
-    delete: vi.fn(),
-    withTransaction: vi.fn(),
+    create: jest.fn(),
+    findById: jest.fn(),
+    findBySlug: jest.fn(),
+    findByOwner: jest.fn(),
+    findMany: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+    withTransaction: jest.fn(),
   },
 }));
 
 // Mock the cache
-vi.mock('@/lib/cache/multi-layer.cache', () => ({
+jest.mock('@/lib/cache/multi-layer.cache', () => ({
   multiLayerCache: {
-    get: vi.fn(),
-    set: vi.fn(),
-    delete: vi.fn(),
-    invalidatePattern: vi.fn(),
-    getOrSet: vi.fn(),
+    get: jest.fn(),
+    set: jest.fn(),
+    delete: jest.fn(),
+    invalidatePattern: jest.fn(),
+    getOrSet: jest.fn(),
   },
   CacheKeys: {
     farm: (id: string) => `farm:${id}`,
@@ -68,19 +68,19 @@ vi.mock('@/lib/cache/multi-layer.cache', () => ({
 }));
 
 // Mock the logger
-vi.mock('@/lib/monitoring/logger', () => ({
-  createLogger: vi.fn(() => ({
-    info: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-    debug: vi.fn(),
-    generateRequestId: vi.fn(() => 'test-request-id-123'),
+jest.mock('@/lib/monitoring/logger', () => ({
+  createLogger: jest.fn(() => ({
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    debug: jest.fn(),
+    generateRequestId: jest.fn(() => 'test-request-id-123'),
   })),
   logger: {
-    info: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-    debug: vi.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    debug: jest.fn(),
   },
 }));
 
@@ -165,7 +165,7 @@ function createMockFarmRequest(overrides = {}) {
 describe('FarmService', () => {
   // Reset mocks before each test
   beforeEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
   });
 
   // ==========================================================================
@@ -182,8 +182,8 @@ describe('FarmService', () => {
         email: farmRequest.email,
       });
 
-      vi.mocked(farmRepository.create).mockResolvedValue(expectedFarm);
-      vi.mocked(multiLayerCache.invalidatePattern).mockResolvedValue(undefined);
+      jest.mocked(farmRepository.create).mockResolvedValue(expectedFarm);
+      jest.mocked(multiLayerCache.invalidatePattern).mockResolvedValue(undefined);
 
       // Act
       const result = await farmService.createFarm(farmRequest);
@@ -208,7 +208,7 @@ describe('FarmService', () => {
       const farmRequest = createMockFarmRequest({ name: 'Amazing Farm & Co!' });
       const expectedFarm = createMockFarm();
 
-      vi.mocked(farmRepository.create).mockResolvedValue(expectedFarm);
+      jest.mocked(farmRepository.create).mockResolvedValue(expectedFarm);
 
       // Act
       await farmService.createFarm(farmRequest);
@@ -226,7 +226,7 @@ describe('FarmService', () => {
       const farmRequest = createMockFarmRequest();
       const expectedFarm = createMockFarm({ status: 'PENDING_VERIFICATION' as FarmStatus });
 
-      vi.mocked(farmRepository.create).mockResolvedValue(expectedFarm);
+      jest.mocked(farmRepository.create).mockResolvedValue(expectedFarm);
 
       // Act
       const result = await farmService.createFarm(farmRequest);
@@ -248,7 +248,7 @@ describe('FarmService', () => {
       const farmRequest = createMockFarmRequest();
       const dbError = new Error('Database connection failed');
 
-      vi.mocked(farmRepository.create).mockRejectedValue(dbError);
+      jest.mocked(farmRepository.create).mockRejectedValue(dbError);
 
       // Act & Assert
       await expect(farmService.createFarm(farmRequest)).rejects.toThrow('Database connection failed');
@@ -259,7 +259,7 @@ describe('FarmService', () => {
       const farmRequest = createMockFarmRequest();
       const duplicateError = new Error('Unique constraint failed on slug');
 
-      vi.mocked(farmRepository.create).mockRejectedValue(duplicateError);
+      jest.mocked(farmRepository.create).mockRejectedValue(duplicateError);
 
       // Act & Assert
       await expect(farmService.createFarm(farmRequest)).rejects.toThrow();
@@ -276,7 +276,7 @@ describe('FarmService', () => {
       const farmId = 'farm_123';
       const cachedFarm = createMockFarm({ id: farmId });
 
-      vi.mocked(multiLayerCache.get).mockResolvedValue(cachedFarm);
+      jest.mocked(multiLayerCache.get).mockResolvedValue(cachedFarm);
 
       // Act
       const result = await farmService.getFarmById(farmId);
@@ -292,9 +292,9 @@ describe('FarmService', () => {
       const farmId = 'farm_123';
       const dbFarm = createMockFarm({ id: farmId });
 
-      vi.mocked(multiLayerCache.get).mockResolvedValue(null); // Cache miss
-      vi.mocked(farmRepository.findById).mockResolvedValue(dbFarm);
-      vi.mocked(multiLayerCache.set).mockResolvedValue(undefined);
+      jest.mocked(multiLayerCache.get).mockResolvedValue(null); // Cache miss
+      jest.mocked(farmRepository.findById).mockResolvedValue(dbFarm);
+      jest.mocked(multiLayerCache.set).mockResolvedValue(undefined);
 
       // Act
       const result = await farmService.getFarmById(farmId);
@@ -314,8 +314,8 @@ describe('FarmService', () => {
       // Arrange
       const farmId = 'nonexistent_farm';
 
-      vi.mocked(multiLayerCache.get).mockResolvedValue(null);
-      vi.mocked(farmRepository.findById).mockResolvedValue(null);
+      jest.mocked(multiLayerCache.get).mockResolvedValue(null);
+      jest.mocked(farmRepository.findById).mockResolvedValue(null);
 
       // Act
       const result = await farmService.getFarmById(farmId);
@@ -329,8 +329,8 @@ describe('FarmService', () => {
       const farmId = 'farm_123';
       const dbError = new Error('Database query failed');
 
-      vi.mocked(multiLayerCache.get).mockResolvedValue(null);
-      vi.mocked(farmRepository.findById).mockRejectedValue(dbError);
+      jest.mocked(multiLayerCache.get).mockResolvedValue(null);
+      jest.mocked(farmRepository.findById).mockRejectedValue(dbError);
 
       // Act & Assert
       await expect(farmService.getFarmById(farmId)).rejects.toThrow('Database query failed');
@@ -347,7 +347,7 @@ describe('FarmService', () => {
       const slug = 'green-valley-farm';
       const cachedFarm = createMockFarm({ slug });
 
-      vi.mocked(multiLayerCache.get).mockResolvedValue(cachedFarm);
+      jest.mocked(multiLayerCache.get).mockResolvedValue(cachedFarm);
 
       // Act
       const result = await farmService.getFarmBySlug(slug);
@@ -362,9 +362,9 @@ describe('FarmService', () => {
       const slug = 'organic-acres';
       const dbFarm = createMockFarm({ slug });
 
-      vi.mocked(multiLayerCache.get).mockResolvedValue(null);
-      vi.mocked(farmRepository.findBySlug).mockResolvedValue(dbFarm);
-      vi.mocked(multiLayerCache.set).mockResolvedValue(undefined);
+      jest.mocked(multiLayerCache.get).mockResolvedValue(null);
+      jest.mocked(farmRepository.findBySlug).mockResolvedValue(dbFarm);
+      jest.mocked(multiLayerCache.set).mockResolvedValue(undefined);
 
       // Act
       const result = await farmService.getFarmBySlug(slug);
@@ -378,8 +378,8 @@ describe('FarmService', () => {
       // Arrange
       const slug = 'non-existent-farm';
 
-      vi.mocked(multiLayerCache.get).mockResolvedValue(null);
-      vi.mocked(farmRepository.findBySlug).mockResolvedValue(null);
+      jest.mocked(multiLayerCache.get).mockResolvedValue(null);
+      jest.mocked(farmRepository.findBySlug).mockResolvedValue(null);
 
       // Act
       const result = await farmService.getFarmBySlug(slug);
@@ -400,9 +400,9 @@ describe('FarmService', () => {
       const updates = { name: 'Updated Farm Name', description: 'New description' };
       const updatedFarm = createMockFarm({ ...updates, id: farmId });
 
-      vi.mocked(farmRepository.update).mockResolvedValue(updatedFarm);
-      vi.mocked(multiLayerCache.delete).mockResolvedValue(undefined);
-      vi.mocked(multiLayerCache.invalidatePattern).mockResolvedValue(undefined);
+      jest.mocked(farmRepository.update).mockResolvedValue(updatedFarm);
+      jest.mocked(multiLayerCache.delete).mockResolvedValue(undefined);
+      jest.mocked(multiLayerCache.invalidatePattern).mockResolvedValue(undefined);
 
       // Act
       const result = await farmService.updateFarm(farmId, updates);
@@ -422,7 +422,7 @@ describe('FarmService', () => {
       const updates = { name: 'Updated Name' };
       const error = new Error('Update failed');
 
-      vi.mocked(farmRepository.update).mockRejectedValue(error);
+      jest.mocked(farmRepository.update).mockRejectedValue(error);
 
       // Act & Assert
       await expect(farmService.updateFarm(farmId, updates)).rejects.toThrow('Update failed');
@@ -438,9 +438,9 @@ describe('FarmService', () => {
       // Arrange
       const farmId = 'farm_123';
 
-      vi.mocked(farmRepository.delete).mockResolvedValue(undefined);
-      vi.mocked(multiLayerCache.delete).mockResolvedValue(undefined);
-      vi.mocked(multiLayerCache.invalidatePattern).mockResolvedValue(undefined);
+      jest.mocked(farmRepository.delete).mockResolvedValue(undefined);
+      jest.mocked(multiLayerCache.delete).mockResolvedValue(undefined);
+      jest.mocked(multiLayerCache.invalidatePattern).mockResolvedValue(undefined);
 
       // Act
       await farmService.deleteFarm(farmId);
@@ -465,7 +465,7 @@ describe('FarmService', () => {
         createMockFarm({ id: 'farm_2', ownerId }),
       ];
 
-      vi.mocked(farmRepository.findByOwner).mockResolvedValue(farms);
+      jest.mocked(farmRepository.findByOwner).mockResolvedValue(farms);
 
       // Act
       const result = await farmService.getFarmsByOwner(ownerId);
@@ -479,7 +479,7 @@ describe('FarmService', () => {
       // Arrange
       const ownerId = 'user_789';
 
-      vi.mocked(farmRepository.findByOwner).mockResolvedValue([]);
+      jest.mocked(farmRepository.findByOwner).mockResolvedValue([]);
 
       // Act
       const result = await farmService.getFarmsByOwner(ownerId);
@@ -502,7 +502,7 @@ describe('FarmService', () => {
         createMockFarm({ id: 'farm_2' }),
       ];
 
-      vi.mocked(farmRepository.findMany).mockResolvedValue({
+      jest.mocked(farmRepository.findMany).mockResolvedValue({
         farms,
         total: 50,
         page: 1,
@@ -525,7 +525,7 @@ describe('FarmService', () => {
       const filters = { page: 1, limit: 20, searchQuery: 'organic' };
       const farms = [createMockFarm({ name: 'Organic Farm' })];
 
-      vi.mocked(farmRepository.findMany).mockResolvedValue({
+      jest.mocked(farmRepository.findMany).mockResolvedValue({
         farms,
         total: 1,
         page: 1,
@@ -557,9 +557,9 @@ describe('FarmService', () => {
         verificationStatus: 'VERIFIED',
       });
 
-      vi.mocked(farmRepository.update).mockResolvedValue(approvedFarm);
-      vi.mocked(multiLayerCache.delete).mockResolvedValue(undefined);
-      vi.mocked(multiLayerCache.invalidatePattern).mockResolvedValue(undefined);
+      jest.mocked(farmRepository.update).mockResolvedValue(approvedFarm);
+      jest.mocked(multiLayerCache.delete).mockResolvedValue(undefined);
+      jest.mocked(multiLayerCache.invalidatePattern).mockResolvedValue(undefined);
 
       // Act
       const result = await farmService.approveFarm(farmId, adminId);
@@ -582,8 +582,8 @@ describe('FarmService', () => {
         verificationStatus: 'REJECTED',
       });
 
-      vi.mocked(farmRepository.update).mockResolvedValue(rejectedFarm);
-      vi.mocked(multiLayerCache.delete).mockResolvedValue(undefined);
+      jest.mocked(farmRepository.update).mockResolvedValue(rejectedFarm);
+      jest.mocked(multiLayerCache.delete).mockResolvedValue(undefined);
 
       // Act
       const result = await farmService.rejectFarm(farmId, adminId, reason);

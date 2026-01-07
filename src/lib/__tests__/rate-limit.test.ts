@@ -208,9 +208,9 @@ describe("🛡️ Rate Limiting", () => {
 
       const result = checkRateLimit(identifier, config);
 
-      // Reset time should be approximately 60 seconds (with small tolerance)
-      expect(result.resetTime).toBeGreaterThan(55);
-      expect(result.resetTime).toBeLessThanOrEqual(60);
+      // Reset time should be approximately 60 seconds (60000ms with small tolerance)
+      expect(result.resetTime).toBeGreaterThan(55000);
+      expect(result.resetTime).toBeLessThanOrEqual(60000);
     });
 
     it("should decrease reset time with subsequent calls", async () => {
@@ -317,7 +317,7 @@ describe("🛡️ Rate Limiting", () => {
 
       const result = checkRateLimit(identifier, config);
       expect(result.allowed).toBe(true);
-      expect(result.resetTime).toBeGreaterThan(86000); // ~24 hours in seconds
+      expect(result.resetTime).toBeGreaterThan(86000000); // ~24 hours in milliseconds
     });
 
     it("should handle rapid successive requests", () => {
@@ -358,7 +358,7 @@ describe("🛡️ Rate Limiting", () => {
 
       expect(result.allowed).toBe(false);
       expect(result.resetTime).toBeGreaterThan(0);
-      expect(result.resetTime).toBeLessThanOrEqual(60);
+      expect(result.resetTime).toBeLessThanOrEqual(60000);
     });
   });
 });

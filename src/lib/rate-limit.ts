@@ -131,16 +131,18 @@ initializeRedisRateLimit();
 
 const inMemoryStore: InMemoryStore = {};
 
-// Cleanup old entries every minute
-setInterval(() => {
-  const now = Date.now();
-  Object.keys(inMemoryStore).forEach((key) => {
-    const entry = inMemoryStore[key];
-    if (entry && entry.resetTime < now) {
-      delete inMemoryStore[key];
-    }
-  });
-}, 60000);
+// Cleanup old entries every minute (only in non-test environments)
+if (process.env.NODE_ENV !== 'test') {
+  setInterval(() => {
+    const now = Date.now();
+    Object.keys(inMemoryStore).forEach((key) => {
+      const entry = inMemoryStore[key];
+      if (entry && entry.resetTime < now) {
+        delete inMemoryStore[key];
+      }
+    });
+  }, 60000);
+}
 
 /**
  * In-memory rate limiter (fallback)
@@ -159,9 +161,12 @@ function checkRateLimitInMemory(
       resetTime: now + config.windowMs,
     };
 
+    // Handle zero max requests case
+    const allowed = config.maxRequests === 0 ? false : true;
+
     return {
-      allowed: true,
-      remaining: config.maxRequests - 1,
+      allowed,
+      remaining: Math.max(0, config.maxRequests - 1),
       resetTime: config.windowMs,
       current: 1,
       limit: config.maxRequests,
@@ -237,7 +242,7 @@ async function checkRateLimitRedis(
 // ============================================================================
 
 /**
- * Check if a request should be rate limited
+ * Check if a request should be rate limited (async version)
  *
  * Automatically uses Redis if available, falls back to in-memory
  *
@@ -245,7 +250,7 @@ async function checkRateLimitRedis(
  * @param config - Rate limit configuration
  * @returns Rate limit result
  */
-export async function checkRateLimit(
+export async function checkRateLimitAsync(
   identifier: string,
   config: RateLimitConfig
 ): Promise<RateLimitResult> {
@@ -264,6 +269,33 @@ export async function checkRateLimit(
   // Use Redis if available, otherwise use in-memory
   if (isRedisAvailable) {
     return await checkRateLimitRedis(identifier, config);
+  }
+
+  return checkRateLimitInMemory(identifier, config);
+}
+
+/**
+ * Check if a request should be rate limited (synchronous version)
+ *
+ * Uses in-memory store only. For async/Redis support, use checkRateLimitAsync
+ *
+ * @param identifier - Unique identifier (IP address, user ID, etc.)
+ * @param config - Rate limit configuration
+ * @returns Rate limit result
+ */
+export function checkRateLimit(
+  identifier: string,
+  config: RateLimitConfig
+): RateLimitResult {
+  if (config.skip || process.env.DISABLE_RATE_LIMITING === 'true') {
+    return {
+      allowed: true,
+      remaining: config.maxRequests,
+      resetTime: config.windowMs,
+      current: 0,
+      limit: config.maxRequests,
+      isRedis: false,
+    };
   }
 
   return checkRateLimitInMemory(identifier, config);
@@ -358,10 +390,10 @@ export function getRateLimitIdentifier(
  * Pre-configured rate limit profiles for common scenarios
  */
 export const RateLimitProfiles = {
-  /** Strict: 10 requests per minute (auth endpoints) */
+  /** Strict: 10 requests per hour (sensitive operations) */
   STRICT: {
     maxRequests: 10,
-    windowMs: 60 * 1000,
+    windowMs: 60 * 60 * 1000,
   },
 
   /** Standard: 100 requests per minute (API endpoints) */
@@ -411,6 +443,16 @@ export const RateLimitProfiles = {
  * Default rate limit for API routes
  */
 export const API_RATE_LIMIT: RateLimitConfig = RateLimitProfiles.STANDARD;
+
+/**
+ * Rate limit for login attempts
+ */
+export const LOGIN_RATE_LIMIT: RateLimitConfig = RateLimitProfiles.AUTH;
+
+/**
+ * Rate limit for sensitive operations
+ */
+export const SENSITIVE_RATE_LIMIT: RateLimitConfig = RateLimitProfiles.STRICT;
 
 // ============================================================================
 // RATE LIMIT RESPONSE HELPER
@@ -479,6 +521,56 @@ export function isRedisRateLimitEnabled(): boolean {
  */
 export async function reinitializeRedisRateLimit(): Promise<boolean> {
   return await initializeRedisRateLimit();
+}
+
+/**
+ * Clear all rate limits from in-memory store
+ * Useful for testing
+ */
+export function clearAllRateLimits(): void {
+  Object.keys(inMemoryStore).forEach((key) => {
+    delete inMemoryStore[key];
+  });
+}
+
+/**
+ * Reset rate limit for a specific identifier
+ * Useful for testing or manual intervention
+ */
+export function resetRateLimit(identifier: string, config: RateLimitConfig): void {
+  // Try all possible window sizes since we might not know the exact one
+  Object.keys(inMemoryStore).forEach((key) => {
+    if (key.startsWith(`${identifier}:`)) {
+      delete inMemoryStore[key];
+    }
+  });
+}
+
+/**
+ * Get current rate limit status for an identifier without incrementing
+ * Useful for monitoring or displaying limits to users
+ */
+export function getRateLimitStatus(
+  identifier: string,
+  config: RateLimitConfig
+): RateLimitResult | null {
+  const now = Date.now();
+  const key = `${identifier}:${config.windowMs}`;
+
+  const entry = inMemoryStore[key];
+
+  if (!entry || entry.resetTime < now) {
+    return null;
+  }
+
+  return {
+    allowed: entry.count < config.maxRequests,
+    remaining: Math.max(0, config.maxRequests - entry.count),
+    resetTime: entry.resetTime - now,
+    current: entry.count,
+    limit: config.maxRequests,
+    isRedis: false,
+  };
 }
 
 /**

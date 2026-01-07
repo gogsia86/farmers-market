@@ -16,7 +16,7 @@
  */
 
 import { CacheKeys, CacheTTL, MultiLayerCache } from '@/lib/cache/multi-layer.cache';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
 
 // ============================================================================
 // TEST SETUP
