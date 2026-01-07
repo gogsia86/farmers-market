@@ -409,7 +409,9 @@ export async function GET(request: NextRequest): Promise<NextResponse<SearchResp
       },
     });
   } catch (error) {
-    logger.error("GET /api/search error:", error);
+    logger.error("GET /api/search error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
     return NextResponse.json(
       {

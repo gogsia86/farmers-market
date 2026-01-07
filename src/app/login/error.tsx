@@ -18,7 +18,9 @@ export default function LoginError({
 }) {
   useEffect(() => {
     // Log error to console for debugging
-    logger.error("Login page error:", error);
+    logger.error("Login page error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
   }, [error]);
 
   return (

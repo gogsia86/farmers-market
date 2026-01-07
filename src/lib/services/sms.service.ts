@@ -121,7 +121,9 @@ export class SMSService {
       this.isConfigured = true;
       logger.info("✅ SMS service initialized successfully");
     } catch (error) {
-      logger.error("❌ Failed to initialize SMS service:", error);
+      logger.error("❌ Failed to initialize SMS service:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       this.isConfigured = false;
     }
   }
@@ -223,9 +225,9 @@ export class SMSService {
         });
 
         logger.error(
-          `❌ Failed to send SMS to ${this.maskPhoneNumber(options.to)}:`,
-          error
-        );
+          `❌ Failed to send SMS to ${this.maskPhoneNumber(options.to)}:`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
         // Log failure to database if userId provided
         if (options.userId) {
@@ -445,7 +447,9 @@ export class SMSService {
         },
       });
     } catch (error) {
-      logger.error("Failed to log SMS to database:", error);
+      logger.error("Failed to log SMS to database:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       // Don't throw - logging failure shouldn't break SMS sending
     }
   }
@@ -484,7 +488,9 @@ export class SMSService {
         lastSentAt,
       };
     } catch (error) {
-      logger.error("Failed to get user SMS stats:", error);
+      logger.error("Failed to get user SMS stats:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       return {
         total: 0,
         sent: 0,

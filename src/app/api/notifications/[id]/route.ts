@@ -74,7 +74,9 @@ export async function PATCH(
       },
     });
   } catch (error) {
-    logger.error("Failed to update notification:", error);
+    logger.error("Failed to update notification:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,
@@ -125,7 +127,9 @@ export async function DELETE(
       },
     });
   } catch (error) {
-    logger.error("Failed to delete notification:", error);
+    logger.error("Failed to delete notification:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,

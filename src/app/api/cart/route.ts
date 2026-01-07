@@ -101,7 +101,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    logger.error("Cart retrieval error:", error);
+    logger.error("Cart retrieval error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,
@@ -335,7 +337,9 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    logger.error("Add to cart error:", error);
+    logger.error("Add to cart error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,
@@ -480,7 +484,9 @@ export async function PATCH(request: NextRequest) {
       },
     });
   } catch (error) {
-    logger.error("Cart update error:", error);
+    logger.error("Cart update error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,
@@ -578,7 +584,9 @@ export async function DELETE(request: NextRequest) {
       },
     });
   } catch (error) {
-    logger.error("Cart delete error:", error);
+    logger.error("Cart delete error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,

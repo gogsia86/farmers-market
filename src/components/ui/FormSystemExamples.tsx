@@ -73,7 +73,7 @@ export function BasicFormExample() {
   const [submitSuccess, setSubmitSuccess] = React.useState(false);
 
   const onSubmit = async (data: BasicFormData) => {
-    logger.info("Form submitted:", data);
+    logger.info("Form submitted", { datadata: { data: data } });
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setSubmitSuccess(true);
     form.reset();
@@ -194,7 +194,7 @@ export function SelectCheckboxFormExample() {
   });
 
   const onSubmit = (data: UserPreferencesData) => {
-    logger.info("Preferences:", data);
+    logger.info("Preferences", { datadata: { data: data } });
   };
 
   return (
@@ -348,7 +348,7 @@ export function RadioGroupFormExample() {
   });
 
   const onSubmit = (data: PaymentMethodData) => {
-    logger.info("Payment selection:", data);
+    logger.info("Payment selection", { datadata: { data: data } });
   };
 
   return (
@@ -466,8 +466,8 @@ export function FileUploadFormExample() {
   });
 
   const onSubmit = async (data: ProductImageData) => {
-    logger.info("Product submission:", data);
-    logger.info("Files:", files);
+    logger.info("Product submission", { datadata: { data: data } });
+    logger.info("Files", { datafiles: { data: files } });
   };
 
   return (
@@ -561,7 +561,7 @@ export function FormGridExample() {
   });
 
   const onSubmit = (data: FarmProfileData) => {
-    logger.info("Farm profile:", data);
+    logger.info("Farm profile", { datadata: { data: data } });
   };
 
   return (

@@ -88,7 +88,9 @@ export async function createPayPalOrder(
       approvalUrl: approvalUrl || "",
     };
   } catch (error) {
-    logger.error("PayPal order creation failed:", error);
+    logger.error("PayPal order creation failed:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw new Error(
       `Failed to create PayPal order: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
@@ -135,7 +137,9 @@ export async function capturePayPalOrder(paypalOrderId: string): Promise<{
       currency: captureDetails.amount.currency_code,
     };
   } catch (error) {
-    logger.error("PayPal capture failed:", error);
+    logger.error("PayPal capture failed:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw new Error(
       `Failed to capture PayPal payment: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
@@ -179,7 +183,9 @@ export async function getPayPalOrderDetails(paypalOrderId: string): Promise<{
       currency: amount.currency_code,
     };
   } catch (error) {
-    logger.error("Failed to get PayPal order:", error);
+    logger.error("Failed to get PayPal order:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw new Error(
       `Failed to retrieve PayPal order: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
@@ -234,7 +240,9 @@ export async function refundPayPalCapture(
       amount: parseFloat(refund.amount.value),
     };
   } catch (error) {
-    logger.error("PayPal refund failed:", error);
+    logger.error("PayPal refund failed:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw new Error(
       `Failed to refund PayPal payment: ${error instanceof Error ? error.message : "Unknown error"}`,
     );

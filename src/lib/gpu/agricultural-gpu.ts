@@ -42,9 +42,9 @@ export class AgriculturalGPUAccelerator {
         numDataBuffers: this.tf.memory().numDataBuffers,
       });
     } catch (error) {
-      logger.warn(
-        "⚠️ GPU acceleration unavailable, falling back to CPU",
-        error,
+      logger.warn("⚠️ GPU acceleration unavailable, falling back to CPU", {
+          error: error instanceof Error ? error.message : String(error)
+        }
       );
       if (this.tf) {
         await this.tf.setBackend("cpu");

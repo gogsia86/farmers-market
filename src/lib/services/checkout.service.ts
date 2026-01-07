@@ -319,7 +319,9 @@ export class QuantumCheckoutService {
 
         orders.push(order);
       } catch (error) {
-        logger.error(`Failed to create order for farm ${farmOrder.farmId}:`, error);
+        logger.error(`Failed to create order for farm ${farmOrder.farmId}:`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
         // TODO: Implement rollback mechanism
         throw new Error(`Failed to create order for ${farmOrder.farmName}`);
       }

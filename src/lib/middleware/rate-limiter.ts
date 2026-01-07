@@ -152,7 +152,9 @@ export class RateLimiter {
         reset: resetTime,
       };
     } catch (error) {
-      logger.error("Redis rate limit error:", error);
+      logger.error("Redis rate limit error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       // Fallback to memory on Redis error
       return this.checkWithMemory(key, now, windowStart);
     }

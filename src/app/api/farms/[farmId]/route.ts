@@ -136,7 +136,9 @@ export async function GET(
       data: farm as unknown as Farm,
     });
   } catch (error) {
-    logger.error("GET /api/farms/[farmId] error:", error);
+    logger.error("GET /api/farms/[farmId] error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,
@@ -269,7 +271,9 @@ export async function PATCH(
       data: updatedFarm,
     });
   } catch (error) {
-    logger.error("PATCH /api/farms/[farmId] error:", error);
+    logger.error("PATCH /api/farms/[farmId] error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,
@@ -385,7 +389,9 @@ export async function DELETE(
       },
     });
   } catch (error) {
-    logger.error("DELETE /api/farms/[farmId] error:", error);
+    logger.error("DELETE /api/farms/[farmId] error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,

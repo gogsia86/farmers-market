@@ -105,7 +105,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     });
   } catch (error) {
-    logger.error("Failed to fetch notifications:", error);
+    logger.error("Failed to fetch notifications:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,
@@ -152,7 +154,9 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
       },
     });
   } catch (error) {
-    logger.error("Failed to clear notifications:", error);
+    logger.error("Failed to clear notifications:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,

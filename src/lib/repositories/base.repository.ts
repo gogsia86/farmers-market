@@ -138,7 +138,7 @@ export abstract class BaseRepository<
    * ```typescript
    * const farm = await repository.findById("farm_123");
    * if (farm) {
-   *   logger.info("Found:", farm.name);
+   *   logger.info("Found", { name: { data: farm.name } });
    * }
    * ```
    */
@@ -497,7 +497,9 @@ export abstract class BaseRepository<
 
     // Log for debugging (development only)
     if (process.env.NODE_ENV === "development") {
-      logger.error(`\n🚨 [${this.repositoryName}] ${operation} error:`, error);
+      logger.error(`\n🚨 [${this.repositoryName}] ${operation} error:`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
     }
 
     return new Error(errorMessage);

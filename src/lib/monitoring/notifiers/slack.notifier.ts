@@ -7,14 +7,12 @@
  * with agricultural consciousness and divine precision.
  */
 
-import type {
-
 import { logger } from '@/lib/monitoring/logger';
-
+import type {
   MonitoringReport,
   NotificationConfig,
-  WorkflowResult,
   WorkflowPriority,
+  WorkflowResult,
 } from "../types";
 
 // ============================================================================
@@ -602,7 +600,9 @@ export class SlackNotifier {
         timestamp: new Date(),
       };
     } catch (error) {
-      logger.error("Failed to send Slack notification:", error);
+      logger.error("Failed to send Slack notification:", {
+        error: error instanceof Error ? error.message : String(error),
+      });
       return {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",

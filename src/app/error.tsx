@@ -22,8 +22,7 @@ interface ErrorProps {
 export default function Error({ error, reset }: ErrorProps) {
   useEffect(() => {
     // Log error to monitoring service
-    logger.error("Root application error", {
-      error: error.message,
+    logger.error("Root application error", { error: error.message,
       digest: error.digest,
       stack: error.stack,
       name: error.name,

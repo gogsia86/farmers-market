@@ -318,7 +318,9 @@ export async function checkRateLimit(
     const result = await limiter.limit(identifier);
     return result;
   } catch (error) {
-    logger.error("⚠️ Rate limiter error, using memory fallback:", error);
+    logger.error("⚠️ Rate limiter error, using memory fallback:", {
+        error: error instanceof Error ? error.message : String(error)
+      });
 
     // Fallback to memory limiter
     if (fallbackConfig) {
@@ -530,10 +532,10 @@ export async function logRateLimitEvent(event: {
 }) {
   // Log to console in development
   if (process.env.NODE_ENV === "development") {
-    logger.info("🛡️ Rate Limit:", {
+    logger.info("🛡️ Rate Limit", { successALLOWEDBLOCKED: {
       ...event,
       status: event.success ? "✅ ALLOWED" : "🚫 BLOCKED",
-    });
+    } });
   }
 
   // Send to Azure Application Insights in production

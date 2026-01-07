@@ -21,14 +21,12 @@
  * @see https://nextjs.org/docs/app/building-your-application/routing/middleware
  */
 
+import { logger } from '@/lib/monitoring/logger';
 import { getToken } from "next-auth/jwt";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import type { UserRole } from "@/types/core-entities";
 import {
-
-import { logger } from '@/lib/monitoring/logger';
-
   isPublicRoute,
   isAuthRoute,
   isApiRoute,
@@ -70,7 +68,7 @@ const middlewareLog = {
   },
   info: (message: string, metadata?: LogMetadata): void => {
     if (isDevelopment) {
-      logger.info(`🛡️  [Middleware] ${message}`, metadata || "");
+      logger.info(`🛡️  [Middleware] ${message}`, { data: metadata || "" });
     }
   },
   warn: (message: string, metadata?: LogMetadata): void => {
@@ -89,7 +87,7 @@ const middlewareLog = {
   },
   auth: (action: string, metadata: LogMetadata): void => {
     if (isDevelopment) {
-      logger.info(`🔐 [Middleware Auth] ${action}`, metadata);
+      logger.info(`🔐 [Middleware Auth] ${action}`, { data: metadata });
     }
   },
 };

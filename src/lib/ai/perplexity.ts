@@ -11,11 +11,9 @@
  * - Agent orchestration with context management
  */
 
+import { logger } from '@/lib/monitoring/logger';
 import { SpanStatusCode, trace } from "@opentelemetry/api";
 import {
-
-import { logger } from '@/lib/monitoring/logger';
-
   PERPLEXITY_PRO_CONFIG,
   type PerplexityProModel,
 } from "./perplexity-config";

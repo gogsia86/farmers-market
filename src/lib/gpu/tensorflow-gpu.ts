@@ -36,7 +36,9 @@ export async function initializeGPU(): Promise<boolean> {
       return false;
     }
   } catch (error) {
-    logger.error("❌ GPU initialization failed:", error);
+    logger.error("❌ GPU initialization failed:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return false;
   }
 }

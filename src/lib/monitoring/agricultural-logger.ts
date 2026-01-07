@@ -6,13 +6,13 @@
 
 // Stub implementation for logger
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger as baseLogger } from '@/lib/monitoring/logger';
 
 export const logger = {
-  info: (...args: any[]) => logger.info("[INFO]", ...args),
-  error: (...args: any[]) => logger.error("[ERROR]", ...args),
-  warn: (...args: any[]) => logger.warn("[WARN]", ...args),
-  debug: (...args: any[]) => logger.debug("[DEBUG]", ...args),
+  info: (...args: any[]) => baseLogger.info("[INFO]", ...args),
+  error: (...args: any[]) => baseLogger.error("[ERROR]", ...args),
+  warn: (...args: any[]) => baseLogger.warn("[WARN]", ...args),
+  debug: (...args: any[]) => baseLogger.debug("[DEBUG]", ...args),
 };
 
 export default logger;

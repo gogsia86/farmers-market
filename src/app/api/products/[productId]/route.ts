@@ -121,7 +121,9 @@ export async function GET(
       },
     });
   } catch (error) {
-    logger.error(`GET /api/products/[productId] error:`, error);
+    logger.error(`GET /api/products/[productId] error:`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
     return NextResponse.json(
       {
@@ -325,7 +327,9 @@ export async function PATCH(
       },
     });
   } catch (error) {
-    logger.error(`PATCH /api/products/[productId] error:`, error);
+    logger.error(`PATCH /api/products/[productId] error:`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
     return NextResponse.json(
       {
@@ -450,7 +454,9 @@ export async function DELETE(
       },
     });
   } catch (error) {
-    logger.error(`DELETE /api/products/[productId] error:`, error);
+    logger.error(`DELETE /api/products/[productId] error:`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
     return NextResponse.json(
       {

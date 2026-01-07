@@ -92,7 +92,9 @@ export async function POST(request: NextRequest) {
 
       logger.info(`Password reset email sent to: ${user.email}`);
     } catch (emailError) {
-      logger.error("Failed to send password reset email:", emailError);
+      logger.error("Failed to send password reset email", {
+        error: emailError instanceof Error ? emailError.message : String(emailError)
+      });
       // Still return success to user (they don't need to know email failed)
       // But log the error for admin monitoring
     }
@@ -102,7 +104,9 @@ export async function POST(request: NextRequest) {
       message: "If an account exists with this email, you will receive password reset instructions.",
     });
   } catch (error) {
-    logger.error("Forgot password error:", error);
+    logger.error("Forgot password error", {
+      error: error instanceof Error ? error.message : String(error)
+    });
     return NextResponse.json(
       { error: "An unexpected error occurred. Please try again later." },
       { status: 500 }

@@ -56,7 +56,9 @@ class FileUploadService {
       }
       logger.info("✅ Upload directories ready");
     } catch (error) {
-      logger.error("❌ Error creating upload directories:", error);
+      logger.error("❌ Error creating upload directories:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     }
   }
 
@@ -150,7 +152,9 @@ class FileUploadService {
         path: filePath,
       };
     } catch (error) {
-      logger.error("❌ File upload error:", error);
+      logger.error("❌ File upload error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       return {
         success: false,
         error: "Failed to upload file",

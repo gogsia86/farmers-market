@@ -38,7 +38,9 @@ export function useFormPersist<T extends Record<string, any>>(
         return { ...defaultValues, ...parsed };
       }
     } catch (error) {
-      logger.error("Failed to load persisted form data:", error);
+      logger.error("Failed to load persisted form data:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     }
     return defaultValues;
   });
@@ -60,7 +62,9 @@ export function useFormPersist<T extends Record<string, any>>(
       try {
         storage.setItem(key, JSON.stringify(filteredData));
       } catch (error) {
-        logger.error("Failed to persist form data:", error);
+        logger.error("Failed to persist form data:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       }
     },
     [key, storage, exclude]
@@ -92,7 +96,9 @@ export function useFormPersist<T extends Record<string, any>>(
       storage.removeItem(key);
       setValues(defaultValues);
     } catch (error) {
-      logger.error("Failed to clear persisted form data:", error);
+      logger.error("Failed to clear persisted form data:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     }
   }, [key, storage, defaultValues]);
 
@@ -147,7 +153,9 @@ export function useFormAutoSave<T extends Record<string, any>>(
         }
         setLastSaved(new Date());
       } catch (error) {
-        logger.error("Auto-save failed:", error);
+        logger.error("Auto-save failed:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       } finally {
         setIsSaving(false);
       }

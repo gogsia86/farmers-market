@@ -4,8 +4,8 @@
  * Handles reconnection and error recovery
  */
 
+import { logger } from '@/lib/monitoring/logger';
 import Redis from 'ioredis';
-import { logger } from '../monitoring/logger';
 
 // ============================================================================
 // REDIS CLIENT SINGLETON

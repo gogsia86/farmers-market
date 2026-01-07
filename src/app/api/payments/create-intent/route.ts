@@ -142,7 +142,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       { status: 200 }
     );
   } catch (error) {
-    logger.error("Create payment intent error:", error);
+    logger.error("Create payment intent error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
     return NextResponse.json(
       {

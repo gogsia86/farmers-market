@@ -146,12 +146,11 @@ async function processEmailJob(job: Job<EmailJobData>) {
         "job.error": error instanceof Error ? error.message : "Unknown error",
       });
 
-      logger.error(
-        `❌ Email failed to ${job.data.emailOptions.to} (Job: ${job.id}, Attempt: ${
+      logger.error(`❌ Email failed to ${job.data.emailOptions.to} (Job: ${job.id}, Attempt: ${
           job.attemptsMade + 1
-        }):`,
-        error,
-      );
+        }):`, {
+      error: error instanceof Error ? error.message : String(error)
+    });
 
       throw error;
     } finally {
@@ -202,7 +201,9 @@ export function startEmailWorker() {
   });
 
   emailQueue.on("error", (error) => {
-    logger.error("❌ Worker error:", error);
+    logger.error("❌ Worker error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
   });
 
   logger.info("✅ Email worker started successfully");
@@ -218,7 +219,9 @@ export async function stopEmailWorker() {
     await emailQueue.close();
     logger.info("✅ Email worker stopped successfully");
   } catch (error) {
-    logger.error("Failed to stop email worker:", error);
+    logger.error("Failed to stop email worker:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw error;
   }
 }
@@ -230,20 +233,22 @@ export async function stopEmailWorker() {
 if (process.env.NODE_ENV !== "test") {
   // Handle process termination
   process.on("SIGTERM", async () => {
-    logger.info("Received SIGTERM, shutting down worker...");
+    logger.info("Received SIGTERM, { data: shutting down worker..." });
     await stopEmailWorker();
     process.exit(0);
   });
 
   process.on("SIGINT", async () => {
-    logger.info("Received SIGINT, shutting down worker...");
+    logger.info("Received SIGINT, { data: shutting down worker..." });
     await stopEmailWorker();
     process.exit(0);
   });
 
   // Handle uncaught errors
   process.on("uncaughtException", async (error) => {
-    logger.error("Uncaught exception:", error);
+    logger.error("Uncaught exception:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     await stopEmailWorker();
     process.exit(1);
   });

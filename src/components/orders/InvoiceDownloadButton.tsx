@@ -84,7 +84,9 @@ export function InvoiceDownloadButton({
       });
 
     } catch (error) {
-      logger.error('Invoice download failed:', error);
+      logger.error('Invoice download failed:', {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
       // Track error
       trackError({

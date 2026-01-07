@@ -75,12 +75,12 @@ export function OrderConfirmationTracking({
 
     // Log to console in development for debugging
     if (process.env.NODE_ENV === "development") {
-      logger.info("📊 Purchase tracked:", {
+      logger.info("📊 Purchase tracked", { length: {
         orderId,
         orderNumber,
         totalValue,
         itemCount: items.length,
-      });
+      } });
     }
   }, [orderId]); // Only track once per order
 

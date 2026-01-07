@@ -73,8 +73,7 @@ export class WorkflowAgentOrchestrator {
         this.openai = new OpenAI({ apiKey });
         this.initializeAgents();
         logger.info(
-          `✅ Multi-Agent Orchestrator initialized with ${this.agents.size} agents`,
-        );
+          `✅ Multi-Agent Orchestrator initialized with ${this.agents.size} agents`);
       }
     }
   }
@@ -301,7 +300,9 @@ Prioritize system stability and data integrity.`,
         votingResults: consensus.votes,
       };
     } catch (error) {
-      logger.error("❌ Multi-agent analysis error:", error);
+      logger.error("❌ Multi-agent analysis error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       return this.generateFallbackAnalysis(workflowResult);
     }
   }
@@ -347,7 +348,9 @@ Provide specific, implementable optimizations in JSON format:
 
       return parsed.optimizations || [];
     } catch (error) {
-      logger.error("❌ Performance optimization error:", error);
+      logger.error("❌ Performance optimization error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       return [];
     }
   }
@@ -396,7 +399,9 @@ Provide security assessment in JSON:
       const response = await this.queryAgent(agent, prompt);
       return JSON.parse(response.content);
     } catch (error) {
-      logger.error("❌ Security audit error:", error);
+      logger.error("❌ Security audit error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       return {
         securityScore: 50,
         vulnerabilities: [],
@@ -452,7 +457,9 @@ Provide validation in JSON:
       const response = await this.queryAgent(agent, prompt);
       return JSON.parse(response.content);
     } catch (error) {
-      logger.error("❌ Agricultural validation error:", error);
+      logger.error("❌ Agricultural validation error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       return {
         valid: true,
         seasonalAlignment: 100,
@@ -579,7 +586,9 @@ Provide validation in JSON:
         },
       };
     } catch (error) {
-      logger.error(`❌ Agent ${agent.name} query error:`, error);
+      logger.error(`❌ Agent ${agent.name} query error:`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
       throw error;
     }
   }
@@ -628,7 +637,9 @@ Format as concise, actionable recommendation.`;
         votes: this.calculateVotes(analyses),
       };
     } catch (error) {
-      logger.error("❌ Consensus generation error:", error);
+      logger.error("❌ Consensus generation error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       return {
         finalRecommendation: analyses[0]?.analysis || "No analysis available",
         votes: {},

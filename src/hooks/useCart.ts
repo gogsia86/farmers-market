@@ -76,7 +76,9 @@ function setGuestCart(items: GuestCartItem[]): void {
   try {
     localStorage.setItem(GUEST_CART_KEY, JSON.stringify(items));
   } catch (error) {
-    logger.error("Failed to save guest cart:", error);
+    logger.error("Failed to save guest cart:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
   }
 }
 
@@ -86,7 +88,9 @@ function clearGuestCart(): void {
   try {
     localStorage.removeItem(GUEST_CART_KEY);
   } catch (error) {
-    logger.error("Failed to clear guest cart:", error);
+    logger.error("Failed to clear guest cart:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
   }
 }
 

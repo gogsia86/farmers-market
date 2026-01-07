@@ -39,7 +39,7 @@ interface UseOrderUpdatesReturn {
  *   orderId: 'order_123',
  *   userId: 'user_456',
  *   onUpdate: (update) => {
- *     logger.info('Order updated:', update);
+ *     logger.info('Order updated:', { data: update });
  *   }
  * });
  * ```
@@ -79,7 +79,7 @@ export function useOrderUpdates({
 
     // Connection established
     socket.on('connect', () => {
-      logger.info('🌾 Socket connected:', socket.id);
+      logger.info('🌾 Socket connected:', { data: socket.id });
       setIsConnected(true);
       setError(null);
 
@@ -94,12 +94,12 @@ export function useOrderUpdates({
 
     // Room joined confirmation
     socket.on('room-joined', (data: { room: string; orderId?: string }) => {
-      logger.info('📦 Joined room:', data.room);
+      logger.info('📦 Joined room:', { data: data.room });
     });
 
     // Order update received
     socket.on('order-update', (update: OrderUpdatePayload) => {
-      logger.info('📦 Order update received:', update);
+      logger.info('📦 Order update received:', { data: update });
 
       setUpdates((prev) => [...prev, update]);
       setLastUpdate(update);
@@ -109,14 +109,16 @@ export function useOrderUpdates({
         try {
           onUpdate(update);
         } catch (err) {
-          logger.error('Error in onUpdate callback:', err);
+          logger.error('Error in onUpdate callback:', {
+        error: err instanceof Error ? err.message : String(err)
+      });
         }
       }
     });
 
     // Order status change
     socket.on('order-status-change', (data: OrderUpdatePayload) => {
-      logger.info('📦 Order status changed:', data);
+      logger.info('📦 Order status changed:', { data: data });
 
       const update: OrderUpdatePayload = {
         ...data,
@@ -130,14 +132,16 @@ export function useOrderUpdates({
         try {
           onUpdate(update);
         } catch (err) {
-          logger.error('Error in onUpdate callback:', err);
+          logger.error('Error in onUpdate callback:', {
+        error: err instanceof Error ? err.message : String(err)
+      });
         }
       }
     });
 
     // Notification received
     socket.on('notification', (notification: any) => {
-      logger.info('🔔 Notification received:', notification);
+      logger.info('🔔 Notification received:', { data: notification });
 
       // Convert notification to order update format
       if (notification.type?.includes('order')) {
@@ -156,7 +160,7 @@ export function useOrderUpdates({
 
     // Disconnection
     socket.on('disconnect', (reason: string) => {
-      logger.info('🌾 Socket disconnected:', reason);
+      logger.info('🌾 Socket disconnected:', { data: reason });
       setIsConnected(false);
 
       // Attempt to reconnect if disconnected unexpectedly
@@ -170,7 +174,9 @@ export function useOrderUpdates({
 
     // Connection error
     socket.on('connect_error', (err: Error) => {
-      logger.error('⚠️ Socket connection error:', err);
+      logger.error('⚠️ Socket connection error:', {
+        error: err instanceof Error ? err.message : String(err)
+      });
       setError(err);
       setIsConnected(false);
 
@@ -178,21 +184,27 @@ export function useOrderUpdates({
         try {
           onError(err);
         } catch (callbackErr) {
-          logger.error('Error in onError callback:', callbackErr);
+          logger.error('Error in onError callback:', {
+        error: callbackErr instanceof Error ? callbackErr.message : String(callbackErr)
+      });
         }
       }
     });
 
     // Generic error
     socket.on('error', (err: Error) => {
-      logger.error('⚠️ Socket error:', err);
+      logger.error('⚠️ Socket error:', {
+        error: err instanceof Error ? err.message : String(err)
+      });
       setError(err);
 
       if (onError) {
         try {
           onError(err);
         } catch (callbackErr) {
-          logger.error('Error in onError callback:', callbackErr);
+          logger.error('Error in onError callback:', {
+        error: callbackErr instanceof Error ? callbackErr.message : String(callbackErr)
+      });
         }
       }
     });
@@ -259,7 +271,7 @@ export function useNotifications(userId: string | undefined) {
     });
 
     socket.on('notification', (notification: any) => {
-      logger.info('🔔 Notification received:', notification);
+      logger.info('🔔 Notification received:', { data: notification });
       setNotifications((prev) => [notification, ...prev]);
       setUnreadCount((prev) => prev + 1);
     });
@@ -320,12 +332,12 @@ export function useFarmUpdates(farmId: string | undefined) {
     });
 
     socket.on('farm-update', (update: any) => {
-      logger.info('🌾 Farm update received:', update);
+      logger.info('🌾 Farm update received:', { data: update });
       setUpdates((prev) => [update, ...prev]);
     });
 
     socket.on('product-update', (update: any) => {
-      logger.info('🌾 Product update received:', update);
+      logger.info('🌾 Product update received:', { data: update });
       setUpdates((prev) => [update, ...prev]);
     });
 

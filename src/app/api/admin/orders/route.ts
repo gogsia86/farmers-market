@@ -299,7 +299,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     });
   } catch (error) {
-    logger.error("Failed to fetch orders:", error);
+    logger.error("Failed to fetch orders:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,
@@ -503,7 +505,9 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
           });
         }
       } catch (error) {
-        logger.error("Refund processing failed:", error);
+        logger.error("Refund processing failed:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
         return NextResponse.json(
           {
             success: false,
@@ -611,7 +615,9 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
       },
     });
   } catch (error) {
-    logger.error("Failed to update order:", error);
+    logger.error("Failed to update order:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,

@@ -93,7 +93,9 @@ export function initializeTelemetry(): NodeSDK | null {
         await sdk?.shutdown();
         logger.info("🔭 Telemetry: Shutdown complete");
       } catch (error) {
-        logger.error("🔭 Telemetry: Error during shutdown:", error);
+        logger.error("🔭 Telemetry: Error during shutdown:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       } finally {
         process.exit(0);
       }
@@ -101,7 +103,9 @@ export function initializeTelemetry(): NodeSDK | null {
 
     return sdk;
   } catch (error) {
-    logger.error("🔭 Telemetry: Initialization failed:", error);
+    logger.error("🔭 Telemetry: Initialization failed:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return null;
   }
 }

@@ -11,7 +11,6 @@ import { createLogger } from "@/lib/logger";
 import { loadTensorFlow } from "@/lib/lazy/ml.lazy";
 import { loadSharp } from "@/lib/lazy/image.lazy";
 
-import { logger } from '@/lib/monitoring/logger';
 
 import type * as tf from "@tensorflow/tfjs";
 import type Sharp from "sharp";
@@ -30,7 +29,9 @@ export async function initializeGPUDependencies() {
       sharpInstance = await loadSharp();
     }
   } catch (error) {
-    logger.warn("Failed to initialize GPU dependencies:", error);
+    logger.warn("Failed to initialize GPU dependencies:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
   }
 }
 
@@ -295,8 +296,7 @@ export class GPUProcessor {
 
       logger.info(`✅ Image processing complete: ${duration.toFixed(2)}ms`);
       logger.info(
-        `   Compression: ${totalOriginalSize / 1024 / 1024}MB → ${totalNewSize / 1024 / 1024}MB`,
-      );
+        `   Compression: ${totalOriginalSize / 1024 / 1024}MB → ${totalNewSize / 1024 / 1024}MB`);
       logger.info(`   Ratio: ${compressionRatio.toFixed(2)}x`);
 
       this.recordMetric("image-processing", {
@@ -486,8 +486,7 @@ export class GPUProcessor {
     }
 
     logger.info(
-      `🧮 GPU Matrix Multiply: [${rowsA}x${colsA}] * [${rowsB}x${colsB}]`,
-    );
+      `🧮 GPU Matrix Multiply: [${rowsA}x${colsA}] * [${rowsB}x${colsB}]`);
 
     try {
       // CPU fallback for matrix multiplication
@@ -517,7 +516,7 @@ export class GPUProcessor {
 
       const duration = performance.now() - startTime;
 
-      this.logger.debug("Matrix multiplication completed", {
+      this.logger.debug("Matrix multiplication completed"
         duration,
         dimensions: `[${rowsA}x${colsA}] * [${rowsB}x${colsB}]`,
       });

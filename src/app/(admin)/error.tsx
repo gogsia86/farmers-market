@@ -19,8 +19,7 @@ interface ErrorProps {
 
 export default function AdminError({ error, reset }: ErrorProps) {
   useEffect(() => {
-    logger.error("Admin route error", {
-      error: error.message,
+    logger.error("Admin route error", { error: error.message,
       digest: error.digest,
       stack: error.stack,
       context: "admin-routes",

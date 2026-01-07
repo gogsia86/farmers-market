@@ -57,7 +57,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       data: preferences,
     });
   } catch (error) {
-    logger.error("Failed to fetch notification preferences:", error);
+    logger.error("Failed to fetch notification preferences:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,
@@ -126,7 +128,9 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
       data: updatedPreferences,
     });
   } catch (error) {
-    logger.error("Failed to update notification preferences:", error);
+    logger.error("Failed to update notification preferences:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,

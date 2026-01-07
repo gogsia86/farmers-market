@@ -42,8 +42,7 @@ export class SelfHealingOrchestrator {
     if (this.enabled) {
       this.initializeStrategies();
       logger.info(
-        `✅ Self-Healing Orchestrator initialized with ${this.strategies.size} strategies`,
-      );
+        `✅ Self-Healing Orchestrator initialized with ${this.strategies.size} strategies`);
     }
   }
 
@@ -65,8 +64,7 @@ export class SelfHealingOrchestrator {
     }
 
     logger.info(
-      `\n🔧 Attempting self-heal for workflow: ${workflowResult.name}`,
-    );
+      `\n🔧 Attempting self-heal for workflow: ${workflowResult.name}`);
 
     // Check if we've exceeded max attempts for this workflow
     const recentAttempts = this.getRecentAttempts(workflowResult.workflowId);
@@ -168,7 +166,9 @@ export class SelfHealingOrchestrator {
       result.duration = Date.now() - startTime;
       return result;
     } catch (error) {
-      logger.error("   ❌ Healing strategy failed:", error);
+      logger.error("   ❌ Healing strategy failed:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
       const result: HealingResult = {
         healed: false,
@@ -673,7 +673,9 @@ export class SelfHealingOrchestrator {
 
       return true;
     } catch (error) {
-      logger.error("Healing verification error:", error);
+      logger.error("Healing verification error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       return false;
     }
   }
@@ -689,7 +691,9 @@ export class SelfHealingOrchestrator {
       try {
         await database.$connect();
       } catch (error) {
-        logger.error("Rollback failed:", error);
+        logger.error("Rollback failed:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       }
     }
 

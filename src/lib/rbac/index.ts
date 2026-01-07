@@ -213,7 +213,7 @@ export function logPermissionCheck(
   granted: boolean,
   context?: string,
 ) {
-  logger.info("🌾 Divine Permission Check:", {
+  logger.info("🌾 Divine Permission Check:"
     userId,
     role,
     permission,

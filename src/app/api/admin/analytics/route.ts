@@ -408,7 +408,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     });
   } catch (error) {
-    logger.error("Failed to fetch admin analytics:", error);
+    logger.error("Failed to fetch admin analytics:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,

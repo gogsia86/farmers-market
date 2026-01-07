@@ -111,10 +111,9 @@ export async function traceIfEnabled<T>(
     );
   } catch (error) {
     // Fallback: If tracing fails to load, execute without tracing
-    logger.warn(
-      "Failed to load tracing infrastructure, executing without tracing:",
-      error,
-    );
+    logger.warn("Failed to load tracing infrastructure, executing without tracing:", {
+        error: error instanceof Error ? error.message : String(error)
+      });
     return fn();
   }
 }
@@ -172,7 +171,9 @@ export async function traceWithTiming<T>(
       timestamp,
     };
   } catch (error) {
-    logger.warn("Tracing failed, falling back to simple timing:", error);
+    logger.warn("Tracing failed, falling back to simple timing:", {
+        error: error instanceof Error ? error.message : String(error)
+      });
     const result = await fn();
     const durationMs = performance.now() - startTime;
 
@@ -226,7 +227,9 @@ export async function conditionalSpan(
       end: () => span.end(),
     };
   } catch (error) {
-    logger.warn("Failed to create span:", error);
+    logger.warn("Failed to create span:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return createNoOpSpan();
   }
 }

@@ -153,7 +153,9 @@ export class Stripe3DSecureService {
         data: result,
       };
     } catch (error) {
-      logger.error("Error checking 3D Secure status:", error);
+      logger.error("Error checking 3D Secure status:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
       return {
         success: false,
@@ -237,7 +239,9 @@ export class Stripe3DSecureService {
         data: result,
       };
     } catch (error) {
-      logger.error("Error confirming payment with authentication:", error);
+      logger.error("Error confirming payment with authentication:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
       if (error instanceof Stripe.errors.StripeError) {
         return {
@@ -343,7 +347,9 @@ export class Stripe3DSecureService {
         },
       };
     } catch (error) {
-      logger.error("Error handling authentication completion:", error);
+      logger.error("Error handling authentication completion:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
       return {
         success: false,
@@ -434,7 +440,9 @@ export class Stripe3DSecureService {
         data: verification,
       };
     } catch (error) {
-      logger.error("Error getting verification details:", error);
+      logger.error("Error getting verification details:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
       return {
         success: false,
@@ -482,7 +490,9 @@ export class Stripe3DSecureService {
         },
       };
     } catch (error) {
-      logger.error("Error retrying authentication:", error);
+      logger.error("Error retrying authentication:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
       return {
         success: false,
@@ -568,7 +578,9 @@ export class Stripe3DSecureService {
       // Stripe will automatically handle this during confirmation
       return paymentMethod.type === "card" && paymentMethod.card !== null;
     } catch (error) {
-      logger.error("Error checking card 3DS support:", error);
+      logger.error("Error checking card 3DS support:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       return false;
     }
   }

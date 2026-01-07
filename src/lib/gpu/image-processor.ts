@@ -87,7 +87,9 @@ export class GPUImageProcessor {
 
       this.initialized = true;
     } catch (error) {
-      logger.error("❌ GPU initialization failed:", error);
+      logger.error("❌ GPU initialization failed:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       throw new Error("Failed to initialize GPU image processor");
     }
   }
@@ -131,7 +133,9 @@ export class GPUImageProcessor {
         processingTime,
       };
     } catch (error) {
-      logger.error("GPU resize failed:", error);
+      logger.error("GPU resize failed:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       throw error;
     }
   }
@@ -170,7 +174,9 @@ export class GPUImageProcessor {
 
       return results;
     } catch (error) {
-      logger.error("Batch processing failed:", error);
+      logger.error("Batch processing failed:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       throw error;
     }
   }
@@ -233,7 +239,9 @@ export class GPUImageProcessor {
         processingTime,
       };
     } catch (error) {
-      logger.error("GPU enhancement failed:", error);
+      logger.error("GPU enhancement failed:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       throw error;
     }
   }

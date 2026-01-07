@@ -19,8 +19,7 @@ interface ErrorProps {
 
 export default function FarmerError({ error, reset }: ErrorProps) {
   useEffect(() => {
-    logger.error("Farmer route error", {
-      error: error.message,
+    logger.error("Farmer route error", { error: error.message,
       digest: error.digest,
       stack: error.stack,
       context: "farmer-routes",

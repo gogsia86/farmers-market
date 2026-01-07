@@ -68,7 +68,9 @@ export class NotificationService {
         try {
           callback(fullNotification);
         } catch (error) {
-          logger.error("Notification callback error:", error);
+          logger.error("Notification callback error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
         }
       });
     }

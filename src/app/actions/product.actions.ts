@@ -143,7 +143,9 @@ export async function createProduct(
       product,
     };
   } catch (error: any) {
-    logger.error("Create product error:", error);
+    logger.error("Create product error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       success: false,
       error: error.message || "Failed to create product. Please try again.",
@@ -259,7 +261,9 @@ export async function updateProduct(
       product,
     };
   } catch (error: any) {
-    logger.error("Update product error:", error);
+    logger.error("Update product error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       success: false,
       error: error.message || "Failed to update product. Please try again.",
@@ -309,7 +313,9 @@ export async function updateInventory(
       product,
     };
   } catch (error: any) {
-    logger.error("Update inventory error:", error);
+    logger.error("Update inventory error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       success: false,
       error: error.message || "Failed to update inventory.",
@@ -346,7 +352,9 @@ export async function deleteProduct(
       success: true,
     };
   } catch (error: any) {
-    logger.error("Delete product error:", error);
+    logger.error("Delete product error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       success: false,
       error: error.message || "Failed to delete product.",
@@ -405,7 +413,9 @@ export async function updateProductStatus(
       product,
     };
   } catch (error: any) {
-    logger.error("Update product status error:", error);
+    logger.error("Update product status error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       success: false,
       error: error.message || "Failed to update product status.",
@@ -433,7 +443,9 @@ export async function incrementProductView(
 
     return { success: true };
   } catch (error) {
-    logger.error("Increment product view error:", error);
+    logger.error("Increment product view error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return { success: false };
   }
 }
@@ -451,7 +463,9 @@ export async function trackProductCartAdd(
     return { success: true };
     // eslint-disable-next-line no-unreachable
   } catch (error) {
-    logger.error("Track cart add error:", error);
+    logger.error("Track cart add error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return { success: false };
   }
 }
@@ -475,7 +489,9 @@ export async function toggleProductWishlist(
 
     return { success: true, inWishlist: true };
   } catch (error) {
-    logger.error("Toggle wishlist error:", error);
+    logger.error("Toggle wishlist error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return { success: false, inWishlist: false };
   }
 }

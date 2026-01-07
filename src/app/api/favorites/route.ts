@@ -123,7 +123,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    logger.error("Favorites retrieval error:", error);
+    logger.error("Favorites retrieval error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,
@@ -329,7 +331,9 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    logger.error("Add favorite error:", error);
+    logger.error("Add favorite error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,
@@ -468,7 +472,9 @@ export async function DELETE(request: NextRequest) {
       },
     });
   } catch (error) {
-    logger.error("Remove favorite error:", error);
+    logger.error("Remove favorite error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,

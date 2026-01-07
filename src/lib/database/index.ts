@@ -15,7 +15,7 @@
  * @reference .cursorrules - Claude Sonnet 4.5 Database Patterns
  */
 
-import { dbQueryLogger } from "@/lib/monitoring/logger";
+import { dbQueryLogger, logger } from "@/lib/monitoring/logger";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 import { Pool } from "pg";
@@ -52,7 +52,9 @@ const createPrismaClient = (): PrismaClient => {
   });
 
   pool.on('error', (err) => {
-    logger.error('🚨 PostgreSQL pool error:', err);
+    logger.error('🚨 PostgreSQL pool error:', {
+      error: err instanceof Error ? err.message : String(err),
+    });
   });
 
   // Store pool globally in development
@@ -92,18 +94,22 @@ const createPrismaClient = (): PrismaClient => {
 
   // Error logging
   client.$on("error" as never, (e: any) => {
-    logger.error("🚨 Prisma error:", e);
+    logger.error("🚨 Prisma error:", {
+      error: e instanceof Error ? e.message : String(e),
+    });
   });
 
   // Warning logging
   client.$on("warn" as never, (e: any) => {
-    logger.warn("⚠️ Prisma warning:", e);
+    logger.warn("⚠️ Prisma warning:", {
+      error: e instanceof Error ? e.message : String(e),
+    });
   });
 
   // Info logging (development only)
   if (isDevelopment) {
     client.$on("info" as never, (e: any) => {
-      logger.info("ℹ️ Prisma info:", e);
+      logger.info("ℹ️ Prisma info", { datae: { data: e } });
     });
   }
 
@@ -183,7 +189,9 @@ export async function getDatabaseStats(): Promise<{
       idleConnections: result.idle_connections,
     };
   } catch (error) {
-    logger.error("Failed to get database stats:", error);
+    logger.error("Failed to get database stats:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       connections: 0,
       maxConnections: 0,

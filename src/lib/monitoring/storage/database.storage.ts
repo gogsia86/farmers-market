@@ -96,7 +96,9 @@ class DatabaseStorageService {
 
       logger.info(`✅ Report ${report.reportId} saved to database`);
     } catch (error) {
-      logger.error(`❌ Failed to save report ${report.reportId}:`, error);
+      logger.error(`❌ Failed to save report ${report.reportId}:`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
       throw error;
     }
   }
@@ -152,7 +154,9 @@ class DatabaseStorageService {
         await this.saveWorkflowMetricsFromResult(result, execution.runId);
       }
     } catch (error) {
-      logger.error(`❌ Failed to save execution ${result.runId}:`, error);
+      logger.error(`❌ Failed to save execution ${result.runId}:`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
       throw error;
     }
   }
@@ -249,7 +253,9 @@ class DatabaseStorageService {
 
       logger.info("✅ Health check saved to database");
     } catch (error) {
-      logger.error("❌ Failed to save health check:", error);
+      logger.error("❌ Failed to save health check:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       throw error;
     }
   }
@@ -281,7 +287,9 @@ class DatabaseStorageService {
 
       logger.info("✅ Notification logged to database");
     } catch (error) {
-      logger.error("❌ Failed to log notification:", error);
+      logger.error("❌ Failed to log notification:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       // Don't throw - notifications are not critical
     }
   }
@@ -455,7 +463,9 @@ class DatabaseStorageService {
         },
       });
     } catch (error) {
-      logger.error(`Failed to update schedule ${scheduleId}:`, error);
+      logger.error(`Failed to update schedule ${scheduleId}:`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
     }
   }
 
@@ -634,10 +644,12 @@ class DatabaseStorageService {
         deletedNotifications: deletedNotifications.count,
       };
 
-      logger.info("✅ Cleanup complete:", result);
+      logger.info("✅ Cleanup complete", { dataresult: { data: result } });
       return result;
     } catch (error) {
-      logger.error("❌ Cleanup failed:", error);
+      logger.error("❌ Cleanup failed:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       throw error;
     }
   }

@@ -428,7 +428,9 @@ export const useCartStore = create<CartState>()(
             });
           }
         } catch (error) {
-          logger.error("Cart sync error:", error);
+          logger.error("Cart sync error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
           // Don't show error to user for background syncs
         } finally {
           set({ isSyncing: false });
@@ -470,7 +472,9 @@ export const useCartStore = create<CartState>()(
             },
           });
         } catch (error) {
-          logger.error("Cart merge error:", error);
+          logger.error("Cart merge error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
           set({ error: "Failed to merge carts" });
         } finally {
           set({ isLoading: false });

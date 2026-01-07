@@ -47,7 +47,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       });
     }
   } catch (error) {
-    logger.error("Webhook monitoring error:", error);
+    logger.error("Webhook monitoring error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,
@@ -239,7 +241,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         );
     }
   } catch (error) {
-    logger.error("Webhook maintenance action error:", error);
+    logger.error("Webhook maintenance action error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,

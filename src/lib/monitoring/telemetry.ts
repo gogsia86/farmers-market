@@ -107,11 +107,11 @@ export function initializeTelemetry(): NodeSDK {
     return sdkInstance;
   }
 
-  logger.info("[Telemetry] Initializing with config:", {
+  logger.info("[Telemetry] Initializing with config", { otlpEndpoint: {
     serviceName: config.serviceName,
     environment: config.environment,
     endpoint: config.otlpEndpoint,
-  });
+  } });
 
   try {
     // Create OTLP trace exporter
@@ -187,7 +187,9 @@ export function initializeTelemetry(): NodeSDK {
       process.exit(0);
     });
   } catch (error) {
-    logger.error("[Telemetry] Failed to initialize SDK:", error);
+    logger.error("[Telemetry] Failed to initialize SDK:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw error;
   }
 
@@ -199,7 +201,7 @@ export function initializeTelemetry(): NodeSDK {
  */
 export async function shutdownTelemetry(): Promise<void> {
   if (!sdkInstance || !isInitialized) {
-    logger.info("[Telemetry] SDK not initialized, nothing to shutdown");
+    logger.info("[Telemetry] SDK not initialized, { data: nothing to shutdown" });
     return;
   }
 
@@ -209,7 +211,9 @@ export async function shutdownTelemetry(): Promise<void> {
     isInitialized = false;
     logger.info("[Telemetry] SDK shutdown completed");
   } catch (error) {
-    logger.error("[Telemetry] Error during shutdown:", error);
+    logger.error("[Telemetry] Error during shutdown:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
   }
 }
 

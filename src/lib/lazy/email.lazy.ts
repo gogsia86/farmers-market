@@ -7,14 +7,15 @@
  * @category Performance Optimization
  */
 
+import { logger } from '@/lib/monitoring/logger';
 import type nodemailer from "nodemailer";
-import type { Transporter, SendMailOptions, SentMessageInfo } from "nodemailer";
+import type { SendMailOptions, SentMessageInfo, Transporter } from "nodemailer";
 
 // ============================================================================
 // TYPES
 // ============================================================================
 
-export type { Transporter, SendMailOptions, SentMessageInfo };
+export type { SendMailOptions, SentMessageInfo, Transporter };
 
 export interface EmailConfig {
   host?: string;
@@ -122,7 +123,9 @@ export function queueEmail(
 ): void {
   // Fire and forget - don't await
   sendEmail(config, mailOptions).catch((error) => {
-    logger.error("❌ Failed to send queued email:", error);
+    logger.error("❌ Failed to send queued email:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     // TODO: Add to retry queue or dead letter queue
   });
 }
@@ -146,7 +149,9 @@ export async function verifyEmailConfig(config: EmailConfig): Promise<boolean> {
     await transporter.verify();
     return true;
   } catch (error) {
-    logger.error("❌ Email configuration verification failed:", error);
+    logger.error("❌ Email configuration verification failed:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return false;
   }
 }
@@ -178,7 +183,7 @@ After (lazy loading):
 ```typescript
 import { createTransporter, sendEmail } from "@/lib/lazy/email.lazy";
 
-import { logger } from '@/lib/monitoring/logger';
+
 
 // Option 1: Create transporter
 const transporter = await createTransporter({

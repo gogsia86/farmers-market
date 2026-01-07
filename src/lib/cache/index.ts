@@ -138,8 +138,7 @@ class RedisCache implements CacheLayer {
 
       this.client.on("connect", () => {
         this.isConnected = true;
-        logger.info("Redis cache connected", {
-          host: REDIS_CONFIG.host,
+        logger.info("Redis cache connected", { host: REDIS_CONFIG.host,
           port: REDIS_CONFIG.port,
         });
       });

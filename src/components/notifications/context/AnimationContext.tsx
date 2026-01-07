@@ -180,7 +180,7 @@ export function AnimationProvider({
   // Log debug info
   useEffect(() => {
     if (debugMode) {
-      logger.info("🎨 Animation Context Debug Info:", {
+      logger.info("🎨 Animation Context Debug Info", { presetseasonprefersReducedMotionshouldAnimateperformanceModespeedMultiplieruseSeasonalAnimations: {
         preset,
         season,
         prefersReducedMotion,
@@ -188,7 +188,7 @@ export function AnimationProvider({
         performanceMode,
         speedMultiplier,
         useSeasonalAnimations,
-      });
+      } });
     }
   }, [
     debugMode,

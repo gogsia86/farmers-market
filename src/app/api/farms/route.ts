@@ -75,7 +75,7 @@ const logger = createLogger("FarmsAPI");
  */
 export async function GET(request: NextRequest) {
   const ctx = createRequestContext();
-  logger.info("GET /api/farms", ctx);
+  logger.info("GET /api/farms", { data: ctx });
 
   try {
     // Rate limiting check
@@ -216,7 +216,7 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   const ctx = createRequestContext();
-  logger.info("POST /api/farms", ctx);
+  logger.info("POST /api/farms", { data: ctx });
 
   try {
     // Rate limiting check (more strict for POST operations)

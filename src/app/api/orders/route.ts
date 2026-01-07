@@ -159,7 +159,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    logger.error("GET /api/orders error:", error);
+    logger.error("GET /api/orders error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
     return NextResponse.json(
       {
@@ -320,7 +322,9 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
   } catch (error) {
-    logger.error("POST /api/orders error:", error);
+    logger.error("POST /api/orders error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
     if (error instanceof ValidationError) {
       return NextResponse.json(

@@ -103,7 +103,9 @@ export async function createPaymentMethod(
 
     return { success: true, paymentMethod };
   } catch (error) {
-    logger.error("Error creating payment method:", error);
+    logger.error("Error creating payment method:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",
@@ -139,7 +141,9 @@ export async function confirmPayment(
 
     return { success: true, paymentIntent };
   } catch (error) {
-    logger.error("Error confirming payment:", error);
+    logger.error("Error confirming payment:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",

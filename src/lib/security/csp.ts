@@ -275,8 +275,7 @@ export async function handleCSPViolation(
 ): Promise<void> {
   const violation = report["csp-report"];
 
-  logger.error("🚨 CSP VIOLATION DETECTED:", {
-    directive: violation["violated-directive"],
+  logger.error("🚨 CSP VIOLATION DETECTED:", { directive: violation["violated-directive"],
     blockedUri: violation["blocked-uri"],
     documentUri: violation["document-uri"],
     sourceFile: violation["source-file"],

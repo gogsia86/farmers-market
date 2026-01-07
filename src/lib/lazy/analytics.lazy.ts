@@ -71,7 +71,9 @@ export async function trackEvent(
     const { track } = await loadAnalytics();
     track(name, properties);
   } catch (error) {
-    logger.error("Failed to track analytics event:", error);
+    logger.error("Failed to track analytics event:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
   }
 }
 
@@ -95,7 +97,9 @@ export async function trackPageView(path?: string): Promise<void> {
     const currentPath = path || window.location.pathname;
     await trackEvent("page_view", { path: currentPath });
   } catch (error) {
-    logger.error("Failed to track page view:", error);
+    logger.error("Failed to track page view:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
   }
 }
 

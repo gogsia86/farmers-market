@@ -6,21 +6,21 @@
  * Main orchestrator for running workflow tests, generating reports, and sending notifications.
  */
 
-import { createWorkflowExecutor } from "./workflows/workflow-executor";
 import { createReporter } from "./reporter";
-import {
-  PREDEFINED_WORKFLOWS,
-  getEnabledWorkflows,
-  getCriticalWorkflows,
-} from "./workflows/predefined-workflows";
 import type {
   DivineBotConfig,
-  WorkflowConfig,
-  WorkflowResult,
-  WorkflowContext,
   MonitoringReport,
+  WorkflowConfig,
+  WorkflowContext,
+  WorkflowResult,
 } from "./types";
 import { DEFAULT_WORKFLOW_TIMEOUT } from "./types";
+import {
+  PREDEFINED_WORKFLOWS,
+  getCriticalWorkflows,
+  getEnabledWorkflows,
+} from "./workflows/predefined-workflows";
+import { createWorkflowExecutor } from "./workflows/workflow-executor";
 
 import { logger } from '@/lib/monitoring/logger';
 
@@ -109,14 +109,11 @@ export class DivineMonitoringBot {
     }
 
     logger.info(
-      "\n╔════════════════════════════════════════════════════════════╗",
-    );
+      "\n╔════════════════════════════════════════════════════════════╗");
     logger.info(
-      "║ 🤖 DIVINE WORKFLOW MONITORING BOT STARTING                ║",
-    );
+      "║ 🤖 DIVINE WORKFLOW MONITORING BOT STARTING                ║");
     logger.info(
-      "╠════════════════════════════════════════════════════════════╣",
-    );
+      "╠════════════════════════════════════════════════════════════╣");
     logger.info(`║ 🔮 NAME: ${this.config.name.padEnd(48)} ║`);
     logger.info(`║ 📌 VERSION: ${this.config.version.padEnd(45)} ║`);
     logger.info(`║ 🌐 BASE URL: ${this.config.baseUrl.padEnd(44)} ║`);
@@ -127,8 +124,7 @@ export class DivineMonitoringBot {
       `║ 🌾 AGRICULTURE: ${this.config.agricultureConsciousness.enabled ? "ENABLED" : "DISABLED"}${" ".repeat(39 - (this.config.agricultureConsciousness.enabled ? 7 : 8))} ║`,
     );
     logger.info(
-      "╚════════════════════════════════════════════════════════════╝\n",
-    );
+      "╚════════════════════════════════════════════════════════════╝\n");
 
     this.isRunning = true;
 
@@ -315,8 +311,7 @@ export class DivineMonitoringBot {
       const intervalMs = workflow.schedule.interval * 60 * 1000; // Convert minutes to ms
 
       logger.info(
-        `   ⏰ Scheduling ${workflow.name} every ${workflow.schedule.interval} minutes`,
-      );
+        `   ⏰ Scheduling ${workflow.name} every ${workflow.schedule.interval} minutes`);
 
       // Schedule workflow execution
       const interval = setInterval(async () => {
@@ -326,7 +321,9 @@ export class DivineMonitoringBot {
         } catch (error) {
           logger.error(
             `❌ Scheduled workflow failed: ${workflow.name}`,
-            error,
+            {
+              error: error instanceof Error ? error.message : String(error)
+            }
           );
         }
       }, intervalMs);

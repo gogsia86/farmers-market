@@ -243,7 +243,9 @@ export async function GET(
       },
     });
   } catch (error) {
-    logger.error(`GET /api/farms/[farmId]/products error:`, error);
+    logger.error(`GET /api/farms/[farmId]/products error:`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
     return NextResponse.json(
       {

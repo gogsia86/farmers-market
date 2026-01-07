@@ -182,7 +182,9 @@ export async function GET(
       },
     });
   } catch (error) {
-    logger.error(`GET /api/products/[productId]/reviews error:`, error);
+    logger.error(`GET /api/products/[productId]/reviews error:`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
     return NextResponse.json(
       {
@@ -402,7 +404,9 @@ export async function POST(
       { status: 201 }
     );
   } catch (error) {
-    logger.error(`POST /api/products/[productId]/reviews error:`, error);
+    logger.error(`POST /api/products/[productId]/reviews error:`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
     return NextResponse.json(
       {

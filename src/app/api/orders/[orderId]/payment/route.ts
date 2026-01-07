@@ -186,7 +186,9 @@ export async function POST(
       },
     });
   } catch (error) {
-    logger.error("Order payment update error:", error);
+    logger.error("Order payment update error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
     return NextResponse.json(
       {
@@ -301,7 +303,9 @@ export async function GET(
       },
     });
   } catch (error) {
-    logger.error("Order payment retrieval error:", error);
+    logger.error("Order payment retrieval error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
     return NextResponse.json(
       {

@@ -124,7 +124,9 @@ export async function POST(request: NextRequest) {
       message: "Password has been reset successfully. You can now login with your new password.",
     });
   } catch (error) {
-    logger.error("Reset password error:", error);
+    logger.error("Reset password error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       { error: "An unexpected error occurred. Please try again later." },
       { status: 500 }

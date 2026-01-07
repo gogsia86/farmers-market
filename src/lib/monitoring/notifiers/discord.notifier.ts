@@ -7,14 +7,12 @@
  * with agricultural consciousness and divine precision.
  */
 
-import type {
-
 import { logger } from '@/lib/monitoring/logger';
-
+import type {
   MonitoringReport,
   NotificationConfig,
-  WorkflowResult,
   WorkflowPriority,
+  WorkflowResult,
 } from "../types";
 
 // ============================================================================
@@ -527,7 +525,9 @@ export class DiscordNotifier {
         timestamp: new Date(),
       };
     } catch (error) {
-      logger.error("Failed to send Discord notification:", error);
+      logger.error("Failed to send Discord notification:", {
+        error: error instanceof Error ? error.message : String(error),
+      });
       return {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",
@@ -612,4 +612,5 @@ export function createDiscordNotifier(
 // EXPORTS
 // ============================================================================
 
-export type { DiscordMessage, DiscordEmbed, DiscordNotificationResult };
+export type { DiscordEmbed, DiscordMessage, DiscordNotificationResult };
+

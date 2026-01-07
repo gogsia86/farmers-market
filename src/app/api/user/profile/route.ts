@@ -127,7 +127,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    logger.error("Profile retrieval error:", error);
+    logger.error("Profile retrieval error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,
@@ -328,7 +330,9 @@ export async function PATCH(request: NextRequest) {
       },
     });
   } catch (error) {
-    logger.error("Profile update error:", error);
+    logger.error("Profile update error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,

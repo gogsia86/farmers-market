@@ -217,9 +217,9 @@ export class NotificationService {
       }
     } catch (error) {
       logger.error(
-        `Failed to send email notification ${notification.id}:`,
-        error
-      );
+        `Failed to send email notification ${notification.id}:`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
     }
   }
 
@@ -249,7 +249,9 @@ export class NotificationService {
 
       logger.info(`📱 SMS queued for ${notification.user.phone.substring(notification.user.phone.length - 4)}`);
     } catch (error) {
-      logger.error("Failed to queue SMS:", error);
+      logger.error("Failed to queue SMS:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     }
   }
 
@@ -277,7 +279,9 @@ export class NotificationService {
 
       logger.info(`🔔 Push notification queued for user ${notification.userId}`);
     } catch (error) {
-      logger.error("Failed to queue push notification:", error);
+      logger.error("Failed to queue push notification:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     }
   }
 
@@ -348,7 +352,9 @@ export class NotificationService {
         `✅ Notification ${notification.id} queued for delivery at ${sendAt.toISOString()}`
       );
     } catch (error) {
-      logger.error("Failed to queue scheduled notification:", error);
+      logger.error("Failed to queue scheduled notification:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       throw error;
     }
   }
@@ -598,7 +604,9 @@ export class NotificationService {
         });
         sent++;
       } catch (error) {
-        logger.error(`Failed to send notification to user ${userId}:`, error);
+        logger.error(`Failed to send notification to user ${userId}:`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
         failed++;
       }
     }

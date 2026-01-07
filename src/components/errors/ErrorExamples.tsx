@@ -25,6 +25,7 @@ import {
   PaymentError,
   SeasonalViolationError
 } from "@/lib/errors/types";
+import { logger } from '@/lib/monitoring/logger';
 import { useState } from "react";
 import {
   AgriculturalErrorBoundary,
@@ -37,9 +38,6 @@ import {
   InlineError
 } from "./error-display";
 import {
-
-import { logger } from '@/lib/monitoring/logger';
-
   ToastProvider,
   useAgriculturalToast,
   useErrorToast,
@@ -411,7 +409,7 @@ export function ValidationErrorExample() {
     }
 
     if (!validation.hasAnyError) {
-      logger.info("Form submitted:", formData);
+      logger.info("Form submitted", { dataformData: { data: formData } });
     }
   };
 

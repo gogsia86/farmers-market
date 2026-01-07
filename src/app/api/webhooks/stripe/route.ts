@@ -65,7 +65,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       const webhookSecret = getWebhookSecret();
       event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
     } catch (err) {
-      logger.error("Webhook signature verification failed:", err);
+      logger.error("Webhook signature verification failed:", {
+        error: err instanceof Error ? err.message : String(err)
+      });
       return NextResponse.json(
         { error: "Invalid signature" },
         { status: 400 }
@@ -144,7 +146,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
       await webhookEventService.markAsFailed(event.id, errorMessage);
 
-      logger.error(`Webhook event ${event.id} processing failed:`, processingError);
+      logger.error(`Webhook event ${event.id} processing failed:`, {
+        error: processingError instanceof Error ? processingError.message : String(processingError)
+      });
 
       // Return 500 to trigger Stripe retry
       return NextResponse.json(
@@ -156,7 +160,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
   } catch (error) {
-    logger.error("Webhook handler error:", error);
+    logger.error("Webhook handler error:", {
+      error: error instanceof Error ? error.message : String(error)
+    });
     return NextResponse.json(
       {
         error: "Webhook handler failed",
@@ -265,7 +271,9 @@ async function handlePaymentIntentSucceeded(
 
     logger.info(`Successfully processed payment for order ${orderId}`);
   } catch (error) {
-    logger.error(`Failed to process successful payment for order ${orderId}:`, error);
+    logger.error(`Failed to process successful payment for order ${orderId}:`, {
+      error: error instanceof Error ? error.message : String(error)
+    });
   }
 }
 
@@ -325,7 +333,9 @@ async function handlePaymentIntentFailed(
 
     logger.info(`Successfully processed failed payment for order ${orderId}`);
   } catch (error) {
-    logger.error(`Failed to process failed payment for order ${orderId}:`, error);
+    logger.error(`Failed to process failed payment for order ${orderId}:`, {
+      error: error instanceof Error ? error.message : String(error)
+    });
   }
 }
 
@@ -405,7 +415,9 @@ async function handleChargeRefunded(charge: Stripe.Charge): Promise<void> {
       `Successfully processed refund for payment ${payment.id}, amount: $${refundAmount}`
     );
   } catch (error) {
-    logger.error(`Failed to process refund for charge ${charge.id}:`, error);
+    logger.error(`Failed to process refund for charge ${charge.id}`, {
+      error: error instanceof Error ? error.message : String(error)
+    });
   }
 }
 
@@ -439,9 +451,9 @@ async function handlePaymentIntentCreated(
     logger.info(`Tracked payment intent creation for order ${orderId}`);
   } catch (error) {
     logger.error(
-      `Failed to track payment intent creation for order ${orderId}:`,
-      error
-    );
+      `Failed to track payment intent creation for order ${orderId}`, {
+      error: error instanceof Error ? error.message : String(error)
+    });
   }
 }
 

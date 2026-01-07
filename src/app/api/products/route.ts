@@ -238,7 +238,9 @@ export async function GET(
       },
     });
   } catch (error) {
-    logger.error("GET /api/products error:", error);
+    logger.error("GET /api/products error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,
@@ -391,7 +393,9 @@ export async function POST(
       { status: 201 }
     );
   } catch (error) {
-    logger.error("POST /api/products error:", error);
+    logger.error("POST /api/products error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,

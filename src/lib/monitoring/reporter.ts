@@ -44,21 +44,17 @@ export class DivineMonitoringReporter implements IReporter {
     period: { start: Date; end: Date },
   ): Promise<MonitoringReport> {
     logger.info(
-      "\n╔════════════════════════════════════════════════════════════╗",
-    );
+      "\n╔════════════════════════════════════════════════════════════╗");
     logger.info(
-      "║ 📊 GENERATING DIVINE MONITORING REPORT                     ║",
-    );
+      "║ 📊 GENERATING DIVINE MONITORING REPORT                     ║");
     logger.info(
-      "╠════════════════════════════════════════════════════════════╣",
-    );
+      "╠════════════════════════════════════════════════════════════╣");
     logger.info(
       `║ 📅 PERIOD: ${this.formatDate(period.start)} - ${this.formatDate(period.end)}    ║`,
     );
     logger.info(`║ 🔢 WORKFLOWS: ${String(results.length).padEnd(43)} ║`);
     logger.info(
-      "╚════════════════════════════════════════════════════════════╝\n",
-    );
+      "╚════════════════════════════════════════════════════════════╝\n");
 
     // Calculate summary statistics
     const totalWorkflows = results.length;
@@ -154,7 +150,9 @@ export class DivineMonitoringReporter implements IReporter {
       logger.info(`   🌐 HTML: ${htmlPath}`);
       logger.info(`   📝 MD: ${mdPath}\n`);
     } catch (error) {
-      logger.error("❌ Failed to save report:", error);
+      logger.error("❌ Failed to save report:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       throw error;
     }
   }
@@ -184,7 +182,9 @@ export class DivineMonitoringReporter implements IReporter {
         const notification = await this.sendNotification(channel, report);
         notifications.push(notification);
       } catch (error) {
-        logger.error(`❌ Failed to send ${channel} notification:`, error);
+        logger.error(`❌ Failed to send ${channel} notification:`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
         notifications.push({
           id: this.generateNotificationId(),
           timestamp: new Date(),
@@ -225,7 +225,9 @@ export class DivineMonitoringReporter implements IReporter {
 
       return reports;
     } catch (error) {
-      logger.error("❌ Failed to get report history:", error);
+      logger.error("❌ Failed to get report history:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       return [];
     }
   }
@@ -413,10 +415,10 @@ export class DivineMonitoringReporter implements IReporter {
   ): Promise<void> {
     // Email implementation would go here
     // For now, just log
-    logger.info("   📧 Would send email notification:", {
+    logger.info("   📧 Would send email notification", { title: {
       to: this.notificationConfig?.email?.to,
       subject: notification.title,
-    });
+    } });
   }
 
   private async sendSlackNotification(
@@ -456,7 +458,7 @@ export class DivineMonitoringReporter implements IReporter {
     };
 
     // In production, would use fetch to send to Slack
-    logger.info("   💬 Would send Slack message:", slackMessage);
+    logger.info("   💬 Would send Slack message", { dataslackMessage: { data: slackMessage } });
   }
 
   private async sendDiscordNotification(
@@ -484,7 +486,7 @@ export class DivineMonitoringReporter implements IReporter {
     };
 
     // In production, would use fetch to send to Discord
-    logger.info("   🎮 Would send Discord message:", discordMessage);
+    logger.info("   🎮 Would send Discord message", { datadiscordMessage: { data: discordMessage } });
   }
 
   private async sendWebhookNotification(
@@ -496,9 +498,8 @@ export class DivineMonitoringReporter implements IReporter {
 
     // In production, would use fetch to send webhook
     logger.info(
-      "   🔗 Would send webhook to:",
-      this.notificationConfig.webhook.url,
-    );
+      "   🔗 Would send webhook to:", { data: this.notificationConfig.webhook.url,
+     });
   }
 
   private getReportPriority(
@@ -720,14 +721,11 @@ export class DivineMonitoringReporter implements IReporter {
 
   private logReport(report: MonitoringReport): void {
     logger.info(
-      "\n╔════════════════════════════════════════════════════════════╗",
-    );
+      "\n╔════════════════════════════════════════════════════════════╗");
     logger.info(
-      "║ 📊 REPORT SUMMARY                                          ║",
-    );
+      "║ 📊 REPORT SUMMARY                                          ║");
     logger.info(
-      "╠════════════════════════════════════════════════════════════╣",
-    );
+      "╠════════════════════════════════════════════════════════════╣");
     logger.info(
       `║ ✅ PASSED: ${String(report.summary.passedWorkflows).padEnd(47)} ║`,
     );
@@ -744,8 +742,7 @@ export class DivineMonitoringReporter implements IReporter {
       `║ ⏱️  AVG DURATION: ${(report.summary.averageDuration / 1000).toFixed(2)}s${" ".repeat(37 - (report.summary.averageDuration / 1000).toFixed(2).length)} ║`,
     );
     logger.info(
-      "╚════════════════════════════════════════════════════════════╝\n",
-    );
+      "╚════════════════════════════════════════════════════════════╝\n");
   }
 
   private generateReportId(): string {

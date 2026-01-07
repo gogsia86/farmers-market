@@ -7,11 +7,9 @@
  * enabling automatic analysis of failures and triggering of self-healing workflows.
  */
 
+import { logger } from '@/lib/monitoring/logger';
 import { createOrchestratorFromEnv } from "../agents/workflow-agent-orchestrator";
 import {
-
-import { logger } from '@/lib/monitoring/logger';
-
   createAutoRemediationSystem,
   type AutoRemediationSystem,
   type RemediationPlan,
@@ -134,7 +132,9 @@ export class OrchestratorBridge {
     try {
       this.orchestrator = createOrchestratorFromEnv();
     } catch (error) {
-      logger.warn("⚠️ AI Orchestrator not available:", error);
+      logger.warn("⚠️ AI Orchestrator not available:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       this.orchestrator = null;
     }
 
@@ -241,14 +241,11 @@ export class OrchestratorBridge {
     }
 
     logger.info(
-      "\n╔════════════════════════════════════════════════════════════╗",
-    );
+      "\n╔════════════════════════════════════════════════════════════╗");
     logger.info(
-      "║ 🌉 ORCHESTRATOR BRIDGE - Processing Monitoring Report      ║",
-    );
+      "║ 🌉 ORCHESTRATOR BRIDGE - Processing Monitoring Report      ║");
     logger.info(
-      "╠════════════════════════════════════════════════════════════╣",
-    );
+      "╠════════════════════════════════════════════════════════════╣");
     logger.info(
       `║ 📊 Total Workflows: ${String(report.summary.totalWorkflows).padEnd(36)} ║`,
     );
@@ -259,8 +256,7 @@ export class OrchestratorBridge {
       `║ ✅ Passed: ${String(report.summary.passedWorkflows).padEnd(46)} ║`,
     );
     logger.info(
-      "╚════════════════════════════════════════════════════════════╝\n",
-    );
+      "╚════════════════════════════════════════════════════════════╝\n");
 
     // Filter failed workflows
     const failedWorkflows = report.workflows.filter(
@@ -291,7 +287,9 @@ export class OrchestratorBridge {
           }
         }
       } catch (error) {
-        logger.error(`❌ Error processing workflow ${workflow.name}:`, error);
+        logger.error(`❌ Error processing workflow ${workflow.name}:`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
         this.logEvent({
           id: this.generateEventId(),
           timestamp: new Date(),
@@ -307,14 +305,11 @@ export class OrchestratorBridge {
 
     // Print summary
     logger.info(
-      "\n╔════════════════════════════════════════════════════════════╗",
-    );
+      "\n╔════════════════════════════════════════════════════════════╗");
     logger.info(
-      "║ 📈 BRIDGE PROCESSING SUMMARY                               ║",
-    );
+      "║ 📈 BRIDGE PROCESSING SUMMARY                               ║");
     logger.info(
-      "╠════════════════════════════════════════════════════════════╣",
-    );
+      "╠════════════════════════════════════════════════════════════╣");
     logger.info(
       `║ 🔍 Failures Analyzed: ${String(results.failuresAnalyzed).padEnd(35)} ║`,
     );
@@ -325,8 +320,7 @@ export class OrchestratorBridge {
       `║ ✅ Remediations Successful: ${String(results.remediationsSuccessful).padEnd(29)} ║`,
     );
     logger.info(
-      "╚════════════════════════════════════════════════════════════╝\n",
-    );
+      "╚════════════════════════════════════════════════════════════╝\n");
 
     return results;
   }
@@ -449,7 +443,9 @@ export class OrchestratorBridge {
 
       return { analyzed: true, remediated: false, plan };
     } catch (error) {
-      logger.error("❌ Analysis/Remediation error:", error);
+      logger.error("❌ Analysis/Remediation error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
       this.logEvent({
         id: this.generateEventId(),
@@ -489,8 +485,7 @@ export class OrchestratorBridge {
           (this.config.cooldownBetweenAnalyses - timeSinceLastAnalysis) / 1000,
         );
         logger.info(
-          `⏳ Cooldown active. ${remaining}s until next analysis allowed.`,
-        );
+          `⏳ Cooldown active. ${remaining}s until next analysis allowed.`);
         return false;
       }
     }
@@ -542,7 +537,9 @@ export class OrchestratorBridge {
       try {
         await this.sendWebhook(this.config.webhookUrl, payload);
       } catch (error) {
-        logger.error("Failed to send webhook notification:", error);
+        logger.error("Failed to send webhook notification:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       }
     }
 
@@ -551,7 +548,9 @@ export class OrchestratorBridge {
       try {
         await this.sendSlackNotification(payload);
       } catch (error) {
-        logger.error("Failed to send Slack notification:", error);
+        logger.error("Failed to send Slack notification:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       }
     }
   }
@@ -576,7 +575,9 @@ export class OrchestratorBridge {
         logger.warn(`Webhook returned status ${response.status}`);
       }
     } catch (error) {
-      logger.error("Webhook error:", error);
+      logger.error("Webhook error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     }
   }
 
@@ -634,7 +635,9 @@ export class OrchestratorBridge {
         body: JSON.stringify(slackPayload),
       });
     } catch (error) {
-      logger.error("Slack notification error:", error);
+      logger.error("Slack notification error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     }
   }
 
@@ -677,7 +680,9 @@ export class OrchestratorBridge {
       try {
         handler(event);
       } catch (error) {
-        logger.error("Event handler error:", error);
+        logger.error("Event handler error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       }
     }
   }

@@ -4,7 +4,7 @@
  * Agricultural-aware TTLs and seasonal invalidation
  */
 
-import { logger } from "../monitoring/logger";
+import { logger } from '@/lib/monitoring/logger';
 import { redisClient } from "./redis-client";
 import type {
   CacheKey,
@@ -71,7 +71,7 @@ export class CacheService implements ICacheService {
       return value;
     } catch (error) {
       this.stats.errors++;
-      this.logger.error("Cache get error", {
+      this.logger.error("Cache get error"
         key,
         error: error instanceof Error ? error.message : String(error)
       });
@@ -102,7 +102,7 @@ export class CacheService implements ICacheService {
       return success;
     } catch (error) {
       this.stats.errors++;
-      this.logger.error("Cache set error", {
+      this.logger.error("Cache set error"
         key,
         error: error instanceof Error ? error.message : String(error)
       });
@@ -124,7 +124,7 @@ export class CacheService implements ICacheService {
       return true;
     } catch (error) {
       this.stats.errors++;
-      this.logger.error("Cache delete failed", {
+      this.logger.error("Cache delete failed"
         key,
         error: error instanceof Error ? error.message : String(error)
       });
@@ -146,7 +146,7 @@ export class CacheService implements ICacheService {
       return deleted;
     } catch (error) {
       this.stats.errors++;
-      this.logger.error("Cache deletePattern failed", {
+      this.logger.error("Cache deletePattern failed"
         pattern,
         error: error instanceof Error ? error.message : String(error)
       });
@@ -165,7 +165,7 @@ export class CacheService implements ICacheService {
       return await redisClient.exists(fullKey);
     } catch (error) {
       this.stats.errors++;
-      this.logger.error("Cache exists check failed", {
+      this.logger.error("Cache exists check failed"
         key,
         error: error instanceof Error ? error.message : String(error)
       });
@@ -190,7 +190,7 @@ export class CacheService implements ICacheService {
       return true;
     } catch (error) {
       this.stats.errors++;
-      this.logger.error("Cache clear error", {
+      this.logger.error("Cache clear error"
         pattern,
         error: error instanceof Error ? error.message : String(error)
       });
@@ -207,7 +207,7 @@ export class CacheService implements ICacheService {
       await this.deletePattern(pattern);
       this.logger.info("Cache invalidated by tag", { tag });
     } catch (error) {
-      this.logger.error("Tag invalidation failed", {
+      this.logger.error("Tag invalidation failed"
         tag,
         error: error instanceof Error ? error.message : String(error)
       });

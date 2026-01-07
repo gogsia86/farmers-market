@@ -107,8 +107,7 @@ export class WorkflowTracer {
     this.initialized = true;
 
     logger.info(
-      `✅ OpenTelemetry tracing initialized with ${this.config.exporter} exporter`,
-    );
+      `✅ OpenTelemetry tracing initialized with ${this.config.exporter} exporter`);
   }
 
   /**

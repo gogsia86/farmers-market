@@ -180,7 +180,9 @@ export function NotificationCenter({
         setMarkingAsRead(null);
       }
     } catch (err) {
-      logger.error("Failed to mark notification as read:", err);
+      logger.error("Failed to mark notification as read:", {
+      error: err instanceof Error ? err.message : String(err),
+    });
       setMarkingAsRead(null);
     }
   };
@@ -212,7 +214,9 @@ export function NotificationCenter({
       );
       setUnreadCount(0);
     } catch (err) {
-      logger.error("Failed to mark all as read:", err);
+      logger.error("Failed to mark all as read:", {
+      error: err instanceof Error ? err.message : String(err),
+    });
     }
   };
 
@@ -231,7 +235,9 @@ export function NotificationCenter({
         await fetchNotifications({ unreadOnly: filter === "unread" });
       }
     } catch (err) {
-      logger.error("Failed to clear notifications:", err);
+      logger.error("Failed to clear notifications:", {
+      error: err instanceof Error ? err.message : String(err),
+    });
     }
   };
 

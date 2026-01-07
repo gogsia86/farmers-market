@@ -7,12 +7,11 @@
  * @category Performance Optimization
  */
 
-import type { v2 as cloudinaryV2 } from "cloudinary";
+import { logger } from '@/lib/monitoring/logger';
 import type {
-  UploadApiOptions,
-  UploadApiResponse,
-  ConfigOptions,
-  ResourceApiResponse,
+  v2 as cloudinaryV2, ConfigOptions,
+  ResourceApiResponse, UploadApiOptions,
+  UploadApiResponse
 } from "cloudinary";
 
 // ============================================================================
@@ -20,10 +19,9 @@ import type {
 // ============================================================================
 
 export type {
-  UploadApiOptions,
-  UploadApiResponse,
   ConfigOptions,
-  ResourceApiResponse,
+  ResourceApiResponse, UploadApiOptions,
+  UploadApiResponse
 };
 
 export interface CloudinaryConfig {
@@ -197,7 +195,7 @@ export async function deleteFromCloudinary(
  * @example
  * ```typescript
  * const details = await getCloudinaryResource("products/product-123");
- * logger.info(details.width, details.height, details.format);
+ * logger.info(details.width, { data: details.height, details.format });
  * ```
  */
 export async function getCloudinaryResource(
@@ -283,7 +281,9 @@ export function queueCloudinaryUpload(
       : uploadBufferToCloudinary(file, options);
 
   uploadPromise.catch((error) => {
-    logger.error("❌ Failed to upload to Cloudinary:", error);
+    logger.error("❌ Failed to upload to Cloudinary:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     // TODO: Add to retry queue or dead letter queue
   });
 }
@@ -315,7 +315,7 @@ After (lazy loading):
 ```typescript
 import { uploadToCloudinary, configureCloudinary } from "@/lib/lazy/cloudinary.lazy";
 
-import { logger } from '@/lib/monitoring/logger';
+
 
 // Option 1: Auto-configure (uses environment variables)
 const result = await uploadToCloudinary(filePath, {

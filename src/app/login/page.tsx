@@ -101,7 +101,9 @@ export default function LoginPage() {
       </main>
     );
   } catch (error) {
-    logger.error("Login page error:", error);
+    logger.error("Login page error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return (
       <main className="min-h-screen bg-gradient-to-b from-green-50 to-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <LoginError />

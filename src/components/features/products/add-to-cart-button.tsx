@@ -141,7 +141,9 @@ export function AddToCartButton({
         throw new Error(response.error?.message || "Failed to add to cart");
       }
     } catch (error) {
-      logger.error("Add to cart error:", error);
+      logger.error("Add to cart error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       toast({
         title: "Failed to add to cart",
         description: error instanceof Error ? error.message : "Please try again",

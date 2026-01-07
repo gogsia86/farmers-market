@@ -156,7 +156,7 @@ export async function predictCropYield(
  * @example
  * ```typescript
  * const result = await classifyCropDisease(imageBuffer);
- * logger.info(result.class, result.confidence);
+ * logger.info(result.class, { data: result.confidence });
  * ```
  */
 export async function classifyCropDisease(

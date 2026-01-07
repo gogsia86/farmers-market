@@ -279,7 +279,9 @@ export async function GET(
       },
     });
   } catch (error) {
-    logger.error("Failed to fetch user details:", error);
+    logger.error("Failed to fetch user details:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,

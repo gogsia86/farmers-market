@@ -126,7 +126,9 @@ export class WebhookEventService {
           message: errorMessage,
         });
 
-        logger.error(`[WebhookEvent] Failed to record event ${data.eventId}:`, error);
+        logger.error(`[WebhookEvent] Failed to record event ${data.eventId}:`, {
+        error: error instanceof Error ? error.message : String(error)
+      });
 
         return {
           success: false,
@@ -166,7 +168,9 @@ export class WebhookEventService {
       } catch (error) {
         span.recordException(error as Error);
         span.setStatus({ code: SpanStatusCode.ERROR });
-        logger.error(`[WebhookEvent] Failed to mark event ${eventId} as processed:`, error);
+        logger.error(`[WebhookEvent] Failed to mark event ${eventId} as processed:`, {
+        error: error instanceof Error ? error.message : String(error)
+      });
         throw error;
       } finally {
         span.end();
@@ -200,7 +204,9 @@ export class WebhookEventService {
       } catch (dbError) {
         span.recordException(dbError as Error);
         span.setStatus({ code: SpanStatusCode.ERROR });
-        logger.error(`[WebhookEvent] Failed to record error for event ${eventId}:`, dbError);
+        logger.error(`[WebhookEvent] Failed to record error for event ${eventId}:`, {
+        error: dbError instanceof Error ? dbError.message : String(dbError)
+      });
         throw dbError;
       } finally {
         span.end();

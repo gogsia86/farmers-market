@@ -3,6 +3,7 @@
  * WebSocket-based notifications with agricultural consciousness
  */
 
+import { logger } from '@/lib/monitoring/logger';
 import { StructuredLogger } from "@/lib/monitoring/logger";
 import { WebSocket, WebSocketServer } from "ws";
 import type { IncomingMessage } from "http";
@@ -79,7 +80,9 @@ export class RealtimeNotificationSystem {
       );
 
       this.wss.on("error", (error: Error): void => {
-        this.logger.error("WebSocket server error", error);
+        this.logger.error("WebSocket server error", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       });
 
       // Start background tasks
@@ -126,7 +129,7 @@ export class RealtimeNotificationSystem {
 
     this.connections.set(connectionId, { ws, metadata });
 
-    this.logger.info("New WebSocket connection", {
+    this.logger.info("New WebSocket connection"
       connectionId,
       userId,
       userRole: metadata.userRole,
@@ -430,7 +433,7 @@ export class RealtimeNotificationSystem {
   private handleDisconnection(connectionId: string): void {
     const connection = this.connections.get(connectionId);
     if (connection) {
-      this.logger.info("WebSocket disconnected", {
+      this.logger.info("WebSocket disconnected"
         connectionId,
         userId: connection.metadata.userId,
         connectedDuration:
@@ -445,7 +448,9 @@ export class RealtimeNotificationSystem {
    * HANDLE ERROR
    */
   private handleError(connectionId: string, error: Error): void {
-    this.logger.error(`WebSocket connection error for ${connectionId}`, error);
+    this.logger.error(`WebSocket connection error for ${connectionId}`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
   }
 
   /**

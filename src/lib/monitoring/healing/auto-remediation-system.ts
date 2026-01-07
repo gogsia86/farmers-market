@@ -218,7 +218,9 @@ export class AutoRemediationSystem {
       try {
         this.orchestrator = createOrchestratorFromEnv();
       } catch (error) {
-        logger.warn("⚠️ AI Orchestrator initialization failed:", error);
+        logger.warn("⚠️ AI Orchestrator initialization failed:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
         this.orchestrator = null;
       }
     }
@@ -246,14 +248,11 @@ export class AutoRemediationSystem {
     }
 
     logger.info(
-      "\n╔════════════════════════════════════════════════════════════╗",
-    );
+      "\n╔════════════════════════════════════════════════════════════╗");
     logger.info(
-      "║ 🔧 AUTO-REMEDIATION SYSTEM - Processing Failure           ║",
-    );
+      "║ 🔧 AUTO-REMEDIATION SYSTEM - Processing Failure           ║");
     logger.info(
-      "╠════════════════════════════════════════════════════════════╣",
-    );
+      "╠════════════════════════════════════════════════════════════╣");
     logger.info(
       `║ 📋 Workflow: ${workflowResult.name.substring(0, 44).padEnd(44)} ║`,
     );
@@ -262,8 +261,7 @@ export class AutoRemediationSystem {
     );
     logger.info(`║ ❌ Status: ${workflowResult.status.padEnd(47)} ║`);
     logger.info(
-      "╚════════════════════════════════════════════════════════════╝\n",
-    );
+      "╚════════════════════════════════════════════════════════════╝\n");
 
     const planId = this.generatePlanId();
     const startTime = Date.now();
@@ -556,8 +554,7 @@ export class AutoRemediationSystem {
     });
 
     logger.info(
-      `❌ Plan ${planId} rejected by ${rejectedBy}${reason ? `: ${reason}` : ""}`,
-    );
+      `❌ Plan ${planId} rejected by ${rejectedBy}${reason ? `: ${reason}` : ""}`);
   }
 
   /**
@@ -605,7 +602,9 @@ export class AutoRemediationSystem {
         analysisTime: Date.now() - startTime,
       };
     } catch (error) {
-      logger.warn("⚠️ AI analysis failed, using fallback:", error);
+      logger.warn("⚠️ AI analysis failed, using fallback:", {
+        error: error instanceof Error ? error.message : String(error)
+      });
       return this.getFallbackAnalysis(workflowResult);
     }
   }
@@ -1294,8 +1293,7 @@ export class AutoRemediationSystem {
       this.circuitBreakerState.tripped = true;
       this.circuitBreakerState.tripTime = now;
       logger.info(
-        `\n🔴 Circuit breaker TRIPPED! Remediation disabled for ${this.config.circuitBreaker.cooldownMinutes} minutes.\n`,
-      );
+        `\n🔴 Circuit breaker TRIPPED! Remediation disabled for ${this.config.circuitBreaker.cooldownMinutes} minutes.\n`);
     }
   }
 
@@ -1400,14 +1398,11 @@ export class AutoRemediationSystem {
 
   private printPlanSummary(plan: RemediationPlan): void {
     logger.info(
-      "\n╔════════════════════════════════════════════════════════════╗",
-    );
+      "\n╔════════════════════════════════════════════════════════════╗");
     logger.info(
-      "║ 📋 REMEDIATION PLAN SUMMARY                                ║",
-    );
+      "║ 📋 REMEDIATION PLAN SUMMARY                                ║");
     logger.info(
-      "╠════════════════════════════════════════════════════════════╣",
-    );
+      "╠════════════════════════════════════════════════════════════╣");
     logger.info(`║ 🆔 Plan ID: ${plan.id.substring(0, 45).padEnd(45)} ║`);
     logger.info(`║ 📊 Severity: ${plan.severity.padEnd(44)} ║`);
     logger.info(
@@ -1415,11 +1410,9 @@ export class AutoRemediationSystem {
     );
     logger.info(`║ ✅ Approval: ${plan.approvalStatus.padEnd(44)} ║`);
     logger.info(
-      "╠════════════════════════════════════════════════════════════╣",
-    );
+      "╠════════════════════════════════════════════════════════════╣");
     logger.info(
-      "║ 🔧 Proposed Actions:                                       ║",
-    );
+      "║ 🔧 Proposed Actions:                                       ║");
 
     for (const action of plan.proposedActions) {
       const line = `   ${action.priority}. [${action.riskLevel}] ${action.type}`;
@@ -1427,11 +1420,9 @@ export class AutoRemediationSystem {
     }
 
     logger.info(
-      "╠════════════════════════════════════════════════════════════╣",
-    );
+      "╠════════════════════════════════════════════════════════════╣");
     logger.info(
-      "║ 📊 Impact Assessment:                                      ║",
-    );
+      "║ 📊 Impact Assessment:                                      ║");
     logger.info(
       `║    User Impact: ${plan.estimatedImpact.userImpact.padEnd(41)} ║`,
     );
@@ -1442,8 +1433,7 @@ export class AutoRemediationSystem {
       `║    Reversibility: ${plan.estimatedImpact.reversibility.padEnd(38)} ║`,
     );
     logger.info(
-      "╚════════════════════════════════════════════════════════════╝\n",
-    );
+      "╚════════════════════════════════════════════════════════════╝\n");
 
     if (plan.aiAnalysis.rootCause) {
       logger.info(`🔍 Root Cause: ${plan.aiAnalysis.rootCause}\n`);
@@ -1467,14 +1457,11 @@ export class AutoRemediationSystem {
           : "❌";
 
     logger.info(
-      "\n╔════════════════════════════════════════════════════════════╗",
-    );
+      "\n╔════════════════════════════════════════════════════════════╗");
     logger.info(
-      "║ 🏁 EXECUTION RESULT                                        ║",
-    );
+      "║ 🏁 EXECUTION RESULT                                        ║");
     logger.info(
-      "╠════════════════════════════════════════════════════════════╣",
-    );
+      "╠════════════════════════════════════════════════════════════╣");
     logger.info(
       `║ ${statusIcon} Final State: ${result.finalState.padEnd(42)} ║`,
     );
@@ -1487,8 +1474,7 @@ export class AutoRemediationSystem {
     );
     logger.info(`║ ❌ Errors: ${String(result.errors.length).padEnd(46)} ║`);
     logger.info(
-      "╚════════════════════════════════════════════════════════════╝\n",
-    );
+      "╚════════════════════════════════════════════════════════════╝\n");
 
     if (result.errors.length > 0) {
       logger.info("❌ Errors encountered:");

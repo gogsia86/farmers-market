@@ -143,7 +143,9 @@ export class PredictiveMonitor {
         ),
       };
     } catch (error) {
-      logger.error("❌ Prediction error:", error);
+      logger.error("❌ Prediction error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       return this.generateFallbackPrediction();
     }
   }
@@ -234,8 +236,7 @@ export class PredictiveMonitor {
     }
 
     logger.info(
-      `🎓 Training prediction model with ${historicalResults.length} samples...`,
-    );
+      `🎓 Training prediction model with ${historicalResults.length} samples...`);
 
     // Prepare training data
     const { xs, ys } = this.prepareTrainingData(historicalResults);
@@ -270,7 +271,9 @@ export class PredictiveMonitor {
       xs.dispose();
       ys.dispose();
     } catch (error) {
-      logger.error("❌ Model training error:", error);
+      logger.error("❌ Model training error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     }
   }
 

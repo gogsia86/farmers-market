@@ -269,7 +269,9 @@ export async function PATCH(
       },
     });
   } catch (error) {
-    logger.error("Failed to update user role:", error);
+    logger.error("Failed to update user role:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,

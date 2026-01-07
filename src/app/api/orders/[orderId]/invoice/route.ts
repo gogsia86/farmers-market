@@ -117,7 +117,9 @@ export async function GET(
       },
     });
   } catch (error) {
-    logger.error("❌ Invoice generation error:", error);
+    logger.error("❌ Invoice generation error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
     return NextResponse.json(
       {

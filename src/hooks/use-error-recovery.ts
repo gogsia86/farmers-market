@@ -56,7 +56,9 @@ export interface UseRetryReturn<T> {
  *     maxAttempts: 3,
  *     initialDelay: 1000,
  *     onSuccess: () => logger.info('Success!'),
- *     onFailure: (error) => logger.error('Failed:', error)
+ *     onFailure: (error) => logger.error('Failed:', {
+      error: error instanceof Error ? error.message : String(error),
+    })
  *   }
  * );
  *

@@ -189,7 +189,9 @@ export function CreateProductForm({ farmId, farmName }: CreateProductFormProps) 
         }
       }
     } catch (err: any) {
-      logger.error("Product creation error:", err);
+      logger.error("Product creation error:", {
+      error: err instanceof Error ? err.message : String(err),
+    });
       setError(err.message || "An unexpected error occurred");
     } finally {
       setIsSubmitting(false);

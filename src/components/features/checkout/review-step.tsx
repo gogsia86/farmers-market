@@ -170,7 +170,9 @@ export function ReviewStep({
       // Step 4: Redirect to confirmation page
       router.push(`/orders/${orderResult.data.orderId}/confirmation`);
     } catch (err) {
-      logger.error("Order submission error:", err);
+      logger.error("Order submission error:", {
+      error: err instanceof Error ? err.message : String(err),
+    });
       setError(
         err instanceof Error
           ? err.message

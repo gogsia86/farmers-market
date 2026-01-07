@@ -134,11 +134,10 @@ async function processPushJob(job: Job<PushJobData>) {
         "job.error": errorMessage,
       });
 
-      logger.error(
-        `❌ Push notification failed to user ${job.data.userId} (Job: ${job.id}, Attempt: ${job.attemptsMade + 1
-        }):`,
-        error
-      );
+      logger.error(`❌ Push notification failed to user ${job.data.userId} (Job: ${job.id}, Attempt: ${job.attemptsMade + 1
+        }):`, {
+      error: error instanceof Error ? error.message : String(error)
+    });
 
       throw error;
     } finally {
@@ -190,7 +189,9 @@ export function startPushWorker() {
   });
 
   pushQueue.on("error", (error) => {
-    logger.error("❌ Push worker error:", error);
+    logger.error("❌ Push worker error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
   });
 
   logger.info("✅ Push notification worker started successfully");
@@ -206,7 +207,9 @@ export async function stopPushWorker() {
     await pushQueue.close();
     logger.info("✅ Push notification worker stopped successfully");
   } catch (error) {
-    logger.error("Failed to stop push notification worker:", error);
+    logger.error("Failed to stop push notification worker:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw error;
   }
 }
@@ -218,20 +221,22 @@ export async function stopPushWorker() {
 if (process.env.NODE_ENV !== "test") {
   // Handle process termination
   process.on("SIGTERM", async () => {
-    logger.info("Received SIGTERM, shutting down push notification worker...");
+    logger.info("Received SIGTERM, { data: shutting down push notification worker..." });
     await stopPushWorker();
     process.exit(0);
   });
 
   process.on("SIGINT", async () => {
-    logger.info("Received SIGINT, shutting down push notification worker...");
+    logger.info("Received SIGINT, { data: shutting down push notification worker..." });
     await stopPushWorker();
     process.exit(0);
   });
 
   // Handle uncaught errors
   process.on("uncaughtException", async (error) => {
-    logger.error("Uncaught exception:", error);
+    logger.error("Uncaught exception:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     await stopPushWorker();
     process.exit(1);
   });

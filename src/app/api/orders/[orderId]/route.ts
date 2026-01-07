@@ -90,7 +90,9 @@ export async function GET(
       },
     });
   } catch (error) {
-    logger.error(`GET /api/orders/[orderId] error:`, error);
+    logger.error(`GET /api/orders/[orderId] error:`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
     if (error instanceof NotFoundError) {
       return NextResponse.json(
@@ -194,7 +196,9 @@ export async function PATCH(
       },
     });
   } catch (error) {
-    logger.error(`PATCH /api/orders/[orderId] error:`, error);
+    logger.error(`PATCH /api/orders/[orderId] error:`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
     if (error instanceof NotFoundError) {
       return NextResponse.json(
@@ -275,7 +279,9 @@ export async function DELETE(
       },
     });
   } catch (error) {
-    logger.error(`DELETE /api/orders/[orderId] error:`, error);
+    logger.error(`DELETE /api/orders/[orderId] error:`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
     if (error instanceof NotFoundError) {
       return NextResponse.json(

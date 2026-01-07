@@ -49,7 +49,7 @@ export class AIFailureAnalyzer {
         this.enabled = false;
       } else {
         this.openai = new OpenAI({ apiKey });
-        logger.info("✅ AI Failure Analyzer initialized with", this.model);
+        logger.info("✅ AI Failure Analyzer initialized with", { data: this.model });
       }
     }
   }
@@ -106,7 +106,9 @@ export class AIFailureAnalyzer {
         documentationLinks: analysis.documentationLinks || [],
       };
     } catch (error) {
-      logger.error("❌ AI failure analysis error:", error);
+      logger.error("❌ AI failure analysis error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       return this.generateFallbackAnalysis(workflowResult);
     }
   }
@@ -166,7 +168,9 @@ export class AIFailureAnalyzer {
 
       return predictions;
     } catch (error) {
-      logger.error("❌ AI risk prediction error:", error);
+      logger.error("❌ AI risk prediction error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       return [];
     }
   }
@@ -221,7 +225,9 @@ export class AIFailureAnalyzer {
         trend: analysis.trend || "STABLE",
       };
     } catch (error) {
-      logger.error("❌ AI performance analysis error:", error);
+      logger.error("❌ AI performance analysis error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       return {
         summary: "Analysis unavailable",
         bottlenecks: [],
@@ -289,7 +295,9 @@ Keep it concise and actionable for executives.`;
         this.generateBasicSummary(report)
       );
     } catch (error) {
-      logger.error("❌ AI executive summary error:", error);
+      logger.error("❌ AI executive summary error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       return this.generateBasicSummary(report);
     }
   }
@@ -336,7 +344,9 @@ Format as JSON array of strings.`;
       const response = JSON.parse(content);
       return response.steps || response.remediationSteps || [];
     } catch (error) {
-      logger.error("❌ AI remediation suggestion error:", error);
+      logger.error("❌ AI remediation suggestion error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       return this.getFallbackRemediation(workflowType);
     }
   }

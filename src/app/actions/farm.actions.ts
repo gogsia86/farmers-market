@@ -175,7 +175,9 @@ export async function createFarmAction(formData: FormData): Promise<FarmActionRe
       farm,
     };
   } catch (error) {
-    logger.error("Farm creation error:", error);
+    logger.error("Farm creation error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to create farm",
@@ -258,7 +260,9 @@ export async function updateFarmAction(
       farm,
     };
   } catch (error) {
-    logger.error("Farm update error:", error);
+    logger.error("Farm update error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to update farm",
@@ -311,7 +315,9 @@ export async function deleteFarmAction(farmId: string): Promise<FarmActionRespon
       success: true,
     };
   } catch (error) {
-    logger.error("Farm deletion error:", error);
+    logger.error("Farm deletion error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to delete farm",
@@ -370,7 +376,9 @@ export async function toggleFarmFavoriteAction(farmId: string): Promise<FarmActi
       success: true,
     };
   } catch (error) {
-    logger.error("Toggle favorite error:", error);
+    logger.error("Toggle favorite error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to toggle favorite",
@@ -458,7 +466,9 @@ export async function submitFarmReviewAction(
       success: true,
     };
   } catch (error) {
-    logger.error("Review submission error:", error);
+    logger.error("Review submission error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to submit review",

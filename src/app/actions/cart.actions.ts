@@ -104,7 +104,9 @@ export async function addToCartAction(
       },
     };
   } catch (error) {
-    logger.error("Add to cart error:", error);
+    logger.error("Add to cart error", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       success: false,
       error: {
@@ -135,7 +137,9 @@ export async function updateCartItemAction(
       },
     };
   } catch (error) {
-    logger.error("Update cart item error:", error);
+    logger.error("Update cart item error", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       success: false,
       error: {
@@ -163,7 +167,9 @@ export async function removeFromCartAction(itemId: string): Promise<ActionRespon
       },
     };
   } catch (error) {
-    logger.error("Remove from cart error:", error);
+    logger.error("Remove from cart error", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       success: false,
       error: {
@@ -191,7 +197,9 @@ export async function clearCartAction(userId: string): Promise<ActionResponse> {
       },
     };
   } catch (error) {
-    logger.error("Clear cart error:", error);
+    logger.error("Clear cart error", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       success: false,
       error: {
@@ -222,7 +230,9 @@ export async function clearFarmCartAction(
       },
     };
   } catch (error) {
-    logger.error("Clear farm cart error:", error);
+    logger.error("Clear farm cart error", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       success: false,
       error: {
@@ -247,7 +257,9 @@ export async function getCartSummaryAction(
       data: serializeCartSummary(summary),
     };
   } catch (error) {
-    logger.error("Get cart summary error:", error);
+    logger.error("Get cart summary error", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       success: false,
       error: {
@@ -270,7 +282,9 @@ export async function getCartCountAction(userId: string): Promise<ActionResponse
       data: count,
     };
   } catch (error) {
-    logger.error("Get cart count error:", error);
+    logger.error("Get cart count error", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       success: false,
       error: {
@@ -296,7 +310,9 @@ export async function validateCartAction(
       data: validationResult,
     };
   } catch (error) {
-    logger.error("Validate cart error:", error);
+    logger.error("Validate cart error", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       success: false,
       error: {
@@ -327,7 +343,9 @@ export async function syncCartPricesAction(userId: string): Promise<ActionRespon
       },
     };
   } catch (error) {
-    logger.error("Sync cart prices error:", error);
+    logger.error("Sync cart prices error", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       success: false,
       error: {
@@ -358,7 +376,9 @@ export async function mergeGuestCartAction(
       },
     };
   } catch (error) {
-    logger.error("Merge guest cart error:", error);
+    logger.error("Merge guest cart error", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       success: false,
       error: {
@@ -384,7 +404,9 @@ export async function cleanupExpiredCartsAction(): Promise<ActionResponse> {
       },
     };
   } catch (error) {
-    logger.error("Cleanup expired carts error:", error);
+    logger.error("Cleanup expired carts error", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       success: false,
       error: {

@@ -51,21 +51,17 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
     const startTime = new Date();
 
     logger.info(
-      "\n╔════════════════════════════════════════════════════════════╗",
-    );
+      "\n╔════════════════════════════════════════════════════════════╗");
     logger.info(
-      "║ ⚡ DIVINE WORKFLOW EXECUTION INITIATED                     ║",
-    );
+      "║ ⚡ DIVINE WORKFLOW EXECUTION INITIATED                     ║");
     logger.info(
-      "╠════════════════════════════════════════════════════════════╣",
-    );
+      "╠════════════════════════════════════════════════════════════╣");
     logger.info(`║ 🔮 WORKFLOW: ${workflow.name.padEnd(44)} ║`);
     logger.info(`║ 🆔 RUN ID: ${runId.padEnd(46)} ║`);
     logger.info(`║ 🌾 TYPE: ${workflow.type.padEnd(48)} ║`);
     logger.info(`║ ⚠️  PRIORITY: ${workflow.priority.padEnd(45)} ║`);
     logger.info(
-      "╚════════════════════════════════════════════════════════════╝\n",
-    );
+      "╚════════════════════════════════════════════════════════════╝\n");
 
     try {
       // Initialize browser
@@ -142,7 +138,9 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
 
       return result;
     } catch (error) {
-      logger.error("❌ Workflow execution failed:", error);
+      logger.error("❌ Workflow execution failed:", {
+        error: error instanceof Error ? error.message : String(error)
+      });
 
       const endTime = new Date();
       const duration = endTime.getTime() - startTime.getTime();
@@ -256,7 +254,9 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
    * Register workflow for dependency resolution
    */
   registerWorkflow(workflow: WorkflowConfig): void {
-    this.workflows.set(workflow.id, workflow);
+    this.workflows.set(workflow.id, {
+        error: workflow instanceof Error ? workflow.message : String(workflow)
+      });
   }
 
   // ============================================================================
@@ -371,7 +371,9 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
           });
           screenshot = screenshotBuffer.toString("base64");
         } catch (e) {
-          logger.error("Failed to capture screenshot:", e);
+          logger.error("Failed to capture screenshot:", {
+        error: e instanceof Error ? e.message : String(e)
+      });
         }
       }
 
@@ -449,7 +451,9 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
           performanceMetrics.pageLoadTime,
         );
       } catch (e) {
-        logger.warn("Failed to gather performance metrics:", e);
+        logger.warn("Failed to gather performance metrics:", {
+        error: e instanceof Error ? e.message : String(e)
+      });
       }
     }
 
@@ -560,14 +564,11 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
             : "⏭️";
 
     logger.info(
-      "\n╔════════════════════════════════════════════════════════════╗",
-    );
+      "\n╔════════════════════════════════════════════════════════════╗");
     logger.info(
-      `║ ${statusEmoji} WORKFLOW EXECUTION COMPLETE                           ║`,
-    );
+      `║ ${statusEmoji} WORKFLOW EXECUTION COMPLETE                           ║`);
     logger.info(
-      "╠════════════════════════════════════════════════════════════╣",
-    );
+      "╠════════════════════════════════════════════════════════════╣");
     logger.info(`║ 📊 STATUS: ${result.status.padEnd(46)} ║`);
     logger.info(
       `║ ⏱️  DURATION: ${(result.duration / 1000).toFixed(2)}s${" ".repeat(44 - (result.duration / 1000).toFixed(2).length)} ║`,
@@ -595,8 +596,7 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
     }
 
     logger.info(
-      "╚════════════════════════════════════════════════════════════╝\n",
-    );
+      "╚════════════════════════════════════════════════════════════╝\n");
   }
 
   private generateRunId(): string {

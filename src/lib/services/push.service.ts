@@ -261,7 +261,9 @@ export class PushNotificationService {
         logger.info("✅ Push notification service initialized successfully");
       }
     } catch (error) {
-      logger.error("❌ Failed to initialize push notification service:", error);
+      logger.error("❌ Failed to initialize push notification service:", {
+        error: error instanceof Error ? error.message : String(error)
+      });
       this.isConfigured = false;
     }
   }
@@ -427,10 +429,9 @@ export class PushNotificationService {
           message: errorMessage,
         });
 
-        logger.error(
-          `❌ Failed to send push notification to user ${options.userId}:`,
-          error
-        );
+        logger.error(`❌ Failed to send push notification to user ${options.userId}:`, {
+      error: error instanceof Error ? error.message : String(error)
+    });
 
         // Log failure
         await this.logPushNotification({
@@ -541,7 +542,9 @@ export class PushNotificationService {
 
       logger.info(`✅ Device token registered for user ${userId}`);
     } catch (error) {
-      logger.error("Failed to register device token:", error);
+      logger.error("Failed to register device token:", {
+        error: error instanceof Error ? error.message : String(error)
+      });
       throw error;
     }
   }
@@ -559,7 +562,9 @@ export class PushNotificationService {
 
       logger.info(`🗑️ Device token removed: ${token.substring(0, 20)}...`);
     } catch (error) {
-      logger.error("Failed to remove device token:", error);
+      logger.error("Failed to remove device token:", {
+        error: error instanceof Error ? error.message : String(error)
+      });
       // Don't throw - token might already be deleted
     }
   }
@@ -587,7 +592,9 @@ export class PushNotificationService {
 
       return tokens;
     } catch (error) {
-      logger.error("Failed to get user device tokens:", error);
+      logger.error("Failed to get user device tokens:", {
+        error: error instanceof Error ? error.message : String(error)
+      });
       return [];
     }
   }
@@ -623,7 +630,9 @@ export class PushNotificationService {
         },
       });
     } catch (error) {
-      logger.error("Failed to log push notification to database:", error);
+      logger.error("Failed to log push notification to database:", {
+        error: error instanceof Error ? error.message : String(error)
+      });
       // Don't throw - logging failure shouldn't break push sending
     }
   }
@@ -709,7 +718,9 @@ export class PushNotificationService {
 
       logger.info(`✅ User ${userId} subscribed to topic: ${topic}`);
     } catch (error) {
-      logger.error(`Failed to subscribe user ${userId} to topic ${topic}:`, error);
+      logger.error(`Failed to subscribe user ${userId} to topic ${topic}:`, {
+        error: error instanceof Error ? error.message : String(error)
+      });
       throw error;
     }
   }
@@ -742,10 +753,9 @@ export class PushNotificationService {
 
       logger.info(`✅ User ${userId} unsubscribed from topic: ${topic}`);
     } catch (error) {
-      logger.error(
-        `Failed to unsubscribe user ${userId} from topic ${topic}:`,
-        error
-      );
+      logger.error(`Failed to unsubscribe user ${userId} from topic ${topic}:`, {
+      error: error instanceof Error ? error.message : String(error)
+    });
       throw error;
     }
   }

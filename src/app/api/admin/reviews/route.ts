@@ -196,7 +196,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     });
   } catch (error) {
-    logger.error("Failed to fetch reviews:", error);
+    logger.error("Failed to fetch reviews:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,
@@ -380,7 +382,9 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
       },
     });
   } catch (error) {
-    logger.error("Failed to moderate review:", error);
+    logger.error("Failed to moderate review:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,

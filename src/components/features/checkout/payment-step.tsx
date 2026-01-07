@@ -135,7 +135,9 @@ export function PaymentStep({
         setClientSecret(result.data.clientSecret);
         setPaymentIntentId(result.data.paymentIntentId);
       } catch (err) {
-        logger.error("Payment intent creation error:", err);
+        logger.error("Payment intent creation error:", {
+      error: err instanceof Error ? err.message : String(err),
+    });
         setError(
           err instanceof Error
             ? err.message
@@ -284,7 +286,9 @@ function PaymentStepForm({
         paymentIntentId: paymentIntentId || undefined,
       });
     } catch (err) {
-      logger.error("Payment validation error:", err);
+      logger.error("Payment validation error:", {
+      error: err instanceof Error ? err.message : String(err),
+    });
       setPaymentError(
         err instanceof Error
           ? err.message

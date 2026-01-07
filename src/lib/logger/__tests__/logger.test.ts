@@ -129,7 +129,9 @@ describe("🌟 Divine Logger", () => {
 
     it("should log error messages", () => {
       const error = new Error("Test error");
-      logger.error("Error occurred", error);
+      logger.error("Error occurred", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       // In development, error uses console.log, not console.error
       expect(logSpy).toHaveBeenCalled();
     });
@@ -179,7 +181,7 @@ describe("🌟 Divine Logger", () => {
         orderId: "order-456",
       };
 
-      logger.info("Test message", context);
+      logger.info("Test message", { data: context });
 
       expect(logSpy).toHaveBeenCalled();
       const logOutput = logSpy.mock.calls[0][0];
@@ -284,7 +286,9 @@ describe("🌟 Divine Logger", () => {
       const error = new Error("Test error");
       error.stack = "Error stack trace";
 
-      logger.error("Error occurred", error);
+      logger.error("Error occurred", {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
       const logOutput = errorSpy.mock.calls[0][0];
       const parsed = JSON.parse(logOutput);
@@ -320,7 +324,9 @@ describe("🌟 Divine Logger", () => {
       const error: any = new Error("Test error");
       error.code = "ERR_TEST_123";
 
-      logger.error("Error occurred", error);
+      logger.error("Error occurred", {
+      error: error instanceof Error ? error.message : String(error),
+    });
 
       const logOutput = errorSpy.mock.calls[0][0];
       const parsed = JSON.parse(logOutput);
@@ -421,7 +427,7 @@ describe("🌟 Divine Logger", () => {
         operation: "checkout",
       };
 
-      logger.info("Test message", context);
+      logger.info("Test message", { data: context });
 
       expect(mockSpan.addEvent).toHaveBeenCalledWith(
         "Test message",
@@ -529,7 +535,7 @@ describe("🌟 Divine Logger", () => {
       circular.self = circular;
 
       expect(() => {
-        logger.info("Test message", circular);
+        logger.info("Test message", { data: circular });
       }).not.toThrow();
     });
   });

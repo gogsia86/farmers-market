@@ -84,7 +84,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    logger.error("Address retrieval error:", error);
+    logger.error("Address retrieval error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,
@@ -191,7 +193,9 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    logger.error("Address creation error:", error);
+    logger.error("Address creation error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,
@@ -325,7 +329,9 @@ export async function PATCH(request: NextRequest) {
       },
     });
   } catch (error) {
-    logger.error("Address update error:", error);
+    logger.error("Address update error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,
@@ -465,7 +471,9 @@ export async function DELETE(request: NextRequest) {
       },
     });
   } catch (error) {
-    logger.error("Address deletion error:", error);
+    logger.error("Address deletion error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,

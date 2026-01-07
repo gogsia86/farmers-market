@@ -97,7 +97,7 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
 
   // Connection handler
   io.on(SocketEvent.CONNECTION, (socket: Socket) => {
-    logger.info('🌾 Client connected:', socket.id);
+    logger.info('🌾 Client connected:', { data: socket.id });
 
     // Agricultural consciousness metadata
     socket.data.agriculturalConsciousness = 'active';
@@ -160,7 +160,9 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
 
     // Error handler
     socket.on(SocketEvent.ERROR, (error: Error) => {
-      logger.error('⚠️ Socket error:', error);
+      logger.error('⚠️ Socket error:', {
+      error: error instanceof Error ? error.message : String(error),
+    });
     });
   });
 
@@ -193,7 +195,7 @@ export function emitOrderUpdate(
     agriculturalConsciousness: 'active',
   });
 
-  logger.info(`📦 Order update emitted to room: ${roomName}`, payload);
+  logger.info(`📦 Order update emitted to room: ${roomName}`, { data: payload });
 }
 
 /**

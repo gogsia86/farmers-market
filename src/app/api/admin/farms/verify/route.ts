@@ -264,7 +264,9 @@ export async function POST(request: NextRequest) {
       });
     }
   } catch (error) {
-    logger.error("Farm verification error:", error);
+    logger.error("Farm verification error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,

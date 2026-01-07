@@ -54,7 +54,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         WEBHOOK_SECRET
       );
     } catch (error) {
-      logger.error("Webhook signature verification failed:", error);
+      logger.error("Webhook signature verification failed", {
+        error: error instanceof Error ? error.message : String(error)
+      });
       return NextResponse.json(
         { error: "Invalid signature" },
         { status: 400 }
@@ -99,7 +101,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       { status: 200 }
     );
   } catch (error) {
-    logger.error("Webhook handler error:", error);
+    logger.error("Webhook handler error", {
+      error: error instanceof Error ? error.message : String(error)
+    });
 
     return NextResponse.json(
       {
@@ -127,7 +131,7 @@ async function handlePaymentIntentSucceeded(
   const metadata = paymentIntent.metadata;
 
   logger.info(`Processing payment success: ${paymentIntentId}`);
-  logger.info("Metadata:", metadata);
+  logger.info("Metadata", { metadata });
 
   try {
     // Extract metadata
@@ -136,7 +140,7 @@ async function handlePaymentIntentSucceeded(
     const customerEmail = metadata.customerEmail;
 
     if (!checkoutSessionId || !userId) {
-      logger.error("Missing required metadata in payment intent");
+      logger.error("Missing required metadata in payment intent", {});
       return {
         handled: false,
         error: "Missing required metadata",
@@ -179,8 +183,9 @@ async function handlePaymentIntentSucceeded(
         logger.info(`Order confirmation email queued for order ${order.orderNumber}`);
       } catch (emailError) {
         logger.error(
-          `Failed to send confirmation email for order ${order.orderNumber}:`,
-          emailError
+          `Failed to send confirmation email for order ${order.orderNumber}`, {
+          error: emailError instanceof Error ? emailError.message : String(emailError)
+        }
         );
         // Don't fail the webhook if email fails
       }
@@ -205,7 +210,9 @@ async function handlePaymentIntentSucceeded(
       orderNumbers: result.orders.map((o) => o.orderNumber),
     };
   } catch (error) {
-    logger.error("Error processing payment success:", error);
+    logger.error("Error processing payment success", {
+      error: error instanceof Error ? error.message : String(error)
+    });
 
     // Log the error but return success to Stripe to prevent retries
     // The error should be investigated separately
@@ -227,10 +234,9 @@ async function handlePaymentIntentFailed(event: Stripe.Event): Promise<any> {
   const metadata = paymentIntent.metadata;
 
   logger.info(`Processing payment failure: ${paymentIntentId}`);
-  logger.info(
-    "Failure reason:",
-    paymentIntent.last_payment_error?.message || "Unknown"
-  );
+  logger.info("Failure reason", {
+    reason: paymentIntent.last_payment_error?.message || "Unknown"
+  });
 
   try {
     // Find orders associated with this payment intent
@@ -267,7 +273,9 @@ async function handlePaymentIntentFailed(event: Stripe.Event): Promise<any> {
         // TODO: Send payment failure notification email
         logger.info(`Payment failure notification queued for ${customerEmail}`);
       } catch (emailError) {
-        logger.error("Failed to send payment failure email:", emailError);
+        logger.error("Failed to send payment failure email", {
+          error: emailError instanceof Error ? emailError.message : String(emailError)
+        });
       }
     }
 
@@ -277,7 +285,9 @@ async function handlePaymentIntentFailed(event: Stripe.Event): Promise<any> {
       orderCount: orders.length,
     };
   } catch (error) {
-    logger.error("Error processing payment failure:", error);
+    logger.error("Error processing payment failure", {
+      error: error instanceof Error ? error.message : String(error)
+    });
     return {
       handled: true,
       error: error instanceof Error ? error.message : "Unknown error",
@@ -327,7 +337,9 @@ async function handlePaymentIntentCanceled(event: Stripe.Event): Promise<any> {
       orderCount: orders.length,
     };
   } catch (error) {
-    logger.error("Error processing payment cancellation:", error);
+    logger.error("Error processing payment cancellation", {
+      error: error instanceof Error ? error.message : String(error)
+    });
     return {
       handled: true,
       error: error instanceof Error ? error.message : "Unknown error",
@@ -381,7 +393,9 @@ async function handleChargeRefunded(event: Stripe.Event): Promise<any> {
       refundedAmount,
     };
   } catch (error) {
-    logger.error("Error processing refund:", error);
+    logger.error("Error processing refund", {
+      error: error instanceof Error ? error.message : String(error)
+    });
     return {
       handled: true,
       error: error instanceof Error ? error.message : "Unknown error",

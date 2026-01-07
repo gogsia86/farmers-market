@@ -82,7 +82,9 @@ function CheckoutSuccessContent() {
       setOrders(mockOrders);
       setIsLoading(false);
     } catch (err) {
-      logger.error("Failed to fetch order details:", err);
+      logger.error("Failed to fetch order details", {
+        error: err instanceof Error ? err.message : String(err),
+      });
       setError("Failed to load order details");
       setIsLoading(false);
     }

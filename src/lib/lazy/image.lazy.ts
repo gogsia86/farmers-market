@@ -194,7 +194,7 @@ export async function createThumbnail(
  * @example
  * ```typescript
  * const metadata = await getImageMetadata(imageBuffer);
- * logger.info(metadata.width, metadata.height, metadata.format);
+ * logger.info(metadata.width, { data: metadata.height, metadata.format });
  * ```
  */
 export async function getImageMetadata(input: Buffer | string): Promise<{

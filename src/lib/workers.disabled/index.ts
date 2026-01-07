@@ -67,7 +67,9 @@ export async function startAllWorkers(): Promise<void> {
     isRunning = true;
     logger.info("✅ All background workers started successfully!\n");
   } catch (error) {
-    logger.error("❌ Failed to start workers:", error);
+    logger.error("❌ Failed to start workers:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     await stopAllWorkers();
     throw error;
   }
@@ -158,20 +160,22 @@ export function areWorkersHealthy(): boolean {
 if (process.env.NODE_ENV !== "test") {
   // Handle process termination
   process.on("SIGTERM", async () => {
-    logger.info("\n🛑 Received SIGTERM, shutting down workers gracefully...");
+    logger.info("\n🛑 Received SIGTERM, { data: shutting down workers gracefully..." });
     await stopAllWorkers();
     process.exit(0);
   });
 
   process.on("SIGINT", async () => {
-    logger.info("\n🛑 Received SIGINT, shutting down workers gracefully...");
+    logger.info("\n🛑 Received SIGINT, { data: shutting down workers gracefully..." });
     await stopAllWorkers();
     process.exit(0);
   });
 
   // Handle uncaught errors
   process.on("uncaughtException", async (error) => {
-    logger.error("❌ Uncaught exception:", error);
+    logger.error("❌ Uncaught exception:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     await stopAllWorkers();
     process.exit(1);
   });
@@ -209,7 +213,9 @@ if (require.main === module) {
   logger.info("════════════════════════════════════════════════\n");
 
   startAllWorkers().catch((error) => {
-    logger.error("Failed to start workers:", error);
+    logger.error("Failed to start workers:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     process.exit(1);
   });
 }

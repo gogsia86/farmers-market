@@ -50,7 +50,9 @@ export const pageview = (url: string): void => {
       platform: 'farmers-market',
     });
   } catch (error) {
-    logger.error('Analytics pageview error:', error);
+    logger.error('Analytics pageview error:', {
+      error: error instanceof Error ? error.message : String(error),
+    });
   }
 };
 
@@ -136,7 +138,9 @@ export const event = ({
       ...additionalParams,
     });
   } catch (error) {
-    logger.error('Analytics event error:', error);
+    logger.error('Analytics event error:', {
+      error: error instanceof Error ? error.message : String(error),
+    });
   }
 };
 

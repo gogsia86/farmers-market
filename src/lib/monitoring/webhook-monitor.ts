@@ -606,7 +606,9 @@ export class WebhookMonitor {
 
       return { actions, results };
     } catch (error) {
-      logger.error("Auto-remediation failed:", error);
+      logger.error("Auto-remediation failed:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       throw error;
     }
   }

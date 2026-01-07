@@ -80,7 +80,9 @@ export function useNotifications(options?: { persistKey?: string }) {
           }));
         }
       } catch (error) {
-        logger.error("Failed to restore notifications from localStorage:", error);
+        logger.error("Failed to restore notifications from localStorage:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       }
     }
     return [];
@@ -95,7 +97,9 @@ export function useNotifications(options?: { persistKey?: string }) {
       try {
         localStorage.setItem(persistKey, JSON.stringify(notifications));
       } catch (error) {
-        logger.error("Failed to persist notifications to localStorage:", error);
+        logger.error("Failed to persist notifications to localStorage:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       }
     }
   }, [notifications, persistKey]);
@@ -1216,7 +1220,9 @@ export function useNotificationPreferences(userId: string) {
           };
         }
       } catch (error) {
-        logger.error("Failed to restore preferences from localStorage:", error);
+        logger.error("Failed to restore preferences from localStorage:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       }
     }
 
@@ -1246,7 +1252,9 @@ export function useNotificationPreferences(userId: string) {
       try {
         localStorage.setItem(storageKey, JSON.stringify(preferences));
       } catch (error) {
-        logger.error("Failed to persist preferences to localStorage:", error);
+        logger.error("Failed to persist preferences to localStorage:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       }
     }
   }, [preferences, storageKey]);

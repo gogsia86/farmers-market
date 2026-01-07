@@ -77,7 +77,9 @@ export async function confirmPayment(
     });
 
     if (error) {
-      logger.error("Payment confirmation error:", error);
+      logger.error("Payment confirmation error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
       return {
         success: false,
         error: error.message || "Payment confirmation failed",
@@ -97,7 +99,9 @@ export async function confirmPayment(
       error: "No payment intent returned",
     };
   } catch (err) {
-    logger.error("Payment confirmation exception:", err);
+    logger.error("Payment confirmation exception:", {
+      error: err instanceof Error ? err.message : String(err),
+    });
     return {
       success: false,
       error: err instanceof Error ? err.message : "Unknown error occurred",
@@ -145,7 +149,9 @@ export async function retrievePaymentIntent(
       error: "No payment intent found",
     };
   } catch (err) {
-    logger.error("Retrieve payment intent exception:", err);
+    logger.error("Retrieve payment intent exception:", {
+      error: err instanceof Error ? err.message : String(err),
+    });
     return {
       success: false,
       error: err instanceof Error ? err.message : "Unknown error occurred",
@@ -193,7 +199,9 @@ export async function handlePaymentAction(
       error: "No payment intent returned",
     };
   } catch (err) {
-    logger.error("Handle payment action exception:", err);
+    logger.error("Handle payment action exception:", {
+      error: err instanceof Error ? err.message : String(err),
+    });
     return {
       success: false,
       error: err instanceof Error ? err.message : "Unknown error occurred",

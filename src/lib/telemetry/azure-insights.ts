@@ -21,11 +21,9 @@
  * @module AzureTelemetryService
  */
 
+import { logger } from '@/lib/monitoring/logger';
 import { trace, SpanStatusCode, context, Span } from "@opentelemetry/api";
 import {
-
-import { logger } from '@/lib/monitoring/logger';
-
   AzureMonitorOpenTelemetryOptions,
   useAzureMonitor,
 } from "@azure/monitor-opentelemetry";
@@ -169,8 +167,7 @@ export class AzureTelemetryService {
 
     if (!isProduction) {
       logger.info(
-        "ℹ️  Azure Application Insights: Disabled in development mode",
-      );
+        "ℹ️  Azure Application Insights: Disabled in development mode");
       return;
     }
 
@@ -193,10 +190,9 @@ export class AzureTelemetryService {
 
       logger.info("✅ Azure Application Insights initialized successfully");
     } catch (error) {
-      logger.error(
-        "❌ Failed to initialize Azure Application Insights:",
-        error,
-      );
+      logger.error("❌ Failed to initialize Azure Application Insights:", {
+        error: error instanceof Error ? error.message : String(error)
+      });
     }
   }
 

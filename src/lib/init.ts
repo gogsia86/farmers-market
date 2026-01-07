@@ -12,10 +12,8 @@
  * - Agricultural consciousness activation
  */
 
-import {
-
 import { logger } from '@/lib/monitoring/logger';
-
+import {
   checkOptionalServices,
   validateEnv,
   type Env,
@@ -40,14 +38,13 @@ export function initializeApp(): Env {
   checkOptionalServices(env);
 
   // ✅ Step 3: Log startup info
-  logger.info("📊 Environment:", env.NODE_ENV);
-  logger.info(
-    "🗄️  Database:",
-    env.DATABASE_URL?.split("@")[1]?.split("?")[0] || "configured",
-  );
-  logger.info("🔐 Auth:", env.NEXTAUTH_URL);
+  logger.info("📊 Environment", { NODE_ENV: env.NODE_ENV });
+  logger.info("🗄️  Database", {
+    host: env.DATABASE_URL?.split("@")[1]?.split("?")[0] || "configured",
+  });
+  logger.info("🔐 Auth", { NEXTAUTH_URL: env.NEXTAUTH_URL });
 
-  logger.info("\n✨ Application initialized successfully!\n");
+  logger.info("✨ Application initialized successfully!");
 
   return env;
 }
@@ -69,7 +66,9 @@ export async function initializeDatabase(): Promise<void> {
 
     logger.info("✅ Database connection verified");
   } catch (error) {
-    logger.error("❌ Database connection failed:", error);
+    logger.error("❌ Database connection failed:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw new Error("Failed to connect to database");
   }
 }
@@ -87,7 +86,9 @@ export async function shutdownApp(): Promise<void> {
     await database.$disconnect();
     logger.info("✅ Database disconnected");
   } catch (error) {
-    logger.error("⚠️  Error during shutdown:", error);
+    logger.error("⚠️  Error during shutdown:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
   }
 
   logger.info("👋 Shutdown complete\n");

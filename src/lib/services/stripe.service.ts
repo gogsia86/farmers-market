@@ -455,7 +455,7 @@ export class QuantumStripeService {
     logger.info(`Payment succeeded: ${paymentIntent.id}`);
     logger.info(`Amount: ${paymentIntent.amount / 100} ${paymentIntent.currency}`);
     logger.info(`Customer: ${paymentIntent.customer}`);
-    logger.info(`Metadata:`, paymentIntent.metadata);
+    logger.info(`Metadata:`, { data: paymentIntent.metadata });
 
     // Return data for external processing (e.g., order creation)
     return {

@@ -130,11 +130,10 @@ async function processSMSJob(job: Job<SMSJobData>) {
         "job.error": errorMessage,
       });
 
-      logger.error(
-        `❌ SMS failed to ${maskPhoneNumber(job.data.phoneNumber)} (Job: ${job.id}, Attempt: ${job.attemptsMade + 1
-        }):`,
-        error
-      );
+      logger.error(`❌ SMS failed to ${maskPhoneNumber(job.data.phoneNumber)} (Job: ${job.id}, Attempt: ${job.attemptsMade + 1
+        }):`, {
+      error: error instanceof Error ? error.message : String(error)
+    });
 
       throw error;
     } finally {
@@ -196,7 +195,9 @@ export function startSMSWorker() {
   });
 
   smsQueue.on("error", (error) => {
-    logger.error("❌ SMS worker error:", error);
+    logger.error("❌ SMS worker error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
   });
 
   logger.info("✅ SMS worker started successfully");
@@ -212,7 +213,9 @@ export async function stopSMSWorker() {
     await smsQueue.close();
     logger.info("✅ SMS worker stopped successfully");
   } catch (error) {
-    logger.error("Failed to stop SMS worker:", error);
+    logger.error("Failed to stop SMS worker:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw error;
   }
 }
@@ -224,20 +227,22 @@ export async function stopSMSWorker() {
 if (process.env.NODE_ENV !== "test") {
   // Handle process termination
   process.on("SIGTERM", async () => {
-    logger.info("Received SIGTERM, shutting down SMS worker...");
+    logger.info("Received SIGTERM, { data: shutting down SMS worker..." });
     await stopSMSWorker();
     process.exit(0);
   });
 
   process.on("SIGINT", async () => {
-    logger.info("Received SIGINT, shutting down SMS worker...");
+    logger.info("Received SIGINT, { data: shutting down SMS worker..." });
     await stopSMSWorker();
     process.exit(0);
   });
 
   // Handle uncaught errors
   process.on("uncaughtException", async (error) => {
-    logger.error("Uncaught exception:", error);
+    logger.error("Uncaught exception:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     await stopSMSWorker();
     process.exit(1);
   });

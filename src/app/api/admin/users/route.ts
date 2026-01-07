@@ -208,7 +208,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     });
   } catch (error) {
-    logger.error("Failed to fetch users:", error);
+    logger.error("Failed to fetch users:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,
@@ -343,7 +345,9 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
       data: updatedUser,
     });
   } catch (error) {
-    logger.error("Failed to update user:", error);
+    logger.error("Failed to update user:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,
@@ -507,7 +511,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       },
     });
   } catch (error) {
-    logger.error("Failed to perform bulk operation:", error);
+    logger.error("Failed to perform bulk operation:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       {
         success: false,

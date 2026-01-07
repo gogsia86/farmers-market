@@ -161,7 +161,9 @@ export async function enqueueEmail(
 
     return job.id.toString();
   } catch (error) {
-    logger.error("Failed to enqueue email:", error);
+    logger.error("Failed to enqueue email:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw error;
   }
 }
@@ -190,7 +192,9 @@ export async function getQueueStats(): Promise<QueueStats> {
       total: waiting + active + delayed,
     };
   } catch (error) {
-    logger.error("Failed to get queue stats:", error);
+    logger.error("Failed to get queue stats:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw error;
   }
 }
@@ -227,7 +231,9 @@ export async function retryFailedJob(jobId: string): Promise<boolean> {
 
     return false;
   } catch (error) {
-    logger.error(`Failed to retry job ${jobId}:`, error);
+    logger.error(`Failed to retry job ${jobId}:`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw error;
   }
 }
@@ -242,7 +248,9 @@ export async function getJob(jobId: string): Promise<Job<EmailJobData> | null> {
   try {
     return await emailQueue.getJob(jobId);
   } catch (error) {
-    logger.error(`Failed to get job ${jobId}:`, error);
+    logger.error(`Failed to get job ${jobId}:`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return null;
   }
 }
@@ -262,7 +270,9 @@ export async function removeJob(jobId: string): Promise<boolean> {
     }
     return false;
   } catch (error) {
-    logger.error(`Failed to remove job ${jobId}:`, error);
+    logger.error(`Failed to remove job ${jobId}:`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw error;
   }
 }
@@ -283,7 +293,9 @@ export async function cleanOldJobs(
 
     logger.info("✅ Old jobs cleaned successfully");
   } catch (error) {
-    logger.error("Failed to clean old jobs:", error);
+    logger.error("Failed to clean old jobs:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw error;
   }
 }
@@ -296,7 +308,9 @@ export async function pauseQueue(): Promise<void> {
     await emailQueue.pause();
     logger.info("⏸️  Email queue paused");
   } catch (error) {
-    logger.error("Failed to pause queue:", error);
+    logger.error("Failed to pause queue:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw error;
   }
 }
@@ -309,7 +323,9 @@ export async function resumeQueue(): Promise<void> {
     await emailQueue.resume();
     logger.info("▶️  Email queue resumed");
   } catch (error) {
-    logger.error("Failed to resume queue:", error);
+    logger.error("Failed to resume queue:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw error;
   }
 }
@@ -330,7 +346,9 @@ export async function isQueueHealthy(): Promise<boolean> {
     // - Can get stats successfully
     return !isPaused && stats.active + stats.waiting < 1000;
   } catch (error) {
-    logger.error("Queue health check failed:", error);
+    logger.error("Queue health check failed:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return false;
   }
 }
@@ -347,7 +365,9 @@ export async function getFailedJobs(
   try {
     return await emailQueue.getFailed(0, limit - 1);
   } catch (error) {
-    logger.error("Failed to get failed jobs:", error);
+    logger.error("Failed to get failed jobs:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw error;
   }
 }
@@ -364,7 +384,9 @@ export async function getWaitingJobs(
   try {
     return await emailQueue.getWaiting(0, limit - 1);
   } catch (error) {
-    logger.error("Failed to get waiting jobs:", error);
+    logger.error("Failed to get waiting jobs:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw error;
   }
 }
@@ -374,7 +396,9 @@ export async function getWaitingJobs(
 // ============================================
 
 emailQueue.on("error", (error) => {
-  logger.error("❌ Email queue error:", error);
+  logger.error("❌ Email queue error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
 });
 
 emailQueue.on("waiting", (jobId) => {
@@ -425,7 +449,9 @@ export async function closeQueue(): Promise<void> {
     await emailQueue.close();
     logger.info("👋 Email queue closed gracefully");
   } catch (error) {
-    logger.error("Failed to close queue:", error);
+    logger.error("Failed to close queue:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw error;
   }
 }
@@ -433,13 +459,13 @@ export async function closeQueue(): Promise<void> {
 // Handle process termination
 if (process.env.NODE_ENV !== "test") {
   process.on("SIGTERM", async () => {
-    logger.info("Received SIGTERM, shutting down email queue...");
+    logger.info("Received SIGTERM, { data: shutting down email queue..." });
     await closeQueue();
     process.exit(0);
   });
 
   process.on("SIGINT", async () => {
-    logger.info("Received SIGINT, shutting down email queue...");
+    logger.info("Received SIGINT, { data: shutting down email queue..." });
     await closeQueue();
     process.exit(0);
   });

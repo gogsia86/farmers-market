@@ -585,7 +585,9 @@ export class QuantumCartService {
         });
       } catch (error) {
         // Log error but continue with other items
-        logger.error(`Failed to merge cart item ${item.productId}:`, error);
+        logger.error(`Failed to merge cart item ${item.productId}:`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
       }
     }
   }
