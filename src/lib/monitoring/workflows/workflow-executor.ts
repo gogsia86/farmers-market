@@ -13,16 +13,16 @@ import {
   type Page,
 } from "@playwright/test";
 import type {
+  AgriculturalAnalysis,
+  WorkflowExecutor as IWorkflowExecutor,
   WorkflowConfig,
   WorkflowContext,
   WorkflowResult,
-  WorkflowStepResult,
   WorkflowStatus,
-  WorkflowExecutor as IWorkflowExecutor,
-  AgriculturalAnalysis,
   WorkflowStep,
+  WorkflowStepResult,
 } from "../types";
-import { DEFAULT_WORKFLOW_TIMEOUT, DEFAULT_RETRY_DELAY } from "../types";
+import { DEFAULT_RETRY_DELAY, DEFAULT_WORKFLOW_TIMEOUT } from "../types";
 import { getWorkflowSteps as getPredefinedWorkflowSteps } from "./predefined-workflows";
 
 import { logger } from '@/lib/monitoring/logger';
@@ -254,9 +254,7 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
    * Register workflow for dependency resolution
    */
   registerWorkflow(workflow: WorkflowConfig): void {
-    this.workflows.set(workflow.id, {
-        error: workflow instanceof Error ? workflow.message : String(workflow)
-      });
+    this.workflows.set(workflow.id, workflow);
   }
 
   // ============================================================================
@@ -372,8 +370,8 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
           screenshot = screenshotBuffer.toString("base64");
         } catch (e) {
           logger.error("Failed to capture screenshot:", {
-        error: e instanceof Error ? e.message : String(e)
-      });
+            error: e instanceof Error ? e.message : String(e)
+          });
         }
       }
 
@@ -452,8 +450,8 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
         );
       } catch (e) {
         logger.warn("Failed to gather performance metrics:", {
-        error: e instanceof Error ? e.message : String(e)
-      });
+          error: e instanceof Error ? e.message : String(e)
+        });
       }
     }
 

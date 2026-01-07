@@ -561,7 +561,7 @@ export class AzureTelemetryService {
     ) {
       logger.info(
         `📊 [${type}] ${name}`,
-        data ? JSON.stringify(data, null, 2) : "",
+        data ? { data: JSON.stringify(data, null, 2) } : undefined,
       );
     }
   }

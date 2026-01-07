@@ -3,20 +3,19 @@
  * Comprehensive security scanning with agricultural consciousness
  */
 
-import { logger } from '@/lib/monitoring/logger';
 import { StructuredLogger } from "@/lib/monitoring/StructuredLogger";
 
 export interface SecurityVulnerability {
   id: string;
   severity: "CRITICAL" | "HIGH" | "MEDIUM" | "LOW" | "INFO";
   category:
-    | "SQL_INJECTION"
-    | "XSS"
-    | "CSRF"
-    | "AUTH"
-    | "DATA_EXPOSURE"
-    | "DEPENDENCY"
-    | "CONFIGURATION";
+  | "SQL_INJECTION"
+  | "XSS"
+  | "CSRF"
+  | "AUTH"
+  | "DATA_EXPOSURE"
+  | "DEPENDENCY"
+  | "CONFIGURATION";
   description: string;
   location: string;
   recommendation: string;
@@ -143,7 +142,7 @@ export class SecurityAuditSystem {
       // Store audit report
       await this.storeAuditReport(report);
 
-      this.logger.info("Security audit completed"
+      this.logger.info("Security audit completed", {
         scanId,
         duration,
         totalVulnerabilities: summary.total,

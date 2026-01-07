@@ -3,22 +3,21 @@
  * WebSocket-based notifications with agricultural consciousness
  */
 
-import { logger } from '@/lib/monitoring/logger';
 import { StructuredLogger } from "@/lib/monitoring/logger";
-import { WebSocket, WebSocketServer } from "ws";
 import type { IncomingMessage } from "http";
 import type { RawData } from "ws";
+import { WebSocket, WebSocketServer } from "ws";
 
 export interface NotificationPayload {
   id: string;
   type:
-    | "ORDER_UPDATE"
-    | "PRODUCT_AVAILABLE"
-    | "FARM_UPDATE"
-    | "SEASONAL_ALERT"
-    | "HARVEST_READY"
-    | "WEATHER_ALERT"
-    | "PRICE_CHANGE";
+  | "ORDER_UPDATE"
+  | "PRODUCT_AVAILABLE"
+  | "FARM_UPDATE"
+  | "SEASONAL_ALERT"
+  | "HARVEST_READY"
+  | "WEATHER_ALERT"
+  | "PRICE_CHANGE";
   userId: string;
   title: string;
   message: string;
@@ -81,8 +80,8 @@ export class RealtimeNotificationSystem {
 
       this.wss.on("error", (error: Error): void => {
         this.logger.error("WebSocket server error", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+          error: error instanceof Error ? error.message : String(error),
+        });
       });
 
       // Start background tasks
@@ -129,7 +128,7 @@ export class RealtimeNotificationSystem {
 
     this.connections.set(connectionId, { ws, metadata });
 
-    this.logger.info("New WebSocket connection"
+    this.logger.info("New WebSocket connection", {
       connectionId,
       userId,
       userRole: metadata.userRole,
@@ -306,8 +305,8 @@ export class RealtimeNotificationSystem {
   ): Promise<void> {
     const connections = filter
       ? Array.from(this.connections.entries()).filter(([_, conn]) =>
-          filter(conn.metadata),
-        )
+        filter(conn.metadata),
+      )
       : Array.from(this.connections.entries());
 
     const fullNotification: Omit<NotificationPayload, "userId"> = {
@@ -433,7 +432,7 @@ export class RealtimeNotificationSystem {
   private handleDisconnection(connectionId: string): void {
     const connection = this.connections.get(connectionId);
     if (connection) {
-      this.logger.info("WebSocket disconnected"
+      this.logger.info("WebSocket disconnected", {
         connectionId,
         userId: connection.metadata.userId,
         connectedDuration:

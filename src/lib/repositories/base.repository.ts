@@ -15,8 +15,8 @@
  * @reference .github/instructions/07_DATABASE_QUANTUM_MASTERY.instructions.md
  */
 
-import type { PrismaClient } from "@prisma/client";
 import { database } from "@/lib/database";
+import type { PrismaClient } from "@prisma/client";
 
 import { logger } from '@/lib/monitoring/logger';
 
@@ -498,8 +498,8 @@ export abstract class BaseRepository<
     // Log for debugging (development only)
     if (process.env.NODE_ENV === "development") {
       logger.error(`\n🚨 [${this.repositoryName}] ${operation} error:`, {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
 
     return new Error(errorMessage);
@@ -522,7 +522,7 @@ export abstract class BaseRepository<
       const timestamp = new Date().toISOString();
       logger.info(
         `✅ [${timestamp}] [${this.repositoryName}] ${operation}`,
-        Object.keys(meta).length > 0 ? meta : "",
+        Object.keys(meta).length > 0 ? meta : undefined,
       );
     }
   }

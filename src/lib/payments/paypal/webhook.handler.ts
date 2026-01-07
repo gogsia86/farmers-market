@@ -175,7 +175,7 @@ export class PayPalWebhookHandler {
       });
 
       if (existingEvent && existingEvent.processed) {
-        logger.info(`✅ Event ${event.id} already processed, { data: skipping` });
+        logger.info(`✅ Event ${event.id} already processed, skipping`);
         return {
           success: true,
           data: {
@@ -238,8 +238,8 @@ export class PayPalWebhookHandler {
       return result;
     } catch (error) {
       logger.error("Error processing webhook:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
 
       // Log error
       await this.logWebhookEvent(
@@ -680,8 +680,8 @@ export class PayPalWebhookHandler {
       });
     } catch (error) {
       logger.error("Failed to log webhook event:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   }
 
@@ -712,8 +712,8 @@ export class PayPalWebhookHandler {
         }
       } catch (error) {
         logger.error(`Failed to retry webhook ${webhookEvent.id}:`, {
-      error: error instanceof Error ? error.message : String(error),
-    });
+          error: error instanceof Error ? error.message : String(error),
+        });
       }
     }
 

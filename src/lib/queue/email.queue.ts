@@ -397,8 +397,8 @@ export async function getWaitingJobs(
 
 emailQueue.on("error", (error) => {
   logger.error("❌ Email queue error:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+    error: error instanceof Error ? error.message : String(error),
+  });
 });
 
 emailQueue.on("waiting", (jobId) => {
@@ -422,7 +422,7 @@ emailQueue.on("completed", (job, result) => {
 });
 
 emailQueue.on("failed", (job, error) => {
-  logger.error(`❌ Email job ${job?.id} failed:`, error.message);
+  logger.error(`❌ Email job ${job?.id} failed:`, { error: error.message });
 });
 
 emailQueue.on("paused", () => {
@@ -459,15 +459,15 @@ export async function closeQueue(): Promise<void> {
 // Handle process termination
 if (process.env.NODE_ENV !== "test") {
   process.on("SIGTERM", async () => {
-    logger.info("Received SIGTERM, { data: shutting down email queue..." });
-    await closeQueue();
-    process.exit(0);
-  });
+    logger.info("Received SIGTERM, shutting down email queue...");
+  await closeQueue();
+  process.exit(0);
+});
 
-  process.on("SIGINT", async () => {
-    logger.info("Received SIGINT, { data: shutting down email queue..." });
-    await closeQueue();
-    process.exit(0);
+process.on("SIGINT", async () => {
+  logger.info("Received SIGINT, shutting down email queue...");
+await closeQueue();
+process.exit(0);
   });
 }
 

@@ -19,7 +19,7 @@
  * - Agricultural consciousness validation
  */
 
-import { chromium, Browser, Page, BrowserContext } from "@playwright/test";
+import { Browser, BrowserContext, chromium, Page } from "@playwright/test";
 
 import { logger } from '@/lib/monitoring/logger';
 
@@ -1360,7 +1360,7 @@ export class DivineWebsiteChecker {
       report.summary.criticalIssues.forEach((issue) => {
         logger.info(`   - ${issue}`);
       });
-      logger.info();
+      logger.info("");
     }
   }
 

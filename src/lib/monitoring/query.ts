@@ -119,7 +119,7 @@ export class QueryMonitor {
     timestamp: number;
   }> = [];
 
-  constructor(private context: string) {}
+  constructor(private context: string) { }
 
   /**
    * Measure a single query
@@ -184,8 +184,10 @@ export class QueryMonitor {
     const summary = this.getSummary();
     logger.info(`📊 [QUERY MONITOR] ${summary.context}:`, {
       total: summary.totalQueries,
-      duration: `${summary.totalDuration.toFixed(2)}ms`,
-      avg: `${summary.averageDuration.toFixed(2)}ms`,
+      totalDuration: summary.totalDuration,
+      averageDuration: summary.averageDuration,
+      durationFormatted: `${summary.totalDuration.toFixed(2)}ms`,
+      avgFormatted: `${summary.averageDuration.toFixed(2)}ms`,
       success: summary.successCount,
       failed: summary.failureCount,
     });

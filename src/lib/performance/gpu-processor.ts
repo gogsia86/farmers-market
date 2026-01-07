@@ -6,8 +6,7 @@
  * ⚡ PERFORMANCE: Uses lazy loading for TensorFlow and Sharp (~120-170 KB savings)
  */
 
-import type { Logger } from "@/lib/logger";
-import { createLogger } from "@/lib/logger";
+import { logger } from "@/lib/monitoring/logger";
 import { loadTensorFlow } from "@/lib/lazy/ml.lazy";
 import { loadSharp } from "@/lib/lazy/image.lazy";
 
@@ -179,12 +178,9 @@ export async function initializeTensorFlowGPU(): Promise<void> {
     tfBackendInitialized = true;
 
     logger.info("🔥 TensorFlow.js GPU backend initialized");
-    logger.info("   Backend:", tfInstance.getBackend());
-    logger.info(
-      "   WebGL Version:",
-      tfInstance.env().get("WEBGL_VERSION") as number,
-    );
-    logger.info("   Memory:", tfInstance.memory());
+    logger.info("   Backend:", { backend: tfInstance.getBackend() });
+    logger.info("   WebGL Version:", { version: tfInstance.env().get("WEBGL_VERSION") as number });
+    logger.info("   Memory:", { memory: tfInstance.memory() });
   } catch (error) {
     logger.warn(
       "⚠️  TensorFlow GPU initialization failed, falling back to CPU",
@@ -202,7 +198,6 @@ export async function initializeTensorFlowGPU(): Promise<void> {
 
 export class GPUProcessor {
   private tfBackend: string;
-  private logger: Logger;
   private metrics: Map<string, ProcessingMetrics[]> = new Map();
   private gpuMetrics: GPUMetrics = {
     utilization: 0,
@@ -214,8 +209,6 @@ export class GPUProcessor {
 
   constructor() {
     this.tfBackend = "cpu";
-    this.logger = createLogger("GPUProcessor");
-
     // Initialize TensorFlow GPU backend asynchronously
     initializeTensorFlowGPU().then(() => {
       if (tfInstance) {
@@ -318,7 +311,7 @@ export class GPUProcessor {
         },
       };
     } catch (error) {
-      this.logger.error("Farm image processing failed", error as Error);
+      logger.error("Farm image processing failed", error as Error);
       throw error;
     }
   }
@@ -384,7 +377,7 @@ export class GPUProcessor {
 
       return recommendations.indices;
     } catch (error) {
-      this.logger.error(
+      logger.error(
         "Product recommendation generation failed",
         error as Error,
       );
@@ -454,7 +447,7 @@ export class GPUProcessor {
         processingTime: duration,
       };
     } catch (error) {
-      this.logger.error("Agricultural data analysis failed", error as Error);
+      logger.error("Agricultural data analysis failed", error as Error);
       throw error;
     }
   }
@@ -516,14 +509,14 @@ export class GPUProcessor {
 
       const duration = performance.now() - startTime;
 
-      this.logger.debug("Matrix multiplication completed"
+      logger.debug("Matrix multiplication completed", {
         duration,
         dimensions: `[${rowsA}x${colsA}] * [${rowsB}x${colsB}]`,
       });
 
       return result;
     } catch (error) {
-      this.logger.error("Matrix multiplication failed", error as Error);
+      logger.error("Matrix multiplication failed", error as Error);
       throw error;
     }
   }
@@ -651,7 +644,7 @@ export class GPUProcessor {
    */
   dispose(): void {
     // GPU resources disposed automatically
-    this.logger.info("GPU processor disposed");
+    logger.info("GPU processor disposed");
   }
 }
 

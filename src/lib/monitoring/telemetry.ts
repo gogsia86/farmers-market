@@ -8,17 +8,17 @@
  * @module monitoring/telemetry
  */
 
-import { NodeSDK } from "@opentelemetry/sdk-node";
+import { Span, SpanStatusCode, trace, Tracer } from "@opentelemetry/api";
+import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
 import { resourceFromAttributes } from "@opentelemetry/resources";
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-base";
 import {
   ATTR_SERVICE_NAME,
   ATTR_SERVICE_VERSION,
   SEMRESATTRS_DEPLOYMENT_ENVIRONMENT,
 } from "@opentelemetry/semantic-conventions";
-import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-base";
-import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
-import { trace, SpanStatusCode, Span, Tracer } from "@opentelemetry/api";
 
 import { logger } from '@/lib/monitoring/logger';
 
@@ -107,11 +107,13 @@ export function initializeTelemetry(): NodeSDK {
     return sdkInstance;
   }
 
-  logger.info("[Telemetry] Initializing with config", { otlpEndpoint: {
-    serviceName: config.serviceName,
-    environment: config.environment,
-    endpoint: config.otlpEndpoint,
-  } });
+  logger.info("[Telemetry] Initializing with config", {
+    otlpEndpoint: {
+      serviceName: config.serviceName,
+      environment: config.environment,
+      endpoint: config.otlpEndpoint,
+    }
+  });
 
   try {
     // Create OTLP trace exporter
@@ -201,7 +203,7 @@ export function initializeTelemetry(): NodeSDK {
  */
 export async function shutdownTelemetry(): Promise<void> {
   if (!sdkInstance || !isInitialized) {
-    logger.info("[Telemetry] SDK not initialized, { data: nothing to shutdown" });
+    logger.info("[Telemetry] SDK not initialized, nothing to shutdown");
     return;
   }
 

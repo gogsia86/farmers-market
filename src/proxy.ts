@@ -63,23 +63,23 @@ interface LogMetadata {
 const middlewareLog = {
   debug: (message: string, metadata?: LogMetadata): void => {
     if (isDevelopment) {
-      logger.debug(`🛡️  [Middleware] ${message}`, metadata || "");
+      logger.debug(`🛡️  [Middleware] ${message}`, metadata);
     }
   },
   info: (message: string, metadata?: LogMetadata): void => {
     if (isDevelopment) {
-      logger.info(`🛡️  [Middleware] ${message}`, { data: metadata || "" });
+      logger.info(`🛡️  [Middleware] ${message}`, { data: metadata });
     }
   },
   warn: (message: string, metadata?: LogMetadata): void => {
     if (isDevelopment) {
-      logger.warn(`⚠️  [Middleware] ${message}`, metadata || "");
+      logger.warn(`⚠️  [Middleware] ${message}`, metadata);
     }
   },
   error: (message: string, metadata?: LogMetadata): void => {
     // Errors are logged in both environments but with less detail in production
     if (isDevelopment) {
-      logger.error(`❌ [Middleware] ${message}`, metadata || "");
+      logger.error(`❌ [Middleware] ${message}`, metadata);
     } else {
       // In production, log minimal info without sensitive details
       logger.error(`[Middleware Error] ${message}`);
