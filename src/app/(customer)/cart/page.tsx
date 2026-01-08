@@ -35,7 +35,7 @@ export default function CartPage() {
     clearFarmCart,
     validateCart,
     syncPrices,
-  } = useCart({ userId });
+  } = useCart();
 
   // ==========================================================================
   // EFFECTS

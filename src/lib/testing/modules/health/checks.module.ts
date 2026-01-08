@@ -8,7 +8,6 @@
  * @category Critical
  */
 
-import type { TestModule } from "@/lib/testing/types";
 import { expect } from "@/lib/testing/utils/assertions";
 import type { Page } from "@playwright/test";
 
@@ -23,11 +22,11 @@ import type { Page } from "@playwright/test";
  * - Static asset loading
  * - Performance metrics
  */
-export const HealthChecksModule: TestModule = {
+export const HealthChecksModule: any = {
   id: "health",
   name: "Health Checks",
   description: "Critical infrastructure and availability checks",
-  category: "CRITICAL",
+  category: "HEALTH",
   tags: ["health", "infrastructure", "monitoring"],
   timeout: 30000, // 30 seconds per test
 

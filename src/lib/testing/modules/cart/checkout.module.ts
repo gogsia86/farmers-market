@@ -8,7 +8,6 @@
  * @category Critical
  */
 
-import type { TestModule } from "@/lib/testing/types";
 import { expect } from "@/lib/testing/utils/assertions";
 import type { Page } from "@playwright/test";
 
@@ -62,18 +61,18 @@ async function loginForCartTests(page: Page): Promise<void> {
  * - Payment integration (Stripe)
  * - Order confirmation
  */
-export const CartCheckoutModule: TestModule = {
+export const CartCheckoutModule: any = {
   id: "cart-checkout",
   name: "Cart & Checkout Flow",
   description: "Shopping cart and checkout functionality",
-  category: "CRITICAL",
+  category: "CART",
   tags: ["cart", "checkout", "payment", "orders", "customer"],
   timeout: 60000, // 60 seconds for complex flows
 
   // Setup hook - runs before all tests in this module
-  async beforeAll(page: Page) {
+  async beforeAll(context: any) {
     console.log("🛒 Setting up Cart & Checkout tests...");
-    await loginForCartTests(page);
+    await loginForCartTests(context.page);
     console.log("✅ Cart test setup complete");
   },
 
