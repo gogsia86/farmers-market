@@ -42,7 +42,7 @@ export default async function FarmerOrdersPage() {
       },
     },
     include: {
-      user: {
+      customer: {
         select: {
           name: true,
           email: true,
@@ -140,10 +140,10 @@ export default async function FarmerOrdersPage() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-medium text-gray-900">
-                            {order.user.name}
+                            {order.customer.name}
                           </div>
                           <div className="text-xs text-gray-500">
-                            {order.user.email}
+                            {order.customer.email}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -154,12 +154,12 @@ export default async function FarmerOrdersPage() {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span
                             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${order.status === "COMPLETED"
-                                ? "bg-green-100 text-green-800"
-                                : order.status === "PENDING"
-                                  ? "bg-yellow-100 text-yellow-800"
-                                  : order.status === "CANCELLED"
-                                    ? "bg-red-100 text-red-800"
-                                    : "bg-blue-100 text-blue-800"
+                              ? "bg-green-100 text-green-800"
+                              : order.status === "PENDING"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : order.status === "CANCELLED"
+                                  ? "bg-red-100 text-red-800"
+                                  : "bg-blue-100 text-blue-800"
                               }`}
                           >
                             {order.status}
