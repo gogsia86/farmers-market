@@ -212,7 +212,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<SearchResp
         database.farm.findMany({
           where: farmWhere,
           skip: type === "farms" ? skip : 0,
-          take: type === "farms" ? limitNum : Math.min(limitNum / 2, 10),
+          take: type === "farms" ? limitNum : Math.min(Math.floor(limitNum / 2), 10),
           orderBy: farmOrderBy,
           select: {
             id: true,
@@ -277,7 +277,6 @@ export async function GET(request: NextRequest): Promise<NextResponse<SearchResp
         OR: [
           { name: { contains: query, mode: "insensitive" } },
           { description: { contains: query, mode: "insensitive" } },
-          { tags: { has: query.toLowerCase() } },
         ],
       };
 
@@ -338,7 +337,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<SearchResp
         database.product.findMany({
           where: productWhere,
           skip: type === "products" ? skip : 0,
-          take: type === "products" ? limitNum : Math.min(limitNum / 2, 10),
+          take: type === "products" ? limitNum : Math.min(Math.floor(limitNum / 2), 10),
           orderBy: productOrderBy,
           include: {
             farm: {

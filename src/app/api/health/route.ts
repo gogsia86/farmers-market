@@ -249,8 +249,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const pathname = url.pathname;
 
   try {
-    // Database-only health check
-    if (pathname === '/api/health/db') {
+    // Database-only health check (support both /db and /database paths)
+    if (pathname === '/api/health/db' || pathname === '/api/health/database') {
       const dbCheckResult = await checkDatabase();
       return NextResponse.json(
         {
