@@ -106,7 +106,27 @@ export async function GET(request: NextRequest) {
     const [farms, totalCount] = await Promise.all([
       database.farm.findMany({
         where,
-        include: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          description: true,
+          status: true,
+          verificationStatus: true,
+          verifiedBy: true,
+          verifiedAt: true,
+          email: true,
+          phone: true,
+          address: true,
+          city: true,
+          state: true,
+          zipCode: true,
+          latitude: true,
+          longitude: true,
+          logoUrl: true,
+          bannerUrl: true,
+          createdAt: true,
+          updatedAt: true,
           owner: {
             select: {
               id: true,
@@ -116,20 +136,12 @@ export async function GET(request: NextRequest) {
               role: true,
             },
           },
-          location: {
-            select: {
-              address: true,
-              city: true,
-              state: true,
-              zipCode: true,
-              coordinates: true,
-            },
-          },
           certifications: {
             select: {
               id: true,
-              name: true,
-              issuedBy: true,
+              type: true,
+              certifierName: true,
+              status: true,
             },
           },
           _count: {
