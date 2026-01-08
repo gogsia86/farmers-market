@@ -666,53 +666,331 @@ export function createAssertions(page: Page): Assertions {
 /**
  * Expect-style API for fluent assertions
  */
-export function expect(page: Page) {
-  const assertions = new Assertions(page);
+export function expect(page: Page): any;
+export function expect(value: any): any;
+export function expect(pageOrValue: any): any {
+  // If it's a Page object, return page-based assertions
+  if (pageOrValue && typeof pageOrValue === 'object' && 'goto' in pageOrValue) {
+    const assertions = new Assertions(pageOrValue);
+
+    return {
+      async toHaveText(selector: string, text: string) {
+        const result = await assertions.containsText(selector, text);
+        if (!result.passed) throwAssertionError(result);
+      },
+
+      async toBeVisible(selector: string) {
+        const result = await assertions.isVisible(selector);
+        if (!result.passed) throwAssertionError(result);
+      },
+
+      async toBeHidden(selector: string) {
+        const result = await assertions.isHidden(selector);
+        if (!result.passed) throwAssertionError(result);
+      },
+
+      async toHaveURL(url: string | RegExp) {
+        const result = await assertions.urlMatches(url);
+        if (!result.passed) throwAssertionError(result);
+      },
+
+      async toHaveTitle(title: string | RegExp) {
+        const result = await assertions.titleMatches(title);
+        if (!result.passed) throwAssertionError(result);
+      },
+
+      async toHaveCount(selector: string, count: number) {
+        const result = await assertions.elementCount(selector, count);
+        if (!result.passed) throwAssertionError(result);
+      },
+
+      async toBeEnabled(selector: string) {
+        const result = await assertions.isEnabled(selector);
+        if (!result.passed) throwAssertionError(result);
+      },
+
+      async toBeChecked(selector: string) {
+        const result = await assertions.isChecked(selector);
+        if (!result.passed) throwAssertionError(result);
+      },
+
+      async toHaveValue(selector: string, value: string) {
+        const result = await assertions.inputValue(selector, value);
+        if (!result.passed) throwAssertionError(result);
+      }
+    };
+  }
+
+  // Value-based assertions (for non-Page values)
+  const actualValue = pageOrValue;
 
   return {
-    async toHaveText(selector: string, text: string) {
-      const result = await assertions.containsText(selector, text);
-      if (!result.passed) throwAssertionError(result);
+    toBe(expected: any) {
+      const passed = Object.is(actualValue, expected);
+      if (!passed) {
+        throwAssertionError({
+          passed: false,
+          message: `Expected ${JSON.stringify(actualValue)} to be ${JSON.stringify(expected)}`,
+          actual: actualValue,
+          expected
+        });
+      }
     },
 
-    async toBeVisible(selector: string) {
-      const result = await assertions.isVisible(selector);
-      if (!result.passed) throwAssertionError(result);
+    not: {
+      toBe(expected: any) {
+        const passed = !Object.is(actualValue, expected);
+        if (!passed) {
+          throwAssertionError({
+            passed: false,
+            message: `Expected ${JSON.stringify(actualValue)} not to be ${JSON.stringify(expected)}`,
+            actual: actualValue,
+            expected
+          });
+        }
+      }
     },
 
-    async toBeHidden(selector: string) {
-      const result = await assertions.isHidden(selector);
-      if (!result.passed) throwAssertionError(result);
+    toEqual(expected: any) {
+      const passed = JSON.stringify(actualValue) === JSON.stringify(expected);
+      if (!passed) {
+        throwAssertionError({
+          passed: false,
+          message: `Expected ${JSON.stringify(actualValue)} to equal ${JSON.stringify(expected)}`,
+          actual: actualValue,
+          expected
+        });
+      }
     },
 
-    async toHaveURL(url: string | RegExp) {
-      const result = await assertions.urlMatches(url);
-      if (!result.passed) throwAssertionError(result);
+    toBeDefined() {
+      const passed = actualValue !== undefined;
+      if (!passed) {
+        throwAssertionError({
+          passed: false,
+          message: `Expected value to be defined but got undefined`,
+          actual: actualValue,
+          expected: 'defined'
+        });
+      }
     },
 
-    async toHaveTitle(title: string | RegExp) {
-      const result = await assertions.titleMatches(title);
-      if (!result.passed) throwAssertionError(result);
+    toBeUndefined() {
+      const passed = actualValue === undefined;
+      if (!passed) {
+        throwAssertionError({
+          passed: false,
+          message: `Expected value to be undefined but got ${JSON.stringify(actualValue)}`,
+          actual: actualValue,
+          expected: undefined
+        });
+      }
     },
 
-    async toHaveCount(selector: string, count: number) {
-      const result = await assertions.elementCount(selector, count);
-      if (!result.passed) throwAssertionError(result);
+    toBeNull() {
+      const passed = actualValue === null;
+      if (!passed) {
+        throwAssertionError({
+          passed: false,
+          message: `Expected value to be null but got ${JSON.stringify(actualValue)}`,
+          actual: actualValue,
+          expected: null
+        });
+      }
     },
 
-    async toBeEnabled(selector: string) {
-      const result = await assertions.isEnabled(selector);
-      if (!result.passed) throwAssertionError(result);
+    toBeTruthy() {
+      const passed = !!actualValue;
+      if (!passed) {
+        throwAssertionError({
+          passed: false,
+          message: `Expected ${JSON.stringify(actualValue)} to be truthy`,
+          actual: actualValue,
+          expected: 'truthy value'
+        });
+      }
     },
 
-    async toBeChecked(selector: string) {
-      const result = await assertions.isChecked(selector);
-      if (!result.passed) throwAssertionError(result);
+    toBeFalsy() {
+      const passed = !actualValue;
+      if (!passed) {
+        throwAssertionError({
+          passed: false,
+          message: `Expected ${JSON.stringify(actualValue)} to be falsy`,
+          actual: actualValue,
+          expected: 'falsy value'
+        });
+      }
     },
 
-    async toHaveValue(selector: string, value: string) {
-      const result = await assertions.inputValue(selector, value);
-      if (!result.passed) throwAssertionError(result);
+    toBeGreaterThan(expected: number) {
+      const passed = typeof actualValue === 'number' && actualValue > expected;
+      if (!passed) {
+        throwAssertionError({
+          passed: false,
+          message: `Expected ${actualValue} to be greater than ${expected}`,
+          actual: actualValue,
+          expected: `> ${expected}`
+        });
+      }
+    },
+
+    toBeGreaterThanOrEqual(expected: number) {
+      const passed = typeof actualValue === 'number' && actualValue >= expected;
+      if (!passed) {
+        throwAssertionError({
+          passed: false,
+          message: `Expected ${actualValue} to be greater than or equal to ${expected}`,
+          actual: actualValue,
+          expected: `>= ${expected}`
+        });
+      }
+    },
+
+    toBeLessThan(expected: number) {
+      const passed = typeof actualValue === 'number' && actualValue < expected;
+      if (!passed) {
+        throwAssertionError({
+          passed: false,
+          message: `Expected ${actualValue} to be less than ${expected}`,
+          actual: actualValue,
+          expected: `< ${expected}`
+        });
+      }
+    },
+
+    toBeLessThanOrEqual(expected: number) {
+      const passed = typeof actualValue === 'number' && actualValue <= expected;
+      if (!passed) {
+        throwAssertionError({
+          passed: false,
+          message: `Expected ${actualValue} to be less than or equal to ${expected}`,
+          actual: actualValue,
+          expected: `<= ${expected}`
+        });
+      }
+    },
+
+    toContain(expected: any) {
+      let passed = false;
+
+      if (typeof actualValue === 'string' && typeof expected === 'string') {
+        passed = actualValue.includes(expected);
+      } else if (Array.isArray(actualValue)) {
+        passed = actualValue.includes(expected);
+      } else if (actualValue && typeof actualValue === 'object') {
+        passed = Object.values(actualValue).includes(expected);
+      }
+
+      if (!passed) {
+        throwAssertionError({
+          passed: false,
+          message: `Expected ${JSON.stringify(actualValue)} to contain ${JSON.stringify(expected)}`,
+          actual: actualValue,
+          expected
+        });
+      }
+    },
+
+    toMatch(expected: RegExp | string) {
+      const regex = typeof expected === 'string' ? new RegExp(expected) : expected;
+      const passed = typeof actualValue === 'string' && regex.test(actualValue);
+
+      if (!passed) {
+        throwAssertionError({
+          passed: false,
+          message: `Expected "${actualValue}" to match ${regex}`,
+          actual: actualValue,
+          expected: regex.toString()
+        });
+      }
+    },
+
+    toHaveLength(expected: number) {
+      const actualLength = actualValue?.length;
+      const passed = actualLength === expected;
+
+      if (!passed) {
+        throwAssertionError({
+          passed: false,
+          message: `Expected length to be ${expected} but got ${actualLength}`,
+          actual: actualLength,
+          expected
+        });
+      }
+    },
+
+    toHaveProperty(property: string, value?: any) {
+      const hasProperty = actualValue && property in actualValue;
+
+      if (!hasProperty) {
+        throwAssertionError({
+          passed: false,
+          message: `Expected object to have property "${property}"`,
+          actual: actualValue,
+          expected: property
+        });
+      }
+
+      if (value !== undefined) {
+        const actualPropertyValue = actualValue[property];
+        const passed = Object.is(actualPropertyValue, value);
+
+        if (!passed) {
+          throwAssertionError({
+            passed: false,
+            message: `Expected property "${property}" to be ${JSON.stringify(value)} but got ${JSON.stringify(actualPropertyValue)}`,
+            actual: actualPropertyValue,
+            expected: value
+          });
+        }
+      }
+    },
+
+    toBeInstanceOf(expected: any) {
+      const passed = actualValue instanceof expected;
+
+      if (!passed) {
+        throwAssertionError({
+          passed: false,
+          message: `Expected value to be instance of ${expected.name}`,
+          actual: actualValue?.constructor?.name || typeof actualValue,
+          expected: expected.name
+        });
+      }
+    },
+
+    toThrow(expected?: string | RegExp) {
+      let passed = false;
+      let error: any;
+
+      try {
+        if (typeof actualValue === 'function') {
+          actualValue();
+        }
+      } catch (e) {
+        error = e;
+        passed = true;
+
+        if (expected) {
+          if (typeof expected === 'string') {
+            passed = error.message.includes(expected);
+          } else if (expected instanceof RegExp) {
+            passed = expected.test(error.message);
+          }
+        }
+      }
+
+      if (!passed) {
+        throwAssertionError({
+          passed: false,
+          message: expected
+            ? `Expected function to throw error matching ${expected}`
+            : 'Expected function to throw an error',
+          actual: error?.message || 'no error thrown',
+          expected: expected || 'error'
+        });
+      }
     }
   };
 }
