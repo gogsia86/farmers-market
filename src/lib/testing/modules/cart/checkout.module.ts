@@ -93,7 +93,8 @@ export const CartCheckoutModule: TestModule = {
           timeout: 10000,
           retries: 1,
           async run(page: Page) {
-            await page.goto("/cart");
+            await page.goto("/cart", { waitUntil: "domcontentloaded" });
+            await page.waitForTimeout(2000);
             await page.waitForTimeout(1000);
 
             // Check if cart has items
@@ -254,7 +255,8 @@ export const CartCheckoutModule: TestModule = {
           async run(page: Page) {
             // This test assumes previous test added an item
             // Navigate directly to cart
-            await page.goto("/cart");
+            await page.goto("/cart", { waitUntil: "domcontentloaded" });
+            await page.waitForTimeout(2000);
             await page.waitForTimeout(2000);
 
             // Count cart items
@@ -307,7 +309,8 @@ export const CartCheckoutModule: TestModule = {
           timeout: 15000,
           retries: 1,
           async run(page: Page) {
-            await page.goto("/cart");
+            await page.goto("/cart", { waitUntil: "domcontentloaded" });
+            await page.waitForTimeout(2000);
             await page.waitForTimeout(2000);
 
             // Check if cart has items
@@ -358,7 +361,8 @@ export const CartCheckoutModule: TestModule = {
           timeout: 15000,
           retries: 1,
           async run(page: Page) {
-            await page.goto("/cart");
+            await page.goto("/cart", { waitUntil: "domcontentloaded" });
+            await page.waitForTimeout(2000);
             await page.waitForTimeout(2000);
 
             // Check if cart has items
@@ -399,7 +403,8 @@ export const CartCheckoutModule: TestModule = {
           timeout: 10000,
           retries: 1,
           async run(page: Page) {
-            await page.goto("/cart");
+            await page.goto("/cart", { waitUntil: "domcontentloaded" });
+            await page.waitForTimeout(2000);
             await page.waitForTimeout(1000);
 
             // Check for total/subtotal using separate locators
@@ -439,7 +444,8 @@ export const CartCheckoutModule: TestModule = {
           timeout: 10000,
           retries: 2,
           async run(page: Page) {
-            await page.goto("/cart");
+            await page.goto("/cart", { waitUntil: "domcontentloaded" });
+            await page.waitForTimeout(2000);
             await page.waitForTimeout(2000);
 
             // Check if cart has items
@@ -482,7 +488,8 @@ export const CartCheckoutModule: TestModule = {
           timeout: 15000,
           retries: 2,
           async run(page: Page) {
-            await page.goto("/cart");
+            await page.goto("/cart", { waitUntil: "domcontentloaded" });
+            await page.waitForTimeout(2000);
             await page.waitForTimeout(2000);
 
             // Check for items
@@ -860,7 +867,8 @@ export const CartCheckoutModule: TestModule = {
           retries: 1,
           async run(page: Page) {
             // Go to cart and count items
-            await page.goto("/cart");
+            await page.goto("/cart", { waitUntil: "domcontentloaded" });
+            await page.waitForTimeout(2000);
             await page.waitForTimeout(2000);
 
             const initialCount = await page.locator(
@@ -872,7 +880,8 @@ export const CartCheckoutModule: TestModule = {
             await page.waitForTimeout(1000);
 
             // Navigate back to cart
-            await page.goto("/cart");
+            await page.goto("/cart", { waitUntil: "domcontentloaded" });
+            await page.waitForTimeout(2000);
             await page.waitForTimeout(2000);
 
             const finalCount = await page.locator(
@@ -901,7 +910,8 @@ export const CartCheckoutModule: TestModule = {
           timeout: 5000,
           retries: 1,
           async run(page: Page) {
-            await page.goto("/cart");
+            await page.goto("/cart", { waitUntil: "domcontentloaded" });
+            await page.waitForTimeout(2000);
 
             // Check for cart data in localStorage
             const hasLocalStorage = await page.evaluate(() => {
