@@ -1,0 +1,103 @@
+{
+  "summary": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "successRate": 100,
+    "avgDuration": 257,
+    "totalDuration": 257
+  },
+  "results": [
+    {
+      "moduleId": "auth.login.farmer",
+      "moduleName": "Login as Farmer",
+      "status": "success",
+      "timestamp": "2026-01-08T17:54:15.302Z",
+      "duration": 257,
+      "details": {
+        "totalTests": 0,
+        "passedTests": 0,
+        "failedTests": 0,
+        "skippedTests": 0,
+        "successRate": 0,
+        "results": []
+      }
+    }
+  ],
+  "startTime": "2026-01-08T17:54:15.044Z",
+  "endTime": "2026-01-08T17:54:15.302Z",
+  "duration": 258,
+  "config": {
+    "name": "MVP Validation",
+    "version": "1.0.0",
+    "browser": {
+      "headless": true,
+      "slowMo": 0,
+      "timeout": 60000,
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    },
+    "execution": {
+      "mode": "suite",
+      "parallel": false,
+      "maxConcurrency": 1,
+      "retries": 2,
+      "retryDelay": 2000,
+      "continueOnFailure": true
+    },
+    "monitoring": {
+      "enabled": false,
+      "interval": 60000,
+      "alertThreshold": 20
+    },
+    "reporting": {
+      "enabled": true,
+      "formats": [
+        "json",
+        "console"
+      ],
+      "outputDir": "./bot-reports",
+      "screenshotOnFailure": true,
+      "screenshotOnSuccess": false,
+      "fullPageScreenshot": true,
+      "saveTraces": false
+    },
+    "testData": {
+      "useSeededData": false,
+      "generateDynamic": true,
+      "credentials": {
+        "admin": {
+          "email": "admin@farmersmarket.app"
+        },
+        "farmer": {
+          "email": "farmer.existing@farmersmarket.test",
+          "password": "FarmerTest123!@#"
+        },
+        "customer": {
+          "email": "",
+          "password": "CustomerTest123!@#"
+        }
+      }
+    },
+    "modules": {
+      "include": [],
+      "exclude": [],
+      "config": {}
+    },
+    "logging": {
+      "level": "info",
+      "console": true,
+      "file": false
+    },
+    "headless": true
+  },
+  "metadata": {
+    "generatedAt": "2026-01-08T17:54:15.327Z",
+    "generator": "Unified Bot Framework",
+    "version": "1.0.0"
+  }
+}

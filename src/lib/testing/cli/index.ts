@@ -28,6 +28,8 @@ import AuthLoginModule from '../modules/auth/login.module';
 import CartCheckoutModule from '../modules/cart/checkout.module';
 import HealthChecksModule from '../modules/health/checks.module';
 import MarketplaceBrowseModule from '../modules/marketplace/browse.module';
+import CustomerOrdersModule from '../modules/orders/customer-orders.module';
+import FarmerDashboardModule from '../modules/farmer/dashboard.module';
 
 // Color codes for terminal output
 const colors = {
