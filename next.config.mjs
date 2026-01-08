@@ -13,8 +13,10 @@ const withBundleAnalyzer = bundleAnalyzer({
 import { configureWebpack } from "./webpack.config.mjs";
 
 const nextConfig = {
-  // Docker compatibility
-  output: "standalone",
+  // Docker compatibility - only enable in CI/production or when explicitly requested
+  // Disabled for local Windows builds to avoid file path issues with node:inspector
+  // Note: Omitting 'output' key entirely when not needed (rather than setting to undefined)
+  ...(process.env.DOCKER_BUILD === "true" || process.env.CI ? { output: "standalone" } : {}),
 
   // ============================================
   // COMPILER OPTIMIZATIONS
@@ -53,6 +55,11 @@ const nextConfig = {
     optimizeCss: true,
     // Memory optimization with 64GB available
     memoryBasedWorkersCount: true,
+    // Exclude problematic Node.js built-in modules from file tracing
+    // Fixes Windows EINVAL error with node:inspector in standalone builds
+    outputFileTracingExcludes: {
+      "*": ["node:inspector", "node:diagnostics_channel"],
+    },
   },
 
   // ============================================

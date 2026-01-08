@@ -54,6 +54,14 @@
     "skipLibCheck": true, // Skip type checking of declaration files
     "forceConsistentCasingInFileNames": true, // Ensure consistent casing
     // ========================================================================
+    // TYPE RESOLUTION
+    // ========================================================================
+    "typeRoots": [
+      "./node_modules/@types", // Only look in @types packages
+      "./src/types" // And our custom types
+    ],
+    "types": [], // Don't automatically include all @types packages
+    // ========================================================================
     // PATH MAPPING (Divine Quantum Import Resolution)
     // ========================================================================
     "paths": {
@@ -123,10 +131,8 @@
     ".next/dev/types/**/*.ts",
     "**/*.d.ts", // Include all declaration files
     "jest.setup.js" // Include Jest setup for global types
-, "src/app/(customer)/checkout/page.tsx.backup"  ],
-  "types": [
-    "jest",
-    "@testing-library/jest-dom"
+    ,
+    "src/app/(customer)/checkout/page.tsx.backup"
   ],
   "exclude": [
     "node_modules", // Exclude dependencies

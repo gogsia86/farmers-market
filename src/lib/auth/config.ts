@@ -201,9 +201,9 @@ const nextAuthResult = NextAuth({
      */
     async session({ session, token }) {
       if (token && session.user) {
-        session.user.id = token.id;
-        session.user.role = token.role;
-        session.user.status = token.status;
+        session.user.id = token.id as string;
+        session.user.role = token.role as UserRole;
+        session.user.status = token.status as UserStatus;
         session.user.name =
           (token.name as string) || (token.email as string) || "User";
         session.user.email = token.email as string;
@@ -269,8 +269,8 @@ const nextAuthResult = NextAuth({
  */
 export const handlers = nextAuthResult.handlers;
 export const auth: any = nextAuthResult.auth;
-export const signIn = nextAuthResult.signIn;
-export const signOut = nextAuthResult.signOut;
+export const signIn: any = nextAuthResult.signIn;
+export const signOut: any = nextAuthResult.signOut;
 
 /**
  * Helper function to get current user
