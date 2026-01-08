@@ -213,49 +213,12 @@ const nextAuthResult = NextAuth({
     },
 
     /**
-     * Authorized Callback - Controls access to pages
-     * Return true to allow access, false to redirect to sign in
+     * Authorized Callback - Simplified (middleware handles most auth)
+     * Always return true to prevent NextAuth from redirecting
+     * Actual auth checks are done in middleware for better control
      */
-    authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user;
-      const { pathname } = nextUrl;
-
-      // Public routes - always allow
-      const publicRoutes = [
-        '/',
-        '/login',
-        '/register',
-        '/signup',
-        '/forgot-password',
-        '/reset-password',
-        '/about',
-        '/farms',
-        '/products',
-        '/marketplace',
-        '/cart',
-        '/api',
-      ];
-
-      const isPublicRoute = publicRoutes.some(
-        route => pathname === route || pathname.startsWith(route + '/')
-      );
-
-      if (isPublicRoute) {
-        return true; // Allow access to public routes
-      }
-
-      // Protected routes (admin, farmer dashboards)
-      const isOnDashboard =
-        pathname.startsWith("/admin") ||
-        pathname.startsWith("/farmer") ||
-        pathname.startsWith("/customer");
-
-      if (isOnDashboard) {
-        if (isLoggedIn) return true;
-        return false; // Redirect unauthenticated users to login page
-      }
-
-      // Default: allow if logged in, otherwise allow
+    authorized() {
+      // Always return true - middleware handles authentication
       return true;
     },
   },

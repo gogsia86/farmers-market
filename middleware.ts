@@ -16,7 +16,7 @@
 
 import { auth } from "@/lib/auth/config";
 import { applyCORSHeaders, applySecurityHeaders, getProductionCORSConfig } from "@/lib/security/headers";
-import type { NextMiddleware, NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 /**
@@ -29,9 +29,10 @@ export const runtime = "nodejs";
  * Middleware function with NextAuth v5 integration
  *
  * Phase 1: Handle redirects for restructured routes
- * Phase 2: Authentication (handled by NextAuth v5 authorized callback)
+ * Phase 2: Security headers & CORS
+ * Phase 3: Authentication (conditional based on route type)
  */
-export default auth((request: NextRequest) => {
+export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // ============================================================================
@@ -48,6 +49,9 @@ export default auth((request: NextRequest) => {
     '/farms',
     '/products',
     '/marketplace',
+    '/cart',
+    '/api/health',
+    '/api/ready',
   ];
 
   const isPublicRoute = publicRoutes.some(route => pathname === route || pathname.startsWith(route + '/'));
@@ -104,11 +108,20 @@ export default auth((request: NextRequest) => {
     return response;
   }
 
-  // Protected routes require authentication (handled by NextAuth config)
-  // The auth() wrapper will handle redirects to /login if not authenticated
+  // For protected routes, check authentication
+  const session = await auth();
 
+  if (!session?.user) {
+    // Redirect to login if not authenticated
+    const url = request.nextUrl.clone();
+    url.pathname = '/login';
+    url.searchParams.set('callbackUrl', pathname);
+    return NextResponse.redirect(url);
+  }
+
+  // User is authenticated, allow access
   return response;
-}) as NextMiddleware;
+}
 
 /**
  * Middleware configuration

@@ -59,11 +59,11 @@ export function generateCSP(config: SecurityHeadersConfig = {}): string {
     // Default policy for all resources
     'default-src': ["'self'"],
 
-    // Scripts: Allow self, inline scripts (Next.js), and eval in dev
+    // Scripts: Allow self, inline scripts (Next.js), and eval
     'script-src': [
       "'self'",
       "'unsafe-inline'", // Required for Next.js
-      ...(isDevelopment ? ["'unsafe-eval'"] : []), // Only in dev
+      "'unsafe-eval'", // Required for Next.js in production too
       'blob:', // Allow blob: URLs for Web Workers
       'https://js.stripe.com', // Stripe
       'https://maps.googleapis.com', // Google Maps

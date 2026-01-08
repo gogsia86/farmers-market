@@ -44,6 +44,7 @@ interface HealthCheckResult {
         percentage: number;
       };
       uptime?: number;
+      message?: string;
     };
   };
   version?: string;
