@@ -6,7 +6,7 @@
  * test structure while maintaining compatibility with the existing engine.
  */
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from '../../monitoring/logger';
 import type { ModuleExecutionContext } from '../core/bot-engine';
 import type { BotModule, BotResult, TestContext, TestModule, TestResult } from '../types';
 
@@ -32,7 +32,7 @@ export function adaptTestModule(testModule: TestModule): BotModule {
       let totalTests = 0;
       let passedTests = 0;
       let failedTests = 0;
-      let skippedTests = 0;
+      const skippedTests = 0;
 
       try {
         // Get browser page
@@ -43,10 +43,10 @@ export function adaptTestModule(testModule: TestModule): BotModule {
         }
 
         // Set base URL from config - ensure it's set
-        const baseUrl = context.config.baseUrl || context.config.browser?.baseURL || 'http://localhost:3001';
+        const baseUrl = context.config.baseUrl || 'http://localhost:3001';
 
         // Set base URL on page context for relative navigation
-        page.context().setDefaultNavigationTimeout(context.config.browser?.timeout || 60000);
+        page.context().setDefaultNavigationTimeout(context.config.browser.timeout || 60000);
 
         // Execute each suite
         for (const suite of testModule.suites || []) {
@@ -96,7 +96,7 @@ export function adaptTestModule(testModule: TestModule): BotModule {
               results.push({
                 testId: test.id,
                 testName: test.name,
-                status: 'passed',
+                status: 'PASSED',
                 duration: testDuration,
                 timestamp: new Date().toISOString(),
               });
@@ -111,13 +111,13 @@ export function adaptTestModule(testModule: TestModule): BotModule {
               results.push({
                 testId: test.id,
                 testName: test.name,
-                status: 'failed',
+                status: 'FAILED',
                 error: errorMessage,
                 duration: testDuration,
                 timestamp: new Date().toISOString(),
               });
 
-              logger.error(`[${testModule.id}] ✗ ${test.name} (${testDuration}ms)`, error);
+              logger.error(`[${testModule.id}] ✗ ${test.name} (${testDuration}ms)`, error as Error);
 
               // Stop on failure if configured
               if (suite.stopOnFailure) {
@@ -157,7 +157,7 @@ export function adaptTestModule(testModule: TestModule): BotModule {
         const duration = Date.now() - startTime;
         const errorMessage = error instanceof Error ? error.message : String(error);
 
-        logger.error(`[${testModule.id}] Module execution failed:`, error);
+        logger.error(`[${testModule.id}] Module execution failed:`, error as Error);
 
         return {
           moduleId: testModule.id,
@@ -212,5 +212,5 @@ export function ensureBotModule(module: TestModule | BotModule): BotModule {
     return adaptTestModule(module);
   }
 
-  throw new Error(`Invalid module format: ${module?.id || 'unknown'}`);
+  throw new Error(`Invalid module format: ${(module as any)?.id || 'unknown'}`);
 }

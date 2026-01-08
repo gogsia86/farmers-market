@@ -53,7 +53,7 @@ function parseYAML(yamlContent) {
     if (line.includes(':')) {
       const colonIndex = line.indexOf(':');
       const key = line.substring(indent, colonIndex).trim();
-      let value = line.substring(colonIndex + 1).trim();
+      const value = line.substring(colonIndex + 1).trim();
 
       currentKey = key;
 

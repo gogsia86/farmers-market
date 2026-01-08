@@ -12,7 +12,7 @@ import type { Browser, BrowserContext, Page } from 'playwright';
 // ============================================================================
 
 export type TestStatus = 'PASSED' | 'FAILED' | 'WARNING' | 'SKIPPED';
-export type TestPriority = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+export type TestPriority = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | 'OPTIONAL' | 'NICE_TO_HAVE';
 export type TestCategory =
   | 'AUTH'
   | 'MARKETPLACE'
@@ -24,10 +24,37 @@ export type TestCategory =
   | 'SECURITY'
   | 'PERFORMANCE'
   | 'ACCESSIBILITY'
-  | 'MOBILE';
+  | 'MOBILE'
+  | 'IMPORTANT'
+  | 'general';
 
-export type ExecutionMode = 'single' | 'suite' | 'continuous' | 'scheduled';
+export type ExecutionMode = 'single' | 'suite' | 'continuous' | 'scheduled' | 'sequential' | 'parallel' | 'limited-parallel';
 export type ReportFormat = 'json' | 'html' | 'markdown' | 'console';
+export type EventType =
+  | 'module:registered'
+  | 'module:started'
+  | 'module:completed'
+  | 'module:failed'
+  | 'module:retry'
+  | 'suite:registered'
+  | 'suite:started'
+  | 'suite:completed'
+  | 'suite:failed'
+  | 'suite:setup:complete'
+  | 'suite:teardown:complete'
+  | 'test:started'
+  | 'test:passed'
+  | 'test:failed'
+  | 'test:skipped'
+  | 'report:generated'
+  | 'monitoring:started'
+  | 'monitoring:stopped'
+  | 'monitoring:cycle:completed'
+  | 'monitoring:cycle:failed'
+  | 'monitoring:failures:detected'
+  | 'engine:cleanup:complete'
+  | 'error'
+  | '*';
 
 // ============================================================================
 // CONFIGURATION
@@ -60,6 +87,11 @@ export interface BotConfig {
     retryDelay: number;
     continueOnFailure: boolean;
   };
+
+  // Retry settings
+  retryAttempts?: number;
+  retryDelay?: number;
+  maxConcurrency?: number;
 
   // Monitoring settings
   monitoring?: {
@@ -104,6 +136,9 @@ export interface BotConfig {
     file: boolean;
     filePath?: string;
   };
+
+  // Verbose mode
+  verbose?: boolean;
 }
 
 // ============================================================================
@@ -115,14 +150,18 @@ export interface TestModule {
   name: string;
   description: string;
   category: TestCategory;
-  priority: TestPriority;
-  enabled: boolean;
+  priority?: TestPriority;
+  enabled?: boolean;
   timeout?: number;
   retries?: number;
   dependencies?: string[]; // IDs of modules that must run first
+  tags?: string[]; // Tags for filtering and grouping
 
-  // Test execution function
-  execute: (context: TestContext) => Promise<TestResult>;
+  // Test execution function (optional if suites are provided)
+  execute?: (context: TestContext) => Promise<TestResult>;
+
+  // Test suites (alternative to execute function)
+  suites?: TestSuiteDefinition[];
 
   // Optional lifecycle hooks
   beforeAll?: (context: TestContext) => Promise<void>;
@@ -132,28 +171,90 @@ export interface TestModule {
 }
 
 // ============================================================================
+// BOT MODULE (Legacy/Engine Format)
+// ============================================================================
+
+export interface BotModule {
+  id: string;
+  name: string;
+  description: string;
+  category: TestCategory;
+  priority?: TestPriority;
+  enabled?: boolean;
+  timeout?: number;
+  retries?: number;
+  dependencies?: string[];
+  tags?: string[];
+  retryOnFailure?: boolean;
+
+  // Execute function for bot engine
+  execute: (context: any) => Promise<BotResult>;
+}
+
+export interface BotResult {
+  moduleId: string;
+  moduleName: string;
+  status: 'success' | 'failed' | 'warning' | 'skipped';
+  timestamp: string;
+  duration: number;
+  error?: string;
+  details?: {
+    totalTests?: number;
+    passedTests?: number;
+    failedTests?: number;
+    skippedTests?: number;
+    successRate?: number;
+    results?: any[];
+  };
+}
+
+export interface TestSuiteDefinition {
+  id: string;
+  name: string;
+  description?: string;
+  tests: TestDefinition[];
+  setup?: (page: any) => Promise<void>;
+  teardown?: (page: any) => Promise<void>;
+  stopOnFailure?: boolean;
+}
+
+export interface TestDefinition {
+  id: string;
+  name: string;
+  description?: string;
+  category?: TestCategory | TestPriority; // Accepts both for flexibility
+  priority?: TestPriority;
+  timeout?: number;
+  retries?: number;
+  tags?: string[];
+  run: (page: any, context?: any) => Promise<void | any>;
+}
+
+// ============================================================================
 // TEST CONTEXT
 // ============================================================================
 
 export interface TestContext {
   // Core context
-  moduleId: string;
-  runId: string;
-  config: BotConfig;
+  moduleId?: string;
+  runId?: string;
+  config?: BotConfig;
+  baseUrl?: string;
 
   // Browser instances
-  browser: Browser;
-  context: BrowserContext;
-  page: Page;
+  browser?: Browser;
+  context?: BrowserContext;
+  page?: Page;
 
   // Test data
-  testData: TestData;
+  testData?: TestData;
+  data?: Record<string, any>; // Alternative data property
 
   // State management
-  state: Record<string, any>;
+  state?: Record<string, any>;
 
   // Utilities
-  utils: {
+  utils?: {
     navigate: (url: string) => Promise<void>;
     waitForNavigation: () => Promise<void>;
     fillForm: (selector: string, value: string) => Promise<void>;
@@ -164,7 +265,7 @@ export interface TestContext {
   };
 
   // Logging
-  log: {
+  log?: {
     debug: (message: string, data?: any) => void;
     info: (message: string, data?: any) => void;
     warn: (message: string, data?: any) => void;
@@ -238,22 +339,25 @@ export interface TestData {
 
 export interface TestResult {
   // Identification
-  id: string;
-  moduleId: string;
-  name: string;
-  category: TestCategory;
-  priority: TestPriority;
+  id?: string;
+  testId?: string; // Alternative test identifier
+  moduleId?: string;
+  name?: string;
+  testName?: string; // Alternative test name
+  category?: TestCategory;
+  priority?: TestPriority;
 
   // Status
   status: TestStatus;
 
   // Timing
-  startTime: Date;
-  endTime: Date;
+  startTime?: Date;
+  endTime?: Date;
   duration: number;
+  timestamp?: string; // ISO timestamp string
 
   // Results
-  message: string;
+  message?: string;
   error?: string;
   errorStack?: string;
 
@@ -327,8 +431,8 @@ export interface BotReport {
   // Execution info
   execution: {
     mode: ExecutionMode;
-    startTime: Date;
-    endTime: Date;
+    startTime: Date | string;
+    endTime: Date | string;
     duration: number;
   };
 
@@ -422,9 +526,9 @@ export interface TestSuite {
   id: string;
   name: string;
   description: string;
-  category: TestCategory;
-  priority: TestPriority;
-  enabled: boolean;
+  category?: TestCategory;
+  priority?: TestPriority;
+  enabled?: boolean;
 
   // Modules to run
   modules: string[]; // Module IDs
@@ -433,6 +537,12 @@ export interface TestSuite {
   parallel?: boolean;
   timeout?: number;
   retries?: number;
+  stopOnFailure?: boolean;
+  tags?: string[];
+
+  // Lifecycle hooks
+  setup?: (context: any) => Promise<void>;
+  teardown?: (context: any) => Promise<void>;
 
   // Prerequisites
   prerequisites?: {
@@ -566,7 +676,7 @@ export interface AssertionResult {
 // EVENTS
 // ============================================================================
 
-export type BotEvent =
+export type BotEventType =
   | 'bot:started'
   | 'bot:stopped'
   | 'suite:started'
@@ -578,8 +688,14 @@ export type BotEvent =
   | 'report:generated'
   | 'error:critical';
 
+export interface BotEvent {
+  type: EventType;
+  timestamp: Date | string;
+  data: any;
+}
+
 export interface BotEventData {
-  event: BotEvent;
+  event: BotEventType;
   timestamp: Date;
   data: any;
 }
@@ -619,4 +735,3 @@ export type {
   BrowserContext,
   Page
 } from 'playwright';
-

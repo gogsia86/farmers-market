@@ -10,8 +10,8 @@
  * - Custom matchers
  */
 
-import { logger } from '@/lib/monitoring/logger';
 import { Page } from 'playwright';
+import { logger } from '../../monitoring/logger';
 
 export interface AssertionResult {
   passed: boolean;
@@ -637,7 +637,7 @@ export class Assertions {
       await this.page.screenshot({ path, fullPage: true });
       return path;
     } catch (error) {
-      logger.error('[Assertions] Failed to capture screenshot:', error);
+      logger.error('[Assertions] Failed to capture screenshot:', error as Error);
       return '';
     }
   }

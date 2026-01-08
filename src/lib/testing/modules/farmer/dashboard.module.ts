@@ -12,9 +12,9 @@
  * @category Important
  */
 
-import type { TestModule } from "@/lib/testing/types";
-import { expect } from "@/lib/testing/utils/assertions";
 import type { Page } from "@playwright/test";
+import type { TestModule } from "../../types";
+import { expect } from "../../utils/assertions";
 
 /**
  * Farmer Dashboard Test Module
@@ -502,7 +502,7 @@ export const FarmerDashboardModule: TestModule = {
 
             // Look for sales-related metrics
             const salesMetrics = await page.locator(
-              'text=/sales|revenue|earnings|\$/i'
+              'text=/sales|revenue|earnings|$/i'
             ).count();
 
             return {

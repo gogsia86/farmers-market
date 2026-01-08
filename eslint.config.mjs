@@ -69,6 +69,7 @@ const eslintConfig = [
       // Disable base rules that are handled by TypeScript
       "no-unused-vars": "off",
       "no-undef": "off",
+      "no-redeclare": "off", // Allow function overloads in TypeScript
     },
   },
 

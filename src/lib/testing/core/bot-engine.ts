@@ -5,7 +5,7 @@
  * This is the heart of the Unified Bot Framework.
  */
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from '../../monitoring/logger';
 import type {
   BotConfig,
   BotEvent,
@@ -219,7 +219,7 @@ export class BotEngine {
       const duration = Date.now() - startTime;
       const errorMessage = error instanceof Error ? error.message : String(error);
 
-      logger.error(`[BotEngine] Suite ${suiteId} failed:`, error);
+      logger.error(`[BotEngine] Suite ${suiteId} failed:`, error as Error);
       this.emit('suite:failed', { suiteId, error: errorMessage, duration });
 
       return [this.createErrorResult(suiteId, errorMessage)];
@@ -298,7 +298,7 @@ export class BotEngine {
 
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
-        logger.error(`[BotEngine] Module ${module.id} threw error:`, error);
+        logger.error(`[BotEngine] Module ${module.id} threw error:`, error as Error);
       }
     }
 
@@ -366,7 +366,7 @@ export class BotEngine {
       const duration = Date.now() - startTime;
       const errorMessage = error instanceof Error ? error.message : String(error);
 
-      logger.error(`[BotEngine] Module ${module.id} failed:`, error);
+      logger.error(`[BotEngine] Module ${module.id} failed:`, error as Error);
 
       const result: BotResult = {
         moduleId: module.id,
@@ -418,7 +418,7 @@ export class BotEngine {
         }
 
       } catch (error) {
-        logger.error(`[BotEngine] Monitoring cycle failed:`, error);
+        logger.error('[BotEngine] Monitoring cycle failed:', error as Error);
         this.emit('monitoring:cycle:failed', { suiteId, error });
       }
 
@@ -471,7 +471,7 @@ export class BotEngine {
       try {
         handler(event);
       } catch (error) {
-        logger.error(`[BotEngine] Event handler error for ${type}:`, error);
+        logger.error(`[BotEngine] Event handler error for ${type}:`, error as Error);
       }
     });
 
@@ -481,7 +481,7 @@ export class BotEngine {
       try {
         handler(event);
       } catch (error) {
-        logger.error(`[BotEngine] Wildcard event handler error:`, error);
+        logger.error(`[BotEngine] Wildcard event handler error:`, error as Error);
       }
     });
   }
@@ -495,7 +495,7 @@ export class BotEngine {
     this.stopMonitoring();
 
     if (this.browserManager.isInitialized()) {
-      await this.browserManager.close();
+      await this.browserManager.cleanup();
     }
 
     this.modules.clear();
