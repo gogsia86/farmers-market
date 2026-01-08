@@ -1,0 +1,364 @@
+name: 🤖 UBF Tests
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+  schedule:
+    # Run full suite daily at 2 AM UTC
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: "Test suite to run"
+        required: false
+        default: "critical"
+        type: choice
+        options:
+          - critical
+          - health
+          - marketplace
+          - checkout
+          - auth
+          - smoke
+          - full
+      preset:
+        description: "Configuration preset"
+        required: false
+        default: "ci"
+        type: choice
+        options:
+          - quick
+          - ci
+          - mvp
+
+env:
+  NODE_VERSION: "18"
+  BASE_URL: "http://localhost:3000"
+  HEADLESS: "true"
+
+jobs:
+  # ============================================================================
+  # Critical Tests (Always Run)
+  # ============================================================================
+  critical-tests:
+    name: Critical Tests
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🎭 Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: 🗄️ Setup test database
+        run: |
+          npm run db:push
+          npm run db:seed:basic
+        env:
+          DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+
+      - name: 🚀 Start application
+        run: |
+          npm run build
+          npm run start &
+          sleep 10
+          npx wait-on http://localhost:3000 --timeout 60000
+        env:
+          NODE_ENV: test
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+
+      - name: 🧪 Run critical tests
+        run: npm run bot:test:critical -- --preset=ci --format=json,markdown,html
+        env:
+          BASE_URL: ${{ env.BASE_URL }}
+          HEADLESS: ${{ env.HEADLESS }}
+
+      - name: 📊 Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: critical-reports
+          path: reports/
+          retention-days: 30
+
+      - name: 📸 Upload screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: critical-screenshots
+          path: screenshots/
+          retention-days: 7
+
+      - name: 💬 Comment PR with results
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const reportPath = './reports/latest.json';
+
+            if (!fs.existsSync(reportPath)) {
+              console.log('No report found');
+              return;
+            }
+
+            const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+            const { summary } = report;
+
+            const status = summary.failed === 0 ? '✅' : '❌';
+            const successRate = summary.successRate.toFixed(2);
+
+            const body = `## ${status} UBF Critical Tests
+
+            | Metric | Value |
+            |--------|-------|
+            | Total Tests | ${summary.total} |
+            | Passed | ${summary.passed} |
+            | Failed | ${summary.failed} |
+            | Skipped | ${summary.skipped} |
+            | Success Rate | ${successRate}% |
+            | Duration | ${(summary.totalDuration / 1000).toFixed(2)}s |
+
+            ${summary.failed > 0 ? '### ❌ Failed Tests\n\n' + report.results
+              .filter(r => r.status === 'failed')
+              .map(r => `- **${r.moduleName}**: ${r.error}`)
+              .join('\n') : '### ✅ All tests passed!'}
+
+            [View full report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+  # ============================================================================
+  # Matrix Tests (Full Suite)
+  # ============================================================================
+  matrix-tests:
+    name: ${{ matrix.suite }} Tests
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+
+    strategy:
+      matrix:
+        suite: [health, marketplace, checkout, auth]
+      fail-fast: false
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🎭 Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: 🗄️ Setup test database
+        run: |
+          npm run db:push
+          npm run db:seed:basic
+        env:
+          DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+
+      - name: 🚀 Start application
+        run: |
+          npm run build
+          npm run start &
+          sleep 10
+          npx wait-on http://localhost:3000 --timeout 60000
+        env:
+          NODE_ENV: test
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+
+      - name: 🧪 Run ${{ matrix.suite }} tests
+        run: npm run bot test ${{ matrix.suite }} -- --preset=ci --format=json,markdown,html
+        env:
+          BASE_URL: ${{ env.BASE_URL }}
+          HEADLESS: ${{ env.HEADLESS }}
+
+      - name: 📊 Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports-${{ matrix.suite }}
+          path: reports/
+          retention-days: 30
+
+      - name: 📸 Upload screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-${{ matrix.suite }}
+          path: screenshots/
+          retention-days: 7
+
+  # ============================================================================
+  # Manual Dispatch Tests
+  # ============================================================================
+  manual-tests:
+    name: Manual Test Run
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🎭 Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: 🗄️ Setup test database
+        run: |
+          npm run db:push
+          npm run db:seed:basic
+        env:
+          DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+
+      - name: 🚀 Start application
+        run: |
+          npm run build
+          npm run start &
+          sleep 10
+          npx wait-on http://localhost:3000 --timeout 60000
+        env:
+          NODE_ENV: test
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+
+      - name: 🧪 Run ${{ github.event.inputs.suite }} tests
+        run: npm run bot test ${{ github.event.inputs.suite }} -- --preset=${{ github.event.inputs.preset }} --format=json,markdown,html
+        env:
+          BASE_URL: ${{ env.BASE_URL }}
+          HEADLESS: ${{ env.HEADLESS }}
+
+      - name: 📊 Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: manual-reports-${{ github.event.inputs.suite }}
+          path: reports/
+          retention-days: 30
+
+      - name: 📸 Upload screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: manual-screenshots-${{ github.event.inputs.suite }}
+          path: screenshots/
+          retention-days: 7
+
+  # ============================================================================
+  # Aggregate Results
+  # ============================================================================
+  aggregate-results:
+    name: Aggregate Results
+    runs-on: ubuntu-latest
+    needs: [matrix-tests]
+    if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+
+    steps:
+      - name: 📥 Download all reports
+        uses: actions/download-artifact@v4
+        with:
+          pattern: reports-*
+          path: all-reports/
+
+      - name: 📊 Generate summary
+        run: |
+          echo "# 🤖 UBF Test Suite Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Summary by Suite" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          for suite in health marketplace checkout auth; do
+            if [ -f "all-reports/reports-${suite}/latest.json" ]; then
+              echo "### ${suite^} Tests" >> $GITHUB_STEP_SUMMARY
+              cat "all-reports/reports-${suite}/latest.json" | jq -r '
+                "| Passed | Failed | Skipped | Success Rate |",
+                "|--------|--------|---------|--------------|",
+                "| \(.summary.passed) | \(.summary.failed) | \(.summary.skipped) | \(.summary.successRate | tonumber | round)% |"
+              ' >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+
+      - name: 🔔 Send notification on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            console.log('Test suite failed - notification would be sent here');
+            // Add Slack/email/webhook notification here
+
+  # ============================================================================
+  # Cleanup
+  # ============================================================================
+  cleanup:
+    name: Cleanup
+    runs-on: ubuntu-latest
+    needs: [critical-tests, matrix-tests, manual-tests]
+    if: always()
+
+    steps:
+      - name: 🧹 Clean up old artifacts
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const artifacts = await github.rest.actions.listArtifactsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 100
+            });
+
+            const cutoffDate = new Date();
+            cutoffDate.setDate(cutoffDate.getDate() - 30);
+
+            for (const artifact of artifacts.data.artifacts) {
+              const createdAt = new Date(artifact.created_at);
+              if (createdAt < cutoffDate) {
+                await github.rest.actions.deleteArtifact({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  artifact_id: artifact.id
+                });
+                console.log(`Deleted artifact: ${artifact.name}`);
+              }
+            }
