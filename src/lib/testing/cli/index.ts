@@ -18,7 +18,10 @@ import { createConfig } from '../config/bot-config';
 import { createReportGenerator } from '../core/report-generator';
 import type { TestFilter, TestRunReport } from '../core/test-runner';
 import { createTestRunner } from '../core/test-runner';
-import type { BotConfig, TestModule, TestSuite } from '../types';
+import type { BotConfig, BotModule, TestModule, TestSuite } from '../types';
+
+// Import module adapter
+import { adaptTestModules } from '../adapters/module-adapter';
 
 // Import all available modules
 import AuthLoginModule from '../modules/auth/login.module';
@@ -248,15 +251,18 @@ function getFilter(options: CLIOptions): TestFilter | undefined {
 }
 
 /**
- * Get all available modules
+ * Get all available modules (converted to BotModule format)
  */
-function getAvailableModules(): TestModule[] {
-  return [
+function getAvailableModules(): BotModule[] {
+  const testModules: TestModule[] = [
     HealthChecksModule,
     MarketplaceBrowseModule,
     CartCheckoutModule,
     AuthLoginModule,
   ];
+
+  // Convert TestModules to BotModules using adapter
+  return adaptTestModules(testModules);
 }
 
 /**
@@ -268,7 +274,7 @@ function getAvailableSuites(): TestSuite[] {
       id: 'health',
       name: 'Health Checks',
       description: 'Critical health and availability checks',
-      modules: ['health-checks'],
+      modules: ['health'],
     },
     {
       id: 'marketplace',
@@ -279,32 +285,32 @@ function getAvailableSuites(): TestSuite[] {
     {
       id: 'checkout',
       name: 'Checkout Flow',
-      description: 'Cart and checkout end-to-end tests',
+      description: 'Shopping cart and checkout process',
       modules: ['cart-checkout'],
     },
     {
       id: 'auth',
       name: 'Authentication',
-      description: 'Login and authentication flows',
-      modules: ['auth-login'],
+      description: 'User authentication flows',
+      modules: ['auth.login.farmer'],
     },
     {
       id: 'critical',
       name: 'Critical Tests',
       description: 'All critical priority tests',
-      modules: ['health-checks', 'auth-login'],
+      modules: ['health', 'auth.login.farmer'],
     },
     {
       id: 'smoke',
       name: 'Smoke Tests',
       description: 'Quick smoke test suite',
-      modules: ['health-checks', 'marketplace-browse'],
+      modules: ['health', 'marketplace-browse'],
     },
     {
       id: 'full',
       name: 'Full Test Suite',
       description: 'Complete test coverage',
-      modules: ['health-checks', 'marketplace-browse', 'cart-checkout', 'auth-login'],
+      modules: ['health', 'marketplace-browse', 'cart-checkout', 'auth.login.farmer'],
     },
   ];
 }
@@ -652,4 +658,3 @@ if (require.main === module) {
 }
 
 export { getAvailableModules, getAvailableSuites, getConfig, getFilter, main, parseArgs };
-
