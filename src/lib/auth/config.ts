@@ -218,17 +218,44 @@ const nextAuthResult = NextAuth({
      */
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
+      const { pathname } = nextUrl;
+
+      // Public routes - always allow
+      const publicRoutes = [
+        '/',
+        '/login',
+        '/register',
+        '/signup',
+        '/forgot-password',
+        '/reset-password',
+        '/about',
+        '/farms',
+        '/products',
+        '/marketplace',
+        '/cart',
+        '/api',
+      ];
+
+      const isPublicRoute = publicRoutes.some(
+        route => pathname === route || pathname.startsWith(route + '/')
+      );
+
+      if (isPublicRoute) {
+        return true; // Allow access to public routes
+      }
+
+      // Protected routes (admin, farmer dashboards)
       const isOnDashboard =
-        nextUrl.pathname.startsWith("/admin") ||
-        nextUrl.pathname.startsWith("/farmer");
+        pathname.startsWith("/admin") ||
+        pathname.startsWith("/farmer") ||
+        pathname.startsWith("/customer");
 
       if (isOnDashboard) {
         if (isLoggedIn) return true;
         return false; // Redirect unauthenticated users to login page
-      } else if (isLoggedIn) {
-        return true;
       }
 
+      // Default: allow if logged in, otherwise allow
       return true;
     },
   },

@@ -319,8 +319,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       });
     }
 
+    // Determine HTTP status code
+    // - 200: healthy or degraded (system is functional)
+    // - 503: unhealthy (system cannot serve requests)
+    const httpStatus = overallStatus === 'unhealthy' ? 503 : 200;
+
     return NextResponse.json(result, {
-      status: overallStatus === 'healthy' ? 200 : 503,
+      status: httpStatus,
       headers: {
         'Cache-Control': 'no-store, no-cache, must-revalidate',
       },
