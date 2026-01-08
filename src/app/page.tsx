@@ -239,10 +239,10 @@ export default async function HomePage() {
                         per {product.unit}
                       </span>
                     </div>
-                    {product.quantityAvailable && Number(product.quantityAvailable) > 0 ? (
+                    {(product as any).quantityAvailable && Number((product as any).quantityAvailable) > 0 ? (
                       <div className="mt-3">
                         <span className="text-xs text-gray-600">
-                          {Number(product.quantityAvailable)} available
+                          {Number((product as any).quantityAvailable)} available
                         </span>
                       </div>
                     ) : (
