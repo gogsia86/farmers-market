@@ -54,7 +54,16 @@ export default async function middleware(request: NextRequest) {
     '/api/ready',
   ];
 
-  const isPublicRoute = publicRoutes.some(route => pathname === route || pathname.startsWith(route + '/'));
+  // Check if current path is public (ignore query params for matching)
+  const isPublicRoute = publicRoutes.some(route => {
+    // Exact match or starts with route path
+    return pathname === route || pathname.startsWith(route + '/');
+  });
+
+  // Log middleware execution for debugging
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`[Middleware] ${pathname} - isPublic: ${isPublicRoute}`);
+  }
 
   // ============================================================================
   // PHASE 1: ROUTE REDIRECTS (Redundant Nesting Removal)
@@ -105,6 +114,9 @@ export default async function middleware(request: NextRequest) {
   // ============================================================================
   // Public routes can proceed without authentication
   if (isPublicRoute) {
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[Middleware] Public route ${pathname} - allowing access`);
+    }
     return response;
   }
 
@@ -112,11 +124,24 @@ export default async function middleware(request: NextRequest) {
   const session = await auth();
 
   if (!session?.user) {
+    // Prevent redirect loops - don't redirect if already going to login
+    if (pathname === '/login') {
+      return response;
+    }
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[Middleware] Protected route ${pathname} - redirecting to login`);
+    }
+
     // Redirect to login if not authenticated
     const url = request.nextUrl.clone();
     url.pathname = '/login';
     url.searchParams.set('callbackUrl', pathname);
     return NextResponse.redirect(url);
+  }
+
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`[Middleware] Protected route ${pathname} - authenticated as ${session.user.email}`);
   }
 
   // User is authenticated, allow access

@@ -93,6 +93,9 @@ async function main() {
           "A family-owned organic farm growing fresh vegetables and fruits year-round",
         ownerId: existingFarmer.id,
         status: "ACTIVE",
+        verificationStatus: "VERIFIED", // Active farm should be verified
+        verifiedAt: new Date(),
+        verifiedBy: "system-seed",
         email: existingFarmerEmail,
         phone: "+15559876543",
         address: "123 Farm Road",
@@ -108,15 +111,20 @@ async function main() {
         deliveryRadius: 25,
       },
     });
-    console.log(`✅ Created farm: ${existingFarm.name}`);
+    console.log(`✅ Created farm: ${existingFarm.name} (VERIFIED)`);
   } else {
-    // Update status to ACTIVE if not already
-    if (existingFarm.status !== "ACTIVE") {
+    // Update status to ACTIVE and verificationStatus to VERIFIED if not already
+    if (existingFarm.status !== "ACTIVE" || existingFarm.verificationStatus !== "VERIFIED") {
       existingFarm = await prisma.farm.update({
         where: { id: existingFarm.id },
-        data: { status: "ACTIVE" },
+        data: {
+          status: "ACTIVE",
+          verificationStatus: "VERIFIED",
+          verifiedAt: new Date(),
+          verifiedBy: "system-seed"
+        },
       });
-      console.log(`✅ Updated farm status to ACTIVE: ${existingFarm.name}`);
+      console.log(`✅ Updated farm status to ACTIVE/VERIFIED: ${existingFarm.name}`);
     } else {
       console.log(`✅ Farm already exists and is active: ${existingFarm.name}`);
     }
@@ -168,6 +176,7 @@ async function main() {
           "A new organic farm specializing in heritage vegetables and sustainable farming practices. Awaiting admin approval.",
         ownerId: pendingFarmer.id,
         status: "PENDING",
+        verificationStatus: "PENDING", // Critical: Admin API filters by verificationStatus
         email: pendingFarmerEmail,
         phone: "+15557654321",
         address: "456 Sunrise Lane",
@@ -183,17 +192,20 @@ async function main() {
         deliveryRadius: 20,
       },
     });
-    console.log(`✅ Created PENDING farm: ${pendingFarm.name}`);
+    console.log(`✅ Created PENDING farm: ${pendingFarm.name} (verificationStatus: PENDING)`);
   } else {
-    // Update status to PENDING if not already
-    if (pendingFarm.status !== "PENDING") {
+    // Update both status and verificationStatus to PENDING if not already
+    if (pendingFarm.status !== "PENDING" || pendingFarm.verificationStatus !== "PENDING") {
       pendingFarm = await prisma.farm.update({
         where: { id: pendingFarm.id },
-        data: { status: "PENDING" },
+        data: {
+          status: "PENDING",
+          verificationStatus: "PENDING"
+        },
       });
-      console.log(`✅ Updated farm status to PENDING: ${pendingFarm.name}`);
+      console.log(`✅ Updated farm to PENDING status: ${pendingFarm.name}`);
     } else {
-      console.log(`✅ PENDING farm already exists: ${pendingFarm.name}`);
+      console.log(`✅ PENDING farm already exists: ${pendingFarm.name} (verificationStatus: PENDING)`);
     }
   }
 

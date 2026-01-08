@@ -75,7 +75,7 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white shadow-sm">
+    <header className="sticky top-0 z-40 w-full border-b bg-white shadow-sm">
       <nav className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
@@ -138,10 +138,10 @@ export function Header() {
                 {userMenuOpen && (
                   <>
                     <div
-                      className="fixed inset-0 z-40"
+                      className="fixed inset-0 z-30"
                       onClick={() => setUserMenuOpen(false)}
                     />
-                    <div className="absolute right-0 z-50 mt-2 w-56 rounded-md border bg-white py-1 shadow-lg">
+                    <div className="absolute right-0 z-50 mt-2 w-56 rounded-md border bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5">
                       {/* User Info */}
                       <div className="px-4 py-3 border-b">
                         <p className="text-sm font-medium text-gray-900 truncate">

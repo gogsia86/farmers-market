@@ -176,8 +176,8 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
   };
 
   return (
-    <div className={`w-full max-w-2xl ${className}`}>
-      <div className="bg-white rounded-2xl shadow-xl border-2 border-green-100 p-8">
+    <div className={`w-full max-w-2xl ${className}`} style={{ position: 'relative', zIndex: 1 }}>
+      <div className="bg-white rounded-2xl shadow-xl border-2 border-green-100 p-8" style={{ position: 'relative', zIndex: 1 }}>
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
@@ -253,16 +253,18 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
                 Farmer
               </label>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 relative z-10">
               <button
                 type="button"
+                data-testid="role-consumer-button"
                 onClick={() => setFormData((prev) => ({ ...prev, role: "CONSUMER" }))}
-                className={`p-4 border-2 rounded-lg transition-all ${formData.role === "CONSUMER"
+                className={`p-4 border-2 rounded-lg transition-all cursor-pointer ${formData.role === "CONSUMER"
                   ? "border-green-600 bg-green-50"
                   : "border-gray-300 hover:border-gray-400"
                   }`}
+                style={{ pointerEvents: 'auto' }}
               >
-                <div className="flex items-center justify-center mb-2">
+                <div className="flex items-center justify-center mb-2 pointer-events-none">
                   <svg
                     className={`w-8 h-8 ${formData.role === "CONSUMER" ? "text-green-600" : "text-gray-400"
                       }`}
@@ -279,23 +281,25 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
                   </svg>
                 </div>
                 <span
-                  className={`font-semibold ${formData.role === "CONSUMER" ? "text-green-700" : "text-gray-700"
+                  className={`font-semibold pointer-events-none ${formData.role === "CONSUMER" ? "text-green-700" : "text-gray-700"
                     }`}
                 >
                   Customer
                 </span>
-                <p className="text-xs text-gray-500 mt-1">Buy fresh produce</p>
+                <p className="text-xs text-gray-500 mt-1 pointer-events-none">Buy fresh produce</p>
               </button>
 
               <button
                 type="button"
+                data-testid="role-farmer-button"
                 onClick={() => setFormData((prev) => ({ ...prev, role: "FARMER" }))}
-                className={`p-4 border-2 rounded-lg transition-all ${formData.role === "FARMER"
+                className={`p-4 border-2 rounded-lg transition-all cursor-pointer ${formData.role === "FARMER"
                   ? "border-green-600 bg-green-50"
                   : "border-gray-300 hover:border-gray-400"
                   }`}
+                style={{ pointerEvents: 'auto' }}
               >
-                <div className="flex items-center justify-center mb-2">
+                <div className="flex items-center justify-center mb-2 pointer-events-none">
                   <svg
                     className={`w-8 h-8 ${formData.role === "FARMER" ? "text-green-600" : "text-gray-400"
                       }`}
@@ -312,12 +316,12 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
                   </svg>
                 </div>
                 <span
-                  className={`font-semibold ${formData.role === "FARMER" ? "text-green-700" : "text-gray-700"
+                  className={`font-semibold pointer-events-none ${formData.role === "FARMER" ? "text-green-700" : "text-gray-700"
                     }`}
                 >
                   Farmer
                 </span>
-                <p className="text-xs text-gray-500 mt-1">Sell your products</p>
+                <p className="text-xs text-gray-500 mt-1 pointer-events-none">Sell your products</p>
               </button>
             </div>
           </div>

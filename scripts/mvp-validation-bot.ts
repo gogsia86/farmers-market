@@ -71,13 +71,9 @@ const CONFIG = {
     admin: {
       email: process.env.ADMIN_EMAIL || "admin@farmersmarket.app",
       password:
+        process.env.ADMIN_PASSWORD ||
         process.env.TEST_USER_PASSWORD ||
-        (() => {
-          console.error(
-            "\n❌ ERROR: TEST_USER_PASSWORD environment variable is required",
-          );
-          process.exit(1);
-        })(),
+        "DivineAdmin123!", // Default from seed script
     },
     product: {
       name: "Fresh Organic Tomatoes",
