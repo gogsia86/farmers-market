@@ -142,8 +142,8 @@ export function AddToCartButton({
       }
     } catch (error) {
       logger.error("Add to cart error:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       toast({
         title: "Failed to add to cart",
         description: error instanceof Error ? error.message : "Please try again",
@@ -393,12 +393,19 @@ export function CompactAddToCartButton({
       onClick={handleQuickAdd}
       disabled={isLoading || availableStock === 0}
       size="sm"
+      data-testid="add-to-cart-button"
+      aria-label={`Add ${productName} to cart`}
       className="bg-green-600 hover:bg-green-700 text-white"
     >
       {isLoading ? (
-        <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+        <>
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+        </>
       ) : (
-        <ShoppingCart className="h-4 w-4" />
+        <>
+          <ShoppingCart className="h-4 w-4" />
+          <span className="ml-1.5">Add to Cart</span>
+        </>
       )}
     </Button>
   );

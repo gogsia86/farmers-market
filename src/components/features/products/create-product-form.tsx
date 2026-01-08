@@ -199,7 +199,7 @@ export function CreateProductForm({ farmId, farmName }: CreateProductFormProps) 
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6" data-testid="create-product-form">
       {/* Header */}
       <div>
         <h2 className="text-2xl font-bold text-gray-900">

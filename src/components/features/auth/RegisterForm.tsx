@@ -160,14 +160,15 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
       });
 
       if (signInResult?.ok) {
-        // Redirect based on role
+        // Show success message
+        setError(null);
+        // Redirect based on role - use window.location for guaranteed redirect
         const redirectUrl =
           formData.role === "FARMER" ? "/farmer/dashboard" : "/customer/dashboard";
-        router.push(redirectUrl);
-        router.refresh();
+        window.location.href = redirectUrl;
       } else {
-        // Registration successful but auto-login failed
-        router.push("/login?registered=true");
+        // Registration successful but auto-login failed - redirect to login
+        window.location.href = "/login?registered=true";
       }
     } catch (error) {
       setError("An unexpected error occurred. Please try again.");

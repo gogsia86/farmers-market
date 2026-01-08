@@ -184,6 +184,63 @@ export default async function FarmerDashboardPage() {
           </div>
         </div>
 
+        {/* Recent Orders Section */}
+        <div className="bg-white rounded-lg shadow mb-8">
+          <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-gray-900">📦 Recent Orders</h2>
+            {totalOrders > 0 && (
+              <Link
+                href="/farmer/orders"
+                className="text-sm text-green-600 hover:text-green-700 font-medium"
+              >
+                View All Orders →
+              </Link>
+            )}
+          </div>
+          <div className="p-6" data-testid="farmer-orders-section">
+            {orders.length === 0 ? (
+              <div className="text-center py-8">
+                <ShoppingBag className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-sm font-medium text-gray-900">No orders yet</p>
+                <p className="text-sm text-gray-500 mt-1">
+                  Orders will appear here once customers make purchases
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {orders.slice(0, 5).map((order, index) => (
+                  <div
+                    key={`${order.createdAt.toISOString()}-${index}`}
+                    className="flex items-center justify-between border-b border-gray-100 pb-4 last:border-0"
+                  >
+                    <div>
+                      <p className="font-medium text-gray-900">
+                        Order from {order.createdAt.toLocaleDateString()}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Status: <span className={`font-medium ${order.status === 'COMPLETED' ? 'text-green-600' :
+                            order.status === 'PENDING' ? 'text-yellow-600' :
+                              'text-blue-600'
+                          }`}>
+                          {order.status}
+                        </span>
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold text-gray-900">
+                        {formatCurrency(Number(order.total))}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {order.createdAt.toLocaleTimeString()}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* Farms List */}
         <div className="bg-white rounded-lg shadow">
           <div className="px-6 py-4 border-b border-gray-200">
