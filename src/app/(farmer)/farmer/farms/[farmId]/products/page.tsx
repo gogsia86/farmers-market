@@ -23,13 +23,13 @@ import { redirect } from "next/navigation";
  * 🌱 PAGE PROPS
  */
 interface PageProps {
-  params: {
+  params: Promise<{
     farmId: string;
-  };
-  searchParams: {
+  }>;
+  searchParams: Promise<{
     status?: string;
     category?: string;
-  };
+  }>;
 }
 
 /**
@@ -39,6 +39,10 @@ export default async function ProductsManagementPage({
   params,
   searchParams,
 }: PageProps) {
+  // Await params and searchParams (Next.js 15+)
+  const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
+
   // Authentication check
   const session = await auth();
   if (!session?.user) {
@@ -47,7 +51,7 @@ export default async function ProductsManagementPage({
 
   // Fetch farm and verify ownership
   const farm = await database.farm.findUnique({
-    where: { id: params.farmId },
+    where: { id: resolvedParams.farmId },
     select: {
       id: true,
       name: true,
@@ -108,10 +112,10 @@ export default async function ProductsManagementPage({
 
   // Fetch products for this farm
   const { products, total } = await productService.getProductsByFarm(
-    params.farmId,
+    resolvedParams.farmId,
     {
-      status: searchParams.status as any,
-      category: searchParams.category as any,
+      status: resolvedSearchParams.status as any,
+      category: resolvedSearchParams.category as any,
       limit: 100,
     }
   );

@@ -32,10 +32,10 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 interface PageProps {
-  searchParams: {
+  searchParams: Promise<{
     status?: string;
     page?: string;
-  };
+  }>;
 }
 
 // Order status configuration
@@ -110,11 +110,14 @@ export default async function OrdersPage({ searchParams }: PageProps) {
 
   const userId = session.user.id;
 
+  // Await searchParams (Next.js 15+)
+  const params = await searchParams;
+
   // ==========================================================================
   // PARSE FILTERS
   // ==========================================================================
-  const statusFilter = searchParams.status as keyof typeof ORDER_STATUSES | undefined;
-  const page = parseInt(searchParams.page || "1", 10);
+  const statusFilter = params.status as keyof typeof ORDER_STATUSES | undefined;
+  const page = parseInt(params.page || "1", 10);
   const limit = 20;
   const skip = (page - 1) * limit;
 

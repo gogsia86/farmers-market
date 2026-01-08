@@ -6,8 +6,9 @@
  * - Products for testing
  */
 
-import { database } from "../src/lib/database";
 import * as bcrypt from "bcryptjs";
+import "dotenv/config";
+import { database } from "../src/lib/database";
 
 const prisma = database;
 
@@ -122,7 +123,82 @@ async function main() {
   }
 
   // ==========================================================================
-  // 3. Create Products
+  // 3. Create PENDING Farmer with PENDING Farm (for admin approval tests)
+  // ==========================================================================
+  console.log("\n⏳ Creating pending farmer with pending farm...");
+
+  const pendingFarmerEmail = "farmer.pending@farmersmarket.test";
+  let pendingFarmer = await prisma.user.findUnique({
+    where: { email: pendingFarmerEmail },
+  });
+
+  if (!pendingFarmer) {
+    pendingFarmer = await prisma.user.create({
+      data: {
+        email: pendingFarmerEmail,
+        password: await bcrypt.hash("PendingFarmer123!@#", 12),
+        firstName: "Pending",
+        lastName: "Farmer",
+        phone: "+15557654321",
+        role: "FARMER",
+        emailVerified: true,
+        emailVerifiedAt: new Date(),
+        phoneVerified: true,
+        phoneVerifiedAt: new Date(),
+        lastLoginAt: new Date(),
+        loginCount: 0,
+      },
+    });
+    console.log(`✅ Created pending farmer: ${pendingFarmer.email}`);
+  } else {
+    console.log(`✅ Pending farmer already exists: ${pendingFarmer.email}`);
+  }
+
+  // Create PENDING farm for admin approval workflow
+  let pendingFarm = await prisma.farm.findFirst({
+    where: { ownerId: pendingFarmer.id },
+  });
+
+  if (!pendingFarm) {
+    pendingFarm = await prisma.farm.create({
+      data: {
+        name: "Sunrise Organic Farm",
+        slug: "sunrise-organic-farm",
+        description:
+          "A new organic farm specializing in heritage vegetables and sustainable farming practices. Awaiting admin approval.",
+        ownerId: pendingFarmer.id,
+        status: "PENDING",
+        email: pendingFarmerEmail,
+        phone: "+15557654321",
+        address: "456 Sunrise Lane",
+        city: "Eugene",
+        state: "OR",
+        zipCode: "97401",
+        country: "US",
+        latitude: 44.0521,
+        longitude: -123.0868,
+        images: [],
+        taxId: "98-7654321",
+        certificationsArray: ["USDA_ORGANIC"],
+        deliveryRadius: 20,
+      },
+    });
+    console.log(`✅ Created PENDING farm: ${pendingFarm.name}`);
+  } else {
+    // Update status to PENDING if not already
+    if (pendingFarm.status !== "PENDING") {
+      pendingFarm = await prisma.farm.update({
+        where: { id: pendingFarm.id },
+        data: { status: "PENDING" },
+      });
+      console.log(`✅ Updated farm status to PENDING: ${pendingFarm.name}`);
+    } else {
+      console.log(`✅ PENDING farm already exists: ${pendingFarm.name}`);
+    }
+  }
+
+  // ==========================================================================
+  // 4. Create Products
   // ==========================================================================
   console.log("\n🌾 Creating products...");
 
@@ -265,8 +341,10 @@ async function main() {
   // ==========================================================================
   console.log("\n📊 Seed Summary:");
   console.log(`  Admin: ${adminEmail}`);
-  console.log(`  Farmer: ${existingFarmerEmail}`);
-  console.log(`  Farm: ${existingFarm.name} (${existingFarm.status})`);
+  console.log(`  Active Farmer: ${existingFarmerEmail}`);
+  console.log(`  Active Farm: ${existingFarm.name} (${existingFarm.status})`);
+  console.log(`  Pending Farmer: ${pendingFarmerEmail}`);
+  console.log(`  Pending Farm: ${pendingFarm.name} (${pendingFarm.status})`);
 
   const productCount = await prisma.product.count({
     where: { farmId: existingFarm.id },

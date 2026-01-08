@@ -15,14 +15,15 @@
  * - Real-time status reporting
  */
 
-import { chromium, Browser, Page } from "@playwright/test";
+import { Browser, chromium, Page } from "@playwright/test";
+import "dotenv/config";
 
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
 
 const CONFIG = {
-  baseUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001",
+  baseUrl: process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "http://localhost:3001",
   timeout: 30000,
   retries: 3,
   checkInterval: 60000, // Check every minute
@@ -958,6 +959,7 @@ async function runOnce() {
   const checker = new WebsiteChecker();
 
   try {
+    log(`🌐 Checking: ${CONFIG.baseUrl}`, "cyan");
     await checker.initialize();
     const report = await checker.runAllChecks();
 
@@ -1043,7 +1045,8 @@ Modes:
   help         Show this help message
 
 Environment Variables:
-  NEXT_PUBLIC_APP_URL    Base URL to check (default: http://localhost:3000)
+  NEXT_PUBLIC_APP_URL    Base URL to check (default: http://localhost:3001)
+  BASE_URL               Alternative base URL variable
 
 Examples:
   tsx scripts/website-checker-bot.ts

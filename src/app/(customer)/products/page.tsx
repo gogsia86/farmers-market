@@ -30,7 +30,7 @@ export const dynamic = "force-dynamic";
  * 🌱 PAGE PROPS
  */
 interface PageProps {
-  searchParams: {
+  searchParams: Promise<{
     search?: string;
     category?: ProductCategory;
     minPrice?: string;
@@ -39,7 +39,7 @@ interface PageProps {
     sort?: "price" | "name" | "popularity" | "createdAt";
     order?: "asc" | "desc";
     page?: string;
-  };
+  }>;
 }
 
 /**
@@ -66,29 +66,30 @@ const PRODUCT_CATEGORIES: { value: ProductCategory; label: string; icon: string 
  */
 export default async function ProductsPage({ searchParams }: PageProps) {
   const session = await auth();
-  const page = parseInt(searchParams.page || "1", 10);
+  const params = await searchParams;
+  const page = parseInt(params.page || "1", 10);
   const limit = 24;
 
   // Parse filters
-  const minPrice = searchParams.minPrice
-    ? parseFloat(searchParams.minPrice)
+  const minPrice = params.minPrice
+    ? parseFloat(params.minPrice)
     : undefined;
-  const maxPrice = searchParams.maxPrice
-    ? parseFloat(searchParams.maxPrice)
+  const maxPrice = params.maxPrice
+    ? parseFloat(params.maxPrice)
     : undefined;
-  const isOrganic = searchParams.organic === "true" ? true : undefined;
+  const isOrganic = params.organic === "true" ? true : undefined;
 
   // Fetch products
   const { products, total, hasMore } = await productService.searchProducts({
     page,
     limit,
-    searchQuery: searchParams.search,
-    category: searchParams.category,
+    searchQuery: params.search,
+    category: params.category,
     minPrice,
     maxPrice,
     isOrganic,
-    sortBy: searchParams.sort || "createdAt",
-    sortOrder: searchParams.order || "desc",
+    sortBy: params.sort || "createdAt",
+    sortOrder: params.order || "desc",
     status: "ACTIVE",
   });
 
@@ -98,16 +99,16 @@ export default async function ProductsPage({ searchParams }: PageProps) {
    * 🔗 BUILD FILTER URL
    */
   const buildFilterUrl = (updates: Record<string, string | undefined>) => {
-    const params = new URLSearchParams();
-    const current = { ...searchParams, ...updates };
+    const urlParams = new URLSearchParams();
+    const current = { ...params, ...updates };
 
     Object.entries(current).forEach(([key, value]) => {
       if (value !== undefined && value !== "") {
-        params.set(key, value);
+        urlParams.set(key, value);
       }
     });
 
-    return `/products?${params.toString()}`;
+    return `/products?${urlParams.toString()}`;
   };
 
   return (
@@ -132,7 +133,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
               <input
                 type="text"
                 name="search"
-                defaultValue={searchParams.search}
+                defaultValue={params.search}
                 placeholder="Search products..."
                 className="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
               />
@@ -145,11 +146,11 @@ export default async function ProductsPage({ searchParams }: PageProps) {
             </div>
 
             {/* Preserve other filters */}
-            {searchParams.category && (
-              <input type="hidden" name="category" value={searchParams.category} />
+            {params.category && (
+              <input type="hidden" name="category" value={params.category} />
             )}
-            {searchParams.organic && (
-              <input type="hidden" name="organic" value={searchParams.organic} />
+            {params.organic && (
+              <input type="hidden" name="organic" value={params.organic} />
             )}
           </form>
         </div>
@@ -168,7 +169,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                 <div className="mt-4 space-y-2">
                   <Link
                     href={buildFilterUrl({ category: undefined, page: "1" })}
-                    className={`block rounded-md px-3 py-2 text-sm ${!searchParams.category
+                    className={`block rounded-md px-3 py-2 text-sm ${!params.category
                       ? "bg-green-100 font-medium text-green-900"
                       : "text-gray-700 hover:bg-gray-100"
                       }`}
@@ -179,7 +180,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                     <Link
                       key={cat.value}
                       href={buildFilterUrl({ category: cat.value, page: "1" })}
-                      className={`block rounded-md px-3 py-2 text-sm ${searchParams.category === cat.value
+                      className={`block rounded-md px-3 py-2 text-sm ${params.category === cat.value
                         ? "bg-green-100 font-medium text-green-900"
                         : "text-gray-700 hover:bg-gray-100"
                         }`}
@@ -198,10 +199,10 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                 <div className="mt-4">
                   <Link
                     href={buildFilterUrl({
-                      organic: searchParams.organic === "true" ? undefined : "true",
+                      organic: params.organic === "true" ? undefined : "true",
                       page: "1",
                     })}
-                    className={`block rounded-md px-3 py-2 text-sm ${searchParams.organic === "true"
+                    className={`block rounded-md px-3 py-2 text-sm ${params.organic === "true"
                       ? "bg-green-100 font-medium text-green-900"
                       : "text-gray-700 hover:bg-gray-100"
                       }`}
@@ -227,7 +228,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                       name="minPrice"
                       step="0.01"
                       min="0"
-                      defaultValue={searchParams.minPrice}
+                      defaultValue={params.minPrice}
                       placeholder="$0.00"
                       className="mt-1 block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-green-500 focus:ring-green-500"
                     />
@@ -242,20 +243,20 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                       name="maxPrice"
                       step="0.01"
                       min="0"
-                      defaultValue={searchParams.maxPrice}
+                      defaultValue={params.maxPrice}
                       placeholder="$100.00"
                       className="mt-1 block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-green-500 focus:ring-green-500"
                     />
                   </div>
                   {/* Preserve other filters */}
-                  {searchParams.category && (
-                    <input type="hidden" name="category" value={searchParams.category} />
+                  {params.category && (
+                    <input type="hidden" name="category" value={params.category} />
                   )}
-                  {searchParams.organic && (
-                    <input type="hidden" name="organic" value={searchParams.organic} />
+                  {params.organic && (
+                    <input type="hidden" name="organic" value={params.organic} />
                   )}
-                  {searchParams.search && (
-                    <input type="hidden" name="search" value={searchParams.search} />
+                  {params.search && (
+                    <input type="hidden" name="search" value={params.search} />
                   )}
                   <button
                     type="submit"
@@ -283,8 +284,8 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                 <div className="flex gap-2">
                   <Link
                     href={buildFilterUrl({ sort: "createdAt", order: "desc", page: "1" })}
-                    className={`rounded-md px-3 py-1 text-sm ${(!searchParams.sort || searchParams.sort === "createdAt") &&
-                      (!searchParams.order || searchParams.order === "desc")
+                    className={`rounded-md px-3 py-1 text-sm ${(!params.sort || params.sort === "createdAt") &&
+                      (!params.order || params.order === "desc")
                       ? "bg-green-600 text-white"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                       }`}
@@ -293,7 +294,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                   </Link>
                   <Link
                     href={buildFilterUrl({ sort: "price", order: "asc", page: "1" })}
-                    className={`rounded-md px-3 py-1 text-sm ${searchParams.sort === "price" && searchParams.order === "asc"
+                    className={`rounded-md px-3 py-1 text-sm ${params.sort === "price" && params.order === "asc"
                       ? "bg-green-600 text-white"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                       }`}
@@ -302,7 +303,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                   </Link>
                   <Link
                     href={buildFilterUrl({ sort: "price", order: "desc", page: "1" })}
-                    className={`rounded-md px-3 py-1 text-sm ${searchParams.sort === "price" && searchParams.order === "desc"
+                    className={`rounded-md px-3 py-1 text-sm ${params.sort === "price" && params.order === "desc"
                       ? "bg-green-600 text-white"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                       }`}

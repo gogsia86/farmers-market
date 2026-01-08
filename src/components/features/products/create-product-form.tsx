@@ -190,8 +190,8 @@ export function CreateProductForm({ farmId, farmName }: CreateProductFormProps) 
       }
     } catch (err: any) {
       logger.error("Product creation error:", {
-      error: err instanceof Error ? err.message : String(err),
-    });
+        error: err instanceof Error ? err.message : String(err),
+      });
       setError(err.message || "An unexpected error occurred");
     } finally {
       setIsSubmitting(false);
@@ -241,6 +241,7 @@ export function CreateProductForm({ farmId, farmName }: CreateProductFormProps) 
         <Label htmlFor="name">Product Name *</Label>
         <Input
           id="name"
+          data-testid="product-name"
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -258,6 +259,7 @@ export function CreateProductForm({ farmId, farmName }: CreateProductFormProps) 
         <Label htmlFor="description">Description *</Label>
         <Textarea
           id="description"
+          data-testid="product-description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Describe your product, how it's grown, and what makes it special..."
@@ -275,6 +277,7 @@ export function CreateProductForm({ farmId, farmName }: CreateProductFormProps) 
         <Label htmlFor="category">Category *</Label>
         <select
           id="category"
+          data-testid="product-category"
           value={category}
           onChange={(e) => setCategory(e.target.value as ProductCategory)}
           required
@@ -301,6 +304,7 @@ export function CreateProductForm({ farmId, farmName }: CreateProductFormProps) 
             </div>
             <Input
               id="price"
+              data-testid="product-price"
               type="number"
               step="0.01"
               min="0"
@@ -320,6 +324,7 @@ export function CreateProductForm({ farmId, farmName }: CreateProductFormProps) 
           <Label htmlFor="unit">Unit *</Label>
           <select
             id="unit"
+            data-testid="product-unit"
             value={unit}
             onChange={(e) => setUnit(e.target.value)}
             required
@@ -342,6 +347,7 @@ export function CreateProductForm({ farmId, farmName }: CreateProductFormProps) 
         <Label htmlFor="quantityAvailable">Quantity Available *</Label>
         <Input
           id="quantityAvailable"
+          data-testid="product-stock"
           type="number"
           step="0.01"
           min="0"
@@ -350,6 +356,13 @@ export function CreateProductForm({ farmId, farmName }: CreateProductFormProps) 
           placeholder="0"
           required
           className="mt-1"
+        />
+        {/* Hidden field for bot compatibility - alias for quantityAvailable */}
+        <input
+          type="hidden"
+          id="stock"
+          name="stock"
+          value={quantityAvailable}
         />
         {fieldErrors.quantityAvailable && (
           <p className="mt-1 text-sm text-red-600">
@@ -517,6 +530,7 @@ export function CreateProductForm({ farmId, farmName }: CreateProductFormProps) 
       <div className="flex gap-4 pt-4">
         <Button
           type="submit"
+          data-testid="product-submit"
           disabled={isSubmitting}
           className="flex-1"
           variant="default"

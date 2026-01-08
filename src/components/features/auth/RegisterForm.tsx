@@ -11,11 +11,13 @@
  * - Agricultural-themed UI
  * - Error handling with enlightening messages
  * - Loading states with quantum feedback
+ * - URL param role pre-selection
+ * - Bot compatibility with hidden name field
  */
 
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface RegisterFormProps {
   callbackUrl?: string;
@@ -32,6 +34,7 @@ interface FormData {
   lastName: string;
   phone: string;
   role: UserRole;
+  agreeToTerms: boolean;
   // Farm fields
   farmName: string;
   farmAddress: string;
@@ -40,6 +43,7 @@ interface FormData {
 
 export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterFormProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>({
@@ -50,16 +54,36 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
     lastName: "",
     phone: "",
     role: "CONSUMER",
+    agreeToTerms: false,
     farmName: "",
     farmAddress: "",
     farmDescription: "",
   });
 
+  // Set role from URL params on mount (for /register-farm redirect)
+  useEffect(() => {
+    const roleParam = searchParams.get("role");
+    if (roleParam && (roleParam.toUpperCase() === "FARMER" || roleParam.toUpperCase() === "CONSUMER")) {
+      setFormData((prev) => ({ ...prev, role: roleParam.toUpperCase() as UserRole }));
+    }
+  }, [searchParams]);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Handle hidden "name" field for bot compatibility
+    if (name === "name") {
+      // Split full name into firstName and lastName
+      const nameParts = value.trim().split(/\s+/);
+      const firstName = nameParts[0] || "";
+      const lastName = nameParts.slice(1).join(" ") || "";
+      setFormData((prev) => ({ ...prev, firstName, lastName }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+
     setError(null);
   };
 
@@ -68,6 +92,11 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
     setError(null);
 
     // Client-side validation
+    if (!formData.firstName || !formData.lastName) {
+      setError("Please enter your full name");
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -85,6 +114,11 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
 
     if (formData.role === "FARMER" && (!formData.farmName || !formData.farmAddress)) {
       setError("Farm name and address are required for farmers");
+      return;
+    }
+
+    if (!formData.agreeToTerms) {
+      setError("You must agree to the Terms of Service and Privacy Policy");
       return;
     }
 
@@ -194,13 +228,38 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               I am a <span className="text-red-500">*</span>
             </label>
+            {/* Hidden radio inputs for bot compatibility - visually hidden but accessible */}
+            <div className="sr-only">
+              <label>
+                <input
+                  type="radio"
+                  name="role"
+                  value="CONSUMER"
+                  checked={formData.role === "CONSUMER"}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, role: e.target.value as UserRole }))}
+                  data-testid="role-consumer"
+                />
+                Consumer
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="role"
+                  value="FARMER"
+                  checked={formData.role === "FARMER"}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, role: e.target.value as UserRole }))}
+                  data-testid="role-farmer"
+                />
+                Farmer
+              </label>
+            </div>
             <div className="grid grid-cols-2 gap-4">
               <button
                 type="button"
                 onClick={() => setFormData((prev) => ({ ...prev, role: "CONSUMER" }))}
                 className={`p-4 border-2 rounded-lg transition-all ${formData.role === "CONSUMER"
-                    ? "border-green-600 bg-green-50"
-                    : "border-gray-300 hover:border-gray-400"
+                  ? "border-green-600 bg-green-50"
+                  : "border-gray-300 hover:border-gray-400"
                   }`}
               >
                 <div className="flex items-center justify-center mb-2">
@@ -232,8 +291,8 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
                 type="button"
                 onClick={() => setFormData((prev) => ({ ...prev, role: "FARMER" }))}
                 className={`p-4 border-2 rounded-lg transition-all ${formData.role === "FARMER"
-                    ? "border-green-600 bg-green-50"
-                    : "border-gray-300 hover:border-gray-400"
+                  ? "border-green-600 bg-green-50"
+                  : "border-gray-300 hover:border-gray-400"
                   }`}
               >
                 <div className="flex items-center justify-center mb-2">
@@ -263,42 +322,28 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
             </div>
           </div>
 
-          {/* Personal Information */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="firstName" className="block text-sm font-semibold text-gray-700 mb-2">
-                First Name <span className="text-red-500">*</span>
-              </label>
-              <input
-                id="firstName"
-                name="firstName"
-                type="text"
-                value={formData.firstName}
-                onChange={handleChange}
-                required
-                disabled={isLoading}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
-                placeholder="John"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="lastName" className="block text-sm font-semibold text-gray-700 mb-2">
-                Last Name <span className="text-red-500">*</span>
-              </label>
-              <input
-                id="lastName"
-                name="lastName"
-                type="text"
-                value={formData.lastName}
-                onChange={handleChange}
-                required
-                disabled={isLoading}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
-                placeholder="Doe"
-              />
-            </div>
+          {/* Full Name field - primary field for bot compatibility */}
+          <div>
+            <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
+              Full Name <span className="text-red-500">*</span>
+            </label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              value={`${formData.firstName} ${formData.lastName}`.trim()}
+              onChange={handleChange}
+              required
+              disabled={isLoading}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
+              placeholder="John Doe"
+            />
+            <p className="mt-1 text-xs text-gray-500">Enter your full name (first and last)</p>
           </div>
+
+          {/* Hidden fields to store split name values */}
+          <input type="hidden" id="firstName" name="firstName" value={formData.firstName} />
+          <input type="hidden" id="lastName" name="lastName" value={formData.lastName} />
 
           {/* Email */}
           <div>
@@ -467,6 +512,35 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
               </div>
             </div>
           )}
+
+          {/* Terms of Service Agreement */}
+          <div className="flex items-start">
+            <div className="flex items-center h-5">
+              <input
+                id="agreeToTerms"
+                name="agreeToTerms"
+                type="checkbox"
+                checked={formData.agreeToTerms}
+                onChange={(e) => setFormData((prev) => ({ ...prev, agreeToTerms: e.target.checked }))}
+                disabled={isLoading}
+                className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500 focus:ring-2 disabled:cursor-not-allowed"
+                required
+              />
+            </div>
+            <div className="ml-3 text-sm">
+              <label htmlFor="agreeToTerms" className="text-gray-700">
+                I agree to the{" "}
+                <a href="/terms" target="_blank" className="text-green-600 hover:text-green-700 font-semibold">
+                  Terms of Service
+                </a>{" "}
+                and{" "}
+                <a href="/privacy" target="_blank" className="text-green-600 hover:text-green-700 font-semibold">
+                  Privacy Policy
+                </a>
+                <span className="text-red-500"> *</span>
+              </label>
+            </div>
+          </div>
 
           {/* Submit Button */}
           <button
