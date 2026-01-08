@@ -4,16 +4,16 @@
   "private": true,
   "description": "Divine Agricultural E-Commerce Platform - Prisma 7",
   "engines": {
-    "node": "20.x",
+    "node": ">=20.0.0",
     "npm": ">=10.0.0"
   },
   "scripts": {
     "postinstall": "npx prisma generate || echo 'Prisma generate skipped'",
     "prepare": "node -e \"if (!process.env.CI && !process.env.DOCKER && !process.env.HUSKY) { try { require('husky').install() } catch (e) {} }\"",
     "seed": "tsx scripts/seed-test-data.ts",
-    "dev": "cross-env NODE_OPTIONS='--max-old-space-size=16384' NODE_ENV=development next dev --turbo -p 3001",
+    "dev": "cross-env NODE_OPTIONS='--max-old-space-size=16384' NODE_ENV=development next dev --webpack -p 3001",
     "dev:safe": "node scripts/start-dev-safe.js",
-    "dev:webpack": "cross-env NODE_OPTIONS='--max-old-space-size=16384' NODE_ENV=development next dev -p 3001",
+    "dev:webpack": "cross-env NODE_OPTIONS='--max-old-space-size=16384' NODE_ENV=development next dev --webpack -p 3001",
     "dev:turbo": "cross-env NODE_OPTIONS='--max-old-space-size=16384' NODE_ENV=development next dev --turbo -p 3001",
     "dev:omen": "cross-env NODE_OPTIONS='--max-old-space-size=32768 --max-semi-space-size=512' NODE_ENV=development next dev --turbo -p 3001",
     "dev:logger": "cross-env NODE_OPTIONS='--max-old-space-size=16384' NODE_ENV=development LOG_LEVEL=debug next dev --turbo -p 3001",
