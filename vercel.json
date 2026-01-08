@@ -71,11 +71,6 @@
       "source": "/dashboard",
       "destination": "/admin",
       "permanent": false
-    },
-    {
-      "source": "/register",
-      "destination": "/signup",
-      "permanent": true
     }
   ],
   "functions": {
