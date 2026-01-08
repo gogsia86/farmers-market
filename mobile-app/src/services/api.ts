@@ -10,9 +10,9 @@
  * - Request retry logic
  */
 
-import axios, { AxiosInstance, AxiosError, AxiosRequestConfig } from "axios";
-import * as SecureStore from "expo-secure-store";
 import NetInfo from "@react-native-community/netinfo";
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
+import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
 
 // Environment configuration
@@ -888,6 +888,7 @@ export interface ProductQueryParams {
   minPrice?: number;
   maxPrice?: number;
   inStock?: boolean;
+  farmId?: string;
 }
 
 export interface ProductFilters {
@@ -909,7 +910,7 @@ export interface CreateProductData {
   farmId: string;
 }
 
-export interface UpdateProductData extends Partial<CreateProductData> {}
+export interface UpdateProductData extends Partial<CreateProductData> { }
 
 export interface FarmQueryParams {
   page?: number;
@@ -932,7 +933,7 @@ export interface CreateFarmData {
   website?: string;
 }
 
-export interface UpdateFarmData extends Partial<CreateFarmData> {}
+export interface UpdateFarmData extends Partial<CreateFarmData> { }
 
 export interface CartItem {
   id: string;

@@ -1,7 +1,8 @@
 // 🌾 Farm Detail Screen - Farm Profile Page
 // Displays detailed information about a farm with products and location
 
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
 import {
   Image,
@@ -17,12 +18,22 @@ import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
-import { apiClient } from '../../services/api';
+import apiClient from '../../services/api';
 import { theme } from '../../theme';
 
 // ========================================
 // 🎯 TYPES & INTERFACES
 // ========================================
+
+type RootStackParamList = {
+  FarmDetail: { farmId: string };
+  ProductDetail: { productId: string };
+  Cart: undefined;
+  Home: undefined;
+};
+
+type FarmDetailRouteProp = RouteProp<RootStackParamList, 'FarmDetail'>;
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 interface Product {
   id: string;
@@ -30,7 +41,8 @@ interface Product {
   price: number;
   unit: string;
   image: string | null;
-  stock: number;
+  inStock: boolean;
+  quantityAvailable: number | null;
   isOrganic: boolean;
 }
 
@@ -64,9 +76,9 @@ interface Farm {
 // ========================================
 
 export const FarmDetailScreen: React.FC = () => {
-  const navigation = useNavigation();
-  const route = useRoute();
-  const { farmId } = (route.params as { farmId: string }) || {};
+  const navigation = useNavigation<NavigationProp>();
+  const route = useRoute<FarmDetailRouteProp>();
+  const { farmId } = route.params;
 
   const [farm, setFarm] = useState<Farm | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
@@ -120,15 +132,19 @@ export const FarmDetailScreen: React.FC = () => {
       setFarm(farmData);
 
       // Fetch farm's products
-      const productsResponse = await apiClient.farms.getProducts(farmId);
+      const productsResponse = await apiClient.products.getAll({
+        farmId: farmId,
+        inStock: true
+      });
       const productsData: Product[] = productsResponse.data.map((product: any) => ({
         id: product.id,
         name: product.name,
         price: product.price,
         unit: product.unit || 'unit',
-        image: product.image || null,
-        stock: product.stock || 0,
-        isOrganic: product.isOrganic || false,
+        image: product.primaryPhotoUrl || product.images?.[0] || null,
+        inStock: product.inStock ?? true,
+        quantityAvailable: product.quantityAvailable ?? null,
+        isOrganic: product.organic || false,
       }));
 
       setProducts(productsData);
@@ -153,7 +169,7 @@ export const FarmDetailScreen: React.FC = () => {
   };
 
   const handleProductPress = (productId: string) => {
-    navigation.navigate('ProductDetail' as never, { productId } as never);
+    navigation.navigate('ProductDetail', { productId });
   };
 
   const handleCall = () => {
@@ -641,7 +657,7 @@ const styles = StyleSheet.create({
   },
   activeTab: {
     borderBottomWidth: 2,
-    borderBottomColor: theme.colors.primary.main,
+    borderBottomColor: theme.colors.primary[600],
   },
   tabText: {
     ...theme.typography.styles.body1,
@@ -650,7 +666,7 @@ const styles = StyleSheet.create({
     fontWeight: theme.typography.fontWeight.medium,
   },
   activeTabText: {
-    color: theme.colors.primary.main,
+    color: theme.colors.primary[600],
   },
   tabContent: {
     paddingHorizontal: theme.spacing[6],
@@ -699,7 +715,7 @@ const styles = StyleSheet.create({
   },
   practiceIcon: {
     fontSize: 16,
-    color: theme.colors.primary.main,
+    color: theme.colors.primary[600],
     marginRight: theme.spacing[2],
     marginTop: 2,
   },
@@ -753,7 +769,7 @@ const styles = StyleSheet.create({
   },
   productPrice: {
     ...theme.typography.styles.body2,
-    color: theme.colors.primary.main,
+    color: theme.colors.primary[600],
     marginBottom: theme.spacing[1],
   },
   productStock: {

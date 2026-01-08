@@ -13,28 +13,27 @@
  * @reference .github/instructions/10_AGRICULTURAL_FEATURE_PATTERNS.instructions.md
  */
 
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import apiClient from "@/services/api";
+import { useCartStore } from "@/stores/cartStore";
+import { borderRadius, colors, shadows, spacing, typography } from "@/theme";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Image,
-  TouchableOpacity,
-  Dimensions,
-  FlatList,
   ActivityIndicator,
   Alert,
-  Share,
   Animated,
+  Dimensions,
+  FlatList,
+  Image,
   Platform,
+  Share,
   StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
-import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useCartStore } from "@/stores/cartStore";
-import apiClient from "@/services/api";
-import { colors, spacing, typography, shadows, borderRadius } from "@/theme";
 
 // ============================================
 // TYPE DEFINITIONS
@@ -57,7 +56,7 @@ interface Product {
   isOrganic: boolean;
   isSeasonal: boolean;
   inStock: boolean;
-  stock: number;
+  quantityAvailable: number | null;
   rating: number;
   reviewCount: number;
   harvestDate?: string;
@@ -467,7 +466,7 @@ export const ProductDetailScreen: React.FC = () => {
         isOrganic: productData.isOrganic || false,
         isSeasonal: productData.isSeasonal || false,
         inStock: productData.inStock !== false,
-        stock: productData.stock || productData.quantityAvailable || 10,
+        quantityAvailable: productData.quantityAvailable || 10,
         rating: productData.rating || 4.5,
         reviewCount: productData.reviewCount || 0,
         harvestDate: productData.harvestDate,
@@ -494,17 +493,17 @@ export const ProductDetailScreen: React.FC = () => {
         const relatedData = relatedResponse.data || relatedResponse || [];
         const related = Array.isArray(relatedData)
           ? relatedData
-              .filter((p: any) => p.id !== productId)
-              .slice(0, 6)
-              .map((p: any) => ({
-                id: p.id,
-                name: p.name,
-                price: Number(p.price),
-                unit: p.unit || "lb",
-                image: p.images?.[0] || "",
-                farmName: p.farm?.name || "Local Farm",
-                isOrganic: p.isOrganic || false,
-              }))
+            .filter((p: any) => p.id !== productId)
+            .slice(0, 6)
+            .map((p: any) => ({
+              id: p.id,
+              name: p.name,
+              price: Number(p.price),
+              unit: p.unit || "lb",
+              image: p.images?.[0] || "",
+              farmName: p.farm?.name || "Local Farm",
+              isOrganic: p.isOrganic || false,
+            }))
           : [];
         setRelatedProducts(related);
       } catch (error) {
@@ -541,7 +540,7 @@ export const ProductDetailScreen: React.FC = () => {
         unit: product.unit,
         farmId: product.farmId,
         farmName: product.farmName,
-        stock: product.stock,
+        stock: product.quantityAvailable || 0,
       });
 
       Alert.alert(
@@ -574,7 +573,7 @@ export const ProductDetailScreen: React.FC = () => {
           unit: product.unit,
           farmId: product.farmId,
           farmName: product.farmName,
-          stock: product.stock,
+          stock: product.quantityAvailable || 0,
         });
       }
       navigation.navigate("Cart");
@@ -627,7 +626,7 @@ export const ProductDetailScreen: React.FC = () => {
   };
 
   const incrementQuantity = () => {
-    if (product && quantity < product.stock) {
+    if (product && product.quantityAvailable && quantity < product.quantityAvailable) {
       setQuantity((q) => q + 1);
     }
   };
@@ -773,7 +772,7 @@ export const ProductDetailScreen: React.FC = () => {
           {/* Stock Status */}
           {product.inStock ? (
             <Text style={styles.stockStatus}>
-              ✓ In Stock ({product.stock} available)
+              ✓ In Stock ({product.quantityAvailable || 0} available)
             </Text>
           ) : (
             <Text style={styles.outOfStock}>✗ Out of Stock</Text>
@@ -884,7 +883,7 @@ export const ProductDetailScreen: React.FC = () => {
           {/* Quantity Selector */}
           <QuantitySelector
             quantity={quantity}
-            maxQuantity={product.stock}
+            maxQuantity={product.quantityAvailable || 0}
             onIncrease={incrementQuantity}
             onDecrease={decrementQuantity}
           />

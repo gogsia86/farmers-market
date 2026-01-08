@@ -12,25 +12,25 @@
  * @reference Agricultural consciousness patterns
  */
 
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  Image,
   ActivityIndicator,
-  RefreshControl,
-  TextInput,
-  Modal,
   Dimensions,
+  FlatList,
+  Image,
+  Modal,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { theme } from "../../theme";
-import { useCartStore } from "../../stores/cartStore";
 import apiClient from "../../services/api";
+import { useCartStore } from "../../stores/cartStore";
+import { theme } from "../../theme";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const PRODUCTS_PER_PAGE = 20;
@@ -52,7 +52,7 @@ interface Product {
   isOrganic: boolean;
   isSeasonal: boolean;
   inStock: boolean;
-  stock: number;
+  quantityAvailable: number | null;
 }
 
 interface FilterState {
@@ -530,7 +530,7 @@ export const ProductListScreen = () => {
             isOrganic: p.organic || false,
             isSeasonal: p.seasonal || false,
             inStock: p.inStock !== false,
-            stock: p.quantityAvailable || 0,
+            quantityAvailable: p.quantityAvailable || 0,
           }),
         );
 
@@ -601,7 +601,7 @@ export const ProductListScreen = () => {
         unit: product.unit,
         farmId: product.farmId,
         farmName: product.farmName,
-        stock: product.stock,
+        stock: product.quantityAvailable || 0,
       });
       console.log("✅ Added to cart:", product.name);
     } catch (error) {
