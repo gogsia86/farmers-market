@@ -55,5 +55,9 @@ export default async function FarmerProductsPage() {
 
   // Redirect to the farm's product management page
   const farm = farms[0];
+  if (!farm) {
+    redirect("/farmer/farms/new");
+  }
+
   redirect(`/farmer/farms/${farm.id}/products`);
 }
