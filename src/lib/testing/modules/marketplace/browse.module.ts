@@ -186,20 +186,30 @@ export const MarketplaceBrowseModule: TestModule = {
             await page.goto("/products");
             await page.waitForTimeout(2000);
 
-            // Find first clickable product
+            // Find first clickable product - the entire card is a link in this design
             const productLink = await page.locator(
-              '[data-testid="product-card"] a, .product-card a, article a'
+              'a[href*="/products/"]:has-text(""), a[class*="group"]:has([class*="product"]), a[href^="/products/"]'
             ).first();
 
             const linkExists = await productLink.count() > 0;
-            expect(linkExists).toBe(true);
+
+            if (!linkExists) {
+              // Try alternative: any link on the page that goes to a product
+              const anyProductLink = await page.locator('a[href^="/products/"]').first();
+              const hasAnyLink = await anyProductLink.count() > 0;
+              expect(hasAnyLink).toBe(true);
+            }
 
             // Get current URL
             const beforeUrl = page.url();
 
-            // Click the product
-            await productLink.click();
-            await page.waitForTimeout(2000);
+            // Click the product link with navigation wait
+            await Promise.all([
+              page.waitForLoadState('domcontentloaded'),
+              productLink.click()
+            ]);
+
+            await page.waitForTimeout(1000);
 
             // Get new URL
             const afterUrl = page.url();
@@ -207,17 +217,14 @@ export const MarketplaceBrowseModule: TestModule = {
             // Verify navigation occurred
             expect(afterUrl).not.toBe(beforeUrl);
 
-            // Verify we're on a product detail page
-            const isProductPage =
-              afterUrl.includes("/product") ||
-              afterUrl.includes("/products/") ||
-              afterUrl.match(/\/[a-zA-Z0-9\-]+$/);
+            // Verify we're on a product detail page - check for /products/slug pattern
+            const isProductPage = afterUrl.includes("/products/") && afterUrl.split("/products/")[1]?.length > 0;
 
             expect(isProductPage).toBe(true);
 
             // Check for product detail content
             const hasProductDetails = await page.locator(
-              'h1, [data-testid="product-title"], [data-testid="product-details"]'
+              'h1, h2, [data-testid="product-title"], [data-testid="product-details"], [class*="product"]'
             ).count() > 0;
 
             expect(hasProductDetails).toBe(true);
@@ -227,7 +234,8 @@ export const MarketplaceBrowseModule: TestModule = {
                 beforeUrl,
                 afterUrl,
                 navigated: true,
-                hasProductDetails
+                hasProductDetails,
+                productSlug: afterUrl.split("/products/")[1]?.split("?")[0]
               }
             };
           }

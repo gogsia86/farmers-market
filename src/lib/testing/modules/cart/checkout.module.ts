@@ -190,9 +190,9 @@ export const CartCheckoutModule: TestModule = {
             await page.goto("/products");
             await page.waitForTimeout(2000);
 
-            // Click on first product
+            // Click on first product - the entire card is a link in this design
             const productLink = await page.locator(
-              '[data-testid="product-card"] a, .product-card a, article a'
+              'a[href^="/products/"]'
             ).first();
 
             const hasLink = await productLink.count() > 0;
@@ -200,7 +200,11 @@ export const CartCheckoutModule: TestModule = {
               throw new Error("No product links found");
             }
 
-            await productLink.click();
+            // Click with navigation wait
+            await Promise.all([
+              page.waitForLoadState('domcontentloaded'),
+              productLink.click()
+            ]);
             await page.waitForTimeout(2000);
 
             // Find and click add to cart button
@@ -216,7 +220,7 @@ export const CartCheckoutModule: TestModule = {
 
             // Check for success indicators
             const successToast = await page.locator(
-              'text=/added to cart|success|added successfully/i, [role="alert"], [class*="toast"]'
+              '[role="alert"], [class*="toast"], text=/added/i, text=/success/i'
             ).count();
 
             // Check if cart count increased (look for badge)
@@ -397,7 +401,7 @@ export const CartCheckoutModule: TestModule = {
 
             // Check for total/subtotal
             const totalElement = await page.locator(
-              'text=/total|subtotal/i, [data-testid="cart-total"], [class*="total"]'
+              '[data-testid="cart-total"], [class*="total"], text=/total/i, text=/subtotal/i'
             ).count();
 
             const priceElement = await page.locator(
