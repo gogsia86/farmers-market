@@ -15,7 +15,6 @@
  * - Bot compatibility with hidden name field
  */
 
-import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -152,29 +151,16 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
         return;
       }
 
-      // Auto sign in after successful registration
-      const signInResult = await signIn("credentials", {
-        email: formData.email,
-        password: formData.password,
-        redirect: false,
-      });
+      // Registration successful - redirect to login page
+      console.log("✅ Registration successful, redirecting to login...");
+      setError(null);
+      setIsLoading(true);
 
-      if (signInResult?.ok) {
-        // Show success message
-        setError(null);
-        setIsLoading(true);
-        // Small delay to ensure state updates before redirect
-        await new Promise(resolve => setTimeout(resolve, 500));
-        // Redirect based on role - use window.location for guaranteed redirect
-        const redirectUrl =
-          formData.role === "FARMER" ? "/farmer/dashboard" : "/customer/dashboard";
-        window.location.href = redirectUrl;
-      } else {
-        // Registration successful but auto-login failed - redirect to login
-        setIsLoading(true);
-        await new Promise(resolve => setTimeout(resolve, 300));
-        window.location.href = "/login?registered=true";
-      }
+      // Small delay to ensure state updates
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      // Redirect to login with registered param
+      window.location.href = "/login?registered=true";
     } catch (error) {
       setError("An unexpected error occurred. Please try again.");
       setIsLoading(false);
