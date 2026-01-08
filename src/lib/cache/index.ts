@@ -115,53 +115,68 @@ class MemoryCache implements CacheLayer {
 }
 
 /**
+ * REDIS SINGLETON CLIENT
+ * Ensures only one Redis connection per process
+ */
+let redisClientInstance: Redis | null = null;
+let isRedisConnected = false;
+
+function getRedisClient(): Redis | null {
+  const isEnabled = process.env.REDIS_ENABLED === "true";
+
+  if (!isEnabled) {
+    return null;
+  }
+
+  if (redisClientInstance) {
+    return redisClientInstance;
+  }
+
+  try {
+    redisClientInstance = new Redis(REDIS_CONFIG);
+
+    redisClientInstance.on("connect", () => {
+      isRedisConnected = true;
+      logger.info("L2 cache (Redis) connected");
+    });
+
+    redisClientInstance.on("error", (error) => {
+      logger.error("L2 cache (Redis) error", { error: error.message });
+      isRedisConnected = false;
+    });
+
+    redisClientInstance.on("close", () => {
+      logger.warn("L2 cache (Redis) connection closed");
+      isRedisConnected = false;
+    });
+
+    // Attempt connection
+    redisClientInstance.connect().catch((error) => {
+      logger.error("Failed to connect to Redis", { error: error.message });
+    });
+
+    return redisClientInstance;
+  } catch (error) {
+    logger.error("Failed to initialize Redis", { error });
+    return null;
+  }
+}
+
+/**
  * REDIS CACHE LAYER
  * Distributed cache for multi-instance deployments
  */
 class RedisCache implements CacheLayer {
-  private client: Redis | null = null;
-  private isConnected = false;
-  private isEnabled = false;
-
-  constructor() {
-    this.isEnabled = process.env.REDIS_ENABLED === "true";
-    if (this.isEnabled) {
-      this.connect();
-    } else {
-      logger.info("Redis cache disabled - using memory-only cache");
-    }
+  private get client(): Redis | null {
+    return getRedisClient();
   }
 
-  private connect() {
-    try {
-      this.client = new Redis(REDIS_CONFIG);
+  private get isConnected(): boolean {
+    return isRedisConnected;
+  }
 
-      this.client.on("connect", () => {
-        this.isConnected = true;
-        logger.info("Redis cache connected", { host: REDIS_CONFIG.host,
-          port: REDIS_CONFIG.port,
-        });
-      });
-
-      this.client.on("error", (error) => {
-        // Only log errors if Redis is explicitly enabled
-        if (this.isEnabled) {
-          logger.error("Redis cache error", { error });
-        }
-        this.isConnected = false;
-      });
-
-      // Attempt connection
-      this.client.connect().catch((error) => {
-        if (this.isEnabled) {
-          logger.error("Failed to connect to Redis", { error });
-        }
-      });
-    } catch (error) {
-      if (this.isEnabled) {
-        logger.error("Failed to initialize Redis", { error });
-      }
-    }
+  private get isEnabled(): boolean {
+    return process.env.REDIS_ENABLED === "true";
   }
 
   async get<T>(key: string): Promise<T | null> {
@@ -222,9 +237,10 @@ class RedisCache implements CacheLayer {
   }
 
   async disconnect(): Promise<void> {
-    if (this.client) {
-      await this.client.quit();
-      this.isConnected = false;
+    if (redisClientInstance) {
+      await redisClientInstance.quit();
+      redisClientInstance = null;
+      isRedisConnected = false;
     }
   }
 }
