@@ -162,12 +162,17 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
       if (signInResult?.ok) {
         // Show success message
         setError(null);
+        setIsLoading(true);
+        // Small delay to ensure state updates before redirect
+        await new Promise(resolve => setTimeout(resolve, 500));
         // Redirect based on role - use window.location for guaranteed redirect
         const redirectUrl =
           formData.role === "FARMER" ? "/farmer/dashboard" : "/customer/dashboard";
         window.location.href = redirectUrl;
       } else {
         // Registration successful but auto-login failed - redirect to login
+        setIsLoading(true);
+        await new Promise(resolve => setTimeout(resolve, 300));
         window.location.href = "/login?registered=true";
       }
     } catch (error) {
