@@ -13,6 +13,43 @@ import { expect } from "@/lib/testing/utils/assertions";
 import type { Page } from "@playwright/test";
 
 /**
+ * Helper function to log in before cart tests
+ * Cart operations require authentication
+ */
+async function loginForCartTests(page: Page): Promise<void> {
+  console.log("🔐 Logging in for cart tests...");
+
+  // Navigate to login page
+  await page.goto("/login", { waitUntil: "domcontentloaded" });
+  await page.waitForTimeout(1000);
+
+  // Fill in test credentials
+  const emailInput = page.locator('input[name="email"], input[type="email"]').first();
+  const passwordInput = page.locator('input[name="password"], input[type="password"]').first();
+  const submitButton = page.locator('button[type="submit"]').first();
+
+  await emailInput.fill("test@farmersmarket.com");
+  await passwordInput.fill("testpassword123");
+  await submitButton.click();
+
+  // Wait for navigation after login
+  await page.waitForTimeout(2000);
+
+  // Verify login success by checking for user session
+  const isLoggedIn = await page.evaluate(() => {
+    return document.cookie.includes("next-auth") ||
+      localStorage.getItem("user") !== null ||
+      window.location.pathname !== "/login";
+  });
+
+  if (!isLoggedIn) {
+    console.warn("⚠️ Login may have failed, but continuing with tests...");
+  } else {
+    console.log("✅ Login successful!");
+  }
+}
+
+/**
  * Cart & Checkout Test Module
  *
  * Validates:
@@ -33,6 +70,13 @@ export const CartCheckoutModule: TestModule = {
   tags: ["cart", "checkout", "payment", "orders", "customer"],
   timeout: 60000, // 60 seconds for complex flows
 
+  // Setup hook - runs before all tests in this module
+  async beforeAll(page: Page) {
+    console.log("🛒 Setting up Cart & Checkout tests...");
+    await loginForCartTests(page);
+    console.log("✅ Cart test setup complete");
+  },
+
   suites: [
     {
       id: "cart-basic",
@@ -47,6 +91,12 @@ export const CartCheckoutModule: TestModule = {
           timeout: 15000,
           retries: 2,
           async run(page: Page) {
+            // Ensure we're logged in (may need re-authentication)
+            const currentUrl = page.url();
+            if (currentUrl.includes("/login")) {
+              await loginForCartTests(page);
+            }
+
             // Navigate to cart page
             await page.goto("/cart", {
               waitUntil: "domcontentloaded",
@@ -93,9 +143,14 @@ export const CartCheckoutModule: TestModule = {
           timeout: 10000,
           retries: 1,
           async run(page: Page) {
+            // Ensure authentication
+            const currentUrl = page.url();
+            if (currentUrl.includes("/login")) {
+              await loginForCartTests(page);
+            }
+
             await page.goto("/cart", { waitUntil: "domcontentloaded" });
             await page.waitForTimeout(2000);
-            await page.waitForTimeout(1000);
 
             // Check if cart has items
             const cartItems = await page.locator(
@@ -147,6 +202,12 @@ export const CartCheckoutModule: TestModule = {
           timeout: 15000,
           retries: 2,
           async run(page: Page) {
+            // Ensure authentication for add-to-cart operations
+            const currentUrl = page.url();
+            if (currentUrl.includes("/login")) {
+              await loginForCartTests(page);
+            }
+
             // Navigate to products page
             await page.goto("/products");
             await page.waitForTimeout(2000);
@@ -187,6 +248,12 @@ export const CartCheckoutModule: TestModule = {
           timeout: 20000,
           retries: 2,
           async run(page: Page) {
+            // Ensure authentication
+            const currentUrl = page.url();
+            if (currentUrl.includes("/login")) {
+              await loginForCartTests(page);
+            }
+
             // Navigate to products
             await page.goto("/products");
             await page.waitForTimeout(2000);

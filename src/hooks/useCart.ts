@@ -21,6 +21,7 @@ import type {
   CartSummary,
   CartValidationResult,
 } from "@/lib/services/cart.service";
+import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useState } from "react";
 
 import { logger } from '@/lib/monitoring/logger';
@@ -30,7 +31,6 @@ import { logger } from '@/lib/monitoring/logger';
 // ============================================================================
 
 interface UseCartOptions {
-  userId?: string;
   autoSync?: boolean;
   syncInterval?: number; // milliseconds
 }
@@ -65,11 +65,6 @@ function getGuestCart(): GuestCartItem[] {
   }
 }
 
-function getGuestCartCount(): number {
-  const items = getGuestCart();
-  return items.reduce((sum, item) => sum + item.quantity, 0);
-}
-
 function setGuestCart(items: GuestCartItem[]): void {
   if (typeof window === "undefined") return;
 
@@ -99,7 +94,9 @@ function clearGuestCart(): void {
 // ============================================================================
 
 export function useCart(options: UseCartOptions = {}) {
-  const { userId, autoSync = true, syncInterval = 30000 } = options;
+  const { autoSync = true, syncInterval = 30000 } = options;
+  const { data: session, status: sessionStatus } = useSession();
+  const userId = session?.user?.id;
   const { toast } = useToast();
 
   // Prevent hydration mismatch by deferring localStorage access
@@ -126,6 +123,11 @@ export function useCart(options: UseCartOptions = {}) {
     // Don't access localStorage until mounted to prevent hydration mismatch
     if (!mounted) return;
 
+    // Wait for session to load
+    if (sessionStatus === "loading") {
+      return;
+    }
+
     if (!userId) {
       // Load guest cart from local storage
       const guestItems = getGuestCart();
@@ -133,6 +135,7 @@ export function useCart(options: UseCartOptions = {}) {
         ...prev,
         count: guestItems.reduce((sum, item) => sum + item.quantity, 0),
         isLoading: false,
+        summary: null,
       }));
       return;
     }
@@ -141,8 +144,8 @@ export function useCart(options: UseCartOptions = {}) {
 
     try {
       const [summaryResponse, countResponse] = await Promise.all([
-        getCartSummaryAction(userId),
-        getCartCountAction(userId),
+        getCartSummaryAction(),
+        getCartCountAction(),
       ]);
 
       if (summaryResponse.success && countResponse.success) {
@@ -185,7 +188,7 @@ export function useCart(options: UseCartOptions = {}) {
         error: null, // Don't show error to user, just show empty cart
       });
     }
-  }, [userId, mounted]);
+  }, [userId, mounted, sessionStatus]);
 
   // ==========================================================================
   // CART OPERATIONS
@@ -229,10 +232,7 @@ export function useCart(options: UseCartOptions = {}) {
         count: prev.count + request.quantity,
       }));
 
-      const response = await addToCartAction({
-        ...request,
-        userId,
-      });
+      const response = await addToCartAction(request);
 
       if (response.success) {
         // Reload cart to get accurate data
@@ -358,7 +358,7 @@ export function useCart(options: UseCartOptions = {}) {
       return { success: true };
     }
 
-    const response = await clearCartAction(userId);
+    const response = await clearCartAction();
 
     if (response.success) {
       setState({
@@ -388,7 +388,7 @@ export function useCart(options: UseCartOptions = {}) {
     async (farmId: string) => {
       if (!userId) return { success: false };
 
-      const response = await clearFarmCartAction(userId, farmId);
+      const response = await clearFarmCartAction(farmId);
 
       if (response.success) {
         await loadCart();
@@ -419,7 +419,7 @@ export function useCart(options: UseCartOptions = {}) {
 
     setState((prev) => ({ ...prev, isValidating: true }));
 
-    const response = await validateCartAction(userId);
+    const response = await validateCartAction();
 
     setState((prev) => ({ ...prev, isValidating: false }));
 
@@ -448,7 +448,7 @@ export function useCart(options: UseCartOptions = {}) {
   const syncPrices = useCallback(async () => {
     if (!userId) return { success: false };
 
-    const response = await syncCartPricesAction(userId);
+    const response = await syncCartPricesAction();
 
     if (response.success) {
       await loadCart();
@@ -465,12 +465,12 @@ export function useCart(options: UseCartOptions = {}) {
   }, [userId, loadCart, toast]);
 
   const mergeGuestCart = useCallback(async () => {
-    if (!userId) return;
+    if (!userId || !mounted) return;
 
     const guestItems = getGuestCart();
     if (guestItems.length === 0) return;
 
-    const response = await mergeGuestCartAction(guestItems, userId);
+    const response = await mergeGuestCartAction(guestItems);
 
     if (response.success) {
       clearGuestCart();
@@ -481,7 +481,7 @@ export function useCart(options: UseCartOptions = {}) {
         description: "Your items have been added to your cart",
       });
     }
-  }, [userId, loadCart, toast]);
+  }, [userId, mounted, loadCart, toast]);
 
   // ==========================================================================
   // EFFECTS
@@ -489,26 +489,28 @@ export function useCart(options: UseCartOptions = {}) {
 
   // Load cart on mount and when userId changes
   useEffect(() => {
-    loadCart();
-  }, [loadCart]);
+    if (mounted && sessionStatus !== "loading") {
+      loadCart();
+    }
+  }, [loadCart, mounted, sessionStatus]);
 
   // Merge guest cart on login
   useEffect(() => {
-    if (userId) {
+    if (userId && mounted && sessionStatus === "authenticated") {
       mergeGuestCart();
     }
-  }, [userId, mergeGuestCart]);
+  }, [userId, mounted, sessionStatus, mergeGuestCart]);
 
   // Auto-sync cart at intervals
   useEffect(() => {
-    if (!userId || !autoSync) return;
+    if (!userId || !autoSync || !mounted) return;
 
     const interval = setInterval(() => {
       loadCart();
     }, syncInterval);
 
     return () => clearInterval(interval);
-  }, [userId, autoSync, syncInterval, loadCart]);
+  }, [userId, autoSync, syncInterval, mounted, loadCart]);
 
   // ==========================================================================
   // RETURN

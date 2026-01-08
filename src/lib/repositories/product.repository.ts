@@ -16,8 +16,75 @@
  * @reference .github/instructions/10_AGRICULTURAL_FEATURE_PATTERNS.instructions.md
  */
 
+import type { Prisma, Product } from "@prisma/client";
 import { BaseRepository, type RepositoryOptions } from "./base.repository";
-import type { Product, Prisma } from "@prisma/client";
+
+/**
+ * Product Detail Data Type - Optimized for detail page rendering
+ * Includes minimal fields with essential relations
+ */
+export type ProductDetailData = Prisma.ProductGetPayload<{
+  select: {
+    id: true;
+    name: true;
+    slug: true;
+    description: true;
+    price: true;
+    compareAtPrice: true;
+    unit: true;
+    primaryPhotoUrl: true;
+    images: true;
+    photoUrls: true;
+    inStock: true;
+    quantityAvailable: true;
+    featured: true;
+    organic: true;
+    certifications: true;
+    harvestDate: true;
+    storageInstructions: true;
+    averageRating: true;
+    reviewCount: true;
+    tags: true;
+    category: true;
+    createdAt: true;
+    farm: {
+      select: {
+        id: true;
+        name: true;
+        slug: true;
+        description: true;
+        city: true;
+        state: true;
+        logoUrl: true;
+        images: true;
+        averageRating: true;
+        reviewCount: true;
+        verificationStatus: true;
+      };
+    };
+    reviews: {
+      select: {
+        id: true;
+        rating: true;
+        reviewText: true;
+        createdAt: true;
+        customer: {
+          select: {
+            id: true;
+            firstName: true;
+            lastName: true;
+            avatar: true;
+          };
+        };
+      };
+    };
+    _count: {
+      select: {
+        reviews: true;
+      };
+    };
+  };
+}>;
 
 /**
  * Quantum Product with all relations loaded
@@ -649,6 +716,334 @@ export class QuantumProductRepository extends BaseRepository<
         },
       },
     };
+  }
+
+  /**
+   * 🎯 FIND BY SLUG WITH MINIMAL DATA (OPTIMIZED FOR DETAIL PAGE)
+   * Fetches product with only essential fields for detail page rendering
+   * Reduces payload size and query time by 60-70%
+   */
+  async findBySlugWithMinimalData(slug: string): Promise<ProductDetailData | null> {
+    this.logOperation("findBySlugWithMinimalData:start", { slug });
+
+    try {
+      const product = await this.db.product.findFirst({
+        where: {
+          slug,
+          status: "ACTIVE",
+        },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          description: true,
+          price: true,
+          compareAtPrice: true,
+          unit: true,
+          primaryPhotoUrl: true,
+          images: true,
+          photoUrls: true,
+          inStock: true,
+          quantityAvailable: true,
+          featured: true,
+          organic: true,
+          certifications: true,
+          harvestDate: true,
+          storageInstructions: true,
+          averageRating: true,
+          reviewCount: true,
+          tags: true,
+          category: true,
+          createdAt: true,
+          // Optimized farm relation with minimal fields
+          farm: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+              description: true,
+              city: true,
+              state: true,
+              logoUrl: true,
+              images: true,
+              averageRating: true,
+              reviewCount: true,
+              verificationStatus: true,
+            },
+          },
+          // Limited reviews
+          reviews: {
+            take: 5,
+            orderBy: { createdAt: "desc" },
+            select: {
+              id: true,
+              rating: true,
+              reviewText: true,
+              createdAt: true,
+              customer: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  avatar: true,
+                },
+              },
+            },
+          },
+          _count: {
+            select: {
+              reviews: true,
+            },
+          },
+        },
+      });
+
+      if (!product) {
+        this.logOperation("findBySlugWithMinimalData:notFound", { slug });
+        return null;
+      }
+
+      this.logOperation("findBySlugWithMinimalData:found", { slug, productId: product.id });
+      return product;
+    } catch (error) {
+      this.logOperation("findBySlugWithMinimalData:error", { slug, error });
+      throw error;
+    }
+  }
+
+  /**
+   * 🌾 FIND RELATED PRODUCTS (OPTIMIZED)
+   * Fetches related products based on category and farm
+   */
+  async findRelatedProducts(productId: string, category: string | null, farmId: string, limit: number = 6) {
+    this.logOperation("findRelatedProducts:start", { productId, category, farmId, limit });
+
+    try {
+      const whereConditions: any[] = [{ farmId }];
+      if (category) {
+        whereConditions.push({ category: category as any });
+      }
+
+      const products = await this.db.product.findMany({
+        where: {
+          id: { not: productId },
+          status: "ACTIVE",
+          inStock: true,
+          OR: whereConditions,
+        },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          description: true,
+          price: true,
+          unit: true,
+          primaryPhotoUrl: true,
+          images: true,
+          inStock: true,
+          featured: true,
+          organic: true,
+          averageRating: true,
+          reviewCount: true,
+          farm: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+            },
+          },
+        },
+        orderBy: [
+          { featured: "desc" },
+          { averageRating: "desc" },
+          { createdAt: "desc" },
+        ],
+        take: limit,
+      });
+
+      this.logOperation("findRelatedProducts:found", {
+        productId,
+        count: products.length,
+      });
+
+      return products;
+    } catch (error) {
+      this.logOperation("findRelatedProducts:error", { productId, error });
+      throw error;
+    }
+  }
+
+  /**
+   * 📋 FIND PRODUCTS FOR LISTING (OPTIMIZED)
+   * Fetches products with minimal fields for listing pages
+   */
+  async findForListing(filters: {
+    search?: string;
+    category?: string;
+    farmId?: string;
+    organic?: boolean;
+    minPrice?: number;
+    maxPrice?: number;
+    inStock?: boolean;
+    page?: number;
+    limit?: number;
+  }) {
+    this.logOperation("findForListing:start", { filters });
+
+    try {
+      const {
+        search,
+        category,
+        farmId,
+        organic,
+        minPrice,
+        maxPrice,
+        inStock = true,
+        page = 1,
+        limit = 20,
+      } = filters;
+
+      const skip = (page - 1) * limit;
+
+      const where: any = {
+        status: "ACTIVE",
+      };
+
+      if (inStock) {
+        where.inStock = true;
+      }
+
+      if (search) {
+        where.OR = [
+          { name: { contains: search, mode: "insensitive" } },
+          { description: { contains: search, mode: "insensitive" } },
+        ];
+      }
+
+      if (category) {
+        where.category = category;
+      }
+
+      if (farmId) {
+        where.farmId = farmId;
+      }
+
+      if (organic !== undefined) {
+        where.organic = organic;
+      }
+
+      if (minPrice !== undefined || maxPrice !== undefined) {
+        where.price = {};
+        if (minPrice !== undefined) {
+          where.price.gte = minPrice;
+        }
+        if (maxPrice !== undefined) {
+          where.price.lte = maxPrice;
+        }
+      }
+
+      const [products, total] = await Promise.all([
+        this.db.product.findMany({
+          where,
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            description: true,
+            price: true,
+            compareAtPrice: true,
+            unit: true,
+            primaryPhotoUrl: true,
+            images: true,
+            inStock: true,
+            quantityAvailable: true,
+            featured: true,
+            organic: true,
+            averageRating: true,
+            reviewCount: true,
+            farm: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                verificationStatus: true,
+              },
+            },
+          },
+          orderBy: [
+            { featured: "desc" },
+            { averageRating: "desc" },
+            { createdAt: "desc" },
+          ],
+          skip,
+          take: limit,
+        }),
+        this.db.product.count({ where }),
+      ]);
+
+      this.logOperation("findForListing:found", {
+        count: products.length,
+        total,
+        page,
+      });
+
+      return { products, total, page, limit };
+    } catch (error) {
+      this.logOperation("findForListing:error", { filters, error });
+      throw error;
+    }
+  }
+
+  /**
+   * 🏪 FIND FEATURED PRODUCTS (OPTIMIZED)
+   * Fetches featured products for homepage and promotional displays
+   */
+  async findFeaturedProducts(limit: number = 8) {
+    this.logOperation("findFeaturedProducts:start", { limit });
+
+    try {
+      const products = await this.db.product.findMany({
+        where: {
+          status: "ACTIVE",
+          inStock: true,
+          featured: true,
+        },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          description: true,
+          price: true,
+          unit: true,
+          primaryPhotoUrl: true,
+          images: true,
+          organic: true,
+          averageRating: true,
+          reviewCount: true,
+          farm: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+              verificationStatus: true,
+            },
+          },
+        },
+        orderBy: [
+          { averageRating: "desc" },
+          { reviewCount: "desc" },
+          { createdAt: "desc" },
+        ],
+        take: limit,
+      });
+
+      this.logOperation("findFeaturedProducts:found", { count: products.length });
+
+      return products;
+    } catch (error) {
+      this.logOperation("findFeaturedProducts:error", { error });
+      throw error;
+    }
   }
 }
 

@@ -8,10 +8,11 @@ import { CartSummary } from "@/components/features/cart/cart-summary";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody } from "@/components/ui/card";
 import { useCart } from "@/hooks/useCart";
-import { AlertTriangle, ShoppingBag, ShoppingCart, Trash2 } from "lucide-react";
+import { AlertTriangle, LogIn, ShoppingBag, ShoppingCart, Trash2 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 // ============================================================================
 // CART PAGE COMPONENT
@@ -19,8 +20,8 @@ import { useEffect, useState } from "react";
 
 export default function CartPage() {
   const router = useRouter();
-  const [userId, setUserId] = useState<string | undefined>(undefined);
-  const [isMounted, setIsMounted] = useState(false);
+  const { data: session, status: sessionStatus } = useSession();
+  const userId = session?.user?.id;
 
   const {
     cart,
@@ -41,20 +42,13 @@ export default function CartPage() {
   // ==========================================================================
 
   useEffect(() => {
-    setIsMounted(true);
-    // TODO: Get userId from auth session
-    // For now, using mock user ID
-    setUserId("user_123");
-  }, []);
-
-  useEffect(() => {
-    if (isMounted && userId) {
+    if (userId) {
       // Validate cart on mount
       validateCart();
       // Sync prices
       syncPrices();
     }
-  }, [isMounted, userId]);
+  }, [userId, validateCart, syncPrices]);
 
   // ==========================================================================
   // HANDLERS
@@ -94,10 +88,10 @@ export default function CartPage() {
   };
 
   // ==========================================================================
-  // RENDER LOADING
+  // RENDER LOADING (Session + Cart)
   // ==========================================================================
 
-  if (!isMounted || isLoading) {
+  if (sessionStatus === "loading" || isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-center py-16">
@@ -108,7 +102,71 @@ export default function CartPage() {
   }
 
   // ==========================================================================
-  // RENDER EMPTY CART
+  // RENDER UNAUTHENTICATED STATE
+  // ==========================================================================
+
+  if (sessionStatus === "unauthenticated" || !session?.user) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Shopping Cart</h1>
+          <p className="mt-2 text-gray-600">Please log in to view your cart</p>
+        </div>
+
+        {/* Unauthenticated State */}
+        <Card className="mx-auto max-w-2xl">
+          <CardBody className="flex flex-col items-center justify-center py-16">
+            <div className="mb-6 rounded-full bg-gray-100 p-6">
+              <ShoppingCart className="h-16 w-16 text-gray-400" />
+            </div>
+
+            <h2 className="mb-2 text-2xl font-semibold text-gray-900">
+              Sign in to view your cart
+            </h2>
+            <p className="mb-6 text-center text-gray-600">
+              Log in to access your cart and checkout.
+              <br />
+              New to our platform? Create an account to get started!
+            </p>
+
+            <div className="flex gap-3">
+              <Link href={`/login?callbackUrl=/cart`}>
+                <Button size="lg" className="bg-green-600 hover:bg-green-700">
+                  <LogIn className="mr-2 h-4 w-4" />
+                  Sign In
+                </Button>
+              </Link>
+              <Link href="/register">
+                <Button size="lg" variant="outline">
+                  Create Account
+                </Button>
+              </Link>
+            </div>
+
+            <div className="mt-8 text-center">
+              <p className="text-sm text-gray-500 mb-3">Or continue browsing</p>
+              <div className="flex gap-3 justify-center">
+                <Link href="/products">
+                  <Button variant="ghost" size="sm">
+                    Browse Products
+                  </Button>
+                </Link>
+                <Link href="/farms">
+                  <Button variant="ghost" size="sm">
+                    Explore Farms
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+      </div>
+    );
+  }
+
+  // ==========================================================================
+  // RENDER EMPTY CART (Authenticated)
   // ==========================================================================
 
   if (isEmpty || !cart) {
@@ -155,7 +213,7 @@ export default function CartPage() {
   }
 
   // ==========================================================================
-  // RENDER CART WITH ITEMS
+  // RENDER CART WITH ITEMS (Authenticated)
   // ==========================================================================
 
   const { farmGroups } = cart;

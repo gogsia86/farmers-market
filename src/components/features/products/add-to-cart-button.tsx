@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { Minus, Plus, ShoppingCart } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -25,7 +26,6 @@ interface AddToCartButtonProps {
   availableStock?: number;
   minQuantity?: number;
   maxQuantity?: number;
-  userId?: string;
   disabled?: boolean;
   showQuantitySelector?: boolean;
   size?: "sm" | "default" | "lg";
@@ -44,7 +44,6 @@ export function AddToCartButton({
   availableStock = 999,
   minQuantity = 1,
   maxQuantity,
-  userId,
   disabled = false,
   showQuantitySelector = true,
   size = "lg",
@@ -53,6 +52,7 @@ export function AddToCartButton({
   const router = useRouter();
   const { toast } = useToast();
   const { trackAddToCart } = useAnalytics();
+  const { data: session, status: sessionStatus } = useSession();
 
   const [quantity, setQuantity] = useState(minQuantity);
   const [isLoading, setIsLoading] = useState(false);
@@ -82,13 +82,13 @@ export function AddToCartButton({
 
   const handleAddToCart = async () => {
     // Check if user is authenticated
-    if (!userId) {
+    if (!session?.user?.id) {
       toast({
         title: "Authentication required",
         description: "Please sign in to add items to your cart",
         variant: "warning",
       });
-      router.push(`/auth/signin?callbackUrl=/products/${productId}`);
+      router.push(`/login?callbackUrl=/products/${productId}`);
       return;
     }
 
@@ -117,7 +117,6 @@ export function AddToCartButton({
       const response = await addToCartAction({
         productId,
         quantity,
-        userId,
       });
 
       if (response.success) {
@@ -201,7 +200,7 @@ export function AddToCartButton({
   }
 
   // Not authenticated state
-  if (!userId) {
+  if (!session?.user?.id) {
     return (
       <div className={`w-full ${className}`}>
         <Button
@@ -318,7 +317,6 @@ interface CompactAddToCartButtonProps {
   productName: string;
   price: number;
   availableStock?: number;
-  userId?: string;
 }
 
 export function CompactAddToCartButton({
@@ -326,19 +324,19 @@ export function CompactAddToCartButton({
   productName,
   price,
   availableStock = 999,
-  userId,
 }: CompactAddToCartButtonProps) {
   const router = useRouter();
   const { toast } = useToast();
   const { trackAddToCart } = useAnalytics();
+  const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleQuickAdd = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (!userId) {
-      router.push(`/auth/signin?callbackUrl=/products/${productId}`);
+    if (!session?.user?.id) {
+      router.push(`/login?callbackUrl=/products/${productId}`);
       return;
     }
 
@@ -357,7 +355,6 @@ export function CompactAddToCartButton({
       const response = await addToCartAction({
         productId,
         quantity: 1,
-        userId,
       });
 
       if (response.success) {

@@ -20,13 +20,19 @@
  * - Biodynamic product patterns
  */
 
+import { CacheTTL, multiLayerCache } from "@/lib/cache/multi-layer.cache";
 import { database } from "@/lib/database";
+import { createLogger } from "@/lib/monitoring/logger";
+import { productRepository } from "@/lib/repositories/product.repository";
 import type {
   Product,
   ProductCategory,
   ProductStatus,
 } from "@prisma/client";
 import { Prisma } from "@prisma/client";
+import { nanoid } from "nanoid";
+
+const logger = createLogger("ProductService");
 
 /**
  * 🌱 CREATE PRODUCT REQUEST TYPE
@@ -499,64 +505,7 @@ export class QuantumProductCatalogService {
     };
   }
 
-  /**
-   * 🌟 GET FEATURED PRODUCTS
-   * Retrieves featured products for homepage
-   */
-  async getFeaturedProducts(limit: number = 12): Promise<ProductWithRelations[]> {
-    const products = await database.product.findMany({
-      where: {
-        status: "ACTIVE",
-        quantityAvailable: { gt: 0 },
-      },
-      orderBy: [
-        { purchaseCount: "desc" },
-        { averageRating: "desc" },
-      ],
-      take: limit,
-      include: {
-        farm: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-            averageRating: true,
-          },
-        },
-      },
-    });
 
-    return products;
-  }
-
-  /**
-   * 🔥 GET TRENDING PRODUCTS
-   * Retrieves trending products based on recent sales
-   */
-  async getTrendingProducts(limit: number = 10): Promise<ProductWithRelations[]> {
-    const products = await database.product.findMany({
-      where: {
-        status: "ACTIVE",
-        quantityAvailable: { gt: 0 },
-      },
-      orderBy: [
-        { purchaseCount: "desc" },
-        { createdAt: "desc" },
-      ],
-      take: limit,
-      include: {
-        farm: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
-      },
-    });
-
-    return products;
-  }
 
   /**
    * 🔐 VERIFY PRODUCT ACCESS
@@ -855,6 +804,194 @@ export class QuantumProductCatalogService {
 
       return updatedProducts;
     });
+  }
+
+  /**
+   * 🎯 GET PRODUCT DETAIL DATA (OPTIMIZED)
+   * Fetches minimal product data for detail page with aggressive caching
+   * This method is optimized for the product detail page to minimize query time
+   *
+   * @param slug - Product slug
+   * @returns Product with minimal relations for detail page
+   */
+  async getProductDetailData(slug: string): Promise<Awaited<ReturnType<typeof productRepository.findBySlugWithMinimalData>>> {
+    const requestId = nanoid();
+    logger.debug("Getting optimized product detail data", { requestId, slug });
+
+    try {
+      const cacheKey = `product:detail:${slug}`;
+      const cached = await multiLayerCache.get(cacheKey);
+
+      if (cached) {
+        logger.debug("Product detail data retrieved from cache", { requestId, slug });
+        return cached as Awaited<ReturnType<typeof productRepository.findBySlugWithMinimalData>>;
+      }
+
+      // Optimized query with minimal field selection
+      const product = await productRepository.findBySlugWithMinimalData(slug);
+
+      if (!product) {
+        logger.debug("Product not found for detail page", { requestId, slug });
+        return null;
+      }
+
+      // Cache with longer TTL (product details don't change often)
+      await multiLayerCache.set(cacheKey, product, { ttl: CacheTTL.LONG });
+
+      logger.info("Product detail data fetched and cached", {
+        requestId,
+        slug,
+        productId: product.id
+      });
+
+      return product;
+    } catch (error) {
+      logger.error("Failed to get product detail data", {
+        requestId,
+        slug,
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * 🌾 GET RELATED PRODUCTS (OPTIMIZED)
+   * Fetches related products with caching
+   *
+   * @param productId - Product ID
+   * @param category - Product category
+   * @param farmId - Farm ID
+   * @param limit - Max products to return (default: 6)
+   * @returns Array of related products
+   */
+  async getRelatedProducts(productId: string, category: string | null, farmId: string, limit: number = 6): Promise<Awaited<ReturnType<typeof productRepository.findRelatedProducts>>> {
+    const requestId = nanoid();
+    logger.debug("Getting related products (optimized)", { requestId, productId, limit });
+
+    try {
+      const cacheKey = `product:related:${productId}:${limit}`;
+      const cached = await multiLayerCache.get(cacheKey);
+
+      if (cached) {
+        logger.debug("Related products retrieved from cache", { requestId, productId });
+        return cached as Awaited<ReturnType<typeof productRepository.findRelatedProducts>>;
+      }
+
+      const products = await productRepository.findRelatedProducts(productId, category, farmId, limit);
+
+      // Cache for medium duration
+      await multiLayerCache.set(cacheKey, products, { ttl: CacheTTL.MEDIUM });
+
+      logger.debug("Related products fetched and cached", {
+        requestId,
+        productId,
+        count: products.length
+      });
+
+      return products;
+    } catch (error) {
+      logger.error("Failed to get related products", {
+        requestId,
+        productId,
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * 📋 GET PRODUCTS FOR LISTING (OPTIMIZED)
+   * Fetches products for listing pages with caching
+   *
+   * @param filters - Search and filter criteria
+   * @returns Paginated product list
+   */
+  async getProductsForListing(filters: {
+    search?: string;
+    category?: string;
+    farmId?: string;
+    organic?: boolean;
+    minPrice?: number;
+    maxPrice?: number;
+    inStock?: boolean;
+    page?: number;
+    limit?: number;
+  }): Promise<Awaited<ReturnType<typeof productRepository.findForListing>>> {
+    const requestId = nanoid();
+    logger.debug("Getting products for listing (optimized)", { requestId, filters });
+
+    try {
+      const filterKey = JSON.stringify(filters);
+      const cacheKey = `products:listing:${Buffer.from(filterKey).toString('base64').slice(0, 50)}`;
+      const cached = await multiLayerCache.get(cacheKey);
+
+      if (cached) {
+        logger.debug("Product listing retrieved from cache", { requestId });
+        return cached as Awaited<ReturnType<typeof productRepository.findForListing>>;
+      }
+
+      const result = await productRepository.findForListing(filters);
+
+      // Cache for short duration (listings change frequently)
+      await multiLayerCache.set(cacheKey, result, { ttl: CacheTTL.SHORT });
+
+      logger.debug("Product listing fetched and cached", {
+        requestId,
+        count: result.products.length,
+        total: result.total
+      });
+
+      return result;
+    } catch (error) {
+      logger.error("Failed to get products for listing", {
+        requestId,
+        filters,
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * 🏪 GET FEATURED PRODUCTS (OPTIMIZED)
+   * Fetches featured products with caching for homepage
+   *
+   * @param limit - Max products to return (default: 8)
+   * @returns Array of featured products
+   */
+  async getFeaturedProducts(limit: number = 8): Promise<Awaited<ReturnType<typeof productRepository.findFeaturedProducts>>> {
+    const requestId = nanoid();
+    logger.debug("Getting featured products (optimized)", { requestId, limit });
+
+    try {
+      const cacheKey = `products:featured:${limit}`;
+      const cached = await multiLayerCache.get(cacheKey);
+
+      if (cached) {
+        logger.debug("Featured products retrieved from cache", { requestId });
+        return cached as Awaited<ReturnType<typeof productRepository.findFeaturedProducts>>;
+      }
+
+      const products = await productRepository.findFeaturedProducts(limit);
+
+      // Cache for long duration (featured products rarely change)
+      await multiLayerCache.set(cacheKey, products, { ttl: CacheTTL.LONG });
+
+      logger.debug("Featured products fetched and cached", {
+        requestId,
+        count: products.length
+      });
+
+      return products;
+    } catch (error) {
+      logger.error("Failed to get featured products", {
+        requestId,
+        limit,
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+      throw error;
+    }
   }
 }
 

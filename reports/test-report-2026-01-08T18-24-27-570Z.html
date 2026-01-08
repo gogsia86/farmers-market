@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Report - 1/8/2026</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: #f3f4f6;
+      padding: 2rem;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+    .header p { opacity: 0.9; }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .metric {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .metric-value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #ef4444;
+      margin-bottom: 0.5rem;
+    }
+    .metric-label { color: #6b7280; font-size: 0.875rem; text-transform: uppercase; }
+    .results {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .result-item {
+      padding: 1rem;
+      border-left: 4px solid;
+      margin-bottom: 1rem;
+      background: #f9fafb;
+      border-radius: 4px;
+    }
+    .result-item.success { border-color: #10b981; }
+    .result-item.failed { border-color: #ef4444; }
+    .result-item.skipped { border-color: #6b7280; }
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .result-name { font-weight: 600; font-size: 1.1rem; }
+    .result-duration { color: #6b7280; font-size: 0.875rem; }
+    .result-error {
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 0.75rem;
+      border-radius: 4px;
+      margin-top: 0.5rem;
+      font-family: monospace;
+      font-size: 0.875rem;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .status-badge.success { background: #d1fae5; color: #065f46; }
+    .status-badge.failed { background: #fee2e2; color: #991b1b; }
+    .status-badge.skipped { background: #e5e7eb; color: #374151; }
+    .progress-bar {
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    .progress-fill {
+      height: 100%;
+      background: #ef4444;
+      transition: width 0.3s ease;
+    }
+    .chart { margin: 2rem 0; }
+    h2 { margin: 2rem 0 1rem; color: #1f2937; }
+    .footer {
+      text-align: center;
+      color: #6b7280;
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid #e5e7eb;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🌾 Farmers Market Platform - Test Report</h1>
+      <p>Generated: 1/8/2026, 7:24:27 PM</p>
+      <p>Duration: 3m 3s</p>
+    </div>
+
+    <div class="summary">
+      <div class="metric">
+        <div class="metric-value">3</div>
+        <div class="metric-label">Total Tests</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value" style="color: #10b981;">2</div>
+        <div class="metric-label">Passed</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value" style="color: #ef4444;">1</div>
+        <div class="metric-label">Failed</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value" style="color: #6b7280;">0</div>
+        <div class="metric-label">Skipped</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value">66.7%</div>
+        <div class="metric-label">Success Rate</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value">14.67s</div>
+        <div class="metric-label">Avg Duration</div>
+      </div>
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress-fill" style="width: 66.66666666666666%"></div>
+    </div>
+
+    <div class="results">
+      <h2>📝 Test Results</h2>
+      
+        <div class="result-item success">
+          <div class="result-header">
+            <div class="result-name">Health Checks</div>
+            <div>
+              <span class="status-badge success">success</span>
+              <span class="result-duration">5.20s</span>
+            </div>
+          </div>
+          <div style="color: #6b7280; font-size: 0.875rem;">health</div>
+          
+          
+        </div>
+      
+        <div class="result-item success">
+          <div class="result-header">
+            <div class="result-name">Marketplace Browse & Search</div>
+            <div>
+              <span class="status-badge success">success</span>
+              <span class="result-duration">38.81s</span>
+            </div>
+          </div>
+          <div style="color: #6b7280; font-size: 0.875rem;">marketplace-browse</div>
+          
+          
+        </div>
+      
+        <div class="result-item failed">
+          <div class="result-header">
+            <div class="result-name">cart-checkout</div>
+            <div>
+              <span class="status-badge failed">failed</span>
+              <span class="result-duration">0ms</span>
+            </div>
+          </div>
+          <div style="color: #6b7280; font-size: 0.875rem;">cart-checkout</div>
+          <div class="result-error">Module failed</div>
+          
+        </div>
+      
+    </div>
+
+    <div class="footer">
+      <p>Generated by Unified Bot Framework v1.0.0</p>
+      <p>Powered by Claude Sonnet 4.5</p>
+    </div>
+  </div>
+</body>
+</html>

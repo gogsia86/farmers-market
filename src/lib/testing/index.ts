@@ -95,6 +95,9 @@ export { default as CartCheckoutModule } from './modules/cart/checkout.module';
 // Authentication Module (Phase 2)
 export { default as AuthLoginModule } from './modules/auth/login.module';
 
+// New Pages Module (Website Enhancement)
+export { default as NewPagesModule } from './modules/pages/new-pages.module';
+
 // ============================================================================
 // VERSION & INFO
 // ============================================================================
@@ -125,7 +128,7 @@ export function getFrameworkInfo() {
       foundation: 'Complete',
       coreEngine: 'Complete',
       testModules: 'In Progress (Phase 3)',
-      migratedModules: ['health', 'marketplace', 'cart', 'auth'],
+      migratedModules: ['health', 'marketplace', 'cart', 'auth', 'pages'],
     },
   };
 }

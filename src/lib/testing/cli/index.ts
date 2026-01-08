@@ -26,10 +26,11 @@ import { adaptTestModules } from '../adapters/module-adapter';
 // Import all available modules
 import AuthLoginModule from '../modules/auth/login.module';
 import CartCheckoutModule from '../modules/cart/checkout.module';
+import FarmerDashboardModule from '../modules/farmer/dashboard.module';
 import HealthChecksModule from '../modules/health/checks.module';
 import MarketplaceBrowseModule from '../modules/marketplace/browse.module';
 import CustomerOrdersModule from '../modules/orders/customer-orders.module';
-import FarmerDashboardModule from '../modules/farmer/dashboard.module';
+import NewPagesModule from '../modules/pages/new-pages.module';
 
 // Color codes for terminal output
 const colors = {
@@ -261,6 +262,9 @@ function getAvailableModules(): BotModule[] {
     MarketplaceBrowseModule,
     CartCheckoutModule,
     AuthLoginModule,
+    CustomerOrdersModule,
+    FarmerDashboardModule,
+    NewPagesModule,
   ];
 
   // Convert TestModules to BotModules using adapter

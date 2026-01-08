@@ -46,10 +46,12 @@ export default async function middleware(request: NextRequest) {
     '/forgot-password',
     '/reset-password',
     '/about',
+    '/contact',
+    '/faq',
+    '/how-it-works',
     '/farms',
     '/products',
     '/marketplace',
-    '/cart',
     '/api/health',
     '/api/ready',
   ];

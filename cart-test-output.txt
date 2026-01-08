@@ -1,0 +1,354 @@
+
+> farmers-market@1.0.0 bot
+> node scripts/bot-cli.js test cart-checkout
+
+⚠️  Configuration validation warnings:
+   - baseUrl is required
+
+[1m[36m🤖 Starting test run...[0m
+
+[2mTarget:[0m cart-checkout
+[2mPreset:[0m mvp
+[2mMode:[0m   headed
+
+[2026-01-08T20:16:45.306Z] [INFO] [no-request-id] [BotEngine] Registered module: Health Checks (health) 
+[2026-01-08T20:16:45.306Z] [INFO] [no-request-id] [BotEngine] Registered module: Marketplace Browse & Search (marketplace-browse) 
+[2026-01-08T20:16:45.306Z] [INFO] [no-request-id] [BotEngine] Registered module: Cart & Checkout Flow (cart-checkout) 
+[2026-01-08T20:16:45.306Z] [INFO] [no-request-id] [BotEngine] Registered module: Login as Farmer (auth.login.farmer) 
+[2026-01-08T20:16:45.306Z] [INFO] [no-request-id] [BotEngine] Registered module: Customer Order Management (customer-orders) 
+[2026-01-08T20:16:45.306Z] [INFO] [no-request-id] [BotEngine] Registered module: Farmer Dashboard & Management (farmer-dashboard) 
+[2026-01-08T20:16:45.306Z] [INFO] [no-request-id] [BotEngine] Registered module: New Pages Tests (new-pages) 
+[2026-01-08T20:16:45.306Z] [INFO] [no-request-id] [BotEngine] Registered suite: Health Checks (health) 
+[2026-01-08T20:16:45.307Z] [INFO] [no-request-id] [BotEngine] Registered suite: Marketplace Tests (marketplace) 
+[2026-01-08T20:16:45.307Z] [INFO] [no-request-id] [BotEngine] Registered suite: Checkout Flow (checkout) 
+[2026-01-08T20:16:45.307Z] [INFO] [no-request-id] [BotEngine] Registered suite: Authentication (auth) 
+[2026-01-08T20:16:45.307Z] [INFO] [no-request-id] [BotEngine] Registered suite: Critical Tests (critical) 
+[2026-01-08T20:16:45.307Z] [INFO] [no-request-id] [BotEngine] Registered suite: Smoke Tests (smoke) 
+[2026-01-08T20:16:45.307Z] [INFO] [no-request-id] [BotEngine] Registered suite: Full Test Suite (full) 
+[36mRunning module:[0m cart-checkout
+
+[2026-01-08T20:16:45.307Z] [INFO] [no-request-id] [TestRunner] Running single module: cart-checkout 
+[2026-01-08T20:16:45.308Z] [INFO] [no-request-id] [TestRunner] Module started: Cart & Checkout Flow 
+✅ Browser initialized successfully
+[2026-01-08T20:16:45.555Z] [INFO] [no-request-id] [cart-checkout] Running suite: Basic Cart Operations 
+[2026-01-08T20:16:45.555Z] [INFO] [no-request-id] [cart-checkout] Running test: Cart Page Accessible 
+[2026-01-08T20:16:45.828Z] [ERROR] [no-request-id] [cart-checkout] ✗ Cart Page Accessible (273ms) {
+  error: {
+    name: 'AssertionError',
+    message: 'Expected false to be true',
+    stack: undefined
+  },
+  context: undefined
+}
+[2026-01-08T20:16:45.829Z] [INFO] [no-request-id] [cart-checkout] Running test: Empty Cart Message 
+🔐 Logging in for cart tests...
+⚠️ Login may have failed, but continuing with tests...
+[2026-01-08T20:16:51.450Z] [ERROR] [no-request-id] [cart-checkout] ✗ Empty Cart Message (5621ms) {
+  error: {
+    name: 'AssertionError',
+    message: 'Expected 0 to be greater than 0',
+    stack: undefined
+  },
+  context: undefined
+}
+[2026-01-08T20:16:51.451Z] [INFO] [no-request-id] [cart-checkout] Running suite: Add Items to Cart 
+[2026-01-08T20:16:51.451Z] [INFO] [no-request-id] [cart-checkout] Running test: Add to Cart Button Exists 
+🔐 Logging in for cart tests...
+⚠️ Login may have failed, but continuing with tests...
+[2026-01-08T20:17:01.630Z] [INFO] [no-request-id] [cart-checkout] ✓ Add to Cart Button Exists (10179ms) 
+[2026-01-08T20:17:01.631Z] [INFO] [no-request-id] [cart-checkout] Running test: Add Product to Cart 
+[2026-01-08T20:17:06.974Z] [ERROR] [no-request-id] [cart-checkout] ✗ Add Product to Cart (5343ms) {
+  error: {
+    name: 'AssertionError',
+    message: 'Expected false to be true',
+    stack: undefined
+  },
+  context: undefined
+}
+[2026-01-08T20:17:06.975Z] [INFO] [no-request-id] [cart-checkout] Running test: Verify Cart Has Item 
+[2026-01-08T20:17:11.153Z] [ERROR] [no-request-id] [cart-checkout] ✗ Verify Cart Has Item (4178ms) {
+  error: {
+    name: 'AssertionError',
+    message: 'Expected 0 to be greater than 0',
+    stack: undefined
+  },
+  context: undefined
+}
+[2026-01-08T20:17:11.153Z] [INFO] [no-request-id] [cart-checkout] Running suite: Cart Management 
+[2026-01-08T20:17:11.153Z] [INFO] [no-request-id] [cart-checkout] Running test: Update Item Quantity 
+[2026-01-08T20:17:15.367Z] [INFO] [no-request-id] [cart-checkout] ✓ Update Item Quantity (4214ms) 
+[2026-01-08T20:17:15.368Z] [INFO] [no-request-id] [cart-checkout] Running test: Remove Item from Cart 
+[2026-01-08T20:17:19.534Z] [INFO] [no-request-id] [cart-checkout] ✓ Remove Item from Cart (4166ms) 
+[2026-01-08T20:17:19.534Z] [INFO] [no-request-id] [cart-checkout] Running test: Cart Total Calculation 
+[2026-01-08T20:17:22.711Z] [INFO] [no-request-id] [cart-checkout] ✓ Cart Total Calculation (3177ms) 
+[2026-01-08T20:17:22.711Z] [INFO] [no-request-id] [cart-checkout] Running suite: Checkout Flow 
+[2026-01-08T20:17:22.711Z] [INFO] [no-request-id] [cart-checkout] Running test: Checkout Button Available 
+[2026-01-08T20:17:26.879Z] [INFO] [no-request-id] [cart-checkout] ✓ Checkout Button Available (4168ms) 
+[2026-01-08T20:17:26.879Z] [INFO] [no-request-id] [cart-checkout] Running test: Navigate to Checkout 
+[2026-01-08T20:17:31.063Z] [INFO] [no-request-id] [cart-checkout] ✓ Navigate to Checkout (4184ms) 
+[2026-01-08T20:17:31.063Z] [INFO] [no-request-id] [cart-checkout] Running test: Checkout Form Elements 
+[2026-01-08T20:17:31.223Z] [INFO] [no-request-id] [cart-checkout] ✓ Checkout Form Elements (160ms) 
+[2026-01-08T20:17:31.223Z] [INFO] [no-request-id] [cart-checkout] Running suite: Payment Integration 
+[2026-01-08T20:17:31.223Z] [INFO] [no-request-id] [cart-checkout] Running test: Stripe Elements Load 
+[2026-01-08T20:17:32.299Z] [INFO] [no-request-id] [cart-checkout] ✓ Stripe Elements Load (1076ms) 
+[2026-01-08T20:17:32.299Z] [INFO] [no-request-id] [cart-checkout] Running test: Payment Method Selection 
+[2026-01-08T20:17:33.440Z] [INFO] [no-request-id] [cart-checkout] ✓ Payment Method Selection (1141ms) 
+[2026-01-08T20:17:33.440Z] [INFO] [no-request-id] [cart-checkout] Running test: Test Mode Indicator 
+[2026-01-08T20:17:34.552Z] [INFO] [no-request-id] [cart-checkout] ✓ Test Mode Indicator (1112ms) 
+[2026-01-08T20:17:34.552Z] [INFO] [no-request-id] [cart-checkout] Running suite: Form Validation 
+[2026-01-08T20:17:34.552Z] [INFO] [no-request-id] [cart-checkout] Running test: Required Fields Validation 
+[2026-01-08T20:17:35.613Z] [INFO] [no-request-id] [cart-checkout] ✓ Required Fields Validation (1061ms) 
+[2026-01-08T20:17:35.613Z] [INFO] [no-request-id] [cart-checkout] Running test: Email Format Validation 
+[2026-01-08T20:17:37.306Z] [INFO] [no-request-id] [cart-checkout] ✓ Email Format Validation (1693ms) 
+[2026-01-08T20:17:37.306Z] [INFO] [no-request-id] [cart-checkout] Running suite: Cart Persistence 
+[2026-01-08T20:17:37.306Z] [INFO] [no-request-id] [cart-checkout] Running test: Cart Survives Navigation 
+[2026-01-08T20:17:48.013Z] [INFO] [no-request-id] [cart-checkout] ✓ Cart Survives Navigation (10707ms) 
+[2026-01-08T20:17:48.014Z] [INFO] [no-request-id] [cart-checkout] Running test: Cart Storage Mechanism 
+[2026-01-08T20:17:50.179Z] [INFO] [no-request-id] [cart-checkout] ✓ Cart Storage Mechanism (2165ms) 
+[2026-01-08T20:17:50.179Z] [INFO] [no-request-id] [TestRunner] ✗ Cart & Checkout Flow (64871ms) 
+[2026-01-08T20:17:50.179Z] [INFO] [no-request-id] [BotEngine] Retrying module cart-checkout (attempt 1/2) 
+[2026-01-08T20:17:50.180Z] [WARN] [no-request-id] [TestRunner] Retrying cart-checkout (1/2) 
+[2026-01-08T20:17:51.194Z] [INFO] [no-request-id] [TestRunner] Module started: Cart & Checkout Flow 
+[2026-01-08T20:17:51.194Z] [INFO] [no-request-id] [cart-checkout] Running suite: Basic Cart Operations 
+[2026-01-08T20:17:51.194Z] [INFO] [no-request-id] [cart-checkout] Running test: Cart Page Accessible 
+🔐 Logging in for cart tests...
+⚠️ Login may have failed, but continuing with tests...
+[2026-01-08T20:17:54.588Z] [ERROR] [no-request-id] [cart-checkout] ✗ Cart Page Accessible (3394ms) {
+  error: {
+    name: 'AssertionError',
+    message: 'Expected false to be true',
+    stack: undefined
+  },
+  context: undefined
+}
+[2026-01-08T20:17:54.589Z] [INFO] [no-request-id] [cart-checkout] Running test: Empty Cart Message 
+🔐 Logging in for cart tests...
+⚠️ Login may have failed, but continuing with tests...
+[2026-01-08T20:18:00.087Z] [ERROR] [no-request-id] [cart-checkout] ✗ Empty Cart Message (5498ms) {
+  error: {
+    name: 'AssertionError',
+    message: 'Expected 0 to be greater than 0',
+    stack: undefined
+  },
+  context: undefined
+}
+[2026-01-08T20:18:00.088Z] [INFO] [no-request-id] [cart-checkout] Running suite: Add Items to Cart 
+[2026-01-08T20:18:00.088Z] [INFO] [no-request-id] [cart-checkout] Running test: Add to Cart Button Exists 
+🔐 Logging in for cart tests...
+⚠️ Login may have failed, but continuing with tests...
+[2026-01-08T20:18:06.761Z] [INFO] [no-request-id] [cart-checkout] ✓ Add to Cart Button Exists (6673ms) 
+[2026-01-08T20:18:06.761Z] [INFO] [no-request-id] [cart-checkout] Running test: Add Product to Cart 
+[2026-01-08T20:18:12.156Z] [ERROR] [no-request-id] [cart-checkout] ✗ Add Product to Cart (5395ms) {
+  error: {
+    name: 'AssertionError',
+    message: 'Expected false to be true',
+    stack: undefined
+  },
+  context: undefined
+}
+[2026-01-08T20:18:12.156Z] [INFO] [no-request-id] [cart-checkout] Running test: Verify Cart Has Item 
+[2026-01-08T20:18:16.328Z] [ERROR] [no-request-id] [cart-checkout] ✗ Verify Cart Has Item (4172ms) {
+  error: {
+    name: 'AssertionError',
+    message: 'Expected 0 to be greater than 0',
+    stack: undefined
+  },
+  context: undefined
+}
+[2026-01-08T20:18:16.328Z] [INFO] [no-request-id] [cart-checkout] Running suite: Cart Management 
+[2026-01-08T20:18:16.328Z] [INFO] [no-request-id] [cart-checkout] Running test: Update Item Quantity 
+[2026-01-08T20:18:20.533Z] [INFO] [no-request-id] [cart-checkout] ✓ Update Item Quantity (4205ms) 
+[2026-01-08T20:18:20.533Z] [INFO] [no-request-id] [cart-checkout] Running test: Remove Item from Cart 
+[2026-01-08T20:18:24.712Z] [INFO] [no-request-id] [cart-checkout] ✓ Remove Item from Cart (4179ms) 
+[2026-01-08T20:18:24.712Z] [INFO] [no-request-id] [cart-checkout] Running test: Cart Total Calculation 
+[2026-01-08T20:18:27.896Z] [INFO] [no-request-id] [cart-checkout] ✓ Cart Total Calculation (3184ms) 
+[2026-01-08T20:18:27.896Z] [INFO] [no-request-id] [cart-checkout] Running suite: Checkout Flow 
+[2026-01-08T20:18:27.896Z] [INFO] [no-request-id] [cart-checkout] Running test: Checkout Button Available 
+[2026-01-08T20:18:32.074Z] [INFO] [no-request-id] [cart-checkout] ✓ Checkout Button Available (4178ms) 
+[2026-01-08T20:18:32.074Z] [INFO] [no-request-id] [cart-checkout] Running test: Navigate to Checkout 
+[2026-01-08T20:18:36.327Z] [INFO] [no-request-id] [cart-checkout] ✓ Navigate to Checkout (4253ms) 
+[2026-01-08T20:18:36.327Z] [INFO] [no-request-id] [cart-checkout] Running test: Checkout Form Elements 
+[2026-01-08T20:18:36.474Z] [INFO] [no-request-id] [cart-checkout] ✓ Checkout Form Elements (147ms) 
+[2026-01-08T20:18:36.474Z] [INFO] [no-request-id] [cart-checkout] Running suite: Payment Integration 
+[2026-01-08T20:18:36.474Z] [INFO] [no-request-id] [cart-checkout] Running test: Stripe Elements Load 
+[2026-01-08T20:18:37.591Z] [INFO] [no-request-id] [cart-checkout] ✓ Stripe Elements Load (1117ms) 
+[2026-01-08T20:18:37.591Z] [INFO] [no-request-id] [cart-checkout] Running test: Payment Method Selection 
+[2026-01-08T20:18:38.835Z] [INFO] [no-request-id] [cart-checkout] ✓ Payment Method Selection (1244ms) 
+[2026-01-08T20:18:38.836Z] [INFO] [no-request-id] [cart-checkout] Running test: Test Mode Indicator 
+[2026-01-08T20:18:39.953Z] [INFO] [no-request-id] [cart-checkout] ✓ Test Mode Indicator (1117ms) 
+[2026-01-08T20:18:39.953Z] [INFO] [no-request-id] [cart-checkout] Running suite: Form Validation 
+[2026-01-08T20:18:39.953Z] [INFO] [no-request-id] [cart-checkout] Running test: Required Fields Validation 
+[2026-01-08T20:18:41.116Z] [INFO] [no-request-id] [cart-checkout] ✓ Required Fields Validation (1163ms) 
+[2026-01-08T20:18:41.116Z] [INFO] [no-request-id] [cart-checkout] Running test: Email Format Validation 
+[2026-01-08T20:18:42.905Z] [INFO] [no-request-id] [cart-checkout] ✓ Email Format Validation (1789ms) 
+[2026-01-08T20:18:42.905Z] [INFO] [no-request-id] [cart-checkout] Running suite: Cart Persistence 
+[2026-01-08T20:18:42.905Z] [INFO] [no-request-id] [cart-checkout] Running test: Cart Survives Navigation 
+[2026-01-08T20:18:53.703Z] [INFO] [no-request-id] [cart-checkout] ✓ Cart Survives Navigation (10798ms) 
+[2026-01-08T20:18:53.703Z] [INFO] [no-request-id] [cart-checkout] Running test: Cart Storage Mechanism 
+[2026-01-08T20:18:55.987Z] [INFO] [no-request-id] [cart-checkout] ✓ Cart Storage Mechanism (2284ms) 
+[2026-01-08T20:18:55.987Z] [INFO] [no-request-id] [TestRunner] ✗ Cart & Checkout Flow (64793ms) 
+[2026-01-08T20:18:55.987Z] [INFO] [no-request-id] [BotEngine] Retrying module cart-checkout (attempt 2/2) 
+[2026-01-08T20:18:55.987Z] [WARN] [no-request-id] [TestRunner] Retrying cart-checkout (2/2) 
+[2026-01-08T20:18:56.991Z] [INFO] [no-request-id] [TestRunner] Module started: Cart & Checkout Flow 
+[2026-01-08T20:18:56.991Z] [INFO] [no-request-id] [cart-checkout] Running suite: Basic Cart Operations 
+[2026-01-08T20:18:56.991Z] [INFO] [no-request-id] [cart-checkout] Running test: Cart Page Accessible 
+🔐 Logging in for cart tests...
+⚠️ Login may have failed, but continuing with tests...
+[2026-01-08T20:19:00.453Z] [ERROR] [no-request-id] [cart-checkout] ✗ Cart Page Accessible (3462ms) {
+  error: {
+    name: 'AssertionError',
+    message: 'Expected false to be true',
+    stack: undefined
+  },
+  context: undefined
+}
+[2026-01-08T20:19:00.453Z] [INFO] [no-request-id] [cart-checkout] Running test: Empty Cart Message 
+🔐 Logging in for cart tests...
+⚠️ Login may have failed, but continuing with tests...
+[2026-01-08T20:19:05.912Z] [ERROR] [no-request-id] [cart-checkout] ✗ Empty Cart Message (5459ms) {
+  error: {
+    name: 'AssertionError',
+    message: 'Expected 0 to be greater than 0',
+    stack: undefined
+  },
+  context: undefined
+}
+[2026-01-08T20:19:05.912Z] [INFO] [no-request-id] [cart-checkout] Running suite: Add Items to Cart 
+[2026-01-08T20:19:05.912Z] [INFO] [no-request-id] [cart-checkout] Running test: Add to Cart Button Exists 
+🔐 Logging in for cart tests...
+⚠️ Login may have failed, but continuing with tests...
+[2026-01-08T20:19:12.628Z] [INFO] [no-request-id] [cart-checkout] ✓ Add to Cart Button Exists (6716ms) 
+[2026-01-08T20:19:12.628Z] [INFO] [no-request-id] [cart-checkout] Running test: Add Product to Cart 
+[2026-01-08T20:19:17.998Z] [ERROR] [no-request-id] [cart-checkout] ✗ Add Product to Cart (5370ms) {
+  error: {
+    name: 'AssertionError',
+    message: 'Expected false to be true',
+    stack: undefined
+  },
+  context: undefined
+}
+[2026-01-08T20:19:17.999Z] [INFO] [no-request-id] [cart-checkout] Running test: Verify Cart Has Item 
+[2026-01-08T20:19:22.188Z] [ERROR] [no-request-id] [cart-checkout] ✗ Verify Cart Has Item (4189ms) {
+  error: {
+    name: 'AssertionError',
+    message: 'Expected 0 to be greater than 0',
+    stack: undefined
+  },
+  context: undefined
+}
+[2026-01-08T20:19:22.188Z] [INFO] [no-request-id] [cart-checkout] Running suite: Cart Management 
+[2026-01-08T20:19:22.188Z] [INFO] [no-request-id] [cart-checkout] Running test: Update Item Quantity 
+[2026-01-08T20:19:26.376Z] [INFO] [no-request-id] [cart-checkout] ✓ Update Item Quantity (4188ms) 
+[2026-01-08T20:19:26.376Z] [INFO] [no-request-id] [cart-checkout] Running test: Remove Item from Cart 
+[2026-01-08T20:19:30.534Z] [INFO] [no-request-id] [cart-checkout] ✓ Remove Item from Cart (4158ms) 
+[2026-01-08T20:19:30.534Z] [INFO] [no-request-id] [cart-checkout] Running test: Cart Total Calculation 
+[2026-01-08T20:19:33.715Z] [INFO] [no-request-id] [cart-checkout] ✓ Cart Total Calculation (3181ms) 
+[2026-01-08T20:19:33.715Z] [INFO] [no-request-id] [cart-checkout] Running suite: Checkout Flow 
+[2026-01-08T20:19:33.715Z] [INFO] [no-request-id] [cart-checkout] Running test: Checkout Button Available 
+[2026-01-08T20:19:37.883Z] [INFO] [no-request-id] [cart-checkout] ✓ Checkout Button Available (4168ms) 
+[2026-01-08T20:19:37.883Z] [INFO] [no-request-id] [cart-checkout] Running test: Navigate to Checkout 
+[2026-01-08T20:19:42.091Z] [INFO] [no-request-id] [cart-checkout] ✓ Navigate to Checkout (4208ms) 
+[2026-01-08T20:19:42.092Z] [INFO] [no-request-id] [cart-checkout] Running test: Checkout Form Elements 
+[2026-01-08T20:19:42.222Z] [INFO] [no-request-id] [cart-checkout] ✓ Checkout Form Elements (130ms) 
+[2026-01-08T20:19:42.222Z] [INFO] [no-request-id] [cart-checkout] Running suite: Payment Integration 
+[2026-01-08T20:19:42.222Z] [INFO] [no-request-id] [cart-checkout] Running test: Stripe Elements Load 
+[2026-01-08T20:19:43.320Z] [INFO] [no-request-id] [cart-checkout] ✓ Stripe Elements Load (1098ms) 
+[2026-01-08T20:19:43.320Z] [INFO] [no-request-id] [cart-checkout] Running test: Payment Method Selection 
+[2026-01-08T20:19:44.571Z] [INFO] [no-request-id] [cart-checkout] ✓ Payment Method Selection (1251ms) 
+[2026-01-08T20:19:44.571Z] [INFO] [no-request-id] [cart-checkout] Running test: Test Mode Indicator 
+[2026-01-08T20:19:45.682Z] [INFO] [no-request-id] [cart-checkout] ✓ Test Mode Indicator (1111ms) 
+[2026-01-08T20:19:45.682Z] [INFO] [no-request-id] [cart-checkout] Running suite: Form Validation 
+[2026-01-08T20:19:45.682Z] [INFO] [no-request-id] [cart-checkout] Running test: Required Fields Validation 
+[2026-01-08T20:19:45.884Z] [INFO] [no-request-id] [cart-checkout] ✓ Required Fields Validation (202ms) 
+[2026-01-08T20:19:45.884Z] [INFO] [no-request-id] [cart-checkout] Running test: Email Format Validation 
+[2026-01-08T20:19:45.889Z] [ERROR] [no-request-id] [cart-checkout] ✗ Email Format Validation (5ms) {
+  error: {
+    name: 'Error',
+    message: 'locator.count: Target crashed ',
+    stack: undefined
+  },
+  context: undefined
+}
+[2026-01-08T20:19:45.889Z] [INFO] [no-request-id] [cart-checkout] Running suite: Cart Persistence 
+[2026-01-08T20:19:45.889Z] [INFO] [no-request-id] [cart-checkout] Running test: Cart Survives Navigation 
+[2026-01-08T20:19:45.892Z] [ERROR] [no-request-id] [cart-checkout] ✗ Cart Survives Navigation (3ms) {
+  error: {
+    name: 'Error',
+    message: 'page.goto: Page crashed\n' +
+      'Call log:\n' +
+      '\x1B[2m  - navigating to "http://localhost:3001/cart", waiting until "domcontentloaded"\x1B[22m\n',
+    stack: undefined
+  },
+  context: undefined
+}
+[2026-01-08T20:19:45.893Z] [INFO] [no-request-id] [cart-checkout] Running test: Cart Storage Mechanism 
+[2026-01-08T20:19:45.895Z] [ERROR] [no-request-id] [cart-checkout] ✗ Cart Storage Mechanism (2ms) {
+  error: {
+    name: 'Error',
+    message: 'page.goto: Page crashed\n' +
+      'Call log:\n' +
+      '\x1B[2m  - navigating to "http://localhost:3001/cart", waiting until "domcontentloaded"\x1B[22m\n',
+    stack: undefined
+  },
+  context: undefined
+}
+[2026-01-08T20:19:45.896Z] [INFO] [no-request-id] [TestRunner] ✗ Cart & Checkout Flow (48904ms) 
+
+======================================================================
+[1m[36m  Test Run Summary[0m
+======================================================================
+
+[2mStarted:[0m  1/8/2026, 9:16:45 PM
+[2mFinished:[0m 1/8/2026, 9:19:45 PM
+[2mDuration:[0m 180.59s
+
+[1mResults:[0m
+  [2m✓ Passed:[0m  0/1
+  [31m✗ Failed:[0m  1/1
+  [2m○ Skipped:[0m 0/1
+
+[1mSuccess Rate:[0m [31m0.00%[0m
+[1mAvg Duration:[0m 0ms
+
+[1m[31mFailed Tests:[0m
+
+  [31m✗[0m cart-checkout
+    [2mModule failed[0m
+
+======================================================================
+
+[31m[1mTests failed![0m
+
+[2026-01-08T20:19:45.926Z] [INFO] [no-request-id] [ReportGenerator] Generating reports {"formats":["json","markdown","console"]}
+[2026-01-08T20:19:45.929Z] [INFO] [no-request-id] [ReportGenerator] JSON report saved: reports\test-report-2026-01-08T20-19-45-927Z.json 
+[2026-01-08T20:19:45.931Z] [INFO] [no-request-id] [ReportGenerator] Markdown report saved: reports\test-report-2026-01-08T20-19-45-929Z.md 
+
+================================================================================
+🌾 FARMERS MARKET PLATFORM - TEST REPORT
+================================================================================
+
+📊 SUMMARY:
+  Total:        1
+  ✅ Passed:    0
+  ❌ Failed:    1
+  ⏭️  Skipped:   0
+  Success Rate: 0.00%
+  Avg Duration: 0ms
+  Duration:     3m 1s
+
+❌ Overall Status: Critical - Many Failures
+
+❌ FAILED TESTS:
+
+  1. cart-checkout
+     Module: cart-checkout
+     Duration: 0ms
+     Error: Module failed
+
+================================================================================
+
+[1mReports generated:[0m
+  [32m✓[0m json: reports\test-report-2026-01-08T20-19-45-927Z.json
+  [32m✓[0m markdown: reports\test-report-2026-01-08T20-19-45-929Z.md
+
+^C^C

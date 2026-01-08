@@ -710,8 +710,8 @@ export class BiodynamicFarmService {
   }
 
   /**
-   * 🗑️ INVALIDATE FARM CACHES
-   * Comprehensive cache invalidation for farm updates
+   * 🧹 INVALIDATE FARM CACHES
+   * Clears all caches related to a farm
    */
   private async invalidateFarmCaches(
     farmId: string,
@@ -734,6 +734,242 @@ export class BiodynamicFarmService {
     ]);
 
     logger.debug("Farm caches invalidated", { farmId, ownerId, slug });
+  }
+
+  /**
+   * 🎯 GET FARM DETAIL DATA (OPTIMIZED)
+   * Fetches minimal farm data for detail page with aggressive caching
+   * This method is optimized for the farm detail page to minimize query time
+   *
+   * @param slug - Farm slug
+   * @returns Farm with minimal relations for detail page
+   */
+  async getFarmDetailData(slug: string): Promise<Awaited<ReturnType<typeof farmRepository.findBySlugWithMinimalData>>> {
+    const requestId = nanoid();
+    logger.debug("Getting optimized farm detail data", { requestId, slug });
+
+    try {
+      const cacheKey = `farm:detail:${slug}`;
+      const cached = await multiLayerCache.get(cacheKey);
+
+      if (cached) {
+        logger.debug("Farm detail data retrieved from cache", { requestId, slug });
+        return cached as Awaited<ReturnType<typeof farmRepository.findBySlugWithMinimalData>>;
+      }
+
+      // Optimized query with minimal field selection
+      const farm = await farmRepository.findBySlugWithMinimalData(slug);
+
+      if (!farm) {
+        logger.debug("Farm not found for detail page", { requestId, slug });
+        return null;
+      }
+
+      // Cache with longer TTL (farm details don't change often)
+      await multiLayerCache.set(cacheKey, farm, { ttl: CacheTTL.LONG });
+
+      logger.info("Farm detail data fetched and cached", {
+        requestId,
+        slug,
+        farmId: farm.id
+      });
+
+      return farm;
+    } catch (error) {
+      logger.error("Failed to get farm detail data", {
+        requestId,
+        slug,
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * 🌾 GET FARM PRODUCTS (OPTIMIZED)
+   * Fetches active products for a farm with minimal fields
+   *
+   * @param farmId - Farm ID
+   * @param limit - Max products to return (default: 12)
+   * @returns Array of products with minimal fields
+   */
+  async getFarmProducts(farmId: string, limit: number = 12): Promise<Awaited<ReturnType<typeof farmRepository.findProductsByFarmId>>> {
+    const requestId = nanoid();
+    logger.debug("Getting farm products (optimized)", { requestId, farmId, limit });
+
+    try {
+      const cacheKey = `farm:products:${farmId}:${limit}`;
+      const cached = await multiLayerCache.get(cacheKey);
+
+      if (cached) {
+        logger.debug("Farm products retrieved from cache", { requestId, farmId });
+        return cached as Awaited<ReturnType<typeof farmRepository.findProductsByFarmId>>;
+      }
+
+      const products = await farmRepository.findProductsByFarmId(farmId, limit);
+
+      // Cache for medium duration (products change more frequently)
+      await multiLayerCache.set(cacheKey, products, { ttl: CacheTTL.MEDIUM });
+
+      logger.debug("Farm products fetched and cached", {
+        requestId,
+        farmId,
+        count: products.length
+      });
+
+      return products;
+    } catch (error) {
+      logger.error("Failed to get farm products", {
+        requestId,
+        farmId,
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * 📜 GET FARM CERTIFICATIONS (OPTIMIZED)
+   * Fetches active certifications for a farm
+   *
+   * @param farmId - Farm ID
+   * @returns Array of certifications
+   */
+  async getFarmCertifications(farmId: string): Promise<Awaited<ReturnType<typeof farmRepository.findCertificationsByFarmId>>> {
+    const requestId = nanoid();
+    logger.debug("Getting farm certifications", { requestId, farmId });
+
+    try {
+      const cacheKey = `farm:certifications:${farmId}`;
+      const cached = await multiLayerCache.get(cacheKey);
+
+      if (cached) {
+        logger.debug("Farm certifications retrieved from cache", { requestId, farmId });
+        return cached as Awaited<ReturnType<typeof farmRepository.findCertificationsByFarmId>>;
+      }
+
+      const certifications = await farmRepository.findCertificationsByFarmId(farmId);
+
+      // Cache for long duration (certifications rarely change)
+      await multiLayerCache.set(cacheKey, certifications, { ttl: CacheTTL.LONG });
+
+      logger.debug("Farm certifications fetched and cached", {
+        requestId,
+        farmId,
+        count: certifications.length
+      });
+
+      return certifications;
+    } catch (error) {
+      logger.error("Failed to get farm certifications", {
+        requestId,
+        farmId,
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * 📋 GET FARMS FOR LISTING (OPTIMIZED)
+   * Fetches farms with minimal fields for listing pages
+   * Optimized for /farms and /marketplace pages
+   *
+   * @param options - Filter and pagination options
+   * @returns Object with farms array, total count, and pagination info
+   */
+  async getFarmsForListing(options?: {
+    page?: number;
+    limit?: number;
+    verifiedOnly?: boolean;
+    state?: string;
+    searchQuery?: string;
+  }): Promise<{
+    farms: QuantumFarm[];
+    total: number;
+    page: number;
+    limit: number;
+    hasMore: boolean;
+  }> {
+    const requestId = nanoid();
+    const page = options?.page || 1;
+    const limit = options?.limit || 20;
+    const skip = (page - 1) * limit;
+
+    logger.debug("Getting farms for listing (optimized)", { requestId, options });
+
+    try {
+      const filterKey = JSON.stringify(options || {});
+      const cacheKey = `farms:listing:${page}:${filterKey}`;
+      const cached = await multiLayerCache.get<{
+        farms: QuantumFarm[];
+        total: number;
+        page: number;
+        limit: number;
+        hasMore: boolean;
+      }>(cacheKey);
+
+      if (cached) {
+        logger.debug("Farms listing retrieved from cache", { requestId, page });
+        return cached;
+      }
+
+      // Build where clause
+      const where: Prisma.FarmWhereInput = {
+        status: "ACTIVE" as FarmStatus,
+      };
+
+      if (options?.verifiedOnly) {
+        where.verificationStatus = "VERIFIED";
+      }
+
+      if (options?.state) {
+        where.state = options.state;
+      }
+
+      if (options?.searchQuery) {
+        where.OR = [
+          { name: { contains: options.searchQuery, mode: "insensitive" } },
+          { description: { contains: options.searchQuery, mode: "insensitive" } },
+        ];
+      }
+
+      // Fetch farms with minimal fields using repository
+      const farms = await farmRepository.findMany(where, {
+        skip,
+        take: limit,
+        orderBy: { createdAt: "desc" },
+      });
+
+      const total = await farmRepository.count(where);
+
+      const result = {
+        farms,
+        total,
+        page,
+        limit,
+        hasMore: total > page * limit,
+      };
+
+      // Cache for medium duration (5 minutes)
+      await multiLayerCache.set(cacheKey, result, { ttl: CacheTTL.MEDIUM });
+
+      logger.debug("Farms listing fetched and cached", {
+        requestId,
+        count: farms.length,
+        total,
+        page,
+      });
+
+      return result;
+    } catch (error) {
+      logger.error("Failed to get farms for listing", {
+        requestId,
+        options,
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+      throw error;
+    }
   }
 }
 
