@@ -36,12 +36,12 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 interface PageProps {
-  params: { farmId: string };
-  searchParams: {
+  params: Promise<{ farmId: string }>;
+  searchParams: Promise<{
     status?: string;
     page?: string;
     search?: string;
-  };
+  }>;
 }
 
 const ORDER_STATUS_CONFIG = {
@@ -101,8 +101,12 @@ export default async function FarmOrdersPage({ params, searchParams }: PageProps
   // Authentication check
   const session = await auth();
 
+  // Await params and searchParams in Next.js 15 (they are now Promises)
+  const { farmId } = await params;
+  const { status, search, page: pageParam } = await searchParams;
+
   if (!session?.user?.id) {
-    redirect(`/login?callbackUrl=/farmer/farms/${params.farmId}/orders`);
+    redirect(`/login?callbackUrl=/farmer/farms/${farmId}/orders`);
   }
 
   // Verify user is a farmer
@@ -112,7 +116,7 @@ export default async function FarmOrdersPage({ params, searchParams }: PageProps
 
   // Get farm and verify ownership
   const farm = await database.farm.findUnique({
-    where: { id: params.farmId },
+    where: { id: farmId },
     select: {
       id: true,
       name: true,
@@ -134,14 +138,14 @@ export default async function FarmOrdersPage({ params, searchParams }: PageProps
   }
 
   // Parse query parameters
-  const statusFilter = searchParams.status?.toUpperCase();
-  const searchQuery = searchParams.search?.trim();
-  const page = parseInt(searchParams.page || "1", 10);
+  const statusFilter = status?.toUpperCase();
+  const searchQuery = search?.trim();
+  const currentPage = parseInt(pageParam || "1", 10);
   const pageSize = 20;
 
   // Build where clause
   const where: any = {
-    farmId: params.farmId,
+    farmId: farmId,
   };
 
   if (statusFilter && statusFilter !== "ALL") {
@@ -194,13 +198,13 @@ export default async function FarmOrdersPage({ params, searchParams }: PageProps
       },
       orderBy: { createdAt: "desc" },
       take: pageSize,
-      skip: (page - 1) * pageSize,
+      skip: (currentPage - 1) * pageSize,
     }),
     database.order.count({ where }),
   ]);
 
   // Calculate stats
-  const statsWhere = { farmId: params.farmId };
+  const statsWhere = { farmId: farmId };
 
   const [
     totalRevenueResult,
@@ -239,7 +243,7 @@ export default async function FarmOrdersPage({ params, searchParams }: PageProps
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           {/* Back Navigation */}
           <Link
-            href={`/farmer/farms/${params.farmId}`}
+            href={`/farmer/farms/${farmId}`}
             className="inline-flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 mb-4"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -496,7 +500,7 @@ export default async function FarmOrdersPage({ params, searchParams }: PageProps
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                           <Link
-                            href={`/farmer/farms/${params.farmId}/orders/${order.id}`}
+                            href={`/farmer/farms/${farmId}/orders/${order.id}`}
                             className="text-green-600 hover:text-green-900"
                           >
                             View Details →
@@ -514,17 +518,17 @@ export default async function FarmOrdersPage({ params, searchParams }: PageProps
           {totalPages > 1 && (
             <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
               <div className="flex-1 flex justify-between sm:hidden">
-                {page > 1 && (
+                {currentPage > 1 && (
                   <Link
-                    href={`?page=${page - 1}${statusFilter ? `&status=${statusFilter}` : ""}${searchQuery ? `&search=${searchQuery}` : ""}`}
+                    href={`?page=${currentPage - 1}${statusFilter ? `&status=${statusFilter}` : ""}${searchQuery ? `&search=${searchQuery}` : ""}`}
                     className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
                   >
                     Previous
                   </Link>
                 )}
-                {page < totalPages && (
+                {currentPage < totalPages && (
                   <Link
-                    href={`?page=${page + 1}${statusFilter ? `&status=${statusFilter}` : ""}${searchQuery ? `&search=${searchQuery}` : ""}`}
+                    href={`?page=${currentPage + 1}${statusFilter ? `&status=${statusFilter}` : ""}${searchQuery ? `&search=${searchQuery}` : ""}`}
                     className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
                   >
                     Next
@@ -535,18 +539,18 @@ export default async function FarmOrdersPage({ params, searchParams }: PageProps
                 <div>
                   <p className="text-sm text-gray-700">
                     Showing{" "}
-                    <span className="font-medium">{(page - 1) * pageSize + 1}</span> to{" "}
+                    <span className="font-medium">{(currentPage - 1) * pageSize + 1}</span> to{" "}
                     <span className="font-medium">
-                      {Math.min(page * pageSize, totalOrders)}
+                      {Math.min(currentPage * pageSize, totalOrders)}
                     </span>{" "}
                     of <span className="font-medium">{totalOrders}</span> orders
                   </p>
                 </div>
                 <div>
                   <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-                    {page > 1 && (
+                    {currentPage > 1 && (
                       <Link
-                        href={`?page=${page - 1}${statusFilter ? `&status=${statusFilter}` : ""}${searchQuery ? `&search=${searchQuery}` : ""}`}
+                        href={`?page=${currentPage - 1}${statusFilter ? `&status=${statusFilter}` : ""}${searchQuery ? `&search=${searchQuery}` : ""}`}
                         className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                       >
                         Previous
@@ -558,19 +562,19 @@ export default async function FarmOrdersPage({ params, searchParams }: PageProps
                       let pageNum: number;
                       if (totalPages <= 5) {
                         pageNum = i + 1;
-                      } else if (page <= 3) {
+                      } else if (currentPage <= 3) {
                         pageNum = i + 1;
-                      } else if (page >= totalPages - 2) {
+                      } else if (currentPage >= totalPages - 2) {
                         pageNum = totalPages - 4 + i;
                       } else {
-                        pageNum = page - 2 + i;
+                        pageNum = currentPage - 2 + i;
                       }
 
                       return (
                         <Link
                           key={pageNum}
                           href={`?page=${pageNum}${statusFilter ? `&status=${statusFilter}` : ""}${searchQuery ? `&search=${searchQuery}` : ""}`}
-                          className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${page === pageNum
+                          className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${currentPage === pageNum
                             ? "z-10 bg-green-50 border-green-500 text-green-600"
                             : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
                             }`}
@@ -580,9 +584,9 @@ export default async function FarmOrdersPage({ params, searchParams }: PageProps
                       );
                     })}
 
-                    {page < totalPages && (
+                    {currentPage < totalPages && (
                       <Link
-                        href={`?page=${page + 1}${statusFilter ? `&status=${statusFilter}` : ""}${searchQuery ? `&search=${searchQuery}` : ""}`}
+                        href={`?page=${currentPage + 1}${statusFilter ? `&status=${statusFilter}` : ""}${searchQuery ? `&search=${searchQuery}` : ""}`}
                         className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                       >
                         Next

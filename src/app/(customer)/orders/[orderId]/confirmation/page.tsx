@@ -23,9 +23,9 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 interface PageProps {
-  params: {
+  params: Promise<{
     orderId: string;
-  };
+  }>;
 }
 
 export default async function OrderConfirmationPage({ params }: PageProps) {
@@ -35,10 +35,13 @@ export default async function OrderConfirmationPage({ params }: PageProps) {
     redirect("/auth/signin?callbackUrl=/orders");
   }
 
+  // Await params in Next.js 15 (params is now a Promise)
+  const { orderId } = await params;
+
   // Fetch order with relationships
   const order = await database.order.findFirst({
     where: {
-      id: params.orderId,
+      id: orderId,
       customerId: session.user.id,
     },
     include: {

@@ -31,7 +31,7 @@ function getBestFarmImage(farm: FarmImageProps["farm"], variant: FarmImageProps[
   // For card and thumbnail, prefer banner then logo
   if (farm.bannerUrl) return farm.bannerUrl;
   if (farm.logoUrl) return farm.logoUrl;
-  if (farm.images && farm.images.length > 0) return farm.images[0];
+  if (farm.images && farm.images.length > 0 && farm.images[0]) return farm.images[0];
 
   return null;
 }
@@ -88,12 +88,12 @@ export function FarmImage({
           <div className="text-center">
             <div
               className={`${variant === "hero"
-                  ? "text-9xl"
-                  : variant === "card"
-                    ? "text-6xl"
-                    : variant === "thumbnail"
-                      ? "text-3xl"
-                      : "text-4xl"
+                ? "text-9xl"
+                : variant === "card"
+                  ? "text-6xl"
+                  : variant === "thumbnail"
+                    ? "text-3xl"
+                    : "text-4xl"
                 }`}
             >
               🌾
@@ -116,7 +116,7 @@ export function FarmImage({
         } ${className}`}
     >
       <Image
-        src={imageUrl}
+        src={imageUrl ?? '/images/farm-placeholder.jpg'}
         alt={`${farm.name} - Farm Photo`}
         fill={variant !== "thumbnail" && variant !== "logo"}
         width={variant === "thumbnail" ? 96 : variant === "logo" ? 80 : undefined}
@@ -154,7 +154,7 @@ export function FarmImageGallery({ farm, additionalPhotos = [] }: FarmImageGalle
   // Remove duplicates
   const uniquePhotos = Array.from(new Set(allPhotos));
 
-  const primaryPhoto = uniquePhotos[0];
+  const primaryPhoto = uniquePhotos[0] ?? null;
   const secondaryPhotos = uniquePhotos.slice(1, 5);
 
   if (uniquePhotos.length === 0) {
@@ -178,7 +178,7 @@ export function FarmImageGallery({ farm, additionalPhotos = [] }: FarmImageGalle
       {/* Primary Photo */}
       <div className="relative h-96 w-full overflow-hidden rounded-t-lg">
         <Image
-          src={primaryPhoto}
+          src={primaryPhoto ?? '/images/farm-placeholder.jpg'}
           alt={`${farm.name} - Main Photo`}
           fill
           className="object-cover"
@@ -197,7 +197,7 @@ export function FarmImageGallery({ farm, additionalPhotos = [] }: FarmImageGalle
               className="relative h-24 overflow-hidden rounded-md"
             >
               <Image
-                src={photo}
+                src={photo ?? '/images/farm-placeholder.jpg'}
                 alt={`${farm.name} - Photo ${index + 2}`}
                 fill
                 className="object-cover transition-transform hover:scale-110"

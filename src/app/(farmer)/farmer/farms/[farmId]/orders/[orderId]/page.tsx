@@ -40,7 +40,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 interface PageProps {
-  params: { farmId: string; orderId: string };
+  params: Promise<{ farmId: string; orderId: string }>;
 }
 
 const ORDER_STATUS_CONFIG = {
@@ -107,12 +107,15 @@ const FULFILLMENT_METHOD_CONFIG = {
 } as const;
 
 export default async function OrderDetailsPage({ params }: PageProps) {
+  // Await params in Next.js 15 (params is now a Promise)
+  const { farmId, orderId } = await params;
+
   // Authentication check
   const session = await auth();
 
   if (!session?.user?.id) {
     redirect(
-      `/login?callbackUrl=/farmer/farms/${params.farmId}/orders/${params.orderId}`
+      `/login?callbackUrl=/farmer/farms/${farmId}/orders/${orderId}`
     );
   }
 
@@ -123,7 +126,7 @@ export default async function OrderDetailsPage({ params }: PageProps) {
 
   // Get farm and verify ownership
   const farm = await database.farm.findUnique({
-    where: { id: params.farmId },
+    where: { id: farmId },
     select: {
       id: true,
       name: true,
@@ -141,10 +144,10 @@ export default async function OrderDetailsPage({ params }: PageProps) {
   }
 
   // Fetch order with all details
-  const order = await database.order.findUnique({
+  const order = await database.order.findFirst({
     where: {
-      id: params.orderId,
-      farmId: params.farmId, // Ensure order belongs to this farm
+      id: orderId,
+      farmId: farmId,
     },
     include: {
       customer: {
@@ -218,7 +221,7 @@ export default async function OrderDetailsPage({ params }: PageProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           {/* Back Navigation */}
           <Link
-            href={`/farmer/farms/${params.farmId}/orders`}
+            href={`/farmer/farms/${farmId}/orders`}
             className="inline-flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 mb-4"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -334,7 +337,7 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                       </p>
                       {item.product && (
                         <Link
-                          href={`/farmer/farms/${params.farmId}/products/${item.product.id}`}
+                          href={`/farmer/farms/${farmId}/products/${item.product.id}`}
                           className="text-xs text-green-600 hover:text-green-700"
                         >
                           View Product →

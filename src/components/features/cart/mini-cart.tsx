@@ -34,7 +34,7 @@ export function MiniCart({ isOpen, onClose, userId }: MiniCartProps) {
     isEmpty,
     updateCartItem,
     removeFromCart,
-  } = useCart({ userId });
+  } = useCart();
 
   useEffect(() => {
     setIsMounted(true);

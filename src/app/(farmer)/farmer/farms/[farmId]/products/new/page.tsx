@@ -21,15 +21,18 @@ import { redirect } from "next/navigation";
  * 🌱 PAGE PROPS
  */
 interface PageProps {
-  params: {
+  params: Promise<{
     farmId: string;
-  };
+  }>;
 }
 
 /**
  * 🌾 NEW PRODUCT PAGE
  */
 export default async function NewProductPage({ params }: PageProps) {
+  // Await params in Next.js 15 (params is now a Promise)
+  const { farmId } = await params;
+
   // Authentication check
   const session = await auth();
   if (!session?.user) {
@@ -38,7 +41,7 @@ export default async function NewProductPage({ params }: PageProps) {
 
   // Fetch farm and verify ownership
   const farm = await database.farm.findUnique({
-    where: { id: params.farmId },
+    where: { id: farmId },
     select: {
       id: true,
       name: true,

@@ -58,7 +58,7 @@ export function CartBadge({
     isLoading,
     removeFromCart,
     clearCart,
-  } = useCart({ userId: mounted ? userId : undefined });
+  } = useCart();
 
   // Trigger animation when count changes (only when mounted)
   useEffect(() => {
@@ -302,7 +302,7 @@ export function CompactCartBadge({
   userId?: string;
   className?: string;
 }) {
-  const { count } = useCart({ userId });
+  const { count } = useCart();
   const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {

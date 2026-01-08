@@ -1018,6 +1018,7 @@ export class QuantumProductRepository extends BaseRepository<
           primaryPhotoUrl: true,
           images: true,
           organic: true,
+          quantityAvailable: true,
           averageRating: true,
           reviewCount: true,
           farm: {

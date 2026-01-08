@@ -35,21 +35,24 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 interface PageProps {
-  params: {
+  params: Promise<{
     farmId: string;
-  };
+  }>;
 }
 
 export default async function FarmDetailsPage({ params }: PageProps) {
   const session = await auth();
 
+  // Await params in Next.js 15 (params is now a Promise)
+  const { farmId } = await params;
+
   if (!session?.user) {
-    redirect(`/auth/signin?callbackUrl=/farmer/farms/${params.farmId}`);
+    redirect(`/auth/signin?callbackUrl=/farmer/farms/${farmId}`);
   }
 
   // Fetch farm with relationships
   const farm = await database.farm.findUnique({
-    where: { id: params.farmId },
+    where: { id: farmId },
     include: {
       owner: {
         select: {

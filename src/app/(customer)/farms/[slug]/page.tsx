@@ -15,7 +15,7 @@ import { cache, Suspense } from "react";
 export const revalidate = 300;
 
 interface PageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 // Type definitions for optimized data
@@ -240,8 +240,11 @@ const getFarmData = cache(async (slug: string) => {
 });
 
 export default async function FarmDetailPage({ params }: PageProps) {
+  // Await params in Next.js 15 (params is now a Promise)
+  const { slug } = await params;
+
   // Optimized data fetching with service layer caching
-  const farm = await getFarmData(params.slug);
+  const farm = await getFarmData(slug);
 
   if (!farm) {
     notFound();
@@ -454,8 +457,11 @@ function CertificationsSkeleton() {
 // ============================================================================
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  // Await params in Next.js 15 (params is now a Promise)
+  const { slug } = await params;
+
   // Use cached farm data for metadata generation
-  const farm = await getFarmData(params.slug);
+  const farm = await getFarmData(slug);
 
   if (!farm) {
     return {

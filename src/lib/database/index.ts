@@ -38,10 +38,10 @@ const createPrismaClient = (): PrismaClient => {
   // Reuse existing pool in development to prevent connection leaks
   const pool = globalThis.pgPool ?? new Pool({
     connectionString: process.env.DATABASE_URL,
-    // Optimize for serverless (Vercel)
-    max: isDevelopment ? 10 : 5, // Fewer connections in production
-    idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 10000,
+    // Optimize for serverless (Vercel) - reduced for better connection management
+    max: 1, // Single connection per serverless function (prevents pool exhaustion)
+    idleTimeoutMillis: 10000, // Faster cleanup in serverless
+    connectionTimeoutMillis: 5000,
   });
 
   // Log pool events

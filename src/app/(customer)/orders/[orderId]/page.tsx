@@ -36,9 +36,9 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 interface PageProps {
-  params: {
+  params: Promise<{
     orderId: string;
-  };
+  }>;
 }
 
 const ORDER_STATUS_STEPS = [
@@ -53,14 +53,17 @@ const ORDER_STATUS_STEPS = [
 export default async function OrderDetailsPage({ params }: PageProps) {
   const session = await auth();
 
+  // Await params in Next.js 15 (params is now a Promise)
+  const { orderId } = await params;
+
   if (!session?.user) {
-    redirect(`/auth/signin?callbackUrl=/orders/${params.orderId}`);
+    redirect(`/auth/signin?callbackUrl=/orders/${orderId}`);
   }
 
   // Fetch order with all relationships
   const order = await database.order.findFirst({
     where: {
-      id: params.orderId,
+      id: orderId,
       customerId: session.user.id,
     },
     include: {

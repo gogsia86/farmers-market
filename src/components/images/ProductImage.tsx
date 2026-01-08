@@ -22,7 +22,7 @@ interface ProductImageProps {
  */
 function getBestProductImage(product: ProductImageProps["product"]): string | null {
   if (product.primaryPhotoUrl) return product.primaryPhotoUrl;
-  if (product.images && product.images.length > 0) return product.images[0];
+  if (product.images && product.images.length > 0 && product.images[0]) return product.images[0];
   return null;
 }
 
@@ -201,7 +201,7 @@ export function ProductImageGallery({ product, additionalPhotos = [] }: ProductI
       {/* Primary Photo */}
       <div className="relative h-96 w-full overflow-hidden rounded-t-lg">
         <Image
-          src={primaryPhoto}
+          src={primaryPhoto ?? '/images/product-placeholder.jpg'}
           alt={`${product.name} - Main Photo`}
           fill
           className="object-cover"
@@ -249,7 +249,7 @@ export function ProductImageGallery({ product, additionalPhotos = [] }: ProductI
  * Small thumbnail for product lists, cart items, etc.
  */
 interface ProductThumbnailProps {
-  product: Pick<Product, "id" | "name" | "primaryPhotoUrl" | "images" | "organic">;
+  product: Pick<Product, "id" | "name" | "primaryPhotoUrl" | "images" | "organic" | "featured">;
   size?: "sm" | "md" | "lg";
   className?: string;
 }
@@ -348,7 +348,7 @@ export function ProductImageCarousel({ product, additionalPhotos = [] }: Product
       {/* Main Image */}
       <div className="relative h-96 w-full overflow-hidden rounded-lg">
         <Image
-          src={allPhotos[currentIndex]}
+          src={allPhotos[currentIndex] ?? '/images/product-placeholder.jpg'}
           alt={`${product.name} - Image ${currentIndex + 1}`}
           fill
           className="object-cover"
@@ -398,8 +398,8 @@ export function ProductImageCarousel({ product, additionalPhotos = [] }: Product
               key={index}
               onClick={() => goToSlide(index)}
               className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md transition-all ${index === currentIndex
-                  ? "ring-2 ring-green-600 ring-offset-2"
-                  : "opacity-60 hover:opacity-100"
+                ? "ring-2 ring-green-600 ring-offset-2"
+                : "opacity-60 hover:opacity-100"
                 }`}
             >
               <Image
