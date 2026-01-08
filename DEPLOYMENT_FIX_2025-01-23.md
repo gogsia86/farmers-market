@@ -39,6 +39,11 @@ According to `prisma/schema.prisma`, the Product model uses:
 - Line 234: `farm.verified` → `farm.verifiedAt`
 - Line 377: Added proper TypeScript type for metadata
 
+### 3. `src/app/(farmer)/farmer/products/page.tsx`
+**Changes:**
+- Line 58-62: Added null check for `farms[0]` before accessing `farm.id`
+- Prevents TypeScript error: `'farm' is possibly 'undefined'`
+
 ### 2. `mobile-app/src/screens/farms/FarmDetailScreen.tsx`
 **Changes:**
 - Line 448-450: Updated to use `inStock` and `quantityAvailable` instead of `stock`
@@ -135,9 +140,31 @@ model Product {
 }
 ```
 
+## Additional Fix - Farmer Products Page
+
+**Build Error #2:**
+```
+./src/app/(farmer)/farmer/products/page.tsx:58:29
+Type error: 'farm' is possibly 'undefined'.
+```
+
+**Fix Applied:**
+```typescript
+// ❌ WRONG - TypeScript can't guarantee farms[0] exists
+const farm = farms[0];
+redirect(`/farmer/farms/${farm.id}/products`);
+
+// ✅ CORRECT - Explicit null check
+const farm = farms[0];
+if (!farm) {
+  redirect("/farmer/farms/new");
+}
+redirect(`/farmer/farms/${farm.id}/products`);
+```
+
 ## Deployment Status
 
-✅ **FIXED** - Ready for redeployment to Vercel
+✅ **FIXED** - Ready for redeployment to Vercel (All issues resolved)
 
 ## Next Steps
 
@@ -145,6 +172,8 @@ model Product {
 2. Push to master branch
 3. Vercel will automatically redeploy
 4. Monitor build logs to confirm success
+
+**Update:** Second build attempt required additional fix for farmer products page. Now complete.
 
 ## Testing Recommendations
 
@@ -164,3 +193,8 @@ After deployment, verify:
 **Date:** January 23, 2025
 **Build Environment:** Vercel (Node.js 24.x)
 **Framework:** Next.js 16.1.1 (Turbopack)
+**Total Fixes:** 3 files (marketplace page, mobile app, farmer products page)
+**Git Commits:**
+- `f6198af6` - Marketplace page fixes
+- `8ebfc81c` - Mobile app fixes
+- `adb46ad4` - Farmer products page fix
