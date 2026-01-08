@@ -16,6 +16,7 @@
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
 import { productService } from "@/lib/services/product.service";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -405,7 +406,7 @@ export default async function ProductsManagementPage({
 /**
  * 📄 METADATA
  */
-export const metadata = {
+export const metadata: Metadata = {
   title: "Product Management | Farmer Dashboard",
   description: "Manage your farm's product catalog and inventory",
 };

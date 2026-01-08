@@ -15,6 +15,7 @@
 import { CreateProductForm } from "@/components/features/products/create-product-form";
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 /**
@@ -217,7 +218,7 @@ export default async function NewProductPage({ params }: PageProps) {
 /**
  * 📄 METADATA
  */
-export const metadata = {
+export const metadata: Metadata = {
   title: "Add New Product | Farmer Dashboard",
   description: "Add a new product to your farm catalog",
 };

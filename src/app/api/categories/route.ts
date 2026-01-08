@@ -179,5 +179,4 @@ export async function GET(request: NextRequest): Promise<NextResponse<Categories
 // ============================================================================
 
 export const runtime = 'edge';
-export const dynamic = 'force-static';
 export const revalidate = 3600; // Cache for 1 hour
