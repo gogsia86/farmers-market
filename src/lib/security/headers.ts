@@ -64,6 +64,7 @@ export function generateCSP(config: SecurityHeadersConfig = {}): string {
       "'self'",
       "'unsafe-inline'", // Required for Next.js
       ...(isDevelopment ? ["'unsafe-eval'"] : []), // Only in dev
+      'blob:', // Allow blob: URLs for Web Workers
       'https://js.stripe.com', // Stripe
       'https://maps.googleapis.com', // Google Maps
       'https://www.googletagmanager.com', // Analytics
@@ -118,8 +119,11 @@ export function generateCSP(config: SecurityHeadersConfig = {}): string {
     // Media: Allow self and trusted CDNs
     'media-src': ["'self'", 'https://res.cloudinary.com'],
 
-    // Workers: Allow self
-    'worker-src': ["'self'", 'blob:'],
+    // Workers: Allow self, blob, and data URIs
+    'worker-src': ["'self'", 'blob:', 'data:'],
+
+    // Child sources (workers, frames) - explicitly set to prevent script-src fallback
+    'child-src': ["'self'", 'blob:', 'data:'],
 
     // Manifests: Allow self (PWA)
     'manifest-src': ["'self'"],

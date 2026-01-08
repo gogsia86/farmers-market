@@ -35,6 +35,24 @@ export default auth((request: NextRequest) => {
   const { pathname } = request.nextUrl;
 
   // ============================================================================
+  // PUBLIC ROUTES - Allow without authentication checks
+  // ============================================================================
+  const publicRoutes = [
+    '/',
+    '/login',
+    '/register',
+    '/signup',
+    '/forgot-password',
+    '/reset-password',
+    '/about',
+    '/farms',
+    '/products',
+    '/marketplace',
+  ];
+
+  const isPublicRoute = publicRoutes.some(route => pathname === route || pathname.startsWith(route + '/'));
+
+  // ============================================================================
   // PHASE 1: ROUTE REDIRECTS (Redundant Nesting Removal)
   // ============================================================================
 
@@ -79,13 +97,15 @@ export default auth((request: NextRequest) => {
   }
 
   // ============================================================================
-  // FUTURE: Add enhanced authentication and RBAC here
+  // PHASE 3: AUTHENTICATION & AUTHORIZATION
   // ============================================================================
-  // Phase 3+ will add:
-  // - Check session
-  // - Verify user roles
-  // - Protect routes based on role
-  // See: src/lib/middleware/route-config.ts for configuration
+  // Public routes can proceed without authentication
+  if (isPublicRoute) {
+    return response;
+  }
+
+  // Protected routes require authentication (handled by NextAuth config)
+  // The auth() wrapper will handle redirects to /login if not authenticated
 
   return response;
 }) as NextMiddleware;

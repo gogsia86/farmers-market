@@ -148,14 +148,15 @@ async function checkCache(): Promise<HealthCheckResult['checks']['cache']> {
       details: process.env.NODE_ENV === 'development' ? (stats as unknown as Record<string, unknown>) : undefined,
     };
   } catch (error) {
-    logger.error('Cache health check failed', {
+    logger.warn('Cache health check failed - treating as degraded', {
       error: error instanceof Error ? error.message : 'Unknown error',
     });
 
+    // Cache failure is degraded, not unhealthy - app can work without cache
     return {
       status: 'degraded',
       latency: Date.now() - start,
-      message: 'Cache system degraded',
+      message: 'Cache system unavailable or degraded',
       details:
         process.env.NODE_ENV === 'development'
           ? { error: error instanceof Error ? error.message : 'Unknown error' }
@@ -204,19 +205,31 @@ function checkSystem(): HealthCheckResult['checks']['system'] {
 
 /**
  * Determine overall health status based on individual checks
+ * Database is critical, cache and system are less critical
  */
 function determineOverallStatus(checks: HealthCheckResult['checks']): HealthStatus {
+  // Database unhealthy = system unhealthy
+  if (checks.database?.status === 'unhealthy') {
+    return 'unhealthy';
+  }
+
+  // System critically degraded = unhealthy
+  if (checks.system?.status === 'unhealthy') {
+    return 'unhealthy';
+  }
+
+  // Database degraded OR any other issue = degraded
+  if (checks.database?.status === 'degraded') {
+    return 'degraded';
+  }
+
+  // Cache or system degraded = overall degraded (but app can run)
   const statuses = [
-    checks.database?.status,
     checks.cache?.status,
     checks.system?.status,
   ].filter(Boolean) as HealthStatus[];
 
-  if (statuses.includes('unhealthy')) {
-    return 'unhealthy';
-  }
-
-  if (statuses.includes('degraded')) {
+  if (statuses.includes('unhealthy') || statuses.includes('degraded')) {
     return 'degraded';
   }
 
@@ -261,17 +274,27 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    // Full health check
-    const [dbCheck, cacheCheck, systemCheck] = await Promise.all([
+    // Full health check - run checks in parallel
+    // Wrap cache check to not fail the entire health check
+    const [dbCheck, cacheCheck, systemCheck] = await Promise.allSettled([
       checkDatabase(),
       checkCache(),
       Promise.resolve(checkSystem()),
     ]);
 
     const checks: HealthCheckResult['checks'] = {
-      database: dbCheck,
-      cache: cacheCheck,
-      system: systemCheck,
+      database: dbCheck.status === 'fulfilled' ? dbCheck.value : {
+        status: 'unhealthy',
+        message: 'Database check failed',
+      },
+      cache: cacheCheck.status === 'fulfilled' ? cacheCheck.value : {
+        status: 'degraded',
+        message: 'Cache check failed',
+      },
+      system: systemCheck.status === 'fulfilled' ? systemCheck.value : {
+        status: 'degraded',
+        message: 'System check failed',
+      },
     };
 
     const overallStatus = determineOverallStatus(checks);

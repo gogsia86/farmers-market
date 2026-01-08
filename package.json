@@ -335,7 +335,8 @@
     "test:day19:quick": "npm run test:real-device:journeys && npm run test:chaos:network",
     "clean": "bash scripts/cleanup-repo.sh",
     "export:pdf:legacy": "node scripts/convert-to-pdf.js",
-    "generate:api-docs": "tsx scripts/generate-api-docs.ts"
+    "generate:api-docs": "tsx scripts/generate-api-docs.ts",
+    "bot:auto": "tsx scripts/mvp-automation-bot.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
