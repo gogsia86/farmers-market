@@ -55,11 +55,15 @@ const nextConfig = {
     optimizeCss: true,
     // Memory optimization with 64GB available
     memoryBasedWorkersCount: true,
-    // Exclude problematic Node.js built-in modules from file tracing
-    // Fixes Windows EINVAL error with node:inspector in standalone builds
-    outputFileTracingExcludes: {
-      "*": ["node:inspector", "node:diagnostics_channel"],
-    },
+  },
+
+  // ============================================
+  // OUTPUT FILE TRACING (TOP-LEVEL)
+  // ============================================
+  // Exclude problematic Node.js built-in modules from file tracing
+  // Fixes Windows EINVAL error with node:inspector in standalone builds
+  outputFileTracingExcludes: {
+    "*": ["node:inspector", "node:diagnostics_channel"],
   },
 
   // ============================================
