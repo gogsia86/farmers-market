@@ -44,7 +44,14 @@ According to `prisma/schema.prisma`, the Product model uses:
 - Line 58-62: Added null check for `farms[0]` before accessing `farm.id`
 - Prevents TypeScript error: `'farm' is possibly 'undefined'`
 
-### 2. `mobile-app/src/screens/farms/FarmDetailScreen.tsx`
+### 4. `src/app/api/admin/farms/route.ts`
+**Changes:**
+- Line 131-133: Fixed FarmCertification select fields: `name`/`issuedBy` → `type`/`certifierName`/`status`
+- Line 119-127: Removed non-existent `location` relation
+- Changed from `include` to `select` with direct Farm fields (address, city, state, zipCode, latitude, longitude)
+- Prevents TypeScript errors: fields don't exist in Prisma schema
+
+### 5. `mobile-app/src/screens/farms/FarmDetailScreen.tsx`
 **Changes:**
 - Line 448-450: Updated to use `inStock` and `quantityAvailable` instead of `stock`
 
@@ -173,7 +180,10 @@ redirect(`/farmer/farms/${farm.id}/products`);
 3. Vercel will automatically redeploy
 4. Monitor build logs to confirm success
 
-**Update:** Second build attempt required additional fix for farmer products page. Now complete.
+**Update:** Multiple build attempts required additional fixes:
+- Build #2: Farmer products page (null safety)
+- Build #3: Admin farms API (schema field corrections)
+- All issues now resolved ✅
 
 ## Testing Recommendations
 
@@ -193,8 +203,9 @@ After deployment, verify:
 **Date:** January 23, 2025
 **Build Environment:** Vercel (Node.js 24.x)
 **Framework:** Next.js 16.1.1 (Turbopack)
-**Total Fixes:** 3 files (marketplace page, mobile app, farmer products page)
+**Total Fixes:** 5 files (marketplace page, mobile app, farmer products page, admin farms API)
 **Git Commits:**
 - `f6198af6` - Marketplace page fixes
 - `8ebfc81c` - Mobile app fixes
 - `adb46ad4` - Farmer products page fix
+- `57cc8d19` - Admin farms API fix
