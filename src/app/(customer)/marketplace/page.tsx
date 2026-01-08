@@ -22,7 +22,7 @@ async function getFeaturedProducts() {
     const products = await database.product.findMany({
       where: {
         status: 'ACTIVE',
-        stock: { gt: 0 },
+        inStock: true,
       },
       include: {
         farm: {
@@ -31,10 +31,6 @@ async function getFeaturedProducts() {
             name: true,
             slug: true,
           },
-        },
-        images: {
-          take: 1,
-          orderBy: { order: 'asc' },
         },
       },
       orderBy: [
@@ -56,7 +52,7 @@ async function getFeaturedFarms() {
     const farms = await database.farm.findMany({
       where: {
         status: 'ACTIVE',
-        verified: true,
+        verifiedAt: { not: null },
       },
       include: {
         _count: {
@@ -68,7 +64,6 @@ async function getFeaturedFarms() {
         },
       },
       orderBy: [
-        { featured: 'desc' },
         { createdAt: 'desc' },
       ],
       take: 6,
@@ -85,10 +80,10 @@ async function getMarketplaceStats() {
   try {
     const [productCount, farmCount] = await Promise.all([
       database.product.count({
-        where: { status: 'ACTIVE', stock: { gt: 0 } },
+        where: { status: 'ACTIVE', inStock: true },
       }),
       database.farm.count({
-        where: { status: 'ACTIVE', verified: true },
+        where: { status: 'ACTIVE', verifiedAt: { not: null } },
       }),
     ]);
 
@@ -155,9 +150,15 @@ async function FeaturedProducts() {
         <Link key={product.id} href={`/products/${product.slug}`}>
           <Card className="h-full hover:shadow-lg transition-shadow">
             <CardHeader className="p-0">
-              {product.images[0] ? (
+              {product.primaryPhotoUrl ? (
                 <img
-                  src={product.images[0].url}
+                  src={product.primaryPhotoUrl}
+                  alt={product.name}
+                  className="w-full h-48 object-cover rounded-t-lg"
+                />
+              ) : product.images[0] ? (
+                <img
+                  src={product.images[0]}
                   alt={product.name}
                   className="w-full h-48 object-cover rounded-t-lg"
                 />
@@ -170,16 +171,16 @@ async function FeaturedProducts() {
             <CardContent className="pt-4">
               <h3 className="font-semibold text-lg mb-1 line-clamp-1">{product.name}</h3>
               <p className="text-sm text-muted-foreground mb-2 line-clamp-1">
-                {product.farm?.name}
+                {product.farm.name}
               </p>
               <div className="flex items-center justify-between">
                 <span className="text-lg font-bold text-primary">
                   ${product.price.toFixed(2)}
                   {product.unit && <span className="text-sm font-normal">/{product.unit}</span>}
                 </span>
-                {product.stock > 0 && (
+                {product.inStock && product.quantityAvailable && (
                   <span className="text-xs text-muted-foreground">
-                    {product.stock} in stock
+                    {product.quantityAvailable.toString()} in stock
                   </span>
                 )}
               </div>
@@ -208,9 +209,15 @@ async function FeaturedFarms() {
         <Link key={farm.id} href={`/farms/${farm.slug}`}>
           <Card className="h-full hover:shadow-lg transition-shadow">
             <CardHeader className="p-0">
-              {farm.logo ? (
+              {farm.logoUrl ? (
                 <img
-                  src={farm.logo}
+                  src={farm.logoUrl}
+                  alt={farm.name}
+                  className="w-full h-32 object-cover rounded-t-lg"
+                />
+              ) : farm.bannerUrl ? (
+                <img
+                  src={farm.bannerUrl}
                   alt={farm.name}
                   className="w-full h-32 object-cover rounded-t-lg"
                 />
@@ -231,7 +238,7 @@ async function FeaturedFarms() {
                 <span className="text-muted-foreground">
                   {farm._count.products} product{farm._count.products !== 1 ? 's' : ''}
                 </span>
-                {farm.verified && (
+                {farm.verifiedAt && (
                   <span className="text-green-600 font-medium">✓ Verified</span>
                 )}
               </div>
@@ -374,7 +381,9 @@ export default async function MarketplacePage() {
 // METADATA
 // ============================================================================
 
-export const metadata = {
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
   title: 'Marketplace | Farmers Market Platform',
   description: 'Discover fresh, locally-grown produce directly from farmers in your area',
 };

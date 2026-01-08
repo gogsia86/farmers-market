@@ -445,8 +445,8 @@ export const FarmDetailScreen: React.FC = () => {
                   ${product.price.toFixed(2)}/{product.unit}
                 </Text>
                 <Text style={styles.productStock}>
-                  {product.stock > 0
-                    ? `${product.stock} in stock`
+                  {product.inStock && product.quantityAvailable
+                    ? `${product.quantityAvailable.toString()} in stock`
                     : 'Out of stock'}
                 </Text>
               </View>
