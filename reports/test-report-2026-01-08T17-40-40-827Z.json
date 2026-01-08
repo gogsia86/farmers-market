@@ -1,0 +1,296 @@
+{
+  "summary": {
+    "total": 3,
+    "passed": 2,
+    "failed": 1,
+    "skipped": 0,
+    "successRate": 66.66666666666666,
+    "avgDuration": 14981.666666666666,
+    "totalDuration": 44945
+  },
+  "results": [
+    {
+      "moduleId": "health",
+      "moduleName": "Health Checks",
+      "status": "success",
+      "timestamp": "2026-01-08T17:37:39.891Z",
+      "duration": 5600,
+      "details": {
+        "totalTests": 13,
+        "passedTests": 13,
+        "failedTests": 0,
+        "skippedTests": 0,
+        "successRate": 100,
+        "results": [
+          {
+            "testId": "health-homepage",
+            "testName": "Homepage Load",
+            "status": "passed",
+            "duration": 563,
+            "timestamp": "2026-01-08T17:37:35.069Z"
+          },
+          {
+            "testId": "health-database",
+            "testName": "Database Connection",
+            "status": "passed",
+            "duration": 54,
+            "timestamp": "2026-01-08T17:37:35.124Z"
+          },
+          {
+            "testId": "health-auth",
+            "testName": "Auth Service",
+            "status": "passed",
+            "duration": 54,
+            "timestamp": "2026-01-08T17:37:35.178Z"
+          },
+          {
+            "testId": "health-api-general",
+            "testName": "General API Health",
+            "status": "passed",
+            "duration": 48,
+            "timestamp": "2026-01-08T17:37:35.226Z"
+          },
+          {
+            "testId": "health-marketplace-api",
+            "testName": "Marketplace API",
+            "status": "passed",
+            "duration": 92,
+            "timestamp": "2026-01-08T17:37:35.318Z"
+          },
+          {
+            "testId": "health-products-api",
+            "testName": "Products API",
+            "status": "passed",
+            "duration": 53,
+            "timestamp": "2026-01-08T17:37:35.371Z"
+          },
+          {
+            "testId": "health-categories-api",
+            "testName": "Categories API",
+            "status": "passed",
+            "duration": 368,
+            "timestamp": "2026-01-08T17:37:35.739Z"
+          },
+          {
+            "testId": "health-search-api",
+            "testName": "Search API",
+            "status": "passed",
+            "duration": 32,
+            "timestamp": "2026-01-08T17:37:35.771Z"
+          },
+          {
+            "testId": "health-page-load-time",
+            "testName": "Page Load Performance",
+            "status": "passed",
+            "duration": 1337,
+            "timestamp": "2026-01-08T17:37:37.108Z"
+          },
+          {
+            "testId": "health-api-response-time",
+            "testName": "API Response Time",
+            "status": "passed",
+            "duration": 75,
+            "timestamp": "2026-01-08T17:37:37.184Z"
+          },
+          {
+            "testId": "health-static-assets",
+            "testName": "Static Assets Loading",
+            "status": "passed",
+            "duration": 1278,
+            "timestamp": "2026-01-08T17:37:38.462Z"
+          },
+          {
+            "testId": "health-uptime",
+            "testName": "Service Uptime",
+            "status": "passed",
+            "duration": 20,
+            "timestamp": "2026-01-08T17:37:38.482Z"
+          },
+          {
+            "testId": "health-critical-paths",
+            "testName": "Critical User Paths",
+            "status": "passed",
+            "duration": 1408,
+            "timestamp": "2026-01-08T17:37:39.890Z"
+          }
+        ]
+      }
+    },
+    {
+      "moduleId": "marketplace-browse",
+      "moduleName": "Marketplace Browse & Search",
+      "status": "success",
+      "timestamp": "2026-01-08T17:38:19.236Z",
+      "duration": 39345,
+      "details": {
+        "totalTests": 11,
+        "passedTests": 11,
+        "failedTests": 0,
+        "skippedTests": 0,
+        "successRate": 100,
+        "results": [
+          {
+            "testId": "products-page-load",
+            "testName": "Products Page Loads",
+            "status": "passed",
+            "duration": 12452,
+            "timestamp": "2026-01-08T17:37:52.343Z"
+          },
+          {
+            "testId": "product-cards-content",
+            "testName": "Product Cards Display Content",
+            "status": "passed",
+            "duration": 3807,
+            "timestamp": "2026-01-08T17:37:56.150Z"
+          },
+          {
+            "testId": "product-detail-navigation",
+            "testName": "Product Detail Navigation",
+            "status": "passed",
+            "duration": 4555,
+            "timestamp": "2026-01-08T17:38:00.705Z"
+          },
+          {
+            "testId": "search-input-exists",
+            "testName": "Search Input Available",
+            "status": "passed",
+            "duration": 1479,
+            "timestamp": "2026-01-08T17:38:02.184Z"
+          },
+          {
+            "testId": "search-products",
+            "testName": "Search Products",
+            "status": "passed",
+            "duration": 4023,
+            "timestamp": "2026-01-08T17:38:06.207Z"
+          },
+          {
+            "testId": "search-api-endpoint",
+            "testName": "Search API Endpoint",
+            "status": "passed",
+            "duration": 29,
+            "timestamp": "2026-01-08T17:38:06.236Z"
+          },
+          {
+            "testId": "category-filter",
+            "testName": "Category Filter",
+            "status": "passed",
+            "duration": 2415,
+            "timestamp": "2026-01-08T17:38:08.651Z"
+          },
+          {
+            "testId": "sort-functionality",
+            "testName": "Sort Products",
+            "status": "passed",
+            "duration": 1383,
+            "timestamp": "2026-01-08T17:38:10.034Z"
+          },
+          {
+            "testId": "farms-page-load",
+            "testName": "Farms Page Loads",
+            "status": "passed",
+            "duration": 2427,
+            "timestamp": "2026-01-08T17:38:12.461Z"
+          },
+          {
+            "testId": "farm-detail-page",
+            "testName": "Farm Detail Page",
+            "status": "passed",
+            "duration": 3324,
+            "timestamp": "2026-01-08T17:38:15.785Z"
+          },
+          {
+            "testId": "mobile-product-view",
+            "testName": "Mobile Product View",
+            "status": "passed",
+            "duration": 3451,
+            "timestamp": "2026-01-08T17:38:19.236Z"
+          }
+        ]
+      }
+    },
+    {
+      "moduleId": "cart-checkout",
+      "moduleName": "cart-checkout",
+      "status": "failed",
+      "error": "Module failed",
+      "timestamp": "2026-01-08T17:40:40.798Z",
+      "duration": 0
+    }
+  ],
+  "startTime": "2026-01-08T17:37:34.289Z",
+  "endTime": "2026-01-08T17:40:40.798Z",
+  "duration": 186508,
+  "config": {
+    "name": "MVP Validation",
+    "version": "1.0.0",
+    "browser": {
+      "headless": true,
+      "slowMo": 0,
+      "timeout": 60000,
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    },
+    "execution": {
+      "mode": "suite",
+      "parallel": false,
+      "maxConcurrency": 1,
+      "retries": 2,
+      "retryDelay": 2000,
+      "continueOnFailure": true
+    },
+    "monitoring": {
+      "enabled": false,
+      "interval": 60000,
+      "alertThreshold": 20
+    },
+    "reporting": {
+      "enabled": true,
+      "formats": [
+        "json",
+        "console"
+      ],
+      "outputDir": "./bot-reports",
+      "screenshotOnFailure": true,
+      "screenshotOnSuccess": false,
+      "fullPageScreenshot": true,
+      "saveTraces": false
+    },
+    "testData": {
+      "useSeededData": false,
+      "generateDynamic": true,
+      "credentials": {
+        "admin": {
+          "email": "admin@farmersmarket.app"
+        },
+        "farmer": {
+          "email": "farmer.existing@farmersmarket.test",
+          "password": "FarmerTest123!@#"
+        },
+        "customer": {
+          "email": "",
+          "password": "CustomerTest123!@#"
+        }
+      }
+    },
+    "modules": {
+      "include": [],
+      "exclude": [],
+      "config": {}
+    },
+    "logging": {
+      "level": "info",
+      "console": true,
+      "file": false
+    },
+    "headless": true
+  },
+  "metadata": {
+    "generatedAt": "2026-01-08T17:40:40.828Z",
+    "generator": "Unified Bot Framework",
+    "version": "1.0.0"
+  }
+}

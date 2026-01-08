@@ -218,10 +218,13 @@ export const CartCheckoutModule: TestModule = {
             await addButton.click();
             await page.waitForTimeout(3000);
 
-            // Check for success indicators
-            const successToast = await page.locator(
-              '[role="alert"], [class*="toast"], text=/added/i, text=/success/i'
-            ).count();
+            // Check for success indicators using separate locators
+            const alertByRole = await page.locator('[role="alert"]').count();
+            const toastByClass = await page.locator('[class*="toast"]').count();
+            const addedText = await page.getByText(/added/i).count();
+            const successText = await page.getByText(/success/i).count();
+
+            const successToast = alertByRole + toastByClass + addedText + successText;
 
             // Check if cart count increased (look for badge)
             const cartBadge = await page.locator(
@@ -399,14 +402,17 @@ export const CartCheckoutModule: TestModule = {
             await page.goto("/cart");
             await page.waitForTimeout(1000);
 
-            // Check for total/subtotal
-            const totalElement = await page.locator(
-              '[data-testid="cart-total"], [class*="total"], text=/total/i, text=/subtotal/i'
-            ).count();
+            // Check for total/subtotal using separate locators
+            const totalByTestId = await page.locator('[data-testid="cart-total"]').count();
+            const totalByClass = await page.locator('[class*="total"]').count();
+            const totalByText = await page.getByText(/total/i).count();
+            const subtotalByText = await page.getByText(/subtotal/i).count();
 
-            const priceElement = await page.locator(
-              'text=/\\$\\d+\\.\\d{2}/, text=/\\d+\\.\\d{2}/'
-            ).count();
+            const totalElement = totalByTestId + totalByClass + totalByText + subtotalByText;
+
+            // Check for price display
+            const priceByRegex = await page.getByText(/\$\d+\.\d{2}/).count();
+            const priceElement = priceByRegex;
 
             return {
               data: {
