@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { SessionProvider } from "@/components/providers/SessionProvider";
@@ -57,6 +58,7 @@ export default async function RootLayout({
           <Footer />
           <Toaster />
         </SessionProvider>
+        <Analytics />
       </body>
     </html>
   );
