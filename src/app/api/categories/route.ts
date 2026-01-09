@@ -178,5 +178,31 @@ export async function GET(request: NextRequest): Promise<NextResponse<Categories
 // EXPORT ROUTE CONFIG
 // ============================================================================
 
+/**
+ * Edge Runtime Configuration
+ *
+ * This API route uses Edge Runtime for optimal performance:
+ * ✅ Global edge distribution for low latency worldwide
+ * ✅ Faster cold starts compared to Node.js runtime
+ * ✅ Simple data fetching with no Node.js-specific APIs needed
+ * ✅ Automatic caching and revalidation support
+ *
+ * Edge Runtime is appropriate here because:
+ * - This is an API route, not a page (no static generation needed)
+ * - Operations are lightweight (database queries only)
+ * - Benefits from global CDN distribution
+ * - No heavy computation or large dependencies
+ *
+ * @see https://nextjs.org/docs/app/building-your-application/rendering/edge-and-nodejs-runtimes
+ */
 export const runtime = 'edge';
+
+/**
+ * Revalidation Configuration
+ *
+ * Cache responses for 1 hour (3600 seconds) to balance:
+ * - Fresh category data for users
+ * - Reduced database load
+ * - Fast response times
+ */
 export const revalidate = 3600; // Cache for 1 hour
