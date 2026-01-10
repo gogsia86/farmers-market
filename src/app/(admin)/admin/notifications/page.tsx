@@ -31,7 +31,7 @@ export default async function AdminNotificationsPage() {
       user: {
         select: {
           id: true,
-          type: true,
+          name: true,
           email: true,
         },
       },

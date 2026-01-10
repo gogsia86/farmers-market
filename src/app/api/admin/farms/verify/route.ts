@@ -14,7 +14,7 @@ import type { FarmVerificationStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 /**
  * ✅ POST - Approve or Reject Farm Verification
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
             message: "You must be logged in to verify farms",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -47,31 +47,33 @@ export async function POST(request: NextRequest) {
             message: "Only admins can verify farms",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     const body = await request.json();
 
     // Validation schema
-    const VerifyFarmSchema = z.object({
-      farmId: z.string().min(1),
-      action: z.enum(["approve", "reject"]),
-      reason: z.string().max(500).optional(),
-      notes: z.string().max(1000).optional(),
-    }).refine(
-      (data) => {
-        // If rejecting, reason is required
-        if (data.action === "reject" && !data.reason) {
-          return false;
-        }
-        return true;
-      },
-      {
-        message: "Reason is required when rejecting a farm",
-        path: ["reason"],
-      }
-    );
+    const VerifyFarmSchema = z
+      .object({
+        farmId: z.string().min(1),
+        action: z.enum(["approve", "reject"]),
+        reason: z.string().max(500).optional(),
+        notes: z.string().max(1000).optional(),
+      })
+      .refine(
+        (data) => {
+          // If rejecting, reason is required
+          if (data.action === "reject" && !data.reason) {
+            return false;
+          }
+          return true;
+        },
+        {
+          message: "Reason is required when rejecting a farm",
+          path: ["reason"],
+        },
+      );
 
     const validation = VerifyFarmSchema.safeParse(body);
     if (!validation.success) {
@@ -84,7 +86,7 @@ export async function POST(request: NextRequest) {
             details: validation.error.errors,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -94,7 +96,7 @@ export async function POST(request: NextRequest) {
     const farm = await database.farm.findUnique({
       where: { id: farmId },
       include: {
-        ownerId: {
+        owner: {
           select: {
             id: true,
             email: true,
@@ -115,7 +117,7 @@ export async function POST(request: NextRequest) {
             message: "Farm not found",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -129,7 +131,7 @@ export async function POST(request: NextRequest) {
             message: "This farm is already verified",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -148,7 +150,7 @@ export async function POST(request: NextRequest) {
           updatedAt: now,
         },
         include: {
-          ownerId: {
+          owner: {
             select: {
               id: true,
               email: true,
@@ -211,7 +213,7 @@ export async function POST(request: NextRequest) {
           updatedAt: now,
         },
         include: {
-          ownerId: {
+          owner: {
             select: {
               id: true,
               email: true,
@@ -272,10 +274,11 @@ export async function POST(request: NextRequest) {
         success: false,
         error: {
           code: "VERIFICATION_ERROR",
-          message: error instanceof Error ? error.message : "Failed to verify farm",
+          message:
+            error instanceof Error ? error.message : "Failed to verify farm",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

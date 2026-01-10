@@ -90,7 +90,11 @@ const ORDER_STATUS_CONFIG = {
 
 const PAYMENT_STATUS_CONFIG = {
   PENDING: { label: "Pending Payment", color: "text-yellow-600", icon: Clock },
-  PAID: { label: "Payment Received", color: "text-green-600", icon: CheckCircle },
+  PAID: {
+    label: "Payment Received",
+    color: "text-green-600",
+    icon: CheckCircle,
+  },
   FAILED: { label: "Payment Failed", color: "text-red-600", icon: XCircle },
   REFUNDED: { label: "Refunded", color: "text-gray-600", icon: DollarSign },
   PARTIALLY_REFUNDED: {
@@ -114,9 +118,7 @@ export default async function OrderDetailsPage({ params }: PageProps) {
   const session = await auth();
 
   if (!session?.user?.id) {
-    redirect(
-      `/login?callbackUrl=/farmer/farms/${farmId}/orders/${orderId}`
-    );
+    redirect(`/login?callbackUrl=/farmer/farms/${farmId}/orders/${orderId}`);
   }
 
   // Verify user is a farmer
@@ -165,7 +167,7 @@ export default async function OrderDetailsPage({ params }: PageProps) {
           product: {
             select: {
               id: true,
-              tax: true,
+              name: true,
               primaryPhotoUrl: true,
               status: true,
             },
@@ -197,11 +199,11 @@ export default async function OrderDetailsPage({ params }: PageProps) {
     ORDER_STATUS_CONFIG[order.status as keyof typeof ORDER_STATUS_CONFIG];
   const paymentConfig =
     PAYMENT_STATUS_CONFIG[
-    order.paymentStatus as keyof typeof PAYMENT_STATUS_CONFIG
+      order.paymentStatus as keyof typeof PAYMENT_STATUS_CONFIG
     ];
   const fulfillmentConfig =
     FULFILLMENT_METHOD_CONFIG[
-    order.fulfillmentMethod as keyof typeof FULFILLMENT_METHOD_CONFIG
+      order.fulfillmentMethod as keyof typeof FULFILLMENT_METHOD_CONFIG
     ];
 
   const StatusIcon = statusConfig?.icon || Clock;
@@ -211,7 +213,7 @@ export default async function OrderDetailsPage({ params }: PageProps) {
   // Calculate totals
   const itemsSubtotal = order.items.reduce(
     (sum: number, item) => sum + Number(item.subtotal),
-    0
+    0,
   );
 
   return (
@@ -241,7 +243,9 @@ export default async function OrderDetailsPage({ params }: PageProps) {
               className={`inline-flex items-center px-4 py-2 rounded-lg border ${statusConfig?.color || "bg-gray-100 text-gray-800 border-gray-200"}`}
             >
               <StatusIcon className="mr-2 h-5 w-5" />
-              <span className="font-medium">{statusConfig?.label || order.status}</span>
+              <span className="font-medium">
+                {statusConfig?.label || order.status}
+              </span>
             </div>
           </div>
         </div>
@@ -272,17 +276,20 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                   </p>
                   {order.confirmedAt && (
                     <p className="mt-2 text-xs text-gray-500">
-                      Confirmed on {format(new Date(order.confirmedAt), "PPP 'at' p")}
+                      Confirmed on{" "}
+                      {format(new Date(order.confirmedAt), "PPP 'at' p")}
                     </p>
                   )}
                   {order.fulfilledAt && (
                     <p className="mt-1 text-xs text-gray-500">
-                      Fulfilled on {format(new Date(order.fulfilledAt), "PPP 'at' p")}
+                      Fulfilled on{" "}
+                      {format(new Date(order.fulfilledAt), "PPP 'at' p")}
                     </p>
                   )}
                   {order.completedAt && (
                     <p className="mt-1 text-xs text-gray-500">
-                      Completed on {format(new Date(order.completedAt), "PPP 'at' p")}
+                      Completed on{" "}
+                      {format(new Date(order.completedAt), "PPP 'at' p")}
                     </p>
                   )}
                 </div>
@@ -294,10 +301,13 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                   <p className="text-sm font-medium text-red-900">
                     Cancellation Reason:
                   </p>
-                  <p className="mt-1 text-sm text-red-700">{order.cancelReason}</p>
+                  <p className="mt-1 text-sm text-red-700">
+                    {order.cancelReason}
+                  </p>
                   {order.cancelledAt && (
                     <p className="mt-2 text-xs text-red-600">
-                      Cancelled on {format(new Date(order.cancelledAt), "PPP 'at' p")}
+                      Cancelled on{" "}
+                      {format(new Date(order.cancelledAt), "PPP 'at' p")}
                     </p>
                   )}
                 </div>
@@ -307,11 +317,16 @@ export default async function OrderDetailsPage({ params }: PageProps) {
             {/* Order Items */}
             <div className="bg-white rounded-lg shadow overflow-hidden">
               <div className="p-6 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900">Order Items</h2>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Order Items
+                </h2>
               </div>
               <div className="divide-y divide-gray-200">
                 {order.items.map((item: any) => (
-                  <div key={item.id} className="p-6 flex items-center space-x-4">
+                  <div
+                    key={item.id}
+                    className="p-6 flex items-center space-x-4"
+                  >
                     {/* Product Image */}
                     <div className="flex-shrink-0">
                       {item.product?.primaryPhotoUrl ? (
@@ -450,7 +465,8 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                       </p>
                       <p className="text-sm text-gray-600">
                         {format(new Date(order.scheduledDate), "PPP")}
-                        {order.scheduledTimeSlot && ` • ${order.scheduledTimeSlot}`}
+                        {order.scheduledTimeSlot &&
+                          ` • ${order.scheduledTimeSlot}`}
                       </p>
                     </div>
                   </div>
@@ -468,7 +484,8 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                         {order.deliveryAddress.street2 &&
                           `, ${order.deliveryAddress.street2}`}
                         <br />
-                        {order.deliveryAddress.city}, {order.deliveryAddress.state}{" "}
+                        {order.deliveryAddress.city},{" "}
+                        {order.deliveryAddress.state}{" "}
                         {order.deliveryAddress.zipCode}
                       </p>
                     </div>
@@ -484,7 +501,9 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                       </p>
                       <p className="text-sm text-gray-600">
                         {order.shippingService && `${order.shippingService}: `}
-                        <span className="font-mono">{order.trackingNumber}</span>
+                        <span className="font-mono">
+                          {order.trackingNumber}
+                        </span>
                       </p>
                     </div>
                   </div>
@@ -573,7 +592,9 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                   <PaymentIcon className="h-5 w-5 text-gray-400 mt-0.5" />
                   <div>
                     <p className="text-sm font-medium text-gray-900">Status</p>
-                    <p className={`text-sm font-medium ${paymentConfig?.color}`}>
+                    <p
+                      className={`text-sm font-medium ${paymentConfig?.color}`}
+                    >
                       {paymentConfig?.label || order.paymentStatus}
                     </p>
                   </div>
@@ -621,7 +642,9 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                   <div className="pt-3 border-t border-gray-200">
                     <p className="text-xs text-gray-500">
                       Payment Intent:{" "}
-                      <span className="font-mono">{order.stripePaymentIntentId}</span>
+                      <span className="font-mono">
+                        {order.stripePaymentIntentId}
+                      </span>
                     </p>
                   </div>
                 )}
@@ -637,7 +660,9 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                 <div className="flex items-start space-x-3">
                   <div className="flex-shrink-0 w-2 h-2 mt-2 bg-green-500 rounded-full"></div>
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Order Placed</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      Order Placed
+                    </p>
                     <p className="text-xs text-gray-500">
                       {format(new Date(order.createdAt), "PPP 'at' p")}
                     </p>
@@ -730,10 +755,12 @@ export default async function OrderDetailsPage({ params }: PageProps) {
               <div className="flex items-start">
                 <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
                 <div>
-                  <h3 className="text-sm font-medium text-blue-900">Need Help?</h3>
+                  <h3 className="text-sm font-medium text-blue-900">
+                    Need Help?
+                  </h3>
                   <p className="mt-1 text-xs text-blue-700">
-                    Contact customer support if you have questions about this order or
-                    need to make changes.
+                    Contact customer support if you have questions about this
+                    order or need to make changes.
                   </p>
                 </div>
               </div>

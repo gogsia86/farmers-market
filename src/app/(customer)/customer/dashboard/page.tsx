@@ -26,7 +26,8 @@ export default async function CustomerDashboardPage() {
         include: {
           product: {
             select: {
-              tax: true,
+              id: true,
+              name: true,
               images: true,
             },
           },
@@ -42,7 +43,7 @@ export default async function CustomerDashboardPage() {
       farm: {
         select: {
           id: true,
-          tax: true,
+          name: true,
           slug: true,
           description: true,
           logoUrl: true,
@@ -54,8 +55,9 @@ export default async function CustomerDashboardPage() {
   });
 
   // Calculate total spent
-  const totalSpent = orders.reduce((sum: any, order: any) => sum + Number(order.total),
-    0
+  const totalSpent = orders.reduce(
+    (sum: any, order: any) => sum + Number(order.total),
+    0,
   );
 
   return (
@@ -117,8 +119,12 @@ export default async function CustomerDashboardPage() {
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Orders</p>
-                <p className="text-2xl font-bold text-gray-900">{orders.length}</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Orders
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {orders.length}
+                </p>
               </div>
             </div>
           </div>
@@ -167,7 +173,9 @@ export default async function CustomerDashboardPage() {
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Favorite Farms</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Favorite Farms
+                </p>
                 <p className="text-2xl font-bold text-gray-900">
                   {favorites.length}
                 </p>
@@ -179,7 +187,9 @@ export default async function CustomerDashboardPage() {
         {/* Recent Orders */}
         <div className="bg-white rounded-lg shadow mb-8">
           <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-gray-900">Recent Orders</h2>
+            <h2 className="text-xl font-semibold text-gray-900">
+              Recent Orders
+            </h2>
             <Link
               href="/orders"
               className="text-sm text-green-600 hover:text-green-700 font-medium"
@@ -234,16 +244,18 @@ export default async function CustomerDashboardPage() {
                               Order #{order.orderNumber}
                             </p>
                             <span
-                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${order.status === "COMPLETED"
-                                ? "bg-green-100 text-green-800"
-                                : order.status === "PENDING"
-                                  ? "bg-yellow-100 text-yellow-800"
-                                  : order.status === "CONFIRMED" || order.status === "PREPARING"
-                                    ? "bg-blue-100 text-blue-800"
-                                    : order.status === "CANCELLED"
-                                      ? "bg-red-100 text-red-800"
-                                      : "bg-gray-100 text-gray-800"
-                                }`}
+                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                order.status === "COMPLETED"
+                                  ? "bg-green-100 text-green-800"
+                                  : order.status === "PENDING"
+                                    ? "bg-yellow-100 text-yellow-800"
+                                    : order.status === "CONFIRMED" ||
+                                        order.status === "PREPARING"
+                                      ? "bg-blue-100 text-blue-800"
+                                      : order.status === "CANCELLED"
+                                        ? "bg-red-100 text-red-800"
+                                        : "bg-gray-100 text-gray-800"
+                              }`}
                             >
                               {order.status.replace(/_/g, " ")}
                             </span>
@@ -254,11 +266,14 @@ export default async function CustomerDashboardPage() {
                             {Number(order.total).toFixed(2)}
                           </p>
                           <p className="text-xs text-gray-500 mt-1">
-                            {new Date(order.createdAt).toLocaleDateString("en-US", {
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                            })}
+                            {new Date(order.createdAt).toLocaleDateString(
+                              "en-US",
+                              {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              },
+                            )}
                           </p>
                         </div>
                         <svg

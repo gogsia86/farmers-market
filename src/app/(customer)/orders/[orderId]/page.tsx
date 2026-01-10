@@ -72,7 +72,7 @@ export default async function OrderDetailsPage({ params }: PageProps) {
           product: {
             select: {
               id: true,
-              tax: true,
+              name: true,
               slug: true,
               images: true,
             },

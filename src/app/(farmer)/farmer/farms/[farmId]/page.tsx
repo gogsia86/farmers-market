@@ -54,7 +54,7 @@ export default async function FarmDetailsPage({ params }: PageProps) {
   const farm = await database.farm.findUnique({
     where: { id: farmId },
     include: {
-      ownerId: {
+      owner: {
         select: {
           id: true,
           firstName: true,
@@ -97,25 +97,30 @@ export default async function FarmDetailsPage({ params }: PageProps) {
   }
 
   // Authorization check - only owner can access
-  const isOwner = farm.ownerId === session.user.id;
+  const isOwner = farm.owner.id === session.user.id;
 
   if (!isOwner && session.user.role !== "ADMIN") {
     redirect("/farmer/dashboard");
   }
 
   // Calculate statistics
-  const activeProducts = farm.products.filter((p: any) => p.status === "ACTIVE").length;
+  const activeProducts = farm.products.filter(
+    (p: any) => p.status === "ACTIVE",
+  ).length;
   const totalRevenue = farm.orders
     .filter((o: any) => ["COMPLETED", "COMPLETED"].includes(o.status))
     .reduce((sum: any, order: any) => sum + Number(order.total), 0);
 
   const inventoryValue = farm.products.reduce((sum: any, product: any) => {
-    const qty = product.quantityAvailable ? Number(product.quantityAvailable) : 0;
+    const qty = product.quantityAvailable
+      ? Number(product.quantityAvailable)
+      : 0;
     const price = Number(product.price);
     return sum + qty * price;
   }, 0);
 
-  const pendingOrders = farm.orders.filter((o: any) => o.status === "PENDING" || o.status === "CONFIRMED"
+  const pendingOrders = farm.orders.filter(
+    (o: any) => o.status === "PENDING" || o.status === "CONFIRMED",
   ).length;
 
   // Get verification status badge
@@ -169,7 +174,9 @@ export default async function FarmDetailsPage({ params }: PageProps) {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex-1">
               <div className="flex items-center gap-3">
-                <h1 className="text-3xl font-bold text-gray-900">{farm.name}</h1>
+                <h1 className="text-3xl font-bold text-gray-900">
+                  {farm.name}
+                </h1>
                 {getVerificationBadge()}
               </div>
               <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-600">
@@ -217,9 +224,9 @@ export default async function FarmDetailsPage({ params }: PageProps) {
                   Verification Pending
                 </h3>
                 <p className="mt-1 text-sm text-yellow-700">
-                  Your farm is currently under review. You can add products, but they won't
-                  be visible to customers until your farm is verified (usually within 24-48
-                  hours).
+                  Your farm is currently under review. You can add products, but
+                  they won't be visible to customers until your farm is verified
+                  (usually within 24-48 hours).
                 </p>
               </div>
             </div>
@@ -235,8 +242,9 @@ export default async function FarmDetailsPage({ params }: PageProps) {
                   Verification Rejected
                 </h3>
                 <p className="mt-1 text-sm text-red-700">
-                  Your farm verification was rejected. Please review the feedback and update
-                  your farm information. Contact support if you need assistance.
+                  Your farm verification was rejected. Please review the
+                  feedback and update your farm information. Contact support if
+                  you need assistance.
                 </p>
                 {farm.rejectionReason && (
                   <p className="mt-2 text-sm text-red-800 font-medium">
@@ -333,7 +341,9 @@ export default async function FarmDetailsPage({ params }: PageProps) {
               </h2>
               <div className="space-y-4">
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Description</p>
+                  <p className="text-sm font-medium text-gray-500">
+                    Description
+                  </p>
                   <p className="mt-1 text-sm text-gray-900">
                     {farm.description || "No description provided"}
                   </p>
@@ -354,7 +364,7 @@ export default async function FarmDetailsPage({ params }: PageProps) {
                       Farming Practices
                     </p>
                     <p className="mt-1 text-sm text-gray-900">
-                      {typeof farm.farmingPractices === 'string'
+                      {typeof farm.farmingPractices === "string"
                         ? farm.farmingPractices
                         : JSON.stringify(farm.farmingPractices)}
                     </p>
@@ -370,16 +380,20 @@ export default async function FarmDetailsPage({ params }: PageProps) {
                   Operating Hours
                 </h2>
                 <div className="space-y-2">
-                  {Object.entries(operatingHours).map(([day, hours]: [string, any]) => (
-                    <div key={day} className="flex justify-between text-sm">
-                      <span className="font-medium text-gray-700 capitalize">{day}</span>
-                      <span className="text-gray-600">
-                        {hours.open && hours.close
-                          ? `${hours.open} - ${hours.close}`
-                          : "Closed"}
-                      </span>
-                    </div>
-                  ))}
+                  {Object.entries(operatingHours).map(
+                    ([day, hours]: [string, any]) => (
+                      <div key={day} className="flex justify-between text-sm">
+                        <span className="font-medium text-gray-700 capitalize">
+                          {day}
+                        </span>
+                        <span className="text-gray-600">
+                          {hours.open && hours.close
+                            ? `${hours.open} - ${hours.close}`
+                            : "Closed"}
+                        </span>
+                      </div>
+                    ),
+                  )}
                 </div>
               </div>
             )}
@@ -387,7 +401,9 @@ export default async function FarmDetailsPage({ params }: PageProps) {
             {/* Recent Orders */}
             <div className="rounded-lg bg-white p-6 shadow">
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900">Recent Orders</h2>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Recent Orders
+                </h2>
                 <Link
                   href={`/farmer/farms/${farm.id}/orders`}
                   className="text-sm font-medium text-green-600 hover:text-green-700"
@@ -417,9 +433,12 @@ export default async function FarmDetailsPage({ params }: PageProps) {
                         <span
                           className={cn(
                             "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
-                            order.status === "PENDING" && "bg-yellow-100 text-yellow-800",
-                            order.status === "CONFIRMED" && "bg-blue-100 text-blue-800",
-                            order.status === "COMPLETED" && "bg-green-100 text-green-800"
+                            order.status === "PENDING" &&
+                              "bg-yellow-100 text-yellow-800",
+                            order.status === "CONFIRMED" &&
+                              "bg-blue-100 text-blue-800",
+                            order.status === "COMPLETED" &&
+                              "bg-green-100 text-green-800",
                           )}
                         >
                           {order.status}
@@ -440,7 +459,9 @@ export default async function FarmDetailsPage({ params }: PageProps) {
           <div className="space-y-6">
             {/* Quick Actions */}
             <div className="rounded-lg bg-white p-6 shadow">
-              <h2 className="mb-4 text-lg font-semibold text-gray-900">Quick Actions</h2>
+              <h2 className="mb-4 text-lg font-semibold text-gray-900">
+                Quick Actions
+              </h2>
               <div className="space-y-3">
                 <Link
                   href={`/farmer/farms/${farm.id}/products`}
@@ -455,14 +476,18 @@ export default async function FarmDetailsPage({ params }: PageProps) {
                   href={`/farmer/farms/${farm.id}/products/new`}
                   className="flex items-center justify-between rounded-lg border border-gray-200 p-3 hover:bg-gray-50"
                 >
-                  <span className="text-sm font-medium text-gray-900">Add Product</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    Add Product
+                  </span>
                   <Package className="h-5 w-5 text-gray-400" />
                 </Link>
                 <Link
                   href={`/farmer/farms/${farm.id}/orders`}
                   className="flex items-center justify-between rounded-lg border border-gray-200 p-3 hover:bg-gray-50"
                 >
-                  <span className="text-sm font-medium text-gray-900">View Orders</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    View Orders
+                  </span>
                   <ShoppingBag className="h-5 w-5 text-gray-400" />
                 </Link>
               </div>
@@ -470,7 +495,9 @@ export default async function FarmDetailsPage({ params }: PageProps) {
 
             {/* Farm Metrics */}
             <div className="rounded-lg bg-white p-6 shadow">
-              <h2 className="mb-4 text-lg font-semibold text-gray-900">Performance</h2>
+              <h2 className="mb-4 text-lg font-semibold text-gray-900">
+                Performance
+              </h2>
               <div className="space-y-4">
                 <div>
                   <div className="flex items-center justify-between text-sm">
@@ -483,7 +510,9 @@ export default async function FarmDetailsPage({ params }: PageProps) {
                 <div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-600">Pending Orders</span>
-                    <span className="font-semibold text-gray-900">{pendingOrders}</span>
+                    <span className="font-semibold text-gray-900">
+                      {pendingOrders}
+                    </span>
                   </div>
                 </div>
                 <div>

@@ -47,11 +47,11 @@ export async function GET(request: NextRequest) {
       include: {
         product: {
           include: {
-            farmId: {
+            farm: {
               select: {
                 id: true,
+                name: true,
                 slug: true,
-                tags: true,
               },
             },
           },
@@ -172,10 +172,11 @@ export async function POST(request: NextRequest) {
     const product = await database.product.findUnique({
       where: { id: productId },
       include: {
-        farmId: {
+        farm: {
           select: {
             id: true,
-            tags: true,
+            name: true,
+            status: true,
           },
         },
       },
@@ -277,10 +278,10 @@ export async function POST(request: NextRequest) {
         include: {
           product: {
             include: {
-              farmId: {
+              farm: {
                 select: {
                   id: true,
-                  tags: true,
+                  name: true,
                   slug: true,
                 },
               },
@@ -308,10 +309,10 @@ export async function POST(request: NextRequest) {
         include: {
           product: {
             include: {
-              farmId: {
+              farm: {
                 select: {
                   id: true,
-                  tags: true,
+                  name: true,
                   slug: true,
                 },
               },
@@ -470,10 +471,10 @@ export async function PATCH(request: NextRequest) {
       include: {
         product: {
           include: {
-            farmId: {
+            farm: {
               select: {
                 id: true,
-                tags: true,
+                name: true,
                 slug: true,
               },
             },

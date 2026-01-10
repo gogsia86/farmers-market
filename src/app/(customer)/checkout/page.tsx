@@ -83,7 +83,7 @@ export default async function CheckoutPage() {
     include: {
       product: {
         include: {
-          farmId: {
+          farm: {
             select: {
               id: true,
               name: true,

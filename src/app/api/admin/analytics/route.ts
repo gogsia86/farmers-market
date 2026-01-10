@@ -9,7 +9,7 @@ import type { Product, Order } from "@prisma/client";
 import { database } from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // Helper Functions
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             message: "Authentication required",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -55,7 +55,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             message: "Admin access required",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -173,7 +173,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             select: {
               id: true,
               email: true,
-              type: true,
+              name: true,
               firstName: true,
               lastName: true,
             },
@@ -186,43 +186,47 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const previousPeriodStart = new Date(startDate);
     previousPeriodStart.setDate(previousPeriodStart.getDate() - days);
 
-    const [previousNewUsers, previousNewFarms, previousOrders, previousRevenue] =
-      await Promise.all([
-        database.user.count({
-          where: {
-            createdAt: {
-              gte: previousPeriodStart,
-              lt: startDate,
-            },
+    const [
+      previousNewUsers,
+      previousNewFarms,
+      previousOrders,
+      previousRevenue,
+    ] = await Promise.all([
+      database.user.count({
+        where: {
+          createdAt: {
+            gte: previousPeriodStart,
+            lt: startDate,
           },
-        }),
-        database.farm.count({
-          where: {
-            createdAt: {
-              gte: previousPeriodStart,
-              lt: startDate,
-            },
+        },
+      }),
+      database.farm.count({
+        where: {
+          createdAt: {
+            gte: previousPeriodStart,
+            lt: startDate,
           },
-        }),
-        database.order.count({
-          where: {
-            createdAt: {
-              gte: previousPeriodStart,
-              lt: startDate,
-            },
+        },
+      }),
+      database.order.count({
+        where: {
+          createdAt: {
+            gte: previousPeriodStart,
+            lt: startDate,
           },
-        }),
-        database.payment.aggregate({
-          _sum: { amount: true },
-          where: {
-            status: "PAID",
-            paidAt: {
-              gte: previousPeriodStart,
-              lt: startDate,
-            },
+        },
+      }),
+      database.payment.aggregate({
+        _sum: { amount: true },
+        where: {
+          status: "PAID",
+          paidAt: {
+            gte: previousPeriodStart,
+            lt: startDate,
           },
-        }),
-      ]);
+        },
+      }),
+    ]);
 
     // Calculate growth percentages
     const userGrowth =
@@ -240,9 +244,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const revenueGrowth =
       previousRevenue._sum.amount && recentRevenue._sum.amount
         ? ((parseFloat(recentRevenue._sum.amount.toString()) -
-          parseFloat(previousRevenue._sum.amount.toString())) /
-          parseFloat(previousRevenue._sum.amount.toString())) *
-        100
+            parseFloat(previousRevenue._sum.amount.toString())) /
+            parseFloat(previousRevenue._sum.amount.toString())) *
+          100
         : 100;
 
     // Get top performing farms by revenue
@@ -280,7 +284,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     });
 
     // Get customer details for recent orders
-    const customerIds = [...new Set(recentOrdersDetails.map(o => o.customerId))];
+    const customerIds = [
+      ...new Set(recentOrdersDetails.map((o) => o.customerId)),
+    ];
     const customers = await database.user.findMany({
       where: { id: { in: customerIds } },
       select: {
@@ -291,7 +297,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         lastName: true,
       },
     });
-    const customerMap = new Map(customers.map(c => [c.id, c]));
+    const customerMap = new Map(customers.map((c) => [c.id, c]));
 
     // Format usersByRole
     const roleDistribution = usersByRole.reduce(
@@ -299,7 +305,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         acc[role] = _count;
         return acc;
       },
-      {} as Record<string, number>
+      {} as Record<string, number>,
     );
 
     // Format ordersByStatus
@@ -308,7 +314,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         acc[status] = _count;
         return acc;
       },
-      {} as Record<string, number>
+      {} as Record<string, number>,
     );
 
     // Format paymentsByStatus
@@ -320,7 +326,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         };
         return acc;
       },
-      {} as Record<string, { count: number; total: number }>
+      {} as Record<string, { count: number; total: number }>,
     );
 
     // Calculate average order value
@@ -424,7 +430,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
               : "Failed to fetch analytics",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

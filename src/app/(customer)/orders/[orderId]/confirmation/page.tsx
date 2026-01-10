@@ -58,7 +58,7 @@ export default async function OrderConfirmationPage({ params }: PageProps) {
           product: {
             select: {
               id: true,
-              tax: true,
+              name: true,
               images: true,
             },
           },
