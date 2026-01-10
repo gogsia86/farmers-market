@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "rm -f package-lock.json && npm_config_platform=linux npm_config_arch=x64 npm install --force --no-audit",
   "buildCommand": "npm run build",
   "framework": "nextjs",
   "build": {
