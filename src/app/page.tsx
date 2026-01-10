@@ -15,8 +15,8 @@ export const revalidate = 0;
 
 export default async function HomePage() {
   // Fetch featured data with error handling
-  let featuredProducts = [];
-  let featuredFarms = [];
+  let featuredProducts: any[] = [];
+  let featuredFarms: any[] = [];
 
   try {
     const [products, { farms }] = await Promise.all([

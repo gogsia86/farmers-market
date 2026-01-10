@@ -120,7 +120,9 @@ export async function GET(
       );
     }
 
-    const pdfBlob = await InvoicePDFService.generateInvoice({ order });
+    const pdfBlob = await InvoicePDFService.generateInvoice({
+      order: order as any,
+    });
 
     // Convert blob to buffer for Next.js response
     const arrayBuffer = await pdfBlob.arrayBuffer();

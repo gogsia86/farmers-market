@@ -9,7 +9,7 @@ import type { Order } from "@prisma/client";
 import { database } from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // Helper Functions
@@ -29,7 +29,7 @@ async function isAdmin(userId: string): Promise<boolean> {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
     const session = await auth();
@@ -43,7 +43,7 @@ export async function GET(
             message: "Authentication required",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -58,7 +58,7 @@ export async function GET(
             message: "Admin access required",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -108,7 +108,7 @@ export async function GET(
             message: "User not found",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -234,7 +234,7 @@ export async function GET(
     });
 
     // Get suspension details if applicable
-    let suspendedByAdmin = null;
+    let suspendedByAdmin: any = null;
     if (user.suspendedBy) {
       suspendedByAdmin = await database.user.findUnique({
         where: { id: user.suspendedBy },
@@ -295,7 +295,7 @@ export async function GET(
               : "Failed to fetch user details",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

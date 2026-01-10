@@ -173,7 +173,7 @@ export class SearchService {
         database.farm.count({ where: farmWhere }),
       ]);
 
-      result.farms = farms;
+      result.farms = farms as any;
       result.total.farms = farmCount;
     }
 

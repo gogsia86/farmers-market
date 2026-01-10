@@ -26,7 +26,7 @@ const RegisterSchema = z.object({
     .min(8, "Password must be at least 8 characters")
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      "Password must contain uppercase, lowercase, and numbers"
+      "Password must contain uppercase, lowercase, and numbers",
     ),
   firstName: z.string().min(2, "First name must be at least 2 characters"),
   lastName: z.string().min(2, "Last name must be at least 2 characters"),
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
             })),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
             message: "An account with this email already exists",
           },
         },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
               message: "Farm name and address are required for farmers",
             },
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
       });
 
       // Create farm if user is a farmer
-      let farm = null;
+      let farm: any = null;
       if (data.role === "FARMER" && data.farmName && data.farmAddress) {
         // Generate unique slug
         const baseSlug = data.farmName
@@ -203,12 +203,12 @@ export async function POST(request: NextRequest) {
               : "Account created successfully! You can now sign in.",
         },
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     apiLogger.error(
       "Registration error",
-      error instanceof Error ? error : new Error(String(error))
+      error instanceof Error ? error : new Error(String(error)),
     );
 
     return NextResponse.json(
@@ -219,7 +219,7 @@ export async function POST(request: NextRequest) {
           message: "Failed to create account. Please try again.",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
