@@ -10,7 +10,7 @@ import type { Product, ProductCategory, ProductStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 /**
  * Update product validation schema
@@ -18,19 +18,21 @@ import { logger } from '@/lib/monitoring/logger';
 const UpdateProductSchema = z.object({
   name: z.string().min(2).max(200).optional(),
   description: z.string().min(10).max(2000).optional(),
-  category: z.enum([
-    "VEGETABLES",
-    "FRUITS",
-    "GRAINS",
-    "DAIRY",
-    "MEAT",
-    "EGGS",
-    "HONEY",
-    "PRESERVES",
-    "BAKED_GOODS",
-    "HERBS",
-    "OTHER",
-  ]).optional(),
+  category: z
+    .enum([
+      "VEGETABLES",
+      "FRUITS",
+      "GRAINS",
+      "DAIRY",
+      "MEAT",
+      "EGGS",
+      "HONEY",
+      "PRESERVES",
+      "BAKED_GOODS",
+      "HERBS",
+      "OTHER",
+    ])
+    .optional(),
   price: z.number().positive().optional(),
   unit: z.string().optional(),
   quantityAvailable: z.number().nonnegative().optional(),
@@ -39,7 +41,9 @@ const UpdateProductSchema = z.object({
   harvestDate: z.string().optional(),
   storageInstructions: z.string().optional(),
   tags: z.array(z.string()).optional(),
-  status: z.enum(["ACTIVE", "OUT_OF_STOCK", "DISCONTINUED", "DRAFT"]).optional(),
+  status: z
+    .enum(["ACTIVE", "OUT_OF_STOCK", "DISCONTINUED", "DRAFT"])
+    .optional(),
 });
 
 interface ProductResponse {
@@ -62,7 +66,7 @@ interface ProductResponse {
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { productId: string } }
+  { params }: { params: { productId: string } },
 ): Promise<NextResponse<ProductResponse>> {
   try {
     const { productId } = params;
@@ -70,17 +74,17 @@ export async function GET(
     const product = await database.product.findUnique({
       where: { id: productId },
       include: {
-        farmId: {
+        farm: {
           select: {
             id: true,
-            tags: true,
+            name: true,
             slug: true,
             location: true,
             certifications: true,
             owner: {
               select: {
                 id: true,
-                tags: true,
+                name: true,
                 firstName: true,
                 lastName: true,
               },
@@ -99,7 +103,7 @@ export async function GET(
             message: `Product with ID ${productId} not found`,
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -134,7 +138,7 @@ export async function GET(
             error instanceof Error ? error.message : "Failed to fetch product",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -145,7 +149,7 @@ export async function GET(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { productId: string } }
+  { params }: { params: { productId: string } },
 ): Promise<NextResponse<ProductResponse>> {
   try {
     const session = await auth();
@@ -159,7 +163,7 @@ export async function PATCH(
             message: "You must be logged in to update products",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -175,7 +179,7 @@ export async function PATCH(
             message: "Only farmers and admins can update products",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -185,7 +189,7 @@ export async function PATCH(
     const existingProduct = await database.product.findUnique({
       where: { id: productId },
       include: {
-        farmId: {
+        farm: {
           select: {
             id: true,
             ownerId: true,
@@ -203,7 +207,7 @@ export async function PATCH(
             message: `Product with ID ${productId} not found`,
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -217,7 +221,7 @@ export async function PATCH(
             message: "You don't have permission to update this product",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -235,7 +239,7 @@ export async function PATCH(
             details: validation.error.flatten(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -274,7 +278,10 @@ export async function PATCH(
       // Auto-update status based on quantity
       if (updateData.quantityAvailable === 0 && !updateData.status) {
         data.status = "OUT_OF_STOCK" as ProductStatus;
-      } else if (updateData.quantityAvailable > 0 && existingProduct.status === "OUT_OF_STOCK") {
+      } else if (
+        updateData.quantityAvailable > 0 &&
+        existingProduct.status === "OUT_OF_STOCK"
+      ) {
         data.status = "ACTIVE" as ProductStatus;
       }
     }
@@ -308,10 +315,10 @@ export async function PATCH(
       where: { id: productId },
       data,
       include: {
-        farmId: {
+        farm: {
           select: {
             id: true,
-            tags: true,
+            name: true,
             slug: true,
           },
         },
@@ -340,7 +347,7 @@ export async function PATCH(
             error instanceof Error ? error.message : "Failed to update product",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -351,7 +358,7 @@ export async function PATCH(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { productId: string } }
+  { params }: { params: { productId: string } },
 ): Promise<NextResponse<ProductResponse>> {
   try {
     const session = await auth();
@@ -365,7 +372,7 @@ export async function DELETE(
             message: "You must be logged in to delete products",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -381,7 +388,7 @@ export async function DELETE(
             message: "Only farmers and admins can delete products",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -391,7 +398,7 @@ export async function DELETE(
     const existingProduct = await database.product.findUnique({
       where: { id: productId },
       include: {
-        farmId: {
+        farm: {
           select: {
             id: true,
             ownerId: true,
@@ -409,7 +416,7 @@ export async function DELETE(
             message: `Product with ID ${productId} not found`,
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -423,7 +430,7 @@ export async function DELETE(
             message: "You don't have permission to delete this product",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -435,10 +442,10 @@ export async function DELETE(
         status: "DISCONTINUED" as ProductStatus,
       },
       include: {
-        farmId: {
+        farm: {
           select: {
             id: true,
-            tags: true,
+            name: true,
             slug: true,
           },
         },
@@ -467,7 +474,7 @@ export async function DELETE(
             error instanceof Error ? error.message : "Failed to delete product",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
