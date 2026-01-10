@@ -5,7 +5,8 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Farmers Market Platform | Fresh Local Produce",
-  description: "Connect with local farmers and get fresh, organic produce delivered to your door",
+  description:
+    "Connect with local farmers and get fresh, organic produce delivered to your door",
 };
 
 // Force dynamic rendering - don't pre-render at build time
@@ -13,11 +14,21 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function HomePage() {
-  // Fetch featured data
-  const [featuredProducts, { farms: featuredFarms }] = await Promise.all([
-    productService.getFeaturedProducts(8),
-    farmService.getAllFarms({ status: "ACTIVE", limit: 6 }),
-  ]);
+  // Fetch featured data with error handling
+  let featuredProducts = [];
+  let featuredFarms = [];
+
+  try {
+    const [products, { farms }] = await Promise.all([
+      productService.getFeaturedProducts(8),
+      farmService.getAllFarms({ status: "ACTIVE", limit: 6 }),
+    ]);
+    featuredProducts = products;
+    featuredFarms = farms;
+  } catch (error) {
+    console.error("Error fetching homepage data:", error);
+    // Continue with empty arrays - page will still render
+  }
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-green-50 to-white">
@@ -29,8 +40,8 @@ export default async function HomePage() {
               🌾 Fresh from Farm to Table
             </h1>
             <p className="text-xl md:text-2xl mb-8 text-green-50">
-              Support local farmers. Get fresh, organic produce delivered to your door.
-              Sustainable farming for a better tomorrow.
+              Support local farmers. Get fresh, organic produce delivered to
+              your door. Sustainable farming for a better tomorrow.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -99,7 +110,8 @@ export default async function HomePage() {
               100% Fresh & Organic
             </h3>
             <p className="text-gray-600">
-              Directly from local farms to your table. No middlemen, just fresh produce.
+              Directly from local farms to your table. No middlemen, just fresh
+              produce.
             </p>
           </div>
 
@@ -123,7 +135,8 @@ export default async function HomePage() {
               Fast Delivery
             </h3>
             <p className="text-gray-600">
-              Order today, enjoy tomorrow. Quick delivery from farms in your area.
+              Order today, enjoy tomorrow. Quick delivery from farms in your
+              area.
             </p>
           </div>
 
@@ -147,7 +160,8 @@ export default async function HomePage() {
               Support Local Farmers
             </h3>
             <p className="text-gray-600">
-              Your purchase directly supports local farming communities and sustainability.
+              Your purchase directly supports local farming communities and
+              sustainability.
             </p>
           </div>
         </div>
@@ -239,7 +253,8 @@ export default async function HomePage() {
                         per {product.unit}
                       </span>
                     </div>
-                    {(product as any).quantityAvailable && Number((product as any).quantityAvailable) > 0 ? (
+                    {(product as any).quantityAvailable &&
+                    Number((product as any).quantityAvailable) > 0 ? (
                       <div className="mt-3">
                         <span className="text-xs text-gray-600">
                           {Number((product as any).quantityAvailable)} available
@@ -347,18 +362,19 @@ export default async function HomePage() {
                           </svg>
                           {farm.city}, {farm.state}
                         </div>
-                        {farm.averageRating && Number(farm.averageRating) > 0 && (
-                          <div className="flex items-center text-sm text-yellow-600">
-                            <svg
-                              className="w-4 h-4 mr-1"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                            </svg>
-                            {Number(farm.averageRating).toFixed(1)}
-                          </div>
-                        )}
+                        {farm.averageRating &&
+                          Number(farm.averageRating) > 0 && (
+                            <div className="flex items-center text-sm text-yellow-600">
+                              <svg
+                                className="w-4 h-4 mr-1"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                              </svg>
+                              {Number(farm.averageRating).toFixed(1)}
+                            </div>
+                          )}
                       </div>
                     </div>
                   </div>
@@ -376,8 +392,8 @@ export default async function HomePage() {
             Are you a farmer?
           </h2>
           <p className="text-xl mb-8 text-green-50 max-w-2xl mx-auto">
-            Join our platform and connect with customers who value fresh, local produce.
-            Start selling your harvest today!
+            Join our platform and connect with customers who value fresh, local
+            produce. Start selling your harvest today!
           </p>
           <Link
             href="/login"
