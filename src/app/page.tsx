@@ -1,5 +1,3 @@
-import { farmService } from "@/lib/services/farm.service";
-import { productService } from "@/lib/services/product.service";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -9,26 +7,10 @@ export const metadata: Metadata = {
     "Connect with local farmers and get fresh, organic produce delivered to your door",
 };
 
-// Force dynamic rendering - don't pre-render at build time
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
-export default async function HomePage() {
-  // Fetch featured data with error handling
-  let featuredProducts = [];
-  let featuredFarms = [];
-
-  try {
-    const [products, { farms }] = await Promise.all([
-      productService.getFeaturedProducts(8),
-      farmService.getAllFarms({ status: "ACTIVE", limit: 6 }),
-    ]);
-    featuredProducts = products;
-    featuredFarms = farms;
-  } catch (error) {
-    console.error("Error fetching homepage data:", error);
-    // Continue with empty arrays - page will still render
-  }
+export default function HomePage() {
+  // Temporarily using empty arrays for testing
+  const featuredProducts: any[] = [];
+  const featuredFarms: any[] = [];
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-green-50 to-white">
