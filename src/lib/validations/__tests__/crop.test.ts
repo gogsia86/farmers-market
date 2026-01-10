@@ -20,7 +20,7 @@ describe("⚡ Crop Validation Schemas - Divine Test Suite", () => {
     it("accepts all valid seasons", () => {
       const validSeasons = ["SPRING", "SUMMER", "FALL", "WINTER"];
 
-      validSeasons.forEach((season) => {
+      validSeasons.forEach((season: any) => {
         const result = seasonSchema.safeParse(season);
         expect(result.success).toBe(true);
         if (result.success) {
@@ -40,7 +40,7 @@ describe("⚡ Crop Validation Schemas - Divine Test Suite", () => {
         123,
       ];
 
-      invalidSeasons.forEach((season) => {
+      invalidSeasons.forEach((season: any) => {
         const result = seasonSchema.safeParse(season);
         expect(result.success).toBe(false);
       });
@@ -59,7 +59,7 @@ describe("⚡ Crop Validation Schemas - Divine Test Suite", () => {
         "DORMANT",
       ];
 
-      validPhases.forEach((phase) => {
+      validPhases.forEach((phase: any) => {
         const result = growthPhaseSchema.safeParse(phase);
         expect(result.success).toBe(true);
         if (result.success) {
@@ -79,7 +79,7 @@ describe("⚡ Crop Validation Schemas - Divine Test Suite", () => {
         456,
       ];
 
-      invalidPhases.forEach((phase) => {
+      invalidPhases.forEach((phase: any) => {
         const result = growthPhaseSchema.safeParse(phase);
         expect(result.success).toBe(false);
       });
@@ -99,7 +99,7 @@ describe("⚡ Crop Validation Schemas - Divine Test Suite", () => {
         "FLOWER",
       ];
 
-      validTypes.forEach((type) => {
+      validTypes.forEach((type: any) => {
         const result = cropTypeSchema.safeParse(type);
         expect(result.success).toBe(true);
         if (result.success) {
@@ -119,7 +119,7 @@ describe("⚡ Crop Validation Schemas - Divine Test Suite", () => {
         789,
       ];
 
-      invalidTypes.forEach((type) => {
+      invalidTypes.forEach((type: any) => {
         const result = cropTypeSchema.safeParse(type);
         expect(result.success).toBe(false);
       });
@@ -224,7 +224,7 @@ describe("⚡ Crop Validation Schemas - Divine Test Suite", () => {
     it("accepts valid sunlight requirements", () => {
       const sunlightValues = ["FULL_SUN", "PARTIAL_SHADE", "FULL_SHADE"];
 
-      sunlightValues.forEach((sunlight) => {
+      sunlightValues.forEach((sunlight: any) => {
         const crop = {
           ...validCrop,
           requirements: { sunlight },
@@ -242,7 +242,7 @@ describe("⚡ Crop Validation Schemas - Divine Test Suite", () => {
         "BI_WEEKLY",
       ];
 
-      waterFrequencies.forEach((waterFrequency) => {
+      waterFrequencies.forEach((waterFrequency: any) => {
         const crop = {
           ...validCrop,
           requirements: { waterFrequency },
@@ -255,7 +255,7 @@ describe("⚡ Crop Validation Schemas - Divine Test Suite", () => {
     it("accepts valid soil type requirements", () => {
       const soilTypes = ["SANDY", "CLAY", "LOAM", "SILT", "PEAT"];
 
-      soilTypes.forEach((soilType) => {
+      soilTypes.forEach((soilType: any) => {
         const crop = {
           ...validCrop,
           requirements: { soilType },
@@ -401,7 +401,7 @@ describe("⚡ Crop Validation Schemas - Divine Test Suite", () => {
     it("accepts crop with all season types", () => {
       const seasons = ["SPRING", "SUMMER", "FALL", "WINTER"];
 
-      seasons.forEach((season) => {
+      seasons.forEach((season: any) => {
         const crop = { ...validCrop, season };
         const result = createCropSchema.safeParse(crop);
         expect(result.success).toBe(true);
@@ -420,7 +420,7 @@ describe("⚡ Crop Validation Schemas - Divine Test Suite", () => {
         "FLOWER",
       ];
 
-      types.forEach((type) => {
+      types.forEach((type: any) => {
         const crop = { ...validCrop, type };
         const result = createCropSchema.safeParse(crop);
         expect(result.success).toBe(true);
@@ -632,7 +632,7 @@ describe("⚡ Crop Validation Schemas - Divine Test Suite", () => {
     it("accepts all valid seasons", () => {
       const seasons = ["SPRING", "SUMMER", "FALL", "WINTER"];
 
-      seasons.forEach((season) => {
+      seasons.forEach((season: any) => {
         const cycle = { ...validCycle, season };
         const result = seasonalCycleSchema.safeParse(cycle);
         expect(result.success).toBe(true);
@@ -739,7 +739,7 @@ describe("⚡ Crop Validation Schemas - Divine Test Suite", () => {
     it("accepts valid season filter", () => {
       const seasons = ["SPRING", "SUMMER", "FALL", "WINTER"];
 
-      seasons.forEach((season) => {
+      seasons.forEach((season: any) => {
         const result = cropQuerySchema.safeParse({ season });
         expect(result.success).toBe(true);
       });
@@ -757,7 +757,7 @@ describe("⚡ Crop Validation Schemas - Divine Test Suite", () => {
         "FLOWER",
       ];
 
-      types.forEach((type) => {
+      types.forEach((type: any) => {
         const result = cropQuerySchema.safeParse({ type });
         expect(result.success).toBe(true);
       });
@@ -774,7 +774,7 @@ describe("⚡ Crop Validation Schemas - Divine Test Suite", () => {
         "DORMANT",
       ];
 
-      phases.forEach((growthPhase) => {
+      phases.forEach((growthPhase: any) => {
         const result = cropQuerySchema.safeParse({ growthPhase });
         expect(result.success).toBe(true);
       });
@@ -919,7 +919,7 @@ describe("⚡ Crop Validation Schemas - Divine Test Suite", () => {
         season: "SUMMER" as const,
       };
 
-      phases.forEach((growthPhase) => {
+      phases.forEach((growthPhase: any) => {
         const crop = { ...baseCrop, growthPhase };
         const result = createCropSchema.safeParse(crop);
         expect(result.success).toBe(true);
@@ -960,7 +960,7 @@ describe("⚡ Crop Validation Schemas - Divine Test Suite", () => {
         { season: "WINTER", name: "Winter Kale", type: "LEAF" },
       ];
 
-      seasonalCrops.forEach((crop) => {
+      seasonalCrops.forEach((crop: any) => {
         const fullCrop = {
           ...crop,
           farmId: "clxyz123abc456",

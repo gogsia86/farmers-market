@@ -317,7 +317,7 @@ export default function WebhookMonitoringPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {report.alerts.map((alert, index) => {
+              {report.alerts.map((alert: any, index: any) => {
                 const severityColor =
                   alert.severity === "CRITICAL"
                     ? "red"
@@ -372,7 +372,7 @@ export default function WebhookMonitoringPage() {
           </CardHeader>
           <CardContent>
             <ul className="space-y-2">
-              {report.recommendations.map((rec, index) => (
+              {report.recommendations.map((rec: any, index: any) => (
                 <li key={index} className="flex items-start gap-3 text-gray-700">
                   <span className="mt-1">•</span>
                   <span>{rec}</span>

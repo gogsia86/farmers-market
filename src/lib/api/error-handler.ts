@@ -189,7 +189,7 @@ function mapPrismaError(error: Prisma.PrismaClientKnownRequestError): AppError {
  * Format Zod validation errors
  */
 function formatZodError(error: ZodError): { message: string; details: any } {
-  const errors = error.issues.map((err) => ({
+  const errors = error.issues.map((err: any) => ({
     path: err.path.join("."),
     message: err.message,
   }));

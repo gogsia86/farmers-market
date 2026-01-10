@@ -17,7 +17,7 @@ export function Toaster() {
 
   return (
     <ToastViewport position="top-right">
-      {toasts.map((toast) => (
+      {toasts.map((toast: any) => (
         <div
           key={toast.id}
           className="animate-in slide-in-from-top-full fade-in duration-300"

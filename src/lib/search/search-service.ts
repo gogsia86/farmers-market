@@ -298,7 +298,7 @@ export class SearchService {
 
     // Filter by category
     if (category) {
-      filtered = filtered.filter((r) => r.category === category);
+      filtered = filtered.filter((r: any) => r.category === category);
     }
 
     return filtered;
@@ -322,7 +322,7 @@ export class SearchService {
       take: limit,
     });
 
-    products.forEach((p) => {
+    products.forEach((p: any) => {
       suggestions.add(p.name);
       if (p.category) suggestions.add(String(p.category));
     });
@@ -337,7 +337,7 @@ export class SearchService {
       take: limit,
     });
 
-    farms.forEach((f) => suggestions.add(f.name));
+    farms.forEach((f: any) => suggestions.add(f.name));
 
     return Array.from(suggestions).slice(0, limit);
   }

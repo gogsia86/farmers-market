@@ -474,7 +474,7 @@ describeIntegration("Product List Integration Tests", () => {
       );
       const responses = await Promise.all(requests);
 
-      responses.forEach((response) => {
+      responses.forEach((response: any) => {
         ResponseHelpers.expectSuccess(response);
       });
     });

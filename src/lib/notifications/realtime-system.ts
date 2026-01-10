@@ -205,7 +205,7 @@ export class RealtimeNotificationSystem {
     const connection = this.connections.get(connectionId);
     if (!connection) return;
 
-    channels.forEach((channel) => {
+    channels.forEach((channel: any) => {
       if (!connection.metadata.subscriptions.includes(channel)) {
         connection.metadata.subscriptions.push(channel);
       }
@@ -387,8 +387,8 @@ export class RealtimeNotificationSystem {
 
         if (connections.length > 0) {
           // User came online - send queued notifications
-          notifications.forEach((notification) => {
-            connections.forEach((conn) => {
+          notifications.forEach((notification: any) => {
+            connections.forEach((conn: any) => {
               if (conn.ws.readyState === WebSocket.OPEN) {
                 conn.ws.send(
                   JSON.stringify({
@@ -462,7 +462,7 @@ export class RealtimeNotificationSystem {
     const pendingNotifications =
       this.notificationQueue.get(connection.metadata.userId) || [];
 
-    pendingNotifications.forEach((notification) => {
+    pendingNotifications.forEach((notification: any) => {
       this.sendToConnection(connectionId, {
         type: "NOTIFICATION",
         payload: notification,
@@ -569,7 +569,7 @@ export class RealtimeNotificationSystem {
    */
   async shutdown(): Promise<void> {
     if (this.wss) {
-      this.connections.forEach((connection) => {
+      this.connections.forEach((connection: any) => {
         connection.ws.close(1000, "Server shutting down");
       });
 

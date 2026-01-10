@@ -246,7 +246,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<SearchResp
 
       // Calculate distance if location provided
       if (searchLocation && farms.length > 0) {
-        farms = farms.map((farm) => {
+        farms = farms.map((farm: any) => {
           const distance =
             farm.latitude && farm.longitude
               ? calculateDistance(
@@ -359,7 +359,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<SearchResp
 
       // Calculate distance for products (based on farm location)
       if (searchLocation && products.length > 0) {
-        products = products.map((product) => {
+        products = products.map((product: any) => {
           const distance =
             product.farm.latitude && product.farm.longitude
               ? calculateDistance(

@@ -274,14 +274,14 @@ export async function traceBatchOperations<T>(
 
   if (!enabled) {
     // Execute all operations without tracing
-    return Promise.all(operations.map((op) => op.fn()));
+    return Promise.all(operations.map((op: any) => op.fn()));
   }
 
   // Load tracing once for all operations
   const { traceAgriculturalOperation } = await import("./agricultural-tracer");
 
   return Promise.all(
-    operations.map((op) =>
+    operations.map((op: any) =>
       traceAgriculturalOperation(
         op.operation as AgriculturalOperation,
         op.attributes,

@@ -11,6 +11,8 @@
  */
 
 import { auth } from "@/lib/auth";
+
+import type { Product } from "@prisma/client";
 import { database } from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -100,12 +102,12 @@ export async function GET(request: NextRequest) {
 
     // Separate farms and products
     const favoriteFarms = favorites
-      .filter((f) => f.farmId !== null)
-      .map((f) => f);
+      .filter((f: any) => f.farmId !== null)
+      .map((f: any) => f);
 
     const favoriteProducts = favorites
-      .filter((f) => f.productId !== null)
-      .map((f) => f);
+      .filter((f: any) => f.productId !== null)
+      .map((f: any) => f);
 
     return NextResponse.json({
       success: true,

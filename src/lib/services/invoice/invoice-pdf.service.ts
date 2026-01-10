@@ -523,7 +523,7 @@ export class InvoicePDFService {
     const lines: string[] = [];
     let currentLine = "";
 
-    words.forEach((word) => {
+    words.forEach((word: any) => {
       const testLine = currentLine + (currentLine ? " " : "") + word;
       const textWidth = doc.getTextWidth(testLine);
 

@@ -144,7 +144,7 @@ async function fetchProductsPage(
  *
  *   return (
  *     <div>
- *       {products.map((product, index) => (
+ *       {products.map((product: any, index: any) => (
  *         <ProductCard
  *           key={product.id}
  *           product={product}
@@ -284,7 +284,7 @@ export function useInfiniteProductSearch(
  *
  *   return (
  *     <div>
- *       {products.map((product, index) => (
+ *       {products.map((product: any, index: any) => (
  *         <div
  *           key={product.id}
  *           ref={index === products.length - 1 ? lastElementRef : null}

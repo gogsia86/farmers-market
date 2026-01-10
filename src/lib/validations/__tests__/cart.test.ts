@@ -113,7 +113,7 @@ describe("Cart Validation Schemas", () => {
     it("should accept various positive integer quantities", () => {
       const productId = "clabcdef1234567890abcdef";
 
-      [1, 2, 5, 10, 50, 100, 1000].forEach((quantity) => {
+      [1, 2, 5, 10, 50, 100, 1000].forEach((quantity: any) => {
         expect(() =>
           addToCartSchema.parse({ productId, quantity }),
         ).not.toThrow();
@@ -278,7 +278,7 @@ describe("Cart Validation Schemas", () => {
     it("should require all required fields", () => {
       const fields = ["id", "cartId", "productId", "quantity"];
 
-      fields.forEach((field) => {
+      fields.forEach((field: any) => {
         const incompleteItem = { ...validCartItem };
         delete (incompleteItem as any)[field];
 

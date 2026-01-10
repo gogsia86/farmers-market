@@ -329,7 +329,7 @@ export class PushNotificationService {
 
         // Build multicast message
         const message: MulticastMessage = {
-          tokens: tokens.map((t) => t.token),
+          tokens: tokens.map((t: any) => t.token),
           notification: {
             title: options.title,
             body: options.body,
@@ -653,7 +653,7 @@ export class PushNotificationService {
     data?: Record<string, string>
   ): Promise<{ userId: string; result: SendPushResult }[]> {
     const results = await Promise.allSettled(
-      userIds.map((userId) =>
+      userIds.map((userId: any) =>
         this.sendPushNotification({
           userId,
           title,
@@ -663,7 +663,7 @@ export class PushNotificationService {
       )
     );
 
-    return userIds.map((userId, index) => {
+    return userIds.map((userId: any, index: any) => {
       const result = results[index];
       if (!result) {
         return {
@@ -712,7 +712,7 @@ export class PushNotificationService {
       }
 
       await this.messaging.subscribeToTopic(
-        tokens.map((t) => t.token),
+        tokens.map((t: any) => t.token),
         topic
       );
 
@@ -747,7 +747,7 @@ export class PushNotificationService {
       }
 
       await this.messaging.unsubscribeFromTopic(
-        tokens.map((t) => t.token),
+        tokens.map((t: any) => t.token),
         topic
       );
 

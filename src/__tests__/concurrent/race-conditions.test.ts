@@ -165,8 +165,8 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
       const results = await Promise.allSettled(updates);
 
       // Verify that some succeeded and inventory never went negative
-      const successful = results.filter((r) => r.status === "fulfilled");
-      const failed = results.filter((r) => r.status === "rejected");
+      const successful = results.filter((r: any) => r.status === "fulfilled");
+      const failed = results.filter((r: any) => r.status === "rejected");
 
       expect(successful.length + failed.length).toBe(10);
       expect(availableQuantity).toBeGreaterThanOrEqual(0);
@@ -268,7 +268,7 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
 
       // All should complete (though in real DB, optimistic locking would handle this)
       expect(results).toHaveLength(3);
-      results.forEach((result) => {
+      results.forEach((result: any) => {
         expect(result.id).toBe(orderId);
       });
     });
@@ -296,7 +296,7 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
       const results = await Promise.all(confirmations);
 
       // All should succeed (idempotent operation)
-      results.forEach((result) => {
+      results.forEach((result: any) => {
         expect(result.count).toBeGreaterThanOrEqual(0);
       });
     });
@@ -337,8 +337,8 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
       const results = await Promise.allSettled(payments);
 
       // One should succeed, one should fail
-      const successful = results.filter((r) => r.status === "fulfilled");
-      const failed = results.filter((r) => r.status === "rejected");
+      const successful = results.filter((r: any) => r.status === "fulfilled");
+      const failed = results.filter((r: any) => r.status === "rejected");
 
       expect(successful.length).toBe(1);
       expect(failed.length).toBe(1);
@@ -372,7 +372,7 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
       const duration = endTime - startTime;
 
       // All should succeed (return products, not null)
-      results.forEach((result) => {
+      results.forEach((result: any) => {
         expect(result).toBeDefined();
         expect(result).not.toBeNull();
       });
@@ -449,14 +449,14 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
       expect(results).toHaveLength(50);
 
       // Count successes and failures
-      const successful = results.filter((r) => r.status === "fulfilled");
-      const failed = results.filter((r) => r.status === "rejected");
+      const successful = results.filter((r: any) => r.status === "fulfilled");
+      const failed = results.filter((r: any) => r.status === "rejected");
 
       // At least some operations should succeed
       expect(successful.length).toBeGreaterThan(0);
 
       // Each successful result should be an array of products
-      successful.forEach((result) => {
+      successful.forEach((result: any) => {
         if (result.status === "fulfilled") {
           expect(Array.isArray(result.value)).toBe(true);
         }
@@ -536,7 +536,7 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
       expect(results).toHaveLength(3);
 
       // At least some operations should succeed
-      const successful = results.filter((r) => r.status === "fulfilled");
+      const successful = results.filter((r: any) => r.status === "fulfilled");
       expect(successful.length).toBeGreaterThan(0);
     });
   });

@@ -207,7 +207,7 @@ export default function AdminReviewsPage() {
   const renderStars = (rating: number) => {
     return (
       <div className="flex items-center gap-1">
-        {[1, 2, 3, 4, 5].map((star) => (
+        {[1, 2, 3, 4, 5].map((star: any) => (
           <Star
             key={star}
             className={`h-4 w-4 ${star <= rating
@@ -346,7 +346,7 @@ export default function AdminReviewsPage() {
             </div>
           ) : (
             <div className="space-y-4">
-              {reviews.map((review) => (
+              {reviews.map((review: any) => (
                 <div
                   key={review.id}
                   className="p-6 border border-gray-200 rounded-lg space-y-4"

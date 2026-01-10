@@ -12,8 +12,8 @@ export class AgriculturalGPUAccelerator {
 
   async processAgriculturalData(data: number[][]): Promise<number[][]> {
     // Simple mock processing
-    return data.map((row) =>
-      row.map((val) => Math.min(255, Math.max(0, val * 1.1))),
+    return data.map((row: any) =>
+      row.map((val: any) => Math.min(255, Math.max(0, val * 1.1))),
     );
   }
 
@@ -21,7 +21,7 @@ export class AgriculturalGPUAccelerator {
     batches: number[][][],
     operation: (batch: any) => any,
   ): Promise<number[][][]> {
-    return batches.map((batch) => batch.map((row) => row.map((val) => val)));
+    return batches.map((batch: any) => batch.map((row: any) => row.map((val: any) => val)));
   }
 
   getMemoryStats() {

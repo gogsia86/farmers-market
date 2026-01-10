@@ -54,8 +54,7 @@ export default async function CustomerDashboardPage() {
   });
 
   // Calculate total spent
-  const totalSpent = orders.reduce(
-    (sum, order) => sum + Number(order.total),
+  const totalSpent = orders.reduce((sum: any, order: any) => sum + Number(order.total),
     0
   );
 
@@ -221,7 +220,7 @@ export default async function CustomerDashboardPage() {
               </div>
             ) : (
               <div className="space-y-4">
-                {orders.map((order) => (
+                {orders.map((order: any) => (
                   <Link
                     key={order.id}
                     href={`/orders/${order.id}`}
@@ -330,7 +329,7 @@ export default async function CustomerDashboardPage() {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {favorites.map((favorite) => {
+                {favorites.map((favorite: any) => {
                   if (!favorite.farm) return null;
 
                   return (

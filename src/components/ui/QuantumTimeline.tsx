@@ -378,7 +378,7 @@ function TimelineGroupComponent({
 
       {/* Group Events */}
       <div className="ml-4">
-        {group.events.map((event, index) => (
+        {group.events.map((event: any, index: any) => (
           <TimelineItem
             key={event.id}
             event={event}
@@ -481,7 +481,7 @@ export function QuantumTimeline({
     return (
       <div className={cn("overflow-x-auto pb-4", className)}>
         <div className="flex gap-4 min-w-max">
-          {sortedEvents.map((event, index) => {
+          {sortedEvents.map((event: any, index: any) => {
             const color = getEventColor(
               event.type || "general",
               event.status,
@@ -558,7 +558,7 @@ export function QuantumTimeline({
   return (
     <div className={cn("relative", className)}>
       {mode === "events" &&
-        sortedEvents.map((event, index) => (
+        sortedEvents.map((event: any, index: any) => (
           <TimelineItem
             key={event.id}
             event={event}
@@ -573,7 +573,7 @@ export function QuantumTimeline({
         ))}
 
       {mode === "grouped" &&
-        sortedGroups.map((group) => (
+        sortedGroups.map((group: any) => (
           <TimelineGroupComponent
             key={group.id}
             group={group}

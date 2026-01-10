@@ -78,7 +78,7 @@ export function CheckoutWizard({ cart, savedAddresses, userId }: WizardProps) {
   const { trackBeginCheckout } = useAnalytics();
 
   // Calculate cart total
-  const cartTotal = cart.reduce((sum, item) => {
+  const cartTotal = cart.reduce((sum: any, item: any) => {
     const itemTotal = Number(item.priceAtAdd) * Number(item.quantity);
     return sum + itemTotal;
   }, 0);
@@ -115,7 +115,7 @@ export function CheckoutWizard({ cart, savedAddresses, userId }: WizardProps) {
   // ==========================================================================
 
   const handleStepComplete = (stepData: any) => {
-    const currentStepKey = steps.find((s) => s.number === currentStep)?.key;
+    const currentStepKey = steps.find((s: any) => s.number === currentStep)?.key;
 
     if (currentStepKey && currentStepKey !== "review") {
       // Save step data
@@ -175,7 +175,7 @@ export function CheckoutWizard({ cart, savedAddresses, userId }: WizardProps) {
         <Card>
           <CardBody>
             <div className="flex items-center justify-between">
-              {steps.map((step, index) => (
+              {steps.map((step: any, index: any) => (
                 <div key={step.number} className="flex items-center">
                   {/* Step Circle */}
                   <button

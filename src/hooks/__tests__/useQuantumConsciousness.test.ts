@@ -277,7 +277,7 @@ describe("🌾 useQuantumConsciousness - Component Consciousness Tracking", () =
 
       // Check that no interaction tracking was logged (trackInteractions not enabled)
       const logCalls = (console.log as jest.Mock).mock.calls;
-      const interactionLogged = logCalls.some((call) =>
+      const interactionLogged = logCalls.some((call: any) =>
         call.some(
           (arg) =>
             typeof arg === "string" && arg.includes("Interaction tracked"),

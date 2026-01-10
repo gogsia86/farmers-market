@@ -215,7 +215,7 @@ export function OrderCard({
               ({totalItems} total)
             </p>
             <div className="space-y-1">
-              {order.items.slice(0, 3).map((item) => (
+              {order.items.slice(0, 3).map((item: any) => (
                 <div
                   key={item.id}
                   className="flex justify-between text-sm text-gray-600"

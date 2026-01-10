@@ -254,7 +254,7 @@ export default function EnvCheckPage() {
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg shadow-xl p-6">
             <h2 className="text-xl font-bold text-yellow-900 mb-4">💡 Recommendations</h2>
             <ul className="space-y-2">
-              {data.recommendations.map((rec, idx) => (
+              {data.recommendations.map((rec: any, idx: any) => (
                 <li key={idx} className="flex items-start text-yellow-800">
                   <span className="mr-2">•</span>
                   <span>{rec}</span>
@@ -347,7 +347,7 @@ function VariableCategory({ title, variables, critical }: VariableCategoryProps)
     <div className="bg-white rounded-lg shadow-xl p-6">
       <h2 className="text-xl font-bold text-gray-900 mb-4">{title}</h2>
       <div className="space-y-3">
-        {variables.map((variable) => (
+        {variables.map((variable: any) => (
           <div
             key={variable.name}
             className={`flex items-center justify-between p-4 rounded-lg border-2 ${variable.status.exists

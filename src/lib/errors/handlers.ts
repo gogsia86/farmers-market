@@ -461,7 +461,7 @@ export function handleAggregateErrors(
     return toAppError(errors[0]);
   }
 
-  const appErrors = errors.map((e) => toAppError(e));
+  const appErrors = errors.map((e: any) => toAppError(e));
   const highestSeverity = appErrors.reduce(
     (max, err) =>
       Object.values(ErrorSeverity).indexOf(err.severity) >
@@ -472,7 +472,7 @@ export function handleAggregateErrors(
   );
 
   return new AppError({
-    message: `Multiple errors occurred: ${appErrors.map((e) => e.message).join("; ")}`,
+    message: `Multiple errors occurred: ${appErrors.map((e: any) => e.message).join("; ")}`,
     code: "AGGREGATE_ERROR",
     severity: highestSeverity,
     category: ErrorCategory.SYSTEM,
@@ -491,7 +491,7 @@ export function handleAggregateErrors(
       ...metadata,
       context: {
         errorCount: errors.length,
-        errors: appErrors.map((e) => e.toJSON()),
+        errors: appErrors.map((e: any) => e.toJSON()),
       },
     },
   });

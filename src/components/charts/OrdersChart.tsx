@@ -73,8 +73,8 @@ export function OrdersChart({
 
   // Calculate statistics
   const stats = useMemo(() => {
-    const totalOrders = data.reduce((sum, item) => sum + item.count, 0);
-    const mostCommonStatus = data.reduce((max, item) =>
+    const totalOrders = data.reduce((sum: any, item: any) => sum + item.count, 0);
+    const mostCommonStatus = data.reduce((max: any, item: any) =>
       item.count > max.count ? item : max
       , data[0] || { status: 'N/A', count: 0 });
 
@@ -166,7 +166,7 @@ export function OrdersChart({
               label={renderCustomLabel}
               labelLine={false}
             >
-              {enrichedData.map((entry, index) => (
+              {enrichedData.map((entry: any, index: any) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
               ))}
             </Pie>
@@ -195,7 +195,7 @@ export function OrdersChart({
             <Tooltip content={<CustomTooltip />} />
             <Legend formatter={(value) => 'Orders'} />
             <Bar dataKey="count" radius={[8, 8, 0, 0]}>
-              {enrichedData.map((entry, index) => (
+              {enrichedData.map((entry: any, index: any) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
               ))}
             </Bar>
@@ -217,7 +217,7 @@ export function OrdersChart({
           </p>
         </div>
         <div className="flex gap-2">
-          {['bar', 'pie'].map((v) => (
+          {['bar', 'pie'].map((v: any) => (
             <button
               key={v}
               className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${variant === v
@@ -282,7 +282,7 @@ export function OrdersChart({
       {/* Status Legend */}
       <div className="mt-6 pt-4 border-t border-gray-200">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {enrichedData.map((item) => (
+          {enrichedData.map((item: any) => (
             <div key={item.status} className="flex items-center gap-2">
               <div
                 className="w-3 h-3 rounded-full"

@@ -277,10 +277,10 @@ export function NotificationProvider({
 
         // Limit toasts
         if (newNotification.type === "toast") {
-          const toastCount = updated.filter((n) => n.type === "toast").length;
+          const toastCount = updated.filter((n: any) => n.type === "toast").length;
           if (toastCount > maxToasts) {
             // Remove oldest toast
-            const toastIndex = updated.findIndex((n) => n.type === "toast");
+            const toastIndex = updated.findIndex((n: any) => n.type === "toast");
             if (toastIndex !== -1) {
               updated.splice(toastIndex, 1);
             }
@@ -289,10 +289,10 @@ export function NotificationProvider({
 
         // Limit banners
         if (newNotification.type === "banner") {
-          const bannerCount = updated.filter((n) => n.type === "banner").length;
+          const bannerCount = updated.filter((n: any) => n.type === "banner").length;
           if (bannerCount > maxBanners) {
             // Remove oldest banner
-            const bannerIndex = updated.findIndex((n) => n.type === "banner");
+            const bannerIndex = updated.findIndex((n: any) => n.type === "banner");
             if (bannerIndex !== -1) {
               updated.splice(bannerIndex, 1);
             }
@@ -308,12 +308,12 @@ export function NotificationProvider({
   );
 
   const removeNotification = useCallback((id: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
+    setNotifications((prev) => prev.filter((n: any) => n.id !== id));
   }, []);
 
   const markAsRead = useCallback((id: string) => {
     setNotifications((prev) =>
-      prev.map((n) =>
+      prev.map((n: any) =>
         n.id === id
           ? { ...n, readAt: new Date(), status: "read" as const }
           : n
@@ -323,7 +323,7 @@ export function NotificationProvider({
 
   const markAllAsRead = useCallback(() => {
     setNotifications((prev) =>
-      prev.map((n) => ({ ...n, readAt: new Date(), status: "read" as const }))
+      prev.map((n: any) => ({ ...n, readAt: new Date(), status: "read" as const }))
     );
   }, []);
 
@@ -440,7 +440,7 @@ export function NotificationProvider({
   );
 
   const hideAllBanners = useCallback(() => {
-    setNotifications((prev) => prev.filter((n) => n.type !== "banner"));
+    setNotifications((prev) => prev.filter((n: any) => n.type !== "banner"));
   }, []);
 
   // ============================================================================

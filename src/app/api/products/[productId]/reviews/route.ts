@@ -155,7 +155,7 @@ export async function GET(
       5: 0,
     };
 
-    ratingCounts.forEach((item) => {
+    ratingCounts.forEach((item: any) => {
       ratingDistribution[item.rating] = item._count.rating;
     });
 

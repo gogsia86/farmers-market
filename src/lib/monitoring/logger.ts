@@ -319,7 +319,7 @@ class Logger {
     return {
       total: this.queryMetrics.length,
       slowQueries,
-      averageDuration: durations.reduce((a, b) => a + b, 0) / durations.length,
+      averageDuration: durations.reduce((a: any, b: any) => a + b, 0) / durations.length,
       maxDuration: Math.max(...durations),
       minDuration: Math.min(...durations),
     };
@@ -354,7 +354,7 @@ class Logger {
 
     return {
       total: this.performanceMetrics.length,
-      averageDuration: durations.reduce((a, b) => a + b, 0) / durations.length,
+      averageDuration: durations.reduce((a: any, b: any) => a + b, 0) / durations.length,
       maxDuration: Math.max(...durations),
       minDuration: Math.min(...durations),
       byOperation,

@@ -296,7 +296,7 @@ export const QuantumFarmCard = forwardRef<HTMLDivElement, QuantumFarmCardProps>(
           {/* CERTIFICATIONS */}
           {farm.certifications.length > 0 && (
             <div className="flex flex-wrap gap-2">
-              {farm.certifications.slice(0, 3).map((cert) => (
+              {farm.certifications.slice(0, 3).map((cert: any) => (
                 <span
                   key={cert}
                   className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"

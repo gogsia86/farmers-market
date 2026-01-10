@@ -377,7 +377,7 @@ describe("🗄️ Cache Index - Multi-Layer Caching", () => {
       }
 
       const results = await Promise.all(promises);
-      results.forEach((result) => {
+      results.forEach((result: any) => {
         expect(result).toEqual({ data: "test" });
       });
     });

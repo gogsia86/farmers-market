@@ -245,7 +245,7 @@ async function handlePaymentIntentSucceeded(
     }
 
     // Send notification to farmers
-    const farmIds = [...new Set(order.items.map((item) => item.product.farmId))];
+    const farmIds = [...new Set(order.items.map((item: any) => item.product.farmId))];
     for (const farmId of farmIds) {
       const farm = await database.farm.findUnique({
         where: { id: farmId },

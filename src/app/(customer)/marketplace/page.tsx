@@ -135,7 +135,7 @@ async function FeaturedProducts() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {products.map((product) => (
+      {products.map((product: any) => (
         <Link key={product.id} href={`/products/${product.slug}`}>
           <Card className="h-full hover:shadow-lg transition-shadow">
             <CardHeader className="p-0">
@@ -310,7 +310,7 @@ export default async function MarketplacePage() {
         <Suspense
           fallback={
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[...Array(8)].map((_, i) => (
+              {[...Array(8)].map((_: any, i: any) => (
                 <ProductCardSkeleton key={i} />
               ))}
             </div>
@@ -337,7 +337,7 @@ export default async function MarketplacePage() {
         <Suspense
           fallback={
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[...Array(6)].map((_, i) => (
+              {[...Array(6)].map((_: any, i: any) => (
                 <FarmCardSkeleton key={i} />
               ))}
             </div>

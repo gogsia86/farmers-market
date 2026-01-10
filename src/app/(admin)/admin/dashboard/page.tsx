@@ -459,7 +459,7 @@ export default function AdminDashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {analytics.orders.recentOrders.map((order) => (
+                {analytics.orders.recentOrders.map((order: any) => (
                   <div
                     key={order.id}
                     className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50"
@@ -504,7 +504,7 @@ export default function AdminDashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {analytics.farms.topFarms.map((farm, index) => (
+                {analytics.farms.topFarms.map((farm: any, index: any) => (
                   <div
                     key={farm.id}
                     className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg"

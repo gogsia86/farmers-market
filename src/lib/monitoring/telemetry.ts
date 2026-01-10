@@ -300,7 +300,7 @@ export function traceSync<T>(
 ): T {
   const tracer = getTracer("farmers-market-platform");
 
-  return tracer.startActiveSpan(spanName, (span) => {
+  return tracer.startActiveSpan(spanName, (span: any) => {
     try {
       if (attributes) {
         span.setAttributes(attributes);

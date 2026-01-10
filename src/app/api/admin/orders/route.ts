@@ -5,6 +5,8 @@
  */
 
 import { auth } from "@/lib/auth";
+
+import type { Order } from "@prisma/client";
 import { database } from "@/lib/database";
 import { notificationService } from "@/lib/services/notification.service";
 import { NextRequest, NextResponse } from "next/server";
@@ -261,7 +263,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({
       success: true,
       data: {
-        orders: orders.map((order) => ({
+        orders: orders.map((order: any) => ({
           ...order,
           total: parseFloat(order.total.toString()),
           subtotal: parseFloat(order.subtotal.toString()),
@@ -276,7 +278,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
               amount: parseFloat(order.Payment.amount.toString()),
             }
             : null,
-          items: order.items.map((item) => ({
+          items: order.items.map((item: any) => ({
             ...item,
             unitPrice: parseFloat(item.unitPrice.toString()),
             quantity: parseFloat(item.quantity.toString()),
@@ -604,7 +606,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
                 amount: parseFloat(updatedOrder.Payment.amount.toString()),
               }
               : null,
-            items: updatedOrder.items.map((item) => ({
+            items: updatedOrder.items.map((item: any) => ({
               ...item,
               unitPrice: parseFloat(item.unitPrice.toString()),
               quantity: parseFloat(item.quantity.toString()),

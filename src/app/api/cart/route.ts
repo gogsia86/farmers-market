@@ -64,14 +64,14 @@ export async function GET(request: NextRequest) {
     });
 
     // Calculate cart totals
-    const subtotal = cartItems.reduce((sum, item) => {
+    const subtotal = cartItems.reduce((sum: any, item: any) => {
       const itemPrice = parseFloat(item.priceAtAdd.toString());
       const quantity = parseFloat(item.quantity.toString());
       return sum + itemPrice * quantity;
     }, 0);
 
     // Group by farm for delivery fee calculation
-    const farmGroups = cartItems.reduce((groups, item) => {
+    const farmGroups = cartItems.reduce((groups: any, item: any) => {
       const farmId = item.farmId;
       if (!groups[farmId]) {
         groups[farmId] = {

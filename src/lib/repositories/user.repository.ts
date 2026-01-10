@@ -794,7 +794,7 @@ export class QuantumUserRepository extends BaseRepository<
       let verifiedUsers = 0;
       let activeUsers = 0;
 
-      users.forEach((user) => {
+      users.forEach((user: any) => {
         // Count by role
         usersByRole[user.role] = (usersByRole[user.role] || 0) + 1;
 

@@ -215,7 +215,7 @@ export function ProductImageGallery({ product, additionalPhotos = [] }: ProductI
       {/* Additional Photos Grid */}
       {secondaryPhotos.length > 0 && (
         <div className="grid grid-cols-2 gap-2 rounded-b-lg bg-white p-2 md:grid-cols-4">
-          {secondaryPhotos.map((photo, index) => (
+          {secondaryPhotos.map((photo: any, index: any) => (
             <div
               key={index}
               className="relative h-24 cursor-pointer overflow-hidden rounded-md transition-transform hover:scale-105"
@@ -393,7 +393,7 @@ export function ProductImageCarousel({ product, additionalPhotos = [] }: Product
       {/* Thumbnail Navigation */}
       {allPhotos.length > 1 && (
         <div className="mt-2 flex gap-2 overflow-x-auto">
-          {allPhotos.map((photo, index) => (
+          {allPhotos.map((photo: any, index: any) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}

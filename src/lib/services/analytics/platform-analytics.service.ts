@@ -230,7 +230,7 @@ class PlatformAnalyticsService {
 
     const averageProducts =
       productCounts.length > 0
-        ? productCounts.reduce((sum, f) => sum + f._count.products, 0) /
+        ? productCounts.reduce((sum: any, f: any) => sum + f._count.products, 0) /
         productCounts.length
         : 0;
 
@@ -257,10 +257,10 @@ class PlatformAnalyticsService {
     });
 
     const topPerforming = topFarms
-      .map((farm) => ({
+      .map((farm: any) => ({
         id: farm.id,
         name: farm.name,
-        revenue: farm.orders.reduce((sum, o) => sum + Number(o.total), 0),
+        revenue: farm.orders.reduce((sum: any, o: any) => sum + Number(o.total), 0),
         orderCount: farm._count.orders,
       }))
       .sort((a, b) => b.revenue - a.revenue)
@@ -309,7 +309,7 @@ class PlatformAnalyticsService {
       },
     });
 
-    const totalInventoryValue = products.reduce((sum, p) => {
+    const totalInventoryValue = products.reduce((sum: any, p: any) => {
       const qty = Number(p.quantityAvailable || 0);
       const price = Number(p.price);
       return sum + qty * price;
@@ -331,7 +331,7 @@ class PlatformAnalyticsService {
     });
 
     const topSelling = topProducts
-      .map((product) => ({
+      .map((product: any) => ({
         id: product.id,
         name: product.name,
         sales: product.orderItems.reduce(
@@ -577,7 +577,7 @@ class PlatformAnalyticsService {
 
     const dataMap = new Map<string, number>();
 
-    orders.forEach((order) => {
+    orders.forEach((order: any) => {
       const dateKey = order.createdAt.toISOString().split("T")[0];
       if (!dateKey) return;
       const current = dataMap.get(dateKey) || 0;
@@ -617,7 +617,7 @@ class PlatformAnalyticsService {
 
     const dataMap = new Map<string, number>();
 
-    orders.forEach((order) => {
+    orders.forEach((order: any) => {
       const dateKey = order.createdAt.toISOString().split("T")[0];
       if (!dateKey) return;
       const current = dataMap.get(dateKey) || 0;
@@ -657,7 +657,7 @@ class PlatformAnalyticsService {
 
     const dataMap = new Map<string, number>();
 
-    users.forEach((user) => {
+    users.forEach((user: any) => {
       const dateKey = user.createdAt.toISOString().split("T")[0];
       if (!dateKey) return;
       const current = dataMap.get(dateKey) || 0;

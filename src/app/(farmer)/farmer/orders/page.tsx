@@ -1,4 +1,6 @@
 import { auth } from "@/lib/auth";
+import type { Order } from "@prisma/client";
+
 import { database } from "@/lib/database";
 import { formatCurrency } from "@/lib/utils/currency";
 import { ShoppingBag } from "lucide-react";
@@ -32,7 +34,7 @@ export default async function FarmerOrdersPage() {
     },
   });
 
-  const farmIds = farms.map((f) => f.id);
+  const farmIds = farms.map((f: any) => f.id);
 
   // Get all orders for farmer's farms
   const orders = farmIds.length > 0 ? await database.order.findMany({
@@ -128,7 +130,7 @@ export default async function FarmerOrdersPage() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {orders.map((order) => (
+                    {orders.map((order: any) => (
                       <tr key={order.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">
@@ -200,14 +202,14 @@ export default async function FarmerOrdersPage() {
               <h3 className="text-sm font-medium text-gray-600">Total Revenue</h3>
               <p className="text-3xl font-bold text-gray-900 mt-2">
                 {formatCurrency(
-                  orders.reduce((sum, order) => sum + Number(order.total), 0)
+                  orders.reduce((sum: any, order: any) => sum + Number(order.total), 0)
                 )}
               </p>
             </div>
             <div className="bg-white rounded-lg shadow p-6">
               <h3 className="text-sm font-medium text-gray-600">Pending Orders</h3>
               <p className="text-3xl font-bold text-gray-900 mt-2">
-                {orders.filter((o) => o.status === "PENDING").length}
+                {orders.filter((o: any) => o.status === "PENDING").length}
               </p>
             </div>
           </div>

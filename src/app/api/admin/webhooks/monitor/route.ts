@@ -118,7 +118,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             data: {
               action: "retry-failed",
               eventsFound: failedEvents.length,
-              events: failedEvents.map((e) => ({
+              events: failedEvents.map((e: any) => ({
                 eventId: e.eventId,
                 provider: e.provider,
                 eventType: e.eventType,

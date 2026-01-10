@@ -225,7 +225,7 @@ export default function AdminFarmsPage() {
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Status Filter */}
             <div className="flex gap-2">
-              {(["ALL", "PENDING", "VERIFIED", "REJECTED"] as FilterStatus[]).map((status) => (
+              {(["ALL", "PENDING", "VERIFIED", "REJECTED"] as FilterStatus[]).map((status: any) => (
                 <button
                   key={status}
                   onClick={() => setFilter(status)}
@@ -295,7 +295,7 @@ export default function AdminFarmsPage() {
 
         {!isLoading && filteredFarms.length > 0 && (
           <div className="space-y-4">
-            {filteredFarms.map((farm) => (
+            {filteredFarms.map((farm: any) => (
               <div
                 key={farm.id}
                 className="bg-white rounded-lg shadow hover:shadow-md transition-shadow"

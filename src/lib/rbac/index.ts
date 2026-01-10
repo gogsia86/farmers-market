@@ -113,7 +113,7 @@ export function hasAnyPermission(
   role: UserRole,
   permissions: Permission[],
 ): boolean {
-  return permissions.some((permission) => hasPermission(role, permission));
+  return permissions.some((permission: any) => hasPermission(role, permission));
 }
 
 /**
@@ -123,7 +123,7 @@ export function hasAllPermissions(
   role: UserRole,
   permissions: Permission[],
 ): boolean {
-  return permissions.every((permission) => hasPermission(role, permission));
+  return permissions.every((permission: any) => hasPermission(role, permission));
 }
 
 /**

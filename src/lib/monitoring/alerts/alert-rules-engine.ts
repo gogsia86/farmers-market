@@ -264,7 +264,7 @@ export class AlertRulesEngine {
     initialRules: AlertRule[] = PREDEFINED_RULES,
   ) {
     // Load initial rules
-    initialRules.forEach((rule) => this.addRule(rule));
+    initialRules.forEach((rule: any) => this.addRule(rule));
   }
 
   /**
@@ -448,7 +448,7 @@ export class AlertRulesEngine {
     // Check workflow result
     if (parts[0] === "workflow" && context.workflowResult) {
       const result = context.workflowResult as any;
-      return parts.slice(1).reduce((obj, key) => obj?.[key], result);
+      return parts.slice(1).reduce((obj: any, key: any) => obj?.[key], result);
     }
 
     // Check report
@@ -460,7 +460,7 @@ export class AlertRulesEngine {
       if (parts[1] === "successRate") {
         return report.summary.passedWorkflows / report.summary.totalWorkflows;
       }
-      return parts.slice(1).reduce((obj, key) => obj?.[key], report);
+      return parts.slice(1).reduce((obj: any, key: any) => obj?.[key], report);
     }
 
     // Check custom metrics
@@ -721,7 +721,7 @@ export class AlertRulesEngine {
 
     return {
       totalRules: this.rules.size,
-      enabledRules: Array.from(this.rules.values()).filter((r) => r.enabled)
+      enabledRules: Array.from(this.rules.values()).filter((r: any) => r.enabled)
         .length,
       activeAlerts: this.activeAlerts.size,
       alertsBySeverity,

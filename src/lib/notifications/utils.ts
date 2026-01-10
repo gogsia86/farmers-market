@@ -128,7 +128,7 @@ export function filterNotifications(
   notifications: BaseNotification[],
   filter: NotificationFilter
 ): BaseNotification[] {
-  return notifications.filter((notification) => {
+  return notifications.filter((notification: any) => {
     // Filter by type
     if (filter.type) {
       const types = Array.isArray(filter.type) ? filter.type : [filter.type];
@@ -177,7 +177,7 @@ export function filterNotifications(
     // Filter by tags
     if (filter.tags && filter.tags.length > 0) {
       if (!notification.metadata?.tags) return false;
-      const hasTag = filter.tags.some((tag) =>
+      const hasTag = filter.tags.some((tag: any) =>
         notification.metadata!.tags!.includes(tag)
       );
       if (!hasTag) return false;
@@ -802,7 +802,7 @@ export function deduplicateNotifications(
   // Keep most recent from each group
   const unique: BaseNotification[] = [];
   for (const group of groups.values()) {
-    const mostRecent = group.reduce((latest, current) => {
+    const mostRecent = group.reduce((latest: any, current: any) => {
       return current.createdAt > latest.createdAt ? current : latest;
     });
     unique.push(mostRecent);
@@ -825,7 +825,7 @@ export function findDuplicates(
     groups.set(key, [...existing, notification]);
   }
 
-  return Array.from(groups.values()).filter((group) => group.length > 1);
+  return Array.from(groups.values()).filter((group: any) => group.length > 1);
 }
 
 // ============================================================================

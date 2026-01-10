@@ -98,7 +98,7 @@ export function useOrders(
       Object.entries(state.filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
           if (Array.isArray(value)) {
-            value.forEach((v) => queryParams.append(key, String(v)));
+            value.forEach((v: any) => queryParams.append(key, String(v)));
           } else if (value instanceof Date) {
             queryParams.append(key, value.toISOString());
           } else {
@@ -208,7 +208,7 @@ export function useOrders(
         // Update order in local state
         setState((prev) => ({
           ...prev,
-          orders: prev.orders.map((order) =>
+          orders: prev.orders.map((order: any) =>
             order.id === orderId ? data.data! : order,
           ),
         }));
@@ -242,7 +242,7 @@ export function useOrders(
         // Update order in local state
         setState((prev) => ({
           ...prev,
-          orders: prev.orders.map((order) =>
+          orders: prev.orders.map((order: any) =>
             order.id === request.orderId ? data.data! : order,
           ),
         }));

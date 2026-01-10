@@ -344,7 +344,7 @@ export function createApiHandler<
               firstError?.message || "Request validation failed",
               400,
               {
-                errors: validationResult.error.issues.map((err) => ({
+                errors: validationResult.error.issues.map((err: any) => ({
                   path: err.path.join("."),
                   message: err.message,
                 })),
@@ -379,7 +379,7 @@ export function createApiHandler<
             firstError?.message || "Query parameter validation failed",
             400,
             {
-              errors: validationResult.error.issues.map((err) => ({
+              errors: validationResult.error.issues.map((err: any) => ({
                 path: err.path.join("."),
                 message: err.message,
               })),

@@ -125,7 +125,7 @@ class PerformanceDashboard {
 
   private notifySubscribers(): void {
     const snapshot = this.getSnapshot();
-    this.subscribers.forEach((callback) => callback(snapshot));
+    this.subscribers.forEach((callback: any) => callback(snapshot));
   }
 
   getSnapshot() {
@@ -149,10 +149,10 @@ class PerformanceDashboard {
       };
     }
 
-    const values = recentMetrics.map((m) => m.value);
+    const values = recentMetrics.map((m: any) => m.value);
 
     return {
-      average: values.reduce((a, b) => a + b, 0) / values.length,
+      average: values.reduce((a: any, b: any) => a + b, 0) / values.length,
       min: Math.min(...values),
       max: Math.max(...values),
       count: values.length,
@@ -174,11 +174,11 @@ class PerformanceDashboard {
 
     return {
       averageConsciousness:
-        recent.reduce((sum, m) => sum + m.consciousness, 0) / recent.length,
+        recent.reduce((sum: any, m: any) => sum + m.consciousness, 0) / recent.length,
       averageBiodynamicScore:
-        recent.reduce((sum, m) => sum + m.biodynamicScore, 0) / recent.length,
+        recent.reduce((sum: any, m: any) => sum + m.biodynamicScore, 0) / recent.length,
       averageSoilHealth:
-        recent.reduce((sum, m) => sum + m.soilHealth, 0) / recent.length,
+        recent.reduce((sum: any, m: any) => sum + m.soilHealth, 0) / recent.length,
       currentSeason: recent[recent.length - 1]?.season || "UNKNOWN",
       history: recent,
     };

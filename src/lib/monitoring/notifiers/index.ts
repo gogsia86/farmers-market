@@ -114,7 +114,7 @@ export class NotificationManager {
       title: `Workflow Failed: ${workflow.name}`,
       message: workflow.error || "Unknown error",
       workflowResult: workflow,
-      sent: results.some((r) => r.success),
+      sent: results.some((r: any) => r.success),
     });
 
     return results;
@@ -168,7 +168,7 @@ export class NotificationManager {
       title: `Workflow Passed: ${workflow.name}`,
       message: "Workflow completed successfully",
       workflowResult: workflow,
-      sent: results.some((r) => r.success),
+      sent: results.some((r: any) => r.success),
     });
 
     return results;
@@ -217,7 +217,7 @@ export class NotificationManager {
       title: "Monitoring Report Summary",
       message: `Success Rate: ${report.summary.successRate.toFixed(1)}%`,
       report,
-      sent: results.some((r) => r.success),
+      sent: results.some((r: any) => r.success),
     });
 
     return results;
@@ -271,7 +271,7 @@ export class NotificationManager {
       priority: "CRITICAL",
       title: `CRITICAL: ${title}`,
       message,
-      sent: results.some((r) => r.success),
+      sent: results.some((r: any) => r.success),
     });
 
     return results;
@@ -320,7 +320,7 @@ export class NotificationManager {
       title: "Daily Summary Report",
       message: `Success Rate: ${report.summary.successRate.toFixed(1)}%`,
       report,
-      sent: results.some((r) => r.success),
+      sent: results.some((r: any) => r.success),
     });
 
     return results;

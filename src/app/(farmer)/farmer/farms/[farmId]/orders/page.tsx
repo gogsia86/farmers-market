@@ -414,7 +414,7 @@ export default async function FarmOrdersPage({ params, searchParams }: PageProps
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {orders.map((order) => {
+                  {orders.map((order: any) => {
                     const statusConfig =
                       ORDER_STATUS_CONFIG[
                       order.status as keyof typeof ORDER_STATUS_CONFIG
@@ -453,7 +453,7 @@ export default async function FarmOrdersPage({ params, searchParams }: PageProps
                         </td>
                         <td className="px-6 py-4">
                           <div className="text-sm text-gray-900">
-                            {order.items.slice(0, 2).map((item, idx) => (
+                            {order.items.slice(0, 2).map((item: any, idx: number) => (
                               <div key={item.id} className="truncate max-w-xs">
                                 {item.productName}
                                 {idx === 1 && order.items.length > 2 && (

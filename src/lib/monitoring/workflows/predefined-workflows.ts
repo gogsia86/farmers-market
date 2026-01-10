@@ -942,19 +942,19 @@ export const WORKFLOW_STEPS_MAP = new Map<string, WorkflowStep[]>([
 // ============================================================================
 
 export function getWorkflowById(id: string): WorkflowConfig | undefined {
-  return PREDEFINED_WORKFLOWS.find((w) => w.id === id);
+  return PREDEFINED_WORKFLOWS.find((w: any) => w.id === id);
 }
 
 export function getWorkflowsByType(type: string): WorkflowConfig[] {
-  return PREDEFINED_WORKFLOWS.filter((w) => w.type === type);
+  return PREDEFINED_WORKFLOWS.filter((w: any) => w.type === type);
 }
 
 export function getWorkflowsByPriority(priority: string): WorkflowConfig[] {
-  return PREDEFINED_WORKFLOWS.filter((w) => w.priority === priority);
+  return PREDEFINED_WORKFLOWS.filter((w: any) => w.priority === priority);
 }
 
 export function getEnabledWorkflows(): WorkflowConfig[] {
-  return PREDEFINED_WORKFLOWS.filter((w) => w.enabled);
+  return PREDEFINED_WORKFLOWS.filter((w: any) => w.enabled);
 }
 
 export function getCriticalWorkflows(): WorkflowConfig[] {

@@ -7,6 +7,7 @@ import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
+import type { Notification, NotificationType } from "@prisma/client";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -41,7 +42,7 @@ export default async function AdminNotificationsPage() {
   const stats = {
     total: await database.notification.count(),
     unread: await database.notification.count({
-      where: { read: false },
+      where: { isRead: false },
     }),
     today: await database.notification.count({
       where: {
@@ -141,73 +142,83 @@ export default async function AdminNotificationsPage() {
           </div>
         ) : (
           <div className="divide-y divide-gray-200">
-            {notifications.map((notification) => (
-              <div
-                key={notification.id}
-                className={`p-6 hover:bg-gray-50 transition-colors ${
-                  !notification.read ? "bg-blue-50" : ""
-                }`}
-              >
-                <div className="flex items-start gap-4">
-                  {/* Icon */}
-                  <div
-                    className={`flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center ${
-                      !notification.read
-                        ? "bg-blue-100 text-blue-600"
-                        : "bg-gray-100 text-gray-600"
-                    }`}
-                  >
-                    {getNotificationIcon(notification.type)}
-                  </div>
+            {notifications.map(
+              (
+                notification: Notification & {
+                  user: {
+                    id: string;
+                    name: string | null;
+                    email: string;
+                  } | null;
+                },
+              ) => (
+                <div
+                  key={notification.id}
+                  className={`p-6 hover:bg-gray-50 transition-colors ${
+                    !notification.isRead ? "bg-blue-50" : ""
+                  }`}
+                >
+                  <div className="flex items-start gap-4">
+                    {/* Icon */}
+                    <div
+                      className={`flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center ${
+                        !notification.isRead
+                          ? "bg-blue-100 text-blue-600"
+                          : "bg-gray-100 text-gray-600"
+                      }`}
+                    >
+                      {getNotificationIcon(notification.type)}
+                    </div>
 
-                  {/* Content */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <p
-                          className={`text-sm font-medium ${
-                            !notification.read
-                              ? "text-gray-900"
-                              : "text-gray-700"
-                          }`}
-                        >
-                          {notification.title}
-                        </p>
-                        <p className="text-sm text-gray-600 mt-1">
-                          {notification.message}
-                        </p>
-                        <div className="flex items-center gap-4 mt-2">
-                          <span className="text-xs text-gray-500">
-                            {notification.user?.name || "System"}
-                          </span>
-                          <span className="text-xs text-gray-400">•</span>
-                          <span className="text-xs text-gray-500">
-                            {formatDate(notification.createdAt)}
-                          </span>
-                          {!notification.read && (
-                            <>
-                              <span className="text-xs text-gray-400">•</span>
-                              <span className="text-xs font-medium text-blue-600">
-                                Unread
-                              </span>
-                            </>
-                          )}
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <p
+                            className={`text-sm font-medium ${
+                              !notification.isRead
+                                ? "text-gray-900"
+                                : "text-gray-700"
+                            }`}
+                          >
+                            {notification.title}
+                          </p>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {notification.body}
+                          </p>
+                          <div className="flex items-center gap-4 mt-2">
+                            <span className="text-xs text-gray-500">
+                              {notification.user?.name || "System"}
+                            </span>
+                            <span className="text-xs text-gray-400">•</span>
+                            <span className="text-xs text-gray-500">
+                              {formatDate(notification.createdAt)}
+                            </span>
+                            {!notification.isRead && (
+                              <>
+                                <span className="text-xs text-gray-400">•</span>
+                                <span className="text-xs font-medium text-blue-600">
+                                  Unread
+                                </span>
+                              </>
+                            )}
+                          </div>
                         </div>
-                      </div>
 
-                      {/* Type Badge */}
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getTypeBadgeClass(
-                          notification.type,
-                        )}`}
-                      >
-                        {notification.type}
-                      </span>
+                        {/* Type Badge */}
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getTypeBadgeClass(
+                            notification.type,
+                          )}`}
+                        >
+                          {notification.type}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ),
+            )}
           </div>
         )}
       </div>
@@ -216,7 +227,7 @@ export default async function AdminNotificationsPage() {
 }
 
 // Helper functions
-function getNotificationIcon(type: string): string {
+function getNotificationIcon(type: NotificationType): string {
   const icons: Record<string, string> = {
     ORDER: "📦",
     PAYMENT: "💳",
@@ -230,7 +241,7 @@ function getNotificationIcon(type: string): string {
   return icons[type] || "🔔";
 }
 
-function getTypeBadgeClass(type: string): string {
+function getTypeBadgeClass(type: NotificationType): string {
   const classes: Record<string, string> = {
     ORDER: "bg-blue-100 text-blue-800",
     PAYMENT: "bg-green-100 text-green-800",
@@ -259,6 +270,9 @@ function formatDate(date: Date): string {
   return new Date(date).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
-    year: new Date(date).getFullYear() !== now.getFullYear() ? "numeric" : undefined,
+    year:
+      new Date(date).getFullYear() !== now.getFullYear()
+        ? "numeric"
+        : undefined,
   });
 }

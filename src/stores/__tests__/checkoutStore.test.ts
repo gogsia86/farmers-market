@@ -416,7 +416,7 @@ describe("CheckoutStore - Validation", () => {
 
       expect(canProceed!).toBe(false);
       expect(
-        result.current.errors.some((e) => e.code === "ADDRESS_REQUIRED"),
+        result.current.errors.some((e: any) => e.code === "ADDRESS_REQUIRED"),
       ).toBe(true);
     });
 
@@ -437,7 +437,7 @@ describe("CheckoutStore - Validation", () => {
 
       expect(canProceed!).toBe(false);
       expect(
-        result.current.errors.some((e) => e.code === "ADDRESS_INCOMPLETE"),
+        result.current.errors.some((e: any) => e.code === "ADDRESS_INCOMPLETE"),
       ).toBe(true);
     });
 
@@ -488,7 +488,7 @@ describe("CheckoutStore - Validation", () => {
 
       expect(canProceed!).toBe(false);
       expect(
-        result.current.errors.some((e) => e.code === "PAYMENT_METHOD_REQUIRED"),
+        result.current.errors.some((e: any) => e.code === "PAYMENT_METHOD_REQUIRED"),
       ).toBe(true);
     });
   });

@@ -207,7 +207,7 @@ export default async function OrderDetailsPage({ params }: PageProps) {
 
                   {/* Steps */}
                   <div className="space-y-8">
-                    {ORDER_STATUS_STEPS.map((step, index) => {
+                    {ORDER_STATUS_STEPS.map((step: any, index: any) => {
                       const isStepCompleted = index < currentStatusIndex;
                       const isCurrent = index === currentStatusIndex;
                       const Icon = step.icon;
@@ -282,7 +282,7 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                 Order Items ({order.items.length})
               </h2>
               <div className="space-y-4">
-                {order.items.map((item) => (
+                {order.items.map((item: any) => (
                   <div
                     key={item.id}
                     className="flex items-center gap-4 rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50"

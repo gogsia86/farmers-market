@@ -7,7 +7,7 @@
     "lib": [
       "ES2022", // Modern JavaScript features
       "DOM", // DOM types for browser APIs
-      "DOM.Iterable" // Iterable DOM collections
+      "DOM.Iterable", // Iterable DOM collections
     ],
     "module": "ESNext", // Use ESNext module system
     "moduleResolution": "bundler", // Next.js 15 bundler resolution (correct for App Router)
@@ -58,55 +58,27 @@
     // ========================================================================
     "typeRoots": [
       "./node_modules/@types", // Only look in @types packages
-      "./src/types" // And our custom types
+      "./src/types", // And our custom types
     ],
-    "types": [], // Don't automatically include all @types packages
+    "types": ["node"], // Include node types for global declarations
     // ========================================================================
     // PATH MAPPING (Divine Quantum Import Resolution)
     // ========================================================================
     "paths": {
-      "@/*": [
-        "./src/*"
-      ], // Explicit path from project root
-      "@/components/*": [
-        "./src/components/*"
-      ],
-      "@/lib/*": [
-        "./src/lib/*"
-      ],
-      "@/lib/logger": [
-        "./src/lib/logger/index.ts"
-      ],
-      "@/lib/logger/*": [
-        "./src/lib/logger/*"
-      ],
-      "@/app/*": [
-        "./src/app/*"
-      ],
-      "@/types/*": [
-        "./src/types/*"
-      ],
-      "@/hooks/*": [
-        "./src/hooks/*"
-      ],
-      "@/utils/*": [
-        "./src/utils/*"
-      ],
-      "@/styles/*": [
-        "./src/styles/*"
-      ],
-      "@/config/*": [
-        "./src/config/*"
-      ],
-      "@/services/*": [
-        "./src/services/*"
-      ],
-      "@/repositories/*": [
-        "./src/repositories/*"
-      ],
-      "@/controllers/*": [
-        "./src/controllers/*"
-      ]
+      "@/*": ["./src/*"], // Explicit path from project root
+      "@/components/*": ["./src/components/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/lib/logger": ["./src/lib/logger/index.ts"],
+      "@/lib/logger/*": ["./src/lib/logger/*"],
+      "@/app/*": ["./src/app/*"],
+      "@/types/*": ["./src/types/*"],
+      "@/hooks/*": ["./src/hooks/*"],
+      "@/utils/*": ["./src/utils/*"],
+      "@/styles/*": ["./src/styles/*"],
+      "@/config/*": ["./src/config/*"],
+      "@/services/*": ["./src/services/*"],
+      "@/repositories/*": ["./src/repositories/*"],
+      "@/controllers/*": ["./src/controllers/*"],
     },
     // ========================================================================
     // NEXT.JS SPECIFIC
@@ -114,15 +86,16 @@
     "incremental": true, // Enable incremental compilation
     "plugins": [
       {
-        "name": "next"
-      }
-    ]
+        "name": "next",
+      },
+    ],
   },
   // ==========================================================================
   // INCLUDE/EXCLUDE
   // ==========================================================================
   "include": [
     "next-env.d.ts", // Next.js types
+    "src/types/global.d.ts", // Global type declarations
     "**/*.ts", // All TypeScript files
     "**/*.tsx", // All TSX files
     ".next/types/**/*.ts", // Next.js generated types
@@ -130,9 +103,7 @@
     "**/*.cts", // CommonJS TypeScript files
     ".next/dev/types/**/*.ts",
     "**/*.d.ts", // Include all declaration files
-    "jest.setup.js" // Include Jest setup for global types
-    ,
-    "src/app/(customer)/checkout/page.tsx.backup"
+    "jest.setup.js", // Include Jest setup for global types
   ],
   "exclude": [
     "node_modules", // Exclude dependencies
@@ -164,6 +135,6 @@
     "src/lib/workers.disabled/**", // Exclude disabled queue workers (require Bull/Redis)
     "src/lib/testing/**", // Exclude testing framework (has type issues - needs refactor)
     "**/*.md", // Exclude all markdown files (contain code examples)
-    "COMPREHENSIVE_CODE_REVIEW.md" // Exclude code review documentation
-  ]
+    "COMPREHENSIVE_CODE_REVIEW.md", // Exclude code review documentation
+  ],
 }

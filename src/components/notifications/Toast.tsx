@@ -270,7 +270,7 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
           {/* Actions */}
           {actions.length > 0 && (
             <div className="mt-3 flex gap-2">
-              {actions.map((action) => (
+              {actions.map((action: any) => (
                 <button
                   key={action.id}
                   type="button"

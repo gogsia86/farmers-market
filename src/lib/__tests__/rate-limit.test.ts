@@ -292,8 +292,8 @@ describe("🛡️ Rate Limiting", () => {
 
       const results = await Promise.all(requests);
 
-      const allowed = results.filter((r) => r.allowed);
-      const blocked = results.filter((r) => !r.allowed);
+      const allowed = results.filter((r: any) => r.allowed);
+      const blocked = results.filter((r: any) => !r.allowed);
 
       expect(allowed.length).toBe(10);
       expect(blocked.length).toBe(5);

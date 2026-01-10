@@ -412,7 +412,7 @@ export class TestRunner {
 
     const successRate = total > 0 ? (passed / total) * 100 : 0;
 
-    const totalDuration = results.reduce((sum, r) => sum + r.duration, 0);
+    const totalDuration = results.reduce((sum: any, r: any) => sum + r.duration, 0);
     const avgDuration = total > 0 ? totalDuration / total : 0;
 
     return {

@@ -84,7 +84,7 @@ export class TemporalBatcher<T> {
     const batch = this.queue.splice(0, this.config.maxBatchSize);
 
     try {
-      const operations = batch.map((op) => op.operation);
+      const operations = batch.map((op: any) => op.operation);
       const results = await this.executor(operations);
 
       batch.forEach((op, index) => {
@@ -96,7 +96,7 @@ export class TemporalBatcher<T> {
         }
       });
     } catch (error) {
-      batch.forEach((op) => {
+      batch.forEach((op: any) => {
         op.reject(error as Error);
       });
     } finally {
@@ -133,7 +133,7 @@ export class DatabaseQueryBatcher {
     // User query batcher
     this.userBatcher = new TemporalBatcher(
       async (operations) => {
-        return await Promise.all(operations.map((op) => op()));
+        return await Promise.all(operations.map((op: any) => op()));
       },
       { windowMs: 10, maxBatchSize: 50, maxWaitMs: 50 },
     );
@@ -141,7 +141,7 @@ export class DatabaseQueryBatcher {
     // Farm query batcher
     this.farmBatcher = new TemporalBatcher(
       async (operations) => {
-        return await Promise.all(operations.map((op) => op()));
+        return await Promise.all(operations.map((op: any) => op()));
       },
       { windowMs: 16, maxBatchSize: 100, maxWaitMs: 100 },
     );
@@ -149,7 +149,7 @@ export class DatabaseQueryBatcher {
     // Product query batcher
     this.productBatcher = new TemporalBatcher(
       async (operations) => {
-        return await Promise.all(operations.map((op) => op()));
+        return await Promise.all(operations.map((op: any) => op()));
       },
       { windowMs: 16, maxBatchSize: 100, maxWaitMs: 100 },
     );

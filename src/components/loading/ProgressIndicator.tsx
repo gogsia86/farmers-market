@@ -335,7 +335,7 @@ export const StepProgress = React.forwardRef<HTMLDivElement, StepProgressProps>(
         aria-valuemax={steps.length - 1}
         {...props}
       >
-        {steps.map((step, index) => (
+        {steps.map((step: any, index: any) => (
           <React.Fragment key={step.id}>
             {/* Step item */}
             <div
@@ -663,7 +663,7 @@ export const MultiProgress = React.forwardRef<HTMLDivElement, MultiProgressProps
     },
     ref
   ) => {
-    const maxValue = total || segments.reduce((sum, seg) => sum + seg.value, 0);
+    const maxValue = total || segments.reduce((sum: any, seg: any) => sum + seg.value, 0);
 
     return (
       <div ref={ref} className={cn("w-full", className)} {...props}>
@@ -672,7 +672,7 @@ export const MultiProgress = React.forwardRef<HTMLDivElement, MultiProgressProps
           role="progressbar"
           aria-label="Multi-segment progress"
         >
-          {segments.map((segment, index) => {
+          {segments.map((segment: any, index: any) => {
             const percentage = (segment.value / maxValue) * 100;
             return (
               <div
@@ -694,7 +694,7 @@ export const MultiProgress = React.forwardRef<HTMLDivElement, MultiProgressProps
 
         {showLegend && (
           <div className="flex flex-wrap gap-3 mt-3">
-            {segments.map((segment) => (
+            {segments.map((segment: any) => (
               <div key={segment.id} className="flex items-center gap-2">
                 <div
                   className="w-3 h-3 rounded-full"

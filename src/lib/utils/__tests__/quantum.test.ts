@@ -71,7 +71,7 @@ describe("🌾 Quantum Utility - Divine ID Generation", () => {
 
     it("should generate consistent length IDs", () => {
       const ids = Array.from({ length: 10 }, () => generateQuantumId());
-      const lengths = ids.map((id) => id.length);
+      const lengths = ids.map((id: any) => id.length);
 
       // All IDs should have similar lengths (within reasonable range)
       const minLength = Math.min(...lengths);
@@ -124,7 +124,7 @@ describe("🌾 Quantum Utility - Divine ID Generation", () => {
 
     it("should be consistent in format", () => {
       const ids = Array.from({ length: 10 }, () => generateRequestId());
-      ids.forEach((id) => {
+      ids.forEach((id: any) => {
         expect(id).toMatch(/^req_[a-z0-9]+_[a-z0-9]+$/);
       });
     });
@@ -161,7 +161,7 @@ describe("🌾 Quantum Utility - Divine ID Generation", () => {
 
     it("should be consistent in format", () => {
       const ids = Array.from({ length: 10 }, () => generateSessionId());
-      ids.forEach((id) => {
+      ids.forEach((id: any) => {
         expect(id).toMatch(/^sess_[a-z0-9]+_[a-z0-9]+$/);
       });
     });
@@ -300,14 +300,14 @@ describe("🌾 Quantum Utility - Divine ID Generation", () => {
 
     it("should generate IDs for different entities", () => {
       const entities = ["farm", "product", "order", "customer", "farmer"];
-      const ids = entities.map((entity) => generateQuantumId(entity));
+      const ids = entities.map((entity: any) => generateQuantumId(entity));
 
       // All should be unique
       const uniqueIds = new Set(ids);
       expect(uniqueIds.size).toBe(entities.length);
 
       // All should be valid
-      ids.forEach((id) => {
+      ids.forEach((id: any) => {
         expect(validateQuantumId(id)).toBe(true);
       });
     });
@@ -386,7 +386,7 @@ describe("🌾 Quantum Utility - Divine ID Generation", () => {
       const ids = Array.from({ length: 1000 }, () => generateQuantumId());
       const start = Date.now();
 
-      ids.forEach((id) => validateQuantumId(id));
+      ids.forEach((id: any) => validateQuantumId(id));
 
       const duration = Date.now() - start;
       expect(duration).toBeLessThan(100); // 1000 validations in < 100ms
@@ -425,7 +425,7 @@ describe("🌾 Quantum Utility - Divine ID Generation", () => {
       const productIds = Array.from({ length: 5 }, () =>
         generateQuantumId("product"),
       );
-      productIds.forEach((id) => {
+      productIds.forEach((id: any) => {
         expect(validateQuantumId(id)).toBe(true);
       });
 
@@ -468,7 +468,7 @@ describe("🌾 Quantum Utility - Divine ID Generation", () => {
       const uniqueIds = new Set(ids);
       expect(uniqueIds.size).toBe(50);
 
-      ids.forEach((id) => {
+      ids.forEach((id: any) => {
         expect(validateQuantumId(id)).toBe(true);
       });
     });

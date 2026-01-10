@@ -294,7 +294,7 @@ describe("🛡️ Error Classes - Divine Error Handling System", () => {
     it("should handle different database operations", () => {
       const operations = ["SELECT", "INSERT", "UPDATE", "DELETE", "UPSERT"];
 
-      operations.forEach((operation) => {
+      operations.forEach((operation: any) => {
         const error = new DatabaseError(operation, new Error("Test error"), {
           table: "test_table",
         });
@@ -383,7 +383,7 @@ describe("🛡️ Error Classes - Divine Error Handling System", () => {
         new BusinessLogicError("Business error", "OPERATION"),
       ];
 
-      errors.forEach((error) => {
+      errors.forEach((error: any) => {
         expect(error).toBeInstanceOf(Error);
         expect(error).toBeInstanceOf(ApplicationError);
         expect(error.code).toBeDefined();

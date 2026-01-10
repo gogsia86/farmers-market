@@ -112,12 +112,12 @@ export function useQuantumConsciousness(
     ...metrics.current,
     averageMeasurementTime:
       metrics.current.measurements.length > 0
-        ? metrics.current.measurements.reduce((sum, m) => sum + m.duration, 0) /
+        ? metrics.current.measurements.reduce((sum: any, m: any) => sum + m.duration, 0) /
           metrics.current.measurements.length
         : 0,
     successRate:
       metrics.current.measurements.length > 0
-        ? metrics.current.measurements.filter((m) => m.success).length /
+        ? metrics.current.measurements.filter((m: any) => m.success).length /
           metrics.current.measurements.length
         : 1,
   });

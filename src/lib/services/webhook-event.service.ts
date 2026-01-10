@@ -509,7 +509,7 @@ export class WebhookEventService {
       ORDER BY count DESC
     `;
 
-    return duplicates.map((d) => ({
+    return duplicates.map((d: any) => ({
       ...d,
       count: Number(d.count),
     }));

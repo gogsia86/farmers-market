@@ -42,7 +42,7 @@ export default function CustomerLoading() {
 
           {/* Product Grid Skeleton */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => (
+            {[...Array(6)].map((_: any, i: any) => (
               <div
                 key={i}
                 className="bg-card border border-border rounded-lg overflow-hidden"

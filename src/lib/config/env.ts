@@ -198,7 +198,7 @@ export function validateEnv(): Env {
     console.error('');
 
     if (error instanceof z.ZodError) {
-      error.errors.forEach((err) => {
+      error.errors.forEach((err: any) => {
         const path = err.path.join('.');
         console.error(`  • ${path}: ${err.message}`);
       });

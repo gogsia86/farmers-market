@@ -126,7 +126,7 @@ export class QuantumCheckoutService {
     const validation = await cartService.validateCart(userId);
     if (!validation.isValid) {
       throw new Error(
-        `Cart validation failed: ${validation.errors.map((e) => e.message).join(", ")}`
+        `Cart validation failed: ${validation.errors.map((e: any) => e.message).join(", ")}`
       );
     }
 
@@ -376,7 +376,7 @@ export class QuantumCheckoutService {
         specialInstructions: session.specialInstructions,
         stripePaymentIntentId: paymentIntentId,
         items: {
-          create: farmOrder.items.map((item) => ({
+          create: farmOrder.items.map((item: any) => ({
             productId: item.productId,
             productName: item.product.name,
             quantity: item.quantity,
@@ -420,7 +420,7 @@ export class QuantumCheckoutService {
     }>,
     fulfillmentMethod: "DELIVERY" | "PICKUP"
   ): FarmCheckoutOrder[] {
-    return farmGroups.map((group) => {
+    return farmGroups.map((group: any) => {
       const subtotal = group.subtotal;
 
       // Calculate delivery fee (per farm)
@@ -464,11 +464,11 @@ export class QuantumCheckoutService {
    * 💰 Calculate total amounts across all farm orders
    */
   private calculateTotals(farmOrders: FarmCheckoutOrder[]): CheckoutTotals {
-    const subtotal = farmOrders.reduce((sum, order) => sum + order.subtotal, 0);
-    const tax = farmOrders.reduce((sum, order) => sum + order.tax, 0);
-    const deliveryFee = farmOrders.reduce((sum, order) => sum + order.deliveryFee, 0);
-    const platformFee = farmOrders.reduce((sum, order) => sum + order.platformFee, 0);
-    const total = farmOrders.reduce((sum, order) => sum + order.total, 0);
+    const subtotal = farmOrders.reduce((sum: any, order: any) => sum + order.subtotal, 0);
+    const tax = farmOrders.reduce((sum: any, order: any) => sum + order.tax, 0);
+    const deliveryFee = farmOrders.reduce((sum: any, order: any) => sum + order.deliveryFee, 0);
+    const platformFee = farmOrders.reduce((sum: any, order: any) => sum + order.platformFee, 0);
+    const total = farmOrders.reduce((sum: any, order: any) => sum + order.total, 0);
 
     return {
       subtotal: Math.round(subtotal * 100) / 100,
@@ -498,7 +498,7 @@ export class QuantumCheckoutService {
     const cartValidation = await cartService.validateCart(userId);
     if (!cartValidation.isValid) {
       errors.push(
-        ...cartValidation.errors.map((e) => ({
+        ...cartValidation.errors.map((e: any) => ({
           code: e.type,
           message: e.message,
           field: "cart",
@@ -547,7 +547,7 @@ export class QuantumCheckoutService {
 
     // Add warnings from cart validation
     if (cartValidation.warnings.length > 0) {
-      warnings.push(...cartValidation.warnings.map((w) => w.message));
+      warnings.push(...cartValidation.warnings.map((w: any) => w.message));
     }
 
     return {

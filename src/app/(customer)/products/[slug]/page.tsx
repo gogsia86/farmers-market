@@ -93,7 +93,7 @@ const getRelatedProductsData = cache(
 function RelatedProductsSkeleton() {
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-      {[...Array(4)].map((_, i) => (
+      {[...Array(4)].map((_: any, i: any) => (
         <Card key={i}>
           <CardHeader className="p-0">
             <Skeleton className="h-48 w-full rounded-t-lg" />
@@ -112,7 +112,7 @@ function RelatedProductsSkeleton() {
 function ReviewsSkeleton() {
   return (
     <div className="space-y-4">
-      {[...Array(3)].map((_, i) => (
+      {[...Array(3)].map((_: any, i: any) => (
         <Card key={i}>
           <CardContent className="pt-6">
             <div className="flex items-start gap-4">
@@ -150,7 +150,9 @@ async function RelatedProducts({
   );
 
   // Filter out current product
-  const filtered = relatedProducts.filter((p) => p.id !== productId);
+  const filtered = relatedProducts.filter(
+    (p: (typeof relatedProducts)[0]) => p.id !== productId,
+  );
 
   if (filtered.length === 0) {
     return (
@@ -162,7 +164,7 @@ async function RelatedProducts({
 
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-      {filtered.map((product) => (
+      {filtered.map((product: (typeof relatedProducts)[0]) => (
         <Link key={product.id} href={`/products/${product.slug}`}>
           <Card className="h-full hover:shadow-lg transition-shadow">
             <CardHeader className="p-0">
@@ -305,7 +307,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
             {/* Thumbnail gallery */}
             {product.images && product.images.length > 1 && (
               <div className="mt-4 grid grid-cols-4 gap-4">
-                {product.images.slice(1, 5).map((image, index) => (
+                {product.images.slice(1, 5).map((image: any, index: number) => (
                   <div
                     key={index}
                     className="aspect-square overflow-hidden rounded-md bg-gray-100"
@@ -386,7 +388,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               {product.category && (
                 <Badge variant="outline">{product.category}</Badge>
               )}
-              {tags.map((tag, index) => (
+              {tags.map((tag: any, index: number) => (
                 <Badge key={`${tag}-${index}`} variant="secondary">
                   {String(tag)}
                 </Badge>
@@ -483,7 +485,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
             Customer Reviews
           </h2>
           <Suspense fallback={<ReviewsSkeleton />}>
-            <ProductReviews productSlug={resolvedParams.slug} />
+            <ProductReviews productSlug={slug} />
           </Suspense>
         </section>
       </div>
@@ -499,7 +501,8 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
-  const product = await getProductData(resolvedParams.slug);
+  const slug = resolvedParams.slug;
+  const product = await getProductData(slug);
 
   if (!product) {
     return {

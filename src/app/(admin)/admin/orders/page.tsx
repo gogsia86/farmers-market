@@ -66,7 +66,7 @@ export default async function AdminOrdersPage() {
   };
 
   // Calculate total revenue
-  const totalRevenue = orders.reduce((sum, order) => {
+  const totalRevenue = orders.reduce((sum: any, order: any) => {
     return sum + Number(order.totalAmount);
   }, 0);
 
@@ -129,9 +129,7 @@ export default async function AdminOrdersPage() {
       {/* Revenue Card */}
       <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow-lg p-6 mb-8 text-white">
         <p className="text-sm font-medium opacity-90">Total Revenue</p>
-        <p className="text-4xl font-bold mt-2">
-          ${totalRevenue.toFixed(2)}
-        </p>
+        <p className="text-4xl font-bold mt-2">${totalRevenue.toFixed(2)}</p>
         <p className="text-sm opacity-75 mt-2">
           From {orders.length} recent orders
         </p>
@@ -184,7 +182,7 @@ export default async function AdminOrdersPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {orders.map((order) => (
+                {orders.map((order: any) => (
                   <tr key={order.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-mono text-gray-900">
@@ -201,13 +199,16 @@ export default async function AdminOrdersPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">
-                        {order.items.length} item{order.items.length !== 1 ? "s" : ""}
+                        {order.items.length} item
+                        {order.items.length !== 1 ? "s" : ""}
                       </div>
                       <div className="text-xs text-gray-500">
-                        {order.items.slice(0, 2).map((item, i) => (
+                        {order.items.slice(0, 2).map((item: any, i: number) => (
                           <div key={item.id}>
                             {item.product.name}
-                            {i === 1 && order.items.length > 2 && ` +${order.items.length - 2} more`}
+                            {i === 1 &&
+                              order.items.length > 2 &&
+                              ` +${order.items.length - 2} more`}
                           </div>
                         ))}
                       </div>

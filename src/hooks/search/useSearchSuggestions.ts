@@ -226,7 +226,7 @@ function useDebounce<T>(value: T, delay: number): T {
  *
  *       {suggestions.length > 0 && (
  *         <ul>
- *           {suggestions.map((suggestion, index) => (
+ *           {suggestions.map((suggestion: any, index: any) => (
  *             <li
  *               key={`${suggestion.type}-${suggestion.value}`}
  *               className={index === selectedIndex ? "selected" : ""}
@@ -285,17 +285,17 @@ export function useSearchSuggestions(
 
   // Group suggestions by type
   const productSuggestions = useMemo(
-    () => suggestions.filter((s) => s.type === "PRODUCT"),
+    () => suggestions.filter((s: any) => s.type === "PRODUCT"),
     [suggestions],
   );
 
   const farmSuggestions = useMemo(
-    () => suggestions.filter((s) => s.type === "FARM"),
+    () => suggestions.filter((s: any) => s.type === "FARM"),
     [suggestions],
   );
 
   const categorySuggestions = useMemo(
-    () => suggestions.filter((s) => s.type === "CATEGORY"),
+    () => suggestions.filter((s: any) => s.type === "CATEGORY"),
     [suggestions],
   );
 
@@ -413,7 +413,7 @@ export function useSearchSuggestions(
  *     <div>
  *       <h3>Recent Searches</h3>
  *       <ul>
- *         {recentSearches.map((search) => (
+ *         {recentSearches.map((search: any) => (
  *           <li key={search.id}>
  *             {search.query}
  *             <button onClick={() => removeSearch(search.id)}>×</button>
@@ -468,7 +468,7 @@ export function useRecentSearches(maxItems: number = 10) {
 
       setRecentSearches((prev) => {
         // Remove duplicate if exists
-        const filtered = prev.filter((s) => s.query !== trimmedQuery);
+        const filtered = prev.filter((s: any) => s.query !== trimmedQuery);
 
         // Add new search at the beginning
         const updated = [
@@ -489,7 +489,7 @@ export function useRecentSearches(maxItems: number = 10) {
 
   // Remove specific search
   const removeSearch = useCallback((id: string) => {
-    setRecentSearches((prev) => prev.filter((s) => s.id !== id));
+    setRecentSearches((prev) => prev.filter((s: any) => s.id !== id));
   }, []);
 
   // Clear all searches

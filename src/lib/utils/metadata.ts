@@ -418,7 +418,7 @@ export function generateBreadcrumbJsonLd(
   items: Array<{ name: string; url: string }>,
 ) {
   return generateJsonLd("BreadcrumbList", {
-    itemListElement: items.map((item, index) => ({
+    itemListElement: items.map((item: any, index: any) => ({
       "@type": "ListItem",
       position: index + 1,
       name: item.name,
@@ -466,7 +466,7 @@ export function addBiodynamicContext(
         name: "Farming Practice",
         value: "Biodynamic & Sustainable",
       },
-      ...(certifications || []).map((cert) => ({
+      ...(certifications || []).map((cert: any) => ({
         "@type": "PropertyValue",
         name: "Certification",
         value: cert,
@@ -509,10 +509,10 @@ export function extractKeywords(text: string, count: number = 10): string[] {
     .toLowerCase()
     .replace(/[^a-z0-9\s]/g, "")
     .split(/\s+/)
-    .filter((word) => word.length > 3);
+    .filter((word: any) => word.length > 3);
 
   const frequency = new Map<string, number>();
-  words.forEach((word) => {
+  words.forEach((word: any) => {
     frequency.set(word, (frequency.get(word) || 0) + 1);
   });
 

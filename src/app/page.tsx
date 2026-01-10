@@ -187,7 +187,7 @@ export default async function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredProducts.map((product) => (
+            {featuredProducts.map((product: any) => (
               <Link
                 key={product.id}
                 href={`/products/${product.slug}`}
@@ -295,7 +295,7 @@ export default async function HomePage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredFarms.map((farm) => (
+              {featuredFarms.map((farm: any) => (
                 <Link
                   key={farm.id}
                   href={`/farms/${farm.slug}`}

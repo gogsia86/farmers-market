@@ -131,7 +131,7 @@ export function isPublicRoute(pathname: string): boolean {
   // Strip query params and hash for comparison
   const cleanPath = pathname.split("?")[0]?.split("#")[0] || pathname;
 
-  return PUBLIC_ROUTES.some((route) => {
+  return PUBLIC_ROUTES.some((route: any) => {
     if (route.endsWith("/*")) {
       return cleanPath.startsWith(route.slice(0, -2));
     }
@@ -148,7 +148,7 @@ export function isPublicRoute(pathname: string): boolean {
  * Check if a route is an auth route (login/signup)
  */
 export function isAuthRoute(pathname: string): boolean {
-  return AUTH_ROUTES.some((route) => {
+  return AUTH_ROUTES.some((route: any) => {
     return pathname === route || pathname.startsWith(route.replace("/*", ""));
   });
 }
@@ -157,7 +157,7 @@ export function isAuthRoute(pathname: string): boolean {
  * Check if a route is an API route
  */
 export function isApiRoute(pathname: string): boolean {
-  return API_ROUTES.some((route) => {
+  return API_ROUTES.some((route: any) => {
     if (route.endsWith("/*")) {
       return pathname.startsWith(route.slice(0, -2));
     }
@@ -169,7 +169,7 @@ export function isApiRoute(pathname: string): boolean {
  * Check if a route is a system route (static files, etc.)
  */
 export function isSystemRoute(pathname: string): boolean {
-  return SYSTEM_ROUTES.some((route) => {
+  return SYSTEM_ROUTES.some((route: any) => {
     if (route.startsWith("/*.")) {
       const ext = route.slice(2);
       return pathname.endsWith(ext);

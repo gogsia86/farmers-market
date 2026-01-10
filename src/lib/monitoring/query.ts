@@ -92,7 +92,7 @@ export async function measureParallelQueries<T extends unknown[]>(
     logger.info(
       `⚡ [PARALLEL QUERIES] ${queries.length} queries in ${totalDuration.toFixed(2)}ms`,
       {
-        individual: queries.map((q, i) => ({
+        individual: queries.map((q: any, i: any) => ({
           name: q.name,
           duration: `${individualDurations[i]?.toFixed(2)}ms`,
         })),
@@ -157,8 +157,8 @@ export class QueryMonitor {
    * Get summary of all queries in this context
    */
   getSummary() {
-    const totalDuration = this.queries.reduce((sum, q) => sum + q.duration, 0);
-    const successCount = this.queries.filter((q) => q.success).length;
+    const totalDuration = this.queries.reduce((sum: any, q: any) => sum + q.duration, 0);
+    const successCount = this.queries.filter((q: any) => q.success).length;
     const failureCount = this.queries.length - successCount;
 
     return {
@@ -169,7 +169,7 @@ export class QueryMonitor {
         this.queries.length > 0 ? totalDuration / this.queries.length : 0,
       successCount,
       failureCount,
-      queries: this.queries.map((q) => ({
+      queries: this.queries.map((q: any) => ({
         name: q.name,
         duration: q.duration,
         success: q.success,

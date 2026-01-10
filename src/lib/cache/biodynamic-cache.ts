@@ -258,7 +258,7 @@ export class BiodynamicCacheManager {
     if (params) {
       const sortedParams = Object.keys(params)
         .sort((a, b) => a.localeCompare(b))
-        .map((key) => `${key}:${params[key]}`)
+        .map((key: any) => `${key}:${params[key]}`)
         .join(":");
       parts.push(sortedParams);
     }

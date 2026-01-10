@@ -316,7 +316,7 @@ export const useCheckoutStore = create<CheckoutStore>()(
       clearErrors: (step?: CheckoutStep) => {
         if (step) {
           set((state) => ({
-            errors: state.errors.filter((e) => e.step !== step),
+            errors: state.errors.filter((e: any) => e.step !== step),
           }));
         } else {
           set({ errors: [] });
@@ -447,7 +447,7 @@ export const useCheckoutValidation = () => {
     state.canProceedFromStep(currentStep),
   );
   const errors = useCheckoutStore((state) =>
-    state.errors.filter((e) => e.step === currentStep),
+    state.errors.filter((e: any) => e.step === currentStep),
   );
 
   return {

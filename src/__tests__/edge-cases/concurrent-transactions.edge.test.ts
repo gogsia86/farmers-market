@@ -136,7 +136,7 @@ describe('Edge Case: Concurrent Transactions', () => {
       });
 
       // Verify results
-      const successfulOps = results.filter((r) => r.status === 'fulfilled').length;
+      const successfulOps = results.filter((r: any) => r.status === 'fulfilled').length;
       const expectedInventory = initialInventory - successfulOps * decrementAmount;
 
       expect(finalProduct?.inventory).toBe(expectedInventory);
@@ -208,8 +208,8 @@ describe('Edge Case: Concurrent Transactions', () => {
       const results = await Promise.allSettled(buyAttempts);
 
       // Only one should succeed
-      const successful = results.filter((r) => r.status === 'fulfilled').length;
-      const failed = results.filter((r) => r.status === 'rejected').length;
+      const successful = results.filter((r: any) => r.status === 'fulfilled').length;
+      const failed = results.filter((r: any) => r.status === 'rejected').length;
 
       expect(successful).toBe(1);
       expect(failed).toBe(4);
@@ -243,7 +243,7 @@ describe('Edge Case: Concurrent Transactions', () => {
       );
 
       // Each user creates an order concurrently
-      const orderCreations = users.map((user) =>
+      const orderCreations = users.map((user: any) =>
         database.$transaction(async (tx) => {
           // Create order
           const order = await tx.order.create({
@@ -281,7 +281,7 @@ describe('Edge Case: Concurrent Transactions', () => {
       const results = await Promise.allSettled(orderCreations);
 
       // All should succeed (we have enough inventory)
-      const successful = results.filter((r) => r.status === 'fulfilled').length;
+      const successful = results.filter((r: any) => r.status === 'fulfilled').length;
       expect(successful).toBe(5);
 
       // Verify inventory decreased by 5
@@ -468,7 +468,7 @@ describe('Edge Case: Concurrent Transactions', () => {
       const results = await Promise.allSettled([transaction1, transaction2]);
 
       // At least one should succeed
-      const successful = results.filter((r) => r.status === 'fulfilled').length;
+      const successful = results.filter((r: any) => r.status === 'fulfilled').length;
       expect(successful).toBeGreaterThanOrEqual(1);
 
       // Cleanup
@@ -573,8 +573,8 @@ describe('Edge Case: Concurrent Transactions', () => {
 
       const results = await Promise.allSettled(operations);
 
-      const successful = results.filter((r) => r.status === 'fulfilled').length;
-      const failed = results.filter((r) => r.status === 'rejected').length;
+      const successful = results.filter((r: any) => r.status === 'fulfilled').length;
+      const failed = results.filter((r: any) => r.status === 'rejected').length;
 
       // Verify integrity
       const finalProduct = await database.product.findUnique({

@@ -227,7 +227,7 @@ export default async function OrdersPage({ searchParams }: PageProps) {
           </div>
         ) : (
           <div className="space-y-4">
-            {orders.map((order) => {
+            {orders.map((order: any) => {
               const status = order.status as keyof typeof ORDER_STATUSES;
               const statusConfig = ORDER_STATUSES[status] || ORDER_STATUSES.PENDING;
               const StatusIcon = statusConfig.icon;
@@ -285,7 +285,7 @@ export default async function OrdersPage({ searchParams }: PageProps) {
                     {/* Order Items Preview */}
                     <div className="border-t border-gray-100 pt-4">
                       <div className="space-y-2">
-                        {order.items.slice(0, 3).map((item) => (
+                        {order.items.slice(0, 3).map((item: any) => (
                           <div
                             key={item.id}
                             className="flex items-center justify-between text-sm"

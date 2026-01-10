@@ -45,7 +45,7 @@ export default function AdminLoading() {
 
           {/* Stats Cards Skeleton */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            {[...Array(4)].map((_, i) => (
+            {[...Array(4)].map((_: any, i: any) => (
               <div
                 key={i}
                 className="bg-card border border-border rounded-lg p-6"
@@ -85,14 +85,14 @@ export default function AdminLoading() {
                 <div className="space-y-3">
                   {/* Table Header */}
                   <div className="grid grid-cols-4 gap-4 pb-2 border-b border-border">
-                    {[...Array(4)].map((_, i) => (
+                    {[...Array(4)].map((_: any, i: any) => (
                       <div key={i} className="h-4 bg-muted animate-pulse rounded" />
                     ))}
                   </div>
                   {/* Table Rows */}
-                  {[...Array(6)].map((_, i) => (
+                  {[...Array(6)].map((_: any, i: any) => (
                     <div key={i} className="grid grid-cols-4 gap-4 py-3">
-                      {[...Array(4)].map((_, j) => (
+                      {[...Array(4)].map((_: any, j: any) => (
                         <div key={j} className="h-4 bg-muted animate-pulse rounded" />
                       ))}
                     </div>
@@ -107,7 +107,7 @@ export default function AdminLoading() {
               <div className="bg-card border border-border rounded-lg p-6">
                 <div className="h-6 w-32 bg-muted animate-pulse rounded mb-4" />
                 <div className="space-y-2">
-                  {[...Array(5)].map((_, i) => (
+                  {[...Array(5)].map((_: any, i: any) => (
                     <div key={i} className="h-10 bg-muted animate-pulse rounded" />
                   ))}
                 </div>
@@ -117,7 +117,7 @@ export default function AdminLoading() {
               <div className="bg-card border border-border rounded-lg p-6">
                 <div className="h-6 w-36 bg-muted animate-pulse rounded mb-4" />
                 <div className="space-y-4">
-                  {[...Array(4)].map((_, i) => (
+                  {[...Array(4)].map((_: any, i: any) => (
                     <div key={i} className="flex items-start gap-3">
                       <div className="h-10 w-10 bg-muted animate-pulse rounded-full flex-shrink-0" />
                       <div className="flex-1 space-y-2">
@@ -133,7 +133,7 @@ export default function AdminLoading() {
               <div className="bg-card border border-border rounded-lg p-6">
                 <div className="h-6 w-28 bg-muted animate-pulse rounded mb-4" />
                 <div className="space-y-3">
-                  {[...Array(3)].map((_, i) => (
+                  {[...Array(3)].map((_: any, i: any) => (
                     <div key={i} className="flex items-center justify-between">
                       <div className="h-4 w-20 bg-muted animate-pulse rounded" />
                       <div className="h-6 w-16 bg-muted animate-pulse rounded-full" />

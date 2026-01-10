@@ -85,7 +85,7 @@ export function useRealtimeNotifications(
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Calculate unread count
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const unreadCount = notifications.filter((n: any) => !n.read).length;
 
   // Connect to SSE endpoint
   const connect = useCallback(() => {
@@ -129,7 +129,7 @@ export function useRealtimeNotifications(
 
           setNotifications((prev) => {
             // Prevent duplicates
-            if (prev.some((n) => n.id === notification.id)) {
+            if (prev.some((n: any) => n.id === notification.id)) {
               return prev;
             }
             return [notification, ...prev];
@@ -245,7 +245,7 @@ export function useRealtimeNotifications(
   // Mark notification as read
   const markAsRead = useCallback(async (notificationId: string) => {
     setNotifications((prev) =>
-      prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n)),
+      prev.map((n: any) => (n.id === notificationId ? { ...n, read: true } : n)),
     );
 
     // Sync with server
@@ -263,7 +263,7 @@ export function useRealtimeNotifications(
 
   // Mark all notifications as read
   const markAllAsRead = useCallback(async () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    setNotifications((prev) => prev.map((n: any) => ({ ...n, read: true })));
 
     // Sync with server
     try {
@@ -280,7 +280,7 @@ export function useRealtimeNotifications(
 
   // Remove notification
   const removeNotification = useCallback(async (notificationId: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
+    setNotifications((prev) => prev.filter((n: any) => n.id !== notificationId));
 
     // Sync with server
     try {

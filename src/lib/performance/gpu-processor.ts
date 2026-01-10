@@ -283,8 +283,8 @@ export class GPUProcessor {
       }
 
       const duration = performance.now() - startTime;
-      const totalOriginalSize = originalSizes.reduce((a, b) => a + b, 0);
-      const totalNewSize = newSizes.reduce((a, b) => a + b, 0);
+      const totalOriginalSize = originalSizes.reduce((a: any, b: any) => a + b, 0);
+      const totalNewSize = newSizes.reduce((a: any, b: any) => a + b, 0);
       const compressionRatio = totalOriginalSize / totalNewSize;
 
       logger.info(`✅ Image processing complete: ${duration.toFixed(2)}ms`);
@@ -541,7 +541,7 @@ export class GPUProcessor {
     };
 
     const overall =
-      Object.values(breakdown).reduce((sum, val) => sum + val, 0) /
+      Object.values(breakdown).reduce((sum: any, val: any) => sum + val, 0) /
       Object.keys(breakdown).length;
 
     const recommendations: string[] = [];
@@ -585,9 +585,9 @@ export class GPUProcessor {
       const metrics = this.metrics.get(operation);
       if (!metrics || metrics.length === 0) return null;
 
-      const durations = metrics.map((m) => m.duration);
+      const durations = metrics.map((m: any) => m.duration);
       const avgDuration =
-        durations.reduce((a, b) => a + b, 0) / durations.length;
+        durations.reduce((a: any, b: any) => a + b, 0) / durations.length;
 
       return {
         operation,
@@ -595,7 +595,7 @@ export class GPUProcessor {
         avgDuration,
         minDuration: Math.min(...durations),
         maxDuration: Math.max(...durations),
-        successRate: metrics.filter((m) => m.success).length / metrics.length,
+        successRate: metrics.filter((m: any) => m.success).length / metrics.length,
       };
     }
 
@@ -635,7 +635,7 @@ export class GPUProcessor {
     }
 
     this.gpuMetrics.averageKernelTime =
-      this.kernelExecutions.reduce((a, b) => a + b, 0) /
+      this.kernelExecutions.reduce((a: any, b: any) => a + b, 0) /
       this.kernelExecutions.length;
   }
 
@@ -692,7 +692,7 @@ export class GPUPerformanceMonitor {
 
     return {
       count: measurements.length,
-      avg: measurements.reduce((a, b) => a + b, 0) / measurements.length,
+      avg: measurements.reduce((a: any, b: any) => a + b, 0) / measurements.length,
       min: Math.min(...measurements),
       max: Math.max(...measurements),
       p50: sorted[Math.floor(sorted.length * 0.5)],

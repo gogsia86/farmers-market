@@ -97,7 +97,7 @@ export class QuantumCoherenceError extends ServiceError {
 ║ 🎯 EXPECTED REALITY: ${JSON.stringify(expectedState, null, 2)}
 ║
 ║ 🛠️  PATH TO ENLIGHTENMENT:
-║    ${resolutionPath.map((step, i) => `${i + 1}. ${step}`).join('\n║    ')}
+║    ${resolutionPath.map((step: any, i: any) => `${i + 1}. ${step}`).join('\n║    ')}
 ╚════════════════════════════════════════════════════════════╝
     `;
     super(formattedMessage, "QUANTUM_COHERENCE_ERROR", 500, {

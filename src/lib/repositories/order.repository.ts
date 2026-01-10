@@ -489,7 +489,7 @@ export class QuantumOrderRepository extends BaseRepository<
       const ordersByStatus: Record<string, number> = {};
       const ordersByFulfillmentMethod: Record<string, number> = {};
 
-      orders.forEach((order) => {
+      orders.forEach((order: any) => {
         // Count by status
         ordersByStatus[order.status] = (ordersByStatus[order.status] || 0) + 1;
 

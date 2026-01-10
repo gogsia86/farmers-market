@@ -5,7 +5,7 @@ import { database } from "@/lib/database";
 import type { CartItem, Product } from "@prisma/client";
 import { Decimal } from "decimal.js";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -24,6 +24,17 @@ export interface UpdateCartItemRequest {
 }
 
 export interface CartItemWithProduct extends CartItem {
+  id: string;
+  userId: string;
+  productId: string;
+  farmId: string;
+  quantity: Decimal;
+  unit: string;
+  priceAtAdd: Decimal;
+  fulfillmentMethod: "DELIVERY" | "PICKUP";
+  reservedUntil: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
   product: Product & {
     farm: {
       id: string;
@@ -63,7 +74,11 @@ export interface CartValidationError {
   itemId: string;
   productId: string;
   productName: string;
-  type: "OUT_OF_STOCK" | "INSUFFICIENT_STOCK" | "PRODUCT_INACTIVE" | "PRICE_CHANGED";
+  type:
+    | "OUT_OF_STOCK"
+    | "INSUFFICIENT_STOCK"
+    | "PRODUCT_INACTIVE"
+    | "PRICE_CHANGED";
   message: string;
   currentStock?: number;
   requestedQuantity?: number;
@@ -95,7 +110,12 @@ export class QuantumCartService {
    * 🛒 Add item to cart with quantum manifestation
    */
   async addToCart(request: AddToCartRequest): Promise<CartItemWithProduct> {
-    const { userId, productId, quantity, fulfillmentMethod = "DELIVERY" } = request;
+    const {
+      userId,
+      productId,
+      quantity,
+      fulfillmentMethod = "DELIVERY",
+    } = request;
 
     // Validate quantity
     if (quantity <= 0) {
@@ -133,7 +153,7 @@ export class QuantumCartService {
     const availableStock = product.quantityAvailable?.toNumber() || 0;
     if (quantity > availableStock) {
       throw new Error(
-        `Insufficient stock. Only ${availableStock} ${product.unit} available`
+        `Insufficient stock. Only ${availableStock} ${product.unit} available`,
       );
     }
 
@@ -151,7 +171,7 @@ export class QuantumCartService {
 
       if (newQuantity > availableStock) {
         throw new Error(
-          `Cannot add ${quantity} more. Maximum available: ${availableStock} ${product.unit}`
+          `Cannot add ${quantity} more. Maximum available: ${availableStock} ${product.unit}`,
         );
       }
 
@@ -216,11 +236,15 @@ export class QuantumCartService {
   /**
    * 🔄 Update cart item quantity
    */
-  async updateCartItem(request: UpdateCartItemRequest): Promise<CartItemWithProduct> {
+  async updateCartItem(
+    request: UpdateCartItemRequest,
+  ): Promise<CartItemWithProduct> {
     const { itemId, quantity } = request;
 
     if (quantity <= 0) {
-      throw new Error("Quantity must be greater than 0. Use removeFromCart to delete items.");
+      throw new Error(
+        "Quantity must be greater than 0. Use removeFromCart to delete items.",
+      );
     }
 
     const cartItem = await database.cartItem.findUnique({
@@ -238,7 +262,7 @@ export class QuantumCartService {
     const availableStock = cartItem.product.quantityAvailable?.toNumber() || 0;
     if (quantity > availableStock) {
       throw new Error(
-        `Insufficient stock. Only ${availableStock} ${cartItem.product.unit} available`
+        `Insufficient stock. Only ${availableStock} ${cartItem.product.unit} available`,
       );
     }
 
@@ -307,7 +331,7 @@ export class QuantumCartService {
     try {
       // Validate userId
       if (!userId) {
-        logger.warn('getCartItems called with empty userId');
+        logger.warn("getCartItems called with empty userId");
         return [];
       }
 
@@ -331,7 +355,7 @@ export class QuantumCartService {
 
       return items as CartItemWithProduct[];
     } catch (error) {
-      logger.error('Get cart items error', {
+      logger.error("Get cart items error", {
         error: error instanceof Error ? error.message : String(error),
         userId,
         stack: error instanceof Error ? error.stack : undefined,
@@ -348,7 +372,7 @@ export class QuantumCartService {
     try {
       // Validate userId
       if (!userId) {
-        logger.warn('getCartSummary called with empty userId');
+        logger.warn("getCartSummary called with empty userId");
         return this.getEmptyCartSummary();
       }
 
@@ -359,12 +383,13 @@ export class QuantumCartService {
       }
 
       // Calculate subtotal with error handling
-      const subtotal = items.reduce((sum, item) => {
+      const subtotal = items.reduce((sum: any, item: any) => {
         try {
-          const itemTotal = item.quantity.toNumber() * item.priceAtAdd.toNumber();
+          const itemTotal =
+            item.quantity.toNumber() * item.priceAtAdd.toNumber();
           return sum + itemTotal;
         } catch (error) {
-          logger.warn('Error calculating item total', {
+          logger.warn("Error calculating item total", {
             itemId: item.id,
             error: error instanceof Error ? error.message : String(error),
           });
@@ -383,11 +408,11 @@ export class QuantumCartService {
       const total = subtotal + tax + deliveryFee;
 
       // Calculate item count (total quantity of all items)
-      const itemCount = items.reduce((sum, item) => {
+      const itemCount = items.reduce((sum: any, item: any) => {
         try {
           return sum + item.quantity.toNumber();
         } catch (error) {
-          logger.warn('Error calculating item quantity', {
+          logger.warn("Error calculating item quantity", {
             itemId: item.id,
             error: error instanceof Error ? error.message : String(error),
           });
@@ -409,7 +434,7 @@ export class QuantumCartService {
         farmGroups,
       };
     } catch (error) {
-      logger.error('Get cart summary error', {
+      logger.error("Get cart summary error", {
         error: error instanceof Error ? error.message : String(error),
         userId,
         stack: error instanceof Error ? error.stack : undefined,
@@ -455,11 +480,11 @@ export class QuantumCartService {
       const firstItem = farmItems[0];
       if (!firstItem) continue;
 
-      const farmSubtotal = farmItems.reduce((sum, item) => {
+      const farmSubtotal = farmItems.reduce((sum: any, item: any) => {
         return sum + item.quantity.toNumber() * item.priceAtAdd.toNumber();
       }, 0);
 
-      const farmItemCount = farmItems.reduce((sum, item) => {
+      const farmItemCount = farmItems.reduce((sum: any, item: any) => {
         return sum + item.quantity.toNumber();
       }, 0);
 
@@ -483,7 +508,7 @@ export class QuantumCartService {
     try {
       // Validate userId
       if (!userId) {
-        logger.warn('getCartCount called with empty userId');
+        logger.warn("getCartCount called with empty userId");
         return 0;
       }
 
@@ -497,10 +522,10 @@ export class QuantumCartService {
         return 0;
       }
 
-      const totalQuantity = items.reduce((sum, item) => {
+      const totalQuantity = items.reduce((sum: any, item: any) => {
         // Handle null/undefined quantity gracefully
         if (!item.quantity) {
-          logger.warn('Cart item with null quantity found', { userId });
+          logger.warn("Cart item with null quantity found", { userId });
           return sum;
         }
         return sum + item.quantity.toNumber();
@@ -508,7 +533,7 @@ export class QuantumCartService {
 
       return Math.round(totalQuantity);
     } catch (error) {
-      logger.error('Get cart count error', {
+      logger.error("Get cart count error", {
         error: error instanceof Error ? error.message : String(error),
         userId,
         stack: error instanceof Error ? error.stack : undefined,
@@ -655,7 +680,7 @@ export class QuantumCartService {
    */
   async mergeGuestCart(
     guestCartItems: Array<{ productId: string; quantity: number }>,
-    userId: string
+    userId: string,
   ): Promise<void> {
     for (const item of guestCartItems) {
       try {

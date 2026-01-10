@@ -184,7 +184,7 @@ function shouldCompress(
 ): boolean {
   if (!contentType) return false;
 
-  return config.compressibleTypes.some((type) =>
+  return config.compressibleTypes.some((type: any) =>
     contentType.toLowerCase().includes(type),
   );
 }

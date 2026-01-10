@@ -132,7 +132,7 @@ describe("Toast Component - Positions", () => {
     "bottom-right",
   ] as const;
 
-  positions.forEach((position) => {
+  positions.forEach((position: any) => {
     it(`should render in ${position} position`, () => {
       const { container } = renderToast({ position });
       const toast = container.firstChild;

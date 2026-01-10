@@ -63,7 +63,7 @@ describe("🔐 Password Utility - Divine Authentication Security", () => {
       const passwords = ["Short1!", "Medium123!", "VeryLongPassword123!@#$%"];
       const hashes = await Promise.all(passwords.map(hashPassword));
 
-      const lengths = hashes.map((h) => h.length);
+      const lengths = hashes.map((h: any) => h.length);
       expect(new Set(lengths).size).toBe(1); // All same length
     });
   });
@@ -250,7 +250,7 @@ describe("🔐 Password Utility - Divine Authentication Security", () => {
         "Password123+",
       ];
 
-      passwords.forEach((password) => {
+      passwords.forEach((password: any) => {
         const result = validatePasswordStrength(password);
         expect(result.valid).toBe(true);
       });
@@ -276,7 +276,7 @@ describe("🔐 Password Utility - Divine Authentication Security", () => {
       const result = validatePasswordStrength("farmer");
 
       expect(result.valid).toBe(false);
-      result.errors.forEach((error) => {
+      result.errors.forEach((error: any) => {
         expect(error).toMatch(/Password must/);
         expect(typeof error).toBe("string");
       });
@@ -285,7 +285,7 @@ describe("🔐 Password Utility - Divine Authentication Security", () => {
     it("should validate password with numbers at different positions", () => {
       const passwords = ["1Password!", "Pass1word!", "Password1!"];
 
-      passwords.forEach((password) => {
+      passwords.forEach((password: any) => {
         const result = validatePasswordStrength(password);
         expect(result.valid).toBe(true);
       });
@@ -294,7 +294,7 @@ describe("🔐 Password Utility - Divine Authentication Security", () => {
     it("should validate password with uppercase at different positions", () => {
       const passwords = ["Password123!", "pAssword123!", "passworD123!"];
 
-      passwords.forEach((password) => {
+      passwords.forEach((password: any) => {
         const result = validatePasswordStrength(password);
         expect(result.valid).toBe(true);
       });

@@ -162,7 +162,7 @@ export function useComponentConsciousness(
 
     // Calculate average render time
     metricsRef.current.averageRenderTime =
-      renderTimesRef.current.reduce((sum, time) => sum + time, 0) /
+      renderTimesRef.current.reduce((sum: any, time: any) => sum + time, 0) /
       renderTimesRef.current.length;
 
     // Log slow renders (development only)
@@ -356,7 +356,7 @@ export function initializeDivinePerformanceTracking() {
     },
     getMetrics: () => metrics,
     getComponentMetrics: (componentName: string) =>
-      metrics.filter((m) => m.component === componentName),
+      metrics.filter((m: any) => m.component === componentName),
     clearMetrics: () => {
       metrics.length = 0;
     },

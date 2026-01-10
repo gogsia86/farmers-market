@@ -181,7 +181,7 @@ export function CartBadge({
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {cart.items.slice(0, 5).map((item) => (
+                  {cart.items.slice(0, 5).map((item: any) => (
                     <div
                       key={item.id}
                       className="flex items-start space-x-3 rounded-lg border p-3 transition-colors hover:bg-gray-50"

@@ -133,7 +133,7 @@ export function useCart(options: UseCartOptions = {}) {
       const guestItems = getGuestCart();
       setState((prev) => ({
         ...prev,
-        count: guestItems.reduce((sum, item) => sum + item.quantity, 0),
+        count: guestItems.reduce((sum: any, item: any) => sum + item.quantity, 0),
         isLoading: false,
         summary: null,
       }));
@@ -215,7 +215,7 @@ export function useCart(options: UseCartOptions = {}) {
         setGuestCart(guestItems);
         setState((prev) => ({
           ...prev,
-          count: guestItems.reduce((sum, item) => sum + item.quantity, 0),
+          count: guestItems.reduce((sum: any, item: any) => sum + item.quantity, 0),
         }));
 
         toast({
@@ -269,7 +269,7 @@ export function useCart(options: UseCartOptions = {}) {
       setState((prev) => {
         if (!prev.summary) return prev;
 
-        const oldItem = prev.summary.items.find((item) => item.id === itemId);
+        const oldItem = prev.summary.items.find((item: any) => item.id === itemId);
         if (!oldItem) return prev;
 
         const quantityDiff = quantity - oldItem.quantity.toNumber();
@@ -313,7 +313,7 @@ export function useCart(options: UseCartOptions = {}) {
       setState((prev) => {
         if (!prev.summary) return prev;
 
-        const item = prev.summary.items.find((item) => item.id === itemId);
+        const item = prev.summary.items.find((item: any) => item.id === itemId);
         if (!item) return prev;
 
         return {

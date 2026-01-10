@@ -479,7 +479,7 @@ describe("🌾 QuantumProductRepository - Divine Product Database Operations", (
 
       // Assert
       expect(result).toHaveLength(2);
-      expect(result.every((p) => p.isActive)).toBe(true);
+      expect(result.every((p: any) => p.isActive)).toBe(true);
       expect(database.product.findMany).toHaveBeenCalledWith({
         where: { farmId, status: "ACTIVE" },
         include: defaultInclude,
@@ -538,7 +538,7 @@ describe("🌾 QuantumProductRepository - Divine Product Database Operations", (
 
       // Assert
       expect(result).toHaveLength(3);
-      expect(result.every((p) => p.category === "VEGETABLES")).toBe(true);
+      expect(result.every((p: any) => p.category === "VEGETABLES")).toBe(true);
       expect(database.product.findMany).toHaveBeenCalledWith({
         where: { category, status: "ACTIVE" },
         include: defaultInclude,
@@ -622,8 +622,8 @@ describe("🌾 QuantumProductRepository - Divine Product Database Operations", (
 
       // Assert
       expect(result).toHaveLength(2);
-      expect(result.every((p) => p.seasonal)).toBe(true);
-      expect(result.every((p) => p.inStock)).toBe(true);
+      expect(result.every((p: any) => p.seasonal)).toBe(true);
+      expect(result.every((p: any) => p.inStock)).toBe(true);
       expect(database.product.findMany).toHaveBeenCalledWith({
         where: { seasonal: true, inStock: true },
         include: defaultInclude,
@@ -650,7 +650,7 @@ describe("🌾 QuantumProductRepository - Divine Product Database Operations", (
       const result = await repository.findBySeason(season);
 
       // Assert
-      expect(result.every((p) => p.inStock)).toBe(true);
+      expect(result.every((p: any) => p.inStock)).toBe(true);
     });
   });
 
@@ -694,8 +694,8 @@ describe("🌾 QuantumProductRepository - Divine Product Database Operations", (
 
       // Assert
       expect(result).toHaveLength(3);
-      expect(result.every((p) => p.organic)).toBe(true);
-      expect(result.every((p) => p.inStock)).toBe(true);
+      expect(result.every((p: any) => p.organic)).toBe(true);
+      expect(result.every((p: any) => p.inStock)).toBe(true);
       expect(database.product.findMany).toHaveBeenCalledWith({
         where: { organic: true, inStock: true },
         include: defaultInclude,

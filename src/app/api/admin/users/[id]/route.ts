@@ -4,6 +4,8 @@
  */
 
 import { auth } from "@/lib/auth";
+
+import type { Order } from "@prisma/client";
 import { database } from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -265,12 +267,12 @@ export async function GET(
           totalFavorites: user._count.favorites,
           totalAddresses: user._count.addresses,
         },
-        farms: farms.map((farm) => ({
+        farms: farms.map((farm: any) => ({
           ...farm,
           productCount: farm._count.products,
           reviewCount: farm._count.reviews,
         })),
-        recentOrders: recentOrders.map((order) => ({
+        recentOrders: recentOrders.map((order: any) => ({
           ...order,
           total: parseFloat(order.total.toString()),
         })),

@@ -301,11 +301,11 @@ describe("🌾 Currency Utility - Financial Formatting", () => {
 
     it("should handle cart calculations", () => {
       const items = [12.99, 8.5, 15.75, 22.0];
-      const total = items.reduce((sum, price) => sum + price, 0);
+      const total = items.reduce((sum: any, price: any) => sum + price, 0);
 
       expect(formatCurrency(total)).toBe("$59.24");
 
-      items.forEach((price) => {
+      items.forEach((price: any) => {
         const formatted = formatCurrency(price);
         const parsed = parseCurrency(formatted);
         expect(parsed).toBe(price);

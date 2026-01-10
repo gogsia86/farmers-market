@@ -115,7 +115,7 @@ export class WebhookMonitor {
           duplicatesCheck,
         ];
 
-        const failedChecks = allChecks.filter((check) => !check.passed);
+        const failedChecks = allChecks.filter((check: any) => !check.passed);
         const healthy = failedChecks.length === 0;
         const status = this.determineHealthStatus(failedChecks.length, allChecks.length);
 
@@ -474,7 +474,7 @@ export class WebhookMonitor {
     const recommendations: string[] = [];
 
     // High failure rate recommendations
-    if (alerts.some((a) => a.type === "HIGH_FAILURE_RATE")) {
+    if (alerts.some((a: any) => a.type === "HIGH_FAILURE_RATE")) {
       recommendations.push(
         "🔴 Investigate recent webhook failures - check provider API status and error logs"
       );
@@ -484,7 +484,7 @@ export class WebhookMonitor {
     }
 
     // Large backlog recommendations
-    if (alerts.some((a) => a.type === "LARGE_BACKLOG")) {
+    if (alerts.some((a: any) => a.type === "LARGE_BACKLOG")) {
       recommendations.push(
         "⚡ Consider scaling up webhook workers to process backlog faster"
       );
@@ -494,7 +494,7 @@ export class WebhookMonitor {
     }
 
     // Stale events recommendations
-    if (alerts.some((a) => a.type === "STALE_EVENTS")) {
+    if (alerts.some((a: any) => a.type === "STALE_EVENTS")) {
       recommendations.push(
         "🚨 Oldest events are very stale - immediate attention required"
       );
@@ -504,7 +504,7 @@ export class WebhookMonitor {
     }
 
     // Slow processing recommendations
-    if (alerts.some((a) => a.type === "SLOW_PROCESSING")) {
+    if (alerts.some((a: any) => a.type === "SLOW_PROCESSING")) {
       recommendations.push(
         "⏱️ Events requiring multiple attempts - investigate retry causes"
       );
@@ -514,7 +514,7 @@ export class WebhookMonitor {
     }
 
     // Duplicate events recommendations
-    if (alerts.some((a) => a.type === "DUPLICATE_EVENTS")) {
+    if (alerts.some((a: any) => a.type === "DUPLICATE_EVENTS")) {
       recommendations.push(
         "🔍 Duplicate events detected - verify idempotency implementation"
       );
@@ -524,7 +524,7 @@ export class WebhookMonitor {
     }
 
     // Low success rate recommendations
-    if (alerts.some((a) => a.type === "LOW_SUCCESS_RATE")) {
+    if (alerts.some((a: any) => a.type === "LOW_SUCCESS_RATE")) {
       recommendations.push(
         "📉 Overall success rate is low - review webhook processing pipeline"
       );

@@ -140,7 +140,7 @@ describe("📧 Email Service - Divine Communication System", () => {
         "dashboard",
       ];
 
-      expectedContent.forEach((keyword) => {
+      expectedContent.forEach((keyword: any) => {
         expect(keyword).toBeDefined();
       });
     });
@@ -278,7 +278,7 @@ describe("📧 Email Service - Divine Communication System", () => {
       };
 
       expect(orderData.items.length).toBe(3);
-      orderData.items.forEach((item) => {
+      orderData.items.forEach((item: any) => {
         expect(item.name).toBeDefined();
         expect(item.quantity).toBeGreaterThan(0);
         expect(item.price).toBeGreaterThan(0);
@@ -413,7 +413,7 @@ describe("📧 Email Service - Divine Communication System", () => {
       ];
 
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      validEmails.forEach((email) => {
+      validEmails.forEach((email: any) => {
         expect(email).toMatch(emailRegex);
       });
     });
@@ -427,7 +427,7 @@ describe("📧 Email Service - Divine Communication System", () => {
       ];
 
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      invalidEmails.forEach((email) => {
+      invalidEmails.forEach((email: any) => {
         expect(email).not.toMatch(emailRegex);
       });
     });
@@ -479,7 +479,7 @@ describe("📧 Email Service - Divine Communication System", () => {
 
     it("should support loops for items", () => {
       const items = ["Apple", "Orange", "Banana"];
-      const itemList = items.map((item) => `<li>${item}</li>`).join("");
+      const itemList = items.map((item: any) => `<li>${item}</li>`).join("");
       expect(itemList).toContain("<li>Apple</li>");
       expect(itemList).toContain("<li>Orange</li>");
       expect(itemList).toContain("<li>Banana</li>");
@@ -521,7 +521,7 @@ describe("📧 Email Service - Divine Communication System", () => {
   describe("🌾 Agricultural Consciousness", () => {
     it("should use seasonal themes in emails", () => {
       const seasons = ["SPRING", "SUMMER", "FALL", "WINTER"];
-      seasons.forEach((season) => {
+      seasons.forEach((season: any) => {
         expect(season).toBeDefined();
       });
     });
@@ -538,7 +538,7 @@ describe("📧 Email Service - Divine Communication System", () => {
 
     it("should support multiple languages", () => {
       const languages = ["en", "es", "fr"];
-      languages.forEach((lang) => {
+      languages.forEach((lang: any) => {
         expect(lang.length).toBe(2);
       });
     });

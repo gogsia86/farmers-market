@@ -141,7 +141,7 @@ export function ShippingStep({
             Use a saved address
           </Label>
           <div className="space-y-2">
-            {savedAddresses.slice(0, 3).map((address) => (
+            {savedAddresses.slice(0, 3).map((address: any) => (
               <button
                 key={address.id}
                 type="button"

@@ -288,7 +288,7 @@ function MiniCalendar({
 
       {/* Day Headers */}
       <div className="grid grid-cols-7 gap-1">
-        {["S", "M", "T", "W", "T", "F", "S"].map((day, i) => (
+        {["S", "M", "T", "W", "T", "F", "S"].map((day: any, i: any) => (
           <div key={i} className="text-center text-xs font-medium text-gray-600">
             {day}
           </div>
@@ -297,7 +297,7 @@ function MiniCalendar({
 
       {/* Calendar Grid */}
       <div className="grid grid-cols-7 gap-1">
-        {calendarDays.map((date, index) => {
+        {calendarDays.map((date: any, index: any) => {
           if (date === null) {
             return <div key={`empty-${index}`} className="aspect-square" />;
           }
@@ -441,7 +441,7 @@ export function DateRangeSelector({
             {showPresets && (
               <div className="flex-shrink-0 border-r bg-gray-50 p-3">
                 <div className="space-y-1">
-                  {presets.map((preset) => (
+                  {presets.map((preset: any) => (
                     <button
                       key={preset}
                       type="button"

@@ -237,7 +237,7 @@ export class SelfHealingOrchestrator {
     ).length;
 
     const avgHealTime =
-      this.healingHistory.reduce((sum, h) => sum + h.result.duration, 0) /
+      this.healingHistory.reduce((sum: any, h: any) => sum + h.result.duration, 0) /
       (total || 1);
 
     // Calculate top strategies
@@ -246,7 +246,7 @@ export class SelfHealingOrchestrator {
       { uses: number; successes: number }
     >();
 
-    this.healingHistory.forEach((attempt) => {
+    this.healingHistory.forEach((attempt: any) => {
       const stats = strategyStats.get(attempt.strategy) || {
         uses: 0,
         successes: 0,
@@ -600,7 +600,7 @@ export class SelfHealingOrchestrator {
 
   private matchesErrorPattern(error: string, patterns: string[]): boolean {
     const errorLower = error.toLowerCase();
-    return patterns.some((pattern) =>
+    return patterns.some((pattern: any) =>
       errorLower.includes(pattern.toLowerCase()),
     );
   }

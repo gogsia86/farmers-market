@@ -128,7 +128,7 @@ export const CreateFarmSchema = z
       .transform((val) =>
         val
           .split(' ')
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+          .map((word: any) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
           .join(' ')
       ),
 

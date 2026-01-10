@@ -573,7 +573,7 @@ describe("📎 File Upload Service - Divine Upload Operations", () => {
       const results = await fileUploadService.uploadMultiple(files);
 
       expect(results.length).toBe(10);
-      expect(results.every((r) => r.success)).toBe(true);
+      expect(results.every((r: any) => r.success)).toBe(true);
     });
   });
 
@@ -648,11 +648,11 @@ describe("📎 File Upload Service - Divine Upload Operations", () => {
       ];
 
       const results = await Promise.all(
-        files.map((file) => fileUploadService.uploadFile(file)),
+        files.map((file: any) => fileUploadService.uploadFile(file)),
       );
 
       expect(results.length).toBe(3);
-      expect(results.every((r) => r.success)).toBe(true);
+      expect(results.every((r: any) => r.success)).toBe(true);
     });
 
     it("should generate unique filenames for concurrent uploads", async () => {
@@ -664,7 +664,7 @@ describe("📎 File Upload Service - Divine Upload Operations", () => {
         fileUploadService.uploadFile(file),
       ]);
 
-      const urls = results.map((r) => r.url);
+      const urls = results.map((r: any) => r.url);
       const uniqueUrls = new Set(urls);
       expect(uniqueUrls.size).toBe(3);
     });
@@ -731,13 +731,13 @@ describe("📎 File Upload Service - Divine Upload Operations", () => {
       ];
 
       const results = await Promise.all(
-        productImages.map((file, i) =>
+        productImages.map((file: any, i: any) =>
           fileUploadService.uploadProductImage(file, `product-${i}`),
         ),
       );
 
-      expect(results.every((r) => r.success)).toBe(true);
-      expect(results.every((r) => r.url?.includes("/uploads/products/"))).toBe(
+      expect(results.every((r: any) => r.success)).toBe(true);
+      expect(results.every((r: any) => r.url?.includes("/uploads/products/"))).toBe(
         true,
       );
     });

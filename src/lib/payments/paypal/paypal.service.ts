@@ -352,7 +352,7 @@ export class PayPalService {
                   },
                 },
               },
-              items: order.items.map((item) => ({
+              items: order.items.map((item: any) => ({
                 name: item.product.name,
                 description: item.product.description?.substring(0, 127),
                 unit_amount: {

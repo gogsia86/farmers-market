@@ -103,7 +103,7 @@ const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps>(
       if (checked) {
         onChange([...value, optionValue]);
       } else {
-        onChange(value.filter((v) => v !== optionValue));
+        onChange(value.filter((v: any) => v !== optionValue));
       }
     };
 
@@ -116,7 +116,7 @@ const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps>(
           className
         )}
       >
-        {options.map((option) => (
+        {options.map((option: any) => (
           <div key={option.value} className="flex items-start space-x-3">
             <Checkbox
               id={`checkbox-${option.value}`}
@@ -203,7 +203,7 @@ const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
         )}
         role="radiogroup"
       >
-        {options.map((option) => (
+        {options.map((option: any) => (
           <div key={option.value} className="flex items-start space-x-3">
             <div className="flex items-center h-5">
               <input
@@ -288,7 +288,7 @@ const CardRadioGroup = React.forwardRef<HTMLDivElement, CardRadioGroupProps>(
         )}
         role="radiogroup"
       >
-        {options.map((option) => (
+        {options.map((option: any) => (
           <label
             key={option.value}
             htmlFor={`card-radio-${name}-${option.value}`}

@@ -136,8 +136,8 @@ export async function createFarmAction(formData: FormData): Promise<FarmActionRe
     if (certificationsRaw) {
       certifications = certificationsRaw
         .split(/[,\n]/)
-        .map((cert) => cert.trim())
-        .filter((cert) => cert.length > 0);
+        .map((cert: any) => cert.trim())
+        .filter((cert: any) => cert.length > 0);
     }
 
     // Parse size in acres

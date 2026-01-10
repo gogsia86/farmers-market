@@ -83,7 +83,7 @@ const nextAuthResult = NextAuth({
           type: "password",
         },
       },
-      async authorize(credentials) {
+      async authorize(credentials: any) {
         // Validate credentials exist
         if (!credentials?.email || !credentials?.password) {
           authLogger.warn("Missing credentials in login attempt");
@@ -178,7 +178,7 @@ const nextAuthResult = NextAuth({
      * JWT Callback - Called when JWT is created or updated
      * Add custom fields to the token
      */
-    async jwt({ token, user, trigger, session }) {
+    async jwt({ token, user, trigger, session }: any) {
       // Initial sign in
       if (user) {
         token.id = user.id;
@@ -199,7 +199,7 @@ const nextAuthResult = NextAuth({
      * Session Callback - Called when session is checked
      * Add custom fields to the session
      */
-    async session({ session, token }) {
+    async session({ session, token }: any) {
       if (token && session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as UserRole;
@@ -226,7 +226,7 @@ const nextAuthResult = NextAuth({
      * Redirect Callback - Ensures proper redirect URL for sign in/out
      * Forces production domain to prevent deployment URL issues
      */
-    async redirect({ url, baseUrl }) {
+    async redirect({ url, baseUrl }: any) {
       // Use production domain from env or fallback
       const productionUrl =
         process.env.NEXTAUTH_URL ||
@@ -259,7 +259,7 @@ const nextAuthResult = NextAuth({
 
   // Events for logging
   events: {
-    async signIn({ user }) {
+    async signIn({ user }: any) {
       authLogger.info("User signed in", {
         email: user.email,
         role: user.role,

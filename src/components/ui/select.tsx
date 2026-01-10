@@ -246,7 +246,7 @@ const AgriculturalSelect = React.forwardRef<
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            {options.map((option) => (
+            {options.map((option: any) => (
               <SelectItem key={option.value} value={option.value}>
                 <div className="flex items-center gap-2">
                   {option.icon && <span className="flex-shrink-0">{option.icon}</span>}

@@ -121,7 +121,7 @@ export function CreateProductForm({ farmId, farmName }: CreateProductFormProps) 
    * 🗑️ REMOVE TAG
    */
   const handleRemoveTag = (tagToRemove: string) => {
-    setTags(tags.filter((tag) => tag !== tagToRemove));
+    setTags(tags.filter((tag: any) => tag !== tagToRemove));
   };
 
   /**
@@ -145,7 +145,7 @@ export function CreateProductForm({ farmId, farmName }: CreateProductFormProps) 
    * 🗑️ REMOVE IMAGE URL
    */
   const handleRemoveImage = (urlToRemove: string) => {
-    setImageUrls(imageUrls.filter((url) => url !== urlToRemove));
+    setImageUrls(imageUrls.filter((url: any) => url !== urlToRemove));
   };
 
   /**
@@ -283,7 +283,7 @@ export function CreateProductForm({ farmId, farmName }: CreateProductFormProps) 
           required
           className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500"
         >
-          {PRODUCT_CATEGORIES.map((cat) => (
+          {PRODUCT_CATEGORIES.map((cat: any) => (
             <option key={cat.value} value={cat.value}>
               {cat.label}
             </option>
@@ -330,7 +330,7 @@ export function CreateProductForm({ farmId, farmName }: CreateProductFormProps) 
             required
             className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500"
           >
-            {COMMON_UNITS.map((u) => (
+            {COMMON_UNITS.map((u: any) => (
               <option key={u} value={u}>
                 {u}
               </option>
@@ -445,7 +445,7 @@ export function CreateProductForm({ farmId, farmName }: CreateProductFormProps) 
         {/* Image List */}
         {imageUrls.length > 0 && (
           <div className="mt-3 space-y-2">
-            {imageUrls.map((url, index) => (
+            {imageUrls.map((url: any, index: any) => (
               <div
                 key={index}
                 className="flex items-center gap-2 rounded-md bg-gray-50 p-2"
@@ -507,7 +507,7 @@ export function CreateProductForm({ farmId, farmName }: CreateProductFormProps) 
         {/* Tag List */}
         {tags.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-2">
-            {tags.map((tag, index) => (
+            {tags.map((tag: any, index: any) => (
               <span
                 key={index}
                 className="inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-sm text-green-800"

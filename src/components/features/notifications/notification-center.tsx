@@ -167,7 +167,7 @@ export function NotificationCenter({
         // Delay state update to allow animation to complete
         setTimeout(() => {
           setNotifications((prev) =>
-            prev.map((notif) =>
+            prev.map((notif: any) =>
               notif.id === notificationId
                 ? { ...notif, isRead: true, readAt: new Date().toISOString() }
                 : notif
@@ -190,13 +190,13 @@ export function NotificationCenter({
   // Mark all as read
   const markAllAsRead = async () => {
     try {
-      const unreadIds = notifications.filter((n) => !n.isRead).map((n) => n.id);
+      const unreadIds = notifications.filter((n: any) => !n.isRead).map((n: any) => n.id);
 
       if (unreadIds.length === 0) return;
 
       // Mark all through individual PATCH requests
       await Promise.all(
-        unreadIds.map((id) =>
+        unreadIds.map((id: any) =>
           fetch(`/api/notifications/${id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
@@ -206,7 +206,7 @@ export function NotificationCenter({
       );
 
       setNotifications((prev) =>
-        prev.map((notif) => ({
+        prev.map((notif: any) => ({
           ...notif,
           isRead: true,
           readAt: notif.readAt || new Date().toISOString(),
@@ -230,7 +230,7 @@ export function NotificationCenter({
       const data: ApiResponse<{ cleared: number }> = await response.json();
 
       if (data.success) {
-        setNotifications((prev) => prev.filter((n) => !n.isRead));
+        setNotifications((prev) => prev.filter((n: any) => !n.isRead));
         // Refresh to get accurate counts
         await fetchNotifications({ unreadOnly: filter === "unread" });
       }
@@ -280,7 +280,7 @@ export function NotificationCenter({
   };
 
   // Filter notifications
-  const filteredNotifications = notifications.filter((notif) =>
+  const filteredNotifications = notifications.filter((notif: any) =>
     filter === "all" ? true : !notif.isRead
   );
 
@@ -361,7 +361,7 @@ export function NotificationCenter({
                 Mark all read
               </button>
             )}
-            {notifications.some((n) => n.isRead) && (
+            {notifications.some((n: any) => n.isRead) && (
               <button
                 onClick={clearReadNotifications}
                 className="text-sm text-gray-600 hover:text-gray-800 transition"
@@ -438,7 +438,7 @@ export function NotificationCenter({
             animate="animate"
           >
             <AnimatePresence mode="popLayout">
-              {filteredNotifications.map((notification, index) => {
+              {filteredNotifications.map((notification: any, index: any) => {
                 const icon = getNotificationIcon(notification.type);
                 const color = getNotificationColor(notification.type);
                 const isBeingMarked = markingAsRead === notification.id;

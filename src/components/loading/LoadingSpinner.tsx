@@ -188,7 +188,7 @@ function DotsSpinner({
 
   return (
     <div className="flex items-center" style={{ gap: `${gap}px` }}>
-      {[0, 1, 2].map((index) => (
+      {[0, 1, 2].map((index: any) => (
         <div
           key={index}
           className="rounded-full animate-bounce"
@@ -232,7 +232,7 @@ function BarsSpinner({
 
   return (
     <div className="flex items-center" style={{ gap: `${gap}px` }}>
-      {[0, 1, 2, 3].map((index) => (
+      {[0, 1, 2, 3].map((index: any) => (
         <div
           key={index}
           className="rounded-sm animate-pulse"
@@ -332,7 +332,7 @@ function PulseSpinner({
 
   return (
     <div className="relative" style={{ width: dimension, height: dimension }}>
-      {[0, 1, 2].map((index) => (
+      {[0, 1, 2].map((index: any) => (
         <div
           key={index}
           className="absolute inset-0 rounded-full animate-ping"

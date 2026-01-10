@@ -24,7 +24,7 @@ export const gpuMatrixMultiply = jest.fn(
 
 export const gpuArrayProcess = jest.fn(
   async <T extends number>(data: T[]): Promise<T[]> => {
-    return data.map((x) => (x * x) as T);
+    return data.map((x: any) => (x * x) as T);
   },
 );
 

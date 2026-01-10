@@ -119,8 +119,8 @@ class DatabaseStorageService {
           startedAt: result.startTime,
           completedAt: result.endTime,
           durationMs: result.duration,
-          testsPassed: result.steps.filter((s) => s.success).length,
-          testsFailed: result.steps.filter((s) => !s.success).length,
+          testsPassed: result.steps.filter((s: any) => s.success).length,
+          testsFailed: result.steps.filter((s: any) => !s.success).length,
           testsTotal: result.steps.length,
           errorMessage: result.error ? String(result.error) : null,
           errorStack:
@@ -313,7 +313,7 @@ class DatabaseStorageService {
       skip: offset,
     });
 
-    return reports.map((r) => this.mapReportFromDatabase(r));
+    return reports.map((r: any) => this.mapReportFromDatabase(r));
   }
 
   /**
@@ -362,7 +362,7 @@ class DatabaseStorageService {
       skip: offset,
     });
 
-    return executions.map((e) => this.mapExecutionFromDatabase(e));
+    return executions.map((e: any) => this.mapExecutionFromDatabase(e));
   }
 
   /**
@@ -529,7 +529,7 @@ class DatabaseStorageService {
       },
     });
 
-    return reports.map((r) => ({
+    return reports.map((r: any) => ({
       date: r.generatedAt,
       successRate: r.successRate,
       totalRuns: r.totalRuns,
@@ -568,8 +568,8 @@ class DatabaseStorageService {
     }
 
     const durations = executions
-      .filter((e) => e.durationMs !== null)
-      .map((e) => e.durationMs!);
+      .filter((e: any) => e.durationMs !== null)
+      .map((e: any) => e.durationMs!);
     const successCount = executions.filter(
       (e) => e.status === "SUCCESS",
     ).length;
@@ -584,7 +584,7 @@ class DatabaseStorageService {
     return {
       averageDuration:
         durations.length > 0
-          ? durations.reduce((a, b) => a + b, 0) / durations.length
+          ? durations.reduce((a: any, b: any) => a + b, 0) / durations.length
           : 0,
       minDuration: durations.length > 0 ? Math.min(...durations) : 0,
       maxDuration: durations.length > 0 ? Math.max(...durations) : 0,
@@ -686,7 +686,7 @@ class DatabaseStorageService {
         criticalIssues: metadata?.criticalIssues || 0,
       },
       workflows: dbReport.workflowExecutions
-        ? dbReport.workflowExecutions.map((e) =>
+        ? dbReport.workflowExecutions.map((e: any) =>
             this.mapExecutionFromDatabase(e),
           )
         : [],

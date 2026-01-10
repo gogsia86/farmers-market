@@ -1,4 +1,6 @@
 import { auth } from "@/lib/auth";
+
+import type { Product, Order } from "@prisma/client";
 import { database } from "@/lib/database";
 import { farmService } from "@/lib/services/farm.service";
 import { formatCurrency } from "@/lib/utils/currency";
@@ -46,7 +48,7 @@ export default async function FarmerDashboardPage() {
     },
   }) : [];
 
-  const monthlyRevenue = orders.reduce((sum, order) => sum + Number(order.total), 0);
+  const monthlyRevenue = orders.reduce((sum: any, order: any) => sum + Number(order.total), 0);
   const totalOrders = orders.length;
   const activeOrders = orders.filter(o =>
     ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED'].includes(o.status)
@@ -208,7 +210,7 @@ export default async function FarmerDashboardPage() {
               </div>
             ) : (
               <div className="space-y-4">
-                {orders.slice(0, 5).map((order, index) => (
+                {orders.slice(0, 5).map((order: any, index: any) => (
                   <div
                     key={`${order.createdAt.toISOString()}-${index}`}
                     className="flex items-center justify-between border-b border-gray-100 pb-4 last:border-0"
@@ -279,7 +281,7 @@ export default async function FarmerDashboardPage() {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {farms.map((farm) => (
+                {farms.map((farm: any) => (
                   <Link
                     key={farm.id}
                     href={`/farmer/farms/${farm.id}`}

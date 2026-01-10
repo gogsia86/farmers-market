@@ -40,7 +40,7 @@ describe("📦 Order Validation Schemas - Divine Order Management", () => {
       "REFUNDED",
     ];
 
-    validStatuses.forEach((status) => {
+    validStatuses.forEach((status: any) => {
       it(`should accept valid status: ${status}`, () => {
         const result = orderStatusSchema.safeParse(status);
         expect(result.success).toBe(true);
@@ -75,7 +75,7 @@ describe("📦 Order Validation Schemas - Divine Order Management", () => {
       "PARTIALLY_REFUNDED",
     ];
 
-    validStatuses.forEach((status) => {
+    validStatuses.forEach((status: any) => {
       it(`should accept valid payment status: ${status}`, () => {
         const result = paymentStatusSchema.safeParse(status);
         expect(result.success).toBe(true);
@@ -204,7 +204,7 @@ describe("📦 Order Validation Schemas - Divine Order Management", () => {
         "+15550100",
       ];
 
-      phoneFormats.forEach((phone) => {
+      phoneFormats.forEach((phone: any) => {
         const address = {
           fullName: "John Doe",
           addressLine1: "123 Farm Road",

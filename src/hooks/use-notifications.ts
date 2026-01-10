@@ -137,15 +137,15 @@ export function useNotifications(options?: { persistKey?: string }) {
 
   // Remove notification
   const removeNotification = useCallback((id: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
-    setActiveToasts((prev) => prev.filter((n) => n.id !== id));
-    setActiveBanners((prev) => prev.filter((n) => n.id !== id));
+    setNotifications((prev) => prev.filter((n: any) => n.id !== id));
+    setActiveToasts((prev) => prev.filter((n: any) => n.id !== id));
+    setActiveBanners((prev) => prev.filter((n: any) => n.id !== id));
   }, []);
 
   // Mark as read
   const markAsRead = useCallback((id: string) => {
     setNotifications((prev) =>
-      prev.map((n) =>
+      prev.map((n: any) =>
         n.id === id
           ? { ...n, readAt: new Date(), status: "read" as const }
           : n
@@ -157,7 +157,7 @@ export function useNotifications(options?: { persistKey?: string }) {
   const markAllAsRead = useCallback(() => {
     const now = new Date();
     setNotifications((prev) =>
-      prev.map((n) => ({ ...n, readAt: now, status: "read" as const }))
+      prev.map((n: any) => ({ ...n, readAt: now, status: "read" as const }))
     );
   }, []);
 
@@ -170,7 +170,7 @@ export function useNotifications(options?: { persistKey?: string }) {
 
   // Clear by type
   const clearByType = useCallback((type: BaseNotification["type"]) => {
-    setNotifications((prev) => prev.filter((n) => n.type !== type));
+    setNotifications((prev) => prev.filter((n: any) => n.type !== type));
     if (type === "toast") {
       setActiveToasts([]);
     } else if (type === "banner") {
@@ -240,7 +240,7 @@ export function useToast(options?: { maxToasts?: number }) {
         if (maxToasts !== Infinity && next.length > maxToasts) {
           // Remove oldest toasts
           const toRemove = next.slice(0, next.length - maxToasts);
-          toRemove.forEach((t) => {
+          toRemove.forEach((t: any) => {
             const timer = timersRef.current.get(t.id);
             if (timer) {
               clearTimeout(timer);
@@ -299,7 +299,7 @@ export function useToast(options?: { maxToasts?: number }) {
         if (maxToasts !== Infinity && next.length > maxToasts) {
           // Remove oldest toasts
           const toRemove = next.slice(0, next.length - maxToasts);
-          toRemove.forEach((t) => {
+          toRemove.forEach((t: any) => {
             const timer = timersRef.current.get(t.id);
             if (timer) {
               clearTimeout(timer);
@@ -327,7 +327,7 @@ export function useToast(options?: { maxToasts?: number }) {
 
   // Dismiss toast
   const dismissToast = useCallback((id: string) => {
-    setToasts((prev) => prev.filter((t) => t.id !== id));
+    setToasts((prev) => prev.filter((t: any) => t.id !== id));
 
     // Clear timer
     const timer = timersRef.current.get(id);
@@ -344,7 +344,7 @@ export function useToast(options?: { maxToasts?: number }) {
   // Dismiss all toasts
   const dismissAll = useCallback(() => {
     setToasts([]);
-    timersRef.current.forEach((timer) => clearTimeout(timer));
+    timersRef.current.forEach((timer: any) => clearTimeout(timer));
     setTimers(new Map());
   }, []);
 
@@ -404,7 +404,7 @@ export function useToast(options?: { maxToasts?: number }) {
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      timersRef.current.forEach((timer) => clearTimeout(timer));
+      timersRef.current.forEach((timer: any) => clearTimeout(timer));
     };
   }, []);
 
@@ -425,7 +425,7 @@ export function useToast(options?: { maxToasts?: number }) {
 
       // Update the toast with loading title
       setToasts((prev) =>
-        prev.map((t) =>
+        prev.map((t: any) =>
           t.id === loadingId
             ? { ...t, title: options.loading, message: "" }
             : t
@@ -554,7 +554,7 @@ export function useNotificationCenter(initialFilter?: NotificationFilter) {
 
   // Unread count
   const unreadCount = useMemo(() => {
-    return notifications.filter((n) => !n.readAt).length;
+    return notifications.filter((n: any) => !n.readAt).length;
   }, [notifications]);
 
   // Statistics
@@ -578,13 +578,13 @@ export function useNotificationCenter(initialFilter?: NotificationFilter) {
 
   // Remove notification
   const removeNotification = useCallback((id: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
+    setNotifications((prev) => prev.filter((n: any) => n.id !== id));
   }, []);
 
   // Mark as read
   const markAsRead = useCallback((id: string) => {
     setNotifications((prev) =>
-      prev.map((n) =>
+      prev.map((n: any) =>
         n.id === id
           ? { ...n, readAt: new Date(), status: "read" as const }
           : n
@@ -596,35 +596,35 @@ export function useNotificationCenter(initialFilter?: NotificationFilter) {
   const markAllAsRead = useCallback(() => {
     const now = new Date();
     setNotifications((prev) =>
-      prev.map((n) => ({ ...n, readAt: now, status: "read" as const }))
+      prev.map((n: any) => ({ ...n, readAt: now, status: "read" as const }))
     );
   }, []);
 
   // Archive notification
   const archiveNotification = useCallback((id: string) => {
     setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, archived: true } : n))
+      prev.map((n: any) => (n.id === id ? { ...n, archived: true } : n))
     );
   }, []);
 
   // Unarchive notification
   const unarchiveNotification = useCallback((id: string) => {
     setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, archived: false } : n))
+      prev.map((n: any) => (n.id === id ? { ...n, archived: false } : n))
     );
   }, []);
 
   // Pin notification
   const pinNotification = useCallback((id: string) => {
     setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, pinned: true } : n))
+      prev.map((n: any) => (n.id === id ? { ...n, pinned: true } : n))
     );
   }, []);
 
   // Unpin notification
   const unpinNotification = useCallback((id: string) => {
     setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, pinned: false } : n))
+      prev.map((n: any) => (n.id === id ? { ...n, pinned: false } : n))
     );
   }, []);
 
@@ -635,7 +635,7 @@ export function useNotificationCenter(initialFilter?: NotificationFilter) {
 
   // Clear read notifications
   const clearRead = useCallback(() => {
-    setNotifications((prev) => prev.filter((n) => !n.readAt));
+    setNotifications((prev) => prev.filter((n: any) => !n.readAt));
   }, []);
 
   return {
@@ -687,12 +687,12 @@ export function useBanner() {
 
       setBanners((prev) => {
         const position = newBanner.position || "top";
-        const positionBanners = prev.filter((b) => (b.position || "top") === position);
+        const positionBanners = prev.filter((b: any) => (b.position || "top") === position);
 
         // If at limit, remove oldest banner at this position
         if (positionBanners.length >= MAX_BANNERS_PER_POSITION && positionBanners[0]) {
           const toRemove = positionBanners[0].id;
-          return [...prev.filter((b) => b.id !== toRemove), newBanner];
+          return [...prev.filter((b: any) => b.id !== toRemove), newBanner];
         }
 
         return [...prev, newBanner];
@@ -704,12 +704,12 @@ export function useBanner() {
 
   // Hide banner (alias for dismiss)
   const hideBanner = useCallback((id: string) => {
-    setBanners((prev) => prev.filter((b) => b.id !== id));
+    setBanners((prev) => prev.filter((b: any) => b.id !== id));
   }, []);
 
   // Dismiss banner
   const dismissBanner = useCallback((id: string) => {
-    setBanners((prev) => prev.filter((b) => b.id !== id));
+    setBanners((prev) => prev.filter((b: any) => b.id !== id));
   }, []);
 
   // Hide all banners (alias for dismissAll)

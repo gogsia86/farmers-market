@@ -112,7 +112,7 @@ export function isLoadingTimeout(state: BaseLoadingState, timeout = 30000): bool
 export function createMultiStageLoading(
   stageNames: string[]
 ): MultiStageLoadingState {
-  const stages: LoadingStage[] = stageNames.map((name, index) => ({
+  const stages: LoadingStage[] = stageNames.map((name: any, index: any) => ({
     id: `stage-${index}`,
     name,
     state: index === 0 ? LoadingState.LOADING : LoadingState.IDLE,
@@ -207,7 +207,7 @@ export function completeStage(
 export function calculateOverallProgress(stages: LoadingStage[]): number {
   if (stages.length === 0) return 0;
 
-  const totalProgress = stages.reduce((sum, stage) => sum + stage.progress, 0);
+  const totalProgress = stages.reduce((sum: any, stage: any) => sum + stage.progress, 0);
   return Math.round(totalProgress / stages.length);
 }
 
@@ -606,7 +606,7 @@ export async function batchLoad<T>(
 
   for (let i = 0; i < operations.length; i += batchSize) {
     const batch = operations.slice(i, i + batchSize);
-    const batchResults = await Promise.all(batch.map((op) => op()));
+    const batchResults = await Promise.all(batch.map((op: any) => op()));
     results.push(...batchResults);
   }
 

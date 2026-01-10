@@ -265,20 +265,20 @@ export class AITracer {
       };
     }
 
-    const totalLatency = traces.reduce((sum, t) => {
+    const totalLatency = traces.reduce((sum: any, t: any) => {
       return sum + ((t.endTime || Date.now()) - t.startTime);
     }, 0);
 
-    const totalTokens = traces.reduce((sum, t) => {
+    const totalTokens = traces.reduce((sum: any, t: any) => {
       return sum + (t.metadata.totalTokens || 0);
     }, 0);
 
-    const totalCost = traces.reduce((sum, t) => {
+    const totalCost = traces.reduce((sum: any, t: any) => {
       return sum + (t.metadata.totalCost || 0);
     }, 0);
 
-    const successCount = traces.filter((t) => {
-      const hasError = t.spans.some((span) => span.status === "error");
+    const successCount = traces.filter((t: any) => {
+      const hasError = t.spans.some((span: any) => span.status === "error");
       return !hasError;
     }).length;
 

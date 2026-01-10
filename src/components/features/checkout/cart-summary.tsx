@@ -30,7 +30,7 @@ export function CartSummary({ cart }: CartSummaryProps) {
   // ==========================================================================
 
   const calculateTotals = () => {
-    const subtotal = cart.reduce((sum, item) => {
+    const subtotal = cart.reduce((sum: any, item: any) => {
       const itemTotal = Number(item.priceAtAdd) * Number(item.quantity);
       return sum + itemTotal;
     }, 0);
@@ -52,7 +52,7 @@ export function CartSummary({ cart }: CartSummaryProps) {
   const totals = calculateTotals();
 
   // Group items by farm
-  const itemsByFarm = cart.reduce((groups, item) => {
+  const itemsByFarm = cart.reduce((groups: any, item: any) => {
     const farmId = item.farmId;
     if (!groups[farmId]) {
       groups[farmId] = {
@@ -82,7 +82,7 @@ export function CartSummary({ cart }: CartSummaryProps) {
       {/* Cart Items */}
       <div className="max-h-[400px] overflow-y-auto p-4">
         <div className="space-y-4">
-          {Object.values(itemsByFarm).map((farmGroup) => (
+          {Object.values(itemsByFarm).map((farmGroup: any) => (
             <div key={farmGroup.farmId} className="space-y-3">
               {/* Farm Name */}
               <div className="flex items-center gap-2 border-b pb-2">
@@ -94,7 +94,7 @@ export function CartSummary({ cart }: CartSummaryProps) {
 
               {/* Farm Items */}
               <div className="space-y-2">
-                {farmGroup.items.map((item) => (
+                {farmGroup.items.map((item: any) => (
                   <div
                     key={item.id}
                     className="flex items-start gap-3 text-sm"

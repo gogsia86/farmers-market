@@ -198,7 +198,7 @@ export function trackMetric(metric: CustomMetric): void {
  * Track multiple metrics at once
  */
 export function trackMetrics(metrics: CustomMetric[]): void {
-  metrics.forEach((metric) => trackMetric(metric));
+  metrics.forEach((metric: any) => trackMetric(metric));
 }
 
 // ============================================================================

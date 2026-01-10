@@ -124,7 +124,7 @@ export class PerformanceTracker {
    */
   static getMetrics(name?: string): PerformanceMetric[] {
     if (name) {
-      return this.metrics.filter((m) => m.name === name);
+      return this.metrics.filter((m: any) => m.name === name);
     }
     return [...this.metrics];
   }
@@ -142,15 +142,15 @@ export class PerformanceTracker {
     count: number;
   } | null {
     const metrics = this.metrics
-      .filter((m) => m.name === name)
-      .map((m) => m.value)
+      .filter((m: any) => m.name === name)
+      .map((m: any) => m.value)
       .sort((a, b) => a - b);
 
     if (metrics.length === 0) {
       return null;
     }
 
-    const sum = metrics.reduce((a, b) => a + b, 0);
+    const sum = metrics.reduce((a: any, b: any) => a + b, 0);
 
     return {
       min: metrics[0] ?? 0,

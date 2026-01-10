@@ -290,7 +290,7 @@ export function useNotifications(userId: string | undefined) {
 
   const markAsRead = (notificationId: string) => {
     setNotifications((prev) =>
-      prev.map((n) =>
+      prev.map((n: any) =>
         n.id === notificationId ? { ...n, read: true } : n
       )
     );

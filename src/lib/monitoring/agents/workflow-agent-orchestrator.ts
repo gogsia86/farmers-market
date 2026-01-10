@@ -492,7 +492,7 @@ Provide validation in JSON:
     });
 
     const results = await Promise.all(promises);
-    return results.filter((r) => r !== null) as Array<{
+    return results.filter((r: any) => r !== null) as Array<{
       agent: string;
       analysis: string;
       confidence: number;
@@ -518,7 +518,7 @@ Provide validation in JSON:
       // Include previous analyses in context
       if (results.length > 0) {
         prompt += `\n\nPrevious Agent Analyses:\n${results
-          .map((r) => `${r.agent}: ${r.analysis}`)
+          .map((r: any) => `${r.agent}: ${r.analysis}`)
           .join("\n\n")}`;
       }
 
@@ -556,7 +556,7 @@ Provide validation in JSON:
     try {
       const completion = await this.openai.chat.completions.create({
         model: agent.config.llmConfig.model,
-        messages: messages.map((m) => ({
+        messages: messages.map((m: any) => ({
           role: m.role,
           content: m.content,
         })),
@@ -605,7 +605,7 @@ Provide validation in JSON:
 
     const prompt = `Given these expert analyses, synthesize a consensus recommendation:
 
-${analyses.map((a) => `**${a.agent}** (confidence: ${a.confidence}%):\n${a.analysis}\n`).join("\n")}
+${analyses.map((a: any) => `**${a.agent}** (confidence: ${a.confidence}%):\n${a.analysis}\n`).join("\n")}
 
 Provide a unified recommendation that:
 1. Incorporates the strongest insights from each expert
@@ -648,7 +648,7 @@ Format as concise, actionable recommendation.`;
   }
 
   private buildAnalysisPrompt(workflowResult: WorkflowResult): string {
-    const failedSteps = workflowResult.steps.filter((s) => !s.success);
+    const failedSteps = workflowResult.steps.filter((s: any) => !s.success);
 
     return `Analyze this workflow failure from your area of expertise:
 
@@ -685,7 +685,7 @@ Provide your expert analysis with specific, actionable recommendations.`;
   ): string[] {
     // Simple conflict detection based on low consensus
     const avgConfidence =
-      analyses.reduce((sum, a) => sum + a.confidence, 0) / analyses.length;
+      analyses.reduce((sum: any, a: any) => sum + a.confidence, 0) / analyses.length;
 
     if (avgConfidence < this.consensusThreshold * 100) {
       return [
@@ -701,7 +701,7 @@ Provide your expert analysis with specific, actionable recommendations.`;
   ): Record<string, number> {
     const votes: Record<string, number> = {};
 
-    analyses.forEach((a) => {
+    analyses.forEach((a: any) => {
       votes[a.agent] = a.confidence;
     });
 
@@ -724,9 +724,9 @@ Provide your expert analysis with specific, actionable recommendations.`;
       count: results.length,
       averages: {
         duration:
-          results.reduce((sum, r) => sum + r.duration, 0) / results.length,
+          results.reduce((sum: any, r: any) => sum + r.duration, 0) / results.length,
         pageLoadTime:
-          results.reduce((sum, r) => sum + (r.metrics.pageLoadTime || 0), 0) /
+          results.reduce((sum: any, r: any) => sum + (r.metrics.pageLoadTime || 0), 0) /
           results.length,
         apiResponseTime:
           results.reduce(
@@ -735,7 +735,7 @@ Provide your expert analysis with specific, actionable recommendations.`;
           ) / results.length,
       },
       trends: {
-        duration: this.calculateTrend(results.map((r) => r.duration)),
+        duration: this.calculateTrend(results.map((r: any) => r.duration)),
       },
     };
   }
@@ -747,9 +747,9 @@ Provide your expert analysis with specific, actionable recommendations.`;
     const secondHalf = values.slice(Math.floor(values.length / 2));
 
     const avgFirst =
-      firstHalf.reduce((sum, v) => sum + v, 0) / firstHalf.length;
+      firstHalf.reduce((sum: any, v: any) => sum + v, 0) / firstHalf.length;
     const avgSecond =
-      secondHalf.reduce((sum, v) => sum + v, 0) / secondHalf.length;
+      secondHalf.reduce((sum: any, v: any) => sum + v, 0) / secondHalf.length;
 
     return ((avgSecond - avgFirst) / avgFirst) * 100;
   }

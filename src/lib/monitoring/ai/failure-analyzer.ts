@@ -264,7 +264,7 @@ Critical Issues: ${report.criticalIssues}
 
 Failed Workflows:
 ${failedWorkflows
-  .map((w) => `- ${w.name} (${w.type}): ${w.error || "Unknown error"}`)
+  .map((w: any) => `- ${w.name} (${w.type}): ${w.error || "Unknown error"}`)
   .join("\n")}
 
 Provide:
@@ -356,7 +356,7 @@ Format as JSON array of strings.`;
   // ============================================================================
 
   private buildFailureAnalysisPrompt(result: WorkflowResult): string {
-    const failedSteps = result.steps.filter((s) => !s.success);
+    const failedSteps = result.steps.filter((s: any) => !s.success);
 
     return `Analyze this workflow failure as a senior DevOps engineer specializing in agricultural e-commerce:
 
@@ -491,19 +491,19 @@ Provide practical, actionable insights with agricultural consciousness.`;
     return {
       totalRuns: results.length,
       failureRate:
-        results.filter((r) => r.status === "FAILED").length / results.length,
+        results.filter((r: any) => r.status === "FAILED").length / results.length,
       averageDuration:
-        results.reduce((sum, r) => sum + r.duration, 0) / results.length,
-      performanceTrend: this.calculateTrend(results.map((r) => r.duration)),
-      commonErrors: this.groupErrors(results.filter((r) => r.error)),
+        results.reduce((sum: any, r: any) => sum + r.duration, 0) / results.length,
+      performanceTrend: this.calculateTrend(results.map((r: any) => r.duration)),
+      commonErrors: this.groupErrors(results.filter((r: any) => r.error)),
       timeDistribution: this.analyzeTimeDistribution(results),
       workflowTypeBreakdown: Object.entries(grouped).map(
         ([type, workflows]) => ({
           type,
           total: workflows.length,
-          failed: workflows.filter((w) => w.status === "FAILED").length,
+          failed: workflows.filter((w: any) => w.status === "FAILED").length,
           avgDuration:
-            workflows.reduce((sum, w) => sum + w.duration, 0) /
+            workflows.reduce((sum: any, w: any) => sum + w.duration, 0) /
             workflows.length,
         }),
       ),
@@ -516,9 +516,9 @@ Provide practical, actionable insights with agricultural consciousness.`;
       count: results.length,
       averages: {
         duration:
-          results.reduce((sum, r) => sum + r.duration, 0) / results.length,
+          results.reduce((sum: any, r: any) => sum + r.duration, 0) / results.length,
         pageLoadTime:
-          results.reduce((sum, r) => sum + (r.metrics.pageLoadTime || 0), 0) /
+          results.reduce((sum: any, r: any) => sum + (r.metrics.pageLoadTime || 0), 0) /
           results.length,
         apiResponseTime:
           results.reduce(
@@ -527,16 +527,16 @@ Provide practical, actionable insights with agricultural consciousness.`;
           ) / results.length,
       },
       p95: this.calculatePercentile(
-        results.map((r) => r.duration),
+        results.map((r: any) => r.duration),
         0.95,
       ),
       p99: this.calculatePercentile(
-        results.map((r) => r.duration),
+        results.map((r: any) => r.duration),
         0.99,
       ),
       errorRate:
-        results.filter((r) => r.status === "FAILED").length / results.length,
-      trend: this.calculateTrend(results.map((r) => r.duration)),
+        results.filter((r: any) => r.status === "FAILED").length / results.length,
+      trend: this.calculateTrend(results.map((r: any) => r.duration)),
     };
   }
 
@@ -588,9 +588,9 @@ Provide practical, actionable insights with agricultural consciousness.`;
     const secondHalf = values.slice(Math.floor(values.length / 2));
 
     const avgFirst =
-      firstHalf.reduce((sum, v) => sum + v, 0) / firstHalf.length;
+      firstHalf.reduce((sum: any, v: any) => sum + v, 0) / firstHalf.length;
     const avgSecond =
-      secondHalf.reduce((sum, v) => sum + v, 0) / secondHalf.length;
+      secondHalf.reduce((sum: any, v: any) => sum + v, 0) / secondHalf.length;
 
     return ((avgSecond - avgFirst) / avgFirst) * 100;
   }

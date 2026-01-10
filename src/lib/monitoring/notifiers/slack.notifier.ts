@@ -485,7 +485,7 @@ export class SlackNotifier {
     const trendText = this.formatTrends(trends);
     const recommendationsText = report.recommendations
       .slice(0, 5)
-      .map((r) => `• ${r}`)
+      .map((r: any) => `• ${r}`)
       .join("\n");
 
     return {

@@ -85,7 +85,7 @@ export function isValidSlug(slug: string): boolean {
 export function slugToText(slug: string): string {
   return slug
     .split("-")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((word: any) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 }
 
@@ -109,7 +109,7 @@ export function generateAgriculturalSlug(text: string): string {
   let slug = generateSlug(text);
 
   // Ensure agricultural terms are preserved
-  preserveTerms.forEach((term) => {
+  preserveTerms.forEach((term: any) => {
     const termSlug = generateSlug(term);
     if (text.toLowerCase().includes(term)) {
       // Term already in slug, ensure proper format

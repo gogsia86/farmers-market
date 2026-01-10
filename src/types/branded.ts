@@ -182,7 +182,7 @@ export function isNotificationId(id: string): id is NotificationId {
  * ```
  */
 export function brandIds<T extends Brand<string, string>>(ids: string[]): T[] {
-  return ids.map((id) => id as T);
+  return ids.map((id: any) => id as T);
 }
 
 /**
@@ -197,7 +197,7 @@ export function brandIds<T extends Brand<string, string>>(ids: string[]): T[] {
 export function unbrandIds<T extends Brand<string, string>>(
   ids: T[],
 ): string[] {
-  return ids.map((id) => id as string);
+  return ids.map((id: any) => id as string);
 }
 
 // ============================================================================

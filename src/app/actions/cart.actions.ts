@@ -47,10 +47,10 @@ function serializeDecimal(value: any): any {
 function serializeCartSummary(summary: CartSummary): CartSummary {
   return {
     ...summary,
-    items: summary.items.map((item) => ({
+    items: summary.items.map((item: any) => ({
       ...item,
-      quantity: serializeDecimal(item.quantity),
-      priceAtAdd: serializeDecimal(item.priceAtAdd),
+      quantity: serializeDecimal(Number(item.quantity)),
+      priceAtAdd: serializeDecimal(Number(item.priceAtAdd)),
       product: {
         ...item.product,
         price: serializeDecimal(item.product.price),
@@ -60,12 +60,12 @@ function serializeCartSummary(summary: CartSummary): CartSummary {
         averageRating: item.product.averageRating ? serializeDecimal(item.product.averageRating) : null,
       },
     })),
-    farmGroups: summary.farmGroups.map((group) => ({
+    farmGroups: summary.farmGroups.map((group: any) => ({
       ...group,
-      items: group.items.map((item) => ({
+      items: group.items.map((item: any) => ({
         ...item,
-        quantity: serializeDecimal(item.quantity),
-        priceAtAdd: serializeDecimal(item.priceAtAdd),
+        quantity: serializeDecimal(Number(item.quantity)),
+        priceAtAdd: serializeDecimal(Number(item.priceAtAdd)),
         product: {
           ...item.product,
           price: serializeDecimal(item.product.price),

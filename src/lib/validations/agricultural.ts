@@ -179,7 +179,7 @@ export function validateBiodynamicCompliance(practices: string[]): {
   missing: string[];
 } {
   const requiredPractices = ["COMPOSTING", "CROP_ROTATION"];
-  const missing = requiredPractices.filter((p) => !practices.includes(p));
+  const missing = requiredPractices.filter((p: any) => !practices.includes(p));
 
   return {
     compliant: missing.length === 0,

@@ -173,7 +173,7 @@ export const useCartStore = create<CartState>()(
       // Computed Properties
       // ======================================================================
       get itemCount() {
-        return get().items.reduce((count, item) => count + item.quantity, 0);
+        return get().items.reduce((count: any, item: any) => count + item.quantity, 0);
       },
 
       get isEmpty() {
@@ -181,7 +181,7 @@ export const useCartStore = create<CartState>()(
       },
 
       get hasMultipleFarms() {
-        const farmIds = new Set(get().items.map((item) => item.farmId));
+        const farmIds = new Set(get().items.map((item: any) => item.farmId));
         return farmIds.size > 1;
       },
 
@@ -248,7 +248,7 @@ export const useCartStore = create<CartState>()(
        */
       removeItem: (itemId: string) => {
         set((state) => ({
-          items: state.items.filter((item) => item.id !== itemId),
+          items: state.items.filter((item: any) => item.id !== itemId),
         }));
 
         get().calculateTotals();
@@ -265,7 +265,7 @@ export const useCartStore = create<CartState>()(
         }
 
         set((state) => ({
-          items: state.items.map((item) =>
+          items: state.items.map((item: any) =>
             item.id === itemId
               ? {
                   ...item,
@@ -285,7 +285,7 @@ export const useCartStore = create<CartState>()(
        */
       updateNotes: (itemId: string, notes: string) => {
         set((state) => ({
-          items: state.items.map((item) =>
+          items: state.items.map((item: any) =>
             item.id === itemId ? { ...item, notes } : item,
           ),
         }));
@@ -581,7 +581,7 @@ export const useCartStore = create<CartState>()(
        * Get cart item by ID
        */
       getItemById: (itemId: string) => {
-        return get().items.find((item) => item.id === itemId);
+        return get().items.find((item: any) => item.id === itemId);
       },
 
       // ======================================================================

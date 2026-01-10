@@ -244,7 +244,7 @@ export class QuantumFarmRepository extends BaseRepository<
 
       // Calculate distances and filter by radius
       const farmsWithDistance: FarmSearchResult[] = farms
-        .map((farm) => {
+        .map((farm: any) => {
           if (!farm.latitude || !farm.longitude) {
             return null;
           }

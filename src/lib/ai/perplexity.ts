@@ -536,7 +536,7 @@ export class AgriculturalResearchAgent {
     ];
 
     const lowerAnswer = answer.toLowerCase();
-    const matchCount = agriculturalKeywords.filter((keyword) =>
+    const matchCount = agriculturalKeywords.filter((keyword: any) =>
       lowerAnswer.includes(keyword),
     ).length;
 
@@ -679,7 +679,7 @@ export class CodeGenerationAgent {
       "biodynamic",
     ];
 
-    return patterns.filter((pattern) =>
+    return patterns.filter((pattern: any) =>
       response.toLowerCase().includes(pattern),
     );
   }

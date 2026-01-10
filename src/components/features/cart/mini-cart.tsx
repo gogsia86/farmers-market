@@ -151,7 +151,7 @@ export function MiniCart({ isOpen, onClose, userId }: MiniCartProps) {
               {/* Items List - Scrollable */}
               <div className="flex-1 overflow-y-auto px-6 py-4">
                 <div className="space-y-4">
-                  {cart.items.map((item) => {
+                  {cart.items.map((item: any) => {
                     const product = item.product;
                     const productImages = product.images as string[] | null;
                     const primaryImage: string = (

@@ -102,7 +102,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 
       if (existingItemIndex > -1) {
         // Item already exists, increment quantity
-        newItems = state.items.map((item, index) => {
+        newItems = state.items.map((item: any, index: any) => {
           if (index === existingItemIndex) {
             const newQuantity = Math.min(
               item.quantity + action.payload.quantity,
@@ -134,9 +134,9 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 
       if (quantity <= 0) {
         // Remove item if quantity is 0 or less
-        newItems = state.items.filter((item) => item.productId !== productId);
+        newItems = state.items.filter((item: any) => item.productId !== productId);
       } else {
-        newItems = state.items.map((item) => {
+        newItems = state.items.map((item: any) => {
           if (item.productId === productId) {
             const validQuantity = Math.min(quantity, item.maxStock);
             return { ...item, quantity: validQuantity };
@@ -268,7 +268,7 @@ export function CartProvider({ children }: CartProviderProps) {
   // Remove item from cart
   const removeItem = useCallback(
     (productId: string) => {
-      const item = state.items.find((i) => i.productId === productId);
+      const item = state.items.find((i: any) => i.productId === productId);
 
       dispatch({ type: "REMOVE_ITEM", payload: { productId } });
 
@@ -285,7 +285,7 @@ export function CartProvider({ children }: CartProviderProps) {
   // Update item quantity
   const updateQuantity = useCallback(
     (productId: string, quantity: number) => {
-      const item = state.items.find((i) => i.productId === productId);
+      const item = state.items.find((i: any) => i.productId === productId);
 
       if (!item) {
         return;
@@ -326,7 +326,7 @@ export function CartProvider({ children }: CartProviderProps) {
   // Check if item is in cart
   const isInCart = useCallback(
     (productId: string): boolean => {
-      return state.items.some((item) => item.productId === productId);
+      return state.items.some((item: any) => item.productId === productId);
     },
     [state.items],
   );
@@ -334,7 +334,7 @@ export function CartProvider({ children }: CartProviderProps) {
   // Get item quantity
   const getItemQuantity = useCallback(
     (productId: string): number => {
-      const item = state.items.find((i) => i.productId === productId);
+      const item = state.items.find((i: any) => i.productId === productId);
       return item?.quantity || 0;
     },
     [state.items],

@@ -400,7 +400,7 @@ describe("Notification Filtering", () => {
       const result = filterNotifications(notifications, filter);
 
       expect(result.length).toBeGreaterThan(0);
-      expect(result.every((n) => !n.readAt)).toBe(true);
+      expect(result.every((n: any) => !n.readAt)).toBe(true);
     });
 
     it("should filter by category", () => {
@@ -427,7 +427,7 @@ describe("Notification Filtering", () => {
       const result = filterNotifications(notifications, filter);
 
       expect(result).toHaveLength(2);
-      expect(result.map((n) => n.id).sort()).toEqual(["1", "4"]);
+      expect(result.map((n: any) => n.id).sort()).toEqual(["1", "4"]);
     });
 
     it("should return all notifications with empty filter", () => {
@@ -633,7 +633,7 @@ describe("Agricultural Helpers", () => {
         "general",
       ];
 
-      events.forEach((event) => {
+      events.forEach((event: any) => {
         const color = getAgriculturalEventColor(event);
         expect(color).toBeTruthy();
       });
@@ -658,7 +658,7 @@ describe("Agricultural Helpers", () => {
         "general",
       ];
 
-      events.forEach((event) => {
+      events.forEach((event: any) => {
         const icon = getAgriculturalEventIcon(event);
         expect(icon).toBeTruthy();
       });

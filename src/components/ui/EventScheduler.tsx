@@ -364,7 +364,7 @@ export function EventScheduler({
   // CONVERT EVENTS
   // ==========================================================================
 
-  const calendarEvents: CalendarEvent[] = events.map((event) => ({
+  const calendarEvents: CalendarEvent[] = events.map((event: any) => ({
     id: event.id,
     title: event.title,
     description: event.description,
@@ -374,7 +374,7 @@ export function EventScheduler({
     metadata: event.metadata,
   }));
 
-  const timelineEvents: TimelineEvent[] = events.map((event) => ({
+  const timelineEvents: TimelineEvent[] = events.map((event: any) => ({
     id: event.id,
     title: event.title,
     description: event.description,
@@ -431,7 +431,7 @@ export function EventScheduler({
   };
 
   const handleTimelineEventClick = (event: TimelineEvent) => {
-    const scheduledEvent = events.find((e) => e.id === event.id);
+    const scheduledEvent = events.find((e: any) => e.id === event.id);
     if (scheduledEvent && !readOnly) {
       handleEditEvent(scheduledEvent);
     }
@@ -559,7 +559,7 @@ export function EventScheduler({
           events={calendarEvents}
           onDateClick={handleDateClick}
           onEventClick={(event) => {
-            const scheduledEvent = events.find((e) => e.id === event.id);
+            const scheduledEvent = events.find((e: any) => e.id === event.id);
             if (scheduledEvent) handleEditEvent(scheduledEvent);
           }}
           showSeasonalTheme
@@ -585,7 +585,7 @@ export function EventScheduler({
             events={calendarEvents}
             onDateClick={handleDateClick}
             onEventClick={(event) => {
-              const scheduledEvent = events.find((e) => e.id === event.id);
+              const scheduledEvent = events.find((e: any) => e.id === event.id);
               if (scheduledEvent) handleEditEvent(scheduledEvent);
             }}
             showSeasonalTheme
@@ -615,19 +615,19 @@ export function EventScheduler({
         <div className="rounded-lg border bg-white p-4">
           <div className="text-sm font-medium text-gray-600">Scheduled</div>
           <div className="mt-1 text-2xl font-bold text-blue-600">
-            {events.filter((e) => e.status === "scheduled").length}
+            {events.filter((e: any) => e.status === "scheduled").length}
           </div>
         </div>
         <div className="rounded-lg border bg-white p-4">
           <div className="text-sm font-medium text-gray-600">In Progress</div>
           <div className="mt-1 text-2xl font-bold text-amber-600">
-            {events.filter((e) => e.status === "in_progress").length}
+            {events.filter((e: any) => e.status === "in_progress").length}
           </div>
         </div>
         <div className="rounded-lg border bg-white p-4">
           <div className="text-sm font-medium text-gray-600">Completed</div>
           <div className="mt-1 text-2xl font-bold text-green-600">
-            {events.filter((e) => e.status === "completed").length}
+            {events.filter((e: any) => e.status === "completed").length}
           </div>
         </div>
       </div>

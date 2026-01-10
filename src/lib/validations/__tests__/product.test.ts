@@ -36,7 +36,7 @@ describe("⚡ Product Validation Schemas - Divine Test Suite", () => {
         "OTHER",
       ];
 
-      validCategories.forEach((category) => {
+      validCategories.forEach((category: any) => {
         const result = productCategorySchema.safeParse(category);
         expect(result.success).toBe(true);
         if (result.success) {
@@ -56,7 +56,7 @@ describe("⚡ Product Validation Schemas - Divine Test Suite", () => {
         123,
       ];
 
-      invalidCategories.forEach((category) => {
+      invalidCategories.forEach((category: any) => {
         const result = productCategorySchema.safeParse(category);
         expect(result.success).toBe(false);
       });
@@ -80,7 +80,7 @@ describe("⚡ Product Validation Schemas - Divine Test Suite", () => {
         "GALLON",
       ];
 
-      validUnits.forEach((unit) => {
+      validUnits.forEach((unit: any) => {
         const result = productUnitSchema.safeParse(unit);
         expect(result.success).toBe(true);
         if (result.success) {
@@ -92,7 +92,7 @@ describe("⚡ Product Validation Schemas - Divine Test Suite", () => {
     it("rejects invalid unit values", () => {
       const invalidUnits = ["INVALID", "lb", "Kg", "", null, undefined, 456];
 
-      invalidUnits.forEach((unit) => {
+      invalidUnits.forEach((unit: any) => {
         const result = productUnitSchema.safeParse(unit);
         expect(result.success).toBe(false);
       });
@@ -470,7 +470,7 @@ describe("⚡ Product Validation Schemas - Divine Test Suite", () => {
         ...validProduct,
         images: Array(10)
           .fill(0)
-          .map((_, i) => `https://example.com/image${i}.jpg`),
+          .map((_: any, i: any) => `https://example.com/image${i}.jpg`),
       };
 
       const result = createProductSchema.safeParse(product);
@@ -524,7 +524,7 @@ describe("⚡ Product Validation Schemas - Divine Test Suite", () => {
         ...validProduct,
         images: Array(11)
           .fill(0)
-          .map((_, i) => `https://example.com/image${i}.jpg`),
+          .map((_: any, i: any) => `https://example.com/image${i}.jpg`),
       };
       const result = createProductSchema.safeParse(product);
       expect(result.success).toBe(false);
@@ -641,7 +641,7 @@ describe("⚡ Product Validation Schemas - Divine Test Suite", () => {
     it("accepts valid sortBy values", () => {
       const sortByValues = ["price", "name", "createdAt", "popularity"];
 
-      sortByValues.forEach((sortBy) => {
+      sortByValues.forEach((sortBy: any) => {
         const result = productQuerySchema.safeParse({ sortBy });
         expect(result.success).toBe(true);
       });
@@ -650,7 +650,7 @@ describe("⚡ Product Validation Schemas - Divine Test Suite", () => {
     it("accepts valid sortOrder values", () => {
       const sortOrders = ["asc", "desc"];
 
-      sortOrders.forEach((sortOrder) => {
+      sortOrders.forEach((sortOrder: any) => {
         const result = productQuerySchema.safeParse({ sortOrder });
         expect(result.success).toBe(true);
       });

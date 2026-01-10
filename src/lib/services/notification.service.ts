@@ -434,7 +434,7 @@ export class NotificationService {
     preferences: NotificationPreferencesData,
     type: NotificationType
   ): NotificationChannel[] {
-    return channels.filter((channel) => {
+    return channels.filter((channel: any) => {
       switch (channel) {
         case "EMAIL":
           return preferences.emailEnabled && this.shouldSendEmailForType(type, preferences);
@@ -586,7 +586,7 @@ export class NotificationService {
         where: { id: { in: farmIds } },
         select: { ownerId: true },
       });
-      targetUserIds = farms.map((f) => f.ownerId);
+      targetUserIds = farms.map((f: any) => f.ownerId);
     }
 
     let sent = 0;
@@ -629,7 +629,7 @@ export class NotificationService {
     });
 
     return await this.sendBulkNotifications({
-      userIds: users.map((u) => u.id),
+      userIds: users.map((u: any) => u.id),
       type: "SYSTEM_ANNOUNCEMENT",
       channels,
       title,
@@ -653,13 +653,13 @@ export class NotificationService {
 
     const stats: NotificationStats = {
       total: notifications.length,
-      unread: notifications.filter((n) => !n.isRead).length,
+      unread: notifications.filter((n: any) => !n.isRead).length,
       byType: {} as Record<NotificationType, number>,
       byChannel: {} as Record<NotificationChannel, number>,
     };
 
     // Count by type
-    notifications.forEach((n) => {
+    notifications.forEach((n: any) => {
       stats.byType[n.type] = (stats.byType[n.type] || 0) + 1;
       stats.byChannel[n.channel] = (stats.byChannel[n.channel] || 0) + 1;
     });

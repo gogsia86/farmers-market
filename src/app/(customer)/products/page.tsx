@@ -210,7 +210,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                   >
                     All Products
                   </Link>
-                  {PRODUCT_CATEGORIES.map((cat) => (
+                  {PRODUCT_CATEGORIES.map((cat: any) => (
                     <Link
                       key={cat.value}
                       href={buildFilterUrl({ category: cat.value, page: "1" })}

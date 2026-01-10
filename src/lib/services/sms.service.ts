@@ -472,12 +472,12 @@ export class SMSService {
         },
       });
 
-      const sent = logs.filter((log) => log.status === "SENT");
-      const failed = logs.filter((log) => log.status === "FAILED");
+      const sent = logs.filter((log: any) => log.status === "SENT");
+      const failed = logs.filter((log: any) => log.status === "FAILED");
       const lastSentAt =
         sent.length > 0
           ? new Date(
-            Math.max(...sent.map((log) => log.sentAt?.getTime() || 0))
+            Math.max(...sent.map((log: any) => log.sentAt?.getTime() || 0))
           )
           : null;
 

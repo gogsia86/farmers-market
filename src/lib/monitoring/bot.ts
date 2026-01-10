@@ -94,7 +94,7 @@ export class DivineMonitoringBot {
     );
 
     // Register workflows
-    this.config.workflows.forEach((workflow) => {
+    this.config.workflows.forEach((workflow: any) => {
       this.executor.registerWorkflow(workflow);
     });
   }
@@ -225,7 +225,7 @@ export class DivineMonitoringBot {
    * ✅ RUN WORKFLOW BY ID - Execute specific workflow
    */
   async runWorkflow(workflowId: string): Promise<WorkflowResult> {
-    const workflow = this.config.workflows.find((w) => w.id === workflowId);
+    const workflow = this.config.workflows.find((w: any) => w.id === workflowId);
 
     if (!workflow) {
       throw new Error(`Workflow not found: ${workflowId}`);
@@ -291,7 +291,7 @@ export class DivineMonitoringBot {
    * ✅ PUBLIC API - Get workflow by ID
    */
   getWorkflow(id: string): WorkflowConfig | undefined {
-    return this.config.workflows.find((w) => w.id === id);
+    return this.config.workflows.find((w: any) => w.id === id);
   }
 
   // ============================================================================

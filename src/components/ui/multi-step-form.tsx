@@ -320,7 +320,7 @@ export function StepsProgress({
   if (variant === "minimal") {
     return (
       <div className={cn("flex items-center justify-center gap-2", className)}>
-        {steps.map((_, index) => (
+        {steps.map((_: any, index: any) => (
           <div
             key={index}
             className={cn(
@@ -367,7 +367,7 @@ export function StepsProgress({
         className
       )}
     >
-      {steps.map((step, index) => (
+      {steps.map((step: any, index: any) => (
         <React.Fragment key={step.id}>
           <StepIndicator
             step={step}

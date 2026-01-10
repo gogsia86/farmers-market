@@ -212,7 +212,7 @@ export function SettingsClient({ initialData }: SettingsClientProps) {
       {/* Tabs Navigation */}
       <div className="overflow-x-auto">
         <div className="flex gap-2 border-b border-gray-200">
-          {tabs.map((tab) => {
+          {tabs.map((tab: any) => {
             const Icon = tab.icon;
             return (
               <button
@@ -816,7 +816,7 @@ export function SettingsClient({ initialData }: SettingsClientProps) {
               </div>
             ) : (
               <div className="space-y-4">
-                {initialData.addresses.map((address) => (
+                {initialData.addresses.map((address: any) => (
                   <div
                     key={address.id}
                     className="rounded-lg border border-gray-200 p-4 hover:border-green-300"

@@ -168,7 +168,7 @@ export class PredictiveMonitor {
 
     // Check duration anomalies
     const durationAnomaly = this.checkAnomaly(
-      recentValues.map((m) => m.totalDuration),
+      recentValues.map((m: any) => m.totalDuration),
       baselines.duration,
     );
     if (durationAnomaly.isAnomaly) {
@@ -186,7 +186,7 @@ export class PredictiveMonitor {
     // Check API response time anomalies
     if (baselines.apiResponseTime) {
       const apiAnomaly = this.checkAnomaly(
-        recentValues.map((m) => m.apiResponseTime || 0).filter((v) => v > 0),
+        recentValues.map((m: any) => m.apiResponseTime || 0).filter((v: any) => v > 0),
         baselines.apiResponseTime,
       );
       if (apiAnomaly.isAnomaly) {
@@ -205,7 +205,7 @@ export class PredictiveMonitor {
     // Check error rate anomalies
     if (baselines.errors) {
       const errorAnomaly = this.checkAnomaly(
-        recentValues.map((m) => m.errors || 0),
+        recentValues.map((m: any) => m.errors || 0),
         baselines.errors,
       );
       if (errorAnomaly.isAnomaly) {
@@ -346,7 +346,7 @@ export class PredictiveMonitor {
     // Create sequences of 10 timesteps
     for (let i = 10; i < results.length; i++) {
       const sequence = results.slice(i - 10, i);
-      const features = sequence.map((r) => this.extractFeaturesFromResult(r));
+      const features = sequence.map((r: any) => this.extractFeaturesFromResult(r));
 
       sequences.push(features);
       const result = results[i];
@@ -355,8 +355,8 @@ export class PredictiveMonitor {
 
     // Normalize features
     this.calculateNormalizationParams(sequences.flat());
-    const normalizedSequences = sequences.map((seq) =>
-      seq.map((features) => this.normalizeFeatureArray(features)),
+    const normalizedSequences = sequences.map((seq: any) =>
+      seq.map((features: any) => this.normalizeFeatureArray(features)),
     );
 
     if (!this.normalizationParams) {
@@ -370,7 +370,7 @@ export class PredictiveMonitor {
   }
 
   private extractFeatures(metrics: WorkflowMetrics[]): number[][] {
-    return metrics.map((m) => [
+    return metrics.map((m: any) => [
       m.totalDuration / 1000, // Convert to seconds
       (m.apiResponseTime || 0) / 1000,
       (m.pageLoadTime || 0) / 1000,
@@ -426,13 +426,13 @@ export class PredictiveMonitor {
       this.calculateNormalizationParams(features);
     }
 
-    return features.map((feature) => this.normalizeFeatureArray(feature));
+    return features.map((feature: any) => this.normalizeFeatureArray(feature));
   }
 
   private normalizeFeatureArray(features: number[]): number[] {
     if (!this.normalizationParams) return features;
 
-    return features.map((value, i) => {
+    return features.map((value: any, i: any) => {
       const mean = this.normalizationParams?.mean[i] ?? 0;
       const std = this.normalizationParams?.std[i] ?? 1;
       return (value - mean) / std;
@@ -448,11 +448,11 @@ export class PredictiveMonitor {
     apiResponseTime?: { mean: number; std: number };
     errors?: { mean: number; std: number };
   } {
-    const durations = metrics.map((m) => m.totalDuration);
+    const durations = metrics.map((m: any) => m.totalDuration);
     const apiTimes = metrics
-      .map((m) => m.apiResponseTime || 0)
-      .filter((v) => v > 0);
-    const errors = metrics.map((m) => m.errors || 0);
+      .map((m: any) => m.apiResponseTime || 0)
+      .filter((v: any) => v > 0);
+    const errors = metrics.map((m: any) => m.errors || 0);
 
     return {
       duration: this.calculateStats(durations),
@@ -463,9 +463,9 @@ export class PredictiveMonitor {
   }
 
   private calculateStats(values: number[]): { mean: number; std: number } {
-    const mean = values.reduce((sum, v) => sum + v, 0) / values.length;
+    const mean = values.reduce((sum: any, v: any) => sum + v, 0) / values.length;
     const variance =
-      values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / values.length;
+      values.reduce((sum: any, v: any) => sum + Math.pow(v - mean, 2), 0) / values.length;
     const std = Math.sqrt(variance);
 
     return { mean, std: std || 1 };
@@ -475,7 +475,7 @@ export class PredictiveMonitor {
     values: number[],
     baseline: { mean: number; std: number },
   ): Omit<AnomalyDetection, "context" | "recommendations"> {
-    const recentAvg = values.reduce((sum, v) => sum + v, 0) / values.length;
+    const recentAvg = values.reduce((sum: any, v: any) => sum + v, 0) / values.length;
     const deviation = Math.abs(recentAvg - baseline.mean) / baseline.std;
 
     const threshold = 2.5; // Standard deviations
@@ -505,10 +505,10 @@ export class PredictiveMonitor {
 
     // Check duration increase
     const avgRecent =
-      recentMetrics.reduce((sum, m) => sum + m.totalDuration, 0) /
+      recentMetrics.reduce((sum: any, m: any) => sum + m.totalDuration, 0) /
       recentMetrics.length;
     const avgBaseline =
-      baseline.reduce((sum, m) => sum + m.totalDuration, 0) / baseline.length;
+      baseline.reduce((sum: any, m: any) => sum + m.totalDuration, 0) / baseline.length;
 
     if (avgRecent > avgBaseline * 1.5) {
       factors.push("Significant increase in execution time");
@@ -524,7 +524,7 @@ export class PredictiveMonitor {
 
     // Check performance degradation
     const avgPerf =
-      recentMetrics.reduce((sum, m) => sum + (m.performanceScore || 0), 0) /
+      recentMetrics.reduce((sum: any, m: any) => sum + (m.performanceScore || 0), 0) /
       recentMetrics.length;
     if (avgPerf < 50) {
       factors.push("Performance score below threshold");
@@ -543,10 +543,10 @@ export class PredictiveMonitor {
     const dataConfidence = Math.min(dataPoints / 100, 1) * 0.5;
 
     // Variance confidence
-    const durations = metrics.map((m) => m.totalDuration);
-    const mean = durations.reduce((sum, v) => sum + v, 0) / durations.length;
+    const durations = metrics.map((m: any) => m.totalDuration);
+    const mean = durations.reduce((sum: any, v: any) => sum + v, 0) / durations.length;
     const variance =
-      durations.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) /
+      durations.reduce((sum: any, v: any) => sum + Math.pow(v - mean, 2), 0) /
       durations.length;
     const cv = Math.sqrt(variance) / mean; // Coefficient of variation
     const varianceConfidence = Math.max(0, 1 - cv) * 0.5;

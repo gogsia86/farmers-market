@@ -612,7 +612,7 @@ describe("useBanner Hook", () => {
       });
     });
 
-    const topBanners = result.current.banners.filter((b) => b.position === "top");
+    const topBanners = result.current.banners.filter((b: any) => b.position === "top");
     expect(topBanners).toHaveLength(2);
   });
 });

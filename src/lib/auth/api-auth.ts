@@ -165,7 +165,7 @@ export function revokeApiKey(keyId: string): boolean {
 export function listApiKeys(): Array<
   Omit<ApiKey, "key"> & { keyPreview: string }
 > {
-  return Array.from(apiKeys.values()).map((apiKey) => ({
+  return Array.from(apiKeys.values()).map((apiKey: any) => ({
     ...apiKey,
     key: undefined as unknown as string,
     keyPreview: `${apiKey.key.substring(0, 8)}...${apiKey.key.substring(apiKey.key.length - 4)}`,
@@ -467,7 +467,7 @@ export function hasRequiredScopes(
   }
 
   // Check if all required scopes are present
-  return requiredScopes.every((scope) => authResult.scopes!.includes(scope));
+  return requiredScopes.every((scope: any) => authResult.scopes!.includes(scope));
 }
 
 /**

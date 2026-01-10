@@ -64,7 +64,7 @@ export function validateEnv(): Env {
     if (error instanceof z.ZodError) {
       logger.error("❌ Invalid environment variables:");
       const zodError = error as z.ZodError;
-      zodError.issues.forEach((issue) => {
+      zodError.issues.forEach((issue: any) => {
         logger.error(`  - ${issue.path.join(".")}: ${issue.message}`);
       });
     }
@@ -96,7 +96,7 @@ export function checkOptionalServices(env: Env): void {
 
   if (warnings.length > 0) {
     logger.info("\n📋 Optional Service Warnings:");
-    warnings.forEach((warning) => logger.info(`  ${warning}`));
+    warnings.forEach((warning: any) => logger.info(`  ${warning}`));
     logger.info("");
   }
 }

@@ -104,19 +104,18 @@ export default async function FarmDetailsPage({ params }: PageProps) {
   }
 
   // Calculate statistics
-  const activeProducts = farm.products.filter((p) => p.status === "ACTIVE").length;
+  const activeProducts = farm.products.filter((p: any) => p.status === "ACTIVE").length;
   const totalRevenue = farm.orders
-    .filter((o) => ["COMPLETED", "COMPLETED"].includes(o.status))
-    .reduce((sum, order) => sum + Number(order.total), 0);
+    .filter((o: any) => ["COMPLETED", "COMPLETED"].includes(o.status))
+    .reduce((sum: any, order: any) => sum + Number(order.total), 0);
 
-  const inventoryValue = farm.products.reduce((sum, product) => {
+  const inventoryValue = farm.products.reduce((sum: any, product: any) => {
     const qty = product.quantityAvailable ? Number(product.quantityAvailable) : 0;
     const price = Number(product.price);
     return sum + qty * price;
   }, 0);
 
-  const pendingOrders = farm.orders.filter(
-    (o) => o.status === "PENDING" || o.status === "CONFIRMED"
+  const pendingOrders = farm.orders.filter((o: any) => o.status === "PENDING" || o.status === "CONFIRMED"
   ).length;
 
   // Get verification status badge
@@ -398,7 +397,7 @@ export default async function FarmDetailsPage({ params }: PageProps) {
               </div>
               {farm.orders.length > 0 ? (
                 <div className="space-y-3">
-                  {farm.orders.map((order) => (
+                  {farm.orders.map((order: any) => (
                     <div
                       key={order.id}
                       className="flex items-center justify-between rounded-lg border border-gray-200 p-4"

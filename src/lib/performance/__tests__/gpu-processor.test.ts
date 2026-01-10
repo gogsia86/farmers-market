@@ -134,7 +134,7 @@ class GPUProcessor {
     // Simulate processing
     if (options?.enhance) {
       // Return slightly modified images
-      return images.map((img) => {
+      return images.map((img: any) => {
         const newData = new Uint8ClampedArray(img.data);
         return { ...img, data: newData };
       });

@@ -58,8 +58,8 @@ export class DivineMonitoringReporter implements IReporter {
 
     // Calculate summary statistics
     const totalWorkflows = results.length;
-    const passedWorkflows = results.filter((r) => r.status === "PASSED").length;
-    const failedWorkflows = results.filter((r) => r.status === "FAILED").length;
+    const passedWorkflows = results.filter((r: any) => r.status === "PASSED").length;
+    const failedWorkflows = results.filter((r: any) => r.status === "FAILED").length;
     const warningWorkflows = results.filter(
       (r) => r.status === "WARNING",
     ).length;
@@ -70,7 +70,7 @@ export class DivineMonitoringReporter implements IReporter {
       totalWorkflows > 0 ? (passedWorkflows / totalWorkflows) * 100 : 0;
     const averageDuration =
       totalWorkflows > 0
-        ? results.reduce((sum, r) => sum + r.duration, 0) / totalWorkflows
+        ? results.reduce((sum: any, r: any) => sum + r.duration, 0) / totalWorkflows
         : 0;
     const criticalIssues = results.filter(
       (r) => r.status === "FAILED" && r.priority === "CRITICAL",
@@ -208,7 +208,7 @@ export class DivineMonitoringReporter implements IReporter {
   async getReportHistory(limit: number = 10): Promise<MonitoringReport[]> {
     try {
       const files = await fs.readdir(this.reportStoragePath);
-      const jsonFiles = files.filter((f) => f.endsWith(".json"));
+      const jsonFiles = files.filter((f: any) => f.endsWith(".json"));
 
       // Sort by date (newest first)
       jsonFiles.sort().reverse();
@@ -240,7 +240,7 @@ export class DivineMonitoringReporter implements IReporter {
     const recommendations: string[] = [];
 
     // Check success rate
-    const passedCount = results.filter((r) => r.status === "PASSED").length;
+    const passedCount = results.filter((r: any) => r.status === "PASSED").length;
     const successRate =
       results.length > 0 ? (passedCount / results.length) * 100 : 100;
 
@@ -262,7 +262,7 @@ export class DivineMonitoringReporter implements IReporter {
 
     // Check performance
     const avgDuration =
-      results.reduce((sum, r) => sum + r.duration, 0) / results.length;
+      results.reduce((sum: any, r: any) => sum + r.duration, 0) / results.length;
     if (avgDuration > 60000) {
       // > 1 minute
       recommendations.push(
@@ -271,7 +271,7 @@ export class DivineMonitoringReporter implements IReporter {
     }
 
     // Check error patterns
-    const errorWorkflows = results.filter((r) => r.status === "FAILED");
+    const errorWorkflows = results.filter((r: any) => r.status === "FAILED");
     if (errorWorkflows.length > results.length * 0.2) {
       recommendations.push(
         `❌ High error rate detected (${((errorWorkflows.length / results.length) * 100).toFixed(1)}%). Review system stability.`,
@@ -548,7 +548,7 @@ export class DivineMonitoringReporter implements IReporter {
       lines.push("\n**Recommendations:**");
       report.recommendations
         .slice(0, 3)
-        .forEach((rec) => lines.push(`• ${rec}`));
+        .forEach((rec: any) => lines.push(`• ${rec}`));
     }
 
     return lines.join("\n");
@@ -620,7 +620,7 @@ export class DivineMonitoringReporter implements IReporter {
 
         <div class="recommendations">
             <h2>📋 Recommendations</h2>
-            ${report.recommendations.map((rec) => `<p>• ${rec}</p>`).join("")}
+            ${report.recommendations.map((rec: any) => `<p>• ${rec}</p>`).join("")}
         </div>
 
         ${
@@ -629,9 +629,9 @@ export class DivineMonitoringReporter implements IReporter {
         <div class="agriculture">
             <h2>🌾 Agricultural Insights</h2>
             <h3>Seasonal Optimization</h3>
-            ${report.agricultureInsights.seasonalOptimization.map((opt) => `<p>• ${opt}</p>`).join("")}
+            ${report.agricultureInsights.seasonalOptimization.map((opt: any) => `<p>• ${opt}</p>`).join("")}
             <h3>Biodynamic Suggestions</h3>
-            ${report.agricultureInsights.biodynamicSuggestions.map((sug) => `<p>• ${sug}</p>`).join("")}
+            ${report.agricultureInsights.biodynamicSuggestions.map((sug: any) => `<p>• ${sug}</p>`).join("")}
         </div>
         `
             : ""
@@ -681,28 +681,28 @@ export class DivineMonitoringReporter implements IReporter {
     lines.push(`- **Critical Issues:** ${report.summary.criticalIssues}\n`);
 
     lines.push("## 📋 Recommendations\n");
-    report.recommendations.forEach((rec) => lines.push(`- ${rec}`));
+    report.recommendations.forEach((rec: any) => lines.push(`- ${rec}`));
     lines.push("");
 
     if (report.agricultureInsights) {
       lines.push("## 🌾 Agricultural Insights\n");
       lines.push("### Seasonal Optimization\n");
-      report.agricultureInsights.seasonalOptimization.forEach((opt) =>
+      report.agricultureInsights.seasonalOptimization.forEach((opt: any) =>
         lines.push(`- ${opt}`),
       );
       lines.push("\n### Biodynamic Suggestions\n");
-      report.agricultureInsights.biodynamicSuggestions.forEach((sug) =>
+      report.agricultureInsights.biodynamicSuggestions.forEach((sug: any) =>
         lines.push(`- ${sug}`),
       );
       lines.push("\n### Farm Health Trends\n");
-      report.agricultureInsights.farmHealthTrends.forEach((trend) =>
+      report.agricultureInsights.farmHealthTrends.forEach((trend: any) =>
         lines.push(`- ${trend}`),
       );
       lines.push("");
     }
 
     lines.push("## 🔄 Workflow Results\n");
-    report.workflows.forEach((w) => {
+    report.workflows.forEach((w: any) => {
       const statusEmoji =
         w.status === "PASSED" ? "✅" : w.status === "FAILED" ? "❌" : "⚠️";
       lines.push(`### ${statusEmoji} ${w.name} (${w.type})\n`);

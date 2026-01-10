@@ -473,12 +473,12 @@ export function Example4_EventScheduler() {
 
   const handleEventUpdate = (id: string, updates: Partial<ScheduledEvent>) => {
     setEvents(
-      events.map((event) => (event.id === id ? { ...event, ...updates } : event))
+      events.map((event: any) => (event.id === id ? { ...event, ...updates } : event))
     );
   };
 
   const handleEventDelete = (id: string) => {
-    setEvents(events.filter((event) => event.id !== id));
+    setEvents(events.filter((event: any) => event.id !== id));
   };
 
   return (
@@ -525,12 +525,12 @@ export function Example5_HarvestPlanner() {
 
   const handlePlanUpdate = (id: string, updates: Partial<HarvestPlan>) => {
     setPlans(
-      plans.map((plan) => (plan.id === id ? { ...plan, ...updates } : plan))
+      plans.map((plan: any) => (plan.id === id ? { ...plan, ...updates } : plan))
     );
   };
 
   const handlePlanDelete = (id: string) => {
-    setPlans(plans.filter((plan) => plan.id !== id));
+    setPlans(plans.filter((plan: any) => plan.id !== id));
   };
 
   return (
@@ -574,7 +574,7 @@ export function Example6_CombinedUsage() {
   });
 
   // Filter events by date range
-  const filteredEvents = mockTimelineEvents.filter((event) => {
+  const filteredEvents = mockTimelineEvents.filter((event: any) => {
     if (!dateRange.start || !dateRange.end) return true;
     const eventDate =
       typeof event.timestamp === "string"
@@ -668,13 +668,13 @@ export function Example6_CombinedUsage() {
         <div className="rounded-lg border bg-white p-4">
           <div className="text-sm font-medium text-gray-600">Completed</div>
           <div className="mt-1 text-2xl font-bold text-green-600">
-            {filteredEvents.filter((e) => e.status === "completed").length}
+            {filteredEvents.filter((e: any) => e.status === "completed").length}
           </div>
         </div>
         <div className="rounded-lg border bg-white p-4">
           <div className="text-sm font-medium text-gray-600">Upcoming</div>
           <div className="mt-1 text-2xl font-bold text-blue-600">
-            {filteredEvents.filter((e) => e.status === "upcoming").length}
+            {filteredEvents.filter((e: any) => e.status === "upcoming").length}
           </div>
         </div>
       </div>
@@ -774,7 +774,7 @@ export default function TimelineCalendarExamples() {
         {/* Navigation */}
         <div className="border-b bg-white px-6 py-4">
           <div className="flex flex-wrap gap-2">
-            {examples.map((example) => (
+            {examples.map((example: any) => (
               <button
                 key={example.id}
                 onClick={() => setActiveExample(example.id)}
@@ -791,7 +791,7 @@ export default function TimelineCalendarExamples() {
 
         {/* Content */}
         <div className="bg-white">
-          {examples.find((ex) => ex.id === activeExample)?.component}
+          {examples.find((ex: any) => ex.id === activeExample)?.component}
         </div>
 
         {/* Footer */}

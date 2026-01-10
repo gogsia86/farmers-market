@@ -436,13 +436,13 @@ export class AutoRemediationSystem {
 
     // Execute rollback if needed
     let rollbackExecuted = false;
-    if (rollbackRequired && executedActions.some((a) => a.success)) {
+    if (rollbackRequired && executedActions.some((a: any) => a.success)) {
       logger.info("⚠️ Rolling back executed actions...\n");
       rollbackExecuted = await this.executeRollback(plan, executedActions);
     }
 
     // Determine final state
-    const successCount = executedActions.filter((a) => a.success).length;
+    const successCount = executedActions.filter((a: any) => a.success).length;
     const totalActions = executedActions.length;
     let finalState: ExecutionResult["finalState"];
 
@@ -633,7 +633,7 @@ export class AutoRemediationSystem {
     if (analysis.votingResults) {
       const votes = Object.values(analysis.votingResults) as number[];
       if (votes.length > 0) {
-        return Math.round(votes.reduce((a, b) => a + b, 0) / votes.length);
+        return Math.round(votes.reduce((a: any, b: any) => a + b, 0) / votes.length);
       }
     }
 
@@ -773,7 +773,7 @@ export class AutoRemediationSystem {
     }
 
     // Add error-specific actions if not already included
-    const actionTypes = new Set(actions.map((a) => a.type));
+    const actionTypes = new Set(actions.map((a: any) => a.type));
 
     if (error.includes("timeout") && !actionTypes.has("ADJUST_TIMEOUT")) {
       actions.push({
@@ -1000,7 +1000,7 @@ export class AutoRemediationSystem {
     const dataRisk = hasDataRisk ? "LOW" : "NONE";
 
     // Determine reversibility
-    const hasIrreversible = actions.some((a) => a.type === "CLEAR_CACHE");
+    const hasIrreversible = actions.some((a: any) => a.type === "CLEAR_CACHE");
     const reversibility = hasIrreversible
       ? "PARTIALLY_REVERSIBLE"
       : "FULLY_REVERSIBLE";
@@ -1226,7 +1226,7 @@ export class AutoRemediationSystem {
     logger.info("\n⏪ Executing rollback for executed actions...\n");
 
     const successfulActions = executedActions
-      .filter((a) => a.success)
+      .filter((a: any) => a.success)
       .reverse();
 
     for (const action of successfulActions) {
@@ -1338,7 +1338,7 @@ export class AutoRemediationSystem {
   }
 
   getPendingPlans(): RemediationPlan[] {
-    return this.getAllPlans().filter((p) => p.approvalStatus === "PENDING");
+    return this.getAllPlans().filter((p: any) => p.approvalStatus === "PENDING");
   }
 
   getStatistics(): {
@@ -1350,15 +1350,15 @@ export class AutoRemediationSystem {
     averageConfidence: number;
   } {
     const plans = this.getAllPlans();
-    const executed = plans.filter((p) => p.executionResult);
-    const successful = executed.filter((p) => p.executionResult?.success);
+    const executed = plans.filter((p: any) => p.executionResult);
+    const successful = executed.filter((p: any) => p.executionResult?.success);
     const autoApproved = plans.filter(
       (p) => p.approvalStatus === "AUTO_APPROVED",
     );
 
     return {
       totalPlans: plans.length,
-      pendingApproval: plans.filter((p) => p.approvalStatus === "PENDING")
+      pendingApproval: plans.filter((p: any) => p.approvalStatus === "PENDING")
         .length,
       autoApproved: autoApproved.length,
       executed: executed.length,
@@ -1366,7 +1366,7 @@ export class AutoRemediationSystem {
         executed.length > 0 ? (successful.length / executed.length) * 100 : 0,
       averageConfidence:
         plans.length > 0
-          ? plans.reduce((sum, p) => sum + p.aiAnalysis.confidence, 0) /
+          ? plans.reduce((sum: any, p: any) => sum + p.aiAnalysis.confidence, 0) /
             plans.length
           : 0,
     };
@@ -1470,7 +1470,7 @@ export class AutoRemediationSystem {
       `║ 🔧 Actions Executed: ${String(result.actionsExecuted.length).padEnd(36)} ║`,
     );
     logger.info(
-      `║ ✅ Successful: ${String(result.actionsExecuted.filter((a) => a.success).length).padEnd(42)} ║`,
+      `║ ✅ Successful: ${String(result.actionsExecuted.filter((a: any) => a.success).length).padEnd(42)} ║`,
     );
     logger.info(`║ ❌ Errors: ${String(result.errors.length).padEnd(46)} ║`);
     logger.info(

@@ -127,30 +127,30 @@ export function getPerformanceStats(windowMs: number = 60000) {
   const recentDbQueries = metrics.database.filter(
     (m) => m.timestamp > windowStart,
   );
-  const recentMemory = metrics.memory.filter((m) => m.timestamp > windowStart);
+  const recentMemory = metrics.memory.filter((m: any) => m.timestamp > windowStart);
 
   // Calculate request stats
   const requestStats = {
     total: recentRequests.length,
-    avgDuration: average(recentRequests.map((r) => r.duration)),
+    avgDuration: average(recentRequests.map((r: any) => r.duration)),
     p50Duration: percentile(
-      recentRequests.map((r) => r.duration),
+      recentRequests.map((r: any) => r.duration),
       50,
     ),
     p95Duration: percentile(
-      recentRequests.map((r) => r.duration),
+      recentRequests.map((r: any) => r.duration),
       95,
     ),
     p99Duration: percentile(
-      recentRequests.map((r) => r.duration),
+      recentRequests.map((r: any) => r.duration),
       99,
     ),
     successRate:
-      (recentRequests.filter((r) => r.statusCode < 400).length /
+      (recentRequests.filter((r: any) => r.statusCode < 400).length /
         recentRequests.length) *
         100 || 0,
     errorRate:
-      (recentRequests.filter((r) => r.statusCode >= 400).length /
+      (recentRequests.filter((r: any) => r.statusCode >= 400).length /
         recentRequests.length) *
         100 || 0,
   };
@@ -158,13 +158,13 @@ export function getPerformanceStats(windowMs: number = 60000) {
   // Calculate database stats
   const dbStats = {
     total: recentDbQueries.length,
-    avgDuration: average(recentDbQueries.map((q) => q.duration)),
+    avgDuration: average(recentDbQueries.map((q: any) => q.duration)),
     p95Duration: percentile(
-      recentDbQueries.map((q) => q.duration),
+      recentDbQueries.map((q: any) => q.duration),
       95,
     ),
     successRate:
-      (recentDbQueries.filter((q) => q.success).length /
+      (recentDbQueries.filter((q: any) => q.success).length /
         recentDbQueries.length) *
         100 || 0,
   };
@@ -174,9 +174,9 @@ export function getPerformanceStats(windowMs: number = 60000) {
     ? {
         current: recentMemory[recentMemory.length - 1],
         avg: {
-          heapUsed: average(recentMemory.map((m) => m.heapUsed)),
-          heapTotal: average(recentMemory.map((m) => m.heapTotal)),
-          rss: average(recentMemory.map((m) => m.rss)),
+          heapUsed: average(recentMemory.map((m: any) => m.heapUsed)),
+          heapTotal: average(recentMemory.map((m: any) => m.heapTotal)),
+          rss: average(recentMemory.map((m: any) => m.rss)),
         },
       }
     : null;
@@ -285,7 +285,7 @@ export function exportMetrics() {
 // Helper functions
 function average(values: number[]): number {
   if (values.length === 0) return 0;
-  return values.reduce((sum, val) => sum + val, 0) / values.length;
+  return values.reduce((sum: any, val: any) => sum + val, 0) / values.length;
 }
 
 function percentile(values: number[], p: number): number {

@@ -191,7 +191,7 @@ export function FarmImageGallery({ farm, additionalPhotos = [] }: FarmImageGalle
       {/* Additional Photos Grid */}
       {secondaryPhotos.length > 0 && (
         <div className="grid grid-cols-2 gap-2 rounded-b-lg bg-white p-2 md:grid-cols-4">
-          {secondaryPhotos.map((photo, index) => (
+          {secondaryPhotos.map((photo: any, index: any) => (
             <div
               key={index}
               className="relative h-24 overflow-hidden rounded-md"

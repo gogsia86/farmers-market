@@ -164,7 +164,7 @@ function isDateDisabled(
 ): boolean {
   if (minDate && date < minDate) return true;
   if (maxDate && date > maxDate) return true;
-  if (disabledDates?.some((d) => isSameDay(d, date))) return true;
+  if (disabledDates?.some((d: any) => isSameDay(d, date))) return true;
   return false;
 }
 
@@ -233,7 +233,7 @@ function MonthView({
   const eventsByDate = useMemo(() => {
     const grouped = new Map<string, CalendarEvent[]>();
 
-    events.forEach((event) => {
+    events.forEach((event: any) => {
       const eventDate =
         typeof event.date === "string" ? new Date(event.date) : event.date;
       const dateKey = `${eventDate.getFullYear()}-${eventDate.getMonth()}-${eventDate.getDate()}`;
@@ -261,7 +261,7 @@ function MonthView({
             Wk
           </div>
         )}
-        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day: any) => (
           <div
             key={day}
             className="text-center text-xs font-semibold text-gray-700"
@@ -273,7 +273,7 @@ function MonthView({
 
       {/* Calendar Grid */}
       <div className="grid grid-cols-7 gap-1">
-        {calendarDays.map((date, index) => {
+        {calendarDays.map((date: any, index: any) => {
           if (date === null) {
             return <div key={`empty-${index}`} className="aspect-square" />;
           }
@@ -327,7 +327,7 @@ function MonthView({
                 {/* Event Indicators */}
                 {hasEvents && (
                   <div className="mt-1 flex w-full flex-col gap-0.5">
-                    {dayEvents.slice(0, 2).map((event) => (
+                    {dayEvents.slice(0, 2).map((event: any) => (
                       <div
                         key={event.id}
                         onClick={(e) => {

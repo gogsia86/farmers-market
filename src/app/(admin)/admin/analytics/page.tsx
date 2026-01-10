@@ -49,22 +49,29 @@ export default async function AnalyticsPage() {
   const metrics = await platformAnalyticsService.getPlatformMetrics();
   const revenueTimeSeries = await platformAnalyticsService.getTimeSeriesData(
     "revenue",
-    30
+    30,
   );
   const ordersTimeSeries = await platformAnalyticsService.getTimeSeriesData(
     "orders",
-    30
+    30,
   );
 
   // Calculate trends
-  const recentRevenue = revenueTimeSeries.slice(-7).reduce((sum, d) => sum + d.value, 0);
-  const previousRevenue = revenueTimeSeries.slice(-14, -7).reduce((sum, d) => sum + d.value, 0);
-  const weeklyRevenueTrend = previousRevenue > 0
-    ? ((recentRevenue - previousRevenue) / previousRevenue) * 100
-    : 100;
+  const recentRevenue = revenueTimeSeries
+    .slice(-7)
+    .reduce((sum: number, d: { value: number }) => sum + d.value, 0);
+  const previousRevenue = revenueTimeSeries
+    .slice(-14, -7)
+    .reduce((sum: number, d: { value: number }) => sum + d.value, 0);
+  const weeklyRevenueTrend =
+    previousRevenue > 0
+      ? ((recentRevenue - previousRevenue) / previousRevenue) * 100
+      : 100;
 
   // Fetch chart data (last 30 days)
-  const chartRevenueData = await database.$queryRaw<Array<{ date: Date; revenue: number; orders: number }>>`
+  const chartRevenueData = await database.$queryRaw<
+    Array<{ date: Date; revenue: number; orders: number }>
+  >`
     SELECT
       DATE("createdAt") as date,
       SUM("total")::DECIMAL as revenue,
@@ -76,29 +83,35 @@ export default async function AnalyticsPage() {
   `;
 
   // Format data for RevenueChart
-  const formattedRevenueData = chartRevenueData.map(item => ({
-    date: item.date.toISOString(),
-    revenue: Number(item.revenue),
-    orders: item.orders,
-  }));
+  const formattedRevenueData = chartRevenueData.map(
+    (item: { date: Date; revenue: number; orders: number }) => ({
+      date: item.date.toISOString(),
+      revenue: Number(item.revenue),
+      orders: item.orders,
+    }),
+  );
 
   // Get order status distribution
   const ordersData = await database.order.groupBy({
-    by: ['status'],
+    by: ["status"],
     _count: { status: true },
   });
 
-  const formattedOrdersData = ordersData.map(item => ({
-    status: item.status,
-    count: item._count.status,
-  }));
+  const formattedOrdersData = ordersData.map(
+    (item: { status: string; _count: { status: number } }) => ({
+      status: item.status,
+      count: item._count.status,
+    }),
+  );
 
   return (
     <main className="min-h-screen bg-gray-50 py-8">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Analytics Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Analytics Dashboard
+          </h1>
           <p className="mt-2 text-sm text-gray-600">
             Platform-wide metrics and performance insights
           </p>
@@ -261,13 +274,17 @@ export default async function AnalyticsPage() {
                 </span>
               </div>
               <div className="flex justify-between border-b border-gray-200 pb-3">
-                <span className="text-sm text-gray-600">Average Order Value</span>
+                <span className="text-sm text-gray-600">
+                  Average Order Value
+                </span>
                 <span className="text-sm font-semibold text-gray-900">
                   {formatCurrency(metrics.revenue.averagePerOrder)}
                 </span>
               </div>
               <div className="flex justify-between border-b border-gray-200 pb-3">
-                <span className="text-sm text-gray-600">Platform Fees Collected</span>
+                <span className="text-sm text-gray-600">
+                  Platform Fees Collected
+                </span>
                 <span className="text-sm font-semibold text-green-600">
                   {formatCurrency(metrics.revenue.platformFees)}
                 </span>
@@ -339,7 +356,9 @@ export default async function AnalyticsPage() {
                 </span>
               </div>
               <div className="flex justify-between border-b border-gray-200 pb-3">
-                <span className="text-sm text-gray-600">Active Users (30d)</span>
+                <span className="text-sm text-gray-600">
+                  Active Users (30d)
+                </span>
                 <span className="text-sm font-semibold text-green-600">
                   {metrics.users.active.toLocaleString()}
                 </span>
@@ -393,13 +412,17 @@ export default async function AnalyticsPage() {
                 </span>
               </div>
               <div className="flex justify-between border-b border-gray-200 pb-3">
-                <span className="text-sm text-gray-600">Pending Verification</span>
+                <span className="text-sm text-gray-600">
+                  Pending Verification
+                </span>
                 <span className="text-sm font-semibold text-yellow-600">
                   {metrics.farms.pending.toLocaleString()}
                 </span>
               </div>
               <div className="flex justify-between border-b border-gray-200 pb-3">
-                <span className="text-sm text-gray-600">Average Products/Farm</span>
+                <span className="text-sm text-gray-600">
+                  Average Products/Farm
+                </span>
                 <span className="text-sm font-semibold text-gray-900">
                   {metrics.farms.averageProducts.toFixed(1)}
                 </span>
@@ -443,7 +466,7 @@ export default async function AnalyticsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {metrics.farms.topPerforming.map((farm, index) => (
+                {metrics.farms.topPerforming.map((farm: any, index: any) => (
                   <tr key={farm.id} className="hover:bg-gray-50">
                     <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
                       #{index + 1}
@@ -459,7 +482,9 @@ export default async function AnalyticsPage() {
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
                       {formatCurrency(
-                        farm.orderCount > 0 ? farm.revenue / farm.orderCount : 0
+                        farm.orderCount > 0
+                          ? farm.revenue / farm.orderCount
+                          : 0,
                       )}
                     </td>
                   </tr>
@@ -493,7 +518,7 @@ export default async function AnalyticsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {metrics.products.topSelling.map((product, index) => (
+                {metrics.products.topSelling.map((product: any, index: any) => (
                   <tr key={product.id} className="hover:bg-gray-50">
                     <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
                       #{index + 1}
@@ -544,8 +569,10 @@ export default async function AnalyticsPage() {
             Daily Revenue Bars (Last 10 Days)
           </h2>
           <div className="space-y-2">
-            {revenueTimeSeries.slice(-10).map((data, index) => {
-              const maxValue = Math.max(...revenueTimeSeries.map((d) => d.value));
+            {revenueTimeSeries.slice(-10).map((data: any, index: any) => {
+              const maxValue = Math.max(
+                ...revenueTimeSeries.map((d: any) => d.value),
+              );
               const width = maxValue > 0 ? (data.value / maxValue) * 100 : 0;
 
               return (

@@ -638,7 +638,7 @@ class OrderService extends BaseService {
     const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
 
     const statusCounts: Record<string, number> = {};
-    ordersByStatus.forEach((item) => {
+    ordersByStatus.forEach((item: any) => {
       statusCounts[item.status] = item._count.status;
     });
 
@@ -989,15 +989,15 @@ class OrderService extends BaseService {
     items: CheckoutOrderRequest["cartItems"]
   ) {
     // Fetch product details
-    const productIds = items.map((item) => item.productId);
+    const productIds = items.map((item: any) => item.productId);
     const products = await tx.product.findMany({
       where: { id: { in: productIds } },
       select: { id: true, name: true, unit: true },
     });
 
-    const productMap = new Map(products.map((p) => [p.id, p]));
+    const productMap = new Map(products.map((p: any) => [p.id, p]));
 
-    const orderItems = items.map((item) => {
+    const orderItems = items.map((item: any) => {
       const product = productMap.get(item.productId);
       return {
         orderId,

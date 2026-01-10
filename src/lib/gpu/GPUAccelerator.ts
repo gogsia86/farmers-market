@@ -100,7 +100,7 @@ export class GPUAccelerator {
 
     try {
       const results = await Promise.all(
-        data.map((item) => Promise.resolve(processor(item))),
+        data.map((item: any) => Promise.resolve(processor(item))),
       );
       const executionTime = performance.now() - startTime;
 

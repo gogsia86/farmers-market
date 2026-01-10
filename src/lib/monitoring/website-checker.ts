@@ -548,7 +548,7 @@ export class DivineWebsiteChecker {
       // Get Web Vitals (approximations)
       const webVitals = await page.evaluate(() => {
         const paint = performance.getEntriesByType("paint");
-        const firstPaint = paint.find((p) => p.name === "first-paint");
+        const firstPaint = paint.find((p: any) => p.name === "first-paint");
 
         return {
           firstPaint: firstPaint ? firstPaint.startTime : undefined,
@@ -675,12 +675,12 @@ export class DivineWebsiteChecker {
         const types: string[] = [];
         const errors: string[] = [];
 
-        scripts.forEach((script) => {
+        scripts.forEach((script: any) => {
           try {
             const data = JSON.parse(script.textContent || "");
             if (data["@type"]) types.push(data["@type"]);
             if (Array.isArray(data)) {
-              data.forEach((item) => {
+              data.forEach((item: any) => {
                 if (item["@type"]) types.push(item["@type"]);
               });
             }
@@ -701,7 +701,7 @@ export class DivineWebsiteChecker {
         const h1Elements = Array.from(document.querySelectorAll("h1"));
         const structure: string[] = [];
 
-        ["h1", "h2", "h3", "h4", "h5", "h6"].forEach((tag) => {
+        ["h1", "h2", "h3", "h4", "h5", "h6"].forEach((tag: any) => {
           const count = document.querySelectorAll(tag).length;
           if (count > 0) structure.push(`${tag}: ${count}`);
         });
@@ -830,7 +830,7 @@ export class DivineWebsiteChecker {
         // For now, we just validate that styles are accessible
 
         return {
-          violations: violations.map((v) => ({
+          violations: violations.map((v: any) => ({
             id: v.id,
             impact: v.impact,
             description: v.description,
@@ -890,7 +890,7 @@ export class DivineWebsiteChecker {
           oversized: [] as any[],
         };
 
-        images.forEach((img) => {
+        images.forEach((img: any) => {
           // Check alt text
           if (!img.alt || img.alt.trim() === "") {
             data.missingAlt++;
@@ -959,15 +959,15 @@ export class DivineWebsiteChecker {
     try {
       const links = await page.evaluate(() => {
         const anchors = Array.from(document.querySelectorAll("a[href]"));
-        return anchors.map((a) => ({
+        return anchors.map((a: any) => ({
           url: a.getAttribute("href") || "",
           text: a.textContent?.trim() || "",
           isExternal: a.getAttribute("href")?.startsWith("http") || false,
         }));
       });
 
-      const internal = links.filter((l) => !l.isExternal).length;
-      const external = links.filter((l) => l.isExternal).length;
+      const internal = links.filter((l: any) => !l.isExternal).length;
+      const external = links.filter((l: any) => l.isExternal).length;
 
       // In a real implementation, we would check each link
       // For now, we'll just return the counts
@@ -1077,7 +1077,7 @@ export class DivineWebsiteChecker {
           "harvest",
           "planting",
         ];
-        const seasonalContent = seasonalTerms.some((term) =>
+        const seasonalContent = seasonalTerms.some((term: any) =>
           text.includes(term),
         );
 
@@ -1087,7 +1087,7 @@ export class DivineWebsiteChecker {
         );
         let farmDataValidation = false;
 
-        scripts.forEach((script) => {
+        scripts.forEach((script: any) => {
           try {
             const data = JSON.parse(script.textContent || "");
             if (
@@ -1114,7 +1114,7 @@ export class DivineWebsiteChecker {
           "sustainable",
           "regenerative",
         ];
-        const biodynamicIndicators = biodynamicTerms.some((term) =>
+        const biodynamicIndicators = biodynamicTerms.some((term: any) =>
           text.includes(term),
         );
 
@@ -1256,9 +1256,9 @@ export class DivineWebsiteChecker {
     pages: PageCheckResult[],
   ): WebsiteHealthReport["summary"] {
     const totalPages = pages.length;
-    const passed = pages.filter((p) => p.status === "PASS").length;
-    const failed = pages.filter((p) => p.status === "FAIL").length;
-    const warnings = pages.filter((p) => p.status === "WARN").length;
+    const passed = pages.filter((p: any) => p.status === "PASS").length;
+    const failed = pages.filter((p: any) => p.status === "FAIL").length;
+    const warnings = pages.filter((p: any) => p.status === "WARN").length;
 
     const avgPerformance =
       pages.reduce(
@@ -1267,11 +1267,11 @@ export class DivineWebsiteChecker {
       ) / totalPages;
 
     const avgAccessibility =
-      pages.reduce((sum, p) => sum + p.checks.accessibility.score, 0) /
+      pages.reduce((sum: any, p: any) => sum + p.checks.accessibility.score, 0) /
       totalPages;
 
     const criticalIssues: string[] = [];
-    pages.forEach((page) => {
+    pages.forEach((page: any) => {
       if (page.errors.length > 0) {
         criticalIssues.push(`${page.url}: ${page.errors.join(", ")}`);
       }
@@ -1296,8 +1296,8 @@ export class DivineWebsiteChecker {
     apiEndpoints: ApiHealthResult[],
     database: DatabaseHealthResult,
   ): "HEALTHY" | "DEGRADED" | "CRITICAL" {
-    const criticalPages = pages.filter((p) => p.status === "FAIL").length;
-    const criticalApis = apiEndpoints.filter((a) => a.status === "FAIL").length;
+    const criticalPages = pages.filter((p: any) => p.status === "FAIL").length;
+    const criticalApis = apiEndpoints.filter((a: any) => a.status === "FAIL").length;
     const databaseFailed = database.status === "FAIL";
 
     if (
@@ -1357,7 +1357,7 @@ export class DivineWebsiteChecker {
 
     if (report.summary.criticalIssues.length > 0) {
       logger.info("⚠️  CRITICAL ISSUES:");
-      report.summary.criticalIssues.forEach((issue) => {
+      report.summary.criticalIssues.forEach((issue: any) => {
         logger.info(`   - ${issue}`);
       });
       logger.info("");

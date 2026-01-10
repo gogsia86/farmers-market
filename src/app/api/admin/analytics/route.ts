@@ -4,6 +4,8 @@
  */
 
 import { auth } from "@/lib/auth";
+
+import type { Product, Order } from "@prisma/client";
 import { database } from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -356,7 +358,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           pending: pendingFarms,
           newFarms: newFarmsCount,
           farmGrowth: parseFloat(farmGrowth.toFixed(2)),
-          topFarms: topFarms.map((farm) => ({
+          topFarms: topFarms.map((farm: any) => ({
             id: farm.id,
             name: farm.name,
             productCount: farm._count.products,
@@ -372,7 +374,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           total: totalOrders,
           recent: recentOrders,
           byStatus: statusDistribution,
-          recentOrders: recentOrdersDetails.map((order) => ({
+          recentOrders: recentOrdersDetails.map((order: any) => ({
             id: order.id,
             orderNumber: order.orderNumber,
             status: order.status,
@@ -391,7 +393,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             ? parseFloat(averageRating._avg.rating.toFixed(2))
             : 0,
         },
-        recentActivity: recentActivity.map((action) => ({
+        recentActivity: recentActivity.map((action: any) => ({
           id: action.id,
           actionType: action.type,
           targetType: action.targetType,

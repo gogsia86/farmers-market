@@ -147,8 +147,8 @@ function CheckoutSuccessContent() {
   // RENDER SUCCESS
   // ==========================================================================
 
-  const totalAmount = orders.reduce((sum, order) => sum + order.total, 0);
-  const totalItems = orders.reduce((sum, order) => sum + order.itemCount, 0);
+  const totalAmount = orders.reduce((sum: any, order: any) => sum + order.total, 0);
+  const totalItems = orders.reduce((sum: any, order: any) => sum + order.itemCount, 0);
 
   return (
     <div className="bg-gray-50 min-h-screen py-8">
@@ -189,7 +189,7 @@ function CheckoutSuccessContent() {
               </h2>
 
               <div className="space-y-4">
-                {orders.map((order) => (
+                {orders.map((order: any) => (
                   <div
                     key={order.id}
                     className="rounded-lg border border-gray-200 bg-gray-50 p-4"

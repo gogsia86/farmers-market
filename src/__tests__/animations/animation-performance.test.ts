@@ -39,7 +39,7 @@ describe("Animation Performance System", () => {
         lastFrameTime = currentTime;
       }
 
-      const averageFrameTime = frameTimes.reduce((a, b) => a + b, 0) / frameTimes.length;
+      const averageFrameTime = frameTimes.reduce((a: any, b: any) => a + b, 0) / frameTimes.length;
       const fps = 1000 / averageFrameTime;
 
       expect(fps).toBeGreaterThanOrEqual(55); // Allow 5fps tolerance
@@ -66,7 +66,7 @@ describe("Animation Performance System", () => {
         frameTimes.push(endTime - startTime);
       }
 
-      const averageFrameTime = frameTimes.reduce((a, b) => a + b, 0) / frameTimes.length;
+      const averageFrameTime = frameTimes.reduce((a: any, b: any) => a + b, 0) / frameTimes.length;
       const fps = 1000 / averageFrameTime;
 
       expect(fps).toBeGreaterThanOrEqual(30); // Should maintain at least 30fps with 10 animations
@@ -82,7 +82,7 @@ describe("Animation Performance System", () => {
         frameTimes.push(targetFrameTime + jank);
       }
 
-      const frameDrops = frameTimes.filter((time) => time > targetFrameTime * 1.5).length;
+      const frameDrops = frameTimes.filter((time: any) => time > targetFrameTime * 1.5).length;
       const dropPercentage = (frameDrops / frameTimes.length) * 100;
 
       expect(dropPercentage).toBeLessThan(10); // Less than 10% frame drops
@@ -107,7 +107,7 @@ describe("Animation Performance System", () => {
       }
 
       // Cleanup all animations
-      animations.forEach((anim) => anim.cleanup());
+      animations.forEach((anim: any) => anim.cleanup());
       animations.length = 0;
 
       const finalMemory = (performance as any).memory?.usedJSHeapSize || 0;
@@ -162,7 +162,7 @@ describe("Animation Performance System", () => {
       expect(listeners.size).toBeGreaterThan(0);
 
       // Cleanup all
-      cleanups.forEach((cleanup) => cleanup());
+      cleanups.forEach((cleanup: any) => cleanup());
 
       expect(timers.size).toBe(0);
       expect(listeners.size).toBe(0);
@@ -183,17 +183,17 @@ describe("Animation Performance System", () => {
 
       const usedProperties = new Set<string>();
 
-      Object.values(animationConfig).forEach((state) => {
-        Object.keys(state).forEach((prop) => usedProperties.add(prop));
+      Object.values(animationConfig).forEach((state: any) => {
+        Object.keys(state).forEach((prop: any) => usedProperties.add(prop));
       });
 
       // Should use GPU properties
-      gpuProperties.forEach((prop) => {
+      gpuProperties.forEach((prop: any) => {
         expect(usedProperties.has(prop)).toBe(true);
       });
 
       // Should NOT use CPU properties
-      cpuProperties.forEach((prop) => {
+      cpuProperties.forEach((prop: any) => {
         expect(usedProperties.has(prop)).toBe(false);
       });
     });
@@ -214,7 +214,7 @@ describe("Animation Performance System", () => {
       // Animation should not use these properties
       const safeAnimationProps = ["transform", "opacity", "filter"];
 
-      safeAnimationProps.forEach((prop) => {
+      safeAnimationProps.forEach((prop: any) => {
         expect(layoutTriggeringProps.includes(prop)).toBe(false);
       });
     });
@@ -292,10 +292,10 @@ describe("Animation Performance System", () => {
           : 0,
       }));
 
-      const activeThreads = threads.filter((t) => t.animations > 0);
+      const activeThreads = threads.filter((t: any) => t.animations > 0);
       expect(activeThreads.length).toBe(threadCount);
 
-      const totalProcessed = threads.reduce((sum, t) => sum + t.animations, 0);
+      const totalProcessed = threads.reduce((sum: any, t: any) => sum + t.animations, 0);
       expect(totalProcessed).toBe(totalAnimations);
     });
   });
@@ -317,12 +317,12 @@ describe("Animation Performance System", () => {
       // In production, unused imports should be tree-shaken
       const bundleIncludes = (name: string) => usedImports.includes(name);
 
-      usedImports.forEach((imp) => {
+      usedImports.forEach((imp: any) => {
         expect(bundleIncludes(imp)).toBe(true);
       });
 
       // Verify unused are NOT in the test (simulating tree-shaking)
-      unusedImports.forEach((imp) => {
+      unusedImports.forEach((imp: any) => {
         expect(bundleIncludes(imp)).toBe(false);
       });
     });
@@ -340,8 +340,8 @@ describe("Animation Performance System", () => {
 
       // Other seasons should not be loaded initially
       seasons
-        .filter((s) => s !== currentSeason)
-        .forEach((season) => {
+        .filter((s: any) => s !== currentSeason)
+        .forEach((season: any) => {
           expect(loadedSeasons.has(season)).toBe(false);
         });
     });
@@ -428,7 +428,7 @@ describe("Animation Performance System", () => {
       const presets = ["minimal", "standard", "enhanced", "divine"] as const;
       const switchTimes: number[] = [];
 
-      presets.forEach((preset) => {
+      presets.forEach((preset: any) => {
         const startTime = performance.now();
 
         // Simulate preset switch
@@ -444,7 +444,7 @@ describe("Animation Performance System", () => {
         switchTimes.push(endTime - startTime);
       });
 
-      const averageSwitchTime = switchTimes.reduce((a, b) => a + b, 0) / switchTimes.length;
+      const averageSwitchTime = switchTimes.reduce((a: any, b: any) => a + b, 0) / switchTimes.length;
 
       expect(averageSwitchTime).toBeLessThan(1); // Should be nearly instant
     });
@@ -535,7 +535,7 @@ describe("Animation Performance System", () => {
         eventTimes.push(endTime - startTime);
       }
 
-      const averageEventTime = eventTimes.reduce((a, b) => a + b, 0) / eventTimes.length;
+      const averageEventTime = eventTimes.reduce((a: any, b: any) => a + b, 0) / eventTimes.length;
       const targetTime = 1000 / 60; // 16.67ms per frame
 
       expect(averageEventTime).toBeLessThan(targetTime);

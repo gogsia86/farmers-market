@@ -122,9 +122,9 @@ export default async function ProductsManagementPage({
   );
 
   // Calculate summary stats
-  const activeProducts = products.filter((p) => p.status === "ACTIVE").length;
-  const outOfStock = products.filter((p) => p.status === "OUT_OF_STOCK").length;
-  const totalInventoryValue = products.reduce((sum, p) => {
+  const activeProducts = products.filter((p: any) => p.status === "ACTIVE").length;
+  const outOfStock = products.filter((p: any) => p.status === "OUT_OF_STOCK").length;
+  const totalInventoryValue = products.reduce((sum: any, p: any) => {
     const qty = p.quantityAvailable ? Number(p.quantityAvailable) : 0;
     const price = Number(p.price);
     return sum + qty * price;
@@ -246,7 +246,7 @@ export default async function ProductsManagementPage({
       {/* Products Grid */}
       {products.length > 0 && (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map((product) => {
+          {products.map((product: any) => {
             const quantity = product.quantityAvailable
               ? Number(product.quantityAvailable)
               : 0;

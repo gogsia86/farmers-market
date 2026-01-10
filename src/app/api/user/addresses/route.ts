@@ -61,10 +61,10 @@ export async function GET(request: NextRequest) {
     });
 
     // Find default address
-    const defaultAddress = addresses.find((addr) => addr.isDefault);
-    const homeAddresses = addresses.filter((addr) => addr.type === "HOME");
-    const workAddresses = addresses.filter((addr) => addr.type === "WORK");
-    const otherAddresses = addresses.filter((addr) => addr.type === "OTHER");
+    const defaultAddress = addresses.find((addr: any) => addr.isDefault);
+    const homeAddresses = addresses.filter((addr: any) => addr.type === "HOME");
+    const workAddresses = addresses.filter((addr: any) => addr.type === "WORK");
+    const otherAddresses = addresses.filter((addr: any) => addr.type === "OTHER");
 
     return NextResponse.json({
       success: true,

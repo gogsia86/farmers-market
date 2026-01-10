@@ -256,7 +256,7 @@ export async function POST(request: NextRequest) {
           data: {
             orderId: orders[0]?.id,
             orderNumber: orders[0]?.orderNumber,
-            orders: orders.map((o) => ({
+            orders: orders.map((o: any) => ({
               id: o.id,
               orderNumber: o.orderNumber,
               farmId: o.farmId,

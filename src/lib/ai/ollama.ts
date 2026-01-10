@@ -552,7 +552,7 @@ Provide:
     const lines = text.split("\n");
     for (const line of lines) {
       const lower = line.toLowerCase();
-      if (seasonKeywords.some((keyword) => lower.includes(keyword))) {
+      if (seasonKeywords.some((keyword: any) => lower.includes(keyword))) {
         seasonal.push(line.trim());
       }
     }
@@ -580,10 +580,10 @@ Provide:
     ];
 
     const lower = text.toLowerCase();
-    const uncertainCount = uncertainWords.filter((word) =>
+    const uncertainCount = uncertainWords.filter((word: any) =>
       lower.includes(word),
     ).length;
-    const confidentCount = confidentWords.filter((word) =>
+    const confidentCount = confidentWords.filter((word: any) =>
       lower.includes(word),
     ).length;
 
@@ -614,7 +614,7 @@ Provide:
     ];
 
     const lower = text.toLowerCase();
-    const matchCount = agriculturalKeywords.filter((keyword) =>
+    const matchCount = agriculturalKeywords.filter((keyword: any) =>
       lower.includes(keyword),
     ).length;
 
@@ -640,10 +640,10 @@ Provide:
       "risk",
     ];
 
-    if (highRiskWords.some((word) => lower.includes(word))) {
+    if (highRiskWords.some((word: any) => lower.includes(word))) {
       return "HIGH";
     }
-    if (mediumRiskWords.some((word) => lower.includes(word))) {
+    if (mediumRiskWords.some((word: any) => lower.includes(word))) {
       return "MEDIUM";
     }
     return "LOW";
@@ -664,7 +664,7 @@ Provide:
     ];
 
     const lower = text.toLowerCase();
-    const matchCount = biodynamicKeywords.filter((keyword) =>
+    const matchCount = biodynamicKeywords.filter((keyword: any) =>
       lower.includes(keyword),
     ).length;
 
@@ -688,7 +688,7 @@ Provide:
     ];
 
     const lower = text.toLowerCase();
-    const matchCount = coherenceKeywords.filter((keyword) =>
+    const matchCount = coherenceKeywords.filter((keyword: any) =>
       lower.includes(keyword),
     ).length;
 

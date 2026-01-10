@@ -146,7 +146,7 @@ export async function generateResponsiveImages(
   const { sizes, format = "webp", quality = 80 } = options;
 
   const results = await Promise.all(
-    sizes.map((width) =>
+    sizes.map((width: any) =>
       processImage(input, {
         width,
         format,
@@ -329,7 +329,7 @@ export async function batchProcessImages(
   images: (Buffer | string)[],
   options: ImageProcessingOptions = {},
 ): Promise<ImageOptimizationResult[]> {
-  return await Promise.all(images.map((img) => processImage(img, options)));
+  return await Promise.all(images.map((img: any) => processImage(img, options)));
 }
 
 // ============================================================================

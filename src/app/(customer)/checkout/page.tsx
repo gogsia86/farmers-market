@@ -26,7 +26,7 @@ function serializeDecimal(value: Prisma.Decimal | number | null | undefined): nu
  * Recursively serializes cart items with Decimal fields
  */
 function serializeCart(cart: any[]): any[] {
-  return cart.map((item) => ({
+  return cart.map((item: any) => ({
     ...item,
     quantity: serializeDecimal(item.quantity),
     priceAtAdd: serializeDecimal(item.priceAtAdd),

@@ -88,7 +88,7 @@ class MultiLayerCache implements IMultiLayerCache {
     const memoryKeys = Array.from(this.memoryCache.keys());
     const regex = new RegExp(pattern.replace(/\*/g, ".*"));
 
-    memoryKeys.forEach((key) => {
+    memoryKeys.forEach((key: any) => {
       if (regex.test(key)) {
         this.memoryCache.delete(key);
       }

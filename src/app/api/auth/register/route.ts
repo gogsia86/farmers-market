@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
           error: {
             code: "VALIDATION_ERROR",
             message: "Invalid registration data",
-            details: validation.error.errors.map((err) => ({
+            details: validation.error.errors.map((err: any) => ({
               field: err.path.join("."),
               message: err.message,
             })),

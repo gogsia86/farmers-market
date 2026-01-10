@@ -207,7 +207,7 @@ async function handlePaymentIntentSucceeded(
       ordersCreated: true,
       orderCount: result.orderCount,
       totalAmount: result.totalAmount,
-      orderNumbers: result.orders.map((o) => o.orderNumber),
+      orderNumbers: result.orders.map((o: any) => o.orderNumber),
     };
   } catch (error) {
     logger.error("Error processing payment success", {

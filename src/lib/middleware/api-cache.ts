@@ -187,7 +187,7 @@ function generateCacheKey(request: NextRequest, config: CacheConfig): string {
   // Vary by specific headers
   if (config.varyBy) {
     const varyValues = config.varyBy
-      .map((header) => {
+      .map((header: any) => {
         const value = request.headers.get(header);
         return value ? `${header}:${value}` : null;
       })

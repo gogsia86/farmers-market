@@ -40,13 +40,13 @@ export const mockFarmRepository = {
 // ============================================================================
 
 export function resetAllRepositoryMocks() {
-  Object.values(mockProductRepository).forEach((mock) => {
+  Object.values(mockProductRepository).forEach((mock: any) => {
     if (typeof mock === "function" && "mockReset" in mock) {
       (mock as jest.Mock).mockReset();
     }
   });
 
-  Object.values(mockFarmRepository).forEach((mock) => {
+  Object.values(mockFarmRepository).forEach((mock: any) => {
     if (typeof mock === "function" && "mockReset" in mock) {
       (mock as jest.Mock).mockReset();
     }

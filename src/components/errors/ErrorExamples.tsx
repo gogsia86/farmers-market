@@ -564,7 +564,7 @@ export function FallbackExample() {
         <div className="p-4 bg-gray-50 rounded">
           <p className="font-medium mb-2">Data:</p>
           <ul className="list-disc list-inside text-sm">
-            {fallback.data.map((item, i) => (
+            {fallback.data.map((item: any, i: any) => (
               <li key={i}>{item}</li>
             ))}
           </ul>

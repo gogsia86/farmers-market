@@ -172,7 +172,7 @@ export class RateLimiter {
     const timestamps = this.memoryStore.get(key) || [];
 
     // Remove timestamps outside the time window
-    const validTimestamps = timestamps.filter((ts) => ts > windowStart);
+    const validTimestamps = timestamps.filter((ts: any) => ts > windowStart);
 
     // Check if limit exceeded
     if (validTimestamps.length >= this.config.maxRequests) {
@@ -236,7 +236,7 @@ export class RateLimiter {
   private cleanupMemoryStore(windowStart: number): void {
     const entries = Array.from(this.memoryStore.entries());
     for (const [key, timestamps] of entries) {
-      const validTimestamps = timestamps.filter((ts) => ts > windowStart);
+      const validTimestamps = timestamps.filter((ts: any) => ts > windowStart);
       if (validTimestamps.length === 0) {
         this.memoryStore.delete(key);
       } else {

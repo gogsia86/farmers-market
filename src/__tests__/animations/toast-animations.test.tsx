@@ -344,7 +344,7 @@ describe("Toast Animation System", () => {
       const { container } = render(
         <AnimationProvider>
           <>
-            {toasts.map((toast) => (
+            {toasts.map((toast: any) => (
               <Toast key={toast.id} toast={toast} onDismiss={jest.fn()} />
             ))}
           </>
@@ -362,7 +362,7 @@ describe("Toast Animation System", () => {
   describe("Seasonal Variants", () => {
     const seasons = ["spring", "summer", "fall", "winter"] as const;
 
-    seasons.forEach((season) => {
+    seasons.forEach((season: any) => {
       it(`should render ${season} seasonal variant`, () => {
         const toast = createMockToast({
           metadata: {
@@ -385,7 +385,7 @@ describe("Toast Animation System", () => {
   describe("Severity Types", () => {
     const types = ["success", "error", "warning", "info"] as const;
 
-    types.forEach((type) => {
+    types.forEach((type: any) => {
       it(`should render ${type} toast with correct styling`, () => {
         const toast = createMockToast({ type });
 

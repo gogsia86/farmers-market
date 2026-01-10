@@ -135,7 +135,7 @@ const inMemoryStore: InMemoryStore = {};
 if (process.env.NODE_ENV !== 'test') {
   setInterval(() => {
     const now = Date.now();
-    Object.keys(inMemoryStore).forEach((key) => {
+    Object.keys(inMemoryStore).forEach((key: any) => {
       const entry = inMemoryStore[key];
       if (entry && entry.resetTime < now) {
         delete inMemoryStore[key];
@@ -528,7 +528,7 @@ export async function reinitializeRedisRateLimit(): Promise<boolean> {
  * Useful for testing
  */
 export function clearAllRateLimits(): void {
-  Object.keys(inMemoryStore).forEach((key) => {
+  Object.keys(inMemoryStore).forEach((key: any) => {
     delete inMemoryStore[key];
   });
 }
@@ -539,7 +539,7 @@ export function clearAllRateLimits(): void {
  */
 export function resetRateLimit(identifier: string, config: RateLimitConfig): void {
   // Try all possible window sizes since we might not know the exact one
-  Object.keys(inMemoryStore).forEach((key) => {
+  Object.keys(inMemoryStore).forEach((key: any) => {
     if (key.startsWith(`${identifier}:`)) {
       delete inMemoryStore[key];
     }

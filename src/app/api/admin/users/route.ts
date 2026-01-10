@@ -493,7 +493,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Log admin actions for each user
     await Promise.all(
-      userIds.map((userId) =>
+      userIds.map((userId: any) =>
         logAdminAction(session.user.id, actionType, userId, {
           operation,
           reason,

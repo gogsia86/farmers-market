@@ -481,13 +481,13 @@ export class SecurityAuditSystem {
   private generateSummary() {
     const summary = {
       total: this.vulnerabilities.length,
-      critical: this.vulnerabilities.filter((v) => v.severity === "CRITICAL")
+      critical: this.vulnerabilities.filter((v: any) => v.severity === "CRITICAL")
         .length,
-      high: this.vulnerabilities.filter((v) => v.severity === "HIGH").length,
-      medium: this.vulnerabilities.filter((v) => v.severity === "MEDIUM")
+      high: this.vulnerabilities.filter((v: any) => v.severity === "HIGH").length,
+      medium: this.vulnerabilities.filter((v: any) => v.severity === "MEDIUM")
         .length,
-      low: this.vulnerabilities.filter((v) => v.severity === "LOW").length,
-      info: this.vulnerabilities.filter((v) => v.severity === "INFO").length,
+      low: this.vulnerabilities.filter((v: any) => v.severity === "LOW").length,
+      info: this.vulnerabilities.filter((v: any) => v.severity === "INFO").length,
     };
 
     return summary;
@@ -510,7 +510,7 @@ export class SecurityAuditSystem {
     }
 
     // High severity
-    const high = this.vulnerabilities.filter((v) => v.severity === "HIGH");
+    const high = this.vulnerabilities.filter((v: any) => v.severity === "HIGH");
     if (high.length > 0) {
       recommendations.push(
         `Resolve ${high.length} HIGH severity issues within 7 days`,

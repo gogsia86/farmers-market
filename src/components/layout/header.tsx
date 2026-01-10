@@ -88,7 +88,7 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex md:items-center md:space-x-6">
-            {baseNavigation.map((item) => (
+            {baseNavigation.map((item: any) => (
               <Link
                 key={item.name}
                 href={item.href}
@@ -251,7 +251,7 @@ export function Header() {
         {mounted && mobileMenuOpen && (
           <div className="border-t py-4 md:hidden">
             <div className="space-y-2">
-              {baseNavigation.map((item) => (
+              {baseNavigation.map((item: any) => (
                 <Link
                   key={item.name}
                   href={item.href}

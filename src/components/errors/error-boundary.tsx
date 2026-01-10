@@ -232,7 +232,7 @@ function DefaultErrorFallback({ error, onReset }: DefaultErrorFallbackProps) {
               Suggestions:
             </p>
             <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
-              {error.userDetails.suggestions.map((suggestion, index) => (
+              {error.userDetails.suggestions.map((suggestion: any, index: any) => (
                 <li key={index}>{suggestion}</li>
               ))}
             </ul>
@@ -394,7 +394,7 @@ function AgriculturalErrorFallback({
               🌱 Suggested Actions:
             </p>
             <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
-              {error.userDetails.suggestions.map((suggestion, index) => (
+              {error.userDetails.suggestions.map((suggestion: any, index: any) => (
                 <li key={index}>{suggestion}</li>
               ))}
             </ul>
@@ -449,7 +449,7 @@ export function RouteErrorBoundary({
             {showBreadcrumb && route && (
               <div className="mb-4 text-sm text-gray-500">
                 <span>Home</span>
-                {route.split("/").filter(Boolean).map((segment, index) => (
+                {route.split("/").filter(Boolean).map((segment: any, index: any) => (
                   <span key={index}>
                     {" / "}
                     <span className="capitalize">{segment}</span>

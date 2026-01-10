@@ -302,13 +302,13 @@ describe("PaymentAnalyticsService", () => {
 
       expect(result).toHaveLength(3);
 
-      const cardMethod = result.find((r) => r.method === "CARD");
+      const cardMethod = result.find((r: any) => r.method === "CARD");
       expect(cardMethod?.count).toBe(2);
       expect(cardMethod?.totalAmount).toBe(300);
       expect(cardMethod?.averageAmount).toBe(150);
       expect(cardMethod?.percentage).toBeCloseTo(60, 1);
 
-      const bankMethod = result.find((r) => r.method === "BANK_TRANSFER");
+      const bankMethod = result.find((r: any) => r.method === "BANK_TRANSFER");
       expect(bankMethod?.count).toBe(1);
       expect(bankMethod?.totalAmount).toBe(150);
       expect(bankMethod?.percentage).toBeCloseTo(30, 1);
@@ -365,7 +365,7 @@ describe("PaymentAnalyticsService", () => {
       ];
 
       (database.payment.findMany as jest.Mock).mockResolvedValue(
-        mockPayments.filter((p) => p.status === "PAID"),
+        mockPayments.filter((p: any) => p.status === "PAID"),
       );
 
       const result = await service.getRevenueByPaymentMethod({
@@ -410,8 +410,8 @@ describe("PaymentAnalyticsService", () => {
         endDate,
       });
 
-      const cardMethod = result.find((r) => r.method === "CARD");
-      const cashMethod = result.find((r) => r.method === "CASH");
+      const cardMethod = result.find((r: any) => r.method === "CARD");
+      const cashMethod = result.find((r: any) => r.method === "CASH");
 
       expect(cardMethod?.percentage).toBeCloseTo(80, 1);
       expect(cashMethod?.percentage).toBeCloseTo(20, 1);
@@ -480,7 +480,7 @@ describe("PaymentAnalyticsService", () => {
         "day",
       );
 
-      const day1 = result.find((d) => d.timestamp.getDate() === 1);
+      const day1 = result.find((d: any) => d.timestamp.getDate() === 1);
 
       expect(day1?.transactionCount).toBe(2);
       expect(day1?.revenue).toBe(100); // Only successful

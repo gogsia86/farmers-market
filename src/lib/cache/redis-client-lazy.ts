@@ -251,7 +251,7 @@ export async function batchRedisOperations<T>(
   operations: Array<(client: IRedisClient) => Promise<T>>,
 ): Promise<T[]> {
   const client = await getRedisClient();
-  return Promise.all(operations.map((op) => op(client)));
+  return Promise.all(operations.map((op: any) => op(client)));
 }
 
 /**

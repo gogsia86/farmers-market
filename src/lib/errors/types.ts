@@ -646,7 +646,7 @@ export class QuantumCoherenceError extends AppError {
 ║ 🎯 EXPECTED REALITY: ${JSON.stringify(config.expectedState, null, 2)}
 ║
 ║ 🛠️  PATH TO ENLIGHTENMENT:
-║    ${config.resolutionPath.map((step, i) => `${i + 1}. ${step}`).join('\n║    ')}
+║    ${config.resolutionPath.map((step: any, i: any) => `${i + 1}. ${step}`).join('\n║    ')}
 ╚════════════════════════════════════════════════════════════╝
     `.trim();
 

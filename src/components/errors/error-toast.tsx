@@ -155,7 +155,7 @@ export function ToastProvider({
   );
 
   const removeToast = useCallback((id: string) => {
-    setToasts((prev) => prev.filter((toast) => toast.id !== id));
+    setToasts((prev) => prev.filter((toast: any) => toast.id !== id));
   }, []);
 
   const success = useCallback(
@@ -285,7 +285,7 @@ function ToastContainer({ toasts, position, onRemove }: ToastContainerProps) {
       aria-live="polite"
       aria-atomic="true"
     >
-      {toasts.map((toast) => (
+      {toasts.map((toast: any) => (
         <ToastItem key={toast.id} toast={toast} onRemove={onRemove} />
       ))}
     </div>

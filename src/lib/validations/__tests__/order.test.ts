@@ -30,7 +30,7 @@ describe("⚡ Order Validation Schemas - Divine Test Suite", () => {
         "REFUNDED",
       ];
 
-      validStatuses.forEach((status) => {
+      validStatuses.forEach((status: any) => {
         const result = orderStatusSchema.safeParse(status);
         expect(result.success).toBe(true);
         if (result.success) {
@@ -50,7 +50,7 @@ describe("⚡ Order Validation Schemas - Divine Test Suite", () => {
         123,
       ];
 
-      invalidStatuses.forEach((status) => {
+      invalidStatuses.forEach((status: any) => {
         const result = orderStatusSchema.safeParse(status);
         expect(result.success).toBe(false);
       });
@@ -67,7 +67,7 @@ describe("⚡ Order Validation Schemas - Divine Test Suite", () => {
         "PARTIALLY_REFUNDED",
       ];
 
-      validStatuses.forEach((status) => {
+      validStatuses.forEach((status: any) => {
         const result = paymentStatusSchema.safeParse(status);
         expect(result.success).toBe(true);
         if (result.success) {
@@ -87,7 +87,7 @@ describe("⚡ Order Validation Schemas - Divine Test Suite", () => {
         456,
       ];
 
-      invalidStatuses.forEach((status) => {
+      invalidStatuses.forEach((status: any) => {
         const result = paymentStatusSchema.safeParse(status);
         expect(result.success).toBe(false);
       });
@@ -148,7 +148,7 @@ describe("⚡ Order Validation Schemas - Divine Test Suite", () => {
         "+15035550123",
       ];
 
-      phoneFormats.forEach((phone) => {
+      phoneFormats.forEach((phone: any) => {
         const address = { ...validAddress, phone };
         const result = shippingAddressSchema.safeParse(address);
         expect(result.success).toBe(true);
@@ -667,7 +667,7 @@ describe("⚡ Order Validation Schemas - Divine Test Suite", () => {
         "REFUNDED",
       ];
 
-      statuses.forEach((status) => {
+      statuses.forEach((status: any) => {
         const result = orderQuerySchema.safeParse({ status });
         expect(result.success).toBe(true);
       });
@@ -682,7 +682,7 @@ describe("⚡ Order Validation Schemas - Divine Test Suite", () => {
         "PARTIALLY_REFUNDED",
       ];
 
-      paymentStatuses.forEach((paymentStatus) => {
+      paymentStatuses.forEach((paymentStatus: any) => {
         const result = orderQuerySchema.safeParse({ paymentStatus });
         expect(result.success).toBe(true);
       });

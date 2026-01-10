@@ -64,7 +64,7 @@ export class NotificationService {
     // Send to connected clients
     const userConnections = this.connections.get(userId);
     if (userConnections) {
-      userConnections.forEach((callback) => {
+      userConnections.forEach((callback: any) => {
         try {
           callback(fullNotification);
         } catch (error) {
@@ -86,7 +86,7 @@ export class NotificationService {
     notification: Omit<Notification, "id" | "userId" | "createdAt">,
   ) {
     return Promise.all(
-      userIds.map((userId) => this.notify(userId, notification)),
+      userIds.map((userId: any) => this.notify(userId, notification)),
     );
   }
 

@@ -229,7 +229,7 @@ export async function flushEvents(): Promise<void> {
 
   // Send all events
   await Promise.all(
-    events.map((event) => trackEvent(event.name, event.properties)),
+    events.map((event: any) => trackEvent(event.name, event.properties)),
   );
 }
 

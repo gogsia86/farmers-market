@@ -121,7 +121,7 @@ export async function uploadMultipleImages(
   folder: string = "farmers-market/products",
   options?: UploadOptions,
 ): Promise<string[]> {
-  const uploadPromises = files.map((file) =>
+  const uploadPromises = files.map((file: any) =>
     uploadImage(file, folder, options),
   );
   return Promise.all(uploadPromises);

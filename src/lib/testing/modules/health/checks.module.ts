@@ -408,7 +408,7 @@ export const HealthChecksModule: any = {
             }
 
             const avgResponseTime =
-              Object.values(measurements).reduce((a, b) => a + b, 0) /
+              Object.values(measurements).reduce((a: any, b: any) => a + b, 0) /
               Object.keys(measurements).length;
 
             const allFast = Object.values(measurements).every(t => t < 1000);

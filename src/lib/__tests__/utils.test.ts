@@ -492,7 +492,7 @@ describe("🔧 Utility Functions - Divine Helper System", () => {
     it("should generate IDs with consistent format", () => {
       const ids = Array.from({ length: 100 }, generateId);
 
-      ids.forEach((id) => {
+      ids.forEach((id: any) => {
         expect(id).toMatch(/^[a-z0-9]+$/);
         expect(id.length).toBeGreaterThan(8);
         expect(id.length).toBeLessThanOrEqual(13);
@@ -512,7 +512,7 @@ describe("🔧 Utility Functions - Divine Helper System", () => {
     it("should generate alphanumeric IDs only", () => {
       const ids = Array.from({ length: 50 }, generateId);
 
-      ids.forEach((id) => {
+      ids.forEach((id: any) => {
         expect(id).toMatch(/^[a-z0-9]+$/);
         expect(id).not.toContain(" ");
         expect(id).not.toContain("-");
@@ -532,12 +532,12 @@ describe("🔧 Utility Functions - Divine Helper System", () => {
 
     it("should work for react keys", () => {
       const items = ["Apple", "Banana", "Orange"];
-      const keysMap = items.map((item) => ({
+      const keysMap = items.map((item: any) => ({
         key: generateId(),
         value: item,
       }));
 
-      const keys = keysMap.map((item) => item.key);
+      const keys = keysMap.map((item: any) => item.key);
       const uniqueKeys = new Set(keys);
 
       expect(uniqueKeys.size).toBe(keys.length);
@@ -601,7 +601,7 @@ describe("🔧 Utility Functions - Divine Helper System", () => {
         { id: generateId(), product: "Carrots" },
       ];
 
-      const ids = cartItems.map((item) => item.id);
+      const ids = cartItems.map((item: any) => item.id);
       const uniqueIds = new Set(ids);
 
       expect(uniqueIds.size).toBe(3);

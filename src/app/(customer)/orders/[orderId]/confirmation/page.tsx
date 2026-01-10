@@ -149,7 +149,7 @@ export default async function OrderConfirmationPage({ params }: PageProps) {
               Order Items
             </h3>
             <div className="space-y-4">
-              {order.items.map((item) => (
+              {order.items.map((item: any) => (
                 <div
                   key={item.id}
                   className="flex items-center justify-between border-b border-gray-100 pb-4 last:border-0"

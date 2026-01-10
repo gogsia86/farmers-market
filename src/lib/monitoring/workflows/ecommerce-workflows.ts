@@ -1036,21 +1036,21 @@ export const ECOMMERCE_WORKFLOWS: WorkflowConfig[] = [
 export function getEcommerceWorkflowById(
   id: string,
 ): WorkflowConfig | undefined {
-  return ECOMMERCE_WORKFLOWS.find((w) => w.id === id);
+  return ECOMMERCE_WORKFLOWS.find((w: any) => w.id === id);
 }
 
 export function getEcommerceWorkflowsByType(type: string): WorkflowConfig[] {
-  return ECOMMERCE_WORKFLOWS.filter((w) => w.type === type);
+  return ECOMMERCE_WORKFLOWS.filter((w: any) => w.type === type);
 }
 
 export function getEcommerceWorkflowsByPriority(
   priority: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL",
 ): WorkflowConfig[] {
-  return ECOMMERCE_WORKFLOWS.filter((w) => w.priority === priority);
+  return ECOMMERCE_WORKFLOWS.filter((w: any) => w.priority === priority);
 }
 
 export function getEnabledEcommerceWorkflows(): WorkflowConfig[] {
-  return ECOMMERCE_WORKFLOWS.filter((w) => w.enabled);
+  return ECOMMERCE_WORKFLOWS.filter((w: any) => w.enabled);
 }
 
 export function getCriticalEcommerceWorkflows(): WorkflowConfig[] {
@@ -1074,15 +1074,15 @@ export function getAllEcommerceWorkflows(): WorkflowConfig[] {
  * Get e-commerce workflows by tag
  */
 export function getWorkflowsByTag(tag: string): WorkflowConfig[] {
-  return ECOMMERCE_WORKFLOWS.filter((w) => w.tags?.includes(tag));
+  return ECOMMERCE_WORKFLOWS.filter((w: any) => w.tags?.includes(tag));
 }
 
 /**
  * Get shopping-related workflows (cart + checkout)
  */
 export function getShoppingWorkflows(): WorkflowConfig[] {
-  return ECOMMERCE_WORKFLOWS.filter((w) =>
-    w.tags?.some((tag) => ["cart", "checkout", "payment"].includes(tag)),
+  return ECOMMERCE_WORKFLOWS.filter((w: any) =>
+    w.tags?.some((tag: any) => ["cart", "checkout", "payment"].includes(tag)),
   );
 }
 
@@ -1090,12 +1090,12 @@ export function getShoppingWorkflows(): WorkflowConfig[] {
  * Get admin-related workflows
  */
 export function getAdminWorkflows(): WorkflowConfig[] {
-  return ECOMMERCE_WORKFLOWS.filter((w) => w.tags?.includes("admin"));
+  return ECOMMERCE_WORKFLOWS.filter((w: any) => w.tags?.includes("admin"));
 }
 
 /**
  * Get farmer-related workflows
  */
 export function getFarmerWorkflows(): WorkflowConfig[] {
-  return ECOMMERCE_WORKFLOWS.filter((w) => w.tags?.includes("farmer"));
+  return ECOMMERCE_WORKFLOWS.filter((w: any) => w.tags?.includes("farmer"));
 }

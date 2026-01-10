@@ -129,7 +129,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           status: paymentIntent.status,
           checkoutSession: {
             id: session.id,
-            farmOrders: session.farmOrders.map((order) => ({
+            farmOrders: session.farmOrders.map((order: any) => ({
               farmId: order.farmId,
               farmName: order.farmName,
               subtotal: order.subtotal,

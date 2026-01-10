@@ -98,7 +98,7 @@ export function ErrorAlert({
 
           {error.userDetails.suggestions && error.userDetails.suggestions.length > 0 && (
             <ul className="mt-2 text-sm space-y-1 opacity-80">
-              {error.userDetails.suggestions.map((suggestion, index) => (
+              {error.userDetails.suggestions.map((suggestion: any, index: any) => (
                 <li key={index} className="flex items-start gap-2">
                   <span className="mt-0.5">•</span>
                   <span>{suggestion}</span>
@@ -192,7 +192,7 @@ export function ErrorCard({
                 What you can do:
               </p>
               <ul className="space-y-2">
-                {error.userDetails.suggestions.map((suggestion, index) => (
+                {error.userDetails.suggestions.map((suggestion: any, index: any) => (
                   <li key={index} className="flex items-start gap-2 text-sm text-gray-600">
                     <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
                     <span>{suggestion}</span>
@@ -204,7 +204,7 @@ export function ErrorCard({
 
           {allActions.length > 0 && (
             <div className="flex flex-wrap gap-3 mb-4">
-              {allActions.map((action, index) => (
+              {allActions.map((action: any, index: any) => (
                 <button
                   key={index}
                   onClick={action.action}
@@ -349,7 +349,7 @@ export function ErrorPage({
               <div className="w-full max-w-md mb-8 text-left">
                 <p className="font-medium text-gray-700 mb-3">What you can try:</p>
                 <ul className="space-y-3">
-                  {error.userDetails.suggestions.map((suggestion, index) => (
+                  {error.userDetails.suggestions.map((suggestion: any, index: any) => (
                     <li key={index} className="flex items-start gap-3">
                       <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm font-medium">
                         {index + 1}
@@ -470,7 +470,7 @@ export function AgriculturalErrorDisplay({
 
           {error.userDetails.suggestions && error.userDetails.suggestions.length > 0 && (
             <ul className="space-y-2 mb-4">
-              {error.userDetails.suggestions.map((suggestion, index) => (
+              {error.userDetails.suggestions.map((suggestion: any, index: any) => (
                 <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
                   <span className="text-green-600 mt-0.5">✓</span>
                   <span>{suggestion}</span>

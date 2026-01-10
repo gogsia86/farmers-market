@@ -367,7 +367,7 @@ function PlanCard({ plan, onEdit, onDelete, readOnly }: PlanCardProps) {
                   Weather Considerations
                 </div>
                 <div className="mt-1 flex flex-wrap gap-1">
-                  {plan.weatherConsiderations.map((consideration, i) => (
+                  {plan.weatherConsiderations.map((consideration: any, i: any) => (
                     <span
                       key={i}
                       className="rounded bg-blue-50 px-2 py-0.5 text-xs text-blue-700"
@@ -473,7 +473,7 @@ function SeasonalRecommendations({ season }: SeasonalRecommendationsProps) {
         <div>
           <h4 className="text-sm font-semibold">Recommended Crops</h4>
           <div className="mt-2 flex flex-wrap gap-2">
-            {recommendation.crops.map((crop) => (
+            {recommendation.crops.map((crop: any) => (
               <span
                 key={crop}
                 className="rounded-full bg-white px-3 py-1 text-xs font-medium shadow-sm"
@@ -488,7 +488,7 @@ function SeasonalRecommendations({ season }: SeasonalRecommendationsProps) {
         <div>
           <h4 className="text-sm font-semibold">Growing Tips</h4>
           <ul className="mt-2 space-y-1.5">
-            {recommendation.tips.map((tip, index) => (
+            {recommendation.tips.map((tip: any, index: any) => (
               <li key={index} className="flex gap-2 text-xs">
                 <span className="mt-1">•</span>
                 <span>{tip}</span>
@@ -535,7 +535,7 @@ export function HarvestPlanner({
   // ==========================================================================
 
   const filteredPlans = useMemo(() => {
-    return plans.filter((plan) => {
+    return plans.filter((plan: any) => {
       if (filterSeason !== "all" && plan.season !== filterSeason) return false;
       if (filterStage !== "all" && plan.stage !== filterStage) return false;
       return true;
@@ -550,18 +550,18 @@ export function HarvestPlanner({
     return {
       total: plans.length,
       bySeason: {
-        SPRING: plans.filter((p) => p.season === "SPRING").length,
-        SUMMER: plans.filter((p) => p.season === "SUMMER").length,
-        FALL: plans.filter((p) => p.season === "FALL").length,
-        WINTER: plans.filter((p) => p.season === "WINTER").length,
+        SPRING: plans.filter((p: any) => p.season === "SPRING").length,
+        SUMMER: plans.filter((p: any) => p.season === "SUMMER").length,
+        FALL: plans.filter((p: any) => p.season === "FALL").length,
+        WINTER: plans.filter((p: any) => p.season === "WINTER").length,
       },
       byStage: {
-        planning: plans.filter((p) => p.stage === "planning").length,
-        preparing: plans.filter((p) => p.stage === "preparing").length,
-        planting: plans.filter((p) => p.stage === "planting").length,
-        growing: plans.filter((p) => p.stage === "growing").length,
-        harvesting: plans.filter((p) => p.stage === "harvesting").length,
-        completed: plans.filter((p) => p.stage === "completed").length,
+        planning: plans.filter((p: any) => p.stage === "planning").length,
+        preparing: plans.filter((p: any) => p.stage === "preparing").length,
+        planting: plans.filter((p: any) => p.stage === "planting").length,
+        growing: plans.filter((p: any) => p.stage === "growing").length,
+        harvesting: plans.filter((p: any) => p.stage === "harvesting").length,
+        completed: plans.filter((p: any) => p.stage === "completed").length,
       },
     };
   }, [plans]);
@@ -570,7 +570,7 @@ export function HarvestPlanner({
   // CONVERT TO CALENDAR EVENTS
   // ==========================================================================
 
-  const calendarEvents: CalendarEvent[] = filteredPlans.map((plan) => ({
+  const calendarEvents: CalendarEvent[] = filteredPlans.map((plan: any) => ({
     id: plan.id,
     title: plan.cropName,
     description: `${plan.stage} - ${plan.cropType}`,
@@ -712,7 +712,7 @@ export function HarvestPlanner({
                   </p>
                 </div>
               ) : (
-                filteredPlans.map((plan) => (
+                filteredPlans.map((plan: any) => (
                   <PlanCard
                     key={plan.id}
                     plan={plan}

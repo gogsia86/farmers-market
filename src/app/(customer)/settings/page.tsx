@@ -128,7 +128,7 @@ export default async function SettingsPage() {
         contactMethod: "email",
         communicationFrequency: "normal",
       },
-    addresses: addresses.map((addr) => ({
+    addresses: addresses.map((addr: any) => ({
       id: addr.id,
       type: addr.type,
       label: addr.label || "",

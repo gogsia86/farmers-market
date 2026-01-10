@@ -42,7 +42,7 @@ export default function FarmerLoading() {
 
           {/* Stats Cards Skeleton */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            {[...Array(4)].map((_, i) => (
+            {[...Array(4)].map((_: any, i: any) => (
               <div
                 key={i}
                 className="bg-card border border-border rounded-lg p-6"
@@ -67,7 +67,7 @@ export default function FarmerLoading() {
               <div className="bg-card border border-border rounded-lg p-6">
                 <div className="h-6 w-48 bg-muted animate-pulse rounded mb-4" />
                 <div className="space-y-4">
-                  {[...Array(5)].map((_, i) => (
+                  {[...Array(5)].map((_: any, i: any) => (
                     <div key={i} className="flex items-center gap-4">
                       <div className="h-16 w-16 bg-muted animate-pulse rounded" />
                       <div className="flex-1 space-y-2">
@@ -86,7 +86,7 @@ export default function FarmerLoading() {
               <div className="bg-card border border-border rounded-lg p-6">
                 <div className="h-6 w-32 bg-muted animate-pulse rounded mb-4" />
                 <div className="space-y-3">
-                  {[...Array(4)].map((_, i) => (
+                  {[...Array(4)].map((_: any, i: any) => (
                     <div key={i} className="flex items-center justify-between">
                       <div className="h-4 w-24 bg-muted animate-pulse rounded" />
                       <div className="h-4 w-16 bg-muted animate-pulse rounded" />

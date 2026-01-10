@@ -184,7 +184,7 @@ export function DeliveryStep({
             Preferred Time Slot *
           </Label>
           <div className="mt-2 space-y-2">
-            {timeSlots.map((slot) => (
+            {timeSlots.map((slot: any) => (
               <label
                 key={slot.value}
                 className={`flex cursor-pointer items-center gap-3 rounded-lg border-2 p-4 transition-all ${selectedTime === slot.value
@@ -271,7 +271,7 @@ export function DeliveryStep({
               </p>
               <p>
                 <span className="font-medium">Time:</span>{" "}
-                {timeSlots.find((s) => s.value === selectedTime)?.label}
+                {timeSlots.find((s: any) => s.value === selectedTime)?.label}
               </p>
             </div>
           </div>

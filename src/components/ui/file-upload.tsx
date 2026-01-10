@@ -139,7 +139,7 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
         // Handle rejected files
         if (rejectedFiles.length > 0) {
           const errors = rejectedFiles
-            .map((f) => f.errors.map((e: any) => e.message).join(", "))
+            .map((f: any) => f.errors.map((e: any) => e.message).join(", "))
             .join("; ");
           setError(errors);
           return;
@@ -161,8 +161,8 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
         if (onUpload) {
           try {
             // Update status to uploading
-            const uploadingFiles = updatedFiles.map((f) =>
-              newFiles.find((nf) => nf.id === f.id)
+            const uploadingFiles = updatedFiles.map((f: any) =>
+              newFiles.find((nf: any) => nf.id === f.id)
                 ? { ...f, status: "uploading" as const }
                 : f
             );
@@ -173,8 +173,8 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
             await onUpload(acceptedFiles);
 
             // Update status to success
-            const successFiles = updatedFiles.map((f) =>
-              newFiles.find((nf) => nf.id === f.id)
+            const successFiles = updatedFiles.map((f: any) =>
+              newFiles.find((nf: any) => nf.id === f.id)
                 ? { ...f, status: "success" as const, progress: 100 }
                 : f
             );
@@ -182,8 +182,8 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
             onChange?.(successFiles);
           } catch (err) {
             // Update status to error
-            const errorFiles = updatedFiles.map((f) =>
-              newFiles.find((nf) => nf.id === f.id)
+            const errorFiles = updatedFiles.map((f: any) =>
+              newFiles.find((nf: any) => nf.id === f.id)
                 ? {
                   ...f,
                   status: "error" as const,
@@ -208,18 +208,18 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
     });
 
     const removeFile = (id: string) => {
-      const updatedFiles = files.filter((f) => f.id !== id);
+      const updatedFiles = files.filter((f: any) => f.id !== id);
       setFiles(updatedFiles);
       onChange?.(updatedFiles);
       setError(null);
     };
 
     const retryUpload = async (id: string) => {
-      const file = files.find((f) => f.id === id);
+      const file = files.find((f: any) => f.id === id);
       if (!file || !onUpload) return;
 
       try {
-        const updatedFiles = files.map((f) =>
+        const updatedFiles = files.map((f: any) =>
           f.id === id ? { ...f, status: "uploading" as const, error: undefined } : f
         );
         setFiles(updatedFiles);
@@ -227,13 +227,13 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
 
         await onUpload([file.file]);
 
-        const successFiles = files.map((f) =>
+        const successFiles = files.map((f: any) =>
           f.id === id ? { ...f, status: "success" as const, progress: 100 } : f
         );
         setFiles(successFiles);
         onChange?.(successFiles);
       } catch (err) {
-        const errorFiles = files.map((f) =>
+        const errorFiles = files.map((f: any) =>
           f.id === id
             ? {
               ...f,
@@ -311,7 +311,7 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
               <div className="text-xs text-muted-foreground">
                 {Object.values(accept)
                   .flat()
-                  .map((ext) => ext.toUpperCase())
+                  .map((ext: any) => ext.toUpperCase())
                   .join(", ")}
               </div>
             </div>
@@ -348,7 +348,7 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
             </div>
 
             <div className="space-y-2">
-              {files.map((file) => (
+              {files.map((file: any) => (
                 <FilePreview
                   key={file.id}
                   file={file}

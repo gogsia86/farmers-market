@@ -57,7 +57,7 @@ export function ReviewStep({
   // ==========================================================================
 
   const calculateTotals = () => {
-    const subtotal = cart.reduce((sum, item) => {
+    const subtotal = cart.reduce((sum: any, item: any) => {
       const itemTotal = Number(item.priceAtAdd) * Number(item.quantity);
       return sum + itemTotal;
     }, 0);
@@ -103,7 +103,7 @@ export function ReviewStep({
           shippingAddress: formData.shipping,
           deliveryInfo: formData.delivery,
           paymentMethod: formData.payment,
-          cartItems: cart.map((item) => ({
+          cartItems: cart.map((item: any) => ({
             productId: item.productId,
             farmId: item.farmId,
             quantity: Number(item.quantity),
@@ -336,7 +336,7 @@ export function ReviewStep({
           Order Items ({cart.length})
         </h3>
         <div className="space-y-4">
-          {cart.map((item) => (
+          {cart.map((item: any) => (
             <div
               key={item.id}
               className="flex items-start gap-4 pb-4 border-b last:border-b-0 last:pb-0"

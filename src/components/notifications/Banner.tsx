@@ -411,7 +411,7 @@ export const Banner = React.forwardRef<HTMLDivElement, BannerProps>(
           {/* Actions */}
           {actions.length > 0 && (
             <div className="flex flex-wrap gap-2 pt-1">
-              {actions.map((action) => (
+              {actions.map((action: any) => (
                 <button
                   key={action.id}
                   type="button"

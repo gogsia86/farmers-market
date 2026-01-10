@@ -404,7 +404,7 @@ class ErrorAggregator {
     if (currentConfig.enableConsole) {
       console.info(
         `📦 [ERROR BATCH] Flushing ${batch.length} errors`,
-        batch.map((e) => ({
+        batch.map((e: any) => ({
           errorId: e.errorId,
           code: e.code,
           severity: e.severity,
@@ -432,7 +432,7 @@ class ErrorAggregator {
         body: JSON.stringify({
           batch: true,
           count: errors.length,
-          errors: errors.map((e) => createStructuredLog(e)),
+          errors: errors.map((e: any) => createStructuredLog(e)),
           serviceName: currentConfig.serviceName,
           environment: currentConfig.environment,
         }),
@@ -531,7 +531,7 @@ class ErrorRateTracker {
 
   private cleanOldTimestamps(now: number): void {
     const cutoff = now - this.windowSize;
-    this.timestamps = this.timestamps.filter((ts) => ts > cutoff);
+    this.timestamps = this.timestamps.filter((ts: any) => ts > cutoff);
   }
 
   getErrorRate(): number {

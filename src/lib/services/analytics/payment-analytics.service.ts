@@ -358,7 +358,7 @@ export class PaymentAnalyticsService {
       transactionCount: number;
     }>();
 
-    payments.forEach((payment) => {
+    payments.forEach((payment: any) => {
       if (!payment.order?.farm) return;
 
       const farmId = payment.order.farm.id;
@@ -426,7 +426,7 @@ export class PaymentAnalyticsService {
       failedTransactions: number;
     }>();
 
-    payments.forEach((payment) => {
+    payments.forEach((payment: any) => {
       const dateKey = this.formatDateByGranularity(
         payment.createdAt,
         granularity
@@ -585,7 +585,7 @@ export class PaymentAnalyticsService {
     // Group by payment method
     const methodMap = new Map<string, { count: number; totalAmount: number }>();
 
-    payments.forEach((payment) => {
+    payments.forEach((payment: any) => {
       const method = payment.paymentMethod;
       const amount = parseFloat(payment.amount.toString());
 
@@ -663,7 +663,7 @@ export class PaymentAnalyticsService {
       successCount: number;
     }>();
 
-    payments.forEach((payment) => {
+    payments.forEach((payment: any) => {
       const timeKey = this.formatDateByInterval(payment.createdAt, interval);
 
       if (!timeMap.has(timeKey)) {
@@ -737,7 +737,7 @@ export class PaymentAnalyticsService {
       transactionCount: number;
     }>();
 
-    payments.forEach((payment) => {
+    payments.forEach((payment: any) => {
       if (!payment.order || !payment.order.farm) return;
 
       const farmId = payment.order.farm.id;
@@ -769,7 +769,7 @@ export class PaymentAnalyticsService {
       }))
       .sort((a, b) => b.totalRevenue - a.totalRevenue)
       .slice(0, limit)
-      .map((farm, index) => ({
+      .map((farm: any, index: any) => ({
         ...farm,
         rank: index + 1,
       }));

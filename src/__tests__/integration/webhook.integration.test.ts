@@ -301,7 +301,7 @@ describe("🔐 Webhook Integration Tests", () => {
       );
 
       expect(events).toHaveLength(2);
-      expect(events.every((e) => e.provider === "STRIPE")).toBe(true);
+      expect(events.every((e: any) => e.provider === "STRIPE")).toBe(true);
     });
 
     it("should filter events by processed status", async () => {
@@ -318,8 +318,8 @@ describe("🔐 Webhook Integration Tests", () => {
 
       expect(processed.length).toBeGreaterThanOrEqual(1);
       expect(unprocessed.length).toBeGreaterThanOrEqual(2);
-      expect(processed.every((e) => e.processed === true)).toBe(true);
-      expect(unprocessed.every((e) => e.processed === false)).toBe(true);
+      expect(processed.every((e: any) => e.processed === true)).toBe(true);
+      expect(unprocessed.every((e: any) => e.processed === false)).toBe(true);
     });
 
     it("should get failed events for retry", async () => {
@@ -329,7 +329,7 @@ describe("🔐 Webhook Integration Tests", () => {
       const failedEvents = await webhookEventService.getFailedEvents(5, 100);
 
       expect(failedEvents.length).toBeGreaterThanOrEqual(1);
-      const failedEvent = failedEvents.find((e) => e.eventId === "test_evt_101");
+      const failedEvent = failedEvents.find((e: any) => e.eventId === "test_evt_101");
       expect(failedEvent).toBeDefined();
       expect(failedEvent?.processed).toBe(false);
       expect(failedEvent?.attempts).toBeGreaterThan(0);
@@ -642,7 +642,7 @@ describe("🔐 Webhook Integration Tests", () => {
       });
 
       const duplicates = await webhookEventService.findDuplicates("STRIPE");
-      const testDuplicates = duplicates.filter((d) =>
+      const testDuplicates = duplicates.filter((d: any) =>
         d.eventId.startsWith("test_evt_50")
       );
 
@@ -673,7 +673,7 @@ describe("🔐 Webhook Integration Tests", () => {
       });
 
       const duplicates = await webhookEventService.findDuplicates("STRIPE");
-      const testDuplicate = duplicates.find((d) => d.eventId === "test_evt_502");
+      const testDuplicate = duplicates.find((d: any) => d.eventId === "test_evt_502");
 
       expect(testDuplicate).toBeDefined();
       expect(testDuplicate?.count).toBe(2);

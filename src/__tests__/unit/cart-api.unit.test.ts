@@ -227,7 +227,7 @@ describe("Cart API Integration Tests", () => {
       mockDatabase.cartItem.findMany.mockResolvedValue(mockCartItems);
 
       // Filtered result should only contain valid items
-      const validItems = mockCartItems.filter((item) => item.product !== null);
+      const validItems = mockCartItems.filter((item: any) => item.product !== null);
 
       expect(validItems).toHaveLength(1);
     });

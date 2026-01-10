@@ -336,7 +336,7 @@ describe("Animation Accessibility System", () => {
 
       render(
         <AnimationProvider>
-          {toasts.map((toast) => (
+          {toasts.map((toast: any) => (
             <Toast key={toast.id} toast={toast} onDismiss={jest.fn()} />
           ))}
         </AnimationProvider>
@@ -662,7 +662,7 @@ describe("Animation Accessibility System", () => {
       const presets = ["minimal", "standard", "enhanced", "divine"] as const;
       const toast = createMockToast();
 
-      presets.forEach((preset) => {
+      presets.forEach((preset: any) => {
         const { container } = render(
           <AnimationProvider preset={preset}>
             <Toast toast={toast} onDismiss={jest.fn()} />

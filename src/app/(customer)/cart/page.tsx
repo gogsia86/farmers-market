@@ -4,6 +4,8 @@
 // Full cart view with farm-grouped items and agricultural consciousness
 
 import { CartItemCard } from "@/components/features/cart/cart-item-card";
+
+import type { CartItem, Product } from "@prisma/client";
 import { CartSummary } from "@/components/features/cart/cart-summary";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody } from "@/components/ui/card";
@@ -217,7 +219,7 @@ export default function CartPage() {
   // ==========================================================================
 
   const { farmGroups } = cart;
-  const hasValidationIssues = cart.items.some((item) => {
+  const hasValidationIssues = cart.items.some((item: any) => {
     const availableStock = item.product.quantityAvailable?.toNumber() || 0;
     return (
       item.product.status !== "ACTIVE" ||
@@ -272,7 +274,7 @@ export default function CartPage() {
         <div className="lg:col-span-2">
           <div className="space-y-6">
             {/* Group items by farm */}
-            {farmGroups.map((farmGroup) => (
+            {farmGroups.map((farmGroup: any) => (
               <div key={farmGroup.farmId}>
                 {/* Farm Header */}
                 <div className="mb-4 flex items-center justify-between border-b pb-3">
@@ -304,7 +306,7 @@ export default function CartPage() {
 
                 {/* Farm Items */}
                 <div className="space-y-3">
-                  {farmGroup.items.map((item) => (
+                  {farmGroup.items.map((item: any) => (
                     <CartItemCard
                       key={item.id}
                       item={item}

@@ -195,7 +195,7 @@ describe("CartStore", () => {
       const currentItems = useCartStore.getState().items;
       expect(currentItems).toHaveLength(2);
       expect(
-        currentItems.find((i) => i.id === mockProduct2.id),
+        currentItems.find((i: any) => i.id === mockProduct2.id),
       ).toBeUndefined();
     });
 
@@ -205,8 +205,8 @@ describe("CartStore", () => {
       removeItem(mockProduct2.id);
 
       const currentItems = useCartStore.getState().items;
-      expect(currentItems.find((i) => i.id === mockProduct1.id)).toBeDefined();
-      expect(currentItems.find((i) => i.id === mockProduct3.id)).toBeDefined();
+      expect(currentItems.find((i: any) => i.id === mockProduct1.id)).toBeDefined();
+      expect(currentItems.find((i: any) => i.id === mockProduct3.id)).toBeDefined();
     });
 
     it("should handle removing non-existent item gracefully", () => {
@@ -257,7 +257,7 @@ describe("CartStore", () => {
       updateQuantity(mockProduct1.id, 5);
 
       const currentItems = useCartStore.getState().items;
-      const updatedItem = currentItems.find((i) => i.id === mockProduct1.id);
+      const updatedItem = currentItems.find((i: any) => i.id === mockProduct1.id);
       expect(updatedItem?.quantity).toBe(5);
     });
 
@@ -267,7 +267,7 @@ describe("CartStore", () => {
       updateQuantity(mockProduct1.id, 10);
 
       const currentItems = useCartStore.getState().items;
-      expect(currentItems.find((i) => i.id === mockProduct1.id)?.quantity).toBe(
+      expect(currentItems.find((i: any) => i.id === mockProduct1.id)?.quantity).toBe(
         10,
       );
     });
@@ -278,7 +278,7 @@ describe("CartStore", () => {
       updateQuantity(mockProduct1.id, 1);
 
       const currentItems = useCartStore.getState().items;
-      expect(currentItems.find((i) => i.id === mockProduct1.id)?.quantity).toBe(
+      expect(currentItems.find((i: any) => i.id === mockProduct1.id)?.quantity).toBe(
         1,
       );
     });
@@ -290,7 +290,7 @@ describe("CartStore", () => {
 
       const currentItems = useCartStore.getState().items;
       expect(
-        currentItems.find((i) => i.id === mockProduct1.id),
+        currentItems.find((i: any) => i.id === mockProduct1.id),
       ).toBeUndefined();
     });
 
@@ -301,7 +301,7 @@ describe("CartStore", () => {
 
       const currentItems = useCartStore.getState().items;
       expect(
-        currentItems.find((i) => i.id === mockProduct1.id),
+        currentItems.find((i: any) => i.id === mockProduct1.id),
       ).toBeUndefined();
     });
 
@@ -310,13 +310,13 @@ describe("CartStore", () => {
 
       const beforeUpdate = useCartStore
         .getState()
-        .items.find((i) => i.id === mockProduct2.id)?.quantity;
+        .items.find((i: any) => i.id === mockProduct2.id)?.quantity;
 
       updateQuantity(mockProduct1.id, 10);
 
       const afterUpdate = useCartStore
         .getState()
-        .items.find((i) => i.id === mockProduct2.id)?.quantity;
+        .items.find((i: any) => i.id === mockProduct2.id)?.quantity;
 
       expect(afterUpdate).toBe(beforeUpdate);
     });
@@ -587,10 +587,10 @@ describe("CartStore", () => {
 
       const currentItems = useCartStore.getState().items;
       expect(currentItems).toHaveLength(2);
-      expect(currentItems.find((i) => i.id === mockProduct1.id)?.quantity).toBe(
+      expect(currentItems.find((i: any) => i.id === mockProduct1.id)?.quantity).toBe(
         5,
       );
-      expect(currentItems.find((i) => i.id === mockProduct3.id)?.quantity).toBe(
+      expect(currentItems.find((i: any) => i.id === mockProduct3.id)?.quantity).toBe(
         3,
       );
     });

@@ -218,8 +218,8 @@ export function extractProductIdsFromInteractions(
   return [
     ...new Set(
       interactions
-        .filter((i) => i.entityType === "product")
-        .map((i) => i.entityId),
+        .filter((i: any) => i.entityType === "product")
+        .map((i: any) => i.entityId),
     ),
   ];
 }
@@ -235,8 +235,8 @@ export function extractFarmIdsFromInteractions(
   return [
     ...new Set(
       interactions
-        .filter((i) => i.entityType === "farm")
-        .map((i) => i.entityId),
+        .filter((i: any) => i.entityType === "farm")
+        .map((i: any) => i.entityId),
     ),
   ];
 }

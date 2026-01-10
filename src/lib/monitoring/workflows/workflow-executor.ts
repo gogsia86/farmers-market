@@ -122,13 +122,13 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
         duration,
         steps: stepResults,
         totalSteps: stepResults.length,
-        passedSteps: stepResults.filter((s) => s.success).length,
-        failedSteps: stepResults.filter((s) => !s.success).length,
+        passedSteps: stepResults.filter((s: any) => s.success).length,
+        failedSteps: stepResults.filter((s: any) => !s.success).length,
         skippedSteps: 0,
         screenshots: stepResults
-          .filter((s) => s.screenshot)
-          .map((s) => s.screenshot!),
-        traces: stepResults.filter((s) => s.trace).map((s) => s.trace!),
+          .filter((s: any) => s.screenshot)
+          .map((s: any) => s.screenshot!),
+        traces: stepResults.filter((s: any) => s.trace).map((s: any) => s.trace!),
         metrics,
         agricultureConsciousness,
         tags: workflow.tags,
@@ -401,11 +401,11 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
   private calculateWorkflowStatus(steps: WorkflowStepResult[]): WorkflowStatus {
     if (steps.length === 0) return "SKIPPED";
 
-    const failed = steps.some((s) => !s.success);
+    const failed = steps.some((s: any) => !s.success);
     if (failed) return "FAILED";
 
-    const hasWarnings = steps.some((s) =>
-      s.logs.some((log) => log.includes("WARN")),
+    const hasWarnings = steps.some((s: any) =>
+      s.logs.some((log: any) => log.includes("WARN")),
     );
     if (hasWarnings) return "WARNING";
 
@@ -416,12 +416,12 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
     page: Page | undefined,
     steps: WorkflowStepResult[],
   ): Promise<any> {
-    const totalDuration = steps.reduce((sum, s) => sum + s.duration, 0);
+    const totalDuration = steps.reduce((sum: any, s: any) => sum + s.duration, 0);
 
     const metrics: any = {
       totalDuration,
-      errors: steps.filter((s) => !s.success).length,
-      warnings: steps.filter((s) => s.logs.some((log) => log.includes("WARN")))
+      errors: steps.filter((s: any) => !s.success).length,
+      warnings: steps.filter((s: any) => s.logs.some((log: any) => log.includes("WARN")))
         .length,
     };
 
@@ -544,7 +544,7 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
 
   private calculateFarmHealthScore(steps: WorkflowStepResult[]): number {
     // Calculate overall farm data integrity
-    const healthySteps = steps.filter((s) => {
+    const healthySteps = steps.filter((s: any) => {
       const data = s.agricultureData;
       return data?.farmDataIntegrity !== false && data?.soilQuality !== "POOR";
     });

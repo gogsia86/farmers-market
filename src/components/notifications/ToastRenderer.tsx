@@ -201,7 +201,7 @@ export function ToastRenderer({
 
   return (
     <>
-      {positions.map((position) => {
+      {positions.map((position: any) => {
         const positionToasts = toastsByPosition[position] || [];
         if (positionToasts.length === 0) return null;
 
@@ -221,7 +221,7 @@ export function ToastRenderer({
             aria-label={`Notifications: ${position.replace("-", " ")}`}
           >
             <AnimatePresence mode="sync">
-              {visibleToasts.map((toast, index) => {
+              {visibleToasts.map((toast: any, index: any) => {
                 // Select appropriate variants for this toast
                 const variants = selectToastVariants(
                   toast,

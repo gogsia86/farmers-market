@@ -56,8 +56,8 @@ export function RevenueChart({
 }: RevenueChartProps) {
   // Calculate statistics
   const stats = useMemo(() => {
-    const totalRevenue = data.reduce((sum, item) => sum + item.revenue, 0);
-    const totalOrders = data.reduce((sum, item) => sum + (item.orders || 0), 0);
+    const totalRevenue = data.reduce((sum: any, item: any) => sum + item.revenue, 0);
+    const totalOrders = data.reduce((sum: any, item: any) => sum + (item.orders || 0), 0);
     const avgRevenue = data.length > 0 ? totalRevenue / data.length : 0;
     const maxRevenue = Math.max(...data.map(item => item.revenue));
 
@@ -255,7 +255,7 @@ export function RevenueChart({
           </p>
         </div>
         <div className="flex gap-2">
-          {['area', 'line', 'bar'].map((v) => (
+          {['area', 'line', 'bar'].map((v: any) => (
             <button
               key={v}
               className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${variant === v

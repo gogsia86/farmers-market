@@ -105,7 +105,7 @@ export class TemporalBatcher<Input, Output> {
     const batchKeys = Array.from(this.pendingRequests.keys());
     this.batchTimer = null;
 
-    await Promise.all(batchKeys.map((key) => this.executeBatch(key)));
+    await Promise.all(batchKeys.map((key: any) => this.executeBatch(key)));
   }
 
   /**
@@ -121,7 +121,7 @@ export class TemporalBatcher<Input, Output> {
 
     try {
       // Execute all requests in single batch
-      const inputs = requests.map((r) => r.input);
+      const inputs = requests.map((r: any) => r.input);
       const outputs = await this.executor(inputs);
 
       // Resolve all promises with proper undefined check
@@ -140,7 +140,7 @@ export class TemporalBatcher<Input, Output> {
       }
     } catch (error) {
       // Reject all promises
-      requests.forEach((req) => {
+      requests.forEach((req: any) => {
         req.reject(error as Error);
       });
     }
