@@ -129,7 +129,6 @@ export class QuantumCartService {
         farmId: {
           select: {
             id: true,
-            tags: true,
             slug: true,
             tags: true,
           },

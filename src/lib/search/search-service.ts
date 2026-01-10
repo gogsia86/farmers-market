@@ -107,8 +107,6 @@ export class SearchService {
               select: {
                 id: true,
                 tags: true,
-                id: true,
-                tags: true,
               },
             },
           },
