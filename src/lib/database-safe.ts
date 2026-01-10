@@ -24,8 +24,8 @@
  * ```
  */
 
-import { database } from '@/lib/database';
-import type { Prisma, PrismaClient } from '@prisma/client';
+import { database } from "@/lib/database";
+import type { Prisma, PrismaClient } from "@prisma/client";
 
 // ============================================
 // TYPE-SAFE WRAPPER TYPES
@@ -42,26 +42,17 @@ type SafeModelDelegate<T extends keyof PrismaClient> = PrismaClient[T];
  */
 export interface SafeDatabase {
   // Core models
-  user: SafeModelDelegate<'user'>;
-  farm: SafeModelDelegate<'farm'>;
-  product: SafeModelDelegate<'product'>;
-  order: SafeModelDelegate<'order'>;
-  orderItem: SafeModelDelegate<'orderItem'>;
-  cart: SafeModelDelegate<'cart'>;
-  cartItem: SafeModelDelegate<'cartItem'>;
-  review: SafeModelDelegate<'review'>;
-  payment: SafeModelDelegate<'payment'>;
-  notification: SafeModelDelegate<'notification'>;
-  message: SafeModelDelegate<'message'>;
-  userAddress: SafeModelDelegate<'userAddress'>;
-
-  // Support models
-  category: SafeModelDelegate<'category'>;
-  tag: SafeModelDelegate<'tag'>;
-  wishlist: SafeModelDelegate<'wishlist'>;
-  wishlistItem: SafeModelDelegate<'wishlistItem'>;
-  subscription: SafeModelDelegate<'subscription'>;
-  coupon: SafeModelDelegate<'coupon'>;
+  user: SafeModelDelegate<"user">;
+  farm: SafeModelDelegate<"farm">;
+  product: SafeModelDelegate<"product">;
+  order: SafeModelDelegate<"order">;
+  orderItem: SafeModelDelegate<"orderItem">;
+  cartItem: SafeModelDelegate<"cartItem">;
+  review: SafeModelDelegate<"review">;
+  payment: SafeModelDelegate<"payment">;
+  notification: SafeModelDelegate<"notification">;
+  message: SafeModelDelegate<"message">;
+  userAddress: SafeModelDelegate<"userAddress">;
 
   // Additional utility methods
   $transaction: typeof database.$transaction;
@@ -121,17 +112,15 @@ export const orderQueries = {
   /**
    * Find many orders with customer and items included
    */
-  findManyWithDetails: (args?: Omit<Prisma.OrderFindManyArgs, 'include'>) => {
+  findManyWithDetails: (args?: Omit<Prisma.OrderFindManyArgs, "include">) => {
     return database.order.findMany({
       ...args,
       include: {
         customer: {
           select: {
             id: true,
-            tax: true,
+            name: true,
             email: true,
-            firstName: true,
-            lastName: true,
           },
         },
         items: {
@@ -139,7 +128,7 @@ export const orderQueries = {
             product: {
               select: {
                 id: true,
-                tax: true,
+                name: true,
                 slug: true,
                 price: true,
                 images: true,
@@ -166,7 +155,7 @@ export const orderQueries = {
       where,
       include: {
         customer: true,
-        farms: {
+        items: {
           include: {
             product: true,
           },
@@ -174,7 +163,6 @@ export const orderQueries = {
         farm: true,
         deliveryAddress: true,
         Payment: true,
-        reviews: true,
       },
     });
   },
@@ -182,12 +170,15 @@ export const orderQueries = {
   /**
    * Find orders by customer with all relations
    */
-  findByCustomer: (customerId: string, args?: Omit<Prisma.OrderFindManyArgs, 'where' | 'include'>) => {
+  findByCustomer: (
+    customerId: string,
+    args?: Omit<Prisma.OrderFindManyArgs, "where" | "include">,
+  ) => {
     return database.order.findMany({
       ...args,
       where: { customerId },
       include: {
-        farms: {
+        items: {
           include: {
             product: true,
           },
@@ -206,27 +197,25 @@ export const productQueries = {
   /**
    * Find products with all relations
    */
-  findManyWithDetails: (args?: Omit<Prisma.ProductFindManyArgs, 'include'>) => {
+  findManyWithDetails: (args?: Omit<Prisma.ProductFindManyArgs, "include">) => {
     return database.product.findMany({
       ...args,
       include: {
-        farmId: {
+        farm: {
           select: {
             id: true,
-            tax: true,
+            name: true,
             slug: true,
-            location: true,
           },
         },
-        category: true,
         reviews: {
           take: 5,
-          orderBy: { createdAt: 'desc' },
+          orderBy: { createdAt: "desc" },
           include: {
-            unit: {
+            customer: {
               select: {
                 id: true,
-                tax: true,
+                name: true,
                 avatar: true,
               },
             },
@@ -243,21 +232,20 @@ export const productQueries = {
   },
 
   /**
-   * Find product by slug with full details
+   * Find product by ID with full details
    */
-  findBySlugWithDetails: (slug: string) => {
+  findByIdWithDetails: (id: string) => {
     return database.product.findUnique({
-      where: { slug },
+      where: { id },
       include: {
-        farmId: true,
-        category: true,
+        farm: true,
         reviews: {
-          orderBy: { createdAt: 'desc' },
+          orderBy: { createdAt: "desc" },
           include: {
-            unit: {
+            customer: {
               select: {
                 id: true,
-                tax: true,
+                name: true,
                 avatar: true,
               },
             },
@@ -286,21 +274,12 @@ export const userQueries = {
       include: {
         addresses: true,
         orders: {
-          orderBy: { createdAt: 'desc' },
+          orderBy: { createdAt: "desc" },
           take: 10,
         },
         reviews: {
-          orderBy: { createdAt: 'desc' },
+          orderBy: { createdAt: "desc" },
           take: 5,
-        },
-        cart: {
-          include: {
-            farms: {
-              include: {
-                product: true,
-              },
-            },
-          },
         },
       },
     });
@@ -331,23 +310,23 @@ export const farmQueries = {
   /**
    * Find farms with products and stats
    */
-  findManyWithStats: (args?: Omit<Prisma.FarmFindManyArgs, 'include'>) => {
+  findManyWithStats: (args?: Omit<Prisma.FarmFindManyArgs, "include">) => {
     return database.farm.findMany({
       ...args,
       include: {
-        ownerId: {
+        owner: {
           select: {
             id: true,
-            tax: true,
+            name: true,
             email: true,
           },
         },
         products: {
           where: {
-            status: 'ACTIVE',
+            status: "ACTIVE",
           },
           take: 5,
-          orderBy: { createdAt: 'desc' },
+          orderBy: { createdAt: "desc" },
         },
         _count: {
           select: {
@@ -366,17 +345,17 @@ export const farmQueries = {
     return database.farm.findUnique({
       where: { slug },
       include: {
-        ownerId: {
+        owner: {
           select: {
             id: true,
-            tax: true,
+            name: true,
             email: true,
             avatar: true,
           },
         },
         products: {
-          where: { status: 'ACTIVE' },
-          orderBy: { createdAt: 'desc' },
+          where: { status: "ACTIVE" },
+          orderBy: { createdAt: "desc" },
         },
         _count: {
           select: {
@@ -406,7 +385,12 @@ export const farmQueries = {
  * ```
  */
 export async function executeTransaction<T>(
-  fn: (tx: Omit<PrismaClient, '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'>) => Promise<T>
+  fn: (
+    tx: Omit<
+      PrismaClient,
+      "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
+    >,
+  ) => Promise<T>,
 ): Promise<T> {
   return database.$transaction(fn);
 }
@@ -429,27 +413,6 @@ export async function executeRawQuery<T = unknown>(
 }
 
 // ============================================
-// VALIDATION HELPERS
-// ============================================
-
-/**
- * Validate that a relation exists on a model
- * This is a compile-time check only
- */
-export type ValidateRelation<
-  TModel extends keyof PrismaClient,
-  TRelation extends string
-> = TRelation extends keyof Prisma.TypeMap['model'][Capitalize<TModel & string>]['operations']['findMany']['args']['include']
-  ? TRelation
-  : never;
-
-/**
- * Get valid relations for a model
- */
-export type GetValidRelations<TModel extends keyof PrismaClient> =
-  keyof Prisma.TypeMap['model'][Capitalize<TModel & string>]['operations']['findMany']['args']['include'];
-
-// ============================================
 // EXPORTS
 // ============================================
 
@@ -461,23 +424,16 @@ export type {
   Product,
   Order,
   OrderItem,
-  Cart,
   CartItem,
   Review,
   Payment,
   Notification,
   Message,
   UserAddress,
-  Category,
-  Tag,
-  Wishlist,
-  WishlistItem,
-  Subscription,
-  Coupon,
-} from '@prisma/client';
+} from "@prisma/client";
 
 // Export the original database for advanced use cases
-export { database as unsafeDatabase } from '@/lib/database';
+export { database as unsafeDatabase } from "@/lib/database";
 
 /**
  * Default export for convenience
