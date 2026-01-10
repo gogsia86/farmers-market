@@ -135,7 +135,10 @@ const presetDefinitions: Record<
 // UTILITY FUNCTIONS
 // ============================================================================
 
-function formatDateRange(range: DateRange, format: "short" | "long" = "short"): string {
+function formatDateRange(
+  range: DateRange,
+  format: "short" | "long" = "short",
+): string {
   if (!range.start && !range.end) return "";
 
   const formatOptions: Intl.DateTimeFormatOptions =
@@ -247,8 +250,10 @@ function MiniCalendar({
   const isDateInHoverRange = (date: Date): boolean => {
     if (!selectedRange.start || selectedRange.end || !hoverDate) return false;
 
-    const start = selectedRange.start < hoverDate ? selectedRange.start : hoverDate;
-    const end = selectedRange.start < hoverDate ? hoverDate : selectedRange.start;
+    const start =
+      selectedRange.start < hoverDate ? selectedRange.start : hoverDate;
+    const end =
+      selectedRange.start < hoverDate ? hoverDate : selectedRange.start;
 
     return date >= start && date <= end;
   };
@@ -289,7 +294,10 @@ function MiniCalendar({
       {/* Day Headers */}
       <div className="grid grid-cols-7 gap-1">
         {["S", "M", "T", "W", "T", "F", "S"].map((day: any, i: any) => (
-          <div key={i} className="text-center text-xs font-medium text-gray-600">
+          <div
+            key={i}
+            className="text-center text-xs font-medium text-gray-600"
+          >
             {day}
           </div>
         ))}
@@ -319,10 +327,13 @@ function MiniCalendar({
                 "aspect-square rounded text-xs transition-colors",
                 isSelected && "bg-green-600 text-white font-semibold",
                 isInHoverRange && !isSelected && "bg-green-100",
-                !isSelected && !isInHoverRange && !isDisabled && "hover:bg-gray-100",
+                !isSelected &&
+                  !isInHoverRange &&
+                  !isDisabled &&
+                  "hover:bg-gray-100",
                 isDisabled && "cursor-not-allowed opacity-30",
                 !isDisabled && !isSelected && "text-gray-900",
-                isToday && !isSelected && "border border-green-600"
+                isToday && !isSelected && "border border-green-600",
               )}
             >
               {date.getDate()}
@@ -344,7 +355,14 @@ export function DateRangeSelector({
   minDate,
   maxDate,
   showPresets = true,
-  presets = ["today", "yesterday", "last7days", "last30days", "thisMonth", "lastMonth"],
+  presets = [
+    "today",
+    "yesterday",
+    "last7days",
+    "last30days",
+    "thisMonth",
+    "lastMonth",
+  ],
   placeholder = "Select date range",
   className,
   disabled = false,
@@ -353,13 +371,18 @@ export function DateRangeSelector({
 }: DateRangeSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [selectedPreset, setSelectedPreset] = useState<DateRangePreset | null>(null);
+  const [selectedPreset, setSelectedPreset] = useState<DateRangePreset | null>(
+    null,
+  );
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -401,7 +424,7 @@ export function DateRangeSelector({
           "flex w-full items-center justify-between gap-2 rounded-lg border bg-white px-4 py-2.5 text-sm transition-colors",
           "hover:border-gray-400 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-20",
           disabled && "cursor-not-allowed opacity-50",
-          isOpen && "border-green-500 ring-2 ring-green-500 ring-opacity-20"
+          isOpen && "border-green-500 ring-2 ring-green-500 ring-opacity-20",
         )}
       >
         <div className="flex items-center gap-2">
@@ -427,7 +450,7 @@ export function DateRangeSelector({
           <ChevronDown
             className={cn(
               "h-4 w-4 text-gray-500 transition-transform",
-              isOpen && "rotate-180"
+              isOpen && "rotate-180",
             )}
           />
         </div>
@@ -441,16 +464,15 @@ export function DateRangeSelector({
             {showPresets && (
               <div className="flex-shrink-0 border-r bg-gray-50 p-3">
                 <div className="space-y-1">
-                  {presets.map((preset: any) => (
+                  {presets.map((preset: DateRangePreset) => (
                     <button
                       key={preset}
-                      type="button"
                       onClick={() => handlePresetClick(preset)}
                       className={cn(
                         "w-full rounded px-3 py-2 text-left text-sm transition-colors",
                         selectedPreset === preset
                           ? "bg-green-100 font-medium text-green-700"
-                          : "text-gray-700 hover:bg-gray-100"
+                          : "text-gray-700 hover:bg-gray-100",
                       )}
                     >
                       {presetDefinitions[preset].label}

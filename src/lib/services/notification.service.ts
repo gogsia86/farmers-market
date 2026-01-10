@@ -15,7 +15,7 @@ import type {
 } from "@prisma/client";
 import { emailService } from "./email.service";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // Types & Interfaces
@@ -76,7 +76,7 @@ export class NotificationService {
    * Create and send a notification through specified channels
    */
   async createNotification(
-    request: CreateNotificationRequest
+    request: CreateNotificationRequest,
   ): Promise<Notification> {
     const {
       userId,
@@ -97,7 +97,7 @@ export class NotificationService {
       effectiveChannels = this.filterChannelsByPreferences(
         channels,
         preferences,
-        type
+        type,
       );
     }
 
@@ -121,11 +121,7 @@ export class NotificationService {
 
     // Send through all effective channels
     if (!sendAt || sendAt <= new Date()) {
-      await this.sendThroughChannels(
-        notification,
-        effectiveChannels,
-        priority
-      );
+      await this.sendThroughChannels(notification, effectiveChannels, priority);
     } else {
       // Queue for later delivery
       await this.queueNotification(notification, effectiveChannels, sendAt);
@@ -140,7 +136,7 @@ export class NotificationService {
   private async sendThroughChannels(
     notification: NotificationWithRelations,
     channels: NotificationChannel[],
-    priority: string
+    priority: string,
   ): Promise<void> {
     const promises: Promise<any>[] = [];
 
@@ -168,11 +164,11 @@ export class NotificationService {
    * Send email notification
    */
   private async sendEmailNotification(
-    notification: NotificationWithRelations
+    notification: NotificationWithRelations,
   ): Promise<void> {
     if (!notification.user?.email) {
       logger.warn(
-        `Cannot send email notification ${notification.id}: No user email`
+        `Cannot send email notification ${notification.id}: No user email`,
       );
       return;
     }
@@ -180,11 +176,13 @@ export class NotificationService {
     try {
       const emailData = {
         email: notification.user.email,
-        userName: notification.user.name || notification.user.firstName || "User",
+        userName:
+          notification.user.name || notification.user.firstName || "User",
         notificationTitle: notification.title,
         notificationBody: notification.body,
         orderNumber: "",
-        customerName: notification.user.name || notification.user.firstName || "User",
+        customerName:
+          notification.user.name || notification.user.firstName || "User",
         items: [],
         total: 0,
       };
@@ -193,16 +191,19 @@ export class NotificationService {
       switch (notification.type) {
         case "ORDER_PLACED":
         case "ORDER_CONFIRMED":
-          if (notification.data && typeof notification.data === 'object') {
+          if (notification.data && typeof notification.data === "object") {
             const data = notification.data as any;
             await emailService.sendOrderConfirmationEmail(
               notification.user.email,
               {
                 orderNumber: data.orderNumber || "",
-                customerName: notification.user.name || notification.user.firstName || "User",
+                customerName:
+                  notification.user.name ||
+                  notification.user.firstName ||
+                  "User",
                 items: data.items || [],
                 total: data.total || 0,
-              }
+              },
             );
           }
           break;
@@ -212,14 +213,15 @@ export class NotificationService {
         default:
           // For non-order notifications, we'll skip email for now
           // as they don't fit the current email templates
-          logger.info(`Email notification skipped for type: ${notification.type}`);
+          logger.info(
+            `Email notification skipped for type: ${notification.type}`,
+          );
           break;
       }
     } catch (error) {
-      logger.error(
-        `Failed to send email notification ${notification.id}:`, {
-      error: error instanceof Error ? error.message : String(error),
-    });
+      logger.error(`Failed to send email notification ${notification.id}:`, {
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   }
 
@@ -227,10 +229,12 @@ export class NotificationService {
    * Send SMS notification via queue
    */
   private async sendSMSNotification(
-    notification: NotificationWithRelations
+    notification: NotificationWithRelations,
   ): Promise<void> {
     if (!notification.user?.phone) {
-      logger.warn(`⚠️ No phone number for user ${notification.userId}, skipping SMS`);
+      logger.warn(
+        `⚠️ No phone number for user ${notification.userId}, skipping SMS`,
+      );
       return;
     }
 
@@ -247,11 +251,13 @@ export class NotificationService {
         },
       });
 
-      logger.info(`📱 SMS queued for ${notification.user.phone.substring(notification.user.phone.length - 4)}`);
+      logger.info(
+        `📱 SMS queued for ${notification.user.phone.substring(notification.user.phone.length - 4)}`,
+      );
     } catch (error) {
       logger.error("Failed to queue SMS:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   }
 
@@ -259,7 +265,7 @@ export class NotificationService {
    * Send push notification via queue
    */
   private async sendPushNotification(
-    notification: NotificationWithRelations
+    notification: NotificationWithRelations,
   ): Promise<void> {
     if (!notification.userId) {
       logger.warn("⚠️ No userId provided, skipping push notification");
@@ -277,11 +283,13 @@ export class NotificationService {
         priority: this.getPushPriority(notification.type),
       });
 
-      logger.info(`🔔 Push notification queued for user ${notification.userId}`);
+      logger.info(
+        `🔔 Push notification queued for user ${notification.userId}`,
+      );
     } catch (error) {
       logger.error("Failed to queue push notification:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   }
 
@@ -305,7 +313,7 @@ export class NotificationService {
   private async queueNotification(
     notification: Notification,
     channels: NotificationChannel[],
-    sendAt: Date
+    sendAt: Date,
   ): Promise<void> {
     const delay = sendAt.getTime() - Date.now();
 
@@ -317,11 +325,7 @@ export class NotificationService {
       });
 
       if (fullNotification) {
-        await this.sendThroughChannels(
-          fullNotification,
-          channels,
-          "MEDIUM"
-        );
+        await this.sendThroughChannels(fullNotification, channels, "MEDIUM");
       }
       return;
     }
@@ -338,23 +342,23 @@ export class NotificationService {
           if (user?.phone) {
             // SMS scheduled sending will be handled by the queue's delay mechanism
             logger.info(
-              `📅 SMS scheduled for ${sendAt.toISOString()} to ${user.phone.substring(user.phone.length - 4)}`
+              `📅 SMS scheduled for ${sendAt.toISOString()} to ${user.phone.substring(user.phone.length - 4)}`,
             );
           }
         } else if (channel === "PUSH" && notification.userId) {
           logger.info(
-            `📅 Push notification scheduled for ${sendAt.toISOString()} for user ${notification.userId}`
+            `📅 Push notification scheduled for ${sendAt.toISOString()} for user ${notification.userId}`,
           );
         }
       }
 
       logger.info(
-        `✅ Notification ${notification.id} queued for delivery at ${sendAt.toISOString()}`
+        `✅ Notification ${notification.id} queued for delivery at ${sendAt.toISOString()}`,
       );
     } catch (error) {
       logger.error("Failed to queue scheduled notification:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     }
   }
@@ -363,7 +367,7 @@ export class NotificationService {
    * Get user notification preferences
    */
   async getUserPreferences(
-    userId: string
+    userId: string,
   ): Promise<NotificationPreferencesData> {
     const preferences = await database.notificationPreferencesV2.findUnique({
       where: { userId },
@@ -403,14 +407,19 @@ export class NotificationService {
    */
   async updateUserPreferences(
     userId: string,
-    updates: Partial<NotificationPreferencesData>
+    updates: Partial<NotificationPreferencesData>,
   ): Promise<void> {
     const updateData: any = {};
-    if (updates.emailEnabled !== undefined) updateData.emailEnabled = updates.emailEnabled;
-    if (updates.emailFrequency !== undefined) updateData.emailFrequency = updates.emailFrequency;
-    if (updates.pushEnabled !== undefined) updateData.pushEnabled = updates.pushEnabled;
-    if (updates.smsEnabled !== undefined) updateData.smsEnabled = updates.smsEnabled;
-    if (updates.inAppEnabled !== undefined) updateData.inAppEnabled = updates.inAppEnabled;
+    if (updates.emailEnabled !== undefined)
+      updateData.emailEnabled = updates.emailEnabled;
+    if (updates.emailFrequency !== undefined)
+      updateData.emailFrequency = updates.emailFrequency;
+    if (updates.pushEnabled !== undefined)
+      updateData.pushEnabled = updates.pushEnabled;
+    if (updates.smsEnabled !== undefined)
+      updateData.smsEnabled = updates.smsEnabled;
+    if (updates.inAppEnabled !== undefined)
+      updateData.inAppEnabled = updates.inAppEnabled;
 
     await database.notificationPreferencesV2.upsert({
       where: { userId },
@@ -432,12 +441,15 @@ export class NotificationService {
   private filterChannelsByPreferences(
     channels: NotificationChannel[],
     preferences: NotificationPreferencesData,
-    type: NotificationType
+    type: NotificationType,
   ): NotificationChannel[] {
     return channels.filter((channel: any) => {
       switch (channel) {
         case "EMAIL":
-          return preferences.emailEnabled && this.shouldSendEmailForType(type, preferences);
+          return (
+            preferences.emailEnabled &&
+            this.shouldSendEmailForType(type, preferences)
+          );
         case "SMS":
           return preferences.smsEnabled;
         case "PUSH":
@@ -455,7 +467,7 @@ export class NotificationService {
    */
   private shouldSendEmailForType(
     type: NotificationType,
-    preferences: NotificationPreferencesData
+    preferences: NotificationPreferencesData,
   ): boolean {
     switch (type) {
       case "ORDER_PLACED":
@@ -484,7 +496,7 @@ export class NotificationService {
       limit?: number;
       unreadOnly?: boolean;
       type?: NotificationType;
-    } = {}
+    } = {},
   ): Promise<{ notifications: Notification[]; total: number; unread: number }> {
     const { page = 1, limit = 20, unreadOnly = false, type } = options;
     const skip = (page - 1) * limit;
@@ -545,7 +557,10 @@ export class NotificationService {
   /**
    * Delete notification
    */
-  async deleteNotification(notificationId: string, userId: string): Promise<void> {
+  async deleteNotification(
+    notificationId: string,
+    userId: string,
+  ): Promise<void> {
     await database.notification.deleteMany({
       where: {
         id: notificationId,
@@ -572,7 +587,7 @@ export class NotificationService {
    * Send bulk notifications to multiple users
    */
   async sendBulkNotifications(
-    request: BulkNotificationRequest
+    request: BulkNotificationRequest,
   ): Promise<{ sent: number; failed: number }> {
     const { userIds, farmIds, type, channels, title, body, data } = request;
 
@@ -605,8 +620,8 @@ export class NotificationService {
         sent++;
       } catch (error) {
         logger.error(`Failed to send notification to user ${userId}:`, {
-      error: error instanceof Error ? error.message : String(error),
-    });
+          error: error instanceof Error ? error.message : String(error),
+        });
         failed++;
       }
     }
@@ -620,7 +635,7 @@ export class NotificationService {
   async sendSystemAnnouncement(
     title: string,
     body: string,
-    channels: NotificationChannel[] = ["IN_APP", "EMAIL"]
+    channels: NotificationChannel[] = ["IN_APP", "EMAIL"],
   ): Promise<{ sent: number; failed: number }> {
     // Get all active users
     const users = await database.user.findMany({
@@ -660,8 +675,10 @@ export class NotificationService {
 
     // Count by type
     notifications.forEach((n: any) => {
-      stats.byType[n.type] = (stats.byType[n.type] || 0) + 1;
-      stats.byChannel[n.channel] = (stats.byChannel[n.channel] || 0) + 1;
+      const notifType = n.type as NotificationType;
+      const notifChannel = n.channel as NotificationChannel;
+      stats.byType[notifType] = (stats.byType[notifType] || 0) + 1;
+      stats.byChannel[notifChannel] = (stats.byChannel[notifChannel] || 0) + 1;
     });
 
     return stats;
@@ -674,7 +691,7 @@ export class NotificationService {
     userId: string,
     orderId: string,
     status: string,
-    orderData: any
+    orderData: any,
   ): Promise<void> {
     const typeMap: Record<string, NotificationType> = {
       PENDING: "ORDER_PLACED",
@@ -706,7 +723,7 @@ export class NotificationService {
    */
   async sendPaymentNotification(
     userId: string,
-    paymentData: any
+    paymentData: any,
   ): Promise<void> {
     await this.createNotification({
       userId,
@@ -721,10 +738,7 @@ export class NotificationService {
   /**
    * Send low stock alert to farm owner
    */
-  async sendLowStockAlert(
-    farmId: string,
-    productData: any
-  ): Promise<void> {
+  async sendLowStockAlert(farmId: string, productData: any): Promise<void> {
     const farm = await database.farm.findUnique({
       where: { id: farmId },
       select: { ownerId: true },
