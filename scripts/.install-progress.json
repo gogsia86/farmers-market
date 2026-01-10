@@ -1,0 +1,23 @@
+{
+  "installed": [],
+  "failed": [
+    {
+      "name": "@anthropic-ai/sdk",
+      "version": "^0.71.2",
+      "error": "spawnSync C:\\Windows\\system32\\cmd.exe ETIMEDOUT"
+    },
+    {
+      "name": "@auth/prisma-adapter",
+      "version": "^2.11.1",
+      "error": "Command failed: npm install @auth/prisma-adapter@^2.11.1 --legacy-peer-deps --no-save --silent"
+    },
+    {
+      "name": "@azure/monitor-opentelemetry",
+      "version": "^1.14.2",
+      "error": "Command failed: npm install @azure/monitor-opentelemetry@^1.14.2 --legacy-peer-deps --no-save --silent"
+    }
+  ],
+  "skipped": [],
+  "startTime": 1768006717481,
+  "totalPackages": 133
+}
