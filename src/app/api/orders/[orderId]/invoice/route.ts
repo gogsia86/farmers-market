@@ -53,8 +53,8 @@ export async function GET(
           include: {
             product: {
               select: {
-                name: true,
-                unit: true,
+                tax: true,
+                id: true,
               },
             },
           },

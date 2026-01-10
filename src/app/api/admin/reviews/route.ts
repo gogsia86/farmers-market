@@ -144,7 +144,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
               email: true,
               firstName: true,
               lastName: true,
-              name: true,
+              farm: true,
             },
           },
           product: {
@@ -276,7 +276,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
           select: {
             id: true,
             email: true,
-            name: true,
+            farm: true,
             firstName: true,
           },
         },

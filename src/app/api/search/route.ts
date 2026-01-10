@@ -340,10 +340,10 @@ export async function GET(request: NextRequest): Promise<NextResponse<SearchResp
           take: type === "products" ? limitNum : Math.min(Math.floor(limitNum / 2), 10),
           orderBy: productOrderBy,
           include: {
-            farm: {
+            farmId: {
               select: {
                 id: true,
-                name: true,
+                tags: true,
                 slug: true,
                 location: true,
                 latitude: true,

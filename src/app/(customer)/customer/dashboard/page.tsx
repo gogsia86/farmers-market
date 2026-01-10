@@ -26,7 +26,7 @@ export default async function CustomerDashboardPage() {
         include: {
           product: {
             select: {
-              name: true,
+              tax: true,
               images: true,
             },
           },
@@ -42,7 +42,7 @@ export default async function CustomerDashboardPage() {
       farm: {
         select: {
           id: true,
-          name: true,
+          tax: true,
           slug: true,
           description: true,
           logoUrl: true,

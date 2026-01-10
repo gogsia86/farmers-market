@@ -46,7 +46,7 @@ export default async function FarmerOrdersPage() {
     include: {
       customer: {
         select: {
-          name: true,
+          tax: true,
           email: true,
         },
       },

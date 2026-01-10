@@ -209,10 +209,10 @@ export async function GET(
         take: limitNum,
         orderBy,
         include: {
-          farm: {
+          farmId: {
             select: {
               id: true,
-              name: true,
+              tags: true,
               slug: true,
               location: true,
               certifications: true,
@@ -375,10 +375,10 @@ export async function POST(
         reviewCount: 0,
       },
       include: {
-        farm: {
+        farmId: {
           select: {
             id: true,
-            name: true,
+            tags: true,
             slug: true,
           },
         },

@@ -17,7 +17,7 @@ import type { FulfillmentMethod } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 /**
  * 🔍 GET - Retrieve User's Cart
@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
             message: "You must be logged in to view your cart",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -47,12 +47,11 @@ export async function GET(request: NextRequest) {
       include: {
         product: {
           include: {
-            farm: {
+            farmId: {
               select: {
                 id: true,
-                name: true,
                 slug: true,
-                status: true,
+                tags: true,
               },
             },
           },
@@ -71,21 +70,26 @@ export async function GET(request: NextRequest) {
     }, 0);
 
     // Group by farm for delivery fee calculation
-    const farmGroups = cartItems.reduce((groups: any, item: any) => {
-      const farmId = item.farmId;
-      if (!groups[farmId]) {
-        groups[farmId] = {
-          farmId,
-          farmName: item.product.farm.name,
-          items: [],
-          subtotal: 0,
-        };
-      }
-      groups[farmId].items.push(item);
-      const itemTotal = parseFloat(item.priceAtAdd.toString()) * parseFloat(item.quantity.toString());
-      groups[farmId].subtotal += itemTotal;
-      return groups;
-    }, {} as Record<string, any>);
+    const farmGroups = cartItems.reduce(
+      (groups: any, item: any) => {
+        const farmId = item.farmId;
+        if (!groups[farmId]) {
+          groups[farmId] = {
+            farmId,
+            farmName: item.product.farm.name,
+            items: [],
+            subtotal: 0,
+          };
+        }
+        groups[farmId].items.push(item);
+        const itemTotal =
+          parseFloat(item.priceAtAdd.toString()) *
+          parseFloat(item.quantity.toString());
+        groups[farmId].subtotal += itemTotal;
+        return groups;
+      },
+      {} as Record<string, any>,
+    );
 
     return NextResponse.json({
       success: true,
@@ -109,10 +113,11 @@ export async function GET(request: NextRequest) {
         success: false,
         error: {
           code: "CART_FETCH_ERROR",
-          message: error instanceof Error ? error.message : "Failed to retrieve cart",
+          message:
+            error instanceof Error ? error.message : "Failed to retrieve cart",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -133,7 +138,7 @@ export async function POST(request: NextRequest) {
             message: "You must be logged in to add items to cart",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -157,7 +162,7 @@ export async function POST(request: NextRequest) {
             details: validation.error.errors,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -167,11 +172,10 @@ export async function POST(request: NextRequest) {
     const product = await database.product.findUnique({
       where: { id: productId },
       include: {
-        farm: {
+        farmId: {
           select: {
             id: true,
-            name: true,
-            status: true,
+            tags: true,
           },
         },
       },
@@ -186,7 +190,7 @@ export async function POST(request: NextRequest) {
             message: "Product not found",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -200,7 +204,7 @@ export async function POST(request: NextRequest) {
             message: "This product is not currently available",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -214,7 +218,7 @@ export async function POST(request: NextRequest) {
             message: "This farm is not currently active",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -232,7 +236,7 @@ export async function POST(request: NextRequest) {
             message: `Only ${availableQuantity} ${product.unit} available`,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -248,7 +252,8 @@ export async function POST(request: NextRequest) {
 
     if (existingCartItem) {
       // Update existing cart item
-      const newQuantity = parseFloat(existingCartItem.quantity.toString()) + quantity;
+      const newQuantity =
+        parseFloat(existingCartItem.quantity.toString()) + quantity;
 
       if (availableQuantity < newQuantity) {
         return NextResponse.json(
@@ -259,7 +264,7 @@ export async function POST(request: NextRequest) {
               message: `Cannot add more. Only ${availableQuantity} ${product.unit} available`,
             },
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -272,10 +277,10 @@ export async function POST(request: NextRequest) {
         include: {
           product: {
             include: {
-              farm: {
+              farmId: {
                 select: {
                   id: true,
-                  name: true,
+                  tags: true,
                   slug: true,
                 },
               },
@@ -296,16 +301,17 @@ export async function POST(request: NextRequest) {
           quantity: quantity,
           unit: product.unit,
           priceAtAdd: product.price,
-          fulfillmentMethod: (fulfillmentMethod || "DELIVERY") as FulfillmentMethod,
+          fulfillmentMethod: (fulfillmentMethod ||
+            "DELIVERY") as FulfillmentMethod,
           reservedUntil,
         },
         include: {
           product: {
             include: {
-              farm: {
+              farmId: {
                 select: {
                   id: true,
-                  name: true,
+                  tags: true,
                   slug: true,
                 },
               },
@@ -345,10 +351,13 @@ export async function POST(request: NextRequest) {
         success: false,
         error: {
           code: "CART_ADD_ERROR",
-          message: error instanceof Error ? error.message : "Failed to add item to cart",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Failed to add item to cart",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -369,7 +378,7 @@ export async function PATCH(request: NextRequest) {
             message: "You must be logged in to update cart",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -392,7 +401,7 @@ export async function PATCH(request: NextRequest) {
             details: validation.error.errors,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -415,7 +424,7 @@ export async function PATCH(request: NextRequest) {
             message: "Cart item not found",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -429,7 +438,7 @@ export async function PATCH(request: NextRequest) {
             message: "You can only update your own cart items",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -447,7 +456,7 @@ export async function PATCH(request: NextRequest) {
             message: `Only ${availableQuantity} ${cartItem.product.unit} available`,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -461,10 +470,10 @@ export async function PATCH(request: NextRequest) {
       include: {
         product: {
           include: {
-            farm: {
+            farmId: {
               select: {
                 id: true,
-                name: true,
+                tags: true,
                 slug: true,
               },
             },
@@ -492,10 +501,13 @@ export async function PATCH(request: NextRequest) {
         success: false,
         error: {
           code: "CART_UPDATE_ERROR",
-          message: error instanceof Error ? error.message : "Failed to update cart item",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Failed to update cart item",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -516,7 +528,7 @@ export async function DELETE(request: NextRequest) {
             message: "You must be logged in to remove cart items",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -532,7 +544,7 @@ export async function DELETE(request: NextRequest) {
             message: "cartItemId is required",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -550,7 +562,7 @@ export async function DELETE(request: NextRequest) {
             message: "Cart item not found",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -564,7 +576,7 @@ export async function DELETE(request: NextRequest) {
             message: "You can only remove your own cart items",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -592,10 +604,13 @@ export async function DELETE(request: NextRequest) {
         success: false,
         error: {
           code: "CART_DELETE_ERROR",
-          message: error instanceof Error ? error.message : "Failed to remove cart item",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Failed to remove cart item",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

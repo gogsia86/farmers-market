@@ -72,10 +72,9 @@ export default async function OrderDetailsPage({ params }: PageProps) {
           product: {
             select: {
               id: true,
-              name: true,
+              tax: true,
               slug: true,
               images: true,
-              unit: true,
             },
           },
         },
@@ -112,7 +111,7 @@ export default async function OrderDetailsPage({ params }: PageProps) {
 
   // Calculate status progress
   const currentStatusIndex = ORDER_STATUS_STEPS.findIndex(
-    (step) => step.key === order.status
+    (step) => step.key === order.status,
   );
   const isCancelled = order.status === "CANCELLED";
   const isCompleted = order.status === "COMPLETED";
@@ -177,9 +176,9 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                 <h3 className="text-sm font-medium text-red-900">
                   Order Cancelled
                 </h3>
-                <p className="mt-1 text-sm text-red-700"
-                >
-                  This order has been cancelled. If you have any questions, please contact the farm.
+                <p className="mt-1 text-sm text-red-700">
+                  This order has been cancelled. If you have any questions,
+                  please contact the farm.
                 </p>
               </div>
             </div>
@@ -213,19 +212,24 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                       const Icon = step.icon;
 
                       return (
-                        <div key={step.key} className="relative flex items-start">
+                        <div
+                          key={step.key}
+                          className="relative flex items-start"
+                        >
                           <div
                             className={cn(
                               "flex h-10 w-10 items-center justify-center rounded-full border-2 bg-white transition-all",
                               isCompleted
                                 ? "border-green-600 bg-green-50"
-                                : "border-gray-300"
+                                : "border-gray-300",
                             )}
                           >
                             <Icon
                               className={cn(
                                 "h-5 w-5",
-                                isCompleted ? "text-green-600" : "text-gray-400"
+                                isCompleted
+                                  ? "text-green-600"
+                                  : "text-gray-400",
                               )}
                             />
                           </div>
@@ -233,7 +237,9 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                             <p
                               className={cn(
                                 "text-sm font-medium",
-                                isStepCompleted ? "text-gray-900" : "text-gray-500"
+                                isStepCompleted
+                                  ? "text-gray-900"
+                                  : "text-gray-500",
                               )}
                             >
                               {step.label}
@@ -266,7 +272,8 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                             month: "long",
                             day: "numeric",
                           })}
-                          {order.scheduledTimeSlot && ` • ${order.scheduledTimeSlot}`}
+                          {order.scheduledTimeSlot &&
+                            ` • ${order.scheduledTimeSlot}`}
                         </p>
                       </div>
                     </div>
@@ -288,7 +295,10 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                     className="flex items-center gap-4 rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50"
                   >
                     {/* Product Image */}
-                    <Link href={`/products/${item.product.slug}`} className="flex-shrink-0">
+                    <Link
+                      href={`/products/${item.product.slug}`}
+                      className="flex-shrink-0"
+                    >
                       {item.product.images[0] ? (
                         <img
                           src={item.product.images[0]}
@@ -311,9 +321,14 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                         {item.productName}
                       </Link>
                       <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600">
-                        <span>Quantity: {Number(item.quantity)} {item.unit}</span>
+                        <span>
+                          Quantity: {Number(item.quantity)} {item.unit}
+                        </span>
                         <span>•</span>
-                        <span>{formatCurrency(Number(item.unitPrice))} per {item.unit}</span>
+                        <span>
+                          {formatCurrency(Number(item.unitPrice))} per{" "}
+                          {item.unit}
+                        </span>
                       </div>
                     </div>
 
@@ -342,7 +357,9 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                   <div className="mt-1 text-sm text-gray-600">
                     <p>{shippingAddress?.fullName}</p>
                     <p>{shippingAddress?.street}</p>
-                    {shippingAddress?.street2 && <p>{shippingAddress.street2}</p>}
+                    {shippingAddress?.street2 && (
+                      <p>{shippingAddress.street2}</p>
+                    )}
                     <p>
                       {shippingAddress?.city}, {shippingAddress?.state}{" "}
                       {shippingAddress?.zipCode}
@@ -422,7 +439,7 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                         ? "bg-green-100 text-green-800"
                         : order.paymentStatus === "REFUNDED"
                           ? "bg-blue-100 text-blue-800"
-                          : "bg-yellow-100 text-yellow-800"
+                          : "bg-yellow-100 text-yellow-800",
                     )}
                   >
                     {order.paymentStatus}
@@ -449,7 +466,8 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                     <div className="text-sm text-gray-600">
                       <p>{order.farm.address}</p>
                       <p>
-                        {order.farm.city}, {order.farm.state} {order.farm.zipCode}
+                        {order.farm.city}, {order.farm.state}{" "}
+                        {order.farm.zipCode}
                       </p>
                     </div>
                   </div>

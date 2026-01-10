@@ -10,9 +10,9 @@
 
 export async function register() {
   // Only initialize tracing in Node.js runtime (not Edge)
-  if (process.env.NEXT_RUNTIME === "nodejs") {
+  if (process.env["NEXT_RUNTIME"] === "nodejs") {
     // Check if tracing is explicitly enabled via environment variable
-    const tracingEnabled = process.env.ENABLE_TRACING === "true";
+    const tracingEnabled = process.env["ENABLE_TRACING"] === "true";
 
     if (tracingEnabled) {
       try {

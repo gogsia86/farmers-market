@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // TYPES
@@ -31,7 +31,6 @@ interface OrderDetails {
 // ============================================================================
 
 function CheckoutSuccessContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
   const [orders, setOrders] = useState<OrderDetails[]>([]);
@@ -108,7 +107,9 @@ function CheckoutSuccessContent() {
       <div className="container mx-auto px-4 py-16">
         <div className="flex items-center justify-center">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-green-600 border-t-transparent"></div>
-          <span className="ml-3 text-lg text-gray-600">Loading order details...</span>
+          <span className="ml-3 text-lg text-gray-600">
+            Loading order details...
+          </span>
         </div>
       </div>
     );
@@ -130,7 +131,8 @@ function CheckoutSuccessContent() {
               Order Not Found
             </h2>
             <p className="mb-6 text-center text-gray-600">
-              {error || "We couldn't find your order. Please check your email for confirmation."}
+              {error ||
+                "We couldn't find your order. Please check your email for confirmation."}
             </p>
             <Link href="/orders">
               <Button size="lg" className="bg-green-600 hover:bg-green-700">
@@ -147,8 +149,14 @@ function CheckoutSuccessContent() {
   // RENDER SUCCESS
   // ==========================================================================
 
-  const totalAmount = orders.reduce((sum: any, order: any) => sum + order.total, 0);
-  const totalItems = orders.reduce((sum: any, order: any) => sum + order.itemCount, 0);
+  const totalAmount = orders.reduce(
+    (sum: any, order: any) => sum + order.total,
+    0,
+  );
+  const totalItems = orders.reduce(
+    (sum: any, order: any) => sum + order.itemCount,
+    0,
+  );
 
   return (
     <div className="bg-gray-50 min-h-screen py-8">
@@ -174,7 +182,8 @@ function CheckoutSuccessContent() {
           <Card>
             <CardBody className="text-center">
               <p className="text-gray-700">
-                We've sent a confirmation email with your order details to your email address.
+                We've sent a confirmation email with your order details to your
+                email address.
                 <br />
                 You can track your order status from your orders page.
               </p>
@@ -199,14 +208,17 @@ function CheckoutSuccessContent() {
                         <p className="font-semibold text-gray-900">
                           Order #{order.orderNumber}
                         </p>
-                        <p className="text-sm text-gray-600">{order.farmName}</p>
+                        <p className="text-sm text-gray-600">
+                          {order.farmName}
+                        </p>
                       </div>
                       <div className="text-right">
                         <p className="font-semibold text-gray-900">
                           ${order.total.toFixed(2)}
                         </p>
                         <p className="text-sm text-gray-600">
-                          {order.itemCount} item{order.itemCount !== 1 ? "s" : ""}
+                          {order.itemCount} item
+                          {order.itemCount !== 1 ? "s" : ""}
                         </p>
                       </div>
                     </div>
@@ -215,9 +227,13 @@ function CheckoutSuccessContent() {
                       <div className="flex items-center gap-2 rounded-lg bg-white p-3">
                         <Package className="h-4 w-4 text-green-600" />
                         <div className="text-sm">
-                          <span className="text-gray-600">Estimated delivery: </span>
+                          <span className="text-gray-600">
+                            Estimated delivery:{" "}
+                          </span>
                           <span className="font-medium text-gray-900">
-                            {new Date(order.estimatedDelivery).toLocaleDateString("en-US", {
+                            {new Date(
+                              order.estimatedDelivery,
+                            ).toLocaleDateString("en-US", {
                               weekday: "long",
                               year: "numeric",
                               month: "long",
@@ -241,7 +257,9 @@ function CheckoutSuccessContent() {
               {/* Total */}
               <div className="mt-6 border-t pt-4">
                 <div className="flex justify-between text-lg">
-                  <span className="font-semibold text-gray-900">Total Paid</span>
+                  <span className="font-semibold text-gray-900">
+                    Total Paid
+                  </span>
                   <span className="font-semibold text-gray-900">
                     ${totalAmount.toFixed(2)}
                   </span>
@@ -272,8 +290,8 @@ function CheckoutSuccessContent() {
                       Farm Prepares Your Order
                     </h3>
                     <p className="text-sm text-gray-600">
-                      The farm will carefully prepare your fresh produce for delivery or
-                      pickup.
+                      The farm will carefully prepare your fresh produce for
+                      delivery or pickup.
                     </p>
                   </div>
                 </div>
@@ -287,8 +305,8 @@ function CheckoutSuccessContent() {
                   <div>
                     <h3 className="font-medium text-gray-900">Get Notified</h3>
                     <p className="text-sm text-gray-600">
-                      You'll receive email updates when your order is ready for delivery or
-                      pickup.
+                      You'll receive email updates when your order is ready for
+                      delivery or pickup.
                     </p>
                   </div>
                 </div>
@@ -304,7 +322,8 @@ function CheckoutSuccessContent() {
                       Receive Your Fresh Produce
                     </h3>
                     <p className="text-sm text-gray-600">
-                      Enjoy your fresh, locally-grown products from your favorite farms!
+                      Enjoy your fresh, locally-grown products from your
+                      favorite farms!
                     </p>
                   </div>
                 </div>
@@ -332,7 +351,10 @@ function CheckoutSuccessContent() {
             </Button>
 
             <Link href="/" className="w-full">
-              <Button size="lg" className="w-full bg-green-600 hover:bg-green-700">
+              <Button
+                size="lg"
+                className="w-full bg-green-600 hover:bg-green-700"
+              >
                 <Home className="mr-2 h-4 w-4" />
                 Back to Home
               </Button>

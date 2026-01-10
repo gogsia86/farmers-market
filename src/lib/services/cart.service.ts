@@ -126,12 +126,12 @@ export class QuantumCartService {
     const product = await database.product.findUnique({
       where: { id: productId },
       include: {
-        farm: {
+        farmId: {
           select: {
             id: true,
-            name: true,
+            tags: true,
             slug: true,
-            status: true,
+            tags: true,
           },
         },
       },
@@ -185,10 +185,10 @@ export class QuantumCartService {
         include: {
           product: {
             include: {
-              farm: {
+              farmId: {
                 select: {
                   id: true,
-                  name: true,
+                  tags: true,
                   slug: true,
                 },
               },
@@ -218,10 +218,10 @@ export class QuantumCartService {
       include: {
         product: {
           include: {
-            farm: {
+            farmId: {
               select: {
                 id: true,
-                name: true,
+                tags: true,
                 slug: true,
               },
             },
@@ -275,10 +275,10 @@ export class QuantumCartService {
       include: {
         product: {
           include: {
-            farm: {
+            farmId: {
               select: {
                 id: true,
-                name: true,
+                tags: true,
                 slug: true,
               },
             },
@@ -340,10 +340,10 @@ export class QuantumCartService {
         include: {
           product: {
             include: {
-              farm: {
+              farmId: {
                 select: {
                   id: true,
-                  name: true,
+                  tags: true,
                   slug: true,
                 },
               },

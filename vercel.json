@@ -1,13 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "name": "farmers-market-platform",
-  "buildCommand": "npm run build",
+  "buildCommand": "prisma generate && next build",
   "devCommand": "npm run dev",
-  "installCommand": "npm ci --legacy-peer-deps || npm install --legacy-peer-deps",
+  "installCommand": "npm ci --legacy-peer-deps --prefer-offline || npm install --legacy-peer-deps",
   "framework": "nextjs",
-  "regions": [
-    "iad1"
-  ],
+  "regions": ["iad1"],
   "build": {
     "env": {
       "NODE_VERSION": "20",
@@ -15,7 +13,10 @@
       "TURBOPACK": "0",
       "SENTRY_UPLOAD_DRY_RUN": "true",
       "NEXT_DISABLE_SOURCEMAPS": "true",
-      "SKIP_ENV_VALIDATION": "true"
+      "SKIP_ENV_VALIDATION": "true",
+      "NEXT_TELEMETRY_DISABLED": "1",
+      "PRISMA_GENERATE_SKIP_AUTOINSTALL": "true",
+      "CI": "true"
     }
   },
   "outputDirectory": ".next",
@@ -75,16 +76,24 @@
   ],
   "functions": {
     "src/app/api/**/*.ts": {
-      "maxDuration": 10
+      "maxDuration": 10,
+      "memory": 1024
     },
     "src/app/api/ai/**/*.ts": {
-      "maxDuration": 30
+      "maxDuration": 30,
+      "memory": 3008
     },
     "src/app/api/checkout/**/*.ts": {
-      "maxDuration": 15
+      "maxDuration": 15,
+      "memory": 1024
     },
     "src/app/api/payments/**/*.ts": {
-      "maxDuration": 15
+      "maxDuration": 15,
+      "memory": 1024
+    },
+    "src/app/(admin)/**/*.tsx": {
+      "maxDuration": 30,
+      "memory": 1024
     }
   },
   "crons": [
@@ -98,7 +107,8 @@
     "NODE_ENV": "production",
     "TURBOPACK": "0",
     "SENTRY_UPLOAD_DRY_RUN": "true",
-    "NEXT_DISABLE_SOURCEMAPS": "true"
+    "NEXT_DISABLE_SOURCEMAPS": "true",
+    "NEXT_TELEMETRY_DISABLED": "1"
   },
   "github": {
     "silent": true

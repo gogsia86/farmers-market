@@ -13,7 +13,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { z } from "zod";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // Lazy Stripe Initialization
@@ -98,7 +98,7 @@ async function logAdminAction(
   type: string,
   targetId: string,
   description: string,
-  metadata?: Record<string, any>
+  metadata?: Record<string, any>,
 ): Promise<void> {
   await database.adminAction.create({
     data: {
@@ -129,7 +129,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             message: "Authentication required",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -144,7 +144,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             message: "Admin access required",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -171,12 +171,20 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             details: validation.error.flatten(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    const { page, limit, status, search, farmId, customerId, sortBy, sortOrder } =
-      validation.data;
+    const {
+      page,
+      limit,
+      status,
+      search,
+      farmId,
+      customerId,
+      sortBy,
+      sortOrder,
+    } = validation.data;
     const skip = (page - 1) * limit;
 
     // Build where clause
@@ -202,7 +210,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
               email: true,
               firstName: true,
               lastName: true,
-              name: true,
+              tax: true,
             },
           },
           items: {
@@ -210,12 +218,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
               product: {
                 select: {
                   id: true,
-                  name: true,
-                  farmId: true,
+                  tax: true,
                   farm: {
                     select: {
                       id: true,
-                      name: true,
+                      tax: true,
                     },
                   },
                 },
@@ -274,9 +281,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           farmerAmount: parseFloat(order.farmerAmount.toString()),
           Payment: order.Payment
             ? {
-              ...order.Payment,
-              amount: parseFloat(order.Payment.amount.toString()),
-            }
+                ...order.Payment,
+                amount: parseFloat(order.Payment.amount.toString()),
+              }
             : null,
           items: order.items.map((item: any) => ({
             ...item,
@@ -309,10 +316,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         success: false,
         error: {
           code: "FETCH_ORDERS_ERROR",
-          message: error instanceof Error ? error.message : "Failed to fetch orders",
+          message:
+            error instanceof Error ? error.message : "Failed to fetch orders",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -334,7 +342,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
             message: "Authentication required",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -349,7 +357,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
             message: "Admin access required",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -366,7 +374,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
             details: validation.error.flatten(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -380,7 +388,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
           select: {
             id: true,
             email: true,
-            name: true,
+            tax: true,
           },
         },
         Payment: true,
@@ -396,7 +404,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
             message: "Order not found",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -411,7 +419,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
               message: "No payment found for this order",
             },
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -453,9 +461,9 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
         });
 
         const refundedAmount = totalRefunded._sum.amount
-          ? (typeof totalRefunded._sum.amount === 'number'
+          ? typeof totalRefunded._sum.amount === "number"
             ? totalRefunded._sum.amount
-            : totalRefunded._sum.amount.toNumber())
+            : totalRefunded._sum.amount.toNumber()
           : 0;
         const orderTotal = order.total.toNumber();
         const isFullRefund = refundedAmount >= orderTotal;
@@ -486,7 +494,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
             fullRefund: refund.fullRefund,
             reason: refund.reason,
             stripeRefundId: stripeRefund.id,
-          }
+          },
         );
 
         // Send notification to customer
@@ -495,7 +503,9 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
             userId: order.customer.id,
             type: "PAYMENT_RECEIVED",
             channels: ["IN_APP", "EMAIL"],
-            title: refund.fullRefund ? "Refund processed" : "Partial refund processed",
+            title: refund.fullRefund
+              ? "Refund processed"
+              : "Partial refund processed",
             body: `Your refund of $${(stripeRefund.amount / 100).toFixed(2)} for order #${order.orderNumber} has been processed.`,
             data: {
               orderId: order.id,
@@ -508,8 +518,8 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
         }
       } catch (error) {
         logger.error("Refund processing failed:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+          error: error instanceof Error ? error.message : String(error),
+        });
         return NextResponse.json(
           {
             success: false,
@@ -521,7 +531,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
                   : "Failed to process refund",
             },
           },
-          { status: 500 }
+          { status: 500 },
         );
       }
     }
@@ -542,7 +552,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
         {
           previousStatus: order.status,
           newStatus: status,
-        }
+        },
       );
 
       // Send notification to customer
@@ -554,7 +564,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
           {
             orderNumber: order.orderNumber,
             total: order.total.toNumber(),
-          }
+          },
         );
       }
     }
@@ -569,7 +579,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
             email: true,
             firstName: true,
             lastName: true,
-            name: true,
+            tax: true,
           },
         },
         items: {
@@ -577,8 +587,8 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
             product: {
               select: {
                 id: true,
-                name: true,
-                farmId: true,
+                tax: true,
+                farm: true,
               },
             },
           },
@@ -592,27 +602,27 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
       data: {
         order: updatedOrder
           ? {
-            ...updatedOrder,
-            total: parseFloat(updatedOrder.total.toString()),
-            subtotal: parseFloat(updatedOrder.subtotal.toString()),
-            tax: parseFloat(updatedOrder.tax.toString()),
-            deliveryFee: parseFloat(updatedOrder.deliveryFee.toString()),
-            platformFee: parseFloat(updatedOrder.platformFee.toString()),
-            discount: parseFloat(updatedOrder.discount.toString()),
-            farmerAmount: parseFloat(updatedOrder.farmerAmount.toString()),
-            Payment: updatedOrder.Payment
-              ? {
-                ...updatedOrder.Payment,
-                amount: parseFloat(updatedOrder.Payment.amount.toString()),
-              }
-              : null,
-            items: updatedOrder.items.map((item: any) => ({
-              ...item,
-              unitPrice: parseFloat(item.unitPrice.toString()),
-              quantity: parseFloat(item.quantity.toString()),
-              subtotal: parseFloat(item.subtotal.toString()),
-            })),
-          }
+              ...updatedOrder,
+              total: parseFloat(updatedOrder.total.toString()),
+              subtotal: parseFloat(updatedOrder.subtotal.toString()),
+              tax: parseFloat(updatedOrder.tax.toString()),
+              deliveryFee: parseFloat(updatedOrder.deliveryFee.toString()),
+              platformFee: parseFloat(updatedOrder.platformFee.toString()),
+              discount: parseFloat(updatedOrder.discount.toString()),
+              farmerAmount: parseFloat(updatedOrder.farmerAmount.toString()),
+              Payment: updatedOrder.Payment
+                ? {
+                    ...updatedOrder.Payment,
+                    amount: parseFloat(updatedOrder.Payment.amount.toString()),
+                  }
+                : null,
+              items: updatedOrder.items.map((item: any) => ({
+                ...item,
+                unitPrice: parseFloat(item.unitPrice.toString()),
+                quantity: parseFloat(item.quantity.toString()),
+                subtotal: parseFloat(item.subtotal.toString()),
+              })),
+            }
           : null,
       },
     });
@@ -625,10 +635,11 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
         success: false,
         error: {
           code: "UPDATE_ORDER_ERROR",
-          message: error instanceof Error ? error.message : "Failed to update order",
+          message:
+            error instanceof Error ? error.message : "Failed to update order",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

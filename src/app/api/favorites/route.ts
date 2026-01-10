@@ -17,7 +17,7 @@ import { database } from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 /**
  * 🔍 GET - Retrieve User's Favorites
@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
             message: "You must be logged in to view favorites",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -67,7 +67,6 @@ export async function GET(request: NextRequest) {
             bannerUrl: true,
             status: true,
             averageRating: true,
-            city: true,
             state: true,
             certifications: true,
           },
@@ -133,10 +132,13 @@ export async function GET(request: NextRequest) {
         success: false,
         error: {
           code: "FAVORITES_FETCH_ERROR",
-          message: error instanceof Error ? error.message : "Failed to retrieve favorites",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Failed to retrieve favorites",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -157,22 +159,21 @@ export async function POST(request: NextRequest) {
             message: "You must be logged in to add favorites",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     const body = await request.json();
 
     // Validation schema - must have either farmId or productId
-    const AddFavoriteSchema = z.object({
-      farmId: z.string().optional(),
-      productId: z.string().optional(),
-    }).refine(
-      (data) => data.farmId || data.productId,
-      {
+    const AddFavoriteSchema = z
+      .object({
+        farmId: z.string().optional(),
+        productId: z.string().optional(),
+      })
+      .refine((data) => data.farmId || data.productId, {
         message: "Either farmId or productId must be provided",
-      }
-    );
+      });
 
     const validation = AddFavoriteSchema.safeParse(body);
     if (!validation.success) {
@@ -185,7 +186,7 @@ export async function POST(request: NextRequest) {
             details: validation.error.errors,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -207,7 +208,7 @@ export async function POST(request: NextRequest) {
               message: "Farm not found",
             },
           },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
@@ -220,7 +221,7 @@ export async function POST(request: NextRequest) {
               message: "This farm is not currently active",
             },
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -241,7 +242,7 @@ export async function POST(request: NextRequest) {
               message: "Product not found",
             },
           },
-          { status: 404 }
+          { status: 404 },
         );
       }
     }
@@ -264,7 +265,7 @@ export async function POST(request: NextRequest) {
             message: "This item is already in your favorites",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -279,7 +280,7 @@ export async function POST(request: NextRequest) {
         farm: {
           select: {
             id: true,
-            name: true,
+            farm: true,
             slug: true,
             logoUrl: true,
           },
@@ -341,10 +342,11 @@ export async function POST(request: NextRequest) {
         success: false,
         error: {
           code: "FAVORITE_ADD_ERROR",
-          message: error instanceof Error ? error.message : "Failed to add favorite",
+          message:
+            error instanceof Error ? error.message : "Failed to add favorite",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -365,7 +367,7 @@ export async function DELETE(request: NextRequest) {
             message: "You must be logged in to remove favorites",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -384,7 +386,7 @@ export async function DELETE(request: NextRequest) {
             message: "favoriteId, farmId, or productId is required",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -415,7 +417,7 @@ export async function DELETE(request: NextRequest) {
             message: "Favorite not found",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -429,7 +431,7 @@ export async function DELETE(request: NextRequest) {
             message: "You can only remove your own favorites",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -482,10 +484,13 @@ export async function DELETE(request: NextRequest) {
         success: false,
         error: {
           code: "FAVORITE_DELETE_ERROR",
-          message: error instanceof Error ? error.message : "Failed to remove favorite",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Failed to remove favorite",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -8,7 +8,15 @@ import { OrderConfirmationTracking } from "@/components/orders/OrderConfirmation
 import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
 import { formatCurrency } from "@/lib/utils/currency";
-import { Calendar, Check, Mail, MapPin, Package, Phone, Truck } from "lucide-react";
+import {
+  Calendar,
+  Check,
+  Mail,
+  MapPin,
+  Package,
+  Phone,
+  Truck,
+} from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -50,9 +58,8 @@ export default async function OrderConfirmationPage({ params }: PageProps) {
           product: {
             select: {
               id: true,
-              name: true,
+              tax: true,
               images: true,
-              unit: true,
             },
           },
         },
@@ -94,7 +101,7 @@ export default async function OrderConfirmationPage({ params }: PageProps) {
         totalValue={Number(order.total)}
         tax={Number(order.tax || 0)}
         shipping={Number(order.deliveryFee || 0)}
-        items={order.items.map(item => ({
+        items={order.items.map((item) => ({
           productId: item.productId,
           productName: item.productName,
           price: Number(item.unitPrice),
@@ -125,7 +132,8 @@ export default async function OrderConfirmationPage({ params }: PageProps) {
                   Order #{order.orderNumber}
                 </h2>
                 <p className="text-sm text-gray-500">
-                  Placed on {new Date(order.createdAt).toLocaleDateString("en-US", {
+                  Placed on{" "}
+                  {new Date(order.createdAt).toLocaleDateString("en-US", {
                     weekday: "long",
                     year: "numeric",
                     month: "long",
@@ -266,24 +274,34 @@ export default async function OrderConfirmationPage({ params }: PageProps) {
             </h3>
             <div className="space-y-4">
               <div>
-                <p className="text-sm font-medium text-gray-900">Delivery Address</p>
+                <p className="text-sm font-medium text-gray-900">
+                  Delivery Address
+                </p>
                 <p className="mt-1 text-sm text-gray-600">
                   {shippingAddress?.fullName}
                 </p>
-                <p className="text-sm text-gray-600">{shippingAddress?.street}</p>
+                <p className="text-sm text-gray-600">
+                  {shippingAddress?.street}
+                </p>
                 {shippingAddress?.street2 && (
-                  <p className="text-sm text-gray-600">{shippingAddress.street2}</p>
+                  <p className="text-sm text-gray-600">
+                    {shippingAddress.street2}
+                  </p>
                 )}
                 <p className="text-sm text-gray-600">
                   {shippingAddress?.city}, {shippingAddress?.state}{" "}
                   {shippingAddress?.zipCode}
                 </p>
-                <p className="text-sm text-gray-600">{shippingAddress?.phone}</p>
+                <p className="text-sm text-gray-600">
+                  {shippingAddress?.phone}
+                </p>
               </div>
 
               {order.scheduledDate && (
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Scheduled Delivery</p>
+                  <p className="text-sm font-medium text-gray-900">
+                    Scheduled Delivery
+                  </p>
                   <p className="mt-1 flex items-center text-sm text-gray-600">
                     <Calendar className="mr-2 h-4 w-4" />
                     {new Date(order.scheduledDate).toLocaleDateString("en-US", {
@@ -299,7 +317,9 @@ export default async function OrderConfirmationPage({ params }: PageProps) {
 
               {order.specialInstructions && (
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Delivery Instructions</p>
+                  <p className="text-sm font-medium text-gray-900">
+                    Delivery Instructions
+                  </p>
                   <p className="mt-1 text-sm text-gray-600">
                     {order.specialInstructions}
                   </p>

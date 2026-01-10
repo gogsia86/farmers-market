@@ -165,7 +165,7 @@ export default async function OrderDetailsPage({ params }: PageProps) {
           product: {
             select: {
               id: true,
-              name: true,
+              tax: true,
               primaryPhotoUrl: true,
               status: true,
             },

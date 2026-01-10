@@ -70,7 +70,7 @@ export async function GET(
     const farm = await database.farm.findUnique({
       where: { id: farmId },
       include: {
-        owner: {
+        ownerId: {
           select: {
             id: true,
             firstName: true,

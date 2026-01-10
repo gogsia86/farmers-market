@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
     const farm = await database.farm.findUnique({
       where: { id: farmId },
       include: {
-        owner: {
+        ownerId: {
           select: {
             id: true,
             email: true,
@@ -148,7 +148,7 @@ export async function POST(request: NextRequest) {
           updatedAt: now,
         },
         include: {
-          owner: {
+          ownerId: {
             select: {
               id: true,
               email: true,
@@ -211,7 +211,7 @@ export async function POST(request: NextRequest) {
           updatedAt: now,
         },
         include: {
-          owner: {
+          ownerId: {
             select: {
               id: true,
               email: true,

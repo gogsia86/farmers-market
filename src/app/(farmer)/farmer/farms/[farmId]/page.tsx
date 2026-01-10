@@ -54,7 +54,7 @@ export default async function FarmDetailsPage({ params }: PageProps) {
   const farm = await database.farm.findUnique({
     where: { id: farmId },
     include: {
-      owner: {
+      ownerId: {
         select: {
           id: true,
           firstName: true,

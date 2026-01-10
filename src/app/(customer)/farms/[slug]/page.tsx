@@ -20,14 +20,23 @@ interface PageProps {
 
 // Type definitions for optimized data
 type FarmDetailData = Awaited<ReturnType<typeof farmService.getFarmDetailData>>;
-type FarmProduct = Awaited<ReturnType<typeof farmService.getFarmProducts>>[number];
-type FarmCertification = Awaited<ReturnType<typeof farmService.getFarmCertifications>>[number];
+type FarmProduct = Awaited<
+  ReturnType<typeof farmService.getFarmProducts>
+>[number];
+type FarmCertification = Awaited<
+  ReturnType<typeof farmService.getFarmCertifications>
+>[number];
 
 // ============================================================================
 // PHOTO GALLERY COMPONENT
 // ============================================================================
 
-function FarmPhotoGallery({ images, logoUrl, bannerUrl, farmName }: {
+function FarmPhotoGallery({
+  images,
+  logoUrl,
+  bannerUrl,
+  farmName,
+}: {
   images: string[];
   logoUrl: string | null;
   bannerUrl: string | null;
@@ -75,7 +84,10 @@ function FarmPhotoGallery({ images, logoUrl, bannerUrl, farmName }: {
       {additionalPhotos.length > 0 && (
         <div className="grid grid-cols-2 gap-2 rounded-b-lg bg-white p-2 md:grid-cols-4">
           {additionalPhotos.map((photo: any, index: any) => (
-            <div key={index} className="relative h-24 overflow-hidden rounded-md">
+            <div
+              key={index}
+              className="relative h-24 overflow-hidden rounded-md"
+            >
               <Image
                 src={photo}
                 alt={`${farmName} - Photo ${index + 2}`}
@@ -128,7 +140,9 @@ async function FarmProducts({ farmId }: { farmId: string }) {
         // Get product image - always show something
         const productImage =
           product.primaryPhotoUrl ||
-          (product.images && product.images.length > 0 ? product.images[0] : null);
+          (product.images && product.images.length > 0
+            ? product.images[0]
+            : null);
 
         return (
           <Link
@@ -219,7 +233,8 @@ async function FarmCertifications({ farmId }: { farmId: string }) {
               <p className="text-sm text-gray-600">{cert.certifierName}</p>
               {cert.expirationDate && (
                 <p className="mt-1 text-xs text-gray-500">
-                  Valid until {new Date(cert.expirationDate).toLocaleDateString()}
+                  Valid until{" "}
+                  {new Date(cert.expirationDate).toLocaleDateString()}
                 </p>
               )}
             </div>
@@ -251,7 +266,7 @@ export default async function FarmDetailPage({ params }: PageProps) {
   }
 
   // Collect all photo URLs
-  const photoUrls = farm?.photos?.map(photo => photo.photoUrl) ?? [];
+  const photoUrls = farm?.photos?.map((photo) => photo.photoUrl) ?? [];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -269,11 +284,21 @@ export default async function FarmDetailPage({ params }: PageProps) {
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div className="flex-1">
               <div className="mb-2 flex items-center gap-2">
-                <h1 className="text-4xl font-bold text-gray-900">{farm.name}</h1>
+                <h1 className="text-4xl font-bold text-gray-900">
+                  {farm.name}
+                </h1>
                 {farm.verificationStatus === "VERIFIED" && (
                   <span className="flex items-center rounded-full bg-green-100 px-3 py-1 text-sm font-semibold text-green-800">
-                    <svg className="mr-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    <svg
+                      className="mr-1 h-4 w-4"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     Verified Farm
                   </span>
@@ -282,11 +307,28 @@ export default async function FarmDetailPage({ params }: PageProps) {
 
               {/* Location */}
               <div className="mb-4 flex items-center text-gray-600">
-                <svg className="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                <svg
+                  className="mr-2 h-5 w-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
                 </svg>
-                <span>{farm.city}, {farm.state} {farm.zipCode}</span>
+                <span>
+                  {farm.city}, {farm.state} {farm.zipCode}
+                </span>
               </div>
 
               {/* Description */}
@@ -297,8 +339,12 @@ export default async function FarmDetailPage({ params }: PageProps) {
               {/* Story */}
               {farm.story && (
                 <div className="mb-4 rounded-lg bg-white p-6 shadow-sm">
-                  <h3 className="mb-3 text-xl font-semibold text-gray-900">Our Story</h3>
-                  <p className="whitespace-pre-line text-gray-700">{farm.story}</p>
+                  <h3 className="mb-3 text-xl font-semibold text-gray-900">
+                    Our Story
+                  </h3>
+                  <p className="whitespace-pre-line text-gray-700">
+                    {farm.story}
+                  </p>
                 </div>
               )}
             </div>
@@ -331,7 +377,12 @@ export default async function FarmDetailPage({ params }: PageProps) {
                       </span>
                       <div className="flex text-yellow-500">
                         {[...Array(5)].map((_: any, i: any) => (
-                          <svg key={i} className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                          <svg
+                            key={i}
+                            className="h-5 w-5"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                           </svg>
                         ))}
@@ -344,24 +395,59 @@ export default async function FarmDetailPage({ params }: PageProps) {
                 <div className="space-y-3 border-t pt-4">
                   {farm.phone && (
                     <div className="flex items-center text-sm text-gray-600">
-                      <svg className="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                      <svg
+                        className="mr-2 h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                        />
                       </svg>
                       <span>{farm.phone}</span>
                     </div>
                   )}
                   {farm.email && (
                     <div className="flex items-center text-sm text-gray-600">
-                      <svg className="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      <svg
+                        className="mr-2 h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                        />
                       </svg>
                       <span>{farm.email}</span>
                     </div>
                   )}
                   {farm.website && (
-                    <a href={farm.website} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm text-green-700 hover:underline">
-                      <svg className="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                    <a
+                      href={farm.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center text-sm text-green-700 hover:underline"
+                    >
+                      <svg
+                        className="mr-2 h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
+                        />
                       </svg>
                       <span>Visit Website</span>
                     </a>
@@ -380,7 +466,11 @@ export default async function FarmDetailPage({ params }: PageProps) {
         </div>
 
         {/* Certifications Section */}
-        <Suspense fallback={<div className="mb-8 h-32 animate-pulse rounded-lg bg-white" />}>
+        <Suspense
+          fallback={
+            <div className="mb-8 h-32 animate-pulse rounded-lg bg-white" />
+          }
+        >
           <div className="mb-8">
             <FarmCertifications farmId={farm.id} />
           </div>
@@ -395,13 +485,18 @@ export default async function FarmDetailPage({ params }: PageProps) {
             </div>
           </div>
 
-          <Suspense fallback={
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {[...Array(8)].map((_: any, i: any) => (
-                <div key={i} className="h-80 animate-pulse rounded-lg bg-white" />
-              ))}
-            </div>
-          }>
+          <Suspense
+            fallback={
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {[...Array(8)].map((_: any, i: any) => (
+                  <div
+                    key={i}
+                    className="h-80 animate-pulse rounded-lg bg-white"
+                  />
+                ))}
+              </div>
+            }
+          >
             <FarmProducts farmId={farm.id} />
           </Suspense>
         </div>
@@ -418,7 +513,10 @@ function ProductsSkeleton() {
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {[...Array(8)].map((_: any, i: any) => (
-        <div key={i} className="animate-pulse rounded-lg bg-white p-4 shadow-sm">
+        <div
+          key={i}
+          className="animate-pulse rounded-lg bg-white p-4 shadow-sm"
+        >
           <div className="mb-4 aspect-square rounded-lg bg-gray-200" />
           <div className="mb-2 h-5 w-3/4 rounded bg-gray-200" />
           <div className="mb-3 h-4 w-1/2 rounded bg-gray-200" />
@@ -436,7 +534,10 @@ function CertificationsSkeleton() {
       <h2 className="mb-6 text-3xl font-bold text-gray-900">Certifications</h2>
       <div className="space-y-4">
         {[...Array(3)].map((_: any, i: any) => (
-          <div key={i} className="animate-pulse rounded-lg bg-white p-6 shadow-sm">
+          <div
+            key={i}
+            className="animate-pulse rounded-lg bg-white p-6 shadow-sm"
+          >
             <div className="flex items-start gap-4">
               <div className="h-16 w-16 rounded-full bg-gray-200" />
               <div className="flex-1 space-y-3">
@@ -456,7 +557,9 @@ function CertificationsSkeleton() {
 // METADATA (Optimized with minimal fields)
 // ============================================================================
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   // Await params in Next.js 15 (params is now a Promise)
   const { slug } = await params;
 
@@ -469,14 +572,19 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  const image = farm?.bannerUrl || farm?.logoUrl || (farm?.images && farm.images[0]) || "/images/placeholder-farm.jpg";
+  const image =
+    farm?.bannerUrl ||
+    farm?.logoUrl ||
+    (farm?.images && farm.images[0]) ||
+    "/images/placeholder-farm.jpg";
 
   return {
     title: `${farm.name} | Farmers Market`,
     description: farm.description || `Discover fresh produce from ${farm.name}`,
     openGraph: {
       title: farm.name,
-      description: farm.description || `Discover fresh produce from ${farm.name}`,
+      description:
+        farm.description || `Discover fresh produce from ${farm.name}`,
       images: [image],
     },
   };

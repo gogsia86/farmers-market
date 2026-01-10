@@ -173,7 +173,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             select: {
               id: true,
               email: true,
-              name: true,
+              type: true,
               firstName: true,
               lastName: true,
             },

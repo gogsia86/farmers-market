@@ -70,17 +70,17 @@ export async function GET(
     const product = await database.product.findUnique({
       where: { id: productId },
       include: {
-        farm: {
+        farmId: {
           select: {
             id: true,
-            name: true,
+            tags: true,
             slug: true,
             location: true,
             certifications: true,
             owner: {
               select: {
                 id: true,
-                name: true,
+                tags: true,
                 firstName: true,
                 lastName: true,
               },
@@ -185,7 +185,7 @@ export async function PATCH(
     const existingProduct = await database.product.findUnique({
       where: { id: productId },
       include: {
-        farm: {
+        farmId: {
           select: {
             id: true,
             ownerId: true,
@@ -308,10 +308,10 @@ export async function PATCH(
       where: { id: productId },
       data,
       include: {
-        farm: {
+        farmId: {
           select: {
             id: true,
-            name: true,
+            tags: true,
             slug: true,
           },
         },
@@ -391,7 +391,7 @@ export async function DELETE(
     const existingProduct = await database.product.findUnique({
       where: { id: productId },
       include: {
-        farm: {
+        farmId: {
           select: {
             id: true,
             ownerId: true,
@@ -435,10 +435,10 @@ export async function DELETE(
         status: "DISCONTINUED" as ProductStatus,
       },
       include: {
-        farm: {
+        farmId: {
           select: {
             id: true,
-            name: true,
+            tags: true,
             slug: true,
           },
         },

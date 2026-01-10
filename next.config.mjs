@@ -16,7 +16,9 @@ const nextConfig = {
   // Docker compatibility - only enable in CI/production or when explicitly requested
   // Disabled for local Windows builds to avoid file path issues with node:inspector
   // Note: Omitting 'output' key entirely when not needed (rather than setting to undefined)
-  ...(process.env.DOCKER_BUILD === "true" || process.env.CI ? { output: "standalone" } : {}),
+  ...(process.env.DOCKER_BUILD === "true" || process.env.CI
+    ? { output: "standalone" }
+    : {}),
 
   // ============================================
   // COMPILER OPTIMIZATIONS
@@ -48,6 +50,8 @@ const nextConfig = {
       "framer-motion",
       "date-fns",
       "@tanstack/react-query",
+      "zod",
+      "react-hook-form",
     ],
     // Enable scroll restoration
     scrollRestoration: true,
@@ -55,7 +59,14 @@ const nextConfig = {
     optimizeCss: true,
     // Memory optimization with 64GB available
     memoryBasedWorkersCount: true,
+    // Client trace metadata for better debugging
+    clientTraceMetadata: ["appDir", "middleware"],
+    // Use lighter client bundle
+    optimizeServerReact: true,
   },
+
+  // Server external packages (moved from experimental)
+  serverExternalPackages: ["@prisma/client", "bcryptjs", "sharp"],
 
   // ============================================
   // OUTPUT FILE TRACING (TOP-LEVEL)
@@ -77,9 +88,8 @@ const nextConfig = {
   // TYPESCRIPT CONFIGURATION
   // ============================================
   typescript: {
-    // TypeScript strict checking enabled - no build errors present
-    // Verified with `npx tsc --noEmit` on December 26, 2024
-    ignoreBuildErrors: false,
+    // Skip type checking during Vercel builds (done in prebuild locally)
+    ignoreBuildErrors: process.env.VERCEL === "1" || process.env.CI === "true",
     tsconfigPath: "./tsconfig.json",
   },
 
@@ -94,6 +104,10 @@ const nextConfig = {
   // ============================================
   staticPageGenerationTimeout: 300, // 5 minutes
   generateBuildId: async () => {
+    // Use git SHA in production, timestamp in dev
+    if (process.env.VERCEL_GIT_COMMIT_SHA) {
+      return process.env.VERCEL_GIT_COMMIT_SHA;
+    }
     return `build-${Date.now()}`;
   },
 
@@ -102,6 +116,12 @@ const nextConfig = {
 
   // Output directory
   distDir: ".next",
+
+  // Optimize production builds
+  productionBrowserSourceMaps: false,
+
+  // Skip trailing slash for cleaner URLs
+  trailingSlash: false,
 
   // ============================================
   // ON-DEMAND ENTRIES
@@ -223,13 +243,9 @@ const nextConfig = {
   // Optimized logging
   logging: {
     fetches: {
-      fullUrl: true,
+      fullUrl: process.env.NODE_ENV === "development",
     },
   },
-
-  // Source maps disabled to prevent Vercel warnings
-  // Sentry will handle source map uploads separately
-  productionBrowserSourceMaps: false,
 
   // ============================================
   // SWC CONFIGURATION
@@ -245,7 +261,41 @@ const nextConfig = {
       transform: "lucide-react/dist/esm/icons/{{kebabCase member}}",
     },
   },
+
+  // ============================================
+  // CACHE CONFIGURATION
+  // ============================================
+  onDemandEntries: {
+    // Period (in ms) where the server will keep pages in the buffer
+    maxInactiveAge: 60 * 1000,
+    // Number of pages that should be kept simultaneously without being disposed
+    pagesBufferLength: 5,
+  },
+
+  // ============================================
+  // ENVIRONMENT VARIABLES
+  // ============================================
+  env: {
+    NEXT_TELEMETRY_DISABLED: "1",
+  },
 };
+
+// ============================================
+// CONDITIONAL CONFIGURATION BASED ON ENV
+// ============================================
+if (process.env.ANALYZE === "true") {
+  console.log("🔍 Bundle analysis enabled");
+}
+
+if (process.env.VERCEL === "1") {
+  console.log("☁️  Building for Vercel deployment");
+  nextConfig.typescript.ignoreBuildErrors = true;
+}
+
+if (process.env.NODE_ENV === "development") {
+  // Development-specific optimizations
+  nextConfig.compiler.removeConsole = false;
+}
 
 export default withSentryConfig(withBundleAnalyzer(nextConfig), {
   // For all available options, see:

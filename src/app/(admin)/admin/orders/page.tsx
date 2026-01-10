@@ -27,10 +27,10 @@ export default async function AdminOrdersPage() {
     orderBy: { createdAt: "desc" },
     take: 100,
     include: {
-      user: {
+      customer: {
         select: {
           id: true,
-          name: true,
+          tax: true,
           email: true,
         },
       },
@@ -39,7 +39,7 @@ export default async function AdminOrdersPage() {
           product: {
             select: {
               id: true,
-              name: true,
+              tax: true,
               slug: true,
             },
           },
@@ -192,9 +192,11 @@ export default async function AdminOrdersPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm">
                         <div className="font-medium text-gray-900">
-                          {order.user.name}
+                          {order.customer.name}
                         </div>
-                        <div className="text-gray-500">{order.user.email}</div>
+                        <div className="text-gray-500">
+                          {order.customer.email}
+                        </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">

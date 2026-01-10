@@ -51,11 +51,6 @@ export default async function AnalyticsPage() {
     "revenue",
     30,
   );
-  const ordersTimeSeries = await platformAnalyticsService.getTimeSeriesData(
-    "orders",
-    30,
-  );
-
   // Calculate trends
   const recentRevenue = revenueTimeSeries
     .slice(-7)
@@ -63,10 +58,7 @@ export default async function AnalyticsPage() {
   const previousRevenue = revenueTimeSeries
     .slice(-14, -7)
     .reduce((sum: number, d: { value: number }) => sum + d.value, 0);
-  const weeklyRevenueTrend =
-    previousRevenue > 0
-      ? ((recentRevenue - previousRevenue) / previousRevenue) * 100
-      : 100;
+  // Weekly revenue trend calculation removed (not currently used)
 
   // Fetch chart data (last 30 days)
   const chartRevenueData = await database.$queryRaw<

@@ -16,7 +16,9 @@ import { redirect } from "next/navigation";
 /**
  * Converts Prisma Decimal objects to plain numbers for client serialization
  */
-function serializeDecimal(value: Prisma.Decimal | number | null | undefined): number | null {
+function serializeDecimal(
+  value: Prisma.Decimal | number | null | undefined,
+): number | null {
   if (value === null || value === undefined) return null;
   if (typeof value === "number") return value;
   return value.toNumber();
@@ -81,13 +83,12 @@ export default async function CheckoutPage() {
     include: {
       product: {
         include: {
-          farm: {
+          farmId: {
             select: {
               id: true,
               name: true,
               slug: true,
               address: true,
-              city: true,
               state: true,
               zipCode: true,
             },

@@ -16,7 +16,7 @@ import {
   MapPin,
   Package,
   Truck,
-  XCircle
+  XCircle,
 } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -140,8 +140,7 @@ export default async function OrdersPage({ searchParams }: PageProps) {
           select: {
             id: true,
             name: true,
-            city: true,
-            state: true,
+            slug: true,
           },
         },
         items: {
@@ -185,10 +184,11 @@ export default async function OrdersPage({ searchParams }: PageProps) {
         <div className="mb-6 flex flex-wrap gap-2">
           <Link
             href="/orders"
-            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${!statusFilter
-              ? "bg-green-600 text-white"
-              : "bg-white text-gray-700 hover:bg-gray-100"
-              }`}
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+              !statusFilter
+                ? "bg-green-600 text-white"
+                : "bg-white text-gray-700 hover:bg-gray-100"
+            }`}
           >
             All Orders ({totalCount})
           </Link>
@@ -196,10 +196,11 @@ export default async function OrdersPage({ searchParams }: PageProps) {
             <Link
               key={status}
               href={`/orders?status=${status}`}
-              className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${statusFilter === status
-                ? "bg-green-600 text-white"
-                : "bg-white text-gray-700 hover:bg-gray-100"
-                }`}
+              className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                statusFilter === status
+                  ? "bg-green-600 text-white"
+                  : "bg-white text-gray-700 hover:bg-gray-100"
+              }`}
             >
               {config.label}
             </Link>
@@ -229,7 +230,8 @@ export default async function OrdersPage({ searchParams }: PageProps) {
           <div className="space-y-4">
             {orders.map((order: any) => {
               const status = order.status as keyof typeof ORDER_STATUSES;
-              const statusConfig = ORDER_STATUSES[status] || ORDER_STATUSES.PENDING;
+              const statusConfig =
+                ORDER_STATUSES[status] || ORDER_STATUSES.PENDING;
               const StatusIcon = statusConfig.icon;
 
               return (
@@ -256,11 +258,14 @@ export default async function OrdersPage({ searchParams }: PageProps) {
                         <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-gray-600">
                           <span className="flex items-center gap-1">
                             <Calendar className="h-4 w-4" />
-                            {new Date(order.createdAt).toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric",
-                            })}
+                            {new Date(order.createdAt).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              },
+                            )}
                           </span>
                           <span className="flex items-center gap-1">
                             <MapPin className="h-4 w-4" />
@@ -268,7 +273,8 @@ export default async function OrdersPage({ searchParams }: PageProps) {
                           </span>
                           <span className="flex items-center gap-1">
                             <Package className="h-4 w-4" />
-                            {order.items.length} item{order.items.length !== 1 ? "s" : ""}
+                            {order.items.length} item
+                            {order.items.length !== 1 ? "s" : ""}
                           </span>
                         </div>
                       </div>
@@ -294,13 +300,15 @@ export default async function OrdersPage({ searchParams }: PageProps) {
                               {item.productName}
                             </span>
                             <span className="text-gray-600">
-                              {Number(item.quantity)} {item.unit} × {formatCurrency(Number(item.unitPrice))}
+                              {Number(item.quantity)} {item.unit} ×{" "}
+                              {formatCurrency(Number(item.unitPrice))}
                             </span>
                           </div>
                         ))}
                         {order.items.length > 3 && (
                           <p className="text-sm text-gray-500">
-                            + {order.items.length - 3} more item{order.items.length - 3 !== 1 ? "s" : ""}
+                            + {order.items.length - 3} more item
+                            {order.items.length - 3 !== 1 ? "s" : ""}
                           </p>
                         )}
                       </div>
@@ -313,13 +321,17 @@ export default async function OrdersPage({ searchParams }: PageProps) {
                         <span className="text-blue-900">
                           Scheduled for:{" "}
                           <span className="font-medium">
-                            {new Date(order.scheduledDate).toLocaleDateString("en-US", {
-                              weekday: "long",
-                              month: "long",
-                              day: "numeric",
-                            })}
+                            {new Date(order.scheduledDate).toLocaleDateString(
+                              "en-US",
+                              {
+                                weekday: "long",
+                                month: "long",
+                                day: "numeric",
+                              },
+                            )}
                           </span>
-                          {order.scheduledTimeSlot && ` - ${order.scheduledTimeSlot}`}
+                          {order.scheduledTimeSlot &&
+                            ` - ${order.scheduledTimeSlot}`}
                         </span>
                       </div>
                     )}

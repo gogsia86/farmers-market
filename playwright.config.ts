@@ -7,15 +7,15 @@ import path from "path";
 
 // Determine the port to use (allow override via env)
 // Default to 3000 (Docker) - use TEST_PORT=3001 for dev script
-const PORT = process.env.TEST_PORT || process.env.PORT || "3000";
+const PORT = process.env["TEST_PORT"] || process.env["PORT"] || "3000";
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || `http://localhost:${PORT}`;
 
 export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : 6, // Use 6 workers on local (HP OMEN optimization)
+  forbidOnly: !!process.env["CI"],
+  retries: process.env["CI"] ? 2 : 0,
+  workers: process.env["CI"] ? 1 : 6, // Use 6 workers on local (HP OMEN optimization)
   reporter: "html",
   timeout: 30000, // 30 second timeout per test
   globalSetup: path.join(__dirname, "tests", "global-setup.ts"),
@@ -65,14 +65,14 @@ export default defineConfig({
   webServer: {
     command: `npx next dev --turbo -p ${PORT} -H 0.0.0.0`,
     url: `http://localhost:${PORT}/api/health`,
-    reuseExistingServer: !process.env.CI, // Always reuse existing server locally
+    reuseExistingServer: !process.env["CI"], // Always reuse existing server locally
     timeout: 180 * 1000, // 3 minutes timeout for server startup
     stdout: "pipe", // Show server output for debugging
     stderr: "pipe",
     env: {
       // Use test database - explicitly set to port 5433 for E2E tests
       DATABASE_URL:
-        process.env.TEST_DATABASE_URL ||
+        process.env["TEST_DATABASE_URL"] ||
         "postgresql://postgres:test_password_123@127.0.0.1:5433/farmersmarket_test",
       NEXTAUTH_URL: `http://localhost:${PORT}`,
       NEXTAUTH_SECRET:
