@@ -122,9 +122,11 @@ export default async function FarmsPage() {
                   {farm.photos && farm.photos.length > 0 ? (
                     <Image
                       src={
-                        farm.photos[0].thumbnailUrl || farm.photos[0].photoUrl
+                        farm.photos[0]?.thumbnailUrl ||
+                        farm.photos[0]?.photoUrl ||
+                        ""
                       }
-                      alt={farm.photos[0].altText || farm.name}
+                      alt={farm.photos[0]?.altText || farm.name}
                       fill
                       className="object-cover transition-transform group-hover:scale-105"
                     />

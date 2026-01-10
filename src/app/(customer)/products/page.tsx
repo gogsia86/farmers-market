@@ -420,7 +420,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
             {/* Products Grid */}
             {products.length > 0 && (
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {products.map((product) => {
+                {products.map((product: any) => {
                   return (
                     <Link
                       key={product.id}

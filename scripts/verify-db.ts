@@ -84,7 +84,7 @@ async function verifyDatabase() {
 
     if (farms.length > 0) {
       console.log("🏪 Sample Farms:\n");
-      farms.forEach((farm) => {
+      farms.forEach((farm: any) => {
         console.log(`  • ${farm.name} (${farm.status})`);
         console.log(
           `    Products: ${farm._count.products} | Photos: ${farm._count.photos}`,
@@ -95,7 +95,7 @@ async function verifyDatabase() {
 
     if (products.length > 0) {
       console.log("🥬 Sample Products:\n");
-      products.forEach((product) => {
+      products.forEach((product: any) => {
         const hasPhoto = product.primaryPhotoUrl ? "📸" : "🚫";
         console.log(`  • ${product.name} - $${product.price} ${hasPhoto}`);
         console.log(
