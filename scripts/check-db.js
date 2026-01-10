@@ -9,21 +9,14 @@ require("dotenv").config({ path: ".env.vercel.local" });
 
 const { PrismaClient } = require("@prisma/client");
 
-// Use Prisma Accelerate URL
-const accelerateUrl =
-  process.env.Database_PRISMA_DATABASE_URL ||
-  process.env.POSTGRES_PRISMA_URL ||
-  process.env.DATABASE_URL;
-
-if (!accelerateUrl) {
-  console.error("❌ No database URL found in environment variables!");
+// DATABASE_URL is loaded from .env.vercel.local by dotenv above
+if (!process.env.DATABASE_URL) {
+  console.error("❌ No DATABASE_URL found in environment variables!");
   console.error("Please run: vercel env pull .env.vercel.local");
   process.exit(1);
 }
 
-const prisma = new PrismaClient({
-  accelerateUrl: accelerateUrl,
-});
+const prisma = new PrismaClient();
 
 async function checkDatabaseData() {
   console.log("🔍 Checking Vercel Database Data...\n");

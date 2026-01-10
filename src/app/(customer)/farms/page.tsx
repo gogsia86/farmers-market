@@ -23,11 +23,30 @@ import { cache } from "react";
 // Type for farm listing item
 type FarmListingItem = Pick<
   Farm,
-  "id" | "name" | "slug" | "description" | "city" | "state" | "logoUrl" | "bannerUrl" | "images" | "verificationStatus" | "averageRating" | "reviewCount"
+  | "id"
+  | "name"
+  | "slug"
+  | "description"
+  | "city"
+  | "state"
+  | "logoUrl"
+  | "bannerUrl"
+  | "images"
+  | "verificationStatus"
+  | "averageRating"
+  | "reviewCount"
 > & {
   _count?: {
     products: number;
   };
+  photos?: Array<{
+    id: string;
+    photoUrl: string;
+    thumbnailUrl: string;
+    caption: string | null;
+    altText: string | null;
+    isPrimary: boolean;
+  }>;
 };
 
 export const metadata: Metadata = {
@@ -100,7 +119,16 @@ export default async function FarmsPage() {
               >
                 {/* Farm Image */}
                 <div className="relative h-48 w-full overflow-hidden bg-gray-200">
-                  {farm.logoUrl ? (
+                  {farm.photos && farm.photos.length > 0 ? (
+                    <Image
+                      src={
+                        farm.photos[0].thumbnailUrl || farm.photos[0].photoUrl
+                      }
+                      alt={farm.photos[0].altText || farm.name}
+                      fill
+                      className="object-cover transition-transform group-hover:scale-105"
+                    />
+                  ) : farm.logoUrl ? (
                     <Image
                       src={farm.logoUrl}
                       alt={farm.name}
@@ -168,7 +196,7 @@ export default async function FarmsPage() {
                   )}
 
                   {/* Verification Badge */}
-                  {farm.verificationStatus === 'VERIFIED' && (
+                  {farm.verificationStatus === "VERIFIED" && (
                     <div className="mb-3">
                       <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
                         ✓ Verified Farm
@@ -179,7 +207,8 @@ export default async function FarmsPage() {
                   {/* Product Count */}
                   {farm._count?.products !== undefined && (
                     <div className="mb-3 text-sm text-gray-600">
-                      {farm._count.products} product{farm._count.products !== 1 ? 's' : ''} available
+                      {farm._count.products} product
+                      {farm._count.products !== 1 ? "s" : ""} available
                     </div>
                   )}
 

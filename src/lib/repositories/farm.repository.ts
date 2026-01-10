@@ -453,6 +453,17 @@ export class QuantumFarmRepository extends BaseRepository<
           avatar: true,
         },
       },
+      photos: {
+        orderBy: { sortOrder: "asc" },
+        select: {
+          id: true,
+          photoUrl: true,
+          thumbnailUrl: true,
+          caption: true,
+          altText: true,
+          isPrimary: true,
+        },
+      },
       products: {
         where: { inStock: true },
         select: {
@@ -471,6 +482,7 @@ export class QuantumFarmRepository extends BaseRepository<
         select: {
           products: true,
           orders: true,
+          photos: true,
         },
       },
     };
@@ -501,9 +513,9 @@ export class QuantumFarmRepository extends BaseRepository<
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(this.toRadians(lat1)) *
-      Math.cos(this.toRadians(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
+        Math.cos(this.toRadians(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distance = R * c;
@@ -579,10 +591,7 @@ export class QuantumFarmRepository extends BaseRepository<
               isPrimary: true,
               sortOrder: true,
             },
-            orderBy: [
-              { isPrimary: "desc" },
-              { sortOrder: "asc" },
-            ],
+            orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }],
             take: 20, // Limit photos for performance
           },
           _count: {
@@ -601,7 +610,10 @@ export class QuantumFarmRepository extends BaseRepository<
         return null;
       }
 
-      this.logOperation("findBySlugWithMinimalData:found", { slug, farmId: farm.id });
+      this.logOperation("findBySlugWithMinimalData:found", {
+        slug,
+        farmId: farm.id,
+      });
       return farm;
     } catch (error) {
       this.logOperation("findBySlugWithMinimalData:error", { slug, error });
@@ -637,10 +649,7 @@ export class QuantumFarmRepository extends BaseRepository<
           averageRating: true,
           reviewCount: true,
         },
-        orderBy: [
-          { featured: "desc" },
-          { createdAt: "desc" },
-        ],
+        orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
         take: limit,
       });
 

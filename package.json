@@ -185,6 +185,8 @@
     "monitor:trends:alert": "npx tsx scripts/monitor-deployment-trends.ts --alert",
     "db:setup": "npm run db:push && npm run db:seed:basic",
     "db:reset": "prisma db push --force-reset && npm run db:seed:basic",
+    "db:verify": "tsx scripts/verify-db.ts",
+    "db:add-photos": "tsx scripts/add-photos.ts",
     "db:studio": "prisma studio",
     "db:test:setup": "tsx scripts/setup-test-db.ts",
     "vercel:preflight": "node scripts/vercel-preflight.js",

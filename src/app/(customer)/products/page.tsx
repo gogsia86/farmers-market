@@ -57,7 +57,11 @@ interface PageProps {
 /**
  * 🌾 PRODUCT CATEGORIES
  */
-const PRODUCT_CATEGORIES: { value: ProductCategory; label: string; icon: string }[] = [
+const PRODUCT_CATEGORIES: {
+  value: ProductCategory;
+  label: string;
+  icon: string;
+}[] = [
   { value: "VEGETABLES", label: "Vegetables", icon: "🥕" },
   { value: "FRUITS", label: "Fruits", icon: "🍎" },
   { value: "DAIRY", label: "Dairy", icon: "🥛" },
@@ -80,18 +84,20 @@ const PRODUCT_CATEGORIES: { value: ProductCategory; label: string; icon: string 
 /**
  * Cached product listing with request deduplication
  */
-const getProductListing = cache(async (filters: {
-  search?: string;
-  category?: string;
-  minPrice?: number;
-  maxPrice?: number;
-  organic?: boolean;
-  inStock?: boolean;
-  page?: number;
-  limit?: number;
-}) => {
-  return await productService.getProductsForListing(filters);
-});
+const getProductListing = cache(
+  async (filters: {
+    search?: string;
+    category?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    organic?: boolean;
+    inStock?: boolean;
+    page?: number;
+    limit?: number;
+  }) => {
+    return await productService.getProductsForListing(filters);
+  },
+);
 
 // ============================================================================
 // MAIN PAGE COMPONENT
@@ -155,11 +161,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
           </p>
 
           {/* Search Bar */}
-          <form
-            method="GET"
-            action="/products"
-            className="mt-6"
-          >
+          <form method="GET" action="/products" className="mt-6">
             <div className="flex gap-2">
               <input
                 type="text"
@@ -200,10 +202,11 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                 <div className="mt-4 space-y-2">
                   <Link
                     href={buildFilterUrl({ category: undefined, page: "1" })}
-                    className={`block rounded-md px-3 py-2 text-sm ${!params.category
-                      ? "bg-green-100 font-medium text-green-900"
-                      : "text-gray-700 hover:bg-gray-100"
-                      }`}
+                    className={`block rounded-md px-3 py-2 text-sm ${
+                      !params.category
+                        ? "bg-green-100 font-medium text-green-900"
+                        : "text-gray-700 hover:bg-gray-100"
+                    }`}
                   >
                     All Products
                   </Link>
@@ -211,10 +214,11 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                     <Link
                       key={cat.value}
                       href={buildFilterUrl({ category: cat.value, page: "1" })}
-                      className={`block rounded-md px-3 py-2 text-sm ${params.category === cat.value
-                        ? "bg-green-100 font-medium text-green-900"
-                        : "text-gray-700 hover:bg-gray-100"
-                        }`}
+                      className={`block rounded-md px-3 py-2 text-sm ${
+                        params.category === cat.value
+                          ? "bg-green-100 font-medium text-green-900"
+                          : "text-gray-700 hover:bg-gray-100"
+                      }`}
                     >
                       {cat.icon} {cat.label}
                     </Link>
@@ -233,10 +237,11 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                       organic: params.organic === "true" ? undefined : "true",
                       page: "1",
                     })}
-                    className={`block rounded-md px-3 py-2 text-sm ${params.organic === "true"
-                      ? "bg-green-100 font-medium text-green-900"
-                      : "text-gray-700 hover:bg-gray-100"
-                      }`}
+                    className={`block rounded-md px-3 py-2 text-sm ${
+                      params.organic === "true"
+                        ? "bg-green-100 font-medium text-green-900"
+                        : "text-gray-700 hover:bg-gray-100"
+                    }`}
                   >
                     🌿 Organic Only
                   </Link>
@@ -248,9 +253,16 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                 <h3 className="text-sm font-semibold text-gray-900">
                   Price Range
                 </h3>
-                <form method="GET" action="/products" className="mt-4 space-y-3">
+                <form
+                  method="GET"
+                  action="/products"
+                  className="mt-4 space-y-3"
+                >
                   <div>
-                    <label htmlFor="minPrice" className="block text-xs text-gray-600">
+                    <label
+                      htmlFor="minPrice"
+                      className="block text-xs text-gray-600"
+                    >
                       Min Price
                     </label>
                     <input
@@ -265,7 +277,10 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                     />
                   </div>
                   <div>
-                    <label htmlFor="maxPrice" className="block text-xs text-gray-600">
+                    <label
+                      htmlFor="maxPrice"
+                      className="block text-xs text-gray-600"
+                    >
                       Max Price
                     </label>
                     <input
@@ -281,10 +296,18 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                   </div>
                   {/* Preserve other filters */}
                   {params.category && (
-                    <input type="hidden" name="category" value={params.category} />
+                    <input
+                      type="hidden"
+                      name="category"
+                      value={params.category}
+                    />
                   )}
                   {params.organic && (
-                    <input type="hidden" name="organic" value={params.organic} />
+                    <input
+                      type="hidden"
+                      name="organic"
+                      value={params.organic}
+                    />
                   )}
                   {params.search && (
                     <input type="hidden" name="search" value={params.search} />
@@ -305,8 +328,8 @@ export default async function ProductsPage({ searchParams }: PageProps) {
             {/* Results Header */}
             <div className="mb-6 flex items-center justify-between">
               <p className="text-sm text-gray-700">
-                Showing <span className="font-medium">{products.length}</span> of{" "}
-                <span className="font-medium">{total}</span> products
+                Showing <span className="font-medium">{products.length}</span>{" "}
+                of <span className="font-medium">{total}</span> products
               </p>
 
               {/* Sort Links */}
@@ -314,30 +337,45 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                 <span className="text-sm text-gray-700">Sort by:</span>
                 <div className="flex gap-2">
                   <Link
-                    href={buildFilterUrl({ sort: "createdAt", order: "desc", page: "1" })}
-                    className={`rounded-md px-3 py-1 text-sm ${(!params.sort || params.sort === "createdAt") &&
+                    href={buildFilterUrl({
+                      sort: "createdAt",
+                      order: "desc",
+                      page: "1",
+                    })}
+                    className={`rounded-md px-3 py-1 text-sm ${
+                      (!params.sort || params.sort === "createdAt") &&
                       (!params.order || params.order === "desc")
-                      ? "bg-green-600 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                      }`}
+                        ? "bg-green-600 text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
                   >
                     Newest
                   </Link>
                   <Link
-                    href={buildFilterUrl({ sort: "price", order: "asc", page: "1" })}
-                    className={`rounded-md px-3 py-1 text-sm ${params.sort === "price" && params.order === "asc"
-                      ? "bg-green-600 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                      }`}
+                    href={buildFilterUrl({
+                      sort: "price",
+                      order: "asc",
+                      page: "1",
+                    })}
+                    className={`rounded-md px-3 py-1 text-sm ${
+                      params.sort === "price" && params.order === "asc"
+                        ? "bg-green-600 text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
                   >
                     Price ↑
                   </Link>
                   <Link
-                    href={buildFilterUrl({ sort: "price", order: "desc", page: "1" })}
-                    className={`rounded-md px-3 py-1 text-sm ${params.sort === "price" && params.order === "desc"
-                      ? "bg-green-600 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                      }`}
+                    href={buildFilterUrl({
+                      sort: "price",
+                      order: "desc",
+                      page: "1",
+                    })}
+                    className={`rounded-md px-3 py-1 text-sm ${
+                      params.sort === "price" && params.order === "desc"
+                        ? "bg-green-600 text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
                   >
                     Price ↓
                   </Link>
@@ -365,7 +403,8 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                   No products found
                 </h3>
                 <p className="mt-1 text-sm text-gray-500">
-                  Try adjusting your search or filters to find what you're looking for.
+                  Try adjusting your search or filters to find what you're
+                  looking for.
                 </p>
                 <div className="mt-6">
                   <Link
@@ -390,7 +429,13 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                     >
                       {/* Product Image */}
                       <div className="relative aspect-square w-full overflow-hidden bg-gray-100">
-                        {product.images && product.images.length > 0 ? (
+                        {product.primaryPhotoUrl ? (
+                          <img
+                            src={product.primaryPhotoUrl}
+                            alt={product.name}
+                            className="h-full w-full object-cover transition group-hover:scale-105"
+                          />
+                        ) : product.images && product.images.length > 0 ? (
                           <img
                             src={product.images[0] as string}
                             alt={product.name}
@@ -452,12 +497,17 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                             productId={product.id}
                             productName={product.name}
                             price={Number(product.price)}
-                            availableStock={product.quantityAvailable ? Number(product.quantityAvailable) : 0}
+                            availableStock={
+                              product.quantityAvailable
+                                ? Number(product.quantityAvailable)
+                                : 0
+                            }
                           />
                         </div>
 
                         {/* Stock Status */}
-                        {product.quantityAvailable && Number(product.quantityAvailable) > 0 ? (
+                        {product.quantityAvailable &&
+                        Number(product.quantityAvailable) > 0 ? (
                           <p className="mt-2 text-sm text-green-600">
                             ✓ In Stock
                           </p>
@@ -505,8 +555,8 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                 <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                   <div>
                     <p className="text-sm text-gray-700">
-                      Showing page <span className="font-medium">{page}</span> of{" "}
-                      <span className="font-medium">{totalPages}</span>
+                      Showing page <span className="font-medium">{page}</span>{" "}
+                      of <span className="font-medium">{totalPages}</span>
                     </p>
                   </div>
                   <div>
@@ -517,7 +567,11 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                           className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                         >
                           <span className="sr-only">Previous</span>
-                          <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <svg
+                            className="h-5 w-5"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
                             <path
                               fillRule="evenodd"
                               d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
@@ -528,31 +582,37 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                       )}
 
                       {/* Page numbers */}
-                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                        let pageNum;
-                        if (totalPages <= 5) {
-                          pageNum = i + 1;
-                        } else if (page <= 3) {
-                          pageNum = i + 1;
-                        } else if (page >= totalPages - 2) {
-                          pageNum = totalPages - 4 + i;
-                        } else {
-                          pageNum = page - 2 + i;
-                        }
+                      {Array.from(
+                        { length: Math.min(5, totalPages) },
+                        (_, i) => {
+                          let pageNum;
+                          if (totalPages <= 5) {
+                            pageNum = i + 1;
+                          } else if (page <= 3) {
+                            pageNum = i + 1;
+                          } else if (page >= totalPages - 2) {
+                            pageNum = totalPages - 4 + i;
+                          } else {
+                            pageNum = page - 2 + i;
+                          }
 
-                        return (
-                          <Link
-                            key={pageNum}
-                            href={buildFilterUrl({ page: pageNum.toString() })}
-                            className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${pageNum === page
-                              ? "z-10 bg-green-600 text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-                              : "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                          return (
+                            <Link
+                              key={pageNum}
+                              href={buildFilterUrl({
+                                page: pageNum.toString(),
+                              })}
+                              className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${
+                                pageNum === page
+                                  ? "z-10 bg-green-600 text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+                                  : "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                               }`}
-                          >
-                            {pageNum}
-                          </Link>
-                        );
-                      })}
+                            >
+                              {pageNum}
+                            </Link>
+                          );
+                        },
+                      )}
 
                       {page < totalPages && (
                         <Link
@@ -560,7 +620,11 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                           className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                         >
                           <span className="sr-only">Next</span>
-                          <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <svg
+                            className="h-5 w-5"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
                             <path
                               fillRule="evenodd"
                               d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
@@ -586,8 +650,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
  */
 export const metadata: Metadata = {
   title: "Browse Products | Farmers Market",
-  description:
-    "Discover fresh, locally-grown products from farms in your area",
+  description: "Discover fresh, locally-grown products from farms in your area",
 };
 
 /**
