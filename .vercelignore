@@ -72,6 +72,7 @@ QUICK_TEST_GUIDE_*.md
 # ═══════════════════════════════════════════════════════════
 scripts/**
 !scripts/vercel-build.sh
+!scripts/vercel/**
 profiling_scripts/**
 profiling_output/**
 
