@@ -9,7 +9,7 @@ import { database } from "@/lib/database";
 import { InvoicePDFService } from "@/lib/services/invoice/invoice-pdf.service";
 import { NextRequest, NextResponse } from "next/server";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 interface RouteContext {
   params: {
@@ -23,7 +23,7 @@ interface RouteContext {
  */
 export async function GET(
   request: NextRequest,
-  { params }: RouteContext
+  { params }: RouteContext,
 ): Promise<NextResponse> {
   try {
     // ==========================================================================
@@ -34,7 +34,7 @@ export async function GET(
     if (!session?.user?.id) {
       return NextResponse.json(
         { success: false, error: "Authentication required" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -53,14 +53,35 @@ export async function GET(
           include: {
             product: {
               select: {
-                tax: true,
                 id: true,
+                name: true,
+                images: true,
               },
             },
           },
         },
-        farm: true,
-        customer: true,
+        farm: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+            address: true,
+            city: true,
+            state: true,
+            zipCode: true,
+            ownerId: true,
+          },
+        },
+        customer: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
       },
     });
 
@@ -70,7 +91,7 @@ export async function GET(
     if (!order) {
       return NextResponse.json(
         { success: false, error: "Order not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -82,7 +103,7 @@ export async function GET(
     if (!isCustomer && !isFarmer && !isAdmin) {
       return NextResponse.json(
         { success: false, error: "Not authorized to view this invoice" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -91,8 +112,11 @@ export async function GET(
     // ==========================================================================
     if (!order.farm || !order.items || !order.customer) {
       return NextResponse.json(
-        { success: false, error: "Order data incomplete for invoice generation" },
-        { status: 500 }
+        {
+          success: false,
+          error: "Order data incomplete for invoice generation",
+        },
+        { status: 500 },
       );
     }
 
@@ -128,7 +152,7 @@ export async function GET(
         details:
           error instanceof Error ? error.message : "Unknown error occurred",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

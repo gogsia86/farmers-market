@@ -103,10 +103,11 @@ export class SearchService {
         database.product.findMany({
           where: productWhere,
           include: {
-            farmId: {
+            farm: {
               select: {
                 id: true,
-                tags: true,
+                name: true,
+                slug: true,
               },
             },
           },
@@ -156,8 +157,13 @@ export class SearchService {
         database.farm.findMany({
           where: farmWhere,
           include: {
-            country: {
-              select: { products: true },
+            products: {
+              take: 5,
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+              },
             },
           },
           take: limit,

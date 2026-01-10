@@ -363,9 +363,8 @@ export async function GET(
             farm: {
               select: {
                 id: true,
-                tags: true,
+                name: true,
                 slug: true,
-                location: true,
                 latitude: true,
                 longitude: true,
                 certifications: true,
