@@ -221,6 +221,40 @@ const nextAuthResult = NextAuth({
       // Always return true - middleware handles authentication
       return true;
     },
+
+    /**
+     * Redirect Callback - Ensures proper redirect URL for sign in/out
+     * Forces production domain to prevent deployment URL issues
+     */
+    async redirect({ url, baseUrl }) {
+      // Use production domain from env or fallback
+      const productionUrl =
+        process.env.NEXTAUTH_URL ||
+        process.env.NEXT_PUBLIC_APP_URL ||
+        "https://farmers-market-platform.vercel.app";
+
+      // If url starts with '/', prepend production domain
+      if (url.startsWith("/")) {
+        return `${productionUrl}${url}`;
+      }
+
+      // If url is relative to baseUrl, replace with production
+      try {
+        const urlObj = new URL(url);
+        const prodObj = new URL(productionUrl);
+
+        // If same hostname as production, allow it
+        if (urlObj.hostname === prodObj.hostname) {
+          return url;
+        }
+
+        // Otherwise, redirect to production home
+        return productionUrl;
+      } catch {
+        // Invalid URL, default to production home
+        return productionUrl;
+      }
+    },
   },
 
   // Events for logging

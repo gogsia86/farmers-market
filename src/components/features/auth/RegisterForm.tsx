@@ -40,7 +40,10 @@ interface FormData {
   farmDescription: string;
 }
 
-export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterFormProps) {
+export function RegisterForm({
+  callbackUrl = "/",
+  className = "",
+}: RegisterFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
@@ -62,20 +65,30 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
   // Set role from URL params on mount (for /register-farm redirect)
   useEffect(() => {
     const roleParam = searchParams.get("role");
-    if (roleParam && (roleParam.toUpperCase() === "FARMER" || roleParam.toUpperCase() === "CONSUMER")) {
-      setFormData((prev) => ({ ...prev, role: roleParam.toUpperCase() as UserRole }));
+    if (
+      roleParam &&
+      (roleParam.toUpperCase() === "FARMER" ||
+        roleParam.toUpperCase() === "CONSUMER")
+    ) {
+      setFormData((prev) => ({
+        ...prev,
+        role: roleParam.toUpperCase() as UserRole,
+      }));
     }
   }, [searchParams]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     const { name, value } = e.target;
 
     // Handle hidden "name" field for bot compatibility
     if (name === "name") {
-      // Split full name into firstName and lastName
-      const nameParts = value.trim().split(/\s+/);
+      // Don't trim during typing - only split on actual spaces
+      // This allows users to type spaces naturally
+      const nameParts = value.split(/\s+/);
       const firstName = nameParts[0] || "";
       const lastName = nameParts.slice(1).join(" ") || "";
       setFormData((prev) => ({ ...prev, firstName, lastName }));
@@ -111,7 +124,10 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
       return;
     }
 
-    if (formData.role === "FARMER" && (!formData.farmName || !formData.farmAddress)) {
+    if (
+      formData.role === "FARMER" &&
+      (!formData.farmName || !formData.farmAddress)
+    ) {
       setError("Farm name and address are required for farmers");
       return;
     }
@@ -138,15 +154,19 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
           phone: formData.phone || undefined,
           role: formData.role,
           farmName: formData.role === "FARMER" ? formData.farmName : undefined,
-          farmAddress: formData.role === "FARMER" ? formData.farmAddress : undefined,
-          farmDescription: formData.role === "FARMER" ? formData.farmDescription : undefined,
+          farmAddress:
+            formData.role === "FARMER" ? formData.farmAddress : undefined,
+          farmDescription:
+            formData.role === "FARMER" ? formData.farmDescription : undefined,
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        setError(data.error?.message || "Registration failed. Please try again.");
+        setError(
+          data.error?.message || "Registration failed. Please try again.",
+        );
         setIsLoading(false);
         return;
       }
@@ -157,7 +177,7 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
       setIsLoading(true);
 
       // Small delay to ensure state updates
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
       // Redirect to login with registered param
       window.location.href = "/login?registered=true";
@@ -168,8 +188,14 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
   };
 
   return (
-    <div className={`w-full max-w-2xl ${className}`} style={{ position: 'relative', zIndex: 1 }}>
-      <div className="bg-white rounded-2xl shadow-xl border-2 border-green-100 p-8" style={{ position: 'relative', zIndex: 1 }}>
+    <div
+      className={`w-full max-w-2xl ${className}`}
+      style={{ position: "relative", zIndex: 1 }}
+    >
+      <div
+        className="bg-white rounded-2xl shadow-xl border-2 border-green-100 p-8"
+        style={{ position: "relative", zIndex: 1 }}
+      >
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
@@ -228,7 +254,12 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
                   name="role"
                   value="CONSUMER"
                   checked={formData.role === "CONSUMER"}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, role: e.target.value as UserRole }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      role: e.target.value as UserRole,
+                    }))
+                  }
                   data-testid="role-consumer"
                 />
                 Consumer
@@ -239,7 +270,12 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
                   name="role"
                   value="FARMER"
                   checked={formData.role === "FARMER"}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, role: e.target.value as UserRole }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      role: e.target.value as UserRole,
+                    }))
+                  }
                   data-testid="role-farmer"
                 />
                 Farmer
@@ -249,17 +285,23 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
               <button
                 type="button"
                 data-testid="role-consumer-button"
-                onClick={() => setFormData((prev) => ({ ...prev, role: "CONSUMER" }))}
-                className={`p-4 border-2 rounded-lg transition-all cursor-pointer ${formData.role === "CONSUMER"
-                  ? "border-green-600 bg-green-50"
-                  : "border-gray-300 hover:border-gray-400"
-                  }`}
-                style={{ pointerEvents: 'auto' }}
+                onClick={() =>
+                  setFormData((prev) => ({ ...prev, role: "CONSUMER" }))
+                }
+                className={`p-4 border-2 rounded-lg transition-all cursor-pointer ${
+                  formData.role === "CONSUMER"
+                    ? "border-green-600 bg-green-50"
+                    : "border-gray-300 hover:border-gray-400"
+                }`}
+                style={{ pointerEvents: "auto" }}
               >
                 <div className="flex items-center justify-center mb-2 pointer-events-none">
                   <svg
-                    className={`w-8 h-8 ${formData.role === "CONSUMER" ? "text-green-600" : "text-gray-400"
-                      }`}
+                    className={`w-8 h-8 ${
+                      formData.role === "CONSUMER"
+                        ? "text-green-600"
+                        : "text-gray-400"
+                    }`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -273,28 +315,39 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
                   </svg>
                 </div>
                 <span
-                  className={`font-semibold pointer-events-none ${formData.role === "CONSUMER" ? "text-green-700" : "text-gray-700"
-                    }`}
+                  className={`font-semibold pointer-events-none ${
+                    formData.role === "CONSUMER"
+                      ? "text-green-700"
+                      : "text-gray-700"
+                  }`}
                 >
                   Customer
                 </span>
-                <p className="text-xs text-gray-500 mt-1 pointer-events-none">Buy fresh produce</p>
+                <p className="text-xs text-gray-500 mt-1 pointer-events-none">
+                  Buy fresh produce
+                </p>
               </button>
 
               <button
                 type="button"
                 data-testid="role-farmer-button"
-                onClick={() => setFormData((prev) => ({ ...prev, role: "FARMER" }))}
-                className={`p-4 border-2 rounded-lg transition-all cursor-pointer ${formData.role === "FARMER"
-                  ? "border-green-600 bg-green-50"
-                  : "border-gray-300 hover:border-gray-400"
-                  }`}
-                style={{ pointerEvents: 'auto' }}
+                onClick={() =>
+                  setFormData((prev) => ({ ...prev, role: "FARMER" }))
+                }
+                className={`p-4 border-2 rounded-lg transition-all cursor-pointer ${
+                  formData.role === "FARMER"
+                    ? "border-green-600 bg-green-50"
+                    : "border-gray-300 hover:border-gray-400"
+                }`}
+                style={{ pointerEvents: "auto" }}
               >
                 <div className="flex items-center justify-center mb-2 pointer-events-none">
                   <svg
-                    className={`w-8 h-8 ${formData.role === "FARMER" ? "text-green-600" : "text-gray-400"
-                      }`}
+                    className={`w-8 h-8 ${
+                      formData.role === "FARMER"
+                        ? "text-green-600"
+                        : "text-gray-400"
+                    }`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -308,42 +361,70 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
                   </svg>
                 </div>
                 <span
-                  className={`font-semibold pointer-events-none ${formData.role === "FARMER" ? "text-green-700" : "text-gray-700"
-                    }`}
+                  className={`font-semibold pointer-events-none ${
+                    formData.role === "FARMER"
+                      ? "text-green-700"
+                      : "text-gray-700"
+                  }`}
                 >
                   Farmer
                 </span>
-                <p className="text-xs text-gray-500 mt-1 pointer-events-none">Sell your products</p>
+                <p className="text-xs text-gray-500 mt-1 pointer-events-none">
+                  Sell your products
+                </p>
               </button>
             </div>
           </div>
 
           {/* Full Name field - primary field for bot compatibility */}
           <div>
-            <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
+            <label
+              htmlFor="name"
+              className="block text-sm font-semibold text-gray-700 mb-2"
+            >
               Full Name <span className="text-red-500">*</span>
             </label>
             <input
               id="name"
               name="name"
               type="text"
-              value={`${formData.firstName} ${formData.lastName}`.trim()}
+              value={
+                formData.firstName && formData.lastName
+                  ? `${formData.firstName} ${formData.lastName}`
+                  : formData.firstName || ""
+              }
               onChange={handleChange}
               required
               disabled={isLoading}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
               placeholder="John Doe"
+              autoComplete="name"
             />
-            <p className="mt-1 text-xs text-gray-500">Enter your full name (first and last)</p>
+            <p className="mt-1 text-xs text-gray-500">
+              Enter your full name (first and last)
+            </p>
           </div>
 
           {/* Hidden fields to store split name values */}
-          <input type="hidden" id="firstName" name="firstName" value={formData.firstName} />
-          <input type="hidden" id="lastName" name="lastName" value={formData.lastName} />
+          <input
+            type="hidden"
+            id="firstName"
+            name="firstName"
+            value={formData.firstName}
+          />
+          <input
+            type="hidden"
+            id="lastName"
+            name="lastName"
+            value={formData.lastName}
+          />
 
           {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
+            <label
+              htmlFor="email"
+              className="block text-sm font-semibold text-gray-700 mb-2"
+            >
               Email Address <span className="text-red-500">*</span>
             </label>
             <input
@@ -362,7 +443,10 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
 
           {/* Phone */}
           <div>
-            <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-2">
+            <label
+              htmlFor="phone"
+              className="block text-sm font-semibold text-gray-700 mb-2"
+            >
               Phone Number (Optional)
             </label>
             <input
@@ -381,7 +465,10 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
           {/* Password Fields */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-semibold text-gray-700 mb-2"
+              >
                 Password <span className="text-red-500">*</span>
               </label>
               <input
@@ -448,11 +535,16 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
                     d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
                   />
                 </svg>
-                <h3 className="text-lg font-semibold text-gray-900">Farm Information</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Farm Information
+                </h3>
               </div>
 
               <div>
-                <label htmlFor="farmName" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label
+                  htmlFor="farmName"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
                   Farm Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -517,7 +609,12 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
                 name="agreeToTerms"
                 type="checkbox"
                 checked={formData.agreeToTerms}
-                onChange={(e) => setFormData((prev) => ({ ...prev, agreeToTerms: e.target.checked }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    agreeToTerms: e.target.checked,
+                  }))
+                }
                 disabled={isLoading}
                 className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500 focus:ring-2 disabled:cursor-not-allowed"
                 required
@@ -526,11 +623,19 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
             <div className="ml-3 text-sm">
               <label htmlFor="agreeToTerms" className="text-gray-700">
                 I agree to the{" "}
-                <a href="/terms" target="_blank" className="text-green-600 hover:text-green-700 font-semibold">
+                <a
+                  href="/terms"
+                  target="_blank"
+                  className="text-green-600 hover:text-green-700 font-semibold"
+                >
                   Terms of Service
                 </a>{" "}
                 and{" "}
-                <a href="/privacy" target="_blank" className="text-green-600 hover:text-green-700 font-semibold">
+                <a
+                  href="/privacy"
+                  target="_blank"
+                  className="text-green-600 hover:text-green-700 font-semibold"
+                >
                   Privacy Policy
                 </a>
                 <span className="text-red-500"> *</span>
@@ -569,7 +674,12 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
               </>
             ) : (
               <>
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-5 h-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -587,7 +697,10 @@ export function RegisterForm({ callbackUrl = "/", className = "" }: RegisterForm
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
             Already have an account?{" "}
-            <a href="/login" className="text-green-600 hover:text-green-700 font-semibold">
+            <a
+              href="/login"
+              className="text-green-600 hover:text-green-700 font-semibold"
+            >
               Sign In
             </a>
           </p>

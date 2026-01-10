@@ -62,16 +62,29 @@ interface PageProps {
  * Cached product data fetching with React cache for request deduplication
  * This ensures metadata and page content share the same fetch
  */
-const getProductData = cache(async (slug: string): Promise<Awaited<ReturnType<typeof productService.getProductDetailData>>> => {
-  return await productService.getProductDetailData(slug);
-});
+const getProductData = cache(
+  async (
+    slug: string,
+  ): Promise<
+    Awaited<ReturnType<typeof productService.getProductDetailData>>
+  > => {
+    return await productService.getProductDetailData(slug);
+  },
+);
 
 /**
  * Cached related products fetching
  */
-const getRelatedProductsData = cache(async (productId: string, category: string | null, farmId: string) => {
-  return await productService.getRelatedProducts(productId, category, farmId, 4);
-});
+const getRelatedProductsData = cache(
+  async (productId: string, category: string | null, farmId: string) => {
+    return await productService.getRelatedProducts(
+      productId,
+      category,
+      farmId,
+      4,
+    );
+  },
+);
 
 // ============================================================================
 // LOADING SKELETONS
@@ -121,8 +134,20 @@ function ReviewsSkeleton() {
 // STREAMING COMPONENTS
 // ============================================================================
 
-async function RelatedProducts({ productId, category, farmId }: { productId: string; category: string | null; farmId: string }) {
-  const relatedProducts = await getRelatedProductsData(productId, category, farmId);
+async function RelatedProducts({
+  productId,
+  category,
+  farmId,
+}: {
+  productId: string;
+  category: string | null;
+  farmId: string;
+}) {
+  const relatedProducts = await getRelatedProductsData(
+    productId,
+    category,
+    farmId,
+  );
 
   // Filter out current product
   const filtered = relatedProducts.filter((p) => p.id !== productId);
@@ -160,12 +185,20 @@ async function RelatedProducts({ productId, category, farmId }: { productId: str
               )}
             </CardHeader>
             <CardContent className="pt-4">
-              <h3 className="font-semibold text-lg mb-1 line-clamp-1">{product.name}</h3>
-              <p className="text-sm text-gray-600 mb-2 line-clamp-1">{product.farm.name}</p>
+              <h3 className="font-semibold text-lg mb-1 line-clamp-1">
+                {product.name}
+              </h3>
+              <p className="text-sm text-gray-600 mb-2 line-clamp-1">
+                {product.farm.name}
+              </p>
               <div className="flex items-center justify-between">
                 <span className="text-lg font-bold text-green-600">
                   ${product.price.toFixed(2)}
-                  {product.unit && <span className="text-sm font-normal text-gray-600">/{product.unit}</span>}
+                  {product.unit && (
+                    <span className="text-sm font-normal text-gray-600">
+                      /{product.unit}
+                    </span>
+                  )}
                 </span>
               </div>
             </CardContent>
@@ -192,10 +225,10 @@ async function ProductReviews({ productSlug }: { productSlug: string }) {
 
 export default async function ProductDetailPage({ params }: PageProps) {
   const session = await auth();
-  const resolvedParams = await params;
+  const { slug } = await params;
 
   // Optimized data fetching with service layer caching
-  const product = await getProductData(resolvedParams.slug);
+  const product = await getProductData(slug);
 
   // If no product found, return 404
   if (!product) {
@@ -203,7 +236,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
   }
 
   // Type guard to ensure product has farm
-  if (!('farm' in product) || !product.farm) {
+  if (!("farm" in product) || !product.farm) {
     notFound();
   }
 
@@ -212,10 +245,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
   // Format dates
   const harvestDate = product.harvestDate
     ? new Date(product.harvestDate).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
     : null;
 
   const quantity = product.quantityAvailable
@@ -226,7 +259,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
   // Parse tags safely - tags is JsonValue which can be any type
   const tags = Array.isArray(product.tags)
-    ? product.tags.filter((tag): tag is string => typeof tag === 'string')
+    ? product.tags.filter((tag): tag is string => typeof tag === "string")
     : [];
 
   return (
@@ -273,7 +306,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
             {product.images && product.images.length > 1 && (
               <div className="mt-4 grid grid-cols-4 gap-4">
                 {product.images.slice(1, 5).map((image, index) => (
-                  <div key={index} className="aspect-square overflow-hidden rounded-md bg-gray-100">
+                  <div
+                    key={index}
+                    className="aspect-square overflow-hidden rounded-md bg-gray-100"
+                  >
                     <img
                       src={image as string}
                       alt={`${product.name} ${index + 2}`}
@@ -306,7 +342,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
                 ${product.price.toFixed(2)}
                 {product.unit && (
                   <span className="text-lg font-normal text-gray-600">
-                    {" "}/ {product.unit}
+                    {" "}
+                    / {product.unit}
                   </span>
                 )}
               </p>
@@ -316,26 +353,33 @@ export default async function ProductDetailPage({ params }: PageProps) {
             <div className="mb-6">
               {inStock ? (
                 <div className="flex items-center gap-2">
-                  <Badge variant="default" className="bg-green-100 text-green-800">
+                  <Badge
+                    variant="default"
+                    className="bg-green-100 text-green-800"
+                  >
                     ✓ In Stock
                   </Badge>
                   {lowStock && (
-                    <Badge variant="secondary" className="bg-orange-100 text-orange-800">
+                    <Badge
+                      variant="secondary"
+                      className="bg-orange-100 text-orange-800"
+                    >
                       ⚠️ Low Stock ({quantity} remaining)
                     </Badge>
                   )}
                 </div>
               ) : (
-                <Badge variant="destructive">
-                  Out of Stock
-                </Badge>
+                <Badge variant="destructive">Out of Stock</Badge>
               )}
             </div>
 
             {/* Badges */}
             <div className="mb-6 flex flex-wrap gap-2">
               {product.organic && (
-                <Badge variant="outline" className="border-green-600 text-green-600">
+                <Badge
+                  variant="outline"
+                  className="border-green-600 text-green-600"
+                >
                   🌱 Organic
                 </Badge>
               )}
@@ -406,13 +450,13 @@ export default async function ProductDetailPage({ params }: PageProps) {
                 <h3 className="text-lg font-semibold mb-2">About the Farm</h3>
                 <p className="text-gray-600 mb-4">
                   {farm.city && farm.state && (
-                    <span>📍 {farm.city}, {farm.state}</span>
+                    <span>
+                      📍 {farm.city}, {farm.state}
+                    </span>
                   )}
                 </p>
                 <Button asChild variant="outline" className="w-full">
-                  <Link href={`/farms/${farm.slug}`}>
-                    Visit Farm Profile
-                  </Link>
+                  <Link href={`/farms/${farm.slug}`}>Visit Farm Profile</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -451,7 +495,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
 // METADATA GENERATION
 // ============================================================================
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
   const product = await getProductData(resolvedParams.slug);
 
@@ -461,22 +507,31 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  const image = product.primaryPhotoUrl || (product.images && product.images.length > 0 ? product.images[0] as string : undefined);
+  const image =
+    product.primaryPhotoUrl ||
+    (product.images && product.images.length > 0
+      ? (product.images[0] as string)
+      : undefined);
 
   return {
     title: `${product.name} | Farmers Market Platform`,
-    description: product.description || `Buy fresh ${product.name} from ${product.farm.name}`,
+    description:
+      product.description ||
+      `Buy fresh ${product.name} from ${product.farm.name}`,
     openGraph: {
       title: product.name,
-      description: product.description || `Fresh ${product.name} from local farmers`,
-      images: image ? [
-        {
-          url: image,
-          width: 800,
-          height: 800,
-          alt: product.name,
-        },
-      ] : [],
+      description:
+        product.description || `Fresh ${product.name} from local farmers`,
+      images: image
+        ? [
+            {
+              url: image,
+              width: 800,
+              height: 800,
+              alt: product.name,
+            },
+          ]
+        : [],
     },
   };
 }
