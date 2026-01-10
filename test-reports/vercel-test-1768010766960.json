@@ -1,0 +1,176 @@
+{
+  "url": "https://farmers-market-platform.vercel.app",
+  "timestamp": "2026-01-10T02:06:06.956Z",
+  "duration": 7808,
+  "summary": {
+    "total": 14,
+    "passed": 12,
+    "failed": 0,
+    "warnings": 2,
+    "skipped": 0
+  },
+  "results": [
+    {
+      "name": "Basic Connectivity",
+      "category": "connectivity",
+      "status": "pass",
+      "duration": 450,
+      "details": {
+        "statusCode": 200,
+        "duration": 449
+      }
+    },
+    {
+      "name": "SSL/TLS Certificate",
+      "category": "security",
+      "status": "pass",
+      "duration": 317,
+      "message": "HTTPS enabled"
+    },
+    {
+      "name": "Response Time",
+      "category": "performance",
+      "status": "pass",
+      "duration": 346,
+      "message": "Excellent (346ms)"
+    },
+    {
+      "name": "Health Endpoint",
+      "category": "api",
+      "status": "pass",
+      "duration": 826,
+      "message": "Health check passed",
+      "details": {
+        "status": "degraded",
+        "timestamp": "2026-01-10T02:06:01.878Z",
+        "checks": {
+          "database": {
+            "status": "healthy",
+            "latency": 637,
+            "message": "Database is responsive"
+          },
+          "cache": {
+            "status": "healthy",
+            "latency": 1,
+            "message": "Cache is responsive"
+          },
+          "system": {
+            "status": "degraded",
+            "memory": {
+              "used": 31,
+              "total": 36,
+              "percentage": 86.56
+            },
+            "uptime": 762
+          }
+        },
+        "version": "1.0.0",
+        "environment": "production"
+      }
+    },
+    {
+      "name": "API Routes",
+      "category": "api",
+      "status": "pass",
+      "duration": 1278,
+      "message": "All 4 API routes accessible"
+    },
+    {
+      "name": "Database Connectivity",
+      "category": "database",
+      "status": "pass",
+      "duration": 969,
+      "message": "Database connection working (farms API)"
+    },
+    {
+      "name": "Authentication Pages",
+      "category": "pages",
+      "status": "pass",
+      "duration": 284,
+      "message": "Login page accessible"
+    },
+    {
+      "name": "Error Handling",
+      "category": "pages",
+      "status": "warn",
+      "duration": 101,
+      "message": "Non-existent page returned 307 instead of 404"
+    },
+    {
+      "name": "Static Assets",
+      "category": "assets",
+      "status": "warn",
+      "duration": 306,
+      "message": "Some static assets may not be loading",
+      "details": [
+        {
+          "asset": "/favicon.ico",
+          "status": 404
+        },
+        {
+          "asset": "/_next/static/css",
+          "status": 404
+        }
+      ]
+    },
+    {
+      "name": "Security Headers",
+      "category": "security",
+      "status": "pass",
+      "duration": 354,
+      "message": "4/4 security headers present",
+      "details": {
+        "x-frame-options": "DENY",
+        "x-content-type-options": "nosniff",
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "x-xss-protection": "1; mode=block"
+      }
+    },
+    {
+      "name": "CORS Configuration",
+      "category": "security",
+      "status": "pass",
+      "duration": 309,
+      "message": "CORS not enabled (same-origin only)"
+    },
+    {
+      "name": "Performance Metrics",
+      "category": "performance",
+      "status": "pass",
+      "duration": 1556,
+      "message": "Good performance (avg: 519ms)"
+    },
+    {
+      "name": "SEO Basics",
+      "category": "seo",
+      "status": "pass",
+      "duration": 393,
+      "message": "3/4 SEO basics implemented",
+      "details": {
+        "hasTitle": true,
+        "hasMetaDescription": true,
+        "hasMetaViewport": true,
+        "hasCanonical": false
+      }
+    },
+    {
+      "name": "Mobile Responsiveness",
+      "category": "mobile",
+      "status": "pass",
+      "duration": 313,
+      "message": "Viewport and responsive elements detected"
+    }
+  ],
+  "recommendations": [],
+  "performance": {
+    "avgResponseTime": 557,
+    "slowestEndpoint": {
+      "url": "Performance Metrics",
+      "time": 1556
+    },
+    "fastestEndpoint": {
+      "url": "Error Handling",
+      "time": 101
+    }
+  }
+}
