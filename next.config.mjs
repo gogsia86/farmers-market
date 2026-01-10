@@ -63,19 +63,6 @@ const nextConfig = {
     clientTraceMetadata: ["appDir", "middleware"],
     // Use lighter client bundle
     optimizeServerReact: true,
-    // Turbopack source map configuration for Sentry
-    turbo: {
-      rules: {
-        "*.tsx": {
-          loaders: ["@next/swc-loader"],
-          as: "*.tsx",
-        },
-        "*.ts": {
-          loaders: ["@next/swc-loader"],
-          as: "*.ts",
-        },
-      },
-    },
   },
 
   // Server external packages (moved from experimental)
@@ -377,11 +364,15 @@ export default withSentryConfig(withBundleAnalyzer(nextConfig), {
   // Don't hide source maps - we need them for Sentry
   hideSourceMaps: false,
 
-  // Automatically tree-shake Sentry logger statements in production
-  disableLogger: process.env.NODE_ENV === "production",
-
-  // Annotate React components for better breadcrumbs
-  reactComponentAnnotation: {
-    enabled: true,
+  // Webpack-specific configurations
+  webpack: {
+    // Tree-shake Sentry logger statements in production
+    treeshake: {
+      removeDebugLogging: process.env.NODE_ENV === "production",
+    },
+    // Annotate React components for better breadcrumbs
+    reactComponentAnnotation: {
+      enabled: true,
+    },
   },
 });
