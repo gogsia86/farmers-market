@@ -15,7 +15,11 @@
  */
 
 import { auth } from "@/lib/auth/config";
-import { applyCORSHeaders, applySecurityHeaders, getProductionCORSConfig } from "@/lib/security/headers";
+import {
+  applyCORSHeaders,
+  applySecurityHeaders,
+  getProductionCORSConfig,
+} from "@/lib/security/headers";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
@@ -36,34 +40,42 @@ export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // ============================================================================
+  // IMMEDIATE PASS FOR ROOT PATH
+  // ============================================================================
+  // Always allow root path to pass through without any checks
+  if (pathname === "/" || pathname === "") {
+    return NextResponse.next();
+  }
+
+  // ============================================================================
   // PUBLIC ROUTES - Allow without authentication checks
   // ============================================================================
   const publicRoutes = [
-    '/',
-    '/login',
-    '/register',
-    '/signup',
-    '/forgot-password',
-    '/reset-password',
-    '/about',
-    '/contact',
-    '/faq',
-    '/how-it-works',
-    '/farms',
-    '/products',
-    '/marketplace',
-    '/api/health',
-    '/api/ready',
+    "/",
+    "/login",
+    "/register",
+    "/signup",
+    "/forgot-password",
+    "/reset-password",
+    "/about",
+    "/contact",
+    "/faq",
+    "/how-it-works",
+    "/farms",
+    "/products",
+    "/marketplace",
+    "/api/health",
+    "/api/ready",
   ];
 
   // Check if current path is public (ignore query params for matching)
-  const isPublicRoute = publicRoutes.some(route => {
+  const isPublicRoute = publicRoutes.some((route) => {
     // Exact match or starts with route path
-    return pathname === route || pathname.startsWith(route + '/');
+    return pathname === route || pathname.startsWith(route + "/");
   });
 
   // Log middleware execution for debugging
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === "development") {
     console.log(`[Middleware] ${pathname} - isPublic: ${isPublicRoute}`);
   }
 
@@ -102,12 +114,15 @@ export default async function middleware(request: NextRequest) {
   // Apply security headers (CSP, HSTS, X-Frame-Options, etc.)
   applySecurityHeaders(response, {
     enableCSP: true,
-    enableHSTS: process.env.NODE_ENV === 'production',
-    environment: process.env.NODE_ENV as 'development' | 'staging' | 'production',
+    enableHSTS: process.env.NODE_ENV === "production",
+    environment: process.env.NODE_ENV as
+      | "development"
+      | "staging"
+      | "production",
   });
 
   // Apply CORS headers for API routes
-  if (pathname.startsWith('/api')) {
+  if (pathname.startsWith("/api")) {
     applyCORSHeaders(response, request, getProductionCORSConfig());
   }
 
@@ -116,7 +131,7 @@ export default async function middleware(request: NextRequest) {
   // ============================================================================
   // Public routes can proceed without authentication
   if (isPublicRoute) {
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === "development") {
       console.log(`[Middleware] Public route ${pathname} - allowing access`);
     }
     return response;
@@ -127,23 +142,27 @@ export default async function middleware(request: NextRequest) {
 
   if (!session?.user) {
     // Prevent redirect loops - don't redirect if already going to login
-    if (pathname === '/login') {
+    if (pathname === "/login") {
       return response;
     }
 
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`[Middleware] Protected route ${pathname} - redirecting to login`);
+    if (process.env.NODE_ENV === "development") {
+      console.log(
+        `[Middleware] Protected route ${pathname} - redirecting to login`,
+      );
     }
 
     // Redirect to login if not authenticated
     const url = request.nextUrl.clone();
-    url.pathname = '/login';
-    url.searchParams.set('callbackUrl', pathname);
+    url.pathname = "/login";
+    url.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(url);
   }
 
-  if (process.env.NODE_ENV === 'development') {
-    console.log(`[Middleware] Protected route ${pathname} - authenticated as ${session.user.email}`);
+  if (process.env.NODE_ENV === "development") {
+    console.log(
+      `[Middleware] Protected route ${pathname} - authenticated as ${session.user.email}`,
+    );
   }
 
   // User is authenticated, allow access
