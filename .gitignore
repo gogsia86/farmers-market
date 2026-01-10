@@ -13,7 +13,7 @@ node_modules/
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
-package-lock.json
+# package-lock.json  # Commented out - we now track lockfile for deterministic builds
 
 # ═══════════════════════════════════════════════════════════
 # 🧪 Testing
@@ -153,7 +153,7 @@ tsconfig.tsbuildinfo
 # Uncomment the lock files you DON'T want to track:
 yarn.lock              # If using npm or pnpm
 pnpm-lock.yaml         # If using npm or yarn
-# package-lock.json      # If using yarn or pnpm
+# package-lock.json is now tracked (see line 16)
 
 # ═══════════════════════════════════════════════════════════
 # 🎨 Generated & Cache Files
