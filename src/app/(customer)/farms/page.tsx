@@ -111,118 +111,123 @@ export default async function FarmsPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {farms.map((farm: FarmListingItem) => (
-              <Link
-                key={farm.id}
-                href={`/farms/${farm.slug}`}
-                className="group overflow-hidden rounded-lg bg-white shadow-md transition-all hover:shadow-lg"
-              >
-                {/* Farm Image */}
-                <div className="relative h-48 w-full overflow-hidden bg-gray-200">
-                  {farm.photos && farm.photos.length > 0 ? (
-                    <Image
-                      src={
-                        farm.photos[0]?.thumbnailUrl ||
-                        farm.photos[0]?.photoUrl ||
-                        ""
-                      }
-                      alt={farm.photos[0]?.altText || farm.name}
-                      fill
-                      className="object-cover transition-transform group-hover:scale-105"
-                    />
-                  ) : farm.logoUrl ? (
-                    <Image
-                      src={farm.logoUrl}
-                      alt={farm.name}
-                      fill
-                      className="object-cover transition-transform group-hover:scale-105"
-                    />
-                  ) : farm.bannerUrl ? (
-                    <Image
-                      src={farm.bannerUrl}
-                      alt={farm.name}
-                      fill
-                      className="object-cover transition-transform group-hover:scale-105"
-                    />
-                  ) : farm.images && farm.images.length > 0 ? (
-                    <Image
-                      src={farm.images[0] as string}
-                      alt={farm.name}
-                      fill
-                      className="object-cover transition-transform group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="flex h-full items-center justify-center text-6xl">
-                      🌾
-                    </div>
-                  )}
-                </div>
+            {farms.map((farm: FarmListingItem) => {
+              // Extract first photo for type safety
+              const firstPhoto = farm.photos?.[0];
 
-                {/* Farm Info */}
-                <div className="p-4">
-                  <h3 className="mb-2 text-lg font-semibold text-gray-900 group-hover:text-green-700">
-                    {farm.name}
-                  </h3>
-                  {farm.description && (
-                    <p className="mb-3 line-clamp-2 text-sm text-gray-600">
-                      {farm.description}
-                    </p>
-                  )}
+              return (
+                <Link
+                  key={farm.id}
+                  href={`/farms/${farm.slug}`}
+                  className="group overflow-hidden rounded-lg bg-white shadow-md transition-all hover:shadow-lg"
+                >
+                  {/* Farm Image */}
+                  <div className="relative h-48 w-full overflow-hidden bg-gray-200">
+                    {firstPhoto ? (
+                      <Image
+                        src={
+                          firstPhoto.thumbnailUrl ||
+                          firstPhoto.photoUrl ||
+                          "/images/placeholder-farm.svg"
+                        }
+                        alt={firstPhoto.altText || farm.name}
+                        fill
+                        className="object-cover transition-transform group-hover:scale-105"
+                      />
+                    ) : farm.logoUrl ? (
+                      <Image
+                        src={farm.logoUrl}
+                        alt={farm.name}
+                        fill
+                        className="object-cover transition-transform group-hover:scale-105"
+                      />
+                    ) : farm.bannerUrl ? (
+                      <Image
+                        src={farm.bannerUrl}
+                        alt={farm.name}
+                        fill
+                        className="object-cover transition-transform group-hover:scale-105"
+                      />
+                    ) : farm.images && farm.images.length > 0 ? (
+                      <Image
+                        src={farm.images[0] as string}
+                        alt={farm.name}
+                        fill
+                        className="object-cover transition-transform group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-6xl">
+                        🌾
+                      </div>
+                    )}
+                  </div>
 
-                  {/* Location */}
-                  {(farm.city || farm.state) && (
-                    <div className="mb-3 flex items-center text-sm text-gray-500">
-                      <svg
-                        className="mr-1 h-4 w-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                      </svg>
-                      {farm.city && farm.state
-                        ? `${farm.city}, ${farm.state}`
-                        : farm.city || farm.state || "Location available"}
-                    </div>
-                  )}
+                  {/* Farm Info */}
+                  <div className="p-4">
+                    <h3 className="mb-2 text-lg font-semibold text-gray-900 group-hover:text-green-700">
+                      {farm.name}
+                    </h3>
+                    {farm.description && (
+                      <p className="mb-3 line-clamp-2 text-sm text-gray-600">
+                        {farm.description}
+                      </p>
+                    )}
 
-                  {/* Verification Badge */}
-                  {farm.verificationStatus === "VERIFIED" && (
-                    <div className="mb-3">
-                      <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                        ✓ Verified Farm
+                    {/* Location */}
+                    {(farm.city || farm.state) && (
+                      <div className="mb-3 flex items-center text-sm text-gray-500">
+                        <svg
+                          className="mr-1 h-4 w-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                        </svg>
+                        {farm.city && farm.state
+                          ? `${farm.city}, ${farm.state}`
+                          : farm.city || farm.state || "Location available"}
+                      </div>
+                    )}
+
+                    {/* Verification Badge */}
+                    {farm.verificationStatus === "VERIFIED" && (
+                      <div className="mb-3">
+                        <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                          ✓ Verified Farm
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Product Count */}
+                    {farm._count?.products !== undefined && (
+                      <div className="mb-3 text-sm text-gray-600">
+                        {farm._count.products} product
+                        {farm._count.products !== 1 ? "s" : ""} available
+                      </div>
+                    )}
+
+                    {/* Visit Farm */}
+                    <div className="flex items-center justify-end border-t pt-3">
+                      <span className="text-sm font-medium text-green-700 group-hover:underline">
+                        Visit Farm →
                       </span>
                     </div>
-                  )}
-
-                  {/* Product Count */}
-                  {farm._count?.products !== undefined && (
-                    <div className="mb-3 text-sm text-gray-600">
-                      {farm._count.products} product
-                      {farm._count.products !== 1 ? "s" : ""} available
-                    </div>
-                  )}
-
-                  {/* Visit Farm */}
-                  <div className="flex items-center justify-end border-t pt-3">
-                    <span className="text-sm font-medium text-green-700 group-hover:underline">
-                      Visit Farm →
-                    </span>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         )}
       </div>
