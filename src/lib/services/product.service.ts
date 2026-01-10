@@ -166,11 +166,10 @@ export class QuantumProductCatalogService {
         reviewCount: 0,
       },
       include: {
-        farmId: {
+        farm: {
           select: {
             id: true,
             slug: true,
-            tags: true,
           },
         },
       },
@@ -190,7 +189,7 @@ export class QuantumProductCatalogService {
     const product = await database.product.findUnique({
       where: { id: productId },
       include: {
-        farmId: true,
+        farm: true,
         reviews: includeRelations,
       },
     });
@@ -209,7 +208,7 @@ export class QuantumProductCatalogService {
     const product = await database.product.findFirst({
       where: { slug, farmId },
       include: {
-        farmId: true,
+        farm: true,
         reviews: {
           take: 10,
           orderBy: { createdAt: "desc" },
@@ -234,9 +233,7 @@ export class QuantumProductCatalogService {
    * 📋 SEARCH AND FILTER PRODUCTS
    * Retrieves products with advanced search, filtering, and pagination
    */
-  async searchProducts(
-    options: ProductSearchOptions,
-  ): Promise<{
+  async searchProducts(options: ProductSearchOptions): Promise<{
     products: ProductWithRelations[];
     total: number;
     hasMore: boolean;
@@ -313,12 +310,10 @@ export class QuantumProductCatalogService {
         skip,
         orderBy,
         include: {
-          farmId: {
+          farm: {
             select: {
               id: true,
-              tags: true,
               slug: true,
-              averageRating: true,
             },
           },
         },
@@ -412,7 +407,7 @@ export class QuantumProductCatalogService {
         updatedAt: new Date(),
       },
       include: {
-        farmId: true,
+        farm: true,
       },
     });
 
@@ -526,7 +521,7 @@ export class QuantumProductCatalogService {
     const product = await database.product.findUnique({
       where: { id: productId },
       include: {
-        farmId: {
+        farm: {
           select: {
             ownerId: true,
             teamMembers: {
@@ -687,7 +682,7 @@ export class QuantumProductCatalogService {
         const product = await tx.product.findUnique({
           where: { id: productId },
           include: {
-            farmId: {
+            farm: {
               select: { ownerId: true },
             },
           },
@@ -730,7 +725,7 @@ export class QuantumProductCatalogService {
             updatedAt: new Date(),
           },
           include: {
-            farmId: true,
+            farm: true,
           },
         });
 
@@ -757,7 +752,7 @@ export class QuantumProductCatalogService {
         const product = await tx.product.findUnique({
           where: { id: productId },
           include: {
-            farmId: {
+            farm: {
               select: { ownerId: true },
             },
           },
@@ -808,7 +803,7 @@ export class QuantumProductCatalogService {
             updatedAt: new Date(),
           },
           include: {
-            farmId: true,
+            farm: true,
           },
         });
 
