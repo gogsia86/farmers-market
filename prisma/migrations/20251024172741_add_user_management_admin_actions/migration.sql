@@ -11,7 +11,8 @@
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- CreateExtension
-CREATE EXTENSION IF NOT EXISTS "postgis" WITH SCHEMA "public";
+-- CREATE EXTENSION IF NOT EXISTS "postgis" WITH SCHEMA "public";
+-- Note: PostGIS not available on Vercel Postgres, commented out
 
 -- CreateEnum
 CREATE TYPE "FarmVerificationStatus" AS ENUM ('PENDING', 'VERIFIED', 'REJECTED');
